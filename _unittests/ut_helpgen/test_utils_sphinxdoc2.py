@@ -1,0 +1,87 @@
+"""
+@brief      test log(time=1s)
+@author     Xavier Dupre
+"""
+
+
+from __future__ import print_function
+import sys, os, unittest, re, io, datetime
+
+
+try :
+    import src
+except ImportError :
+    import os, sys
+    path =  os.path.normpath(os.path.abspath(os.path.join(os.path.split(__file__)[0], "..", "..")))
+    if path not in sys.path : sys.path.append(path)
+    import src
+    
+from src.pyquickhelper.loghelper.flog           import fLOG
+from src.pyquickhelper.sync.synchelper          import explore_folder
+import src.pyquickhelper.helpgen.utils_sphinx_doc as utils_sphinx_doc
+from src.pyquickhelper.loghelper.pysvn_helper   import get_repo_version, get_repo_log
+
+class TestSphinxDoc2 (unittest.TestCase):
+        
+    def test_apply_modification_template_obj (self) :
+        fLOG (__file__, self._testMethodName, OutputPrint = __name__ == "__main__")
+        
+        path    = os.path.split(__file__)[0]
+        file    = os.path.join(path, "..", "..", "src", "pyquickhelper", "loghelper", "pqh_exception.py")
+        
+        store_obj = { }
+        softfile = lambda f : False        
+        rst = utils_sphinx_doc.apply_modification_template (store_obj,
+                    utils_sphinx_doc.add_file_rst_template,
+                    file,
+                    os.path.join(path, "..", "..", "src"),
+                    softfile,
+                    {},
+                    additional_sys_path = [])
+                    
+        assert len(store_obj) > 0
+        for k,v in store_obj.items () :
+            fLOG(k,v)
+            
+    @staticmethod
+    def private_static() :
+        """ doc pr"""
+        return 0
+        
+    @property
+    def prop(self) :
+        """ doc prop"""
+        return 1
+        
+    def __gt__(self, o) :
+        """doc gt"""
+        return True
+            
+    def test_inspect_object(self) :
+        """ test 2"""
+        fLOG (__file__, self._testMethodName, OutputPrint = __name__ == "__main__")
+        
+        mod = sys.modules[__name__]
+        fLOG(type(mod))
+        objs = utils_sphinx_doc.get_module_objects (mod)
+        fLOG(objs)
+        ty = { }
+        for _ in objs : 
+            ty [_.type] = ty.get(_.type, 0) + 1
+        fLOG(ty)
+        if ty["method"] > 5 :
+            for _ in objs : 
+                if _.type == "method" : continue
+                if "private" in _.name : 
+                    assert "doc pr" in _.doc
+                fLOG(_.type, _.name, _.doc.replace ("\n","\\n"))
+            for _ in objs : 
+                if _.type != "method" : continue
+                fLOG(_.type, _.module, _.name, _.doc.replace ("\n","\\n"))
+
+        assert ty["property"] == 1
+        assert ty["staticmethod"] == 1
+        assert ty["method"] > 0
+        
+if __name__ == "__main__"  :
+    unittest.main ()    

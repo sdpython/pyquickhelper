@@ -1,0 +1,41 @@
+.. project_name documentation documentation master file, created by
+   sphinx-quickstart on Fri May 10 18:35:14 2013.
+   You can adapt this file completely to your liking, but it should at least
+   contain the root `toctree` directive.
+
+Welcome to pyquickhelper documentation
+======================================
+
+.. contents::
+   :depth: 3
+
+
+Introduction
+------------
+
+This extension gathers three functionalities:
+    * a logging function: :func:`loghelper.flog.fLOG`
+    * a function to synchronize two folders: :func:`sync.synchelper.synchronize_folder`
+    * a function to generate a copy of a module, converting doxygen documentation in rst format: :func:`helpgen.utils_sphinx_doc.prepare_file_for_sphinx_help_generation`
+
+About this documentation
+------------------------
+
+.. toctree::
+    :maxdepth: 2
+
+    generatedoc
+    glossary
+    confr_pyp
+
+    
+Indices and tables
+==================
+
++------------------+---------------------+------------------+------------------+------------------------+---------------------+
+| :ref:`l-modules` |  :ref:`l-functions` | :ref:`l-classes` | :ref:`l-methods` | :ref:`l-staticmethods` | :ref:`l-properties` |
++------------------+---------------------+------------------+------------------+------------------------+---------------------+
+| :ref:`genindex`  |  :ref:`modindex`    | :ref:`search`    | :ref:`l-license` | :ref:`l-changes`       |                     |
++------------------+---------------------+------------------+------------------+------------------------+---------------------+
+   
+
