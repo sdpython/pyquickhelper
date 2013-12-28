@@ -51,4 +51,29 @@ def df_to_rst(df, add_line=True):
     res.append (sline)
     return "\n".join(res) + "\n"
     
+def df_to_html (self, class_table = None, class_td = None, class_tr = None, class_th = None) :
+    """
+    convert the table into a html string
     
+    @param  class_table     adds a class to the tag ``table`` (None for none)
+    @param  class_td        adds a class to the tag ``td`` (None for none)
+    @param  class_tr        adds a class to the tag ``tr`` (None for none)
+    @param  class_th        adds a class to the tag ``th`` (None for none)
+    """
+    clta = ' class="%s"' % class_table  if class_table != None else ""
+    cltr = ' class="%s"' % class_tr     if class_tr != None else ""
+    cltd = ' class="%s"' % class_td     if class_td != None else ""
+    clth = ' class="%s"' % class_th     if class_th != None else ""
+    
+    rows= [ "<table%s>" % clta ]
+    rows.append (  ("<tr%s><th%s>" % (cltr, clth)) + ("</th><th%s>" % clth).join (self.columns) + "</th></tr>" )
+    septd = "</td><td%s>" % cltd
+    strtd = "<tr%s><td%s>" % (cltr, cltd)
+    for row in self.values :
+        s = septd.join ( [ str(_) for _ in row ] )
+        rows.append ( strtd + s + "</td></tr>")
+    rows.append ("</table>")
+    rows.append("")
+    return "\n".join(rows)
+    
+
