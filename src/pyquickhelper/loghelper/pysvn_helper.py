@@ -117,9 +117,9 @@ def get_repo_log (path = None, file_detail = False, commandline = False) :
     The function use a command line if an error occured. It uses the xml format:
     @code
     <logentry revision="161">
-        <author>sloane</author>
+        <author>xavier dupre</author>
         <date>2013-03-23T15:02:50.311828Z</date>
-        <msg>pyhome3: moving pyhome3</msg>
+        <msg>pyquickhelper: first version</msg>
     </logentry>
     @endcode
     """

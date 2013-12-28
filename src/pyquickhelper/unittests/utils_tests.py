@@ -2,7 +2,7 @@
 @file
 @brief  This extension contains various functionalities to help unittesting.
 """
-import hashlib, functools, os, sys, glob, re, unittest
+import hashlib, functools, os, sys, glob, re, unittest, io
 
 from ..loghelper.flog       import fLOG
 from ..sync.synchelper      import remove_folder
@@ -189,9 +189,7 @@ def main (  runner,
     # checking that the module does not belong to the installed modules
     if path_test != None :
         pathModule = os.path.join(sys.executable, "Lib", "site-packages")
-        paths = [ os.path.join(pathModule, "srcpyhome"),
-                  os.path.join(pathModule, "pyhome3"),
-                  os.path.join(pathModule, "pyhome"), ]
+        paths = [ os.path.join(pathModule, "src"), ]
         for path in paths : 
             if os.path.exists (path): 
                 raise FileExistsError("this path should not exist " + path)
@@ -230,7 +228,7 @@ def main (  runner,
     fail    = 0
     
     stderr      = sys.stderr
-    sys.stderr  = UnicodeStringIO()
+    sys.stderr  = io.StringIO()
     
     for i,s in enumerate(suite) :
         if skip >= 0 and i < skip :

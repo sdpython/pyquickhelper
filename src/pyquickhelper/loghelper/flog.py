@@ -5,7 +5,7 @@
 @brief Exception specific to this module
 
 
-The function fLOG (or fLOG) is used to logged everything into a log file. All exceptions raised by pyhome3 are logged.
+The function fLOG (or fLOG) is used to logged everything into a log file.
 
 @code
 from pyquickhelper.loghelper.flog import fLOG
@@ -31,7 +31,7 @@ def init (path = None, filename = None, create = True, path_add = []) :
     """
     initialisation
     @param      path        new path, 
-                                - if path == "###", then uses d:\\temp\\log_pyhome3 is it exists or c:\\temp\\log_pyhome3 if not
+                                - if path == "###", then uses d:\\temp\\log_pyquickhelper is it exists or c:\\temp\\log_pyhome3 if not
     @param      filename    new filename
     @param      create      force the creation
     @param      path_add    subfolder to append to the current folder
@@ -44,10 +44,10 @@ def init (path = None, filename = None, create = True, path_add = []) :
     if path == "###" :
         if sys.platform.startswith("win") :
             path = "d:\\temp" if os.path.exists ("d:\\temp") else "c:\\temp"
-            path = os.path.join (path, "log_pyhome3")
+            path = os.path.join (path, "log_pyquickhelper")
         else :
             path = "/tmp"
-            path = os.path.join (path, "log_pyhome3")
+            path = os.path.join (path, "log_pyquickhelper")
             
     if len (path_add) > 0 : 
         if not isinstance (path_add, list) : path_add = [ path_add ]
@@ -345,6 +345,7 @@ def _check_zip_file (filename, path_unzip, outfile) :
             #raise Exception.YstException("ColumnInfoSet.load_from_file: file %s contains no file or more than one file\n" + message)
             folder = os.path.split (filename) [0]
             todo   = 0
+            _zip7_path = r"c:\Program Files\7-Zip"
             zip7   = os.path.exists (_zip7_path)
             wait   = [ ]
             for info in file.infolist () :
@@ -912,7 +913,6 @@ if "hal_log_values" not in sys.__dict__ :
     sys.hal_log_values ["__log_file_sep"]  = "\n"  # previous value: "\n" if not sys.platform.startswith("win") else "\n"
     sys.hal_log_values ["__log_display"]   = False
     sys.hal_log_values ["month_date"]      = {"jan":1, "feb":2, "mar":3, "apr":4, "may":5, "jun":6, "jul":7, "aug":8, "sep":9, "oct":10, "nov":11, "dec":12 }
-    _zip7_path                             = r"c:\Program Files\7-Zip"
 
     res = []
     dif = { }
@@ -922,8 +922,4 @@ if "hal_log_values" not in sys.__dict__ :
             dif [ id(sys.modules[k]) ] = 0
     if len (res) > 1 :
         pathes = "\n".join (sys.path)
-        # maybe do something here
-        #"this module already exists (dif %d):\n* names\n%s\n* pathes\n%s\n, see pyhome3/__init__.py to change the import order." % (len (dif), "\n".join (res), pathes))
-
-    fLOG = fLOG    
     

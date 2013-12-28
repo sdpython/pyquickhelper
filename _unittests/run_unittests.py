@@ -7,13 +7,13 @@
 import unittest, os, sys, io
 
 try:
-    import pyhome3
+    import pyquickhelper
 except ImportError:
-    sys.path.append ( os.path.normpath (os.path.abspath("../../../pyhome")))
-    import pyhome3
+    sys.path.append ( os.path.normpath (os.path.abspath("../src")))
+    import pyquickhelper
     
-from pyhome3 import fLOG
-from pyhome3.srcpyhome.utils.utils_tests import main 
+from pyquickhelper import fLOG
+from pyquickhelper.unittests.utils_tests import main 
 
 
 

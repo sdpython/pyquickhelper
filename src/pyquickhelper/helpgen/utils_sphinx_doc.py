@@ -415,7 +415,7 @@ def add_file_rst (store_obj,
     @param      additional_sys_path     additional path to include to sys.path before importing a module (will be removed afterwards)
     @return                     list of written files stored in RstFileHelp
     
-    @todo This functions still includes some code specific to pyhome3.
+    @todo This functions still includes some code specific to pyquickhelper.
     """
 
     memo = { }
@@ -439,12 +439,9 @@ def add_file_rst (store_obj,
                 name = os.path.split(file)[-1]
                 noex = os.path.splitext(name)[0]
                 
-                # todo: specific case to pyhome3: shoud be remove.
+                # todo: specific case: shoud be removed and added back in a proper way
                 if "examples/" in zzz or "studies/" in zzz :
                     content += "\n.. _%s_literal:\n\nCode\n----\n\n.. literalinclude:: %s\n\n" % (noex, name)
-                #elif "graph_with_gnuplot" in zzz :
-                #    print (zzz, file)
-                #    assert False
                 
                 with open(rst, "w", encoding="utf8") as g :
                     g.write(content)

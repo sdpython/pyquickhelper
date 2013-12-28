@@ -13,4 +13,4 @@ def check( log = False):
     """
     return True
     
-    
+from .loghelper.flog import fLOG    
