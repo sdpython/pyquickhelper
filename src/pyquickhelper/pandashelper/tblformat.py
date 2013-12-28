@@ -11,6 +11,7 @@ def df_to_rst(df, add_line=True):
     @return                     string
 
     It produces the following results:
+    
     @code
     +------------------------+------------+----------+----------+
     | Header row, column 1   | Header 2   | Header 3 | Header 4 |

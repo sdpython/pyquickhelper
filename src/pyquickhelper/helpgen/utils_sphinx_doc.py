@@ -328,7 +328,7 @@ def apply_modification_template (   store_obj,
                         maxi = max([len(_) for _ in tbl[k] ])
                         s = 0 if tbl.ix[0,1] == None else len(tbl.ix[0,1])
                         t = "" if tbl.ix[0,1] == None else tbl.ix[0,1]
-                        tbl[0,1] = t + (" " * (3*maxi - s))
+                        tbl.ix[0,1] = t + (" " * (3*maxi - s))
                         sph  = df_to_rst(tbl)
                         titl = "\n\n" + add_file_rst_template_title[k] + "\n"
                         titl += "+" * len(add_file_rst_template_title[k]) 
@@ -545,13 +545,13 @@ def produces_indexes (
     
         tbl = DataFrame (columns=["_", k, "class parent", "truncated documentation"] , data=values)
         if len(tbl.columns)>=2 :
-            tbl = tbl [  tbl.columns[:2] ]
+            tbl = tbl [  tbl.columns[1:] ]
             
         if len(tbl) > 0 :
             maxi = max([len(_) for _ in tbl[k] ])
             s = 0 if tbl.ix[0,1] == None else len(tbl.ix[0,1])
             t = "" if tbl.ix[0,1] == None else tbl.ix[0,1]
-            tbl[0,1] = t + (" " * (3*maxi - s))
+            tbl.ix[0,1] = t + (" " * (3*maxi - s))
             sph = df_to_rst(tbl)
             res [k] = sph
     
@@ -578,11 +578,11 @@ def produces_indexes (
     
         tbl = DataFrame (columns=["_", k, "truncated documentation"] , data=values)
         if len(tbl.columns)>=2 :
-            tbl = tbl [  tbl.columns[:2] ]
+            tbl = tbl [  tbl.columns[1:] ]
             
         if len(tbl) > 0 :
             maxi = max( [ len(_) for _ in tbl[k] ] )
-            tbl[0,1] = tbl.ix[0,1] + (" " * (3*maxi - len(tbl.ix[0,1])))
+            tbl.ix[0,1] = tbl.ix[0,1] + (" " * (3*maxi - len(tbl.ix[0,1])))
             sph = df_to_rst(tbl)
             res [k] = sph
             
