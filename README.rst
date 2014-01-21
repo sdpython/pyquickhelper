@@ -18,6 +18,9 @@ This extension gathers three functionalities:
 The documentation is available at 
 `pyquickhelper documentation <http://www.xavierdupre.fr/app/pyquickhelper/helpsphinx/index.html>`_.
 You can download the setup  `here <http://www.xavierdupre.fr/site2013/index_code.html>`_.
+The module is available on `pypi/pyquickhelper <https://pypi.python.org/pypi/pyquickhelper/>`_ and
+on `GitHub/pyquickhelper <https://github.com/sdpython/pyquickhelper>`_.
+
 
 Design
 ------

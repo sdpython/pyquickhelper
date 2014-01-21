@@ -18,12 +18,12 @@
 #  3. All advertising materials mentioning features or use of this
 #     software must display the following acknowledgment:
 #     "This product includes software developed by
-#      --------------- <--------------- AT --------------->"
+#      Xavier Dupré <xavier.dupre AT gmail.com>"
 # 
 #  4. Redistributions of any form whatsoever must retain the following
 #     acknowledgment:
 #     "This product includes software developed by
-#      --------------- <--------------- AT --------------->."
+#      Xavier Dupré <xavier.dupre AT gmail.com>."
 # 
 #  THIS SOFTWARE IS PROVIDED BY --------------- ``AS IS'' AND ANY
 #  EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
@@ -58,10 +58,10 @@ readme              = 'README.rst'
 
 
 KEYWORDS = \
-project_var_name + ', first name, last name'
+project_var_name + ', synchronization, files, Xavier, Dupré'
 
 DESCRIPTION = \
-"""This a project template including a setup and the generation of sphinx generation."""
+"""Three functionalities: folder synchronization, a logging function, helpers to generate documentatino with sphinx"""
 
 CLASSIFIERS = \
 [
@@ -129,10 +129,7 @@ setup(
     packages                = packages,
     package_dir             = package_dir,
     package_data            = package_data,
-    #data_files              = data_files,
-    #requires                = [  "numpy (>= 1.7.1)", ],
     ext_modules             = EXT_MODULES,
-    #include_package_data    = True,
     )
 
     

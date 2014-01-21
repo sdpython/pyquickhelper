@@ -12,7 +12,7 @@ from ..sync.synchelper      import remove_folder
 def get_test_file (filter, dir = None) :
     """
     return the list of test files
-    @param      dir         path to look
+    @param      dir         path to look (or paths to look if it is a list)
     @param      filter      only select files matching the pattern (ex: test*)
     @return                 a list of test files
     """
@@ -23,10 +23,15 @@ def get_test_file (filter, dir = None) :
         uts  = os.path.abspath(os.path.join(path, "..", "..", "_unittest"))
         ut2  = os.path.abspath(os.path.join(path, "..", "..", "_unittests"))
         dirs = [ nrt, uts, ut2 ]
-    else :
+    elif isinstance(dir, str) :
         if not os.path.exists(dir) :
             raise FileNotFoundError (dir)
         dirs = [ dir ]
+    else :
+        dirs = dir
+        for d in dirs :
+            if not os.path.exists(d) :
+                raise FileNotFoundError (d)
     
     li   = [ ]
     for dir in dirs :
@@ -178,7 +183,7 @@ def main (  runner,
             skip        = -1) :
     """
     @param      runner      unittest Runner
-    @param      path_test   path to look, if None, looks for defaults paht related to this project
+    @param      path_test   path to look, if None, looks for defaults path related to this project
     @param      limit_max   avoid running tests longer than limit seconds
     @param      log         if True, enables intermediate files
     @param      skip        if skip != -1, skip the first "skip" test files
