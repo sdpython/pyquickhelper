@@ -57,7 +57,7 @@ copyright = '2014, ' + author
 # The full version, including alpha/beta/rc tags.
 version_file = os.path.abspath(os.path.join(os.path.split(__file__)[0], "..", "..", "..", "version.txt"))
 try :
-    with open(version_file, "r") as ff : first_line = ff.readlines()[0]
+    with open(version_file, "r") as ff : first_line = ff.readlines()[0].strip(" \n\r")
 except FileNotFoundError :
     first_line = "xxx"
 release = '%s.%s' % (version, first_line)
