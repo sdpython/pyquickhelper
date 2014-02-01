@@ -1,40 +1,28 @@
 Generate this documentation
 ===========================
 
-Tips to generate the documentation
-++++++++++++++++++++++++++++++++++
 
 .. generatedoc:
 
-You need to install sphinx (pip install sphinx). If you do not have any projet, you need to run sphinx-quicl-install
-from the folder you want to use to generate the documentation. Look at the configuration:
-
-Run::
-
-   make clean
-   make html
+The documentation can be written using `RST <http://sphinx-doc.org/rest.html>`_ format
+or `javadoc <http://en.wikipedia.org/wiki/Javadoc>`_ format.
+The program ``make_help.py`` without any required change except mention in the introduction. 
+Just run it. It will go through the following steps:
+    * it will copy all files found in ``src`` in folder ``_doc/sphinxdoc/source/[project_name]``
+    * it will replace all relative import by absolute import (by adding proper 
+    * it will generates a file .rst for each python file in ``_doc/sphinxdoc/source/[project_name]``
+    * it will run the generation of the documentation using Sphinx.
     
-However, some steps are missing:
-    * automatically create a list of files to document
-    * convert javadoc syntax into rst syntax
-    * create a copy of the file to document
+The results are stored in folder ``_doc/sphinxdoc/build``. On Windows,
+the batch file ``build_setup_help_on_windows.bat`` copies all files
+into ``dist/html``.
 
-Tips:
-    * 3 spaces before any included files
 
-Pointers:
-    * `Sphinx short syntax <http://matplotlib.org/sampledoc/cheatsheet.html>`_
-    * `Sphinx long syntax <http://sphinx-doc.org/contents.html>`_
-    * `Documenting Your Project Using Sphinx <http://pythonhosted.org/an_example_pypi_project/sphinx.html>`_
-    * `Sphinx extensions for embedded plots, math and more <http://matplotlib.org/sampledoc/extensions.html>`_
-    * `A page with many examples <http://docutils.sourceforge.net/docs/user/rst/demo.txt>`_
-    * `FAQ <http://sphinx.readthedocs.org/en/latest/faq.html>`_
-    * `Welcome to The Hitchhiker's Guide to Packaging <http://guide.python-distribute.org/>`_
-
-configuration:
-    *   confr_pyp
+Configuration:
+    * :ref:`l-confpy`
  
 Extensions to install
 +++++++++++++++++++++
 
-* `fancybox <http://spinus.github.io/sphinxcontrib-fancybox/>`_: the module is not bullet proof for Python 3.x, unicode type must be replaced by str.
+* `Sphinx <http://sphinx-doc.org/>`_
+* `fancybox <http://spinus.github.io/sphinxcontrib-fancybox/>`_

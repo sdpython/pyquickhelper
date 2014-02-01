@@ -3,8 +3,6 @@
 Documentation, unit tests, setup
 ================================
 
-.. contents::
-   :depth: 3
 
 
     
@@ -51,33 +49,3 @@ This test file must begin by ``test_`` and must look like the following::
     if __name__ == "__main__"  :
         unittest.main ()        
 
-Generation of the documentation
--------------------------------
-
-The program ``make_help.py`` without any required change except mention in the introduction. Just run it. It will go through the following steps:
-    * it will copy all files found in ``src`` in folder ``_doc/sphinxdoc/source/project_name``
-    * it will generates a file .rst for each python file in ``_doc/sphinxdoc/source/project_name``
-    * it will run the generation of the documentation using Sphinx.
-    
-The results are stored in folder ``_doc/sphinxdoc/build``.
-
-.. warning::
-    
-    The folder containing the project (here: project_template) must be different from the project name 
-    (here: project_name). Otherwise, the generation of the documentation might face some issues while 
-    importing modules. The documentation creates another folder, copies every source file
-    there, change the doxygen help format into rst format, adds custom summaries.
-
-Generation of the setup
------------------------
-
-Unless you add an extension or some data to your module (images, text files),
-no modification are required. To generate a zip or gz setup::
-
-    %pythonexe% setup.py sdist --formats=gztar,zip
-    
-To generate an executable setup on Windows::
-
-    %pythonexe% setup.py bdist_wininst
-
-On Windows, the file ``build_setup_help_on_windows.bat`` does everything for you.

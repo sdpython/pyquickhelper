@@ -12,7 +12,7 @@ from ..sync.file_tree_node      import FileTreeNode
 from ..sync.synchelper          import remove_folder, synchronize_folder, explore_folder
 from ._my_doxypy                import process_string
 from ..loghelper.pysvn_helper   import get_repo_version, get_repo_log
-from .utils_sphinx_doc_helpers  import add_file_rst_template, process_var_tag, import_module, get_module_objects, add_file_rst_template_cor, add_file_rst_template_title, IndexInformation, RstFileHelp
+from .utils_sphinx_doc_helpers  import add_file_rst_template, process_var_tag, import_module, get_module_objects, add_file_rst_template_cor, add_file_rst_template_title, IndexInformation, RstFileHelp, HelpGenException
 from ..pandashelper.tblformat   import df_to_rst
 
 def _ishome() :
@@ -563,7 +563,7 @@ def produces_indexes (
 
     for k in types :
         if k in res : 
-            raise Exception ("you should not index anything related to classes, functions or method (conflict: %s)" % k)
+            raise HelpGenException ("you should not index anything related to classes, functions or method (conflict: %s)" % k)
         values = []
         for t,o in indexes.items() :
             if fexclude_index(o) : continue
@@ -966,7 +966,10 @@ def private_migrating_doxygen_doc(
         @var        <param_name>  produces a table with the attributes
 
         @return             description
-        :rtype:             description
+        :return:            description
+
+        @rtype             description
+        :rtype:            description
 
         @code
         code:: + indentation
@@ -1022,6 +1025,7 @@ def private_migrating_doxygen_doc(
     rows = copy.copy(rows)
     pars = re.compile ("([@]param( +)([a-zA-Z0-9_]+)) ")
     refe = re.compile ("([@]((see)|(ref)) +((fn)|(cl)|(at)|(me)|(te)) +([a-zA-Z0-9_]+))($|[^a-zA-Z0-9_])")
+    exce = re.compile ("([@]exception( +)([a-zA-Z0-9_]+)) ")
     
     indent = False
     openi  = False
@@ -1080,7 +1084,9 @@ def private_migrating_doxygen_doc(
             # basic tags
             row = rows[i]
             
+            # tag param
             look = pars.search(row)
+            lexxce = exce.search(row)
             
             if look :
                 rep     = look.groups()[0]
@@ -1093,11 +1099,29 @@ def private_migrating_doxygen_doc(
                 if i > 0 and not rows[i-1].strip().startswith(":") and len(rows[i-1].strip()) > 0 :
                     rows[i] = "\n" + rows[i]
                 
-            elif "@return" in row :
-                rows[i] = row.replace("@return", ":rtype:")
+            elif lexxce:
+                rep     = lexxce.groups()[0]
+                sp      = lexxce.groups()[1]
+                name    = lexxce.groups()[2]
+                to      = ":raises%s%s:" % (sp, name)
+                rows[i] = row.replace(rep, to)
+                
                 # it requires an empty line before if the previous line does not start by :
                 if i > 0 and not rows[i-1].strip().startswith(":") and len(rows[i-1].strip()) > 0 :
                     rows[i] = "\n" + rows[i]
+                
+            elif "@return" in row :
+                rows[i] = row.replace("@return", ":return:")
+                # it requires an empty line before if the previous line does not start by :
+                if i > 0 and not rows[i-1].strip().startswith(":") and len(rows[i-1].strip()) > 0 :
+                    rows[i] = "\n" + rows[i]
+                    
+            elif "@rtype" in row :
+                rows[i] = row.replace("@rtype", ":rtype:")
+                # it requires an empty line before if the previous line does not start by :
+                if i > 0 and not rows[i-1].strip().startswith(":") and len(rows[i-1].strip()) > 0 :
+                    rows[i] = "\n" + rows[i]
+                    
             elif "@brief" in row : 
                 rows[i] = row.replace("@brief", "").strip()
             elif "@file" in row : 
@@ -1122,7 +1146,8 @@ def private_migrating_doxygen_doc(
             if "__sphinx__skip__" in row : 
                 break
             if "@param" in row or "@return" in row or "@see" in row or "@warning" in row \
-                   or "@todo" in row or "@code" in row or "@endcode" in row or "@brief" in row or "@file" in row:
+                   or "@todo" in row or "@code" in row or "@endcode" in row or "@brief" in row or "@file" in row \
+                   or "@rtype" in row or "@exception" in row :
                 if not silent :
                     fLOG("#########################")
                     private_migrating_doxygen_doc(debugrows, index_first_line, filename, debug = True)

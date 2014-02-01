@@ -3,47 +3,35 @@
 README
 ======
 
-.. contents::
-   :depth: 3
+   
+   
+**Links:**
+    * `pypi/pymyinstall <https://pypi.python.org/pypi/pymyinstall/>`_
+    * `GitHub/pymyinstall <https://github.com/sdpython/pymyinstall>`_
+    * `documentation <http://www.xavierdupre.fr/app/pymyinstall/helpsphinx/index.html>`_
+    * `Windows Setup <http://www.xavierdupre.fr/site2013/index_code.html#pymyinstall>`_
 
 
-Introduction
-------------
+Description
+-----------
 
 This extension gathers three functionalities:
-    * a logging function
-    * a function to synchronize two folders
-    * a function to generate a copy of a module, converting doxygen documentation in rst format
+    * a logging function: :func:`fLOG <loghelper.flog.fLOG>`
+    * a function to synchronize two folders: :func:`synchronize_folder <sync.synchelper.synchronize_folder>`
+    * a function to generate a copy of a module, converting doxygen documentation in rst format: :func:`generate_help_sphinx <helpgen.sphinx_main.generate_help_sphinx>` (see also :func:`prepare_file_for_sphinx_help_generation <helpgen.utils_sphinx_doc.prepare_file_for_sphinx_help_generation>`)
     
-The documentation is available at 
-`pyquickhelper documentation <http://www.xavierdupre.fr/app/pyquickhelper/helpsphinx/index.html>`_.
-You can download the setup  `here <http://www.xavierdupre.fr/site2013/index_code.html>`_.
 The module is available on `pypi/pyquickhelper <https://pypi.python.org/pypi/pyquickhelper/>`_ and
 on `GitHub/pyquickhelper <https://github.com/sdpython/pyquickhelper>`_.
 
-Get the list of files in a SVN repository and copy them in another folder::
+Functionalities
+---------------
 
-    all = []
-    action = synchronize_folder (folder1, folder2, svn1 = True, 
-                            operations = lambda a,b,c : all.append (a))
-    for a in all :
-        print (a)
-        
-And to copy them::        
-
-    synchronize_folder (folder1, folder2, svn1 = True)
-    
-A logging function which does not break due to encoding issues::
-
-    fLOG(OutputPrint=True)  # enable the printing
-    fLOG(something)         # prints the date + the something
-    
-To generate the documentation for this project::
-
-    generate_help_sphinx("pyquickhelper")
-
-It assumes this function is run a script from the root folder.
-It copies every all the files in ``_doc/sphinxdoc/source``.
+    * help generation
+    * folder synchronization
+    * logging
+    * import a flat file into a SQLite database
+    * help running unit tests
+    * functions to convert a pandas DataFrame into a HTML table or a RST table
 
 Design
 ------

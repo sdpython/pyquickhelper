@@ -25,16 +25,21 @@ fLOG (LogPath = "c:/temp/log_path")       # change the log path, creates it if i
 import datetime,sys,os,time, subprocess, random, math, decimal, urllib, time
 import urllib.request, io
 
+class PQHException (Exception) :
+    """
+    custome exception for this file
+    """
+    pass
 
 
 def init (path = None, filename = None, create = True, path_add = []) :
     """
     initialisation
-    @param      path        new path, 
+    @param      path            new path, 
                                 - if path == "###", then uses d:\\temp\\log_pyquickhelper is it exists or c:\\temp\\log_pyquickhelper if not
-    @param      filename    new filename
-    @param      create      force the creation
-    @param      path_add    subfolder to append to the current folder
+    @param      filename        new filename
+    @param      create          force the creation
+    @param      path_add        subfolder to append to the current folder
     
     This function is also called when LogPath is specified while calling function fLOG.
     """
@@ -97,7 +102,11 @@ def Print (redirect = True) :
     
 def GetLogFile () :
     """
-    @return         a pointer to a log file (str format)
+    Returns a file name containing the log
+    
+    @return                 a pointer to a log file
+    @rtype                  str
+    @exception  OSError     if this file cannot be created
     """
     if sys.hal_log_values ["__log_file"] == None :
         path = GetPath ()
@@ -113,12 +122,15 @@ def GetLogFile () :
                     sys.hal_log_values ["__log_file"] = open (sys.hal_log_values ["__log_file_name"], "w", encoding="utf-8")
                 else :
                     sys.hal_log_values ["__log_file"] = codecs.open (sys.hal_log_values ["__log_file_name"], "w", encoding="utf-8")
-            except Exception as e:    raise OSError ("unable to create file " + sys.hal_log_values ["__log_file_name"] + "\n" + str(e))
+            except Exception as e:    
+                raise OSError ("unable to create file " + sys.hal_log_values ["__log_file_name"] + "\n" + str(e))
+                
     return sys.hal_log_values ["__log_file"]
 
 def fLOG (*l, **p) :
     """
-    builds a message on a single line with the date
+    Builds a message on a single line with the date, it deals with encoding issues.
+    
     @param      l       list of fields
     @param      p       dictionary of fields
                             - if p contains OutputPrint, call Print (OutputPrint),
@@ -132,6 +144,8 @@ def fLOG (*l, **p) :
                         @code
                         fLOG (LogPath = "###", LogPathAdd = __file__, OutputPrint = True)
                         @endcode
+                        
+    @exception  OSError     When the log file cannot be created.
     """
     path_add = p.get ("LogPathAdd", [] )
 
@@ -187,9 +201,11 @@ def fLOG (*l, **p) :
 def get_relative_path (folder, file) :
     """
     return the relative path between a folder and a file
+    
     @param      folder      folder
     @param      file        file
     @return                 relative path
+    @rtype                  str
     """
     if not os.path.exists (folder) : raise PQHException (folder + " does not exist.")
     if not os.path.exists (file)   : raise PQHException (file + " does not exist.")
@@ -217,7 +233,8 @@ def download (httpfile, path_unzip = None, outfile = None) :
     @param      httpfile        (str) url
     @param      path_unzip      (str) path where to unzip the file, if None, choose GetPath ()
     @param      outfile         (str) if None, the function will assign a filename unless this parameter is specified
-    @return                     local file name"""
+    @return                     local file name
+    """
     if path_unzip == None : path_unzip = GetPath ()
     file = _check_source (httpfile, path_unzip = path_unzip, outfile = outfile)
     return file
@@ -261,7 +278,8 @@ def _get_file_url (url, path) :
     return path
     
 def _get_file_txt (zipname) :
-    """build a filename knowing an url, same name but in default_path
+    """
+    build a filename knowing an url, same name but in default_path
     @param      zipname     filename of the zip
     @return                 filename
     """
@@ -274,9 +292,11 @@ def _get_file_txt (zipname) :
     return path
 
 def _check_zip_file (filename, path_unzip, outfile) :
-    """this function tests if a file is a zip file (extension zip),
+    """
+    this function tests if a file is a zip file (extension zip),
     if it is the case, it unzips it into another file and return the new name,
     if the unzipped file already exists, the file is not unzipped a second time
+    
     @param      filename        any filename (.zip or not), if txt, it has no effect
     @param      path_unzip      if None, unzip it where it stands, otherwise, place it into path
     @param      outfile         if None, the function will assign a filename unless this parameter is specified
@@ -430,10 +450,12 @@ def _check_zip_file (filename, path_unzip, outfile) :
     return filename
     
 def _first_more_recent (f1, path) :
-    """checks if the first file (opened url) is more recent of the second file (path)
+    """
+    checks if the first file (opened url) is more recent of the second file (path)
     @param      f1      opened url
     @param      path    path name
-    @return             boolean"""
+    @return             boolean
+    """
     import datetime
     import re
     import time
@@ -611,6 +633,7 @@ def run_cmd (   cmd,
     @param      encerror            encoding errors (ignore by default) while converting the output into a string
     @param      encoding            encoding of the output
     @return                         content of stdout, stdres  (only if wait is True)  
+    @rtype      tuple
     """
     if secure != None :
         fLOG("secure=",secure)
@@ -703,7 +726,8 @@ def run_script (script, *l) :
     return out,err
     
 def get_prefix () :
-    """return a prefix for a file based on time
+    """
+    return a prefix for a file based on time
     """
     t = datetime.datetime (2010,1,1).now ()
     t = str(t).replace (":", "_").replace ("/", "_").replace (" ", "_")
@@ -711,7 +735,8 @@ def get_prefix () :
     return os.path.join (GetPath (), "temp_" + t)
     
 def removedirs (folder, silent = False) :
-    """remove all files and folder in folder
+    """
+    remove all files and folder in folder
     @param      folder      folder
     @param      silent      silent mode or not
     @return                 list of not remove files or folders
@@ -879,8 +904,12 @@ def guess_machine_parameter () :
     
 def IsEmptyString (s) :
     """
-    @param      s       any string (str, None)
-    @return             is it empty or not?
+    empty string or not?
+    
+    @param      s               any string (str, None)
+    @return                     is it empty or not?
+    @rtype      bool
+    @exception  PQHException    When a type is unexpected
     """
     if s == None : return True
     elif isinstance (s, str) :

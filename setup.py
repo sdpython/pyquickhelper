@@ -25,7 +25,7 @@
 #     "This product includes software developed by
 #      Xavier Dupré <xavier.dupre AT gmail.com>."
 # 
-#  THIS SOFTWARE IS PROVIDED BY --------------- ``AS IS'' AND ANY
+#  THIS SOFTWARE IS PROVIDED BY Xavier Dupré ``AS IS'' AND ANY
 #  EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 #  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
 #  PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL Roman V. Kiseliov OR
@@ -120,7 +120,7 @@ setup(
     version                 = 'py%s-v%s.%d' % (versionPython, sversion, subversion),
     author                  = 'Xavier Dupré',
     author_email            = 'xavier.dupre AT gmail.com',
-    url                     = "http://www.xavierdupre.fr/site2013/index_code.html",
+    url                     = "http://www.xavierdupre.fr/app/pyquickhelper/helpsphinx/index.html",
     download_url            = "https://github.com/sdpython/pyquickhelper",
     description             = DESCRIPTION,
     long_description        = long_description,

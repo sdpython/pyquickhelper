@@ -10,6 +10,7 @@ from ..loghelper.flog           import run_cmd, fLOG
 from ..loghelper.pysvn_helper   import get_repo_version, get_repo_log
 from ..pandashelper.tblformat   import df_to_rst
 from .utils_sphinx_doc          import prepare_file_for_sphinx_help_generation
+from .utils_sphinx_doc_helpers  import HelpGenException
 
 template_examples = """
 
@@ -42,21 +43,29 @@ def get_executables_path() :
         res += [ os.path.join(res[-1], "Scripts") ]
     return res
     
-def generate_changes_svn(chan, source) :
+def generate_changes_svn(chan, source, exception_if_empty = True) :
     """
-    generates a rst tables containing the changes stored by a svn repository,
-    the outcome is stored in a file
+    Generates a rst tables containing the changes stored by a svn repository,
+    the outcome is stored in a file.
+    The log comment must start with ``*`` to be taken into account.
     
-    @param          chan        filename to write (or None if you don't need to)
-    @param          source      source folder to get changes for
-    @return                     string (rst tables with the changes)
+    @param          chan                filename to write (or None if you don't need to)
+    @param          source              source folder to get changes for
+    @param          exception_if_empty  raises an exception if empty
+    @return                             string (rst tables with the changes)
     """
     # builds the changes files
     try :
         logs = get_repo_log(path = source, commandline = True)
     except Exception as e :
-        logs = [ ("none", 0, datetime.datetime.now(), "-") ]
-        fLOG("error",e)
+        if exception_if_empty :
+            raise HelpGenException("unable to retrieve log from " + source) from e
+        else :
+            logs = [ ("none", 0, datetime.datetime.now(), "-") ]
+            fLOG("error",e)
+
+    if len(logs) == 0 and exception_if_empty:
+        raise HelpGenException("retrieved logs are empty from " + source)
         
     logs.sort(reverse=True)
     rows = [ ]
@@ -72,7 +81,10 @@ def generate_changes_svn(chan, source) :
                 fLOG ("last changes % 4d - %s - %s" % (nbch, ds, comment.strip("*")))
                 first = False
             values.append ( ["%04d" % nbch, "%s" % ds, comment.strip("*") ] )
-    
+            
+    if len(values) == 0 and exception_if_empty:
+        raise HelpGenException("Logs were not empty but there was no comment starting with '*' from " + source + "\n" + "\n".join( [ str(_) for _ in logs ] ))
+
     if len(values) > 0 :
         tbl = DataFrame ( columns=["change number", "date", "comment"], data=values)
         rows.append("\n\n" + df_to_rst(tbl) + "\n\n")
@@ -153,8 +165,7 @@ def generate_help_sphinx (project_var_name, clean = True, root = ".") :
                 try :
                     with open(thn, "r", encoding="utf8") as f : c=f.read()
                 except Exception as e :
-                    fLOG ("issue with file ", thn)
-                    raise e
+                    raise HelpGenException ("issue with file ", thn) from e
                 
     fLOG("running sphinx... from", docpath)
     if not os.path.exists (docpath) :
@@ -170,8 +181,12 @@ def generate_help_sphinx (project_var_name, clean = True, root = ".") :
         run_cmd (cmd, wait = True)
         
     cmd = "make.bat html".split ()
+    
+    # This instruction should work but it does not. Sphinx seems to be stuck.
     #run_cmd (cmd, wait = True, secure="make_help.log", stop_waiting_if = lambda v : "build succeeded" in v)
-    #subprocess.call("make html", shell=True)
+    # The following one works but opens a extra windows.
     os.system("make html")
+    
+    # end
     os.chdir (pa)
     

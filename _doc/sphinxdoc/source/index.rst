@@ -6,8 +6,13 @@
 Welcome to pyquickhelper documentation
 ======================================
 
-.. contents::
-   :depth: 3
+   
+   
+**Links:**
+    * `pypi/pymyinstall <https://pypi.python.org/pypi/pymyinstall/>`_
+    * `GitHub/pymyinstall <https://github.com/sdpython/pymyinstall>`_
+    * `documentation <http://www.xavierdupre.fr/app/pymyinstall/helpsphinx/index.html>`_
+    * `Windows Setup <http://www.xavierdupre.fr/site2013/index_code.html#pymyinstall>`_
 
 
 Description
@@ -21,13 +26,26 @@ This extension gathers three functionalities:
 The module is available on `pypi/pyquickhelper <https://pypi.python.org/pypi/pyquickhelper/>`_ and
 on `GitHub/pyquickhelper <https://github.com/sdpython/pyquickhelper>`_.
 
+Functionalities
+---------------
+
+    * help generation
+    * folder synchronization
+    * logging
+    * import a flat file into a SQLite database
+    * help running unit tests
+    * functions to convert a pandas DataFrame into a HTML table or a RST table
+
 About this documentation
 ------------------------
 
 .. toctree::
-    :maxdepth: 2
+    :maxdepth: 1
 
+    doctestunit
     generatedoc
+    generatesetup
+    installation
     glossary
 
     

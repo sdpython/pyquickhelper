@@ -9,6 +9,12 @@ from pandas import DataFrame
 from ..pandashelper.tblformat import df_to_rst
 from ..loghelper.flog import fLOG
 
+class HelpGenException(Exception):
+    """
+    custom exception
+    """
+    pass
+
 _length_truncated_doc = 120
 
 

@@ -16,7 +16,7 @@ def str_to_datetime (dt, format = None):
                             %Y-%m-%d %H:%M:%S.%f
                             @endcode
                         which you get by default
-    @return             datetime
+    @rtype              datetime
     """
     if format == None :
         if "." in dt :        
@@ -30,7 +30,7 @@ def timestamp_to_datetime(timestamp):
     """
     convert a time into a datetime
     @param      ctime       ctime object (time)
-    @return             datetime
+    @rtype                  datetime
     """
     return datetime.datetime.utcfromtimestamp(timestamp)
     
