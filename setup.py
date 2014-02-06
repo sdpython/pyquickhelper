@@ -130,7 +130,7 @@ setup(
     package_dir             = package_dir,
     package_data            = package_data,
     ext_modules             = EXT_MODULES,
-    requires                = [  "numpy", "pandas", "pymyinstall" ],
+    install_requires        = [  "numpy", "pandas", "pymyinstall" ],
     )
 
     
