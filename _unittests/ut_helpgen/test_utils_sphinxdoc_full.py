@@ -19,7 +19,7 @@ except ImportError :
 from src.pyquickhelper.loghelper.flog           import fLOG, removedirs
 from src.pyquickhelper.sync.synchelper          import explore_folder
 import src.pyquickhelper.helpgen.utils_sphinx_doc as utils_sphinx_doc
-from src.pyquickhelper.loghelper.pysvn_helper   import get_repo_version, get_repo_log
+from src.pyquickhelper.loghelper.pyrepo_helper  import SourceRepository
 from src.pyquickhelper.sync.synchelper          import synchronize_folder
 
 
@@ -33,7 +33,7 @@ class TestSphinxDocFull (unittest.TestCase):
         assert not os.path.exists(temp)
         os.mkdir(temp)
             
-        file    = os.path.join(path, "..", "..", "..", "..", "python", "project_template")
+        file    = os.path.join(path, "..", "..", "..", "pyquickhelper")
         fLOG(os.path.normpath(os.path.abspath(file)))
         assert os.path.exists(file)
         
@@ -44,11 +44,11 @@ class TestSphinxDocFull (unittest.TestCase):
         del sys.path [0]
         
         synchronize_folder (sysp, temp, 
-                            filter = lambda c: "__pycache__" not in c and "project_template" not in c)
+                            filter = lambda c: "__pycache__" not in c and "pyquickhelper" not in c)
         shutil.copy(os.path.join(file, "README.rst"), temp)
 
         # copy the files 
-        project_var_name = "project_name"
+        project_var_name = "pyquickhelper"
         issues           = [ ]
         store_obj        = { }
                     
@@ -65,48 +65,26 @@ class TestSphinxDocFull (unittest.TestCase):
                         
         fLOG("end of prepare_file_for_sphinx_help_generation")
         
-        files = [   os.path.join(temp, "index_ext-tohelp.rst"),
+        files = [   
+                    #os.path.join(temp, "index_ext-tohelp.rst"),
                     os.path.join(temp, "index_function.rst"),
                     os.path.join(temp, "glossary.rst"),
                     os.path.join(temp, "index_class.rst"),
                     os.path.join(temp, "index_module.rst"),
+                    os.path.join(temp, "index_property.rst"),
                     os.path.join(temp, "index_method.rst"), 
                     os.path.join(temp, "filechanges.rst"),
                     ]
         for f in files :
             if not os.path.exists(f) :
                 raise FileNotFoundError(f + "\nabspath: " + os.path.abspath(f))
-            
-        file = os.path.join(temp, "project_name","subproject2","myexample2.py")
-        assert os.path.exists (file)
-        with open(file, "r", encoding="utf8") as f : content = f.read()
-        assert "del sys.path[0]" in content
-        assert "class myclass2 (myclass) :" in content
-        assert "from subproject.myexample import myclass" in content
-        assert "# replace # from ..subproject.myexample import myclass" in content
-        
-        file = os.path.join(temp, "project_name","subproject2","myexample2.rst")
-        assert os.path.exists (file)
-        with open(file, "r", encoding="utf8") as f : content = f.read()
-        if "temp_doc.project_name.subproject2.myexample2" not in content :
-            raise Exception("unable to find a string in \n" + content)
-            
-        file = os.path.join(temp, "project_name","subproject","myexampleb.py")
-        assert os.path.exists (file)
-        with open(file, "r", encoding="utf8") as f : content = f.read()
-        assert "# replace # from .myexample import myclass" in content
-            
-        fileth = os.path.join(temp, "project_name","subproject","myexample_nouse.tohelp")
-        assert os.path.exists (fileth)
-        filerst = os.path.join(temp, "project_name","subproject","myexample_nouse.rst")
-        assert os.path.exists (filerst)
-        
+                    
         with open(files[0],"r",encoding="utf8") as f : content = f.read()
-        assert "nouse" in content
         
         for f in ["fix_incomplete_references"] :
-            func = [ _ for _ in issues if _[0] == f ]
+            func = [ _ for _ in issues if _[0] == f and "utils_sphinx_doc.py" not in _[1]]
             if len(func) > 0 :
+                fLOG(func)
                 mes = "\n".join ( [_[1] for _ in func ])
                 stk = [ ]
                 for k,v in store_obj.items () :
