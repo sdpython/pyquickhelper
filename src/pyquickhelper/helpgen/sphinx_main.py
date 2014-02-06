@@ -81,20 +81,14 @@ def generate_changes_repo(  chan,
     rows.append("""\n.. _l-changes:\n\n\nChanges\n=======\n\nList of recent changes:\n""")
     first = True
     values = []
-    for code, nbch, date, comment in logs :
+    for row in logs :
+        code, nbch, date, comment = row[:4]
+        last = row[-1]
+        if last.startswith("http") :
+            nbch = "`%s <%s>`_"% (str(nbch), last)
+            
         ds = "%04d-%02d-%02d" % (date.year, date.month, date.day)
-        if first : 
-            if isinstance(nbch,int):
-                fLOG ("last changes: % 4d - %s - %s" % (nbch, ds, comment))
-            else :
-                fLOG ("last changes: %s - %s - %s" % (nbch, ds, comment))
         if filter_commit(comment):
-            if first : 
-                if isinstance(nbch,int):
-                    fLOG ("last changes % 4d - %s - %s" % (nbch, ds, comment.strip("*")))
-                else :
-                    fLOG ("last changes %s - %s - %s" % (nbch, ds, comment.strip("*")))
-                first = False
             if isinstance(nbch,int) :
                 values.append ( ["%04d" % nbch, "%s" % ds, comment.strip("*") ] )
             else :

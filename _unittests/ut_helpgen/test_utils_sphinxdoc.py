@@ -47,7 +47,7 @@ class TestSphinxDoc (unittest.TestCase):
         ver = src.log()
         assert len(ver) > 0
         assert isinstance(ver, list)
-        assert len(ver[0]) == 4
+        assert len(ver[0]) >= 4
         assert isinstance(ver[0][1], int) or isinstance(ver[0][1], str) 
         assert isinstance(ver[0][2], datetime.datetime)
         ver.sort(reverse=True)

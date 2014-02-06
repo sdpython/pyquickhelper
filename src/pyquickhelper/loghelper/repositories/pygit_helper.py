@@ -9,7 +9,7 @@ import xml.etree.ElementTree as ET
 from ..flog import fLOG, run_cmd
 from ..convert_helper import str_to_datetime
 
-def IsRepo(location, commandline = False):
+def IsRepo(location, commandline = True):
     """
     says if it a repository GIT
     
@@ -44,7 +44,7 @@ class RepoFile :
         """
         return self.name
 
-def repo_ls(full, commandline = False):
+def repo_ls(full, commandline = True):
     """
     run ``ls`` on a path
     @param      full            full path
@@ -100,7 +100,7 @@ def __get_version_from_version_txt(path) :
                 return int(f.read().strip(" \n\r\t")) 
     raise FileNotFoundError("unable to find version.txt in\n" + "\n".join(pathes))
     
-def get_repo_log (path = None, file_detail = False, commandline = False) :
+def get_repo_log (path = None, file_detail = False, commandline = True) :
     """
     get the latest changes operated on a file in a folder or a subfolder
     @param      path            path to look
@@ -108,9 +108,11 @@ def get_repo_log (path = None, file_detail = False, commandline = False) :
     @param      commandline     if True, use the command line to get the version number, otherwise it uses pysvn
     @return                     list of changes, each change is a list of 4-uple:
                                     - author
-                                    - change number (int)
+                                    - commit hash [:6]
                                     - date (datetime)
-                                    - comment
+                                    - comment$
+                                    - full commit hash
+                                    - link to commit (if the repository is http://...)
                     
     The function use a command line if an error occured. It uses the xml format:
     @code
@@ -118,6 +120,7 @@ def get_repo_log (path = None, file_detail = False, commandline = False) :
         <author>xavier dupre</author>
         <date>2013-03-23T15:02:50.311828Z</date>
         <msg>pyquickhelper: first version</msg>
+        <hash>full commit hash</hash>
     </logentry>
     @endcode
     
@@ -126,6 +129,9 @@ def get_repo_log (path = None, file_detail = False, commandline = False) :
     https://github.com/sdpython/pyquickhelper/commit/8d5351d1edd4a8997f358be39da80c72b06c2272    
     @endcode
     """
+    if file_detail :
+        raise NotImplementedError()
+    
     if path == None :
         path = os.path.normpath(os.path.abspath( os.path.join( os.path.split(__file__)[0], "..", "..", "..")))
         
@@ -140,7 +146,7 @@ def get_repo_log (path = None, file_detail = False, commandline = False) :
         else :
             cmd = 'git' 
 
-        cmd += ' log --pretty=format:"<logentry revision=\\"%h\\"><author>%an</author><date>%ci</date><msg>%s</msg></logentry>" ' + path
+        cmd += ' log --pretty=format:"<logentry revision=\\"%h\\"><author>%an</author><date>%ci</date><msg>%s</msg><hash>%H</hash></logentry>" ' + path
         out,err = run_cmd(  cmd, 
                             wait = True, 
                             do_not_log = True, 
@@ -150,6 +156,10 @@ def get_repo_log (path = None, file_detail = False, commandline = False) :
         if len(err) > 0 :
             fLOG ("problem with file ", path, err)
             raise Exception(err)
+            
+        master = get_master_location(path, commandline)
+        if master.endswith(".git") :
+            master = master[:-4]
 
         out = out.replace("\n\n","\n")
         out = "<xml>%s</xml>"%out
@@ -159,32 +169,17 @@ def get_repo_log (path = None, file_detail = False, commandline = False) :
             revision    = i.attrib['revision'].strip()
             author      = i.find("author").text.strip()
             t           = i.find("msg").text
+            hash        = i.find("hash").text
             msg         = t.strip() if t != None else "-"
             sdate       = i.find("date").text.strip()
             dt          = str_to_datetime(sdate.replace("T"," ").strip("Z "))
-            row         = [author, revision, dt, msg ]
+            row         = [author, revision, dt, msg, hash ]
+            if master.startswith("http") :
+                row.append (master + "/commit/" + hash)
             res.append(row)
         return res
-            
-    message = []
-    for info in log:
-        message.append ( ( "",
-                           info.revision.number, 
-                           datetime.datetime.utcfromtimestamp(info.date),
-                           info.message) )
-        if file_detail :
-            for i,pt in enumerate(info.changed_paths) :
-                message.append( ("file",
-                                 info.revision.numbe, 
-                                 pt.data["action"], 
-                                 pt.data["path"]) )
-                if i > 100 :
-                    message.append ("       ...")
-                    break
-            
-    return message
-            
-def get_repo_version (path = None, commandline = False) :
+                        
+def get_repo_version (path = None, commandline = True) :
     """
     get the latest check in number for a specific path
     @param      path            path to look
@@ -227,5 +222,49 @@ def get_repo_version (path = None, commandline = False) :
                 
         return res
             
+def get_master_location(path = None, commandline = True):
+    """
+    get the master location
+    
+    @param      path            path to look
+    @param      commandline     if True, use the command line to get the version number, otherwise it uses pysvn
+    @return                     integer (check in number)
+    """
+    if path == None :
+        path = os.path.normpath(os.path.abspath( os.path.join( os.path.split(__file__)[0], "..", "..", "..")))
+        
+    if not commandline :
+        try :
+            raise NotYetImplemented()
+        except Exception as e :
+            return get_repo_version(path, True)
+    else :
+        if sys.platform.startswith("win32") :
+            cmd = r'"C:\Program Files (x86)\Git\bin\git"'
+        else :
+            cmd = 'git' 
+            
+        cmd += " config --get remote.origin.url"
+
+        out,err = run_cmd(  cmd, 
+                            wait = True, 
+                            do_not_log = True, 
+                            encerror = "strict",
+                            encoding = sys.stdout.encoding,
+                            change_path = os.path.split(path)[0] if os.path.isfile(path) else path,
+                            log_error = False)
+                                                                            
+        if len(err) > 0 :
+            fLOG ("problem with file ", path, err)
+            raise Exception(err)
+        lines = out.split("\n")
+        lines = [ _ for _ in lines if len(_) > 0 ]
+        res = lines[0]
+        
+        if len(res) == 0 :
+            raise Exception("the command 'git help' should return something")
+                
+        return res
+
 
     

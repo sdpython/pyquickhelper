@@ -11,7 +11,7 @@ import xml.etree.ElementTree as ET
 from ..flog import fLOG, run_cmd
 from ..convert_helper import str_to_datetime
 
-def IsRepo(location, commandline = False):
+def IsRepo(location, commandline = True):
     """
     says if it a repository SVN
     
@@ -46,7 +46,7 @@ class RepoFile :
         """
         return self.name
 
-def repo_ls(full, commandline = False):
+def repo_ls(full, commandline = True):
     """
     run ``ls`` on a path
     @param      full            full path
@@ -114,7 +114,7 @@ def __get_version_from_version_txt(path) :
                 return int(f.read().strip(" \n\r\t")) 
     raise FileNotFoundError("unable to find version.txt in\n" + "\n".join(pathes))
     
-def get_repo_log (path = None, file_detail = False, commandline = False) :
+def get_repo_log (path = None, file_detail = False, commandline = True) :
     """
     get the latest changes operated on a file in a folder or a subfolder
     @param      path            path to look
@@ -207,7 +207,7 @@ def get_repo_log (path = None, file_detail = False, commandline = False) :
             
     return message
             
-def get_repo_version (path = None, commandline = False) :
+def get_repo_version (path = None, commandline = True) :
     """
     get the latest check in number for a specific path
     @param      path            path to look
@@ -257,5 +257,10 @@ def get_repo_version (path = None, commandline = False) :
                 
         return int(res)
             
-
+def get_master_location(path = None, commandline = True):
+    """
+    raises an exception
+    """
+    raise NotImplementedError()
+    
     
