@@ -218,3 +218,9 @@ pip-log.txt
 # py* packages
 temp_*
 out_*
+*/sphinxdoc/source/index_*
+*/sphinxdoc/source/readme.*
+*/sphinxdoc/source/LICENSE.*
+*/sphinxdoc/source/filechanges.*
+version.txt
+*/sphinxdoc/source/pyquickhelper/*

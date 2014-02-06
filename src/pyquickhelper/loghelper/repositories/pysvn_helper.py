@@ -13,7 +13,7 @@ from ..convert_helper import str_to_datetime
 
 def IsRepo(location, commandline = False):
     """
-    says if it a repository GIT
+    says if it a repository SVN
     
     @param      location        (str) location
     @param      commandline     (bool) use commandline or not
@@ -241,7 +241,8 @@ def get_repo_version (path = None, commandline = False) :
                             wait = True, 
                             do_not_log = True, 
                             encerror = "strict",
-                            encoding = sys.stdout.encoding)
+                            encoding = sys.stdout.encoding,
+                            log_error = False)
         if len(err) > 0 :
             raise Exception(err)
         lines = out.split("\n")
@@ -250,7 +251,7 @@ def get_repo_version (path = None, commandline = False) :
         res   = lines[1]
         
         if len(res) == 0 :
-            o,e = run_cmd("svn help", wait = True)
+            o,e = run_cmd("svn help", wait = True, log_error = False)
             if len(o) < 3 :
                 raise Exception("the command 'svn help' should return something")
                 

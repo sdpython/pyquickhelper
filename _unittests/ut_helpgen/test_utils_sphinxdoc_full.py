@@ -73,7 +73,6 @@ class TestSphinxDocFull (unittest.TestCase):
                     os.path.join(temp, "index_module.rst"),
                     os.path.join(temp, "index_property.rst"),
                     os.path.join(temp, "index_method.rst"), 
-                    os.path.join(temp, "filechanges.rst"),
                     ]
         for f in files :
             if not os.path.exists(f) :

@@ -120,6 +120,11 @@ def get_repo_log (path = None, file_detail = False, commandline = False) :
         <msg>pyquickhelper: first version</msg>
     </logentry>
     @endcode
+    
+    Add link:
+    @code
+    https://github.com/sdpython/pyquickhelper/commit/8d5351d1edd4a8997f358be39da80c72b06c2272    
+    @endcode
     """
     if path == None :
         path = os.path.normpath(os.path.abspath( os.path.join( os.path.split(__file__)[0], "..", "..", "..")))
@@ -207,7 +212,8 @@ def get_repo_version (path = None, commandline = False) :
                             do_not_log = True, 
                             encerror = "strict",
                             encoding = sys.stdout.encoding,
-                            change_path = os.path.split(path)[0] if os.path.isfile(path) else path)
+                            change_path = os.path.split(path)[0] if os.path.isfile(path) else path,
+                            log_error = False)
                                                                             
         if len(err) > 0 :
             fLOG ("problem with file ", path, err)

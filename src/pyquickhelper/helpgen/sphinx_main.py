@@ -70,6 +70,8 @@ def generate_changes_repo(chan, source, exception_if_empty = True) :
         fLOG("error, unable to retrieve log from " + source)
         if exception_if_empty:
             raise HelpGenException("retrieved logs are empty from " + source)
+    else :
+        fLOG("info, retrieved ", len(logs), " commits")
         
     logs.sort(reverse=True)
     rows = [ ]
@@ -126,7 +128,8 @@ def generate_help_sphinx (project_var_name, clean = True, root = ".") :
     import conf
     root = os.path.abspath(root)
     
-    version = SourceRepository(commandline=False).version()
+    src = SourceRepository(commandline=True)
+    version = src.version(os.path.abspath(root))
     if version != None :
         with open("version.txt", "w") as f : f.write(str(version) + "\n")
     
