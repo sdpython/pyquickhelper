@@ -666,15 +666,22 @@ def run_cmd (   cmd,
         
         if secure == None :
             for line in proc.stdout :
-                if not do_not_log : 
-                    fLOG(line.decode(encoding, errors=encerror))
                 try :
-                    out.append(line.decode(encoding, errors=encerror))
+                    decol = line.decode(encoding, errors=encerror)
                 except UnicodeDecodeError as exu :
-                    raise Exception("issue with cmd:" + str(cmd) + "\n" + str(exu))
+                    try :
+                        decol = line.decode("latin-1", errors=encerror)
+                    except Exception as e :
+                        decol = line.decode(encoding, errors='ignore')
+                        raise Exception("issue with cmd:" + str(cmd) + "\n" + str(exu))
+
+                if not do_not_log :
+                    fLOG(decol)
+
+                out.append(decol)
                 if proc.stdout.closed: 
                     break
-                if stop_waiting_if != None and stop_waiting_if(line.decode("utf8", errors=encerror)) :
+                if stop_waiting_if != None and stop_waiting_if(decol) :
                     skip_waiting = True
                     break
         else :
@@ -693,13 +700,16 @@ def run_cmd (   cmd,
                         break
                 time.sleep(0.1)
          
-        fLOG("end waiting 0")
         if not skip_waiting :
             proc.wait ()
         
-        fLOG("end waiting")
         out = "\n".join(out)
-        err = proc.stderr.read().decode(encoding, errors=encerror)
+        temp = err = proc.stderr.read()
+        try :
+            err = temp.decode(encoding, errors=encerror)
+        except :
+            err = temp.decode(ecoding, errors="ignore")
+
         if not do_not_log : 
             fLOG ("end of execution ", cmd)
         if len (err) > 0 and log_error :

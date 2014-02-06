@@ -3,7 +3,7 @@
 @file
 @brief logged exception
 
-By default, all exceptions are logged through the function HalLOG (@see fn HalLOG).
+By default, all exceptions are logged through the function fLOG (@see fn fLOG).
 
 @code
 raise HalException ("message")

@@ -7,7 +7,7 @@ import os,sys, subprocess, glob, shutil, re, datetime
 from pandas import DataFrame
 
 from ..loghelper.flog           import run_cmd, fLOG
-from ..loghelper.pysvn_helper   import get_repo_version, get_repo_log
+from ..loghelper.pyrepo_helper  import SourceRepository
 from ..pandashelper.tblformat   import df_to_rst
 from .utils_sphinx_doc          import prepare_file_for_sphinx_help_generation
 from .utils_sphinx_doc_helpers  import HelpGenException
@@ -43,9 +43,9 @@ def get_executables_path() :
         res += [ os.path.join(res[-1], "Scripts") ]
     return res
     
-def generate_changes_svn(chan, source, exception_if_empty = True) :
+def generate_changes_repo(chan, source, exception_if_empty = True) :
     """
-    Generates a rst tables containing the changes stored by a svn repository,
+    Generates a rst tables containing the changes stored by a svn or git repository,
     the outcome is stored in a file.
     The log comment must start with ``*`` to be taken into account.
     
@@ -56,16 +56,20 @@ def generate_changes_svn(chan, source, exception_if_empty = True) :
     """
     # builds the changes files
     try :
-        logs = get_repo_log(path = source, commandline = True)
+        src = SourceRepository(commandline=True)
+        logs = src.log(path = source)
     except Exception as e :
         if exception_if_empty :
+            fLOG("error, unable to retrieve log from " + source)
             raise HelpGenException("unable to retrieve log from " + source) from e
         else :
             logs = [ ("none", 0, datetime.datetime.now(), "-") ]
-            fLOG("error",e)
+            fLOG("error,",e)
 
-    if len(logs) == 0 and exception_if_empty:
-        raise HelpGenException("retrieved logs are empty from " + source)
+    if len(logs) == 0 :
+        fLOG("error, unable to retrieve log from " + source)
+        if exception_if_empty:
+            raise HelpGenException("retrieved logs are empty from " + source)
         
     logs.sort(reverse=True)
     rows = [ ]
@@ -113,7 +117,7 @@ def generate_help_sphinx (project_var_name, clean = True, root = ".") :
     import conf
     root = os.path.abspath(root)
     
-    version = get_repo_version()
+    version = SourceRepository(commandline=False).version()
     if version != None :
         with open("version.txt", "w") as f : f.write(str(version) + "\n")
     
@@ -124,7 +128,7 @@ def generate_help_sphinx (project_var_name, clean = True, root = ".") :
 
     #changes
     chan = os.path.join (root, "_doc", "sphinxdoc", "source", "filechanges.rst")
-    generate_changes_svn(chan, root)
+    generate_changes_repo(chan, root)
     
     # copy the files 
     optional_dirs = [ ]

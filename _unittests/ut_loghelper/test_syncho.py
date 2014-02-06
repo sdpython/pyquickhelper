@@ -47,8 +47,8 @@ class TestFileCol (unittest.TestCase):
         f1  = p1
         f2  = p2
         
-        node1 = FileTreeNode (f1, filter = filter, svn = True)
-        node2 = FileTreeNode (f2, filter = filter, svn = False)
+        node1 = FileTreeNode (f1, filter = filter, repository = True)
+        node2 = FileTreeNode (f2, filter = filter, repository = False)
         fLOG ("number of found files (p1)", len (node1), node1.max_date ())
         fLOG ("number of found files (p2)", len (node2), node2.max_date ())
          
@@ -57,8 +57,8 @@ class TestFileCol (unittest.TestCase):
             if r [0] == ">+" :
                 r [2].copyTo (p2)
                 
-        node1 = FileTreeNode (f1, filter = filter, svn = True)
-        node2 = FileTreeNode (f2, filter = filter, svn = False)
+        node1 = FileTreeNode (f1, filter = filter, repository = True)
+        node2 = FileTreeNode (f2, filter = filter, repository = False)
         fLOG ("number of found files (p1)", len (node1), node1.max_date ())
         fLOG ("number of found files (p2)", len (node2), node2.max_date ())
         res = node1.difference (node2, hash_size = 1024**2)

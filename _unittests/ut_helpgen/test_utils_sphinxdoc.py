@@ -17,13 +17,14 @@ except ImportError :
 from src.pyquickhelper.loghelper.flog           import fLOG
 from src.pyquickhelper.sync.synchelper          import explore_folder
 import src.pyquickhelper.helpgen.utils_sphinx_doc as utils_sphinx_doc
-from src.pyquickhelper.loghelper.pysvn_helper   import get_repo_version, get_repo_log
+from src.pyquickhelper.loghelper.pyrepo_helper  import SourceRepository
 
 class TestSphinxDoc (unittest.TestCase):
     
     def test_svn_version (self) :
         fLOG (__file__, self._testMethodName, OutputPrint = __name__ == "__main__")
-        ver = get_repo_version()
+        src = SourceRepository()
+        ver = src.version()
         fLOG("version", ver)
         assert isinstance(ver,int)
         
@@ -42,7 +43,8 @@ class TestSphinxDoc (unittest.TestCase):
         except ImportError:
             return
         
-        ver = get_repo_log()
+        src = SourceRepository()
+        ver = src.log()
         assert len(ver) > 0
         assert isinstance(ver, list)
         assert len(ver[0]) == 4

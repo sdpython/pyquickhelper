@@ -35,11 +35,11 @@ class TestFolder (unittest.TestCase):
             return
             
         all = []
-        action = foldermod.synchronize_folder (os.path.join(thispath,"..","ut_loghelper"), cache, hash_size = 0, svn1 = True, 
+        action = foldermod.synchronize_folder (os.path.join(thispath,"..","ut_loghelper"), cache, hash_size = 0, repo1 = True, 
                 operations = lambda a,b,c : all.append (a))
         assert len(all)>0
             
-        action = foldermod.synchronize_folder (os.path.join(thispath,"..","ut_loghelper"), cache, hash_size = 0, svn1 = True)
+        action = foldermod.synchronize_folder (os.path.join(thispath,"..","ut_loghelper"), cache, hash_size = 0, repo1 = True)
         assert os.path.exists (cache)
         assert len(os.listdir(cache)) > 0
         assert os.path.exists (os.path.join(cache,"data"))
@@ -58,7 +58,7 @@ class TestFolder (unittest.TestCase):
         if os.path.exists (remone) : 
             os.remove (remone)
             
-        action = foldermod.synchronize_folder (os.path.join(thispath,"..","ut_loghelper"), cache, hash_size = 0, svn1 = False,
+        action = foldermod.synchronize_folder (os.path.join(thispath,"..","ut_loghelper"), cache, hash_size = 0, repo1 = False,
                 filter = lambda v : "temp" not in v )
         assert os.path.exists (cache)
         assert len(os.listdir(cache)) > 0
@@ -82,7 +82,7 @@ class TestFolder (unittest.TestCase):
         except ImportError:
             return
             
-        action = foldermod.synchronize_folder (thispath, cache, hash_size = 0, svn1 = True)
+        action = foldermod.synchronize_folder (thispath, cache, hash_size = 0, repo1 = True)
         ac = foldermod.remove_folder (cache, True)
         assert len(ac) > 0
         for a in ac : assert not os.path.exists (a[0])

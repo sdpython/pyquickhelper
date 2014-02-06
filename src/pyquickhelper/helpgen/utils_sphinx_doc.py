@@ -11,9 +11,9 @@ from ..loghelper.flog           import fLOG
 from ..sync.file_tree_node      import FileTreeNode
 from ..sync.synchelper          import remove_folder, synchronize_folder, explore_folder
 from ._my_doxypy                import process_string
-from ..loghelper.pysvn_helper   import get_repo_version, get_repo_log
 from .utils_sphinx_doc_helpers  import add_file_rst_template, process_var_tag, import_module, get_module_objects, add_file_rst_template_cor, add_file_rst_template_title, IndexInformation, RstFileHelp, HelpGenException
 from ..pandashelper.tblformat   import df_to_rst
+from ..loghelper.pyrepo_helper  import SourceRepository
 
 def _ishome() :
     """

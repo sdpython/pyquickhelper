@@ -10,7 +10,8 @@ import sys, os, re, datetime, time, shutil, hashlib
 
 from ..loghelper.pqh_exception  import PQHException
 from ..loghelper.flog           import fLOG
-from ..loghelper.pysvn_helper   import repo_ls
+from ..loghelper.pyrepo_helper  import SourceRepository
+
 
 class FileTreeNode :
     
@@ -70,7 +71,7 @@ class FileTreeNode :
                         filter              = None,
                         level               = 0,
                         parent              = None,
-                        svn                 = False,
+                        repository          = False,
                         log                 = False) :
         """
         define a file, relative to a root
@@ -82,7 +83,7 @@ class FileTreeNode :
                                         look into subfolders
         @param      level           hierarchy level
         @param      parent          link to the parent
-        @param      svn             use SVN if True
+        @param      repository      use SVN or GIT if True
         @param      log             log every explored folder
         """
         self._root      = root
@@ -94,6 +95,7 @@ class FileTreeNode :
         self._level     = level
         self._parent    = parent
         self._log       = log
+        self.module     = None
         
         if not os.path.exists (root) : raise PQHException ("path %s does not exist"  % root)
         if not os.path.isdir  (root) : raise PQHException ("path %s is not a folder" % root)
@@ -102,15 +104,14 @@ class FileTreeNode :
             if not self.exists () : raise PQHException ("%s does not exist" % self.get_fullname ())
                 
         self._fillstat ()
-        
         if self.isdir () :
             if isinstance(filter, str) :
                 # we assume it is a regular expression instread of a function
                 exp = re.compile(filter)
                 fil = lambda root, path, f, dir, e=exp : dir or (e.search(f) != None)
-                self._fill (fil, svn = svn)
+                self._fill (fil, repository = repository)
             else :
-                self._fill (filter, svn = svn)
+                self._fill (filter, repository = repository)
             
     @property
     def name(self): return self._file
@@ -182,20 +183,26 @@ class FileTreeNode :
             line.append (r)
         return "\n".join (line)
         
-    def _fill (self, filter, svn) :
+    def repo_ls(self, path):
+        """
+        call ls of an instance of @see cl SourceRepository
+        """
+        if "_repo_" not in self.__dict__ :
+            self._repo_ = SourceRepository(True)
+        return self._repo_.ls(path)
+        
+    def _fill (self, filter, repository) :
         """look for subfolders
         @param      filter      boolean function
-        @param      svn         use svn
+        @param      repository  use svn or git
         """
         if not self.isdir () :
             raise PQHException ("unable to look into a file %s full %s" % (self._file, self.get_fullname ()))
         
-        #if self._log : fLOG ("FileTreeNode: filling ", self.fullname)
-            
-        if svn :
+        if repository :
             full    = self.get_fullname ()
             fi      = "" if self._file == None else self._file
-            entry   = repo_ls(full)
+            entry   = self.repo_ls(full)
             temp    = [os.path.relpath (p.name, full) for p in entry ]
             all     = []
             for s in temp :
@@ -217,7 +224,7 @@ class FileTreeNode :
                                     filter,
                                     level   = self._level+1,
                                     parent  = self,
-                                    svn     = svn,
+                                    repository = repository,
                                     log     = self._log)
                 except PQHException as e :
                     if "does not exist" in str (e) :

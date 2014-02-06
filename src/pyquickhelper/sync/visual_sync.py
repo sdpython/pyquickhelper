@@ -131,10 +131,10 @@ def create_visual_diff_through_html(string1, string2):
     """
     if True :
         from pymyinstall import ModuleInstall
-        temp = os.path.abspath(os.path.split(__file__)[0])
+        temp = os.path.join(os.path.abspath(os.path.split(__file__)[0]), "temp_difflibjs")
         ModuleInstall("jsdifflib","github",gitrepo="cemerick", fLOG = lambda *s : None).download(temp_folder = temp)
     
-    fold = os.path.abspath(os.path.join(os.path.split(__file__)[0],"jsdifflib-master"))
+    fold = os.path.abspath(os.path.join(os.path.split(__file__)[0], "temp_difflibjs", "jsdifflib-master"))
     if not os.path.exists(fold):
         raise FileNotFoundError("unable to find jsdifflib in: " + fold)
     global html_page

@@ -65,14 +65,14 @@ def explore_folder_iterfile (folder, pattern = None, fullname = False) :
             r = os.path.split (temp) [0]
             rep [r] = None
             
-def explore_folder_iterfile_svn (folder, log = fLOG) :
+def explore_folder_iterfile_repo (folder, log = fLOG) :
     """
     returns all files present in folder and added to svn
     @param      folder      folder
     @param      log         log function
     @return                 iterator
     """
-    node = FileTreeNode (folder, svn = True, log = log)
+    node = FileTreeNode (folder, repository = True, log = log)
     svnfiles = node.get_dict ()
     for file in svnfiles :
         yield file
@@ -134,8 +134,8 @@ def gzip_files (filename_gz, fileSet, log = fLOG, filename_zip = None) :
 def synchronize_folder (   p1, 
                     p2, 
                     hash_size       = 1024**2, 
-                    svn1            = False, 
-                    svn2            = False, 
+                    repo1           = False, 
+                    repo2           = False, 
                     size_different  = True,
                     no_deletion     = False,
                     filter          = None,
@@ -148,9 +148,9 @@ def synchronize_folder (   p1,
     @param      p1                  (str) first path
     @param      p2                  (str) second path
     @param      hash_size           to check whether or not two files are different
-    @param      svn1                assuming the first folder is under SVN, it uses pysvn to get the list
+    @param      repo1               assuming the first folder is under SVN or GIT, it uses pysvn to get the list
                                         of files (avoiding any extra files)
-    @param      svn2                assuming the second folder is under SVN, it uses pysvn to get the list
+    @param      repo2               assuming the second folder is under SVN or GIT, it uses pysvn to get the list
                                         of files (avoiding any extra files)
     @param      size_different      if True, a file will be copied only if size are different,
                                     otherwise, it will be copied if the first file is more recent
@@ -190,9 +190,9 @@ def synchronize_folder (   p1,
     f2  = p2
     
     fLOG ("   exploring ", f1)
-    node1 = FileTreeNode (f1, filter = pr_filter, svn = svn1, log = True)
+    node1 = FileTreeNode (f1, filter = pr_filter, repository = repo1, log = True)
     fLOG ("   exploring ", f2)
-    node2 = FileTreeNode (f2, filter = pr_filter, svn = svn2, log = True)
+    node2 = FileTreeNode (f2, filter = pr_filter, repository = repo2, log = True)
     fLOG ("   number of found files (p1)", len (node1), node1.max_date ())
     fLOG ("   number of found files (p2)", len (node2), node2.max_date ())
      

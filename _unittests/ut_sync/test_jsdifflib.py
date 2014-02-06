@@ -28,7 +28,7 @@ class TestJsDiffLib(unittest.TestCase):
     def test_jsdifflib(self) :
         fLOG (__file__, self._testMethodName, OutputPrint = __name__ == "__main__")
         tt = os.path.split(src.pyquickhelper.sync.visual_sync.__file__)[0]
-        ma = os.path.join(tt, "jsdifflib-master")
+        ma = os.path.join(tt, "temp_difflibjs", "jsdifflib-master")
         if os.path.exists(ma):
             for i in os.listdir(ma) :
                 os.remove(os.path.join(ma,i))

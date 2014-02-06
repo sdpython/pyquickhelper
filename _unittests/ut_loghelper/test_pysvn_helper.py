@@ -14,8 +14,8 @@ except ImportError :
     if path not in sys.path : sys.path.append (path)
     import src
 
-from src.pyquickhelper.loghelper.flog         import fLOG
-from src.pyquickhelper.loghelper.pysvn_helper import repo_ls, get_repo_version        
+from src.pyquickhelper.loghelper.flog           import fLOG
+from src.pyquickhelper.loghelper.pyrepo_helper  import SourceRepository
 
 
 class TestPySvnHelper (unittest.TestCase):
@@ -24,7 +24,8 @@ class TestPySvnHelper (unittest.TestCase):
         fLOG (__file__, self._testMethodName, OutputPrint = __name__ == "__main__")
         path = os.path.split(__file__)[0]
         data = os.path.join(path, "..", "..")
-        all = get_repo_version(data)
+        src = SourceRepository()
+        all = src.version(data)
         fLOG("version",all)
         assert isinstance(all,int)
 

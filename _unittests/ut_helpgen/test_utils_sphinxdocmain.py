@@ -15,7 +15,7 @@ except ImportError :
     import src
     
 from src.pyquickhelper.loghelper.flog           import fLOG
-from src.pyquickhelper.helpgen.sphinx_main      import generate_changes_svn
+from src.pyquickhelper.helpgen.sphinx_main      import generate_changes_repo
 
 class TestSphinxDocMain (unittest.TestCase):
     
@@ -26,7 +26,7 @@ class TestSphinxDocMain (unittest.TestCase):
         assert os.path.exists(file)
         fLOG(file)
         
-        rst     = generate_changes_svn(None, file)
+        rst     = generate_changes_repo(None, file)
         fLOG(rst)
         assert len(rst)>0
         assert "pyquickhelper: add run_cmd" in rst

@@ -19,7 +19,7 @@ except ImportError :
 from src.pyquickhelper.loghelper.flog           import fLOG
 from src.pyquickhelper.sync.synchelper          import explore_folder
 import src.pyquickhelper.helpgen.utils_sphinx_doc as utils_sphinx_doc
-from src.pyquickhelper.loghelper.pysvn_helper   import get_repo_version, get_repo_log
+from src.pyquickhelper.loghelper.pyrepo_helper  import SourceRepository
 
 class TestSphinxDoc2 (unittest.TestCase):
         
