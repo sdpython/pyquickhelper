@@ -53,46 +53,28 @@ def repo_ls(full, commandline = False):
     """
     
     if not commandline :
-        
         try :
-            import pysvn
-            client  = pysvn.Client()
-            entry = client.ls (full)
-            return entry
+            raise NotYetImplemented()
         except Exception as e :
-            if "This client is too old to work with the working copy at" in str (e) or \
-                "No module named 'pysvn'" in str(e) :
-                cmd = "svn ls -r HEAD \"%s\"" % full
-                out,err = run_cmd(  cmd, 
-                                    wait = True, 
-                                    do_not_log = True, 
-                                    encerror = "strict",
-                                    encoding = sys.stdout.encoding)
-                if len(err) > 0 :
-                    fLOG ("pysvn.version", pysvn.version)
-                    fLOG ("pysvn.svn_version", pysvn.svn_version)
-                    fLOG ("problem with file ", full, err)
-                    raise Exception(err)
-                res = [ RepoFile(name=os.path.join(full,_.strip())) for _ in out.split("\n") if len(_) > 0]
-                return res
-            else :
-                fLOG ("pysvn.version", pysvn.version)
-                fLOG ("pysvn.svn_version", pysvn.svn_version)
-                fLOG ("problem with file ", full, e)
-                raise e
+            return repo_ls(full, True)
     else :
-        cmd = "svn ls -r HEAD \"%s\"" % full
+        if sys.platform.startswith("win32") :
+            cmd = r'"C:\Program Files (x86)\Git\bin\git"' 
+        else :
+            cmd = 'git' 
+        
+        cmd += " ls-tree -r HEAD \"%s\"" % full
         out,err = run_cmd(  cmd, 
                             wait = True, 
                             do_not_log = True, 
                             encerror = "strict",
-                            encoding = sys.stdout.encoding)
+                            encoding = sys.stdout.encoding,
+                            change_path = os.path.split(full)[0] if os.path.isfile(full) else full)
         if len(err) > 0 :
-            fLOG ("pysvn.version", pysvn.version)
-            fLOG ("pysvn.svn_version", pysvn.svn_version)
             fLOG ("problem with file ", full, err)
             raise Exception(err)
-        res = [ RepoFile(name=os.path.join(full,_.strip())) for _ in out.split("\n") if len(_) > 0]
+
+        res = [ RepoFile(name=os.path.join(full,_.strip().split()[-1])) for _ in out.split("\n") if len(_) > 0]
         return res
             
 def __get_version_from_version_txt(path) :
@@ -144,48 +126,32 @@ def get_repo_log (path = None, file_detail = False, commandline = False) :
         
     if not commandline :
         try :
-            import pysvn
-            svnClient   = pysvn.Client()
-            version = get_repo_version(path)
-            log  = svnClient.log(
-                    path, 
-                    revision_start=pysvn.Revision( pysvn.opt_revision_kind.number, 0),
-                    revision_end=pysvn.Revision( pysvn.opt_revision_kind.number, version ),
-                    discover_changed_paths=True,
-                    strict_node_history=True,
-                    limit=0,
-                    include_merged_revisions=False,
-                    )
+            raise NotYetImplemented()
         except Exception as e :
-            if "is not a working copy" in str(e) :
-                return [
-                        ("",
-                         __get_version_from_version_txt(path),
-                         datetime.datetime.now(),
-                         "no repository") ]
-            elif "This client is too old to work with the working copy at" in str (e) or \
-                "No module named 'pysvn'" in str(e) :
-                return get_repo_log(path,file_detail, commandline = True)
-            else :
-                raise e
-                    
+            return get_repo_log(path, file_detail, True)
     else :
-        cmd = "svn log -r HEAD:1 --xml \"%s\"" % path
+        if sys.platform.startswith("win32") :
+            cmd = r'"C:\Program Files (x86)\Git\bin\git"' 
+        else :
+            cmd = 'git' 
+
+        cmd += ' log --pretty=format:"<logentry revision=\\"%h\\"><author>%an</author><date>%ci</date><msg>%s</msg></logentry>" ' + path
         out,err = run_cmd(  cmd, 
                             wait = True, 
                             do_not_log = True, 
                             encerror = "strict",
-                            encoding = sys.stdout.encoding)
+                            encoding = sys.stdout.encoding,
+                            change_path = os.path.split(path)[0] if os.path.isfile(path) else path)
         if len(err) > 0 :
-            fLOG ("pysvn.version", pysvn.version)
-            fLOG ("pysvn.svn_version", pysvn.svn_version)
             fLOG ("problem with file ", path, err)
             raise Exception(err)
-            
+
+        out = out.replace("\n\n","\n")
+        out = "<xml>%s</xml>"%out
         root = ET.fromstring(out)
         res = []
         for i in root.iter('logentry'):
-            revision    = int(i.attrib['revision'].strip())
+            revision    = i.attrib['revision'].strip()
             author      = i.find("author").text.strip()
             t           = i.find("msg").text
             msg         = t.strip() if t != None else "-"
@@ -225,45 +191,35 @@ def get_repo_version (path = None, commandline = False) :
         
     if not commandline :
         try :
-            import pysvn
-            svnClient   = pysvn.Client()
-            info        = svnClient.info2(".")
-            infos       = [_[1] for _ in info ]
-            revv        = [ _["rev"].number for _ in infos]
-            revision    = max(revv)
-            return revision
+            raise NotYetImplemented()
         except Exception as e :
-            if "This client is too old to work with the working copy at" in str (e) or \
-                "No module named 'pysvn'" in str(e) :
-                return get_repo_version(path, commandline = True)
-            elif "is not a working copy" in str(e) :
-                return __get_version_from_version_txt(path)
-            else :
-                raise e
+            return get_repo_version(path, True)
     else :
-        cmd = "svn info -r HEAD" 
+        if sys.platform.startswith("win32") :
+            cmd = r'"C:\Program Files (x86)\Git\bin\git" log --format="%h"'   # %H for full commit hash
+        else :
+            cmd = 'git log --format="%H"' 
+
         if path != None : cmd += " \"%s\"" % path
+        
         out,err = run_cmd(  cmd, 
                             wait = True, 
                             do_not_log = True, 
                             encerror = "strict",
-                            encoding = sys.stdout.encoding)
+                            encoding = sys.stdout.encoding,
+                            change_path = os.path.split(path)[0] if os.path.isfile(path) else path)
+                                                                            
         if len(err) > 0 :
-            fLOG ("pysvn.version", pysvn.version)
-            fLOG ("pysvn.svn_version", pysvn.svn_version)
-            fLOG ("problem with file ", full, err)
+            fLOG ("problem with file ", path, err)
             raise Exception(err)
         lines = out.split("\n")
-        lines = [ _ for _ in lines if "Revision" in _ ]
-        lines = lines[0].split(":")
-        res   = lines[1]
+        lines = [ _ for _ in lines if len(_) > 0 ]
+        res = lines[0]
         
         if len(res) == 0 :
-            o,e = run_cmd("svn help", wait = True)
-            if len(o) < 3 :
-                raise Exception("the command 'svn help' should return something")
+            raise Exception("the command 'git help' should return something")
                 
-        return int(res)
+        return res
             
 
     

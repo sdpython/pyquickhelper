@@ -71,15 +71,11 @@ def repo_ls(full, commandline = False):
                                     encerror = "strict",
                                     encoding = sys.stdout.encoding)
                 if len(err) > 0 :
-                    fLOG ("pysvn.version", pysvn.version)
-                    fLOG ("pysvn.svn_version", pysvn.svn_version)
                     fLOG ("problem with file ", full, err)
                     raise Exception(err)
                 res = [ RepoFile(name=os.path.join(full,_.strip())) for _ in out.split("\n") if len(_) > 0]
                 return res
             else :
-                fLOG ("pysvn.version", pysvn.version)
-                fLOG ("pysvn.svn_version", pysvn.svn_version)
                 fLOG ("problem with file ", full, e)
                 raise e
     else :
@@ -90,8 +86,6 @@ def repo_ls(full, commandline = False):
                             encerror = "strict",
                             encoding = sys.stdout.encoding)
         if len(err) > 0 :
-            fLOG ("pysvn.version", pysvn.version)
-            fLOG ("pysvn.svn_version", pysvn.svn_version)
             fLOG ("problem with file ", full, err)
             raise Exception(err)
         res = [ RepoFile(name=os.path.join(full,_.strip())) for _ in out.split("\n") if len(_) > 0]
@@ -179,8 +173,6 @@ def get_repo_log (path = None, file_detail = False, commandline = False) :
                             encerror = "strict",
                             encoding = sys.stdout.encoding)
         if len(err) > 0 :
-            fLOG ("pysvn.version", pysvn.version)
-            fLOG ("pysvn.svn_version", pysvn.svn_version)
             fLOG ("problem with file ", path, err)
             raise Exception(err)
             
@@ -251,9 +243,6 @@ def get_repo_version (path = None, commandline = False) :
                             encerror = "strict",
                             encoding = sys.stdout.encoding)
         if len(err) > 0 :
-            fLOG ("pysvn.version", pysvn.version)
-            fLOG ("pysvn.svn_version", pysvn.svn_version)
-            fLOG ("problem with file ", full, err)
             raise Exception(err)
         lines = out.split("\n")
         lines = [ _ for _ in lines if "Revision" in _ ]

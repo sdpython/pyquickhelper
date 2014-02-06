@@ -79,12 +79,21 @@ def generate_changes_repo(chan, source, exception_if_empty = True) :
     for code, nbch, date, comment in logs :
         ds = "%04d-%02d-%02d" % (date.year, date.month, date.day)
         if first : 
-            fLOG ("last changes: % 4d - %s - %s" % (nbch, ds, comment))
+            if isinstance(nbch,int):
+                fLOG ("last changes: % 4d - %s - %s" % (nbch, ds, comment))
+            else :
+                fLOG ("last changes: %s - %s - %s" % (nbch, ds, comment))
         if comment.startswith('*') :
             if first : 
-                fLOG ("last changes % 4d - %s - %s" % (nbch, ds, comment.strip("*")))
+                if isinstance(nbch,int):
+                    fLOG ("last changes % 4d - %s - %s" % (nbch, ds, comment.strip("*")))
+                else :
+                    fLOG ("last changes %s - %s - %s" % (nbch, ds, comment.strip("*")))
                 first = False
-            values.append ( ["%04d" % nbch, "%s" % ds, comment.strip("*") ] )
+            if isinstance(nbch,int) :
+                values.append ( ["%04d" % nbch, "%s" % ds, comment.strip("*") ] )
+            else :
+                values.append ( ["%s" % nbch, "%s" % ds, comment.strip("*") ] )
             
     if len(values) == 0 and exception_if_empty:
         raise HelpGenException("Logs were not empty but there was no comment starting with '*' from " + source + "\n" + "\n".join( [ str(_) for _ in logs ] ))

@@ -9,6 +9,9 @@ from .repositories import pygit_helper as GIT
 class SourceRepository :
     """
     proposes the same functionatilies independant from the source chosen repository (GIT or SVN)
+    
+    On Windows, it might help to install either `TortoiseSVN <http://tortoisesvn.net/>`_
+    or the `GitHub application <http://windows.github.com/>`_.
     """
     
     def __init__ (self, commandline = True):

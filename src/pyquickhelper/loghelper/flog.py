@@ -617,7 +617,8 @@ def run_cmd (   cmd,
                 stop_waiting_if = None,
                 do_not_log      = False,
                 encerror        = "ignore",
-                encoding        = "utf8") :
+                encoding        = "utf8",
+                change_path     = None) :
     """
     run a command line and wait for the result
     @param      cmd                 command line
@@ -632,6 +633,7 @@ def run_cmd (   cmd,
     @param      do_not_log          do not log the output
     @param      encerror            encoding errors (ignore by default) while converting the output into a string
     @param      encoding            encoding of the output
+    @param      change_path         change the current path if  not None (put it back after the execution)
     @return                         content of stdout, stdres  (only if wait is True)  
     @rtype      tuple
     """
@@ -643,6 +645,10 @@ def run_cmd (   cmd,
         else : cmd.append(add)
     if not do_not_log : 
         fLOG ("execute ", cmd)
+        
+    if change_path != None :
+        current = os.getcwd()
+        os.chdir(change_path)
     
     if sys.platform.startswith("win") :
         
@@ -659,6 +665,10 @@ def run_cmd (   cmd,
                                  shell = shell, 
                                  stdout = subprocess.PIPE, 
                                  stderr = subprocess.PIPE)
+                                 
+    if change_path != None :
+        os.chdir(current)
+        
     if wait : 
     
         out = [ ]

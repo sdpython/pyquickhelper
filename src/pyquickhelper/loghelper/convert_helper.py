@@ -18,6 +18,7 @@ def str_to_datetime (dt, format = None):
                         which you get by default
     @rtype              datetime
     """
+    if "+" in dt : dt = dt.split("+")[0].strip()
     if format == None :
         if "." in dt :        
             return datetime.datetime.strptime (dt, "%Y-%m-%d %H:%M:%S.%f")    

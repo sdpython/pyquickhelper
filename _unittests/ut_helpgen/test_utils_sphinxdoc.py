@@ -26,14 +26,14 @@ class TestSphinxDoc (unittest.TestCase):
         src = SourceRepository()
         ver = src.version()
         fLOG("version", ver)
-        assert isinstance(ver,int)
+        assert isinstance(ver,int) or isinstance(ver,str)
         
         try :
             import pysvn
         except ImportError:
             return
         
-        if ver <= 3 :raise Exception("version should be > 100 : " + str(ver))
+        if isinstance(ver, int) and ver <= 3 :raise Exception("version should be > 100 : " + str(ver))
     
     def test_svn_logs (self) :
         fLOG (__file__, self._testMethodName, OutputPrint = __name__ == "__main__")
@@ -48,7 +48,7 @@ class TestSphinxDoc (unittest.TestCase):
         assert len(ver) > 0
         assert isinstance(ver, list)
         assert len(ver[0]) == 4
-        assert isinstance(ver[0][1], int)
+        assert isinstance(ver[0][1], int) or isinstance(ver[0][1], str) 
         assert isinstance(ver[0][2], datetime.datetime)
         ver.sort(reverse=True)
         fLOG("logs", "\n" + "\n".join(map(str,ver[:10])))

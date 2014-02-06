@@ -29,7 +29,7 @@ class TestSphinxDocMain (unittest.TestCase):
         rst     = generate_changes_repo(None, file)
         fLOG(rst)
         assert len(rst)>0
-        assert "pyquickhelper: add run_cmd" in rst
+        assert "pyquickhelper" in rst
             
         
 if __name__ == "__main__"  :

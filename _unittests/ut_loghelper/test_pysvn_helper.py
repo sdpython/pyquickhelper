@@ -23,11 +23,11 @@ class TestPySvnHelper (unittest.TestCase):
     def test_repo_version (self) :
         fLOG (__file__, self._testMethodName, OutputPrint = __name__ == "__main__")
         path = os.path.split(__file__)[0]
-        data = os.path.join(path, "..", "..")
+        data = os.path.abspath(os.path.join(path, "..", ".."))
         src = SourceRepository()
         all = src.version(data)
         fLOG("version",all)
-        assert isinstance(all,int)
+        assert isinstance(all,int) or isinstance(all,str)
 
 
 if __name__ == "__main__"  :
