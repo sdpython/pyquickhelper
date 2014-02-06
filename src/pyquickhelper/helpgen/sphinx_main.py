@@ -43,7 +43,10 @@ def get_executables_path() :
         res += [ os.path.join(res[-1], "Scripts") ]
     return res
     
-def generate_changes_repo(chan, source, exception_if_empty = True) :
+def generate_changes_repo(  chan, 
+                            source, 
+                            exception_if_empty = True,
+                            filter_commit = lambda c : c.strip() != "documentation") :
     """
     Generates a rst tables containing the changes stored by a svn or git repository,
     the outcome is stored in a file.
@@ -52,6 +55,7 @@ def generate_changes_repo(chan, source, exception_if_empty = True) :
     @param          chan                filename to write (or None if you don't need to)
     @param          source              source folder to get changes for
     @param          exception_if_empty  raises an exception if empty
+    @param          filter_commit       function which accepts a commit to show on the documentation (based on the comment)
     @return                             string (rst tables with the changes)
     """
     # builds the changes files
@@ -73,7 +77,6 @@ def generate_changes_repo(chan, source, exception_if_empty = True) :
     else :
         fLOG("info, retrieved ", len(logs), " commits")
         
-    logs.sort(reverse=True)
     rows = [ ]
     rows.append("""\n.. _l-changes:\n\n\nChanges\n=======\n\nList of recent changes:\n""")
     first = True
@@ -85,7 +88,7 @@ def generate_changes_repo(chan, source, exception_if_empty = True) :
                 fLOG ("last changes: % 4d - %s - %s" % (nbch, ds, comment))
             else :
                 fLOG ("last changes: %s - %s - %s" % (nbch, ds, comment))
-        if comment.startswith('*') :
+        if filter_commit(comment):
             if first : 
                 if isinstance(nbch,int):
                     fLOG ("last changes % 4d - %s - %s" % (nbch, ds, comment.strip("*")))
@@ -110,7 +113,10 @@ def generate_changes_repo(chan, source, exception_if_empty = True) :
             f.write(final)
     return final
 
-def generate_help_sphinx (project_var_name, clean = True, root = ".") :
+def generate_help_sphinx (  project_var_name, 
+                            clean = True, 
+                            root = ".",
+                            filter_commit = lambda c : c.strip() != "documentation") :
     """
     runs the help generation
         - copies every file in another folder
@@ -121,6 +127,7 @@ def generate_help_sphinx (project_var_name, clean = True, root = ".") :
     @param      project_var_name    project name
     @param      clean               if True, cleans the previous documentation first
     @param      root                see below
+    @param      filter_commit       function which accepts a commit to show on the documentation (based on the comment)
     
     The result is stored in path: ``root/_doc/sphinxdoc/source``.
     """
@@ -140,7 +147,7 @@ def generate_help_sphinx (project_var_name, clean = True, root = ".") :
 
     #changes
     chan = os.path.join (root, "_doc", "sphinxdoc", "source", "filechanges.rst")
-    generate_changes_repo(chan, root)
+    generate_changes_repo(chan, root, filter_commit = filter_commit)
     
     # copy the files 
     optional_dirs = [ ]
