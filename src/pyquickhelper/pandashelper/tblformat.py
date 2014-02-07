@@ -8,7 +8,9 @@ def df_to_rst(df, add_line=True, align = None):
     builds a string in RST format from a dataframe
     @param      df              dataframe
     @param      add_line        (bool) add a line separator between each row
-    @param      align           a string (l,r,c,p{5cm}) or a list of the same
+    @param      align           a string in [l,r,c,p{5cm}] or a list of the same,
+                                or something like ``['1x','2x','5x']`` to specify a ratio
+                                between column (alignment is left)
     @return                     string
 
     It produces the following results:
@@ -28,6 +30,43 @@ def df_to_rst(df, add_line=True, align = None):
     for row in df.values :
         for i,v in enumerate(row) :
                 length[i] = max ( length[i], len(str(v)) )
+
+    if align != None :
+        if isinstance(align,str):
+            align = [ align ] * len(length)
+            
+        if isinstance(align,list):
+            if len(align) != len(length) :
+                raise ValueError("align has not a good length: {0} and {1}".format(str(align), str(df.columns)))
+            ratio = len([ _ for _ in align if "x" in _ ]) > 0
+            if ratio :
+                head = ""
+                ratio = [ ]
+                for _ in align :
+                    try : 
+                        i = int(_.strip(" x"))
+                        ratio.append(i)
+                    except :
+                        raise ValueError("unable to parse {0} in {1}".format(_, str(align)))
+                        
+                mini = max(length)
+                length2 = [ mini*r for r in ratio ]
+                
+                # we reduce
+                for i in range(8,1,-1) :
+                    length3 = [ k//i for k in length2 ]
+                    notgood = [ k<l for k,l in zip(length3,length) ]
+                    notgood = [ _ for _ in notgood if _ ]
+                    if not notgood :
+                        length2 = length3
+                        break
+                length = length2
+            else :
+                head = ".. tabularcolumns:: "  + "|%s|" % "|".join(align) + "\n\n"
+        else :
+            raise TypeError(str(type(align)))
+    else : 
+        head = ""
 
     ic = 3
     length = [ _+ ic for _ in length ]
@@ -54,17 +93,8 @@ def df_to_rst(df, add_line=True, align = None):
     res.append (sline)
     table = "\n".join(res) + "\n"
     
-    if align != None :
-        if isinstance(align,str):
-            align = ("|" + align) * len(length) + "|"
-        elif isinstance(align,list):
-            align = "|%s|" % "|".join(align)
-        else :
-            raise TypeError(str(type(align)))
-        align = ".. tabularcolumns:: " + align + "\n\n"
-        return align + table
-    else :
-        return table
+            
+    return head + table
     
 def df_to_html (self, class_table = None, class_td = None, class_tr = None, class_th = None) :
     """

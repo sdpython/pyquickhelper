@@ -513,7 +513,9 @@ def process_var_tag(docstring, rst_replace = False, header = ["attribute", "mean
                     val.append ( list(a) )
                 if len(val)>0 :
                     tbl = DataFrame (columns=header, data=val)
-                    rst = df_to_rst(tbl)
+                    align = ["1x"] * len(header)
+                    align[-1] = "3x"
+                    rst = df_to_rst(tbl, align = align)
                     values.append(rst)
             else :
                 values.append (line)

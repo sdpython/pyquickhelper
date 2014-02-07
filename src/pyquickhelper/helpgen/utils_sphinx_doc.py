@@ -329,7 +329,7 @@ def apply_modification_template (   store_obj,
                         s = 0 if tbl.ix[0,1] == None else len(tbl.ix[0,1])
                         t = "" if tbl.ix[0,1] == None else tbl.ix[0,1]
                         tbl.ix[0,1] = t + (" " * (3*maxi - s))
-                        sph  = df_to_rst(tbl)
+                        sph  = df_to_rst(tbl, align=["1x","3x"])
                         titl = "\n\n" + add_file_rst_template_title[k] + "\n"
                         titl += "+" * len(add_file_rst_template_title[k]) 
                         titl += "\n\n"
@@ -549,7 +549,9 @@ def produces_indexes (
             s = 0 if tbl.ix[0,1] == None else len(tbl.ix[0,1])
             t = "" if tbl.ix[0,1] == None else tbl.ix[0,1]
             tbl.ix[0,1] = t + (" " * (3*maxi - s))
-            sph = df_to_rst(tbl)
+            align = ["1x"] * len(tbl.columns)
+            align[-1] = "3x"
+            sph = df_to_rst(tbl, align=align)
             res [k] = sph
     
     # we process indexes
@@ -580,7 +582,9 @@ def produces_indexes (
         if len(tbl) > 0 :
             maxi = max( [ len(_) for _ in tbl[k] ] )
             tbl.ix[0,1] = tbl.ix[0,1] + (" " * (3*maxi - len(tbl.ix[0,1])))
-            sph = df_to_rst(tbl)
+            align = ["1x"] * len(tbl.columns)
+            align[-1] = "3x"
+            sph = df_to_rst(tbl, align=align)
             res [k] = sph
             
     # end
