@@ -5,7 +5,7 @@
 to visualize the differences between two files.
 """
 
-import sys, os, re, zipfile, datetime, gzip
+import os
 
 html_page = """
     <!doctype html>

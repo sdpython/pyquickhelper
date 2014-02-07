@@ -5,9 +5,8 @@
 @brief Series of functions related to folder, explore, zip, gzip, synchronize, remove (recursively).
 """
 
-import sys, os, re, zipfile, datetime, gzip
+import os, re, zipfile, datetime, gzip
 
-from ..loghelper.pqh_exception  import PQHException
 from ..loghelper.flog           import fLOG
 from .file_tree_node            import FileTreeNode
 

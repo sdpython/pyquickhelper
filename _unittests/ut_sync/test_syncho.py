@@ -3,8 +3,7 @@
 """
 
 
-from __future__ import print_function
-import sys, os, unittest, re, io
+import sys, os, unittest, re
 
 try :
     import src
@@ -13,7 +12,7 @@ except ImportError :
     if path not in sys.path : sys.path.append (path)
     import src
 
-from src.pyquickhelper.loghelper.flog        import GetPath, fLOG
+from src.pyquickhelper.loghelper.flog        import fLOG
 from src.pyquickhelper.sync.file_tree_node   import FileTreeNode
 
 class TestFileCol (unittest.TestCase):
@@ -23,7 +22,7 @@ class TestFileCol (unittest.TestCase):
         
         try :
             import pysvn
-        except ImportError as e :
+        except ImportError:
             fLOG("pysvn is not available")
             return
         

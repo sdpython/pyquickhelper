@@ -3,7 +3,7 @@
 @brief  Uses git to get version number.
 """
 
-import os,sys,datetime
+import os,sys
 import xml.etree.ElementTree as ET
 
 from ..flog import fLOG, run_cmd
@@ -21,7 +21,7 @@ def IsRepo(location, commandline = True):
         location = os.path.normpath(os.path.abspath( os.path.join( os.path.split(__file__)[0], "..", "..", "..", "..")))
         
     try :
-        v = get_repo_version(location, commandline)
+        get_repo_version(location, commandline)
         return True
     except :
         return False
@@ -54,8 +54,8 @@ def repo_ls(full, commandline = True):
     
     if not commandline :
         try :
-            raise NotYetImplemented()
-        except Exception as e :
+            raise NotImplementedError()
+        except Exception :
             return repo_ls(full, True)
     else :
         if sys.platform.startswith("win32") :
@@ -137,8 +137,8 @@ def get_repo_log (path = None, file_detail = False, commandline = True) :
         
     if not commandline :
         try :
-            raise NotYetImplemented()
-        except Exception as e :
+            raise NotImplementedError()
+        except Exception: 
             return get_repo_log(path, file_detail, True)
     else :
         if sys.platform.startswith("win32") :
@@ -191,8 +191,8 @@ def get_repo_version (path = None, commandline = True) :
         
     if not commandline :
         try :
-            raise NotYetImplemented()
-        except Exception as e :
+            raise NotImplementedError()
+        except Exception :
             return get_repo_version(path, True)
     else :
         if sys.platform.startswith("win32") :
@@ -235,8 +235,8 @@ def get_master_location(path = None, commandline = True):
         
     if not commandline :
         try :
-            raise NotYetImplemented()
-        except Exception as e :
+            raise NotImplementedError()
+        except Exception :
             return get_repo_version(path, True)
     else :
         if sys.platform.startswith("win32") :

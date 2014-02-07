@@ -2,7 +2,7 @@
 @file
 @brief Various functions about conversions.
 """
-import datetime, time
+import datetime
 
 def str_to_datetime (dt, format = None):
     """

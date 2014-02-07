@@ -2,24 +2,18 @@
 @brief      test log(time=12s)
 @author     Xavier Dupre
 """
-
-
-from __future__ import print_function
-import sys, os, unittest, re, io, datetime, shutil
+import os, sys, unittest, shutil
 
 
 try :
     import src
 except ImportError :
-    import os, sys
     path =  os.path.normpath(os.path.abspath(os.path.join(os.path.split(__file__)[0], "..", "..")))
     if path not in sys.path : sys.path.append(path)
     import src
     
 from src.pyquickhelper.loghelper.flog           import fLOG, removedirs
-from src.pyquickhelper.sync.synchelper          import explore_folder
 import src.pyquickhelper.helpgen.utils_sphinx_doc as utils_sphinx_doc
-from src.pyquickhelper.loghelper.pyrepo_helper  import SourceRepository
 from src.pyquickhelper.sync.synchelper          import synchronize_folder
 
 
@@ -40,7 +34,6 @@ class TestSphinxDocFull (unittest.TestCase):
         sysp = os.path.join(file, "_doc", "sphinxdoc","source")
         assert os.path.exists(sysp)
         sys.path.insert (0,sysp)
-        import conf
         del sys.path [0]
         
         synchronize_folder (sysp, temp, 
@@ -78,7 +71,7 @@ class TestSphinxDocFull (unittest.TestCase):
             if not os.path.exists(f) :
                 raise FileNotFoundError(f + "\nabspath: " + os.path.abspath(f))
                     
-        with open(files[0],"r",encoding="utf8") as f : content = f.read()
+        with open(files[0],"r",encoding="utf8") as f : f.read()
         
         for f in ["fix_incomplete_references"] :
             func = [ _ for _ in issues if _[0] == f and "utils_sphinx_doc.py" not in _[1]]

@@ -3,7 +3,7 @@
 @brief Main functions to produce the documentation for a module
 
 """
-import os,sys, subprocess, glob, shutil, re, datetime
+import os,sys, shutil, datetime
 from pandas import DataFrame
 
 from ..loghelper.flog           import run_cmd, fLOG
@@ -79,7 +79,7 @@ def generate_changes_repo(  chan,
         
     rows = [ ]
     rows.append("""\n.. _l-changes:\n\n\nChanges\n=======\n\nList of recent changes:\n""")
-    first = True
+
     values = []
     for row in logs :
         code, nbch, date, comment = row[:4]
@@ -126,7 +126,6 @@ def generate_help_sphinx (  project_var_name,
     The result is stored in path: ``root/_doc/sphinxdoc/source``.
     """
     sys.path.append (os.path.abspath(os.path.join("_doc", "sphinxdoc","source")))
-    import conf
     root = os.path.abspath(root)
     
     src = SourceRepository(commandline=True)
@@ -135,7 +134,6 @@ def generate_help_sphinx (  project_var_name,
         with open("version.txt", "w") as f : f.write(str(version) + "\n")
     
     # modifies the version number in conf.py
-    svver = conf.release
     shutil.copy("README.rst", "_doc/sphinxdoc/source")
     shutil.copy("LICENSE.txt", "_doc/sphinxdoc/source")
 
@@ -180,7 +178,7 @@ def generate_help_sphinx (  project_var_name,
             thn = os.path.join(root, name)
             if name.endswith(".rst") :
                 try :
-                    with open(thn, "r", encoding="utf8") as f : c=f.read()
+                    with open(thn, "r", encoding="utf8") as f : f.read()
                 except Exception as e :
                     raise HelpGenException ("issue with file ", thn) from e
                 

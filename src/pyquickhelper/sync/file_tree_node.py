@@ -5,7 +5,7 @@
 @brief      a node which contains a file or a folder
 """
 
-import sys, os, re, datetime, time, shutil, hashlib
+import os, re, datetime, time, shutil, hashlib
 
 
 from ..loghelper.pqh_exception  import PQHException
@@ -215,7 +215,7 @@ class FileTreeNode :
         all.sort ()
         self._children = []
         for a in all :
-            af = os.path.join (fi, a)
+            #af = os.path.join (fi, a)
             fu = os.path.join (full, a)
             if filter == None or filter (self._root, fi, a, os.path.isdir (fu)) :
                 try :

@@ -4,16 +4,14 @@
 
 """
     
-import sys, os, re, copy, shutil, time, datetime, inspect, copy, unittest
+import sys, os, re, shutil, copy
 from pandas import DataFrame
 
 from ..loghelper.flog           import fLOG
-from ..sync.file_tree_node      import FileTreeNode
 from ..sync.synchelper          import remove_folder, synchronize_folder, explore_folder
 from ._my_doxypy                import process_string
 from .utils_sphinx_doc_helpers  import add_file_rst_template, process_var_tag, import_module, get_module_objects, add_file_rst_template_cor, add_file_rst_template_title, IndexInformation, RstFileHelp, HelpGenException
 from ..pandashelper.tblformat   import df_to_rst
-from ..loghelper.pyrepo_helper  import SourceRepository
 
 def _ishome() :
     """
@@ -190,7 +188,7 @@ def copy_source_files ( input,
         os.makedirs(output)
     
     if remove :
-        ok = remove_folder(output, False)
+        remove_folder(output, False)
         
     deffilter = "(.+[.]py$)|(.+[.]pyd$)|(.+[.]cpp$)|(.+[.]h$)|(.+[.]dll$)|(.+[.]o$)|(.+[.]def$)|(.+[.]exe$)|(.+[.]config$)"
         
@@ -693,10 +691,6 @@ def prepare_file_for_sphinx_help_generation (
     """   
     fLOG("* starting documentation preparation in",output)
     
-    # checking some modules are installed
-    import sphinx
-    import sphinxcontrib.fancybox
-    
     actions = [ ]
     rsts    = [ ]
     indexes = { }
@@ -854,7 +848,7 @@ def fix_incomplete_references(folder_source, store_obj, issues = None):
             encoding = "utf8"
         except :
             with open(fn, "r") as f : content = f.read()
-            enoding = None
+            encoding = None
             
         mainname = os.path.splitext(os.path.split(fn)[-1])[0]
             
@@ -865,7 +859,7 @@ def fix_incomplete_references(folder_source, store_obj, issues = None):
             ref = reg.search(line)
             if ref :
                 all = ref.groups()[0]
-                pre = ref.groups()[1]
+                #pre = ref.groups()[1]
                 typ = ref.groups()[2]
                 nam = ref.groups()[-1]
                 
@@ -875,7 +869,7 @@ def fix_incomplete_references(folder_source, store_obj, issues = None):
                     k = "%s;%s" % (cand, nam)
                     if k in store_obj :
                         if isinstance(store_obj[k], list): 
-                            se = [ _ for _ in store_obj[k] if mainname in _.rst_link() ]
+                            se = [ _s for _s in store_obj[k] if mainname in _s.rst_link() ]
                             if len(se) == 1 :
                                 obj = se[0]
                                 break
@@ -1175,5 +1169,6 @@ class useless_class_UnicodeStringIOThreadSafe (str) :
         """
         creates a lock
         """
-        UnicodeStringIO.__init__ (self)
+        str.__init__ (self)
+        import threading
         self.lock = threading.Lock ()

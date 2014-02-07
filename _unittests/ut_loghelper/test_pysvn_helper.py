@@ -4,8 +4,7 @@
 """
 
 
-from __future__ import print_function
-import sys, os, unittest, re, io
+import sys, os, unittest
 
 try :
     import src
@@ -24,8 +23,8 @@ class TestPySvnHelper (unittest.TestCase):
         fLOG (__file__, self._testMethodName, OutputPrint = __name__ == "__main__")
         path = os.path.split(__file__)[0]
         data = os.path.abspath(os.path.join(path, "..", ".."))
-        src = SourceRepository()
-        all = src.version(data)
+        s = SourceRepository()
+        all = s.version(data)
         fLOG("version",all)
         assert isinstance(all,int) or isinstance(all,str)
 

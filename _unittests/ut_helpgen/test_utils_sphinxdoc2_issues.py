@@ -4,21 +4,17 @@
 """
 
 
-import sys, os, unittest, re, io, datetime
+import sys, os, unittest
 
 try :
     import src
 except ImportError :
-    import os, sys
     path =  os.path.normpath(os.path.abspath(os.path.join(os.path.split(__file__)[0], "..", "..")))
     if path not in sys.path : sys.path.append(path)
     import src
     
 from src.pyquickhelper.loghelper.flog           import fLOG
-from src.pyquickhelper.sync.synchelper          import explore_folder
-import src.pyquickhelper.helpgen.utils_sphinx_doc as utils_sphinx_doc
 from src.pyquickhelper.helpgen.utils_sphinx_doc_helpers     import process_var_tag
-from src.pyquickhelper.loghelper.pyrepo_helper  import SourceRepository
 
 
 class TestSphinxDoc2Issue (unittest.TestCase):

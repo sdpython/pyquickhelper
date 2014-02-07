@@ -3,13 +3,12 @@
 @author     Xavier Dupre
 """
 
-import sys, os, unittest, re, io, datetime
+import sys, os, unittest
 
 
 try :
     import src
 except ImportError :
-    import os, sys
     path =  os.path.normpath(os.path.abspath(os.path.join(os.path.split(__file__)[0], "..", "..")))
     if path not in sys.path : sys.path.append(path)
     import src

@@ -23,9 +23,9 @@ def IsRepo(location, commandline = True):
         location = os.path.normpath(os.path.abspath( os.path.join( os.path.split(__file__)[0], "..", "..", "..", "..")))
         
     try :
-        v = get_repo_version(location, commandline)
+        get_repo_version(location, commandline)
         return True
-    except Exception as e :
+    except Exception :
         return False
 
 class RepoFile :

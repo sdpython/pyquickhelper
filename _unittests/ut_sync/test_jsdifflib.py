@@ -4,7 +4,7 @@
 
 
 from __future__ import print_function
-import sys, os, unittest, re, io
+import sys, os, unittest
 
 try :
     import src

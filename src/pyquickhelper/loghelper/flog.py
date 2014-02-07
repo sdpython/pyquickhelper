@@ -22,8 +22,8 @@ fLOG (LogPath = "c:/temp/log_path")       # change the log path, creates it if i
 @warning This module inserts static variable in module sys. I did it because I did not know how to deal with several instance of the same module.
 """
 
-import datetime,sys,os,time, subprocess, random, math, decimal, urllib, time
-import urllib.request, io
+import datetime,sys,os,time, subprocess, random, math, decimal, urllib, copy
+import urllib.request
 
 class PQHException (Exception) :
     """
@@ -118,10 +118,7 @@ def GetLogFile () :
             sys.hal_log_values ["__log_file"] = sys.hal_log_values ["__log_file_name"]
         else :
             try :       
-                if sys.version_info.major >= 3 :
-                    sys.hal_log_values ["__log_file"] = open (sys.hal_log_values ["__log_file_name"], "w", encoding="utf-8")
-                else :
-                    sys.hal_log_values ["__log_file"] = codecs.open (sys.hal_log_values ["__log_file_name"], "w", encoding="utf-8")
+                sys.hal_log_values ["__log_file"] = open (sys.hal_log_values ["__log_file_name"], "w", encoding="utf-8")
             except Exception as e:    
                 raise OSError ("unable to create file " + sys.hal_log_values ["__log_file_name"] + "\n" + str(e))
                 
@@ -189,7 +186,7 @@ def fLOG (*l, **p) :
         if k == "OutputPrint" and v : continue
         message = st + "%s = %s%s" % (str (k), str (v), sys.hal_log_values ["__log_file_sep"])
         if "INNER JOIN" in message :
-            stop
+            break
         GetLogFile ().write (message)
         if sys.hal_log_values ["__log_display"] : 
             try :
@@ -209,9 +206,9 @@ def get_relative_path (folder, file) :
     """
     if not os.path.exists (folder) : raise PQHException (folder + " does not exist.")
     if not os.path.exists (file)   : raise PQHException (file + " does not exist.")
-    sd = _split_path (folder)
-    sf = _split_path (file)
-    for i in xrange (0, len (sd)) :
+    sd = folder.replace("\\","/").split("/")
+    sf = file.replace("\\","/").split("/")
+    for i in range (0, len (sd)) :
         if i >= len (sf) : break
         elif sf [i] != sd [i] : break
     res = copy.copy (sd)
@@ -288,8 +285,7 @@ def _get_file_txt (zipname) :
     file = file.replace (".ZIP", ".txt")
     file = file.replace (".gz", ".txt")
     file = file.replace (".GZ", ".txt")
-    path = default_path + "/" + file
-    return path
+    return file
 
 def _check_zip_file (filename, path_unzip, outfile) :
     """
@@ -471,8 +467,6 @@ def _first_more_recent (f1, path) :
     da = datetime.datetime ( int (gr [2]), sys.hal_log_values ["month_date"] [gr [1].lower ()], int (gr [0]),
                              int (gr [3]), int (gr [4]), int (gr [5]) )
                              
-    url = da
-    
     p  =  time.ctime (os.path.getmtime (path))
     gr = re.compile ("[\w, ]* ([\w]{3}) ([ \d]{2}) ([\d]{2}):([\d]{2}):([\d]{2}) ([\d]{4})").search (p)
     if gr == None :
@@ -683,7 +677,7 @@ def run_cmd (   cmd,
                         decol = line.decode("latin-1", errors=encerror)
                     except Exception as e :
                         decol = line.decode(encoding, errors='ignore')
-                        raise Exception("issue with cmd:" + str(cmd) + "\n" + str(exu))
+                        raise Exception("issue with cmd:" + str(cmd) + "\n" + str(exu)) from e
 
                 if not do_not_log :
                     fLOG(decol)
@@ -718,7 +712,7 @@ def run_cmd (   cmd,
         try :
             err = temp.decode(encoding, errors=encerror)
         except :
-            err = temp.decode(ecoding, errors="ignore")
+            err = temp.decode(encoding, errors="ignore")
 
         if not do_not_log : 
             fLOG ("end of execution ", cmd)
@@ -804,7 +798,7 @@ def guess_type_value (x, none = None) :
     @warning if an integer starts with a zero, then it is a string
     """
     try :
-        i = int (x)
+        int (x)
         if x [0] == '0' and len (x) > 1 :   return str
         else :                              return int if len (x) < 9 else str
     except :

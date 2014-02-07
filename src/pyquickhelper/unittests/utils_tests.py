@@ -2,11 +2,10 @@
 @file
 @brief  This extension contains various functionalities to help unittesting.
 """
-import hashlib, functools, os, sys, glob, re, unittest, io
+import os, sys, glob, re, unittest, io
 
-from ..loghelper.flog       import fLOG
 from ..sync.synchelper      import remove_folder
-
+from ..loghelper.flog       import fLOG
 
 
 def get_test_file (filter, dir = None) :
@@ -71,13 +70,13 @@ def get_estimation_time (file) :
         f = open (file, "r")
         li = f.readlines ()
         f.close ()
-    except UnicodeDecodeError as e :
+    except UnicodeDecodeError :
         try :
             f = open (file, "r", encoding="latin-1")
             li = f.readlines ()
             f.close ()
         except Exception as ee :
-            raise Exception("issue with %s\n%s" % (file,str(e)))
+            raise Exception("issue with %s\n%s" % (file,str(ee)))
         
     s = ''.join (li)
     c = re.compile ("[(]time=([0-9]+)s[)]").search (s)
@@ -204,7 +203,7 @@ def main (  runner,
     co      = [ (e,l) for e,l in zip(est, li) ]
     co.sort ()
     cco     = []
-    limit   = -1
+    #limit   = -1
     if skip != -1 :
         print ("found ", len(co), " test files skipping", skip)
     else :
@@ -228,7 +227,7 @@ def main (  runner,
     li      = [ a [1] for a in cco ]
     suite   = import_files (li)
     keep    = []
-    memerr  = sys.stderr
+    #memerr  = sys.stderr
     memout  = sys.stdout
     fail    = 0
     
@@ -245,8 +244,8 @@ def main (  runner,
         memout.write (zzz)
         
         if log :
-            HalLOG(OutputPrint=True)
-            HalLOG(Lock=True)
+            fLOG(OutputPrint=True)
+            fLOG(Lock=True)
         
         r   = runner.run(s[0])
         out = r.stream.getvalue ()
@@ -254,7 +253,7 @@ def main (  runner,
         add = " ran %s tests in %ss" % ti
         
         if log :
-            HalLOG(Lock=False)
+            fLOG(Lock=False)
         
         memout.write (add)
         

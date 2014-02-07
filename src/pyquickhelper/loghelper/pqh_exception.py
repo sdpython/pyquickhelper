@@ -9,7 +9,6 @@ By default, all exceptions are logged through the function fLOG (@see fn fLOG).
 raise HalException ("message")
 @endcode
 """
-import sys, re
 
 class PQHException (Exception) :
     """

@@ -7,7 +7,6 @@
 import inspect, os, copy, re, sys
 from pandas import DataFrame
 from ..pandashelper.tblformat import df_to_rst
-from ..loghelper.flog import fLOG
 
 class HelpGenException(Exception):
     """
@@ -189,7 +188,7 @@ class ModuleMemberDoc :
         try :
             self.module = obj.__module__
             self.name   = obj.__name__
-        except Exception as me:
+        except Exception :
             if self.type in ["property", "staticmethod"]:
                 self.module = self.cl.__module__
             else :
@@ -438,16 +437,16 @@ def get_module_objects(mod) :
     @return             list of ModuleMemberDoc
     """
     
-    exp = { "__class__":"",
-            "__dict__":"",
-            "__doc__":"",
-            "__format__":"",
-            "__reduce__":"",
-            "__reduce_ex__":"",
-            "__subclasshook__":"",
-            "__dict__":"",
-            "__weakref__":""
-             }
+    #exp = { "__class__":"",
+    #        "__dict__":"",
+    #        "__doc__":"",
+    #        "__format__":"",
+    #        "__reduce__":"",
+    #        "__reduce_ex__":"",
+    #        "__subclasshook__":"",
+    #        "__dict__":"",
+    #        "__weakref__":""
+    #         }
              
     cl = [ ]
     for name, obj in inspect.getmembers(mod):

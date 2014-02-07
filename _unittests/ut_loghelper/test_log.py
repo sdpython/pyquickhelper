@@ -3,7 +3,6 @@
 @brief      test log(time=0s)
 """
 
-from __future__ import print_function
 import sys, os, unittest
 
 
@@ -76,6 +75,7 @@ class TestLog (unittest.TestCase):
         f   = os.path.join (pat, "tsv_file__.txt")
         if not os.path.exists (f): raise FileNotFoundError(f)
         unz = unzip (z, path_unzip = pat)
+        assert len(unz)>0
         
         r = removedirs (pat, silent = True)
         if len (r) > 1 :

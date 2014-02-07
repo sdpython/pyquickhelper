@@ -3,13 +3,12 @@
 @author     Xavier Dupre
 """
 
-import sys, os, unittest, re, io, datetime
+import sys, os, unittest, datetime
 
 
 try :
     import src
 except ImportError :
-    import os, sys
     path =  os.path.normpath(os.path.abspath(os.path.join(os.path.split(__file__)[0], "..", "..")))
     if path not in sys.path : sys.path.append(path)
     import src
@@ -23,8 +22,8 @@ class TestSphinxDoc (unittest.TestCase):
     
     def test_svn_version (self) :
         fLOG (__file__, self._testMethodName, OutputPrint = __name__ == "__main__")
-        src = SourceRepository()
-        ver = src.version()
+        s = SourceRepository()
+        ver = s.version()
         fLOG("version", ver)
         assert isinstance(ver,int) or isinstance(ver,str)
         
@@ -85,7 +84,7 @@ class TestSphinxDoc (unittest.TestCase):
                 well = well.replace("/",".")
                 
                 try :
-                    modimport = __import__(well)
+                    __import__(well)
                 except Exception as e :
                     message = [ "issues while importing file:" + well + "(" +fi+")"]
                     message.append ("  File \"%s\", line 1" % os.path.abspath(fi))

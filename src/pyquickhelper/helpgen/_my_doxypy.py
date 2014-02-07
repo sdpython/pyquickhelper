@@ -50,7 +50,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import sys
 import re
 
-from optparse import OptionParser, OptionGroup
+from optparse import OptionParser
 
 class FSM(object):
     """Implements a finite state machine.
@@ -431,7 +431,7 @@ def optParse():
     (options, filename) = parser.parse_args()
     
     if not filename:
-        print_output("No filename given.", file=sys.stderr)
+        sys.stderr.write("No filename given.")
         sys.exit(-1)
     
     return filename[0]

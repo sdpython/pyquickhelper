@@ -70,6 +70,7 @@ CLASSIFIERS = \
 'Topic :: Scientific/Engineering',
 'Topic :: Education',
 'License :: OSI Approved :: BSD License',
+'Development Status :: 5 - Production/Stable'
 ]
 
 #############################################################
