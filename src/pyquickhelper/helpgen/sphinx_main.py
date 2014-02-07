@@ -99,7 +99,7 @@ def generate_changes_repo(  chan,
 
     if len(values) > 0 :
         tbl = DataFrame ( columns=["change number", "date", "comment"], data=values)
-        rows.append("\n\n" + df_to_rst(tbl) + "\n\n")
+        rows.append("\n\n" + df_to_rst(tbl, align=["p{2cm}","l","l"]) + "\n\n")
 
     final = "\n".join(rows)
     if chan != None :

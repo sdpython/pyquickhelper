@@ -3,11 +3,12 @@
 @brief To format a pandas dataframe
 """
 
-def df_to_rst(df, add_line=True):
+def df_to_rst(df, add_line=True, align = None):
     """
     builds a string in RST format from a dataframe
     @param      df              dataframe
     @param      add_line        (bool) add a line separator between each row
+    @param      align           a string (l,r,c,p{5cm}) or a list of the same
     @return                     string
 
     It produces the following results:
@@ -26,8 +27,10 @@ def df_to_rst(df, add_line=True):
     length  = [ len(_) for _ in df.columns ]
     for row in df.values :
         for i,v in enumerate(row) :
-            length[i] = max ( length[i], len(str(v)) )
-    length = [ _+ 2 for _ in length ]
+                length[i] = max ( length[i], len(str(v)) )
+
+    ic = 3
+    length = [ _+ ic for _ in length ]
     line   = [ "-" * l for l in length ]
     lineb  = [ "=" * l for l in length ]
     sline  = "+%s+" % ("+".join(line))
@@ -36,7 +39,7 @@ def df_to_rst(df, add_line=True):
     
     def complete(cool) :
         s,i = cool
-        s = str(s)
+        s = str(s) + " "
         i -= 2
         if len(s) < i : s += " " * (i-len(s))
         return s
@@ -49,7 +52,19 @@ def df_to_rst(df, add_line=True):
         for i in range(t-1,3,-1) : 
             res.insert(i, sline)
     res.append (sline)
-    return "\n".join(res) + "\n"
+    table = "\n".join(res) + "\n"
+    
+    if align != None :
+        if isinstance(align,str):
+            align = ("|" + align) * len(length) + "|"
+        elif isinstance(align,list):
+            align = "|%s|" % "|".join(align)
+        else :
+            raise TypeError(str(type(align)))
+        align = ".. tabularcolumns:: " + align + "\n\n"
+        return align + table
+    else :
+        return table
     
 def df_to_html (self, class_table = None, class_td = None, class_tr = None, class_th = None) :
     """
