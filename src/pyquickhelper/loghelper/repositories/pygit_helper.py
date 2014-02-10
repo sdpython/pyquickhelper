@@ -203,7 +203,7 @@ def get_repo_version (path = None, commandline = True, usedate = True) :
         if sys.platform.startswith("win32") :
             cmd = r'"C:\Program Files (x86)\Git\bin\git" log --format="%h---%ci"'   # %H for full commit hash
         else :
-            cmd = 'git log --format="%H---%ci"' 
+            cmd = 'git log --format="%h---%ci"' 
 
         if path != None : cmd += " \"%s\"" % path
         
@@ -221,9 +221,12 @@ def get_repo_version (path = None, commandline = True, usedate = True) :
         lines = out.split("\n")
         lines = [ _.split("---") for _ in lines if len(_) > 0 ]
         temp  = lines[0]
-        dt = str_to_datetime(temp[1].replace("T"," ").strip("Z "))
-        dt0 = datetime.datetime(dt.year, 1,1,0,0,0)
-        res = "%d" % (dt-dt0).days
+        if usedate :
+            dt = str_to_datetime(temp[1].replace("T"," ").strip("Z "))
+            dt0 = datetime.datetime(dt.year, 1,1,0,0,0)
+            res = "%d" % (dt-dt0).days
+        else :
+            res = temp[0]
         
         if len(res) == 0 :
             raise Exception("the command 'git help' should return something")
