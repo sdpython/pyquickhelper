@@ -3,7 +3,7 @@
 @brief  Uses git to get version number.
 """
 
-import os,sys
+import os,sys,datetime
 import xml.etree.ElementTree as ET
 
 from ..flog import fLOG, run_cmd
@@ -128,6 +128,8 @@ def get_repo_log (path = None, file_detail = False, commandline = True) :
     @code
     https://github.com/sdpython/pyquickhelper/commit/8d5351d1edd4a8997f358be39da80c72b06c2272    
     @endcode
+    
+    More: `git pretty format <http://opensource.apple.com/source/Git/Git-19/src/git-htmldocs/pretty-formats.txt>`_
     """
     if file_detail :
         raise NotImplementedError()
@@ -179,12 +181,15 @@ def get_repo_log (path = None, file_detail = False, commandline = True) :
             res.append(row)
         return res
                         
-def get_repo_version (path = None, commandline = True) :
+def get_repo_version (path = None, commandline = True, usedate = True) :
     """
-    get the latest check in number for a specific path
+    Get the latest check for a specific path or version number based on the date (is usedate is True)
+    If usedate is False, it returns a mini hash (a string then)
+    
     @param      path            path to look
     @param      commandline     if True, use the command line to get the version number, otherwise it uses pysvn
-    @return                     integer (check in number)
+    @param      usedate         if True, it uses the date to return a minor version number (1.1.thisone)
+    @return                     integer)
     """
     if path == None :
         path = os.path.normpath(os.path.abspath( os.path.join( os.path.split(__file__)[0], "..", "..", "..")))
@@ -196,9 +201,9 @@ def get_repo_version (path = None, commandline = True) :
             return get_repo_version(path, True)
     else :
         if sys.platform.startswith("win32") :
-            cmd = r'"C:\Program Files (x86)\Git\bin\git" log --format="%h"'   # %H for full commit hash
+            cmd = r'"C:\Program Files (x86)\Git\bin\git" log --format="%h---%ci"'   # %H for full commit hash
         else :
-            cmd = 'git log --format="%H"' 
+            cmd = 'git log --format="%H---%ci"' 
 
         if path != None : cmd += " \"%s\"" % path
         
@@ -214,8 +219,11 @@ def get_repo_version (path = None, commandline = True) :
             fLOG ("problem with file ", path, err)
             raise Exception(err)
         lines = out.split("\n")
-        lines = [ _ for _ in lines if len(_) > 0 ]
-        res = lines[0]
+        lines = [ _.split("---") for _ in lines if len(_) > 0 ]
+        temp  = lines[0]
+        dt = str_to_datetime(temp[1].replace("T"," ").strip("Z "))
+        dt0 = datetime.datetime(dt.year, 1,1,0,0,0)
+        res = "%d" % (dt-dt0).days
         
         if len(res) == 0 :
             raise Exception("the command 'git help' should return something")

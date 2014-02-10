@@ -64,7 +64,7 @@ def repo_ls(full, commandline = True):
         except Exception as e :
             if "This client is too old to work with the working copy at" in str (e) or \
                 "No module named 'pysvn'" in str(e) :
-                cmd = "svn ls -r HEAD \"%s\"" % full
+                cmd = "svn ls -r HEAD \"%s\"" % full.replace("\\","/")
                 out,err = run_cmd(  cmd, 
                                     wait = True, 
                                     do_not_log = True, 
@@ -79,7 +79,7 @@ def repo_ls(full, commandline = True):
                 fLOG ("problem with file ", full, e)
                 raise e
     else :
-        cmd = "svn ls -r HEAD \"%s\"" % full
+        cmd = "svn ls -r HEAD \"%s\"" % full.replace("\\","/")
         out,err = run_cmd(  cmd, 
                             wait = True, 
                             do_not_log = True, 
@@ -166,7 +166,7 @@ def get_repo_log (path = None, file_detail = False, commandline = True) :
                 raise e
                     
     else :
-        cmd = "svn log -r HEAD:1 --xml \"%s\"" % path
+        cmd = "svn log -r HEAD:1 --xml \"%s\"" % path.replace("\\","/")
         out,err = run_cmd(  cmd, 
                             wait = True, 
                             do_not_log = True, 
@@ -236,7 +236,7 @@ def get_repo_version (path = None, commandline = True) :
                 raise e
     else :
         cmd = "svn info -r HEAD" 
-        if path != None : cmd += " \"%s\"" % path
+        if path != None : cmd += " \"%s\"" % path.replace("\\","/")
         out,err = run_cmd(  cmd, 
                             wait = True, 
                             do_not_log = True, 
