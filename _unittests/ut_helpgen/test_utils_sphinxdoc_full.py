@@ -72,6 +72,12 @@ class TestSphinxDocFull (unittest.TestCase):
         for f in files :
             if not os.path.exists(f) :
                 raise FileNotFoundError(f + "\nabspath: " + os.path.abspath(f))
+                
+        with open(os.path.join(temp, "all_FAQ.rst"), "r") as f : contentf = f.read()
+        assert "How to activate the logs?" in contentf
+        assert "_le-" not in contentf
+        assert "_lf-" not in contentf
+        assert "__!LI!NE!__" not in contentf
                     
         with open(files[0],"r",encoding="utf8") as f : f.read()
         

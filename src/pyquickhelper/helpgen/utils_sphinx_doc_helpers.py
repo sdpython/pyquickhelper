@@ -539,21 +539,27 @@ def process_look_for_tag(tag, title, files):
     
     The function is looking for regular expression::
     
-        #tag(...)
+        .. tag(...).
         ...
-        #endtag
+        .. endtag.
     
     """
     repl = "__!LI!NE!__"
-    exp = re.compile("#%s[(](.*?)[)](.*?)#end%s" % (tag,tag))
+    exp  = re.compile("[.][.] %s[(](.*?);;(.*?)[)][.](.*?)[.][.] end%s[.]" % (tag,tag))
+    exp2 = re.compile("[.][.] %s[(](.*?)[)][.](.*?)[.][.] end%s[.]" % (tag,tag))
     coll = [ ]
     for file in files :
         if file.file == None : continue
         if "utils_sphinx_doc.py" in file.file : continue
         with open(file.file,"r") as f : content = f.read()
         content = content.replace("\n",repl)
+        
         all = exp.findall(content)
-        coll   += [ (a,b.replace(repl,"\n")) for a,b in all ]
+        all2 = exp2.findall(content)
+        if len(all2) > len(all) :
+            raise HelpGenException("an issue was detected in file: " + file.file)
+        
+        coll   += [ (a,c.replace(repl,"\n"),b) for a,b,c in all ]
     coll.sort()
     
     rows = ["""
@@ -567,11 +573,15 @@ def process_look_for_tag(tag, title, files):
             
         """.replace("        ","").format(tag, title, "=" * len(title))]
         
-    for a,b in coll :
+    for a,b,c in coll :
         rows.append( a )
         rows.append( "+" * len(a) )
         rows.append( "" )
         rows.append( remove_some_indent(b) )
+        rows.append( "" )
+        spl = c.split("-")
+        d = "file {0}.py".format(spl[1]) # line, spl[2].lstrip("l"))
+        rows.append( "see :ref:`%s <%s>`" % (d,c))
         rows.append( "" )
 
     return "\n".join(rows)

@@ -1061,10 +1061,10 @@ def private_migrating_doxygen_doc(
         if "@endFAQ" in strow or "@endexample" in strow :
             if "@endFAQ" in strow:
                 beginends["FAQ"] = beginends.get("FAQ",0)-1
-                rows[i] = "#endFAQ"
+                rows[i] = ".. endFAQ."
             if "@endexample" in strow:
                 beginends["example"] = beginends.get("example",0)-1
-                rows[i] = "#endexample"
+                rows[i] = ".. endexample."
             continue
     
         if indent :
@@ -1100,7 +1100,10 @@ def private_migrating_doxygen_doc(
             elif strow.startswith("@code") :
                 pos       = rows[i].find("@code")
                 rows[i]   = ""
-                rows[i-1] += (":" if rows[i].endswith(":") else "::")
+                if rows[i-1].strip("\n").endswith("."): 
+                    rows[i-1] += "\n\n::\n"
+                else :
+                    rows[i-1] += (":" if rows[i].endswith(":") else "::")
                 indent = True
                 openi  = True
                 beginends["code"] = beginends.get("code",0)+1
@@ -1139,7 +1142,8 @@ def private_migrating_doxygen_doc(
             elif example:
                 rep     = example.groups()[0]
                 exa     = example.groups()[1]
-                to      = "**Example: %s**  #example(%s)" % (exa,exa)
+                ref     = os.path.splitext(os.path.split(filename)[-1])[0] + "-l%d" % i
+                to      = "\n\n.. _le-%s:\n\n**Example: %s**  \n\n.. example(%s;;le-%s)." % (ref,exa,exa,ref)
                 rows[i] = row.replace(rep, to)
                 
                 # it requires an empty line before if the previous line does not start by :
@@ -1150,7 +1154,8 @@ def private_migrating_doxygen_doc(
             elif faq:
                 rep     = faq.groups()[0]
                 exa     = faq.groups()[1]
-                to      = "**%s**  #FAQ(%s)" % (exa,exa)
+                ref     = os.path.splitext(os.path.split(filename)[-1])[0] + "-l%d" % i
+                to      = "\n\n.. _lf-%s:\n\n**%s**  \n\n\n.. FAQ(%s;;lf-%s)." % (ref,exa,exa,ref)
                 rows[i] = row.replace(rep, to)
                 
                 # it requires an empty line before if the previous line does not start by :
