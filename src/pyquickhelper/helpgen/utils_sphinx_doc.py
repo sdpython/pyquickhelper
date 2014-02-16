@@ -1140,10 +1140,11 @@ def private_migrating_doxygen_doc(
                     rows[i] = "\n" + rows[i]
                 
             elif example:
+                sp      = " " * row.index("@example")
                 rep     = example.groups()[0]
                 exa     = example.groups()[1]
                 ref     = os.path.splitext(os.path.split(filename)[-1])[0] + "-l%d" % i
-                to      = "\n\n.. _le-%s:\n\n**Example: %s**  \n\n.. example(%s;;le-%s)." % (ref,exa,exa,ref)
+                to      = "\n\n%s.. _le-%s:\n\n%s**Example: %s**  \n\n%s.. example(%s;;le-%s)." % (sp,ref,sp,exa,sp,exa,ref)
                 rows[i] = row.replace(rep, to)
                 
                 # it requires an empty line before if the previous line does not start by :
@@ -1152,10 +1153,11 @@ def private_migrating_doxygen_doc(
                 beginends["example"] = beginends.get("example",0)+1
                 
             elif faq:
+                sp      = " " * row.index("@example")
                 rep     = faq.groups()[0]
                 exa     = faq.groups()[1]
                 ref     = os.path.splitext(os.path.split(filename)[-1])[0] + "-l%d" % i
-                to      = "\n\n.. _lf-%s:\n\n**%s**  \n\n\n.. FAQ(%s;;lf-%s)." % (ref,exa,exa,ref)
+                to      = "\n\n%s.. _lf-%s:\n\n%s**%s**  \n\n\n%s.. FAQ(%s;;lf-%s)." % (sp,ref,sp,exa,sp,exa,ref)
                 rows[i] = row.replace(rep, to)
                 
                 # it requires an empty line before if the previous line does not start by :
