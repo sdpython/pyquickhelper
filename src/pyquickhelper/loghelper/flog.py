@@ -143,6 +143,19 @@ def fLOG (*l, **p) :
                         @endcode
                         
     @exception  OSError     When the log file cannot be created.
+    
+    @example(activate the logs)
+    @code
+    fLOG(OutputPrint=True)
+    @endcode
+    @endexample
+    
+    @FAQ(How to activate the logs?)
+    The following instruction will do:
+    @code
+    fLOG(OutputPrint=True)
+    @endcode
+    @endFAQ
     """
     path_add = p.get ("LogPathAdd", [] )
 
@@ -630,6 +643,12 @@ def run_cmd (   cmd,
     @param      change_path         change the current path if  not None (put it back after the execution)
     @return                         content of stdout, stdres  (only if wait is True)  
     @rtype      tuple
+    
+    @example(run a program using the command line)
+    @code
+    out,err = run_cmd( "python setup.py install", wait=True)
+    @endcode
+    @endexample
     """
     if secure != None :
         fLOG("secure=",secure)

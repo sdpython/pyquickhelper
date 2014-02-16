@@ -124,6 +124,13 @@ def generate_help_sphinx (  project_var_name,
     @param      filter_commit       function which accepts a commit to show on the documentation (based on the comment)
     
     The result is stored in path: ``root/_doc/sphinxdoc/source``.
+    
+    @example(run help generation)
+    @code
+    # from the main folder which contains folder src
+    generate_help_sphinx("pyquickhelper")
+    @endcode
+    @endexample
     """
     sys.path.append (os.path.abspath(os.path.join("_doc", "sphinxdoc","source")))
     root = os.path.abspath(root)

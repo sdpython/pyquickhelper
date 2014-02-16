@@ -527,3 +527,75 @@ def process_var_tag(docstring, rst_replace = False, header = ["attribute", "mean
                 for a in all :
                     values.append ( a )
         return values
+
+def process_look_for_tag(tag, title, files):
+    """
+    looks for specific information in all files, collect them
+    into one single page
+    
+    @param      tag     tag
+    @param      title   title of the page
+    @param      files   list of files to look for
+    
+    The function is looking for regular expression::
+    
+        #tag(...)
+        ...
+        #endtag
+    
+    """
+    repl = "__!LI!NE!__"
+    exp = re.compile("#%s[(](.*?)[)](.*?)#end%s" % (tag,tag))
+    coll = [ ]
+    for file in files :
+        if file.file == None : continue
+        if "utils_sphinx_doc.py" in file.file : continue
+        with open(file.file,"r") as f : content = f.read()
+        content = content.replace("\n",repl)
+        all = exp.findall(content)
+        coll   += [ (a,b.replace(repl,"\n")) for a,b in all ]
+    coll.sort()
+    
+    rows = ["""
+        .. _l-{0}:
+
+        {1}
+        {2}
+
+        .. contents::
+            :depth: 3
+            
+        """.replace("        ","").format(tag, title, "=" * len(title))]
+        
+    for a,b in coll :
+        rows.append( a )
+        rows.append( "+" * len(a) )
+        rows.append( "" )
+        rows.append( remove_some_indent(b) )
+        rows.append( "" )
+
+    return "\n".join(rows)
+    
+def remove_some_indent(s):
+    """
+    bring text to the left
+    
+    @param      s       text
+    @return             text
+    """
+    rows = s.split("\n")
+    mi = len(s)
+    for l in rows :
+        ll = l.lstrip()
+        if len(ll) > 0 :
+            d  = len(l)-len(ll)
+            mi = min(d,mi)
+
+    if mi > 0 :
+        keep = [ ]
+        for _ in rows :
+            keep.append( _[mi:] if len(_.strip())>0 and len(_) > mi else _ )
+        return "\n".join(keep)
+    else :
+        return s
+

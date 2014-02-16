@@ -10,7 +10,7 @@ from pandas import DataFrame
 from ..loghelper.flog           import fLOG
 from ..sync.synchelper          import remove_folder, synchronize_folder, explore_folder
 from ._my_doxypy                import process_string
-from .utils_sphinx_doc_helpers  import add_file_rst_template, process_var_tag, import_module, get_module_objects, add_file_rst_template_cor, add_file_rst_template_title, IndexInformation, RstFileHelp, HelpGenException
+from .utils_sphinx_doc_helpers  import add_file_rst_template, process_var_tag, import_module, get_module_objects, add_file_rst_template_cor, add_file_rst_template_title, IndexInformation, RstFileHelp, HelpGenException, process_look_for_tag
 from ..pandashelper.tblformat   import df_to_rst
 
 def _ishome() :
@@ -694,7 +694,7 @@ def prepare_file_for_sphinx_help_generation (
     actions = [ ]
     rsts    = [ ]
     indexes = { }
-
+    
     for sub in subfolders :
         if isinstance(sub, str) :
             src = (input  + "/" + sub).replace("//","/")
@@ -782,6 +782,16 @@ def prepare_file_for_sphinx_help_generation (
     fLOG("+looking for incomplete references",output)
     fix_incomplete_references(output, store_obj, issues = issues)
     #for t,so in store_obj.items() :
+    
+    # look for FAQ and example
+    app = [ ]
+    for tag,title in [("FAQ","FAQ"), 
+                      ("example","Examples")] :
+        onefile = process_look_for_tag(tag, title, rsts)
+        saveas = os.path.join(output, "all_%s.rst" % tag)
+        with open(saveas, "w") as f : f.write(onefile)
+        app.append( RstFileHelp (saveas, onefile, "") )
+    rsts += app
   
     fLOG("* end of documentation preparation in",output)
     return actions, rsts
@@ -1024,9 +1034,12 @@ def private_migrating_doxygen_doc(
     pars = re.compile ("([@]param( +)([a-zA-Z0-9_]+)) ")
     refe = re.compile ("([@]((see)|(ref)) +((fn)|(cl)|(at)|(me)|(te)) +([a-zA-Z0-9_]+))($|[^a-zA-Z0-9_])")
     exce = re.compile ("([@]exception( +)([a-zA-Z0-9_]+)) ")
+    exem = re.compile ("([@]example[(](.*?)[)])")
+    faq_ = re.compile ("([@]FAQ[(](.*?)[)])")
     
-    indent = False
-    openi  = False
+    indent    = False
+    openi     = False
+    beginends =  { }
     
     whole  = "\n".join(rows)
     if "@var" in whole :
@@ -1044,11 +1057,23 @@ def private_migrating_doxygen_doc(
             break
 
         strow = row.strip(" ")
+        
+        if "@endFAQ" in strow or "@endexample" in strow :
+            if "@endFAQ" in strow:
+                beginends["FAQ"] = beginends.get("FAQ",0)-1
+                rows[i] = "#endFAQ"
+            if "@endexample" in strow:
+                beginends["example"] = beginends.get("example",0)-1
+                rows[i] = "#endexample"
+            continue
+    
         if indent :
             if (not openi and len(strow) == 0) or "@endcode" in strow :
                 indent = False
                 rows[i] = ""
                 openi  = False
+                if "@endcode" in strow:
+                    beginends["code"] = beginends.get("code",0)-1
             else :
                 rows[i] = "    " + rows[i]
         else :
@@ -1078,13 +1103,16 @@ def private_migrating_doxygen_doc(
                 rows[i-1] += (":" if rows[i].endswith(":") else "::")
                 indent = True
                 openi  = True
+                beginends["code"] = beginends.get("code",0)+1
             
             # basic tags
             row = rows[i]
             
             # tag param
-            look = pars.search(row)
-            lexxce = exce.search(row)
+            look    = pars.search(row)
+            lexxce  = exce.search(row)
+            example = exem.search(row)
+            faq     = faq_.search(row)
             
             if look :
                 rep     = look.groups()[0]
@@ -1107,6 +1135,28 @@ def private_migrating_doxygen_doc(
                 # it requires an empty line before if the previous line does not start by :
                 if i > 0 and not rows[i-1].strip().startswith(":") and len(rows[i-1].strip()) > 0 :
                     rows[i] = "\n" + rows[i]
+                
+            elif example:
+                rep     = example.groups()[0]
+                exa     = example.groups()[1]
+                to      = "**Example: %s**  #example(%s)" % (exa,exa)
+                rows[i] = row.replace(rep, to)
+                
+                # it requires an empty line before if the previous line does not start by :
+                if i > 0 and not rows[i-1].strip().startswith(":") and len(rows[i-1].strip()) > 0 :
+                    rows[i] = "\n" + rows[i]
+                beginends["example"] = beginends.get("example",0)+1
+                
+            elif faq:
+                rep     = faq.groups()[0]
+                exa     = faq.groups()[1]
+                to      = "**%s**  #FAQ(%s)" % (exa,exa)
+                rows[i] = row.replace(rep, to)
+                
+                # it requires an empty line before if the previous line does not start by :
+                if i > 0 and not rows[i-1].strip().startswith(":") and len(rows[i-1].strip()) > 0 :
+                    rows[i] = "\n" + rows[i]
+                beginends["FAQ"] = beginends.get("FAQ",0)+1
                 
             elif "@return" in row :
                 rows[i] = row.replace("@return", ":return:")
@@ -1145,7 +1195,8 @@ def private_migrating_doxygen_doc(
                 break
             if "@param" in row or "@return" in row or "@see" in row or "@warning" in row \
                    or "@todo" in row or "@code" in row or "@endcode" in row or "@brief" in row or "@file" in row \
-                   or "@rtype" in row or "@exception" in row :
+                   or "@rtype" in row or "@exception" in row \
+                   or "@example" in row or "@FAQ" in row or "@endFAQ" in row or "@endexample" in row :
                 if not silent :
                     fLOG("#########################")
                     private_migrating_doxygen_doc(debugrows, index_first_line, filename, debug = True)
@@ -1153,6 +1204,13 @@ def private_migrating_doxygen_doc(
                     mes = "  File \"%s\", line %d, in ???\n    unable to process: %s \nwhole blocks:\n%s" %(filename, index_first_line+i+1, row, "\n".join(rows))
                     fLOG("error: ", mes)
                 raise SyntaxError(mes)
+                
+    for k,v in beginends.items():
+        if v != 0 :
+            mes = "  File \"%s\", line %d, in ???\n    unbalanced tag %s: %s \nwhole blocks:\n%s" %(filename, index_first_line+i+1, k, row, "\n".join(rows))
+            fLOG("error: ", mes)
+            raise SyntaxError(mes)
+            
             
     return rows
     

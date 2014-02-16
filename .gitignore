@@ -224,3 +224,4 @@ out_*
 */sphinxdoc/source/filechanges.*
 version.txt
 */sphinxdoc/source/pyquickhelper/*
+*/sphinxdoc/source/all*.rst
