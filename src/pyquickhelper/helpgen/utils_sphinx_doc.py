@@ -1078,32 +1078,44 @@ def private_migrating_doxygen_doc(
                     beginends["code"] = beginends.get("code",0)-1
             else :
                 rows[i] = "    " + rows[i]
+                
         else :
+            
             if strow.startswith("@warning") :
                 pos     = rows[i].find("@warning")
-                rows[i] = rows[i].replace("@warning", "\n.. warning::\n" + (" "*(pos+4)))
+                sp      = " "*pos
+                rows[i] = rows[i].replace("@warning", "\n%s.. warning::%s\n" % (sp,sp) + "    ")
                 indent = True
+                
             elif strow.startswith("@todo") :
                 pos     = rows[i].find("@todo")
-                rows[i] = rows[i].replace("@todo", "\n.. todo::\n" + (" "*(pos+4)))
+                sp      = " "*pos
+                rows[i] = rows[i].replace("@todo", "\n%s.. todo::%s\n" % (sp,sp) + "    ")
                 indent = True
+                
             elif strow.startswith("@ingroup") :
                 rows[i] = ""
+                
             elif strow.startswith("@defgroup") :
                 rows[i] = ""
+                
             elif strow.startswith("@image") :
+                pos = rows[i].find("@image")
+                sp  = " "*pos
                 spl = strow.split()
                 img = spl[-1]
                 if img.startswith("http://") :
-                    rows[i] = "\n.. fancybox:: " + img + "\n    no description\n\n"
+                    rows[i] = "\n%s.. fancybox:: "%sp + img + "\n%s    no description\n\n"%sp
                 else :
                     sp = " " * row.index("@image")
                     rows[i] = "\n%s.. image:: %s\n%s    :align: center\n" % (sp,img,sp)
+                    
             elif strow.startswith("@code") :
                 pos       = rows[i].find("@code")
+                sp        = " "*pos
                 rows[i]   = ""
                 if rows[i-1].strip("\n").endswith("."): 
-                    rows[i-1] += "\n\n::\n"
+                    rows[i-1] += "\n\n%s::\n" % sp
                 else :
                     rows[i-1] += (":" if rows[i].endswith(":") else "::")
                 indent = True
