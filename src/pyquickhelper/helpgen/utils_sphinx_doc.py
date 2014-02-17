@@ -1061,10 +1061,12 @@ def private_migrating_doxygen_doc(
         if "@endFAQ" in strow or "@endexample" in strow :
             if "@endFAQ" in strow:
                 beginends["FAQ"] = beginends.get("FAQ",0)-1
-                rows[i] = ".. endFAQ."
+                sp      = " " * row.index("@endFAQ")
+                rows[i] = sp + ".. endFAQ."
             if "@endexample" in strow:
                 beginends["example"] = beginends.get("example",0)-1
-                rows[i] = ".. endexample."
+                sp      = " " * row.index("@endexample")
+                rows[i] = sp + ".. endexample."
             continue
     
         if indent :
@@ -1153,7 +1155,7 @@ def private_migrating_doxygen_doc(
                 beginends["example"] = beginends.get("example",0)+1
                 
             elif faq:
-                sp      = " " * row.index("@example")
+                sp      = " " * row.index("@FAQ")
                 rep     = faq.groups()[0]
                 exa     = faq.groups()[1]
                 ref     = os.path.splitext(os.path.split(filename)[-1])[0] + "-l%d" % i

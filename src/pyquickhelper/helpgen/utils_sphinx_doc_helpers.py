@@ -559,8 +559,9 @@ def process_look_for_tag(tag, title, files):
         if len(all2) > len(all) :
             raise HelpGenException("an issue was detected in file: " + file.file)
         
-        coll   += [ (a,c.replace(repl,"\n"),b) for a,b,c in all ]
+        coll   += [ (a.lower(), a,c.replace(repl,"\n"),b) for a,b,c in all ]
     coll.sort()
+    coll = [ _[1:] for _ in coll ]
     
     rows = ["""
         .. _l-{0}:
