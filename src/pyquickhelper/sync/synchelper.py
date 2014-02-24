@@ -185,6 +185,10 @@ def synchronize_folder (   p1,
         be   = os.path.join (path, f)
         return tfilter (be)
         
+    if isinstance(filter_copy,str):
+        rg = re.compile(filter_copy)
+        filter_copy = lambda f, ex=rg : rg.search(file) != None
+        
     f1  = p1
     f2  = p2
     
