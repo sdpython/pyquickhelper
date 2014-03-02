@@ -110,7 +110,8 @@ def generate_changes_repo(  chan,
 def generate_help_sphinx (  project_var_name, 
                             clean = True, 
                             root = ".",
-                            filter_commit = lambda c : c.strip() != "documentation") :
+                            filter_commit = lambda c : c.strip() != "documentation",
+                            extra_ext = []) :
     """
     runs the help generation
         - copies every file in another folder
@@ -122,6 +123,7 @@ def generate_help_sphinx (  project_var_name,
     @param      clean               if True, cleans the previous documentation first
     @param      root                see below
     @param      filter_commit       function which accepts a commit to show on the documentation (based on the comment)
+    @param      extra_ext           list of file extensions
     
     The result is stored in path: ``root/_doc/sphinxdoc/source``.
     
@@ -131,6 +133,10 @@ def generate_help_sphinx (  project_var_name,
     generate_help_sphinx("pyquickhelper")
     @endcode
     @endexample
+    
+    By default, the function only consider files end by ``.py`` and ``.rst`` but you could
+    add others files sharing the same extensions by adding this one
+    in the ``extra_ext`` list.
     """
     sys.path.append (os.path.abspath(os.path.join("_doc", "sphinxdoc","source")))
     root = os.path.abspath(root)
@@ -150,6 +156,8 @@ def generate_help_sphinx (  project_var_name,
     
     # copy the files 
     optional_dirs = [ ]
+    
+    mapped_function = [ (".*[.]%s$" % ext.strip(".") , None) for ext in extra_ext ]
             
     prepare_file_for_sphinx_help_generation ( 
                 {},
@@ -161,7 +169,7 @@ def generate_help_sphinx (  project_var_name,
                 silent          = True,
                 rootrep         = ("_doc.sphinxdoc.source.%s." % (project_var_name,), ""),
                 optional_dirs   = optional_dirs,
-                mapped_function = [ (".*[.]tohelp$", None) ] )
+                mapped_function = mapped_function )
                 
     fLOG("end of prepare_file_for_sphinx_help_generation")
                 
