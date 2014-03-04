@@ -418,7 +418,6 @@ def add_file_rst (store_obj,
 
     memo = { }
     app  = []
-    
     for a,file,dest in actions : 
         if not isinstance (file, str) : file = file.name
 
@@ -473,10 +472,8 @@ def add_file_rst (store_obj,
                     ext = ext.strip(".")
                     label = IndexInformation.get_label(indexes, "ext-" + filenoext)
                     indexes [ label ] = IndexInformation("ext-" + ext, label, filenoext, doc, rst, to)
-                    fLOG("adding into index ", indexes [ label ])
+                    fLOG("add ext into index ", indexes [ label ])
                     
-                break
-
     return app
     
 def produces_indexes (  
@@ -607,10 +604,23 @@ def filecontent_to_rst(filename, content) :
     """
     file = os.path.split(filename)[-1]
     full = file + "\n" + ("=" * len(file)) +"\n"
-    rows =  [ "", ".. f-%s:" % file, "", "", full, "", "fullpath: ``%s``" % filename, "", "" ]
-    rows.append(".. literalinclude:: %s " % file)
+    rows =  [ "", ".. _f-%s:" % file, "", "", full, "", 
+                #"fullpath: ``%s``" % filename, 
+                "", "" ]
+    if ".. RSTFORMAT." in content :
+        rows.append(".. include:: %s " % file)
+    else :
+        rows.append(".. literalinclude:: %s " % file)
     rows.append("")
-    return "\n".join(rows)
+
+    nospl = content.replace("\n","_!_!:!_")
+    reg = re.compile("(.. beginshortsummary[.](.*?).. endshortsummary[.])")
+    cont = reg.search(nospl)
+    if cont :
+        g = cont.groups()[1].replace("_!_!:!_","\n")
+        return "\n".join(rows), g.strip("\n\r ")
+    else :
+        return "\n".join(rows), "no documentation"
     
 def prepare_file_for_sphinx_help_generation (
         store_obj,
@@ -619,7 +629,7 @@ def prepare_file_for_sphinx_help_generation (
         subfolders,
         fmod_copy       = lambda v, filename : v,
         template        = add_file_rst_template, 
-        rootrep         = ("_doc.sphinxdoc.source.pyhome.", ""),
+        rootrep         = ("_doc.sphinxdoc.source.project_name.", ""),
         fmod_res        = lambda v : v,
         silent          = False,
         optional_dirs   = [],
