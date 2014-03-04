@@ -1084,13 +1084,13 @@ def private_migrating_doxygen_doc(
             if strow.startswith("@warning") :
                 pos     = rows[i].find("@warning")
                 sp      = " "*pos
-                rows[i] = rows[i].replace("@warning", "\n%s.. warning::%s\n" % (sp,sp) + "    ")
+                rows[i] = rows[i].replace("@warning", "\n%s.. warning:: " % sp)
                 indent = True
                 
             elif strow.startswith("@todo") :
                 pos     = rows[i].find("@todo")
                 sp      = " "*pos
-                rows[i] = rows[i].replace("@todo", "\n%s.. todo::%s\n" % (sp,sp) + "    ")
+                rows[i] = rows[i].replace("@todo", "\n%s.. todo:: " % sp)
                 indent = True
                 
             elif strow.startswith("@ingroup") :
