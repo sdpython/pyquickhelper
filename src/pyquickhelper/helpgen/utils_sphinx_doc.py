@@ -614,13 +614,46 @@ def filecontent_to_rst(filename, content) :
     rows.append("")
 
     nospl = content.replace("\n","_!_!:!_")
+    
     reg = re.compile("(.. beginshortsummary[.](.*?).. endshortsummary[.])")
     cont = reg.search(nospl)
     if cont :
         g = cont.groups()[1].replace("_!_!:!_","\n")
         return "\n".join(rows), g.strip("\n\r ")
-    else :
-        return "\n".join(rows), "no documentation"
+    
+    if "@brief" in content:
+        spl = content.split("\n")
+        begin = None
+        end = None
+        for i,r in enumerate(spl):
+            if "@brief" in spl[i] : begin = i
+            if end == None and begin != None and len(spl[i].strip(" \n\r\t")) == 0 :
+                end = i
+                
+        if begin != None and end != None :
+            summary = "\n".join( spl[begin:end] ).replace("@brief","").strip("\n\t\r ")
+        else :
+            summary = "no documentation"
+            
+        # looking for C++/java/C# comments
+        spl = content.split("\n")
+        begin = None
+        end = None
+        for i,r in enumerate(spl):
+            if "/**" in spl[i] : begin = i
+            if end == None and begin != None and "*/" in spl[i]:
+                end = i
+            
+        content = "\n".join(rows)
+        if begin != None and end != None :
+            filerows = private_migrating_doxygen_doc(spl[begin+1:end-1], 1, filename)
+            rstr = "\n".join(filerows)
+            rstr = re.sub(":param +([a-zA-Z_][[a-zA-Z_0-9]*) *:", r"* **\1**:", rstr)
+            content = content.replace(".. literalinclude::","\n%s\n\n.. literalinclude::" % rstr)
+            
+        return content, summary
+            
+    return "\n".join(rows), "no documentation"
     
 def prepare_file_for_sphinx_help_generation (
         store_obj,
