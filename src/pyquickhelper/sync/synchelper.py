@@ -9,6 +9,7 @@ import os, re, zipfile, datetime, gzip
 
 from ..loghelper.flog           import fLOG
 from .file_tree_node            import FileTreeNode
+from .file_tree_status          import FileTreeStatus
 
 def explore_folder (folder, pattern = None, fullname = False) :
     """returns the list of files included in a folder and in the subfolder
@@ -140,7 +141,8 @@ def synchronize_folder (   p1,
                     filter          = None,
                     filter_copy     = None,
                     avoid_copy      = False,
-                    operations      = None) :
+                    operations      = None,
+                    file_date       = None) :
     """
     synchronize two folders (or copy if the second is empty), it only copies more recent files.
     
@@ -162,12 +164,19 @@ def synchronize_folder (   p1,
                                     a function for something more complex: function (fullname) --> True
     @param      avoid_copy          if True, just return the list of files which should be copied but does not do the copy
     @param      operations          if None, this function is called with the following parameters: ``operations(op,n1,n2)``
+    @param      file_date           filename which contains information about when the last sync was done
     @return                         list of operations done by the function
                                         list of 3-uple: action, source_file, dest_file
+                                        
+    if ``file_date`` is mentioned, the second folder is not explored. Only
+    the modified files will be taken into account (except for the first sync).
     """
     
     fLOG ("form ", p1)
     fLOG ("to   ", p2)
+    
+    if file_date != None and not os.path.exists(file_date):
+        with open(file_date,"w") as f : f.write("")
     
     if filter == None :
         tfilter = lambda v : True 
@@ -194,39 +203,51 @@ def synchronize_folder (   p1,
     
     fLOG ("   exploring ", f1)
     node1 = FileTreeNode (f1, filter = pr_filter, repository = repo1, log = True)
-    fLOG ("   exploring ", f2)
-    node2 = FileTreeNode (f2, filter = pr_filter, repository = repo2, log = True)
-    fLOG ("   number of found files (p1)", len (node1), node1.max_date ())
-    fLOG ("   number of found files (p2)", len (node2), node2.max_date ())
-     
-    res = node1.difference (node2, hash_size = hash_size)
-    action = []
+    fLOG ("     number of found files (p1)", len (node1), node1.max_date ())
+    if file_date != None and os.path.exists(file_date) :
+        status = FileTreeStatus(file_date)
+        res = list(status.difference(node1, u4=True))
+    else :
+        fLOG ("   exploring ", f2)
+        node2 = FileTreeNode (f2, filter = pr_filter, repository = repo2, log = True)
+        fLOG ("     number of found files (p2)", len (node2), node2.max_date ())
+        res = node1.difference (node2, hash_size = hash_size)
+        status = None
+    action = [ ]
     
     for op, file, n1, n2 in res :
-        
+
         if filter_copy != None and not filter_copy(file) :
             continue 
             
         if operations != None :
             operations(op,n1,n2)
+            if status != None : file.update (status)
         else :
                 
             if op in [">", ">+"] :
                 if not n1.isdir () : 
-                    if not size_different or n2 == None or n1._size != n2._size :
+                    if file_date != None or not size_different or n2 == None or n1._size != n2._size :
                         if not avoid_copy : n1.copyTo (f2)
                         action.append ( (">+", n1, f2) )
+                        if status != None : 
+                            status.update_copied_file (n1.fullname)
                     else :
-                        #fLOG ("skipped", "size are equal for file %s (%d == %d) dates (%s,%s) (op %s)" % (file, n1._size, n2._size, n1._date, n2._date, op))
                         pass
+                        
             elif op in ["<+"] :
                 if not n2.isdir () and not no_deletion: 
                     if not avoid_copy : n2.remove ()
                     action.append ( (">-", None, n2) )
-            elif n1._size != n2._size and not n1.isdir () :
+                    if status != None : 
+                        status.update_copied_file (n1.fullname, delete = True)
+            elif n2 != None and n1._size != n2._size and not n1.isdir () :
                 fLOG ("problem", "size are different for file %s (%d != %d) dates (%s,%s) (op %s)" % (file, n1._size, n2._size, n1._date, n2._date, op))
                 #n1.copyTo (f2)
                 #raise Exception ("size are different for file %s (%d != %d) (op %s)" % (file, n1._size, n2._size, op))    
+                
+    if status != None :
+        status.save_dates(file_date)
     
     return action
 
