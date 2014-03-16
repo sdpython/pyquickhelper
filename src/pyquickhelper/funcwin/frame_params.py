@@ -306,7 +306,7 @@ def open_window_params (  params,
     
     The program opens a window like the following one:
     
-    .. image: open_params.png
+    @image open_params.png
     
     @endexample
     

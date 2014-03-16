@@ -171,7 +171,7 @@ def main_loop_functions (  functions,
     main_loop_functions ( functions, title = "title: TestMakeWindow2")
     @endcode
     
-    .. image: open_functionl.png
+    @image open_functionl.png
     
     @endexample
     """
