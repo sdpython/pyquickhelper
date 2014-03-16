@@ -441,7 +441,7 @@ def open_window_function (  func,
     @endcode
     
     The functions opens a window which looks like the following one:
-    @image open_function.png
+    @image images/open_function.png
     
     @endexample
     """
