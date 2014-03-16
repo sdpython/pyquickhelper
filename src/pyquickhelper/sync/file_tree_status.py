@@ -241,10 +241,10 @@ class FileTreeStatus :
         """
         goes through the list of files and tells which one has changed
         
-        @param      files   @see cl FileTreeNode
-        @param      u4      @see cl FileTreeNode (changes the output)
-        @param      nlog    if not None, print something every ``nlog`` processed files
-        @return             iterator on files which changed
+        @param      files           @see cl FileTreeNode
+        @param      u4              @see cl FileTreeNode (changes the output)
+        @param      nlog            if not None, print something every ``nlog`` processed files
+        @return                     iterator on files which changed
         """
         if u4 :
             nb = 0
@@ -253,6 +253,7 @@ class FileTreeStatus :
                 nb += 1
                 if nlog != None and nb % nlog == 0 :
                     self.LOG("[FileTreeStatus], processed", nb, "files")
+                    
                 full = file.fullname
                 r, reason = self.has_been_modified_and_reason(full)
                 if r :
@@ -301,21 +302,20 @@ class FileTreeStatus :
         date    = datetime.datetime.now()
         md      = checksum_md5 (file)
         obj = FileInfo(file, size, date, mdate, md)
-        self.copyFiles[file] = obj
+        self.copyFiles[file] = obj        
         return obj
 
-    def copy_file (self, file, to, doFTP = True, doClean = False, to_is_a_file = False) :
+    def copy_file (self, file, to, doClean = False, to_is_a_file = False) :
         """
         process a file copy
         @param      file            file to copy
         @param      to              destination (folder)
-        @param      doFTP           if True, does some latex modifications (creates an image)
         @param      doClean         if True, does some cleaning before the copy 
                                     (for script in pyhome having section such as the one in tableformula.py)
         @param      to_is_a_file    it means to is a file, not a folder
         """
-        if doClean and doFTP :
-            raise AssertionError ("this case is not meant to happen, doClean and doFTP, set up at the same time")
+        if doClean :
+            raise AssertionError ("this case is not meant to happen, doClean, set up at the same time")
         if len(to) == 0 :
             raise ValueError("an empty folder is not allowed for parameter to")
             
@@ -342,7 +342,7 @@ class FileTreeStatus :
                 
             return to
                         
-    def copy_file_ext (self, file, exte, to, doFTP = True, doClean = False) :
+    def copy_file_ext (self, file, exte, to, doClean = False) :
         """
         @see me copy_file
         """
@@ -351,9 +351,9 @@ class FileTreeStatus :
             if not os.path.isfile (file + "/" + f) : continue
             ro, ext = os.path.splitext (f)
             if exte == None or ext [1:] == exte :
-                self.copy_file (file + "/" + f, to, doFTP, doClean)
+                self.copy_file (file + "/" + f, to, doClean)
         
-    def copy_file_contains (self, file, pattern, to, doFTP = True, doClean = False) :
+    def copy_file_contains (self, file, pattern, to, doClean = False) :
         """
         @see me copy_file
         """
@@ -361,5 +361,5 @@ class FileTreeStatus :
         for f in fi :
             if not os.path.isfile (file + "/" + f) : continue
             if pattern in f :
-                self.copy_file (file + "/" + f, to, doFTP, doClean)
+                self.copy_file (file + "/" + f, to, doClean)
                 

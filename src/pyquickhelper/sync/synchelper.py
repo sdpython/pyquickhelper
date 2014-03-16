@@ -164,7 +164,8 @@ def synchronize_folder (   p1,
     @param      filter_copy         (str) None to accept every file, a string if it is a regular expression, 
                                     a function for something more complex: function (fullname) --> True
     @param      avoid_copy          if True, just return the list of files which should be copied but does not do the copy
-    @param      operations          if None, this function is called with the following parameters: ``operations(op,n1,n2)``
+    @param      operations          if None, this function is called with the following parameters: ``operations(op,n1,n2)``,
+                                    if should return True if the file was updated
     @param      file_date           filename which contains information about when the last sync was done
     @param      log1                @see cl FileTreeNode
     @return                         list of operations done by the function
@@ -204,19 +205,21 @@ def synchronize_folder (   p1,
     f2  = p2
     
     fLOG ("   exploring ", f1)
-    node1 = FileTreeNode (f1, filter = pr_filter, repository = repo1, log = True)
+    node1 = FileTreeNode (f1, filter = pr_filter, repository = repo1, log = True, log1 = log1)
     fLOG ("     number of found files (p1)", len (node1), node1.max_date ())
-    if file_date != None and os.path.exists(file_date) :
+    if file_date != None :
         log1n = 1000 if log1  else None
-        status = FileTreeStatus(file_date)
+        status = FileTreeStatus(file_date, fLOG = fLOG)
         res = list(status.difference(node1, u4=True, nlog = log1n))
     else :
         fLOG ("   exploring ", f2)
-        node2 = FileTreeNode (f2, filter = pr_filter, repository = repo2, log = True, log1 = True)
+        node2 = FileTreeNode (f2, filter = pr_filter, repository = repo2, log = True, log1 = log1)
         fLOG ("     number of found files (p2)", len (node2), node2.max_date ())
         res = node1.difference (node2, hash_size = hash_size)
         status = None
     action = [ ]
+    
+    modif = 0
     
     for op, file, n1, n2 in res :
 
@@ -224,8 +227,11 @@ def synchronize_folder (   p1,
             continue 
             
         if operations != None :
-            operations(op,n1,n2)
-            if status != None : file.update (status)
+            r = operations(op,n1,n2)
+            if r and status != None : 
+                status.update_copied_file (n1.fullname)
+                modif += 1
+                if modif % 50 == 0 : status.save_dates()
         else :
                 
             if op in [">", ">+"] :
@@ -235,6 +241,8 @@ def synchronize_folder (   p1,
                         action.append ( (">+", n1, f2) )
                         if status != None : 
                             status.update_copied_file (n1.fullname)
+                            modif += 1
+                            if modif % 50 == 0 : status.save_dates()
                     else :
                         pass
                         
@@ -244,6 +252,8 @@ def synchronize_folder (   p1,
                     action.append ( (">-", None, n2) )
                     if status != None : 
                         status.update_copied_file (n1.fullname, delete = True)
+                        modif += 1
+                        if modif % 50 == 0 : status.save_dates()
             elif n2 != None and n1._size != n2._size and not n1.isdir () :
                 fLOG ("problem", "size are different for file %s (%d != %d) dates (%s,%s) (op %s)" % (file, n1._size, n2._size, n1._date, n2._date, op))
                 #n1.copyTo (f2)
