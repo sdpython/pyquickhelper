@@ -1075,7 +1075,7 @@ def private_migrating_doxygen_doc(
     debugrows = rows
     rows = copy.copy(rows)
     pars = re.compile ("([@]param( +)([a-zA-Z0-9_]+)) ")
-    refe = re.compile ("([@]((see)|(ref)) +((fn)|(cl)|(at)|(me)|(te)) +([a-zA-Z0-9_]+))($|[^a-zA-Z0-9_])")
+    refe = re.compile ("([@]((see)|(ref)) +((fn)|(cl)|(at)|(me)|(te)|(md)) +([a-zA-Z0-9_]+))($|[^a-zA-Z0-9_])")
     exce = re.compile ("([@]exception( +)([a-zA-Z0-9_]+)) ")
     exem = re.compile ("([@]example[(](.*?)[)])")
     faq_ = re.compile ("([@]FAQ[(](.*?)[)])")
