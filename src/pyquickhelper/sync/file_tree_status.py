@@ -237,17 +237,22 @@ class FileTreeStatus :
             self.modifiedFile.append( (file, reason) )
         return res, reason
         
-    def difference(self, files, u4 = False):
+    def difference(self, files, u4 = False, nlog = None):
         """
         goes through the list of files and tells which one has changed
         
         @param      files   @see cl FileTreeNode
         @param      u4      @see cl FileTreeNode (changes the output)
+        @param      nlog    if not None, print something every ``nlog`` processed files
         @return             iterator on files which changed
         """
         if u4 :
+            nb = 0
             for file in files :
                 if file._file == None : continue
+                nb += 1
+                if nlog != None and nb % nlog == 0 :
+                    self.LOG("[FileTreeStatus], processed", nb, "files")
                 full = file.fullname
                 r, reason = self.has_been_modified_and_reason(full)
                 if r :
@@ -261,7 +266,11 @@ class FileTreeStatus :
                     r = ( "==", file._file, file, None )
                     yield r
         else :
+            nb = 0
             for file in files :
+                nb += 1
+                if nlog != None and nb % nlog == 0 :
+                    self.LOG("[FileTreeStatus], processed", nb, "files")
                 full = file.fullname
                 if self.has_been_modified_and_reason(file):
                     yield file

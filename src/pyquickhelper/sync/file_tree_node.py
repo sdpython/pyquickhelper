@@ -72,7 +72,8 @@ class FileTreeNode :
                         level               = 0,
                         parent              = None,
                         repository          = False,
-                        log                 = False) :
+                        log                 = False,
+                        log1                = False) :
         """
         define a file, relative to a root
         @param      root            root (it must exist)
@@ -85,6 +86,7 @@ class FileTreeNode :
         @param      parent          link to the parent
         @param      repository      use SVN or GIT if True
         @param      log             log every explored folder
+        @param      log1            intermediate logs (first level)
         """
         self._root      = root
         self._file      = None if file == None else file
@@ -95,6 +97,7 @@ class FileTreeNode :
         self._level     = level
         self._parent    = parent
         self._log       = log
+        self._log1      = log1
         self.module     = None
         
         if not os.path.exists (root) : raise PQHException ("path %s does not exist"  % root)
@@ -216,6 +219,8 @@ class FileTreeNode :
         self._children = []
         for a in all :
             #af = os.path.join (fi, a)
+            if self._log1:
+                fLOG("[FileTreeNode], entering", a)
             fu = os.path.join (full, a)
             if filter == None or filter (self._root, fi, a, os.path.isdir (fu)) :
                 try :

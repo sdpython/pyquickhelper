@@ -142,7 +142,8 @@ def synchronize_folder (   p1,
                     filter_copy     = None,
                     avoid_copy      = False,
                     operations      = None,
-                    file_date       = None) :
+                    file_date       = None,
+                    log1            = False) :
     """
     synchronize two folders (or copy if the second is empty), it only copies more recent files.
     
@@ -165,6 +166,7 @@ def synchronize_folder (   p1,
     @param      avoid_copy          if True, just return the list of files which should be copied but does not do the copy
     @param      operations          if None, this function is called with the following parameters: ``operations(op,n1,n2)``
     @param      file_date           filename which contains information about when the last sync was done
+    @param      log1                @see cl FileTreeNode
     @return                         list of operations done by the function
                                         list of 3-uple: action, source_file, dest_file
                                         
@@ -205,11 +207,12 @@ def synchronize_folder (   p1,
     node1 = FileTreeNode (f1, filter = pr_filter, repository = repo1, log = True)
     fLOG ("     number of found files (p1)", len (node1), node1.max_date ())
     if file_date != None and os.path.exists(file_date) :
+        log1n = 1000 if log1  else None
         status = FileTreeStatus(file_date)
-        res = list(status.difference(node1, u4=True))
+        res = list(status.difference(node1, u4=True, nlog = log1n))
     else :
         fLOG ("   exploring ", f2)
-        node2 = FileTreeNode (f2, filter = pr_filter, repository = repo2, log = True)
+        node2 = FileTreeNode (f2, filter = pr_filter, repository = repo2, log = True, log1 = True)
         fLOG ("     number of found files (p2)", len (node2), node2.max_date ())
         res = node1.difference (node2, hash_size = hash_size)
         status = None
