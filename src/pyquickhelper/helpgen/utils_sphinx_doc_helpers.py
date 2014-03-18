@@ -4,7 +4,7 @@
 
 """
 
-import inspect, os, copy, re, sys
+import inspect, os, copy, re, sys, types
 from pandas import DataFrame
 from ..pandashelper.tblformat import df_to_rst
 
@@ -175,15 +175,23 @@ class ModuleMemberDoc :
                 self.type = "method"
             elif inspect.isfunction(obj) :
                 self.type = "function"
+            elif inspect.isgenerated(obj) :
+                self.type = "generator"
             else :
                 raise TypeError ("E/unable to deal with this type: " + str(type(obj)))
                 
         if ty == "method":
-            if isinstance(obj, staticmethod):
+            if isinstance(obj, staticmethod) :
                 self.type = "staticmethod"
             elif isinstance(obj, property):
                 self.type = "property"
-            
+            elif sys.version_info >= (3,4):
+                # should be replaced by something more robust
+                if len(obj.__code__.co_varnames) == 0 :
+                    self.type = "staticmethod"
+                elif obj.__code__.co_varnames[0] != 'self':
+                    self.type = "staticmethod"
+
         # module
         try :
             self.module = obj.__module__
@@ -452,6 +460,7 @@ def get_module_objects(mod) :
     for name, obj in inspect.getmembers(mod):
         if inspect.isclass(obj) or \
            inspect.isfunction(obj) or \
+           inspect.isgenerator(obj) or \
            inspect.ismethod(obj) :
             cl.append ( ModuleMemberDoc (obj) )
             if inspect.isclass(obj) :

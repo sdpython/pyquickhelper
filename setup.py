@@ -1,5 +1,3 @@
-# coding: utf-8
-
 #  Copyright (C) 2013 ---------------
 #  All rights reserved.
 # 
@@ -73,26 +71,6 @@ CLASSIFIERS = \
 'Development Status :: 5 - Production/Stable'
 ]
 
-#############################################################
-# begin checking
-#############################################################
-
-def remove_existing_build_setup() :
-    if "bdist_wininst" not in sys.argv :
-        for p in ["dist", "src/dist"] :
-            if os.path.exists (p) :
-                for exe in os.listdir (p) :
-                    if ".exe" in exe or ".zip" in exe or ".gz" in exe :
-                        print ("removing ", exe)
-                        os.remove (os.path.join(p, exe))
-
-remove_existing_build_setup()
-
-#############################################################
-# end checking
-#############################################################
-
-
 if "bdist_wininst" not in sys.argv :
     EXT_MODULES = [ 
                     #Extension(project_var_name + '.subproject.sample_module', 
@@ -131,7 +109,7 @@ setup(
     package_dir             = package_dir,
     package_data            = package_data,
     ext_modules             = EXT_MODULES,
-    install_requires        = [  "numpy", "pandas", "pymyinstall" ],
+    install_requires        = [  "numpy", "pandas", "pymyinstall", "six", "dateutils" ],
     )
 
     

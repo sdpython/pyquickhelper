@@ -4,7 +4,7 @@
 """
 
 
-import sys, os, unittest
+import sys, os, unittest, inspect
 
 
 try :
@@ -43,7 +43,8 @@ class TestSphinxDoc2 (unittest.TestCase):
     @staticmethod
     def private_static() :
         """ doc pr"""
-        return 0
+        res = 0
+        return res
         
     @property
     def prop(self) :
@@ -66,7 +67,7 @@ class TestSphinxDoc2 (unittest.TestCase):
         for _ in objs : 
             ty [_.type] = ty.get(_.type, 0) + 1
         fLOG(ty)
-        if ty["method"] > 5 :
+        if ty.get("method",0) > 5 or ty.get("staticmethod",0) == 0 :
             for _ in objs : 
                 if _.type == "method" : continue
                 if "private" in _.name : 
@@ -76,8 +77,9 @@ class TestSphinxDoc2 (unittest.TestCase):
                 if _.type != "method" : continue
                 fLOG(_.type, _.module, _.name, _.doc.replace ("\n","\\n"))
 
-        assert ty["property"] == 1
-        assert ty["staticmethod"] == 1
+        assert ty.get("property",0) == 1
+        if ty.get("staticmethod",0) != 1:
+            raise Exception("{0}".format(str(ty)))
         assert ty["method"] > 0
         
 if __name__ == "__main__"  :
