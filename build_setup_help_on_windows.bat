@@ -11,7 +11,6 @@ set pythonexe="c:\python33_x64\python"
 set pythonexe="c:\python33\python"
 %pythonexe% clean_pyd.py
 %pythonexe% setup.py sdist --formats=gztar,zip --verbose
-%pythonexe% clean_pyd.py
 %pythonexe% setup.py bdist_wininst
 
 rem python 3.4
@@ -23,7 +22,6 @@ set pythonexe="c:\python34_x64\python"
 set pythonexe="c:\python34\python"
 %pythonexe% clean_pyd.py
 %pythonexe% setup.py sdist --formats=gztar,zip --verbose
-%pythonexe% clean_pyd.py
 %pythonexe% setup.py bdist_wininst
 
 rem help
