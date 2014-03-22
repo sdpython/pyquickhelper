@@ -301,13 +301,17 @@ def open_window_params (  params,
     @code
     params = { "user":os.environ["USERNAME"],
                "password":"" }
-    newparams = open_window_params (params, "try the password *", help_string = "unit test")
+    newparams = open_window_params (params, title="try the password *", help_string = "unit test", key_save="my_key")
     @endcode
     
     The program opens a window like the following one:
     
     @image images/open_params.png
     
+    The parameters ``key_save`` can be ignored but if you use this function
+    with different parameters, they should all appear after a couple of runs.
+    That is because the function uses ``key_save`` ot unique the file uses
+    to store the values for the parameters used in previous execution.
     @endexample
     
     Password are not stored in a text file. You must type them again next time.

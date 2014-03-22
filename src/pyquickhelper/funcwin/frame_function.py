@@ -441,8 +441,13 @@ def open_window_function (  func,
     @endcode
     
     The functions opens a window which looks like the following one:
-    @image images/open_function.png
     
+    @image images/open_function.png
+        
+    The parameters ``key_save`` can be ignored but if you use this function
+    with different parameters, they should all appear after a couple of runs.
+    That is because the function uses ``key_save`` ot unique the file uses
+    to store the values for the parameters used in previous execution.
     @endexample
     """
     FrameFunction.open_window ( func = func,
