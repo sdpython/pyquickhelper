@@ -103,6 +103,8 @@ class FrameFunction (tkinter.Frame) :
         lab.pack (side=tkinter.LEFT)
         lab.insert ("0.0", self.info ["help"])
         
+        objs = [ lab, tlab ]
+        
         scroll=tkinter.Scrollbar(self.fdoc)
         scroll.pack(side=tkinter.RIGHT, fill=tkinter.Y)
         scroll.config(command=lab.yview, width=5)
@@ -150,8 +152,7 @@ class FrameFunction (tkinter.Frame) :
             if self.info ["param"][k] != None :
                 lab.insert ("0", str (self.info ["param"][k]))
             self.input [k] = lab
-            lab.bind('<Return>', self.run_function)
-            lab.bind('<Escape>', self.run_cancel)
+            objs.append(lab)
             line += 1
 
         # optional
@@ -169,8 +170,7 @@ class FrameFunction (tkinter.Frame) :
             if self.info ["param"][k] != None :
                 lab.insert ("0", str (self.info ["param"][k]))
             self.input [k] = lab
-            lab.bind('<Return>', self.run_function)
-            lab.bind('<Escape>', self.run_cancel)
+            objs.append(lab)
             line += 1
 
         # next
@@ -196,6 +196,13 @@ class FrameFunction (tkinter.Frame) :
         self.bdown.pack (side = tkinter.LEFT)
         self.bup.config (command = self.history_up)
         self.bdown.config (command = self.history_down)
+        
+        # keys
+        for obj in objs + [ tex, parent, self, self.bup, self.bdown, self.run, self.cancel, self.fdoc ] :
+            obj.bind("<Up>", self.history_up)        
+            obj.bind("<Down>", self.history_down)        
+            obj.bind("<Return>", self.run_function)        
+            obj.bind("<Escape>", self.run_cancel)        
         
     def update (self):
         """
@@ -365,6 +372,8 @@ class FrameFunction (tkinter.Frame) :
         root.title (fr.get_title ())
         if ico != None and top_level_window == None and sys.platform.startswith("win") : 
             root.wm_iconbitmap(ico)
+        if top_level_window == None : fr.focus_set()
+        root.focus_set()
         fr.mainloop ()
         
 class FrameFunction_ThreadFunction (threading.Thread) :

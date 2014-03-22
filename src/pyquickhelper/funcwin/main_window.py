@@ -131,6 +131,7 @@ class MainFrame(tkinter.Frame) :
                         hide            = self.params["hide"],
                         command_leave   = self.run_cancel) 
         self.frameWindow.pack()
+        self.frameWindow.focus_set()
         
     def change_selection(self, event) :
         """

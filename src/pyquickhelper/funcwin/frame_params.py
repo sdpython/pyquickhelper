@@ -55,6 +55,8 @@ class FrameParams (tkinter.Frame) :
         self._hpos     = -1
 
         self.info       = { "name":"FrameParams", "param":params, "help":help, "key_save":key_save }
+
+        objs = [ ]
         
         if restore : 
             self._history = _private_restore (".".join( [ self.info ["name"], self.info ["key_save"] ] ))
@@ -73,15 +75,14 @@ class FrameParams (tkinter.Frame) :
         lab = tkinter.Text (self.fdoc, width = width, height = 7)
         lab.pack (side=tkinter.LEFT)
         lab.insert ("0.0", self.info ["help"])
+        objs.append(lab)
+        objs.append(tlab)
         
         scroll=tkinter.Scrollbar(self.fdoc)
         scroll.pack(side=tkinter.RIGHT, fill=tkinter.Y)
         scroll.config(command=lab.yview, width=5)
         lab.config(yscrollcommand = scroll.set)        
                 
-        self.fdoc.bind('<Return>', self.run_function)
-        self.fdoc.bind('<Escape>', self.run_cancel)
-        
         # next
         line = 0
         for k in sorted (self.info ["param"]) :
@@ -98,8 +99,7 @@ class FrameParams (tkinter.Frame) :
             if self.info ["param"][k] != None :
                 lab.insert ("0", str (self.info ["param"][k]))
             self.input [k] = lab
-            lab.bind('<Return>', self.run_function)
-            lab.bind('<Escape>', self.run_cancel)
+            objs.append(lab)
             line += 1
 
         # optional
@@ -116,10 +116,8 @@ class FrameParams (tkinter.Frame) :
             lab.grid (row = line, column = 1)
             if self.info ["param"][k] != None :
                 lab.insert ("0", str (self.info ["param"][k]))
-            lab.bind('<Return>', self.run_function)
-            lab.bind('<Escape>', self.run_cancel)
             self.input [k] = lab
-
+            objs.append(lab)
             line += 1
 
         # next: button
@@ -142,6 +140,13 @@ class FrameParams (tkinter.Frame) :
         self.bdown.pack (side = tkinter.LEFT)
         self.bup.config (command = self.history_up)
         self.bdown.config (command = self.history_down)
+        
+        # keys
+        for obj in objs + [ parent, self, self.bup, self.bdown, self.run, self.cancel, self.fdoc ] :
+            obj.bind("<Up>", self.history_up)        
+            obj.bind("<Down>", self.history_down)        
+            obj.bind("<Return>", self.run_function)        
+            obj.bind("<Escape>", self.run_cancel)        
         
     def update (self):
         """
@@ -270,6 +275,8 @@ class FrameParams (tkinter.Frame) :
         root.title (title)
         if ico != None and top_level_window == None and sys.platform.startswith("win") : 
             root.wm_iconbitmap(ico)
+        if top_level_window == None : fr.focus_set()
+        root.focus_set()
         fr.mainloop ()
         return param
         
