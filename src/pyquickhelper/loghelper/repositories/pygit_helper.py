@@ -9,22 +9,26 @@ import xml.etree.ElementTree as ET
 from ..flog import fLOG, run_cmd
 from ..convert_helper import str_to_datetime
 
-def IsRepo(location, commandline = True):
+def IsRepo(location, commandline = True, log = False):
     """
     says if it a repository GIT
     
     @param      location        (str) location
     @param      commandline     (bool) use commandline or not
+    @param      log             if True, return the log not a boolean
     @return                     bool
     """
     if location == None :
         location = os.path.normpath(os.path.abspath( os.path.join( os.path.split(__file__)[0], "..", "..", "..", "..")))
         
     try :
-        get_repo_version(location, commandline)
+        get_repo_version(location, commandline, log = log)
         return True
-    except :
-        return False
+    except Exception :
+        if log :
+            return get_repo_version(location, commandline, log = log)
+        else :
+            return False
 
 class RepoFile :
     """
@@ -68,7 +72,7 @@ def repo_ls(full, commandline = True):
                             wait = True, 
                             do_not_log = True, 
                             encerror = "strict",
-                            encoding = sys.stdout.encoding,
+                            encoding = sys.stdout.encoding if sys.stdout != None else "utf8",
                             change_path = os.path.split(full)[0] if os.path.isfile(full) else full)
         if len(err) > 0 :
             fLOG ("problem with file ", full, err)
@@ -153,7 +157,7 @@ def get_repo_log (path = None, file_detail = False, commandline = True) :
                             wait = True, 
                             do_not_log = True, 
                             encerror = "strict",
-                            encoding = sys.stdout.encoding,
+                            encoding = sys.stdout.encoding if sys.stdout != None else "utf8",
                             change_path = os.path.split(path)[0] if os.path.isfile(path) else path)
         if len(err) > 0 :
             fLOG ("problem with file ", path, err)
@@ -181,7 +185,7 @@ def get_repo_log (path = None, file_detail = False, commandline = True) :
             res.append(row)
         return res
                         
-def get_repo_version (path = None, commandline = True, usedate = True) :
+def get_repo_version (path = None, commandline = True, usedate = True, log = False) :
     """
     Get the latest check for a specific path or version number based on the date (is usedate is True)
     If usedate is False, it returns a mini hash (a string then)
@@ -189,6 +193,7 @@ def get_repo_version (path = None, commandline = True, usedate = True) :
     @param      path            path to look
     @param      commandline     if True, use the command line to get the version number, otherwise it uses pysvn
     @param      usedate         if True, it uses the date to return a minor version number (1.1.thisone)
+    @param      log             if True, returns the output instead of a boolean
     @return                     integer)
     """
     if path == None :
@@ -211,13 +216,16 @@ def get_repo_version (path = None, commandline = True, usedate = True) :
                             wait = True, 
                             do_not_log = True, 
                             encerror = "strict",
-                            encoding = sys.stdout.encoding,
+                            encoding = sys.stdout.encoding if sys.stdout != None else "utf8",
                             change_path = os.path.split(path)[0] if os.path.isfile(path) else path,
                             log_error = False)
                                                                             
         if len(err) > 0 :
             fLOG ("problem with file ", path, err)
-            raise Exception(err)
+            if log :
+                return "OUT\n{0}\nERR:{1}".format(out,err)
+            else :
+                raise Exception(err)
         lines = out.split("\n")
         lines = [ _.split("---") for _ in lines if len(_) > 0 ]
         temp  = lines[0]
@@ -261,7 +269,7 @@ def get_master_location(path = None, commandline = True):
                             wait = True, 
                             do_not_log = True, 
                             encerror = "strict",
-                            encoding = sys.stdout.encoding,
+                            encoding = sys.stdout.encoding if sys.stdout != None else "utf8",
                             change_path = os.path.split(path)[0] if os.path.isfile(path) else path,
                             log_error = False)
                                                                             

@@ -11,22 +11,25 @@ import xml.etree.ElementTree as ET
 from ..flog import fLOG, run_cmd
 from ..convert_helper import str_to_datetime
 
-def IsRepo(location, commandline = True):
+def IsRepo(location, commandline = True, log = False):
     """
     says if it a repository SVN
     
     @param      location        (str) location
     @param      commandline     (bool) use commandline or not
+    @param      log             if True, return the log not a boolean
     @return                     bool
     """
     if location == None :
         location = os.path.normpath(os.path.abspath( os.path.join( os.path.split(__file__)[0], "..", "..", "..", "..")))
-        
     try :
-        get_repo_version(location, commandline)
+        get_repo_version(location, commandline, log = log)
         return True
     except Exception :
-        return False
+        if log :
+            return get_repo_version(location, commandline, log = log)
+        else :
+            return False
 
 class RepoFile :
     """
@@ -69,7 +72,7 @@ def repo_ls(full, commandline = True):
                                     wait = True, 
                                     do_not_log = True, 
                                     encerror = "strict",
-                                    encoding = sys.stdout.encoding)
+                                    encoding = sys.stdout.encoding if sys.stdout != None else "utf8")
                 if len(err) > 0 :
                     fLOG ("problem with file ", full, err)
                     raise Exception(err)
@@ -84,7 +87,7 @@ def repo_ls(full, commandline = True):
                             wait = True, 
                             do_not_log = True, 
                             encerror = "strict",
-                            encoding = sys.stdout.encoding)
+                            encoding = sys.stdout.encoding if sys.stdout != None else "utf8")
         if len(err) > 0 :
             fLOG ("problem with file ", full, err)
             raise Exception(err)
@@ -171,7 +174,7 @@ def get_repo_log (path = None, file_detail = False, commandline = True) :
                             wait = True, 
                             do_not_log = True, 
                             encerror = "strict",
-                            encoding = sys.stdout.encoding)
+                            encoding = sys.stdout.encoding if sys.stdout != None else "utf8")
         if len(err) > 0 :
             fLOG ("problem with file ", path, err)
             raise Exception(err)
@@ -207,11 +210,12 @@ def get_repo_log (path = None, file_detail = False, commandline = True) :
             
     return message
             
-def get_repo_version (path = None, commandline = True) :
+def get_repo_version (path = None, commandline = True, log = False) :
     """
     get the latest check in number for a specific path
     @param      path            path to look
     @param      commandline     if True, use the command line to get the version number, otherwise it uses pysvn
+    @param      log             if True, returns the output instead of a boolean
     @return                     integer (check in number)
     """
     if path == None :
@@ -241,10 +245,14 @@ def get_repo_version (path = None, commandline = True) :
                             wait = True, 
                             do_not_log = True, 
                             encerror = "strict",
-                            encoding = sys.stdout.encoding,
+                            encoding = sys.stdout.encoding if sys.stdout != None else "utf8",
                             log_error = False)
         if len(err) > 0 :
-            raise Exception(err)
+            fLOG ("problem with file ", path, err)
+            if log :
+                return "OUT\n{0}\nERR:{1}".format(out,err)
+            else :
+                raise Exception(err)
         lines = out.split("\n")
         lines = [ _ for _ in lines if "Revision" in _ ]
         lines = lines[0].split(":")
