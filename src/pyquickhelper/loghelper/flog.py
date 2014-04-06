@@ -407,8 +407,7 @@ def _check_zip_file (filename, path_unzip, outfile) :
             if todo > 0 and zip7 :
                 dest    = os.path.realpath (path_unzip)
                 cmd     = _zip7_path + "\\7z.exe e -y -o\"%s\" \"%s\"" % (dest, os.path.realpath (filename)) 
-                fLOG ("running", cmd)
-                out,err = run_cmd (cmd)
+                out,err = run_cmd (cmd, wait = True)
                 if len (err) > 0 :  raise PQHException (err)
                 if "Error" in out : raise PQHException (out)
             else :
@@ -625,7 +624,8 @@ def run_cmd (   cmd,
                 do_not_log      = False,
                 encerror        = "ignore",
                 encoding        = "utf8",
-                change_path     = None) :
+                change_path     = None,
+                communicate     = False) :
     """
     run a command line and wait for the result
     @param      cmd                 command line
@@ -641,6 +641,8 @@ def run_cmd (   cmd,
     @param      encerror            encoding errors (ignore by default) while converting the output into a string
     @param      encoding            encoding of the output
     @param      change_path         change the current path if  not None (put it back after the execution)
+    @param      communicate         use method `communicate <https://docs.python.org/3.4/library/subprocess.html#subprocess.Popen.communicate>`_ which is supposed to be safer,
+                                    parameter ``wait`` must be True
     @return                         content of stdout, stdres  (only if wait is True)  
     @rtype      tuple
     
@@ -651,7 +653,6 @@ def run_cmd (   cmd,
     @endexample
     """
     if secure != None :
-        fLOG("secure=",secure)
         with open(secure,"w") as f : f.write("")
         add = ">%s" % secure 
         if isinstance (cmd, str) : cmd += " " + add
@@ -668,16 +669,16 @@ def run_cmd (   cmd,
         startupinfo = subprocess.STARTUPINFO()    
         startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
         
-        proc = subprocess.Popen (cmd, 
+        pproc = subprocess.Popen (cmd, 
                                  shell = shell, 
-                                 stdout = subprocess.PIPE, 
-                                 stderr = subprocess.PIPE,
+                                 stdout = subprocess.PIPE if wait else None, 
+                                 stderr = subprocess.PIPE if wait else None,
                                  startupinfo = startupinfo)
     else :
-        proc = subprocess.Popen (split_cmp_command(cmd),
+        pproc = subprocess.Popen (split_cmp_command(cmd),
                                  shell = shell, 
-                                 stdout = subprocess.PIPE, 
-                                 stderr = subprocess.PIPE)
+                                 stdout = subprocess.PIPE if wait else None, 
+                                 stderr = subprocess.PIPE if wait else None)
                                  
     if change_path != None :
         os.chdir(current)
@@ -687,58 +688,89 @@ def run_cmd (   cmd,
         out = [ ]
         skip_waiting = False
         
-        if secure == None :
-            for line in proc.stdout :
+        if communicate:
+            stdoutdata, stderrdata = pproc.communicate(sin, timeout = None)
+            try :
+                out = stdoutdata.decode(encoding, errors=encerror)
+            except UnicodeDecodeError as exu :
                 try :
-                    decol = line.decode(encoding, errors=encerror)
-                except UnicodeDecodeError as exu :
-                    try :
-                        decol = line.decode("latin-1", errors=encerror)
-                    except Exception as e :
-                        decol = line.decode(encoding, errors='ignore')
-                        raise Exception("issue with cmd:" + str(cmd) + "\n" + str(exu)) from e
-
-                if not do_not_log :
-                    fLOG(decol)
-
-                out.append(decol)
-                if proc.stdout.closed: 
-                    break
-                if stop_waiting_if != None and stop_waiting_if(decol) :
-                    skip_waiting = True
-                    break
+                    out = stdoutdata.decode("latin-1", errors=encerror)
+                except Exception as e :
+                    out = stdoutdata.decode(encoding, errors='ignore')
+                    raise Exception("issue with cmd:" + str(cmd) + "\n" + str(exu)) from e
+                    
+            try :
+                err = stderrdata.decode(encoding, errors=encerror)
+            except UnicodeDecodeError as exu :
+                try :
+                    err = stderrdata.decode("latin-1", errors=encerror)
+                except Exception as e :
+                    err = stderrdata.decode(encoding, errors='ignore')
+                    raise Exception("issue with cmd:" + str(cmd) + "\n" + str(exu)) from e
+                    
+            
         else :
-            last = []
-            while proc.poll() == None :
-                if os.path.exists (secure) :
-                    with open(secure,"r") as f :
-                        lines = f.readlines()
-                    if len(lines) > len(last) :
-                        for line in lines[len(last):] :
-                            fLOG(line)
-                            out.append(line)
-                        last = lines
-                    if stop_waiting_if != None and len(last)>0 and stop_waiting_if(last[-1]) :
+            stdout, stderr = pproc.stdout, pproc.stderr
+            
+            if secure == None :
+                for line in stdout :
+                    try :
+                        decol = line.decode(encoding, errors=encerror)
+                    except UnicodeDecodeError as exu :
+                        try :
+                            decol = line.decode("latin-1", errors=encerror)
+                        except Exception as e :
+                            decol = line.decode(encoding, errors='ignore')
+                            raise Exception("issue with cmd:" + str(cmd) + "\n" + str(exu)) from e
+
+                    if not do_not_log :
+                        fLOG(decol)
+
+                    out.append(decol)
+                    if stdout.closed: 
+                        break
+                    if stop_waiting_if != None and stop_waiting_if(decol) :
                         skip_waiting = True
                         break
-                time.sleep(0.1)
-         
-        if not skip_waiting :
-            proc.wait ()
+            else :
+                last = []
+                while pproc.poll() == None :
+                    if os.path.exists (secure) :
+                        with open(secure,"r") as f :
+                            lines = f.readlines()
+                        if len(lines) > len(last) :
+                            for line in lines[len(last):] :
+                                fLOG(line)
+                                out.append(line)
+                            last = lines
+                        if stop_waiting_if != None and len(last)>0 and stop_waiting_if(last[-1]) :
+                            skip_waiting = True
+                            break
+                    time.sleep(0.1)
+             
+            if not skip_waiting :
+                pproc.wait ()
         
-        out = "\n".join(out)
-        temp = err = proc.stderr.read()
-        try :
-            err = temp.decode(encoding, errors=encerror)
-        except :
-            err = temp.decode(encoding, errors="ignore")
+            out = "\n".join(out)
+            temp = err = stderr.read()
+            try :
+                err = temp.decode(encoding, errors=encerror)
+            except :
+                err = temp.decode(encoding, errors="ignore")
+                
+            stdout.close()
+            stderr.close()
 
         if not do_not_log : 
             fLOG ("end of execution ", cmd)
         if len (err) > 0 and log_error :
             fLOG ("error (log)\n%s" % err)
         #return bytes.decode (out, errors="ignore"), bytes.decode(err, errors="ignore")
-        return out, err
+        
+        if sys.platform.startswith("win") :
+            return out.replace("\r\n","\n"), err.replace("\r\n","\n")
+        else:
+            return out, err
     else :
         return "",""
     

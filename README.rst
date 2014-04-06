@@ -42,5 +42,11 @@ This project contains various helper about logging functions, unit tests and hel
    * a _doc folder: ``_doc``, it will contains the documentation
    * a file ``setup.py`` to build and to install the module
    * a file ``make_help.py`` to build the sphinx documentation
+   
+Versions
+--------
 
+* **v0.4 - 2014/??/??**
+    * **change**: use method `communicate <https://docs.python.org/3.4/library/subprocess.html#subprocess.Popen.communicate>`_ in :func:`run_cmd <loghelper.flog.run_cmd>`, remove characters ``\r`` on Windows
+    * **change**: more robust function :func:`run_cmd <loghelper.flog.unzip>`
 

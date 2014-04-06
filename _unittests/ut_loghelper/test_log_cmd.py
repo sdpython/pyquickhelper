@@ -1,7 +1,5 @@
-# coding: latin-1
 """
 @brief      test log(time=1s)
-
 """
 
 

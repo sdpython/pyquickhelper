@@ -217,8 +217,8 @@ def synchronize_folder (   p1,
         fLOG ("     number of found files (p2)", len (node2), node2.max_date ())
         res = node1.difference (node2, hash_size = hash_size)
         status = None
+        
     action = [ ]
-    
     modif = 0
     
     for op, file, n1, n2 in res :
