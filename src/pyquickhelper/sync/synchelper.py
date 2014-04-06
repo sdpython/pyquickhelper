@@ -173,6 +173,27 @@ def synchronize_folder (   p1,
                                         
     if ``file_date`` is mentioned, the second folder is not explored. Only
     the modified files will be taken into account (except for the first sync).
+    
+    @example(synchronize two folders)
+    The following function synchronizes a folder with another one
+    on a USB drive or a network drive. To minimize the number of access
+    to the other location, it stores the status of the previous 
+    synchronization in a file (``status_copy.txt`` in the below example).
+    Next time, the function goes through the directory and sub-directories
+    to synchronize and only propagates the modifications which happened
+    since the last modification.
+    The function ``filter_copy`` defines what file to synchronize or not.
+    @code
+    def filter_copy(file):
+        return "_don_t_synchornize_" not in file    
+    
+    synchronize_folder( "c:/mydata",
+                        "g:/mybackup",
+                        hash_size = 0,
+                        filter_copy = filter_copy,
+                        file_date = "c:/status_copy.txt")    
+    @endcode
+    @endexample
     """
     
     fLOG ("form ", p1)
@@ -247,13 +268,28 @@ def synchronize_folder (   p1,
                         pass
                         
             elif op in ["<+"] :
-                if not n2.isdir () and not no_deletion: 
-                    if not avoid_copy : n2.remove ()
-                    action.append ( (">-", None, n2) )
-                    if status != None : 
-                        status.update_copied_file (n1.fullname, delete = True)
-                        modif += 1
-                        if modif % 50 == 0 : status.save_dates()
+                if n2 == None :
+                    if not no_deletion: 
+                        # this case happens when we do not know sideB (sideA is stored in a file)
+                        # we need to remove file, file refers to this side
+                        filerel = os.path.relpath(file, start=p1)
+                        filerem = os.path.join(p2, filerel)
+                        action.append ( (">-", None, FileTreeNode(p2, filerel) ) )
+                        if not avoid_copy : 
+                            fLOG ("- remove ", filerem)
+                            os.remove(filerem)
+                        if status != None : 
+                            status.update_copied_file (file, delete = True)
+                            modif += 1
+                            if modif % 50 == 0 : status.save_dates()
+                else :
+                    if not n2.isdir () and not no_deletion: 
+                        if not avoid_copy : n2.remove ()
+                        action.append ( (">-", None, n2) )
+                        if status != None : 
+                            status.update_copied_file (n1.fullname, delete = True)
+                            modif += 1
+                            if modif % 50 == 0 : status.save_dates()
             elif n2 != None and n1._size != n2._size and not n1.isdir () :
                 fLOG ("problem", "size are different for file %s (%d != %d) dates (%s,%s) (op %s)" % (file, n1._size, n2._size, n1._date, n2._date, op))
                 #n1.copyTo (f2)

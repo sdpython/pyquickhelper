@@ -73,6 +73,42 @@ class TestSynchoHash (unittest.TestCase):
         assert len(a)==2
         assert a[0][0]==">+"==a[1][0]
         assert len(b) == 0
+        
+        troi2 = os.path.join(fold, "temp_troi3")
+        if not os.path.exists(troi2): os.mkdir(troi2)
+        
+        file_date = os.path.join(temp, "file_date_rem.txt")
+        if os.path.exists(file_date): os.remove(file_date)
+        
+        c = synchronize_folder(  troi,
+                        troi2,
+                        hash_size = 0,
+                        repo1 = False,
+                        filter_copy = filter_copy,
+                        file_date = file_date)
+        
+        onefile = os.path.join(troi, "onefile.txt")
+        os.remove(onefile)
+        with open(file_date,"r") as f : all_b = f.readlines()
+        
+        c = synchronize_folder(  troi,
+                        troi2,
+                        hash_size = 0,
+                        repo1 = False,
+                        filter_copy = filter_copy,
+                        file_date = file_date)
+                        
+        with open(file_date,"r") as f : all_c = f.readlines()
+        fLOG(c)
+        assert len(c) > 0
+        onefile2 = os.path.join(troi2, "onefile.txt")
+        assert not os.path.exists(onefile2)
+        
+        assert len(all_b) == len(all_c)+1
+        
+        if __name__ != "__main__" :
+            remove_folder(troi)
+            remove_folder(troi2)
             
 
 if __name__ == "__main__"  :

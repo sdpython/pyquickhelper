@@ -246,9 +246,11 @@ class FileTreeStatus :
         @param      nlog            if not None, print something every ``nlog`` processed files
         @return                     iterator on files which changed
         """
+        memo = { }
         if u4 :
             nb = 0
             for file in files :
+                memo[file.fullname] = True
                 if file._file == None : continue
                 nb += 1
                 if nlog != None and nb % nlog == 0 :
@@ -269,12 +271,17 @@ class FileTreeStatus :
         else :
             nb = 0
             for file in files :
+                memo[file.fullpath] = True
                 nb += 1
                 if nlog != None and nb % nlog == 0 :
                     self.LOG("[FileTreeStatus], processed", nb, "files")
                 full = file.fullname
                 if self.has_been_modified_and_reason(file):
                     yield file
+                    
+        for key,file in self.copyFiles.items():
+            if file.filename not in memo:
+                yield ( "<+", file.filename, None, None )
 
     def add_if_modified (self, file):
         """
@@ -290,20 +297,26 @@ class FileTreeStatus :
                 self.modifiedFile.append( (file, reason) )
         return res
         
-    def update_copied_file(self, file) :
+    def update_copied_file(self, file, delete = False) :
         """
         update the file in copyFiles (before saving), update all field
         @param      file        filename
+        @param      delete      to remove this file
         @return                 file object
         """
-        st      = os.stat(file)
-        size    = st.st_size
-        mdate   = convert_st_date_to_datetime(st.st_mtime)
-        date    = datetime.datetime.now()
-        md      = checksum_md5 (file)
-        obj = FileInfo(file, size, date, mdate, md)
-        self.copyFiles[file] = obj        
-        return obj
+        if delete:
+            if file not in self.copyFiles:
+                raise FileNotFoundError("unable to find a file in the list of monitored files: {0}".format(file))
+            del self.copyFiles[file]
+        else :
+            st      = os.stat(file)
+            size    = st.st_size
+            mdate   = convert_st_date_to_datetime(st.st_mtime)
+            date    = datetime.datetime.now()
+            md      = checksum_md5 (file)
+            obj = FileInfo(file, size, date, mdate, md)
+            self.copyFiles[file] = obj        
+            return obj
 
     def copy_file (self, file, to, doClean = False, to_is_a_file = False) :
         """
@@ -335,7 +348,7 @@ class FileTreeStatus :
                 shutil.copy (file, to)
                 if not os.path.isfile(to) :
                     to = os.path.join (to, os.path.split(file)[-1] )
-                self.LOG("copy ", file, " as ", to)
+                self.LOG("+ copy ", file, " as ", to)
             except Exception as e :
                 self.LOG ("issue with ", file, " copied to ", to)
                 self.LOG ("error message: ", e)

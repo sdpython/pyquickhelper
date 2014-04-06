@@ -393,7 +393,7 @@ class FileTreeNode :
             os.makedirs (fina)
         try :
         #if 1 :
-            fLOG ("copy ", full, " to ", dest)
+            fLOG ("+ copy ", full, " to ", dest)
             shutil.copy (full, dest)
             cop = os.path.join (dest, os.path.split (full) [1])
             if not os.path.exists (cop) :
