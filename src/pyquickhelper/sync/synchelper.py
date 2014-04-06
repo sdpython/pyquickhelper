@@ -193,6 +193,9 @@ def synchronize_folder (   p1,
                         filter_copy = filter_copy,
                         file_date = "c:/status_copy.txt")    
     @endcode
+    
+    The function is able to go through 90.000 files and 90 Gb
+    in 12 minutes (for an update).
     @endexample
     """
     
