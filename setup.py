@@ -49,7 +49,7 @@ else :
     subversion = 1   
 
 project_var_name    = "pyquickhelper"
-sversion            = "0.3"
+sversion            = "0.4"
 versionPython       = "%s.%s" % (sys.version_info.major, sys.version_info.minor)
 path                = "Lib/site-packages/" + project_var_name
 readme              = 'README.rst'
