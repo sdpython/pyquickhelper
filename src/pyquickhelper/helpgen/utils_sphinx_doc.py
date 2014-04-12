@@ -830,10 +830,13 @@ def prepare_file_for_sphinx_help_generation (
     app = [ ]
     for tag,title in [("FAQ","FAQ"), 
                       ("example","Examples")] :
-        onefile = process_look_for_tag(tag, title, rsts)
-        saveas = os.path.join(output, "all_%s.rst" % tag)
-        with open(saveas, "w") as f : f.write(onefile)
-        app.append( RstFileHelp (saveas, onefile, "") )
+        onefiles = process_look_for_tag(tag, title, rsts)
+        for page,onefile in onefiles:
+            saveas = os.path.join(output, "all_%s%s.rst" % \
+                            (tag, \
+                             page.replace(":","").replace("/","")))
+            with open(saveas, "w") as f : f.write(onefile)
+            app.append( RstFileHelp (saveas, onefile, "") )
     rsts += app
   
     fLOG("* end of documentation preparation in",output)
@@ -1077,12 +1080,12 @@ def private_migrating_doxygen_doc(
     pars = re.compile ("([@]param( +)([a-zA-Z0-9_]+)) ")
     refe = re.compile ("([@]((see)|(ref)) +((fn)|(cl)|(at)|(me)|(te)|(md)) +([a-zA-Z0-9_]+))($|[^a-zA-Z0-9_])")
     exce = re.compile ("([@]exception( +)([a-zA-Z0-9_]+)) ")
-    exem = re.compile ("([@]example[(](.*?)[)])")
+    exem = re.compile ("([@]example[(](.*?___)?(.*?)[)])")
     faq_ = re.compile ("([@]FAQ[(](.*?)[)])")
     
     indent    = False
     openi     = False
-    beginends =  { }
+    beginends = { }
     
     whole  = "\n".join(rows)
     if "@var" in whole :
@@ -1199,9 +1202,11 @@ def private_migrating_doxygen_doc(
             elif example:
                 sp      = " " * row.index("@example")
                 rep     = example.groups()[0]
-                exa     = example.groups()[1]
+                exa     = example.groups()[2]
+                pag     = example.groups()[1]
+                if pag is None: pag = ""
                 ref     = os.path.splitext(os.path.split(filename)[-1])[0] + "-l%d" % i
-                to      = "\n\n%s.. _le-%s:\n\n%s**Example: %s**  \n\n%s.. example(%s;;le-%s)." % (sp,ref,sp,exa,sp,exa,ref)
+                to      = "\n\n%s.. _le-%s:\n\n%s**Example: %s**  \n\n%s.. example(%s%s;;le-%s)." % (sp,ref,sp,exa,sp,pag,exa,ref)
                 rows[i] = row.replace(rep, to)
                 
                 # it requires an empty line before if the previous line does not start by :
@@ -1274,7 +1279,6 @@ def private_migrating_doxygen_doc(
             mes = "  File \"%s\", line %d, in ???\n    unbalanced tag %s: %s \nwhole blocks:\n%s" %(filename, index_first_line+i+1, k, row, "\n".join(rows))
             fLOG("error: ", mes)
             raise SyntaxError(mes)
-            
             
     return rows
     

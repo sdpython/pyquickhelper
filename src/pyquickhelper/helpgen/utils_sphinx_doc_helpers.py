@@ -545,14 +545,27 @@ def process_look_for_tag(tag, title, files):
     @param      tag     tag
     @param      title   title of the page
     @param      files   list of files to look for
+    @return             a list of tuple (page, content of the page)
     
     The function is looking for regular expression::
     
         .. tag(...).
         ...
         .. endtag.
+        
+    They can be split into several pages::
     
+        .. tag(page::...).
+        ...
+        .. endtag.
+        
     """
+    def noneempty(a):
+        if "___" in a:
+            page,a= a.split("___")
+            return "_" + page, a.lower(),a
+        else :
+            return "", a.lower(), a
     repl = "__!LI!NE!__"
     exp  = re.compile("[.][.] %s[(](.*?);;(.*?)[)][.](.*?)[.][.] end%s[.]" % (tag,tag))
     exp2 = re.compile("[.][.] %s[(](.*?)[)][.](.*?)[.][.] end%s[.]" % (tag,tag))
@@ -568,33 +581,41 @@ def process_look_for_tag(tag, title, files):
         if len(all2) > len(all) :
             raise HelpGenException("an issue was detected in file: " + file.file)
         
-        coll   += [ (a.lower(), a,c.replace(repl,"\n"),b) for a,b,c in all ]
-    coll.sort()
-    coll = [ _[1:] for _ in coll ]
-    
-    rows = ["""
-        .. _l-{0}:
-
-        {1}
-        {2}
-
-        .. contents::
-            :depth: 3
-            
-        """.replace("        ","").format(tag, title, "=" * len(title))]
+        coll += [ noneempty(a) + (c.replace(repl,"\n"),b) for a,b,c in all ]
         
-    for a,b,c in coll :
-        rows.append( a )
-        rows.append( "+" * len(a) )
-        rows.append( "" )
-        rows.append( remove_some_indent(b) )
-        rows.append( "" )
-        spl = c.split("-")
-        d = "file {0}.py".format(spl[1]) # line, spl[2].lstrip("l"))
-        rows.append( "see :ref:`%s <%s>`" % (d,c))
-        rows.append( "" )
+    coll.sort()
+    coll = [ (_[0],) + _[2:] for _ in coll ]
+    
+    pages = set ( _[0] for _ in coll )
+    
+    pagerows = [ ]
+    
+    for page in pages :
+        rows = ["""
+            .. _l-{0}:
 
-    return "\n".join(rows)
+            {1}
+            {2}
+
+            .. contents::
+                :depth: 3
+                
+            """.replace("        ","").format(tag, title, "=" * len(title))]
+            
+        for pa, a,b,c in coll :
+            if page != pa : continue
+            rows.append( a )
+            rows.append( "+" * len(a) )
+            rows.append( "" )
+            rows.append( remove_some_indent(b) )
+            rows.append( "" )
+            spl = c.split("-")
+            d = "file {0}.py".format(spl[1]) # line, spl[2].lstrip("l"))
+            rows.append( "see :ref:`%s <%s>`" % (d,c))
+            rows.append( "" )
+
+        pagerows.append ( (page, "\n".join(rows)) )
+    return pagerows
     
 def remove_some_indent(s):
     """

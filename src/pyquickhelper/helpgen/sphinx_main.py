@@ -137,6 +137,14 @@ def generate_help_sphinx (  project_var_name,
     By default, the function only consider files end by ``.py`` and ``.rst`` but you could
     add others files sharing the same extensions by adding this one
     in the ``extra_ext`` list.
+    
+    @example(other page of examples___run help generation)
+    This example is exactly the same as the previous one but will be generated on another page of examples.
+    @code
+    # from the main folder which contains folder src
+    generate_help_sphinx("pyquickhelper")
+    @endcode
+    @endexample
     """
     sys.path.append (os.path.abspath(os.path.join("_doc", "sphinxdoc","source")))
     root = os.path.abspath(root)
