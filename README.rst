@@ -47,6 +47,7 @@ Versions
 --------
 
 * **v0.4 - 2014/??/??**
+    * **change**: add the possibility to create more than one page of examples, use tag ``@example(page___title)``
     * **change**: use method `communicate <https://docs.python.org/3.4/library/subprocess.html#subprocess.Popen.communicate>`_ in :func:`run_cmd <loghelper.flog.run_cmd>`, remove characters ``\r`` on Windows
     * **change**: more robust function :func:`run_cmd <loghelper.flog.unzip>`
     * **change**: :func:`synchronize_folder <sync.synchelper.synchronize_folder>` now removes files when using a file to memorize the list of synchronized files

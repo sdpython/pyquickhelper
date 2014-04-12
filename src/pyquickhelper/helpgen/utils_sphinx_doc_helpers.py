@@ -591,8 +591,16 @@ def process_look_for_tag(tag, title, files):
     pagerows = [ ]
     
     for page in pages :
+        
+        if page == "":
+            tit = title
+            suf = ""
+        else :
+            tit = title + ": " + page.strip("_")
+            suf = page.replace(" ","").replace("_","")
+            
         rows = ["""
-            .. _l-{0}:
+            .. _l-{0}{3}:
 
             {1}
             {2}
@@ -600,7 +608,7 @@ def process_look_for_tag(tag, title, files):
             .. contents::
                 :depth: 3
                 
-            """.replace("        ","").format(tag, title, "=" * len(title))]
+            """.replace("            ","").format(tag, tit, "=" * len(tit), suf)]
             
         for pa, a,b,c in coll :
             if page != pa : continue

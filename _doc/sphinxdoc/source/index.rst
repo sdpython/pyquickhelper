@@ -60,4 +60,6 @@ Indices and tables
 | :ref:`l-example` |  :ref:`l-FAQ`       |                  |                  |                        |                     |
 +------------------+---------------------+------------------+------------------+------------------------+---------------------+
    
+Other page of examples:
+    * :ref:`l-exampleotherpageofexamples`
 
