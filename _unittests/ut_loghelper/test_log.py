@@ -42,6 +42,16 @@ class TestLog (unittest.TestCase):
         out,err = run_cmd ("dir *.pyc", shell = True, wait = True)
         assert len (out) > 0
 
+    def test_cmd_noshell (self) :
+        fLOG (__file__, self._testMethodName, OutputPrint = __name__ == "__main__")
+        out,err = run_cmd ("dir", wait = True)
+        assert len (out) > 0
+
+    def test_cmd_communicate (self) :
+        fLOG (__file__, self._testMethodName, OutputPrint = __name__ == "__main__")
+        out,err = run_cmd ("dir", wait = True, communicate = True)
+        assert len (out) > 0
+
     def test_cmd_communicate (self) :
         fLOG (__file__, self._testMethodName, OutputPrint = __name__ == "__main__")
         out,err = run_cmd ("dir *.py", shell = True, wait = True, communicate = True)

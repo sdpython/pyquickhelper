@@ -406,10 +406,10 @@ def _check_zip_file (filename, path_unzip, outfile) :
                         
             if todo > 0 and zip7 :
                 dest    = os.path.realpath (path_unzip)
-                cmd     = _zip7_path + "\\7z.exe e -y -o\"%s\" \"%s\"" % (dest, os.path.realpath (filename)) 
+                cmd     = '"' + _zip7_path + '\\7z.exe" e -y -o"%s" "%s"' % (dest, os.path.realpath (filename)) 
                 out,err = run_cmd (cmd, wait = True)
-                if len (err) > 0 :  raise PQHException (err)
-                if "Error" in out : raise PQHException (out)
+                if len (err) > 0 :  raise PQHException ("command {0} failed\n{1}".format(cmd,err))
+                if "Error" in out : raise PQHException ("command {0} failed\n{1}".format(cmd,out))
             else :
                 dest    = path_unzip
                         
@@ -616,7 +616,7 @@ def split_cmp_command(cmd, remove_quotes = True) :
     
 def run_cmd (   cmd, 
                 sin             = "", 
-                shell           = False, 
+                shell           = True, 
                 wait            = False, 
                 log_error       = True,
                 secure          = None,
@@ -625,7 +625,7 @@ def run_cmd (   cmd,
                 encerror        = "ignore",
                 encoding        = "utf8",
                 change_path     = None,
-                communicate     = False) :
+                communicate     = True) :
     """
     run a command line and wait for the result
     @param      cmd                 command line

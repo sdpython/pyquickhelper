@@ -11,14 +11,14 @@ except ImportError:
     sys.path.append ( os.path.normpath (os.path.abspath("../src")))
     import pyquickhelper
     
-from pyquickhelper import fLOG
+from pyquickhelper import fLOG, run_cmd
 from pyquickhelper.unittests.utils_tests import main 
 
 
 
 if __name__ == "__main__" :
     fLOG(OutputPrint = True)
-        
+    
     runner  = unittest.TextTestRunner(verbosity=0, stream = io.StringIO ())
     path    = os.path.abspath(os.path.join(os.path.split(__file__) [0]))
     res     = main(runner, path_test = path, skip = -1)
