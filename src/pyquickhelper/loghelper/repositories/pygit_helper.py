@@ -221,7 +221,8 @@ def get_repo_version (path = None, commandline = True, usedate = True, log = Fal
                             log_error = False)
                                                                             
         if len(err) > 0 :
-            fLOG ("problem with file ", path, err)
+            if log :
+                fLOG ("problem with file ", path, err)
             if log :
                 return "OUT\n{0}\nERR:{1}".format(out,err)
             else :

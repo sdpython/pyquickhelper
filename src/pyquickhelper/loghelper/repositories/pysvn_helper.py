@@ -23,11 +23,12 @@ def IsRepo(location, commandline = True, log = False):
     if location == None :
         location = os.path.normpath(os.path.abspath( os.path.join( os.path.split(__file__)[0], "..", "..", "..", "..")))
     try :
-        get_repo_version(location, commandline, log = log)
+        r = get_repo_version(location, commandline, log = log)
         return True
-    except Exception :
+    except Exception as e :
         if log :
-            return get_repo_version(location, commandline, log = log)
+            r = get_repo_version(location, commandline, log = log)
+            return r
         else :
             return False
 
@@ -248,7 +249,8 @@ def get_repo_version (path = None, commandline = True, log = False) :
                             encoding = sys.stdout.encoding if sys.stdout != None else "utf8",
                             log_error = False)
         if len(err) > 0 :
-            fLOG ("problem with file ", path, err)
+            if log: 
+                fLOG ("problem with file ", path, err)
             if log :
                 return "OUT\n{0}\nERR:{1}".format(out,err)
             else :
