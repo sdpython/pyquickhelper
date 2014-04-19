@@ -6,6 +6,7 @@
 #
 
 import sys, os, datetime, re
+import solar_theme
 
 def extract_version_from_setup():
     """
@@ -51,7 +52,7 @@ extensions = [  'sphinx.ext.autodoc',
                 'sphinx.ext.viewcode',
                 'sphinxcontrib.fancybox',
                 ]
-
+                
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['phdoc_templates']
 
@@ -124,7 +125,7 @@ modindex_common_prefix = [
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
-html_theme = 'agogo' # 'sphinxdoc'
+html_theme = 'solar_theme' # 'sphinxdoc'
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
@@ -132,7 +133,7 @@ html_theme = 'agogo' # 'sphinxdoc'
 shtml_theme_options = { "bodyfont":"Calibri"}
 
 # Add any paths that contain custom themes here, relative to this directory.
-#html_theme_path = []
+html_theme_path = [solar_theme.theme_path]
 
 # The name for this set of Sphinx documents.  If None, it defaults to
 # "<project> v<release> documentation".
