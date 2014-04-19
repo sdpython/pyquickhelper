@@ -9,10 +9,10 @@ pyquickhelper documentation
    
    
 **Links:**
-    * `pypi/pymyinstall <https://pypi.python.org/pypi/pymyinstall/>`_
-    * `GitHub/pymyinstall <https://github.com/sdpython/pymyinstall>`_
-    * `documentation <http://www.xavierdupre.fr/app/pymyinstall/helpsphinx/index.html>`_
-    * `Windows Setup <http://www.xavierdupre.fr/site2013/index_code.html#pymyinstall>`_
+    * `pypi/pyquickhelper <https://pypi.python.org/pypi/pyquickhelper/>`_
+    * `GitHub/pyquickhelper <https://github.com/sdpython/pyquickhelper>`_
+    * `documentation <http://www.xavierdupre.fr/app/pyquickhelper/helpsphinx/index.html>`_
+    * `Windows Setup <http://www.xavierdupre.fr/site2013/index_code.html#pyquickhelper>`_
 
 
 Description
