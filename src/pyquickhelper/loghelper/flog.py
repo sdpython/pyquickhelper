@@ -724,9 +724,9 @@ def run_cmd (   cmd,
                             raise Exception("issue with cmd:" + str(cmd) + "\n" + str(exu)) from e
 
                     if not do_not_log :
-                        fLOG(decol)
+                        fLOG(decol.strip("\n\r"))
 
-                    out.append(decol)
+                    out.append(decol.strip("\n\r"))
                     if stdout.closed: 
                         break
                     if stop_waiting_if != None and stop_waiting_if(decol) :
@@ -740,8 +740,8 @@ def run_cmd (   cmd,
                             lines = f.readlines()
                         if len(lines) > len(last) :
                             for line in lines[len(last):] :
-                                fLOG(line)
-                                out.append(line)
+                                fLOG(line.strip("\n\r"))
+                                out.append(line.strip("\n\r"))
                             last = lines
                         if stop_waiting_if != None and len(last)>0 and stop_waiting_if(last[-1]) :
                             skip_waiting = True
@@ -761,6 +761,7 @@ def run_cmd (   cmd,
             stdout.close()
             stderr.close()
 
+        err = err.replace("\r\n","\n")
         if not do_not_log : 
             fLOG ("end of execution ", cmd)
         if len (err) > 0 and log_error :
