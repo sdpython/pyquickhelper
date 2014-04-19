@@ -3,7 +3,7 @@
 @brief Main functions to produce the documentation for a module
 
 """
-import os,sys, shutil, datetime
+import os,sys, shutil, datetime, re
 from pandas import DataFrame
 
 from ..loghelper.flog           import run_cmd, fLOG
@@ -179,7 +179,22 @@ def generate_help_sphinx (  project_var_name,
                 optional_dirs   = optional_dirs,
                 mapped_function = mapped_function )
                 
-    fLOG("end of prepare_file_for_sphinx_help_generation")
+    fLOG("**** end of prepare_file_for_sphinx_help_generation")
+    
+    # notebooks
+    notebook_dir = os.path.abspath(os.path.join("_doc", "notebooks"))
+    notebook_doc = os.path.abspath(os.path.join("_doc/sphinxdoc/source", "notebooks"))
+    notebooks = [ os.path.join(notebook_dir,_) for _ in os.listdir(notebook_dir) if ".ipynb" in _ ]
+    if len(notebooks) >0:
+        fLOG("**** notebooks")
+        build = os.path.abspath("build/notebooks")
+        if not os.path.exists(build): os.makedirs(build)
+        if not os.path.exists(notebook_doc): os.mkdir(notebook_doc)
+        nbs = process_notebooks(notebooks, 
+                                build=build, 
+                                outfold=notebook_doc)
+        add_notebook_page(nbs, os.path.join(notebook_doc,"..","all_notebooks.rst"))
+    
                 
     #  run the documentation generation
     if sys.platform == "win32" :
@@ -228,3 +243,236 @@ def generate_help_sphinx (  project_var_name,
     # end
     os.chdir (pa)
     
+def process_notebooks(  notebooks, 
+                        outfold, 
+                        build,
+                        pandoc_path = "%USERPROFILE%\\AppData\\Local\\Pandoc",
+                        formats = ["html", "python", "rst", "pdf"],
+                        latex_path = r"C:\Program Files\MiKTeX 2.9\miktex\bin\x64"):
+    """
+    converts notebooks into html, rst, latex using 
+    `nbconvert <http://ipython.org/ipython-doc/rel-1.0.0/interactive/nbconvert.html>`_.
+    
+    @param      notebooks   list of notebooks 
+    @param      outfold     folder which will contains the outputs
+    @param      build       tempoary folder which contains all produced files
+    @param      pandoc_path path to pandoc
+    @param      formats     list of formats to convert into (pdf format means latex then compilation)
+    @param      latex_path  path to the latex compiler
+    @return                 created files
+    
+    This function relies on `pandoc <http://johnmacfarlane.net/pandoc/index.html>`_.
+    It also needs modules `pywin32 <http://sourceforge.net/projects/pywin32/>`_,
+    `pygments <http://pygments.org/>`_.
+    
+    The latex compilation uses `MiKTeX <http://miktex.org/>`_.
+    
+    @warning Some latex templates (for nbconvert) uses ``[commandchars=\\\\\\{\\}]{\\|}`` which allows commands ``\\\\`` and it does not compile. 
+                The one used here is ``report``.
+    """
+    if isinstance(notebooks,str):
+        notebooks = [ notebooks ]
+
+    if sys.platform.startswith("win"):
+        user = os.environ["USERPROFILE"]
+        path = pandoc_path.replace("%USERPROFILE%", user)
+        p = os.environ["PATH"]
+        if path not in p :
+            p += ";" + path
+            os.environ["PATH"] = p
+            
+        exe = os.path.split(sys.executable)[0]
+        exe2 = exe.replace("Python34","Python33")
+        if os.path.exists(exe2):
+            exe = exe2  # safer for the moment
+        # very specific, should be removed
+        exe2 = exe.replace("Python33_x64", "Python33")
+        if os.path.exists(exe2):
+            exe = exe2  # safer for the moment
+            
+        files = [ ]
+        
+        ipy = os.path.join(exe, "Scripts", "ipython3.exe")
+        cmd = '{0} nbconvert --to {1} "{2}" --template {5} --output="{3}\\{4}"'
+        for notebook in notebooks:
+            nbout = os.path.split(notebook)[-1]
+            nbout = os.path.splitext(nbout)[0]
+            for format in formats :
+                
+                compilation = format == "pdf"
+                if format == "pdf": format = "latex"
+                
+                templ = "full" if format != "latex" else "article"
+                fLOG("convert into ", format, " NB: ", notebook)
+                c = cmd.format(ipy, format, notebook, build, nbout, templ)
+                fLOG(c)
+                out,err = run_cmd(c,wait=True, do_not_log = False, log_error=False)
+                
+                if "raise ImportError" in err:
+                    raise ImportError(err)
+                if len(err)>0 and "error" in err.lower():
+                    raise HelpGenException(err)
+                    
+                if format == "latex": format = "tex"
+                if format == "python": format = "py"
+                files.append ( os.path.join( build, nbout + "." + format) )
+                
+                if compilation:
+                    # compilation latex
+                    if os.path.exists(latex_path):
+                        lat = os.path.join(latex_path, "pdflatex.exe")
+                        c = '"{0}" "{1}" -output-directory="{2}"'.format(lat, files[-1], os.path.split(files[-1])[0])
+                        out,err = run_cmd(c,wait=True, do_not_log = False, log_error=False)
+                        if len(err) > 0 :
+                            raise HelpGenException(err)
+                        f = os.path.join( build, nbout + ".pdf")
+                        if not os.path.exists(f):
+                            raise HelpGenException(err)
+                        files.append(f)
+                    else:
+                        fLOG("unable to find latex in", latex_path)
+                        
+                elif format == "html":
+                    # we add a link to the notebook
+                    files += add_link_to_notebook(files[-1], notebook, "pdf" in formats, False, "python" in formats)
+                    
+                elif format == "rst":
+                    # we add a link to the notebook
+                    files += add_link_to_notebook(files[-1], notebook, "pdf" in formats, "html" in formats, "python" in formats)
+        
+        copy = [ ]
+        for f in files:
+            dest = os.path.join(outfold, os.path.split(f)[-1])
+            if not f.endswith(".tex"):
+                try:
+                    shutil.copy(f, outfold)
+                    fLOG("copy ",f, " to ", outfold, "[",dest,"]")
+                except shutil.SameFileError:
+                    fLOG("w,file ", dest, "already exists")
+                    pass
+                if not os.path.exists(dest):
+                    raise FileNotFoundError(dest)
+            copy.append ( dest )
+        
+        return copy
+    else :
+        raise NotImplementedError("not implemented on linux")
+
+def add_link_to_notebook(file, nb, pdf, html, python):
+    """
+    add a link to the notebook in HTML format
+    
+    @param      file        notebook.html
+    @param      nb          notebook (.ipynb)
+    @param      pdf         if True, add a link to the PDF, assuming it will exists at the same location
+    """
+    ext = os.path.splitext(file)[-1]
+    
+    fold,name = os.path.split(file)
+    noext = os.path.splitext(name)[0]
+    res = [ os.path.join(fold, os.path.split(nb)[-1]) ]
+    if not os.path.exists(res[-1]):
+        shutil.copy(nb, fold)
+
+    if ext == ".html":
+        
+        with open(file, "r", encoding="utf8") as f :
+            text = f.read()
+            
+        link = '''
+                <div style="position:fixed;text-align:center;align:right;width:15%;bottom:50px;right:20px;background:#DDDDDD;">
+                <p>
+                {0}
+                </p>
+                </div>
+                '''
+                
+        links = [ '<b>links</b><br /><a href="{0}.ipynb">{0}.ipynb</a>'.format(noext) ]
+        if pdf: 
+            links.append( '<a href="{0}.pdf">{0}.pdf</a>'.format(noext))
+        if python: 
+            links.append( '<a href="{0}.py">{0}.py</a>'.format(noext))
+        link = link.format( "\n<br />".join(links) )
+                
+        text = text.replace("</body>", link + "\n</body>")
+        text = text.replace("<title>[]</title>", "<title>%s</title>" % name)
+        if "<h1>" not in text : 
+            text = text.replace("<body>", "<body><h1>%s</h1>" % name)
+
+        with open(file, "w", encoding="utf8") as f :
+            f.write(text)
+        
+        return res
+        
+    elif ext == ".rst":
+        with open(file, "r", encoding="utf8") as f :
+            lines = f.readlines()
+            
+        for pos in range(0,len(lines)):
+            lines[pos] = lines[pos].replace(".. code:: python","::")
+            
+        for pos,line in enumerate(lines):
+            line = line.strip("\n\r")
+            if len(line) > 0 and line == "=" * len(line):
+                lines[pos] = lines[pos].replace("=","*")
+                pos2 = pos-1
+                l = len(lines[pos])
+                while len(lines[pos2])!=l: pos2-=1
+                sep = "" if lines[pos2].endswith("\n") else "\n"
+                lines[pos2] = "{0}{2}{1}".format(lines[pos],lines[pos2], sep)
+                for p in range(pos2+1,pos):
+                    if lines[p] == "\n": lines[p] = ""
+                break
+                
+        pos += 1
+        if pos >= len(lines):
+            raise HelpGenException("unable to find a title")
+            
+        # label
+        label = "\n.. _{0}:\n\n".format (name.replace(" ","").replace("_","").replace(":","").replace(".",""))
+        lines.insert(0,label)
+            
+        # links
+        links = [ '**Links:**','','    * :download:`{0}.ipynb <{0}.ipynb>`'.format(noext) ]
+        if html: 
+            links.append('    * :download:`{0}.html <{0}.html>`'.format(noext))
+        if pdf: 
+            links.append('    * :download:`{0}.pdf <{0}.pdf>`'.format(noext))
+        if python: 
+            links.append('    * :download:`{0}.py <{0}.py>`'.format(noext))
+        lines[pos] = "{0}\n\n{1}\n\n**Notebook:**\n\n".format(lines[pos],"\n".join(links))
+                
+        with open(file, "w", encoding="utf8") as f :
+            f.write("".join(lines))
+        
+        return res
+         
+    else :
+        raise HelpGenException("unable to add a link to this extension: " + ext)
+
+def add_notebook_page(nbs, fileout):
+    """
+    creates a rst page with links to all notebooks
+    
+    @param      nbs             list of notebooks to consider
+    @param      fileout         file to create
+    @return                     created file name
+    """
+    rst = [ _ for _ in nbs if _.endswith(".rst") ]
+
+    rows = ["", ".. _l-notebooks:","","","Notebooks","=========",""]
+
+    exp = re.compile("[.][.] _([-a-zA-Z0-9_]+):")
+    rst = sorted(rst)
+    for file in rst :
+        with open(file,"r",encoding="utf8") as f : cont = f.read()
+        found = exp.findall(cont)
+        if len(found) == 0: raise HelpGenException("unable to find a label in " + file)
+        rows.append ("    * :ref:`{0}`".format(found[0]))
+        
+    rows.append("")
+    with open(fileout, "w", encoding="utf8") as f :
+        f.write("\n".join(rows))
+    return file
+    
+

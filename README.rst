@@ -1,3 +1,4 @@
+
 .. _l-README:
 
 README
@@ -10,7 +11,6 @@ README
     * `GitHub/pyquickhelper <https://github.com/sdpython/pyquickhelper>`_
     * `documentation <http://www.xavierdupre.fr/app/pyquickhelper/helpsphinx/index.html>`_
     * `Windows Setup <http://www.xavierdupre.fr/site2013/index_code.html#pyquickhelper>`_
-
 
 Description
 -----------
@@ -46,8 +46,9 @@ This project contains various helper about logging functions, unit tests and hel
 Versions
 --------
 
-* **v0.4 - 2014/??/??**
+* **v0.4 - 2014/04/19**
     * **change**: add the possibility to create more than one page of examples, use tag ``@example(page___title)``
     * **change**: use method `communicate <https://docs.python.org/3.4/library/subprocess.html#subprocess.Popen.communicate>`_ in :func:`run_cmd <loghelper.flog.run_cmd>`, remove characters ``\r`` on Windows
     * **change**: more robust function :func:`run_cmd <loghelper.flog.run_cmd>`, change default values 
     * **change**: :func:`synchronize_folder <sync.synchelper.synchronize_folder>` now removes files when using a file to memorize the list of synchronized files
+    * **new:** the documentation generation takes notebooks from folder ``_docs/notebooks``
