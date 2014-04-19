@@ -222,6 +222,7 @@ out_*
 */sphinxdoc/source/readme.*
 */sphinxdoc/source/LICENSE.*
 */sphinxdoc/source/filechanges.*
+*/sphinxdoc/source/notebooks/*
 version.txt
 */sphinxdoc/source/pyquickhelper/*
 */sphinxdoc/source/all*.rst
