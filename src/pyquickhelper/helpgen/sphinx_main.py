@@ -269,18 +269,22 @@ def process_notebooks(  notebooks,
     
     @warning Some latex templates (for nbconvert) uses ``[commandchars=\\\\\\{\\}]{\\|}`` which allows commands ``\\\\`` and it does not compile. 
                 The one used here is ``report``.
+                
+    The function can use a different python Version if environement variable ``PANDOCPY`` is set up the Python path.
+    `WinPython <http://winpython.sourceforge.net/>`_ works better when a notebook contains an image.
     """
     if isinstance(notebooks,str):
         notebooks = [ notebooks ]
 
-    if sys.platform.startswith("win"):
-        user = os.environ["USERPROFILE"]
-        path = pandoc_path.replace("%USERPROFILE%", user)
-        p = os.environ["PATH"]
-        if path not in p :
-            p += ";" + path
-            os.environ["PATH"] = p
-            
+    if "PANDOCPY" in os.environ:
+        exe = os.environ["PANDOCPY"]
+        exe = exe.rstrip("\\/")
+        if exe.endswith("\\Scripts"):
+            exe = exe[:len(exe)-len("Scripts")-1]
+        if not os.path.exists(exe):
+            raise FileNotFoundError(exe)
+        fLOG("** using PANDOCPY", exe)
+    else :
         exe = os.path.split(sys.executable)[0]
         exe2 = exe.replace("Python34","Python33")
         if os.path.exists(exe2):
@@ -289,6 +293,15 @@ def process_notebooks(  notebooks,
         exe2 = exe.replace("Python33_x64", "Python33")
         if os.path.exists(exe2):
             exe = exe2  # safer for the moment
+    
+    if sys.platform.startswith("win"):
+        user = os.environ["USERPROFILE"]
+        path = pandoc_path.replace("%USERPROFILE%", user)
+        p = os.environ["PATH"]
+        if path not in p :
+            p += ";%WINPYDIR%\DLLs;" + path 
+            os.environ["WINPYDIR"]=exe
+            os.environ["PATH"] = p
             
         files = [ ]
         
@@ -353,6 +366,21 @@ def process_notebooks(  notebooks,
                 if not os.path.exists(dest):
                     raise FileNotFoundError(dest)
             copy.append ( dest )
+            
+        # image
+        for image in os.listdir(build):
+            if image.endswith(".png") or image.endswith(".html"):
+                image = os.path.join(build,image)
+                dest = os.path.join(outfold, os.path.split(image)[-1])
+                try:
+                    shutil.copy(image, outfold)
+                    fLOG("copy ",image, " to ", outfold, "[",dest,"]")
+                except shutil.SameFileError:
+                    fLOG("w,file ", dest, "already exists")
+                    pass
+                if not os.path.exists(dest):
+                    raise FileNotFoundError(dest)
+                copy.append ( dest )
         
         return copy
     else :
@@ -365,6 +393,8 @@ def add_link_to_notebook(file, nb, pdf, html, python):
     @param      file        notebook.html
     @param      nb          notebook (.ipynb)
     @param      pdf         if True, add a link to the PDF, assuming it will exists at the same location
+    
+    The function does some cleaning too in the files.
     """
     ext = os.path.splitext(file)[-1]
     
@@ -410,6 +440,10 @@ def add_link_to_notebook(file, nb, pdf, html, python):
             
         for pos in range(0,len(lines)):
             lines[pos] = lines[pos].replace(".. code:: python","::")
+            if lines[pos].startswith(".. image::"):
+                filename = lines[pos][len(".. image::"):].strip()
+                filename = os.path.split(filename) [-1]
+                lines[pos] = ".. image:: ../../_static/" + filename.replace(" ","%20")
             
         for pos,line in enumerate(lines):
             line = line.strip("\n\r")
