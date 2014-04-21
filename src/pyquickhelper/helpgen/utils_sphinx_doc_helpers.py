@@ -27,6 +27,9 @@ __FULLNAME_UNDERLINED__
   :platform: __PLATFORM__
 
 
+.. inheritance-diagram:: __FULLNAMENOEXT__
+
+
 Short summary
 +++++++++++++
       

@@ -52,6 +52,8 @@ extensions = [  'sphinx.ext.autodoc',
                 'sphinx.ext.viewcode',
                 'sphinxcontrib.fancybox',
                 'sphinx.ext.autosummary',
+                'sphinx.ext.graphviz',
+                'sphinx.ext.inheritance_diagram',
                 ]
                 
 # Add any paths that contain templates here, relative to this directory.
@@ -289,7 +291,14 @@ texinfo_documents = [
 ##################
 autoclass_content = 'both'
 autosummary_generate = True
+#inheritance_graph_attrs = dict(rankdir="LR", size='"6.0, 8.0"', fontsize=14, ratio='compress')
+#inheritance_node_attrs = dict(shape='ellipse', fontsize=14, height=0.75, color='dodgerblue1', style='filled')
+graphviz_output_format = "svg"
+graphviz_dot = r"C:\Program Files (x86)\Graphviz2.34\bin\dot.exe"
 
+if not os.path.exists(graphviz_dot):
+    raise FileNotFoundError(graphviz_dot)
+                               
 def skip(app, what, name, obj, skip, options):
     if name.startswith("_") and name not in \
             [   "__qualname__", 
