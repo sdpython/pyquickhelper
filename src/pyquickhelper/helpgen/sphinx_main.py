@@ -184,17 +184,17 @@ def generate_help_sphinx (  project_var_name,
     # notebooks
     notebook_dir = os.path.abspath(os.path.join("_doc", "notebooks"))
     notebook_doc = os.path.abspath(os.path.join("_doc/sphinxdoc/source", "notebooks"))
-    notebooks = [ os.path.join(notebook_dir,_) for _ in os.listdir(notebook_dir) if ".ipynb" in _ ]
-    if len(notebooks) >0:
-        fLOG("**** notebooks")
-        build = os.path.abspath("build/notebooks")
-        if not os.path.exists(build): os.makedirs(build)
-        if not os.path.exists(notebook_doc): os.mkdir(notebook_doc)
-        nbs = process_notebooks(notebooks, 
-                                build=build, 
-                                outfold=notebook_doc)
-        add_notebook_page(nbs, os.path.join(notebook_doc,"..","all_notebooks.rst"))
-    
+    if os.path.exists(notebook_dir):
+        notebooks = [ os.path.join(notebook_dir,_) for _ in os.listdir(notebook_dir) if ".ipynb" in _ ]
+        if len(notebooks) >0:
+            fLOG("**** notebooks")
+            build = os.path.abspath("build/notebooks")
+            if not os.path.exists(build): os.makedirs(build)
+            if not os.path.exists(notebook_doc): os.mkdir(notebook_doc)
+            nbs = process_notebooks(notebooks, 
+                                    build=build, 
+                                    outfold=notebook_doc)
+            add_notebook_page(nbs, os.path.join(notebook_doc,"..","all_notebooks.rst"))
                 
     #  run the documentation generation
     if sys.platform == "win32" :
