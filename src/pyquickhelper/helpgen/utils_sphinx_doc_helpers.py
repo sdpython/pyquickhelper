@@ -25,7 +25,7 @@ __FULLNAME_UNDERLINED__
 .. module:: __FULLNAMENOEXT__
   :synopsis: __DOCUMENTATIONLINE__
   :platform: __PLATFORM__
-  
+
 
 Short summary
 +++++++++++++

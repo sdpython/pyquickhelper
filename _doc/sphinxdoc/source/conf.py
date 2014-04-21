@@ -51,6 +51,7 @@ extensions = [  'sphinx.ext.autodoc',
                 'sphinx.ext.ifconfig', 
                 'sphinx.ext.viewcode',
                 'sphinxcontrib.fancybox',
+                'sphinx.ext.autosummary',
                 ]
                 
 # Add any paths that contain templates here, relative to this directory.
@@ -287,6 +288,7 @@ texinfo_documents = [
 # for the autogeneration
 ##################
 autoclass_content = 'both'
+autosummary_generate = True
 
 def skip(app, what, name, obj, skip, options):
     if name.startswith("_") and name not in \
