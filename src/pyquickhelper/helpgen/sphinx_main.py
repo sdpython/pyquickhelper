@@ -185,7 +185,8 @@ def generate_help_sphinx (  project_var_name,
     notebook_dir = os.path.abspath(os.path.join("_doc", "notebooks"))
     notebook_doc = os.path.abspath(os.path.join("_doc/sphinxdoc/source", "notebooks"))
     if os.path.exists(notebook_dir):
-        notebooks = [ os.path.join(notebook_dir,_) for _ in os.listdir(notebook_dir) if ".ipynb" in _ ]
+        notebooks = [ os.path.join(notebook_dir,_) for _ in os.listdir(notebook_dir) if ".ipynb" in _  ]
+        notebooks = [ _ for _ in notebooks if os.path.isfile(_) ]
         if len(notebooks) >0:
             fLOG("**** notebooks")
             build = os.path.abspath("build/notebooks")
@@ -463,7 +464,7 @@ def add_link_to_notebook(file, nb, pdf, html, python):
             raise HelpGenException("unable to find a title")
             
         # label
-        label = "\n.. _{0}:\n\n".format (name.replace(" ","").replace("_","").replace(":","").replace(".",""))
+        label = "\n.. _{0}:\n\n".format (name.replace(" ","").replace("_","").replace(":","").replace(".","").replace(",",""))
         lines.insert(0,label)
             
         # links
