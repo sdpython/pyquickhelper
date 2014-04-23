@@ -46,6 +46,8 @@ This project contains various helper about logging functions, unit tests and hel
 Versions
 --------
 
+* **v0.5 - 2014/??/??**
+    * **changes:** few fixes while generating the documentation (notebooks, toctrees)
 * **v0.4 - 2014/04/19**
     * **change**: add the possibility to create more than one page of examples, use tag ``@example(page___title)``
     * **change**: use method `communicate <https://docs.python.org/3.4/library/subprocess.html#subprocess.Popen.communicate>`_ in :func:`run_cmd <loghelper.flog.run_cmd>`, remove characters ``\r`` on Windows

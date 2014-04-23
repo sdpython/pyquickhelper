@@ -44,7 +44,11 @@ class TestNotebookConversion (unittest.TestCase):
                 "example pyquickhelper.pdf",
                 ]
         fou = [ os.path.split(_)[-1] for _ in res ]
-        assert exp == fou
+        if len(fou) < len(exp):
+            raise Exception("length {0} != {1}\n{2}\n---\n{3}".format(len(fou),len(exp),
+                    "\n".join(fou), "\n".join(exp)))
+        for i,j in zip(exp,fou):
+            if i != j : raise Exception("{0} != {1}".format(i,j))
      
         file = os.path.join(temp, "all_notebooks.rst")
         add_notebook_page(res, file)

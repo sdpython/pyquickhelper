@@ -108,10 +108,11 @@ def generate_changes_repo(  chan,
     return final
 
 def generate_help_sphinx (  project_var_name, 
-                            clean = True, 
-                            root = ".",
-                            filter_commit = lambda c : c.strip() != "documentation",
-                            extra_ext = []) :
+                            clean           = True, 
+                            root            = ".",
+                            filter_commit   = lambda c : c.strip() != "documentation",
+                            extra_ext       = [],
+                            nbformats       = ["html", "python", "rst", "pdf"]) :
     """
     runs the help generation
         - copies every file in another folder
@@ -124,6 +125,7 @@ def generate_help_sphinx (  project_var_name,
     @param      root                see below
     @param      filter_commit       function which accepts a commit to show on the documentation (based on the comment)
     @param      extra_ext           list of file extensions
+    @param      nbformats           requested formats for the notebooks conversion
     
     The result is stored in path: ``root/_doc/sphinxdoc/source``.
     
@@ -194,7 +196,8 @@ def generate_help_sphinx (  project_var_name,
             if not os.path.exists(notebook_doc): os.mkdir(notebook_doc)
             nbs = process_notebooks(notebooks, 
                                     build=build, 
-                                    outfold=notebook_doc)
+                                    outfold=notebook_doc,
+                                    formats=nbformats)
             add_notebook_page(nbs, os.path.join(notebook_doc,"..","all_notebooks.rst"))
                 
     #  run the documentation generation
@@ -248,8 +251,8 @@ def process_notebooks(  notebooks,
                         outfold, 
                         build,
                         pandoc_path = "%USERPROFILE%\\AppData\\Local\\Pandoc",
-                        formats = ["html", "python", "rst", "pdf"],
-                        latex_path = r"C:\Program Files\MiKTeX 2.9\miktex\bin\x64"):
+                        formats     = ["html", "python", "rst", "pdf"],
+                        latex_path  = r"C:\Program Files\MiKTeX 2.9\miktex\bin\x64"):
     """
     converts notebooks into html, rst, latex using 
     `nbconvert <http://ipython.org/ipython-doc/rel-1.0.0/interactive/nbconvert.html>`_.
@@ -389,7 +392,7 @@ def process_notebooks(  notebooks,
 
 def add_link_to_notebook(file, nb, pdf, html, python):
     """
-    add a link to the notebook in HTML format
+    add a link to the notebook in HTML format and does a little bit of cleaning
     
     @param      file        notebook.html
     @param      nb          notebook (.ipynb)
@@ -418,16 +421,16 @@ def add_link_to_notebook(file, nb, pdf, html, python):
                 </div>
                 '''
                 
-        links = [ '<b>links</b><br /><a href="{0}.ipynb">{0}.ipynb</a>'.format(noext) ]
+        links = [ '<b>links</b><br /><a href="{0}.ipynb">notebook</a>'.format(noext) ]
         if pdf: 
-            links.append( '<a href="{0}.pdf">{0}.pdf</a>'.format(noext))
+            links.append( '<a href="{0}.pdf">PDF</a>'.format(noext))
         if python: 
-            links.append( '<a href="{0}.py">{0}.py</a>'.format(noext))
+            links.append( '<a href="{0}.py">python</a>'.format(noext))
         link = link.format( "\n<br />".join(links) )
                 
         text = text.replace("</body>", link + "\n</body>")
         text = text.replace("<title>[]</title>", "<title>%s</title>" % name)
-        if "<h1>" not in text : 
+        if "<h1>" not in text and "<h1 id" not in text : 
             text = text.replace("<body>", "<body><h1>%s</h1>" % name)
 
         with open(file, "w", encoding="utf8") as f :
@@ -468,14 +471,27 @@ def add_link_to_notebook(file, nb, pdf, html, python):
         lines.insert(0,label)
             
         # links
-        links = [ '**Links:**','','    * :download:`{0}.ipynb <{0}.ipynb>`'.format(noext) ]
+        links = [ '**Links:**','','    * :download:`notebook <{0}.ipynb>`'.format(noext) ]
         if html: 
-            links.append('    * :download:`{0}.html <{0}.html>`'.format(noext))
+            links.append('    * :download:`html <{0}.html>`'.format(noext))
         if pdf: 
-            links.append('    * :download:`{0}.pdf <{0}.pdf>`'.format(noext))
+            links.append('    * :download:`PDF <{0}.pdf>`'.format(noext))
         if python: 
-            links.append('    * :download:`{0}.py <{0}.py>`'.format(noext))
+            links.append('    * :download:`python <{0}.py>`'.format(noext))
         lines[pos] = "{0}\n\n{1}\n\n**Notebook:**\n\n".format(lines[pos],"\n".join(links))
+        
+        # we remover some empty lines
+        rem=[]
+        for i in range(1,len(lines)-1):
+            if len(lines[i].strip(" \n\r")) == 0:
+                if lines[i-1][0:2] not in ["..", "  ","::"] and \
+                   lines[i+1][0:2] not in ["..", "  ","::"] and \
+                   len(lines[i-1].strip(" \n\r"))>0 and \
+                   len(lines[i+1].strip(" \n\r"))>0 :
+                    rem.append(i)
+        rem.reverse()
+        for i in rem:
+            del lines[i]
                 
         with open(file, "w", encoding="utf8") as f :
             f.write("".join(lines))
