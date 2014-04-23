@@ -808,6 +808,15 @@ def prepare_file_for_sphinx_help_generation (
     for k,v in res.items() :
         out = os.path.join(output, "index_" + k + ".rst")
         fLOG("  generates index", out)
+        if k == "module":
+            toc = ["\n\n.. toctree::\n"]
+            for _ in rsts :
+                if _.file != None and len(_.file) >0:
+                    na = os.path.splitext(_.rst)[0].replace("\\","/").split("/")
+                    if len(na)>4 : na = na[4:]
+                    na = ".".join(na)
+                    toc.append("    " + na)
+            v += "\n".join(toc)
         with open(out, "w", encoding="utf8") as f :
             f.write(v)
         rsts.append ( RstFileHelp (None, out, None) )
@@ -834,7 +843,7 @@ def prepare_file_for_sphinx_help_generation (
         for page,onefile in onefiles:
             saveas = os.path.join(output, "all_%s%s.rst" % \
                             (tag, \
-                             page.replace(":","").replace("/","")))
+                             page.replace(":","").replace("/","").replace(" ","")))
             with open(saveas, "w") as f : f.write(onefile)
             app.append( RstFileHelp (saveas, onefile, "") )
     rsts += app

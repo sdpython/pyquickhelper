@@ -46,7 +46,11 @@ About this documentation
     generatedoc
     generatesetup
     installation
+    all_example
+    all_FAQ
+    all_notebooks
     glossary
+    index_module
 
     
 Indices and tables

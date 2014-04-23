@@ -22,7 +22,7 @@ class TestNotebookConversion (unittest.TestCase):
         fLOG (__file__, self._testMethodName, OutputPrint = __name__ == "__main__")
         path    = os.path.abspath(os.path.split(__file__)[0])
         fold    = os.path.normpath(os.path.join(path, "..", "..", "_doc", "notebooks"))
-        nb      = os.path.join(fold, "example pyquickhelper.ipynb")
+        nb      = os.path.join(fold, "example_pyquickhelper.ipynb")
         assert os.path.exists(nb)
         
         temp = os.path.join(path, "temp_nb")
@@ -35,13 +35,13 @@ class TestNotebookConversion (unittest.TestCase):
             fLOG(_)
             assert os.path.exists(_)
                 
-        exp = ["example pyquickhelper.html",
-                "example pyquickhelper.ipynb",
-                "example pyquickhelper.py",
-                "example pyquickhelper.rst",
-                "example pyquickhelper.ipynb",
-                "example pyquickhelper.tex",
-                "example pyquickhelper.pdf",
+        exp = [ "example_pyquickhelper.html",
+                "example_pyquickhelper.ipynb",
+                "example_pyquickhelper.py",
+                "example_pyquickhelper.rst",
+                "example_pyquickhelper.ipynb",
+                "example_pyquickhelper.tex",
+                "example_pyquickhelper.pdf",
                 ]
         fou = [ os.path.split(_)[-1] for _ in res ]
         if len(fou) < len(exp):

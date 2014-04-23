@@ -313,6 +313,7 @@ def process_notebooks(  notebooks,
         cmd = '{0} nbconvert --to {1} "{2}" --template {5} --output="{3}\\{4}"'
         for notebook in notebooks:
             nbout = os.path.split(notebook)[-1]
+            if " " in nbout: raise Exception("spaces are not allowed in notebooks file names: {0}".format(notebook))
             nbout = os.path.splitext(nbout)[0]
             for format in formats :
                 
@@ -520,6 +521,12 @@ def add_notebook_page(nbs, fileout):
         found = exp.findall(cont)
         if len(found) == 0: raise HelpGenException("unable to find a label in " + file)
         rows.append ("    * :ref:`{0}`".format(found[0]))
+        
+    rows.append("")
+    rows.append(".. toctree::")
+    rows.append("")
+    for file in rst:
+        rows.append("    {0}".format(os.path.splitext(os.path.split(file)[-1])[0]))
         
     rows.append("")
     with open(fileout, "w", encoding="utf8") as f :
