@@ -578,7 +578,10 @@ def process_look_for_tag(tag, title, files):
     for file in files :
         if file.file == None : continue
         if "utils_sphinx_doc.py" in file.file : continue
-        with open(file.file,"r") as f : content = f.read()
+        try:
+            with open(file.file,"r",encoding="utf8") as f : content = f.read()
+        except:
+            with open(file.file,"r") as f : content = f.read()
         content = content.replace("\n",repl)
         
         all = exp.findall(content)
