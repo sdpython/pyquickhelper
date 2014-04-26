@@ -47,8 +47,8 @@ Indices and tables
 | :ref:`l-example` |  :ref:`l-FAQ`       | :ref:`l-notebooks`  |                  |                        |                     |
 +------------------+---------------------+---------------------+------------------+------------------------+---------------------+
    
-About this documentation
-------------------------
+Navigation
+==========
 
 .. toctree::
     :maxdepth: 1
@@ -63,8 +63,8 @@ About this documentation
     all_notebooks
     glossary
     index_module
-    all_indexes
     license
     filechanges
     README
+    all_indexes
     
