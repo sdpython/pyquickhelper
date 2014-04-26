@@ -1,7 +1,22 @@
+#-*- coding:utf-8 -*-
 """
 @file
 @brief To format a pandas dataframe
 """
+
+def len_modified(s):
+    """
+    estimate the length of a string for rst (issues with utf8 characters)
+    
+    @param      s       string
+    @return             length
+    
+    The function is currenlty calling ``len`` but it returns some issues if the 
+    encoding was not ``utf8``.
+    """
+    if not isinstance(s,str):
+        raise ValueError("expect a string")
+    return len(s)
 
 def df_to_rst(df, add_line=True, align = None):
     """
@@ -26,14 +41,14 @@ def df_to_rst(df, add_line=True, align = None):
     +------------------------+------------+----------+----------+        
     @endcode
     """
-    length  = [ len(_) for _ in df.columns ]
+    length  = [ len_modified(_) for _ in df.columns ]
     for row in df.values :
         for i,v in enumerate(row) :
-                length[i] = max ( length[i], len(str(v)) )
+                length[i] = max ( length[i], len_modified(str(v)) )
 
     if align != None :
         if isinstance(align,str):
-            align = [ align ] * len(length)
+            align = [ align ] * len_modified(length)
             
         if isinstance(align,list):
             if len(align) != len(length) :
@@ -80,7 +95,7 @@ def df_to_rst(df, add_line=True, align = None):
         s,i = cool
         s = str(s) + " "
         i -= 2
-        if len(s) < i : s += " " * (i-len(s))
+        if len_modified(s) < i : s += " " * (i-len_modified(s))
         return s
     
     res.append ( "| %s |" % " | ".join (map (complete, zip(df.columns, length)) ) )

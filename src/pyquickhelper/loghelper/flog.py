@@ -613,6 +613,30 @@ def split_cmp_command(cmd, remove_quotes = True) :
         return res
     else : 
         return cmd
+        
+def decode_outerr(outerr, encoding, encerror, msg):
+    """
+    decode the output or the error after running a command line instructions
+    
+    @param      outerr      output or error
+    @param      encoding    encoding
+    @param      encerror    how to handle errors
+    @param      msg         part of the error to add message 
+    @return                 converted string
+    """
+    if not isinstance(outerr,bytes):
+        raise TypeError("unable to decode string")
+    try :
+        out = outerr.decode(encoding, errors=encerror)
+        return out
+    except UnicodeDecodeError as exu :
+        try :
+            out = outerr.decode("utf8", errors=encerror)
+            return out
+        except Exception as e :
+            out = outerr.decode(encoding, errors='ignore')
+            raise Exception("issue with cmd:" + str(msg) + "\n" + str(exu)) from e
+    raise Exception("complete issue with cmd:" + str(msg)) 
     
 def run_cmd (   cmd, 
                 sin             = "", 
@@ -690,45 +714,19 @@ def run_cmd (   cmd,
         
         if communicate:
             stdoutdata, stderrdata = pproc.communicate(sin, timeout = None)
-            try :
-                out = stdoutdata.decode(encoding, errors=encerror)
-            except UnicodeDecodeError as exu :
-                try :
-                    out = stdoutdata.decode("latin-1", errors=encerror)
-                except Exception as e :
-                    out = stdoutdata.decode(encoding, errors='ignore')
-                    raise Exception("issue with cmd:" + str(cmd) + "\n" + str(exu)) from e
-                    
-            try :
-                err = stderrdata.decode(encoding, errors=encerror)
-            except UnicodeDecodeError as exu :
-                try :
-                    err = stderrdata.decode("latin-1", errors=encerror)
-                except Exception as e :
-                    err = stderrdata.decode(encoding, errors='ignore')
-                    raise Exception("issue with cmd:" + str(cmd) + "\n" + str(exu)) from e
-                    
-            
+            out = decode_outerr(stdoutdata, encoding, encerror, cmd)
+            err = decode_outerr(stderrdata, encoding, encerror, cmd)
         else :
             stdout, stderr = pproc.stdout, pproc.stderr
             
             if secure == None :
                 for line in stdout :
-                    try :
-                        decol = line.decode(encoding, errors=encerror)
-                    except UnicodeDecodeError as exu :
-                        try :
-                            decol = line.decode("latin-1", errors=encerror)
-                        except Exception as e :
-                            decol = line.decode(encoding, errors='ignore')
-                            raise Exception("issue with cmd:" + str(cmd) + "\n" + str(exu)) from e
-
+                    decol = decode_outerr(line, encoding, encerror, cmd)
                     if not do_not_log :
                         fLOG(decol.strip("\n\r"))
 
                     out.append(decol.strip("\n\r"))
-                    if stdout.closed: 
-                        break
+                    if stdout.closed: break
                     if stop_waiting_if != None and stop_waiting_if(decol) :
                         skip_waiting = True
                         break
@@ -753,20 +751,17 @@ def run_cmd (   cmd,
         
             out = "\n".join(out)
             temp = err = stderr.read()
-            try :
-                err = temp.decode(encoding, errors=encerror)
+            try:
+                err = decode_outerr(temp, encoding, encerror, cmd)
             except :
-                err = temp.decode(encoding, errors="ignore")
+                err = decode_outerr(temp, encoding, "ignore", cmd)
                 
             stdout.close()
             stderr.close()
 
         err = err.replace("\r\n","\n")
-        if not do_not_log : 
-            fLOG ("end of execution ", cmd)
-        if len (err) > 0 and log_error :
-            fLOG ("error (log)\n%s" % err)
-        #return bytes.decode (out, errors="ignore"), bytes.decode(err, errors="ignore")
+        if not do_not_log : fLOG ("end of execution ", cmd)
+        if len (err) > 0 and log_error : fLOG ("error (log)\n%s" % err)
         
         if sys.platform.startswith("win") :
             return out.replace("\r\n","\n"), err.replace("\r\n","\n")

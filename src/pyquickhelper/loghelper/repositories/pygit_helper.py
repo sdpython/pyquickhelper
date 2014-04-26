@@ -153,12 +153,14 @@ def get_repo_log (path = None, file_detail = False, commandline = True) :
             cmd = 'git' 
 
         cmd += ' log --pretty=format:"<logentry revision=\\"%h\\"><author>%an</author><date>%ci</date><msg>%s</msg><hash>%H</hash></logentry>" ' + path
+        enc  = sys.stdout.encoding if sys.stdout != None else "utf8"
         out,err = run_cmd(  cmd, 
                             wait = True, 
                             do_not_log = True, 
                             encerror = "strict",
-                            encoding = sys.stdout.encoding if sys.stdout != None else "utf8",
+                            encoding = enc,
                             change_path = os.path.split(path)[0] if os.path.isfile(path) else path)
+                            
         if len(err) > 0 :
             fLOG ("problem with file ", path, err)
             raise Exception(err)
@@ -166,6 +168,10 @@ def get_repo_log (path = None, file_detail = False, commandline = True) :
         master = get_master_location(path, commandline)
         if master.endswith(".git") :
             master = master[:-4]
+        
+        if enc != "utf8" and enc != None:
+            by = out.encode(enc)
+            out = by.decode("utf8")
 
         out = out.replace("\n\n","\n")
         out = "<xml>%s</xml>"%out

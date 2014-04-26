@@ -103,7 +103,7 @@ def generate_changes_repo(  chan,
 
     final = "\n".join(rows)
     if chan != None :
-        with open(chan, "w") as f :
+        with open(chan, "w", encoding="utf8") as f :
             f.write(final)
     return final
 
