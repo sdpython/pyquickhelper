@@ -471,10 +471,6 @@ def add_link_to_notebook(file, nb, pdf, html, python):
             
         for pos in range(0,len(lines)):
             lines[pos] = lines[pos].replace(".. code:: python","::")
-            if lines[pos].startswith(".. image::"):
-                filename = lines[pos][len(".. image::"):].strip()
-                filename = os.path.split(filename) [-1]
-                lines[pos] = ".. image:: ../../_static/" + filename.replace(" ","%20")
             
         for pos,line in enumerate(lines):
             line = line.strip("\n\r")
