@@ -258,7 +258,7 @@ class FrameParams (tkinter.Frame) :
         @warning If the string "__cancel__" is present in the results, it means the users clicked on cancel.
         
         The window looks like:
-        @image html http://www.xavierdupre.fr/app/screenshots/open_window_params.png
+        @image images/open_window_params.png
         
         Example:
         @code
@@ -302,7 +302,7 @@ def open_window_params (  params,
     @warning If the string "__cancel__" is present in the results, it means the users clicked on cancel.
     
     The window looks like:
-    @image html http://www.xavierdupre.fr/app/screenshots/open_window_params.png
+    @image images/open_window_params.png
     
     @example(open a tkinter window to ask parameters to a user)
     @code

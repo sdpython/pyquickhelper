@@ -562,6 +562,8 @@ def process_look_for_tag(tag, title, files):
         ...
         .. endtag.
         
+    If the extracted example contains an image (..image:: ../../), the path
+    is fixed too.
     """
     def noneempty(a):
         if "___" in a:
@@ -584,7 +586,8 @@ def process_look_for_tag(tag, title, files):
         if len(all2) > len(all) :
             raise HelpGenException("an issue was detected in file: " + file.file)
         
-        coll += [ noneempty(a) + (c.replace(repl,"\n"),b) for a,b,c in all ]
+        coll += [ noneempty(a) + \
+                  (fix_image_page_for_root(c.replace(repl,"\n"),file),b) for a,b,c in all ]
         
     coll.sort()
     coll = [ (_[0],) + _[2:] for _ in coll ]
@@ -627,6 +630,27 @@ def process_look_for_tag(tag, title, files):
 
         pagerows.append ( (page, "\n".join(rows)) )
     return pagerows
+    
+def fix_image_page_for_root(content, file):
+    """
+    look for images and fix their path as if the extract were copied to the root
+    
+    @param      content     extracted content
+    @param      file        file where is comes from
+    @return                 content
+    """
+    rows = content.split("\n")
+    for i in range(len(rows)):
+        row = rows[i]
+        if ".. image::" in row:
+            spl = row.split(".. image::")
+            img = spl[-1]
+            if "../images" in img:
+                img = img.lstrip("./ ")
+            if len(spl) == 1: row = ".. image:: " + img
+            else : row = spl[0] + ".. image:: " + img
+            rows[i] = row
+    return "\n".join(rows)
     
 def remove_some_indent(s):
     """

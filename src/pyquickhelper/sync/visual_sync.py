@@ -119,7 +119,7 @@ def create_visual_diff_through_html(string1, string2):
     @param  string2         second string
     @return                 html page
     
-    Example:
+    @example(Visualize the difference between two text files or strings)
     @code
     while open("file1.txt","r",encoding="utf8") as f : text1 = f.read()
     while open("file2.txt","r",encoding="utf8") as f : text2 = f.read()
@@ -128,6 +128,7 @@ def create_visual_diff_through_html(string1, string2):
     import webbrowser
     webbrowser.open("page.html")
     @endcode
+    @endexample
     """
     if True :
         from pymyinstall import ModuleInstall

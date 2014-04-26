@@ -803,23 +803,38 @@ def prepare_file_for_sphinx_help_generation (
     # processing all store_obj to compute some indices
     fLOG("extracted ", len(store_obj), " objects")
     res = produces_indexes(store_obj, indexes, fexclude_index)
- 
+    
     fLOG("generating ", len(res), " indexes for ", ", ".join(list(res.keys())))
+    allfiles = [ ]
     for k,v in res.items() :
         out = os.path.join(output, "index_" + k + ".rst")
+        allfiles.append("index_" + k)
         fLOG("  generates index", out)
         if k == "module":
             toc = ["\n\n.. toctree::\n"]
             for _ in rsts :
                 if _.file != None and len(_.file) >0:
                     na = os.path.splitext(_.rst)[0].replace("\\","/").split("/")
-                    if len(na)>4 : na = na[4:]
-                    na = ".".join(na)
+                    if len(na)>3 : na = na[3:]
+                    na = "/".join(na)
                     toc.append("    " + na)
             v += "\n".join(toc)
         with open(out, "w", encoding="utf8") as f :
             f.write(v)
         rsts.append ( RstFileHelp (None, out, None) )
+        
+    all_index = os.path.join(output, "all_indexes.rst")
+    with open(all_index,"w") as falli :
+        falli.write("\n")
+        falli.write("All indexes\n")
+        falli.write("===========\n")
+        falli.write("\n\n")
+        falli.write(".. toctree::\n")
+        falli.write("\n")
+        for k in sorted(allfiles):
+            falli.write("    %s\n" % k)
+        falli.write("\n")
+    rsts.append( RstFileHelp(None, all_index, None))
         
     # last function to process images
     fLOG("looking for images",output)
@@ -1160,10 +1175,20 @@ def private_migrating_doxygen_doc(
                 spl = strow.split()
                 img = spl[-1]
                 if img.startswith("http://") :
-                    rows[i] = "\n%s.. fancybox:: "%sp + img + "\n%s    no description\n\n"%sp
+                    rows[i] = "\n%s.. fancybox:: "%sp + img + "\n\n"
                 else :
+                    
+                    if img.startswith("images") or img.startswith("~"):
+                        # we assume it is a relative path to the source
+                        img = img.strip("~")
+                        spl_path = filename.replace("\\","/").split("/")
+                        pos = spl_path.index("src")
+                        ref = "/".join([".."] * (len(spl_path) - pos - 2)) + "/"
+                    else :
+                        ref = ""
+                        
                     sp = " " * row.index("@image")
-                    rows[i] = "\n%s.. image:: %s\n%s    :align: center\n" % (sp,img,sp)
+                    rows[i] = "\n%s.. image:: %s%s\n%s    :align: center\n" % (sp,ref,img,sp)
                     
             elif strow.startswith("@code") :
                 pos       = rows[i].find("@code")

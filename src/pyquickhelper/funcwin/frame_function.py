@@ -356,7 +356,7 @@ class FrameFunction (tkinter.Frame) :
         @param      key_save                suffix added to the file used to store the parameters
         
         The window looks like:
-        @image html http://www.xavierdupre.fr/app/screenshots/open_window_function.png
+        @image images/open_window_function.png
         
         Example:
         @code
@@ -442,7 +442,7 @@ def open_window_function (  func,
     @param      key_save                suffix added to the file used to store the parameters
     
     The window looks like:
-    @image html http://www.xavierdupre.fr/app/screenshots/open_window_function.png
+    @image images/open_window_function.png
     
     @example(open a tkinter windows to run a function)
     @code

@@ -358,6 +358,10 @@ def process_notebooks(  notebooks,
                     # we add a link to the notebook
                     files += add_link_to_notebook(files[-1], notebook, "pdf" in formats, "html" in formats, "python" in formats)
         
+                elif format == "tex":
+                    # we add a link to the notebook
+                    files += add_link_to_notebook(files[-1], notebook, False, False, False)
+        
         copy = [ ]
         for f in files:
             dest = os.path.join(outfold, os.path.split(f)[-1])
@@ -439,6 +443,28 @@ def add_link_to_notebook(file, nb, pdf, html, python):
         
         return res
         
+    elif ext == ".tex":
+        with open(file, "r", encoding="utf8") as f :
+            lines = f.readlines()
+        
+        # we remover some empty lines
+        rem=[]
+        for i in range(1,len(lines)-1):
+            if len(lines[i].strip(" \n\r")) == 0:
+                if lines[i-1][0:2] not in ["..", "  ","::"] and \
+                   lines[i+1][0:2] not in ["..", "  ","::"] and \
+                   len(lines[i-1].strip(" \n\r"))>0 and \
+                   len(lines[i+1].strip(" \n\r"))>0 :
+                    rem.append(i)
+        rem.reverse()
+        for i in rem:
+            del lines[i]
+                
+        with open(file, "w", encoding="utf8") as f :
+            f.write("".join(lines))
+            
+        return res
+        
     elif ext == ".rst":
         with open(file, "r", encoding="utf8") as f :
             lines = f.readlines()
@@ -516,21 +542,23 @@ def add_notebook_page(nbs, fileout):
 
     exp = re.compile("[.][.] _([-a-zA-Z0-9_]+):")
     rst = sorted(rst)
-    for file in rst :
-        with open(file,"r",encoding="utf8") as f : cont = f.read()
-        found = exp.findall(cont)
-        if len(found) == 0: raise HelpGenException("unable to find a label in " + file)
-        rows.append ("    * :ref:`{0}`".format(found[0]))
+    
+    if False:
+        for file in rst :
+            with open(file,"r",encoding="utf8") as f : cont = f.read()
+            found = exp.findall(cont)
+            if len(found) == 0: raise HelpGenException("unable to find a label in " + file)
+            rows.append ("    * :ref:`{0}`".format(found[0]))
         
     rows.append("")
     rows.append(".. toctree::")
     rows.append("")
     for file in rst:
-        rows.append("    {0}".format(os.path.splitext(os.path.split(file)[-1])[0]))
+        rows.append("    notebooks/{0}".format(os.path.splitext(os.path.split(file)[-1])[0]))
         
     rows.append("")
     with open(fileout, "w", encoding="utf8") as f :
         f.write("\n".join(rows))
-    return file
+    return fileout
     
 

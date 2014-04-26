@@ -36,23 +36,6 @@ Functionalities
     * help running unit tests
     * functions to convert a pandas DataFrame into a HTML table or a RST table
 
-About this documentation
-------------------------
-
-.. toctree::
-    :maxdepth: 1
-
-    doctestunit
-    generatedoc
-    generatesetup
-    installation
-    all_example
-    all_FAQ
-    all_notebooks
-    glossary
-    index_module
-
-    
 Indices and tables
 ==================
 
@@ -64,6 +47,24 @@ Indices and tables
 | :ref:`l-example` |  :ref:`l-FAQ`       | :ref:`l-notebooks`  |                  |                        |                     |
 +------------------+---------------------+---------------------+------------------+------------------------+---------------------+
    
-Other page of examples:
-    * :ref:`l-exampleotherpageofexamples`
+About this documentation
+------------------------
 
+.. toctree::
+    :maxdepth: 1
+
+    doctestunit
+    generatedoc
+    generatesetup
+    installation
+    all_example
+    all_example_otherpageofexamples
+    all_FAQ
+    all_notebooks
+    glossary
+    index_module
+    all_indexes
+    license
+    filechanges
+    README
+    

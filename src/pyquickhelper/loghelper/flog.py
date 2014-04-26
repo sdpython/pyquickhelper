@@ -36,7 +36,7 @@ def init (path = None, filename = None, create = True, path_add = []) :
     """
     initialisation
     @param      path            new path, 
-                                - if path == "###", then uses d:\\temp\\log_pyquickhelper is it exists or c:\\temp\\log_pyquickhelper if not
+                                    - if path == "###", then uses d:\\temp\\log_pyquickhelper is it exists or c:\\temp\\log_pyquickhelper if not
     @param      filename        new filename
     @param      create          force the creation
     @param      path_add        subfolder to append to the current folder
