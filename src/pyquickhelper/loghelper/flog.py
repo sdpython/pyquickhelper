@@ -173,7 +173,12 @@ def fLOG (*l, **p) :
     if len (l) > 0 :
         def _str_process (s) :
             if isinstance (s, str) : return s
-            else : return str (s)
+            elif isinstance(s, bytes) : return s.encode("utf8")
+            else : 
+                try:
+                    return str (s)
+                except Exception as e :
+                    raise Exception("unable to convert s into string: type(s)=" + str(type(s))) from e
                 
         message = str (dt).split (".")[0] + " " + " ".join ( [_str_process(s)  for s in l ] ) + sys.hal_log_values ["__log_file_sep"]
             
