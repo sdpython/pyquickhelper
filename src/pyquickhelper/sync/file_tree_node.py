@@ -19,41 +19,42 @@ class FileTreeNode :
     defines a node for a folder or a tree
     
     example:
-        @code
-        def example (p1, p2, hash_size = 1024**2*2, svn1 = True, svn2 = False) :
-            extout = re.compile (FileTreeNode.build_expression ("dvi bbl blg ilg ind old out pyc pyd " \
-                                          "bak idx obj log aux pdb sbr ncb res idb suo dep " \
-                                          "ogm manifest dsp dsz user ilk bsc exp eps".split ()))
-            extfou = re.compile ("(exeinterpreter[/\\\\].*[.]dll)|([/\\\\]upgradereport)|" \
-                                 "(thumbs[.]db)|([.]svn)|(temp[_/\\\\].*)")
+    
+    @code
+    def example (p1, p2, hash_size = 1024**2*2, svn1 = True, svn2 = False) :
+        extout = re.compile (FileTreeNode.build_expression ("dvi bbl blg ilg ind old out pyc pyd " \
+                                      "bak idx obj log aux pdb sbr ncb res idb suo dep " \
+                                      "ogm manifest dsp dsz user ilk bsc exp eps".split ()))
+        extfou = re.compile ("(exeinterpreter[/\\\\].*[.]dll)|([/\\\\]upgradereport)|" \
+                             "(thumbs[.]db)|([.]svn)|(temp[_/\\\\].*)")
+        
+        def filter (root, path, f, d) :
+            root = root.lower ()
+            path = path.lower ()
+            f    = f.lower ()
+            if extout.search (f) : 
+                if not d and not f.endswith (".pyc") : fLOG ("rejected (o1)", path, f)
+                return False
+            fu = os.path.join (path, f)
+            if extfou.search (fu) : 
+                if not d and not f.endswith (".pyc") : fLOG ("rejected (o2)", path, f)
+                return False
+            return True
             
-            def filter (root, path, f, d) :
-                root = root.lower ()
-                path = path.lower ()
-                f    = f.lower ()
-                if extout.search (f) : 
-                    if not d and not f.endswith (".pyc") : fLOG ("rejected (o1)", path, f)
-                    return False
-                fu = os.path.join (path, f)
-                if extfou.search (fu) : 
-                    if not d and not f.endswith (".pyc") : fLOG ("rejected (o2)", path, f)
-                    return False
-                return True
-                
-            f1  = p1
-            f2  = p2
-            
-            node1 = FileTreeNode (f1, filter = filter, svn = svn1)
-            node2 = FileTreeNode (f2, filter = filter, svn = svn2)
-            fLOG (len (node1), node1.max_date ())
-            fLOG (len (node2), node2.max_date ())
-             
-            res = node1.difference (node2, hash_size = hash_size)
-            return res
-            
-        fLOG (__file__, "synchro", OutputPrint = __name__ == "__main__")
-        res = example (p1, p2)
-        @endcode
+        f1  = p1
+        f2  = p2
+        
+        node1 = FileTreeNode (f1, filter = filter, svn = svn1)
+        node2 = FileTreeNode (f2, filter = filter, svn = svn2)
+        fLOG (len (node1), node1.max_date ())
+        fLOG (len (node2), node2.max_date ())
+         
+        res = node1.difference (node2, hash_size = hash_size)
+        return res
+        
+    fLOG (__file__, "synchro", OutputPrint = __name__ == "__main__")
+    res = example (p1, p2)
+    @endcode
     """
     
     _default_not_ext    = "bbl out pyc log lib ind pdb opt".split ()
@@ -117,19 +118,53 @@ class FileTreeNode :
                 self._fill (filter, repository = repository)
             
     @property
-    def name(self): return self._file
+    def name(self): 
+        """
+        return the file name from the root
+        """
+        return self._file
+    
     @property
-    def root(self): return self._root
+    def root(self): 
+        """
+        return the root directory, the one used as a root for a synchronization
+        """
+        return self._root
+    
     @property
-    def size(self): return self._size
+    def size(self): 
+        """
+        return the size
+        """
+        return self._size
+    
     @property
-    def date(self): return self._date
+    def date(self): 
+        """
+        returns the modification date
+        """
+        return self._date
+    
     @property
-    def type(self): return self._type
+    def type(self): 
+        """
+        returns the file type  (``file`` or ``folder``)
+        """
+        return self._type
+    
     @property
-    def fullname(self): return self.get_fullname()
+    def fullname(self): 
+        """
+        returns the full name
+        """
+        return self.get_fullname()
             
     def hash_md5_readfile (self):
+        """
+        compute a haash of a file
+        
+        @return     string
+        """
         filename    = self.get_fullname ()
         f           = open (filename,'rb')
         m           = hashlib.md5()
@@ -144,18 +179,23 @@ class FileTreeNode :
         return m.hexdigest ()            
                 
     def get_fullname (self) :
-        """return the full name
+        """
+        @return         the full name
         """
         if self._file == None : return self._root
         else : return os.path.join (self._root, self._file)
         
     def exists (self) :
-        """say if it does exist or not
+        """
+        say if it does exist or not
+        
+        @return     boolean
         """
         return os.path.exists (self.get_fullname ())
         
     def _fillstat (self) :
-        """fill _type, _size
+        """
+        private: fill _type, _size
         """
         full = self.get_fullname ()
         if os.path.isfile (full) :
@@ -169,7 +209,10 @@ class FileTreeNode :
         self._date  = temp
         
     def isdir (self) :
-        """is it a folder
+        """
+        is it a folder
+        
+        @return     boolean
         """
         return os.path.isdir (self.get_fullname ())
         
@@ -242,7 +285,10 @@ class FileTreeNode :
                     self._children.append (n)
             
     def get (self) :
-        """return a dictionary with all the values
+        """
+        return a dictionary with some values which describe the file
+        
+        @return     dict
         """
         res = { "name":     "" if self._file == None else self._file,
                 "root___":  self._root,

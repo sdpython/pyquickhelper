@@ -185,7 +185,7 @@ def synchronize_folder (   p1,
     The function ``filter_copy`` defines what file to synchronize or not.
     @code
     def filter_copy(file):
-        return "_don_t_synchornize_" not in file    
+        return "_don_t_synchronize_" not in file    
     
     synchronize_folder( "c:/mydata",
                         "g:/mybackup",
