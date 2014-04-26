@@ -221,6 +221,8 @@ def generate_help_sphinx (  project_var_name,
             if name.endswith(".rst") :
                 try :
                     with open(thn, "r", encoding="utf8") as f : f.read()
+                except UnicodeDecodeError as e :
+                    raise HelpGenException ("issue with encoding for file ", thn) from e
                 except Exception as e :
                     raise HelpGenException ("issue with file ", thn) from e
                 
@@ -317,14 +319,26 @@ def process_notebooks(  notebooks,
             nbout = os.path.splitext(nbout)[0]
             for format in formats :
                 
-                compilation = format == "pdf"
-                if format == "pdf": format = "latex"
+                options = ""
+                if format == "pdf": 
+                    title = os.path.splitext(os.path.split(notebook)[-1])[0].replace("_", " ")
+                    format = "latex"
+                    options = ' --post PDF --SphinxTransformer.author="" --SphinxTransformer.overridetitle="{0}"'.format(title)
+                    compilation = False
+                else :
+                    compilation = False
                 
                 templ = "full" if format != "latex" else "article"
                 fLOG("convert into ", format, " NB: ", notebook)
                 c = cmd.format(ipy, format, notebook, build, nbout, templ)
+                c += options
                 fLOG(c)
+                
+                if format == "latex":
+                    cwd = os.getcwd()
+                    os.chdir(build)
                 out,err = run_cmd(c,wait=True, do_not_log = False, log_error=False)
+                if format == "latex": os.chdir(cwd)
                 
                 if "raise ImportError" in err:
                     raise ImportError(err)
@@ -334,6 +348,8 @@ def process_notebooks(  notebooks,
                 if format == "latex": format = "tex"
                 if format == "python": format = "py"
                 files.append ( os.path.join( build, nbout + "." + format) )
+                if "--post PDF" in c :
+                    files.append ( os.path.join( build, nbout + ".pdf") )
                 
                 if compilation:
                     # compilation latex
@@ -357,10 +373,6 @@ def process_notebooks(  notebooks,
                 elif format == "rst":
                     # we add a link to the notebook
                     files += add_link_to_notebook(files[-1], notebook, "pdf" in formats, "html" in formats, "python" in formats)
-        
-                elif format == "tex":
-                    # we add a link to the notebook
-                    files += add_link_to_notebook(files[-1], notebook, False, False, False)
         
         copy = [ ]
         for f in files:
@@ -442,29 +454,7 @@ def add_link_to_notebook(file, nb, pdf, html, python):
             f.write(text)
         
         return res
-        
-    elif ext == ".tex":
-        with open(file, "r", encoding="utf8") as f :
-            lines = f.readlines()
-        
-        # we remover some empty lines
-        rem=[]
-        for i in range(1,len(lines)-1):
-            if len(lines[i].strip(" \n\r")) == 0:
-                if lines[i-1][0:2] not in ["..", "  ","::"] and \
-                   lines[i+1][0:2] not in ["..", "  ","::"] and \
-                   len(lines[i-1].strip(" \n\r"))>0 and \
-                   len(lines[i+1].strip(" \n\r"))>0 :
-                    rem.append(i)
-        rem.reverse()
-        for i in rem:
-            del lines[i]
-                
-        with open(file, "w", encoding="utf8") as f :
-            f.write("".join(lines))
-            
-        return res
-        
+              
     elif ext == ".rst":
         with open(file, "r", encoding="utf8") as f :
             lines = f.readlines()
