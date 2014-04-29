@@ -196,7 +196,9 @@ class Doxypy(object):
         self.indent = ""
 
     def __closeComment(self):
-        """Appends any open comment block and triggering block to the output."""
+        """
+        Appends any open comment block and triggering block to the output.
+        """
         
         if options.autobrief:
             if len(self.comment) == 1 \
@@ -211,7 +213,8 @@ class Doxypy(object):
             self.output.extend(block)
             
     def __docstringSummaryToBrief(self, line):
-        """Adds \\brief to the docstrings summary line.
+        """
+        Adds \\brief to the docstrings summary line.
         
         A \\brief is prepended, provided no other doxygen command is at the
         start of the line.
@@ -223,7 +226,9 @@ class Doxypy(object):
             return line
     
     def __flushBuffer(self):
-        """Flushes the current outputbuffer to the outstream."""
+        """
+        Flushes the current outputbuffer to the outstream.
+        """
         if self.output:
             if options.debug :
                 print("# OUTPUT: ", self.output, file=sys.stderr)
@@ -232,11 +237,14 @@ class Doxypy(object):
         self.output = []
 
     def catchall(self, input):
-        """The catchall-condition, always returns true."""
+        """
+        The catchall-condition, always returns true.
+        """
         return True
     
     def resetCommentSearch(self, match):
-        """Restarts a new comment search for a different triggering line.
+        """
+        Restarts a new comment search for a different triggering line.
         
         Closes the current commentblock and starts a new comment search.
         """
@@ -246,7 +254,8 @@ class Doxypy(object):
         self.startCommentSearch(match)
     
     def startCommentSearch(self, match):
-        """Starts a new comment search.
+        """
+        Starts a new comment search.
         
         Saves the triggering line, resets the current comment and saves
         the current indentation.
@@ -258,7 +267,8 @@ class Doxypy(object):
         self.indent = match.group(1)        
     
     def stopCommentSearch(self, match):
-        """Stops a comment search.
+        """
+        Stops a comment search.
         
         Closes the current commentblock, resets the triggering line and
         appends the current line to the output.
@@ -271,7 +281,8 @@ class Doxypy(object):
         self.output.append(self.fsm.current_input)
     
     def appendFileheadLine(self, match):
-        """Appends a line in the FILEHEAD state.
+        """
+        Appends a line in the FILEHEAD state.
         
         Closes the open comment block, resets it and appends the current line.
         """ 
@@ -282,7 +293,8 @@ class Doxypy(object):
         self.output.append(self.fsm.current_input)
 
     def appendCommentLine(self, match):
-        """Appends a comment line.
+        """
+        Appends a comment line.
         
         The comment delimiter is removed from multiline start and ends as
         well as singleline comments.
@@ -323,19 +335,24 @@ class Doxypy(object):
             self.comment.append(self.fsm.current_input)
     
     def appendNormalLine(self, match):
-        """Appends a line to the output."""
+        """
+        Appends a line to the output.
+        """
         if options.debug :
             self.print_output("# CALLBACK: appendNormalLine", file=sys.stderr) 
         self.output.append(self.fsm.current_input)
         
     def appendDefclassLine(self, match):
-        """Appends a line to the triggering block."""
+        """
+        Appends a line to the triggering block.
+        """
         if options.debug :
             self.print_output("# CALLBACK: appendDefclassLine", file=sys.stderr) 
         self.defclass.append(self.fsm.current_input)
     
     def makeCommentBlock(self):
-        """Indents the current comment block with respect to the current
+        """
+        Indents the current comment block with respect to the current
         indentation level.
 
         @returns a list of indented comment lines
@@ -359,7 +376,8 @@ class Doxypy(object):
         return l
     
     def parse(self, input):
-        """Parses a python file given as input string and returns the doxygen-
+        """
+        Parses a python file given as input string and returns the doxygen-
         compatible representation.
         
         @param  input   the python code to parse
@@ -376,7 +394,8 @@ class Doxypy(object):
         return "\n".join(self.output)
     
     def parseFile(self, filename):
-        """Parses a python file given as input string and returns the doxygen-
+        """
+        Parses a python file given as input string and returns the doxygen-
         compatible representation.
         
         @param  filename       the python code to parse (filename)
@@ -404,7 +423,8 @@ class Doxypy(object):
             self.__flushBuffer()
     
     def parseLine(self, line):
-        """Parse one line of python and flush the resulting output to the 
+        """
+        Parse one line of python and flush the resulting output to the 
         outstream.
         
         @param  line    the python code line to parse
@@ -413,7 +433,9 @@ class Doxypy(object):
         self.__flushBuffer()
     
 def optParse():
-    """Parses commandline options."""
+    """
+    Parses commandline options.
+    """
     parser = OptionParser(prog=__applicationName__, version="%prog " + __version__)
     
     parser.set_usage("%prog [options] filename")
@@ -437,7 +459,8 @@ def optParse():
     return filename[0]
 
 def main(file = None, print_output = None):
-    """Starts the parser on the file given by the filename as the first 
+    """
+    Starts the parser on the file given by the filename as the first 
     argument on the commandline.
     
     @param      file        if equal to None, take this one on the command line
