@@ -859,7 +859,7 @@ def prepare_file_for_sphinx_help_generation (
             saveas = os.path.join(output, "all_%s%s.rst" % \
                             (tag, \
                              page.replace(":","").replace("/","").replace(" ","")))
-            with open(saveas, "w") as f : f.write(onefile)
+            with open(saveas, "w", encoding="utf8") as f : f.write(onefile)
             app.append( RstFileHelp (saveas, onefile, "") )
     rsts += app
   
@@ -1100,12 +1100,12 @@ def private_migrating_doxygen_doc(
             
     """
     debugrows = rows
-    rows = copy.copy(rows)
+    rows = [ _.replace("\t", "    ") for _ in rows ]
     pars = re.compile ("([@]param( +)([a-zA-Z0-9_]+)) ")
     refe = re.compile ("([@]((see)|(ref)) +((fn)|(cl)|(at)|(me)|(te)|(md)) +([a-zA-Z0-9_]+))($|[^a-zA-Z0-9_])")
     exce = re.compile ("([@]exception( +)([a-zA-Z0-9_]+)) ")
     exem = re.compile ("([@]example[(](.*?___)?(.*?)[)])")
-    faq_ = re.compile ("([@]FAQ[(](.*?)[)])")
+    faq_ = re.compile ("([@]FAQ[(](.*?___)?(.*?)[)])")
     
     indent    = False
     openi     = False
@@ -1236,7 +1236,7 @@ def private_migrating_doxygen_doc(
             elif example:
                 sp      = " " * row.index("@example")
                 rep     = example.groups()[0]
-                exa     = example.groups()[2]
+                exa     = example.groups()[2].replace("[|","(").replace("|]",")")
                 pag     = example.groups()[1]
                 if pag is None: pag = ""
                 ref     = os.path.splitext(os.path.split(filename)[-1])[0] + "-l%d" % i
@@ -1251,9 +1251,11 @@ def private_migrating_doxygen_doc(
             elif faq:
                 sp      = " " * row.index("@FAQ")
                 rep     = faq.groups()[0]
-                exa     = faq.groups()[1]
+                exa     = faq.groups()[2].replace("[|","(").replace("|]",")")
+                pag     = faq.groups()[1]
+                if pag is None: pag = ""
                 ref     = os.path.splitext(os.path.split(filename)[-1])[0] + "-l%d" % i
-                to      = "\n\n%s.. _lf-%s:\n\n%s**%s**  \n\n\n%s.. FAQ(%s;;lf-%s)." % (sp,ref,sp,exa,sp,exa,ref)
+                to      = "\n\n%s.. _le-%s:\n\n%s**FAQ: %s**  \n\n%s.. FAQ(%s%s;;le-%s)." % (sp,ref,sp,exa,sp,pag,exa,ref)
                 rows[i] = row.replace(rep, to)
                 
                 # it requires an empty line before if the previous line does not start by :
