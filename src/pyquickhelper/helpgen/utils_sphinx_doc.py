@@ -1193,11 +1193,14 @@ def private_migrating_doxygen_doc(
             elif strow.startswith("@code") :
                 pos       = rows[i].find("@code")
                 sp        = " "*pos
+                prev      = i-1
+                while prev > 0 and len(rows[prev].strip(" \n\r\t"))== 0:
+                    prev -= 1
                 rows[i]   = ""
-                if rows[i-1].strip("\n").endswith("."): 
-                    rows[i-1] += "\n\n%s::\n" % sp
+                if rows[prev].strip("\n").endswith("."): 
+                    rows[prev] += "\n\n%s::\n" % sp
                 else :
-                    rows[i-1] += (":" if rows[i].endswith(":") else "::")
+                    rows[prev] += (":" if rows[i].endswith(":") else "::")
                 indent = True
                 openi  = True
                 beginends["code"] = beginends.get("code",0)+1
