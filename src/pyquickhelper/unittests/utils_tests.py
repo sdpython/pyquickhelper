@@ -135,7 +135,9 @@ def import_files (li) :
     return allsuite
     
 def clean () :
-    """do the cleaning"""
+    """
+    do the cleaning
+    """
     # do not use SVN here just in case some files are not checked in.
     print
     for log_file in ["temp_hal_log.txt", "temp_hal_log2.txt", 
@@ -181,13 +183,18 @@ def main (  runner,
             log         = False,
             skip        = -1) :
     """
+    run all unit test
+    the function looks into the folder _unittest and extract from all files
+    beginning by `test_` all methods starting by `test_`.
+    Each files should mention an execution time.
+    Tests are sorted by increasing order.
+    
     @param      runner      unittest Runner
     @param      path_test   path to look, if None, looks for defaults path related to this project
     @param      limit_max   avoid running tests longer than limit seconds
     @param      log         if True, enables intermediate files
     @param      skip        if skip != -1, skip the first "skip" test files
     @return                 list of couple (file, test results)
-    run all NRT
     """
 
     # checking that the module does not belong to the installed modules
