@@ -1242,7 +1242,7 @@ def private_migrating_doxygen_doc(
                 exa     = example.groups()[2].replace("[|","(").replace("|]",")")
                 pag     = example.groups()[1]
                 if pag is None: pag = ""
-                ref     = os.path.splitext(os.path.split(filename)[-1])[0] + "-l%d" % i
+                ref     = os.path.splitext(os.path.split(filename)[-1])[0] + "-l%d" % (i+index_first_line)
                 to      = "\n\n%s.. _le-%s:\n\n%s**Example: %s**  \n\n%s.. example(%s%s;;le-%s)." % (sp,ref,sp,exa,sp,pag,exa,ref)
                 rows[i] = row.replace(rep, to)
                 
@@ -1257,7 +1257,7 @@ def private_migrating_doxygen_doc(
                 exa     = faq.groups()[2].replace("[|","(").replace("|]",")")
                 pag     = faq.groups()[1]
                 if pag is None: pag = ""
-                ref     = os.path.splitext(os.path.split(filename)[-1])[0] + "-l%d" % i
+                ref     = os.path.splitext(os.path.split(filename)[-1])[0] + "-l%d" % (i+index_first_line)
                 to      = "\n\n%s.. _le-%s:\n\n%s**FAQ: %s**  \n\n%s.. FAQ(%s%s;;le-%s)." % (sp,ref,sp,exa,sp,pag,exa,ref)
                 rows[i] = row.replace(rep, to)
                 
