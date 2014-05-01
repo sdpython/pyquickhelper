@@ -30,7 +30,9 @@ class TestNotebookConversion (unittest.TestCase):
         for file in os.listdir(temp): 
             os.remove(os.path.join(temp,file))
         
-        res = process_notebooks(nb, temp, temp)
+        p1  = r"C:\Program Files\MiKTeX 2.9\miktex\bin\x64"
+        p2  = r"%USERPROFILE%\AppData\Local\Pandoc"
+        res = process_notebooks(nb, temp, temp, latex_path = p1, pandoc_path = p2)
         for _ in res:
             fLOG(_)
             assert os.path.exists(_)

@@ -1,9 +1,10 @@
 """
 @file
-@brief Main functions to produce the documentation for a module
+@brief Contains the main function to generate the documentation
+for a module designed the same way as this one, @see fn generate_help_sphinx.
 
 """
-import os,sys, shutil, datetime, re
+import os,sys, shutil, datetime, re, importlib
 from pandas import DataFrame
 
 from ..loghelper.flog           import run_cmd, fLOG
@@ -29,6 +30,177 @@ Another list
 
 """
 
+def generate_help_sphinx (  project_var_name, 
+                            clean           = True, 
+                            root            = ".",
+                            filter_commit   = lambda c : c.strip() != "documentation",
+                            extra_ext       = [],
+                            nbformats       = ["html", "python", "rst", "pdf"],
+                            layout          = ["html"]) :
+    """
+    runs the help generation
+        - copies every file in another folder
+        - replaces comments in doxygen format into rst format
+        - replaces local import by global import (tweaking sys.path too)
+        - calls sphinx to generate the documentation.
+        
+    @param      project_var_name    project name
+    @param      clean               if True, cleans the previous documentation first
+    @param      root                see below
+    @param      filter_commit       function which accepts a commit to show on the documentation (based on the comment)
+    @param      extra_ext           list of file extensions
+    @param      nbformats           requested formats for the notebooks conversion
+    @param      layout              list of formats sphinx should generate such as html, latex, pdf, docx 
+    
+    The result is stored in path: ``root/_doc/sphinxdoc/source``.
+    We assume the file ``root/_doc/sphinxdoc/source/conf.py`` exists
+    as well as ``root/_doc/sphinxdoc/source/index.rst``.
+    
+    If you generate latex/pdf files, you should add variables ``latex_path`` and ``pandoc_path``
+    in your file ``conf.py`` which defines the help.
+    
+    @code
+    latex_path  = r"C:/Program Files/MiKTeX 2.9/miktex/bin/x64"
+    pandoc_path = r"%USERPROFILE%/AppData/Local/Pandoc"
+    @endcode
+    
+    @example(run help generation)
+    @code
+    # from the main folder which contains folder src
+    generate_help_sphinx("pyquickhelper")
+    @endcode
+    @endexample
+    
+    By default, the function only consider files end by ``.py`` and ``.rst`` but you could
+    add others files sharing the same extensions by adding this one
+    in the ``extra_ext`` list.
+    
+    @example(other page of examples___run help generation)
+    This example is exactly the same as the previous one but will be generated on another page of examples.
+    @code
+    # from the main folder which contains folder src
+    generate_help_sphinx("pyquickhelper")
+    @endcode
+    @endexample
+    """
+    root = os.path.abspath(root)
+    froot = root
+    sys.path.append (os.path.join(root, "_doc", "sphinxdoc","source"))
+    
+    src = SourceRepository(commandline=True)
+    version = src.version(root)
+    if version != None :
+        with open("version.txt", "w") as f : f.write(str(version) + "\n")
+    
+    # modifies the version number in conf.py
+    shutil.copy("README.rst", "_doc/sphinxdoc/source")
+    shutil.copy("LICENSE.txt", "_doc/sphinxdoc/source")
+    
+    # import conf.py
+    theconf     = importlib.import_module('conf')
+    if theconf is None:
+        raise ImportError("unable to import conf.py which defines the help generation")
+    latex_path  = theconf.__dict__.get("latex_path",r"C:\Program Files\MiKTeX 2.9\miktex\bin\x64")
+    pandoc_path = theconf.__dict__.get("pandoc_path",r"%USERPROFILE%\AppData\Local\Pandoc")
+
+    #changes
+    chan = os.path.join (root, "_doc", "sphinxdoc", "source", "filechanges.rst")
+    generate_changes_repo(chan, root, filter_commit = filter_commit)
+    
+    # copy the files 
+    optional_dirs = [ ]
+    
+    mapped_function = [ (".*[.]%s$" % ext.strip(".") , None) for ext in extra_ext ]
+            
+    prepare_file_for_sphinx_help_generation ( 
+                {},
+                root, 
+                "_doc/sphinxdoc/source/", 
+                subfolders      = [ 
+                                    ("src/" + project_var_name, project_var_name), 
+                                     ],
+                silent          = True,
+                rootrep         = ("_doc.sphinxdoc.source.%s." % (project_var_name,), ""),
+                optional_dirs   = optional_dirs,
+                mapped_function = mapped_function )
+                
+    fLOG("**** end of prepare_file_for_sphinx_help_generation")
+    
+    # notebooks
+    notebook_dir = os.path.abspath(os.path.join("_doc", "notebooks"))
+    notebook_doc = os.path.abspath(os.path.join("_doc/sphinxdoc/source", "notebooks"))
+    if os.path.exists(notebook_dir):
+        notebooks = [ os.path.join(notebook_dir,_) for _ in os.listdir(notebook_dir) if ".ipynb" in _  ]
+        notebooks = [ _ for _ in notebooks if os.path.isfile(_) ]
+        if len(notebooks) >0:
+            fLOG("**** notebooks")
+            build = os.path.abspath("build/notebooks")
+            if not os.path.exists(build): os.makedirs(build)
+            if not os.path.exists(notebook_doc): os.mkdir(notebook_doc)
+            nbs = process_notebooks(notebooks, 
+                                    build=build, 
+                                    outfold=notebook_doc,
+                                    formats=nbformats,
+                                    latex_path=latex_path,
+                                    pandoc_path=pandoc_path)
+            add_notebook_page(nbs, os.path.join(notebook_doc,"..","all_notebooks.rst"))
+                
+    #  run the documentation generation
+    if sys.platform == "win32" :
+        temp = os.environ ["PATH"]
+        pyts = get_executables_path()
+        script = ";".join(pyts)
+        fLOG ("adding " + script)
+        temp = script + ";" + temp
+        os.environ["PATH"] = temp
+        fLOG("changing PATH", temp)
+        pa = os.getcwd ()
+
+    thispath = os.path.normpath(root)
+    docpath  = os.path.normpath(os.path.join(thispath, "_doc","sphinxdoc"))
+
+    fLOG("checking encoding utf8...")
+    for root, dirs, files in os.walk(docpath):
+        for name in files:
+            thn = os.path.join(root, name)
+            if name.endswith(".rst") :
+                try :
+                    with open(thn, "r", encoding="utf8") as f : f.read()
+                except UnicodeDecodeError as e :
+                    raise HelpGenException ("issue with encoding for file ", thn) from e
+                except Exception as e :
+                    raise HelpGenException ("issue with file ", thn) from e
+                
+    fLOG("running sphinx... from", docpath)
+    if not os.path.exists (docpath) :
+        raise FileNotFoundError(docpath)
+        
+    if sys.platform == "win32" :
+        make = os.path.join(docpath, "make.bat")
+        if not os.path.exists(make) : raise FileNotFoundError(make)
+            
+    os.chdir (docpath)
+    if clean :
+        cmd = "make.bat clean".split ()
+        run_cmd (cmd, wait = True)
+        
+    for lay in layout :
+        if lay == "pdf":
+            lay = "latex"
+        cmd = "make {0}".format(lay)
+        # This instruction should work but it does not. Sphinx seems to be stuck.
+        #run_cmd (cmd, wait = True, secure="make_help.log", stop_waiting_if = lambda v : "build succeeded" in v)
+        # The following one works but opens a extra windows.
+        os.system(cmd)
+        if lay == "latex":
+            post_process_latex_output(froot)
+        
+    if "pdf" in layout:
+        compile_latex_output(froot, latex_path)
+    
+    # end
+    os.chdir (pa)
+    
 def get_executables_path() :
     """
     returns the paths to Python, Python Scripts
@@ -107,154 +279,13 @@ def generate_changes_repo(  chan,
             f.write(final)
     return final
 
-def generate_help_sphinx (  project_var_name, 
-                            clean           = True, 
-                            root            = ".",
-                            filter_commit   = lambda c : c.strip() != "documentation",
-                            extra_ext       = [],
-                            nbformats       = ["html", "python", "rst", "pdf"]) :
-    """
-    runs the help generation
-        - copies every file in another folder
-        - replaces comments in doxygen format into rst format
-        - replaces local import by global import (tweaking sys.path too)
-        - calls sphinx to generate the documentation.
-        
-    @param      project_var_name    project name
-    @param      clean               if True, cleans the previous documentation first
-    @param      root                see below
-    @param      filter_commit       function which accepts a commit to show on the documentation (based on the comment)
-    @param      extra_ext           list of file extensions
-    @param      nbformats           requested formats for the notebooks conversion
-    
-    The result is stored in path: ``root/_doc/sphinxdoc/source``.
-    
-    @example(run help generation)
-    @code
-    # from the main folder which contains folder src
-    generate_help_sphinx("pyquickhelper")
-    @endcode
-    @endexample
-    
-    By default, the function only consider files end by ``.py`` and ``.rst`` but you could
-    add others files sharing the same extensions by adding this one
-    in the ``extra_ext`` list.
-    
-    @example(other page of examples___run help generation)
-    This example is exactly the same as the previous one but will be generated on another page of examples.
-    @code
-    # from the main folder which contains folder src
-    generate_help_sphinx("pyquickhelper")
-    @endcode
-    @endexample
-    """
-    sys.path.append (os.path.abspath(os.path.join("_doc", "sphinxdoc","source")))
-    root = os.path.abspath(root)
-    
-    src = SourceRepository(commandline=True)
-    version = src.version(os.path.abspath(root))
-    if version != None :
-        with open("version.txt", "w") as f : f.write(str(version) + "\n")
-    
-    # modifies the version number in conf.py
-    shutil.copy("README.rst", "_doc/sphinxdoc/source")
-    shutil.copy("LICENSE.txt", "_doc/sphinxdoc/source")
-
-    #changes
-    chan = os.path.join (root, "_doc", "sphinxdoc", "source", "filechanges.rst")
-    generate_changes_repo(chan, root, filter_commit = filter_commit)
-    
-    # copy the files 
-    optional_dirs = [ ]
-    
-    mapped_function = [ (".*[.]%s$" % ext.strip(".") , None) for ext in extra_ext ]
-            
-    prepare_file_for_sphinx_help_generation ( 
-                {},
-                root, 
-                "_doc/sphinxdoc/source/", 
-                subfolders      = [ 
-                                    ("src/" + project_var_name, project_var_name), 
-                                     ],
-                silent          = True,
-                rootrep         = ("_doc.sphinxdoc.source.%s." % (project_var_name,), ""),
-                optional_dirs   = optional_dirs,
-                mapped_function = mapped_function )
-                
-    fLOG("**** end of prepare_file_for_sphinx_help_generation")
-    
-    # notebooks
-    notebook_dir = os.path.abspath(os.path.join("_doc", "notebooks"))
-    notebook_doc = os.path.abspath(os.path.join("_doc/sphinxdoc/source", "notebooks"))
-    if os.path.exists(notebook_dir):
-        notebooks = [ os.path.join(notebook_dir,_) for _ in os.listdir(notebook_dir) if ".ipynb" in _  ]
-        notebooks = [ _ for _ in notebooks if os.path.isfile(_) ]
-        if len(notebooks) >0:
-            fLOG("**** notebooks")
-            build = os.path.abspath("build/notebooks")
-            if not os.path.exists(build): os.makedirs(build)
-            if not os.path.exists(notebook_doc): os.mkdir(notebook_doc)
-            nbs = process_notebooks(notebooks, 
-                                    build=build, 
-                                    outfold=notebook_doc,
-                                    formats=nbformats)
-            add_notebook_page(nbs, os.path.join(notebook_doc,"..","all_notebooks.rst"))
-                
-    #  run the documentation generation
-    if sys.platform == "win32" :
-        temp = os.environ ["PATH"]
-        pyts = get_executables_path()
-        script = ";".join(pyts)
-        fLOG ("adding " + script)
-        temp = script + ";" + temp
-        os.environ["PATH"] = temp
-        fLOG("changing PATH", temp)
-        pa = os.getcwd ()
-
-    thispath = os.path.normpath(root)
-    docpath  = os.path.normpath(os.path.join(thispath, "_doc","sphinxdoc"))
-
-    fLOG("checking encoding utf8...")
-    for root, dirs, files in os.walk(docpath):
-        for name in files:
-            thn = os.path.join(root, name)
-            if name.endswith(".rst") :
-                try :
-                    with open(thn, "r", encoding="utf8") as f : f.read()
-                except UnicodeDecodeError as e :
-                    raise HelpGenException ("issue with encoding for file ", thn) from e
-                except Exception as e :
-                    raise HelpGenException ("issue with file ", thn) from e
-                
-    fLOG("running sphinx... from", docpath)
-    if not os.path.exists (docpath) :
-        raise FileNotFoundError(docpath)
-        
-    if sys.platform == "win32" :
-        make = os.path.join(docpath, "make.bat")
-        if not os.path.exists(make) : raise FileNotFoundError(make)
-            
-    os.chdir (docpath)
-    if clean :
-        cmd = "make.bat clean".split ()
-        run_cmd (cmd, wait = True)
-        
-    cmd = "make.bat html".split ()
-    
-    # This instruction should work but it does not. Sphinx seems to be stuck.
-    #run_cmd (cmd, wait = True, secure="make_help.log", stop_waiting_if = lambda v : "build succeeded" in v)
-    # The following one works but opens a extra windows.
-    os.system("make html")
-    
-    # end
-    os.chdir (pa)
-    
 def process_notebooks(  notebooks, 
                         outfold, 
                         build,
-                        pandoc_path = "%USERPROFILE%\\AppData\\Local\\Pandoc",
-                        formats     = ["html", "python", "rst", "pdf"],
-                        latex_path  = r"C:\Program Files\MiKTeX 2.9\miktex\bin\x64"):
+                        latex_path,
+                        pandoc_path,
+                        formats = ["html", "python", "rst", "pdf"]
+                        ):
     """
     converts notebooks into html, rst, latex using 
     `nbconvert <http://ipython.org/ipython-doc/rel-1.0.0/interactive/nbconvert.html>`_.
@@ -547,4 +578,59 @@ def add_notebook_page(nbs, fileout):
         f.write("\n".join(rows))
     return fileout
     
-
+def post_process_latex_output(root):
+    """
+    post process the latex file produced by sphinx
+    
+    @param      root        root path
+    """
+    build = os.path.join(root, "_doc", "sphinxdoc","build","latex")
+    for tex in os.listdir(build):
+        if tex.endswith(".tex"):
+            file = os.path.join(build,tex)
+            fLOG("modify file", file)
+            with open(file, "r", encoding="utf8") as f : content = f.read()
+            content = post_process_latex(content)
+            with open(file, "w", encoding="utf8") as f : f.write(content)
+    
+def post_process_latex(st):
+    """
+    modifies a latex file after its generation by sphinx
+    
+    @param      st      string
+    @return             string
+    """
+    st = st.replace("<br />","\\\\")
+    st = st.replace("\\maketitle","\\maketitle\n\n\\newchapter{Introduction}")
+    
+    # first section
+    lines = st.split("\n")
+    for i,line in enumerate(lines):
+        if "\\section" in line :
+            lines[i] = "\\newchapter{Documentation}\n" + lines[i]
+            break
+        
+    st = st.replace("\\chapter", "\\section")
+    st = st.replace("\\newchapter", "\\chapter")
+    return st
+    
+def compile_latex_output(root, latex_path):
+    """
+    compiles the latex documents
+    
+    @param      root        root
+    @param      latex_path  path to the compilter
+    """
+    lat = os.path.join(latex_path, "pdflatex.exe")
+    build = os.path.join(root, "_doc", "sphinxdoc","build","latex")
+    for tex in os.listdir(build):
+        if tex.endswith(".tex"):
+            file = os.path.join(build, tex)
+            c = '"{0}" "{1}" -output-directory="{2}"'.format(lat, file, build)
+            out,err = run_cmd(c,wait=True, do_not_log = False, log_error=False)
+            if len(err) > 0 :
+                raise HelpGenException(err)
+            # second compilation
+            out,err = run_cmd(c,wait=True, do_not_log = False, log_error=False)
+            if len(err) > 0 :
+                raise HelpGenException(err)
