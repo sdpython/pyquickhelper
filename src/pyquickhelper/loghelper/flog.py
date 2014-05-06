@@ -23,7 +23,7 @@ fLOG (LogPath = "c:/temp/log_path")       # change the log path, creates it if i
 """
 
 import datetime,sys,os,time, subprocess, random, math, decimal, urllib, copy
-import urllib.request
+import urllib.request, tkinter
 
 class PQHException (Exception) :
     """
@@ -165,6 +165,8 @@ def fLOG (*l, **p) :
     if "LogFile" in p and "LogPath" in p :  init (p ["LogPath"], p ["LogFile"])
     elif "LogFile" in p :                   init (filename = p ["LogFile"], path_add = path_add)
     elif "LogPath" in p :                   init (path     = p ["LogPath"], path_add = path_add)
+    
+    def myprint(s): print(s)
         
     if "OutputPrint" in p : 
         Print (p ["OutputPrint"])
@@ -184,17 +186,17 @@ def fLOG (*l, **p) :
             
         if sys.hal_log_values ["__log_display"] :  
             try :
-                print (message.strip ("\r\n"))
+                myprint (message.strip ("\r\n"))
             except UnicodeEncodeError :
                 try :
-                    print ("\n".join (repr (message.strip ("\r\n")).split ("\\n")))
+                    myprint ("\n".join (repr (message.strip ("\r\n")).split ("\\n")))
                 except UnicodeEncodeError :
                     try :
                         rr = repr (message.strip ("\r\n")).split ("\\n")
                         for r in rr :
-                            print (r.encode("utf8"))
+                            myprint (r.encode("utf8"))
                     except UnicodeEncodeError :
-                        print ("look error in log file")
+                        myprint ("look error in log file")
         GetLogFile ().write (message)
         st = "                    "
     else :
@@ -208,9 +210,9 @@ def fLOG (*l, **p) :
         GetLogFile ().write (message)
         if sys.hal_log_values ["__log_display"] : 
             try :
-                print (message.strip ("\r\n"))
+                myprint (message.strip ("\r\n"))
             except UnicodeEncodeError :
-                print ("\n".join (repr (message.strip ("\r\n")).split ("\\n")))
+                myprint ("\n".join (repr (message.strip ("\r\n")).split ("\\n")))
     GetLogFile ().flush ()
             
 def get_relative_path (folder, file) :
