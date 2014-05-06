@@ -612,6 +612,8 @@ def post_process_latex(st):
         
     st = st.replace("\\chapter", "\\section")
     st = st.replace("\\newchapter", "\\chapter")
+    st = st.replace(r"\usepackage{multirow}", r"\usepackage{multirow}\usepackage{amssymb}\usepackage{latexsym}\usepackage{amsfonts}")
+
     return st
     
 def compile_latex_output(root, latex_path):
@@ -626,7 +628,7 @@ def compile_latex_output(root, latex_path):
     for tex in os.listdir(build):
         if tex.endswith(".tex"):
             file = os.path.join(build, tex)
-            c = '"{0}" "{1}" -output-directory="{2}"'.format(lat, file, build)
+            c = '"{0}" "{1}" -output-directory="{2}" -interaction=nonstopmode'.format(lat, file, build)
             out,err = run_cmd(c,wait=True, do_not_log = False, log_error=False)
             if len(err) > 0 :
                 raise HelpGenException(err)
