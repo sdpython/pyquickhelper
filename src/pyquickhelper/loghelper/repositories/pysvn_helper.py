@@ -245,7 +245,7 @@ def get_repo_version (path = None, commandline = True, log = False) :
         out,err = run_cmd(  cmd, 
                             wait = True, 
                             do_not_log = True, 
-                            encerror = "strict",
+                            encerror = "ignore",
                             encoding = sys.stdout.encoding if sys.stdout != None else "utf8",
                             log_error = False)
         if len(err) > 0 :
