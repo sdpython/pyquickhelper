@@ -46,6 +46,8 @@ class TestNotebookConversion (unittest.TestCase):
                 "example_pyquickhelper.pdf",
                 ]
         fou = [ os.path.split(_)[-1] for _ in res ]
+        fou = set(fou)
+        exp = set(exp)
         if len(fou) < len(exp):
             raise Exception("length {0} != {1}\n{2}\n---\n{3}".format(len(fou),len(exp),
                     "\n".join(fou), "\n".join(exp)))

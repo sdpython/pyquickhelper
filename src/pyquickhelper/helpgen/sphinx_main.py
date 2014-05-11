@@ -284,7 +284,7 @@ def process_notebooks(  notebooks,
                         build,
                         latex_path,
                         pandoc_path,
-                        formats = ["html", "python", "rst", "pdf"]
+                        formats = ["ipynb", "html", "python", "rst", "pdf"]
                         ):
     """
     converts notebooks into html, rst, latex using 
@@ -330,6 +330,14 @@ def process_notebooks(  notebooks,
         exe2 = exe.replace("Python33_x64", "Python33")
         if os.path.exists(exe2):
             exe = exe2  # safer for the moment
+            
+    extensions = {  "ipynb":".ipynb",
+                    "latex":".tex",
+                    "pdf":".pdf",
+                    "html":".html",
+                    "rst":".rst",
+                    "python":".py",
+                }
     
     if sys.platform.startswith("win"):
         user = os.environ["USERPROFILE"]
@@ -358,6 +366,19 @@ def process_notebooks(  notebooks,
                     compilation = False
                 else :
                     compilation = False
+                    
+                # output
+                outputfile = os.path.join(build, nbout + extensions[format])
+                fLOG("--- produce ", outputfile)
+                
+                # we chech it was not done before
+                if os.path.exists(outputfile) :
+                    dto = os.stat(outputfile).st_mtime 
+                    dtnb = os.stat(notebook).st_mtime
+                    if dtnb < dto :
+                        fLOG("-- skipping notebook", format, notebook)
+                        files.append ( outputfile )
+                        continue
                 
                 templ = "full" if format != "latex" else "article"
                 fLOG("convert into ", format, " NB: ", notebook)
@@ -365,23 +386,28 @@ def process_notebooks(  notebooks,
                 c += options
                 fLOG(c)
                 
-                if format == "latex":
-                    cwd = os.getcwd()
-                    os.chdir(build)
-                out,err = run_cmd(c,wait=True, do_not_log = False, log_error=False)
-                if format == "latex": os.chdir(cwd)
-                
-                if "raise ImportError" in err:
-                    raise ImportError(err)
-                if len(err)>0 and "error" in err.lower():
-                    raise HelpGenException(err)
+                if format not in ["ipynb"]:
+                    if format == "latex":
+                        cwd = os.getcwd()
+                        os.chdir(build)
+                        
+                    out,err = run_cmd(c,wait=True, do_not_log = False, log_error=False)
                     
-                if format == "latex": format = "tex"
-                if format == "python": format = "py"
-                files.append ( os.path.join( build, nbout + "." + format) )
+                    if format == "latex": 
+                        os.chdir(cwd)
+                
+                    if "raise ImportError" in err:
+                        raise ImportError(err)
+                    if len(err)>0 and "error" in err.lower():
+                        raise HelpGenException(err)
+                    
+                format = extensions[format].strip(".")
+                
+                files.append ( outputfile )
+                
                 if "--post PDF" in c :
                     files.append ( os.path.join( build, nbout + ".pdf") )
-                
+                    
                 if compilation:
                     # compilation latex
                     if os.path.exists(latex_path):
@@ -399,22 +425,39 @@ def process_notebooks(  notebooks,
                         
                 elif format == "html":
                     # we add a link to the notebook
-                    files += add_link_to_notebook(files[-1], notebook, "pdf" in formats, False, "python" in formats)
+                    files += add_link_to_notebook(outputfile, notebook, "pdf" in formats, False, "python" in formats)
+                    
+                elif format == "ipynb":
+                    # we just copy the notebook
+                    files += add_link_to_notebook(outputfile, notebook, "ipynb" in formats, 
+                                                False, "python" in formats)
                     
                 elif format == "rst":
                     # we add a link to the notebook
-                    files += add_link_to_notebook(files[-1], notebook, "pdf" in formats, "html" in formats, "python" in formats)
+                    files += add_link_to_notebook(outputfile, notebook, "pdf" in formats, "html" in formats, "python" in formats)
         
         copy = [ ]
         for f in files:
             dest = os.path.join(outfold, os.path.split(f)[-1])
             if not f.endswith(".tex"):
-                try:
-                    shutil.copy(f, outfold)
-                    fLOG("copy ",f, " to ", outfold, "[",dest,"]")
-                except shutil.SameFileError:
-                    fLOG("w,file ", dest, "already exists")
-                    pass
+                
+                if sys.version_info >= (3,4):
+                    try:
+                        shutil.copy(f, outfold)
+                        fLOG("copy ",f, " to ", outfold, "[",dest,"]")
+                    except shutil.SameFileError:
+                        fLOG("w,file ", dest, "already exists")
+                        pass
+                else :
+                    try:
+                        shutil.copy(f, outfold)
+                        fLOG("copy ",f, " to ", outfold, "[",dest,"]")
+                    except shutil.Error as e :
+                        if "are the same file" in str(e) :
+                            fLOG("w,file ", dest, "already exists")
+                        else :
+                            raise e
+                            
                 if not os.path.exists(dest):
                     raise FileNotFoundError(dest)
             copy.append ( dest )
@@ -424,12 +467,24 @@ def process_notebooks(  notebooks,
             if image.endswith(".png") or image.endswith(".html"):
                 image = os.path.join(build,image)
                 dest = os.path.join(outfold, os.path.split(image)[-1])
-                try:
-                    shutil.copy(image, outfold)
-                    fLOG("copy ",image, " to ", outfold, "[",dest,"]")
-                except shutil.SameFileError:
-                    fLOG("w,file ", dest, "already exists")
-                    pass
+
+                if sys.version_info >= (3,4):
+                    try:
+                        shutil.copy(image, outfold)
+                        fLOG("copy ",image, " to ", outfold, "[",dest,"]")
+                    except shutil.SameFileError:
+                        fLOG("w,file ", dest, "already exists")
+                        pass
+                else :
+                    try:
+                        shutil.copy(image, outfold)
+                        fLOG("copy ",image, " to ", outfold, "[",dest,"]")
+                    except shutil.Error as e:
+                        if "are the same file" in str(e) :
+                            fLOG("w,file ", dest, "already exists")
+                        else :
+                            raise e
+                        
                 if not os.path.exists(dest):
                     raise FileNotFoundError(dest)
                 copy.append ( dest )
@@ -456,7 +511,10 @@ def add_link_to_notebook(file, nb, pdf, html, python):
     if not os.path.exists(res[-1]):
         shutil.copy(nb, fold)
 
-    if ext == ".html":
+    if ext == ".ipynb":
+        return res
+        
+    elif ext == ".html":
         
         with open(file, "r", encoding="utf8") as f :
             text = f.read()
