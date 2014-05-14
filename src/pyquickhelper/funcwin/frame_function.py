@@ -237,7 +237,7 @@ class FrameFunction (tkinter.Frame) :
         if "thread_started" in self.__dict__ :
             for th in self.thread_started :
                 if th.is_alive():
-                    th._stop()
+                    th._stop()  #maybe try th._shutdown()
             
     def destroy(self) :
         """
