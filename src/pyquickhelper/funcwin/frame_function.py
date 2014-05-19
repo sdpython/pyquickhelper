@@ -237,11 +237,18 @@ class FrameFunction (tkinter.Frame) :
         if "thread_started" in self.__dict__ :
             for th in self.thread_started :
                 if th.is_alive():
-                    th._stop()  #maybe try th._shutdown()
+                    if not th.daemon :
+                        raise Exception("the thread is not daemon, this case should not happen")
+                    th._stop()
             
     def destroy(self) :
         """
-        stops the thread and destory the function
+        Stops the thread and destory the function
+        
+        The behaviour of method 
+        `Thread._stop <http://hg.python.org/cpython/file/3.4/Lib/threading.py>`_
+        changed in Python 3.4,
+        see the `discussion <https://groups.google.com/forum/#!topic/comp.lang.python/sXXwTh9EHsI>`_.
         """
         self.stop_thread()
         if self.command_leave != None :
