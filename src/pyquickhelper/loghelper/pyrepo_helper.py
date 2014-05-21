@@ -1,3 +1,4 @@
+#-*- coding: utf-8 -*-
 """
 @file
 @brief   a repository class independant from the repository system (it will be guessed)

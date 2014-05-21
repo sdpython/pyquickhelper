@@ -1,3 +1,4 @@
+#-*- coding: utf-8 -*-
 """
 @file
 @brief  Various function needed when using the windows used to ask for parameters

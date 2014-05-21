@@ -1,4 +1,4 @@
-# coding: latin-1
+#-*- coding: utf-8 -*-
 """
 @file
 @brief  Common functions used for @see cl FrameFunction and @see cl FrameParams.

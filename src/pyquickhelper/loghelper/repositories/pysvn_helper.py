@@ -1,3 +1,4 @@
+#-*- coding: utf-8 -*-
 """
 @file
 @brief  Gather all pysvn functionalities here. There might be some differences
