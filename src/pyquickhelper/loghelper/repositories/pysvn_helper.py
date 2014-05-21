@@ -81,15 +81,18 @@ def repo_ls(full, commandline = True):
                 res = [ RepoFile(name=os.path.join(full,_.strip())) for _ in out.split("\n") if len(_) > 0]
                 return res
             else :
-                fLOG ("problem with file ", full, e)
-                raise e
+                raise Exception("problem with file "+ full) from e 
     else :
         cmd = "svn ls -r HEAD \"%s\"" % full.replace("\\","/")
-        out,err = run_cmd(  cmd, 
-                            wait = True, 
-                            do_not_log = True, 
-                            encerror = "strict",
-                            encoding = sys.stdout.encoding if sys.stdout != None else "utf8")
+        try :
+            out,err = run_cmd(  cmd, 
+                                wait = True, 
+                                do_not_log = True, 
+                                encerror = "strict",
+                                encoding = sys.stdout.encoding if sys.stdout != None else "utf8")
+        except Exception as e :
+            raise Exception("issue with file or folder " + full) from e
+            
         if len(err) > 0 :
             fLOG ("problem with file ", full, err)
             raise Exception(err)

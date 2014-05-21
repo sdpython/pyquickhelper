@@ -632,17 +632,17 @@ def decode_outerr(outerr, encoding, encerror, msg):
     @return                 converted string
     """
     if not isinstance(outerr,bytes):
-        raise TypeError("unable to decode string")
+        raise TypeError("only able to decode bytes, not " + str(type(outerr)))
     try :
         out = outerr.decode(encoding, errors=encerror)
         return out
     except UnicodeDecodeError as exu :
         try :
-            out = outerr.decode("utf8", errors=encerror)
+            out = outerr.decode("utf8" if encoding != "utf8" else "latin-1", errors=encerror)
             return out
         except Exception as e :
             out = outerr.decode(encoding, errors='ignore')
-            raise Exception("issue with cmd:" + str(msg) + "\n" + str(exu)) from e
+            raise Exception("issue with cmd (" + encoding +"):" + str(msg) + "\n" + str(exu) + "\n-----\n" + out) from e
     raise Exception("complete issue with cmd:" + str(msg)) 
     
 def run_cmd (   cmd, 
