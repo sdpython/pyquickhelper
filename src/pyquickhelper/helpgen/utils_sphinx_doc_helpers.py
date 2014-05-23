@@ -607,6 +607,8 @@ def process_look_for_tag(tag, title, files):
         else :
             tit = title + ": " + page.strip("_")
             suf = page.replace(" ","").replace("_","")
+            suf = re.sub(r'([^a-zA-Z0-9_])', "", suf)
+            page = re.sub(r'([^a-zA-Z0-9_])', "", page)
             
         rows = ["""
             .. _l-{0}{3}:
