@@ -69,6 +69,7 @@ class TestSphinxDocFull (unittest.TestCase):
                     os.path.join(temp, "all_example.rst"), 
                     os.path.join(temp, "all_example_otherpageofexamples.rst"), 
                     os.path.join(temp, "all_FAQ.rst"), 
+                    os.path.join(temp, "all_example_pagewithanaccentinthetitle.rst"), 
                     ]
         for f in files :
             if not os.path.exists(f) :
@@ -76,6 +77,10 @@ class TestSphinxDocFull (unittest.TestCase):
             if "all_example_otherpageofexamples" in f :
                 with open(f, "r", encoding="utf8") as ff : content = ff.read()
                 if "This example is exactly the same as the previous" not in content:
+                    raise Exception("file " + f + " is empty:\n" + content)
+            if "all_example_pagewithanaccentinthetitle" in f :
+                with open(f, "r", encoding="utf8") as ff : content = ff.read()
+                if "Same page with an accent." not in content:
                     raise Exception("file " + f + " is empty:\n" + content)
                 
         with open(os.path.join(temp, "all_FAQ.rst"), "r") as f : contentf = f.read()

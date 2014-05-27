@@ -1,3 +1,4 @@
+#-*- coding: utf-8 -*-
 """
 @file
 @brief Contains the main function to generate the documentation
@@ -77,6 +78,14 @@ def generate_help_sphinx (  project_var_name,
     
     @example(other page of examples___run help generation)
     This example is exactly the same as the previous one but will be generated on another page of examples.
+    @code
+    # from the main folder which contains folder src
+    generate_help_sphinx("pyquickhelper")
+    @endcode
+    @endexample
+    
+    @example(page with an accent -é- in the title___run help generation)
+    Same page with an accent.
     @code
     # from the main folder which contains folder src
     generate_help_sphinx("pyquickhelper")

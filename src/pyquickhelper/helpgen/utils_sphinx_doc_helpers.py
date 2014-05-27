@@ -620,7 +620,8 @@ def process_look_for_tag(tag, title, files):
             """.replace("            ","").format(tag, tit, "=" * len(tit), suf)]
             
         for pa, a,b,c in coll :
-            if page.replace(" ","") != pa.replace(" ","") : continue
+            pan = re.sub(r'([^a-zA-Z0-9_])', "", pa)
+            if page != pan : continue
             rows.append( a )
             rows.append( "+" * len(a) )
             rows.append( "" )
