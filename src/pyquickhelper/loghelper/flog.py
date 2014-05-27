@@ -81,7 +81,7 @@ def init (path = None, filename = None, create = True, path_add = []) :
             
 def GetSepLine () :
     """
-    return always \\n
+    return always ``\\n``
     """
     return "\n" # previous value: sys.hal_log_values ["__log_file_sep"]
 

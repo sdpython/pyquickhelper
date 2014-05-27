@@ -36,7 +36,7 @@ def generate_help_sphinx (  project_var_name,
                             root            = ".",
                             filter_commit   = lambda c : c.strip() != "documentation",
                             extra_ext       = [],
-                            nbformats       = ["html", "python", "rst", "pdf"],
+                            nbformats       = ["ipynb", "html", "python", "rst", "pdf"],
                             layout          = ["html"]) :
     """
     runs the help generation
@@ -385,7 +385,7 @@ def process_notebooks(  notebooks,
                     dto = os.stat(outputfile).st_mtime 
                     dtnb = os.stat(notebook).st_mtime
                     if dtnb < dto :
-                        fLOG("-- skipping notebook", format, notebook)
+                        fLOG("-- skipping notebook", format, notebook, "(", outputfile, ")")
                         files.append ( outputfile )
                         continue
                 
@@ -601,9 +601,19 @@ def add_link_to_notebook(file, nb, pdf, html, python):
                    len(lines[i-1][:4] != "    " and \
                    lines[i+1].strip(" \n\r"))>0 :
                     rem.append(i)
+            if len(lines[i]) > 0 and lines[i] != " " and lines[i-1].startswith("    ") :
+                lines[i] = "\n" + lines[i]
         rem.reverse()
         for i in rem:
             del lines[i]
+            
+        # remove last ::
+        for i in range(len(lines)-1,0,-1) :
+            s = lines[i-1].strip(" \n\r")
+            if len(s) != 0 and s != "::"  : break
+        
+        if i < len(lines):
+            del lines[i:]
                 
         with open(file, "w", encoding="utf8") as f :
             f.write("".join(lines))

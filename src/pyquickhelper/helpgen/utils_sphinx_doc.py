@@ -360,7 +360,8 @@ def apply_modification_template (   store_obj,
     #text_specials = "".join(["    :special-members: %s\n" % k for k in tspecials ])
     text_specials = ""  
      
-    rep = { "__FULLNAME_UNDERLINED__": fullname + "\n" + ("=" * len(fullname)) +"\n",
+    ttitle = "module ``{0}``".format(fullname)
+    rep = { "__FULLNAME_UNDERLINED__": ttitle + "\n" + ("=" * len(ttitle)) +"\n",
             "__FILENAMENOEXT__":filenoext,
             "__FULLNAMENOEXT__":fullnamenoext,
             "__DOCUMENTATION__":doc,
@@ -371,11 +372,17 @@ def apply_modification_template (   store_obj,
     
     for k,v in additional.items() :
         rep [k] = v
-            
+        
     res = template
     for a,b in rep.items () :
         res = res.replace(a,b)
         
+    has_class = "class " in content
+    if not has_class :
+        spl = res.split("\n")
+        spl = [ _ for _ in spl if not _.startswith(".. inheritance-diagram::") ]
+        res = "\n".join(spl)
+            
     if softfile(fullname) :
         res = res.replace (":special-members:", "")
         
