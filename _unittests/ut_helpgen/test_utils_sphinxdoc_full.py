@@ -73,6 +73,10 @@ class TestSphinxDocFull (unittest.TestCase):
         for f in files :
             if not os.path.exists(f) :
                 raise FileNotFoundError(f + "\nabspath: " + os.path.abspath(f))
+            if "all_example_otherpageofexamples" in f :
+                with open(f, "r", encoding="utf8") as ff : content = ff.read()
+                if "This example is exactly the same as the previous" not in content:
+                    raise Exception("file " + f + " is empty:\n" + content)
                 
         with open(os.path.join(temp, "all_FAQ.rst"), "r") as f : contentf = f.read()
         assert "How to activate the logs?" in contentf
@@ -94,10 +98,10 @@ class TestSphinxDocFull (unittest.TestCase):
                             stk.append ( "storedl %s=%s " % (k,o.rst_link()) )
                     else :
                         stk.append ( "stored  %s=%s " % (k,v.rst_link()) )
-                mes += "\nstored:\n" + "\n".join ( stk)
+                mes += "\nstored:\n" + "\n".join ( sorted(stk))
                 raise Exception("issues detected for function " + f + "\n" + mes)
             
-            
+        
         
         
 if __name__ == "__main__"  :

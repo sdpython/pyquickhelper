@@ -600,7 +600,6 @@ def process_look_for_tag(tag, title, files):
     pagerows = [ ]
     
     for page in pages :
-        
         if page == "":
             tit = title
             suf = ""
@@ -617,12 +616,11 @@ def process_look_for_tag(tag, title, files):
             {2}
 
             .. contents::
-                :depth: 3
                 
             """.replace("            ","").format(tag, tit, "=" * len(tit), suf)]
             
         for pa, a,b,c in coll :
-            if page != pa : continue
+            if page.replace(" ","") != pa.replace(" ","") : continue
             rows.append( a )
             rows.append( "+" * len(a) )
             rows.append( "" )

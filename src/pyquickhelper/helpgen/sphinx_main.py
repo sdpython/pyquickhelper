@@ -589,7 +589,8 @@ def add_link_to_notebook(file, nb, pdf, html, python):
                 if lines[i-1][0:2] not in ["..", "  ","::"] and \
                    lines[i+1][0:2] not in ["..", "  ","::"] and \
                    len(lines[i-1].strip(" \n\r"))>0 and \
-                   len(lines[i+1].strip(" \n\r"))>0 :
+                   len(lines[i-1][:4] != "    " and \
+                   lines[i+1].strip(" \n\r"))>0 :
                     rem.append(i)
         rem.reverse()
         for i in rem:
