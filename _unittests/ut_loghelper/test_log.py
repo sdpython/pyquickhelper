@@ -19,8 +19,10 @@ class TestLog (unittest.TestCase):
     
     def test_random_curve (self) :
         fLOG (__file__, self._testMethodName, OutputPrint = __name__ == "__main__")
-        fLOG ("message", "ok", option1 = "k", option2 = 2)
-        assert os.path.exists ("temp_log.txt")
+        fold = os.path.abspath(os.path.split (__file__) [0])
+        fLOG ("message", "ok", option1 = "k", option2 = 2, 
+                LogFile=os.path.join(fold,"temp_log.txt"))
+        assert os.path.exists (os.path.join(fold,"temp_log.txt"))
         #os.remove ("hal_log.txt")
         
     def test_import_problem (self) :

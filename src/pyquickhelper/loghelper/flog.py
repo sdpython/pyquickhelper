@@ -99,29 +99,67 @@ def Print (redirect = True) :
     lock = sys.hal_log_values.get("Lock", False)
     if not lock :
         sys.hal_log_values ["__log_display"] = redirect
+        
+class LogFakeFileStream:
+    """
+    a fake file
+    """
+    def __init__(self):
+        """
+        do nothing
+        """
+        pass
+        
+    def open(self):
+        """
+        do nothing
+        """
+        pass
+        
+    def write(self, s):
+        """
+        do nothing
+        """
+        pass
+        
+    def close(self):
+        """
+        do nothing
+        """
+        pass
+        
+    def flush(self):
+        """
+        do nothing
+        """
+        pass
     
-def GetLogFile () :
+def GetLogFile (physical = False) :
     """
     Returns a file name containing the log
     
+    @param      physical    use a physical file or not
     @return                 a pointer to a log file
     @rtype                  str
     @exception  OSError     if this file cannot be created
     """
     if sys.hal_log_values ["__log_file"] == None :
-        path = GetPath ()
-        if sys.hal_log_values ["__log_file_name"] == None :
-            if os.path.exists (path) :  sys.hal_log_values ["__log_file_name"] = os.path.join (path, sys.hal_log_values ["__log_const"])
-            else :                      raise PQHException ("unable to create a log file in folder " + path)
-                
-        if not isinstance (sys.hal_log_values ["__log_file_name"], str) :
-            sys.hal_log_values ["__log_file"] = sys.hal_log_values ["__log_file_name"]
+        if physical :
+            path = GetPath ()
+            if sys.hal_log_values ["__log_file_name"] == None :
+                if os.path.exists (path) :  sys.hal_log_values ["__log_file_name"] = os.path.join (path, sys.hal_log_values ["__log_const"])
+                else :                      raise PQHException ("unable to create a log file in folder " + path)
+                    
+            if not isinstance (sys.hal_log_values ["__log_file_name"], str) :
+                sys.hal_log_values ["__log_file"] = sys.hal_log_values ["__log_file_name"]
+            else :
+                try :       
+                    sys.hal_log_values ["__log_file"] = open (sys.hal_log_values ["__log_file_name"], "w", encoding="utf-8")
+                except Exception as e:    
+                    raise OSError ("unable to create file " + sys.hal_log_values ["__log_file_name"] + "\n" + str(e))
         else :
-            try :       
-                sys.hal_log_values ["__log_file"] = open (sys.hal_log_values ["__log_file_name"], "w", encoding="utf-8")
-            except Exception as e:    
-                raise OSError ("unable to create file " + sys.hal_log_values ["__log_file_name"] + "\n" + str(e))
-                
+            sys.hal_log_values ["__log_file"] = LogFakeFileStream()
+            
     return sys.hal_log_values ["__log_file"]
 
 def fLOG (*l, **p) :
@@ -155,6 +193,12 @@ def fLOG (*l, **p) :
     @code
     fLOG(OutputPrint=True)
     @endcode
+    
+    To log everything into a file:
+    @code
+    fLOG(OutputPrint=True, LogFile="log_file.txt")
+    @endcode
+    
     @endFAQ
     """
     path_add = p.get ("LogPathAdd", [] )
@@ -170,6 +214,9 @@ def fLOG (*l, **p) :
         
     if "OutputPrint" in p : 
         Print (p ["OutputPrint"])
+        
+    if "LogFile" in p :
+        logfile = GetLogFile(True)
         
     dt = datetime.datetime (2009,1,1).now ()
     if len (l) > 0 :
