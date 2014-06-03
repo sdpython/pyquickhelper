@@ -1,6 +1,14 @@
+# -*- coding: utf-8 -*-
 """
 Documentation for this file.
 """
+
+__version__ = "0.5"
+__author__ = "Xavier Dupré"
+__github__ = "https://github.com/sdpython/pyquickhelper"
+__url__ = "http://www.xavierdupre.fr/app/pyquickhelper/helpsphinx/index.html"
+__downloadUrl__ = "http://www.xavierdupre.fr/site2013/index_code.html#pyquickhelper"
+__license__ = "BSD License"
 
 def check( log = False):
     """
