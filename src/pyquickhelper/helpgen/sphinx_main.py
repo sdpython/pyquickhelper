@@ -153,6 +153,12 @@ def generate_help_sphinx (  project_var_name,
                                     latex_path=latex_path,
                                     pandoc_path=pandoc_path)
             add_notebook_page(nbs, os.path.join(notebook_doc,"..","all_notebooks.rst"))
+            
+        imgs      = [ os.path.join(notebook_dir,_) for _ in os.listdir(notebook_dir) if ".png" in _  ]
+        if len(imgs) > 0 :
+            for img in imgs :
+                shutil.copy (img, notebook_doc)
+            
                 
     #  run the documentation generation
     if sys.platform == "win32" :
