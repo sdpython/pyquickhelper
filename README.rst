@@ -48,9 +48,11 @@ Versions
 --------
 
 * **v0.5 - 2014/??/??**
-    * **changes:** few fixes while generating the documentation (notebooks, toctrees)
-    * **changes:** compilation of the help into PDF, latex, singlehtml
-    * **changes:** removes the creation of ``temp_log.txt`` by default when using function :func:`fLOG <loghelper.flog.fLOG>`
+    * **change:** few fixes while generating the documentation (notebooks, toctrees)
+    * **change:** compilation of the help into PDF, latex, singlehtml
+    * **change:** removes the creation of ``temp_log.txt`` by default when using function :func:`fLOG <loghelper.flog.fLOG>`
+    * **fix:** the module can fix an exception thrown by ``pywin32`` about DLL missing
+    * **change:** can use nbconvert from ipython 2.1 to generate the documentation
 * **v0.4 - 2014/04/19**
     * **change**: add the possibility to create more than one page of examples, use tag ``@example(page___title)``
     * **change**: use method `communicate <https://docs.python.org/3.4/library/subprocess.html#subprocess.Popen.communicate>`_ in :func:`run_cmd <loghelper.flog.run_cmd>`, remove characters ``\r`` on Windows

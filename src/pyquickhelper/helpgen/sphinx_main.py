@@ -317,11 +317,16 @@ def process_notebooks(  notebooks,
     It also needs modules `pywin32 <http://sourceforge.net/projects/pywin32/>`_,
     `pygments <http://pygments.org/>`_.
     
+    `pywin32 <http://sourceforge.net/projects/pywin32/>`_ might have some issues
+    to find its DLL, look @see fn import_pywin32.
+    
     The latex compilation uses `MiKTeX <http://miktex.org/>`_.
     
     @warning Some latex templates (for nbconvert) uses ``[commandchars=\\\\\\{\\}]{\\|}`` which allows commands ``\\\\`` and it does not compile. 
                 The one used here is ``report``.
                 
+    *Will be deprecated:*
+    
     The function can use a different python Version if environement variable ``PANDOCPY`` is set up the Python path.
     `WinPython <http://winpython.sourceforge.net/>`_ works better when a notebook contains an image.
     """
@@ -337,14 +342,10 @@ def process_notebooks(  notebooks,
             raise FileNotFoundError(exe)
         fLOG("** using PANDOCPY", exe)
     else :
+        if sys.platform.startswith("win"):
+            from .utils_pywin32 import import_pywin32   
+            import_pywin32()
         exe = os.path.split(sys.executable)[0]
-        exe2 = exe.replace("Python34","Python33")
-        if os.path.exists(exe2):
-            exe = exe2  # safer for the moment
-        # very specific, should be removed
-        exe2 = exe.replace("Python33_x64", "Python33")
-        if os.path.exists(exe2):
-            exe = exe2  # safer for the moment
             
     extensions = {  "ipynb":".ipynb",
                     "latex":".tex",
@@ -366,7 +367,7 @@ def process_notebooks(  notebooks,
         files = [ ]
         
         ipy = os.path.join(exe, "Scripts", "ipython3.exe")
-        cmd = '{0} nbconvert --to {1} "{2}" --template {5} --output="{3}\\{4}"'
+        cmd = '{0} nbconvert --to {1} "{2}"{5} --output="{3}\\{4}"'
         for notebook in notebooks:
             nbout = os.path.split(notebook)[-1]
             if " " in nbout: raise Exception("spaces are not allowed in notebooks file names: {0}".format(notebook))
@@ -397,7 +398,14 @@ def process_notebooks(  notebooks,
                 
                 templ = "full" if format != "latex" else "article"
                 fLOG("convert into ", format, " NB: ", notebook)
-                c = cmd.format(ipy, format, notebook, build, nbout, templ)
+                
+                if format == "html":
+                    fmttpl = " --template {0}".format(templ)
+                else :
+                    fmttpl = ""
+                
+                c = cmd.format(ipy, format, notebook, build, nbout, fmttpl)
+
                 c += options
                 fLOG(c)
                 
