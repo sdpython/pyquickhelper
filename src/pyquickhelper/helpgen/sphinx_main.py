@@ -139,7 +139,7 @@ def generate_help_sphinx (  project_var_name,
     notebook_dir = os.path.abspath(os.path.join("_doc", "notebooks"))
     notebook_doc = os.path.abspath(os.path.join("_doc/sphinxdoc/source", "notebooks"))
     if os.path.exists(notebook_dir):
-        notebooks = [ os.path.join(notebook_dir,_) for _ in os.listdir(notebook_dir) if ".ipynb" in _  ]
+        notebooks = [ os.path.join(notebook_dir,_) for _ in os.listdir(notebook_dir) if ".ipynb" in _ and "checkpoint" not in _ ]
         notebooks = [ _ for _ in notebooks if os.path.isfile(_) ]
         if len(notebooks) >0:
             fLOG("**** notebooks")
