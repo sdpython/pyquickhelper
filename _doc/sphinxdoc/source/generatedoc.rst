@@ -22,6 +22,26 @@ into ``dist/html``.
 
 Configuration:
     * :ref:`l-confpy`
+    
+Design
+++++++
+
+The module is organized as follows:
+
+    * ``pyquickhelper/src/pyquickhelper``: contains the sources of the modules
+    * ``pyquickhelper/_unittests/``: contains the unit tests, they can run with program ``run_unittests.py``
+    * ``pyquickhelper/_unittests/_doc/notebooks``: contains the notebooks included in the documentation
+    * ``pyquickhelper/_unittests/_doc/sphinxdoc/source``: contains the sphinx documentation
+
+When the documentation is being generated (by script ``pyquickhelper/make_help.py``, 
+the sources are copied into ``pyquickhelper/_unittests/_doc/sphinxdoc/source/pyquickhelper``.
+The documentation in `javadoc <http://en.wikipedia.org/wiki/Javadoc>`_ format is replaced by the RST syntax. Various
+files are automatically generated (indexes, examples, FAQ).
+Then `sphinx <http://sphinx-doc.org/>`_ is run.
+
+After the documentation is generated, everything is copied into folder
+``pyquickhelper/dist``.
+    
  
 Extensions to install
 +++++++++++++++++++++
