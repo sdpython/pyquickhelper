@@ -21,7 +21,8 @@ def check( log = False):
     """
     return True
     
-from .loghelper.flog import fLOG, run_cmd, unzip, get_url_content
+from .loghelper.flog import fLOG, run_cmd, unzip
+from .loghelper.url_helper import get_url_content
 from .funcwin.frame_params import open_window_params
 from .funcwin.frame_function import open_window_function
 from .funcwin.main_window import main_loop_functions
