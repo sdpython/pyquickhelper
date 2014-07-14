@@ -770,6 +770,7 @@ def post_process_latex(st, doall):
     if not doall :
         st = st.replace("\\maketitle","\\maketitle\n\n\\newchapter{Introduction}")
     
+    st = st.replace("%5C","/").replace("%3A",":").replace("\\includegraphics{notebooks\\","\\includegraphics{")
     st = st.replace(r"\begin{document}",r"\setlength{\parindent}{0cm}%s\begin {document}" % "\n")
     st = st.replace(r"DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}",
                     r"DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\},fontsize=\small}")
@@ -822,7 +823,10 @@ def compile_latex_output_final(root, latex_path, doall, afile = None):
     for tex in os.listdir(build):
         if tex.endswith(".tex") and (afile is None or afile in tex):
             file = os.path.join(build, tex)
-            c = '"{0}" "{1}" -output-directory="{2}"'.format(lat, file, build) #  -interaction=batchmode
+            if doall :
+                c = '"{0}" "{1}" -output-directory="{2}"'.format(lat, file, build) #  -interaction=batchmode
+            else :
+                c = '"{0}" "{1}" -interaction=batchmode -output-directory="{2}"'.format(lat, file, build) 
             fLOG("   ** LATEX compilation (c)", c) 
             post_process_latex_output(file, doall)
             out,err = run_cmd(c,wait=True, do_not_log = False, log_error=False)
