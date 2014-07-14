@@ -680,13 +680,18 @@ def post_process_rst_output(file, html, pdf, python):
     
     # bullets
     for pos,line in enumerate(lines):
+        if pos == 0 : continue
         if len(line) > 0 and (line.startswith("- ") or line.startswith("* ")) \
             and pos < len(lines) :
             next = lines[pos+1]
             prev = lines[pos-1]
-            if (next.startswith("- ") or next.startswith("* ")) and \
-               not (prev.startswith("- ") or prev.startswith("* ")):
-                lines[pos] = "\n" + lines[pos]
+            if (next.startswith("- ") or next.startswith("* ")) \
+               and not (prev.startswith("- ") or prev.startswith("* ")) \
+               and not prev.startswith("  "):
+                lines[pos-1] += "\n"
+            elif line.startswith("-  ") and next.startswith("   ") \
+                 and not prev.startswith("   ") and not prev.startswith("-  "):
+                lines[pos-1] += "\n"
     
     # we remove some empty lines
     rem=[]
