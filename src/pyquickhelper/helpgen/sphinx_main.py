@@ -13,6 +13,7 @@ from ..loghelper.pyrepo_helper  import SourceRepository
 from ..pandashelper.tblformat   import df_to_rst
 from .utils_sphinx_doc          import prepare_file_for_sphinx_help_generation
 from .utils_sphinx_doc_helpers  import HelpGenException
+from ..sync.synchelper          import explore_folder
 
 template_examples = """
 
@@ -139,9 +140,9 @@ def generate_help_sphinx (  project_var_name,
     notebook_dir = os.path.abspath(os.path.join("_doc", "notebooks"))
     notebook_doc = os.path.abspath(os.path.join("_doc/sphinxdoc/source", "notebooks"))
     if os.path.exists(notebook_dir):
-        notebooks = [ os.path.join(notebook_dir,_) for _ in os.listdir(notebook_dir) if ".ipynb" in _ and "checkpoint" not in _ ]
-        notebooks = [ _ for _ in notebooks if os.path.isfile(_) ]
-        if len(notebooks) >0:
+        notebooks = explore_folder(notebook_dir, pattern=".*[.]ipynb", fullname=True)[1]
+        notebooks = [ _ for _ in notebooks if "checkpoint" not in _ ]
+        if len(notebooks) > 0:
             fLOG("**** notebooks")
             build = os.path.abspath("build/notebooks")
             if not os.path.exists(build): os.makedirs(build)
