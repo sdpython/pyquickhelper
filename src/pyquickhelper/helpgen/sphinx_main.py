@@ -446,7 +446,7 @@ def process_notebooks(  notebooks,
                         lat = os.path.join(latex_path, "pdflatex.exe")
                         tex = files[-1].replace(".pdf", ".tex")
                         post_process_latex_output_any(tex)
-                        c = '"{0}" "{1}" -interaction=batchmode -output-directory="{2}"'.format(lat, tex, os.path.split(tex)[0])
+                        c = '"{0}" "{1}" -output-directory="{2}"'.format(lat, tex, os.path.split(tex)[0]) #  -interaction=batchmode
                         fLOG("   ** LATEX compilation (b)", c) 
                         out,err = run_cmd(c,wait=True, do_not_log = False, log_error=False)
                         if len(err) > 0 :
@@ -508,7 +508,7 @@ def process_notebooks(  notebooks,
             
         # image
         for image in os.listdir(build):
-            if image.endswith(".png") or image.endswith(".html"):
+            if image.endswith(".png") or image.endswith(".html") or image.endswith(".pdf"):
                 image = os.path.join(build,image)
                 dest = os.path.join(outfold, os.path.split(image)[-1])
 
@@ -822,7 +822,7 @@ def compile_latex_output_final(root, latex_path, doall, afile = None):
     for tex in os.listdir(build):
         if tex.endswith(".tex") and (afile is None or afile in tex):
             file = os.path.join(build, tex)
-            c = '"{0}" "{1}" -output-directory="{2}" -interaction=batchmode'.format(lat, file, build)
+            c = '"{0}" "{1}" -output-directory="{2}"'.format(lat, file, build) #  -interaction=batchmode
             fLOG("   ** LATEX compilation (c)", c) 
             post_process_latex_output(file, doall)
             out,err = run_cmd(c,wait=True, do_not_log = False, log_error=False)
