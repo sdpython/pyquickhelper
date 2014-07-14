@@ -209,10 +209,10 @@ def generate_help_sphinx (  project_var_name,
         # The following one works but opens a extra windows.
         os.system(cmd)
         if lay == "latex":
-            post_process_latex_output(froot)
+            post_process_latex_output(froot, False)
         
     if "pdf" in layout:
-        compile_latex_output(froot, latex_path)
+        compile_latex_output_final(froot, latex_path, False)
     
     # end
     os.chdir (pa)
@@ -380,7 +380,7 @@ def process_notebooks(  notebooks,
                     title = os.path.splitext(os.path.split(notebook)[-1])[0].replace("_", " ")
                     format = "latex"
                     options = ' --post PDF --SphinxTransformer.author="" --SphinxTransformer.overridetitle="{0}"'.format(title)
-                    compilation = False
+                    compilation = True
                 else :
                     compilation = False
                     
@@ -410,7 +410,9 @@ def process_notebooks(  notebooks,
                 c += options
                 fLOG(c)
                 
+                #
                 if format not in ["ipynb"]:
+                    # for latex file
                     if format == "latex":
                         cwd = os.getcwd()
                         os.chdir(build)
@@ -424,19 +426,28 @@ def process_notebooks(  notebooks,
                         raise ImportError(err)
                     if len(err)>0 and "error" in err.lower():
                         raise HelpGenException(err)
+                        
+                    # we should compile a second time
+                    # compilation = True  # already done above
                     
                 format = extensions[format].strip(".")
                 
+                # we add the file to the list of generated files
                 files.append ( outputfile )
                 
                 if "--post PDF" in c :
                     files.append ( os.path.join( build, nbout + ".pdf") )
                     
+                fLOG("******",format, compilation, outputfile)
+
                 if compilation:
                     # compilation latex
                     if os.path.exists(latex_path):
                         lat = os.path.join(latex_path, "pdflatex.exe")
-                        c = '"{0}" "{1}" -output-directory="{2}"'.format(lat, files[-1], os.path.split(files[-1])[0])
+                        tex = files[-1].replace(".pdf", ".tex")
+                        post_process_latex_output_any(tex)
+                        c = '"{0}" "{1}" -interaction=batchmode -output-directory="{2}"'.format(lat, tex, os.path.split(tex)[0])
+                        fLOG("   ** LATEX compilation (b)", c) 
                         out,err = run_cmd(c,wait=True, do_not_log = False, log_error=False)
                         if len(err) > 0 :
                             raise HelpGenException(err)
@@ -459,6 +470,15 @@ def process_notebooks(  notebooks,
                 elif format == "rst":
                     # we add a link to the notebook
                     files += add_link_to_notebook(outputfile, notebook, "pdf" in formats, "html" in formats, "python" in formats)
+                    
+                elif format in ("tex", "latex", "pdf"):
+                    files += add_link_to_notebook(outputfile, notebook, False, False, False)
+                    
+                elif format == "py":
+                    pass
+                    
+                else :
+                    raise Exception("unexpected format " + format)
         
         copy = [ ]
         for f in files:
@@ -520,122 +540,35 @@ def process_notebooks(  notebooks,
 def add_link_to_notebook(file, nb, pdf, html, python):
     """
     add a link to the notebook in HTML format and does a little bit of cleaning
+    for various format
     
     @param      file        notebook.html
     @param      nb          notebook (.ipynb)
     @param      pdf         if True, add a link to the PDF, assuming it will exists at the same location
+    @param      html        if True, add a link to the HTML conversion
+    @param      python      if True, add a link to the Python conversion
+    @return                 list of generated files
     
     The function does some cleaning too in the files.
     """
     ext = os.path.splitext(file)[-1]
     
     fold,name = os.path.split(file)
-    noext = os.path.splitext(name)[0]
     res = [ os.path.join(fold, os.path.split(nb)[-1]) ]
     if not os.path.exists(res[-1]):
         shutil.copy(nb, fold)
 
-    if ext == ".ipynb":
+    if   ext == ".ipynb": return res
+    elif ext == ".html" :
+        post_process_html_output(file, pdf, python)
         return res
-        
-    elif ext == ".html":
-        
-        with open(file, "r", encoding="utf8") as f :
-            text = f.read()
-            
-        link = '''
-                <div style="position:fixed;text-align:center;align:right;width:15%;bottom:50px;right:20px;background:#DDDDDD;">
-                <p>
-                {0}
-                </p>
-                </div>
-                '''
-                
-        links = [ '<b>links</b><br /><a href="{0}.ipynb">notebook</a>'.format(noext) ]
-        if pdf: 
-            links.append( '<a href="{0}.pdf">PDF</a>'.format(noext))
-        if python: 
-            links.append( '<a href="{0}.py">python</a>'.format(noext))
-        link = link.format( "\n<br />".join(links) )
-                
-        text = text.replace("</body>", link + "\n</body>")
-        text = text.replace("<title>[]</title>", "<title>%s</title>" % name)
-        if "<h1>" not in text and "<h1 id" not in text : 
-            text = text.replace("<body>", "<body><h1>%s</h1>" % name)
-
-        with open(file, "w", encoding="utf8") as f :
-            f.write(text)
-        
+    elif ext == ".tex" :
+        post_process_latex_output(file, True)
         return res
-              
-    elif ext == ".rst":
-        with open(file, "r", encoding="utf8") as f :
-            lines = f.readlines()
-            
-        for pos in range(0,len(lines)):
-            lines[pos] = lines[pos].replace(".. code:: python","::")
-            
-        for pos,line in enumerate(lines):
-            line = line.strip("\n\r")
-            if len(line) > 0 and line == "=" * len(line):
-                lines[pos] = lines[pos].replace("=","*")
-                pos2 = pos-1
-                l = len(lines[pos])
-                while len(lines[pos2])!=l: pos2-=1
-                sep = "" if lines[pos2].endswith("\n") else "\n"
-                lines[pos2] = "{0}{2}{1}".format(lines[pos],lines[pos2], sep)
-                for p in range(pos2+1,pos):
-                    if lines[p] == "\n": lines[p] = ""
-                break
-                
-        pos += 1
-        if pos >= len(lines):
-            raise HelpGenException("unable to find a title")
-            
-        # label
-        label = "\n.. _{0}:\n\n".format (name.replace(" ","").replace("_","").replace(":","").replace(".","").replace(",",""))
-        lines.insert(0,label)
-            
-        # links
-        links = [ '**Links:**','','    * :download:`notebook <{0}.ipynb>`'.format(noext) ]
-        if html: 
-            links.append('    * :download:`html <{0}.html>`'.format(noext))
-        if pdf: 
-            links.append('    * :download:`PDF <{0}.pdf>`'.format(noext))
-        if python: 
-            links.append('    * :download:`python <{0}.py>`'.format(noext))
-        lines[pos] = "{0}\n\n{1}\n\n**Notebook:**\n\n".format(lines[pos],"\n".join(links))
-        
-        # we remover some empty lines
-        rem=[]
-        for i in range(1,len(lines)-1):
-            if len(lines[i].strip(" \n\r")) == 0:
-                if lines[i-1][0:2] not in ["..", "  ","::"] and \
-                   lines[i+1][0:2] not in ["..", "  ","::"] and \
-                   len(lines[i-1].strip(" \n\r"))>0 and \
-                   len(lines[i-1][:4] != "    " and \
-                   lines[i+1].strip(" \n\r"))>0 :
-                    rem.append(i)
-            if len(lines[i]) > 0 and lines[i] != " " and lines[i-1].startswith("    ") :
-                lines[i] = "\n" + lines[i]
-        rem.reverse()
-        for i in rem:
-            del lines[i]
-            
-        # remove last ::
-        for i in range(len(lines)-1,0,-1) :
-            s = lines[i-1].strip(" \n\r")
-            if len(s) != 0 and s != "::"  : break
-        
-        if i < len(lines):
-            del lines[i:]
-                
-        with open(file, "w", encoding="utf8") as f :
-            f.write("".join(lines))
-        
+    elif ext == ".rst"  : 
+        post_process_rst_output(file, html, pdf, python)
         return res
-         
-    else :
+    else : 
         raise HelpGenException("unable to add a link to this extension: " + ext)
 
 def add_notebook_page(nbs, fileout):
@@ -653,13 +586,6 @@ def add_notebook_page(nbs, fileout):
     exp = re.compile("[.][.] _([-a-zA-Z0-9_]+):")
     rst = sorted(rst)
     
-    if False:
-        for file in rst :
-            with open(file,"r",encoding="utf8") as f : cont = f.read()
-            found = exp.findall(cont)
-            if len(found) == 0: raise HelpGenException("unable to find a label in " + file)
-            rows.append ("    * :ref:`{0}`".format(found[0]))
-        
     rows.append("")
     rows.append(".. toctree::")
     rows.append("")
@@ -671,61 +597,234 @@ def add_notebook_page(nbs, fileout):
         f.write("\n".join(rows))
     return fileout
     
-def post_process_latex_output(root):
+def post_process_latex_output(root, doall):
     """
     post process the latex file produced by sphinx
     
-    @param      root        root path
+    @param      root        root path or latex file to process
+    @param      doall       do all transformations
     """
-    build = os.path.join(root, "_doc", "sphinxdoc","build","latex")
-    for tex in os.listdir(build):
-        if tex.endswith(".tex"):
-            file = os.path.join(build,tex)
-            fLOG("modify file", file)
-            with open(file, "r", encoding="utf8") as f : content = f.read()
-            content = post_process_latex(content)
-            with open(file, "w", encoding="utf8") as f : f.write(content)
+    if os.path.isfile(root):
+        file = root
+        with open(file, "r", encoding="utf8") as f : content = f.read()
+        content = post_process_latex(content, doall)
+        with open(file, "w", encoding="utf8") as f : f.write(content)
+    else :
+        build = os.path.join(root, "_doc", "sphinxdoc","build","latex")
+        for tex in os.listdir(build):
+            if tex.endswith(".tex"):
+                file = os.path.join(build,tex)
+                fLOG("modify file", file)
+                with open(file, "r", encoding="utf8") as f : content = f.read()
+                content = post_process_latex(content, doall)
+                with open(file, "w", encoding="utf8") as f : f.write(content)
+                
+def post_process_latex_output_any(file):
+    """
+    post process the latex file produced by sphinx
     
-def post_process_latex(st):
+    @param      file        latex filename
+    """
+    fLOG("   ** post_process_latex_output_any ", file)
+    with open(file, "r", encoding="utf8") as f : content = f.read()
+    content = post_process_latex(content, True)
+    with open(file, "w", encoding="utf8") as f : f.write(content)                
+            
+def post_process_rst_output(file, html, pdf, python):
+    """
+    process a RST file generated from the conversion of a notebook
+    
+    @param      file        filename
+    @param      pdf         if True, add a link to the PDF, assuming it will exists at the same location
+    @param      html        if True, add a link to the HTML conversion
+    @param      python      if True, add a link to the Python conversion
+    """
+    fold,name = os.path.split(file)
+    noext = os.path.splitext(name)[0]
+    with open(file, "r", encoding="utf8") as f :
+        lines = f.readlines()
+        
+    for pos in range(0,len(lines)):
+        lines[pos] = lines[pos].replace(".. code:: python","::")
+        
+    for pos,line in enumerate(lines):
+        line = line.strip("\n\r")
+        if len(line) > 0 and line == "=" * len(line):
+            lines[pos] = lines[pos].replace("=","*")
+            pos2 = pos-1
+            l = len(lines[pos])
+            while len(lines[pos2])!=l: pos2-=1
+            sep = "" if lines[pos2].endswith("\n") else "\n"
+            lines[pos2] = "{0}{2}{1}".format(lines[pos],lines[pos2], sep)
+            for p in range(pos2+1,pos):
+                if lines[p] == "\n": lines[p] = ""
+            break
+            
+    pos += 1
+    if pos >= len(lines):
+        raise HelpGenException("unable to find a title")
+        
+    # label
+    label = "\n.. _{0}:\n\n".format (name.replace(" ","").replace("_","").replace(":","").replace(".","").replace(",",""))
+    lines.insert(0,label)
+        
+    # links
+    links = [ '**Links:**','','    * :download:`notebook <{0}.ipynb>`'.format(noext) ]
+    if html: 
+        links.append('    * :download:`html <{0}.html>`'.format(noext))
+    if pdf: 
+        links.append('    * :download:`PDF <{0}.pdf>`'.format(noext))
+    if python: 
+        links.append('    * :download:`python <{0}.py>`'.format(noext))
+    lines[pos] = "{0}\n\n{1}\n\n**Notebook:**\n\n".format(lines[pos],"\n".join(links))
+    
+    # bullets
+    for pos,line in enumerate(lines):
+        if len(line) > 0 and (line.startswith("- ") or line.startswith("* ")) \
+            and pos < len(lines) :
+            next = lines[pos+1]
+            prev = lines[pos-1]
+            if (next.startswith("- ") or next.startswith("* ")) and \
+               not (prev.startswith("- ") or prev.startswith("* ")):
+                lines[pos] = "\n" + lines[pos]
+    
+    # we remove some empty lines
+    rem=[]
+    for i in range(1,len(lines)-1):
+        if len(lines[i].strip(" \n\r")) == 0:
+            if lines[i-1][0:2] not in ["..", "  ","::"] and \
+               lines[i+1][0:2] not in ["..", "  ","::"] and \
+               len(lines[i-1].strip(" \n\r"))>0 and \
+               len(lines[i-1][:4] != "    " and \
+               lines[i+1].strip(" \n\r"))>0 :
+                rem.append(i)
+        if len(lines[i]) > 0 and lines[i] != " " and lines[i-1].startswith("    ") :
+            lines[i] = "\n" + lines[i]
+    rem.reverse()
+    for i in rem:
+        del lines[i]
+        
+    # remove last ::
+    for i in range(len(lines)-1,0,-1) :
+        s = lines[i-1].strip(" \n\r")
+        if len(s) != 0 and s != "::"  : break
+    
+    if i < len(lines):
+        del lines[i:]
+            
+    with open(file, "w", encoding="utf8") as f :
+        f.write("".join(lines))
+    
+def post_process_html_output(file, pdf, python):
+    """
+    process a HTML file generated from the conversion of a notebook
+    
+    @param      file        filename
+    @param      pdf         if True, add a link to the PDF, assuming it will exists at the same location
+    @param      python      if True, add a link to the Python conversion
+    """
+    fold,name = os.path.split(file)
+    noext = os.path.splitext(name)[0]
+    with open(file, "r", encoding="utf8") as f :
+        text = f.read()
+        
+    link = '''
+            <div style="position:fixed;text-align:center;align:right;width:15%;bottom:50px;right:20px;background:#DDDDDD;">
+            <p>
+            {0}
+            </p>
+            </div>
+            '''
+            
+    links = [ '<b>links</b><br /><a href="{0}.ipynb">notebook</a>'.format(noext) ]
+    if pdf: 
+        links.append( '<a href="{0}.pdf">PDF</a>'.format(noext))
+    if python: 
+        links.append( '<a href="{0}.py">python</a>'.format(noext))
+    link = link.format( "\n<br />".join(links) )
+            
+    text = text.replace("</body>", link + "\n</body>")
+    text = text.replace("<title>[]</title>", "<title>%s</title>" % name)
+    if "<h1>" not in text and "<h1 id" not in text : 
+        text = text.replace("<body>", "<body><h1>%s</h1>" % name)
+
+    with open(file, "w", encoding="utf8") as f :
+        f.write(text)
+
+def post_process_latex(st, doall):
     """
     modifies a latex file after its generation by sphinx
     
     @param      st      string
+    @param      doall   do all transformations
     @return             string
     """
+    fLOG("   ** enter post_process_latex", doall, "%post_process_latex" in st)
     st = st.replace("<br />","\\\\")
-    st = st.replace("\\maketitle","\\maketitle\n\n\\newchapter{Introduction}")
     
-    # first section
-    lines = st.split("\n")
-    for i,line in enumerate(lines):
-        if "\\section" in line :
-            lines[i] = "\\newchapter{Documentation}\n" + lines[i]
-            break
+    if not doall :
+        st = st.replace("\\maketitle","\\maketitle\n\n\\newchapter{Introduction}")
+    
+    st = st.replace(r"\begin{document}",r"\setlength{\parindent}{0cm}%s\begin {document}" % "\n")
+    st = st.replace(r"DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}",
+                    r"DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\},fontsize=\small}")
+    
+    # hyperref
+    if doall and "%post_process_latex" not in st :
+        st = "%post_process_latex\n" + st
+        reg = re.compile("hyperref[[]([a-zA-Z0-9]+)[]][{](.*?)[}]")
+        allhyp = reg.findall(st)
+        sections = [ ]
+        for id,section in allhyp:
+            sec = r"\subsection{%s} \label{%s}" % (section, id)
+            sections.append ( (id,section, sec) )
+    elif not doall:
+        sections = [ ]
+        # first section
+        lines = st.split("\n")
+        for i,line in enumerate(lines):
+            if "\\section" in line :
+                lines[i] = "\\newchapter{Documentation}\n" + lines[i]
+                break
+        st = "\n".join(lines)
+
+    if len(sections) > 0 :
+        lines = st.split("\n")
+        for i,line in enumerate(lines):
+            for id,section,sec in sections :
+                if line.strip("\r\n ") == section :
+                    fLOG("   **", section, " --> ", sec)
+                    lines[i] = sec
+        st = "\n".join(lines)
         
     st = st.replace("\\chapter", "\\section")
     st = st.replace("\\newchapter", "\\chapter")
     st = st.replace(r"\usepackage{multirow}", r"\usepackage{multirow}\usepackage{amssymb}\usepackage{latexsym}\usepackage{amsfonts}")
-
+    
     return st
     
-def compile_latex_output(root, latex_path):
+def compile_latex_output_final(root, latex_path, doall, afile = None):
     """
     compiles the latex documents
     
     @param      root        root
-    @param      latex_path  path to the compilter
+    @param      latex_path  path to the compiler
+    @param      doall       do more transformation of the latex file before compiling it
+    @param      afile       process a specific file
     """
     lat = os.path.join(latex_path, "pdflatex.exe")
     build = os.path.join(root, "_doc", "sphinxdoc","build","latex")
     for tex in os.listdir(build):
-        if tex.endswith(".tex"):
+        if tex.endswith(".tex") and (afile is None or afile in tex):
             file = os.path.join(build, tex)
-            c = '"{0}" "{1}" -output-directory="{2}" -interaction=nonstopmode'.format(lat, file, build)
+            c = '"{0}" "{1}" -output-directory="{2}" -interaction=batchmode'.format(lat, file, build)
+            fLOG("   ** LATEX compilation (c)", c) 
+            post_process_latex_output(file, doall)
             out,err = run_cmd(c,wait=True, do_not_log = False, log_error=False)
             if len(err) > 0 :
                 raise HelpGenException(err)
             # second compilation
+            fLOG("   ** LATEX compilation (d)", c) 
             out,err = run_cmd(c,wait=True, do_not_log = False, log_error=False)
             if len(err) > 0 :
                 raise HelpGenException(err)
