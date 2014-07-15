@@ -153,9 +153,10 @@ def generate_help_sphinx (  project_var_name,
                                     formats=nbformats,
                                     latex_path=latex_path,
                                     pandoc_path=pandoc_path)
+            nbs = list(set(nbs))
             add_notebook_page(nbs, os.path.join(notebook_doc,"..","all_notebooks.rst"))
             
-        imgs      = [ os.path.join(notebook_dir,_) for _ in os.listdir(notebook_dir) if ".png" in _  ]
+        imgs = [ os.path.join(notebook_dir,_) for _ in os.listdir(notebook_dir) if ".png" in _  ]
         if len(imgs) > 0 :
             for img in imgs :
                 shutil.copy (img, notebook_doc)
@@ -371,7 +372,7 @@ def process_notebooks(  notebooks,
         cmd = '{0} nbconvert --to {1} "{2}"{5} --output="{3}\\{4}"'
         for notebook in notebooks:
             nbout = os.path.split(notebook)[-1]
-            if " " in nbout: raise Exception("spaces are not allowed in notebooks file names: {0}".format(notebook))
+            if " " in nbout: raise HelpGenException("spaces are not allowed in notebooks file names: {0}".format(notebook))
             nbout = os.path.splitext(nbout)[0]
             for format in formats :
                 
@@ -398,7 +399,7 @@ def process_notebooks(  notebooks,
                         continue
                 
                 templ = "full" if format != "latex" else "article"
-                fLOG("convert into ", format, " NB: ", notebook)
+                fLOG("### convert into ", format, " NB: ", notebook)
                 
                 if format == "html":
                     fmttpl = " --template {0}".format(templ)
@@ -458,7 +459,7 @@ def process_notebooks(  notebooks,
                     else:
                         fLOG("unable to find latex in", latex_path)
                         
-                elif format == "html":
+                if format == "html":
                     # we add a link to the notebook
                     files += add_link_to_notebook(outputfile, notebook, "pdf" in formats, False, "python" in formats)
                     
@@ -478,7 +479,7 @@ def process_notebooks(  notebooks,
                     pass
                     
                 else :
-                    raise Exception("unexpected format " + format)
+                    raise HelpGenException("unexpected format " + format)
         
         copy = [ ]
         for f in files:
@@ -552,6 +553,7 @@ def add_link_to_notebook(file, nb, pdf, html, python):
     The function does some cleaning too in the files.
     """
     ext = os.path.splitext(file)[-1]
+    fLOG("    add_link_to_notebook", ext, " file ", file)
     
     fold,name = os.path.split(file)
     res = [ os.path.join(fold, os.path.split(nb)[-1]) ]
@@ -639,6 +641,8 @@ def post_process_rst_output(file, html, pdf, python):
     @param      html        if True, add a link to the HTML conversion
     @param      python      if True, add a link to the Python conversion
     """
+    fLOG("    post_process_rst_output",file)
+    
     fold,name = os.path.split(file)
     noext = os.path.splitext(name)[0]
     with open(file, "r", encoding="utf8") as f :
@@ -692,6 +696,8 @@ def post_process_rst_output(file, html, pdf, python):
             elif line.startswith("-  ") and next.startswith("   ") \
                  and not prev.startswith("   ") and not prev.startswith("-  "):
                 lines[pos-1] += "\n"
+            elif line.startswith("- "):
+                pass
     
     # we remove some empty lines
     rem=[]
@@ -700,8 +706,10 @@ def post_process_rst_output(file, html, pdf, python):
             if lines[i-1][0:2] not in ["..", "  ","::"] and \
                lines[i+1][0:2] not in ["..", "  ","::"] and \
                len(lines[i-1].strip(" \n\r"))>0 and \
-               len(lines[i-1][:4] != "    " and \
-               lines[i+1].strip(" \n\r"))>0 :
+               lines[i-1][:4] != "    " and \
+               not lines[i+1].startswith("- ") and \
+               not lines[i+1].startswith("* ") and \
+               len(lines[i+1].strip(" \n\r"))>0 :
                 rem.append(i)
         if len(lines[i]) > 0 and lines[i] != " " and lines[i-1].startswith("    ") :
             lines[i] = "\n" + lines[i]
@@ -793,6 +801,8 @@ def post_process_latex(st, doall):
                 lines[i] = "\\newchapter{Documentation}\n" + lines[i]
                 break
         st = "\n".join(lines)
+    else:
+        sections = []
 
     if len(sections) > 0 :
         lines = st.split("\n")
