@@ -161,6 +161,12 @@ def GetLogFile (physical = False) :
             sys.hal_log_values ["__log_file"] = LogFakeFileStream()
             
     return sys.hal_log_values ["__log_file"]
+    
+def noLOG (*l, **p) :
+    """
+    does nothing
+    """
+    pass
 
 def fLOG (*l, **p) :
     """
