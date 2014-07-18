@@ -55,6 +55,7 @@ Versions
     * **change:** can use nbconvert from ipython 2.1 to generate the documentation
     * **new:** add function :func:`get_url_content <loghelper.url_helper.get_url_content>`
     * **new:** add function :func:`noLOG <loghelper.flog.noLOG>` which does nothing (disable the logs)
+    * **fix:** fix path to local images in notebooks
 * **v0.4 - 2014/04/19**
     * **change**: add the possibility to create more than one page of examples, use tag ``@example(page___title)``
     * **change**: use method `communicate <https://docs.python.org/3.4/library/subprocess.html#subprocess.Popen.communicate>`_ in :func:`run_cmd <loghelper.flog.run_cmd>`, remove characters ``\r`` on Windows

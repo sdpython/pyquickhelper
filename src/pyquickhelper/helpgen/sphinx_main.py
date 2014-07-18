@@ -648,8 +648,19 @@ def post_process_rst_output(file, html, pdf, python):
     with open(file, "r", encoding="utf8") as f :
         lines = f.readlines()
         
+    imgreg = re.compile("[.][.] image:: (.*)")
+        
+    # code and images
     for pos in range(0,len(lines)):
         lines[pos] = lines[pos].replace(".. code:: python","::")
+        if lines[pos].strip().startswith(".. image::"):
+            # we assume every image should be placed in the same folder as the notebook itself
+            img = imgreg.findall(lines[pos])
+            if len(img) == 0 : raise HelpGenException("unable to extract image name in " + lines[pos])
+            name = img[0]
+            short = name.replace("%5C","/")
+            short = os.path.split(short)[-1]
+            lines[pos] = lines[pos].replace(name, short)
         
     for pos,line in enumerate(lines):
         line = line.strip("\n\r")
