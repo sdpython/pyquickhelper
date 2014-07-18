@@ -5,7 +5,6 @@
 """
 
 import inspect, os, copy, re, sys, types
-from pandas import DataFrame
 from ..pandashelper.tblformat import df_to_rst
 
 class HelpGenException(Exception):
@@ -504,6 +503,7 @@ def process_var_tag(docstring, rst_replace = False, header = ["attribute", "mean
     @return                     a matrix with two columns or a string if rst_replace is True
     
     """
+    from pandas import DataFrame
     
     reg = re.compile("[@]var +([_a-zA-Z][a-zA-Z0-9_]*?) +((?:(?!@var).)+)")
     

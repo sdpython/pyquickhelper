@@ -6,7 +6,6 @@ for a module designed the same way as this one, @see fn generate_help_sphinx.
 
 """
 import os,sys, shutil, datetime, re, importlib
-from pandas import DataFrame
 
 from ..loghelper.flog           import run_cmd, fLOG
 from ..loghelper.pyrepo_helper  import SourceRepository
@@ -287,6 +286,7 @@ def generate_changes_repo(  chan,
         raise HelpGenException("Logs were not empty but there was no comment starting with '*' from " + source + "\n" + "\n".join( [ str(_) for _ in logs ] ))
 
     if len(values) > 0 :
+        from pandas import DataFrame
         tbl = DataFrame ( columns=["change number", "date", "comment"], data=values)
         rows.append("\n\n" + df_to_rst(tbl, align=["1x","1x","3x"]) + "\n\n")
 

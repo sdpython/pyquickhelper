@@ -2,6 +2,11 @@ rem we remove everything from dist
 echo off
 del /Q dist\*.*
 
+rem unittests with python 3.4
+
+set pythonexe="c:\Python34\python"
+%pythonexe% -u setup.py unittests
+
 rem python 3.3
 
 set pythonexe="c:\Python33_x64\python"
@@ -28,7 +33,8 @@ set pythonexe="c:\Python34\python"
 
 rem help
 
-%pythonexe% -u make_help.py
+%pythonexe% -u setup.py build_sphinx
+
 if not exist dist\html mkdir dist\html
 xcopy /E /C /I /Y _doc\sphinxdoc\build\html dist\html
 

@@ -5,7 +5,6 @@
 """
     
 import sys, os, re, shutil, copy
-from pandas import DataFrame
 
 from ..loghelper.flog           import fLOG
 from ..sync.synchelper          import remove_folder, synchronize_folder, explore_folder
@@ -250,6 +249,8 @@ def apply_modification_template (   store_obj,
     @param      additional_sys_path     additional path to include to sys.path before importing a module (will be removed afterwards)
     @return                 content of a .rst file
     """
+    from pandas import DataFrame
+    
     keepf     = fullname
     filename  = os.path.split(fullname)[-1]
     filenoext = os.path.splitext(filename)[0]
@@ -509,9 +510,9 @@ def produces_indexes (
     @param      correspondances     each type is mapped to a label to add to the rst file
     @return                         dictionary: { type : rst content of the index }
     """
+    from pandas import DataFrame
     
     # we process store_obj
-    
     types = { }
     for k,v in store_obj.items () :
         if not isinstance(v,list) :

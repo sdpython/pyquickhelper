@@ -5,7 +5,6 @@
 """
 import io
 from ..loghelper.url_helper import get_url_content
-import pandas
 
 
 def read_url(url, **args):
@@ -25,5 +24,6 @@ def read_url(url, **args):
     @endcode
     @endexample
     """
+    import pandas
     text = get_url_content(url)
     return pandas.read_csv(io.StringIO(text), **args)
