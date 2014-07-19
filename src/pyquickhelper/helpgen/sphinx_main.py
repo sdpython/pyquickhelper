@@ -648,11 +648,51 @@ def post_process_rst_output(file, html, pdf, python):
     with open(file, "r", encoding="utf8") as f :
         lines = f.readlines()
         
-    imgreg = re.compile("[.][.] image:: (.*)")
+    # remove empty lines in inserted code, also add line number
+    def startss(line):
+        for b in ["::",".. parsed-literal::", ".. code:: python",
+                  ".. code-block:: python"]:
+            if line.startswith(b): return b
+        return None
+        
+    codeb = [".. code:: python", ".. code-block:: python"]
+    inbloc = False
+    for pos,line in enumerate(lines):
+        if not inbloc :
+            b = startss(line)
+            if b is None:
+                pass
+            else :
+                if b in codeb :
+                    lines[pos] = "{0}\n    :linenos:\n\n".format(codeb[-1])
+                inbloc = True
+                memopos = pos
+        else:
+            if len(line.strip(" \r\n")) == 0 and pos < len(lines)-1 and \
+                lines[pos+1].startswith(" ") and len(lines[pos+1].strip(" \r\n")) > 0 :
+                lines[pos] = ""
+                    
+            elif not line.startswith(" ") and line != "\n" :
+                inbloc = False
+                
+                if lines[memopos].startswith("::"):
+                    code = "".join((_[4:] if _.startswith("    ") else _) for _ in lines[memopos+1:pos])
+                    if len(code) == 0 :
+                        fLOG ("EMPTY-SECTION in ", file)
+                    else :
+                        try:
+                            cmp = compile(code, "", "exec")
+                            if cmp is not None:
+                                lines[memopos] = "{0}\n    :linenos:\n".format(".. code-block:: python")
+                        except Exception as e :
+                            pass
+                        
+                memopos = None
         
     # code and images
+    imgreg = re.compile("[.][.] image:: (.*)")
     for pos in range(0,len(lines)):
-        lines[pos] = lines[pos].replace(".. code:: python","::")
+        #lines[pos] = lines[pos].replace(".. code:: python","::")
         if lines[pos].strip().startswith(".. image::"):
             # we assume every image should be placed in the same folder as the notebook itself
             img = imgreg.findall(lines[pos])
@@ -662,6 +702,7 @@ def post_process_rst_output(file, html, pdf, python):
             short = os.path.split(short)[-1]
             lines[pos] = lines[pos].replace(name, short)
         
+    # title
     for pos,line in enumerate(lines):
         line = line.strip("\n\r")
         if len(line) > 0 and line == "=" * len(line):
@@ -709,24 +750,6 @@ def post_process_rst_output(file, html, pdf, python):
                 lines[pos-1] += "\n"
             elif line.startswith("- "):
                 pass
-    
-    # we remove some empty lines
-    rem=[]
-    for i in range(1,len(lines)-1):
-        if len(lines[i].strip(" \n\r")) == 0:
-            if lines[i-1][0:2] not in ["..", "  ","::"] and \
-               lines[i+1][0:2] not in ["..", "  ","::"] and \
-               len(lines[i-1].strip(" \n\r"))>0 and \
-               lines[i-1][:4] != "    " and \
-               not lines[i+1].startswith("- ") and \
-               not lines[i+1].startswith("* ") and \
-               len(lines[i+1].strip(" \n\r"))>0 :
-                rem.append(i)
-        if len(lines[i]) > 0 and lines[i] != " " and lines[i-1].startswith("    ") :
-            lines[i] = "\n" + lines[i]
-    rem.reverse()
-    for i in rem:
-        del lines[i]
         
     # remove last ::
     for i in range(len(lines)-1,0,-1) :

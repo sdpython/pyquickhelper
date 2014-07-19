@@ -57,6 +57,12 @@ class TestNotebookConversion (unittest.TestCase):
         file = os.path.join(temp, "all_notebooks.rst")
         add_notebook_page(res, file)
         assert os.path.exists(file)
+        
+        with open(os.path.join(temp, "example_pyquickhelper.rst"), "r", encoding="utf8") as f:
+            text = f.read()
+        assert "from pyquickhelper import fLOG\n    fLOG(OutputPrint=False)  # by default" in text
+        assert ":linenos:" in text
+        #assert ".. code:: python" in text
             
         
 if __name__ == "__main__"  :
