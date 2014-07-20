@@ -697,10 +697,10 @@ def post_process_rst_output(file, html, pdf, python):
             # we assume every image should be placed in the same folder as the notebook itself
             img = imgreg.findall(lines[pos])
             if len(img) == 0 : raise HelpGenException("unable to extract image name in " + lines[pos])
-            name = img[0]
-            short = name.replace("%5C","/")
+            nameimg = img[0]
+            short = nameimg.replace("%5C","/")
             short = os.path.split(short)[-1]
-            lines[pos] = lines[pos].replace(name, short)
+            lines[pos] = lines[pos].replace(nameimg, short)
         
     # title
     for pos,line in enumerate(lines):
@@ -721,7 +721,8 @@ def post_process_rst_output(file, html, pdf, python):
         raise HelpGenException("unable to find a title")
         
     # label
-    label = "\n.. _{0}:\n\n".format (name.replace(" ","").replace("_","").replace(":","").replace(".","").replace(",",""))
+    labelname = name.replace(" ","").replace("_","").replace(":","").replace(".","").replace(",","")
+    label = "\n.. _{0}:\n\n".format (labelname)
     lines.insert(0,label)
         
     # links
