@@ -37,7 +37,7 @@ def generate_help_sphinx (  project_var_name,
                             filter_commit   = lambda c : c.strip() != "documentation",
                             extra_ext       = [],
                             nbformats       = ["ipynb", "html", "python", "rst", "pdf"],
-                            layout          = ["html"]) :
+                            layout          = [("html", "build", {})]) :
     """
     runs the help generation
         - copies every file in another folder
@@ -51,7 +51,8 @@ def generate_help_sphinx (  project_var_name,
     @param      filter_commit       function which accepts a commit to show on the documentation (based on the comment)
     @param      extra_ext           list of file extensions
     @param      nbformats           requested formats for the notebooks conversion
-    @param      layout              list of formats sphinx should generate such as html, latex, pdf, docx 
+    @param      layout              list of formats sphinx should generate such as html, latex, pdf, docx,
+                                    it is a list of tuple (layout, build directory, parameters to override)
     
     The result is stored in path: ``root/_doc/sphinxdoc/source``.
     We assume the file ``root/_doc/sphinxdoc/source/conf.py`` exists
@@ -200,16 +201,33 @@ def generate_help_sphinx (  project_var_name,
         cmd = "make.bat clean".split ()
         run_cmd (cmd, wait = True)
         
-    for lay in layout :
+    cmds=[]
+    lays = []
+    for t3 in layout :
+        if isinstance(t3,str) : lay,build,override = t3,"build",{}
+        elif len(t3) == 1 :     lay,build,override = t3[0],"build",{}
+        elif len(t3) == 2 :     lay,build = t3[0],t3[1],{}
+        else :                  lay,build,override = t3
+        
         if lay == "pdf":
             lay = "latex"
-        cmd = "make {0}".format(lay)
-        # This instruction should work but it does not. Sphinx seems to be stuck.
-        #run_cmd (cmd, wait = True, secure="make_help.log", stop_waiting_if = lambda v : "build succeeded" in v)
-        # The following one works but opens a extra windows.
-        os.system(cmd)
-        if lay == "latex":
-            post_process_latex_output(froot, False)
+
+        over = [ " -D {0}={1}".format(k,v) for k,v in override.items() ]
+        over = "".join(over)
+        
+        cmd = "sphinx-build -b {1} -d {0}/doctrees{2} source {0}/html".format(build, lay, over)
+        cmds.append(cmd)
+        fLOG("run:", cmd)
+        lays.append(lay)
+        
+    #cmd = "make {0}".format(lay)
+    
+    # This instruction should work but it does not. Sphinx seems to be stuck.
+    #run_cmd (cmd, wait = True, secure="make_help.log", stop_waiting_if = lambda v : "build succeeded" in v)
+    # The following one works but opens a extra windows.
+    os.system("\n".join(cmds))
+    if "latex" in lays:
+        post_process_latex_output(froot, False)
         
     if "pdf" in layout:
         compile_latex_output_final(froot, latex_path, False)
