@@ -206,7 +206,7 @@ def generate_help_sphinx (  project_var_name,
             lay = "latex"
 
         if clean :
-            cmd = r"for /d %%i in ({0}\*) do rmdir /q /s %%i".format(build)
+            cmd = r"for /d {1} in ({0}\*) do rmdir /q /s {1}".format(build,"%%i")
             run_cmd (cmd, wait = True)
             cmd = r"del /q /s {0}\*".format(build)
             run_cmd (cmd, wait = True)
