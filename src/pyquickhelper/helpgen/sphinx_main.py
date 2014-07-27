@@ -197,24 +197,29 @@ def generate_help_sphinx (  project_var_name,
     cmds=[]
     lays = []
     for t3 in layout :
-        if isinstance(t3,str) : lay,build,override = t3,"build",{}
-        elif len(t3) == 1 :     lay,build,override = t3[0],"build",{}
-        elif len(t3) == 2 :     lay,build = t3[0],t3[1],{}
-        else :                  lay,build,override = t3
+        if isinstance(t3,str) : lay,build,override,newconf = t3,"build",{},None
+        elif len(t3) == 1 :     lay,build,override,newconf = t3[0],"build",{},None
+        elif len(t3) == 2 :     lay,build,override,newconf = t3[0],t3[1],{}, None
+        elif len(t3) == 3 :     lay,build,override,newconf = t3[0],t3[1],t3[2],None
+        else :                  lay,build,override,newconf = t3
         
         if lay == "pdf":
             lay = "latex"
 
         if clean :
-            cmd = r"for /d {1} in ({0}\*) do rmdir /q /s {1}".format(build,"%%i")
-            run_cmd (cmd, wait = True)
+            if os.path.exists(build):
+                for fold in os.listdir(build):
+                    cmd = "rmdir /q /s {0}\\{1}".format(build,fold)
+                    run_cmd(cmd, wait=True)
             cmd = r"del /q /s {0}\*".format(build)
             run_cmd (cmd, wait = True)
         
         over = [ " -D {0}={1}".format(k,v) for k,v in override.items() ]
         over = "".join(over)
         
-        cmd = "sphinx-build -b {1} -d {0}/doctrees{2} source {0}/html".format(build, lay, over)
+        sconf = "" if newconf is None else " -c {0}".format(newconf)
+        
+        cmd = "sphinx-build -b {1} -d {0}/doctrees{2}{3} source {0}/html".format(build, lay, over, sconf)
         cmds.append(cmd)
         fLOG("run:", cmd)
         lays.append(lay)
@@ -224,7 +229,9 @@ def generate_help_sphinx (  project_var_name,
     # This instruction should work but it does not. Sphinx seems to be stuck.
     #run_cmd (cmd, wait = True, secure="make_help.log", stop_waiting_if = lambda v : "build succeeded" in v)
     # The following one works but opens a extra windows.
-    os.system("\n".join(cmds))
+    for cmd in cmds :
+        os.system(cmd)
+        
     if "latex" in lays:
         post_process_latex_output(froot, False)
         
