@@ -219,7 +219,7 @@ def generate_help_sphinx (  project_var_name,
         
         sconf = "" if newconf is None else " -c {0}".format(newconf)
         
-        cmd = "sphinx-build -b {1} -d {0}/doctrees{2}{3} source {0}/html".format(build, lay, over, sconf)
+        cmd = "sphinx-build -b {1} -d {0}/doctrees{2}{3} source {0}/{1}".format(build, lay, over, sconf)
         cmds.append(cmd)
         fLOG("run:", cmd)
         lays.append(lay)
