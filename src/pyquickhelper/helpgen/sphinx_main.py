@@ -192,14 +192,7 @@ def generate_help_sphinx (  project_var_name,
     if not os.path.exists (docpath) :
         raise FileNotFoundError(docpath)
         
-    if sys.platform == "win32" :
-        make = os.path.join(docpath, "make.bat")
-        if not os.path.exists(make) : raise FileNotFoundError(make)
-            
     os.chdir (docpath)
-    if clean :
-        cmd = "make.bat clean".split ()
-        run_cmd (cmd, wait = True)
         
     cmds=[]
     lays = []
@@ -212,6 +205,12 @@ def generate_help_sphinx (  project_var_name,
         if lay == "pdf":
             lay = "latex"
 
+        if clean :
+            cmd = r"for /d %%i in ({0}\*) do rmdir /q /s %%i".format(build)
+            run_cmd (cmd, wait = True)
+            cmd = r"del /q /s {0}\*".format(build)
+            run_cmd (cmd, wait = True)
+        
         over = [ " -D {0}={1}".format(k,v) for k,v in override.items() ]
         over = "".join(over)
         
