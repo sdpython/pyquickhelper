@@ -30,5 +30,6 @@ from .loghelper.convert_helper import str_to_datetime
 from .sync.synchelper import explore_folder
 from .pandashelper.readh import read_url
 from .pandashelper.tblformat import df_to_rst, df_to_html
+from .pandashelper.tblfunction import isempty, isnan
 from .helpgen import get_help_usage
 from .helpgen.sphinx_main  import generate_help_sphinx
