@@ -57,6 +57,7 @@ Versions
     * **new:** add function :func:`noLOG <loghelper.flog.noLOG>` which does nothing (disable the logs)
     * **fix:** fix path to local images in notebooks
     * **change:** the help generation can now produce multiple layout for the same package
+    * **new:** auto completion class for IPython
 * **v0.4 - 2014/04/19**
     * **change**: add the possibility to create more than one page of examples, use tag ``@example(page___title)``
     * **change**: use method `communicate <https://docs.python.org/3.4/library/subprocess.html#subprocess.Popen.communicate>`_ in :func:`run_cmd <loghelper.flog.run_cmd>`, remove characters ``\r`` on Windows

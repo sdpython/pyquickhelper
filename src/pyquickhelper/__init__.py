@@ -33,3 +33,4 @@ from .pandashelper.tblformat import df_to_rst, df_to_html
 from .pandashelper.tblfunction import isempty, isnan
 from .helpgen import get_help_usage
 from .helpgen.sphinx_main  import generate_help_sphinx
+from .ipythonhelper.kindofcompletion import AutoCompletion, AutoCompletionFile
