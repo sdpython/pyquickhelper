@@ -47,7 +47,7 @@ This project contains various helper about logging functions, unit tests and hel
 Versions
 --------
 
-* **v0.5 - 2014/??/??**
+* **v0.5 - 2014/08/05**
     * **change:** few fixes while generating the documentation (notebooks, toctrees)
     * **change:** compilation of the help into PDF, latex, singlehtml
     * **change:** removes the creation of ``temp_log.txt`` by default when using function :func:`fLOG <loghelper.flog.fLOG>`
