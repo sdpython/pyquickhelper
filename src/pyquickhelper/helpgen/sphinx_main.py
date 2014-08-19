@@ -163,7 +163,7 @@ def generate_help_sphinx (  project_var_name,
             
                 
     #  run the documentation generation
-    if sys.platform == "win32" :
+    if sys.platform.startswith("win"):
         temp = os.environ ["PATH"]
         pyts = get_executables_path()
         script = ";".join(pyts)
@@ -249,7 +249,7 @@ def get_executables_path() :
     """
     res  = [ os.path.split(sys.executable)[0] ]
     res += [ os.path.join(res[-1], "Scripts") ]
-    if sys.platform == "win32" :
+    if sys.platform.startswith("win") :
         ver = "c:\\Python%d%d" % (sys.version_info.major, sys.version_info.minor)
         res += [ver ]
         res += [ os.path.join(res[-1], "Scripts") ]
