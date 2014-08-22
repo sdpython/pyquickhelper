@@ -328,7 +328,7 @@ def process_notebooks(  notebooks,
                         formats = ["ipynb", "html", "python", "rst", "pdf"]
                         ):
     """
-    converts notebooks into html, rst, latex using 
+    Converts notebooks into html, rst, latex, pdf, python, docx using 
     `nbconvert <http://ipython.org/ipython-doc/rel-1.0.0/interactive/nbconvert.html>`_.
     
     @param      notebooks   list of notebooks 
@@ -347,14 +347,12 @@ def process_notebooks(  notebooks,
     to find its DLL, look @see fn import_pywin32.
     
     The latex compilation uses `MiKTeX <http://miktex.org/>`_.
+    The conversion into Word document durectly uses pandoc.
+    It still has an issue with table.
     
     @warning Some latex templates (for nbconvert) uses ``[commandchars=\\\\\\{\\}]{\\|}`` which allows commands ``\\\\`` and it does not compile. 
                 The one used here is ``report``.
                 
-    *Will be deprecated:*
-    
-    The function can use a different python Version if environement variable ``PANDOCPY`` is set up the Python path.
-    `WinPython <http://winpython.sourceforge.net/>`_ works better when a notebook contains an image.
     """
     if isinstance(notebooks,str):
         notebooks = [ notebooks ]
@@ -379,6 +377,8 @@ def process_notebooks(  notebooks,
                     "html":".html",
                     "rst":".rst",
                     "python":".py",
+                    "docx":".docx",
+                    "word":".docx",
                 }
     
     if sys.platform.startswith("win"):
@@ -406,8 +406,13 @@ def process_notebooks(  notebooks,
                     format = "latex"
                     options = ' --post PDF --SphinxTransformer.author="" --SphinxTransformer.overridetitle="{0}"'.format(title)
                     compilation = True
+                    pandoco = None
+                elif format in ["word", "docx"] :
+                    format = "html"
+                    pandoco = "docx"
                 else :
                     compilation = False
+                    pandoco = None
                     
                 # output
                 outputfile = os.path.join(build, nbout + extensions[format])
@@ -420,7 +425,8 @@ def process_notebooks(  notebooks,
                     if dtnb < dto :
                         fLOG("-- skipping notebook", format, notebook, "(", outputfile, ")")
                         files.append ( outputfile )
-                        continue
+                        if pandoco is None :
+                            continue
                 
                 templ = "full" if format != "latex" else "article"
                 fLOG("### convert into ", format, " NB: ", notebook)
@@ -483,6 +489,15 @@ def process_notebooks(  notebooks,
                     else:
                         fLOG("unable to find latex in", latex_path)
                         
+                elif pandoco != None :
+                    # compilation pandoc
+                    fLOG("   ** pandoc compilation (b)", pandoco) 
+                    outfilep = os.path.splitext(outputfile)[0] + "." + pandoco
+                    c = r'"{0}\pandoc.exe" -f html -t {1} "{2}" -o "{3}"'.format(pandoc_path, pandoco, outputfile, outfilep)
+                    out,err = run_cmd(c,wait=True, do_not_log = False, log_error=False)
+                    if len(err) > 0 :
+                        raise HelpGenException(err)
+                        
                 if format == "html":
                     # we add a link to the notebook
                     files += add_link_to_notebook(outputfile, notebook, "pdf" in formats, False, "python" in formats)
@@ -500,6 +515,9 @@ def process_notebooks(  notebooks,
                     files += add_link_to_notebook(outputfile, notebook, False, False, False)
                     
                 elif format == "py":
+                    pass
+                    
+                elif format in ["docx","word"]:
                     pass
                     
                 else :

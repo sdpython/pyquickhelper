@@ -228,7 +228,7 @@ def fLOG (*l, **p) :
     if len (l) > 0 :
         def _str_process (s) :
             if isinstance (s, str) : return s
-            elif isinstance(s, bytes) : return s.encode("utf8")
+            elif isinstance(s, bytes) : return s.decode("utf8")
             else : 
                 try:
                     return str (s)
