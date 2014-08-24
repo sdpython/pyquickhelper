@@ -892,7 +892,7 @@ def post_process_latex(st, doall):
         
     st = st.replace("\\chapter", "\\section")
     st = st.replace("\\newchapter", "\\chapter")
-    st = st.replace(r"\usepackage{multirow}", r"\usepackage{multirow}\usepackage{amssymb}\usepackage{latexsym}\usepackage{amsfonts}")
+    st = st.replace(r"\usepackage{multirow}", r"\usepackage{multirow}\usepackage{amssymb}\usepackage{latexsym}\usepackage{amsfonts}\usepackage{ulem}")
     
     return st
     
