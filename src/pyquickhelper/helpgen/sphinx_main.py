@@ -892,7 +892,12 @@ def post_process_latex(st, doall):
         
     st = st.replace("\\chapter", "\\section")
     st = st.replace("\\newchapter", "\\chapter")
-    st = st.replace(r"\usepackage{multirow}", r"\usepackage{multirow}\usepackage{amssymb}\usepackage{latexsym}\usepackage{amsfonts}\usepackage{ulem}")
+    if r"\usepackage{multirow}" in st :
+        st = st.replace(r"\usepackage{multirow}", r"\usepackage{multirow}\usepackage{amssymb}\usepackage{latexsym}\usepackage{amsfonts}\usepackage{ulem}")
+    elif r"\usepackage{hyperref}" in st :
+        st = st.replace(r"\usepackage{hyperref}", r"\usepackage{hyperref}\usepackage{amssymb}\usepackage{latexsym}\usepackage{amsfonts}\usepackage{ulem}")
+    else :
+        raise HelpGenException("unable to add new instructions usepackage")
     
     return st
     
