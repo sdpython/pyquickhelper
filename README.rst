@@ -46,6 +46,9 @@ This project contains various helper about logging functions, unit tests and hel
 Versions
 --------
 
+* **v0.6 - 2014/08/24**
+    * **change:** minor fixes for the documentation generation
+    * **add:** add code to handle conversion of notebooks in docx format
 * **v0.5 - 2014/08/05**
     * **change:** few fixes while generating the documentation (notebooks, toctrees)
     * **change:** compilation of the help into PDF, latex, singlehtml

@@ -3,7 +3,7 @@
 Documentation for this file.
 """
 
-__version__ = "0.5"
+__version__ = "0.6"
 __author__ = "Xavier Dupré"
 __github__ = "https://github.com/sdpython/pyquickhelper"
 __url__ = "http://www.xavierdupre.fr/app/pyquickhelper/helpsphinx/index.html"
