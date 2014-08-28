@@ -151,7 +151,9 @@ class FileTreeStatus :
         
         if os.path.exists(self.fileKeep) :
             with open(self.fileKeep, "r", encoding="utf8") as f :
-                for _ in f.readlines() : 
+                for ni,_ in enumerate(f.readlines()) : 
+                    if ni == 0 and _.startswith("\ufeff") :
+                        _ = _ [len("\ufeff"):]
                     spl = _.strip("\r\n ").split("\t")
                     try :
                         if len(spl) >= 2 :

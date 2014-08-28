@@ -10,6 +10,7 @@ import os, re, zipfile, datetime, gzip
 from ..loghelper.flog           import fLOG
 from .file_tree_node            import FileTreeNode
 from .file_tree_status          import FileTreeStatus
+from ..loghelper.pqh_exception  import PQHException
 
 def explore_folder (folder, pattern = None, fullname = False) :
     """returns the list of files included in a folder and in the subfolder
@@ -203,7 +204,7 @@ def synchronize_folder (   p1,
     fLOG ("to   ", p2)
     
     if file_date != None and not os.path.exists(file_date):
-        with open(file_date,"w") as f : f.write("")
+        with open(file_date,"w",encoding="utf8") as f : f.write("")
     
     if filter == None :
         tfilter = lambda v : True 
@@ -277,14 +278,22 @@ def synchronize_folder (   p1,
                         # we need to remove file, file refers to this side
                         filerel = os.path.relpath(file, start=p1)
                         filerem = os.path.join(p2, filerel)
-                        action.append ( (">-", None, FileTreeNode(p2, filerel) ) )
-                        if not avoid_copy : 
-                            fLOG ("- remove ", filerem)
-                            os.remove(filerem)
-                        if status != None : 
-                            status.update_copied_file (file, delete = True)
-                            modif += 1
-                            if modif % 50 == 0 : status.save_dates()
+                        try:
+                            ft = FileTreeNode(p2, filerel)
+                        except PQHException as e :
+                            ft = None  #probably already removed
+                            
+                        if ft != None :
+                            action.append ( (">-", None, ft ) )
+                            if not avoid_copy : 
+                                fLOG ("- remove ", filerem)
+                                os.remove(filerem)
+                            if status != None : 
+                                status.update_copied_file (file, delete = True)
+                                modif += 1
+                                if modif % 50 == 0 : status.save_dates()
+                        else :
+                                fLOG ("- skip (probably already removed) ", filerem)
                 else :
                     if not n2.isdir () and not no_deletion: 
                         if not avoid_copy : n2.remove ()

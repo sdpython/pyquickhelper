@@ -70,7 +70,8 @@ class TestSynchoHash (unittest.TestCase):
                         filter_copy = filter_copy,
                         file_date = file_date)
         
-        assert len(a)==2
+        if len(a)not in [2,3]:
+            raise Exception("2 or 3 expected: " + "\n".join([str(_) for _ in a]))
         assert a[0][0]==">+"==a[1][0]
         assert len(b) == 0
         
