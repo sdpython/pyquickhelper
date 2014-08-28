@@ -21,16 +21,16 @@ def check( log = False):
     """
     return True
     
-from .loghelper.flog import fLOG, run_cmd, unzip, noLOG
-from .loghelper.url_helper import get_url_content
-from .funcwin.frame_params import open_window_params
-from .funcwin.frame_function import open_window_function
-from .funcwin.main_window import main_loop_functions
-from .loghelper.convert_helper import str_to_datetime
-from .sync.synchelper import explore_folder
-from .pandashelper.readh import read_url
-from .pandashelper.tblformat import df_to_rst, df_to_html
-from .pandashelper.tblfunction import isempty, isnan
-from .helpgen import get_help_usage
-from .helpgen.sphinx_main  import generate_help_sphinx
-from .ipythonhelper.kindofcompletion import AutoCompletion, AutoCompletionFile
+from .loghelper.flog                    import fLOG, run_cmd, unzip, noLOG
+from .loghelper.url_helper              import get_url_content
+from .funcwin.frame_params              import open_window_params
+from .funcwin.frame_function            import open_window_function
+from .funcwin.main_window               import main_loop_functions
+from .loghelper.convert_helper          import str_to_datetime
+from .sync.synchelper                   import explore_folder, synchronize_folder
+from .pandashelper.readh                import read_url
+from .pandashelper.tblformat            import df_to_rst, df_to_html
+from .pandashelper.tblfunction          import isempty, isnan
+from .helpgen                           import get_help_usage
+from .helpgen.sphinx_main               import generate_help_sphinx
+from .ipythonhelper.kindofcompletion    import AutoCompletion, AutoCompletionFile

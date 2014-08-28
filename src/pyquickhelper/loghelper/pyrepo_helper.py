@@ -17,7 +17,7 @@ class SourceRepository :
     
     def __init__ (self, commandline = True):
         """
-        constructior
+        constructor
         
         @param      commandline     use command line or a specific module (like pysvn for example)
         """

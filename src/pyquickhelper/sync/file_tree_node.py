@@ -105,7 +105,8 @@ class FileTreeNode :
         if not os.path.isdir  (root) : raise PQHException ("path %s is not a folder" % root)
         
         if self._file != None :
-            if not self.exists () : raise PQHException ("%s does not exist" % self.get_fullname ())
+            if not self.exists() : 
+                raise PQHException ("%s does not exist [%s,%s]" % (self.get_fullname(),root,file))
                 
         self._fillstat ()
         if self.isdir () :
@@ -246,6 +247,7 @@ class FileTreeNode :
             raise PQHException ("unable to look into a file %s full %s" % (self._file, self.get_fullname ()))
         
         if repository :
+            opt     = "repo_ls"
             full    = self.get_fullname ()
             fi      = "" if self._file == None else self._file
             entry   = self.repo_ls(full)
@@ -254,6 +256,7 @@ class FileTreeNode :
             for s in temp :
                 all.append (s)
         else :
+            opt  = "listdir"
             full = self.get_fullname ()
             fi   = "" if self._file == None else self._file
             all  = [a for a in os.listdir (full) if a not in [".", ".."] ]
@@ -276,7 +279,7 @@ class FileTreeNode :
                                     log     = self._log)
                 except PQHException as e :
                     if "does not exist" in str (e) :
-                        fLOG ("a folder should exist, but is it is not, we continue")
+                        fLOG ("a folder should exist, but is it is not, we continue [opt=%s]" % opt)
                         fLOG (e)
                         continue
                 if n.isdir () and len (n._children) == 0 : 

@@ -150,7 +150,7 @@ class FileTreeStatus :
         self.LOG                = fLOG
         
         if os.path.exists(self.fileKeep) :
-            with open(self.fileKeep, "r") as f :
+            with open(self.fileKeep, "r", encoding="utf8") as f :
                 for _ in f.readlines() : 
                     spl = _.strip("\r\n ").split("\t")
                     try :
@@ -192,7 +192,7 @@ class FileTreeStatus :
             
             rows.append ( sval )
             
-        with open(self.fileKeep, "w") as f:
+        with open(self.fileKeep, "w", encoding="utf8") as f:
             for r in rows : f.write(r)
         
     def has_been_modified_and_reason (self, file) :

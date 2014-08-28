@@ -45,6 +45,11 @@ class RepoFile :
         for k,v in args.items() :
             self.__dict__[k] = v
             
+        if "name" in self.__dict__ and '"' in self.name:
+            #defa = sys.stdout.encoding if sys.stdout != None else "utf8"
+            self.name = self.name.replace('"',"")
+            #self.name = self.name.encode(defa).decode("utf-8")
+            
     def __str__(self):
         """
         usual
@@ -58,9 +63,7 @@ def repo_ls(full, commandline = True):
     @param      commandline use command line instead of pysvn
     @return                     output of client.ls
     """
-    
     if not commandline :
-        
         try :
             import pysvn
             client  = pysvn.Client()
@@ -96,7 +99,9 @@ def repo_ls(full, commandline = True):
         if len(err) > 0 :
             fLOG ("problem with file ", full, err)
             raise Exception(err)
-        res = [ RepoFile(name=os.path.join(full,_.strip())) for _ in out.split("\n") if len(_) > 0]
+            
+        res = [ RepoFile(name=os.path.join(full,_.strip())) \
+                            for _ in out.split("\n") if len(_) > 0]
         return res
             
 def __get_version_from_version_txt(path) :
