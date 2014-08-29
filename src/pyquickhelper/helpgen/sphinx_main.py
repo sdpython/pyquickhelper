@@ -74,7 +74,7 @@ def generate_help_sphinx (  project_var_name,
     @endexample
     
     By default, the function only consider files end by ``.py`` and ``.rst`` but you could
-    add others files sharing the same extensions by adding this one
+    add other files sharing the same extensions by adding this one
     in the ``extra_ext`` list.
     
     @example(other page of examples___run help generation)

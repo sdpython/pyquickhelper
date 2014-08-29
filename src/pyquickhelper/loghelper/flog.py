@@ -834,7 +834,7 @@ def run_script (script, *l) :
     """
     run a script
     @param      script      script to execute
-    @param      l           others parameters
+    @param      l           other parameters
     @return                 out,err: content of stdout stream and stderr stream
     """
     if not os.path.exists (script) :
