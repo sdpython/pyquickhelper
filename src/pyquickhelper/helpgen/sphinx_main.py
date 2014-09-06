@@ -12,7 +12,7 @@ from ..loghelper.pyrepo_helper  import SourceRepository
 from ..pandashelper.tblformat   import df_to_rst
 from .utils_sphinx_doc          import prepare_file_for_sphinx_help_generation
 from .utils_sphinx_doc_helpers  import HelpGenException
-from ..sync.synchelper          import explore_folder
+from ..sync.synchelper          import explore_folder, has_been_updated
 
 template_examples = """
 
@@ -371,14 +371,14 @@ def process_notebooks(  notebooks,
             import_pywin32()
         exe = os.path.split(sys.executable)[0]
             
-    extensions = {  "ipynb":".ipynb",
-                    "latex":".tex",
-                    "pdf":".pdf",
-                    "html":".html",
-                    "rst":".rst",
-                    "python":".py",
-                    "docx":".docx",
-                    "word":".docx",
+    extensions = {  "ipynb":    ".ipynb",
+                    "latex":    ".tex",
+                    "pdf":      ".pdf",
+                    "html":     ".html",
+                    "rst":      ".rst",
+                    "python":   ".py",
+                    "docx":     ".docx",
+                    "word":     ".docx",
                 }
     
     if sys.platform.startswith("win"):
@@ -599,10 +599,12 @@ def add_link_to_notebook(file, nb, pdf, html, python):
     
     fold,name = os.path.split(file)
     res = [ os.path.join(fold, os.path.split(nb)[-1]) ]
-    if not os.path.exists(res[-1]):
-        shutil.copy(nb, fold)
+    newr,reason = has_been_updated(nb, res[-1])
+    if newr:
+        shutil.copy(nb, fold)  
 
-    if   ext == ".ipynb": return res
+    if ext == ".ipynb": 
+        return res
     elif ext == ".html" :
         post_process_html_output(file, pdf, python)
         return res

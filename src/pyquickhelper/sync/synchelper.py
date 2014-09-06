@@ -9,8 +9,9 @@ import os, re, zipfile, datetime, gzip
 
 from ..loghelper.flog           import fLOG
 from .file_tree_node            import FileTreeNode
-from .file_tree_status          import FileTreeStatus
+from .file_tree_status          import FileTreeStatus, checksum_md5
 from ..loghelper.pqh_exception  import PQHException
+
 
 def explore_folder (folder, pattern = None, fullname = False) :
     """returns the list of files included in a folder and in the subfolder
@@ -339,3 +340,33 @@ def remove_folder (top, remove_also_top = True) :
         os.rmdir(root)
             
     return res
+
+def has_been_updated(source, dest) :
+    """
+    we assume ``dest`` is a copy of ``source``, we want to know
+    if the copy is up to date or not
+    @param      source      filename
+    @param      dest        copy
+    @return                 True,reason or False,None
+    """
+    if not os.path.exists(dest):
+        return True,"new"
+    
+    st1 = os.stat(source)
+    st2 = os.stat(dest)
+    if st1.st_size != st2.st_size:
+        return True,"size"
+        
+    d1 = st1.st_mtime
+    d2 = st2.st_mtime
+    if d1 > d2 :
+        return True, "date"
+        
+    c1 = checksum_md5 (source)
+    c2 = checksum_md5 (dest)
+    
+    if c1 != c2 :
+        return True, "md5"
+        
+    return False,None
+        

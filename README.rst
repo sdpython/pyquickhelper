@@ -46,6 +46,9 @@ This project contains various helper about logging functions, unit tests and hel
 Versions
 --------
 
+* **0.7 - 2014/??/??**
+    * **new:** function :func:`has_been_updated <sync.synchelper.has_been_updated>` to check a copy of a file is outdated
+    * **fix:** fix a bug while updating the notebook file (documentation generation)
 * **0.6 - 2014/08/24**
     * **change:** minor fixes for the documentation generation
     * **add:** add code to handle conversion of notebooks in docx format
