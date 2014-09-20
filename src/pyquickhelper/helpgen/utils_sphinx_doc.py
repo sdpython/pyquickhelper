@@ -143,11 +143,47 @@ def _private_process_one_file(fullname, to, silent, fmod):
                 raise e
             else :
                 content = keepc
+                
         content = fmod (content, fullname)
+        content = remove_undesired_part_for_documentation(content, fullname)
         fold = os.path.split(to)[0]
         if not os.path.exists(fold) : os.makedirs(fold)
         content = replace_relative_import(fullname, content)
         with open(to, "w", encoding="utf8") as g : g.write(content)
+        
+def remove_undesired_part_for_documentation(content, filename):
+    """
+    Some files contains blocs inserted between the two lines:
+        * ``# -- HELP BEGIN EXCLUDE --``
+        * ``# -- HELP END EXCLUDE --``
+        
+    Those lines will be commented out.
+    
+    @param      content     file content
+    @param      filename    for error message
+    @return                 modified file content
+    """
+    marker_in = "# -- HELP BEGIN EXCLUDE --"
+    marker_out = "# -- HELP END EXCLUDE --"
+    
+    lines   = content.split("\n")
+    res     = [ ]
+    inside   = False
+    for line in lines :
+        if line.startswith(marker_in):
+            if inside: raise HelpGenException("issues with undesired blocs in file " + filename + " with: " + marker_in + "|" + marker_out)
+            inside = True
+            res.append(line)
+        elif line.startswith(marker_out):
+            if not inside: raise HelpGenException("issues with undesired blocs in file " + filename + " with: " + marker_in + "|" + marker_out)
+            inside = False
+            res.append(line)
+        else:
+            if inside:
+                res.append("### " + line)
+            else :
+                res.append(line)
+    return "\n".join(res)
     
 def copy_source_files ( input, 
                         output, 

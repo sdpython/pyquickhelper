@@ -50,6 +50,7 @@ Versions
     * **new:** function :func:`has_been_updated <sync.synchelper.has_been_updated>` to check a copy of a file is outdated
     * **fix:** fix a bug while updating the notebook file (documentation generation)
     * **fix:** fix misspellings and some minor bugs
+    * **add:** some parts can be ignored while generation the documentation by adding section ``# -- HELP BEGIN EXCLUDE --`` and ``# -- HELP END EXCLUDE --``
 * **0.6 - 2014/08/24**
     * **change:** minor fixes for the documentation generation
     * **add:** add code to handle conversion of notebooks in docx format

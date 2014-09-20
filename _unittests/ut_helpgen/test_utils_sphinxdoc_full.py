@@ -107,7 +107,11 @@ class TestSphinxDocFull (unittest.TestCase):
                 raise Exception("issues detected for function " + f + "\n" + mes)
             
         
-        
+        exclude = os.path.join(temp, "pyquickhelper","helpgen","utils_sphinx_doc.py")
+        with open(exclude, "r") as f : content = f.read()
+        assert "### # -- HELP END EXCLUDE --" not in content
+        assert "### class useless_class_UnicodeStringIOThreadSafe (str) :" not in content
+        assert '###             elif strow.startswith("@ingroup") :' in content
         
 if __name__ == "__main__"  :
     unittest.main ()    
