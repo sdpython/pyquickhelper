@@ -11,10 +11,7 @@ except ImportError :
     import src
     
 from src.pyquickhelper.loghelper.flog import fLOG
-from src.pyquickhelper.funcwin.function_helper import extract_function_information
-from src.pyquickhelper.funcwin.default_functions import file_grep
 from src.pyquickhelper.funcwin.storing_functions import get_icon
-from src.pyquickhelper.funcwin.frame_params import FrameParams, open_window_params
 from src.pyquickhelper.funcwin.frame_function import open_window_function
 
 from src.pyquickhelper.funcwin.default_functions import test_regular_expression

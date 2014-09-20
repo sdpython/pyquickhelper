@@ -13,7 +13,6 @@ except ImportError :
     import src
 
 from src.pyquickhelper.loghelper.flog        import fLOG
-from src.pyquickhelper.sync.file_tree_node   import FileTreeNode
 from src.pyquickhelper.sync.synchelper       import synchronize_folder, remove_folder
 
 class TestSynchoHash (unittest.TestCase):

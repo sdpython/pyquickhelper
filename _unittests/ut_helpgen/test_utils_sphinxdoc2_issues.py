@@ -13,7 +13,7 @@ except ImportError :
     if path not in sys.path : sys.path.append(path)
     import src
     
-from src.pyquickhelper.loghelper.flog           import fLOG
+from src.pyquickhelper.loghelper.flog                       import fLOG
 from src.pyquickhelper.helpgen.utils_sphinx_doc_helpers     import process_var_tag
 
 

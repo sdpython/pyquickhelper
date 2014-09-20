@@ -25,7 +25,7 @@ class TestChanges (unittest.TestCase):
         if os.path.exists(fold):
             file = os.path.join(path, "out_table.rst")
             if os.path.exists(file) : os.remove(file)
-            tbl = generate_changes_repo(file, fold)
+            generate_changes_repo(file, fold)
             with open(file, "r", encoding="utf8") as f : content = f.readlines()
             ls = [ len(_) for _ in content ]
             ml = max ( ls )

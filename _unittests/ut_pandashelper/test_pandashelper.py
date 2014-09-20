@@ -12,7 +12,7 @@ except ImportError :
     if path not in sys.path : sys.path.append (path)
     import src
 
-from src.pyquickhelper import __version__, fLOG, read_url
+from src.pyquickhelper import read_url, fLOG
 
 
 class TestVersion (unittest.TestCase):

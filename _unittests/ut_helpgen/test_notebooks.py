@@ -62,8 +62,7 @@ class TestNotebookConversion (unittest.TestCase):
             text = f.read()
         assert "from pyquickhelper import fLOG\n    fLOG(OutputPrint=False)  # by default" in text
         assert ":linenos:" in text
-        #assert ".. code:: python" in text
-            
+
         
 if __name__ == "__main__"  :
     unittest.main ()    
