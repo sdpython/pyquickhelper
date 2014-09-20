@@ -99,7 +99,7 @@ def generate_help_sphinx (  project_var_name,
     
     src = SourceRepository(commandline=True)
     version = src.version(root)
-    if version != None :
+    if version is not None :
         with open("version.txt", "w") as f : f.write(str(version) + "\n")
     
     # modifies the version number in conf.py
@@ -107,7 +107,7 @@ def generate_help_sphinx (  project_var_name,
     shutil.copy("LICENSE.txt", "_doc/sphinxdoc/source")
     
     # import conf.py
-    theconf     = importlib.import_module('conf')
+    theconf = importlib.import_module('conf')
     if theconf is None:
         raise ImportError("unable to import conf.py which defines the help generation")
     latex_path  = theconf.__dict__.get("latex_path",r"C:\Program Files\MiKTeX 2.9\miktex\bin\x64")
@@ -333,7 +333,7 @@ def process_notebooks(  notebooks,
     
     @param      notebooks   list of notebooks 
     @param      outfold     folder which will contains the outputs
-    @param      build       tempoary folder which contains all produced files
+    @param      build       tempopary folder which contains all produced files
     @param      pandoc_path path to pandoc
     @param      formats     list of formats to convert into (pdf format means latex then compilation)
     @param      latex_path  path to the latex compiler
@@ -489,7 +489,7 @@ def process_notebooks(  notebooks,
                     else:
                         fLOG("unable to find latex in", latex_path)
                         
-                elif pandoco != None :
+                elif pandoco is not None :
                     # compilation pandoc
                     fLOG("   ** pandoc compilation (b)", pandoco) 
                     outfilep = os.path.splitext(outputfile)[0] + "." + pandoco
@@ -747,6 +747,7 @@ def post_process_rst_output(file, html, pdf, python):
             lines[pos] = lines[pos].replace(nameimg, short)
         
     # title
+    pos = 0
     for pos,line in enumerate(lines):
         line = line.strip("\n\r")
         if len(line) > 0 and line == "=" * len(line):
@@ -797,6 +798,7 @@ def post_process_rst_output(file, html, pdf, python):
                 pass
         
     # remove last ::
+    i = len(lines)
     for i in range(len(lines)-1,0,-1) :
         s = lines[i-1].strip(" \n\r")
         if len(s) != 0 and s != "::"  : break

@@ -19,7 +19,7 @@ def IsRepo(location, commandline = True, log = False):
     @param      log             if True, return the log not a boolean
     @return                     bool
     """
-    if location == None :
+    if location is None :
         location = os.path.normpath(os.path.abspath( os.path.join( os.path.split(__file__)[0], "..", "..", "..", "..")))
         
     try :
@@ -70,7 +70,7 @@ def repo_ls(full, commandline = True):
     if not commandline :
         try :
             raise NotImplementedError()
-        except Exception :
+        except Exception as e :
             return repo_ls(full, True)
     else :
         if sys.platform.startswith("win32") :
@@ -104,17 +104,17 @@ def __get_version_from_version_txt(path) :
     @warning If ``version.txt`` was not found, it throws an exception.
     """
     file = os.path.split(__file__)[0]
-    pathes = [ file,
+    paths = [ file,
                os.path.join(file, ".."),
                os.path.join(file, "..", ".."),
                os.path.join(file, "..", "..", ".."),
                path ]
-    for p in pathes :
+    for p in paths :
         fp = os.path.join(p, "version.txt")
         if os.path.exists (fp) :
             with open(fp, "r") as f :
                 return int(f.read().strip(" \n\r\t")) 
-    raise FileNotFoundError("unable to find version.txt in\n" + "\n".join(pathes))
+    raise FileNotFoundError("unable to find version.txt in\n" + "\n".join(paths))
     
 def get_repo_log (path = None, file_detail = False, commandline = True) :
     """
@@ -130,7 +130,7 @@ def get_repo_log (path = None, file_detail = False, commandline = True) :
                                     - full commit hash
                                     - link to commit (if the repository is http://...)
                     
-    The function use a command line if an error occured. It uses the xml format:
+    The function use a command line if an error occurred. It uses the xml format:
     @code
     <logentry revision="161">
         <author>xavier dupre</author>
@@ -150,7 +150,7 @@ def get_repo_log (path = None, file_detail = False, commandline = True) :
     if file_detail :
         raise NotImplementedError()
     
-    if path == None :
+    if path is None :
         path = os.path.normpath(os.path.abspath( os.path.join( os.path.split(__file__)[0], "..", "..", "..")))
         
     if not commandline :
@@ -194,7 +194,7 @@ def get_repo_log (path = None, file_detail = False, commandline = True) :
             author      = i.find("author").text.strip()
             t           = i.find("msg").text
             hash        = i.find("hash").text
-            msg         = t.strip() if t != None else "-"
+            msg         = t.strip() if t is not None else "-"
             sdate       = i.find("date").text.strip()
             dt          = str_to_datetime(sdate.replace("T"," ").strip("Z "))
             row         = [author, revision, dt, msg, hash ]
@@ -214,13 +214,13 @@ def get_repo_version (path = None, commandline = True, usedate = True, log = Fal
     @param      log             if True, returns the output instead of a boolean
     @return                     integer)
     """
-    if path == None :
+    if path is None :
         path = os.path.normpath(os.path.abspath( os.path.join( os.path.split(__file__)[0], "..", "..", "..")))
         
     if not commandline :
         try :
             raise NotImplementedError()
-        except Exception :
+        except Exception as e :
             return get_repo_version(path, True)
     else :
         if sys.platform.startswith("win32") :
@@ -228,7 +228,7 @@ def get_repo_version (path = None, commandline = True, usedate = True, log = Fal
         else :
             cmd = 'git log --format="%h---%ci"' 
 
-        if path != None : cmd += " \"%s\"" % path
+        if path is not None : cmd += " \"%s\"" % path
         
         out,err = run_cmd(  cmd, 
                             wait = True, 
@@ -245,6 +245,7 @@ def get_repo_version (path = None, commandline = True, usedate = True, log = Fal
                 return "OUT\n{0}\nERR:{1}".format(out,err)
             else :
                 raise Exception(err)
+
         lines = out.split("\n")
         lines = [ _.split("---") for _ in lines if len(_) > 0 ]
         temp  = lines[0]
@@ -268,13 +269,13 @@ def get_master_location(path = None, commandline = True):
     @param      commandline     if True, use the command line to get the version number, otherwise it uses pysvn
     @return                     integer (check in number)
     """
-    if path == None :
+    if path is None :
         path = os.path.normpath(os.path.abspath( os.path.join( os.path.split(__file__)[0], "..", "..", "..")))
         
     if not commandline :
         try :
             raise NotImplementedError()
-        except Exception :
+        except Exception as e :
             return get_repo_version(path, True)
     else :
         if sys.platform.startswith("win32") :

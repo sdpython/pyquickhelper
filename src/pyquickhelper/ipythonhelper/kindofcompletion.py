@@ -4,7 +4,7 @@
 """
 
 import os
-from ..sync.synchelper import explore_folder
+
 
 class AutoCompletion :
     """
@@ -117,7 +117,7 @@ class AutoCompletionFile(AutoCompletion) :
         remove unexpected characters for a file name
         
         @param      s       filename
-        @return             cleand filename
+        @return             cleaned filename
         """
         s = s.replace("'","_") \
                 .replace('"',"_") \

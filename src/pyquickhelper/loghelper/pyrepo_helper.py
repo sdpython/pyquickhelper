@@ -1,7 +1,7 @@
 #-*- coding: utf-8 -*-
 """
 @file
-@brief   a repository class independant from the repository system (it will be guessed)
+@brief   a repository class independent from the repository system (it will be guessed)
 """
 from .repositories import pysvn_helper as SVN
 from .repositories import pygit_helper as GIT
@@ -9,7 +9,7 @@ from .repositories import pygit_helper as GIT
 
 class SourceRepository :
     """
-    proposes the same functionatilies independant from the source chosen repository (GIT or SVN)
+    proposes the same functionatilies independent from the source chosen repository (GIT or SVN)
     
     On Windows, it might help to install either `TortoiseSVN <http://tortoisesvn.net/>`_
     or the `GitHub application <http://windows.github.com/>`_.
@@ -51,7 +51,7 @@ class SourceRepository :
         @param      path        path
         @return                 a list
         """
-        if self.module == None :
+        if self.module is None :
             self.SetGuessedType(path)
         return self.module.repo_ls(path, commandline = self.commandline)
     
@@ -66,7 +66,7 @@ class SourceRepository :
                                         - date (datetime)
                                         - comment
                         
-        The function use a command line if an error occured. It uses the xml format:
+        The function use a command line if an error occurred. It uses the xml format:
         @code
         <logentry revision="161">
             <author>xavier dupre</author>
@@ -75,7 +75,7 @@ class SourceRepository :
         </logentry>
         @endcode
         """
-        if self.module == None :
+        if self.module is None :
             self.SetGuessedType(path)
         return self.module.get_repo_log(path, file_detail, commandline = self.commandline)
         
@@ -85,7 +85,7 @@ class SourceRepository :
         @param      path            path to look
         @return                     string or int (check in number)
         """
-        if self.module == None :
+        if self.module is None :
             self.SetGuessedType(path)
         return self.module.get_repo_version(path, commandline = self.commandline)
     

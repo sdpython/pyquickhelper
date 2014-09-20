@@ -6,18 +6,21 @@
 
 import math, os, re, random, time, sys
 
-from ..loghelper.flog import fLOG
+from ..loghelper.flog import fLOG, GetSepLine
+from ..sync.synchelper import explore_folder_iterfile
+
 
 
 _keep_var_character = re.compile ("[^a-zA-Z0-9_]")
+
 def _clean_name_variable (st) :
     """clean a string
     @param      st      string to clean
     @return             another string
     """
     res = _keep_var_character.split (st)
-    if res == None :
-        raise HalException ("unable to clean " + st)
+    if res is None :
+        raise Exception ("unable to clean " + st)
     return "_".join (res)
 
 def _get_format_zero_nb_integer (nb) :
@@ -27,7 +30,7 @@ def _get_format_zero_nb_integer (nb) :
         h = int (h/10)
         c += 1
     if c > 20 :
-        raise HalException("this should not be that high %s (nb=%s)" % (str(c), str(nb)))
+        raise Exception("this should not be that high %s (nb=%s)" % (str(c), str(nb)))
     return "%0" + str (int(c)) + "d"
 
 def test_regular_expression (   exp     = ".*", 
@@ -41,8 +44,18 @@ def test_regular_expression (   exp     = ".*",
     fLOG ("text", text)
     ex = re.compile (exp)
     ma = ex.search (text)
-    if ma == None : fLOG ("no result")
+    if ma is None : fLOG ("no result")
     else : fLOG (ma.groups ())
+
+def IsEmptyString(s):
+    """
+    tells if a string is empty
+
+    @param      s       string
+    @return             boolean
+    """
+    if s is None: return True
+    return len(s) == 0
     
 def file_head ( file = "",
                 head = 1000,
@@ -57,7 +70,7 @@ def file_head ( file = "",
     @return                 out
     """
     if not os.path.exists (file) :
-        raise HalException ("unable to find file %s" % file)
+        raise Exception ("unable to find file %s" % file)
     if IsEmptyString (out) :
         f, ext = os.path.splitext (file)
         out = "%s.head.%d%s" % (file, head, ext)
@@ -87,7 +100,7 @@ def file_split (file   = "",
     @param      rnd         randomly draw the file which receives the current line
     """
     if not os.path.exists (file) :
-        raise HalException ("unable to find file %s" % file)
+        raise Exception ("unable to find file %s" % file)
         
     if IsEmptyString (out) : 
         f, ext = os.path.splitext (file)
@@ -122,7 +135,7 @@ def file_split (file   = "",
         
 def file_list (file, out = "") :
     """
-    prints the list of files and subfiles in a text file
+    prints the list of files and sub files in a text file
     
     @param      file        folder
     @param      out         result
@@ -136,14 +149,15 @@ def file_list (file, out = "") :
     f = open (out, "w")
     for l in explore_folder_iterfile (file) :
         f.write (l)
-        f.write (GetSepLine ())
+        f.write (GetSepLine())
     f.close ()
     
     return out
 
 def file_grep ( file = "",
                 regex = ".*",
-                out  = "") :
+                out  = "",
+                head = 100) :
     """
     grep
     
@@ -151,10 +165,11 @@ def file_grep ( file = "",
     @param      regex        regular expression
     @param      out         output file, if == None or empty, then, it becomes:
                                 file + ".head.%d.ext" % head
+    @param      head        head
     @return                 out
     """
     if not os.path.exists (file) :
-        raise HalException ("unable to find file %s" % file)
+        raise Exception ("unable to find file %s" % file)
     if IsEmptyString (out) :
         f, ext = os.path.splitext (file)
         out = "%s.regex.%d%s" % (file, head, ext)

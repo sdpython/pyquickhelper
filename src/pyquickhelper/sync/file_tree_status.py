@@ -5,12 +5,8 @@
 @brief      keep the status of a folder, assuming this folder is not moved
 """
 
-import os, re, datetime, time, shutil, hashlib
+import os, datetime, shutil, hashlib
 
-
-from ..loghelper.pqh_exception  import PQHException
-from ..loghelper.flog           import fLOG
-from ..loghelper.pyrepo_helper  import SourceRepository
 
 def convert_st_date_to_datetime (t) :
     """
@@ -36,9 +32,6 @@ def checksum_md5 (filename) :
     """
     fname = filename
     block_size = 0x10000
-    def upd(m, data):
-        m.update(data)
-        return m
     fd = open(fname, "rb")
     try:
         block = [ fd.read(block_size) ]
@@ -54,7 +47,7 @@ def checksum_md5 (filename) :
         return m.hexdigest()
     finally:
         fd.close()
-    return None        
+        return None
 
 class FileInfo :
     """
@@ -78,27 +71,27 @@ class FileInfo :
         self.date       = date
         self.mdate      = mdate    # modification date
         self.checksum   = checksum
-        if date != None and not isinstance (self.date, datetime.datetime) :
+        if date is not None and not isinstance (self.date, datetime.datetime) :
             raise ValueError("mismatch for date (%s) and file %s" % (str(type(date)), filename))
-        if mdate != None and not isinstance (self.mdate, datetime.datetime) :
+        if mdate is not None and not isinstance (self.mdate, datetime.datetime) :
             raise ValueError("mismatch for mdate (%s) and file %s" % (str(type(mdate)), filename))
         if not isinstance (size, int) :
             raise ValueError("mismatch for size (%s) and file %s" % (str(type(size)), filename))
-        if checksum != None and not isinstance (checksum, str) :
+        if checksum is not None and not isinstance (checksum, str) :
             raise ValueError("mismatch for checksum (%s) and file %s" % (str(type(checksum)), filename))
-        if date != None and mdate != None :
+        if date is not None and mdate is not None :
             if mdate > date :
-                raise ValueError("expecting mdate <= date for file " + file)
+                raise ValueError("expecting mdate <= date for file " + filename)
             
     def __str__ (self) :
         """
         usual
         """
         return "File[name=%s, size=%d (%s), mdate=%s (%s), date=%s (%s), md5=%s (%s)]" % \
-                 (self.filename, \
-                    self.size, str(type(self.size)), \
-                  str(self.mdate), str(type(self.mdate)), \
-                  str(self.date), str(type(self.date)), \
+                 (self.filename,
+                    self.size, str(type(self.size)),
+                  str(self.mdate), str(type(self.mdate)),
+                  str(self.date), str(type(self.date)),
                   self.checksum, str(type(self.checksum)))
         
     def set_date(self, date) :
@@ -171,17 +164,19 @@ class FileTreeStatus :
         # contains all file to update
         self.modifiedFile = [ ]
             
-    def save_dates (self, checkfile = []) :
+    def save_dates (self, checkfile = None) :
         """
         save the status of the copy
         @param      checkfile       check the status for file checkfile
         """
+        if checkfile is None:
+            checkfile = []
         rows = []
         for k in sorted(self.copyFiles) :
             obj  = self.copyFiles[k]
-            da   = "" if obj.date == None else str(obj.date)
-            mda  = "" if obj.mdate == None else str(obj.mdate)
-            sum5 = "" if obj.checksum == None else str(obj.checksum)
+            da   = "" if obj.date is None else str(obj.date)
+            mda  = "" if obj.mdate is None else str(obj.mdate)
+            sum5 = "" if obj.checksum is None else str(obj.checksum)
 
             if k in checkfile and len(da)   == 0  : raise ValueError("there should be a date for file " + k + "\n" + str(obj))
             if k in checkfile and len(mda)  == 0  : raise ValueError("there should be a mdate for file " + k + "\n" + str(obj))
@@ -221,7 +216,7 @@ class FileTreeStatus :
                 d = convert_st_date_to_datetime(_m)
                 if d != l :
                     # dates are different but files might be the same
-                    if obj.checksum != None :
+                    if obj.checksum is not None :
                         ch = checksum_md5 (file)
                         if ch != obj.checksum :
                             reason = "date/md5 %s != old date %s  md5 %s != %s" % (str(l), str(d), obj.checksum, ch)
@@ -253,9 +248,9 @@ class FileTreeStatus :
             nb = 0
             for file in files :
                 memo[file.fullname] = True
-                if file._file == None : continue
+                if file._file is None : continue
                 nb += 1
-                if nlog != None and nb % nlog == 0 :
+                if nlog is not None and nb % nlog == 0 :
                     self.LOG("[FileTreeStatus], processed", nb, "files")
                     
                 full = file.fullname
@@ -275,10 +270,10 @@ class FileTreeStatus :
             for file in files :
                 memo[file.fullpath] = True
                 nb += 1
-                if nlog != None and nb % nlog == 0 :
+                if nlog is not None and nb % nlog == 0 :
                     self.LOG("[FileTreeStatus], processed", nb, "files")
                 full = file.fullname
-                if self.has_been_modified_and_reason(file):
+                if self.has_been_modified_and_reason(full):
                     yield file
                     
         for key,file in self.copyFiles.items():
@@ -365,7 +360,7 @@ class FileTreeStatus :
         for f in fi :
             if not os.path.isfile (file + "/" + f) : continue
             ro, ext = os.path.splitext (f)
-            if exte == None or ext [1:] == exte :
+            if exte is None or ext [1:] == exte :
                 self.copy_file (file + "/" + f, to, doClean)
         
     def copy_file_contains (self, file, pattern, to, doClean = False) :

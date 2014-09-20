@@ -21,7 +21,7 @@ def str_to_datetime (dt, format = None):
     """
     if "+" in dt : dt = dt.split("+")[0].strip()
     elif " -" in dt : dt = dt.split(" -")[0].strip()
-    if format == None :
+    if format is None :
         if "." in dt :        
             return datetime.datetime.strptime (dt, "%Y-%m-%d %H:%M:%S.%f")    
         else :

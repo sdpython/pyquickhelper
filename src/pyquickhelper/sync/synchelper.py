@@ -21,14 +21,14 @@ def explore_folder (folder, pattern = None, fullname = False) :
     @param          fullname    (bool) if True, include the subfolder while checking the regex (pattern)
     @return                     a list of folders, a list of files (the folder is not included the path name)
     """
-    if pattern != None :
+    if pattern is not None :
         pattern = re.compile (pattern)
     
     file, rep = [], { }
     for r, d, f in os.walk (folder) :
         for a in f : 
             temp = os.path.join (r, a)
-            if pattern != None :
+            if pattern is not None :
                 if fullname :
                     if not pattern.search (temp) : continue
                 else :
@@ -50,14 +50,14 @@ def explore_folder_iterfile (folder, pattern = None, fullname = False) :
     @param          fullname    if True, include the subfolder while checking the regex
     @return                     a list of folders, a list of files (the folder is not included the path name)
     """
-    if pattern != None :
+    if pattern is not None :
         pattern = re.compile (pattern)
     
     file, rep = [], { }
     for r, d, f in os.walk (folder) :
         for a in f : 
             temp = os.path.join (r, a)
-            if pattern != None :
+            if pattern is not None :
                 if fullname :
                     if not pattern.search (temp) : continue
                 else :
@@ -97,7 +97,7 @@ def zip_files (filename, fileSet, log = fLOG) :
             if atime < a1980 or mtime < a1980 :
                 new_mtime = st.st_mtime + (4*3600) #new modification time
                 while datetime.datetime.fromtimestamp(new_mtime) < a1980 :
-                    new_mtime = new_mtime + (4*3600) #new modification time
+                    new_mtime += (4*3600) #new modification time
                 
                 log("zip_files: changing time timestamp for file ", file)
                 os.utime(file,(st.st_atime,new_mtime))
@@ -115,7 +115,7 @@ def gzip_files (filename_gz, fileSet, log = fLOG, filename_zip = None) :
     @param      log             log function
     @return                     number of added files
     """
-    if filename_zip == None :
+    if filename_zip is None :
         zipf = filename_gz + ".temp.zip"
     else : zipf = filename_zip
     nb = zip_files (zipf, fileSet, log = log)
@@ -128,7 +128,7 @@ def gzip_files (filename_gz, fileSet, log = fLOG, filename_zip = None) :
             bb = gr.read(1000000)
     f.close()
     
-    if filename_zip == None :
+    if filename_zip is None :
         os.remove (zipf)
     
     return nb
@@ -204,10 +204,10 @@ def synchronize_folder (   p1,
     fLOG ("form ", p1)
     fLOG ("to   ", p2)
     
-    if file_date != None and not os.path.exists(file_date):
+    if file_date is not None and not os.path.exists(file_date):
         with open(file_date,"w",encoding="utf8") as f : f.write("")
     
-    if filter == None :
+    if filter is None :
         tfilter = lambda v : True 
     elif isinstance(filter,str) : 
         exp = re.compile (filter)
@@ -225,7 +225,7 @@ def synchronize_folder (   p1,
         
     if isinstance(filter_copy,str):
         rg = re.compile(filter_copy)
-        filter_copy = lambda f, ex=rg : rg.search(file) != None
+        filter_copy = lambda f, ex=rg : rg.search(file) is not None
         
     f1  = p1
     f2  = p2
@@ -233,7 +233,7 @@ def synchronize_folder (   p1,
     fLOG ("   exploring ", f1)
     node1 = FileTreeNode (f1, filter = pr_filter, repository = repo1, log = True, log1 = log1)
     fLOG ("     number of found files (p1)", len (node1), node1.max_date ())
-    if file_date != None :
+    if file_date is not None :
         log1n = 1000 if log1  else None
         status = FileTreeStatus(file_date, fLOG = fLOG)
         res = list(status.difference(node1, u4=True, nlog = log1n))
@@ -249,12 +249,12 @@ def synchronize_folder (   p1,
     
     for op, file, n1, n2 in res :
 
-        if filter_copy != None and not filter_copy(file) :
+        if filter_copy is not None and not filter_copy(file) :
             continue 
             
-        if operations != None :
+        if operations is not None :
             r = operations(op,n1,n2)
-            if r and status != None : 
+            if r and status is not None :
                 status.update_copied_file (n1.fullname)
                 modif += 1
                 if modif % 50 == 0 : status.save_dates()
@@ -262,10 +262,10 @@ def synchronize_folder (   p1,
                 
             if op in [">", ">+"] :
                 if not n1.isdir () : 
-                    if file_date != None or not size_different or n2 == None or n1._size != n2._size :
+                    if file_date is not None or not size_different or n2 is None or n1._size != n2._size :
                         if not avoid_copy : n1.copyTo (f2)
                         action.append ( (">+", n1, f2) )
-                        if status != None : 
+                        if status is not None :
                             status.update_copied_file (n1.fullname)
                             modif += 1
                             if modif % 50 == 0 : status.save_dates()
@@ -273,7 +273,7 @@ def synchronize_folder (   p1,
                         pass
                         
             elif op in ["<+"] :
-                if n2 == None :
+                if n2 is None :
                     if not no_deletion: 
                         # this case happens when we do not know sideB (sideA is stored in a file)
                         # we need to remove file, file refers to this side
@@ -284,12 +284,12 @@ def synchronize_folder (   p1,
                         except PQHException as e :
                             ft = None  #probably already removed
                             
-                        if ft != None :
+                        if ft is not None :
                             action.append ( (">-", None, ft ) )
                             if not avoid_copy : 
                                 fLOG ("- remove ", filerem)
                                 os.remove(filerem)
-                            if status != None : 
+                            if status is not None :
                                 status.update_copied_file (file, delete = True)
                                 modif += 1
                                 if modif % 50 == 0 : status.save_dates()
@@ -299,11 +299,11 @@ def synchronize_folder (   p1,
                     if not n2.isdir () and not no_deletion: 
                         if not avoid_copy : n2.remove ()
                         action.append ( (">-", None, n2) )
-                        if status != None : 
+                        if status is not None :
                             status.update_copied_file (n1.fullname, delete = True)
                             modif += 1
                             if modif % 50 == 0 : status.save_dates()
-            elif n2 != None and n1._size != n2._size and not n1.isdir () :
+            elif n2 is not None and n1._size != n2._size and not n1.isdir () :
                 fLOG ("problem", "size are different for file %s (%d != %d) dates (%s,%s) (op %s)" % (file, n1._size, n2._size, n1._date, n2._date, op))
                 #n1.copyTo (f2)
                 #raise Exception ("size are different for file %s (%d != %d) (op %s)" % (file, n1._size, n2._size, op))    
@@ -315,7 +315,7 @@ def synchronize_folder (   p1,
 
 def remove_folder (top, remove_also_top = True) :
     """
-    remove everyting in folder top
+    remove everything in folder top
     @param      top                 path to remove
     @param      remove_also_top     remove also root
     @return                         list of removed files and folders

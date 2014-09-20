@@ -3,7 +3,7 @@
 @file
 @brief  Common functions used for @see cl FrameFunction and @see cl FrameParams.
 """
-import os,sys,math, re, os, copy, inspect, datetime, hashlib
+import os, copy, datetime, hashlib
 
 from ..loghelper.convert_helper     import str_to_datetime
 from ..loghelper.flog               import fLOG, guess_machine_parameter
@@ -27,7 +27,7 @@ def _private_store (function_name, param) :
     for r in rem : del param [r]
         
     values   = guess_machine_parameter ()
-    filename = os.path.join (values ["TEMP"], function_name + ".pyhome3.txt")
+    filename = os.path.join (values ["TEMP"], function_name + ".pyquickhelper.txt")
     fLOG("FrameWindows: storing parameters in file: ", os.path.abspath(filename))
     
     if "password" in param :
@@ -43,7 +43,7 @@ def _private_store (function_name, param) :
             found = i
             break
     
-    if found != None :
+    if found is not None :
         fLOG("removing one element from history")
         del history[found]
     else :
@@ -68,7 +68,7 @@ def _private_restore (function_name, pwd = True) :
     The function replaces every substring ``#*###n####*#`` y end of line.
     """
     values      = guess_machine_parameter ()
-    filename    = os.path.join (values ["TEMP"], function_name + ".pyhome3.txt")
+    filename    = os.path.join (values ["TEMP"], function_name + ".pyquickhelper.txt")
     if not os.path.exists (filename) :
         fLOG("FrameWindows: unable to find file ", os.path.abspath(filename))
         return []
@@ -85,14 +85,13 @@ def _private_restore (function_name, pwd = True) :
             if pwd and "password" in ev : ev["password"] = ""
             ans.append(ev)
     except Exception as e :
-        fLOG ("problem in file ", filename)
-        raise e
-    
+        raise Exception("problem in file " + filename) from e
+
     return ans
   
 def get_icon():
     """
-    returns a filename corresponding the pyhome3 icon
+    returns a filename corresponding the pyquickhelper icon
     @return     filename
     """
     ico = os.path.realpath (os.path.join (os.path.split (__file__) [0], "project_ico.ico"))
@@ -103,7 +102,7 @@ def interpret_parameter(ty, s) :
     interprets a parameter
     
     @param      ty      type (the return type)
-    @param      s       value to interpet (a string)
+    @param      s       value to interpret (a string)
     @return             value
     """
     
@@ -111,7 +110,7 @@ def interpret_parameter(ty, s) :
         if ty in [bool] :
             return s in [True, "True", "true", "TRUE", "1", 1]
         elif ty == datetime.datetime :
-            if s == None or len(s) == 0 or s == "None" : return None
+            if s is None or len(s) == 0 or s == "None" : return None
             else : return str_to_datetime(s)
         elif ty in [int, float, str] :
             return ty (s)
@@ -122,10 +121,10 @@ def interpret_parameter(ty, s) :
         else :
             try :
                 return eval (s)
-            except Exception as s :
-                fLOG ("unable to evaluation ", s)
+            except Exception as ee :
+                fLOG ("unable to evaluation ", ee)
                 return None
     except Exception as e :
-        fLOG ("unable to process value ", k, " v= ", s, " --> ", None)
+        fLOG ("unable to process value ", ty, " v= ", s, " --> ", None)
         return None
     

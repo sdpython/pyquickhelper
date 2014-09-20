@@ -21,7 +21,7 @@ def IsRepo(location, commandline = True, log = False):
     @param      log             if True, return the log not a boolean
     @return                     bool
     """
-    if location == None :
+    if location is None :
         location = os.path.normpath(os.path.abspath( os.path.join( os.path.split(__file__)[0], "..", "..", "..", "..")))
     try :
         r = get_repo_version(location, commandline, log = log)
@@ -115,17 +115,17 @@ def __get_version_from_version_txt(path) :
     @warning If ``version.txt`` was not found, it throws an exception.
     """
     file = os.path.split(__file__)[0]
-    pathes = [ file,
+    paths = [ file,
                os.path.join(file, ".."),
                os.path.join(file, "..", ".."),
                os.path.join(file, "..", "..", ".."),
                path ]
-    for p in pathes :
+    for p in paths :
         fp = os.path.join(p, "version.txt")
         if os.path.exists (fp) :
             with open(fp, "r") as f :
                 return int(f.read().strip(" \n\r\t")) 
-    raise FileNotFoundError("unable to find version.txt in\n" + "\n".join(pathes))
+    raise FileNotFoundError("unable to find version.txt in\n" + "\n".join(paths))
     
 def get_repo_log (path = None, file_detail = False, commandline = True) :
     """
@@ -139,7 +139,7 @@ def get_repo_log (path = None, file_detail = False, commandline = True) :
                                     - date (datetime)
                                     - comment
                     
-    The function use a command line if an error occured. It uses the xml format:
+    The function use a command line if an error occurred. It uses the xml format:
     @code
     <logentry revision="161">
         <author>xavier dupre</author>
@@ -148,7 +148,7 @@ def get_repo_log (path = None, file_detail = False, commandline = True) :
     </logentry>
     @endcode
     """
-    if path == None :
+    if path is None :
         path = os.path.normpath(os.path.abspath( os.path.join( os.path.split(__file__)[0], "..", "..", "..")))
         
     if not commandline :
@@ -184,7 +184,7 @@ def get_repo_log (path = None, file_detail = False, commandline = True) :
                             wait = True, 
                             do_not_log = True, 
                             encerror = "strict",
-                            encoding = sys.stdout.encoding if sys.stdout != None else "utf8")
+                            encoding = sys.stdout.encoding if sys.stdout is not None else "utf8")
         if len(err) > 0 :
             fLOG ("problem with file ", path, err)
             raise Exception(err)
@@ -228,7 +228,7 @@ def get_repo_version (path = None, commandline = True, log = False) :
     @param      log             if True, returns the output instead of a boolean
     @return                     integer (check in number)
     """
-    if path == None :
+    if path is None :
         path = os.path.normpath(os.path.abspath( os.path.join( os.path.split(__file__)[0], "..", "..", "..")))
         
     if not commandline :
@@ -250,7 +250,7 @@ def get_repo_version (path = None, commandline = True, log = False) :
                 raise e
     else :
         cmd = "svn info -r HEAD" 
-        if path != None : cmd += " \"%s\"" % path.replace("\\","/")
+        if path is not None : cmd += " \"%s\"" % path.replace("\\","/")
         out,err = run_cmd(  cmd, 
                             wait = True, 
                             do_not_log = True, 

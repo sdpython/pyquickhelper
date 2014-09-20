@@ -26,7 +26,7 @@ class FrameFunction (tkinter.Frame) :
                         restore         = True, 
                         width           = 100, 
                         raise_exception = False, 
-                        overwrite       = {},
+                        overwrite       = None,
                         hide            = False,
                         command_leave   = None,
                         key_save        = "e") :
@@ -42,6 +42,9 @@ class FrameFunction (tkinter.Frame) :
         @param      command_leave   if not None, this function will be called when clicking on Cancel or Leave
         @param      key_save        suffix to add to the filename used to store parameters
         """
+        if overwrite is None:
+            overwrite = { }
+
         tkinter.Frame.__init__ (self, parent)
         self.fdoc       = tkinter.Frame (self)
         self.fpar       = tkinter.Frame (self)
@@ -115,14 +118,14 @@ class FrameFunction (tkinter.Frame) :
         self.fdoc.bind('<Escape>', self.run_cancel)
         
         # overwrite parameters
-        if overwrite != None :
+        if overwrite is not None :
             for k in self.info ["param"] :
                 if k in overwrite :
                     self.info ["param"][k] = overwrite [k]
 
         # optional parameters in **params
         has = has_unknown_parameters (function)
-        if has and overwrite != None :
+        if has and overwrite is not None :
             add = []
             for a,b in overwrite.items () :
                 if a not in self.info ["param"] :
@@ -150,7 +153,7 @@ class FrameFunction (tkinter.Frame) :
                 lab = tkinter.Entry (self.fpar, width = width)
             
             lab.grid (row = line, column = 1)
-            if self.info ["param"][k] != None :
+            if self.info ["param"][k] is not None :
                 lab.insert ("0", str (self.info ["param"][k]))
             self.input [k] = lab
             objs.append(lab)
@@ -168,7 +171,7 @@ class FrameFunction (tkinter.Frame) :
                 lab = tkinter.Entry (self.fpar, width = width)
             
             lab.grid (row = line, column = 1)
-            if self.info ["param"][k] != None :
+            if self.info ["param"][k] is not None :
                 lab.insert ("0", str (self.info ["param"][k]))
             self.input [k] = lab
             objs.append(lab)
@@ -244,7 +247,7 @@ class FrameFunction (tkinter.Frame) :
             
     def destroy(self) :
         """
-        Stops the thread and destory the function
+        Stops the thread and destroy the function
         
         The behaviour of method 
         `Thread._stop <http://hg.python.org/cpython/file/3.4/Lib/threading.py>`_
@@ -252,7 +255,7 @@ class FrameFunction (tkinter.Frame) :
         see the `discussion <https://groups.google.com/forum/#!topic/comp.lang.python/sXXwTh9EHsI>`_.
         """
         self.stop_thread()
-        if self.command_leave != None :
+        if self.command_leave is not None :
             f = self.command_leave
             self.command_leave = None
             f()
@@ -267,7 +270,7 @@ class FrameFunction (tkinter.Frame) :
         """
         cancel
         """
-        if self.command_leave != None :
+        if self.command_leave is not None :
             f = self.command_leave
             self.command_leave = None
             f()
@@ -300,7 +303,7 @@ class FrameFunction (tkinter.Frame) :
         refresh the screen
         """
         temp = self.LOG.get ("0.0", "end")
-        log  = GetLogFile ().getvalue ()
+        log  = GetLogFile().getvalue ()
         log  = log [len(temp):]
         
         try :
@@ -373,14 +376,14 @@ class FrameFunction (tkinter.Frame) :
         """
         param   = params if params != None else {  }
 
-        root = top_level_window if top_level_window != None else tkinter.Tk ()
+        root = top_level_window if top_level_window is not None else tkinter.Tk ()
         ico  = os.path.realpath (os.path.join (os.path.split (__file__) [0], "project_ico.ico"))
         fr   = FrameFunction (root, func, overwrite = param, hide = False)
         fr.pack ()
         root.title (fr.get_title ())
-        if ico != None and top_level_window == None and sys.platform.startswith("win") : 
+        if ico is not None and top_level_window is None and sys.platform.startswith("win") :
             root.wm_iconbitmap(ico)
-        if top_level_window == None : fr.focus_set()
+        if top_level_window is None : fr.focus_set()
         root.focus_set()
         fr.mainloop ()
         
@@ -409,7 +412,7 @@ class FrameFunction_ThreadFunction (threading.Thread) :
             function = None
         param = self.parameter # self.framewindow.info ["param"]
         
-        if function != None :
+        if function is not None :
             if not self.framewindow.raise_exception :
                 try : 
                     ret = function (**param)

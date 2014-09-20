@@ -4,11 +4,9 @@
 
 @brief  building windows to use a function and specify its parameter based on a python function
 """
-import os, sys, tkinter
-import tkinter.font as tkFont
+import os, tkinter
 import tkinter.tix as tix
     
-from ..loghelper.flog       import fLOG, guess_machine_parameter
 from .frame_function        import FrameFunction
 from .storing_functions     import get_icon
 
@@ -34,7 +32,7 @@ class MainFrame(tkinter.Frame) :
                         restore         = True, 
                         width           = 100, 
                         raise_exception = False, 
-                        overwrite       = {},
+                        overwrite       = None,
                         hide            = False) :
         """
         constructor
@@ -47,6 +45,8 @@ class MainFrame(tkinter.Frame) :
         @param      overwrite       parameters to overwrite
         @param      hide            if True, hide the window after clicking on OK
         """
+        if overwrite is None:
+            overwrite = {}
         tkinter.Frame.__init__ (self, parent)
         self.kparent    = parent
         self.fsel       = tkinter.Frame (self)
@@ -70,7 +70,7 @@ class MainFrame(tkinter.Frame) :
         self.combo.pack()
         self.functionsDict = functions
         
-        if first == None :
+        if first is None :
             keys = list (functions.keys())
             keys.sort()
             first = keys[0]
@@ -147,7 +147,7 @@ def main_loop_functions (  functions,
                         restore         = True, 
                         width           = 100, 
                         raise_exception = False, 
-                        overwrite       = {},
+                        overwrite       = None,
                         hide            = False,
                         title           = None,
                         ico             = None) :
@@ -162,7 +162,7 @@ def main_loop_functions (  functions,
     @param      overwrite       parameters to overwrite
     @param      hide            if True, hide the window after clicking on OK
     @param      title           if not None, overwrite the default title
-    @param      ico             (str) an icon or None for pyhome's one
+    @param      ico             (str) an icon or None
     
     @example(open a window to run a function from a predefined list of functions)
     @code
@@ -176,11 +176,13 @@ def main_loop_functions (  functions,
     
     @endexample
     """
-    ico = get_icon() if ico == None else ico
+    if overwrite is None:
+        overwrite = {}
+
+    ico = get_icon() if ico is None else ico
     root = tix.Tk ()
     root.wm_iconbitmap(ico)
-    param = { }
-    fr   = MainFrame (  parent          = root, 
+    fr   = MainFrame (  parent          = root,
                         functions       = functions,
                         first           = first,
                         restore         = restore, 
@@ -189,6 +191,6 @@ def main_loop_functions (  functions,
                         overwrite       = overwrite,
                         hide            = hide)
     fr.pack ()
-    root.title (fr.get_title () if title == None else title)
+    root.title (fr.get_title () if title is None else title)
     fr.mainloop ()    
     

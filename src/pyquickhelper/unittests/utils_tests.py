@@ -16,7 +16,7 @@ def get_test_file (filter, dir = None) :
     @return                 a list of test files
     """
     
-    if dir == None :
+    if dir is None :
         path = os.path.split(__file__)[0]
         nrt  = os.path.abspath(os.path.join(path, "..", "..", "_nrt"))
         uts  = os.path.abspath(os.path.join(path, "..", "..", "_unittest"))
@@ -80,7 +80,7 @@ def get_estimation_time (file) :
         
     s = ''.join (li)
     c = re.compile ("[(]time=([0-9]+)s[)]").search (s)
-    if c == None : return 0
+    if c is None : return 0
     else : return int (c.groups () [0])
         
 def import_files (li) :        
@@ -116,7 +116,7 @@ def import_files (li) :
         cl = dir (mo)
         for c in cl :
             if len (c) < 5 or c [:4] != "Test" : continue
-            # classe de test c
+            # test class c
             testsuite = unittest.TestSuite ()
             loc = locals()
             exec (compile ("di = dir (mo." + c + ")", "", "exec"), globals(), loc)
@@ -130,7 +130,7 @@ def import_files (li) :
                 exec (compile ("t = mo." + c + "(\"" + d + "\")", "", "exec"), globals(), loc)
                 t = loc["t"]
                 testsuite.addTest (t)
-        allsuite.append ((testsuite, l))
+            allsuite.append ((testsuite, l))
                 
     return allsuite
     
@@ -139,7 +139,7 @@ def clean () :
     do the cleaning
     """
     # do not use SVN here just in case some files are not checked in.
-    print
+    print()
     for log_file in ["temp_hal_log.txt", "temp_hal_log2.txt", 
                     "temp_hal_log_.txt", "temp_log.txt", "temp_log2.txt", ] :
         li = get_test_file (log_file)
@@ -198,7 +198,7 @@ def main (  runner,
     """
 
     # checking that the module does not belong to the installed modules
-    if path_test != None :
+    if path_test is not None :
         pathModule = os.path.join(sys.executable, "Lib", "site-packages")
         paths = [ os.path.join(pathModule, "src"), ]
         for path in paths : 
@@ -227,7 +227,7 @@ def main (  runner,
                     cut)
         cco.append( (e, l) )
         index += 1
-    print
+    print()
         
     exp = re.compile ("Ran ([0-9]+) tests? in ([.0-9]+)s")
         

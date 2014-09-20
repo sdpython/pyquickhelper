@@ -84,7 +84,7 @@ def compute_truncated_documentation(doc,
     """
     produces a truncated version of a docstring
     @param      doc                 doc string
-    @param      length              approximative length of the truncated docstring
+    @param      length              approximated length of the truncated docstring
     @param      raise_exception     raises an exception when the result is empty and the input is not
     @return                         truncated doc string
     """
@@ -134,7 +134,7 @@ class ModuleMemberDoc :
     def __init__ (self, obj, ty = None, cl = None, name = None) :
         """
         constructor
-        @param      obj     anykind of object
+        @param      obj     any kind of object
         @param      ty      type (if you want to overwrite what the class will choose),
                             this type is a string (class, method, function)
         @param      cl      if is a method, class it belongs to
@@ -145,9 +145,9 @@ class ModuleMemberDoc :
         self.name = name
         self.populate()
         
-        if self.cl == None and self.type in [ "method", "staticmethod", "property" ] :
+        if self.cl is None and self.type in [ "method", "staticmethod", "property" ] :
             self.cl = self.obj.__class__
-        if self.cl == None and self.type in [ "method", "staticmethod", "property" ] :
+        if self.cl is None and self.type in [ "method", "staticmethod", "property" ] :
             raise TypeError("N/a method must have a class (not None): %s" % str(self.obj))
             
     def add_prefix(self, prefix) :
@@ -198,12 +198,12 @@ class ModuleMemberDoc :
         try :
             self.module = obj.__module__
             self.name   = obj.__name__
-        except Exception :
+        except Exception as e:
             if self.type in ["property", "staticmethod"]:
                 self.module = self.cl.__module__
             else :
                 self.module = None
-            if self.name == None : raise IndexError("unable to find a name for this object")
+            if self.name is None : raise IndexError("unable to find a name for this object")
             
         # documentation
         if self.type == "staticmethod" :
@@ -221,20 +221,20 @@ class ModuleMemberDoc :
         except : self.file = ""
 
         # truncated documentation
-        if self.doc != None :
+        if self.doc is not None :
             self.truncdoc = compute_truncated_documentation(self.doc)
         else :
             self.doc = ""
             self.truncdoc = ""
             
-        if self.name == None :
+        if self.name is None :
             raise TypeError("S/name is None for object: %s" % str(self.obj))
         
     def __str__(self) :
         """
         usual
         """
-        clname = ".%s" % self.cl.__name__ if self.cl != None else ""
+        clname = ".%s" % self.cl.__name__ if self.cl is not None else ""
         mes = "%s in %s%s: %s (%s)" % (self.type, self.module, clname, self.name, self.truncdoc)
         return mes
         
@@ -251,7 +251,7 @@ class ModuleMemberDoc :
         cor = {"function":"func", "method":"meth", 
                 "staticmethod":"meth", "property":"meth" }
         
-        if prefix == None and "prefix" in self.__dict__ :
+        if prefix is None and "prefix" in self.__dict__ :
             prefix = self.prefix
         
         if self.type in ["method", "staticmethod", "property"]:
@@ -259,7 +259,7 @@ class ModuleMemberDoc :
         else :
             path = "%s.%s" % (self.module, self.name)
             
-        if prefix != None :
+        if prefix is not None :
             path = "%s.%s" % (prefix, path)
         
         if self.type in ["method", "staticmethod", "property"] and class_in_bracket :
@@ -333,7 +333,7 @@ class IndexInformation :
         @param      rst_file        rst_file
         """
         self.rstfile = rstfile
-        if rstfile != None :
+        if rstfile is not None :
             self.add_label_if_not_present()
         
     @property
@@ -347,7 +347,7 @@ class IndexInformation :
         """
         The function checks the label is present in the original file.
         """
-        if self.rstfile != None :
+        if self.rstfile is not None :
             with open(self.rstfile,"r",encoding="utf8") as f : 
                 content = f.read()
             label = ".. _%s:" % self.label
@@ -409,7 +409,7 @@ def import_module (filename, log_function, additional_sys_path = [ ]) :
     sys.path.insert (0, sdir)
     tl  = os.path.split (l) [1]
     fi  = tl.replace (".py", "")
-    if additional_sys_path != None and len(additional_sys_path) > 0 :
+    if additional_sys_path is not None and len(additional_sys_path) > 0 :
         sys.path.extend(additional_sys_path)
     
     try :
@@ -535,8 +535,8 @@ def process_var_tag(docstring, rst_replace = False, header = ["attribute", "mean
         for line in docstring :
             line = line.replace("\n", " ")
             if "@var" in line :
-                all = reg.findall(line)
-                for a in all :
+                alls = reg.findall(line)
+                for a in alls :
                     values.append ( a )
         return values
 
@@ -567,7 +567,7 @@ def process_look_for_tag(tag, title, files):
     """
     def noneempty(a):
         if "___" in a:
-            page,a= a.split("___")
+            page, a = a.split("___")
             return "_" + page, a.lower(),a
         else :
             return "", a.lower(), a
@@ -576,7 +576,7 @@ def process_look_for_tag(tag, title, files):
     exp2 = re.compile("[.][.] %s[(](.*?)[)][.](.*?)[.][.] end%s[.]" % (tag,tag))
     coll = [ ]
     for file in files :
-        if file.file == None : continue
+        if file.file is None : continue
         if "utils_sphinx_doc.py" in file.file : continue
         try:
             with open(file.file,"r",encoding="utf8") as f : content = f.read()

@@ -12,12 +12,6 @@ from ._my_doxypy                import process_string
 from .utils_sphinx_doc_helpers  import add_file_rst_template, process_var_tag, import_module, get_module_objects, add_file_rst_template_cor, add_file_rst_template_title, IndexInformation, RstFileHelp, HelpGenException, process_look_for_tag
 from ..pandashelper.tblformat   import df_to_rst
 
-def _ishome() :
-    """
-    private function
-    """
-    return (sys.platform == "win" + "32") and "dupre" in os.environ["COMPUTERNAME"].lower()
-    
 def validate_file_for_help(filename, fexclude = lambda f : False) :
     """
     accept or reject a file to be copied in the help folder
@@ -49,7 +43,7 @@ def replace_relative_import (fullname, content = None) :
     
     @warning It uses regular expressions, so it might do it in the comments. It does not support import on several lines.
     """
-    if content == None :
+    if content is None :
         with open(fullname,"r",encoding="utf8") as f :
             content = f.read()
             
@@ -65,6 +59,7 @@ def replace_relative_import (fullname, content = None) :
         extracted = None
         next      = None
         add       = None
+        fr        = None
         
         if find :
             sp          = find.groups()[0]
@@ -122,13 +117,13 @@ def _private_process_one_file(fullname, to, silent, fmod):
     @param      fullname        name of the file
     @param      to              location (folder)
     @param      silent          no logs if True
-    @param      fmod            modification fonctions
+    @param      fmod            modification functions
     """
     ext = os.path.splitext(fullname)[-1]
     
     if ext in [".pyd", ".png", ".dat", ".dll", ".o", ".so", ".exe"] :
         if ext in [".pyd", ".so"] :
-            # if the file is being executed, the copy might keep the proterties of
+            # if the file is being executed, the copy might keep the properties of
             # the original (only Windows)
             with open(fullname, "rb") as f : bin = f.read()
             with open(to, "wb") as f : f.write(bin)
@@ -179,8 +174,8 @@ def copy_source_files ( input,
     @param      remove      if True, remove every files in the output folder first
     @param      softfile    softfile is a function (f : filename --> True or False), when it is True,
                             the documentation is lighter (no special members)
-    @param      fexclude    function to exclue some files from the help
-    @param      addfilter   additinal filter, it should look like: ``"(.+[.]pyx$)|(.+[.]pyh$)"``
+    @param      fexclude    function to exclude some files from the help
+    @param      addfilter   additional filter, it should look like: ``"(.+[.]pyx$)|(.+[.]pyh$)"``
     @return                 list of copied files
     """
     if not os.path.exists (output) :
@@ -191,11 +186,11 @@ def copy_source_files ( input,
         
     deffilter = "(.+[.]py$)|(.+[.]pyd$)|(.+[.]cpp$)|(.+[.]h$)|(.+[.]dll$)|(.+[.]o$)|(.+[.]def$)|(.+[.]exe$)|(.+[.]config$)"
         
-    if addfilter != None and len(addfilter) > 0 :
-        if filter == None or len(filter) == 0 : filter = "|".join( [ deffilter, addfilter ] )
+    if addfilter is not None and len(addfilter) > 0 :
+        if filter is None or len(filter) == 0 : filter = "|".join( [ deffilter, addfilter ] )
         else : filter = "|".join( [ filter, addfilter ] )
         
-    if filter == None :
+    if filter is None :
         actions = synchronize_folder(   input, 
                                         output, 
                                         filter = deffilter, 
@@ -267,7 +262,7 @@ def apply_modification_template (   store_obj,
     additional  = { }
     tspecials   = { }
     
-    if mo != None :
+    if mo is not None :
         if isinstance (mo, str) :
             # it is an error
             spl         = mo.split("\n")
@@ -278,7 +273,7 @@ def apply_modification_template (   store_obj,
         else :
             if filenoext != mo.__name__ :
                 raise NameError("module is %s, expecting %s" % (mo.__name__, filenoext))
-            if mo.__doc__ != None :
+            if mo.__doc__ is not None :
                 doc  = mo.__doc__
                 doc  = private_migrating_doxygen_doc(doc.split("\n"), 0, fullname)
                 doct = doc
@@ -325,8 +320,8 @@ def apply_modification_template (   store_obj,
                     
                     if len(tbl) > 0 :
                         maxi = max([len(_) for _ in tbl[k] ])
-                        s = 0 if tbl.ix[0,1] == None else len(tbl.ix[0,1])
-                        t = "" if tbl.ix[0,1] == None else tbl.ix[0,1]
+                        s = 0 if tbl.ix[0,1] is None else len(tbl.ix[0,1])
+                        t = "" if tbl.ix[0,1] is None else tbl.ix[0,1]
                         tbl.ix[0,1] = t + (" " * (3*maxi - s))
                         sph  = df_to_rst(tbl, align=["1x","3x"])
                         titl = "\n\n" + add_file_rst_template_title[k] + "\n"
@@ -392,7 +387,7 @@ def apply_modification_template (   store_obj,
 def add_file_rst (store_obj, 
                   actions, 
                   template          = add_file_rst_template, 
-                  rootrep           = ("_doc.sphinxdoc.source.pyhome.", ""),
+                  rootrep           = ("_doc.sphinxdoc.source.pyquickhelper.", ""),
                   fmod              = lambda v,filename : v,
                   softfile          = lambda f : False,
                   mapped_function   = [ ],
@@ -444,7 +439,7 @@ def add_file_rst (store_obj,
                 name = os.path.split(file)[-1]
                 noex = os.path.splitext(name)[0]
                 
-                # todo: specific case: shoud be removed and added back in a proper way
+                # todo: specific case: should be removed and added back in a proper way
                 if "examples/" in zzz or "studies/" in zzz :
                     content += "\n.. _%s_literal:\n\nCode\n----\n\n.. literalinclude:: %s\n\n" % (noex, name)
                 
@@ -459,12 +454,12 @@ def add_file_rst (store_obj,
                         
         else :
             for pat,func in mapped_function :
-                if func == None and ext == ".rst" : continue  
+                if func is None and ext == ".rst" : continue
                 if pat not in memo : memo[pat] = re.compile(pat)
                 exp = memo[pat]
                 if exp.search(file) :
                     with open(to, "r", encoding="utf8") as g: content = g.read()
-                    if func == None : func = filecontent_to_rst
+                    if func is None : func = filecontent_to_rst
                     content = func(to, content)
                     
                     if isinstance(content, tuple) and len(content) == 2 :
@@ -535,7 +530,7 @@ def produces_indexes (
                 if o.type != k : continue
                 values.append (  [ o.name, 
                                    o.rst_link(class_in_bracket = False), 
-                                   o.classname.__name__ if o.classname != None else "",
+                                   o.classname.__name__ if o.classname is not None else "",
                                    o.truncdoc ] )
                 
         values.sort()
@@ -549,8 +544,8 @@ def produces_indexes (
             
         if len(tbl) > 0 :
             maxi = max([len(_) for _ in tbl[k] ])
-            s = 0 if tbl.ix[0,1] == None else len(tbl.ix[0,1])
-            t = "" if tbl.ix[0,1] == None else tbl.ix[0,1]
+            s = 0 if tbl.ix[0,1] is None else len(tbl.ix[0,1])
+            t = "" if tbl.ix[0,1] is None else tbl.ix[0,1]
             tbl.ix[0,1] = t + (" " * (3*maxi - s))
             align = ["1x"] * len(tbl.columns)
             align[-1] = "3x"
@@ -635,10 +630,10 @@ def filecontent_to_rst(filename, content) :
         end = None
         for i,r in enumerate(spl):
             if "@brief" in spl[i] : begin = i
-            if end == None and begin != None and len(spl[i].strip(" \n\r\t")) == 0 :
+            if end is None and begin is not None and len(spl[i].strip(" \n\r\t")) == 0 :
                 end = i
                 
-        if begin != None and end != None :
+        if begin is None and end is not None :
             summary = "\n".join( spl[begin:end] ).replace("@brief","").strip("\n\t\r ")
         else :
             summary = "no documentation"
@@ -653,7 +648,7 @@ def filecontent_to_rst(filename, content) :
                 end = i
             
         content = "\n".join(rows)
-        if begin != None and end != None :
+        if begin is not None and end is not None :
             filerows = private_migrating_doxygen_doc(spl[begin+1:end-1], 1, filename)
             rstr = "\n".join(filerows)
             rstr = re.sub(":param +([a-zA-Z_][[a-zA-Z_0-9]*) *:", r"* **\1**:", rstr)
@@ -795,7 +790,7 @@ def prepare_file_for_sphinx_help_generation (
     for tu in optional_dirs :
         if len(tu) == 2 : fold, dest, filt = tu + ( ".*", )
         else : fold, dest, filt = tu
-        if filt == None : filt = ".*"
+        if filt is None : filt = ".*"
         if not os.path.exists (dest) :
             fLOG("creating folder (sphinx) ", dest)
             os.makedirs(dest)
@@ -821,7 +816,7 @@ def prepare_file_for_sphinx_help_generation (
         if k == "module":
             toc = ["\n\n.. toctree::\n"]
             for _ in rsts :
-                if _.file != None and len(_.file) >0:
+                if _.file is not None and len(_.file) >0:
                     na = os.path.splitext(_.rst)[0].replace("\\","/").split("/")
                     if len(na)>3 : na = na[3:]
                     na = "/".join(na)
@@ -913,7 +908,7 @@ def process_copy_images(folder_source, folder_images):
     
 def fix_incomplete_references(folder_source, store_obj, issues = None):
     """
-    look into every file .rst or .py for imcomplete reference. Example::
+    look into every file .rst or .py for incomplete reference. Example::
     
         :class:`name`  --> :class:`name <...>`.
         
@@ -973,7 +968,7 @@ def fix_incomplete_references(folder_source, store_obj, issues = None):
                     line = line.replace(all, lnk)
                 else :
                     fLOG("  w,unable to replace key ", key, ": ", all, "in file", fn)
-                    if issues != None :
+                    if issues is not None :
                         issues.append ( ("fix_incomplete_references", 
                                 "unable to replace key %s, link %s in file %s" % (key, all, fn)))
                     
@@ -1011,6 +1006,8 @@ def migrating_doxygen_doc(content, filename, silent = False, log = False, debug 
                     0,
                     debug = debug)
     return "\n".join(rows)
+    
+# -- HELP BEGIN EXCLUDE --
     
 def private_migrating_doxygen_doc(
                     rows, 
@@ -1332,6 +1329,8 @@ def private_migrating_doxygen_doc(
             raise SyntaxError(mes)
             
     return rows
+    
+# -- HELP END EXCLUDE --
     
 def doc_checking():
     """

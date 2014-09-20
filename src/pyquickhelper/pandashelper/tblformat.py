@@ -11,7 +11,7 @@ def len_modified(s):
     @param      s       string
     @return             length
     
-    The function is currenlty calling ``len`` but it returns some issues if the 
+    The function is currently calling ``len`` but it returns some issues if the
     encoding was not ``utf8``.
     """
     if not isinstance(s,str):
@@ -46,7 +46,7 @@ def df_to_rst(df, add_line=True, align = None):
         for i,v in enumerate(row) :
                 length[i] = max ( length[i], len_modified(str(v)) )
 
-    if align != None :
+    if align is not None :
         if isinstance(align,str):
             align = [ align ] * len_modified(length)
             
@@ -125,7 +125,7 @@ def df_to_html (self, class_table = None, class_td = None, class_tr = None, clas
     cltd = ' class="%s"' % class_td     if class_td != None else ""
     clth = ' class="%s"' % class_th     if class_th != None else ""
     
-    rows= [ "<table%s>" % clta ]
+    rows = [ "<table%s>" % clta ]
     rows.append (  ("<tr%s><th%s>" % (cltr, clth)) + ("</th><th%s>" % clth).join (self.columns) + "</th></tr>" )
     septd = "</td><td%s>" % cltd
     strtd = "<tr%s><td%s>" % (cltr, cltd)

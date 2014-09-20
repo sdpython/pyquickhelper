@@ -19,7 +19,7 @@ class FrameParams (tkinter.Frame) :
                         restore         = True, 
                         width           = 100, 
                         raise_exception = False, 
-                        params          = {},
+                        params          = None,
                         help            = "",
                         key_save        = "",
                         command_leave   = None) :
@@ -34,6 +34,9 @@ class FrameParams (tkinter.Frame) :
         @param      key_save        to make unique the file storing and restoring the parameters
         @param      command_leave   if not None, this function will be called when clicking on Cancel or Leave
         """
+        if params is None:
+            params = {}
+
         tkinter.Frame.__init__ (self, parent)
         self.fdoc       = tkinter.Frame (self)
         self.fpar       = tkinter.Frame (self)
@@ -50,7 +53,7 @@ class FrameParams (tkinter.Frame) :
         self.key_save   = key_save
         self.command_leave = command_leave
         
-        # retieve previous answers
+        # retrieve previous answers
         self._history  = [ ]
         self._hpos     = -1
 
@@ -69,7 +72,7 @@ class FrameParams (tkinter.Frame) :
             if self.types [k] in [None, None.__class__] : 
                 self.types [k] = str
         
-        # documentatin 
+        # documentation
         tlab = tkinter.Label(self.fdoc, text = "Help")
         tlab.pack (side = tkinter.LEFT)
         lab = tkinter.Text (self.fdoc, width = width, height = 7)
@@ -96,7 +99,7 @@ class FrameParams (tkinter.Frame) :
                 lab = tkinter.Entry (self.fpar, width = width)
             
             lab.grid (row = line, column = 1)
-            if self.info ["param"][k] != None :
+            if self.info ["param"][k] is not None :
                 lab.insert ("0", str (self.info ["param"][k]))
             self.input [k] = lab
             objs.append(lab)
@@ -114,7 +117,7 @@ class FrameParams (tkinter.Frame) :
                 lab = tkinter.Entry (self.fpar, width = width)
             
             lab.grid (row = line, column = 1)
-            if self.info ["param"][k] != None :
+            if self.info ["param"][k] is not None :
                 lab.insert ("0", str (self.info ["param"][k]))
             self.input [k] = lab
             objs.append(lab)
@@ -181,7 +184,7 @@ class FrameParams (tkinter.Frame) :
         what to do when Cancel is pressed
         """
         self.info["param"]["__cancel__"] = True
-        if self.command_leave != None :
+        if self.command_leave is not None :
             self.command_leave()
         else :
             self.parent.destroy()
@@ -266,16 +269,16 @@ class FrameParams (tkinter.Frame) :
         newparams = FrameParams.open_window (params, "fetch data from Velib website")
         @endcode
         """
-        param   = params if params != None else {  }
+        param   = params if params is not None else {  }
 
-        root = top_level_window if top_level_window != None else tkinter.Tk ()
+        root = top_level_window if top_level_window is not None else tkinter.Tk ()
         ico  = os.path.realpath (os.path.join (os.path.split (__file__) [0], "project_ico.ico"))
         fr   =  FrameParams ( root, params = param, help = help_string, key_save = key_save)
         fr.pack ()
         root.title (title)
-        if ico != None and top_level_window == None and sys.platform.startswith("win") : 
+        if ico is not None and top_level_window is None and sys.platform.startswith("win") :
             root.wm_iconbitmap(ico)
-        if top_level_window == None : fr.focus_set()
+        if top_level_window is None : fr.focus_set()
         root.focus_set()
         fr.mainloop ()
         return param

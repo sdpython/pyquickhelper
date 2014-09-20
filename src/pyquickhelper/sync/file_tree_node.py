@@ -90,7 +90,7 @@ class FileTreeNode :
         @param      log1            intermediate logs (first level)
         """
         self._root      = root
-        self._file      = None if file == None else file
+        self._file      = None if file is None else file
         self._children  = []
         self._type      = None
         self._date      = None
@@ -104,16 +104,16 @@ class FileTreeNode :
         if not os.path.exists (root) : raise PQHException ("path %s does not exist"  % root)
         if not os.path.isdir  (root) : raise PQHException ("path %s is not a folder" % root)
         
-        if self._file != None :
+        if self._file is not None :
             if not self.exists() : 
                 raise PQHException ("%s does not exist [%s,%s]" % (self.get_fullname(),root,file))
                 
         self._fillstat ()
         if self.isdir () :
             if isinstance(filter, str) :
-                # we assume it is a regular expression instread of a function
+                # we assume it is a regular expression instead of a function
                 exp = re.compile(filter)
-                fil = lambda root, path, f, dir, e=exp : dir or (e.search(f) != None)
+                fil = lambda root, path, f, dir, e=exp : dir or (e.search(f) is not None)
                 self._fill (fil, repository = repository)
             else :
                 self._fill (filter, repository = repository)
@@ -170,20 +170,20 @@ class FileTreeNode :
         f           = open (filename,'rb')
         m           = hashlib.md5()
         readBytes   = 1024**2  # read 1024 bytes per time
-        totalBytes  = 0;
-        while (readBytes):
-            readString = f.read(readBytes);
-            m.update(readString);
-            readBytes  = len(readString);
-            totalBytes+=readBytes;
-        f.close();
+        totalBytes  = 0
+        while readBytes:
+            readString = f.read(readBytes)
+            m.update(readString)
+            readBytes  = len(readString)
+            totalBytes+=readBytes
+        f.close()
         return m.hexdigest ()            
                 
     def get_fullname (self) :
         """
         @return         the full name
         """
-        if self._file == None : return self._root
+        if self._file is None : return self._root
         else : return os.path.join (self._root, self._file)
         
     def exists (self) :
@@ -222,7 +222,7 @@ class FileTreeNode :
         usual
         """
         line = [ self._root ] if self._level == 0 else []
-        fi   = "" if self._file == None else self._file
+        fi   = "" if self._file is None else self._file
         fi   = os.path.split (fi) [-1]
         if len (fi) > 0 : line.append ( "    " * self._level + fi ) 
         for c in self._children :
@@ -249,7 +249,7 @@ class FileTreeNode :
         if repository :
             opt     = "repo_ls"
             full    = self.get_fullname ()
-            fi      = "" if self._file == None else self._file
+            fi      = "" if self._file is None else self._file
             entry   = self.repo_ls(full)
             temp    = [os.path.relpath (p.name, full) for p in entry ]
             all     = []
@@ -268,7 +268,7 @@ class FileTreeNode :
             if self._log1:
                 fLOG("[FileTreeNode], entering", a)
             fu = os.path.join (full, a)
-            if filter == None or filter (self._root, fi, a, os.path.isdir (fu)) :
+            if filter is None or filter (self._root, fi, a, os.path.isdir (fu)) :
                 try :
                     n = FileTreeNode (  self._root, 
                                     os.path.join (fi, a), 
@@ -335,11 +335,11 @@ class FileTreeNode :
         res = { }
         if lower :
             for node in self :
-                if node._file != None :
+                if node._file is not None :
                     res [ node._file.lower () ] = node
         else :
             for node in self :
-                if node._file != None :
+                if node._file is not None :
                     res [ node._file ] = node
         return res
         
@@ -410,7 +410,8 @@ class FileTreeNode :
         return zoo
             
     def remove (self) :
-        """remove the file
+        """
+        remove the file
         """
         full = self.get_fullname ()
         fLOG ("removing ", full)
