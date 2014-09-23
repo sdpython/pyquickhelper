@@ -282,4 +282,13 @@ def get_master_location(path = None, commandline = True):
     """
     raise NotImplementedError()
     
+def get_nb_commits(path = None, commandline = True):
+    """
+    returns the number of commit
+    
+    @param      path            path to look
+    @param      commandline     if True, use the command line to get the version number, otherwise it uses pysvn
+    @return                     integer
+    """
+    raise NotImplementedError()
     

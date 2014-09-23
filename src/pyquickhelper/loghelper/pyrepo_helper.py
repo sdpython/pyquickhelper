@@ -89,4 +89,14 @@ class SourceRepository :
             self.SetGuessedType(path)
         return self.module.get_repo_version(path, commandline = self.commandline)
     
-    
+    def nb_commits(self, path = None):
+        """
+        return the number of commits
+        
+        @param      path            path to look
+        @return                     number of commit
+        """
+        if self.module is None :
+            self.SetGuessedType(path)
+        return self.get_nb_commits(path, commandline = self.commandline)
+        

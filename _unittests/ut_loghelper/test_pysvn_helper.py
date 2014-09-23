@@ -1,4 +1,3 @@
-# coding: latin-1
 """
 @brief      test log(time=3s)
 """
@@ -24,9 +23,10 @@ class TestPySvnHelper (unittest.TestCase):
         path = os.path.split(__file__)[0]
         data = os.path.abspath(os.path.join(path, "..", ".."))
         s = SourceRepository()
-        all = s.version(data)
-        fLOG("version",all)
-        assert isinstance(all,int) or isinstance(all,str)
+        alls = s.version(data)
+        fLOG("data",data)
+        fLOG("version",alls)
+        assert isinstance(alls,int) or isinstance(alls,str)
 
 
 if __name__ == "__main__"  :

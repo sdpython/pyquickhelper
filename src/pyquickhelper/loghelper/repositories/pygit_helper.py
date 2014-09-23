@@ -203,7 +203,7 @@ def get_repo_log (path = None, file_detail = False, commandline = True) :
             res.append(row)
         return res
                         
-def get_repo_version (path = None, commandline = True, usedate = True, log = False) :
+def get_repo_version (path = None, commandline = True, usedate = False, log = False) :
     """
     Get the latest check for a specific path or version number based on the date (is usedate is True)
     If usedate is False, it returns a mini hash (a string then)
@@ -214,52 +214,56 @@ def get_repo_version (path = None, commandline = True, usedate = True, log = Fal
     @param      log             if True, returns the output instead of a boolean
     @return                     integer)
     """
-    if path is None :
-        path = os.path.normpath(os.path.abspath( os.path.join( os.path.split(__file__)[0], "..", "..", "..")))
-        
-    if not commandline :
-        try :
-            raise NotImplementedError()
-        except Exception as e :
-            return get_repo_version(path, True)
-    else :
-        if sys.platform.startswith("win32") :
-            cmd = r'"C:\Program Files (x86)\Git\bin\git" log --format="%h---%ci"'   # %H for full commit hash
+    if not usedate:
+        last = get_nb_commits(path, commandline)
+        return last
+    else:
+        if path is None :
+            path = os.path.normpath(os.path.abspath( os.path.join( os.path.split(__file__)[0], "..", "..", "..")))
+            
+        if not commandline :
+            try :
+                raise NotImplementedError()
+            except Exception as e :
+                return get_repo_version(path, True)
         else :
-            cmd = 'git log --format="%h---%ci"' 
-
-        if path is not None : cmd += " \"%s\"" % path
-        
-        out,err = run_cmd(  cmd, 
-                            wait = True, 
-                            do_not_log = True, 
-                            encerror = "strict",
-                            encoding = sys.stdout.encoding if sys.stdout != None else "utf8",
-                            change_path = os.path.split(path)[0] if os.path.isfile(path) else path,
-                            log_error = False)
-                                                                            
-        if len(err) > 0 :
-            if log :
-                fLOG ("problem with file ", path, err)
-            if log :
-                return "OUT\n{0}\nERR:{1}".format(out,err)
+            if sys.platform.startswith("win32") :
+                cmd = r'"C:\Program Files (x86)\Git\bin\git" log --format="%h---%ci"'   # %H for full commit hash
             else :
-                raise Exception(err)
+                cmd = 'git log --format="%h---%ci"' 
 
-        lines = out.split("\n")
-        lines = [ _.split("---") for _ in lines if len(_) > 0 ]
-        temp  = lines[0]
-        if usedate :
-            dt = str_to_datetime(temp[1].replace("T"," ").strip("Z "))
-            dt0 = datetime.datetime(dt.year, 1,1,0,0,0)
-            res = "%d" % (dt-dt0).days
-        else :
-            res = temp[0]
-        
-        if len(res) == 0 :
-            raise Exception("the command 'git help' should return something")
-                
-        return res
+            if path is not None : cmd += " \"%s\"" % path
+            
+            out,err = run_cmd(  cmd, 
+                                wait = True, 
+                                do_not_log = True, 
+                                encerror = "strict",
+                                encoding = sys.stdout.encoding if sys.stdout != None else "utf8",
+                                change_path = os.path.split(path)[0] if os.path.isfile(path) else path,
+                                log_error = False)
+                                                                                
+            if len(err) > 0 :
+                if log :
+                    fLOG ("problem with file ", path, err)
+                if log :
+                    return "OUT\n{0}\nERR:{1}".format(out,err)
+                else :
+                    raise Exception(err)
+
+            lines = out.split("\n")
+            lines = [ _.split("---") for _ in lines if len(_) > 0 ]
+            temp  = lines[0]
+            if usedate :
+                dt = str_to_datetime(temp[1].replace("T"," ").strip("Z "))
+                dt0 = datetime.datetime(dt.year, 1,1,0,0,0)
+                res = "%d" % (dt-dt0).days
+            else :
+                res = temp[0]
+            
+            if len(res) == 0 :
+                raise Exception("the command 'git help' should return something")
+                    
+            return res
             
 def get_master_location(path = None, commandline = True):
     """
@@ -305,5 +309,40 @@ def get_master_location(path = None, commandline = True):
                 
         return res
 
-
+def get_nb_commits(path = None, commandline = True):
+    """
+    returns the number of commit
     
+    @param      path            path to look
+    @param      commandline     if True, use the command line to get the version number, otherwise it uses pysvn
+    @return                     integer
+    """
+    if path is None :
+        path = os.path.normpath(os.path.abspath( os.path.join( os.path.split(__file__)[0], "..", "..", "..")))
+        
+    if not commandline :
+        try :
+            raise NotImplementedError()
+        except Exception as e :
+            return get_repo_version(path, True)
+    else :
+        if sys.platform.startswith("win32") :
+            cmd = r'"C:\Program Files (x86)\Git\bin\git" rev-list HEAD --count'   # %H for full commit hash
+        else :
+            cmd = 'git rev-list HEAD --count' 
+
+        if path is not None : cmd += " \"%s\"" % path
+        
+        out,err = run_cmd(  cmd, 
+                            wait = True, 
+                            do_not_log = True, 
+                            encerror = "strict",
+                            encoding = sys.stdout.encoding if sys.stdout != None else "utf8",
+                            change_path = os.path.split(path)[0] if os.path.isfile(path) else path,
+                            log_error = False)
+                                                                            
+        if len(err) > 0 :
+            raise Exception("unable to get commit number from path {0}\nERR:\n{1}".format(path,err))
+
+        lines = out.strip()
+        return int(lines)
