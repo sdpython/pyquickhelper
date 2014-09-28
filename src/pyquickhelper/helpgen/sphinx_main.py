@@ -61,6 +61,11 @@ def generate_help_sphinx (  project_var_name,
     If you generate latex/pdf files, you should add variables ``latex_path`` and ``pandoc_path``
     in your file ``conf.py`` which defines the help.
     
+    You can exclud some part while generating the documentation by adding:
+        
+        * ``# -- HELP BEGIN EXCLUDE --``
+        * ``# -- HELP END EXCLUDE --``
+    
     @code
     latex_path  = r"C:/Program Files/MiKTeX 2.9/miktex/bin/x64"
     pandoc_path = r"%USERPROFILE%/AppData/Local/Pandoc"
