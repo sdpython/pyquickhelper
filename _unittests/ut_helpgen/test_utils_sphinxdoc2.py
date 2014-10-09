@@ -23,14 +23,14 @@ class TestSphinxDoc2 (unittest.TestCase):
         fLOG (__file__, self._testMethodName, OutputPrint = __name__ == "__main__")
         
         path    = os.path.split(__file__)[0]
-        file    = os.path.join(path, "..", "..", "src", "pyquickhelper", "loghelper", "pqh_exception.py")
+        file    = os.path.normpath(os.path.join(path, "..", "..", "src", "pyquickhelper", "loghelper", "pqh_exception.py"))
         
         store_obj = { }
         softfile = lambda f : False        
         rst = utils_sphinx_doc.apply_modification_template (store_obj,
                     utils_sphinx_doc.add_file_rst_template,
                     file,
-                    os.path.join(path, "..", "..", "src"),
+                    os.path.normpath(os.path.join(path, "..", "..", "src")),
                     softfile,
                     {},
                     additional_sys_path = [])
@@ -38,7 +38,7 @@ class TestSphinxDoc2 (unittest.TestCase):
         assert len(rst)>0
         assert len(store_obj) > 0
         for k,v in store_obj.items () :
-            fLOG(k,v)
+            fLOG("test1",k,v)
             
     @staticmethod
     def private_static() :
