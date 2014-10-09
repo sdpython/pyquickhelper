@@ -123,15 +123,18 @@ class ModuleMemberDoc :
     """
     represents a member in a module
     
+    See `inspect <https://docs.python.org/3.4/library/inspect.html>`_
+    
     @var    obj         object
     @var    type        (str) type
     @var    cl          (class) class it belongs to
     @var    name        (str)
-    @var    module      (module)
+    @var    module      (str) module name
     @var    doc         (str) documentation
     @var    truncdoc    (str) truncated documentation    
+    @var    owner       (module) 
     """
-    def __init__ (self, obj, ty = None, cl = None, name = None) :
+    def __init__ (self, obj, ty = None, cl = None, name = None, module = None) :
         """
         constructor
         @param      obj     any kind of object
@@ -139,6 +142,10 @@ class ModuleMemberDoc :
                             this type is a string (class, method, function)
         @param      cl      if is a method, class it belongs to
         """
+        if module is None:
+            raise ValueError("module cannot be null")
+        
+        self.owner = module
         self.obj = obj
         self.cl  = cl
         if ty != None : self.type = ty
@@ -301,6 +308,12 @@ class ModuleMemberDoc :
     def __eq__(self, oth): return self.__cmp__(oth) == 0
     def __gt__(self, oth): return self.__cmp__(oth) == 1
     
+    def __str__(self):
+        """
+        usual
+        """
+        return "[key={0},clname={1},type={2},module_name={3},file={4}".format(self.key, self.classname, self.type, self.module, self.owner.__file__)
+    
 class IndexInformation :
     """
     keeps some information to index
@@ -409,11 +422,25 @@ def import_module (filename, log_function, additional_sys_path = [ ]) :
     sys.path.insert (0, sdir)
     tl  = os.path.split (l) [1]
     fi  = tl.replace (".py", "")
+    
     if additional_sys_path is not None and len(additional_sys_path) > 0 :
+        # there is an issue here due to the confusion in the paths
+        # the paths should be removed just after the import
         sys.path.extend(additional_sys_path)
     
     try :
         mo = __import__ (fi)
+        
+        if not mo.__file__.replace("\\","/").endswith(filename.replace("\\","/").strip("./")):
+            namem = os.path.splitext(os.path.split(filename)[-1])[0]
+            if namem in sys.modules :
+                del sys.modules[namem]
+                mo = __import__ (fi)
+                if not mo.__file__.replace("\\","/").endswith(filename.replace("\\","/").strip("./")):
+                    raise ImportError("the wrong file was imported (2):\nEXP: {0}\nIMP: {1}\nPATHS:\n   - {2}".format(filename, mo.__file__, "\n   - ".join(sys.path)))
+            else:
+                raise ImportError("the wrong file was imported (1):\nEXP: {0}\nIMP: {1}\nPATHS:\n   - {2}".format(filename, mo.__file__, "\n   - ".join(sys.path)))
+                
         sys.path = memo
         log_function("importing ", filename, " successfully")
         return mo
@@ -464,11 +491,11 @@ def get_module_objects(mod) :
            inspect.isfunction(obj) or \
            inspect.isgenerator(obj) or \
            inspect.ismethod(obj) :
-            cl.append ( ModuleMemberDoc (obj) )
+            cl.append ( ModuleMemberDoc (obj, module=mod) )
             if inspect.isclass(obj) :
                 for n, o in inspect.getmembers(obj):
                     try :
-                        ok = ModuleMemberDoc (o, "method", cl = obj, name = n)
+                        ok = ModuleMemberDoc (o, "method", cl = obj, name = n, module = mod)
                         if ok.module != None :
                             cl.append ( ok  )
                     except Exception as e :

@@ -13,6 +13,7 @@ except ImportError :
 from src.pyquickhelper.loghelper.flog import fLOG
 from src.pyquickhelper.funcwin.function_helper import extract_function_information
 from src.pyquickhelper.funcwin.default_functions import file_grep
+from src.pyquickhelper import check
 
 
 class TestFonctionHelper (unittest.TestCase):
@@ -25,6 +26,10 @@ class TestFonctionHelper (unittest.TestCase):
         for k in sorted(res["param"]):
             fLOG("--",k,res["param"][k],"-",res["types"][k])
         assert res["types"]["file"] == str
+        
+    def test_check(self):
+        fLOG(__file__, self._testMethodName, OutputPrint = __name__ == "__main__")
+        check()
         
 if __name__ == "__main__"  :
     unittest.main ()    

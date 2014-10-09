@@ -60,9 +60,9 @@ class TestSphinxDoc2 (unittest.TestCase):
         fLOG (__file__, self._testMethodName, OutputPrint = __name__ == "__main__")
         
         mod = sys.modules[__name__]
-        fLOG(type(mod))
+        fLOG(type(mod), mod.__file__, mod.__name__)
         objs = utils_sphinx_doc.get_module_objects (mod)
-        fLOG(objs)
+        fLOG("objs=",objs)
         ty = { }
         for _ in objs : 
             ty [_.type] = ty.get(_.type, 0) + 1

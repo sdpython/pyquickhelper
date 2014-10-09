@@ -330,6 +330,7 @@ def apply_modification_template (   store_obj,
                 
             # we produce the table for the function, classes, and
             objs   = get_module_objects(mo)
+            
             prefix = ".".join(fullnamenoext.split(".")[:-1])
             for ob in objs :
                 

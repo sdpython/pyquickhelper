@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Documentation for this file.
+Main files, contains the version, the url to the documention.
 """
 
 __version__ = "0.7"
@@ -10,15 +10,15 @@ __url__ = "http://www.xavierdupre.fr/app/pyquickhelper/helpsphinx/index.html"
 __downloadUrl__ = "http://www.xavierdupre.fr/site2013/index_code.html#pyquickhelper"
 __license__ = "BSD License"
 
-def check( log = False):
+def check():
     """
     Checks the library is working.
-    It raises an exception.
-    If you want to disable the logs:
+    It raises an exception if it does not.
     
-    @param      log     if True, display information, otherwise
-    @return             0 or exception
+    @return         boolean
     """
+    from .funcwin import check_icon
+    check_icon()
     return True
     
 from .loghelper.flog                    import fLOG, run_cmd, unzip, noLOG
