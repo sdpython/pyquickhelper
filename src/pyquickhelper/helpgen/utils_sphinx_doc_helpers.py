@@ -433,6 +433,10 @@ def import_module (filename, log_function, additional_sys_path = [ ]) :
         
         if not mo.__file__.replace("\\","/").endswith(filename.replace("\\","/").strip("./")):
             namem = os.path.splitext(os.path.split(filename)[-1])[0]
+            
+            if "src" in sys.path:
+                sys.path = [ _ for _ in sys.path if _ != "src" ]
+            
             if namem in sys.modules :
                 del sys.modules[namem]
                 mo = __import__ (fi)
@@ -442,7 +446,7 @@ def import_module (filename, log_function, additional_sys_path = [ ]) :
                 raise ImportError("the wrong file was imported (1):\nEXP: {0}\nIMP: {1}\nPATHS:\n   - {2}".format(filename, mo.__file__, "\n   - ".join(sys.path)))
                 
         sys.path = memo
-        log_function("importing ", filename, " successfully")
+        log_function("importing ", filename, " successfully", mo.__file__)
         return mo
     except ImportError as e :
         exp = re.compile("No module named '(.*)'")
