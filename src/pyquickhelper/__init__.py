@@ -18,7 +18,9 @@ def check():
     @return         boolean
     """
     from .funcwin import check_icon
+    from .loghelper import check_log
     check_icon()
+    check_log()
     return True
     
 from .loghelper.flog                    import fLOG, run_cmd, unzip, noLOG
