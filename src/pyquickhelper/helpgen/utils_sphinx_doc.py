@@ -296,6 +296,7 @@ def apply_modification_template (   rootm,
     fullnamenoext = fullname[:-3] \
                     if (fullname.endswith(".py") or fullname.endswith(".cpp")) \
                     else fullname
+    pythonname = None
 
     mo,prefix   = import_module(rootm, keepf, fLOG, additional_sys_path = additional_sys_path)
     doc         = ""
@@ -305,6 +306,7 @@ def apply_modification_template (   rootm,
     tspecials   = { }
     
     if mo is not None :
+        pythonname = mo.__name__
         if isinstance (mo, str) :
             # it is an error
             spl         = mo.split("\n")
@@ -351,7 +353,7 @@ def apply_modification_template (   rootm,
                     store_obj [ob.key] = ob
             
             for k,v in add_file_rst_template_cor.items () :
-                values = [ [ o.rst_link(prefix, class_in_bracket = False), o.truncdoc ] \
+                values = [ [ o.rst_link(None, class_in_bracket = False), o.truncdoc ] \
                                     for o in objs if o.type == k ]
                 if len(values) > 0 :
                     tbl = DataFrame (columns=[k, "truncated documentation"] , data=values)
@@ -396,17 +398,20 @@ def apply_modification_template (   rootm,
     # dealing with special members (does not work)
     #text_specials = "".join(["    :special-members: %s\n" % k for k in tspecials ])
     text_specials = ""  
+    
+    if fullnamenoext.endswith(".__init__"): fullnamenoext = fullnamenoext[ : -len(".__init__")]
+    if filenoext.endswith(".__init__"): filenoext = filenoext[ : -len(".__init__")]
      
-    ttitle = "module ``{0}``".format(fullname)
+    ttitle = "module ``{0}``".format(fullnamenoext)
     rep = { "__FULLNAME_UNDERLINED__": ttitle + "\n" + ("=" * len(ttitle)) +"\n",
             "__FILENAMENOEXT__":filenoext,
-            "__FULLNAMENOEXT__":fullnamenoext,
+            "__FULLNAMENOEXT__":pythonname,
             "__DOCUMENTATION__":doc,
             "__DOCUMENTATIONLINE__": shortdoc,
             "__PLATFORM__":plat,
             "__ADDEDMEMBERS__":text_specials,
              }
-    
+             
     for k,v in additional.items() :
         rep [k] = v
         

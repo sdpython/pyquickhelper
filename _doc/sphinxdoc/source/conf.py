@@ -35,7 +35,7 @@ version          = extract_version_from_setup()
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.split(__file__)[0])))
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.split(__file__)[0], project_var_name)))
+#sys.path.insert(0, os.path.abspath(os.path.join(os.path.split(__file__)[0], project_var_name)))
 
 # -- General configuration -----------------------------------------------------
 

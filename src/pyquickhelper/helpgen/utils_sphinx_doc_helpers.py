@@ -258,9 +258,6 @@ class ModuleMemberDoc :
         cor = {"function":"func", "method":"meth", 
                 "staticmethod":"meth", "property":"meth" }
         
-        if prefix is None and "prefix" in self.__dict__ :
-            prefix = self.prefix
-        
         if self.type in ["method", "staticmethod", "property"]:
             path = "%s.%s.%s" % (self.module, self.cl.__name__, self.name)
         else :
@@ -425,9 +422,26 @@ def import_module (rootm, filename, log_function, additional_sys_path = [ ]) :
     fmod    = spl[0]  # this is the prefix
     relpath = "/".join(spl[1:])
     
+    # we remove every path ending by "src"
+    rem = []
+    for i,p in enumerate(sys.path):
+        if p.endswith("src"): rem.append(i)
+    rem.reverse()
+    for r in rem : del sys.path[r]
+    
+    # remove fmod from sys.modules
+    addback = []
+    rem=[]
+    for n,m in sys.modules.items():
+        if n.startswith(fmod): 
+            rem.append(n)
+            addback.append( (n, m) )
+    for r in rem:
+        del sys.modules[r]
+    
     # full path
     fullpath = sdir.replace("\\","/")
-    if rootm != None :
+    if rootm != None:
         root = rootm
         tl = relpath
         fi = tl.replace(".py","").replace("/",".")
@@ -463,12 +477,15 @@ def import_module (rootm, filename, log_function, additional_sys_path = [ ]) :
                 #mo = __import__ (fi)
                 mo = importlib.import_module(fi, context)
                 if not mo.__file__.replace("\\","/").endswith(filename.replace("\\","/").strip("./")):
-                    raise ImportError("the wrong file was imported (2):\nEXP: {0}\nIMP: {1}\nPATHS:\n   - {2}".format(filename, mo.__file__, "\n   - ".join(sys.path)))
+                    raise ImportError("the wrong file was imported (2):\nEXP: {0}\nIMP: {1}\nPATHS:\n   - {2}" \
+                           .format(filename, mo.__file__, "\n   - ".join(sys.path)))
             else:
-                raise ImportError("the wrong file was imported (1):\nEXP: {0}\nIMP: {1}\nPATHS:\n   - {2}".format(filename, mo.__file__, "\n   - ".join(sys.path)))
+                raise ImportError("the wrong file was imported (1):\nEXP: {0}\nIMP: {1}\nPATHS:\n   - {2}" \
+                           .format(filename, mo.__file__, "\n   - ".join(sys.path)))
                 
         sys.path = memo
         log_function("importing ", filename, " successfully", mo.__file__)
+        for n,m in addback: sys.modules[n] = m
         return mo, fmod
     except ImportError as e :
         exp = re.compile("No module named '(.*)'")
@@ -477,19 +494,22 @@ def import_module (rootm, filename, log_function, additional_sys_path = [ ]) :
             module = find.groups()[0]
             log_function("unable to import module " + module + " --- " + str(e).replace("\n"," "))
             
-        log_function("  File \"%s\", line %d" % (__file__,359))
+        log_function("  File \"%s\", line %d" % (__file__,501))
         log_function("-- unable to import module (1) ", filename, ",", fi, " in path ", sdir, " Error: ", str(e))
         log_function("    cwd ", os.getcwd())
         log_function("    path", sdir)
         sys.path = memo
+        for n,m in addback: sys.modules[n] = m
         return "unable to import %s\nError:\n%s" % (filename, str(e)), fmod
     except SystemError as e :
         log_function("-- unable to import module (2) ", filename, ",", fi, " in path ", sdir, " Error: ", str(e))
         sys.path = memo
+        for n,m in addback: sys.modules[n] = m
         return "unable to import %s\nError:\n%s" % (filename, str(e)), fmod
     except Exception as e :
         log_function("-- unable to import module (3) ", filename, ",", fi, " in path ", sdir, " Error: ", str(e))
         sys.path = memo
+        for n,m in addback: sys.modules[n] = m
         return "unable to import %s\nError:\n%s" % (filename, str(e)), fmod
         
 def get_module_objects(mod) :
