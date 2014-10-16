@@ -1,4 +1,5 @@
-﻿.. _l-README:
+﻿
+.. _l-README:
 
 README
 ======
@@ -51,23 +52,7 @@ Versions
     * **fix:** fix a bug while updating the notebook file (documentation generation)
     * **fix:** fix misspellings and some minor bugs
     * **add:** some parts can be ignored while generation the documentation by adding section ``# -- HELP BEGIN EXCLUDE --`` and ``# -- HELP END EXCLUDE --``
+    * **change:** do not replace relative imports when generating the documentation
 * **0.6 - 2014/08/24**
     * **change:** minor fixes for the documentation generation
     * **add:** add code to handle conversion of notebooks in docx format
-* **v0.5 - 2014/08/05**
-    * **change:** few fixes while generating the documentation (notebooks, toctrees)
-    * **change:** compilation of the help into PDF, latex, singlehtml
-    * **change:** removes the creation of ``temp_log.txt`` by default when using function :func:`fLOG <loghelper.flog.fLOG>`
-    * **fix:** the module can fix an exception thrown by ``pywin32`` about DLL missing
-    * **change:** can use nbconvert from ipython 2.1 to generate the documentation
-    * **new:** add function :func:`get_url_content <loghelper.url_helper.get_url_content>`
-    * **new:** add function :func:`noLOG <loghelper.flog.noLOG>` which does nothing (disable the logs)
-    * **fix:** fix path to local images in notebooks
-    * **change:** the help generation can now produce multiple layout for the same package
-    * **new:** auto completion class for IPython
-* **v0.4 - 2014/04/19**
-    * **change**: add the possibility to create more than one page of examples, use tag ``@example(page___title)``
-    * **change**: use method `communicate <https://docs.python.org/3.4/library/subprocess.html#subprocess.Popen.communicate>`_ in :func:`run_cmd <loghelper.flog.run_cmd>`, remove characters ``\r`` on Windows
-    * **change**: more robust function :func:`run_cmd <loghelper.flog.run_cmd>`, change default values 
-    * **change**: :func:`synchronize_folder <sync.synchelper.synchronize_folder>` now removes files when using a file to memorize the list of synchronized files
-    * **new:** the documentation generation takes notebooks from folder ``_docs/notebooks``

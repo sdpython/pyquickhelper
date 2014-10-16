@@ -23,7 +23,6 @@ This test file must begin by ``test_`` and must look like the following::
     """
 
     import sys, os, unittest
-    from pyhome3 import fLOG  # it requires pyhome3.
 
     # to import files from the module
     try :
@@ -33,6 +32,8 @@ This test file must begin by ``test_`` and must look like the following::
         if path not in sys.path : sys.path.append (path)
         import src
 
+    from pyquickhelper import fLOG
+    
     # import the file you want to test 
     from src.project_name.subproject.myexample import myclass
 

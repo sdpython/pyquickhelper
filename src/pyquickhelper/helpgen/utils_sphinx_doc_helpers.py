@@ -4,7 +4,7 @@
 
 """
 
-import inspect, os, copy, re, sys, types
+import inspect, os, copy, re, sys, types, importlib
 from ..pandashelper.tblformat import df_to_rst
 
 class HelpGenException(Exception):
@@ -406,30 +406,49 @@ class RstFileHelp :
         self.rst  = rst
         self.doc  = doc
 
-def import_module (filename, log_function, additional_sys_path = [ ]) :
+def import_module (rootm, filename, log_function, additional_sys_path = [ ]) :
     """
     import a module using its filename
+    @param      rootm                   root of the module (for relative import)
     @param      filename                file name of the module
     @param      log_function            logging function
     @param      additional_sys_path     additional path to include to sys.path before importing a module (will be removed afterwards)
-    @return                             module object
+    @return                             module object, prefix
     
     @warning It adds the file path at the first position in sys.path and then deletes it.
     """
-    memo = copy.deepcopy(sys.path)
-    l = filename
-    sdir = os.path.abspath(os.path.split (l) [0])
-    sys.path.insert (0, sdir)
-    tl  = os.path.split (l) [1]
-    fi  = tl.replace (".py", "")
+    memo    = copy.deepcopy(sys.path)
+    l       = filename.replace("\\","/")
+    sdir    = os.path.abspath(os.path.split (l) [0])
+    relpath = os.path.relpath( l, rootm ).replace("\\","/")
+    spl     = relpath.split("/")
+    fmod    = spl[0]  # this is the prefix
+    relpath = "/".join(spl[1:])
     
+    # full path
+    fullpath = sdir.replace("\\","/")
+    if rootm != None :
+        root = rootm
+        tl = relpath
+        fi = tl.replace(".py","").replace("/",".")
+        fi = fmod + "." + fi
+        context = None
+        if fi.endswith(".__init__") :
+            fi = fi [ :-len(".__init__") ]
+    else :
+        root = sdir
+        tl = os.path.split (l) [1]
+        fi = tl.replace (".py", "")
+        context = None
+        
     if additional_sys_path is not None and len(additional_sys_path) > 0 :
         # there is an issue here due to the confusion in the paths
         # the paths should be removed just after the import
         sys.path.extend(additional_sys_path)
-    
+        
+    sys.path.insert (0, root)
     try :
-        mo = __import__ (fi)
+        mo = importlib.import_module(fi, context)
         
         if not mo.__file__.replace("\\","/").endswith(filename.replace("\\","/").strip("./")):
             namem = os.path.splitext(os.path.split(filename)[-1])[0]
@@ -439,7 +458,10 @@ def import_module (filename, log_function, additional_sys_path = [ ]) :
             
             if namem in sys.modules :
                 del sys.modules[namem]
-                mo = __import__ (fi)
+                # add the context here for relative import
+                # use importlib.import_module with the package argument filled
+                #mo = __import__ (fi)
+                mo = importlib.import_module(fi, context)
                 if not mo.__file__.replace("\\","/").endswith(filename.replace("\\","/").strip("./")):
                     raise ImportError("the wrong file was imported (2):\nEXP: {0}\nIMP: {1}\nPATHS:\n   - {2}".format(filename, mo.__file__, "\n   - ".join(sys.path)))
             else:
@@ -447,29 +469,28 @@ def import_module (filename, log_function, additional_sys_path = [ ]) :
                 
         sys.path = memo
         log_function("importing ", filename, " successfully", mo.__file__)
-        return mo
+        return mo, fmod
     except ImportError as e :
         exp = re.compile("No module named '(.*)'")
         find = exp.search(str(e))
         if find :
             module = find.groups()[0]
             log_function("unable to import module " + module + " --- " + str(e).replace("\n"," "))
-            pass
             
         log_function("  File \"%s\", line %d" % (__file__,359))
         log_function("-- unable to import module (1) ", filename, ",", fi, " in path ", sdir, " Error: ", str(e))
         log_function("    cwd ", os.getcwd())
         log_function("    path", sdir)
         sys.path = memo
-        return "unable to import %s\nError:\n%s" % (filename, str(e))
+        return "unable to import %s\nError:\n%s" % (filename, str(e)), fmod
     except SystemError as e :
         log_function("-- unable to import module (2) ", filename, ",", fi, " in path ", sdir, " Error: ", str(e))
         sys.path = memo
-        return "unable to import %s\nError:\n%s" % (filename, str(e))
+        return "unable to import %s\nError:\n%s" % (filename, str(e)), fmod
     except Exception as e :
         log_function("-- unable to import module (3) ", filename, ",", fi, " in path ", sdir, " Error: ", str(e))
         sys.path = memo
-        return "unable to import %s\nError:\n%s" % (filename, str(e))
+        return "unable to import %s\nError:\n%s" % (filename, str(e)), fmod
         
 def get_module_objects(mod) :
     """

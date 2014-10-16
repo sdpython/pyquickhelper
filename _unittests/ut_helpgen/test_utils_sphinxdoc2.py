@@ -24,10 +24,12 @@ class TestSphinxDoc2 (unittest.TestCase):
         
         path    = os.path.split(__file__)[0]
         file    = os.path.normpath(os.path.join(path, "..", "..", "src", "pyquickhelper", "loghelper", "pqh_exception.py"))
+        rootm   = os.path.normpath(os.path.join(path, "..", "..", "src"))
         
         store_obj = { }
         softfile = lambda f : False        
-        rst = utils_sphinx_doc.apply_modification_template (store_obj,
+        rst = utils_sphinx_doc.apply_modification_template (rootm,
+                    store_obj,
                     utils_sphinx_doc.add_file_rst_template,
                     file,
                     os.path.normpath(os.path.join(path, "..", "..", "src")),

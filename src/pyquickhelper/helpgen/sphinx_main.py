@@ -137,7 +137,8 @@ def generate_help_sphinx (  project_var_name,
                 silent          = True,
                 rootrep         = ("_doc.sphinxdoc.source.%s." % (project_var_name,), ""),
                 optional_dirs   = optional_dirs,
-                mapped_function = mapped_function )
+                mapped_function = mapped_function,
+                replace_relative_import = False)
                 
     fLOG("**** end of prepare_file_for_sphinx_help_generation")
     
@@ -457,11 +458,13 @@ def process_notebooks(  notebooks,
                     
                     if format == "latex": 
                         os.chdir(cwd)
-                
+                        
                     if "raise ImportError" in err:
                         raise ImportError(err)
-                    if len(err)>0 and "error" in err.lower():
-                        raise HelpGenException(err)
+                    if len(err)>0 :
+                        err = err.lower()
+                        if "error" in err or "critical" in err or "bad config" in err:
+                            raise HelpGenException(err)
                         
                     # we should compile a second time
                     # compilation = True  # already done above

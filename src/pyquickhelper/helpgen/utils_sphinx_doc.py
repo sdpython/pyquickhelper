@@ -108,16 +108,17 @@ def replace_relative_import (fullname, content = None) :
                         
     return "\n".join(lines)
 
-def _private_process_one_file(fullname, to, silent, fmod):
+def _private_process_one_file(fullname, to, silent, fmod, replace_relative_import):
     """
     Copy one file from the source to the documentation folder.
     It processes some comments in doxygen format (@ param, @ return).
     It replaces relatives imports by a regular import.
     
-    @param      fullname        name of the file
-    @param      to              location (folder)
-    @param      silent          no logs if True
-    @param      fmod            modification functions
+    @param      fullname                    name of the file
+    @param      to                          location (folder)
+    @param      silent                      no logs if True
+    @param      fmod                        modification functions
+    @param      replace_relative_import     replace relative import
     """
     ext = os.path.splitext(fullname)[-1]
     
@@ -148,7 +149,8 @@ def _private_process_one_file(fullname, to, silent, fmod):
         content = remove_undesired_part_for_documentation(content, fullname)
         fold = os.path.split(to)[0]
         if not os.path.exists(fold) : os.makedirs(fold)
-        content = replace_relative_import(fullname, content)
+        if replace_relative_import:
+            content = replace_relative_import(fullname, content)
         with open(to, "w", encoding="utf8") as g : g.write(content)
         
 def remove_undesired_part_for_documentation(content, filename):
@@ -193,7 +195,8 @@ def copy_source_files ( input,
                         remove    = True,
                         softfile  = lambda f : False,
                         fexclude  = lambda f : False,
-                        addfilter = None) :
+                        addfilter = None,
+                        replace_relative_import = False) :
     """
     copy all sources files (input) into a folder (output),
     apply on each of them a modification
@@ -212,6 +215,7 @@ def copy_source_files ( input,
                             the documentation is lighter (no special members)
     @param      fexclude    function to exclude some files from the help
     @param      addfilter   additional filter, it should look like: ``"(.+[.]pyx$)|(.+[.]pyh$)"``
+    @param      replace_relative_import     replace relative import
     @return                 list of copied files
     """
     if not os.path.exists (output) :
@@ -256,11 +260,12 @@ def copy_source_files ( input,
             os.makedirs(dd)
         fLOG("copy_source_files: copy ", file.fullname, " to ", to)
         
-        _private_process_one_file(file.fullname, to, silent, fmod)
+        _private_process_one_file(file.fullname, to, silent, fmod, replace_relative_import)
         
     return ractions
     
-def apply_modification_template (   store_obj,
+def apply_modification_template (   rootm,
+                                    store_obj,
                                     template, 
                                     fullname, 
                                     rootrep, 
@@ -270,6 +275,7 @@ def apply_modification_template (   store_obj,
     """
     @see fn add_file_rst
     
+    @param      rootm       root of the module
     @param      store_obj   keep track of all objects extracted from the module
     @param      action      output from copy_source_files
     @param      template    rst template to produce
@@ -291,7 +297,7 @@ def apply_modification_template (   store_obj,
                     if (fullname.endswith(".py") or fullname.endswith(".cpp")) \
                     else fullname
 
-    mo          = import_module(keepf, fLOG, additional_sys_path = additional_sys_path)
+    mo,prefix   = import_module(rootm, keepf, fLOG, additional_sys_path = additional_sys_path)
     doc         = ""
     shortdoc    = ""
     
@@ -307,8 +313,6 @@ def apply_modification_template (   store_obj,
             doc         = mo
             shortdoc    = "Error"
         else :
-            if filenoext != mo.__name__ :
-                raise NameError("module is %s, expecting %s" % (mo.__name__, filenoext))
             if mo.__doc__ is not None :
                 doc  = mo.__doc__
                 doc  = private_migrating_doxygen_doc(doc.split("\n"), 0, fullname)
@@ -421,7 +425,8 @@ def apply_modification_template (   store_obj,
         
     return res
     
-def add_file_rst (store_obj, 
+def add_file_rst (rootm,
+                  store_obj, 
                   actions, 
                   template          = add_file_rst_template, 
                   rootrep           = ("_doc.sphinxdoc.source.pyquickhelper.", ""),
@@ -432,6 +437,8 @@ def add_file_rst (store_obj,
                   additional_sys_path = [ ]) :
     """
     creates a rst file for every source file
+    
+    @param      rootm           root of the module (for relative import)
     @param      store_obj       to keep table of all objects
     @param      action          output from copy_source_files
     @param      template        rst template to produce
@@ -468,7 +475,7 @@ def add_file_rst (store_obj,
         
         if file.endswith(".py") :
             if os.stat(to).st_size > 0 :
-                content = apply_modification_template(store_obj, template, to, rootrep, softfile, indexes, additional_sys_path = additional_sys_path)
+                content = apply_modification_template(rootm, store_obj, template, to, rootrep, softfile, indexes, additional_sys_path = additional_sys_path)
                 content = fmod(content)
                 
                 # tweaks for example and studies
@@ -711,7 +718,8 @@ def prepare_file_for_sphinx_help_generation (
         mapped_function = [],
         fexclude_index  = lambda f : False,
         issues          = None,
-        additional_sys_path = [ ] ) :        
+        additional_sys_path = [ ],
+        replace_relative_import = False) :        
     """
     prepare all files for Sphinx generation
     
@@ -753,6 +761,7 @@ def prepare_file_for_sphinx_help_generation (
     @param      issues          if not None (a list), the function will store some issues here.
     
     @param      additional_sys_path     additional pathes to includes to sys.path when import a module (will be removed afterwards)
+    @param      replace_relative_import replace relative import 
                                 
     @return                     list of written files stored in RstFileHelp
     
@@ -773,6 +782,8 @@ def prepare_file_for_sphinx_help_generation (
     @endcode
     """   
     fLOG("* starting documentation preparation in",output)
+    rootm = os.path.abspath(output)
+    fLOG("* module location", input) 
     
     actions = [ ]
     rsts    = [ ]
@@ -790,7 +801,8 @@ def prepare_file_for_sphinx_help_generation (
             _private_process_one_file(src, dst, silent, fmod_copy)
             temp       = os.path.split(dst)
             actions_t  = [ (">", temp[1], temp[0])  ]
-            rstadd     = add_file_rst ( store_obj, 
+            rstadd     = add_file_rst ( rootm,
+                                        store_obj, 
                                         actions_t, 
                                         template, 
                                         rootrep, 
@@ -809,9 +821,11 @@ def prepare_file_for_sphinx_help_generation (
                                             silent = silent, 
                                             softfile = softfile, 
                                             fexclude = fexclude,
-                                            addfilter = "|".join( [ '(%s)' % _[0] for _ in mapped_function ] ))
+                                            addfilter = "|".join( [ '(%s)' % _[0] for _ in mapped_function ] ),
+                                            replace_relative_import = replace_relative_import)
                                                                                      
-            rsts      += add_file_rst ( store_obj, 
+            rsts      += add_file_rst ( rootm,
+                                        store_obj, 
                                         actions_t, 
                                         template, 
                                         rootrep, 
@@ -838,7 +852,8 @@ def prepare_file_for_sphinx_help_generation (
                             filter = filt, 
                             softfile = softfile, 
                             fexclude = fexclude,
-                            addfilter = "|".join( [ '(%s)' % _[0] for _ in mapped_function ] ))
+                            addfilter = "|".join( [ '(%s)' % _[0] for _ in mapped_function ] ),
+                            replace_relative_import = replace_relative_import)
 
     # processing all store_obj to compute some indices
     fLOG("extracted ", len(store_obj), " objects")
