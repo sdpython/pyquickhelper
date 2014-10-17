@@ -306,7 +306,6 @@ def apply_modification_template (   rootm,
     tspecials   = { }
     
     if mo is not None :
-        pythonname = mo.__name__
         if isinstance (mo, str) :
             # it is an error
             spl         = mo.split("\n")
@@ -314,7 +313,9 @@ def apply_modification_template (   rootm,
             mo          = "::\n\n" + mo + "\n\n"
             doc         = mo
             shortdoc    = "Error"
+            pythonname  = fullnamenoext
         else :
+            pythonname = mo.__name__
             if mo.__doc__ is not None :
                 doc  = mo.__doc__
                 doc  = private_migrating_doxygen_doc(doc.split("\n"), 0, fullname)
