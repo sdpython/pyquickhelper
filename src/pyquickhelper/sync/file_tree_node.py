@@ -374,13 +374,15 @@ class FileTreeNode :
         @param      node        other node
         @param      hash_size   above this size, we do not compute the hash key
         @param      lower       if True, every filename is converted into lower case
-        @return                 list of [ (?, self._file, node (in self), node (in node)) ]
-                                where ? is chosen among :
-                                    - ``==`` no change
-                                    - ``>``  more recent in self
-                                    - ``<``  more recent in node
-                                    - ``>+`` absent in node
-                                    - ``<+`` absent in self
+        @return                 list of [ (``?``, self._file, node (in self), node (in node)) ], see below for the choice of ``?``
+        
+        The question mark ``?`` means:
+            - ``==`` no change
+            - ``>``  more recent in self
+            - ``<``  more recent in node
+            - ``>+`` absent in node
+            - ``<+`` absent in self
+            
         """
         ti  = time.clock ()
         d1  = self.get_dict (lower = lower)
