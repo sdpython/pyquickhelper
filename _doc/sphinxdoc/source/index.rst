@@ -19,9 +19,9 @@ Description
 -----------
 
 This extension gathers three functionalities:
-    * a logging function: :func:`fLOG <loghelper.flog.fLOG>`
-    * a function to synchronize two folders: :func:`synchronize_folder <sync.synchelper.synchronize_folder>`
-    * a function to generate a copy of a module, converting doxygen documentation in rst format: :func:`generate_help_sphinx <helpgen.sphinx_main.generate_help_sphinx>` (see also :func:`prepare_file_for_sphinx_help_generation <helpgen.utils_sphinx_doc.prepare_file_for_sphinx_help_generation>`)
+    * a logging function: :func:`fLOG <pyquickhelper.loghelper.flog.fLOG>`
+    * a function to synchronize two folders: :func:`pyquickhelper.synchronize_folder <pyquickhelper.sync.synchelper.synchronize_folder>`
+    * a function to generate a copy of a module, converting doxygen documentation in rst format: :func:`generate_help_sphinx <pyquickhelper.helpgen.sphinx_main.generate_help_sphinx>` (see also :func:`prepare_file_for_sphinx_help_generation <pyquickhelper.helpgen.utils_sphinx_doc.prepare_file_for_sphinx_help_generation>`)
     
 The module is available on `pypi/pyquickhelper <https://pypi.python.org/pypi/pyquickhelper/>`_ and
 on `GitHub/pyquickhelper <https://github.com/sdpython/pyquickhelper>`_.
