@@ -13,7 +13,7 @@ except ImportError :
     if path not in sys.path : sys.path.append(path)
     import src
     
-from src.pyquickhelper.loghelper.flog           import fLOG
+from src.pyquickhelper.loghelper.flog           import fLOG, run_cmd
 from src.pyquickhelper.helpgen.sphinx_main      import process_notebooks, add_notebook_page
 
 class TestNotebookConversion (unittest.TestCase):
@@ -29,9 +29,14 @@ class TestNotebookConversion (unittest.TestCase):
         if not os.path.exists(temp): os.mkdir(temp)
         for file in os.listdir(temp): 
             os.remove(os.path.join(temp,file))
+            
+        if sys.platform.startswith("win"):
+            p1  = r"C:\Program Files\MiKTeX 2.9\miktex\bin\x64"
+            p2  = r"%USERPROFILE%\AppData\Local\Pandoc"
+        else :
+            p1 = "."
+            p2 = "."            
         
-        p1  = r"C:\Program Files\MiKTeX 2.9\miktex\bin\x64"
-        p2  = r"%USERPROFILE%\AppData\Local\Pandoc"
         res = process_notebooks(nb, temp, temp, latex_path = p1, pandoc_path = p2)
         for _ in res:
             fLOG(_)
@@ -62,6 +67,30 @@ class TestNotebookConversion (unittest.TestCase):
             text = f.read()
         assert "from pyquickhelper import fLOG\n    fLOG(OutputPrint=False)  # by default" in text
         assert ":linenos:" in text
+        
+    def _test_short_cmd(self):
+        fLOG (__file__, self._testMethodName, OutputPrint = __name__ == "__main__")
+        if sys.platform.startswith("win"): return
+        home = os.environ["HOME"]
+        f = "{0}/github/pyquickhelper/_doc/notebooks/example_pyquickhelper.ipynb".format(home)
+        fo = "{0}/github/pyquickhelper/_unittests/ut_helpgen/temp_nb/example_pyquickhelper.html".format(home)
+        if os.path.exists(fo): os.remove(fo)
+        assert not os.path.exists(fo)
+        if os.path.exists(f):
+            cmd   = '{0}/anaconda3/bin/ipython nbconvert --to html {0}/github/pyquickhelper/_doc/notebooks/example_pyquickhelper.ipynb --template full --output={0}/github/pyquickhelper/_unittests/ut_helpgen/temp_nb/example_pyquickhelper'
+            cmd = cmd.format(home)
+            out,err = run_cmd(cmd, shell=False, wait = True, communicate=False)
+            #fLOG(out)
+            #fLOG("******************",err)
+            assert "[NbConvertApp] Writing" in err
+            if not os.path.exists( fo ):
+                fLOG(fo)
+                fLOG( os.path.abspath(os.path.dirname(fo) ))
+                fLOG(os.listdir( os.path.dirname(fo)  ))
+                assert False
+        else:
+            fLOG("unfound ", f)
+            
 
         
 if __name__ == "__main__"  :

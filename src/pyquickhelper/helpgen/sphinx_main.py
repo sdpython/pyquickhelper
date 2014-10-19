@@ -5,7 +5,7 @@
 for a module designed the same way as this one, @see fn generate_help_sphinx.
 
 """
-import os,sys, shutil, datetime, re, importlib
+import os,sys, shutil, datetime, re, importlib, time
 
 from ..loghelper.flog           import run_cmd, fLOG
 from ..loghelper.pyrepo_helper  import SourceRepository
@@ -97,6 +97,10 @@ def generate_help_sphinx (  project_var_name,
     generate_help_sphinx("pyquickhelper")
     @endcode
     @endexample
+    
+    The function requires:
+        - pandoc
+        - latex
     """
     root = os.path.abspath(root)
     froot = root
@@ -254,11 +258,12 @@ def get_executables_path() :
     @return     a list of paths
     """
     res  = [ os.path.split(sys.executable)[0] ]
-    res += [ os.path.join(res[-1], "Scripts") ]
     if sys.platform.startswith("win") :
+        res += [ os.path.join(res[-1], "Scripts") ]
         ver = "c:\\Python%d%d" % (sys.version_info.major, sys.version_info.minor)
         res += [ver ]
         res += [ os.path.join(res[-1], "Scripts") ]
+        
     return res
     
 def generate_changes_repo(  chan, 
@@ -363,7 +368,7 @@ def process_notebooks(  notebooks,
     if isinstance(notebooks,str):
         notebooks = [ notebooks ]
 
-    if "PANDOCPY" in os.environ:
+    if "PANDOCPY" in os.environ and sys.platform.startswith("win"):
         exe = os.environ["PANDOCPY"]
         exe = exe.rstrip("\\/")
         if exe.endswith("\\Scripts"):
@@ -396,197 +401,211 @@ def process_notebooks(  notebooks,
             os.environ["WINPYDIR"]=exe
             os.environ["PATH"] = p
             
-        files = [ ]
-        
         ipy = os.path.join(exe, "Scripts", "ipython3.exe")
-        cmd = '{0} nbconvert --to {1} "{2}"{5} --output="{3}\\{4}"'
-        for notebook in notebooks:
-            nbout = os.path.split(notebook)[-1]
-            if " " in nbout: raise HelpGenException("spaces are not allowed in notebooks file names: {0}".format(notebook))
-            nbout = os.path.splitext(nbout)[0]
-            for format in formats :
+    else :
+        ipy = os.path.join(exe, "ipython")
+        
+    cmd = '{0} nbconvert --to {1} "{2}"{5} --output="{3}/{4}"'
+    files = [ ]
+    
+    for notebook in notebooks:
+        nbout = os.path.split(notebook)[-1]
+        if " " in nbout: raise HelpGenException("spaces are not allowed in notebooks file names: {0}".format(notebook))
+        nbout = os.path.splitext(nbout)[0]
+        for format in formats :
+            
+            options = ""
+            if format == "pdf": 
+                title = os.path.splitext(os.path.split(notebook)[-1])[0].replace("_", " ")
+                format = "latex"
+                options = ' --post PDF --SphinxTransformer.author="" --SphinxTransformer.overridetitle="{0}"'.format(title)
+                compilation = True
+                pandoco = None
+            elif format in ["word", "docx"] :
+                format = "html"
+                pandoco = "docx"
+            else :
+                compilation = False
+                pandoco = None
                 
-                options = ""
-                if format == "pdf": 
-                    title = os.path.splitext(os.path.split(notebook)[-1])[0].replace("_", " ")
-                    format = "latex"
-                    options = ' --post PDF --SphinxTransformer.author="" --SphinxTransformer.overridetitle="{0}"'.format(title)
-                    compilation = True
-                    pandoco = None
-                elif format in ["word", "docx"] :
-                    format = "html"
-                    pandoco = "docx"
-                else :
-                    compilation = False
-                    pandoco = None
-                    
-                # output
-                outputfile = os.path.join(build, nbout + extensions[format])
-                fLOG("--- produce ", outputfile)
-                
-                # we chech it was not done before
-                if os.path.exists(outputfile) :
-                    dto = os.stat(outputfile).st_mtime 
-                    dtnb = os.stat(notebook).st_mtime
-                    if dtnb < dto :
-                        fLOG("-- skipping notebook", format, notebook, "(", outputfile, ")")
-                        files.append ( outputfile )
-                        if pandoco is None :
-                            continue
-                
-                templ = "full" if format != "latex" else "article"
-                fLOG("### convert into ", format, " NB: ", notebook)
-                
-                if format == "html":
-                    fmttpl = " --template {0}".format(templ)
-                else :
-                    fmttpl = ""
-                
-                c = cmd.format(ipy, format, notebook, build, nbout, fmttpl)
+            # output
+            outputfile = os.path.join(build, nbout + extensions[format])
+            fLOG("--- produce ", outputfile)
+            
+            # we chech it was not done before
+            if os.path.exists(outputfile) :
+                dto = os.stat(outputfile).st_mtime 
+                dtnb = os.stat(notebook).st_mtime
+                if dtnb < dto :
+                    fLOG("-- skipping notebook", format, notebook, "(", outputfile, ")")
+                    files.append ( outputfile )
+                    if pandoco is None :
+                        continue
+            
+            templ = "full" if format != "latex" else "article"
+            fLOG("### convert into ", format, " NB: ", notebook)
+            
+            if format == "html":
+                fmttpl = " --template {0}".format(templ)
+            else :
+                fmttpl = ""
+            
+            c = cmd.format(ipy, format, notebook, build, nbout, fmttpl)
 
-                c += options
-                fLOG(c)
-                
-                #
-                if format not in ["ipynb"]:
-                    # for latex file
-                    if format == "latex":
-                        cwd = os.getcwd()
-                        os.chdir(build)
-                        
-                    out,err = run_cmd(c,wait=True, do_not_log = False, log_error=False)
-                    
-                    if format == "latex": 
-                        os.chdir(cwd)
-                        
-                    if "raise ImportError" in err:
-                        raise ImportError(err)
-                    if len(err)>0 :
-                        err = err.lower()
-                        if "error" in err or "critical" in err or "bad config" in err:
-                            raise HelpGenException(err)
-                        
-                    # we should compile a second time
-                    # compilation = True  # already done above
-                    
-                format = extensions[format].strip(".")
-                
-                # we add the file to the list of generated files
-                files.append ( outputfile )
-                
-                if "--post PDF" in c :
-                    files.append ( os.path.join( build, nbout + ".pdf") )
-                    
-                fLOG("******",format, compilation, outputfile)
+            c += options
+            fLOG(c)
+            
+            #
+            if format not in ["ipynb"]:
+                # for latex file
+                if format == "latex":
+                    cwd = os.getcwd()
+                    os.chdir(build)
 
-                if compilation:
-                    # compilation latex
-                    if os.path.exists(latex_path):
+                if not sys.platform.startswith("win"): c = c.replace('"','')
+                out,err = run_cmd(c,wait=True, do_not_log = False, log_error=False, shell = sys.platform.startswith("win"))
+                
+                if format == "latex": 
+                    os.chdir(cwd)
+                    
+                if "raise ImportError" in err:
+                    raise ImportError(err)
+                if len(err)>0 :
+                    err = err.lower()
+                    if "error" in err or "critical" in err or "bad config" in err:
+                        raise HelpGenException(err)
+                    
+                # we should compile a second time
+                # compilation = True  # already done above
+                
+            format = extensions[format].strip(".")
+            
+            # we add the file to the list of generated files
+            files.append ( outputfile )
+            
+            if "--post PDF" in c :
+                files.append ( os.path.join( build, nbout + ".pdf") )
+                
+            fLOG("******",format, compilation, outputfile)
+
+            if compilation:
+                # compilation latex
+                if os.path.exists(latex_path):
+                    if sys.platform.startswith("win"):
                         lat = os.path.join(latex_path, "pdflatex.exe")
-                        tex = files[-1].replace(".pdf", ".tex")
-                        post_process_latex_output_any(tex)
-                        c = '"{0}" "{1}" -output-directory="{2}"'.format(lat, tex, os.path.split(tex)[0]) #  -interaction=batchmode
-                        fLOG("   ** LATEX compilation (b)", c) 
-                        out,err = run_cmd(c,wait=True, do_not_log = False, log_error=False)
-                        if len(err) > 0 :
-                            raise HelpGenException(err)
-                        f = os.path.join( build, nbout + ".pdf")
-                        if not os.path.exists(f):
-                            raise HelpGenException(err)
-                        files.append(f)
                     else:
-                        fLOG("unable to find latex in", latex_path)
+                        lat= "pdflatex"
                         
-                elif pandoco is not None :
-                    # compilation pandoc
-                    fLOG("   ** pandoc compilation (b)", pandoco) 
-                    outfilep = os.path.splitext(outputfile)[0] + "." + pandoco
-                    c = r'"{0}\pandoc.exe" -f html -t {1} "{2}" -o "{3}"'.format(pandoc_path, pandoco, outputfile, outfilep)
-                    out,err = run_cmd(c,wait=True, do_not_log = False, log_error=False)
+                    tex = files[-1].replace(".pdf", ".tex")
+                    post_process_latex_output_any(tex)
+                    c = '"{0}" "{1}" -output-directory="{2}"'.format(lat, tex, os.path.split(tex)[0]) #  -interaction=batchmode
+                    fLOG("   ** LATEX compilation (b)", c) 
+                    if not sys.platform.startswith("win"): c = c.replace('"','')
+                    out,err = run_cmd(c,wait=True, do_not_log = False, log_error=False, shell = sys.platform.startswith("win"))
                     if len(err) > 0 :
                         raise HelpGenException(err)
-                        
-                if format == "html":
-                    # we add a link to the notebook
-                    files += add_link_to_notebook(outputfile, notebook, "pdf" in formats, False, "python" in formats)
+                    f = os.path.join( build, nbout + ".pdf")
+                    if not os.path.exists(f):
+                        raise HelpGenException(err)
+                    files.append(f)
+                else:
+                    fLOG("unable to find latex in", latex_path)
                     
-                elif format == "ipynb":
-                    # we just copy the notebook
-                    files += add_link_to_notebook(outputfile, notebook, "ipynb" in formats, 
-                                                False, "python" in formats)
-                    
-                elif format == "rst":
-                    # we add a link to the notebook
-                    files += add_link_to_notebook(outputfile, notebook, "pdf" in formats, "html" in formats, "python" in formats)
-                    
-                elif format in ("tex", "latex", "pdf"):
-                    files += add_link_to_notebook(outputfile, notebook, False, False, False)
-                    
-                elif format == "py":
-                    pass
-                    
-                elif format in ["docx","word"]:
-                    pass
-                    
-                else :
-                    raise HelpGenException("unexpected format " + format)
-        
-        copy = [ ]
-        for f in files:
-            dest = os.path.join(outfold, os.path.split(f)[-1])
-            if not f.endswith(".tex"):
+            elif pandoco is not None :
+                # compilation pandoc
+                fLOG("   ** pandoc compilation (b)", pandoco) 
+                outfilep = os.path.splitext(outputfile)[0] + "." + pandoco
                 
-                if sys.version_info >= (3,4):
-                    try:
-                        shutil.copy(f, outfold)
-                        fLOG("copy ",f, " to ", outfold, "[",dest,"]")
-                    except shutil.SameFileError:
-                        fLOG("w,file ", dest, "already exists")
-                        pass
-                else :
-                    try:
-                        shutil.copy(f, outfold)
-                        fLOG("copy ",f, " to ", outfold, "[",dest,"]")
-                    except shutil.Error as e :
-                        if "are the same file" in str(e) :
-                            fLOG("w,file ", dest, "already exists")
-                        else :
-                            raise e
-                            
-                if not os.path.exists(dest):
-                    raise FileNotFoundError(dest)
-            copy.append ( dest )
-            
-        # image
-        for image in os.listdir(build):
-            if image.endswith(".png") or image.endswith(".html") or image.endswith(".pdf"):
-                image = os.path.join(build,image)
-                dest = os.path.join(outfold, os.path.split(image)[-1])
+                if sys.platform.startswith("win"):
+                    c = r'"{0}\pandoc.exe" -f html -t {1} "{2}" -o "{3}"'.format(pandoc_path, pandoco, outputfile, outfilep)
+                else:
+                    c = r'pandoc -f html -t {1} "{2}" -o "{3}"'.format(pandoc_path, pandoco, outputfile, outfilep)
+                    
+                if not sys.platform.startswith("win"): c = c.replace('"','')
+                out,err = run_cmd(c,wait=True, do_not_log = False, log_error=False, shell = sys.platform.startswith("win"))
+                if len(err) > 0 :
+                    raise HelpGenException(err)
 
-                if sys.version_info >= (3,4):
-                    try:
-                        shutil.copy(image, outfold)
-                        fLOG("copy ",image, " to ", outfold, "[",dest,"]")
-                    except shutil.SameFileError:
+            if format == "html":
+                # we add a link to the notebook
+                if not os.path.exists(outputfile): 
+                    raise FileNotFoundError(outputfile + "\nCONTENT in " + os.path.dirname (outputfile) + ":\n" + "\n".join( os.listdir ( os.path.dirname (outputfile) )) + "\nERR:\n" + err + "\nOUT:\n" + out + "\nCMD:\n" + c)
+                files += add_link_to_notebook(outputfile, notebook, "pdf" in formats, False, "python" in formats)
+                
+            elif format == "ipynb":
+                # we just copy the notebook
+                files += add_link_to_notebook(outputfile, notebook, "ipynb" in formats, False, "python" in formats)
+                
+            elif format == "rst":
+                # we add a link to the notebook
+                files += add_link_to_notebook(outputfile, notebook, "pdf" in formats, "html" in formats, "python" in formats)
+                
+            elif format in ("tex", "latex", "pdf"):
+                files += add_link_to_notebook(outputfile, notebook, False, False, False)
+                
+            elif format == "py":
+                pass
+                
+            elif format in ["docx","word"]:
+                pass
+                
+            else :
+                raise HelpGenException("unexpected format " + format)
+    
+    copy = [ ]
+    for f in files:
+        dest = os.path.join(outfold, os.path.split(f)[-1])
+        if not f.endswith(".tex"):
+            
+            if sys.version_info >= (3,4):
+                try:
+                    shutil.copy(f, outfold)
+                    fLOG("copy ",f, " to ", outfold, "[",dest,"]")
+                except shutil.SameFileError:
+                    fLOG("w,file ", dest, "already exists")
+                    pass
+            else :
+                try:
+                    shutil.copy(f, outfold)
+                    fLOG("copy ",f, " to ", outfold, "[",dest,"]")
+                except shutil.Error as e :
+                    if "are the same file" in str(e) :
                         fLOG("w,file ", dest, "already exists")
-                        pass
-                else :
-                    try:
-                        shutil.copy(image, outfold)
-                        fLOG("copy ",image, " to ", outfold, "[",dest,"]")
-                    except shutil.Error as e:
-                        if "are the same file" in str(e) :
-                            fLOG("w,file ", dest, "already exists")
-                        else :
-                            raise e
+                    else :
+                        raise e
                         
-                if not os.path.exists(dest):
-                    raise FileNotFoundError(dest)
-                copy.append ( dest )
+            if not os.path.exists(dest):
+                raise FileNotFoundError(dest)
+        copy.append ( dest )
         
-        return copy
-    else :
-        raise NotImplementedError("not implemented on linux")
+    # image
+    for image in os.listdir(build):
+        if image.endswith(".png") or image.endswith(".html") or image.endswith(".pdf"):
+            image = os.path.join(build,image)
+            dest = os.path.join(outfold, os.path.split(image)[-1])
+
+            if sys.version_info >= (3,4):
+                try:
+                    shutil.copy(image, outfold)
+                    fLOG("copy ",image, " to ", outfold, "[",dest,"]")
+                except shutil.SameFileError:
+                    fLOG("w,file ", dest, "already exists")
+                    pass
+            else :
+                try:
+                    shutil.copy(image, outfold)
+                    fLOG("copy ",image, " to ", outfold, "[",dest,"]")
+                except shutil.Error as e:
+                    if "are the same file" in str(e) :
+                        fLOG("w,file ", dest, "already exists")
+                    else :
+                        raise e
+                    
+            if not os.path.exists(dest):
+                raise FileNotFoundError(dest)
+            copy.append ( dest )
+    
+    return copy
 
 def add_link_to_notebook(file, nb, pdf, html, python):
     """
@@ -827,6 +846,7 @@ def post_process_html_output(file, pdf, python):
     """
     fold,name = os.path.split(file)
     noext = os.path.splitext(name)[0]
+    if not os.path.exists(file): raise FileNotFoundError(file)
     with open(file, "r", encoding="utf8") as f :
         text = f.read()
         
@@ -922,7 +942,11 @@ def compile_latex_output_final(root, latex_path, doall, afile = None):
     @param      doall       do more transformation of the latex file before compiling it
     @param      afile       process a specific file
     """
-    lat = os.path.join(latex_path, "pdflatex.exe")
+    if sys.platform.startswith("win"):
+        lat = os.path.join(latex_path, "pdflatex.exe")
+    else:
+        lat = "pdflatex"
+        
     build = os.path.join(root, "_doc", "sphinxdoc","build","latex")
     for tex in os.listdir(build):
         if tex.endswith(".tex") and (afile is None or afile in tex):

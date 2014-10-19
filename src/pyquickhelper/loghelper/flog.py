@@ -671,7 +671,12 @@ def split_cmp_command(cmd, remove_quotes = True) :
             else : 
                 res.append(s)
         if remove_quotes :
-            res = [ _.strip('"') for _ in res ]
+            nres = [ ]
+            for _ in res :
+                if _.startswith('"') and _.endswith('"'):
+                    nres.append(_.strip('"'))
+                else:
+                    nres.append(_)
         return res
     else : 
         return cmd
@@ -765,12 +770,15 @@ def run_cmd (   cmd,
                                  stderr = subprocess.PIPE if wait else None,
                                  startupinfo = startupinfo)
     else :
-        pproc = subprocess.Popen (split_cmp_command(cmd) if preprocess else cmd,
+        cmdl = split_cmp_command(cmd) if preprocess else cmd
+        if not do_not_log : 
+            fLOG("--linux", cmdl)
+        pproc = subprocess.Popen (cmdl,
                                  shell = shell, 
                                  stdout = subprocess.PIPE if wait else None, 
                                  stderr = subprocess.PIPE if wait else None)
 
-    if isinstance(cmd, str):
+    if isinstance(cmd, list):
         cmd = " ".join(cmd)
         
     if wait : 
@@ -824,7 +832,7 @@ def run_cmd (   cmd,
                 
             stdout.close()
             stderr.close()
-
+            
         err = err.replace("\r\n","\n")
         if not do_not_log : fLOG ("end of execution ", cmd)
         if len (err) > 0 and log_error : fLOG ("error (log)\n%s" % err)
