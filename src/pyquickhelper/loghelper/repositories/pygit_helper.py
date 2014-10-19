@@ -84,7 +84,8 @@ def repo_ls(full, commandline = True):
                             do_not_log = True, 
                             encerror = "strict",
                             encoding = sys.stdout.encoding if sys.stdout != None else "utf8",
-                            change_path = os.path.split(full)[0] if os.path.isfile(full) else full)
+                            change_path = os.path.split(full)[0] if os.path.isfile(full) else full,
+                            shell = sys.platform.startswith("win32") )
         if len(err) > 0 :
             fLOG ("problem with file ", full, err)
             raise Exception(err)
@@ -161,21 +162,24 @@ def get_repo_log (path = None, file_detail = False, commandline = True) :
     else :
         if sys.platform.startswith("win32") :
             cmd = r'"C:\Program Files (x86)\Git\bin\git"' 
+            cmd += ' log --pretty=format:"<logentry revision=\\"%h\\"><author>%an</author><date>%ci</date><msg>%s</msg><hash>%H</hash></logentry>" ' + path
         else :
-            cmd = 'git' 
+            cmd = ['git']
+            cmd += ['log', '--pretty=format:<logentry revision="%h"><author>%an</author><date>%ci</date><msg>%s</msg><hash>%H</hash></logentry>', path]
 
-        cmd += ' log --pretty=format:"<logentry revision=\\"%h\\"><author>%an</author><date>%ci</date><msg>%s</msg><hash>%H</hash></logentry>" ' + path
         enc  = sys.stdout.encoding if sys.stdout != None else "utf8"
         out,err = run_cmd(  cmd, 
                             wait = True, 
                             do_not_log = True, 
                             encerror = "strict",
                             encoding = enc,
-                            change_path = os.path.split(path)[0] if os.path.isfile(path) else path)
+                            change_path = os.path.split(path)[0] if os.path.isfile(path) else path,
+                            shell = sys.platform.startswith("win32") ,
+                            preprocess = False)
                             
         if len(err) > 0 :
             fLOG ("problem with file ", path, err)
-            raise Exception(err)
+            raise Exception(err + "\nCMD:\n" + cmd  +"\nOUT:\n" + out + "\nERR:\n" + err)
             
         master = get_master_location(path, commandline)
         if master.endswith(".git") :
@@ -187,7 +191,10 @@ def get_repo_log (path = None, file_detail = False, commandline = True) :
 
         out = out.replace("\n\n","\n")
         out = "<xml>%s</xml>"%out
-        root = ET.fromstring(out)
+        try:
+            root = ET.fromstring(out)
+        except ET.ParseError as ee :
+            raise Exception("unable to parse:\n" + out) from ee 
         res = []
         for i in root.iter('logentry'):
             revision    = i.attrib['revision'].strip()
@@ -240,7 +247,8 @@ def get_repo_version (path = None, commandline = True, usedate = False, log = Fa
                                 encerror = "strict",
                                 encoding = sys.stdout.encoding if sys.stdout != None else "utf8",
                                 change_path = os.path.split(path)[0] if os.path.isfile(path) else path,
-                                log_error = False)
+                                log_error = False,
+                                shell = sys.platform.startswith("win32") )
                                                                                 
             if len(err) > 0 :
                 if log :
@@ -295,7 +303,8 @@ def get_master_location(path = None, commandline = True):
                             encerror = "strict",
                             encoding = sys.stdout.encoding if sys.stdout != None else "utf8",
                             change_path = os.path.split(path)[0] if os.path.isfile(path) else path,
-                            log_error = False)
+                            log_error = False,
+                            shell = sys.platform.startswith("win32") )
                                                                             
         if len(err) > 0 :
             fLOG ("problem with file ", path, err)
@@ -339,10 +348,15 @@ def get_nb_commits(path = None, commandline = True):
                             encerror = "strict",
                             encoding = sys.stdout.encoding if sys.stdout != None else "utf8",
                             change_path = os.path.split(path)[0] if os.path.isfile(path) else path,
-                            log_error = False)
+                            log_error = False,
+                            shell = sys.platform.startswith("win32") )
                                                                             
         if len(err) > 0 :
             raise Exception("unable to get commit number from path {0}\nERR:\n{1}".format(path,err))
 
         lines = out.strip()
-        return int(lines)
+        try:
+            nb = int(lines)
+        except ValueError as e :
+            raise ValueError("unable to parse: " + lines + "\nCMD:\n" + cmd) from e
+        return nb

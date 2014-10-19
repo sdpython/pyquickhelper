@@ -4,6 +4,8 @@
 
 import sys, os, unittest
 
+if "temp_" in os.path.abspath(__file__):
+    raise ImportError("this file should not be imported in that location: " + os.path.abspath(__file__))
 
 try :
     import src

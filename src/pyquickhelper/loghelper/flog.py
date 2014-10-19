@@ -711,7 +711,8 @@ def run_cmd (   cmd,
                 encerror        = "ignore",
                 encoding        = "utf8",
                 change_path     = None,
-                communicate     = True) :
+                communicate     = True,
+                preprocess = True) :
     """
     run a command line and wait for the result
     @param      cmd                 command line
@@ -729,6 +730,7 @@ def run_cmd (   cmd,
     @param      change_path         change the current path if  not None (put it back after the execution)
     @param      communicate         use method `communicate <https://docs.python.org/3.4/library/subprocess.html#subprocess.Popen.communicate>`_ which is supposed to be safer,
                                     parameter ``wait`` must be True
+    @param      preprocess     preprocess the command line if necessary (not available on Windows) (False to disable that option)
     @return                         content of stdout, stdres  (only if wait is True)  
     @rtype      tuple
     
@@ -737,6 +739,8 @@ def run_cmd (   cmd,
     out,err = run_cmd( "python setup.py install", wait=True)
     @endcode
     @endexample
+    
+    If you are using this function to run git function, parameter ``shell`` must be True.
     """
     if secure is not None :
         with open(secure,"w") as f : f.write("")
@@ -749,7 +753,7 @@ def run_cmd (   cmd,
     if change_path is not None :
         current = os.getcwd()
         os.chdir(change_path)
-    
+        
     if sys.platform.startswith("win") :
         
         startupinfo = subprocess.STARTUPINFO()    
@@ -761,13 +765,13 @@ def run_cmd (   cmd,
                                  stderr = subprocess.PIPE if wait else None,
                                  startupinfo = startupinfo)
     else :
-        pproc = subprocess.Popen (split_cmp_command(cmd),
+        pproc = subprocess.Popen (split_cmp_command(cmd) if preprocess else cmd,
                                  shell = shell, 
                                  stdout = subprocess.PIPE if wait else None, 
                                  stderr = subprocess.PIPE if wait else None)
-                                 
-    if change_path is not None :
-        os.chdir(current)
+
+    if isinstance(cmd, str):
+        cmd = " ".join(cmd)
         
     if wait : 
     
@@ -825,11 +829,18 @@ def run_cmd (   cmd,
         if not do_not_log : fLOG ("end of execution ", cmd)
         if len (err) > 0 and log_error : fLOG ("error (log)\n%s" % err)
         
+        if change_path is not None :
+            os.chdir(current)
+            
         if sys.platform.startswith("win") :
             return out.replace("\r\n","\n"), err.replace("\r\n","\n")
         else:
             return out, err
     else :
+        
+        if change_path is not None :
+            os.chdir(current)
+        
         return "",""
     
 def run_script (script, *l) :

@@ -31,6 +31,8 @@ def get_test_file (filter, dir = None) :
         for d in dirs :
             if not os.path.exists(d) :
                 raise FileNotFoundError (d)
+                
+    copypaths = sys.path.copy()
     
     li   = [ ]
     for dir in dirs :
@@ -57,6 +59,10 @@ def get_test_file (filter, dir = None) :
                 temp = get_test_file (filter, l)
                 temp = [t for t in temp ]
                 li.extend (temp)
+                
+    # we restore sys.path
+    sys.path = copypaths
+
     return li
     
 def get_estimation_time (file) :
@@ -92,6 +98,9 @@ def import_files (li) :
     """
     allsuite = []
     for l in li :
+        
+        copypath = sys.path.copy()
+        
         sdir = os.path.split (l) [0]
         if sdir not in sys.path : 
             sys.path.append (sdir)
@@ -111,8 +120,10 @@ def import_files (li) :
             except :
                 print ("problem with ",fi)
                 mo = __import__ (fi)
-                
-            
+
+        # some tests can mess up with the import path
+        sys.path = copypath
+        
         cl = dir (mo)
         for c in cl :
             if len (c) < 5 or c [:4] != "Test" : continue
@@ -244,6 +255,7 @@ def main (  runner,
     for i,s in enumerate(suite) :
         if skip >= 0 and i < skip :
             continue
+
         cut = os.path.split(s[1])
         cut = os.path.split(cut[0])[-1] + "/" + cut[-1]
         zzz = "running test % 3d, %s" % (i+1,cut)
@@ -253,7 +265,7 @@ def main (  runner,
         if log :
             fLOG(OutputPrint=True)
             fLOG(Lock=True)
-        
+                        
         r   = runner.run(s[0])
         out = r.stream.getvalue ()
         ti  = exp.findall (out) [-1]
