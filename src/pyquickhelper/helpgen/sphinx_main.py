@@ -46,7 +46,7 @@ def generate_help_sphinx (  project_var_name,
         - calls sphinx to generate the documentation.
         
     @param      project_var_name    project name
-    @param      clean               if True, cleans the previous documentation first
+    @param      clean               if True, cleans the previous documentation first, does not work on linux yet
     @param      root                see below
     @param      filter_commit       function which accepts a commit to show on the documentation (based on the comment)
     @param      extra_ext           list of file extensions
@@ -153,7 +153,7 @@ def generate_help_sphinx (  project_var_name,
         notebooks = explore_folder(notebook_dir, pattern=".*[.]ipynb", fullname=True)[1]
         notebooks = [ _ for _ in notebooks if "checkpoint" not in _ ]
         if len(notebooks) > 0:
-            fLOG("**** notebooks")
+            fLOG("**** notebooks", nbformats)
             build = os.path.abspath("build/notebooks")
             if not os.path.exists(build): os.makedirs(build)
             if not os.path.exists(notebook_doc): os.mkdir(notebook_doc)
@@ -173,15 +173,15 @@ def generate_help_sphinx (  project_var_name,
             
                 
     #  run the documentation generation
-    if sys.platform.startswith("win"):
-        temp = os.environ ["PATH"]
-        pyts = get_executables_path()
-        script = ";".join(pyts)
-        fLOG ("adding " + script)
-        temp = script + ";" + temp
-        os.environ["PATH"] = temp
-        fLOG("changing PATH", temp)
-        pa = os.getcwd ()
+    temp = os.environ ["PATH"]
+    pyts = get_executables_path()
+    sepj = ";" if sys.platform.startswith("win") else ":"
+    script = sepj.join(pyts) 
+    fLOG ("adding " + script)
+    temp = script + sepj + temp
+    os.environ["PATH"] = temp
+    fLOG("changing PATH", temp)
+    pa = os.getcwd ()
 
     thispath = os.path.normpath(root)
     docpath  = os.path.normpath(os.path.join(thispath, "_doc","sphinxdoc"))
@@ -216,7 +216,7 @@ def generate_help_sphinx (  project_var_name,
         if lay == "pdf":
             lay = "latex"
 
-        if clean :
+        if clean and sys.platform.startswith("win"):
             if os.path.exists(build):
                 for fold in os.listdir(build):
                     cmd = "rmdir /q /s {0}\\{1}".format(build,fold)

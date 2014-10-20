@@ -39,6 +39,7 @@
 
 
 import sys,os
+
 from distutils.core import setup, Extension
 import distutils.sysconfig as SH
 from setuptools import find_packages
@@ -118,7 +119,12 @@ if "build_sphinx" in sys.argv:
 
         fLOG (OutputPrint = True)
         project_name = os.path.split(os.path.split(os.path.abspath(__file__))[0])[-1]
-        generate_help_sphinx(project_name)
+        
+        if sys.platform.startswith("win"):
+            generate_help_sphinx(project_name)
+        else:
+            # unable to test latex conversion due to adjustbox.sty missing package
+            generate_help_sphinx(project_name, nbformats = ["ipynb", "html", "python", "rst"])
         
 elif "unittests" in sys.argv:        
     

@@ -677,7 +677,9 @@ def split_cmp_command(cmd, remove_quotes = True) :
                     nres.append(_.strip('"'))
                 else:
                     nres.append(_)
-        return res
+            return nres
+        else:
+            return res
     else : 
         return cmd
         

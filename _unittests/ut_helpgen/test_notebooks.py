@@ -36,20 +36,25 @@ class TestNotebookConversion (unittest.TestCase):
         else :
             p1 = "."
             p2 = "."            
-        
-        res = process_notebooks(nb, temp, temp, latex_path = p1, pandoc_path = p2)
-        for _ in res:
-            fLOG(_)
-            assert os.path.exists(_)
-                
+            
+        formats = ["ipynb", "html", "python", "rst"]
         exp = [ "example_pyquickhelper.html",
                 "example_pyquickhelper.ipynb",
                 "example_pyquickhelper.py",
                 "example_pyquickhelper.rst",
                 "example_pyquickhelper.ipynb",
-                "example_pyquickhelper.tex",
-                "example_pyquickhelper.pdf",
                 ]
+        
+        if sys.platform.startswith("win"): 
+            formats.append("pdf")
+            exp.append ( "example_pyquickhelper.tex" )
+            exp.append ( "example_pyquickhelper.pdf" )
+        
+        res = process_notebooks(nb, temp, temp, latex_path = p1, pandoc_path = p2, formats = formats)
+        for _ in res:
+            fLOG(_)
+            assert os.path.exists(_)
+                
         fou = [ os.path.split(_)[-1] for _ in res ]
         fou = set(fou)
         exp = set(exp)
@@ -68,7 +73,7 @@ class TestNotebookConversion (unittest.TestCase):
         assert "from pyquickhelper import fLOG\n    fLOG(OutputPrint=False)  # by default" in text
         assert ":linenos:" in text
         
-    def _test_short_cmd(self):
+    def test_short_cmd(self):
         fLOG (__file__, self._testMethodName, OutputPrint = __name__ == "__main__")
         if sys.platform.startswith("win"): return
         home = os.environ["HOME"]
