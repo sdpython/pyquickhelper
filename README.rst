@@ -46,12 +46,13 @@ This project contains various helper about logging functions, unit tests and hel
 Versions
 --------
 
-* **0.7 - 2014/??/??**
+* **0.7 - 2014/10/22**
     * **new:** function :func:`has_been_updated <pyquickhelper.sync.synchelper.has_been_updated>` to check a copy of a file is outdated
     * **fix:** fix a bug while updating the notebook file (documentation generation)
     * **fix:** fix misspellings and some minor bugs
     * **add:** some parts can be ignored while generation the documentation by adding section ``# -- HELP BEGIN EXCLUDE --`` and ``# -- HELP END EXCLUDE --``
     * **change:** do not replace relative imports when generating the documentation
+    * **change:** the documentation compiles under linux (the latex part was not tested and removed from the script ``build_setup_help_on_linux.sh``)
 * **0.6 - 2014/08/24**
     * **change:** minor fixes for the documentation generation
     * **add:** add code to handle conversion of notebooks in docx format
