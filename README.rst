@@ -46,6 +46,8 @@ This project contains various helper about logging functions, unit tests and hel
 Versions
 --------
 
+* **0.8 - 2014/??/??**
+    * **add:** Python version is now checked, ImportError is raised if it used on Python 2
 * **0.7 - 2014/10/22**
     * **new:** function :func:`has_been_updated <pyquickhelper.sync.synchelper.has_been_updated>` to check a copy of a file is outdated
     * **fix:** fix a bug while updating the notebook file (documentation generation)
