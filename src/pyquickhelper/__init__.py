@@ -41,3 +41,4 @@ from .helpgen                           import get_help_usage
 from .helpgen.sphinx_main               import generate_help_sphinx
 from .ipythonhelper.kindofcompletion    import AutoCompletion, AutoCompletionFile
 from .sync.visual_sync                  import create_visual_diff_through_html
+from .serverdoc.documentation_server    import run_doc_server
