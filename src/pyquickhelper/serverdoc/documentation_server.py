@@ -280,16 +280,20 @@ class DocumentationHandler(BaseHTTPRequestHandler):
             params = parse_qs(path.query)
             params["__path__"] = path
             
-            url = path.geturl()
+            fullurl = path.geturl()
+            fullfile = path.path
             params["__url__"] = path
-            spl = url.strip("/").split("/")
+            spl = fullfile.strip("/").split("/")
             
             project = spl[0]
             link = "/".join(spl[1:])
             value = DocumentationHandler.mappings.get(project, None)
             
             if value is None:
-                raise KeyError("unable to find a mapping associated to: " + project)
+                self.LOG("can't serve",path)
+                self.LOG("with params",params)
+                return
+                #raise KeyError("unable to find a mapping associated to: " + project + "\nURL:\n" + url + "\nPARAMS:\n" + str(params))
             
             if value == "shut://":
                 self.LOG("call shutdown")
@@ -453,8 +457,10 @@ def run_doc_server (server,
         
     if server == None : 
         server = HTTPServer(('localhost', port), DocumentationHandler)
-    elif isinstance(server, tuple):
-        server = HTTPServer(server, DocumentationHandler)
+    elif isinstance(server, str):
+        server = HTTPServer((server, port), DocumentationHandler)
+    elif not isinstance(server, HTTPServer):
+        raise TypeError("unexpected type for server: " + str(type(server)))
         
     if thread :
         th = DocumentationThreadServer(server)
@@ -467,7 +473,10 @@ def run_doc_server (server,
 if __name__ == '__main__':
     
     
-    if False:
+    if True:
+        # http://localhost:8079/pyquickhelper/
+        this_fold = os.path.abspath(os.path.dirname(__file__))
+        this_fold = os.path.join(this_fold, "..", "..", "..", "dist", "html")
         fLOG(OutputPrint=True)
         fLOG("running server")
         run_doc_server(None, mappings = { "pyquickhelper": this_fold } )

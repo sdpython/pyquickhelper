@@ -29,14 +29,19 @@ class TestDocumentationServer(unittest.TestCase):
         path = os.path.abspath(os.path.split(__file__)[0])
         data = os.path.join(path,"data")
         
-        
-        server = ('localhost', 8094)
-        thread = run_doc_server(server, {"pyquickhelper":data}, True)
+        server = 'localhost'
+        thread = run_doc_server(server, {"pyquickhelper":data}, True, port = 8094)
         
         url = "http://localhost:8094/pyquickhelper/"
         cont = get_url_content(url)
         assert len(cont)> 0
         assert "GitHub/pyquickhelper</a>" in cont
+        fLOG("-------")
+        url = "http://localhost:8094/pyquickhelper/search.html?q=flog&check_keywords=yes&area=default"
+        cont = get_url_content(url)
+        assert len(cont)> 0
+        assert "Please activate JavaScript to enable the search" in cont
+        assert "http://sphinx.pocoo.org/" in cont
         
         thread.shutdown()    
         assert not thread.is_alive()
