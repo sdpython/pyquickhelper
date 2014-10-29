@@ -109,43 +109,35 @@ class DocumentationHandler(BaseHTTPRequestHandler):
         self.send_header('Location', path)
         self.end_headers()
         
+    media_types = {
+            ".js"   : ( 'application/javascript', 'r' ),
+            ".css"  : ("text/css", 'r'),
+            ".html" : ('text/html', 'r'),
+            ".py"   : ('text/html','execute'),
+            ".png"  : ('image/png','rb'),
+            ".jpg"  : ('image/jpeg','rb'),
+            ".ico"  : ('image/x-icon','rb'),
+            ".gif"  : ('image/gif','rb'),
+            ".eot"  : ('application/vnd.ms-fontobject','rb'),
+            ".ttf"  : ('application/font-sfnt','rb'),
+            ".otf"  : ('font/opentype','rb'),
+            ".svg"  : ('image/svg+xml','r'),
+            ".woff" : ('application/font-wof','rb'),
+           }
+        
     def get_ftype(self, path):
         """
         defines the header to send (type of files) based on path
         @param      path        location (a string)
         @return                 htype, ftype (html, css, ...)
+        
+        If a type is missing, you should look for the ``MIME TYPE``
+        on a search engine.
+        
+        See also `media-types <http://www.iana.org/assignments/media-types/media-types.xhtml>`_ 
         """
-        htype = ''
-        ftype = ''
-
-        if path.endswith('.js'):
-            htype = 'application/javascript'
-            ftype = 'r'
-        elif path.endswith('.css'):
-            htype = 'text/css'
-            ftype = 'r'
-        elif path.endswith('.html'):
-            htype = 'text/html'
-            ftype = 'r'
-        elif path.endswith('.py'):
-            htype = 'text/html'
-            ftype = 'execute'
-        elif path.endswith('.png'):
-            htype = 'image/png'
-            ftype = 'rb'
-        elif path.endswith('.jpg'):
-            htype = 'image/jpeg'
-            ftype = 'rb'
-        elif path.endswith('.jepg'):
-            htype = 'image/jpeg'
-            ftype = 'rb'
-        elif path.endswith('.ico'):
-            htype = 'image/x-icon'
-            ftype = 'rb'
-        elif path.endswith('.gif'):
-            htype = 'image/gif'
-            ftype = 'rb'    
-            
+        ext = "." + path.split(".")[-1]
+        htype, ftype = DocumentationHandler.media_types.get(ext, ('',''))
         return htype, ftype
 
     def send_headers(self, path):

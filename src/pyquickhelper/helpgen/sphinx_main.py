@@ -13,6 +13,7 @@ from ..pandashelper.tblformat   import df_to_rst
 from .utils_sphinx_doc          import prepare_file_for_sphinx_help_generation
 from .utils_sphinx_doc_helpers  import HelpGenException
 from ..sync.synchelper          import explore_folder, has_been_updated
+from .utils_sphinx_config       import ie_layout_html
 
 template_examples = """
 
@@ -101,7 +102,17 @@ def generate_help_sphinx (  project_var_name,
     The function requires:
         - pandoc
         - latex
+        
+    @warning Some themes such as `Bootstrap Sphinx Theme <http://ryan-roemer.github.io/sphinx-bootstrap-theme/>`_ do not work on Internet Explorer. In that case, the 
+             file ``<python_path>/Lib/site-packages/sphinx/themes/basic/layout.html`` 
+             must be modified to add the following line (just below ``Content-Type``).
+             
+             @code
+             <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+             @endcode
     """
+    ie_layout_html()
+    
     root = os.path.abspath(root)
     froot = root
     sys.path.append (os.path.join(root, "_doc", "sphinxdoc","source"))
