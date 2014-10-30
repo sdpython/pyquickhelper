@@ -9,7 +9,9 @@ import sys, os, re, shutil, copy
 from ..loghelper.flog           import fLOG
 from ..sync.synchelper          import remove_folder, synchronize_folder, explore_folder
 from ._my_doxypy                import process_string
-from .utils_sphinx_doc_helpers  import add_file_rst_template, process_var_tag, import_module, get_module_objects, add_file_rst_template_cor, add_file_rst_template_title, IndexInformation, RstFileHelp, HelpGenException, process_look_for_tag
+from .utils_sphinx_doc_helpers  import add_file_rst_template, process_var_tag, import_module
+from .utils_sphinx_doc_helpers  import get_module_objects, add_file_rst_template_cor, add_file_rst_template_title
+from .utils_sphinx_doc_helpers  import IndexInformation, RstFileHelp, HelpGenException, process_look_for_tag, make_label_index
 from ..pandashelper.tblformat   import df_to_rst
 
 def validate_file_for_help(filename, fexclude = lambda f : False) :
@@ -1308,7 +1310,8 @@ def private_migrating_doxygen_doc(
                 fil     = os.path.splitext(os.path.split(filename)[-1])[0]
                 fil     = re.sub(r'([^a-zA-Z0-9_])', "", fil)
                 ref     = fil + "-l%d" % (i+index_first_line)
-                to      = "\n\n%s.. _le-%s:\n\n%s**Example: %s**  \n\n%s.. example(%s%s;;le-%s)." % (sp,ref,sp,exa,sp,pag,exa,ref)
+                ref2    = make_label_index(exa, str(example.groups()))
+                to      = "\n\n%s.. _le-%s:\n\n%s.. _le-%s:\n\n%s**Example: %s**  \n\n%s.. example(%s%s;;le-%s)." % (sp,ref,sp,ref2,sp,exa,sp,pag,exa,ref)
                 rows[i] = row.replace(rep, to)
                 
                 # it requires an empty line before if the previous line does not start by :
@@ -1325,7 +1328,8 @@ def private_migrating_doxygen_doc(
                 fil     = os.path.splitext(os.path.split(filename)[-1])[0]
                 fil     = re.sub(r'([^a-zA-Z0-9_])', "", fil)
                 ref     = fil + "-l%d" % (i+index_first_line)
-                to      = "\n\n%s.. _le-%s:\n\n%s**FAQ: %s**  \n\n%s.. FAQ(%s%s;;le-%s)." % (sp,ref,sp,exa,sp,pag,exa,ref)
+                ref2    = make_label_index(exa, str(faq.groups()))
+                to      = "\n\n%s.. _le-%s:\n\n%s.. _le-%s:\n\n%s**FAQ: %s**  \n\n%s.. FAQ(%s%s;;le-%s)." % (sp,ref,sp,ref2,sp,exa,sp,pag,exa,ref)
                 rows[i] = row.replace(rep, to)
                 
                 # it requires an empty line before if the previous line does not start by :

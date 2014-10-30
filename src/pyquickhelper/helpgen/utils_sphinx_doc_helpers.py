@@ -611,7 +611,31 @@ def process_var_tag(docstring, rst_replace = False, header = ["attribute", "mean
                 for a in alls :
                     values.append ( a )
         return values
-
+        
+def make_label_index(title, comment):
+    """
+    build a sphinx label from a string by
+    removing any odd characters
+    
+    @param      title       title
+    @param      comment     add this string in the exception when it raises one
+    @return                 label
+    """
+    def accept(c):
+        if "a" <= c <= "z" : return c
+        if "A" <= c <= "Z" : return c
+        if "0" <= c <= "9" : return c
+        if c in "-_" : return c
+        return ""
+    
+    try:
+        r = "".join( map (accept, title) )
+        if len(r) == 0:
+            raise HelpGenException("unable to interpret this title (empty?): {0} (type: {2})\nCOMMENT:\n{1}".format(str(title), comment, str(type(title)))) 
+        return r
+    except TypeError as e :
+        raise HelpGenException("unable to interpret this title: {0} (type: {2})\nCOMMENT:\n{1}".format(str(title), comment, str(type(title)))) from e
+    
 def process_look_for_tag(tag, title, files):
     """
     looks for specific information in all files, collect them
@@ -694,6 +718,10 @@ def process_look_for_tag(tag, title, files):
         for pa, a,b,c in coll :
             pan = re.sub(r'([^a-zA-Z0-9_])', "", pa)
             if page != pan : continue
+            lindex = make_label_index( a, pan )
+            rows.append( "" )
+            rows.append( ".. _lm-{0}:".format( lindex ) )
+            rows.append( "" )
             rows.append( a )
             rows.append( "+" * len(a) )
             rows.append( "" )

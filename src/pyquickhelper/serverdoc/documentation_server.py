@@ -433,7 +433,7 @@ def run_doc_server (server,
     @param      port        port to use
     @return                 server if thread is False, the thread otherwise (the thread is started)
     
-    @example("run a local server which serves the documentation")
+    @example(run a local server which serves the documentation)
     
     The following code will create a local server: `http://localhost:8079/pyquickhelper/ <http://localhost:8079/pyquickhelper/>`_.
     @code
