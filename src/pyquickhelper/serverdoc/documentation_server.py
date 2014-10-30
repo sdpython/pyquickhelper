@@ -215,6 +215,9 @@ class DocumentationHandler(BaseHTTPRequestHandler):
         print ( tbl.tohtml(class_table="myclasstable") )
         </script>
         @endcode
+        
+        The server does not interpret Python, to do that, you need to use
+        `pyrsslocal <http://www.xavierdupre.fr/app/pyrsslocal/helpsphinx/index.html>`_.
         """
         if isinstance (any, bytes) :
             if script_python : 
