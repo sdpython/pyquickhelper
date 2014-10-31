@@ -186,20 +186,32 @@ class DocumentationHandler(BaseHTTPRequestHandler):
             self.LOG("serves cached",tlocalpath)
             return content
             
-        if not os.path.exists(tlocalpath) :
-            self.send_error(404)
-            content = "unable to find file " + localpath
-            self.LOG(content)
-            return content
-            
         if ftype == "r" or ftype == "execute" :
-            self.LOG("reading file ", tlocalpath)
-            with open(tlocalpath, "r", encoding="utf8") as f :
+            if not os.path.exists(tlocalpath) and "_static/bootswatch" in tlocalpath:
+                access = tlocalpath.replace("bootswatch", "bootstrap")
+            else:
+                access = tlocalpath
+                
+            if not os.path.exists(access):
+                self.LOG("** w,unable to find: ", access)
+                return None
+            
+            self.LOG("reading file ", access)
+            with open(access, "r", encoding="utf8") as f :
                 content = f.read()
                 self.update_cache(tlocalpath, content)
                 return content
         else :
-            self.LOG("reading file ", tlocalpath)
+            if not os.path.exists(tlocalpath) and "_static/bootswatch" in tlocalpath:
+                access = tlocalpath.replace("bootswatch", "bootstrap")
+            else:
+                access = tlocalpath
+                
+            if not os.path.exists(access):
+                self.LOG("** w,unable to find: ", access)
+                return None
+            
+            self.LOG("reading file ", access)
             with open(tlocalpath, "rb") as f :
                 content = f.read()
                 self.update_cache(tlocalpath, content)
@@ -290,7 +302,7 @@ class DocumentationHandler(BaseHTTPRequestHandler):
         """
         if isinstance (any, bytes) :
             if script_python : 
-                raise SystemError("unable to execute script from bytes")
+                raise SystemError("** w,unable to execute script from bytes")
             self.wfile.write(any)
         else :
             if script_python :
@@ -394,17 +406,22 @@ class DocumentationHandler(BaseHTTPRequestHandler):
 
                 if ftype != 'execute' or not execute :
                     content = self.get_file_content(fullpath, ftype, path)
-                    ext = os.path.splitext(localpath)[-1].lower()
-                    if ext in [".py", ".c", ".cpp", ".hpp", ".h", ".r", ".sql", ".java"] :
-                        self.send_headers (".html")
-                        self.feed ( self.html_code_renderer (localpath, content) )
-                    elif ext in [".html"]:
-                        content = self.process_html_path(project, content)
-                        self.send_headers (localpath)
-                        self.feed(content)
+                    if content is None:
+                        self.LOG("** w,unable to get file for key:", path)
+                        self.send_error(404)
+                        self.feed("Requested resource %s unavailable" % localpath )
                     else:
-                        self.send_headers (localpath)
-                        self.feed(content)
+                        ext = os.path.splitext(localpath)[-1].lower()
+                        if ext in [".py", ".c", ".cpp", ".hpp", ".h", ".r", ".sql", ".java"] :
+                            self.send_headers (".html")
+                            self.feed ( self.html_code_renderer (localpath, content) )
+                        elif ext in [".html"]:
+                            content = self.process_html_path(project, content)
+                            self.send_headers (localpath)
+                            self.feed(content)
+                        else:
+                            self.send_headers (localpath)
+                            self.feed(content)
                 else:
                     self.LOG("execute file ", localpath)
                     out,err = self.execute (localpath)
@@ -452,7 +469,7 @@ class DocumentationHandler(BaseHTTPRequestHandler):
         """
         self.send_response(200)
         self.send_headers("")
-        self.feed("unable to serve content for url: " + path.geturl() + "\n" + str(params) + "\n")
+        self.feed("** w,unable to serve content for url: " + path.geturl() + "\n" + str(params) + "\n")
         self.send_error(404)
         
     def serve_main_page(self):
