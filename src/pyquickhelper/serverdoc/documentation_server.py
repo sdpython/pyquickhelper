@@ -385,52 +385,58 @@ class DocumentationHandler(BaseHTTPRequestHandler):
                 self.feed(content, False, params = { })
             
             else:
-                localpath = link
-                if localpath in [None, "/", ""] :
-                    localpath = "index.html"
-                fullpath  = os.path.join( value, localpath )
-                self.LOG("localpath ", fullpath, os.path.isfile(fullpath))
-                
-                self.send_response(200)
-                _,ftype   = self.get_ftype(localpath)
-                
-                execute = eval(params.get("execute",["True"])[0])
-                path    = params.get("path",[None])[0]
-                keep    = eval(params.get("keep",["False"])[0])
-                
-                if keep and path not in self.get_pathes():
-                    self.LOG("execute", execute , "- ftype", ftype, " - path", path, " keep ", keep)
-                    self.add_path(path)
+                if ".." in link:
+                    # we avoid that case to prevent users from digging others paths
+                    # than the mapped ones, just in that the browser does not remove them
+                    self.send_error(404)
+                    self.feed("Requested resource %s unavailable" % localpath )
                 else :
-                    self.LOG("execute", execute , "- ftype", ftype, " - path", path)
-
-                if ftype != 'execute' or not execute :
-                    content = self.get_file_content(fullpath, ftype, path)
-                    if content is None:
-                        self.LOG("** w,unable to get file for key:", path)
-                        self.send_error(404)
-                        self.feed("Requested resource %s unavailable" % localpath )
-                    else:
-                        ext = os.path.splitext(localpath)[-1].lower()
-                        if ext in [".py", ".c", ".cpp", ".hpp", ".h", ".r", ".sql", ".java"] :
-                            self.send_headers (".html")
-                            self.feed ( self.html_code_renderer (localpath, content) )
-                        elif ext in [".html"]:
-                            content = self.process_html_path(project, content)
-                            self.send_headers (localpath)
-                            self.feed(content)
-                        else:
-                            self.send_headers (localpath)
-                            self.feed(content)
-                else:
-                    self.LOG("execute file ", localpath)
-                    out,err = self.execute (localpath)
-                    if len(err) > 0 :
-                        self.send_error(404)
-                        self.feed("Requested resource %s unavailable" % localpath )
+                    localpath = link
+                    if localpath in [None, "/", ""] :
+                        localpath = "index.html"
+                    fullpath  = os.path.join( value, localpath )
+                    self.LOG("localpath ", fullpath, os.path.isfile(fullpath))
+                    
+                    self.send_response(200)
+                    _,ftype   = self.get_ftype(localpath)
+                    
+                    execute = eval(params.get("execute",["True"])[0])
+                    path    = params.get("path",[None])[0]
+                    keep    = eval(params.get("keep",["False"])[0])
+                    
+                    if keep and path not in self.get_pathes():
+                        self.LOG("execute", execute , "- ftype", ftype, " - path", path, " keep ", keep)
+                        self.add_path(path)
                     else :
-                        self.send_headers (localpath)
-                        self.feed(out)
+                        self.LOG("execute", execute , "- ftype", ftype, " - path", path)
+
+                    if ftype != 'execute' or not execute :
+                        content = self.get_file_content(fullpath, ftype, path)
+                        if content is None:
+                            self.LOG("** w,unable to get file for key:", path)
+                            self.send_error(404)
+                            self.feed("Requested resource %s unavailable" % localpath )
+                        else:
+                            ext = os.path.splitext(localpath)[-1].lower()
+                            if ext in [".py", ".c", ".cpp", ".hpp", ".h", ".r", ".sql", ".java"] :
+                                self.send_headers (".html")
+                                self.feed ( self.html_code_renderer (localpath, content) )
+                            elif ext in [".html"]:
+                                content = self.process_html_path(project, content)
+                                self.send_headers (localpath)
+                                self.feed(content)
+                            else:
+                                self.send_headers (localpath)
+                                self.feed(content)
+                    else:
+                        self.LOG("execute file ", localpath)
+                        out,err = self.execute (localpath)
+                        if len(err) > 0 :
+                            self.send_error(404)
+                            self.feed("Requested resource %s unavailable" % localpath )
+                        else :
+                            self.send_headers (localpath)
+                            self.feed(out)
                         
     def process_html_path(self, project, content):
         """
