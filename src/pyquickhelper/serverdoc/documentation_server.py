@@ -9,7 +9,7 @@
 @brief  This modules contains a class which implements a simple server.
 """
 
-import sys, string, cgi, time, os, subprocess, socket, copy, re, io
+import sys, string, cgi, time, os, subprocess, socket, copy, re, io, datetime
 from urllib.parse import urlparse, parse_qs
 from io import StringIO
 from threading import Thread
@@ -50,6 +50,10 @@ class DocumentationHandler(BaseHTTPRequestHandler):
             </html>
             """.replace("            ","")
             
+    cache = { }
+    cache_attributes = { }
+    cache_refresh = datetime.timedelta(1)
+            
     def LOG(self, *l, **p):
         """
         logging function
@@ -68,6 +72,9 @@ class DocumentationHandler(BaseHTTPRequestHandler):
         If you run the server multitimes, the mappings stays because it 
         is a static variable.
         """
+        value = os.path.normpath(value)
+        if not os.path.exists(value):
+            raise FileNotFoundError(value)
         DocumentationHandler.mappings[key] = value
         
     @staticmethod    
@@ -166,10 +173,18 @@ class DocumentationHandler(BaseHTTPRequestHandler):
         @param      ftype           r or rb
         @param      path            if != None, the filename will be path/localpath
         @return                     content
+        
+        This function implements a simple cache mechanism.
         """
         if path is not None :
             tlocalpath = os.path.join(path, localpath)
-        else : tlocalpath = localpath
+        else : 
+            tlocalpath = localpath
+            
+        content = self.get_from_cache(tlocalpath)
+        if content is not None : 
+            self.LOG("serves cached",tlocalpath)
+            return content
             
         if not os.path.exists(tlocalpath) :
             self.send_error(404)
@@ -180,11 +195,65 @@ class DocumentationHandler(BaseHTTPRequestHandler):
         if ftype == "r" or ftype == "execute" :
             self.LOG("reading file ", tlocalpath)
             with open(tlocalpath, "r", encoding="utf8") as f :
-                return f.read()
+                content = f.read()
+                self.update_cache(tlocalpath, content)
+                return content
         else :
             self.LOG("reading file ", tlocalpath)
             with open(tlocalpath, "rb") as f :
-                return f.read()
+                content = f.read()
+                self.update_cache(tlocalpath, content)
+                return content
+                
+    def get_from_cache(self, key):
+        """
+        retrieve a file from the cache if it was cached, 
+        it the file was added later than a day, it returns None
+        
+        @param      key     key
+        @return             content or None if None found or too old
+        """
+        content = DocumentationHandler.cache.get(key, None)
+        if content is None : 
+            return content
+            
+        att = DocumentationHandler.cache_attributes [ key ]
+        delta = datetime.datetime.now() - att["date"]
+        if delta > DocumentationHandler.cache_refresh:
+            del DocumentationHandler.cache[key]
+            del DocumentationHandler.cache_attributes[key]
+            return None
+        else:
+            DocumentationHandler.cache_attributes[key]["nb"] += 1
+            return content
+            
+    def update_cache(self, key, content):
+        """
+        update the cache
+        
+        @param      key         key
+        @param      content     content to place
+        """
+        if len(DocumentationHandler.cache) < 5000 :
+            # we do not clean here as the cache is shared by every session/user
+            # it would not be safe
+            # unless we add protection
+            #self.clean_cache(1000)
+            pass
+            
+        # this one first as a document existence is checked by using cache
+        DocumentationHandler.cache_attributes[key] = {"nb":1,
+                    "date": datetime.datetime.now() }
+        DocumentationHandler.cache[key] = content
+        
+    def _print_cache(self, n = 20):
+        """
+        display the most requested files
+        """
+        al = [ (v["nb"], k) for k,v in DocumentationHandler.cache_attributes.items() if v["nb"] > 1 ]
+        for i,doc in enumerate(sorted(al,reverse=True)):
+            if i >= n: break
+            print("cache: {0} - {1}".format(*doc))
 
     def execute(self, localpath):
         """
@@ -269,8 +338,7 @@ class DocumentationHandler(BaseHTTPRequestHandler):
         """
         if path.path == "" or path.path == "/":
             params = parse_qs(path.query)
-            self.serve_content_web(path, "GET", params)
-            
+            self.serve_main_page()
         else:
             params = parse_qs(path.query)
             params["__path__"] = path
@@ -386,6 +454,25 @@ class DocumentationHandler(BaseHTTPRequestHandler):
         self.send_headers("")
         self.feed("unable to serve content for url: " + path.geturl() + "\n" + str(params) + "\n")
         self.send_error(404)
+        
+    def serve_main_page(self):
+        """
+        displays all the mapping for the default path
+        """
+        rows = ["<html><body>"]
+        rows.append("<h1>Documentation Server</h1>")
+        rows.append("<ul>")
+        for k,v in sorted(DocumentationHandler.mappings.items()):
+            if not k.startswith("_"):
+                row = '<li><a href="{0}/">{0}</a></li>'.format(k)
+                rows.append(row)
+        rows.append("</ul></body></html>")
+        content = "\n".join(rows)
+        
+        self.send_response(200)
+        self.send_headers (".html")
+        self.feed(content)
+        
                 
 class DocumentationThreadServer (Thread) :
     """
@@ -470,10 +557,12 @@ if __name__ == '__main__':
     
     if True:
         # http://localhost:8079/pyquickhelper/
-        this_fold = os.path.abspath(os.path.dirname(__file__))
-        this_fold = os.path.join(this_fold, "..", "..", "..", "dist", "html")
+        this_fold  = os.path.abspath(os.path.dirname(__file__))
+        this_fold2 = os.path.join(this_fold, "..", "..", "..", "..", "ensae_teaching_cs", "dist", "html3")
+        this_fold  = os.path.join(this_fold, "..", "..", "..", "dist", "html")
         fLOG(OutputPrint=True)
         fLOG("running server")
-        run_doc_server(None, mappings = { "pyquickhelper": this_fold } )
+        run_doc_server(None, mappings = {   "pyquickhelper": this_fold,   
+                                            "ensae_teaching_cs": this_fold2 } )
         fLOG("end running server")
     
