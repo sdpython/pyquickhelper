@@ -829,14 +829,14 @@ def post_process_rst_output(file, html, pdf, python):
     lines.insert(0,label)
         
     # links
-    links = [ '**Links:**','','    * :download:`notebook <{0}.ipynb>`'.format(noext) ]
+    links = [ '**Links:** :download:`notebook <{0}.ipynb>`'.format(noext) ]
     if html: 
-        links.append('    * :download:`html <{0}.html>`'.format(noext))
+        links.append(':download:`html <{0}.html>`'.format(noext))
     if pdf: 
-        links.append('    * :download:`PDF <{0}.pdf>`'.format(noext))
+        links.append(':download:`PDF <{0}.pdf>`'.format(noext))
     if python: 
-        links.append('    * :download:`python <{0}.py>`'.format(noext))
-    lines[pos] = "{0}\n\n{1}\n\n**Notebook:**\n\n".format(lines[pos],"\n".join(links))
+        links.append(':download:`python <{0}.py>`'.format(noext))
+    lines[pos] = "{0}\n\n{1}\n\n**Notebook:**\n\n".format(lines[pos],", ".join(links))
     
     # bullets
     for pos,line in enumerate(lines):
