@@ -3,7 +3,7 @@
 @author     Xavier Dupre
 """
 
-import sys, os, unittest, shutil
+import sys, os, unittest, re
 
 
 try :
@@ -24,6 +24,20 @@ class TestSmallFunction(unittest.TestCase):
         res = make_label_index(title,"")
         fLOG("***",title,res)
         assert res == "abAB_-56"
+        
+    def test_regular_expressions(self):
+        fLOG (__file__, self._testMethodName, OutputPrint = __name__ == "__main__")
+        fold = os.path.abspath(os.path.dirname(__file__))
+        ff   = os.path.join(fold,"data","divabsolute.rst")
+        with open(ff,"r") as f : lines = f.readlines()
+        div = "[\\n ]+<div[\\n ]+style=.?position:absolute; .*?[.]{2} "
+        reg = re.compile("([.]{2} raw[:]{2} html[\\n ]+<div[\\n ]+style=.?position:absolute;(.|\\n)*?[.]{2} raw[:]{2} html[\\n ]+</div>)")
+        fLOG("nb lines",len(lines))
+        merged = "".join(lines).replace("\r","").replace("\t","")
+        r = reg.findall(merged)
+        for _ in r :
+            fLOG(_)
+        assert len(r)>0
         
 if __name__ == "__main__"  :
     unittest.main ()    

@@ -836,7 +836,23 @@ def post_process_rst_output(file, html, pdf, python):
         links.append(':download:`PDF <{0}.pdf>`'.format(noext))
     if python: 
         links.append(':download:`python <{0}.py>`'.format(noext))
-    lines[pos] = "{0}\n\n{1}\n\n**Notebook:**\n\n".format(lines[pos],", ".join(links))
+    lines[pos] = "{0}\n\n{1}\n\n".format(lines[pos],", ".join(links))
+    
+    # we remove the 
+    # <div
+    # style="position:absolute; 
+    # ....
+    # </div>
+    reg = re.compile("([.]{2} raw[:]{2} html[\\n ]+<div[\\n ]+style=.?position:absolute;(.|\\n)*?[.]{2} raw[:]{2} html[\\n ]+</div>)")
+    merged = "".join(lines)
+    r = reg.findall(merged)
+    if len(r) > 0 :
+        fLOG("    *** remove div absolute in ",file)
+        for spa in r :
+            rep = spa[0]
+            nbl = len(rep.split("\n"))
+            merged = merged.replace(rep, "\n" * nbl)
+        lines = [ (_ +"\n") for _ in merged.split("\n")]
     
     # bullets
     for pos,line in enumerate(lines):
