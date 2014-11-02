@@ -147,7 +147,7 @@ class FrameFunction (tkinter.Frame) :
             lab = tkinter.Label (self.fpar, text = k)
             lab.grid (row = line, column = 0)
             
-            if k == "password" :
+            if k in ["password", "password1", "password2", "password3"] :
                 lab = tkinter.Entry (self.fpar, width = width, show = "*")
             else :
                 lab = tkinter.Entry (self.fpar, width = width)
@@ -165,7 +165,7 @@ class FrameFunction (tkinter.Frame) :
             lab = tkinter.Label (self.fpar, text = k)
             lab.grid (row = line, column = 0)
             
-            if k == "password" :
+            if k in ["password", "password1", "password2", "password3"] :
                 lab = tkinter.Entry (self.fpar, width = width, show = "*")
             else :
                 lab = tkinter.Entry (self.fpar, width = width)
@@ -334,7 +334,7 @@ class FrameFunction (tkinter.Frame) :
         self._history.append(res)
         
         for k in sorted (res) :
-            if k == "password" :
+            if k in ["password", "password1", "password2", "password3"] :
                 fLOG ("parameter ", k, " = ****")
             else :
                 fLOG ("parameter ", k, " = ", res [k], " type ", type(res[k]))

@@ -49,6 +49,7 @@ Versions
 * **0.8 - 2014/??/??**
     * **add:** Python version is now checked, ImportError is raised if it used on Python 2
     * **new:** function :func:`run_doc_server <pyquickhelper.serverdoc.documentation_server.run_doc_server>` creates a local server to display documentation
+    * **change:** password, password1, password2, password3 are hidden by stars when open a param window
 * **0.7 - 2014/10/22**
     * **new:** function :func:`has_been_updated <pyquickhelper.sync.synchelper.has_been_updated>` to check a copy of a file is outdated
     * **fix:** fix a bug while updating the notebook file (documentation generation)

@@ -30,9 +30,14 @@ def _private_store (function_name, param) :
     filename = os.path.join (values ["TEMP"], function_name + ".pyquickhelper.txt")
     fLOG("FrameWindows: storing parameters in file: ", os.path.abspath(filename))
     
-    if "password" in param :
+    if "password" in param or \
+        "password1" in param or \
+        "password2" in param or \
+        "password3" in param :
         param = param.copy()
-        param ["password"] = hashlib.sha1(param["password"].encode("utf8")).hexdigest()
+        for k in ["password","password1","password2","password3"]:
+            if k in param:
+                param [k] = hashlib.sha1(param[k].encode("utf8")).hexdigest()
         fLOG("this class contains a parameter 'password' --> it will be encrypted")
         
     history = _private_restore (function_name, pwd = False)
@@ -82,7 +87,11 @@ def _private_restore (function_name, pwd = True) :
     try :
         for line in s :
             ev = eval (line.replace("#*###n####*#","\n"))
-            if pwd and "password" in ev : ev["password"] = ""
+            if pwd :
+                if "password3" in ev : ev["password3"] = ""
+                if "password2" in ev : ev["password2"] = ""
+                if "password1" in ev : ev["password1"] = ""
+                if "password"  in ev : ev["password"] = ""
             ans.append(ev)
     except Exception as e :
         raise Exception("problem in file " + filename) from e

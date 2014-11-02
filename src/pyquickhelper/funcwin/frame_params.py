@@ -93,7 +93,7 @@ class FrameParams (tkinter.Frame) :
             lab = tkinter.Label (self.fpar, text = k)
             lab.grid (row = line, column = 0)
             
-            if k == "password" :
+            if k in ["password", "password1", "password2", "password3"] :
                 lab = tkinter.Entry (self.fpar, width = width, show = "*")
             else :
                 lab = tkinter.Entry (self.fpar, width = width)
@@ -111,7 +111,7 @@ class FrameParams (tkinter.Frame) :
             lab = tkinter.Label (self.fpar, text = k)
             lab.grid (row = line, column = 0)
             
-            if k == "password" :
+            if k in ["password", "password1", "password2", "password3"] :
                 lab = tkinter.Entry (self.fpar, width = width, show = "*")
             else :
                 lab = tkinter.Entry (self.fpar, width = width)
