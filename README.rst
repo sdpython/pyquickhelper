@@ -46,7 +46,7 @@ This project contains various helper about logging functions, unit tests and hel
 Versions
 --------
 
-* **0.8 - 2014/??/??**
+* **0.8 - 2014/11/03**
     * **add:** Python version is now checked, ImportError is raised if it used on Python 2
     * **new:** function :func:`run_doc_server <pyquickhelper.serverdoc.documentation_server.run_doc_server>` creates a local server to display documentation
     * **change:** password, password1, password2, password3 are hidden by stars when open a param window
