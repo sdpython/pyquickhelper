@@ -39,7 +39,7 @@ Design
 This project contains various helper about logging functions, unit tests and help generation.
    * a source folder: ``src``
    * a unit test folder: ``_unittests``, go to this folder and run ``run_unittests.py``
-   * a _doc folder: ``_doc``, it will contains the documentation
+   * a _doc folder: ``_doc``, it will contain the documentation
    * a file ``setup.py`` to build and to install the module
    * a file ``make_help.py`` to build the sphinx documentation
    
@@ -51,7 +51,7 @@ Versions
     * **new:** function :func:`run_doc_server <pyquickhelper.serverdoc.documentation_server.run_doc_server>` creates a local server to display documentation
     * **change:** password, password1, password2, password3 are hidden by stars when open a param window
 * **0.7 - 2014/10/22**
-    * **new:** function :func:`has_been_updated <pyquickhelper.sync.synchelper.has_been_updated>` to check a copy of a file is outdated
+    * **new:** function :func:`has_been_updated <pyquickhelper.sync.synchelper.has_been_updated>` to check if a copy of a file is outdated
     * **fix:** fix a bug while updating the notebook file (documentation generation)
     * **fix:** fix misspellings and some minor bugs
     * **add:** some parts can be ignored while generation the documentation by adding section ``# -- HELP BEGIN EXCLUDE --`` and ``# -- HELP END EXCLUDE --``
