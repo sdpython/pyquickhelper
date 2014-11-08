@@ -325,6 +325,7 @@ def remove_folder (top, remove_also_top = True) :
         raise Exception("top is a root (c: for example), this is not safe")
 
     res = [ ]
+    first_root = None
     for root, dirs, files in os.walk(top, topdown=False):
         for name in files:
             t = os.path.join(root, name)
@@ -334,10 +335,12 @@ def remove_folder (top, remove_also_top = True) :
             t = os.path.join(root, name)
             os.rmdir(t)
             res.append ( (t,"dir") )
+        if first_root is None:
+            first_root = root
 
-        if remove_also_top :
-            res.append ( (root,"dir") )
-            os.rmdir(root)
+    if first_root is not None and remove_also_top :
+        res.append ( (root,"dir") )
+        os.rmdir(root)
 
     return res
 

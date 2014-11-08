@@ -59,9 +59,13 @@ def IsEmptyString(s):
 
 def is_empty_string(s):
     """
-    calls @see fn IsEmptyString
+    tells if a string is empty
+
+    @param      s       string
+    @return             boolean
     """
-    return IsEmptyString(s)
+    if s is None: return True
+    return len(s) == 0
 
 def file_head ( file = "",
                 head = 1000,
