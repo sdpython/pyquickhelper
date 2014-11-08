@@ -14,10 +14,10 @@ def main():
 
     import pyquickhelper
     from pyquickhelper import fLOG, run_cmd
-    from pyquickhelper.unittests.utils_tests import main 
+    from pyquickhelper.unittests.utils_tests import main
 
     fLOG(OutputPrint = True)
-    
+
     runner  = unittest.TextTestRunner(verbosity=0, stream = io.StringIO ())
     path    = os.path.abspath(os.path.join(os.path.split(__file__) [0]))
     res     = main(runner, path_test = path, skip = -1)

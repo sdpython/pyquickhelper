@@ -16,7 +16,7 @@ from src.pyquickhelper import AutoCompletion, fLOG, AutoCompletionFile
 
 
 class TestAutoCompletion (unittest.TestCase):
-    
+
     def test_completion(self) :
         fLOG (__file__, self._testMethodName, OutputPrint = __name__ == "__main__")
         root = AutoCompletion()
@@ -32,7 +32,7 @@ class TestAutoCompletion (unittest.TestCase):
         fLOG("l=",l)
         assert l == 6
         fLOG(root._)
-        
+
     def test_completion_file(self):
         fLOG (__file__, self._testMethodName, OutputPrint = __name__ == "__main__")
         fold = os.path.abspath(os.path.split(__file__)[0])
@@ -40,10 +40,9 @@ class TestAutoCompletion (unittest.TestCase):
         this = AutoCompletionFile(fold)
         l = len(this)
         assert l > 30
-        
-        
+
+
 
 
 if __name__ == "__main__"  :
-    unittest.main ()    
-
+    unittest.main ()

@@ -6,7 +6,7 @@
 import sys, os, inspect, threading, tkinter, io
 import tkinter.font as tkFont
 import tkinter.tix as tix
-    
+
 from ..loghelper.flog               import fLOG, GetLogFile
 from .function_helper               import has_unknown_parameters, extract_function_information, private_adjust_parameters, private_get_function
 from .storing_functions             import _private_restore, _private_store, interpret_parameter
@@ -14,18 +14,18 @@ from .storing_functions             import _private_restore, _private_store, int
 class FrameFunction (tkinter.Frame) :
     """
     Creating a Frame window for a function.
-    
+
     It will create an entry control for every parameter.
     If one of the parameter is 'password', the window will show only stars.
     The windows proposes to store the value and to restore them on the next call.
     This functionality is disable when 'password' is present in the list of parameters.
     """
-    
-    def __init__ (self, parent, 
-                        function, 
-                        restore         = True, 
-                        width           = 100, 
-                        raise_exception = False, 
+
+    def __init__ (self, parent,
+                        function,
+                        restore         = True,
+                        width           = 100,
+                        raise_exception = False,
                         overwrite       = None,
                         hide            = False,
                         command_leave   = None,
@@ -63,60 +63,60 @@ class FrameFunction (tkinter.Frame) :
         self._added     = { }
         self.command_leave = command_leave
         self._suffix    = key_save
-        
+
         # retieve previous answers
         self._history  = [ ]
         self._hpos     = -1
-        
+
         if isinstance (function, str) :
             if self.hide :
                 fLOG (__file__, function) #, OutputPrint = False)
             else :
-                fLOG (__file__, function, #, OutputPrint = False, 
+                fLOG (__file__, function, #, OutputPrint = False,
                             LogFile = io.StringIO ())
-                            
+
             function = private_get_function (function)
             self.function   = function
             self.info       = extract_function_information (function)
-            
+
         else :
             self.function   = function
             self.info       = extract_function_information (function)
-            
+
             if self.hide :
-                fLOG (__file__, self.info ["name"], #, OutputPrint = False, 
+                fLOG (__file__, self.info ["name"], #, OutputPrint = False,
                             LogFile = io.StringIO ())
             else :
-                fLOG (__file__, self.info ["name"], #, OutputPrint = False, 
+                fLOG (__file__, self.info ["name"], #, OutputPrint = False,
                             LogFile = io.StringIO ())
-            
-        if restore : 
+
+        if restore :
             self._history = _private_restore (self.info ["name"] + "." + self._suffix)
             if len(self._history) > 0 :
                 self.info ["param"].update (self._history[-1])
                 self._hpos = len(self._history)-1
-            
+
         for k in self.info ["param"]:
             self.types [k] = self.info ["types"][k]
-            if self.types [k] in [None, None.__class__] : 
+            if self.types [k] in [None, None.__class__] :
                 self.types [k] = str
-        
+
         tlab = tkinter.Label(self.fdoc, text = "Help")
         tlab.pack (side = tkinter.LEFT)
         lab = tkinter.Text (self.fdoc, width = width, height = 7)
         lab.pack (side=tkinter.LEFT)
         lab.insert ("0.0", self.info ["help"])
-        
+
         objs = [ lab, tlab ]
-        
+
         scroll=tkinter.Scrollbar(self.fdoc)
         scroll.pack(side=tkinter.RIGHT, fill=tkinter.Y)
         scroll.config(command=lab.yview, width=5)
-        lab.config(yscrollcommand = scroll.set)        
-                
+        lab.config(yscrollcommand = scroll.set)
+
         self.fdoc.bind('<Return>', self.run_function)
         self.fdoc.bind('<Escape>', self.run_cancel)
-        
+
         # overwrite parameters
         if overwrite is not None :
             for k in self.info ["param"] :
@@ -133,25 +133,25 @@ class FrameFunction (tkinter.Frame) :
             for a,b in add :
                 self.info ["param"][a] = b
                 self.types [a] = type (b)
-                
+
         params = inspect.getargspec(function)[0]
         self._added = [ _ for _ in self.info ["param"] if _ not in params]
-        
+
         self.fpar.bind('<Return>', self.run_function)
         self.fpar.bind('<Escape>', self.run_cancel)
-                        
+
         # next
         line = 0
         for k in sorted (self.info ["param"]) :
             if k in self._added : continue
             lab = tkinter.Label (self.fpar, text = k)
             lab.grid (row = line, column = 0)
-            
+
             if k in ["password", "password1", "password2", "password3"] :
                 lab = tkinter.Entry (self.fpar, width = width, show = "*")
             else :
                 lab = tkinter.Entry (self.fpar, width = width)
-            
+
             lab.grid (row = line, column = 1)
             if self.info ["param"][k] is not None :
                 lab.insert ("0", str (self.info ["param"][k]))
@@ -164,12 +164,12 @@ class FrameFunction (tkinter.Frame) :
             if k not in self._added : continue
             lab = tkinter.Label (self.fpar, text = k)
             lab.grid (row = line, column = 0)
-            
+
             if k in ["password", "password1", "password2", "password3"] :
                 lab = tkinter.Entry (self.fpar, width = width, show = "*")
             else :
                 lab = tkinter.Entry (self.fpar, width = width)
-            
+
             lab.grid (row = line, column = 1)
             if self.info ["param"][k] is not None :
                 lab.insert ("0", str (self.info ["param"][k]))
@@ -182,17 +182,17 @@ class FrameFunction (tkinter.Frame) :
         tex.pack ()
         self.LOG = tex
         tex.config (font = tkFont.Font (family = "Courrier New", size = 8))
-        
+
         self.cancel = tkinter.Button (self.fbut, text = "cancel or leave")
         self.run    = tkinter.Button (self.fbut, text = "     run       ")
         self.cancel.pack (side = tkinter.LEFT)
         self.run.pack (side = tkinter.LEFT)
-        
+
         self.cancel.config (command = self.run_cancel)
         self.run.config (command = self.run_function)
         private_adjust_parameters (self.info ["param"])
         self._already = False
-        
+
         # up, down
         self.bup   = tkinter.Button (self.fbut, text = "up")
         self.bdown = tkinter.Button (self.fbut, text = "down")
@@ -200,14 +200,14 @@ class FrameFunction (tkinter.Frame) :
         self.bdown.pack (side = tkinter.LEFT)
         self.bup.config (command = self.history_up)
         self.bdown.config (command = self.history_down)
-        
+
         # keys
         for obj in objs + [ tex, parent, self, self.bup, self.bdown, self.run, self.cancel, self.fdoc ] :
-            obj.bind("<Up>", self.history_up)        
-            obj.bind("<Down>", self.history_down)        
-            obj.bind("<Return>", self.run_function)        
-            obj.bind("<Escape>", self.run_cancel)        
-        
+            obj.bind("<Up>", self.history_up)
+            obj.bind("<Down>", self.history_down)
+            obj.bind("<Return>", self.run_function)
+            obj.bind("<Escape>", self.run_cancel)
+
     def update (self):
         """
         update the parameters (ie ``self.info``)
@@ -215,7 +215,7 @@ class FrameFunction (tkinter.Frame) :
         for k in self.input :
             self.input[k].delete(0, tkinter.END)
             self.input[k].insert ("0", str (self.info ["param"].get(k,"")))
-        
+
     def history_up(self, *args) :
         """
         look back in the history of used parameters and change the parameters
@@ -224,7 +224,7 @@ class FrameFunction (tkinter.Frame) :
             self._hpos = (self._hpos+1) % len(self._history)
             self.info ["param"].update (self._history[self._hpos])
             self.update()
-        
+
     def history_down(self, *args):
         """
         look forward in the history of used parameters and change the parameters
@@ -233,7 +233,7 @@ class FrameFunction (tkinter.Frame) :
             self._hpos = (self._hpos+len(self._history)-1) % len(self._history)
             self.info ["param"].update (self._history[self._hpos])
             self.update()
-            
+
     def stop_thread(self):
         """
         stops the function execution
@@ -244,12 +244,12 @@ class FrameFunction (tkinter.Frame) :
                     if not th.daemon :
                         raise Exception("the thread is not daemon, this case should not happen")
                     th._stop()
-            
+
     def destroy(self) :
         """
         Stops the thread and destroy the function
-        
-        The behaviour of method 
+
+        The behaviour of method
         `Thread._stop <http://hg.python.org/cpython/file/3.4/Lib/threading.py>`_
         changed in Python 3.4,
         see the `discussion <https://groups.google.com/forum/#!topic/comp.lang.python/sXXwTh9EHsI>`_.
@@ -265,7 +265,7 @@ class FrameFunction (tkinter.Frame) :
             except Exception as e :
                 if "application has been destroyed" in str(e) :
                     os._exit(0)
-            
+
     def run_cancel(self, *args) :
         """
         cancel
@@ -276,11 +276,11 @@ class FrameFunction (tkinter.Frame) :
             f()
         else :
             self.parent.destroy()
-        
+
     def get_parameters (self) :
         """
         returns the parameters in a dictionary
-        
+
         @return     dictionary
         """
         res = { }
@@ -291,13 +291,13 @@ class FrameFunction (tkinter.Frame) :
             ty = self.types [k]
             res[k] = interpret_parameter(ty, s)
         return res
-                
+
     def get_title (self) :
         """
         @return self.info ["name"]
         """
         return self.info ["name"]
-        
+
     def refresh (self) :
         """
         refresh the screen
@@ -305,7 +305,7 @@ class FrameFunction (tkinter.Frame) :
         temp = self.LOG.get ("0.0", "end")
         log  = GetLogFile().getvalue ()
         log  = log [len(temp):]
-        
+
         try :
             self.LOG.insert ("end", log)
         except :
@@ -318,7 +318,7 @@ class FrameFunction (tkinter.Frame) :
             self.run.config (state = tkinter.NORMAL)
             if self.hide :
                 self.parent.destroy ()
-        
+
     def run_function (self, *args) :
         """
         run the function
@@ -326,20 +326,20 @@ class FrameFunction (tkinter.Frame) :
         if self.hide :  self.parent.withdraw ()
         else :          self.run.config (state = tkinter.DISABLED)
         self._already = True
-        
+
         res = self.get_parameters ()
         if self.restore :
             _private_store (self.info ["name"] + "." + self._suffix, res)
-            
+
         self._history.append(res)
-        
+
         for k in sorted (res) :
             if k in ["password", "password1", "password2", "password3"] :
                 fLOG ("parameter ", k, " = ****")
             else :
                 fLOG ("parameter ", k, " = ", res [k], " type ", type(res[k]))
         fLOG ("------------------------")
-        
+
         self.after (100, self.refresh)
         th = FrameFunction_ThreadFunction (self, res)
         th.daemon=True
@@ -347,28 +347,28 @@ class FrameFunction (tkinter.Frame) :
         if "thread_started" not in self.__dict__ :
             self.thread_started = []
         self.thread_started.append(th)
-        
+
     @staticmethod
-    def open_window(func, 
+    def open_window(func,
                     top_level_window = None,
                     params = None,
                     key_save = "f") :
-                                
+
         """
         Open a tkinter window to run a function. It adds entries for the parameters,
         it displays the help associated to this function,
-        and it allows use to run the function in a window frame. 
+        and it allows use to run the function in a window frame.
         Logs are also displayed.
         It also memorizes the latest values used (stored in <user>/TEMP folder).
-        
+
         @param      func                    function (function object)
         @param      top_level_window        if you want this window to depend on a top level window from tkinter
         @param      params                  if not None, overwrite values for some parameters
         @param      key_save                suffix added to the file used to store the parameters
-        
+
         The window looks like:
         @image images/open_window_function.png
-        
+
         Example:
         @code
         FrameFunction.open_window (file_head)
@@ -386,14 +386,14 @@ class FrameFunction (tkinter.Frame) :
         if top_level_window is None : fr.focus_set()
         root.focus_set()
         fr.mainloop ()
-        
+
 class FrameFunction_ThreadFunction (threading.Thread) :
     """
     class associated to FrameFunction, it runs the function
     is a separate thread (in order to be able to stop its execution
     from the interface).
     """
-    
+
     def __init__ (self, framewindow, parameter) :
         """
         constructor
@@ -401,7 +401,7 @@ class FrameFunction_ThreadFunction (threading.Thread) :
         threading.Thread.__init__(self)# ne pas oublier cette ligne
         self.framewindow = framewindow
         self.parameter   = parameter
-        
+
     def run (self) :
         """
         run the thread
@@ -411,10 +411,10 @@ class FrameFunction_ThreadFunction (threading.Thread) :
         else :
             function = None
         param = self.parameter # self.framewindow.info ["param"]
-        
+
         if function is not None :
             if not self.framewindow.raise_exception :
-                try : 
+                try :
                     ret = function (**param)
                 except Exception as e :
                     fLOG ("------------------------------ END with exception")
@@ -429,13 +429,13 @@ class FrameFunction_ThreadFunction (threading.Thread) :
                 ret = function (**param)
         else :
             ret = None
-        
+
         fLOG ("END")
         fLOG ("result:")
         fLOG(ret)
         self.framewindow._already = False
-                        
-def open_window_function (  func, 
+
+def open_window_function (  func,
                             top_level_window = None,
                             params = None,
                             key_save = "f") :
@@ -443,27 +443,27 @@ def open_window_function (  func,
     """
     Open a tkinter window to run a function. It adds entries for the parameters,
     it displays the help associated to this function,
-    and it allows use to run the function in a window frame. 
+    and it allows use to run the function in a window frame.
     Logs are also displayed.
     It also memorizes the latest values used (stored in ``<user>/TEMP folder``).
-    
+
     @param      func                    function (function object)
     @param      top_level_window        if you want this window to depend on a top level window from tkinter
     @param      params                  if not None, overwrite values for some parameters
     @param      key_save                suffix added to the file used to store the parameters
-    
+
     The window looks like:
     @image images/open_window_function.png
-    
+
     @example(open a tkinter windows to run a function)
     @code
     open_window_function (test_regular_expression)
     @endcode
-    
+
     The functions opens a window which looks like the following one:
-    
+
     @image images/open_function.png
-        
+
     The parameters ``key_save`` can be ignored but if you use this function
     with different parameters, they should all appear after a couple of runs.
     That is because the function uses ``key_save`` ot unique the file uses
@@ -471,8 +471,6 @@ def open_window_function (  func,
     @endexample
     """
     FrameFunction.open_window ( func = func,
-                                top_level_window = top_level_window, 
+                                top_level_window = top_level_window,
                                 params = params,
                                 key_save = key_save )
-
-        

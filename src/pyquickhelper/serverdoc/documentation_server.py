@@ -29,13 +29,13 @@ class DocumentationHandler(BaseHTTPRequestHandler):
     """
     Define a simple handler used by HTTPServer,
     it just serves local content.
-    
+
     """
-    
+
     mappings = {    "__fetchurl__": "http://",
                     "__shutdown__": "shut://",
                 }
-    
+
     html_header = """
             <?xml version="1.0" encoding="utf-8"?>
             <html>
@@ -49,11 +49,11 @@ class DocumentationHandler(BaseHTTPRequestHandler):
             </body>
             </html>
             """.replace("            ","")
-            
+
     cache = { }
     cache_attributes = { }
     cache_refresh = datetime.timedelta(1)
-            
+
     def LOG(self, *l, **p):
         """
         logging function
@@ -66,47 +66,47 @@ class DocumentationHandler(BaseHTTPRequestHandler):
         adds a mapping associated to a local path to watch
         @param      key         key in ``http://locahost:8008/key/
         @param      value       local path
-        
+
         Python documentation says list are proctected against multithreads (concurrent accesses).
-        
-        If you run the server multitimes, the mappings stays because it 
+
+        If you run the server multitimes, the mappings stays because it
         is a static variable.
         """
         value = os.path.normpath(value)
         if not os.path.exists(value):
             raise FileNotFoundError(value)
         DocumentationHandler.mappings[key] = value
-        
-    @staticmethod    
+
+    @staticmethod
     def get_mappings():
         """
         returns a copy of the mappings
-        
+
         @return         dictionary of mappings
         """
         return copy.copy(DocumentationHandler.mappings)
-    
+
     def __init__(self, request, client_address, server):
         """
         Regular constructor, an instance is created for each request,
         do not store any data for a longer time than a request.
         """
         BaseHTTPRequestHandler.__init__(self, request, client_address, server)
-        
+
     def do_GET(self):
         """
         what to do is case of GET request
         """
         parsed_path = urlparse(self.path)
         self.serve_content(parsed_path, "GET")
-        
+
     def do_POST(self):
         """
         what to do is case of POST request
         """
         parsed_path = urlparse.urlparse(self.path)
         self.serve_content(parsed_path)
-        
+
     def do_redirect(self, path="/index.html"):
         """
         redirection when url is just the website
@@ -115,7 +115,7 @@ class DocumentationHandler(BaseHTTPRequestHandler):
         self.send_response(301)
         self.send_header('Location', path)
         self.end_headers()
-        
+
     media_types = {
             ".js"   : ( 'application/javascript', 'r' ),
             ".css"  : ("text/css", 'r'),
@@ -131,17 +131,17 @@ class DocumentationHandler(BaseHTTPRequestHandler):
             ".svg"  : ('image/svg+xml','r'),
             ".woff" : ('application/font-wof','rb'),
            }
-        
+
     def get_ftype(self, path):
         """
         defines the header to send (type of files) based on path
         @param      path        location (a string)
         @return                 htype, ftype (html, css, ...)
-        
+
         If a type is missing, you should look for the ``MIME TYPE``
         on a search engine.
-        
-        See also `media-types <http://www.iana.org/assignments/media-types/media-types.xhtml>`_ 
+
+        See also `media-types <http://www.iana.org/assignments/media-types/media-types.xhtml>`_
         """
         ext = "." + path.split(".")[-1]
         htype, ftype = DocumentationHandler.media_types.get(ext, ('',''))
@@ -154,7 +154,7 @@ class DocumentationHandler(BaseHTTPRequestHandler):
         @return                 type (html, css, ...)
         """
         htype, ftype = self.get_ftype(path)
-        
+
         if htype != '':
             self.send_header('Content-type', htype)
             self.end_headers()
@@ -162,40 +162,40 @@ class DocumentationHandler(BaseHTTPRequestHandler):
             self.send_header('Content-type', 'text/plain')
             self.end_headers()
         return ftype
-        
+
     def get_file_content(self, localpath, ftype, path = None):
         """
         Returns the content of a local file. The function also looks into
-        folders in ``self.__pathes`` to see if the file can be found in one of the 
+        folders in ``self.__pathes`` to see if the file can be found in one of the
         folder when not found in the first one.
-        
+
         @param      localpath       local filename
         @param      ftype           r or rb
         @param      path            if != None, the filename will be path/localpath
         @return                     content
-        
+
         This function implements a simple cache mechanism.
         """
         if path is not None :
             tlocalpath = os.path.join(path, localpath)
-        else : 
+        else :
             tlocalpath = localpath
-            
+
         content = self.get_from_cache(tlocalpath)
-        if content is not None : 
+        if content is not None :
             self.LOG("serves cached",tlocalpath)
             return content
-            
+
         if ftype == "r" or ftype == "execute" :
             if not os.path.exists(tlocalpath) and "_static/bootswatch" in tlocalpath:
                 access = tlocalpath.replace("bootswatch", "bootstrap")
             else:
                 access = tlocalpath
-                
+
             if not os.path.exists(access):
                 self.LOG("** w,unable to find: ", access)
                 return None
-            
+
             self.LOG("reading file ", access)
             with open(access, "r", encoding="utf8") as f :
                 content = f.read()
@@ -206,29 +206,29 @@ class DocumentationHandler(BaseHTTPRequestHandler):
                 access = tlocalpath.replace("bootswatch", "bootstrap")
             else:
                 access = tlocalpath
-                
+
             if not os.path.exists(access):
                 self.LOG("** w,unable to find: ", access)
                 return None
-            
+
             self.LOG("reading file ", access)
             with open(tlocalpath, "rb") as f :
                 content = f.read()
                 self.update_cache(tlocalpath, content)
                 return content
-                
+
     def get_from_cache(self, key):
         """
-        retrieve a file from the cache if it was cached, 
+        retrieve a file from the cache if it was cached,
         it the file was added later than a day, it returns None
-        
+
         @param      key     key
         @return             content or None if None found or too old
         """
         content = DocumentationHandler.cache.get(key, None)
-        if content is None : 
+        if content is None :
             return content
-            
+
         att = DocumentationHandler.cache_attributes [ key ]
         delta = datetime.datetime.now() - att["date"]
         if delta > DocumentationHandler.cache_refresh:
@@ -238,11 +238,11 @@ class DocumentationHandler(BaseHTTPRequestHandler):
         else:
             DocumentationHandler.cache_attributes[key]["nb"] += 1
             return content
-            
+
     def update_cache(self, key, content):
         """
         update the cache
-        
+
         @param      key         key
         @param      content     content to place
         """
@@ -252,12 +252,12 @@ class DocumentationHandler(BaseHTTPRequestHandler):
             # unless we add protection
             #self.clean_cache(1000)
             pass
-            
+
         # this one first as a document existence is checked by using cache
         DocumentationHandler.cache_attributes[key] = {"nb":1,
                     "date": datetime.datetime.now() }
         DocumentationHandler.cache[key] = content
-        
+
     def _print_cache(self, n = 20):
         """
         display the most requested files
@@ -273,20 +273,20 @@ class DocumentationHandler(BaseHTTPRequestHandler):
         @param      localpath       local python script
         @return                     output, error
         """
-        exe = subprocess.Popen([sys.executable, localpath], 
-                               stdout = subprocess.PIPE, 
+        exe = subprocess.Popen([sys.executable, localpath],
+                               stdout = subprocess.PIPE,
                                stderr = subprocess.PIPE)
         out, error = exe.communicate()
         return out, error
-        
+
     def feed(self, any, script_python = False, params = { }):
         """
         displays something
-        
+
         @param      any                 string
         @param      script_python       if True, the function processes script sections
-        @param      params              
-        
+        @param      params              extra parameters when a script must be executed
+
         A script section looks like:
         @code
         <script type="text/python">
@@ -296,12 +296,12 @@ class DocumentationHandler(BaseHTTPRequestHandler):
         print ( tbl.tohtml(class_table="myclasstable") )
         </script>
         @endcode
-        
+
         The server does not interpret Python, to do that, you need to use
         `pyrsslocal <http://www.xavierdupre.fr/app/pyrsslocal/helpsphinx/index.html>`_.
         """
         if isinstance (any, bytes) :
-            if script_python : 
+            if script_python :
                 raise SystemError("** w,unable to execute script from bytes")
             self.wfile.write(any)
         else :
@@ -309,10 +309,10 @@ class DocumentationHandler(BaseHTTPRequestHandler):
                 any = self.process_scripts(any, params)
             text = any.encode("utf-8")
             self.wfile.write(text)
-        
+
     def shutdown(self):
         """
-        Shuts down the service from the service itself (not from another thread). 
+        Shuts down the service from the service itself (not from another thread).
         For the time being, the function generates the following exception:
         @code
         Traceback (most recent call last):
@@ -326,7 +326,7 @@ class DocumentationHandler(BaseHTTPRequestHandler):
             return func(*args)
         ValueError: file descriptor cannot be a negative integer (-1)
         @endcode
-        
+
         A better way to shut it down should is recommended. The use of the function:
         @code
         self.server.shutdown()
@@ -335,16 +335,16 @@ class DocumentationHandler(BaseHTTPRequestHandler):
         """
         self.server.socket.close()
         self.LOG("end of shut down")
-        
+
     def serve_content(self, path, method = "GET"):
         """
-        Tells what to do based on the path. The function intercepts the 
+        Tells what to do based on the path. The function intercepts the
         path /localfile/, otherwise it calls ``serve_content_web``.
-        
-        If you type ``http://localhost:8080/root/file``, 
+
+        If you type ``http://localhost:8080/root/file``,
         assuming ``root`` is mapped to a local folder.
         It will display this file.
-        
+
         @param      path        ParseResult
         @param      method      GET or POST
         """
@@ -354,26 +354,26 @@ class DocumentationHandler(BaseHTTPRequestHandler):
         else:
             params = parse_qs(path.query)
             params["__path__"] = path
-            
+
             fullurl = path.geturl()
             fullfile = path.path
             params["__url__"] = path
             spl = fullfile.strip("/").split("/")
-            
+
             project = spl[0]
             link = "/".join(spl[1:])
             value = DocumentationHandler.mappings.get(project, None)
-            
+
             if value is None:
                 self.LOG("can't serve",path)
                 self.LOG("with params",params)
                 return
                 #raise KeyError("unable to find a mapping associated to: " + project + "\nURL:\n" + url + "\nPARAMS:\n" + str(params))
-            
+
             if value == "shut://":
                 self.LOG("call shutdown")
-                self.shutdown()  
-                
+                self.shutdown()
+
             elif value == "http://":
                 self.send_response(200)
                 self.send_headers("debug.html")
@@ -383,7 +383,7 @@ class DocumentationHandler(BaseHTTPRequestHandler):
                 except Exception as e :
                     content = "<html><body>ERROR (2): %s</body></html>" % e
                 self.feed(content, False, params = { })
-            
+
             else:
                 if ".." in link:
                     # we avoid that case to prevent users from digging others paths
@@ -396,14 +396,14 @@ class DocumentationHandler(BaseHTTPRequestHandler):
                         localpath = "index.html"
                     fullpath  = os.path.join( value, localpath )
                     self.LOG("localpath ", fullpath, os.path.isfile(fullpath))
-                    
+
                     self.send_response(200)
                     _,ftype   = self.get_ftype(localpath)
-                    
+
                     execute = eval(params.get("execute",["True"])[0])
                     path    = params.get("path",[None])[0]
                     keep    = eval(params.get("keep",["False"])[0])
-                    
+
                     if keep and path not in self.get_pathes():
                         self.LOG("execute", execute , "- ftype", ftype, " - path", path, " keep ", keep)
                         self.add_path(path)
@@ -437,24 +437,24 @@ class DocumentationHandler(BaseHTTPRequestHandler):
                         else :
                             self.send_headers (localpath)
                             self.feed(out)
-                        
+
     def process_html_path(self, project, content):
         """
         process a HTML content, replace path which are relative
         to the root and not the project
-        
+
         @param      project     project, ex: ``pyquickhelper``
-        @param      content     page content 
+        @param      content     page content
         @return                 modified content
         """
         #content = content.replace(' src="',' src="' + project + '/')
         #content = content.replace(' href="',' href="' + project + '/')
         return content
-                                            
+
     def html_code_renderer(self, localpath, content):
         """
         produces a html code for code
-        
+
         @param      localpath   local path to file (local or not)
         @param      content     content of the file
         @return                 html string
@@ -464,11 +464,11 @@ class DocumentationHandler(BaseHTTPRequestHandler):
         res.append(content.replace("<","&lt;").replace(">","&gt;"))
         res.append(DocumentationHandler.html_footer)
         return "\n".join(res)
-                
+
     def serve_content_web(self, path, method, params):
         """
         functions to overload (executed after serve_content)
-        
+
         @param      path        ParseResult
         @param      method      GET or POST
         @param      params      params parsed from the url + others
@@ -477,7 +477,7 @@ class DocumentationHandler(BaseHTTPRequestHandler):
         self.send_headers("")
         self.feed("** w,unable to serve content for url: " + path.geturl() + "\n" + str(params) + "\n")
         self.send_error(404)
-        
+
     def serve_main_page(self):
         """
         displays all the mapping for the default path
@@ -491,19 +491,19 @@ class DocumentationHandler(BaseHTTPRequestHandler):
                 rows.append(row)
         rows.append("</ul></body></html>")
         content = "\n".join(rows)
-        
+
         self.send_response(200)
         self.send_headers (".html")
         self.feed(content)
-        
-                
+
+
 class DocumentationThreadServer (Thread) :
     """
     defines a thread which holds a web server
-    
+
     @var    server      the server of run
     """
-    
+
     def __init__ (self, server) :
         """
         constructor
@@ -511,27 +511,27 @@ class DocumentationThreadServer (Thread) :
         """
         Thread.__init__(self)
         self.server = server
-        
+
     def run(self):
         """
         run the server
         """
         self.server.serve_forever()
-        
+
     def shutdown(self):
         """
         shuts down the server, if it does not work, you can still kill
-        the thread: 
+        the thread:
         @code
         self.kill()
         @endcode
         """
         self.server.shutdown()
-        
-        
-def run_doc_server (server, 
+
+
+def run_doc_server (server,
                 mappings,
-                thread = False, 
+                thread = False,
                 port = 8079) :
     """
     run the server
@@ -542,31 +542,31 @@ def run_doc_server (server,
                             otherwite, it runs the server.
     @param      port        port to use
     @return                 server if thread is False, the thread otherwise (the thread is started)
-    
+
     @example(run a local server which serves the documentation)
-    
+
     The following code will create a local server: `http://localhost:8079/pyquickhelper/ <http://localhost:8079/pyquickhelper/>`_.
     @code
     this_fold = os.path.dirname(pyquickhelper.serverdoc.documentation_server.__file__)
     this_path = os.path.abspath( os.path.join( this_fold, "..", "..", "..", "dist", "html") )
     run_doc_server(None, mappings = { "pyquickhelper": this_path } )
     @endcode
-    
-    The same server can serves more than one projet. 
+
+    The same server can serves more than one projet.
     More than one mappings can be sent.
     @endexample
-    
+
     """
     for k,v in mappings.items():
         DocumentationHandler.add_mapping(k,v)
-        
-    if server == None : 
+
+    if server == None :
         server = HTTPServer(('localhost', port), DocumentationHandler)
     elif isinstance(server, str):
         server = HTTPServer((server, port), DocumentationHandler)
     elif not isinstance(server, HTTPServer):
         raise TypeError("unexpected type for server: " + str(type(server)))
-        
+
     if thread :
         th = DocumentationThreadServer(server)
         th.start()
@@ -576,8 +576,8 @@ def run_doc_server (server,
         return server
 
 if __name__ == '__main__':
-    
-    
+
+
     if True:
         # http://localhost:8079/pyquickhelper/
         this_fold  = os.path.abspath(os.path.dirname(__file__))
@@ -585,7 +585,6 @@ if __name__ == '__main__':
         this_fold  = os.path.join(this_fold, "..", "..", "..", "dist", "html")
         fLOG(OutputPrint=True)
         fLOG("running server")
-        run_doc_server(None, mappings = {   "pyquickhelper": this_fold,   
+        run_doc_server(None, mappings = {   "pyquickhelper": this_fold,
                                             "ensae_teaching_cs": this_fold2 } )
         fLOG("end running server")
-    

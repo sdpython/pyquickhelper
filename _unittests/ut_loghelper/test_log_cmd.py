@@ -18,15 +18,15 @@ from src.pyquickhelper.loghelper.flog import split_cmp_command, fLOG
 
 
 class TestLogFunc (unittest.TestCase):
-    
+
     def test_split_cmp_command(self) :
         fLOG (__file__, self._testMethodName, OutputPrint = __name__ == "__main__")
         assert split_cmp_command("ab cd ef") == ["ab", "cd", "ef"]
-        r = split_cmp_command('ab "cd ef"') 
+        r = split_cmp_command('ab "cd ef"')
         if r != ["ab", 'cd ef'] : raise Exception(r)
         assert split_cmp_command('"ab cd" ef') == ["ab cd", "ef"]
         assert split_cmp_command('"ab" cd ef') == ["ab", "cd", "ef"]
         assert split_cmp_command('"ab cd ef"') == ["ab cd ef"]
 
 if __name__ == "__main__"  :
-    unittest.main ()    
+    unittest.main ()

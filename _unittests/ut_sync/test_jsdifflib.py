@@ -24,7 +24,7 @@ from src.pyquickhelper.loghelper.flog        import fLOG
 from src.pyquickhelper.sync.visual_sync      import create_visual_diff_through_html
 
 class TestJsDiffLib(unittest.TestCase):
-    
+
     def test_jsdifflib(self) :
         fLOG (__file__, self._testMethodName, OutputPrint = __name__ == "__main__")
         tt = os.path.split(src.pyquickhelper.sync.visual_sync.__file__)[0]
@@ -36,7 +36,7 @@ class TestJsDiffLib(unittest.TestCase):
         p = create_visual_diff_through_html("a","b")
         assert len(p) > 0
         assert os.path.exists(os.path.join(ma,"difflib.js"))
-        
+
 
 if __name__ == "__main__"  :
-    unittest.main ()    
+    unittest.main ()

@@ -17,16 +17,16 @@ from src.pyquickhelper.sync.file_tree_node   import FileTreeNode
 from src.pyquickhelper.sync.synchelper       import synchronize_folder, remove_folder
 
 class TestFileCol (unittest.TestCase):
-    
+
     def test_synchro (self) :
         fLOG (__file__, self._testMethodName, OutputPrint = __name__ == "__main__")
-        
+
         try :
             import pysvn
         except ImportError:
             fLOG("pysvn is not available")
             return
-        
+
         path = os.path.split (__file__) [0]
         p1 = os.path.abspath(os.path.join (path, "..","ut_loghelper","data"))
         p2 = os.path.abspath(os.path.join(path,"pyapptemp"))
@@ -43,23 +43,23 @@ class TestFileCol (unittest.TestCase):
             if "build" in be : return False
             if exp.search (be) : return False
             return True
-            
+
         f1  = p1
         f2  = p2
-        
+
         fLOG("p1=",p1)
         fLOG("p2=",p2)
-        
+
         node1 = FileTreeNode (f1, filter = filter, repository = True)
         node2 = FileTreeNode (f2, filter = filter, repository = False)
         fLOG ("number of found files (p1)", len (node1), node1.max_date ())
         fLOG ("number of found files (p2)", len (node2), node2.max_date ())
-         
+
         res = node1.difference (node2, hash_size = 1024**2)
         for r in res :
             if r [0] == ">+" :
                 r [2].copyTo (p2)
-                
+
         node1 = FileTreeNode (f1, filter = filter, repository = True)
         node2 = FileTreeNode (f2, filter = filter, repository = False)
         fLOG ("number of found files (p1)", len (node1), node1.max_date ())
@@ -75,7 +75,7 @@ class TestFileCol (unittest.TestCase):
         seco = os.path.join(fold, "data", "temp_seco")
         troi = os.path.join(fold, "temp_troi")
         sec2 = os.path.join(troi, "temp_seco")
-        
+
         stay = os.path.join(sec2,"notfile.txt")
         nocp = os.path.join(seco,"file.txt")
 
@@ -83,26 +83,26 @@ class TestFileCol (unittest.TestCase):
             return "temp_seco" not in file
         fLOG(filter_copy(stay),stay)
         assert not filter_copy(stay)
-        
+
         if os.path.exists(troi):
             remove_folder(troi)
-        
+
         if not os.path.exists(seco) : os.mkdir(seco)
         if not os.path.exists(troi) : os.mkdir(troi)
         if not os.path.exists(sec2) : os.mkdir(sec2)
-        
+
         with open(nocp, "w") as f : f.write("should not be here")
         with open(stay, "w") as f : f.write("should stay")
-        
+
         synchronize_folder(  data,
                         troi,
                         hash_size = 0,
                         repo1 = True,
                         filter_copy = filter_copy)
-                        
+
         assert os.path.exists(os.path.join(troi,"sub","filetwo.txt"))
         assert os.path.exists(stay)
         assert not os.path.exists(stay.replace("notfile.txt", "file.txt"))
 
 if __name__ == "__main__"  :
-    unittest.main ()    
+    unittest.main ()

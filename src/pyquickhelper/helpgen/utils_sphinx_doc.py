@@ -3,7 +3,7 @@
 @brief various helpers to produce a Sphinx documentation
 
 """
-    
+
 import sys, os, re, shutil, copy
 
 from ..loghelper.flog           import fLOG
@@ -24,31 +24,31 @@ def validate_file_for_help(filename, fexclude = lambda f : False) :
     """
     if fexclude(filename) :
         return False
-    
+
     if filename.endswith(".pyd") or filename.endswith(".so") :
         return True
-        
+
     if "rpy2" in filename :
         with open(filename,"r") as f : content = f.read()
         if "from pandas.core." in content : return False
-            
+
     return True
-    
+
 def replace_relative_import (fullname, content = None) :
     """
     Takes a python file and replaces all relative imports it was able to find
     by an import which can be processed by Python if the file were the main file.
-    
+
     @param      fullname        name of the file
     @param      content         a preprocessed content of the file of the content if it is None
     @return                     content of the file without relative imports
-    
+
     @warning It uses regular expressions, so it might do it in the comments. It does not support import on several lines.
     """
     if content is None :
         with open(fullname,"r",encoding="utf8") as f :
             content = f.read()
-            
+
     lines = content.split("\n")
     reg   = re.compile("^( *)from +[.]{2}([a-zA-Z_][a-zA-Z0-9_.]*) +import +(.*)$")
     reg2  = re.compile("^( *)from +[.]([a-zA-Z_][a-zA-Z0-9_.]*) +import +(.*)$")
@@ -57,19 +57,19 @@ def replace_relative_import (fullname, content = None) :
     for i in range(0,len(lines)) :
         line = lines[i]
         find = reg.search(line)
-        
+
         extracted = None
         next      = None
         add       = None
         fr        = None
-        
+
         if find :
             sp          = find.groups()[0]
             fr          = "from"
             extracted   = find.groups()[1]
             next        = find.groups()[2]
             add         = ".."
-        else :    
+        else :
             find = reg2.search(line)
             if find :
                 sp          = find.groups()[0]
@@ -93,7 +93,7 @@ def replace_relative_import (fullname, content = None) :
                         extracted   = os.path.split(os.path.split(os.path.split(fullname)[0])[0])[-1]
                         next        = find.groups()[1]
                         add         = os.path.join("..","..")
-        
+
         if extracted != None :
             by  = ("%s%s %s import %s" % (sp, fr, extracted, next)).strip()
             sts = ["", "# replace # " + line ]
@@ -107,7 +107,7 @@ def replace_relative_import (fullname, content = None) :
             sts.append("%sdel sys.path[0]" % sp)
             line = "\n".join(sts)
             lines[i] = line
-                        
+
     return "\n".join(lines)
 
 def _private_process_one_file(fullname, to, silent, fmod, replace_relative_import):
@@ -115,7 +115,7 @@ def _private_process_one_file(fullname, to, silent, fmod, replace_relative_impor
     Copy one file from the source to the documentation folder.
     It processes some comments in doxygen format (@ param, @ return).
     It replaces relatives imports by a regular import.
-    
+
     @param      fullname                    name of the file
     @param      to                          location (folder)
     @param      silent                      no logs if True
@@ -123,7 +123,7 @@ def _private_process_one_file(fullname, to, silent, fmod, replace_relative_impor
     @param      replace_relative_import     replace relative import
     """
     ext = os.path.splitext(fullname)[-1]
-    
+
     if ext in [".pyd", ".png", ".dat", ".dll", ".o", ".so", ".exe"] :
         if ext in [".pyd", ".so"] :
             # if the file is being executed, the copy might keep the properties of
@@ -137,16 +137,16 @@ def _private_process_one_file(fullname, to, silent, fmod, replace_relative_impor
             with open(fullname, "r", encoding="utf8") as g : content = g.read()
         except UnicodeDecodeError:
             with open(fullname, "r") as g : content = g.read()
-        
+
         keepc = content
         try :
             content = migrating_doxygen_doc(content, fullname, silent)
         except SyntaxError as e:
-            if not silent : 
+            if not silent :
                 raise e
             else :
                 content = keepc
-                
+
         content = fmod (content, fullname)
         content = remove_undesired_part_for_documentation(content, fullname)
         fold = os.path.split(to)[0]
@@ -154,22 +154,22 @@ def _private_process_one_file(fullname, to, silent, fmod, replace_relative_impor
         if replace_relative_import:
             content = replace_relative_import(fullname, content)
         with open(to, "w", encoding="utf8") as g : g.write(content)
-        
+
 def remove_undesired_part_for_documentation(content, filename):
     """
     Some files contains blocs inserted between the two lines:
         * ``# -- HELP BEGIN EXCLUDE --``
         * ``# -- HELP END EXCLUDE --``
-        
+
     Those lines will be commented out.
-    
+
     @param      content     file content
     @param      filename    for error message
     @return                 modified file content
     """
     marker_in = "# -- HELP BEGIN EXCLUDE --"
     marker_out = "# -- HELP END EXCLUDE --"
-    
+
     lines   = content.split("\n")
     res     = [ ]
     inside   = False
@@ -188,9 +188,9 @@ def remove_undesired_part_for_documentation(content, filename):
             else :
                 res.append(line)
     return "\n".join(res)
-    
-def copy_source_files ( input, 
-                        output, 
+
+def copy_source_files ( input,
+                        output,
                         fmod      = lambda v, filename : v,
                         silent    = False,
                         filter    = None,
@@ -202,13 +202,13 @@ def copy_source_files ( input,
     """
     copy all sources files (input) into a folder (output),
     apply on each of them a modification
-    
+
     @param      input       input folder
     @param      output      output folder (it will be cleaned each time)
     @param      fmod        modifies the content of each file,
                             this function takes a string and returns a string
     @param      silent      if True, do not stop when facing an issue with doxygen documentation
-    @param      filter      if None, process only file related to python code, otherwise, 
+    @param      filter      if None, process only file related to python code, otherwise,
                             use this filter to select file (regular expression). If this parameter
                             is None or is empty, the default value is:
                             ``"(.+[.]py$)|(.+[.]pyd$)|(.+[.]cpp$)|(.+[.]h$)|(.+[.]dll$)|(.+[.]o$)|(.+[.]def$)|(.+[.]exe$)|(.+[.]config$)"``.
@@ -222,27 +222,27 @@ def copy_source_files ( input,
     """
     if not os.path.exists (output) :
         os.makedirs(output)
-    
+
     if remove :
         remove_folder(output, False)
-        
+
     deffilter = "(.+[.]py$)|(.+[.]pyd$)|(.+[.]cpp$)|(.+[.]h$)|(.+[.]dll$)|(.+[.]o$)|(.+[.]def$)|(.+[.]exe$)|(.+[.]config$)"
-        
+
     if addfilter is not None and len(addfilter) > 0 :
         if filter is None or len(filter) == 0 : filter = "|".join( [ deffilter, addfilter ] )
         else : filter = "|".join( [ filter, addfilter ] )
-        
+
     if filter is None :
-        actions = synchronize_folder(   input, 
-                                        output, 
-                                        filter = deffilter, 
+        actions = synchronize_folder(   input,
+                                        output,
+                                        filter = deffilter,
                                         avoid_copy = True)
     else :
-        actions = synchronize_folder(   input, 
-                                        output, 
-                                        filter = filter, 
+        actions = synchronize_folder(   input,
+                                        output,
+                                        filter = filter,
                                         avoid_copy = True)
-        
+
     if len(actions) == 0 :
         raise FileNotFoundError ("empty folder: " + input)
 
@@ -261,22 +261,22 @@ def copy_source_files ( input,
             fLOG("copy_source_files: create ", dd, softfile = softfile, fexclude = fexclude)
             os.makedirs(dd)
         fLOG("copy_source_files: copy ", file.fullname, " to ", to)
-        
+
         _private_process_one_file(file.fullname, to, silent, fmod, replace_relative_import)
-        
+
     return ractions
-    
+
 def apply_modification_template (   rootm,
                                     store_obj,
-                                    template, 
-                                    fullname, 
-                                    rootrep, 
+                                    template,
+                                    fullname,
+                                    rootrep,
                                     softfile,
                                     indexes,
                                     additional_sys_path) :
     """
     @see fn add_file_rst
-    
+
     @param      rootm       root of the module
     @param      store_obj   keep track of all objects extracted from the module
     @param      action      output from copy_source_files
@@ -289,7 +289,7 @@ def apply_modification_template (   rootm,
     @return                 content of a .rst file
     """
     from pandas import DataFrame
-    
+
     keepf     = fullname
     filename  = os.path.split(fullname)[-1]
     filenoext = os.path.splitext(filename)[0]
@@ -303,10 +303,10 @@ def apply_modification_template (   rootm,
     mo,prefix   = import_module(rootm, keepf, fLOG, additional_sys_path = additional_sys_path)
     doc         = ""
     shortdoc    = ""
-    
+
     additional  = { }
     tspecials   = { }
-    
+
     if mo is not None :
         if isinstance (mo, str) :
             # it is an error
@@ -323,29 +323,29 @@ def apply_modification_template (   rootm,
                 doc  = private_migrating_doxygen_doc(doc.split("\n"), 0, fullname)
                 doct = doc
                 doc  = []
-                
-                for d in doct : 
+
+                for d in doct :
                     if len(doc) != 0 or len(d) > 0 : doc.append(d)
                 while len(doc) > 0 and len(doc[-1]) == 0 : doc.pop()
-                    
+
                 shortdoc = doc[0] if len(doc) > 0 else ""
                 if len(doc) > 1 : shortdoc += "..."
-                
+
                 doc      = "\n".join(doc)
                 doc      = "module ``" + mo.__name__ + "``\n\n" + doc
             else :
                 doc      = ""
                 shortdoc = "empty"
-                
+
             # we produce the table for the function, classes, and
             objs   = get_module_objects(mo)
-            
+
             prefix = ".".join(fullnamenoext.split(".")[:-1])
             for ob in objs :
-                
+
                 if ob.type in ["method"] and ob.name.startswith("_") :
                     tspecials [ob.name] = ob
-                    
+
                 ob.add_prefix (prefix)
                 if ob.key in store_obj :
                     if isinstance (store_obj [ob.key], list) :
@@ -354,7 +354,7 @@ def apply_modification_template (   rootm,
                         store_obj [ob.key] = [store_obj [ob.key], ob]
                 else :
                     store_obj [ob.key] = ob
-            
+
             for k,v in add_file_rst_template_cor.items () :
                 values = [ [ o.rst_link(None, class_in_bracket = False), o.truncdoc ] \
                                     for o in objs if o.type == k ]
@@ -363,7 +363,7 @@ def apply_modification_template (   rootm,
                     for row in tbl.values :
                         if ":meth:`_" in row[0] :
                             row[0] = row[0].replace(":meth:`_",":py:meth:`_")
-                    
+
                     if len(tbl) > 0 :
                         maxi = max([len(_) for _ in tbl[k] ])
                         s = 0 if tbl.ix[0,1] is None else len(tbl.ix[0,1])
@@ -371,23 +371,23 @@ def apply_modification_template (   rootm,
                         tbl.ix[0,1] = t + (" " * (3*maxi - s))
                         sph  = df_to_rst(tbl, align=["1x","3x"])
                         titl = "\n\n" + add_file_rst_template_title[k] + "\n"
-                        titl += "+" * len(add_file_rst_template_title[k]) 
+                        titl += "+" * len(add_file_rst_template_title[k])
                         titl += "\n\n"
                         additional [v] = titl + sph
                     else :
                         additional [v] = ""
                 else :
                     additional [v] = ""
-                
+
             del mo
-        
+
     else :
         doc = "Error: unable to import."
-        
+
     label = IndexInformation.get_label(indexes, "f-" + filenoext)
     indexes [ label ] = IndexInformation("module", label, filenoext, doc, None, keepf)
     fLOG("adding into index ", indexes [ label ])
-        
+
     try :
         with open(keepf, "r") as ft : content = ft.read()
     except UnicodeDecodeError:
@@ -395,16 +395,16 @@ def apply_modification_template (   rootm,
             with open(keepf, "r", encoding="latin-1") as ft : content = ft.read()
         except UnicodeDecodeError:
             with open(keepf, "r", encoding="utf8") as ft : content = ft.read()
-            
+
     plat = "Windows" if "This example only runs on Windows." in content else "any"
-    
+
     # dealing with special members (does not work)
     #text_specials = "".join(["    :special-members: %s\n" % k for k in tspecials ])
-    text_specials = ""  
-    
+    text_specials = ""
+
     if fullnamenoext.endswith(".__init__"): fullnamenoext = fullnamenoext[ : -len(".__init__")]
     if filenoext.endswith(".__init__"): filenoext = filenoext[ : -len(".__init__")]
-     
+
     ttitle = "module ``{0}``".format(fullnamenoext)
     rep = { "__FULLNAME_UNDERLINED__": ttitle + "\n" + ("=" * len(ttitle)) +"\n",
             "__FILENAMENOEXT__":filenoext,
@@ -414,29 +414,29 @@ def apply_modification_template (   rootm,
             "__PLATFORM__":plat,
             "__ADDEDMEMBERS__":text_specials,
              }
-             
+
     for k,v in additional.items() :
         rep [k] = v
-        
+
     res = template
     for a,b in rep.items () :
         res = res.replace(a,b)
-        
+
     has_class = "class " in content
     if not has_class :
         spl = res.split("\n")
         spl = [ _ for _ in spl if not _.startswith(".. inheritance-diagram::") ]
         res = "\n".join(spl)
-            
+
     if softfile(fullname) :
         res = res.replace (":special-members:", "")
-        
+
     return res
-    
+
 def add_file_rst (rootm,
-                  store_obj, 
-                  actions, 
-                  template          = add_file_rst_template, 
+                  store_obj,
+                  actions,
+                  template          = add_file_rst_template,
                   rootrep           = ("_doc.sphinxdoc.source.pyquickhelper.", ""),
                   fmod              = lambda v,filename : v,
                   softfile          = lambda f : False,
@@ -445,7 +445,7 @@ def add_file_rst (rootm,
                   additional_sys_path = [ ]) :
     """
     creates a rst file for every source file
-    
+
     @param      rootm           root of the module (for relative import)
     @param      store_obj       to keep table of all objects
     @param      action          output from copy_source_files
@@ -467,43 +467,43 @@ def add_file_rst (rootm,
     @param      indexes         to index some information { dictionary label:IndexInformation (...) }, the function populates it
     @param      additional_sys_path     additional path to include to sys.path before importing a module (will be removed afterwards)
     @return                     list of written files stored in RstFileHelp
-    
+
     @todo This functions still includes some code specific to pyquickhelper.
     """
 
     memo = { }
     app  = []
-    for a,file,dest in actions : 
+    for a,file,dest in actions :
         if not isinstance (file, str) : file = file.name
 
         to   = os.path.join(dest, file)
         rst  = os.path.splitext(to)[0]
         rst += ".rst"
         ext  = os.path.splitext(to)[-1]
-        
+
         if file.endswith(".py") :
             if os.stat(to).st_size > 0 :
                 content = apply_modification_template(rootm, store_obj, template, to, rootrep, softfile, indexes, additional_sys_path = additional_sys_path)
                 content = fmod(content)
-                
+
                 # tweaks for example and studies
                 zzz  = to.replace ("\\","/")
                 name = os.path.split(file)[-1]
                 noex = os.path.splitext(name)[0]
-                
+
                 # todo: specific case: should be removed and added back in a proper way
                 if "examples/" in zzz or "studies/" in zzz :
                     content += "\n.. _%s_literal:\n\nCode\n----\n\n.. literalinclude:: %s\n\n" % (noex, name)
-                
+
                 with open(rst, "w", encoding="utf8") as g :
                     g.write(content)
                 app.append( RstFileHelp (to,rst, ""))
-                
+
                 for k,v in indexes.items() :
                     if v.fullname == to :
                         v.set_rst_file(rst)
                         break
-                        
+
         else :
             for pat,func in mapped_function :
                 if func is None and ext == ".rst" : continue
@@ -513,31 +513,31 @@ def add_file_rst (rootm,
                     with open(to, "r", encoding="utf8") as g: content = g.read()
                     if func is None : func = filecontent_to_rst
                     content = func(to, content)
-                    
+
                     if isinstance(content, tuple) and len(content) == 2 :
                         content,doc = content
                     else :
                         doc = ""
-                    
+
                     with open(rst, "w", encoding="utf8") as g :
                         g.write(content)
                     app.append( RstFileHelp (to,rst, ""))
-                    
+
                     filenoext,ext = os.path.splitext(os.path.split(to)[-1])
                     ext = ext.strip(".")
                     label = IndexInformation.get_label(indexes, "ext-" + filenoext)
                     indexes [ label ] = IndexInformation("ext-" + ext, label, filenoext, doc, rst, to)
                     fLOG("add ext into index ", indexes [ label ])
-                    
+
     return app
-    
-def produces_indexes (  
-            store_obj, 
+
+def produces_indexes (
+            store_obj,
             indexes,
             fexclude_index,
             titles          = {"method":"Methods",
-                               "staticmethod":"Static Methods", 
-                               "property":"Properties", 
+                               "staticmethod":"Static Methods",
+                               "property":"Properties",
                               "function":"Functions",
                               "class":"Classes",
                               "module":"Modules"},
@@ -558,7 +558,7 @@ def produces_indexes (
     @return                         dictionary: { type : rst content of the index }
     """
     from pandas import DataFrame
-    
+
     # we process store_obj
     types = { }
     for k,v in store_obj.items () :
@@ -567,33 +567,33 @@ def produces_indexes (
         for _ in v :
             if fexclude_index(_) : continue
             types [_.type] = types.get(_.type,0) + 1
-        
+
     fLOG("store_obj: extraction of types ",types)
     res = { }
     for k in types :
-        
+
         values = []
         for t,so in store_obj.items() :
             if not isinstance(so,list) :
                 so = [ so ]
-                
+
             for o in so :
                 if fexclude_index(o) : continue
                 if o.type != k : continue
-                values.append (  [ o.name, 
-                                   o.rst_link(class_in_bracket = False), 
+                values.append (  [ o.name,
+                                   o.rst_link(class_in_bracket = False),
                                    o.classname.__name__ if o.classname is not None else "",
                                    o.truncdoc ] )
-                
+
         values.sort()
         for row in values :
             if ":meth:`_" in row[1] :
                 row[1] = row[1].replace(":meth:`_",":py:meth:`_")
-    
+
         tbl = DataFrame (columns=["_", k, "class parent", "truncated documentation"] , data=values)
         if len(tbl.columns)>=2 :
             tbl = tbl [  tbl.columns[1:] ]
-            
+
         if len(tbl) > 0 :
             maxi = max([len(_) for _ in tbl[k] ])
             s = 0 if tbl.ix[0,1] is None else len(tbl.ix[0,1])
@@ -603,32 +603,32 @@ def produces_indexes (
             align[-1] = "3x"
             sph = df_to_rst(tbl, align=align)
             res [k] = sph
-    
+
     # we process indexes
-    
+
     types = { }
     for k,v in indexes.items () :
         if fexclude_index(v) : continue
         types [v.type] = types.get(v.type,0) + 1
-        
+
     fLOG("indexes: extraction of types ",types)
 
     for k in types :
-        if k in res : 
+        if k in res :
             raise HelpGenException ("you should not index anything related to classes, functions or method (conflict: %s)" % k)
         values = []
         for t,o in indexes.items() :
             if fexclude_index(o) : continue
             if o.type != k : continue
-            values.append (  [ o.name, 
-                               o.rst_link(), 
+            values.append (  [ o.name,
+                               o.rst_link(),
                                o.truncdoc ] )
         values.sort()
-    
+
         tbl = DataFrame (columns=["_", k, "truncated documentation"] , data=values)
         if len(tbl.columns)>=2 :
             tbl = tbl [  tbl.columns[1:] ]
-            
+
         if len(tbl) > 0 :
             maxi = max( [ len(_) for _ in tbl[k] ] )
             tbl.ix[0,1] = tbl.ix[0,1] + (" " * (3*maxi - len(tbl.ix[0,1])))
@@ -636,31 +636,31 @@ def produces_indexes (
             align[-1] = "3x"
             sph = df_to_rst(tbl, align=align)
             res [k] = sph
-            
+
     # end
-    
+
     for k in res :
         label = correspondances.get (k, k)
         title = titles.get(k,k)
         under = "=" * len(title)
-        
+
         res[k] = "\n.. _%s:\n\n%s\n%s\n\n%s" % (label, title, under, res[k])
-    
+
     return res
-    
+
 def filecontent_to_rst(filename, content) :
     """
     produces a .rst file which contains the file. It adds a title and a label based on the
     filename (no folder included).
-    
+
     @param      filename        filename
     @param      content         content
     @return                     new content
     """
     file = os.path.split(filename)[-1]
     full = file + "\n" + ("=" * len(file)) +"\n"
-    rows =  [ "", ".. _f-%s:" % file, "", "", full, "", 
-                #"fullpath: ``%s``" % filename, 
+    rows =  [ "", ".. _f-%s:" % file, "", "", full, "",
+                #"fullpath: ``%s``" % filename,
                 "", "" ]
     if ".. RSTFORMAT." in content :
         rows.append(".. include:: %s " % file)
@@ -669,13 +669,13 @@ def filecontent_to_rst(filename, content) :
     rows.append("")
 
     nospl = content.replace("\n","_!_!:!_")
-    
+
     reg = re.compile("(.. beginshortsummary[.](.*?).. endshortsummary[.])")
     cont = reg.search(nospl)
     if cont :
         g = cont.groups()[1].replace("_!_!:!_","\n")
         return "\n".join(rows), g.strip("\n\r ")
-    
+
     if "@brief" in content:
         spl = content.split("\n")
         begin = None
@@ -684,12 +684,12 @@ def filecontent_to_rst(filename, content) :
             if "@brief" in spl[i] : begin = i
             if end is None and begin is not None and len(spl[i].strip(" \n\r\t")) == 0 :
                 end = i
-                
+
         if begin is None and end is not None :
             summary = "\n".join( spl[begin:end] ).replace("@brief","").strip("\n\t\r ")
         else :
             summary = "no documentation"
-            
+
         # looking for C++/java/C# comments
         spl = content.split("\n")
         begin = None
@@ -698,25 +698,25 @@ def filecontent_to_rst(filename, content) :
             if "/**" in spl[i] : begin = i
             if end == None and begin != None and "*/" in spl[i]:
                 end = i
-            
+
         content = "\n".join(rows)
         if begin is not None and end is not None :
             filerows = private_migrating_doxygen_doc(spl[begin+1:end-1], 1, filename)
             rstr = "\n".join(filerows)
             rstr = re.sub(":param +([a-zA-Z_][[a-zA-Z_0-9]*) *:", r"* **\1**:", rstr)
             content = content.replace(".. literalinclude::","\n%s\n\n.. literalinclude::" % rstr)
-            
+
         return content, summary
-            
+
     return "\n".join(rows), "no documentation"
-    
+
 def prepare_file_for_sphinx_help_generation (
         store_obj,
-        input, 
-        output, 
+        input,
+        output,
         subfolders,
         fmod_copy       = lambda v, filename : v,
-        template        = add_file_rst_template, 
+        template        = add_file_rst_template,
         rootrep         = ("_doc.sphinxdoc.source.project_name.", ""),
         fmod_res        = lambda v : v,
         silent          = False,
@@ -727,10 +727,10 @@ def prepare_file_for_sphinx_help_generation (
         fexclude_index  = lambda f : False,
         issues          = None,
         additional_sys_path = [ ],
-        replace_relative_import = False) :        
+        replace_relative_import = False) :
     """
     prepare all files for Sphinx generation
-    
+
     @param      store_obj       to keep track of all objects, it should be a dictionary
     @param      input           input folder
     @param      output          output folder (it will be cleaned each time)
@@ -746,7 +746,7 @@ def prepare_file_for_sphinx_help_generation (
     @param      rootrep         file name in the documentation contains some folders which are not desired in the documentation
     @param      fmod_res        applies modification to the instanciated template
     @param      silent          if True, do not stop when facing an issue with doxygen migration
-    @param      optional_dirs   list of tuple with a list of folders (source, copy, filter) to 
+    @param      optional_dirs   list of tuple with a list of folders (source, copy, filter) to
                                 copy for the documentation, example:
                                 @code
                                     ( <folder_help>, "coverage", ".*" )
@@ -755,7 +755,7 @@ def prepare_file_for_sphinx_help_generation (
                                 the documentation is lighter (no special members)
     @param      fexclude        function to exclude some files from the help
     @param      fexclude_index  function to exclude some files from the indices
-    
+
     @param      mapped_function list of 2-tuple (pattern, function). Every file matching the pattern
                                 will be copied to the documentation folder, its content will be sent
                                 to the function and will produce a file <filename>.rst. Example:
@@ -765,38 +765,38 @@ def prepare_file_for_sphinx_help_generation (
                                 The function takes two parameters: full_filename, content_filename. It returns
                                 a string (the rst file) or a tuple (rst file, short description).
                                 By default (if function is None), the function ``filecontent_to_rst`` will be called.
-                                
+
     @param      issues          if not None (a list), the function will store some issues here.
-    
+
     @param      additional_sys_path     additional pathes to includes to sys.path when import a module (will be removed afterwards)
-    @param      replace_relative_import replace relative import 
-                                
+    @param      replace_relative_import replace relative import
+
     @return                     list of written files stored in RstFileHelp
-    
+
     Example:
-    
+
     @code
-    prepare_file_for_sphinx_help_generation ( 
+    prepare_file_for_sphinx_help_generation (
                 {},
-                ".", 
-                "_doc/sphinxdoc/source/", 
-                subfolders      = [ 
-                                    ("src/" + project_var_name, project_var_name), 
+                ".",
+                "_doc/sphinxdoc/source/",
+                subfolders      = [
+                                    ("src/" + project_var_name, project_var_name),
                                      ],
                 silent          = True,
                 rootrep         = ("_doc.sphinxdoc.source.%s." % (project_var_name,), ""),
                 optional_dirs   = optional_dirs,
-                mapped_function = [ (".*[.]tohelp$", None) ] )    
+                mapped_function = [ (".*[.]tohelp$", None) ] )
     @endcode
-    """   
+    """
     fLOG("* starting documentation preparation in",output)
     rootm = os.path.abspath(output)
-    fLOG("* module location", input) 
-    
+    fLOG("* module location", input)
+
     actions = [ ]
     rsts    = [ ]
     indexes = { }
-    
+
     for sub in subfolders :
         if isinstance(sub, str) :
             src = (input  + "/" + sub).replace("//","/")
@@ -804,17 +804,17 @@ def prepare_file_for_sphinx_help_generation (
         else :
             src = (input  + "/" + sub[0]).replace("//","/")
             dst = (output + "/" + sub[1]).replace("//","/")
-            
+
         if os.path.isfile(src) :
             _private_process_one_file(src, dst, silent, fmod_copy)
             temp       = os.path.split(dst)
             actions_t  = [ (">", temp[1], temp[0])  ]
             rstadd     = add_file_rst ( rootm,
-                                        store_obj, 
-                                        actions_t, 
-                                        template, 
-                                        rootrep, 
-                                        fmod_res, 
+                                        store_obj,
+                                        actions_t,
+                                        template,
+                                        rootrep,
+                                        fmod_res,
                                         softfile = softfile,
                                         mapped_function = mapped_function,
                                         indexes = indexes,
@@ -822,29 +822,29 @@ def prepare_file_for_sphinx_help_generation (
                                         )
             rsts      += rstadd
         else :
-            
-            actions_t  = copy_source_files (src, 
-                                            dst, 
-                                            fmod_copy, 
-                                            silent = silent, 
-                                            softfile = softfile, 
+
+            actions_t  = copy_source_files (src,
+                                            dst,
+                                            fmod_copy,
+                                            silent = silent,
+                                            softfile = softfile,
                                             fexclude = fexclude,
                                             addfilter = "|".join( [ '(%s)' % _[0] for _ in mapped_function ] ),
                                             replace_relative_import = replace_relative_import)
-                                                                                     
+
             rsts      += add_file_rst ( rootm,
-                                        store_obj, 
-                                        actions_t, 
-                                        template, 
-                                        rootrep, 
-                                        fmod_res, 
+                                        store_obj,
+                                        actions_t,
+                                        template,
+                                        rootrep,
+                                        fmod_res,
                                         softfile = softfile,
                                         mapped_function = mapped_function,
                                         indexes = indexes,
                                         additional_sys_path = additional_sys_path)
-        
+
         actions += actions_t
-    
+
     # everything is cleaned from the build folder, so, it is no use
     for tu in optional_dirs :
         if len(tu) == 2 : fold, dest, filt = tu + ( ".*", )
@@ -853,12 +853,12 @@ def prepare_file_for_sphinx_help_generation (
         if not os.path.exists (dest) :
             fLOG("creating folder (sphinx) ", dest)
             os.makedirs(dest)
-            
-        copy_source_files ( fold, 
-                            dest, 
-                            silent = silent, 
-                            filter = filt, 
-                            softfile = softfile, 
+
+        copy_source_files ( fold,
+                            dest,
+                            silent = silent,
+                            filter = filt,
+                            softfile = softfile,
                             fexclude = fexclude,
                             addfilter = "|".join( [ '(%s)' % _[0] for _ in mapped_function ] ),
                             replace_relative_import = replace_relative_import)
@@ -866,7 +866,7 @@ def prepare_file_for_sphinx_help_generation (
     # processing all store_obj to compute some indices
     fLOG("extracted ", len(store_obj), " objects")
     res = produces_indexes(store_obj, indexes, fexclude_index)
-    
+
     fLOG("generating ", len(res), " indexes for ", ", ".join(list(res.keys())))
     allfiles = [ ]
     for k,v in res.items() :
@@ -885,7 +885,7 @@ def prepare_file_for_sphinx_help_generation (
         with open(out, "w", encoding="utf8") as f :
             f.write(v)
         rsts.append ( RstFileHelp (None, out, None) )
-        
+
     all_index = os.path.join(output, "all_indexes.rst")
     with open(all_index,"w") as falli :
         falli.write("\n")
@@ -898,24 +898,24 @@ def prepare_file_for_sphinx_help_generation (
             falli.write("    %s\n" % k)
         falli.write("\n")
     rsts.append( RstFileHelp(None, all_index, None))
-        
+
     # last function to process images
     fLOG("looking for images",output)
-    
+
     images = os.path.join( output, "images")
     fLOG("+looking for images into ", images, " for folder ", output)
     if os.path.exists (images) :
         process_copy_images(output, images)
-        
+
     # fixes indexed objects with incomplete names
     # :class:`name`  --> :class:`name <...>`
     fLOG("+looking for incomplete references",output)
     fix_incomplete_references(output, store_obj, issues = issues)
     #for t,so in store_obj.items() :
-    
+
     # look for FAQ and example
     app = [ ]
-    for tag,title in [("FAQ","FAQ"), 
+    for tag,title in [("FAQ","FAQ"),
                       ("example","Examples")] :
         onefiles = process_look_for_tag(tag, title, rsts)
         for page,onefile in onefiles:
@@ -925,16 +925,16 @@ def prepare_file_for_sphinx_help_generation (
             with open(saveas, "w", encoding="utf8") as f : f.write(onefile)
             app.append( RstFileHelp (saveas, onefile, "") )
     rsts += app
-  
+
     fLOG("* end of documentation preparation in",output)
     return actions, rsts
-    
+
 def process_copy_images(folder_source, folder_images):
     """
     look into every file .rst or .py for images (.. image:: imagename),
-    if this image was found in directory folder_images, then the image is copied 
+    if this image was found in directory folder_images, then the image is copied
     close to the file
-    
+
     @param      folder_source       folder where to look for sources
     @param      folder_images       folder where to look for images
     @return                         list of copied images
@@ -944,12 +944,12 @@ def process_copy_images(folder_source, folder_images):
     cop     = [ ]
     for fn in files :
         try :
-            with open(fn, "r", encoding="utf8") as f : 
+            with open(fn, "r", encoding="utf8") as f :
                 content = f.read()
         except :
-            with open(fn, "r") as f : 
+            with open(fn, "r") as f :
                 content = f.read()
-            
+
         lines = content.split("\n")
         for line in lines :
             img = reg.search(line)
@@ -965,23 +965,23 @@ def process_copy_images(folder_source, folder_images):
                 else :
                     fLOG("-unable to find image ", name)
     return cop
-    
+
 def fix_incomplete_references(folder_source, store_obj, issues = None):
     """
     look into every file .rst or .py for incomplete reference. Example::
-    
+
         :class:`name`  --> :class:`name <...>`.
-        
-    
+
+
     @param      folder_source       folder where to look for sources
     @param      store_obj           container for indexed objects
     @param      issues              if not None (a list), it will add issues (function, message)
     @return                         list of fixed references
     """
-    cor = { "func":["function"], 
+    cor = { "func":["function"],
             "meth":[ "method", "property", "staticmethod" ]
-            }            
-    
+            }
+
     _,files = explore_folder (folder_source, "[.](py)$")
     reg     = re.compile("(:(py:)?((class)|(meth)|(func)):`([a-zA-Z_][a-zA-Z0-9_]*?)`)")
     cop     = [ ]
@@ -992,9 +992,9 @@ def fix_incomplete_references(folder_source, store_obj, issues = None):
         except :
             with open(fn, "r") as f : content = f.read()
             encoding = None
-            
+
         mainname = os.path.splitext(os.path.split(fn)[-1])[0]
-            
+
         modif = False
         lines = content.split("\n")
         rline = [ ]
@@ -1005,13 +1005,13 @@ def fix_incomplete_references(folder_source, store_obj, issues = None):
                 #pre = ref.groups()[1]
                 typ = ref.groups()[2]
                 nam = ref.groups()[-1]
-                
+
                 key = None
                 obj = None
                 for cand in cor.get(typ, [ typ ] ) :
                     k = "%s;%s" % (cand, nam)
                     if k in store_obj :
-                        if isinstance(store_obj[k], list): 
+                        if isinstance(store_obj[k], list):
                             se = [ _s for _s in store_obj[k] if mainname in _s.rst_link() ]
                             if len(se) == 1 :
                                 obj = se[0]
@@ -1020,7 +1020,7 @@ def fix_incomplete_references(folder_source, store_obj, issues = None):
                             key = k
                             obj = store_obj[k]
                             break
-                
+
                 if key in store_obj:
                     modif = True
                     lnk = obj.rst_link(class_in_bracket = False)
@@ -1029,18 +1029,18 @@ def fix_incomplete_references(folder_source, store_obj, issues = None):
                 else :
                     fLOG("  w,unable to replace key ", key, ": ", all, "in file", fn)
                     if issues is not None :
-                        issues.append ( ("fix_incomplete_references", 
+                        issues.append ( ("fix_incomplete_references",
                                 "unable to replace key %s, link %s in file %s" % (key, all, fn)))
-                    
+
             rline.append(line)
-            
+
         if modif :
             if encoding == "utf8" :
                 with open(fn, "w", encoding="utf8") as f : f.write("\n".join(rline))
             else :
                 with open(fn, "w") as f : f.write("\n".join(rline))
-    return cop    
-    
+    return cop
+
 def migrating_doxygen_doc(content, filename, silent = False, log = False, debug = False) :
     """
     migrates the doxygen documentation to rst format
@@ -1050,57 +1050,57 @@ def migrating_doxygen_doc(content, filename, silent = False, log = False, debug 
     @param      log         if True, write some information in the logs (not only exceptions)
     @param      debug       display more information on the output if True
     @return                 new content file
-    
+
     @see fn private_migrating_doxygen_doc to get the list of conversion
     which will be done.
     """
     if log : fLOG("migrating_doxygen_doc: ", filename)
-    
+
     rows = []
     def print_in_rows ( v, file = None) :
         rows.append (v)
-    process_string (content, 
-                    print_in_rows, 
+    process_string (content,
+                    print_in_rows,
                     private_migrating_doxygen_doc,
                     filename,
                     0,
                     debug = debug)
     return "\n".join(rows)
-    
+
 # -- HELP BEGIN EXCLUDE --
-    
+
 def private_migrating_doxygen_doc(
-                    rows, 
-                    index_first_line, 
+                    rows,
+                    index_first_line,
                     filename,
-                    debug       = False, 
+                    debug       = False,
                     silent      = False) :
     """
     process a block help (from doxygen to rst):
-    
+
     @param      rows                list of text lines
     @param      index_first_line    index of the first line (to display useful message error)
     @param      filename            filename (to display useful message error)
     @param      silent              if True, do not display anything
     @param      debug               display more information if True
     @return                         another list of text lines
-    
+
     @warning    This function uses regular expression to process the documentation,
                 it does not import the module (as Sphinx does). It might misunderstand some code.
-    
+
     @todo Try to import the module and if it possible, uses that information to help
     the parsing.
-    
+
     The following line displays error message you can click on using SciTe
-    
+
     @code
     raise SyntaxError("  File \"%s\", line %d, in ???\n    unable to process: %s " %(filename, index_first_line+i+1, row))
     @endcode
-    
+
     __sphinx__skip__
-    
+
     The previous string tells the function to stop processing the help.
-    
+
     Doxygen conversions::
 
         @param      <param_name>  description
@@ -1125,44 +1125,44 @@ def private_migrating_doxygen_doc(
 
         @brief
         nothing
-        
+
         @ingroup  ...
         nothing
-        
+
         @defgroup  ....
         nothing
-        
+
         @image html ...
-        
+
         @see,@ref  label forbidden
         should be <op> <fn> <label>, example: @ref cl label
         <op> must be in [fn, cl, at, me, te, md]
-        
+
         :class:`label`
         :func:`label`
         :attr:`label`
         :meth:`label`
         :mod:`label`
-        
+
         @warning description  (until next empty line)
-        .. warning::  
+        .. warning::
            description
-           
-        @todo        
+
+        @todo
         .. todo:: a todo box
-           
+
         ------------- not done yet
-           
+
         @img      image name
         .. image:: test.png
-            :width: 200pt 
-            
+            :width: 200pt
+
         `Python <http://www.python.org/>`_
-        
-        
+
+
         .. raw:: html
             html indente
-            
+
     """
     debugrows = rows
     rows = [ _.replace("\t", "    ") for _ in rows ]
@@ -1171,28 +1171,28 @@ def private_migrating_doxygen_doc(
     exce = re.compile ("([@]exception( +)([a-zA-Z0-9_]+)) ")
     exem = re.compile ("([@]example[(](.*?___)?(.*?)[)])")
     faq_ = re.compile ("([@]FAQ[(](.*?___)?(.*?)[)])")
-    
+
     indent    = False
     openi     = False
     beginends = { }
-    
+
     whole  = "\n".join(rows)
     if "@var" in whole :
         whole = process_var_tag(whole, True)
         rows = whole.split("\n")
-    
+
     for i in range (len(rows)) :
         row   = rows[i]
-        
+
         if debug :
             fLOG ("-- indent=%s openi=%s row=%s" % (indent, openi, row))
-        
-        if "__sphinx__skip__" in row : 
+
+        if "__sphinx__skip__" in row :
             if not silent : fLOG ("  File \"%s\", line %s, skipping" % (filename, index_first_line+i+1))
             break
 
         strow = row.strip(" ")
-        
+
         if "@endFAQ" in strow or "@endexample" in strow :
             if "@endFAQ" in strow:
                 beginends["FAQ"] = beginends.get("FAQ",0)-1
@@ -1203,7 +1203,7 @@ def private_migrating_doxygen_doc(
                 sp      = " " * row.index("@endexample")
                 rows[i] = sp + ".. endexample."
             continue
-    
+
         if indent :
             if (not openi and len(strow) == 0) or "@endcode" in strow :
                 indent = False
@@ -1213,27 +1213,27 @@ def private_migrating_doxygen_doc(
                     beginends["code"] = beginends.get("code",0)-1
             else :
                 rows[i] = "    " + rows[i]
-                
+
         else :
-            
+
             if strow.startswith("@warning") :
                 pos     = rows[i].find("@warning")
                 sp      = " "*pos
                 rows[i] = rows[i].replace("@warning", "\n%s.. warning:: " % sp)
                 indent = True
-                
+
             elif strow.startswith("@todo") :
                 pos     = rows[i].find("@todo")
                 sp      = " "*pos
                 rows[i] = rows[i].replace("@todo", "\n%s.. todo:: " % sp)
                 indent = True
-                
+
             elif strow.startswith("@ingroup") :
                 rows[i] = ""
-                
+
             elif strow.startswith("@defgroup") :
                 rows[i] = ""
-                
+
             elif strow.startswith("@image") :
                 pos = rows[i].find("@image")
                 sp  = " "*pos
@@ -1242,7 +1242,7 @@ def private_migrating_doxygen_doc(
                 if img.startswith("http://") :
                     rows[i] = "\n%s.. fancybox:: "%sp + img + "\n\n"
                 else :
-                    
+
                     if img.startswith("images") or img.startswith("~"):
                         # we assume it is a relative path to the source
                         img = img.strip("~")
@@ -1251,10 +1251,10 @@ def private_migrating_doxygen_doc(
                         ref = "/".join([".."] * (len(spl_path) - pos - 2)) + "/"
                     else :
                         ref = ""
-                        
+
                     sp = " " * row.index("@image")
                     rows[i] = "\n%s.. image:: %s%s\n%s    :align: center\n" % (sp,ref,img,sp)
-                    
+
             elif strow.startswith("@code") :
                 pos       = rows[i].find("@code")
                 sp        = " "*pos
@@ -1262,45 +1262,45 @@ def private_migrating_doxygen_doc(
                 while prev > 0 and len(rows[prev].strip(" \n\r\t"))== 0:
                     prev -= 1
                 rows[i]   = ""
-                if rows[prev].strip("\n").endswith("."): 
+                if rows[prev].strip("\n").endswith("."):
                     rows[prev] += "\n\n%s::\n" % sp
                 else :
                     rows[prev] += (":" if rows[i].endswith(":") else "::")
                 indent = True
                 openi  = True
                 beginends["code"] = beginends.get("code",0)+1
-            
+
             # basic tags
             row = rows[i]
-            
+
             # tag param
             look    = pars.search(row)
             lexxce  = exce.search(row)
             example = exem.search(row)
             faq     = faq_.search(row)
-            
+
             if look :
                 rep     = look.groups()[0]
                 sp      = look.groups()[1]
                 name    = look.groups()[2]
                 to      = ":param%s%s:" % (sp, name)
                 rows[i] = row.replace(rep, to)
-                
+
                 # it requires an empty line before if the previous line does not start by :
                 if i > 0 and not rows[i-1].strip().startswith(":") and len(rows[i-1].strip()) > 0 :
                     rows[i] = "\n" + rows[i]
-                
+
             elif lexxce:
                 rep     = lexxce.groups()[0]
                 sp      = lexxce.groups()[1]
                 name    = lexxce.groups()[2]
                 to      = ":raises%s%s:" % (sp, name)
                 rows[i] = row.replace(rep, to)
-                
+
                 # it requires an empty line before if the previous line does not start by :
                 if i > 0 and not rows[i-1].strip().startswith(":") and len(rows[i-1].strip()) > 0 :
                     rows[i] = "\n" + rows[i]
-                
+
             elif example:
                 sp      = " " * row.index("@example")
                 rep     = example.groups()[0]
@@ -1313,12 +1313,12 @@ def private_migrating_doxygen_doc(
                 ref2    = make_label_index(exa, str(example.groups()))
                 to      = "\n\n%s.. _le-%s:\n\n%s.. _le-%s:\n\n%s**Example: %s**  \n\n%s.. example(%s%s;;le-%s)." % (sp,ref,sp,ref2,sp,exa,sp,pag,exa,ref)
                 rows[i] = row.replace(rep, to)
-                
+
                 # it requires an empty line before if the previous line does not start by :
                 if i > 0 and not rows[i-1].strip().startswith(":") and len(rows[i-1].strip()) > 0 :
                     rows[i] = "\n" + rows[i]
                 beginends["example"] = beginends.get("example",0)+1
-                
+
             elif faq:
                 sp      = " " * row.index("@FAQ")
                 rep     = faq.groups()[0]
@@ -1331,29 +1331,29 @@ def private_migrating_doxygen_doc(
                 ref2    = make_label_index(exa, str(faq.groups()))
                 to      = "\n\n%s.. _le-%s:\n\n%s.. _le-%s:\n\n%s**FAQ: %s**  \n\n%s.. FAQ(%s%s;;le-%s)." % (sp,ref,sp,ref2,sp,exa,sp,pag,exa,ref)
                 rows[i] = row.replace(rep, to)
-                
+
                 # it requires an empty line before if the previous line does not start by :
                 if i > 0 and not rows[i-1].strip().startswith(":") and len(rows[i-1].strip()) > 0 :
                     rows[i] = "\n" + rows[i]
                 beginends["FAQ"] = beginends.get("FAQ",0)+1
-                
+
             elif "@return" in row :
                 rows[i] = row.replace("@return", ":return:")
                 # it requires an empty line before if the previous line does not start by :
                 if i > 0 and not rows[i-1].strip().startswith(":") and len(rows[i-1].strip()) > 0 :
                     rows[i] = "\n" + rows[i]
-                    
+
             elif "@rtype" in row :
                 rows[i] = row.replace("@rtype", ":rtype:")
                 # it requires an empty line before if the previous line does not start by :
                 if i > 0 and not rows[i-1].strip().startswith(":") and len(rows[i-1].strip()) > 0 :
                     rows[i] = "\n" + rows[i]
-                    
-            elif "@brief" in row : 
+
+            elif "@brief" in row :
                 rows[i] = row.replace("@brief", "").strip()
-            elif "@file" in row : 
+            elif "@file" in row :
                 rows[i] = row.replace("@file", "").strip()
-                
+
             # loop on references
             refl = refe.search(rows[i])
             while refl :
@@ -1367,10 +1367,10 @@ def private_migrating_doxygen_doc(
                 to   = "%s:%s:`%s`" % (see,ty, name)
                 rows[i] = rows[i].replace(rep,to)
                 refl = refe.search(rows[i])
-                
+
     if not debug :
         for i,row in enumerate(rows) :
-            if "__sphinx__skip__" in row : 
+            if "__sphinx__skip__" in row :
                 break
             if "@param" in row or "@return" in row or "@see" in row or "@warning" in row \
                    or "@todo" in row or "@code" in row or "@endcode" in row or "@brief" in row or "@file" in row \
@@ -1383,26 +1383,26 @@ def private_migrating_doxygen_doc(
                     mes = "  File \"%s\", line %d, in ???\n    unable to process: %s \nwhole blocks:\n%s" %(filename, index_first_line+i+1, row, "\n".join(rows))
                     fLOG("error: ", mes)
                 raise SyntaxError(mes)
-                
+
     for k,v in beginends.items():
         if v != 0 :
             mes = "  File \"%s\", line %d, in ???\n    unbalanced tag %s: %s \nwhole blocks:\n%s" %(filename, index_first_line+i+1, k, row, "\n".join(rows))
             fLOG("error: ", mes)
             raise SyntaxError(mes)
-            
+
     return rows
-    
+
 # -- HELP END EXCLUDE --
-    
+
 def doc_checking():
     """
     """
     pass
-    
+
 class useless_class_UnicodeStringIOThreadSafe (str) :
     """avoid conversion problem between str and char,
     class protected again Thread issue"""
-    
+
     def __init__ (self) :
         """
         creates a lock

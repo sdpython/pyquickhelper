@@ -14,11 +14,11 @@ class FrameParams (tkinter.Frame) :
     """
     creating a Frame window for a list of parameters
     """
-    
-    def __init__ (self, parent, 
-                        restore         = True, 
-                        width           = 100, 
-                        raise_exception = False, 
+
+    def __init__ (self, parent,
+                        restore         = True,
+                        width           = 100,
+                        raise_exception = False,
                         params          = None,
                         help            = "",
                         key_save        = "",
@@ -52,7 +52,7 @@ class FrameParams (tkinter.Frame) :
         self._added     = { }
         self.key_save   = key_save
         self.command_leave = command_leave
-        
+
         # retrieve previous answers
         self._history  = [ ]
         self._hpos     = -1
@@ -60,18 +60,18 @@ class FrameParams (tkinter.Frame) :
         self.info       = { "name":"FrameParams", "param":params, "help":help, "key_save":key_save }
 
         objs = [ ]
-        
-        if restore : 
+
+        if restore :
             self._history = _private_restore (".".join( [ self.info ["name"], self.info ["key_save"] ] ))
             if len(self._history) > 0 :
                 self.info ["param"].update (self._history[-1])
                 self._hpos = len(self._history)-1
-            
+
         for k in self.info ["param"]:
             self.types [k] = self.info ["param"][k].__class__
-            if self.types [k] in [None, None.__class__] : 
+            if self.types [k] in [None, None.__class__] :
                 self.types [k] = str
-        
+
         # documentation
         tlab = tkinter.Label(self.fdoc, text = "Help")
         tlab.pack (side = tkinter.LEFT)
@@ -80,24 +80,24 @@ class FrameParams (tkinter.Frame) :
         lab.insert ("0.0", self.info ["help"])
         objs.append(lab)
         objs.append(tlab)
-        
+
         scroll=tkinter.Scrollbar(self.fdoc)
         scroll.pack(side=tkinter.RIGHT, fill=tkinter.Y)
         scroll.config(command=lab.yview, width=5)
-        lab.config(yscrollcommand = scroll.set)        
-                
+        lab.config(yscrollcommand = scroll.set)
+
         # next
         line = 0
         for k in sorted (self.info ["param"]) :
             if k in self._added : continue
             lab = tkinter.Label (self.fpar, text = k)
             lab.grid (row = line, column = 0)
-            
+
             if k in ["password", "password1", "password2", "password3"] :
                 lab = tkinter.Entry (self.fpar, width = width, show = "*")
             else :
                 lab = tkinter.Entry (self.fpar, width = width)
-            
+
             lab.grid (row = line, column = 1)
             if self.info ["param"][k] is not None :
                 lab.insert ("0", str (self.info ["param"][k]))
@@ -110,12 +110,12 @@ class FrameParams (tkinter.Frame) :
             if k not in self._added : continue
             lab = tkinter.Label (self.fpar, text = k)
             lab.grid (row = line, column = 0)
-            
+
             if k in ["password", "password1", "password2", "password3"] :
                 lab = tkinter.Entry (self.fpar, width = width, show = "*")
             else :
                 lab = tkinter.Entry (self.fpar, width = width)
-            
+
             lab.grid (row = line, column = 1)
             if self.info ["param"][k] is not None :
                 lab.insert ("0", str (self.info ["param"][k]))
@@ -130,12 +130,12 @@ class FrameParams (tkinter.Frame) :
         self.run.pack (side = tkinter.LEFT)
         self.run.bind('<Return>', self.run_function)
         self.run.bind('<Escape>', self.run_cancel)
-        
+
         self.cancel.config (command = self.run_cancel)
         self.run.config (command = self.run_function)
         private_adjust_parameters (self.info ["param"])
         self._already = False
-        
+
         # up, down
         self.bup   = tkinter.Button (self.fbut, text = "up")
         self.bdown = tkinter.Button (self.fbut, text = "down")
@@ -143,14 +143,14 @@ class FrameParams (tkinter.Frame) :
         self.bdown.pack (side = tkinter.LEFT)
         self.bup.config (command = self.history_up)
         self.bdown.config (command = self.history_down)
-        
+
         # keys
         for obj in objs + [ parent, self, self.bup, self.bdown, self.run, self.cancel, self.fdoc ] :
-            obj.bind("<Up>", self.history_up)        
-            obj.bind("<Down>", self.history_down)        
-            obj.bind("<Return>", self.run_function)        
-            obj.bind("<Escape>", self.run_cancel)        
-        
+            obj.bind("<Up>", self.history_up)
+            obj.bind("<Down>", self.history_down)
+            obj.bind("<Return>", self.run_function)
+            obj.bind("<Escape>", self.run_cancel)
+
     def update (self):
         """
         update the parameters (ie ``self.info``)
@@ -158,7 +158,7 @@ class FrameParams (tkinter.Frame) :
         for k in self.input :
             self.input[k].delete(0, tkinter.END)
             self.input[k].insert ("0", str (self.info ["param"].get(k,"")))
-        
+
     def history_up(self, *args) :
         """
         look back in the history (log of used parameters)
@@ -168,7 +168,7 @@ class FrameParams (tkinter.Frame) :
             self._hpos = (self._hpos+1) % len(self._history)
             self.info ["param"].update (self._history[self._hpos])
             self.update()
-        
+
     def history_down(self, *args):
         """
         look forward in the history (log of used parameters)
@@ -178,7 +178,7 @@ class FrameParams (tkinter.Frame) :
             self._hpos = (self._hpos+len(self._history)-1) % len(self._history)
             self.info ["param"].update (self._history[self._hpos])
             self.update()
-        
+
     def run_cancel(self, *args) :
         """
         what to do when Cancel is pressed
@@ -188,11 +188,11 @@ class FrameParams (tkinter.Frame) :
             self.command_leave()
         else :
             self.parent.destroy()
-        
+
     def get_parameters (self) :
         """
         returns the parameters
-        
+
         @return     dictionary
         """
         res = { }
@@ -203,15 +203,15 @@ class FrameParams (tkinter.Frame) :
             ty = self.types [k]
             res[k] = interpret_parameter(ty, s)
         return res
-        
+
     def get_title (self) :
         """
         return the title
-        
+
         @return self.info ["name"]
         """
         return self.info ["name"]
-        
+
     def refresh (self) :
         """
         refresh the screen
@@ -222,7 +222,7 @@ class FrameParams (tkinter.Frame) :
             self.run.config (state = tkinter.NORMAL)
             if True :
                 self.parent.destroy ()
-        
+
     def run_function (self, *args) :
         """
         run the function
@@ -230,14 +230,14 @@ class FrameParams (tkinter.Frame) :
         if True :  self.parent.withdraw ()
         else :     self.run.config (state = tkinter.DISABLED)
         self._already = True
-        
+
         res = self.get_parameters ()
         if self.restore :
             _private_store (".".join( [ self.info ["name"], self.info ["key_save"] ] ) , res)
-            
+
         self.info["param"].update(res)
         self.parent.destroy()
-        
+
     @staticmethod
     def open_window (   params,
                         help_string       = "",
@@ -245,11 +245,11 @@ class FrameParams (tkinter.Frame) :
                         top_level_window  = None,
                         key_save          = "") :
         """
-        Open a tkinter window to set up parameters. 
+        Open a tkinter window to set up parameters.
         It adds entries for the parameters,
         it displays the help given to this function.
         It also memorizes the latest values used (stored in ``<user>/TEMP folder``).
-        
+
         @param      help_string             help to de displayed
         @param      top_level_window        if you want this window to depend on a top level window from tkinter
         @param      params                  if not None, overwrite values for some parameters,
@@ -257,12 +257,12 @@ class FrameParams (tkinter.Frame) :
         @param      key_save                parameters are saved and restore from a file, key_save will make this file unique
         @param      title                   title of the window
         @return                             new parameters
-        
+
         @warning If the string "__cancel__" is present in the results, it means the users clicked on cancel.
-        
+
         The window looks like:
         @image images/open_window_params.png
-        
+
         Example:
         @code
         params =  {"velib_key": "", "contract":"Paris"}
@@ -282,18 +282,18 @@ class FrameParams (tkinter.Frame) :
         root.focus_set()
         fr.mainloop ()
         return param
-        
+
 def open_window_params (  params,
                           help_string       = "",
                           title             = "",
                           top_level_window  = None,
                           key_save          = "") :
     """
-    Open a tkinter window to set up parameters. 
+    Open a tkinter window to set up parameters.
     It adds entries for the parameters,
     it displays the help given to this function.
     It also memorizes the latest values used (stored in <user>/TEMP folder).
-    
+
     @param      help_string             help to de displayed
     @param      top_level_window        if you want this window to depend on a top level window from tkinter
     @param      params                  if not None, overwrite values for some parameters,
@@ -301,29 +301,29 @@ def open_window_params (  params,
     @param      key_save                parameters are saved and restore from a file, key_save will make this file unique
     @param      title                   title of the window
     @return                             new parameters
-    
+
     @warning If the string "__cancel__" is present in the results, it means the users clicked on cancel.
-    
+
     The window looks like:
     @image images/open_window_params.png
-    
+
     @example(open a tkinter window to ask parameters to a user)
     @code
     params = { "user":os.environ["USERNAME"],
                "password":"" }
     newparams = open_window_params (params, title="try the password *", help_string = "unit test", key_save="my_key")
     @endcode
-    
+
     The program opens a window like the following one:
-    
+
     @image images/open_params.png
-    
+
     The parameters ``key_save`` can be ignored but if you use this function
     with different parameters, they should all appear after a couple of runs.
     That is because the function uses ``key_save`` ot unique the file uses
     to store the values for the parameters used in previous execution.
     @endexample
-    
+
     Password are not stored in a text file. You must type them again next time.
     """
     return FrameParams.open_window (params = params,

@@ -35,19 +35,19 @@ class PQHException (Exception) :
 def init (path = None, filename = None, create = True, path_add = None) :
     """
     initialisation
-    @param      path            new path, 
+    @param      path            new path,
                                     - if path == "###", then uses d:\\temp\\log_pyquickhelper is it exists or c:\\temp\\log_pyquickhelper if not
     @param      filename        new filename
     @param      create          force the creation
     @param      path_add        subfolder to append to the current folder
-    
+
     This function is also called when LogPath is specified while calling function fLOG.
     """
     if path_add is None:
         path_add=[]
     if path is None :
         path = sys.hal_log_values ["__log_path"]
-        
+
     if path == "###" :
         if sys.platform.startswith("win") :
             path = "d:\\temp" if os.path.exists ("d:\\temp") else "c:\\temp"
@@ -55,32 +55,32 @@ def init (path = None, filename = None, create = True, path_add = None) :
         else :
             path = "/tmp"
             path = os.path.join (path, "log_pyquickhelper")
-            
-    if len (path_add) > 0 : 
+
+    if len (path_add) > 0 :
         if not isinstance (path_add, list) : path_add = [ path_add ]
         temp = []
         for p in path_add :
             spl = os.path.splitext (p)
             temp.append (spl [0])
         path = os.path.join (path, *temp)
-        
+
     if filename is None :
         filename = sys.hal_log_values ["__log_file_name"]
-    
+
     if (sys.hal_log_values ["__log_path"] != path or sys.hal_log_values ["__log_file_name"] != filename) \
           and sys.hal_log_values ["__log_file"] != None :
         sys.hal_log_values ["__log_file"].close ()
         sys.hal_log_values ["__log_file"] = None
     sys.hal_log_values ["__log_path"]       = path
     sys.hal_log_values ["__log_file_name"]  = filename
-    
+
     if create :
         if not os.path.exists (sys.hal_log_values ["__log_path"]) :
             os.makedirs (sys.hal_log_values ["__log_path"])
     else :
         if not os.path.exists (sys.hal_log_values ["__log_path"]) :
             raise PQHException ("unable to find path " + sys.hal_log_values ["__log_path"])
-            
+
 def GetSepLine () :
     """
     return always ``\\n``
@@ -93,7 +93,7 @@ def GetPath () :
     @return         path to the logs
     """
     return sys.hal_log_values ["__log_path"]
-    
+
 def Print (redirect = True) :
     """
     if True, redirect everything which is displayed to the standard output
@@ -101,7 +101,7 @@ def Print (redirect = True) :
     lock = sys.hal_log_values.get("Lock", False)
     if not lock :
         sys.hal_log_values ["__log_display"] = redirect
-        
+
 class LogFakeFileStream:
     """
     a fake file
@@ -111,35 +111,35 @@ class LogFakeFileStream:
         do nothing
         """
         pass
-        
+
     def open(self):
         """
         do nothing
         """
         pass
-        
+
     def write(self, s):
         """
         do nothing
         """
         pass
-        
+
     def close(self):
         """
         do nothing
         """
         pass
-        
+
     def flush(self):
         """
         do nothing
         """
         pass
-    
+
 def GetLogFile (physical = False) :
     """
     Returns a file name containing the log
-    
+
     @param      physical    use a physical file or not
     @return                 a pointer to a log file
     @rtype                  str
@@ -151,19 +151,19 @@ def GetLogFile (physical = False) :
             if sys.hal_log_values ["__log_file_name"] is None :
                 if os.path.exists (path) :  sys.hal_log_values ["__log_file_name"] = os.path.join (path, sys.hal_log_values ["__log_const"])
                 else :                      raise PQHException ("unable to create a log file in folder " + path)
-                    
+
             if not isinstance (sys.hal_log_values ["__log_file_name"], str) :
                 sys.hal_log_values ["__log_file"] = sys.hal_log_values ["__log_file_name"]
             else :
-                try :       
+                try :
                     sys.hal_log_values ["__log_file"] = open (sys.hal_log_values ["__log_file_name"], "w", encoding="utf-8")
-                except Exception as e:    
+                except Exception as e:
                     raise OSError ("unable to create file " + sys.hal_log_values ["__log_file_name"] + "\n" + str(e))
         else :
             sys.hal_log_values ["__log_file"] = LogFakeFileStream()
-            
+
     return sys.hal_log_values ["__log_file"]
-    
+
 def noLOG (*l, **p) :
     """
     does nothing
@@ -173,7 +173,7 @@ def noLOG (*l, **p) :
 def fLOG (*l, **p) :
     """
     Builds a message on a single line with the date, it deals with encoding issues.
-    
+
     @param      l       list of fields
     @param      p       dictionary of fields
                             - if p contains OutputPrint, call Print (OutputPrint),
@@ -182,64 +182,64 @@ def fLOG (*l, **p) :
                             - if p contains LogPathAdd, it adds this path to the temporary file
                             - if p contains Lock, it Locks option OutputPrint
                             - if p contains UnLock, it unlock option OutputPrint
-                        
+
                         example:
                         @code
                         fLOG (LogPath = "###", LogPathAdd = __file__, OutputPrint = True)
                         @endcode
-                        
+
     @exception  OSError     When the log file cannot be created.
-    
+
     @example(activate the logs)
     @code
     fLOG(OutputPrint=True)
     @endcode
     @endexample
-    
+
     @FAQ(How to activate the logs?)
     The following instruction will do:
     @code
     fLOG(OutputPrint=True)
     @endcode
-    
+
     To log everything into a file:
     @code
     fLOG(OutputPrint=True, LogFile="log_file.txt")
     @endcode
-    
+
     @endFAQ
     """
     path_add = p.get ("LogPathAdd", [] )
 
     lock = p.get("Lock", None)
     if lock is not None : sys.hal_log_values["Lock"] = lock
-    
+
     if "LogFile" in p and "LogPath" in p :  init (p ["LogPath"], p ["LogFile"])
     elif "LogFile" in p :                   init (filename = p ["LogFile"], path_add = path_add)
     elif "LogPath" in p :                   init (path     = p ["LogPath"], path_add = path_add)
-    
+
     def myprint(s): print(s)
-        
-    if "OutputPrint" in p : 
+
+    if "OutputPrint" in p :
         Print (p ["OutputPrint"])
-        
+
     if "LogFile" in p :
         logfile = GetLogFile(True)
-        
+
     dt = datetime.datetime (2009,1,1).now ()
     if len (l) > 0 :
         def _str_process (s) :
             if isinstance (s, str) : return s
             elif isinstance(s, bytes) : return s.decode("utf8")
-            else : 
+            else :
                 try:
                     return str (s)
                 except Exception as e :
                     raise Exception("unable to convert s into string: type(s)=" + str(type(s))) from e
-                
+
         message = str (dt).split (".")[0] + " " + " ".join ( [_str_process(s)  for s in l ] ) + sys.hal_log_values ["__log_file_sep"]
-            
-        if sys.hal_log_values ["__log_display"] :  
+
+        if sys.hal_log_values ["__log_display"] :
             try :
                 myprint (message.strip ("\r\n"))
             except UnicodeEncodeError :
@@ -256,24 +256,24 @@ def fLOG (*l, **p) :
         st = "                    "
     else :
         st = str (dt).split (".")[0] + " "
-        
+
     for k,v in p.items () :
         if k == "OutputPrint" and v : continue
         message = st + "%s = %s%s" % (str (k), str (v), sys.hal_log_values ["__log_file_sep"])
         if "INNER JOIN" in message :
             break
         GetLogFile ().write (message)
-        if sys.hal_log_values ["__log_display"] : 
+        if sys.hal_log_values ["__log_display"] :
             try :
                 myprint (message.strip ("\r\n"))
             except UnicodeEncodeError :
                 myprint ("\n".join (repr (message.strip ("\r\n")).split ("\\n")))
     GetLogFile ().flush ()
-            
+
 def get_relative_path (folder, file) :
     """
     return the relative path between a folder and a file
-    
+
     @param      folder      folder
     @param      file        file
     @return                 relative path
@@ -293,7 +293,7 @@ def get_relative_path (folder, file) :
         res.append ("..")
     res.extend (sf [j:])
     return os.path.join (*res)
-    
+
 def download (httpfile, path_unzip = None, outfile = None) :
     """
     Download a file to the folder path_unzip if not present, if the downloading is interrupted,
@@ -301,7 +301,7 @@ def download (httpfile, path_unzip = None, outfile = None) :
     which means the downloading has began. If the connection is lost, an exception is raised and the program stopped.
     Next time, the program will detect the existence of the temporary file and will start downloading from where it previously stopped.
     After it ends, the temporary file is removed.
-    
+
     @param      httpfile        (str) url
     @param      path_unzip      (str) path where to unzip the file, if None, choose GetPath ()
     @param      outfile         (str) if None, the function will assign a filename unless this parameter is specified
@@ -310,7 +310,7 @@ def download (httpfile, path_unzip = None, outfile = None) :
     if path_unzip is None : path_unzip = GetPath ()
     file = _check_source (httpfile, path_unzip = path_unzip, outfile = outfile)
     return file
-    
+
 def unzip (file, path_unzip = None, outfile = None) :
     """
     unzip a file into the temporary folder
@@ -322,17 +322,17 @@ def unzip (file, path_unzip = None, outfile = None) :
     if path_unzip is None : path_unzip = GetPath ()
     fLOG ("unzip file", file)
     file = _check_source (file, path_unzip = path_unzip, outfile = outfile)
-    
+
     nb = 0
     while not os.path.exists (file) and nb < 10 :
         time.sleep(0.5)
         nb += 1
-    
+
     if not os.path.exists (file) :
         raise FileNotFoundError(file)
-        
+
     return file
-    
+
 def _get_file_url (url, path) :
     """build a filename knowing an url
     @param      url         url
@@ -348,7 +348,7 @@ def _get_file_url (url, path) :
             spl  = spl [:len(spl)-1]
             path = "-".join (spl) + "." + ext
     return path
-    
+
 def _get_file_txt (zipname) :
     """
     build a filename knowing an url, same name but in default_path
@@ -367,7 +367,7 @@ def _check_zip_file (filename, path_unzip, outfile) :
     this function tests if a file is a zip file (extension zip),
     if it is the case, it unzips it into another file and return the new name,
     if the unzipped file already exists, the file is not unzipped a second time
-    
+
     @param      filename        any filename (.zip or not), if txt, it has no effect
     @param      path_unzip      if None, unzip it where it stands, otherwise, place it into path
     @param      outfile         if None, the function will assign a filename unless this parameter is specified
@@ -377,9 +377,9 @@ def _check_zip_file (filename, path_unzip, outfile) :
     file,ext = os.path.splitext (filename)
     ext      = ext.lower ()
     if ext == ".gz" :
-        
+
         import gzip
-        
+
         if outfile is None :
             dest = filename.split ("!")
             dest = dest [ len(dest)-1 ]
@@ -390,20 +390,20 @@ def _check_zip_file (filename, path_unzip, outfile) :
             dest = path + "/" + dest
         else :
             dest = outfile
-            
+
         if not os.path.exists (dest) :
             file = gzip.GzipFile (filename, "r")
             if outfile is None :
                 dest = os.path.split (dest) [1]
                 dest = os.path.join (path_unzip, dest)
-            
+
             if os.path.exists (dest) :
                 st1 = datetime.datetime.utcfromtimestamp (os.stat (filename).st_mtime)
                 st2 = datetime.datetime.utcfromtimestamp (os.stat (dest).st_mtime)
-                if st2 > st1 : 
+                if st2 > st1 :
                     fLOG ("ungzipping file (already done)", dest)
                     return dest
-            
+
             fLOG ("ungzipping file", dest)
             f    = open (dest, "w")
             data = file.read (2**27)
@@ -416,18 +416,18 @@ def _check_zip_file (filename, path_unzip, outfile) :
                 data = file.read (2**27)
             f.close ()
             file.close ()
-            
+
         return dest
-        
+
     if ext == ".zip" :
-        
+
         import zipfile
         try :
             file = zipfile.ZipFile (filename, "r")
         except Exception as e :
             fLOG ("problem with ", filename)
             raise e
-    
+
         if len (file.infolist()) != 1:
             if outfile is not None :
                 raise PQHException ("the archive contains %d files and not one as you expected by filling outfile" % len (file.infolist()))
@@ -448,9 +448,9 @@ def _check_zip_file (filename, path_unzip, outfile) :
                     if os.path.exists (dest) :
                         st1 = datetime.datetime.utcfromtimestamp (os.stat (filename).st_mtime)
                         st2 = datetime.datetime.utcfromtimestamp (os.stat (dest).st_mtime)
-                        if st2 > st1 : 
+                        if st2 > st1 :
                             continue
-                            
+
                     if not sys.platform.startswith("win") or not zip7 :
                         data = file.read (fileinside)
                         dest = os.path.split (dest) [1]
@@ -465,33 +465,33 @@ def _check_zip_file (filename, path_unzip, outfile) :
                         f.close ()
                     else :
                         todo += 1
-                        
+
             if todo > 0 and zip7 :
                 dest    = os.path.realpath (path_unzip)
-                cmd     = '"' + _zip7_path + '\\7z.exe" e -y -o"%s" "%s"' % (dest, os.path.realpath (filename)) 
+                cmd     = '"' + _zip7_path + '\\7z.exe" e -y -o"%s" "%s"' % (dest, os.path.realpath (filename))
                 out,err = run_cmd (cmd, wait = True)
                 if len (err) > 0 :  raise PQHException ("command {0} failed\n{1}".format(cmd,err))
                 if "Error" in out : raise PQHException ("command {0} failed\n{1}".format(cmd,out))
             else :
                 dest    = path_unzip
-                        
+
             file.close ()
-            
+
             ch = False
             while not ch :
                 ch = True
                 for a in wait :
-                    if not os.path.exists(a) : 
+                    if not os.path.exists(a) :
                         ch = False
                         break
                 time.sleep(0.5)
-            
+
             return dest
-            
+
         else :
             for info in file.infolist () :
                 fileinside = info.filename
-                
+
             path = os.path.split (filename)
             dest = outfile if outfile is not None else path [0] + "/" + fileinside
             if not os.path.exists (dest) :
@@ -499,14 +499,14 @@ def _check_zip_file (filename, path_unzip, outfile) :
                 if outfile is None :
                     dest = os.path.split (dest) [1]
                     dest = os.path.join (path_unzip, dest)
-                    
+
                 if os.path.exists (dest) :
                     st1 = datetime.datetime.utcfromtimestamp (os.stat (filename).st_mtime)
                     st2 = datetime.datetime.utcfromtimestamp (os.stat (dest).st_mtime)
-                    if st2 > st1 : 
+                    if st2 > st1 :
                         fLOG("unzipping one file (already done)", dest)
                         return dest
-                    
+
                 fLOG("unzipping one file", dest)
                 f    = open (dest, "w")
                 if isinstance (data, bytes) :
@@ -516,9 +516,9 @@ def _check_zip_file (filename, path_unzip, outfile) :
                 f.close ()
                 file.close ()
             return dest
-            
+
     return filename
-    
+
 def _first_more_recent (f1, path) :
     """
     checks if the first file (opened url) is more recent of the second file (path)
@@ -533,14 +533,14 @@ def _first_more_recent (f1, path) :
     da = re.compile ("Last[-]Modified: (.+) GMT").search (s)
     if da is None :
         return True
-        
+
     da = da.groups () [0]
     gr = re.compile ("[\w, ]* ([ \d]{2}) ([\w]{3}) ([\d]{4}) ([\d]{2}):([\d]{2}):([\d]{2})").search (da)
     if gr == None : return True
     gr = gr.groups ()
     da = datetime.datetime ( int (gr [2]), sys.hal_log_values ["month_date"] [gr [1].lower ()], int (gr [0]),
                              int (gr [3]), int (gr [4]), int (gr [5]) )
-                             
+
     p  =  time.ctime (os.path.getmtime (path))
     gr = re.compile ("[\w, ]* ([\w]{3}) ([ \d]{2}) ([\d]{2}):([\d]{2}):([\d]{2}) ([\d]{4})").search (p)
     if gr is None :
@@ -548,11 +548,11 @@ def _first_more_recent (f1, path) :
     gr = gr.groups ()
     da = datetime.datetime ( int (gr [5]), sys.hal_log_values ["month_date"] [gr [0].lower ()], int (gr [1]),
                              int (gr [2]), int (gr [3]), int (gr [4]) )
-    
+
     file = da
-    
+
     return da > file
-    
+
 def _check_url_file (url, path_download, outfile) :
     """if url is an url, download the file and return the downloaded
     if it has already been downloaded, it is not downloaded again
@@ -565,7 +565,7 @@ def _check_url_file (url, path_download, outfile) :
         dest = outfile if outfile != None else _get_file_url (url, path_download)
         down = False
         nyet = dest + ".notyet"
-        
+
         if os.path.exists (dest) and not os.path.exists (nyet) :
             try :
                 fLOG("trying to connect", url)
@@ -576,34 +576,34 @@ def _check_url_file (url, path_download, outfile) :
             except IOError :
                 fLOG("unable to connect Internet, working offline for url", url)
                 down = False
-        else : 
+        else :
             down    = True
             newdate = False
-            
+
         if down :
             if newdate :    fLOG (" downloading (updated) ", url)
             else :          fLOG (" downloading ", url)
-                
+
             if len (url) > 4 and url [-4].lower () in [".txt", ".csv", ".tsv", ".log"] :
                 fLOG ("creating text file ", dest)
                 format = "w"
-            else : 
+            else :
                 fLOG ("creating binary file ", dest)
                 format = "wb"
-                
+
             if os.path.exists (nyet) :
                 size    = os.stat (dest).st_size
                 fLOG ("resume downloading (stop at", size, ") from ", url)
-                request = urllib.request.Request(url) 
+                request = urllib.request.Request(url)
                 request.add_header("Range", "bytes=%d-" % size)
-                fu      = urllib.request.urlopen (request) 
+                fu      = urllib.request.urlopen (request)
                 f       = open (dest, format.replace ("w", "a"))
             else :
                 fLOG ("downloading ", url)
-                request = urllib.request.Request(url) 
+                request = urllib.request.Request(url)
                 fu      = urllib.request.urlopen (url)
                 f       = open (dest, format)
-                
+
             open (nyet, "w").close ()
             c       = fu.read (2**21)
             size    = 0
@@ -617,22 +617,22 @@ def _check_url_file (url, path_download, outfile) :
             f.close ()
             fu.close ()
             os.remove (nyet)
-        
+
         url = dest
     return url
-    
+
 def _check_source (fileurl, path_unzip, outfile) :
     """
     @param      fileurl     can be an url, a zip file, a text file
     @param      path_unzip  if None, unzip the file where it stands, otherwise, put it in path
     @param      outfile     if None, the function will assign a filename unless this parameter is specified
     @return                 a text file name
-    
+
     if it is:
         - an url:       download it and copy it into default_path
         - a zipfile:    beside the true file
         - a text file:  do nothing
-        
+
     If the file has already been downloaded and unzipped, it is not done twice.
     """
     if outfile is not None and os.path.splitext (outfile)[1].lower () == os.path.splitext (fileurl)[1].lower () :
@@ -645,14 +645,14 @@ def _check_source (fileurl, path_unzip, outfile) :
             message = "hal_core._check_source: unable to find file " + txt + " source (" + fileurl + ")"
             raise PQHException (message)
         return txt
-    
+
 def get_interpreter_path () :
     """
     return the interpreter path
     """
     if sys.platform.startswith("win") : return sys.executable.replace ("pythonw.exe", "python.exe")
     else : return sys.executable
-    
+
 def split_cmp_command(cmd, remove_quotes = True) :
     """
     splits a command line
@@ -668,7 +668,7 @@ def split_cmp_command(cmd, remove_quotes = True) :
                 res.append(s)
             elif res[-1].startswith('"') and not res[-1].endswith('"') :
                 res[-1] += " " + s
-            else : 
+            else :
                 res.append(s)
         if remove_quotes :
             nres = [ ]
@@ -680,17 +680,17 @@ def split_cmp_command(cmd, remove_quotes = True) :
             return nres
         else:
             return res
-    else : 
+    else :
         return cmd
-        
+
 def decode_outerr(outerr, encoding, encerror, msg):
     """
     decode the output or the error after running a command line instructions
-    
+
     @param      outerr      output or error
     @param      encoding    encoding
     @param      encerror    how to handle errors
-    @param      msg         part of the error to add message 
+    @param      msg         part of the error to add message
     @return                 converted string
     """
     if not isinstance(outerr,bytes):
@@ -705,12 +705,12 @@ def decode_outerr(outerr, encoding, encerror, msg):
         except Exception as e :
             out = outerr.decode(encoding, errors='ignore')
             raise Exception("issue with cmd (" + encoding +"):" + str(msg) + "\n" + str(exu) + "\n-----\n" + out) from e
-    raise Exception("complete issue with cmd:" + str(msg)) 
-    
-def run_cmd (   cmd, 
-                sin             = "", 
-                shell           = True, 
-                wait            = False, 
+    raise Exception("complete issue with cmd:" + str(msg))
+
+def run_cmd (   cmd,
+                sin             = "",
+                shell           = True,
+                wait            = False,
                 log_error       = True,
                 secure          = None,
                 stop_waiting_if = None,
@@ -738,63 +738,63 @@ def run_cmd (   cmd,
     @param      communicate         use method `communicate <https://docs.python.org/3.4/library/subprocess.html#subprocess.Popen.communicate>`_ which is supposed to be safer,
                                     parameter ``wait`` must be True
     @param      preprocess     preprocess the command line if necessary (not available on Windows) (False to disable that option)
-    @return                         content of stdout, stdres  (only if wait is True)  
+    @return                         content of stdout, stdres  (only if wait is True)
     @rtype      tuple
-    
+
     @example(run a program using the command line)
     @code
     out,err = run_cmd( "python setup.py install", wait=True)
     @endcode
     @endexample
-    
+
     If you are using this function to run git function, parameter ``shell`` must be True.
     """
     if secure is not None :
         with open(secure,"w") as f : f.write("")
-        add = ">%s" % secure 
+        add = ">%s" % secure
         if isinstance (cmd, str) : cmd += " " + add
         else : cmd.append(add)
-    if not do_not_log : 
+    if not do_not_log :
         fLOG ("execute ", cmd)
-        
+
     if change_path is not None :
         current = os.getcwd()
         os.chdir(change_path)
-        
+
     if sys.platform.startswith("win") :
-        
-        startupinfo = subprocess.STARTUPINFO()    
+
+        startupinfo = subprocess.STARTUPINFO()
         startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
-        
-        pproc = subprocess.Popen (cmd, 
-                                 shell = shell, 
-                                 stdout = subprocess.PIPE if wait else None, 
+
+        pproc = subprocess.Popen (cmd,
+                                 shell = shell,
+                                 stdout = subprocess.PIPE if wait else None,
                                  stderr = subprocess.PIPE if wait else None,
                                  startupinfo = startupinfo)
     else :
         cmdl = split_cmp_command(cmd) if preprocess else cmd
-        if not do_not_log : 
+        if not do_not_log :
             fLOG("--linux", cmdl)
         pproc = subprocess.Popen (cmdl,
-                                 shell = shell, 
-                                 stdout = subprocess.PIPE if wait else None, 
+                                 shell = shell,
+                                 stdout = subprocess.PIPE if wait else None,
                                  stderr = subprocess.PIPE if wait else None)
 
     if isinstance(cmd, list):
         cmd = " ".join(cmd)
-        
-    if wait : 
-    
+
+    if wait :
+
         out = [ ]
         skip_waiting = False
-        
+
         if communicate:
             stdoutdata, stderrdata = pproc.communicate(sin, timeout = None)
             out = decode_outerr(stdoutdata, encoding, encerror, cmd)
             err = decode_outerr(stderrdata, encoding, encerror, cmd)
         else :
             stdout, stderr = pproc.stdout, pproc.stderr
-            
+
             if secure is None :
                 for line in stdout :
                     decol = decode_outerr(line, encoding, encerror, cmd)
@@ -821,38 +821,38 @@ def run_cmd (   cmd,
                             skip_waiting = True
                             break
                     time.sleep(0.1)
-             
+
             if not skip_waiting :
                 pproc.wait ()
-        
+
             out = "\n".join(out)
             temp = err = stderr.read()
             try:
                 err = decode_outerr(temp, encoding, encerror, cmd)
             except :
                 err = decode_outerr(temp, encoding, "ignore", cmd)
-                
+
             stdout.close()
             stderr.close()
-            
+
         err = err.replace("\r\n","\n")
         if not do_not_log : fLOG ("end of execution ", cmd)
         if len (err) > 0 and log_error : fLOG ("error (log)\n%s" % err)
-        
+
         if change_path is not None :
             os.chdir(current)
-            
+
         if sys.platform.startswith("win") :
             return out.replace("\r\n","\n"), err.replace("\r\n","\n")
         else:
             return out, err
     else :
-        
+
         if change_path is not None :
             os.chdir(current)
-        
+
         return "",""
-    
+
 def run_script (script, *l) :
     """
     run a script
@@ -868,7 +868,7 @@ def run_script (script, *l) :
         cmd += " " + " ".join ( [str (x) for x in l])
     out,err = run_cmd (cmd)
     return out,err
-    
+
 def get_prefix () :
     """
     return a prefix for a file based on time
@@ -877,7 +877,7 @@ def get_prefix () :
     t = str(t).replace (":", "_").replace ("/", "_").replace (" ", "_")
     t += "_" + str (random.randint (0,1000)) + "_"
     return os.path.join (GetPath (), "temp_" + t)
-    
+
 def removedirs (folder, silent = False) :
     """
     remove all files and folder in folder
@@ -887,9 +887,9 @@ def removedirs (folder, silent = False) :
     """
     file, rep = [], []
     for r, d, f in os.walk (folder) :
-        for a in d : 
+        for a in d :
             rep.append (os.path.join (r, a))
-        for a in f : 
+        for a in f :
             file.append (os.path.join (r, a))
     impos = []
     file.sort ()
@@ -901,7 +901,7 @@ def removedirs (folder, silent = False) :
         except Exception as e :
             fLOG ("unable to remove file", f, " --- ", str(e).replace("\n", " "))
             if silent :  impos.append (f)
-            else : raise 
+            else : raise
     for f in rep :
         try :
             if os.path.exists (f):
@@ -909,22 +909,22 @@ def removedirs (folder, silent = False) :
         except Exception as e :
             fLOG ("unable to remove folder", f, " --- ", str(e).replace("\n", " "))
             if silent :  impos.append (f)
-            else : raise 
-            
+            else : raise
+
     if os.path.exists (folder) :
         try :
             os.rmdir(folder)
         except Exception as e:
             impos.append(folder)
     return impos
-    
+
 def guess_type_value (x, none = None) :
     """
     guess the type of a value
     @param      x           type
     @param      none        if True and all values are empty, return None
     @return                 type
-    
+
     @warning if an integer starts with a zero, then it is a string
     """
     try :
@@ -952,7 +952,7 @@ def guess_type_value_type (none = True) :
     @return                 the list of types recognized by guess_type_value
     """
     return [ None, str, int, float ] if none else [ str, int, float ]
-    
+
 def get_default_value_type (ty, none = True) :
     """
     @param      ty          type in guess_type_value_type
@@ -970,8 +970,8 @@ def get_default_value_type (ty, none = True) :
 def guess_type_list (l, tolerance = 0.01, none = True) :
     """
     guess the type of a list
-    @param      l           list    
-    @param      tolerance   let's denote m as the frequency of the most representative type, 
+    @param      l           list
+    @param      tolerance   let's denote m as the frequency of the most representative type,
                             and m2 the second one, if m2 > m * tolerance --> str
     @param      none        if True and all values are empty, return None
     @return                 type, length (order of preference (int, float, str))
@@ -979,18 +979,18 @@ def guess_type_list (l, tolerance = 0.01, none = True) :
     """
     defa   = None if none else str
     length = 0
-        
+
     if l in [str, float, int, None, decimal.Decimal] :
         raise PQHException ("this case is unexpected %s" % str (l))
-        
-    if len (l) == 0 : 
+
+    if len (l) == 0 :
         res = defa
-        
-    elif len (l) == 1 : 
+
+    elif len (l) == 1 :
         res = guess_type_value (l[0], none)
-        if res == str : 
+        if res == str :
             length = len (l [0])
-            
+
     else :
         count = { }
         for x in l :
@@ -998,17 +998,17 @@ def guess_type_list (l, tolerance = 0.01, none = True) :
             length = max (length, len (x))
             if t in count : count [t] += 1
             else :          count [t]  = 1
-                
+
         val = [ (v,k) for k,v in count.items() ]
         val.sort (reverse = True)
-        if len (val) == 1 : 
+        if len (val) == 1 :
             res = val [0][1]
         elif val [0][0] * tolerance < val [1][0] :
             res = str
         else :
             res = val [0][1]
-            
-    if res != str : 
+
+    if res != str :
         olength = 0
     else :
         if length > 0 :
@@ -1018,9 +1018,9 @@ def guess_type_list (l, tolerance = 0.01, none = True) :
             olength = int (olength)*2
         else :
             olength = length
-            
+
     return res, olength
-            
+
 def guess_machine_parameter () :
     """
     determine many parameters on this machine
@@ -1039,17 +1039,17 @@ def guess_machine_parameter () :
             x = x.split (";")
             res [v] = x
         else : res [v] = os.getenv (v)
-        
+
     if not sys.platform.startswith("win") :
         if "TEMP" not in res or res["TEMP"] is None :
             res["TEMP"] = "/tmp"
-        
+
     return res
-    
+
 def IsEmptyString (s) :
     """
     empty string or not?
-    
+
     @param      s               any string (str, None)
     @return                     is it empty or not?
     @rtype      bool
@@ -1057,10 +1057,10 @@ def IsEmptyString (s) :
     """
     if s is None : return True
     elif isinstance (s, str) :
-        return len (s) == 0 
+        return len (s) == 0
     else :
         raise PQHException ("the type is unexpected %s" % str (type (s)))
-        
+
 def load_content_file_with_encoding (filename) :
     """
     try different encoding to load a file, tries utf8, latin1 and None
@@ -1075,7 +1075,7 @@ def load_content_file_with_encoding (filename) :
         except Exception as e :
             error = e
     raise error
-    
+
 if "hal_log_values" not in sys.__dict__ :
     sys.hal_log_values = { }
     sys.hal_log_values ["__log_const"]     = "temp_log.txt"
@@ -1085,6 +1085,3 @@ if "hal_log_values" not in sys.__dict__ :
     sys.hal_log_values ["__log_file_sep"]  = "\n"  # previous value: "\n" if not sys.platform.startswith("win") else "\n"
     sys.hal_log_values ["__log_display"]   = False
     sys.hal_log_values ["month_date"]      = {"jan":1, "feb":2, "mar":3, "apr":4, "may":5, "jun":6, "jul":7, "aug":8, "sep":9, "oct":10, "nov":11, "dec":12 }
-
-    
-    

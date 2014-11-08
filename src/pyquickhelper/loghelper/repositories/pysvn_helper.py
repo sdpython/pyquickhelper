@@ -15,7 +15,7 @@ from ..convert_helper import str_to_datetime
 def IsRepo(location, commandline = True, log = False):
     """
     says if it a repository SVN
-    
+
     @param      location        (str) location
     @param      commandline     (bool) use commandline or not
     @param      log             if True, return the log not a boolean
@@ -44,12 +44,12 @@ class RepoFile :
         """
         for k,v in args.items() :
             self.__dict__[k] = v
-            
+
         if "name" in self.__dict__ and '"' in self.name:
             #defa = sys.stdout.encoding if sys.stdout != None else "utf8"
             self.name = self.name.replace('"',"")
             #self.name = self.name.encode(defa).decode("utf-8")
-            
+
     def __str__(self):
         """
         usual
@@ -73,9 +73,9 @@ def repo_ls(full, commandline = True):
             if "This client is too old to work with the working copy at" in str (e) or \
                 "No module named 'pysvn'" in str(e) :
                 cmd = "svn ls -r HEAD \"%s\"" % full.replace("\\","/")
-                out,err = run_cmd(  cmd, 
-                                    wait = True, 
-                                    do_not_log = True, 
+                out,err = run_cmd(  cmd,
+                                    wait = True,
+                                    do_not_log = True,
                                     encerror = "strict",
                                     encoding = sys.stdout.encoding if sys.stdout != None else "utf8")
                 if len(err) > 0 :
@@ -84,26 +84,26 @@ def repo_ls(full, commandline = True):
                 res = [ RepoFile(name=os.path.join(full,_.strip())) for _ in out.split("\n") if len(_) > 0]
                 return res
             else :
-                raise Exception("problem with file "+ full) from e 
+                raise Exception("problem with file "+ full) from e
     else :
         cmd = "svn ls -r HEAD \"%s\"" % full.replace("\\","/")
         try :
-            out,err = run_cmd(  cmd, 
-                                wait = True, 
-                                do_not_log = True, 
+            out,err = run_cmd(  cmd,
+                                wait = True,
+                                do_not_log = True,
                                 encerror = "strict",
                                 encoding = sys.stdout.encoding if sys.stdout != None else "utf8")
         except Exception as e :
             raise Exception("issue with file or folder " + full) from e
-            
+
         if len(err) > 0 :
             fLOG ("problem with file ", full, err)
             raise Exception(err)
-            
+
         res = [ RepoFile(name=os.path.join(full,_.strip())) \
                             for _ in out.split("\n") if len(_) > 0]
         return res
-            
+
 def __get_version_from_version_txt(path) :
     """
     private function, tries to find a file ``version.txt`` which should
@@ -111,7 +111,7 @@ def __get_version_from_version_txt(path) :
     @param      path        folder to look, it will look to the the path of this file,
                             some parents directories and finally this path
     @return                 the version number
-    
+
     @warning If ``version.txt`` was not found, it throws an exception.
     """
     file = os.path.split(__file__)[0]
@@ -124,9 +124,9 @@ def __get_version_from_version_txt(path) :
         fp = os.path.join(p, "version.txt")
         if os.path.exists (fp) :
             with open(fp, "r") as f :
-                return int(f.read().strip(" \n\r\t")) 
+                return int(f.read().strip(" \n\r\t"))
     raise FileNotFoundError("unable to find version.txt in\n" + "\n".join(paths))
-    
+
 def get_repo_log (path = None, file_detail = False, commandline = True) :
     """
     get the latest changes operated on a file in a folder or a subfolder
@@ -138,7 +138,7 @@ def get_repo_log (path = None, file_detail = False, commandline = True) :
                                     - change number (int)
                                     - date (datetime)
                                     - comment
-                    
+
     The function use a command line if an error occurred. It uses the xml format:
     @code
     <logentry revision="161">
@@ -150,14 +150,14 @@ def get_repo_log (path = None, file_detail = False, commandline = True) :
     """
     if path is None :
         path = os.path.normpath(os.path.abspath( os.path.join( os.path.split(__file__)[0], "..", "..", "..")))
-        
+
     if not commandline :
         try :
             import pysvn
             svnClient   = pysvn.Client()
             version = get_repo_version(path)
             log  = svnClient.log(
-                    path, 
+                    path,
                     revision_start=pysvn.Revision( pysvn.opt_revision_kind.number, 0),
                     revision_end=pysvn.Revision( pysvn.opt_revision_kind.number, version ),
                     discover_changed_paths=True,
@@ -177,18 +177,18 @@ def get_repo_log (path = None, file_detail = False, commandline = True) :
                 return get_repo_log(path,file_detail, commandline = True)
             else :
                 raise e
-                    
+
     else :
         cmd = "svn log -r HEAD:1 --xml \"%s\"" % path.replace("\\","/")
-        out,err = run_cmd(  cmd, 
-                            wait = True, 
-                            do_not_log = True, 
+        out,err = run_cmd(  cmd,
+                            wait = True,
+                            do_not_log = True,
                             encerror = "strict",
                             encoding = sys.stdout.encoding if sys.stdout is not None else "utf8")
         if len(err) > 0 :
             fLOG ("problem with file ", path, err)
             raise Exception(err)
-            
+
         root = ET.fromstring(out)
         res = []
         for i in root.iter('logentry'):
@@ -201,25 +201,25 @@ def get_repo_log (path = None, file_detail = False, commandline = True) :
             row         = [author, revision, dt, msg ]
             res.append(row)
         return res
-            
+
     message = []
     for info in log:
         message.append ( ( "",
-                           info.revision.number, 
+                           info.revision.number,
                            datetime.datetime.utcfromtimestamp(info.date),
                            info.message) )
         if file_detail :
             for i,pt in enumerate(info.changed_paths) :
                 message.append( ("file",
-                                 info.revision.numbe, 
-                                 pt.data["action"], 
+                                 info.revision.numbe,
+                                 pt.data["action"],
                                  pt.data["path"]) )
                 if i > 100 :
                     message.append ("       ...")
                     break
-            
+
     return message
-            
+
 def get_repo_version (path = None, commandline = True, log = False) :
     """
     get the latest check in number for a specific path
@@ -230,7 +230,7 @@ def get_repo_version (path = None, commandline = True, log = False) :
     """
     if path is None :
         path = os.path.normpath(os.path.abspath( os.path.join( os.path.split(__file__)[0], "..", "..", "..")))
-        
+
     if not commandline :
         try :
             import pysvn
@@ -249,16 +249,16 @@ def get_repo_version (path = None, commandline = True, log = False) :
             else :
                 raise e
     else :
-        cmd = "svn info -r HEAD" 
+        cmd = "svn info -r HEAD"
         if path is not None : cmd += " \"%s\"" % path.replace("\\","/")
-        out,err = run_cmd(  cmd, 
-                            wait = True, 
-                            do_not_log = True, 
+        out,err = run_cmd(  cmd,
+                            wait = True,
+                            do_not_log = True,
                             encerror = "ignore",
                             encoding = sys.stdout.encoding if sys.stdout != None else "utf8",
                             log_error = False)
         if len(err) > 0 :
-            if log: 
+            if log:
                 fLOG ("problem with file ", path, err)
             if log :
                 return "OUT\n{0}\nERR:{1}".format(out,err)
@@ -268,27 +268,26 @@ def get_repo_version (path = None, commandline = True, log = False) :
         lines = [ _ for _ in lines if "Revision" in _ ]
         lines = lines[0].split(":")
         res   = lines[1]
-        
+
         if len(res) == 0 :
             o,e = run_cmd("svn help", wait = True, log_error = False)
             if len(o) < 3 :
                 raise Exception("the command 'svn help' should return something")
-                
+
         return int(res)
-            
+
 def get_master_location(path = None, commandline = True):
     """
     raises an exception
     """
     raise NotImplementedError()
-    
+
 def get_nb_commits(path = None, commandline = True):
     """
     returns the number of commit
-    
+
     @param      path            path to look
     @param      commandline     if True, use the command line to get the version number, otherwise it uses pysvn
     @return                     integer
     """
     raise NotImplementedError()
-    

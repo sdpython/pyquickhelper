@@ -3,8 +3,8 @@
 README
 ======
 
-   
-   
+
+
 **Links:**
     * `pypi/pyquickhelper <https://pypi.python.org/pypi/pyquickhelper/>`_
     * `GitHub/pyquickhelper <https://github.com/sdpython/pyquickhelper>`_
@@ -19,7 +19,7 @@ This extension gathers three functionalities:
     * a function to synchronize two folders: :func:`synchronize_folder <pyquickhelper.sync.synchelper.synchronize_folder>`
     * a function to generate a copy of a module, converting doxygen documentation in rst format: :func:`generate_help_sphinx <pyquickhelper.helpgen.sphinx_main.generate_help_sphinx>` (see also :func:`prepare_file_for_sphinx_help_generation <pyquickhelper.helpgen.utils_sphinx_doc.prepare_file_for_sphinx_help_generation>`),
       it requires the module is designed as this one (`src`, `_doc` folders).
-    
+
 The module is available on `pypi/pyquickhelper <https://pypi.python.org/pypi/pyquickhelper/>`_ and
 on `GitHub/pyquickhelper <https://github.com/sdpython/pyquickhelper>`_.
 
@@ -42,7 +42,7 @@ This project contains various helper about logging functions, unit tests and hel
    * a _doc folder: ``_doc``, it will contain the documentation
    * a file ``setup.py`` to build and to install the module
    * a file ``make_help.py`` to build the sphinx documentation
-   
+
 Versions
 --------
 

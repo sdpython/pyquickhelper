@@ -180,7 +180,7 @@ chaque colonne comme les variables d'une table
 
     import pandas
 
-    l = [ { "date":"2014-06-22", "prix":220.0, "devise":"euros" }, 
+    l = [ { "date":"2014-06-22", "prix":220.0, "devise":"euros" },
           { "date":"2014-06-23", "prix":221.0, "devise":"euros" },]
 
     df = pandas.DataFrame(l)
@@ -239,7 +239,7 @@ Avec une valeur manquante :
 
 ::
 
-    l = [ { "date":"2014-06-22", "prix":220.0, "devise":"euros" }, 
+    l = [ { "date":"2014-06-22", "prix":220.0, "devise":"euros" },
 
           { "date":"2014-06-23", "devise":"euros"  },]
     df = pandas.DataFrame(l)
@@ -408,26 +408,26 @@ obligatoire mais conseillée lorsque les données contiennent des accents
 
     import pandas
 
-    l = [ { "date":"2014-06-22", "prix":220.0, "devise":"euros" }, 
+    l = [ { "date":"2014-06-22", "prix":220.0, "devise":"euros" },
           { "date":"2014-06-23", "prix":221.0, "devise":"euros" },]
 
     df = pandas.DataFrame(l)
-    
+
 
     # écriture au format texte
     df.to_csv("exemple.txt",sep="\t",encoding="utf-8", index=False)
 
-    
+
     # on regarde ce qui a été enregistré
 
     with open("exemple.txt", "r", encoding="utf-8") as f : text = f.read()
     print(text)
 
-    
+
     # on enregistre au format Excel
 
     df.to_excel("exemple.xlsx", index=False)
-    
+
 
     # on ouvre Excel sur ce fichier (sous Windows)
     from pyquickhelper import run_cmd
@@ -441,8 +441,8 @@ obligatoire mais conseillée lorsque les données contiennent des accents
     2014-06-22	euros	220.0
     2014-06-23	euros	221.0
 
-    
-    
+
+
 
 
 On peut récupérer des données directement depuis Internet ou une chaîne
@@ -565,7 +565,7 @@ lignes peuvent être désignées par un entier.
 
     import pandas
 
-    l = [ { "date":"2014-06-22", "prix":220.0, "devise":"euros" }, 
+    l = [ { "date":"2014-06-22", "prix":220.0, "devise":"euros" },
           { "date":"2014-06-23", "prix":221.0, "devise":"euros" },]
 
     df = pandas.DataFrame(l)
@@ -727,7 +727,7 @@ Il est possible d'utiliser plusieurs colonnes comme index :
 
 ::
 
-    df = pandas.DataFrame([ {"prénom":"xavier", "nom":"dupré", "arrondissement":18}, 
+    df = pandas.DataFrame([ {"prénom":"xavier", "nom":"dupré", "arrondissement":18},
 
            {"prénom":"clémence", "nom":"dupré", "arrondissement":15 } ])
     dfi = df.set_index(["nom","prénom"])
@@ -750,12 +750,12 @@ Si on veut changer l'index ou le supprimer
 
 ::
 
-    dfi.reset_index(drop=False, inplace=True)  
+    dfi.reset_index(drop=False, inplace=True)
 
             # le mot-clé drop pour garder ou non les colonnes servant d'index
             # inplace signifie qu'on modifie l'instance et non qu'une copie est modifiée
 
-            # donc on peut aussi écrire dfi2 = dfi.reset_index(drop=False)  
+            # donc on peut aussi écrire dfi2 = dfi.reset_index(drop=False)
     dfi.set_index(["nom", "arrondissement"],inplace=True)
 
     dfi
@@ -1129,7 +1129,7 @@ Exercice 1 : créer un fichier Excel
 .. raw:: html
 
    </h3>
-       
+
 
 
 On souhaite récupérer les données

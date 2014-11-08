@@ -12,11 +12,11 @@ def read_url(url, **args):
     the function reads data from a url, it expects a flat file,
     the function does not consider the data to download as a stream,
     it first downloads everything
-    
+
     @param      url     url
     @param      args    parameter given to function `read_csv <http://pandas.pydata.org/pandas-docs/stable/generated/pandas.io.parsers.read_csv.html>`_
     @return             a DataFrame
-    
+
     @example(create a pandas DataFrame from a file on internet)
     @code
     url = "http://www.xavierdupre.fr/enseignement/complements/marathon.txt"

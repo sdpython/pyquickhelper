@@ -15,7 +15,7 @@ def get_test_file (filter, dir = None) :
     @param      filter      only select files matching the pattern (ex: test*)
     @return                 a list of test files
     """
-    
+
     if dir is None :
         path = os.path.split(__file__)[0]
         nrt  = os.path.abspath(os.path.join(path, "..", "..", "_nrt"))
@@ -31,15 +31,15 @@ def get_test_file (filter, dir = None) :
         for d in dirs :
             if not os.path.exists(d) :
                 raise FileNotFoundError (d)
-                
+
     copypaths = sys.path.copy()
-    
+
     li   = [ ]
     for dir in dirs :
         if "__pycache__" in dir : continue
         if not os.path.exists (dir) :
             continue
-        if dir not in sys.path and dir != "." : 
+        if dir not in sys.path and dir != "." :
             sys.path.append (dir)
         li += glob.glob (dir + "/" + filter)
         if filter != "temp_*" :
@@ -52,23 +52,23 @@ def get_test_file (filter, dir = None) :
                                     ".so" not in l and \
                                     ".py~" not in l and \
                                     ".pyo" not in l ]
-                                    
+
         lid = glob.glob (dir + "/*")
         for l in lid :
             if os.path.isdir (l) :
                 temp = get_test_file (filter, l)
                 temp = [t for t in temp ]
                 li.extend (temp)
-                
+
     # we restore sys.path
     sys.path = copypaths
 
     return li
-    
+
 def get_estimation_time (file) :
     """
     return an estimation of the processing time, it extracts the number in ``(time=5s)`` for example
-    
+
     @param      file        filename
     @return                 int
     """
@@ -83,31 +83,31 @@ def get_estimation_time (file) :
             f.close ()
         except Exception as ee :
             raise Exception("issue with %s\n%s" % (file,str(ee)))
-        
+
     s = ''.join (li)
     c = re.compile ("[(]time=([0-9]+)s[)]").search (s)
     if c is None : return 0
     else : return int (c.groups () [0])
-        
-def import_files (li) :        
+
+def import_files (li) :
     """
     run all tests in file list li
-    
+
     @param      li      list of files (python scripts)
     @return             list of tests [ ( testsuite, file) ]
     """
     allsuite = []
     for l in li :
-        
+
         copypath = sys.path.copy()
-        
+
         sdir = os.path.split (l) [0]
-        if sdir not in sys.path : 
+        if sdir not in sys.path :
             sys.path.append (sdir)
         tl  = os.path.split (l) [1]
         fi  = tl.replace (".py", "")
-        
-        if fi in ["neural_network", "test_c", 
+
+        if fi in ["neural_network", "test_c",
                   "test_model", "test_look_up",
                   "test_look_up.extract.txt"] :
             try :
@@ -123,7 +123,7 @@ def import_files (li) :
 
         # some tests can mess up with the import path
         sys.path = copypath
-        
+
         cl = dir (mo)
         for c in cl :
             if len (c) < 5 or c [:4] != "Test" : continue
@@ -142,35 +142,35 @@ def import_files (li) :
                 t = loc["t"]
                 testsuite.addTest (t)
             allsuite.append ((testsuite, l))
-                
+
     return allsuite
-    
+
 def clean () :
     """
     do the cleaning
     """
     # do not use SVN here just in case some files are not checked in.
     print()
-    for log_file in ["temp_hal_log.txt", "temp_hal_log2.txt", 
+    for log_file in ["temp_hal_log.txt", "temp_hal_log2.txt",
                     "temp_hal_log_.txt", "temp_log.txt", "temp_log2.txt", ] :
         li = get_test_file (log_file)
         for l in li :
             try :
                 if os.path.isfile (l) : os.remove (l)
-            except Exception as e : 
+            except Exception as e :
                 print ("unable to remove file",l, " --- ", str(e).replace("\n", " "))
-        
+
     li = get_test_file ("temp_*")
     for l in li :
         try :
             if os.path.isfile (l) : os.remove (l)
-        except Exception as e : 
+        except Exception as e :
             print ("unable to remove file. ",l, " --- ", str(e).replace("\n", " "))
     for l in li :
         try :
             if os.path.isdir (l) :
                 remove_folder (l)
-        except Exception as e : 
+        except Exception as e :
             print ("unable to remove dir. ",l, " --- ", str(e).replace("\n", " "))
     #print ()
     path = os.path.split (__file__) [0]
@@ -183,14 +183,14 @@ def clean () :
         if "hal_python" in sys.modules :
             HAL = sys.modules ["hal_python"]
             HAL.End ()
-        if os.path.exists (d) : 
+        if os.path.exists (d) :
             li = glob.glob (d + "/*.*")
             for l in li : os.remove (l)
             os.rmdir (d)
-    
-def main (  runner, 
+
+def main (  runner,
             path_test   = None,
-            limit_max   = 1e9, 
+            limit_max   = 1e9,
             log         = False,
             skip        = -1) :
     """
@@ -199,7 +199,7 @@ def main (  runner,
     beginning by `test_` all methods starting by `test_`.
     Each files should mention an execution time.
     Tests are sorted by increasing order.
-    
+
     @param      runner      unittest Runner
     @param      path_test   path to look, if None, looks for defaults path related to this project
     @param      limit_max   avoid running tests longer than limit seconds
@@ -212,10 +212,10 @@ def main (  runner,
     if path_test is not None :
         pathModule = os.path.join(sys.executable, "Lib", "site-packages")
         paths = [ os.path.join(pathModule, "src"), ]
-        for path in paths : 
-            if os.path.exists (path): 
+        for path in paths :
+            if os.path.exists (path):
                 raise FileExistsError("this path should not exist " + path)
-        
+
     li      = get_test_file ("test*", path_test)
     est     = [ get_estimation_time(l) for l in li ]
     co      = [ (e,l) for e,l in zip(est, li) ]
@@ -228,30 +228,30 @@ def main (  runner,
         print ("found ", len(co), " test files")
     index   = 0
     for e,l in co:
-        if e > limit_max : 
+        if e > limit_max :
             continue
         cut = os.path.split(l)
         cut = os.path.split(cut[0])[-1] + "/" + cut[-1]
         if skip == -1 or index >= skip :
-            print ("% 3d - time " % (len(cco)+1), 
-                    "% 3d" % e, "s  --> ", 
+            print ("% 3d - time " % (len(cco)+1),
+                    "% 3d" % e, "s  --> ",
                     cut)
         cco.append( (e, l) )
         index += 1
     print()
-        
+
     exp = re.compile ("Ran ([0-9]+) tests? in ([.0-9]+)s")
-        
+
     li      = [ a [1] for a in cco ]
     suite   = import_files (li)
     keep    = []
     #memerr  = sys.stderr
     memout  = sys.stdout
     fail    = 0
-    
+
     stderr      = sys.stderr
     sys.stderr  = io.StringIO()
-    
+
     for i,s in enumerate(suite) :
         if skip >= 0 and i < skip :
             continue
@@ -261,41 +261,40 @@ def main (  runner,
         zzz = "running test % 3d, %s" % (i+1,cut)
         zzz += (60 - len (zzz)) * " "
         memout.write (zzz)
-        
+
         if log :
             fLOG(OutputPrint=True)
             fLOG(Lock=True)
-                        
+
         r   = runner.run(s[0])
         out = r.stream.getvalue ()
         ti  = exp.findall (out) [-1]
         add = " ran %s tests in %ss" % ti
-        
+
         if log :
             fLOG(Lock=False)
-        
+
         memout.write (add)
-        
+
         if not r.wasSuccessful () :
             err = out.split ("===========")
             err = err [-1]
             memout.write ("\n")
             memout.write (err)
             fail += 1
-        
+
         memout.write ("\n")
-        
+
         keep.append( (s[1], r) )
-        
+
     val = sys.stderr.getvalue()
     if len(val) > 0 :
         print ("-------------------------------\nstderr")
         print (val)
-        
+
     sys.stderr = stderr
-        
+
     if fail == 0 :
         clean ()
-        
+
     return keep
-    

@@ -10,7 +10,7 @@ def str_to_datetime (dt, format = None):
     convert a string into a datetime object, it can be:
         - 2013-05-24 18:49:46
         - 2013-05-24 18:49:46.568
-        
+
     @param      dt      string
     @param      format  format for the conversion, the most complete one is:
                             @code
@@ -22,8 +22,8 @@ def str_to_datetime (dt, format = None):
     if "+" in dt : dt = dt.split("+")[0].strip()
     elif " -" in dt : dt = dt.split(" -")[0].strip()
     if format is None :
-        if "." in dt :        
-            return datetime.datetime.strptime (dt, "%Y-%m-%d %H:%M:%S.%f")    
+        if "." in dt :
+            return datetime.datetime.strptime (dt, "%Y-%m-%d %H:%M:%S.%f")
         else :
             return datetime.datetime.strptime (dt, "%Y-%m-%d %H:%M:%S")
     else :
@@ -36,4 +36,3 @@ def timestamp_to_datetime(timestamp):
     @rtype                  datetime
     """
     return datetime.datetime.utcfromtimestamp(timestamp)
-    

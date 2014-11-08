@@ -9,7 +9,7 @@ except ImportError :
     path = os.path.normpath(os.path.abspath( os.path.join( os.path.split(__file__)[0], "..", "..")))
     if path not in sys.path : sys.path.append (path)
     import src
-    
+
 from src.pyquickhelper.loghelper.flog import fLOG
 from src.pyquickhelper.funcwin.function_helper import extract_function_information
 from src.pyquickhelper.funcwin.default_functions import file_grep
@@ -17,7 +17,7 @@ from src.pyquickhelper import check
 
 
 class TestFonctionHelper (unittest.TestCase):
-    
+
     def test_fonction_info (self) :
         fLOG(__file__, self._testMethodName, OutputPrint = __name__ == "__main__")
         res = extract_function_information(file_grep)
@@ -26,10 +26,10 @@ class TestFonctionHelper (unittest.TestCase):
         for k in sorted(res["param"]):
             fLOG("--",k,res["param"][k],"-",res["types"][k])
         assert res["types"]["file"] == str
-        
+
     def test_check(self):
         fLOG(__file__, self._testMethodName, OutputPrint = __name__ == "__main__")
         check()
-        
+
 if __name__ == "__main__"  :
-    unittest.main ()    
+    unittest.main ()

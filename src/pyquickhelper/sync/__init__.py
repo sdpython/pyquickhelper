@@ -16,4 +16,3 @@ def check():
     if not r : return r
     size = os.stat(f).st_size
     return size > 0
-    

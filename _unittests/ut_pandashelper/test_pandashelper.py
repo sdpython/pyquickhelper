@@ -16,7 +16,7 @@ from src.pyquickhelper import read_url, fLOG
 
 
 class TestVersion (unittest.TestCase):
-    
+
     def test_version(self) :
         fLOG (__file__, self._testMethodName, OutputPrint = __name__ == "__main__")
         url = "http://www.xavierdupre.fr/enseignement/complements/marathon.txt"
@@ -27,5 +27,4 @@ class TestVersion (unittest.TestCase):
 
 
 if __name__ == "__main__"  :
-    unittest.main ()    
-
+    unittest.main ()

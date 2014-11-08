@@ -12,59 +12,59 @@ except ImportError :
     path =  os.path.normpath(os.path.abspath(os.path.join(os.path.split(__file__)[0], "..", "..")))
     if path not in sys.path : sys.path.append(path)
     import src
-    
+
 from src.pyquickhelper.loghelper.flog           import fLOG
 from src.pyquickhelper.sync.synchelper          import explore_folder
 import src.pyquickhelper.helpgen.utils_sphinx_doc as utils_sphinx_doc
 from src.pyquickhelper.loghelper.pyrepo_helper  import SourceRepository
 
 class TestSphinxDoc (unittest.TestCase):
-    
+
     def test_svn_version (self) :
         fLOG (__file__, self._testMethodName, OutputPrint = __name__ == "__main__")
         s = SourceRepository()
         ver = s.version()
         fLOG("version", ver)
         assert isinstance(ver,int) or isinstance(ver,str)
-        
+
         try :
             import pysvn
         except ImportError:
             return
-        
+
         if isinstance(ver, int) and ver <= 3 :raise Exception("version should be > 100 : " + str(ver))
-    
+
     def test_svn_logs (self) :
         fLOG (__file__, self._testMethodName, OutputPrint = __name__ == "__main__")
-        
+
         try :
             import pysvn
         except ImportError:
             return
-        
+
         src = SourceRepository()
         ver = src.log()
         assert len(ver) > 0
         assert isinstance(ver, list)
         assert len(ver[0]) >= 4
-        assert isinstance(ver[0][1], int) or isinstance(ver[0][1], str) 
+        assert isinstance(ver[0][1], int) or isinstance(ver[0][1], str)
         assert isinstance(ver[0][2], datetime.datetime)
         ver.sort(reverse=True)
         fLOG("logs", "\n" + "\n".join(map(str,ver[:10])))
-        
+
     def test_sphinx_doc (self) :
         fLOG (__file__, self._testMethodName, OutputPrint = __name__ == "__main__")
         path    = os.path.split(__file__)[0]
         file    = os.path.join(path, "..", "..", "src", "pyquickhelper", "helpgen", "utils_sphinx_doc.py")
         assert os.path.exists(file)
-        
+
         with open(file, "r", encoding="utf8") as f : content = f.read()
         newc = utils_sphinx_doc.migrating_doxygen_doc(content, file)
         snewc = newc[:len(newc)//2]
         assert "pass" in newc
         assert ":param" in newc
         assert "@param" not in snewc
-        
+
     def test_sphinx_doc_all(self) :
         fLOG (__file__, self._testMethodName, OutputPrint = __name__ == "__main__")
         path    = os.path.split(__file__)[0]
@@ -82,7 +82,7 @@ class TestSphinxDoc (unittest.TestCase):
                 well = well[well.find("src"):]
                 well = os.path.splitext(well)[0]
                 well = well.replace("/",".")
-                
+
                 try :
                     __import__(well)
                 except Exception as e :
@@ -100,7 +100,7 @@ class TestSphinxDoc (unittest.TestCase):
                                 import rpy2
                             """.replace("                            ",""))
                     raise Exception("error\n" + "\n".join(message) + "\n" + str(e))
-                    
+
             try :
                 with open(fi, "r", encoding="utf8") as f : content = f.read()
             except UnicodeDecodeError:
@@ -109,23 +109,23 @@ class TestSphinxDoc (unittest.TestCase):
                     with open(fi, "r") as f : content = f.read()
                 except UnicodeDecodeError:
                     with open(fi, "r", encoding="latin1") as f : content = f.read()
-                
+
             try :
                 newc = utils_sphinx_doc.migrating_doxygen_doc(content, fi, silent = True)
             except SyntaxError as e :
                 issue.append(("  File \"%s\", line 1," % fi) + "    issue 1 (unable to migrate through doxygen)")
-                
+
             if "@param" in newc :
                 if "utils_sphinx_doc.py" in fi : continue
                 if r"pdf.py" in fi : continue
                 if r"_externals\xlrd" in fi or r"_externals/xlrd" in fi : continue
                 fLOG("issue with file", fi)
                 nb.append(("  File \"%s\", line 1," % fi) + "    issue 2 (contains @param)")
-                
-        for i in issue : 
+
+        for i in issue :
             fLOG("issue (1) with ", i)
             #utils_sphinx_doc.migrating_doxygen_doc(content, i)
-        for i in nb : 
+        for i in nb :
             fLOG("issue (2) with ", i)
         if len(nb) != 0 :
             fLOG("***** issues ", "\n".join(nb))
@@ -133,7 +133,7 @@ class TestSphinxDoc (unittest.TestCase):
         if len(issue)!= 0 :
             fLOG("***** issues ", "\n".join(issue))
             raise Exception("issue:\n" + "\n".join(issue))
-            
-        
+
+
 if __name__ == "__main__"  :
-    unittest.main ()    
+    unittest.main ()

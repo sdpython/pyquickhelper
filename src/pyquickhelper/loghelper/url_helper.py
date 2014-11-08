@@ -24,4 +24,4 @@ def get_url_content(url, useMozilla = False):
         text = u.read()
         u.close()
         text = text.decode("utf8")
-        return text    
+        return text

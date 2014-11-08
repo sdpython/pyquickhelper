@@ -22,7 +22,7 @@ except ImportError :
 from src.pyquickhelper import fLOG, remove_extra_spaces, create_visual_diff_through_html_files
 
 class TestCodeHelper(unittest.TestCase):
-    
+
     def test_synchro_hash (self) :
         fLOG (__file__, self._testMethodName, OutputPrint = __name__ == "__main__")
         fold = os.path.abspath(os.path.split(__file__)[0])
@@ -38,10 +38,10 @@ class TestCodeHelper(unittest.TestCase):
         assert d > 0
         assert d < 100
         if __name__ == "__main__":
-            create_visual_diff_through_html_files(filename, dest, 
+            create_visual_diff_through_html_files(filename, dest,
                         page = os.path.join(temp, "page_diff.html"),
                         encoding=None, browser = True)
-            
+
 
 if __name__ == "__main__"  :
-    unittest.main ()    
+    unittest.main ()

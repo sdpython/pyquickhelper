@@ -16,7 +16,7 @@ class HelpGenException(Exception):
 _length_truncated_doc = 120
 
 
-    
+
 add_file_rst_template = """
 __FULLNAME_UNDERLINED__
 
@@ -31,9 +31,9 @@ __FULLNAME_UNDERLINED__
 
 Short summary
 +++++++++++++
-      
+
 __DOCUMENTATION__
-   
+
 
 __CLASSES__
 
@@ -55,14 +55,14 @@ __ADDEDMEMBERS__
 
 """
 
-add_file_rst_template_cor = { "class":"__CLASSES__", 
+add_file_rst_template_cor = { "class":"__CLASSES__",
                               "method":"__METHODS__",
                               "function":"__FUNCTIONS__",
                               "staticmethod":"__STATICMETHODS__",
                               "property":"__PROPERTIES__",
                               }
 
-add_file_rst_template_title = { "class":"Classes", 
+add_file_rst_template_title = { "class":"Classes",
                                 "method":"Methods",
                                 "function":"Functions",
                                 "staticmethod":"Static Methods",
@@ -78,7 +78,7 @@ add_file_rst_template_title = { "class":"Classes",
 #   :toctree: __FILENAMENOEXT__/
 #
 
-def compute_truncated_documentation(doc, 
+def compute_truncated_documentation(doc,
                                     length = _length_truncated_doc,
                                     raise_exception = False):
     """
@@ -92,18 +92,18 @@ def compute_truncated_documentation(doc,
         return doc
     else :
         doc_ = doc
-        
+
         if "@brief " in doc :
             doc = doc.split("@brief ")
             doc = doc[-1]
-            
+
         doc = doc.strip("\n\r\t ")
         doc = doc.replace("\n", " ").replace("\r", "").strip("\n\r\t ")
-        
+
         for subs in ["@" + "param", "@" + "return", ":param", ":return" ] :
             if subs in doc :
                 doc = doc[:doc.find(subs)].strip("\r\t ")
-                
+
         if len(doc) >= _length_truncated_doc :
             spl = doc.split(" ")
             doc = ""
@@ -114,25 +114,25 @@ def compute_truncated_documentation(doc,
                 doc += spl[i] + " "
                 i   += 1
             doc += "..."
-        
+
         if raise_exception and len(doc) == 0 :
             raise ValueError("bad format for docstring: " + doc_)
         return doc
-        
+
 class ModuleMemberDoc :
     """
     represents a member in a module
-    
+
     See `inspect <https://docs.python.org/3.4/library/inspect.html>`_
-    
+
     @var    obj         object
     @var    type        (str) type
     @var    cl          (class) class it belongs to
     @var    name        (str)
     @var    module      (str) module name
     @var    doc         (str) documentation
-    @var    truncdoc    (str) truncated documentation    
-    @var    owner       (module) 
+    @var    truncdoc    (str) truncated documentation
+    @var    owner       (module)
     """
     def __init__ (self, obj, ty = None, cl = None, name = None, module = None) :
         """
@@ -144,33 +144,33 @@ class ModuleMemberDoc :
         """
         if module is None:
             raise ValueError("module cannot be null")
-        
+
         self.owner = module
         self.obj = obj
         self.cl  = cl
         if ty != None : self.type = ty
         self.name = name
         self.populate()
-        
+
         if self.cl is None and self.type in [ "method", "staticmethod", "property" ] :
             self.cl = self.obj.__class__
         if self.cl is None and self.type in [ "method", "staticmethod", "property" ] :
             raise TypeError("N/a method must have a class (not None): %s" % str(self.obj))
-            
+
     def add_prefix(self, prefix) :
         """
         adds a prefix (for the documentation)
         @param      prefix      string
         """
         self.prefix = prefix
-            
+
     @property
     def key (self) :
         """
         returns a key to identify it
         """
         return "%s;%s" % (self.type, self.name)
-        
+
     def populate(self) :
         """
         extract some information about an object
@@ -188,7 +188,7 @@ class ModuleMemberDoc :
                 self.type = "generator"
             else :
                 raise TypeError ("E/unable to deal with this type: " + str(type(obj)))
-                
+
         if ty == "method":
             if isinstance(obj, staticmethod) :
                 self.type = "staticmethod"
@@ -211,7 +211,7 @@ class ModuleMemberDoc :
             else :
                 self.module = None
             if self.name is None : raise IndexError("unable to find a name for this object")
-            
+
         # documentation
         if self.type == "staticmethod" :
             try :
@@ -223,7 +223,7 @@ class ModuleMemberDoc :
                 self.doc = obj.__doc__
             except Exception as ie :
                 self.doc = str(ie) + " \n----------\n " + str(dir(obj))
-        
+
         try :    self.file   = self.module.__file__
         except : self.file = ""
 
@@ -233,10 +233,10 @@ class ModuleMemberDoc :
         else :
             self.doc = ""
             self.truncdoc = ""
-            
+
         if self.name is None :
             raise TypeError("S/name is None for object: %s" % str(self.obj))
-        
+
     def __str__(self) :
         """
         usual
@@ -244,34 +244,34 @@ class ModuleMemberDoc :
         clname = ".%s" % self.cl.__name__ if self.cl is not None else ""
         mes = "%s in %s%s: %s (%s)" % (self.type, self.module, clname, self.name, self.truncdoc)
         return mes
-        
+
     def rst_link(self, prefix = None, class_in_bracket = True) :
         """
         returns a sphinx link on the object
         @param      prefix              to correct the path with a prefix
         @param      class_in_bracket    if True, adds the class in bracket for methods and properties
         @return                         a string style::
-        
+
                                             :%s:`%s <%s>`               or
                                             :%s:`%s <%s>` (class)
         """
-        cor = {"function":"func", "method":"meth", 
+        cor = {"function":"func", "method":"meth",
                 "staticmethod":"meth", "property":"meth" }
-        
+
         if self.type in ["method", "staticmethod", "property"]:
             path = "%s.%s.%s" % (self.module, self.cl.__name__, self.name)
         else :
             path = "%s.%s" % (self.module, self.name)
-            
+
         if prefix is not None :
             path = "%s.%s" % (prefix, path)
-        
+
         if self.type in ["method", "staticmethod", "property"] and class_in_bracket :
             link = ":%s:`%s <%s>` (%s)" % (cor.get(self.type, self.type), self.name, path, self.cl.__name__)
         else :
             link = ":%s:`%s <%s>`" % (cor.get(self.type, self.type), self.name, path)
         return link
-        
+
     @property
     def classname (self):
         """
@@ -282,7 +282,7 @@ class ModuleMemberDoc :
             return self.cl
         else :
             return None
-        
+
     def __cmp__ (self, oth) :
         """
         comparison operators, compares first the first, second the name (lower case)
@@ -300,17 +300,17 @@ class ModuleMemberDoc :
             return c
         else :
             return -1 if self.type < oth.type else (1 if self.type > oth.type else 0)
-            
+
     def __lt__(self, oth): return self.__cmp__(oth) == -1
     def __eq__(self, oth): return self.__cmp__(oth) == 0
     def __gt__(self, oth): return self.__cmp__(oth) == 1
-    
+
     def __str__(self):
         """
         usual
         """
         return "[key={0},clname={1},type={2},module_name={3},file={4}".format(self.key, self.classname, self.type, self.module, self.owner.__file__)
-    
+
 class IndexInformation :
     """
     keeps some information to index
@@ -330,13 +330,13 @@ class IndexInformation :
         self.text = text
         self.fullname = fullname
         self.set_rst_file(rstfile)
-        
+
     def __str__(self):
         """
         usual
         """
         return "%s -- %s" % (self.label, self.rst_link())
-        
+
     def set_rst_file(self, rstfile) :
         """
         sets the rst file and checks the label is present in it
@@ -345,27 +345,27 @@ class IndexInformation :
         self.rstfile = rstfile
         if rstfile is not None :
             self.add_label_if_not_present()
-        
+
     @property
     def truncdoc (self):
         """
         returns self.text
         """
         return self.text.replace("\n", "  ").replace("\t","").replace("\r","")
-    
+
     def add_label_if_not_present(self):
         """
         The function checks the label is present in the original file.
         """
         if self.rstfile is not None :
-            with open(self.rstfile,"r",encoding="utf8") as f : 
+            with open(self.rstfile,"r",encoding="utf8") as f :
                 content = f.read()
             label = ".. _%s:" % self.label
             if label not in content :
                 content = "\n%s\n%s" % (label, content)
-                with open(self.rstfile,"w",encoding="utf8") as f : 
+                with open(self.rstfile,"w",encoding="utf8") as f :
                     f.write(content)
-        
+
     def get_label(existing, suggestion) :
         """
         returns a new label given the existing ones
@@ -378,7 +378,7 @@ class IndexInformation :
             suggestion += "z"
         return suggestion
     get_label = staticmethod(get_label)
-    
+
     def rst_link(self) :
         """
         return a link rst
@@ -388,7 +388,7 @@ class IndexInformation :
             return ":ref:`%s`" % self.label[1:]
         else :
             return ":ref:`%s`" % self.label
-    
+
 class RstFileHelp :
     """
     defines what a rst file and what it describes
@@ -411,7 +411,7 @@ def import_module (rootm, filename, log_function, additional_sys_path = [ ]) :
     @param      log_function            logging function
     @param      additional_sys_path     additional path to include to sys.path before importing a module (will be removed afterwards)
     @return                             module object, prefix
-    
+
     @warning It adds the file path at the first position in sys.path and then deletes it.
     """
     memo    = copy.deepcopy(sys.path)
@@ -421,24 +421,24 @@ def import_module (rootm, filename, log_function, additional_sys_path = [ ]) :
     spl     = relpath.split("/")
     fmod    = spl[0]  # this is the prefix
     relpath = "/".join(spl[1:])
-    
+
     # we remove every path ending by "src"
     rem = []
     for i,p in enumerate(sys.path):
         if p.endswith("src"): rem.append(i)
     rem.reverse()
     for r in rem : del sys.path[r]
-    
+
     # remove fmod from sys.modules
     addback = []
     rem=[]
     for n,m in sys.modules.items():
-        if n.startswith(fmod): 
+        if n.startswith(fmod):
             rem.append(n)
             addback.append( (n, m) )
     for r in rem:
         del sys.modules[r]
-    
+
     # full path
     fullpath = sdir.replace("\\","/")
     if rootm != None:
@@ -454,22 +454,22 @@ def import_module (rootm, filename, log_function, additional_sys_path = [ ]) :
         tl = os.path.split (l) [1]
         fi = tl.replace (".py", "")
         context = None
-        
+
     if additional_sys_path is not None and len(additional_sys_path) > 0 :
         # there is an issue here due to the confusion in the paths
         # the paths should be removed just after the import
         sys.path.extend(additional_sys_path)
-        
+
     sys.path.insert (0, root)
     try :
         mo = importlib.import_module(fi, context)
-        
+
         if not mo.__file__.replace("\\","/").endswith(filename.replace("\\","/").strip("./")):
             namem = os.path.splitext(os.path.split(filename)[-1])[0]
-            
+
             if "src" in sys.path:
                 sys.path = [ _ for _ in sys.path if _ != "src" ]
-            
+
             if namem in sys.modules :
                 del sys.modules[namem]
                 # add the context here for relative import
@@ -482,7 +482,7 @@ def import_module (rootm, filename, log_function, additional_sys_path = [ ]) :
             else:
                 raise ImportError("the wrong file was imported (1):\nEXP: {0}\nIMP: {1}\nPATHS:\n   - {2}" \
                            .format(filename, mo.__file__, "\n   - ".join(sys.path)))
-                
+
         sys.path = memo
         log_function("importing ", filename, " successfully", mo.__file__)
         for n,m in addback: sys.modules[n] = m
@@ -493,7 +493,7 @@ def import_module (rootm, filename, log_function, additional_sys_path = [ ]) :
         if find :
             module = find.groups()[0]
             log_function("unable to import module " + module + " --- " + str(e).replace("\n"," "))
-            
+
         log_function("  File \"%s\", line %d" % (__file__,501))
         log_function("-- unable to import module (1) ", filename, ",", fi, " in path ", sdir, " Error: ", str(e))
         log_function("    cwd ", os.getcwd())
@@ -511,14 +511,14 @@ def import_module (rootm, filename, log_function, additional_sys_path = [ ]) :
         sys.path = memo
         for n,m in addback: sys.modules[n] = m
         return "unable to import %s\nError:\n%s" % (filename, str(e)), fmod
-        
+
 def get_module_objects(mod) :
     """
     gets all the classes from a module
     @param      mod     module objects
     @return             list of ModuleMemberDoc
     """
-    
+
     #exp = { "__class__":"",
     #        "__dict__":"",
     #        "__doc__":"",
@@ -529,7 +529,7 @@ def get_module_objects(mod) :
     #        "__dict__":"",
     #        "__weakref__":""
     #         }
-             
+
     cl = [ ]
     for name, obj in inspect.getmembers(mod):
         if inspect.isclass(obj) or \
@@ -555,36 +555,36 @@ def get_module_objects(mod) :
                 res.append(_)
         except :
             pass
-            
+
     res.sort()
     return res
-    
+
 def process_var_tag(docstring, rst_replace = False, header = ["attribute", "meaning"]):
     """
     Process a docstring using tag ``@ var``, and return a list of 2-tuple
-    
+
     @code
         @ var    filename        file name
         @ var    utf8            decode in utf8?
         @ var    errors          decoding in utf8 can raise some errors
     @endcode
-    
+
     @param      docstring       string
     @param      rst_replace     if True, replace the var bloc var a rst bloc
     @param      header          header for the table
     @return                     a matrix with two columns or a string if rst_replace is True
-    
+
     """
     from pandas import DataFrame
-    
+
     reg = re.compile("[@]var +([_a-zA-Z][a-zA-Z0-9_]*?) +((?:(?!@var).)+)")
-    
+
     docstring = docstring.split("\n")
     docstring = [ _.strip("\r \t") for _ in docstring ]
     docstring = [ _ if len(_) > 0 else "\n\n" for _ in docstring ]
     docstring = "\n".join(docstring)
     docstring = docstring.split("\n\n")
-    
+
     values    = [ ]
     if rst_replace :
         for line in docstring :
@@ -611,12 +611,12 @@ def process_var_tag(docstring, rst_replace = False, header = ["attribute", "mean
                 for a in alls :
                     values.append ( a )
         return values
-        
+
 def make_label_index(title, comment):
     """
     build a sphinx label from a string by
     removing any odd characters
-    
+
     @param      title       title
     @param      comment     add this string in the exception when it raises one
     @return                 label
@@ -627,37 +627,37 @@ def make_label_index(title, comment):
         if "0" <= c <= "9" : return c
         if c in "-_" : return c
         return ""
-    
+
     try:
         r = "".join( map (accept, title) )
         if len(r) == 0:
-            raise HelpGenException("unable to interpret this title (empty?): {0} (type: {2})\nCOMMENT:\n{1}".format(str(title), comment, str(type(title)))) 
+            raise HelpGenException("unable to interpret this title (empty?): {0} (type: {2})\nCOMMENT:\n{1}".format(str(title), comment, str(type(title))))
         return r
     except TypeError as e :
         raise HelpGenException("unable to interpret this title: {0} (type: {2})\nCOMMENT:\n{1}".format(str(title), comment, str(type(title)))) from e
-    
+
 def process_look_for_tag(tag, title, files):
     """
     looks for specific information in all files, collect them
     into one single page
-    
+
     @param      tag     tag
     @param      title   title of the page
     @param      files   list of files to look for
     @return             a list of tuple (page, content of the page)
-    
+
     The function is looking for regular expression::
-    
+
         .. tag(...).
         ...
         .. endtag.
-        
+
     They can be split into several pages::
-    
+
         .. tag(page::...).
         ...
         .. endtag.
-        
+
     If the extracted example contains an image (..image:: ../../), the path
     is fixed too.
     """
@@ -679,22 +679,22 @@ def process_look_for_tag(tag, title, files):
         except:
             with open(file.file,"r") as f : content = f.read()
         content = content.replace("\n",repl)
-        
+
         all = exp.findall(content)
         all2 = exp2.findall(content)
         if len(all2) > len(all) :
             raise HelpGenException("an issue was detected in file: " + file.file)
-        
+
         coll += [ noneempty(a) + \
                   (fix_image_page_for_root(c.replace(repl,"\n"),file),b) for a,b,c in all ]
-        
+
     coll.sort()
     coll = [ (_[0],) + _[2:] for _ in coll ]
-    
+
     pages = set ( _[0] for _ in coll )
-    
+
     pagerows = [ ]
-    
+
     for page in pages :
         if page == "":
             tit = title
@@ -704,7 +704,7 @@ def process_look_for_tag(tag, title, files):
             suf = page.replace(" ","").replace("_","")
             suf = re.sub(r'([^a-zA-Z0-9_])', "", suf)
             page = re.sub(r'([^a-zA-Z0-9_])', "", page)
-            
+
         rows = ["""
             .. _l-{0}{3}:
 
@@ -712,9 +712,9 @@ def process_look_for_tag(tag, title, files):
             {2}
 
             .. contents::
-                
+
             """.replace("            ","").format(tag, tit, "=" * len(tit), suf)]
-            
+
         for pa, a,b,c in coll :
             pan = re.sub(r'([^a-zA-Z0-9_])', "", pa)
             if page != pan : continue
@@ -734,11 +734,11 @@ def process_look_for_tag(tag, title, files):
 
         pagerows.append ( (page, "\n".join(rows)) )
     return pagerows
-    
+
 def fix_image_page_for_root(content, file):
     """
     look for images and fix their path as if the extract were copied to the root
-    
+
     @param      content     extracted content
     @param      file        file where is comes from
     @return                 content
@@ -755,11 +755,11 @@ def fix_image_page_for_root(content, file):
             else : row = spl[0] + ".. image:: " + img
             rows[i] = row
     return "\n".join(rows)
-    
+
 def remove_some_indent(s):
     """
     bring text to the left
-    
+
     @param      s       text
     @return             text
     """
@@ -778,4 +778,3 @@ def remove_some_indent(s):
         return "\n".join(keep)
     else :
         return s
-

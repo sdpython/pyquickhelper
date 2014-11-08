@@ -17,23 +17,23 @@ from src.pyquickhelper.loghelper.flog        import fLOG
 from src.pyquickhelper.sync.synchelper       import synchronize_folder, remove_folder
 
 class TestSyncFolder (unittest.TestCase):
-    
+
     def test_bug_accent (self) :
         fLOG (__file__, self._testMethodName, OutputPrint = __name__ == "__main__")
         data = os.path.abspath(os.path.dirname(__file__))
         fold = os.path.join(data, "data", "bug")
         assert os.path.exists(fold)
-        
+
         to = os.path.join(data, "temp_bug")
         if os.path.exists(to) : remove_folder(to)
         os.mkdir(to)
         assert os.path.exists(to)
-        
+
         synchronize_folder(  fold,
                                 to,
                                 hash_size = 0,
-                                repo1           = False, 
-                                repo2           = False, 
+                                repo1           = False,
+                                repo2           = False,
                                 size_different  = True,
                                 no_deletion     = False,
                                 filter          = None,
@@ -41,10 +41,10 @@ class TestSyncFolder (unittest.TestCase):
                                 avoid_copy      = False,
                                 operations      = None,
                                 file_date       = None,
-                                log1            = False)      
-        
+                                log1            = False)
+
         assert os.path.exists(os.path.join(to, "bugged","Présentation.pdf.txt"))
-        
+
     def test_encoding(self):
         import locale
         fLOG(locale.getpreferredencoding(False))
@@ -57,4 +57,4 @@ class TestSyncFolder (unittest.TestCase):
                 assert "é" in s
 
 if __name__ == "__main__"  :
-    unittest.main ()    
+    unittest.main ()

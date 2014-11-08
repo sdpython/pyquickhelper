@@ -10,24 +10,24 @@ from .repositories import pygit_helper as GIT
 class SourceRepository :
     """
     proposes the same functionatilies independent from the source chosen repository (GIT or SVN)
-    
+
     On Windows, it might help to install either `TortoiseSVN <http://tortoisesvn.net/>`_
     or the `GitHub application <http://windows.github.com/>`_.
     """
-    
+
     def __init__ (self, commandline = True):
         """
         constructor
-        
+
         @param      commandline     use command line or a specific module (like pysvn for example)
         """
         self.commandline = commandline
         self.module = None
-        
+
     def SetGuessedType(self, location):
         """
         guess the repository type given a location and change a member of the class
-        
+
         @param      location    location
         @return                 module to use
         """
@@ -43,18 +43,18 @@ class SourceRepository :
         else :
             self.module = SVN
         return self.module
-        
+
     def ls(self, path):
         """
         extract the content of a location
-        
+
         @param      path        path
         @return                 a list
         """
         if self.module is None :
             self.SetGuessedType(path)
         return self.module.repo_ls(path, commandline = self.commandline)
-    
+
     def log(self, path = None, file_detail = False):
         """
         get the latest changes operated on a file in a folder or a subfolder
@@ -65,7 +65,7 @@ class SourceRepository :
                                         - change number (int)
                                         - date (datetime)
                                         - comment
-                        
+
         The function use a command line if an error occurred. It uses the xml format:
         @code
         <logentry revision="161">
@@ -78,7 +78,7 @@ class SourceRepository :
         if self.module is None :
             self.SetGuessedType(path)
         return self.module.get_repo_log(path, file_detail, commandline = self.commandline)
-        
+
     def version(self, path = None):
         """
         get the latest check in number for a specific path
@@ -88,15 +88,14 @@ class SourceRepository :
         if self.module is None :
             self.SetGuessedType(path)
         return self.module.get_repo_version(path, commandline = self.commandline)
-    
+
     def nb_commits(self, path = None):
         """
         return the number of commits
-        
+
         @param      path            path to look
         @return                     number of commit
         """
         if self.module is None :
             self.SetGuessedType(path)
         return self.get_nb_commits(path, commandline = self.commandline)
-        

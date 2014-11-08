@@ -6,7 +6,7 @@
 def check_icon():
     """
     checks the ico was installed with the module
-    
+
     @return     boolean
     """
     import os
@@ -15,4 +15,3 @@ def check_icon():
     if not os.path.exists(icon):
         raise FileNotFoundError(icon)
     return True
-    

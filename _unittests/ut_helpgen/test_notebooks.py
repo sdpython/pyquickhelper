@@ -12,31 +12,31 @@ except ImportError :
     path =  os.path.normpath(os.path.abspath(os.path.join(os.path.split(__file__)[0], "..", "..")))
     if path not in sys.path : sys.path.append(path)
     import src
-    
+
 from src.pyquickhelper.loghelper.flog           import fLOG, run_cmd
 from src.pyquickhelper.helpgen.sphinx_main      import process_notebooks, add_notebook_page
 
 class TestNotebookConversion (unittest.TestCase):
-    
+
     def test_notebook(self) :
         fLOG (__file__, self._testMethodName, OutputPrint = __name__ == "__main__")
         path    = os.path.abspath(os.path.split(__file__)[0])
         fold    = os.path.normpath(os.path.join(path, "..", "..", "_doc", "notebooks"))
         nb      = os.path.join(fold, "example_pyquickhelper.ipynb")
         assert os.path.exists(nb)
-        
+
         temp = os.path.join(path, "temp_nb")
         if not os.path.exists(temp): os.mkdir(temp)
-        for file in os.listdir(temp): 
+        for file in os.listdir(temp):
             os.remove(os.path.join(temp,file))
-            
+
         if sys.platform.startswith("win"):
             p1  = r"C:\Program Files\MiKTeX 2.9\miktex\bin\x64"
             p2  = r"%USERPROFILE%\AppData\Local\Pandoc"
         else :
             p1 = "."
-            p2 = "."            
-            
+            p2 = "."
+
         formats = ["ipynb", "html", "python", "rst"]
         exp = [ "example_pyquickhelper.html",
                 "example_pyquickhelper.ipynb",
@@ -44,17 +44,17 @@ class TestNotebookConversion (unittest.TestCase):
                 "example_pyquickhelper.rst",
                 "example_pyquickhelper.ipynb",
                 ]
-        
-        if sys.platform.startswith("win"): 
+
+        if sys.platform.startswith("win"):
             formats.append("pdf")
             exp.append ( "example_pyquickhelper.tex" )
             exp.append ( "example_pyquickhelper.pdf" )
-        
+
         res = process_notebooks(nb, temp, temp, latex_path = p1, pandoc_path = p2, formats = formats)
         for _ in res:
             fLOG(_)
             assert os.path.exists(_)
-                
+
         fou = [ os.path.split(_)[-1] for _ in res ]
         fou = set(fou)
         exp = set(exp)
@@ -63,16 +63,16 @@ class TestNotebookConversion (unittest.TestCase):
                     "\n".join(fou), "\n".join(exp)))
         for i,j in zip(exp,fou):
             if i != j : raise Exception("{0} != {1}".format(i,j))
-     
+
         file = os.path.join(temp, "all_notebooks.rst")
         add_notebook_page(res, file)
         assert os.path.exists(file)
-        
+
         with open(os.path.join(temp, "example_pyquickhelper.rst"), "r", encoding="utf8") as f:
             text = f.read()
         assert "from pyquickhelper import fLOG\n    fLOG(OutputPrint=False)  # by default" in text
         assert ":linenos:" in text
-        
+
     def test_short_cmd(self):
         fLOG (__file__, self._testMethodName, OutputPrint = __name__ == "__main__")
         if sys.platform.startswith("win"): return
@@ -95,8 +95,8 @@ class TestNotebookConversion (unittest.TestCase):
                 assert False
         else:
             fLOG("unfound ", f)
-            
 
-        
+
+
 if __name__ == "__main__"  :
-    unittest.main ()    
+    unittest.main ()

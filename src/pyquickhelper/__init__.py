@@ -18,7 +18,7 @@ def check():
     """
     Checks the library is working.
     It raises an exception if it does not.
-    
+
     @return         boolean
     """
     from .funcwin import check_icon
@@ -26,7 +26,7 @@ def check():
     check_icon()
     check_log()
     return True
-    
+
 from .loghelper.flog                    import fLOG, run_cmd, unzip, noLOG
 from .loghelper.url_helper              import get_url_content
 from .funcwin.frame_params              import open_window_params

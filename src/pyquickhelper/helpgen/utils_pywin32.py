@@ -7,7 +7,7 @@ def import_pywin32():
     """
     For the module ``pywin32``,
     this function tries to add the path to the DLL to ``PATH``
-    before throwing the exception: 
+    before throwing the exception:
     ``DLL load failed: The specified module could not be found``.
     """
     try:
@@ -25,4 +25,3 @@ def import_pywin32():
                 raise ImportError("some DLL must be copied:\n" + "\n".join(dll)) from e
         else :
             raise e
-    

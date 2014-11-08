@@ -10,30 +10,30 @@ class AutoCompletion :
     """
     You can add auto completion object to IPython by adding member
     to an instance of this class.
-    
+
     All members must begin by ``_``
     """
-    
+
     def __init__(self, value = None):
         """
         constructor
-        
+
         @param      value       any value of object
         """
         self._value = value
-        
+
     @property
     def _(self):
         """
         return the value
         """
         return self._value
-        
+
     def _add(self, member, value):
         """
         add a member to this class, add an ``AutoCompletion`` instance,
         creates one if value is not from ``AutoCompletion`` type
-        
+
         @param      member    name of the new member
         @param      value     value to add
         @return               (AutoCompletion)
@@ -49,20 +49,20 @@ class AutoCompletion :
             value = AutoCompletion(value)
             self.__dict__[member] = value
             return value
-            
+
     @property
     def _members(self):
         """
         returns all the member
         """
         return [ _ for _ in self.__dict__ if not _.startswith("_") ]
-        
+
     def __len__(self):
         """
         returns the number of elements
         """
         return 1 + sum ( len(self.__dict__[_]) for _ in self._members)
-            
+
     def __str__(self):
         """
         returns a string
@@ -80,15 +80,15 @@ class AutoCompletion :
                 lin = [ (pref + _) for _ in lin ]
                 rows.extend(lin)
         return "\n".join(rows)
-            
-            
+
+
 class AutoCompletionFile(AutoCompletion) :
     """
-    builds a tree based on a list of files, 
+    builds a tree based on a list of files,
     the class adds ``A__`` before every folder or file starting with ``_``
-    
+
     @example(file autocompletion in IPython)
-    
+
     The following code:
 
     @code
@@ -96,13 +96,13 @@ class AutoCompletionFile(AutoCompletion) :
     @endcode
 
     Will produce the following auto completion picture:
-    
+
     @image images/completion.png
 
     @endexample
-    
+
     """
-    
+
     def __init__(self, value):
         """
         @param  value       directory
@@ -111,11 +111,11 @@ class AutoCompletionFile(AutoCompletion) :
             raise FileNotFoundError("{0} does not exists".format(value))
         super().__init__( os.path.normpath(os.path.abspath(value)))
         self._populate()
-        
+
     def _filter(self, s):
         """
         remove unexpected characters for a file name
-        
+
         @param      s       filename
         @return             cleaned filename
         """
@@ -135,10 +135,10 @@ class AutoCompletionFile(AutoCompletion) :
                 .replace('$',"_") \
                 .replace('-',"_") \
                 .replace('#',"_") \
-                .replace('*',"_") 
+                .replace('*',"_")
         if s.startswith("_") : s = "A__" + s
         return s
-        
+
     def _populate(self):
         """
         populate the class with files and folder in the folder
