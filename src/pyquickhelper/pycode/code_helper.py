@@ -3,6 +3,9 @@
 @brief Various function to clean the code.
 """
 
+import os
+from ..sync.synchelper import explore_folder
+
 def remove_extra_spaces(filename):
     """
     removes extra spaces in a filename, replace the file in place
@@ -20,4 +23,22 @@ def remove_extra_spaces(filename):
         with open(filename,"w") as f :
             f.write("\n".join(lines2))
     return diff
+    
+def remove_extra_spaces_folder(folder, extensions = [".py",".rst"]):
+    """
+    removes extra files in a folder for specific file extensions
+    
+    @param      folder      folder to explore
+    @param      extensions  list of file extensions to process
+    @return                 the list of modified files
+    """
+    files = explore_folder(folder)
+    mod = [ ]
+    for f in files :
+        ext = os.path.splitext(f)
+        if ext in extensions:
+            d = remove_extra_spaces(f)
+            if d != 0 : 
+                mod.append(f)
+    return mod
     

@@ -17,7 +17,7 @@ def explore_folder (folder, pattern = None, fullname = False) :
     """returns the list of files included in a folder and in the subfolder
     @param          folder      (str) folder
     @param          pattern     (str) if None, get all files, otherwise, it is a regular expression, 
-                                the filename must verify (with the folder is fullname is True)
+                                the filename must verify (with the folder if fullname is True)
     @param          fullname    (bool) if True, include the subfolder while checking the regex (pattern)
     @return                     a list of folders, a list of files (the folder is not included the path name)
     """

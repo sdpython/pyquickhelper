@@ -42,4 +42,4 @@ from .helpgen.sphinx_main               import generate_help_sphinx
 from .ipythonhelper.kindofcompletion    import AutoCompletion, AutoCompletionFile
 from .sync.visual_sync                  import create_visual_diff_through_html, create_visual_diff_through_html_files
 from .serverdoc.documentation_server    import run_doc_server
-from .pycode.code_helper                import remove_extra_spaces
+from .pycode.code_helper                import remove_extra_spaces, remove_extra_spaces_folder

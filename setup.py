@@ -96,7 +96,23 @@ if "--verbose" in sys.argv :
     print ("current     =", os.path.abspath(os.getcwd()))
     print ("---------------------------------")
     
-if "build_sphinx" in sys.argv:
+if "clean_space" in sys.argv:
+    # clean the extra space in all files
+    try:
+        import pyquickhelper
+    except ImportError:
+        sys.path.append ( os.path.normpath (os.path.abspath(os.path.join("..", "pyquickhelper", "src" ))))
+        try:
+            import pyquickhelper
+        except ImportError as e :
+            raise ImportError("module pyquickhelper is needed to build the documentation") from e 
+
+    fold = os.path.dirname(__file__)
+    fold = os.path.abspath(fold)
+    rem  = pyquickhelper.remove_extra_spaces_folder(fold)
+    print("number of removed spaces", len(rem))
+    
+elif "build_sphinx" in sys.argv:
     # we take a shortcut 
     
     try:
