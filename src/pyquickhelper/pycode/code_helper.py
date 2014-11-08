@@ -17,6 +17,11 @@ def remove_extra_spaces(filename):
         lines = f.readlines()
 
     lines2 = [ _.rstrip(" \r\n") for _ in lines ]
+    last = len(lines2)-1
+    while last >= 0 and len(lines2[last]) == 0 :
+        last -= 1
+    last+=1
+    lines2 = lines2[:last]
 
     diff = len("".join(lines)) - len("\n".join(lines2))
     if diff != 0:

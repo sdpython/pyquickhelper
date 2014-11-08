@@ -18,6 +18,7 @@ c:\Python34vir\install\Scripts\python -u setup.py install
 echo #######################################################
 
 set pythonexe="c:\Python34\python"
+%pythonexe% -u setup.py clean_space
 %pythonexe% -u setup.py unittests
 echo #######################################################
 
