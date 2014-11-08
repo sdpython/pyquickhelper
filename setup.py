@@ -110,7 +110,7 @@ if "clean_space" in sys.argv:
     fold = os.path.dirname(__file__)
     fold = os.path.abspath(fold)
     rem  = pyquickhelper.remove_extra_spaces_folder(fold, extensions=[".py","rst",".bat",".sh"])
-    print("number of removed spaces", len(rem))
+    print("number of impacted files", len(rem))
 
 elif "build_sphinx" in sys.argv:
     # we take a shortcut
