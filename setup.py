@@ -61,7 +61,7 @@ KEYWORDS = \
 project_var_name + ', synchronization, files, Xavier, Dupré'
 
 DESCRIPTION = \
-"""Three functionalities: folder synchronization, a logging function, helpers to generate documentatino with sphinx"""
+"""Three functionalities: folder synchronization, a logging function, helpers to generate documentation with sphinx"""
 
 CLASSIFIERS = \
 [
