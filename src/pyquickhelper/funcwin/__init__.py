@@ -1,6 +1,6 @@
 """
 @file
-@brief 
+@brief Add a simple function to check an icon exists.
 """
 
 def check_icon():

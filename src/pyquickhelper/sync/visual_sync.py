@@ -148,3 +148,33 @@ def create_visual_diff_through_html(string1, string2):
                     .replace("__STRI"+"NG2__", cleanh(string2))
     
     return page
+
+def create_visual_diff_through_html_files(  file1, 
+                                            file2, 
+                                            encoding="utf8", 
+                                            page = None,
+                                            browser = False):
+    """
+    calls function @see fn create_visual_diff_through_html
+    with the content of two files
+    
+    @param      file1       first file
+    @param      file2       second file
+    @param      page        if not None, saves the results in file
+    @param      browser     open browser ?
+    
+    @return                 HTML page
+    """
+    with open(file1,"r",encoding=encoding) as f: cont1 = f.read()
+    with open(file2,"r",encoding=encoding) as f: cont2 = f.read()
+    diff = create_visual_diff_through_html(cont1,cont2)
+    if page is not None:
+        with open(page,"w",encoding="utf8") as f : 
+            f.write(diff)        
+    if browser:
+        if page is None:
+            raise AttributeError("browser is True, page must be True")
+        import webbrowser
+        webbrowser.open(page)
+    return diff
+    
