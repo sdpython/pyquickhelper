@@ -5,7 +5,7 @@
 for a module designed the same way as this one, @see fn generate_help_sphinx.
 
 """
-import os,sys, shutil, datetime, re, importlib, time
+import os,sys, shutil, datetime, re, importlib
 
 from ..loghelper.flog           import run_cmd, fLOG
 from ..loghelper.pyrepo_helper  import SourceRepository
@@ -375,7 +375,7 @@ def process_notebooks(  notebooks,
 
     @param      notebooks   list of notebooks
     @param      outfold     folder which will contains the outputs
-    @param      build       tempopary folder which contains all produced files
+    @param      build       temporary folder which contains all produced files
     @param      pandoc_path path to pandoc
     @param      formats     list of formats to convert into (pdf format means latex then compilation)
     @param      latex_path  path to the latex compiler
@@ -389,7 +389,7 @@ def process_notebooks(  notebooks,
     to find its DLL, look @see fn import_pywin32.
 
     The latex compilation uses `MiKTeX <http://miktex.org/>`_.
-    The conversion into Word document durectly uses pandoc.
+    The conversion into Word document directly uses pandoc.
     It still has an issue with table.
 
     @warning Some latex templates (for nbconvert) uses ``[commandchars=\\\\\\{\\}]{\\|}`` which allows commands ``\\\\`` and it does not compile.
@@ -963,7 +963,7 @@ def post_process_latex(st, doall):
     if len(sections) > 0 :
         lines = st.split("\n")
         for i,line in enumerate(lines):
-            for id,section,sec in sections :
+            for _,section,sec in sections :
                 if line.strip("\r\n ") == section :
                     fLOG("   **", section, " --> ", sec)
                     lines[i] = sec

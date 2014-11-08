@@ -83,7 +83,7 @@ def repo_ls(full, commandline = True):
                             wait = True,
                             do_not_log = True,
                             encerror = "strict",
-                            encoding = sys.stdout.encoding if sys.stdout != None else "utf8",
+                            encoding = sys.stdout.encoding if sys.stdout is not None else "utf8",
                             change_path = os.path.split(full)[0] if os.path.isfile(full) else full,
                             shell = sys.platform.startswith("win32") )
         if len(err) > 0 :
@@ -245,7 +245,7 @@ def get_repo_version (path = None, commandline = True, usedate = False, log = Fa
                                 wait = True,
                                 do_not_log = True,
                                 encerror = "strict",
-                                encoding = sys.stdout.encoding if sys.stdout != None else "utf8",
+                                encoding = sys.stdout.encoding if sys.stdout is not None else "utf8",
                                 change_path = os.path.split(path)[0] if os.path.isfile(path) else path,
                                 log_error = False,
                                 shell = sys.platform.startswith("win32") )
@@ -346,7 +346,7 @@ def get_nb_commits(path = None, commandline = True):
                             wait = True,
                             do_not_log = True,
                             encerror = "strict",
-                            encoding = sys.stdout.encoding if sys.stdout != None else "utf8",
+                            encoding = sys.stdout.encoding if sys.stdout is not None else "utf8",
                             change_path = os.path.split(path)[0] if os.path.isfile(path) else path,
                             log_error = False,
                             shell = sys.platform.startswith("win32") )

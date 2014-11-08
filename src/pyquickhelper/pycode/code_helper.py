@@ -29,7 +29,7 @@ def remove_extra_spaces(filename):
             f.write("\n".join(lines2))
     return diff
 
-def remove_extra_spaces_folder(folder, extensions = [".py",".rst"]):
+def remove_extra_spaces_folder(folder, extensions = (".py",".rst")):
     """
     removes extra files in a folder for specific file extensions
 

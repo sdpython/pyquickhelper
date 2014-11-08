@@ -64,7 +64,7 @@ class MainFrame(tkinter.Frame) :
                                         variable=self.varcombo,
                                         command = self.change_selection,
                                         options="listbox.height %d label.width %d entry.width %d" % (25, 30, 50))
-        self.combo.entry.config(state='readonly')  ## met la zone de texte en lecture seule
+        self.combo.entry.config(state='readonly')  ## put the text zone in read only mode
         for i,k in enumerate(sorted(functions)) :
             self.combo.insert(i, k)
         self.combo.pack()

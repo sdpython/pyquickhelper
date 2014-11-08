@@ -77,7 +77,7 @@ def repo_ls(full, commandline = True):
                                     wait = True,
                                     do_not_log = True,
                                     encerror = "strict",
-                                    encoding = sys.stdout.encoding if sys.stdout != None else "utf8")
+                                    encoding = sys.stdout.encoding if sys.stdout is not None else "utf8")
                 if len(err) > 0 :
                     fLOG ("problem with file ", full, err)
                     raise Exception(err)
@@ -195,7 +195,7 @@ def get_repo_log (path = None, file_detail = False, commandline = True) :
             revision    = int(i.attrib['revision'].strip())
             author      = i.find("author").text.strip()
             t           = i.find("msg").text
-            msg         = t.strip() if t != None else "-"
+            msg         = t.strip() if t is not None else "-"
             sdate       = i.find("date").text.strip()
             dt          = str_to_datetime(sdate.replace("T"," ").strip("Z "))
             row         = [author, revision, dt, msg ]
@@ -255,7 +255,7 @@ def get_repo_version (path = None, commandline = True, log = False) :
                             wait = True,
                             do_not_log = True,
                             encerror = "ignore",
-                            encoding = sys.stdout.encoding if sys.stdout != None else "utf8",
+                            encoding = sys.stdout.encoding if sys.stdout is not None else "utf8",
                             log_error = False)
         if len(err) > 0 :
             if log:

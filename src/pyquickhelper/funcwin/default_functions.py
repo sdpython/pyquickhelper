@@ -4,7 +4,7 @@
 @brief  various basic functions often needed
 """
 
-import math, os, re, random, time, sys
+import os, re, random
 
 from ..loghelper.flog import fLOG, GetSepLine
 from ..sync.synchelper import explore_folder_iterfile
@@ -57,6 +57,12 @@ def IsEmptyString(s):
     if s is None: return True
     return len(s) == 0
 
+def is_empty_string(s):
+    """
+    calls @see fn IsEmptyString
+    """
+    return IsEmptyString(s)
+
 def file_head ( file = "",
                 head = 1000,
                 out  = "") :
@@ -102,7 +108,7 @@ def file_split (file   = "",
     if not os.path.exists (file) :
         raise Exception ("unable to find file %s" % file)
 
-    if IsEmptyString (out) :
+    if is_empty_string (out) :
         f, ext = os.path.splitext (file)
         out = "%s.split.%s%s" % (file, _get_format_zero_nb_integer (nb), ext)
 
@@ -133,21 +139,21 @@ def file_split (file   = "",
     for k,v in g.items () :
         v.close ()
 
-def file_list (file, out = "") :
+def file_list (folder, out = "") :
     """
     prints the list of files and sub files in a text file
 
-    @param      file        folder
+    @param      folder      folder
     @param      out         result
     @return                 out
     """
 
-    if IsEmptyString (out) :
-        f, ext = os.path.splitext (file)
-        out = "%s_.list_of_files.txt" % (file)
+    if is_empty_string (out) :
+        #f, ext = os.path.splitext (file)
+        out = "%s_.list_of_files.txt" % folder
 
     f = open (out, "w")
-    for l in explore_folder_iterfile (file) :
+    for l in explore_folder_iterfile (folder) :
         f.write (l)
         f.write (GetSepLine())
     f.close ()

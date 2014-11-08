@@ -5,7 +5,6 @@
 """
 import sys, os, inspect, threading, tkinter, io
 import tkinter.font as tkFont
-import tkinter.tix as tix
 
 from ..loghelper.flog               import fLOG, GetLogFile
 from .function_helper               import has_unknown_parameters, extract_function_information, private_adjust_parameters, private_get_function
@@ -308,7 +307,7 @@ class FrameFunction (tkinter.Frame) :
 
         try :
             self.LOG.insert ("end", log)
-        except :
+        except Exception as e :
             self.LOG.insert ("end", "\n".join (repr (log).split ("\n")))
         self.LOG.see ("end")
 
@@ -374,7 +373,7 @@ class FrameFunction (tkinter.Frame) :
         FrameFunction.open_window (file_head)
         @endcode
         """
-        param   = params if params != None else {  }
+        param   = params if params is not None else {  }
 
         root = top_level_window if top_level_window is not None else tkinter.Tk ()
         ico  = os.path.realpath (os.path.join (os.path.split (__file__) [0], "project_ico.ico"))

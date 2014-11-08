@@ -120,10 +120,10 @@ def df_to_html (self, class_table = None, class_td = None, class_tr = None, clas
     @param  class_tr        adds a class to the tag ``tr`` (None for none)
     @param  class_th        adds a class to the tag ``th`` (None for none)
     """
-    clta = ' class="%s"' % class_table  if class_table != None else ""
-    cltr = ' class="%s"' % class_tr     if class_tr != None else ""
-    cltd = ' class="%s"' % class_td     if class_td != None else ""
-    clth = ' class="%s"' % class_th     if class_th != None else ""
+    clta = ' class="%s"' % class_table  if class_table is not None else ""
+    cltr = ' class="%s"' % class_tr     if class_tr is not None else ""
+    cltd = ' class="%s"' % class_td     if class_td is not None else ""
+    clth = ' class="%s"' % class_th     if class_th is not None else ""
 
     rows = [ "<table%s>" % clta ]
     rows.append (  ("<tr%s><th%s>" % (cltr, clth)) + ("</th><th%s>" % clth).join (self.columns) + "</th></tr>" )

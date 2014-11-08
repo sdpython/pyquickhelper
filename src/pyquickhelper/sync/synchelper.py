@@ -166,7 +166,7 @@ def synchronize_folder (   p1,
     @param      filter_copy         (str) None to accept every file, a string if it is a regular expression,
                                     a function for something more complex: function (fullname) --> True
     @param      avoid_copy          if True, just return the list of files which should be copied but does not do the copy
-    @param      operations          if None, this function is called with the following parameters: ``operations(op,n1,n2)``,
+    @param      operations          if None, this function is called the following way ``operations(op,n1,n2)``
                                     if should return True if the file was updated
     @param      file_date           filename which contains information about when the last sync was done
     @param      log1                @see cl FileTreeNode
@@ -217,7 +217,7 @@ def synchronize_folder (   p1,
 
     def pr_filter (root, path, f, d) :
         if d : return True
-        root = root.lower ()
+        #root = root.lower ()
         path = path.lower ()
         f    = f.lower ()
         be   = os.path.join (path, f)
@@ -225,7 +225,7 @@ def synchronize_folder (   p1,
 
     if isinstance(filter_copy,str):
         rg = re.compile(filter_copy)
-        filter_copy = lambda f, ex=rg : rg.search(file) is not None
+        filter_copy = lambda f, ex=rg : ex.search(f) is not None
 
     f1  = p1
     f2  = p2
@@ -308,7 +308,7 @@ def synchronize_folder (   p1,
                 #n1.copyTo (f2)
                 #raise Exception ("size are different for file %s (%d != %d) (op %s)" % (file, n1._size, n2._size, op))
 
-    if status != None :
+    if status is not None :
         status.save_dates(file_date)
 
     return action
@@ -335,9 +335,9 @@ def remove_folder (top, remove_also_top = True) :
             os.rmdir(t)
             res.append ( (t,"dir") )
 
-    if remove_also_top :
-        res.append ( (root,"dir") )
-        os.rmdir(root)
+        if remove_also_top :
+            res.append ( (root,"dir") )
+            os.rmdir(root)
 
     return res
 

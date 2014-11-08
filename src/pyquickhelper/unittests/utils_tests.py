@@ -114,6 +114,7 @@ def import_files (li) :
                 mo = __import__ (fi)
             except Exception as e :
                 print ("unable to import ", fi)
+                mo = None
         else :
             try :
                 mo = __import__ (fi)
@@ -172,21 +173,6 @@ def clean () :
                 remove_folder (l)
         except Exception as e :
             print ("unable to remove dir. ",l, " --- ", str(e).replace("\n", " "))
-    #print ()
-    path = os.path.split (__file__) [0]
-    d    = os.path.join (path, "model")
-    if os.path.exists (d) : os.rmdir (d)
-    d    = os.path.join (path, "param")
-    if os.path.exists (d) : os.rmdir (d)
-    d    = os.path.join (path, "temp")
-    if False :
-        if "hal_python" in sys.modules :
-            HAL = sys.modules ["hal_python"]
-            HAL.End ()
-        if os.path.exists (d) :
-            li = glob.glob (d + "/*.*")
-            for l in li : os.remove (l)
-            os.rmdir (d)
 
 def main (  runner,
             path_test   = None,
@@ -210,8 +196,8 @@ def main (  runner,
 
     # checking that the module does not belong to the installed modules
     if path_test is not None :
-        pathModule = os.path.join(sys.executable, "Lib", "site-packages")
-        paths = [ os.path.join(pathModule, "src"), ]
+        path_module = os.path.join(sys.executable, "Lib", "site-packages")
+        paths = [ os.path.join(path_module, "src"), ]
         for path in paths :
             if os.path.exists (path):
                 raise FileExistsError("this path should not exist " + path)
@@ -269,7 +255,7 @@ def main (  runner,
         r   = runner.run(s[0])
         out = r.stream.getvalue ()
         ti  = exp.findall (out) [-1]
-        add = " ran %s tests in %ss" % ti
+        add = " ran %s tests in %ss" % ti  # don't modify it, PyCharm does not get it right (ti is a tuple)
 
         if log :
             fLOG(Lock=False)

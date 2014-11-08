@@ -441,7 +441,7 @@ def import_module (rootm, filename, log_function, additional_sys_path = [ ]) :
 
     # full path
     fullpath = sdir.replace("\\","/")
-    if rootm != None:
+    if rootm is not None:
         root = rootm
         tl = relpath
         fi = tl.replace(".py","").replace("/",".")
@@ -541,7 +541,7 @@ def get_module_objects(mod) :
                 for n, o in inspect.getmembers(obj):
                     try :
                         ok = ModuleMemberDoc (o, "method", cl = obj, name = n, module = mod)
-                        if ok.module != None :
+                        if ok.module is not None :
                             cl.append ( ok  )
                     except Exception as e :
                         if str(e).startswith("S/") :
@@ -740,7 +740,7 @@ def fix_image_page_for_root(content, file):
     look for images and fix their path as if the extract were copied to the root
 
     @param      content     extracted content
-    @param      file        file where is comes from
+    @param      file        file where is comes from (unused)
     @return                 content
     """
     rows = content.split("\n")

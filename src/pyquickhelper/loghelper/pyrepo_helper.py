@@ -9,7 +9,7 @@ from .repositories import pygit_helper as GIT
 
 class SourceRepository :
     """
-    proposes the same functionatilies independent from the source chosen repository (GIT or SVN)
+    proposes the same functionality independent from the source chosen repository (GIT or SVN)
 
     On Windows, it might help to install either `TortoiseSVN <http://tortoisesvn.net/>`_
     or the `GitHub application <http://windows.github.com/>`_.
@@ -98,4 +98,4 @@ class SourceRepository :
         """
         if self.module is None :
             self.SetGuessedType(path)
-        return self.get_nb_commits(path, commandline = self.commandline)
+        return self.module.get_nb_commits(path, commandline = self.commandline)

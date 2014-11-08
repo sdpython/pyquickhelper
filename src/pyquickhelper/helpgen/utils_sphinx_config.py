@@ -23,9 +23,9 @@ def ie_layout_html():
         with open(layout, "r", encoding="utf-8") as f :
             content = f.read()
         if tofind not in content:
-            all = [ "unable to find: " + tofind  + " in "]
-            all.append ('  File "{0}", line 1'.format(layout))
-            raise Exception("\n".join(all))
+            alls = [ "unable to find: " + tofind  + " in ",
+                     '  File "{0}", line 1'.format(layout) ]
+            raise Exception("\n".join(alls))
         return True
     else:
         raise FileNotFoundError("Sphinx is not properly installed, unable to find: " + layout)

@@ -68,7 +68,7 @@ def init (path = None, filename = None, create = True, path_add = None) :
         filename = sys.hal_log_values ["__log_file_name"]
 
     if (sys.hal_log_values ["__log_path"] != path or sys.hal_log_values ["__log_file_name"] != filename) \
-          and sys.hal_log_values ["__log_file"] != None :
+          and sys.hal_log_values ["__log_file"] is not None :
         sys.hal_log_values ["__log_file"].close ()
         sys.hal_log_values ["__log_file"] = None
     sys.hal_log_values ["__log_path"]       = path
@@ -562,7 +562,7 @@ def _check_url_file (url, path_download, outfile) :
     @return                         the filename
     """
     if "http://" in url.lower () :
-        dest = outfile if outfile != None else _get_file_url (url, path_download)
+        dest = outfile if outfile is not None else _get_file_url (url, path_download)
         down = False
         nyet = dest + ".notyet"
 
@@ -719,13 +719,13 @@ def run_cmd (   cmd,
                 encoding        = "utf8",
                 change_path     = None,
                 communicate     = True,
-                preprocess = True) :
+                preprocess      = True) :
     """
     run a command line and wait for the result
     @param      cmd                 command line
     @param      sin                 sin: what must be written on the standard input
     @param      shell               if True, cmd is a shell command (and no command window is opened)
-    @param      wait                call proc.wait
+    @param      wait                call ``proc.wait``
     @param      log_error           if log_error, call fLOG (error)
     @param      secure              if secure is a string (a valid filename), the function stores the output in a file
                                     and reads it continuously
@@ -737,7 +737,7 @@ def run_cmd (   cmd,
     @param      change_path         change the current path if  not None (put it back after the execution)
     @param      communicate         use method `communicate <https://docs.python.org/3.4/library/subprocess.html#subprocess.Popen.communicate>`_ which is supposed to be safer,
                                     parameter ``wait`` must be True
-    @param      preprocess     preprocess the command line if necessary (not available on Windows) (False to disable that option)
+    @param      preprocess          preprocess the command line if necessary (not available on Windows) (False to disable that option)
     @return                         content of stdout, stdres  (only if wait is True)
     @rtype      tuple
 
@@ -1077,7 +1077,7 @@ def load_content_file_with_encoding (filename) :
     raise error
 
 if "hal_log_values" not in sys.__dict__ :
-    sys.hal_log_values = { }
+    sys.hal_log_values = dict()
     sys.hal_log_values ["__log_const"]     = "temp_log.txt"
     sys.hal_log_values ["__log_path"]      = "."
     sys.hal_log_values ["__log_file_name"] = None

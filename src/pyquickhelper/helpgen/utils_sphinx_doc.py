@@ -768,7 +768,7 @@ def prepare_file_for_sphinx_help_generation (
 
     @param      issues          if not None (a list), the function will store some issues here.
 
-    @param      additional_sys_path     additional pathes to includes to sys.path when import a module (will be removed afterwards)
+    @param      additional_sys_path     additional paths to includes to sys.path when import a module (will be removed afterwards)
     @param      replace_relative_import replace relative import
 
     @return                     list of written files stored in RstFileHelp
@@ -920,7 +920,7 @@ def prepare_file_for_sphinx_help_generation (
         onefiles = process_look_for_tag(tag, title, rsts)
         for page,onefile in onefiles:
             saveas = os.path.join(output, "all_%s%s.rst" % \
-                            (tag, \
+                            (tag,
                              page.replace(":","").replace("/","").replace(" ","")))
             with open(saveas, "w", encoding="utf8") as f : f.write(onefile)
             app.append( RstFileHelp (saveas, onefile, "") )
