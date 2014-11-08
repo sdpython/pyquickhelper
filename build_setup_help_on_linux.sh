@@ -13,5 +13,3 @@ if [ -f dist/html ] ; then
     mkdir dist/html
 fi
 rsync -ra _doc/sphinxdoc/build/html/* dist/html
-
-
