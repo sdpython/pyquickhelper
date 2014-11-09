@@ -86,7 +86,10 @@ packages     = find_packages('src', exclude='src')
 package_dir  = { k: "src/" + k.replace(".","/") for k in packages }
 package_data = { project_var_name + ".funcwin": ["*.ico"] }
 
-with open(readme) as f : long_description = f.read()
+if os.path.exists(readme):
+    with open(readme) as f : long_description = f.read()
+else:
+    long_description = ""
 
 if "--verbose" in sys.argv :
     print ("---------------------------------")
