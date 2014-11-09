@@ -49,6 +49,7 @@ Versions
 * **0.9 - 2014/??/??**
     * **add:** function to remove extra spaces in a file :func:`remove_extra_spaces <pyquickhelper.pycode.code_helper.remove_extra_spaces>`
     * **add:** function :func:`create_visual_diff_through_html_files <pyquickhelper.sync.visual_sync.create_visual_diff_through_html_files>`
+    * **fix:** the setup does not need the file ``README.rst`` anymore
 * **0.8 - 2014/11/03**
     * **add:** Python version is now checked, ImportError is raised if it used on Python 2
     * **new:** function :func:`run_doc_server <pyquickhelper.serverdoc.documentation_server.run_doc_server>` creates a local server to display documentation
