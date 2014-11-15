@@ -11,16 +11,18 @@ def open_html_form (params,
             title='',
             key_save = "",
             style="background-color:gainsboro; padding:2px; border:0px;",
-            raw = False):
+            raw = False,
+            hook = None):
     """
-    the function displays a form onto a notebook,
-    it requires a notebook to be open
+    The function displays a form onto a notebook,
+    it requires a notebook to be open.
 
     @param      params          dictionary of parameters (see comment below)
     @param      title           titre of the added box
     @param      style           style of the form
     @param      key_save        name of the variable to add to the notebook (as a dictionary)
     @param      raw             returns the raw HTML and not ``HTML( text )``
+    @param      hook            an instruction as a string which will be executed if the button is clicked (None for none)
     @return                     HTML
 
     The code comes from
@@ -35,14 +37,26 @@ def open_html_form (params,
 
     Cell 1:
     @code
-    params = { "user":os.environ["USERNAME"],
-               "password":"" }
+    params = { "user":os.environ["USERNAME"], "password":"" }
     open_html_form (params, title="try the password *", key_save="my_new_params")
     @endcode
 
     Cell 2:
     @code
     print(my_new_params)
+    @endcode
+
+    We can execute a simple action after the button *Ok* is pressed. This second trick
+    comes from `this notebook <https://raw.githubusercontent.com/fluxtream/fluxtream-ipy/master/Communication%20between%20kernel%20and%20javascript%20in%20iPython%202.0.ipynb>`_.
+    The code displays whatever comes from function ``custom_action`` in this case.
+    You should return ``""`` to display nothing.
+
+    @code
+    def custom_action(x):
+        x["combined"] = x["first_name"] + " " + x["last_name"]
+        return x
+    params = { "first_name":"", "last_name":"" }
+    open_html_form (params, title="enter your name", key_save="my_address", hook="custom_action(my_address)")
     @endcode
 
     @endexample
@@ -65,8 +79,14 @@ def open_html_form (params,
         else: typ = "text"
         rows.append ( row.format(k, "" if v is None else str(v), key_save, typ ) )
     rows.append( """<br /><button onclick="set_value{0}()">Ok</button></div>""".format(key_save) )
+    if hook is not None:
+        rows.append("<div id='out%s'></div>" % key_save.replace("_",""))
 
     rows.append("""<script type="text/Javascript">""")
+    rows.append("function %scallback(msg) {" % key_save)
+    rows.append("   var ret = msg.content.data['text/plain'];")
+    rows.append("   $('#out%s').text(ret);" % key_save.replace("_",""))
+    rows.append("}")
     rows.append("function set_value__KEY__(){".replace("__KEY__",key_save))
 
     rows.append("   command='%s = {' ;" % key_save)
@@ -76,6 +96,8 @@ def open_html_form (params,
     rows.append("""   command += '}';""")
     rows.append("""   var kernel = IPython.notebook.kernel;""")
     rows.append("""   kernel.execute(command);""")
+    if hook is not None:
+        rows.append("""   kernel.execute('%s', {iopub: {output: %scallback}}, {silent: false});""" % (hook, key_save))
     rows.append("""}""")
     rows.append("</script>")
 
