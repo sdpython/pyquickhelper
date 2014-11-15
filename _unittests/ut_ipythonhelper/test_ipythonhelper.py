@@ -12,7 +12,8 @@ except ImportError :
     if path not in sys.path : sys.path.append (path)
     import src
 
-from src.pyquickhelper import AutoCompletion, fLOG, AutoCompletionFile
+from src.pyquickhelper import AutoCompletion, fLOG, AutoCompletionFile, open_html_form
+
 
 
 class TestAutoCompletion (unittest.TestCase):
@@ -41,6 +42,14 @@ class TestAutoCompletion (unittest.TestCase):
         l = len(this)
         assert l > 30
 
+    def test_html_form(self):
+        fLOG (__file__, self._testMethodName, OutputPrint = __name__ == "__main__")
+        params = {"parA":"valueA", "parB":"valueB"}
+        title = 'unit_test_title'
+        key_save = 'jjj'
+        raw = open_html_form(params, title, key_save, raw=True)
+        fLOG(raw)
+        assert len(raw) > 0
 
 
 
