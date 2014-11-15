@@ -31,19 +31,19 @@ def open_html_form (params,
     This behaviour is expected in case one of the field contains a password. On a notebook, it
     gives the following result:
 
-    @image images/form.png
-
     @example(open a add a form in a notebook to ask parameters to a user)
+
+    @image images/form.png
 
     Cell 1:
     @code
-    params = { "user":os.environ["USERNAME"], "password":"" }
-    open_html_form (params, title="try the password *", key_save="my_new_params")
+    params = { "module":, "version":"v..." }
+    open_html_form (params, title="try the password *", key_save="form1")
     @endcode
 
     Cell 2:
     @code
-    print(my_new_params)
+    print(form1)
     @endcode
 
     We can execute a simple action after the button *Ok* is pressed. This second trick
