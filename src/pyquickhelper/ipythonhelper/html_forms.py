@@ -3,7 +3,9 @@
 @brief Some functions to interact better with Notebook
 """
 
-import os
+import os, re
+
+_reg_var = re.compile("^[a-zA-Z_]([a-zA-Z_0-9]*)$")
 
 def open_html_form (params,
             title='',
@@ -14,7 +16,7 @@ def open_html_form (params,
     the function displays a form onto a notebook,
     it requires a notebook to be open
 
-    @param      params          dictionary of parameters
+    @param      params          dictionary of parameters (see comment below)
     @param      title           titre of the added box
     @param      style           style of the form
     @param      key_save        name of the variable to add to the notebook (as a dictionary)
@@ -45,8 +47,15 @@ def open_html_form (params,
 
     @endexample
 
+    The function generates javascript based on the keys the dictionary ``params`` contains.
+    The keys must follows the same as a javascript identifier (no space).
+
     .. versionadded:: 0.9
     """
+    global _reg_var
+    for k in params:
+        if not _reg_var.match(k):
+            raise KeyError("keys in params must look like a variable, it is not the case for: " + k)
 
     row = """<br />{0} <input type="{3}" id="{2}{0}" value="{1}" size="80" />"""
 
