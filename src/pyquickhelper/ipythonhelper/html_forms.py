@@ -8,7 +8,7 @@ import os
 def open_html_form (params,
             title='',
             key_save = "",
-            style="background-color:gainsboro; width:600px; padding:10px;",
+            style="background-color:gainsboro; padding:2px; border:0px;",
             raw = False):
     """
     the function displays a form onto a notebook,
@@ -24,19 +24,38 @@ def open_html_form (params,
     The code comes from
     `IPython Notebook: Javascript/Python Bi-directional Communication <https://jakevdp.github.io/blog/2013/06/01/ipython-notebook-javascript-python-communication/>`_.
     When the notebook is converted into a HTML document, the values in the form do not appear.
-    This behaviour is expected in case one of the field contains a password.
+    This behaviour is expected in case one of the field contains a password. On a notebook, it
+    gives the following result:
+
+    @image images/form.png
+
+    @example(open a add a form in a notebook to ask parameters to a user)
+
+    Cell 1:
+    @code
+    params = { "user":os.environ["USERNAME"],
+               "password":"" }
+    open_html_form (params, title="try the password *", key_save="my_new_params")
+    @endcode
+
+    Cell 2:
+    @code
+    print(my_new_params)
+    @endcode
+
+    @endexample
 
     .. versionadded:: 0.9
     """
 
-    row = """<td><td>{0}</td><td><input type="{3}" id="{2}{0}" value="{1}" /></td></tr>"""
+    row = """<br />{0} <input type="{3}" id="{2}{0}" value="{1}" size="80" />"""
 
-    rows = [ """<div style="{0}">{1} <table border="0">""".format(style, title, key_save) ]
+    rows = [ """<div style="{0}"><b>{1}</b>""".format(style, title, key_save) ]
     for k,v in sorted(params.items()):
         if k.startswith("password") : typ = "password"
         else: typ = "text"
         rows.append ( row.format(k, "" if v is None else str(v), key_save, typ ) )
-    rows.append( """</table><button onclick="set_value{0}()">Ok</button></div>""".format(key_save) )
+    rows.append( """<br /><button onclick="set_value{0}()">Ok</button></div>""".format(key_save) )
 
     rows.append("""<script type="text/Javascript">""")
     rows.append("function set_value__KEY__(){".replace("__KEY__",key_save))
