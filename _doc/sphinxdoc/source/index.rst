@@ -15,26 +15,15 @@ pyquickhelper documentation
     * `Windows Setup <http://www.xavierdupre.fr/site2013/index_code.html#pyquickhelper>`_
 
 
-Description
------------
-
-This extension gathers three functionalities:
-    * a logging function: :func:`fLOG <pyquickhelper.loghelper.flog.fLOG>`
-    * a function to synchronize two folders: :func:`pyquickhelper.synchronize_folder <pyquickhelper.sync.synchelper.synchronize_folder>`
-    * a function to generate a copy of a module, converting doxygen documentation in rst format: :func:`generate_help_sphinx <pyquickhelper.helpgen.sphinx_main.generate_help_sphinx>` (see also :func:`prepare_file_for_sphinx_help_generation <pyquickhelper.helpgen.utils_sphinx_doc.prepare_file_for_sphinx_help_generation>`)
-
-The module is available on `pypi/pyquickhelper <https://pypi.python.org/pypi/pyquickhelper/>`_ and
-on `GitHub/pyquickhelper <https://github.com/sdpython/pyquickhelper>`_.
-
 Functionalities
 ---------------
 
-    * help generation
-    * folder synchronization
-    * logging
-    * import a flat file into a SQLite database
-    * help running unit tests
-    * functions to convert a pandas DataFrame into a HTML table or a RST table
+    * simple forms in notebooks (see :func:`open_html_form <pyquickhelper.ipythonhelper.html_forms.open_html_form>`)
+    * help generation including notebook conversion (see :func:`generate_help_sphinx <pyquickhelper.helpgen.sphinx_main.generate_help_sphinx>`)
+    * folder synchronization (see :func:`pyquickhelper.synchronize_folder <pyquickhelper.sync.synchelper.synchronize_folder>`)
+    * logging (see :func:`fLOG <pyquickhelper.loghelper.flog.fLOG>`)
+    * help running unit tests (see :func:`main <pyquickhelper.unittests.utils_test.main>`)
+    * simple server to server sphinx documentation (see :func:`run_doc_server <pyquickhelper.serverdoc.documentation_server.run_doc_server>`)
 
 Indices and tables
 ==================
