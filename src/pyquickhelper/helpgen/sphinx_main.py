@@ -395,6 +395,9 @@ def process_notebooks(  notebooks,
     @warning Some latex templates (for nbconvert) uses ``[commandchars=\\\\\\{\\}]{\\|}`` which allows commands ``\\\\`` and it does not compile.
                 The one used here is ``report``.
 
+    ..versionchanged:: 0.9
+        For HTML conversion, read the following blog about mathjax: `nbconvert: Math is not displayed in the html output <https://github.com/ipython/ipython/issues/6440>`_.
+
     """
     if isinstance(notebooks,str):
         notebooks = [ notebooks ]
@@ -890,6 +893,10 @@ def post_process_html_output(file, pdf, python):
     @param      file        filename
     @param      pdf         if True, add a link to the PDF, assuming it will exists at the same location
     @param      python      if True, add a link to the Python conversion
+
+    ..versionchanged:: 0.9
+        For HTML conversion, read the following blog about mathjax: `nbconvert: Math is not displayed in the html output <https://github.com/ipython/ipython/issues/6440>`_.
+
     """
     fold,name = os.path.split(file)
     noext = os.path.splitext(name)[0]
@@ -916,6 +923,10 @@ def post_process_html_output(file, pdf, python):
     text = text.replace("<title>[]</title>", "<title>%s</title>" % name)
     if "<h1>" not in text and "<h1 id" not in text :
         text = text.replace("<body>", "<body><h1>%s</h1>" % name)
+
+    # mathjax
+    text = text.replace("https://c328740.ssl.cf1.rackcdn.com/mathjax/latest/MathJax.js?config=TeX-AMS_HTML",
+                        "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML")
 
     with open(file, "w", encoding="utf8") as f :
         f.write(text)

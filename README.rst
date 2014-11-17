@@ -39,6 +39,7 @@ Versions
     * **add:** function :func:`create_visual_diff_through_html_files <pyquickhelper.sync.visual_sync.create_visual_diff_through_html_files>`
     * **fix:** the setup does not need the file ``README.rst`` anymore
     * **add:** function :func:`open_html_form <pyquickhelper.ipythonhelper.html_forms.open_html_form>`
+    * **fix:** fix a bad link to MathJax when converting notebook to HTML format
 * **0.8 - 2014/11/03**
     * **add:** Python version is now checked, ImportError is raised if it used on Python 2
     * **new:** function :func:`run_doc_server <pyquickhelper.serverdoc.documentation_server.run_doc_server>` creates a local server to display documentation
