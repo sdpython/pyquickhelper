@@ -719,7 +719,8 @@ def run_cmd (   cmd,
                 encoding        = "utf8",
                 change_path     = None,
                 communicate     = True,
-                preprocess      = True) :
+                preprocess      = True,
+                timeout         = None) :
     """
     run a command line and wait for the result
     @param      cmd                 command line
@@ -738,6 +739,7 @@ def run_cmd (   cmd,
     @param      communicate         use method `communicate <https://docs.python.org/3.4/library/subprocess.html#subprocess.Popen.communicate>`_ which is supposed to be safer,
                                     parameter ``wait`` must be True
     @param      preprocess          preprocess the command line if necessary (not available on Windows) (False to disable that option)
+    @param      timeout             when data is sent to stdin (``sin``), a timeout is needed to avoid waiting for ever
     @return                         content of stdout, stdres  (only if wait is True)
     @rtype      tuple
 
@@ -748,6 +750,10 @@ def run_cmd (   cmd,
     @endexample
 
     If you are using this function to run git function, parameter ``shell`` must be True.
+
+    .. versionchanged:: 0.9
+        parameter *timeout* was added,
+        the function now works with stdin
     """
     if secure is not None :
         with open(secure,"w") as f : f.write("")
@@ -768,6 +774,7 @@ def run_cmd (   cmd,
 
         pproc = subprocess.Popen (cmd,
                                  shell = shell,
+                                 stdin  = subprocess.PIPE if sin is not None and len(sin) > 0 else None,
                                  stdout = subprocess.PIPE if wait else None,
                                  stderr = subprocess.PIPE if wait else None,
                                  startupinfo = startupinfo)
@@ -776,7 +783,8 @@ def run_cmd (   cmd,
         if not do_not_log :
             fLOG("--linux", cmdl)
         pproc = subprocess.Popen (cmdl,
-                                 shell = shell,
+                                 shell  = shell,
+                                 stdin  = subprocess.PIPE if sin is not None and len(sin) > 0 else None,
                                  stdout = subprocess.PIPE if wait else None,
                                  stderr = subprocess.PIPE if wait else None)
 
@@ -789,10 +797,12 @@ def run_cmd (   cmd,
         skip_waiting = False
 
         if communicate:
-            stdoutdata, stderrdata = pproc.communicate(sin, timeout = None)
+            stdoutdata, stderrdata = pproc.communicate(sin.encode(), timeout = timeout)
             out = decode_outerr(stdoutdata, encoding, encerror, cmd)
             err = decode_outerr(stderrdata, encoding, encerror, cmd)
         else :
+            if sin is not None and len(sin) > 0 :
+                raise Exception("communicate should be True to send something on stdin")
             stdout, stderr = pproc.stdout, pproc.stderr
 
             if secure is None :
