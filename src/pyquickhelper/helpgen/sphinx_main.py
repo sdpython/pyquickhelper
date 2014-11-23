@@ -558,7 +558,7 @@ def process_notebooks(  notebooks,
                 if not sys.platform.startswith("win"): c = c.replace('"','')
                 out,err = run_cmd(c,wait=True, do_not_log = False, log_error=False, shell = sys.platform.startswith("win"))
                 if len(err) > 0 :
-                    raise HelpGenException(err)
+                    raise HelpGenException("issue with cmd: %s\nERR:\n%s" % (c, err))
 
             if format == "html":
                 # we add a link to the notebook
