@@ -44,4 +44,5 @@ from .sync.visual_sync                  import create_visual_diff_through_html, 
 from .serverdoc.documentation_server    import run_doc_server
 from .pycode.code_helper                import remove_extra_spaces, remove_extra_spaces_folder
 from .ipythonhelper.html_forms          import open_html_form
+from .ipythonhelper.magic_parser        import MagicCommandParser
 from .helpgen.utils_sphinx_config       import NbImage
