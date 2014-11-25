@@ -768,8 +768,11 @@ def post_process_rst_output(file, html, pdf, python):
             if b is None:
                 pass
             else :
-                if b in codeb :
-                    lines[pos] = "{0}\n    :linenos:\n\n".format(codeb[-1])
+                if b in codeb:
+                    if "notebook" not in file :  # we remove line number for the notebooks
+                        lines[pos] = "{0}\n    :linenos:\n\n".format(codeb[-1])
+                    else:
+                        lines[pos] = "{0}\n\n".format(codeb[-1])
                 inbloc = True
                 memopos = pos
         else:
