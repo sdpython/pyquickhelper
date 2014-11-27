@@ -797,7 +797,7 @@ def run_cmd (   cmd,
         skip_waiting = False
 
         if communicate:
-            stdoutdata, stderrdata = pproc.communicate(sin.encode(), timeout = timeout)
+            stdoutdata, stderrdata = pproc.communicate(sin if sin is None else sin.encode(), timeout = timeout)
             out = decode_outerr(stdoutdata, encoding, encerror, cmd)
             err = decode_outerr(stderrdata, encoding, encerror, cmd)
         else :
