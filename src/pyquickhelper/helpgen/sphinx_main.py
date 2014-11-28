@@ -395,7 +395,7 @@ def process_notebooks(  notebooks,
     @warning Some latex templates (for nbconvert) uses ``[commandchars=\\\\\\{\\}]{\\|}`` which allows commands ``\\\\`` and it does not compile.
                 The one used here is ``report``.
 
-    ..versionchanged:: 0.9
+    .. versionchanged:: 0.9
         For HTML conversion, read the following blog about mathjax: `nbconvert: Math is not displayed in the html output <https://github.com/ipython/ipython/issues/6440>`_.
 
     """
@@ -897,7 +897,7 @@ def post_process_html_output(file, pdf, python):
     @param      pdf         if True, add a link to the PDF, assuming it will exists at the same location
     @param      python      if True, add a link to the Python conversion
 
-    ..versionchanged:: 0.9
+    .. versionchanged:: 0.9
         For HTML conversion, read the following blog about mathjax: `nbconvert: Math is not displayed in the html output <https://github.com/ipython/ipython/issues/6440>`_.
 
     """
