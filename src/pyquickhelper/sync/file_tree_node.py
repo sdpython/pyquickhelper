@@ -162,7 +162,7 @@ class FileTreeNode :
 
     def hash_md5_readfile (self):
         """
-        compute a haash of a file
+        compute a hash of a file
 
         @return     string
         """
