@@ -178,7 +178,8 @@ def main (  runner,
             path_test   = None,
             limit_max   = 1e9,
             log         = False,
-            skip        = -1) :
+            skip        = -1,
+            on_stderr   = True) :
     """
     run all unit test
     the function looks into the folder _unittest and extract from all files
@@ -191,6 +192,7 @@ def main (  runner,
     @param      limit_max   avoid running tests longer than limit seconds
     @param      log         if True, enables intermediate files
     @param      skip        if skip != -1, skip the first "skip" test files
+    @param      on_stderr   if True, publish everything on stderr at the end
     @return                 list of couple (file, test results)
     """
 
@@ -282,5 +284,8 @@ def main (  runner,
 
     if fail == 0 :
         clean ()
+
+    if on_stderr :
+        sys.stderr.write(val)
 
     return keep
