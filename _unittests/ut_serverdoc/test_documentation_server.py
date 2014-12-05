@@ -19,7 +19,7 @@ except ImportError :
     import src
     import pyquickhelper
 
-from pyquickhelper                      import fLOG, run_doc_server, get_url_content
+from pyquickhelper import fLOG, run_doc_server, get_url_content
 
 
 class TestDocumentationServer(unittest.TestCase):
