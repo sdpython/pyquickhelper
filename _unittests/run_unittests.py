@@ -28,7 +28,9 @@ def main():
             
     err = res.get("err","")
     if len(err) > 0 :
-        raise Exception(err)
+        sys.stderr.write(err)
+        sys.exit(-1)
+        #raise Exception(err)
 
 if __name__ == "__main__" :
     main()
