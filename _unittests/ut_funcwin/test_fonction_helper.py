@@ -31,5 +31,9 @@ class TestFonctionHelper (unittest.TestCase):
         fLOG(__file__, self._testMethodName, OutputPrint = __name__ == "__main__")
         check()
 
+    def test_fail(self):
+        fLOG(__file__, self._testMethodName, OutputPrint = __name__ == "__main__")
+        assert False
+
 if __name__ == "__main__"  :
     unittest.main ()
