@@ -818,7 +818,7 @@ def find_graphviz_dot():
         if p is None:
             raise FileNotFoundError("unable to find graphviz, look into paths such as: " + graphviz_dot)
         else:
-            return p
+            return os.path.join(p, "dot.exe")
     else:
         # linux
         return "dot"
@@ -835,8 +835,9 @@ def find_latex_path():
         latex = r"C:\Program Files\MiKTeX 2.9\miktex\bin\x64"
         if not os.path.exists(latex):
             latex = find_in_PATH("latex.exe")
-        if latex is None or not os.path.exists(latex):
-            raise FileNotFoundError("unable to find latex (miktex), look into paths such as: " + latex)
+            if latex is None or not os.path.exists(latex):
+                raise FileNotFoundError("unable to find latex (miktex), look into paths such as: " + latex)
+        return latex
     else:
         # linux
         return ""
