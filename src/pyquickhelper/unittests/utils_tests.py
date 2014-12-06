@@ -334,3 +334,21 @@ def is_valid_error(error):
         if key.lower() in error:
             return True
     return False
+
+def main_wrapper_tests(codefile):
+    """
+    calls function @see fn main and throw an exception if it fails
+
+    @param      codefile        ``__file__`` of ``run_unittests.py``
+    """
+    runner  = unittest.TextTestRunner(verbosity=0, stream = io.StringIO ())
+    path    = os.path.abspath(os.path.join(os.path.split(codefile) [0]))
+    res     = main(runner, path_test = path, skip = -1)
+    for r in res["tests"] :
+        k = str (r [1])
+        if "errors=0" not in k or "failures=0" not in k :
+            print ("*", r[1], r[0])
+
+    err = res.get("err","")
+    if len(err) > 0 :
+        raise Exception(err)

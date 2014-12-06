@@ -46,3 +46,4 @@ from .pycode.code_helper                import remove_extra_spaces, remove_extra
 from .ipythonhelper.html_forms          import open_html_form
 from .ipythonhelper.magic_parser        import MagicCommandParser
 from .helpgen.utils_sphinx_config       import NbImage
+from .unittests.utils_tests             import main_wrapper_tests
