@@ -196,7 +196,7 @@ def main (  runner,
     @param      on_stderr   if True, publish everything on stderr at the end
     @param      flogp       logging, printing function
     @return                 dictionnary: ``{ "err": err, "tests":list of couple (file, test results) }``
-    
+
     .. versionchanged:: 0.9
         change the result type into a dictionary
     """

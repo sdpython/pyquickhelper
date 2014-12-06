@@ -778,15 +778,15 @@ def remove_some_indent(s):
         return "\n".join(keep)
     else :
         return s
-        
+
 def find_in_PATH(prog):
     """
     look into every path mentioned in ``%PATH%`` a specific file,
     it raises an exception if not Found
-    
+
     @param      prog        program to look for
     @return                 path
-    
+
     .. versionadded:: 0.9
     """
     path = os.environ["PATH"]
@@ -803,9 +803,9 @@ def find_graphviz_dot():
     assuming it was installed in a standard folder: ``C:\Program Files\MiKTeX 2.9\miktex\bin\x64``
 
     @return         path to dot
-    
+
     :raises FileNotFoundError: if graphviz not found
-    
+
     .. versionadded:: 0.9
     """
     if sys.platform.startswith("win"):
@@ -826,9 +826,9 @@ def find_graphviz_dot():
 def find_latex_path():
     """
     @return ``C:\Program Files\MiKTeX 2.9\miktex\bin\x64``
-    
+
     :raises FileNotFoundError: if latex not found
-    
+
     .. versionadded:: 0.9
     """
     if sys.platform.startswith("win"):
@@ -847,7 +847,7 @@ def find_pandoc_path():
     determines pandoc location
 
     @return         path to pandoc
-    
+
     .. versionadded:: 0.9
     """
     if sys.platform.startswith("win"):

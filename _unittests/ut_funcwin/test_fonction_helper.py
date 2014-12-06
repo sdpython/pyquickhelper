@@ -33,7 +33,7 @@ class TestFonctionHelper (unittest.TestCase):
 
     def test_fail(self):
         fLOG(__file__, self._testMethodName, OutputPrint = __name__ == "__main__")
-        assert False
+        assert False  # change that value to test the build stops going through a failure
 
 if __name__ == "__main__"  :
     unittest.main ()

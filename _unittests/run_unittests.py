@@ -25,12 +25,10 @@ def main():
         k = str (r [1])
         if "errors=0" not in k or "failures=0" not in k :
             print ("*", r[1], r[0])
-            
+
     err = res.get("err","")
     if len(err) > 0 :
-        sys.stderr.write(err)
-        sys.exit(-1)
-        #raise Exception(err)
+        raise Exception(err)
 
 if __name__ == "__main__" :
     main()
