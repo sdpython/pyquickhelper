@@ -179,7 +179,7 @@ def main (  runner,
             limit_max   = 1e9,
             log         = False,
             skip        = -1,
-            on_stderr   = True,
+            on_stderr   = False,
             flogp       = print) :
     """
     run all unit test
@@ -195,7 +195,10 @@ def main (  runner,
     @param      skip        if skip != -1, skip the first "skip" test files
     @param      on_stderr   if True, publish everything on stderr at the end
     @param      flogp       logging, printing function
-    @return                 list of couple (file, test results)
+    @return                 dictionnary: ``{ "err": err, "tests":list of couple (file, test results) }``
+    
+    .. versionchanged:: 0.9
+        change the result type into a dictionary
     """
 
     # checking that the module does not belong to the installed modules
@@ -313,7 +316,7 @@ def main (  runner,
 
     flogp("END of unit tests")
 
-    return keep
+    return dict(err=val, tests=keep)
 
 def is_valid_error(error):
     """

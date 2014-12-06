@@ -21,10 +21,14 @@ def main():
     runner  = unittest.TextTestRunner(verbosity=0, stream = io.StringIO ())
     path    = os.path.abspath(os.path.join(os.path.split(__file__) [0]))
     res     = main(runner, path_test = path, skip = -1)
-    for r in res :
+    for r in res["tests"] :
         k = str (r [1])
         if "errors=0" not in k or "failures=0" not in k :
             print ("*", r[1], r[0])
+            
+    err = res.get("err","")
+    if len(err) > 0 :
+        raise Exception(err)
 
 if __name__ == "__main__" :
     main()
