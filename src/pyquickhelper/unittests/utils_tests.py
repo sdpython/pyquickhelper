@@ -340,6 +340,26 @@ def main_wrapper_tests(codefile):
     calls function :func:`main <pyquickhelper.unittests.utils_tests.main>` and throw an exception if it fails
 
     @param      codefile        ``__file__`` of ``run_unittests.py``
+    
+    @FAQ(How to build pyquickhelper with Jenkins?)
+    `Jenkins <http://jenkins-ci.org/>`_ is a task scheduler for continuous integration.
+    You can easily schedule batch command to build and run unit tests for a specific project.
+    To build pyquickhelper, you need to install `python <https://www.python.org/>`_, 
+    `pymyinstall <http://www.xavierdupre.fr/app/pymyinstall/helpsphinx/>`_,
+    `miktex <http://miktex.org/>`_,
+    `pandoc <http://johnmacfarlane.net/pandoc/>`_,
+    `sphinx <http://sphinx-doc.org/>`_.
+    
+    Once Jenkins is installed, the command to schedule is::
+    
+        set PATH=%PATH%;%USERPOFILE%\AppData\Local\Pandoc
+        build_setup_help_on_windows.bat    
+    
+    This works if you installed Jenkins with your credentials.
+    Otherwise the path to ``pandoc.exe`` needs to be changed.
+    
+    And you can also read `Schedule builds with Jenkins <http://www.xavierdupre.fr/blog/2014-12-06_nojs.html>`_.
+    @endFAQ
     """
     runner  = unittest.TextTestRunner(verbosity=0, stream = io.StringIO ())
     path    = os.path.abspath(os.path.join(os.path.split(codefile) [0]))
