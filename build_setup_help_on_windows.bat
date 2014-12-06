@@ -21,6 +21,7 @@ echo #######################################################
 
 set pythonexe="c:\Python34\python"
 %pythonexe% -u setup.py clean_space
+if %errorlevel% neq 0 exit /b %errorlevel%
 %pythonexe% -u setup.py unittests
 if %errorlevel% neq 0 exit /b %errorlevel%
 echo #######################################################
@@ -29,6 +30,7 @@ rem python 3.3
 
 set pythonexe="c:\Python33_x64\python"
 %pythonexe% clean_pyd.py
+if %errorlevel% neq 0 exit /b %errorlevel%
 %pythonexe% setup.py build bdist_wininst --plat-name=win-amd64
 if %errorlevel% neq 0 exit /b %errorlevel%
 echo #######################################################
@@ -36,6 +38,7 @@ echo #######################################################
 set pythonexe="c:\Python33\python"
 %pythonexe% clean_pyd.py
 %pythonexe% setup.py sdist --formats=gztar,zip --verbose
+if %errorlevel% neq 0 exit /b %errorlevel%
 %pythonexe% setup.py bdist_wininst
 if %errorlevel% neq 0 exit /b %errorlevel%
 echo #######################################################
@@ -45,6 +48,7 @@ rem python 3.4
 set pythonexe="c:\Python34_x64\python"
 %pythonexe% clean_pyd.py
 %pythonexe% setup.py build bdist_wininst --plat-name=win-amd64
+if %errorlevel% neq 0 exit /b %errorlevel%
 %pythonexe% setup.py build bdist_msi --plat-name=win-amd64
 if %errorlevel% neq 0 exit /b %errorlevel%
 echo #######################################################
@@ -52,7 +56,9 @@ echo #######################################################
 set pythonexe="c:\Python34\python"
 %pythonexe% clean_pyd.py
 %pythonexe% setup.py sdist --formats=gztar,zip --verbose
+if %errorlevel% neq 0 exit /b %errorlevel%
 %pythonexe% setup.py bdist_wininst
+if %errorlevel% neq 0 exit /b %errorlevel%
 %pythonexe% setup.py bdist_msi
 if %errorlevel% neq 0 exit /b %errorlevel%
 echo #######################################################
