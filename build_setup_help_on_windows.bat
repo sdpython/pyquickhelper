@@ -30,7 +30,6 @@ rem python 3.3
 
 set pythonexe="c:\Python33_x64\python"
 %pythonexe% clean_pyd.py
-if %errorlevel% neq 0 exit /b %errorlevel%
 %pythonexe% setup.py build bdist_wininst --plat-name=win-amd64
 if %errorlevel% neq 0 exit /b %errorlevel%
 echo #######################################################
