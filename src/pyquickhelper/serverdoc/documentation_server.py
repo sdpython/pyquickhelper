@@ -316,29 +316,9 @@ class DocumentationHandler(BaseHTTPRequestHandler):
 
     def shutdown(self):
         """
-        Shuts down the service from the service itself (not from another thread).
-        For the time being, the function generates the following exception:
-        @code
-        Traceback (most recent call last):
-          File "simple_server_custom.py", line 225, in <module>
-            run_server(None)
-          File "simple_server_custom.py", line 219, in run_server
-            server.serve_forever()
-          File "c:\python33\lib\socketserver.py", line 237, in serve_forever
-            poll_interval)
-          File "c:\python33\lib\socketserver.py", line 155, in _eintr_retry
-            return func(*args)
-        ValueError: file descriptor cannot be a negative integer (-1)
-        @endcode
-
-        A better way to shut it down should is recommended. The use of the function:
-        @code
-        self.server.shutdown()
-        @endcode
-        freezes the server because this function should not be run in the same thread.
+        Shuts down the service.
         """
-        self.server.socket.close()
-        self.LOG("end of shut down")
+        raise NotImplementedError()
 
     def serve_content(self, cpath, method = "GET"):
         """
@@ -527,6 +507,7 @@ class DocumentationThreadServer (Thread) :
         @endcode
         """
         self.server.shutdown()
+        self.server.server_close()
 
 
 def run_doc_server (server,

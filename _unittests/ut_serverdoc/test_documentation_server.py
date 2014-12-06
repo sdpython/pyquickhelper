@@ -44,7 +44,9 @@ class TestDocumentationServer(unittest.TestCase):
         assert "http://sphinx.pocoo.org/" in cont
 
         thread.shutdown()
-        assert not thread.is_alive()
+        if thread.is_alive():
+            fLOG("thread is still alive?",thread.is_alive())
+            assert False
 
 
 if __name__ == "__main__"  :
