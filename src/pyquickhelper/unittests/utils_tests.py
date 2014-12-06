@@ -304,9 +304,9 @@ def main (  runner,
         flogp ("-- end STDERR on STDOUT")
 
         if on_stderr :
-            sys.stderr.write("-- STDERR (from unittests)\n")
+            sys.stderr.write("##### STDERR (from unittests) #####\n")
             sys.stderr.write(val)
-            sys.stderr.write("-- end STDERR\n")
+            sys.stderr.write("##### end STDERR #####\n")
 
     if fail == 0 :
         clean ()
