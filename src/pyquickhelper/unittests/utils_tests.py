@@ -337,7 +337,7 @@ def is_valid_error(error):
 
 def main_wrapper_tests(codefile):
     """
-    calls function :func:`main` and throw an exception if it fails
+    calls function :func:`main <pyquickhelper.unittests.utils_tests.main>` and throw an exception if it fails
 
     @param      codefile        ``__file__`` of ``run_unittests.py``
     """
