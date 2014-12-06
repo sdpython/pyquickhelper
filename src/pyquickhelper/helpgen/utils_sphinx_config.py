@@ -9,7 +9,7 @@ import sys, os, site
 def ie_layout_html():
     """
     The layout produced by sphinx does not always work with Internet Explorer.
-    See `Issue with some Sphinx themes and Internet Explorer <http://www.xavierdupre.fr/blog/2014-10-27_nojs.html>`_.
+    See `Issue with some Sphinx themes and Internet Explorer <http://www.xavierdupre.fr/blog/2014-10-30_nojs.html>`_.
 
     @return         boolean
 
