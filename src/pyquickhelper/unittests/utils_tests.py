@@ -179,7 +179,8 @@ def main (  runner,
             limit_max   = 1e9,
             log         = False,
             skip        = -1,
-            on_stderr   = True) :
+            on_stderr   = True,
+            flogp       = print) :
     """
     run all unit test
     the function looks into the folder _unittest and extract from all files
@@ -193,6 +194,7 @@ def main (  runner,
     @param      log         if True, enables intermediate files
     @param      skip        if skip != -1, skip the first "skip" test files
     @param      on_stderr   if True, publish everything on stderr at the end
+    @param      flogp       logging, printing function
     @return                 list of couple (file, test results)
     """
 
@@ -209,11 +211,10 @@ def main (  runner,
     co      = [ (e,l) for e,l in zip(est, li) ]
     co.sort ()
     cco     = []
-    #limit   = -1
-    if skip != -1 :
-        print ("found ", len(co), " test files skipping", skip)
-    else :
-        print ("found ", len(co), " test files")
+
+    if skip != -1 : flogp ("found ", len(co), " test files skipping", skip)
+    else :          flogp ("found ", len(co), " test files")
+
     index   = 0
     for e,l in co:
         if e > limit_max :
@@ -221,16 +222,14 @@ def main (  runner,
         cut = os.path.split(l)
         cut = os.path.split(cut[0])[-1] + "/" + cut[-1]
         if skip == -1 or index >= skip :
-            print ("% 3d - time " % (len(cco)+1),
-                    "% 3d" % e, "s  --> ",
-                    cut)
+            flogp ("% 3d - time " % (len(cco)+1), "% 3d" % e, "s  --> ", cut)
         cco.append( (e, l) )
         index += 1
-    print()
 
     exp = re.compile ("Ran ([0-9]+) tests? in ([.0-9]+)s")
 
     li      = [ a [1] for a in cco ]
+    lis     = [ os.path.split(_)[-1] for _ in li ]
     suite   = import_files (li)
     keep    = []
     #memerr  = sys.stderr
@@ -238,7 +237,7 @@ def main (  runner,
     fail    = 0
 
     stderr      = sys.stderr
-    sys.stderr  = io.StringIO()
+    fullstderr  = io.StringIO()
 
     for i,s in enumerate(suite) :
         if skip >= 0 and i < skip :
@@ -254,38 +253,81 @@ def main (  runner,
             fLOG(OutputPrint=True)
             fLOG(Lock=True)
 
+        newstdr     = io.StringIO()
+        keepstdr    = sys.stderr
+        sys.stderr  = newstdr
+
         r   = runner.run(s[0])
         out = r.stream.getvalue ()
         ti  = exp.findall (out) [-1]
         add = " ran %s tests in %ss" % ti  # don't modify it, PyCharm does not get it right (ti is a tuple)
+
+        sys.stderr  = keepstdr
 
         if log :
             fLOG(Lock=False)
 
         memout.write (add)
 
-        if not r.wasSuccessful () :
+        if not r.wasSuccessful() :
             err = out.split ("===========")
             err = err [-1]
             memout.write ("\n")
             memout.write (err)
             fail += 1
 
+            fullstderr.write("\n#-----" + lis[i] + "\n")
+            fullstderr.write("OUT:\n")
+            fullstderr.write(out)
+            fullstderr.write("ERRo:\n")
+            fullstderr.write(err)
+            fullstderr.write("ERR:\n")
+            fullstderr.write(newstdr.getvalue())
+        else:
+            val = newstdr.getvalue()
+            if len(val) > 0 and is_valid_error(val) :
+                fullstderr.write("\n*-----" + lis[i] + "\n")
+                fullstderr.write("ERR:\n")
+                fullstderr.write(val)
+
         memout.write ("\n")
 
         keep.append( (s[1], r) )
 
-    val = sys.stderr.getvalue()
-    if len(val) > 0 :
-        print ("-------------------------------\nstderr")
-        print (val)
-
     sys.stderr = stderr
+    sys.stdout = memout
+    val = fullstderr.getvalue()
+
+    if len(val) > 0 :
+        flogp ("-- STDERR (from unittests) on STDOUT")
+        flogp (val)
+        flogp ("-- end STDERR on STDOUT")
+
+        if on_stderr :
+            sys.stderr.write("-- STDERR (from unittests)\n")
+            sys.stderr.write(val)
+            sys.stderr.write("-- end STDERR\n")
 
     if fail == 0 :
         clean ()
 
-    if on_stderr :
-        sys.stderr.write(val)
+    flogp("END of unit tests")
 
     return keep
+
+def is_valid_error(error):
+    """
+    checks if the text written on stderr is an error or not,
+    a local server can push logs on this stream,
+
+    it looks for keywords such as Exception, Error, TraceBack...
+
+    @param      error       text
+    @return                 boolean
+    """
+    keys  = ["Exception", "Error", "TraceBack", "invalid", " line "]
+    error = error.lower()
+    for key in keys:
+        if key.lower() in error:
+            return True
+    return False

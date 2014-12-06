@@ -11,7 +11,7 @@ from ..loghelper.flog           import run_cmd, fLOG
 from ..loghelper.pyrepo_helper  import SourceRepository
 from ..pandashelper.tblformat   import df_to_rst
 from .utils_sphinx_doc          import prepare_file_for_sphinx_help_generation
-from .utils_sphinx_doc_helpers  import HelpGenException
+from .utils_sphinx_doc_helpers  import HelpGenException, find_latex_path, find_graphviz_dot, find_pandoc_path
 from ..sync.synchelper          import explore_folder, has_been_updated
 from .utils_sphinx_config       import ie_layout_html
 
@@ -130,8 +130,10 @@ def generate_help_sphinx (  project_var_name,
     theconf = importlib.import_module('conf')
     if theconf is None:
         raise ImportError("unable to import conf.py which defines the help generation")
-    latex_path  = theconf.__dict__.get("latex_path",r"C:\Program Files\MiKTeX 2.9\miktex\bin\x64")
-    pandoc_path = theconf.__dict__.get("pandoc_path",r"%USERPROFILE%\AppData\Local\Pandoc")
+
+    latex_path      = theconf.__dict__.get("latex_path",find_latex_path())
+    graphviz_dot    = theconf.__dict__.get("graphviz_dot", find_graphviz_dot())
+    pandoc_path     = theconf.__dict__.get("pandoc_path",find_pandoc_path())
 
     #changes
     chan = os.path.join (root, "_doc", "sphinxdoc", "source", "filechanges.rst")

@@ -43,17 +43,8 @@ Versions
     * **add:** add parameter timeout in function :func:`run_cmd`
     * **fix:** :func:`run_cmd` now accepts something on the standard input
     * **new:** class :class:`MagicCommandParser <pyquickhelper.ipythonhelper.magic_parser.MagicCommandParser>`
+    * **fix:** better behavior while running the unit test
 * **0.8 - 2014/11/03**
     * **add:** Python version is now checked, ImportError is raised if it used on Python 2
     * **new:** function :func:`run_doc_server <pyquickhelper.serverdoc.documentation_server.run_doc_server>` creates a local server to display documentation
     * **change:** password, password1, password2, password3 are hidden by stars when open a param window
-* **0.7 - 2014/10/22**
-    * **new:** function :func:`has_been_updated <pyquickhelper.sync.synchelper.has_been_updated>` to check if a copy of a file is outdated
-    * **fix:** fix a bug while updating the notebook file (documentation generation)
-    * **fix:** fix misspellings and some minor bugs
-    * **add:** some parts can be ignored while generation the documentation by adding section ``# -- HELP BEGIN EXCLUDE --`` and ``# -- HELP END EXCLUDE --``
-    * **change:** do not replace relative imports when generating the documentation
-    * **change:** the documentation compiles under linux (the latex part was not tested and removed from the script ``build_setup_help_on_linux.sh``)
-* **0.6 - 2014/08/24**
-    * **change:** minor fixes for the documentation generation
-    * **add:** add code to handle conversion of notebooks in docx format
