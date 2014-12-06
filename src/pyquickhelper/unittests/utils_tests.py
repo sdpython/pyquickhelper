@@ -276,7 +276,7 @@ def main (  runner,
             for ww in w :
                 list_warn.append(ww)
             warnings.resetwarnings()
-    
+
         out = r.stream.getvalue ()
         ti  = exp.findall (out) [-1]
         add = " ran %s tests in %ss" % ti  # don't modify it, PyCharm does not get it right (ti is a tuple)
@@ -339,7 +339,7 @@ def main (  runner,
 
     if fail == 0 :
         clean ()
-        
+
     for fi, lw in allwarn:
         if len(lw) > 0 :
             memout.write("WARN: {0}\n".format(fi))
@@ -373,24 +373,24 @@ def main_wrapper_tests(codefile, skip_list = None):
 
     @param      codefile        ``__file__`` of ``run_unittests.py``
     @param      skip_list       to skip a list of unit tests (by index, starting by 1)
-    
+
     @FAQ(How to build pyquickhelper with Jenkins?)
     `Jenkins <http://jenkins-ci.org/>`_ is a task scheduler for continuous integration.
     You can easily schedule batch command to build and run unit tests for a specific project.
-    To build pyquickhelper, you need to install `python <https://www.python.org/>`_, 
+    To build pyquickhelper, you need to install `python <https://www.python.org/>`_,
     `pymyinstall <http://www.xavierdupre.fr/app/pymyinstall/helpsphinx/>`_,
     `miktex <http://miktex.org/>`_,
     `pandoc <http://johnmacfarlane.net/pandoc/>`_,
     `sphinx <http://sphinx-doc.org/>`_.
-    
+
     Once Jenkins is installed, the command to schedule is::
-    
+
         set PATH=%PATH%;%USERPOFILE%\AppData\Local\Pandoc
-        build_setup_help_on_windows.bat    
-    
+        build_setup_help_on_windows.bat
+
     This works if you installed Jenkins with your credentials.
     Otherwise the path to ``pandoc.exe`` needs to be changed.
-    
+
     And you can also read `Schedule builds with Jenkins <http://www.xavierdupre.fr/blog/2014-12-06_nojs.html>`_.
     @endFAQ
     """
