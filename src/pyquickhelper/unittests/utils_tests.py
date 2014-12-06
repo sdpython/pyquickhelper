@@ -2,7 +2,7 @@
 @file
 @brief  This extension contains various functionalities to help unittesting.
 """
-import os, sys, glob, re, unittest, io
+import os, sys, glob, re, unittest, io, warnings
 
 from ..sync.synchelper      import remove_folder
 from ..loghelper.flog       import fLOG
@@ -179,6 +179,7 @@ def main (  runner,
             limit_max   = 1e9,
             log         = False,
             skip        = -1,
+            skip_list   = None,
             on_stderr   = False,
             flogp       = print) :
     """
@@ -193,13 +194,18 @@ def main (  runner,
     @param      limit_max   avoid running tests longer than limit seconds
     @param      log         if True, enables intermediate files
     @param      skip        if skip != -1, skip the first "skip" test files
+    @param      skip_list   skip unit test id in this list (by index, starting by 1)
     @param      on_stderr   if True, publish everything on stderr at the end
     @param      flogp       logging, printing function
     @return                 dictionnary: ``{ "err": err, "tests":list of couple (file, test results) }``
 
     .. versionchanged:: 0.9
-        change the result type into a dictionary
+        change the result type into a dictionary, catches warning when running unit tests
     """
+    if skip_list is None:
+        skip_list = set()
+    else:
+        skip_list = set(skip_list)
 
     # checking that the module does not belong to the installed modules
     if path_test is not None :
@@ -238,12 +244,15 @@ def main (  runner,
     #memerr  = sys.stderr
     memout  = sys.stdout
     fail    = 0
+    allwarn = [ ]
 
     stderr      = sys.stderr
     fullstderr  = io.StringIO()
 
     for i,s in enumerate(suite) :
         if skip >= 0 and i < skip :
+            continue
+        if i+1 in skip_list:
             continue
 
         cut = os.path.split(s[1])
@@ -259,8 +268,15 @@ def main (  runner,
         newstdr     = io.StringIO()
         keepstdr    = sys.stderr
         sys.stderr  = newstdr
+        list_warn   = [ ]
 
-        r   = runner.run(s[0])
+        with warnings.catch_warnings(record=True) as w:
+            warnings.simplefilter("always")
+            r = runner.run(s[0])
+            for ww in w :
+                list_warn.append(ww)
+            warnings.resetwarnings()
+    
         out = r.stream.getvalue ()
         ti  = exp.findall (out) [-1]
         add = " ran %s tests in %ss" % ti  # don't modify it, PyCharm does not get it right (ti is a tuple)
@@ -284,12 +300,22 @@ def main (  runner,
             fullstderr.write(out)
             fullstderr.write("ERRo:\n")
             fullstderr.write(err)
+            fullstderr.write("WARN:\n")
+            if len(list_warn) > 0:
+                fullstderr.write("WARN:\n")
+                for w in list_warn:
+                    fullstderr.write("w{0}: {1}\n".format(i,str(w)))
             fullstderr.write("ERR:\n")
             fullstderr.write(newstdr.getvalue())
         else:
+            allwarn.append ( (lis[i], list_warn) )
             val = newstdr.getvalue()
             if len(val) > 0 and is_valid_error(val) :
                 fullstderr.write("\n*-----" + lis[i] + "\n")
+                if len(list_warn) > 0:
+                    fullstderr.write("WARN:\n")
+                    for w in list_warn:
+                        fullstderr.write("w{0}: {1}\n".format(i,str(w)))
                 fullstderr.write("ERR:\n")
                 fullstderr.write(val)
 
@@ -313,6 +339,12 @@ def main (  runner,
 
     if fail == 0 :
         clean ()
+        
+    for fi, lw in allwarn:
+        if len(lw) > 0 :
+            memout.write("WARN: {0}\n".format(fi))
+            for i,w in enumerate(lw):
+                memout.write("  w{0}: {1}\n".format(i,str(w)))
 
     flogp("END of unit tests")
 
@@ -335,11 +367,12 @@ def is_valid_error(error):
             return True
     return False
 
-def main_wrapper_tests(codefile):
+def main_wrapper_tests(codefile, skip_list = None):
     """
     calls function :func:`main <pyquickhelper.unittests.utils_tests.main>` and throw an exception if it fails
 
     @param      codefile        ``__file__`` of ``run_unittests.py``
+    @param      skip_list       to skip a list of unit tests (by index, starting by 1)
     
     @FAQ(How to build pyquickhelper with Jenkins?)
     `Jenkins <http://jenkins-ci.org/>`_ is a task scheduler for continuous integration.
@@ -363,7 +396,7 @@ def main_wrapper_tests(codefile):
     """
     runner  = unittest.TextTestRunner(verbosity=0, stream = io.StringIO ())
     path    = os.path.abspath(os.path.join(os.path.split(codefile) [0]))
-    res     = main(runner, path_test = path, skip = -1)
+    res     = main(runner, path_test = path, skip = -1, skip_list=skip_list)
     for r in res["tests"] :
         k = str (r [1])
         if "errors=0" not in k or "failures=0" not in k :
