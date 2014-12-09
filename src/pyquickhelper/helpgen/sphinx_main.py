@@ -945,6 +945,13 @@ def post_process_latex(st, doall):
     @return             string
     """
     fLOG("   ** enter post_process_latex", doall, "%post_process_latex" in st)
+
+    # we count the number of times we have \$ (which is unexpected unless the currency is used.
+    dollar = st.split("\\$")
+    if len(dollar)%2 == 1 and len(dollar) > 0 :
+        # probably an issue, for the time being, we are strict, no dollar as a currency in latex
+        raise HelpGenException("too many \\$ in a latex file")
+
     st = st.replace("<br />","\\\\")
 
     if not doall :
