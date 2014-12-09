@@ -477,9 +477,13 @@ def process_notebooks(  notebooks,
                     files.append ( outputfile )
                     if pandoco is None :
                         continue
+                    else:
+                        out2 = os.path.splitext(outputfile)[0] + "." + pandoco
+                        if os.path.exists(out2):
+                            continue
 
             templ = "full" if format != "latex" else "article"
-            fLOG("### convert into ", format, " NB: ", notebook)
+            fLOG("### convert into ", format, " NB: ", notebook, " ### ", os.path.exists(outputfile), ":", outputfile)
 
             if format == "html":
                 fmttpl = " --template {0}".format(templ)
@@ -950,9 +954,20 @@ def post_process_latex(st, doall):
     dollar = st.split("\\$")
     if len(dollar)%2 == 1 and len(dollar) > 0 :
         # probably an issue, for the time being, we are strict, no dollar as a currency in latex
-        raise HelpGenException("too many \\$ in a latex file")
+        exp = re.compile("\\$")
+        found = 0
+        for m in exp.finditer(st):
+            found += 1
+            t = m.groups()
+            p1,p2 = m.start(), m.end()
+            sub = st[p1-3:p2+2]
+            if sub not in [ ".*)\\$", "ar`\$" ] :
+                raise HelpGenException("unexpected \\$ in a latex file: " + sub + "\nat position: {0},{1}".format(p1,p2))
+        if found == 0 :
+            raise NotImplementedError("unexpect issue with \\$")
 
     st = st.replace("<br />","\\\\")
+    st = st.replace("»",'"')
 
     if not doall :
         st = st.replace("\\maketitle","\\maketitle\n\n\\newchapter{Introduction}")
