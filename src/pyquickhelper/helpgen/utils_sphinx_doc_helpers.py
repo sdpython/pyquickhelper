@@ -816,7 +816,7 @@ def find_graphviz_dot():
                 return graphviz_dot
         p = find_in_PATH("dot.exe")
         if p is None:
-            raise FileNotFoundError("unable to find graphviz, look into paths such as: " + graphviz_dot)
+            raise FileNotFoundError("unable to find graphviz, look into paths such as: " + str(graphviz_dot))
         else:
             return os.path.join(p, "dot.exe")
     else:
@@ -832,11 +832,11 @@ def find_latex_path():
     .. versionadded:: 0.9
     """
     if sys.platform.startswith("win"):
-        latex = r"C:\Program Files\MiKTeX 2.9\miktex\bin\x64"
+        latex = latex0 = r"C:\Program Files\MiKTeX 2.9\miktex\bin\x64"
         if not os.path.exists(latex):
             latex = find_in_PATH("latex.exe")
             if latex is None or not os.path.exists(latex):
-                raise FileNotFoundError("unable to find latex (miktex), look into paths such as: " + latex)
+                raise FileNotFoundError("unable to find latex (miktex), look into paths such as: " + str(latex0))
         return latex
     else:
         # linux
