@@ -965,9 +965,10 @@ def post_process_latex(st, doall):
             found += 1
             t = m.groups()
             p1,p2 = m.start(), m.end()
-            sub = st[p1-3:p2+2]
-            if sub not in [ ".*)\\$", "ar`\\$", "tt{\\$" ] :
-                raise HelpGenException("unexpected \\$ in a latex file: " + sub + "\nat position: {0},{1}".format(p1,p2))
+            sub = st[p1-3:p2+2].strip(" \r\n")
+            # very quick and dirty
+            if sub not in [ ".*)\\$", "r`\\$", "ar`\\$", "tt{\\$" ] :
+                raise HelpGenException("unexpected \\$ in a latex file: " + str([sub]) + "\nat position: {0},{1}".format(p1,p2))
         if found == 0 :
             raise NotImplementedError("unexpect issue with \\$")
 
