@@ -511,9 +511,14 @@ def process_notebooks(  notebooks,
                 if "raise ImportError" in err:
                     raise ImportError(err)
                 if len(err)>0 :
-                    err = err.lower()
-                    if "error" in err or "critical" in err or "bad config" in err:
-                        raise HelpGenException(err)
+                    if format == "latex":
+                        # there might be some errors because the latex script needs to be post-processed
+                        # sometimes (wrong characters such as " or formulas not captured as formulas)
+                        pass
+                    else:
+                        err = err.lower()
+                        if "error" in err or "critical" in err or "bad config" in err:
+                            raise HelpGenException(err)
 
                 # we should compile a second time
                 # compilation = True  # already done above
