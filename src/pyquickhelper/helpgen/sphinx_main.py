@@ -551,7 +551,7 @@ def process_notebooks(  notebooks,
                         raise HelpGenException(err)
                     f = os.path.join( build, nbout + ".pdf")
                     if not os.path.exists(f):
-                        raise HelpGenException(err)
+                        raise HelpGenException("missing file: {0}\nERR:\n{1}".format(f,err))
                     files.append(f)
                 else:
                     fLOG("unable to find latex in", latex_path)
