@@ -28,7 +28,7 @@ class TestNoteBooksBug(unittest.TestCase):
             fLOG("1",_.groups())
             nb += 1
         nb1 = nb
-        
+
         s = r"\def\PYZdl{\char`\$}"
         fLOG(s)
         r = exp.finditer(s)
@@ -36,7 +36,7 @@ class TestNoteBooksBug(unittest.TestCase):
         for _ in r :
             fLOG("2",_.groups())
             nb += 1
-            
+
         assert nb1 == 0
         assert nb > 0
 

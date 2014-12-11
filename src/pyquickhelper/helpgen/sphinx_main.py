@@ -396,7 +396,7 @@ def process_notebooks(  notebooks,
 
     @warning Some latex templates (for nbconvert) uses ``[commandchars=\\\\\\{\\}]{\\|}`` which allows commands ``\\\\`` and it does not compile.
                 The one used here is ``report``.
-                
+
     If *pandoc_path* is None, uses @see fn find_pandoc_path to guess it.
     If *latex_path* is None, uses @see fn find_latex_path to guess it.
 
@@ -407,12 +407,12 @@ def process_notebooks(  notebooks,
     """
     if pandoc_path is None:
         pandoc_path = find_pandoc_path()
-    
+
     if latex_path is None:
         latex_path = find_latex_path()
-    
+
     #graphviz_dot    = theconf.__dict__.get("graphviz_dot", find_graphviz_dot())
-    
+
     if isinstance(notebooks,str):
         notebooks = [ notebooks ]
 
@@ -472,6 +472,7 @@ def process_notebooks(  notebooks,
             elif format in ["word", "docx"] :
                 format = "html"
                 pandoco = "docx"
+                compilation = False
             else :
                 compilation = False
                 pandoco = None
@@ -965,10 +966,10 @@ def post_process_latex(st, doall, info = None):
     @param      doall   do all transformations
     @param      info    for more understandable error messages
     @return             string
-    
+
     ..versionchanged:: 0.9
         add parameter *info*
-        
+
     @todo Check latex is properly converted in HTML files
     """
     fLOG("   ** enter post_process_latex", doall, "%post_process_latex" in st)
