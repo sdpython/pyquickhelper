@@ -968,7 +968,7 @@ def post_process_latex(st, doall, info = None):
     @return             string
 
     ..versionchanged:: 0.9
-        add parameter *info*
+        add parameter *info*, add tableofcontent in the document
 
     @todo Check latex is properly converted in HTML files
     """
@@ -1042,6 +1042,15 @@ def post_process_latex(st, doall, info = None):
         st = st.replace(r"\usepackage{hyperref}", r"\usepackage{hyperref}\usepackage{amssymb}\usepackage{latexsym}\usepackage{amsfonts}\usepackage{ulem}")
     else :
         raise HelpGenException("unable to add new instructions usepackage in file {0}".format(info))
+
+    # add tableofcontents
+    lines = st.split("\n")
+    for i,line in enumerate(lines):
+        if "\\section" in line and "{" in line and "}" in line:
+            # shoud be cleaner with regular expressions
+            line = line + "\n\n\\tableofcontents\n\n\\noindent\\rule{4cm}{0.4pt}\n\n"
+            lines[i] = line
+    st = "\n".join(lines)
 
     return st
 
