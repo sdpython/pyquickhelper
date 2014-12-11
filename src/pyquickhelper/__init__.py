@@ -38,7 +38,7 @@ from .pandashelper.readh                import read_url
 from .pandashelper.tblformat            import df_to_rst, df_to_html
 from .pandashelper.tblfunction          import isempty, isnan
 from .helpgen                           import get_help_usage
-from .helpgen.sphinx_main               import generate_help_sphinx
+from .helpgen.sphinx_main               import generate_help_sphinx, process_notebooks
 from .ipythonhelper.kindofcompletion    import AutoCompletion, AutoCompletionFile
 from .sync.visual_sync                  import create_visual_diff_through_html, create_visual_diff_through_html_files
 from .serverdoc.documentation_server    import run_doc_server

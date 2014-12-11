@@ -367,8 +367,8 @@ def generate_changes_repo(  chan,
 def process_notebooks(  notebooks,
                         outfold,
                         build,
-                        latex_path,
-                        pandoc_path,
+                        latex_path = None,
+                        pandoc_path = None,
                         formats = ["ipynb", "html", "python", "rst", "pdf"]
                         ):
     """
@@ -396,11 +396,23 @@ def process_notebooks(  notebooks,
 
     @warning Some latex templates (for nbconvert) uses ``[commandchars=\\\\\\{\\}]{\\|}`` which allows commands ``\\\\`` and it does not compile.
                 The one used here is ``report``.
+                
+    If *pandoc_path* is None, uses @see fn find_pandoc_path to guess it.
+    If *latex_path* is None, uses @see fn find_latex_path to guess it.
 
     .. versionchanged:: 0.9
         For HTML conversion, read the following blog about mathjax: `nbconvert: Math is not displayed in the html output <https://github.com/ipython/ipython/issues/6440>`_.
+        Add defaults values for *pandoc_path*, *latex_path*.
 
     """
+    if pandoc_path is None:
+        pandoc_path = find_pandoc_path()
+    
+    if latex_path is None:
+        latex_path = find_latex_path()
+    
+    #graphviz_dot    = theconf.__dict__.get("graphviz_dot", find_graphviz_dot())
+    
     if isinstance(notebooks,str):
         notebooks = [ notebooks ]
 
@@ -745,7 +757,7 @@ def post_process_latex_output_any(file):
     """
     fLOG("   ** post_process_latex_output_any ", file)
     with open(file, "r", encoding="utf8") as f : content = f.read()
-    content = post_process_latex(content, True)
+    content = post_process_latex(content, True, info = file)
     with open(file, "w", encoding="utf8") as f : f.write(content)
 
 def post_process_rst_output(file, html, pdf, python):
@@ -945,32 +957,40 @@ def post_process_html_output(file, pdf, python):
     with open(file, "w", encoding="utf8") as f :
         f.write(text)
 
-def post_process_latex(st, doall):
+def post_process_latex(st, doall, info = None):
     """
     modifies a latex file after its generation by sphinx
 
     @param      st      string
     @param      doall   do all transformations
+    @param      info    for more understandable error messages
     @return             string
+    
+    ..versionchanged:: 0.9
+        add parameter *info*
+        
+    @todo Check latex is properly converted in HTML files
     """
     fLOG("   ** enter post_process_latex", doall, "%post_process_latex" in st)
 
     # we count the number of times we have \$ (which is unexpected unless the currency is used.
     dollar = st.split("\\$")
-    if len(dollar)%2 == 1 and len(dollar) > 0 :
+    if len(dollar) > 0 and (info is None or os.path.splitext(info)[-1] != ".html") :
         # probably an issue, for the time being, we are strict, no dollar as a currency in latex
-        exp = re.compile("\\$")
+        # we do not check HTML files, for the time being, the formulas appears in pseudo latex
+        exp = re.compile(r"(.{3}[\\]\$)")
         found = 0
         for m in exp.finditer(st):
             found += 1
             t = m.groups()
             p1,p2 = m.start(), m.end()
-            sub = st[p1-3:p2+2].strip(" \r\n")
+            sub = st[p1:p2].strip(" \r\n")
+            sub2 = st[max(p1-10,0):min(len(st),p2+10)]
             # very quick and dirty
-            if sub not in [ ".*)\\$", "r`\\$", "r`\\$}", "ar`\\$", "tt{\\$", "*)\\$" ] :
-                raise HelpGenException("unexpected \\$ in a latex file: " + str([sub]) + "\nat position: {0},{1}".format(p1,p2))
+            if sub not in [ ".*)\\$", "r`\\$}", "ar`\\$", "tt{\\$" ] :
+                raise HelpGenException("unexpected \\$ in a latex file:\n{0}\nat position: {1},{2}\nsubstring: {3}\naround: {4}".format(info, p1,p2, sub, sub2))
         if found == 0 :
-            raise NotImplementedError("unexpect issue with \\$")
+            raise NotImplementedError("unexpected issue with \\$ in file: {0}".format(info))
 
     st = st.replace("<br />","\\\\")
     st = st.replace("»",'"')
@@ -1020,7 +1040,7 @@ def post_process_latex(st, doall):
     elif r"\usepackage{hyperref}" in st :
         st = st.replace(r"\usepackage{hyperref}", r"\usepackage{hyperref}\usepackage{amssymb}\usepackage{latexsym}\usepackage{amsfonts}\usepackage{ulem}")
     else :
-        raise HelpGenException("unable to add new instructions usepackage")
+        raise HelpGenException("unable to add new instructions usepackage in file {0}".format(info))
 
     return st
 
