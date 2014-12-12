@@ -747,7 +747,7 @@ def post_process_latex_output(root, doall):
                 file = os.path.join(build,tex)
                 fLOG("modify file", file)
                 with open(file, "r", encoding="utf8") as f : content = f.read()
-                content = post_process_latex(content, doall)
+                content = post_process_latex(content, doall, info = file)
                 with open(file, "w", encoding="utf8") as f : f.write(content)
 
 def post_process_latex_output_any(file):
@@ -989,7 +989,13 @@ def post_process_latex(st, doall, info = None):
             sub2 = st[max(p1-10,0):min(len(st),p2+10)]
             # very quick and dirty
             if sub not in [ ".*)\\$", "r`\\$}", "ar`\\$", "tt{\\$" ] :
-                raise HelpGenException("unexpected \\$ in a latex file:\n{0}\nat position: {1},{2}\nsubstring: {3}\naround: {4}".format(info, p1,p2, sub, sub2))
+                if p1 > 30 :
+                    # very very quick and dirty
+                    temp = st[p1-20:p2]
+                    if "quick fix to remove \\$" not in temp:
+                        raise HelpGenException("unexpected \\$ in a latex file:\n{0}\nat position: {1},{2}\nsubstring: {3}\naround: {4}".format(info, p1,p2, sub, sub2))
+                else:
+                    raise HelpGenException("unexpected \\$ in a latex file:\n{0}\nat position: {1},{2}\nsubstring: {3}\naround: {4}".format(info, p1,p2, sub, sub2))
         if found == 0 :
             raise NotImplementedError("unexpected issue with \\$ in file: {0}".format(info))
 
