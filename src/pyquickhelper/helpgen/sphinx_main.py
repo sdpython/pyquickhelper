@@ -561,7 +561,7 @@ def process_notebooks(  notebooks,
                     if not sys.platform.startswith("win"): c = c.replace('"','')
                     out,err = run_cmd(c,wait=True, do_not_log = False, log_error=False, shell = sys.platform.startswith("win"))
                     if len(err) > 0 :
-                        raise HelpGenException(err)
+                        raise HelpGenException("CMD:\n{0}\nERR:\n{1}".format(c,err))
                     f = os.path.join( build, nbout + ".pdf")
                     if not os.path.exists(f):
                         raise HelpGenException("missing file: {0}\nERR:\n{1}".format(f,err))
