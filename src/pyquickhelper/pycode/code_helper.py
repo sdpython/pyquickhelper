@@ -13,8 +13,11 @@ def remove_extra_spaces(filename):
     @param      filename        file name
     @return                     number of removed extra spaces
     """
-    with open(filename, "r") as f :
-        lines = f.readlines()
+    try:
+        with open(filename, "r") as f :
+            lines = f.readlines()
+    except PermissionError as e :
+        raise PermissionError (filename) from e 
 
     lines2 = [ _.rstrip(" \r\n") for _ in lines ]
     last = len(lines2)-1
