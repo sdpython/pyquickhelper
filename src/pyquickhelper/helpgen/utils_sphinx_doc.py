@@ -121,6 +121,10 @@ def _private_process_one_file(fullname, to, silent, fmod, replace_relative_impor
     @param      silent                      no logs if True
     @param      fmod                        modification functions
     @param      replace_relative_import     replace relative import
+    @return                                 extension, number of lines
+    
+    .. versionchanged:: 0.9
+        return extension, number of lines
     """
     ext = os.path.splitext(fullname)[-1]
 
@@ -132,11 +136,16 @@ def _private_process_one_file(fullname, to, silent, fmod, replace_relative_impor
             with open(to, "wb") as f : f.write(bin)
         else :
             shutil.copy(fullname, to)
+        return os.path.splitext(fullname)[-1], 0
     else :
         try :
             with open(fullname, "r", encoding="utf8") as g : content = g.read()
         except UnicodeDecodeError:
             with open(fullname, "r") as g : content = g.read()
+            
+        lines = [ _.strip(" \t\n\r") for _ in content.split("\n") ]
+        lines = [ _ for _ in lines if len(_) > 0 ]
+        nblines = len(lines)
 
         keepc = content
         try :
@@ -154,6 +163,8 @@ def _private_process_one_file(fullname, to, silent, fmod, replace_relative_impor
         if replace_relative_import:
             content = replace_relative_import(fullname, content)
         with open(to, "w", encoding="utf8") as g : g.write(content)
+        
+        return os.path.splitext(fullname)[-1], nblines
 
 def remove_undesired_part_for_documentation(content, filename):
     """
@@ -254,7 +265,7 @@ def copy_source_files ( input,
         if file.name.endswith("setup.py") : continue
         if "setup.py" in file.name :
             raise FileNotFoundError("are you sure (setup.py)?, file: " + file.fullname)
-        ractions.append ( (a, file, dest))
+        
         to = os.path.join(dest, file.name)
         dd = os.path.split(to)[0]
         if not os.path.exists (dd) :
@@ -262,7 +273,8 @@ def copy_source_files ( input,
             os.makedirs(dd)
         fLOG("copy_source_files: copy ", file.fullname, " to ", to)
 
-        _private_process_one_file(file.fullname, to, silent, fmod, replace_relative_import)
+        rext, rline = _private_process_one_file(file.fullname, to, silent, fmod, replace_relative_import)
+        ractions.append ( (a, file, dest, rext, rline))
 
     return ractions
 
@@ -473,7 +485,8 @@ def add_file_rst (rootm,
 
     memo = { }
     app  = []
-    for a,file,dest in actions :
+    for action in actions :
+        a,file,dest = action[:3]
         if not isinstance (file, str) : file = file.name
 
         to   = os.path.join(dest, file)
@@ -788,6 +801,9 @@ def prepare_file_for_sphinx_help_generation (
                 optional_dirs   = optional_dirs,
                 mapped_function = [ (".*[.]tohelp$", None) ] )
     @endcode
+    
+    .. versionchanged:: 0.9
+        produce a file with the number of lines and files per extension
     """
     fLOG("* starting documentation preparation in",output)
     rootm = os.path.abspath(output)
@@ -807,6 +823,7 @@ def prepare_file_for_sphinx_help_generation (
 
         if os.path.isfile(src) :
             _private_process_one_file(src, dst, silent, fmod_copy)
+            
             temp       = os.path.split(dst)
             actions_t  = [ (">", temp[1], temp[0])  ]
             rstadd     = add_file_rst ( rootm,
@@ -885,7 +902,30 @@ def prepare_file_for_sphinx_help_generation (
         with open(out, "w", encoding="utf8") as f :
             f.write(v)
         rsts.append ( RstFileHelp (None, out, None) )
-
+        
+    # geneates a table with the number of lines per extension
+    rows = []
+    for act in actions:
+        v = 1 if act[-1] > 0 else 0
+        rows.append ( act[-2:] + (v,) )
+    from pandas import DataFrame
+    df = DataFrame(data=rows, columns=["extension", "nb lines", "nb files"])
+    df = df.groupby("extension", as_index=False).sum().sort("extension")
+        
+    all_report = os.path.join(output, "all_report.rst")
+    with open(all_report,"w") as falli :
+        falli.write("\n")
+        falli.write(".. _l-statcode:\n")
+        falli.write("\n")
+        falli.write("Statistics on code\n")
+        falli.write("==================\n")
+        falli.write("\n\n")
+        sph  = df_to_rst(df)
+        falli.write(sph)
+        falli.write("\n")
+    rsts.append( RstFileHelp(None, all_report, None))
+        
+    # all indexes
     all_index = os.path.join(output, "all_indexes.rst")
     with open(all_index,"w") as falli :
         falli.write("\n")

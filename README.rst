@@ -46,6 +46,7 @@ Versions
     * **fix:** better behavior while running the unit test
     * **change:** catch warnings when running the unit tests
     * **change:** expose the function :func:`process_notebooks <pyquickhelper.helpgen.sphinx_main.process_notebooks>` to convert a notebook into html, pdf, rst, docx formats
+    * **add:** add simple statistics while generation the documentation
 * **0.8 - 2014/11/03**
     * **add:** Python version is now checked, ImportError is raised if it used on Python 2
     * **new:** function :func:`run_doc_server <pyquickhelper.serverdoc.documentation_server.run_doc_server>` creates a local server to display documentation

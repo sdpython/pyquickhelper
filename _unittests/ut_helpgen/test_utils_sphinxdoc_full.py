@@ -70,6 +70,7 @@ class TestSphinxDocFull (unittest.TestCase):
                     os.path.join(temp, "all_example_otherpageofexamples.rst"),
                     os.path.join(temp, "all_FAQ.rst"),
                     os.path.join(temp, "all_example_pagewithanaccentinthetitle.rst"),
+                    os.path.join(temp, "all_report.rst"),
                     ]
         for f in files :
             if not os.path.exists(f) :
@@ -82,6 +83,9 @@ class TestSphinxDocFull (unittest.TestCase):
                 with open(f, "r", encoding="utf8") as ff : content = ff.read()
                 if "Same page with an accent." not in content:
                     raise Exception("file " + f + " is empty:\n" + content)
+            if "report" in f :
+                with open(f, "r", encoding="utf8") as ff : content = ff.read()
+                assert ".py" in content
 
         with open(os.path.join(temp, "all_FAQ.rst"), "r") as f : contentf = f.read()
         assert "How to activate the logs?" in contentf
