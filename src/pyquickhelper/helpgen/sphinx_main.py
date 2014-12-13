@@ -988,7 +988,8 @@ def post_process_latex(st, doall, info = None):
             sub = st[p1:p2].strip(" \r\n")
             sub2 = st[max(p1-10,0):min(len(st),p2+10)]
             # very quick and dirty
-            if sub not in [ ".*)\\$", "r`\\$}", "ar`\\$", "tt{\\$" ] :
+            if sub not in [ ".*)\\$", "r`\\$}", "ar`\\$", "tt{\\$" ] and \
+               not sub.endswith("'\\$"):
                 if p1 > 30 :
                     # very very quick and dirty
                     temp = st[p1-20:p2]
