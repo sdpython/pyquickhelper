@@ -17,7 +17,7 @@ def remove_extra_spaces(filename):
         with open(filename, "r") as f :
             lines = f.readlines()
     except PermissionError as e :
-        raise PermissionError (filename) from e 
+        raise PermissionError (filename) from e
 
     lines2 = [ _.rstrip(" \r\n") for _ in lines ]
     last = len(lines2)-1
