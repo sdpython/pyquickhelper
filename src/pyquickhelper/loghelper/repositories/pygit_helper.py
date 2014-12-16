@@ -360,3 +360,80 @@ def get_nb_commits(path = None, commandline = True):
         except ValueError as e :
             raise ValueError("unable to parse: " + lines + "\nCMD:\n" + cmd) from e
         return nb
+
+def clone(  location,
+            srv,
+            group,
+            project,
+            username = None,
+            password = None):
+    """
+    clone a repository
+
+    @param      location    location of the clone
+    @param      srv         git server
+    @param      group       group
+    @param      project     project name
+    @param      username    username
+    @param      password    password
+    @return                 output, error
+
+    see `How to provide username and password when run "git clone git@remote.git"? <http://stackoverflow.com/questions/10054318/how-to-provide-username-and-password-when-run-git-clone-gitremote-git>`_
+
+    @example(Clone a git repository)
+
+    @code
+    clone(r"local_folder", "github.com", "sdpython", "pyquickhelper")
+    @endcode
+
+    @endexample
+
+    .. versionadded:: 0.9
+    """
+    if username is not None:
+        address = "https://{0}:{1}@{2}/{3}/{4}.git".format(username,
+                        password, srv, group, project)
+    else:
+        address = "https://{2}/{3}/{4}.git".format(username,
+                        password, srv, group, project)
+
+    cmd = "git clone " + address + " " + location
+    out, err = run_cmd(cmd, wait=True)
+    if len(err) > 0 and "Cloning into" not in err:
+        raise Exception("unable to clone {0}\nERR:\n{1}".format(address, err))
+    return out, err
+
+def rebase(  location,
+            srv,
+            group,
+            project,
+            username = None,
+            password = None):
+    """
+    run ``git pull -rebase``  on a repository
+
+    @param      location    location of the clone
+    @param      srv         git server
+    @param      group       group
+    @param      project     project name
+    @param      username    username
+    @param      password    password
+    @return                 output, error
+
+    .. versionadded:: 0.9
+    """
+    if username is not None:
+        address = "https://{0}:{1}@{2}/{3}/{4}.git".format(username,
+                        password, srv, group, project)
+    else:
+        address = "https://{2}/{3}/{4}.git".format(username,
+                        password, srv, group, project)
+
+    cwd = os.getcwd()
+    os.chdir(location)
+    cmd = "git pull --rebase " + address
+    out, err = run_cmd(cmd, wait=True)
+    os.chdir(cwd)
+    if len(err) > 0 and "-> FETCH_HEAD" not in err:
+        raise Exception("unable to rebase {0}\nERR:\n{1}".format(address, err))
+    return out, err

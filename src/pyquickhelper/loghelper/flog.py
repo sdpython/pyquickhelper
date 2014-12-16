@@ -888,45 +888,59 @@ def get_prefix () :
     t += "_" + str (random.randint (0,1000)) + "_"
     return os.path.join (GetPath (), "temp_" + t)
 
-def removedirs (folder, silent = False) :
+def removedirs (folder, silent = False, use_command_line = False) :
     """
     remove all files and folder in folder
-    @param      folder      folder
-    @param      silent      silent mode or not
-    @return                 list of not remove files or folders
-    """
-    file, rep = [], []
-    for r, d, f in os.walk (folder) :
-        for a in d :
-            rep.append (os.path.join (r, a))
-        for a in f :
-            file.append (os.path.join (r, a))
-    impos = []
-    file.sort ()
-    rep.sort (reverse = True)
-    for f in file :
-        try :
-            if os.path.exists (f):
-                os.remove (f)
-        except Exception as e :
-            fLOG ("unable to remove file", f, " --- ", str(e).replace("\n", " "))
-            if silent :  impos.append (f)
-            else : raise
-    for f in rep :
-        try :
-            if os.path.exists (f):
-                os.removedirs (f)
-        except Exception as e :
-            fLOG ("unable to remove folder", f, " --- ", str(e).replace("\n", " "))
-            if silent :  impos.append (f)
-            else : raise
 
-    if os.path.exists (folder) :
-        try :
-            os.rmdir(folder)
-        except Exception as e:
-            impos.append(folder)
-    return impos
+    @param      folder              folder
+    @param      silent              silent mode or not
+    @param      use_command_line    see below
+    @return                         list of not remove files or folders
+
+    Sometimes it fails due to PermissionError exception,
+    in that case, you can try to remove the folder through the command
+    line ``rmdir /q /s + <folder>``. In that case, the function
+    does not return the list of removed files but the output of
+    the command line
+    """
+    if use_command_line:
+        out,err = run_cmd("rmdir /s /q " + folder, wait=True)
+        if len(err) > 0 :
+            raise Exception("unable to remove " + folder + "\n" + err)
+        return out
+    else:
+        file, rep = [], []
+        for r, d, f in os.walk (folder) :
+            for a in d :
+                rep.append (os.path.join (r, a))
+            for a in f :
+                file.append (os.path.join (r, a))
+        impos = []
+        file.sort ()
+        rep.sort (reverse = True)
+        for f in file :
+            try :
+                if os.path.exists (f):
+                    os.remove (f)
+            except Exception as e :
+                fLOG ("unable to remove file", f, " --- ", str(e).replace("\n", " "))
+                if silent :  impos.append (f)
+                else : raise
+        for f in rep :
+            try :
+                if os.path.exists (f):
+                    os.removedirs (f)
+            except Exception as e :
+                fLOG ("unable to remove folder", f, " --- ", str(e).replace("\n", " "))
+                if silent :  impos.append (f)
+                else : raise
+
+        if os.path.exists (folder) :
+            try :
+                os.rmdir(folder)
+            except Exception as e:
+                impos.append(folder)
+        return impos
 
 def guess_type_value (x, none = None) :
     """
