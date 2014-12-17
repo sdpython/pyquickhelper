@@ -5,7 +5,7 @@
 import os, sys, glob, re, unittest, io, warnings
 
 from ..sync.synchelper      import remove_folder
-from ..loghelper.flog       import fLOG
+from ..loghelper.flog       import fLOG, run_cmd
 
 
 def get_test_file (filter, dir = None) :
@@ -181,7 +181,8 @@ def main (  runner,
             skip        = -1,
             skip_list   = None,
             on_stderr   = False,
-            flogp       = print) :
+            flogp       = print,
+            processes   = False) :
     """
     run all unit test
     the function looks into the folder _unittest and extract from all files
@@ -197,10 +198,14 @@ def main (  runner,
     @param      skip_list   skip unit test id in this list (by index, starting by 1)
     @param      on_stderr   if True, publish everything on stderr at the end
     @param      flogp       logging, printing function
+    @param      processes   to run the unit test in a separate process (with function @see fn run_cmd),
+                            however, to make that happen, you need to specify
+                            ``exit=False`` for each test file, see `unittest.main <https://docs.python.org/3.4/library/unittest.html#unittest.main>`_
     @return                 dictionnary: ``{ "err": err, "tests":list of couple (file, test results) }``
 
     .. versionchanged:: 0.9
-        change the result type into a dictionary, catches warning when running unit tests
+        change the result type into a dictionary, catches warning when running unit tests,
+        add parameter *processes* to run the unit test in a different process through command line
     """
     if skip_list is None:
         skip_list = set()
@@ -270,14 +275,21 @@ def main (  runner,
         sys.stderr  = newstdr
         list_warn   = [ ]
 
-        with warnings.catch_warnings(record=True) as w:
-            warnings.simplefilter("always")
-            r = runner.run(s[0])
-            for ww in w :
-                list_warn.append(ww)
-            warnings.resetwarnings()
+        if processes:
+            cmd = sys.executable.replace("w.exe",".exe") + " " + li[i]
+            out,err = run_cmd(cmd, wait=True)
+            if len(err) > 0 :
+                sys.stderr.write(err)
+        else:
+            with warnings.catch_warnings(record=True) as w:
+                warnings.simplefilter("always")
+                r = runner.run(s[0])
+                for ww in w :
+                    list_warn.append(ww)
+                warnings.resetwarnings()
 
-        out = r.stream.getvalue ()
+            out = r.stream.getvalue ()
+
         ti  = exp.findall (out) [-1]
         add = " ran %s tests in %ss" % ti  # don't modify it, PyCharm does not get it right (ti is a tuple)
 
@@ -367,12 +379,15 @@ def is_valid_error(error):
             return True
     return False
 
-def main_wrapper_tests(codefile, skip_list = None):
+def main_wrapper_tests(codefile, skip_list = None, processes = False):
     """
     calls function :func:`main <pyquickhelper.unittests.utils_tests.main>` and throw an exception if it fails
 
     @param      codefile        ``__file__`` of ``run_unittests.py``
     @param      skip_list       to skip a list of unit tests (by index, starting by 1)
+    @param      processes       to run the unit test in a separate process (with function @see fn run_cmd),
+                                however, to make that happen, you need to specify
+                                ``exit=False`` for each test file, see `unittest.main <https://docs.python.org/3.4/library/unittest.html#unittest.main>`_
 
     @FAQ(How to build pyquickhelper with Jenkins?)
     `Jenkins <http://jenkins-ci.org/>`_ is a task scheduler for continuous integration.
@@ -396,7 +411,7 @@ def main_wrapper_tests(codefile, skip_list = None):
     """
     runner  = unittest.TextTestRunner(verbosity=0, stream = io.StringIO ())
     path    = os.path.abspath(os.path.join(os.path.split(codefile) [0]))
-    res     = main(runner, path_test = path, skip = -1, skip_list=skip_list)
+    res     = main(runner, path_test = path, skip = -1, skip_list=skip_list, processes=processes)
     for r in res["tests"] :
         k = str (r [1])
         if "errors=0" not in k or "failures=0" not in k :
