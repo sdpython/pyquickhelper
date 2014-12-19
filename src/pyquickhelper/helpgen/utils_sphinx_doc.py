@@ -892,6 +892,7 @@ def prepare_file_for_sphinx_help_generation (
         fLOG("  generates index", out)
         if k == "module":
             toc = ["\n\n.. toctree::\n"]
+            toc.append ( "    :maxdepth: 1\n" )
             for _ in rsts :
                 if _.file is not None and len(_.file) >0:
                     na = os.path.splitext(_.rst)[0].replace("\\","/").split("/")

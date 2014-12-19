@@ -128,7 +128,7 @@ class ModuleMemberDoc :
     @var    obj         object
     @var    type        (str) type
     @var    cl          (class) class it belongs to
-    @var    name        (str)
+    @var    name        (str) name
     @var    module      (str) module name
     @var    doc         (str) documentation
     @var    truncdoc    (str) truncated documentation
