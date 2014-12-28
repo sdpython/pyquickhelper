@@ -47,3 +47,4 @@ from .ipythonhelper.html_forms          import open_html_form
 from .ipythonhelper.magic_parser        import MagicCommandParser
 from .helpgen.utils_sphinx_config       import NbImage
 from .unittests.utils_tests             import main_wrapper_tests
+from .loghelper.repositories.gitlab_helper import GitLabAPI, GitLabException
