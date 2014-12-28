@@ -33,7 +33,7 @@ from .funcwin.frame_params              import open_window_params
 from .funcwin.frame_function            import open_window_function
 from .funcwin.main_window               import main_loop_functions
 from .loghelper.convert_helper          import str_to_datetime
-from .sync.synchelper                   import explore_folder, synchronize_folder, has_been_updated
+from .sync.synchelper                   import explore_folder, synchronize_folder, has_been_updated, remove_folder, gzip_files, zip_files
 from .pandashelper.readh                import read_url
 from .pandashelper.tblformat            import df_to_rst, df_to_html
 from .pandashelper.tblfunction          import isempty, isnan
