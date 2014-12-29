@@ -48,6 +48,7 @@ Navigation
     installation
     all_example
     all_example_otherpageofexamples
+    all_example_pagewithanaccentinthetitle
     all_FAQ
     all_notebooks
     glossary

@@ -26,7 +26,9 @@ class TestChanges (unittest.TestCase):
             file = os.path.join(path, "out_table.rst")
             if os.path.exists(file) : os.remove(file)
             generate_changes_repo(file, fold)
-            with open(file, "r", encoding="utf8") as f : content = f.readlines()
+            with open(file, "r", encoding="utf8") as f : content = f.read()
+            assert ".. plot::" in content
+            content = content [ content.find("List of recent changes:"):].split("\n")
             ls = [ len(_) for _ in content ]
             ml = max ( ls )
             total = [ l for l in ls if ml-100 <= l < ml ]

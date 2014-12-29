@@ -1,0 +1,237 @@
+change number	date	comment
+`49e0443 <https://github.com/sdpython/pyquickhelper/commit/49e04433d6bed9b02d1dce792cbe26035b7270a9>`_	2014-12-28	first version a class wrapping Git Lab API
+`9d97316 <https://github.com/sdpython/pyquickhelper/commit/9d973161ef9869ea74fe8e860260a772fa852dc7>`_	2014-12-28	expose more function in the main file __init__.py
+`1556b89 <https://github.com/sdpython/pyquickhelper/commit/1556b8926ec2a49930c0854c66aa5221ae05da2c>`_	2014-12-19	remove an extra line in the documentation
+`bc9e347 <https://github.com/sdpython/pyquickhelper/commit/bc9e3473f46026804a60b633d62072edc7db5fb8>`_	2014-12-19	process a form
+`b33a4d3 <https://github.com/sdpython/pyquickhelper/commit/b33a4d31b66a6a2f900453bfd0770699c2b3910d>`_	2014-12-17	add parameter processes
+`80b749c <https://github.com/sdpython/pyquickhelper/commit/80b749c56aebbb7e7bab41b8b4d66e0933897d96>`_	2014-12-16	add function to clone or rebase a folder
+`a5b4d21 <https://github.com/sdpython/pyquickhelper/commit/a5b4d21fad3edc31b2dd149aef18382ece55df2c>`_	2014-12-15	quick fix again for latex
+`05d4427 <https://github.com/sdpython/pyquickhelper/commit/05d4427f3998180a9e9caa192ddadd7bb5e8ccdd>`_	2014-12-14	remove extra spaces
+`cc577ea <https://github.com/sdpython/pyquickhelper/commit/cc577ea7c01c57a0bbfc19af4a5479a3958da987>`_	2014-12-14	add a missing latex package
+`7825ca9 <https://github.com/sdpython/pyquickhelper/commit/7825ca929b56955e89fefd6096f78c13f711d5dc>`_	2014-12-14	fix a latex issue again
+`1e5bf02 <https://github.com/sdpython/pyquickhelper/commit/1e5bf02eec6449ffba36266c49b916d4959f60a8>`_	2014-12-13	more explicit error message
+`cb7fb44 <https://github.com/sdpython/pyquickhelper/commit/cb7fb4400e37a5b34e774afe55548f7e5b2600fc>`_	2014-12-13	remove empty __init__.py
+`5851ad7 <https://github.com/sdpython/pyquickhelper/commit/5851ad751ef044be7b39871b258925e90cf0a92d>`_	2014-12-13	add statistics on code (number of lines, number of files)
+`2e46061 <https://github.com/sdpython/pyquickhelper/commit/2e46061490ba44f429b4f61f08571dfbdcf5b2cb>`_	2014-12-12	better time estimation
+`0fcecc3 <https://github.com/sdpython/pyquickhelper/commit/0fcecc3322fe2620f7db16553b54acf20c4797b3>`_	2014-12-12	better error message
+`3e7f84a <https://github.com/sdpython/pyquickhelper/commit/3e7f84acede1ecc66f106668c732e27e49496aa7>`_	2014-12-12	dirty fix to avoid crashing when compiling the document with comments for commit changes which include $
+`41fc01e <https://github.com/sdpython/pyquickhelper/commit/41fc01e4cb7f02698f49a2ff2eecb882c2e0b0f9>`_	2014-12-11	add tableofcontents in latex files
+`bd88e0d <https://github.com/sdpython/pyquickhelper/commit/bd88e0d496ea9ca906bd598f011111cb8ab1154e>`_	2014-12-11	fix the previous commit which was incomplete: variable compilation was not set up in every path
+`3f49b5f <https://github.com/sdpython/pyquickhelper/commit/3f49b5fc4f9ef9706099af534ad0c72ad7373310>`_	2014-12-11	improve the conversion of notebook into HTML (still in progress)
+`8d0850f <https://github.com/sdpython/pyquickhelper/commit/8d0850f3cd91da7bc3d4d361753a5c2af72cd5b5>`_	2014-12-11	better error message
+`0b9d7a3 <https://github.com/sdpython/pyquickhelper/commit/0b9d7a3c6bd8d45686df9c68484ceb4ec8edb43e>`_	2014-12-11	fixing an issue while compiling latex (not really a good solution)
+`21826b5 <https://github.com/sdpython/pyquickhelper/commit/21826b563e674290756db5883f70290f02c4d3a9>`_	2014-12-10	improve some error messages
+`5cba140 <https://github.com/sdpython/pyquickhelper/commit/5cba1403a2437a241ffbe149291c8e7ecc998b46>`_	2014-12-10	same previous fix
+`81443b4 <https://github.com/sdpython/pyquickhelper/commit/81443b40dd6f418e05eda036841b7f380768c7e7>`_	2014-12-10	quick fix just to check it is working
+`492fee8 <https://github.com/sdpython/pyquickhelper/commit/492fee89173d25f659113b04c0f2fe074b76b658>`_	2014-12-10	quick fix, should be modified in a more robust way later
+`248b84e <https://github.com/sdpython/pyquickhelper/commit/248b84eaef4c813c021aad6fc05c692aa3b91e2b>`_	2014-12-10	skip a latex error caught up later on in the process
+`d8c744d <https://github.com/sdpython/pyquickhelper/commit/d8c744d8fa26a56437782e71eb17bcaea4b0449a>`_	2014-12-10	skip notebook generation even if the output format is docx (it was not the case) + others small modications
+`d2d5f33 <https://github.com/sdpython/pyquickhelper/commit/d2d5f3323e248a3a5e9d1addb8a21540df03ca91>`_	2014-12-09	add a quick fix to stop processing a notebook if \$ is found
+`795c2b0 <https://github.com/sdpython/pyquickhelper/commit/795c2b094280272f9aebd0cc8f2335b53ca52d2b>`_	2014-12-06	fix the setup
+`33d08e0 <https://github.com/sdpython/pyquickhelper/commit/33d08e0732ec9bfd94e3ab99bed4196052f8700f>`_	2014-12-06	remove extra spaces
+`2c047fc <https://github.com/sdpython/pyquickhelper/commit/2c047fc546da139c67ae89d0fcc91d2bbf5dfb5c>`_	2014-12-06	close the server after shutdown (and close the socket)
+`68223fb <https://github.com/sdpython/pyquickhelper/commit/68223fb389e90da4cd4f4647aa0cf1c193dbdcde>`_	2014-12-06	add parameter skip_list, catch warnings when running unit tests
+`8414519 <https://github.com/sdpython/pyquickhelper/commit/8414519e73dba6959905ad63205fd3d7bbcaa4d3>`_	2014-12-06	fix a link which make the documentation fails
+`789aca7 <https://github.com/sdpython/pyquickhelper/commit/789aca796dd9991f8b0094b4a8f92cdd78b10020>`_	2014-12-06	catch more errors when building the documentation
+`06d569f <https://github.com/sdpython/pyquickhelper/commit/06d569f486800619ac8f041dd933e8d3d5f250ea>`_	2014-12-06	move some repeated code inside the module
+`77c0210 <https://github.com/sdpython/pyquickhelper/commit/77c021071ff86ae11826eaa0b9a43a0b6e22289a>`_	2014-12-06	fix the build and check it on jenkins
+`7f1bc34 <https://github.com/sdpython/pyquickhelper/commit/7f1bc34000633ca884bdf4c9496c83622d18abee>`_	2014-12-06	make the build fails for jenkins
+`3fed112 <https://github.com/sdpython/pyquickhelper/commit/3fed112dc73319608eb0d2d44bcf44148b67f2bf>`_	2014-12-06	another try 2
+`19b18f2 <https://github.com/sdpython/pyquickhelper/commit/19b18f2ef6ea3160a9fe8d7516fe2544f9bc8c62>`_	2014-12-06	another try
+`9dc98cd <https://github.com/sdpython/pyquickhelper/commit/9dc98cdf18b88b8d847cf0fccb7042a76548654b>`_	2014-12-06	modification to check the previous one
+`3acfa41 <https://github.com/sdpython/pyquickhelper/commit/3acfa41e128f31488e509dea2196db8ae92f401e>`_	2014-12-06	introduce a failure to tst jenkins build automation
+`a85eb6e <https://github.com/sdpython/pyquickhelper/commit/a85eb6e7fffd4e395b138a4b4f313a7bd0f8ce46>`_	2014-12-06	avoid returning None in a function find_latex
+`3740803 <https://github.com/sdpython/pyquickhelper/commit/374080311fa1cf672980e55a8fbdc070937289bf>`_	2014-12-06	look into %PATH% for graphviz, pandoc, latex
+`35a2048 <https://github.com/sdpython/pyquickhelper/commit/35a20486f254b0a436eb0ecd14de2ec67c36cfff>`_	2014-12-06	better behavior of the unit test
+`bae1291 <https://github.com/sdpython/pyquickhelper/commit/bae1291f615a9830201013454caab669538041b3>`_	2014-12-06	fix graphviz path in conf.py
+`19dfee9 <https://github.com/sdpython/pyquickhelper/commit/19dfee938e57ecaf0f1a1a103b3578c4fea89786>`_	2014-12-05	spaces
+`b75bf7a <https://github.com/sdpython/pyquickhelper/commit/b75bf7a34baaab5fa94166199c58eb93995f4381>`_	2014-12-05	write the errors on stderr after running the unit tests
+`0c13c56 <https://github.com/sdpython/pyquickhelper/commit/0c13c564ec191f2cb2622cc0e1d6f5152f14ac2a>`_	2014-11-27	fix a bug in run_cmd (when sin is None)
+`f093234 <https://github.com/sdpython/pyquickhelper/commit/f0932348261119b524fbfa83a6a12f04e778df26>`_	2014-11-25	remove line number on notebooks because it is more difficult to read
+`459d113 <https://github.com/sdpython/pyquickhelper/commit/459d1134a2c830c15352aabe2969cc04b0592c45>`_	2014-11-23	add MagicCommandParser
+`4120bba <https://github.com/sdpython/pyquickhelper/commit/4120bba212e02a1a538bc868955f6087884c9339>`_	2014-11-23	Merge branch 'master' of https://github.com/sdpython/pyquickhelper
+`2a2d8f4 <https://github.com/sdpython/pyquickhelper/commit/2a2d8f429205de6c163ab8e371dac7b1714b20bb>`_	2014-11-23	improve an error message
+`dcce51b <https://github.com/sdpython/pyquickhelper/commit/dcce51b350c3794dc74686332fc5394cadcfe8c6>`_	2014-11-23	fix a failing unit test
+`c28d11a <https://github.com/sdpython/pyquickhelper/commit/c28d11acf7f2d4bb71b757cd594b8f3c146658e6>`_	2014-11-23	fix function NbImage
+`1d6b4b7 <https://github.com/sdpython/pyquickhelper/commit/1d6b4b71471c19ec1b4ccc891d8a3aad7a56ead8>`_	2014-11-23	add a function to retrieve an image from github instead of using the local paths
+`5446994 <https://github.com/sdpython/pyquickhelper/commit/54469945cc90b3383de73a206edb4430fecc7e54>`_	2014-11-23	add an image to a notebook
+`77ce770 <https://github.com/sdpython/pyquickhelper/commit/77ce7701890ac52719ff751235d3382db9ea34bf>`_	2014-11-23	update pathfor the notebooks and documentation (linux)
+`0555f7d <https://github.com/sdpython/pyquickhelper/commit/0555f7daf5bdd04b61c731a4908eaabb008c74ea>`_	2014-11-23	compile the documentation on linux, check the notebooks are working on this environnement
+`71bee87 <https://github.com/sdpython/pyquickhelper/commit/71bee87b32b3a7cd4c2a3adf2131e53578278aff>`_	2014-11-20	add parameter timeout in run_cmd and fix the stdin issue
+`a5e0c42 <https://github.com/sdpython/pyquickhelper/commit/a5e0c42ed3e1b25a994bcceadfac64e02120bae9>`_	2014-11-17	fix mathjax links for HTML conversion
+`4110223 <https://github.com/sdpython/pyquickhelper/commit/411022312332e6786034a6718f614fee265512e0>`_	2014-11-15	remove the weird character on pypi
+`117f3e8 <https://github.com/sdpython/pyquickhelper/commit/117f3e88b1c729e80e99ffce08dacb5e950df8d5>`_	2014-11-15	add callback function when showing a form on a notebook
+`b6ba781 <https://github.com/sdpython/pyquickhelper/commit/b6ba78105cb97ddbbc8046decb15239567c5f51a>`_	2014-11-15	raise an exception if unexpected keys in open_html_form
+`cd6558f <https://github.com/sdpython/pyquickhelper/commit/cd6558f0165ff8dff47362c0c20badf6c648b7f5>`_	2014-11-15	documentation and html design
+`604760c <https://github.com/sdpython/pyquickhelper/commit/604760cbf65f5e85628c2fe237c5203ccefcc696>`_	2014-11-15	add function open_html_form to create a form on a notebook
+`dc9d027 <https://github.com/sdpython/pyquickhelper/commit/dc9d0278f4e9670a717ca7cc9b40bcaffa033d54>`_	2014-11-09	fix the setup (cannot find readme.rst)
+`1e82c54 <https://github.com/sdpython/pyquickhelper/commit/1e82c545ab96e779a65875fbbff5375b488b4193>`_	2014-11-08	fix an issue when removing empty spaces
+`1a5580a <https://github.com/sdpython/pyquickhelper/commit/1a5580a9c7be2d334bc1da21b0a555bafb2a6753>`_	2014-11-08	various typo, misspelling, small bugs
+`9485dee <https://github.com/sdpython/pyquickhelper/commit/9485dee6d19d929ce5c7f754d367d792ec4c8fd6>`_	2014-11-08	remove empty lines at the end of every scripts
+`dbaada8 <https://github.com/sdpython/pyquickhelper/commit/dbaada87c120081860b2bd816a97f944dbe64183>`_	2014-11-08	remove extra space in files .bat, .sh
+`b2581a0 <https://github.com/sdpython/pyquickhelper/commit/b2581a0a4952306e93acc8d8c846acadb7aeb9a5>`_	2014-11-08	remove extra spaces in all files
+`468370a <https://github.com/sdpython/pyquickhelper/commit/468370a0bc27106555d61656dac129b2a5d7e02f>`_	2014-11-08	fix bugs in remove_extra_spaces_folder
+`424610b <https://github.com/sdpython/pyquickhelper/commit/424610b8e8aa991fb336ee43b5e870d4ceaba859>`_	2014-11-08	add function remove_extra_spaces_folder to remove spaces in all files a a folder
+`69340b0 <https://github.com/sdpython/pyquickhelper/commit/69340b094d7eb20b20b38f3ac2a6e4c906bd66f6>`_	2014-11-08	add a function to remove extra spaces in a file
+`da5a734 <https://github.com/sdpython/pyquickhelper/commit/da5a734d0918816d7c9980f4d4a26a2b07782cf1>`_	2014-11-08	fix spelling in the setup, merge a pull request
+`0f328f3 <https://github.com/sdpython/pyquickhelper/commit/0f328f3e704dc27f7349f58e74cbbb9f9d95740a>`_	2014-11-07	Update README.rst
+`0e504c3 <https://github.com/sdpython/pyquickhelper/commit/0e504c32bb63ba607d953a37f0ca384bbd8d99d9>`_	2014-11-03	parameter password1, password2, password3 are also hidden with stars (open_window_params)
+`d43f496 <https://github.com/sdpython/pyquickhelper/commit/d43f4966f9226825e5b6044240f0edb346b4c549>`_	2014-11-02	improves the conversion of notebooks into RST files
+`15e34b0 <https://github.com/sdpython/pyquickhelper/commit/15e34b076f613db3aae95a4e062ecf4dbd238283>`_	2014-11-01	move fix div in a notebook to the right
+`64f10a0 <https://github.com/sdpython/pyquickhelper/commit/64f10a05171d7ad2531b5534564f9e9a84fbbf6d>`_	2014-10-31	replace a bullet list by a single line when converting notebooks
+`496c460 <https://github.com/sdpython/pyquickhelper/commit/496c4605a04f4945683fafcc546d2b5a2b941dcb>`_	2014-10-31	avoid a bad path (with ..) to happen (doc server)
+`472643e <https://github.com/sdpython/pyquickhelper/commit/472643e1fd01f83a9ff5b7fcf3c2db2de5d405e8>`_	2014-10-31	better handling of missing files for doc server
+`79a8cee <https://github.com/sdpython/pyquickhelper/commit/79a8cee11d564a8c883f3a63590e309a5411d471>`_	2014-10-31	add a default page to show the mappings + add a simple cache mechanism to the simple doc server
+`8eb019c <https://github.com/sdpython/pyquickhelper/commit/8eb019c436eec0dd0f54f9023f0da2ac4098887d>`_	2014-10-30	add a named label for every example and FAQ item
+`e326a9e <https://github.com/sdpython/pyquickhelper/commit/e326a9e94871bc3c062115c0e22c6559294de921>`_	2014-10-30	improve docserver, checks the IE layout
+`c22d7af <https://github.com/sdpython/pyquickhelper/commit/c22d7afd34e65dad91853ba15ce825f1601ca1db>`_	2014-10-29	add unit test coverage in the documentation
+`042e39e <https://github.com/sdpython/pyquickhelper/commit/042e39e5dcd134678febbca9582c05942cdfc252>`_	2014-10-28	fix a bug in documentation_server.py preventing the search page to be working
+`06a85fb <https://github.com/sdpython/pyquickhelper/commit/06a85fbc135ec3b033e0950c027ec925eca6bdea>`_	2014-10-28	add function run_doc_server to serve documentation
+`1c2dba9 <https://github.com/sdpython/pyquickhelper/commit/1c2dba92a3c920c23c3cfb2dd8264950279ab37f>`_	2014-10-28	data for a unit test
+`6e96746 <https://github.com/sdpython/pyquickhelper/commit/6e96746f6dc5abc4f83f8b29b3e89872e71c09a6>`_	2014-10-25	add a test to check python version
+`4e9951d <https://github.com/sdpython/pyquickhelper/commit/4e9951d2a8c5204a135b5660cc6156d4a0f0c14a>`_	2014-10-20	add script to compilte the documentation on linux
+`0c09472 <https://github.com/sdpython/pyquickhelper/commit/0c094722db657be49ce01a4e6d604ced8e2f840f>`_	2014-10-19	notebook compilation into html on ubuntu
+`11667eb <https://github.com/sdpython/pyquickhelper/commit/11667eb9808e443e7df8adbf8055352ac730c2d5>`_	2014-10-19	modification to make it work on linux, last one: pandoc
+`9667774 <https://github.com/sdpython/pyquickhelper/commit/966777429dbc23f3ab1de976fcd67ba70783f18f>`_	2014-10-17	fix a bug which happened after an import exception
+`18a8d93 <https://github.com/sdpython/pyquickhelper/commit/18a8d930eb616683f9c0d15652f2861b06afb609>`_	2014-10-17	fix rst links issues introduced by the non replacement of relative imports
+`9a07319 <https://github.com/sdpython/pyquickhelper/commit/9a0731957ecb2619ba873e2c8edabe7490c36241>`_	2014-10-16	remove the replacement of the relative imports
+`8b5085b <https://github.com/sdpython/pyquickhelper/commit/8b5085bcc0417cd296be34f9a9f6d2f78e3b3754>`_	2014-10-12	add basic checking
+`d1f2d50 <https://github.com/sdpython/pyquickhelper/commit/d1f2d5038434126c205c738ef781521e185d88f4>`_	2014-10-11	better help generation, still a bug to be fixed
+`90e1ba8 <https://github.com/sdpython/pyquickhelper/commit/90e1ba8190fab4e27e3f53ba4864d9692dbd0ef8>`_	2014-10-10	fix a failing unittest (replacd file name by normalized paths)
+`6f1ff33 <https://github.com/sdpython/pyquickhelper/commit/6f1ff33b5152010e3ee1c4f668e183cb34fb7b74>`_	2014-10-10	fix a bug while generating the documentation, the wrong module could be imported by function import_module
+`4e2559c <https://github.com/sdpython/pyquickhelper/commit/4e2559c3500db2a5f6a6e43a19e17836338feacc>`_	2014-09-25	theme change for the documentation
+`2a9a477 <https://github.com/sdpython/pyquickhelper/commit/2a9a47759af320dd3534c03cc2061552a73a45ad>`_	2014-09-24	change version number to commit number
+`754bde5 <https://github.com/sdpython/pyquickhelper/commit/754bde5152a3f8a4832c1273333ac912be011e71>`_	2014-09-20	add the possibility to ignore some file parts while generation the documentation
+`22c687c <https://github.com/sdpython/pyquickhelper/commit/22c687cffeb9e32347ff5299b8d2fb6ee98a1cd7>`_	2014-09-20	fix misspelling again
+`dcb2459 <https://github.com/sdpython/pyquickhelper/commit/dcb2459eda23e075299cf6ef1556e677441a84e6>`_	2014-09-20	fix misspelling and minor bugs
+`862125c <https://github.com/sdpython/pyquickhelper/commit/862125c59bdb3eee4741d1bb5d3d1d66a6abe76f>`_	2014-09-06	fix a few bug while generating the documentation (notebook were not up to date)
+`bcafc66 <https://github.com/sdpython/pyquickhelper/commit/bcafc663211414d3c45edcacad18471b6965cce9>`_	2014-08-29	fix another issues with encodings while synchronizing folders
+`b3aca53 <https://github.com/sdpython/pyquickhelper/commit/b3aca535ed7d69130d5a1fcd9d8ffe0d1143a2df>`_	2014-08-29	fix an encoding issue + avoid raising an exception in one particular case
+`af6432e <https://github.com/sdpython/pyquickhelper/commit/af6432e4042ecb22bab0728ce3e0a6770b72fb58>`_	2014-08-28	fix a bug while getting content using git (the solution is still not perfect)
+`32b5945 <https://github.com/sdpython/pyquickhelper/commit/32b594567cb704b167e21b7a81fec244526112d1>`_	2014-08-24	second fix for the previous bug
+`622c5fa <https://github.com/sdpython/pyquickhelper/commit/622c5fa9528bb8a1f9eb9f132e08d6deba8bbb72>`_	2014-08-24	fix a package issue when converting a notebook into latex
+`477968f <https://github.com/sdpython/pyquickhelper/commit/477968f0d2fa849d44c8051de7eb703ba1348538>`_	2014-08-22	add conversion from ipynb to docx
+`bbe57d6 <https://github.com/sdpython/pyquickhelper/commit/bbe57d6fe02b15c54644349f7508054858d78a72>`_	2014-08-19	minor change, no impact
+`9f9a64f <https://github.com/sdpython/pyquickhelper/commit/9f9a64fdb09c694a7159d4a0c0e5634411e96a70>`_	2014-08-18	encoding
+`ebbdd3c <https://github.com/sdpython/pyquickhelper/commit/ebbdd3cb4edd0a3887599b5691587771dd450d8b>`_	2014-08-05	auto completion for IPython
+`fdb38ca <https://github.com/sdpython/pyquickhelper/commit/fdb38ca49ad32b74e3977aa6157ed37036be081c>`_	2014-08-03	cleaning a file
+`20d636e <https://github.com/sdpython/pyquickhelper/commit/20d636eb6cb982fdf48039c9e4b8967186a1d261>`_	2014-08-01	add two function to detect empty string in pandas tables
+`948f195 <https://github.com/sdpython/pyquickhelper/commit/948f19515add3a93003452ff03235286f93ce7aa>`_	2014-07-27	fix a path in help documentation
+`868a478 <https://github.com/sdpython/pyquickhelper/commit/868a4785608c6f091c1701fee4f54ca215cf51fc>`_	2014-07-27	fix the latest bug when producing multiple layout for the same package
+`dba267f <https://github.com/sdpython/pyquickhelper/commit/dba267f308995b77c7b2dc9a0e0e0845652d3ed7>`_	2014-07-27	still an issue with the cleaning
+`e701241 <https://github.com/sdpython/pyquickhelper/commit/e7012417162c9513b209c3aba09350dfb00a5d8a>`_	2014-07-27	remove unnecessary files, modifies the clean option when generating help
+`461a88b <https://github.com/sdpython/pyquickhelper/commit/461a88b34fcb791d85bd74d14a1b9a7cbc48880f>`_	2014-07-26	allow multiple layout for the help generation
+`2a211fb <https://github.com/sdpython/pyquickhelper/commit/2a211fb0383ab61dcc7644ecc2942bef8ddd859d>`_	2014-07-20	fix a bug in notebook conversion to rst (issue with automated label)
+`82156e3 <https://github.com/sdpython/pyquickhelper/commit/82156e3aa1df3d46dfbd9f23fe3cbf6ab0923cb9>`_	2014-07-19	improve the conversion of notebooks to rst format
+`72c23b7 <https://github.com/sdpython/pyquickhelper/commit/72c23b7d60ef870f045be1e441fc5648efee24ef>`_	2014-07-19	check the setup installation
+`45709dc <https://github.com/sdpython/pyquickhelper/commit/45709dc973691995214c237067963bb06e04078e>`_	2014-07-18	extend setup.py functionalities (unittest, build_sphinx)
+`d83cded <https://github.com/sdpython/pyquickhelper/commit/d83cded9612f087a9bb438e1f4a98bbab0c5038a>`_	2014-07-18	fix image path while converting notebooks
+`b3e744e <https://github.com/sdpython/pyquickhelper/commit/b3e744e29d254ae93f26d1444165fb557c83a1c6>`_	2014-07-18	add function noLOG
+`a1ff6b3 <https://github.com/sdpython/pyquickhelper/commit/a1ff6b35e8dfdfd8de70caa0b98461a05e60f5da>`_	2014-07-16	add function read_url
+`07418e6 <https://github.com/sdpython/pyquickhelper/commit/07418e6fde079969228e27a558a62e1210083911>`_	2014-07-15	avoid two fixes to contradict themselves
+`3a8f9b5 <https://github.com/sdpython/pyquickhelper/commit/3a8f9b5fa9a36191553e61cc99cda6aee1ff88c0>`_	2014-07-15	fix some issues with image path
+`a7a9a83 <https://github.com/sdpython/pyquickhelper/commit/a7a9a837b0c543914a3f08ba36a63f12f7245c4a>`_	2014-07-15	improve automated documentation for notebooks
+`7cbe636 <https://github.com/sdpython/pyquickhelper/commit/7cbe636a0ee7845e4d49fbf6dcefaf7b98e424ee>`_	2014-07-14	improve conversion from notebook to RST
+`a9dedc7 <https://github.com/sdpython/pyquickhelper/commit/a9dedc705d2ea7780a90d4acfa7a1ec75a472580>`_	2014-07-14	improve conversion from notebook to PDF
+`72fe022 <https://github.com/sdpython/pyquickhelper/commit/72fe022be3ddd2a8be12f7ed94b0d8d07ab818c7>`_	2014-07-14	refactoring
+`fa2d42a <https://github.com/sdpython/pyquickhelper/commit/fa2d42a9d18da6269addd2266dd24243d886f424>`_	2014-07-14	add function get_url_content
+`3cec76a <https://github.com/sdpython/pyquickhelper/commit/3cec76ac3df5f309831dde3dfe5a14adc805dab5>`_	2014-07-14	consider subfolders when compiling notebooks in the documentation
+`55de90e <https://github.com/sdpython/pyquickhelper/commit/55de90ecbe4b30a89ea8b1d6ecf97cb9c8cf6da3>`_	2014-07-06	remove the checkpoints from the notebooks to add to the documentation
+`b33581b <https://github.com/sdpython/pyquickhelper/commit/b33581b49666257d964a1dc3a2eba0ff0d32f044>`_	2014-07-02	move unecessary lines
+`c5e1b07 <https://github.com/sdpython/pyquickhelper/commit/c5e1b07207535fd54c851ae1237a970f42d15405>`_	2014-07-02	fix an issue with pywin32, improve the generation of the documentation with the latest version of ipython
+`8be405a <https://github.com/sdpython/pyquickhelper/commit/8be405a2d72b82694bc3dfa7414872cf61dab58f>`_	2014-06-18	+msi
+`0ee91e0 <https://github.com/sdpython/pyquickhelper/commit/0ee91e0acbd0e2600dbf1d2c3eb5bcdb67d3a83c>`_	2014-06-15	copy images from the notebooks folder to the documentation folder
+`b5a7a1a <https://github.com/sdpython/pyquickhelper/commit/b5a7a1aae4389841f694a656d1620c3367e8eb6b>`_	2014-06-03	add version number of __init__.py
+`a498618 <https://github.com/sdpython/pyquickhelper/commit/a498618f8e76066f8f0ea3d057aef3e705e9187f>`_	2014-05-27	reduce the number of warnings while generating the documentation
+`0de65ac <https://github.com/sdpython/pyquickhelper/commit/0de65ac6534a195f50455d89ade7beeb2d3207d7>`_	2014-05-27	fix an issue with accent in example pages
+`1404f44 <https://github.com/sdpython/pyquickhelper/commit/1404f447b9ece037da9d8d777cfccceae8ea1e7b>`_	2014-05-27	bug fix (missing some pages in documentation because of a space)
+`e1f7e14 <https://github.com/sdpython/pyquickhelper/commit/e1f7e1478f48ed3d773798337b0fd3fa4a581283>`_	2014-05-27	remove the creation of temp_log.txt by default
+`a73d502 <https://github.com/sdpython/pyquickhelper/commit/a73d502b62aab78c06a616c9bd48e6d9a18e89ea>`_	2014-05-23	fix some case issues
+`0df849d <https://github.com/sdpython/pyquickhelper/commit/0df849d8ddc2c6054ddb09792907a55ef8d9298e>`_	2014-05-22	add a shortcut to __init__.py
+`7244cb6 <https://github.com/sdpython/pyquickhelper/commit/7244cb681efcef5d1b6cd5e0b773d08b6bee7e09>`_	2014-05-22	add a shortcut to __init__.py
+`948cb71 <https://github.com/sdpython/pyquickhelper/commit/948cb7106e643318777ae82862c9569f81c69301>`_	2014-05-21	better error message + fix an encoding issue
+`bdb5d4a <https://github.com/sdpython/pyquickhelper/commit/bdb5d4a144545a7b129e1aeb9255751c16a34ef9>`_	2014-05-21	replace encoding latin-1 by itf-8
+`1234d49 <https://github.com/sdpython/pyquickhelper/commit/1234d49fc2faa8a399682bb3e8d249a3ae6b73d9>`_	2014-05-14	comment
+`46dd885 <https://github.com/sdpython/pyquickhelper/commit/46dd8858e89b062f704576160fe358c4b4c5103b>`_	2014-05-12	"Revert ""until I find something better"""
+`ea9fad8 <https://github.com/sdpython/pyquickhelper/commit/ea9fad84655c8192f9fca162defd8b4cb010b218>`_	2014-05-11	until I find something better
+`0ecca05 <https://github.com/sdpython/pyquickhelper/commit/0ecca053b0da7431cefbd259c5f7ce63c01ccab5>`_	2014-05-11	avoid compiling notebooks again if the last compilation is more recent than the file to compile
+`faf9f24 <https://github.com/sdpython/pyquickhelper/commit/faf9f249ed13abe8c7cc6ee452cdf6273184e60e>`_	2014-05-09	stuck sometimes, unstuck it
+`a0036bd <https://github.com/sdpython/pyquickhelper/commit/a0036bd027c2ad79fbf951c3b946d826ad8a3804>`_	2014-05-06	make it easy to change print into something else for logging
+`6cae131 <https://github.com/sdpython/pyquickhelper/commit/6cae131acfeeaff074454f61f22becc0a18de06b>`_	2014-05-06	add latex packages before compiling the documentation into PDF
+`58bf387 <https://github.com/sdpython/pyquickhelper/commit/58bf38753e49829d5feab4126d4b137b60f4693a>`_	2014-05-02	add pdf compilation of the help
+`ffc82df <https://github.com/sdpython/pyquickhelper/commit/ffc82dfb050f3ac169f46e6a4327a0d6058a6fc9>`_	2014-05-01	fix an issue while assigning ids to example and FAQ
+`97cc36d <https://github.com/sdpython/pyquickhelper/commit/97cc36df1bd8fa4732923adb6dc86142b382e201>`_	2014-04-30	improve help generation around snippets of code + unit test
+`569ce1d <https://github.com/sdpython/pyquickhelper/commit/569ce1d4d096f1c930739b8b104298a9144b333b>`_	2014-04-30	allows several pages of FAQ: FAQ(page__question)
+`70c7858 <https://github.com/sdpython/pyquickhelper/commit/70c78587531093e169ed4123778ee2a0854badd4>`_	2014-04-26	catches an exception in fLOG
+`d6e019b <https://github.com/sdpython/pyquickhelper/commit/d6e019bfb8da33a38d429c145a17925c503d8b4b>`_	2014-04-26	fix an encoding issue
+`e1003f8 <https://github.com/sdpython/pyquickhelper/commit/e1003f8680e6504c34ca435c96f6f1ce5946934a>`_	2014-04-26	fix an issue with the encodings of the repo changes while generating documentation
+`723903d <https://github.com/sdpython/pyquickhelper/commit/723903d4b30251b186e8f56bc5b1c61a090f9b96>`_	2014-04-26	remove author and improve title when generating PDF from notebooks
+`4b4ae76 <https://github.com/sdpython/pyquickhelper/commit/4b4ae760de278e82511a3880a5cd4d33f726d42d>`_	2014-04-26	improve the documentation generation, add toctrees
+`1165306 <https://github.com/sdpython/pyquickhelper/commit/116530601aba0cd698d3348c68964b5e3bc457d6>`_	2014-04-24	cleaning an unused file
+`16ecb34 <https://github.com/sdpython/pyquickhelper/commit/16ecb349b088b0d859f26dc5a50a1d6b2b363e91>`_	2014-04-24	improve toctree for the documentation generation
+`5e56c1b <https://github.com/sdpython/pyquickhelper/commit/5e56c1bd90d5cfb34794b5b745a62018d46dd228>`_	2014-04-24	improve documentation generation (notebooks empty lines)
+`36641e3 <https://github.com/sdpython/pyquickhelper/commit/36641e3e0c8d0f90e5081c3c1095561e4dcaaff5>`_	2014-04-22	remove a character from a rst label
+`30003c5 <https://github.com/sdpython/pyquickhelper/commit/30003c5283ab728a6d845264e268df1615fb8865>`_	2014-04-21	fix a bug about a missing path
+`55c272c <https://github.com/sdpython/pyquickhelper/commit/55c272ca11b12ff4763ca1aa30626727e2b19863>`_	2014-04-20	add a trick to fix image path when they contain a space (only for notebooks)
+`d845912 <https://github.com/sdpython/pyquickhelper/commit/d845912f5f9c2e1cec54baf5ee093fb42b809c0f>`_	2014-04-20	fix a path
+`8f8f6c9 <https://github.com/sdpython/pyquickhelper/commit/8f8f6c93fbcb1d3aaf572fa5ae24a7540d0b8dfa>`_	2014-04-20	change documentation theme
+`51a83ca <https://github.com/sdpython/pyquickhelper/commit/51a83caff95bf9dc26c26c857de5e576122f2915>`_	2014-04-19	fix the script building the documentation and setup
+`3aad549 <https://github.com/sdpython/pyquickhelper/commit/3aad549af4d2035ed13165c21ea0aa3aee102fe3>`_	2014-04-19	add notebook while generation the documentation
+`dd85b1d <https://github.com/sdpython/pyquickhelper/commit/dd85b1d2c8b37325e3cdfdb494813a62f4ba3050>`_	2014-04-19	update gitignore to avoid adding notebooks
+`ca80bbb <https://github.com/sdpython/pyquickhelper/commit/ca80bbbba609c2c9d73bf76687f01d00d637dae3>`_	2014-04-19	remove too many empty lines when running run_cmd
+`d5cb5da <https://github.com/sdpython/pyquickhelper/commit/d5cb5da4feec00149c7479bb4cee9bd891e06c77>`_	2014-04-19	avoid printing tooo many lines of logs on console
+`2b62cc1 <https://github.com/sdpython/pyquickhelper/commit/2b62cc1172074a1a17de0542c2e4a403ccc6210d>`_	2014-04-19	moving the notebooks
+`f93764d <https://github.com/sdpython/pyquickhelper/commit/f93764d5ba3365063e951bc4e4691f24d9e0c06a>`_	2014-04-18	add a notebook
+`412ffd4 <https://github.com/sdpython/pyquickhelper/commit/412ffd4de891768e8656d63287369b7128dd8e80>`_	2014-04-18	change default values in run_cmd, extend an error message
+`5c23c95 <https://github.com/sdpython/pyquickhelper/commit/5c23c9574a53550acf2c36af2ceb17e1f84600a6>`_	2014-04-12	fix index, labels for the help generation
+`8eb8e9a <https://github.com/sdpython/pyquickhelper/commit/8eb8e9a8510e3cd00eefd973927f7b5d7c5ef160>`_	2014-04-12	add the possibility to create more than one page of examples (use ___ as a separator)
+`372e852 <https://github.com/sdpython/pyquickhelper/commit/372e8520161e50d50dab837741b20207e0d2057a>`_	2014-04-06	update function synchronize_folder to remove file when using a status_file to look for modifications
+`63b4fbb <https://github.com/sdpython/pyquickhelper/commit/63b4fbbb208bf2522a59f8e6322e1391251cfb63>`_	2014-04-06	more robust function run_cmd, unzip
+`910265e <https://github.com/sdpython/pyquickhelper/commit/910265e51b8ff6476686aa612345334924a798ee>`_	2014-04-06	update version + read version from setup.py for documentation
+`f321d19 <https://github.com/sdpython/pyquickhelper/commit/f321d19d27a80706f441b1cfdf056b0de85b39f4>`_	2014-03-30	adjust the code to deal with the case of sys.stdout == None
+`91f8b43 <https://github.com/sdpython/pyquickhelper/commit/91f8b43b9497287547f7b219fc674e576f9b0c99>`_	2014-03-30	fix an issue while converting strings to datetime (with symbol -)
+`d8790ac <https://github.com/sdpython/pyquickhelper/commit/d8790acf4a81807b3eea49a3103abc6c72babf58>`_	2014-03-22	handle in a better way keys when using open_window_params
+`d877774 <https://github.com/sdpython/pyquickhelper/commit/d87777462ceb664e070d1849725778528fb6e6ad>`_	2014-03-18	remove unnecessary lines
+`75036c5 <https://github.com/sdpython/pyquickhelper/commit/75036c568fcb39ae37c97b8630f32f6daf11202e>`_	2014-03-18	migration to python 3.4
+`3791bbb <https://github.com/sdpython/pyquickhelper/commit/3791bbb889dfb313530a2460835dd0eca51efc85>`_	2014-03-17	fix a few bugs about folder synchronization
+`6aa1503 <https://github.com/sdpython/pyquickhelper/commit/6aa1503a5f441f216dcaf689ee2143e45f4e175f>`_	2014-03-16	change the version
+`5220909 <https://github.com/sdpython/pyquickhelper/commit/52209094abd9a6a3293e858bd94787d39bfc9671>`_	2014-03-16	add logging information while synchronizing big folders
+`20837b4 <https://github.com/sdpython/pyquickhelper/commit/20837b466e15d92f29d37b9e09878e3d9b4ec57b>`_	2014-03-16	add missing file __init__.py
+`cd3dce1 <https://github.com/sdpython/pyquickhelper/commit/cd3dce1db5691f6710d349f46bd9db7c4b41ee12>`_	2014-03-16	update the setup, documentation
+`553c621 <https://github.com/sdpython/pyquickhelper/commit/553c621da5fbb9d817c2c912b12b5c47fc8b306f>`_	2014-03-16	tkinter window to easily enter parameters
+`cad05d9 <https://github.com/sdpython/pyquickhelper/commit/cad05d9b6ef890b6499768440ab6f90791d432ee>`_	2014-03-14	use hash before copying files (folder synchronization)
+`4117806 <https://github.com/sdpython/pyquickhelper/commit/41178067d025f8a04092180f428454092749f636>`_	2014-03-06	improve the default behaviour when generating help for a non-python file
+`e252585 <https://github.com/sdpython/pyquickhelper/commit/e2525854ccdd66c58bb811367990644e3b494ea2>`_	2014-03-04	fix issues with others extension during help generation
+`bdf9f0d <https://github.com/sdpython/pyquickhelper/commit/bdf9f0d1b68b59ae6fefa2c8fb4868579f2f885d>`_	2014-03-04	some fixes for the help generation
+`de84d87 <https://github.com/sdpython/pyquickhelper/commit/de84d87c5d8efd4b8a89b47d51145e3f73b7dd39>`_	2014-03-02	add parameter extra_ext to include others file extension in documentation
+`d47cc56 <https://github.com/sdpython/pyquickhelper/commit/d47cc56b874c9a8c3f65a76a02c4975dc7a23c22>`_	2014-02-26	version modification in the setup
+`db5da14 <https://github.com/sdpython/pyquickhelper/commit/db5da145ab74afd6c014f8406c61da9ef0e83cdc>`_	2014-02-24	add a unit test and fix sync function
+`974ed29 <https://github.com/sdpython/pyquickhelper/commit/974ed29045b348579fbb53b4c99d07756f0ce91f>`_	2014-02-24	another file for unit test purpose
+`fa171a5 <https://github.com/sdpython/pyquickhelper/commit/fa171a5100283179bd7163eef778db8126ad7ae9>`_	2014-02-24	add a file for unit test purpose
+`147e562 <https://github.com/sdpython/pyquickhelper/commit/147e56216b3d5aa854de87576ff2466ee4c11447>`_	2014-02-20	comment
+`4101d6c <https://github.com/sdpython/pyquickhelper/commit/4101d6c26ad8524fa5e29e640c89ba6c3075ef21>`_	2014-02-17	fix indentation issues when generating the documentation
+`b86df72 <https://github.com/sdpython/pyquickhelper/commit/b86df72f439d5db782824ea70d3a15e42269e283>`_	2014-02-17	fix sphinx indentation for tags example, FAQ
+`1471246 <https://github.com/sdpython/pyquickhelper/commit/1471246880b6ca6ce045dc3d211cd19fc523075f>`_	2014-02-16	fix an issue about indentation when generating the example and FAQ section
+`ba0c3d6 <https://github.com/sdpython/pyquickhelper/commit/ba0c3d6eda9b69ea756dce8e846c44b39b077ad3>`_	2014-02-16	add references when gathering examples and questions
+`17017a6 <https://github.com/sdpython/pyquickhelper/commit/17017a6abd366dbd3961beb67312e3ae5e08f7db>`_	2014-02-16	improve help generation, process page to extract examples and FAQ
+`d619abd <https://github.com/sdpython/pyquickhelper/commit/d619abdf234acab0f9b19b83260150240be32f33>`_	2014-02-10	change version number
+`281fe53 <https://github.com/sdpython/pyquickhelper/commit/281fe53225defa872b87c303b429ee71438ee797>`_	2014-02-10	use the new introduced parameter in get_repo_version_
+`5053b74 <https://github.com/sdpython/pyquickhelper/commit/5053b74de97b28144598d4233305f9c92aa15019>`_	2014-02-10	change the version number returned by pygit_hlper
+`c4ce311 <https://github.com/sdpython/pyquickhelper/commit/c4ce311f3386cc283293ad361aa3aaab1e13e24d>`_	2014-02-08	clean the code after applying pylint
+`afe55f5 <https://github.com/sdpython/pyquickhelper/commit/afe55f540087ca149e1ff59944ec84f42c14eb8f>`_	2014-02-07	add an option to parameter align when formatting a table in rst format
+`e1aba5d <https://github.com/sdpython/pyquickhelper/commit/e1aba5d2c22417234ad6d55ffb94e2ee0567bb36>`_	2014-02-07	add alignment options when building rst format for a table
+`280a9f6 <https://github.com/sdpython/pyquickhelper/commit/280a9f65f75bf3eecef0cb6ec6b64bda940939dc>`_	2014-02-07	add link to commit on the documentation
+`0364c3c <https://github.com/sdpython/pyquickhelper/commit/0364c3c1e299b8b11907712a3ac635195f33312b>`_	2014-02-06	add a function to filter commit to add to the documentation
+`dbb54b3 <https://github.com/sdpython/pyquickhelper/commit/dbb54b3a36d8d7f751ba279ca12878037c93a773>`_	2014-02-06	documentation and setup can be now generated using GitHub
+`a62330e <https://github.com/sdpython/pyquickhelper/commit/a62330e5f44f86353078aea5030ae39172bef4ce>`_	2014-02-06	first update to fix the generation of the documentation using Git
+`6d10a4d <https://github.com/sdpython/pyquickhelper/commit/6d10a4df8ebe47f02caf13ebb15f85086f25caca>`_	2014-02-06	fix a unit test which uses to depend on another project
+`7617b0b <https://github.com/sdpython/pyquickhelper/commit/7617b0b5ef39182d9281cb75ce42318aef394222>`_	2014-02-06	pyquickhelper: first step in using GIT as source repository
+`f0af509 <https://github.com/sdpython/pyquickhelper/commit/f0af509efd6c612f967ea2c9e858a55b71d8f203>`_	2014-02-06	remove unused files + change setup
+`8d5351d <https://github.com/sdpython/pyquickhelper/commit/8d5351d1edd4a8997f358be39da80c72b06c2272>`_	2014-02-01	fix the search page on documentation
+`1270d70 <https://github.com/sdpython/pyquickhelper/commit/1270d708bce837f4009245deddd5ce5abc6b19d5>`_	2014-02-01	improve the documentation
+`58277e1 <https://github.com/sdpython/pyquickhelper/commit/58277e1efbd54e19cce56b25295c05655e539d25>`_	2014-01-30	add run_cmd to __init__.py, changed icon
+`5205d36 <https://github.com/sdpython/pyquickhelper/commit/5205d3617cd08f20a6d599469dc36e37b915ffb2>`_	2014-01-24	adding a function to quickly visualize differences between two files
+`20df58e <https://github.com/sdpython/pyquickhelper/commit/20df58e5ae4dd942f125ff8f77517b13e7f88980>`_	2013-12-28	adding function df_to_html
+`2ed70b9 <https://github.com/sdpython/pyquickhelper/commit/2ed70b97343035f1b246c0b8f29fb319980ad1e0>`_	2013-12-28	improving the help generation, moving functions from make_help to helpgen/sphinx_main
+`92c3582 <https://github.com/sdpython/pyquickhelper/commit/92c3582868beaac71619723efac2606ca2dc0535>`_	2013-12-28	fixing an issue while converting pandas dataframe into rst format
+`b94d02d <https://github.com/sdpython/pyquickhelper/commit/b94d02d8e4bc124e7203c936cdde9570b8392d59>`_	2013-12-28	first version, doc, unit test, setup
