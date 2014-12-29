@@ -335,8 +335,13 @@ def produce_code_graph_changes(df):
             plt.style.use('ggplot')
             fig,ax = plt.subplots(nrows=1,ncols=1,figsize=(10,4))
             ax.bar( x,y )
-            ax.set_xticklabels(xl)
-            ax.grid()
+            tig = ax.get_xticks()
+            labs = [ ]
+            for t in tig:
+                if t in x: labs.append(xl[x.index(t)])
+                else: labs.append("")
+            ax.set_xticklabels( labs )
+            ax.grid(True)
             ax.set_title("commits")
             plt.show()
             """.replace("            ","") \

@@ -34,6 +34,5 @@ class TestGraphChanges (unittest.TestCase):
         exec(obj, globals(), locals())
 
 
-
 if __name__ == "__main__"  :
     unittest.main ()
