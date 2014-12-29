@@ -298,11 +298,11 @@ def get_executables_path() :
         res += [ os.path.join(res[-1], "Scripts") ]
 
     return res
-    
+
 def produce_code_graph_changes(df):
     """
     return the code for a graph which counts the number of changes per week over the last year
-    
+
     @param      df      dataframe (has a column date with format ``YYYY-MM-DD``)
     @return             graph
     """
@@ -325,7 +325,7 @@ def produce_code_graph_changes(df):
     xl = list(gr["week"])
     x = list(range(len(xl)))
     y = list(gr["commits"])
-    
+
     code = """
             import matplotlib.pyplot as plt
             x = __X__
@@ -338,12 +338,12 @@ def produce_code_graph_changes(df):
             ax.set_xticklabels(xl)
             ax.grid()
             ax.set_title("commits")
-            plt.show()    
+            plt.show()
             """.replace("            ","") \
                .replace("__X__",str(x)) \
                .replace("__XL__",str(xl)) \
                .replace("__Y__",str(y))
-    
+
     return code
 
 def generate_changes_repo(  chan,
@@ -404,9 +404,9 @@ def generate_changes_repo(  chan,
         from pandas import DataFrame
         tbl = DataFrame ( columns=["change number", "date", "comment"], data=values)
         rows.append("\n\n" + df_to_rst(tbl, align=["1x","1x","3x"]) + "\n\n")
-        
+
     final = "\n".join(rows)
-    
+
     if len(values) > 0 :
         code = produce_code_graph_changes(tbl)
         code = code.split("\n")
@@ -414,7 +414,7 @@ def generate_changes_repo(  chan,
         code = "\n".join(code)
         code = ".. plot::\n" + code + "\n"
         final = final.replace("__CODEGRAPH__",code)
-        
+
     if chan != None :
         with open(chan, "w", encoding="utf8") as f :
             f.write(final)
