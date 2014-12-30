@@ -316,11 +316,21 @@ def produce_code_graph_changes(df):
         return "%d-w%02d"%(year,week)
     df = df.copy()
     df["dt"] = df.apply ( lambda r : datetime.datetime.strptime (r["date"], "%Y-%m-%d"), axis=1)
+    df = df [["dt"]]
     now = datetime.datetime.now()
     last = now - datetime.timedelta(365)
-    df = df [ df.dt > last ]
+    df = df [ df.dt >= last ]
     df["week"] = df.apply( lambda r : to_str(r["dt"]), axis=1)
     df["commits"] = 1
+
+    val = [ ]
+    for alldays in range(0,365):
+        a = now - datetime.timedelta(alldays)
+        val.append ( { "dt": a, "week":  to_str(a), "commits":0 } )
+
+    import pandas
+    df = pandas.concat ( [ df, pandas.DataFrame(val) ] )
+
     gr = df[["week","commits"]].groupby("week",as_index=False).sum()
     xl = list(gr["week"])
     x = list(range(len(xl)))
