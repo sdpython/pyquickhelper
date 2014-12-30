@@ -12,7 +12,7 @@ except ImportError :
     path = os.path.normpath(os.path.abspath( os.path.join( os.path.split(__file__)[0], "..", "..")))
     if path not in sys.path : sys.path.append (path)
     import src
-    
+
 from src.pyquickhelper.loghelper.flog        import fLOG
 from src.pyquickhelper.sync.visual_sync      import create_visual_diff_through_html
 
@@ -20,7 +20,7 @@ class TestJsDiffLib(unittest.TestCase):
 
     def test_jsdifflib(self) :
         fLOG (__file__, self._testMethodName, OutputPrint = __name__ == "__main__")
-        
+
         try :
             import pymyinstall
         except ImportError :
@@ -32,7 +32,7 @@ class TestJsDiffLib(unittest.TestCase):
                 # we skip
                 warnings.warn("unable to test TestJsDiffLib.test_jsdifflib")
                 return
-        
+
         tt = os.path.split(src.pyquickhelper.sync.visual_sync.__file__)[0]
         ma = os.path.join(tt, "temp_difflibjs", "jsdifflib-master")
         if os.path.exists(ma):

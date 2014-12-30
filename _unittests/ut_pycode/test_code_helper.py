@@ -18,7 +18,7 @@ class TestCodeHelper(unittest.TestCase):
 
     def test_synchro_hash (self) :
         fLOG (__file__, self._testMethodName, OutputPrint = __name__ == "__main__")
-        
+
         try :
             import pymyinstall
         except ImportError :
@@ -30,7 +30,7 @@ class TestCodeHelper(unittest.TestCase):
                 # we skip
                 warnings.warn("unable to test TestCodeHelper.test_synchro_hash")
                 return
-        
+
         fold = os.path.abspath(os.path.split(__file__)[0])
         data = os.path.join(fold, "data")
         filename = os.path.join(data, "setup.py.test")
