@@ -3,7 +3,7 @@
 """
 
 
-import sys, os, unittest, re, shutil
+import sys, os, unittest, re, shutil, warnings
 
 try :
     import src
@@ -12,19 +12,25 @@ except ImportError :
     if path not in sys.path : sys.path.append (path)
     import src
 
-try :
-    import pymyinstall
-except ImportError :
-    path = os.path.normpath(os.path.abspath( os.path.join( os.path.split(__file__)[0], "..", "..", "..", "pymyinstall", "src")))
-    if path not in sys.path : sys.path.append (path)
-    import pymyinstall
-
 from src.pyquickhelper import fLOG, remove_extra_spaces, create_visual_diff_through_html_files
 
 class TestCodeHelper(unittest.TestCase):
 
     def test_synchro_hash (self) :
         fLOG (__file__, self._testMethodName, OutputPrint = __name__ == "__main__")
+        
+        try :
+            import pymyinstall
+        except ImportError :
+            path = os.path.normpath(os.path.abspath( os.path.join( os.path.split(__file__)[0], "..", "..", "..", "pymyinstall", "src")))
+            if path not in sys.path : sys.path.append (path)
+            try:
+                import pymyinstall
+            except ImportError :
+                # we skip
+                warnings.warn("unable to test TestCodeHelper.test_synchro_hash")
+                return
+        
         fold = os.path.abspath(os.path.split(__file__)[0])
         data = os.path.join(fold, "data")
         filename = os.path.join(data, "setup.py.test")
