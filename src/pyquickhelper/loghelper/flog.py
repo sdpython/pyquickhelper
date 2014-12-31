@@ -739,8 +739,8 @@ def run_cmd (   cmd,
     @param      communicate         use method `communicate <https://docs.python.org/3.4/library/subprocess.html#subprocess.Popen.communicate>`_ which is supposed to be safer,
                                     parameter ``wait`` must be True
     @param      preprocess          preprocess the command line if necessary (not available on Windows) (False to disable that option)
-    @param      timeout             when data is sent to stdin (``sin``), a timeout is needed to avoid waiting for ever
-    @return                         content of stdout, stdres  (only if wait is True)
+    @param      timeout             when data is sent to stdin (``sin``), a timeout is needed to avoid waiting for ever (*timeout* is in seconds)
+    @return                         content of stdout, stdres  (only if wait is True) 
     @rtype      tuple
 
     @example(run a program using the command line)
@@ -797,7 +797,10 @@ def run_cmd (   cmd,
         skip_waiting = False
 
         if communicate:
-            stdoutdata, stderrdata = pproc.communicate(sin if sin is None else sin.encode(), timeout = timeout)
+            input = sin if sin is None else sin.encode()
+            if input is not None and len(input) > 0 and not do_not_log :
+                fLOG("send to input", [input])
+            stdoutdata, stderrdata = pproc.communicate(input = input, timeout = timeout)
             out = decode_outerr(stdoutdata, encoding, encerror, cmd)
             err = decode_outerr(stderrdata, encoding, encerror, cmd)
         else :
