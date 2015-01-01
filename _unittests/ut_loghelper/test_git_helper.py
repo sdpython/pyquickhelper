@@ -23,7 +23,7 @@ class TestGit(unittest.TestCase):
     def test_clone_repo(self) :
         fLOG (__file__, self._testMethodName, OutputPrint = __name__ == "__main__")
         fold = os.path.abspath(os.path.split (__file__) [0])
-        temp = os.path.join(fold, "temp_clone")
+        temp = os.path.join(fold, "temp_clone_repo")
         if os.path.exists(temp):
             removedirs(temp, use_command_line=True)
         if not os.path.exists(temp):

@@ -270,6 +270,12 @@ def fLOG (*l, **p) :
                 myprint ("\n".join (repr (message.strip ("\r\n")).split ("\\n")))
     GetLogFile ().flush ()
 
+def _this_fLOG (*l, **p) :
+    """
+    other name private to this module
+    """
+    fLOG(*l, **p)
+
 def get_relative_path (folder, file) :
     """
     return the relative path between a folder and a file
@@ -720,7 +726,8 @@ def run_cmd (   cmd,
                 change_path     = None,
                 communicate     = True,
                 preprocess      = True,
-                timeout         = None) :
+                timeout         = None,
+                fLOG            = fLOG) :
     """
     run a command line and wait for the result
     @param      cmd                 command line
@@ -740,6 +747,7 @@ def run_cmd (   cmd,
                                     parameter ``wait`` must be True
     @param      preprocess          preprocess the command line if necessary (not available on Windows) (False to disable that option)
     @param      timeout             when data is sent to stdin (``sin``), a timeout is needed to avoid waiting for ever (*timeout* is in seconds)
+    @param      fLOG                logging function (if not None, bypass others parameters)
     @return                         content of stdout, stdres  (only if wait is True)
     @rtype      tuple
 
@@ -752,7 +760,7 @@ def run_cmd (   cmd,
     If you are using this function to run git function, parameter ``shell`` must be True.
 
     .. versionchanged:: 0.9
-        parameter *timeout* was added,
+        parameters *timeout*, *fLOG* were added,
         the function now works with stdin
     """
     if secure is not None :
@@ -760,8 +768,11 @@ def run_cmd (   cmd,
         add = ">%s" % secure
         if isinstance (cmd, str) : cmd += " " + add
         else : cmd.append(add)
-    if not do_not_log :
-        fLOG ("execute ", cmd)
+
+    if fLOG is not None:
+        fLOG("execute", cmd)
+    elif not do_not_log :
+        _this_fLOG ("execute", cmd)
 
     if change_path is not None :
         current = os.getcwd()
@@ -780,8 +791,10 @@ def run_cmd (   cmd,
                                  startupinfo = startupinfo)
     else :
         cmdl = split_cmp_command(cmd) if preprocess else cmd
-        if not do_not_log :
+        if fLOG is not None:
             fLOG("--linux", cmdl)
+        elif not do_not_log :
+            _this_fLOG("--linux", cmdl)
         pproc = subprocess.Popen (cmdl,
                                  shell  = shell,
                                  stdin  = subprocess.PIPE if sin is not None and len(sin) > 0 else None,
@@ -798,8 +811,11 @@ def run_cmd (   cmd,
 
         if communicate:
             input = sin if sin is None else sin.encode()
-            if input is not None and len(input) > 0 and not do_not_log :
-                fLOG("send to input", [input])
+            if input is not None and len(input) > 0 :
+                if fLOG is not None:
+                    fLOG("input", [input])
+                elif not do_not_log :
+                    _this_fLOG("input", [input])
             stdoutdata, stderrdata = pproc.communicate(input = input, timeout = timeout)
             out = decode_outerr(stdoutdata, encoding, encerror, cmd)
             err = decode_outerr(stderrdata, encoding, encerror, cmd)
@@ -811,8 +827,10 @@ def run_cmd (   cmd,
             if secure is None :
                 for line in stdout :
                     decol = decode_outerr(line, encoding, encerror, cmd)
-                    if not do_not_log :
+                    if fLOG is not None:
                         fLOG(decol.strip("\n\r"))
+                    elif not do_not_log :
+                        _this_fLOG(decol.strip("\n\r"))
 
                     out.append(decol.strip("\n\r"))
                     if stdout.closed: break
@@ -827,7 +845,10 @@ def run_cmd (   cmd,
                             lines = f.readlines()
                         if len(lines) > len(last) :
                             for line in lines[len(last):] :
-                                fLOG(line.strip("\n\r"))
+                                if fLOG is not None:
+                                    fLOG(line.strip("\n\r"))
+                                else:
+                                    _this_fLOG(line.strip("\n\r"))
                                 out.append(line.strip("\n\r"))
                             last = lines
                         if stop_waiting_if is not None and len(last)>0 and stop_waiting_if(last[-1]) :
@@ -849,8 +870,13 @@ def run_cmd (   cmd,
             stderr.close()
 
         err = err.replace("\r\n","\n")
-        if not do_not_log : fLOG ("end of execution ", cmd)
-        if len (err) > 0 and log_error : fLOG ("error (log)\n%s" % err)
+        if fLOG is not None: fLOG("end of execution", cmd)
+        elif not do_not_log : _this_fLOG("end of execution ", cmd)
+        if len (err) > 0 :
+            if fLOG is not None:
+                fLOG("error (log)\n%s" % err)
+            elif log_error :
+                _this_fLOG("error (log)\n%s" % err)
 
         if change_path is not None :
             os.chdir(current)
