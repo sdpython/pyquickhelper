@@ -740,7 +740,7 @@ def run_cmd (   cmd,
                                     parameter ``wait`` must be True
     @param      preprocess          preprocess the command line if necessary (not available on Windows) (False to disable that option)
     @param      timeout             when data is sent to stdin (``sin``), a timeout is needed to avoid waiting for ever (*timeout* is in seconds)
-    @return                         content of stdout, stdres  (only if wait is True) 
+    @return                         content of stdout, stdres  (only if wait is True)
     @rtype      tuple
 
     @example(run a program using the command line)

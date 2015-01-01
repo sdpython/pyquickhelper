@@ -210,7 +210,7 @@ def generate_help_sphinx (  project_var_name,
                     raise HelpGenException ("issue with encoding for file ", thn) from e
                 except Exception as e :
                     raise HelpGenException ("issue with file ", thn) from e
-                    
+
                 # to avoid an error later
                 with open(thn, 'r') as f :
                     try:
@@ -475,11 +475,23 @@ def process_notebooks(  notebooks,
     The conversion into Word document directly uses pandoc.
     It still has an issue with table.
 
-    @warning Some latex templates (for nbconvert) uses ``[commandchars=\\\\\\{\\}]{\\|}`` which allows commands ``\\\\`` and it does not compile.
-                The one used here is ``report``.
+    Some latex templates (for nbconvert) uses ``[commandchars=\\\\\\{\\}]{\\|}`` which allows commands ``\\\\`` and it does not compile.
+    The one used here is ``report``.
+    Some others bugs can be found at: `schlichtanders/latex_test.html <https://gist.github.com/schlichtanders/e108ed0be80108178af2>`_.
+    For example, you must not let spaces between symbol ``$`` and the
+    formulas it indicates.
 
     If *pandoc_path* is None, uses @see fn find_pandoc_path to guess it.
     If *latex_path* is None, uses @see fn find_latex_path to guess it.
+
+    @example(convert a notebook into multiple formats)
+    @code
+    process_notebooks("td1a_correction_session7.ipynb",
+                      "dest_folder",
+                      "dest_folder",
+                      formats=["ipynb", "html", "python", "rst", "pdf", "docx"])
+    @endcode
+    @endexample
 
     .. versionchanged:: 0.9
         For HTML conversion, read the following blog about mathjax: `nbconvert: Math is not displayed in the html output <https://github.com/ipython/ipython/issues/6440>`_.
