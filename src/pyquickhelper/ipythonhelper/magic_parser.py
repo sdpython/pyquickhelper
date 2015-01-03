@@ -15,16 +15,30 @@ class MagicCommandParser (argparse.ArgumentParser):
     .. versionadded:: 0.9
     """
 
-    def parse_cmd(self, line):
+    def parse_cmd(self, line, context = None, fLOG=noLOG):
         """
         split line using `shlex <https://docs.python.org/3.4/library/shlex.html>`_
         and call `parse_args <https://docs.python.org/3.4/library/argparse.html#argparse.ArgumentParser.parse_args>`_
 
         @param      line        string
+        @param      context     if not None, tries to evaluate expression the command may contain
+        @param      fLOG        logging function
         @return                 list of strings
         """
         args = shlex.split(line, posix=False)
-        return self.parse_args(args)
+        res  = self.parse_args(args)
+
+        if context is not None:
+            up   = { }
+            for k,v in res.__dict__.items():
+                ev = self.eval(v, context=context, fLOG=fLOG)
+                if ev != v :
+                    up[k] = ev
+            if len(up) > 0 :
+                for k,v in up.items():
+                    res.__dict__[k] = v
+
+        return res
 
     def eval(self, value, context, fLOG = noLOG):
         """

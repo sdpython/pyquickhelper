@@ -59,6 +59,18 @@ class TestAutoCompletion (unittest.TestCase):
         fLOG(res)
         assert res == 7
 
+    def test_parse(self):
+        fLOG (__file__, self._testMethodName, OutputPrint = __name__ == "__main__")
+        parser = MagicCommandParser(description='display the first lines of a text file')
+        parser.add_argument('f', type=str, help='filename')
+        parser.add_argument('-n', '--n', type=str, default=10, help='number of lines to display')
+        parser.add_argument('-e', '--encoding', default="utf8", help='file encoding')
+        params = {"x":3, "y":4 }
+        res = parser.parse_cmd('this.py -n x+y', context = params, fLOG=fLOG)
+        fLOG(res.__dict__)
+        assert res.n == 7
+
+
 
 
 
