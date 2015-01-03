@@ -3,9 +3,10 @@
 @brief Functions about compressing files.
 """
 
-import os, re, zipfile, datetime, gzip
+import os, re, zipfile, datetime, gzip, sys
 
-from ..loghelper.flog import noLOG
+from ..loghelper.flog import noLOG, run_cmd
+from .fexceptions import FileException
 
 def zip_files (filename, fileSet, fLOG = noLOG) :
     """
@@ -42,7 +43,7 @@ def gzip_files (filename_gz, fileSet, fLOG = noLOG, filename_zip = None) :
     @param      filename_gz     final gzip file (double compression, extension should something like .zip.gz)
     @param      filename_zip    temporary zip file (will be removed after the zipping unless it is different from None)
     @param      fileSet         iterator on file to add
-    @param      log             log function
+    @param      fLOG            logging function
     @return                     number of added files
     """
     if filename_zip is None :
@@ -62,3 +63,39 @@ def gzip_files (filename_gz, fileSet, fLOG = noLOG, filename_zip = None) :
         os.remove (zipf)
 
     return nb
+
+def zip7_files(filename_7z, fileSet, fLOG = noLOG, temp_folder = "."):
+    """
+    If `7z <http://www.7-zip.org/>`_ is installed, the function uses it
+    to compress file into 7z format. The file *filename_7z* must not exist.
+
+    @param      filename_7z     final destination
+    @param      fileSet         list of files to compress
+    @param      fLOG            logging function
+    @param      temp_folder     the function stores the list of files in a file in the
+                                folder *temp_folder*, it will be removed afterwords
+    @return                     number of added files
+
+    .. versionadded:: 0.9
+
+    """
+    if sys.platform.startswith("win"):
+        exe = r"C:\Program Files\7-Zip\7z.exe"
+        if not os.path.exists(exe):
+            raise FileNotFoundError("unable to find: {0}".format(exe))
+    else:
+        exe = "7z"
+
+    if os.path.exists(filename_7z):
+        raise FileException("{0} already exists".format(filename_7z))
+
+    flist = os.path.join(temp_folder, "listfiles7z.txt")
+    with open(flist,"w",encoding="utf8") as f:
+        f.write("\n".join(fileSet))
+
+    cmd = '"{0}" a "{1}" @"{2}"'.format(exe, filename_7z, flist)
+    run_cmd(cmd, wait=True)
+
+    #os.remove(flist)
+
+    return len(fileSet)

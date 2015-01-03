@@ -14,12 +14,12 @@ except ImportError :
     if path not in sys.path : sys.path.append (path)
     import src
 
-from src.pyquickhelper import download, get_temp_folder, fLOG, gzip_files, zip_files
+from src.pyquickhelper import download, get_temp_folder, fLOG, gzip_files, zip_files, zip7_files
 
 
 class TestDownload (unittest.TestCase):
 
-    def test_download(self) :
+    def test_download_zip(self) :
         fLOG (__file__, self._testMethodName, OutputPrint = __name__ == "__main__")
         fold = get_temp_folder(__file__,"temp_download")
         url = "https://docs.python.org/3.5/library/ftplib.html"
@@ -38,6 +38,10 @@ class TestDownload (unittest.TestCase):
         fLOG(r)
         assert os.path.exists(out)
 
+        out7 = os.path.join(fold, "try.7z")
+        r = zip7_files(out7, [f, out], fLOG = fLOG, temp_folder = fold)
+        fLOG(r)
+        assert os.path.exists(out7)
 
 if __name__ == "__main__"  :
     unittest.main ()
