@@ -89,6 +89,10 @@ def zip7_files(filename_7z, fileSet, fLOG = noLOG, temp_folder = "."):
     if os.path.exists(filename_7z):
         raise FileException("{0} already exists".format(filename_7z))
 
+    notxist = [ fn for fn in fileSet if not os.path.exists(fn) ]
+    if len(notxist) > 0:
+        raise FileNotFoundError("unable to compress unexisting files:\n{0}".format("\n".join(notxist)))
+
     flist = os.path.join(temp_folder, "listfiles7z.txt")
     with open(flist,"w",encoding="utf8") as f:
         f.write("\n".join(fileSet))
