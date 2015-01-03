@@ -69,7 +69,8 @@ def explore_folder_iterfile (folder, pattern = None, fullname = False) :
 
 def explore_folder_iterfile_repo (folder, log = fLOG) :
     """
-    returns all files present in folder and added to svn
+    returns all files present in folder and added to
+    a `SVN <https://subversion.apache.org/>`_ or `GIT <http://git-scm.com/>`_ reposotory.
     @param      folder      folder
     @param      log         log function
     @return                 iterator
