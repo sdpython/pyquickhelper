@@ -4,9 +4,38 @@
 """
 import os, sys, glob, re, unittest, io, warnings
 
-from ..sync.synchelper      import remove_folder
-from ..loghelper.flog       import fLOG, run_cmd
+from ..filehelper.synchelper    import remove_folder
+from ..loghelper.flog           import fLOG, run_cmd
 
+def get_temp_folder(thisfile, name, clean = True, create = True):
+    """
+    return a local temporary folder to store files when unit testing
+
+    @param      thisfile        use ``__file__``
+    @param      name            name of the temporary folder
+    @param      clean           if True, clean the folder first
+    @param      create          if True, creates it (empty if clean is True)
+    @return                     temporary folder
+
+    .. versionadded:: 0.9
+    """
+    if not name.startswith("temp_"):
+        raise NameError("the folder {0} must begin with temp_".format(name))
+
+    local = os.path.join(os.path.normpath(os.path.abspath(os.path.dirname(thisfile))), name)
+    if name == local:
+        raise NameError("the folder {0} must be relative, not absolute".format(name))
+
+    if not os.path.exists(local):
+        if create:
+            os.mkdir(local)
+    else:
+        if clean:
+            remove_folder(local)
+        if create:
+            os.mkdir(local)
+
+    return local
 
 def get_test_file (filter, dir = None) :
     """

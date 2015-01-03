@@ -13,8 +13,8 @@ except ImportError :
     import src
 
 from src.pyquickhelper.loghelper.flog           import fLOG, removedirs
+from src.pyquickhelper.filehelper.synchelper    import synchronize_folder
 import src.pyquickhelper.helpgen.utils_sphinx_doc as utils_sphinx_doc
-from src.pyquickhelper.sync.synchelper          import synchronize_folder
 
 
 class TestSphinxDocFull (unittest.TestCase):

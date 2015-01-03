@@ -12,9 +12,9 @@ except ImportError :
     if path not in sys.path : sys.path.append (path)
     import src
 
-from src.pyquickhelper.loghelper.flog        import fLOG
-from src.pyquickhelper.sync.file_tree_node   import FileTreeNode
-from src.pyquickhelper.sync.synchelper       import synchronize_folder, remove_folder
+from src.pyquickhelper.loghelper.flog              import fLOG
+from src.pyquickhelper.filehelper.file_tree_node   import FileTreeNode
+from src.pyquickhelper.filehelper.synchelper       import synchronize_folder, remove_folder
 
 class TestFileCol (unittest.TestCase):
 

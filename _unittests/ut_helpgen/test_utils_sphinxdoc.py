@@ -13,10 +13,10 @@ except ImportError :
     if path not in sys.path : sys.path.append(path)
     import src
 
-from src.pyquickhelper.loghelper.flog           import fLOG
-from src.pyquickhelper.sync.synchelper          import explore_folder
+from src.pyquickhelper.loghelper.flog               import fLOG
+from src.pyquickhelper.filehelper.synchelper        import explore_folder
+from src.pyquickhelper.loghelper.pyrepo_helper      import SourceRepository
 import src.pyquickhelper.helpgen.utils_sphinx_doc as utils_sphinx_doc
-from src.pyquickhelper.loghelper.pyrepo_helper  import SourceRepository
 
 class TestSphinxDoc (unittest.TestCase):
 

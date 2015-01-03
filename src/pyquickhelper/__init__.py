@@ -33,18 +33,19 @@ from .funcwin.frame_params              import open_window_params
 from .funcwin.frame_function            import open_window_function
 from .funcwin.main_window               import main_loop_functions
 from .loghelper.convert_helper          import str_to_datetime
-from .sync.synchelper                   import explore_folder, synchronize_folder, has_been_updated, remove_folder, gzip_files, zip_files
+from .filehelper.synchelper             import explore_folder, synchronize_folder, has_been_updated, remove_folder
 from .pandashelper.readh                import read_url
 from .pandashelper.tblformat            import df_to_rst, df_to_html
 from .pandashelper.tblfunction          import isempty, isnan
 from .helpgen                           import get_help_usage
 from .helpgen.sphinx_main               import generate_help_sphinx, process_notebooks
 from .ipythonhelper.kindofcompletion    import AutoCompletion, AutoCompletionFile
-from .sync.visual_sync                  import create_visual_diff_through_html, create_visual_diff_through_html_files
+from .filehelper.visual_sync            import create_visual_diff_through_html, create_visual_diff_through_html_files
 from .serverdoc.documentation_server    import run_doc_server
 from .pycode.code_helper                import remove_extra_spaces, remove_extra_spaces_folder
 from .ipythonhelper.html_forms          import open_html_form
 from .ipythonhelper.magic_parser        import MagicCommandParser
 from .helpgen.utils_sphinx_config       import NbImage
-from .unittests.utils_tests             import main_wrapper_tests
 from .loghelper.repositories.gitlab_helper import GitLabAPI, GitLabException
+from .filehelper.internet_helper        import download
+from .unittests.utils_tests             import get_temp_folder, main_wrapper_tests

@@ -13,7 +13,7 @@ except ImportError :
     import src
 
 from src.pyquickhelper.loghelper.flog import fLOG
-import src.pyquickhelper.sync.synchelper as foldermod
+import src.pyquickhelper.filehelper.synchelper as foldermod
 
 
 class TestFolder (unittest.TestCase):

@@ -7,7 +7,7 @@
 import sys, os, re, shutil, copy
 
 from ..loghelper.flog           import fLOG
-from ..sync.synchelper          import remove_folder, synchronize_folder, explore_folder
+from ..filehelper.synchelper    import remove_folder, synchronize_folder, explore_folder
 from ._my_doxypy                import process_string
 from .utils_sphinx_doc_helpers  import add_file_rst_template, process_var_tag, import_module
 from .utils_sphinx_doc_helpers  import get_module_objects, add_file_rst_template_cor, add_file_rst_template_title

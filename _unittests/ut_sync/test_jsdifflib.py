@@ -13,8 +13,8 @@ except ImportError :
     if path not in sys.path : sys.path.append (path)
     import src
 
-from src.pyquickhelper.loghelper.flog        import fLOG
-from src.pyquickhelper.sync.visual_sync      import create_visual_diff_through_html
+from src.pyquickhelper.loghelper.flog           import fLOG
+from src.pyquickhelper.filehelper.visual_sync   import create_visual_diff_through_html
 
 class TestJsDiffLib(unittest.TestCase):
 
@@ -33,7 +33,7 @@ class TestJsDiffLib(unittest.TestCase):
                 warnings.warn("unable to test TestJsDiffLib.test_jsdifflib")
                 return
 
-        tt = os.path.split(src.pyquickhelper.sync.visual_sync.__file__)[0]
+        tt = os.path.split(src.pyquickhelper.filehelper.visual_sync.__file__)[0]
         ma = os.path.join(tt, "temp_difflibjs", "jsdifflib-master")
         if os.path.exists(ma):
             for i in os.listdir(ma) :

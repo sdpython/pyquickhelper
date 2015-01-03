@@ -4,7 +4,7 @@
 """
 
 import os
-from ..sync.synchelper import explore_folder
+from ..filehelper.synchelper import explore_folder
 
 def remove_extra_spaces(filename):
     """

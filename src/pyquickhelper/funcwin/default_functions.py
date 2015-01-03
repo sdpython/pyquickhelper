@@ -7,7 +7,7 @@
 import os, re, random
 
 from ..loghelper.flog import fLOG, GetSepLine
-from ..sync.synchelper import explore_folder_iterfile
+from ..filehelper.synchelper import explore_folder_iterfile
 
 
 

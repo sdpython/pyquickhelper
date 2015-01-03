@@ -25,7 +25,6 @@ class TestLog (unittest.TestCase):
         fLOG ("message", "ok", option1 = "k", option2 = 2,
                 LogFile=os.path.join(fold,"temp_log.txt"))
         assert os.path.exists (os.path.join(fold,"temp_log.txt"))
-        #os.remove ("hal_log.txt")
 
     def test_import_problem (self) :
         fLOG (__file__, self._testMethodName, OutputPrint = __name__ == "__main__")

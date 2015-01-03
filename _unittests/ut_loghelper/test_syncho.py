@@ -13,7 +13,7 @@ except ImportError :
     import src
 
 from src.pyquickhelper.loghelper.flog import fLOG
-from src.pyquickhelper.sync.file_tree_node import FileTreeNode
+from src.pyquickhelper.filehelper.file_tree_node import FileTreeNode
 
 class TestFileCol (unittest.TestCase):
 

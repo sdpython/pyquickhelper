@@ -14,7 +14,7 @@ except ImportError :
     import src
 
 from src.pyquickhelper.loghelper.flog        import fLOG
-from src.pyquickhelper.sync.synchelper       import synchronize_folder, remove_folder
+from src.pyquickhelper.filehelper.synchelper import synchronize_folder, remove_folder
 
 class TestSyncFolder (unittest.TestCase):
 

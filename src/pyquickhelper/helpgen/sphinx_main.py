@@ -12,7 +12,7 @@ from ..loghelper.pyrepo_helper  import SourceRepository
 from ..pandashelper.tblformat   import df_to_rst
 from .utils_sphinx_doc          import prepare_file_for_sphinx_help_generation
 from .utils_sphinx_doc_helpers  import HelpGenException, find_latex_path, find_graphviz_dot, find_pandoc_path
-from ..sync.synchelper          import explore_folder, has_been_updated
+from ..filehelper.synchelper    import explore_folder, has_been_updated
 from .utils_sphinx_config       import ie_layout_html
 
 template_examples = """
