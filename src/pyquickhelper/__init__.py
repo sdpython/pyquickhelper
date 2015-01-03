@@ -47,5 +47,6 @@ from .ipythonhelper.html_forms          import open_html_form
 from .ipythonhelper.magic_parser        import MagicCommandParser
 from .helpgen.utils_sphinx_config       import NbImage
 from .loghelper.repositories.gitlab_helper import GitLabAPI, GitLabException
-from .filehelper.internet_helper        import download
 from .unittests.utils_tests             import get_temp_folder, main_wrapper_tests
+from .filehelper.internet_helper        import download
+from .filehelper.compression_helper     import zip_files, gzip_files

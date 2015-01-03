@@ -14,7 +14,7 @@ except ImportError :
     if path not in sys.path : sys.path.append (path)
     import src
 
-from src.pyquickhelper import download, get_temp_folder, fLOG
+from src.pyquickhelper import download, get_temp_folder, fLOG, gzip_files, zip_files
 
 
 class TestDownload (unittest.TestCase):
@@ -27,6 +27,16 @@ class TestDownload (unittest.TestCase):
         fLOG(f)
         assert os.path.exists(f)
         assert f.endswith("ftplib.html")
+
+        out = os.path.join(fold, "try.html.gz")
+        r = gzip_files(out, [f], fLOG = fLOG)
+        fLOG(r)
+        assert os.path.exists(out)
+
+        out = os.path.join(fold, "try.zip")
+        r = zip_files(out, [f], fLOG = fLOG)
+        fLOG(r)
+        assert os.path.exists(out)
 
 
 if __name__ == "__main__"  :

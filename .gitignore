@@ -230,3 +230,5 @@ version.txt
 */sphinxdoc/source/*.png
 */sphinxdoc/source/coverage/*
 README
+*/notebooks/request.html.gz
+*/notebooks/urllib.request.html
