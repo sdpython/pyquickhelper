@@ -12,7 +12,7 @@ except ImportError :
     if path not in sys.path : sys.path.append (path)
     import src
 
-from src.pyquickhelper import AutoCompletion, fLOG, AutoCompletionFile, open_html_form
+from src.pyquickhelper import AutoCompletion, fLOG, AutoCompletionFile, open_html_form, MagicCommandParser
 
 
 
@@ -50,6 +50,15 @@ class TestAutoCompletion (unittest.TestCase):
         raw = open_html_form(params, title, key_save, raw=True)
         fLOG(raw)
         assert len(raw) > 0
+
+    def test_eval(self):
+        fLOG (__file__, self._testMethodName, OutputPrint = __name__ == "__main__")
+        params = {"x":3, "y":4}
+        cl = MagicCommandParser()
+        res = cl.eval("x+y", params, fLOG=fLOG)
+        fLOG(res)
+        assert res == 7
+
 
 
 
