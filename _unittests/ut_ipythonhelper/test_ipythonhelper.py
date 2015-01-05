@@ -12,7 +12,7 @@ except ImportError :
     if path not in sys.path : sys.path.append (path)
     import src
 
-from src.pyquickhelper import AutoCompletion, fLOG, AutoCompletionFile, open_html_form, MagicCommandParser
+from src.pyquickhelper import AutoCompletion, fLOG, AutoCompletionFile, open_html_form, MagicCommandParser, MagicClassWithHelpers
 
 
 
@@ -70,6 +70,20 @@ class TestAutoCompletion (unittest.TestCase):
         fLOG(res.__dict__)
         assert res.n == 7
 
+    def test_class_magic(self):
+        fLOG (__file__, self._testMethodName, OutputPrint = __name__ == "__main__")
+        cl = MagicClassWithHelpers()
+        assert cl.Context is None
+        pa = cl.get_parser(MagicCommandParser, "parser_unittest")
+        pa.add_argument('f', type=str, help='filename')
+        pa.add_argument('-n', '--n', type=str, default=10, help='number of lines to display')
+        pa.add_argument('-e', '--encoding', default="utf8", help='file encoding')
+        assert pa is not None
+        cl.add_context({"x":3, "y":4})
+        assert cl.Context == {"x":3, "y":4}
+        res = cl.get_args('this.py -n x+y', pa, print_function = fLOG)
+        fLOG("**RES",res)
+        assert res.n == 7
 
 
 

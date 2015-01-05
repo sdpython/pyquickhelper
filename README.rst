@@ -21,6 +21,7 @@ Functionalities
     * help running unit tests
     * simple server to server sphinx documentation
     * file compression, zip, gzip, 7z
+    * helpers for ipython notebooks
 
 Design
 ------
@@ -52,6 +53,7 @@ Versions
     * **new:** function :func:`set_sphinx_variables <pyquickhelper.helpgen.default_conf.set_sphinx_variables>` to avoid copying the same configuration file over multiple projects
     * **del:** remove folder *sync*, move everything to *filehelper*
     * **new:** function :func:`7zip_files <pyquickhelper.filehelper.compression_helper.7zip_files>`_
+    * **new:** class :class:`MagicClassWithHelpers <pyquickhelper.ipythonhelper.magic_class.MagicClassWithHelpers>`
 * **0.8 - 2014/11/03**
     * **add:** Python version is now checked, ImportError is raised if it used on Python 2
     * **new:** function :func:`run_doc_server <pyquickhelper.serverdoc.documentation_server.run_doc_server>` creates a local server to display documentation

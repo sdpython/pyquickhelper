@@ -46,6 +46,7 @@ from .serverdoc.documentation_server    import run_doc_server
 from .pycode.code_helper                import remove_extra_spaces, remove_extra_spaces_folder
 from .ipythonhelper.html_forms          import open_html_form
 from .ipythonhelper.magic_parser        import MagicCommandParser
+from .ipythonhelper.magic_class         import MagicClassWithHelpers
 from .helpgen.utils_sphinx_config       import NbImage
 from .loghelper.repositories.gitlab_helper import GitLabAPI, GitLabException
 from .unittests.utils_tests             import get_temp_folder, main_wrapper_tests
