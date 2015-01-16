@@ -1,4 +1,4 @@
-echo on
+echo off
 IF EXIST dist del /Q dist\*.*
 
 IF NOT EXIST c:\Python34 GOTO checkinstall64:
@@ -45,7 +45,7 @@ echo #######################################################
 :setup33_64:
 IF NOT EXIST c:\Python33_x64 GOTO setup33:
 set pythonexe="c:\Python33_x64\python"
-%pythonexe% clean_pyd.py
+%pythonexe% setup.py clean_pyd
 %pythonexe% setup.py build bdist_wininst --plat-name=win-amd64
 if %errorlevel% neq 0 exit /b %errorlevel%
 echo #######################################################
@@ -53,7 +53,7 @@ echo #######################################################
 :setup33:
 IF NOT EXIST c:\Python33 GOTO setup34_64:
 set pythonexe="c:\Python33\python"
-%pythonexe% clean_pyd.py
+%pythonexe% setup.py clean_pyd
 %pythonexe% setup.py sdist --formats=gztar,zip --verbose
 if %errorlevel% neq 0 exit /b %errorlevel%
 %pythonexe% setup.py bdist_wininst
@@ -62,7 +62,7 @@ echo #######################################################
 
 :setup34_64:
 set pythonexe="c:\Python34_x64\python"
-%pythonexe% clean_pyd.py
+%pythonexe% setup.py clean_pyd
 %pythonexe% setup.py build bdist_wininst --plat-name=win-amd64
 if %errorlevel% neq 0 exit /b %errorlevel%
 %pythonexe% setup.py build bdist_msi --plat-name=win-amd64
@@ -71,7 +71,7 @@ echo #######################################################
 
 :setup_msi:
 set pythonexe="c:\Python34_x64\python"
-%pythonexe% clean_pyd.py
+%pythonexe% setup.py clean_pyd
 %pythonexe% setup.py sdist --formats=gztar,zip --verbose
 if %errorlevel% neq 0 exit /b %errorlevel%
 %pythonexe% setup.py bdist_wininst

@@ -24,9 +24,17 @@ Functionalities
     * logging (see :func:`fLOG <pyquickhelper.loghelper.flog.fLOG>`)
     * help running unit tests (see :func:`main <pyquickhelper.unittests.utils_tests.main>`)
     * simple server to server sphinx documentation (see :func:`run_doc_server <pyquickhelper.serverdoc.documentation_server.run_doc_server>`)
+    
+Installation
+------------
+
+**pip**::
+
+    pip install pyquickhelper
+    
 
 Indices and tables
-==================
+------------------
 
 +------------------+---------------------+---------------------+--------------------+------------------------+------------------------------------------------+
 | :ref:`l-modules` |  :ref:`l-functions` | :ref:`l-classes`    | :ref:`l-methods`   | :ref:`l-staticmethods` | :ref:`l-properties`                            |

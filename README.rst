@@ -1,7 +1,7 @@
 .. _l-README:
 
-README
-======
+README / Changes
+================
 
 
 
@@ -26,15 +26,22 @@ Functionalities
 Design
 ------
 
-This project contains various helper about logging functions, unit tests and help generation.
+This project contains the following folders:
    * a source folder: ``src``
    * a unit test folder: ``_unittests``, go to this folder and run ``run_unittests.py``
    * a _doc folder: ``_doc``, it will contain the documentation
-   * a file ``setup.py`` to build and to install the module
-   * a file ``make_help.py`` to build the sphinx documentation
+   * a file ``setup.py`` to build and to install the module, if the source were retrieve from GitHub,
+     the script can also be called with the following extra options (``python setup.py <option>``):
+        * *clean_space*: remove extra spaces in the code
+        * *clean_pyd*: remove files *.pyd
+        * *build_sphinx*: builds the documentation
+        * *unittests*: run the unit tests
+   * a script ``build_setup_help_on_windows.bat`` which run the unit tests, builds the setups and generate the documentaton on Windows
+   * a script ``build_setup_help_on_linux.sh`` which does almost the same on Linux
+   * a script ``publish_on_pipy.bat``
 
-Versions
---------
+Versions / Changes
+------------------
 
 * **0.9 - 2015/??/??**
     * **add:** function to remove extra spaces in a file :func:`remove_extra_spaces <pyquickhelper.pycode.code_helper.remove_extra_spaces>`
@@ -52,7 +59,7 @@ Versions
     * **add:** add function :func:`clone <pyquickhelper.loghelper.repositories.pygit_helper.clone>` and :func:`rebase <pyquickhelper.loghelper.repositories.pygit_helper.rebase>` to clone or pull rebase a git repository
     * **new:** function :func:`set_sphinx_variables <pyquickhelper.helpgen.default_conf.set_sphinx_variables>` to avoid copying the same configuration file over multiple projects
     * **del:** remove folder *sync*, move everything to *filehelper*
-    * **new:** function :func:`7zip_files <pyquickhelper.filehelper.compression_helper.7zip_files>`_
+    * **new:** function :func:`7zip_files <pyquickhelper.filehelper.compression_helper.7zip_files>`
     * **new:** class :class:`MagicClassWithHelpers <pyquickhelper.ipythonhelper.magic_class.MagicClassWithHelpers>`
 * **0.8 - 2014/11/03**
     * **add:** Python version is now checked, ImportError is raised if it used on Python 2

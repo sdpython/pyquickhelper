@@ -3,7 +3,7 @@ export pythonexe=$HOME/anaconda3/bin/python
 echo #######################################################
 $pythonexe setup.py unittests
 echo #######################################################
-$pythonexe clean_pyd.py
+$pythonexe setup.py clean_pyd
 $pythonexe setup.py sdist --formats=gztar,zip --verbose
 echo #######################################################
 $pythonexe -u setup.py build_sphinx

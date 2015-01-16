@@ -52,3 +52,4 @@ from .loghelper.repositories.gitlab_helper import GitLabAPI, GitLabException
 from .unittests.utils_tests             import get_temp_folder, main_wrapper_tests
 from .filehelper.internet_helper        import download
 from .filehelper.compression_helper     import zip_files, gzip_files, zip7_files
+from .pycode.clean_helper               import clean_exts
