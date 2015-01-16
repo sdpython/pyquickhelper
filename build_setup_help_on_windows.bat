@@ -1,8 +1,5 @@
-rem we remove everything from dist
-echo off
-del /Q dist\*.*
-
-rem unittests with python 3.4
+echo on
+IF EXIST dist del /Q dist\*.*
 
 IF NOT EXIST c:\Python34 GOTO checkinstall64:
 
@@ -28,7 +25,7 @@ mkdir c:\Python34_64vir
 
 :nextb:
 IF EXIST c:\Python34_64vir\install GOTO fullsetupb:
-c:\Python34\Scripts\virtualenv c:\Python34_64vir\install --system-site-packages
+c:\Python34_x64\Scripts\virtualenv c:\Python34_64vir\install --system-site-packages
 if %errorlevel% neq 0 exit /b %errorlevel%
 
 :fullsetupb:
@@ -37,25 +34,24 @@ c:\Python34_64vir\install\Scripts\python -u setup.py install
 if %errorlevel% neq 0 exit /b %errorlevel%
 echo #######################################################
 
-:utpy34:
-IF NOT EXIST c:\Python34 GOTO utpy33_64:
-set pythonexe="c:\Python34\python"
+:utpy34_64:
+set pythonexe="c:\Python34_x64\python"
 %pythonexe% -u setup.py clean_space
 if %errorlevel% neq 0 exit /b %errorlevel%
 %pythonexe% -u setup.py unittests
 if %errorlevel% neq 0 exit /b %errorlevel%
 echo #######################################################
 
-:utpy33_64:
-IF NOT EXIST c:\Python33_x64 GOTO utpy33:
+:setup33_64:
+IF NOT EXIST c:\Python33_x64 GOTO setup33:
 set pythonexe="c:\Python33_x64\python"
 %pythonexe% clean_pyd.py
 %pythonexe% setup.py build bdist_wininst --plat-name=win-amd64
 if %errorlevel% neq 0 exit /b %errorlevel%
 echo #######################################################
 
-:utpy33:
-IF NOT EXIST c:\Python33 GOTO utpy34_64:
+:setup33:
+IF NOT EXIST c:\Python33 GOTO setup34_64:
 set pythonexe="c:\Python33\python"
 %pythonexe% clean_pyd.py
 %pythonexe% setup.py sdist --formats=gztar,zip --verbose
@@ -64,7 +60,7 @@ if %errorlevel% neq 0 exit /b %errorlevel%
 if %errorlevel% neq 0 exit /b %errorlevel%
 echo #######################################################
 
-:utpy34_64:
+:setup34_64:
 set pythonexe="c:\Python34_x64\python"
 %pythonexe% clean_pyd.py
 %pythonexe% setup.py build bdist_wininst --plat-name=win-amd64
