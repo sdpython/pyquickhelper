@@ -408,15 +408,23 @@ def is_valid_error(error):
             return True
     return False
 
-def main_wrapper_tests(codefile, skip_list = None, processes = False):
+def main_wrapper_tests( codefile,
+                        skip_list = None,
+                        processes = False,
+                        add_coverage = False,
+                        report_folder = None):
     """
     calls function :func:`main <pyquickhelper.unittests.utils_tests.main>` and throw an exception if it fails
 
-    @param      codefile        ``__file__`` of ``run_unittests.py``
+    @param      codefile        ``__file__`` or ``run_unittests.py``
     @param      skip_list       to skip a list of unit tests (by index, starting by 1)
     @param      processes       to run the unit test in a separate process (with function @see fn run_cmd),
                                 however, to make that happen, you need to specify
                                 ``exit=False`` for each test file, see `unittest.main <https://docs.python.org/3.4/library/unittest.html#unittest.main>`_
+    @param      add_coverage    run the unit tests and measure the coverage at the same time
+    @param      report_folder   folder where the coverage report will be stored, if None, it will be placed in:
+                                ``os.path.join(os.path.dirname(codefile), "..", "_doc","sphinxdoc","source", "coverage")``
+
 
     @FAQ(How to build pyquickhelper with Jenkins?)
     `Jenkins <http://jenkins-ci.org/>`_ is a task scheduler for continuous integration.
@@ -437,10 +445,42 @@ def main_wrapper_tests(codefile, skip_list = None, processes = False):
 
     And you can also read `Schedule builds with Jenkins <http://www.xavierdupre.fr/blog/2014-12-06_nojs.html>`_.
     @endFAQ
+
+    .. versionchanged:: 0.9
+        Parameters *add_coverage* and *report_folder* were added to compute the coverage
+        using the module `coverage <http://nedbatchelder.com/code/coverage/>`_.
     """
     runner  = unittest.TextTestRunner(verbosity=0, stream = io.StringIO ())
     path    = os.path.abspath(os.path.join(os.path.split(codefile) [0]))
-    res     = main(runner, path_test = path, skip = -1, skip_list=skip_list, processes=processes)
+
+    def run_main():
+        res = main(runner, path_test = path, skip = -1, skip_list=skip_list, processes=processes)
+        return res
+
+    if add_coverage:
+        if report_folder is None:
+            report_folder = os.path.join( os.path.dirname(codefile), "..", "_doc","sphinxdoc","source", "coverage")
+
+        print("enabling coverage")
+        from coverage import coverage
+        folder = os.path.join(os.path.dirname(codefile), "..", "src")
+        content = [ _ for _ in os.listdir(folder) if not _.startswith("_") and os.path.isdir( os.path.join(folder,_)) ]
+        if len(content) != 1:
+            raise FileNotFoundError("unable to guess the project name in {0}\n{1}".format(folder, "\n".join(content)))
+
+        project_var_name = content[0]
+        cov = coverage(source = ["src/" + project_var_name])
+        cov.exclude ('if __name__ == "__main__"')
+        cov.start()
+
+        res = run_main()
+
+        cov.stop()
+        cov.html_report(directory=report_folder)
+
+    else:
+        res = run_main()
+
     for r in res["tests"] :
         k = str (r [1])
         if "errors=0" not in k or "failures=0" not in k :

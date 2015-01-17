@@ -53,7 +53,7 @@ class AutoCompletion :
     @property
     def _members(self):
         """
-        returns all the member
+        returns all the members
         """
         return [ _ for _ in self.__dict__ if not _.startswith("_") ]
 
@@ -105,6 +105,8 @@ class AutoCompletionFile(AutoCompletion) :
 
     def __init__(self, value):
         """
+        constructor
+
         @param  value       directory
         """
         if not os.path.exists(value):

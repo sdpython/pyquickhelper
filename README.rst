@@ -35,7 +35,7 @@ This project contains the following folders:
         * *clean_space*: remove extra spaces in the code
         * *clean_pyd*: remove files *.pyd
         * *build_sphinx*: builds the documentation
-        * *unittests*: run the unit tests
+        * *unittests*: run the unit tests, compute the code coverage
    * a script ``build_setup_help_on_windows.bat`` which run the unit tests, builds the setups and generate the documentaton on Windows
    * a script ``build_setup_help_on_linux.sh`` which does almost the same on Linux
    * a script ``publish_on_pipy.bat``
@@ -52,7 +52,7 @@ Versions / Changes
     * **add:** add parameter timeout in function :func:`run_cmd <pyquickhelper.loghelper.flog.run_cmd>`
     * **fix:** :func:`run_cmd <pyquickhelper.loghelper.flog.run_cmd>` now accepts something on the standard input
     * **new:** class :class:`MagicCommandParser <pyquickhelper.ipythonhelper.magic_parser.MagicCommandParser>`
-    * **fix:** better behavior while running the unit test
+    * **fix:** better behavior while running the unit test, add an option to compute the coverage
     * **change:** catch warnings when running the unit tests
     * **change:** expose the function :func:`process_notebooks <pyquickhelper.helpgen.sphinx_main.process_notebooks>` to convert a notebook into html, pdf, rst, docx formats
     * **add:** add simple statistics while generation the documentation

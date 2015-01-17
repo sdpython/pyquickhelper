@@ -28,41 +28,25 @@ Functionalities
 Installation
 ------------
 
-**pip**::
-
-    pip install pyquickhelper
+The most simple way is with *pip*: ``pip install pyquickhelper``. 
+Others options are described at: :ref:`l-moreinstall`.
     
 
 Indices and tables
 ------------------
 
-+------------------+---------------------+---------------------+--------------------+------------------------+------------------------------------------------+
-| :ref:`l-modules` |  :ref:`l-functions` | :ref:`l-classes`    | :ref:`l-methods`   | :ref:`l-staticmethods` | :ref:`l-properties`                            |
-+------------------+---------------------+---------------------+--------------------+------------------------+------------------------------------------------+
-| :ref:`genindex`  |  :ref:`modindex`    | :ref:`search`       | :ref:`l-license`   | :ref:`l-changes`       | :ref:`l-README`                                |
-+------------------+---------------------+---------------------+--------------------+------------------------+------------------------------------------------+
-| :ref:`l-example` |  :ref:`l-FAQ`       | :ref:`l-notebooks`  |                    | :ref:`l-statcode`      | `Unit Test Coverage <coverage/index.html>`_    |
-+------------------+---------------------+---------------------+--------------------+------------------------+------------------------------------------------+
++----------------------+---------------------+---------------------+--------------------+------------------------+------------------------------------------------+
+| :ref:`l-modules`     |  :ref:`l-functions` | :ref:`l-classes`    | :ref:`l-methods`   | :ref:`l-staticmethods` | :ref:`l-properties`                            |
++----------------------+---------------------+---------------------+--------------------+------------------------+------------------------------------------------+
+| :ref:`modindex`      |  :ref:`l-example`   | :ref:`search`       | :ref:`l-license`   | :ref:`l-changes`       | :ref:`l-README`                                |
++----------------------+---------------------+---------------------+--------------------+------------------------+------------------------------------------------+
+| :ref:`genindex`      |  :ref:`l-FAQ`       | :ref:`l-notebooks`  |                    | :ref:`l-statcode`      | `Unit Test Coverage <coverage/index.html>`_    |
++----------------------+---------------------+---------------------+--------------------+------------------------+------------------------------------------------+
 
 Navigation
-==========
+----------
 
 .. toctree::
     :maxdepth: 1
 
-    doctestunit
-    generatedoc
-    generatesetup
-    installation
-    all_example
-    all_example_otherpageofexamples
-    all_example_pagewithanaccentinthetitle
-    all_FAQ
-    all_notebooks
-    glossary
-    index_module
-    license
-    filechanges
-    README
-    all_indexes
-    all_report
+    index__menu

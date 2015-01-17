@@ -38,9 +38,7 @@ the sources are copied into ``pyquickhelper/_unittests/_doc/sphinxdoc/source/pyq
 The documentation in `javadoc <http://en.wikipedia.org/wiki/Javadoc>`_ format is replaced by the RST syntax. Various
 files are automatically generated (indexes, examples, FAQ).
 Then `sphinx <http://sphinx-doc.org/>`_ is run.
-
-After the documentation is generated, everything is copied into folder
-``pyquickhelper/dist``.
+After the documentation is generated, everything is copied into folder ``pyquickhelper/dist``.
 
 
 Extensions to install
@@ -48,3 +46,4 @@ Extensions to install
 
 * `Sphinx <http://sphinx-doc.org/>`_
 * `fancybox <http://spinus.github.io/sphinxcontrib-fancybox/>`_
+* `coverage <http://nedbatchelder.com/code/coverage/>`_

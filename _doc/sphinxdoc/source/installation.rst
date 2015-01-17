@@ -1,3 +1,6 @@
+
+.. _l-moreinstall:
+
 Installation
 ============
 
@@ -17,7 +20,7 @@ Installation
 
             tar xf pyquickhelper-py3.3.tar.gz
             sudo su
-            python3.3 setup.py install
+            python3.4 setup.py install
 
     * Using pip::
 

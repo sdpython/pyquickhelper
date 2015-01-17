@@ -114,7 +114,7 @@ def import_pyquickhelper():
         try:
             import pyquickhelper
         except ImportError as e :
-            raise ImportError("module pyquickhelper is needed to build the documentation") from e
+            raise ImportError("module pyquickhelper is needed to build the documentation ({0})".format(sys.executable)) from e
     return pyquickhelper
 
 if "clean_space" in sys.argv:
@@ -155,24 +155,12 @@ elif "unittests" in sys.argv:
     if not os.path.exists("_unittests"):
         raise FileNotFoundError("you must get the source from GitHub to run the unittests")
 
-    fold  = os.path.abspath(os.path.dirname(__file__))
-    foldu = os.path.join(fold, "_unittests")
-    docu  = os.path.join(fold, "_doc")
-    dest  = os.path.join(fold, "_doc","sphinxdoc","source", "coverage")
-    if not os.path.exists(dest):
-        os.mkdir(dest)
+    run_unit = os.path.join("_unittests", "run_unittests.py")
+    if not os.path.exists(run_unit):
+        raise FileNotFoundError("the folder should contain run_unittests.py")
 
-    sys.path.append(foldu)
-
-    from coverage import coverage
-    cov = coverage(source = ["src/" + project_var_name])
-    cov.exclude ('if __name__ == "__main__"')
-    cov.start()
-
-    from run_unittests import main
-    main()
-    cov.stop()
-    cov.html_report(directory=dest)
+    pyquickhelper = import_pyquickhelper()
+    pyquickhelper.main_wrapper_tests(run_unit, add_coverage=True)
 
 else :
     setup(
@@ -190,5 +178,5 @@ else :
         package_dir       = package_dir,
         package_data      = package_data,
         ext_modules       = EXT_MODULES,
-        install_requires  = [  "numpy", "pandas", "pymyinstall", "six", "dateutils"],
+        install_requires  = [  "numpy", "pandas", "pymyinstall", "six", "dateutils", "requests"],
         )

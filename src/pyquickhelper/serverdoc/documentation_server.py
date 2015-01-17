@@ -64,7 +64,8 @@ class DocumentationHandler(BaseHTTPRequestHandler):
     def add_mapping(key, value) :
         """
         adds a mapping associated to a local path to watch
-        @param      key         key in ``http://locahost:8008/key/
+
+        @param      key         key in ``http://locahost:8008/key/``
         @param      value       local path
 
         Python documentation says list are protected against multithreading (concurrent accesses).

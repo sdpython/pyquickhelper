@@ -3,9 +3,11 @@
 @file
 @brief  Modification to doxypy.py
 (which you can found here: http://code.foosel.org/doxypy).
+
 The main tweaks are:
-   - the documentation is not moved before the function or class definition
-   - it uses a function to modify every line of documentation to use rst syntax.
+
+- the documentation is not moved before the function or class definition
+- it uses a function to modify every line of documentation to use rst syntax.
 """
 
 __applicationName__ = "doxypy"
