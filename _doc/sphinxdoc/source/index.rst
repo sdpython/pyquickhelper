@@ -20,7 +20,7 @@ Functionalities
 
     * simple forms in notebooks (see :func:`open_html_form <pyquickhelper.ipythonhelper.html_forms.open_html_form>`)
     * help generation including notebook conversion (see :func:`generate_help_sphinx <pyquickhelper.helpgen.sphinx_main.generate_help_sphinx>`)
-    * folder synchronization (see :func:`pyquickhelper.synchronize_folder <pyquickhelper.sync.synchelper.synchronize_folder>`)
+    * folder synchronization (see :func:`pyquickhelper.synchronize_folder <pyquickhelper.filehelper.synchelper.synchronize_folder>`)
     * logging (see :func:`fLOG <pyquickhelper.loghelper.flog.fLOG>`)
     * help running unit tests (see :func:`main <pyquickhelper.unittests.utils_tests.main>`)
     * simple server to server sphinx documentation (see :func:`run_doc_server <pyquickhelper.serverdoc.documentation_server.run_doc_server>`)
