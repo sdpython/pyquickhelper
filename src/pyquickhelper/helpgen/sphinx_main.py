@@ -1103,6 +1103,7 @@ def post_process_latex(st, doall, info = None):
     st = st.replace(r"\begin{document}",r"\setlength{\parindent}{0cm}%s\begin {document}" % "\n")
     st = st.replace(r"DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}",
                     r"DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\},fontsize=\small}")
+    st = st.replace("\\textquotesingle{}","'")
 
     # hyperref
     if doall and "%post_process_latex" not in st :
