@@ -49,4 +49,4 @@ Navigation
 .. toctree::
     :maxdepth: 1
 
-    index__menu
+    indexmenu
