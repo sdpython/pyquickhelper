@@ -58,6 +58,11 @@ class TestNoteBooksBug(unittest.TestCase):
             fLOG(_)
             assert os.path.exists(_)
 
+        check = os.path.join(temp, "td1a_correction_session4.tex")
+        with open(check,"r",encoding="utf8") as f :
+            content = f.read()
+        assert "textquotesingle" not in content
+
 
 
 

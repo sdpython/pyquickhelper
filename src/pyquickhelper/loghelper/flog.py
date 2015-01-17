@@ -872,10 +872,11 @@ def run_cmd (   cmd,
         err = err.replace("\r\n","\n")
         if fLOG is not None: fLOG("end of execution", cmd)
         elif not do_not_log : _this_fLOG("end of execution ", cmd)
-        if len (err) > 0 :
+
+        if len (err) > 0 and log_error:
             if fLOG is not None:
                 fLOG("error (log)\n%s" % err)
-            elif log_error :
+            else:
                 _this_fLOG("error (log)\n%s" % err)
 
         if change_path is not None :

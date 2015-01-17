@@ -609,7 +609,7 @@ def process_notebooks(  notebooks,
                     os.chdir(build)
 
                 if not sys.platform.startswith("win"): c = c.replace('"','')
-                out,err = run_cmd(c,wait=True, do_not_log = False, log_error=False, shell = sys.platform.startswith("win"))
+                out,err = run_cmd(c,wait=True, do_not_log = True, log_error=False)#, shell = sys.platform.startswith("win"))
 
                 if format == "latex":
                     os.chdir(cwd)
