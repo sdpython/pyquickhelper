@@ -117,5 +117,11 @@ class TestSphinxDocFull (unittest.TestCase):
         assert "### class useless_class_UnicodeStringIOThreadSafe (str) :" not in content
         assert '###             elif strow.startswith("@ingroup") :' in content
 
+        # test content
+        content = os.path.join(temp, "all_example.rst")
+        assert os.path.exists(content)
+        with open(content, "r", encoding="utf8") as f : content = f.read()
+        assert ":math:`\\left \\{ \\begin{array}{l} \\min_{x,y} \\left \\{ x" in content
+
 if __name__ == "__main__"  :
     unittest.main ()

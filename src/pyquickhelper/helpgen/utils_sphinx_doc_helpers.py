@@ -660,6 +660,13 @@ def process_look_for_tag(tag, title, files):
 
     If the extracted example contains an image (..image:: ../../), the path
     is fixed too.
+
+    The function parses the files instead of loading the files as a module.
+    The function needs to replace ``\\\\`` by ``\\``, it does not takes into
+    acount doc string starting with ``r'''``.
+
+    .. versionchanged:: 0.9
+        Calls function @see fn remove_some_indent with ``backslash=True`` to replace double backslash by simple backslash.
     """
     def noneempty(a):
         if "___" in a:
@@ -725,7 +732,7 @@ def process_look_for_tag(tag, title, files):
             rows.append( a )
             rows.append( "+" * len(a) )
             rows.append( "" )
-            rows.append( remove_some_indent(b) )
+            rows.append( remove_some_indent(b, backslash=True) )
             rows.append( "" )
             spl = c.split("-")
             d = "file {0}.py".format(spl[1]) # line, spl[2].lstrip("l"))
@@ -756,12 +763,16 @@ def fix_image_page_for_root(content, file):
             rows[i] = row
     return "\n".join(rows)
 
-def remove_some_indent(s):
+def remove_some_indent(s, backslash=False):
     """
     bring text to the left
 
-    @param      s       text
-    @return             text
+    @param      s               text
+    @param      backslash       if True, replace double backslash by simple backslash
+    @return                     text
+
+    .. versionchanged:: 0.9
+        Add parameter *backslash* to remove replace double backslash by simple backslah.
     """
     rows = s.split("\n")
     mi = len(s)
@@ -775,9 +786,13 @@ def remove_some_indent(s):
         keep = [ ]
         for _ in rows :
             keep.append( _[mi:] if len(_.strip())>0 and len(_) > mi else _ )
-        return "\n".join(keep)
+        res = "\n".join(keep)
     else :
-        return s
+        res = s
+
+    if backslash:
+        res = res.replace("\\\\", "\\")
+    return res
 
 def find_in_PATH(prog):
     """

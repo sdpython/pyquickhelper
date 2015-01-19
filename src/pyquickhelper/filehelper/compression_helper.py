@@ -66,8 +66,11 @@ def gzip_files (filename_gz, fileSet, fLOG = noLOG, filename_zip = None) :
 
 def zip7_files(filename_7z, fileSet, fLOG = noLOG, temp_folder = "."):
     """
+
     If `7z <http://www.7-zip.org/>`_ is installed, the function uses it
     to compress file into 7z format. The file *filename_7z* must not exist.
+
+    .. index:: 7zip, 7z
 
     @param      filename_7z     final destination
     @param      fileSet         list of files to compress
