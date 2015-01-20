@@ -275,13 +275,16 @@ def generate_help_sphinx (  project_var_name,
             # no rst file --> we copy
             allfiles = [ os.path.join(covfold, _) for _ in allfiles ]
             for lay in lays:
-                covbuild = os.path.join(docpath, build, lay, "coverage")
-                fLOG("covbuild", covbuild)
-                if not os.path.exists(covbuild):
-                    os.mkdir(covbuild)
-                for f in allfiles:
-                    fLOG("copy ", f, " to ", covbuild)
-                    shutil.copy(f, covbuild)
+                layfolder = os.path.join(docpath, build, lay)
+                fLOG("## docpath:", docpath, " -- ",build, " -- ", lay )
+                if os.path.exists(layfolder):
+                    covbuild = os.path.join(docpath, build, lay, "coverage")
+                    fLOG("covbuild", covbuild)
+                    if not os.path.exists(covbuild):
+                        os.mkdir(covbuild)
+                    for f in allfiles:
+                        fLOG("copy ", f, " to ", covbuild)
+                        shutil.copy(f, covbuild)
     else:
         fLOG("## no coverage files", covfold)
 

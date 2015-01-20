@@ -235,7 +235,7 @@ def copy_source_files ( input,
         os.makedirs(output)
 
     if remove :
-        remove_folder(output, False)
+        remove_folder(output, False, raise_exception=False)
 
     deffilter = "(.+[.]py$)|(.+[.]pyd$)|(.+[.]cpp$)|(.+[.]h$)|(.+[.]dll$)|(.+[.]o$)|(.+[.]def$)|(.+[.]exe$)|(.+[.]config$)"
 

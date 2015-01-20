@@ -262,13 +262,17 @@ def synchronize_folder (   p1,
 
     return action
 
-def remove_folder (top, remove_also_top = True) :
+def remove_folder (top, remove_also_top = True, raise_exception = True) :
     """
     remove everything in folder top
     @param      top                 path to remove
     @param      remove_also_top     remove also root
+    @param      raise_exception     raise an exception if a file cannot be remove
     @return                         list of removed files and folders
                                      --> list of tuple ( (name, "file" or "dir") )
+
+    .. versionchanged:: 0.9
+        Parameter *raise_exception* was added.
     """
     if top in ["", "C:", "c:", "C:\\", "c:\\", "d:", "D:", "D:\\", "d:\\" ] :
         raise Exception("top is a root (c: for example), this is not safe")
@@ -278,11 +282,25 @@ def remove_folder (top, remove_also_top = True) :
     for root, dirs, files in os.walk(top, topdown=False):
         for name in files:
             t = os.path.join(root, name)
-            os.remove(t)
+            try:
+                os.remove(t)
+            except PermissionError as e :
+                if raise_exception:
+                    raise PermissionError("unable to remove file {0}".format(t)) from e
+                else:
+                    remove_also_top=False
+                    continue
             res.append((t,"file"))
         for name in dirs:
             t = os.path.join(root, name)
-            os.rmdir(t)
+            try:
+                os.rmdir(t)
+            except OSError as e :
+                if raise_exception:
+                    raise OSError("unable to remove folder {0}".format(t)) from e
+                else:
+                    remove_also_top=False
+                    continue
             res.append ( (t,"dir") )
         if first_root is None:
             first_root = root
