@@ -1147,6 +1147,10 @@ def post_process_latex(st, doall, info = None):
     else :
         raise HelpGenException("unable to add new instructions usepackage in file {0}".format(info))
 
+    if r"\usepackage[utf8]" in st:
+        st = st.replace(r"\usepackage[utf8]{inputenc}",r"\usepackage{ucs}\usepackage[utf8x]{inputenc}")
+        st = st.replace(r"\DeclareUnicodeCharacter{00A0}{\nobreakspace}",r"%\DeclareUnicodeCharacter{00A0}{\nobreakspace}")
+
     # add tableofcontents
     lines = st.split("\n")
     for i,line in enumerate(lines):
