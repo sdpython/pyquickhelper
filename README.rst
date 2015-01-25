@@ -45,7 +45,7 @@ This project contains the following folders:
 Versions / Changes
 ------------------
 
-* **0.9 - 2015/??/??**
+* **0.9 - 2015/01/25**
     * **add:** function to remove extra spaces in a file :func:`remove_extra_spaces <pyquickhelper.pycode.code_helper.remove_extra_spaces>`
     * **add:** function :func:`create_visual_diff_through_html_files <pyquickhelper.filehelper.visual_sync.create_visual_diff_through_html_files>`
     * **fix:** the setup does not need the file ``README.rst`` anymore
