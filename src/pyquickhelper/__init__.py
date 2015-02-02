@@ -7,7 +7,7 @@ import sys
 if sys.version_info[0] < 3 :
     raise ImportError("pyquickhelper only works with Python 3")
 
-__version__ = "0.9"
+__version__ = "1.0"
 __author__ = "Xavier Dupré"
 __github__ = "https://github.com/sdpython/pyquickhelper"
 __url__ = "http://www.xavierdupre.fr/app/pyquickhelper/helpsphinx/index.html"
