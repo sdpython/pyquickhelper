@@ -18,14 +18,26 @@ def str_to_datetime (dt, format = None):
                             @endcode
                         which you get by default
     @rtype              datetime
+    @return             datetime
+    
+    .. versionchanged:: 1.0
+        accept more formats (no time, T instead of space)
     """
     if "+" in dt : dt = dt.split("+")[0].strip()
     elif " -" in dt : dt = dt.split(" -")[0].strip()
     if format is None :
-        if "." in dt :
-            return datetime.datetime.strptime (dt, "%Y-%m-%d %H:%M:%S.%f")
-        else :
-            return datetime.datetime.strptime (dt, "%Y-%m-%d %H:%M:%S")
+        if " " in dt:
+            if "." in dt :
+                return datetime.datetime.strptime (dt, "%Y-%m-%d %H:%M:%S.%f")
+            else :
+                return datetime.datetime.strptime (dt, "%Y-%m-%d %H:%M:%S")
+        elif "T" in dt:
+            if "." in dt :
+                return datetime.datetime.strptime (dt, "%Y-%m-%dT%H:%M:%S.%f")
+            else :
+                return datetime.datetime.strptime (dt, "%Y-%m-%dT%H:%M:%S")
+        else:
+            return datetime.datetime.strptime (dt, "%Y-%m-%d")
     else :
         return datetime.datetime.strptime (dt, format)
 
