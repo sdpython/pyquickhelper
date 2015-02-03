@@ -157,10 +157,19 @@ class NotebookRunner(object):
                 raise NotImplementedError('unhandled iopub message: %s' % msg_type)
             outs.append(out)
         cell['outputs'] = outs
-        self.fLOG("\n".join(str(_.text) for _ in outs))
+
+        raw = [ ]
+        for _ in outs:
+            try:
+                t = _.text
+                raw.append(t)
+            except AttributeError:
+                continue
+
+        self.fLOG("\n".join(raw))
 
         if status == 'error':
-            raise NotebookError(traceback_text)
+            raise NotebookError("CELL:\n{0}\n\nTRACE:\n{1}".format(cell.input, traceback_text))
         return outs
 
     def iter_code_cells(self):
@@ -175,7 +184,8 @@ class NotebookRunner(object):
     def run_notebook(self,
                     skip_exceptions=False,
                     progress_callback=None,
-                    additional_path=None):
+                    additional_path=None,
+                    valid = None):
         '''
         Run all the cells of a notebook in order and update
         the outputs in-place.
@@ -186,6 +196,7 @@ class NotebookRunner(object):
         @param      skip_exceptions     skip exception
         @param      progress_callback   call back function
         @param      additional_path     additional paths (as a list or None if none)
+        @param      valid               if not None, valid is a function which returns wether or not the cell should be executed or not
         '''
         if additional_path is not None:
             if not isinstance(additional_path, list):
@@ -201,6 +212,8 @@ class NotebookRunner(object):
                     raise
 
         for i, cell in enumerate(self.iter_code_cells()):
+            if valid is not None and not valid(cell.input) :
+                continue
             try:
                 self.run_cell(cell)
             except NotebookError:

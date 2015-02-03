@@ -12,7 +12,8 @@ def run_notebook(filename,
                 skip_exceptions = False,
                 outfilename     = None,
                 encoding        = "utf8",
-                additional_path = None):
+                additional_path = None,
+                valid           = None):
     """
     run a notebook end to end, it uses module `runipy <https://github.com/paulgb/runipy/>`_
 
@@ -23,6 +24,7 @@ def run_notebook(filename,
     @param      outfilename     if not None, saves the output in this notebook
     @param      encoding        encoding for the notebooks
     @param      additional_path additional paths for import
+    @param      valid           if not None, valid is a function which returns wether or not the cell should be executed or not
     @return                     output
 
     @warning The function calls `basicConfig <https://docs.python.org/3.4/library/logging.html#logging.basicConfig>`_.
@@ -48,7 +50,8 @@ def run_notebook(filename,
             out.write("\n")
 
         nb_runner = NotebookRunner(nb, profile_dir, working_dir, fLOG=flogging)
-        nb_runner.run_notebook(skip_exceptions=skip_exceptions, additional_path=additional_path)
+        nb_runner.run_notebook(skip_exceptions=skip_exceptions, additional_path=additional_path,
+                valid = valid)
 
         if outfilename is not None:
             with open(outfilename, 'w', encoding=encoding) as f:
