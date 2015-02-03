@@ -134,7 +134,7 @@ class NotebookRunner(object):
                     out.text = content['text']
                 else:
                     out.text = content['data']
-                #print(out.text, end='')
+
             elif msg_type in ('display_data', 'pyout'):
                 for mime, data in content['data'].items():
                     try:
@@ -143,13 +143,12 @@ class NotebookRunner(object):
                         raise NotImplementedError('unhandled mime type: %s' % mime)
 
                     setattr(out, attr, data)
-                #print(data, end='')
+                    
             elif msg_type == 'pyerr':
                 out.ename = content['ename']
                 out.evalue = content['evalue']
                 out.traceback = content['traceback']
 
-                #logging.error('\n'.join(content['traceback']))
             elif msg_type == 'clear_output':
                 outs = list()
                 continue
@@ -216,9 +215,11 @@ class NotebookRunner(object):
                 continue
             try:
                 self.run_cell(cell)
-            except NotebookError:
+            except NotebookError as e:
                 if not skip_exceptions:
                     raise
+                else:
+                    raise Exception("issue when executing:\n{0}".format(cell))
             if progress_callback:
                 progress_callback(i)
 
