@@ -19,7 +19,7 @@ def str_to_datetime (dt, format = None):
                         which you get by default
     @rtype              datetime
     @return             datetime
-    
+
     .. versionchanged:: 1.0
         accept more formats (no time, T instead of space)
     """

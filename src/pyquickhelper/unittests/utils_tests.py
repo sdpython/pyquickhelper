@@ -2,7 +2,7 @@
 @file
 @brief  This extension contains various functionalities to help unittesting.
 """
-import os, sys, glob, re, unittest, io, warnings
+import os, sys, glob, re, unittest, io, warnings, time
 
 from ..filehelper.synchelper    import remove_folder
 from ..loghelper.flog           import fLOG, run_cmd
@@ -32,7 +32,8 @@ def get_temp_folder(thisfile, name, clean = True, create = True):
     else:
         if clean:
             remove_folder(local)
-        if create:
+            time.sleep(0.1)
+        if create and not os.path.exists(local):
             os.mkdir(local)
 
     return local
