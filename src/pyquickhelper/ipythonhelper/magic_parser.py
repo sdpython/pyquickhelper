@@ -55,7 +55,7 @@ class MagicCommandParser (argparse.ArgumentParser):
         if value in context:
             return context[value]
 
-        if "[" in value or "]" in value or "+" in value or "*" in value:
+        if isinstance(value,str) and ("[" in value or "]" in value or "+" in value or "*" in value):
             try:
                 res = eval ( value, {}, context)
                 return res

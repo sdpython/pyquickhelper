@@ -713,6 +713,29 @@ def decode_outerr(outerr, encoding, encerror, msg):
             raise Exception("issue with cmd (" + encoding +"):" + str(msg) + "\n" + str(exu) + "\n-----\n" + out) from e
     raise Exception("complete issue with cmd:" + str(msg))
 
+def skip_run_cmd (   cmd,
+                sin             = "",
+                shell           = True,
+                wait            = False,
+                log_error       = True,
+                secure          = None,
+                stop_waiting_if = None,
+                do_not_log      = False,
+                encerror        = "ignore",
+                encoding        = "utf8",
+                change_path     = None,
+                communicate     = True,
+                preprocess      = True,
+                timeout         = None,
+                fLOG            = fLOG) :
+    """
+    has the same signature as @see fn run_cmd but does nothing
+
+    .. versionadded:: 1.0
+    """
+    return "",""
+
+
 def run_cmd (   cmd,
                 sin             = "",
                 shell           = True,

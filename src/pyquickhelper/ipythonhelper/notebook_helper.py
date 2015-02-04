@@ -13,7 +13,8 @@ def run_notebook(filename,
                 outfilename     = None,
                 encoding        = "utf8",
                 additional_path = None,
-                valid           = None):
+                valid           = None,
+                clean_function  = None):
     """
     run a notebook end to end, it uses module `runipy <https://github.com/paulgb/runipy/>`_
 
@@ -25,6 +26,7 @@ def run_notebook(filename,
     @param      encoding        encoding for the notebooks
     @param      additional_path additional paths for import
     @param      valid           if not None, valid is a function which returns wether or not the cell should be executed or not
+    @param      clean_function  function which cleans a cell's code before executing it (None for None)
     @return                     output
 
     @warning The function calls `basicConfig <https://docs.python.org/3.4/library/logging.html#logging.basicConfig>`_.
@@ -51,10 +53,11 @@ def run_notebook(filename,
 
         nb_runner = NotebookRunner(nb, profile_dir, working_dir, fLOG=flogging)
         nb_runner.run_notebook(skip_exceptions=skip_exceptions, additional_path=additional_path,
-                valid = valid)
+                valid = valid, clean_function=clean_function)
 
         if outfilename is not None:
             with open(outfilename, 'w', encoding=encoding) as f:
                 write(nb_runner.nb, f, 'json')
 
+        nb_runner.shutdown_kernel()
         return out.getvalue()

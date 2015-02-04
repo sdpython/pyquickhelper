@@ -27,7 +27,7 @@ def check():
     check_log()
     return True
 
-from .loghelper.flog                    import fLOG, run_cmd, unzip, noLOG, removedirs
+from .loghelper.flog                    import fLOG, run_cmd, skip_run_cmd, unzip, noLOG, removedirs
 from .loghelper.url_helper              import get_url_content
 from .funcwin.frame_params              import open_window_params
 from .funcwin.frame_function            import open_window_function

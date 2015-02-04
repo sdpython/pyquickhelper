@@ -41,6 +41,25 @@ def ie_layout_html():
     else:
         raise FileNotFoundError("Sphinx is not properly installed, unable to find: " + layout)
 
+def locate_image_documentation(image_name):
+    """
+    tries to local an image in the module for help generation in a folder ``_doc``
+
+    @param      image_name      path
+    @return                     local file
+    """
+    folder, filename = os.path.split(image_name)
+    while len(folder) > 0 and "_doc" not in os.listdir(folder):
+        folder = os.path.split(folder)[0]
+    doc = os.path.join(folder, "_doc")
+    for root, dirs, files in os.walk(doc):
+        for name in files:
+            t = os.path.join(root, name)
+            fn = os.path.split(t)[-1]
+            if filename == fn:
+                return t
+    raise FileNotFoundError(image_name)
+
 def NbImage (name, repository = None, force_github = False, width = None):
     """
     retrieve a name or a url of the image if it is not found in the local folder
@@ -64,11 +83,15 @@ def NbImage (name, repository = None, force_github = False, width = None):
     local = os.path.abspath(name)
     if not force_github and os.path.exists(local) : return Image(local, width=width)
 
+    if "notebooks" not in local:
+        local = locate_image_documentation(local)
+
     # otherwise --> github
     paths = local.replace("\\","/").split("/")
     try:
         pos = paths.index("notebooks")-1
     except IndexError as e :
+        # we are looking for the right path
         raise IndexError("the image is not retrieve from a notebook from a folder ``_docs/notebooks`` or you changed the current folder")
 
     if repository is None:

@@ -34,7 +34,7 @@ class TestNotebookRunner (unittest.TestCase):
         fLOG(out)
         assert os.path.exists(outfile)
         assert "No module named 'pyquickhelper'" not in out
-        assert "datetime.datetime(2015, 3, 2, 0, 0)" in out
+        assert "datetime.datetime(2015, 3, 2" in out
 
 
 

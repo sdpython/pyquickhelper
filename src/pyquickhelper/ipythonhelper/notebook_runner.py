@@ -4,7 +4,7 @@
 """
 
 from queue import Empty
-import os
+import os, re
 from time import sleep
 
 from IPython.nbformat.current import NotebookNode
@@ -79,19 +79,68 @@ class NotebookRunner(object):
         self.kc.stop_channels()
         self.km.shutdown_kernel(now=True)
 
-    def run_cell(self, cell):
+    def clean_code(self, code):
+        """
+        clean the code before running it, the function comment out
+        instruction such as ``show()``
+
+        @param      code        code (string)
+        @return                 cleaned code
+        """
+        has_bokeh = "bokeh." in code or "from bokeh" in code or "import bokeh" in code
+        if code is None:
+            return code
+        else:
+            lines = [ _.strip("\n\r").rstrip(" \t") for _ in code.split("\n") ]
+            res = [ ]
+            show_is_last=False
+            for line in lines:
+                if line.replace(" ","") == "show()":
+                    line = line.replace("show","#show")
+                    show_is_last=True
+                elif has_bokeh and line.replace(" ","") == "output_notebook()":
+                    line = line.replace("output_notebook","#output_notebook")
+                else:
+                    show_is_last=False
+                res.append(line)
+                if show_is_last:
+                    res.append('"nothing to show"')
+            return "\n".join(res)
+
+    def run_cell(self, index_cell, cell, clean_function=None):
         '''
         Run a notebook cell and update the output of that cell in-place.
+
+        @param      index_cell          index of the cell
+        @param      cell                cell to execute
+        @param      clean_function      cleaning function to apply to the code before running it
+        @return                         output of the cell
         '''
-        self.fLOG('-- running cell:\n%s\n' % cell.input)
-        self.kc.execute(cell.input)
+        if isinstance(cell, str):
+            iscell = False
+            codei = cell
+        else:
+            iscell = True
+            codei = cell.input
+
+        self.fLOG('-- running cell:\n%s\n' % codei)
+
+        code = self.clean_code(codei)
+        if clean_function is not None:
+            code = clean_function(code)
+        if len(code) == 0:
+            return ""
+        self.kc.execute(code)
+
         reply = self.kc.get_shell_msg()
         status = reply['content']['status']
         if status == 'error':
-            traceback_text = 'Cell raised uncaught exception: \n' + \
-                '\n'.join(reply['content']['traceback'])
-            self.fLOG(traceback_text)
+            ansi_escape = re.compile(r'\x1b[^m]*m')
+            tr = [ ansi_escape.sub('', _) for _ in reply['content']['traceback'] ]
+            traceback_text = '\n'.join(tr)
+            self.fLOG("ERR:\n", traceback_text)
         else:
+            traceback_text = ''
             self.fLOG('-- cell returned')
 
         outs = list()
@@ -101,10 +150,11 @@ class NotebookRunner(object):
                 if msg['msg_type'] == 'status':
                     if msg['content']['execution_state'] == 'idle':
                         break
-            except Empty:
+            except Empty as e:
                 # execution state should return to idle before the queue becomes empty,
                 # if it doesn't, something bad has happened
-                raise
+                status="error"
+                continue
 
             content = msg['content']
             msg_type = msg['msg_type']
@@ -121,11 +171,13 @@ class NotebookRunner(object):
             out = NotebookNode(output_type=msg_type)
 
             if 'execution_count' in content:
-                cell['prompt_number'] = content['execution_count']
+                if iscell:
+                    cell['prompt_number'] = content['execution_count']
                 out.prompt_number = content['execution_count']
 
             if msg_type in ('status', 'pyin', 'execute_input'):
                 continue
+
             elif msg_type == 'stream':
                 out.stream = content['name']
                 # in msgspec 5, this is name, text
@@ -141,9 +193,8 @@ class NotebookRunner(object):
                         attr = self.MIME_MAP[mime]
                     except KeyError:
                         raise NotImplementedError('unhandled mime type: %s' % mime)
-
                     setattr(out, attr, data)
-                    
+
             elif msg_type == 'pyerr':
                 out.ename = content['ename']
                 out.evalue = content['evalue']
@@ -152,10 +203,13 @@ class NotebookRunner(object):
             elif msg_type == 'clear_output':
                 outs = list()
                 continue
+
             else:
                 raise NotImplementedError('unhandled iopub message: %s' % msg_type)
             outs.append(out)
-        cell['outputs'] = outs
+
+        if iscell:
+            cell['outputs'] = outs
 
         raw = [ ]
         for _ in outs:
@@ -165,10 +219,28 @@ class NotebookRunner(object):
             except AttributeError:
                 continue
 
-        self.fLOG("\n".join(raw))
+        sraw = "\n".join(raw)
+        self.fLOG(sraw)
+
+        def reply2string(reply):
+            sreply=[]
+            for k,v in sorted(reply.items()):
+                if isinstance(v, dict):
+                    temp = [ ]
+                    for _,__ in sorted(v.items()):
+                        temp.append("    [{0}]={1}".format(_,str(__)))
+                    v = "\n".join(temp)
+                    sreply.append ( "reply['{0}']=dict\n{1}".format(k,v))
+                else:
+                    sreply.append ( "reply['{0}']={1}".format(k,str(v)))
+            sreply= "\n".join(sreply)
+            return sreply
 
         if status == 'error':
-            raise NotebookError("CELL:\n{0}\n\nTRACE:\n{1}".format(cell.input, traceback_text))
+            sreply = reply2string(reply)
+            if len(code) < 5: scode = [code]
+            else: scode = ""
+            raise NotebookError("CELL {4} length={5} -- {6}:\n{0}\nTRACE:\n{1}\nRAW:\n{2}REPLY:\n{3}".format(code, traceback_text, sraw, sreply, index_cell, len(code), scode))
         return outs
 
     def iter_code_cells(self):
@@ -184,7 +256,8 @@ class NotebookRunner(object):
                     skip_exceptions=False,
                     progress_callback=None,
                     additional_path=None,
-                    valid = None):
+                    valid = None,
+                    clean_function = None):
         '''
         Run all the cells of a notebook in order and update
         the outputs in-place.
@@ -196,6 +269,7 @@ class NotebookRunner(object):
         @param      progress_callback   call back function
         @param      additional_path     additional paths (as a list or None if none)
         @param      valid               if not None, valid is a function which returns wether or not the cell should be executed or not
+        @param      clean_function      function which cleans a cell's code before executing it (None for None)
         '''
         if additional_path is not None:
             if not isinstance(additional_path, list):
@@ -204,22 +278,20 @@ class NotebookRunner(object):
             for p in additional_path:
                 code.append("sys.path.append(r'{0}')".format(p))
             cell = "\n".join(code)
-            try:
-                self.kc.execute(cell)
-            except NotebookError:
-                if not skip_exceptions:
-                    raise
+            self.run_cell(-1, cell)
 
         for i, cell in enumerate(self.iter_code_cells()):
             if valid is not None and not valid(cell.input) :
                 continue
             try:
-                self.run_cell(cell)
+                self.run_cell(i, cell, clean_function=clean_function)
+            except Empty as er:
+                    raise Exception("issue when executing:\n{0}".format(cell.input)) from er
             except NotebookError as e:
                 if not skip_exceptions:
                     raise
                 else:
-                    raise Exception("issue when executing:\n{0}".format(cell))
+                    raise Exception("issue when executing:\n{0}".format(cell.input)) from e
             if progress_callback:
                 progress_callback(i)
 
