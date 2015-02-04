@@ -84,7 +84,8 @@ def NbImage (name, repository = None, force_github = False, width = None):
     if not force_github and os.path.exists(local) : 
         return Image(local, width=width)
 
-    if "notebooks" not in local:
+    local_split = local.replace("\\","/").split("/")
+    if "notebooks" not in local_split:
         local = locate_image_documentation(local)
         return Image(local, width=width)
 
@@ -94,7 +95,10 @@ def NbImage (name, repository = None, force_github = False, width = None):
         pos = paths.index("notebooks")-1
     except IndexError as e :
         # we are looking for the right path
-        raise IndexError("the image is not retrieve from a notebook from a folder ``_docs/notebooks`` or you changed the current folder")
+        raise IndexError("the image is not retrieve from a notebook from a folder ``_docs/notebooks`` or you changed the current folder:\n{0}".format(local)) from e
+    except ValueError as ee :
+        # we are looking for the right path
+        raise IndexError("the image is not retrieve from a notebook from a folder ``_docs/notebooks`` or you changed the current folder:\n{0}".format(local)) from ee
 
     if repository is None:
         module = paths[pos-1]
