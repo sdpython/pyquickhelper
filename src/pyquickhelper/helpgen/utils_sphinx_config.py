@@ -81,10 +81,12 @@ def NbImage (name, repository = None, force_github = False, width = None):
     """
     from IPython.core.display import Image
     local = os.path.abspath(name)
-    if not force_github and os.path.exists(local) : return Image(local, width=width)
+    if not force_github and os.path.exists(local) : 
+        return Image(local, width=width)
 
     if "notebooks" not in local:
         local = locate_image_documentation(local)
+        return Image(local, width=width)
 
     # otherwise --> github
     paths = local.replace("\\","/").split("/")
