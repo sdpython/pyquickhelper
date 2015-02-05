@@ -212,7 +212,8 @@ def main (  runner,
             skip_list   = None,
             on_stderr   = False,
             flogp       = print,
-            processes   = False) :
+            processes   = False,
+            skip_function = None) :
     """
     run all unit test
     the function looks into the folder _unittest and extract from all files
@@ -220,22 +221,26 @@ def main (  runner,
     Each files should mention an execution time.
     Tests are sorted by increasing order.
 
-    @param      runner      unittest Runner
-    @param      path_test   path to look, if None, looks for defaults path related to this project
-    @param      limit_max   avoid running tests longer than limit seconds
-    @param      log         if True, enables intermediate files
-    @param      skip        if skip != -1, skip the first "skip" test files
-    @param      skip_list   skip unit test id in this list (by index, starting by 1)
-    @param      on_stderr   if True, publish everything on stderr at the end
-    @param      flogp       logging, printing function
-    @param      processes   to run the unit test in a separate process (with function @see fn run_cmd),
-                            however, to make that happen, you need to specify
-                            ``exit=False`` for each test file, see `unittest.main <https://docs.python.org/3.4/library/unittest.html#unittest.main>`_
-    @return                 dictionnary: ``{ "err": err, "tests":list of couple (file, test results) }``
+    @param      runner          unittest Runner
+    @param      path_test       path to look, if None, looks for defaults path related to this project
+    @param      limit_max       avoid running tests longer than limit seconds
+    @param      log             if True, enables intermediate files
+    @param      skip            if skip != -1, skip the first "skip" test files
+    @param      skip_list       skip unit test id in this list (by index, starting by 1)
+    @param      skip_function   function(filename,content) --> boolean to skip a unit test
+    @param      on_stderr       if True, publish everything on stderr at the end
+    @param      flogp           logging, printing function
+    @param      processes       to run the unit test in a separate process (with function @see fn run_cmd),
+                                however, to make that happen, you need to specify
+                                ``exit=False`` for each test file, see `unittest.main <https://docs.python.org/3.4/library/unittest.html#unittest.main>`_
+    @return                     dictionnary: ``{ "err": err, "tests":list of couple (file, test results) }``
 
     .. versionchanged:: 0.9
         change the result type into a dictionary, catches warning when running unit tests,
         add parameter *processes* to run the unit test in a different process through command line
+
+    .. versionchanged:: 1.0
+        parameter *skip_function* was added
     """
     if skip_list is None:
         skip_list = set()
@@ -289,6 +294,10 @@ def main (  runner,
             continue
         if i+1 in skip_list:
             continue
+        if skip_function is not None:
+            with open(s[1],"r") as f : content = f.read()
+            if skip_function(s[1], content):
+                continue
 
         cut = os.path.split(s[1])
         cut = os.path.split(cut[0])[-1] + "/" + cut[-1]
@@ -413,7 +422,8 @@ def main_wrapper_tests( codefile,
                         skip_list = None,
                         processes = False,
                         add_coverage = False,
-                        report_folder = None):
+                        report_folder = None,
+                        skip_function = None):
     """
     calls function :func:`main <pyquickhelper.unittests.utils_tests.main>` and throw an exception if it fails
 
@@ -425,6 +435,7 @@ def main_wrapper_tests( codefile,
     @param      add_coverage    run the unit tests and measure the coverage at the same time
     @param      report_folder   folder where the coverage report will be stored, if None, it will be placed in:
                                 ``os.path.join(os.path.dirname(codefile), "..", "_doc","sphinxdoc","source", "coverage")``
+    @param      skip_function   function(filename,content) --> boolean to skip a unit test
 
 
     @FAQ(How to build pyquickhelper with Jenkins?)
@@ -455,7 +466,8 @@ def main_wrapper_tests( codefile,
     path    = os.path.abspath(os.path.join(os.path.split(codefile) [0]))
 
     def run_main():
-        res = main(runner, path_test = path, skip = -1, skip_list=skip_list, processes=processes)
+        res = main(runner, path_test = path, skip = -1, skip_list=skip_list, processes=processes,
+                    skip_function=skip_function)
         return res
 
     if add_coverage:
