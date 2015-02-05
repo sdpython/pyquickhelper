@@ -5,6 +5,7 @@
 import os, logging, io
 from IPython.nbformat.current import read, write
 from .notebook_runner import NotebookRunner, NotebookError
+from ..loghelper.flog import noLOG
 
 def run_notebook(filename,
                 profile_dir     = None,
@@ -14,7 +15,8 @@ def run_notebook(filename,
                 encoding        = "utf8",
                 additional_path = None,
                 valid           = None,
-                clean_function  = None):
+                clean_function  = None,
+                fLOG            = noLOG):
     """
     run a notebook end to end, it uses module `runipy <https://github.com/paulgb/runipy/>`_
 
@@ -27,6 +29,7 @@ def run_notebook(filename,
     @param      additional_path additional paths for import
     @param      valid           if not None, valid is a function which returns wether or not the cell should be executed or not
     @param      clean_function  function which cleans a cell's code before executing it (None for None)
+    @param      fLOG            logging function
     @return                     output
 
     @warning The function calls `basicConfig <https://docs.python.org/3.4/library/logging.html#logging.basicConfig>`_.
@@ -50,6 +53,7 @@ def run_notebook(filename,
             if len(l) > 0 : out.write( " ".join(l) )
             if len(p) > 0 : out.write( str(p) )
             out.write("\n")
+            fLOG(*l,**p)
 
         nb_runner = NotebookRunner(nb, profile_dir, working_dir, fLOG=flogging)
         nb_runner.run_notebook(skip_exceptions=skip_exceptions, additional_path=additional_path,
