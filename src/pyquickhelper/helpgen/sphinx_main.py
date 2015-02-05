@@ -670,6 +670,10 @@ def process_notebooks(  notebooks,
                 fLOG("   ** pandoc compilation (b)", pandoco)
                 outfilep = os.path.splitext(outputfile)[0] + "." + pandoco
 
+                # for some files, the following error might appear:
+                #Stack space overflow: current size 33692 bytes.
+                #Use `+RTS -Ksize -RTS' to increase it.
+                # it usually means there is something wrong (circular reference, ...)
                 if sys.platform.startswith("win"):
                     c = r'"{0}\pandoc.exe" -f html -t {1} "{2}" -o "{3}"'.format(pandoc_path, pandoco, outputfile, outfilep)
                 else:

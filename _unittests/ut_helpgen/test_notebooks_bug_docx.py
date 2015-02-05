@@ -15,16 +15,16 @@ except ImportError :
 
 from src.pyquickhelper import fLOG, process_notebooks
 
-class TestNoteBooksBugLatex(unittest.TestCase):
+class TestNoteBooksBugDocx(unittest.TestCase):
 
     def test_notebook(self) :
         fLOG (__file__, self._testMethodName, OutputPrint = __name__ == "__main__")
         path    = os.path.abspath(os.path.split(__file__)[0])
-        fold    = os.path.normpath(os.path.join(path, "notebooks_latex"))
+        fold    = os.path.normpath(os.path.join(path, "notebooks_docx"))
         nbs     = [ os.path.join(fold, _) for _ in os.listdir(fold) if ".ipynb" in _ ]
         formats = ["ipynb", "html", "python", "rst", "pdf", "docx"]
 
-        temp = os.path.join(path, "temp_nb_bug_latex")
+        temp = os.path.join(path, "temp_nb_bug_docx")
         if not os.path.exists(temp): os.mkdir(temp)
         for file in os.listdir(temp):
             os.remove(os.path.join(temp,file))
