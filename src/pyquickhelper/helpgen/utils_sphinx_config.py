@@ -81,7 +81,7 @@ def NbImage (name, repository = None, force_github = False, width = None):
     """
     from IPython.core.display import Image
     local = os.path.abspath(name)
-    if not force_github and os.path.exists(local) : 
+    if not force_github and os.path.exists(local) :
         return Image(local, width=width)
 
     local_split = local.replace("\\","/").split("/")

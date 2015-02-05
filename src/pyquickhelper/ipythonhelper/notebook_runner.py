@@ -144,6 +144,7 @@ class NotebookRunner(object):
             self.fLOG('-- cell returned')
 
         outs = list()
+        nbissue = 0
         while True:
             try:
                 msg = self.kc.get_iopub_msg(timeout=1)
@@ -154,7 +155,11 @@ class NotebookRunner(object):
                 # execution state should return to idle before the queue becomes empty,
                 # if it doesn't, something bad has happened
                 status="error"
-                continue
+                nbissue += 1
+                if nbissue > 10 :
+                    # the notebook is empty
+                    return ""
+                else : continue
 
             content = msg['content']
             msg_type = msg['msg_type']
