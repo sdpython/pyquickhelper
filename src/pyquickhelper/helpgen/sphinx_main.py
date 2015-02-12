@@ -38,7 +38,8 @@ def generate_help_sphinx (  project_var_name,
                             filter_commit   = lambda c : c.strip() != "documentation",
                             extra_ext       = [],
                             nbformats       = ["ipynb", "html", "python", "rst", "pdf"],
-                            layout          = [("html", "build", {})]) :
+                            layout          = [("html", "build", {})],
+                            module_name     = None) :
     """
     runs the help generation
         - copies every file in another folder
@@ -54,6 +55,8 @@ def generate_help_sphinx (  project_var_name,
     @param      nbformats           requested formats for the notebooks conversion
     @param      layout              list of formats sphinx should generate such as html, latex, pdf, docx,
                                     it is a list of tuple (layout, build directory, parameters to override)
+    @param      module_name         name of the module (must be the folder name src/*name*, if None, *module_name*
+                                    will be replaced by *project_var_name*
 
     The result is stored in path: ``root/_doc/sphinxdoc/source``.
     We assume the file ``root/_doc/sphinxdoc/source/conf.py`` exists
@@ -110,6 +113,8 @@ def generate_help_sphinx (  project_var_name,
              @code
              <meta http-equiv="X-UA-Compatible" content="IE=edge" />
              @endcode
+
+    .. versionchanged:: 1.0
     """
     ie_layout_html()
 
@@ -144,15 +149,18 @@ def generate_help_sphinx (  project_var_name,
 
     mapped_function = [ (".*[.]%s$" % ext.strip(".") , None) for ext in extra_ext ]
 
+    if module_name is None:
+        module_name = project_var_name
+
     prepare_file_for_sphinx_help_generation (
                 {},
                 root,
                 "_doc/sphinxdoc/source/",
                 subfolders      = [
-                                    ("src/" + project_var_name, project_var_name),
+                                    ("src/" + module_name, module_name),
                                      ],
                 silent          = True,
-                rootrep         = ("_doc.sphinxdoc.source.%s." % (project_var_name,), ""),
+                rootrep         = ("_doc.sphinxdoc.source.%s." % (module_name,), ""),
                 optional_dirs   = optional_dirs,
                 mapped_function = mapped_function,
                 replace_relative_import = False)
