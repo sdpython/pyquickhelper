@@ -128,15 +128,6 @@ class FileTreeNode :
     @property
     def root(self):
         """
-        return the root
-
-        .. versionadded:: 1.0
-        """
-        return self._root
-
-    @property
-    def root(self):
-        """
         return the root directory, the one used as a root for a synchronization
         """
         return self._root

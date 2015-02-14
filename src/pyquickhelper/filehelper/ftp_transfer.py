@@ -110,13 +110,6 @@ class TransferFTP (FTP) :
         """
         return self.run_command(FTP.retrlines,'LIST')
 
-    def close(self) :
-        """
-        closes the connection
-        """
-        self.LOG ("disconnecting from", self.Site)
-        FTP.disconnect(self)
-
     def mkd (self, path) :
         """
         creates a directory
@@ -176,7 +169,7 @@ class TransferFTP (FTP) :
         transfers a file
 
         @param      file        file
-        @param      to          destination
+        @param      to          destination (a folder)
         @param      debug       if True, displays more information
         @return                 status
         """
