@@ -1,137 +1,28 @@
 #-*- coding: utf-8 -*-
 """
 @file
-
 @brief      keep the status of a folder, assuming this folder is not moved
+
+.. versionchanged:: 1.0
+    This file was renamed into *files_status.py*.
 """
 
 import os, datetime, shutil, hashlib
 
+from ..loghelper.flog   import noLOG
+from .file_info         import convert_st_date_to_datetime, checksum_md5, FileInfo
 
-def convert_st_date_to_datetime (t) :
-    """
-    converts a string into a datetime
-
-    @param      t       str
-    @return             datetime
-    """
-    if isinstance (t, str) :
-        if "." in t :
-            return datetime.datetime.strptime (t, "%Y-%m-%d %H:%M:%S.%f")
-        else :
-            return datetime.datetime.strptime (t, "%Y-%m-%d %H:%M:%S")
-    else :
-        return datetime.datetime.fromtimestamp(t)
-
-def checksum_md5 (filename) :
-    """
-    computes MD5 for a file
-
-    @param      filename        filename
-    @return                     string or None if there was an error
-    """
-    fname = filename
-    block_size = 0x10000
-    fd = open(fname, "rb")
-    try:
-        block = [ fd.read(block_size) ]
-        while len(block[-1]) > 0 :
-            block.append ( fd.read(block_size) )
-        contents = block
-        zero =  hashlib.md5()
-        i = 0
-        for el in contents :
-            i += 1
-            zero.update( el )
-        m = zero
-        return m.hexdigest()
-    finally:
-        fd.close()
-        return None
-
-class FileInfo :
-    """
-    intermediate class: it represents the data we collect about a file
-    to determine whether or not it was modified
-    """
-
-    def __init__ (self, filename, size, date, mdate, checksum) :
-        """
-        constructor
-
-        @param      filename        filename
-        @param      size            size
-        @param      date            date (str or datetime)
-        @param      mdate           modification date (str or datetime)
-
-        Dates will be converted into datetime.
-        """
-        self.filename   = filename
-        self.size       = size
-        self.date       = date
-        self.mdate      = mdate    # modification date
-        self.checksum   = checksum
-        if date is not None and not isinstance (self.date, datetime.datetime) :
-            raise ValueError("mismatch for date (%s) and file %s" % (str(type(date)), filename))
-        if mdate is not None and not isinstance (self.mdate, datetime.datetime) :
-            raise ValueError("mismatch for mdate (%s) and file %s" % (str(type(mdate)), filename))
-        if not isinstance (size, int) :
-            raise ValueError("mismatch for size (%s) and file %s" % (str(type(size)), filename))
-        if checksum is not None and not isinstance (checksum, str) :
-            raise ValueError("mismatch for checksum (%s) and file %s" % (str(type(checksum)), filename))
-        if date is not None and mdate is not None :
-            if mdate > date :
-                raise ValueError("expecting mdate <= date for file " + filename)
-
-    def __str__ (self) :
-        """
-        usual
-        """
-        return "File[name=%s, size=%d (%s), mdate=%s (%s), date=%s (%s), md5=%s (%s)]" % \
-                 (self.filename,
-                    self.size, str(type(self.size)),
-                  str(self.mdate), str(type(self.mdate)),
-                  str(self.date), str(type(self.date)),
-                  self.checksum, str(type(self.checksum)))
-
-    def set_date(self, date) :
-        """
-        set date
-
-        @param  date    date (a str or datetime)
-        """
-        self.date = date
-        if not isinstance (self.date, datetime.datetime) :
-            raise ValueError("mismatch for date (%s) and file %s" % (str(type(date)), self.filename))
-
-    def set_mdate(self, mdate) :
-        """
-        set mdate
-
-        @param  mdate    mdate (a str or datetime)
-        """
-        self.mdate = mdate
-        if not isinstance (self.mdate, datetime.datetime) :
-            raise ValueError("mismatch for date (%s) and file %s" % (str(type(mdate)), self.filename))
-
-    def set_md5(self, checksum) :
-        """
-        set md5
-
-        @param  md5     byte
-        """
-        self.checksum = checksum
-        if not isinstance (checksum, str) :
-            raise ValueError("mismatch for checksum (%s) and file %s" % (str(type(checksum)), self.filename))
-
-class FileTreeStatus :
-
+class FilesStatus :
     """
     this classes maintains a list of files
     and does some verifications in order to check if a file
     was modified or not (if yes, then it will be updated to the website)
+
+    .. versionchanged:: 1.0
+        This class was renamed from FileTreeStatus into ``FilesStatus``
+
     """
-    def __init__ (self, file, fLOG = print) :
+    def __init__ (self, file, fLOG = noLOG) :
         """
         file which will contains the status
         @param      file            file, if None, fill _children
@@ -162,11 +53,26 @@ class FileTreeStatus :
                         raise Exception("issue with line:\n  {0} -- {1}".format(_, spl)) from e
 
         # contains all file to update
-        self.modifiedFile = [ ]
+        self.modifiedFile = { }
+
+    def __iter__(self):
+        """
+        iterates on all files stored in the current file, yield a couple ( filename, FileInfo )
+        """
+        for a,b in self.copyFiles.items():
+            yield a,b
+
+    def iter_modified(self):
+        """
+        iterates on all modified files yield a couple ( filename, reason )
+        """
+        for a,b in self.modifiedFile:
+            yield a,b
 
     def save_dates (self, checkfile = None) :
         """
         save the status of the copy
+
         @param      checkfile       check the status for file checkfile
         """
         if checkfile is None:
@@ -195,8 +101,8 @@ class FileTreeStatus :
     def has_been_modified_and_reason (self, file) :
         """
         returns True, reason if a file was modified or False,None if not
-        @param      file        filename
-        @return                 True,reason or False,None
+        @param      file            filename
+        @return                     True,reason or False,None
         """
         res    = True
         reason = None
@@ -230,9 +136,29 @@ class FileTreeStatus :
                     # mda.... no expected modification (dates did not change)
                     res = False
 
-        if res :
-            self.modifiedFile.append( (file, reason) )
         return res, reason
+
+    def add_modified_file(self, file, reason):
+        """
+        add a file the modified list of files
+
+        @param      file        file to add
+        @param      reason      reason for modification
+        """
+        if file in self.modifiedFile:
+            raise KeyError("file {0} is already present".format(file))
+        self.modifiedFile [ file ] = reason
+
+    def add_if_modified (self, file):
+        """
+        add a file to self.modifiedList if it was modified
+        @param      file    filename
+        @return             True or False
+        """
+        res,reason = self.has_been_modified_and_reason(file, add_to_list = False)
+        if res :
+            self.add_modified_file(res, reason)
+        return res
 
     def difference(self, files, u4 = False, nlog = None):
         """
@@ -280,23 +206,9 @@ class FileTreeStatus :
             if file.filename not in memo:
                 yield ( "<+", file.filename, None, None )
 
-    def add_if_modified (self, file):
-        """
-        add a file to self.modifiedList if it was modified
-        @param      file    filename
-        @return             True or False
-        """
-        res,reason = self.has_been_modified_and_reason(file)
-        if res :
-            memo = [ _ for _ in self.modifiedFile if _[0] == file ]
-            if len(memo) == 0 :
-                # not already added
-                self.modifiedFile.append( (file, reason) )
-        return res
-
     def update_copied_file(self, file, delete = False) :
         """
-        update the file in copyFiles (before saving), update all field
+        update the file in copyFiles (before saving), update all fields
         @param      file        filename
         @param      delete      to remove this file
         @return                 file object
@@ -314,61 +226,3 @@ class FileTreeStatus :
             obj = FileInfo(file, size, date, mdate, md)
             self.copyFiles[file] = obj
             return obj
-
-    def copy_file (self, file, to, doClean = False, to_is_a_file = False) :
-        """
-        process a file copy
-        @param      file            file to copy
-        @param      to              destination (folder)
-        @param      doClean         if True, does some cleaning before the copy
-                                    (for script in pyhome having section such as the one in tableformula.py)
-        @param      to_is_a_file    it means to is a file, not a folder
-        """
-        if doClean :
-            raise AssertionError ("this case is not meant to happen, doClean, set up at the same time")
-        if len(to) == 0 :
-            raise ValueError("an empty folder is not allowed for parameter to")
-
-        folder = to
-        if not os.path.exists (folder) :
-            ffff, last = os.path.split(to)
-            if to_is_a_file :
-                folder = ffff
-            elif "." in last :
-                raise ValueError("are you sure to is not a file :" + to + "?")
-
-            if not os.path.exists (folder) :
-                self.LOG("creating folder ", folder)
-                os.makedirs (folder)
-
-            try :
-                shutil.copy (file, to)
-                if not os.path.isfile(to) :
-                    to = os.path.join (to, os.path.split(file)[-1] )
-                self.LOG("+ copy ", file, " as ", to)
-            except Exception as e :
-                self.LOG ("issue with ", file, " copied to ", to)
-                self.LOG ("error message: ", e)
-
-            return to
-
-    def copy_file_ext (self, file, exte, to, doClean = False) :
-        """
-        @see me copy_file
-        """
-        fi = os.listdir (file)
-        for f in fi :
-            if not os.path.isfile (file + "/" + f) : continue
-            ro, ext = os.path.splitext (f)
-            if exte is None or ext [1:] == exte :
-                self.copy_file (file + "/" + f, to, doClean)
-
-    def copy_file_contains (self, file, pattern, to, doClean = False) :
-        """
-        @see me copy_file
-        """
-        fi = os.listdir (file)
-        for f in fi :
-            if not os.path.isfile (file + "/" + f) : continue
-            if pattern in f :
-                self.copy_file (file + "/" + f, to, doClean)

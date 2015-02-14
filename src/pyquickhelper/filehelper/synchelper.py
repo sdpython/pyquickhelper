@@ -9,7 +9,7 @@ import os, re, datetime
 
 from ..loghelper.flog           import fLOG
 from .file_tree_node            import FileTreeNode
-from .file_tree_status          import FileTreeStatus, checksum_md5
+from .files_status              import FilesStatus, checksum_md5
 from ..loghelper.pqh_exception  import PQHException
 
 
@@ -184,7 +184,7 @@ def synchronize_folder (   p1,
     fLOG ("     number of found files (p1)", len (node1), node1.max_date ())
     if file_date is not None :
         log1n = 1000 if log1  else None
-        status = FileTreeStatus(file_date, fLOG = fLOG)
+        status = FilesStatus(file_date, fLOG = fLOG)
         res = list(status.difference(node1, u4=True, nlog = log1n))
     else :
         fLOG ("   exploring ", f2)

@@ -128,6 +128,15 @@ class FileTreeNode :
     @property
     def root(self):
         """
+        return the root
+
+        .. versionadded:: 1.0
+        """
+        return self._root
+
+    @property
+    def root(self):
+        """
         return the root directory, the one used as a root for a synchronization
         """
         return self._root
@@ -211,11 +220,19 @@ class FileTreeNode :
 
     def isdir (self) :
         """
-        is it a folder
+        is it a folder?
 
         @return     boolean
         """
         return os.path.isdir (self.get_fullname ())
+
+    def isfile (self) :
+        """
+        is it a file?
+
+        @return     boolean
+        """
+        return os.path.isfile(self.get_fullname ())
 
     def __str__ (self) :
         """
@@ -308,8 +325,10 @@ class FileTreeNode :
         return self._children [i]
 
     def __iter__ (self) :
-        """iterator on the element
-        @return iterator
+        """
+        iterator on the element
+
+        @return iterator on all contained files
         """
         yield self
         for c in self._children :
@@ -424,6 +443,12 @@ class FileTreeNode :
             fLOG ("error :", e)
 
     def copyTo (self, path) :
+        """
+        old syntax for @see me copy_to
+        """
+        return self.copy_to(path)
+
+    def copy_to(self, path) :
         """
         copy the file to path
         @param      path        path

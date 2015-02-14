@@ -53,3 +53,7 @@ from .unittests.utils_tests             import get_temp_folder, main_wrapper_tes
 from .filehelper.internet_helper        import download
 from .filehelper.compression_helper     import zip_files, gzip_files, zip7_files
 from .pycode.clean_helper               import clean_exts
+from .filehelper.files_status           import FilesStatus
+from .filehelper.ftp_transfer           import TransferFTP
+from .filehelper.ftp_transfer_files     import FolderTransferFTP
+from .filehelper.file_tree_node         import FileTreeNode

@@ -37,7 +37,7 @@ class TestAutoCompletion (unittest.TestCase):
     def test_completion_file(self):
         fLOG (__file__, self._testMethodName, OutputPrint = __name__ == "__main__")
         fold = os.path.abspath(os.path.split(__file__)[0])
-        fold = os.path.join(fold, "..")
+        fold = os.path.join(fold, "..", "..", "src")
         this = AutoCompletionFile(fold)
         l = len(this)
         assert l > 30
