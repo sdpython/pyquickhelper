@@ -6,7 +6,7 @@
     moved from pyensae to pyquickhelper
 """
 from ftplib import FTP
-import os
+import os, io
 
 from ..loghelper.flog import noLOG
 
@@ -89,7 +89,7 @@ class TransferFTP (FTP) :
             if command == FTP.pwd or command == FTP.dir:
                 return t
             elif command != FTP.cwd :
-                self.LOG("    ** run ", str(command), str(args))
+                pass
             return True
         except Exception as e:
             if TransferFTP.errorNoDirectory in str(e) :
@@ -164,40 +164,37 @@ class TransferFTP (FTP) :
         """
         return self.run_command(FTP.dir, path)
 
-    def transfer (self, file, to, debug = False) :
+    def transfer (self, file, to, name, debug = False) :
         """
         transfers a file
 
-        @param      file        file
+        @param      file        file name or stream (binary, BytesIO)
         @param      to          destination (a folder)
+        @param      name        name of the stream on the website
         @param      debug       if True, displays more information
         @return                 status
-        """
-        if not os.path.exists(file):
-            raise FileNotFoundError(file)
 
+        .. versionchanged:: 1.0
+            file can be a file name or a stream,
+            parameter *name* was added
+        """
         path = to.split("/")
         path = [ _ for _ in path if len(_) > 0 ]
-        temp = os.path.split(file)[-1]
-        self.LOG ("[upload] ", temp, "to", to)
-
-        if debug :
-            self.LOG ("    -- path", path)
-            self.LOG ("    -- pwd", self.pwd())
 
         for p in path :
-            if debug :  self.LOG ("    -- cwd", p)
             self.cwd(p, True)
 
-        if debug :
-            self.LOG ("    -- transferring", file)
-
-        with open(file, "rb") as f :
-            r = self.run_command(FTP.storbinary, 'STOR ' + temp, f)
+        if isinstance(file, str):
+            if not os.path.exists(file):
+                raise FileNotFoundError(file)
+            with open(file, "rb") as f :
+                r = self.run_command(FTP.storbinary, 'STOR ' + name, f)
+        elif isinstance(file, io.BytesIO):
+            r = self.run_command(FTP.storbinary, 'STOR ' + name, file)
+        else:
+            r = self.run_command(FTP.storbinary, 'STOR ' + name, file)
 
         for p in path :
-            if debug :
-                self.LOG ("    -- cwd", "..")
             self.cwd("..")
 
         return r

@@ -28,7 +28,9 @@ class TestFolderTransfer(unittest.TestCase):
 
         ftn  = FileTreeNode(folder)
         ftp  = MockTransferFTP("http://www.xavierdupre.fr/", "login", "password", fLOG=fLOG)
-        fftp = FolderTransferFTP (ftn, ftp, status)
+        fftp = FolderTransferFTP (ftn, ftp, status,
+                        footer_html = "<b>footer</b>",
+                        content_filter = lambda c : c)
 
         li = list ( fftp.iter_eligible_files() )
         assert len(li) > 0

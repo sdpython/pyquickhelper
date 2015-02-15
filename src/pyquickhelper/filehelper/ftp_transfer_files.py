@@ -4,7 +4,7 @@
 
 .. versionadded:: 1.0
 """
-import os
+import os, io
 from .files_status      import FilesStatus
 from ..loghelper.flog   import noLOG
 
@@ -13,6 +13,25 @@ class FolderTransferFTPException(Exception):
     custom exxception for @see cl FolderTransferFTP
     """
     pass
+
+_text_extensions = { ".ipynb", ".html", ".py", ".cpp", ".h", ".hpp", ".c",
+                ".cs", ".txt", ".csv", ".xml", ".css", ".js", ".r", ".doc",
+                ".ind", ".buildinfo", ".rst", ".aux", ".out", ".log",
+                }
+
+def content_as_binary(filename):
+    """
+    determines if filename is binary or None before transfering it
+
+    @param      filename        filename
+    @return                     boolean
+    """
+    global _text_extensions
+    ext = os.path.splitext(filename)[-1].lower()
+    if ext in _text_extensions:
+        return False
+    else:
+        return True
 
 class FolderTransferFTP:
     """
@@ -29,7 +48,7 @@ class FolderTransferFTP:
     ftn  = FileTreeNode("c:/somefolder")
     ftp  = TransferFTP("ftp.website.fr", "login", "password", fLOG=print)
     fftp = FolderTransferFTP (ftn, ftp, "status_file.txt",
-            root_website = "/www/htdocs/app/pyquickhelper/helpsphinx")
+            root_web = "/www/htdocs/app/pyquickhelper/helpsphinx")
 
     fftp.start_transfering()
 
@@ -70,7 +89,7 @@ class FolderTransferFTP:
         sfile = os.path.join(this, "status_%s.txt" % module)
         ftn  = FileTreeNode(root)
         fftp = FolderTransferFTP (ftn, ftp, sfile,
-                            root_website = rootw % module,
+                            root_web = rootw % module,
                             fLOG=print)
 
         fftp.start_transfering()
@@ -79,7 +98,7 @@ class FolderTransferFTP:
 
         ftn  = FileTreeNode(os.path.join(root,".."), filter = lambda root, path, f, dir: not dir)
         fftp = FolderTransferFTP (ftn, ftp, sfile,
-                            root_website = (rootw % module).replace("helpsphinx",""),
+                            root_web = (rootw % module).replace("helpsphinx",""),
                             fLOG=print)
 
         fftp.start_transfering()
@@ -95,9 +114,12 @@ class FolderTransferFTP:
                     file_tree_node,
                     ftp_transfer,
                     file_status,
-                    root_local = None,
-                    root_website = None,
-                    fLOG = noLOG):
+                    root_local      = None,
+                    root_web        = None,
+                    footer_html     = None,
+                    content_filter  = None,
+                    is_binary       = content_as_binary,
+                    fLOG            = noLOG):
         """
         constructor
 
@@ -105,15 +127,24 @@ class FolderTransferFTP:
         @param      ftp_transfer        @see cl TransferFTP
         @param      file_status         file keeping the status file
         @param      root_local          local root
-        @param      root_website        remote root on the website
+        @param      root_web            remote root on the website
+        @param      footer_html         append  this HTML code to any uploaded page (such a javascript code to count the audience)
+                                        at the end of the file (before tag ``</body>``)
+        @param      content_filter      function which transform the content if a specific string is found
+                                        in the file, if the result is None, it raises an exception
+                                        indicating  the file cannot be transfered (applies only on text files)
+        @param      is_binary           function which determines if content of a files is binary or not
         @param      fLOG                logging function
         """
-        self._ftn = file_tree_node
-        self._ftp = ftp_transfer
-        self._status = file_status
-        self._root_local = root_local if root_local is not None else file_tree_node.root
-        self._root_website = root_website if root_website is not None else ""
-        self.fLOG = fLOG
+        self._ftn               = file_tree_node
+        self._ftp               = ftp_transfer
+        self._status            = file_status
+        self._root_local        = root_local if root_local is not None else file_tree_node.root
+        self._root_web          = root_web if root_web is not None else ""
+        self.fLOG               = fLOG
+        self._footer_html       = footer_html
+        self._content_filter    = content_filter
+        self._is_binary         = is_binary
 
         self._ft = FilesStatus(file_status)
 
@@ -123,7 +154,7 @@ class FolderTransferFTP:
         """
         mes  = [ "FolderTransferFTP" ]
         mes += [ "    local root: {0}".format(self._root_local) ]
-        mes += [ "    remote root: {0}".format(self._root_website) ]
+        mes += [ "    remote root: {0}".format(self._root_web) ]
         return "\n".join(mes)
 
     def iter_eligible_files(self):
@@ -149,6 +180,55 @@ class FolderTransferFTP:
         self._ft.save_dates()
         return r
 
+    def preprocess_before_transfering(self, path):
+        """
+        Applies some preprocessing to the file to transfer.
+        It adds the footer for example.
+        It returns a stream which should be closed by using method @see me close_stream
+
+        @param      path        file name
+        @return                 binary stream
+        """
+        if self._is_binary(path):
+            return open(path, "rb")
+        else:
+            if self._footer_html is None and self._content_filter is None:
+                return open(path, "rb")
+            else:
+                with open(path, "r", encoding="utf8") as f :
+                    content = f.read()
+
+                # footer
+                if self._footer_html is not None and os.path.splitext(path)[-1].lower() in (".htm", ".html") :
+                    spl = content.split("</body>")
+                    if len(spl) == 1:
+                        raise FolderTransferFTPException("tag </body> was not found, it must be written in lower case, file: {0}".format(path))
+
+                    if len(spl) != 2:
+                        spl = [ "</body>".join(spl[:-1]), spl[-1] ]
+
+                    content = spl[0] + self._footer_html + "</body>" + spl[-1]
+
+                # filter
+                content = self._content_filter(content)
+                if content is None:
+                    raise FolderTransferFTPException("File {0} cannot be transferred due to its content".format(path))
+
+                # to binary
+                bcont = content.encode("utf8")
+                return io.BytesIO(bcont)
+
+    def close_stream(self, stream):
+        """
+        close a stream opened by @see me preprocess_before_transfering
+
+        @param      stream      stream to close
+        """
+        if isinstance(stream, io.BytesIO):
+            pass
+        else:
+            stream.close()
+
     def start_transfering(self):
         """
         starts transfering files to the remote website
@@ -160,19 +240,33 @@ class FolderTransferFTP:
         issues = [ ]
         done = [ ]
         total = list ( self.iter_eligible_files() )
+        sum_bytes = 0
         for i, file in enumerate(total):
             if i % 20 == 0:
-                self.fLOG("#### transfering",i,len(total))
+                self.fLOG("#### transfering %d/%d (so far %d bytes)"% (i,len(total), sum_bytes))
             relp = os.path.relpath(file.fullname, self._root_local)
             if ".." in relp:
                 raise ValueError("the local root is not accurate:\n{0}\nFILE:\n{1}\nRELPATH:\n{2}".format(self, file.fullname, relp))
-            path = self._root_website + "/" + os.path.split(relp)[0]
+            path = self._root_web + "/" + os.path.split(relp)[0]
             path = path.replace("\\","/")
+
+            size = os.stat(file.fullname).st_size
+            self.fLOG("[upload % 8d bytes name=%s -- fullname=%s]" % (
+                                        size,
+                                        os.path.split(file.fullname)[-1],
+                                        file.fullname))
+
+            data = self.preprocess_before_transfering(file.fullname)
+
             try :
-                r = self._ftp.transfer (file.fullname, path)
-            except Exception as e :
+                r = self._ftp.transfer (data, path, os.path.split(file.fullname)[-1])
+            except FileNotFoundError as e :
                 r = False
-                issues.append( (file.fullname, e) )
+                issues.append( (file.fullname, "not found") )
+
+            self.close_stream(data)
+
+            sum_bytes += size
 
             if r :
                 fi = self.update_status(file.fullname)
