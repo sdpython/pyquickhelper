@@ -145,10 +145,11 @@ elif "build_sphinx" in sys.argv:
         project_name = os.path.split(os.path.split(os.path.abspath(__file__))[0])[-1]
 
         if sys.platform.startswith("win"):
-            generate_help_sphinx(project_name)
+            generate_help_sphinx(project_name, module_name = project_var_name)
         else:
             # unable to test latex conversion due to adjustbox.sty missing package
-            generate_help_sphinx(project_name, nbformats = ["ipynb", "html", "python", "rst"])
+            generate_help_sphinx(project_name, nbformats = ["ipynb", "html", "python", "rst"],
+                    module_name = project_var_name)
 
 elif "unittests" in sys.argv:
 

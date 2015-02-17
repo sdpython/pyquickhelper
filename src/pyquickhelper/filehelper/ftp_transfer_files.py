@@ -213,7 +213,7 @@ class FolderTransferFTP:
                 try:
                     content = self._content_filter(content)
                 except Exception as e :
-                    raise FolderTransferFTPException("File {0} cannot be transferred (exception)".format(path)) from e 
+                    raise FolderTransferFTPException("File {0} cannot be transferred (exception)".format(path)) from e
                 if content is None:
                     raise FolderTransferFTPException("File {0} cannot be transferred due to its content".format(path))
 
