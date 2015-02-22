@@ -422,6 +422,12 @@ def import_module (rootm, filename, log_function, additional_sys_path = [ ]) :
     fmod    = spl[0]  # this is the prefix
     relpath = "/".join(spl[1:])
 
+    # has init
+    init_   = os.path.join(sdir, "__init__.py")
+    if init_ != filename and not os.path.exists(init_):
+        # no init
+        return "No __init__.py, unable to import %s\nError:\n%s" % (filename, str(e)), fmod
+
     # we remove every path ending by "src"
     rem = []
     for i,p in enumerate(sys.path):
@@ -511,7 +517,11 @@ def import_module (rootm, filename, log_function, additional_sys_path = [ ]) :
         for p in sys.path:
             message.append ("      path: " + p)
         for p in sorted(sys.modules):
-            message.append ("      module: " + p + "=" + str(sys.modules[p].__path__))
+            try:
+                m = sys.modules[p].__path__
+            except AttributeError:
+                m = str(sys.modules[p])
+            message.append ("      module: " + p + "=" + m)
 
         sys.path = memo
         for n,m in addback: sys.modules[n] = m
