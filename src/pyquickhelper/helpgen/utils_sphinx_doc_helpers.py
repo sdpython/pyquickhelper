@@ -498,16 +498,25 @@ def import_module (rootm, filename, log_function, additional_sys_path = [ ]) :
         log_function("-- unable to import module (1) ", filename, ",", fi, " in path ", sdir, " Error: ", str(e))
         log_function("    cwd ", os.getcwd())
         log_function("    path", sdir)
+        import traceback
+        stack = traceback.format_exc()
+        log_function("      stack:\n", stack)
         sys.path = memo
         for n,m in addback: sys.modules[n] = m
         return "unable to import %s\nError:\n%s" % (filename, str(e)), fmod
     except SystemError as e :
         log_function("-- unable to import module (2) ", filename, ",", fi, " in path ", sdir, " Error: ", str(e))
+        import traceback
+        stack = traceback.format_exc()
+        log_function("      stack:\n", stack)
         sys.path = memo
         for n,m in addback: sys.modules[n] = m
         return "unable to import %s\nError:\n%s" % (filename, str(e)), fmod
     except Exception as e :
         log_function("-- unable to import module (3) ", filename, ",", fi, " in path ", sdir, " Error: ", str(e))
+        import traceback
+        stack = traceback.format_exc()
+        log_function("      stack:\n", stack)
         sys.path = memo
         for n,m in addback: sys.modules[n] = m
         return "unable to import %s\nError:\n%s" % (filename, str(e)), fmod
