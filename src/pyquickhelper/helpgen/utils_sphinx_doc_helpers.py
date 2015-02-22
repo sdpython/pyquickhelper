@@ -459,7 +459,7 @@ def import_module (rootm, filename, log_function, additional_sys_path = [ ]) :
         # there is an issue here due to the confusion in the paths
         # the paths should be removed just after the import
         sys.path.extend(additional_sys_path)
-        
+
     sys.path.insert (0, root)
     try :
         mo = importlib.import_module(fi, context)
@@ -487,7 +487,7 @@ def import_module (rootm, filename, log_function, additional_sys_path = [ ]) :
         log_function("importing ", filename, " successfully", mo.__file__)
         for n,m in addback: sys.modules[n] = m
         return mo, fmod
-    
+
     except ImportError as e :
         exp = re.compile("No module named '(.*)'")
         find = exp.search(str(e))
@@ -504,7 +504,7 @@ def import_module (rootm, filename, log_function, additional_sys_path = [ ]) :
         log_function("      executable", sys.executable)
         log_function("      version", sys.version_info)
         log_function("      stack:\n", stack)
-        
+
         message = [ stack ]
         message.append ("      executable: " + sys.executable)
         message.append ("      version: " + str(sys.version_info))
@@ -512,15 +512,15 @@ def import_module (rootm, filename, log_function, additional_sys_path = [ ]) :
             message.append ("      path: " + p)
         for p in sorted(sys.modules):
             message.append ("      module: " + p + "=" + str(sys.modules[p].__path__))
-                
+
         sys.path = memo
         for n,m in addback: sys.modules[n] = m
 
         if 'File "<frozen importlib._bootstrap>"' in stack:
             raise ImportError("frozen importlib._bootstrap is an issue:\n" + "\n".join(message)) from e
-            
+
         return "unable to import %s\nError:\n%s" % (filename, str(e)), fmod
-    
+
     except SystemError as e :
         log_function("-- unable to import module (2) ", filename, ",", fi, " in path ", sdir, " Error: ", str(e))
         import traceback
@@ -531,7 +531,7 @@ def import_module (rootm, filename, log_function, additional_sys_path = [ ]) :
         sys.path = memo
         for n,m in addback: sys.modules[n] = m
         return "unable to import %s\nError:\n%s" % (filename, str(e)), fmod
-    
+
     except Exception as e :
         log_function("-- unable to import module (3) ", filename, ",", fi, " in path ", sdir, " Error: ", str(e))
         import traceback
