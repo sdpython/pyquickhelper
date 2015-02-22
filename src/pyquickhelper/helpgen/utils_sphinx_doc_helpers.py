@@ -425,7 +425,7 @@ def import_module (rootm, filename, log_function, additional_sys_path = [ ]) :
     # we remove every path ending by "src"
     rem = []
     for i,p in enumerate(sys.path):
-        if p.endswith("src"): rem.append(i)
+        if p.endswith("src") or ".zip" in p: rem.append(i)
     rem.reverse()
     for r in rem : del sys.path[r]
 
@@ -510,8 +510,8 @@ def import_module (rootm, filename, log_function, additional_sys_path = [ ]) :
         message.append ("      version: " + str(sys.version_info))
         for p in sys.path:
             message.append ("      path: " + p)
-        for p in sys.modules:
-            message.append ("      module: " + p + "=" + str(sys.modules[p]))
+        for p in sorted(sys.modules):
+            message.append ("      module: " + p + "=" + str(sys.modules[p].__path__))
                 
         sys.path = memo
         for n,m in addback: sys.modules[n] = m
