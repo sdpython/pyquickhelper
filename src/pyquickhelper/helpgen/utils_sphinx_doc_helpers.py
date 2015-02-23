@@ -521,7 +521,7 @@ def import_module (rootm, filename, log_function, additional_sys_path = [ ]) :
                 m = sys.modules[p].__path__
             except AttributeError:
                 m = str(sys.modules[p])
-            message.append ("      module: " + p + "=" + m)
+            message.append ("      module: {0}={1}".format(p,m))
 
         sys.path = memo
         for n,m in addback: sys.modules[n] = m
