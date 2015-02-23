@@ -421,12 +421,12 @@ def import_module (rootm, filename, log_function, additional_sys_path = [ ]) :
     spl     = relpath.split("/")
     fmod    = spl[0]  # this is the prefix
     relpath = "/".join(spl[1:])
-
+    
     # has init
     init_   = os.path.join(sdir, "__init__.py")
     if init_ != filename and not os.path.exists(init_):
         # no init
-        return "No __init__.py, unable to import %s\nError:\n%s" % (filename, str(e)), fmod
+        return "No __init__.py, unable to import %s" % (filename), fmod
 
     # we remove every path ending by "src"
     rem = []
