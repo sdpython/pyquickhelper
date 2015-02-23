@@ -50,6 +50,7 @@ Versions / Changes
     * **change:** function :func:`str_to_datetime <pyquickhelper.loghelper.convert_helper.str_to_datetime>` implicitely handles more formats
     * **change:** rename ``FileTreeStatus`` into `FilesStatus <pyquickhelper.filehelper.files_status.FilesStatus>`
     * **new:** class :class:`FolderTransferFTP <pyquickhelper.filehelper.ftp_transfer_files.FolderTransferFTP>`
+    * **new:** function `remove_diacritics <pyquickhelper.texthelper.diacritic_helper.remove_diacritics>`_
 * **0.9 - 2015/01/25**
     * **add:** function to remove extra spaces in a file :func:`remove_extra_spaces <pyquickhelper.pycode.code_helper.remove_extra_spaces>`
     * **add:** function :func:`create_visual_diff_through_html_files <pyquickhelper.filehelper.visual_sync.create_visual_diff_through_html_files>`
