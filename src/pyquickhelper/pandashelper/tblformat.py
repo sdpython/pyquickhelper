@@ -108,7 +108,6 @@ def df_to_rst(df, add_line=True, align = None):
     res.append (sline)
     table = "\n".join(res) + "\n"
 
-
     return head + table
 
 def df_to_html (self, class_table = None, class_td = None, class_tr = None, class_th = None) :

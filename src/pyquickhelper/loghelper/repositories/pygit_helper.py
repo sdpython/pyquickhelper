@@ -8,7 +8,20 @@ import os,sys,datetime
 import xml.etree.ElementTree as ET
 
 from ..flog import fLOG, run_cmd
-from ..convert_helper import str_to_datetime
+
+def my_date_conversion(sdate):
+    """
+    converts a date into a datetime
+
+    @param      sdate       string
+    @return                 date
+
+    .. versionadded:: 1.0
+
+    """
+    first = sdate.split(" ")[0]
+    trois = first.replace(".","-").replace("/","-").split("-")
+    return datetime.datetime(int(trois[0]), int(trois[1]), int(trois[2]))
 
 def IsRepo(location, commandline = True, log = False):
     """
@@ -147,6 +160,19 @@ def get_repo_log (path = None, file_detail = False, commandline = True) :
     @endcode
 
     More: `git pretty format <http://opensource.apple.com/source/Git/Git-19/src/git-htmldocs/pretty-formats.txt>`_
+
+    .. versionchanged:: 1.0
+        For some searon, the call to @see fn str_to_datetime seemed to cause exception such as::
+
+            File "<frozen importlib._bootstrap>", line 2212, in _find_and_load_unlocked
+            File "<frozen importlib._bootstrap>", line 321, in _call_with_frames_removed
+            File "<frozen importlib._bootstrap>", line 2254, in _gcd_import
+            File "<frozen importlib._bootstrap>", line 2237, in _find_and_load
+            File "<frozen importlib._bootstrap>", line 2224, in _find_and_load_unlocked
+
+        when it was used to generate documentation for others modules than pyquickhelper.
+        Not using this function helps. The cause still remains obscure.
+
     """
     if file_detail :
         raise NotImplementedError()
@@ -195,6 +221,7 @@ def get_repo_log (path = None, file_detail = False, commandline = True) :
             root = ET.fromstring(out)
         except ET.ParseError as ee :
             raise Exception("unable to parse:\n" + out) from ee
+
         res = []
         for i in root.iter('logentry'):
             revision    = i.attrib['revision'].strip()
@@ -203,7 +230,7 @@ def get_repo_log (path = None, file_detail = False, commandline = True) :
             hash        = i.find("hash").text
             msg         = t.strip() if t is not None else "-"
             sdate       = i.find("date").text.strip()
-            dt          = str_to_datetime(sdate.replace("T"," ").strip("Z "))
+            dt          = my_date_conversion(sdate.replace("T"," ").strip("Z "))
             row         = [author, revision, dt, msg, hash ]
             if master.startswith("http") :
                 row.append (master + "/commit/" + hash)
@@ -262,7 +289,7 @@ def get_repo_version (path = None, commandline = True, usedate = False, log = Fa
             lines = [ _.split("---") for _ in lines if len(_) > 0 ]
             temp  = lines[0]
             if usedate :
-                dt = str_to_datetime(temp[1].replace("T"," ").strip("Z "))
+                dt = my_date_conversion(temp[1].replace("T"," ").strip("Z "))
                 dt0 = datetime.datetime(dt.year, 1,1,0,0,0)
                 res = "%d" % (dt-dt0).days
             else :

@@ -5,6 +5,12 @@
 for a module designed the same way as this one, @see fn generate_help_sphinx.
 
 """
+try:
+    import pandas
+    has_pandas = True
+except ImportError:
+    has_pandas = False
+
 import os,sys, shutil, datetime, re, importlib
 
 from ..loghelper.flog           import run_cmd, fLOG
@@ -320,12 +326,40 @@ def get_executables_path() :
 
     return res
 
+def my_date_conversion(sdate):
+    """
+    converts a date into a datetime
+
+    @param      sdate       string
+    @return                 date
+
+    .. versionadded:: 1.0
+
+    """
+    first = sdate.split(" ")[0]
+    trois = first.replace(".","-").replace("/","-").split("-")
+    return datetime.datetime(int(trois[0]), int(trois[1]), int(trois[2]))
+
 def produce_code_graph_changes(df):
     """
     return the code for a graph which counts the number of changes per week over the last year
 
     @param      df      dataframe (has a column date with format ``YYYY-MM-DD``)
     @return             graph
+
+    .. versionchanged:: 1.0
+        The call to `datetime.datetime.strptime <https://docs.python.org/3.4/library/datetime.html#strftime-strptime-behavior>`_
+        introduced exceptions::
+
+            File "<frozen importlib._bootstrap>", line 2212, in _find_and_load_unlocked
+            File "<frozen importlib._bootstrap>", line 321, in _call_with_frames_removed
+            File "<frozen importlib._bootstrap>", line 2254, in _gcd_import
+            File "<frozen importlib._bootstrap>", line 2237, in _find_and_load
+            File "<frozen importlib._bootstrap>", line 2224, in _find_and_load_unlocked
+
+        when generating the documentation for another project. The reason
+        is still unclear. It was replaced by a custom function.
+
     """
     def to_dt(x):
         return datetime.datetime(x.year,x.month,x.day)
@@ -335,8 +369,9 @@ def produce_code_graph_changes(df):
     def to_str(x):
         year,week = year_week(x)
         return "%d-w%02d"%(year,week)
+
     df = df.copy()
-    df["dt"] = df.apply ( lambda r : datetime.datetime.strptime (r["date"], "%Y-%m-%d"), axis=1)
+    df["dt"] = df.apply ( lambda r : my_date_conversion (r["date"]), axis=1)
     df = df [["dt"]]
     now = datetime.datetime.now()
     last = now - datetime.timedelta(365)
@@ -349,7 +384,6 @@ def produce_code_graph_changes(df):
         a = now - datetime.timedelta(alldays)
         val.append ( { "dt": a, "week":  to_str(a), "commits":0 } )
 
-    import pandas
     df = pandas.concat ( [ df, pandas.DataFrame(val) ] )
 
     gr = df[["week","commits"]].groupby("week",as_index=False).sum()
@@ -396,6 +430,20 @@ def generate_changes_repo(  chan,
     @param          exception_if_empty  raises an exception if empty
     @param          filter_commit       function which accepts a commit to show on the documentation (based on the comment)
     @return                             string (rst tables with the changes)
+
+    .. versionchanged:: 1.0
+
+        pandas is not imported in the function itself but at the beginning of the module. It
+        seemed to cause soe weird exceptions when generating the documentation for another module::
+
+            File "<frozen importlib._bootstrap>", line 2212, in _find_and_load_unlocked
+            File "<frozen importlib._bootstrap>", line 321, in _call_with_frames_removed
+            File "<frozen importlib._bootstrap>", line 2254, in _gcd_import
+            File "<frozen importlib._bootstrap>", line 2237, in _find_and_load
+            File "<frozen importlib._bootstrap>", line 2224, in _find_and_load_unlocked
+
+        Doing that helps. The cause still remains obscure.
+
     """
     # builds the changes files
     try :
@@ -437,8 +485,7 @@ def generate_changes_repo(  chan,
         raise HelpGenException("Logs were not empty but there was no comment starting with '*' from " + source + "\n" + "\n".join( [ str(_) for _ in logs ] ))
 
     if len(values) > 0 :
-        from pandas import DataFrame
-        tbl = DataFrame ( columns=["change number", "date", "comment"], data=values)
+        tbl = pandas.DataFrame ( columns=["change number", "date", "comment"], data=values)
         rows.append("\n\n" + df_to_rst(tbl, align=["1x","1x","3x"]) + "\n\n")
 
     final = "\n".join(rows)

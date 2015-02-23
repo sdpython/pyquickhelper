@@ -421,7 +421,7 @@ def import_module (rootm, filename, log_function, additional_sys_path = [ ]) :
     spl     = relpath.split("/")
     fmod    = spl[0]  # this is the prefix
     relpath = "/".join(spl[1:])
-    
+
     # has init
     init_   = os.path.join(sdir, "__init__.py")
     if init_ != filename and not os.path.exists(init_):
