@@ -57,3 +57,4 @@ from .filehelper.files_status           import FilesStatus
 from .filehelper.ftp_transfer           import TransferFTP
 from .filehelper.ftp_transfer_files     import FolderTransferFTP
 from .filehelper.file_tree_node         import FileTreeNode
+from .texthelper.diacritic_helper       import remove_diacritics
