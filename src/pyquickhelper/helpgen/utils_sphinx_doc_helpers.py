@@ -468,7 +468,10 @@ def import_module (rootm, filename, log_function, additional_sys_path = [ ]) :
 
     sys.path.insert (0, root)
     try :
-        mo = importlib.import_module(fi, context)
+        try:
+            mo = importlib.import_module(fi, context)
+        except ImportError as e1:
+            mo = importlib.util.find_spec(fi, context)
 
         if not mo.__file__.replace("\\","/").endswith(filename.replace("\\","/").strip("./")):
             namem = os.path.splitext(os.path.split(filename)[-1])[0]
