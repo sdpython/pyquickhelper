@@ -484,7 +484,11 @@ def import_module (rootm, filename, log_function, additional_sys_path = [ ]) :
                 # add the context here for relative import
                 # use importlib.import_module with the package argument filled
                 #mo = __import__ (fi)
-                mo = importlib.import_module(fi, context)
+                try:
+                    mo = importlib.import_module(fi, context)
+                except ImportError as e2:
+                    mo = importlib.util.find_spec(fi, context)
+
                 if not mo.__file__.replace("\\","/").endswith(filename.replace("\\","/").strip("./")):
                     raise ImportError("the wrong file was imported (2):\nEXP: {0}\nIMP: {1}\nPATHS:\n   - {2}" \
                            .format(filename, mo.__file__, "\n   - ".join(sys.path)))

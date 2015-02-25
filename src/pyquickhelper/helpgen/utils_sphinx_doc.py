@@ -4,7 +4,7 @@
 
 """
 
-import sys, os, re, shutil, copy
+import sys, os, re, shutil, copy, importlib
 
 from ..loghelper.flog           import fLOG
 from ..filehelper.synchelper    import remove_folder, synchronize_folder, explore_folder
@@ -740,7 +740,9 @@ def prepare_file_for_sphinx_help_generation (
         fexclude_index  = lambda f : False,
         issues          = None,
         additional_sys_path = [ ],
-        replace_relative_import = False) :
+        replace_relative_import = False,
+        module_name     = None
+        ) :
     """
     prepare all files for Sphinx generation
 
@@ -783,6 +785,7 @@ def prepare_file_for_sphinx_help_generation (
 
     @param      additional_sys_path     additional paths to includes to sys.path when import a module (will be removed afterwards)
     @param      replace_relative_import replace relative import
+    @param      module_name     module name (cannot be None)
 
     @return                     list of written files stored in RstFileHelp
 
@@ -804,7 +807,13 @@ def prepare_file_for_sphinx_help_generation (
 
     .. versionchanged:: 0.9
         produce a file with the number of lines and files per extension
+
+    .. versionchanged:: 1.0
+        add parameter *module_name*, more robust to import issues
     """
+    if module_name is None:
+        raise ValueError("module_name cannot be None")
+
     fLOG("* starting documentation preparation in",output)
     rootm = os.path.abspath(output)
     fLOG("* module location", input)
@@ -848,6 +857,10 @@ def prepare_file_for_sphinx_help_generation (
                                             fexclude = fexclude,
                                             addfilter = "|".join( [ '(%s)' % _[0] for _ in mapped_function ] ),
                                             replace_relative_import = replace_relative_import)
+
+            # without those two lines, importing the module might crash later
+            importlib.invalidate_caches()
+            r = importlib.util.find_spec(module_name)
 
             rsts      += add_file_rst ( rootm,
                                         store_obj,

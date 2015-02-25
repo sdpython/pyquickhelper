@@ -54,7 +54,8 @@ class TestSphinxDocFull (unittest.TestCase):
                     rootrep         = ("_doc.sphinxdoc.source.%s." % (project_var_name,), ""),
                     optional_dirs   = [],
                     mapped_function = [ (".*[.]tohelp$", None) ],
-                    issues          = issues)
+                    issues          = issues,
+                    module_name     = project_var_name)
 
         fLOG("end of prepare_file_for_sphinx_help_generation")
 

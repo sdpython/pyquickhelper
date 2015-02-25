@@ -169,7 +169,8 @@ def generate_help_sphinx (  project_var_name,
                 rootrep         = ("_doc.sphinxdoc.source.%s." % (module_name,), ""),
                 optional_dirs   = optional_dirs,
                 mapped_function = mapped_function,
-                replace_relative_import = False)
+                replace_relative_import = False,
+                module_name     = module_name)
 
     fLOG("**** end of prepare_file_for_sphinx_help_generation")
 
