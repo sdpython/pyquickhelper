@@ -22,9 +22,6 @@ add_file_rst_template = """
 __FULLNAME_UNDERLINED__
 
 
-.. module:: __FULLNAMENOEXT__
-  :synopsis: __DOCUMENTATIONLINE__
-  :platform: __PLATFORM__
 
 
 .. inheritance-diagram:: __FULLNAMENOEXT__
@@ -52,6 +49,7 @@ Documentation
 .. automodule:: __FULLNAMENOEXT__
     :members:
     :show-inheritance:
+
 __ADDEDMEMBERS__
 
 """

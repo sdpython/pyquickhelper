@@ -35,10 +35,12 @@ This project contains the following folders:
    * a _doc folder: ``_doc``, it will contain the documentation
    * a file ``setup.py`` to build and to install the module, if the source were retrieve from GitHub,
      the script can also be called with the following extra options (``python setup.py <option>``):
-        * *clean_space*: remove extra spaces in the code
-        * *clean_pyd*: remove files *.pyd
-        * *build_sphinx*: builds the documentation
-        * *unittests*: run the unit tests, compute the code coverage
+     
+        - clean_space: remove extra spaces in the code
+        - clean_pyd: remove files *.pyd
+        - build_sphinx: builds the documentation
+        - unittests: run the unit tests, compute the code coverage
+        
    * a script ``build_setup_help_on_windows.bat`` which run the unit tests, builds the setups and generate the documentaton on Windows
    * a script ``build_setup_help_on_linux.sh`` which does almost the same on Linux
    * a script ``publish_on_pipy.bat``
@@ -54,6 +56,7 @@ Versions / Changes
     * **new:** function :func:`remove_diacritics <pyquickhelper.texthelper.diacritic_helper.remove_diacritics>`
     * **new:** function :func:`docstring2html <pyquickhelper.helpgen.convert_doc_helper.docstring2html>` which converts RST documentation into HTML module IPython can display
     * **add:** run unit tests on `Travis-CI <https://travis-ci.org/sdpython/pyquickhelper>`_
+    * **change:** renamed ``df_to_html`` into :func:`df2html <pyquickhelper.pandashelper.tblformat.df2html>`, ``df_to_rst`` into :func:`df2rst <pyquickhelper.pandashelper.tblformat.df2rst>`
 * **0.9 - 2015/01/25**
     * **add:** function to remove extra spaces in a file :func:`remove_extra_spaces <pyquickhelper.pycode.code_helper.remove_extra_spaces>`
     * **add:** function :func:`create_visual_diff_through_html_files <pyquickhelper.filehelper.visual_sync.create_visual_diff_through_html_files>`

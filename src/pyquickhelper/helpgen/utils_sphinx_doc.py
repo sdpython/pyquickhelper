@@ -1110,6 +1110,7 @@ def fix_incomplete_references(folder_source, store_obj, issues = None):
 def migrating_doxygen_doc(content, filename, silent = False, log = False, debug = False) :
     """
     migrates the doxygen documentation to rst format
+
     @param      content     file content
     @param      filename    filename (to display useful error messages)
     @param      silent      if silent, do not raise an exception
@@ -1117,7 +1118,7 @@ def migrating_doxygen_doc(content, filename, silent = False, log = False, debug 
     @param      debug       display more information on the output if True
     @return                 new content file
 
-    @see fn private_migrating_doxygen_doc to get the list of conversion
+    Function ``private_migrating_doxygen_doc`` enumerates the list of conversion
     which will be done.
     """
     if log : fLOG("migrating_doxygen_doc: ", filename)

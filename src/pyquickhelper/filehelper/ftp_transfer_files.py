@@ -10,7 +10,7 @@ from ..loghelper.flog   import noLOG
 
 class FolderTransferFTPException(Exception):
     """
-    custom exxception for @see cl FolderTransferFTP
+    custom exception for @see cl FolderTransferFTP
     """
     pass
 

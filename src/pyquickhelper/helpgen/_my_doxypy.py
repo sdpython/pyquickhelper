@@ -21,6 +21,7 @@ __doc__ = __blurb__ + \
 """
 In order to make Doxygen preprocess files through doxypy, simply
 add the following lines to your Doxyfile:
+
     - ``FILTER_SOURCE_FILES = YES``
     - ``INPUT_FILTER = "python /path/to/doxypy.py"``
 """

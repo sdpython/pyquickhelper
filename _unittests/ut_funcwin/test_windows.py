@@ -2,6 +2,7 @@
 @brief      test log(time=1s)
 """
 import os, sys, unittest, datetime
+from tkinter import TclError
 
 try :
     import src
@@ -28,7 +29,10 @@ class TestWindows (unittest.TestCase):
     def test_open_window_params(self) :
         fLOG(__file__, self._testMethodName, OutputPrint = __name__ == "__main__")
         params = dict(p1="p1", p2=3)
-        win = open_window_params(params, do_not_open=True)
+        try:
+            win = open_window_params(params, do_not_open=True)
+        except TclError:
+            return
         fLOG(type(win))
         assert isinstance(win, src.pyquickhelper.funcwin.frame_params.FrameParams)
 
