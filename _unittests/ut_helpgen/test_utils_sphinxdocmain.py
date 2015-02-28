@@ -28,8 +28,8 @@ class TestSphinxDocMain (unittest.TestCase):
         rst     = generate_changes_repo(None, file)
         fLOG(rst)
         assert len(rst)>0
-        if "pyquickhelper" not in rst:
-            raise Exception("pyquickhelper not in rst:\n" + str(rst))
+        if "+-----------------------" not in rst:
+            raise Exception("+----------------------- not in rst:\n" + str(rst))
 
 
 if __name__ == "__main__"  :

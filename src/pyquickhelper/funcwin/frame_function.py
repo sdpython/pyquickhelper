@@ -6,6 +6,7 @@
 import sys, os, inspect, threading, tkinter, io
 import tkinter.font as tkFont
 
+from .tk_window                     import create_tk
 from ..loghelper.flog               import fLOG, GetLogFile
 from .function_helper               import has_unknown_parameters, extract_function_information, private_adjust_parameters, private_get_function
 from .storing_functions             import _private_restore, _private_store, interpret_parameter
@@ -381,7 +382,7 @@ class FrameFunction (tkinter.Frame) :
         """
         param   = params if params is not None else {  }
 
-        root = top_level_window if top_level_window is not None else tkinter.Tk ()
+        root = top_level_window if top_level_window is not None else create_tk()
         ico  = os.path.realpath (os.path.join (os.path.split (__file__) [0], "project_ico.ico"))
         fr   = FrameFunction (root, func, overwrite = param, hide = False)
         fr.pack ()

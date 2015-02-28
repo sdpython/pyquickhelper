@@ -6,6 +6,7 @@
 """
 import sys, os, tkinter
 
+from .tk_window             import create_tk
 from .function_helper       import private_adjust_parameters
 from .storing_functions     import _private_restore, _private_store, interpret_parameter
 
@@ -276,7 +277,7 @@ class FrameParams (tkinter.Frame) :
         """
         param   = params if params is not None else {  }
 
-        root = top_level_window if top_level_window is not None else tkinter.Tk ()
+        root = top_level_window if top_level_window is not None else create_tk()
         ico  = os.path.realpath (os.path.join (os.path.split (__file__) [0], "project_ico.ico"))
         fr   =  FrameParams ( root, params = param, help = help_string, key_save = key_save)
         fr.pack ()

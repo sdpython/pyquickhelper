@@ -140,7 +140,10 @@ class NotebookRunner(object):
 
         if status == 'error':
             ansi_escape = re.compile(r'\x1b[^m]*m')
-            tr = [ ansi_escape.sub('', _) for _ in reply['content']['traceback'] ]
+            try:
+                tr = [ ansi_escape.sub('', _) for _ in reply['content']['traceback'] ]
+            except KeyError:
+                tr = [ "No traceback, avaible keys in reply['content']"] + [ _ for _ in reply['content'] ]
             traceback_text = '\n'.join(tr)
             self.fLOG("ERR:\n", traceback_text)
         else:

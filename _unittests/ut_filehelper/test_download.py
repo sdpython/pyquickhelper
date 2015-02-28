@@ -41,7 +41,8 @@ class TestDownload (unittest.TestCase):
         out7 = os.path.join(fold, "try.7z")
         r = zip7_files(out7, [f, out], fLOG = fLOG, temp_folder = fold)
         fLOG(r)
-        assert os.path.exists(out7)
+        if not os.path.exists(out7):
+            raise FileNotFoundError(out7)
 
     def test_check(self):
         fLOG (__file__, self._testMethodName, OutputPrint = __name__ == "__main__")

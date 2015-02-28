@@ -7,6 +7,7 @@
 import os, tkinter
 import tkinter.tix as tix
 
+from .tk_window             import create_tk, create_tixtk
 from .frame_function        import FrameFunction
 from .storing_functions     import get_icon
 
@@ -180,7 +181,7 @@ def main_loop_functions (  functions,
         overwrite = {}
 
     ico = get_icon() if ico is None else ico
-    root = tix.Tk ()
+    root = create_tixtk()
     root.wm_iconbitmap(ico)
     fr   = MainFrame (  parent          = root,
                         functions       = functions,
