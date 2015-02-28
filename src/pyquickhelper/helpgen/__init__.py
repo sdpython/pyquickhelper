@@ -17,3 +17,7 @@ def get_help_usage():
 
             python setup.py build_sphinx
         """.replace("        ","")
+
+
+from .sphinx_main               import generate_help_sphinx, process_notebooks
+from .utils_sphinx_config       import NbImage

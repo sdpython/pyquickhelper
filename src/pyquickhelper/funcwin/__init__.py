@@ -1,6 +1,5 @@
 """
-@file
-@brief Add a simple function to check an icon exists.
+shortcuts
 """
 
 def check_icon():
@@ -15,3 +14,7 @@ def check_icon():
     if not os.path.exists(icon):
         raise FileNotFoundError(icon)
     return True
+
+from .frame_params              import open_window_params
+from .frame_function            import open_window_function
+from .main_window               import main_loop_functions

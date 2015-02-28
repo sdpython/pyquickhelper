@@ -16,3 +16,10 @@ def check():
     if not r : return r
     size = os.stat(f).st_size
     return size > 0
+
+
+from .synchelper             import explore_folder, synchronize_folder, has_been_updated, remove_folder
+from .synchelper             import explore_folder_iterfile, explore_folder_iterfile_repo
+from .visual_sync            import create_visual_diff_through_html, create_visual_diff_through_html_files
+from .compression_helper     import zip_files, gzip_files, zip7_files
+from .file_tree_node         import FileTreeNode
