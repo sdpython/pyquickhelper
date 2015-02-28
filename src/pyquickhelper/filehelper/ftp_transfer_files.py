@@ -205,7 +205,8 @@ class FolderTransferFTP:
                     content = f.read()
 
                 # footer
-                if self._footer_html is not None and os.path.splitext(path)[-1].lower() in (".htm", ".html"):
+                if self._footer_html is not None and os.path.splitext(
+                        path)[-1].lower() in (".htm", ".html"):
                     spl = content.split("</body>")
                     if len(spl) == 1:
                         raise FolderTransferFTPException(

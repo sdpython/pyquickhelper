@@ -196,7 +196,8 @@ class DocumentationHandler(BaseHTTPRequestHandler):
             return content
 
         if ftype == "r" or ftype == "execute":
-            if not os.path.exists(tlocalpath) and "_static/bootswatch" in tlocalpath:
+            if not os.path.exists(
+                    tlocalpath) and "_static/bootswatch" in tlocalpath:
                 access = tlocalpath.replace("bootswatch", "bootstrap")
             else:
                 access = tlocalpath
@@ -211,7 +212,8 @@ class DocumentationHandler(BaseHTTPRequestHandler):
                 DocumentationHandler.update_cache(tlocalpath, content)
                 return content
         else:
-            if not os.path.exists(tlocalpath) and "_static/bootswatch" in tlocalpath:
+            if not os.path.exists(
+                    tlocalpath) and "_static/bootswatch" in tlocalpath:
                 access = tlocalpath.replace("bootswatch", "bootstrap")
             else:
                 access = tlocalpath
@@ -410,7 +412,8 @@ class DocumentationHandler(BaseHTTPRequestHandler):
                                 "Requested resource %s unavailable" % localpath)
                         else:
                             ext = os.path.splitext(localpath)[-1].lower()
-                            if ext in [".py", ".c", ".cpp", ".hpp", ".h", ".r", ".sql", ".java"]:
+                            if ext in [
+                                    ".py", ".c", ".cpp", ".hpp", ".h", ".r", ".sql", ".java"]:
                                 self.send_headers(".html")
                                 self.feed(
                                     DocumentationHandler.html_code_renderer(localpath, content))

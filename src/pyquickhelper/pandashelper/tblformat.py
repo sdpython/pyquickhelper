@@ -118,7 +118,8 @@ def df2rst(df, add_line=True, align=None):
     return head + table
 
 
-def df2html(self, class_table=None, class_td=None, class_tr=None, class_th=None):
+def df2html(self, class_table=None, class_td=None, class_tr=None,
+            class_th=None):
     """
     convert the table into a html string
 

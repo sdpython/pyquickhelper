@@ -65,7 +65,8 @@ def download(url, path_download=".", outfile=None, fLOG=noLOG):
             else:
                 fLOG(" downloading ", url)
 
-            if len(url) > 4 and url[-4].lower() in [".txt", ".csv", ".tsv", ".log"]:
+            if len(
+                    url) > 4 and url[-4].lower() in [".txt", ".csv", ".tsv", ".log"]:
                 fLOG("creating text file ", dest)
                 format = "w"
             else:

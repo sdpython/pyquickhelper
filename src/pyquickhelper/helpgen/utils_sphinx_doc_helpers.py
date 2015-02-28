@@ -158,14 +158,16 @@ class ModuleMemberDoc:
         self.owner = module
         self.obj = obj
         self.cl = cl
-        if ty != None:
+        if ty is not None:
             self.type = ty
         self.name = name
         self.populate()
 
-        if self.cl is None and self.type in ["method", "staticmethod", "property"]:
+        if self.cl is None and self.type in [
+                "method", "staticmethod", "property"]:
             self.cl = self.obj.__class__
-        if self.cl is None and self.type in ["method", "staticmethod", "property"]:
+        if self.cl is None and self.type in [
+                "method", "staticmethod", "property"]:
             raise TypeError(
                 "N/a method must have a class (not None): %s" % str(self.obj))
 
@@ -189,7 +191,7 @@ class ModuleMemberDoc:
         """
         obj = self.obj
         ty = self.type if "type" in self.__dict__ else None
-        if ty == None:
+        if ty is None:
             if inspect.isclass(obj):
                 self.type = "class"
             elif inspect.ismethod(obj):
@@ -283,7 +285,8 @@ class ModuleMemberDoc:
         if prefix is not None:
             path = "%s.%s" % (prefix, path)
 
-        if self.type in ["method", "staticmethod", "property"] and class_in_bracket:
+        if self.type in ["method", "staticmethod",
+                         "property"] and class_in_bracket:
             link = ":%s:`%s <%s>` (%s)" % (
                 cor.get(self.type, self.type), self.name, path, self.cl.__name__)
         else:
@@ -318,7 +321,9 @@ class ModuleMemberDoc:
                 c = -1 if ln < lo else (1 if ln > lo else 0)
             return c
         else:
-            return -1 if self.type < oth.type else (1 if self.type > oth.type else 0)
+            return - \
+                1 if self.type < oth.type else (
+                    1 if self.type > oth.type else 0)
 
     def __lt__(self, oth): return self.__cmp__(oth) == -1
 
@@ -330,7 +335,8 @@ class ModuleMemberDoc:
         """
         usual
         """
-        return "[key={0},clname={1},type={2},module_name={3},file={4}".format(self.key, self.classname, self.type, self.module, self.owner.__file__)
+        return "[key={0},clname={1},type={2},module_name={3},file={4}".format(
+            self.key, self.classname, self.type, self.module, self.owner.__file__)
 
 
 class IndexInformation:
@@ -375,7 +381,8 @@ class IndexInformation:
         """
         returns self.text
         """
-        return self.text.replace("\n", "  ").replace("\t", "").replace("\r", "")
+        return self.text.replace("\n", "  ").replace(
+            "\t", "").replace("\r", "")
 
     def add_label_if_not_present(self):
         """
@@ -431,7 +438,8 @@ class RstFileHelp:
         self.doc = doc
 
 
-def import_module(rootm, filename, log_function, additional_sys_path=[], fLOG=noLOG):
+def import_module(
+        rootm, filename, log_function, additional_sys_path=[], fLOG=noLOG):
     """
     import a module using its filename
     @param      rootm                   root of the module (for relative import)
@@ -511,7 +519,8 @@ def import_module(rootm, filename, log_function, additional_sys_path=[], fLOG=no
             mo = mo_spec.loader.load_module()
             fLOG("successful try", mo_spec)
 
-        if not mo.__file__.replace("\\", "/").endswith(filename.replace("\\", "/").strip("./")):
+        if not mo.__file__.replace(
+                "\\", "/").endswith(filename.replace("\\", "/").strip("./")):
             namem = os.path.splitext(os.path.split(filename)[-1])[0]
 
             if "src" in sys.path:
@@ -527,7 +536,8 @@ def import_module(rootm, filename, log_function, additional_sys_path=[], fLOG=no
                 except ImportError as e2:
                     mo = importlib.util.find_spec(fi, context)
 
-                if not mo.__file__.replace("\\", "/").endswith(filename.replace("\\", "/").strip("./")):
+                if not mo.__file__.replace(
+                        "\\", "/").endswith(filename.replace("\\", "/").strip("./")):
                     raise ImportError("the wrong file was imported (2):\nEXP: {0}\nIMP: {1}\nPATHS:\n   - {2}"
                                       .format(filename, mo.__file__, "\n   - ".join(sys.path)))
             else:
@@ -657,7 +667,8 @@ def get_module_objects(mod):
     return res
 
 
-def process_var_tag(docstring, rst_replace=False, header=["attribute", "meaning"]):
+def process_var_tag(
+        docstring, rst_replace=False, header=["attribute", "meaning"]):
     """
     Process a docstring using tag ``@ var``, and return a list of 2-tuple
 

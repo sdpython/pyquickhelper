@@ -105,7 +105,7 @@ def replace_relative_import(fullname, content=None):
                         next = find.groups()[1]
                         add = os.path.join("..", "..")
 
-        if extracted != None:
+        if extracted is not None:
             by = ("%s%s %s import %s" % (sp, fr, extracted, next)).strip()
             sts = ["", "# replace # " + line]
             sts.append("%simport sys,os" % sp)
@@ -124,7 +124,8 @@ def replace_relative_import(fullname, content=None):
     return "\n".join(lines)
 
 
-def _private_process_one_file(fullname, to, silent, fmod, replace_relative_import):
+def _private_process_one_file(
+        fullname, to, silent, fmod, replace_relative_import):
     """
     Copy one file from the source to the documentation folder.
     It processes some comments in doxygen format (@ param, @ return).
@@ -775,7 +776,8 @@ def filecontent_to_rst(filename, content):
         for i, r in enumerate(spl):
             if "@brief" in spl[i]:
                 begin = i
-            if end is None and begin is not None and len(spl[i].strip(" \n\r\t")) == 0:
+            if end is None and begin is not None and len(
+                    spl[i].strip(" \n\r\t")) == 0:
                 end = i
 
         if begin is None and end is not None:
@@ -791,7 +793,7 @@ def filecontent_to_rst(filename, content):
         for i, r in enumerate(spl):
             if "/**" in spl[i]:
                 begin = i
-            if end == None and begin != None and "*/" in spl[i]:
+            if end is None and begin is not None and "*/" in spl[i]:
                 end = i
 
         content = "\n".join(rows)
@@ -1202,7 +1204,8 @@ def fix_incomplete_references(folder_source, store_obj, issues=None):
     return cop
 
 
-def migrating_doxygen_doc(content, filename, silent=False, log=False, debug=False):
+def migrating_doxygen_doc(
+        content, filename, silent=False, log=False, debug=False):
     """
     migrates the doxygen documentation to rst format
 
@@ -1458,7 +1461,8 @@ def private_migrating_doxygen_doc(
 
                 # it requires an empty line before if the previous line does
                 # not start by :
-                if i > 0 and not rows[i - 1].strip().startswith(":") and len(rows[i - 1].strip()) > 0:
+                if i > 0 and not rows[
+                        i - 1].strip().startswith(":") and len(rows[i - 1].strip()) > 0:
                     rows[i] = "\n" + rows[i]
 
             elif lexxce:
@@ -1470,7 +1474,8 @@ def private_migrating_doxygen_doc(
 
                 # it requires an empty line before if the previous line does
                 # not start by :
-                if i > 0 and not rows[i - 1].strip().startswith(":") and len(rows[i - 1].strip()) > 0:
+                if i > 0 and not rows[
+                        i - 1].strip().startswith(":") and len(rows[i - 1].strip()) > 0:
                     rows[i] = "\n" + rows[i]
 
             elif example:
@@ -1490,7 +1495,8 @@ def private_migrating_doxygen_doc(
 
                 # it requires an empty line before if the previous line does
                 # not start by :
-                if i > 0 and not rows[i - 1].strip().startswith(":") and len(rows[i - 1].strip()) > 0:
+                if i > 0 and not rows[
+                        i - 1].strip().startswith(":") and len(rows[i - 1].strip()) > 0:
                     rows[i] = "\n" + rows[i]
                 beginends["example"] = beginends.get("example", 0) + 1
 
@@ -1511,7 +1517,8 @@ def private_migrating_doxygen_doc(
 
                 # it requires an empty line before if the previous line does
                 # not start by :
-                if i > 0 and not rows[i - 1].strip().startswith(":") and len(rows[i - 1].strip()) > 0:
+                if i > 0 and not rows[
+                        i - 1].strip().startswith(":") and len(rows[i - 1].strip()) > 0:
                     rows[i] = "\n" + rows[i]
                 beginends["FAQ"] = beginends.get("FAQ", 0) + 1
 
@@ -1519,14 +1526,16 @@ def private_migrating_doxygen_doc(
                 rows[i] = row.replace("@return", ":return:")
                 # it requires an empty line before if the previous line does
                 # not start by :
-                if i > 0 and not rows[i - 1].strip().startswith(":") and len(rows[i - 1].strip()) > 0:
+                if i > 0 and not rows[
+                        i - 1].strip().startswith(":") and len(rows[i - 1].strip()) > 0:
                     rows[i] = "\n" + rows[i]
 
             elif "@rtype" in row:
                 rows[i] = row.replace("@rtype", ":rtype:")
                 # it requires an empty line before if the previous line does
                 # not start by :
-                if i > 0 and not rows[i - 1].strip().startswith(":") and len(rows[i - 1].strip()) > 0:
+                if i > 0 and not rows[
+                        i - 1].strip().startswith(":") and len(rows[i - 1].strip()) > 0:
                     rows[i] = "\n" + rows[i]
 
             elif "@brief" in row:

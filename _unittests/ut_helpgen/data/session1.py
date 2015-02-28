@@ -5,6 +5,7 @@
 
 """
 
+
 def commentaire_accentues():
     """
     L'aide de cette fonction contient assuréments des accents.

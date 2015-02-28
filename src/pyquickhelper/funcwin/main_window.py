@@ -76,8 +76,7 @@ class MainFrame(tkinter.Frame):
         self.functionsDict = functions
 
         if first is None:
-            keys = list(functions.keys())
-            keys.sort()
+            keys = sorted(functions.keys())
             first = keys[0]
         firstFunction = functions[first]
 

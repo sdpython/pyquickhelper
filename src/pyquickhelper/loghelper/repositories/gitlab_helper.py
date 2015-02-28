@@ -25,7 +25,8 @@ class GitLabException(Exception):
         """
         usual
         """
-        return "{0}\nCODE: {1}\nERR:\n{2}".format(Exception.__str__(self), self.request.status_code, self.request.content)
+        return "{0}\nCODE: {1}\nERR:\n{2}".format(
+            Exception.__str__(self), self.request.status_code, self.request.content)
 
 
 class GitLabAPI:
@@ -44,7 +45,8 @@ class GitLabAPI:
         @param      use_ssl     use_ssl (SSL connection)
         """
         self.host = host.rstrip("/")
-        if not self.host.startswith("https://") and not self.host.startswith("http://"):
+        if not self.host.startswith(
+                "https://") and not self.host.startswith("http://"):
             raise GitLabException("host should start with https:// or http://")
 
         self.api_url = self.host + "/api/v3"

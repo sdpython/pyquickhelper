@@ -209,7 +209,7 @@ def get_repo_log(path=None, file_detail=False, commandline=True):
             cmd += ['log',
                     '--pretty=format:<logentry revision="%h"><author>%an</author><date>%ci</date><msg>%s</msg><hash>%H</hash></logentry>', path]
 
-        enc = sys.stdout.encoding if sys.stdout != None else "utf8"
+        enc = sys.stdout.encoding if sys.stdout is not None else "utf8"
         out, err = run_cmd(cmd,
                            wait=True,
                            do_not_log=True,
@@ -229,7 +229,7 @@ def get_repo_log(path=None, file_detail=False, commandline=True):
         if master.endswith(".git"):
             master = master[:-4]
 
-        if enc != "utf8" and enc != None:
+        if enc != "utf8" and enc is not None:
             by = out.encode(enc)
             out = by.decode("utf8")
 
@@ -354,7 +354,7 @@ def get_master_location(path=None, commandline=True):
                            wait=True,
                            do_not_log=True,
                            encerror="strict",
-                           encoding=sys.stdout.encoding if sys.stdout != None else "utf8",
+                           encoding=sys.stdout.encoding if sys.stdout is not None else "utf8",
                            change_path=os.path.split(
                                path)[0] if os.path.isfile(path) else path,
                            log_error=False,

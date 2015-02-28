@@ -520,7 +520,7 @@ def main(file=None, print_output=None):
     @param      file        if equal to None, take this one on the command line
     @param      print_output    every string is sent to that funtion
     """
-    filename = file if file != None else optParse()
+    filename = file if file is not None else optParse()
     fsm = Doxypy(print_output, lambda a, b, c: a, {})
     fsm.parseFile(filename)
 

@@ -421,7 +421,7 @@ def produce_code_graph_changes(df):
     val = []
     for alldays in range(0, 365):
         a = now - datetime.timedelta(alldays)
-        val.append({"dt": a, "week":  to_str(a), "commits": 0})
+        val.append({"dt": a, "week": to_str(a), "commits": 0})
 
     df = pandas.concat([df, pandas.DataFrame(val)])
 
@@ -542,7 +542,7 @@ def generate_changes_repo(chan,
         code = ".. plot::\n" + code + "\n"
         final = final.replace("__CODEGRAPH__", code)
 
-    if chan != None:
+    if chan is not None:
         with open(chan, "w", encoding="utf8") as f:
             f.write(final)
     return final
@@ -626,14 +626,14 @@ def process_notebooks(notebooks,
             import_pywin32()
         exe = os.path.split(sys.executable)[0]
 
-    extensions = {"ipynb":    ".ipynb",
-                  "latex":    ".tex",
-                  "pdf":      ".pdf",
-                  "html":     ".html",
-                  "rst":      ".rst",
-                  "python":   ".py",
-                  "docx":     ".docx",
-                  "word":     ".docx",
+    extensions = {"ipynb": ".ipynb",
+                  "latex": ".tex",
+                  "pdf": ".pdf",
+                  "html": ".html",
+                  "rst": ".rst",
+                  "python": ".py",
+                  "docx": ".docx",
+                  "word": ".docx",
                   }
 
     if sys.platform.startswith("win"):
@@ -870,7 +870,8 @@ def process_notebooks(notebooks,
 
     # image
     for image in os.listdir(build):
-        if image.endswith(".png") or image.endswith(".html") or image.endswith(".pdf"):
+        if image.endswith(".png") or image.endswith(
+                ".html") or image.endswith(".pdf"):
             image = os.path.join(build, image)
             dest = os.path.join(outfold, os.path.split(image)[-1])
 
@@ -1239,7 +1240,8 @@ def post_process_latex(st, doall, info=None):
     # we count the number of times we have \$ (which is unexpected unless the
     # currency is used.
     dollar = st.split("\\$")
-    if len(dollar) > 0 and (info is None or os.path.splitext(info)[-1] != ".html"):
+    if len(dollar) > 0 and (
+            info is None or os.path.splitext(info)[-1] != ".html"):
         # probably an issue, for the time being, we are strict, no dollar as a currency in latex
         # we do not check HTML files, for the time being, the formulas appears
         # in pseudo latex

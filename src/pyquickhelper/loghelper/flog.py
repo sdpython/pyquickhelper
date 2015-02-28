@@ -403,7 +403,8 @@ def _get_file_url(url, path):
     spl = path.split("-")
     if len(spl) >= 2:
         ext = spl[len(spl) - 1].lower()
-        if 2 <= len(ext) <= 3 and ext in ["png", "jpg", "zip", "txt", "gif", "py", "cpp", "gz", "pdf", "tif", "py", "html", "h"]:
+        if 2 <= len(ext) <= 3 and ext in [
+                "png", "jpg", "zip", "txt", "gif", "py", "cpp", "gz", "pdf", "tif", "py", "html", "h"]:
             spl = path.split("-")
             spl = spl[:len(spl) - 1]
             path = "-".join(spl) + "." + ext
@@ -617,7 +618,7 @@ def _first_more_recent(f1, path):
     da = da.groups()[0]
     gr = re.compile(
         "[\w, ]* ([ \d]{2}) ([\w]{3}) ([\d]{4}) ([\d]{2}):([\d]{2}):([\d]{2})").search(da)
-    if gr == None:
+    if gr is None:
         return True
     gr = gr.groups()
     da = datetime.datetime(int(gr[2]), sys.hal_log_values["month_date"][gr[1].lower()], int(gr[0]),
@@ -672,7 +673,8 @@ def _check_url_file(url, path_download, outfile):
             else:
                 fLOG(" downloading ", url)
 
-            if len(url) > 4 and url[-4].lower() in [".txt", ".csv", ".tsv", ".log"]:
+            if len(
+                    url) > 4 and url[-4].lower() in [".txt", ".csv", ".tsv", ".log"]:
                 fLOG("creating text file ", dest)
                 format = "w"
             else:
@@ -724,15 +726,16 @@ def _check_source(fileurl, path_unzip, outfile):
 
     If the file has already been downloaded and unzipped, it is not done twice.
     """
-    if outfile is not None and os.path.splitext(outfile)[1].lower() == os.path.splitext(fileurl)[1].lower():
+    if outfile is not None and os.path.splitext(
+            outfile)[1].lower() == os.path.splitext(fileurl)[1].lower():
         file = _check_url_file(
-            fileurl,    path_download=path_unzip, outfile=outfile)
+            fileurl, path_download=path_unzip, outfile=outfile)
         return file
     else:
         file = _check_url_file(
-            fileurl,    path_download=path_unzip, outfile=None)
+            fileurl, path_download=path_unzip, outfile=None)
         txt = _check_zip_file(
-            file,       path_unzip=path_unzip, outfile=outfile)
+            file, path_unzip=path_unzip, outfile=outfile)
         if not os.path.exists(txt):
             message = "hal_core._check_source: unable to find file " + \
                 txt + " source (" + fileurl + ")"
@@ -977,7 +980,8 @@ def run_cmd(cmd,
                                     _this_fLOG(line.strip("\n\r"))
                                 out.append(line.strip("\n\r"))
                             last = lines
-                        if stop_waiting_if is not None and len(last) > 0 and stop_waiting_if(last[-1]):
+                        if stop_waiting_if is not None and len(
+                                last) > 0 and stop_waiting_if(last[-1]):
                             skip_waiting = True
                             break
                     time.sleep(0.1)

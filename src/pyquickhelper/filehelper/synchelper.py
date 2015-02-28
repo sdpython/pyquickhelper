@@ -41,8 +41,7 @@ def explore_folder(folder, pattern=None, fullname=False):
             r = os.path.split(temp)[0]
             rep[r] = None
 
-    keys = list(rep.keys())
-    keys.sort()
+    keys = sorted(rep.keys())
     return keys, file
 
 

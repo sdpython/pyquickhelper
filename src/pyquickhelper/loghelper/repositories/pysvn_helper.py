@@ -101,7 +101,7 @@ def repo_ls(full, commandline=True):
                                wait=True,
                                do_not_log=True,
                                encerror="strict",
-                               encoding=sys.stdout.encoding if sys.stdout != None else "utf8")
+                               encoding=sys.stdout.encoding if sys.stdout is not None else "utf8")
         except Exception as e:
             raise Exception("issue with file or folder " + full) from e
 

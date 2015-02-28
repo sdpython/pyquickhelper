@@ -2,16 +2,26 @@
 @brief      test log(time=2s)
 """
 
-import sys, os, unittest
+import sys
+import os
+import unittest
 
 if "temp_" in os.path.abspath(__file__):
-    raise ImportError("this file should not be imported in that location: " + os.path.abspath(__file__))
+    raise ImportError(
+        "this file should not be imported in that location: " +
+        os.path.abspath(__file__))
 
-try :
+try:
     import src
-except ImportError :
-    path = os.path.normpath(os.path.abspath( os.path.join( os.path.split(__file__)[0], "..", "..")))
-    if path not in sys.path : sys.path.append (path)
+except ImportError:
+    path = os.path.normpath(
+        os.path.abspath(
+            os.path.join(
+                os.path.split(__file__)[0],
+                "..",
+                "..")))
+    if path not in sys.path:
+        sys.path.append(path)
     import src
 
 from src.pyquickhelper import get_temp_folder, fLOG, FileTreeNode, TransferFTP, FolderTransferFTP
@@ -20,19 +30,26 @@ from src.pyquickhelper.filehelper.ftp_transfer import MockTransferFTP
 
 class TestFolderTransfer(unittest.TestCase):
 
-    def test_folder_transfer(self) :
-        fLOG (__file__, self._testMethodName, OutputPrint = __name__ == "__main__")
+    def test_folder_transfer(self):
+        fLOG(
+            __file__,
+            self._testMethodName,
+            OutputPrint=__name__ == "__main__")
         temp = get_temp_folder(__file__, "temp_folder_transfer")
         status = os.path.join(temp, "temp_status_file.txt")
         folder = os.path.normpath(os.path.join(temp, "..", "..", "..", "src"))
 
-        ftn  = FileTreeNode(folder)
-        ftp  = MockTransferFTP("http://www.xavierdupre.fr/", "login", "password", fLOG=fLOG)
-        fftp = FolderTransferFTP (ftn, ftp, status,
-                        footer_html = "<b>footer</b>",
-                        content_filter = lambda c : c)
+        ftn = FileTreeNode(folder)
+        ftp = MockTransferFTP(
+            "http://www.xavierdupre.fr/",
+            "login",
+            "password",
+            fLOG=fLOG)
+        fftp = FolderTransferFTP(ftn, ftp, status,
+                                 footer_html="<b>footer</b>",
+                                 content_filter=lambda c: c)
 
-        li = list ( fftp.iter_eligible_files() )
+        li = list(fftp.iter_eligible_files())
         assert len(li) > 0
 
         done = fftp.start_transfering()
@@ -43,7 +60,7 @@ class TestFolderTransfer(unittest.TestCase):
         assert os.path.exists(status)
 
         done = fftp.start_transfering()
-        if len(done) > 0 :
+        if len(done) > 0:
             for f in done:
                 fLOG(f)
             assert False
@@ -51,5 +68,5 @@ class TestFolderTransfer(unittest.TestCase):
         ftp.close()
 
 
-if __name__ == "__main__"  :
-    unittest.main ()
+if __name__ == "__main__":
+    unittest.main()

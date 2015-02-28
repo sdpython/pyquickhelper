@@ -72,7 +72,7 @@ def extract_function_information(function):
     nbp = function.__code__.co_argcount
     par = function.__code__.co_varnames[:nbp]
     res["nbpar"] = len(par)
-    defd = function.__defaults__ if function.__defaults__ != None else []
+    defd = function.__defaults__ if function.__defaults__ is not None else []
     dec = len(par) - len(defd)
 
     typ = {}
@@ -109,7 +109,7 @@ def extract_function_information(function):
     typ = {k: v for k, v in alls}
     for a in res["types"]:
         b = res["types"][a]
-        if b is None or b == type(None):
+        if b is None or isinstance(None, b):
             b = typ.get(a, None)
             if b is not None:
                 if "|" in b:

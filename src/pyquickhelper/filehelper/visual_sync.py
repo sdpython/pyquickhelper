@@ -145,7 +145,8 @@ def create_visual_diff_through_html(string1, string2):
     global html_page
 
     def cleanh(s):
-        return s.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+        return s.replace("&", "&amp;").replace(
+            "<", "&lt;").replace(">", "&gt;")
 
     page = html_page.replace("__PATH__", fold + "\\") \
                     .replace("__STRI" + "NG1__", cleanh(string1)) \

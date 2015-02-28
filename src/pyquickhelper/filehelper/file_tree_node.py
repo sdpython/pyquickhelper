@@ -279,7 +279,7 @@ class FileTreeNode:
         else:
             opt = "listdir"
             full = self.get_fullname()
-            fi = "" if self._file == None else self._file
+            fi = "" if self._file is None else self._file
             all = [a for a in os.listdir(full) if a not in [".", ".."]]
 
         all.sort()
@@ -315,11 +315,11 @@ class FileTreeNode:
 
         @return     dict
         """
-        res = {"name":     "" if self._file == None else self._file,
-               "root___":  self._root,
-               "time":     str(self._date),
-               "size":     self._size,
-               "type___":  self._type}
+        res = {"name": "" if self._file is None else self._file,
+               "root___": self._root,
+               "time": str(self._date),
+               "size": self._size,
+               "type___": self._type}
         return res
 
     def __getitem__(self, i):
@@ -377,7 +377,8 @@ class FileTreeNode:
         if self._date == node._date:
             return "=="
         elif self._date < node._date:
-            if self.isdir() or self._size != node._size or node._size > hash_size:
+            if self.isdir(
+            ) or self._size != node._size or node._size > hash_size:
                 return "<"
             else:
                 h1 = self.hash_md5_readfile()
@@ -387,7 +388,8 @@ class FileTreeNode:
                 else:
                     return "=="
         else:
-            if self.isdir() or self._size != node._size or node._size > hash_size:
+            if self.isdir(
+            ) or self._size != node._size or node._size > hash_size:
                 return ">"
             else:
                 h1 = self.hash_md5_readfile()
@@ -425,7 +427,7 @@ class FileTreeNode:
                 fLOG("FileTreeNode.difference: processed files", nb)
                 ti = ti2
             if k not in d2:
-                res.append((k, ">+",                       v, None))
+                res.append((k, ">+", v, None))
             else:
                 res.append((k, v.sign(d2[k], hash_size), v, d2[k]))
             nb += 1
@@ -436,7 +438,7 @@ class FileTreeNode:
                 fLOG("FileTreeNode.difference: processed files", nb)
                 ti = ti2
             if k not in d1:
-                res.append((k, "<+",                       None, v))
+                res.append((k, "<+", None, v))
             nb += 1
 
         res.sort()

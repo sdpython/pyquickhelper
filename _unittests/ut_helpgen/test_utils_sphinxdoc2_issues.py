@@ -4,17 +4,25 @@
 """
 
 
-import sys, os, unittest
+import sys
+import os
+import unittest
 
-try :
+try:
     import src
-except ImportError :
-    path =  os.path.normpath(os.path.abspath(os.path.join(os.path.split(__file__)[0], "..", "..")))
-    if path not in sys.path : sys.path.append(path)
+except ImportError:
+    path = os.path.normpath(
+        os.path.abspath(
+            os.path.join(
+                os.path.split(__file__)[0],
+                "..",
+                "..")))
+    if path not in sys.path:
+        sys.path.append(path)
     import src
 
-from src.pyquickhelper.loghelper.flog                       import fLOG
-from src.pyquickhelper.helpgen.utils_sphinx_doc_helpers     import process_var_tag
+from src.pyquickhelper.loghelper.flog import fLOG
+from src.pyquickhelper.helpgen.utils_sphinx_doc_helpers import process_var_tag
 
 
 class TestSphinxDoc2Issue (unittest.TestCase):
@@ -24,18 +32,24 @@ class TestSphinxDoc2Issue (unittest.TestCase):
         """ help to fetch"""
         return 1
 
-    def test_issues1(self) :
-        fLOG (__file__, self._testMethodName, OutputPrint = __name__ == "__main__")
+    def test_issues1(self):
+        fLOG(
+            __file__,
+            self._testMethodName,
+            OutputPrint=__name__ == "__main__")
 
         obj = TestSphinxDoc2Issue.get_help
         d1 = obj.__doc__
 
         obj = TestSphinxDoc2Issue.__dict__["get_help"]
-        d2 =  obj.__func__.__doc__
+        d2 = obj.__func__.__doc__
         assert d1 == d2
 
     def test_var(self):
-        fLOG (__file__, self._testMethodName, OutputPrint = __name__ == "__main__")
+        fLOG(
+            __file__,
+            self._testMethodName,
+            OutputPrint=__name__ == "__main__")
 
         docstring = """
             This class opens a text file as if it were a binary file. It can deal with null characters which are missed by open function.
@@ -61,10 +75,8 @@ class TestSphinxDoc2Issue (unittest.TestCase):
 
         rst = process_var_tag(docstring, True)
         fLOG(rst)
-        assert len(rst)  > 0
+        assert len(rst) > 0
 
 
-
-
-if __name__ == "__main__"  :
-    unittest.main ()
+if __name__ == "__main__":
+    unittest.main()

@@ -212,7 +212,8 @@ class FrameFunction (tkinter.Frame):
         self.bdown.config(command=self.history_down)
 
         # keys
-        for obj in objs + [tex, parent, self, self.bup, self.bdown, self.run, self.cancel, self.fdoc]:
+        for obj in objs + [tex, parent, self, self.bup,
+                           self.bdown, self.run, self.cancel, self.fdoc]:
             obj.bind("<Up>", self.history_up)
             obj.bind("<Down>", self.history_down)
             obj.bind("<Return>", self.run_function)
@@ -402,7 +403,8 @@ class FrameFunction (tkinter.Frame):
         fr = FrameFunction(root, func, overwrite=param, hide=False)
         fr.pack()
         root.title(fr.get_title())
-        if ico is not None and top_level_window is None and sys.platform.startswith("win"):
+        if ico is not None and top_level_window is None and sys.platform.startswith(
+                "win"):
             root.wm_iconbitmap(ico)
         if top_level_window is None:
             fr.focus_set()

@@ -81,7 +81,8 @@ class SourceRepository:
         """
         if self.module is None:
             self.SetGuessedType(path)
-        return self.module.get_repo_log(path, file_detail, commandline=self.commandline)
+        return self.module.get_repo_log(
+            path, file_detail, commandline=self.commandline)
 
     def version(self, path=None):
         """
