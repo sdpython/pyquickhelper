@@ -39,7 +39,10 @@ class TestWindows (unittest.TestCase):
     def test_open_window_function(self) :
         fLOG(__file__, self._testMethodName, OutputPrint = __name__ == "__main__")
         func = test_function
-        win = open_window_function(func, do_not_open=True)
+        try:
+            win = open_window_function(func, do_not_open=True)
+        except TclError:
+            return
         fLOG(type(win))
         assert isinstance(win, src.pyquickhelper.funcwin.frame_function.FrameFunction)
 

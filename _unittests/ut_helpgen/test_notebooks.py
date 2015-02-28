@@ -50,6 +50,9 @@ class TestNotebookConversion (unittest.TestCase):
             exp.append ( "example_pyquickhelper.tex" )
             exp.append ( "example_pyquickhelper.pdf" )
 
+        # to be removed later
+        if not sys.platform.startswith("win"): return
+
         res = process_notebooks(nb, temp, temp, latex_path = p1, pandoc_path = p2, formats = formats)
         for _ in res:
             fLOG(_)
