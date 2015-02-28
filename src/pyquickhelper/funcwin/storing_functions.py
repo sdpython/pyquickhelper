@@ -15,7 +15,7 @@ def _private_store (function_name, param) :
     It a parameter is a password (name=password, the password will be encrypted using sha1).
 
     @param      function_name       name of the function (a unique string, the function is not called)
-    @param      param               list of parameters
+    @param      param               (dict) list of parameters
 
     The function replaces every end of line into ``#*###n####*#``.
     """

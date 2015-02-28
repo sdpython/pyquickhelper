@@ -34,11 +34,13 @@ def _get_format_zero_nb_integer (nb) :
     return "%0" + str (int(c)) + "d"
 
 def test_regular_expression (   exp     = ".*",
-                                text    = "") :
+                                text    = "",
+                                fLOG    = fLOG) :
     """
     test a regular expression
     @param      exp     regular expression
     @param      text    text to check
+    @param      fLOG    logging function
     """
     fLOG ("regex", exp)
     fLOG ("text", text)
@@ -167,7 +169,7 @@ def file_list (folder, out = "") :
 def file_grep ( file = "",
                 regex = ".*",
                 out  = "",
-                head = 100) :
+                head = -1) :
     """
     grep
 
@@ -175,7 +177,7 @@ def file_grep ( file = "",
     @param      regex        regular expression
     @param      out         output file, if == None or empty, then, it becomes:
                                 file + ".head.%d.ext" % head
-    @param      head        head
+    @param      head        stops after the first head lines (or -1 if not stop)
     @return                 out
     """
     if not os.path.exists (file) :
@@ -188,9 +190,13 @@ def file_grep ( file = "",
 
     f = open (file, "r")
     g = open (out, "w")
+    nb = 0
     for i,line in enumerate (f) :
         if exp.search (line) :
             g.write (line)
+            nb += 1
+            if head >= 0 and nb >= head:
+                break
     f.close ()
     g.close ()
     return out

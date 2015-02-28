@@ -243,7 +243,8 @@ class FrameParams (tkinter.Frame) :
                         help_string       = "",
                         title             = "",
                         top_level_window  = None,
-                        key_save          = "") :
+                        key_save          = "",
+                        do_not_open       = False) :
         """
         Open a tkinter window to set up parameters.
         It adds entries for the parameters,
@@ -256,7 +257,8 @@ class FrameParams (tkinter.Frame) :
                                                 it will be updated by the function (= returned value)
         @param      key_save                parameters are saved and restore from a file, key_save will make this file unique
         @param      title                   title of the window
-        @return                             new parameters
+        @param      do_not_open             do not open the window, let you do it
+        @return                             new parameters (or a the Windows object if *do_not_open* is True)
 
         @warning If the string "__cancel__" is present in the results, it means the users clicked on cancel.
 
@@ -268,6 +270,9 @@ class FrameParams (tkinter.Frame) :
         params =  {"velib_key": "", "contract":"Paris"}
         newparams = FrameParams.open_window (params, "fetch data from Velib website")
         @endcode
+
+        .. versionchanged:: 1.0
+            Parameter *do_not_open* was added.
         """
         param   = params if params is not None else {  }
 
@@ -280,14 +285,19 @@ class FrameParams (tkinter.Frame) :
             root.wm_iconbitmap(ico)
         if top_level_window is None : fr.focus_set()
         root.focus_set()
-        fr.mainloop ()
-        return param
+
+        if do_not_open:
+            return fr
+        else:
+            fr.mainloop ()
+            return param
 
 def open_window_params (  params,
                           help_string       = "",
                           title             = "",
                           top_level_window  = None,
-                          key_save          = "") :
+                          key_save          = "",
+                          do_not_open       = False) :
     """
     Open a tkinter window to set up parameters.
     It adds entries for the parameters,
@@ -300,7 +310,8 @@ def open_window_params (  params,
                                             it will be updated by the function (= returned value)
     @param      key_save                parameters are saved and restore from a file, key_save will make this file unique
     @param      title                   title of the window
-    @return                             new parameters
+    @param      do_not_open             do not open the window, let you do it
+    @return                             new parameters (or a the Windows object if *do_not_open* is True)
 
     @warning If the string "__cancel__" is present in the results, it means the users clicked on cancel.
 
@@ -325,9 +336,13 @@ def open_window_params (  params,
     @endexample
 
     Password are not stored in a text file. You must type them again next time.
+
+    .. versionchanged:: 1.0
+        Parameter *do_not_open* was added.
     """
     return FrameParams.open_window (params = params,
                                 help_string = help_string,
                                 title = title,
                                 top_level_window = top_level_window,
-                                key_save = key_save)
+                                key_save = key_save,
+                                do_not_open = do_not_open)

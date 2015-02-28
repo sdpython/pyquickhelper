@@ -18,7 +18,7 @@ def len_modified(s):
         raise ValueError("expect a string")
     return len(s)
 
-def df_to_rst(df, add_line=True, align = None):
+def df2rst(df, add_line=True, align = None):
     """
     builds a string in RST format from a dataframe
     @param      df              dataframe
@@ -110,7 +110,7 @@ def df_to_rst(df, add_line=True, align = None):
 
     return head + table
 
-def df_to_html (self, class_table = None, class_td = None, class_tr = None, class_th = None) :
+def df2html (self, class_table = None, class_td = None, class_tr = None, class_th = None) :
     """
     convert the table into a html string
 

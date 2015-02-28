@@ -6,13 +6,13 @@
 
 import sys, os, re, shutil, copy, importlib
 
-from ..loghelper.flog           import fLOG
+from ..loghelper.flog           import fLOG, noLOG
 from ..filehelper.synchelper    import remove_folder, synchronize_folder, explore_folder
 from ._my_doxypy                import process_string
 from .utils_sphinx_doc_helpers  import add_file_rst_template, process_var_tag, import_module
 from .utils_sphinx_doc_helpers  import get_module_objects, add_file_rst_template_cor, add_file_rst_template_title
 from .utils_sphinx_doc_helpers  import IndexInformation, RstFileHelp, HelpGenException, process_look_for_tag, make_label_index
-from ..pandashelper.tblformat   import df_to_rst
+from ..pandashelper.tblformat   import df2rst
 
 def validate_file_for_help(filename, fexclude = lambda f : False) :
     """
@@ -285,7 +285,8 @@ def apply_modification_template (   rootm,
                                     rootrep,
                                     softfile,
                                     indexes,
-                                    additional_sys_path) :
+                                    additional_sys_path,
+                                    fLOG = noLOG) :
     """
     @see fn add_file_rst
 
@@ -298,7 +299,11 @@ def apply_modification_template (   rootm,
                             the documentation is lighter (no special members)
     @param      indexes     dictionary with the label and some information (IndexInformation)
     @param      additional_sys_path     additional path to include to sys.path before importing a module (will be removed afterwards)
+    @param      fLOG        logging function
     @return                 content of a .rst file
+
+    .. versionadded:: 1.0
+        Paramater *fLOG* was added.
     """
     from pandas import DataFrame
 
@@ -312,7 +317,7 @@ def apply_modification_template (   rootm,
                     else fullname
     pythonname = None
 
-    mo,prefix   = import_module(rootm, keepf, fLOG, additional_sys_path = additional_sys_path)
+    mo,prefix   = import_module(rootm, keepf, fLOG, additional_sys_path = additional_sys_path, fLOG=fLOG)
     doc         = ""
     shortdoc    = ""
 
@@ -381,7 +386,7 @@ def apply_modification_template (   rootm,
                         s = 0 if tbl.ix[0,1] is None else len(tbl.ix[0,1])
                         t = "" if tbl.ix[0,1] is None else tbl.ix[0,1]
                         tbl.ix[0,1] = t + (" " * (3*maxi - s))
-                        sph  = df_to_rst(tbl, align=["1x","3x"])
+                        sph  = df2rst(tbl, align=["1x","3x"])
                         titl = "\n\n" + add_file_rst_template_title[k] + "\n"
                         titl += "+" * len(add_file_rst_template_title[k])
                         titl += "\n\n"
@@ -454,7 +459,8 @@ def add_file_rst (rootm,
                   softfile          = lambda f : False,
                   mapped_function   = [ ],
                   indexes           = None,
-                  additional_sys_path = [ ]) :
+                  additional_sys_path = [ ],
+                  fLOG              = noLOG) :
     """
     creates a rst file for every source file
 
@@ -478,9 +484,12 @@ def add_file_rst (rootm,
                                 except for .rst file for which nothing is done.
     @param      indexes         to index some information { dictionary label:IndexInformation (...) }, the function populates it
     @param      additional_sys_path     additional path to include to sys.path before importing a module (will be removed afterwards)
+    @param      fLOG            logging function
     @return                     list of written files stored in RstFileHelp
 
-    @todo This functions still includes some code specific to pyquickhelper.
+    .. versionadded:: 1.0
+        Paramater *fLOG* was added.
+
     """
 
     memo = { }
@@ -496,7 +505,7 @@ def add_file_rst (rootm,
 
         if file.endswith(".py") :
             if os.stat(to).st_size > 0 :
-                content = apply_modification_template(rootm, store_obj, template, to, rootrep, softfile, indexes, additional_sys_path = additional_sys_path)
+                content = apply_modification_template(rootm, store_obj, template, to, rootrep, softfile, indexes, additional_sys_path = additional_sys_path, fLOG=fLOG)
                 content = fmod(content)
 
                 # tweaks for example and studies
@@ -614,7 +623,7 @@ def produces_indexes (
             tbl.ix[0,1] = t + (" " * (3*maxi - s))
             align = ["1x"] * len(tbl.columns)
             align[-1] = "3x"
-            sph = df_to_rst(tbl, align=align)
+            sph = df2rst(tbl, align=align)
             res [k] = sph
 
     # we process indexes
@@ -647,7 +656,7 @@ def produces_indexes (
             tbl.ix[0,1] = tbl.ix[0,1] + (" " * (3*maxi - len(tbl.ix[0,1])))
             align = ["1x"] * len(tbl.columns)
             align[-1] = "3x"
-            sph = df_to_rst(tbl, align=align)
+            sph = df2rst(tbl, align=align)
             res [k] = sph
 
     # end
@@ -844,7 +853,8 @@ def prepare_file_for_sphinx_help_generation (
                                         softfile = softfile,
                                         mapped_function = mapped_function,
                                         indexes = indexes,
-                                        additional_sys_path = additional_sys_path
+                                        additional_sys_path = additional_sys_path,
+                                        fLOG=fLOG
                                         )
             rsts      += rstadd
         else :
@@ -871,7 +881,8 @@ def prepare_file_for_sphinx_help_generation (
                                         softfile = softfile,
                                         mapped_function = mapped_function,
                                         indexes = indexes,
-                                        additional_sys_path = additional_sys_path)
+                                        additional_sys_path = additional_sys_path,
+                                        fLOG=fLOG)
 
         actions += actions_t
 
@@ -935,7 +946,7 @@ def prepare_file_for_sphinx_help_generation (
         falli.write("Statistics on code\n")
         falli.write("==================\n")
         falli.write("\n\n")
-        sph  = df_to_rst(df)
+        sph  = df2rst(df)
         falli.write(sph)
         falli.write("\n")
     rsts.append( RstFileHelp(None, all_report, None))

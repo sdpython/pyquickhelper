@@ -14,7 +14,7 @@ except ImportError :
     if path not in sys.path : sys.path.append (path)
     import src
 
-from src.pyquickhelper.loghelper.flog import fLOG, run_cmd, load_content_file_with_encoding, run_script, get_prefix, removedirs, unzip, guess_type_list
+from src.pyquickhelper.loghelper.flog import fLOG, run_cmd, load_content_file_with_encoding, run_script, get_prefix, removedirs, unzip, guess_type_list, GetLogFile, get_relative_path
 
 
 class TestLog (unittest.TestCase):
@@ -122,6 +122,17 @@ class TestLog (unittest.TestCase):
         cont, enc = load_content_file_with_encoding(file)
         assert len(file) > 0
 
+    def test_logfile(self):
+        fLOG (__file__, self._testMethodName, OutputPrint = __name__ == "__main__")
+        r = GetLogFile ()
+        assert not isinstance(r, str)
+
+    def test_get_relative_path(self):
+        fLOG (__file__, self._testMethodName, OutputPrint = __name__ == "__main__")
+        fold = os.path.abspath(os.path.dirname(__file__))
+        file = os.path.abspath(__file__)
+        rel = get_relative_path(fold, file)
+        fLOG("-----",rel)
 
 if __name__ == "__main__"  :
     unittest.main ()

@@ -351,7 +351,8 @@ class FrameFunction (tkinter.Frame) :
     def open_window(func,
                     top_level_window = None,
                     params = None,
-                    key_save = "f") :
+                    key_save = "f",
+                    do_not_open = False) :
 
         """
         Open a tkinter window to run a function. It adds entries for the parameters,
@@ -364,6 +365,8 @@ class FrameFunction (tkinter.Frame) :
         @param      top_level_window        if you want this window to depend on a top level window from tkinter
         @param      params                  if not None, overwrite values for some parameters
         @param      key_save                suffix added to the file used to store the parameters
+        @param      do_not_open             if True, the function do not open the window but returns it
+        @return                             None or windows if *do_not_open* is True
 
         The window looks like:
         @image images/open_window_function.png
@@ -372,6 +375,9 @@ class FrameFunction (tkinter.Frame) :
         @code
         FrameFunction.open_window (file_head)
         @endcode
+
+        .. versionadded:: 1.0
+            Parameter *do_not_open* was added.
         """
         param   = params if params is not None else {  }
 
@@ -384,7 +390,11 @@ class FrameFunction (tkinter.Frame) :
             root.wm_iconbitmap(ico)
         if top_level_window is None : fr.focus_set()
         root.focus_set()
-        fr.mainloop ()
+
+        if do_not_open:
+            return fr
+        else:
+            fr.mainloop ()
 
 class FrameFunction_ThreadFunction (threading.Thread) :
     """
@@ -437,7 +447,8 @@ class FrameFunction_ThreadFunction (threading.Thread) :
 def open_window_function (  func,
                             top_level_window = None,
                             params = None,
-                            key_save = "f") :
+                            key_save = "f",
+                            do_not_open = False) :
 
     """
     Open a tkinter window to run a function. It adds entries for the parameters,
@@ -450,6 +461,8 @@ def open_window_function (  func,
     @param      top_level_window        if you want this window to depend on a top level window from tkinter
     @param      params                  if not None, overwrite values for some parameters
     @param      key_save                suffix added to the file used to store the parameters
+    @param      do_not_open             if True, the function do not open the window but returns it
+    @return                             None or windows if *do_not_open* is True
 
     The window looks like:
     @image images/open_window_function.png
@@ -468,8 +481,12 @@ def open_window_function (  func,
     That is because the function uses ``key_save`` ot unique the file uses
     to store the values for the parameters used in previous execution.
     @endexample
+
+    .. versionadded:: 1.0
+        Parameter *do_not_open* was added.
     """
-    FrameFunction.open_window ( func = func,
+    return FrameFunction.open_window ( func = func,
                                 top_level_window = top_level_window,
                                 params = params,
-                                key_save = key_save )
+                                key_save = key_save,
+                                do_not_open = do_not_open)

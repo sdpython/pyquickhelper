@@ -35,7 +35,8 @@ class TestSphinxDoc2 (unittest.TestCase):
                     os.path.normpath(os.path.join(path, "..", "..", "src")),
                     softfile,
                     {},
-                    additional_sys_path = [])
+                    additional_sys_path = [],
+                    fLOG=fLOG)
 
         assert len(rst)>0
         assert len(store_obj) > 0

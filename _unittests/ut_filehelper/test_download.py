@@ -15,7 +15,7 @@ except ImportError :
     import src
 
 from src.pyquickhelper import download, get_temp_folder, fLOG, gzip_files, zip_files, zip7_files
-
+from src.pyquickhelper.filehelper import check
 
 class TestDownload (unittest.TestCase):
 
@@ -42,6 +42,10 @@ class TestDownload (unittest.TestCase):
         r = zip7_files(out7, [f, out], fLOG = fLOG, temp_folder = fold)
         fLOG(r)
         assert os.path.exists(out7)
+
+    def test_check(self):
+        fLOG (__file__, self._testMethodName, OutputPrint = __name__ == "__main__")
+        check()
 
 if __name__ == "__main__"  :
     unittest.main ()

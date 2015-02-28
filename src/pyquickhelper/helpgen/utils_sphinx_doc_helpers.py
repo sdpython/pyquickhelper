@@ -5,7 +5,8 @@
 """
 
 import inspect, os, copy, re, sys, types, importlib
-from ..pandashelper.tblformat import df_to_rst
+from ..pandashelper.tblformat import df2rst
+from ..loghelper.flog import noLOG
 
 class HelpGenException(Exception):
     """
@@ -403,16 +404,20 @@ class RstFileHelp :
         self.rst  = rst
         self.doc  = doc
 
-def import_module (rootm, filename, log_function, additional_sys_path = [ ]) :
+def import_module (rootm, filename, log_function, additional_sys_path = [ ], fLOG=noLOG) :
     """
     import a module using its filename
     @param      rootm                   root of the module (for relative import)
     @param      filename                file name of the module
     @param      log_function            logging function
     @param      additional_sys_path     additional path to include to sys.path before importing a module (will be removed afterwards)
+    @param      fLOG                    logging function
     @return                             module object, prefix
 
     @warning It adds the file path at the first position in sys.path and then deletes it.
+
+    .. versionadded:: 1.0
+        Parameter *fLOG* was added.
     """
     memo    = copy.deepcopy(sys.path)
     l       = filename.replace("\\","/")
@@ -471,7 +476,11 @@ def import_module (rootm, filename, log_function, additional_sys_path = [ ]) :
         try:
             mo = importlib.import_module(fi, context)
         except ImportError as e1:
-            mo = importlib.util.find_spec(fi, context)
+            fLOG("unable to import module ", fi, "fullname", fullname)
+            mo_spec = importlib.util.find_spec(fi, context)
+            fLOG("imported spec", mo_spec)
+            mo = mo_spec.loader.load_module()
+            fLOG("successful try", mo_spec)
 
         if not mo.__file__.replace("\\","/").endswith(filename.replace("\\","/").strip("./")):
             namem = os.path.splitext(os.path.split(filename)[-1])[0]
@@ -646,7 +655,7 @@ def process_var_tag(docstring, rst_replace = False, header = ["attribute", "mean
                     tbl = DataFrame (columns=header, data=val)
                     align = ["1x"] * len(header)
                     align[-1] = "3x"
-                    rst = df_to_rst(tbl, align = align)
+                    rst = df2rst(tbl, align = align)
                     values.append(rst)
             else :
                 values.append (line)

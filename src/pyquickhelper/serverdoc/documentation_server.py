@@ -9,18 +9,25 @@
 @brief  This modules contains a class which implements a simple server.
 """
 
-import sys, os, subprocess, copy, datetime
+import sys
+import os
+import subprocess
+import copy
+import datetime
 from urllib.parse import urlparse, parse_qs
 from threading import Thread
 from http.server import BaseHTTPRequestHandler, HTTPServer
 
-if __name__ == "__main__" :
-    path = os.path.normpath(os.path.abspath(os.path.join(os.path.split(__file__)[0],"..","..","..", "src")))
-    if path not in sys.path : sys.path.append(path)
-    path = os.path.normpath(os.path.abspath(os.path.join(os.path.split(__file__)[0],"..","..","..", "..","pyquickhelper","src")))
-    if path not in sys.path : sys.path.append(path)
+if __name__ == "__main__":
+    path = os.path.normpath(os.path.abspath(os.path.join(os.path.split(__file__)[0], "..", "..", "..", "src")))
+    if path not in sys.path:
+        sys.path.append(path)
+    path = os.path.normpath(os.path.abspath(os.path.join(os.path.split(__file__)[0],
+                                                         "..", "..", "..", "..", "pyquickhelper", "src")))
+    if path not in sys.path:
+        sys.path.append(path)
     from pyquickhelper import fLOG, get_url_content
-else :
+else:
     from ..loghelper.flog import fLOG
     from ..loghelper.url_helper import get_url_content
 
@@ -32,9 +39,9 @@ class DocumentationHandler(BaseHTTPRequestHandler):
 
     """
 
-    mappings = {    "__fetchurl__": "http://",
-                    "__shutdown__": "shut://",
-                }
+    mappings = { "__fetchurl__": "http://",
+                 "__shutdown__": "shut://",
+               }
 
     html_header = """
             <?xml version="1.0" encoding="utf-8"?>

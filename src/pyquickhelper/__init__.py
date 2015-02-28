@@ -36,7 +36,7 @@ from .loghelper.convert_helper          import str_to_datetime
 from .filehelper.synchelper             import explore_folder, synchronize_folder, has_been_updated, remove_folder
 from .filehelper.synchelper             import explore_folder_iterfile, explore_folder_iterfile_repo
 from .pandashelper.readh                import read_url
-from .pandashelper.tblformat            import df_to_rst, df_to_html
+from .pandashelper.tblformat            import df2rst, df2html
 from .pandashelper.tblfunction          import isempty, isnan
 from .helpgen                           import get_help_usage
 from .helpgen.sphinx_main               import generate_help_sphinx, process_notebooks

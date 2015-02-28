@@ -278,7 +278,8 @@ def _this_fLOG (*l, **p) :
 
 def get_relative_path (folder, file) :
     """
-    return the relative path between a folder and a file
+    private function, return the relative path or absolute between a folder and a file,
+    use `relpath <https://docs.python.org/3.4/library/os.path.html#os.path.relpath>`_
 
     @param      folder      folder
     @param      file        file

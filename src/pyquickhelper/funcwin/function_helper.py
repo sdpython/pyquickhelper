@@ -148,20 +148,13 @@ def private_get_function (function_name) :
     if "." in function_name :
         module = function_name.split (".")
         name   = module [-1]
-        #module = ".".join (module [:-1])
-        module = module [:-1]
-        fname  = ".".join(module [:-1])
+        fname  = ".".join( module [:-1] )
 
         if fname in sys.modules :
             mod = sys.modules[fname]
         else :
             mod    = __import__ (fname, globals (), locals (),[], 0)
 
-        modn   = module[-1]
-        if modn not in mod.__dict__ :
-            raise KeyError ("module %s not in %s (path %s)" % \
-                   (module, str (mod.__dict__.keys ()), mod.__file__))
-        mod = mod.__dict__ [modn]
         if name not in mod.__dict__ :
             raise KeyError ("module %s, function %s not in %s (path %s)" % \
                    (module, name, str (mod.__dict__.keys ()), mod.__file__))

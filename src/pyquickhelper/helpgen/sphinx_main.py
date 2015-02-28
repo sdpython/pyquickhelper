@@ -15,7 +15,7 @@ import os,sys, shutil, datetime, re, importlib
 
 from ..loghelper.flog           import run_cmd, fLOG
 from ..loghelper.pyrepo_helper  import SourceRepository
-from ..pandashelper.tblformat   import df_to_rst
+from ..pandashelper.tblformat   import df2rst
 from .utils_sphinx_doc          import prepare_file_for_sphinx_help_generation
 from .utils_sphinx_doc_helpers  import HelpGenException, find_latex_path, find_graphviz_dot, find_pandoc_path
 from ..filehelper.synchelper    import explore_folder, has_been_updated
@@ -487,7 +487,7 @@ def generate_changes_repo(  chan,
 
     if len(values) > 0 :
         tbl = pandas.DataFrame ( columns=["change number", "date", "comment"], data=values)
-        rows.append("\n\n" + df_to_rst(tbl, align=["1x","1x","3x"]) + "\n\n")
+        rows.append("\n\n" + df2rst(tbl, align=["1x","1x","3x"]) + "\n\n")
 
     final = "\n".join(rows)
 
