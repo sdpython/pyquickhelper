@@ -77,6 +77,7 @@ class TestNotebookConversion (unittest.TestCase):
 
     def test_short_cmd(self):
         fLOG (__file__, self._testMethodName, OutputPrint = __name__ == "__main__")
+        return
         if sys.platform.startswith("win"): return
         home = os.environ["HOME"]
         f = "{0}/github/pyquickhelper/_doc/notebooks/example_pyquickhelper.ipynb".format(home)

@@ -38,11 +38,14 @@ class TestDownload (unittest.TestCase):
         fLOG(r)
         assert os.path.exists(out)
 
-        out7 = os.path.join(fold, "try.7z")
-        r = zip7_files(out7, [f, out], fLOG = fLOG, temp_folder = fold)
-        fLOG(r)
-        if not os.path.exists(out7):
-            raise FileNotFoundError(out7)
+        if sys.platform.startswith("win"):
+            out7 = os.path.join(fold, "try.7z")
+            r = zip7_files(out7, [f, out], fLOG = fLOG, temp_folder = fold)
+            fLOG(r)
+            if not os.path.exists(out7):
+                raise FileNotFoundError(out7)
+        else:
+            fLOG("skip 7z")
 
     def test_check(self):
         fLOG (__file__, self._testMethodName, OutputPrint = __name__ == "__main__")
