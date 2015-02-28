@@ -20,7 +20,9 @@ dateutils>=0.6.6
 docutils>=0.12
 hachibee-sphinx-theme>=0.2.4
 ipython>=2.4.0
+jsonschema==2.4.0
 lxml>=3.3.5
+matplotlib>=1.4.2
 mechanize>=0.2.5
 pkgtools>=0.7.3
 pycparser>=2.10
