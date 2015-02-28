@@ -7,12 +7,17 @@
     This file was renamed into *files_status.py*.
 """
 
-import os, datetime, shutil, hashlib
+import os
+import datetime
+import shutil
+import hashlib
 
-from ..loghelper.flog   import noLOG
-from .file_info         import convert_st_date_to_datetime, checksum_md5, FileInfo
+from ..loghelper.flog import noLOG
+from .file_info import convert_st_date_to_datetime, checksum_md5, FileInfo
 
-class FilesStatus :
+
+class FilesStatus:
+
     """
     this classes maintains a list of files
     and does some verifications in order to check if a file
@@ -22,54 +27,62 @@ class FilesStatus :
         This class was renamed from FileTreeStatus into ``FilesStatus``
 
     """
-    def __init__ (self, file, fLOG = noLOG) :
+
+    def __init__(self, file, fLOG=noLOG):
         """
         file which will contains the status
         @param      file            file, if None, fill _children
         @param      fLOG            logging function
         """
-        self._file              = file
-        self.copyFiles          = { }
-        self.fileKeep           = file
-        self.LOG                = fLOG
+        self._file = file
+        self.copyFiles = {}
+        self.fileKeep = file
+        self.LOG = fLOG
 
-        if os.path.exists(self.fileKeep) :
-            with open(self.fileKeep, "r", encoding="utf8") as f :
-                for ni,_ in enumerate(f.readlines()) :
-                    if ni == 0 and _.startswith("\ufeff") :
-                        _ = _ [len("\ufeff"):]
+        if os.path.exists(self.fileKeep):
+            with open(self.fileKeep, "r", encoding="utf8") as f:
+                for ni, _ in enumerate(f.readlines()):
+                    if ni == 0 and _.startswith("\ufeff"):
+                        _ = _[len("\ufeff"):]
                     spl = _.strip("\r\n ").split("\t")
-                    try :
-                        if len(spl) >= 2 :
-                            a,b  = spl[:2]
+                    try:
+                        if len(spl) >= 2:
+                            a, b = spl[:2]
                             obj = FileInfo(a, int(b), None, None, None)
-                            if len(spl) > 2 and len(spl[2]) > 0 : obj.set_date (convert_st_date_to_datetime(spl[2]))
-                            if len(spl) > 3 and len(spl[3]) > 0 : obj.set_mdate (convert_st_date_to_datetime(spl[3]))
-                            if len(spl) > 4 and len(spl[4]) > 0 : obj.set_md5 (spl[4])
+                            if len(spl) > 2 and len(spl[2]) > 0:
+                                obj.set_date(
+                                    convert_st_date_to_datetime(spl[2]))
+                            if len(spl) > 3 and len(spl[3]) > 0:
+                                obj.set_mdate(
+                                    convert_st_date_to_datetime(spl[3]))
+                            if len(spl) > 4 and len(spl[4]) > 0:
+                                obj.set_md5(spl[4])
                             self.copyFiles[a] = obj
-                        else :
-                            raise ValueError("expecting a filename and a date on this line: " + _)
-                    except Exception as e :
-                        raise Exception("issue with line:\n  {0} -- {1}".format(_, spl)) from e
+                        else:
+                            raise ValueError(
+                                "expecting a filename and a date on this line: " + _)
+                    except Exception as e:
+                        raise Exception(
+                            "issue with line:\n  {0} -- {1}".format(_, spl)) from e
 
         # contains all file to update
-        self.modifiedFile = { }
+        self.modifiedFile = {}
 
     def __iter__(self):
         """
         iterates on all files stored in the current file, yield a couple ( filename, FileInfo )
         """
-        for a,b in self.copyFiles.items():
-            yield a,b
+        for a, b in self.copyFiles.items():
+            yield a, b
 
     def iter_modified(self):
         """
         iterates on all modified files yield a couple ( filename, reason )
         """
-        for a,b in self.modifiedFile:
-            yield a,b
+        for a, b in self.modifiedFile:
+            yield a, b
 
-    def save_dates (self, checkfile = None) :
+    def save_dates(self, checkfile=None):
         """
         save the status of the copy
 
@@ -78,61 +91,71 @@ class FilesStatus :
         if checkfile is None:
             checkfile = []
         rows = []
-        for k in sorted(self.copyFiles) :
-            obj  = self.copyFiles[k]
-            da   = "" if obj.date is None else str(obj.date)
-            mda  = "" if obj.mdate is None else str(obj.mdate)
+        for k in sorted(self.copyFiles):
+            obj = self.copyFiles[k]
+            da = "" if obj.date is None else str(obj.date)
+            mda = "" if obj.mdate is None else str(obj.mdate)
             sum5 = "" if obj.checksum is None else str(obj.checksum)
 
-            if k in checkfile and len(da)   == 0  : raise ValueError("there should be a date for file " + k + "\n" + str(obj))
-            if k in checkfile and len(mda)  == 0  : raise ValueError("there should be a mdate for file " + k + "\n" + str(obj))
-            if k in checkfile and len(sum5) <= 10 : raise ValueError("there should be a checksum( for file " + k + "\n" + str(obj))
+            if k in checkfile and len(da) == 0:
+                raise ValueError(
+                    "there should be a date for file " + k + "\n" + str(obj))
+            if k in checkfile and len(mda) == 0:
+                raise ValueError(
+                    "there should be a mdate for file " + k + "\n" + str(obj))
+            if k in checkfile and len(sum5) <= 10:
+                raise ValueError(
+                    "there should be a checksum( for file " + k + "\n" + str(obj))
 
-            values = [ k, str(obj.size), da, mda, sum5 ]
-            sval   = "%s\n" % "\t".join( values)
-            if "\tNone" in sval :
-                raise AssertionError("this case should happen " + sval + "\n" + str(obj))
+            values = [k, str(obj.size), da, mda, sum5]
+            sval = "%s\n" % "\t".join(values)
+            if "\tNone" in sval:
+                raise AssertionError(
+                    "this case should happen " + sval + "\n" + str(obj))
 
-            rows.append ( sval )
+            rows.append(sval)
 
         with open(self.fileKeep, "w", encoding="utf8") as f:
-            for r in rows : f.write(r)
+            for r in rows:
+                f.write(r)
 
-    def has_been_modified_and_reason (self, file) :
+    def has_been_modified_and_reason(self, file):
         """
         returns True, reason if a file was modified or False,None if not
         @param      file            filename
         @return                     True,reason or False,None
         """
-        res    = True
+        res = True
         reason = None
 
-        if file not in self.copyFiles :
+        if file not in self.copyFiles:
             reason = "new"
-            res    = True
-        else :
+            res = True
+        else:
             obj = self.copyFiles[file]
             st = os.stat(file)
-            if st.st_size != obj.size :
-                reason = "size %s != old size %s" % (str(st.st_size), str(obj.size))
-                res    = True
-            else :
+            if st.st_size != obj.size:
+                reason = "size %s != old size %s" % (
+                    str(st.st_size), str(obj.size))
+                res = True
+            else:
                 l = obj.mdate
                 _m = st.st_mtime
                 d = convert_st_date_to_datetime(_m)
-                if d != l :
+                if d != l:
                     # dates are different but files might be the same
-                    if obj.checksum is not None :
-                        ch = checksum_md5 (file)
-                        if ch != obj.checksum :
-                            reason = "date/md5 %s != old date %s  md5 %s != %s" % (str(l), str(d), obj.checksum, ch)
-                            res    = True
-                        else :
+                    if obj.checksum is not None:
+                        ch = checksum_md5(file)
+                        if ch != obj.checksum:
+                            reason = "date/md5 %s != old date %s  md5 %s != %s" % (
+                                str(l), str(d), obj.checksum, ch)
+                            res = True
+                        else:
                             res = False
-                    else :
+                    else:
                         # we cannot know, we do nothing
                         res = False
-                else :
+                else:
                     # mda.... no expected modification (dates did not change)
                     res = False
 
@@ -147,20 +170,21 @@ class FilesStatus :
         """
         if file in self.modifiedFile:
             raise KeyError("file {0} is already present".format(file))
-        self.modifiedFile [ file ] = reason
+        self.modifiedFile[file] = reason
 
-    def add_if_modified (self, file):
+    def add_if_modified(self, file):
         """
         add a file to self.modifiedList if it was modified
         @param      file    filename
         @return             True or False
         """
-        res,reason = self.has_been_modified_and_reason(file, add_to_list = False)
-        if res :
+        res, reason = self.has_been_modified_and_reason(
+            file, add_to_list=False)
+        if res:
             self.add_modified_file(res, reason)
         return res
 
-    def difference(self, files, u4 = False, nlog = None):
+    def difference(self, files, u4=False, nlog=None):
         """
         goes through the list of files and tells which one has changed
 
@@ -169,44 +193,45 @@ class FilesStatus :
         @param      nlog            if not None, print something every ``nlog`` processed files
         @return                     iterator on files which changed
         """
-        memo = { }
-        if u4 :
+        memo = {}
+        if u4:
             nb = 0
-            for file in files :
+            for file in files:
                 memo[file.fullname] = True
-                if file._file is None : continue
+                if file._file is None:
+                    continue
                 nb += 1
-                if nlog is not None and nb % nlog == 0 :
+                if nlog is not None and nb % nlog == 0:
                     self.LOG("[FileTreeStatus], processed", nb, "files")
 
                 full = file.fullname
                 r, reason = self.has_been_modified_and_reason(full)
-                if r :
+                if r:
                     if reason == "new":
-                        r = ( ">+", file._file, file, None )
+                        r = (">+", file._file, file, None)
                         yield r
-                    else :
-                        r = ( ">", file._file, file, None )
+                    else:
+                        r = (">", file._file, file, None)
                         yield r
-                else :
-                    r = ( "==", file._file, file, None )
+                else:
+                    r = ("==", file._file, file, None)
                     yield r
-        else :
+        else:
             nb = 0
-            for file in files :
+            for file in files:
                 memo[file.fullpath] = True
                 nb += 1
-                if nlog is not None and nb % nlog == 0 :
+                if nlog is not None and nb % nlog == 0:
                     self.LOG("[FileTreeStatus], processed", nb, "files")
                 full = file.fullname
                 if self.has_been_modified_and_reason(full):
                     yield file
 
-        for key,file in self.copyFiles.items():
+        for key, file in self.copyFiles.items():
             if file.filename not in memo:
-                yield ( "<+", file.filename, None, None )
+                yield ("<+", file.filename, None, None)
 
-    def update_copied_file(self, file, delete = False) :
+    def update_copied_file(self, file, delete=False):
         """
         update the file in copyFiles (before saving), update all fields
         @param      file        filename
@@ -215,14 +240,15 @@ class FilesStatus :
         """
         if delete:
             if file not in self.copyFiles:
-                raise FileNotFoundError("unable to find a file in the list of monitored files: {0}".format(file))
+                raise FileNotFoundError(
+                    "unable to find a file in the list of monitored files: {0}".format(file))
             del self.copyFiles[file]
-        else :
-            st      = os.stat(file)
-            size    = st.st_size
-            mdate   = convert_st_date_to_datetime(st.st_mtime)
-            date    = datetime.datetime.now()
-            md      = checksum_md5 (file)
+        else:
+            st = os.stat(file)
+            size = st.st_size
+            mdate = convert_st_date_to_datetime(st.st_mtime)
+            date = datetime.datetime.now()
+            md = checksum_md5(file)
             obj = FileInfo(file, size, date, mdate, md)
             self.copyFiles[file] = obj
             return obj

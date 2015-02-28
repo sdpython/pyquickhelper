@@ -3,6 +3,7 @@
 @brief Subpart related to the documentation generation.
 """
 
+
 def get_help_usage():
     """
     returns the usage ``python setup.py build_sphinx``
@@ -16,9 +17,9 @@ def get_help_usage():
         Usage:
 
             python setup.py build_sphinx
-        """.replace("        ","")
+        """.replace("        ", "")
 
 
-from .sphinx_main               import generate_help_sphinx, process_notebooks
-from .utils_sphinx_config       import NbImage
-from .convert_doc_helper        import docstring2html
+from .sphinx_main import generate_help_sphinx, process_notebooks
+from .utils_sphinx_config import NbImage
+from .convert_doc_helper import docstring2html

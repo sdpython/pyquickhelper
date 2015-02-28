@@ -4,18 +4,25 @@
 
 """
 
-import inspect, os, copy, re, sys, types, importlib
+import inspect
+import os
+import copy
+import re
+import sys
+import types
+import importlib
 from ..pandashelper.tblformat import df2rst
 from ..loghelper.flog import noLOG
 
+
 class HelpGenException(Exception):
+
     """
     custom exception
     """
     pass
 
 _length_truncated_doc = 120
-
 
 
 add_file_rst_template = """
@@ -54,19 +61,19 @@ __ADDEDMEMBERS__
 
 """
 
-add_file_rst_template_cor = { "class":"__CLASSES__",
-                              "method":"__METHODS__",
-                              "function":"__FUNCTIONS__",
-                              "staticmethod":"__STATICMETHODS__",
-                              "property":"__PROPERTIES__",
-                              }
+add_file_rst_template_cor = {"class": "__CLASSES__",
+                             "method": "__METHODS__",
+                             "function": "__FUNCTIONS__",
+                             "staticmethod": "__STATICMETHODS__",
+                             "property": "__PROPERTIES__",
+                             }
 
-add_file_rst_template_title = { "class":"Classes",
-                                "method":"Methods",
-                                "function":"Functions",
-                                "staticmethod":"Static Methods",
-                                "property":"Properties",
-                                }
+add_file_rst_template_title = {"class": "Classes",
+                               "method": "Methods",
+                               "function": "Functions",
+                               "staticmethod": "Static Methods",
+                               "property": "Properties",
+                               }
 
 #
 #:platform: Unix, Windows
@@ -77,9 +84,10 @@ add_file_rst_template_title = { "class":"Classes",
 #   :toctree: __FILENAMENOEXT__/
 #
 
+
 def compute_truncated_documentation(doc,
-                                    length = _length_truncated_doc,
-                                    raise_exception = False):
+                                    length=_length_truncated_doc,
+                                    raise_exception=False):
     """
     produces a truncated version of a docstring
     @param      doc                 doc string
@@ -87,38 +95,40 @@ def compute_truncated_documentation(doc,
     @param      raise_exception     raises an exception when the result is empty and the input is not
     @return                         truncated doc string
     """
-    if len(doc) == 0 :
+    if len(doc) == 0:
         return doc
-    else :
+    else:
         doc_ = doc
 
-        if "@brief " in doc :
+        if "@brief " in doc:
             doc = doc.split("@brief ")
             doc = doc[-1]
 
         doc = doc.strip("\n\r\t ")
         doc = doc.replace("\n", " ").replace("\r", "").strip("\n\r\t ")
 
-        for subs in ["@" + "param", "@" + "return", ":param", ":return" ] :
-            if subs in doc :
+        for subs in ["@" + "param", "@" + "return", ":param", ":return"]:
+            if subs in doc:
                 doc = doc[:doc.find(subs)].strip("\r\t ")
 
-        if len(doc) >= _length_truncated_doc :
+        if len(doc) >= _length_truncated_doc:
             spl = doc.split(" ")
             doc = ""
-            cq  = 0
-            i   = 0
+            cq = 0
+            i = 0
             while len(doc) < _length_truncated_doc or cq % 2 != 0:
-                cq  += spl[i].count("`")
+                cq += spl[i].count("`")
                 doc += spl[i] + " "
-                i   += 1
+                i += 1
             doc += "..."
 
-        if raise_exception and len(doc) == 0 :
+        if raise_exception and len(doc) == 0:
             raise ValueError("bad format for docstring: " + doc_)
         return doc
 
-class ModuleMemberDoc :
+
+class ModuleMemberDoc:
+
     """
     represents a member in a module
 
@@ -133,7 +143,8 @@ class ModuleMemberDoc :
     @var    truncdoc    (str) truncated documentation
     @var    owner       (module)
     """
-    def __init__ (self, obj, ty = None, cl = None, name = None, module = None) :
+
+    def __init__(self, obj, ty=None, cl=None, name=None, module=None):
         """
         constructor
         @param      obj     any kind of object
@@ -146,17 +157,19 @@ class ModuleMemberDoc :
 
         self.owner = module
         self.obj = obj
-        self.cl  = cl
-        if ty != None : self.type = ty
+        self.cl = cl
+        if ty != None:
+            self.type = ty
         self.name = name
         self.populate()
 
-        if self.cl is None and self.type in [ "method", "staticmethod", "property" ] :
+        if self.cl is None and self.type in ["method", "staticmethod", "property"]:
             self.cl = self.obj.__class__
-        if self.cl is None and self.type in [ "method", "staticmethod", "property" ] :
-            raise TypeError("N/a method must have a class (not None): %s" % str(self.obj))
+        if self.cl is None and self.type in ["method", "staticmethod", "property"]:
+            raise TypeError(
+                "N/a method must have a class (not None): %s" % str(self.obj))
 
-    def add_prefix(self, prefix) :
+    def add_prefix(self, prefix):
         """
         adds a prefix (for the documentation)
         @param      prefix      string
@@ -164,87 +177,92 @@ class ModuleMemberDoc :
         self.prefix = prefix
 
     @property
-    def key (self) :
+    def key(self):
         """
         returns a key to identify it
         """
         return "%s;%s" % (self.type, self.name)
 
-    def populate(self) :
+    def populate(self):
         """
         extract some information about an object
         """
         obj = self.obj
-        ty  = self.type if "type" in self.__dict__ else None
-        if ty == None :
-            if inspect.isclass (obj) :
+        ty = self.type if "type" in self.__dict__ else None
+        if ty == None:
+            if inspect.isclass(obj):
                 self.type = "class"
-            elif inspect.ismethod (obj) :
+            elif inspect.ismethod(obj):
                 self.type = "method"
-            elif inspect.isfunction(obj) :
+            elif inspect.isfunction(obj):
                 self.type = "function"
-            elif inspect.isgenerated(obj) :
+            elif inspect.isgenerated(obj):
                 self.type = "generator"
-            else :
-                raise TypeError ("E/unable to deal with this type: " + str(type(obj)))
+            else:
+                raise TypeError(
+                    "E/unable to deal with this type: " + str(type(obj)))
 
         if ty == "method":
-            if isinstance(obj, staticmethod) :
+            if isinstance(obj, staticmethod):
                 self.type = "staticmethod"
             elif isinstance(obj, property):
                 self.type = "property"
-            elif sys.version_info >= (3,4):
+            elif sys.version_info >= (3, 4):
                 # should be replaced by something more robust
-                if len(obj.__code__.co_varnames) == 0 :
+                if len(obj.__code__.co_varnames) == 0:
                     self.type = "staticmethod"
                 elif obj.__code__.co_varnames[0] != 'self':
                     self.type = "staticmethod"
 
         # module
-        try :
+        try:
             self.module = obj.__module__
-            self.name   = obj.__name__
+            self.name = obj.__name__
         except Exception as e:
             if self.type in ["property", "staticmethod"]:
                 self.module = self.cl.__module__
-            else :
+            else:
                 self.module = None
-            if self.name is None : raise IndexError("unable to find a name for this object")
+            if self.name is None:
+                raise IndexError("unable to find a name for this object")
 
         # documentation
-        if self.type == "staticmethod" :
-            try :
+        if self.type == "staticmethod":
+            try:
                 self.doc = obj.__func__.__doc__
-            except Exception as ie :
+            except Exception as ie:
                 self.doc = str(ie) + " \n----------\n " + str(dir(obj))
-        else :
-            try :
+        else:
+            try:
                 self.doc = obj.__doc__
-            except Exception as ie :
+            except Exception as ie:
                 self.doc = str(ie) + " \n----------\n " + str(dir(obj))
 
-        try :    self.file   = self.module.__file__
-        except : self.file = ""
+        try:
+            self.file = self.module.__file__
+        except:
+            self.file = ""
 
         # truncated documentation
-        if self.doc is not None :
+        if self.doc is not None:
             self.truncdoc = compute_truncated_documentation(self.doc)
-        else :
+        else:
             self.doc = ""
             self.truncdoc = ""
 
-        if self.name is None :
+        if self.name is None:
             raise TypeError("S/name is None for object: %s" % str(self.obj))
 
-    def __str__(self) :
+    def __str__(self):
         """
         usual
         """
         clname = ".%s" % self.cl.__name__ if self.cl is not None else ""
-        mes = "%s in %s%s: %s (%s)" % (self.type, self.module, clname, self.name, self.truncdoc)
+        mes = "%s in %s%s: %s (%s)" % (
+            self.type, self.module, clname, self.name, self.truncdoc)
         return mes
 
-    def rst_link(self, prefix = None, class_in_bracket = True) :
+    def rst_link(self, prefix=None, class_in_bracket=True):
         """
         returns a sphinx link on the object
         @param      prefix              to correct the path with a prefix
@@ -254,54 +272,58 @@ class ModuleMemberDoc :
                                             :%s:`%s <%s>`               or
                                             :%s:`%s <%s>` (class)
         """
-        cor = {"function":"func", "method":"meth",
-                "staticmethod":"meth", "property":"meth" }
+        cor = {"function": "func", "method": "meth",
+               "staticmethod": "meth", "property": "meth"}
 
         if self.type in ["method", "staticmethod", "property"]:
             path = "%s.%s.%s" % (self.module, self.cl.__name__, self.name)
-        else :
+        else:
             path = "%s.%s" % (self.module, self.name)
 
-        if prefix is not None :
+        if prefix is not None:
             path = "%s.%s" % (prefix, path)
 
-        if self.type in ["method", "staticmethod", "property"] and class_in_bracket :
-            link = ":%s:`%s <%s>` (%s)" % (cor.get(self.type, self.type), self.name, path, self.cl.__name__)
-        else :
-            link = ":%s:`%s <%s>`" % (cor.get(self.type, self.type), self.name, path)
+        if self.type in ["method", "staticmethod", "property"] and class_in_bracket:
+            link = ":%s:`%s <%s>` (%s)" % (
+                cor.get(self.type, self.type), self.name, path, self.cl.__name__)
+        else:
+            link = ":%s:`%s <%s>`" % (
+                cor.get(self.type, self.type), self.name, path)
         return link
 
     @property
-    def classname (self):
+    def classname(self):
         """
         returns the class name if the object is a method
         @return     class object
         """
-        if self.type in ["method", "staticmethod", "property"] :
+        if self.type in ["method", "staticmethod", "property"]:
             return self.cl
-        else :
+        else:
             return None
 
-    def __cmp__ (self, oth) :
+    def __cmp__(self, oth):
         """
         comparison operators, compares first the first, second the name (lower case)
         @param      oth         other object
         @return                 -1, 0 or 1
         """
-        if self.type == oth.type :
+        if self.type == oth.type:
             ln = self.name.lower()
             lo = oth.name.lower()
-            c  = -1 if ln < lo else (1 if ln > lo else 0)
-            if c == 0 and self.type == "method" :
+            c = -1 if ln < lo else (1 if ln > lo else 0)
+            if c == 0 and self.type == "method":
                 ln = self.cl.__name__
                 lo = self.cl.__name__
-                c  = -1 if ln < lo else (1 if ln > lo else 0)
+                c = -1 if ln < lo else (1 if ln > lo else 0)
             return c
-        else :
+        else:
             return -1 if self.type < oth.type else (1 if self.type > oth.type else 0)
 
     def __lt__(self, oth): return self.__cmp__(oth) == -1
+
     def __eq__(self, oth): return self.__cmp__(oth) == 0
+
     def __gt__(self, oth): return self.__cmp__(oth) == 1
 
     def __str__(self):
@@ -310,11 +332,14 @@ class ModuleMemberDoc :
         """
         return "[key={0},clname={1},type={2},module_name={3},file={4}".format(self.key, self.classname, self.type, self.module, self.owner.__file__)
 
-class IndexInformation :
+
+class IndexInformation:
+
     """
     keeps some information to index
     """
-    def __init__ (self, type, label, name, text, rstfile, fullname) :
+
+    def __init__(self, type, label, name, text, rstfile, fullname):
         """
         @param      type        each type gets an index
         @param      label       label used to index
@@ -336,73 +361,77 @@ class IndexInformation :
         """
         return "%s -- %s" % (self.label, self.rst_link())
 
-    def set_rst_file(self, rstfile) :
+    def set_rst_file(self, rstfile):
         """
         sets the rst file and checks the label is present in it
         @param      rst_file        rst_file
         """
         self.rstfile = rstfile
-        if rstfile is not None :
+        if rstfile is not None:
             self.add_label_if_not_present()
 
     @property
-    def truncdoc (self):
+    def truncdoc(self):
         """
         returns self.text
         """
-        return self.text.replace("\n", "  ").replace("\t","").replace("\r","")
+        return self.text.replace("\n", "  ").replace("\t", "").replace("\r", "")
 
     def add_label_if_not_present(self):
         """
         The function checks the label is present in the original file.
         """
-        if self.rstfile is not None :
-            with open(self.rstfile,"r",encoding="utf8") as f :
+        if self.rstfile is not None:
+            with open(self.rstfile, "r", encoding="utf8") as f:
                 content = f.read()
             label = ".. _%s:" % self.label
-            if label not in content :
+            if label not in content:
                 content = "\n%s\n%s" % (label, content)
-                with open(self.rstfile,"w",encoding="utf8") as f :
+                with open(self.rstfile, "w", encoding="utf8") as f:
                     f.write(content)
 
-    def get_label(existing, suggestion) :
+    def get_label(existing, suggestion):
         """
         returns a new label given the existing ones
         @param  existing    existing labels stored in a dictionary
         @param  suggestion  the suggestion will be chosen if it does not exists, ``suggestion + zzz`` otherwise
         @return             string
         """
-        suggestion = suggestion.replace("_","").replace(".","")
-        while suggestion in existing :
+        suggestion = suggestion.replace("_", "").replace(".", "")
+        while suggestion in existing:
             suggestion += "z"
         return suggestion
     get_label = staticmethod(get_label)
 
-    def rst_link(self) :
+    def rst_link(self):
         """
         return a link rst
         @return     rst link
         """
-        if self.label.startswith("_") :
+        if self.label.startswith("_"):
             return ":ref:`%s`" % self.label[1:]
-        else :
+        else:
             return ":ref:`%s`" % self.label
 
-class RstFileHelp :
+
+class RstFileHelp:
+
     """
     defines what a rst file and what it describes
     """
-    def __init__ (self, file, rst, doc) :
+
+    def __init__(self, file, rst, doc):
         """
         @param      file        original filename
         @param      rst         produced rst file
         @param      doc         documentation if any
         """
         self.file = file
-        self.rst  = rst
-        self.doc  = doc
+        self.rst = rst
+        self.doc = doc
 
-def import_module (rootm, filename, log_function, additional_sys_path = [ ], fLOG=noLOG) :
+
+def import_module(rootm, filename, log_function, additional_sys_path=[], fLOG=noLOG):
     """
     import a module using its filename
     @param      rootm                   root of the module (for relative import)
@@ -417,60 +446,62 @@ def import_module (rootm, filename, log_function, additional_sys_path = [ ], fLO
     .. versionadded:: 1.0
         Parameter *fLOG* was added.
     """
-    memo    = copy.deepcopy(sys.path)
-    l       = filename.replace("\\","/")
-    sdir    = os.path.abspath(os.path.split (l) [0])
-    relpath = os.path.relpath( l, rootm ).replace("\\","/")
-    spl     = relpath.split("/")
-    fmod    = spl[0]  # this is the prefix
+    memo = copy.deepcopy(sys.path)
+    l = filename.replace("\\", "/")
+    sdir = os.path.abspath(os.path.split(l)[0])
+    relpath = os.path.relpath(l, rootm).replace("\\", "/")
+    spl = relpath.split("/")
+    fmod = spl[0]  # this is the prefix
     relpath = "/".join(spl[1:])
 
     # has init
-    init_   = os.path.join(sdir, "__init__.py")
+    init_ = os.path.join(sdir, "__init__.py")
     if init_ != filename and not os.path.exists(init_):
         # no init
         return "No __init__.py, unable to import %s" % (filename), fmod
 
     # we remove every path ending by "src"
     rem = []
-    for i,p in enumerate(sys.path):
-        if p.endswith("src") or ".zip" in p: rem.append(i)
+    for i, p in enumerate(sys.path):
+        if p.endswith("src") or ".zip" in p:
+            rem.append(i)
     rem.reverse()
-    for r in rem : del sys.path[r]
+    for r in rem:
+        del sys.path[r]
 
     # remove fmod from sys.modules
     addback = []
-    rem=[]
-    for n,m in sys.modules.items():
+    rem = []
+    for n, m in sys.modules.items():
         if n.startswith(fmod):
             rem.append(n)
-            addback.append( (n, m) )
+            addback.append((n, m))
     for r in rem:
         del sys.modules[r]
 
     # full path
-    fullpath = sdir.replace("\\","/")
+    fullpath = sdir.replace("\\", "/")
     if rootm is not None:
         root = rootm
         tl = relpath
-        fi = tl.replace(".py","").replace("/",".")
+        fi = tl.replace(".py", "").replace("/", ".")
         fi = fmod + "." + fi
         context = None
-        if fi.endswith(".__init__") :
-            fi = fi [ :-len(".__init__") ]
-    else :
+        if fi.endswith(".__init__"):
+            fi = fi[:-len(".__init__")]
+    else:
         root = sdir
-        tl = os.path.split (l) [1]
-        fi = tl.replace (".py", "")
+        tl = os.path.split(l)[1]
+        fi = tl.replace(".py", "")
         context = None
 
-    if additional_sys_path is not None and len(additional_sys_path) > 0 :
+    if additional_sys_path is not None and len(additional_sys_path) > 0:
         # there is an issue here due to the confusion in the paths
         # the paths should be removed just after the import
         sys.path.extend(additional_sys_path)
 
-    sys.path.insert (0, root)
-    try :
+    sys.path.insert(0, root)
+    try:
         try:
             mo = importlib.import_module(fi, context)
         except ImportError as e1:
@@ -480,13 +511,13 @@ def import_module (rootm, filename, log_function, additional_sys_path = [ ], fLO
             mo = mo_spec.loader.load_module()
             fLOG("successful try", mo_spec)
 
-        if not mo.__file__.replace("\\","/").endswith(filename.replace("\\","/").strip("./")):
+        if not mo.__file__.replace("\\", "/").endswith(filename.replace("\\", "/").strip("./")):
             namem = os.path.splitext(os.path.split(filename)[-1])[0]
 
             if "src" in sys.path:
-                sys.path = [ _ for _ in sys.path if _ != "src" ]
+                sys.path = [_ for _ in sys.path if _ != "src"]
 
-            if namem in sys.modules :
+            if namem in sys.modules:
                 del sys.modules[namem]
                 # add the context here for relative import
                 # use importlib.import_module with the package argument filled
@@ -496,27 +527,30 @@ def import_module (rootm, filename, log_function, additional_sys_path = [ ], fLO
                 except ImportError as e2:
                     mo = importlib.util.find_spec(fi, context)
 
-                if not mo.__file__.replace("\\","/").endswith(filename.replace("\\","/").strip("./")):
-                    raise ImportError("the wrong file was imported (2):\nEXP: {0}\nIMP: {1}\nPATHS:\n   - {2}" \
-                           .format(filename, mo.__file__, "\n   - ".join(sys.path)))
+                if not mo.__file__.replace("\\", "/").endswith(filename.replace("\\", "/").strip("./")):
+                    raise ImportError("the wrong file was imported (2):\nEXP: {0}\nIMP: {1}\nPATHS:\n   - {2}"
+                                      .format(filename, mo.__file__, "\n   - ".join(sys.path)))
             else:
-                raise ImportError("the wrong file was imported (1):\nEXP: {0}\nIMP: {1}\nPATHS:\n   - {2}" \
-                           .format(filename, mo.__file__, "\n   - ".join(sys.path)))
+                raise ImportError("the wrong file was imported (1):\nEXP: {0}\nIMP: {1}\nPATHS:\n   - {2}"
+                                  .format(filename, mo.__file__, "\n   - ".join(sys.path)))
 
         sys.path = memo
         log_function("importing ", filename, " successfully", mo.__file__)
-        for n,m in addback: sys.modules[n] = m
+        for n, m in addback:
+            sys.modules[n] = m
         return mo, fmod
 
-    except ImportError as e :
+    except ImportError as e:
         exp = re.compile("No module named '(.*)'")
         find = exp.search(str(e))
-        if find :
+        if find:
             module = find.groups()[0]
-            log_function("unable to import module " + module + " --- " + str(e).replace("\n"," "))
+            log_function(
+                "unable to import module " + module + " --- " + str(e).replace("\n", " "))
 
-        log_function("  File \"%s\", line %d" % (__file__,501))
-        log_function("-- unable to import module (1) ", filename, ",", fi, " in path ", sdir, " Error: ", str(e))
+        log_function("  File \"%s\", line %d" % (__file__, 501))
+        log_function("-- unable to import module (1) ", filename,
+                     ",", fi, " in path ", sdir, " Error: ", str(e))
         log_function("    cwd ", os.getcwd())
         log_function("    path", sdir)
         import traceback
@@ -525,56 +559,63 @@ def import_module (rootm, filename, log_function, additional_sys_path = [ ], fLO
         log_function("      version", sys.version_info)
         log_function("      stack:\n", stack)
 
-        message = [ stack ]
-        message.append ("      executable: " + sys.executable)
-        message.append ("      version: " + str(sys.version_info))
+        message = [stack]
+        message.append("      executable: " + sys.executable)
+        message.append("      version: " + str(sys.version_info))
         for p in sys.path:
-            message.append ("      path: " + p)
+            message.append("      path: " + p)
         for p in sorted(sys.modules):
             try:
                 m = sys.modules[p].__path__
             except AttributeError:
                 m = str(sys.modules[p])
-            message.append ("      module: {0}={1}".format(p,m))
+            message.append("      module: {0}={1}".format(p, m))
 
         sys.path = memo
-        for n,m in addback: sys.modules[n] = m
+        for n, m in addback:
+            sys.modules[n] = m
 
         if 'File "<frozen importlib._bootstrap>"' in stack:
-            raise ImportError("frozen importlib._bootstrap is an issue:\n" + "\n".join(message)) from e
+            raise ImportError(
+                "frozen importlib._bootstrap is an issue:\n" + "\n".join(message)) from e
 
         return "unable to import %s\nError:\n%s" % (filename, str(e)), fmod
 
-    except SystemError as e :
-        log_function("-- unable to import module (2) ", filename, ",", fi, " in path ", sdir, " Error: ", str(e))
+    except SystemError as e:
+        log_function("-- unable to import module (2) ", filename,
+                     ",", fi, " in path ", sdir, " Error: ", str(e))
         import traceback
         stack = traceback.format_exc()
         log_function("      executable", sys.executable)
         log_function("      version", sys.version_info)
         log_function("      stack:\n", stack)
         sys.path = memo
-        for n,m in addback: sys.modules[n] = m
+        for n, m in addback:
+            sys.modules[n] = m
         return "unable to import %s\nError:\n%s" % (filename, str(e)), fmod
 
-    except Exception as e :
-        log_function("-- unable to import module (3) ", filename, ",", fi, " in path ", sdir, " Error: ", str(e))
+    except Exception as e:
+        log_function("-- unable to import module (3) ", filename,
+                     ",", fi, " in path ", sdir, " Error: ", str(e))
         import traceback
         stack = traceback.format_exc()
         log_function("      executable", sys.executable)
         log_function("      version", sys.version_info)
         log_function("      stack:\n", stack)
         sys.path = memo
-        for n,m in addback: sys.modules[n] = m
+        for n, m in addback:
+            sys.modules[n] = m
         return "unable to import %s\nError:\n%s" % (filename, str(e)), fmod
 
-def get_module_objects(mod) :
+
+def get_module_objects(mod):
     """
     gets all the classes from a module
     @param      mod     module objects
     @return             list of ModuleMemberDoc
     """
 
-    #exp = { "__class__":"",
+    # exp = { "__class__":"",
     #        "__dict__":"",
     #        "__doc__":"",
     #        "__format__":"",
@@ -585,36 +626,38 @@ def get_module_objects(mod) :
     #        "__weakref__":""
     #         }
 
-    cl = [ ]
+    cl = []
     for name, obj in inspect.getmembers(mod):
         if inspect.isclass(obj) or \
            inspect.isfunction(obj) or \
            inspect.isgenerator(obj) or \
-           inspect.ismethod(obj) :
-            cl.append ( ModuleMemberDoc (obj, module=mod) )
-            if inspect.isclass(obj) :
+           inspect.ismethod(obj):
+            cl.append(ModuleMemberDoc(obj, module=mod))
+            if inspect.isclass(obj):
                 for n, o in inspect.getmembers(obj):
-                    try :
-                        ok = ModuleMemberDoc (o, "method", cl = obj, name = n, module = mod)
-                        if ok.module is not None :
-                            cl.append ( ok  )
-                    except Exception as e :
-                        if str(e).startswith("S/") :
+                    try:
+                        ok = ModuleMemberDoc(
+                            o, "method", cl=obj, name=n, module=mod)
+                        if ok.module is not None:
+                            cl.append(ok)
+                    except Exception as e:
+                        if str(e).startswith("S/"):
                             raise e
 
-    res = [ ]
-    for _ in cl :
-        try :
-            #if _.module != None :
-            if _.module == mod.__name__ :
+    res = []
+    for _ in cl:
+        try:
+            # if _.module != None :
+            if _.module == mod.__name__:
                 res.append(_)
-        except :
+        except:
             pass
 
     res.sort()
     return res
 
-def process_var_tag(docstring, rst_replace = False, header = ["attribute", "meaning"]):
+
+def process_var_tag(docstring, rst_replace=False, header=["attribute", "meaning"]):
     """
     Process a docstring using tag ``@ var``, and return a list of 2-tuple
 
@@ -635,37 +678,38 @@ def process_var_tag(docstring, rst_replace = False, header = ["attribute", "mean
     reg = re.compile("[@]var +([_a-zA-Z][a-zA-Z0-9_]*?) +((?:(?!@var).)+)")
 
     docstring = docstring.split("\n")
-    docstring = [ _.strip("\r \t") for _ in docstring ]
-    docstring = [ _ if len(_) > 0 else "\n\n" for _ in docstring ]
+    docstring = [_.strip("\r \t") for _ in docstring]
+    docstring = [_ if len(_) > 0 else "\n\n" for _ in docstring]
     docstring = "\n".join(docstring)
     docstring = docstring.split("\n\n")
 
-    values    = [ ]
-    if rst_replace :
-        for line in docstring :
+    values = []
+    if rst_replace:
+        for line in docstring:
             line2 = line.replace("\n", " ")
-            if "@var" in line2 :
+            if "@var" in line2:
                 all = reg.findall(line2)
                 val = []
-                for a in all :
-                    val.append ( list(a) )
-                if len(val)>0 :
-                    tbl = DataFrame (columns=header, data=val)
+                for a in all:
+                    val.append(list(a))
+                if len(val) > 0:
+                    tbl = DataFrame(columns=header, data=val)
                     align = ["1x"] * len(header)
                     align[-1] = "3x"
-                    rst = df2rst(tbl, align = align)
+                    rst = df2rst(tbl, align=align)
                     values.append(rst)
-            else :
-                values.append (line)
+            else:
+                values.append(line)
         return "\n".join(values)
-    else :
-        for line in docstring :
+    else:
+        for line in docstring:
             line = line.replace("\n", " ")
-            if "@var" in line :
+            if "@var" in line:
                 alls = reg.findall(line)
-                for a in alls :
-                    values.append ( a )
+                for a in alls:
+                    values.append(a)
         return values
+
 
 def make_label_index(title, comment):
     """
@@ -677,19 +721,26 @@ def make_label_index(title, comment):
     @return                 label
     """
     def accept(c):
-        if "a" <= c <= "z" : return c
-        if "A" <= c <= "Z" : return c
-        if "0" <= c <= "9" : return c
-        if c in "-_" : return c
+        if "a" <= c <= "z":
+            return c
+        if "A" <= c <= "Z":
+            return c
+        if "0" <= c <= "9":
+            return c
+        if c in "-_":
+            return c
         return ""
 
     try:
-        r = "".join( map (accept, title) )
+        r = "".join(map(accept, title))
         if len(r) == 0:
-            raise HelpGenException("unable to interpret this title (empty?): {0} (type: {2})\nCOMMENT:\n{1}".format(str(title), comment, str(type(title))))
+            raise HelpGenException("unable to interpret this title (empty?): {0} (type: {2})\nCOMMENT:\n{1}".format(
+                str(title), comment, str(type(title))))
         return r
-    except TypeError as e :
-        raise HelpGenException("unable to interpret this title: {0} (type: {2})\nCOMMENT:\n{1}".format(str(title), comment, str(type(title)))) from e
+    except TypeError as e:
+        raise HelpGenException("unable to interpret this title: {0} (type: {2})\nCOMMENT:\n{1}".format(
+            str(title), comment, str(type(title)))) from e
+
 
 def process_look_for_tag(tag, title, files):
     """
@@ -726,44 +777,51 @@ def process_look_for_tag(tag, title, files):
     def noneempty(a):
         if "___" in a:
             page, a = a.split("___")
-            return "_" + page, a.lower(),a
-        else :
+            return "_" + page, a.lower(), a
+        else:
             return "", a.lower(), a
     repl = "__!LI!NE!__"
-    exp  = re.compile("[.][.] %s[(](.*?);;(.*?)[)][.](.*?)[.][.] end%s[.]" % (tag,tag))
-    exp2 = re.compile("[.][.] %s[(](.*?)[)][.](.*?)[.][.] end%s[.]" % (tag,tag))
-    coll = [ ]
-    for file in files :
-        if file.file is None : continue
-        if "utils_sphinx_doc.py" in file.file : continue
+    exp = re.compile(
+        "[.][.] %s[(](.*?);;(.*?)[)][.](.*?)[.][.] end%s[.]" % (tag, tag))
+    exp2 = re.compile(
+        "[.][.] %s[(](.*?)[)][.](.*?)[.][.] end%s[.]" % (tag, tag))
+    coll = []
+    for file in files:
+        if file.file is None:
+            continue
+        if "utils_sphinx_doc.py" in file.file:
+            continue
         try:
-            with open(file.file,"r",encoding="utf8") as f : content = f.read()
+            with open(file.file, "r", encoding="utf8") as f:
+                content = f.read()
         except:
-            with open(file.file,"r") as f : content = f.read()
-        content = content.replace("\n",repl)
+            with open(file.file, "r") as f:
+                content = f.read()
+        content = content.replace("\n", repl)
 
         all = exp.findall(content)
         all2 = exp2.findall(content)
-        if len(all2) > len(all) :
-            raise HelpGenException("an issue was detected in file: " + file.file)
+        if len(all2) > len(all):
+            raise HelpGenException(
+                "an issue was detected in file: " + file.file)
 
-        coll += [ noneempty(a) + \
-                  (fix_image_page_for_root(c.replace(repl,"\n"),file),b) for a,b,c in all ]
+        coll += [noneempty(a) +
+                 (fix_image_page_for_root(c.replace(repl, "\n"), file), b) for a, b, c in all]
 
     coll.sort()
-    coll = [ (_[0],) + _[2:] for _ in coll ]
+    coll = [(_[0],) + _[2:] for _ in coll]
 
-    pages = set ( _[0] for _ in coll )
+    pages = set(_[0] for _ in coll)
 
-    pagerows = [ ]
+    pagerows = []
 
-    for page in pages :
+    for page in pages:
         if page == "":
             tit = title
             suf = ""
-        else :
+        else:
             tit = title + ": " + page.strip("_")
-            suf = page.replace(" ","").replace("_","")
+            suf = page.replace(" ", "").replace("_", "")
             suf = re.sub(r'([^a-zA-Z0-9_])', "", suf)
             page = re.sub(r'([^a-zA-Z0-9_])', "", page)
 
@@ -775,27 +833,29 @@ def process_look_for_tag(tag, title, files):
 
             .. contents::
 
-            """.replace("            ","").format(tag, tit, "=" * len(tit), suf)]
+            """.replace("            ", "").format(tag, tit, "=" * len(tit), suf)]
 
-        for pa, a,b,c in coll :
+        for pa, a, b, c in coll:
             pan = re.sub(r'([^a-zA-Z0-9_])', "", pa)
-            if page != pan : continue
-            lindex = make_label_index( a, pan )
-            rows.append( "" )
-            rows.append( ".. _lm-{0}:".format( lindex ) )
-            rows.append( "" )
-            rows.append( a )
-            rows.append( "+" * len(a) )
-            rows.append( "" )
-            rows.append( remove_some_indent(b, backslash=True) )
-            rows.append( "" )
+            if page != pan:
+                continue
+            lindex = make_label_index(a, pan)
+            rows.append("")
+            rows.append(".. _lm-{0}:".format(lindex))
+            rows.append("")
+            rows.append(a)
+            rows.append("+" * len(a))
+            rows.append("")
+            rows.append(remove_some_indent(b, backslash=True))
+            rows.append("")
             spl = c.split("-")
-            d = "file {0}.py".format(spl[1]) # line, spl[2].lstrip("l"))
-            rows.append( "see :ref:`%s <%s>`" % (d,c))
-            rows.append( "" )
+            d = "file {0}.py".format(spl[1])  # line, spl[2].lstrip("l"))
+            rows.append("see :ref:`%s <%s>`" % (d, c))
+            rows.append("")
 
-        pagerows.append ( (page, "\n".join(rows)) )
+        pagerows.append((page, "\n".join(rows)))
     return pagerows
+
 
 def fix_image_page_for_root(content, file):
     """
@@ -813,10 +873,13 @@ def fix_image_page_for_root(content, file):
             img = spl[-1]
             if "../images" in img:
                 img = img.lstrip("./ ")
-            if len(spl) == 1: row = ".. image:: " + img
-            else : row = spl[0] + ".. image:: " + img
+            if len(spl) == 1:
+                row = ".. image:: " + img
+            else:
+                row = spl[0] + ".. image:: " + img
             rows[i] = row
     return "\n".join(rows)
+
 
 def remove_some_indent(s, backslash=False):
     """
@@ -831,23 +894,24 @@ def remove_some_indent(s, backslash=False):
     """
     rows = s.split("\n")
     mi = len(s)
-    for l in rows :
+    for l in rows:
         ll = l.lstrip()
-        if len(ll) > 0 :
-            d  = len(l)-len(ll)
-            mi = min(d,mi)
+        if len(ll) > 0:
+            d = len(l) - len(ll)
+            mi = min(d, mi)
 
-    if mi > 0 :
-        keep = [ ]
-        for _ in rows :
-            keep.append( _[mi:] if len(_.strip())>0 and len(_) > mi else _ )
+    if mi > 0:
+        keep = []
+        for _ in rows:
+            keep.append(_[mi:] if len(_.strip()) > 0 and len(_) > mi else _)
         res = "\n".join(keep)
-    else :
+    else:
         res = s
 
     if backslash:
         res = res.replace("\\\\", "\\")
     return res
+
 
 def find_in_PATH(prog):
     """
@@ -866,6 +930,7 @@ def find_in_PATH(prog):
             return p
     return None
 
+
 def find_graphviz_dot():
     """
     determines the path to graphviz (on Windows),
@@ -879,19 +944,22 @@ def find_graphviz_dot():
     .. versionadded:: 0.9
     """
     if sys.platform.startswith("win"):
-        version = range(34,45)
+        version = range(34, 45)
         for v in version:
-            graphviz_dot = r"C:\Program Files (x86)\Graphviz2.{0}\bin\dot.exe".format(v)
+            graphviz_dot = r"C:\Program Files (x86)\Graphviz2.{0}\bin\dot.exe".format(
+                v)
             if os.path.exists(graphviz_dot):
                 return graphviz_dot
         p = find_in_PATH("dot.exe")
         if p is None:
-            raise FileNotFoundError("unable to find graphviz, look into paths such as: " + str(graphviz_dot))
+            raise FileNotFoundError(
+                "unable to find graphviz, look into paths such as: " + str(graphviz_dot))
         else:
             return os.path.join(p, "dot.exe")
     else:
         # linux
         return "dot"
+
 
 def find_latex_path():
     """
@@ -906,11 +974,13 @@ def find_latex_path():
         if not os.path.exists(latex):
             latex = find_in_PATH("latex.exe")
             if latex is None or not os.path.exists(latex):
-                raise FileNotFoundError("unable to find latex (miktex), look into paths such as: " + str(latex0))
+                raise FileNotFoundError(
+                    "unable to find latex (miktex), look into paths such as: " + str(latex0))
         return latex
     else:
         # linux
         return ""
+
 
 def find_pandoc_path():
     """
@@ -922,29 +992,32 @@ def find_pandoc_path():
     """
     if sys.platform.startswith("win"):
         path = os.environ["USERPROFILE"]
-        pandoc = os.path.join(path, "AppData","Local","Pandoc")
-        tries = [ pandoc ]
+        pandoc = os.path.join(path, "AppData", "Local", "Pandoc")
+        tries = [pandoc]
         if not os.path.exists(pandoc):
-            # we try others users because pandoc goes into a user folder by default
+            # we try others users because pandoc goes into a user folder by
+            # default
             root = os.path.normpath(os.path.join(path, ".."))
             users = os.listdir(root)
-            for u in users :
+            for u in users:
                 p = os.path.join(root, u)
                 if os.path.isdir(p):
-                    pandoc = os.path.join(p, "AppData","Local","Pandoc")
-                    if os.path.exists(pandoc) :
+                    pandoc = os.path.join(p, "AppData", "Local", "Pandoc")
+                    if os.path.exists(pandoc):
                         return pandoc
                     tries.append(pandoc)
             pandoc = find_in_PATH("pandoc.exe")
             if pandoc is None:
-                raise FileNotFoundError("unable to find pandoc, look into paths such as:\n" + "\n".join(tries))
+                raise FileNotFoundError(
+                    "unable to find pandoc, look into paths such as:\n" + "\n".join(tries))
             else:
                 return pandoc
-        else :
+        else:
             return pandoc
     else:
         # linux
         return ""
+
 
 def example_function_latex():
     """

@@ -2,6 +2,7 @@
 Some checking functions.
 """
 
+
 def check_log():
     """
     check function noLOG

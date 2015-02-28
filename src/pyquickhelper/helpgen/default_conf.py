@@ -5,15 +5,19 @@
 """
 
 
-import sys, os, datetime, re
+import sys
+import os
+import datetime
+import re
 
 #sys.path.insert(0, os.path.abspath(os.path.join(os.path.split(__file__)[0])))
 
+
 def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path, ext_locals,
-                add_extensions = None,
-                bootswatch_theme = "spacelab",
-                bootswatch_navbar_links = None
-                ):
+                         add_extensions=None,
+                         bootswatch_theme="spacelab",
+                         bootswatch_navbar_links=None
+                         ):
     """
     defines variables for Sphinx
 
@@ -51,54 +55,56 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
     @endcode
     @endexample
     """
-    project_var_name            = module_name
-    author                      = author
-    year                        = str(year)
-    version                     = extract_version_from_setup(fileconf)
-    pygments_style              = 'sphinx'
-    modindex_common_prefix      = [ project_var_name + ".", ]
-    html_theme                  = theme
-    shtml_theme_options         = { "bodyfont":"Calibri"}
+    project_var_name = module_name
+    author = author
+    year = str(year)
+    version = extract_version_from_setup(fileconf)
+    pygments_style = 'sphinx'
+    modindex_common_prefix = [project_var_name + ".", ]
+    html_theme = theme
+    shtml_theme_options = {"bodyfont": "Calibri"}
     if theme_path is not None:
-        html_theme_path         = [ theme_path ]
-    html_logo                   = "project_ico.png"
-    html_favicon                = "project_ico.ico"
-    html_static_path            = ['phdoc_static']
-    templates_path              = ['phdoc_templates']
-    source_suffix               = '.rst'
-    source_encoding             = 'utf-8'
-    master_doc                  = 'index'
-    project                     = project_var_name + ' documentation'
-    copyright                   = str(year) + ", " + author
-    version_file                = os.path.abspath(os.path.join(os.path.split(__file__)[0], "..", "..", "..", "version.txt"))
-    first_line                  = get_first_line(version_file)
-    release                     = '%s.%s' % (version, first_line)
-    exclude_patterns            = []
-    html_title                  = "%s %s" % (project_var_name, release)
-    html_show_sphinx            = False
-    html_show_copyright         = False
-    htmlhelp_basename           = '%s_doc' % project_var_name
-    latex_use_parts             = True
-    latex_show_pagerefs         = True
-    __html_last_updated_fmt_dt  = datetime.datetime.now()
-    html_last_updated_fmt       = '%04d-%02d-%02d' % (__html_last_updated_fmt_dt.year, __html_last_updated_fmt_dt.month, __html_last_updated_fmt_dt.day)
-    autoclass_content           = 'both'
-    autosummary_generate        = True
-    graphviz_output_format      = "svg"
-    graphviz_dot                = get_graphviz_dot()
+        html_theme_path = [theme_path]
+    html_logo = "project_ico.png"
+    html_favicon = "project_ico.ico"
+    html_static_path = ['phdoc_static']
+    templates_path = ['phdoc_templates']
+    source_suffix = '.rst'
+    source_encoding = 'utf-8'
+    master_doc = 'index'
+    project = project_var_name + ' documentation'
+    copyright = str(year) + ", " + author
+    version_file = os.path.abspath(
+        os.path.join(os.path.split(__file__)[0], "..", "..", "..", "version.txt"))
+    first_line = get_first_line(version_file)
+    release = '%s.%s' % (version, first_line)
+    exclude_patterns = []
+    html_title = "%s %s" % (project_var_name, release)
+    html_show_sphinx = False
+    html_show_copyright = False
+    htmlhelp_basename = '%s_doc' % project_var_name
+    latex_use_parts = True
+    latex_show_pagerefs = True
+    __html_last_updated_fmt_dt = datetime.datetime.now()
+    html_last_updated_fmt = '%04d-%02d-%02d' % (
+        __html_last_updated_fmt_dt.year, __html_last_updated_fmt_dt.month, __html_last_updated_fmt_dt.day)
+    autoclass_content = 'both'
+    autosummary_generate = True
+    graphviz_output_format = "svg"
+    graphviz_dot = get_graphviz_dot()
 
-    extensions = [  'sphinx.ext.autodoc',
-                    'sphinx.ext.todo',
-                    'sphinx.ext.coverage',
-                    'sphinx.ext.pngmath',
-                    'sphinx.ext.ifconfig',
-                    'sphinx.ext.viewcode',
-                    'sphinxcontrib.images',
-                    'sphinx.ext.autosummary',
-                    'sphinx.ext.graphviz',
-                    'sphinx.ext.inheritance_diagram',
-                    'matplotlib.sphinxext.plot_directive',
-                    ]
+    extensions = ['sphinx.ext.autodoc',
+                  'sphinx.ext.todo',
+                  'sphinx.ext.coverage',
+                  'sphinx.ext.pngmath',
+                  'sphinx.ext.ifconfig',
+                  'sphinx.ext.viewcode',
+                  'sphinxcontrib.images',
+                  'sphinx.ext.autosummary',
+                  'sphinx.ext.graphviz',
+                  'sphinx.ext.inheritance_diagram',
+                  'matplotlib.sphinxext.plot_directive',
+                  ]
 
     if add_extensions is not None:
         extensions.extend(add_extensions)
@@ -122,41 +128,41 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
     #texinfo_domain_indices = True
     #texinfo_show_urls = 'footnote'
 
-
-    latex_elements      = { 'papersize': 'a4', 'pointsize': '10pt',
-                        #'preamble': '',
-                        }
-    latex_documents     = [ ( 'index', '%s_doc.tex' % project_var_name, '%s Documentation' % project_var_name, author, 'manual'), ]
-    man_pages           = [ ( 'index', '%s_doc' % project_var_name, '%s Documentation' % project_var_name, [author], 1) ]
-    texinfo_documents   = [   ('index', '%s_documentation' % project_var_name, '%s Documentation' % project_var_name,
-                            author, '%s documentation' % project_var_name,
-                            'One line description of project.',
-                            'Miscellaneous'),
-                        ]
-
+    latex_elements = {'papersize': 'a4', 'pointsize': '10pt',
+                      #'preamble': '',
+                      }
+    latex_documents = [('index', '%s_doc.tex' % project_var_name,
+                        '%s Documentation' % project_var_name, author, 'manual'), ]
+    man_pages = [('index', '%s_doc' % project_var_name,
+                  '%s Documentation' % project_var_name, [author], 1)]
+    texinfo_documents = [('index', '%s_documentation' % project_var_name, '%s Documentation' % project_var_name,
+                          author, '%s documentation' % project_var_name,
+                          'One line description of project.',
+                          'Miscellaneous'),
+                         ]
 
     if html_theme == "bootstrap":
         if bootswatch_navbar_links is None:
             bootswatch_navbar_links = []
         html_logo = "project_ico_small.png"
         html_theme_options = {
-            'navbar_title'              : "home",
-            'navbar_site_name'          : "Site",
-            'navbar_links'              : navbar_links,
-            'navbar_sidebarrel'         : True,
-            'navbar_pagenav'            : True,
-            'navbar_pagenav_name'       : "Page",
-            'globaltoc_depth'           : 3,
-            'globaltoc_includehidden'   : "true",
-            'navbar_class'              : "navbar navbar-inverse",
-            'navbar_fixed_top'          : "true",
-            'source_link_position'      : "nav",
-            'bootswatch_theme'          : bootswatch_theme,
-            'bootstrap_version'         : "3",
+            'navbar_title': "home",
+            'navbar_site_name': "Site",
+            'navbar_links': navbar_links,
+            'navbar_sidebarrel': True,
+            'navbar_pagenav': True,
+            'navbar_pagenav_name': "Page",
+            'globaltoc_depth': 3,
+            'globaltoc_includehidden': "true",
+            'navbar_class': "navbar navbar-inverse",
+            'navbar_fixed_top': "true",
+            'source_link_position': "nav",
+            'bootswatch_theme': bootswatch_theme,
+            'bootstrap_version': "3",
         }
 
     loc = locals()
-    for k,v in loc.items():
+    for k, v in loc.items():
         if not k.startswith("_"):
             ext_locals[k] = v
 
@@ -177,39 +183,44 @@ def extract_version_from_setup(filename):
     setup = os.path.abspath(os.path.split(filename)[0])
     setup = os.path.join(setup, "..", "..", "..", "setup.py")
     if os.path.exists(setup):
-        with open(setup,"r") as f : content = f.read()
+        with open(setup, "r") as f:
+            content = f.read()
         exp = re.compile("sversion *= *['\\\"]([0-9.]+?)['\\\"]")
         all = exp.findall(content)
         if len(all) == 0:
             raise Exception("unable to locate the version from setup.py")
-        if len(all) != 1 :
+        if len(all) != 1:
             raise Exception("more than one version was found: " + str(all))
         return all[0]
     else:
         raise FileNotFoundError("unable to find setup.py, tried: " + setup)
 
+
 def get_first_line(filename):
     """
     expects to find a text file with a line, the function extracts and returns this line
     """
-    try :
-        with open(filename, "r") as ff : first_line = ff.readlines()[0].strip(" \n\r")
-    except FileNotFoundError :
+    try:
+        with open(filename, "r") as ff:
+            first_line = ff.readlines()[0].strip(" \n\r")
+    except FileNotFoundError:
         first_line = "xxx"
     return first_line
+
 
 def get_graphviz_dot():
     """
     finds Graphviz executable dot, does something specific for Windows
     """
     if sys.platform.startswith("win"):
-        version = range(34,42)
+        version = range(34, 42)
         for v in version:
-            graphviz_dot = r"C:\Program Files (x86)\Graphviz2.{0}\bin\dot.exe".format(v)
+            graphviz_dot = r"C:\Program Files (x86)\Graphviz2.{0}\bin\dot.exe".format(
+                v)
             if os.path.exists(graphviz_dot):
                 break
 
-    if sys.platform.startswith("win") :
+    if sys.platform.startswith("win"):
         if not os.path.exists(graphviz_dot):
             raise FileNotFoundError(graphviz_dot)
     else:
@@ -220,6 +231,7 @@ def get_graphviz_dot():
 # sphinx functions
 #################
 
+
 def skip(app, what, name, obj, skip, options):
     """
     to skip some functions,
@@ -227,14 +239,15 @@ def skip(app, what, name, obj, skip, options):
     see `Skipping members <http://sphinx-doc.org/ext/autodoc.html#event-autodoc-skip-member>`_
     """
     if name.startswith("_") and name not in \
-            [   "__qualname__",
+            ["__qualname__",
                 "__module__",
                 "__dict__",
                 "__doc__",
                 "__weakref__",
-                ]:
+             ]:
         return False
     return skip
+
 
 def custom_setup(app, author):
     """

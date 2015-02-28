@@ -4,7 +4,10 @@
 
 """
 
-import sys, os, site
+import sys
+import os
+import site
+
 
 def ie_layout_html():
     """
@@ -17,29 +20,32 @@ def ie_layout_html():
     """
     tofind = '<meta http-equiv="X-UA-Compatible" content="IE=edge" />'
 
-    sitep = [ _ for _ in site.getsitepackages() if "packages" in _ ]
-    if len(sitep) == 1 :
+    sitep = [_ for _ in site.getsitepackages() if "packages" in _]
+    if len(sitep) == 1:
         sitep = sitep[0]
     else:
-        raise FileNotFoundError("unable to find site-packages\n{1}".format("\n".join(site.getsitepackages())) )
+        raise FileNotFoundError(
+            "unable to find site-packages\n{1}".format("\n".join(site.getsitepackages())))
 
     if not os.path.exists(sitep):
         raise FileNotFoundError("unable to find site-packages, tried: {0}\nALL:\n{1}".format(sitep,
-                        "\n".join(site.getsitepackages())) )
+                                                                                             "\n".join(site.getsitepackages())))
 
     path = os.path.dirname(sys.executable)
-    layout = os.path.join( sitep,"sphinx","themes","basic","layout.html")
+    layout = os.path.join(sitep, "sphinx", "themes", "basic", "layout.html")
     if os.path.exists(layout):
-        with open(layout, "r", encoding="utf-8") as f :
+        with open(layout, "r", encoding="utf-8") as f:
             content = f.read()
         if tofind not in content:
-            alls = [ "unable to find: " + tofind  + " in ",
-                     '  File "{0}", line 1'.format(layout) ,
-                     'see http://www.xavierdupre.fr/blog/2014-10-30_nojs.html']
+            alls = ["unable to find: " + tofind + " in ",
+                    '  File "{0}", line 1'.format(layout),
+                    'see http://www.xavierdupre.fr/blog/2014-10-30_nojs.html']
             raise Exception("\n".join(alls))
         return True
     else:
-        raise FileNotFoundError("Sphinx is not properly installed, unable to find: " + layout)
+        raise FileNotFoundError(
+            "Sphinx is not properly installed, unable to find: " + layout)
+
 
 def locate_image_documentation(image_name):
     """
@@ -60,7 +66,8 @@ def locate_image_documentation(image_name):
                 return t
     raise FileNotFoundError(image_name)
 
-def NbImage (name, repository = None, force_github = False, width = None):
+
+def NbImage(name, repository=None, force_github=False, width=None):
     """
     retrieve a name or a url of the image if it is not found in the local folder
 
@@ -81,40 +88,43 @@ def NbImage (name, repository = None, force_github = False, width = None):
     """
     from IPython.core.display import Image
     local = os.path.abspath(name)
-    if not force_github and os.path.exists(local) :
+    if not force_github and os.path.exists(local):
         return Image(local, width=width)
 
-    local_split = local.replace("\\","/").split("/")
+    local_split = local.replace("\\", "/").split("/")
     if "notebooks" not in local_split:
         local = locate_image_documentation(local)
         return Image(local, width=width)
 
     # otherwise --> github
-    paths = local.replace("\\","/").split("/")
+    paths = local.replace("\\", "/").split("/")
     try:
-        pos = paths.index("notebooks")-1
-    except IndexError as e :
+        pos = paths.index("notebooks") - 1
+    except IndexError as e:
         # we are looking for the right path
-        raise IndexError("the image is not retrieve from a notebook from a folder ``_docs/notebooks`` or you changed the current folder:\n{0}".format(local)) from e
-    except ValueError as ee :
+        raise IndexError(
+            "the image is not retrieve from a notebook from a folder ``_docs/notebooks`` or you changed the current folder:\n{0}".format(local)) from e
+    except ValueError as ee:
         # we are looking for the right path
-        raise IndexError("the image is not retrieve from a notebook from a folder ``_docs/notebooks`` or you changed the current folder:\n{0}".format(local)) from ee
+        raise IndexError(
+            "the image is not retrieve from a notebook from a folder ``_docs/notebooks`` or you changed the current folder:\n{0}".format(local)) from ee
 
     if repository is None:
-        module = paths[pos-1]
+        module = paths[pos - 1]
         if module not in sys.modules:
             if "ensae_teaching_cs" in local:
                 # for some specific modules, we add the location
                 repository = "https://github.com/sdpython/ensae_teaching_cs/"
             else:
-                raise ImportError("the module {0} was not imported, cannot guess the location of the repository".format(module))
+                raise ImportError(
+                    "the module {0} was not imported, cannot guess the location of the repository".format(module))
         else:
             repository = sys.modules[module].__github__
         repository = repository.strip("/")
 
-    loc = "/".join( ["master", "_doc","notebooks" ] + paths[pos+2:] )
+    loc = "/".join(["master", "_doc", "notebooks"] + paths[pos + 2:])
     url = repository + "/" + loc
-    url = url.replace("github.com","raw.githubusercontent.com")
+    url = url.replace("github.com", "raw.githubusercontent.com")
     return Image(url, width=width)
 
 if __name__ == "__main__":

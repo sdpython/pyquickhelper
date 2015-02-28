@@ -6,6 +6,7 @@
 
 import unicodedata
 
+
 def remove_diacritics(input_str):
     """
     remove diacritics

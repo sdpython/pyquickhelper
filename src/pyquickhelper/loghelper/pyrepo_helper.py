@@ -7,7 +7,8 @@ from .repositories import pysvn_helper as SVN
 from .repositories import pygit_helper as GIT
 
 
-class SourceRepository :
+class SourceRepository:
+
     """
     proposes the same functionality independent from the source chosen repository (GIT or SVN)
 
@@ -15,7 +16,7 @@ class SourceRepository :
     or the `GitHub application <http://windows.github.com/>`_.
     """
 
-    def __init__ (self, commandline = True):
+    def __init__(self, commandline=True):
         """
         constructor
 
@@ -31,16 +32,19 @@ class SourceRepository :
         @param      location    location
         @return                 module to use
         """
-        svn = SVN.IsRepo(location, commandline = self.commandline)
-        if not svn :
-            git = GIT.IsRepo(location, commandline = self.commandline)
-            if not git :
-                logsvn = SVN.IsRepo(location, commandline = self.commandline, log = True)
-                loggit = GIT.IsRepo(location, commandline = self.commandline, log = True)
-                raise Exception("unable to guess source repository type for location " + location + " - (cmd={0})\nSVN:\n{1}\nGIT:\n{2}".format(self.commandline, logsvn, loggit))
-            else :
+        svn = SVN.IsRepo(location, commandline=self.commandline)
+        if not svn:
+            git = GIT.IsRepo(location, commandline=self.commandline)
+            if not git:
+                logsvn = SVN.IsRepo(
+                    location, commandline=self.commandline, log=True)
+                loggit = GIT.IsRepo(
+                    location, commandline=self.commandline, log=True)
+                raise Exception("unable to guess source repository type for location " + location +
+                                " - (cmd={0})\nSVN:\n{1}\nGIT:\n{2}".format(self.commandline, logsvn, loggit))
+            else:
                 self.module = GIT
-        else :
+        else:
             self.module = SVN
         return self.module
 
@@ -51,11 +55,11 @@ class SourceRepository :
         @param      path        path
         @return                 a list
         """
-        if self.module is None :
+        if self.module is None:
             self.SetGuessedType(path)
-        return self.module.repo_ls(path, commandline = self.commandline)
+        return self.module.repo_ls(path, commandline=self.commandline)
 
-    def log(self, path = None, file_detail = False):
+    def log(self, path=None, file_detail=False):
         """
         get the latest changes operated on a file in a folder or a subfolder
         @param      path            path to look
@@ -75,27 +79,27 @@ class SourceRepository :
         </logentry>
         @endcode
         """
-        if self.module is None :
+        if self.module is None:
             self.SetGuessedType(path)
-        return self.module.get_repo_log(path, file_detail, commandline = self.commandline)
+        return self.module.get_repo_log(path, file_detail, commandline=self.commandline)
 
-    def version(self, path = None):
+    def version(self, path=None):
         """
         get the latest check in number for a specific path
         @param      path            path to look
         @return                     string or int (check in number)
         """
-        if self.module is None :
+        if self.module is None:
             self.SetGuessedType(path)
-        return self.module.get_repo_version(path, commandline = self.commandline)
+        return self.module.get_repo_version(path, commandline=self.commandline)
 
-    def nb_commits(self, path = None):
+    def nb_commits(self, path=None):
         """
         return the number of commits
 
         @param      path            path to look
         @return                     number of commit
         """
-        if self.module is None :
+        if self.module is None:
             self.SetGuessedType(path)
-        return self.module.get_nb_commits(path, commandline = self.commandline)
+        return self.module.get_nb_commits(path, commandline=self.commandline)

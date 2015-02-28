@@ -9,8 +9,10 @@
 
 from IPython.core.magic import Magics, magics_class
 
+
 @magics_class
 class MagicClassWithHelpers(Magics):
+
     """
     Provides some functions reused in others classes inherited from *Magics*.
     The class should not be registered as it is but should be
@@ -26,14 +28,14 @@ class MagicClassWithHelpers(Magics):
 
     """
 
-    _parser_store = { }
+    _parser_store = {}
 
     @property
     def Context(self):
         """
         return the context or None
         """
-        if self.shell is None :
+        if self.shell is None:
             return None
         return self.shell.user_ns
 
@@ -45,11 +47,12 @@ class MagicClassWithHelpers(Magics):
         """
         if self.shell is None:
             class EmptyClass:
+
                 def __init__(self):
-                    self.user_ns={}
+                    self.user_ns = {}
             self.shell = EmptyClass()
-        for k,v in context.items():
-            self.shell.user_ns[k]=v
+        for k, v in context.items():
+            self.shell.user_ns[k] = v
 
     def get_parser(self, parser_class, name):
         """
@@ -69,7 +72,7 @@ class MagicClassWithHelpers(Magics):
         else:
             return res
 
-    def get_args(self, line, parser, print_function = print):
+    def get_args(self, line, parser, print_function=print):
         """
         parser a command line with a given parser
 
@@ -93,9 +96,9 @@ class MagicClassWithHelpers(Magics):
                     # ....
         """
         try:
-            args = parser.parse_cmd(line, context = self.Context)
+            args = parser.parse_cmd(line, context=self.Context)
         except SystemExit:
-            print_function( parser.print_help() )
+            print_function(parser.print_help())
             args = None
 
         return args

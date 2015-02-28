@@ -5,15 +5,17 @@
 @brief Series of functions related to folder, explore, synchronize, remove (recursively).
 """
 
-import os, re, datetime
+import os
+import re
+import datetime
 
-from ..loghelper.flog           import fLOG
-from .file_tree_node            import FileTreeNode
-from .files_status              import FilesStatus, checksum_md5
-from ..loghelper.pqh_exception  import PQHException
+from ..loghelper.flog import fLOG
+from .file_tree_node import FileTreeNode
+from .files_status import FilesStatus, checksum_md5
+from ..loghelper.pqh_exception import PQHException
 
 
-def explore_folder (folder, pattern = None, fullname = False) :
+def explore_folder(folder, pattern=None, fullname=False):
     """returns the list of files included in a folder and in the subfolder
     @param          folder      (str) folder
     @param          pattern     (str) if None, get all files, otherwise, it is a regular expression,
@@ -21,27 +23,30 @@ def explore_folder (folder, pattern = None, fullname = False) :
     @param          fullname    (bool) if True, include the subfolder while checking the regex (pattern)
     @return                     a list of folders, a list of files (the folder is not included the path name)
     """
-    if pattern is not None :
-        pattern = re.compile (pattern)
+    if pattern is not None:
+        pattern = re.compile(pattern)
 
-    file, rep = [], { }
-    for r, d, f in os.walk (folder) :
-        for a in f :
-            temp = os.path.join (r, a)
-            if pattern is not None :
-                if fullname :
-                    if not pattern.search (temp) : continue
-                else :
-                    if not pattern.search (a) : continue
-            file.append (temp)
-            r = os.path.split (temp) [0]
-            rep [r] = None
+    file, rep = [], {}
+    for r, d, f in os.walk(folder):
+        for a in f:
+            temp = os.path.join(r, a)
+            if pattern is not None:
+                if fullname:
+                    if not pattern.search(temp):
+                        continue
+                else:
+                    if not pattern.search(a):
+                        continue
+            file.append(temp)
+            r = os.path.split(temp)[0]
+            rep[r] = None
 
-    keys = list(rep.keys ())
-    keys.sort ()
+    keys = list(rep.keys())
+    keys.sort()
     return keys, file
 
-def explore_folder_iterfile (folder, pattern = None, fullname = False) :
+
+def explore_folder_iterfile(folder, pattern=None, fullname=False):
     """iterator of the list of files...
     included in a folder and in the subfolder
     @param          folder      folder
@@ -50,24 +55,27 @@ def explore_folder_iterfile (folder, pattern = None, fullname = False) :
     @param          fullname    if True, include the subfolder while checking the regex
     @return                     a list of folders, a list of files (the folder is not included the path name)
     """
-    if pattern is not None :
-        pattern = re.compile (pattern)
+    if pattern is not None:
+        pattern = re.compile(pattern)
 
-    file, rep = [], { }
-    for r, d, f in os.walk (folder) :
-        for a in f :
-            temp = os.path.join (r, a)
-            if pattern is not None :
-                if fullname :
-                    if not pattern.search (temp) : continue
-                else :
-                    if not pattern.search (a) : continue
+    file, rep = [], {}
+    for r, d, f in os.walk(folder):
+        for a in f:
+            temp = os.path.join(r, a)
+            if pattern is not None:
+                if fullname:
+                    if not pattern.search(temp):
+                        continue
+                else:
+                    if not pattern.search(a):
+                        continue
             #file.append (temp)
             yield temp
-            r = os.path.split (temp) [0]
-            rep [r] = None
+            r = os.path.split(temp)[0]
+            rep[r] = None
 
-def explore_folder_iterfile_repo (folder, log = fLOG) :
+
+def explore_folder_iterfile_repo(folder, log=fLOG):
     """
     returns all files present in folder and added to
     a `SVN <https://subversion.apache.org/>`_ or `GIT <http://git-scm.com/>`_ reposotory.
@@ -75,24 +83,25 @@ def explore_folder_iterfile_repo (folder, log = fLOG) :
     @param      log         log function
     @return                 iterator
     """
-    node = FileTreeNode (folder, repository = True, log = log)
-    svnfiles = node.get_dict ()
-    for file in svnfiles :
+    node = FileTreeNode(folder, repository=True, log=log)
+    svnfiles = node.get_dict()
+    for file in svnfiles:
         yield file
 
-def synchronize_folder (   p1,
-                    p2,
-                    hash_size       = 1024**2,
-                    repo1           = False,
-                    repo2           = False,
-                    size_different  = True,
-                    no_deletion     = False,
-                    filter          = None,
-                    filter_copy     = None,
-                    avoid_copy      = False,
-                    operations      = None,
-                    file_date       = None,
-                    log1            = False) :
+
+def synchronize_folder(p1,
+                       p2,
+                       hash_size=1024**2,
+                       repo1=False,
+                       repo2=False,
+                       size_different=True,
+                       no_deletion=False,
+                       filter=None,
+                       filter_copy=None,
+                       avoid_copy=False,
+                       operations=None,
+                       file_date=None,
+                       log1=False):
     """
     synchronize two folders (or copy if the second is empty), it only copies more recent files.
 
@@ -150,79 +159,86 @@ def synchronize_folder (   p1,
 
     """
 
-    fLOG ("form ", p1)
-    fLOG ("to   ", p2)
+    fLOG("form ", p1)
+    fLOG("to   ", p2)
 
     if file_date is not None and not os.path.exists(file_date):
-        with open(file_date,"w",encoding="utf8") as f : f.write("")
+        with open(file_date, "w", encoding="utf8") as f:
+            f.write("")
 
-    if filter is None :
-        tfilter = lambda v : True
-    elif isinstance(filter,str) :
-        exp = re.compile (filter)
-        tfilter = lambda be : (True if exp.search (be) else False)
-    else :
+    if filter is None:
+        tfilter = lambda v: True
+    elif isinstance(filter, str):
+        exp = re.compile(filter)
+        tfilter = lambda be: (True if exp.search(be) else False)
+    else:
         tfilter = filter
 
-    def pr_filter (root, path, f, d) :
-        if d : return True
+    def pr_filter(root, path, f, d):
+        if d:
+            return True
         #root = root.lower ()
-        path = path.lower ()
-        f    = f.lower ()
-        be   = os.path.join (path, f)
-        return tfilter (be)
+        path = path.lower()
+        f = f.lower()
+        be = os.path.join(path, f)
+        return tfilter(be)
 
-    if isinstance(filter_copy,str):
+    if isinstance(filter_copy, str):
         rg = re.compile(filter_copy)
-        filter_copy = lambda f, ex=rg : ex.search(f) is not None
+        filter_copy = lambda f, ex=rg: ex.search(f) is not None
 
-    f1  = p1
-    f2  = p2
+    f1 = p1
+    f2 = p2
 
-    fLOG ("   exploring ", f1)
-    node1 = FileTreeNode (f1, filter = pr_filter, repository = repo1, log = True, log1 = log1)
-    fLOG ("     number of found files (p1)", len (node1), node1.max_date ())
-    if file_date is not None :
-        log1n = 1000 if log1  else None
-        status = FilesStatus(file_date, fLOG = fLOG)
-        res = list(status.difference(node1, u4=True, nlog = log1n))
-    else :
-        fLOG ("   exploring ", f2)
-        node2 = FileTreeNode (f2, filter = pr_filter, repository = repo2, log = True, log1 = log1)
-        fLOG ("     number of found files (p2)", len (node2), node2.max_date ())
-        res = node1.difference (node2, hash_size = hash_size)
+    fLOG("   exploring ", f1)
+    node1 = FileTreeNode(
+        f1, filter=pr_filter, repository=repo1, log=True, log1=log1)
+    fLOG("     number of found files (p1)", len(node1), node1.max_date())
+    if file_date is not None:
+        log1n = 1000 if log1 else None
+        status = FilesStatus(file_date, fLOG=fLOG)
+        res = list(status.difference(node1, u4=True, nlog=log1n))
+    else:
+        fLOG("   exploring ", f2)
+        node2 = FileTreeNode(
+            f2, filter=pr_filter, repository=repo2, log=True, log1=log1)
+        fLOG("     number of found files (p2)", len(node2), node2.max_date())
+        res = node1.difference(node2, hash_size=hash_size)
         status = None
 
-    action = [ ]
+    action = []
     modif = 0
 
-    for op, file, n1, n2 in res :
+    for op, file, n1, n2 in res:
 
-        if filter_copy is not None and not filter_copy(file) :
+        if filter_copy is not None and not filter_copy(file):
             continue
 
-        if operations is not None :
-            r = operations(op,n1,n2)
-            if r and status is not None :
-                status.update_copied_file (n1.fullname)
+        if operations is not None:
+            r = operations(op, n1, n2)
+            if r and status is not None:
+                status.update_copied_file(n1.fullname)
                 modif += 1
-                if modif % 50 == 0 : status.save_dates()
-        else :
+                if modif % 50 == 0:
+                    status.save_dates()
+        else:
 
-            if op in [">", ">+"] :
-                if not n1.isdir () :
-                    if file_date is not None or not size_different or n2 is None or n1._size != n2._size :
-                        if not avoid_copy : n1.copyTo (f2)
-                        action.append ( (">+", n1, f2) )
-                        if status is not None :
-                            status.update_copied_file (n1.fullname)
+            if op in [">", ">+"]:
+                if not n1.isdir():
+                    if file_date is not None or not size_different or n2 is None or n1._size != n2._size:
+                        if not avoid_copy:
+                            n1.copyTo(f2)
+                        action.append((">+", n1, f2))
+                        if status is not None:
+                            status.update_copied_file(n1.fullname)
                             modif += 1
-                            if modif % 50 == 0 : status.save_dates()
-                    else :
+                            if modif % 50 == 0:
+                                status.save_dates()
+                    else:
                         pass
 
-            elif op in ["<+"] :
-                if n2 is None :
+            elif op in ["<+"]:
+                if n2 is None:
                     if not no_deletion:
                         # this case happens when we do not know sideB (sideA is stored in a file)
                         # we need to remove file, file refers to this side
@@ -230,39 +246,44 @@ def synchronize_folder (   p1,
                         filerem = os.path.join(p2, filerel)
                         try:
                             ft = FileTreeNode(p2, filerel)
-                        except PQHException as e :
-                            ft = None  #probably already removed
+                        except PQHException as e:
+                            ft = None  # probably already removed
 
-                        if ft is not None :
-                            action.append ( (">-", None, ft ) )
-                            if not avoid_copy :
-                                fLOG ("- remove ", filerem)
+                        if ft is not None:
+                            action.append((">-", None, ft))
+                            if not avoid_copy:
+                                fLOG("- remove ", filerem)
                                 os.remove(filerem)
-                            if status is not None :
-                                status.update_copied_file (file, delete = True)
+                            if status is not None:
+                                status.update_copied_file(file, delete=True)
                                 modif += 1
-                                if modif % 50 == 0 : status.save_dates()
-                        else :
-                                fLOG ("- skip (probably already removed) ", filerem)
-                else :
-                    if not n2.isdir () and not no_deletion:
-                        if not avoid_copy : n2.remove ()
-                        action.append ( (">-", None, n2) )
-                        if status is not None :
-                            status.update_copied_file (n1.fullname, delete = True)
+                                if modif % 50 == 0:
+                                    status.save_dates()
+                        else:
+                            fLOG("- skip (probably already removed) ", filerem)
+                else:
+                    if not n2.isdir() and not no_deletion:
+                        if not avoid_copy:
+                            n2.remove()
+                        action.append((">-", None, n2))
+                        if status is not None:
+                            status.update_copied_file(n1.fullname, delete=True)
                             modif += 1
-                            if modif % 50 == 0 : status.save_dates()
-            elif n2 is not None and n1._size != n2._size and not n1.isdir () :
-                fLOG ("problem", "size are different for file %s (%d != %d) dates (%s,%s) (op %s)" % (file, n1._size, n2._size, n1._date, n2._date, op))
+                            if modif % 50 == 0:
+                                status.save_dates()
+            elif n2 is not None and n1._size != n2._size and not n1.isdir():
+                fLOG("problem", "size are different for file %s (%d != %d) dates (%s,%s) (op %s)" % (
+                    file, n1._size, n2._size, n1._date, n2._date, op))
                 #n1.copyTo (f2)
                 #raise Exception ("size are different for file %s (%d != %d) (op %s)" % (file, n1._size, n2._size, op))
 
-    if status is not None :
+    if status is not None:
         status.save_dates(file_date)
 
     return action
 
-def remove_folder (top, remove_also_top = True, raise_exception = True) :
+
+def remove_folder(top, remove_also_top=True, raise_exception=True):
     """
     remove everything in folder top
     @param      top                 path to remove
@@ -274,44 +295,47 @@ def remove_folder (top, remove_also_top = True, raise_exception = True) :
     .. versionchanged:: 0.9
         Parameter *raise_exception* was added.
     """
-    if top in ["", "C:", "c:", "C:\\", "c:\\", "d:", "D:", "D:\\", "d:\\" ] :
+    if top in ["", "C:", "c:", "C:\\", "c:\\", "d:", "D:", "D:\\", "d:\\"]:
         raise Exception("top is a root (c: for example), this is not safe")
 
-    res = [ ]
+    res = []
     first_root = None
     for root, dirs, files in os.walk(top, topdown=False):
         for name in files:
             t = os.path.join(root, name)
             try:
                 os.remove(t)
-            except PermissionError as e :
+            except PermissionError as e:
                 if raise_exception:
-                    raise PermissionError("unable to remove file {0}".format(t)) from e
+                    raise PermissionError(
+                        "unable to remove file {0}".format(t)) from e
                 else:
-                    remove_also_top=False
+                    remove_also_top = False
                     continue
-            res.append((t,"file"))
+            res.append((t, "file"))
         for name in dirs:
             t = os.path.join(root, name)
             try:
                 os.rmdir(t)
-            except OSError as e :
+            except OSError as e:
                 if raise_exception:
-                    raise OSError("unable to remove folder {0}".format(t)) from e
+                    raise OSError(
+                        "unable to remove folder {0}".format(t)) from e
                 else:
-                    remove_also_top=False
+                    remove_also_top = False
                     continue
-            res.append ( (t,"dir") )
+            res.append((t, "dir"))
         if first_root is None:
             first_root = root
 
-    if first_root is not None and remove_also_top :
-        res.append ( (root,"dir") )
+    if first_root is not None and remove_also_top:
+        res.append((root, "dir"))
         os.rmdir(root)
 
     return res
 
-def has_been_updated(source, dest) :
+
+def has_been_updated(source, dest):
     """
     we assume ``dest`` is a copy of ``source``, we want to know
     if the copy is up to date or not
@@ -320,22 +344,22 @@ def has_been_updated(source, dest) :
     @return                 True,reason or False,None
     """
     if not os.path.exists(dest):
-        return True,"new"
+        return True, "new"
 
     st1 = os.stat(source)
     st2 = os.stat(dest)
     if st1.st_size != st2.st_size:
-        return True,"size"
+        return True, "size"
 
     d1 = st1.st_mtime
     d2 = st2.st_mtime
-    if d1 > d2 :
+    if d1 > d2:
         return True, "date"
 
-    c1 = checksum_md5 (source)
-    c2 = checksum_md5 (dest)
+    c1 = checksum_md5(source)
+    c2 = checksum_md5(dest)
 
-    if c1 != c2 :
+    if c1 != c2:
         return True, "md5"
 
-    return False,None
+    return False, None

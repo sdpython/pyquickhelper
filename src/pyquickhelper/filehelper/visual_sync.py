@@ -107,6 +107,7 @@ html_page = """
     </html>
     """
 
+
 def create_visual_diff_through_html(string1, string2):
     """
     The function uses `jsdifflib <https://github.com/cemerick/jsdifflib>`_
@@ -130,30 +131,34 @@ def create_visual_diff_through_html(string1, string2):
     @endcode
     @endexample
     """
-    if True :
+    if True:
         from pymyinstall import ModuleInstall
-        temp = os.path.join(os.path.abspath(os.path.split(__file__)[0]), "temp_difflibjs")
-        ModuleInstall("jsdifflib","github",gitrepo="cemerick", fLOG = lambda *s : None).download(temp_folder = temp)
+        temp = os.path.join(
+            os.path.abspath(os.path.split(__file__)[0]), "temp_difflibjs")
+        ModuleInstall("jsdifflib", "github", gitrepo="cemerick",
+                      fLOG=lambda *s: None).download(temp_folder=temp)
 
-    fold = os.path.abspath(os.path.join(os.path.split(__file__)[0], "temp_difflibjs", "jsdifflib-master"))
+    fold = os.path.abspath(
+        os.path.join(os.path.split(__file__)[0], "temp_difflibjs", "jsdifflib-master"))
     if not os.path.exists(fold):
         raise FileNotFoundError("unable to find jsdifflib in: " + fold)
     global html_page
 
-    def cleanh(s) :
-        return s.replace("&","&amp;").replace("<","&lt;").replace(">","&gt;")
+    def cleanh(s):
+        return s.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
 
-    page = html_page.replace("__PATH__",fold + "\\") \
-                    .replace("__STRI"+"NG1__", cleanh(string1)) \
-                    .replace("__STRI"+"NG2__", cleanh(string2))
+    page = html_page.replace("__PATH__", fold + "\\") \
+                    .replace("__STRI" + "NG1__", cleanh(string1)) \
+                    .replace("__STRI" + "NG2__", cleanh(string2))
 
     return page
 
-def create_visual_diff_through_html_files(  file1,
-                                            file2,
-                                            encoding="utf8",
-                                            page = None,
-                                            browser = False):
+
+def create_visual_diff_through_html_files(file1,
+                                          file2,
+                                          encoding="utf8",
+                                          page=None,
+                                          browser=False):
     """
     calls function @see fn create_visual_diff_through_html
     with the content of two files
@@ -165,11 +170,13 @@ def create_visual_diff_through_html_files(  file1,
 
     @return                 HTML page
     """
-    with open(file1,"r",encoding=encoding) as f: cont1 = f.read()
-    with open(file2,"r",encoding=encoding) as f: cont2 = f.read()
-    diff = create_visual_diff_through_html(cont1,cont2)
+    with open(file1, "r", encoding=encoding) as f:
+        cont1 = f.read()
+    with open(file2, "r", encoding=encoding) as f:
+        cont2 = f.read()
+    diff = create_visual_diff_through_html(cont1, cont2)
     if page is not None:
-        with open(page,"w",encoding="utf8") as f :
+        with open(page, "w", encoding="utf8") as f:
             f.write(diff)
     if browser:
         if page is None:

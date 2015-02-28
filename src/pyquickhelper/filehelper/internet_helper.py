@@ -3,12 +3,16 @@
 @brief Gather functions about downloading from internet, ...
 """
 
-import os, urllib, urllib.request, sys
+import os
+import urllib
+import urllib.request
+import sys
 
 from ..loghelper.flog import noLOG, _get_file_url
 from .fexceptions import FileException
 
-def download (url, path_download = ".", outfile = None, fLOG = noLOG) :
+
+def download(url, path_download=".", outfile=None, fLOG=noLOG):
     """
     Download a file
 
@@ -33,62 +37,67 @@ def download (url, path_download = ".", outfile = None, fLOG = noLOG) :
     """
     lurl = url.lower()
     if "http://" in lurl or "https://" in lurl or "ftp://":
-        if outfile is None: dest = os.path.join(path_download, os.path.split(url)[-1])
-        elif outfile == "" : dest = _get_file_url (url, path_download)
-        else: dest = outfile
+        if outfile is None:
+            dest = os.path.join(path_download, os.path.split(url)[-1])
+        elif outfile == "":
+            dest = _get_file_url(url, path_download)
+        else:
+            dest = outfile
 
         down = False
         nyet = dest + ".notyet"
 
-        if os.path.exists (dest) and not os.path.exists (nyet) :
-            try :
-                f1      = urllib.urlopen (url)
-                down    = _first_more_recent (f1, dest)
+        if os.path.exists(dest) and not os.path.exists(nyet):
+            try:
+                f1 = urllib.urlopen(url)
+                down = _first_more_recent(f1, dest)
                 newdate = down
-                f1.close ()
-            except IOError as e :
+                f1.close()
+            except IOError as e:
                 raise FileException("unable to access url: " + url) from e
-        else :
-            down    = True
+        else:
+            down = True
             newdate = False
 
-        if down :
-            if newdate :    fLOG (" downloading (updated) ", url)
-            else :          fLOG (" downloading ", url)
+        if down:
+            if newdate:
+                fLOG(" downloading (updated) ", url)
+            else:
+                fLOG(" downloading ", url)
 
-            if len (url) > 4 and url [-4].lower () in [".txt", ".csv", ".tsv", ".log"] :
-                fLOG ("creating text file ", dest)
+            if len(url) > 4 and url[-4].lower() in [".txt", ".csv", ".tsv", ".log"]:
+                fLOG("creating text file ", dest)
                 format = "w"
-            else :
-                fLOG ("creating binary file ", dest)
+            else:
+                fLOG("creating binary file ", dest)
                 format = "wb"
 
-            if os.path.exists (nyet) :
-                size    = os.stat (dest).st_size
-                fLOG ("resume downloading (stop at", size, ") from ", url)
+            if os.path.exists(nyet):
+                size = os.stat(dest).st_size
+                fLOG("resume downloading (stop at", size, ") from ", url)
                 request = urllib.request.Request(url)
                 request.add_header("Range", "bytes=%d-" % size)
-                fu      = urllib.request.urlopen (request)
-                f       = open (dest, format.replace ("w", "a"))
-            else :
-                fLOG ("downloading ", url)
+                fu = urllib.request.urlopen(request)
+                f = open(dest, format.replace("w", "a"))
+            else:
+                fLOG("downloading ", url)
                 request = urllib.request.Request(url)
-                fu      = urllib.request.urlopen (url)
-                f       = open (dest, format)
+                fu = urllib.request.urlopen(url)
+                f = open(dest, format)
 
-            open (nyet, "w").close ()
-            c       = fu.read (2**21)
-            size    = 0
-            while len (c) > 0 :
-                size += len (c)
+            open(nyet, "w").close()
+            c = fu.read(2**21)
+            size = 0
+            while len(c) > 0:
+                size += len(c)
                 fLOG("    size", size)
-                f.write (c)
-                f.flush ()
-                c = fu.read (2**21)
-            fLOG ("end downloading")
-            f.close ()
-            fu.close ()
-            os.remove (nyet)
+                f.write(c)
+                f.flush()
+                c = fu.read(2**21)
+            fLOG("end downloading")
+            f.close()
+            fu.close()
+            os.remove(nyet)
 
         url = dest
         return url

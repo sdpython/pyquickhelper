@@ -115,8 +115,9 @@ class TestSphinxDocFull (unittest.TestCase):
         exclude = os.path.join(temp, "pyquickhelper","helpgen","utils_sphinx_doc.py")
         with open(exclude, "r") as f : content = f.read()
         assert "### # -- HELP END EXCLUDE --" not in content
-        assert "### class useless_class_UnicodeStringIOThreadSafe (str) :" not in content
-        assert '###             elif strow.startswith("@ingroup") :' in content
+        assert "### class useless_class_UnicodeStringIOThreadSafe(str):" not in content
+        if '###             elif strow.startswith("@ingroup"):' not in content:
+            raise Exception(content)
 
         # test content
         content = os.path.join(temp, "all_example.rst")

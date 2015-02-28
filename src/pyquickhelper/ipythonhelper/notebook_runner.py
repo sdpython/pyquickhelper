@@ -4,7 +4,8 @@
 """
 
 from queue import Empty
-import os, re
+import os
+import re
 from time import sleep
 
 from IPython.nbformat.current import NotebookNode
@@ -14,6 +15,7 @@ from ..loghelper.flog import noLOG
 
 
 class NotebookError(Exception):
+
     """
     custom exception
     """
@@ -21,6 +23,7 @@ class NotebookError(Exception):
 
 
 class NotebookRunner(object):
+
     """
     The kernel communicates with mime-types while the notebook
     uses short labels for different cell types. We'll use this to
@@ -40,8 +43,7 @@ class NotebookRunner(object):
     }
 
     def __init__(self, nb, profile_dir=None, working_dir=None,
-                    fLOG = noLOG):
-
+                 fLOG=noLOG):
         """
         constuctor
 
@@ -62,13 +64,13 @@ class NotebookRunner(object):
         if working_dir:
             os.chdir(working_dir)
 
-        self.km.start_kernel(extra_arguments = args)
+        self.km.start_kernel(extra_arguments=args)
 
         os.chdir(cwd)
 
         self.kc = self.km.client()
         self.kc.start_channels()
-        #self.kc.wait_for_ready()
+        # self.kc.wait_for_ready()
         self.nb = nb
 
     def shutdown_kernel(self):
@@ -91,17 +93,17 @@ class NotebookRunner(object):
         if code is None:
             return code
         else:
-            lines = [ _.strip("\n\r").rstrip(" \t") for _ in code.split("\n") ]
-            res = [ ]
-            show_is_last=False
+            lines = [_.strip("\n\r").rstrip(" \t") for _ in code.split("\n")]
+            res = []
+            show_is_last = False
             for line in lines:
-                if line.replace(" ","") == "show()":
-                    line = line.replace("show","#show")
-                    show_is_last=True
-                elif has_bokeh and line.replace(" ","") == "output_notebook()":
-                    line = line.replace("output_notebook","#output_notebook")
+                if line.replace(" ", "") == "show()":
+                    line = line.replace("show", "#show")
+                    show_is_last = True
+                elif has_bokeh and line.replace(" ", "") == "output_notebook()":
+                    line = line.replace("output_notebook", "#output_notebook")
                 else:
-                    show_is_last=False
+                    show_is_last = False
                 res.append(line)
                 if show_is_last:
                     res.append('"nothing to show"')
@@ -136,14 +138,16 @@ class NotebookRunner(object):
         try:
             status = reply['content']['status']
         except KeyError:
-            status='error'
+            status = 'error'
 
         if status == 'error':
             ansi_escape = re.compile(r'\x1b[^m]*m')
             try:
-                tr = [ ansi_escape.sub('', _) for _ in reply['content']['traceback'] ]
+                tr = [ansi_escape.sub('', _)
+                      for _ in reply['content']['traceback']]
             except KeyError:
-                tr = [ "No traceback, avaible keys in reply['content']"] + [ _ for _ in reply['content'] ]
+                tr = ["No traceback, avaible keys in reply['content']"] + \
+                    [_ for _ in reply['content']]
             traceback_text = '\n'.join(tr)
             self.fLOG("ERR:\n", traceback_text)
         else:
@@ -161,12 +165,13 @@ class NotebookRunner(object):
             except Empty as e:
                 # execution state should return to idle before the queue becomes empty,
                 # if it doesn't, something bad has happened
-                status="error"
+                status = "error"
                 nbissue += 1
-                if nbissue > 10 :
+                if nbissue > 10:
                     # the notebook is empty
                     return ""
-                else : continue
+                else:
+                    continue
 
             content = msg['content']
             msg_type = msg['msg_type']
@@ -204,7 +209,8 @@ class NotebookRunner(object):
                     try:
                         attr = self.MIME_MAP[mime]
                     except KeyError:
-                        raise NotImplementedError('unhandled mime type: %s' % mime)
+                        raise NotImplementedError(
+                            'unhandled mime type: %s' % mime)
                     setattr(out, attr, data)
 
             elif msg_type == 'pyerr':
@@ -217,13 +223,14 @@ class NotebookRunner(object):
                 continue
 
             else:
-                raise NotImplementedError('unhandled iopub message: %s' % msg_type)
+                raise NotImplementedError(
+                    'unhandled iopub message: %s' % msg_type)
             outs.append(out)
 
         if iscell:
             cell['outputs'] = outs
 
-        raw = [ ]
+        raw = []
         for _ in outs:
             try:
                 t = _.text
@@ -235,24 +242,27 @@ class NotebookRunner(object):
         self.fLOG(sraw)
 
         def reply2string(reply):
-            sreply=[]
-            for k,v in sorted(reply.items()):
+            sreply = []
+            for k, v in sorted(reply.items()):
                 if isinstance(v, dict):
-                    temp = [ ]
-                    for _,__ in sorted(v.items()):
-                        temp.append("    [{0}]={1}".format(_,str(__)))
+                    temp = []
+                    for _, __ in sorted(v.items()):
+                        temp.append("    [{0}]={1}".format(_, str(__)))
                     v = "\n".join(temp)
-                    sreply.append ( "reply['{0}']=dict\n{1}".format(k,v))
+                    sreply.append("reply['{0}']=dict\n{1}".format(k, v))
                 else:
-                    sreply.append ( "reply['{0}']={1}".format(k,str(v)))
-            sreply= "\n".join(sreply)
+                    sreply.append("reply['{0}']={1}".format(k, str(v)))
+            sreply = "\n".join(sreply)
             return sreply
 
         if status == 'error':
             sreply = reply2string(reply)
-            if len(code) < 5: scode = [code]
-            else: scode = ""
-            raise NotebookError("CELL {4} length={5} -- {6}:\n{0}\nTRACE:\n{1}\nRAW:\n{2}REPLY:\n{3}".format(code, traceback_text, sraw, sreply, index_cell, len(code), scode))
+            if len(code) < 5:
+                scode = [code]
+            else:
+                scode = ""
+            raise NotebookError("CELL {4} length={5} -- {6}:\n{0}\nTRACE:\n{1}\nRAW:\n{2}REPLY:\n{3}".format(
+                code, traceback_text, sraw, sreply, index_cell, len(code), scode))
         return outs
 
     def iter_code_cells(self):
@@ -265,11 +275,11 @@ class NotebookRunner(object):
                     yield cell
 
     def run_notebook(self,
-                    skip_exceptions=False,
-                    progress_callback=None,
-                    additional_path=None,
-                    valid = None,
-                    clean_function = None):
+                     skip_exceptions=False,
+                     progress_callback=None,
+                     additional_path=None,
+                     valid=None,
+                     clean_function=None):
         '''
         Run all the cells of a notebook in order and update
         the outputs in-place.
@@ -285,7 +295,8 @@ class NotebookRunner(object):
         '''
         if additional_path is not None:
             if not isinstance(additional_path, list):
-                raise TypeError("additional_path should be a list not: "  +str(additional_path))
+                raise TypeError(
+                    "additional_path should be a list not: " + str(additional_path))
             code = ["import sys"]
             for p in additional_path:
                 code.append("sys.path.append(r'{0}')".format(p))
@@ -293,17 +304,19 @@ class NotebookRunner(object):
             self.run_cell(-1, cell)
 
         for i, cell in enumerate(self.iter_code_cells()):
-            if valid is not None and not valid(cell.input) :
+            if valid is not None and not valid(cell.input):
                 continue
             try:
                 self.run_cell(i, cell, clean_function=clean_function)
             except Empty as er:
-                    raise Exception("issue when executing:\n{0}".format(cell.input)) from er
+                raise Exception(
+                    "issue when executing:\n{0}".format(cell.input)) from er
             except NotebookError as e:
                 if not skip_exceptions:
                     raise
                 else:
-                    raise Exception("issue when executing:\n{0}".format(cell.input)) from e
+                    raise Exception(
+                        "issue when executing:\n{0}".format(cell.input)) from e
             if progress_callback:
                 progress_callback(i)
 

@@ -2,12 +2,20 @@
 @file
 @brief  This extension contains various functionalities to help unittesting.
 """
-import os, sys, glob, re, unittest, io, warnings, time
+import os
+import sys
+import glob
+import re
+import unittest
+import io
+import warnings
+import time
 
-from ..filehelper.synchelper    import remove_folder
-from ..loghelper.flog           import fLOG, run_cmd
+from ..filehelper.synchelper import remove_folder
+from ..loghelper.flog import fLOG, run_cmd
 
-def get_temp_folder(thisfile, name, clean = True, create = True):
+
+def get_temp_folder(thisfile, name, clean=True, create=True):
     """
     return a local temporary folder to store files when unit testing
 
@@ -22,9 +30,11 @@ def get_temp_folder(thisfile, name, clean = True, create = True):
     if not name.startswith("temp_"):
         raise NameError("the folder {0} must begin with temp_".format(name))
 
-    local = os.path.join(os.path.normpath(os.path.abspath(os.path.dirname(thisfile))), name)
+    local = os.path.join(
+        os.path.normpath(os.path.abspath(os.path.dirname(thisfile))), name)
     if name == local:
-        raise NameError("the folder {0} must be relative, not absolute".format(name))
+        raise NameError(
+            "the folder {0} must be relative, not absolute".format(name))
 
     if not os.path.exists(local):
         if create:
@@ -38,7 +48,8 @@ def get_temp_folder(thisfile, name, clean = True, create = True):
 
     return local
 
-def get_test_file (filter, dir = None) :
+
+def get_test_file(filter, dir=None):
     """
     return the list of test files
     @param      dir         path to look (or paths to look if it is a list)
@@ -46,80 +57,85 @@ def get_test_file (filter, dir = None) :
     @return                 a list of test files
     """
 
-    if dir is None :
+    if dir is None:
         path = os.path.split(__file__)[0]
-        nrt  = os.path.abspath(os.path.join(path, "..", "..", "_nrt"))
-        uts  = os.path.abspath(os.path.join(path, "..", "..", "_unittest"))
-        ut2  = os.path.abspath(os.path.join(path, "..", "..", "_unittests"))
-        dirs = [ nrt, uts, ut2 ]
-    elif isinstance(dir, str) :
-        if not os.path.exists(dir) :
-            raise FileNotFoundError (dir)
-        dirs = [ dir ]
-    else :
+        nrt = os.path.abspath(os.path.join(path, "..", "..", "_nrt"))
+        uts = os.path.abspath(os.path.join(path, "..", "..", "_unittest"))
+        ut2 = os.path.abspath(os.path.join(path, "..", "..", "_unittests"))
+        dirs = [nrt, uts, ut2]
+    elif isinstance(dir, str):
+        if not os.path.exists(dir):
+            raise FileNotFoundError(dir)
+        dirs = [dir]
+    else:
         dirs = dir
-        for d in dirs :
-            if not os.path.exists(d) :
-                raise FileNotFoundError (d)
+        for d in dirs:
+            if not os.path.exists(d):
+                raise FileNotFoundError(d)
 
     copypaths = sys.path.copy()
 
-    li   = [ ]
-    for dir in dirs :
-        if "__pycache__" in dir : continue
-        if not os.path.exists (dir) :
+    li = []
+    for dir in dirs:
+        if "__pycache__" in dir:
             continue
-        if dir not in sys.path and dir != "." :
-            sys.path.append (dir)
-        li += glob.glob (dir + "/" + filter)
-        if filter != "temp_*" :
-            li = [ l for l in li if "test_" in l and ".py" in l and \
-                                    "test_main" not in l and \
-                                    "temp_" not in l and \
-                                    "out.test_copyfile.py.2.txt" not in l and \
-                                    ".pyc" not in l and \
-                                    ".pyd" not in l and \
-                                    ".so" not in l and \
-                                    ".py~" not in l and \
-                                    ".pyo" not in l ]
+        if not os.path.exists(dir):
+            continue
+        if dir not in sys.path and dir != ".":
+            sys.path.append(dir)
+        li += glob.glob(dir + "/" + filter)
+        if filter != "temp_*":
+            li = [l for l in li if "test_" in l and ".py" in l and
+                  "test_main" not in l and
+                  "temp_" not in l and
+                  "out.test_copyfile.py.2.txt" not in l and
+                  ".pyc" not in l and
+                  ".pyd" not in l and
+                  ".so" not in l and
+                  ".py~" not in l and
+                  ".pyo" not in l]
 
-        lid = glob.glob (dir + "/*")
-        for l in lid :
-            if os.path.isdir (l) :
-                temp = get_test_file (filter, l)
-                temp = [t for t in temp ]
-                li.extend (temp)
+        lid = glob.glob(dir + "/*")
+        for l in lid:
+            if os.path.isdir(l):
+                temp = get_test_file(filter, l)
+                temp = [t for t in temp]
+                li.extend(temp)
 
     # we restore sys.path
     sys.path = copypaths
 
     return li
 
-def get_estimation_time (file) :
+
+def get_estimation_time(file):
     """
     return an estimation of the processing time, it extracts the number in ``(time=5s)`` for example
 
     @param      file        filename
     @return                 int
     """
-    try :
-        f = open (file, "r")
-        li = f.readlines ()
-        f.close ()
-    except UnicodeDecodeError :
-        try :
-            f = open (file, "r", encoding="latin-1")
-            li = f.readlines ()
-            f.close ()
-        except Exception as ee :
-            raise Exception("issue with %s\n%s" % (file,str(ee)))
+    try:
+        f = open(file, "r")
+        li = f.readlines()
+        f.close()
+    except UnicodeDecodeError:
+        try:
+            f = open(file, "r", encoding="latin-1")
+            li = f.readlines()
+            f.close()
+        except Exception as ee:
+            raise Exception("issue with %s\n%s" % (file, str(ee)))
 
-    s = ''.join (li)
-    c = re.compile ("[(]time=([0-9]+)s[)]").search (s)
-    if c is None : return 0
-    else : return int (c.groups () [0])
+    s = ''.join(li)
+    c = re.compile("[(]time=([0-9]+)s[)]").search(s)
+    if c is None:
+        return 0
+    else:
+        return int(c.groups()[0])
 
-def import_files (li) :
+
+def import_files(li):
     """
     run all tests in file list li
 
@@ -127,93 +143,105 @@ def import_files (li) :
     @return             list of tests [ ( testsuite, file) ]
     """
     allsuite = []
-    for l in li :
+    for l in li:
 
         copypath = sys.path.copy()
 
-        sdir = os.path.split (l) [0]
-        if sdir not in sys.path :
-            sys.path.append (sdir)
-        tl  = os.path.split (l) [1]
-        fi  = tl.replace (".py", "")
+        sdir = os.path.split(l)[0]
+        if sdir not in sys.path:
+            sys.path.append(sdir)
+        tl = os.path.split(l)[1]
+        fi = tl.replace(".py", "")
 
         if fi in ["neural_network", "test_c",
                   "test_model", "test_look_up",
-                  "test_look_up.extract.txt"] :
-            try :
-                mo = __import__ (fi)
-            except Exception as e :
-                print ("unable to import ", fi)
+                  "test_look_up.extract.txt"]:
+            try:
+                mo = __import__(fi)
+            except Exception as e:
+                print("unable to import ", fi)
                 mo = None
-        else :
-            try :
-                mo = __import__ (fi)
-            except :
-                print ("problem with ",fi)
-                mo = __import__ (fi)
+        else:
+            try:
+                mo = __import__(fi)
+            except:
+                print("problem with ", fi)
+                mo = __import__(fi)
 
         # some tests can mess up with the import path
         sys.path = copypath
 
-        cl = dir (mo)
-        for c in cl :
-            if len (c) < 5 or c [:4] != "Test" : continue
+        cl = dir(mo)
+        for c in cl:
+            if len(c) < 5 or c[:4] != "Test":
+                continue
             # test class c
-            testsuite = unittest.TestSuite ()
+            testsuite = unittest.TestSuite()
             loc = locals()
-            exec (compile ("di = dir (mo." + c + ")", "", "exec"), globals(), loc)
+            exec(
+                compile("di = dir (mo." + c + ")", "", "exec"), globals(), loc)
             di = loc["di"]
-            for d in di :
-                if len (d) >= 6 and d [:5] == "_test" :
-                    raise RuntimeError ("a function _test is still deactivated %s in %s" % (d, c))
-                if len (d) < 5 or d [:4] != "test" : continue
+            for d in di:
+                if len(d) >= 6 and d[:5] == "_test":
+                    raise RuntimeError(
+                        "a function _test is still deactivated %s in %s" % (d, c))
+                if len(d) < 5 or d[:4] != "test":
+                    continue
                 # method d.c
                 loc = locals()
-                exec (compile ("t = mo." + c + "(\"" + d + "\")", "", "exec"), globals(), loc)
+                exec(
+                    compile("t = mo." + c + "(\"" + d + "\")", "", "exec"), globals(), loc)
                 t = loc["t"]
-                testsuite.addTest (t)
-            allsuite.append ((testsuite, l))
+                testsuite.addTest(t)
+            allsuite.append((testsuite, l))
 
     return allsuite
 
-def clean () :
+
+def clean():
     """
     do the cleaning
     """
     # do not use SVN here just in case some files are not checked in.
     print()
     for log_file in ["temp_hal_log.txt", "temp_hal_log2.txt",
-                    "temp_hal_log_.txt", "temp_log.txt", "temp_log2.txt", ] :
-        li = get_test_file (log_file)
-        for l in li :
-            try :
-                if os.path.isfile (l) : os.remove (l)
-            except Exception as e :
-                print ("unable to remove file",l, " --- ", str(e).replace("\n", " "))
+                     "temp_hal_log_.txt", "temp_log.txt", "temp_log2.txt", ]:
+        li = get_test_file(log_file)
+        for l in li:
+            try:
+                if os.path.isfile(l):
+                    os.remove(l)
+            except Exception as e:
+                print(
+                    "unable to remove file", l, " --- ", str(e).replace("\n", " "))
 
-    li = get_test_file ("temp_*")
-    for l in li :
-        try :
-            if os.path.isfile (l) : os.remove (l)
-        except Exception as e :
-            print ("unable to remove file. ",l, " --- ", str(e).replace("\n", " "))
-    for l in li :
-        try :
-            if os.path.isdir (l) :
-                remove_folder (l)
-        except Exception as e :
-            print ("unable to remove dir. ",l, " --- ", str(e).replace("\n", " "))
+    li = get_test_file("temp_*")
+    for l in li:
+        try:
+            if os.path.isfile(l):
+                os.remove(l)
+        except Exception as e:
+            print("unable to remove file. ", l,
+                  " --- ", str(e).replace("\n", " "))
+    for l in li:
+        try:
+            if os.path.isdir(l):
+                remove_folder(l)
+        except Exception as e:
+            print("unable to remove dir. ", l,
+                  " --- ", str(e).replace("\n", " "))
 
-def main (  runner,
-            path_test   = None,
-            limit_max   = 1e9,
-            log         = False,
-            skip        = -1,
-            skip_list   = None,
-            on_stderr   = False,
-            flogp       = print,
-            processes   = False,
-            skip_function = None) :
+
+def main(runner,
+         path_test=None,
+         limit_max=1e9,
+         log=False,
+         skip=-1,
+         skip_list=None,
+         on_stderr=False,
+         flogp=print,
+         processes=False,
+         skip_function=None):
     """
     run all unit test
     the function looks into the folder _unittest and extract from all files
@@ -248,102 +276,106 @@ def main (  runner,
         skip_list = set(skip_list)
 
     # checking that the module does not belong to the installed modules
-    if path_test is not None :
+    if path_test is not None:
         path_module = os.path.join(sys.executable, "Lib", "site-packages")
-        paths = [ os.path.join(path_module, "src"), ]
-        for path in paths :
-            if os.path.exists (path):
+        paths = [os.path.join(path_module, "src"), ]
+        for path in paths:
+            if os.path.exists(path):
                 raise FileExistsError("this path should not exist " + path)
 
-    li      = get_test_file ("test*", path_test)
-    est     = [ get_estimation_time(l) for l in li ]
-    co      = [ (e,l) for e,l in zip(est, li) ]
-    co.sort ()
-    cco     = []
+    li = get_test_file("test*", path_test)
+    est = [get_estimation_time(l) for l in li]
+    co = [(e, l) for e, l in zip(est, li)]
+    co.sort()
+    cco = []
 
-    if skip != -1 : flogp ("found ", len(co), " test files skipping", skip)
-    else :          flogp ("found ", len(co), " test files")
+    if skip != -1:
+        flogp("found ", len(co), " test files skipping", skip)
+    else:
+        flogp("found ", len(co), " test files")
 
-    index   = 0
-    for e,l in co:
-        if e > limit_max :
+    index = 0
+    for e, l in co:
+        if e > limit_max:
             continue
         cut = os.path.split(l)
         cut = os.path.split(cut[0])[-1] + "/" + cut[-1]
-        if skip == -1 or index >= skip :
-            flogp ("% 3d - time " % (len(cco)+1), "% 3d" % e, "s  --> ", cut)
-        cco.append( (e, l) )
+        if skip == -1 or index >= skip:
+            flogp("% 3d - time " % (len(cco) + 1), "% 3d" % e, "s  --> ", cut)
+        cco.append((e, l))
         index += 1
 
-    exp = re.compile ("Ran ([0-9]+) tests? in ([.0-9]+)s")
+    exp = re.compile("Ran ([0-9]+) tests? in ([.0-9]+)s")
 
-    li      = [ a [1] for a in cco ]
-    lis     = [ os.path.split(_)[-1] for _ in li ]
-    suite   = import_files (li)
-    keep    = []
+    li = [a[1] for a in cco]
+    lis = [os.path.split(_)[-1] for _ in li]
+    suite = import_files(li)
+    keep = []
     #memerr  = sys.stderr
-    memout  = sys.stdout
-    fail    = 0
-    allwarn = [ ]
+    memout = sys.stdout
+    fail = 0
+    allwarn = []
 
-    stderr      = sys.stderr
-    fullstderr  = io.StringIO()
+    stderr = sys.stderr
+    fullstderr = io.StringIO()
 
-    for i,s in enumerate(suite) :
-        if skip >= 0 and i < skip :
+    for i, s in enumerate(suite):
+        if skip >= 0 and i < skip:
             continue
-        if i+1 in skip_list:
+        if i + 1 in skip_list:
             continue
         if skip_function is not None:
-            with open(s[1],"r") as f : content = f.read()
+            with open(s[1], "r") as f:
+                content = f.read()
             if skip_function(s[1], content):
                 continue
 
         cut = os.path.split(s[1])
         cut = os.path.split(cut[0])[-1] + "/" + cut[-1]
-        zzz = "running test % 3d, %s" % (i+1,cut)
-        zzz += (60 - len (zzz)) * " "
-        memout.write (zzz)
+        zzz = "running test % 3d, %s" % (i + 1, cut)
+        zzz += (60 - len(zzz)) * " "
+        memout.write(zzz)
 
-        if log :
+        if log:
             fLOG(OutputPrint=True)
             fLOG(Lock=True)
 
-        newstdr     = io.StringIO()
-        keepstdr    = sys.stderr
-        sys.stderr  = newstdr
-        list_warn   = [ ]
+        newstdr = io.StringIO()
+        keepstdr = sys.stderr
+        sys.stderr = newstdr
+        list_warn = []
 
         if processes:
-            cmd = sys.executable.replace("w.exe",".exe") + " " + li[i]
-            out,err = run_cmd(cmd, wait=True)
-            if len(err) > 0 :
+            cmd = sys.executable.replace("w.exe", ".exe") + " " + li[i]
+            out, err = run_cmd(cmd, wait=True)
+            if len(err) > 0:
                 sys.stderr.write(err)
         else:
             with warnings.catch_warnings(record=True) as w:
                 warnings.simplefilter("always")
                 r = runner.run(s[0])
-                for ww in w :
+                for ww in w:
                     list_warn.append(ww)
                 warnings.resetwarnings()
 
-            out = r.stream.getvalue ()
+            out = r.stream.getvalue()
 
-        ti  = exp.findall (out) [-1]
-        add = " ran %s tests in %ss" % ti  # don't modify it, PyCharm does not get it right (ti is a tuple)
+        ti = exp.findall(out)[-1]
+        # don't modify it, PyCharm does not get it right (ti is a tuple)
+        add = " ran %s tests in %ss" % ti
 
-        sys.stderr  = keepstdr
+        sys.stderr = keepstdr
 
-        if log :
+        if log:
             fLOG(Lock=False)
 
-        memout.write (add)
+        memout.write(add)
 
-        if not r.wasSuccessful() :
-            err = out.split ("===========")
-            err = err [-1]
-            memout.write ("\n")
-            memout.write (err)
+        if not r.wasSuccessful():
+            err = out.split("===========")
+            err = err[-1]
+            memout.write("\n")
+            memout.write(err)
             fail += 1
 
             fullstderr.write("\n#-----" + lis[i] + "\n")
@@ -355,51 +387,52 @@ def main (  runner,
             if len(list_warn) > 0:
                 fullstderr.write("WARN:\n")
                 for w in list_warn:
-                    fullstderr.write("w{0}: {1}\n".format(i,str(w)))
+                    fullstderr.write("w{0}: {1}\n".format(i, str(w)))
             fullstderr.write("ERR:\n")
             fullstderr.write(newstdr.getvalue())
         else:
-            allwarn.append ( (lis[i], list_warn) )
+            allwarn.append((lis[i], list_warn))
             val = newstdr.getvalue()
-            if len(val) > 0 and is_valid_error(val) :
+            if len(val) > 0 and is_valid_error(val):
                 fullstderr.write("\n*-----" + lis[i] + "\n")
                 if len(list_warn) > 0:
                     fullstderr.write("WARN:\n")
                     for w in list_warn:
-                        fullstderr.write("w{0}: {1}\n".format(i,str(w)))
+                        fullstderr.write("w{0}: {1}\n".format(i, str(w)))
                 fullstderr.write("ERR:\n")
                 fullstderr.write(val)
 
-        memout.write ("\n")
+        memout.write("\n")
 
-        keep.append( (s[1], r) )
+        keep.append((s[1], r))
 
     sys.stderr = stderr
     sys.stdout = memout
     val = fullstderr.getvalue()
 
-    if len(val) > 0 :
-        flogp ("-- STDERR (from unittests) on STDOUT")
-        flogp (val)
-        flogp ("-- end STDERR on STDOUT")
+    if len(val) > 0:
+        flogp("-- STDERR (from unittests) on STDOUT")
+        flogp(val)
+        flogp("-- end STDERR on STDOUT")
 
-        if on_stderr :
+        if on_stderr:
             sys.stderr.write("##### STDERR (from unittests) #####\n")
             sys.stderr.write(val)
             sys.stderr.write("##### end STDERR #####\n")
 
-    if fail == 0 :
-        clean ()
+    if fail == 0:
+        clean()
 
     for fi, lw in allwarn:
-        if len(lw) > 0 :
+        if len(lw) > 0:
             memout.write("WARN: {0}\n".format(fi))
-            for i,w in enumerate(lw):
-                memout.write("  w{0}: {1}\n".format(i,str(w)))
+            for i, w in enumerate(lw):
+                memout.write("  w{0}: {1}\n".format(i, str(w)))
 
     flogp("END of unit tests")
 
     return dict(err=val, tests=keep)
+
 
 def is_valid_error(error):
     """
@@ -411,19 +444,20 @@ def is_valid_error(error):
     @param      error       text
     @return                 boolean
     """
-    keys  = ["Exception", "Error", "TraceBack", "invalid", " line "]
+    keys = ["Exception", "Error", "TraceBack", "invalid", " line "]
     error = error.lower()
     for key in keys:
         if key.lower() in error:
             return True
     return False
 
-def main_wrapper_tests( codefile,
-                        skip_list = None,
-                        processes = False,
-                        add_coverage = False,
-                        report_folder = None,
-                        skip_function = None):
+
+def main_wrapper_tests(codefile,
+                       skip_list=None,
+                       processes=False,
+                       add_coverage=False,
+                       report_folder=None,
+                       skip_function=None):
     """
     calls function :func:`main <pyquickhelper.unittests.utils_tests.main>` and throw an exception if it fails
 
@@ -469,12 +503,12 @@ def main_wrapper_tests( codefile,
 
         It is due to matplotlib. See `Generating matplotlib graphs without a running X server <http://stackoverflow.com/questions/4931376/generating-matplotlib-graphs-without-a-running-x-server>`_.
     """
-    runner  = unittest.TextTestRunner(verbosity=0, stream = io.StringIO ())
-    path    = os.path.abspath(os.path.join(os.path.split(codefile) [0]))
+    runner = unittest.TextTestRunner(verbosity=0, stream=io.StringIO())
+    path = os.path.abspath(os.path.join(os.path.split(codefile)[0]))
 
     def run_main():
-        res = main(runner, path_test = path, skip = -1, skip_list=skip_list, processes=processes,
-                    skip_function=skip_function)
+        res = main(runner, path_test=path, skip=-1, skip_list=skip_list, processes=processes,
+                   skip_function=skip_function)
         return res
 
     if "win" not in sys.platform and "DISPLAY" not in os.environ:
@@ -483,25 +517,29 @@ def main_wrapper_tests( codefile,
         #os.environ["DISPLAY"] = "localhost:0"
         pass
 
-    # to deal with: _tkinter.TclError: no display name and no $DISPLAY environment variable
+    # to deal with: _tkinter.TclError: no display name and no $DISPLAY
+    # environment variable
     import matplotlib as mpl
     mpl.use('Agg')
     import matplotlib.pyplot as plt
 
     if add_coverage:
         if report_folder is None:
-            report_folder = os.path.join( os.path.dirname(codefile), "..", "_doc","sphinxdoc","source", "coverage")
+            report_folder = os.path.join(
+                os.path.dirname(codefile), "..", "_doc", "sphinxdoc", "source", "coverage")
 
         print("enabling coverage")
         from coverage import coverage
         folder = os.path.join(os.path.dirname(codefile), "..", "src")
-        content = [ _ for _ in os.listdir(folder) if not _.startswith("_") and os.path.isdir( os.path.join(folder,_)) ]
+        content = [_ for _ in os.listdir(folder) if not _.startswith(
+            "_") and os.path.isdir(os.path.join(folder, _))]
         if len(content) != 1:
-            raise FileNotFoundError("unable to guess the project name in {0}\n{1}".format(folder, "\n".join(content)))
+            raise FileNotFoundError(
+                "unable to guess the project name in {0}\n{1}".format(folder, "\n".join(content)))
 
         project_var_name = content[0]
-        cov = coverage(source = ["src/" + project_var_name])
-        cov.exclude ('if __name__ == "__main__"')
+        cov = coverage(source=["src/" + project_var_name])
+        cov.exclude('if __name__ == "__main__"')
         cov.start()
 
         res = run_main()
@@ -512,11 +550,11 @@ def main_wrapper_tests( codefile,
     else:
         res = run_main()
 
-    for r in res["tests"] :
-        k = str (r [1])
-        if "errors=0" not in k or "failures=0" not in k :
-            print ("*", r[1], r[0])
+    for r in res["tests"]:
+        k = str(r[1])
+        if "errors=0" not in k or "failures=0" not in k:
+            print("*", r[1], r[0])
 
-    err = res.get("err","")
-    if len(err) > 0 :
+    err = res.get("err", "")
+    if len(err) > 0:
         raise Exception(err)

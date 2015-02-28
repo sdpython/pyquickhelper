@@ -18,7 +18,7 @@ into Doxygen-conform documentation blocks.
 """
 
 __doc__ = __blurb__ + \
-"""
+    """
 In order to make Doxygen preprocess files through doxypy, simply
 add the following lines to your Doxyfile:
 
@@ -55,7 +55,9 @@ import re
 
 from optparse import OptionParser
 
+
 class FSM(object):
+
     """Implements a finite state machine.
 
     Transitions are given as 4-tuples, consisting of an origin state, a target
@@ -94,16 +96,19 @@ class FSM(object):
                     self.current_state = to_state
                     self.current_input = input
                     self.current_transition = transition
-                    if options.debug :
-                        print((sys.stderr, "# FSM: executing ({} -> {}) for line '{}'".format(from_state, to_state, input)))
+                    if options.debug:
+                        print(
+                            (sys.stderr, "# FSM: executing ({} -> {}) for line '{}'".format(from_state, to_state, input)))
                     callback(match)
                     return
 
+
 class Doxypy(object):
-    def __init__(   self,
-                    print_output,
-                    process_comment,
-                    information):
+
+    def __init__(self,
+                 print_output,
+                 process_comment,
+                 information):
         """
         constructor for Doxypy
         @param      print_output        function which will receive the output
@@ -113,80 +118,116 @@ class Doxypy(object):
         """
         string_prefixes = "[uU]?[rR]?"
 
-        self.start_single_comment_re     = re.compile("^\s*%s(''')" % string_prefixes)
+        self.start_single_comment_re = re.compile(
+            "^\s*%s(''')" % string_prefixes)
         self.end_single_comment_re       = re.compile("(''')\s*$")
 
-        self.start_double_comment_re     = re.compile("^\s*%s(\"\"\")" % string_prefixes)
-        self.end_double_comment_re       = re.compile("(\"\"\")\s*$")
+        self.start_double_comment_re = re.compile(
+            "^\s*%s(\"\"\")" % string_prefixes)
+        self.end_double_comment_re = re.compile("(\"\"\")\s*$")
 
-        self.single_comment_re           = re.compile("^\s*%s(''').*(''')\s*$" % string_prefixes)
-        self.double_comment_re           = re.compile("^\s*%s(\"\"\").*(\"\"\")\s*$" % string_prefixes)
+        self.single_comment_re = re.compile(
+            "^\s*%s(''').*(''')\s*$" % string_prefixes)
+        self.double_comment_re = re.compile(
+            "^\s*%s(\"\"\").*(\"\"\")\s*$" % string_prefixes)
 
-        self.defclass_re                 = re.compile("^(\s*)(def .+:|class .+:)")
-        self.empty_re                    = re.compile("^\s*$")
-        self.hashline_re                 = re.compile("^\s*#.*$")
-        self.importline_re               = re.compile("^\s*(import |from .+ import)")
+        self.defclass_re = re.compile("^(\s*)(def .+:|class .+:)")
+        self.empty_re = re.compile("^\s*$")
+        self.hashline_re = re.compile("^\s*#.*$")
+        self.importline_re = re.compile("^\s*(import |from .+ import)")
 
-        self.multiline_defclass_start_re = re.compile("^(\s*)(def|class)(\s.*)?$")
-        self.multiline_defclass_end_re   = re.compile(":\s*$")
-        self.print_output                = print_output
-        self.process_comment             = process_comment
-        self.information                 = information
+        self.multiline_defclass_start_re = re.compile(
+            "^(\s*)(def|class)(\s.*)?$")
+        self.multiline_defclass_end_re = re.compile(":\s*$")
+        self.print_output = print_output
+        self.process_comment = process_comment
+        self.information = information
 
-        ## Transition list format
+        # Transition list format
         #  ["FROM", "TO", condition, action]
         transitions = [
-            ### FILEHEAD
+            # FILEHEAD
 
             # single line comments
-            ["FILEHEAD", "FILEHEAD", self.single_comment_re.search, self.appendCommentLine],
-            ["FILEHEAD", "FILEHEAD", self.double_comment_re.search, self.appendCommentLine],
+            ["FILEHEAD", "FILEHEAD", self.single_comment_re.search,
+                self.appendCommentLine],
+            ["FILEHEAD", "FILEHEAD", self.double_comment_re.search,
+                self.appendCommentLine],
 
             # multiline comments
-            ["FILEHEAD", "FILEHEAD_COMMENT_SINGLE", self.start_single_comment_re.search, self.appendCommentLine],
-            ["FILEHEAD_COMMENT_SINGLE", "FILEHEAD", self.end_single_comment_re.search, self.appendCommentLine],
-            ["FILEHEAD_COMMENT_SINGLE", "FILEHEAD_COMMENT_SINGLE", self.catchall, self.appendCommentLine],
-            ["FILEHEAD", "FILEHEAD_COMMENT_DOUBLE", self.start_double_comment_re.search, self.appendCommentLine],
-            ["FILEHEAD_COMMENT_DOUBLE", "FILEHEAD", self.end_double_comment_re.search, self.appendCommentLine],
-            ["FILEHEAD_COMMENT_DOUBLE", "FILEHEAD_COMMENT_DOUBLE", self.catchall, self.appendCommentLine],
+            ["FILEHEAD", "FILEHEAD_COMMENT_SINGLE",
+                self.start_single_comment_re.search, self.appendCommentLine],
+            ["FILEHEAD_COMMENT_SINGLE", "FILEHEAD",
+                self.end_single_comment_re.search, self.appendCommentLine],
+            ["FILEHEAD_COMMENT_SINGLE", "FILEHEAD_COMMENT_SINGLE",
+                self.catchall, self.appendCommentLine],
+            ["FILEHEAD", "FILEHEAD_COMMENT_DOUBLE",
+                self.start_double_comment_re.search, self.appendCommentLine],
+            ["FILEHEAD_COMMENT_DOUBLE", "FILEHEAD",
+                self.end_double_comment_re.search, self.appendCommentLine],
+            ["FILEHEAD_COMMENT_DOUBLE", "FILEHEAD_COMMENT_DOUBLE",
+                self.catchall, self.appendCommentLine],
 
             # other lines
-            ["FILEHEAD", "FILEHEAD", self.empty_re.search, self.appendFileheadLine],
-            ["FILEHEAD", "FILEHEAD", self.hashline_re.search, self.appendFileheadLine],
-            ["FILEHEAD", "FILEHEAD", self.importline_re.search, self.appendFileheadLine],
-            ["FILEHEAD", "DEFCLASS", self.defclass_re.search, self.resetCommentSearch],
-            ["FILEHEAD", "DEFCLASS_MULTI", self.multiline_defclass_start_re.search, self.resetCommentSearch],
-            ["FILEHEAD", "DEFCLASS_BODY", self.catchall, self.appendFileheadLine],
+            ["FILEHEAD", "FILEHEAD", self.empty_re.search,
+                self.appendFileheadLine],
+            ["FILEHEAD", "FILEHEAD", self.hashline_re.search,
+                self.appendFileheadLine],
+            ["FILEHEAD", "FILEHEAD", self.importline_re.search,
+                self.appendFileheadLine],
+            ["FILEHEAD", "DEFCLASS", self.defclass_re.search,
+                self.resetCommentSearch],
+            ["FILEHEAD", "DEFCLASS_MULTI",
+                self.multiline_defclass_start_re.search, self.resetCommentSearch],
+            ["FILEHEAD", "DEFCLASS_BODY",
+                self.catchall, self.appendFileheadLine],
 
-            ### DEFCLASS
+            # DEFCLASS
 
             # single line comments
-            ["DEFCLASS", "DEFCLASS_BODY", self.single_comment_re.search, self.appendCommentLine],
-            ["DEFCLASS", "DEFCLASS_BODY", self.double_comment_re.search, self.appendCommentLine],
+            ["DEFCLASS", "DEFCLASS_BODY",
+                self.single_comment_re.search, self.appendCommentLine],
+            ["DEFCLASS", "DEFCLASS_BODY",
+                self.double_comment_re.search, self.appendCommentLine],
 
             # multiline comments
-            ["DEFCLASS", "COMMENT_SINGLE", self.start_single_comment_re.search, self.appendCommentLine],
-            ["COMMENT_SINGLE", "DEFCLASS_BODY", self.end_single_comment_re.search, self.appendCommentLine],
-            ["COMMENT_SINGLE", "COMMENT_SINGLE", self.catchall, self.appendCommentLine],
-            ["DEFCLASS", "COMMENT_DOUBLE", self.start_double_comment_re.search, self.appendCommentLine],
-            ["COMMENT_DOUBLE", "DEFCLASS_BODY", self.end_double_comment_re.search, self.appendCommentLine],
-            ["COMMENT_DOUBLE", "COMMENT_DOUBLE", self.catchall, self.appendCommentLine],
+            ["DEFCLASS", "COMMENT_SINGLE",
+                self.start_single_comment_re.search, self.appendCommentLine],
+            ["COMMENT_SINGLE", "DEFCLASS_BODY",
+                self.end_single_comment_re.search, self.appendCommentLine],
+            ["COMMENT_SINGLE", "COMMENT_SINGLE",
+                self.catchall, self.appendCommentLine],
+            ["DEFCLASS", "COMMENT_DOUBLE",
+                self.start_double_comment_re.search, self.appendCommentLine],
+            ["COMMENT_DOUBLE", "DEFCLASS_BODY",
+                self.end_double_comment_re.search, self.appendCommentLine],
+            ["COMMENT_DOUBLE", "COMMENT_DOUBLE",
+                self.catchall, self.appendCommentLine],
 
             # other lines
-            ["DEFCLASS", "DEFCLASS", self.empty_re.search, self.appendDefclassLine],
-            ["DEFCLASS", "DEFCLASS", self.defclass_re.search, self.resetCommentSearch],
-            ["DEFCLASS", "DEFCLASS_MULTI", self.multiline_defclass_start_re.search, self.resetCommentSearch],
-            ["DEFCLASS", "DEFCLASS_BODY", self.catchall, self.stopCommentSearch],
+            ["DEFCLASS", "DEFCLASS", self.empty_re.search,
+                self.appendDefclassLine],
+            ["DEFCLASS", "DEFCLASS", self.defclass_re.search,
+                self.resetCommentSearch],
+            ["DEFCLASS", "DEFCLASS_MULTI",
+                self.multiline_defclass_start_re.search, self.resetCommentSearch],
+            ["DEFCLASS", "DEFCLASS_BODY",
+                self.catchall, self.stopCommentSearch],
 
-            ### DEFCLASS_BODY
+            # DEFCLASS_BODY
 
-            ["DEFCLASS_BODY", "DEFCLASS", self.defclass_re.search, self.startCommentSearch],
-            ["DEFCLASS_BODY", "DEFCLASS_MULTI", self.multiline_defclass_start_re.search, self.startCommentSearch],
-            ["DEFCLASS_BODY", "DEFCLASS_BODY", self.catchall, self.appendNormalLine],
+            ["DEFCLASS_BODY", "DEFCLASS",
+                self.defclass_re.search, self.startCommentSearch],
+            ["DEFCLASS_BODY", "DEFCLASS_MULTI",
+                self.multiline_defclass_start_re.search, self.startCommentSearch],
+            ["DEFCLASS_BODY", "DEFCLASS_BODY",
+                self.catchall, self.appendNormalLine],
 
-            ### DEFCLASS_MULTI
-            ["DEFCLASS_MULTI", "DEFCLASS", self.multiline_defclass_end_re.search, self.appendDefclassLine],
-            ["DEFCLASS_MULTI", "DEFCLASS_MULTI", self.catchall, self.appendDefclassLine],
+            # DEFCLASS_MULTI
+            ["DEFCLASS_MULTI", "DEFCLASS",
+                self.multiline_defclass_end_re.search, self.appendDefclassLine],
+            ["DEFCLASS_MULTI", "DEFCLASS_MULTI",
+                self.catchall, self.appendDefclassLine],
         ]
 
         self.fsm = FSM("FILEHEAD", transitions)
@@ -205,8 +246,9 @@ class Doxypy(object):
 
         if options.autobrief:
             if len(self.comment) == 1 \
-            or (len(self.comment) > 2 and self.comment[1].strip() == ''):
-                self.comment[0] = self.__docstringSummaryToBrief(self.comment[0])
+                    or (len(self.comment) > 2 and self.comment[1].strip() == ''):
+                self.comment[0] = self.__docstringSummaryToBrief(
+                    self.comment[0])
 
         if self.defclass:
             self.output.extend(self.defclass)
@@ -233,7 +275,7 @@ class Doxypy(object):
         Flushes the current outputbuffer to the outstream.
         """
         if self.output:
-            if options.debug :
+            if options.debug:
                 print("# OUTPUT: ", self.output, file=sys.stderr)
             self.print_output("\n".join(self.output), file=self.outstream)
             self.outstream.flush()
@@ -251,7 +293,7 @@ class Doxypy(object):
 
         Closes the current commentblock and starts a new comment search.
         """
-        if options.debug :
+        if options.debug:
             print("# CALLBACK: resetCommentSearch", file=sys.stderr)
         self.__closeComment()
         self.startCommentSearch(match)
@@ -263,7 +305,7 @@ class Doxypy(object):
         Saves the triggering line, resets the current comment and saves
         the current indentation.
         """
-        if options.debug :
+        if options.debug:
             print("# CALLBACK: startCommentSearch", file=sys.stderr)
         self.defclass = [self.fsm.current_input]
         self.comment = []
@@ -276,7 +318,7 @@ class Doxypy(object):
         Closes the current commentblock, resets the triggering line and
         appends the current line to the output.
         """
-        if options.debug :
+        if options.debug:
             print("# CALLBACK: stopCommentSearch", file=sys.stderr)
         self.__closeComment()
 
@@ -289,7 +331,7 @@ class Doxypy(object):
 
         Closes the open comment block, resets it and appends the current line.
         """
-        if options.debug :
+        if options.debug:
             print("# CALLBACK: appendFileheadLine", file=sys.stderr)
         self.__closeComment()
         self.comment = []
@@ -302,17 +344,19 @@ class Doxypy(object):
         The comment delimiter is removed from multiline start and ends as
         well as singleline comments.
         """
-        if options.debug :
+        if options.debug:
             print("# CALLBACK: appendCommentLine", file=sys.stderr)
-        (from_state, to_state, condition, callback) = self.fsm.current_transition
+        (from_state, to_state, condition,
+         callback) = self.fsm.current_transition
 
         # single line comment
         if (from_state == "DEFCLASS" and to_state == "DEFCLASS_BODY") \
-        or (from_state == "FILEHEAD" and to_state == "FILEHEAD"):
+                or (from_state == "FILEHEAD" and to_state == "FILEHEAD"):
             # remove comment delimiter from begin and end of the line
             activeCommentDelim = match.group(1)
             line = self.fsm.current_input
-            self.comment.append(line[line.find(activeCommentDelim)+len(activeCommentDelim):line.rfind(activeCommentDelim)])
+            self.comment.append(line[line.find(
+                activeCommentDelim) + len(activeCommentDelim):line.rfind(activeCommentDelim)])
 
             if (to_state == "DEFCLASS_BODY"):
                 self.__closeComment()
@@ -322,7 +366,8 @@ class Doxypy(object):
             # remove comment delimiter from begin of the line
             activeCommentDelim = match.group(1)
             line = self.fsm.current_input
-            self.comment.append(line[line.find(activeCommentDelim)+len(activeCommentDelim):])
+            self.comment.append(
+                line[line.find(activeCommentDelim) + len(activeCommentDelim):])
         # multiline end
         elif to_state == "DEFCLASS_BODY" or to_state == "FILEHEAD":
             # remove comment delimiter from end of the line
@@ -341,7 +386,7 @@ class Doxypy(object):
         """
         Appends a line to the output.
         """
-        if options.debug :
+        if options.debug:
             self.print_output("# CALLBACK: appendNormalLine", file=sys.stderr)
         self.output.append(self.fsm.current_input)
 
@@ -349,8 +394,9 @@ class Doxypy(object):
         """
         Appends a line to the triggering block.
         """
-        if options.debug :
-            self.print_output("# CALLBACK: appendDefclassLine", file=sys.stderr)
+        if options.debug:
+            self.print_output(
+                "# CALLBACK: appendDefclassLine", file=sys.stderr)
         self.defclass.append(self.fsm.current_input)
 
     def makeCommentBlock(self):
@@ -360,21 +406,23 @@ class Doxypy(object):
 
         @returns a list of indented comment lines
         """
-        if options.debug :
+        if options.debug:
             self.print_output("# makeCommentBlock", file=sys.stderr)
         indent4 = "    " if len(self.defclass) > 0 else ""
-        doxyStart = "%s\"\"\""  % indent4
+        doxyStart = "%s\"\"\"" % indent4
         doxyEnd = "%s\"\"\"" % indent4
         commentLines = self.comment
 
-        commentLines = ["%s%s%s" % (self.indent, indent4, x) for x in commentLines]
-        commentLines = self.process_comment (commentLines,
-                                             self.information.get("first_row", 0) + self._index_row + 1,
-                                             self.information.get("filename", "filename is not present"))
+        commentLines = ["%s%s%s" %
+                        (self.indent, indent4, x) for x in commentLines]
+        commentLines = self.process_comment(commentLines,
+                                            self.information.get(
+                                                "first_row", 0) + self._index_row + 1,
+                                            self.information.get("filename", "filename is not present"))
 
         l = [self.indent + doxyStart]
         l.extend(commentLines)
-        l.append( self.indent + doxyEnd )
+        l.append(self.indent + doxyEnd)
 
         return l
 
@@ -405,19 +453,19 @@ class Doxypy(object):
         @returns the modified python code
         """
         self._index_row = 0
-        if isinstance(filename, list) :
-            for line in filename :
+        if isinstance(filename, list):
+            for line in filename:
                 self.parseLine(line.rstrip('\r\n'))
                 self._index_row += 1
-        else :
+        else:
             import os
-            if len(filename) < 2000 and os.path.exists (filename) :
-                with open(filename, 'r') as f :
+            if len(filename) < 2000 and os.path.exists(filename):
+                with open(filename, 'r') as f:
                     for line in f:
                         self.parseLine(line.rstrip('\r\n'))
                     self._index_row += 1
-            else :
-                for line in filename.split("\n") :
+            else:
+                for line in filename.split("\n"):
                     self.parseLine(line.rstrip('\r\n'))
                     self._index_row += 1
 
@@ -435,23 +483,25 @@ class Doxypy(object):
         self.fsm.makeTransition(line)
         self.__flushBuffer()
 
+
 def optParse():
     """
     Parses commandline options.
     """
-    parser = OptionParser(prog=__applicationName__, version="%prog " + __version__)
+    parser = OptionParser(
+        prog=__applicationName__, version="%prog " + __version__)
 
     parser.set_usage("%prog [options] filename")
     parser.add_option("--autobrief",
-        action="store_true", dest="autobrief",
-        help="use the docstring summary line as @brief description"
-    )
+                      action="store_true", dest="autobrief",
+                      help="use the docstring summary line as @brief description"
+                      )
     parser.add_option("--debug",
-        action="store_true", dest="debug",
-        help="enable debug output on stderr"
-    )
+                      action="store_true", dest="debug",
+                      help="enable debug output on stderr"
+                      )
 
-    ## parse options
+    # parse options
     global options
     (options, filename) = parser.parse_args()
 
@@ -461,7 +511,8 @@ def optParse():
 
     return filename[0]
 
-def main(file = None, print_output = None):
+
+def main(file=None, print_output=None):
     """
     Starts the parser on the file given by the filename as the first
     argument on the commandline.
@@ -470,21 +521,24 @@ def main(file = None, print_output = None):
     @param      print_output    every string is sent to that funtion
     """
     filename = file if file != None else optParse()
-    fsm = Doxypy(print_output, lambda a,b,c: a, { })
+    fsm = Doxypy(print_output, lambda a, b, c: a, {})
     fsm.parseFile(filename)
 
-class Opt :
-    def __init__(self) :
+
+class Opt:
+
+    def __init__(self):
         self.debug = False
         self.autobrief = True
 options = Opt()
 
-def process_string (content,
-                    print_output,
-                    process_comment,
-                    filename,
-                    first_row,
-                    debug = False) :
+
+def process_string(content,
+                   print_output,
+                   process_comment,
+                   filename,
+                   first_row,
+                   debug=False):
     """
     applies the doxypy like process to a string
     @param      content             string
@@ -495,13 +549,13 @@ def process_string (content,
     @param      debug               if True, display more information
     """
     options.debug = debug
-    fsm = Doxypy(   print_output,
-                    process_comment,
-                    { "filename":filename, "first_row":first_row })
+    fsm = Doxypy(print_output,
+                 process_comment,
+                 {"filename": filename, "first_row": first_row})
     fsm.parseFile(content)
 
 if __name__ == "__main__":
-    with open(__file__, "r") as f :
+    with open(__file__, "r") as f:
         content = f.read()
     #main(__file__, print_output = print)
-    process_string( content, print, lambda a,b,c : a, "", 0)
+    process_string(content, print, lambda a, b, c: a, "", 0)

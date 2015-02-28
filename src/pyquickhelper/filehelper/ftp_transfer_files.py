@@ -4,20 +4,24 @@
 
 .. versionadded:: 1.0
 """
-import os, io
-from .files_status      import FilesStatus
-from ..loghelper.flog   import noLOG
+import os
+import io
+from .files_status import FilesStatus
+from ..loghelper.flog import noLOG
+
 
 class FolderTransferFTPException(Exception):
+
     """
     custom exception for @see cl FolderTransferFTP
     """
     pass
 
-_text_extensions = { ".ipynb", ".html", ".py", ".cpp", ".h", ".hpp", ".c",
-                ".cs", ".txt", ".csv", ".xml", ".css", ".js", ".r", ".doc",
-                ".ind", ".buildinfo", ".rst", ".aux", ".out", ".log",
-                }
+_text_extensions = {".ipynb", ".html", ".py", ".cpp", ".h", ".hpp", ".c",
+                    ".cs", ".txt", ".csv", ".xml", ".css", ".js", ".r", ".doc",
+                    ".ind", ".buildinfo", ".rst", ".aux", ".out", ".log",
+                    }
+
 
 def content_as_binary(filename):
     """
@@ -33,7 +37,9 @@ def content_as_binary(filename):
     else:
         return True
 
+
 class FolderTransferFTP:
+
     """
     This class aims at transfering a folder to a FTP website,
     it checks that a file was updated before transfering,
@@ -111,15 +117,15 @@ class FolderTransferFTP:
     """
 
     def __init__(self,
-                    file_tree_node,
-                    ftp_transfer,
-                    file_status,
-                    root_local      = None,
-                    root_web        = None,
-                    footer_html     = None,
-                    content_filter  = None,
-                    is_binary       = content_as_binary,
-                    fLOG            = noLOG):
+                 file_tree_node,
+                 ftp_transfer,
+                 file_status,
+                 root_local=None,
+                 root_web=None,
+                 footer_html=None,
+                 content_filter=None,
+                 is_binary=content_as_binary,
+                 fLOG=noLOG):
         """
         constructor
 
@@ -136,15 +142,15 @@ class FolderTransferFTP:
         @param      is_binary           function which determines if content of a files is binary or not
         @param      fLOG                logging function
         """
-        self._ftn               = file_tree_node
-        self._ftp               = ftp_transfer
-        self._status            = file_status
-        self._root_local        = root_local if root_local is not None else file_tree_node.root
-        self._root_web          = root_web if root_web is not None else ""
-        self.fLOG               = fLOG
-        self._footer_html       = footer_html
-        self._content_filter    = content_filter
-        self._is_binary         = is_binary
+        self._ftn = file_tree_node
+        self._ftp = ftp_transfer
+        self._status = file_status
+        self._root_local = root_local if root_local is not None else file_tree_node.root
+        self._root_web = root_web if root_web is not None else ""
+        self.fLOG = fLOG
+        self._footer_html = footer_html
+        self._content_filter = content_filter
+        self._is_binary = is_binary
 
         self._ft = FilesStatus(file_status)
 
@@ -152,9 +158,9 @@ class FolderTransferFTP:
         """
         usual
         """
-        mes  = [ "FolderTransferFTP" ]
-        mes += [ "    local root: {0}".format(self._root_local) ]
-        mes += [ "    remote root: {0}".format(self._root_web) ]
+        mes = ["FolderTransferFTP"]
+        mes += ["    local root: {0}".format(self._root_local)]
+        mes += ["    remote root: {0}".format(self._root_web)]
         return "\n".join(mes)
 
     def iter_eligible_files(self):
@@ -164,8 +170,8 @@ class FolderTransferFTP:
         @return         iterator on file name
         """
         for f in self._ftn:
-            if f.isfile() :
-                n,r = self._ft.has_been_modified_and_reason(f.fullname)
+            if f.isfile():
+                n, r = self._ft.has_been_modified_and_reason(f.fullname)
                 if n:
                     yield f
 
@@ -195,27 +201,30 @@ class FolderTransferFTP:
             if self._footer_html is None and self._content_filter is None:
                 return open(path, "rb")
             else:
-                with open(path, "r", encoding="utf8") as f :
+                with open(path, "r", encoding="utf8") as f:
                     content = f.read()
 
                 # footer
-                if self._footer_html is not None and os.path.splitext(path)[-1].lower() in (".htm", ".html") :
+                if self._footer_html is not None and os.path.splitext(path)[-1].lower() in (".htm", ".html"):
                     spl = content.split("</body>")
                     if len(spl) == 1:
-                        raise FolderTransferFTPException("tag </body> was not found, it must be written in lower case, file: {0}".format(path))
+                        raise FolderTransferFTPException(
+                            "tag </body> was not found, it must be written in lower case, file: {0}".format(path))
 
                     if len(spl) != 2:
-                        spl = [ "</body>".join(spl[:-1]), spl[-1] ]
+                        spl = ["</body>".join(spl[:-1]), spl[-1]]
 
                     content = spl[0] + self._footer_html + "</body>" + spl[-1]
 
                 # filter
                 try:
                     content = self._content_filter(content)
-                except Exception as e :
-                    raise FolderTransferFTPException("File {0} cannot be transferred (exception)".format(path)) from e
+                except Exception as e:
+                    raise FolderTransferFTPException(
+                        "File {0} cannot be transferred (exception)".format(path)) from e
                 if content is None:
-                    raise FolderTransferFTPException("File {0} cannot be transferred due to its content".format(path))
+                    raise FolderTransferFTPException(
+                        "File {0} cannot be transferred due to its content".format(path))
 
                 # to binary
                 bcont = content.encode("utf8")
@@ -240,42 +249,46 @@ class FolderTransferFTP:
         @exception      the class raises an exception (@see cl FolderTransferFTPException)
                         if more than 5 issues happened
         """
-        issues = [ ]
-        done = [ ]
-        total = list ( self.iter_eligible_files() )
+        issues = []
+        done = []
+        total = list(self.iter_eligible_files())
         sum_bytes = 0
         for i, file in enumerate(total):
             if i % 20 == 0:
-                self.fLOG("#### transfering %d/%d (so far %d bytes)"% (i,len(total), sum_bytes))
+                self.fLOG("#### transfering %d/%d (so far %d bytes)" %
+                          (i, len(total), sum_bytes))
             relp = os.path.relpath(file.fullname, self._root_local)
             if ".." in relp:
-                raise ValueError("the local root is not accurate:\n{0}\nFILE:\n{1}\nRELPATH:\n{2}".format(self, file.fullname, relp))
+                raise ValueError("the local root is not accurate:\n{0}\nFILE:\n{1}\nRELPATH:\n{2}".format(
+                    self, file.fullname, relp))
             path = self._root_web + "/" + os.path.split(relp)[0]
-            path = path.replace("\\","/")
+            path = path.replace("\\", "/")
 
             size = os.stat(file.fullname).st_size
             self.fLOG("[upload % 8d bytes name=%s -- fullname=%s]" % (
-                                        size,
-                                        os.path.split(file.fullname)[-1],
-                                        file.fullname))
+                size,
+                os.path.split(file.fullname)[-1],
+                file.fullname))
 
             data = self.preprocess_before_transfering(file.fullname)
 
-            try :
-                r = self._ftp.transfer (data, path, os.path.split(file.fullname)[-1])
-            except FileNotFoundError as e :
+            try:
+                r = self._ftp.transfer(
+                    data, path, os.path.split(file.fullname)[-1])
+            except FileNotFoundError as e:
                 r = False
-                issues.append( (file.fullname, "not found") )
+                issues.append((file.fullname, "not found"))
 
             self.close_stream(data)
 
             sum_bytes += size
 
-            if r :
+            if r:
                 fi = self.update_status(file.fullname)
                 done.append(fi)
 
-            if len(issues) >= 5 :
-                raise FolderTransferFTPException("too many issues:\n{0}".format( "\n".join( "{0} -- {1}".format(a,b) for a,b in issues ) ) )
+            if len(issues) >= 5:
+                raise FolderTransferFTPException("too many issues:\n{0}".format(
+                    "\n".join("{0} -- {1}".format(a, b) for a, b in issues)))
 
         return done

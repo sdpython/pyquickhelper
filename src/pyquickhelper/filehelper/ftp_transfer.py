@@ -6,11 +6,14 @@
     moved from pyensae to pyquickhelper
 """
 from ftplib import FTP
-import os, io
+import os
+import io
 
 from ..loghelper.flog import noLOG
 
-class TransferFTP (FTP) :
+
+class TransferFTP (FTP):
+
     """
     this class uploads files to a website,
     if the remote does not exists, it creates it first
@@ -49,7 +52,7 @@ class TransferFTP (FTP) :
 
     errorNoDirectory = "Can't change directory"
 
-    def __init__ (self, site, login, password, fLOG = noLOG) :
+    def __init__(self, site, login, password, fLOG=noLOG):
         """
         constructor
 
@@ -69,14 +72,14 @@ class TransferFTP (FTP) :
         """
         return self._atts["site"]
 
-    def _private_login (self) :
+    def _private_login(self):
         """
         logs in
         """
-        self.LOG ("connecting to ", self.Site)
+        self.LOG("connecting to ", self.Site)
         FTP.login(self)
 
-    def run_command (self, command, *args) :
+    def run_command(self, command, *args):
         """
         run a FTP command
 
@@ -84,33 +87,33 @@ class TransferFTP (FTP) :
         @param      args        list of argument
         @return                 output of the command or True for success, False for failure
         """
-        try :
-            t = command (self, *args)
+        try:
+            t = command(self, *args)
             if command == FTP.pwd or command == FTP.dir:
                 return t
-            elif command != FTP.cwd :
+            elif command != FTP.cwd:
                 pass
             return True
         except Exception as e:
-            if TransferFTP.errorNoDirectory in str(e) :
+            if TransferFTP.errorNoDirectory in str(e):
                 raise e
-            self.LOG (e)
-            self.LOG ("    ** run exc ", str(command), str(args))
+            self.LOG(e)
+            self.LOG("    ** run exc ", str(command), str(args))
             self._private_login()
-            t = command (self, *args)
-            self.LOG ("    ** run ", str(command), str(args))
+            t = command(self, *args)
+            self.LOG("    ** run ", str(command), str(args))
             return t
 
-    def print_list (self) :
+    def print_list(self):
         """
         return the list of files in the current directory
         the function sends eveything to the logging function
 
         @return         output of the command or True for success, False for failure
         """
-        return self.run_command(FTP.retrlines,'LIST')
+        return self.run_command(FTP.retrlines, 'LIST')
 
-    def mkd (self, path) :
+    def mkd(self, path):
         """
         creates a directory
 
@@ -120,7 +123,7 @@ class TransferFTP (FTP) :
         self.LOG("[mkd]", path)
         return self.run_command(FTP.mkd, path)
 
-    def cwd (self, path, create = False) :
+    def cwd(self, path, create=False):
         """
         go to a directory, if it does not exist, create it
         (if create is True)
@@ -129,16 +132,16 @@ class TransferFTP (FTP) :
         @param      create      True to create it
         @return                 True or False
         """
-        try :
+        try:
             self.run_command(FTP.cwd, path)
-        except Exception as e :
-            if create and TransferFTP.errorNoDirectory in str(e) :
-                self.mkd (path)
-                self.cwd (path, create)
-            else :
+        except Exception as e:
+            if create and TransferFTP.errorNoDirectory in str(e):
+                self.mkd(path)
+                self.cwd(path, create)
+            else:
                 raise e
 
-    def pwd (self) :
+    def pwd(self):
         """
         Return the pathname of the current directory on the server.
 
@@ -146,7 +149,7 @@ class TransferFTP (FTP) :
         """
         return self.run_command(FTP.pwd)
 
-    def dir(self, path = '.'):
+    def dir(self, path='.'):
         """
         list the content of a path
 
@@ -155,7 +158,7 @@ class TransferFTP (FTP) :
         """
         return self.run_command(FTP.dir, path)
 
-    def ls(self, path = '.'):
+    def ls(self, path='.'):
         """
         list the content of a path
 
@@ -164,7 +167,7 @@ class TransferFTP (FTP) :
         """
         return self.run_command(FTP.dir, path)
 
-    def transfer (self, file, to, name, debug = False) :
+    def transfer(self, file, to, name, debug=False):
         """
         transfers a file
 
@@ -179,44 +182,47 @@ class TransferFTP (FTP) :
             parameter *name* was added
         """
         path = to.split("/")
-        path = [ _ for _ in path if len(_) > 0 ]
+        path = [_ for _ in path if len(_) > 0]
 
-        for p in path :
+        for p in path:
             self.cwd(p, True)
 
         if isinstance(file, str):
             if not os.path.exists(file):
                 raise FileNotFoundError(file)
-            with open(file, "rb") as f :
+            with open(file, "rb") as f:
                 r = self.run_command(FTP.storbinary, 'STOR ' + name, f)
         elif isinstance(file, io.BytesIO):
             r = self.run_command(FTP.storbinary, 'STOR ' + name, file)
         else:
             r = self.run_command(FTP.storbinary, 'STOR ' + name, file)
 
-        for p in path :
+        for p in path:
             self.cwd("..")
 
         return r
 
-class MockTransferFTP (TransferFTP) :
+
+class MockTransferFTP (TransferFTP):
+
     """
     mocking FTP transfer
     """
-    def __init__(self, site, login, password, fLOG = noLOG):
+
+    def __init__(self, site, login, password, fLOG=noLOG):
         """
         same signature as @see cl TransferFTP
         """
         self.LOG = fLOG
         self._atts = dict(site=site)
 
-    def transfer (self, file, to, debug = False) :
+    def transfer(self, file, to, debug=False):
         """
         does nothing, returns True
         """
         return True
 
-    def close(self) :
+    def close(self):
         """
         does noting
         """

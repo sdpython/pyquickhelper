@@ -10,18 +10,21 @@ raise HalException ("message")
 @endcode
 """
 
-class PQHException (Exception) :
+
+class PQHException (Exception):
+
     """
     define an exception
       - exception used in Python module to make exception raised by this module easier to catch
       - every time exception is logged
     """
-    def __init__ (self, m, log = True) :
+
+    def __init__(self, m, log=True):
         """constructor
         @param      m       message
         @param      log     log the exception
         """
-        Exception.__init__ (self, m)
-        if log :
+        Exception.__init__(self, m)
+        if log:
             from .flog import fLOG
-            fLOG("PQHException",m)
+            fLOG("PQHException", m)

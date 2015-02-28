@@ -13,6 +13,7 @@ README / Changes
     * `GitHub/pyquickhelper <https://github.com/sdpython/pyquickhelper>`_
     * `documentation <http://www.xavierdupre.fr/app/pyquickhelper/helpsphinx/index.html>`_
     * `Windows Setup <http://www.xavierdupre.fr/site2013/index_code.html#pyquickhelper>`_
+    * `Travis/pyquickhelper <https://travis-ci.org/sdpython/pyquickhelper>`_
 
 Functionalities
 ---------------

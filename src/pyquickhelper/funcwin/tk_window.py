@@ -5,6 +5,7 @@
 """
 import tkinter
 
+
 def has_x_server():
     """
     detects the presences of X server
@@ -28,6 +29,7 @@ def create_tk():
     """
     global _has_x_server
     return tkinter.Tk() if _has_x_server else tkinter.Tcl()
+
 
 def create_tixtk():
     """

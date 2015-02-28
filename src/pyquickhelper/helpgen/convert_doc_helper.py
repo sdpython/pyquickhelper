@@ -20,7 +20,7 @@ from .utils_sphinx_doc import private_migrating_doxygen_doc
 # -- HELP END EXCLUDE --
 
 
-def rst2html(s, fLOG = noLOG):
+def rst2html(s, fLOG=noLOG):
     """
     converts a string into HTML format
 
@@ -31,18 +31,20 @@ def rst2html(s, fLOG = noLOG):
     .. versionadded:: 1.0
     """
 
-    settings_overrides={'output_encoding': 'unicode',
-                                'doctitle_xform': True,
-                                'initial_header_level': 2,
-                            'warning_stream': io.StringIO()}
+    settings_overrides = {'output_encoding': 'unicode',
+                          'doctitle_xform': True,
+                          'initial_header_level': 2,
+                          'warning_stream': io.StringIO()}
 
-    parts = core.publish_parts( source=s, source_path=None, destination_path=None,
-            writer_name='html', settings_overrides=settings_overrides)
+    parts = core.publish_parts(source=s, source_path=None, destination_path=None,
+                               writer_name='html', settings_overrides=settings_overrides)
 
     fLOG(settings_overrides["warning_stream"].getvalue())
 
-    exp = re.sub('(<div class="system-message">(.|\\n)*?</div>)', "", parts["whole"])
+    exp = re.sub(
+        '(<div class="system-message">(.|\\n)*?</div>)', "", parts["whole"])
     return exp
+
 
 def correct_indentation(text):
     """
@@ -53,7 +55,7 @@ def correct_indentation(text):
 
     .. versionadded:: 1.0
     """
-    title = { }
+    title = {}
     rows = text.split("\n")
     for row in rows:
         row = row.replace("\t", "    ")
@@ -62,27 +64,28 @@ def correct_indentation(text):
 
         tit = cr.strip("\r\n\t ")
         if len(tit) > 0 and tit[0] in "-+=*^" and tit == tit[0] * len(tit):
-            title[ind] = title.get(ind, 0)+1
+            title[ind] = title.get(ind, 0) + 1
 
     mint = min(title.keys())
     if mint > 0:
-        newrows = [ ]
+        newrows = []
         for row in rows:
             i = 0
             while i < len(row) and row[i] == ' ':
                 i += 1
 
             rem = min(i, mint)
-            if rem > 0 :
-                newrows.append ( row[ rem: ] )
+            if rem > 0:
+                newrows.append(row[rem:])
             else:
-                newrows.append ( row )
+                newrows.append(row)
 
-        return "\n".join( newrows )
+        return "\n".join(newrows)
     else:
         return text
 
-def docstring2html(function_or_string, as_ipython_html = True, fLOG = noLOG):
+
+def docstring2html(function_or_string, as_ipython_html=True, fLOG=noLOG):
     """
     converts a docstring into a HTML format
 
@@ -111,9 +114,10 @@ def docstring2html(function_or_string, as_ipython_html = True, fLOG = noLOG):
     else:
         doc = function_or_string
 
-    javadoc = migrating_doxygen_doc (doc, "None", log=True)
+    javadoc = migrating_doxygen_doc(doc, "None", log=True)
     rows = javadoc.split("\n")
-    rst = private_migrating_doxygen_doc(rows, index_first_line = 0, filename="None")
+    rst = private_migrating_doxygen_doc(
+        rows, index_first_line=0, filename="None")
     rst = "\n".join(rst)
     ded = textwrap.dedent(rst)
     try:

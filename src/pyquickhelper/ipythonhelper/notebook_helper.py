@@ -2,21 +2,24 @@
 @file
 @brief Some automation helpers about notebooks
 """
-import os, logging, io
+import os
+import logging
+import io
 from IPython.nbformat.current import read, write
 from .notebook_runner import NotebookRunner, NotebookError
 from ..loghelper.flog import noLOG
 
+
 def run_notebook(filename,
-                profile_dir     = None,
-                working_dir     = None,
-                skip_exceptions = False,
-                outfilename     = None,
-                encoding        = "utf8",
-                additional_path = None,
-                valid           = None,
-                clean_function  = None,
-                fLOG            = noLOG):
+                 profile_dir=None,
+                 working_dir=None,
+                 skip_exceptions=False,
+                 outfilename=None,
+                 encoding="utf8",
+                 additional_path=None,
+                 valid=None,
+                 clean_function=None,
+                 fLOG=noLOG):
     """
     run a notebook end to end, it uses module `runipy <https://github.com/paulgb/runipy/>`_
 
@@ -49,15 +52,18 @@ def run_notebook(filename,
         nb = read(payload, 'json')
 
         out = io.StringIO()
+
         def flogging(*l, **p):
-            if len(l) > 0 : out.write( " ".join(l) )
-            if len(p) > 0 : out.write( str(p) )
+            if len(l) > 0:
+                out.write(" ".join(l))
+            if len(p) > 0:
+                out.write(str(p))
             out.write("\n")
-            fLOG(*l,**p)
+            fLOG(*l, **p)
 
         nb_runner = NotebookRunner(nb, profile_dir, working_dir, fLOG=flogging)
         nb_runner.run_notebook(skip_exceptions=skip_exceptions, additional_path=additional_path,
-                valid = valid, clean_function=clean_function)
+                               valid=valid, clean_function=clean_function)
 
         if outfilename is not None:
             with open(outfilename, 'w', encoding=encoding) as f:

@@ -3,16 +3,18 @@
 @brief Some functions to interact better with Notebook
 """
 
-import os, re
+import os
+import re
 
 _reg_var = re.compile("^[a-zA-Z_]([a-zA-Z_0-9]*)$")
 
-def open_html_form (params,
-            title='',
-            key_save = "",
-            style="background-color:gainsboro; padding:2px; border:0px;",
-            raw = False,
-            hook = None):
+
+def open_html_form(params,
+                   title='',
+                   key_save="",
+                   style="background-color:gainsboro; padding:2px; border:0px;",
+                   raw=False,
+                   hook=None):
     """
     The function displays a form onto a notebook,
     it requires a notebook to be open.
@@ -69,42 +71,49 @@ def open_html_form (params,
     global _reg_var
     for k in params:
         if not _reg_var.match(k):
-            raise KeyError("keys in params must look like a variable, it is not the case for: " + k)
+            raise KeyError(
+                "keys in params must look like a variable, it is not the case for: " + k)
 
     row = """<br />{0} <input type="{3}" id="{2}{0}" value="{1}" size="80" />"""
 
     rows = [ """<div style="{0}"><b>{1}</b>""".format(style, title, key_save) ]
-    for k,v in sorted(params.items()):
-        if k.startswith("password") : typ = "password"
-        else: typ = "text"
-        rows.append ( row.format(k, "" if v is None else str(v), key_save, typ ) )
-    rows.append( """<br /><button onclick="set_value{0}()">Ok</button></div>""".format(key_save) )
+    for k, v in sorted(params.items()):
+        if k.startswith("password"):
+            typ = "password"
+        else:
+            typ = "text"
+        rows.append(row.format(k, "" if v is None else str(v), key_save, typ))
+    rows.append(
+        """<br /><button onclick="set_value{0}()">Ok</button></div>""".format(key_save) )
     if hook is not None:
-        rows.append("<div id='out%s'></div>" % key_save.replace("_",""))
+        rows.append("<div id='out%s'></div>" % key_save.replace("_", ""))
 
     rows.append("""<script type="text/Javascript">""")
     rows.append("function %scallback(msg) {" % key_save)
     rows.append("   var ret = msg.content.data['text/plain'];")
-    rows.append("   $('#out%s').text(ret);" % key_save.replace("_",""))
+    rows.append("   $('#out%s').text(ret);" % key_save.replace("_", ""))
     rows.append("}")
-    rows.append("function set_value__KEY__(){".replace("__KEY__",key_save))
+    rows.append("function set_value__KEY__(){".replace("__KEY__", key_save))
 
     rows.append("   command='%s = {' ;" % key_save)
-    for k,v in sorted(params.items()):
-        rows.append( """   var {0}{1}var_value = document.getElementById('{0}{1}').value;""".format(key_save,k) )
-        rows.append( """   command += '"{0}":"' + """.format(k) + "{0}{1}var_value".format(key_save,k) + """ + '",';""" )
+    for k, v in sorted(params.items()):
+        rows.append(
+            """   var {0}{1}var_value = document.getElementById('{0}{1}').value;""".format(key_save, k) )
+        rows.append( """   command += '"{0}":"' + """.format(k) +
+                     "{0}{1}var_value".format(key_save, k) + """ + '",';""" )
     rows.append("""   command += '}';""")
     rows.append("""   var kernel = IPython.notebook.kernel;""")
     rows.append("""   kernel.execute(command);""")
     if hook is not None:
-        rows.append("""   kernel.execute('%s', {iopub: {output: %scallback}}, {silent: false});""" % (hook, key_save))
+        rows.append("""   kernel.execute('%s', {iopub: {output: %scallback}}, {silent: false});""" % (
+            hook, key_save))
     rows.append("""}""")
     rows.append("</script>")
 
     text = "\n".join(rows)
 
-    if raw :
+    if raw:
         return text
-    else :
+    else:
         from IPython.display import HTML
         return HTML(text)

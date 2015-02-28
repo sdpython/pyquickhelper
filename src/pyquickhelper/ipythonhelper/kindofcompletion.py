@@ -6,7 +6,8 @@
 import os
 
 
-class AutoCompletion :
+class AutoCompletion:
+
     """
     You can add auto completion object to IPython by adding member
     to an instance of this class.
@@ -14,7 +15,7 @@ class AutoCompletion :
     All members must begin by ``_``
     """
 
-    def __init__(self, value = None):
+    def __init__(self, value=None):
         """
         constructor
 
@@ -38,14 +39,15 @@ class AutoCompletion :
         @param      value     value to add
         @return               (AutoCompletion)
         """
-        if member in self.__dict__ :
-            raise NameError("unable to add member {0} because it already exists".format(member))
-        if member.startswith("_") :
+        if member in self.__dict__:
+            raise NameError(
+                "unable to add member {0} because it already exists".format(member))
+        if member.startswith("_"):
             raise NameError("a member cannot start by _: {0}".format(member))
         if isinstance(value, AutoCompletion):
             self.__dict__[member] = value
             return value
-        else :
+        else:
             value = AutoCompletion(value)
             self.__dict__[member] = value
             return value
@@ -55,34 +57,36 @@ class AutoCompletion :
         """
         returns all the members
         """
-        return [ _ for _ in self.__dict__ if not _.startswith("_") ]
+        return [_ for _ in self.__dict__ if not _.startswith("_")]
 
     def __len__(self):
         """
         returns the number of elements
         """
-        return 1 + sum ( len(self.__dict__[_]) for _ in self._members)
+        return 1 + sum(len(self.__dict__[_]) for _ in self._members)
 
     def __str__(self):
         """
         returns a string
         """
         ch = self._members
-        if len(ch) == 0 : return ""
-        rows = [ ]
-        for i,c in enumerate(sorted(ch)) :
-            pref = " |  " if i < len(ch)-1 else "    "
+        if len(ch) == 0:
+            return ""
+        rows = []
+        for i, c in enumerate(sorted(ch)):
+            pref = " |  " if i < len(ch) - 1 else "    "
             name = " |- " + c
             rows.append(name)
             sub = str(self.__dict__[c])
-            if len(sub) > 0 :
+            if len(sub) > 0:
                 lin = sub.split("\n")
-                lin = [ (pref + _) for _ in lin ]
+                lin = [(pref + _) for _ in lin]
                 rows.extend(lin)
         return "\n".join(rows)
 
 
-class AutoCompletionFile(AutoCompletion) :
+class AutoCompletionFile(AutoCompletion):
+
     """
     builds a tree based on a list of files,
     the class adds ``A__`` before every folder or file starting with ``_``
@@ -111,7 +115,7 @@ class AutoCompletionFile(AutoCompletion) :
         """
         if not os.path.exists(value):
             raise FileNotFoundError("{0} does not exists".format(value))
-        super().__init__( os.path.normpath(os.path.abspath(value)))
+        super().__init__(os.path.normpath(os.path.abspath(value)))
         self._populate()
 
     def _filter(self, s):
@@ -121,24 +125,25 @@ class AutoCompletionFile(AutoCompletion) :
         @param      s       filename
         @return             cleaned filename
         """
-        s = s.replace("'","_") \
-                .replace('"',"_") \
-                .replace('(',"_") \
-                .replace(')',"_") \
-                .replace('[',"_") \
-                .replace(']',"_") \
-                .replace('{',"_") \
-                .replace('}',"_") \
-                .replace('.',"_") \
-                .replace(':',"_") \
-                .replace('/',"_") \
-                .replace('\\',"_") \
-                .replace('!',"_") \
-                .replace('$',"_") \
-                .replace('-',"_") \
-                .replace('#',"_") \
-                .replace('*',"_")
-        if s.startswith("_") : s = "A__" + s
+        s = s.replace("'", "_") \
+            .replace('"', "_") \
+            .replace('(', "_") \
+            .replace(')', "_") \
+            .replace('[', "_") \
+            .replace(']', "_") \
+            .replace('{', "_") \
+            .replace('}', "_") \
+            .replace('.', "_") \
+            .replace(':', "_") \
+            .replace('/', "_") \
+            .replace('\\', "_") \
+            .replace('!', "_") \
+            .replace('$', "_") \
+            .replace('-', "_") \
+            .replace('#', "_") \
+            .replace('*', "_")
+        if s.startswith("_"):
+            s = "A__" + s
         return s
 
     def _populate(self):
@@ -146,9 +151,9 @@ class AutoCompletionFile(AutoCompletion) :
         populate the class with files and folder in the folder
         this class holds
         """
-        if os.path.isdir(self._) :
+        if os.path.isdir(self._):
             files = os.listdir(self._)
-            for file in files :
+            for file in files:
                 fullname = os.path.join(self._, file)
                 obj = AutoCompletionFile(fullname)
-                self._add( self._filter(file), obj)
+                self._add(self._filter(file), obj)

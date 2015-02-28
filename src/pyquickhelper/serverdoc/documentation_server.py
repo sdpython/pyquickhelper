@@ -19,7 +19,8 @@ from threading import Thread
 from http.server import BaseHTTPRequestHandler, HTTPServer
 
 if __name__ == "__main__":
-    path = os.path.normpath(os.path.abspath(os.path.join(os.path.split(__file__)[0], "..", "..", "..", "src")))
+    path = os.path.normpath(os.path.abspath(
+        os.path.join(os.path.split(__file__)[0], "..", "..", "..", "src")))
     if path not in sys.path:
         sys.path.append(path)
     path = os.path.normpath(os.path.abspath(os.path.join(os.path.split(__file__)[0],
@@ -33,15 +34,16 @@ else:
 
 
 class DocumentationHandler(BaseHTTPRequestHandler):
+
     """
     Define a simple handler used by HTTPServer,
     it just serves local content.
 
     """
 
-    mappings = { "__fetchurl__": "http://",
-                 "__shutdown__": "shut://",
-               }
+    mappings = {"__fetchurl__": "http://",
+                "__shutdown__": "shut://",
+                }
 
     html_header = """
             <?xml version="1.0" encoding="utf-8"?>
@@ -50,15 +52,15 @@ class DocumentationHandler(BaseHTTPRequestHandler):
             <title>%s</title>
             </head>
             <body>
-            """.replace("            ","")
+            """.replace("            ", "")
 
     html_footer = """
             </body>
             </html>
-            """.replace("            ","")
+            """.replace("            ", "")
 
-    cache = { }
-    cache_attributes = { }
+    cache = {}
+    cache_attributes = {}
     cache_refresh = datetime.timedelta(1)
 
     def LOG(self, *l, **p):
@@ -68,7 +70,7 @@ class DocumentationHandler(BaseHTTPRequestHandler):
         fLOG(*l, **p)
 
     @staticmethod
-    def add_mapping(key, value) :
+    def add_mapping(key, value):
         """
         adds a mapping associated to a local path to watch
 
@@ -125,20 +127,20 @@ class DocumentationHandler(BaseHTTPRequestHandler):
         self.end_headers()
 
     media_types = {
-            ".js"   : ( 'application/javascript', 'r' ),
-            ".css"  : ("text/css", 'r'),
-            ".html" : ('text/html', 'r'),
-            ".py"   : ('text/html','execute'),
-            ".png"  : ('image/png','rb'),
-            ".jpg"  : ('image/jpeg','rb'),
-            ".ico"  : ('image/x-icon','rb'),
-            ".gif"  : ('image/gif','rb'),
-            ".eot"  : ('application/vnd.ms-fontobject','rb'),
-            ".ttf"  : ('application/font-sfnt','rb'),
-            ".otf"  : ('font/opentype','rb'),
-            ".svg"  : ('image/svg+xml','r'),
-            ".woff" : ('application/font-wof','rb'),
-           }
+        ".js": ('application/javascript', 'r'),
+        ".css": ("text/css", 'r'),
+        ".html": ('text/html', 'r'),
+        ".py": ('text/html', 'execute'),
+        ".png": ('image/png', 'rb'),
+        ".jpg": ('image/jpeg', 'rb'),
+        ".ico": ('image/x-icon', 'rb'),
+        ".gif": ('image/gif', 'rb'),
+        ".eot": ('application/vnd.ms-fontobject', 'rb'),
+        ".ttf": ('application/font-sfnt', 'rb'),
+        ".otf": ('font/opentype', 'rb'),
+        ".svg": ('image/svg+xml', 'r'),
+        ".woff": ('application/font-wof', 'rb'),
+    }
 
     @staticmethod
     def get_ftype(apath):
@@ -153,7 +155,7 @@ class DocumentationHandler(BaseHTTPRequestHandler):
         See also `media-types <http://www.iana.org/assignments/media-types/media-types.xhtml>`_
         """
         ext = "." + apath.split(".")[-1]
-        htype, ftype = DocumentationHandler.media_types.get(ext, ('',''))
+        htype, ftype = DocumentationHandler.media_types.get(ext, ('', ''))
         return htype, ftype
 
     def send_headers(self, path):
@@ -172,7 +174,7 @@ class DocumentationHandler(BaseHTTPRequestHandler):
             self.end_headers()
         return ftype
 
-    def get_file_content(self, localpath, ftype, path = None):
+    def get_file_content(self, localpath, ftype, path=None):
         """
         Returns the content of a local file.
 
@@ -183,17 +185,17 @@ class DocumentationHandler(BaseHTTPRequestHandler):
 
         This function implements a simple cache mechanism.
         """
-        if path is not None :
+        if path is not None:
             tlocalpath = os.path.join(path, localpath)
-        else :
+        else:
             tlocalpath = localpath
 
         content = DocumentationHandler.get_from_cache(tlocalpath)
-        if content is not None :
-            self.LOG("serves cached",tlocalpath)
+        if content is not None:
+            self.LOG("serves cached", tlocalpath)
             return content
 
-        if ftype == "r" or ftype == "execute" :
+        if ftype == "r" or ftype == "execute":
             if not os.path.exists(tlocalpath) and "_static/bootswatch" in tlocalpath:
                 access = tlocalpath.replace("bootswatch", "bootstrap")
             else:
@@ -204,11 +206,11 @@ class DocumentationHandler(BaseHTTPRequestHandler):
                 return None
 
             self.LOG("reading file ", access)
-            with open(access, "r", encoding="utf8") as f :
+            with open(access, "r", encoding="utf8") as f:
                 content = f.read()
                 DocumentationHandler.update_cache(tlocalpath, content)
                 return content
-        else :
+        else:
             if not os.path.exists(tlocalpath) and "_static/bootswatch" in tlocalpath:
                 access = tlocalpath.replace("bootswatch", "bootstrap")
             else:
@@ -219,7 +221,7 @@ class DocumentationHandler(BaseHTTPRequestHandler):
                 return None
 
             self.LOG("reading file ", access)
-            with open(tlocalpath, "rb") as f :
+            with open(tlocalpath, "rb") as f:
                 content = f.read()
                 DocumentationHandler.update_cache(tlocalpath, content)
                 return content
@@ -234,10 +236,10 @@ class DocumentationHandler(BaseHTTPRequestHandler):
         @return             content or None if None found or too old
         """
         content = DocumentationHandler.cache.get(key, None)
-        if content is None :
+        if content is None:
             return content
 
-        att = DocumentationHandler.cache_attributes [ key ]
+        att = DocumentationHandler.cache_attributes[key]
         delta = datetime.datetime.now() - att["date"]
         if delta > DocumentationHandler.cache_refresh:
             del DocumentationHandler.cache[key]
@@ -255,26 +257,28 @@ class DocumentationHandler(BaseHTTPRequestHandler):
         @param      key         key
         @param      content     content to place
         """
-        if len(DocumentationHandler.cache) < 5000 :
+        if len(DocumentationHandler.cache) < 5000:
             # we do not clean here as the cache is shared by every session/user
             # it would not be safe
             # unless we add protection
-            #self.clean_cache(1000)
+            # self.clean_cache(1000)
             pass
 
         # this one first as a document existence is checked by using cache
-        DocumentationHandler.cache_attributes[key] = {"nb":1,
-                    "date": datetime.datetime.now() }
+        DocumentationHandler.cache_attributes[key] = {"nb": 1,
+                                                      "date": datetime.datetime.now()}
         DocumentationHandler.cache[key] = content
 
     @staticmethod
-    def _print_cache(n = 20):
+    def _print_cache(n=20):
         """
         display the most requested files
         """
-        al = [ (v["nb"], k) for k,v in DocumentationHandler.cache_attributes.items() if v["nb"] > 1 ]
-        for i,doc in enumerate(sorted(al,reverse=True)):
-            if i >= n: break
+        al = [(v["nb"], k)
+              for k, v in DocumentationHandler.cache_attributes.items() if v["nb"] > 1]
+        for i, doc in enumerate(sorted(al, reverse=True)):
+            if i >= n:
+                break
             print("cache: {0} - {1}".format(*doc))
 
     @staticmethod
@@ -285,12 +289,12 @@ class DocumentationHandler(BaseHTTPRequestHandler):
         @return                     output, error
         """
         exe = subprocess.Popen([sys.executable, localpath],
-                               stdout = subprocess.PIPE,
-                               stderr = subprocess.PIPE)
+                               stdout=subprocess.PIPE,
+                               stderr=subprocess.PIPE)
         out, error = exe.communicate()
         return out, error
 
-    def feed(self, anys, script_python = False, params = None):
+    def feed(self, anys, script_python=False, params=None):
         """
         displays something
 
@@ -311,12 +315,12 @@ class DocumentationHandler(BaseHTTPRequestHandler):
         The server does not interpret Python, to do that, you need to use
         `pyrsslocal <http://www.xavierdupre.fr/app/pyrsslocal/helpsphinx/index.html>`_.
         """
-        if isinstance (anys, bytes) :
-            if script_python :
+        if isinstance(anys, bytes):
+            if script_python:
                 raise SystemError("** w,unable to execute script from bytes")
             self.wfile.write(anys)
-        else :
-            if script_python :
+        else:
+            if script_python:
                 #any = self.process_scripts(any, params)
                 raise NotImplementedError("unable to execute a python script")
             text = anys.encode("utf-8")
@@ -328,7 +332,7 @@ class DocumentationHandler(BaseHTTPRequestHandler):
         """
         raise NotImplementedError()
 
-    def serve_content(self, cpath, method = "GET"):
+    def serve_content(self, cpath, method="GET"):
         """
         Tells what to do based on the path. The function intercepts the
         path /localfile/, otherwise it calls ``serve_content_web``.
@@ -357,8 +361,8 @@ class DocumentationHandler(BaseHTTPRequestHandler):
             value = DocumentationHandler.mappings.get(project, None)
 
             if value is None:
-                self.LOG("can't serve",cpath)
-                self.LOG("with params",params)
+                self.LOG("can't serve", cpath)
+                self.LOG("with params", params)
                 return
                 #raise KeyError("unable to find a mapping associated to: " + project + "\nURL:\n" + url + "\nPARAMS:\n" + str(params))
 
@@ -369,59 +373,64 @@ class DocumentationHandler(BaseHTTPRequestHandler):
             elif value == "http://":
                 self.send_response(200)
                 self.send_headers("debug.html")
-                url = cpath.path.replace ("/%s/"%project, "")
-                try :
+                url = cpath.path.replace("/%s/" % project, "")
+                try:
                     content = get_url_content(url)
-                except Exception as e :
+                except Exception as e:
                     content = "<html><body>ERROR (2): %s</body></html>" % e
-                self.feed(content, False, params = { })
+                self.feed(content, False, params={})
 
             else:
                 if ".." in link:
                     # we avoid that case to prevent users from digging others paths
-                    # than the mapped ones, just in that the browser does not remove them
+                    # than the mapped ones, just in that the browser does not
+                    # remove them
                     self.send_error(404)
-                    self.feed("Requested resource %s unavailable" % link )
-                else :
+                    self.feed("Requested resource %s unavailable" % link)
+                else:
                     localpath = link
-                    if localpath in [None, "/", ""] :
+                    if localpath in [None, "/", ""]:
                         localpath = "index.html"
-                    fullpath  = os.path.join( value, localpath )
+                    fullpath = os.path.join(value, localpath)
                     self.LOG("localpath ", fullpath, os.path.isfile(fullpath))
 
                     self.send_response(200)
-                    _,ftype   = self.get_ftype(localpath)
+                    _, ftype = self.get_ftype(localpath)
 
-                    execute = eval(params.get("execute",["True"])[0])
-                    spath   = params.get("path",[None])[0]
-                    keep    = eval(params.get("keep",["False"])[0])
+                    execute = eval(params.get("execute", ["True"])[0])
+                    spath = params.get("path", [None])[0]
+                    keep = eval(params.get("keep", ["False"])[0])
 
-                    if ftype != 'execute' or not execute :
+                    if ftype != 'execute' or not execute:
                         content = self.get_file_content(fullpath, ftype, spath)
                         if content is None:
                             self.LOG("** w,unable to get file for key:", spath)
                             self.send_error(404)
-                            self.feed("Requested resource %s unavailable" % localpath )
+                            self.feed(
+                                "Requested resource %s unavailable" % localpath)
                         else:
                             ext = os.path.splitext(localpath)[-1].lower()
-                            if ext in [".py", ".c", ".cpp", ".hpp", ".h", ".r", ".sql", ".java"] :
-                                self.send_headers (".html")
-                                self.feed ( DocumentationHandler.html_code_renderer (localpath, content) )
+                            if ext in [".py", ".c", ".cpp", ".hpp", ".h", ".r", ".sql", ".java"]:
+                                self.send_headers(".html")
+                                self.feed(
+                                    DocumentationHandler.html_code_renderer(localpath, content))
                             elif ext in [".html"]:
-                                content = DocumentationHandler.process_html_path(project, content)
-                                self.send_headers (localpath)
+                                content = DocumentationHandler.process_html_path(
+                                    project, content)
+                                self.send_headers(localpath)
                                 self.feed(content)
                             else:
-                                self.send_headers (localpath)
+                                self.send_headers(localpath)
                                 self.feed(content)
                     else:
                         self.LOG("execute file ", localpath)
-                        out,err = DocumentationHandler.execute (localpath)
-                        if len(err) > 0 :
+                        out, err = DocumentationHandler.execute(localpath)
+                        if len(err) > 0:
                             self.send_error(404)
-                            self.feed("Requested resource %s unavailable" % localpath )
-                        else :
-                            self.send_headers (localpath)
+                            self.feed(
+                                "Requested resource %s unavailable" % localpath)
+                        else:
+                            self.send_headers(localpath)
                             self.feed(out)
 
     @staticmethod
@@ -447,9 +456,9 @@ class DocumentationHandler(BaseHTTPRequestHandler):
         @param      content     content of the file
         @return                 html string
         """
-        res = [ DocumentationHandler.html_header % (localpath) ]
-        res.append ("<pre class=\"prettyprint\">")
-        res.append(content.replace("<","&lt;").replace(">","&gt;"))
+        res = [DocumentationHandler.html_header % (localpath)]
+        res.append("<pre class=\"prettyprint\">")
+        res.append(content.replace("<", "&lt;").replace(">", "&gt;"))
         res.append(DocumentationHandler.html_footer)
         return "\n".join(res)
 
@@ -463,7 +472,8 @@ class DocumentationHandler(BaseHTTPRequestHandler):
         """
         self.send_response(200)
         self.send_headers("")
-        self.feed("** w,unable to serve content for url: " + path.geturl() + "\n" + str(params) + "\n")
+        self.feed("** w,unable to serve content for url: " +
+                  path.geturl() + "\n" + str(params) + "\n")
         self.send_error(404)
 
     def serve_main_page(self):
@@ -473,7 +483,7 @@ class DocumentationHandler(BaseHTTPRequestHandler):
         rows = ["<html><body>"]
         rows.append("<h1>Documentation Server</h1>")
         rows.append("<ul>")
-        for k,v in sorted(DocumentationHandler.mappings.items()):
+        for k, v in sorted(DocumentationHandler.mappings.items()):
             if not k.startswith("_"):
                 row = '<li><a href="{0}/">{0}</a></li>'.format(k)
                 rows.append(row)
@@ -481,18 +491,19 @@ class DocumentationHandler(BaseHTTPRequestHandler):
         content = "\n".join(rows)
 
         self.send_response(200)
-        self.send_headers (".html")
+        self.send_headers(".html")
         self.feed(content)
 
 
-class DocumentationThreadServer (Thread) :
+class DocumentationThreadServer (Thread):
+
     """
     defines a thread which holds a web server
 
     @var    server      the server of run
     """
 
-    def __init__ (self, server) :
+    def __init__(self, server):
         """
         constructor
         @param      server to run
@@ -518,10 +529,10 @@ class DocumentationThreadServer (Thread) :
         self.server.server_close()
 
 
-def run_doc_server (server,
-                mappings,
-                thread = False,
-                port = 8079) :
+def run_doc_server(server,
+                   mappings,
+                   thread=False,
+                   port=8079):
     """
     run the server
     @param      server      if None, it becomes ``HTTPServer(('localhost', 8080), DocumentationHandler)``
@@ -546,34 +557,34 @@ def run_doc_server (server,
     @endexample
 
     """
-    for k,v in mappings.items():
-        DocumentationHandler.add_mapping(k,v)
+    for k, v in mappings.items():
+        DocumentationHandler.add_mapping(k, v)
 
-    if server is None :
+    if server is None:
         server = HTTPServer(('localhost', port), DocumentationHandler)
     elif isinstance(server, str):
         server = HTTPServer((server, port), DocumentationHandler)
     elif not isinstance(server, HTTPServer):
         raise TypeError("unexpected type for server: " + str(type(server)))
 
-    if thread :
+    if thread:
         th = DocumentationThreadServer(server)
         th.start()
         return th
-    else :
+    else:
         server.serve_forever()
         return server
 
 if __name__ == '__main__':
 
-
     if True:
         # http://localhost:8079/pyquickhelper/
-        this_fold  = os.path.abspath(os.path.dirname(__file__))
-        this_fold2 = os.path.join(this_fold, "..", "..", "..", "..", "ensae_teaching_cs", "dist", "html3")
-        this_fold  = os.path.join(this_fold, "..", "..", "..", "dist", "html")
+        this_fold = os.path.abspath(os.path.dirname(__file__))
+        this_fold2 = os.path.join(
+            this_fold, "..", "..", "..", "..", "ensae_teaching_cs", "dist", "html3")
+        this_fold = os.path.join(this_fold, "..", "..", "..", "dist", "html")
         fLOG(OutputPrint=True)
         fLOG("running server")
-        run_doc_server(None, mappings = {   "pyquickhelper": this_fold,
-                                            "ensae_teaching_cs": this_fold2 } )
+        run_doc_server(None, mappings={"pyquickhelper": this_fold,
+                                       "ensae_teaching_cs": this_fold2})
         fLOG("end running server")

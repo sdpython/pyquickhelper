@@ -5,7 +5,8 @@
 """
 import datetime
 
-def str_to_datetime (dt, format = None):
+
+def str_to_datetime(dt, format=None):
     """
     convert a string into a datetime object, it can be:
         - 2013-05-24 18:49:46
@@ -23,23 +24,26 @@ def str_to_datetime (dt, format = None):
     .. versionchanged:: 1.0
         accept more formats (no time, T instead of space)
     """
-    if "+" in dt : dt = dt.split("+")[0].strip()
-    elif " -" in dt : dt = dt.split(" -")[0].strip()
-    if format is None :
+    if "+" in dt:
+        dt = dt.split("+")[0].strip()
+    elif " -" in dt:
+        dt = dt.split(" -")[0].strip()
+    if format is None:
         if " " in dt:
-            if "." in dt :
-                return datetime.datetime.strptime (dt, "%Y-%m-%d %H:%M:%S.%f")
-            else :
-                return datetime.datetime.strptime (dt, "%Y-%m-%d %H:%M:%S")
+            if "." in dt:
+                return datetime.datetime.strptime(dt, "%Y-%m-%d %H:%M:%S.%f")
+            else:
+                return datetime.datetime.strptime(dt, "%Y-%m-%d %H:%M:%S")
         elif "T" in dt:
-            if "." in dt :
-                return datetime.datetime.strptime (dt, "%Y-%m-%dT%H:%M:%S.%f")
-            else :
-                return datetime.datetime.strptime (dt, "%Y-%m-%dT%H:%M:%S")
+            if "." in dt:
+                return datetime.datetime.strptime(dt, "%Y-%m-%dT%H:%M:%S.%f")
+            else:
+                return datetime.datetime.strptime(dt, "%Y-%m-%dT%H:%M:%S")
         else:
-            return datetime.datetime.strptime (dt, "%Y-%m-%d")
-    else :
-        return datetime.datetime.strptime (dt, format)
+            return datetime.datetime.strptime(dt, "%Y-%m-%d")
+    else:
+        return datetime.datetime.strptime(dt, format)
+
 
 def timestamp_to_datetime(timestamp):
     """
