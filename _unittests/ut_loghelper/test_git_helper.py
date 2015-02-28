@@ -29,6 +29,8 @@ class TestGit(unittest.TestCase):
         if not os.path.exists(temp):
             os.mkdir(temp)
 
+        if "travis" in sys.executable: return
+
         to = os.path.join(temp, "pq")
         out,err = clone(to, "github.com", "sdpython", "pyquickhelper")
         fLOG("OUT:",out)

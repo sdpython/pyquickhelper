@@ -29,6 +29,8 @@ class TestNoteBooksBugDocx(unittest.TestCase):
         for file in os.listdir(temp):
             os.remove(os.path.join(temp,file))
 
+        if "travis" in sys.executable: return
+
         res = process_notebooks(nbs, temp, temp, formats=formats)
         fLOG("*****",len(res))
         for _ in res:

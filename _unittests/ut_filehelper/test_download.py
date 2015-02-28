@@ -38,7 +38,7 @@ class TestDownload (unittest.TestCase):
         fLOG(r)
         assert os.path.exists(out)
 
-        if sys.platform.startswith("win"):
+        if "travis" not in sys.executable:
             out7 = os.path.join(fold, "try.7z")
             r = zip7_files(out7, [f, out], fLOG = fLOG, temp_folder = fold)
             fLOG(r)
