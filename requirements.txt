@@ -24,6 +24,9 @@ jsonschema==2.4.0
 lxml>=3.3.5
 matplotlib>=1.4.2
 mechanize>=0.2.5
+numpy>=1.9.0b2
+openpyxl>=1.8.6
+pandas>=0.14.1
 pkgtools>=0.7.3
 pycparser>=2.10
 pyparsing>=2.0.2
