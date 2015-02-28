@@ -476,7 +476,7 @@ def import_module (rootm, filename, log_function, additional_sys_path = [ ], fLO
         try:
             mo = importlib.import_module(fi, context)
         except ImportError as e1:
-            fLOG("unable to import module ", fi, "fullname", fullname)
+            fLOG("unable to import module ", fi, "fullname", filename)
             mo_spec = importlib.util.find_spec(fi, context)
             fLOG("imported spec", mo_spec)
             mo = mo_spec.loader.load_module()

@@ -1,56 +1,48 @@
 """
 @file
 @brief Helpers to convert docstring to various format
+
+.. versionadded:: 1.0
 """
 
 import io
+import re
 import docutils
 import textwrap
 from docutils import core
-from .utils_sphinx_doc import migrating_doxygen_doc, private_migrating_doxygen_doc
+from .utils_sphinx_doc import migrating_doxygen_doc
+from ..loghelper.flog import noLOG
 
-class CustomStringIO(io.StringIO):
-    """
-    Access the content of a stream before it closes,
-    when the method *close* is called, it will copy the content into
-    attribute *my_buffer*.
-    """
-    def __init__(self, buffer):
-        """
-        constructor
+# -- HELP BEGIN EXCLUDE --
 
-        @param      buffer      list
-        """
-        if not isinstance(buffer, list):
-            raise TypeError("buffer must be a list")
-        self._my_buffer = buffer
-        super(CustomStringIO, self).__init__()
+from .utils_sphinx_doc import private_migrating_doxygen_doc
 
-    def close(self):
-        """
-        overlaods close to get the content before it closes
-        """
-        self._my_buffer.append ( self.getvalue() )
-        super(CustomStringIO, self).close()
+# -- HELP END EXCLUDE --
 
-    @property
-    def ValueAfterClosed(self):
-        """
-        return the content of attribute *my_buffer*
 
-        @return     string
-        """
-        return "".join(self._my_buffer)
-
-def rst2html(s):
+def rst2html(s, fLOG = noLOG):
     """
     converts a string into HTML format
+
+    @param  s       string to converts
+    @param  fLOG    logging function (warnings will be logged)
+    @return         HTML format
+
+    .. versionadded:: 1.0
     """
-    buffer = []
-    input = io.StringIO(s)
-    output = CustomStringIO( buffer )
-    core.publish_file(source=input, destination=output, writer_name='html')
-    return output.ValueAfterClosed
+
+    settings_overrides={'output_encoding': 'unicode',
+                                'doctitle_xform': True,
+                                'initial_header_level': 2,
+                            'warning_stream': io.StringIO()}
+
+    parts = core.publish_parts( source=s, source_path=None, destination_path=None,
+            writer_name='html', settings_overrides=settings_overrides)
+
+    fLOG(settings_overrides["warning_stream"].getvalue())
+
+    exp = re.sub('(<div class="system-message">(.|\\n)*?</div>)', "", parts["whole"])
+    return exp
 
 def correct_indentation(text):
     """
@@ -58,6 +50,8 @@ def correct_indentation(text):
 
     @param      text        text to correct
     @return                 corrected text
+
+    .. versionadded:: 1.0
     """
     title = { }
     rows = text.split("\n")
@@ -88,12 +82,13 @@ def correct_indentation(text):
     else:
         return text
 
-def docstring2html(function_or_string, as_ipython_html = True):
+def docstring2html(function_or_string, as_ipython_html = True, fLOG = noLOG):
     """
     converts a docstring into a HTML format
 
     @param      function_or_string      function, class, method or doctring
     @param      as_ipython_html         if True return a IPython object instead of a string
+    @param      fLOG                    logging function
     @return                             (str) HTML format or (IPython.core.display.HTML)
 
     @example(Produce HTML documentation for a function or class)
@@ -108,6 +103,8 @@ def docstring2html(function_or_string, as_ipython_html = True):
     @endcode
 
     @endexample
+
+    .. versionadded:: 1.0
     """
     if not isinstance(function_or_string, str):
         doc = function_or_string.__doc__
@@ -120,12 +117,12 @@ def docstring2html(function_or_string, as_ipython_html = True):
     rst = "\n".join(rst)
     ded = textwrap.dedent(rst)
     try:
-        html = rst2html(ded)
+        html = rst2html(ded, fLOG=fLOG)
     except Exception:
         # we check the indentation
         ded = correct_indentation(ded)
         try:
-            html = rst2html(ded)
+            html = rst2html(ded, fLOG=fLOG)
         except Exception as e:
             raise Exception("unable to process:\n{0}".format(ded)) from e
 

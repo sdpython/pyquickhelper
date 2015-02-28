@@ -133,7 +133,11 @@ class NotebookRunner(object):
         self.kc.execute(code)
 
         reply = self.kc.get_shell_msg()
-        status = reply['content']['status']
+        try:
+            status = reply['content']['status']
+        except KeyError:
+            status='error'
+
         if status == 'error':
             ansi_escape = re.compile(r'\x1b[^m]*m')
             tr = [ ansi_escape.sub('', _) for _ in reply['content']['traceback'] ]

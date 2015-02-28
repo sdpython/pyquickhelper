@@ -461,6 +461,13 @@ def main_wrapper_tests( codefile,
     .. versionchanged:: 0.9
         Parameters *add_coverage* and *report_folder* were added to compute the coverage
         using the module `coverage <http://nedbatchelder.com/code/coverage/>`_.
+
+    .. versionadded:: 1.0
+        Does something to avoid getting the following error::
+
+            _tkinter.TclError: no display name and no $DISPLAY environment variable
+
+        It is due to matplotlib. See `Generating matplotlib graphs without a running X server <http://stackoverflow.com/questions/4931376/generating-matplotlib-graphs-without-a-running-x-server>`_.
     """
     runner  = unittest.TextTestRunner(verbosity=0, stream = io.StringIO ())
     path    = os.path.abspath(os.path.join(os.path.split(codefile) [0]))
@@ -473,7 +480,13 @@ def main_wrapper_tests( codefile,
     if "win" not in sys.platform and "DISPLAY" not in os.environ:
         # issue detected with travis
         # _tkinter.TclError: no display name and no $DISPLAY environment variable
-        os.environ["DISPLAY"] = "localhost:0"
+        #os.environ["DISPLAY"] = "localhost:0"
+        pass
+
+    # to deal with: _tkinter.TclError: no display name and no $DISPLAY environment variable
+    import matplotlib as mpl
+    mpl.use('Agg')
+    import matplotlib.pyplot as plt
 
     if add_coverage:
         if report_folder is None:

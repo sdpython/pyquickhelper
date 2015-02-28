@@ -60,21 +60,21 @@ class TestConvertDocHelper(unittest.TestCase):
             More than one mappings can be sent.
             .. endexample.
         """
-        html = rst2html(rst)
+        html = rst2html(rst, fLOG=fLOG)
         assert len(html) > 0
         assert "example(run a local server which serves" in html
 
     def test_doctring2html(self) :
         fLOG (__file__, self._testMethodName, OutputPrint = __name__ == "__main__")
-        html = docstring2html(df2rst, False)
+        html = docstring2html(df2rst, False, fLOG=fLOG)
         assert len(html) > 0
         assert "<p>&#64;code" not in html
-        html = docstring2html(df2rst, True)
+        html = docstring2html(df2rst, True, fLOG=fLOG)
         assert isinstance(html, HTML)
 
     def test_doctring2html_pandas(self) :
         fLOG (__file__, self._testMethodName, OutputPrint = __name__ == "__main__")
-        html = docstring2html(pandas.read_csv, False)
+        html = docstring2html(pandas.read_csv, False, fLOG=fLOG)
         assert len(html) > 0
 
     def test_doctring2html_sklearn(self) :
@@ -83,8 +83,10 @@ class TestConvertDocHelper(unittest.TestCase):
             import sklearn.linear_model
         except ImportError:
             return
-        html = docstring2html(sklearn.linear_model.LogisticRegression, False)
+        html = docstring2html(sklearn.linear_model.LogisticRegression, False, fLOG=fLOG)
         assert len(html) > 0
+        if '<div class="system-message">' in html:
+            raise Exception(html)
 
 
 if __name__ == "__main__"  :
