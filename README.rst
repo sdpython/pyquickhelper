@@ -6,7 +6,9 @@ README / Changes
 ================
 
 .. image:: https://travis-ci.org/sdpython/pyquickhelper.svg?branch=master
-
+    :target: https://travis-ci.org/sdpython/pyquickhelper
+    :alt: Build status
+    
 
 **Links:**
     * `pypi/pyquickhelper <https://pypi.python.org/pypi/pyquickhelper/>`_
