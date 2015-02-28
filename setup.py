@@ -179,5 +179,5 @@ else :
         package_dir       = package_dir,
         package_data      = package_data,
         ext_modules       = EXT_MODULES,
-        install_requires  = [  "numpy", "pandas", "pymyinstall", "six", "dateutils", "requests"],
+        install_requires  = [  "numpy", "pandas", "pymyinstall", "six", "dateutils", "requests", "docutil", "IPython"],
         )
