@@ -470,6 +470,11 @@ def main_wrapper_tests( codefile,
                     skip_function=skip_function)
         return res
 
+    if "win" not in sys.platform and "DISPLAY" not in os.environ:
+        # issue detected with travis
+        # _tkinter.TclError: no display name and no $DISPLAY environment variable
+        os.environ["DISPLAY"] = "localhost:0"
+
     if add_coverage:
         if report_folder is None:
             report_folder = os.path.join( os.path.dirname(codefile), "..", "_doc","sphinxdoc","source", "coverage")

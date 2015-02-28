@@ -1,0 +1,136 @@
+"""
+@file
+@brief Helpers to convert docstring to various format
+"""
+
+import io
+import docutils
+import textwrap
+from docutils import core
+from .utils_sphinx_doc import migrating_doxygen_doc, private_migrating_doxygen_doc
+
+class CustomStringIO(io.StringIO):
+    """
+    Access the content of a stream before it closes,
+    when the method *close* is called, it will copy the content into
+    attribute *my_buffer*.
+    """
+    def __init__(self, buffer):
+        """
+        constructor
+
+        @param      buffer      list
+        """
+        if not isinstance(buffer, list):
+            raise TypeError("buffer must be a list")
+        self._my_buffer = buffer
+        super(CustomStringIO, self).__init__()
+
+    def close(self):
+        """
+        overlaods close to get the content before it closes
+        """
+        self._my_buffer.append ( self.getvalue() )
+        super(CustomStringIO, self).close()
+
+    @property
+    def ValueAfterClosed(self):
+        """
+        return the content of attribute *my_buffer*
+
+        @return     string
+        """
+        return "".join(self._my_buffer)
+
+def rst2html(s):
+    """
+    converts a string into HTML format
+    """
+    buffer = []
+    input = io.StringIO(s)
+    output = CustomStringIO( buffer )
+    core.publish_file(source=input, destination=output, writer_name='html')
+    return output.ValueAfterClosed
+
+def correct_indentation(text):
+    """
+    tries to improve the indentation before running docutil
+
+    @param      text        text to correct
+    @return                 corrected text
+    """
+    title = { }
+    rows = text.split("\n")
+    for row in rows:
+        row = row.replace("\t", "    ")
+        cr = row.lstrip()
+        ind = len(row) - len(cr)
+
+        tit = cr.strip("\r\n\t ")
+        if len(tit) > 0 and tit[0] in "-+=*^" and tit == tit[0] * len(tit):
+            title[ind] = title.get(ind, 0)+1
+
+    mint = min(title.keys())
+    if mint > 0:
+        newrows = [ ]
+        for row in rows:
+            i = 0
+            while i < len(row) and row[i] == ' ':
+                i += 1
+
+            rem = min(i, mint)
+            if rem > 0 :
+                newrows.append ( row[ rem: ] )
+            else:
+                newrows.append ( row )
+
+        return "\n".join( newrows )
+    else:
+        return text
+
+def docstring2html(function_or_string, as_ipython_html = True):
+    """
+    converts a docstring into a HTML format
+
+    @param      function_or_string      function, class, method or doctring
+    @param      as_ipython_html         if True return a IPython object instead of a string
+    @return                             (str) HTML format or (IPython.core.display.HTML)
+
+    @example(Produce HTML documentation for a function or class)
+
+    The following code can display the dosstring in HTML format
+    to display it in a notebook.
+
+    @code
+    from pyquickhelper import docstring2html
+    import sklearn.linear_model
+    docstring2html(sklearn.linear_model.LogisticRegression)
+    @endcode
+
+    @endexample
+    """
+    if not isinstance(function_or_string, str):
+        doc = function_or_string.__doc__
+    else:
+        doc = function_or_string
+
+    javadoc = migrating_doxygen_doc (doc, "None", log=True)
+    rows = javadoc.split("\n")
+    rst = private_migrating_doxygen_doc(rows, index_first_line = 0, filename="None")
+    rst = "\n".join(rst)
+    ded = textwrap.dedent(rst)
+    try:
+        html = rst2html(ded)
+    except Exception:
+        # we check the indentation
+        ded = correct_indentation(ded)
+        try:
+            html = rst2html(ded)
+        except Exception as e:
+            raise Exception("unable to process:\n{0}".format(ded)) from e
+
+    if as_ipython_html:
+        from IPython.core.display import HTML
+        return HTML(html)
+    else:
+        return html

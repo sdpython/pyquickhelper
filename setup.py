@@ -110,11 +110,11 @@ def import_pyquickhelper():
     try:
         import pyquickhelper
     except ImportError:
-        sys.path.append ( os.path.normpath (os.path.abspath(os.path.join("..", "pyquickhelper", "src" ))))
+        sys.path.append ( os.path.normpath (os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "pyquickhelper", "src" ))))
         try:
             import pyquickhelper
         except ImportError as e :
-            raise ImportError("module pyquickhelper is needed to build the documentation ({0})".format(sys.executable)) from e
+            raise ImportError("module pyquickhelper is needed to build the documentation ({0}), not found in path {1}".format(sys.executable, sys.path[-1])) from e
     return pyquickhelper
 
 if "clean_space" in sys.argv:
@@ -179,5 +179,5 @@ else :
         package_dir       = package_dir,
         package_data      = package_data,
         ext_modules       = EXT_MODULES,
-        install_requires  = [  "numpy", "pandas", "pymyinstall", "six", "dateutils", "requests", "docutil", "IPython"],
+        install_requires  = [  "numpy", "pandas", "pymyinstall", "six", "dateutils", "requests", "docutils", "IPython", "matplotlib"],
         )

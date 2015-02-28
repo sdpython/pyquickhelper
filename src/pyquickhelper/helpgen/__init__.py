@@ -21,3 +21,4 @@ def get_help_usage():
 
 from .sphinx_main               import generate_help_sphinx, process_notebooks
 from .utils_sphinx_config       import NbImage
+from .convert_doc_helper        import docstring2html
