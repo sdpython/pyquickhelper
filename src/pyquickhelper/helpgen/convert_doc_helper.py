@@ -85,12 +85,12 @@ def correct_indentation(text):
         return text
 
 
-def docstring2html(function_or_string, as_ipython_html=True, fLOG=noLOG):
+def docstring2html(function_or_string, format="html", fLOG=noLOG):
     """
     converts a docstring into a HTML format
 
     @param      function_or_string      function, class, method or doctring
-    @param      as_ipython_html         if True return a IPython object instead of a string
+    @param      format                  output format
     @param      fLOG                    logging function
     @return                             (str) HTML format or (IPython.core.display.HTML)
 
@@ -107,6 +107,13 @@ def docstring2html(function_or_string, as_ipython_html=True, fLOG=noLOG):
 
     @endexample
 
+    The output format is defined by:
+
+        * html: IPython HTML object
+        * rawhtml: HTML as text + style
+        * rst: rst
+        * text: raw text
+
     .. versionadded:: 1.0
     """
     if not isinstance(function_or_string, str):
@@ -114,12 +121,19 @@ def docstring2html(function_or_string, as_ipython_html=True, fLOG=noLOG):
     else:
         doc = function_or_string
 
+    if format == "text":
+        return doc
+
     javadoc = migrating_doxygen_doc(doc, "None", log=True)
     rows = javadoc.split("\n")
     rst = private_migrating_doxygen_doc(
         rows, index_first_line=0, filename="None")
     rst = "\n".join(rst)
     ded = textwrap.dedent(rst)
+
+    if format == "rst":
+        return ded
+
     try:
         html = rst2html(ded, fLOG=fLOG)
     except Exception:
@@ -130,8 +144,11 @@ def docstring2html(function_or_string, as_ipython_html=True, fLOG=noLOG):
         except Exception as e:
             raise Exception("unable to process:\n{0}".format(ded)) from e
 
-    if as_ipython_html:
+    if format == "html":
         from IPython.core.display import HTML
         return HTML(html)
-    else:
+    elif format == "rawhtml":
         return html
+    else:
+        raise ValueError(
+            "unexected format: " + format + ", should be html, rawhtml, text, rst")
