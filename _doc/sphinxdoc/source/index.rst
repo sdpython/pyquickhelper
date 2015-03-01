@@ -12,11 +12,11 @@ pyquickhelper documentation
     :alt: Build status
 
 
-**Links:** `pypi/pyquickhelper <https://pypi.python.org/pypi/pyquickhelper/>`_, 
-`GitHub/pyquickhelper <https://github.com/sdpython/pyquickhelper>`_,
+**Links:** `pypi <https://pypi.python.org/pypi/pyquickhelper/>`_, 
+`github <https://github.com/sdpython/pyquickhelper>`_,
 `documentation <http://www.xavierdupre.fr/app/pyquickhelper/helpsphinx/index.html>`_, 
-`Windows Setup <http://www.xavierdupre.fr/site2013/index_code.html#pyquickhelper>`_,
-`Travis/pyquickhelper <https://travis-ci.org/sdpython/pyquickhelper>`_
+`wheel <http://www.xavierdupre.fr/site2013/index_code.html#pyquickhelper>`_,
+`travis <https://travis-ci.org/sdpython/pyquickhelper>`_
 
 Functionalities
 ---------------
