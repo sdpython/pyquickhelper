@@ -44,7 +44,7 @@ from .helpgen.sphinx_main import generate_help_sphinx, process_notebooks
 from .ipythonhelper.kindofcompletion import AutoCompletion, AutoCompletionFile
 from .filehelper.visual_sync import create_visual_diff_through_html, create_visual_diff_through_html_files
 from .serverdoc.documentation_server import run_doc_server
-from .pycode.code_helper import remove_extra_spaces, remove_extra_spaces_folder
+from .pycode.code_helper import remove_extra_spaces_and_pep8, remove_extra_spaces_folder
 from .ipythonhelper.html_forms import open_html_form
 from .ipythonhelper.magic_parser import MagicCommandParser
 from .ipythonhelper.magic_class import MagicClassWithHelpers

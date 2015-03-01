@@ -9,7 +9,7 @@ import autopep8
 from ..filehelper.synchelper import explore_folder
 
 
-def remove_extra_spaces(filename, apply_pep8=True):
+def remove_extra_spaces_and_pep8(filename, apply_pep8=True):
     """
     removes extra spaces in a filename, replace the file in place
 
@@ -78,6 +78,11 @@ def remove_extra_spaces_folder(
     @param      apply_pep8      if True, calls ``autopep8`` on the file
     @return                 the list of modified files
 
+    The function does not check files having
+    ``/build/`` or ``/dist/`` or ``temp_``
+    or ``/build2/`` or ``/build3/``
+    in their name.
+
     .. versionchanged:: 1.0
         Parameter *apply_pep8* was added.
     """
@@ -86,10 +91,13 @@ def remove_extra_spaces_folder(
     for f in files:
         fl = f.lower().replace("\\", "/")
         if "/temp_" not in fl and "/build/" not in fl \
+                and "/dist/" not in fl \
+                and "/build2/" not in fl \
+                and "/build3/" not in fl \
                 and os.stat(f).st_size < 100000:
             ext = os.path.splitext(f)[-1]
             if ext in extensions:
-                d = remove_extra_spaces(f, apply_pep8=apply_pep8)
+                d = remove_extra_spaces_and_pep8(f, apply_pep8=apply_pep8)
                 if d != 0:
                     mod.append(f)
     return mod

@@ -23,7 +23,7 @@ except ImportError:
         sys.path.append(path)
     import src
 
-from src.pyquickhelper import fLOG, remove_extra_spaces, create_visual_diff_through_html_files
+from src.pyquickhelper import fLOG, remove_extra_spaces_and_pep8, create_visual_diff_through_html_files
 
 
 class TestCodeHelper(unittest.TestCase):
@@ -66,7 +66,7 @@ class TestCodeHelper(unittest.TestCase):
         if os.path.exists(dest):
             os.remove(dest)
         shutil.copy(filename, dest)
-        d = remove_extra_spaces(dest)
+        d = remove_extra_spaces_and_pep8(dest)
         fLOG("removed", d)
         assert d > 0
         assert d < 100
