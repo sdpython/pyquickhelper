@@ -218,5 +218,6 @@ else:
             "requests",
             "docutils",
             "IPython",
-            "matplotlib"],
+            "matplotlib",
+            "autopep8"],
     )
