@@ -4,17 +4,24 @@
 @brief  Handles window `Tk <https://docs.python.org/3.4/library/tkinter.html#tkinter.Tk>`_
 """
 import tkinter
+import sys
+
+
+def X_is_running():
+    from subprocess import Popen, PIPE
+    p = Popen(["xset", "-q"], stdout=PIPE, stderr=PIPE)
+    p.communicate()
+    return p.returncode == 0
 
 
 def has_x_server():
     """
     detects the presences of X server
     """
-    try:
-        tk = tkinter.Tk()
+    if sys.platform.startswith("win"):
         return True
-    except:
-        return False
+    return X_is_running()
+
 
 _has_x_server = has_x_server()
 
