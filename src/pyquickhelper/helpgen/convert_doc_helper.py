@@ -124,7 +124,7 @@ def docstring2html(function_or_string, format="html", fLOG=noLOG):
     if format == "text":
         return doc
 
-    javadoc = migrating_doxygen_doc(doc, "None", log=True)
+    javadoc = migrating_doxygen_doc(doc, "None", log=False)
     rows = javadoc.split("\n")
     rst = private_migrating_doxygen_doc(
         rows, index_first_line=0, filename="None")
