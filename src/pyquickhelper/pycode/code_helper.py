@@ -84,7 +84,9 @@ def remove_extra_spaces_folder(
     files = explore_folder(folder)[1]
     mod = []
     for f in files:
-        if "/temp_" not in f.lower().replace("\\", "/"):
+        fl = f.lower().replace("\\", "/")
+        if "/temp_" not in fl and "/build/" not in fl \
+                and os.stat(f).st_size < 100000:
             ext = os.path.splitext(f)[-1]
             if ext in extensions:
                 d = remove_extra_spaces(f, apply_pep8=apply_pep8)
