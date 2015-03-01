@@ -45,7 +45,7 @@ def remove_extra_spaces_and_pep8(filename, apply_pep8=True):
     if os.path.splitext(filename)[-1] == ".py":
         r = autopep8.fix_lines(
             lines2,
-            options=autopep8.parse_args([''] + ['--aggressive']))
+            options=autopep8.parse_args(['']))
 
         if encoding is None:
             with open(filename, "w") as f:
