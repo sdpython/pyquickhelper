@@ -4,6 +4,7 @@
 @brief  Handles window `Tk <https://docs.python.org/3.4/library/tkinter.html#tkinter.Tk>`_
 """
 import tkinter
+import tkinter.tix as tix
 import sys
 
 
