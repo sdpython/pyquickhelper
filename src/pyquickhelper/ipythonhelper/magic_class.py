@@ -98,7 +98,7 @@ class MagicClassWithHelpers(Magics):
         try:
             args = parser.parse_cmd(line, context=self.Context)
         except SystemExit:
-            print_function(parser.print_help())
+            print_function(parser.format_usage())
             args = None
 
         return args
