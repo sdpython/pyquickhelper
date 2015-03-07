@@ -43,13 +43,14 @@ class NotebookRunner(object):
     }
 
     def __init__(self, nb, profile_dir=None, working_dir=None,
-                 fLOG=noLOG):
+                 comment="", fLOG=noLOG):
         """
         constuctor
 
         @param      nb              notebook as JSON
         @param      profile_dir     profile directory
         @param      working_dir     working directory
+        @param      comment         additional information added to error message
         @param      fLOG            logging function
         """
         self.km = KernelManager()
@@ -72,6 +73,7 @@ class NotebookRunner(object):
         self.kc.start_channels()
         # self.kc.wait_for_ready()
         self.nb = nb
+        self.comment = comment
 
     def shutdown_kernel(self):
         """
@@ -261,8 +263,8 @@ class NotebookRunner(object):
                 scode = [code]
             else:
                 scode = ""
-            raise NotebookError("CELL {4} length={5} -- {6}:\n{0}\nTRACE:\n{1}\nRAW:\n{2}REPLY:\n{3}".format(
-                code, traceback_text, sraw, sreply, index_cell, len(code), scode))
+            raise NotebookError("{7}\nCELL {4} length={5} -- {6}:\n{0}\nTRACE:\n{1}\nRAW:\n{2}REPLY:\n{3}".format(
+                code, traceback_text, sraw, sreply, index_cell, len(code), scode, self.comment))
         return outs
 
     def iter_code_cells(self):
@@ -310,7 +312,7 @@ class NotebookRunner(object):
                 self.run_cell(i, cell, clean_function=clean_function)
             except Empty as er:
                 raise Exception(
-                    "issue when executing:\n{0}".format(cell.input)) from er
+                    "{0}\nissue when executing:\n{1}".format(self.comment, cell.input)) from er
             except NotebookError as e:
                 if not skip_exceptions:
                     raise

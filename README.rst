@@ -60,6 +60,7 @@ Versions / Changes
     * **new:** function :func:`docstring2html <pyquickhelper.helpgen.convert_doc_helper.docstring2html>` which converts RST documentation into HTML module IPython can display
     * **add:** run unit tests on `Travis-CI <https://travis-ci.org/sdpython/pyquickhelper>`_
     * **change:** renamed ``df_to_html`` into :func:`df2html <pyquickhelper.pandashelper.tblformat.df2html>`, ``df_to_rst`` into :func:`df2rst <pyquickhelper.pandashelper.tblformat.df2rst>`
+    * **new:** function :func:`py3to2_convert_tree <pyquickhelper.pycode.py3to2.py3to2_convert_tree>` to convert files from python 3 to 2
 * **0.9 - 2015/01/25**
     * **add:** function to remove extra spaces in a file :func:`remove_extra_spaces <pyquickhelper.pycode.code_helper.remove_extra_spaces>`
     * **add:** function :func:`create_visual_diff_through_html_files <pyquickhelper.filehelper.visual_sync.create_visual_diff_through_html_files>`

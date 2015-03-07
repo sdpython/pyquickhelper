@@ -61,7 +61,8 @@ def run_notebook(filename,
             out.write("\n")
             fLOG(*l, **p)
 
-        nb_runner = NotebookRunner(nb, profile_dir, working_dir, fLOG=flogging)
+        nb_runner = NotebookRunner(
+            nb, profile_dir, working_dir, fLOG=flogging, comment=filename)
         nb_runner.run_notebook(skip_exceptions=skip_exceptions, additional_path=additional_path,
                                valid=valid, clean_function=clean_function)
 
