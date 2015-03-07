@@ -9,6 +9,7 @@ The main tweaks are:
 - the documentation is not moved before the function or class definition
 - it uses a function to modify every line of documentation to use rst syntax.
 """
+from __future__ import print_function
 
 __applicationName__ = "doxypy"
 __blurb__ = """
@@ -97,8 +98,8 @@ class FSM(object):
                     self.current_input = input
                     self.current_transition = transition
                     if options.debug:
-                        print(
-                            (sys.stderr, "# FSM: executing ({} -> {}) for line '{}'".format(from_state, to_state, input)))
+                        sys.stderr.write(
+                            "# FSM: executing ({} -> {}) for line '{}'\n".format(from_state, to_state, input))
                     callback(match)
                     return
 
@@ -276,7 +277,7 @@ class Doxypy(object):
         """
         if self.output:
             if options.debug:
-                print("# OUTPUT: ", self.output, file=sys.stderr)
+                sys.stderr.write("# OUTPUT: {0}\n".format(self.output))
             self.print_output("\n".join(self.output), file=self.outstream)
             self.outstream.flush()
         self.output = []
@@ -294,7 +295,7 @@ class Doxypy(object):
         Closes the current commentblock and starts a new comment search.
         """
         if options.debug:
-            print("# CALLBACK: resetCommentSearch", file=sys.stderr)
+            sys.stderr.write("# CALLBACK: resetCommentSearch")
         self.__closeComment()
         self.startCommentSearch(match)
 
@@ -306,7 +307,7 @@ class Doxypy(object):
         the current indentation.
         """
         if options.debug:
-            print("# CALLBACK: startCommentSearch", file=sys.stderr)
+            sys.stderr.write("# CALLBACK: startCommentSearch")
         self.defclass = [self.fsm.current_input]
         self.comment = []
         self.indent = match.group(1)
@@ -319,7 +320,7 @@ class Doxypy(object):
         appends the current line to the output.
         """
         if options.debug:
-            print("# CALLBACK: stopCommentSearch", file=sys.stderr)
+            sys.stderr.write("# CALLBACK: stopCommentSearch")
         self.__closeComment()
 
         self.defclass = []
@@ -332,7 +333,7 @@ class Doxypy(object):
         Closes the open comment block, resets it and appends the current line.
         """
         if options.debug:
-            print("# CALLBACK: appendFileheadLine", file=sys.stderr)
+            sys.stderr.write("# CALLBACK: appendFileheadLine")
         self.__closeComment()
         self.comment = []
         self.output.append(self.fsm.current_input)
@@ -345,7 +346,7 @@ class Doxypy(object):
         well as singleline comments.
         """
         if options.debug:
-            print("# CALLBACK: appendCommentLine", file=sys.stderr)
+            sys.stderr.write("# CALLBACK: appendCommentLine")
         (from_state, to_state, condition,
          callback) = self.fsm.current_transition
 
@@ -558,4 +559,8 @@ if __name__ == "__main__":
     with open(__file__, "r") as f:
         content = f.read()
     #main(__file__, print_output = print)
-    process_string(content, print, lambda a, b, c: a, "", 0)
+
+    def pprint(*l, **kw):
+        print(*l, **kw)
+
+    process_string(content, pprint, lambda a, b, c: a, "", 0)

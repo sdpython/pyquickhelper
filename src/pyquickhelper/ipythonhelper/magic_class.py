@@ -6,6 +6,7 @@
 .. versionadded:: 0.9
 
 """
+from __future__ import print_function
 
 from IPython.core.magic import Magics, magics_class
 

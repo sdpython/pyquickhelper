@@ -5,8 +5,13 @@
 @brief  building windows to use a function and specify its parameter based on a python function
 """
 import os
-import tkinter
-import tkinter.tix as tix
+
+try:
+    import tkinter
+    import tkinter.tix as tix
+except ImportError:
+    import Tkinter as tkinter
+    import Tix as tix
 
 from .tk_window import create_tk, create_tixtk
 from .frame_function import FrameFunction

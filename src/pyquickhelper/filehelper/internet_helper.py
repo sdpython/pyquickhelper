@@ -5,7 +5,10 @@
 
 import os
 import urllib
-import urllib.request
+try:
+    import urllib.request as urllib_request
+except ImportError:
+    import urllib2 as urllib_request
 import sys
 
 from ..loghelper.flog import noLOG, _get_file_url
@@ -76,14 +79,14 @@ def download(url, path_download=".", outfile=None, fLOG=noLOG):
             if os.path.exists(nyet):
                 size = os.stat(dest).st_size
                 fLOG("resume downloading (stop at", size, ") from ", url)
-                request = urllib.request.Request(url)
+                request = urllib_request.Request(url)
                 request.add_header("Range", "bytes=%d-" % size)
-                fu = urllib.request.urlopen(request)
+                fu = urllib_request.urlopen(request)
                 f = open(dest, format.replace("w", "a"))
             else:
                 fLOG("downloading ", url)
-                request = urllib.request.Request(url)
-                fu = urllib.request.urlopen(url)
+                request = urllib_request.Request(url)
+                fu = urllib_request.urlopen(url)
                 f = open(dest, format)
 
             open(nyet, "w").close()

@@ -7,9 +7,14 @@ import sys
 import os
 import inspect
 import threading
-import tkinter
 import io
-import tkinter.font as tkFont
+
+try:
+    import tkinter
+    import tkinter.font as tkFont
+except ImportError:
+    import Tkinter as tkinter
+    import tkFont
 
 from .tk_window import create_tk
 from ..loghelper.flog import fLOG, GetLogFile

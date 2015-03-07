@@ -6,7 +6,11 @@
 """
 import sys
 import os
-import tkinter
+
+try:
+    import tkinter
+except ImportError:
+    import Tkinter as tkinter
 
 from .tk_window import create_tk
 from .function_helper import private_adjust_parameters

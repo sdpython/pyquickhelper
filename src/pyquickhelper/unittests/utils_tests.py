@@ -2,6 +2,8 @@
 @file
 @brief  This extension contains various functionalities to help unittesting.
 """
+from __future__ import print_function
+
 import os
 import sys
 import glob

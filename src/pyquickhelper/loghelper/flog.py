@@ -32,7 +32,11 @@ import math
 import decimal
 import urllib
 import copy
-import urllib.request
+
+try:
+    import urllib.request as urllib_request
+except ImportError:
+    import urllib2 as urllib_request
 
 
 class PQHException (Exception):
@@ -684,14 +688,14 @@ def _check_url_file(url, path_download, outfile):
             if os.path.exists(nyet):
                 size = os.stat(dest).st_size
                 fLOG("resume downloading (stop at", size, ") from ", url)
-                request = urllib.request.Request(url)
+                request = urllib_request.Request(url)
                 request.add_header("Range", "bytes=%d-" % size)
-                fu = urllib.request.urlopen(request)
+                fu = urllib_request.urlopen(request)
                 f = open(dest, format.replace("w", "a"))
             else:
                 fLOG("downloading ", url)
-                request = urllib.request.Request(url)
-                fu = urllib.request.urlopen(url)
+                request = urllib_request.Request(url)
+                fu = urllib_request.urlopen(url)
                 f = open(dest, format)
 
             open(nyet, "w").close()

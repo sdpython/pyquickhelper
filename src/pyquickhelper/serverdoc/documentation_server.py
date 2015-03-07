@@ -14,9 +14,18 @@ import os
 import subprocess
 import copy
 import datetime
-from urllib.parse import urlparse, parse_qs
+
+try:
+    from urllib.parse import urlparse, parse_qs
+except ImportError:
+    from urlparse import urlparse, parse_qs
+
 from threading import Thread
-from http.server import BaseHTTPRequestHandler, HTTPServer
+
+try:
+    from http.server import BaseHTTPRequestHandler, HTTPServer
+except ImportError:
+    from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
 
 if __name__ == "__main__":
     path = os.path.normpath(os.path.abspath(

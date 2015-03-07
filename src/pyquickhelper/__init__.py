@@ -3,10 +3,6 @@
 Main files, contains the version, the url to the documention.
 """
 
-import sys
-if sys.version_info[0] < 3:
-    raise ImportError("pyquickhelper only works with Python 3")
-
 __version__ = "1.0"
 __author__ = "Xavier Dupré"
 __github__ = "https://github.com/sdpython/pyquickhelper"
@@ -60,3 +56,4 @@ from .filehelper.ftp_transfer_files import FolderTransferFTP
 from .filehelper.file_tree_node import FileTreeNode
 from .texthelper.diacritic_helper import remove_diacritics
 from .helpgen.convert_doc_helper import docstring2html
+from .pycode.py3to2 import py3to2_convert_tree, py3to2_convert
