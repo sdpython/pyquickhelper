@@ -129,9 +129,9 @@ class JenkinsExt(jenkins.Jenkins):
         @param      script          script to execute
         @param      keep            number of buils to keep
         @param      location        location of the build
-        
+
         The job can be modified on Jenkins. To add a time trigger::
-            
+
             H H(13-14) * * *
         """
         location = "" if location is None else "<customWorkspace>%s</customWorkspace>" % location

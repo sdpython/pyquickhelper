@@ -9,6 +9,9 @@ README / Changes
     :target: https://travis-ci.org/sdpython/pyquickhelper
     :alt: Build status
     
+.. image:: https://badge.fury.io/py/pyquickhelper.svg
+    :target: http://badge.fury.io/py/pyquickhelper
+        
 
 **Links:**
     * `pypi/pyquickhelper <https://pypi.python.org/pypi/pyquickhelper/>`_
