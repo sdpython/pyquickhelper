@@ -310,7 +310,14 @@ def generate_help_sphinx(project_var_name,
     #run_cmd (cmd, wait = True, secure="make_help.log", stop_waiting_if = lambda v : "build succeeded" in v)
     # The following one works but opens a extra windows.
     for cmd in cmds:
+        fLOG("##################################################################################################")
+        fLOG("##################### run sphinx #################################################################")
+        fLOG("##################################################################################################")
+        fLOG("#####",cmd)
         os.system(cmd)
+        fLOG("##################################################################################################")
+        fLOG("##################### end run sphinx #############################################################")
+        fLOG("##################################################################################################")
 
     # we copy the coverage files if it is missing
     covfold = os.path.join(docpath, "source", "coverage")
