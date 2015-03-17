@@ -147,7 +147,7 @@ if "clean_space" in sys.argv:
             ".bat",
             ".sh"])
     print("number of impacted files", len(rem))
-    
+
 elif "write_version" in sys.argv:
     pyquickhelper = import_pyquickhelper()
     from pyquickhelper.loghelper.pyrepo_helper import SourceRepository

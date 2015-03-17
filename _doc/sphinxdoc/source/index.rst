@@ -14,6 +14,11 @@ pyquickhelper documentation
 .. image:: https://badge.fury.io/py/pyquickhelper.svg
     :target: http://badge.fury.io/py/pyquickhelper
     
+.. image:: http://img.shields.io/pypi/dm/pyquickhelper.png
+    :alt: PYPI Package
+    :target: https://pypi.python.org/pypi/pyquickhelper
+
+
 
 **Links:** `pypi <https://pypi.python.org/pypi/pyquickhelper/>`_, 
 `github <https://github.com/sdpython/pyquickhelper>`_,
