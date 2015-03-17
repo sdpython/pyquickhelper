@@ -89,7 +89,8 @@ class TransferFTP (FTP):
         """
         try:
             t = command(self, *args)
-            if command == FTP.pwd or command == FTP.dir:
+            if command == FTP.pwd or command == FTP.dir or \
+                    command == FTP.mlsd or command == FTP.nlst:
                 return t
             elif command != FTP.cwd:
                 pass
@@ -155,8 +156,12 @@ class TransferFTP (FTP):
 
         @param      path        path
         @return                 list of path
+
+        see @see me enumerate_ls
+
+        .. versionchanged:: 1.0
         """
-        return self.run_command(FTP.dir, path)
+        return list(self.enumerate_ls(path))
 
     def ls(self, path='.'):
         """
@@ -164,8 +169,37 @@ class TransferFTP (FTP):
 
         @param      path        path
         @return                 list of path
+
+        see @see me enumerate_ls
+
+        .. versionchanged:: 1.0
         """
-        return self.run_command(FTP.dir, path)
+        return list(self.enumerate_ls(path))
+
+    def enumerate_ls(self, path='.'):
+        """
+        enumerate the content of a path
+
+        @param      path        path
+        @return                 list of dictionaries
+
+        One dictionary::
+
+            {'name': 'www',
+             'type': 'dir',
+             'unique': 'aaaa',
+             'unix.uid': '1111',
+             'unix.mode': '111',
+             'sizd': '5',
+             'unix.gid': '000',
+             'modify': '111111'}
+
+        .. versionadded:: 1.0
+        """
+        for a in self.run_command(FTP.mlsd, path):
+            r = dict(name=a[0])
+            r.update(a[1])
+            yield r
 
     def transfer(self, file, to, name, debug=False):
         """
