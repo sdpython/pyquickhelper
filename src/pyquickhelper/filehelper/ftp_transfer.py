@@ -157,7 +157,7 @@ class TransferFTP (FTP):
         @param      path        path
         @return                 list of path
 
-        see @see me enumerate_ls
+        see :meth:`enumerate_ls <pyquickhelper.filehelper.ftp_transfer.TransferFTP.enumerate_ls>`
 
         .. versionchanged:: 1.0
         """
@@ -170,7 +170,7 @@ class TransferFTP (FTP):
         @param      path        path
         @return                 list of path
 
-        see @see me enumerate_ls
+        see :meth:`enumerate_ls <pyquickhelper.filehelper.ftp_transfer.TransferFTP.enumerate_ls>`
 
         .. versionchanged:: 1.0
         """
