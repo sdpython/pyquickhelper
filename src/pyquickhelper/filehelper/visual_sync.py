@@ -1,4 +1,4 @@
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 """
 @file
 @brief Quick and dirty trick to use `jsdifflib <https://github.com/cemerick/jsdifflib>`_

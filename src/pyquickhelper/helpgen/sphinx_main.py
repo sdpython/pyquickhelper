@@ -1,4 +1,4 @@
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 """
 @file
 @brief Contains the main function to generate the documentation
@@ -22,7 +22,7 @@ from ..loghelper.flog import run_cmd, fLOG
 from ..loghelper.pyrepo_helper import SourceRepository
 from ..pandashelper.tblformat import df2rst
 from .utils_sphinx_doc import prepare_file_for_sphinx_help_generation
-from .utils_sphinx_doc_helpers import HelpGenException, find_latex_path, find_graphviz_dot, find_pandoc_path
+from .utils_sphinx_doc_helpers import HelpGenException, find_latex_path, find_pandoc_path
 from ..filehelper.synchelper import explore_folder, has_been_updated
 from .utils_sphinx_config import ie_layout_html
 
@@ -160,7 +160,7 @@ def generate_help_sphinx(project_var_name,
             "unable to import conf.py which defines the help generation")
 
     latex_path = theconf.__dict__.get("latex_path", find_latex_path())
-    graphviz_dot = theconf.__dict__.get("graphviz_dot", find_graphviz_dot())
+    # graphviz_dot = theconf.__dict__.get("graphviz_dot", find_graphviz_dot())
     pandoc_path = theconf.__dict__.get("pandoc_path", find_pandoc_path())
 
     # changes
@@ -254,7 +254,7 @@ def generate_help_sphinx(project_var_name,
                 # to avoid an error later
                 with open(thn, 'r') as f:
                     try:
-                        lines = f.read().splitlines()
+                        f.read().splitlines()
                     except UnicodeDecodeError as e:
                         raise HelpGenException(
                             "issue with encoding for file ", thn) from e
@@ -304,10 +304,10 @@ def generate_help_sphinx(project_var_name,
         fLOG("run:", cmd)
         lays.append(lay)
 
-    #cmd = "make {0}".format(lay)
+    # cmd = "make {0}".format(lay)
 
     # This instruction should work but it does not. Sphinx seems to be stuck.
-    #run_cmd (cmd, wait = True, secure="make_help.log", stop_waiting_if = lambda v : "build succeeded" in v)
+    # run_cmd (cmd, wait = True, secure="make_help.log", stop_waiting_if = lambda v : "build succeeded" in v)
     # The following one works but opens a extra windows.
     for cmd in cmds:
         fLOG(
@@ -619,8 +619,6 @@ def process_notebooks(notebooks,
 
     if latex_path is None:
         latex_path = find_latex_path()
-
-    #graphviz_dot    = theconf.__dict__.get("graphviz_dot", find_graphviz_dot())
 
     if isinstance(notebooks, str):
         notebooks = [notebooks]
@@ -963,7 +961,7 @@ def add_notebook_page(nbs, fileout):
 
     rows = ["", ".. _l-notebooks:", "", "", "Notebooks", "=========", ""]
 
-    exp = re.compile("[.][.] _([-a-zA-Z0-9_]+):")
+    # exp = re.compile("[.][.] _([-a-zA-Z0-9_]+):")
     rst = sorted(rst)
 
     rows.append("")
@@ -1079,7 +1077,7 @@ def post_process_rst_output(file, html, pdf, python):
                             if cmp is not None:
                                 lines[memopos] = "{0}\n    :linenos:\n".format(
                                     ".. code-block:: python")
-                        except Exception as e:
+                        except Exception:
                             pass
 
                 memopos = None
@@ -1087,7 +1085,7 @@ def post_process_rst_output(file, html, pdf, python):
     # code and images
     imgreg = re.compile("[.][.] image:: (.*)")
     for pos in range(0, len(lines)):
-        #lines[pos] = lines[pos].replace(".. code:: python","::")
+        # lines[pos] = lines[pos].replace(".. code:: python","::")
         if lines[pos].strip().startswith(".. image::"):
             # we assume every image should be placed in the same folder as the
             # notebook itself
@@ -1262,12 +1260,11 @@ def post_process_latex(st, doall, info=None):
         found = 0
         for m in exp.finditer(st):
             found += 1
-            t = m.groups()
             p1, p2 = m.start(), m.end()
             sub = st[p1:p2].strip(" \r\n")
             sub2 = st[max(p1 - 10, 0):min(len(st), p2 + 10)]
             # very quick and dirty
-            if sub not in [ ".*)\\$", "r`\\$}", "ar`\\$", "tt{\\$" ] and \
+            if sub not in [".*)\\$", "r`\\$}", "ar`\\$", "tt{\\$"] and \
                not sub.endswith("'\\$") and not sub.endswith("{\\$"):
                 if p1 > 30:
                     # very very quick and dirty

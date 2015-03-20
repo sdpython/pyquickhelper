@@ -3,7 +3,6 @@
 @brief Some functions to interact better with Notebook
 """
 
-import os
 import re
 
 _reg_var = re.compile("^[a-zA-Z_]([a-zA-Z_0-9]*)$")
@@ -76,7 +75,7 @@ def open_html_form(params,
 
     row = """<br />{0} <input type="{3}" id="{2}{0}" value="{1}" size="80" />"""
 
-    rows = [ """<div style="{0}"><b>{1}</b>""".format(style, title, key_save) ]
+    rows = ["""<div style="{0}"><b>{1}</b>""".format(style, title, key_save)]
     for k, v in sorted(params.items()):
         if k.startswith("password"):
             typ = "password"
@@ -84,7 +83,7 @@ def open_html_form(params,
             typ = "text"
         rows.append(row.format(k, "" if v is None else str(v), key_save, typ))
     rows.append(
-        """<br /><button onclick="set_value{0}()">Ok</button></div>""".format(key_save) )
+        """<br /><button onclick="set_value{0}()">Ok</button></div>""".format(key_save))
     if hook is not None:
         rows.append("<div id='out%s'></div>" % key_save.replace("_", ""))
 
@@ -98,9 +97,9 @@ def open_html_form(params,
     rows.append("   command='%s = {' ;" % key_save)
     for k, v in sorted(params.items()):
         rows.append(
-            """   var {0}{1}var_value = document.getElementById('{0}{1}').value;""".format(key_save, k) )
-        rows.append( """   command += '"{0}":"' + """.format(k) +
-                     "{0}{1}var_value".format(key_save, k) + """ + '",';""" )
+            """   var {0}{1}var_value = document.getElementById('{0}{1}').value;""".format(key_save, k))
+        rows.append("""   command += '"{0}":"' + """.format(k) +
+                    "{0}{1}var_value".format(key_save, k) + """ + '",';""")
     rows.append("""   command += '}';""")
     rows.append("""   var kernel = IPython.notebook.kernel;""")
     rows.append("""   kernel.execute(command);""")

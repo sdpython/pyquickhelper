@@ -6,7 +6,6 @@
 from queue import Empty
 import os
 import re
-from time import sleep
 
 from IPython.nbformat.current import NotebookNode
 from IPython.kernel import KernelManager
@@ -164,7 +163,7 @@ class NotebookRunner(object):
                 if msg['msg_type'] == 'status':
                     if msg['content']['execution_state'] == 'idle':
                         break
-            except Empty as e:
+            except Empty:
                 # execution state should return to idle before the queue becomes empty,
                 # if it doesn't, something bad has happened
                 status = "error"

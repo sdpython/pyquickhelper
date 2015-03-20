@@ -20,10 +20,10 @@ def change_file_status(folder, status=stat.S_IWRITE, strict=False):
     """
     res = []
     if strict:
-        for f in explore_folder_iterfile(temp):
+        for f in explore_folder_iterfile(folder):
             try:
                 mode = os.stat(f).st_mode
-            except FileNotFoundError as e:
+            except FileNotFoundError:
                 # it appends for some weird path
                 # GitHub\pyensae\src\pyensae\file_helper\pigjar\pig-0.14.0\contrib\piggybank\java\build\classes\org\apache\pig\piggybank\storage\IndexedStorage$IndexedStorageInputFormat$IndexedStorageRecordReader$IndexedStorageRecordReaderComparator.class
                 warnings.warn("[change_file_status] unable to find " + f)
@@ -36,7 +36,7 @@ def change_file_status(folder, status=stat.S_IWRITE, strict=False):
         for f in explore_folder_iterfile(folder):
             try:
                 mode = os.stat(f).st_mode
-            except FileNotFoundError as e:
+            except FileNotFoundError:
                 # it appends for some weird path
                 warnings.warn("[change_file_status] unable to find " + f)
                 continue

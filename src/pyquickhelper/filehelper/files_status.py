@@ -1,4 +1,4 @@
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 """
 @file
 @brief      keep the status of a folder, assuming this folder is not moved
@@ -9,8 +9,6 @@
 
 import os
 import datetime
-import shutil
-import hashlib
 
 from ..loghelper.flog import noLOG
 from .file_info import convert_st_date_to_datetime, checksum_md5, FileInfo

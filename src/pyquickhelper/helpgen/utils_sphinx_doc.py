@@ -4,11 +4,9 @@
 
 """
 
-import sys
 import os
 import re
 import shutil
-import copy
 import importlib
 
 from ..loghelper.flog import fLOG, noLOG
@@ -462,7 +460,7 @@ def apply_modification_template(rootm,
     plat = "Windows" if "This example only runs on Windows." in content else "any"
 
     # dealing with special members (does not work)
-    #text_specials = "".join(["    :special-members: %s\n" % k for k in tspecials ])
+    # text_specials = "".join(["    :special-members: %s\n" % k for k in tspecials ])
     text_specials = ""
 
     if fullnamenoext.endswith(".__init__"):
@@ -753,7 +751,7 @@ def filecontent_to_rst(filename, content):
     file = os.path.split(filename)[-1]
     full = file + "\n" + ("=" * len(file)) + "\n"
     rows = ["", ".. _f-%s:" % file, "", "", full, "",
-            #"fullpath: ``%s``" % filename,
+            # "fullpath: ``%s``" % filename,
             "", ""]
     if ".. RSTFORMAT." in content:
         rows.append(".. include:: %s " % file)
@@ -950,7 +948,7 @@ def prepare_file_for_sphinx_help_generation(
 
             # without those two lines, importing the module might crash later
             importlib.invalidate_caches()
-            r = importlib.util.find_spec(module_name)
+            importlib.util.find_spec(module_name)
 
             rsts += add_file_rst(rootm,
                                  store_obj,
@@ -1160,7 +1158,7 @@ def fix_incomplete_references(folder_source, store_obj, issues=None):
             ref = reg.search(line)
             if ref:
                 all = ref.groups()[0]
-                #pre = ref.groups()[1]
+                # pre = ref.groups()[1]
                 typ = ref.groups()[2]
                 nam = ref.groups()[-1]
 

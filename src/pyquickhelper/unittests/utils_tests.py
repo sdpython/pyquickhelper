@@ -523,7 +523,6 @@ def main_wrapper_tests(codefile,
     # environment variable
     import matplotlib as mpl
     mpl.use('Agg')
-    import matplotlib.pyplot as plt
 
     if add_coverage:
         if report_folder is None:

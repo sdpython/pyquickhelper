@@ -4,7 +4,6 @@
 """
 
 import os
-import sys
 import autopep8
 from ..filehelper.synchelper import explore_folder
 

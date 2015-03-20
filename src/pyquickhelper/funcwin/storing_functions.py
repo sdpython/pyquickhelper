@@ -1,4 +1,4 @@
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 """
 @file
 @brief  Common functions used for @see cl FrameFunction and @see cl FrameParams.
@@ -153,6 +153,6 @@ def interpret_parameter(ty, s):
             except Exception as ee:
                 fLOG("unable to evaluation ", ee)
                 return None
-    except Exception as e:
+    except Exception:
         fLOG("unable to process value ", ty, " v= ", s, " --> ", None)
         return None

@@ -276,7 +276,7 @@ class FolderTransferFTP:
             try:
                 r = self._ftp.transfer(
                     data, path, os.path.split(file.fullname)[-1])
-            except FileNotFoundError as e:
+            except FileNotFoundError:
                 r = False
                 issues.append((file.fullname, "not found"))
 

@@ -4,7 +4,6 @@
 """
 
 import os
-import re
 import zipfile
 import datetime
 import gzip

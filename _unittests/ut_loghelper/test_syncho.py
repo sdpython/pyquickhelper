@@ -67,7 +67,7 @@ class TestFileCol (unittest.TestCase):
         fLOG("number of found files (p1)", len(node1), node1.max_date())
         fLOG("number of found files (p2)", len(node2), node2.max_date())
 
-        res = node1.difference(node2, hash_size=1024**2)
+        res = node1.difference(node2, hash_size=1024 ** 2)
         for r in res:
             if r[0] == ">+":
                 r[2].copyTo(p2)
@@ -76,7 +76,7 @@ class TestFileCol (unittest.TestCase):
         node2 = FileTreeNode(f2, filter=filter, repository=False)
         fLOG("number of found files (p1)", len(node1), node1.max_date())
         fLOG("number of found files (p2)", len(node2), node2.max_date())
-        res = node1.difference(node2, hash_size=1024**2)
+        res = node1.difference(node2, hash_size=1024 ** 2)
         for r in res:
             if r[0] == "==":
                 r[3].remove()

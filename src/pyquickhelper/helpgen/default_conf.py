@@ -10,14 +10,12 @@ import os
 import datetime
 import re
 
-#sys.path.insert(0, os.path.abspath(os.path.join(os.path.split(__file__)[0])))
 
-
-def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path, ext_locals,
+def set_sphinx_variables(fileconf, module_name, author, year,
+                         theme, theme_path, ext_locals,
                          add_extensions=None,
                          bootswatch_theme="spacelab",
-                         bootswatch_navbar_links=None
-                         ):
+                         bootswatch_navbar_links=None):
     """
     defines variables for Sphinx
 
@@ -109,27 +107,27 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
     if add_extensions is not None:
         extensions.extend(add_extensions)
 
-    #add_function_parentheses = True
-    #add_module_names = True
-    #show_authors = False
-    #html_sidebars = {}
-    #html_additional_pages = {}
-    #html_domain_indices = True
-    #html_use_index = True
-    #html_split_index = False
-    #html_show_sourcelink = True
-    #html_use_opensearch = ''
-    #html_file_suffix = None
-    #latex_logo = None
-    #latex_show_urls = False
-    #latex_appendices = []
-    #latex_domain_indices = True
-    #texinfo_appendices = []
-    #texinfo_domain_indices = True
-    #texinfo_show_urls = 'footnote'
+    # add_function_parentheses = True
+    # add_module_names = True
+    # show_authors = False
+    # html_sidebars = {}
+    # html_additional_pages = {}
+    # html_domain_indices = True
+    # html_use_index = True
+    # html_split_index = False
+    # html_show_sourcelink = True
+    # html_use_opensearch = ''
+    # html_file_suffix = None
+    # latex_logo = None
+    # latex_show_urls = False
+    # latex_appendices = []
+    # latex_domain_indices = True
+    # texinfo_appendices = []
+    # texinfo_domain_indices = True
+    # texinfo_show_urls = 'footnote'
 
     latex_elements = {'papersize': 'a4', 'pointsize': '10pt',
-                      #'preamble': '',
+                      # 'preamble': '',
                       }
     latex_documents = [('index', '%s_doc.tex' % project_var_name,
                         '%s Documentation' % project_var_name, author, 'manual'), ]
@@ -145,6 +143,7 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
         if bootswatch_navbar_links is None:
             bootswatch_navbar_links = []
         html_logo = "project_ico_small.png"
+        navbar_links = True,
         html_theme_options = {
             'navbar_title': "home",
             'navbar_site_name': "Site",

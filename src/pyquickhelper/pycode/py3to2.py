@@ -81,7 +81,7 @@ def py3to2_convert(script):
         try:
             with open(script, "r", encoding="utf8") as f:
                 content = f.read()
-        except UnicodeEncodingError as e:
+        except UnicodeEncodeError:
             with open(script, "r") as f:
                 content = f.read()
 

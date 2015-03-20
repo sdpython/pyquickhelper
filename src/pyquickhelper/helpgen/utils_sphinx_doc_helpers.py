@@ -9,7 +9,6 @@ import os
 import copy
 import re
 import sys
-import types
 import importlib
 from ..pandashelper.tblformat import df2rst
 from ..loghelper.flog import noLOG
@@ -76,10 +75,10 @@ add_file_rst_template_title = {"class": "Classes",
                                }
 
 #
-#:platform: Unix, Windows
+# :platform: Unix, Windows
 #   :synopsis: Analyze and reanimate dead parrots.
-#.. moduleauthor:: Eric Cleese <eric@python.invalid>
-#.. moduleauthor:: John Idle <john@python.invalid>
+# .. moduleauthor:: Eric Cleese <eric@python.invalid>
+# .. moduleauthor:: John Idle <john@python.invalid>
 #  for autosummary
 #   :toctree: __FILENAMENOEXT__/
 #
@@ -220,7 +219,7 @@ class ModuleMemberDoc:
         try:
             self.module = obj.__module__
             self.name = obj.__name__
-        except Exception as e:
+        except Exception:
             if self.type in ["property", "staticmethod"]:
                 self.module = self.cl.__module__
             else:
@@ -259,10 +258,8 @@ class ModuleMemberDoc:
         """
         usual
         """
-        clname = ".%s" % self.cl.__name__ if self.cl is not None else ""
-        mes = "%s in %s%s: %s (%s)" % (
-            self.type, self.module, clname, self.name, self.truncdoc)
-        return mes
+        return "[key={0},clname={1},type={2},module_name={3},file={4}".format(
+            self.key, self.classname, self.type, self.module, self.owner.__file__)
 
     def rst_link(self, prefix=None, class_in_bracket=True):
         """
@@ -325,18 +322,14 @@ class ModuleMemberDoc:
                 1 if self.type < oth.type else (
                     1 if self.type > oth.type else 0)
 
-    def __lt__(self, oth): return self.__cmp__(oth) == -1
+    def __lt__(self, oth):
+        return self.__cmp__(oth) == -1
 
-    def __eq__(self, oth): return self.__cmp__(oth) == 0
+    def __eq__(self, oth):
+        return self.__cmp__(oth) == 0
 
-    def __gt__(self, oth): return self.__cmp__(oth) == 1
-
-    def __str__(self):
-        """
-        usual
-        """
-        return "[key={0},clname={1},type={2},module_name={3},file={4}".format(
-            self.key, self.classname, self.type, self.module, self.owner.__file__)
+    def __gt__(self, oth):
+        return self.__cmp__(oth) == 1
 
 
 class IndexInformation:
@@ -488,7 +481,6 @@ def import_module(
         del sys.modules[r]
 
     # full path
-    fullpath = sdir.replace("\\", "/")
     if rootm is not None:
         root = rootm
         tl = relpath
@@ -512,7 +504,7 @@ def import_module(
     try:
         try:
             mo = importlib.import_module(fi, context)
-        except ImportError as e1:
+        except ImportError:
             fLOG("unable to import module ", fi, "fullname", filename)
             mo_spec = importlib.util.find_spec(fi, context)
             fLOG("imported spec", mo_spec)
@@ -530,10 +522,10 @@ def import_module(
                 del sys.modules[namem]
                 # add the context here for relative import
                 # use importlib.import_module with the package argument filled
-                #mo = __import__ (fi)
+                # mo = __import__ (fi)
                 try:
                     mo = importlib.import_module(fi, context)
-                except ImportError as e2:
+                except ImportError:
                     mo = importlib.util.find_spec(fi, context)
 
                 if not mo.__file__.replace(

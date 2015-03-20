@@ -1,4 +1,4 @@
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 """
 @file
 @brief  Handles window `Tk <https://docs.python.org/3.4/library/tkinter.html#tkinter.Tk>`_

@@ -1,4 +1,4 @@
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 """
 @file
 @brief  @see cl FrameFunction
@@ -327,7 +327,7 @@ class FrameFunction (tkinter.Frame):
 
         try:
             self.LOG.insert("end", log)
-        except Exception as e:
+        except Exception:
             self.LOG.insert("end", "\n".join(repr(log).split("\n")))
         self.LOG.see("end")
 

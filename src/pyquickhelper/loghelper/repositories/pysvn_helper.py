@@ -30,7 +30,7 @@ def IsRepo(location, commandline=True, log=False):
     try:
         r = get_repo_version(location, commandline, log=log)
         return True
-    except Exception as e:
+    except Exception:
         if log:
             r = get_repo_version(location, commandline, log=log)
             return r
@@ -78,7 +78,7 @@ def repo_ls(full, commandline=True):
             entry = client.ls(full)
             return entry
         except Exception as e:
-            if "This client is too old to work with the working copy at" in str (e) or \
+            if "This client is too old to work with the working copy at" in str(e) or \
                     "No module named 'pysvn'" in str(e):
                 cmd = "svn ls -r HEAD \"%s\"" % full.replace("\\", "/")
                 out, err = run_cmd(cmd,
@@ -187,7 +187,7 @@ def get_repo_log(path=None, file_detail=False, commandline=True):
                      __get_version_from_version_txt(path),
                      datetime.datetime.now(),
                      "no repository")]
-            elif "This client is too old to work with the working copy at" in str (e) or \
+            elif "This client is too old to work with the working copy at" in str(e) or \
                     "No module named 'pysvn'" in str(e):
                 return get_repo_log(path, file_detail, commandline=True)
             else:
@@ -258,7 +258,7 @@ def get_repo_version(path=None, commandline=True, log=False):
             revision = max(revv)
             return revision
         except Exception as e:
-            if "This client is too old to work with the working copy at" in str (e) or \
+            if "This client is too old to work with the working copy at" in str(e) or \
                     "No module named 'pysvn'" in str(e):
                 return get_repo_version(path, commandline=True)
             elif "is not a working copy" in str(e):

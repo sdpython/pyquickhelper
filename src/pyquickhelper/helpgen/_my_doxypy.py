@@ -121,7 +121,7 @@ class Doxypy(object):
 
         self.start_single_comment_re = re.compile(
             "^\s*%s(''')" % string_prefixes)
-        self.end_single_comment_re       = re.compile("(''')\s*$")
+        self.end_single_comment_re = re.compile("(''')\s*$")
 
         self.start_double_comment_re = re.compile(
             "^\s*%s(\"\"\")" % string_prefixes)
@@ -558,7 +558,7 @@ def process_string(content,
 if __name__ == "__main__":
     with open(__file__, "r") as f:
         content = f.read()
-    #main(__file__, print_output = print)
+    # main(__file__, print_output = print)
 
     def pprint(*l, **kw):
         print(*l, **kw)

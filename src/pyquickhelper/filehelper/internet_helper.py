@@ -9,10 +9,10 @@ try:
     import urllib.request as urllib_request
 except ImportError:
     import urllib2 as urllib_request
-import sys
 
 from ..loghelper.flog import noLOG, _get_file_url
 from .fexceptions import FileException
+from ..loghelper.flog import _first_more_recent
 
 
 def download(url, path_download=".", outfile=None, fLOG=noLOG):
@@ -90,14 +90,14 @@ def download(url, path_download=".", outfile=None, fLOG=noLOG):
                 f = open(dest, format)
 
             open(nyet, "w").close()
-            c = fu.read(2**21)
+            c = fu.read(2 ** 21)
             size = 0
             while len(c) > 0:
                 size += len(c)
                 fLOG("    size", size)
                 f.write(c)
                 f.flush()
-                c = fu.read(2**21)
+                c = fu.read(2 ** 21)
             fLOG("end downloading")
             f.close()
             fu.close()

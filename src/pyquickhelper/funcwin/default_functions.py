@@ -1,4 +1,4 @@
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 """
 @file
 @brief  various basic functions often needed
@@ -173,7 +173,6 @@ def file_list(folder, out=""):
     """
 
     if is_empty_string(out):
-        #f, ext = os.path.splitext (file)
         out = "%s_.list_of_files.txt" % folder
 
     f = open(out, "w")

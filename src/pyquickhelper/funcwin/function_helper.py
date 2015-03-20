@@ -1,4 +1,4 @@
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 """
 @file
 @brief  Various function needed when using the windows used to ask for parameters
@@ -33,10 +33,10 @@ def has_unknown_parameters(func):
     @param      func    function
     @return             True if the function contains something like ``**params``
     """
-    de = func.__defaults__
-    na = func.__code__.co_varnames
-    all = inspect.getargspec(func)
-    return len(all) > 2 and all[2] is not None
+    # de = func.__defaults__
+    # na = func.__code__.co_varnames
+    alls = inspect.getargspec(func)
+    return len(alls) > 2 and alls[2] is not None
 
 
 def extract_function_information(function):

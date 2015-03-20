@@ -3,6 +3,7 @@ extends Jenkins Server from `python-jenkins <http://python-jenkins.readthedocs.o
 """
 
 import jenkins
+from jenkins import JenkinsException
 
 
 class JenkinsExt(jenkins.Jenkins):

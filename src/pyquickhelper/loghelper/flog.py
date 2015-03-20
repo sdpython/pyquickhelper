@@ -1,4 +1,4 @@
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 """
 @file
 
@@ -83,7 +83,7 @@ def init(path=None, filename=None, create=True, path_add=None):
     if filename is None:
         filename = sys.hal_log_values["__log_file_name"]
 
-    if (sys.hal_log_values ["__log_path"] != path or sys.hal_log_values ["__log_file_name"] != filename) \
+    if (sys.hal_log_values["__log_path"] != path or sys.hal_log_values["__log_file_name"] != filename) \
             and sys.hal_log_values["__log_file"] is not None:
         sys.hal_log_values["__log_file"].close()
         sys.hal_log_values["__log_file"] = None
@@ -255,13 +255,11 @@ def fLOG(*l, **p):
     elif "LogPath" in p:
         init(path=p["LogPath"], path_add=path_add)
 
-    def myprint(s): print(s)
+    def myprint(s):
+        print(s)
 
     if "OutputPrint" in p:
         Print(p["OutputPrint"])
-
-    if "LogFile" in p:
-        logfile = GetLogFile(True)
 
     dt = datetime.datetime(2009, 1, 1).now()
     if len(l) > 0:
@@ -475,7 +473,7 @@ def _check_zip_file(filename, path_unzip, outfile):
 
             fLOG("ungzipping file", dest)
             f = open(dest, "w")
-            data = file.read(2**27)
+            data = file.read(2 ** 27)
             size = 0
             while len(data) > 0:
                 size += len(data)
@@ -484,7 +482,7 @@ def _check_zip_file(filename, path_unzip, outfile):
                     f.write(bytes.decode(data))
                 else:
                     f.write(data)
-                data = file.read(2**27)
+                data = file.read(2 ** 27)
             f.close()
             file.close()
 
@@ -699,14 +697,14 @@ def _check_url_file(url, path_download, outfile):
                 f = open(dest, format)
 
             open(nyet, "w").close()
-            c = fu.read(2**21)
+            c = fu.read(2 ** 21)
             size = 0
             while len(c) > 0:
                 size += len(c)
                 fLOG("    size", size)
                 f.write(c)
                 f.flush()
-                c = fu.read(2**21)
+                c = fu.read(2 ** 21)
             fLOG("end downloading")
             f.close()
             fu.close()

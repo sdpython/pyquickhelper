@@ -1,12 +1,10 @@
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 """
 @file
 @brief      Defines class @see cl FileInfo
 """
 
-import os
 import datetime
-import shutil
 import hashlib
 
 

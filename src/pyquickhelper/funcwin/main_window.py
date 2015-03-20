@@ -1,4 +1,4 @@
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 """
 @file
 
@@ -13,7 +13,7 @@ except ImportError:
     import Tkinter as tkinter
     import Tix as tix
 
-from .tk_window import create_tk, create_tixtk
+from .tk_window import create_tixtk
 from .frame_function import FrameFunction
 from .storing_functions import get_icon
 

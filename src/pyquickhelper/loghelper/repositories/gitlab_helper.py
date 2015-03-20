@@ -72,7 +72,8 @@ class GitLabAPI:
             raise GitLabException("unable to login to " + url, request)
         else:
             msg = json.loads(request.content.decode("utf-8"))['message']
-            raise GitLabException("unable to login to " + url, request)
+            raise GitLabException(
+                "unable to login to " + url + "\n" + msg, request)
 
     def get_projects(self, page=1, per_page=100):
         """

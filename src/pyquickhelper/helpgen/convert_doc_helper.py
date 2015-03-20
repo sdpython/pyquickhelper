@@ -7,7 +7,6 @@
 
 import io
 import re
-import docutils
 import textwrap
 from docutils import core
 from .utils_sphinx_doc import migrating_doxygen_doc

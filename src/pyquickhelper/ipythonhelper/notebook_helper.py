@@ -2,11 +2,9 @@
 @file
 @brief Some automation helpers about notebooks
 """
-import os
-import logging
 import io
 from IPython.nbformat.current import read, write
-from .notebook_runner import NotebookRunner, NotebookError
+from .notebook_runner import NotebookRunner
 from ..loghelper.flog import noLOG
 
 

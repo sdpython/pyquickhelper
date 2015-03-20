@@ -1,4 +1,4 @@
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 """
 @file
 
@@ -178,7 +178,7 @@ class FileTreeNode:
         filename = self.get_fullname()
         f = open(filename, 'rb')
         m = hashlib.md5()
-        readBytes = 1024**2  # read 1024 bytes per time
+        readBytes = 1024 ** 2  # read 1024 bytes per time
         totalBytes = 0
         while readBytes:
             readString = f.read(readBytes)
@@ -285,7 +285,6 @@ class FileTreeNode:
         all.sort()
         self._children = []
         for a in all:
-            #af = os.path.join (fi, a)
             if self._log1:
                 fLOG("[FileTreeNode], entering", a)
             fu = os.path.join(full, a)
@@ -399,7 +398,7 @@ class FileTreeNode:
                 else:
                     return "=="
 
-    def difference(self, node, hash_size=1024**2 * 2, lower=False):
+    def difference(self, node, hash_size=1024 ** 2 * 2, lower=False):
         """
         return the differences with another folder
 

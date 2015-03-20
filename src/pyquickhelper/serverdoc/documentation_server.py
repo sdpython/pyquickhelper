@@ -362,7 +362,7 @@ class DocumentationHandler(BaseHTTPRequestHandler):
             params = parse_qs(cpath.query)
             params["__path__"] = cpath
 
-            fullurl = cpath.geturl()
+            # fullurl = cpath.geturl()
             fullfile = cpath.path
             params["__url__"] = cpath
             spl = fullfile.strip("/").split("/")
@@ -410,7 +410,7 @@ class DocumentationHandler(BaseHTTPRequestHandler):
 
                     execute = eval(params.get("execute", ["True"])[0])
                     spath = params.get("path", [None])[0]
-                    keep = eval(params.get("keep", ["False"])[0])
+                    # keep = eval(params.get("keep", ["False"])[0])
 
                     if ftype != 'execute' or not execute:
                         content = self.get_file_content(fullpath, ftype, spath)

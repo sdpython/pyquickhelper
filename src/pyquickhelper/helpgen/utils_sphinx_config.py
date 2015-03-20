@@ -31,7 +31,6 @@ def ie_layout_html():
         raise FileNotFoundError("unable to find site-packages, tried: {0}\nALL:\n{1}".format(sitep,
                                                                                              "\n".join(site.getsitepackages())))
 
-    path = os.path.dirname(sys.executable)
     layout = os.path.join(sitep, "sphinx", "themes", "basic", "layout.html")
     if os.path.exists(layout):
         with open(layout, "r", encoding="utf-8") as f:

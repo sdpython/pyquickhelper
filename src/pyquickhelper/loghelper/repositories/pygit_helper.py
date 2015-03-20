@@ -92,7 +92,7 @@ def repo_ls(full, commandline=True):
     if not commandline:
         try:
             raise NotImplementedError()
-        except Exception as e:
+        except Exception:
             return repo_ls(full, True)
     else:
         if sys.platform.startswith("win32"):
@@ -278,7 +278,7 @@ def get_repo_version(path=None, commandline=True, usedate=False, log=False):
         if not commandline:
             try:
                 raise NotImplementedError()
-            except Exception as e:
+            except Exception:
                 return get_repo_version(path, True)
         else:
             if sys.platform.startswith("win32"):
@@ -340,7 +340,7 @@ def get_master_location(path=None, commandline=True):
     if not commandline:
         try:
             raise NotImplementedError()
-        except Exception as e:
+        except Exception:
             return get_repo_version(path, True)
     else:
         if sys.platform.startswith("win32"):

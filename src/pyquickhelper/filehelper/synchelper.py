@@ -1,4 +1,4 @@
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 """
 @file
 
@@ -7,7 +7,6 @@
 
 import os
 import re
-import datetime
 
 from ..loghelper.flog import fLOG
 from .file_tree_node import FileTreeNode
@@ -57,7 +56,7 @@ def explore_folder_iterfile(folder, pattern=None, fullname=False):
     if pattern is not None:
         pattern = re.compile(pattern)
 
-    file, rep = [], {}
+    rep = {}
     for r, d, f in os.walk(folder):
         for a in f:
             temp = os.path.join(r, a)
@@ -68,7 +67,6 @@ def explore_folder_iterfile(folder, pattern=None, fullname=False):
                 else:
                     if not pattern.search(a):
                         continue
-            #file.append (temp)
             yield temp
             r = os.path.split(temp)[0]
             rep[r] = None
@@ -90,7 +88,7 @@ def explore_folder_iterfile_repo(folder, log=fLOG):
 
 def synchronize_folder(p1,
                        p2,
-                       hash_size=1024**2,
+                       hash_size=1024 ** 2,
                        repo1=False,
                        repo2=False,
                        size_different=True,
@@ -176,7 +174,6 @@ def synchronize_folder(p1,
     def pr_filter(root, path, f, d):
         if d:
             return True
-        #root = root.lower ()
         path = path.lower()
         f = f.lower()
         be = os.path.join(path, f)
@@ -245,7 +242,7 @@ def synchronize_folder(p1,
                         filerem = os.path.join(p2, filerel)
                         try:
                             ft = FileTreeNode(p2, filerel)
-                        except PQHException as e:
+                        except PQHException:
                             ft = None  # probably already removed
 
                         if ft is not None:
@@ -273,8 +270,8 @@ def synchronize_folder(p1,
             elif n2 is not None and n1._size != n2._size and not n1.isdir():
                 fLOG("problem", "size are different for file %s (%d != %d) dates (%s,%s) (op %s)" % (
                     file, n1._size, n2._size, n1._date, n2._date, op))
-                #n1.copyTo (f2)
-                #raise Exception ("size are different for file %s (%d != %d) (op %s)" % (file, n1._size, n2._size, op))
+                # n1.copyTo (f2)
+                # raise Exception ("size are different for file %s (%d != %d) (op %s)" % (file, n1._size, n2._size, op))
 
     if status is not None:
         status.save_dates(file_date)
