@@ -26,3 +26,4 @@ from .synchelper import explore_folder_iterfile, explore_folder_iterfile_repo
 from .visual_sync import create_visual_diff_through_html, create_visual_diff_through_html_files
 from .compression_helper import zip_files, gzip_files, zip7_files
 from .file_tree_node import FileTreeNode
+from .anyfhelper import change_file_status

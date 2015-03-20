@@ -6,6 +6,7 @@ import sys
 import os
 import unittest
 import shutil
+import stat
 
 if "temp_" in os.path.abspath(__file__):
     raise ImportError(
@@ -25,7 +26,7 @@ except ImportError:
         sys.path.append(path)
     import src
 
-from src.pyquickhelper import fLOG, removedirs, run_cmd
+from src.pyquickhelper import fLOG, removedirs, run_cmd, explore_folder_iterfile, change_file_status
 from src.pyquickhelper.loghelper.repositories.pygit_helper import clone, rebase
 
 
@@ -61,6 +62,9 @@ class TestGit(unittest.TestCase):
         out, err = rebase(to, "github.com", "sdpython", "pyquickhelper")
         fLOG("OUT:", out)
         fLOG("ERR:", err)
+
+        r = changes = change_file_status(temp)
+        assert len(r) > 0
 
 
 if __name__ == "__main__":

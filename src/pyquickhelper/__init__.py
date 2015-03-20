@@ -57,3 +57,4 @@ from .filehelper.file_tree_node import FileTreeNode
 from .texthelper.diacritic_helper import remove_diacritics
 from .helpgen.convert_doc_helper import docstring2html
 from .pycode.py3to2 import py3to2_convert_tree, py3to2_convert
+from .filehelper.anyfhelper import change_file_status
