@@ -37,7 +37,8 @@ class TestLog (unittest.TestCase):
         fold = os.path.abspath(os.path.split(__file__)[0])
         fLOG("message", "ok", option1="k", option2=2,
              LogFile=os.path.join(fold, "temp_log.txt"))
-        assert os.path.exists(os.path.join(fold, "temp_log.txt"))
+        if not os.path.exists(os.path.join(fold, "temp_log.txt")):
+            raise FileNotFoundError(os.path.join(fold, "temp_log.txt"))
 
     def test_import_problem(self):
         fLOG(
