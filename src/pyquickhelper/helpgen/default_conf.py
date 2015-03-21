@@ -9,6 +9,7 @@ import sys
 import os
 import datetime
 import re
+import warnings
 
 
 def set_sphinx_variables(fileconf,
