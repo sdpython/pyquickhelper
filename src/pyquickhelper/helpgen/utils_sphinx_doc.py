@@ -151,7 +151,7 @@ def _private_process_one_file(
                 f.write(bin)
         else:
             shutil.copy(fullname, to)
-        return os.path.splitext(fullname)[-1], 0
+        return os.path.splitext(fullname)[-1], 0, 0
     else:
         try:
             with open(fullname, "r", encoding="utf8") as g:
