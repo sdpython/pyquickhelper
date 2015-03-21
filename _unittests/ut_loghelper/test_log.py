@@ -30,14 +30,17 @@ from src.pyquickhelper.loghelper.flog import fLOG, run_cmd, load_content_file_wi
 class TestLog (unittest.TestCase):
 
     def test_random_curve(self):
+        fold = os.path.abspath(os.path.split(__file__)[0])
+        l = os.path.join(fold, "temp_log.txt")
+        if os.path.exists(l):
+            os.remove(l)
         fLOG(
             __file__,
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
-        fold = os.path.abspath(os.path.split(__file__)[0])
         fLOG("message", "ok", option1="k", option2=2,
              LogFile=os.path.join(fold, "temp_log.txt"))
-        if not os.path.exists(os.path.join(fold, "temp_log.txt")):
+        if not os.path.exists(l):
             raise FileNotFoundError(os.path.join(fold, "temp_log.txt"))
 
     def test_import_problem(self):
