@@ -9,7 +9,7 @@ from jenkins import JenkinsException
 class JenkinsExt(jenkins.Jenkins):
 
     """
-    extension of the jenkins server
+    extension for the `Jenkins <https://jenkins-ci.org/>`_ server
     """
 
     def jenkins_open(self, req, add_crumb=True):

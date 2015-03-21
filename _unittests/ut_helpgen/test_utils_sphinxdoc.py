@@ -87,11 +87,12 @@ class TestSphinxDoc (unittest.TestCase):
 
         with open(file, "r", encoding="utf8") as f:
             content = f.read()
-        newc = utils_sphinx_doc.migrating_doxygen_doc(content, file)
+        stats, newc = utils_sphinx_doc.migrating_doxygen_doc(content, file)
         snewc = newc[:len(newc) // 2]
         assert "pass" in newc
         assert ":param" in newc
         assert "@param" not in snewc
+        assert "docrows" in stats
 
     def test_sphinx_doc_all(self):
         fLOG(

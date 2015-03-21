@@ -11,11 +11,17 @@ import datetime
 import re
 
 
-def set_sphinx_variables(fileconf, module_name, author, year,
-                         theme, theme_path, ext_locals,
+def set_sphinx_variables(fileconf,
+                         module_name,
+                         author,
+                         year,
+                         theme,
+                         theme_path,
+                         ext_locals,
                          add_extensions=None,
                          bootswatch_theme="spacelab",
-                         bootswatch_navbar_links=None):
+                         bootswatch_navbar_links=None,
+                         description_latex=""):
     """
     defines variables for Sphinx
 
@@ -29,6 +35,7 @@ def set_sphinx_variables(fileconf, module_name, author, year,
     @param      add_extensions          additional extensions
     @param      bootswatch_theme        for example, ``spacelab``, look at ` <http://bootswatch.com/spacelab/>`_
     @param      bootswatch_navbar_links see `sphinx-bootstrap-theme <http://ryan-roemer.github.io/sphinx-bootstrap-theme/README.html>`_
+    @param      description latex       description latex
 
     @example(Simple configuration file for Sphinx)
 
@@ -51,46 +58,91 @@ def set_sphinx_variables(fileconf, module_name, author, year,
                             solar_theme.theme_path,
                             locals())
     @endcode
+
+    *setup.py* must contain a string such as ``__version__ = 3.4``.
+    Close to the setup, there must be a file ``version.txt``.
+    You overwrite a value by giving a variable another value after the fucntion is called.
+
     @endexample
     """
+    # version .txt
+    dirconf = os.path.abspath(os.path.dirname(fileconf))
+    version_file = os.path.join(dirconf, "..", "..", "..", "version.txt")
+    if not os.path.exists(version_file):
+        raise FileNotFoundError(
+            "a file must contain the commit number (or last part of the version): " + version_file)
+    first_line = get_first_line(version_file)
+
+    # main version
+    version = extract_version_from_setup(fileconf)
+
+    # settings sphinx
+    pygments_style = 'sphinx'
+
+    # personnalization
     project_var_name = module_name
     author = author
     year = str(year)
-    version = extract_version_from_setup(fileconf)
-    pygments_style = 'sphinx'
     modindex_common_prefix = [project_var_name + ".", ]
+    project = project_var_name + ' documentation'
+    copyright = str(year) + ", " + author
+    release = '%s.%s' % (version, first_line)
+    html_title = "%s %s" % (project_var_name, release)
+    htmlhelp_basename = '%s_doc' % project_var_name
+
+    # personnalization latex
+    latex_elements = {'papersize': 'a4', 'pointsize': '10pt',
+                      # 'preamble': '',
+                      }
+    latex_documents = [('index', '%s_doc.tex' % project_var_name,
+                        '%s Documentation' % project_var_name, author, 'manual'), ]
+    man_pages = [('index', '%s_doc' % project_var_name,
+                  '%s Documentation' % project_var_name, [author], 1)]
+    texinfo_documents = [('index',
+                          '%s_documentation' % project_var_name,
+                          '%s Documentation' % project_var_name,
+                          author,
+                          '%s documentation' % project_var_name,
+                          description_latex,
+                          'Miscellaneous'),
+                         ]
+
+    # theme
     html_theme = theme
     shtml_theme_options = {"bodyfont": "Calibri"}
     if theme_path is not None:
         html_theme_path = [theme_path]
+
+    # static files
     html_logo = "project_ico.png"
     html_favicon = "project_ico.ico"
     html_static_path = ['phdoc_static']
     templates_path = ['phdoc_templates']
+
+    # extensions, encoding
     source_suffix = '.rst'
-    source_encoding = 'utf-8'
+    source_encoding = 'utf-8-sig'
     master_doc = 'index'
-    project = project_var_name + ' documentation'
-    copyright = str(year) + ", " + author
-    version_file = os.path.abspath(
-        os.path.join(os.path.split(__file__)[0], "..", "..", "..", "version.txt"))
-    first_line = get_first_line(version_file)
-    release = '%s.%s' % (version, first_line)
+
+    # settings
     exclude_patterns = []
-    html_title = "%s %s" % (project_var_name, release)
     html_show_sphinx = False
     html_show_copyright = False
-    htmlhelp_basename = '%s_doc' % project_var_name
     latex_use_parts = True
     latex_show_pagerefs = True
     __html_last_updated_fmt_dt = datetime.datetime.now()
     html_last_updated_fmt = '%04d-%02d-%02d' % (
-        __html_last_updated_fmt_dt.year, __html_last_updated_fmt_dt.month, __html_last_updated_fmt_dt.day)
+        __html_last_updated_fmt_dt.year,
+        __html_last_updated_fmt_dt.month,
+        __html_last_updated_fmt_dt.day)
     autoclass_content = 'both'
     autosummary_generate = True
+
+    # graphviz
     graphviz_output_format = "svg"
     graphviz_dot = get_graphviz_dot()
 
+    # extensions
     extensions = ['sphinx.ext.autodoc',
                   'sphinx.ext.todo',
                   'sphinx.ext.coverage',
@@ -125,19 +177,6 @@ def set_sphinx_variables(fileconf, module_name, author, year,
     # texinfo_appendices = []
     # texinfo_domain_indices = True
     # texinfo_show_urls = 'footnote'
-
-    latex_elements = {'papersize': 'a4', 'pointsize': '10pt',
-                      # 'preamble': '',
-                      }
-    latex_documents = [('index', '%s_doc.tex' % project_var_name,
-                        '%s Documentation' % project_var_name, author, 'manual'), ]
-    man_pages = [('index', '%s_doc' % project_var_name,
-                  '%s Documentation' % project_var_name, [author], 1)]
-    texinfo_documents = [('index', '%s_documentation' % project_var_name, '%s Documentation' % project_var_name,
-                          author, '%s documentation' % project_var_name,
-                          'One line description of project.',
-                          'Miscellaneous'),
-                         ]
 
     if html_theme == "bootstrap":
         if bootswatch_navbar_links is None:

@@ -450,8 +450,7 @@ class Doxypy(object):
         Parses a python file given as input string and returns the doxygen-
         compatible representation.
 
-        @param  filename       the python code to parse (filename)
-        @returns the modified python code
+        @param  filename        the python code to parse (filename)
         """
         self._index_row = 0
         if isinstance(filename, list):

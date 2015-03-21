@@ -21,9 +21,11 @@ class HelpGenException(Exception):
     """
     pass
 
+#: max length for short summaries
 _length_truncated_doc = 120
 
 
+#: template for a module, substring ``__...__`` ought to be replaced
 add_file_rst_template = """
 __FULLNAME_UNDERLINED__
 
@@ -60,6 +62,7 @@ __ADDEDMEMBERS__
 
 """
 
+#: fields to be replaced
 add_file_rst_template_cor = {"class": "__CLASSES__",
                              "method": "__METHODS__",
                              "function": "__FUNCTIONS__",
@@ -67,6 +70,7 @@ add_file_rst_template_cor = {"class": "__CLASSES__",
                              "property": "__PROPERTIES__",
                              }
 
+#: names for python objects
 add_file_rst_template_title = {"class": "Classes",
                                "method": "Methods",
                                "function": "Functions",
@@ -77,8 +81,8 @@ add_file_rst_template_title = {"class": "Classes",
 #
 # :platform: Unix, Windows
 #   :synopsis: Analyze and reanimate dead parrots.
-# .. moduleauthor:: Eric Cleese <eric@python.invalid>
-# .. moduleauthor:: John Idle <john@python.invalid>
+# .. moduleauthor:: xx <x@x>
+# .. moduleauthor:: xx <x@x>
 #  for autosummary
 #   :toctree: __FILENAMENOEXT__/
 #
@@ -227,6 +231,12 @@ class ModuleMemberDoc:
             if self.name is None:
                 raise IndexError("unable to find a name for this object")
 
+        # full path for the module
+        if self.module is not None:
+            self.fullpath = self.module
+        else:
+            self.fullpath = ""
+
         # documentation
         if self.type == "staticmethod":
             try:
@@ -309,8 +319,8 @@ class ModuleMemberDoc:
         @return                 -1, 0 or 1
         """
         if self.type == oth.type:
-            ln = self.name.lower()
-            lo = oth.name.lower()
+            ln = self.fullpath + "@@@" + self.name.lower()
+            lo = oth.fullpath + "@@@" + oth.name.lower()
             c = -1 if ln < lo else (1 if ln > lo else 0)
             if c == 0 and self.type == "method":
                 ln = self.cl.__name__
@@ -323,12 +333,21 @@ class ModuleMemberDoc:
                     1 if self.type > oth.type else 0)
 
     def __lt__(self, oth):
+        """
+        operator ``<``
+        """
         return self.__cmp__(oth) == -1
 
     def __eq__(self, oth):
+        """
+        operator ``==``
+        """
         return self.__cmp__(oth) == 0
 
     def __gt__(self, oth):
+        """
+        operator ``>``
+        """
         return self.__cmp__(oth) == 1
 
 

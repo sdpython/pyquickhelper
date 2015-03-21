@@ -263,7 +263,7 @@ def fLOG(*l, **p):
 
     if "LogFile" in p:
         GetLogFile(True)
-        
+
     dt = datetime.datetime(2009, 1, 1).now()
     if len(l) > 0:
         def _str_process(s):

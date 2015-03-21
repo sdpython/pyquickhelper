@@ -35,16 +35,18 @@ Functionalities
     * logging (see :func:`fLOG <pyquickhelper.loghelper.flog.fLOG>`)
     * help running unit tests (see :func:`main <pyquickhelper.unittests.utils_tests.main>`)
     * simple server to server sphinx documentation (see :func:`run_doc_server <pyquickhelper.serverdoc.documentation_server.run_doc_server>`)
+    * function to create and delete jobs on `Jenkins <https://jenkins-ci.org/>`_, see :class:`JenkinsExt <pyquickhelper.jenkinshelper.jenkins_server.JenkinsExt>`
+    * :class:`MagicCommandParser <pyquickhelper.ipythonhelper.magic_parser.MagicCommandParser>`, 
+      :class:`MagicClassWithHelpers <pyquickhelper.ipythonhelper.magic_class.MagicClassWithHelpers>` to help 
+      creating magic command for IPython notebooks,
+      the parser tries to interpret values passed to the magic commands
     
-Installation
-------------
+Navigation
+----------
 
 The most simple way is with *pip*: ``pip install pyquickhelper``. 
 Others options are described at: :ref:`l-moreinstall`.
     
-
-Indices and tables
-------------------
 
 +----------------------+---------------------+---------------------+--------------------+------------------------+------------------------------------------------+
 | :ref:`l-modules`     |  :ref:`l-functions` | :ref:`l-classes`    | :ref:`l-methods`   | :ref:`l-staticmethods` | :ref:`l-properties`                            |
@@ -54,10 +56,8 @@ Indices and tables
 | :ref:`genindex`      |  :ref:`l-FAQ`       | :ref:`l-notebooks`  |                    | :ref:`l-statcode`      | `Unit Test Coverage <coverage/index.html>`_    |
 +----------------------+---------------------+---------------------+--------------------+------------------------+------------------------------------------------+
 
-Navigation
-----------
 
 .. toctree::
-    :maxdepth: 1
+    :maxdepth: 2
 
     indexmenu

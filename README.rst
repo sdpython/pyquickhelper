@@ -67,6 +67,10 @@ Versions / Changes
     * **add:** run unit tests on `Travis-CI <https://travis-ci.org/sdpython/pyquickhelper>`_
     * **change:** renamed ``df_to_html`` into :func:`df2html <pyquickhelper.pandashelper.tblformat.df2html>`, ``df_to_rst`` into :func:`df2rst <pyquickhelper.pandashelper.tblformat.df2rst>`
     * **new:** function :func:`py3to2_convert_tree <pyquickhelper.pycode.py3to2.py3to2_convert_tree>` to convert files from python 3 to 2
+    * **new:** class :class:`JenkinsExt <pyquickhelper.jenkinshelper.jenkins_server.JenkinsExt>` to help creating and deleting jobs on Jenkins
+    * **new:** :class:`MagicCommandParser <pyquickhelper.ipythonhelper.magic_parser.MagicCommandParser>`, 
+      :class:`MagicClassWithHelpers <pyquickhelper.ipythonhelper.magic_class.MagicClassWithHelpers>` to help creating magic commands on IPython notebooks,
+      the parser tries to interpret values passed to the magic commands               
 * **0.9 - 2015/01/25**
     * **add:** function to remove extra spaces in a file :func:`remove_extra_spaces <pyquickhelper.pycode.code_helper.remove_extra_spaces>`
     * **add:** function :func:`create_visual_diff_through_html_files <pyquickhelper.filehelper.visual_sync.create_visual_diff_through_html_files>`
@@ -85,7 +89,3 @@ Versions / Changes
     * **del:** remove folder *sync*, move everything to *filehelper*
     * **new:** function :func:`zip7_files <pyquickhelper.filehelper.compression_helper.zip7_files>`
     * **new:** class :class:`MagicClassWithHelpers <pyquickhelper.ipythonhelper.magic_class.MagicClassWithHelpers>`
-* **0.8 - 2014/11/03**
-    * **add:** Python version is now checked, ImportError is raised if it used on Python 2
-    * **new:** function :func:`run_doc_server <pyquickhelper.serverdoc.documentation_server.run_doc_server>` creates a local server to display documentation
-    * **change:** password, password1, password2, password3 are hidden by stars when open a param window

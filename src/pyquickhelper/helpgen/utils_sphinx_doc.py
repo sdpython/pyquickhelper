@@ -134,7 +134,7 @@ def _private_process_one_file(
     @param      silent                      no logs if True
     @param      fmod                        modification functions
     @param      replace_relative_import     replace relative import
-    @return                                 extension, number of lines
+    @return                                 extension, number of lines, number of lines in documentation
 
     .. versionchanged:: 0.9
         return extension, number of lines
@@ -166,12 +166,13 @@ def _private_process_one_file(
 
         keepc = content
         try:
-            content = migrating_doxygen_doc(content, fullname, silent)
+            counts, content = migrating_doxygen_doc(content, fullname, silent)
         except SyntaxError as e:
             if not silent:
                 raise e
             else:
                 content = keepc
+                counts = dict(docrows=0)
 
         content = fmod(content, fullname)
         content = remove_undesired_part_for_documentation(content, fullname)
@@ -183,7 +184,7 @@ def _private_process_one_file(
         with open(to, "w", encoding="utf8") as g:
             g.write(content)
 
-        return os.path.splitext(fullname)[-1], nblines
+        return os.path.splitext(fullname)[-1], nblines, counts["docrows"]
 
 
 def remove_undesired_part_for_documentation(content, filename):
@@ -304,9 +305,9 @@ def copy_source_files(input,
             os.makedirs(dd)
         fLOG("copy_source_files: copy ", file.fullname, " to ", to)
 
-        rext, rline = _private_process_one_file(
+        rext, rline, rdocline = _private_process_one_file(
             file.fullname, to, silent, fmod, replace_relative_import)
-        ractions.append((a, file, dest, rext, rline))
+        ractions.append((a, file, dest, rext, rline, rdocline))
 
     return ractions
 
@@ -827,8 +828,7 @@ def prepare_file_for_sphinx_help_generation(
         issues=None,
         additional_sys_path=[],
         replace_relative_import=False,
-        module_name=None
-):
+        module_name=None):
     """
     prepare all files for Sphinx generation
 
@@ -920,7 +920,7 @@ def prepare_file_for_sphinx_help_generation(
             _private_process_one_file(src, dst, silent, fmod_copy)
 
             temp = os.path.split(dst)
-            actions_t = [(">", temp[1], temp[0])]
+            actions_t = [(">", temp[1], temp[0], 0, 0)]
             rstadd = add_file_rst(rootm,
                                   store_obj,
                                   actions_t,
@@ -1017,11 +1017,24 @@ def prepare_file_for_sphinx_help_generation(
     for act in actions:
         if "__init__.py" not in act[1].get_fullname() or act[-1] > 0:
             v = 1
-            rows.append(act[-2:] + (v,))
-    from pandas import DataFrame
-    df = DataFrame(data=rows, columns=["extension", "nb lines", "nb files"])
-    df = df.groupby("extension", as_index=False).sum().sort("extension")
+            rows.append(act[-3:] + (v,))
+            name = os.path.split(act[1].get_fullname())[-1]
+            if name.startswith("auto_"):
+                rows.append(("auto_*" + act[-3], act[-2], act[-1], v))
+            elif "__init__.py" in name:
+                rows.append(("__init__.py", act[-2], act[-1], v))
+        elif "__init__.py" in act[1].get_fullname():
+            v = 1
+            rows.append(("empty __init__.py", act[-2], act[-1], v))
 
+    # use DataFrame to produce a RST table
+    from pandas import DataFrame
+    df = DataFrame(
+        data=rows, columns=["extension/kind", "nb lines", "nb doc lines", "nb files"])
+    df = df.groupby(
+        "extension/kind", as_index=False).sum().sort("extension/kind")
+
+    # reports
     all_report = os.path.join(output, "all_report.rst")
     with open(all_report, "w") as falli:
         falli.write("\n")
@@ -1202,8 +1215,7 @@ def fix_incomplete_references(folder_source, store_obj, issues=None):
     return cop
 
 
-def migrating_doxygen_doc(
-        content, filename, silent=False, log=False, debug=False):
+def migrating_doxygen_doc(content, filename, silent=False, log=False, debug=False):
     """
     migrates the doxygen documentation to rst format
 
@@ -1212,25 +1224,36 @@ def migrating_doxygen_doc(
     @param      silent      if silent, do not raise an exception
     @param      log         if True, write some information in the logs (not only exceptions)
     @param      debug       display more information on the output if True
-    @return                 new content file
+    @return                 statistics, new content file
 
     Function ``private_migrating_doxygen_doc`` enumerates the list of conversion
     which will be done.
+
+    .. versionchanged:: 1.0
+        Returns basic statistics on each files.
     """
     if log:
         fLOG("migrating_doxygen_doc: ", filename)
 
     rows = []
+    counts = {"docrows": 0}
 
     def print_in_rows(v, file=None):
         rows.append(v)
+
+    def local_private_migrating_doxygen_doc(r, index_first_line,
+                                            filename, debug=False, silent=False):
+        counts["docrows"] += len(r)
+        return private_migrating_doxygen_doc(r, index_first_line,
+                                             filename, debug=debug, silent=silent)
+
     process_string(content,
                    print_in_rows,
-                   private_migrating_doxygen_doc,
+                   local_private_migrating_doxygen_doc,
                    filename,
                    0,
                    debug=debug)
-    return "\n".join(rows)
+    return counts, "\n".join(rows)
 
 # -- HELP BEGIN EXCLUDE --
 
