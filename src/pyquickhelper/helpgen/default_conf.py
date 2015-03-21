@@ -69,9 +69,11 @@ def set_sphinx_variables(fileconf,
     dirconf = os.path.abspath(os.path.dirname(fileconf))
     version_file = os.path.join(dirconf, "..", "..", "..", "version.txt")
     if not os.path.exists(version_file):
-        raise FileNotFoundError(
+        warnings.warn(
             "a file must contain the commit number (or last part of the version): " + version_file)
-    first_line = get_first_line(version_file)
+        first_line = "0"
+    else:
+        first_line = get_first_line(version_file)
 
     # main version
     version = extract_version_from_setup(fileconf)
