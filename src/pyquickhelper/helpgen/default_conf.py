@@ -114,7 +114,10 @@ def set_sphinx_variables(fileconf,
     html_theme = theme
     shtml_theme_options = {"bodyfont": "Calibri"}
     if theme_path is not None:
-        html_theme_path = [theme_path]
+        if isinstance(theme_path, list):
+            html_theme_path = theme_path
+        else:
+            html_theme_path = [theme_path]
 
     # static files
     html_logo = "project_ico.png"
