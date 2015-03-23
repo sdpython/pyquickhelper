@@ -175,10 +175,10 @@ def generate_help_sphinx(project_var_name,
 
     if module_name is None:
         module_name = project_var_name
-        
+
     # we save the module already imported
     sys_modules = set(sys.modules.keys())
-        
+
     try:
 
         prepare_file_for_sphinx_help_generation(
@@ -194,15 +194,16 @@ def generate_help_sphinx(project_var_name,
             mapped_function=mapped_function,
             replace_relative_import=False,
             module_name=module_name)
-            
+
     except ImportErrorHelpGen as e:
-        
-        fLOG("**** major failure, no solution found yet, please run again the script")
+
+        fLOG(
+            "**** major failure, no solution found yet, please run again the script")
         fLOG("**** list of added modules:")
-        remove = [ k for k in sys.modules if k not in sys_modules ]
+        remove = [k for k in sys.modules if k not in sys_modules]
         for k in sorted(remove):
-            fLOG("****    ",k)
-            
+            fLOG("****    ", k)
+
         raise e
 
     fLOG("**** end of prepare_file_for_sphinx_help_generation")

@@ -20,12 +20,14 @@ class HelpGenException(Exception):
     custom exception
     """
     pass
-    
+
+
 class ImportErrorHelpGen(ImportError):
+
     """
     a custom exception to detect a specific location when
     *ImportError* happens in the process
-    
+
     .. versionadded:: 1.0
     """
     pass
@@ -505,10 +507,13 @@ def import_module(
         if n.startswith(fmod):
             rem.append(n)
             addback.append((n, m))
-            
-    # we skip that part
-    # for r in rem:
-    #    del sys.modules[r]
+
+    # we remove the modules
+    # this line is important to remove all modules
+    # from the sources in folder src and not the modified ones 
+    # in the documentation folder
+    for r in rem:
+        del sys.modules[r]
 
     # full path
     if rootm is not None:
