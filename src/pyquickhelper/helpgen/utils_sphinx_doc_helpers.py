@@ -510,7 +510,7 @@ def import_module(
 
     # we remove the modules
     # this line is important to remove all modules
-    # from the sources in folder src and not the modified ones 
+    # from the sources in folder src and not the modified ones
     # in the documentation folder
     for r in rem:
         del sys.modules[r]
