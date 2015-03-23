@@ -20,6 +20,15 @@ class HelpGenException(Exception):
     custom exception
     """
     pass
+    
+class ImportErrorHelpGen(ImportError):
+    """
+    a custom exception to detect a specific location when
+    *ImportError* happens in the process
+    
+    .. versionadded:: 1.0
+    """
+    pass
 
 #: max length for short summaries
 _length_truncated_doc = 120
@@ -597,7 +606,7 @@ def import_module(
             sys.modules[n] = m
 
         if 'File "<frozen importlib._bootstrap>"' in stack:
-            raise ImportError(
+            raise ImportErrorHelpGen(
                 "frozen importlib._bootstrap is an issue:\n" + "\n".join(message)) from e
 
         return "unable to import %s\nError:\n%s" % (filename, str(e)), fmod
