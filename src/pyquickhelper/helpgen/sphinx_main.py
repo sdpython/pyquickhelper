@@ -195,7 +195,7 @@ def generate_help_sphinx(project_var_name,
             replace_relative_import=False,
             module_name=module_name)
             
-    except ImportErrorHelpGen as e:
+    except ImportErrorHelpGen:
         
         # we remove unnecessary modules
         remove = [ k for k in sys.modules if k not in sys_modules ]
@@ -222,7 +222,12 @@ def generate_help_sphinx(project_var_name,
             optional_dirs=optional_dirs,
             mapped_function=mapped_function,
             replace_relative_import=False,
-            module_name=module_name)        
+            module_name=module_name)   
+
+    except Exception as e:
+        fLOG("*********************** this should not happen here")
+        fLOG(e)
+        raise ImportError("STOP")
             
 
     fLOG("**** end of prepare_file_for_sphinx_help_generation")
