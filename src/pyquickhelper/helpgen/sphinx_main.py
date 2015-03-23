@@ -195,40 +195,15 @@ def generate_help_sphinx(project_var_name,
             replace_relative_import=False,
             module_name=module_name)
             
-    except ImportErrorHelpGen:
+    except ImportErrorHelpGen as e:
         
-        # we remove unnecessary modules
+        fLOG("**** major failure, no solution found yet, please run again the script")
+        fLOG("**** list of added modules:")
         remove = [ k for k in sys.modules if k not in sys_modules ]
-        for k in remove:
-            del sys.modules[k]
-        
-        fLOG("###############################################")
-        fLOG("###############################################")
-        fLOG("###############################################")
-        fLOG("######### second run ##########################")
-        fLOG("###############################################")
-        fLOG("###############################################")
-        fLOG("###############################################")
-        # we run the process a second time
-        prepare_file_for_sphinx_help_generation(
-            {},
-            root,
-            "_doc/sphinxdoc/source/",
-            subfolders=[
-                ("src/" + module_name, module_name),
-            ],
-            silent=True,
-            rootrep=("_doc.sphinxdoc.source.%s." % (module_name,), ""),
-            optional_dirs=optional_dirs,
-            mapped_function=mapped_function,
-            replace_relative_import=False,
-            module_name=module_name)   
-
-    except Exception as e:
-        fLOG("*********************** this should not happen here")
-        fLOG(e)
-        raise ImportError("STOP")
+        for k in sorted(remove):
+            fLOG("****    ",k)
             
+        raise e
 
     fLOG("**** end of prepare_file_for_sphinx_help_generation")
 

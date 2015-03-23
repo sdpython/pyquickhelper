@@ -505,8 +505,10 @@ def import_module(
         if n.startswith(fmod):
             rem.append(n)
             addback.append((n, m))
-    for r in rem:
-        del sys.modules[r]
+            
+    # we skip that part
+    # for r in rem:
+    #    del sys.modules[r]
 
     # full path
     if rootm is not None:
@@ -567,7 +569,8 @@ def import_module(
         sys.path = memo
         log_function("importing ", filename, " successfully", mo.__file__)
         for n, m in addback:
-            sys.modules[n] = m
+            if n not in sys.modules:
+                sys.modules[n] = m
         return mo, fmod
 
     except ImportError as e:
@@ -603,7 +606,8 @@ def import_module(
 
         sys.path = memo
         for n, m in addback:
-            sys.modules[n] = m
+            if n not in sys.modules:
+                sys.modules[n] = m
 
         if 'File "<frozen importlib._bootstrap>"' in stack:
             raise ImportErrorHelpGen(
@@ -621,7 +625,8 @@ def import_module(
         log_function("      stack:\n", stack)
         sys.path = memo
         for n, m in addback:
-            sys.modules[n] = m
+            if n not in sys.modules:
+                sys.modules[n] = m
         return "unable to import %s\nError:\n%s" % (filename, str(e)), fmod
 
     except Exception as e:
@@ -634,7 +639,8 @@ def import_module(
         log_function("      stack:\n", stack)
         sys.path = memo
         for n, m in addback:
-            sys.modules[n] = m
+            if n not in sys.modules:
+                sys.modules[n] = m
         return "unable to import %s\nError:\n%s" % (filename, str(e)), fmod
 
 
