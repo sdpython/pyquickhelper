@@ -266,10 +266,11 @@ class FolderTransferFTP:
             path = path.replace("\\", "/")
 
             size = os.stat(file.fullname).st_size
-            self.fLOG("[upload % 8d bytes name=%s -- fullname=%s]" % (
+            self.fLOG("[upload % 8d bytes name=%s -- fullname=%s -- to=%s]" % (
                 size,
                 os.path.split(file.fullname)[-1],
-                file.fullname))
+                file.fullname,
+                path))
 
             data = self.preprocess_before_transfering(file.fullname)
 
