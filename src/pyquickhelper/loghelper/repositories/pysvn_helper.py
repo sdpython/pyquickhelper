@@ -279,7 +279,7 @@ def get_repo_version(path=None, commandline=True, log=False):
             if log:
                 fLOG("problem with file ", path, err)
             if log:
-                return "OUT\n{0}\nERR:{1}".format(out, err)
+                return "OUT\n{0}\nERR:{1}\nCMD:\n{2}".format(out, err, cmd)
             else:
                 raise Exception(err)
         lines = out.split("\n")

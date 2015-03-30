@@ -97,18 +97,20 @@ def set_sphinx_variables(fileconf,
     latex_elements = {'papersize': 'a4', 'pointsize': '10pt',
                       # 'preamble': '',
                       }
+    latex_use_parts = False
     latex_documents = [('index', '%s_doc.tex' % project_var_name,
-                        '%s Documentation' % project_var_name, author, 'manual'), ]
+                        '%s' % project_var_name, author, 'manual', True), ]
     man_pages = [('index', '%s_doc' % project_var_name,
                   '%s Documentation' % project_var_name, [author], 1)]
     texinfo_documents = [('index',
                           '%s_documentation' % project_var_name,
-                          '%s Documentation' % project_var_name,
+                          '%s' % project_var_name,
                           author,
                           '%s documentation' % project_var_name,
                           description_latex,
                           'Miscellaneous'),
                          ]
+    latex_show_pagerefs = True
 
     # theme
     html_theme = theme
@@ -134,8 +136,6 @@ def set_sphinx_variables(fileconf,
     exclude_patterns = []
     html_show_sphinx = False
     html_show_copyright = False
-    latex_use_parts = True
-    latex_show_pagerefs = True
     __html_last_updated_fmt_dt = datetime.datetime.now()
     html_last_updated_fmt = '%04d-%02d-%02d' % (
         __html_last_updated_fmt_dt.year,
