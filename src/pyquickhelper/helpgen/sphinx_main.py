@@ -17,6 +17,7 @@ import shutil
 import datetime
 import re
 import importlib
+import warnings
 
 from ..loghelper.flog import run_cmd, fLOG
 from ..loghelper.pyrepo_helper import SourceRepository
@@ -1274,6 +1275,7 @@ def post_process_latex(st, doall, info=None):
         # in pseudo latex
         exp = re.compile(r"(.{3}[\\]\$)")
         found = 0
+        records = []
         for m in exp.finditer(st):
             found += 1
             p1, p2 = m.start(), m.end()
@@ -1283,14 +1285,19 @@ def post_process_latex(st, doall, info=None):
             if sub not in [".*)\\$", "r`\\$}", "ar`\\$", "tt{\\$"] and \
                not sub.endswith("'\\$") and not sub.endswith("{\\$"):
                 if p1 > 30:
-                    # very very quick and dirty
-                    temp = st[p1 - 20:p2]
-                    if "quick fix to remove \\$" not in temp:
-                        raise HelpGenException(
-                            "unexpected \\$ in a latex file:\n{0}\nat position: {1},{2}\nsubstring: {3}\naround: {4}".format(info, p1, p2, sub, sub2))
+                    temp = st[p1 - 25:p2]
                 else:
-                    raise HelpGenException(
-                        "unexpected \\$ in a latex file:\n{0}\nat position: {1},{2}\nsubstring: {3}\naround: {4}".format(info, p1, p2, sub, sub2))
+                    temp = st[0:p2]
+                records.append((info, p1, p2, sub, sub2, temp))
+
+        if len(records) > 0:
+            messages = [str(i) + ":" + ("unexpected \\$ in a latex file:\n    {0}\n    at position: {1},{2}\n" +
+                                        "    substring: {3}\n    around: {4}\n    temp=[{5}]").format(*rec)
+                        for i, rec in enumerate(records)]
+            for mes in messages:
+                warnings.warn(mes)
+            #raise HelpGenException("\n".join(messages))
+
         if found == 0:
             raise NotImplementedError(
                 "unexpected issue with \\$ in file: {0}".format(info))

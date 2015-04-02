@@ -180,7 +180,8 @@ elif "build_sphinx" in sys.argv:
             os.path.split(os.path.abspath(__file__))[0])[-1]
 
         if sys.platform.startswith("win"):
-            generate_help_sphinx(project_name, module_name=project_var_name)
+            generate_help_sphinx(project_name, module_name=project_var_name,
+                                 layout=["html", "pdf"])
         else:
             # unable to test latex conversion due to adjustbox.sty missing
             # package
