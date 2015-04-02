@@ -181,12 +181,14 @@ elif "build_sphinx" in sys.argv:
 
         if sys.platform.startswith("win"):
             generate_help_sphinx(project_name, module_name=project_var_name,
-                                 layout=["html", "pdf"])
+                                 layout=["html", "pdf"],
+                                 extra_ext=["doc"])
         else:
             # unable to test latex conversion due to adjustbox.sty missing
             # package
             generate_help_sphinx(project_name, nbformats=["ipynb", "html", "python", "rst"],
-                                 module_name=project_var_name)
+                                 module_name=project_var_name,
+                                 extra_ext=["doc"])
 
 elif "unittests" in sys.argv:
 

@@ -1,0 +1,20 @@
+
+
+.. RSTFORMAT.
+
+.. beginshortsummary.
+
+Short summary for the file documentation.doc
+
+.. endshortsummary.
+
+
+.. index:: doc, extension, extra extension, extra file
+
+Example of an extra file added to the documentation even if
+the extension is not ``.py`` or ``.rst``. You should add
+``.. RSTFORMAT.`` to tell pyquickhelper to consider
+this file as documention in RST format.
+
+
+
