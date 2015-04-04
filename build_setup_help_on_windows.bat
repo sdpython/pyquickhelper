@@ -80,4 +80,5 @@ echo #######################################################
 :copyfiles:
 if not exist dist\html mkdir dist\html
 xcopy /E /C /I /Y _doc\sphinxdoc\build\html dist\html
+if exist _doc\sphinxdoc\build\latex xcopy /E /C /I /Y _doc\sphinxdoc\build\latex\*.pdf dist\html
 if %errorlevel% neq 0 exit /b %errorlevel%
