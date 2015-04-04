@@ -26,7 +26,6 @@ from src.pyquickhelper import fLOG, get_temp_folder
 from src.pyquickhelper.ipythonhelper import ipython_cython_extension
 
 
-
 class TestCheckCython(unittest.TestCase):
 
     def test_ipython_cython_extension(self):
@@ -34,7 +33,7 @@ class TestCheckCython(unittest.TestCase):
             __file__,
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
-            
+
         ipython_cython_extension()
 
 if __name__ == "__main__":
