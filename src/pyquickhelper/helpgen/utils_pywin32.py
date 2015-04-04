@@ -23,12 +23,14 @@ def import_pywin32():
             os.environ["PATH"] = os.environ["PATH"] + ";" + path
             try:
                 import win32com
+                return win32com
             except ImportError:
                 # addition for WinPython
                 exe = os.path.abspath(os.path.dirname(sys.executable))
                 os.environ["PATH"] = os.environ["PATH"] + ";" + exe
                 try:
                     import win32com
+                    return win32com
                 except ImportError:
                     dll = os.listdir(path)
                     dll = [os.path.join(path, _) for _ in dll if "dll" in _]

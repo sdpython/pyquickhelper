@@ -76,6 +76,9 @@ def set_sphinx_variables(fileconf,
     else:
         first_line = get_first_line(version_file)
 
+    # language
+    language = "en"
+
     # main version
     version = extract_version_from_setup(fileconf)
 
@@ -108,7 +111,7 @@ def set_sphinx_variables(fileconf,
                           'Miscellaneous'),
                          ]
     latex_show_pagerefs = True
-    
+
     preamble = r'''
             \usepackage{fixltx2e} % LaTeX patches, \textsubscript
             \usepackage{cmap} % fix search and cut-and-paste in Acrobat
@@ -120,8 +123,8 @@ def set_sphinx_variables(fileconf,
             \newcommand{\hsp}{\hspace{20pt}}
             \newcommand{\HRule}{\rule{\linewidth}{0.5mm}}
             %\titleformat{\chapter}[hang]{\Huge\bfseries\sffamily}{\thechapter\hsp}{0pt}{\Huge\bfseries\sffamily}
-            '''.replace("            ","")
-            
+            '''.replace("            ", "")
+
     latex_elements = {'papersize': 'a4', 'pointsize': '10pt',
                       'preamble': preamble,
                       }
@@ -174,6 +177,11 @@ def set_sphinx_variables(fileconf,
                   'sphinx.ext.graphviz',
                   'sphinx.ext.inheritance_diagram',
                   'matplotlib.sphinxext.plot_directive',
+                  'matplotlib.sphinxext.mathmpl',
+                  'matplotlib.sphinxext.only_directives',
+                  #'matplotlib.sphinxext.ipython_directive',
+                  'IPython.sphinxext.ipython_console_highlighting',
+                  'sphinx.ext.napoleon',
                   ]
 
     if add_extensions is not None:
@@ -226,6 +234,7 @@ def set_sphinx_variables(fileconf,
 
     def this_setup(app):
         return custom_setup(app, author)
+
     ext_locals["setup"] = this_setup
 
 
@@ -311,5 +320,23 @@ def custom_setup(app, author):
     """
     see `Sphinx core events <http://sphinx-doc.org/extdev/appapi.html?highlight=setup#sphinx-core-events>`_
     """
+    from .sphinx_blog_extension import visit_blogpost_node, depart_blogpost_node
+    from .sphinx_blog_extension import blogpostlist, blogpost
+    from .sphinx_blog_extension import BlogPostDirective, BlogPostListDirective
+    from .sphinx_blog_extension import process_blogpost_nodes, purge_blogpost
+
     app.connect("autodoc-skip-member", skip)
     app.add_config_value('author', author, True)
+
+    app.add_config_value('blogpost_include_s', False, False)
+
+    app.add_node(blogpostlist)
+    app.add_node(blogpost,
+                 html=(visit_blogpost_node, depart_blogpost_node),
+                 latex=(visit_blogpost_node, depart_blogpost_node),
+                 text=(visit_blogpost_node, depart_blogpost_node))
+
+    app.add_directive('blogpost', BlogPostDirective)
+    app.add_directive('blogpostlist', BlogPostListDirective)
+    app.connect('doctree-resolved', process_blogpost_nodes)
+    app.connect('env-purge-doc', purge_blogpost)
