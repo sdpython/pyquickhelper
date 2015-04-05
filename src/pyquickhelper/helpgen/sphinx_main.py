@@ -30,6 +30,8 @@ from .utils_sphinx_config import ie_layout_html
 from .blog_post_list import BlogPostList
 from .sphinx_blog_extension import BlogPostDirective
 
+from .texts_language import TITLES
+
 template_examples = """
 
 List of programs
@@ -46,6 +48,41 @@ Another list
 ++++++++++++
 
 """
+
+
+def add_missing_files(root, conf):
+    """
+    add missing files for the documentation,
+    ``moduletoc.html``, ``blogtoc.html``
+
+    @param      root        root
+    @param      conf        configuration module (to guess the template folder)
+    """
+    fold = conf.templates_path
+    if isinstance(fold, list):
+        fold = fold[0]
+
+    language = conf.language
+
+    loc = os.path.join(root, "_doc", "sphinxdoc", "source", fold)
+    if not os.path.exists(loc):
+        os.makedirs(loc)
+
+    # moduletoc.html
+    mt = os.path.join(loc, "moduletoc.html")
+    if not os.path.exists(mt):
+        with open(mt, "w", encoding="utf8") as f:
+            f.write(
+                """<h3><a href="{{ pathto(master_doc) }}">{{ _('%s') }}</a></h3>\n""" % TITLES[language]["toc"])
+            f.write("""{{ toctree() }}""")
+
+    # blogtoc.html
+    mt = os.path.join(loc, "blogtoc.html")
+    if not os.path.exists(mt):
+        with open(mt, "w", encoding="utf8") as f:
+            f.write(
+                """<h3><a href="{{ pathto(master_doc) }}">{{ _('Blog') }}</a></h3>\n""")
+            f.write("""{{ toctree() }}""")
 
 
 def generate_help_sphinx(project_var_name,
@@ -168,6 +205,9 @@ def generate_help_sphinx(project_var_name,
         raise ImportError(
             "unable to import conf.py which defines the help generation")
 
+    # add missing files
+    add_missing_files(root, theconf)
+
     # language
     language = theconf.__dict__.get("language", "en")
 
@@ -223,8 +263,15 @@ def generate_help_sphinx(project_var_name,
     # blog
     blog_fold = os.path.join(
         os.path.join(root, "_doc/sphinxdoc/source", "blog"))
-    plist = BlogPostList(blog_fold, language=language)
-    plist.write_aggregated(blog_fold)
+
+    if os.path.exists(blog_fold):
+        plist = BlogPostList(blog_fold, language=language)
+        plist.write_aggregated(blog_fold,
+                               blog_title=theconf.__dict__.get(
+                                   "blog_title", project_var_name),
+                               blog_description=theconf.__dict__.get(
+                                   "blog_description", "blog associated to " + project_var_name),
+                               blog_root=theconf.__dict__.get("blog_root", "__BLOG_ROOT__"))
 
     # notebooks
     notebook_dir = os.path.abspath(os.path.join(root, "_doc", "notebooks"))

@@ -21,3 +21,4 @@ table of contents
     all_example_otherpageofexamples
     all_example_pagewithanaccentinthetitle
     index_module
+    blog/blogindex.rst

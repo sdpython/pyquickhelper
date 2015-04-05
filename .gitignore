@@ -233,3 +233,7 @@ README
 */notebooks/request.html.gz
 */notebooks/urllib.request.html
 */notebooks/notebooks.7z
+*/sphinxdoc/source/blog/*.rst
+*/sphinxdoc/source/blog/rss.xml
+*/sphinxdoc/source/phdoc_templates/*.html
+

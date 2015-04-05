@@ -206,6 +206,12 @@ def set_sphinx_variables(fileconf,
     # texinfo_domain_indices = True
     # texinfo_show_urls = 'footnote'
 
+    # it modifies the set of things to display inside the sidebar
+    html_sidebars = {
+        '**': ['localtoc.html', 'relations.html', 'sourcelink.html', 'searchbox.html', 'moduletoc.html', ],
+        'blog/**': ['searchbox.html', 'blogtoc.html'],
+    }
+
     if html_theme == "bootstrap":
         if bootswatch_navbar_links is None:
             bootswatch_navbar_links = []

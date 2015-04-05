@@ -24,7 +24,8 @@ pyquickhelper documentation
 `github <https://github.com/sdpython/pyquickhelper>`_,
 `documentation <http://www.xavierdupre.fr/app/pyquickhelper/helpsphinx/index.html>`_, 
 `wheel <http://www.xavierdupre.fr/site2013/index_code.html#pyquickhelper>`_,
-`travis <https://travis-ci.org/sdpython/pyquickhelper>`_
+`travis <https://travis-ci.org/sdpython/pyquickhelper>`_,
+:ref:`blog <ap-main-0>`
 
 Functionalities
 ---------------
@@ -40,6 +41,9 @@ Functionalities
       :class:`MagicClassWithHelpers <pyquickhelper.ipythonhelper.magic_class.MagicClassWithHelpers>` to help 
       creating magic command for IPython notebooks,
       the parser tries to interpret values passed to the magic commands
+    * function :func:`rst2html <pyquickhelper.helpgen.convert_doc_helper.rst2html>` to convert RST into HTML
+    * Sphinx directive :class:`BlogPostDirective <pyquickhelper.helpgen.sphinx_blog_extension.BlogPostDirective>` 
+      to add a drective ``blogpost`` into the docutmention
     
 Navigation
 ----------

@@ -13,13 +13,6 @@ from docutils.parsers.rst import directives
 from sphinx import addnodes
 from sphinx.util.nodes import set_source_info, process_index_entry
 
-languages = {
-    'en': {"blogpost": "blogpost",
-           },
-    'fr': {"blogpost": "article",
-           }
-}
-
 
 class BlogPostDirective(Directive):
 
@@ -61,7 +54,7 @@ class BlogPostDirective(Directive):
         targetnode = nodes.target('', '', ids=[targetid])
 
         ad = make_admonition(blogpost_node, self.name,
-                             [_locale(self.options["date"])],
+                             [_locale(self.options["date"]) + " "],
                              self.options,
                              self.content,
                              self.lineno,
