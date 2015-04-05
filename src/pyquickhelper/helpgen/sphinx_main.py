@@ -3,8 +3,8 @@
 @file
 @brief Contains the main function to generate the documentation
 for a module designed the same way as this one, @see fn generate_help_sphinx.
-"""
 
+"""
 try:
     import pandas
     has_pandas = True
@@ -71,7 +71,7 @@ def add_missing_files(root, conf):
     # moduletoc.html
     mt = os.path.join(loc, "moduletoc.html")
     if not os.path.exists(mt):
-        with open(mt, "w", encoding="utf-8") as f:
+        with open(mt, "w", encoding="utf8") as f:
             f.write(
                 """<h3><a href="{{ pathto(master_doc) }}">{{ _('%s') }}</a></h3>\n""" % TITLES[language]["toc"])
             f.write("""{{ toctree() }}""")
@@ -79,7 +79,7 @@ def add_missing_files(root, conf):
     # blogtoc.html
     mt = os.path.join(loc, "blogtoc.html")
     if not os.path.exists(mt):
-        with open(mt, "w", encoding="utf-8") as f:
+        with open(mt, "w", encoding="utf8") as f:
             f.write(
                 """<h3><a href="{{ pathto(master_doc) }}">{{ _('Blog') }}</a></h3>\n""")
             f.write("""{{ toctree() }}""")
@@ -324,7 +324,7 @@ def generate_help_sphinx(project_var_name,
             thn = os.path.join(root, name)
             if name.endswith(".rst"):
                 try:
-                    with open(thn, "r", encoding="utf-8") as f:
+                    with open(thn, "r", encoding="utf8") as f:
                         f.read()
                 except UnicodeDecodeError as e:
                     raise HelpGenException(
@@ -637,7 +637,7 @@ def generate_changes_repo(chan,
         final = final.replace("__CODEGRAPH__", code)
 
     if chan is not None:
-        with open(chan, "w", encoding="utf-8") as f:
+        with open(chan, "w", encoding="utf8") as f:
             f.write(final)
     return final
 
@@ -1067,7 +1067,7 @@ def post_process_latex_output(root, doall):
     """
     if os.path.isfile(root):
         file = root
-        with open(file, "r", encoding="utf-8") as f:
+        with open(file, "r", encoding="utf8") as f:
             content = f.read()
         content = post_process_latex(content, doall)
         with open(file, "w", encoding="utf8") as f:
@@ -1078,7 +1078,7 @@ def post_process_latex_output(root, doall):
             if tex.endswith(".tex"):
                 file = os.path.join(build, tex)
                 fLOG("modify file", file)
-                with open(file, "r", encoding="utf-8") as f:
+                with open(file, "r", encoding="utf8") as f:
                     content = f.read()
                 content = post_process_latex(content, doall, info=file)
                 with open(file, "w", encoding="utf8") as f:
@@ -1092,7 +1092,7 @@ def post_process_latex_output_any(file):
     @param      file        latex filename
     """
     fLOG("   ** post_process_latex_output_any ", file)
-    with open(file, "r", encoding="utf-8") as f:
+    with open(file, "r", encoding="utf8") as f:
         content = f.read()
     content = post_process_latex(content, True, info=file)
     with open(file, "w", encoding="utf8") as f:
@@ -1112,7 +1112,7 @@ def post_process_rst_output(file, html, pdf, python):
 
     fold, name = os.path.split(file)
     noext = os.path.splitext(name)[0]
-    with open(file, "r", encoding="utf-8") as f:
+    with open(file, "r", encoding="utf8") as f:
         lines = f.readlines()
 
     # remove empty lines in inserted code, also add line number
@@ -1281,7 +1281,7 @@ def post_process_html_output(file, pdf, python):
     noext = os.path.splitext(name)[0]
     if not os.path.exists(file):
         raise FileNotFoundError(file)
-    with open(file, "r", encoding="utf-8") as f:
+    with open(file, "r", encoding="utf8") as f:
         text = f.read()
 
     link = '''

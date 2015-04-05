@@ -53,7 +53,7 @@ def replace_relative_import(fullname, content=None):
     @warning It uses regular expressions, so it might do it in the comments. It does not support import on several lines.
     """
     if content is None:
-        with open(fullname, "r", encoding="utf-8") as f:
+        with open(fullname, "r", encoding="utf8") as f:
             content = f.read()
 
     lines = content.split("\n")
@@ -154,7 +154,7 @@ def _private_process_one_file(
         return os.path.splitext(fullname)[-1], 0, 0
     else:
         try:
-            with open(fullname, "r", encoding="utf-8") as g:
+            with open(fullname, "r", encoding="utf8") as g:
                 content = g.read()
         except UnicodeDecodeError:
             with open(fullname, "r") as g:
@@ -181,7 +181,7 @@ def _private_process_one_file(
             os.makedirs(fold)
         if replace_relative_import:
             content = replace_relative_import(fullname, content)
-        with open(to, "w", encoding="utf-8") as g:
+        with open(to, "w", encoding="utf8") as g:
             g.write(content)
 
         return os.path.splitext(fullname)[-1], nblines, counts["docrows"]
@@ -455,7 +455,7 @@ def apply_modification_template(rootm,
             with open(keepf, "r", encoding="latin-1") as ft:
                 content = ft.read()
         except UnicodeDecodeError:
-            with open(keepf, "r", encoding="utf-8") as ft:
+            with open(keepf, "r", encoding="utf8") as ft:
                 content = ft.read()
 
     plat = "Windows" if "This example only runs on Windows." in content else "any"
@@ -569,7 +569,7 @@ def add_file_rst(rootm,
                     content += "\n.. _%s_literal:\n\nCode\n----\n\n.. literalinclude:: %s\n\n" % (
                         noex, name)
 
-                with open(rst, "w", encoding="utf-8") as g:
+                with open(rst, "w", encoding="utf8") as g:
                     g.write(content)
                 app.append(RstFileHelp(to, rst, ""))
 
@@ -586,7 +586,7 @@ def add_file_rst(rootm,
                     memo[pat] = re.compile(pat)
                 exp = memo[pat]
                 if exp.search(file):
-                    with open(to, "r", encoding="utf-8") as g:
+                    with open(to, "r", encoding="utf8") as g:
                         content = g.read()
                     if func is None:
                         func = filecontent_to_rst
@@ -597,7 +597,7 @@ def add_file_rst(rootm,
                     else:
                         doc = ""
 
-                    with open(rst, "w", encoding="utf-8") as g:
+                    with open(rst, "w", encoding="utf8") as g:
                         g.write(content)
                     app.append(RstFileHelp(to, rst, ""))
 
@@ -1008,7 +1008,7 @@ def prepare_file_for_sphinx_help_generation(
                     na = "/".join(na)
                     toc.append("    " + na)
             v += "\n".join(toc)
-        with open(out, "w", encoding="utf-8") as f:
+        with open(out, "w", encoding="utf8") as f:
             f.write(v)
         rsts.append(RstFileHelp(None, out, None))
 
@@ -1085,7 +1085,7 @@ def prepare_file_for_sphinx_help_generation(
             saveas = os.path.join(output, "all_%s%s.rst" %
                                   (tag,
                                    page.replace(":", "").replace("/", "").replace(" ", "")))
-            with open(saveas, "w", encoding="utf-8") as f:
+            with open(saveas, "w", encoding="utf8") as f:
                 f.write(onefile)
             app.append(RstFileHelp(saveas, onefile, ""))
     rsts += app
@@ -1109,7 +1109,7 @@ def process_copy_images(folder_source, folder_images):
     cop = []
     for fn in files:
         try:
-            with open(fn, "r", encoding="utf-8") as f:
+            with open(fn, "r", encoding="utf8") as f:
                 content = f.read()
         except:
             with open(fn, "r") as f:
@@ -1154,9 +1154,9 @@ def fix_incomplete_references(folder_source, store_obj, issues=None):
     cop = []
     for fn in files:
         try:
-            with open(fn, "r", encoding="utf-8") as f:
+            with open(fn, "r", encoding="utf8") as f:
                 content = f.read()
-            encoding = "utf-8"
+            encoding = "utf8"
         except:
             with open(fn, "r") as f:
                 content = f.read()

@@ -23,7 +23,7 @@ class BlogPost:
     defines a blog post,
     """
 
-    def __init__(self, filename, encoding="utf-8"):
+    def __init__(self, filename, encoding="utf8"):
         """
         create an instance of a blog post from a file or a string
 
