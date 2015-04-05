@@ -79,7 +79,7 @@ def py3to2_convert(script):
     """
     if os.path.exists(script):
         try:
-            with open(script, "r", encoding="utf8") as f:
+            with open(script, "r", encoding="utf-8") as f:
                 content = f.read()
         except UnicodeEncodeError:
             with open(script, "r") as f:
@@ -90,9 +90,9 @@ def py3to2_convert(script):
 
     # start processing
     content = py3to2_remove_raise_from(content)
-    
+
     # some other modification
-    content = content.replace("from queue import","from Queue import")
+    content = content.replace("from queue import", "from Queue import")
 
     # end
     return content

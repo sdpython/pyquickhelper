@@ -23,7 +23,7 @@ class BlogPost:
     defines a blog post,
     """
 
-    def __init__(self, filename, encoding="utf-8-sig"):
+    def __init__(self, filename, encoding="utf-8"):
         """
         create an instance of a blog post from a file or a string
 
@@ -55,7 +55,7 @@ class BlogPost:
         overrides = {}
         overrides['input_encoding'] = encoding
         overrides["out_blogpostlist"] = []
-        
+
         output, pub = publish_programmatically(
             source_class=docio.StringInput,
             source=content,
@@ -79,7 +79,8 @@ class BlogPost:
         objects = pub.settings.out_blogpostlist
 
         if len(objects) != 1:
-            raise BlogPostPareError('no blog post (#={1}) in\n  File "{0}", line 1'.format(filename, len(objects)))
+            raise BlogPostPareError(
+                'no blog post (#={1}) in\n  File "{0}", line 1'.format(filename, len(objects)))
 
         post = objects[0]
         for k in post.options:

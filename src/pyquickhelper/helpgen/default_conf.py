@@ -146,7 +146,7 @@ def set_sphinx_variables(fileconf,
 
     # extensions, encoding
     source_suffix = '.rst'
-    source_encoding = 'utf-8-sig'
+    source_encoding = 'utf-8'
     master_doc = 'index'
 
     # settings
@@ -208,8 +208,8 @@ def set_sphinx_variables(fileconf,
 
     # it modifies the set of things to display inside the sidebar
     html_sidebars = {
-        '**': ['localtoc.html', 'relations.html', 'sourcelink.html', 'searchbox.html', 'moduletoc.html', ],
-        'blog/**': ['searchbox.html', 'blogtoc.html'],
+        '**': ['searchbox.html', 'moduletoc.html', 'relations.html', 'sourcelink.html', ],
+        'blog/**': ['searchbox.html', 'blogtoc.html', 'localtoc.html', ],
     }
 
     if html_theme == "bootstrap":

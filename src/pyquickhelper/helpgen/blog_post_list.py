@@ -15,7 +15,7 @@ class BlogPostList:
     defines a list of @see cl BlogPost
     """
 
-    def __init__(self, folder, encoding="utf-8-sig", language="en"):
+    def __init__(self, folder, encoding="utf-8", language="en"):
         """
         create a list of BlogPost, we assume each blog post belongs to a sub-folder *YYYY*
 
@@ -157,9 +157,9 @@ class BlogPostList:
         return links
 
     def write_aggregated(self, folder, division=10,
-                blog_title="__BLOG_TITLE__",
-                blog_description="__BLOG_DESCRIPTION__",
-                blog_root="__BLOG_ROOT__"):
+                         blog_title="__BLOG_TITLE__",
+                         blog_description="__BLOG_DESCRIPTION__",
+                         blog_root="__BLOG_ROOT__"):
         """
         writes posts in a aggregated manner (post, categories, months)
 
@@ -181,8 +181,8 @@ class BlogPostList:
                 break
             keep.append(_)
         c = build_rss(keep, blog_title=blog_title,
-                    blog_description=blog_description,
-                    blog_root=blog_root)
+                      blog_description=blog_description,
+                      blog_root=blog_root)
         with open(rss, "w", encoding=self._encoding) as f:
             f.write(c)
 
@@ -243,7 +243,7 @@ class BlogPostList:
         """
         return BlogPostList.write_aggregated_post_list(folder=folder,
                                                        l=list(_ for _ in self),
-                                                       division=division, 
+                                                       division=division,
                                                        prefix="main",
                                                        encoding=self._encoding,
                                                        rst_links_up=rst_links_up,
@@ -267,7 +267,7 @@ class BlogPostList:
             posts = [_ for _ in self if cat in _.Categories]
             add = BlogPostList.write_aggregated_post_list(folder=folder,
                                                           l=posts,
-                                                          division=division, 
+                                                          division=division,
                                                           prefix="cat-" + cat,
                                                           encoding=self._encoding,
                                                           rst_links_up=rst_links_up,
@@ -294,7 +294,7 @@ class BlogPostList:
             posts = [_ for _ in self if _.Date.startswith(m)]
             add = BlogPostList.write_aggregated_post_list(folder=folder,
                                                           l=posts,
-                                                          division=division, 
+                                                          division=division,
                                                           prefix="month-" + m,
                                                           encoding=self._encoding,
                                                           rst_links_up=rst_links_up, rst_links_down=rst_links_down,

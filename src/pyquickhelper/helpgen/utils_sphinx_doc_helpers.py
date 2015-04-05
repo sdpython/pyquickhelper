@@ -412,7 +412,7 @@ class IndexInformation:
         The function checks the label is present in the original file.
         """
         if self.rstfile is not None:
-            with open(self.rstfile, "r", encoding="utf-8-sig") as f:
+            with open(self.rstfile, "r", encoding="utf-8") as f:
                 content = f.read()
             label = ".. _%s:" % self.label
             if label not in content:
@@ -834,7 +834,7 @@ def process_look_for_tag(tag, title, files):
         if "utils_sphinx_doc.py" in file.file:
             continue
         try:
-            with open(file.file, "r", encoding="utf-8-sig") as f:
+            with open(file.file, "r", encoding="utf-8") as f:
                 content = f.read()
         except:
             with open(file.file, "r") as f:

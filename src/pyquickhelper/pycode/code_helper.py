@@ -26,8 +26,11 @@ def remove_extra_spaces_and_pep8(filename, apply_pep8=True):
         raise PermissionError(filename) from e
 
     if len(lines) > 0 and "#-*-coding:utf-8-*-" in lines[0].replace(" ", ""):
-        with open(filename, "r", encoding="utf8") as f:
-            lines = f.readlines()
+        with open(filename, "r", encoding="utf-8") as f:
+            try:
+                lines = f.readlines()
+            except UnicodeDecodeError as e:
+                raise Exception("unable to read: " + filename) from e
         encoding = "utf8"
     else:
         encoding = None

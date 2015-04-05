@@ -71,8 +71,8 @@ class RepoFile:
                 #self.name = self.name.encode(defa).decode("utf-8")
             if "\\303" in self.name:
                 # don't know yet how to avoid that
-                self.name = self.name.replace(r"\303\251", "é") \
-                                     .replace(r"\303\250", "è")
+                self.name = self.name.replace(r"\303\251", chr(233)) \
+                                     .replace(r"\303\250", chr(232))
 
     def __str__(self):
         """
