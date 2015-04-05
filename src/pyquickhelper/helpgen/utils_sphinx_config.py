@@ -33,7 +33,7 @@ def ie_layout_html():
 
     layout = os.path.join(sitep, "sphinx", "themes", "basic", "layout.html")
     if os.path.exists(layout):
-        with open(layout, "r", encoding="utf-8") as f:
+        with open(layout, "r", encoding="utf-8-sig") as f:
             content = f.read()
         if tofind not in content:
             alls = ["unable to find: " + tofind + " in ",

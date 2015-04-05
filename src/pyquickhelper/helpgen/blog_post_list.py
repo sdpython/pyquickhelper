@@ -15,7 +15,7 @@ class BlogPostList:
     defines a list of @see cl BlogPost
     """
 
-    def __init__(self, folder, encoding="utf8", language="en"):
+    def __init__(self, folder, encoding="utf-8-sig", language="en"):
         """
         create a list of BlogPost, we assume each blog post belongs to a sub-folder *YYYY*
 
