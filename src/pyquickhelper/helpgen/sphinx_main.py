@@ -18,6 +18,7 @@ import datetime
 import re
 import importlib
 import warnings
+from docutils.parsers.rst import directives
 
 from ..loghelper.flog import run_cmd, fLOG
 from ..loghelper.pyrepo_helper import SourceRepository
@@ -26,6 +27,8 @@ from .utils_sphinx_doc import prepare_file_for_sphinx_help_generation
 from .utils_sphinx_doc_helpers import HelpGenException, find_latex_path, find_pandoc_path, ImportErrorHelpGen
 from ..filehelper.synchelper import explore_folder, has_been_updated
 from .utils_sphinx_config import ie_layout_html
+from .blog_post_list import BlogPostList
+from .sphinx_blog_extension import BlogPostDirective
 
 template_examples = """
 
@@ -142,6 +145,9 @@ def generate_help_sphinx(project_var_name,
     """
     ie_layout_html()
 
+    directives.register_directive("blogpost", BlogPostDirective)
+    #directives.register_directive("blogpostagg", BlogPostDirective)
+
     root = os.path.abspath(root)
     froot = root
     sys.path.append(os.path.join(root, "_doc", "sphinxdoc", "source"))
@@ -161,6 +167,9 @@ def generate_help_sphinx(project_var_name,
     if theconf is None:
         raise ImportError(
             "unable to import conf.py which defines the help generation")
+
+    # language
+    language = theconf.__dict__.get("language", "en")
 
     latex_path = theconf.__dict__.get("latex_path", find_latex_path())
     # graphviz_dot = theconf.__dict__.get("graphviz_dot", find_graphviz_dot())
@@ -211,10 +220,16 @@ def generate_help_sphinx(project_var_name,
 
     fLOG("**** end of prepare_file_for_sphinx_help_generation")
 
+    # blog
+    blog_fold = os.path.join(
+        os.path.join(root, "_doc/sphinxdoc/source", "blog"))
+    plist = BlogPostList(blog_fold, language=language)
+    plist.write_aggregated(blog_fold)
+
     # notebooks
-    notebook_dir = os.path.abspath(os.path.join("_doc", "notebooks"))
+    notebook_dir = os.path.abspath(os.path.join(root, "_doc", "notebooks"))
     notebook_doc = os.path.abspath(
-        os.path.join("_doc/sphinxdoc/source", "notebooks"))
+        os.path.join(root, "_doc/sphinxdoc/source", "notebooks"))
     if os.path.exists(notebook_dir):
         notebooks = explore_folder(
             notebook_dir, pattern=".*[.]ipynb", fullname=True)[1]

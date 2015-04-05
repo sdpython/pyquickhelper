@@ -321,22 +321,23 @@ def custom_setup(app, author):
     see `Sphinx core events <http://sphinx-doc.org/extdev/appapi.html?highlight=setup#sphinx-core-events>`_
     """
     from .sphinx_blog_extension import visit_blogpost_node, depart_blogpost_node
-    from .sphinx_blog_extension import blogpostlist, blogpost
-    from .sphinx_blog_extension import BlogPostDirective, BlogPostListDirective
+    from .sphinx_blog_extension import blogpost_node
+    from .sphinx_blog_extension import BlogPostDirective, BlogPostDirectiveAgg
     from .sphinx_blog_extension import process_blogpost_nodes, purge_blogpost
 
     app.connect("autodoc-skip-member", skip)
     app.add_config_value('author', author, True)
 
-    app.add_config_value('blogpost_include_s', False, False)
+    #app.add_config_value('blogpost_include_s', False, False)
 
-    app.add_node(blogpostlist)
-    app.add_node(blogpost,
+    # app.add_node(blogpostlist)
+    app.add_node(blogpost_node,
                  html=(visit_blogpost_node, depart_blogpost_node),
                  latex=(visit_blogpost_node, depart_blogpost_node),
                  text=(visit_blogpost_node, depart_blogpost_node))
 
     app.add_directive('blogpost', BlogPostDirective)
-    app.add_directive('blogpostlist', BlogPostListDirective)
-    app.connect('doctree-resolved', process_blogpost_nodes)
-    app.connect('env-purge-doc', purge_blogpost)
+    app.add_directive('blogpostagg', BlogPostDirectiveAgg)
+    #app.add_directive('blogpostlist', BlogPostListDirective)
+    #app.connect('doctree-resolved', process_blogpost_nodes)
+    #app.connect('env-purge-doc', purge_blogpost)

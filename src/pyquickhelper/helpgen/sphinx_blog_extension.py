@@ -10,6 +10,9 @@ from docutils.parsers.rst import Directive
 from sphinx.util.compat import make_admonition
 from sphinx.locale import _ as _locale
 from docutils.parsers.rst import directives
+from sphinx import addnodes
+from sphinx.util.nodes import explicit_title_re, set_source_info, process_index_entry, nested_parse_with_titles
+from docutils.statemachine import ViewList
 
 languages = {
     'en': {"blogpost": "blogpost",
@@ -19,10 +22,11 @@ languages = {
 }
 
 
-class BlogPostInfoDirective(Directive):
+class BlogPostDirective(Directive):
 
     """
-    extracts information about a blog post described by a directive ``..blogpost::``.
+    extracts information about a blog post described by a directive ``.. blogpost::``
+    and modifies the documentation if *env* is not null
     """
     required_arguments = 0
     optional_arguments = 0
@@ -34,79 +38,31 @@ class BlogPostInfoDirective(Directive):
                    'author': directives.unchanged,
                    }
     has_content = True
+    add_index = True
 
     def run(self):
         """
-        extracts the information in a dictionary
+        extracts the information in a dictionary and displays it
+        if the environment is not null
         """
         sett = self.state.document.settings
 
         if hasattr(sett, "out_blogpostlist"):
             sett.out_blogpostlist.append(self)
 
-        # print(sett.out_blogpostlist)
-        # print(self.state)
-        # print(self.state_machine)
-        #lineno = self.lineno
-        #name = self.name
-        #content = self.content
-        #block_text = self.block_text
-        #options = self.options
-        return []
+        if hasattr(self.state.document.settings, "env"):
+            env = self.state.document.settings.env
+        else:
+            env = None
 
-
-class blogpost(nodes.Admonition, nodes.Element):
-
-    """
-    defines *blogpost* node
-    """
-    pass
-
-
-class blogpostlist(nodes.General, nodes.Element):
-
-    """
-    defines *blogpostlist* node
-    """
-    pass
-
-
-def visit_blogpost_node(self, node):
-    """
-    what to do when visiting a node blogpost
-    """
-    print("[visit]", node)
-    self.visit_admonition(node)
-
-
-def depart_blogpost_node(self, node):
-    """
-    what to do when leaving a node blogpost
-    """
-    print("[depart]", node)
-    self.depart_admonition(node)
-
-
-class BlogPostListDirective(Directive):
-
-    def run(self):
-        print("[run]")
-        return [BlogPostListDirective.blogpostlist('')]
-
-
-class BlogPostDirective(BlogPostInfoDirective):
-
-    # this enables content in the directive
-    has_content = True
-
-    def run(self):
-        print("[BlogPostDirective.run]")
-        env = self.state.document.settings.env
+        if env is None:
+            return []
 
         targetid = "blogpost-%d" % env.new_serialno('blogpost')
         targetnode = nodes.target('', '', ids=[targetid])
 
-        ad = make_admonition(blogpost, self.name, [_locale('BlogPost')],
+        ad = make_admonition(blogpost_node, self.name,
+                             [_locale(self.options["date"])],
                              self.options,
                              self.content,
                              self.lineno,
@@ -123,27 +79,93 @@ class BlogPostDirective(BlogPostInfoDirective):
             'lineno': self.lineno,
             'blogpost': ad[0].deepcopy(),
             'target': targetnode,
-            'date': "?",
-            'title': "??",
-            'keywords': "???",
-            'categories': "????",
+            'date': self.options["date"],
+            'title': self.options["title"],
+            'keywords': [_.strip() for _ in self.options["keywords"].split(",")],
+            'categories': [_.strip() for _ in self.options["categories"].split(",")],
         }
         env.blogpost_all.append(p)
-        print(p)
 
-        return [targetnode] + ad
+        # we add a title (does not work)
+        section = nodes.section()
+        section += nodes.title(text=p["title"])
+
+        # index (see site-packages/sphinx/directives/code.py, class Index)
+        if self.__class__.add_index:
+
+            # we add an index
+            self.state.document.note_explicit_target(targetnode)
+            indexnode = addnodes.index()
+            indexnode['entries'] = ne = []
+            indexnode['inline'] = False
+            set_source_info(self, indexnode)
+            for entry in set(p["keywords"] + p["categories"] + [p["date"]]):
+                ne.extend(process_index_entry(entry, targetid))
+            ns = [indexnode, targetnode, section]
+        else:
+            ns = [targetnode, section]
+
+        return ns + ad
+
+
+class BlogPostDirectiveAgg(BlogPostDirective):
+
+    """
+    same but for the same post in a aggregated pages
+    """
+    add_index = False
+
+
+class blogpost_node(nodes.Admonition, nodes.Element):
+
+    """
+    defines *blogpost* node
+    """
+    pass
+
+
+class blogpostlist_node(nodes.General, nodes.Element):
+
+    """
+    defines *blogpostlist* node
+    """
+    pass
+
+
+def visit_blogpost_node(self, node):
+    """
+    what to do when visiting a node blogpost
+    """
+    #self.body.append ( ... )
+    self.visit_admonition(node)
+
+
+def depart_blogpost_node(self, node):
+    """
+    what to do when leaving a node blogpost
+    """
+    #self.body.append ( ... )
+    self.depart_admonition(node)
+
+######################
+# not really used yet
+######################
+
+
+class BlogPostListDirective(Directive):
+
+    def run(self):
+        return [BlogPostListDirective.blogpostlist('')]
 
 
 def purge_blogpost(app, env, docname):
     if not hasattr(env, 'blogpost_all'):
         return
-    print("[purge_blogpost]")
     env.blogpost_all = [post for post in env.blogpost_all
                         if post['docname'] != docname]
 
 
 def process_blogpost_nodes(app, doctree, fromdocname):
-    print("[process_blogpost_nodes]")
     if not app.config.blogpost_include_s:
         for node in doctree.traverse(blogpost):
             node.parent.remove(node)
@@ -160,7 +182,6 @@ def process_blogpost_nodes(app, doctree, fromdocname):
         content = []
 
         for post_info in env.blogpost_all:
-            print("post_info", post_info)
             para = nodes.paragraph()
             filename = env.doc2path(post_info['docname'], base=None)
             description = (

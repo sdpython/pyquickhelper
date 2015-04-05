@@ -1,15 +1,12 @@
 # -*- coding: utf-8 -*-
 """
 @file
-@brief Helpers to process blog post inclueded in the documentation.
+@brief Helpers to process blog post included in the documentation.
 """
 
 import os
 from docutils import io as docio
 from docutils.core import publish_programmatically
-from docutils.parsers.rst import directives
-
-from .sphinx_blog_extension import BlogPostInfoDirective
 
 
 class BlogPostPareError(Exception):
@@ -59,8 +56,6 @@ class BlogPost:
         overrides['input_encoding'] = encoding
         overrides["out_blogpostlist"] = []
 
-        directives.register_directive("blogpost", BlogPostInfoDirective)
-
         output, pub = publish_programmatically(
             source_class=docio.StringInput,
             source=content,
@@ -91,6 +86,25 @@ class BlogPost:
             setattr(self, k, post.options[k])
         self.rst_obj = post
         self.pub = pub
+        self._content = post.content
+
+    @property
+    def Fields(self):
+        """
+        return the fields as a dictionary
+        """
+        return dict(title=self.title,
+                    date=self.date,
+                    keywords=self.Keywords,
+                    categories=self.Categories)
+
+    @property
+    def Tag(self):
+        """
+        produces a tag for the blog post
+        """
+        return "post-" + self.Date + "-" + \
+               "".join([c for c in self.Title.lower() if "a" <= c <= "z"])
 
     @property
     def FileName(self):
@@ -118,11 +132,36 @@ class BlogPost:
         """
         return the keywords
         """
-        return self.keywords
+        return [_.strip() for _ in self.keywords.split(",")]
 
     @property
     def Categories(self):
         """
         return the categories
         """
-        return self.categories
+        return [_.strip() for _ in self.categories.split(",")]
+
+    @property
+    def Content(self):
+        """
+        return the content of the blogpost
+        """
+        return self._content
+
+    def post_as_rst(self, directive="blogpostagg"):
+        """
+        reproduces the text of the blog post
+
+        @return         blog post as RST
+        """
+        rows = []
+        rows.append(".. %s::" % directive)
+        for f, v in self.Fields.items():
+            if isinstance(v, str):
+                rows.append("    :%s: %s" % (f, v))
+            else:
+                rows.append("    :%s: %s" % (f, ",".join(v)))
+        rows.append("")
+        for r in self.Content:
+            rows.append("    " + r)
+        return "\n".join(rows)
