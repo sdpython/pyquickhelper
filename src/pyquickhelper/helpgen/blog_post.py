@@ -79,7 +79,7 @@ class BlogPost:
         objects = pub.settings.out_blogpostlist
 
         if len(objects) != 1:
-            raise BlogPostPareError("no blog post in\n" + filename)
+            raise BlogPostPareError('no blog post (#={1}) in\n  File "{0}", line 1'.format(filename, len(objects)))
 
         post = objects[0]
         for k in post.options:
