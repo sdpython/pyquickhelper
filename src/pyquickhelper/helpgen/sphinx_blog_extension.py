@@ -11,8 +11,7 @@ from sphinx.util.compat import make_admonition
 from sphinx.locale import _ as _locale
 from docutils.parsers.rst import directives
 from sphinx import addnodes
-from sphinx.util.nodes import explicit_title_re, set_source_info, process_index_entry, nested_parse_with_titles
-from docutils.statemachine import ViewList
+from sphinx.util.nodes import set_source_info, process_index_entry
 
 languages = {
     'en': {"blogpost": "blogpost",
@@ -167,14 +166,14 @@ def purge_blogpost(app, env, docname):
 
 def process_blogpost_nodes(app, doctree, fromdocname):
     if not app.config.blogpost_include_s:
-        for node in doctree.traverse(blogpost):
+        for node in doctree.traverse(blogpost_node):
             node.parent.remove(node)
 
     # Replace all blogpostlist nodes with a list of the collected blogposts.
     # Augment each blogpost with a backlink to the original location.
     env = app.builder.env
 
-    for node in doctree.traverse(blogpostlist):
+    for node in doctree.traverse(blogpostlist_node):
         if not app.config.blogpost_include_s:
             node.replace_self([])
             continue

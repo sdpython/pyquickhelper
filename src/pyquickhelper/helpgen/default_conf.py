@@ -323,7 +323,6 @@ def custom_setup(app, author):
     from .sphinx_blog_extension import visit_blogpost_node, depart_blogpost_node
     from .sphinx_blog_extension import blogpost_node
     from .sphinx_blog_extension import BlogPostDirective, BlogPostDirectiveAgg
-    from .sphinx_blog_extension import process_blogpost_nodes, purge_blogpost
 
     app.connect("autodoc-skip-member", skip)
     app.add_config_value('author', author, True)

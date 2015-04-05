@@ -212,7 +212,7 @@ class BlogPostList:
                 current.append(obj)
             else:
                 buckets.append(current)
-                curent = []
+                current = []
         if len(current) > 0:
             buckets.append(current)
         return buckets
