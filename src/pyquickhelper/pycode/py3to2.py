@@ -90,6 +90,9 @@ def py3to2_convert(script):
 
     # start processing
     content = py3to2_remove_raise_from(content)
+    
+    # some other modification
+    content = content.replace("from queue import","from Queue import")
 
     # end
     return content
