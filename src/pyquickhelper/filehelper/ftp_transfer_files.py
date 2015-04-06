@@ -143,7 +143,7 @@ class FolderTransferFTP:
         @param      is_binary           function which determines if content of a files is binary or not
         @param      text_transform      function to transform the content of a text file before uploading it
         @param      fLOG                logging function
-        
+
         Function *text_transform(self, filename, content)* returns the modified content.
         """
         self._ftn = file_tree_node
@@ -231,7 +231,7 @@ class FolderTransferFTP:
                 if content is None:
                     raise FolderTransferFTPException(
                         "File {0} cannot be transferred due to its content".format(path))
-                        
+
                 # transform
                 if self._text_transform is not None:
                     content = self._text_transform(self, path, content)
