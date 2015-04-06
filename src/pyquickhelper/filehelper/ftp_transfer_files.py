@@ -125,6 +125,7 @@ class FolderTransferFTP:
                  footer_html=None,
                  content_filter=None,
                  is_binary=content_as_binary,
+                 text_transform=None,
                  fLOG=noLOG):
         """
         constructor
@@ -140,7 +141,10 @@ class FolderTransferFTP:
                                         in the file, if the result is None, it raises an exception
                                         indicating  the file cannot be transfered (applies only on text files)
         @param      is_binary           function which determines if content of a files is binary or not
+        @param      text_transform      function to transform the content of a text file before uploading it
         @param      fLOG                logging function
+        
+        Function *text_transform(self, filename, content)* returns the modified content.
         """
         self._ftn = file_tree_node
         self._ftp = ftp_transfer
@@ -153,6 +157,7 @@ class FolderTransferFTP:
         self._is_binary = is_binary
 
         self._ft = FilesStatus(file_status)
+        self._text_transform = text_transform
 
     def __str__(self):
         """
@@ -226,6 +231,10 @@ class FolderTransferFTP:
                 if content is None:
                     raise FolderTransferFTPException(
                         "File {0} cannot be transferred due to its content".format(path))
+                        
+                # transform
+                if self._text_transform is not None:
+                    content = self._text_transform(self, path, content)
 
                 # to binary
                 bcont = content.encode("utf8")
