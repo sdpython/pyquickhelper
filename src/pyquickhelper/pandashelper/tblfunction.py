@@ -13,6 +13,8 @@ def isempty(s):
     @param      s       ``str`` or ``numpy.NaN``
     @return             boolean
     """
+    if s is None:
+        return True
     if isinstance(s, str):
         return len(s) == 0
     if numpy.isnan(s):

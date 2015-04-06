@@ -172,14 +172,19 @@ def file_list(folder, out=""):
     @return                 out
     """
 
-    if is_empty_string(out):
-        out = "%s_.list_of_files.txt" % folder
+    if out is None or isinstance(out, str):
+        if is_empty_string(out):
+            out = "%s_.list_of_files.txt" % folder
+        f = open(out, "w")
+    else:
+        f = out
 
-    f = open(out, "w")
     for l in explore_folder_iterfile(folder):
         f.write(l)
         f.write(GetSepLine())
-    f.close()
+
+    if isinstance(out, str):
+        f.close()
 
     return out
 

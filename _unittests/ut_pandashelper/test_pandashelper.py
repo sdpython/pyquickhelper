@@ -6,6 +6,7 @@ import sys
 import os
 import unittest
 import re
+import numpy
 
 
 try:
@@ -21,7 +22,7 @@ except ImportError:
         sys.path.append(path)
     import src
 
-from src.pyquickhelper import read_url, fLOG
+from src.pyquickhelper import read_url, fLOG, isempty, isnan
 
 
 class TestVersion (unittest.TestCase):
@@ -44,6 +45,19 @@ class TestVersion (unittest.TestCase):
         assert len(df.columns) == 4
         fLOG(df.head())
 
+    def test_isnull(self):
+        fLOG(
+            __file__,
+            self._testMethodName,
+            OutputPrint=__name__ == "__main__")
+
+        assert isempty("")
+        assert not isempty("e")
+        assert isempty(None)
+        assert isempty(numpy.nan)
+
+        assert isnan(numpy.nan)
+        assert not isnan(0.0)
 
 if __name__ == "__main__":
     unittest.main()
