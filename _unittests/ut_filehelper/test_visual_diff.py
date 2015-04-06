@@ -37,7 +37,15 @@ class TestVisualDiff(unittest.TestCase):
         page = os.path.join(temp, "page_diff.html")
 
         f = __file__.replace(".pyc", ".py")
-        diff = create_visual_diff_through_html_files(f, f, page=page)
+        try:
+            diff = create_visual_diff_through_html_files(f, f, page=page)
+        except FileNotFoundError as e:
+            try:
+                import pymyinstall
+                raise e
+            except ImportError:
+                return
+            
         fLOG(page)
         assert os.path.exists(page)
         assert len(diff) > 0
