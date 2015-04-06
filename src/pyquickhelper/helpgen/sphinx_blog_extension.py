@@ -12,6 +12,7 @@ from sphinx.locale import _ as _locale
 from docutils.parsers.rst import directives
 from sphinx import addnodes
 from sphinx.util.nodes import set_source_info, process_index_entry
+from .blog_post import BlogPost
 
 
 class BlogPostDirective(Directive):
@@ -50,8 +51,21 @@ class BlogPostDirective(Directive):
         if env is None:
             return []
 
+        # post
+        p = {
+            'docname': env.docname,
+            'lineno': self.lineno,
+            'date': self.options["date"],
+            'title': self.options["title"],
+            'keywords': [_.strip() for _ in self.options["keywords"].split(",")],
+            'categories': [_.strip() for _ in self.options["categories"].split(",")],
+        }
+
+        # label
+        tag = BlogPost.build_tag(p["date"], p["title"])
         targetid = "blogpost-%d" % env.new_serialno('blogpost')
-        targetnode = nodes.target('', '', ids=[targetid])
+        targetnode = nodes.target('', '', ids=[targetid, tag])
+        p["target"] = targetnode
 
         ad = make_admonition(blogpost_node, self.name,
                              [_locale(self.options["date"]) + " "],
@@ -62,20 +76,10 @@ class BlogPostDirective(Directive):
                              self.block_text,
                              self.state,
                              self.state_machine)
+        p['blogpost'] = ad[0].deepcopy()
 
         if not hasattr(env, 'blogpost_all'):
             env.blogpost_all = []
-
-        p = {
-            'docname': env.docname,
-            'lineno': self.lineno,
-            'blogpost': ad[0].deepcopy(),
-            'target': targetnode,
-            'date': self.options["date"],
-            'title': self.options["title"],
-            'keywords': [_.strip() for _ in self.options["keywords"].split(",")],
-            'categories': [_.strip() for _ in self.options["categories"].split(",")],
-        }
         env.blogpost_all.append(p)
 
         # we add a title (does not work)

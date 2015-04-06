@@ -45,7 +45,7 @@ class TestVisualDiff(unittest.TestCase):
                 raise e
             except ImportError:
                 return
-            
+
         fLOG(page)
         assert os.path.exists(page)
         assert len(diff) > 0

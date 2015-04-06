@@ -5,8 +5,10 @@
 """
 
 import os
+import shutil
 from .blog_post import BlogPost
 from .build_rss import build_rss
+from .texts_language import TITLES
 
 
 class BlogPostList:
@@ -197,6 +199,26 @@ class BlogPostList:
         res.append(self.write_aggregated_index(folder, hidden_files=res))
         return res
 
+    def get_image(self, img):
+        """
+        return the local path to an image in this folder
+
+        @param      img     image name (see below)
+        @return             local file
+
+        Allowed image names:
+            - rss: image for RSS stream
+        """
+        if img == "rss":
+            img = "feed-icon-16x16.png"
+            loc = os.path.abspath(os.path.dirname(__file__))
+            img = os.path.join(loc, img)
+            if not os.path.exists(img):
+                raise FileNotFoundError("unable to find: " + img)
+            return img
+        else:
+            raise FileNotFoundError("unable to get image name: " + img)
+
     def write_aggregated_index(self, folder, hidden_files=None):
         """
         writes an index
@@ -227,6 +249,15 @@ class BlogPostList:
                 for h in hidden_files:
                     f.write("    " + os.path.split(h)[-1] + "\n")
                 f.write("\n")
+
+            f.write("\n")
+            f.write(".. image:: feed-icon-16x16.png\n")
+            f.write(":download:`{0} rss <rss.xml>`\n".format(
+                TITLES[self.Lang]["download"]))
+            f.write("\n")
+
+            img = self.get_image("rss")
+            shutil.copy(img, folder)
 
         return name
 
@@ -389,7 +420,7 @@ class BlogPostList:
         @param      bold_title      title to display of the beginning of the page
         @return                     content of the page
         """
-        direction = ""
+        direction = "|rss_image| "
         if prev is not None:
             direction += ":ref:`<-- <%s>` " % prev
         if bold_title is not None:
@@ -414,6 +445,10 @@ class BlogPostList:
         rows.append("")
         rows.append(direction)
         rows.append("")
+        rows.append(".. |rss_image| image:: feed-icon-16x16.png")
+        rows.append("    :target: ../_downloads/rss.xml")
+        rows.append("    :alt: RSS")
+        rows.append("")
         rows.append(".. raw:: html")
         rows.append("")
         rows.append("    <hr />")
@@ -429,6 +464,9 @@ class BlogPostList:
         for post in l:
             text = post.post_as_rst()
             rows.append(text)
+            rows.append("")
+            rows.append("")
+            rows.append(":ref:`... <{0}>`".format(post.Tag))
             rows.append("")
             rows.append("")
 

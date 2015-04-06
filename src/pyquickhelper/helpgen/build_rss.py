@@ -5,7 +5,7 @@
 """
 import datetime
 import os
-
+from xml.sax.saxutils import escape
 
 modelForARSSFeed = """<rss version="2.0">
                         <channel>
@@ -68,10 +68,11 @@ def build_rss(posts,
 
     for post in posts:
         obj = EmptyClass()
-        obj.title = post.Title
+        obj.title = escape(post.Title)
         obj.date = post.Date
-        obj.name = os.path.splitext(os.path.split(post.FileName)[-1])[0]
-        obj.decription = "\n".join(post.Content)
+        obj.name = escape(
+            os.path.splitext(os.path.split(post.FileName)[-1])[0])
+        obj.decription = escape("\n".join(post.Content))
         obj.root = blog_root
         row = modelForARSSRow.format(obj)
         rows.append(row)

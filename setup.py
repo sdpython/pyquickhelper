@@ -87,7 +87,8 @@ else:
 
 packages = find_packages('src', exclude='src')
 package_dir = {k: "src/" + k.replace(".", "/") for k in packages}
-package_data = {project_var_name + ".funcwin": ["*.ico"]}
+package_data = {project_var_name + ".funcwin": ["*.ico"],
+                project_var_name + ".helpgen": ["*.png"], }
 
 if os.path.exists(readme):
     try:

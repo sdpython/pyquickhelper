@@ -104,8 +104,19 @@ class BlogPost:
         """
         produces a tag for the blog post
         """
-        return "post-" + self.Date + "-" + \
-               "".join([c for c in self.Title.lower() if "a" <= c <= "z"])
+        return BlogPost.build_tag(self.Date, self.Title)
+
+    @staticmethod
+    def build_tag(date, title):
+        """
+        builds the tag for a post
+
+        @param      date        date
+        @param      title       title
+        @return                 tag or label
+        """
+        return "post-" + date + "-" + \
+               "".join([c for c in title.lower() if "a" <= c <= "z"])
 
     @property
     def FileName(self):

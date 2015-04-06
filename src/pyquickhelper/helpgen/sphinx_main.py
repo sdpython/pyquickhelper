@@ -1471,7 +1471,8 @@ def compile_latex_output_final(root, latex_path, doall, afile=None):
             post_process_latex_output(file, doall)
             out, err = run_cmd(c, wait=True, do_not_log=False, log_error=False)
             if len(err) > 0:
-                raise HelpGenException(err)
+                raise HelpGenException(
+                    "CMD:\n{0}\nERR:\n{1}\nOUT:\n{2}".format(c, err, out))
             # second compilation
             fLOG("   ** LATEX compilation (d)", c)
             out, err = run_cmd(c, wait=True, do_not_log=False, log_error=False)
