@@ -28,7 +28,7 @@ from .utils_sphinx_doc_helpers import HelpGenException, find_latex_path, find_pa
 from ..filehelper.synchelper import explore_folder, has_been_updated
 from .utils_sphinx_config import ie_layout_html
 from .blog_post_list import BlogPostList
-from .sphinx_blog_extension import BlogPostDirective
+from .sphinx_blog_extension import BlogPostDirective, BlogPostDirectiveAgg
 
 from .texts_language import TITLES
 
@@ -183,7 +183,7 @@ def generate_help_sphinx(project_var_name,
     ie_layout_html()
 
     directives.register_directive("blogpost", BlogPostDirective)
-    #directives.register_directive("blogpostagg", BlogPostDirective)
+    directives.register_directive("blogpostagg", BlogPostDirectiveAgg)
 
     root = os.path.abspath(root)
     froot = root

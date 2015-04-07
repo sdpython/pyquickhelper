@@ -327,7 +327,8 @@ def custom_setup(app, author):
     see `Sphinx core events <http://sphinx-doc.org/extdev/appapi.html?highlight=setup#sphinx-core-events>`_
     """
     from .sphinx_blog_extension import visit_blogpost_node, depart_blogpost_node
-    from .sphinx_blog_extension import blogpost_node
+    from .sphinx_blog_extension import visit_blogpostagg_node, depart_blogpostagg_node
+    from .sphinx_blog_extension import blogpost_node, blogpostagg_node
     from .sphinx_blog_extension import BlogPostDirective, BlogPostDirectiveAgg
 
     app.connect("autodoc-skip-member", skip)
@@ -340,6 +341,11 @@ def custom_setup(app, author):
                  html=(visit_blogpost_node, depart_blogpost_node),
                  latex=(visit_blogpost_node, depart_blogpost_node),
                  text=(visit_blogpost_node, depart_blogpost_node))
+
+    app.add_node(blogpostagg_node,
+                 html=(visit_blogpostagg_node, depart_blogpostagg_node),
+                 latex=(visit_blogpostagg_node, depart_blogpostagg_node),
+                 text=(visit_blogpostagg_node, depart_blogpostagg_node))
 
     app.add_directive('blogpost', BlogPostDirective)
     app.add_directive('blogpostagg', BlogPostDirectiveAgg)

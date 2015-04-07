@@ -33,9 +33,10 @@ class BlogPostList:
             if os.path.isdir(full):
                 posts = os.listdir(full)
                 for post in posts:
-                    fpost = os.path.join(full, post)
-                    obj = BlogPost(fpost, encoding=encoding)
-                    self._blogposts.append((obj.date, obj))
+                    if os.path.splitext(post)[-1] in [".rst"]:
+                        fpost = os.path.join(full, post)
+                        obj = BlogPost(fpost, encoding=encoding)
+                        self._blogposts.append((obj.date, obj))
         self._blogposts.sort(reverse=True)
         self._blogposts = [_[1] for _ in self._blogposts]
         self._encoding = encoding

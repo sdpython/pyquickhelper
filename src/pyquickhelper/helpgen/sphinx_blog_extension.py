@@ -5,6 +5,7 @@
 See `Tutorial: Writing a simple extension <http://sphinx-doc.org/extdev/tutorial.html>`_
 """
 
+import re
 from docutils import nodes
 from docutils.parsers.rst import Directive
 from sphinx.util.compat import make_admonition
@@ -13,6 +14,22 @@ from docutils.parsers.rst import directives
 from sphinx import addnodes
 from sphinx.util.nodes import set_source_info, process_index_entry
 from .blog_post import BlogPost
+
+
+class blogpost_node(nodes.Admonition, nodes.Element):
+
+    """
+    defines *blogpost* node
+    """
+    pass
+
+
+class blogpostagg_node(nodes.Admonition, nodes.Element):
+
+    """
+    defines *blogpostagg* node
+    """
+    pass
 
 
 class BlogPostDirective(Directive):
@@ -32,11 +49,30 @@ class BlogPostDirective(Directive):
                    }
     has_content = True
     add_index = True
+    blogpost_class = blogpost_node
+
+    def _make_ad(self):
+        """
+        private function
+        """
+        ad = make_admonition(self.__class__.blogpost_class,
+                             self.name,
+                             [_locale(self.options["date"]) + " "],
+                             self.options,
+                             self.content,
+                             self.lineno,
+                             self.content_offset,
+                             self.block_text,
+                             self.state,
+                             self.state_machine)
+        return ad
 
     def run(self):
         """
         extracts the information in a dictionary and displays it
         if the environment is not null
+
+        @return      a list of nodes
         """
         sett = self.state.document.settings
 
@@ -67,15 +103,8 @@ class BlogPostDirective(Directive):
         targetnode = nodes.target('', '', ids=[targetid, tag])
         p["target"] = targetnode
 
-        ad = make_admonition(blogpost_node, self.name,
-                             [_locale(self.options["date"]) + " "],
-                             self.options,
-                             self.content,
-                             self.lineno,
-                             self.content_offset,
-                             self.block_text,
-                             self.state,
-                             self.state_machine)
+        ad = self._make_ad()
+
         p['blogpost'] = ad[0].deepcopy()
 
         if not hasattr(env, 'blogpost_all'):
@@ -110,22 +139,24 @@ class BlogPostDirectiveAgg(BlogPostDirective):
     same but for the same post in a aggregated pages
     """
     add_index = False
+    blogpost_class = blogpostagg_node
 
-
-class blogpost_node(nodes.Admonition, nodes.Element):
-
-    """
-    defines *blogpost* node
-    """
-    pass
-
-
-class blogpostlist_node(nodes.General, nodes.Element):
-
-    """
-    defines *blogpostlist* node
-    """
-    pass
+    def _make_ad(self):
+        """
+        We could overload the method to
+        update what to do.
+        """
+        ad = make_admonition(self.__class__.blogpost_class,
+                             self.name,
+                             [_locale(self.options["date"]) + " "],
+                             self.options,
+                             self.content,
+                             self.lineno,
+                             self.content_offset,
+                             self.block_text,
+                             self.state,
+                             self.state_machine)
+        return ad
 
 
 def visit_blogpost_node(self, node):
@@ -143,9 +174,33 @@ def depart_blogpost_node(self, node):
     #self.body.append ( ... )
     self.depart_admonition(node)
 
+
+def visit_blogpostagg_node(self, node):
+    """
+    what to do when visiting a node blogpost
+    """
+    #self.body.append ( ... )
+    self.visit_admonition(node)
+
+
+def depart_blogpostagg_node(self, node):
+    """
+    what to do when leaving a node blogpost
+    """
+    #self.body.append ( ... )
+    self.depart_admonition(node)
+
+
 ######################
 # not really used yet
 ######################
+
+class blogpostlist_node(nodes.General, nodes.Element):
+
+    """
+    defines *blogpostlist* node
+    """
+    pass
 
 
 class BlogPostListDirective(Directive):

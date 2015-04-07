@@ -44,7 +44,11 @@ class BlogPost:
         """
         if os.path.exists(filename):
             with open(filename, "r", encoding=encoding) as f:
-                content = f.read()
+                try:
+                    content = f.read()
+                except UnicodeDecodeError as e:
+                    raise Exception(
+                        'unable to read filename (encoding issue):\n  File "{0}", line 1'.format(filename)) from e
             self._filename = filename
         else:
             content = filename
@@ -162,7 +166,8 @@ class BlogPost:
 
     def post_as_rst(self, directive="blogpostagg"):
         """
-        reproduces the text of the blog post
+        reproduces the text of the blog post,
+        updates the image links
 
         @return         blog post as RST
         """
@@ -174,6 +179,32 @@ class BlogPost:
             else:
                 rows.append("    :%s: %s" % (f, ",".join(v)))
         rows.append("")
-        for r in self.Content:
-            rows.append("    " + r)
+
+        if directive == "blogpostagg":
+            for r in self.Content:
+                rows.append("    " + self._update_link(r))
+        else:
+            for r in self.Content:
+                rows.append("    " + r)
         return "\n".join(rows)
+
+    image_tag = ".. image:: "
+
+    def _update_link(self, row):
+        """
+        changes a link to an image if the page contains one into
+        *year/img.png*
+
+        @param      row     row
+        @return             new row
+        """
+        r = row.strip("\r\t ")
+        if r.startswith(BlogPost.image_tag):
+            i = len(BlogPost.image_tag)
+            r2 = row[i:]
+            if "/" in r2:
+                return row
+            row = "{0}{1}/{2}".format(row[:i], self.date[:4], r2)
+            return row
+        else:
+            return row
