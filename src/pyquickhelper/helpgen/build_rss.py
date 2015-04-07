@@ -16,8 +16,8 @@ modelForARSSFeed = """<rss version="2.0">
 
 modelForARSSRow = """<item>
             <title>{0.title}</title>
-            <link>{0.root}/blog/{0.name}.html</link>
-            <guid isPermaLink="true">{0.root}/blog/{0.name}.html</guid>
+            <link>{0.root}/blog/{0.year}/{0.name}.html</link>
+            <guid isPermaLink="true">{0.root}/blog/{0.year}/{0.name}.html</guid>
             <description>{0.decription}</description>
             <pubDate>{0.date}</pubDate>
         </item>"""
@@ -70,6 +70,7 @@ def build_rss(posts,
         obj = EmptyClass()
         obj.title = escape(post.Title)
         obj.date = post.Date
+        obj.year = post.Date[:4]
         obj.name = escape(
             os.path.splitext(os.path.split(post.FileName)[-1])[0])
         obj.decription = escape("\n".join(post.Content))
