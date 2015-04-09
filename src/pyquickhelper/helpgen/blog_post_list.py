@@ -166,7 +166,7 @@ class BlogPostList:
         """
         writes posts in a aggregated manner (post, categories, months)
 
-        @param      folder              when to write them
+        @param      folder              where to write them
         @param      division            add a new page every *division* items
         @param      blog_title          blog title
         @param      blog_description    blog description
@@ -198,6 +198,10 @@ class BlogPostList:
         res.extend(self.write_aggregated_months(
             folder, division, rst_links_up=link_up, rst_links_down=link_down))
         res.append(self.write_aggregated_index(folder, hidden_files=res))
+
+        # final aggregator
+        res.extend(self.write_aggregated_chapters(folder))
+
         return res
 
     def get_image(self, img):
@@ -267,7 +271,7 @@ class BlogPostList:
         """
         writes posts in a aggregated manner
 
-        @param      folder          when to write them
+        @param      folder          where to write them
         @param      division        add a new page every *division* items
         @param      rst_links_up    list of rst_links to add at the beginning of a page
         @param      rst_links_down  list of rst_links to add at the bottom of a page
@@ -287,7 +291,7 @@ class BlogPostList:
         """
         writes posts in a aggregated manner per categories
 
-        @param      folder          when to write them
+        @param      folder          where to write them
         @param      division        add a new page every *division* items
         @param      rst_links_up    list of rst_links to add at the beginning of a page
         @param      rst_links_down  list of rst_links to add at the bottom of a page
@@ -314,7 +318,7 @@ class BlogPostList:
         """
         writes posts in a aggregated manner per months
 
-        @param      folder          when to write them
+        @param      folder          where to write them
         @param      division        add a new page every *division* items
         @param      rst_links_up    list of rst_links to add at the beginning of a page
         @param      rst_links_down  list of rst_links to add at the bottom of a page
@@ -334,6 +338,34 @@ class BlogPostList:
                                                           bold_title=m)
             res.extend(add)
         return res
+
+    def write_aggregated_chapters(self, folder):
+        """
+        writes links to post per categories and per months
+
+        @param      folder          where to write them
+        @return                     list of produced files
+        """
+        cats = sorted([(k, len(v))
+                       for k, v in self.get_categories_group().items()])
+        months = sorted(
+            [(k, len(v)) for k, v in self.get_months_group().items()], reverse=True)
+        res = ["", ".. _blog-blog:", "", "", "Blog", "====", "", ""]
+        res.extend(
+            ["* :ref:`{0} <ap-main-0>`".format(TITLES[self.Lang]["page1"]), "", ""])
+        res.extend([TITLES[self.Lang]["by category:"], "", ""])
+        for cat, nb in cats:
+            res.append("* :ref:`{0} ({1}) <ap-cat-{0}-0>`".format(cat, nb))
+        res.extend(["", "", ""])
+        res.extend([TITLES[self.Lang]["by month:"], "", ""])
+        res.extend(["", "", ""])
+        for mon, nb in months:
+            res.append("* :ref:`{0} ({1}) <ap-month-{0}-0>`".format(mon, nb))
+
+        filename = os.path.join(folder, "index_blog.rst")
+        with open(filename, "w", encoding="utf8") as f:
+            f.write("\n".join(res))
+        return [filename]
 
     #################
     # static methods
