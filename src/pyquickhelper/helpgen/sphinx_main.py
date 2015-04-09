@@ -62,7 +62,10 @@ def add_missing_files(root, conf):
     if isinstance(fold, list):
         fold = fold[0]
 
-    language = conf.language
+    if hasattr(conf, "language"):
+        language = conf.language
+    else:
+        language = "en"
 
     loc = os.path.join(root, "_doc", "sphinxdoc", "source", fold)
     if not os.path.exists(loc):
@@ -161,7 +164,8 @@ def generate_help_sphinx(project_var_name,
         - pandoc
         - latex
 
-    @warning Some themes such as `Bootstrap Sphinx Theme <http://ryan-roemer.github.io/sphinx-bootstrap-theme/>`_ do not work on Internet Explorer. In that case, the
+    @warning Some themes such as `Bootstrap Sphinx Theme <http://ryan-roemer.github.io/sphinx-bootstrap-theme/>`_
+             do not work on Internet Explorer. In that case, the
              file ``<python_path>/Lib/site-packages/sphinx/themes/basic/layout.html``
              must be modified to add the following line (just below ``Content-Type``).
 
@@ -177,6 +181,8 @@ def generate_help_sphinx(project_var_name,
     by running the following command line::
 
         autopep8 <folder> --recursive --in-place --pep8-passes 2000 --verbose
+
+    **About encoding:** utf-8 without BOM is the recommanded option.
 
     .. versionchanged:: 1.0
     """
