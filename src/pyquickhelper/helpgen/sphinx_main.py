@@ -383,6 +383,19 @@ def generate_help_sphinx(project_var_name,
         over = [" -D {0}={1}".format(k, v) for k, v in override.items()]
         over = "".join(over)
 
+        if newconf is not None:
+            # we need to import this file to guess the template directory and
+            # add missing templates
+            try:
+                thenewconf = importlib.import_module(newconf)
+            except Exception as ee:
+                raise HelpGenException(
+                    "unable to import a confg file", newconf) from ee
+            if thenewconf is None:
+                raise ImportError(
+                    "unable to import {0} which defines the help generation".format(newconf))
+            add_missing_files(root, thenewconf)
+
         sconf = "" if newconf is None else " -c {0}".format(newconf)
 
         cmd = "sphinx-build -b {1} -d {0}/doctrees{2}{3} source {0}/{1}".format(
