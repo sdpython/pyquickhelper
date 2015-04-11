@@ -182,6 +182,7 @@ def set_sphinx_variables(fileconf,
                   #'matplotlib.sphinxext.ipython_directive',
                   'IPython.sphinxext.ipython_console_highlighting',
                   'sphinx.ext.napoleon',
+                  'bokeh.sphinxext.bokeh_plot',
                   ]
 
     if add_extensions is not None:
