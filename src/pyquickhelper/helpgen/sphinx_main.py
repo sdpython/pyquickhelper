@@ -184,17 +184,91 @@ def generate_help_sphinx(project_var_name,
 
     **About encoding:** utf-8 without BOM is the recommanded option.
 
+    **About languages: ** only one language can be specificied even if you have
+        multiple configuration file. Only the language specified in the main
+        ``conf.py`` will be considered.
+
     .. versionchanged:: 1.0
     """
+
+    def lay_build_override_newconf(t3):
+        if isinstance(t3, str):
+            lay, build, override, newconf = t3, "build", {}, None
+        elif len(t3) == 1:
+            lay, build, override, newconf = t3[0], "build", {}, None
+        elif len(t3) == 2:
+            lay, build, override, newconf = t3[0], t3[1], {}, None
+        elif len(t3) == 3:
+            lay, build, override, newconf = t3[0], t3[1], t3[2], None
+        else:
+            lay, build, override, newconf = t3
+        return lay, build, override, newconf
+
     ie_layout_html()
 
     directives.register_directive("blogpost", BlogPostDirective)
     directives.register_directive("blogpostagg", BlogPostDirectiveAgg)
 
+    if "conf" in sys.modules:
+        raise ImportError("module conf was imported, this function expects not to:\n{0}".format(
+            sys.modules["conf"].__file__))
+
+    # root_source
     root = os.path.abspath(root)
     froot = root
-    sys.path.append(os.path.join(root, "_doc", "sphinxdoc", "source"))
+    root_sphinxdoc = os.path.join(root, "_doc", "sphinxdoc")
+    root_source = os.path.join(root_sphinxdoc, "source")
 
+    # we import conf_base, specific to ensae_teaching_cs
+    confb = os.path.join(root_source, "conf_base.py")
+    if os.path.exists(confb):
+        try:
+            import conf_base
+        except ImportError as e:
+            sys.path.append(root_source)
+            import conf_base
+            del sys.path[-1]
+
+    # import others conf, we must do it now
+    # it takes too long to do ot after if there is an error
+    # we assume the configuration are not too different
+    # about language for example, latex_path, pandoc_path
+    for t3 in layout:
+        lay, build, override, newconf = lay_build_override_newconf(t3)
+        fLOG("newconf:", newconf, t3)
+        if newconf is None:
+            continue
+        # we need to import this file to guess the template directory and
+        # add missing templates
+        folds = os.path.join(root_sphinxdoc, newconf)
+        # trick, we place the good folder in the first position
+        sys.path.insert(0, folds)
+        fLOG("import from", folds)
+        try:
+            thenewconf = importlib.import_module("conf")
+            fLOG("import:", thenewconf)
+        except Exception as ee:
+            raise HelpGenException(
+                "unable to import a confg file", os.path.join(folds, newconf, "conf.py")) from ee
+        # we remove the insert path
+        del sys.path[0]
+        if thenewconf is None:
+            raise ImportError(
+                "unable to import {0} which defines the help generation".format(newconf))
+        add_missing_files(root, thenewconf)
+        del sys.modules["conf"]
+
+    # we add the source path to the list of path to considered before importing
+    sys.path.append(root_source)
+
+    # import conf.py
+    theconf = importlib.import_module('conf')
+    if theconf is None:
+        raise ImportError(
+            "unable to import conf.py which defines the help generation")
+    add_missing_files(root, theconf)
+
+    # changes
     src = SourceRepository(commandline=True)
     version = src.version(root)
     if version is not None:
@@ -204,15 +278,6 @@ def generate_help_sphinx(project_var_name,
     # modifies the version number in conf.py
     shutil.copy("README.rst", "_doc/sphinxdoc/source")
     shutil.copy("LICENSE.txt", "_doc/sphinxdoc/source")
-
-    # import conf.py
-    theconf = importlib.import_module('conf')
-    if theconf is None:
-        raise ImportError(
-            "unable to import conf.py which defines the help generation")
-
-    # add missing files
-    add_missing_files(root, theconf)
 
     # language
     language = theconf.__dict__.get("language", "en")
@@ -358,16 +423,7 @@ def generate_help_sphinx(project_var_name,
     cmds = []
     lays = []
     for t3 in layout:
-        if isinstance(t3, str):
-            lay, build, override, newconf = t3, "build", {}, None
-        elif len(t3) == 1:
-            lay, build, override, newconf = t3[0], "build", {}, None
-        elif len(t3) == 2:
-            lay, build, override, newconf = t3[0], t3[1], {}, None
-        elif len(t3) == 3:
-            lay, build, override, newconf = t3[0], t3[1], t3[2], None
-        else:
-            lay, build, override, newconf = t3
+        lay, build, override, newconf = lay_build_override_newconf(t3)
 
         if lay == "pdf":
             lay = "latex"
@@ -382,19 +438,6 @@ def generate_help_sphinx(project_var_name,
 
         over = [" -D {0}={1}".format(k, v) for k, v in override.items()]
         over = "".join(over)
-
-        if newconf is not None:
-            # we need to import this file to guess the template directory and
-            # add missing templates
-            try:
-                thenewconf = importlib.import_module(newconf)
-            except Exception as ee:
-                raise HelpGenException(
-                    "unable to import a confg file", newconf) from ee
-            if thenewconf is None:
-                raise ImportError(
-                    "unable to import {0} which defines the help generation".format(newconf))
-            add_missing_files(root, thenewconf)
 
         sconf = "" if newconf is None else " -c {0}".format(newconf)
 
