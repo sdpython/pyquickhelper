@@ -245,7 +245,7 @@ class BlogPostList:
             f.write("\n")
             for item in self:
                 f.write(
-                    "    {0}/{1}\n".format(item.Date[:4], os.path.split(item.FileName)[-1]))
+                    "    {0} - {1} <{2}/{3}>\n".format(item.Date, item.Title, item.Date[:4], os.path.split(item.FileName)[-1]))
             f.write("\n\n")
             if hidden_files is not None:
                 f.write(".. toctree::\n")
@@ -259,7 +259,11 @@ class BlogPostList:
             f.write(".. image:: feed-icon-16x16.png\n")
             f.write(":download:`{0} rss <rss.xml>`\n".format(
                 TITLES[self.Lang]["download"]))
-            f.write("\n")
+            f.write("\n\n\n")
+
+            f.write(
+                ":ref:`{0} <blog-blog>`".format(TITLES[self.Lang]["catsmaonths"]))
+            f.write("\n\n\n")
 
             img = self.get_image("rss")
             shutil.copy(img, folder)
@@ -361,6 +365,11 @@ class BlogPostList:
         res.extend(["", "", ""])
         for mon, nb in months:
             res.append("* :ref:`{0} ({1}) <ap-month-{0}-0>`".format(mon, nb))
+
+        res.extend(["", "", ""])
+        res.extend([TITLES[self.Lang]["by title:"], "", ""])
+        res.extend(
+            ["", "", ":ref:`{0} <l-mainblog>`".format(TITLES[self.Lang]["allblogs"]), "", ""])
 
         filename = os.path.join(folder, "index_blog.rst")
         with open(filename, "w", encoding="utf8") as f:
