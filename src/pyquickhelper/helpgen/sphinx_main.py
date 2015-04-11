@@ -610,7 +610,8 @@ def generate_changes_repo(chan,
         """\n.. _l-changes:\n\n\nChanges\n=======\n\n__CODEGRAPH__\n\nList of recent changes:\n""")
 
     values = []
-    for row in logs:
+    for i, row in enumerate(logs):
+        n = len(logs) - i
         code, nbch, date, comment = row[:4]
         last = row[-1]
         if last.startswith("http"):
@@ -619,9 +620,11 @@ def generate_changes_repo(chan,
         ds = "%04d-%02d-%02d" % (date.year, date.month, date.day)
         if filter_commit(comment):
             if isinstance(nbch, int):
-                values.append(["%04d" % nbch, "%s" % ds, comment.strip("*")])
+                values.append(
+                    ["%d" % n, "%04d" % nbch, "%s" % ds, comment.strip("*")])
             else:
-                values.append(["%s" % nbch, "%s" % ds, comment.strip("*")])
+                values.append(
+                    ["%d" % n, "%s" % nbch, "%s" % ds, comment.strip("*")])
 
     if len(values) == 0 and exception_if_empty:
         raise HelpGenException(
@@ -629,8 +632,9 @@ def generate_changes_repo(chan,
 
     if len(values) > 0:
         tbl = pandas.DataFrame(
-            columns=["change number", "date", "comment"], data=values)
-        rows.append("\n\n" + df2rst(tbl, align=["1x", "1x", "3x"]) + "\n\n")
+            columns=["#", "change number", "date", "comment"], data=values)
+        rows.append(
+            "\n\n" + df2rst(tbl, align=["1x", "1x", "1x", "3x"]) + "\n\n")
 
     final = "\n".join(rows)
 
