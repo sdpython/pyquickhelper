@@ -5,7 +5,6 @@
 See `Tutorial: Writing a simple extension <http://sphinx-doc.org/extdev/tutorial.html>`_
 """
 
-import re
 from docutils import nodes
 from docutils.parsers.rst import Directive
 from sphinx.util.compat import make_admonition

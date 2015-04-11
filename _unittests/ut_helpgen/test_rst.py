@@ -23,7 +23,7 @@ except ImportError:
     import src
 
 from src.pyquickhelper.loghelper.flog import fLOG
-from src.pyquickhelper.helpgen.sphinx_main import post_process_rst_output
+from src.pyquickhelper.helpgen.post_process import post_process_rst_output
 
 
 class TestRst(unittest.TestCase):

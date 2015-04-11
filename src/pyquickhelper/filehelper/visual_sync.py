@@ -140,7 +140,7 @@ def create_visual_diff_through_html(string1, string2):
                       fLOG=lambda *s: None).download(temp_folder=temp)
     except ImportError as e:
         warnings.warn("Unable to import jsdifflib, you should get it from: https://github.com/cemerick/jsdifflib\n"
-                      "The page will be generated but might not work.")
+                      "The page will be generated but might not work.\nEXC:\n{0}".format(e))
 
     fold = os.path.abspath(
         os.path.join(os.path.split(__file__)[0], "temp_difflibjs", "jsdifflib-master"))
