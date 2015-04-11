@@ -19,7 +19,19 @@ class HelpGenException(Exception):
     """
     custom exception
     """
-    pass
+
+    def __init__(self, message, file=None):
+        """
+        redefines the message sent to an exception
+
+        @param      message     message
+        @param      file        filename
+        """
+        if file is None:
+            Exception.__init__(self, message)
+        else:
+            mes = '{0}\n  File "{1}", line 1'.format(message, file)
+            Exception.__init__(self, mes)
 
 
 class ImportErrorHelpGen(ImportError):
