@@ -33,6 +33,13 @@
     See :ref:`l-example_bokeh` to se the result. 
     Including this code in the blog post fails but 
     it should be fixed some days.
+    
+    Last detail, for some reasons I don't know, the instruction
+    ``output_file`` must remain. I tried different version 
+    with different title and file name but it did not work either.
+    You should look into bokeh's documentation to get a better
+    sense of how it works as this macro is used to generate the 
+    documentation of the module.
  
         
             
