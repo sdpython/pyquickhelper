@@ -29,7 +29,7 @@ from .blog_post_list import BlogPostList
 from .sphinx_blog_extension import BlogPostDirective, BlogPostDirectiveAgg
 from .post_process import post_process_latex_output
 from .process_notebooks import process_notebooks, add_notebook_page
-
+from .sphinx_helper import post_process_html_nb_output_static_file
 from .texts_language import TITLES
 
 template_examples = """
@@ -498,6 +498,12 @@ def generate_help_sphinx(project_var_name,
 
     if "pdf" in layout:
         compile_latex_output_final(froot, latex_path, False)
+
+    if "html" in layout:
+        post_process_html_nb_output_static_file(
+            os.path.join(build, "html", "notebooks"), fLOG=fLOG)
+        post_process_html_nb_output_static_file(
+            os.path.join(build, "html", "_downloads"), fLOG=fLOG)
 
     # end
     os.chdir(pa)
