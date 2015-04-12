@@ -6,6 +6,7 @@
 """
 import os
 import io
+import warnings
 from .files_status import FilesStatus
 from ..loghelper.flog import noLOG
 
@@ -191,23 +192,35 @@ class FolderTransferFTP:
         self._ft.save_dates()
         return r
 
-    def preprocess_before_transfering(self, path):
+    def preprocess_before_transfering(self, path, force_binary=False):
         """
         Applies some preprocessing to the file to transfer.
         It adds the footer for example.
         It returns a stream which should be closed by using method @see me close_stream
 
-        @param      path        file name
-        @return                 binary stream
+        @param      path            file name
+        @param      force_binary    impose a binary transfer
+        @return                     binary stream
         """
-        if self._is_binary(path):
+        if force_binary or self._is_binary(path):
             return open(path, "rb")
         else:
             if self._footer_html is None and self._content_filter is None:
                 return open(path, "rb")
             else:
                 with open(path, "r", encoding="utf8") as f:
-                    content = f.read()
+                    try:
+                        content = f.read()
+                    except UnicodeDecodeError as e:
+                        ext = os.path.splitext(path)[-1]
+                        if ext in [".js"]:
+                            # just a warning
+                            warnings.warn(
+                                "FTP transfer, encoding issue with: " + path)
+                            return self.preprocess_before_transfering(path, True)
+                        else:
+                            raise FolderTransferFTPException(
+                                'unable to transfer:\n  File "{0}", line 1'.format(path)) from e
 
                 # footer
                 if self._footer_html is not None and os.path.splitext(
