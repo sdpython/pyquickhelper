@@ -97,9 +97,12 @@ class BlogPostDirective(Directive):
         }
 
         # label
+        #targetid = "blogpost-%d" % env.new_serialno('blogpost')
+        #targetnode = nodes.target('', '', ids=[targetid])
+        #p["target"] = targetnode
+
         tag = BlogPost.build_tag(p["date"], p["title"])
-        targetid = "blogpost-%d" % env.new_serialno('blogpost')
-        targetnode = nodes.target('', '', ids=[targetid, tag])
+        targetnode = nodes.target('', '', ids=[tag])
         p["target"] = targetnode
 
         ad = self._make_ad()
@@ -110,7 +113,7 @@ class BlogPostDirective(Directive):
             env.blogpost_all = []
         env.blogpost_all.append(p)
 
-        # we add a title (does not work)
+        # we add a title
         section = nodes.section()
         section += nodes.title(text=p["title"])
 
@@ -124,7 +127,7 @@ class BlogPostDirective(Directive):
             indexnode['inline'] = False
             set_source_info(self, indexnode)
             for entry in set(p["keywords"] + p["categories"] + [p["date"]]):
-                ne.extend(process_index_entry(entry, targetid))
+                ne.extend(process_index_entry(entry, tag))  # targetid))
             ns = [indexnode, targetnode, section]
         else:
             ns = [targetnode, section]
@@ -161,54 +164,70 @@ class BlogPostDirectiveAgg(BlogPostDirective):
 def visit_blogpost_node(self, node):
     """
     what to do when visiting a node blogpost
+    the function should have different behaviour,
+    depending on the format, or the setup should
+    specify a different function for each.
     """
-    #self.body.append ( ... )
     self.visit_admonition(node)
 
 
 def depart_blogpost_node(self, node):
     """
     what to do when leaving a node blogpost
+    the function should have different behaviour,
+    depending on the format, or the setup should
+    specify a different function for each.
     """
-    #self.body.append ( ... )
     self.depart_admonition(node)
 
 
 def visit_blogpostagg_node(self, node):
     """
     what to do when visiting a node blogpost
+    the function should have different behaviour,
+    depending on the format, or the setup should
+    specify a different function for each.
     """
-    #self.body.append ( ... )
     self.visit_admonition(node)
 
 
 def depart_blogpostagg_node(self, node):
     """
-    what to do when leaving a node blogpost
+    what to do when leaving a node blogpost,
+    the function should have different behaviour,
+    depending on the format, or the setup should
+    specify a different function for each.
     """
-    #self.body.append ( ... )
     self.depart_admonition(node)
 
 
 ######################
-# not really used yet
+# unused, kept as example
 ######################
 
 class blogpostlist_node(nodes.General, nodes.Element):
 
     """
-    defines *blogpostlist* node
+    defines *blogpostlist* node,
+    unused, kept as example
     """
     pass
 
 
 class BlogPostListDirective(Directive):
 
+    """
+    unused, kept as example
+    """
+
     def run(self):
         return [BlogPostListDirective.blogpostlist('')]
 
 
 def purge_blogpost(app, env, docname):
+    """
+    unused, kept as example
+    """
     if not hasattr(env, 'blogpost_all'):
         return
     env.blogpost_all = [post for post in env.blogpost_all
@@ -216,6 +235,9 @@ def purge_blogpost(app, env, docname):
 
 
 def process_blogpost_nodes(app, doctree, fromdocname):
+    """
+    unused, kept as example
+    """
     if not app.config.blogpost_include_s:
         for node in doctree.traverse(blogpost_node):
             node.parent.remove(node)

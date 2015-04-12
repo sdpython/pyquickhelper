@@ -210,7 +210,7 @@ def set_sphinx_variables(fileconf,
     # it modifies the set of things to display inside the sidebar
     html_sidebars = {
         '**': ['searchbox.html', 'moduletoc.html', 'relations.html', 'sourcelink.html', ],
-        'blog/**': ['searchbox.html', 'blogtoc.html', 'localtoc.html', ],
+        'blog/**': ['searchbox.html', 'blogtoc.html', 'localtoc.html', 'sourcelink.html', ],
     }
 
     if html_theme == "bootstrap":

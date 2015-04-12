@@ -508,9 +508,6 @@ class BlogPostList:
             rows.append(text)
             rows.append("")
             rows.append("")
-            rows.append(":ref:`... <{0}>`".format(post.Tag))
-            rows.append("")
-            rows.append("")
 
         rows.append(".. raw:: html")
         rows.append("")

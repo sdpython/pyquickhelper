@@ -186,6 +186,14 @@ class BlogPost:
         else:
             for r in self.Content:
                 rows.append("    " + r)
+
+        rows.append("")
+        rows.append("")
+        # does not work yet
+        rows.append("    :ref:`. <{0}>`".format(self.Tag))
+        rows.append("")
+        rows.append("")
+
         return "\n".join(rows)
 
     image_tag = ".. image:: "

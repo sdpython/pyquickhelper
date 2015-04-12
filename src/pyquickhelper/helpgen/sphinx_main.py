@@ -229,6 +229,8 @@ def generate_help_sphinx(project_var_name,
             import conf_base
             del sys.path[-1]
 
+        fLOG("conf_base", conf_base.__file__)
+
     # import others conf, we must do it now
     # it takes too long to do ot after if there is an error
     # we assume the configuration are not too different
