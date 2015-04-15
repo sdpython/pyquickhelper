@@ -307,7 +307,8 @@ def post_process_latex(st, doall, info=None):
     dollar = st.split("\\$")
     if len(dollar) > 0 and (
             info is None or os.path.splitext(info)[-1] != ".html"):
-        # probably an issue, for the time being, we are strict, no dollar as a currency in latex
+        # probably an issue, for the time being, we are strict,
+        # no dollar as a currency in latex
         # we do not check HTML files, for the time being, the formulas appears
         # in pseudo latex
         exp = re.compile(r"(.{3}[\\]\$)")
@@ -333,11 +334,6 @@ def post_process_latex(st, doall, info=None):
                         for i, rec in enumerate(records)]
             for mes in messages:
                 warnings.warn(mes)
-            #raise HelpGenException("\n".join(messages))
-
-        if found == 0:
-            raise NotImplementedError(
-                "unexpected issue with \\$ in file: {0}".format(info))
 
     st = st.replace("<br />", "\\\\")
     st = st.replace("»", '"')
@@ -346,8 +342,9 @@ def post_process_latex(st, doall, info=None):
         st = st.replace(
             "\\maketitle", "\\maketitle\n\n\\newchapter{Introduction}")
 
-    st = st.replace("%5C", "/").replace("%3A",
-                                        ":").replace("\\includegraphics{notebooks\\", "\\includegraphics{")
+    st = st.replace("%5C", "/") \
+           .replace("%3A", ":") \
+           .replace("\\includegraphics{notebooks\\", "\\includegraphics{")
     st = st.replace(
         r"\begin{document}", r"\setlength{\parindent}{0cm}%s\begin {document}" % "\n")
     st = st.replace(r"DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}",

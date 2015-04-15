@@ -86,6 +86,8 @@ def process_notebooks(notebooks,
         For HTML conversion, read the following blog about mathjax: `nbconvert: Math is not displayed in the html output <https://github.com/ipython/ipython/issues/6440>`_.
         Add defaults values for *pandoc_path*, *latex_path*.
 
+    .. versionchanged:: 1.0
+        Assumes IPython 3 is installed. It might no work for earlier versions.
     """
     if pandoc_path is None:
         pandoc_path = find_pandoc_path()
@@ -142,6 +144,8 @@ def process_notebooks(notebooks,
     files = []
 
     for notebook in notebooks:
+        thisfiles = []
+
         nbout = os.path.split(notebook)[-1]
         if " " in nbout:
             raise HelpGenException(
@@ -152,6 +156,7 @@ def process_notebooks(notebooks,
             # output
             trueoutputfile = os.path.join(build, nbout + extensions[format])
             fLOG("--- produce ", trueoutputfile)
+            pandoco = "docx" if format in ["word", "docx"] else None
 
             # we chech it was not done before
             if os.path.exists(trueoutputfile):
@@ -160,11 +165,13 @@ def process_notebooks(notebooks,
                 if dtnb < dto:
                     fLOG("-- skipping notebook", format,
                          notebook, "(", trueoutputfile, ")")
-                    files.append(trueoutputfile)
+                    if trueoutputfile not in thisfiles:
+                        thisfiles.append(trueoutputfile)
                     if pandoco is None:
                         continue
                     else:
-                        out2 = os.path.splitext(outputfile)[0] + "." + pandoco
+                        out2 = os.path.splitext(
+                            trueoutputfile)[0] + "." + pandoco
                         if os.path.exists(out2):
                             continue
 
@@ -177,14 +184,11 @@ def process_notebooks(notebooks,
                     title)
                 format = "latex"
                 compilation = True
-                pandoco = None
             elif format in ["word", "docx"]:
                 format = "html"
-                pandoco = "docx"
                 compilation = False
             else:
                 compilation = False
-                pandoco = None
 
             # output
             outputfile = os.path.join(build, nbout + extensions[format])
@@ -236,8 +240,8 @@ def process_notebooks(notebooks,
             format = extensions[format].strip(".")
 
             # we add the file to the list of generated files
-            if outputfile not in files:
-                files.append(outputfile)
+            if outputfile not in thisfiles:
+                thisfiles.append(outputfile)
 
             fLOG("******", format, compilation, outputfile)
 
@@ -249,7 +253,12 @@ def process_notebooks(notebooks,
                     else:
                         lat = "pdflatex"
 
-                    tex = files[-1].replace(".pdf", ".tex")
+                    tex = [
+                        _ for _ in thisfiles if os.path.splitext(_)[-1] == ".tex"]
+                    if len(tex) != 1:
+                        raise FileNotFoundError(
+                            "no latex file was generated or more than one (={0}), nb={1}".format(len(tex), notebook))
+                    tex = tex[0]
                     post_process_latex_output_any(tex)
                     # -interaction=batchmode
                     c = '"{0}" "{1}" -output-directory="{2}"'.format(
@@ -266,7 +275,7 @@ def process_notebooks(notebooks,
                     if not os.path.exists(f):
                         raise HelpGenException(
                             "missing file: {0}\nERR:\n{1}".format(f, err))
-                    files.append(f)
+                    thisfiles.append(f)
                 else:
                     fLOG("unable to find latex in", latex_path)
 
@@ -300,22 +309,22 @@ def process_notebooks(notebooks,
                 if not os.path.exists(outputfile):
                     raise FileNotFoundError(outputfile + "\nCONTENT in " + os.path.dirname(outputfile) + ":\n" + "\n".join(
                         os.listdir(os.path.dirname(outputfile))) + "\nERR:\n" + err + "\nOUT:\n" + out + "\nCMD:\n" + c)
-                files += add_link_to_notebook(outputfile, notebook,
-                                              "pdf" in formats, False, "python" in formats)
+                thisfiles += add_link_to_notebook(outputfile, notebook,
+                                                  "pdf" in formats, False, "python" in formats)
 
             elif format == "ipynb":
                 # we just copy the notebook
-                files += add_link_to_notebook(outputfile, notebook,
-                                              "ipynb" in formats, False, "python" in formats)
+                thisfiles += add_link_to_notebook(outputfile, notebook,
+                                                  "ipynb" in formats, False, "python" in formats)
 
             elif format == "rst":
                 # we add a link to the notebook
-                files += add_link_to_notebook(
+                thisfiles += add_link_to_notebook(
                     outputfile, notebook, "pdf" in formats, "html" in formats, "python" in formats)
 
             elif format in ("tex", "latex", "pdf"):
-                files += add_link_to_notebook(outputfile,
-                                              notebook, False, False, False)
+                thisfiles += add_link_to_notebook(outputfile,
+                                                  notebook, False, False, False)
 
             elif format == "py":
                 pass
@@ -325,6 +334,8 @@ def process_notebooks(notebooks,
 
             else:
                 raise HelpGenException("unexpected format " + format)
+
+            files.extend(thisfiles)
 
     copy = []
     for f in files:

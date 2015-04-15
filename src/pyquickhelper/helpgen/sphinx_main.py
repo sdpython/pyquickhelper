@@ -189,6 +189,7 @@ def generate_help_sphinx(project_var_name,
         ``conf.py`` will be considered.
 
     .. versionchanged:: 1.0
+        Assumes IPython 3 is installed. It might no work for earlier versions (notebooks).
     """
 
     def lay_build_override_newconf(t3):
