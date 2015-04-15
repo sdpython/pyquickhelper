@@ -55,7 +55,8 @@ class TestPy3to2(unittest.TestCase):
             f.write(script)
 
         pyexe2 = None
-        for location in [r"C:\WinPython-64bit-2.7.9.3\python-2.7.9.amd64",
+        for location in [r"C:\Anaconda",
+                         r"C:\WinPython-64bit-2.7.9.3\python-2.7.9.amd64",
                          ]:
             exe = os.path.join(location, "python.exe")
             if os.path.exists(exe):
