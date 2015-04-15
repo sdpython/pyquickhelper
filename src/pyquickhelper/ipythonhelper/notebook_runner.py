@@ -111,6 +111,24 @@ class NotebookRunner(object):
                     res.append('"nothing to show"')
             return "\n".join(res)
 
+    @staticmethod
+    def get_cell_code(cell):
+        """
+        return the code of a cell
+
+        @param      cell        a cell or a string
+        @return                 boolean (=iscell), string
+        """
+        if isinstance(cell, str):
+            iscell = False
+            return iscell, cell
+        else:
+            iscell = True
+            try:
+                return iscell, cell.source
+            except AttributeError:
+                return iscell, cell.input
+
     def run_cell(self, index_cell, cell, clean_function=None):
         '''
         Run a notebook cell and update the output of that cell in-place.
@@ -120,15 +138,7 @@ class NotebookRunner(object):
         @param      clean_function      cleaning function to apply to the code before running it
         @return                         output of the cell
         '''
-        if isinstance(cell, str):
-            iscell = False
-            codei = cell
-        else:
-            iscell = True
-            try:
-                codei = cell.source
-            except AttributeError:
-                codei = cell.input
+        iscell, codei = NotebookRunner.get_cell_code(cell)
 
         self.fLOG('-- running cell:\n%s\n' % codei)
 
@@ -317,19 +327,20 @@ class NotebookRunner(object):
             self.run_cell(-1, cell)
 
         for i, cell in enumerate(self.iter_code_cells()):
-            if valid is not None and not valid(cell.input):
+            iscell, codei = NotebookRunner.get_cell_code(cell)
+            if valid is not None and not valid(codei):
                 continue
             try:
                 self.run_cell(i, cell, clean_function=clean_function)
             except Empty as er:
                 raise Exception(
-                    "{0}\nissue when executing:\n{1}".format(self.comment, cell.input)) from er
+                    "{0}\nissue when executing:\n{1}".format(self.comment, codei)) from er
             except NotebookError as e:
                 if not skip_exceptions:
                     raise
                 else:
                     raise Exception(
-                        "issue when executing:\n{0}".format(cell.input)) from e
+                        "issue when executing:\n{0}".format(codei)) from e
             if progress_callback:
                 progress_callback(i)
 
