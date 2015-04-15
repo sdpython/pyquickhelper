@@ -21,7 +21,8 @@ into ``dist/html``.
 
 
 Configuration:
-    * :ref:`l-confpy`
+
+.. literalinclude:: conf.py
 
 Design
 ++++++
