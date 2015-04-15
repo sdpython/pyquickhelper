@@ -8,6 +8,7 @@ from IPython.nbformat.reader import reads
 from .notebook_runner import NotebookRunner
 from ..loghelper.flog import noLOG
 from IPython.nbformat.v4 import upgrade
+from .notebook_exception import NotebookException
 
 
 def writes(nb, **kwargs):
@@ -28,7 +29,11 @@ def writes(nb, **kwargs):
     s : unicode
         The notebook string.
     """
-    return versions[nb.nbformat].writes_json(nb, **kwargs)
+    try:
+        return versions[nb.nbformat].writes_json(nb, **kwargs)
+    except AttributeError as e:
+        raise NotebookException(
+            "probably wrong error: {0}".format(nb.nbformat))
 
 
 def upgrade_notebook(filename, encoding="utf8"):
@@ -121,7 +126,11 @@ def run_notebook(filename,
 
         if outfilename is not None:
             with open(outfilename, 'w', encoding=encoding) as f:
-                s = writes(nb_runner.nb)
+                try:
+                    s = writes(nb_runner.nb)
+                except NotebookException as e:
+                    raise NotebookException(
+                        "issue with notebook: " + filename) from e
                 if isinstance(s, bytes):
                     s = s.decode('utf8')
                 f.write(s)

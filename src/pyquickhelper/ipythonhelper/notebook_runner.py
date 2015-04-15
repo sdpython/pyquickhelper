@@ -31,6 +31,7 @@ class NotebookRunner(object):
     This classes executes a notebook end to end.
     """
 
+    #. available output types
     MIME_MAP = {
         'image/jpeg': 'jpeg',
         'image/png': 'png',
@@ -220,16 +221,10 @@ class NotebookRunner(object):
                 if 'text' in content:
                     out.text = content['text']
                 else:
-                    out.text = content['data']
+                    out.data = content['data']
 
             elif msg_type in ('display_data', 'pyout'):
-                for mime, data in content['data'].items():
-                    try:
-                        attr = self.MIME_MAP[mime]
-                    except KeyError:
-                        raise NotImplementedError(
-                            'unhandled mime type: %s' % mime)
-                    setattr(out, attr, data)
+                out.data = content['data']
 
             elif msg_type == 'pyerr':
                 out.ename = content['ename']
@@ -243,6 +238,7 @@ class NotebookRunner(object):
             else:
                 raise NotImplementedError(
                     'unhandled iopub message: %s' % msg_type)
+
             outs.append(out)
 
         if iscell:
@@ -251,10 +247,14 @@ class NotebookRunner(object):
         raw = []
         for _ in outs:
             try:
-                t = _.text
-                raw.append(t)
+                t = _.data
             except AttributeError:
                 continue
+
+            # see MIMEMAP to see the available output type
+            for k, v in t.items():
+                if k.startswith("text"):
+                    raw.append(v)
 
         sraw = "\n".join(raw)
         self.fLOG(sraw)

@@ -122,8 +122,6 @@ def import_pyquickhelper():
                 os.path.abspath(
                     os.path.join(
                         os.path.dirname(__file__),
-                        "..",
-                        "pyquickhelper",
                         "src"))))
         try:
             import pyquickhelper
