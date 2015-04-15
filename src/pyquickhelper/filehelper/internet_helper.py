@@ -4,7 +4,6 @@
 """
 
 import os
-import urllib
 try:
     import urllib.request as urllib_request
 except ImportError:
@@ -52,7 +51,7 @@ def download(url, path_download=".", outfile=None, fLOG=noLOG):
 
         if os.path.exists(dest) and not os.path.exists(nyet):
             try:
-                f1 = urllib.urlopen(url)
+                f1 = urllib_request.urlopen(url)
                 down = _first_more_recent(f1, dest)
                 newdate = down
                 f1.close()

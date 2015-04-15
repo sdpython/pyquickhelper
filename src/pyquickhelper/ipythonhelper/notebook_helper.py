@@ -3,9 +3,64 @@
 @brief Some automation helpers about notebooks
 """
 import io
-from IPython.nbformat.current import read, write
+from IPython.nbformat import versions
+from IPython.nbformat.reader import reads
 from .notebook_runner import NotebookRunner
 from ..loghelper.flog import noLOG
+from IPython.nbformat.v4 import upgrade
+
+
+def writes(nb, **kwargs):
+    """Write a notebook to a string in a given format in the current nbformat version.
+
+    This function always writes the notebook in the current nbformat version.
+
+    Parameters
+    ----------
+    nb : NotebookNode
+        The notebook to write.
+    version : int
+        The nbformat version to write.
+        Used for downgrading notebooks.
+
+    Returns
+    -------
+    s : unicode
+        The notebook string.
+    """
+    return versions[nb.nbformat].writes_json(nb, **kwargs)
+
+
+def upgrade_notebook(filename, encoding="utf8"):
+    """
+    converts a notebook from version 2 to 3
+
+    @param      filename        filename
+    @param      encoding        encoding
+    @return                     modification?
+
+    .. versionadded:: 1.0
+    """
+    with open(filename, "r", encoding=encoding) as payload:
+        content = payload.read()
+
+    nb = reads(content)
+
+    if nb.nbformat >= 4:
+        return False
+
+    upgrade(nb, from_version=nb.nbformat)
+
+    s = writes(nb)
+    if isinstance(s, bytes):
+        s = s.decode('utf8')
+
+    if s == content:
+        return False
+    else:
+        with open(filename, "w", encoding=encoding) as f:
+            f.write(s)
+        return True
 
 
 def run_notebook(filename,
@@ -47,7 +102,7 @@ def run_notebook(filename,
     .. versionadded:: 1.0
     """
     with open(filename, "r", encoding=encoding) as payload:
-        nb = read(payload, 'json')
+        nb = reads(payload.read())
 
         out = io.StringIO()
 
@@ -66,7 +121,10 @@ def run_notebook(filename,
 
         if outfilename is not None:
             with open(outfilename, 'w', encoding=encoding) as f:
-                write(nb_runner.nb, f, 'json')
+                s = writes(nb_runner.nb)
+                if isinstance(s, bytes):
+                    s = s.decode('utf8')
+                f.write(s)
 
         nb_runner.shutdown_kernel()
         return out.getvalue()

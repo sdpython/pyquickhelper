@@ -7,7 +7,7 @@ from queue import Empty
 import os
 import re
 
-from IPython.nbformat.current import NotebookNode
+from IPython.nbformat.v3 import NotebookNode
 from IPython.kernel import KernelManager
 
 from ..loghelper.flog import noLOG
@@ -70,7 +70,8 @@ class NotebookRunner(object):
 
         self.kc = self.km.client()
         self.kc.start_channels()
-        # self.kc.wait_for_ready()
+        # if it does not work, it probably means IPython < 3
+        self.kc.wait_for_ready()
         self.nb = nb
         self.comment = comment
 
@@ -124,7 +125,10 @@ class NotebookRunner(object):
             codei = cell
         else:
             iscell = True
-            codei = cell.input
+            try:
+                codei = cell.source
+            except AttributeError:
+                codei = cell.input
 
         self.fLOG('-- running cell:\n%s\n' % codei)
 
@@ -136,10 +140,12 @@ class NotebookRunner(object):
         self.kc.execute(code)
 
         reply = self.kc.get_shell_msg()
+        reason = None
         try:
             status = reply['content']['status']
         except KeyError:
             status = 'error'
+            reason = "no status key in reply['content']"
 
         if status == 'error':
             ansi_escape = re.compile(r'\x1b[^m]*m')
@@ -147,7 +153,7 @@ class NotebookRunner(object):
                 tr = [ansi_escape.sub('', _)
                       for _ in reply['content']['traceback']]
             except KeyError:
-                tr = ["No traceback, avaible keys in reply['content']"] + \
+                tr = ["No traceback, available keys in reply['content']"] + \
                     [_ for _ in reply['content']]
             traceback_text = '\n'.join(tr)
             self.fLOG("ERR:\n", traceback_text)
@@ -167,6 +173,7 @@ class NotebookRunner(object):
                 # execution state should return to idle before the queue becomes empty,
                 # if it doesn't, something bad has happened
                 status = "error"
+                reason = "exception Empty was raised"
                 nbissue += 1
                 if nbissue > 10:
                     # the notebook is empty
@@ -262,16 +269,21 @@ class NotebookRunner(object):
                 scode = [code]
             else:
                 scode = ""
-            raise NotebookError("{7}\nCELL {4} length={5} -- {6}:\n{0}\nTRACE:\n{1}\nRAW:\n{2}REPLY:\n{3}".format(
-                code, traceback_text, sraw, sreply, index_cell, len(code), scode, self.comment))
+            raise NotebookError("{7}\nCELL status={8}, reason={9} -- {4} length={5} -- {6}:\n-----------------\n{0}\n-----------------\nTRACE:\n{1}\nRAW:\n{2}REPLY:\n{3}".format(
+                code, traceback_text, sraw, sreply, index_cell, len(code), scode, self.comment, status, reason))
         return outs
 
     def iter_code_cells(self):
         '''
         Iterate over the notebook cells containing code.
         '''
-        for ws in self.nb.worksheets:
-            for cell in ws.cells:
+        try:
+            for ws in self.nb.worksheets:
+                for cell in ws.cells:
+                    if cell.cell_type == 'code':
+                        yield cell
+        except AttributeError:
+            for cell in self.nb.cells:
                 if cell.cell_type == 'code':
                     yield cell
 

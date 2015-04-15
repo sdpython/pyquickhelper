@@ -207,14 +207,7 @@ elif "unittests" in sys.argv:
 else:
     setup(
         name=project_var_name,
-        version='%s.%s' % (sversion,
-                           subversion) if "register" in sys.argv or
-                                          "sdist" in sys.argv or
-                                          "bdist_wheel" in sys.argv or
-                                          "bdist_msi" in sys.argv or
-                                          "install" in sys.argv else 'py%s-%s.%s' % (versionPython,
-                                                                                     sversion,
-                                                                                     subversion),
+        version='%s.%s' % (sversion, subversion),
         author='Xavier Dupré',
         author_email='xavier.dupre AT gmail.com',
         url="http://www.xavierdupre.fr/app/pyquickhelper/helpsphinx/index.html",
@@ -235,7 +228,11 @@ else:
             "dateutils",
             "requests",
             "docutils",
-            "IPython",
+            "IPython>=3.1",
             "matplotlib",
-            "autopep8"],
+            "docutils",
+            "flake8",
+            "pep8==1.5.7",
+            "autopep8",
+            "sphinx", ],
     )

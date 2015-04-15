@@ -65,6 +65,7 @@ class TestNotebookConversion (unittest.TestCase):
                ]
 
         if sys.platform.startswith("win"):
+            formats.append("latex")
             formats.append("pdf")
             exp.append("example_pyquickhelper.tex")
             exp.append("example_pyquickhelper.pdf")
@@ -85,7 +86,7 @@ class TestNotebookConversion (unittest.TestCase):
             assert os.path.exists(_)
 
         fou = [os.path.split(_)[-1] for _ in res]
-        fou = [_ for _ in fou if "png" not in fou]
+        fou = [_ for _ in fou if "png" not in _]
         fou = list(sorted(set(fou)))
         exp = list(sorted(set(exp)))
         if len(fou) < len(exp):

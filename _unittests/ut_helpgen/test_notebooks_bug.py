@@ -62,7 +62,7 @@ class TestNoteBooksBug(unittest.TestCase):
         fold = os.path.normpath(os.path.join(path, "notebooks"))
         nbs = [os.path.join(fold, _)
                for _ in os.listdir(fold) if ".ipynb" in _]
-        formats = ["ipynb", "html", "python", "rst", "pdf", "docx"]
+        formats = ["ipynb", "html", "python", "rst", "latex", "pdf", "docx"]
 
         temp = os.path.join(path, "temp_nb_bug")
         if not os.path.exists(temp):

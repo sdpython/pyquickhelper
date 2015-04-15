@@ -73,6 +73,7 @@ Versions / Changes
       the parser tries to interpret values passed to the magic commands
     * **new:** function :func:`ipython_cython_extension <pyquickhelper.ipythonhelper.cython_helper.ipython_cython_extension>` which checks if cython can work on Windows (compiler issues)
     * **new:** the automated generation of the documentation now accepts blogs to be included (in folder ``_doc/sphinxdoc/source/blog``)
+    * **change:** migration to IPython 3.1 (changes when running a notebook offline, converting a notebook)
 * **0.9 - 2015/01/25**
     * **add:** function to remove extra spaces in a file :func:`remove_extra_spaces <pyquickhelper.pycode.code_helper.remove_extra_spaces>`
     * **add:** function :func:`create_visual_diff_through_html_files <pyquickhelper.filehelper.visual_sync.create_visual_diff_through_html_files>`

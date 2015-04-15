@@ -149,13 +149,33 @@ def process_notebooks(notebooks,
         nbout = os.path.splitext(nbout)[0]
         for format in formats:
 
+            # output
+            trueoutputfile = os.path.join(build, nbout + extensions[format])
+            fLOG("--- produce ", trueoutputfile)
+
+            # we chech it was not done before
+            if os.path.exists(trueoutputfile):
+                dto = os.stat(trueoutputfile).st_mtime
+                dtnb = os.stat(notebook).st_mtime
+                if dtnb < dto:
+                    fLOG("-- skipping notebook", format,
+                         notebook, "(", trueoutputfile, ")")
+                    files.append(trueoutputfile)
+                    if pandoco is None:
+                        continue
+                    else:
+                        out2 = os.path.splitext(outputfile)[0] + "." + pandoco
+                        if os.path.exists(out2):
+                            continue
+
+            # next
             options = ""
             if format == "pdf":
                 title = os.path.splitext(
                     os.path.split(notebook)[-1])[0].replace("_", " ")
-                format = "latex"
-                options = ' --post PDF --SphinxTransformer.author="" --SphinxTransformer.overridetitle="{0}"'.format(
+                options = ' --SphinxTransformer.author="" --SphinxTransformer.overridetitle="{0}"'.format(
                     title)
+                format = "latex"
                 compilation = True
                 pandoco = None
             elif format in ["word", "docx"]:
@@ -169,21 +189,6 @@ def process_notebooks(notebooks,
             # output
             outputfile = os.path.join(build, nbout + extensions[format])
             fLOG("--- produce ", outputfile)
-
-            # we chech it was not done before
-            if os.path.exists(outputfile):
-                dto = os.stat(outputfile).st_mtime
-                dtnb = os.stat(notebook).st_mtime
-                if dtnb < dto:
-                    fLOG("-- skipping notebook", format,
-                         notebook, "(", outputfile, ")")
-                    files.append(outputfile)
-                    if pandoco is None:
-                        continue
-                    else:
-                        out2 = os.path.splitext(outputfile)[0] + "." + pandoco
-                        if os.path.exists(out2):
-                            continue
 
             templ = "full" if format != "latex" else "article"
             fLOG("### convert into ", format, " NB: ", notebook,
@@ -228,16 +233,11 @@ def process_notebooks(notebooks,
                         if "error" in err or "critical" in err or "bad config" in err:
                             raise HelpGenException(err)
 
-                # we should compile a second time
-                # compilation = True  # already done above
-
             format = extensions[format].strip(".")
 
             # we add the file to the list of generated files
-            files.append(outputfile)
-
-            if "--post PDF" in c:
-                files.append(os.path.join(build, nbout + ".pdf"))
+            if outputfile not in files:
+                files.append(outputfile)
 
             fLOG("******", format, compilation, outputfile)
 
@@ -407,6 +407,8 @@ def add_link_to_notebook(file, nb, pdf, html, python):
         shutil.copy(nb, fold)
 
     if ext == ".ipynb":
+        return res
+    elif ext == ".pdf":
         return res
     elif ext == ".html":
         post_process_html_output(file, pdf, python)
