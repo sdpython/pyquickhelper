@@ -25,6 +25,7 @@ pyquickhelper documentation
 `documentation <http://www.xavierdupre.fr/app/pyquickhelper/helpsphinx/index.html>`_, 
 `wheel <http://www.xavierdupre.fr/site2013/index_code.html#pyquickhelper>`_,
 `travis <https://travis-ci.org/sdpython/pyquickhelper>`_,
+:ref:`l-README`,
 :ref:`blog <ap-main-0>`
 
 Functionalities
@@ -44,6 +45,13 @@ Functionalities
     * function :func:`rst2html <pyquickhelper.helpgen.convert_doc_helper.rst2html>` to convert RST into HTML
     * Sphinx directive :class:`BlogPostDirective <pyquickhelper.helpgen.sphinx_blog_extension.BlogPostDirective>` 
       to add a drective ``blogpost`` into the docutmention
+    * function to run a notebook offline :func:`run_notebook <pyquickhelper.ipythonhelper.notebook_helper.run_notebook>`
+      
+Installation
+------------
+
+``pip install pyquickhelper``
+
     
 Navigation
 ----------
@@ -62,6 +70,6 @@ Others options are described at: :ref:`l-moreinstall`.
 
 
 .. toctree::
-    :maxdepth: 2
+    :maxdepth: 1
 
     indexmenu

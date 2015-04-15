@@ -33,7 +33,9 @@ Functionalities
     * help running unit tests
     * simple server to server sphinx documentation
     * file compression, zip, gzip, 7z
-    * helpers for ipython notebooks
+    * helpers for ipython notebooks (upgrade, offline run)
+    * parser to quickly add a magic command in a notebook
+    * Sphinx directives to integrate a blogpost in the documentation
 
 Design
 ------
