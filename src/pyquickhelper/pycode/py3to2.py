@@ -156,6 +156,7 @@ def py3to2_convert(script):
     content = content.replace("int  # long#", "long")
     content = content.replace("str  #unicode#", "unicode")
     content = content.replace("str  # unicode#", "unicode")
+    content = content.replace("Programming Language :: Python :: 3", "Programming Language :: Python :: 2")
 
     # end
     return content
