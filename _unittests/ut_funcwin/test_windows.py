@@ -5,7 +5,10 @@ import os
 import sys
 import unittest
 import datetime
-from tkinter import TclError
+if sys.version_info[0] == 2:
+    from Tkinter import TclError
+else:
+    from tkinter import TclError
 
 try:
     import src
@@ -25,7 +28,7 @@ from src.pyquickhelper import check, open_window_params, open_window_function
 from src.pyquickhelper.funcwin.function_helper import get_function_list, has_unknown_parameters, private_get_function
 
 
-def test_function(a, b):
+def my_tst_function(a, b):
     """
     return a+b
     @param      a   (float) float
@@ -57,7 +60,7 @@ class TestWindows (unittest.TestCase):
             __file__,
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
-        func = test_function
+        func = my_tst_function
         try:
             win = open_window_function(func, do_not_open=True)
         except TclError:

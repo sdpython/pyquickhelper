@@ -5,8 +5,12 @@
 """
 
 import os
+import sys
 from docutils import io as docio
 from docutils.core import publish_programmatically
+
+if sys.version_info[0] == 2:
+    from codecs import open
 
 
 class BlogPostPareError(Exception):

@@ -7,6 +7,12 @@ to visualize the differences between two files.
 
 import os
 import warnings
+import sys
+
+if sys.version_info[0] == 2:
+    from codecs import open
+    FileNotFoundError = OSError
+
 
 html_page = """
     <!doctype html>

@@ -35,6 +35,9 @@ class TestPy3to2(unittest.TestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
+        if sys.version_info[0] == 2:
+            return
+
         temp = get_temp_folder(__file__, "temp_py3to2")
         root = os.path.abspath(os.path.dirname(__file__))
         root = os.path.normpath(os.path.join(root, "..", ".."))
@@ -45,7 +48,11 @@ class TestPy3to2(unittest.TestCase):
 
         script = """
             import sys
+            sys.path = [ p for p in sys.path if "src" not in p and "ut_" not in p ]
             sys.path.append(r"{0}")
+            print ""
+            for k in sys.path:
+                print k
             import pyquickhelper
             """.replace("            ", "")
         script = script.format(os.path.join(temp, "src"))
@@ -55,7 +62,8 @@ class TestPy3to2(unittest.TestCase):
             f.write(script)
 
         pyexe2 = None
-        for location in [r"C:\Anaconda",
+        for location in [r"C:\Anaconda2",
+                         r"C:\Anaconda",
                          r"C:\WinPython-64bit-2.7.9.3\python-2.7.9.amd64",
                          ]:
             exe = os.path.join(location, "python.exe")

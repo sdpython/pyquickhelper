@@ -13,7 +13,11 @@ def check_icon():
     path = os.path.dirname(__file__)
     icon = os.path.join(path, "project_ico.ico")
     if not os.path.exists(icon):
-        raise FileNotFoundError(icon)
+        import sys
+        if sys.version_info[0] == 2:
+            raise OSError(icon)
+        else:
+            raise FileNotFoundError(icon)
     return True
 
 from .frame_params import open_window_params

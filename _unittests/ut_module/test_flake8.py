@@ -33,6 +33,9 @@ class TestFlake8(unittest.TestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
+        if sys.version_info[0] == 2:
+            return
+
         thi = os.path.abspath(os.path.dirname(__file__))
         src = os.path.normpath(os.path.join(thi, "..", "..", "src"))
         exe = os.path.dirname(sys.executable)

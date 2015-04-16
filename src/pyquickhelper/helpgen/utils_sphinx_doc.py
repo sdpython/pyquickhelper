@@ -6,6 +6,7 @@
 
 import os
 import re
+import sys
 import shutil
 import importlib
 
@@ -16,6 +17,9 @@ from .utils_sphinx_doc_helpers import add_file_rst_template, process_var_tag, im
 from .utils_sphinx_doc_helpers import get_module_objects, add_file_rst_template_cor, add_file_rst_template_title
 from .utils_sphinx_doc_helpers import IndexInformation, RstFileHelp, HelpGenException, process_look_for_tag, make_label_index
 from ..pandashelper.tblformat import df2rst
+
+if sys.version_info[0] == 2:
+    from codecs import open
 
 
 def validate_file_for_help(filename, fexclude=lambda f: False):
@@ -947,8 +951,9 @@ def prepare_file_for_sphinx_help_generation(
                                           replace_relative_import=replace_relative_import)
 
             # without those two lines, importing the module might crash later
-            importlib.invalidate_caches()
-            importlib.util.find_spec(module_name)
+            if sys.version_info[0] != 2:
+                importlib.invalidate_caches()
+                importlib.util.find_spec(module_name)
 
             rsts += add_file_rst(rootm,
                                  store_obj,

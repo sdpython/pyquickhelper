@@ -40,6 +40,9 @@ class TestSphinxDocFull (unittest.TestCase):
         assert not os.path.exists(temp)
         os.mkdir(temp)
 
+        if sys.version_info[0] == 2:
+            return
+
         file = os.path.join(path, "..", "..")
         fLOG(os.path.normpath(os.path.abspath(file)))
         assert os.path.exists(file)

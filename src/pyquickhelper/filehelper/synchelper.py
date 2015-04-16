@@ -7,11 +7,15 @@
 
 import os
 import re
+import sys
 
 from ..loghelper.flog import fLOG
 from .file_tree_node import FileTreeNode
 from .files_status import FilesStatus, checksum_md5
 from ..loghelper.pqh_exception import PQHException
+
+if sys.version_info[0] == 2:
+    from codecs import open
 
 
 def explore_folder(folder, pattern=None, fullname=False):

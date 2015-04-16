@@ -119,6 +119,9 @@ class TestFileCol (unittest.TestCase):
         with open(stay, "w") as f:
             f.write("should stay")
 
+        if sys.version_info[0] == 2:
+            return
+
         synchronize_folder(data,
                            troi,
                            hash_size=0,

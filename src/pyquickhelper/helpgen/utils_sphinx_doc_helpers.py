@@ -13,6 +13,9 @@ import importlib
 from ..pandashelper.tblformat import df2rst
 from ..loghelper.flog import noLOG
 
+if sys.version_info[0] == 2:
+    from codecs import open
+
 
 class HelpGenException(Exception):
 

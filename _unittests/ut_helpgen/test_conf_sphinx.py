@@ -42,6 +42,8 @@ class TestConfSphinx(unittest.TestCase):
             "sphinxdoc",
             "source",
             "conf.py")
+        if sys.version_info[0] == 2:
+            return
         assert os.path.exists(ff)
         import solar_theme
         d = {}

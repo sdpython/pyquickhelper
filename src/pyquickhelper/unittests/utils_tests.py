@@ -75,7 +75,7 @@ def get_test_file(filter, dir=None):
             if not os.path.exists(d):
                 raise FileNotFoundError(d)
 
-    copypaths = sys.path.copy()
+    copypaths = list(sys.path)
 
     li = []
     for dir in dirs:
@@ -147,7 +147,7 @@ def import_files(li):
     allsuite = []
     for l in li:
 
-        copypath = sys.path.copy()
+        copypath = list(sys.path)
 
         sdir = os.path.split(l)[0]
         if sdir not in sys.path:
@@ -353,14 +353,20 @@ def main(runner,
             if len(err) > 0:
                 sys.stderr.write(err)
         else:
-            with warnings.catch_warnings(record=True) as w:
-                warnings.simplefilter("always")
-                r = runner.run(s[0])
-                for ww in w:
-                    list_warn.append(ww)
-                warnings.resetwarnings()
+            if sys.version_info[0] >= 3:
+                with warnings.catch_warnings(record=True) as w:
+                    warnings.simplefilter("always")
+                    r = runner.run(s[0])
+                    for ww in w:
+                        list_warn.append(ww)
+                    warnings.resetwarnings()
 
-            out = r.stream.getvalue()
+                out = r.stream.getvalue()
+            else:
+                print("running")
+                r = runner.run(s[0])
+                out = r.stream.getvalue()
+                print("end running")
 
         ti = exp.findall(out)[-1]
         # don't modify it, PyCharm does not get it right (ti is a tuple)

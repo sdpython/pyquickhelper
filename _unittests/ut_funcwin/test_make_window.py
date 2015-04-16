@@ -4,7 +4,11 @@
 import os
 import sys
 import unittest
-import tkinter
+
+if sys.version_info[0] == 2:
+    import Tkinter as tkinter
+else:
+    import tkinter
 
 try:
     import src

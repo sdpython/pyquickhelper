@@ -115,7 +115,7 @@ class AutoCompletionFile(AutoCompletion):
         """
         if not os.path.exists(value):
             raise FileNotFoundError("{0} does not exists".format(value))
-        super().__init__(os.path.normpath(os.path.abspath(value)))
+        AutoCompletion.__init__(self, os.path.normpath(os.path.abspath(value)))
         self._populate()
 
     def _filter(self, s):

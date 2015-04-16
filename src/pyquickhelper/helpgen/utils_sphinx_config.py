@@ -8,6 +8,9 @@ import sys
 import os
 import site
 
+if sys.version_info[0] == 2:
+    from codecs import open
+
 
 def ie_layout_html():
     """

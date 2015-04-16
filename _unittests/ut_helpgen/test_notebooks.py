@@ -24,6 +24,9 @@ except ImportError:
 from src.pyquickhelper.loghelper.flog import fLOG, run_cmd
 from src.pyquickhelper.helpgen.sphinx_main import process_notebooks, add_notebook_page
 
+if sys.version_info[0] == 2:
+    from codecs import open
+
 
 class TestNotebookConversion (unittest.TestCase):
 
@@ -32,6 +35,10 @@ class TestNotebookConversion (unittest.TestCase):
             __file__,
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
+
+        if sys.version_info[0] == 2:
+            return
+
         path = os.path.abspath(os.path.split(__file__)[0])
         fold = os.path.normpath(
             os.path.join(

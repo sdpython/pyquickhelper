@@ -7,41 +7,48 @@
 import sys
 import os
 import unittest
-from http.server import HTTPServer
 
-try:
-    import src
-    import pyquickhelper
-    import pyensae
-except ImportError:
-    path = os.path.normpath(
-        os.path.abspath(
-            os.path.join(
-                os.path.split(__file__)[0],
-                "..",
-                "..")))
-    if path not in sys.path:
-        sys.path.append(path)
-    path = os.path.normpath(
-        os.path.abspath(
-            os.path.join(
-                os.path.split(__file__)[0],
-                "..",
-                "..",
-                "..",
-                "pyquickhelper",
-                "src")))
-    if path not in sys.path:
-        sys.path.append(path)
-    import src
-    import pyquickhelper
+if sys.version_info[0] == 2:
+    pass
+else:
+    from http.server import HTTPServer
 
-from pyquickhelper import fLOG, run_doc_server, get_url_content
+    try:
+        import src
+        import pyquickhelper
+        import pyensae
+    except ImportError:
+        path = os.path.normpath(
+            os.path.abspath(
+                os.path.join(
+                    os.path.split(__file__)[0],
+                    "..",
+                    "..")))
+        if path not in sys.path:
+            sys.path.append(path)
+        path = os.path.normpath(
+            os.path.abspath(
+                os.path.join(
+                    os.path.split(__file__)[0],
+                    "..",
+                    "..",
+                    "..",
+                    "pyquickhelper",
+                    "src")))
+        if path not in sys.path:
+            sys.path.append(path)
+        import src
+        import pyquickhelper
+
+    from pyquickhelper import fLOG, run_doc_server, get_url_content
 
 
 class TestDocumentationServer(unittest.TestCase):
 
     def test_server_start_run(self):
+        if sys.version_info[0] == 2:
+            return
+
         fLOG(
             __file__,
             self._testMethodName,

@@ -1,0 +1,25 @@
+
+
+.. blogpost::
+    :title: Migration to IPython 3.1
+    :keywords: ipython, migration, jupyter, jenkins, pandoc
+    :date: 2015-04-16
+    :categories: ipython, documentation
+    
+    It took me some time to do the migration to IPython 3.1.
+    The code which automatically generates the documentation
+    had to be updated to follow the new format of the notebooks.
+    I had to redo the configuration of ipython
+    to have the graph inline...
+    I hope ipython does not rename itself into
+    `jupyter <https://jupyter.org/>`_.
+    The design is better but the notebooks crash from time to time.
+    I guess the code becomes better each time a migration happens.
+    But it takes quite some time.
+    However, the changes are not reversible. Ipython needs to be updated
+    otherwise the automated generation of the documentation will not work.
+    For Jenkins, just remind that the server needs your credentials
+    othewise it does not easily find 
+    `pandoc <http://pandoc.org/>`_.
+    
+    

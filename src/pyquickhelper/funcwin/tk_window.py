@@ -4,14 +4,13 @@
 @brief  Handles window `Tk <https://docs.python.org/3.4/library/tkinter.html#tkinter.Tk>`_
 """
 
-try:
-    import tkinter
-    import tkinter.tix as tix
-except ImportError:
+import sys
+if sys.version_info[0] == 2:
     import Tkinter as tkinter
     import Tix as tix
-
-import sys
+else:
+    import tkinter
+    import tkinter.tix as tix
 
 
 def X_is_running():

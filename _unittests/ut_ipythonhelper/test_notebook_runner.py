@@ -40,6 +40,10 @@ class TestNotebookRunner (unittest.TestCase):
 
         outfile = os.path.join(temp, "out_notebook.ipynb")
         assert not os.path.exists(outfile)
+
+        if sys.version_info[0] == 2:
+            return
+
         out = run_notebook(nbfile, working_dir=temp, outfilename=outfile,
                            additional_path=[addpath])
         fLOG(out)

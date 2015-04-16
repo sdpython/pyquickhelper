@@ -12,6 +12,9 @@ import sys
 from ..loghelper.flog import noLOG, run_cmd
 from .fexceptions import FileException
 
+if sys.version_info[0] == 2:
+    from codecs import open
+
 
 def zip_files(filename, fileSet, fLOG=noLOG):
     """

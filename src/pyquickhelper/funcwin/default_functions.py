@@ -4,6 +4,7 @@
 @brief  various basic functions often needed
 """
 
+import sys
 import os
 import re
 import random
@@ -179,9 +180,14 @@ def file_list(folder, out=""):
     else:
         f = out
 
-    for l in explore_folder_iterfile(folder):
-        f.write(l)
-        f.write(GetSepLine())
+    if sys.version_info[0] == 2:
+        for l in explore_folder_iterfile(folder):
+            f.write(l.decode("utf8"))
+            f.write(GetSepLine().decode("utf8"))
+    else:
+        for l in explore_folder_iterfile(folder):
+            f.write(l)
+            f.write(GetSepLine())
 
     if isinstance(out, str):
         f.close()

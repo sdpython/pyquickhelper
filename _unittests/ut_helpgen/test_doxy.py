@@ -24,6 +24,9 @@ except ImportError:
 from src.pyquickhelper.loghelper.flog import fLOG
 from src.pyquickhelper.helpgen.utils_sphinx_doc import private_migrating_doxygen_doc
 
+if sys.version_info[0] == 2:
+    from codecs import open
+
 
 class TestDoxy (unittest.TestCase):
 
@@ -32,6 +35,10 @@ class TestDoxy (unittest.TestCase):
             __file__,
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
+
+        if sys.version_info[0] == 2:
+            return
+
         path = os.path.abspath(os.path.split(__file__)[0])
         file = os.path.join(path, "data", "session1.py")
         with open(file, "r", encoding="utf8") as f:

@@ -32,6 +32,9 @@ from .process_notebooks import process_notebooks, add_notebook_page
 from .sphinx_helper import post_process_html_nb_output_static_file
 from .texts_language import TITLES
 
+if sys.version_info[0] == 2:
+    from codecs import open
+
 template_examples = """
 
 List of programs
@@ -654,19 +657,19 @@ def generate_changes_repo(chan,
     try:
         src = SourceRepository(commandline=True)
         logs = src.log(path=source)
-    except Exception as e:
+    except Exception as eee:
         if exception_if_empty:
             fLOG("error, unable to retrieve log from " + source)
             raise HelpGenException(
-                "unable to retrieve log from " + source) from e
+                "unable to retrieve log in " + source) from eee
         else:
             logs = [("none", 0, datetime.datetime.now(), "-")]
-            fLOG("error,", e)
+            fLOG("error,", eee)
 
     if len(logs) == 0:
         fLOG("error, unable to retrieve log from " + source)
         if exception_if_empty:
-            raise HelpGenException("retrieved logs are empty from " + source)
+            raise HelpGenException("retrieved logs are empty in " + source)
     else:
         fLOG("info, retrieved ", len(logs), " commits")
 

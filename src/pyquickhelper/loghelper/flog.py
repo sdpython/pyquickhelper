@@ -21,6 +21,7 @@ fLOG (LogPath = "c:/temp/log_path")       # change the log path, creates it if i
 
 @warning This module inserts static variable in module sys. I did it because I did not know how to deal with several instance of the same module.
 """
+from __future__ import unicode_literals
 
 import datetime
 import sys
@@ -33,10 +34,11 @@ import decimal
 import urllib
 import copy
 
-try:
-    import urllib.request as urllib_request
-except ImportError:
+if sys.version_info[0] == 2:
+    from codecs import open
     import urllib2 as urllib_request
+else:
+    import urllib.request as urllib_request
 
 
 class PQHException (Exception):
@@ -266,20 +268,41 @@ def fLOG(*l, **p):
 
     dt = datetime.datetime(2009, 1, 1).now()
     if len(l) > 0:
-        def _str_process(s):
-            if isinstance(s, str):
-                return s
-            elif isinstance(s, bytes):
-                return s.decode("utf8")
-            else:
-                try:
-                    return str(s)
-                except Exception as e:
-                    raise Exception(
-                        "unable to convert s into string: type(s)=" + str(type(s))) from e
+        if sys.version_info[0] == 2:
+            def _str_process(s):
+                if isinstance(s, str):
+                    return s
+                elif isinstance(s, str  # unicode#
+                                ):
+                    return s.encode("utf8", "ignore")
+                elif isinstance(s, bytes):
+                    return s.decode("utf8", "ignore").encode("utf8", "ignore")
+                else:
+                    try:
+                        return str(s)
+                    except Exception as e:
+                        raise Exception(
+                            "unable to convert s into string: type(s)=" + str(type(s))) from e
+            try:
+                message = str(dt).split(".")[0] + " " + " ".join([_str_process(s) for s in l]) + \
+                    sys.hal_log_values["__log_file_sep"]
+            except UnicodeDecodeError:
+                message = "ENCODING ERROR WITH Python 2.7, will not fix it"
+        else:
+            def _str_process(s):
+                if isinstance(s, str):
+                    return s
+                elif isinstance(s, bytes):
+                    return s.decode("utf8")
+                else:
+                    try:
+                        return str(s)
+                    except Exception as e:
+                        raise Exception(
+                            "unable to convert s into string: type(s)=" + str(type(s))) from e
 
-        message = str(dt).split(".")[
-            0] + " " + " ".join([_str_process(s) for s in l]) + sys.hal_log_values["__log_file_sep"]
+            message = str(dt).split(".")[0] + " " + " ".join([_str_process(s) for s in l]) + \
+                sys.hal_log_values["__log_file_sep"]
 
         if sys.hal_log_values["__log_display"]:
             try:
@@ -295,7 +318,11 @@ def fLOG(*l, **p):
                             myprint(r.encode("utf8"))
                     except UnicodeEncodeError:
                         myprint("look error in log file")
-        GetLogFile().write(message)
+
+        if sys.version_info[0] == 2:
+            GetLogFile().write(message.decode("utf-8"))
+        else:
+            GetLogFile().write(message)
         st = "                    "
     else:
         st = str(dt).split(".")[0] + " "
@@ -308,7 +335,10 @@ def fLOG(*l, **p):
                 str(k), str(v), sys.hal_log_values["__log_file_sep"])
         if "INNER JOIN" in message:
             break
-        GetLogFile().write(message)
+        if sys.version_info[0] == 2:
+            GetLogFile().write(message.decode("utf-8"))
+        else:
+            GetLogFile().write(message)
         if sys.hal_log_values["__log_display"]:
             try:
                 myprint(message.strip("\r\n"))
@@ -947,8 +977,11 @@ def run_cmd(cmd,
                     fLOG("input", [input])
                 elif not do_not_log:
                     _this_fLOG("input", [input])
-            stdoutdata, stderrdata = pproc.communicate(
-                input=input, timeout=timeout)
+            if sys.version_info[0] == 2:
+                stdoutdata, stderrdata = pproc.communicate(input=input)
+            else:
+                stdoutdata, stderrdata = pproc.communicate(
+                    input=input, timeout=timeout)
             out = decode_outerr(stdoutdata, encoding, encerror, cmd)
             err = decode_outerr(stderrdata, encoding, encerror, cmd)
         else:

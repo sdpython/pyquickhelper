@@ -5,13 +5,17 @@
 for a module designed the same way as this one, @see fn generate_help_sphinx.
 
 """
+from __future__ import unicode_literals
 import os
 import re
 import warnings
+import sys
 
 from ..loghelper.flog import fLOG
 from .utils_sphinx_doc_helpers import HelpGenException
 
+if sys.version_info[0] == 2:
+    from codecs import open
 
 template_examples = """
 
@@ -383,19 +387,19 @@ def post_process_latex(st, doall, info=None):
 
     st = st.replace("\\chapter", "\\section")
     st = st.replace("\\newchapter", "\\chapter")
-    if r"\usepackage{multirow}" in st:
+    if "\\usepackage{multirow}" in st:
         st = st.replace(
-            r"\usepackage{multirow}", r"\usepackage{multirow}\usepackage{amssymb}\usepackage{latexsym}\usepackage{amsfonts}\usepackage{ulem}\usepackage{textcomp}")
-    elif r"\usepackage{hyperref}" in st:
+            "\\usepackage{multirow}", "\\usepackage{multirow}\\usepackage{amssymb}\\usepackage{latexsym}\\usepackage{amsfonts}\\usepackage{ulem}\\usepackage{textcomp}")
+    elif "\\usepackage{hyperref}" in st:
         st = st.replace(
-            r"\usepackage{hyperref}", r"\usepackage{hyperref}\usepackage{amssymb}\usepackage{latexsym}\usepackage{amsfonts}\usepackage{ulem}\usepackage{textcomp}")
+            "\\usepackage{hyperref}", "\\usepackage{hyperref}\\usepackage{amssymb}\\usepackage{latexsym}\\usepackage{amsfonts}\\usepackage{ulem}\\usepackage{textcomp}")
     else:
         raise HelpGenException(
             "unable to add new instructions usepackage in file {0}".format(info))
 
-    if r"\usepackage[utf8]" in st:
+    if "\\usepackage[utf8]" in st:
         st = st.replace(
-            r"\usepackage[utf8]{inputenc}", r"\usepackage{ucs}\usepackage[utf8x]{inputenc}")
+            "\\usepackage[utf8]{inputenc}", r"\\usepackage{ucs}\\usepackage[utf8x]{inputenc}")
         st = st.replace(
             r"\DeclareUnicodeCharacter{00A0}{\nobreakspace}", r"%\DeclareUnicodeCharacter{00A0}{\nobreakspace}")
 

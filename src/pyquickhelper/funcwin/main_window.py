@@ -6,12 +6,13 @@
 """
 import os
 
-try:
-    import tkinter
-    import tkinter.tix as tix
-except ImportError:
+import sys
+if sys.version_info[0] == 2:
     import Tkinter as tkinter
     import Tix as tix
+else:
+    import tkinter
+    import tkinter.tix as tix
 
 from .tk_window import create_tixtk
 from .frame_function import FrameFunction

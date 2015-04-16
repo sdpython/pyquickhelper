@@ -37,6 +37,9 @@ class TestSphinxDocMain (unittest.TestCase):
         assert os.path.exists(file)
         fLOG(file)
 
+        if sys.version_info[0] == 2:
+            return
+
         rst = generate_changes_repo(None, file)
         fLOG(rst)
         assert len(rst) > 0

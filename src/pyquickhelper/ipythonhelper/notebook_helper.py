@@ -2,13 +2,18 @@
 @file
 @brief Some automation helpers about notebooks
 """
+from __future__ import unicode_literals
 import io
+import sys
 from IPython.nbformat import versions
 from IPython.nbformat.reader import reads
 from .notebook_runner import NotebookRunner
 from ..loghelper.flog import noLOG
 from IPython.nbformat.v4 import upgrade
 from .notebook_exception import NotebookException
+
+if sys.version_info[0] == 2:
+    from codecs import open
 
 
 def writes(nb, **kwargs):
@@ -33,7 +38,7 @@ def writes(nb, **kwargs):
         return versions[nb.nbformat].writes_json(nb, **kwargs)
     except AttributeError as e:
         raise NotebookException(
-            "probably wrong error: {0}".format(nb.nbformat))
+            "probably wrong error: {0}".format(nb.nbformat)) from e
 
 
 def upgrade_notebook(filename, encoding="utf8"):

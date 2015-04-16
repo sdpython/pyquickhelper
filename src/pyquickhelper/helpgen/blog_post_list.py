@@ -5,10 +5,14 @@
 """
 
 import os
+import sys
 import shutil
 from .blog_post import BlogPost
 from .build_rss import build_rss
 from .texts_language import TITLES
+
+if sys.version_info[0] == 2:
+    from codecs import open
 
 
 class BlogPostList:

@@ -9,12 +9,12 @@ import inspect
 import threading
 import io
 
-try:
-    import tkinter
-    import tkinter.font as tkFont
-except ImportError:
+if sys.version_info[0] == 2:
     import Tkinter as tkinter
     import tkFont
+else:
+    import tkinter
+    import tkinter.font as tkFont
 
 from .tk_window import create_tk
 from ..loghelper.flog import fLOG, GetLogFile

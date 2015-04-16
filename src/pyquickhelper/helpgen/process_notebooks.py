@@ -16,6 +16,10 @@ from ..filehelper.synchelper import has_been_updated
 from .post_process import post_process_latex_output, post_process_latex_output_any, post_process_rst_output, post_process_html_output
 
 
+if sys.version_info[0] == 2:
+    from codecs import open
+
+
 template_examples = """
 
 List of programs

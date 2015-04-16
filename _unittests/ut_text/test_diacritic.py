@@ -32,6 +32,8 @@ class TestDiacritic (unittest.TestCase):
             __file__,
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
+        if sys.version_info[0] == 2:
+            return
         assert remove_diacritics("enguérand") == "enguerand"
 
 if __name__ == "__main__":
