@@ -117,6 +117,12 @@ class BlogPostDirective(Directive):
         section = nodes.section()
         section += nodes.title(text=p["title"])
 
+        # create a reference
+        refnode = nodes.reference('', '', internal=True)
+        refnode['refid'] = tag
+        refnode['reftitle'] = p["title"]
+        # still does not work
+
         # index (see site-packages/sphinx/directives/code.py, class Index)
         if self.__class__.add_index:
 
