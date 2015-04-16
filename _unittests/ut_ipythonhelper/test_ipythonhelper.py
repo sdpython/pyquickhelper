@@ -37,7 +37,8 @@ class TestAutoCompletion (unittest.TestCase):
         cl._add("method2", "test_completion")
         cl = root._add("name2", "TestAutoCompletion2")
         cl._add("method3", "test_completion")
-        s = str(root)
+        s = (str  # unicode#
+             (root))
         fLOG("\n" + s)
         assert " |   |- method2" in s
         l = len(root)
@@ -86,12 +87,13 @@ class TestAutoCompletion (unittest.TestCase):
             OutputPrint=__name__ == "__main__")
         parser = MagicCommandParser(
             description='display the first lines of a text file')
-        parser.add_argument('f', type=str, help='filename')
+        parser.add_argument('f', type=str  # unicode#
+                            , help='filename')
         parser.add_argument(
             '-n',
             '--n',
-            type=str,
-            default=10,
+            type=str  # unicode#
+            , default=10,
             help='number of lines to display')
         parser.add_argument(
             '-e',
@@ -111,11 +113,13 @@ class TestAutoCompletion (unittest.TestCase):
         cl = MagicClassWithHelpers()
         assert cl.Context is None
         pa = cl.get_parser(MagicCommandParser, "parser_unittest")
-        pa.add_argument('f', type=str, help='filename')
+        pa.add_argument('f', type=str  # unicode#
+                        , help='filename')
         pa.add_argument(
             '-n',
             '--n',
-            type=str,
+            type=str  # unicode#
+            ,
             default=10,
             help='number of lines to display')
         pa.add_argument(
@@ -128,7 +132,8 @@ class TestAutoCompletion (unittest.TestCase):
         assert cl.Context == {"x": 3, "y": 4}
         res = cl.get_args('this.py -n x+y', pa, print_function=fLOG)
         fLOG("**RES", res)
-        assert res.n == 7
+        if res.n != 7:
+            raise Exception("res.n == {0}\nres={1}".format(res.n, res))
 
 
 if __name__ == "__main__":

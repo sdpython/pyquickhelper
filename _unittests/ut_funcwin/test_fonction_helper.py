@@ -38,7 +38,10 @@ class TestFonctionHelper (unittest.TestCase):
             fLOG(k, res[k])
         for k in sorted(res["param"]):
             fLOG("--", k, res["param"][k], "-", res["types"][k])
-        assert res["types"]["file"] == str
+        if (res["types"]["file"] != str  # unicode#
+            ):
+            raise Exception(
+                "type should be str not {0}\nres={1}".format(res["types"]["file"], res))
 
     def test_check(self):
         fLOG(

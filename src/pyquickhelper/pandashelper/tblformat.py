@@ -15,8 +15,9 @@ def len_modified(s):
     The function is currently calling ``len`` but it returns some issues if the
     encoding was not ``utf8``.
     """
-    if not isinstance(s, str):
-        raise ValueError("expect a string")
+    if not isinstance(s, str  # unicode#
+                      ):
+        raise TypeError("expect a string, got {0}".format(type(s)))
     return len(s)
 
 
@@ -46,10 +47,12 @@ def df2rst(df, add_line=True, align=None):
     length = [len_modified(_) for _ in df.columns]
     for row in df.values:
         for i, v in enumerate(row):
-            length[i] = max(length[i], len_modified(str(v)))
+            length[i] = max(length[i], len_modified(str  # unicode#
+                                                    (v)))
 
     if align is not None:
-        if isinstance(align, str):
+        if isinstance(align, str  # unicode#
+                      ):
             align = [align] * len_modified(length)
 
         if isinstance(align, list):

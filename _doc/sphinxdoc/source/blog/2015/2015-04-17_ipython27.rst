@@ -30,7 +30,8 @@
 
     I also had an issue with code like ``isinstance(v, long)`` as the long type
     does not exists. So I added the string ``int #long#``
-    to be replaced by ``long`` by a function.
+    to be replaced by ``long`` by a function. The one
+    I use the most is ``str  #unicode#`` replaced by ``unicode``.
     
     The second issue is the function open. I usually use the following trick::
     
@@ -47,7 +48,9 @@
     I had to add in some files but maybe I should have added that everywhere::
     
         from __future__ import print_function
+        
+    The following is added everywhere::
+    
         from __future__ import unicode_literals
         
-    I'll try maybe later if there is any need for me.
     

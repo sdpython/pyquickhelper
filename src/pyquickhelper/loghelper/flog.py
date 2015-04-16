@@ -21,8 +21,6 @@ fLOG (LogPath = "c:/temp/log_path")       # change the log path, creates it if i
 
 @warning This module inserts static variable in module sys. I did it because I did not know how to deal with several instance of the same module.
 """
-from __future__ import unicode_literals
-
 import datetime
 import sys
 import os
@@ -182,7 +180,8 @@ def GetLogFile(physical=False):
                     raise PQHException(
                         "unable to create a log file in folder " + path)
 
-            if not isinstance(sys.hal_log_values["__log_file_name"], str):
+            if not isinstance(sys.hal_log_values["__log_file_name"], str  # unicode#
+                              ):
                 sys.hal_log_values["__log_file"] = sys.hal_log_values[
                     "__log_file_name"]
             else:
@@ -267,24 +266,23 @@ def fLOG(*l, **p):
         GetLogFile(True)
 
     dt = datetime.datetime(2009, 1, 1).now()
+    typstr = str  # unicode#
     if len(l) > 0:
         if sys.version_info[0] == 2:
             def _str_process(s):
-                if isinstance(s, str):
+                if isinstance(s, str  # unicode#
+                              ):
                     return s
-                elif isinstance(s, str  # unicode#
-                                ):
-                    return s.encode("utf8", "ignore")
                 elif isinstance(s, bytes):
-                    return s.decode("utf8", "ignore").encode("utf8", "ignore")
+                    return s.decode("utf8")
                 else:
                     try:
-                        return str(s)
+                        return typstr(s)
                     except Exception as e:
                         raise Exception(
-                            "unable to convert s into string: type(s)=" + str(type(s))) from e
+                            "unable to convert s into string: type(s)=" + typstr(type(s))) from e
             try:
-                message = str(dt).split(".")[0] + " " + " ".join([_str_process(s) for s in l]) + \
+                message = typstr(dt).split(".")[0] + " " + " ".join([_str_process(s) for s in l]) + \
                     sys.hal_log_values["__log_file_sep"]
             except UnicodeDecodeError:
                 message = "ENCODING ERROR WITH Python 2.7, will not fix it"
@@ -319,26 +317,20 @@ def fLOG(*l, **p):
                     except UnicodeEncodeError:
                         myprint("look error in log file")
 
-        if sys.version_info[0] == 2:
-            GetLogFile().write(message.decode("utf-8"))
-        else:
-            GetLogFile().write(message)
+        GetLogFile().write(message)
         st = "                    "
     else:
-        st = str(dt).split(".")[0] + " "
+        st = typstr(dt).split(".")[0] + " "
 
     for k, v in p.items():
         if k == "OutputPrint" and v:
             continue
         message = st + \
             "%s = %s%s" % (
-                str(k), str(v), sys.hal_log_values["__log_file_sep"])
+                typstr(k), typstr(v), sys.hal_log_values["__log_file_sep"])
         if "INNER JOIN" in message:
             break
-        if sys.version_info[0] == 2:
-            GetLogFile().write(message.decode("utf-8"))
-        else:
-            GetLogFile().write(message)
+        GetLogFile().write(message)
         if sys.hal_log_values["__log_display"]:
             try:
                 myprint(message.strip("\r\n"))
@@ -558,6 +550,7 @@ def _check_zip_file(filename, path_unzip, outfile):
                             continue
 
                     if not sys.platform.startswith("win") or not zip7:
+                        typstr = str  # unicode#
                         data = file.read(fileinside)
                         dest = os.path.split(dest)[1]
                         dest = os.path.join(path_unzip, dest)
@@ -565,7 +558,7 @@ def _check_zip_file(filename, path_unzip, outfile):
                         wait.append(dest)
                         f = open(dest, "w")
                         if isinstance(data, bytes):
-                            f.write(str(data))
+                            f.write(typstr(data))
                         else:
                             f.write(data)
                         f.close()
@@ -645,7 +638,8 @@ def _first_more_recent(f1, path):
     import datetime
     import re
     import time
-    s = str(f1.info())
+    typstr = str  # unicode#
+    s = typstr(f1.info())
     da = re.compile("Last[-]Modified: (.+) GMT").search(s)
     if da is None:
         return True
@@ -795,7 +789,8 @@ def split_cmp_command(cmd, remove_quotes=True):
     @param      remove_quotes   True by default
     @return                     list
     """
-    if isinstance(cmd, str):
+    if isinstance(cmd, str  # unicode#
+                  ):
         spl = cmd.split()
         res = []
         for s in spl:
@@ -829,8 +824,10 @@ def decode_outerr(outerr, encoding, encerror, msg):
     @param      msg         part of the error to add message
     @return                 converted string
     """
+    typstr = str  # unicode#
     if not isinstance(outerr, bytes):
-        raise TypeError("only able to decode bytes, not " + str(type(outerr)))
+        raise TypeError(
+            "only able to decode bytes, not " + typstr(type(outerr)))
     try:
         out = outerr.decode(encoding, errors=encerror)
         return out
@@ -842,8 +839,8 @@ def decode_outerr(outerr, encoding, encerror, msg):
         except Exception as e:
             out = outerr.decode(encoding, errors='ignore')
             raise Exception("issue with cmd (" + encoding + "):" +
-                            str(msg) + "\n" + str(exu) + "\n-----\n" + out) from e
-    raise Exception("complete issue with cmd:" + str(msg))
+                            typstr(msg) + "\n" + typstr(exu) + "\n-----\n" + out) from e
+    raise Exception("complete issue with cmd:" + typstr(msg))
 
 
 def skip_run_cmd(cmd,
@@ -923,7 +920,8 @@ def run_cmd(cmd,
         with open(secure, "w") as f:
             f.write("")
         add = ">%s" % secure
-        if isinstance(cmd, str):
+        if isinstance(cmd, str  # unicode#
+                      ):
             cmd += " " + add
         else:
             cmd.append(add)
@@ -1076,7 +1074,8 @@ def run_script(script, *l):
     py = get_interpreter_path()
     cmd = "%s %s" % (py, script)
     if len(l) > 0:
-        cmd += " " + " ".join([str(x) for x in l])
+        typstr = str  # unicode#
+        cmd += " " + " ".join([typstr(x) for x in l])
     out, err = run_cmd(cmd)
     return out, err
 
@@ -1085,9 +1084,10 @@ def get_prefix():
     """
     return a prefix for a file based on time
     """
+    typstr = str  # unicode#
     t = datetime.datetime(2010, 1, 1).now()
-    t = str(t).replace(":", "_").replace("/", "_").replace(" ", "_")
-    t += "_" + str(random.randint(0, 1000)) + "_"
+    t = typstr(t).replace(":", "_").replace("/", "_").replace(" ", "_")
+    t += "_" + typstr(random.randint(0, 1000)) + "_"
     return os.path.join(GetPath(), "temp_" + t)
 
 
@@ -1126,8 +1126,9 @@ def removedirs(folder, silent=False, use_command_line=False):
                 if os.path.exists(f):
                     os.remove(f)
             except Exception as e:
+                typstr = str  # unicode#
                 fLOG("unable to remove file", f,
-                     " --- ", str(e).replace("\n", " "))
+                     " --- ", typstr(e).replace("\n", " "))
                 if silent:
                     impos.append(f)
                 else:
@@ -1137,8 +1138,9 @@ def removedirs(folder, silent=False, use_command_line=False):
                 if os.path.exists(f):
                     os.removedirs(f)
             except Exception as e:
+                typstr = str  # unicode#
                 fLOG("unable to remove folder", f,
-                     " --- ", str(e).replace("\n", " "))
+                     " --- ", typstr(e).replace("\n", " "))
                 if silent:
                     impos.append(f)
                 else:
@@ -1164,9 +1166,9 @@ def guess_type_value(x, none=None):
     try:
         int(x)
         if x[0] == '0' and len(x) > 1:
-            return str
+            return str  # unicode#
         else:
-            return int if len(x) < 9 else str
+            return int if len(x) < 9 else str  # unicode#
     except:
         try:
             x = float(x)
@@ -1177,13 +1179,13 @@ def guess_type_value(x, none=None):
                     return None
                 try:
                     if len(x) > 0:
-                        return str
+                        return str  # unicode#
                     else:
                         return None
                 except:
                     return None
             else:
-                return str
+                return str  # unicode#
 
 
 def guess_type_value_type(none=True):
@@ -1191,7 +1193,8 @@ def guess_type_value_type(none=True):
     @param      none        if True and all values are empty, return None
     @return                 the list of types recognized by guess_type_value
     """
-    return [None, str, int, float] if none else [str, int, float]
+    typstr = str  # unicode#
+    return [None, typstr, int, float] if none else [typstr, int, float]
 
 
 def get_default_value_type(ty, none=True):
@@ -1202,7 +1205,8 @@ def get_default_value_type(ty, none=True):
     """
     if ty is None and none:
         return None
-    elif ty == str:
+    elif (ty == str  # unicode#
+          ):
         return ""
     elif ty == int:
         return 0
@@ -1211,7 +1215,8 @@ def get_default_value_type(ty, none=True):
     elif ty == float:
         return 0.0
     else:
-        raise PQHException("type expected in " + str(guess_type_value_type()))
+        raise PQHException("type expected in " + str  # unicode#
+                           (guess_type_value_type()))
 
 
 def guess_type_list(l, tolerance=0.01, none=True):
@@ -1224,20 +1229,19 @@ def guess_type_list(l, tolerance=0.01, none=True):
     @return                 type, length (order of preference (int, float, str))
                             the parameter length has a meaning only for str result
     """
-    defa = None if none else str
+    defa = None if none else str  # unicode#
     length = 0
-
-    if l in [str, float, int, None, decimal.Decimal]:
-        raise PQHException("this case is unexpected %s" % str(l))
+    typstr = str  # unicode#
+    if l in [typstr, float, int, None, decimal.Decimal]:
+        raise PQHException("this case is unexpected %s" % typstr(l))
 
     if len(l) == 0:
         res = defa
 
     elif len(l) == 1:
         res = guess_type_value(l[0], none)
-        if res == str:
+        if res == typstr:
             length = len(l[0])
-
     else:
         count = {}
         for x in l:
@@ -1253,11 +1257,11 @@ def guess_type_list(l, tolerance=0.01, none=True):
         if len(val) == 1:
             res = val[0][1]
         elif val[0][0] * tolerance < val[1][0]:
-            res = str
+            res = str  # unicode#
         else:
             res = val[0][1]
 
-    if res != str:
+    if res != typstr:
         olength = 0
     else:
         if length > 0:
@@ -1309,10 +1313,11 @@ def IsEmptyString(s):
     """
     if s is None:
         return True
-    elif isinstance(s, str):
+    elif isinstance(s, str  # unicode#
+                    ):
         return len(s) == 0
     else:
-        raise PQHException("the type is unexpected %s" % str(type(s)))
+        raise PQHException("the type is unexpected {0}".format(type(s)))
 
 
 def load_content_file_with_encoding(filename):

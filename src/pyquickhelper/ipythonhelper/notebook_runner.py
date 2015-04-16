@@ -120,7 +120,8 @@ class NotebookRunner(object):
         @param      cell        a cell or a string
         @return                 boolean (=iscell), string
         """
-        if isinstance(cell, str):
+        if isinstance(cell, str  # unicode#
+                      ):
             iscell = False
             return iscell, cell
         else:

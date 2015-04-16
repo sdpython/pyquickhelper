@@ -365,7 +365,8 @@ def apply_modification_template(rootm,
     tspecials = {}
 
     if mo is not None:
-        if isinstance(mo, str):
+        if isinstance(mo, str  # unicode#
+                      ):
             # it is an error
             spl = mo.split("\n")
             mo = "\n".join(["    " + _ for _ in spl])

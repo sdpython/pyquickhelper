@@ -12,6 +12,14 @@ from ..filehelper.synchelper import explore_folder_iterfile
 from ..loghelper.flog import noLOG
 
 
+class Convert3to2Exception(Exception):
+
+    """
+    exception raised for an exception happening during the conversion
+    """
+    pass
+
+
 def py3to2_convert_tree(folder,
                         dest,
                         encoding="utf8",
@@ -19,7 +27,7 @@ def py3to2_convert_tree(folder,
                         pattern_copy=".*[.]((ico)|(dll)|(rst)|(ipynb)|(png)|(txt)|(zip)|(gz))$",
                         fLOG=noLOG):
     """
-    Converts a tree from python 3 to python 2,
+    Converts files in a folder and its subfolders from python 3 to python 2,
     the function only considers python script (verifying *pattern*).
 
     @param      folder          folder
@@ -111,6 +119,8 @@ def py3to2_convert(script):
     @param      script      script of filename
     @return                 string
 
+    See see @fn py3to2_convert_tree for more information.
+
     .. versionadded:: 1.0
     """
     if os.path.exists(script):
@@ -127,6 +137,17 @@ def py3to2_convert(script):
     # start processing
     content = py3to2_remove_raise_from(content)
 
+    # unicode
+    if "install_requires=" in content and "setup" in content:
+        # we skip the file setup.py as it raises an error
+        pass
+    else:
+        try:
+            content = py3to2_future(content)
+        except Convert3to2Exception as e:
+            raise Convert3to2Exception(
+                'unable to convert a file due to unicode issue.\n  File "{0}", line 1'.format(script)) from e
+
     # some other modification
     content = content.replace("from queue import", "from Queue import")
 
@@ -138,6 +159,48 @@ def py3to2_convert(script):
 
     # end
     return content
+
+
+def py3to2_future(content):
+    """
+    checks that import ``from __future__ import unicode_literals``
+    is always present, the function assumes it is a python code
+
+    @param      content     file content
+    @return                 new content
+    """
+    find = "from __future__ import unicode_literals"
+    if find in content and '"{0}"'.format(find) not in content:
+        # the second condition avoid to raise this exception when parsing this file
+        # this case should only happen for this file
+        raise Convert3to2Exception("unable to convert a file")
+
+    lines = content.split("\n")
+    position = 0
+    incomment = None
+    while position < len(lines) and not lines[position].startswith("import ") \
+            and not lines[position].startswith("from ") \
+            and not lines[position].startswith("def ") \
+            and not lines[position].startswith("class "):
+        if incomment is None:
+            if lines[position].startswith("'''"):
+                incomment = "'''"
+            elif lines[position].startswith('"""'):
+                incomment = '"""'
+        else:
+            if lines[position].endswith("'''"):
+                incomment = None
+                position += 1
+                break
+            elif lines[position].endswith('"""'):
+                incomment = None
+                position += 1
+                break
+        position += 1
+
+    if position < len(lines):
+        lines[position] = "{0}\n\n{1}".format(find, lines[position])
+    return "\n".join(lines)
 
 
 def py3to2_remove_raise_from(content):

@@ -208,7 +208,9 @@ class TestLog (unittest.TestCase):
             '0001']
         res = guess_type_list(l)
         fLOG(res)
-        assert res == (str, 8)
+        if res != (str  # unicode#
+                   , 8):
+            raise Exception("different: {0}".format(res))
 
     def test_load_content_file_with_encoding(self):
         fLOG(
@@ -225,7 +227,8 @@ class TestLog (unittest.TestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
         r = GetLogFile()
-        assert not isinstance(r, str)
+        assert not isinstance(r, str  # unicode#
+                              )
 
     def test_get_relative_path(self):
         fLOG(

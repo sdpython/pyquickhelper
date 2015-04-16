@@ -5,7 +5,6 @@
 for a module designed the same way as this one, @see fn generate_help_sphinx.
 
 """
-from __future__ import unicode_literals
 import os
 import re
 import warnings

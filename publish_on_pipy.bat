@@ -3,7 +3,7 @@ set pythonexe=%1\python
 goto custom_python:
 
 :default_value:
-set pythonexe=c:\Python34\python
+set pythonexe=c:\Python34_x64\python
 
 :custom_python:
 %pythonexe% setup.py sdist register upload

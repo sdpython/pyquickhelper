@@ -115,17 +115,17 @@ def set_sphinx_variables(fileconf,
                          ]
     latex_show_pagerefs = True
 
-    preamble = r'''
-            \usepackage{fixltx2e} % LaTeX patches, \textsubscript
-            \usepackage{cmap} % fix search and cut-and-paste in Acrobat
-            \usepackage[raccourcis]{fast-diagram}
-            \usepackage{titlesec}
+    preamble = '''
+            \\usepackage{fixltx2e} % LaTeX patches, \\textsubscript
+            \\usepackage{cmap} % fix search and cut-and-paste in Acrobat
+            \\usepackage[raccourcis]{fast-diagram}
+            \\usepackage{titlesec}
             %%% Redifined titleformat
-            \setlength{\parindent}{0cm}
-            \setlength{\parskip}{1ex plus 0.5ex minus 0.2ex}
-            \newcommand{\hsp}{\hspace{20pt}}
-            \newcommand{\HRule}{\rule{\linewidth}{0.5mm}}
-            %\titleformat{\chapter}[hang]{\Huge\bfseries\sffamily}{\thechapter\hsp}{0pt}{\Huge\bfseries\sffamily}
+            \\setlength{\\parindent}{0cm}
+            \\setlength{\\parskip}{1ex plus 0.5ex minus 0.2ex}
+            \\newcommand{\\hsp}{\\hspace{20pt}}
+            \\newcommand{\\HRule}{\\rule{\\linewidth}{0.5mm}}
+            %\\titleformat{\\chapter}[hang]{\\Huge\\bfseries\\sffamily}{\\thechapter\\hsp}{0pt}{\\Huge\\bfseries\\sffamily}
             '''.replace("            ", "")
 
     latex_elements = {'papersize': 'a4', 'pointsize': '10pt',

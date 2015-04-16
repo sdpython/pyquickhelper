@@ -2,7 +2,6 @@
 @file
 @brief Some automation helpers about notebooks
 """
-from __future__ import unicode_literals
 import io
 import sys
 from IPython.nbformat import versions
