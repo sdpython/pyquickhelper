@@ -97,6 +97,41 @@ class BlogPost:
         self.pub = pub
         self._content = post.content
 
+    def __cmp__(self, other):
+        """
+        This method avoids to get the following error
+        ``TypeError: unorderable types: BlogPost() < BlogPost()``
+
+        @param      other       other @see cl BlogPost
+        @return                 -1, 0, or 1
+        """
+        if self.Date < other.Date:
+            return -1
+        elif self.Date > other.Date:
+            return 1
+        else:
+            if self.Tag < other.Tag:
+                return -1
+            elif self.Tag > other.Tag:
+                return 1
+            else:
+                raise Exception(
+                    "same tag for two BlogPost: {0}".format(self.Tag))
+
+    def __lt__(self, other):
+        """
+        Tells if this blog should be placed before *other*.
+        """
+        if self.Date < other.Date:
+            return True
+        elif self.Date > other.Date:
+            return False
+        else:
+            if self.Tag < other.Tag:
+                return True
+            else:
+                return False
+
     @property
     def Fields(self):
         """

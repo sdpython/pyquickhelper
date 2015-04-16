@@ -28,6 +28,9 @@ if %errorlevel% neq 0 exit /b %errorlevel%
 echo #######################################################
 cd ..
 
+rem we add the script with publish the module for python 2.7
+echo %pythonexe27% setup.py sdist register upload > publish_on_pipy27.bat
+
 :setup27_x64_msi_wheel:
 %pythonexe27% setup.py bdist_wheel
 if %errorlevel% neq 0 exit /b %errorlevel%
