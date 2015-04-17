@@ -54,6 +54,8 @@ class BlogPostDirective(Directive):
         """
         private function
         """
+        # self.content  contains the content of the blog as a list
+        # self.block_text contains the raw text including the sphinx command
         ad = make_admonition(self.__class__.blogpost_class,
                              self.name,
                              [_locale(self.options["date"]) + " "],
@@ -154,6 +156,8 @@ class BlogPostDirectiveAgg(BlogPostDirective):
         We could overload the method to
         update what to do.
         """
+        # self.content  contains the content of the blog as a list
+        # self.block_text contains the raw text including the sphinx command
         ad = make_admonition(self.__class__.blogpost_class,
                              self.name,
                              [_locale(self.options["date"]) + " "],

@@ -56,10 +56,12 @@ class TestLog2 (unittest.TestCase):
         cmd = "dir" if sys.platform.startswith("win") else "ls"
         cmd += " " + os.path.split(__file__)[0]
         out, err = run_cmd(cmd, wait=True)
-        assert os.path.split(__file__)[-1] in out
+        if os.path.split(__file__)[-1] not in out:
+            raise Exception("unable to find {0} in\n{1}".format(os.path.split(__file__)[-1], out))
 
         out, err = run_cmd(cmd, wait=True, communicate=False)
-        assert os.path.split(__file__)[-1] in out
+        if os.path.split(__file__)[-1] not in out:
+            raise Exception("unable to find {0} in\n{1}".format(os.path.split(__file__)[-1], out))
 
 if __name__ == "__main__":
     unittest.main()
