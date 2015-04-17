@@ -420,13 +420,19 @@ def unzip(file, path_unzip=None, outfile=None):
 
 
 def _get_file_url(url, path):
-    """build a filename knowing an url
+    """
+    build a filename knowing an url
+
     @param      url         url
     @param      path        where to download the file
     @return                 filename
     """
     path = path + "/" + \
-        url.replace("/", "!").replace(":", "").replace(".", "-")
+        url.replace("/", "!") \
+           .replace(":", "") \
+           .replace(".", "-") \
+           .replace("=", "_") \
+           .replace("?", "_")
     spl = path.split("-")
     if len(spl) >= 2:
         ext = spl[len(spl) - 1].lower()

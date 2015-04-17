@@ -20,6 +20,7 @@ set pythonexe34=c:\Python34_x64\python
 :utpy34:
 %pythonexe34% setup.py copy27
 if %errorlevel% neq 0 exit /b %errorlevel%
+set PYTHONPATH=
 cd dist_module27\_unittests
 
 for /d %%d in (ut_*) do %pythonexe27%\..\Scripts\nosetests.exe -w %%d
