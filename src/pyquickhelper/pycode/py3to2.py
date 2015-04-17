@@ -25,18 +25,20 @@ def py3to2_convert_tree(folder,
                         encoding="utf8",
                         pattern=".*[.]py$",
                         pattern_copy=".*[.]((ico)|(dll)|(rst)|(ipynb)|(png)|(txt)|(zip)|(gz))$",
+                        unittest_modules=None,
                         fLOG=noLOG):
     """
     Converts files in a folder and its subfolders from python 3 to python 2,
     the function only considers python script (verifying *pattern*).
 
-    @param      folder          folder
-    @param      dest            destination
-    @param      encoding        all files will be saved with this encoding
-    @param      pattern         pattern to find source code
-    @param      pattern_copy    copy these files, do not modify them
-    @parm       fLOG            logging function
-    @return                     list of copied files
+    @param      folder              folder
+    @param      dest                destination
+    @param      encoding            all files will be saved with this encoding
+    @param      pattern             pattern to find source code
+    @param      pattern_copy        copy these files, do not modify them
+    @param      fLOG                logging function
+    @param      unittest_modules    modules used during unit test but not installed
+    @return                         list of copied files
 
     If a folder does not exists, it will create it.
     The function excludes all files in subfolders
@@ -51,6 +53,28 @@ def py3to2_convert_tree(folder,
             from codecs import open
 
     You can also read blog post :ref:`b-migration-py2py3`.
+
+    The variable *unittest_modules* indicates the list of modules which are not installed
+    in Python distribution but still used and placed in the same folder
+    as the same which has to converted. A subfolder
+    ``dist_module27`` will be added to it. We assume these modules are imported using the
+    following logic::
+
+        try:
+            import pyquickhelper
+        except ImportError:
+            path = os.path.normpath(
+                os.path.abspath(
+                    os.path.join(
+                        os.path.split(__file__)[0],
+                        "..",
+                        "..",
+                        "..",
+                        "pyquickhelper",  # we replace it by "..", "pyquickhelper", "dist_module27",
+                        "src")))
+            if path not in sys.path:
+                sys.path.append(path)
+            import pyquickhelper
 
     .. versionadded:: 1.0
     """
@@ -77,7 +101,7 @@ def py3to2_convert_tree(folder,
         if reg.search(lfile):
             continue
 
-        py2 = py3to2_convert(full)
+        py2 = py3to2_convert(full, unittest_modules)
         destfile = os.path.join(dest, file)
         dirname = os.path.dirname(destfile)
         if not os.path.exists(dirname):
@@ -112,12 +136,14 @@ def py3to2_convert_tree(folder,
     return conv
 
 
-def py3to2_convert(script):
+def py3to2_convert(script, unittest_modules):
     """
     converts a script into from python 3 to python 2
 
-    @param      script      script of filename
-    @return                 string
+    @param      script              script or filename
+    @param      unittest_modules    modules used during unit test but not installed,
+                                    @see fn py3to2_convert_tree
+    @return                         string
 
     See see @fn py3to2_convert_tree for more information.
 
@@ -138,7 +164,7 @@ def py3to2_convert(script):
     content = py3to2_remove_raise_from(content)
 
     # unicode
-    if "install_requires=" in content and "setup" in content:
+    if ("install_requires=" in content or "package_data" in content) and "setup" in content:
         # we skip the file setup.py as it raises an error
         pass
     else:
@@ -158,6 +184,10 @@ def py3to2_convert(script):
     content = content.replace("str  # unicode#", "unicode")
     content = content.replace(
         "Programming Language :: Python :: 3", "Programming Language :: Python :: 2")
+
+    # imported modules
+    if unittest_modules is not None:
+        content = py3to2_imported_local_modules(content, unittest_modules)
 
     # end
     return content
@@ -201,7 +231,7 @@ def py3to2_future(content):
         position += 1
 
     if position < len(lines):
-        lines[position] = "{0}\n\n{1}".format(find, lines[position])
+        lines[position] = "{0}\n{1}".format(find, lines[position])
     return "\n".join(lines)
 
 
@@ -226,4 +256,32 @@ def py3to2_remove_raise_from(content):
         if r is not None and i > r + 3:
             r = None
 
+    return "\n".join(lines)
+
+
+def py3to2_imported_local_modules(content, unittest_modules):
+    """
+    See function @see fn py3to2_convert_tree
+    and documentation about parameter *unittest_modules*.
+
+    @param      script              script of filename
+    @param      unittest_modules    modules used during unit test but not installed,
+                                    @see fn py3to2_convert_tree
+    """
+    lines = content.split("\n")
+    for modname in unittest_modules:
+        s1 = '"{0}"'.format(modname)
+        s2 = "'{0}'".format(modname)
+        s3 = "import {0}".format(modname)
+
+        if (s1 in content or s2 in content) and s3 in content:
+            for i, line in enumerate(lines):
+                if s1 in line:
+                    line = line.replace(
+                        s1, '"..", {0}, "dist_module27"'.format(s1))
+                    lines[i] = line
+                elif s2 in line:
+                    line = line.replace(
+                        s2, "'..', {0}, 'dist_module27'".format(s2))
+                    lines[i] = line
     return "\n".join(lines)

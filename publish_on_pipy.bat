@@ -6,4 +6,5 @@ goto custom_python:
 set pythonexe=c:\Python34_x64\python
 
 :custom_python:
+%pythonexe% setup.py rotate -k 5
 %pythonexe% setup.py sdist register upload
