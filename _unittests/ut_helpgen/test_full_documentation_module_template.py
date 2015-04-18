@@ -25,6 +25,9 @@ from src.pyquickhelper.loghelper.flog import fLOG, download
 from src.pyquickhelper.helpgen import generate_help_sphinx
 from src.pyquickhelper import get_temp_folder
 
+if sys.version_info[0]==2:
+    from codecs import open
+
 
 class TestSphinxDocFull (unittest.TestCase):
 
