@@ -34,19 +34,19 @@ class TestSphinxDocFull (unittest.TestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
-        temp = get_temp_folder(__file__, "temp_full_doc_template")
-        url = "https://github.com/sdpython/python3_module_template/archive/master.zip"
-        fLOG("download", url)
-        download(url, temp)
-        assert not os.path.exists(os.path.join(temp, "src"))
-        root = os.path.join(temp, "python3_module_template-master")
-
         if "travis" in sys.executable:
             # travis due to the following:
             #       sitep = [_ for _ in site.getsitepackages() if "packages" in _]
             # AttributeError: 'module' object has no attribute
             # 'getsitepackages'
             return
+
+        temp = get_temp_folder(__file__, "temp_full_doc_template")
+        url = "https://github.com/sdpython/python3_module_template/archive/master.zip"
+        fLOG("download", url)
+        download(url, temp)
+        assert not os.path.exists(os.path.join(temp, "src"))
+        root = os.path.join(temp, "python3_module_template-master")
 
         fLOG("generate documentation", root)
         var = "project_name"
