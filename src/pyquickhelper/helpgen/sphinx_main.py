@@ -241,7 +241,7 @@ def generate_help_sphinx(project_var_name,
             del sys.path[-1]
 
         fLOG("conf_base", conf_base.__file__)
-        
+
     copypath = list(sys.path)
 
     # import others conf, we must do it now
@@ -280,7 +280,8 @@ def generate_help_sphinx(project_var_name,
     try:
         theconf = importlib.import_module('conf')
     except ImportError as e:
-        raise ImportError("unable to import conf.py from {0}, sys.path=\n{1}\nBEFORE:\n{2}".format(root_source, "\n".join(sys.path), "\n".join(copypath))) from e 
+        raise ImportError("unable to import conf.py from {0}, sys.path=\n{1}\nBEFORE:\n{2}".format(
+            root_source, "\n".join(sys.path), "\n".join(copypath))) from e
     if theconf is None:
         raise ImportError(
             "unable to import conf.py which defines the help generation")
