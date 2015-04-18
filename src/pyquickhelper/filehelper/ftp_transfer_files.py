@@ -4,6 +4,7 @@
 
 .. versionadded:: 1.0
 """
+import re
 import os
 import io
 import warnings
@@ -131,6 +132,7 @@ class FolderTransferFTP:
                  content_filter=None,
                  is_binary=content_as_binary,
                  text_transform=None,
+                 filter_out=None,
                  fLOG=noLOG):
         """
         constructor
@@ -147,9 +149,16 @@ class FolderTransferFTP:
                                         indicating  the file cannot be transfered (applies only on text files)
         @param      is_binary           function which determines if content of a files is binary or not
         @param      text_transform      function to transform the content of a text file before uploading it
+        @param      filter_out          regular expression to exclude some files, it can also be a function.
         @param      fLOG                logging function
 
         Function *text_transform(self, filename, content)* returns the modified content.
+
+        If *filter_out* is a function, the signature is::
+
+            def filter_out(full_file_name):
+                # ...
+                return True # if the file is filtered out, False otherwise
         """
         self._ftn = file_tree_node
         self._ftp = ftp_transfer
@@ -160,6 +169,10 @@ class FolderTransferFTP:
         self._footer_html = footer_html
         self._content_filter = content_filter
         self._is_binary = is_binary
+        self._filter_out_reg = None if filter_out is None else re.compile(
+            filter_out)
+        self._filter_out = (lambda f: False) if filter_out is None else (
+            lambda f: self._filter_out_reg.search(f) is not None)
 
         self._ft = FilesStatus(file_status)
         self._text_transform = text_transform
@@ -181,6 +194,8 @@ class FolderTransferFTP:
         """
         for f in self._ftn:
             if f.isfile():
+                if self._filter_out(f.fullname):
+                    continue
                 n, r = self._ft.has_been_modified_and_reason(f.fullname)
                 if n:
                     yield f

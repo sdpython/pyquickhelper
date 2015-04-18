@@ -574,8 +574,8 @@ def _check_zip_file(filename, path_unzip, outfile):
             if todo > 0 and zip7:
                 dest = os.path.realpath(path_unzip)
                 cmd = '"' + _zip7_path + \
-                    '\\7z.exe" e -y -o"%s" "%s"' % (dest,
-                                                    os.path.realpath(filename))
+                    '\\7z.exe" x -y -r -o"%s" "%s"' % (dest,
+                                                       os.path.realpath(filename))
                 out, err = run_cmd(cmd, wait=True)
                 if len(err) > 0:
                     raise PQHException(
@@ -681,7 +681,8 @@ def _check_url_file(url, path_download, outfile):
     @param      outfile             if None, the function will assign a filename unless this parameter is specified
     @return                         the filename
     """
-    if "http://" in url.lower():
+    urll = url.lower()
+    if "http://" in urll or "https://" in urll:
         dest = outfile if outfile is not None else _get_file_url(
             url, path_download)
         down = False
@@ -772,7 +773,7 @@ def _check_source(fileurl, path_unzip, outfile):
         txt = _check_zip_file(
             file, path_unzip=path_unzip, outfile=outfile)
         if not os.path.exists(txt):
-            message = "hal_core._check_source: unable to find file " + \
+            message = "_check_source: unable to find file " + \
                 txt + " source (" + fileurl + ")"
             raise PQHException(message)
         return txt

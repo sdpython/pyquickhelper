@@ -50,6 +50,8 @@ def post_process_latex_output(root, doall):
             f.write(content)
     else:
         build = os.path.join(root, "_doc", "sphinxdoc", "build", "latex")
+        if not os.path.exists(build):
+            raise FileNotFoundError(build)
         for tex in os.listdir(build):
             if tex.endswith(".tex"):
                 file = os.path.join(build, tex)

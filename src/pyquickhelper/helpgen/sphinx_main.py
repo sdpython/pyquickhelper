@@ -16,6 +16,7 @@ import sys
 import shutil
 import datetime
 import importlib
+import warnings
 from docutils.parsers.rst import directives
 
 from ..loghelper.flog import run_cmd, fLOG
@@ -98,7 +99,9 @@ def generate_help_sphinx(project_var_name,
                          extra_ext=[],
                          nbformats=["ipynb", "html", "python", "rst", "pdf"],
                          layout=[("html", "build", {})],
-                         module_name=None):
+                         module_name=None,
+                         from_repo=True,
+                         use_run_cmd=False):
     """
     runs the help generation
         - copies every file in another folder
@@ -116,6 +119,9 @@ def generate_help_sphinx(project_var_name,
                                     it is a list of tuple (layout, build directory, parameters to override)
     @param      module_name         name of the module (must be the folder name src/*name*, if None, *module_name*
                                     will be replaced by *project_var_name*
+    @param      from_repo           if True, assumes the sources come from a source repository,
+                                    False otherwise
+    @param      use_run_cmd         use @see fn run_cmd instead os ``os.system`` (default) to run Sphinx
 
     The result is stored in path: ``root/_doc/sphinxdoc/source``.
     We assume the file ``root/_doc/sphinxdoc/source/conf.py`` exists
@@ -193,6 +199,7 @@ def generate_help_sphinx(project_var_name,
 
     .. versionchanged:: 1.0
         Assumes IPython 3 is installed. It might no work for earlier versions (notebooks).
+        Parameters *from_repo*, *use_run_cmd* were added.
     """
 
     def lay_build_override_newconf(t3):
@@ -282,8 +289,8 @@ def generate_help_sphinx(project_var_name,
             f.write(str(version) + "\n")
 
     # modifies the version number in conf.py
-    shutil.copy("README.rst", "_doc/sphinxdoc/source")
-    shutil.copy("LICENSE.txt", "_doc/sphinxdoc/source")
+    shutil.copy(os.path.join(root, "README.rst"), root_source)
+    shutil.copy(os.path.join(root, "LICENSE.txt"), root_source)
 
     # language
     language = theconf.__dict__.get("language", "en")
@@ -294,7 +301,8 @@ def generate_help_sphinx(project_var_name,
 
     # changes
     chan = os.path.join(root, "_doc", "sphinxdoc", "source", "filechanges.rst")
-    generate_changes_repo(chan, root, filter_commit=filter_commit)
+    generate_changes_repo(
+        chan, root, filter_commit=filter_commit, exception_if_empty=from_repo)
 
     # copy the files
     optional_dirs = []
@@ -308,12 +316,13 @@ def generate_help_sphinx(project_var_name,
     # we save the module already imported
     sys_modules = set(sys.modules.keys())
 
+    # generates extra files
     try:
 
         prepare_file_for_sphinx_help_generation(
             {},
             root,
-            "_doc/sphinxdoc/source/",
+            os.path.join(root, "_doc", "sphinxdoc", "source"),
             subfolders=[
                 ("src/" + module_name, module_name),
             ],
@@ -353,14 +362,14 @@ def generate_help_sphinx(project_var_name,
     # notebooks
     notebook_dir = os.path.abspath(os.path.join(root, "_doc", "notebooks"))
     notebook_doc = os.path.abspath(
-        os.path.join(root, "_doc/sphinxdoc/source", "notebooks"))
+        os.path.join(root, "_doc", "sphinxdoc", "source", "notebooks"))
     if os.path.exists(notebook_dir):
         notebooks = explore_folder(
             notebook_dir, pattern=".*[.]ipynb", fullname=True)[1]
         notebooks = [_ for _ in notebooks if "checkpoint" not in _]
         if len(notebooks) > 0:
             fLOG("**** notebooks", nbformats)
-            build = os.path.abspath("build/notebooks")
+            build = os.path.join(root, "build", "notebooks")
             if not os.path.exists(build):
                 os.makedirs(build)
             if not os.path.exists(notebook_doc):
@@ -395,6 +404,7 @@ def generate_help_sphinx(project_var_name,
     thispath = os.path.normpath(root)
     docpath = os.path.normpath(os.path.join(thispath, "_doc", "sphinxdoc"))
 
+    # checks encoding
     fLOG("checking encoding utf8...")
     for root, dirs, files in os.walk(docpath):
         for name in files:
@@ -426,6 +436,7 @@ def generate_help_sphinx(project_var_name,
 
     os.chdir(docpath)
 
+    # builds command lines
     cmds = []
     lays = []
     for t3 in layout:
@@ -455,9 +466,7 @@ def generate_help_sphinx(project_var_name,
 
     # cmd = "make {0}".format(lay)
 
-    # This instruction should work but it does not. Sphinx seems to be stuck.
-    # run_cmd (cmd, wait = True, secure="make_help.log", stop_waiting_if = lambda v : "build succeeded" in v)
-    # The following one works but opens a extra windows.
+    # run cmds (prefer to use os.system instread of run_cmd if it gets stuck)
     for cmd in cmds:
         fLOG(
             "##################################################################################################")
@@ -466,7 +475,16 @@ def generate_help_sphinx(project_var_name,
         fLOG(
             "##################################################################################################")
         fLOG("#####", cmd)
-        os.system(cmd)
+        fLOG("##### from ", os.getcwd())
+        fLOG("##### PATH ", os.environ["PATH"])
+        if use_run_cmd:
+            out, err = run_cmd(cmd, wait=True, fLOG=fLOG)
+            fLOG(out)
+            if len(err) > 0:
+                warnings.warn(
+                    "Sphinx went through errors. Check if any of them is important.\nOUT:\n{0}\nERR:\n{1}".format(out, err))
+        else:
+            os.system(cmd)
         fLOG(
             "##################################################################################################")
         fLOG(
@@ -498,9 +516,11 @@ def generate_help_sphinx(project_var_name,
         fLOG("## no coverage files", covfold)
 
     if "latex" in lays:
+        fLOG("---- post_process_latex_output", froot)
         post_process_latex_output(froot, False)
 
     if "pdf" in layout:
+        fLOG("---- compile_latex_output_final", froot, "**", latex_path)
         compile_latex_output_final(froot, latex_path, False)
 
     if "html" in layout:

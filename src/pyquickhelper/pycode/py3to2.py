@@ -76,6 +76,11 @@ def py3to2_convert_tree(folder,
                 sys.path.append(path)
             import pyquickhelper
 
+    The function does not convert the exception
+    `FileNotFoundError <https://docs.python.org/3/library/exceptions.html>`_
+    which only exists in Python 3. The module will fail in version 2.7
+    if this exception is raised.
+
     .. versionadded:: 1.0
     """
     exclude = "temp_", "dist", "_doc", "build", "extensions", "nbextensions", "dist_module27"
