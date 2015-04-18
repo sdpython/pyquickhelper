@@ -192,13 +192,15 @@ class ModuleMemberDoc:
         self.name = name
         self.populate()
 
+        typstr = str  # unicode#
+
         if self.cl is None and self.type in [
                 "method", "staticmethod", "property"]:
             self.cl = self.obj.__class__
         if self.cl is None and self.type in [
                 "method", "staticmethod", "property"]:
             raise TypeError(
-                "N/a method must have a class (not None): %s" % str(self.obj))
+                "N/a method must have a class (not None): %s" % typstr(self.obj))
 
     def add_prefix(self, prefix):
         """
@@ -220,6 +222,7 @@ class ModuleMemberDoc:
         """
         obj = self.obj
         ty = self.type if "type" in self.__dict__ else None
+        typstr = str  # unicode#
         if ty is None:
             if inspect.isclass(obj):
                 self.type = "class"
@@ -231,7 +234,7 @@ class ModuleMemberDoc:
                 self.type = "generator"
             else:
                 raise TypeError(
-                    "E/unable to deal with this type: " + str(type(obj)))
+                    "E/unable to deal with this type: " + typstr(type(obj)))
 
         if ty == "method":
             if isinstance(obj, staticmethod):
@@ -268,12 +271,12 @@ class ModuleMemberDoc:
             try:
                 self.doc = obj.__func__.__doc__
             except Exception as ie:
-                self.doc = str(ie) + " \n----------\n " + str(dir(obj))
+                self.doc = typstr(ie) + " \n----------\n " + typstr(dir(obj))
         else:
             try:
                 self.doc = obj.__doc__
             except Exception as ie:
-                self.doc = str(ie) + " \n----------\n " + str(dir(obj))
+                self.doc = typstr(ie) + " \n----------\n " + typstr(dir(obj))
 
         try:
             self.file = self.module.__file__
@@ -288,7 +291,7 @@ class ModuleMemberDoc:
             self.truncdoc = ""
 
         if self.name is None:
-            raise TypeError("S/name is None for object: %s" % str(self.obj))
+            raise TypeError("S/name is None for object: %s" % typstr(self.obj))
 
     def __str__(self):
         """
@@ -791,12 +794,14 @@ def make_label_index(title, comment):
     try:
         r = "".join(map(accept, title))
         if len(r) == 0:
+            typstr = str  # unicode#
             raise HelpGenException("unable to interpret this title (empty?): {0} (type: {2})\nCOMMENT:\n{1}".format(
-                str(title), comment, str(type(title))))
+                typstr(title), comment, typstr(type(title))))
         return r
     except TypeError as e:
+        typstr = str  # unicode#
         raise HelpGenException("unable to interpret this title: {0} (type: {2})\nCOMMENT:\n{1}".format(
-            str(title), comment, str(type(title)))) from e
+            typstr(title), comment, typstr(type(title)))) from e
 
 
 def process_look_for_tag(tag, title, files):
@@ -1009,8 +1014,9 @@ def find_graphviz_dot():
                 return graphviz_dot
         p = find_in_PATH("dot.exe")
         if p is None:
+            typstr = str  # unicode#
             raise FileNotFoundError(
-                "unable to find graphviz, look into paths such as: " + str(graphviz_dot))
+                "unable to find graphviz, look into paths such as: " + typstr(graphviz_dot))
         else:
             return os.path.join(p, "dot.exe")
     else:
@@ -1031,8 +1037,9 @@ def find_latex_path():
         if not os.path.exists(latex):
             latex = find_in_PATH("latex.exe")
             if latex is None or not os.path.exists(latex):
+                typstr = str  # unicode#
                 raise FileNotFoundError(
-                    "unable to find latex (miktex), look into paths such as: " + str(latex0))
+                    "unable to find latex (miktex), look into paths such as: " + typstr(latex0))
         return latex
     else:
         # linux

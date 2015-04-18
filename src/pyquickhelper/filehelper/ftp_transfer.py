@@ -221,7 +221,8 @@ class TransferFTP (FTP):
         for p in path:
             self.cwd(p, True)
 
-        if isinstance(file, str):
+        if isinstance(file, str  # unicode#
+                      ):
             if not os.path.exists(file):
                 raise FileNotFoundError(file)
             with open(file, "rb") as f:

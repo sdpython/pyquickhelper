@@ -85,7 +85,7 @@ def repo_ls(full, commandline=True):
                                    wait=True,
                                    do_not_log=True,
                                    encerror="strict",
-                                   encoding=sys.stdout.encoding if sys.stdout is not None else "utf8")
+                                   encoding=sys.stdout.encoding if sys.version_info[0] != 2 and sys.stdout is not None else "utf8")
                 if len(err) > 0:
                     fLOG("problem with file ", full, err)
                     raise Exception(err)
@@ -101,7 +101,7 @@ def repo_ls(full, commandline=True):
                                wait=True,
                                do_not_log=True,
                                encerror="strict",
-                               encoding=sys.stdout.encoding if sys.stdout is not None else "utf8")
+                               encoding=sys.stdout.encoding if sys.version_info[0] != 2 and sys.stdout is not None else "utf8")
         except Exception as e:
             raise Exception("issue with file or folder " + full) from e
 
@@ -199,7 +199,7 @@ def get_repo_log(path=None, file_detail=False, commandline=True):
                            wait=True,
                            do_not_log=True,
                            encerror="strict",
-                           encoding=sys.stdout.encoding if sys.stdout is not None else "utf8")
+                           encoding=sys.stdout.encoding if sys.version_info[0] != 2 and sys.stdout is not None else "utf8")
         if len(err) > 0:
             fLOG("problem with file ", path, err)
             raise Exception(err)
@@ -273,7 +273,8 @@ def get_repo_version(path=None, commandline=True, log=False):
                            wait=True,
                            do_not_log=True,
                            encerror="ignore",
-                           encoding=sys.stdout.encoding if sys.stdout is not None else "utf8",
+                           encoding=sys.stdout.encoding if sys.version_info[
+                               0] != 2 and sys.stdout is not None else "utf8",
                            log_error=False)
         if len(err) > 0:
             if log:

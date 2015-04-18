@@ -105,7 +105,8 @@ def repo_ls(full, commandline=True):
                            wait=True,
                            do_not_log=True,
                            encerror="strict",
-                           encoding=sys.stdout.encoding if sys.stdout is not None else "utf8",
+                           encoding=sys.stdout.encoding if sys.version_info[
+                               0] != 2 and sys.stdout is not None else "utf8",
                            change_path=os.path.split(
                                full)[0] if os.path.isfile(full) else full,
                            shell=sys.platform.startswith("win32"))
@@ -209,7 +210,8 @@ def get_repo_log(path=None, file_detail=False, commandline=True):
             cmd += ['log',
                     '--pretty=format:<logentry revision="%h"><author>%an</author><date>%ci</date><msg>%s</msg><hash>%H</hash></logentry>', path]
 
-        enc = sys.stdout.encoding if sys.stdout is not None else "utf8"
+        enc = sys.stdout.encoding if sys.version_info[
+            0] != 2 and sys.stdout is not None else "utf8"
         out, err = run_cmd(cmd,
                            wait=True,
                            do_not_log=True,
@@ -294,7 +296,8 @@ def get_repo_version(path=None, commandline=True, usedate=False, log=False):
                                wait=True,
                                do_not_log=True,
                                encerror="strict",
-                               encoding=sys.stdout.encoding if sys.stdout is not None else "utf8",
+                               encoding=sys.stdout.encoding if sys.version_info[
+                                   0] != 2 and sys.stdout is not None else "utf8",
                                change_path=os.path.split(
                                    path)[0] if os.path.isfile(path) else path,
                                log_error=False,
@@ -354,7 +357,8 @@ def get_master_location(path=None, commandline=True):
                            wait=True,
                            do_not_log=True,
                            encerror="strict",
-                           encoding=sys.stdout.encoding if sys.stdout is not None else "utf8",
+                           encoding=sys.stdout.encoding if sys.version_info[
+                               0] != 2 and sys.stdout is not None else "utf8",
                            change_path=os.path.split(
                                path)[0] if os.path.isfile(path) else path,
                            log_error=False,
@@ -404,7 +408,8 @@ def get_nb_commits(path=None, commandline=True):
                            wait=True,
                            do_not_log=True,
                            encerror="strict",
-                           encoding=sys.stdout.encoding if sys.stdout is not None else "utf8",
+                           encoding=sys.stdout.encoding if sys.version_info[
+                               0] != 2 and sys.stdout is not None else "utf8",
                            change_path=os.path.split(
                                path)[0] if os.path.isfile(path) else path,
                            log_error=False,

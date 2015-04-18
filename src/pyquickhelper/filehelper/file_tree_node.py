@@ -118,7 +118,8 @@ class FileTreeNode:
 
         self._fillstat()
         if self.isdir():
-            if isinstance(filter, str):
+            if isinstance(filter, str  # unicode#
+                          ):
                 # we assume it is a regular expression instead of a function
                 exp = re.compile(filter)
                 fil = lambda root, path, f, dir, e=exp: dir or (

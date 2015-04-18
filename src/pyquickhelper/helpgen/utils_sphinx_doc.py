@@ -549,7 +549,8 @@ def add_file_rst(rootm,
     app = []
     for action in actions:
         a, file, dest = action[:3]
-        if not isinstance(file, str):
+        if not isinstance(file, str  # unicode#
+                          ):
             file = file.name
 
         to = os.path.join(dest, file)
@@ -914,7 +915,8 @@ def prepare_file_for_sphinx_help_generation(
     indexes = {}
 
     for sub in subfolders:
-        if isinstance(sub, str):
+        if isinstance(sub, str  # unicode#
+                      ):
             src = (input + "/" + sub).replace("//", "/")
             dst = (output + "/" + sub).replace("//", "/")
         else:
@@ -1372,6 +1374,8 @@ def private_migrating_doxygen_doc(
     openi = False
     beginends = {}
 
+    typstr = str  # unicode#
+
     whole = "\n".join(rows)
     if "@var" in whole:
         whole = process_var_tag(whole, True)
@@ -1515,7 +1519,7 @@ def private_migrating_doxygen_doc(
                 fil = os.path.splitext(os.path.split(filename)[-1])[0]
                 fil = re.sub(r'([^a-zA-Z0-9_])', "", fil)
                 ref = fil + "-l%d" % (i + index_first_line)
-                ref2 = make_label_index(exa, str(example.groups()))
+                ref2 = make_label_index(exa, typstr(example.groups()))
                 to = "\n\n%s.. _le-%s:\n\n%s.. _le-%s:\n\n%s**Example: %s**  \n\n%s.. example(%s%s;;le-%s)." % (
                     sp, ref, sp, ref2, sp, exa, sp, pag, exa, ref)
                 rows[i] = row.replace(rep, to)
@@ -1537,7 +1541,7 @@ def private_migrating_doxygen_doc(
                 fil = os.path.splitext(os.path.split(filename)[-1])[0]
                 fil = re.sub(r'([^a-zA-Z0-9_])', "", fil)
                 ref = fil + "-l%d" % (i + index_first_line)
-                ref2 = make_label_index(exa, str(faq.groups()))
+                ref2 = make_label_index(exa, typstr(faq.groups()))
                 to = "\n\n%s.. _le-%s:\n\n%s.. _le-%s:\n\n%s**FAQ: %s**  \n\n%s.. FAQ(%s%s;;le-%s)." % (
                     sp, ref, sp, ref2, sp, exa, sp, pag, exa, ref)
                 rows[i] = row.replace(rep, to)
@@ -1579,7 +1583,7 @@ def private_migrating_doxygen_doc(
                 name = refl.groups()[-2]
                 if len(name) == 0:
                     raise SyntaxError(
-                        "name should be empty: " + str(refl.groups()))
+                        "name should be empty: " + typstr(refl.groups()))
                 rep = refl.groups()[0]
                 ty = {"cl": "class", "me": "meth", "at": "attr",
                       "fn": "func", "te": "term", "md": "mod"}[ty]

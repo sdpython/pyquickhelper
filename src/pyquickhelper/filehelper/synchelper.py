@@ -173,7 +173,8 @@ def synchronize_folder(p1,
 
     if filter is None:
         tfilter = lambda v: True
-    elif isinstance(filter, str):
+    elif isinstance(filter, str  # unicode#
+                    ):
         exp = re.compile(filter)
         tfilter = lambda be: (True if exp.search(be) else False)
     else:
@@ -187,7 +188,8 @@ def synchronize_folder(p1,
         be = os.path.join(path, f)
         return tfilter(be)
 
-    if isinstance(filter_copy, str):
+    if isinstance(filter_copy, str  # unicode#
+                  ):
         rg = re.compile(filter_copy)
         filter_copy = lambda f, ex=rg: ex.search(f) is not None
 

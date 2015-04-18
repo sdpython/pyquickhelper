@@ -203,7 +203,8 @@ def generate_help_sphinx(project_var_name,
     """
 
     def lay_build_override_newconf(t3):
-        if isinstance(t3, str):
+        if isinstance(t3, str  # unicode#
+                      ):
             lay, build, override, newconf = t3, "build", {}, None
         elif len(t3) == 1:
             lay, build, override, newconf = t3[0], "build", {}, None
@@ -264,7 +265,9 @@ def generate_help_sphinx(project_var_name,
             fLOG("import:", thenewconf)
         except Exception as ee:
             raise HelpGenException(
-                "unable to import a confg file", os.path.join(folds, newconf, "conf.py")) from ee
+                "unable to import a config file (t3={0}, root_source={1})".format(
+                    t3, root_source),
+                os.path.join(folds, "conf.py")) from ee
         # we remove the insert path
         del sys.path[0]
         if thenewconf is None:
@@ -280,6 +283,9 @@ def generate_help_sphinx(project_var_name,
     try:
         theconf = importlib.import_module('conf')
     except ImportError as e:
+        if sys.version_info[0] == 2:
+            # we start again because we lose track of the exception
+            theconf = importlib.import_module('conf')
         raise ImportError("unable to import conf.py from {0}, sys.path=\n{1}\nBEFORE:\n{2}".format(
             root_source, "\n".join(sys.path), "\n".join(copypath))) from e
     if theconf is None:
@@ -291,8 +297,9 @@ def generate_help_sphinx(project_var_name,
     src = SourceRepository(commandline=True)
     version = src.version(root)
     if version is not None:
+        typstr = str  # unicode#
         with open("version.txt", "w") as f:
-            f.write(str(version) + "\n")
+            f.write(typstr(version) + "\n")
 
     # modifies the version number in conf.py
     shutil.copy(os.path.join(root, "README.rst"), root_source)
@@ -624,6 +631,8 @@ def produce_code_graph_changes(df):
     x = list(range(len(xl)))
     y = list(gr["commits"])
 
+    typstr = str  # unicode#
+
     code = """
             import matplotlib.pyplot as plt
             x = __X__
@@ -643,9 +652,9 @@ def produce_code_graph_changes(df):
             ax.set_title("commits")
             plt.show()
             """.replace("            ", "") \
-               .replace("__X__", str(x)) \
-               .replace("__XL__", str(xl)) \
-               .replace("__Y__", str(y))
+               .replace("__X__", typstr(x)) \
+               .replace("__XL__", typstr(xl)) \
+               .replace("__Y__", typstr(y))
 
     return code
 
@@ -703,13 +712,15 @@ def generate_changes_repo(chan,
     rows.append(
         """\n.. _l-changes:\n\n\nChanges\n=======\n\n__CODEGRAPH__\n\nList of recent changes:\n""")
 
+    typstr = str  # unicode#
+
     values = []
     for i, row in enumerate(logs):
         n = len(logs) - i
         code, nbch, date, comment = row[:4]
         last = row[-1]
         if last.startswith("http"):
-            nbch = "`%s <%s>`_" % (str(nbch), last)
+            nbch = "`%s <%s>`_" % (typstr(nbch), last)
 
         ds = "%04d-%02d-%02d" % (date.year, date.month, date.day)
         if filter_commit(comment):
@@ -722,7 +733,7 @@ def generate_changes_repo(chan,
 
     if len(values) == 0 and exception_if_empty:
         raise HelpGenException(
-            "Logs were not empty but there was no comment starting with '*' from " + source + "\n" + "\n".join([str(_) for _ in logs]))
+            "Logs were not empty but there was no comment starting with '*' from " + source + "\n" + "\n".join([typstr(_) for _ in logs]))
 
     if len(values) > 0:
         tbl = pandas.DataFrame(

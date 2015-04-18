@@ -90,6 +90,7 @@ class FilesStatus:
 
         @param      checkfile       check the status for file checkfile
         """
+        typstr = str  # unicode#
         if checkfile is None:
             checkfile = []
         rows = []
@@ -109,7 +110,7 @@ class FilesStatus:
                 raise ValueError(
                     "there should be a checksum( for file " + k + "\n" + str(obj))
 
-            values = [k, str(obj.size), da, mda, sum5]
+            values = [k, typstr(obj.size), da, mda, sum5]
             sval = "%s\n" % "\t".join(values)
             if "\tNone" in sval:
                 raise AssertionError(
@@ -129,6 +130,7 @@ class FilesStatus:
         """
         res = True
         reason = None
+        typstr = str  # unicode#
 
         if file not in self.copyFiles:
             reason = "new"
@@ -138,7 +140,7 @@ class FilesStatus:
             st = os.stat(file)
             if st.st_size != obj.size:
                 reason = "size %s != old size %s" % (
-                    str(st.st_size), str(obj.size))
+                    str(st.st_size), typstr(obj.size))
                 res = True
             else:
                 l = obj.mdate
@@ -150,7 +152,7 @@ class FilesStatus:
                         ch = checksum_md5(file)
                         if ch != obj.checksum:
                             reason = "date/md5 %s != old date %s  md5 %s != %s" % (
-                                str(l), str(d), obj.checksum, ch)
+                                typstr(l), typstr(d), obj.checksum, ch)
                             res = True
                         else:
                             res = False
