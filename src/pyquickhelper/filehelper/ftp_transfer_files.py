@@ -169,10 +169,14 @@ class FolderTransferFTP:
         self._footer_html = footer_html
         self._content_filter = content_filter
         self._is_binary = is_binary
-        self._filter_out_reg = None if filter_out is None else re.compile(
-            filter_out)
-        self._filter_out = (lambda f: False) if filter_out is None else (
-            lambda f: self._filter_out_reg.search(f) is not None)
+        if filter_out is not None and not isinstance(filter_out, str  # unicode#
+                                                     ):
+            self._filter_out = filter_out
+        else:
+            self._filter_out_reg = None if filter_out is None else re.compile(
+                filter_out)
+            self._filter_out = (lambda f: False) if filter_out is None else (
+                lambda f: self._filter_out_reg.search(f) is not None)
 
         self._ft = FilesStatus(file_status)
         self._text_transform = text_transform
