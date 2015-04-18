@@ -44,11 +44,27 @@ class TestSphinxDocFull (unittest.TestCase):
         if "travis" in sys.executable:
             # travis due to the following:
             #       sitep = [_ for _ in site.getsitepackages() if "packages" in _]
-            # AttributeError: 'module' object has no attribute 'getsitepackages'            
+            # AttributeError: 'module' object has no attribute
+            # 'getsitepackages'
             return
 
         fLOG("generate documentation", root)
         var = "project_name"
+
+        # we modify conf.py to let it find pyquickhelper
+        pyq = os.path.abspath(os.path.dirname(src.__file__))
+        confpy = os.path.join(root, "_doc", "sphinxdoc", "source", "conf.py")
+        with open(confpy, "r", encoding="utf8") as f:
+            lines = f.read().split("\n")
+        for i,line in enumerate(lines):
+            if line.startswith("sys."):
+                break
+        addition = "sys.path.append(r'{0}')".format(pyq)
+        lines[i] = "{0}\n{1}".format(addition, lines[i])
+        with open(confpy, "w", encoding="utf8") as f:
+            f.write("\n".join(lines))
+        
+        # test
         generate_help_sphinx(var, module_name=var, root=root,
                              layout=["pdf", "html"],
                              extra_ext=["tohelp"],
