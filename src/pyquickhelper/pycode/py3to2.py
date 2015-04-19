@@ -37,7 +37,7 @@ def py3to2_convert_tree(folder,
     @param      pattern             pattern to find source code
     @param      pattern_copy        copy these files, do not modify them
     @param      fLOG                logging function
-    @param      unittest_modules    modules used during unit test but not installed
+    @param      unittest_modules    modules used during unit tests but not installed
     @return                         list of copied files
 
     If a folder does not exists, it will create it.
@@ -70,11 +70,14 @@ def py3to2_convert_tree(folder,
                         "..",
                         "..",
                         "..",
-                        "pyquickhelper",  # we replace it by "..", "pyquickhelper", "dist_module27",
+                        "pyquickhelper",  # it replaces it by "..", "pyquickhelper", "dist_module27",
                         "src")))
             if path not in sys.path:
                 sys.path.append(path)
             import pyquickhelper
+
+    *unittest_modules* can be either a list or a tuple ``(module, alias)``. Then the alias
+    appears instead of the module name.
 
     The function does not convert the exception
     `FileNotFoundError <https://docs.python.org/3/library/exceptions.html>`_
@@ -275,6 +278,11 @@ def py3to2_imported_local_modules(content, unittest_modules):
     """
     lines = content.split("\n")
     for modname in unittest_modules:
+        if isinstance(modname, tuple):
+            modname, alias = modname
+        else:
+            alias = modname
+
         s1 = '"{0}"'.format(modname)
         s2 = "'{0}'".format(modname)
         s3 = "import {0}".format(modname)
@@ -283,10 +291,10 @@ def py3to2_imported_local_modules(content, unittest_modules):
             for i, line in enumerate(lines):
                 if s1 in line:
                     line = line.replace(
-                        s1, '"..", {0}, "dist_module27"'.format(s1))
+                        s1, '"..", "{0}", "dist_module27"'.format(alias))
                     lines[i] = line
                 elif s2 in line:
                     line = line.replace(
-                        s2, "'..', {0}, 'dist_module27'".format(s2))
+                        s2, "'..', '{0}', 'dist_module27'".format(alias))
                     lines[i] = line
     return "\n".join(lines)
