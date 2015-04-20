@@ -59,7 +59,7 @@ This project contains the following folders:
 Versions / Changes
 ------------------
 
-* **1.0 - 2015/??/??**
+* **1.0 - 2015/04/21**
     * **new:** function to run a notebook end to end :func:`run_notebook <pyquickhelper.ipythonhelper.notebook_helper.run_notebook>`
     * **change:** function :func:`str_to_datetime <pyquickhelper.loghelper.convert_helper.str_to_datetime>` implicitely handles more formats
     * **change:** rename ``FileTreeStatus`` into :class:`FilesStatus <pyquickhelper.filehelper.files_status.FilesStatus>`
