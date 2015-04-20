@@ -549,7 +549,7 @@ def main_wrapper_tests(codefile,
             os.path.join(os.path.dirname(codefile), "..", "src", project_var_name))
         ori = src
         src = os.path.relpath(src, os.getcwd())
-        if os.environ["USERNAME"] in src:
+        if "USERNAME" in os.environ and os.environ["USERNAME"] in src:
             raise Exception(
                 "The location of the source should be not contain USERNAME: " + src)
         cov = coverage(source=[src])
