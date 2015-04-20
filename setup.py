@@ -45,6 +45,41 @@ from distutils.core import setup, Extension
 import distutils.sysconfig as SH
 from setuptools import find_packages
 
+
+def import_pyquickhelper():
+    try:
+        import pyquickhelper
+    except ImportError:
+        sys.path.append(
+            os.path.normpath(
+                os.path.abspath(
+                    os.path.join(
+                        os.path.dirname(__file__),
+                        "src"))))
+        try:
+            import pyquickhelper
+        except ImportError as e:
+            message = "module pyquickhelper is needed to build the documentation ({0}), not found in path {1}".format(
+                sys.executable,
+                sys.path[
+                    -1])
+            raise ImportError(message) from e
+    return pyquickhelper
+
+
+def write_version():
+    pyquickhelper = import_pyquickhelper()
+    from pyquickhelper.loghelper.pyrepo_helper import SourceRepository
+    src = SourceRepository(commandline=True)
+    fold = os.path.abspath(os.path.dirname(__file__))
+    version = src.version(fold)
+    if version is not None:
+        with open(os.path.join(fold, "version.txt"), "w") as f:
+            f.write(str(version) + "\n")
+
+if not os.path.exists("version.txt"):
+    write_version()
+
 if os.path.exists("version.txt"):
     with open("version.txt", "r") as f:
         lines = f.readlines()
@@ -113,27 +148,6 @@ if "--verbose" in sys.argv:
     print("current     =", os.path.abspath(os.getcwd()))
     print("---------------------------------")
 
-
-def import_pyquickhelper():
-    try:
-        import pyquickhelper
-    except ImportError:
-        sys.path.append(
-            os.path.normpath(
-                os.path.abspath(
-                    os.path.join(
-                        os.path.dirname(__file__),
-                        "src"))))
-        try:
-            import pyquickhelper
-        except ImportError as e:
-            message = "module pyquickhelper is needed to build the documentation ({0}), not found in path {1}".format(
-                sys.executable,
-                sys.path[
-                    -1])
-            raise ImportError(message) from e
-    return pyquickhelper
-
 if "clean_space" in sys.argv:
     pyquickhelper = import_pyquickhelper()
 
@@ -149,14 +163,7 @@ if "clean_space" in sys.argv:
     print("number of impacted files", len(rem))
 
 elif "write_version" in sys.argv:
-    pyquickhelper = import_pyquickhelper()
-    from pyquickhelper.loghelper.pyrepo_helper import SourceRepository
-    src = SourceRepository(commandline=True)
-    fold = os.path.abspath(os.path.dirname(__file__))
-    version = src.version(fold)
-    if version is not None:
-        with open(os.path.join(fold, "version.txt"), "w") as f:
-            f.write(str(version) + "\n")
+    write_version()
 
 elif "clean_pyd" in sys.argv:
     pyquickhelper = import_pyquickhelper()
