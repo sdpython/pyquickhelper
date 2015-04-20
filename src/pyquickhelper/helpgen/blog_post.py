@@ -183,6 +183,13 @@ class BlogPost:
         return self.date
 
     @property
+    def Year(self):
+        """
+        return the year, we assume self.date is a string YYYY-MM-DD
+        """
+        return self.date[:4]
+
+    @property
     def Keywords(self):
         """
         return the keywords
@@ -203,12 +210,14 @@ class BlogPost:
         """
         return self._content
 
-    def post_as_rst(self, directive="blogpostagg"):
+    def post_as_rst(self, language, directive="blogpostagg"):
         """
         reproduces the text of the blog post,
         updates the image links
 
-        @return         blog post as RST
+        @param      language    language
+        @param      directive   to specify a different behavior based on
+        @return                 blog post as RST
         """
         rows = []
         rows.append(".. %s::" % directive)
@@ -217,6 +226,10 @@ class BlogPost:
                 rows.append("    :%s: %s" % (f, v))
             else:
                 rows.append("    :%s: %s" % (f, ",".join(v)))
+        if self._filename is not None:
+            spl = self._filename.replace("\\", "/").split("/")
+            name = "/".join(spl[-2:])
+            rows.append("    :rawfile: %s" % name)
         rows.append("")
 
         if directive == "blogpostagg":
@@ -228,10 +241,12 @@ class BlogPost:
 
         rows.append("")
         rows.append("")
-        # does not work yet
-        rows.append("    :ref:`. <{0}>`".format(self.Tag))
-        rows.append("")
-        rows.append("")
+
+        # this is done in depart_blogpostagg_node
+        # if directive=="blogpostagg":
+        #    rows.append("    :ref:`{1} <{0}>`".format(self.Tag, TITLES[language]["more"]))
+        #    rows.append("")
+        #    rows.append("")
 
         return "\n".join(rows)
 
@@ -251,7 +266,7 @@ class BlogPost:
             r2 = row[i:]
             if "/" in r2:
                 return row
-            row = "{0}{1}/{2}".format(row[:i], self.date[:4], r2)
+            row = "{0}{1}/{2}".format(row[:i], self.Year, r2)
             return row
         else:
             return row

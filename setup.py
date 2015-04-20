@@ -50,7 +50,7 @@ if os.path.exists("version.txt"):
         lines = f.readlines()
     subversion = lines[0].strip("\r\n ")
 else:
-    subversion = 1
+    raise FileNotFoundError("version.txt")
 
 project_var_name = "pyquickhelper"
 sversion = "1.0"
@@ -88,7 +88,8 @@ else:
 packages = find_packages('src', exclude='src')
 package_dir = {k: "src/" + k.replace(".", "/") for k in packages}
 package_data = {project_var_name + ".funcwin": ["*.ico"],
-                project_var_name + ".helpgen": ["*.png"], }
+                project_var_name + ".helpgen": ["*.png"],
+                }
 
 if os.path.exists(readme):
     try:

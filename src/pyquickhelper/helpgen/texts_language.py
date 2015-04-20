@@ -14,6 +14,7 @@ TITLES = {
            "by title:": "By title :",
            "allblogs": "All blog posts",
            "catsmaonths": "All categories and months",
+           "more": "post",
            },
     'fr': {"blogpost": "article",
            "toc": "Contenu",
@@ -24,5 +25,6 @@ TITLES = {
            "by title:": "Par titre :",
            "allblogs": "Tous les articles de blog",
            "catsmaonths": "Catégories et mois",
+           "more": "article",
            }
 }

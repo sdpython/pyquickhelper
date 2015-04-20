@@ -84,6 +84,11 @@ def py3to2_convert_tree(folder,
     which only exists in Python 3. The module will fail in version 2.7
     if this exception is raised.
 
+    The following page
+    `Cheat Sheet: Writing Python 2-3 compatible code <http://python-future.org/compatible_idioms.html>`_
+    gives the difference between the two versions of Python and how to write
+    compatible code.
+
     .. versionadded:: 1.0
     """
     exclude = "temp_", "dist", "_doc", "build", "extensions", "nbextensions", "dist_module27"

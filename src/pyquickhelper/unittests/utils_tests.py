@@ -533,7 +533,7 @@ def main_wrapper_tests(codefile,
     if add_coverage:
         if report_folder is None:
             report_folder = os.path.join(
-                os.path.dirname(codefile), "..", "_doc", "sphinxdoc", "source", "coverage")
+                os.path.abspath(os.path.dirname(codefile)), "..", "_doc", "sphinxdoc", "source", "coverage")
 
         print("enabling coverage")
         from coverage import coverage
@@ -545,7 +545,14 @@ def main_wrapper_tests(codefile,
                 "unable to guess the project name in {0}\n{1}".format(folder, "\n".join(content)))
 
         project_var_name = content[0]
-        cov = coverage(source=["src/" + project_var_name])
+        src = os.path.abspath(
+            os.path.join(os.path.dirname(codefile), "..", "src", project_var_name))
+        src = os.path.relpath(os.getcwd(), src)
+        if os.environ["USERNAME"] in src:
+            raise Exception(
+                "The location of the source should be not contain USERNAME: " + src)
+        print("**", src)
+        cov = coverage(source=[src])
         cov.exclude('if __name__ == "__main__"')
         cov.start()
 

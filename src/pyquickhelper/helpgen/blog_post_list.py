@@ -292,7 +292,8 @@ class BlogPostList:
                                                        encoding=self._encoding,
                                                        rst_links_up=rst_links_up,
                                                        rst_links_down=rst_links_down,
-                                                       index_terms=["blog"])
+                                                       index_terms=["blog"],
+                                                       language=self.Lang)
 
     def write_aggregated_categories(self, folder, division=10,
                                     rst_links_up=None, rst_links_down=None):
@@ -408,7 +409,7 @@ class BlogPostList:
     @staticmethod
     def write_aggregated_post_list(folder, l, division, prefix, encoding,
                                    rst_links_up=None, rst_links_down=None, index_terms=None,
-                                   bold_title=None):
+                                   bold_title=None, language="en"):
         """
         write list of posts in an aggregated manners
 
@@ -421,6 +422,7 @@ class BlogPostList:
         @param      rst_links_down  list of rst_links to add at the bottom of a page
         @param      index_terms     terms to index on the first bucket
         @param      bold_title      title to display at the beginning of the page
+        @param      language        language
         @return                     list of produced files
         """
         res = []
@@ -440,7 +442,7 @@ class BlogPostList:
                 rst_links_up=rst_links_up,
                 rst_links_down=rst_links_down,
                 index_terms=index_terms if i == 0 else None,
-                bold_title=title)
+                bold_title=title, language=language)
             with open(name, "w", encoding=encoding) as f:
                 f.write(content)
             res.append(name)
@@ -450,7 +452,7 @@ class BlogPostList:
     def produce_aggregated_post_page(name, l, this, prev, next, main_page="Blog",
                                      rst_links_up=None, rst_links_down=None,
                                      index_terms=None,
-                                     bold_title=None):
+                                     bold_title=None, language="en"):
         """
         write the content of an aggregate page of blog posts
 
@@ -464,6 +466,7 @@ class BlogPostList:
         @param      rst_links_down  list of rst_links to add at the bottom of a page
         @param      index_terms     terms to index
         @param      bold_title      title to display of the beginning of the page
+        @param      language        language
         @return                     content of the page
         """
         direction = "|rss_image| "
@@ -508,7 +511,7 @@ class BlogPostList:
         rows.append(".. _%s:" % this)
         rows.append("")
         for post in l:
-            text = post.post_as_rst()
+            text = post.post_as_rst(language=language)
             rows.append(text)
             rows.append("")
             rows.append("")

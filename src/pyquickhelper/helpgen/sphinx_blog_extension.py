@@ -4,7 +4,7 @@
 @brief Defines blogpost directives.
 See `Tutorial: Writing a simple extension <http://sphinx-doc.org/extdev/tutorial.html>`_
 """
-
+import os
 from docutils import nodes
 from docutils.parsers.rst import Directive
 from sphinx.util.compat import make_admonition
@@ -13,6 +13,7 @@ from docutils.parsers.rst import directives
 from sphinx import addnodes
 from sphinx.util.nodes import set_source_info, process_index_entry
 from .blog_post import BlogPost
+from .texts_language import TITLES
 
 
 class blogpost_node(nodes.Admonition, nodes.Element):
@@ -50,7 +51,7 @@ class BlogPostDirective(Directive):
     add_index = True
     blogpost_class = blogpost_node
 
-    def _make_ad(self):
+    def _make_ad(self, year, title, tagid, rawfile):
         """
         private function
         """
@@ -107,7 +108,8 @@ class BlogPostDirective(Directive):
         targetnode = nodes.target('', '', ids=[tag])
         p["target"] = targetnode
 
-        ad = self._make_ad()
+        ad = self._make_ad(
+            p["date"][:4], p["title"], tag, self.options.get("rawfile", None),)
 
         p['blogpost'] = ad[0].deepcopy()
 
@@ -150,24 +152,28 @@ class BlogPostDirectiveAgg(BlogPostDirective):
     """
     add_index = False
     blogpost_class = blogpostagg_node
+    option_spec = {'date': directives.unchanged,
+                   'title': directives.unchanged,
+                   'keywords': directives.unchanged,
+                   'categories': directives.unchanged,
+                   'author': directives.unchanged,
+                   'rawfile': directives.unchanged,
+                   }
 
-    def _make_ad(self):
+    def _make_ad(self, year, title, tagid, rawfile):
         """
         We could overload the method to
         update what to do.
         """
-        # self.content  contains the content of the blog as a list
-        # self.block_text contains the raw text including the sphinx command
-        ad = make_admonition(self.__class__.blogpost_class,
-                             self.name,
-                             [_locale(self.options["date"]) + " "],
-                             self.options,
-                             self.content,
-                             self.lineno,
-                             self.content_offset,
-                             self.block_text,
-                             self.state,
-                             self.state_machine)
+        ad = BlogPostDirective._make_ad(self, year, title, tagid, rawfile)
+
+        # we add fields Year, Tag, Title
+        for a in ad:
+            if isinstance(a, BlogPostDirectiveAgg.blogpost_class):
+                a.Year = year
+                a.Tag = tagid
+                a.Title = title
+                a.RawFile = rawfile
         return ad
 
 
@@ -208,6 +214,17 @@ def depart_blogpostagg_node(self, node):
     depending on the format, or the setup should
     specify a different function for each.
     """
+    if "Year" in node.__dict__:
+        rawfile = node.RawFile
+        if rawfile is not None:
+            # there is probably better to do
+            # module name is something list doctuils.../[xx].py
+            lg = os.path.splitext(os.path.split(self.language.__file__)[-1])[0]
+            name = os.path.splitext(os.path.split(rawfile)[-1])[0]
+            name += ".html"
+            link = """<p><a class="reference internal" href="{0.Year}/{1}" title="{0.Title}">{2}</a></p>""" \
+                .format(node, name, TITLES[lg]["more"])
+            self.body.append(link)
     self.depart_admonition(node)
 
 
