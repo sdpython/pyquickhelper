@@ -45,6 +45,10 @@ from distutils.core import setup, Extension
 import distutils.sysconfig as SH
 from setuptools import find_packages
 
+############
+# functions
+############
+
 
 def import_pyquickhelper():
     try:
@@ -66,39 +70,46 @@ def import_pyquickhelper():
             raise ImportError(message) from e
     return pyquickhelper
 
+##########
+# version
+##########
 
-def write_version():
-    pyquickhelper = import_pyquickhelper()
-    from pyquickhelper.loghelper.pyrepo_helper import SourceRepository
-    src = SourceRepository(commandline=True)
-    fold = os.path.abspath(os.path.dirname(__file__))
-    version = src.version(fold)
-    if version is not None:
-        with open(os.path.join(fold, "version.txt"), "w") as f:
-            f.write(str(version) + "\n")
-
-if not os.path.exists("version.txt"):
-    write_version()
-
-if os.path.exists("version.txt"):
-    with open("version.txt", "r") as f:
-        lines = f.readlines()
-    subversion = lines[0].strip("\r\n ")
+if "install" in sys.argv:
+    # when the module is installed, no commit number is displayed
+    subversion = ""
 else:
-    raise FileNotFoundError("version.txt")
+    def write_version():
+        pyquickhelper = import_pyquickhelper()
+        from pyquickhelper import write_version_for_setup
+        return write_version_for_setup(__file__)
+
+    if not os.path.exists("version.txt"):
+        write_version()
+
+    if os.path.exists("version.txt"):
+        with open("version.txt", "r") as f:
+            lines = f.readlines()
+        subversion = "." + lines[0].strip("\r\n ")
+    else:
+        raise FileNotFoundError("version.txt")
+
+
+###########
+# settings
+###########
 
 project_var_name = "pyquickhelper"
-sversion = "1.0"
+sversion = "1.1"
 versionPython = "%s.%s" % (sys.version_info.major, sys.version_info.minor)
 path = "Lib/site-packages/" + project_var_name
 readme = 'README.rst'
 
 
 KEYWORDS = \
-    project_var_name + ', synchronization, files, Xavier, Dupré'
+    project_var_name + ', synchronization, files, documentation, Xavier, Dupré'
 
 DESCRIPTION = \
-    """Three functionalities: folder synchronization, a logging function, helpers to generate documentation with sphinx"""
+    """Various functionalities: folder synchronization, a logging function, helpers to generate documentation with sphinx, generation of code for Python 2.7 from Python 3"""
 
 CLASSIFIERS = \
     [
@@ -110,15 +121,10 @@ CLASSIFIERS = \
         'Development Status :: 5 - Production/Stable'
     ]
 
-if "bdist_wininst" not in sys.argv:
-    EXT_MODULES = [
-        # Extension(project_var_name + '.subproject.sample_module',
-        #    ['src/' + project_var_name + '/subproject/sample_module.cpp'],
-        # include_dirs = ['src/' + project_var_name +
-        # '/subproject']),
-    ]
-else:
-    EXT_MODULES = []
+#######
+# data
+#######
+
 
 packages = find_packages('src', exclude='src')
 package_dir = {k: "src/" + k.replace(".", "/") for k in packages}
@@ -126,17 +132,13 @@ package_data = {project_var_name + ".funcwin": ["*.ico"],
                 project_var_name + ".helpgen": ["*.png"],
                 }
 
+##############
+# common part
+##############
+
 if os.path.exists(readme):
-    try:
-        with open(readme, "r", encoding='utf-8') as f:
-            long_description = f.read()
-        long_description = long_description.replace("\ufeff", "")
-    except:
-        try:
-            with open(readme, "r") as f:
-                long_description = f.read()
-        except:
-            long_description = ""
+    with open(readme, "r", encoding='utf-8-sig') as f:
+        long_description = f.read()
 else:
     long_description = ""
 
@@ -148,83 +150,17 @@ if "--verbose" in sys.argv:
     print("current     =", os.path.abspath(os.getcwd()))
     print("---------------------------------")
 
-if "clean_space" in sys.argv:
+if "install" not in sys.argv:
     pyquickhelper = import_pyquickhelper()
-
-    fold = os.path.dirname(__file__)
-    fold = os.path.abspath(fold)
-    rem = pyquickhelper.remove_extra_spaces_folder(
-        fold,
-        extensions=[
-            ".py",
-            "rst",
-            ".bat",
-            ".sh"])
-    print("number of impacted files", len(rem))
-
-elif "write_version" in sys.argv:
-    write_version()
-
-elif "clean_pyd" in sys.argv:
-    pyquickhelper = import_pyquickhelper()
-    pyquickhelper.clean_exts()
-
-elif "build_sphinx" in sys.argv:
-    pyquickhelper = import_pyquickhelper()
-
-    if "--help" in sys.argv:
-        print(pyquickhelper.get_help_usage())
-    else:
-
-        if not os.path.exists("_doc/sphinxdoc/source"):
-            raise FileNotFoundError(
-                "you must get the source from GitHub to build the documentation")
-
-        from pyquickhelper import fLOG, generate_help_sphinx
-
-        fLOG(OutputPrint=True)
-        project_name = os.path.split(
-            os.path.split(os.path.abspath(__file__))[0])[-1]
-
-        if sys.platform.startswith("win"):
-            generate_help_sphinx(project_name, module_name=project_var_name,
-                                 layout=["html", "pdf"],
-                                 extra_ext=["doc"])
-        else:
-            # unable to test latex conversion due to adjustbox.sty missing
-            # package
-            generate_help_sphinx(project_name, nbformats=["ipynb", "html", "python", "rst"],
-                                 module_name=project_var_name,
-                                 extra_ext=["doc"])
-
-elif "unittests" in sys.argv:
-
-    if not os.path.exists("_unittests"):
-        raise FileNotFoundError(
-            "you must get the source from GitHub to run the unittests")
-
-    run_unit = os.path.join("_unittests", "run_unittests.py")
-    if not os.path.exists(run_unit):
-        raise FileNotFoundError("the folder should contain run_unittests.py")
-
-    pyquickhelper = import_pyquickhelper()
-    pyquickhelper.main_wrapper_tests(run_unit, add_coverage=True)
-
-elif "copy27" in sys.argv:
-
-    if sys.version_info[0] < 3:
-        raise Exception("Python needs to be Python3")
-
-    pyquickhelper = import_pyquickhelper()
-    root = os.path.abspath(os.path.dirname(__file__))
-    root = os.path.normpath(root)
-    dest = os.path.join(root, "dist_module27")
-    pyquickhelper.py3to2_convert_tree(root, dest)
-
+    r = pyquickhelper.process_standard_options_for_setup(
+        sys.argv, __file__, project_var_name)
 else:
+    r = False
+
+if not r:
     setup(
         name=project_var_name,
-        version='%s.%s' % (sversion, subversion),
+        version='%s%s' % (sversion, subversion),
         author='Xavier Dupré',
         author_email='xavier.dupre AT gmail.com',
         url="http://www.xavierdupre.fr/app/pyquickhelper/helpsphinx/index.html",
@@ -236,7 +172,7 @@ else:
         packages=packages,
         package_dir=package_dir,
         package_data=package_data,
-        ext_modules=EXT_MODULES,
+        ext_modules=[],
         install_requires=[
             "numpy",
             "pandas",

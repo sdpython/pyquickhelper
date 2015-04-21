@@ -1,6 +1,9 @@
 """
 @file
 @brief  This extension contains various functionalities to help unittesting.
+
+.. versionchanged:: 1.1
+    Moved to folder ``pycode``.
 """
 from __future__ import print_function
 
@@ -51,29 +54,38 @@ def get_temp_folder(thisfile, name, clean=True, create=True):
     return local
 
 
-def get_test_file(filter, dir=None):
+def get_test_file(filter, dir=None, no_subfolder=False):
     """
     return the list of test files
-    @param      dir         path to look (or paths to look if it is a list)
-    @param      filter      only select files matching the pattern (ex: test*)
-    @return                 a list of test files
-    """
+    @param      dir             path to look (or paths to look if it is a list)
+    @param      filter          only select files matching the pattern (ex: test*)
+    @param      no_subfolder    the function investigates the folder *dir* and does not try any subfolder in
+                                ``{"_nrt", "_unittest", "_unittests"}``
+    @return                     a list of test files
 
-    if dir is None:
-        path = os.path.split(__file__)[0]
-        nrt = os.path.abspath(os.path.join(path, "..", "..", "_nrt"))
-        uts = os.path.abspath(os.path.join(path, "..", "..", "_unittest"))
-        ut2 = os.path.abspath(os.path.join(path, "..", "..", "_unittests"))
-        dirs = [nrt, uts, ut2]
-    elif isinstance(dir, str):
-        if not os.path.exists(dir):
-            raise FileNotFoundError(dir)
+    .. versionchanged:: 1.1
+        Parameter *no_subfolder* was added.
+    """
+    if no_subfolder:
         dirs = [dir]
     else:
-        dirs = dir
-        for d in dirs:
-            if not os.path.exists(d):
-                raise FileNotFoundError(d)
+        expected = {"_nrt", "_unittest", "_unittests"}
+        if dir is None:
+            path = os.path.split(__file__)[0]
+            dirs = [os.path.join(path, "..", "..", d) for d in expected]
+        elif isinstance(dir, str):
+            if not os.path.exists(dir):
+                raise FileNotFoundError(dir)
+            last = os.path.split(dir)[-1]
+            if last in expected:
+                dirs = [dir]
+            else:
+                dirs = [os.path.join(dir, d) for d in expected]
+        else:
+            dirs = dir
+            for d in dirs:
+                if not os.path.exists(d):
+                    raise FileNotFoundError(d)
 
     copypaths = list(sys.path)
 
@@ -100,7 +112,7 @@ def get_test_file(filter, dir=None):
         lid = glob.glob(dir + "/*")
         for l in lid:
             if os.path.isdir(l):
-                temp = get_test_file(filter, l)
+                temp = get_test_file(filter, l, no_subfolder=True)
                 temp = [t for t in temp]
                 li.extend(temp)
 
@@ -200,7 +212,7 @@ def import_files(li):
     return allsuite
 
 
-def clean():
+def clean(dir=None):
     """
     do the cleaning
     """
@@ -208,7 +220,7 @@ def clean():
     print()
     for log_file in ["temp_hal_log.txt", "temp_hal_log2.txt",
                      "temp_hal_log_.txt", "temp_log.txt", "temp_log2.txt", ]:
-        li = get_test_file(log_file)
+        li = get_test_file(log_file, dir=dir)
         for l in li:
             try:
                 if os.path.isfile(l):
@@ -285,23 +297,48 @@ def main(runner,
             if os.path.exists(path):
                 raise FileExistsError("this path should not exist " + path)
 
-    li = get_test_file("test*", path_test)
+    def short_name(l):
+        cut = os.path.split(l)
+        cut = os.path.split(cut[0])[-1] + "/" + cut[-1]
+        return cut
+
+    # sort the test by increasing expected time
+    print("path_test", path_test)
+    li = get_test_file("test*", dir=path_test)
     est = [get_estimation_time(l) for l in li]
-    co = [(e, l) for e, l in zip(est, li)]
+    co = [(e, short_name(l), l) for e, l in zip(est, li)]
     co.sort()
     cco = []
+
+    # we check we do not run twice the same file
+    done = {}
+    duplicate = []
+    for a, cut, l in cco:
+        if cut in done:
+            duplicate.append((cut, l))
+        done[cut] = True
+
+    if len(duplicate) > 0:
+        s = list(set(duplicate))
+        s.sort()
+        mes = "\n".join(s)
+        raise Exception("duplicated test file were detected:\n" + mes)
+
+    # check existing
+    if len(co) == 0:
+        raise Exception(
+            "unable to find any test files in {0}".format(path_test))
 
     if skip != -1:
         flogp("found ", len(co), " test files skipping", skip)
     else:
         flogp("found ", len(co), " test files")
 
+    # extract the test classes
     index = 0
-    for e, l in co:
+    for e, cut, l in co:
         if e > limit_max:
             continue
-        cut = os.path.split(l)
-        cut = os.path.split(cut[0])[-1] + "/" + cut[-1]
         if skip == -1 or index >= skip:
             flogp("% 3d - time " % (len(cco) + 1), "% 3d" % e, "s  --> ", cut)
         cco.append((e, l))
@@ -309,11 +346,13 @@ def main(runner,
 
     exp = re.compile("Ran ([0-9]+) tests? in ([.0-9]+)s")
 
+    # run the test
     li = [a[1] for a in cco]
     lis = [os.path.split(_)[-1] for _ in li]
     suite = import_files(li)
     keep = []
-    #memerr  = sys.stderr
+
+    # redirect standard output, err
     memout = sys.stdout
     fail = 0
     allwarn = []
@@ -414,6 +453,7 @@ def main(runner,
 
         keep.append((s[1], r))
 
+    # end, catch standard output and err
     sys.stderr = stderr
     sys.stdout = memout
     val = fullstderr.getvalue()

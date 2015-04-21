@@ -3,7 +3,7 @@
 Main files, contains the version, the url to the documention.
 """
 
-__version__ = "1.0"
+__version__ = "1.1"
 __author__ = "Xavier Dupré"
 __github__ = "https://github.com/sdpython/pyquickhelper"
 __url__ = "http://www.xavierdupre.fr/app/pyquickhelper/helpsphinx/index.html"
@@ -46,7 +46,7 @@ from .ipythonhelper.magic_parser import MagicCommandParser
 from .ipythonhelper.magic_class import MagicClassWithHelpers
 from .helpgen.utils_sphinx_config import NbImage
 from .loghelper.repositories.gitlab_helper import GitLabAPI, GitLabException
-from .unittests.utils_tests import get_temp_folder, main_wrapper_tests
+from .pycode.utils_tests import get_temp_folder, main_wrapper_tests
 from .filehelper.internet_helper import download
 from .filehelper.compression_helper import zip_files, gzip_files, zip7_files
 from .pycode.clean_helper import clean_exts
@@ -58,3 +58,4 @@ from .texthelper.diacritic_helper import remove_diacritics
 from .helpgen.convert_doc_helper import docstring2html
 from .pycode.py3to2 import py3to2_convert_tree, py3to2_convert
 from .filehelper.anyfhelper import change_file_status
+from .pycode.setup_helper import write_version_for_setup, clean_space_for_setup, standard_help_for_setup, main_wrapper_tests, process_standard_options_for_setup
