@@ -293,14 +293,6 @@ def generate_help_sphinx(project_var_name,
             "unable to import conf.py which defines the help generation")
     add_missing_files(root, theconf)
 
-    # changes
-    src = SourceRepository(commandline=True)
-    version = src.version(root)
-    if version is not None:
-        typstr = str  # unicode#
-        with open("version.txt", "w") as f:
-            f.write(typstr(version) + "\n")
-
     # modifies the version number in conf.py
     shutil.copy(os.path.join(root, "README.rst"), root_source)
     shutil.copy(os.path.join(root, "LICENSE.txt"), root_source)
@@ -537,10 +529,11 @@ def generate_help_sphinx(project_var_name,
         compile_latex_output_final(froot, latex_path, False)
 
     if "html" in layout:
-        post_process_html_nb_output_static_file(
-            os.path.join(build, "html", "notebooks"), fLOG=fLOG)
-        post_process_html_nb_output_static_file(
-            os.path.join(build, "html", "_downloads"), fLOG=fLOG)
+        nbf = os.path.join(build, "html", "notebooks")
+        if os.path.exists(nbf):
+            post_process_html_nb_output_static_file(nbf, fLOG=fLOG)
+            post_process_html_nb_output_static_file(
+                os.path.join(build, "html", "_downloads"), fLOG=fLOG)
 
     # end
     os.chdir(pa)

@@ -587,7 +587,7 @@ def main_wrapper_tests(codefile,
         project_var_name = content[0]
         src = os.path.abspath(
             os.path.join(os.path.dirname(codefile), "..", "src", project_var_name))
-        ori = src
+
         src = os.path.relpath(src, os.getcwd())
         if "USERNAME" in os.environ and os.environ["USERNAME"] in src:
             raise Exception(

@@ -144,13 +144,14 @@ if is_local():
         from pyquickhelper import write_version_for_setup
         return write_version_for_setup(__file__)
 
-    if not os.path.exists("version.txt"):
-        write_version()
+    write_version()
 
     if os.path.exists("version.txt"):
         with open("version.txt", "r") as f:
             lines = f.readlines()
         subversion = "." + lines[0].strip("\r\n ")
+        if subversion == ".0":
+            raise Exception("subversion is wrong: " + subversion)
     else:
         raise FileNotFoundError("version.txt")
 else:

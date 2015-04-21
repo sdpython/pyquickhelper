@@ -13,6 +13,7 @@ from ..helpgen.sphinx_main import generate_help_sphinx
 from .code_helper import remove_extra_spaces_folder
 from .py3to2 import py3to2_convert_tree
 from ..pycode.utils_tests import main_wrapper_tests
+from ..helpgen import get_help_usage
 
 
 def get_folder(file_or_folder):
@@ -43,6 +44,8 @@ def write_version_for_setup(file_or_folder):
     src = SourceRepository(commandline=True)
     ffolder = get_folder(file_or_folder)
     version = src.version(ffolder)
+    if version in ["0", 0, None]:
+        raise Exception("issue with version {0}".format(version))
 
     # write version number
     if version is not None:
@@ -81,7 +84,7 @@ def standard_help_for_setup(file_or_folder, project_var_name):
     The function outputs some information through function @see fn fLOG.
     """
     if "--help" in sys.argv:
-        print(pyquickhelper.get_help_usage())
+        print(get_help_usage())
     else:
         ffolder = get_folder(file_or_folder)
         source = os.path.join(ffolder, "_doc", "sphinxdoc", "source")
