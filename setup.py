@@ -45,9 +45,63 @@ from distutils.core import setup, Extension
 import distutils.sysconfig as SH
 from setuptools import find_packages
 
+#########
+# settings
+#########
+
+project_var_name = "pyquickhelper"
+sversion = "1.1"
+versionPython = "%s.%s" % (sys.version_info.major, sys.version_info.minor)
+path = "Lib/site-packages/" + project_var_name
+readme = 'README.rst'
+
+
+KEYWORDS = project_var_name + \
+    ', synchronization, files, documentation, Xavier, Dupré'
+DESCRIPTION = """Various functionalities: folder synchronization, a logging function, helpers
+to generate documentation with sphinx, generation of code for Python 2.7 from Python 3"""
+CLASSIFIERS = [
+    'Programming Language :: Python :: 3',
+    'Intended Audience :: Developers',
+    'Topic :: Scientific/Engineering',
+    'Topic :: Education',
+    'License :: OSI Approved :: BSD License',
+    'Development Status :: 5 - Production/Stable'
+]
+
+
+#######
+# data
+#######
+
+
+packages = find_packages('src', exclude='src')
+package_dir = {k: "src/" + k.replace(".", "/") for k in packages}
+package_data = {project_var_name + ".funcwin": ["*.ico"],
+                project_var_name + ".helpgen": ["*.png"],
+                }
+
 ############
 # functions
 ############
+
+
+def is_local():
+    if "clean_space" in sys.argv or \
+            "write_version" in sys.argv or \
+            "clean_pyd" in sys.argv or \
+            "build_sphinx" in sys.argv or \
+            "unittests" in sys.argv or \
+            "copy27" in sys.argv or \
+            "build" in sys.argv or \
+            "sdist" in sys.argv or \
+            "register" in sys.argv or \
+            "bdist_wininst" in sys.argv or \
+            "bdist_msi" in sys.argv or \
+            "bdist_wheel" in sys.argv:
+        return True
+    else:
+        return False
 
 
 def import_pyquickhelper():
@@ -70,14 +124,20 @@ def import_pyquickhelper():
             raise ImportError(message) from e
     return pyquickhelper
 
+
+def verbose():
+    print("---------------------------------")
+    print("package_dir =", package_dir)
+    print("packages    =", packages)
+    print("package_data=", package_data)
+    print("current     =", os.path.abspath(os.getcwd()))
+    print("---------------------------------")
+
 ##########
 # version
 ##########
 
-if "install" in sys.argv:
-    # when the module is installed, no commit number is displayed
-    subversion = ""
-else:
+if is_local():
     def write_version():
         pyquickhelper = import_pyquickhelper()
         from pyquickhelper import write_version_for_setup
@@ -92,45 +152,9 @@ else:
         subversion = "." + lines[0].strip("\r\n ")
     else:
         raise FileNotFoundError("version.txt")
-
-
-###########
-# settings
-###########
-
-project_var_name = "pyquickhelper"
-sversion = "1.1"
-versionPython = "%s.%s" % (sys.version_info.major, sys.version_info.minor)
-path = "Lib/site-packages/" + project_var_name
-readme = 'README.rst'
-
-
-KEYWORDS = \
-    project_var_name + ', synchronization, files, documentation, Xavier, Dupré'
-
-DESCRIPTION = \
-    """Various functionalities: folder synchronization, a logging function, helpers to generate documentation with sphinx, generation of code for Python 2.7 from Python 3"""
-
-CLASSIFIERS = \
-    [
-        'Programming Language :: Python :: 3',
-        'Intended Audience :: Developers',
-        'Topic :: Scientific/Engineering',
-        'Topic :: Education',
-        'License :: OSI Approved :: BSD License',
-        'Development Status :: 5 - Production/Stable'
-    ]
-
-#######
-# data
-#######
-
-
-packages = find_packages('src', exclude='src')
-package_dir = {k: "src/" + k.replace(".", "/") for k in packages}
-package_data = {project_var_name + ".funcwin": ["*.ico"],
-                project_var_name + ".helpgen": ["*.png"],
-                }
+else:
+    # when the module is installed, no commit number is displayed
+    subversion = ""
 
 ##############
 # common part
@@ -143,14 +167,9 @@ else:
     long_description = ""
 
 if "--verbose" in sys.argv:
-    print("---------------------------------")
-    print("package_dir =", package_dir)
-    print("packages    =", packages)
-    print("package_data=", package_data)
-    print("current     =", os.path.abspath(os.getcwd()))
-    print("---------------------------------")
+    verbose()
 
-if "install" not in sys.argv:
+if is_local():
     pyquickhelper = import_pyquickhelper()
     r = pyquickhelper.process_standard_options_for_setup(
         sys.argv, __file__, project_var_name)
@@ -176,7 +195,6 @@ if not r:
         install_requires=[
             "numpy",
             "pandas",
-            "pymyinstall",
             "six",
             "dateutils",
             "requests",

@@ -164,7 +164,6 @@ def process_standard_options_for_setup(argv, file_or_folder, project_var_name):
     @return                         True (an option was processed) or False,
                                     the file ``setup.py`` should call function ``setup``
     """
-
     if "clean_space" in argv:
         rem = clean_space_for_setup(file_or_folder)
         print("number of impacted files", len(rem))

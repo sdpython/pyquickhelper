@@ -6,5 +6,7 @@ goto custom_python:
 set pythonexe=c:\Python34_x64\python
 
 :custom_python:
-%pythonexe% setup.py rotate -k 5
-%pythonexe% setup.py sdist register upload
+%pythonexe% setup.py rotate --match=.zip -k 0
+%pythonexe% setup.py rotate --match=.tar.gz -k 5
+rem %pythonexe% setup.py sdist register
+%pythonexe% setup.py sdist upload --formats=gztar
