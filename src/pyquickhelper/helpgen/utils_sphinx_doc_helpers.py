@@ -897,6 +897,10 @@ def process_look_for_tag(tag, title, files):
 
             """.replace("            ", "").format(tag, tit, "=" * len(tit), suf)]
 
+        if os.environ.get("USERNAME", "````````````") in rows[0]:
+            raise HelpGenException(
+                "the title is probably wrong: {0}\ntag={1}\ntit={1}".format(rows[0], tag, tit))
+
         for pa, a, b, c in coll:
             pan = re.sub(r'([^a-zA-Z0-9_])', "", pa)
             if page != pan:

@@ -350,10 +350,10 @@ def apply_modification_template(rootm,
     filenoext = os.path.splitext(filename)[0]
     fullname = fullname.strip(".").replace(
         "\\", "/").replace("/", ".").strip(".")
-    fullname = fullname.replace(rootrep[0], rootrep[1])
-    fullnamenoext = fullname[:-3] \
-        if (fullname.endswith(".py") or fullname.endswith(".cpp")) \
-        else fullname
+    if rootrep[0] in fullname:
+        pos = fullname.index(rootrep[0])
+        fullname = rootrep[1] + fullname[pos + len(rootrep[0]):]
+    fullnamenoext = fullname[:-3] if fullname.endswith(".py") else fullname
     pythonname = None
 
     mo, prefix = import_module(
@@ -474,6 +474,10 @@ def apply_modification_template(rootm,
     if filenoext.endswith(".__init__"):
         filenoext = filenoext[: -len(".__init__")]
 
+    if os.environ.get("USERNAME", "````````````") in fullnamenoext:
+        raise HelpGenException("the title is probably wrong: {0}\nnoext={1}\npython={2}\nrootm={3}\nrootrep={4}\nfullname={5}\nkeepf={6}".format(
+            fullnamenoext, filenoext, pythonname, rootm, rootrep, fullname, keepf))
+
     ttitle = "module ``{0}``".format(fullnamenoext)
     rep = {"__FULLNAME_UNDERLINED__": ttitle + "\n" + ("=" * len(ttitle)) + "\n",
            "__FILENAMENOEXT__": filenoext,
@@ -561,7 +565,8 @@ def add_file_rst(rootm,
         if file.endswith(".py"):
             if os.stat(to).st_size > 0:
                 content = apply_modification_template(
-                    rootm, store_obj, template, to, rootrep, softfile, indexes, additional_sys_path=additional_sys_path, fLOG=fLOG)
+                    rootm, store_obj, template, to, rootrep, softfile, indexes,
+                    additional_sys_path=additional_sys_path, fLOG=fLOG)
                 content = fmod(content)
 
                 # tweaks for example and studies
@@ -741,6 +746,10 @@ def produces_indexes(
         title = titles.get(k, k)
         under = "=" * len(title)
 
+        if os.environ.get("USERNAME", "````````````") in title:
+            raise HelpGenException(
+                "the title is probably wrong: {0}".format(title))
+
         res[k] = "\n.. _%s:\n\n%s\n%s\n\n%s" % (label, title, under, res[k])
 
     return res
@@ -757,6 +766,10 @@ def filecontent_to_rst(filename, content):
     """
     file = os.path.split(filename)[-1]
     full = file + "\n" + ("=" * len(file)) + "\n"
+
+    if os.environ.get("USERNAME", "````````````") in file:
+        raise HelpGenException("the title is probably wrong: {0}".format(file))
+
     rows = ["", ".. _f-%s:" % file, "", "", full, "",
             # "fullpath: ``%s``" % filename,
             "", ""]

@@ -53,12 +53,8 @@ class TestSphinxDoc2 (unittest.TestCase):
                                                            store_obj,
                                                            utils_sphinx_doc.add_file_rst_template,
                                                            file,
-                                                           os.path.normpath(
-                                                               os.path.join(
-                                                                   path,
-                                                                   "..",
-                                                                   "..",
-                                                                   "src")),
+                                                           ("pyquickhelper.src.pyquickhelper.",
+                                                            ""),
                                                            softfile,
                                                            {},
                                                            additional_sys_path=[],

@@ -67,7 +67,7 @@ class TestSphinxDocFull (unittest.TestCase):
             temp,
             subfolders=[("src/" + project_var_name, project_var_name), ],
             silent=True,
-            rootrep=("_doc.sphinxdoc.source.%s." % (project_var_name,), ""),
+            rootrep=("ut_helpgen.temp_doc.%s." % (project_var_name,), ""),
             optional_dirs=[],
             mapped_function=[(".*[.]tohelp$", None)],
             issues=issues,
