@@ -6,7 +6,6 @@ to visualize the differences between two files.
 """
 
 import os
-import warnings
 import sys
 import datetime
 from ..filehelper.anyfhelper import read_content_ufs

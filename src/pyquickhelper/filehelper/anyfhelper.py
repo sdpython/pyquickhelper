@@ -6,9 +6,13 @@
 import os
 import io
 import stat
+import sys
 import warnings
 from .synchelper import explore_folder_iterfile
 from .internet_helper import read_url
+
+if sys.version_info[0] == 2:
+    from codecs import open    
 
 
 def change_file_status(folder, status=stat.S_IWRITE, strict=False):
