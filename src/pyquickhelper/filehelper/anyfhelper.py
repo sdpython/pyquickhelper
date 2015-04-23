@@ -4,9 +4,11 @@
 """
 
 import os
+import io
 import stat
 import warnings
 from .synchelper import explore_folder_iterfile
+from .internet_helper import read_url
 
 
 def change_file_status(folder, status=stat.S_IWRITE, strict=False):
@@ -45,3 +47,31 @@ def change_file_status(folder, status=stat.S_IWRITE, strict=False):
                 os.chmod(f, nmode)
                 res.append(f)
     return res
+
+
+def read_content_ufs(file_url_stream, encoding="utf8"):
+    """
+    read the content of a source, whether it is a url, a file, a stream
+    or a string (in that case, it returns the string itself),
+    we assume the content type is text
+
+    @param      file_url_stream     file or url or stream or string
+    @param      encoding            encoding
+    @return                         content of the source (str)
+    """
+    if isinstance(file_url_stream, str  # unicode#
+                  ):
+        if os.path.exists(file_url_stream):
+            with open(file_url_stream, "r", encoding=encoding) as f:
+                return f.read()
+        elif file_url_stream.startswith("http"):
+            return read_url(file_url_stream, encoding=encoding)
+        else:
+            return file_url_stream
+    elif isinstance(file_url_stream, io.StringIO):
+        return file_url_stream.getvalue()
+    elif isinstance(file_url_stream, io.BytesIO):
+        return file_url_stream.getvalue().decode(encoding=encoding)
+    else:
+        raise TypeError(
+            "unexpected type for file_url_stream: {0}".format(type(file_url_stream)))

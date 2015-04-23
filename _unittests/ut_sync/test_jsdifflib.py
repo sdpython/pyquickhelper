@@ -57,11 +57,7 @@ class TestJsDiffLib(unittest.TestCase):
 
         tt = os.path.split(
             src.pyquickhelper.filehelper.visual_sync.__file__)[0]
-        ma = os.path.join(tt, "temp_difflibjs", "jsdifflib-master")
-        if os.path.exists(ma):
-            for i in os.listdir(ma):
-                os.remove(os.path.join(ma, i))
-        assert not os.path.exists(os.path.join(ma, "difflib.js"))
+        ma = tt
         p = create_visual_diff_through_html("a", "b")
         assert len(p) > 0
         assert os.path.exists(os.path.join(ma, "difflib.js"))

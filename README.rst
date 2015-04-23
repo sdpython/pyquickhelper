@@ -61,6 +61,13 @@ Versions / Changes
 
 * **1.1 - 2015/??/??**
     * **fix:** shorten setup.py, move functionalities to the module, move utils_test.py to subfolder pycode
+    * **change:** improve the generation of automated documentation
+    * **change:** function :func:`create_visual_diff_through_html_files <pyquickhelper.filehelper.visual_sync.create_visual_diff_through_html_files>` 
+      now returns appropriate objects to display the results into a notebook, it can also retrieve
+      the content from a url or string
+    * **add:** function :func:`read_url <pyquickhelper.filehelper.internet_helper.read_url>` and
+      :func:`read_content_ufs <pyquickhelper.filehelper.anyfhelper.read_content_ufs>` 
+      to read content from a string, a file, a url, a stream
 * **1.0 - 2015/04/21**
     * **new:** function to run a notebook end to end :func:`run_notebook <pyquickhelper.ipythonhelper.notebook_helper.run_notebook>`
     * **change:** function :func:`str_to_datetime <pyquickhelper.loghelper.convert_helper.str_to_datetime>` implicitely handles more formats

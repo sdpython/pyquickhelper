@@ -1,5 +1,5 @@
 """
-@brief      test log(time=2s)
+@brief      test log(time=4s)
 """
 
 import sys
@@ -25,7 +25,7 @@ except ImportError:
     import src
 
 from src.pyquickhelper import download, get_temp_folder, fLOG, gzip_files, zip_files, zip7_files
-from src.pyquickhelper.filehelper import check
+from src.pyquickhelper.filehelper import check, read_url
 
 
 class TestDownload (unittest.TestCase):
@@ -67,6 +67,18 @@ class TestDownload (unittest.TestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
         check()
+
+    def test_read_url(self):
+        fLOG(
+            __file__,
+            self._testMethodName,
+            OutputPrint=__name__ == "__main__")
+
+        url = "https://raw.githubusercontent.com/sdpython/pyquickhelper/master/src/pyquickhelper/ipythonhelper/magic_parser.py"
+        content = read_url(url, encoding="utf8")
+        assert "MagicCommandParser" in content
+        assert isinstance(content, str  # unicode#
+                          )
 
 if __name__ == "__main__":
     unittest.main()

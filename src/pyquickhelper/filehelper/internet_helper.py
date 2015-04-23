@@ -106,3 +106,22 @@ def download(url, path_download=".", outfile=None, fLOG=noLOG):
         return url
     else:
         raise FileException("This url does not seem to be one: " + url)
+
+
+def read_url(url, encoding=None):
+    """
+    read the content of a url
+
+    @param      url         url
+    @param      encoding    if None, the result type is bytes, str otherwise
+    @return                 str or bytes
+
+    .. versionadded:: 1.1
+    """
+    request = urllib_request.Request(url)
+    with urllib_request.urlopen(request) as fu:
+        content = fu.read()
+    if encoding is None:
+        return content
+    else:
+        return content.decode(encoding=encoding)

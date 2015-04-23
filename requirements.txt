@@ -1,4 +1,3 @@
-autopep8
 Cython
 Flask
 Flask-SQLAlchemy
@@ -14,6 +13,7 @@ XlsxWriter
 ansi2html
 ansiconv
 argparse
+autopep8
 brewer2mpl
 cloud-sptheme
 coverage
