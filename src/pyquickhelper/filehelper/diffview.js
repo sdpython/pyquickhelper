@@ -58,7 +58,7 @@ var diffview = {
 		if (newTextLines == null)
 			throw "Cannot build diff view; newTextLines is not defined.";
 		if (!opcodes)
-			throw "Canno build diff view; opcodes is not defined.";
+			throw "Cannot build diff view; opcodes is not defined.";
 		
 		function celt (name, clazz) {
 			var e = document.createElement(name);
@@ -125,8 +125,8 @@ var diffview = {
 		}
 		
 		for (var idx = 0; idx < opcodes.length; idx++) {
-			code = opcodes[idx];
-			change = code[0];
+			var code = opcodes[idx];
+			var change = code[0];
 			var b = code[1];
 			var be = code[2];
 			var n = code[3];

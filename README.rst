@@ -98,7 +98,7 @@ Versions / Changes
     * **new:** class :class:`MagicCommandParser <pyquickhelper.ipythonhelper.magic_parser.MagicCommandParser>`
     * **fix:** better behavior while running the unit test, add an option to compute the coverage
     * **change:** catch warnings when running the unit tests
-    * **change:** expose the function :func:`process_notebooks <pyquickhelper.helpgen.sphinx_main.process_notebooks>` to convert a notebook into html, pdf, rst, docx formats
+    * **change:** expose the function :func:`process_notebooks <pyquickhelper.helpgen.process_notebooks.process_notebooks>` to convert a notebook into html, pdf, rst, docx formats
     * **add:** add simple statistics while generation the documentation
     * **add:** add function :func:`clone <pyquickhelper.loghelper.repositories.pygit_helper.clone>` and :func:`rebase <pyquickhelper.loghelper.repositories.pygit_helper.rebase>` to clone or pull rebase a git repository
     * **new:** function :func:`set_sphinx_variables <pyquickhelper.helpgen.default_conf.set_sphinx_variables>` to avoid copying the same configuration file over multiple projects

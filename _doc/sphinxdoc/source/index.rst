@@ -35,7 +35,7 @@ Functionalities
     * help generation including notebook conversion (see :func:`generate_help_sphinx <pyquickhelper.helpgen.sphinx_main.generate_help_sphinx>`)
     * folder synchronization (see :func:`pyquickhelper.synchronize_folder <pyquickhelper.filehelper.synchelper.synchronize_folder>`)
     * logging (see :func:`fLOG <pyquickhelper.loghelper.flog.fLOG>`)
-    * help running unit tests (see :func:`main <pyquickhelper.unittests.utils_tests.main>`)
+    * help running unit tests (see :func:`main_wrapper_tests <pyquickhelper.pycode.utils_tests.main_wrapper_tests>`)
     * simple server to server sphinx documentation (see :func:`run_doc_server <pyquickhelper.serverdoc.documentation_server.run_doc_server>`)
     * function to create and delete jobs on `Jenkins <https://jenkins-ci.org/>`_, see :class:`JenkinsExt <pyquickhelper.jenkinshelper.jenkins_server.JenkinsExt>`
     * :class:`MagicCommandParser <pyquickhelper.ipythonhelper.magic_parser.MagicCommandParser>`, 

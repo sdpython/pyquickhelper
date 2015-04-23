@@ -154,12 +154,12 @@ def process_standard_options_for_setup(argv, file_or_folder, project_var_name):
     able to process assuming the module which calls this function
     follows the same design as *pyquickhelper*, it will process the following
     options:
-        * ``clean_space``
-        * ``write_version``
-        * ``clean_pyd``
-        * ``build_sphinx``
-        * ``unittests``
-        * ``copy27``
+        * ``clean_space``: clean unnecessary spaces in the code
+        * ``write_version``: write a file ``version.txt`` with the version number (needs an access to GitHub)
+        * ``clean_pyd``: clean file ``*.pyd``
+        * ``build_sphinx``: build the documentation
+        * ``unittests``: run the unit tests
+        * ``copy27``: create a modified copy of the module to run on Python 2.7
 
     @param      argv                = *sys.argv*
     @param      file_or_folder      file ``setup.py`` or folder which contains it

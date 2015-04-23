@@ -34,17 +34,59 @@ The module is organized as follows:
     * ``pyquickhelper/_unittests/_doc/notebooks``: contains the notebooks included in the documentation
     * ``pyquickhelper/_unittests/_doc/sphinxdoc/source``: contains the sphinx documentation
 
-When the documentation is being generated (by script ``pyquickhelper/make_help.py``,
+When the documentation is being generated,
 the sources are copied into ``pyquickhelper/_unittests/_doc/sphinxdoc/source/pyquickhelper``.
-The documentation in `javadoc <http://en.wikipedia.org/wiki/Javadoc>`_ format is replaced by the RST syntax. Various
+The documentation can be in `javadoc <http://en.wikipedia.org/wiki/Javadoc>`_ format is replaced by the RST syntax. Various
 files are automatically generated (indexes, examples, FAQ).
 Then `sphinx <http://sphinx-doc.org/>`_ is run.
 After the documentation is generated, everything is copied into folder ``pyquickhelper/dist``.
+
+``python setup.py build_sphinx`` generaes the documentation
+(see :func:`process_standard_options_for_setup <pyquickhelper.pycode.setup_helper.process_standard_options_for_setup>`).
 
 
 Extensions to install
 +++++++++++++++++++++
 
 * `Sphinx <http://sphinx-doc.org/>`_
-* `fancybox <http://spinus.github.io/sphinxcontrib-fancybox/>`_
+* `sphinxcontrib-images <http://pythonhosted.org//sphinxcontrib-images/>`_
 * `coverage <http://nedbatchelder.com/code/coverage/>`_
+
+As the documentation creates graph to represent the dependencies,
+Graphviz needs to be installed. Here is the list of tools usually used:
+
+* `Python 3.4 64 bit <https://www.python.org/downloads/>`_
+* `7zip <http://www.7-zip.org/>`_
+* `Miktex <http://miktex.org/>`_
+* `Jenkins <https://jenkins-ci.org/>`_ (+ `GitHub <https://wiki.jenkins-ci.org/display/JENKINS/GitHub+Plugin>`_, 
+  `git <https://wiki.jenkins-ci.org/display/JENKINS/Git+Plugin>`_, 
+  `python <https://wiki.jenkins-ci.org/display/JENKINS/Python+Plugin>`_, 
+  `pipeline <https://wiki.jenkins-ci.org/display/JENKINS/Build+Pipeline+Plugin>`_)
+* `pandoc <http://pandoc.org/>`_
+* `Git <http://git-scm.com/>`_ + `GitHub <https://github.com/>`_
+* `GraphViz <http://www.graphviz.org/>`_
+
+If you need to use `Antlr <http://www.antlr.org/>`_:
+
+* `Java <http://www.java.com/fr/download/>`_
+
+
+
+Notebooks
++++++++++
+
+Notebooks in folder ``pyquickhelper/_doc/notebooks`` will be automatically
+be convected into *html* and *pdf* formats but that requires
+latex and `pandoc <http://pandoc.org/>`_.
+
+Themes
+++++++
+
+Depending on the module, themes might be needed.
+
+* `sphinxcontrib-images <http://pythonhosted.org//sphinxcontrib-images/>`_
+* `sphinxjp.themes.sphinxjp <https://pypi.python.org/pypi/sphinxjp.themes.sphinxjp>`_ 
+* `sphinx_rtd_theme <https://github.com/snide/sphinx_rtd_theme>`_ 
+* `sphinx_bootstrap_theme <http://ryan-roemer.github.io/sphinx-bootstrap-theme/>`_ 
+* `sphinxjp.themes.basicstrap <https://pythonhosted.org/sphinxjp.themes.basicstrap/>`_ 
+* `sphinx_py3doc_enhanced_theme <https://pypi.python.org/pypi/sphinx_py3doc_enhanced_theme>`_
