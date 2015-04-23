@@ -33,12 +33,13 @@ table.diff {
 	white-space:pre-wrap
 }
 table.diff tbody { 
-	font-family:Courier, monospace
+	font-family:Consolas;
+	font-size:11px;
 }
 table.diff tbody th {
 	font-family:verdana,arial,'Bitstream Vera Sans',helvetica,sans-serif;
 	background:#EED;
-	font-size:11px;
+	font-size:9px;
 	font-weight:normal;
 	border:1px solid #BBC;
 	color:#886;

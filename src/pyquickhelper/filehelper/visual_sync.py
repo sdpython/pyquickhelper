@@ -222,7 +222,7 @@ def create_visual_diff_through_html(string1, string2, notebook=False, context_si
                     .replace("__ID__", did)
                     .replace("__CSS__", css))
 
-        vars = ["var tview='{0}';".format(1 if inline_view else 0),
+        vars = ["var tview={0};".format(1 if inline_view else 0),
                 "var csize='{0}';".format(
             "" if context_size is None else context_size),
             "var bt = '{0}';".format(
