@@ -198,7 +198,7 @@ if not r:
         install_requires=[
             "numpy",
             "dateutils",
-            "IPython>=3.1",
+            "IPython",
             "matplotlib",
             "pandas", ],
         extras_require={
