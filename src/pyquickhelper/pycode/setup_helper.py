@@ -57,7 +57,9 @@ def write_version_for_setup(file_or_folder):
 
 def clean_space_for_setup(file_or_folder):
     """
-    does some cleaning within the module
+    .. index:: pep8
+
+    does some cleaning within the module, apply pep8 rules
 
     @param      file_or_folder      file ``setup.py`` or folder which contains it
     @return                         deleted files
@@ -73,19 +75,23 @@ def clean_space_for_setup(file_or_folder):
     return rem
 
 
-def standard_help_for_setup(file_or_folder, project_var_name):
+def standard_help_for_setup(file_or_folder, project_var_name, module_name=None):
     """
     standard function to generate help assuming they follow the same design
     as *pyquickhelper*
 
     @param      file_or_folder      file ``setup.py`` or folder which contains it
     @param      project_var_name    display name of the module
+    @param      module_name         module name, None if equal to *project_var_name* (``import <module_name>``)
 
     The function outputs some information through function @see fn fLOG.
     """
     if "--help" in sys.argv:
         print(get_help_usage())
     else:
+        if module_name is None:
+            module_name = project_var_name
+
         ffolder = get_folder(file_or_folder)
         source = os.path.join(ffolder, "_doc", "sphinxdoc", "source")
 
@@ -99,7 +105,7 @@ def standard_help_for_setup(file_or_folder, project_var_name):
             os.path.split(os.path.abspath(ffolder))[0])[-1]
 
         if sys.platform.startswith("win"):
-            generate_help_sphinx(project_name, module_name=project_var_name,
+            generate_help_sphinx(project_name, module_name=module_name,
                                  layout=["html", "pdf"],
                                  extra_ext=["doc"])
         else:
@@ -148,7 +154,7 @@ def copy27_for_setup(file_or_folder):
     py3to2_convert_tree(root, dest)
 
 
-def process_standard_options_for_setup(argv, file_or_folder, project_var_name):
+def process_standard_options_for_setup(argv, file_or_folder, project_var_name, module_name=None):
     """
     process the standard options the module pyquickhelper is
     able to process assuming the module which calls this function
@@ -164,6 +170,7 @@ def process_standard_options_for_setup(argv, file_or_folder, project_var_name):
     @param      argv                = *sys.argv*
     @param      file_or_folder      file ``setup.py`` or folder which contains it
     @param      project_var_name    display name of the module
+    @param      module_name         module name, None if equal to *project_var_name* (``import <module_name>``)
     @return                         True (an option was processed) or False,
                                     the file ``setup.py`` should call function ``setup``
     """
@@ -178,7 +185,8 @@ def process_standard_options_for_setup(argv, file_or_folder, project_var_name):
         clean_space_for_setup(file_or_folder)
         return True
     elif "build_sphinx" in sys.argv:
-        standard_help_for_setup(file_or_folder, project_var_name)
+        standard_help_for_setup(
+            file_or_folder, project_var_name, module_name=module_name)
         return True
     elif "unittests" in sys.argv:
         main_wrapper_tests(file_or_folder)

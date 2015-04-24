@@ -197,16 +197,18 @@ if not r:
         ext_modules=[],
         install_requires=[
             "numpy",
-            "pandas",
-            "six",
             "dateutils",
-            "requests",
-            "docutils",
             "IPython>=3.1",
             "matplotlib",
-            "docutils",
-            "flake8",
-            "pep8==1.5.7",
-            "autopep8",
-            "sphinx", ],
+            "pandas", ],
+        extras_require={
+            'helpgen': [
+                "six",
+                "requests",
+                "docutils",
+                "flake8",
+                "pep8==1.5.7",
+                "autopep8",
+                "sphinx", ],
+        }
     )
