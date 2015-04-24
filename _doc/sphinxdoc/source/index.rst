@@ -52,6 +52,10 @@ Installation
 
 ``pip install pyquickhelper``
 
+And to avoid installing the dependencies::
+
+``pip install pyquickhelper --no-deps``
+
     
 Navigation
 ----------
