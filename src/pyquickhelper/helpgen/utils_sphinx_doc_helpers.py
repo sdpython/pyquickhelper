@@ -271,7 +271,11 @@ class ModuleMemberDoc:
             try:
                 self.doc = obj.__func__.__doc__
             except Exception as ie:
-                self.doc = typstr(ie) + " \n----------\n " + typstr(dir(obj))
+                try:
+                    self.doc = obj.__doc__
+                except Exception as ie2:
+                    self.doc = typstr(
+                        ie) + " - " + typstr(ie2) + " \n----------\n " + typstr(dir(obj))
         else:
             try:
                 self.doc = obj.__doc__
