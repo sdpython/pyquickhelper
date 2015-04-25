@@ -43,7 +43,9 @@ class TestDownloadContent (unittest.TestCase):
         assert isinstance(content, str  # unicode#
                           )
 
-        file = __file__
+        typstr = str  # unicode#
+
+        file = typstr(__file__)
         content = read_content_ufs(file, encoding="utf8")
         assert "TestDownloadContent" in content
 

@@ -58,7 +58,7 @@ class TestFileNodeTree(unittest.TestCase):
                 if nb > 15:
                     break
 
-                if "__init__" not in f.name and ".py" in f.name:
+                if "__init__" not in f.name and ".py" in f.name and ".pyc" not in f.name:
                     content = f.get_content()
                     rst = filecontent_to_rst(f.fullname, content)
                     contr, doc = rst
@@ -68,7 +68,11 @@ class TestFileNodeTree(unittest.TestCase):
 
                     cont2 = replace_relative_import(f.fullname)
                     if "# replace # from ." not in cont2 and "from " in content:
-                        raise Exception(cont2)
+                        if sys.version_info[0] == 2:
+                            if "from __future__ " not in cont2:
+                                raise Exception(cont2)
+                        else:
+                            raise Exception(cont2)
 
         assert nb > 0
         assert nrst > 0

@@ -4,10 +4,12 @@
 """
 
 import os
-try:
-    import urllib.request as urllib_request
-except ImportError:
+import sys
+
+if sys.version_info[0] == 2:
     import urllib2 as urllib_request
+else:
+    import urllib.request as urllib_request
 
 from ..loghelper.flog import noLOG, _get_file_url
 from .fexceptions import FileException
@@ -119,8 +121,14 @@ def read_url(url, encoding=None):
     .. versionadded:: 1.1
     """
     request = urllib_request.Request(url)
-    with urllib_request.urlopen(request) as fu:
+    if sys.version_info[0] == 2:
+        fu = urllib_request.urlopen(request)
         content = fu.read()
+        fu.close()
+    else:
+        with urllib_request.urlopen(request) as fu:
+            content = fu.read()
+
     if encoding is None:
         return content
     else:

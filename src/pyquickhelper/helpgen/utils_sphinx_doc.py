@@ -356,6 +356,10 @@ def apply_modification_template(rootm,
     fullnamenoext = fullname[:-3] if fullname.endswith(".py") else fullname
     pythonname = None
 
+    if os.environ.get("USERNAME", "````````````") in fullnamenoext:
+        raise HelpGenException("the title is probably wrong: {0}\nnoext={1}\npython={2}\nrootm={3}\nrootrep={4}\nfullname={5}\nkeepf={6}".format(
+            fullnamenoext, filenoext, pythonname, rootm, rootrep, fullname, keepf))
+
     mo, prefix = import_module(
         rootm, keepf, fLOG, additional_sys_path=additional_sys_path, fLOG=fLOG)
     doc = ""

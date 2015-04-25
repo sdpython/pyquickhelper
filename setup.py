@@ -145,7 +145,8 @@ if is_local():
         from pyquickhelper import write_version_for_setup
         return write_version_for_setup(__file__)
 
-    write_version()
+    if sys.version_info[0] != 2:
+        write_version()
 
     if os.path.exists("version.txt"):
         with open("version.txt", "r") as f:
@@ -164,6 +165,8 @@ else:
 ##############
 
 if os.path.exists(readme):
+    if sys.version_info[0] == 2:
+        from codecs import open
     with open(readme, "r", encoding='utf-8-sig') as f:
         long_description = f.read()
 else:

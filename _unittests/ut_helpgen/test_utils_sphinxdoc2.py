@@ -47,14 +47,17 @@ class TestSphinxDoc2 (unittest.TestCase):
                 "pqh_exception.py"))
         rootm = os.path.normpath(os.path.join(path, "..", "..", "src"))
 
+        rootrep = ("pyquickhelper.src.pyquickhelper.", "")
+        if sys.version_info[0] == 2:
+            rootrep = ("pyquickhelper.dist_module27.src.pyquickhelper.", "")
+
         store_obj = {}
         softfile = lambda f: False
         rst = utils_sphinx_doc.apply_modification_template(rootm,
                                                            store_obj,
                                                            utils_sphinx_doc.add_file_rst_template,
                                                            file,
-                                                           ("pyquickhelper.src.pyquickhelper.",
-                                                            ""),
+                                                           rootrep,
                                                            softfile,
                                                            {},
                                                            additional_sys_path=[],
