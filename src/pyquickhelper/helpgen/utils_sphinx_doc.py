@@ -798,7 +798,7 @@ def filecontent_to_rst(filename, content):
                     spl[i].strip(" \n\r\t")) == 0:
                 end = i
 
-        if begin is None and end is not None:
+        if begin is not None and end is not None:
             summary = "\n".join(spl[begin:end]).replace(
                 "@brief", "").strip("\n\t\r ")
         else:

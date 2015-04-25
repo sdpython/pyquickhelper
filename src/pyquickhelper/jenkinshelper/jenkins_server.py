@@ -2,7 +2,9 @@
 extends Jenkins Server from `python-jenkins <http://python-jenkins.readthedocs.org/en/latest/>`_
 """
 
+import sys
 import jenkins
+import socket
 from jenkins import JenkinsException
 
 
@@ -12,10 +14,33 @@ class JenkinsExt(jenkins.Jenkins):
     extension for the `Jenkins <https://jenkins-ci.org/>`_ server
     """
 
+    def __init__(self, url,
+                 username=None,
+                 password=None,
+                 timeout=socket._GLOBAL_DEFAULT_TIMEOUT,
+                 mock=False):
+        """
+        constructor
+
+        @param      url         url of the server
+        @param      username    username
+        @param      password    password
+        @param      timeout     timeout
+        @param      mock        True by default, if False, avoid talking to the server
+        """
+        jenkins.Jenkins.__init__(self, url, username, password)
+        self._mock = mock
+
     def jenkins_open(self, req, add_crumb=True):
         '''
         Overloads the same method from module jenkins to replace string by bytes
+
+        @param      req             see `jenkins API <https://python-jenkins.readthedocs.org/en/latest/api.html>`_
+        @param      add_crumb       see `jenkins API <https://python-jenkins.readthedocs.org/en/latest/api.html>`_
         '''
+        if self._mock:
+            raise JenkinsException("mocking server, cannot be open")
+
         try:
             if self.auth:
                 req.add_header('Authorization', self.auth)
@@ -115,10 +140,11 @@ class JenkinsExt(jenkins.Jenkins):
                             name,
                             git_repo,
                             credentials="",
-                            upstreams=[],
+                            upstreams=None,
                             script="build_setup_help_on_windows.bat",
                             location=None,
-                            keep=30
+                            keep=30,
+                            dependencies=None
                             ):
         """
         add a job to the jenkins server
@@ -130,16 +156,41 @@ class JenkinsExt(jenkins.Jenkins):
         @param      script          script to execute
         @param      keep            number of buils to keep
         @param      location        location of the build
+        @param      dependencies    to add environment variable before
+                                    and to set them to empty after the script is done
 
         The job can be modified on Jenkins. To add a time trigger::
 
             H H(13-14) * * *
+
+        Same trigger but once every week and not every day (Sunday for example)::
+
+            H H(13-14) * * 0
+
         """
+        if upstreams is None:
+            upstreams = []
+
+        if dependencies is None:
+            dependencies = {}
+
+        cmd = "set" if sys.platform.startswith("win") else "export"
+
+        if len(dependencies) > 0:
+            rows = []
+            end = []
+            for k, v in sorted(dependencies.items()):
+                rows.append("{0} {1}={2}".format(cmd, k, v))
+                end.append("{0} {1}=".format(cmd, k))
+            rows.append(script)
+            rows.extend(end)
+            script_mod = "\n".join(rows)
+
         location = "" if location is None else "<customWorkspace>%s</customWorkspace>" % location
         conf = JenkinsExt._config_job
         rep = dict(__KEEP__=str(keep),
                    __GITREPO__=git_repo,
-                   __SCRIPT__=script,
+                   __SCRIPT__=script_mod,
                    __UP__=",".join(upstreams),
                    __LOCATION__=location,
                    __CRED__="<credentialsId>%s</credentialsId>" % credentials)
@@ -147,13 +198,19 @@ class JenkinsExt(jenkins.Jenkins):
         for k, v in rep.items():
             conf = conf.replace(k, v)
 
-        return self.create_job(name, conf.encode("utf-8"))
+        if self._mock:
+            return conf
+        else:
+            return self.create_job(name, conf.encode("utf-8"))
 
     def delete_job(self, name):
         '''Delete Jenkins job permanently.
 
         :param name: Name of Jenkins job, ``str``
         '''
+        if self._mock:
+            return
+
         self.jenkins_open(jenkins.Request(
             self.server + jenkins.DELETE_JOB % self._get_encoded_params(locals()), b''))
         if self.job_exists(name):

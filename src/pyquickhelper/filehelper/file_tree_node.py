@@ -11,10 +11,11 @@ import datetime
 import time
 import shutil
 import hashlib
+import sys
 
 
 from ..loghelper.pqh_exception import PQHException
-from ..loghelper.flog import fLOG
+from ..loghelper.flog import noLOG
 from ..loghelper.pyrepo_helper import SourceRepository
 
 
@@ -67,7 +68,11 @@ class FileTreeNode:
                               "|".join(["(.*[.]%s$)" % e for e in _default_not_ext]))
 
     def build_expression(ext):
-        """build a regular expression validating a list of extension
+        """
+        build a regular expression validating a list of extension
+
+        @param      ext     list of extension (with no points)
+        @return             pattern (string)
         """
         return ".*[.]" + "|".join(["(%s$)" % e for e in ext])
     build_expression = staticmethod(build_expression)
@@ -79,7 +84,8 @@ class FileTreeNode:
                  parent=None,
                  repository=False,
                  log=False,
-                 log1=False):
+                 log1=False,
+                 fLOG=noLOG):
         """
         define a file, relative to a root
         @param      root            root (it must exist)
@@ -93,6 +99,10 @@ class FileTreeNode:
         @param      repository      use SVN or GIT if True
         @param      log             log every explored folder
         @param      log1            intermediate logs (first level)
+        @param      fLOG            logging function to use
+
+        .. versionchanged:: 1.1
+            Parameter *fLOG* was added.
         """
         self._root = root
         self._file = None if file is None else file
@@ -105,6 +115,7 @@ class FileTreeNode:
         self._log = log
         self._log1 = log1
         self.module = None
+        self.fLOG = fLOG
 
         if not os.path.exists(root):
             raise PQHException("path %s does not exist" % root)
@@ -188,6 +199,23 @@ class FileTreeNode:
             totalBytes += readBytes
         f.close()
         return m.hexdigest()
+
+    def get_content(self, encoding="utf8"):
+        """
+        return the content of a text file
+
+        @param      encoding        encoding
+        @return                     content as a string
+
+        .. versionadded:: 1.1
+        """
+        if sys.version_info[0] == 2:
+            import codecs
+            with codecs.open(self.fullname, "r", encoding=encoding) as f:
+                return f.read()
+        else:
+            with open(self.fullname, "r", encoding=encoding) as f:
+                return f.read()
 
     def get_fullname(self):
         """
@@ -286,9 +314,9 @@ class FileTreeNode:
         all.sort()
         self._children = []
         for a in all:
-            if self._log1:
-                fLOG("[FileTreeNode], entering", a)
             fu = os.path.join(full, a)
+            if self._log1:
+                self.fLOG("[FileTreeNode], entering", a)
             if filter is None or filter(self._root, fi, a, os.path.isdir(fu)):
                 try:
                     n = FileTreeNode(self._root,
@@ -297,12 +325,14 @@ class FileTreeNode:
                                      level=self._level + 1,
                                      parent=self,
                                      repository=repository,
-                                     log=self._log)
+                                     log=self._log,
+                                     log1=self._log1 or self._log,
+                                     fLOG=self.fLOG)
                 except PQHException as e:
                     if "does not exist" in str(e):
-                        fLOG(
+                        self.fLOG(
                             "a folder should exist, but is it is not, we continue [opt=%s]" % opt)
-                        fLOG(e)
+                        self.fLOG(e)
                         continue
                 if n.isdir() and len(n._children) == 0:
                     continue
@@ -328,6 +358,14 @@ class FileTreeNode:
         @return             element
         """
         return self._children[i]
+
+    def __len__(self):
+        """
+        return the number of children
+
+        @return         int
+        """
+        return len(self._children)
 
     def __iter__(self):
         """
@@ -424,7 +462,7 @@ class FileTreeNode:
         for k, v in d1.items():
             ti2 = time.clock()
             if ti2 - ti > 10:
-                fLOG("FileTreeNode.difference: processed files", nb)
+                self.fLOG("FileTreeNode.difference: processed files", nb)
                 ti = ti2
             if k not in d2:
                 res.append((k, ">+", v, None))
@@ -435,7 +473,7 @@ class FileTreeNode:
         for k, v in d2.items():
             ti2 = time.clock()
             if ti2 - ti > 10:
-                fLOG("FileTreeNode.difference: processed files", nb)
+                self.fLOG("FileTreeNode.difference: processed files", nb)
                 ti = ti2
             if k not in d1:
                 res.append((k, "<+", None, v))
@@ -451,12 +489,13 @@ class FileTreeNode:
         remove the file
         """
         full = self.get_fullname()
-        fLOG("removing ", full)
+        self.fLOG("removing ", full)
         try:
             os.remove(full)
         except Exception as e:
-            fLOG("unable to remove ", full, " --- ", str(e).replace("\n", " "))
-            fLOG("error :", e)
+            self.fLOG(
+                "unable to remove ", full, " --- ", str(e).replace("\n", " "))
+            self.fLOG("error :", e)
 
     def copyTo(self, path):
         """
@@ -483,11 +522,11 @@ class FileTreeNode:
         dest = os.path.join(path, temp)
         fina = dest  # os.path.split (dest) [0]
         if not os.path.exists(fina):
-            fLOG("creating directory: ", fina)
+            self.fLOG("creating directory: ", fina)
             os.makedirs(fina)
         try:
             # if 1 :
-            fLOG("+ copy ", full, " to ", dest)
+            self.fLOG("+ copy ", full, " to ", dest)
             shutil.copy(full, dest)
             cop = os.path.join(dest, os.path.split(full)[1])
             if not os.path.exists(cop):
@@ -501,5 +540,5 @@ class FileTreeNode:
                     "do not understand why t1 >= t2 for file %s" % full)
         except Exception as e:
             # else :
-            fLOG("unable to copy file ", full, " to ", path)
-            fLOG("error:", e)
+            self.fLOG("unable to copy file ", full, " to ", path)
+            self.fLOG("error:", e)

@@ -50,11 +50,13 @@ Functionalities
 Installation
 ------------
 
-``pip install pyquickhelper``
+:: 
+
+    pip install pyquickhelper
 
 And to avoid installing the dependencies::
 
-``pip install pyquickhelper --no-deps``
+    pip install pyquickhelper --no-deps
 
     
 Navigation
