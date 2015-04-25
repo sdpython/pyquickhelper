@@ -266,7 +266,9 @@ class BlogPostList:
             f.write("\n\n\n")
 
             f.write(
-                ":ref:`{0} <blog-blog>`".format(TITLES[self.Lang]["catsmaonths"]))
+                ":ref:`{0} <blog-blog>`, ".format(TITLES[self.Lang]["main"]))
+            f.write(
+                ":ref:`{0} <ap-main-0>`".format(TITLES[self.Lang]["main"]))
             f.write("\n\n\n")
 
             img = self.get_image("rss")
