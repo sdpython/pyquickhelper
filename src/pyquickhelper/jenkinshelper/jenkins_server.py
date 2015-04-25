@@ -180,11 +180,13 @@ class JenkinsExt(jenkins.Jenkins):
             rows = []
             end = []
             for k, v in sorted(dependencies.items()):
-                rows.append("{0} {1}={2}".format(cmd, k, v))
-                end.append("{0} {1}=".format(cmd, k))
+                rows.append("{0} {1}={2}".format(cmd, k.upper(), v))
+                end.append("{0} {1}=".format(cmd, k.upper()))
             rows.append(script)
             rows.extend(end)
             script_mod = "\n".join(rows)
+        else:
+            script_mod = script
 
         location = "" if location is None else "<customWorkspace>%s</customWorkspace>" % location
         conf = JenkinsExt._config_job

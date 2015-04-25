@@ -43,7 +43,7 @@ class TestJenkinsExt(unittest.TestCase):
                                        upstreams=None,
                                        location=r"/home/username/jenkins/",
                                        dependencies={"myversion": "/home/username/mymodule/src/", })
-        assert "myversion=/home/username/mymodule/src/" in conf
+        assert "MYVERSION=/home/username/mymodule/src/" in conf
         assert "build_setup_help_on_windows.bat" in conf
 
 
