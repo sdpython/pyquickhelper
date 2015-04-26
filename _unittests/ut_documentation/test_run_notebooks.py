@@ -1,0 +1,74 @@
+#-*- coding: utf-8 -*-
+"""
+@brief      test log(time=33s)
+"""
+
+import sys
+import os
+import unittest
+import re
+
+try:
+    import src
+except ImportError:
+    path = os.path.normpath(
+        os.path.abspath(
+            os.path.join(
+                os.path.split(__file__)[0],
+                "..",
+                "..")))
+    if path not in sys.path:
+        sys.path.append(path)
+    import src
+
+
+from src.pyquickhelper import fLOG, get_temp_folder
+from src.pyquickhelper.ipythonhelper import execute_notebook_list
+
+
+class TestRunNotebooks(unittest.TestCase):
+
+    def test_run_notebook(self):
+        fLOG(
+            __file__,
+            self._testMethodName,
+            OutputPrint=__name__ == "__main__")
+        temp = get_temp_folder(__file__, "temp_run_notebooks")
+
+        fnb = os.path.normpath(os.path.join(
+            os.path.abspath(os.path.dirname(__file__)), "..", "..", "_doc", "notebooks"))
+        keepnote = []
+        for f in os.listdir(fnb):
+            if os.path.splitext(f)[-1] == ".ipynb":
+                if "example_pyquickhelper" in f:
+                    code_init = "form1={'version': 'modified', 'module': 'anything'}"
+                    keepnote.append((os.path.join(fnb, f), code_init))
+                elif "having_a_form" in f:
+                    code_init = "myvar='my value'\nform1={'version': 'modified', 'module': 'anything'}"
+                    code_init += "\ncredential={'password': 'hiddenpassword', 'login': 'admin'}"
+                    code_init += "\nmy_address={'last_name': 'dupre', 'combined': 'xavier dupre', 'first_name': 'xavier'}"
+                    keepnote.append((os.path.join(fnb, f), code_init))
+                else:
+                    keepnote.append(os.path.join(fnb, f))
+        assert len(keepnote) > 0
+
+        def valid(cell):
+            if "open_html_form" in cell:
+                return False
+            if "open_window_params" in cell:
+                return False
+            if '<div style="position:absolute' in cell:
+                return False
+            return True
+
+        res = execute_notebook_list(temp, keepnote, fLOG=fLOG, valid=valid)
+        assert len(res) > 0
+        fails = [(os.path.split(k)[-1], v)
+                 for k, v in sorted(res.items()) if not v[0]]
+        for f in fails:
+            fLOG(f)
+        if len(fails) > 0:
+            raise fails[0][1][1]
+
+if __name__ == "__main__":
+    unittest.main()

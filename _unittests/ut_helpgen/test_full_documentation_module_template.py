@@ -94,7 +94,7 @@ class TestSphinxDocFull (unittest.TestCase):
         with open(rss, "r", encoding="utf8") as f:
             content_rss = f.read()
 
-        assert "__BLOG_ROOT__" in content_rss
+        assert "__BLOG_ROOT__" not in content_rss
         # this should be replaced when uploading the stream onto the website
         # the website is unknown when producing the documentation
         # it should be resolved when uploading (the documentation could be

@@ -68,6 +68,10 @@ Versions / Changes
     * **add:** function :func:`read_url <pyquickhelper.filehelper.internet_helper.read_url>` and
       :func:`read_content_ufs <pyquickhelper.filehelper.anyfhelper.read_content_ufs>` 
       to read content from a string, a file, a url, a stream
+    * **add:** add function :func:`set_notebook_name_theNotebook <pyquickhelper.ipythonhelper.notebook_helper.set_notebook_name_theNotebook>` 
+      to set the notebook name into variable ``theNotebook`` within a notebook
+    * **add:** add the possibility the run some code before executing a notebook
+      (to populate a context for example)
 * **1.0 - 2015/04/21**
     * **new:** function to run a notebook end to end :func:`run_notebook <pyquickhelper.ipythonhelper.notebook_helper.run_notebook>`
     * **change:** function :func:`str_to_datetime <pyquickhelper.loghelper.convert_helper.str_to_datetime>` implicitely handles more formats

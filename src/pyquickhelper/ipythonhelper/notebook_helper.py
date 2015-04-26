@@ -3,6 +3,7 @@
 @brief Some automation helpers about notebooks
 """
 import io
+import os
 import sys
 from IPython.nbformat import versions
 from IPython.nbformat.reader import reads
@@ -81,6 +82,7 @@ def run_notebook(filename,
                  additional_path=None,
                  valid=None,
                  clean_function=None,
+                 code_init=None,
                  fLOG=noLOG):
     """
     run a notebook end to end, it uses module `runipy <https://github.com/paulgb/runipy/>`_
@@ -94,6 +96,7 @@ def run_notebook(filename,
     @param      additional_path additional paths for import
     @param      valid           if not None, valid is a function which returns wether or not the cell should be executed or not
     @param      clean_function  function which cleans a cell's code before executing it (None for None)
+    @param      code_init       code to run before the execution of the notebook as if it was a cell
     @param      fLOG            logging function
     @return                     output
 
@@ -109,6 +112,11 @@ def run_notebook(filename,
     @endexample
 
     .. versionadded:: 1.0
+
+    .. versionchanged:: 1.1
+        The function adds the local variable ``theNotebook`` with
+        the absolute file name of the notebook.
+        Parameter *code_init* was added.
     """
     with open(filename, "r", encoding=encoding) as payload:
         nb = reads(payload.read())
@@ -124,7 +132,9 @@ def run_notebook(filename,
             fLOG(*l, **p)
 
         nb_runner = NotebookRunner(
-            nb, profile_dir, working_dir, fLOG=flogging, comment=filename)
+            nb, profile_dir, working_dir, fLOG=flogging, comment=filename,
+            theNotebook=os.path.abspath(filename),
+            code_init=code_init)
         nb_runner.run_notebook(skip_exceptions=skip_exceptions, additional_path=additional_path,
                                valid=valid, clean_function=clean_function)
 
@@ -141,3 +151,89 @@ def run_notebook(filename,
 
         nb_runner.shutdown_kernel()
         return out.getvalue()
+
+
+def set_notebook_name_theNotebook():
+    """
+    This function must be called from the notebook
+    you want to know the name. It relies on
+    a javascript piece of code. It populates
+    the variable ``theNotebook`` with the notebook name.
+
+    This solution was found at
+    `How to I get the current IPython Notebook name <http://stackoverflow.com/questions/12544056/how-to-i-get-the-current-ipython-notebook-name>`_.
+
+    The function can be called in a cell.
+    The variable ``theNotebook`` will be available in the next cells.
+
+    .. versionadded:: 1.1
+    """
+    code = """var kernel = IPython.notebook.kernel;
+              var body = document.body, attribs = body.attributes;
+              var command = "theNotebook = " + "'"+attribs['data-notebook-name'].value+"'";
+              kernel.execute(command);""".replace("              ", "")
+
+    def get_name():
+        from IPython.core.display import Javascript, display
+        display(Javascript(code))
+    return get_name()
+
+
+def execute_notebook_list(folder,
+                          notebooks,
+                          clean_function=None,
+                          valid=None,
+                          fLOG=noLOG,
+                          addpath=None,
+                          deepfLOG=noLOG):
+    """
+    execute a list of notebooks
+
+    @param      folder              folder (where to execute the notebook, current folder for the notebook)
+    @param      notebooks           list of notebooks to execute (or a list of tuple(notebook, code which initializes the notebook))
+    @param      clean_function      function which transform the code before running it
+    @param      valid               function which tells if a cell should be executed based on its code
+    @param      fLOG                logging function
+    @param      deepfLOG            logging function used to run the notebook
+    @param      addpath             path to add to *sys.path* before running the notebook
+    @return                         dictionary { notebook_file: (isSuccess, outout) }
+
+    The signature of function ``valid_cell`` is::
+
+        def valid_cell(cell) : return True or False
+
+    The signature of function ``clean_function`` is::
+
+        def clean_function(cell) : return new_cell_content
+
+    .. versionadded:: 1.1
+
+    """
+    if addpath is None:
+        addpath = []
+
+    results = {}
+    for i, note in enumerate(notebooks):
+        if isinstance(note, tuple):
+            note, code_init = note
+        else:
+            code_init = None
+        if filter(i, note):
+            fLOG("******", i, os.path.split(note)[-1])
+            outfile = os.path.join(folder, "out_" + os.path.split(note)[-1])
+            try:
+                out = run_notebook(note,
+                                   working_dir=folder,
+                                   outfilename=outfile,
+                                   additional_path=addpath,
+                                   valid=valid,
+                                   clean_function=clean_function,
+                                   fLOG=deepfLOG,
+                                   code_init=code_init
+                                   )
+                if not os.path.exists(outfile):
+                    raise FileNotFoundError(outfile)
+                results[note] = (True, out)
+            except Exception as e:
+                results[note] = (False, e)
+    return results

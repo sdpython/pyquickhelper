@@ -43,7 +43,7 @@ class NotebookRunner(object):
     }
 
     def __init__(self, nb, profile_dir=None, working_dir=None,
-                 comment="", fLOG=noLOG):
+                 comment="", fLOG=noLOG, theNotebook=None, code_init=None):
         """
         constuctor
 
@@ -51,10 +51,17 @@ class NotebookRunner(object):
         @param      profile_dir     profile directory
         @param      working_dir     working directory
         @param      comment         additional information added to error message
+        @param      theNotebook     if not None, populate the variable *theNotebook* with this value in the notebook
+        @param      code_init       to initialize the notebook with a python code as if it was a cell
         @param      fLOG            logging function
+
+        .. versionchanged:: 1.1
+            Parameters *theNotebook*, *code_init* were added.
         """
         self.km = KernelManager()
         self.fLOG = fLOG
+        self.theNotebook = theNotebook
+        self.code_init = code_init
         args = []
 
         if profile_dir:
@@ -316,7 +323,12 @@ class NotebookRunner(object):
         @param      additional_path     additional paths (as a list or None if none)
         @param      valid               if not None, valid is a function which returns wether or not the cell should be executed or not
         @param      clean_function      function which cleans a cell's code before executing it (None for None)
+
+        .. versionchanged:: 1.1
+            The function adds the local variable ``theNotebook`` with
+            the absolute file name of the notebook.
         '''
+        # additional path
         if additional_path is not None:
             if not isinstance(additional_path, list):
                 raise TypeError(
@@ -327,6 +339,16 @@ class NotebookRunner(object):
             cell = "\n".join(code)
             self.run_cell(-1, cell)
 
+        # we add local variable theNotebook
+        if self.theNotebook is not None:
+            cell = "theNotebook = r'''{0}'''".format(self.theNotebook)
+            self.run_cell(-1, cell)
+
+        # initialisation with a code not inside the notebook
+        if self.code_init is not None:
+            self.run_cell(-1, self.code_init)
+
+        # execution of the notebook
         for i, cell in enumerate(self.iter_code_cells()):
             iscell, codei = NotebookRunner.get_cell_code(cell)
             if valid is not None and not valid(codei):
