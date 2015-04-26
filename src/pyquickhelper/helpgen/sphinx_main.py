@@ -54,44 +54,6 @@ Another list
 """
 
 
-def add_missing_files(root, conf):
-    """
-    add missing files for the documentation,
-    ``moduletoc.html``, ``blogtoc.html``
-
-    @param      root        root
-    @param      conf        configuration module (to guess the template folder)
-    """
-    fold = conf.templates_path
-    if isinstance(fold, list):
-        fold = fold[0]
-
-    if hasattr(conf, "language"):
-        language = conf.language
-    else:
-        language = "en"
-
-    loc = os.path.join(root, "_doc", "sphinxdoc", "source", fold)
-    if not os.path.exists(loc):
-        os.makedirs(loc)
-
-    # moduletoc.html
-    mt = os.path.join(loc, "moduletoc.html")
-    if not os.path.exists(mt):
-        with open(mt, "w", encoding="utf8") as f:
-            f.write(
-                """<h3><a href="{{ pathto(master_doc) }}">{{ _('%s') }}</a></h3>\n""" % TITLES[language]["toc"])
-            f.write("""{{ toctree() }}""")
-
-    # blogtoc.html
-    mt = os.path.join(loc, "blogtoc.html")
-    if not os.path.exists(mt):
-        with open(mt, "w", encoding="utf8") as f:
-            f.write(
-                """<h3><a href="{{ pathto(master_doc) }}">{{ _('Blog') }}</a></h3>\n""")
-            f.write("""{{ toctree() }}""")
-
-
 def generate_help_sphinx(project_var_name,
                          clean=True,
                          root=".",
@@ -193,13 +155,23 @@ def generate_help_sphinx(project_var_name,
 
     **About encoding:** utf-8 without BOM is the recommanded option.
 
-    **About languages: ** only one language can be specificied even if you have
+    **About languages:** only one language can be specificied even if you have
         multiple configuration file. Only the language specified in the main
         ``conf.py`` will be considered.
+
+    **About blog posts:** the function uses sphinx directives ``blogpost`` and ``blogpostagg`` to create
+        a simple blog aggregator. Blog posts will be aggregated by months and categories.
+        Link to others parts to the documentation are possible.
+        The function also create a file ``rss.xml`` which contains the ten last added blog post.
+        This file contains an absolute link to the blog posts. However, because the documentation
+        can be published anywhere, the string ``__BLOG_ROOT__`` was inserted
+        instead of the absolute url to the website. It must be replaced before uploaded
+        or the parameter *blog_root* can be specified in the configuration file ``conf.py``.
 
     .. versionchanged:: 1.0
         Assumes IPython 3 is installed. It might no work for earlier versions (notebooks).
         Parameters *from_repo*, *use_run_cmd* were added.
+
     """
 
     def lay_build_override_newconf(t3):
@@ -537,6 +509,44 @@ def generate_help_sphinx(project_var_name,
 
     # end
     os.chdir(pa)
+
+
+def add_missing_files(root, conf):
+    """
+    add missing files for the documentation,
+    ``moduletoc.html``, ``blogtoc.html``
+
+    @param      root        root
+    @param      conf        configuration module (to guess the template folder)
+    """
+    fold = conf.templates_path
+    if isinstance(fold, list):
+        fold = fold[0]
+
+    if hasattr(conf, "language"):
+        language = conf.language
+    else:
+        language = "en"
+
+    loc = os.path.join(root, "_doc", "sphinxdoc", "source", fold)
+    if not os.path.exists(loc):
+        os.makedirs(loc)
+
+    # moduletoc.html
+    mt = os.path.join(loc, "moduletoc.html")
+    if not os.path.exists(mt):
+        with open(mt, "w", encoding="utf8") as f:
+            f.write(
+                """<h3><a href="{{ pathto(master_doc) }}">{{ _('%s') }}</a></h3>\n""" % TITLES[language]["toc"])
+            f.write("""{{ toctree() }}""")
+
+    # blogtoc.html
+    mt = os.path.join(loc, "blogtoc.html")
+    if not os.path.exists(mt):
+        with open(mt, "w", encoding="utf8") as f:
+            f.write(
+                """<h3><a href="{{ pathto(master_doc) }}">{{ _('Blog') }}</a></h3>\n""")
+            f.write("""{{ toctree() }}""")
 
 
 def get_executables_path():

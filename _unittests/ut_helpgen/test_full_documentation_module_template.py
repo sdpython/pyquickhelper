@@ -88,15 +88,16 @@ class TestSphinxDocFull (unittest.TestCase):
                 raise FileNotFoundError(f)
 
         assert not os.path.exists(os.path.join(temp, "_doc"))
-        
-        rss = os.path.join(root, "_doc", "sphinxdoc", "source", "blog", "rss.xml")
+
+        rss = os.path.join(
+            root, "_doc", "sphinxdoc", "source", "blog", "rss.xml")
         with open(rss, "r", encoding="utf8") as f:
             content_rss = f.read()
-            
+
         assert "__BLOG_ROOT__" in content_rss
-        # this should be replaced when uploading the stream onto the website 
+        # this should be replaced when uploading the stream onto the website
         # the website is unknown when producing the documentation
-        # it should be resolved when uploading (the documentation could be 
+        # it should be resolved when uploading (the documentation could be
         # uploaded at different places)
 
 if __name__ == "__main__":

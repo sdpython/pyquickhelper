@@ -14,3 +14,5 @@ set_sphinx_variables(__file__,
                      "solar_theme",
                      solar_theme.theme_path,
                      locals())
+
+blog_root = "http://www.xavierdupre.fr/app/pyquickhelper/helpsphinx/"
