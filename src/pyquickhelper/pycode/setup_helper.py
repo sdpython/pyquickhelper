@@ -155,7 +155,8 @@ def copy27_for_setup(file_or_folder):
 
 
 def process_standard_options_for_setup(argv, file_or_folder, project_var_name, module_name=None,
-                                       unittest_modules=None):
+                                       unittest_modules=None,
+                                       pattern_copy=".*[.]((ico)|(dll)|(rst)|(ipynb)|(png)|(txt)|(zip)|(gz))$"):
     """
     process the standard options the module pyquickhelper is
     able to process assuming the module which calls this function
@@ -173,6 +174,7 @@ def process_standard_options_for_setup(argv, file_or_folder, project_var_name, m
     @param      project_var_name    display name of the module
     @param      module_name         module name, None if equal to *project_var_name* (``import <module_name>``)
     @param      unittest_modules    modules added for the unit tests, see @see fn py3to2_convert_tree
+    @param      pattern_copy        see @see fn py3to2_convert_tree
     @return                         True (an option was processed) or False,
                                     the file ``setup.py`` should call function ``setup``
     """
@@ -199,7 +201,8 @@ def process_standard_options_for_setup(argv, file_or_folder, project_var_name, m
         root = os.path.abspath(os.path.dirname(file_or_folder))
         root = os.path.normpath(root)
         dest = os.path.join(root, "dist_module27")
-        py3to2_convert_tree(root, dest, unittest_modules=unittest_modules)
+        py3to2_convert_tree(
+            root, dest, unittest_modules=unittest_modules, pattern_copy=pattern_copy)
         return True
     else:
         return False

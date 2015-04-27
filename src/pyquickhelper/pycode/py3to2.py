@@ -141,7 +141,7 @@ def py3to2_convert_tree(folder,
         dirname = os.path.dirname(destfile)
         if not os.path.exists(dirname):
             os.makedirs(dirname)
-        shutil.copy(full, destfile)
+        shutil.copy(full, dirname)
         conv.append(destfile)
 
     fLOG("py3to2_convert_tree, copied", len(conv), "files")

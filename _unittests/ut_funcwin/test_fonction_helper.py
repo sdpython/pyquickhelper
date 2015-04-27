@@ -39,7 +39,7 @@ class TestFonctionHelper (unittest.TestCase):
         for k in sorted(res["param"]):
             fLOG("--", k, res["param"][k], "-", res["types"][k])
         if (res["types"]["file"] != str  # unicode#
-            ):
+                ):
             raise Exception(
                 "type should be str not {0}\nres={1}".format(res["types"]["file"], res))
 
@@ -75,7 +75,9 @@ class TestFonctionHelper (unittest.TestCase):
             __file__,
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
-        assert interpret_parameter(str, "er") == "er"
+        typstr = str  # unicode#
+        if interpret_parameter(typstr, "er") != "er":
+            raise Exception(interpret_parameter(typstr, "er"))
         assert interpret_parameter(int, "0") == 0
         assert interpret_parameter(float, "1.3") == 1.3
         assert interpret_parameter(bool, 1) == True

@@ -136,6 +136,7 @@ def interpret_parameter(ty, s):
     @param      s       value to interpret (a string)
     @return             value
     """
+    typstr = str  # unicode#
 
     try:
         if ty in [bool]:
@@ -145,11 +146,14 @@ def interpret_parameter(ty, s):
                 return None
             else:
                 return str_to_datetime(s)
-        elif ty in [int, float, str]:
+        elif ty in [int, float]:
             return ty(s)
+        elif ty == typstr:
+            if s is None or len(s) == 0 or s == "None":
+                return None
+            else:
+                return s
         elif ty in [None]:
-            return None
-        elif s == "None":
             return None
         else:
             try:
