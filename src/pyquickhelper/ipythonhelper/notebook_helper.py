@@ -184,7 +184,7 @@ def execute_notebook_list(folder,
                           clean_function=None,
                           valid=None,
                           fLOG=noLOG,
-                          addpath=None,
+                          additional_path=None,
                           deepfLOG=noLOG):
     """
     execute a list of notebooks
@@ -195,7 +195,7 @@ def execute_notebook_list(folder,
     @param      valid               function which tells if a cell should be executed based on its code
     @param      fLOG                logging function
     @param      deepfLOG            logging function used to run the notebook
-    @param      addpath             path to add to *sys.path* before running the notebook
+    @param      additional_path     path to add to *sys.path* before running the notebook
     @return                         dictionary { notebook_file: (isSuccess, outout) }
 
     The signature of function ``valid_cell`` is::
@@ -209,8 +209,8 @@ def execute_notebook_list(folder,
     .. versionadded:: 1.1
 
     """
-    if addpath is None:
-        addpath = []
+    if additional_path is None:
+        additional_path = []
 
     results = {}
     for i, note in enumerate(notebooks):
@@ -225,7 +225,7 @@ def execute_notebook_list(folder,
                 out = run_notebook(note,
                                    working_dir=folder,
                                    outfilename=outfile,
-                                   additional_path=addpath,
+                                   additional_path=additional_path,
                                    valid=valid,
                                    clean_function=clean_function,
                                    fLOG=deepfLOG,

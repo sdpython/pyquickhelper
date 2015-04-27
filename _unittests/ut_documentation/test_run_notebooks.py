@@ -61,7 +61,9 @@ class TestRunNotebooks(unittest.TestCase):
                 return False
             return True
 
-        res = execute_notebook_list(temp, keepnote, fLOG=fLOG, valid=valid)
+        addpaths = [os.path.normpath(os.path.join(
+            os.path.abspath(os.path.dirname(__file__)), "..", "..", "src"))]
+        res = execute_notebook_list(temp, keepnote, fLOG=fLOG, valid=valid, additional_path=addpaths)
         assert len(res) > 0
         fails = [(os.path.split(k)[-1], v)
                  for k, v in sorted(res.items()) if not v[0]]
