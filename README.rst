@@ -22,6 +22,7 @@ README / Changes
     * `documentation <http://www.xavierdupre.fr/app/pyquickhelper/helpsphinx/index.html>`_
     * `Windows Setup <http://www.xavierdupre.fr/site2013/index_code.html#pyquickhelper>`_
     * `Travis/pyquickhelper <https://travis-ci.org/sdpython/pyquickhelper>`_
+    * `Blog <http://www.xavierdupre.fr/app/pyquickhelper/helpsphinx/blog/main_0000.html#ap-main-0>`_
 
 Functionalities
 ---------------
