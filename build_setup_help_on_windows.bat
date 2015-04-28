@@ -51,6 +51,7 @@ echo #######################################################
 
 :utpy34_64:
 set pythonexe="c:\Python34_x64\python"
+:custom_python:
 %pythonexe% setup.py write_version
 %pythonexe% -u setup.py clean_space
 if %errorlevel% neq 0 exit /b %errorlevel%
@@ -58,9 +59,6 @@ if %errorlevel% neq 0 exit /b %errorlevel%
 if %errorlevel% neq 0 exit /b %errorlevel%
 echo #######################################################
 
-:setup34_x64_msi_wheel:
-set pythonexe="c:\Python34_x64\python"
-:custom_python:
 %pythonexe% setup.py clean_pyd
 %pythonexe% setup.py sdist --formats=gztar,zip --verbose
 if %errorlevel% neq 0 exit /b %errorlevel%
@@ -72,6 +70,8 @@ if %errorlevel% neq 0 exit /b %errorlevel%
 if %errorlevel% neq 0 exit /b %errorlevel%
 echo #######################################################
 
+if "%2"=="skip_sphinx" goto end:
+
 :documentation:
 %pythonexe% -u setup.py build_sphinx
 if %errorlevel% neq 0 exit /b %errorlevel%
@@ -82,3 +82,5 @@ if not exist dist\html mkdir dist\html
 xcopy /E /C /I /Y _doc\sphinxdoc\build\html dist\html
 if exist _doc\sphinxdoc\build\latex xcopy /E /C /I /Y _doc\sphinxdoc\build\latex\*.pdf dist\html
 if %errorlevel% neq 0 exit /b %errorlevel%
+
+:end:
