@@ -141,6 +141,14 @@ class TestJenkinsExt(unittest.TestCase):
                 if "H H(10-11) * * 0" not in conf:
                     raise Exception(conf)
 
+            if "python3_module_template [27]" in r[0]:
+                if "PYQUICKHELPER27" not in r[-1]:
+                    raise Exception(conf)
+
+            if "[27]" not in r[0]:
+                if "PYQUICKHELPER27" in r[-1]:
+                    raise Exception(conf)
+
         assert i > 0
 
 

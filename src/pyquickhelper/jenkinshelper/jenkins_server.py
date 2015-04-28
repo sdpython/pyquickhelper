@@ -502,6 +502,9 @@ class JenkinsExt(jenkins.Jenkins):
                     j = js.get_job_config(jname) if not js._mock else None
                 except jenkins.NotFoundException:
                     j = None
+                except jenkins.JenkinsException as e:
+                    raise JenkinsExtException(
+                        "unable to retrieve job config for job={0}, name={1}".format(job, jname)) from e
 
                 if overwrite or j is None:
 
@@ -531,10 +534,11 @@ class JenkinsExt(jenkins.Jenkins):
                                                    location=loc,
                                                    dependencies=deps,
                                                    scheduler=scheduler,
-                                                   platform=platform)
+                                                   platform=platform,
+                                                   py27="[27]" in job)
 
                         locations.append((job, loc))
-                        created.append((name, loc, job, r))
+                        created.append((job, name, loc, job, r))
                     else:
                         loc = None if location is None else os.path.join(
                             location, jname)
