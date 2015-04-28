@@ -291,8 +291,10 @@ def py3to2_imported_local_modules(content, unittest_modules):
         s1 = '"{0}"'.format(modname)
         s2 = "'{0}'".format(modname)
         s3 = "import {0}".format(modname)
+        s4 = '"{0}"'.format(modname.upper())
+        s4_rep = '"{0}27"'.format(modname.upper())
 
-        if (s1 in content or s2 in content) and s3 in content:
+        if (s1 in content or s2 in content or s4 in content) and s3 in content:
             for i, line in enumerate(lines):
                 if s1 in line:
                     line = line.replace(
@@ -301,5 +303,8 @@ def py3to2_imported_local_modules(content, unittest_modules):
                 elif s2 in line:
                     line = line.replace(
                         s2, "'..', '{0}', 'dist_module27'".format(alias))
+                    lines[i] = line
+                elif s4 in line:
+                    line = line.replace(s4, s4_rep)
                     lines[i] = line
     return "\n".join(lines)

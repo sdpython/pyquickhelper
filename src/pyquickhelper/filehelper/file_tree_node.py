@@ -359,7 +359,7 @@ class FileTreeNode:
         """
         return self._children[i]
 
-    def __len__(self):
+    def nb_children(self):
         """
         return the number of children
 

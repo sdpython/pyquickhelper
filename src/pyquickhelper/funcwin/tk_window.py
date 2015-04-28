@@ -5,6 +5,8 @@
 """
 
 import sys
+import warnings
+
 if sys.version_info[0] == 2:
     import Tkinter as tkinter
     import Tix as tix
