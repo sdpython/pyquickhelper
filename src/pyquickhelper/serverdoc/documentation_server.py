@@ -8,20 +8,16 @@
 @file
 @brief  This modules contains a class which implements a simple server.
 """
-
 import sys
 import os
 import subprocess
 import copy
 import datetime
-
 try:
     from urllib.parse import urlparse, parse_qs
 except ImportError:
     from urlparse import urlparse, parse_qs
-
 from threading import Thread
-
 try:
     from http.server import BaseHTTPRequestHandler, HTTPServer
 except ImportError:

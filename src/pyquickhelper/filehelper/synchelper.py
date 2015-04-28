@@ -8,7 +8,6 @@
 import os
 import re
 import sys
-
 from ..loghelper.flog import fLOG
 from .file_tree_node import FileTreeNode
 from .files_status import FilesStatus, checksum_md5

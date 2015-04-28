@@ -3,9 +3,13 @@
 @brief Modified version of `runipy.notebook_runner <https://github.com/paulgb/runipy/blob/master/runipy/notebook_runner.py>`_.
 """
 
-from queue import Empty
 import os
 import re
+import sys
+if sys.version_info[0] == 2:
+    from Queue import Empty
+else:
+    from queue import Empty
 
 from IPython.nbformat.v3 import NotebookNode
 from IPython.kernel import KernelManager

@@ -3,13 +3,11 @@
 @brief various helpers to produce a Sphinx documentation
 
 """
-
 import os
 import re
 import sys
 import shutil
 import importlib
-
 from ..loghelper.flog import fLOG, noLOG
 from ..filehelper.synchelper import remove_folder, synchronize_folder, explore_folder
 from ._my_doxypy import process_string
@@ -17,7 +15,6 @@ from .utils_sphinx_doc_helpers import add_file_rst_template, process_var_tag, im
 from .utils_sphinx_doc_helpers import get_module_objects, add_file_rst_template_cor, add_file_rst_template_title
 from .utils_sphinx_doc_helpers import IndexInformation, RstFileHelp, HelpGenException, process_look_for_tag, make_label_index
 from ..pandashelper.tblformat import df2rst
-
 if sys.version_info[0] == 2:
     from codecs import open
 

@@ -133,8 +133,10 @@ class FileTreeNode:
                           ):
                 # we assume it is a regular expression instead of a function
                 exp = re.compile(filter)
-                fil = lambda root, path, f, dir, e=exp: dir or (
-                    e.search(f) is not None)
+
+                def fil(root, path, f, dir, e=exp):
+                    return dir or (e.search(f) is not None)
+
                 self._fill(fil, repository=repository)
             else:
                 self._fill(filter, repository=repository)

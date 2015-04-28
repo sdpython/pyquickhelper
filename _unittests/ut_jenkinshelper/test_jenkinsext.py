@@ -89,7 +89,7 @@ class TestJenkinsExt(unittest.TestCase):
             "http://localhost:8080/", "user", "password", mock=True)
 
         github = "https://github.com/sdpython/"
-        
+
         if sys.platform.startswith("win"):
             modules = [("pyquickhelper", "H H(10-11) * * 0"),
                        ["pymyinstall", ],
@@ -124,7 +124,7 @@ class TestJenkinsExt(unittest.TestCase):
                        ["pymyinstall", ],
                        ["pymyinstall [anaconda] [update]",
                         "pymyinstall [anaconda2] [update27]"],
-                       ["pyquickhelper [anaconda]", 
+                       ["pyquickhelper [anaconda]",
                         "pyquickhelper [27] [anaconda2]"],
                        ["pyensae", ],
                        ["pymmails", "pysqllike", "pyrsslocal", "pymyinstall [27] [anaconda2]",
@@ -144,7 +144,7 @@ class TestJenkinsExt(unittest.TestCase):
                        "ensae_teaching_cs [notebooks]",
                        ["ensae_teaching_cs [anaconda] [notebooks]", ],
                        ]
-                       
+
         pythonexe = os.path.dirname(sys.executable)
         location = None
         dependencies = {'pymyinstall': ['pyquickhelper'],

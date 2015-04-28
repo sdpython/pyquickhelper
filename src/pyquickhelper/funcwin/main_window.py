@@ -5,7 +5,6 @@
 @brief  building windows to use a function and specify its parameter based on a python function
 """
 import os
-
 import sys
 if sys.version_info[0] == 2:
     import Tkinter as tkinter
@@ -13,7 +12,6 @@ if sys.version_info[0] == 2:
 else:
     import tkinter
     import tkinter.tix as tix
-
 from .tk_window import create_tixtk
 from .frame_function import FrameFunction
 from .storing_functions import get_icon

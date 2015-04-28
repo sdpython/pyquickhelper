@@ -8,14 +8,12 @@ import os
 import inspect
 import threading
 import io
-
 if sys.version_info[0] == 2:
     import Tkinter as tkinter
     import tkFont
 else:
     import tkinter
     import tkinter.font as tkFont
-
 from .tk_window import create_tk
 from ..loghelper.flog import fLOG, GetLogFile
 from .function_helper import has_unknown_parameters, extract_function_information, private_adjust_parameters, private_get_function
