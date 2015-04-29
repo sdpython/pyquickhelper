@@ -439,7 +439,8 @@ class JenkinsExt(jenkins.Jenkins):
 
         Example::
 
-            from ensae_teaching_cs.automation.jenkins_helper import setup_jenkins_server, JenkinsExt
+            from ensae_teaching_cs.automation.jenkins_helper import setup_jenkins_server
+            from pyquickhelper.jenkinshelper import JenkinsExt
 
             js = JenkinsExt('http://machine:8080/', "user", "password")
 
