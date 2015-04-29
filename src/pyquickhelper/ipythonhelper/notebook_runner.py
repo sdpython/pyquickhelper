@@ -6,10 +6,7 @@
 import os
 import re
 import sys
-if sys.version_info[0] == 2:
-    from Queue import Empty
-else:
-    from queue import Empty
+from queue import Empty
 
 from IPython.nbformat.v3 import NotebookNode
 from IPython.kernel import KernelManager

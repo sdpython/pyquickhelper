@@ -170,11 +170,23 @@ class TestJenkinsExt(unittest.TestCase):
                     raise Exception(conf)
 
             if "python3_module_template [27]" in r[0]:
-                if "PYQUICKHELPER27" not in r[-1]:
+                if "PYQUICKHELPER27=" not in conf:
+                    raise Exception(conf)
+                if "PYQUICKHELPER=" not in conf:
+                    raise Exception(conf)
+                if "PYQUICKHELPER27=a" not in conf:
+                    raise Exception(conf)
+                if "dist_module27" not in conf:
                     raise Exception(conf)
 
             if "[27]" not in r[0]:
-                if "PYQUICKHELPER27" in r[-1]:
+                if "set " in conf and "PYQUICKHELPER27=" not in conf:
+                    raise Exception(conf)
+                if "set " in conf and "PYQUICKHELPER=" not in conf:
+                    raise Exception(conf)
+                if "PYQUICKHELPER27=a" in conf:
+                    raise Exception(conf)
+                if "dist_module27" in conf:
                     raise Exception(conf)
 
         assert i > 0

@@ -223,9 +223,11 @@ class JenkinsExt(jenkins.Jenkins):
             for k, v in sorted(dependencies.items()):
                 if py27:
                     rows.append("{0} {1}27={2}".format(cmd, k.upper(), v))
+                    rows.append("{0} {1}=".format(cmd, k.upper()))
                     end.append("{0} {1}27=".format(cmd, k.upper()))
                 else:
                     rows.append("{0} {1}={2}".format(cmd, k.upper(), v))
+                    rows.append("{0} {1}27=".format(cmd, k.upper()))
                     end.append("{0} {1}=".format(cmd, k.upper()))
             rows.append(script)
             rows.extend(end)
@@ -577,7 +579,7 @@ class JenkinsExt(jenkins.Jenkins):
                 p27 = "[27]" in j
 
                 if n == dep and p27 == py27:
-                    if p27:
+                    if not p27:
                         res[dep] = os.path.join(loc, "src")
                     else:
                         res[dep] = os.path.join(loc, "dist_module27", "src")

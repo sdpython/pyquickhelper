@@ -556,13 +556,7 @@ def get_executables_path():
     @return     a list of paths
     """
     res = [os.path.split(sys.executable)[0]]
-    if sys.platform.startswith("win"):
-        res += [os.path.join(res[-1], "Scripts")]
-        ver = "c:\\Python%d%d" % (
-            sys.version_info.major, sys.version_info.minor)
-        res += [ver]
-        res += [os.path.join(res[-1], "Scripts")]
-
+    res += [os.path.join(res[-1], "Scripts")]
     return res
 
 
