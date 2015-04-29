@@ -417,7 +417,7 @@ class JenkinsExt(jenkins.Jenkins):
                       ["pymmails", "pysqllike", "pyrsslocal", "pymyinstall [27] [anaconda2]",
                        "python3_module_template", "pyensae [anaconda]", "pyensae [winpython]"],
                       ["pymmails [anaconda]", "pysqllike [anaconda]", "pyrsslocal [anaconda]",
-                       "python3_module_template [anaconda]", "python3_module_template [27] [anaconda]",
+                       "python3_module_template [anaconda]", "python3_module_template [27] [anaconda2]",
                        "pymyinstall [all]"],
                       # actuariat
                       [("actuariat_python", "H H(12-13) * * 0")],
@@ -539,6 +539,10 @@ class JenkinsExt(jenkins.Jenkins):
                                                    scheduler=scheduler,
                                                    platform=platform,
                                                    py27="[27]" in job)
+
+                        if "[27]" in job and "Anaconda3" in script:
+                            raise JenkinsExtException(
+                                "incoherence for job {0}, script:\n{1}".format(job, script))
 
                         locations.append((job, loc))
                         created.append((job, name, loc, job, r))

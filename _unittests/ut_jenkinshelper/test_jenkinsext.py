@@ -101,7 +101,7 @@ class TestJenkinsExt(unittest.TestCase):
                        ["pymmails", "pysqllike", "pyrsslocal", "pymyinstall [27] [anaconda2]",
                         "python3_module_template", "pyensae [anaconda]", "pyensae [winpython]"],
                        ["pymmails [anaconda]", "pysqllike [anaconda]", "pyrsslocal [anaconda]",
-                        "python3_module_template [anaconda]", "python3_module_template [27] [anaconda]",
+                        "python3_module_template [anaconda]", "python3_module_template [27] [anaconda2]",
                         "pymyinstall [all]"],
                        # actuariat
                        [("actuariat_python", "H H(12-13) * * 0")],
@@ -130,7 +130,7 @@ class TestJenkinsExt(unittest.TestCase):
                        ["pymmails", "pysqllike", "pyrsslocal", "pymyinstall [27] [anaconda2]",
                         "python3_module_template", "pyensae [anaconda]"],
                        ["pymmails [anaconda]", "pysqllike [anaconda]", "pyrsslocal [anaconda]",
-                        "python3_module_template [anaconda]", "python3_module_template [27] [anaconda]",
+                        "python3_module_template [anaconda]", "python3_module_template [27] [anaconda2]",
                         "pymyinstall [all]"],
                        # actuariat
                        [("actuariat_python", "H H(12-13) * * 0")],
@@ -178,8 +178,10 @@ class TestJenkinsExt(unittest.TestCase):
                     raise Exception(conf)
                 if "dist_module27" not in conf:
                     raise Exception(conf)
+                if "Anaconda3" in conf:
+                    raise Exception(conf)
 
-            if "[27]" not in r[0]:
+            if "[27]" not in r[0] and "update" not in conf:
                 if "set " in conf and "PYQUICKHELPER27=" not in conf:
                     raise Exception(conf)
                 if "set " in conf and "PYQUICKHELPER=" not in conf:
