@@ -282,7 +282,7 @@ class JenkinsExt(jenkins.Jenkins):
 
         @param      job             module and options
         @param      pythonexe       unused
-        @param      anaconda        location of anaconda
+        @param      anaconda        location of anaconda (3)
         @param      anaconda2       location of anaconda 2
         @param      winpython       location of winpython
         @param      platform        platform, Windows or Linux or ...
@@ -470,6 +470,10 @@ class JenkinsExt(jenkins.Jenkins):
                     overwrite=True,
                     fLOG=print)
         """
+        if anaconda == anaconda2:
+            raise JenkinsExtException("same paths:\n{0}".format(
+                "\n".join([pythonexe, winpython, anaconda, anaconda2])))
+
         if get_jenkins_script is None:
             get_jenkins_script = JenkinsExt.get_jenkins_script
 
@@ -542,7 +546,8 @@ class JenkinsExt(jenkins.Jenkins):
 
                         if "[27]" in job and "Anaconda3" in script:
                             raise JenkinsExtException(
-                                "incoherence for job {0}, script:\n{1}".format(job, script))
+                                "incoherence for job {0}, script:\n{1}\npaths:\n{2}".format(job, script,
+                                                                                            "\n".join([pythonexe, winpython, anaconda, anaconda2])))
 
                         locations.append((job, loc))
                         created.append((job, name, loc, job, r))
