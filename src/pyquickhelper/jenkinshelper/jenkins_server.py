@@ -500,7 +500,7 @@ class JenkinsExt(jenkins.Jenkins):
                     job, scheduler = job
                 else:
                     scheduler = None
-
+                    
                 mod = job.split()[0]
                 name = JenkinsExt.get_jenkins_job_name(job)
                 jname = prefix + name
