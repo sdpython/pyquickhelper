@@ -23,7 +23,8 @@ def import_pywin32():
             paths = set([os.path.join(
                 os.path.split(sys.executable)[0], "Lib", "site-packages", "pywin32_system32"),
                 os.path.join(get_python_lib(), "pywin32_system32"),
-                os.path.dirname(numpy.__file__, "..", "pywin32_system32"),
+                os.path.join(
+                    os.path.dirname(numpy.__file__), "..", "pywin32_system32"),
             ])
 
             epath = os.environ["PATH"]

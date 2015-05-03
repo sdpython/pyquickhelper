@@ -22,8 +22,10 @@ def getsitepackages():
     """
     try:
         return site.getsitepackages()
-    except AttributError:
-        return [get_python_lib()]
+    except AttributeError:
+        import numpy
+        return [os.path.join(os.path.dirname(numpy.__file__), ".."),
+                get_python_lib()]
 
 
 def ie_layout_html():
