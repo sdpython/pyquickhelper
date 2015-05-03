@@ -44,7 +44,7 @@ class TestJenkinsExt(unittest.TestCase):
                                        location=r"/home/username/jenkins/",
                                        dependencies={"myversion": "/home/username/mymodule/src/", })
         assert "MYVERSION=/home/username/mymodule/src/" in conf
-        assert "build_setup_help_on_windows.bat" in conf
+        assert "auto_unittest_setup_help.bat" in conf
 
         conf = srv.create_job_template("pyquickhelper",
                                        git_repo=github +
