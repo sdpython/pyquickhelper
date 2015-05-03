@@ -7,9 +7,23 @@
 import sys
 import os
 import site
+from distutils.sysconfig import get_python_lib
 
 if sys.version_info[0] == 2:
     from codecs import open
+
+
+def getsitepackages():
+    """
+    overwrites function `getsitepackages <https://docs.python.org/3.4/library/site.html#site.getsitepackages>`_
+    which does not work for a virtual environment
+
+    @return         site-package somewhere
+    """
+    try:
+        return site.getsitepackages()
+    except AttributError:
+        return [get_python_lib()]
 
 
 def ie_layout_html():
@@ -23,7 +37,7 @@ def ie_layout_html():
     """
     tofind = '<meta http-equiv="X-UA-Compatible" content="IE=edge" />'
 
-    sitep = [_ for _ in site.getsitepackages() if "packages" in _]
+    sitep = [_ for _ in getsitepackages() if "packages" in _]
     if len(sitep) == 1:
         sitep = sitep[0]
     else:

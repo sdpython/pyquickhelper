@@ -17,10 +17,27 @@ def import_pywin32():
         if "DLL load failed:" in str(e):
             import os
             import sys
-            path = os.path.join(
-                os.path.split(sys.executable)[0], "Lib", "site-packages", "pywin32_system32")
-            # exe = os.path.abspath(os.path.dirname(sys.executable))
-            os.environ["PATH"] = os.environ["PATH"] + ";" + path
+            import numpy
+            from distutils.sysconfig import get_python_lib
+
+            paths = set([os.path.join(
+                os.path.split(sys.executable)[0], "Lib", "site-packages", "pywin32_system32"),
+                os.path.join(get_python_lib(), "pywin32_system32"),
+                os.path.dirname(numpy.__file__, "..", "pywin32_system32"),
+            ])
+
+            epath = os.environ["PATH"]
+            for path in paths:
+                # exe = os.path.abspath(os.path.dirname(sys.executable))
+                os.environ["PATH"] = epath + ";" + path
+
+                try:
+                    import win32com
+                    return win32com
+                except ImportError:
+                    # we try the next path
+                    pass
+
             try:
                 import win32com
                 return win32com

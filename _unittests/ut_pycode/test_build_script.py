@@ -35,20 +35,25 @@ class TestBuilScript(unittest.TestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
-        sc = get_build_script("pyquickhelper")
-        # fLOG(sc)
-        assert "c:\\Python34_x64vir\\install" in sc
-        assert "__" not in sc
+        if sys.platform.startswith("win"):
+            sc = get_build_script("pyquickhelper")
+            # fLOG(sc)
+            assert "c:\\Python34_x64vir\\install" in sc
+            assert "__" not in sc
 
-        scc = get_script_command("unittest", "pyquickhelper", requirements=[])
-        assert "setup.py" in scc
-        assert "__" not in scc
+            scc = get_script_command(
+                "unittest", "pyquickhelper", requirements=[])
+            assert "setup.py" in scc
+            assert "__" not in scc
 
-        sccc = get_extra_script_command(
-            "local_pypi", "pyquickhelper", port=8067, requirements=[])
-        assert "python" in sccc
-        if "__" in sccc:
-            raise Exception(sccc)
+            sccc = get_extra_script_command(
+                "local_pypi", "pyquickhelper", port=8067, requirements=[])
+            assert "python" in sccc
+            if "__" in sccc:
+                raise Exception(sccc)
+        else:
+            # not yet implemented for this platform
+            return
 
 if __name__ == "__main__":
     unittest.main()
