@@ -165,7 +165,7 @@ class JenkinsExt(jenkins.Jenkins):
                             git_repo,
                             credentials="",
                             upstreams=None,
-                            script="build_setup_help_on_windows.bat",
+                            script="auto_unittest_setup_help.bat",
                             location=None,
                             keep=30,
                             dependencies=None,
@@ -292,7 +292,7 @@ class JenkinsExt(jenkins.Jenkins):
             # windows
             spl = job.split()
             if len(spl) == 1:
-                return "build_setup_help_on_windows.bat"
+                return "auto_unittest_setup_help.bat"
             elif len(spl) == 0:
                 raise ValueError("job is empty")
 
@@ -308,7 +308,7 @@ class JenkinsExt(jenkins.Jenkins):
                 elif "[27]" in spl:
                     cmd = "build_setup_help_on_windows_27.bat"
                 else:
-                    cmd = "build_setup_help_on_windows.bat"
+                    cmd = "auto_unittest_setup_help.bat"
 
                 if "[anaconda]" in spl:
                     if anaconda is not None:

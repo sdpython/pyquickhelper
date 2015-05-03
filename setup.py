@@ -54,6 +54,7 @@ sversion = "1.1"
 versionPython = "%s.%s" % (sys.version_info.major, sys.version_info.minor)
 path = "Lib/site-packages/" + project_var_name
 readme = 'README.rst'
+requirements = None
 
 
 KEYWORDS = project_var_name + \
@@ -100,6 +101,7 @@ def is_local():
             "bdist_wininst" in sys.argv or \
             "bdist_msi" in sys.argv or \
             "bdist_wheel" in sys.argv or \
+            "build_script" in sys.argv or \
             "upload_docs" in sys.argv:
         return True
     else:
@@ -178,7 +180,7 @@ if "--verbose" in sys.argv:
 if is_local():
     pyquickhelper = import_pyquickhelper()
     r = pyquickhelper.process_standard_options_for_setup(
-        sys.argv, __file__, project_var_name)
+        sys.argv, __file__, project_var_name, port=8067, requirements=requirements)
 else:
     r = False
 

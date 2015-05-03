@@ -14,6 +14,19 @@ from .code_helper import remove_extra_spaces_folder
 from .py3to2 import py3to2_convert_tree
 from ..pycode.utils_tests import main_wrapper_tests
 from ..helpgen import get_help_usage
+from .build_helper import get_build_script, get_script_command, get_extra_script_command
+
+
+def get_script_extension():
+    """
+    returns the scripts extension based on the system it is running on
+
+    @return     bat or sh
+    """
+    if sys.platform.startswith("win"):
+        return "bat"
+    else:
+        return "sh"
 
 
 def get_folder(file_or_folder):
@@ -154,14 +167,20 @@ def copy27_for_setup(file_or_folder):
     py3to2_convert_tree(root, dest)
 
 
-def process_standard_options_for_setup(argv, file_or_folder, project_var_name, module_name=None,
+def process_standard_options_for_setup(argv,
+                                       file_or_folder,
+                                       project_var_name,
+                                       module_name=None,
                                        unittest_modules=None,
-                                       pattern_copy=".*[.]((ico)|(dll)|(rst)|(ipynb)|(png)|(txt)|(zip)|(gz))$"):
+                                       pattern_copy=".*[.]((ico)|(dll)|(rst)|(ipynb)|(png)|(txt)|(zip)|(gz))$",
+                                       requirements=None,
+                                       port=8067):
     """
     process the standard options the module pyquickhelper is
     able to process assuming the module which calls this function
     follows the same design as *pyquickhelper*, it will process the following
     options:
+        * ``build_script``: produce various scripts to build the module
         * ``clean_space``: clean unnecessary spaces in the code
         * ``write_version``: write a file ``version.txt`` with the version number (needs an access to GitHub)
         * ``clean_pyd``: clean file ``*.pyd``
@@ -175,6 +194,8 @@ def process_standard_options_for_setup(argv, file_or_folder, project_var_name, m
     @param      module_name         module name, None if equal to *project_var_name* (``import <module_name>``)
     @param      unittest_modules    modules added for the unit tests, see @see fn py3to2_convert_tree
     @param      pattern_copy        see @see fn py3to2_convert_tree
+    @param      requirements        dependencies
+    @param      port                port for the local pipy server
     @return                         True (an option was processed) or False,
                                     the file ``setup.py`` should call function ``setup``
     """
@@ -195,6 +216,28 @@ def process_standard_options_for_setup(argv, file_or_folder, project_var_name, m
     elif "unittests" in sys.argv:
         main_wrapper_tests(file_or_folder)
         return True
+    elif "build_script" in sys.argv:
+        script = get_build_script(
+            project_var_name, requirements=requirements, port=port)
+        with open("auto_unittest_setup_help.%s" % get_script_extension(), "w") as f:
+            f.write(script)
+
+        for c in {"build_script", "clean_space",
+                  "write_version", "clean_pyd",
+                  "build_sphinx", "unittests",
+                  "copy27"}:
+            sc = get_script_command(
+                c, project_var_name, requirements=requirements, port=port)
+            with open("auto_setup_%s.%s" % (c, get_script_extension()), "w") as f:
+                f.write(sc)
+
+        for c in {"notebook", "publish", "publish_doc", "local_pypi"}:
+            sc = get_extra_script_command(
+                c, project_var_name, requirements=requirements, port=port)
+            with open("auto_cmd_%s.%s" % (c, get_script_extension()), "w") as f:
+                f.write(sc)
+        return True
+
     elif "copy27" in sys.argv:
         if sys.version_info[0] < 3:
             raise Exception("Python needs to be Python3")

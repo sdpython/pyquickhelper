@@ -40,8 +40,7 @@ cd ..
 if not exist dist: mkdir dist
 copy dist_module27\dist\*.whl dist
 
-rem
-rem autopep8
-rem coverage
-rem flake8
-rem wheel
+:end:
+rem we copy the wheel on a local folder to let a pypiserver take it
+if not exist ..\local_pypi_server mkdir ..\local_pypi_server
+copy dist_module27\dist\*.whl ..\local_pypi_server

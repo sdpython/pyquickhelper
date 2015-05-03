@@ -240,3 +240,5 @@ _doc/sphinxdoc/source/blog/rss.xml
 _doc/sphinxdoc/source/phdoc_templates/*.html
 _doc/notebooks/.ipynb_checkpoints/*
 dist_module27/*
+auto_*.bat
+auto_*.sh
