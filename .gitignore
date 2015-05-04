@@ -242,3 +242,4 @@ _doc/notebooks/.ipynb_checkpoints/*
 dist_module27/*
 auto_*.bat
 auto_*.sh
+auto_setup_dep.py
