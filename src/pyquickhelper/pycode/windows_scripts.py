@@ -117,10 +117,10 @@ set pythonexe=__PY34_X64__\\python
 echo ###----################################################5
 if not exist ..\\virtual mkdir ..\\virtual
 set virtual_env_py=..\\virtual\\__MODULE__
-if exist %virtual_env_py% rmdir /Q /S %virtual_env_py%
-mkdir %virtual_env_py%
-echo %pythonexe%\\..\\Scripts\\virtualenv --system-site-packages %virtual_env_py%
-if exist %virtual_env_py%\\python goto with_virtual:
+if exist %virtual_env_py% rmdir /Q /S %virtual_env_py%_vir
+mkdir %virtual_env_py%_vir
+echo %pythonexe%\\..\\Scripts\\virtualenv --system-site-packages %virtual_env_py%_vir
+if exist %virtual_env_py%_vir\\python goto with_virtual:
 %pythonexe%\\..\\Scripts\\virtualenv --system-site-packages %virtual_env_py%_vir
 if %errorlevel% neq 0 exit /b %errorlevel%
 
