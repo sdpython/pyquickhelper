@@ -34,7 +34,7 @@ default_values = {
 }
 
 
-def private_script_replacements(script, module, requirements, port, raise_exception=True):
+def private_script_replacements(script, module, requirements, port, raise_exception=True, platform=sys.platform):
     """
     run last replacements
 
@@ -43,9 +43,10 @@ def private_script_replacements(script, module, requirements, port, raise_except
     @param      requirements    requirements
     @param      port            port
     @param      raise_exception raise an exception if there is an error, otherwise, return None
+    @param      platform        platform
     @return                     modified script
     """
-    if sys.platform.startswith("win"):
+    if platform.startswith("win"):
         plat = "windows"
         global default_values
 

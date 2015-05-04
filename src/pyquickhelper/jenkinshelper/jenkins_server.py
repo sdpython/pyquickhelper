@@ -183,7 +183,7 @@ class JenkinsExt(jenkins.Jenkins):
                             git_repo,
                             credentials="",
                             upstreams=None,
-                            script=modified_windows_jenkins,
+                            script=None,
                             location=None,
                             keep=30,
                             dependencies=None,
@@ -217,6 +217,14 @@ class JenkinsExt(jenkins.Jenkins):
             H H(13-14) * * 0
 
         """
+        if script is None:
+            if platform.startswith("win"):
+                script = private_script_replacements(
+                    windows_jenkins, "____", None, "____", raise_exception=False,
+                    platform=platform)
+            else:
+                raise JenkinsExtException("no default script for linux")
+
         if upstreams is not None and len(upstreams) > 0 and scheduler is not None:
             raise JenkinsExtException(
                 "upstreams and scheduler cannot be not null at the same time: {0}".format(name))
