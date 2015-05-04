@@ -265,3 +265,11 @@ setup(
         "docutils", ],
 )
 """
+#########################
+#:
+#########################
+
+copy_dist_to_local_pypi = """
+if not exist ..\local_pypi_server mkdir ..\local_pypi_server
+copy dist\*.whl ..\local_pypi_server
+"""

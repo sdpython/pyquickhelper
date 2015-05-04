@@ -76,7 +76,7 @@ class TestBuilScript(unittest.TestCase):
                 assert len(sc) > 0
                 assert "__" not in sc
 
-            for c in {"notebook", "publish", "publish_doc", "local_pypi", "run27", "build27", "setupdep"}:
+            for c in {"notebook", "publish", "publish_doc", "local_pypi", "run27", "build27", "setupdep", "copy_dist"}:
                 sc = get_extra_script_command(
                     c, project_var_name, requirements=requirements, port=port)
                 assert len(sc) > 0

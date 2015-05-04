@@ -249,7 +249,7 @@ def process_standard_options_for_setup(argv,
             with open("auto_setup_%s.%s" % (c, get_script_extension()), "w") as f:
                 f.write(sc)
 
-        for c in {"notebook", "publish", "publish_doc", "local_pypi", "run27", "build27", "setupdep"}:
+        for c in {"notebook", "publish", "publish_doc", "local_pypi", "run27", "build27", "setupdep", "copy_dist"}:
             if "--private" in argv and "publish" in c:
                 # we skip this to avoid producing scripts for publish
                 # functionalities

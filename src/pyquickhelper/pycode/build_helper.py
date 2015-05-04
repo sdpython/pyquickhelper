@@ -9,7 +9,7 @@ import sys
 import os
 from .windows_scripts import windows_error, windows_prefix, windows_setup, windows_build, windows_notebook
 from .windows_scripts import windows_publish, windows_publish_doc, windows_pypi, setup_script_dependency_py
-from .windows_scripts import windows_prefix_27, windows_unittest27
+from .windows_scripts import windows_prefix_27, windows_unittest27, copy_dist_to_local_pypi
 
 
 def choose_path(*paths):
@@ -51,7 +51,7 @@ def private_script_replacements(script, module, requirements, port, raise_except
         global default_values
 
         values = default_values[plat].values()
-        if len(values) != len(set(values)):
+        if raise_exception and len(values) != len(set(values)):
             raise FileNotFoundError("one the paths is wrong among: " +
                                     "\n".join("{0}={1}".format(k, v) for k, v in default_values[plat].items()))
 
@@ -122,7 +122,7 @@ def get_extra_script_command(command, module, requirements, port=8067):
     produces a script which runs the notebook, a documentation server, which
     publishes...
 
-    @param  command         command to run (*notebook*, *publish*, *publish_doc*, *local_pypi*)
+    @param  command         command to run (*notebook*, *publish*, *publish_doc*, *local_pypi*, *setupdep*, *run27*, *build27*, *copy_dist*)
     @param  module          module name
     @param  requirements    list of dependencies (not in your python distribution)
     @param  port            port for the local pypi_server which gives the dependencies
@@ -147,6 +147,8 @@ def get_extra_script_command(command, module, requirements, port=8067):
                             windows_setup.replace(
                                 "exe%", "exe27%") + " bdist_wheel",
                             windows_error, "cd ..", "copy dist_module27\\dist\\*.whl dist"])
+    elif command == "copy_dist":
+        script = copy_dist_to_local_pypi
     elif command == "setupdep":
         script = setup_script_dependency_py
     else:
