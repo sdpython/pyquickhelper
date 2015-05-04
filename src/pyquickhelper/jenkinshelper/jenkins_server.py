@@ -17,9 +17,9 @@ from ..pycode.build_helper import private_script_replacements, choose_path
 
 
 modified_windows_jenkins = private_script_replacements(
-    windows_jenkins, "____", None, "____")
+    windows_jenkins, "____", None, "____", raise_exception=False)
 modified_windows_jenkins_27 = private_script_replacements(
-    windows_jenkins_27, "____", None, "____")
+    windows_jenkins_27, "____", None, "____", raise_exception=False)
 
 
 class JenkinsExtException(Exception):

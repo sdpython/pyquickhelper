@@ -234,6 +234,7 @@ windows_jenkins = "set jenkinspythonexe=__PYTHON__\n" + jenkins_windows_setup + 
 #################
 windows_jenkins_27 = "set jenkinspythonexe=__PYTHON__\n" + jenkins_windows_setup + " build_script\n" + \
     windows_error + "\nauto_setup_copy27.bat %jenkinspythonexe%\n" + windows_error + \
+    "\n\n__REQUIREMENTS__\n\n" + \
     "\nauto_cmd_run27.bat %jenkinspythonexe%\n" + windows_error + \
     "\nauto_cmd_build27.bat %jenkinspythonexe%\n" + windows_error
 

@@ -34,7 +34,7 @@ default_values = {
 }
 
 
-def private_script_replacements(script, module, requirements, port):
+def private_script_replacements(script, module, requirements, port, raise_exception=True):
     """
     run last replacements
 
@@ -42,6 +42,7 @@ def private_script_replacements(script, module, requirements, port):
     @param      module          module name
     @param      requirements    requirements
     @param      port            port
+    @param      raise_exception raise an exception if there is an error, otherwise, return None
     @return                     modified script
     """
     if sys.platform.startswith("win"):
@@ -72,8 +73,11 @@ def private_script_replacements(script, module, requirements, port):
         return script
 
     else:
-        raise NotImplementedError(
-            "not implemented yet for this platform %s" % sys.platform)
+        if raise_exception:
+            raise NotImplementedError(
+                "not implemented yet for this platform %s" % sys.platform)
+        else:
+            return None
 
 
 def get_build_script(module, requirements=None, port=8067):
