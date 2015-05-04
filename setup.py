@@ -101,6 +101,7 @@ def is_local():
             "bdist_msi" in sys.argv or \
             "bdist_wheel" in sys.argv or \
             "build_script" in sys.argv or \
+            "copy_dist" in sys.argv or \
             "upload_docs" in sys.argv:
         return True
     else:
