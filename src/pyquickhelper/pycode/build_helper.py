@@ -140,10 +140,12 @@ def get_extra_script_command(command, module, requirements, port=8067):
         script = "\n".join([windows_prefix, windows_pypi])
     elif command == "run27":
         script = "\n".join(
-            [windows_prefix_27, "cd dist_module27", windows_unittest27, windows_error, "cd .."])
+            [windows_prefix_27, windows_unittest27, windows_error])
     elif command == "build27":
-        script = "\n".join([windows_prefix_27, "cd dist_module27",
-                            windows_setup + " bdist_wheel", windows_error, "cd .."])
+        script = "\n".join([windows_prefix_27, "cd dist_module27", "rmdir /S /Q dist",
+                            windows_setup.replace(
+                                "exe%", "exe27%") + " bdist_wheel",
+                            windows_error, "cd ..", "copy dist_module27\\dist\\*.whl dist"])
     elif command == "setupdep":
         script = setup_script_dependency_py
     else:

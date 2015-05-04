@@ -34,6 +34,9 @@ class TestMissingFunction(unittest.TestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
+        if "travis" in sys.executable:
+            return
+
         try:
             ie_layout_html()
         except AttributeError:

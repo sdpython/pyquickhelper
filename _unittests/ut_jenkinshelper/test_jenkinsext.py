@@ -42,7 +42,9 @@ class TestJenkinsExt(unittest.TestCase):
                                        "%s/" % "pyquickhelper",
                                        upstreams=None,
                                        location=r"/home/username/jenkins/",
-                                       dependencies={"myversion": "/home/username/mymodule/src/", })
+                                       dependencies={
+                                           "myversion": "/home/username/mymodule/src/", },
+                                       platform="win32")
         assert "MYVERSION=/home/username/mymodule/src/" in conf
         assert "auto_unittest_setup_help.bat" in conf
 
@@ -53,7 +55,8 @@ class TestJenkinsExt(unittest.TestCase):
                                        location=r"/home/username/jenkins/",
                                        dependencies={
                                            "myversion": "/home/username/mymodule/src/", },
-                                       scheduler="H H(13-14) * * *")
+                                       scheduler="H H(13-14) * * *",
+                                       platform="win32")
         assert "H H(13-14) * * *" in conf
 
         try:
@@ -64,7 +67,8 @@ class TestJenkinsExt(unittest.TestCase):
                                            location=r"/home/username/jenkins/",
                                            dependencies={
                                                "myversion": "/home/username/mymodule/src/", },
-                                           scheduler="H H(13-14) * * *")
+                                           scheduler="H H(13-14) * * *",
+                                           platform="win32")
             raise Exception("should not happen")
         except JenkinsExtException:
             pass
@@ -76,7 +80,8 @@ class TestJenkinsExt(unittest.TestCase):
                                        location=r"/home/username/jenkins/",
                                        dependencies={
                                            "myversion": "/home/username/mymodule/src/", },
-                                       scheduler=None)
+                                       scheduler=None,
+                                       platform="win32")
         assert "pyquickhelper" in conf
 
     def test_jenkins_ext_setup_server(self):

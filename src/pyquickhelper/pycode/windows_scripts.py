@@ -48,7 +48,8 @@ set PYTHONPATH=
 cd dist_module27\\_unittests
 
 for /d %%d in (ut_*) do %pythonexe27%\\..\\Scripts\\nosetests.exe -w %%d
-"""
+
+""" + windows_error + "\ncd ..\.."
 
 #################
 #: call the setup
