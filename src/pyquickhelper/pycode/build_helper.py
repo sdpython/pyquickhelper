@@ -7,7 +7,8 @@
 
 import sys
 import os
-from .windows_scripts import windows_error, windows_prefix, windows_setup, windows_build, windows_notebook, windows_publish, windows_publish_doc, windows_pypi
+from .windows_scripts import windows_error, windows_prefix, windows_setup, windows_build, windows_notebook
+from .windows_scripts import windows_publish, windows_publish_doc, windows_pypi, setup_script_dependency_py
 from .windows_scripts import windows_prefix_27, windows_unittest27
 
 
@@ -26,9 +27,9 @@ def choose_path(*paths):
 #: default values, to be replaced in the build script
 default_values = {
     "windows": {
-        "__PY34__": "c:\\Python34",
-        "__PY34_X64__": choose_path("c:\\Python34_x64", "c:\\Anaconda3"),
-        "__PY27_X64__": choose_path("c:\\Python27_x64", "c:\\Anaconda2", "c:\\Anaconda"),
+        "__PY34__": choose_path("c:\\Python34", "."),
+        "__PY34_X64__": choose_path("c:\\Python34_x64", "c:\\Anaconda3", "."),
+        "__PY27_X64__": choose_path("c:\\Python27_x64", "c:\\Anaconda2", "c:\\Anaconda", "."),
     },
 }
 
@@ -46,6 +47,12 @@ def private_script_replacements(script, module, requirements, port):
     if sys.platform.startswith("win"):
         plat = "windows"
         global default_values
+
+        values = default_values[plat].values()
+        if len(values) != len(set(values)):
+            raise FileNotFoundError("one the paths is wrong among: " +
+                                    "\n".join("{0}={1}".format(k, v) for k, v in default_values[plat].items()))
+
         script = script.replace("__MODULE__", module)
         for k, v in default_values[plat].items():
             script = script.replace(k, v)
@@ -133,6 +140,12 @@ def get_extra_script_command(command, module, requirements, port=8067):
     elif command == "build27":
         script = "\n".join([windows_prefix_27, "cd dist_module27",
                             windows_setup + " bdist_wheel", windows_error, "cd .."])
+    elif command == "setupdep":
+        script = setup_script_dependency_py
+    else:
+        raise Exception("unable to interpret command: " + command)
+
+    # common post-processing
     if script is None:
         raise Exception("unexpected command: " + command)
     else:

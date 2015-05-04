@@ -135,12 +135,20 @@ def process_notebooks(notebooks,
             os.environ["WINPYDIR"] = exe
             os.environ["PATH"] = p
 
-        ipy = os.path.join(exe, "Scripts", "ipython3.exe")
-        if not os.path.exists(ipy):
-            # Anaconda is different
-            ipy = os.path.join(exe, "Scripts", "ipython.exe")
+        if not exe.endswith("Scripts"):
+            ipy = os.path.join(exe, "Scripts", "ipython3.exe")
             if not os.path.exists(ipy):
-                raise FileNotFoundError(ipy)
+                # Anaconda is different
+                ipy = os.path.join(exe, "Scripts", "ipython.exe")
+                if not os.path.exists(ipy):
+                    raise FileNotFoundError(ipy)
+        else:
+            ipy = os.path.join(exe, "ipython3.exe")
+            if not os.path.exists(ipy):
+                # Anaconda is different
+                ipy = os.path.join(exe, "ipython.exe")
+                if not os.path.exists(ipy):
+                    raise FileNotFoundError(ipy)
     else:
         ipy = os.path.join(exe, "ipython")
 

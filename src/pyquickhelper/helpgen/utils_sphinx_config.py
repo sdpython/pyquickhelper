@@ -23,9 +23,8 @@ def getsitepackages():
     try:
         return site.getsitepackages()
     except AttributeError:
-        import numpy
-        return [os.path.join(os.path.dirname(numpy.__file__), ".."),
-                get_python_lib()]
+        import sphinx
+        return [os.path.normpath(os.path.join(os.path.dirname(sphinx.__file__), ".."))]
 
 
 def ie_layout_html():
@@ -44,7 +43,7 @@ def ie_layout_html():
         sitep = sitep[0]
     else:
         raise FileNotFoundError(
-            "unable to find site-packages\n{1}".format("\n".join(site.getsitepackages())))
+            "unable to find site-packages\n{0}".format("\n".join(getsitepackages())))
 
     if not os.path.exists(sitep):
         raise FileNotFoundError("unable to find site-packages, tried: {0}\nALL:\n{1}".format(sitep,

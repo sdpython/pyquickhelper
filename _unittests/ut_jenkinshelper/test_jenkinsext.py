@@ -163,6 +163,8 @@ class TestJenkinsExt(unittest.TestCase):
         for i, r in enumerate(res):
             fLOG(r)
             conf = r[-1]
+            if "__" in conf and "pyquickhelper_vir" not in conf:
+                raise Exception(conf)
             if i == 0:
                 if "pyquickhelper" not in conf:
                     raise Exception(conf)
@@ -182,10 +184,6 @@ class TestJenkinsExt(unittest.TestCase):
                     raise Exception(conf)
 
             if "[27]" not in r[0] and "update" not in conf:
-                if "set " in conf and "PYQUICKHELPER27=" not in conf:
-                    raise Exception(conf)
-                if "set " in conf and "PYQUICKHELPER=" not in conf:
-                    raise Exception(conf)
                 if "PYQUICKHELPER27=a" in conf:
                     raise Exception(conf)
                 if "dist_module27" in conf:

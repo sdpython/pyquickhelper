@@ -1,49 +1,64 @@
+"""
+@brief
+@file Batch file use to automate some of the tasks (setup, unit tests, help, pypi).
 
+.. versionadded:: 1.1
+"""
+
+#################
 #: stop if error
+#################
 windows_error = "if %errorlevel% neq 0 exit /b %errorlevel%"
 
+#################
 #: prefix
+#################
 windows_prefix = """
 echo off
 
 if "%1"=="" goto default_value_python:
-set pythonexe="%1"
+set pythonexe=%1
 goto start_script:
 
 :default_value_python:
-set pythonexe="__PY34_X64__\\python"
+set pythonexe=__PY34_X64__\\python
 :start_script:
 """
 
+#################
 #: prefix 27
+#################
 windows_prefix_27 = """
 echo off
 
 if "%1"=="" goto default_value_python:
-set pythonexe27="%1"
+set pythonexe27=%1
 goto start_script:
 
 :default_value_python:
-set pythonexe27="__PY27_X64__\\python"
+set pythonexe27=__PY27_X64__\\python
 :start_script:
 """
 
+#################
 #: run unit test 27
+#################
 windows_unittest27 = """
 set PYTHONPATH=
-cd dist_module27\_unittests
+cd dist_module27\\_unittests
 
-for /d %%d in (ut_*) do %pythonexe27%\..\Scripts\nosetests.exe -w %%d
+for /d %%d in (ut_*) do %pythonexe27%\\..\\Scripts\\nosetests.exe -w %%d
 """
 
+#################
 #: call the setup
+#################
 windows_setup = "%pythonexe% setup.py"
+jenkins_windows_setup = "%jenkinspythonexe% setup.py"
 
-#: script for Jenkins
-windows_jenkins = windows_prefix + "\n" + windows_setup + " build_script\n" + \
-    windows_error + "\nauto_unittest_setup_help.bat\n" + windows_error
-
+#################
 #: build script for Windows
+#################
 windows_build = """
 echo off
 IF EXIST dist del /Q dist\\*.*
@@ -101,23 +116,28 @@ set pythonexe=__PY34_X64__\\python
 echo ###----################################################5
 if not exist ..\\virtual mkdir ..\\virtual
 set virtual_env_py=..\\virtual\\__MODULE__
-if exist %virtual_env_py% GOTO folder_here:
+if exist %virtual_env_py% rmdir /Q /S %virtual_env_py%
 mkdir %virtual_env_py%
-:folder_here:
 echo %pythonexe%\\..\\Scripts\\virtualenv --system-site-packages %virtual_env_py%
 if exist %virtual_env_py%\\python goto with_virtual:
-%pythonexe%\\..\\Scripts\\virtualenv --system-site-packages %virtual_env_py%
+%pythonexe%\\..\\Scripts\\virtualenv --system-site-packages %virtual_env_py%_vir
 if %errorlevel% neq 0 exit /b %errorlevel%
 
 :with_virtual:
-set pythonexe=%virtual_env_py%\\Scripts\\python
-set pythonpip=%virtual_env_py%\\Scripts\\python
+set pythonexe=%virtual_env_py%_vir\\Scripts\\python
+set pythonpip=%virtual_env_py%_vir\\Scripts\\pip
+
+:requirements:
+echo %pythonexe% auto_setup_dep.py install
+%pythonexe% auto_setup_dep.py install
 
 __REQUIREMENTS__
 
 %pythonexe% setup.py write_version
+echo #######################################################_clean
 %pythonexe% -u setup.py clean_space
 if %errorlevel% neq 0 exit /b %errorlevel%
+echo #######################################################_unit
 %pythonexe% -u setup.py unittests
 if %errorlevel% neq 0 exit /b %errorlevel%
 echo #######################################################6
@@ -150,7 +170,9 @@ if not exist ..\\local_pypi_server mkdir ..\\local_pypi_server
 copy dist\\*.whl ..\\local_pypi_server
 """
 
+#################
 #: notebooks
+#################
 windows_notebook = """
 if "%1"=="" goto default_value:
 set pythonexe=%1
@@ -164,7 +186,9 @@ set path=%path%;%pythonexe%;%pythonexe%\\Scripts
 ipython3 notebook --notebook-dir=_doc\\notebooks --matplotlib=inline
 """
 
+#################
 #: publish a module
+#################
 windows_publish = """
 %pythonexe% setup.py rotate --match=.zip --keep=1
 %pythonexe% setup.py rotate --match=.tar.gz --keep=3
@@ -172,12 +196,16 @@ rem %pythonexe% setup.py sdist register
 %pythonexe% setup.py sdist --formats=gztar upload
 """
 
+#################
 #: publish the documentation
+#################
 windows_publish_doc = """
 %pythonexe% setup.py upload_docs --upload-dir=dist/html
 """
 
+#################
 #: run a pypi server
+#################
 windows_pypi = """
 set pythonexe=__PY34_X64__
 
@@ -192,4 +220,46 @@ set portpy=__PORT__
 :run:
 echo on
 %pythonexe%\Scripts\pypi-server.exe -u -p %portpy% --disable-fallback .
+"""
+
+#################
+#: script for Jenkins
+#################
+windows_jenkins = "set jenkinspythonexe=__PYTHON__\n" + jenkins_windows_setup + " build_script\n" + \
+    windows_error + "\nauto_unittest_setup_help.bat %jenkinspythonexe%\n" + \
+    windows_error
+
+#################
+#: script for Jenkins
+#################
+windows_jenkins_27 = "set jenkinspythonexe=__PYTHON__\n" + jenkins_windows_setup + " build_script\n" + \
+    windows_error + "\nauto_setup_copy27.bat %jenkinspythonexe%\n" + windows_error + \
+    "\nauto_cmd_run27.bat %jenkinspythonexe%\n" + windows_error + \
+    "\nauto_cmd_build27.bat %jenkinspythonexe%\n" + windows_error
+
+##################
+#: auto setup
+##################
+setup_script_dependency_py = """
+import sys
+from distutils.core import setup, Extension
+import distutils.sysconfig as SH
+from setuptools import find_packages
+
+project_var_name = "dependencies___MODULE__"
+versionPython = "%s.%s" % (sys.version_info.major, sys.version_info.minor)
+path = "Lib/site-packages/" + project_var_name
+
+setup(
+    name=project_var_name,
+    version=versionPython,
+    install_requires=[
+        "numpy",
+        "dateutils",
+        "IPython",
+        "matplotlib",
+        "sphinx",
+        "pandas",
+        "docutils", ],
+)
 """

@@ -12,13 +12,28 @@ import socket
 from ..loghelper.flog import noLOG
 
 
-from ..pycode.windows_scripts import windows_jenkins
+from ..pycode.windows_scripts import windows_jenkins, windows_jenkins_27
+from ..pycode.build_helper import private_script_replacements, choose_path
+
+
+modified_windows_jenkins = private_script_replacements(
+    windows_jenkins, "____", None, "____")
+modified_windows_jenkins_27 = private_script_replacements(
+    windows_jenkins_27, "____", None, "____")
 
 
 class JenkinsExtException(Exception):
 
     """
     exception for the class JenkinsExt
+    """
+    pass
+
+
+class JenkinsExtPyException(Exception):
+
+    """
+    exception for the class JenkinsExt, when a distribution is not available
     """
     pass
 
@@ -168,7 +183,7 @@ class JenkinsExt(jenkins.Jenkins):
                             git_repo,
                             credentials="",
                             upstreams=None,
-                            script=windows_jenkins,
+                            script=modified_windows_jenkins,
                             location=None,
                             keep=30,
                             dependencies=None,
@@ -219,6 +234,10 @@ class JenkinsExt(jenkins.Jenkins):
             dependencies = {}
 
         cmd = "set" if sys.platform.startswith("win") else "export"
+
+        if "__PYTHON__" in script:
+            script = script.replace("__PYTHON__", choose_path(
+                os.path.dirname(sys.executable), "c:\\Python34_x64", "c:\\Anaconda3"))
 
         if len(dependencies) > 0:
             rows = []
@@ -295,37 +314,56 @@ class JenkinsExt(jenkins.Jenkins):
             # windows
             spl = job.split()
             if len(spl) == 1:
-                return windows_jenkins
+                script = modified_windows_jenkins
+                py = choose_path(
+                    os.path.dirname(sys.executable), "c:\\Python34_x64", "c:\\Anaconda3", ".")
+                cmd = script.replace("__PYTHON__", os.path.join(py, "python"))
+                return cmd
             elif len(spl) == 0:
                 raise ValueError("job is empty")
 
             elif len(spl) in [2, 3]:
                 if "[all]" in spl:
-                    cmd = "bunittest_all.bat"
+                    cmd = "bunittest_all.bat __PYTHON__"
                 elif "[notebooks]" in spl:
-                    cmd = "bunittest_notebooks.bat"
+                    cmd = "bunittest_notebooks.bat __PYTHON__"
                 elif "[update]" in spl:
-                    cmd = "update_anaconda.bat"
+                    cmd = "update_anaconda.bat __PYTHON__"
                 elif "[update27]" in spl:
-                    cmd = "update_anaconda_27.bat"
+                    cmd = "update_anaconda_27.bat __PYTHON__"
                 elif "[27]" in spl:
-                    cmd = "build_setup_help_on_windows_27.bat"
+                    cmd = modified_windows_jenkins_27
                 else:
-                    cmd = windows_jenkins
+                    cmd = modified_windows_jenkins
 
                 if "[anaconda]" in spl:
                     if anaconda is not None:
-                        cmd += " " + os.path.join(anaconda, "python")
+                        cmd = cmd.replace(
+                            "__PYTHON__", os.path.join(anaconda, "python"))
+                    else:
+                        raise JenkinsExtPyException(
+                            "anaconda is not available")
                 elif "[anaconda2]" in spl:
                     if anaconda2 is not None:
-                        cmd += " " + os.path.join(anaconda2, "python")
+                        cmd = cmd.replace(
+                            "__PYTHON__", os.path.join(anaconda2, "python"))
+                    else:
+                        raise JenkinsExtPyException(
+                            "anaconda2 is not available")
                 elif "[winpython]" in spl:
                     if winpython is not None:
                         # with WinPython, nb_convert has some trouble when called
                         # from the command line within Python
-                        # we skip for the time being
-                        cmd += " " + \
-                            os.path.join(winpython, "python") + " skip_sphinx"
+                        # the job might fail
+                        cmd = cmd.replace(
+                            "__PYTHON__", os.path.join(winpython, "python"))
+                    else:
+                        raise JenkinsExtPyException(
+                            "winpython is not available")
+                else:
+                    py = choose_path(
+                        os.path.dirname(sys.executable), "c:\\Python34_x64", "c:\\Anaconda3", ".")
+                    cmd = cmd.replace("__PYTHON__", os.path.join(py, "python"))
 
                 return cmd
             else:
@@ -524,6 +562,11 @@ class JenkinsExt(jenkins.Jenkins):
 
                     script = get_jenkins_script(
                         job, pythonexe, winpython, anaconda, anaconda2, platform)
+
+                    if "[27]" in job and "27" not in script:
+                        raise JenkinsExtException(
+                            "python 27 is not mentioned in the script:\njob={0}\n{0}".format(job, script))
+
                     if script is not None:
                         new_dep.append(name)
                         upstreams = [] if (

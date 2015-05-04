@@ -167,6 +167,24 @@ def copy27_for_setup(file_or_folder):
     py3to2_convert_tree(root, dest)
 
 
+def process_standard_options_for_setup_help():
+    """
+    print the added options available through this module
+    """
+    print("""
+        Help for options added by pyquickhelper:
+
+        build_script    produce various scripts to build the module
+        clean_space     clean unnecessary spaces in the code
+        write_version   write a file ``version.txt`` with the version number (needs an access to GitHub)
+        clean_pyd       clean file ``*.pyd``
+        build_sphinx    build the documentation
+        unittests       run the unit tests
+        copy27          create a modified copy of the module to run on Python 2.7
+
+        """)
+
+
 def process_standard_options_for_setup(argv,
                                        file_or_folder,
                                        project_var_name,
@@ -231,11 +249,19 @@ def process_standard_options_for_setup(argv,
             with open("auto_setup_%s.%s" % (c, get_script_extension()), "w") as f:
                 f.write(sc)
 
-        for c in {"notebook", "publish", "publish_doc", "local_pypi", "run27", "build27"}:
+        for c in {"notebook", "publish", "publish_doc", "local_pypi", "run27", "build27", "setupdep"}:
+            if "--private" in argv and "publish" in c:
+                # we skip this to avoid producing scripts for publish
+                # functionalities
+                continue
             sc = get_extra_script_command(
                 c, project_var_name, requirements=requirements, port=port)
-            with open("auto_cmd_%s.%s" % (c, get_script_extension()), "w") as f:
-                f.write(sc)
+            if c == "setupdep":
+                with open("auto_setup_dep.py", "w") as f:
+                    f.write(sc)
+            else:
+                with open("auto_cmd_%s.%s" % (c, get_script_extension()), "w") as f:
+                    f.write(sc)
         return True
 
     elif "copy27" in sys.argv:

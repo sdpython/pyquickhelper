@@ -95,7 +95,6 @@ def is_local():
             "build_sphinx" in sys.argv or \
             "unittests" in sys.argv or \
             "copy27" in sys.argv or \
-            "build" in sys.argv or \
             "sdist" in sys.argv or \
             "register" in sys.argv or \
             "bdist_wininst" in sys.argv or \
@@ -184,6 +183,9 @@ if is_local():
 else:
     r = False
 
+if len(sys.argv) == 1 and "--help" in sys.argv:
+    pyquickhelper.process_standard_options_for_setup_help()
+
 if not r:
     setup(
         name=project_var_name,
@@ -205,15 +207,15 @@ if not r:
             "dateutils",
             "IPython",
             "matplotlib",
-            "pandas", ],
+            "sphinx",
+            "pandas",
+            "docutils", ],
         extras_require={
             'helpgen': [
                 "six",
                 "requests",
-                "docutils",
                 "flake8",
                 "pep8==1.5.7",
-                "autopep8",
-                "sphinx", ],
+                "autopep8"],
         }
     )
