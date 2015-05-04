@@ -12,6 +12,9 @@ import socket
 from ..loghelper.flog import noLOG
 
 
+from ..pycode.windows_scripts import windows_jenkins
+
+
 class JenkinsExtException(Exception):
 
     """
@@ -165,7 +168,7 @@ class JenkinsExt(jenkins.Jenkins):
                             git_repo,
                             credentials="",
                             upstreams=None,
-                            script="auto_unittest_setup_help.bat",
+                            script=windows_jenkins,
                             location=None,
                             keep=30,
                             dependencies=None,
@@ -292,7 +295,7 @@ class JenkinsExt(jenkins.Jenkins):
             # windows
             spl = job.split()
             if len(spl) == 1:
-                return "auto_unittest_setup_help.bat"
+                return windows_jenkins
             elif len(spl) == 0:
                 raise ValueError("job is empty")
 
@@ -308,7 +311,7 @@ class JenkinsExt(jenkins.Jenkins):
                 elif "[27]" in spl:
                     cmd = "build_setup_help_on_windows_27.bat"
                 else:
-                    cmd = "auto_unittest_setup_help.bat"
+                    cmd = windows_jenkins
 
                 if "[anaconda]" in spl:
                     if anaconda is not None:

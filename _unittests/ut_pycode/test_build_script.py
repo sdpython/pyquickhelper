@@ -55,5 +55,36 @@ class TestBuilScript(unittest.TestCase):
             # not yet implemented for this platform
             return
 
+    def test_build_script_all(self):
+        fLOG(
+            __file__,
+            self._testMethodName,
+            OutputPrint=__name__ == "__main__")
+
+        project_var_name = "pyquickhelper"
+        requirements = None
+        port = 8067
+
+        if sys.platform.startswith("win"):
+
+            for c in {"build_script", "clean_space",
+                      "write_version", "clean_pyd",
+                      "build_sphinx", "unittests",
+                      "copy27"}:
+                sc = get_script_command(
+                    c, project_var_name, requirements=requirements, port=port)
+                assert len(sc) > 0
+                assert "__" not in sc
+
+            for c in {"notebook", "publish", "publish_doc", "local_pypi", "run27", "build27"}:
+                sc = get_extra_script_command(
+                    c, project_var_name, requirements=requirements, port=port)
+                assert len(sc) > 0
+                assert "__" not in sc
+        else:
+            # not yet implemented for this platform
+            return
+
+
 if __name__ == "__main__":
     unittest.main()
