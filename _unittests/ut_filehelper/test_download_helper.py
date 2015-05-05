@@ -36,6 +36,10 @@ class TestDownloadHelper(unittest.TestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
+        if sys.version_info[0] == 2:
+            # issue with timeout for python 2.7
+            return
+
         url = "https://raw.githubusercontent.com/sdpython/pyquickhelper/master/src/pyquickhelper/ipythonhelper/magic_parser.py"
         content = get_url_content_timeout(url, encoding="utf8")
         assert "MagicCommandParser" in content
@@ -47,6 +51,10 @@ class TestDownloadHelper(unittest.TestCase):
             __file__,
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
+
+        if sys.version_info[0] == 2:
+            # issue with timeout for python 2.7
+            return
 
         url = "https://localhost:878777/should_not_exists"
         try:
