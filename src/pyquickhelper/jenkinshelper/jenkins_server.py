@@ -331,10 +331,14 @@ class JenkinsExt(jenkins.Jenkins):
                 raise ValueError("job is empty")
 
             elif len(spl) in [2, 3]:
-                if "[all]" in spl:
-                    cmd = "bunittest_all.bat __PYTHON__"
+                if "[test_local_pypi]" in spl:
+                    cmd = "auto_setup_test_local_pypi.bat __PYTHON__"
                 elif "[notebooks]" in spl:
                     cmd = "bunittest_notebooks.bat __PYTHON__"
+                elif "[LONG]" in spl:
+                    cmd = "auto_setup_unittests_LONG.bat __PYTHON__"
+                elif "[SKIP]" in spl:
+                    cmd = "auto_setup_unittests_SKIP.bat __PYTHON__"
                 elif "[update]" in spl:
                     cmd = "update_anaconda.bat __PYTHON__"
                 elif "[update27]" in spl:

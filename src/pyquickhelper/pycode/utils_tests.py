@@ -20,6 +20,9 @@ from ..filehelper.synchelper import remove_folder
 from ..loghelper.flog import fLOG, run_cmd
 
 
+__all__ = ["get_temp_folder", "main_wrapper_tests"]
+
+
 def get_temp_folder(thisfile, name, clean=True, create=True):
     """
     return a local temporary folder to store files when unit testing
@@ -500,12 +503,25 @@ def is_valid_error(error):
     return False
 
 
+def default_skip_function(name, code):
+    """
+    default skip function for function @see fn main_wrapper_tests.
+
+    @param      name        name of the test file
+    @param      code        code of the test file
+    @return                 True if skipped, False otherwise
+    """
+    if "test_SKIP_" in name or "test_LONG_" in name:
+        return True
+    return False
+
+
 def main_wrapper_tests(codefile,
                        skip_list=None,
                        processes=False,
                        add_coverage=False,
                        report_folder=None,
-                       skip_function=None):
+                       skip_function=default_skip_function):
     """
     calls function :func:`main <pyquickhelper.unittests.utils_tests.main>` and throw an exception if it fails
 
@@ -544,12 +560,16 @@ def main_wrapper_tests(codefile,
         Parameters *add_coverage* and *report_folder* were added to compute the coverage
         using the module `coverage <http://nedbatchelder.com/code/coverage/>`_.
 
-    .. versionadded:: 1.0
+    .. versionchanged:: 1.0
         Does something to avoid getting the following error::
 
             _tkinter.TclError: no display name and no $DISPLAY environment variable
 
         It is due to matplotlib. See `Generating matplotlib graphs without a running X server <http://stackoverflow.com/questions/4931376/generating-matplotlib-graphs-without-a-running-x-server>`_.
+
+    .. versionchanged:: 1.1
+        If the skip function is None, it will replace it by the function @see fn default_skip_function.
+
     """
     runner = unittest.TextTestRunner(verbosity=0, stream=io.StringIO())
     path = os.path.abspath(os.path.join(os.path.split(codefile)[0]))

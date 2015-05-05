@@ -15,6 +15,7 @@ from .py3to2 import py3to2_convert_tree
 from ..pycode.utils_tests import main_wrapper_tests
 from ..helpgen import get_help_usage
 from .build_helper import get_build_script, get_script_command, get_extra_script_command
+from ..filehelper import get_url_content_timeout
 
 
 def get_script_extension():
@@ -199,12 +200,15 @@ def process_standard_options_for_setup(argv,
     follows the same design as *pyquickhelper*, it will process the following
     options:
         * ``build_script``: produce various scripts to build the module
-        * ``clean_space``: clean unnecessary spaces in the code
-        * ``write_version``: write a file ``version.txt`` with the version number (needs an access to GitHub)
-        * ``clean_pyd``: clean file ``*.pyd``
         * ``build_sphinx``: build the documentation
-        * ``unittests``: run the unit tests
+        * ``clean_pyd``: clean file ``*.pyd``
+        * ``clean_space``: clean unnecessary spaces in the code
         * ``copy27``: create a modified copy of the module to run on Python 2.7
+        * ``test_local_pypi``: test a local pypi server
+        * ``unittests``: run the unit tests except those beginning by ``test_SKIP_`` or ``test_LONG_``.
+        * ``unittests_LONG``: run the unit tests beginning by ``test_LONG_``
+        * ``unittests_SKIP``: run the unit tests beginning by ``test_SKIP_``
+        * ``write_version``: write a file ``version.txt`` with the version number (needs an access to GitHub)
 
     @param      argv                = *sys.argv*
     @param      file_or_folder      file ``setup.py`` or folder which contains it
@@ -234,6 +238,16 @@ def process_standard_options_for_setup(argv,
     elif "unittests" in sys.argv:
         main_wrapper_tests(file_or_folder)
         return True
+    elif "unittests_LONG" in sys.argv:
+        def skip_long(name, code):
+            return "test_LONG_" not in name
+        main_wrapper_tests(file_or_folder, skip_function=skip_long)
+        return True
+    elif "unittests_SKIP" in sys.argv:
+        def skip_skip(name, code):
+            return "test_LONG_" not in name
+        main_wrapper_tests(file_or_folder, skip_function=skip_skip)
+        return True
     elif "build_script" in sys.argv:
         script = get_build_script(
             project_var_name, requirements=requirements, port=port)
@@ -243,13 +257,15 @@ def process_standard_options_for_setup(argv,
         for c in {"build_script", "clean_space",
                   "write_version", "clean_pyd",
                   "build_sphinx", "unittests",
-                  "copy27"}:
+                  "unittests_LONG", "unittests_SKIP",
+                  "copy27", "test_local_pypi"}:
             sc = get_script_command(
                 c, project_var_name, requirements=requirements, port=port)
             with open("auto_setup_%s.%s" % (c, get_script_extension()), "w") as f:
                 f.write(sc)
 
-        for c in {"notebook", "publish", "publish_doc", "local_pypi", "run27", "build27", "setupdep", "copy_dist"}:
+        for c in {"notebook", "publish", "publish_doc", "local_pypi", "run27",
+                  "build27", "setupdep", "copy_dist"}:
             if "--private" in argv and "publish" in c:
                 # we skip this to avoid producing scripts for publish
                 # functionalities
@@ -272,6 +288,13 @@ def process_standard_options_for_setup(argv,
         dest = os.path.join(root, "dist_module27")
         py3to2_convert_tree(
             root, dest, unittest_modules=unittest_modules, pattern_copy=pattern_copy)
+        return True
+    elif "test_local_pypi" in sys.argv:
+        url = "http://localhost:{0}/".format(port)
+        content = get_url_content_timeout(url, timeout=5)
+        if content is None or len(content) == 0:
+            raise Exception("test failed for url: " + url)
+        print(content)
         return True
     else:
         return False

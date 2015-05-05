@@ -70,13 +70,15 @@ class TestBuilScript(unittest.TestCase):
             for c in {"build_script", "clean_space",
                       "write_version", "clean_pyd",
                       "build_sphinx", "unittests",
-                      "copy27"}:
+                      "unittests_LONG", "unittests_SKIP",
+                      "copy27", "test_local_pypi"}:
                 sc = get_script_command(
                     c, project_var_name, requirements=requirements, port=port)
                 assert len(sc) > 0
                 assert "__" not in sc
 
-            for c in {"notebook", "publish", "publish_doc", "local_pypi", "run27", "build27", "setupdep", "copy_dist"}:
+            for c in {"notebook", "publish", "publish_doc", "local_pypi", "run27",
+                      "build27", "setupdep", "copy_dist"}:
                 sc = get_extra_script_command(
                     c, project_var_name, requirements=requirements, port=port)
                 assert len(sc) > 0
