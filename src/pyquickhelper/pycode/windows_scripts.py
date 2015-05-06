@@ -129,10 +129,16 @@ set pythonexe=%virtual_env_py%_vir\\Scripts\\python
 set pythonpip=%virtual_env_py%_vir\\Scripts\\pip
 
 :requirements:
-echo %pythonexe% auto_setup_dep.py install
-%pythonexe% auto_setup_dep.py install
+echo #######################################################_auto_setup_dep.py
+echo %pythonexe% build\\auto_setup\\auto_setup_dep.py install
+%pythonexe% build\\auto_setup\\auto_setup_dep.py install
+if %errorlevel% neq 0 exit /b %errorlevel%
 
+echo #######################################################_requirements_begin
+echo %pythonpip%
 __REQUIREMENTS__
+if %errorlevel% neq 0 exit /b %errorlevel%
+echo #######################################################_requirements_end
 
 %pythonexe% setup.py write_version
 echo #######################################################_clean
@@ -220,7 +226,7 @@ set portpy=__PORT__
 
 :run:
 echo on
-%pythonexe%\Scripts\pypi-server.exe -u -p %portpy% --disable-fallback .
+%pythonexe%\Scripts\pypi-server.exe -u -p %portpy% --disable-fallback ..\\local_pypi_server
 """
 
 #################

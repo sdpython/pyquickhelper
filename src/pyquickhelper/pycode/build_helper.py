@@ -63,8 +63,9 @@ def private_script_replacements(script, module, requirements, port, raise_except
         if requirements is not None:
             rows = []
             for r in requirements:
-                r = "%pythonpip% install --extra-index-url http://localhost:{0}/simple/ {1}".format(
+                r = "%pythonpip% install --no-cache-dir --index-url http://localhost:{0}/simple/ {1}".format(
                     port, r)
+                rows.append("echo " + r)
                 rows.append(r)
             reqs = "\n".join(rows)
         else:

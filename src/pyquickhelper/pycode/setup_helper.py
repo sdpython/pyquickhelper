@@ -221,6 +221,9 @@ def process_standard_options_for_setup(argv,
     @return                         True (an option was processed) or False,
                                     the file ``setup.py`` should call function ``setup``
     """
+    folder = file_or_folder if os.path.isdir(
+        file_or_folder) else os.path.dirname(file_or_folder)
+
     if "clean_space" in argv:
         rem = clean_space_for_setup(file_or_folder)
         print("number of impacted files", len(rem))
@@ -251,7 +254,7 @@ def process_standard_options_for_setup(argv,
     elif "build_script" in sys.argv:
         script = get_build_script(
             project_var_name, requirements=requirements, port=port)
-        with open("auto_unittest_setup_help.%s" % get_script_extension(), "w") as f:
+        with open(os.path.join(folder, "auto_unittest_setup_help.%s" % get_script_extension()), "w") as f:
             f.write(script)
 
         for c in {"build_script", "clean_space",
@@ -261,7 +264,7 @@ def process_standard_options_for_setup(argv,
                   "copy27", "test_local_pypi"}:
             sc = get_script_command(
                 c, project_var_name, requirements=requirements, port=port)
-            with open("auto_setup_%s.%s" % (c, get_script_extension()), "w") as f:
+            with open(os.path.join(folder, "auto_setup_%s.%s" % (c, get_script_extension())), "w") as f:
                 f.write(sc)
 
         for c in {"notebook", "publish", "publish_doc", "local_pypi", "run27",
@@ -273,10 +276,13 @@ def process_standard_options_for_setup(argv,
             sc = get_extra_script_command(
                 c, project_var_name, requirements=requirements, port=port)
             if c == "setupdep":
-                with open("auto_setup_dep.py", "w") as f:
+                folder_setup = os.path.join(folder, "build", "auto_setup")
+                if not os.path.exists(folder_setup):
+                    os.makedirs(folder_setup)
+                with open(os.path.join(folder_setup, "auto_setup_dep.py"), "w") as f:
                     f.write(sc)
             else:
-                with open("auto_cmd_%s.%s" % (c, get_script_extension()), "w") as f:
+                with open(os.path.join(folder, "auto_cmd_%s.%s" % (c, get_script_extension())), "w") as f:
                     f.write(sc)
         return True
 
