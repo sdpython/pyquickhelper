@@ -250,14 +250,38 @@ windows_jenkins = "set jenkinspythonexe=__PYTHON__\n" + jenkins_windows_setup + 
 #################
 #: script for Jenkins
 #################
+windows_unittest27 = """
+set CURRENT_PATH=%~dp0
+set virtual_env_py=%CURRENT_PATH%\\..\\virtual\\__MODULE__
+if exist %virtual_env_py%_conda27vir rmdir /Q /S %virtual_env_py%_conda27vir
+%jenkinspythonexe%\\..\\Scripts\\conda create -p %virtual_env_py%_conda27vir --clone %jenkinspythonexe%\\.. --offline
+if %errorlevel% neq 0 exit /b %errorlevel%
+set jenkinspythonexe=%virtual_env_py%_conda27vir\\python
+set jenkinspythonpip=%virtual_env_py%_conda27vir\\Scripts\\pip
+
+:requirements:
+echo #######################################################_auto_setup_dep.py
+%jenkinspythonexe% build\\auto_setup\\auto_setup_dep.py install
+if %errorlevel% neq 0 exit /b %errorlevel%
+%jenkinspythonpip% install --extra-index-url http://localhost:__PORT__/simple/ pyquickhelper
+if %errorlevel% neq 0 exit /b %errorlevel%
+
+echo #######################################################_requirements_begin
+echo %jenkinspythonpip%
+"""
+
+
 windows_jenkins_27 = [
     "set jenkinspythonexe=__PYTHON__\n" + jenkins_windows_setup + " build_script\n" +
     windows_error + "\nauto_setup_copy27.bat %jenkinspythonexe%\n" +
     windows_error,
-    "set jenkinspythonexe=__PYTHON27__\n\n" +
-    "\n\n__REQUIREMENTS__\n\n" +
+    "set jenkinspythonexe=__PYTHON27__\n\n" + \
+    windows_unittest27 + \
+    "\n\n__REQUIREMENTS__\n\n" + \
     "\nauto_cmd_run27.bat %jenkinspythonexe%\n" + windows_error,
-    "set jenkinspythonexe=__PYTHON27__\n\n" +
+    "set CURRENT_PATH=%~dp0\n" + \
+    "set virtual_env_py=%CURRENT_PATH%\\..\\virtual\\__MODULE__\n" + \
+    "set jenkinspythonexe=%virtual_env_py%_conda27vir\\python\n" + \
     "\nauto_cmd_build27.bat %jenkinspythonexe%\n" + windows_error,
     "copy dist_module27\\dist\\*.whl ..\\local_pypi_server"]
 
