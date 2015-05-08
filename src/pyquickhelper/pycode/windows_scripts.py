@@ -120,7 +120,10 @@ if exist %virtual_env_py%_vir rmdir /Q /S %virtual_env_py%_vir
 mkdir %virtual_env_py%_vir
 
 if exist %virtual_env_py%_vir%virtual_env_suffix%\\python goto with_virtual:
+set KEEPPATH=PATH
+set PATH=%pythonexe%\\..;%PATH%
 %pythonexe%\\..\\Scripts\\virtualenv --system-site-packages %virtual_env_py%_vir%virtual_env_suffix%
+set PATH=KEEPPATH
 if %errorlevel% neq 0 exit /b %errorlevel%
 :with_virtual:
 set pythonexe=%virtual_env_py%_vir%virtual_env_suffix%\\Scripts\\python
@@ -130,7 +133,6 @@ goto requirements:
 :conda_virtual_env:
 
 if exist %virtual_env_py%_condavir rmdir /Q /S %virtual_env_py%_condavir
-mkdir %virtual_env_py%_condavir
 
 if exist %virtual_env_py%_condavir\\python goto with_virtual_conda:
 %pythonexe%\\..\\Scripts\\conda create -p %virtual_env_py%_condavir --clone %pythonexe%\\.. --offline
