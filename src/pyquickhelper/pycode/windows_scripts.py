@@ -120,7 +120,6 @@ if exist %virtual_env_py%_vir rmdir /Q /S %virtual_env_py%_vir
 mkdir %virtual_env_py%_vir
 
 if exist %virtual_env_py%_vir%virtual_env_suffix%\\python goto with_virtual:
-echo %pythonexe%\\..\\Scripts\\virtualenv --system-site-packages %virtual_env_py%_vir%virtual_env_suffix%
 %pythonexe%\\..\\Scripts\\virtualenv --system-site-packages %virtual_env_py%_vir%virtual_env_suffix%
 if %errorlevel% neq 0 exit /b %errorlevel%
 :with_virtual:
@@ -134,8 +133,7 @@ if exist %virtual_env_py%_condavir rmdir /Q /S %virtual_env_py%_condavir
 mkdir %virtual_env_py%_condavir
 
 if exist %virtual_env_py%_condavir\\python goto with_virtual_conda:
-echo %pythonexe%\\..\\Scripts\\conda create --system-site-packages -p %virtual_env_py%_condavir --clone %pythonexe%\\.. --offline
-%pythonexe%\\..\\Scripts\\conda create --system-site-packages -p %virtual_env_py%_condavir --clone %pythonexe%\\.. --offline
+%pythonexe%\\..\\Scripts\\conda create -p %virtual_env_py%_condavir --clone %pythonexe%\\.. --offline
 if %errorlevel% neq 0 exit /b %errorlevel%
 :with_virtual_conda:
 set pythonexe=%virtual_env_py%_condavir\\python
@@ -143,7 +141,6 @@ set pythonpip=%virtual_env_py%_condavir\\Scripts\\pip
 
 :requirements:
 echo #######################################################_auto_setup_dep.py
-echo %pythonexe% build\\auto_setup\\auto_setup_dep.py install
 %pythonexe% build\\auto_setup\\auto_setup_dep.py install
 if %errorlevel% neq 0 exit /b %errorlevel%
 
@@ -238,7 +235,6 @@ goto run:
 set portpy=__PORT__
 
 :run:
-echo on
 %pythonexe%\Scripts\pypi-server.exe -u -p %portpy% --disable-fallback ..\\local_pypi_server
 """
 
@@ -246,18 +242,22 @@ echo on
 #: script for Jenkins
 #################
 windows_jenkins = "set jenkinspythonexe=__PYTHON__\n" + jenkins_windows_setup + " build_script\n" + \
-    windows_error + "\nauto_unittest_setup_help.bat %jenkinspythonexe%\n" + \
+    windows_error + "\nauto_unittest_setup_help.bat %jenkinspythonexe% __SUFFIX__\n" + \
     windows_error
 
 #################
 #: script for Jenkins
 #################
-windows_jenkins_27 = "set jenkinspythonexe=__PYTHON__\n" + jenkins_windows_setup + " build_script\n" + \
-    windows_error + "\nauto_setup_copy27.bat %jenkinspythonexe%\n" + windows_error + \
-    "\n\nset jenkinspythonexe=__PYTHON27__\n\n" + \
-    "\n\n__REQUIREMENTS__\n\n" + \
-    "\nauto_cmd_run27.bat %jenkinspythonexe%\n" + windows_error + \
-    "\nauto_cmd_build27.bat %jenkinspythonexe%\n" + windows_error
+windows_jenkins_27 = [
+    "set jenkinspythonexe=__PYTHON__\n" + jenkins_windows_setup + " build_script\n" +
+    windows_error + "\nauto_setup_copy27.bat %jenkinspythonexe%\n" +
+    windows_error,
+    "set jenkinspythonexe=__PYTHON27__\n\n" +
+    "\n\n__REQUIREMENTS__\n\n" +
+    "\nauto_cmd_run27.bat %jenkinspythonexe%\n" + windows_error,
+    "set jenkinspythonexe=__PYTHON27__\n\n" +
+    "\n\n__REQUIREMENTS__\n\n" +
+    "\nauto_cmd_build27.bat %jenkinspythonexe%\n" + windows_error]
 
 ##################
 #: auto setup

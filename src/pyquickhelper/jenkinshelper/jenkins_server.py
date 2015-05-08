@@ -127,10 +127,7 @@ class JenkinsExt(jenkins.Jenkins):
               <concurrentBuild>false</concurrentBuild>
               __LOCATION__
               <builders>
-                <hudson.tasks.BatchFile>
-                  <command>__SCRIPT__
-                  </command>
-                </hudson.tasks.BatchFile>
+              __TASKS__
               </builders>
               <publishers/>
               <buildWrappers/>
@@ -182,6 +179,13 @@ class JenkinsExt(jenkins.Jenkins):
               </scm>
               """.replace("            ", "")
 
+    _task_batch = """
+                <hudson.tasks.BatchFile>
+                  <command>__SCRIPT__
+                  </command>
+                </hudson.tasks.BatchFile>
+                """.replace("            ", "")
+
     def create_job_template(self,
                             name,
                             git_repo,
@@ -204,7 +208,7 @@ class JenkinsExt(jenkins.Jenkins):
         @param      git_repo        git repository
         @param      upstreams       the build must run after... (even if failures),
                                     must be None in that case
-        @param      script          script to execute
+        @param      script          script to execute or list of scripts
         @param      keep            number of buils to keep
         @param      location        location of the build
         @param      dependencies    to add environment variable before
@@ -249,42 +253,58 @@ class JenkinsExt(jenkins.Jenkins):
 
         cmd = "set" if sys.platform.startswith("win") else "export"
 
-        if "__PYTHON__" in script:
-            script = script.replace("__PYTHON__", choose_path(
-                os.path.dirname(sys.executable), "c:\\Python34_x64", "c:\\Anaconda3"))
+        if not isinstance(script, list):
+            script = [script]
 
-        if "__PYTHON27__" in script:
-            raise NotImplementedError()
+        # we modify the scripts
+        script_mod = []
+        for scr in script:
+            if "__PYTHON__" in scr:
+                scr = scr.replace("__PYTHON__", choose_path(
+                    os.path.dirname(sys.executable), "c:\\Python34_x64", "c:\\Anaconda3"))
 
-        if len(dependencies) > 0:
-            rows = []
-            end = []
-            for k, v in sorted(dependencies.items()):
-                if py27:
-                    rows.append("{0} {1}27={2}".format(cmd, k.upper(), v))
-                    rows.append("{0} {1}=".format(cmd, k.upper()))
-                    end.append("{0} {1}27=".format(cmd, k.upper()))
-                else:
-                    rows.append("{0} {1}={2}".format(cmd, k.upper(), v))
-                    rows.append("{0} {1}27=".format(cmd, k.upper()))
-                    end.append("{0} {1}=".format(cmd, k.upper()))
-            rows.append(script)
-            rows.extend(end)
-            script_mod = "\n".join(rows)
-        else:
-            script_mod = script
+            if "__PYTHON27__" in scr:
+                raise NotImplementedError()
 
+            if len(dependencies) > 0:
+                rows = []
+                end = []
+                for k, v in sorted(dependencies.items()):
+                    if py27:
+                        rows.append("{0} {1}27={2}".format(cmd, k.upper(), v))
+                        rows.append("{0} {1}=".format(cmd, k.upper()))
+                        end.append("{0} {1}27=".format(cmd, k.upper()))
+                    else:
+                        rows.append("{0} {1}={2}".format(cmd, k.upper(), v))
+                        rows.append("{0} {1}27=".format(cmd, k.upper()))
+                        end.append("{0} {1}=".format(cmd, k.upper()))
+                rows.append(scr)
+                rows.extend(end)
+                scr = "\n".join(rows)
+            else:
+                pass
+
+            script_mod.append(scr)
+
+        # repo
         if git_repo is None:
             git_repo_xml = ""
         else:
             git_repo_xml = JenkinsExt._git_repo \
-                    .replace("__GITREPO__", git_repo) \
-                    .replace("__CRED__", "<credentialsId>%s</credentialsId>" % credentials)
+                .replace("__GITREPO__", git_repo) \
+                .replace("__CRED__", "<credentialsId>%s</credentialsId>" % credentials)
 
+        # scripts
+        tasks = [JenkinsExt._task_batch.replace(
+            "__SCRIPT__", s) for s in script_mod]
+
+        # location
         location = "" if location is None else "<customWorkspace>%s</customWorkspace>" % location
+
+        # replacements
         conf = JenkinsExt._config_job
         rep = dict(__KEEP__=str(keep),
-                   __SCRIPT__=script_mod,
+                   __TASKS__="\n".join(tasks),
                    __TRIGGER__=trigger,
                    __LOCATION__=location,
                    __DESCRIPTION__="" if description is None else description,
@@ -375,16 +395,19 @@ class JenkinsExt(jenkins.Jenkins):
         """
         if platform.startswith("win"):
             # windows
-            py = choose_path(os.path.dirname(sys.executable), 
-                             "c:\\Python34_x64", 
-                             anaconda, 
-                             winpython, 
+            py = choose_path(os.path.dirname(sys.executable),
+                             "c:\\Python34_x64",
+                             anaconda,
+                             winpython,
                              ".")
-            
+
             spl = job.split()
             if len(spl) == 1:
                 script = modified_windows_jenkins
-                cmd = script.replace("__PYTHON__", os.path.join(py, "python"))
+                if not isinstance(script, list):
+                    script = [script]
+                cmd = [s.replace("__PYTHON__", os.path.join(py, "python"))
+                       .replace("__SUFFIX__", "A0") for s in script]
                 return cmd
             elif len(spl) == 0:
                 raise ValueError("job is empty")
@@ -407,36 +430,43 @@ class JenkinsExt(jenkins.Jenkins):
                 else:
                     cmd = modified_windows_jenkins
 
-                if "[anaconda]" in spl:
-                    if anaconda is not None:
-                        cmd = cmd.replace(
-                            "__PYTHON__", os.path.join(anaconda, "python"))
+                cmds = cmd if isinstance(cmd, list) else [cmd]
+                res = []
+                for cmd in cmds:
+                    if "[anaconda]" in spl:
+                        if anaconda is not None:
+                            cmd = cmd.replace("__PYTHON__", os.path.join(anaconda, "python")) \
+                                     .replace("__SUFFIX__", "A3")  # suffix for the virtual environment
+                        else:
+                            raise JenkinsExtPyException(
+                                "anaconda is not available")
+                    elif "[anaconda2]" in spl:
+                        if anaconda2 is not None:
+                            cmd = cmd.replace("__PYTHON27__", os.path.join(anaconda2, "python")) \
+                                     .replace("__PYTHON__", os.path.join(py, "python")) \
+                                     .replace("__SUFFIX__", "A2")  # suffix for the virtual environment
+                        else:
+                            raise JenkinsExtPyException(
+                                "anaconda2 is not available")
+                    elif "[winpython]" in spl:
+                        if winpython is not None:
+                            # with WinPython, nb_convert has some trouble when called
+                            # from the command line within Python
+                            # the job might fail
+                            cmd = cmd.replace("__PYTHON__", os.path.join(winpython, "python")) \
+                                     .replace("__SUFFIX__", "WP")  # suffix for the virtual environment
+                        else:
+                            raise JenkinsExtPyException(
+                                "winpython is not available")
                     else:
-                        raise JenkinsExtPyException(
-                            "anaconda is not available")
-                elif "[anaconda2]" in spl:
-                    if anaconda2 is not None:
-                        cmd = cmd.replace("__PYTHON27__", os.path.join(anaconda2, "python")) \
-                                 .replace("__PYTHON__", os.path.join(py, "python"))
-                    else:
-                        raise JenkinsExtPyException(
-                            "anaconda2 is not available")
-                elif "[winpython]" in spl:
-                    if winpython is not None:
-                        # with WinPython, nb_convert has some trouble when called
-                        # from the command line within Python
-                        # the job might fail
-                        cmd = cmd.replace(
-                            "__PYTHON__", os.path.join(winpython, "python"))
-                    else:
-                        raise JenkinsExtPyException(
-                            "winpython is not available")
-                else:
-                    py = choose_path(
-                        os.path.dirname(sys.executable), "c:\\Python34_x64", "c:\\Anaconda3", ".")
-                    cmd = cmd.replace("__PYTHON__", os.path.join(py, "python"))
+                        py = choose_path(
+                            os.path.dirname(sys.executable), "c:\\Python34_x64", "c:\\Anaconda3", ".")
+                        cmd = cmd.replace("__PYTHON__", os.path.join(py, "python")) \
+                                 .replace("__SUFFIX__", "DF")  # suffix for the virtual environment
 
-                return cmd
+                    res.append(cmd)
+
+                return res
             else:
                 raise ValueError("unable to interpret: " + job)
         else:
@@ -680,11 +710,7 @@ class JenkinsExt(jenkins.Jenkins):
                     script = get_jenkins_script(
                         job, pythonexe, winpython, anaconda, anaconda2, platform, port)
 
-                    if "[27]" in job and "27" not in script:
-                        raise JenkinsExtException(
-                            "python 27 is not mentioned in the script:\njob={0}\n{0}".format(job, script))
-
-                    if script is not None:
+                    if script is not None and len(script) > 0:
                         new_dep.append(name)
                         upstreams = [] if (
                             no_dep or scheduler is not None) else dep[-1:]

@@ -38,7 +38,7 @@ def private_script_replacements(script, module, requirements, port, raise_except
     """
     run last replacements
 
-    @param      script          script
+    @param      script          script or list of scripts
     @param      module          module name
     @param      requirements    requirements
     @param      port            port
@@ -46,6 +46,9 @@ def private_script_replacements(script, module, requirements, port, raise_except
     @param      platform        platform
     @return                     modified script
     """
+    if isinstance(script, list):
+        return [private_script_replacements(s, module, requirements, port, raise_exception, platform) for s in script]
+
     if platform.startswith("win"):
         plat = "windows"
         global default_values
