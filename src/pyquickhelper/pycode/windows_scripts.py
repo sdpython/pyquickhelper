@@ -120,7 +120,7 @@ if exist %virtual_env_py%_vir rmdir /Q /S %virtual_env_py%_vir
 mkdir %virtual_env_py%_vir
 
 if exist %virtual_env_py%_vir%virtual_env_suffix%\\python goto with_virtual:
-set KEEPPATH=PATH
+set KEEPPATH=%PATH%
 set PATH=%pythonexe%\\..;%PATH%
 %pythonexe%\\..\\Scripts\\virtualenv --system-site-packages %virtual_env_py%_vir%virtual_env_suffix%
 set PATH=%KEEPPATH%
