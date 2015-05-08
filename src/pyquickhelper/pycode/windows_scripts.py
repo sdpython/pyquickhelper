@@ -120,20 +120,23 @@ set virtual_env_py=..\\virtual\\__MODULE__
 if exist %virtual_env_py% rmdir /Q /S %virtual_env_py%_vir
 mkdir %virtual_env_py%_vir
 
-if exist %virtual_env_py%_vir\\python goto with_virtual:
 
 if not exist %pythonexe%\\..\\Scripts\\virtualenv.exe goto conda_virtual_env:
+if exist %virtual_env_py%_vir\\python goto with_virtual:
 echo %pythonexe%\\..\\Scripts\\virtualenv --system-site-packages %virtual_env_py%_vir
 %pythonexe%\\..\\Scripts\\virtualenv --system-site-packages %virtual_env_py%_vir
 if %errorlevel% neq 0 exit /b %errorlevel%
+:with_virtual:
 set pythonexe=%virtual_env_py%_vir\\Scripts\\python
 set pythonpip=%virtual_env_py%_vir\\Scripts\\pip
 goto requirements:
 
 :conda_virtual_env:
+if exist %virtual_env_py%_condavir\\python goto with_virtual_conda:
 echo %pythonexe%\\..\\Scripts\\conda create --system-site-packages -p %virtual_env_py%_condavir --clone %pythonexe%\\.. --offline
 %pythonexe%\\..\\Scripts\\conda create --system-site-packages -p %virtual_env_py%_condavir --clone %pythonexe%\\.. --offline
 if %errorlevel% neq 0 exit /b %errorlevel%
+:with_virtual_conda:
 set pythonexe=%virtual_env_py%_condavir\\python
 set pythonpip=%virtual_env_py%_condavir\\Scripts\\pip
 
@@ -250,6 +253,7 @@ windows_jenkins = "set jenkinspythonexe=__PYTHON__\n" + jenkins_windows_setup + 
 #################
 windows_jenkins_27 = "set jenkinspythonexe=__PYTHON__\n" + jenkins_windows_setup + " build_script\n" + \
     windows_error + "\nauto_setup_copy27.bat %jenkinspythonexe%\n" + windows_error + \
+    "\n\nset jenkinspythonexe=__PYTHON27__\n\n" + \
     "\n\n__REQUIREMENTS__\n\n" + \
     "\nauto_cmd_run27.bat %jenkinspythonexe%\n" + windows_error + \
     "\nauto_cmd_build27.bat %jenkinspythonexe%\n" + windows_error

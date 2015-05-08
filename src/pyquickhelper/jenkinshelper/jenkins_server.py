@@ -253,6 +253,9 @@ class JenkinsExt(jenkins.Jenkins):
             script = script.replace("__PYTHON__", choose_path(
                 os.path.dirname(sys.executable), "c:\\Python34_x64", "c:\\Anaconda3"))
 
+        if "__PYTHON27__" in script:
+            raise NotImplementedError()
+
         if len(dependencies) > 0:
             rows = []
             end = []
@@ -274,8 +277,9 @@ class JenkinsExt(jenkins.Jenkins):
         if git_repo is None:
             git_repo_xml = ""
         else:
-            git_repo_xml = JenkinsExt._git_repo.replace(
-                "__GITREPO__", git_repo)
+            git_repo_xml = JenkinsExt._git_repo \
+                    .replace("__GITREPO__", git_repo) \
+                    .replace("__CRED__", "<credentialsId>%s</credentialsId>" % credentials)
 
         location = "" if location is None else "<customWorkspace>%s</customWorkspace>" % location
         conf = JenkinsExt._config_job
@@ -283,7 +287,6 @@ class JenkinsExt(jenkins.Jenkins):
                    __SCRIPT__=script_mod,
                    __TRIGGER__=trigger,
                    __LOCATION__=location,
-                   __CRED__="<credentialsId>%s</credentialsId>" % credentials,
                    __DESCRIPTION__="" if description is None else description,
                    __GITREPOXML__=git_repo_xml)
 
@@ -372,11 +375,15 @@ class JenkinsExt(jenkins.Jenkins):
         """
         if platform.startswith("win"):
             # windows
+            py = choose_path(os.path.dirname(sys.executable), 
+                             "c:\\Python34_x64", 
+                             anaconda, 
+                             winpython, 
+                             ".")
+            
             spl = job.split()
             if len(spl) == 1:
                 script = modified_windows_jenkins
-                py = choose_path(
-                    os.path.dirname(sys.executable), "c:\\Python34_x64", "c:\\Anaconda3", ".")
                 cmd = script.replace("__PYTHON__", os.path.join(py, "python"))
                 return cmd
             elif len(spl) == 0:
@@ -409,8 +416,8 @@ class JenkinsExt(jenkins.Jenkins):
                             "anaconda is not available")
                 elif "[anaconda2]" in spl:
                     if anaconda2 is not None:
-                        cmd = cmd.replace(
-                            "__PYTHON__", os.path.join(anaconda2, "python"))
+                        cmd = cmd.replace("__PYTHON27__", os.path.join(anaconda2, "python")) \
+                                 .replace("__PYTHON__", os.path.join(py, "python"))
                     else:
                         raise JenkinsExtPyException(
                             "anaconda2 is not available")
@@ -546,11 +553,12 @@ class JenkinsExt(jenkins.Jenkins):
 
         Example ::
 
-             modules=[ # update anaconda
-                        ("pymyinstall [anaconda] [update] [-nodep]", "H H(8-9) * * 0"),
-                        "pymyinstall [anaconda2] [update27] [-nodep]",
-                        # pyquickhelper,
-                        ("pyquickhelper", "H H(10-11) * * 0"),
+             modules=[  # update anaconda
+                        ("standalone [conda_update]", "H H(8-9) * * 0"),
+                        "standalone [conda_update27]",
+                        "standalone [local_pypi]",
+                        # pyquickhelper and others,
+                       ("pyquickhelper", "H H(10-11) * * 0"),
                         "pymyinstall",
                         ["pyquickhelper [anaconda]", "pyquickhelper [winpython]",
                         "pyquickhelper [27] [anaconda2]"],
