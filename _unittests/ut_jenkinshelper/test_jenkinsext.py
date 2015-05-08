@@ -36,6 +36,10 @@ class TestJenkinsExt(unittest.TestCase):
         srv = JenkinsExt(
             "http://localhost:8080/", "user", "password", mock=True)
         github = "https://github.com/sdpython/"
+        
+        if not sys.platform.startswith("win"):
+            # not yet implemented
+            return
 
         conf = srv.create_job_template("pyquickhelper",
                                        git_repo=github +
@@ -169,6 +173,7 @@ class TestJenkinsExt(unittest.TestCase):
                         }
                         
         if not sys.platform.startswith("win"):
+            # not yet implemented
             return
 
         res = srv.setup_jenkins_server(github=github, modules=modules, pythonexe=pythonexe,
