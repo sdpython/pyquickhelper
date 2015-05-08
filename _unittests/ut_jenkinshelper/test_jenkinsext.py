@@ -36,7 +36,7 @@ class TestJenkinsExt(unittest.TestCase):
         srv = JenkinsExt(
             "http://localhost:8080/", "user", "password", mock=True)
         github = "https://github.com/sdpython/"
-        
+
         if not sys.platform.startswith("win"):
             # not yet implemented
             return
@@ -171,7 +171,7 @@ class TestJenkinsExt(unittest.TestCase):
                         'actuariat_python': ['pyquickhelper', 'pyensae', 'pyrsslocal', 'pymmails'],
                         'code_beatrix': ['pyquickhelper', 'pyensae', 'pyrsslocal', 'pymmails'],
                         }
-                        
+
         if not sys.platform.startswith("win"):
             # not yet implemented
             return

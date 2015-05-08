@@ -63,12 +63,13 @@ class TestNotebookConversion (unittest.TestCase):
             p1 = "."
             p2 = "."
 
-        formats = ["ipynb", "html", "python", "rst"]
+        formats = ["slides", "ipynb", "html", "python", "rst"]
         exp = ["example_pyquickhelper.html",
                "example_pyquickhelper.ipynb",
                "example_pyquickhelper.py",
                "example_pyquickhelper.rst",
                "example_pyquickhelper.ipynb",
+               "example_pyquickhelper.slides.html",
                ]
 
         if sys.platform.startswith("win"):

@@ -77,7 +77,7 @@ def post_process_latex_output_any(file):
         f.write(content)
 
 
-def post_process_rst_output(file, html, pdf, python):
+def post_process_rst_output(file, html, pdf, python, slides):
     """
     process a RST file generated from the conversion of a notebook
 
@@ -85,6 +85,10 @@ def post_process_rst_output(file, html, pdf, python):
     @param      pdf         if True, add a link to the PDF, assuming it will exists at the same location
     @param      html        if True, add a link to the HTML conversion
     @param      python      if True, add a link to the Python conversion
+    @param      slides      if True, add a link to the slides conversion
+
+    .. versionchanged:: 1.1
+        Parameter *slides* was added;
     """
     fLOG("    post_process_rst_output", file)
 
@@ -192,6 +196,8 @@ def post_process_rst_output(file, html, pdf, python):
         links.append(':download:`PDF <{0}.pdf>`'.format(noext))
     if python:
         links.append(':download:`python <{0}.py>`'.format(noext))
+    if slides:
+        links.append(':download:`slides <{0}.slides.html>`'.format(noext))
     lines[pos] = "{0}\n\n{1}\n\n".format(lines[pos], ", ".join(links))
 
     # we remove the
@@ -243,17 +249,20 @@ def post_process_rst_output(file, html, pdf, python):
         f.write("".join(lines))
 
 
-def post_process_html_output(file, pdf, python):
+def post_process_html_output(file, pdf, python, slides):
     """
     process a HTML file generated from the conversion of a notebook
 
     @param      file        filename
     @param      pdf         if True, add a link to the PDF, assuming it will exists at the same location
     @param      python      if True, add a link to the Python conversion
+    @param      slides      if True, add a link to the slides conversion
 
     .. versionchanged:: 0.9
         For HTML conversion, read the following blog about mathjax: `nbconvert: Math is not displayed in the html output <https://github.com/ipython/ipython/issues/6440>`_.
 
+    .. versionchanged:: 1.1
+        Parameters *slides* was added.
     """
     fold, name = os.path.split(file)
     noext = os.path.splitext(name)[0]
@@ -276,12 +285,53 @@ def post_process_html_output(file, pdf, python):
         links.append('<a href="{0}.pdf">PDF</a>'.format(noext))
     if python:
         links.append('<a href="{0}.py">python</a>'.format(noext))
+    if slides:
+        links.append('<a href="{0}.slides.html">slides</a>'.format(noext))
     link = link.format("\n<br />".join(links))
 
-    text = text.replace("</body>", link + "\n</body>")
-    text = text.replace("<title>[]</title>", "<title>%s</title>" % name)
-    if "<h1>" not in text and "<h1 id" not in text:
-        text = text.replace("<body>", "<body><h1>%s</h1>" % name)
+    # mathjax
+    text = text.replace("https://c328740.ssl.cf1.rackcdn.com/mathjax/latest/MathJax.js?config=TeX-AMS_HTML",
+                        "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML")
+
+    with open(file, "w", encoding="utf8") as f:
+        f.write(text)
+
+
+def post_process_slides_output(file, pdf, python, slides):
+    """
+    process a HTML file generated from the conversion of a notebook
+
+    @param      file        filename
+    @param      pdf         if True, add a link to the PDF, assuming it will exists at the same location
+    @param      python      if True, add a link to the Python conversion
+    @param      slides      if True, add a link to the slides conversion
+
+    .. versionadded:: 1.1
+    """
+    fold, name = os.path.split(file)
+    noext = os.path.splitext(name)[0]
+    if not os.path.exists(file):
+        raise FileNotFoundError(file)
+    with open(file, "r", encoding="utf8") as f:
+        text = f.read()
+
+    link = '''
+            <div style="position:fixed;text-align:center;align:right;width:15%;bottom:50px;right:20px;background:#DDDDDD;">
+            <p>
+            {0}
+            </p>
+            </div>
+            '''
+
+    links = [
+        '<b>links</b><br /><a href="{0}.ipynb">notebook</a>'.format(noext)]
+    if pdf:
+        links.append('<a href="{0}.pdf">PDF</a>'.format(noext))
+    if python:
+        links.append('<a href="{0}.py">python</a>'.format(noext))
+    if slides:
+        links.append('<a href="{0}.slides.html">slides</a>'.format(noext))
+    link = link.format("\n<br />".join(links))
 
     # mathjax
     text = text.replace("https://c328740.ssl.cf1.rackcdn.com/mathjax/latest/MathJax.js?config=TeX-AMS_HTML",
