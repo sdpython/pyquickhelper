@@ -154,6 +154,15 @@ def process_notebooks(notebooks,
 
     cmd = '{0} nbconvert --to {1} "{2}"{5} --output="{3}/{4}"'
     files = []
+    
+    if "WinPython" in sys.executable:
+        # pip, or any program in Scripts cannot find python.exe
+        # for the distribution WinPython
+        keep_path = os.environ["PATH"]
+        os.environ["PATH"] = os.path.dirname(sys.executable) + ";" + keep_path
+        path_modified = True
+    else:
+        path_modified = False
 
     for notebook in notebooks:
         thisfiles = []
@@ -402,6 +411,10 @@ def process_notebooks(notebooks,
             if not os.path.exists(dest):
                 raise FileNotFoundError(dest)
             copy.append(dest)
+            
+    # for the distribution WinPython
+    if path_modified:
+        os.environ["PATH"] = keep_path
 
     return copy
 

@@ -479,7 +479,7 @@ class JenkinsExt(jenkins.Jenkins):
             elif spl[0] == "standalone":
                 # conda update
                 cmd = JenkinsExt.get_cmd_standalone(
-                    job, pythonexe, winpython, anaconda, anaconda2, platform)
+                    job, pythonexe, winpython, anaconda, anaconda2, platform, port)
                 return cmd
             elif len(spl) in [2, 3]:
                 if "[all]" in spl:
