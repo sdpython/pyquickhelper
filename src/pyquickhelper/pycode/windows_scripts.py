@@ -14,8 +14,6 @@ windows_error = "if %errorlevel% neq 0 exit /b %errorlevel%"
 #: prefix
 #################
 windows_prefix = """
-echo off
-
 if "%1"=="" goto default_value_python:
 set pythonexe=%1
 goto start_script:
@@ -29,8 +27,6 @@ set pythonexe=__PY34_X64__\\python
 #: prefix 27
 #################
 windows_prefix_27 = """
-echo off
-
 if "%1"=="" goto default_value_python:
 set pythonexe27=%1
 goto start_script:
@@ -61,8 +57,9 @@ jenkins_windows_setup = "%jenkinspythonexe% setup.py"
 #: build script for Windows
 #################
 windows_build = """
-echo off
 IF EXIST dist del /Q dist\\*.*
+
+set virtual_env_suffix=%2
 
 if "%1"=="" goto default_value:
 set pythonexe=%1
@@ -117,21 +114,25 @@ set pythonexe=__PY34_X64__\\python
 echo ###----################################################5
 if not exist ..\\virtual mkdir ..\\virtual
 set virtual_env_py=..\\virtual\\__MODULE__
-if exist %virtual_env_py% rmdir /Q /S %virtual_env_py%_vir
+if not exist %pythonexe%\\..\\Scripts\\virtualenv.exe goto conda_virtual_env:
+
+if exist %virtual_env_py%_vir rmdir /Q /S %virtual_env_py%_vir
 mkdir %virtual_env_py%_vir
 
-
-if not exist %pythonexe%\\..\\Scripts\\virtualenv.exe goto conda_virtual_env:
-if exist %virtual_env_py%_vir\\python goto with_virtual:
-echo %pythonexe%\\..\\Scripts\\virtualenv --system-site-packages %virtual_env_py%_vir
-%pythonexe%\\..\\Scripts\\virtualenv --system-site-packages %virtual_env_py%_vir
+if exist %virtual_env_py%_vir%virtual_env_suffix%\\python goto with_virtual:
+echo %pythonexe%\\..\\Scripts\\virtualenv --system-site-packages %virtual_env_py%_vir%virtual_env_suffix%
+%pythonexe%\\..\\Scripts\\virtualenv --system-site-packages %virtual_env_py%_vir%virtual_env_suffix%
 if %errorlevel% neq 0 exit /b %errorlevel%
 :with_virtual:
-set pythonexe=%virtual_env_py%_vir\\Scripts\\python
-set pythonpip=%virtual_env_py%_vir\\Scripts\\pip
+set pythonexe=%virtual_env_py%_vir%virtual_env_suffix%\\Scripts\\python
+set pythonpip=%virtual_env_py%_vir%virtual_env_suffix%\\Scripts\\pip
 goto requirements:
 
 :conda_virtual_env:
+
+if exist %virtual_env_py%_condavir rmdir /Q /S %virtual_env_py%_condavir
+mkdir %virtual_env_py%_condavir
+
 if exist %virtual_env_py%_condavir\\python goto with_virtual_conda:
 echo %pythonexe%\\..\\Scripts\\conda create --system-site-packages -p %virtual_env_py%_condavir --clone %pythonexe%\\.. --offline
 %pythonexe%\\..\\Scripts\\conda create --system-site-packages -p %virtual_env_py%_condavir --clone %pythonexe%\\.. --offline
