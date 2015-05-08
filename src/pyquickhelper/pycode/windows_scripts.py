@@ -122,7 +122,7 @@ mkdir %virtual_env_py%_vir
 
 if exist %virtual_env_py%_vir\\python goto with_virtual:
 
-if not exist %pythonexe%\\..\\Scripts\\virtualenv goto conda_virtual_env:
+if not exist %pythonexe%\\..\\Scripts\\virtualenv.exe goto conda_virtual_env:
 echo %pythonexe%\\..\\Scripts\\virtualenv --system-site-packages %virtual_env_py%_vir
 %pythonexe%\\..\\Scripts\\virtualenv --system-site-packages %virtual_env_py%_vir
 if %errorlevel% neq 0 exit /b %errorlevel%
