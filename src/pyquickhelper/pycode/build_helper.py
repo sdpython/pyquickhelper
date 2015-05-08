@@ -68,7 +68,6 @@ def private_script_replacements(script, module, requirements, port, raise_except
             for r in requirements:
                 r = "%pythonpip% install --no-cache-dir --index-url http://localhost:{0}/simple/ {1}".format(
                     port, r)
-                rows.append("echo " + r)
                 rows.append(r)
             reqs = "\n".join(rows)
         else:

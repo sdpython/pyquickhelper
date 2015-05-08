@@ -258,7 +258,6 @@ windows_jenkins_27 = [
     "\n\n__REQUIREMENTS__\n\n" +
     "\nauto_cmd_run27.bat %jenkinspythonexe%\n" + windows_error,
     "set jenkinspythonexe=__PYTHON27__\n\n" +
-    "\n\n__REQUIREMENTS__\n\n" +
     "\nauto_cmd_build27.bat %jenkinspythonexe%\n" + windows_error,
     "copy dist_module27\\dist\\*.whl ..\\local_pypi_server"]
 
