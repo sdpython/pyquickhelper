@@ -34,7 +34,7 @@ class TestCheckCython(unittest.TestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
-        if sys.version_info[0] == 2:
+        if sys.version_info[0] == 2 or "condavir" in sys.executable:
             return
 
         ipython_cython_extension()

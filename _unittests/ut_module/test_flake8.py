@@ -33,7 +33,7 @@ class TestFlake8(unittest.TestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
-        if sys.version_info[0] == 2 or "Anaconda" in sys.executable:
+        if sys.version_info[0] == 2 or "Anaconda" in sys.executable or "condavir" in sys.executable:
             return
 
         thi = os.path.abspath(os.path.dirname(__file__))
