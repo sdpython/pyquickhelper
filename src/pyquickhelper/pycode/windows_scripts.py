@@ -123,7 +123,7 @@ if exist %virtual_env_py%_vir%virtual_env_suffix%\\python goto with_virtual:
 set KEEPPATH=PATH
 set PATH=%pythonexe%\\..;%PATH%
 %pythonexe%\\..\\Scripts\\virtualenv --system-site-packages %virtual_env_py%_vir%virtual_env_suffix%
-set PATH=KEEPPATH
+set PATH=%KEEPPATH%
 if %errorlevel% neq 0 exit /b %errorlevel%
 :with_virtual:
 set pythonexe=%virtual_env_py%_vir%virtual_env_suffix%\\Scripts\\python
