@@ -275,13 +275,13 @@ windows_jenkins_27 = [
     "set jenkinspythonexe=__PYTHON__\n" + jenkins_windows_setup + " build_script\n" +
     windows_error + "\nauto_setup_copy27.bat %jenkinspythonexe%\n" +
     windows_error,
-    "set jenkinspythonexe=__PYTHON27__\n\n" + \
-    windows_unittest27 + \
-    "\n\n__REQUIREMENTS__\n\n" + \
+    "set jenkinspythonexe=__PYTHON27__\n\n" +
+    windows_unittest27 +
+    "\n\n__REQUIREMENTS__\n\n" +
     "\nauto_cmd_run27.bat %jenkinspythonexe%\n" + windows_error,
-    "set CURRENT_PATH=%~dp0\n" + \
-    "set virtual_env_py=%CURRENT_PATH%\\..\\virtual\\__MODULE__\n" + \
-    "set jenkinspythonexe=%virtual_env_py%_conda27vir\\python\n" + \
+    "set CURRENT_PATH=%~dp0\n" +
+    "set virtual_env_py=%CURRENT_PATH%\\..\\virtual\\__MODULE__\n" +
+    "set jenkinspythonexe=%virtual_env_py%_conda27vir\\python\n" +
     "\nauto_cmd_build27.bat %jenkinspythonexe%\n" + windows_error,
     "copy dist_module27\\dist\\*.whl ..\\local_pypi_server"]
 
