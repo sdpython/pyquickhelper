@@ -167,6 +167,9 @@ class TestJenkinsExt(unittest.TestCase):
                         'actuariat_python': ['pyquickhelper', 'pyensae', 'pyrsslocal', 'pymmails'],
                         'code_beatrix': ['pyquickhelper', 'pyensae', 'pyrsslocal', 'pymmails'],
                         }
+                        
+        if not sys.platform.startswith("win"):
+            return
 
         res = srv.setup_jenkins_server(github=github, modules=modules, pythonexe=pythonexe,
                                        overwrite=True,
