@@ -96,63 +96,67 @@ class TestJenkinsExt(unittest.TestCase):
         github = "https://github.com/sdpython/"
 
         if sys.platform.startswith("win"):
-            modules = [("pyquickhelper [test_local_pypi]", "H H(10-11) * * 0"),
-                       "pyquickhelper",
-                       ["pymyinstall", ],
-                       ["pymyinstall [anaconda] [update]",
-                        "pymyinstall [anaconda2] [update27]"],
-                       ["pyquickhelper [anaconda]", "pyquickhelper [winpython]",
-                        "pyquickhelper [27] [anaconda2]"],
-                       ["pyensae", ],
-                       ["pymmails", "pysqllike", "pyrsslocal", "pymyinstall [27] [anaconda2]",
-                        "python3_module_template", "pyensae [anaconda]", "pyensae [winpython]"],
-                       ["pymmails [anaconda]", "pysqllike [anaconda]", "pyrsslocal [anaconda]",
-                        "python3_module_template [anaconda]",
-                        "python3_module_template [27] [anaconda2]",
-                        "pymyinstall [LONG]"],
-                       # actuariat
-                       [("actuariat_python", "H H(12-13) * * 0")],
-                       ["actuariat_python [winpython]",
-                        "actuariat_python [anaconda]"],
-                       # code_beatrix
-                       ("code_beatrix", "H H(14-15) * * 0"),
-                       ["code_beatrix [winpython]",
-                        "code_beatrix [anaconda]"],
-                       # teachings
-                       ("ensae_teaching_cs", "H H(15-16) * * 0"),
-                       ["ensae_teaching_cs [winpython]",
-                           "ensae_teaching_cs [anaconda]"],
-                       "ensae_teaching_cs [notebooks]",
-                       ["ensae_teaching_cs [winpython] [notebooks]",
-                           "ensae_teaching_cs [anaconda] [notebooks]", ],
-                       ]
+            modules = [  # update anaconda
+                ("standalone [conda_update]", "H H(8-9) * * 0"),
+                "standalone [conda_update27]",
+                "standalone [local_pypi]",
+                # pyquickhelper,
+                ("pyquickhelper", "H H(10-11) * * 0"),
+                "pymyinstall",
+                ["pyquickhelper [anaconda]", "pyquickhelper [winpython]",
+                 "pyquickhelper [27] [anaconda2]"],
+                ["pyensae", ],
+                ["pymmails", "pysqllike", "pyrsslocal", "pymyinstall [27] [anaconda2]",
+                 "python3_module_template", "pyensae [anaconda]", "pyensae [winpython]"],
+                ["pymmails [anaconda]", "pysqllike [anaconda]", "pyrsslocal [anaconda]",
+                 "python3_module_template [anaconda]",
+                 "python3_module_template [27] [anaconda2]",
+                 "pymyinstall [LONG]"],
+                # actuariat
+                [("actuariat_python", "H H(12-13) * * 0")],
+                ["actuariat_python [winpython]",
+                 "actuariat_python [anaconda]"],
+                # code_beatrix
+                ("code_beatrix", "H H(14-15) * * 0"),
+                ["code_beatrix [winpython]",
+                 "code_beatrix [anaconda]"],
+                # teachings
+                ("ensae_teaching_cs", "H H(15-16) * * 0"),
+                ["ensae_teaching_cs [winpython]",
+                 "ensae_teaching_cs [anaconda]"],
+                "ensae_teaching_cs [notebooks]",
+                ["ensae_teaching_cs [winpython] [notebooks]",
+                 "ensae_teaching_cs [anaconda] [notebooks]", ],
+            ]
         else:
-            modules = [("pyquickhelper [test_local_pypi]", "H H(10-11) * * 0"),
-                       "pyquickhelper",
-                       ["pymyinstall", ],
-                       ["pymyinstall [anaconda] [update]",
-                        "pymyinstall [anaconda2] [update27]"],
-                       ["pyquickhelper [anaconda]",
-                        "pyquickhelper [27] [anaconda2]"],
-                       ["pyensae", ],
-                       ["pymmails", "pysqllike", "pyrsslocal", "pymyinstall [27] [anaconda2]",
-                        "python3_module_template", "pyensae [anaconda]"],
-                       ["pymmails [anaconda]", "pysqllike [anaconda]", "pyrsslocal [anaconda]",
-                        "python3_module_template [anaconda]",
-                        "python3_module_template [27] [anaconda2]",
-                        "pymyinstall [LONG]"],
-                       # actuariat
-                       [("actuariat_python", "H H(12-13) * * 0")],
-                       ["actuariat_python [anaconda]"],
-                       # code_beatrix
-                       ("code_beatrix", "H H(14-15) * * 0"),
-                       ["code_beatrix [anaconda]"],
-                       # teachings
-                       ("ensae_teaching_cs", "H H(15-16) * * 0"),
-                       ["ensae_teaching_cs [anaconda]"],
-                       "ensae_teaching_cs [notebooks]",
-                       ["ensae_teaching_cs [anaconda] [notebooks]", ],
-                       ]
+            modules = [  # update anaconda
+                ("standalone [conda_update]", "H H(8-9) * * 0"),
+                "standalone [conda_update27]",
+                "standalone [local_pypi]",
+                # pyquickhelper,
+                ("pyquickhelper", "H H(10-11) * * 0"),
+                "pymyinstall",
+                ["pyquickhelper [anaconda]", "pyquickhelper [winpython]",
+                 "pyquickhelper [27] [anaconda2]"],
+                ["pyensae", ],
+                ["pymmails", "pysqllike", "pyrsslocal", "pymyinstall [27] [anaconda2]",
+                 "python3_module_template", "pyensae [anaconda]"],
+                ["pymmails [anaconda]", "pysqllike [anaconda]", "pyrsslocal [anaconda]",
+                 "python3_module_template [anaconda]",
+                 "python3_module_template [27] [anaconda2]",
+                 "pymyinstall [LONG]"],
+                # actuariat
+                [("actuariat_python", "H H(12-13) * * 0")],
+                ["actuariat_python [anaconda]"],
+                # code_beatrix
+                ("code_beatrix", "H H(14-15) * * 0"),
+                ["code_beatrix [anaconda]"],
+                # teachings
+                ("ensae_teaching_cs", "H H(15-16) * * 0"),
+                ["ensae_teaching_cs [anaconda]"],
+                "ensae_teaching_cs [notebooks]",
+                ["ensae_teaching_cs [anaconda] [notebooks]", ],
+            ]
 
         pythonexe = os.path.dirname(sys.executable)
         location = None
@@ -174,10 +178,25 @@ class TestJenkinsExt(unittest.TestCase):
             conf = r[-1]
             if "__" in conf and "pyquickhelper_vir" not in conf:
                 raise Exception(conf)
+
             if i == 0:
+                if "conda update" not in conf:
+                    raise Exception(conf)
+                if "H H(8-9) * * 0" not in conf:
+                    raise Exception(conf)
+                if "A00" not in conf:
+                    raise Exception(conf)
+                if "github" in conf:
+                    raise Exception(conf)
+
+            if i == 3:
                 if "pyquickhelper" not in conf:
                     raise Exception(conf)
                 if "H H(10-11) * * 0" not in conf:
+                    raise Exception(conf)
+                if "B00" not in conf:
+                    raise Exception(conf)
+                if "github" not in conf:
                     raise Exception(conf)
 
             if "python3_module_template [27]" in r[0]:

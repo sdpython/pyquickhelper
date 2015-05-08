@@ -71,7 +71,8 @@ def private_script_replacements(script, module, requirements, port, raise_except
         else:
             reqs = ""
         script = script.replace("__REQUIREMENTS__", reqs) \
-                       .replace("__PORT__", str(port))
+                       .replace("__PORT__", str(port)) \
+                       .replace("__USERNAME__", os.environ["USERNAME"])
         return script
 
     else:

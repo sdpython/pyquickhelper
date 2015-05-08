@@ -119,14 +119,23 @@ if not exist ..\\virtual mkdir ..\\virtual
 set virtual_env_py=..\\virtual\\__MODULE__
 if exist %virtual_env_py% rmdir /Q /S %virtual_env_py%_vir
 mkdir %virtual_env_py%_vir
-echo %pythonexe%\\..\\Scripts\\virtualenv --system-site-packages %virtual_env_py%_vir
+
 if exist %virtual_env_py%_vir\\python goto with_virtual:
+
+if not exist %pythonexe%\\..\\Scripts\\virtualenv goto conda_virtual_env:
+echo %pythonexe%\\..\\Scripts\\virtualenv --system-site-packages %virtual_env_py%_vir
 %pythonexe%\\..\\Scripts\\virtualenv --system-site-packages %virtual_env_py%_vir
 if %errorlevel% neq 0 exit /b %errorlevel%
-
-:with_virtual:
 set pythonexe=%virtual_env_py%_vir\\Scripts\\python
 set pythonpip=%virtual_env_py%_vir\\Scripts\\pip
+goto requirements:
+
+:conda_virtual_env:
+echo %pythonexe%\\..\\Scripts\\conda create --system-site-packages -p %virtual_env_py%_condavir --clone %pythonexe%\\.. --offline
+%pythonexe%\\..\\Scripts\\conda create --system-site-packages -p %virtual_env_py%_condavir --clone %pythonexe%\\.. --offline
+if %errorlevel% neq 0 exit /b %errorlevel%
+set pythonexe=%virtual_env_py%_condavir\\python
+set pythonpip=%virtual_env_py%_condavir\\Scripts\\pip
 
 :requirements:
 echo #######################################################_auto_setup_dep.py
@@ -174,7 +183,7 @@ if %errorlevel% neq 0 exit /b %errorlevel%
 :end:
 rem we copy the wheel on a local folder to let a pypiserver take it
 if not exist ..\\local_pypi_server mkdir ..\\local_pypi_server
-copy dist\\*.whl ..\\local_pypi_server
+copy /Y dist\\*.whl ..\\local_pypi_server
 """
 
 #################
@@ -277,5 +286,5 @@ setup(
 
 copy_dist_to_local_pypi = """
 if not exist ..\local_pypi_server mkdir ..\local_pypi_server
-copy dist\*.whl ..\local_pypi_server
+copy /Y dist\*.whl ..\local_pypi_server
 """

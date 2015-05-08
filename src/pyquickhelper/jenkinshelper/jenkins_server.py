@@ -109,7 +109,7 @@ class JenkinsExt(jenkins.Jenkins):
             <?xml version='1.0' encoding='UTF-8'?>
             <project>
               <actions/>
-              <description></description>
+              <description>__DESCRIPTION__</description>
               <logRotator class="hudson.tasks.LogRotator">
                 <daysToKeep>__KEEP__</daysToKeep>
                 <numToKeep>__KEEP__</numToKeep>
@@ -118,25 +118,7 @@ class JenkinsExt(jenkins.Jenkins):
               </logRotator>
               <keepDependencies>false</keepDependencies>
               <properties/>
-              <scm class="hudson.plugins.git.GitSCM" plugin="git@2.3.4">
-                <configVersion>2</configVersion>
-                <userRemoteConfigs>
-                  <hudson.plugins.git.UserRemoteConfig>
-                    <url>__GITREPO__</url>
-                    __CRED__
-                  </hudson.plugins.git.UserRemoteConfig>
-                </userRemoteConfigs>
-                <branches>
-                  <hudson.plugins.git.BranchSpec>
-                    <name>*/master</name>
-                  </hudson.plugins.git.BranchSpec>
-                </branches>
-                <doGenerateSubmoduleConfigurations>false</doGenerateSubmoduleConfigurations>
-                <submoduleCfg class="list"/>
-                <extensions>
-                  <hudson.plugins.git.extensions.impl.WipeWorkspace/>
-                </extensions>
-              </scm>
+              __GITREPOXML__
               <canRoam>true</canRoam>
               <disabled>false</disabled>
               <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
@@ -178,6 +160,28 @@ class JenkinsExt(jenkins.Jenkins):
               </triggers>
               """.replace("            ", "")
 
+    _git_repo = """
+              <scm class="hudson.plugins.git.GitSCM" plugin="git@2.3.4">
+                <configVersion>2</configVersion>
+                <userRemoteConfigs>
+                  <hudson.plugins.git.UserRemoteConfig>
+                    <url>__GITREPO__</url>
+                    __CRED__
+                  </hudson.plugins.git.UserRemoteConfig>
+                </userRemoteConfigs>
+                <branches>
+                  <hudson.plugins.git.BranchSpec>
+                    <name>*/master</name>
+                  </hudson.plugins.git.BranchSpec>
+                </branches>
+                <doGenerateSubmoduleConfigurations>false</doGenerateSubmoduleConfigurations>
+                <submoduleCfg class="list"/>
+                <extensions>
+                  <hudson.plugins.git.extensions.impl.WipeWorkspace/>
+                </extensions>
+              </scm>
+              """.replace("            ", "")
+
     def create_job_template(self,
                             name,
                             git_repo,
@@ -190,6 +194,7 @@ class JenkinsExt(jenkins.Jenkins):
                             scheduler=None,
                             platform=sys.platform,
                             py27=False,
+                            description=None
                             ):
         """
         add a job to the jenkins server
@@ -207,6 +212,7 @@ class JenkinsExt(jenkins.Jenkins):
         @param      scheduler       add a schedule time (upstreams must be None in that case)
         @param      platform        win, linux, ...
         @param      py27            python 2.7 (True) or Python 3 (False)
+        @param      description     add a description to the job
 
         The job can be modified on Jenkins. To add a time trigger::
 
@@ -265,14 +271,21 @@ class JenkinsExt(jenkins.Jenkins):
         else:
             script_mod = script
 
+        if git_repo is None:
+            git_repo_xml = ""
+        else:
+            git_repo_xml = JenkinsExt._git_repo.replace(
+                "__GITREPO__", git_repo)
+
         location = "" if location is None else "<customWorkspace>%s</customWorkspace>" % location
         conf = JenkinsExt._config_job
         rep = dict(__KEEP__=str(keep),
-                   __GITREPO__=git_repo,
                    __SCRIPT__=script_mod,
                    __TRIGGER__=trigger,
                    __LOCATION__=location,
-                   __CRED__="<credentialsId>%s</credentialsId>" % credentials)
+                   __CRED__="<credentialsId>%s</credentialsId>" % credentials,
+                   __DESCRIPTION__="" if description is None else description,
+                   __GITREPOXML__=git_repo_xml)
 
         for k, v in rep.items():
             conf = conf.replace(k, v)
@@ -306,7 +319,42 @@ class JenkinsExt(jenkins.Jenkins):
         return job.replace(" ", "_").replace("[", "").replace("]", "")
 
     @staticmethod
-    def get_jenkins_script(job, pythonexe, winpython, anaconda, anaconda2, platform):
+    def get_cmd_standalone(job, pythonexe, winpython, anaconda, anaconda2, platform, port):
+        """
+        Custom command for jenkins (such as updating conda)
+
+        @param      job             module and options
+        @param      pythonexe       unused
+        @param      anaconda        location of anaconda (3)
+        @param      anaconda2       location of anaconda 2
+        @param      winpython       location of winpython
+        @param      platform        platform, Windows or Linux or ...
+        @param      port            port for the local pypi server
+        @return                     script
+        """
+        spl = job.split()
+        if spl[0] != "standalone":
+            raise JenkinsExtException(
+                "the job should start by standalone: " + job)
+
+        if platform.startswith("win"):
+            # windows
+            if "[conda_update]" in spl:
+                cmd = "%s\\Scripts\\conda update -y --all" % anaconda
+            elif "[conda_update27]" in spl:
+                cmd = "%s\\Scripts\\conda update -y --all" % anaconda2
+            elif "[local_pypi]" in spl:
+                cmd = "echo __PYTHON__\\Scripts\\pypi-server.exe -u -p __PORT__ --disable-fallback ..\\local_pypi_server > ..\\local_pypi_server\\start_local_pypi.bat"
+                cmd = cmd.replace("__PYTHON__", os.path.dirname(sys.executable)) \
+                         .replace("__PORT__", str(port))
+            else:
+                raise JenkinsExtException("cannot interpret job: " + job)
+            return cmd
+        else:
+            raise NotImplementedError()
+
+    @staticmethod
+    def get_jenkins_script(job, pythonexe, winpython, anaconda, anaconda2, platform, port):
         """
         build the jenkins script for a module and its options
 
@@ -316,7 +364,11 @@ class JenkinsExt(jenkins.Jenkins):
         @param      anaconda2       location of anaconda 2
         @param      winpython       location of winpython
         @param      platform        platform, Windows or Linux or ...
+        @param      port            port for the local pypi server
         @return                     script
+
+        Method @see me setup_jenkins_server describes which tags
+        this method can interpret.
         """
         if platform.startswith("win"):
             # windows
@@ -329,8 +381,12 @@ class JenkinsExt(jenkins.Jenkins):
                 return cmd
             elif len(spl) == 0:
                 raise ValueError("job is empty")
-
-            elif len(spl) in [2, 3]:
+            elif spl[0] == "standalone":
+                # conda update
+                cmd = JenkinsExt.get_cmd_standalone(
+                    job, pythonexe, winpython, anaconda, anaconda2, platform, port)
+                return cmd
+            elif len(spl) in [2, 3, 4]:
                 if "[test_local_pypi]" in spl:
                     cmd = "auto_setup_test_local_pypi.bat __PYTHON__"
                 elif "[notebooks]" in spl:
@@ -339,10 +395,6 @@ class JenkinsExt(jenkins.Jenkins):
                     cmd = "auto_setup_unittests_LONG.bat __PYTHON__"
                 elif "[SKIP]" in spl:
                     cmd = "auto_setup_unittests_SKIP.bat __PYTHON__"
-                elif "[update]" in spl:
-                    cmd = "update_anaconda.bat __PYTHON__"
-                elif "[update27]" in spl:
-                    cmd = "update_anaconda_27.bat __PYTHON__"
                 elif "[27]" in spl:
                     cmd = modified_windows_jenkins_27
                 else:
@@ -387,16 +439,16 @@ class JenkinsExt(jenkins.Jenkins):
                 return "build_setup_help_on_linux.sh"
             elif len(spl) == 0:
                 raise ValueError("job is empty")
-
+            elif spl[0] == "standalone":
+                # conda update
+                cmd = JenkinsExt.get_cmd_standalone(
+                    job, pythonexe, winpython, anaconda, anaconda2, platform)
+                return cmd
             elif len(spl) in [2, 3]:
                 if "[all]" in spl:
                     cmd = "bunittest_all.sh"
                 elif "[notebooks]" in spl:
                     cmd = "bunittest_notebooks.sh"
-                elif "[update]" in spl:
-                    cmd = "update_anaconda.sh"
-                elif "[update27]" in spl:
-                    cmd = "update_anaconda_27.sh"
                 elif "[27]" in spl:
                     cmd = "build_setup_help_on_linux_27.sh"
                 else:
@@ -429,7 +481,8 @@ class JenkinsExt(jenkins.Jenkins):
                              prefix="",
                              fLOG=noLOG,
                              dependencies=None,
-                             platform=sys.platform):
+                             platform=sys.platform,
+                             port=8067):
         """
         Set up many jobs on Jenkins
 
@@ -448,8 +501,41 @@ class JenkinsExt(jenkins.Jenkins):
         @param      dependencies        some modules depend on others also being tested,
                                         this parameter gives the list
         @param      platform            platform of the Jenkins server
+        @param      port                port for the local pypi server
         @param      fLOG                logging function
         @return                         list of created jobs
+
+        The extension
+        `Extra Columns Plugin <https://wiki.jenkins-ci.org/display/JENKINS/Extra+Columns+Plugin>`_
+        is very useful to add extra columns to a view (the description, the output of the
+        last execution). Here is a list of useful extensions:
+
+        * `Build Graph View Plugin <https://wiki.jenkins-ci.org/display/JENKINS/Build+Graph+View+Plugin>`_
+        * `Build Pipeline Plugin <https://wiki.jenkins-ci.org/display/JENKINS/Build+Pipeline+Plugin>`_
+        * `Credentials Plugin <https://wiki.jenkins-ci.org/display/JENKINS/Credentials+Plugin>`_
+        * `Extra Columns Plugin <https://wiki.jenkins-ci.org/display/JENKINS/Extra+Columns+Plugin>`_
+        * `Git Plugin <https://wiki.jenkins-ci.org/display/JENKINS/Git+Plugin>`_
+        * `GitHub Plugin <https://wiki.jenkins-ci.org/display/JENKINS/Github+Plugin>`_
+        * `GitLab Plugin <https://wiki.jenkins-ci.org/display/JENKINS/GitLab+Plugin>`_
+        * `Python <https://wiki.jenkins-ci.org/display/JENKINS/Python+Plugin>`_
+        * `Python Wrapper Plugin <https://wiki.jenkins-ci.org/display/JENKINS/Python+Wrapper+Plugin>`_
+
+
+        Tag description:
+
+        * ``[anaconda]``: use Anaconda as python engine
+        * ``[anaconda2]``: use Anaconda 2.7 as python engine
+        * ``[winpython]``: use WinPython as python engine
+        * ``[27]``: run with python 2.7
+        * ``[-nodep]``: do not check dependencies
+        * ``[LONG]``: run longer unit tests (files start by ``test_LONG``)
+        * ``[SKIP]``: run skipped unit tests (files start by ``test_SKIP``)
+
+        Others tags:
+
+        * ``[conda_update]``: update conda distribution
+        * ``[conda_update27]``: update conda distribution for python 2.7
+        * ``[local_pypi]``: write a script to run a local pypi server on port 8067 (default option)
 
         *modules* is a list defined as follows:
 
@@ -460,18 +546,20 @@ class JenkinsExt(jenkins.Jenkins):
 
         Example ::
 
-             modules=[ ("pyquickhelper", "H H(10-11) * * 0"),
-                      ["pymyinstall", ],
-                      ["pymyinstall [anaconda] [update]",
-                          "pymyinstall [anaconda2] [update27]"],
-                      ["pyquickhelper [anaconda]", "pyquickhelper [winpython]",
-                          "pyquickhelper [27] [anaconda2]"],
+             modules=[ # update anaconda
+                        ("pymyinstall [anaconda] [update] [-nodep]", "H H(8-9) * * 0"),
+                        "pymyinstall [anaconda2] [update27] [-nodep]",
+                        # pyquickhelper,
+                        ("pyquickhelper", "H H(10-11) * * 0"),
+                        "pymyinstall",
+                        ["pyquickhelper [anaconda]", "pyquickhelper [winpython]",
+                        "pyquickhelper [27] [anaconda2]"],
                       ["pyensae", ],
                       ["pymmails", "pysqllike", "pyrsslocal", "pymyinstall [27] [anaconda2]",
                        "python3_module_template", "pyensae [anaconda]", "pyensae [winpython]"],
                       ["pymmails [anaconda]", "pysqllike [anaconda]", "pyrsslocal [anaconda]",
                        "python3_module_template [anaconda]", "python3_module_template [27] [anaconda2]",
-                       "pymyinstall [all]"],
+                       "pymyinstall [LONG]"],
                       # actuariat
                       [("actuariat_python", "H H(12-13) * * 0")],
                       ["actuariat_python [winpython]",
@@ -541,6 +629,9 @@ class JenkinsExt(jenkins.Jenkins):
         dep = []
         created = []
         locations = []
+        order = 0
+        dozen = "A"
+        counts = {}
         for jobs in modules:
 
             if not isinstance(jobs, list):
@@ -551,8 +642,14 @@ class JenkinsExt(jenkins.Jenkins):
 
                 if isinstance(job, tuple):
                     job, scheduler = job
+                    order = 0
+                    if counts.get(dozen, 0) > 0:
+                        dozen = chr(ord(dozen) + 1)
+                    counts[dozen] = counts.get(dozen, 0) + 1
                 else:
                     scheduler = None
+                    order += 1
+                    counts[dozen] = counts.get(dozen, 0) + 1
 
                 mod = job.split()[0]
                 name = JenkinsExt.get_jenkins_job_name(job)
@@ -573,7 +670,7 @@ class JenkinsExt(jenkins.Jenkins):
                         js.delete_job(jname)
 
                     script = get_jenkins_script(
-                        job, pythonexe, winpython, anaconda, anaconda2, platform)
+                        job, pythonexe, winpython, anaconda, anaconda2, platform, port)
 
                     if "[27]" in job and "27" not in script:
                         raise JenkinsExtException(
@@ -591,17 +688,30 @@ class JenkinsExt(jenkins.Jenkins):
                         deps = JenkinsExt.get_dependencies_path(
                             job, locations, dependencies.get(mod, None))
 
+                        # add a description to the job
+                        description = ["%s%02d" % (dozen, order)]
+                        if scheduler is not None:
+                            description.append(scheduler)
+                        description = " - ".join(description)
+
+                        if mod == "standalone":
+                            gpar = None
+                        else:
+                            gpar = github + "%s/" % mod
+
+                        # create the template
                         r = js.create_job_template(jname,
-                                                   git_repo=github +
-                                                   "%s/" % mod,
+                                                   git_repo=gpar,
                                                    upstreams=upstreams,
                                                    script=script,
                                                    location=loc,
                                                    dependencies=deps,
                                                    scheduler=scheduler,
                                                    platform=platform,
-                                                   py27="[27]" in job)
+                                                   py27="[27]" in job,
+                                                   description=description)
 
+                        # check some inconsistencies
                         if "[27]" in job and "Anaconda3" in script:
                             raise JenkinsExtException(
                                 "incoherence for job {0}, script:\n{1}\npaths:\n{2}".format(job, script,
@@ -610,10 +720,12 @@ class JenkinsExt(jenkins.Jenkins):
                         locations.append((job, loc))
                         created.append((job, name, loc, job, r))
                     else:
+                        # skip the job
                         loc = None if location is None else os.path.join(
                             location, jname)
                         locations.append((job, loc))
                         fLOG("skipping", job, "location", loc)
+
                 elif j is not None:
                     new_dep.append(name)
 
@@ -653,7 +765,7 @@ class JenkinsExt(jenkins.Jenkins):
                         res[dep] = os.path.join(loc, "dist_module27", "src")
                     break
 
-        if len(dependencies) != len(res):
+        if len(dependencies) != len(res) and "[-nodep]" not in job:
             pattern = "lower number of dependencies, requested:\n{0}\nFOUND:\n{1}\nLOCATIONS:\n{2}"
             raise Exception(pattern.format(", ".join(dependencies), "\n".join(
                 "{0} : {1}".format(k, v) for k, v in sorted(res.items())),
