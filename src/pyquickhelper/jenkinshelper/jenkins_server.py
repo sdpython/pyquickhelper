@@ -419,10 +419,21 @@ class JenkinsExt(jenkins.Jenkins):
         job_hash = JenkinsExt.hash_string(job)
 
         def replacements(cmd, python, suffix):
-            return cmd.replace("__PYTHON__", python) \
-                      .replace("__SUFFIX__", suffix + "_" + job_hash)  \
-                      .replace("__PORT__", str(port))  \
-                      .replace("__MODULE__", module_name)  # suffix for the virtual environment and module name
+            res = cmd.replace("__PYTHON__", python) \
+                     .replace("__SUFFIX__", suffix + "_" + job_hash)  \
+                     .replace("__PORT__", str(port))  \
+                     .replace("__MODULE__", module_name)  # suffix for the virtual environment and module name
+
+            # patch to avoid installing pyquickhelper when testing
+            # pyquickhelper
+            if module_name == "pyquickhelper":
+                lines = res.split("\n")
+                for i, line in enumerate(lines):
+                    if "/simple/ pyquickhelper" in line and "install --extra-index-url http://localhost" in line:
+                        lines[i] = ""
+                res = "\n".join(lines)
+
+            return res
 
         if platform.startswith("win"):
             # windows
