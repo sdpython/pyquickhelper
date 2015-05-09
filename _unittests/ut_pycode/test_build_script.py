@@ -84,6 +84,9 @@ class TestBuilScript(unittest.TestCase):
                     c, project_var_name, requirements=requirements, port=port)
                 assert len(sc) > 0
                 assert "__" not in sc
+                if c == "run27":
+                    if "nosetest" not in sc:
+                        raise Exception(sc)
         else:
             # not yet implemented for this platform
             return

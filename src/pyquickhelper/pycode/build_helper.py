@@ -127,7 +127,8 @@ def get_extra_script_command(command, module, requirements, port=8067):
     produces a script which runs the notebook, a documentation server, which
     publishes...
 
-    @param  command         command to run (*notebook*, *publish*, *publish_doc*, *local_pypi*, *setupdep*, *run27*, *build27*, *copy_dist*)
+    @param  command         command to run (*notebook*, *publish*, *publish_doc*, *local_pypi*, *setupdep*,
+                            *run27*, *build27*, *copy_dist*, *any_setup_command*)
     @param  module          module name
     @param  requirements    list of dependencies (not in your python distribution)
     @param  port            port for the local pypi_server which gives the dependencies

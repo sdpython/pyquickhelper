@@ -326,7 +326,7 @@ windows_jenkins_any = "set jenkinspythonexe=__PYTHON__\n" + jenkins_windows_setu
 ####################
 #: script for Jenkins 27
 ####################
-windows_unittest27 = """
+windows_jenkins_unittest27 = """
 set CURRENT_PATH=%WORKSPACE%
 set virtual_env_py=%CURRENT_PATH%\\..\\virtual\\__MODULE__
 if exist %virtual_env_py%_conda27vir rmdir /Q /S %virtual_env_py%_conda27vir
@@ -352,9 +352,10 @@ windows_jenkins_27 = [
     windows_error + "\nauto_setup_copy27.bat %jenkinspythonexe%\n" +
     windows_error,
     "set jenkinspythonexe=__PYTHON27__\n\n" +
-    windows_unittest27 +
+    windows_jenkins_unittest27 +
     "\n\n__REQUIREMENTS__\n\n" +
     "\nauto_cmd_run27.bat %jenkinspythonexe%\n" + windows_error,
+    "set jenkinspythonexe=__PYTHON27__\n" +
     "set CURRENT_PATH=%WORKSPACE%\n" +
     "set virtual_env_py=%CURRENT_PATH%\\..\\virtual\\__MODULE__\n" +
     "set jenkinspythonexe=%virtual_env_py%_conda27vir\\python\n" +
