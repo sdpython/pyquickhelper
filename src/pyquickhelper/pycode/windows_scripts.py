@@ -15,6 +15,7 @@ windows_error = "if %errorlevel% neq 0 exit /b %errorlevel%"
 #################
 windows_prefix = """
 if "%1"=="" goto default_value_python:
+if "%1"=="default" goto default_value_python:
 set pythonexe=%1
 goto start_script:
 
@@ -28,6 +29,7 @@ set pythonexe=__PY34_X64__\\python
 #################
 windows_prefix_27 = """
 if "%1"=="" goto default_value_python:
+if "%1"=="default" goto default_value_python:
 set pythonexe27=%1
 goto start_script:
 
@@ -62,6 +64,7 @@ IF EXIST dist del /Q dist\\*.*
 set virtual_env_suffix=%2
 
 if "%1"=="" goto default_value:
+if "%1"=="default" goto default_value:
 set pythonexe=%1
 %pythonexe% setup.py write_version
 goto custom_python:
@@ -70,32 +73,32 @@ goto custom_python:
 IF NOT EXIST __PY34__ GOTO checkinstall64:
 
 :checkinstall:
-IF EXIST __PY34__vir GOTO nexta:
-mkdir __PY34__vir
+IF EXIST __PY34__vir%virtual_env_suffix% GOTO nexta:
+mkdir __PY34__vir%virtual_env_suffix%
 
 :nexta:
-IF EXIST __PY34__vir\\install GOTO fullsetupa:
-__PY34__\\Scripts\\virtualenv __PY34__vir\\install --system-site-packages
+IF EXIST __PY34__vir%virtual_env_suffix%\\install GOTO fullsetupa:
+__PY34__\\Scripts\\virtualenv __PY34__vir%virtual_env_suffix%\\install --system-site-packages
 if %errorlevel% neq 0 exit /b %errorlevel%
 
 :fullsetupa:
 echo #######################################################0
-__PY34__vir\\install\\Scripts\\python -u setup.py install
+__PY34__vir%virtual_env_suffix%\\install\\Scripts\\python -u setup.py install
 if %errorlevel% neq 0 exit /b %errorlevel%
 echo #######################################################1
 
 :checkinstall64:
-IF EXIST __PY34_X64__vir GOTO nextb:
-mkdir __PY34_X64__vir
+IF EXIST __PY34_X64__vir%virtual_env_suffix% GOTO nextb:
+mkdir __PY34_X64__vir%virtual_env_suffix%
 
 :nextb:
-IF EXIST __PY34_X64__vir\\install GOTO fullsetupb:
-__PY34_X64__\\Scripts\\virtualenv __PY34_X64__vir\\install --system-site-packages
+IF EXIST __PY34_X64__vir%virtual_env_suffix%\\install GOTO fullsetupb:
+__PY34_X64__\\Scripts\\virtualenv __PY34_X64__vir%virtual_env_suffix%\\install --system-site-packages
 if %errorlevel% neq 0 exit /b %errorlevel%
 
 :fullsetupb:
 echo #######################################################2
-__PY34_X64__vir\\install\\Scripts\\python -u setup.py install
+__PY34_X64__vir%virtual_env_suffix%\\install\\Scripts\\python -u setup.py install
 if %errorlevel% neq 0 exit /b %errorlevel%
 echo #######################################################3
 
@@ -116,8 +119,8 @@ if not exist ..\\virtual mkdir ..\\virtual
 set virtual_env_py=..\\virtual\\__MODULE__
 if not exist %pythonexe%\\..\\Scripts\\virtualenv.exe goto conda_virtual_env:
 
-if exist %virtual_env_py%_vir rmdir /Q /S %virtual_env_py%_vir
-mkdir %virtual_env_py%_vir
+if exist %virtual_env_py%_vir%virtual_env_suffix% rmdir /Q /S %virtual_env_py%_vir%virtual_env_suffix%
+mkdir %virtual_env_py%_vir%virtual_env_suffix%
 
 if exist %virtual_env_py%_vir%virtual_env_suffix%\\python goto with_virtual:
 set KEEPPATH=%PATH%
@@ -132,14 +135,14 @@ goto requirements:
 
 :conda_virtual_env:
 
-if exist %virtual_env_py%_condavir rmdir /Q /S %virtual_env_py%_condavir
+if exist %virtual_env_py%_condavir%virtual_env_suffix% rmdir /Q /S %virtual_env_py%_condavir%virtual_env_suffix%
 
-if exist %virtual_env_py%_condavir\\python goto with_virtual_conda:
-%pythonexe%\\..\\Scripts\\conda create -p %virtual_env_py%_condavir --clone %pythonexe%\\.. --offline
+if exist %virtual_env_py%_condavir%virtual_env_suffix%\\python goto with_virtual_conda:
+%pythonexe%\\..\\Scripts\\conda create -p %virtual_env_py%_condavir%virtual_env_suffix% --clone %pythonexe%\\.. --offline
 if %errorlevel% neq 0 exit /b %errorlevel%
 :with_virtual_conda:
-set pythonexe=%virtual_env_py%_condavir\\python
-set pythonpip=%virtual_env_py%_condavir\\Scripts\\pip
+set pythonexe=%virtual_env_py%_condavir%virtual_env_suffix%\\python
+set pythonpip=%virtual_env_py%_condavir%virtual_env_suffix%\\Scripts\\pip
 
 :requirements:
 echo #######################################################_auto_setup_dep.py
@@ -193,7 +196,7 @@ copy /Y dist\\*.whl ..\\local_pypi_server
 #: build any script for Windows from a virtual environment
 ####################################################
 windows_any_setup_command = """
-if "%1" == "" echo usage: SCRIPT command [pythonpath] [suffix]
+if "%1"=="" echo usage: SCRIPT command [pythonpath] [suffix]
 
 IF EXIST dist del /Q dist\\*.*
 
@@ -201,6 +204,7 @@ set script_command=%1
 set virtual_env_suffix=%3
 
 if "%2"=="" goto default_value:
+if "%2"=="default" goto default_value:
 set pythonexe=%2
 %pythonexe% setup.py write_version
 goto custom_python:
@@ -214,8 +218,8 @@ if not exist ..\\virtual mkdir ..\\virtual
 set virtual_env_py=..\\virtual\\__MODULE__
 if not exist %pythonexe%\\..\\Scripts\\virtualenv.exe goto conda_virtual_env:
 
-if exist %virtual_env_py%_vir rmdir /Q /S %virtual_env_py%_vir
-mkdir %virtual_env_py%_vir
+if exist %virtual_env_py%_vir%virtual_env_suffix% rmdir /Q /S %virtual_env_py%_vir%virtual_env_suffix%
+mkdir %virtual_env_py%_vir%virtual_env_suffix%
 
 if exist %virtual_env_py%_vir%virtual_env_suffix%\\python goto with_virtual:
 set KEEPPATH=%PATH%
@@ -230,14 +234,14 @@ goto requirements:
 
 :conda_virtual_env:
 
-if exist %virtual_env_py%_condavir rmdir /Q /S %virtual_env_py%_condavir
+if exist %virtual_env_py%_condavir%virtual_env_suffix% rmdir /Q /S %virtual_env_py%_condavir%virtual_env_suffix%
 
-if exist %virtual_env_py%_condavir\\python goto with_virtual_conda:
-%pythonexe%\\..\\Scripts\\conda create -p %virtual_env_py%_condavir --clone %pythonexe%\\.. --offline
+if exist %virtual_env_py%_condavir%virtual_env_suffix%\\python goto with_virtual_conda:
+%pythonexe%\\..\\Scripts\\conda create -p %virtual_env_py%_condavir%virtual_env_suffix% --clone %pythonexe%\\.. --offline
 if %errorlevel% neq 0 exit /b %errorlevel%
 :with_virtual_conda:
-set pythonexe=%virtual_env_py%_condavir\\python
-set pythonpip=%virtual_env_py%_condavir\\Scripts\\pip
+set pythonexe=%virtual_env_py%_condavir%virtual_env_suffix%\\python
+set pythonpip=%virtual_env_py%_condavir%virtual_env_suffix%\\Scripts\\pip
 
 :requirements:
 echo #######################################################_auto_setup_dep.py
@@ -266,6 +270,7 @@ echo #######################################################6
 #################
 windows_notebook = """
 if "%1"=="" goto default_value:
+if "%1"=="default" goto default_value:
 set pythonexe=%1
 goto nextn:
 
@@ -302,6 +307,7 @@ set pythonexe=__PY34_X64__
 
 :custom_python:
 if "%2"=="" goto default_port:
+if "%2"=="default" goto default_port:
 set portpy=%2
 goto run:
 

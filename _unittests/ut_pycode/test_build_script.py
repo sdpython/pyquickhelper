@@ -38,7 +38,7 @@ class TestBuilScript(unittest.TestCase):
         if sys.platform.startswith("win"):
             sc = get_build_script("pyquickhelper")
             # fLOG(sc)
-            assert "c:\\Python34_x64vir\\install" in sc
+            assert "c:\\Python34_x64vir%virtual_env_suffix%\\install" in sc
             assert "__" not in sc
 
             scc = get_script_command(
