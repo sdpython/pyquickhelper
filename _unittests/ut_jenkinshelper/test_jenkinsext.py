@@ -128,9 +128,9 @@ class TestJenkinsExt(unittest.TestCase):
                 ("ensae_teaching_cs", "H H(15-16) * * 0"),
                 ["ensae_teaching_cs [winpython]",
                  "ensae_teaching_cs [anaconda]"],
-                "ensae_teaching_cs [notebooks]",
-                ["ensae_teaching_cs [winpython] [notebooks]",
-                 "ensae_teaching_cs [anaconda] [notebooks]", ],
+                "ensae_teaching_cs [custom_left]",
+                ["ensae_teaching_cs [winpython] [custom_left]",
+                 "ensae_teaching_cs [anaconda] [custom_left]", ],
             ]
         else:
             modules = [  # update anaconda
@@ -158,8 +158,8 @@ class TestJenkinsExt(unittest.TestCase):
                 # teachings
                 ("ensae_teaching_cs", "H H(15-16) * * 0"),
                 ["ensae_teaching_cs [anaconda]"],
-                "ensae_teaching_cs [notebooks]",
-                ["ensae_teaching_cs [anaconda] [notebooks]", ],
+                "ensae_teaching_cs [custom_left]",
+                ["ensae_teaching_cs [anaconda] [custom_left]", ],
             ]
 
         pythonexe = os.path.dirname(sys.executable)
@@ -180,11 +180,17 @@ class TestJenkinsExt(unittest.TestCase):
                                        overwrite=True,
                                        fLOG=fLOG, dependencies=dependencies,
                                        location="anything/")
-
+        df_ = 0
         for i, r in enumerate(res):
             fLOG(r)
             conf = r[-1]
+
+            if "DF_" in conf:
+                df_ += 1
+
             if "__" in conf and "pyquickhelper_vir" not in conf:
+                raise Exception(conf)
+            if "notebook" in conf:
                 raise Exception(conf)
 
             if i == 0:
@@ -228,7 +234,12 @@ class TestJenkinsExt(unittest.TestCase):
             if "_LONG" in conf and "build_script" not in conf:
                 raise Exception(conf)
 
+            if "custom_left" in conf:
+                if "auto_cmd_any_setup_command.bat custom_left" not in conf:
+                    raise Exception(conf)
+
         assert i > 0
+        assert df_ > 0
 
 
 if __name__ == "__main__":

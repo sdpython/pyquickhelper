@@ -9,6 +9,7 @@ import os
 import sys
 import jenkins
 import socket
+import hashlib
 from ..loghelper.flog import noLOG
 
 
@@ -21,7 +22,7 @@ modified_windows_jenkins = private_script_replacements(
 modified_windows_jenkins_27 = private_script_replacements(
     windows_jenkins_27, "__MODULE__", None, "__PORT__", raise_exception=False)
 modified_windows_jenkins_any = windows_jenkins_any \
-    .replace("virtual_env_suffix=%2", "virtual_env_suffix=___COMMAND__")
+    .replace("virtual_env_suffix=%2", "virtual_env_suffix=___SUFFIX__")
 
 
 class JenkinsExtException(Exception):
@@ -379,6 +380,20 @@ class JenkinsExt(jenkins.Jenkins):
             raise NotImplementedError()
 
     @staticmethod
+    def hash_string(s, l=4):
+        """
+        hash a string
+
+        @param      s       string
+        @param      l       cut the string to the first *l* character
+        @return             hashed string
+        """
+        m = hashlib.md5()
+        m.update(s.encode("ascii"))
+        r = m.hexdigest()
+        return r if l == -1 else r[:l]
+
+    @staticmethod
     def get_jenkins_script(job, pythonexe, winpython, anaconda, anaconda2, platform, port):
         """
         build the jenkins script for a module and its options
@@ -394,13 +409,17 @@ class JenkinsExt(jenkins.Jenkins):
 
         Method @see me setup_jenkins_server describes which tags
         this method can interpret.
+
+        The method allow command such as ``[custom...]``, they will be
+        run in a virtual environment as ``setup.py custom...``.
         """
         spl = job.split()
         module_name = spl[0]
+        job_hash = JenkinsExt.hash_string(job)
 
         def replacements(cmd, python, suffix):
             return cmd.replace("__PYTHON__", python) \
-                      .replace("__SUFFIX__", suffix)  \
+                      .replace("__SUFFIX__", suffix + "_" + job_hash)  \
                       .replace("__PORT__", str(port))  \
                       .replace("__MODULE__", module_name)  # suffix for the virtual environment and module name
 
@@ -427,6 +446,8 @@ class JenkinsExt(jenkins.Jenkins):
                     job, pythonexe, winpython, anaconda, anaconda2, platform, port)
 
             elif len(spl) in [2, 3, 4]:
+                # step 1: define the script
+
                 if "[test_local_pypi]" in spl:
                     cmd = "auto_setup_test_local_pypi.bat __PYTHON__"
                 elif "[LONG]" in spl:
@@ -439,6 +460,14 @@ class JenkinsExt(jenkins.Jenkins):
                     cmd = modified_windows_jenkins_27
                 else:
                     cmd = modified_windows_jenkins
+                    for pl in spl[1:]:
+                        if pl.startswith("[custom_") and pl.endswith("]"):
+                            cus = pl.strip("[]")
+                            cmd = modified_windows_jenkins_any.replace(
+                                "__COMMAND__", cus)
+
+                # step 2: replacement (python __PYTHON__, virtual environnement
+                # __SUFFIX__)
 
                 cmds = cmd if isinstance(cmd, list) else [cmd]
                 res = []
@@ -577,6 +606,7 @@ class JenkinsExt(jenkins.Jenkins):
         * ``[-nodep]``: do not check dependencies
         * ``[LONG]``: run longer unit tests (files start by ``test_LONG``)
         * ``[SKIP]``: run skipped unit tests (files start by ``test_SKIP``)
+        * ``[custom.+]``: run ``setup.py <custom.+>`` in a virtual environment
 
         Others tags:
 
@@ -620,9 +650,9 @@ class JenkinsExt(jenkins.Jenkins):
                       ("ensae_teaching_cs", "H H(15-16) * * 0"),
                       ["ensae_teaching_cs [winpython]",
                        "ensae_teaching_cs [anaconda]"],
-                      "ensae_teaching_cs [notebooks]",
-                      ["ensae_teaching_cs [winpython] [notebooks]",
-                       "ensae_teaching_cs [anaconda] [notebooks]", ],
+                      "ensae_teaching_cs [custom_left]",
+                      ["ensae_teaching_cs [winpython] [custom_left]",
+                       "ensae_teaching_cs [anaconda] [custom_left]", ],
                       ],
 
 
