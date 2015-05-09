@@ -10,6 +10,7 @@ import os
 from .windows_scripts import windows_error, windows_prefix, windows_setup, windows_build, windows_notebook
 from .windows_scripts import windows_publish, windows_publish_doc, windows_pypi, setup_script_dependency_py
 from .windows_scripts import windows_prefix_27, windows_unittest27, copy_dist_to_local_pypi
+from .windows_scripts import windows_any_setup_command
 
 
 def choose_path(*paths):
@@ -155,6 +156,8 @@ def get_extra_script_command(command, module, requirements, port=8067):
         script = copy_dist_to_local_pypi
     elif command == "setupdep":
         script = setup_script_dependency_py
+    elif command == "any_setup_command":
+        script = windows_any_setup_command
     else:
         raise Exception("unable to interpret command: " + command)
 

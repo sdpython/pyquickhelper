@@ -189,6 +189,78 @@ if not exist ..\\local_pypi_server mkdir ..\\local_pypi_server
 copy /Y dist\\*.whl ..\\local_pypi_server
 """
 
+####################################################
+#: build any script for Windows from a virtual environment
+####################################################
+windows_any_setup_command = """
+if "%1" == "" echo usage: SCRIPT command [pythonpath] [suffix]
+
+IF EXIST dist del /Q dist\\*.*
+
+set script_command=%1
+set virtual_env_suffix=%3
+
+if "%2"=="" goto default_value:
+set pythonexe=%2
+%pythonexe% setup.py write_version
+goto custom_python:
+
+:default_value:
+set pythonexe=__PY34_X64__\\python
+
+:custom_python:
+echo ###----################################################5
+if not exist ..\\virtual mkdir ..\\virtual
+set virtual_env_py=..\\virtual\\__MODULE__
+if not exist %pythonexe%\\..\\Scripts\\virtualenv.exe goto conda_virtual_env:
+
+if exist %virtual_env_py%_vir rmdir /Q /S %virtual_env_py%_vir
+mkdir %virtual_env_py%_vir
+
+if exist %virtual_env_py%_vir%virtual_env_suffix%\\python goto with_virtual:
+set KEEPPATH=%PATH%
+set PATH=%pythonexe%\\..;%PATH%
+%pythonexe%\\..\\Scripts\\virtualenv --system-site-packages %virtual_env_py%_vir%virtual_env_suffix%
+set PATH=%KEEPPATH%
+if %errorlevel% neq 0 exit /b %errorlevel%
+:with_virtual:
+set pythonexe=%virtual_env_py%_vir%virtual_env_suffix%\\Scripts\\python
+set pythonpip=%virtual_env_py%_vir%virtual_env_suffix%\\Scripts\\pip
+goto requirements:
+
+:conda_virtual_env:
+
+if exist %virtual_env_py%_condavir rmdir /Q /S %virtual_env_py%_condavir
+
+if exist %virtual_env_py%_condavir\\python goto with_virtual_conda:
+%pythonexe%\\..\\Scripts\\conda create -p %virtual_env_py%_condavir --clone %pythonexe%\\.. --offline
+if %errorlevel% neq 0 exit /b %errorlevel%
+:with_virtual_conda:
+set pythonexe=%virtual_env_py%_condavir\\python
+set pythonpip=%virtual_env_py%_condavir\\Scripts\\pip
+
+:requirements:
+echo #######################################################_auto_setup_dep.py
+%pythonexe% build\\auto_setup\\auto_setup_dep.py install
+if %errorlevel% neq 0 exit /b %errorlevel%
+
+echo #######################################################_requirements_begin
+echo %pythonpip%
+__REQUIREMENTS__
+if %errorlevel% neq 0 exit /b %errorlevel%
+echo #######################################################_requirements_end
+
+%pythonexe% setup.py write_version
+echo #######################################################_clean
+%pythonexe% -u setup.py clean_space
+if %errorlevel% neq 0 exit /b %errorlevel%
+echo #######################################################_unit
+%pythonexe% -u setup.py %script_command%
+if %errorlevel% neq 0 exit /b %errorlevel%
+echo #######################################################6
+
+"""
+
 #################
 #: notebooks
 #################
@@ -247,11 +319,15 @@ windows_jenkins = "set jenkinspythonexe=__PYTHON__\n" + jenkins_windows_setup + 
     windows_error + "\nauto_unittest_setup_help.bat %jenkinspythonexe% __SUFFIX__\n" + \
     windows_error
 
-#################
-#: script for Jenkins
-#################
+windows_jenkins_any = "set jenkinspythonexe=__PYTHON__\n" + jenkins_windows_setup + " build_script\n" + \
+    windows_error + "\nauto_cmd_any_setup_command.bat __COMMAND__ %jenkinspythonexe% __SUFFIX__\n" + \
+    windows_error
+
+####################
+#: script for Jenkins 27
+####################
 windows_unittest27 = """
-set CURRENT_PATH=%~dp0
+set CURRENT_PATH=%WORKSPACE%
 set virtual_env_py=%CURRENT_PATH%\\..\\virtual\\__MODULE__
 if exist %virtual_env_py%_conda27vir rmdir /Q /S %virtual_env_py%_conda27vir
 %jenkinspythonexe%\\..\\Scripts\\conda create -p %virtual_env_py%_conda27vir --clone %jenkinspythonexe%\\.. --offline
@@ -275,13 +351,13 @@ windows_jenkins_27 = [
     "set jenkinspythonexe=__PYTHON__\n" + jenkins_windows_setup + " build_script\n" +
     windows_error + "\nauto_setup_copy27.bat %jenkinspythonexe%\n" +
     windows_error,
-    "set jenkinspythonexe=__PYTHON27__\n\n" + \
-    windows_unittest27 + \
-    "\n\n__REQUIREMENTS__\n\n" + \
+    "set jenkinspythonexe=__PYTHON27__\n\n" +
+    windows_unittest27 +
+    "\n\n__REQUIREMENTS__\n\n" +
     "\nauto_cmd_run27.bat %jenkinspythonexe%\n" + windows_error,
-    "set CURRENT_PATH=%~dp0\n" + \
-    "set virtual_env_py=%CURRENT_PATH%\\..\\virtual\\__MODULE__\n" + \
-    "set jenkinspythonexe=%virtual_env_py%_conda27vir\\python\n" + \
+    "set CURRENT_PATH=%WORKSPACE%\n" +
+    "set virtual_env_py=%CURRENT_PATH%\\..\\virtual\\__MODULE__\n" +
+    "set jenkinspythonexe=%virtual_env_py%_conda27vir\\python\n" +
     "\nauto_cmd_build27.bat %jenkinspythonexe%\n" + windows_error,
     "copy dist_module27\\dist\\*.whl ..\\local_pypi_server"]
 

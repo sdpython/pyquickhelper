@@ -100,5 +100,12 @@ class TestSphinxDocFull (unittest.TestCase):
         # it should be resolved when uploading (the documentation could be
         # uploaded at different places)
 
+        # checks some links were processed
+        fhtml = os.path.join(temp, "python3_module_template-master",
+                             "_doc", "sphinxdoc", "build", "html", "index.html")
+        with open(fhtml, "r", encoding="utf8") as f:
+            content = f.read()
+        assert '<td><a class="reference internal" href="index_ext-tohelp.html#ext-tohelp"><span>ext-tohelp</span></a></td>' in content
+
 if __name__ == "__main__":
     unittest.main()

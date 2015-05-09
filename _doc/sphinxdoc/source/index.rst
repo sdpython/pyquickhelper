@@ -44,7 +44,7 @@ Functionalities
       the parser tries to interpret values passed to the magic commands
     * function :func:`rst2html <pyquickhelper.helpgen.convert_doc_helper.rst2html>` to convert RST into HTML
     * Sphinx directive :class:`BlogPostDirective <pyquickhelper.helpgen.sphinx_blog_extension.BlogPostDirective>` 
-      to add a drective ``blogpost`` into the docutmention
+      to add a directive ``blogpost`` into the docutmention
     * function to run a notebook offline :func:`run_notebook <pyquickhelper.ipythonhelper.notebook_helper.run_notebook>`
       
 Installation

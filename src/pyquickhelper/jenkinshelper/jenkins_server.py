@@ -12,7 +12,7 @@ import socket
 from ..loghelper.flog import noLOG
 
 
-from ..pycode.windows_scripts import windows_jenkins, windows_jenkins_27
+from ..pycode.windows_scripts import windows_jenkins, windows_jenkins_27, windows_jenkins_any
 from ..pycode.build_helper import private_script_replacements, choose_path
 
 
@@ -20,6 +20,8 @@ modified_windows_jenkins = private_script_replacements(
     windows_jenkins, "__MODULE__", None, "__PORT__", raise_exception=False)
 modified_windows_jenkins_27 = private_script_replacements(
     windows_jenkins_27, "__MODULE__", None, "__PORT__", raise_exception=False)
+modified_windows_jenkins_any = windows_jenkins_any \
+    .replace("virtual_env_suffix=%2", "virtual_env_suffix=___COMMAND__")
 
 
 class JenkinsExtException(Exception):
@@ -395,13 +397,13 @@ class JenkinsExt(jenkins.Jenkins):
         """
         spl = job.split()
         module_name = spl[0]
-        
+
         def replacements(cmd, python, suffix):
             return cmd.replace("__PYTHON__", python) \
                       .replace("__SUFFIX__", suffix)  \
                       .replace("__PORT__", str(port))  \
-                      .replace("__MODULE__", module_name) # suffix for the virtual environment and module name
-        
+                      .replace("__MODULE__", module_name)  # suffix for the virtual environment and module name
+
         if platform.startswith("win"):
             # windows
             py = choose_path(os.path.dirname(sys.executable),
@@ -414,11 +416,11 @@ class JenkinsExt(jenkins.Jenkins):
                 script = modified_windows_jenkins
                 if not isinstance(script, list):
                     script = [script]
-                return [replacements (s, os.path.join(py, "python"), "A0") for s in script]
+                return [replacements(s, os.path.join(py, "python"), "A0") for s in script]
 
             elif len(spl) == 0:
                 raise ValueError("job is empty")
-                
+
             elif spl[0] == "standalone":
                 # conda update
                 return JenkinsExt.get_cmd_standalone(
@@ -427,12 +429,12 @@ class JenkinsExt(jenkins.Jenkins):
             elif len(spl) in [2, 3, 4]:
                 if "[test_local_pypi]" in spl:
                     cmd = "auto_setup_test_local_pypi.bat __PYTHON__"
-                elif "[notebooks]" in spl:
-                    cmd = "bunittest_notebooks.bat __PYTHON__"
                 elif "[LONG]" in spl:
-                    cmd = "auto_setup_unittests_LONG.bat __PYTHON__"
+                    cmd = modified_windows_jenkins_any.replace(
+                        "__COMMAND__", "unittests_LONG")
                 elif "[SKIP]" in spl:
-                    cmd = "auto_setup_unittests_SKIP.bat __PYTHON__"
+                    cmd = modified_windows_jenkins_any.replace(
+                        "__COMMAND__", "unittests_SKIP")
                 elif "[27]" in spl:
                     cmd = modified_windows_jenkins_27
                 else:
@@ -443,14 +445,16 @@ class JenkinsExt(jenkins.Jenkins):
                 for cmd in cmds:
                     if "[anaconda]" in spl:
                         if anaconda is not None:
-                            cmd = replacements(cmd, os.path.join(anaconda, "python"), "A3") 
+                            cmd = replacements(
+                                cmd, os.path.join(anaconda, "python"), "A3")
                         else:
-                            raise JenkinsExtPyException("anaconda is not available")
-                            
+                            raise JenkinsExtPyException(
+                                "anaconda is not available")
+
                     elif "[anaconda2]" in spl:
                         if anaconda2 is not None:
                             cmd = replacements(cmd, os.path.join(py, "python"), "A2") \
-                                     .replace("__PYTHON27__", os.path.join(anaconda2, "python"))
+                                .replace("__PYTHON27__", os.path.join(anaconda2, "python"))
                         else:
                             raise JenkinsExtPyException(
                                 "anaconda2 is not available")
@@ -459,14 +463,16 @@ class JenkinsExt(jenkins.Jenkins):
                             # with WinPython, nb_convert has some trouble when called
                             # from the command line within Python
                             # the job might fail
-                            cmd = replacements(cmd, os.path.join(winpython, "python"), "WP")
+                            cmd = replacements(
+                                cmd, os.path.join(winpython, "python"), "WP")
                         else:
                             raise JenkinsExtPyException(
                                 "winpython is not available")
                     else:
                         py = choose_path(
                             os.path.dirname(sys.executable), "c:\\Python34_x64", "c:\\Anaconda3", ".")
-                        cmd = replacements(cmd, os.path.join(py, "python"), "DF")
+                        cmd = replacements(
+                            cmd, os.path.join(py, "python"), "DF")
 
                     res.append(cmd)
 

@@ -225,6 +225,9 @@ class TestJenkinsExt(unittest.TestCase):
                 if "dist_module27" in conf:
                     raise Exception(conf)
 
+            if "_LONG" in conf and "build_script" not in conf:
+                raise Exception(conf)
+
         assert i > 0
 
 
