@@ -35,7 +35,7 @@ class TestChanges (unittest.TestCase):
         path = os.path.abspath(os.path.split(__file__)[0])
         fold = os.path.join(path, "..", "..")
         if os.path.exists(fold):
-            fLOG("in")
+            fLOG("exists", fold)
             file = os.path.join(path, "out_table.rst")
             if os.path.exists(file):
                 os.remove(file)
