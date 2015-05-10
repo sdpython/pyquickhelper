@@ -191,7 +191,7 @@ if "--verbose" in sys.argv:
 if is_local():
     pyquickhelper = import_pyquickhelper()
     r = pyquickhelper.process_standard_options_for_setup(
-        sys.argv, __file__, project_var_name, port=8067, requirements=requirements)
+        sys.argv, __file__, project_var_name, port=8067, requirements=requirements, blog_list=pyquickhelper.__blog__)
 else:
     r = False
 

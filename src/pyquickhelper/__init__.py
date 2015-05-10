@@ -9,6 +9,21 @@ __github__ = "https://github.com/sdpython/pyquickhelper"
 __url__ = "http://www.xavierdupre.fr/app/pyquickhelper/helpsphinx/index.html"
 __downloadUrl__ = "http://www.xavierdupre.fr/site2013/index_code.html#pyquickhelper"
 __license__ = "BSD License"
+__blog__ = """
+<?xml version="1.0" encoding="UTF-8"?>
+<opml version="1.0">
+    <head>
+        <title>blog</title>
+    </head>
+    <body>
+        <outline text="pyquickhelper"
+            title="pyquickhelper"
+            type="rss"
+            xmlUrl="http://www.xavierdupre.fr/app/pyquickhelper/helpsphinx/_downloads/rss.xml"
+            htmlUrl="http://www.xavierdupre.fr/app/pyquickhelper/helpsphinx/blog/main_0000.html" />
+    </body>
+</opml>
+"""
 
 
 def check():
@@ -59,3 +74,4 @@ from .pycode.code_helper import remove_extra_spaces_and_pep8, remove_extra_space
 from .pycode.clean_helper import clean_exts
 from .pycode.py3to2 import py3to2_convert_tree, py3to2_convert
 from .pycode.setup_helper import write_version_for_setup, clean_space_for_setup, standard_help_for_setup, main_wrapper_tests, process_standard_options_for_setup
+from .pycode.setup_helper import write_module_scripts

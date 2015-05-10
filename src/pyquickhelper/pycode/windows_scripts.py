@@ -395,10 +395,17 @@ setup(
 )
 """
 #########################
-#:
+#: copy27
 #########################
 
 copy_dist_to_local_pypi = """
 if not exist ..\local_pypi_server mkdir ..\local_pypi_server
 copy /Y dist\*.whl ..\local_pypi_server
+"""
+
+###############
+#: blog post
+###############
+windows_blogpost = """
+%pythonexe% auto_rss_server.py
 """

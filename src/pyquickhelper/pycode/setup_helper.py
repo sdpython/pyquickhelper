@@ -14,7 +14,7 @@ from .code_helper import remove_extra_spaces_folder
 from .py3to2 import py3to2_convert_tree
 from ..pycode.utils_tests import main_wrapper_tests
 from ..helpgen import get_help_usage
-from .build_helper import get_build_script, get_script_command, get_extra_script_command
+from .build_helper import get_build_script, get_script_command, get_extra_script_command, get_script_module
 from ..filehelper import get_url_content_timeout
 
 
@@ -193,7 +193,8 @@ def process_standard_options_for_setup(argv,
                                        unittest_modules=None,
                                        pattern_copy=".*[.]((ico)|(dll)|(rst)|(ipynb)|(png)|(txt)|(zip)|(gz))$",
                                        requirements=None,
-                                       port=8067):
+                                       port=8067,
+                                       blog_list=None):
     """
     process the standard options the module pyquickhelper is
     able to process assuming the module which calls this function
@@ -218,8 +219,12 @@ def process_standard_options_for_setup(argv,
     @param      pattern_copy        see @see fn py3to2_convert_tree
     @param      requirements        dependencies
     @param      port                port for the local pipy server
+    @param      blog_list           list of blog to listen for this module (usually stored in ``module.__blog__``)
     @return                         True (an option was processed) or False,
                                     the file ``setup.py`` should call function ``setup``
+
+    The command ``build_script`` is used, the flag ``--private`` can be used to
+    avoid producing scripts to publish the module on `Pypi <https://pypi.python.org/pypi>`_.
     """
     folder = file_or_folder if os.path.isdir(
         file_or_folder) else os.path.dirname(file_or_folder)
@@ -252,6 +257,9 @@ def process_standard_options_for_setup(argv,
         main_wrapper_tests(file_or_folder, skip_function=skip_skip)
         return True
     elif "build_script" in sys.argv:
+
+        # script running setup.py
+
         script = get_build_script(
             project_var_name, requirements=requirements, port=port)
         with open(os.path.join(folder, "auto_unittest_setup_help.%s" % get_script_extension()), "w") as f:
@@ -263,9 +271,11 @@ def process_standard_options_for_setup(argv,
                   "unittests_LONG", "unittests_SKIP",
                   "copy27", "test_local_pypi"}:
             sc = get_script_command(
-                c, project_var_name, requirements=requirements, port=port)
+                c, project_var_name, requirements=requirements, port=port, platform=sys.platform)
             with open(os.path.join(folder, "auto_setup_%s.%s" % (c, get_script_extension())), "w") as f:
                 f.write(sc)
+
+        # script running for a developper
 
         for c in {"notebook", "publish", "publish_doc", "local_pypi", "run27",
                   "build27", "setupdep", "copy_dist",
@@ -275,7 +285,9 @@ def process_standard_options_for_setup(argv,
                 # functionalities
                 continue
             sc = get_extra_script_command(
-                c, project_var_name, requirements=requirements, port=port)
+                c, project_var_name, requirements=requirements, port=port, platform=sys.platform)
+            if sc is None:
+                continue
             if c == "setupdep":
                 folder_setup = os.path.join(folder, "build", "auto_setup")
                 if not os.path.exists(folder_setup):
@@ -285,6 +297,11 @@ def process_standard_options_for_setup(argv,
             else:
                 with open(os.path.join(folder, "auto_cmd_%s.%s" % (c, get_script_extension())), "w") as f:
                     f.write(sc)
+        # script for anybody
+
+        write_module_scripts(
+            folder, platform=sys.platform, blog_list=blog_list)
+
         return True
 
     elif "copy27" in sys.argv:
@@ -305,3 +322,51 @@ def process_standard_options_for_setup(argv,
         return True
     else:
         return False
+
+
+def write_module_scripts(folder, platform=sys.platform, blog_list=None):
+    """
+    Writes a couple of script which allow a user to be faster on some tasks
+    or to easily get information about the module.
+
+    @param      folder      where to write the script
+    @param      platform    platform
+    @param      blog_list   blog list to follow, should be attribute ``__blog__`` of the module
+    @return                 list of written scripts
+
+    The function produces the following files:
+
+    * *rss_list.xml*: list of rss stream to follow
+    * *rss_database.db3*: stores blog posts
+    * *rss_server.py*: runs a server which updates the scripts and runs a server. It also open the default browser.
+    * *rss_server.(bat|sh)*: run *run_server.py*, the file on Linux might be missing if there is an equivalent python script
+    
+    @example(How to generate auto_rss_server.py)
+    The following code generates the script *auto_rss_local.py*
+    which runs a local server to read blog posts included
+    in the documentation (it uses module
+    `pyrsslocal <http://www.xavierdupre.fr/app/pyrsslocal/helpsphinx/index.html>`_)::
+    
+        from pyquickhelper import write_module_scripts, __blog__
+        write_module_scripts("blog", blog_list=__blog__)
+        
+    @endexample
+    """
+    res = []
+    for c in {"blog"}:
+        sc = get_script_module(c, platform=sys.platform, blog_list=blog_list)
+        if sc is None:
+            continue
+        for item in sc:
+            if isinstance(item, tuple):
+                name = os.path.join(folder, item[0])
+                with open(name, "w", encoding="utf8") as f:
+                    f.write(item[1])
+                res.append(name)
+            else:
+                name = os.path.join(
+                    folder, "auto_run_%s.%s" % (c, get_script_extension()))
+                with open(name, "w") as f:
+                    f.write(item)
+                res.append(name)
+    return res

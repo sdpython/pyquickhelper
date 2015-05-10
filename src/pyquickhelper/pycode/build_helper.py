@@ -10,7 +10,7 @@ import os
 from .windows_scripts import windows_error, windows_prefix, windows_setup, windows_build, windows_notebook
 from .windows_scripts import windows_publish, windows_publish_doc, windows_pypi, setup_script_dependency_py
 from .windows_scripts import windows_prefix_27, windows_unittest27, copy_dist_to_local_pypi
-from .windows_scripts import windows_any_setup_command
+from .windows_scripts import windows_any_setup_command, windows_blogpost
 
 
 def choose_path(*paths):
@@ -59,7 +59,9 @@ def private_script_replacements(script, module, requirements, port, raise_except
             raise FileNotFoundError("one the paths is wrong among: " +
                                     "\n".join("{0}={1}".format(k, v) for k, v in default_values[plat].items()))
 
-        script = script.replace("__MODULE__", module)
+        if module is not None:
+            script = script.replace("__MODULE__", module)
+
         for k, v in default_values[plat].items():
             script = script.replace(k, v)
 
@@ -102,7 +104,7 @@ def get_build_script(module, requirements=None, port=8067):
     return private_script_replacements(windows_build, module, requirements, port)
 
 
-def get_script_command(command, module, requirements, port=8067):
+def get_script_command(command, module, requirements, port=8067, platform=sys.platform):
     """
     produces a script which runs a command available through the setup
 
@@ -110,10 +112,13 @@ def get_script_command(command, module, requirements, port=8067):
     @param  module          module name
     @param  requirements    list of dependencies (not in your python distribution)
     @param  port            port for the local pypi_server which gives the dependencies
+    @param  platform        platform (only Windows)
     @return                 scripts
 
     The available list of commands is given by function @see fn process_standard_options_for_setup.
     """
+    if not platform.startswith("win"):
+        raise NotImplementedError("not yet available on linux")
     global windows_error, windows_prefix, windows_setup
     rows = [windows_prefix]
     rows.append(windows_setup + " " + command)
@@ -122,7 +127,7 @@ def get_script_command(command, module, requirements, port=8067):
     return private_script_replacements(sc, module, requirements, port)
 
 
-def get_extra_script_command(command, module, requirements, port=8067):
+def get_extra_script_command(command, module, requirements, port=8067, blog_list=None, platform=sys.platform):
     """
     produces a script which runs the notebook, a documentation server, which
     publishes...
@@ -132,10 +137,15 @@ def get_extra_script_command(command, module, requirements, port=8067):
     @param  module          module name
     @param  requirements    list of dependencies (not in your python distribution)
     @param  port            port for the local pypi_server which gives the dependencies
+    @param  blog_list       list of blog to listen for this module (usually stored in ``module.__blog__``)
+    @param  platform        platform (only Windows)
     @return                 scripts
 
     The available list of commands is given by function @see fn process_standard_options_for_setup.
     """
+    if not platform.startswith("win"):
+        raise NotImplementedError("linux not yet available")
+
     script = None
     if command == "notebook":
         script = windows_notebook
@@ -167,3 +177,59 @@ def get_extra_script_command(command, module, requirements, port=8067):
         raise Exception("unexpected command: " + command)
     else:
         return private_script_replacements(script, module, requirements, port)
+
+
+def get_script_module(command, platform=sys.platform, blog_list=None):
+    """
+    produces a script which runs the notebook, a documentation server, which
+    publishes...
+
+    @param  command         command to run (*blog*)
+    @param  platform        platform (only Windows)
+    @param  blog_list       list of blog to listen for this module (usually stored in ``module.__blog__``)
+    @return                 scripts
+
+    The available list of commands is given by function @see fn process_standard_options_for_setup.
+    """
+    prefix_setup = ""
+    filename = os.path.abspath(__file__)
+    if "site-packages" not in filename:
+        folder = os.path.normpath(
+            os.path.join(os.path.dirname(filename), "..", ".."))
+        prefix_setup = """
+                import sys
+                sys.path.append(r"{0}")
+                sys.path.append(r"{1}")
+                sys.path.append(r"{2}")
+                """.replace("                ", "").format(folder,
+                                                           folder.replace(
+                                                               "pyquickhelper", "pyensae"),
+                                                           folder.replace(
+                                                               "pyquickhelper", "pyrsslocal")
+                                                           )
+
+    script = None
+    if command == "blog":
+        if blog_list is None:
+            return None
+        else:
+            script = [("auto_rss_list.xml", blog_list.strip("\n\r\t "))]
+            script.append( ("auto_rss_server.py", prefix_setup + """
+                        from pyquickhelper.pycode.blog_helper import rss_update_run_server
+                        rss_update_run_server("auto_rss_database.db3", "auto_rss_list.xml")
+                        """.replace("                        ", "")))
+            if platform.startswith("win"):
+                script.append("\n".join([windows_prefix, windows_blogpost]))
+    else:
+        raise Exception("unable to interpret command: " + command)
+
+    # common post-processing
+    for i, item in enumerate(script):
+        if isinstance(item, tuple):
+            ext = os.path.splitext(item[0])
+            if ext == ".py":
+                s = private_script_replacements(item[1], None, None, None)
+                script[i] = (item[0], s)
+        else:
+            script[i] = private_script_replacements(item, None, None, None)
+    return script
