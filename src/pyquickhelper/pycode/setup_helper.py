@@ -340,16 +340,16 @@ def write_module_scripts(folder, platform=sys.platform, blog_list=None):
     * *rss_database.db3*: stores blog posts
     * *rss_server.py*: runs a server which updates the scripts and runs a server. It also open the default browser.
     * *rss_server.(bat|sh)*: run *run_server.py*, the file on Linux might be missing if there is an equivalent python script
-    
+
     @example(How to generate auto_rss_server.py)
     The following code generates the script *auto_rss_local.py*
     which runs a local server to read blog posts included
     in the documentation (it uses module
     `pyrsslocal <http://www.xavierdupre.fr/app/pyrsslocal/helpsphinx/index.html>`_)::
-    
+
         from pyquickhelper import write_module_scripts, __blog__
         write_module_scripts("blog", blog_list=__blog__)
-        
+
     @endexample
     """
     res = []

@@ -213,7 +213,13 @@ def get_script_module(command, platform=sys.platform, blog_list=None):
         if blog_list is None:
             return None
         else:
-            script = [("auto_rss_list.xml", blog_list.strip("\n\r\t "))]
+            list_xml = blog_list.strip("\n\r\t ")
+            if '<?xml version="1.0" encoding="UTF-8"?>' not in list_xml and os.path.exists(list_xml):
+                with open(list_xml, "r", encoding="utf8") as f:
+                    list_xml = f.read()
+            if "<body>" not in list_xml:
+                raise ValueError("Wrong XML format:\n{0}".format(list_xml))
+            script = [("auto_rss_list.xml", list_xml)]
             script.append( ("auto_rss_server.py", prefix_setup + """
                         from pyquickhelper.pycode.blog_helper import rss_update_run_server
                         rss_update_run_server("auto_rss_database.db3", "auto_rss_list.xml")
