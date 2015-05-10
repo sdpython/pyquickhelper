@@ -244,4 +244,5 @@ auto_*.bat
 auto_*.sh
 auto_*.py
 auto_*.xml
+auto_*.db3
 auto_setup_dep.py
