@@ -7,7 +7,6 @@
 import sys
 import os
 import site
-from distutils.sysconfig import get_python_lib
 
 if sys.version_info[0] == 2:
     from codecs import open

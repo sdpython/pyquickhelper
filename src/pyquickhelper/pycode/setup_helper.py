@@ -194,7 +194,8 @@ def process_standard_options_for_setup(argv,
                                        pattern_copy=".*[.]((ico)|(dll)|(rst)|(ipynb)|(png)|(txt)|(zip)|(gz))$",
                                        requirements=None,
                                        port=8067,
-                                       blog_list=None):
+                                       blog_list=None,
+                                       default_engine_paths=None):
     """
     process the standard options the module pyquickhelper is
     able to process assuming the module which calls this function
@@ -211,20 +212,32 @@ def process_standard_options_for_setup(argv,
         * ``unittests_SKIP``: run the unit tests beginning by ``test_SKIP_``
         * ``write_version``: write a file ``version.txt`` with the version number (needs an access to GitHub)
 
-    @param      argv                = *sys.argv*
-    @param      file_or_folder      file ``setup.py`` or folder which contains it
-    @param      project_var_name    display name of the module
-    @param      module_name         module name, None if equal to *project_var_name* (``import <module_name>``)
-    @param      unittest_modules    modules added for the unit tests, see @see fn py3to2_convert_tree
-    @param      pattern_copy        see @see fn py3to2_convert_tree
-    @param      requirements        dependencies
-    @param      port                port for the local pipy server
-    @param      blog_list           list of blog to listen for this module (usually stored in ``module.__blog__``)
-    @return                         True (an option was processed) or False,
-                                    the file ``setup.py`` should call function ``setup``
+    @param      argv                    = *sys.argv*
+    @param      file_or_folder          file ``setup.py`` or folder which contains it
+    @param      project_var_name        display name of the module
+    @param      module_name             module name, None if equal to *project_var_name* (``import <module_name>``)
+    @param      unittest_modules        modules added for the unit tests, see @see fn py3to2_convert_tree
+    @param      pattern_copy            see @see fn py3to2_convert_tree
+    @param      requirements            dependencies
+    @param      port                    port for the local pipy server
+    @param      blog_list               list of blog to listen for this module (usually stored in ``module.__blog__``)
+    @param      default_engine_paths    define the default location for python engine, should be dictionary *{ engine: path }*, see below.
+    @return                             True (an option was processed) or False,
+                                        the file ``setup.py`` should call function ``setup``
 
     The command ``build_script`` is used, the flag ``--private`` can be used to
     avoid producing scripts to publish the module on `Pypi <https://pypi.python.org/pypi>`_.
+
+    An example for *default_engine_paths*::
+
+        default_engine_paths = {
+            "windows": {
+                "__PY34__": None,
+                "__PY34_X64__": "c:\\Python34_x64",
+                "__PY27_X64__": "c:\\Anaconda2",
+            },
+        }
+
     """
     folder = file_or_folder if os.path.isdir(
         file_or_folder) else os.path.dirname(file_or_folder)
@@ -261,7 +274,8 @@ def process_standard_options_for_setup(argv,
         # script running setup.py
 
         script = get_build_script(
-            project_var_name, requirements=requirements, port=port)
+            project_var_name, requirements=requirements, port=port,
+            default_engine_paths=default_engine_paths)
         with open(os.path.join(folder, "auto_unittest_setup_help.%s" % get_script_extension()), "w") as f:
             f.write(script)
 
@@ -271,7 +285,8 @@ def process_standard_options_for_setup(argv,
                   "unittests_LONG", "unittests_SKIP",
                   "copy27", "test_local_pypi"}:
             sc = get_script_command(
-                c, project_var_name, requirements=requirements, port=port, platform=sys.platform)
+                c, project_var_name, requirements=requirements, port=port, platform=sys.platform,
+                default_engine_paths=default_engine_paths)
             with open(os.path.join(folder, "auto_setup_%s.%s" % (c, get_script_extension())), "w") as f:
                 f.write(sc)
 
@@ -285,7 +300,8 @@ def process_standard_options_for_setup(argv,
                 # functionalities
                 continue
             sc = get_extra_script_command(
-                c, project_var_name, requirements=requirements, port=port, platform=sys.platform)
+                c, project_var_name, requirements=requirements, port=port, platform=sys.platform,
+                default_engine_paths=default_engine_paths)
             if sc is None:
                 continue
             if c == "setupdep":
@@ -300,7 +316,7 @@ def process_standard_options_for_setup(argv,
         # script for anybody
 
         write_module_scripts(
-            folder, platform=sys.platform, blog_list=blog_list)
+            folder, platform=sys.platform, blog_list=blog_list, default_engine_paths=default_engine_paths)
 
         return True
 
@@ -324,7 +340,8 @@ def process_standard_options_for_setup(argv,
         return False
 
 
-def write_module_scripts(folder, platform=sys.platform, blog_list=None):
+def write_module_scripts(folder, platform=sys.platform, blog_list=None,
+                         default_engine_paths=None):
     """
     Writes a couple of script which allow a user to be faster on some tasks
     or to easily get information about the module.
@@ -354,7 +371,8 @@ def write_module_scripts(folder, platform=sys.platform, blog_list=None):
     """
     res = []
     for c in {"blog"}:
-        sc = get_script_module(c, platform=sys.platform, blog_list=blog_list)
+        sc = get_script_module(
+            c, platform=sys.platform, blog_list=blog_list, default_engine_paths=default_engine_paths)
         if sc is None:
             continue
         for item in sc:

@@ -16,11 +16,20 @@ from ..loghelper.flog import noLOG
 from ..pycode.windows_scripts import windows_jenkins, windows_jenkins_27, windows_jenkins_any
 from ..pycode.build_helper import private_script_replacements, choose_path
 
+_default_engine_paths = {
+    "windows": {
+        "__PY34__": "__PY34__",
+        "__PY34_X64__": "__PY34_X64__",
+        "__PY27_X64__": "__PY27_X64__",
+    },
+}
 
 modified_windows_jenkins = private_script_replacements(
-    windows_jenkins, "__MODULE__", None, "__PORT__", raise_exception=False)
+    windows_jenkins, "__MODULE__", None, "__PORT__", raise_exception=False,
+    default_engine_paths=_default_engine_paths)
 modified_windows_jenkins_27 = private_script_replacements(
-    windows_jenkins_27, "__MODULE__", None, "__PORT__", raise_exception=False)
+    windows_jenkins_27, "__MODULE__", None, "__PORT__", raise_exception=False,
+    default_engine_paths=_default_engine_paths)
 modified_windows_jenkins_any = windows_jenkins_any \
     .replace("virtual_env_suffix=%2", "virtual_env_suffix=___SUFFIX__")
 
@@ -201,25 +210,27 @@ class JenkinsExt(jenkins.Jenkins):
                             scheduler=None,
                             platform=sys.platform,
                             py27=False,
-                            description=None
+                            description=None,
+                            default_engine_paths=None
                             ):
         """
         add a job to the jenkins server
 
-        @param      name            name
-        @param      credentials     credentials
-        @param      git_repo        git repository
-        @param      upstreams       the build must run after... (even if failures),
-                                    must be None in that case
-        @param      script          script to execute or list of scripts
-        @param      keep            number of buils to keep
-        @param      location        location of the build
-        @param      dependencies    to add environment variable before
-                                    and to set them to empty after the script is done
-        @param      scheduler       add a schedule time (upstreams must be None in that case)
-        @param      platform        win, linux, ...
-        @param      py27            python 2.7 (True) or Python 3 (False)
-        @param      description     add a description to the job
+        @param      name                    name
+        @param      credentials             credentials
+        @param      git_repo                git repository
+        @param      upstreams               the build must run after... (even if failures),
+                                            must be None in that case
+        @param      script                  script to execute or list of scripts
+        @param      keep                    number of buils to keep
+        @param      location                location of the build
+        @param      dependencies            to add environment variable before
+                                            and to set them to empty after the script is done
+        @param      scheduler               add a schedule time (upstreams must be None in that case)
+        @param      platform                win, linux, ...
+        @param      py27                    python 2.7 (True) or Python 3 (False)
+        @param      description             add a description to the job
+        @param      default_engine_paths    define the default location for python engine, should be dictionary *{ engine: path }*, see below.
 
         The job can be modified on Jenkins. To add a time trigger::
 
@@ -234,7 +245,8 @@ class JenkinsExt(jenkins.Jenkins):
             if platform.startswith("win"):
                 script = private_script_replacements(
                     windows_jenkins, "____", None, "____", raise_exception=False,
-                    platform=platform)
+                    platform=platform,
+                    default_engine_paths=default_engine_paths)
             else:
                 raise JenkinsExtException("no default script for linux")
 
@@ -570,28 +582,30 @@ class JenkinsExt(jenkins.Jenkins):
                              fLOG=noLOG,
                              dependencies=None,
                              platform=sys.platform,
-                             port=8067):
+                             port=8067,
+                             default_engine_paths=None):
         """
         Set up many jobs on Jenkins
 
-        @param      js_url              url or jenkins server (specially if you need credentials)
-        @param      github              github account if it does not start with *http://*,
-                                        the link to git repository of the project otherwise
-        @param      modules             modules for which to generate the
-        @param      get_jenkins_script  see @see me get_jenkins_script (default value if this parameter is None)
-        @param      pythonexe           location of Python (unused)
-        @param      winpython           location of WinPython (or None to skip)
-        @param      anaconda            location of Anaconda (or None to skip)
-        @param      overwrite           do not create the job if it already exists
-        @param      location            None for default or a local folder
-        @param      no_dep              if True, do not add dependencies
-        @param      prefix              add a prefix to the name
-        @param      dependencies        some modules depend on others also being tested,
-                                        this parameter gives the list
-        @param      platform            platform of the Jenkins server
-        @param      port                port for the local pypi server
-        @param      fLOG                logging function
-        @return                         list of created jobs
+        @param      js_url                  url or jenkins server (specially if you need credentials)
+        @param      github                  github account if it does not start with *http://*,
+                                            the link to git repository of the project otherwise
+        @param      modules                 modules for which to generate the
+        @param      get_jenkins_script      see @see me get_jenkins_script (default value if this parameter is None)
+        @param      pythonexe               location of Python (unused)
+        @param      winpython               location of WinPython (or None to skip)
+        @param      anaconda                location of Anaconda (or None to skip)
+        @param      overwrite               do not create the job if it already exists
+        @param      location                None for default or a local folder
+        @param      no_dep                  if True, do not add dependencies
+        @param      prefix                  add a prefix to the name
+        @param      dependencies            some modules depend on others also being tested,
+                                            this parameter gives the list
+        @param      platform                platform of the Jenkins server
+        @param      port                    port for the local pypi server
+        @param      default_engine_paths    define the default location for python engine, should be dictionary *{ engine: path }*, see below.
+        @param      fLOG                    logging function
+        @return                             list of created jobs
 
         The extension
         `Extra Columns Plugin <https://wiki.jenkins-ci.org/display/JENKINS/Extra+Columns+Plugin>`_
@@ -795,7 +809,8 @@ class JenkinsExt(jenkins.Jenkins):
                                                    scheduler=scheduler,
                                                    platform=platform,
                                                    py27="[27]" in job,
-                                                   description=description)
+                                                   description=description,
+                                                   default_engine_paths=default_engine_paths)
 
                         # check some inconsistencies
                         if "[27]" in job and "Anaconda3" in script:

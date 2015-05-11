@@ -4,6 +4,8 @@
 based on pyqcuikhelper design. It relies on module `pyrsslocal <http://www.xavierdupre.fr/app/pyrsslocal/helpsphinx/index.html>`_.
 """
 
+import os
+
 
 def rss_update_run_server(dbfile=None,
                           xml_blogs=None,
@@ -42,7 +44,7 @@ def rss_update_run_server(dbfile=None,
         xml_blogs = __blog__
 
     if dbfile is None:
-        dbfile = os.path.join(user, "rss_blog_posts.db3")
+        dbfile = os.path.join(os.path.dirname(xml_blogs), "rss_blog_posts.db3")
 
     return rss_update_run_server(dbfile=dbfile, xml_blogs=xml_blogs, port=port, browser=browser, period=period,
                                  server=server, thread=thread)

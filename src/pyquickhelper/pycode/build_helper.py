@@ -35,34 +35,50 @@ default_values = {
 }
 
 
-def private_script_replacements(script, module, requirements, port, raise_exception=True, platform=sys.platform):
+def private_script_replacements(script, module, requirements, port, raise_exception=True, platform=sys.platform,
+                                default_engine_paths=None):
     """
     run last replacements
 
-    @param      script          script or list of scripts
-    @param      module          module name
-    @param      requirements    requirements
-    @param      port            port
-    @param      raise_exception raise an exception if there is an error, otherwise, return None
-    @param      platform        platform
-    @return                     modified script
+    @param      script                  script or list of scripts
+    @param      module                  module name
+    @param      requirements            requirements
+    @param      port                    port
+    @param      raise_exception         raise an exception if there is an error, otherwise, return None
+    @param      platform                platform
+    @param      default_engine_paths    define the default location for python engine, should be dictionary *{ engine: path }*, see below.
+    @return                             modified script
+
+    An example for *default_engine_paths*::
+
+        default_engine_paths = {
+            "windows": {
+                "__PY34__": None,
+                "__PY34_X64__": "c:\\Python34_x64",
+                "__PY27_X64__": "c:\\Anaconda2",
+            },
+        }
+
     """
     if isinstance(script, list):
-        return [private_script_replacements(s, module, requirements, port, raise_exception, platform) for s in script]
+        return [private_script_replacements(s, module, requirements,
+                                            port, raise_exception, platform,
+                                            default_engine_paths=default_engine_paths) for s in script]
 
     if platform.startswith("win"):
         plat = "windows"
         global default_values
+        def_values = default_values if default_engine_paths is None else default_engine_paths
 
-        values = default_values[plat].values()
+        values = [v for v in def_values[plat].values() if v is not None]
         if raise_exception and len(values) != len(set(values)):
             raise FileNotFoundError("one the paths is wrong among: " +
-                                    "\n".join("{0}={1}".format(k, v) for k, v in default_values[plat].items()))
+                                    "\n".join("{0}={1}".format(k, v) for k, v in def_values[plat].items()))
 
         if module is not None:
             script = script.replace("__MODULE__", module)
 
-        for k, v in default_values[plat].items():
+        for k, v in def_values[plat].items():
             script = script.replace(k, v)
 
         # requirements
@@ -88,32 +104,36 @@ def private_script_replacements(script, module, requirements, port, raise_except
             return None
 
 
-def get_build_script(module, requirements=None, port=8067):
+def get_build_script(module, requirements=None, port=8067, default_engine_paths=None):
     """
     builds the build script which builds the setup, run the unit tests
     and the documentation
 
-    @param  module          module name
-    @param  requirements    list of dependencies (not in your python distribution)
-    @param  port            port for the local pypi_server which gives the dependencies
-    @return                 scripts
+    @param      module                  module name
+    @param      requirements            list of dependencies (not in your python distribution)
+    @param      port                    port for the local pypi_server which gives the dependencies
+    @param      default_engine_paths    define the default location for python engine, should be dictionary *{ engine: path }*, see below.
+    @return                             scripts
     """
     global windows_build
     if requirements is None:
         requirements = []
-    return private_script_replacements(windows_build, module, requirements, port)
+    return private_script_replacements(windows_build, module, requirements, port,
+                                       default_engine_paths=default_engine_paths)
 
 
-def get_script_command(command, module, requirements, port=8067, platform=sys.platform):
+def get_script_command(command, module, requirements, port=8067, platform=sys.platform,
+                       default_engine_paths=None):
     """
     produces a script which runs a command available through the setup
 
-    @param  command         command to run
-    @param  module          module name
-    @param  requirements    list of dependencies (not in your python distribution)
-    @param  port            port for the local pypi_server which gives the dependencies
-    @param  platform        platform (only Windows)
-    @return                 scripts
+    @param      command                 command to run
+    @param      module                  module name
+    @param      requirements            list of dependencies (not in your python distribution)
+    @param      port                    port for the local pypi_server which gives the dependencies
+    @param      platform                platform (only Windows)
+    @param      default_engine_paths    define the default location for python engine, should be dictionary *{ engine: path }*, see below.
+    @return                             scripts
 
     The available list of commands is given by function @see fn process_standard_options_for_setup.
     """
@@ -124,22 +144,24 @@ def get_script_command(command, module, requirements, port=8067, platform=sys.pl
     rows.append(windows_setup + " " + command)
     rows.append(windows_error)
     sc = "\n".join(rows)
-    return private_script_replacements(sc, module, requirements, port)
+    return private_script_replacements(sc, module, requirements, port, default_engine_paths=default_engine_paths)
 
 
-def get_extra_script_command(command, module, requirements, port=8067, blog_list=None, platform=sys.platform):
+def get_extra_script_command(command, module, requirements, port=8067, blog_list=None, platform=sys.platform,
+                             default_engine_paths=None):
     """
     produces a script which runs the notebook, a documentation server, which
     publishes...
 
-    @param  command         command to run (*notebook*, *publish*, *publish_doc*, *local_pypi*, *setupdep*,
-                            *run27*, *build27*, *copy_dist*, *any_setup_command*)
-    @param  module          module name
-    @param  requirements    list of dependencies (not in your python distribution)
-    @param  port            port for the local pypi_server which gives the dependencies
-    @param  blog_list       list of blog to listen for this module (usually stored in ``module.__blog__``)
-    @param  platform        platform (only Windows)
-    @return                 scripts
+    @param      command                 command to run (*notebook*, *publish*, *publish_doc*, *local_pypi*, *setupdep*,
+                                        *run27*, *build27*, *copy_dist*, *any_setup_command*)
+    @param      module                  module name
+    @param      requirements            list of dependencies (not in your python distribution)
+    @param      port                    port for the local pypi_server which gives the dependencies
+    @param      blog_list               list of blog to listen for this module (usually stored in ``module.__blog__``)
+    @param      platform                platform (only Windows)
+    @param      default_engine_paths    define the default location for python engine, should be dictionary *{ engine: path }*, see below.
+    @return                             scripts
 
     The available list of commands is given by function @see fn process_standard_options_for_setup.
     """
@@ -176,18 +198,20 @@ def get_extra_script_command(command, module, requirements, port=8067, blog_list
     if script is None:
         raise Exception("unexpected command: " + command)
     else:
-        return private_script_replacements(script, module, requirements, port)
+        return private_script_replacements(script, module, requirements, port, default_engine_paths=default_engine_paths)
 
 
-def get_script_module(command, platform=sys.platform, blog_list=None):
+def get_script_module(command, platform=sys.platform, blog_list=None,
+                      default_engine_paths=None):
     """
     produces a script which runs the notebook, a documentation server, which
     publishes...
 
-    @param  command         command to run (*blog*)
-    @param  platform        platform (only Windows)
-    @param  blog_list       list of blog to listen for this module (usually stored in ``module.__blog__``)
-    @return                 scripts
+    @param      command                 command to run (*blog*)
+    @param      platform                platform (only Windows)
+    @param      blog_list               list of blog to listen for this module (usually stored in ``module.__blog__``)
+    @param      default_engine_paths    define the default location for python engine, should be dictionary *{ engine: path }*, see below.
+    @return                             scripts
 
     The available list of commands is given by function @see fn process_standard_options_for_setup.
     """
@@ -220,7 +244,7 @@ def get_script_module(command, platform=sys.platform, blog_list=None):
             if "<body>" not in list_xml:
                 raise ValueError("Wrong XML format:\n{0}".format(list_xml))
             script = [("auto_rss_list.xml", list_xml)]
-            script.append( ("auto_rss_server.py", prefix_setup + """
+            script.append(("auto_rss_server.py", prefix_setup + """
                         from pyquickhelper.pycode.blog_helper import rss_update_run_server
                         rss_update_run_server("auto_rss_database.db3", "auto_rss_list.xml")
                         """.replace("                        ", "")))
@@ -234,8 +258,10 @@ def get_script_module(command, platform=sys.platform, blog_list=None):
         if isinstance(item, tuple):
             ext = os.path.splitext(item[0])
             if ext == ".py":
-                s = private_script_replacements(item[1], None, None, None)
+                s = private_script_replacements(
+                    item[1], None, None, None, default_engine_paths=default_engine_paths)
                 script[i] = (item[0], s)
         else:
-            script[i] = private_script_replacements(item, None, None, None)
+            script[i] = private_script_replacements(
+                item, None, None, None, default_engine_paths=default_engine_paths)
     return script

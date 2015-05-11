@@ -5,7 +5,6 @@
 
 import os
 import re
-import sys
 from queue import Empty
 
 from IPython.nbformat.v3 import NotebookNode
