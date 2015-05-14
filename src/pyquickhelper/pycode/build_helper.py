@@ -12,6 +12,9 @@ from .windows_scripts import windows_publish, windows_publish_doc, windows_pypi,
 from .windows_scripts import windows_prefix_27, windows_unittest27, copy_dist_to_local_pypi
 from .windows_scripts import windows_any_setup_command, windows_blogpost
 
+#: nick name for no folder
+_default_nofolder = "__NOFOLDERSHOULDNOTEXIST__"
+
 
 def choose_path(*paths):
     """
@@ -23,14 +26,16 @@ def choose_path(*paths):
     for path in paths:
         if os.path.exists(path):
             return path
-    raise FileNotFoundError("not path exist in: " + ", ".join(paths))
+    if paths[-1] != _default_nofolder:
+        raise FileNotFoundError("not path exist in: " + ", ".join(paths))
+    return _default_nofolder
 
 #: default values, to be replaced in the build script
 default_values = {
     "windows": {
-        "__PY34__": choose_path("c:\\Python34", "."),
-        "__PY34_X64__": choose_path("c:\\Python34_x64", "c:\\Anaconda3", "."),
-        "__PY27_X64__": choose_path("c:\\Python27_x64", "c:\\Anaconda2", "c:\\Anaconda", "."),
+        "__PY34__": choose_path("c:\\Python34", _default_nofolder),
+        "__PY34_X64__": choose_path("c:\\Python34_x64", "c:\\Anaconda3", _default_nofolder),
+        "__PY27_X64__": choose_path("c:\\Python27_x64", "c:\\Anaconda2", "c:\\Anaconda", _default_nofolder),
     },
 }
 
