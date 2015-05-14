@@ -77,18 +77,19 @@ def post_process_latex_output_any(file):
         f.write(content)
 
 
-def post_process_rst_output(file, html, pdf, python, slides):
+def post_process_rst_output(file, html, pdf, python, slides, is_notebook=False):
     """
     process a RST file generated from the conversion of a notebook
 
-    @param      file        filename
-    @param      pdf         if True, add a link to the PDF, assuming it will exists at the same location
-    @param      html        if True, add a link to the HTML conversion
-    @param      python      if True, add a link to the Python conversion
-    @param      slides      if True, add a link to the slides conversion
+    @param      file            filename
+    @param      pdf             if True, add a link to the PDF, assuming it will exists at the same location
+    @param      html            if True, add a link to the HTML conversion
+    @param      python          if True, add a link to the Python conversion
+    @param      slides          if True, add a link to the slides conversion
+    @param      is_notebook     does something more if the file is a notebook
 
     .. versionchanged:: 1.1
-        Parameter *slides* was added;
+        Parameters *slides*, *is_notebook* were added.
     """
     fLOG("    post_process_rst_output", file)
 
@@ -244,6 +245,18 @@ def post_process_rst_output(file, html, pdf, python, slides):
 
     if i < len(lines):
         del lines[i:]
+
+    # specific treatement for notebooks
+    if is_notebook:
+        # change links <#Alink --> <#alink
+        reg = re.compile("(<#[A-Z][a-zA-Z0-9_+-]+>)")
+        for i, line in enumerate(lines):
+            r = reg.search(line)
+            if r:
+                memo = r.groups()[0]
+                new_memo = "<#" + memo[2].lower() + memo[3:]
+                line = line.replace(memo, new_memo)
+                lines[i] = line
 
     with open(file, "w", encoding="utf8") as f:
         f.write("".join(lines))

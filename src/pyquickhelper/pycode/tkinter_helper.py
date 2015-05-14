@@ -40,19 +40,20 @@ def fix_tkinter_issues_virtualenv():
         raise FileNotFoundError("unable to find any folder starting with {0} in {1}\nLIST:\n{2}".format(
             prefix, where, ", ".join(lst)))
 
-    if "TCL_LIBRARY" not in os.environ:
-        loc = location()
-        p = look_for(loc, "tcl")
-        os.environ["TCL_LIBRARY"] = p
+    if sys.platform.startswith("win"):
+        if "TCL_LIBRARY" not in os.environ:
+            loc = location()
+            p = look_for(loc, "tcl")
+            os.environ["TCL_LIBRARY"] = p
 
-    if "TK_LIBRARY" not in os.environ:
-        loc = location()
-        p = look_for(loc, "tk")
-        os.environ["TK_LIBRARY"] = p
+        if "TK_LIBRARY" not in os.environ:
+            loc = location()
+            p = look_for(loc, "tk")
+            os.environ["TK_LIBRARY"] = p
 
-    if "TIX_LIBRARY" not in os.environ:
-        loc = location()
-        p = look_for(loc, "tix")
-        os.environ["TIX_LIBRARY"] = p
+        if "TIX_LIBRARY" not in os.environ:
+            loc = location()
+            p = look_for(loc, "tix")
+            os.environ["TIX_LIBRARY"] = p
 
-    return os.environ["TCL_LIBRARY"], os.environ["TK_LIBRARY"], os.environ["TIX_LIBRARY"]
+    return os.environ.get("TCL_LIBRARY", None), os.environ.get("TK_LIBRARY", None), os.environ.get("TIX_LIBRARY", None)

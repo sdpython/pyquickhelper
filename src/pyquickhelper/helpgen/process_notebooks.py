@@ -482,7 +482,8 @@ def add_link_to_notebook(file, nb, pdf, html, python, slides):
         post_process_latex_output(file, True)
         return res
     elif ext == ".rst":
-        post_process_rst_output(file, html, pdf, python, slides)
+        post_process_rst_output(
+            file, html, pdf, python, slides, is_notebook=True)
         return res
     else:
         raise HelpGenException(
