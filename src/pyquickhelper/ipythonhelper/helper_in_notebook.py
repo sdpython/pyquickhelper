@@ -77,28 +77,69 @@ def set_notebook_name_theNotebook():
     return get_name()
 
 
-def add_notebook_menu(menu_id="my_id_menu_nb"):
+def add_notebook_menu(menu_id="my_id_menu_nb", raw=False, format="html"):
     """
     add javascript and HTML to the notebook which gathers all in the notebook and builds a menu
 
     @param      menu_id     menu_id
-    @return                 javascript
+    @param      raw         raw HTML and Javascript
+    @param      format      *html* or *rst*
+    @return                 HTML object
+    
+    In a notebook, it is easier to do by using a magic command 
+    ``%%html`` for the HTML and another one
+    ``%%javascript`` for the Javascript.
+    This function returns a full text with HTML and
+    Javascript.
+    
+    If the format is RST, the menu can be copied/pasted in a text cell.
     """
-    html = '<div id="{0}">menu to be replaced</div>'.format(menu_id)
-    js = """
-        var anchors = document.getElementsByClassName("anchor-link");
-        var menu = document.getElementById("__MENUID__");
-        menu.innerHTML="r";
-        var i;
-        var text_menu = "<ul>";
-        for (i = 0; i < anchors.length; i++) {
-            var title = anchors[i].parentNode.textContent;
-            title = title.substring(0,title.length-1);
-            var href = anchors[i].href.split('#')[1];
-            text_menu += '<li><a href="#' + href + '">' + title + '</a></li>';
-        }
-        menu.innerHTML=text_menu;
-        """.replace("        ", "").replace("__MENUID__", menu_id)
+    if format == "html":
+        html = '<div id="{0}">run previous cell</div>'.format(menu_id)
+        js = """
+            var anchors = document.getElementsByClassName("anchor-link");
+            var menu = document.getElementById("__MENUID__");
+            menu.innerHTML="r";
+            var i;
+            var text_menu = "<ul>";
+            for (i = 0; i < anchors.length; i++) {
+                var title = anchors[i].parentNode.textContent;
+                title = title.substring(0,title.length-1);
+                var href = anchors[i].href.split('#')[1];
+                text_menu += '<li><a href="#' + href + '">' + title + '</a></li>';
+            }
+            text_menu += "</ul>"
+            menu.innerHTML=text_menu;
+            """.replace("        ", "").replace("__MENUID__", menu_id)
 
-    display_html(HTML(html))
-    return Javascript(js)
+        full = "{0}\n<script>{1}</script>".format(html, js)
+        if raw:
+            return full
+        else:
+            return HTML(full)
+    elif format == "rst":
+        html = '<div id="{0}">run previous cell</div>'.format(menu_id)
+        js = """
+            var anchors = document.getElementsByClassName("anchor-link");
+            var menu = document.getElementById("__MENUID__");
+            menu.innerHTML="r";
+            var i;
+            var text_menu = "<pre>";
+            for (i = 0; i < anchors.length; i++) {
+                var title = anchors[i].parentNode.textContent;
+                title = title.substring(0,title.length-1);
+                var href = anchors[i].href.split('#')[1];
+                text_menu += '* [' + title + '](#' + href + ')\\n';
+            }
+            text_menu += "</pre>"
+            menu.innerHTML=text_menu;
+            """.replace("        ", "").replace("__MENUID__", menu_id)
+
+        full = "{0}\n<script>{1}</script>".format(html, js)
+        if raw:
+            return full
+        else:
+            return HTML(full)
+    else:
+        raise ValueError("format must be html or rst")
+        

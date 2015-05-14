@@ -15,3 +15,12 @@
         
     You can see what it looks like in notebook
     :ref:`exempleoffixmenurst`.
+    The trick consists in running::
+    
+        from pyquickhelper.ipythonhelper import add_notebook_menu
+        add_notebook_menu(format="rst")
+        
+    The menu can be then copy pasted into a text cell.
+    It won't be refreshed anymore but it will be converted 
+    as part of the notebook into RST, HTML or slides format.
+    
