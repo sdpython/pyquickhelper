@@ -116,10 +116,14 @@ def add_notebook_menu(menu_id="my_id_menu_nb", raw=False, format="html", level="
             var menu = document.getElementById("__MENUID__");
             var i;
             var text_menu = "<ul>";
+            var href;
             for (i = 0; i < anchors.length; i++) {
                 var title = anchors[i].textContent;
                 title = title.substring(0,title.length-1);
-                var href = anchors[i].id;
+                if (anchors[i].hasAttribute("id"))
+                    href = anchors[i].id;
+                else
+                    href = anchors[i].parentNode.id;
                 text_menu += __FORMAT__;
             }
             text_menu += "</ul>"

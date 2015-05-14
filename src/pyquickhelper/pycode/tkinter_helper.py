@@ -6,6 +6,9 @@
 """
 import os
 import sys
+import warnings
+
+_first_execution = False
 
 
 def fix_tkinter_issues_virtualenv():
@@ -16,16 +19,18 @@ def fix_tkinter_issues_virtualenv():
     We try to deal with the following issue on Linux::
 
         _tkinter.TclError: no display name and no $DISPLAY
-        
+
     On Linux, the solution is to run::
-    
+
             import matplotlib as mpl
-            mpl.use('Agg')    
-            
+            mpl.use('Agg')
+
     But it does not work if matplotlib was already imported.
-    That's it is recommended to delay its import 
+    It is recommended to delay its import
     whenever it is possible.
     """
+    global _first_execution
+
     def location():
         import numpy
         site = os.path.dirname(os.path.join(os.path.abspath(numpy.__file__)))
@@ -72,10 +77,14 @@ def fix_tkinter_issues_virtualenv():
         # if "DISPLAY" not in os.environ:
         #    os.environ["DISPLAY"] = ':10.0'
         if "matplotlib" in sys.modules:
-            warnings.warn("cannot fix matplotlivb display because it was already imported")
+            if _first_execution:
+                warnings.warn(
+                    "cannot fix matplotlib display because it was already imported")
         else:
             import matplotlib as mpl
             mpl.use('Agg')
+
+    _first_execution = False
 
     return os.environ.get("TCL_LIBRARY", None), os.environ.get("TK_LIBRARY", None), \
         os.environ.get("TIX_LIBRARY", None), os.environ.get("DISPLAY", None)
