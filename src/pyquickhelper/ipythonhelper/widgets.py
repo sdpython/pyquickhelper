@@ -1,8 +1,8 @@
 """
 @file
 @brief To add interactive widgets in a notebook and connect it to Python function,
-souce: https://github.com/jakevdp/ipywidgets, the module was modified for Python 3
-
+Source: https://github.com/jakevdp/ipywidgets, the module was modified for Python 3
+See notebook :ref:`havingaforminanotebookrst`.
 
 Copyright (c) 2013, Jake Vanderplas
 All rights reserved.
@@ -31,6 +31,9 @@ LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
 ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+
+.. versionadded:: 1.1
 """
 
 import copy

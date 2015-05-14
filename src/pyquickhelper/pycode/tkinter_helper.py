@@ -15,10 +15,19 @@ def fix_tkinter_issues_virtualenv():
     def location():
         import numpy
         site = os.path.dirname(os.path.join(os.path.abspath(numpy.__file__)))
-        site = os.path.join(site, "..", "..", "..", "tcl")
-        if not os.path.exists(site):
-            mes = ", ".join(os.listdir(os.path.join(site, "..")))
-            raise FileNotFoundError("unable to find: {0},\nsubfolders: {1}".format(site, mes))
+        rev = os.path.join(site, "..", "..", "..")
+        if os.platform.startswith("win"):
+            site = os.path.join(rev, "tcl")
+            if not os.path.exists(site):
+                mes = ", ".join(os.listdir(rev))
+                raise FileNotFoundError(
+                    "unable to find: {0},\nsubfolders: {1}".format(site, mes))
+        else:
+            site = os.path.join(rev, "..", "tcl")
+            if not os.path.exists(site):
+                mes = ", ".join(os.listdir(os.path.join(rev, "..")))
+                raise FileNotFoundError(
+                    "unable to find: {0},\nsubfolders: {1}".format(site, mes))
         return os.path.normpath(site)
 
     def look_for(where, prefix):

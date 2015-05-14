@@ -77,6 +77,8 @@ Versions / Changes
       see :func:`process_standard_options_for_setup <pyquickhelper.pycode.setup_helper.process_standard_options_for_setup>`
     * **add:** add format *slides* when converting a notebook
     * **add:** add function :func:`write_module_scripts <pyquickhelper.pycode.setup_helper.write_module_scripts>` which writes some helpful scripts
+    * **add:** form interacting with Python functions in a notebook, 
+      see notebook :ref:`havingaforminanotebookrst`.
 * **1.0 - 2015/04/21**
     * **new:** function to run a notebook end to end :func:`run_notebook <pyquickhelper.ipythonhelper.notebook_helper.run_notebook>`
     * **change:** function :func:`str_to_datetime <pyquickhelper.loghelper.convert_helper.str_to_datetime>` implicitely handles more formats

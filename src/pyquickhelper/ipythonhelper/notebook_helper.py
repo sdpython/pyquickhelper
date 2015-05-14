@@ -153,32 +153,6 @@ def run_notebook(filename,
         return out.getvalue()
 
 
-def set_notebook_name_theNotebook():
-    """
-    This function must be called from the notebook
-    you want to know the name. It relies on
-    a javascript piece of code. It populates
-    the variable ``theNotebook`` with the notebook name.
-
-    This solution was found at
-    `How to I get the current IPython Notebook name <http://stackoverflow.com/questions/12544056/how-to-i-get-the-current-ipython-notebook-name>`_.
-
-    The function can be called in a cell.
-    The variable ``theNotebook`` will be available in the next cells.
-
-    .. versionadded:: 1.1
-    """
-    code = """var kernel = IPython.notebook.kernel;
-              var body = document.body, attribs = body.attributes;
-              var command = "theNotebook = " + "'"+attribs['data-notebook-name'].value+"'";
-              kernel.execute(command);""".replace("              ", "")
-
-    def get_name():
-        from IPython.core.display import Javascript, display
-        display(Javascript(code))
-    return get_name()
-
-
 def execute_notebook_list(folder,
                           notebooks,
                           clean_function=None,
@@ -207,7 +181,6 @@ def execute_notebook_list(folder,
         def clean_function(cell) : return new_cell_content
 
     .. versionadded:: 1.1
-
     """
     if additional_path is None:
         additional_path = []
