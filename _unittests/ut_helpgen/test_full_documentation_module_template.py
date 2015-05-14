@@ -1,5 +1,5 @@
 """
-@brief      test log(time=40s)
+@brief      test log(time=80s)
 @author     Xavier Dupre
 """
 import os
@@ -69,43 +69,68 @@ class TestSphinxDocFull (unittest.TestCase):
             f.write("\n".join(lines))
 
         # test
-        generate_help_sphinx(var, module_name=var, root=root,
-                             layout=["pdf", "html"],
-                             extra_ext=["tohelp"],
-                             from_repo=False,
-                             use_run_cmd=True)
+        for i in range(0, 2):
+            fLOG("\n")
+            fLOG("\n")
+            fLOG("\n")
+            fLOG("#################################################", i)
+            fLOG("#################################################", i)
+            fLOG("#################################################", i)
 
-        files = [os.path.join(root, "_doc", "sphinxdoc", "build", "html", "index.html"),
-                 os.path.join(
-            root, "_doc", "sphinxdoc", "build", "html", "all_example.html"),
-            os.path.join(
-            root, "_doc", "sphinxdoc", "build", "html", "all_indexes.html"),
-            os.path.join(
-            root, "_doc", "sphinxdoc", "build", "html", "all_notebooks.html"),
-        ]
-        for f in files:
-            if not os.path.exists(f):
-                raise FileNotFoundError(f)
+            if "conf" in sys.modules:
+                del sys.modules["conf"]
 
-        assert not os.path.exists(os.path.join(temp, "_doc"))
+            generate_help_sphinx(var, module_name=var, root=root,
+                                 layout=["pdf", "html"],
+                                 extra_ext=["tohelp"],
+                                 from_repo=False,
+                                 use_run_cmd=True)
 
-        rss = os.path.join(
-            root, "_doc", "sphinxdoc", "source", "blog", "rss.xml")
-        with open(rss, "r", encoding="utf8") as f:
-            content_rss = f.read()
+            files = [os.path.join(root, "_doc", "sphinxdoc", "build", "html", "index.html"),
+                     os.path.join(
+                root, "_doc", "sphinxdoc", "build", "html", "all_example.html"),
+                os.path.join(
+                root, "_doc", "sphinxdoc", "build", "html", "all_indexes.html"),
+                os.path.join(
+                root, "_doc", "sphinxdoc", "build", "html", "all_notebooks.html"),
+            ]
+            for f in files:
+                if not os.path.exists(f):
+                    raise FileNotFoundError(f)
 
-        assert "__BLOG_ROOT__" not in content_rss
-        # this should be replaced when uploading the stream onto the website
-        # the website is unknown when producing the documentation
-        # it should be resolved when uploading (the documentation could be
-        # uploaded at different places)
+            assert not os.path.exists(os.path.join(temp, "_doc"))
 
-        # checks some links were processed
-        fhtml = os.path.join(temp, "python3_module_template-master",
-                             "_doc", "sphinxdoc", "build", "html", "index.html")
-        with open(fhtml, "r", encoding="utf8") as f:
-            content = f.read()
-        assert '<td><a class="reference internal" href="index_ext-tohelp.html#ext-tohelp"><span>ext-tohelp</span></a></td>' in content
+            rss = os.path.join(
+                root, "_doc", "sphinxdoc", "source", "blog", "rss.xml")
+            with open(rss, "r", encoding="utf8") as f:
+                content_rss = f.read()
+
+            assert "__BLOG_ROOT__" not in content_rss
+            # this should be replaced when uploading the stream onto the website
+            # the website is unknown when producing the documentation
+            # it should be resolved when uploading (the documentation could be
+            # uploaded at different places)
+
+            # checks some links were processed
+            fhtml = os.path.join(temp, "python3_module_template-master",
+                                 "_doc", "sphinxdoc", "build", "html", "index.html")
+            with open(fhtml, "r", encoding="utf8") as f:
+                content = f.read()
+            assert '<td><a class="reference internal" href="index_ext-tohelp.html#ext-tohelp"><span>ext-tohelp</span></a></td>' in content
+
+            # checks some links were processed
+            fhtml = os.path.join(temp, "python3_module_template-master",
+                                 "_doc", "sphinxdoc", "build", "html", "all_notebooks.html")
+            with open(fhtml, "r", encoding="utf8") as f:
+                content = f.read()
+            assert '<a href="notebooks/custom_notebooks.html" title="Custom Notebooks"' in content
+
+            # checks some links were processed
+            fhtml = os.path.join(temp, "python3_module_template-master",
+                                 "_doc", "sphinxdoc", "source", "all_notebooks.rst")
+            with open(fhtml, "r", encoding="utf8") as f:
+                content = f.read()
+            assert 'notebooks/custom_notebooks' in content
 
 if __name__ == "__main__":
     unittest.main()

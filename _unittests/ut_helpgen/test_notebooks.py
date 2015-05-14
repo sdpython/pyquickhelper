@@ -91,9 +91,9 @@ class TestNotebookConversion (unittest.TestCase):
             formats=formats)
         for _ in res:
             fLOG(_)
-            assert os.path.exists(_)
+            assert os.path.exists(_[0])
 
-        fou = [os.path.split(_)[-1] for _ in res]
+        fou = [os.path.split(_[0])[-1] for _ in res]
         fou = [_ for _ in fou if "png" not in _]
         fou = list(sorted(set(fou)))
         exp = list(sorted(set(exp)))
@@ -110,7 +110,7 @@ class TestNotebookConversion (unittest.TestCase):
                         str(exp)))
 
         file = os.path.join(temp, "all_notebooks.rst")
-        add_notebook_page(res, file)
+        add_notebook_page([ _[0] for _ in res], file)
         assert os.path.exists(file)
 
         with open(os.path.join(temp, "example_pyquickhelper.rst"), "r", encoding="utf8") as f:

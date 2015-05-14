@@ -89,7 +89,7 @@ def clean_space_for_setup(file_or_folder):
     return rem
 
 
-def standard_help_for_setup(file_or_folder, project_var_name, module_name=None):
+def standard_help_for_setup(file_or_folder, project_var_name, module_name=None, extra_ext=None):
     """
     standard function to generate help assuming they follow the same design
     as *pyquickhelper*
@@ -97,8 +97,12 @@ def standard_help_for_setup(file_or_folder, project_var_name, module_name=None):
     @param      file_or_folder      file ``setup.py`` or folder which contains it
     @param      project_var_name    display name of the module
     @param      module_name         module name, None if equal to *project_var_name* (``import <module_name>``)
+    @param      extra_ext           extra file extension to process (ex ``["doc"]``)
 
     The function outputs some information through function @see fn fLOG.
+
+    A page will be added for each extra file extension mentioned in *extra_ext* if
+    some of these were found.
     """
     if "--help" in sys.argv:
         print(get_help_usage())
@@ -121,13 +125,13 @@ def standard_help_for_setup(file_or_folder, project_var_name, module_name=None):
         if sys.platform.startswith("win"):
             generate_help_sphinx(project_name, module_name=module_name,
                                  layout=["html", "pdf"],
-                                 extra_ext=["doc"])
+                                 extra_ext=extra_ext)
         else:
             # unable to test latex conversion due to adjustbox.sty missing
             # package
             generate_help_sphinx(project_name, nbformats=["ipynb", "html", "python", "rst"],
                                  module_name=project_var_name,
-                                 extra_ext=["doc"])
+                                 extra_ext=extra_ext)
 
 
 def run_unittests_for_setup(file_or_folder):
@@ -195,7 +199,8 @@ def process_standard_options_for_setup(argv,
                                        requirements=None,
                                        port=8067,
                                        blog_list=None,
-                                       default_engine_paths=None):
+                                       default_engine_paths=None,
+                                       extra_ext=None):
     """
     process the standard options the module pyquickhelper is
     able to process assuming the module which calls this function
@@ -222,6 +227,7 @@ def process_standard_options_for_setup(argv,
     @param      port                    port for the local pipy server
     @param      blog_list               list of blog to listen for this module (usually stored in ``module.__blog__``)
     @param      default_engine_paths    define the default location for python engine, should be dictionary *{ engine: path }*, see below.
+    @param      extra_ext               extra file extension to process (add a page for each of them, ex ``["doc"]``)
     @return                             True (an option was processed) or False,
                                         the file ``setup.py`` should call function ``setup``
 
@@ -246,29 +252,36 @@ def process_standard_options_for_setup(argv,
         rem = clean_space_for_setup(file_or_folder)
         print("number of impacted files", len(rem))
         return True
+
     elif "write_version" in argv:
         write_version_for_setup(file_or_folder)
         return True
+
     elif "clean_pyd" in sys.argv:
         clean_space_for_setup(file_or_folder)
         return True
+
     elif "build_sphinx" in sys.argv:
         standard_help_for_setup(
-            file_or_folder, project_var_name, module_name=module_name)
+            file_or_folder, project_var_name, module_name=module_name, extra_ext=extra_ext)
         return True
+
     elif "unittests" in sys.argv:
         main_wrapper_tests(file_or_folder)
         return True
+
     elif "unittests_LONG" in sys.argv:
         def skip_long(name, code):
             return "test_LONG_" not in name
         main_wrapper_tests(file_or_folder, skip_function=skip_long)
         return True
+
     elif "unittests_SKIP" in sys.argv:
         def skip_skip(name, code):
             return "test_LONG_" not in name
         main_wrapper_tests(file_or_folder, skip_function=skip_skip)
         return True
+
     elif "build_script" in sys.argv:
 
         # script running setup.py
@@ -329,6 +342,7 @@ def process_standard_options_for_setup(argv,
         py3to2_convert_tree(
             root, dest, unittest_modules=unittest_modules, pattern_copy=pattern_copy)
         return True
+
     elif "test_local_pypi" in sys.argv:
         url = "http://localhost:{0}/".format(port)
         content = get_url_content_timeout(url, timeout=5)
@@ -336,6 +350,7 @@ def process_standard_options_for_setup(argv,
             raise Exception("test failed for url: " + url)
         print(content)
         return True
+
     else:
         return False
 

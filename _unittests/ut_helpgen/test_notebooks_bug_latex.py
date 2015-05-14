@@ -1,5 +1,5 @@
 """
-@brief      test log(time=30s)
+@brief      test log(time=19s)
 @author     Xavier Dupre
 """
 
@@ -51,7 +51,7 @@ class TestNoteBooksBugLatex(unittest.TestCase):
         fLOG("*****", len(res))
         for _ in res:
             fLOG(_)
-            assert os.path.exists(_)
+            assert os.path.exists(_[0])
 
 
 if __name__ == "__main__":

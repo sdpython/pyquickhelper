@@ -346,19 +346,22 @@ def generate_help_sphinx(project_var_name,
             notebook_dir, pattern=".*[.]ipynb", fullname=True)[1]
         notebooks = [_ for _ in notebooks if "checkpoint" not in _]
         if len(notebooks) > 0:
+            fLOG("*******************************************")
             fLOG("**** notebooks", nbformats)
+            fLOG("*******************************************")
             build = os.path.join(root, "build", "notebooks")
             if not os.path.exists(build):
                 os.makedirs(build)
             if not os.path.exists(notebook_doc):
                 os.mkdir(notebook_doc)
-            nbs = process_notebooks(notebooks,
-                                    build=build,
-                                    outfold=notebook_doc,
-                                    formats=nbformats,
-                                    latex_path=latex_path,
-                                    pandoc_path=pandoc_path)
-            nbs = list(set(nbs))
+            nbs_all = process_notebooks(notebooks,
+                                        build=build,
+                                        outfold=notebook_doc,
+                                        formats=nbformats,
+                                        latex_path=latex_path,
+                                        pandoc_path=pandoc_path)
+            nbs = list(set(_[0] for _ in nbs_all))
+            fLOG("*******NB, add:", nbs)
             add_notebook_page(
                 nbs, os.path.join(notebook_doc, "..", "all_notebooks.rst"))
 

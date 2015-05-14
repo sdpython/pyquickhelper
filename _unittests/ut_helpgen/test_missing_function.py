@@ -23,7 +23,7 @@ except ImportError:
     import src
 
 from src.pyquickhelper.loghelper.flog import fLOG
-from src.pyquickhelper.helpgen.utils_sphinx_config import ie_layout_html, NbImage
+from src.pyquickhelper.helpgen.utils_sphinx_config import ie_layout_html, NbImage, fix_ie_layout_html
 
 
 class TestMissingFunction(unittest.TestCase):
@@ -37,8 +37,13 @@ class TestMissingFunction(unittest.TestCase):
         if "travis" in sys.executable:
             return
 
+        if not ie_layout_html():
+            fLOG("updating layout.html")
+            r = fix_ie_layout_html()
+            assert r
+
         try:
-            ie_layout_html()
+            assert ie_layout_html()
         except AttributeError:
             return
 

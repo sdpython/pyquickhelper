@@ -56,7 +56,7 @@ def process_notebooks(notebooks,
     @param      pandoc_path path to pandoc
     @param      formats     list of formats to convert into (pdf format means latex then compilation)
     @param      latex_path  path to the latex compiler
-    @return                 created files
+    @return                 list of tuple *[(file, created or skipped)]*
 
     This function relies on `pandoc <http://johnmacfarlane.net/pandoc/index.html>`_.
     It also needs modules `pywin32 <http://sourceforge.net/projects/pywin32/>`_,
@@ -95,7 +95,7 @@ def process_notebooks(notebooks,
         Assumes IPython 3 is installed. It might no work for earlier versions.
 
     .. versionchanged:: 1.1
-        Add format slides.
+        Add format slides. Return type was changed.
     """
     if pandoc_path is None:
         pandoc_path = find_pandoc_path()
@@ -159,6 +159,7 @@ def process_notebooks(notebooks,
 
     cmd = '{0} nbconvert --to {1} "{2}"{5} --output="{3}/{4}"'
     files = []
+    skipped = []
 
     if "WinPython" in sys.executable:
         # pip, or any program in Scripts cannot find python.exe
@@ -194,11 +195,13 @@ def process_notebooks(notebooks,
                     if trueoutputfile not in thisfiles:
                         thisfiles.append(trueoutputfile)
                     if pandoco is None:
+                        skipped.append(trueoutputfile)
                         continue
                     else:
                         out2 = os.path.splitext(
                             trueoutputfile)[0] + "." + pandoco
                         if os.path.exists(out2):
+                            skipped.append(trueoutputfile)
                             continue
 
             # next
@@ -399,7 +402,7 @@ def process_notebooks(notebooks,
 
             if not os.path.exists(dest):
                 raise FileNotFoundError(dest)
-        copy.append(dest)
+        copy.append((dest, True))
 
     # image
     for image in os.listdir(build):
@@ -427,13 +430,13 @@ def process_notebooks(notebooks,
 
             if not os.path.exists(dest):
                 raise FileNotFoundError(dest)
-            copy.append(dest)
+            copy.append((dest, True))
 
     # for the distribution WinPython
     if path_modified:
         os.environ["PATH"] = keep_path
 
-    return copy
+    return copy + [(_, False) for _ in skipped]
 
 
 def add_link_to_notebook(file, nb, pdf, html, python, slides):

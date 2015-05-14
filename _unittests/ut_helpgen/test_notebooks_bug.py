@@ -1,5 +1,5 @@
 """
-@brief      test log(time=60s)
+@brief      test log(time=65s)
 @author     Xavier Dupre
 """
 
@@ -80,7 +80,7 @@ class TestNoteBooksBug(unittest.TestCase):
         fLOG("*****", len(res))
         for _ in res:
             fLOG(_)
-            assert os.path.exists(_)
+            assert os.path.exists(_[0])
 
         check = os.path.join(temp, "td1a_correction_session4.tex")
         with open(check, "r", encoding="utf8") as f:
@@ -111,7 +111,7 @@ class TestNoteBooksBug(unittest.TestCase):
         fLOG("*****", len(res))
         for _ in res:
             fLOG(_)
-            assert os.path.exists(_)
+            assert os.path.exists(_[0])
 
         check = os.path.join(temp, "td1a_correction_session4.tex")
         with open(check, "r", encoding="utf8") as f:
