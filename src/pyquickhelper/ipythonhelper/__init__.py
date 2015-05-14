@@ -11,3 +11,4 @@ from .kindofcompletion import AutoCompletion
 from .html_forms import open_html_form
 from .interact import StaticInteract
 from .widgets import RangeWidget, DropDownWidget, RadioWidget
+from .helper_in_notebook import store_notebook_path

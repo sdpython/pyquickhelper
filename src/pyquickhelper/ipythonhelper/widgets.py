@@ -95,8 +95,8 @@ class RangeWidget(StaticWidget):
     """
     Range (slider) widget
 
-    The class overloads :meth:`html <pyquickhelper.ipythonhelper.widgets.RangeWidget.html>` 
-    and @see me values.
+    The class overloads :meth:`html <pyquickhelper.ipythonhelper.widgets.RangeWidget.html>`
+    and :meth:`values <pyquickhelper.ipythonhelper.widgets.RangeWidget.values>`.
     """
     slider_html = ('<b>{name}:</b> <input type="range" name="{name}" '
                    'min="{range[0]}" max="{range[1]}" step="{range[2]}" '
