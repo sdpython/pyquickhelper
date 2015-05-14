@@ -193,6 +193,6 @@ class StaticInteract(object):
 
     def _repr_html_(self):
         """
-        Synonym for @see me html.
+        Synonym for :meth:`html <pyquickhelper.ipythonhelper.interact.StaticInteract.html>`.
         """
         return self.html()
