@@ -60,10 +60,14 @@ def fix_tkinter_issues_virtualenv():
             p = look_for(loc, "tix")
             os.environ["TIX_LIBRARY"] = p
     else:
-        #if "DISPLAY" not in os.environ:
+        # if "DISPLAY" not in os.environ:
         #    os.environ["DISPLAY"] = ':10.0'
-        import matplotlib
-        matplotlib.use('Agg')
+        try:
+            import tkinter
+            tkinter.Tk()
+        except Exception as e:
+            import matplotlib as mpl
+            mpl.use('Agg')
 
     return os.environ.get("TCL_LIBRARY", None), os.environ.get("TK_LIBRARY", None), \
         os.environ.get("TIX_LIBRARY", None), os.environ.get("DISPLAY", None)

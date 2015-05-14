@@ -587,8 +587,8 @@ def main_wrapper_tests(codefile,
 
     # to deal with: _tkinter.TclError: no display name and no $DISPLAY
     # environment variable
-    import matplotlib as mpl
-    mpl.use('Agg')
+    from .tkinter_helper import fix_tkinter_issues_virtualenv
+    fix_tkinter_issues_virtualenv()
 
     if add_coverage:
         if report_folder is None:

@@ -255,6 +255,7 @@ def post_process_rst_output(file, html, pdf, python, slides, is_notebook=False):
             if r:
                 memo = r.groups()[0]
                 new_memo = "<#" + memo[2].lower() + memo[3:]
+                new_memo = new_memo.replace("+", "")
                 line = line.replace(memo, new_memo)
                 lines[i] = line
 
