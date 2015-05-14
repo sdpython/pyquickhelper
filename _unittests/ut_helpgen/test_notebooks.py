@@ -110,7 +110,7 @@ class TestNotebookConversion (unittest.TestCase):
                         str(exp)))
 
         file = os.path.join(temp, "all_notebooks.rst")
-        add_notebook_page([ _[0] for _ in res], file)
+        add_notebook_page([_[0] for _ in res], file)
         assert os.path.exists(file)
 
         with open(os.path.join(temp, "example_pyquickhelper.rst"), "r", encoding="utf8") as f:

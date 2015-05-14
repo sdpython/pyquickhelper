@@ -9,3 +9,5 @@ from .notebook_helper import run_notebook, upgrade_notebook, execute_notebook_li
 from .magic_parser import MagicCommandParser
 from .kindofcompletion import AutoCompletion
 from .html_forms import open_html_form
+from .interact import StaticInteract
+from .widgets import RangeWidget, DropDownWidget, RadioWidget
