@@ -243,9 +243,16 @@ class NotebookRunner(object):
                 outs = list()
                 continue
 
+            elif msg_type == 'comm_open' or msg_type == 'comm_msg':
+                # widgets in a notebook
+                out.data = content["data"]
+                out.comm_id = content["comm_id"]
+
             else:
+                dcontent = "\n".join("{0}={1}".format(k, v)
+                                     for k, v in sorted(content.items()))
                 raise NotImplementedError(
-                    'unhandled iopub message: %s' % msg_type)
+                    'unhandled iopub message: %s' % msg_type + "\nCONTENT:\n" + dcontent)
 
             outs.append(out)
 
