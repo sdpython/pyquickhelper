@@ -71,11 +71,11 @@ class TestGraphChanges (unittest.TestCase):
             ax.grid(True)
             ax.set_title("commits")
 
-        obj = compile(code, "", "exec")
         import tkinter
         if __name__ != "__main__":
             code = code.replace("plt.show", "#plt.show")
 
+        obj = compile(code, "", "exec")
         try:
             exec(obj, globals(), locals())
         except Exception as e:

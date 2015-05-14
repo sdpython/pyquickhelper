@@ -58,7 +58,7 @@ def generate_help_sphinx(project_var_name,
                          clean=True,
                          root=".",
                          filter_commit=lambda c: c.strip() != "documentation",
-                         extra_ext=[],
+                         extra_ext=None,
                          nbformats=[
                              "ipynb", "html", "python", "rst", "slides", "pdf"],
                          layout=[("html", "build", {})],
@@ -174,6 +174,8 @@ def generate_help_sphinx(project_var_name,
         Parameters *from_repo*, *use_run_cmd* were added.
 
     """
+    if extra_ext is None:
+        extra_ext = []
 
     def lay_build_override_newconf(t3):
         if isinstance(t3, str  # unicode#
