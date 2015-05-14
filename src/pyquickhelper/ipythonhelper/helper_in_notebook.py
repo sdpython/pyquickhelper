@@ -103,10 +103,16 @@ def add_notebook_menu(menu_id="my_id_menu_nb", raw=False, format="html", level="
     """
     html = '<div id="{0}">run previous cell, wait for 2 seconds</div>'.format(
         menu_id)
+
+    rst_level = "h" + str(int(level.strip("h")) - 1)
+
     js = """
         var update_menu = function() {
-
-            var anchors = document.getElementsByTagName("__LEVEL__");
+            var els = document.getElementsByClassName("sphinxsidebar");
+            var level;
+            if (els.length > 0) level = "__RSTLEVEL__";
+            else level = "__LEVEL__";
+            var anchors = document.getElementsByTagName(level);
             var menu = document.getElementById("__MENUID__");
             var i;
             var text_menu = "<ul>";
@@ -122,7 +128,8 @@ def add_notebook_menu(menu_id="my_id_menu_nb", raw=False, format="html", level="
         window.setTimeout(update_menu,2000);
         """.replace("        ", "") \
            .replace("__MENUID__", menu_id) \
-           .replace("__LEVEL__", level)
+           .replace("__LEVEL__", level) \
+           .replace("__RSTLEVEL__", rst_level)
 
     full = "{0}\n<script>{1}</script>".format(html, js)
 

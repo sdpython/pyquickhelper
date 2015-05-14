@@ -36,7 +36,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
 from collections import OrderedDict
 import itertools
-import matplotlib.pyplot as plt
 from IPython import get_ipython
 import base64
 
@@ -50,6 +49,10 @@ def _get_html(obj):
     png_rep = ip.display_formatter.formatters['image/png'](obj)
 
     if png_rep is not None:
+        # do not move this import to the root or
+        # you will be exposed to the issue mentioned by
+        # function fix_tkinter_issues_virtualenv
+        import matplotlib.pyplot as plt
         if isinstance(obj, plt.Figure):
             plt.close(obj)  # keep from displaying twice
         new_bytes = base64.b64encode(png_rep)
