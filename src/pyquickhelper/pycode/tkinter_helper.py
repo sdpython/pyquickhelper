@@ -12,6 +12,10 @@ def fix_tkinter_issues_virtualenv():
     """
     fix an issue which happens in a virtual environment,
     see `Fix Tcl inside a virtualenv on Windows <https://github.com/pypa/virtualenv/pull/627>`_
+
+    We try to deal with the following issue on Linux::
+
+        _tkinter.TclError: no display name and no $DISPLAY
     """
     def location():
         import numpy
@@ -55,5 +59,9 @@ def fix_tkinter_issues_virtualenv():
             loc = location()
             p = look_for(loc, "tix")
             os.environ["TIX_LIBRARY"] = p
+    else:
+        if "DISPLAY" not in os.environ:
+            os.environ["DISPLAY"] = ':10.0'
 
-    return os.environ.get("TCL_LIBRARY", None), os.environ.get("TK_LIBRARY", None), os.environ.get("TIX_LIBRARY", None)
+    return os.environ.get("TCL_LIBRARY", None), os.environ.get("TK_LIBRARY", None), \
+        os.environ.get("TIX_LIBRARY", None), os.environ.get("DISPLAY", None)

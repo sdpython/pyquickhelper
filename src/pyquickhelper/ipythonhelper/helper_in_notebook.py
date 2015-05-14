@@ -5,7 +5,7 @@
 .. versionadded:: 1.1
 """
 
-from IPython.display import Javascript
+from IPython.display import Javascript, HTML, display_html
 
 
 def store_notebook_path(name="theNotebook"):
@@ -75,3 +75,30 @@ def set_notebook_name_theNotebook():
         from IPython.core.display import Javascript, display
         display(Javascript(code))
     return get_name()
+
+
+def add_notebook_menu(menu_id="my_id_menu_nb"):
+    """
+    add javascript and HTML to the notebook which gathers all in the notebook and builds a menu
+
+    @param      menu_id     menu_id
+    @return                 javascript
+    """
+    html = '<div id="{0}">menu to be replaced</div>'.format(menu_id)
+    js = """
+        var anchors = document.getElementsByClassName("anchor-link");
+        var menu = document.getElementById("__MENUID__");
+        menu.innerHTML="r";
+        var i;
+        var text_menu = "<ul>";
+        for (i = 0; i < anchors.length; i++) {
+            var title = anchors[i].parentNode.textContent;
+            title = title.substring(0,title.length-1);
+            var href = anchors[i].href.split('#')[1];
+            text_menu += '<li><a href="#' + href + '">' + title + '</a></li>';
+        }
+        menu.innerHTML=text_menu;
+        """.replace("        ", "").replace("__MENUID__", menu_id)
+
+    display_html(HTML(html))
+    return Javascript(js)
