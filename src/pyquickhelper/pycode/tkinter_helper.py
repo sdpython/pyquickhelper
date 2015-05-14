@@ -5,6 +5,7 @@
 .. versionadded:: 1.1
 """
 import os
+import sys
 
 
 def fix_tkinter_issues_virtualenv():
@@ -16,7 +17,7 @@ def fix_tkinter_issues_virtualenv():
         import numpy
         site = os.path.dirname(os.path.join(os.path.abspath(numpy.__file__)))
         rev = os.path.join(site, "..", "..", "..")
-        if os.platform.startswith("win"):
+        if sys.platform.startswith("win"):
             site = os.path.join(rev, "tcl")
             if not os.path.exists(site):
                 mes = ", ".join(os.listdir(rev))
