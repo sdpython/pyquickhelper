@@ -122,15 +122,15 @@ class TestJenkinsExt(unittest.TestCase):
                  "actuariat_python [anaconda]"],
                 # code_beatrix
                 ("code_beatrix", "H H(14-15) * * 0"),
-                ["code_beatrix [winpython]",
-                 "code_beatrix [anaconda]"],
+                "code_beatrix [winpython]",
+                "code_beatrix [anaconda]",
                 # teachings
                 ("ensae_teaching_cs", "H H(15-16) * * 0"),
                 ["ensae_teaching_cs [winpython]",
                  "ensae_teaching_cs [anaconda]"],
                 "ensae_teaching_cs [custom_left]",
-                ["ensae_teaching_cs [winpython] [custom_left]",
-                 "ensae_teaching_cs [anaconda] [custom_left]", ],
+                "ensae_teaching_cs [winpython] [custom_left]",
+                "ensae_teaching_cs [anaconda] [custom_left]", 
                 # documentation
                 ("pyquickhelper [doc]", "H H(3-4) * * 1"),
                 ["pymyinstall [doc]", "pysqllike [doc]", "pymmails [doc]",
@@ -193,12 +193,18 @@ class TestJenkinsExt(unittest.TestCase):
                                        fLOG=fLOG, dependencies=dependencies,
                                        location="anything/")
         df_ = 0
+        reg = re.compile("<description>(.*)</description>")
         for i, r in enumerate(res):
-            fLOG(r)
             conf = r[-1]
 
             if "DF_" in conf:
                 df_ += 1
+                
+            search = reg.search(conf)
+            if not search:
+                raise Exception(conf)
+                
+            fLOG(search.groups()[0], r[0], r[1])
 
             if "__" in conf and "pyquickhelper_vir" not in conf:
                 raise Exception(conf)

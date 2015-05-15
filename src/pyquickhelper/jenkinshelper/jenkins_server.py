@@ -750,7 +750,7 @@ class JenkinsExt(jenkins.Jenkins):
 
             unit = 0
             new_dep = []
-            for job in jobs:
+            for i, job in enumerate(jobs):
                 unit += 1
 
                 if isinstance(job, tuple):
@@ -760,7 +760,8 @@ class JenkinsExt(jenkins.Jenkins):
                         dozen = chr(ord(dozen) + 1)
                 else:
                     scheduler = None
-                    order += 1
+                    if i == 0:
+                        order += 1
 
                 counts[dozen] = counts.get(dozen, 0) + 1
 
