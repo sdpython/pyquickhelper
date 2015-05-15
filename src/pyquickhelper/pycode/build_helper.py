@@ -10,7 +10,7 @@ import os
 from .windows_scripts import windows_error, windows_prefix, windows_setup, windows_build, windows_notebook
 from .windows_scripts import windows_publish, windows_publish_doc, windows_pypi, setup_script_dependency_py
 from .windows_scripts import windows_prefix_27, windows_unittest27, copy_dist_to_local_pypi
-from .windows_scripts import windows_any_setup_command, windows_blogpost
+from .windows_scripts import windows_any_setup_command, windows_blogpost, windows_docserver
 
 #: nick name for no folder
 _default_nofolder = "__NOFOLDERSHOULDNOTEXIST__"
@@ -227,6 +227,7 @@ def get_script_module(command, platform=sys.platform, blog_list=None,
             os.path.join(os.path.dirname(filename), "..", ".."))
         prefix_setup = """
                 import sys
+                import os
                 sys.path.append(r"{0}")
                 sys.path.append(r"{1}")
                 sys.path.append(r"{2}")
@@ -255,6 +256,24 @@ def get_script_module(command, platform=sys.platform, blog_list=None,
                         """.replace("                        ", "")))
             if platform.startswith("win"):
                 script.append("\n".join([windows_prefix, windows_blogpost]))
+    elif command == "doc":
+        script = []
+        script.append(("auto_doc_server.py", prefix_setup + """
+                    # address http://localhost:8079/
+                    from pyquickhelper import fLOG
+                    from pyquickhelper.serverdoc import run_doc_server, get_jenkins_mappings
+                    fLOG(OutputPrint=True)
+                    fLOG("running documentation server")
+                    thisfile = os.path.dirname(__file__)
+                    mappings = get_jenkins_mappings(os.path.join(thisfile, ".."))
+                    fLOG("goto", "http://localhost:8079/")
+                    for k,v in sorted(mappings.items()):
+                        fLOG(k,"-->",v)
+                    run_doc_server(None, mappings=mappings)
+                    """.replace("                    ", "")))
+        if platform.startswith("win"):
+            script.append("\n".join([windows_prefix, "rem http://localhost:8079/",
+                                     windows_docserver]))
     else:
         raise Exception("unable to interpret command: " + command)
 

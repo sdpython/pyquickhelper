@@ -131,6 +131,12 @@ class TestJenkinsExt(unittest.TestCase):
                 "ensae_teaching_cs [custom_left]",
                 ["ensae_teaching_cs [winpython] [custom_left]",
                  "ensae_teaching_cs [anaconda] [custom_left]", ],
+                # documentation
+                ("pyquickhelper [doc]", "H H(3-4) * * 1"),
+                ["pymyinstall [doc]", "pysqllike [doc]", "pymmails [doc]",
+                 "pyrsslocal [doc]", "pyensae [doc]"],
+                ["actuariat_python [doc]", "code_beatrix [doc]"],
+                "ensae_teachings_cs [doc]",
             ]
         else:
             modules = [  # update anaconda
@@ -160,6 +166,12 @@ class TestJenkinsExt(unittest.TestCase):
                 ["ensae_teaching_cs [anaconda]"],
                 "ensae_teaching_cs [custom_left]",
                 ["ensae_teaching_cs [anaconda] [custom_left]", ],
+                # documentation
+                ("pyquickhelper [doc]", "H H(3-4) * * 1"),
+                ["pymyinstall [doc]", "pysqllike [doc]", "pymmails [doc]",
+                 "pyrsslocal [doc]", "pyensae [doc]"],
+                ["actuariat_python [doc]", "code_beatrix [doc]"],
+                "ensae_teachings_cs [doc]",
             ]
 
         pythonexe = os.path.dirname(sys.executable)
@@ -202,7 +214,7 @@ class TestJenkinsExt(unittest.TestCase):
                     raise Exception(conf)
                 if "H H(8-9) * * 0" not in conf:
                     raise Exception(conf)
-                if "A00" not in conf:
+                if "A0101" not in conf:
                     raise Exception(conf)
                 if "github" in conf:
                     raise Exception(conf)
@@ -212,7 +224,7 @@ class TestJenkinsExt(unittest.TestCase):
                     raise Exception(conf)
                 if "H H(10-11) * * 0" not in conf:
                     raise Exception(conf)
-                if "B00" not in conf:
+                if "B0101" not in conf:
                     raise Exception(conf)
                 if "github" not in conf:
                     raise Exception(conf)
@@ -240,6 +252,10 @@ class TestJenkinsExt(unittest.TestCase):
 
             if "custom_left" in conf:
                 if "auto_cmd_any_setup_command.bat custom_left" not in conf:
+                    raise Exception(conf)
+
+            if ">F0" in conf:
+                if "auto_setup_build_sphinx.bat" not in conf:
                     raise Exception(conf)
 
         assert i > 0

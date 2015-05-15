@@ -37,6 +37,7 @@ Functionalities
     * helpers for ipython notebooks (upgrade, offline run)
     * parser to quickly add a magic command in a notebook
     * Sphinx directives to integrate a blogpost in the documentation
+    * mechanism to add forms in notebooks
 
 Design
 ------

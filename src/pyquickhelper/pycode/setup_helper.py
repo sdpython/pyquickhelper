@@ -356,7 +356,7 @@ def process_standard_options_for_setup(argv,
 
 
 def write_module_scripts(folder, platform=sys.platform, blog_list=None,
-                         default_engine_paths=None):
+                         default_engine_paths=None, command=None):
     """
     Writes a couple of script which allow a user to be faster on some tasks
     or to easily get information about the module.
@@ -364,14 +364,15 @@ def write_module_scripts(folder, platform=sys.platform, blog_list=None,
     @param      folder      where to write the script
     @param      platform    platform
     @param      blog_list   blog list to follow, should be attribute ``__blog__`` of the module
+    @param      command     None to generate scripts for all commands or a value in *[blog, doc]*.
     @return                 list of written scripts
 
     The function produces the following files:
 
-    * *rss_list.xml*: list of rss stream to follow
-    * *rss_database.db3*: stores blog posts
-    * *rss_server.py*: runs a server which updates the scripts and runs a server. It also open the default browser.
-    * *rss_server.(bat|sh)*: run *run_server.py*, the file on Linux might be missing if there is an equivalent python script
+    * *auto_rss_list.xml*: list of rss stream to follow
+    * *auto_rss_database.db3*: stores blog posts
+    * *auto_rss_server.py*: runs a server which updates the scripts and runs a server. It also open the default browser.
+    * *auto_rss_server.(bat|sh)*: run *auto_run_server.py*, the file on Linux might be missing if there is an equivalent python script
 
     @example(How to generate auto_rss_server.py)
     The following code generates the script *auto_rss_local.py*
@@ -380,12 +381,21 @@ def write_module_scripts(folder, platform=sys.platform, blog_list=None,
     `pyrsslocal <http://www.xavierdupre.fr/app/pyrsslocal/helpsphinx/index.html>`_)::
 
         from pyquickhelper import write_module_scripts, __blog__
-        write_module_scripts("blog", blog_list=__blog__)
+        write_module_scripts(".", blog_list=__blog__, command="blog")
 
     @endexample
     """
+    default_set = {"blog", "doc"}
+    if command is not None:
+        if command not in default_set:
+            raise ValueError(
+                "command {0} is not available in {1}".format(command, default_set))
+        commands = {command}
+    else:
+        commands = default_set
+
     res = []
-    for c in {"blog"}:
+    for c in commands:
         sc = get_script_module(
             c, platform=sys.platform, blog_list=blog_list, default_engine_paths=default_engine_paths)
         if sc is None:

@@ -354,6 +354,10 @@ class JenkinsExt(jenkins.Jenkins):
         @param      job     str
         @return             name
         """
+        for prefix in ["doc", "anaconda", "anaconda2", "winpython"]:
+            p = "[%s]" % prefix
+            if p in job:
+                job = p + " " + job.replace(" " + p, "")
         return job.replace(" ", "_").replace("[", "").replace("]", "")
 
     @staticmethod
@@ -393,7 +397,7 @@ class JenkinsExt(jenkins.Jenkins):
             raise NotImplementedError()
 
     @staticmethod
-    def hash_string(s, l=4):
+    def hash_string(s, l=5):
         """
         hash a string
 
@@ -403,7 +407,7 @@ class JenkinsExt(jenkins.Jenkins):
         """
         m = hashlib.md5()
         m.update(s.encode("ascii"))
-        r = m.hexdigest()
+        r = m.hexdigest().upper()
         return r if l == -1 else r[:l]
 
     @staticmethod
@@ -482,6 +486,9 @@ class JenkinsExt(jenkins.Jenkins):
                         "__COMMAND__", "unittests_SKIP")
                 elif "[27]" in spl:
                     cmd = modified_windows_jenkins_27
+                elif "[doc]" in spl:
+                    # documentation
+                    cmd = "auto_setup_build_sphinx.bat"
                 else:
                     cmd = modified_windows_jenkins
                     for pl in spl[1:]:
@@ -741,19 +748,21 @@ class JenkinsExt(jenkins.Jenkins):
             if not isinstance(jobs, list):
                 jobs = [jobs]
 
+            unit = 0
             new_dep = []
             for job in jobs:
+                unit += 1
 
                 if isinstance(job, tuple):
                     job, scheduler = job
-                    order = 0
+                    order = 1
                     if counts.get(dozen, 0) > 0:
                         dozen = chr(ord(dozen) + 1)
-                    counts[dozen] = counts.get(dozen, 0) + 1
                 else:
                     scheduler = None
                     order += 1
-                    counts[dozen] = counts.get(dozen, 0) + 1
+
+                counts[dozen] = counts.get(dozen, 0) + 1
 
                 mod = job.split()[0]
                 name = JenkinsExt.get_jenkins_job_name(job)
@@ -789,7 +798,7 @@ class JenkinsExt(jenkins.Jenkins):
                             job, locations, dependencies.get(mod, None))
 
                         # add a description to the job
-                        description = ["%s%02d" % (dozen, order)]
+                        description = ["%s%02d%02d" % (dozen, order, unit)]
                         if scheduler is not None:
                             description.append(scheduler)
                         description = " - ".join(description)

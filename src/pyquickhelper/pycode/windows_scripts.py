@@ -409,3 +409,10 @@ copy /Y dist\*.whl ..\local_pypi_server
 windows_blogpost = """
 %pythonexe% auto_rss_server.py
 """
+
+#####################
+#: documenation server
+#####################
+windows_docserver = """
+%pythonexe% auto_doc_server.py
+"""

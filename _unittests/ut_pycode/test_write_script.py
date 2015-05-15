@@ -45,7 +45,7 @@ class TestWriteScript(unittest.TestCase):
                 content = f.read()
             if "__" in content:
                 for line in content.split("\n"):
-                    if "__" in line and "sys.path.append" not in line:
+                    if "__" in line and "sys.path.append" not in line and "__file__" not in line:
                         raise Exception(content)
 
 

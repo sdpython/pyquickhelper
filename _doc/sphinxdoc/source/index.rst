@@ -46,6 +46,7 @@ Functionalities
     * Sphinx directive :class:`BlogPostDirective <pyquickhelper.helpgen.sphinx_blog_extension.BlogPostDirective>` 
       to add a directive ``blogpost`` into the docutmention
     * function to run a notebook offline :func:`run_notebook <pyquickhelper.ipythonhelper.notebook_helper.run_notebook>`
+    * form interacting with Python functions in a notebook, see notebook :ref:`havingaforminanotebookrst`
       
 Installation
 ------------
