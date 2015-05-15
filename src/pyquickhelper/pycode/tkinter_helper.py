@@ -80,6 +80,8 @@ def fix_tkinter_issues_virtualenv():
             if _first_execution:
                 warnings.warn(
                     "cannot fix matplotlib display because it was already imported")
+            import matplotlib as mpl
+            mpl.use('Agg')
         else:
             import matplotlib as mpl
             mpl.use('Agg')

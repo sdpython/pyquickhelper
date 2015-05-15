@@ -587,8 +587,12 @@ def main_wrapper_tests(codefile,
 
     # to deal with: _tkinter.TclError: no display name and no $DISPLAY
     # environment variable
-    from .tkinter_helper import fix_tkinter_issues_virtualenv
-    fix_tkinter_issues_virtualenv()
+    from .tkinter_helper import fix_tkinter_issues_virtualenv, _first_execution
+    print("MODULES (1): matplotlib already imported",
+          "matplotlib" in sys.modules, _first_execution)
+    r = fix_tkinter_issues_virtualenv()
+    print("MODULES (2): matplotlib imported",
+          "matplotlib" in sys.modules, _first_execution, r)
 
     if add_coverage:
         if report_folder is None:

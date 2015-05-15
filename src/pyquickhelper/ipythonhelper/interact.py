@@ -36,7 +36,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
 from collections import OrderedDict
 import itertools
-from IPython import get_ipython
 import base64
 
 
@@ -45,6 +44,7 @@ def _get_html(obj):
     Get the HTML representation of an object
     """
     # TODO: use displaypub to make this more general
+    from IPython import get_ipython
     ip = get_ipython()
     png_rep = ip.display_formatter.formatters['image/png'](obj)
 
