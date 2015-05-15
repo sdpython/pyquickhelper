@@ -31,6 +31,7 @@ import math
 import decimal
 import urllib
 import copy
+import zipfile
 
 if sys.version_info[0] == 2:
     from codecs import open
@@ -417,6 +418,39 @@ def unzip(file, path_unzip=None, outfile=None):
         raise FileNotFoundError(file)
 
     return file
+
+
+def unzip_files(zipf, where_to, fLOG=noLOG):
+    """
+    unzip files from a zip archive
+
+    @param      zipf        archive
+    @param      where_to    destination folder
+    @param      fLOG        logging function
+    @return                 list of unzipped files
+    """
+    files = []
+    with zipfile.ZipFile(zipf, "r") as file:
+        for info in file.infolist():
+            if not os.path.exists(info.filename):
+                data = file.read(info.filename)
+                tos = os.path.join(where_to, info.filename)
+                if not os.path.exists(tos):
+                    finalfolder = os.path.split(tos)[0]
+                    if not os.path.exists(finalfolder):
+                        fLOG("    creating folder ", finalfolder)
+                        os.makedirs(finalfolder)
+                    if not info.filename.endswith("/"):
+                        u = open(tos, "wb")
+                        u.write(data)
+                        u.close()
+                        files.append(tos)
+                        fLOG("    unzipped ", info.filename, " to ", tos)
+                elif not tos.endswith("/"):
+                    files.append(tos)
+            elif not info.filename.endswith("/"):
+                files.append(info.filename)
+    return files
 
 
 def _get_file_url(url, path):

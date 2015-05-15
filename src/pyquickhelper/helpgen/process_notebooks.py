@@ -216,6 +216,9 @@ def process_notebooks(notebooks,
             elif format in ["word", "docx"]:
                 format = "html"
                 compilation = False
+            elif format in ["slides"]:
+                options += " --reveal-prefix ../_static/reveal.js"
+                compilation = False
             else:
                 compilation = False
 

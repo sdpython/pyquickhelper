@@ -39,7 +39,7 @@ def check():
     check_log()
     return True
 
-from .loghelper.flog import fLOG, run_cmd, skip_run_cmd, unzip, noLOG, removedirs
+from .loghelper.flog import fLOG, run_cmd, skip_run_cmd, unzip, noLOG, removedirs, unzip_files
 from .loghelper.url_helper import get_url_content
 from .loghelper.convert_helper import str_to_datetime
 from .loghelper.repositories.gitlab_helper import GitLabAPI, GitLabException

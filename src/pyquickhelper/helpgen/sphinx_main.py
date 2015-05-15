@@ -31,6 +31,7 @@ from .sphinx_blog_extension import BlogPostDirective, BlogPostDirectiveAgg
 from .post_process import post_process_latex_output
 from .process_notebooks import process_notebooks, add_notebook_page
 from .sphinx_helper import post_process_html_nb_output_static_file
+from .install_js_dep import install_javascript_tools
 from .texts_language import TITLES
 
 if sys.version_info[0] == 2:
@@ -173,6 +174,9 @@ def generate_help_sphinx(project_var_name,
         Assumes IPython 3 is installed. It might no work for earlier versions (notebooks).
         Parameters *from_repo*, *use_run_cmd* were added.
 
+    .. versionchanged:: 1.1
+        Add notebook conversion to slides, install reveal.js if not installed.
+
     """
     if extra_ext is None:
         extra_ext = []
@@ -283,6 +287,17 @@ def generate_help_sphinx(project_var_name,
     chan = os.path.join(root, "_doc", "sphinxdoc", "source", "filechanges.rst")
     generate_changes_repo(
         chan, root, filter_commit=filter_commit, exception_if_empty=from_repo)
+
+    # static_path
+    html_static_path = theconf.__dict__.get("html_static_path", "phdoc_static")
+    if isinstance(html_static_path, list):
+        html_static_path = html_static_path[0]
+    html_static_path = os.path.join(root_source, html_static_path)
+    if not os.path.exists(html_static_path):
+        raise FileNotFoundError("no static path:" + html_static_path)
+
+    # we copy javascript dependencies, reveal.js
+    install_javascript_tools(root_sphinxdoc, dest=html_static_path, fLOG=fLOG)
 
     # copy the files
     optional_dirs = []
