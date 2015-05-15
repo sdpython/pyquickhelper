@@ -285,24 +285,6 @@ def post_process_html_output(file, pdf, python, slides):
     with open(file, "r", encoding="utf8") as f:
         text = f.read()
 
-    link = '''
-            <div style="position:fixed;text-align:center;align:right;width:15%;bottom:50px;right:20px;background:#DDDDDD;">
-            <p>
-            {0}
-            </p>
-            </div>
-            '''
-
-    links = [
-        '<b>links</b><br /><a href="{0}.ipynb">notebook</a>'.format(noext)]
-    if pdf:
-        links.append('<a href="{0}.pdf">PDF</a>'.format(noext))
-    if python:
-        links.append('<a href="{0}.py">python</a>'.format(noext))
-    if slides:
-        links.append('<a href="{0}.slides.html">slides</a>'.format(noext))
-    link = link.format("\n<br />".join(links))
-
     # mathjax
     text = text.replace("https://c328740.ssl.cf1.rackcdn.com/mathjax/latest/MathJax.js?config=TeX-AMS_HTML",
                         "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML")
@@ -329,23 +311,88 @@ def post_process_slides_output(file, pdf, python, slides):
     with open(file, "r", encoding="utf8") as f:
         text = f.read()
 
-    link = '''
-            <div style="position:fixed;text-align:center;align:right;width:15%;bottom:50px;right:20px;background:#DDDDDD;">
-            <p>
-            {0}
-            </p>
-            </div>
-            '''
+    # reveal.js
+    text = text.replace("reveal.js/js/reveal.js", "reveal.js/js/reveal.js")
+    lines = text.split("\n")
+    for i, line in enumerate(lines):
+        if '<script src="reveal.js/lib/js/head.min.js"></script>' in line:
+            lines[
+                i] = '<script src="reveal.js/js/jquery.min.js"></script>\n' + lines[i]
+        if '<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>' in line:
+            lines[i] = ""
+        if '<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>' in line:
+            lines[i] = ""
+    text = "\n".join(lines)
 
-    links = [
-        '<b>links</b><br /><a href="{0}.ipynb">notebook</a>'.format(noext)]
-    if pdf:
-        links.append('<a href="{0}.pdf">PDF</a>'.format(noext))
-    if python:
-        links.append('<a href="{0}.py">python</a>'.format(noext))
-    if slides:
-        links.append('<a href="{0}.slides.html">slides</a>'.format(noext))
-    link = link.format("\n<br />".join(links))
+    """
+<link rel="stylesheet" href="reveal.js/css/reveal.css">
+<link rel="stylesheet" href="reveal.js/css/theme/solarized.css" id="theme">
+<link rel="stylesheet" href="reveal.js/lib/css/zenburn.css">
+<link rel="stylesheet" href="reveal.js/revealjs.css" type="text/css" />
+
+<link rel="stylesheet" href="reveal.js/css/reveal.css">
+<link rel="stylesheet" href="reveal.js/css/theme/simple.css" id="theme">
+
+        width: 1076,
+        height: 750,
+
+        margin: 0.1,
+
+        minScale: 0.2,
+        maxScale: 1.0,
+
+        controls: true,
+        progress: true,
+        history: false,
+        center: true,
+
+        keyboard : true,
+        overview: true,
+        touch: true,
+        loop: false,
+        rtl: false,
+        fragments: true,
+
+        autoSlide: 0,
+        mouseWheel: true,
+        rollingLinks: true,
+        previewLinks: true,
+
+        transitionSpeed: "default",
+        backgroundTransition: "default",
+
+        slideNumber: true,
+        embedded: false,
+        autoSlideStoppable: true,
+        hideAddressBar: true,
+
+        parallaxBackgroundImage: "",
+        parallaxBackgroundSize: "",
+
+        focusBodyOnPageVisiblityChange: true,
+
+        viewDistance: 3,
+
+        transition: Reveal.getQueryHash().transition || "linear",
+
+// Optional libraries used to extend on reveal.js
+dependencies: [
+           { src: '_static/lib/js/classList.js', condition: function() { return !document.body.classList; } },
+           { src: '_static/plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+           { src: '_static/plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+           { src: '_static/plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+           { src: '_static/plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+           { src: '_static/plugin/leap/leap.js', async: true, condition: function() { return !!document.body.classList; } },
+
+           { src: '_static/plugin/multiplex/master.js', async: true, condition: function() { return !!document.body.classList; } },
+
+           { src: '_static/plugin/remotes/remotes.js_static/plugin/notes-server/client.js', async: true, condition: function() { return !!document.body.classList; } },
+
+           { src: '_static/plugin/math/math.js', async: true, condition: function() { return !!document.body.classList; } },
+
+           { src: '_static/plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
+
+    """
 
     # mathjax
     text = text.replace("https://c328740.ssl.cf1.rackcdn.com/mathjax/latest/MathJax.js?config=TeX-AMS_HTML",

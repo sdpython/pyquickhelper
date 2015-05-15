@@ -32,6 +32,7 @@ from .post_process import post_process_latex_output
 from .process_notebooks import process_notebooks, add_notebook_page
 from .sphinx_helper import post_process_html_nb_output_static_file
 from .install_js_dep import install_javascript_tools
+from ..filehelper import synchronize_folder
 from .texts_language import TITLES
 
 if sys.version_info[0] == 2:
@@ -513,6 +514,15 @@ def generate_help_sphinx(project_var_name,
     else:
         fLOG("## no coverage files", covfold)
 
+    # we copy javascript dependencies to build _download/javascript
+    builddoc = os.path.join(root_sphinxdoc, "build", "html", "_downloads")
+    if not os.path.exists(build):
+        raise FileNotFoundError(builddoc)
+    fLOG("copy javascript static files from", html_static_path, "to", builddoc)
+    copy = synchronize_folder(html_static_path, builddoc, copy_1to2=True)
+    fLOG("javascript", len(copy), "files copied")
+
+    # next
     if "latex" in lays:
         fLOG("---- post_process_latex_output", froot)
         post_process_latex_output(froot, False)

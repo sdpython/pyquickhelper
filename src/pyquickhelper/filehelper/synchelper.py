@@ -105,7 +105,8 @@ def synchronize_folder(p1,
                        avoid_copy=False,
                        operations=None,
                        file_date=None,
-                       log1=False):
+                       log1=False,
+                       copy_1to2=False):
     """
     synchronize two folders (or copy if the second is empty), it only copies more recent files.
 
@@ -130,6 +131,7 @@ def synchronize_folder(p1,
                                     if should return True if the file was updated
     @param      file_date           filename which contains information about when the last sync was done
     @param      log1                @see cl FileTreeNode
+    @param      copy_1to2           only copy files from *p1* to *p2*
     @return                         list of operations done by the function
                                         list of 3-uple: action, source_file, dest_file
 
@@ -160,6 +162,9 @@ def synchronize_folder(p1,
     in 12 minutes (for an update).
 
     @endexample
+
+    .. versionchanged:: 1.1
+        Parameter *copy_1to2* was added.
 
     """
 
@@ -243,39 +248,43 @@ def synchronize_folder(p1,
                         pass
 
             elif op in ["<+"]:
-                if n2 is None:
-                    if not no_deletion:
-                        # this case happens when we do not know sideB (sideA is stored in a file)
-                        # we need to remove file, file refers to this side
-                        filerel = os.path.relpath(file, start=p1)
-                        filerem = os.path.join(p2, filerel)
-                        try:
-                            ft = FileTreeNode(p2, filerel)
-                        except PQHException:
-                            ft = None  # probably already removed
+                if not copy_1to2:
+                    if n2 is None:
+                        if not no_deletion:
+                            # this case happens when we do not know sideB (sideA is stored in a file)
+                            # we need to remove file, file refers to this side
+                            filerel = os.path.relpath(file, start=p1)
+                            filerem = os.path.join(p2, filerel)
+                            try:
+                                ft = FileTreeNode(p2, filerel)
+                            except PQHException:
+                                ft = None  # probably already removed
 
-                        if ft is not None:
-                            action.append((">-", None, ft))
+                            if ft is not None:
+                                action.append((">-", None, ft))
+                                if not avoid_copy:
+                                    fLOG("- remove ", filerem)
+                                    os.remove(filerem)
+                                if status is not None:
+                                    status.update_copied_file(
+                                        file, delete=True)
+                                    modif += 1
+                                    if modif % 50 == 0:
+                                        status.save_dates()
+                            else:
+                                fLOG(
+                                    "- skip (probably already removed) ", filerem)
+                    else:
+                        if not n2.isdir() and not no_deletion:
                             if not avoid_copy:
-                                fLOG("- remove ", filerem)
-                                os.remove(filerem)
+                                n2.remove()
+                            action.append((">-", None, n2))
                             if status is not None:
-                                status.update_copied_file(file, delete=True)
+                                status.update_copied_file(
+                                    n1.fullname, delete=True)
                                 modif += 1
                                 if modif % 50 == 0:
                                     status.save_dates()
-                        else:
-                            fLOG("- skip (probably already removed) ", filerem)
-                else:
-                    if not n2.isdir() and not no_deletion:
-                        if not avoid_copy:
-                            n2.remove()
-                        action.append((">-", None, n2))
-                        if status is not None:
-                            status.update_copied_file(n1.fullname, delete=True)
-                            modif += 1
-                            if modif % 50 == 0:
-                                status.save_dates()
             elif n2 is not None and n1._size != n2._size and not n1.isdir():
                 fLOG("problem", "size are different for file %s (%d != %d) dates (%s,%s) (op %s)" % (
                     file, n1._size, n2._size, n1._date, n2._date, op))
