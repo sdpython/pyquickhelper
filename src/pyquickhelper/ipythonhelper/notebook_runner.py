@@ -9,6 +9,7 @@ from queue import Empty
 
 from IPython.nbformat.v3 import NotebookNode
 from IPython.kernel import KernelManager
+from IPython.nbformat import writes
 
 from ..loghelper.flog import noLOG
 
@@ -82,6 +83,19 @@ class NotebookRunner(object):
         self.kc.wait_for_ready()
         self.nb = nb
         self.comment = comment
+
+    def to_json(self, filename, encoding="utf8"):
+        """
+        convert the notebook into json
+
+        @param      filename       filename or stream
+        """
+        if isinstance(filename, str  # unicode
+                      ):
+            with open(filename, "w", encoding=encoding) as payload:
+                self.to_json(payload)
+        else:
+            filename.write(writes(self.nb))
 
     def shutdown_kernel(self):
         """
@@ -311,6 +325,131 @@ class NotebookRunner(object):
             for cell in self.nb.cells:
                 if cell.cell_type == 'code':
                     yield cell
+
+    def iter_cells(self):
+        '''
+        Iterate over the notebook cells.
+        '''
+        try:
+            for ws in self.nb.worksheets:
+                for cell in ws.cells:
+                    yield cell
+        except AttributeError:
+            for cell in self.nb.cells:
+                yield cell
+
+    def cell_type(self, cell):
+        """
+        returns the cell type
+
+        @param      cell        from @see me iter_cells
+        @return                 type
+        """
+        return cell.cell_type
+
+    def cell_metadata(self, cell):
+        """
+        returns the cell metadata
+
+        @param      cell        cell
+        @return                 metadata
+        """
+        return cell.metadata
+
+    def cell_height(self, cell):
+        """
+        approximate the height of a cell by its number of lines it contains
+
+        @param      cell        cell
+        @return                 number of cell
+        """
+        kind = self.cell_type(cell)
+        if kind == "markdown":
+            content = cell.source
+            lines = content.split("\n")
+            nbs = sum(1 + len(line) // 80 for line in lines)
+            return nbs
+        elif kind == "code":
+            content = cell.source
+            lines = content.split("\n")
+            nbl = len(lines)
+
+            for output in cell.outputs:
+                if output["output_type"] == "execute_result" or \
+                        output["output_type"] == "display_data":
+                    data = output["data"]
+                    for k, v in data.items():
+                        if k == "text/plain":
+                            nbl += len(v.split("\n"))
+                        elif k == "application/javascript":
+                            # rough estimation
+                            nbl += len(v.split("\n")) // 2
+                        elif k == "text/html":
+                            nbl += len(v.split("\n"))
+                        elif k == "image/png" or k == "image/jpg" or k == "image/jpeg":
+                            nbl += len(v) // 50
+                        else:
+                            raise NotImplementedError("cell type: {0}\nk={1}\nv={2}\nCELL:\n{3}".format(kind,
+                                                                                                        k, v, cell))
+                elif output["output_type"] == "stream":
+                    v = output["text"]
+                    nbl += len(v.split("\n"))
+                else:
+                    raise NotImplementedError("cell type: {0}\noutput type: {1}\nOUT:\n{2}\nCELL:\n{3}".format(kind,
+                                                                                                               output["output_type"], output, cell))
+
+            return nbl
+
+        else:
+            raise NotImplementedError(
+                "cell type: {0}\nCELL:\n{1}".format(kind, cell))
+
+    def add_tag_slide(self, max_nb_cell=8, max_nb_line=30):
+        """
+        tries to add tags for a slide show when they are too few
+
+        @param      max_nb_cell     maximum number of cells within a slide
+        @param      max_nb_line     maximum number of lines within a slide
+        @return                     list of modified cells { #slide: (kind, reason, cell) }
+        """
+        res = {}
+        nbline = 0
+        nbcell = 0
+        for i, cell in enumerate(self.iter_cells()):
+            meta = cell.metadata
+            if "slideshow" in meta:
+                st = meta["slideshow"]["slide_type"]
+                if st in ["slide", "subslide"]:
+                    nbline = 0
+                    nbcell = 0
+            else:
+                if cell.cell_type == "markdown":
+                    content = cell.source
+                    if content.startswith("# ") or \
+                       content.startswith("## ") or \
+                       content.startswith("### "):
+                        meta["slideshow"] = {'slide_type': 'slide'}
+                        nbline = 0
+                        nbcell = 0
+                        res[i] = ("slide", "section", cell)
+
+            dh = self.cell_height(cell)
+            dc = 1
+            new_nbline = nbline + dh
+            new_cell = dc + nbcell
+            if "slideshow" not in meta:
+                if new_cell > max_nb_cell or \
+                   new_nbline > max_nb_line:
+                    res[i] = (
+                        "subslide", "{0}-{1} <-> {2}-{3}".format(nbcell, nbline, dc, dh), cell)
+                    nbline = 0
+                    nbcell = 0
+                    meta["slideshow"] = {'slide_type': 'subslide'}
+
+            nbline += dh
+            nbcell += dc
+
+        return res
 
     def run_notebook(self,
                      skip_exceptions=False,

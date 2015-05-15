@@ -153,6 +153,25 @@ def run_notebook(filename,
         return out.getvalue()
 
 
+def read_nb(filename, profile_dir=None, encoding="utf8"):
+    """
+    reads a notebook and return a @see cl NotebookRunner object
+
+    @param      filename        notebook filename
+    @param      profile_dir     profile directory
+    @param      encoding        encoding for the notebooks
+    @return                     @see cl NotebookRunner
+
+    .. versionadded:: 1.1
+    """
+    with open(filename, "r", encoding=encoding) as payload:
+        nb = reads(payload.read())
+
+        nb_runner = NotebookRunner(
+            nb, profile_dir, theNotebook=os.path.abspath(filename))
+        return nb_runner
+
+
 def execute_notebook_list(folder,
                           notebooks,
                           clean_function=None,

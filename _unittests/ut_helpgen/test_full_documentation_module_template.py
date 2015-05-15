@@ -132,5 +132,13 @@ class TestSphinxDocFull (unittest.TestCase):
                 content = f.read()
             assert 'notebooks/custom_notebooks' in content
 
+            # checks slideshow was added
+            fhtml = os.path.join(temp, "python3_module_template-master",
+                                 "build", "notebooks", "bslides", "custom_notebooks.ipynb")
+            with open(fhtml, "r", encoding="utf8") as f:
+                content = f.read()
+            assert '"slide"' in content
+
+
 if __name__ == "__main__":
     unittest.main()

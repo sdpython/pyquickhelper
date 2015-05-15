@@ -14,7 +14,7 @@ from ..loghelper.flog import run_cmd, fLOG
 from .utils_sphinx_doc_helpers import HelpGenException, find_latex_path, find_pandoc_path
 from ..filehelper.synchelper import has_been_updated
 from .post_process import post_process_latex_output, post_process_latex_output_any, post_process_rst_output, post_process_html_output, post_process_slides_output
-
+from ..ipythonhelper import read_nb
 
 if sys.version_info[0] == 2:
     from codecs import open
@@ -161,6 +161,10 @@ def process_notebooks(notebooks,
     files = []
     skipped = []
 
+    build_slide = os.path.join(build, "bslides")
+    if not os.path.exists(build_slide):
+        os.mkdir(build_slide)
+
     if "WinPython" in sys.executable:
         # pip, or any program in Scripts cannot find python.exe
         # for the distribution WinPython
@@ -204,6 +208,13 @@ def process_notebooks(notebooks,
                             skipped.append(trueoutputfile)
                             continue
 
+            # if the format is slides, we update the metadata
+            if format == "slides":
+                nb_slide = add_tag_for_slideshow(notebook, build_slide)
+                fLOG("NB SLIDE: run add_tag_for_slideshow", nb_slide)
+            else:
+                nb_slide = None
+
             # next
             options = ""
             if format == "pdf":
@@ -235,7 +246,9 @@ def process_notebooks(notebooks,
             else:
                 fmttpl = ""
 
-            c = cmd.format(ipy, format, notebook, build, nbout, fmttpl)
+            c = cmd.format(ipy,  format,
+                           notebook if nb_slide is None else nb_slide,
+                           build, nbout, fmttpl)
 
             c += options
             fLOG("NB:", c)
@@ -519,3 +532,20 @@ def add_notebook_page(nbs, fileout):
     with open(fileout, "w", encoding="utf8") as f:
         f.write("\n".join(rows))
     return fileout
+
+
+def add_tag_for_slideshow(ipy, folder, encoding="utf8"):
+    """
+    modifes a notebook to add tag for a slideshow
+
+    @param      ipy         notebook file
+    @param      folder      where to write the new notebook
+    @param      encoding    encoding
+    @return                 written file
+    """
+    filename = os.path.split(ipy)[-1]
+    output = os.path.join(folder, filename)
+    nb = read_nb(ipy, encoding=encoding)
+    nb.add_tag_slide()
+    nb.to_json(output)
+    return output

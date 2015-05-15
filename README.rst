@@ -80,6 +80,11 @@ Versions / Changes
     * **add:** add function :func:`write_module_scripts <pyquickhelper.pycode.setup_helper.write_module_scripts>` which writes some helpful scripts
     * **add:** form interacting with Python functions in a notebook, 
       see notebook :ref:`havingaforminanotebookrst`.
+    * **new:** the automated documentation now tries to split notebooks in slides by adding
+      metadata, see method :meth:`add_tag_slide <pyquickhelper.ipythonhelper.notebook_runner.NotebookRunner.add_tag_slide>`
+    * **add:** function :func:`add_notebook_menu <pyquickhelper.ipythonhelper.help_in_notebook.add_notebook_menu>` 
+      to automatically add a menu in a notebook 
+      (which still shows up when the notebook is converted into another format)
 * **1.0 - 2015/04/21**
     * **new:** function to run a notebook end to end :func:`run_notebook <pyquickhelper.ipythonhelper.notebook_helper.run_notebook>`
     * **change:** function :func:`str_to_datetime <pyquickhelper.loghelper.convert_helper.str_to_datetime>` implicitely handles more formats
