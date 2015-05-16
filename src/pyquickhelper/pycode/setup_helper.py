@@ -267,7 +267,7 @@ def process_standard_options_for_setup(argv,
         return True
 
     elif "unittests" in sys.argv:
-        main_wrapper_tests(file_or_folder)
+        run_unittests_for_setup(file_or_folder)
         return True
 
     elif "unittests_LONG" in sys.argv:
