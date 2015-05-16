@@ -82,7 +82,7 @@ Versions / Changes
       see notebook :ref:`havingaforminanotebookrst`.
     * **new:** the automated documentation now tries to split notebooks in slides by adding
       metadata, see method :meth:`add_tag_slide <pyquickhelper.ipythonhelper.notebook_runner.NotebookRunner.add_tag_slide>`
-    * **add:** function :func:`add_notebook_menu <pyquickhelper.ipythonhelper.help_in_notebook.add_notebook_menu>` 
+    * **add:** function :func:`add_notebook_menu <pyquickhelper.ipythonhelper.helper_in_notebook.add_notebook_menu>` 
       to automatically add a menu in a notebook 
       (which still shows up when the notebook is converted into another format)
 * **1.0 - 2015/04/21**

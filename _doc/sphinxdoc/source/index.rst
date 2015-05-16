@@ -50,7 +50,7 @@ Functionalities
       to add a directive ``blogpost`` into the docutmention
     * function to run a notebook offline :func:`run_notebook <pyquickhelper.ipythonhelper.notebook_helper.run_notebook>`
     * form interacting with Python functions in a notebook, see notebook :ref:`havingaforminanotebookrst`
-    * function :func:`add_notebook_menu <pyquickhelper.ipythonhelper.help_in_notebook.add_notebook_menu>` 
+    * function :func:`add_notebook_menu <pyquickhelper.ipythonhelper.helper_in_notebook.add_notebook_menu>` 
       automatically adds a menu in the notebook based on sections
     * method to add metadata when converting a notebook into slides 
       :meth:`add_tag_slide <pyquickhelper.ipythonhelper.notebook_runner.NotebookRunner.add_tag_slide>`
