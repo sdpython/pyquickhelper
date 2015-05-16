@@ -473,7 +473,7 @@ class BlogPostList:
         """
         direction = "|rss_image| "
         if prev is not None:
-            direction += ":ref:`<-- <%s>` " % prev
+            direction += ":ref:`<== <%s>` " % prev
         if bold_title is not None:
             if len(direction) > 0:
                 direction += " "
@@ -481,7 +481,7 @@ class BlogPostList:
         if next is not None:
             if len(direction) > 0:
                 direction += " "
-            direction += ":ref:`<-- <%s>`" % next
+            direction += ":ref:`==> <%s>`" % next
         arrows = direction
         if main_page is not None:
             if len(direction) > 0:
