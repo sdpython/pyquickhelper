@@ -52,8 +52,8 @@ for /d %%d in (ut_*) do %pythonexe27%\\..\\Scripts\\nosetests.exe -w %%d
 #################
 #: call the setup
 #################
-windows_setup = "%pythonexe% setup.py"
-jenkins_windows_setup = "%jenkinspythonexe% setup.py"
+windows_setup = "%pythonexe% -u setup.py"
+jenkins_windows_setup = "%jenkinspythonexe% -u setup.py"
 
 #################
 #: build script for Windows
@@ -296,7 +296,7 @@ rem %pythonexe% setup.py sdist register
 #: publish the documentation
 #################
 windows_publish_doc = """
-%pythonexe% setup.py upload_docs --upload-dir=dist/html
+%pythonexe% -u setup.py upload_docs --upload-dir=dist/html
 """
 
 #################
