@@ -139,6 +139,13 @@ class TestSphinxDocFull (unittest.TestCase):
                 content = f.read()
             assert '"slide"' in content
 
+            # reveal.js
+            rev = [os.path.join(root, "_doc", "sphinxdoc", "source", "phdoc_static", "reveal.js"),
+                   os.path.join(root, "_doc", "sphinxdoc", "build", "html", "_downloads", "reveal.js"), ]
+            for r in rev:
+                if not os.path.exists(r):
+                    raise FileNotFoundError(r)
+
 
 if __name__ == "__main__":
     unittest.main()

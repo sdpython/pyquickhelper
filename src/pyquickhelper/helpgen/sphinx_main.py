@@ -225,8 +225,12 @@ def generate_help_sphinx(project_var_name,
 
     copypath = list(sys.path)
 
+    # stores static path for every layout, we store them to copy
+    html_static_paths = []
+    build_paths = []
+
     # import others conf, we must do it now
-    # it takes too long to do ot after if there is an error
+    # it takes too long to do it after if there is an error
     # we assume the configuration are not too different
     # about language for example, latex_path, pandoc_path
     for t3 in layout:
@@ -248,6 +252,7 @@ def generate_help_sphinx(project_var_name,
                 "unable to import a config file (t3={0}, root_source={1})".format(
                     t3, root_source),
                 os.path.join(folds, "conf.py")) from ee
+
         # we remove the insert path
         del sys.path[0]
         if thenewconf is None:
@@ -255,6 +260,17 @@ def generate_help_sphinx(project_var_name,
                 "unable to import {0} which defines the help generation".format(newconf))
         add_missing_files(root, thenewconf)
         del sys.modules["conf"]
+
+        # we store the html_static_path in html_static_paths
+        html_static_path = newconf.__dict__.get(
+            "html_static_path", "phdoc_static")
+        if isinstance(html_static_path, list):
+            html_static_path = html_static_path[0]
+        html_static_path = os.path.join(root_source, html_static_path)
+        if not os.path.exists(html_static_path):
+            raise FileNotFoundError("no static path:" + html_static_path)
+        html_static_paths.append(html_static_path)
+        build_paths.append(build)
 
     # we add the source path to the list of path to considered before importing
     sys.path.append(root_source)
@@ -273,6 +289,17 @@ def generate_help_sphinx(project_var_name,
             "unable to import conf.py which defines the help generation")
     add_missing_files(root, theconf)
 
+    # we store the html_static_path in html_static_paths for the base conf
+    html_static_path = theconf.__dict__.get("html_static_path", "phdoc_static")
+    if isinstance(html_static_path, list):
+        html_static_path = html_static_path[0]
+    html_static_path = os.path.join(root_source, html_static_path)
+    if not os.path.exists(html_static_path):
+        raise FileNotFoundError("no static path:" + html_static_path)
+    html_static_paths.append(html_static_path)
+    build_paths.append(
+        os.path.normpath(os.path.join(html_static_path, "..", "..", "build", "html")))
+
     # modifies the version number in conf.py
     shutil.copy(os.path.join(root, "README.rst"), root_source)
     shutil.copy(os.path.join(root, "LICENSE.txt"), root_source)
@@ -289,16 +316,12 @@ def generate_help_sphinx(project_var_name,
     generate_changes_repo(
         chan, root, filter_commit=filter_commit, exception_if_empty=from_repo)
 
-    # static_path
-    html_static_path = theconf.__dict__.get("html_static_path", "phdoc_static")
-    if isinstance(html_static_path, list):
-        html_static_path = html_static_path[0]
-    html_static_path = os.path.join(root_source, html_static_path)
-    if not os.path.exists(html_static_path):
-        raise FileNotFoundError("no static path:" + html_static_path)
-
     # we copy javascript dependencies, reveal.js
-    install_javascript_tools(root_sphinxdoc, dest=html_static_path, fLOG=fLOG)
+    fLOG("JAVASCRIPT:", html_static_paths)
+    fLOG("BUILD:", build_paths)
+    for html_static_path in html_static_paths:
+        install_javascript_tools(
+            root_sphinxdoc, dest=html_static_path, fLOG=fLOG)
 
     # copy the files
     optional_dirs = []
@@ -515,14 +538,19 @@ def generate_help_sphinx(project_var_name,
         fLOG("## no coverage files", covfold)
 
     # we copy javascript dependencies to build _download/javascript
-    builddoc = os.path.join(root_sphinxdoc, "build", "html", "_downloads")
-    if os.path.exists(builddoc):
-        # no download, there is probably no notebooks
-        # so it is not needed
-        fLOG("copy javascript static files from",
-             html_static_path, "to", builddoc)
-        copy = synchronize_folder(html_static_path, builddoc, copy_1to2=True)
-        fLOG("javascript", len(copy), "files copied")
+    # for every layout
+    fLOG("JAVASCRIPT: COPY", html_static_paths)
+    fLOG("BUILD:", build_paths)
+    for html_static_path, build_path in zip(html_static_paths, build_paths):
+        builddoc = os.path.join(build_path, "_downloads")
+        if os.path.exists(builddoc):
+            # no download, there is probably no notebooks
+            # so it is not needed
+            fLOG("copy javascript static files from",
+                 html_static_path, "to", builddoc)
+            copy = synchronize_folder(
+                html_static_path, builddoc, copy_1to2=True)
+            fLOG("javascript", len(copy), "files copied")
 
     # next
     if "latex" in lays:
