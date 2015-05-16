@@ -394,9 +394,12 @@ class NotebookRunner(object):
                 elif output["output_type"] == "stream":
                     v = output["text"]
                     nbl += len(v.split("\n"))
+                elif output["output_type"] == "error":
+                    v = output["traceback"]
+                    nbl += len(v)
                 else:
-                    raise NotImplementedError("cell type: {0}\noutput type: {1}\nOUT:\n{2}\nCELL:\n{3}".format(kind,
-                                                                                                               output["output_type"], output, cell))
+                    raise NotImplementedError("cell type: {0}\noutput type: {1}\nOUT:\n{2}\nCELL:\n{3}"
+                                              .format(kind, output["output_type"], output, cell))
 
             return nbl
 

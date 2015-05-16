@@ -519,7 +519,8 @@ def generate_help_sphinx(project_var_name,
     if os.path.exists(builddoc):
         # no download, there is probably no notebooks
         # so it is not needed
-        fLOG("copy javascript static files from", html_static_path, "to", builddoc)
+        fLOG("copy javascript static files from",
+             html_static_path, "to", builddoc)
         copy = synchronize_folder(html_static_path, builddoc, copy_1to2=True)
         fLOG("javascript", len(copy), "files copied")
 
