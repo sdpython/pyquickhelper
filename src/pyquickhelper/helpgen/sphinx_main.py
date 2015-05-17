@@ -262,7 +262,7 @@ def generate_help_sphinx(project_var_name,
         del sys.modules["conf"]
 
         # we store the html_static_path in html_static_paths
-        html_static_path = newconf.__dict__.get(
+        html_static_path = thenewconf.__dict__.get(
             "html_static_path", "phdoc_static")
         if isinstance(html_static_path, list):
             html_static_path = html_static_path[0]
