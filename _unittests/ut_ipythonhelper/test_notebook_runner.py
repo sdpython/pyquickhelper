@@ -44,8 +44,9 @@ class TestNotebookRunner (unittest.TestCase):
         if sys.version_info[0] == 2:
             return
 
-        out = run_notebook(nbfile, working_dir=temp, outfilename=outfile,
-                           additional_path=[addpath])
+        stat, out = run_notebook(nbfile, working_dir=temp, outfilename=outfile,
+                                 additional_path=[addpath])
+        fLOG(stat)
         fLOG(out)
         assert os.path.exists(outfile)
         assert "No module named 'pyquickhelper'" not in out

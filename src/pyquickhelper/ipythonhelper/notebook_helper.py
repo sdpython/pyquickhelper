@@ -5,6 +5,7 @@
 import io
 import os
 import sys
+import time
 from IPython.nbformat import versions
 from IPython.nbformat.reader import reads
 from .notebook_runner import NotebookRunner
@@ -98,7 +99,7 @@ def run_notebook(filename,
     @param      clean_function  function which cleans a cell's code before executing it (None for None)
     @param      code_init       code to run before the execution of the notebook as if it was a cell
     @param      fLOG            logging function
-    @return                     output
+    @return                     tuple (statistics, output)
 
     @warning The function calls `basicConfig <https://docs.python.org/3.4/library/logging.html#logging.basicConfig>`_.
 
@@ -117,6 +118,7 @@ def run_notebook(filename,
         The function adds the local variable ``theNotebook`` with
         the absolute file name of the notebook.
         Parameter *code_init* was added.
+        Return type was changed. It now returns *stat*, *output*
     """
     with open(filename, "r", encoding=encoding) as payload:
         nb = reads(payload.read())
@@ -135,8 +137,8 @@ def run_notebook(filename,
             nb, profile_dir, working_dir, fLOG=flogging, comment=filename,
             theNotebook=os.path.abspath(filename),
             code_init=code_init)
-        nb_runner.run_notebook(skip_exceptions=skip_exceptions, additional_path=additional_path,
-                               valid=valid, clean_function=clean_function)
+        stat = nb_runner.run_notebook(skip_exceptions=skip_exceptions, additional_path=additional_path,
+                                      valid=valid, clean_function=clean_function)
 
         if outfilename is not None:
             with open(outfilename, 'w', encoding=encoding) as f:
@@ -150,7 +152,7 @@ def run_notebook(filename,
                 f.write(s)
 
         nb_runner.shutdown_kernel()
-        return out.getvalue()
+        return stat, out.getvalue()
 
 
 def read_nb(filename, profile_dir=None, encoding="utf8"):
@@ -189,7 +191,10 @@ def execute_notebook_list(folder,
     @param      fLOG                logging function
     @param      deepfLOG            logging function used to run the notebook
     @param      additional_path     path to add to *sys.path* before running the notebook
-    @return                         dictionary { notebook_file: (isSuccess, outout) }
+    @return                         dictionary { notebook_file: (isSuccess, statistics, outout) }
+
+    If *isSucess* is False, *statistics* contains the execution time, *output* is the exception
+    raised during the execution.
 
     The signature of function ``valid_cell`` is::
 
@@ -213,19 +218,21 @@ def execute_notebook_list(folder,
         if filter(i, note):
             fLOG("******", i, os.path.split(note)[-1])
             outfile = os.path.join(folder, "out_" + os.path.split(note)[-1])
+            cl = time.clock()
             try:
-                out = run_notebook(note,
-                                   working_dir=folder,
-                                   outfilename=outfile,
-                                   additional_path=additional_path,
-                                   valid=valid,
-                                   clean_function=clean_function,
-                                   fLOG=deepfLOG,
-                                   code_init=code_init
-                                   )
+                stat, out = run_notebook(note,
+                                         working_dir=folder,
+                                         outfilename=outfile,
+                                         additional_path=additional_path,
+                                         valid=valid,
+                                         clean_function=clean_function,
+                                         fLOG=deepfLOG,
+                                         code_init=code_init
+                                         )
                 if not os.path.exists(outfile):
                     raise FileNotFoundError(outfile)
-                results[note] = (True, out)
+                results[note] = (True, stat, out)
             except Exception as e:
-                results[note] = (False, e)
+                etime = time.clock() - cl
+                results[note] = (False, dict(time=etime), e)
     return results

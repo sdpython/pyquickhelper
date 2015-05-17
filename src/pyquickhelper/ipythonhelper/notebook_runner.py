@@ -5,6 +5,7 @@
 
 import os
 import re
+import time
 from queue import Empty
 
 from IPython.nbformat.v3 import NotebookNode
@@ -472,6 +473,7 @@ class NotebookRunner(object):
         @param      additional_path     additional paths (as a list or None if none)
         @param      valid               if not None, valid is a function which returns wether or not the cell should be executed or not
         @param      clean_function      function which cleans a cell's code before executing it (None for None)
+        @return                         dictionary with statistics
 
         .. versionchanged:: 1.1
             The function adds the local variable ``theNotebook`` with
@@ -498,12 +500,19 @@ class NotebookRunner(object):
             self.run_cell(-1, self.code_init)
 
         # execution of the notebook
+        nbcell = 0
+        nbrun = 0
+        nbnerr = 0
+        cl = time.clock()
         for i, cell in enumerate(self.iter_code_cells()):
+            nbcell += 1
             iscell, codei = NotebookRunner.get_cell_code(cell)
             if valid is not None and not valid(codei):
                 continue
             try:
+                nbrun += 1
                 self.run_cell(i, cell, clean_function=clean_function)
+                nbnerr += 1
             except Empty as er:
                 raise Exception(
                     "{0}\nissue when executing:\n{1}".format(self.comment, codei)) from er
@@ -515,6 +524,8 @@ class NotebookRunner(object):
                         "issue when executing:\n{0}".format(codei)) from e
             if progress_callback:
                 progress_callback(i)
+        etime = time.clock() - cl
+        return dict(nbcell=nbcell, nbrun=nbrun, nbvalid=nbnerr, time=etime)
 
     def count_code_cells(self):
         '''
