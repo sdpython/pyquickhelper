@@ -75,7 +75,7 @@ class TestRunNotebooks(unittest.TestCase):
                  for k, v in sorted(res.items()) if not v[0]]
         for f in fails:
             fLOG(f)
-        for k,v in sorted(res.items()):
+        for k, v in sorted(res.items()):
             name = os.path.split(k)[-1]
             fLOG(name, v[0], v[1])
         if len(fails) > 0:
