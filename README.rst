@@ -15,6 +15,16 @@ README / Changes
 .. image:: http://img.shields.io/pypi/dm/pyquickhelper.png
     :alt: PYPI Package
     :target: https://pypi.python.org/pypi/pyquickhelper
+    
+.. image:: http://img.shields.io/github/issues/sdpython/pyquickhelper.png
+    :alt: GitHub Issues
+    :target: https://github.com/sdpython/pyquickhelper/issues
+    
+.. image:: https://img.shields.io/badge/license-MIT-blue.svg
+    :alt: MIT License
+    :target: http://opensource.org/licenses/MIT
+    
+
 
 **Links:**
     * `pypi/pyquickhelper <https://pypi.python.org/pypi/pyquickhelper/>`_
