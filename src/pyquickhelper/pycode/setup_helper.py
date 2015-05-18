@@ -190,12 +190,12 @@ def process_standard_options_for_setup_help():
         """)
 
 
-def call_setup_hook(module_name):
+def call_setup_hook(folder, module_name):
     """
     calls function @see fn _setup_hook for a specific module
 
+    @param      folder          folder for the setup
     @param      module_name     module name
-    @param      fLOG            logging function
     """
     copy_locals = locals().copy()
     copy_globals = globals().copy()
@@ -203,9 +203,16 @@ def call_setup_hook(module_name):
     try:
         exec(code_import, copy_globals, copy_locals)
     except ImportError as e:
-        paths = "\n".join(sys.path)
-        raise ImportError(
-            "unable to import {0}, sys.path=\n{1}".format(module_name, paths))
+        src = os.path.join(folder, "src")
+        sys.path.append(src)
+        try:
+            exec(code_import, copy_globals, copy_locals)
+        except ImportError as e:
+            paths = "\n".join(sys.path)
+            raise ImportError(
+                "unable to import {0}, sys.path=\n{1}".format(module_name, paths))
+        del sys.path[-1]
+
     HELP_MODULE = copy_locals["HELP_MODULE"]
 
     if hasattr(HELP_MODULE, "_setup_hook"):
@@ -286,8 +293,8 @@ def process_standard_options_for_setup(argv,
         return True
 
     elif "build_sphinx" in sys.argv:
-        call_setup_hook(
-            project_var_name if module_name is None else module_name)
+        call_setup_hook(folder,
+                        project_var_name if module_name is None else module_name)
         standard_help_for_setup(
             file_or_folder, project_var_name, module_name=module_name, extra_ext=extra_ext)
         return True
