@@ -76,7 +76,8 @@ def get_test_file(filter, dir=None, no_subfolder=False):
         if dir is None:
             path = os.path.split(__file__)[0]
             dirs = [os.path.join(path, "..", "..", d) for d in expected]
-        elif isinstance(dir, str):
+        elif isinstance(dir, str  # unicode#
+                        ):
             if not os.path.exists(dir):
                 raise FileNotFoundError(dir)
             last = os.path.split(dir)[-1]
@@ -535,7 +536,6 @@ def main_wrapper_tests(codefile,
                                 ``os.path.join(os.path.dirname(codefile), "..", "_doc","sphinxdoc","source", "coverage")``
     @param      skip_function   function(filename,content) --> boolean to skip a unit test
 
-
     @FAQ(How to build pyquickhelper with Jenkins?)
     `Jenkins <http://jenkins-ci.org/>`_ is a task scheduler for continuous integration.
     You can easily schedule batch command to build and run unit tests for a specific project.
@@ -569,6 +569,9 @@ def main_wrapper_tests(codefile,
 
     .. versionchanged:: 1.1
         If the skip function is None, it will replace it by the function @see fn default_skip_function.
+        Calls function @see fn _setup_hook if it is available in the unit tested module.
+        Parameter *tested_module* was added, the function then checks the presence of
+        function @see fn _setup_hook, it is the case, it runs it.
 
     """
     runner = unittest.TextTestRunner(verbosity=0, stream=io.StringIO())
@@ -593,6 +596,30 @@ def main_wrapper_tests(codefile,
     r = fix_tkinter_issues_virtualenv()
     print("MODULES (2): matplotlib imported",
           "matplotlib" in sys.modules, _first_execution, r)
+
+    def tested_module():
+        # module mod
+
+        copy_locals = locals().copy()
+        copy_globals = globals().copy()
+        code_import = "import {0} as UT_MODULE".format(project_var_name)
+        try:
+            exec(code_import, copy_globals, copy_locals)
+            UT_MODULE = copy_locals["UT_MODULE"]
+        except ImportError:
+            src = os.path.abspath(
+                os.path.join(os.path.dirname(codefile), "..", "src"))
+            sys.path.append(src)
+            exec(code_import, copy_globals, copy_locals)
+            UT_MODULE = copy_locals["UT_MODULE"]
+            del sys.path[-1:]
+
+        mod = UT_MODULE
+
+        if mod is not None and hasattr(mod, "_setup_hook"):
+            print("~ calls _setup_hook from ", mod.__file__)
+            mod._setup_hook()
+            print("~ end of _setup_hook from ")
 
     if add_coverage:
         if report_folder is None:
@@ -620,12 +647,15 @@ def main_wrapper_tests(codefile,
         cov.exclude('if __name__ == "__main__"')
         cov.start()
 
+        tested_module()
+
         res = run_main()
 
         cov.stop()
         cov.html_report(directory=report_folder)
 
     else:
+        tested_module()
         res = run_main()
 
     for r in res["tests"]:

@@ -39,6 +39,18 @@ def check():
     check_log()
     return True
 
+
+def _setup_hook():
+    """
+    if this function is added to the module,
+    the help automation and unit tests call it first before
+    anything goes on as an initialization step.
+    """
+    # we can check many things, needed module
+    # any others things before unit tests are started
+    pass
+
+
 from .loghelper.flog import fLOG, run_cmd, skip_run_cmd, unzip, noLOG, removedirs, unzip_files
 from .loghelper.url_helper import get_url_content
 from .loghelper.convert_helper import str_to_datetime
