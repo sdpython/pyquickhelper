@@ -261,7 +261,7 @@ class TestJenkinsExt(unittest.TestCase):
                     raise Exception(conf)
 
             if ">F0" in conf:
-                if "auto_setup_build_sphinx.bat" not in conf:
+                if "auto_cmd_any_setup_command.bat build_sphinx" not in conf:
                     raise Exception(conf)
 
         assert i > 0
