@@ -523,6 +523,7 @@ def add_notebook_page(nbs, fileout):
 
     rows.append("")
     rows.append(".. toctree::")
+    rows.append("    :maxdepth: 2")
     rows.append("")
     for file in rst:
         rows.append(

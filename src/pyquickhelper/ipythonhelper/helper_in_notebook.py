@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 @file
 @brief Functions to call from the notebook
@@ -77,14 +78,14 @@ def set_notebook_name_theNotebook():
     return get_name()
 
 
-def add_notebook_menu(menu_id="my_id_menu_nb", raw=False, format="html", level="h3"):
+def add_notebook_menu(menu_id="my_id_menu_nb", raw=False, format="html", header=None):
     """
     add javascript and HTML to the notebook which gathers all in the notebook and builds a menu
 
     @param      menu_id     menu_id
     @param      raw         raw HTML and Javascript
     @param      format      *html* or *rst*
-    @param      level       tag to look for
+    @param      header      title of the menu (None for None)
     @return                 HTML object
 
     In a notebook, it is easier to do by using a magic command
@@ -104,47 +105,82 @@ def add_notebook_menu(menu_id="my_id_menu_nb", raw=False, format="html", level="
     html = '<div id="{0}">run previous cell, wait for 2 seconds</div>'.format(
         menu_id)
 
-    rst_level = "h" + str(int(level.strip("h")) - 1)
-
     js = """
-        var update_menu = function() {
-            var els = document.getElementsByClassName("sphinxsidebar");
-            var level;
-            if (els.length > 0) level = "__RSTLEVEL__";
-            else level = "__LEVEL__";
-            var anchors = document.getElementsByTagName(level);
-            var menu = document.getElementById("__MENUID__");
-            var i;
-            var text_menu = "<ul>";
-            var href;
-            for (i = 0; i < anchors.length; i++) {
-                var title = anchors[i].textContent;
-                title = title.substring(0,title.length-1);
-                if (anchors[i].hasAttribute("id"))
-                    href = anchors[i].id;
-                else
-                    href = anchors[i].parentNode.id;
-                text_menu += __FORMAT__;
-            }
-            text_menu += "</ul>"
-            menu.innerHTML=text_menu;
-        };
-        window.setTimeout(update_menu,2000);
-        """.replace("        ", "") \
-           .replace("__MENUID__", menu_id) \
-           .replace("__LEVEL__", level) \
-           .replace("__RSTLEVEL__", rst_level)
+                function repeat_indent_string(n){
+                    var a = "" ;
+                    for ( ; n > 0 ; --n) {
+                        a += "    ";
+                    }
+                    return a;
+                }
+                var update_menu = function() {
+                    var anchors = document.getElementsByClassName("section");
+                    if (anchors.length == 0) {
+                        anchors = document.getElementsByClassName("text_cell_render rendered_html");
+                    }
+                    var i;
+                    var text_menu = "__BEGIN__";
+                    var ind = "";
+                    var memo_level = 0;
+                    var href;
+                    for (i = 0; i < anchors.length; i++) {
+                        var child = anchors[i].children[0];
+                        if (anchors[i].hasAttribute("id")) {
+                            href = anchors[i].id;
+                        }
+                        else if (child.hasAttribute("id")) {
+                            href = child.id;
+                        }
+                        else {
+                            continue;
+                        }
+                        var title = child.textContent;
+                        var level = parseInt(child.tagName.substring(1,2));
+                        if ((level <= 1) || (level >= 5)) {
+                            continue ;
+                        }
+                        if (title.endsWith('¶')) {
+                            title = title.substring(0,title.length-1);
+                        }
+                        if (level > memo_level) {
+                            text_menu += "<ul>\\n";
+                        }
+                        text_menu += repeat_indent_string(level-2) + __FORMAT__;
+                        if (level < memo_level) {
+                            text_menu += "</ul>\\n";
+                        }
+                        memo_level = level;
+                    }
+                    text_menu += "__END__";
+                    var menu = document.getElementById("__MENUID__");
+                    menu.innerHTML=text_menu;
+                };
+                window.setTimeout(update_menu,2000);
+            """.replace("                ", "") \
+               .replace("__MENUID__", menu_id)
 
     full = "{0}\n<script>{1}</script>".format(html, js)
 
     if format == "html":
-        full = full.replace("__FORMAT__",
-                            """'<li><a href="#' + href + '">' + title + '</a></li>'""")
+        if header is not None and len(header) > 0:
+            header = "<b>{0}</b>\n".format(header)
+        else:
+            header = ""
+        full = header + \
+            full.replace("__FORMAT__", """'<li><a href="#' + href + '">' + title + '</a></li>'""") \
+            .replace("__BEGIN__", "") \
+            .replace("__END__", "")
     elif format == "rst":
-        full = full.replace("__FORMAT__",
-                            """'* [' + title + '](#' + href + ')\\n'""") \
-            .replace("<ul>", "<pre>") \
-            .replace("</ul>", "</pre>")
+        if header is not None and len(header) > 0:
+            header = "{0}\n\n".format(header)
+        else:
+            header = ""
+        full = header + \
+            full.replace("__FORMAT__", """'* [' + title + '](#' + href + ')\\n'""") \
+            .replace("<ul>", "") \
+            .replace("</ul>", "") \
+            .replace("__BEGIN__", "<pre>\\n") \
+            .replace("__END__", "</pre>\\n")
     else:
         raise ValueError("format must be html or rst")
 

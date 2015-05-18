@@ -65,6 +65,12 @@ Installation
 And to avoid installing the dependencies::
 
     pip install pyquickhelper --no-deps
+    
+To install it on Python 2.7::
+
+    pip install http://www.xavierdupre.fr/app/pyquickhelper/pyquickhelper-1.1.611-py2-none-any.whl
+    
+The latest version is available at `Python Extensions <http://www.xavierdupre.fr/site2013/index_code.html>`_.
 
     
 Navigation

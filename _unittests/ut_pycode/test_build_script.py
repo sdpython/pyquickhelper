@@ -24,7 +24,7 @@ except ImportError:
     import src
 
 from src.pyquickhelper import fLOG
-from src.pyquickhelper.pycode.build_helper import get_build_script, get_script_command, get_extra_script_command
+from src.pyquickhelper.pycode.build_helper import get_build_script, get_script_command, get_extra_script_command, _default_nofolder
 
 
 class TestBuilScript(unittest.TestCase):
@@ -39,7 +39,10 @@ class TestBuilScript(unittest.TestCase):
             sc = get_build_script("pyquickhelper")
             # fLOG(sc)
             assert "c:\\Python34_x64vir%virtual_env_suffix%\\install" in sc
-            assert "__" not in sc
+            lines = sc.split("\n")
+            for line in lines:
+                if "__" in line and _default_nofolder not in line:
+                    raise Exception("issue with __ in:\n" + line)
 
             scc = get_script_command(
                 "unittest", "pyquickhelper", requirements=[])

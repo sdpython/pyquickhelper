@@ -72,10 +72,11 @@ def private_script_replacements(script, module, requirements, port, raise_except
 
     if platform.startswith("win"):
         plat = "windows"
-        global default_values
+        global default_values, _default_nofolder
         def_values = default_values if default_engine_paths is None else default_engine_paths
 
-        values = [v for v in def_values[plat].values() if v is not None]
+        values = [v for v in def_values[
+            plat].values() if v is not None and v != _default_nofolder]
         if raise_exception and len(values) != len(set(values)):
             raise FileNotFoundError("one the paths is wrong among: " +
                                     "\n".join("{0}={1}".format(k, v) for k, v in def_values[plat].items()))
