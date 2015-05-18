@@ -334,18 +334,6 @@ def generate_help_sphinx(project_var_name,
     if module_name is None:
         module_name = project_var_name
 
-    # calls _setup_hook
-    copy_locals = locals().copy()
-    copy_globals = globals().copy()
-    code_import = "import {0} as HELP_MODULE".format(module_name)
-    exec(code_import, copy_globals, copy_locals)
-    HELP_MODULE = copy_locals["HELP_MODULE"]
-
-    if hasattr(HELP_MODULE, "_setup_hook"):
-        fLOG("~ calls _setup_hook from", HELP_MODULE.__file__)
-        HELP_MODULE._setup_hook()
-        fLOG("~ end of call _setup_hook")
-
     # we save the module already imported
     sys_modules = set(sys.modules.keys())
 

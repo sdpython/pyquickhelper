@@ -488,7 +488,8 @@ class JenkinsExt(jenkins.Jenkins):
                     cmd = modified_windows_jenkins_27
                 elif "[doc]" in spl:
                     # documentation
-                    cmd = "auto_setup_build_sphinx.bat"
+                    cmd = modified_windows_jenkins_any.replace(
+                        "__COMMAND__", "build_sphinx")
                 else:
                     cmd = modified_windows_jenkins
                     for pl in spl[1:]:

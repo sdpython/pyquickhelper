@@ -1034,7 +1034,7 @@ def prepare_file_for_sphinx_help_generation(
             f.write(v)
         rsts.append(RstFileHelp(None, out, None))
 
-    # geneates a table with the number of lines per extension
+    # generates a table with the number of lines per extension
     rows = []
     for act in actions:
         if "__init__.py" not in act[1].get_fullname() or act[-1] > 0:
