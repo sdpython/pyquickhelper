@@ -348,7 +348,7 @@ set jenkinspythonpip=%virtual_env_py%_conda27vir\\Scripts\\pip
 :requirements:
 echo #######################################################_auto_setup_dep.py
 cd build\\auto_setup
-..\\..\\%jenkinspythonexe% auto_setup_dep.py install
+%jenkinspythonexe% auto_setup_dep.py install
 if %errorlevel% neq 0 exit /b %errorlevel%
 cd ..\\..
 %jenkinspythonpip% install --extra-index-url http://localhost:__PORT__/simple/ pyquickhelper
