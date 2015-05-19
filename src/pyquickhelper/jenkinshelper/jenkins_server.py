@@ -736,7 +736,7 @@ class JenkinsExt(jenkins.Jenkins):
                     script = get_jenkins_script(
                         job, pythonexe, winpython, anaconda, anaconda2, platform, port)
 
-                    self.process_options(script, options)
+                    script = self.process_options(script, options)
 
                     if script is not None and len(script) > 0:
                         new_dep.append(name)

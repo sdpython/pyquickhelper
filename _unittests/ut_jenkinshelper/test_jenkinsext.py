@@ -201,6 +201,9 @@ class TestJenkinsExt(unittest.TestCase):
             if "DF_" in conf:
                 df_ += 1
 
+            if not conf.startswith("<?xml version='1.0' encoding='UTF-8'?>"):
+                raise Exception(conf)
+
             search = reg.search(conf)
             if not search:
                 raise Exception(conf)
