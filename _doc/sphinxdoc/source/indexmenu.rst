@@ -9,6 +9,7 @@ table of contents
     generatedoc
     generatesetup
     installation
+    ci
     glossary
     license
     filechanges
