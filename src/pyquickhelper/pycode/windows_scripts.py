@@ -146,8 +146,10 @@ set pythonpip=%virtual_env_py%_condavir%virtual_env_suffix%\\Scripts\\pip
 
 :requirements:
 echo #######################################################_auto_setup_dep.py
-%pythonexe% build\\auto_setup\\auto_setup_dep.py install
+cd build\\auto_setup
+..\\..\\%pythonexe% auto_setup_dep.py install
 if %errorlevel% neq 0 exit /b %errorlevel%
+cd ..\\..
 
 echo #######################################################_requirements_begin
 echo %pythonpip%
@@ -245,8 +247,10 @@ set pythonpip=%virtual_env_py%_condavir%virtual_env_suffix%\\Scripts\\pip
 
 :requirements:
 echo #######################################################_auto_setup_dep.py
-%pythonexe% build\\auto_setup\\auto_setup_dep.py install
+cd build\\auto_setup
+%pythonexe% auto_setup_dep.py install
 if %errorlevel% neq 0 exit /b %errorlevel%
+cd ..\\..
 
 echo #######################################################_requirements_begin
 echo %pythonpip%
@@ -343,8 +347,10 @@ set jenkinspythonpip=%virtual_env_py%_conda27vir\\Scripts\\pip
 
 :requirements:
 echo #######################################################_auto_setup_dep.py
-%jenkinspythonexe% build\\auto_setup\\auto_setup_dep.py install
+cd build\\auto_setup
+..\\..\\%jenkinspythonexe% auto_setup_dep.py install
 if %errorlevel% neq 0 exit /b %errorlevel%
+cd ..\\..
 %jenkinspythonpip% install --extra-index-url http://localhost:__PORT__/simple/ pyquickhelper
 if %errorlevel% neq 0 exit /b %errorlevel%
 

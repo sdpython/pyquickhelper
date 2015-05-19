@@ -597,7 +597,7 @@ def main_wrapper_tests(codefile,
     print("MODULES (2): matplotlib imported",
           "matplotlib" in sys.modules, _first_execution, r)
 
-    def tested_module():
+    def tested_module(project_var_name):
         # module mod
 
         copy_locals = locals().copy()
@@ -647,7 +647,7 @@ def main_wrapper_tests(codefile,
         cov.exclude('if __name__ == "__main__"')
         cov.start()
 
-        tested_module()
+        tested_module(project_var_name)
 
         res = run_main()
 
