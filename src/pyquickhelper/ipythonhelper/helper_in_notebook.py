@@ -142,6 +142,9 @@ def add_notebook_menu(menu_id="my_id_menu_nb", raw=False, format="html", header=
                         if (title.endsWith('¶')) {
                             title = title.substring(0,title.length-1);
                         }
+                        if (title.length == 0) {
+                            continue;
+                        }
                         if (level > memo_level) {
                             text_menu += "<ul>\\n";
                         }
