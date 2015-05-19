@@ -11,10 +11,11 @@ import jenkins
 import socket
 import hashlib
 from ..loghelper.flog import noLOG
-
-
 from ..pycode.windows_scripts import windows_jenkins, windows_jenkins_27, windows_jenkins_any
 from ..pycode.build_helper import private_script_replacements, choose_path
+from .jenkins_exceptions import JenkinsExtException, JenkinsExtPyException, JenkinsJobException
+from .jenkins_server_template import _config_job, _trigger_up, _trigger_time, _git_repo, _task_batch
+
 
 _default_engine_paths = {
     "windows": {
@@ -34,27 +35,17 @@ modified_windows_jenkins_any = windows_jenkins_any \
     .replace("virtual_env_suffix=%2", "virtual_env_suffix=___SUFFIX__")
 
 
-class JenkinsExtException(Exception):
-
-    """
-    exception for the class JenkinsExt
-    """
-    pass
-
-
-class JenkinsExtPyException(Exception):
-
-    """
-    exception for the class JenkinsExt, when a distribution is not available
-    """
-    pass
-
-
 class JenkinsExt(jenkins.Jenkins):
 
     """
     extension for the `Jenkins <https://jenkins-ci.org/>`_ server
     """
+
+    _config_job = _config_job
+    _trigger_up = _trigger_up
+    _trigger_time = _trigger_time
+    _git_repo = _git_repo
+    _task_batch = _task_batch
 
     def __init__(self, url,
                  username=None,
@@ -117,86 +108,252 @@ class JenkinsExt(jenkins.Jenkins):
         except jenkins.URLError as e:
             raise jenkins.JenkinsException('Error in request: %s' % (e.reason))
 
-    _config_job = """
-            <?xml version='1.0' encoding='UTF-8'?>
-            <project>
-              <actions/>
-              <description>__DESCRIPTION__</description>
-              <logRotator class="hudson.tasks.LogRotator">
-                <daysToKeep>__KEEP__</daysToKeep>
-                <numToKeep>__KEEP__</numToKeep>
-                <artifactDaysToKeep>-1</artifactDaysToKeep>
-                <artifactNumToKeep>-1</artifactNumToKeep>
-              </logRotator>
-              <keepDependencies>false</keepDependencies>
-              <properties/>
-              __GITREPOXML__
-              <canRoam>true</canRoam>
-              <disabled>false</disabled>
-              <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
-              <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
-              __TRIGGER__
-              <concurrentBuild>false</concurrentBuild>
-              __LOCATION__
-              <builders>
-              __TASKS__
-              </builders>
-              <publishers/>
-              <buildWrappers/>
-            </project>
-        """.replace("            ", "")
+    def delete_job(self, name):
+        '''Delete Jenkins job permanently.
 
-    _trigger_up = """
-              <triggers>
-                <jenkins.triggers.ReverseBuildTrigger>
-                  <spec></spec>
-                  <upstreamProjects>__UP__</upstreamProjects>
-                  <threshold>
-                    <name>FAILURE</name>
-                    <ordinal>2</ordinal>
-                    <color>RED</color>
-                    <completeBuild>true</completeBuild>
-                  </threshold>
-                </jenkins.triggers.ReverseBuildTrigger>
-              </triggers>
-              """.replace("            ", "")
+        :param name: Name of Jenkins job, ``str``
+        '''
+        if self._mock:
+            return
 
-    _trigger_time = """
-              <triggers>
-                <hudson.triggers.TimerTrigger>
-                  <spec>__SCHEDULER__</spec>
-                </hudson.triggers.TimerTrigger>
-              </triggers>
-              """.replace("            ", "")
+        self.jenkins_open(jenkins.Request(
+            self.server + jenkins.DELETE_JOB % self._get_encoded_params(locals()), b''))
+        if self.job_exists(name):
+            raise JenkinsExtException('delete[%s] failed' % (name))
 
-    _git_repo = """
-              <scm class="hudson.plugins.git.GitSCM" plugin="git@2.3.4">
-                <configVersion>2</configVersion>
-                <userRemoteConfigs>
-                  <hudson.plugins.git.UserRemoteConfig>
-                    <url>__GITREPO__</url>
-                    __CRED__
-                  </hudson.plugins.git.UserRemoteConfig>
-                </userRemoteConfigs>
-                <branches>
-                  <hudson.plugins.git.BranchSpec>
-                    <name>*/master</name>
-                  </hudson.plugins.git.BranchSpec>
-                </branches>
-                <doGenerateSubmoduleConfigurations>false</doGenerateSubmoduleConfigurations>
-                <submoduleCfg class="list"/>
-                <extensions>
-                  <hudson.plugins.git.extensions.impl.WipeWorkspace/>
-                </extensions>
-              </scm>
-              """.replace("            ", "")
+    @staticmethod
+    def get_jenkins_job_name(job):
+        """
+        infer a name for the jenkins job
 
-    _task_batch = """
-                <hudson.tasks.BatchFile>
-                  <command>__SCRIPT__
-                  </command>
-                </hudson.tasks.BatchFile>
-                """.replace("            ", "")
+        @param      job     str
+        @return             name
+        """
+        for prefix in ["doc", "anaconda", "anaconda2", "winpython"]:
+            p = "[%s]" % prefix
+            if p in job:
+                job = p + " " + job.replace(" " + p, "")
+        return job.replace(" ", "_").replace("[", "").replace("]", "")
+
+    @staticmethod
+    def get_cmd_standalone(job, pythonexe, winpython, anaconda, anaconda2, platform, port):
+        """
+        Custom command for jenkins (such as updating conda)
+
+        @param      job             module and options
+        @param      pythonexe       unused
+        @param      anaconda        location of anaconda (3)
+        @param      anaconda2       location of anaconda 2
+        @param      winpython       location of winpython
+        @param      platform        platform, Windows or Linux or ...
+        @param      port            port for the local pypi server
+        @return                     script
+        """
+        spl = job.split()
+        if spl[0] != "standalone":
+            raise JenkinsExtException(
+                "the job should start by standalone: " + job)
+
+        if platform.startswith("win"):
+            # windows
+            if "[conda_update]" in spl:
+                cmd = "%s\\Scripts\\conda update -y --all" % anaconda
+            elif "[conda_update27]" in spl:
+                cmd = "%s\\Scripts\\conda update -y --all" % anaconda2
+            elif "[local_pypi]" in spl:
+                cmd = "if not exist ..\\local_pypi_server mkdir ..\\local_pypi_server"
+                cmd += "\necho __PYTHON__\\Scripts\\pypi-server.exe -u -v -p __PORT__ --disable-fallback ..\\local_pypi_server > ..\\local_pypi_server\\start_local_pypi.bat"
+                cmd = cmd.replace("__PYTHON__", os.path.dirname(sys.executable)) \
+                         .replace("__PORT__", str(port))
+            else:
+                raise JenkinsExtException("cannot interpret job: " + job)
+            return cmd
+        else:
+            raise NotImplementedError()
+
+    @staticmethod
+    def hash_string(s, l=5):
+        """
+        hash a string
+
+        @param      s       string
+        @param      l       cut the string to the first *l* character
+        @return             hashed string
+        """
+        m = hashlib.md5()
+        m.update(s.encode("ascii"))
+        r = m.hexdigest().upper()
+        return r if l == -1 else r[:l]
+
+    @staticmethod
+    def get_jenkins_script(job, pythonexe, winpython, anaconda, anaconda2, platform, port):
+        """
+        build the jenkins script for a module and its options
+
+        @param      job             module and options
+        @param      pythonexe       unused
+        @param      anaconda        location of anaconda (3)
+        @param      anaconda2       location of anaconda 2
+        @param      winpython       location of winpython
+        @param      platform        platform, Windows or Linux or ...
+        @param      port            port for the local pypi server
+        @return                     script
+
+        Method @see me setup_jenkins_server describes which tags
+        this method can interpret.
+
+        The method allow command such as ``[custom...]``, they will be
+        run in a virtual environment as ``setup.py custom...``.
+
+        job can be ``empty``, in that case, this function returns an empty string.
+        """
+        spl = job.split()
+        module_name = spl[0]
+        job_hash = JenkinsExt.hash_string(job)
+
+        def replacements(cmd, python, suffix):
+            res = cmd.replace("__PYTHON__", python) \
+                     .replace("__SUFFIX__", suffix + "_" + job_hash)  \
+                     .replace("__PORT__", str(port))  \
+                     .replace("__MODULE__", module_name)  # suffix for the virtual environment and module name
+
+            # patch to avoid installing pyquickhelper when testing
+            # pyquickhelper
+            if module_name == "pyquickhelper":
+                lines = res.split("\n")
+                for i, line in enumerate(lines):
+                    if "/simple/ pyquickhelper" in line and "install --extra-index-url http://localhost" in line:
+                        lines[i] = ""
+                res = "\n".join(lines)
+
+            return res
+
+        if platform.startswith("win"):
+            # windows
+            py = choose_path(os.path.dirname(sys.executable),
+                             "c:\\Python34_x64",
+                             anaconda,
+                             winpython,
+                             ".")
+
+            if len(spl) == 1:
+                script = modified_windows_jenkins
+                if not isinstance(script, list):
+                    script = [script]
+                return [replacements(s, os.path.join(py, "python"), "A0") for s in script]
+
+            elif len(spl) == 0:
+                raise ValueError("job is empty")
+
+            elif spl[0] == "standalone":
+                # conda update
+                return JenkinsExt.get_cmd_standalone(
+                    job, pythonexe, winpython, anaconda, anaconda2, platform, port)
+
+            elif spl[0] == "empty":
+                return ""
+
+            elif len(spl) in [2, 3, 4]:
+                # step 1: define the script
+
+                if "[test_local_pypi]" in spl:
+                    cmd = "auto_setup_test_local_pypi.bat __PYTHON__"
+                elif "[LONG]" in spl:
+                    cmd = modified_windows_jenkins_any.replace(
+                        "__COMMAND__", "unittests_LONG")
+                elif "[SKIP]" in spl:
+                    cmd = modified_windows_jenkins_any.replace(
+                        "__COMMAND__", "unittests_SKIP")
+                elif "[27]" in spl:
+                    cmd = modified_windows_jenkins_27
+                elif "[doc]" in spl:
+                    # documentation
+                    cmd = modified_windows_jenkins_any.replace(
+                        "__COMMAND__", "build_sphinx")
+                else:
+                    cmd = modified_windows_jenkins
+                    for pl in spl[1:]:
+                        if pl.startswith("[custom_") and pl.endswith("]"):
+                            cus = pl.strip("[]")
+                            cmd = modified_windows_jenkins_any.replace(
+                                "__COMMAND__", cus)
+
+                # step 2: replacement (python __PYTHON__, virtual environnement
+                # __SUFFIX__)
+
+                cmds = cmd if isinstance(cmd, list) else [cmd]
+                res = []
+                for cmd in cmds:
+                    if "[anaconda]" in spl:
+                        if anaconda is not None:
+                            cmd = replacements(
+                                cmd, os.path.join(anaconda, "python"), "A3")
+                        else:
+                            raise JenkinsExtPyException(
+                                "anaconda is not available")
+
+                    elif "[anaconda2]" in spl:
+                        if anaconda2 is not None:
+                            cmd = replacements(cmd, os.path.join(py, "python"), "A2") \
+                                .replace("__PYTHON27__", os.path.join(anaconda2, "python"))
+                        else:
+                            raise JenkinsExtPyException(
+                                "anaconda2 is not available")
+                    elif "[winpython]" in spl:
+                        if winpython is not None:
+                            # with WinPython, nb_convert has some trouble when called
+                            # from the command line within Python
+                            # the job might fail
+                            cmd = replacements(
+                                cmd, os.path.join(winpython, "python"), "WP")
+                        else:
+                            raise JenkinsExtPyException(
+                                "winpython is not available")
+                    else:
+                        py = choose_path(
+                            os.path.dirname(sys.executable), "c:\\Python34_x64", "c:\\Anaconda3", ".")
+                        cmd = replacements(
+                            cmd, os.path.join(py, "python"), "DF")
+
+                    res.append(cmd)
+
+                return res
+            else:
+                raise ValueError("unable to interpret: " + job)
+        else:
+            # linux
+            spl = job.split()
+            if len(spl) == 1:
+                return "build_setup_help_on_linux.sh"
+            elif len(spl) == 0:
+                raise ValueError("job is empty")
+            elif spl[0] == "standalone":
+                # conda update
+                cmd = JenkinsExt.get_cmd_standalone(
+                    job, pythonexe, winpython, anaconda, anaconda2, platform, port)
+                return cmd
+            elif len(spl) in [2, 3]:
+                if "[all]" in spl:
+                    cmd = "bunittest_all.sh"
+                elif "[notebooks]" in spl:
+                    cmd = "bunittest_notebooks.sh"
+                elif "[27]" in spl:
+                    cmd = "build_setup_help_on_linux_27.sh"
+                else:
+                    cmd = "build_setup_help_on_linux.sh"
+
+                if "[anaconda]" in spl:
+                    if anaconda is not None:
+                        cmd += " " + os.path.join(anaconda, "python")
+                elif "[anaconda2]" in spl:
+                    if anaconda2 is not None:
+                        cmd += " " + os.path.join(anaconda2, "python")
+                elif "[winpython]" in spl:
+                    raise JenkinsExtException(
+                        "unable to use WinPython on Linux")
+                return cmd
+            else:
+                raise ValueError("unable to interpret: " + job)
 
     def create_job_template(self,
                             name,
@@ -333,247 +490,23 @@ class JenkinsExt(jenkins.Jenkins):
         else:
             return self.create_job(name, conf.encode("utf-8"))
 
-    def delete_job(self, name):
-        '''Delete Jenkins job permanently.
-
-        :param name: Name of Jenkins job, ``str``
-        '''
-        if self._mock:
-            return
-
-        self.jenkins_open(jenkins.Request(
-            self.server + jenkins.DELETE_JOB % self._get_encoded_params(locals()), b''))
-        if self.job_exists(name):
-            raise JenkinsExtException('delete[%s] failed' % (name))
-
-    @staticmethod
-    def get_jenkins_job_name(job):
+    def process_options(self, script, options):
         """
-        infer a name for the jenkins job
+        post process a script inserted in a job definition
 
-        @param      job     str
-        @return             name
+        @param      script      script to execute
+        @param      options     dictionary with options
+        @return                 new script
         """
-        for prefix in ["doc", "anaconda", "anaconda2", "winpython"]:
-            p = "[%s]" % prefix
-            if p in job:
-                job = p + " " + job.replace(" " + p, "")
-        return job.replace(" ", "_").replace("[", "").replace("]", "")
-
-    @staticmethod
-    def get_cmd_standalone(job, pythonexe, winpython, anaconda, anaconda2, platform, port):
-        """
-        Custom command for jenkins (such as updating conda)
-
-        @param      job             module and options
-        @param      pythonexe       unused
-        @param      anaconda        location of anaconda (3)
-        @param      anaconda2       location of anaconda 2
-        @param      winpython       location of winpython
-        @param      platform        platform, Windows or Linux or ...
-        @param      port            port for the local pypi server
-        @return                     script
-        """
-        spl = job.split()
-        if spl[0] != "standalone":
-            raise JenkinsExtException(
-                "the job should start by standalone: " + job)
-
-        if platform.startswith("win"):
-            # windows
-            if "[conda_update]" in spl:
-                cmd = "%s\\Scripts\\conda update -y --all" % anaconda
-            elif "[conda_update27]" in spl:
-                cmd = "%s\\Scripts\\conda update -y --all" % anaconda2
-            elif "[local_pypi]" in spl:
-                cmd = "if not exist ..\\local_pypi_server mkdir ..\\local_pypi_server"
-                cmd += "\necho __PYTHON__\\Scripts\\pypi-server.exe -u -v -p __PORT__ --disable-fallback ..\\local_pypi_server > ..\\local_pypi_server\\start_local_pypi.bat"
-                cmd = cmd.replace("__PYTHON__", os.path.dirname(sys.executable)) \
-                         .replace("__PORT__", str(port))
+        for k, v in options.items():
+            if k == "pre":
+                script = v + "\n" + script
+            elif k == "post":
+                script = script + "\n" + v
             else:
-                raise JenkinsExtException("cannot interpret job: " + job)
-            return cmd
-        else:
-            raise NotImplementedError()
-
-    @staticmethod
-    def hash_string(s, l=5):
-        """
-        hash a string
-
-        @param      s       string
-        @param      l       cut the string to the first *l* character
-        @return             hashed string
-        """
-        m = hashlib.md5()
-        m.update(s.encode("ascii"))
-        r = m.hexdigest().upper()
-        return r if l == -1 else r[:l]
-
-    @staticmethod
-    def get_jenkins_script(job, pythonexe, winpython, anaconda, anaconda2, platform, port):
-        """
-        build the jenkins script for a module and its options
-
-        @param      job             module and options
-        @param      pythonexe       unused
-        @param      anaconda        location of anaconda (3)
-        @param      anaconda2       location of anaconda 2
-        @param      winpython       location of winpython
-        @param      platform        platform, Windows or Linux or ...
-        @param      port            port for the local pypi server
-        @return                     script
-
-        Method @see me setup_jenkins_server describes which tags
-        this method can interpret.
-
-        The method allow command such as ``[custom...]``, they will be
-        run in a virtual environment as ``setup.py custom...``.
-        """
-        spl = job.split()
-        module_name = spl[0]
-        job_hash = JenkinsExt.hash_string(job)
-
-        def replacements(cmd, python, suffix):
-            res = cmd.replace("__PYTHON__", python) \
-                     .replace("__SUFFIX__", suffix + "_" + job_hash)  \
-                     .replace("__PORT__", str(port))  \
-                     .replace("__MODULE__", module_name)  # suffix for the virtual environment and module name
-
-            # patch to avoid installing pyquickhelper when testing
-            # pyquickhelper
-            if module_name == "pyquickhelper":
-                lines = res.split("\n")
-                for i, line in enumerate(lines):
-                    if "/simple/ pyquickhelper" in line and "install --extra-index-url http://localhost" in line:
-                        lines[i] = ""
-                res = "\n".join(lines)
-
-            return res
-
-        if platform.startswith("win"):
-            # windows
-            py = choose_path(os.path.dirname(sys.executable),
-                             "c:\\Python34_x64",
-                             anaconda,
-                             winpython,
-                             ".")
-
-            if len(spl) == 1:
-                script = modified_windows_jenkins
-                if not isinstance(script, list):
-                    script = [script]
-                return [replacements(s, os.path.join(py, "python"), "A0") for s in script]
-
-            elif len(spl) == 0:
-                raise ValueError("job is empty")
-
-            elif spl[0] == "standalone":
-                # conda update
-                return JenkinsExt.get_cmd_standalone(
-                    job, pythonexe, winpython, anaconda, anaconda2, platform, port)
-
-            elif len(spl) in [2, 3, 4]:
-                # step 1: define the script
-
-                if "[test_local_pypi]" in spl:
-                    cmd = "auto_setup_test_local_pypi.bat __PYTHON__"
-                elif "[LONG]" in spl:
-                    cmd = modified_windows_jenkins_any.replace(
-                        "__COMMAND__", "unittests_LONG")
-                elif "[SKIP]" in spl:
-                    cmd = modified_windows_jenkins_any.replace(
-                        "__COMMAND__", "unittests_SKIP")
-                elif "[27]" in spl:
-                    cmd = modified_windows_jenkins_27
-                elif "[doc]" in spl:
-                    # documentation
-                    cmd = modified_windows_jenkins_any.replace(
-                        "__COMMAND__", "build_sphinx")
-                else:
-                    cmd = modified_windows_jenkins
-                    for pl in spl[1:]:
-                        if pl.startswith("[custom_") and pl.endswith("]"):
-                            cus = pl.strip("[]")
-                            cmd = modified_windows_jenkins_any.replace(
-                                "__COMMAND__", cus)
-
-                # step 2: replacement (python __PYTHON__, virtual environnement
-                # __SUFFIX__)
-
-                cmds = cmd if isinstance(cmd, list) else [cmd]
-                res = []
-                for cmd in cmds:
-                    if "[anaconda]" in spl:
-                        if anaconda is not None:
-                            cmd = replacements(
-                                cmd, os.path.join(anaconda, "python"), "A3")
-                        else:
-                            raise JenkinsExtPyException(
-                                "anaconda is not available")
-
-                    elif "[anaconda2]" in spl:
-                        if anaconda2 is not None:
-                            cmd = replacements(cmd, os.path.join(py, "python"), "A2") \
-                                .replace("__PYTHON27__", os.path.join(anaconda2, "python"))
-                        else:
-                            raise JenkinsExtPyException(
-                                "anaconda2 is not available")
-                    elif "[winpython]" in spl:
-                        if winpython is not None:
-                            # with WinPython, nb_convert has some trouble when called
-                            # from the command line within Python
-                            # the job might fail
-                            cmd = replacements(
-                                cmd, os.path.join(winpython, "python"), "WP")
-                        else:
-                            raise JenkinsExtPyException(
-                                "winpython is not available")
-                    else:
-                        py = choose_path(
-                            os.path.dirname(sys.executable), "c:\\Python34_x64", "c:\\Anaconda3", ".")
-                        cmd = replacements(
-                            cmd, os.path.join(py, "python"), "DF")
-
-                    res.append(cmd)
-
-                return res
-            else:
-                raise ValueError("unable to interpret: " + job)
-        else:
-            # linux
-            spl = job.split()
-            if len(spl) == 1:
-                return "build_setup_help_on_linux.sh"
-            elif len(spl) == 0:
-                raise ValueError("job is empty")
-            elif spl[0] == "standalone":
-                # conda update
-                cmd = JenkinsExt.get_cmd_standalone(
-                    job, pythonexe, winpython, anaconda, anaconda2, platform, port)
-                return cmd
-            elif len(spl) in [2, 3]:
-                if "[all]" in spl:
-                    cmd = "bunittest_all.sh"
-                elif "[notebooks]" in spl:
-                    cmd = "bunittest_notebooks.sh"
-                elif "[27]" in spl:
-                    cmd = "build_setup_help_on_linux_27.sh"
-                else:
-                    cmd = "build_setup_help_on_linux.sh"
-
-                if "[anaconda]" in spl:
-                    if anaconda is not None:
-                        cmd += " " + os.path.join(anaconda, "python")
-                elif "[anaconda2]" in spl:
-                    if anaconda2 is not None:
-                        cmd += " " + os.path.join(anaconda2, "python")
-                elif "[winpython]" in spl:
-                    raise JenkinsExtException(
-                        "unable to use WinPython on Linux")
-                return cmd
-            else:
-                raise ValueError("unable to interpret: " + job)
+                raise JenkinsJobException(
+                    "unable to interpret options: " + str(options))
+        return script
 
     def setup_jenkins_server(self,
                              github,
@@ -650,10 +583,16 @@ class JenkinsExt(jenkins.Jenkins):
 
         *modules* is a list defined as follows:
 
-            * each element can be a string or a tuple (string, schedule time) or a list
-            * if it is a list, it contains a list of elements defined as previously
-            * the job at position i is not scheduled, it will start after the last
-              job at position i-1 whether or not it fails
+        * each element can be a string or a tuple (string, schedule time) or a list
+        * if it is a list, it contains a list of elements defined as previously
+        * if the job at position i is not scheduled, it will start after the last
+          job at position i-1 whether or not it fails
+        * the job can be defined as a tuple of 3 elements, the last one contains options
+
+        The available options are:
+
+        * pre: defines a string to insert at the beginning of a job
+        * post: defines a string to insert at the end of a job
 
         Example ::
 
@@ -688,7 +627,6 @@ class JenkinsExt(jenkins.Jenkins):
                       ["ensae_teaching_cs [winpython] [custom_left]",
                        "ensae_teaching_cs [anaconda] [custom_left]", ],
                       ],
-
 
         Example::
 
@@ -755,14 +693,25 @@ class JenkinsExt(jenkins.Jenkins):
                 unit += 1
 
                 if isinstance(job, tuple):
-                    job, scheduler = job
+                    if len(job) < 2:
+                        raise JenkinsJobException(
+                            "the tuple must contain at least two elements:\nJOB:\n" + str(options))
+                    job, scheduler = job[:2]
                     order = 1
                     if counts.get(dozen, 0) > 0:
                         dozen = chr(ord(dozen) + 1)
+                    if len(job) == 3:
+                        options = job[2]
+                        if isinstance(options, dict):
+                            raise JenkinsJobException(
+                                "the last element of the tuple must be a dictionary:\nJOB:\n" + str(options))
+                    else:
+                        options = {}
                 else:
                     scheduler = None
                     if i == 0:
                         order += 1
+                    options = {}
 
                 counts[dozen] = counts.get(dozen, 0) + 1
 
@@ -786,6 +735,8 @@ class JenkinsExt(jenkins.Jenkins):
 
                     script = get_jenkins_script(
                         job, pythonexe, winpython, anaconda, anaconda2, platform, port)
+
+                    self.process_options(script, options)
 
                     if script is not None and len(script) > 0:
                         new_dep.append(name)

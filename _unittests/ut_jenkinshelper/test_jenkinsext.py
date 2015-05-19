@@ -136,7 +136,8 @@ class TestJenkinsExt(unittest.TestCase):
                 ["pymyinstall [doc]", "pysqllike [doc]", "pymmails [doc]",
                  "pyrsslocal [doc]", "pyensae [doc]"],
                 ["actuariat_python [doc]", "code_beatrix [doc]"],
-                "ensae_teachings_cs [doc]",
+                ("ensae_teachings_cs [doc]", None,
+                 dict(pre="rem pre", post="rem post")),
             ]
         else:
             modules = [  # update anaconda
@@ -262,6 +263,10 @@ class TestJenkinsExt(unittest.TestCase):
 
             if ">F0" in conf:
                 if "auto_cmd_any_setup_command.bat build_sphinx" not in conf:
+                    raise Exception(conf)
+
+            if "ensae_teachings_cs [doc]" in conf:
+                if "rem pre" not in conf or "rem post" not in conf:
                     raise Exception(conf)
 
         assert i > 0
