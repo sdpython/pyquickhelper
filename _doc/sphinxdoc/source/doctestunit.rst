@@ -4,6 +4,12 @@ Documentation, unit tests, setup
 ================================
 
 
+The instruction ``python setup.py build_script`` generates
+many short scripts to run simple tasks such as running unit tests,
+generating the setup, the documentation, running a pipy server, 
+publishing the setup or the documentation,
+gathering blogs from the web site this documentation is deployed...
+
 
 
 Unit tests

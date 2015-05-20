@@ -494,15 +494,21 @@ class JenkinsExt(jenkins.Jenkins):
         """
         post process a script inserted in a job definition
 
-        @param      script      script to execute
+        @param      script      script to execute (in a list)
         @param      options     dictionary with options
         @return                 new script
         """
+        if not isinstance(script, list):
+            script = [script]
         for k, v in options.items():
             if k == "pre":
-                script = v + "\n" + script
+                script.insert(0, v)
             elif k == "post":
-                script = script + "\n" + v
+                script.append(v)
+            elif k == "pre_set":
+                script = [v + "\n" + _ for _ in script]
+            elif k == "post_set":
+                script = [_ + "\n" + v for _ in script]
             else:
                 raise JenkinsJobException(
                     "unable to interpret options: " + str(options))
@@ -524,7 +530,8 @@ class JenkinsExt(jenkins.Jenkins):
                              dependencies=None,
                              platform=sys.platform,
                              port=8067,
-                             default_engine_paths=None):
+                             default_engine_paths=None,
+                             credentials=""):
         """
         Set up many jobs on Jenkins
 
@@ -545,6 +552,7 @@ class JenkinsExt(jenkins.Jenkins):
         @param      platform                platform of the Jenkins server
         @param      port                    port for the local pypi server
         @param      default_engine_paths    define the default location for python engine, should be dictionary *{ engine: path }*, see below.
+        @param      credentials             credentials to use for the job
         @param      fLOG                    logging function
         @return                             list of created jobs
 
@@ -673,7 +681,7 @@ class JenkinsExt(jenkins.Jenkins):
 
         js = self
 
-        if "https://" not in github:
+        if github is not None and "https://" not in github:
             github = "https://github.com/" + github + "/"
 
         dep = []
@@ -696,17 +704,25 @@ class JenkinsExt(jenkins.Jenkins):
                     if len(job) < 2:
                         raise JenkinsJobException(
                             "the tuple must contain at least two elements:\nJOB:\n" + str(options))
-                    job, scheduler = job[:2]
-                    order = 1
-                    if counts.get(dozen, 0) > 0:
-                        dozen = chr(ord(dozen) + 1)
+
+                    # we extract options if any
                     if len(job) == 3:
                         options = job[2]
-                        if isinstance(options, dict):
+                        if not isinstance(options, dict):
                             raise JenkinsJobException(
                                 "the last element of the tuple must be a dictionary:\nJOB:\n" + str(options))
                     else:
                         options = {}
+
+                     # job and scheduler
+                    job, scheduler = job[:2]
+                    if scheduler is not None:
+                        order = 1
+                        if counts.get(dozen, 0) > 0:
+                            dozen = chr(ord(dozen) + 1)
+                    else:
+                        if i == 0:
+                            order += 1
                 else:
                     scheduler = None
                     if i == 0:
@@ -736,8 +752,18 @@ class JenkinsExt(jenkins.Jenkins):
                     script = get_jenkins_script(
                         job, pythonexe, winpython, anaconda, anaconda2, platform, port)
 
+                    # we process the repository
+                    if "repo" in options:
+                        gitrepo = options["repo"]
+                        options = options.copy()
+                        del options["repo"]
+                    else:
+                        gitrepo = github
+
+                    # we post process the script
                     script = self.process_options(script, options)
 
+                    # if there is a script
                     if script is not None and len(script) > 0:
                         new_dep.append(name)
                         upstreams = [] if (
@@ -758,8 +784,13 @@ class JenkinsExt(jenkins.Jenkins):
 
                         if mod == "standalone":
                             gpar = None
+                        elif gitrepo is None:
+                            raise JenkinsJobException(
+                                "gitrepo cannot be none if standalone is not defined")
+                        elif gitrepo.endswith(".git"):
+                            gpar = gitrepo
                         else:
-                            gpar = github + "%s/" % mod
+                            gpar = gitrepo + "%s/" % mod
 
                         # create the template
                         r = js.create_job_template(jname,
@@ -772,7 +803,8 @@ class JenkinsExt(jenkins.Jenkins):
                                                    platform=platform,
                                                    py27="[27]" in job,
                                                    description=description,
-                                                   default_engine_paths=default_engine_paths)
+                                                   default_engine_paths=default_engine_paths,
+                                                   credentials=credentials)
 
                         # check some inconsistencies
                         if "[27]" in job and "Anaconda3" in script:

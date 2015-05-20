@@ -146,8 +146,12 @@ set pythonpip=%virtual_env_py%_condavir%virtual_env_suffix%\\Scripts\\pip
 
 :requirements:
 echo #######################################################_auto_setup_dep.py
+set pythonexe_rel=..\\..\\%pythonexe%.exe
+if exist %pythonexe_rel% goto auto_setup_relpath:
+set pythonexe_rel=%pythonexe%
+:auto_setup_relpath:
 cd build\\auto_setup
-..\\..\\%pythonexe% auto_setup_dep.py install
+%pythonexe_rel% auto_setup_dep.py install
 if %errorlevel% neq 0 exit /b %errorlevel%
 cd ..\\..
 
@@ -247,8 +251,12 @@ set pythonpip=%virtual_env_py%_condavir%virtual_env_suffix%\\Scripts\\pip
 
 :requirements:
 echo #######################################################_auto_setup_dep.py
+set pythonexe_rel=..\\..\\%pythonexe%.exe
+if exist %pythonexe_rel% goto auto_setup_relpath:
+set pythonexe_rel=%pythonexe%
+:auto_setup_relpath:
 cd build\\auto_setup
-%pythonexe% auto_setup_dep.py install
+%pythonexe_rel% auto_setup_dep.py install
 if %errorlevel% neq 0 exit /b %errorlevel%
 cd ..\\..
 
@@ -347,8 +355,12 @@ set jenkinspythonpip=%virtual_env_py%_conda27vir\\Scripts\\pip
 
 :requirements:
 echo #######################################################_auto_setup_dep.py
+set pythonexe_rel=..\\..\\%jenkinspythonexe%.exe
+if exist %pythonexe_rel% goto auto_setup_relpath:
+set pythonexe_rel=%jenkinspythonexe%
+:auto_setup_relpath:
 cd build\\auto_setup
-%jenkinspythonexe% auto_setup_dep.py install
+%pythonexe_rel% auto_setup_dep.py install
 if %errorlevel% neq 0 exit /b %errorlevel%
 cd ..\\..
 %jenkinspythonpip% install --extra-index-url http://localhost:__PORT__/simple/ pyquickhelper

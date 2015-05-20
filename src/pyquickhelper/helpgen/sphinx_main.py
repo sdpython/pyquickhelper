@@ -66,7 +66,8 @@ def generate_help_sphinx(project_var_name,
                          layout=[("html", "build", {})],
                          module_name=None,
                          from_repo=True,
-                         use_run_cmd=False):
+                         use_run_cmd=False,
+                         add_htmlhelp=False):
     """
     runs the help generation
         - copies every file in another folder
@@ -87,6 +88,7 @@ def generate_help_sphinx(project_var_name,
     @param      from_repo           if True, assumes the sources come from a source repository,
                                     False otherwise
     @param      use_run_cmd         use @see fn run_cmd instead os ``os.system`` (default) to run Sphinx
+    @param      add_htmlhelp        run HTML Help too (only on Windows)
 
     The result is stored in path: ``root/_doc/sphinxdoc/source``.
     We assume the file ``root/_doc/sphinxdoc/source/conf.py`` exists
@@ -179,8 +181,17 @@ def generate_help_sphinx(project_var_name,
         Add notebook conversion to slides, install reveal.js if not installed.
         Calls the function @see fn _setup_hook to initialize the module before
         generating the documentation.
+        Parameter *add_htmlhelp* was added. It runs HtmlHelp on Windows ::
+
+            "C:\\Program Files (x86)\\HTML Help Workshop\\hhc.exe" build\\htmlhelp\\<module>.hhp
 
     """
+    if add_htmlhelp:
+        if not sys.platform.startswith("win"):
+            raise ValueError("add_htmlhelp is True and the OS is not Windows")
+        else:
+            fLOG("add add_htmlhelp")
+
     if extra_ext is None:
         extra_ext = []
 
@@ -463,6 +474,7 @@ def generate_help_sphinx(project_var_name,
     # builds command lines
     cmds = []
     lays = []
+    cmds_post = []
     for t3 in layout:
         lay, build, override, newconf = lay_build_override_newconf(t3)
 
@@ -487,6 +499,17 @@ def generate_help_sphinx(project_var_name,
         cmds.append(cmd)
         fLOG("run:", cmd)
         lays.append(lay)
+
+        if add_htmlhelp and lay == "html":
+            cmd = "sphinx-build -b {1}help -d {0}/doctrees{2}{3} source {0}/{1}".format(
+                build, lay, over, sconf)
+            cmds.append(cmd)
+            fLOG("run:", cmd)
+            lays.append(lay)
+            hhp = os.path.join(build, lay, module_name + "_doc.hhp")
+            cmdp = '"C:\\Program Files (x86)\\HTML Help Workshop\\hhc.exe" ' + \
+                '"%s"' % hhp
+            cmds_post.append(cmdp)
 
     # cmd = "make {0}".format(lay)
 
@@ -515,6 +538,18 @@ def generate_help_sphinx(project_var_name,
             "##################### end run sphinx #############################################################")
         fLOG(
             "##################################################################################################")
+
+    if add_htmlhelp:
+        # we call HtmlHelp
+        fLOG("### run HTMLHELP ###########################")
+        for cmd in cmds_post:
+            fLOG("running", cmd)
+            out, err = run_cmd(cmd, wait=True, fLOG=fLOG)
+            fLOG(out)
+            if len(err) > 0:
+                warnings.warn(
+                    "Sphinx went through errors. Check if any of them is important.\nOUT:\n{0}\nERR:\n{1}".format(out, err))
+        fLOG("### end run HTMLHELP #######################")
 
     # we copy the coverage files if it is missing
     covfold = os.path.join(docpath, "source", "coverage")
