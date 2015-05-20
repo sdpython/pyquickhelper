@@ -655,7 +655,7 @@ def main_wrapper_tests(codefile,
         cov.html_report(directory=report_folder)
 
     else:
-        tested_module()
+        tested_module(project_var_name)
         res = run_main()
 
     for r in res["tests"]:
