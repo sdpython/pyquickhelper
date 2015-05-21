@@ -9,7 +9,7 @@ from ..loghelper import run_cmd, noLOG
 from ..loghelper.flog import get_interpreter_path
 
 
-def call_setup_hook(folder, module_name, fLOG=noLOG, must_be=False,
+def call_setup_hook(folder, module_name, fLOG=noLOG, must_be=False, 
                     function_name="_setup_hook", use_print=False):
     """
     calls function @see fn _setup_hook for a specific module,
@@ -30,7 +30,8 @@ def call_setup_hook(folder, module_name, fLOG=noLOG, must_be=False,
     code = ["import sys",
             "sys.path.append('{0}')".format(src.replace("\\", "/")),
             "from {0} import {1}".format(module_name, function_name),
-            "{0}()".format(function_name)]
+            "{0}()".format(function_name),
+            "sys.exit(0)"]
     code = ";".join(code)
     if use_print:
         print("CODE:\n", code)
