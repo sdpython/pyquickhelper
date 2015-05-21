@@ -161,8 +161,9 @@ class JenkinsExt(jenkins.Jenkins):
             elif "[conda_update27]" in spl:
                 cmd = "%s\\Scripts\\conda update -y --all" % anaconda2
             elif "[local_pypi]" in spl:
-                cmd = "if not exist ..\\local_pypi_server mkdir ..\\local_pypi_server"
-                cmd += "\necho __PYTHON__\\Scripts\\pypi-server.exe -u -v -p __PORT__ --disable-fallback ..\\local_pypi_server > ..\\local_pypi_server\\start_local_pypi.bat"
+                cmd = "if not exist ..\\local_pypi mkdir ..\\local_pypi"
+                cmd += "\nif not exist ..\\..\\local_pypi\\local_pypi_server mkdir ..\\..\\local_pypi\\local_pypi_server"
+                cmd += "\necho __PYTHON__\\Scripts\\pypi-server.exe -u -v -p __PORT__ --disable-fallback ..\\..\\local_pypi\\local_pypi_server > ..\\..\\local_pypi\\local_pypi_server\\start_local_pypi.bat"
                 cmd = cmd.replace("__PYTHON__", os.path.dirname(sys.executable)) \
                          .replace("__PORT__", str(port))
             else:

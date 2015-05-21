@@ -194,8 +194,9 @@ if %errorlevel% neq 0 exit /b %errorlevel%
 
 :end:
 rem we copy the wheel on a local folder to let a pypiserver take it
-if not exist ..\\local_pypi_server mkdir ..\\local_pypi_server
-copy /Y dist\\*.whl ..\\local_pypi_server
+if not exist ..\\..\\local_pypi mkdir ..\\..\\local_pypi
+if not exist ..\\..local_pypi\\local_pypi_server mkdir ..\\..\\local_pypi\\local_pypi_server
+copy /Y dist\\*.whl ..\\..\\local_pypi\\local_pypi_server
 """
 
 ####################################################
@@ -327,7 +328,7 @@ goto run:
 set portpy=__PORT__
 
 :run:
-%pythonexe%\Scripts\pypi-server.exe -u -p %portpy% --disable-fallback ..\\local_pypi_server
+%pythonexe%\Scripts\pypi-server.exe -u -p %portpy% --disable-fallback ..\\..\\local_pypi\\local_pypi_server
 """
 
 #################
@@ -384,7 +385,7 @@ windows_jenkins_27 = [
     "set virtual_env_py=%CURRENT_PATH%\\..\\virtual\\__MODULE__\n" +
     "set jenkinspythonexe=%virtual_env_py%_conda27vir\\python\n" +
     "\nauto_cmd_build27.bat %jenkinspythonexe%\n" + windows_error,
-    "copy dist_module27\\dist\\*.whl ..\\local_pypi_server"]
+    "copy dist_module27\\dist\\*.whl ..\\..\\local_pypi\\local_pypi_server"]
 
 ##################
 #: auto setup
@@ -417,8 +418,9 @@ setup(
 #########################
 
 copy_dist_to_local_pypi = """
-if not exist ..\local_pypi_server mkdir ..\local_pypi_server
-copy /Y dist\*.whl ..\local_pypi_server
+if not exist ..\\..\\local_pypi mkdir ..\\..\\local_pypi
+if not exist ..\\..\\local_pypi\\local_pypi_server mkdir ..\\..\\local_pypi\\local_pypi_server
+copy /Y dist\\*.whl ..\\..local_pypi\\local_pypi_server
 """
 
 ###############

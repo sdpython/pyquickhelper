@@ -177,6 +177,7 @@ if not r:
         package_data=package_data,
         ext_modules=[],
         install_requires=[
+            "autopep8",
             "numpy",
             "dateutils",
             "IPython",
@@ -189,7 +190,6 @@ if not r:
                 "six",
                 "requests",
                 "flake8",
-                "pep8==1.5.7",
-                "autopep8"],
+                "pep8==1.5.7"],
         }
     )
