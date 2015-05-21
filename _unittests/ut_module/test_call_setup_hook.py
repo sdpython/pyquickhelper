@@ -40,9 +40,30 @@ class TestCallSetupHook(unittest.TestCase):
             init, "pyquickhelper", fLOG=fLOG, function_name="______")
         fLOG(err)
         fLOG(out)
-        assert err == "no ______"
+        assert err == "no ______" or "linux" in out
 
         out, err = call_setup_hook(init, "pyquickhelper", fLOG=fLOG)
+        fLOG(err)
+        fLOG(out)
+        assert len(err) == 0
+
+    def test_call_setup_hook_call(self):
+        fLOG(
+            __file__,
+            self._testMethodName,
+            OutputPrint=__name__ == "__main__")
+        init = os.path.join(
+            os.path.split(__file__)[0],
+            "..",
+            "..")
+        out, err = call_setup_hook(
+            init, "pyquickhelper", fLOG=fLOG, function_name="______", force_call=True)
+        fLOG(err)
+        fLOG(out)
+        assert err == "no ______" or "linux" in out
+
+        out, err = call_setup_hook(
+            init, "pyquickhelper", fLOG=fLOG, force_call=True)
         fLOG(err)
         fLOG(out)
         assert len(err) == 0

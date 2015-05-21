@@ -5,12 +5,15 @@
 .. versionadded:: 1.1
 """
 import os
-from ..loghelper import run_cmd, noLOG
+import sys
+import subprocess
+from ..loghelper import noLOG, run_cmd
 from ..loghelper.flog import get_interpreter_path
 
 
-def call_setup_hook(folder, module_name, fLOG=noLOG, must_be=False, 
-                    function_name="_setup_hook", use_print=False):
+def call_setup_hook(folder, module_name, fLOG=noLOG, must_be=False,
+                    function_name="_setup_hook", use_print=False,
+                    force_call=False):
     """
     calls function @see fn _setup_hook for a specific module,
     it is called in a separate process
@@ -21,6 +24,7 @@ def call_setup_hook(folder, module_name, fLOG=noLOG, must_be=False,
     @param      must_be         raises an exception if @see fn _setup_hook is not found
     @param      function_name   function to call by default
     @param      use_print       use print to display information
+    @param      force_call      use *subprocess.call* instead of @see fn run_cmd
     @return                     stdout, stderr
 
     The function expects to find file ``__init__.py`` in
@@ -44,15 +48,33 @@ def call_setup_hook(folder, module_name, fLOG=noLOG, must_be=False,
         print("CMD:\n", cmd)
 
     fLOG("~~~~~~~~~ calls _setup_hook from", module_name)
-    out, err = run_cmd(cmd, wait=True, fLOG=fLOG, log_error=False)
+    if not force_call and sys.platform.startswith("win"):
+        out, err = run_cmd(cmd, wait=True, fLOG=fLOG, log_error=False)
+        exit = 0
+    else:
+        if use_print:
+            print("subprocess.call", cmd)
+        exit = subprocess.call(cmd)
+        out = "linux"
+        err = ""
+
+        if exit != 0:
+            init = os.path.join(src, module_name, "__init__.py")
+            with open(init, "r") as f:
+                content = f.read()
+            if 'def {0}'.format(function_name) not in init:
+                exit = 0
+                err = "ImportError: cannot import name '{0}'".format(
+                    function_name)
     fLOG("~~~~~~~~~ end of call _setup_hook")
+
     if use_print:
         print("OUT:\n", out)
         print("ERR:\n", err)
 
     def error():
-        mes = "**CMD:\n{3}\n**CODE:\n{0}\n**OUT:\n{1}\n**ERR:\n{2}".format(code.replace(";", "\n"),
-                                                                           out, err, cmd)
+        mes = "**CMD:\n{3}\n**CODE:\n{0}\n**OUT:\n{1}\n**ERR:\n{2}\nexit={4}".format(code.replace(";", "\n"),
+                                                                                     out, err, cmd, exit)
         return mes
 
     if not must_be and "ImportError: cannot import name '{0}'".format(function_name) in err:
@@ -61,5 +83,7 @@ def call_setup_hook(folder, module_name, fLOG=noLOG, must_be=False,
     if "Error while finding spec " in err:
         raise Exception(error())
     if "ImportError: No module named" in err:
+        raise Exception(error())
+    if exit != 0:
         raise Exception(error())
     return out, err

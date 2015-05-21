@@ -40,7 +40,7 @@ def check():
     return True
 
 
-def _setup_hook():
+def _setup_hook(use_print=False):
     """
     if this function is added to the module,
     the help automation and unit tests call it first before
@@ -49,6 +49,8 @@ def _setup_hook():
     """
     # we can check many things, needed module
     # any others things before unit tests are started
+    if use_print:
+        print("Success: _setup_hook")
     pass
 
 
