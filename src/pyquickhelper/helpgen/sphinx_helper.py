@@ -67,7 +67,7 @@ def post_process_html_nb_output_static_file(build, fLOG=noLOG):
                 # maybe it is Windows and the encoding is sometimes different
                 with open(full, "r", encoding="cp1252") as g:
                     try:
-                        content = f.read()
+                        content = g.read()
                         content = content.replace(
                             "charset=cp1252", "charset=utf-8")
                     except UnicodeDecodeError:

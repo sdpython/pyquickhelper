@@ -279,7 +279,6 @@ def post_process_html_output(file, pdf, python, slides):
         Parameters *slides* was added.
     """
     fold, name = os.path.split(file)
-    noext = os.path.splitext(name)[0]
     if not os.path.exists(file):
         raise FileNotFoundError(file)
     with open(file, "r", encoding="utf8") as f:
@@ -305,7 +304,6 @@ def post_process_slides_output(file, pdf, python, slides):
     .. versionadded:: 1.1
     """
     fold, name = os.path.split(file)
-    noext = os.path.splitext(name)[0]
     if not os.path.exists(file):
         raise FileNotFoundError(file)
     with open(file, "r", encoding="utf8") as f:

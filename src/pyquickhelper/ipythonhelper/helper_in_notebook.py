@@ -6,7 +6,7 @@
 .. versionadded:: 1.1
 """
 
-from IPython.display import Javascript, HTML, display_html
+from IPython.display import Javascript, HTML
 
 
 def store_notebook_path(name="theNotebook"):

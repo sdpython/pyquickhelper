@@ -3,7 +3,6 @@
 @brief Various function to install some application such as `pandoc <http://johnmacfarlane.net/pandoc/>`_.
 """
 from __future__ import print_function
-import sys
 import re
 import os
 

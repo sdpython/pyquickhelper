@@ -272,9 +272,9 @@ def process_standard_options_for_setup(argv,
         out, err = call_setup_hook(folder,
                                    project_var_name if module_name is None else module_name,
                                    fLOG=fLOG)
-        if len(err) > 0:
+        if len(err) > 0 and err != "no _setup_hook":
             raise Exception(
-                "unable to run _setup_hook\nOUT:\n{0}\nERR:\n{1}".forma(out, err))
+                "unable to run _setup_hook\nOUT:\n{0}\nERR:\n{1}".format(out, err))
         standard_help_for_setup(
             file_or_folder, project_var_name, module_name=module_name, extra_ext=extra_ext,
             add_htmlhelp=add_htmlhelp)

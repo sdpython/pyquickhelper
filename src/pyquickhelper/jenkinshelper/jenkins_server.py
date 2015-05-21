@@ -714,7 +714,7 @@ class JenkinsExt(jenkins.Jenkins):
                 if isinstance(job, tuple):
                     if len(job) < 2:
                         raise JenkinsJobException(
-                            "the tuple must contain at least two elements:\nJOB:\n" + str(options))
+                            "the tuple must contain at least two elements:\nJOB:\n" + str(job))
 
                     # we extract options if any
                     if len(job) == 3:
@@ -725,7 +725,7 @@ class JenkinsExt(jenkins.Jenkins):
                     else:
                         options = {}
 
-                     # job and scheduler
+                    # job and scheduler
                     job, scheduler = job[:2]
                     if scheduler is not None:
                         order = 1

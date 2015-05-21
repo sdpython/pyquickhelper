@@ -33,7 +33,7 @@ def install_javascript_tools(root, dest, fLOG=noLOG,
         if not os.path.exists(rev):
             try:
                 import sphinxjp.themes.revealjs
-            except ImportError as e:
+            except ImportError:
                 raise ImportError(
                     "module sphinxjp.themes.revealjs is needed to get reveal.js javascript files")
 

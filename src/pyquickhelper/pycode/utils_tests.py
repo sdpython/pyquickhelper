@@ -601,7 +601,7 @@ def main_wrapper_tests(codefile,
     def tested_module(folder, project_var_name):
         # module mod
         out, err = call_setup_hook(folder, project_var_name, fLOG=fLOG)
-        if len(err) > 0:
+        if len(err) > 0 and err != "no _setup_hook":
             raise Exception(
                 "unable to run _setup_hook\n**OUT:\n{0}\n**ERR:\n{1}\n**FOLDER:\n{2}\n**NAME:\n{3}"
                 .format(out, err, folder, project_var_name))

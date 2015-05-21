@@ -5,7 +5,6 @@
 .. versionadded:: 1.1
 """
 import os
-import sys
 from ..loghelper import run_cmd, noLOG
 from ..loghelper.flog import get_interpreter_path
 
