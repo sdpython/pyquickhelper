@@ -62,7 +62,7 @@ def call_setup_hook(folder, module_name, fLOG=noLOG, must_be=False,
             init = os.path.join(src, module_name, "__init__.py")
             with open(init, "r") as f:
                 content = f.read()
-            if 'def {0}'.format(function_name) not in init:
+            if 'def {0}'.format(function_name) not in content:
                 exit = 0
                 err = "ImportError: cannot import name '{0}'".format(
                     function_name)

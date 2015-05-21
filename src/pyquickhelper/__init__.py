@@ -51,7 +51,6 @@ def _setup_hook(use_print=False):
     # any others things before unit tests are started
     if use_print:
         print("Success: _setup_hook")
-    pass
 
 
 from .loghelper.flog import fLOG, run_cmd, skip_run_cmd, unzip, noLOG, removedirs, unzip_files
