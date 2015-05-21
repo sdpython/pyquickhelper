@@ -18,6 +18,7 @@ import time
 
 from ..filehelper.synchelper import remove_folder
 from ..loghelper.flog import fLOG, run_cmd
+from ..pycode.call_setup_hook import call_setup_hook
 
 
 __all__ = ["get_temp_folder", "main_wrapper_tests"]
@@ -597,30 +598,35 @@ def main_wrapper_tests(codefile,
     print("MODULES (2): matplotlib imported",
           "matplotlib" in sys.modules, _first_execution, r)
 
-    def tested_module(project_var_name):
+    def tested_module(folder, project_var_name):
         # module mod
+        out, err = call_setup_hook(folder, project_var_name, fLOG=fLOG)
+        if len(err) > 0:
+            raise Exception(
+                "unable to run _setup_hook\n**OUT:\n{0}\n**ERR:\n{1}\n**FOLDER:\n{2}\n**NAME:\n{3}"
+                .format(out, err, folder, project_var_name))
 
-        copy_locals = locals().copy()
-        copy_globals = globals().copy()
-        code_import = "import {0} as UT_MODULE".format(project_var_name)
-        try:
-            exec(code_import, copy_globals, copy_locals)
-            UT_MODULE = copy_locals["UT_MODULE"]
-        except ImportError:
-            src = os.path.abspath(
-                os.path.join(os.path.dirname(codefile), "..", "src"))
-            sys.path.append(src)
-            exec(code_import, copy_globals, copy_locals)
-            UT_MODULE = copy_locals["UT_MODULE"]
-            del sys.path[-1:]
+    # project_var_name
+    folder = os.path.normpath(
+        os.path.join(os.path.dirname(codefile), "..", "src"))
+    content = [_ for _ in os.listdir(folder) if not _.startswith(
+        "_") and os.path.isdir(os.path.join(folder, _))]
+    if len(content) != 1:
+        raise FileNotFoundError(
+            "unable to guess the project name in {0}\n{1}".format(folder, "\n".join(content)))
 
-        mod = UT_MODULE
+    project_var_name = content[0]
+    src_abs = os.path.normpath(os.path.abspath(
+        os.path.join(os.path.dirname(codefile), "..")))
 
-        if mod is not None and hasattr(mod, "_setup_hook"):
-            print("~ calls _setup_hook from ", mod.__file__)
-            mod._setup_hook()
-            print("~ end of _setup_hook from ")
+    srcp = os.path.relpath(
+        os.path.join(src_abs, "src", project_var_name), os.getcwd())
 
+    if "USERNAME" in os.environ and os.environ["USERNAME"] in srcp:
+        raise Exception(
+            "The location of the source should not contain USERNAME: " + srcp)
+
+    # coverage
     if add_coverage:
         if report_folder is None:
             report_folder = os.path.join(
@@ -628,26 +634,11 @@ def main_wrapper_tests(codefile,
 
         print("enabling coverage")
         from coverage import coverage
-        folder = os.path.join(os.path.dirname(codefile), "..", "src")
-        content = [_ for _ in os.listdir(folder) if not _.startswith(
-            "_") and os.path.isdir(os.path.join(folder, _))]
-        if len(content) != 1:
-            raise FileNotFoundError(
-                "unable to guess the project name in {0}\n{1}".format(folder, "\n".join(content)))
-
-        project_var_name = content[0]
-        src = os.path.abspath(
-            os.path.join(os.path.dirname(codefile), "..", "src", project_var_name))
-
-        src = os.path.relpath(src, os.getcwd())
-        if "USERNAME" in os.environ and os.environ["USERNAME"] in src:
-            raise Exception(
-                "The location of the source should be not contain USERNAME: " + src)
-        cov = coverage(source=[src])
+        cov = coverage(source=[srcp])
         cov.exclude('if __name__ == "__main__"')
         cov.start()
 
-        tested_module(project_var_name)
+        tested_module(src_abs, project_var_name)
 
         res = run_main()
 
@@ -655,7 +646,7 @@ def main_wrapper_tests(codefile,
         cov.html_report(directory=report_folder)
 
     else:
-        tested_module(project_var_name)
+        tested_module(src_abs, project_var_name)
         res = run_main()
 
     for r in res["tests"]:

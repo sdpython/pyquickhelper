@@ -61,7 +61,18 @@ def post_process_html_nb_output_static_file(build, fLOG=noLOG):
     res = []
     for full in explore_folder_iterfile(build, pattern=".*[.]html"):
         with open(full, "r", encoding="utf8") as f:
-            content = f.read()
+            try:
+                content = f.read()
+            except UnicodeDecodeError as e:
+                # maybe it is Windows and the encoding is sometimes different
+                with open(full, "r", encoding="cp1252") as g:
+                    try:
+                        content = f.read()
+                        content = content.replace(
+                            "charset=cp1252", "charset=utf-8")
+                    except UnicodeDecodeError:
+                        raise Exception(
+                            "unable to load: " + full + "\n" + os.path.abspath(full)) from e
 
         if tofind in content:
             res.append(full)

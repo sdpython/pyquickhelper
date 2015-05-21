@@ -45,6 +45,7 @@ def _setup_hook():
     if this function is added to the module,
     the help automation and unit tests call it first before
     anything goes on as an initialization step.
+    It should be run in a separate process.
     """
     # we can check many things, needed module
     # any others things before unit tests are started

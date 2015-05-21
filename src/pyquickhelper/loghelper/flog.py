@@ -398,7 +398,9 @@ def download(httpfile, path_unzip=None, outfile=None):
 
 def unzip(file, path_unzip=None, outfile=None):
     """
-    unzip a file into the temporary folder
+    unzip a file into the temporary folder,
+    the function expects to have only one zipped file
+
     @param      file            (str) zip files
     @param      path_unzip      (str) where to unzip the file, if None, choose GetPath ()
     @param      outfile         (str) if None, the function will assign a filename unless this parameter is specified

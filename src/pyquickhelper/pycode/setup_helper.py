@@ -16,6 +16,7 @@ from ..pycode.utils_tests import main_wrapper_tests
 from ..helpgen import get_help_usage
 from .build_helper import get_build_script, get_script_command, get_extra_script_command, get_script_module
 from ..filehelper import get_url_content_timeout
+from .call_setup_hook import call_setup_hook
 
 
 def get_script_extension():
@@ -194,37 +195,6 @@ def process_standard_options_for_setup_help():
         """)
 
 
-def call_setup_hook(folder, module_name):
-    """
-    calls function @see fn _setup_hook for a specific module
-
-    @param      folder          folder for the setup
-    @param      module_name     module name
-    """
-    copy_locals = locals().copy()
-    copy_globals = globals().copy()
-    code_import = "import {0} as HELP_MODULE".format(module_name)
-    try:
-        exec(code_import, copy_globals, copy_locals)
-    except ImportError as e:
-        src = os.path.join(folder, "src")
-        sys.path.append(src)
-        try:
-            exec(code_import, copy_globals, copy_locals)
-        except ImportError as e:
-            paths = "\n".join(sys.path)
-            raise ImportError(
-                "unable to import {0}, sys.path=\n{1}".format(module_name, paths))
-        del sys.path[-1]
-
-    HELP_MODULE = copy_locals["HELP_MODULE"]
-
-    if hasattr(HELP_MODULE, "_setup_hook"):
-        fLOG("~ calls _setup_hook from", HELP_MODULE.__file__)
-        HELP_MODULE._setup_hook()
-        fLOG("~ end of call _setup_hook")
-
-
 def process_standard_options_for_setup(argv,
                                        file_or_folder,
                                        project_var_name,
@@ -299,8 +269,12 @@ def process_standard_options_for_setup(argv,
         return True
 
     elif "build_sphinx" in sys.argv:
-        call_setup_hook(folder,
-                        project_var_name if module_name is None else module_name)
+        out, err = call_setup_hook(folder,
+                                   project_var_name if module_name is None else module_name,
+                                   fLOG=fLOG)
+        if len(err) > 0:
+            raise Exception(
+                "unable to run _setup_hook\nOUT:\n{0}\nERR:\n{1}".forma(out, err))
         standard_help_for_setup(
             file_or_folder, project_var_name, module_name=module_name, extra_ext=extra_ext,
             add_htmlhelp=add_htmlhelp)

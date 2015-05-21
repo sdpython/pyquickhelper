@@ -557,6 +557,16 @@ class JenkinsExt(jenkins.Jenkins):
         @param      fLOG                    logging function
         @return                             list of created jobs
 
+        The function *get_jenkins_script* is called with the following parameters:
+
+        * job
+        * pythonexe
+        * winpython
+        * anaconda
+        * anaconda2
+        * platform
+        * port
+
         The extension
         `Extra Columns Plugin <https://wiki.jenkins-ci.org/display/JENKINS/Extra+Columns+Plugin>`_
         is very useful to add extra columns to a view (the description, the output of the
