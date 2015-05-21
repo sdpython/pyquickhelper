@@ -600,7 +600,8 @@ def main_wrapper_tests(codefile,
 
     def tested_module(folder, project_var_name):
         # module mod
-        out, err = call_setup_hook(folder, project_var_name, fLOG=fLOG)
+        out, err = call_setup_hook(
+            folder, project_var_name, fLOG=fLOG, use_print=True)
         if len(err) > 0 and err != "no _setup_hook":
             raise Exception(
                 "unable to run _setup_hook\n**OUT:\n{0}\n**ERR:\n{1}\n**FOLDER:\n{2}\n**NAME:\n{3}"
@@ -632,13 +633,16 @@ def main_wrapper_tests(codefile,
             report_folder = os.path.join(
                 os.path.abspath(os.path.dirname(codefile)), "..", "_doc", "sphinxdoc", "source", "coverage")
 
-        print("enabling coverage")
+        print("call _setup_hook", src_abs, "name=", project_var_name)
+        tested_module(src_abs, project_var_name)
+        print("end _setup_hook")
+
+        print("current folder", os.getcwd())
+        print("enabling coverage", srcp)
         from coverage import coverage
         cov = coverage(source=[srcp])
         cov.exclude('if __name__ == "__main__"')
         cov.start()
-
-        tested_module(src_abs, project_var_name)
 
         res = run_main()
 
