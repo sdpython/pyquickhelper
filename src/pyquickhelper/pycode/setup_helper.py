@@ -139,13 +139,14 @@ def standard_help_for_setup(file_or_folder, project_var_name, module_name=None, 
                                  add_htmlhelp=add_htmlhelp)
 
 
-def run_unittests_for_setup(file_or_folder):
+def run_unittests_for_setup(file_or_folder, skip_function=None):
     """
     run the unit tests and compute the coverage, stores
     the results in ``_doc/sphinxdoc/source/coverage``
     assuming the module follows the same design as *pyquickhelper*
 
     @param      file_or_folder      file ``setup.py`` or folder which contains it
+    @param      skip_functino       @see fn main_wrapper_tests
     """
     ffolder = get_folder(file_or_folder)
     funit = os.path.join(ffolder, "_unittests")
@@ -158,7 +159,7 @@ def run_unittests_for_setup(file_or_folder):
         raise FileNotFoundError(
             "the folder {0} should contain run_unittests.py".format(funit))
 
-    main_wrapper_tests(run_unit, add_coverage=True)
+    main_wrapper_tests(run_unit, add_coverage=True, skip_function=skip_function)
 
 
 def copy27_for_setup(file_or_folder):
@@ -287,13 +288,13 @@ def process_standard_options_for_setup(argv,
     elif "unittests_LONG" in sys.argv:
         def skip_long(name, code):
             return "test_LONG_" not in name
-        main_wrapper_tests(file_or_folder, skip_function=skip_long)
+        run_unittests_for_setup(file_or_folder, skip_function=skip_long)
         return True
 
     elif "unittests_SKIP" in sys.argv:
         def skip_skip(name, code):
             return "test_LONG_" not in name
-        main_wrapper_tests(file_or_folder, skip_function=skip_skip)
+        run_unittests_for_setup(file_or_folder, skip_function=skip_skip)
         return True
 
     elif "build_script" in sys.argv:
