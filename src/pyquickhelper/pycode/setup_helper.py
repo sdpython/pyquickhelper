@@ -12,7 +12,7 @@ from ..loghelper.flog import fLOG
 from ..helpgen.sphinx_main import generate_help_sphinx
 from .code_helper import remove_extra_spaces_folder
 from .py3to2 import py3to2_convert_tree
-from ..pycode.utils_tests import main_wrapper_tests
+from ..pycode.utils_tests import main_wrapper_tests, default_skip_function
 from ..helpgen import get_help_usage
 from .build_helper import get_build_script, get_script_command, get_extra_script_command, get_script_module
 from ..filehelper import get_url_content_timeout
@@ -139,7 +139,7 @@ def standard_help_for_setup(file_or_folder, project_var_name, module_name=None, 
                                  add_htmlhelp=add_htmlhelp)
 
 
-def run_unittests_for_setup(file_or_folder, skip_function=None):
+def run_unittests_for_setup(file_or_folder, skip_function=default_skip_function):
     """
     run the unit tests and compute the coverage, stores
     the results in ``_doc/sphinxdoc/source/coverage``
