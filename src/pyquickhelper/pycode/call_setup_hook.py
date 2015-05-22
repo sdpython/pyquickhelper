@@ -6,6 +6,7 @@
 """
 import os
 import sys
+import shlex
 import subprocess
 from ..loghelper import noLOG, run_cmd
 from ..loghelper.flog import get_interpreter_path
@@ -54,7 +55,11 @@ def call_setup_hook(folder, module_name, fLOG=noLOG, must_be=False,
     else:
         if use_print:
             print("subprocess.call", cmd)
-        exit = subprocess.call(cmd)
+        if not sys.platform.startswith("win"):
+            args = shlex.split(cmd)
+        else:
+            args = cmd
+        exit = subprocess.call(args)
         out = "linux"
         err = ""
 
