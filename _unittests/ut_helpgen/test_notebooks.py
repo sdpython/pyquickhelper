@@ -133,7 +133,9 @@ class TestNotebookConversion (unittest.TestCase):
         out, err = run_cmd(cmd, shell=False, wait=True, communicate=False)
         fLOG(out)
         fLOG("******************", err)
-        assert "[NbConvertApp] Writing" in err
+        if "[NbConvertApp] Writing" not in err:
+            raise Exception(
+                "[NbConvertApp] Writing is missing.\nOUT\n{0}\nERR\n{1}".format(out, err))
         if not os.path.exists(fo):
             fLOG(fo)
             fLOG(os.path.abspath(os.path.dirname(fo)))

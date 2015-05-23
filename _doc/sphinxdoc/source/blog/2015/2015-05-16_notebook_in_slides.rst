@@ -32,7 +32,10 @@
     It is too simple to be perfect, it is difficult to guess the size
     of the rendering of some objects (images, javascript...).
     You can check the results for this notebook:
-    :ref:`examplepyquickhelperrst`.
+    :ref:`examplepyquickhelperrst`. 
+    That what the function :func:`nb2slides <pyquickhelper.helpgen.process_notebook_api.nb2slides>`
+    is doing first and then converts it into slides::
 
-    
+        from pyquickhelper import nb2slides
+        nb2slides(("your notebook.ipynb", "convert.slides.html")    
         

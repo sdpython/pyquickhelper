@@ -69,8 +69,10 @@ from .pandashelper.tblfunction import isempty, isnan
 from .helpgen import get_help_usage
 from .helpgen.sphinx_main import generate_help_sphinx, process_notebooks
 from .helpgen.convert_doc_helper import docstring2html
+from .helpgen.process_notebook_api import nb2slides, nb2html
 from .helpgen.utils_sphinx_config import NbImage
 from .serverdoc.documentation_server import run_doc_server
+from .ipythonhelper import read_nb
 from .ipythonhelper.kindofcompletion import AutoCompletion, AutoCompletionFile
 from .ipythonhelper.html_forms import open_html_form
 from .ipythonhelper.magic_parser import MagicCommandParser
