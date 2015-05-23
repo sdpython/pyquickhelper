@@ -38,7 +38,6 @@ class TestFlake8(unittest.TestCase):
                 or "condavir" in sys.executable:
             warnings.warn(
                 "skipping test_flake8 because of Python 2 or " + sys.executable)
-            stop
             return
 
         thi = os.path.abspath(os.path.dirname(__file__))
