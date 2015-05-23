@@ -6,6 +6,7 @@
 .. versionadded:: 1.1
 """
 import logging
+import logging.handlers
 
 
 class PQHException (Exception):
