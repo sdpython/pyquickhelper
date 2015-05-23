@@ -15,13 +15,13 @@ if sys.version_info[0] == 2:
 def detect_encoding(filename):
     """
     guess the encoding from ``# -*- coding: ...``
-    
+
     @param      filename    filename
     @return                 encoding or None
     """
     with open(filename, 'rb') as f:
         enc = f.read(30)
-    s = enc.decode("ascii", errors="ignore").replace(" ", "").replace("\r","")
+    s = enc.decode("ascii", errors="ignore").replace(" ", "").replace("\r", "")
     d = "#-*-coding:"
     if s.startswith(d):
         s = s[len(d):]
@@ -29,12 +29,12 @@ def detect_encoding(filename):
         if i > 0:
             return s[:i]
     return None
-    
+
 
 def open_script(filename, mode="r"):
     """
     open a filename but read the encoding from the first line
-    
+
     @param      filename        filename
     @param      mode            r, only r
     @return                     stream

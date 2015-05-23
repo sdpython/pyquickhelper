@@ -27,7 +27,7 @@ from src.pyquickhelper import get_temp_folder, fLOG
 
 if sys.version_info[0] == 2:
     from codecs import open
-    
+
 
 class TestNotebookReadWrite (unittest.TestCase):
 

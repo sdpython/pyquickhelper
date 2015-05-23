@@ -45,11 +45,11 @@ class TestChanges (unittest.TestCase):
             file = os.path.join(path, "out_table.rst")
             if os.path.exists(file):
                 os.remove(file)
-                
+
             if sys.version_info[0] == 2:
                 # encoding, encoding...
                 return
-            
+
             generate_changes_repo(file, fold)
             with open(file, "r", encoding="utf8") as f:
                 content = f.read()
