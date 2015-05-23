@@ -1,6 +1,8 @@
 """
 @file
 @brief      Various helpers about files
+
+.. versionadded:: 1.1
 """
 
 import os
@@ -15,42 +17,102 @@ if sys.version_info[0] == 2:
     from codecs import open
 
 
-def change_file_status(folder, status=stat.S_IWRITE, strict=False):
+def change_file_status(folder, status=stat.S_IWRITE, strict=False,
+                       include_folder=True):
     """
     change the status of all files inside a folder
 
-    @param      folder      folder
-    @param      status      new status
-    @param      strict      False, use ``|=``, True, use ``=``
-    @return                 list of modified files
+    @param      folder          folder or file
+    @param      status          new status
+    @param      strict          False, use ``|=``, True, use ``=``
+    @param      include_folder  change the status of the folders as well
+    @return                     list of modified files
+
+    By default, status is ``stat.S_IWRITE``.
+    If folder is file, the function changes the status of this file,
+    otherwise, it will change the status of every file the folder contains.
     """
-    res = []
-    if strict:
-        for f in explore_folder_iterfile(folder):
-            try:
-                mode = os.stat(f).st_mode
-            except FileNotFoundError:
-                # it appends for some weird path
-                # GitHub\pyensae\src\pyensae\file_helper\pigjar\pig-0.14.0\contrib\piggybank\java\build\classes\org\apache\pig\piggybank\storage\IndexedStorage$IndexedStorageInputFormat$IndexedStorageRecordReader$IndexedStorageRecordReaderComparator.class
-                warnings.warn("[change_file_status] unable to find " + f)
-                continue
-            nmode = status
-            if nmode != mode:
-                os.chmod(f, nmode)
-                res.append(f)
+    if os.path.isfile(folder):
+        dirname = os.path.dirname(folder)
+        res = []
+        for f in [folder, dirname]:
+            mode = os.stat(f).st_mode
+            if strict:
+                nmode = status
+                if nmode != mode:
+                    os.chmod(f, nmode)
+                    res.append(f)
+            else:
+                nmode = mode | stat.S_IWRITE
+                if nmode != mode:
+                    os.chmod(f, nmode)
+                    res.append(f)
+        return res
     else:
-        for f in explore_folder_iterfile(folder):
-            try:
-                mode = os.stat(f).st_mode
-            except FileNotFoundError:
-                # it appends for some weird path
-                warnings.warn("[change_file_status] unable to find " + f)
-                continue
-            nmode = mode | stat.S_IWRITE
-            if nmode != mode:
-                os.chmod(f, nmode)
-                res.append(f)
-    return res
+        res = []
+        dirname = set()
+        if strict:
+            for f in explore_folder_iterfile(folder):
+                d = os.path.dirname(f)
+                if d not in dirname:
+                    dirname.add(d)
+                    mode = os.stat(d).st_mode
+                    nmode = status
+                    if nmode != mode:
+                        os.chmod(d, nmode)
+                        res.append(d)
+
+                try:
+                    mode = os.stat(f).st_mode
+                except FileNotFoundError:
+                    # it appends for some weird path
+                    # GitHub\pyensae\src\pyensae\file_helper\pigjar\pig-0.14.0\contrib\piggybank\java\build\classes\org\apache\pig\piggybank\storage\IndexedStorage$IndexedStorageInputFormat$IndexedStorageRecordReader$IndexedStorageRecordReaderComparator.class
+                    warnings.warn("[change_file_status] unable to find " + f)
+                    continue
+                nmode = status
+                if nmode != mode:
+                    os.chmod(f, nmode)
+                    res.append(f)
+
+            # we end up with the folder
+            d = folder
+            if d not in dirname:
+                mode = os.stat(d).st_mode
+                nmode = status
+                if nmode != mode:
+                    os.chmod(d, nmode)
+                    res.append(d)
+        else:
+            for f in explore_folder_iterfile(folder):
+                d = os.path.dirname(f)
+                if d not in dirname:
+                    dirname.add(d)
+                    mode = os.stat(d).st_mode
+                    nmode = mode | stat.S_IWRITE
+                    if nmode != mode:
+                        os.chmod(d, nmode)
+                        res.append(d)
+
+                try:
+                    mode = os.stat(f).st_mode
+                except FileNotFoundError:
+                    # it appends for some weird path
+                    warnings.warn("[change_file_status] unable to find " + f)
+                    continue
+                nmode = mode | stat.S_IWRITE
+                if nmode != mode:
+                    os.chmod(f, nmode)
+                    res.append(f)
+
+            # we end up with the folder
+            d = folder
+            if d not in dirname:
+                mode = os.stat(d).st_mode
+                nmode = mode | stat.S_IWRITE
+                if nmode != mode:
+                    os.chmod(d, nmode)
+                    res.append(d)
+        return res
 
 
 def read_content_ufs(file_url_stream, encoding="utf8"):

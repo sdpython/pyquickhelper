@@ -83,7 +83,7 @@ class TestLog (unittest.TestCase):
         out, err = run_cmd("dir", wait=True, communicate=True)
         assert len(out) > 0
 
-    def test_cmd_communicate(self):
+    def test_cmd_communicate2(self):
         fLOG(
             __file__,
             self._testMethodName,
@@ -103,7 +103,7 @@ class TestLog (unittest.TestCase):
             "src",
             "pyquickhelper",
             "loghelper",
-            "flog.py")
+            "flog_fake_classes.py")
         out, err = run_script(file)
         assert len(out) == 0
         assert len(err) == 0

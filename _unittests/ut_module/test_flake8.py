@@ -34,9 +34,11 @@ class TestFlake8(unittest.TestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
-        if sys.version_info[0] == 2 or "Anaconda" in sys.executable or "condavir" in sys.executable:
+        if sys.version_info[0] == 2 or "Anaconda" in sys.executable \
+                or "condavir" in sys.executable:
             warnings.warn(
                 "skipping test_flake8 because of Python 2 or " + sys.executable)
+            stop
             return
 
         thi = os.path.abspath(os.path.dirname(__file__))

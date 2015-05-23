@@ -6,7 +6,7 @@
 import os
 from ..loghelper.flog import noLOG
 from .install_custom import download_revealjs
-from ..filehelper import synchronize_folder
+from ..filehelper import synchronize_folder, change_file_status
 
 
 def install_javascript_tools(root, dest, fLOG=noLOG,
@@ -41,6 +41,8 @@ def install_javascript_tools(root, dest, fLOG=noLOG,
             js = os.path.join(folder, "templates", "revealjs", "static")
             os.mkdir(rev)
             sync = synchronize_folder(js, rev, copy_1to2=True)
-            return [s[1].fullname for s in sync]
+            fulls = [s[1].fullname for s in sync]
+            change_file_status(rev)
+            return fulls
         else:
             return []

@@ -159,7 +159,8 @@ def run_unittests_for_setup(file_or_folder, skip_function=default_skip_function)
         raise FileNotFoundError(
             "the folder {0} should contain run_unittests.py".format(funit))
 
-    main_wrapper_tests(run_unit, add_coverage=True, skip_function=skip_function)
+    main_wrapper_tests(
+        run_unit, add_coverage=True, skip_function=skip_function)
 
 
 def copy27_for_setup(file_or_folder):

@@ -184,7 +184,8 @@ if not r:
             "matplotlib",
             "sphinx",
             "pandas",
-            "docutils", ],
+            "docutils",
+            "sphinxjp.themes.revealjs"],
         extras_require={
             'helpgen': [
                 "six",

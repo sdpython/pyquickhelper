@@ -96,6 +96,7 @@ Versions / Changes
       to automatically add a menu in a notebook 
       (which still shows up when the notebook is converted into another format)
     * **add:** the automated documentation now generates files .chm if it is done on Windows.
+    * **new:** method :meth:`merge_notebook <pyquickhelper.ipythonhelper.notebook_runner.NotebookRunner.mege_notebook>` to merge notebooks into one
 * **1.0 - 2015/04/21**
     * **new:** function to run a notebook end to end :func:`run_notebook <pyquickhelper.ipythonhelper.notebook_helper.run_notebook>`
     * **change:** function :func:`str_to_datetime <pyquickhelper.loghelper.convert_helper.str_to_datetime>` implicitely handles more formats

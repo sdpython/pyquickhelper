@@ -159,18 +159,24 @@ def read_nb(filename, profile_dir=None, encoding="utf8"):
     """
     reads a notebook and return a @see cl NotebookRunner object
 
-    @param      filename        notebook filename
+    @param      filename        notebook filename (or stream)
     @param      profile_dir     profile directory
     @param      encoding        encoding for the notebooks
     @return                     @see cl NotebookRunner
 
     .. versionadded:: 1.1
     """
-    with open(filename, "r", encoding=encoding) as payload:
-        nb = reads(payload.read())
+    if isinstance(filename, str  # unicode
+                  ):
+        with open(filename, "r", encoding=encoding) as payload:
+            nb = reads(payload.read())
 
-        nb_runner = NotebookRunner(
-            nb, profile_dir, theNotebook=os.path.abspath(filename))
+            nb_runner = NotebookRunner(
+                nb, profile_dir, theNotebook=os.path.abspath(filename))
+            return nb_runner
+    else:
+        nb = reads(filename.read())
+        nb_runner = NotebookRunner(nb, profile_dir)
         return nb_runner
 
 

@@ -2,7 +2,7 @@
 """
 @file
 
-@brief Exception specific to this module
+@brief logging functionalities
 
 
 The function fLOG (or fLOG) is used to logged everything into a log file.
@@ -32,6 +32,7 @@ import decimal
 import urllib
 import copy
 import zipfile
+from .flog_fake_classes import FlogStatic, LogFakeFileStream, LogFileStream, PQHException
 
 if sys.version_info[0] == 2:
     from codecs import open
@@ -40,12 +41,7 @@ else:
     import urllib.request as urllib_request
 
 
-class PQHException (Exception):
-
-    """
-    custom exception for this file
-    """
-    pass
+flog_static = FlogStatic()
 
 
 def init(path=None, filename=None, create=True, path_add=None):
@@ -62,7 +58,7 @@ def init(path=None, filename=None, create=True, path_add=None):
     if path_add is None:
         path_add = []
     if path is None:
-        path = sys.hal_log_values["__log_path"]
+        path = flog_static.store_log_values["__log_path"]
 
     if path == "###":
         if sys.platform.startswith("win"):
@@ -82,29 +78,29 @@ def init(path=None, filename=None, create=True, path_add=None):
         path = os.path.join(path, *temp)
 
     if filename is None:
-        filename = sys.hal_log_values["__log_file_name"]
+        filename = flog_static.store_log_values["__log_file_name"]
 
-    if (sys.hal_log_values["__log_path"] != path or sys.hal_log_values["__log_file_name"] != filename) \
-            and sys.hal_log_values["__log_file"] is not None:
-        sys.hal_log_values["__log_file"].close()
-        sys.hal_log_values["__log_file"] = None
-    sys.hal_log_values["__log_path"] = path
-    sys.hal_log_values["__log_file_name"] = filename
+    if (flog_static.store_log_values["__log_path"] != path or flog_static.store_log_values["__log_file_name"] != filename) \
+            and flog_static.store_log_values["__log_file"] is not None:
+        flog_static.store_log_values["__log_file"].close()
+        flog_static.store_log_values["__log_file"] = None
+    flog_static.store_log_values["__log_path"] = path
+    flog_static.store_log_values["__log_file_name"] = filename
 
     if create:
-        if not os.path.exists(sys.hal_log_values["__log_path"]):
-            os.makedirs(sys.hal_log_values["__log_path"])
+        if not os.path.exists(flog_static.store_log_values["__log_path"]):
+            os.makedirs(flog_static.store_log_values["__log_path"])
     else:
-        if not os.path.exists(sys.hal_log_values["__log_path"]):
+        if not os.path.exists(flog_static.store_log_values["__log_path"]):
             raise PQHException(
-                "unable to find path " + sys.hal_log_values["__log_path"])
+                "unable to find path " + flog_static.store_log_values["__log_path"])
 
 
 def GetSepLine():
     """
     return always ``\\n``
     """
-    return "\n"  # previous value: sys.hal_log_values ["__log_file_sep"]
+    return "\n"  # previous value: flog_static.store_log_values ["__log_file_sep"]
 
 
 def GetPath():
@@ -112,90 +108,54 @@ def GetPath():
     returns a path where the log file is stored.
     @return         path to the logs
     """
-    return sys.hal_log_values["__log_path"]
+    return flog_static.store_log_values["__log_path"]
 
 
 def Print(redirect=True):
     """
     if True, redirect everything which is displayed to the standard output
     """
-    lock = sys.hal_log_values.get("Lock", False)
+    lock = flog_static.store_log_values.get("Lock", False)
     if not lock:
-        sys.hal_log_values["__log_display"] = redirect
+        flog_static.store_log_values["__log_display"] = redirect
 
 
-class LogFakeFileStream:
-
-    """
-    a fake file
-    """
-
-    def __init__(self):
-        """
-        do nothing
-        """
-        pass
-
-    def open(self):
-        """
-        do nothing
-        """
-        pass
-
-    def write(self, s):
-        """
-        do nothing
-        """
-        pass
-
-    def close(self):
-        """
-        do nothing
-        """
-        pass
-
-    def flush(self):
-        """
-        do nothing
-        """
-        pass
-
-
-def GetLogFile(physical=False):
+def GetLogFile(physical=False, filename=None):
     """
     Returns a file name containing the log
 
     @param      physical    use a physical file or not
+    @param      filename    file name (if physical is True, default value is ``temp_log.txt``)
     @return                 a pointer to a log file
     @rtype                  str
     @exception  OSError     if this file cannot be created
+
+    .. versionchanged:: 1.1
+        Use module `logging <https://docs.python.org/3.4/library/logging.html>`_.
+        Parameter *filename* was added.
     """
-    if sys.hal_log_values["__log_file"] is None:
+    if flog_static.store_log_values["__log_file"] is None:
         if physical:
             path = GetPath()
-            if sys.hal_log_values["__log_file_name"] is None:
+            if flog_static.store_log_values["__log_file_name"] is None:
                 if os.path.exists(path):
-                    sys.hal_log_values["__log_file_name"] = os.path.join(
-                        path, sys.hal_log_values["__log_const"])
+                    flog_static.store_log_values["__log_file_name"] = os.path.join(
+                        path, flog_static.store_log_values["__log_const"])
                 else:
                     raise PQHException(
                         "unable to create a log file in folder " + path)
 
-            if not isinstance(sys.hal_log_values["__log_file_name"], str  # unicode#
+            if not isinstance(flog_static.store_log_values["__log_file_name"], str  # unicode#
                               ):
-                sys.hal_log_values["__log_file"] = sys.hal_log_values[
+                flog_static.store_log_values["__log_file"] = flog_static.store_log_values[
                     "__log_file_name"]
             else:
-                try:
-                    sys.hal_log_values["__log_file"] = open(
-                        sys.hal_log_values["__log_file_name"], "w", encoding="utf-8")
-                except Exception as e:
-                    raise OSError(
-                        "unable to create file " + sys.hal_log_values["__log_file_name"] + "\n" + str(e))
+                flog_static.store_log_values[
+                    "__log_file"] = LogFileStream(filename=filename)
         else:
-            sys.hal_log_values["__log_file"] = LogFakeFileStream()
+            flog_static.store_log_values["__log_file"] = LogFakeFileStream()
 
-    return sys.hal_log_values["__log_file"]
+    return flog_static.store_log_values["__log_file"]
 
 
 def noLOG(*l, **p):
@@ -248,7 +208,7 @@ def fLOG(*l, **p):
 
     lock = p.get("Lock", None)
     if lock is not None:
-        sys.hal_log_values["Lock"] = lock
+        flog_static.store_log_values["Lock"] = lock
 
     if "LogFile" in p and "LogPath" in p:
         init(p["LogPath"], p["LogFile"])
@@ -264,7 +224,7 @@ def fLOG(*l, **p):
         Print(p["OutputPrint"])
 
     if "LogFile" in p:
-        GetLogFile(True)
+        GetLogFile(True, filename=p["LogFile"])
 
     dt = datetime.datetime(2009, 1, 1).now()
     typstr = str  # unicode#
@@ -284,7 +244,7 @@ def fLOG(*l, **p):
                             "unable to convert s into string: type(s)=" + typstr(type(s))) from e
             try:
                 message = typstr(dt).split(".")[0] + " " + " ".join([_str_process(s) for s in l]) + \
-                    sys.hal_log_values["__log_file_sep"]
+                    flog_static.store_log_values["__log_file_sep"]
             except UnicodeDecodeError:
                 message = "ENCODING ERROR WITH Python 2.7, will not fix it"
         else:
@@ -301,9 +261,9 @@ def fLOG(*l, **p):
                             "unable to convert s into string: type(s)=" + str(type(s))) from e
 
             message = str(dt).split(".")[0] + " " + " ".join([_str_process(s) for s in l]) + \
-                sys.hal_log_values["__log_file_sep"]
+                flog_static.store_log_values["__log_file_sep"]
 
-        if sys.hal_log_values["__log_display"]:
+        if flog_static.store_log_values["__log_display"]:
             try:
                 myprint(message.strip("\r\n"))
             except UnicodeEncodeError:
@@ -328,11 +288,11 @@ def fLOG(*l, **p):
             continue
         message = st + \
             "%s = %s%s" % (
-                typstr(k), typstr(v), sys.hal_log_values["__log_file_sep"])
+                typstr(k), typstr(v), flog_static.store_log_values["__log_file_sep"])
         if "INNER JOIN" in message:
             break
         GetLogFile().write(message)
-        if sys.hal_log_values["__log_display"]:
+        if flog_static.store_log_values["__log_display"]:
             try:
                 myprint(message.strip("\r\n"))
             except UnicodeEncodeError:
@@ -692,7 +652,7 @@ def _first_more_recent(f1, path):
     if gr is None:
         return True
     gr = gr.groups()
-    da = datetime.datetime(int(gr[2]), sys.hal_log_values["month_date"][gr[1].lower()], int(gr[0]),
+    da = datetime.datetime(int(gr[2]), flog_static.store_log_values["month_date"][gr[1].lower()], int(gr[0]),
                            int(gr[3]), int(gr[4]), int(gr[5]))
 
     p = time.ctime(os.path.getmtime(path))
@@ -701,7 +661,7 @@ def _first_more_recent(f1, path):
     if gr is None:
         return True
     gr = gr.groups()
-    da = datetime.datetime(int(gr[5]), sys.hal_log_values["month_date"][gr[0].lower()], int(gr[1]),
+    da = datetime.datetime(int(gr[5]), flog_static.store_log_values["month_date"][gr[0].lower()], int(gr[1]),
                            int(gr[2]), int(gr[3]), int(gr[4]))
 
     file = da
@@ -1378,15 +1338,3 @@ def load_content_file_with_encoding(filename):
         except Exception as e:
             error = e
     raise error
-
-if "hal_log_values" not in sys.__dict__:
-    sys.hal_log_values = dict()
-    sys.hal_log_values["__log_const"] = "temp_log.txt"
-    sys.hal_log_values["__log_path"] = "."
-    sys.hal_log_values["__log_file_name"] = None
-    sys.hal_log_values["__log_file"] = None
-    # previous value: "\n" if not sys.platform.startswith("win") else "\n"
-    sys.hal_log_values["__log_file_sep"] = "\n"
-    sys.hal_log_values["__log_display"] = False
-    sys.hal_log_values["month_date"] = {"jan": 1, "feb": 2, "mar": 3, "apr": 4,
-                                        "may": 5, "jun": 6, "jul": 7, "aug": 8, "sep": 9, "oct": 10, "nov": 11, "dec": 12}

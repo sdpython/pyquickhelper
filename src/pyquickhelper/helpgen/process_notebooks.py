@@ -11,6 +11,7 @@ import sys
 import shutil
 
 from ..loghelper.flog import run_cmd, fLOG
+from ..filehelper import change_file_status
 from .utils_sphinx_doc_helpers import HelpGenException, find_latex_path, find_pandoc_path
 from ..filehelper.synchelper import has_been_updated
 from .post_process import post_process_latex_output, post_process_latex_output_any, post_process_rst_output, post_process_html_output, post_process_slides_output
@@ -161,9 +162,13 @@ def process_notebooks(notebooks,
     files = []
     skipped = []
 
-    build_slide = os.path.join(build, "bslides")
-    if not os.path.exists(build_slide):
-        os.mkdir(build_slide)
+    if "slides" in formats:
+        build_slide = os.path.join(build, "bslides")
+        if not os.path.exists(build_slide):
+            os.mkdir(build_slide)
+
+        # for some reason, sometimes, the folder is not in write mode
+        change_file_status(build_slide)
 
     if "WinPython" in sys.executable:
         # pip, or any program in Scripts cannot find python.exe

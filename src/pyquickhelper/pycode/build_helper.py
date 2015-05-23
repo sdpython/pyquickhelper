@@ -150,7 +150,16 @@ def get_script_command(command, module, requirements, port=8067, platform=sys.pl
     rows.append(windows_setup + " " + command)
     rows.append(windows_error)
     sc = "\n".join(rows)
-    return private_script_replacements(sc, module, requirements, port, default_engine_paths=default_engine_paths)
+    res = private_script_replacements(
+        sc, module, requirements, port, default_engine_paths=default_engine_paths)
+    if command == "copy27" and sys.platform.startswith("win"):
+        res = """
+            if exist dist_module27 (
+                rmdir /Q /S dist_module27
+                if %errorlevel% neq 0 exit /b %errorlevel%
+            )
+            """.replace("            ", "") + res
+    return res
 
 
 def get_extra_script_command(command, module, requirements, port=8067, blog_list=None, platform=sys.platform,

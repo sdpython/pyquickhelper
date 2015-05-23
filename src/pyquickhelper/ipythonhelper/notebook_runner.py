@@ -6,6 +6,7 @@
 import os
 import re
 import time
+import io
 from queue import Empty
 
 from IPython.nbformat.v3 import NotebookNode
@@ -97,6 +98,47 @@ class NotebookRunner(object):
                 self.to_json(payload)
         else:
             filename.write(writes(self.nb))
+
+    @staticmethod
+    def read_json(js, profile_dir=None, encoding="utf8"):
+        """
+        read a notebook from a JSON stream or string
+
+        @param      js              string or stream
+        @param      profile_dir     profile directory
+        @param      encoding        encoding for the notebooks
+        @return                     instance of @see cl NotebookRunner
+        """
+        if isinstance(js, str  # unicode
+                      ):
+            st = io.StringIO(js)
+        else:
+            st = js
+        from .notebook_helper import read_nb
+        return read_nb(st, profile_dir=profile_dir, encoding=encoding)
+
+    def copy(self):
+        """
+        copy the notebook (just the content)
+
+        @return         instance of @see cl NotebookRunner
+
+        .. versionadded:: 1.1
+        """
+        st = io.StringIO()
+        self.to_json(st)
+        return NotebookRunner.read_json(st.getvalue())
+
+    def __add__(self, nb):
+        """
+        merges two notebooks together, returns a new none
+
+        @param      nb      notebook
+        @return             new notebook
+        """
+        c = self.copy()
+        c.merge_notebook(nb)
+        return c
 
     def shutdown_kernel(self):
         """
@@ -317,27 +359,48 @@ class NotebookRunner(object):
         '''
         Iterate over the notebook cells containing code.
         '''
-        try:
-            for ws in self.nb.worksheets:
-                for cell in ws.cells:
-                    if cell.cell_type == 'code':
-                        yield cell
-        except AttributeError:
-            for cell in self.nb.cells:
-                if cell.cell_type == 'code':
-                    yield cell
+        for cell in self.iter_cells():
+            if cell.cell_type == 'code':
+                yield cell
 
     def iter_cells(self):
         '''
         Iterate over the notebook cells.
         '''
-        try:
+        if hasattr(self.nb, "worksheets"):
             for ws in self.nb.worksheets:
                 for cell in ws.cells:
                     yield cell
-        except AttributeError:
+        else:
             for cell in self.nb.cells:
                 yield cell
+
+    def _cell_container(self):
+        """
+        returns a cells container, it may change according to the format
+
+        @return     cell container
+        """
+        if hasattr(self.nb, "worksheets"):
+            last = None
+            for ws in self.nb.worksheets:
+                last = ws
+            if last is None:
+                raise NotebookError("no cell container")
+            return last.cells
+        else:
+            return self.nb.cells
+
+    def __len__(self):
+        """
+        return the number of cells, it iterates on cells
+        to get this information and does cache the information
+
+        @return         int
+
+        .. versionadded:: 1.1
+        """
+        return sum(1 for _ in self.iter_cells())
 
     def cell_type(self, cell):
         """
@@ -530,5 +593,42 @@ class NotebookRunner(object):
     def count_code_cells(self):
         '''
         @return the number of code cells in the notebook
+
+        .. versionadded:: 1.1
         '''
         return sum(1 for _ in self.iter_code_cells())
+
+    def merge_notebook(self, nb):
+        """
+        append notebook *nb* to this one
+
+        @param      nb      notebook or list of notebook (@see cl NotebookRunner)
+        @return             number of added cells
+
+        @example(How to merge notebook?)
+        The following code merges two notebooks into the first one
+        and stores the result unto a file.
+
+        @code
+        from pyquickhelper.ipythonhelper import read_nb
+        nb1 = read_nb("<file1>")
+        nb2 = read_nb("<file2>")
+        nb1.merge_notebook(nb2)
+        nb1.to_json(outfile)
+        @endcode
+        @endexample
+
+        .. versionadded:: 1.1
+        """
+        if isinstance(nb, list):
+            s = 0
+            for n in nb:
+                s += self.merge_notebook(n)
+            return s
+        else:
+            last = self._cell_container()
+            s = 0
+            for cell in nb.iter_cells():
+                last.append(cell)
+                s += 1
+            return s

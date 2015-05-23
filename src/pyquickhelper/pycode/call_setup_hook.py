@@ -35,7 +35,7 @@ def call_setup_hook(folder, module_name, fLOG=noLOG, must_be=False,
     code = ["import sys",
             "sys.path.append('{0}')".format(src.replace("\\", "/")),
             "from {0} import {1}".format(module_name, function_name),
-            "{0}()".format(function_name),
+            "{0}(use_print={1})".format(function_name, use_print),
             "sys.exit(0)"]
     code = ";".join(code)
     if use_print:
