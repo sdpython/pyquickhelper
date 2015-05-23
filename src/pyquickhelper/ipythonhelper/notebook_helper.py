@@ -166,7 +166,7 @@ def read_nb(filename, profile_dir=None, encoding="utf8"):
 
     .. versionadded:: 1.1
     """
-    if isinstance(filename, str  # unicode
+    if isinstance(filename, str  # unicode#
                   ):
         with open(filename, "r", encoding=encoding) as payload:
             nb = reads(payload.read())

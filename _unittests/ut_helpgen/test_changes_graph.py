@@ -71,7 +71,10 @@ class TestGraphChanges (unittest.TestCase):
             ax.grid(True)
             ax.set_title("commits")
 
-        import tkinter
+        if sys.version_info[0] == 2:
+            import Tkinter as tkinter
+        else:
+            import tkinter
         if __name__ != "__main__":
             code = code.replace("plt.show", "#plt.show")
 

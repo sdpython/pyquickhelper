@@ -7,6 +7,7 @@ import os
 import re
 import time
 import io
+import sys
 from queue import Empty
 
 from IPython.nbformat.v3 import NotebookNode
@@ -14,6 +15,9 @@ from IPython.kernel import KernelManager
 from IPython.nbformat import writes
 
 from ..loghelper.flog import noLOG
+
+if sys.version_info[0] == 2:
+    from codecs import open
 
 
 class NotebookError(Exception):
@@ -92,7 +96,7 @@ class NotebookRunner(object):
 
         @param      filename       filename or stream
         """
-        if isinstance(filename, str  # unicode
+        if isinstance(filename, str  # unicode#
                       ):
             with open(filename, "w", encoding=encoding) as payload:
                 self.to_json(payload)
@@ -109,7 +113,7 @@ class NotebookRunner(object):
         @param      encoding        encoding for the notebooks
         @return                     instance of @see cl NotebookRunner
         """
-        if isinstance(js, str  # unicode
+        if isinstance(js, str  # unicode#
                       ):
             st = io.StringIO(js)
         else:

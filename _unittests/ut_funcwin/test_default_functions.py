@@ -64,7 +64,7 @@ class TestWindows (unittest.TestCase):
         head = file_grep(
             __file__.replace(
                 ".pyc",
-                "py"),
+                ".py"),
             out=out,
             regex="test_.*")
         assert os.path.exists(head)

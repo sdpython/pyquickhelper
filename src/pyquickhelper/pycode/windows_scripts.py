@@ -45,7 +45,10 @@ windows_unittest27 = """
 set PYTHONPATH=
 cd dist_module27\\_unittests
 
-for /d %%d in (ut_*) do %pythonexe27%\\..\\Scripts\\nosetests.exe -w %%d
+for /d %%d in (ut_*) do (
+    %pythonexe27%\\..\\Scripts\\nosetests.exe -w %%d
+    if %errorlevel% neq 0 exit /b %errorlevel%
+)
 
 """ + windows_error + "\ncd ..\.."
 

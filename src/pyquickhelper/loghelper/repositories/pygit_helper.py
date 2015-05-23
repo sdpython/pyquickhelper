@@ -11,6 +11,9 @@ import xml.etree.ElementTree as ET
 
 from ..flog import fLOG, run_cmd
 
+if sys.version_info[0] == 2:
+    from codecs import open
+
 
 def my_date_conversion(sdate):
     """

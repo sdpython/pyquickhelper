@@ -25,6 +25,10 @@ from src.pyquickhelper.ipythonhelper.notebook_helper import run_notebook, read_n
 from src.pyquickhelper import get_temp_folder, fLOG
 
 
+if sys.version_info[0] == 2:
+    from codecs import open
+    
+
 class TestNotebookReadWrite (unittest.TestCase):
 
     def test_notebook_read_write(self):
@@ -42,17 +46,17 @@ class TestNotebookReadWrite (unittest.TestCase):
         assert os.path.exists(outfile)
 
         with open(nbfile, "r", encoding="utf8") as f:
-            c1 = f.read()
+            c1 = f.read().replace("\r", "")
         with open(outfile, "r", encoding="utf8") as f:
-            c2 = f.read()
+            c2 = f.read().replace("\r", "")
         if c1 != c2:
-            l1 = c1.strip("\n\r ").split("\n")
-            l2 = c2.strip("\n\r ").split("\n")
+            l1 = c1.strip("\n ").split("\n")
+            l2 = c2.strip("\n ").split("\n")
             for i, cc in enumerate(zip(l1, l2)):
                 a, b = cc
-                if a != b:
+                if a.strip(" \n") != b.strip(" \n"):
                     raise Exception(
-                        "difference at line {0}\n1: {1}\n2: {2}".format(i, a, b))
+                        "difference at line {0}\n1: [{1}]-[{3}]\n2: [{2}]-[{4}]".format(i, a, b, type(a), type(b)))
             if len(l1) != len(l2):
                 raise Exception("different length")
 

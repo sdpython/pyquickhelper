@@ -791,7 +791,7 @@ def generate_changes_repo(chan,
         if exception_if_empty:
             fLOG("error, unable to retrieve log from " + source)
             raise HelpGenException(
-                "unable to retrieve log in " + source) from eee
+                "unable to retrieve log in " + source + "\n" + str(eee)) from eee
         else:
             logs = [("none", 0, datetime.datetime.now(), "-")]
             fLOG("error,", eee)

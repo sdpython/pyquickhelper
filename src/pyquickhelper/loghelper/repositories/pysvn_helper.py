@@ -14,6 +14,9 @@ import xml.etree.ElementTree as ET
 from ..flog import fLOG, run_cmd
 from ..convert_helper import str_to_datetime
 
+if sys.version_info[0] == 2:
+    from codecs import open
+
 
 def IsRepo(location, commandline=True, log=False):
     """
@@ -78,8 +81,9 @@ def repo_ls(full, commandline=True):
             entry = client.ls(full)
             return entry
         except Exception as e:
-            if "This client is too old to work with the working copy at" in str(e) or \
-                    "No module named 'pysvn'" in str(e):
+            typstr = str  # unicode#
+            if "This client is too old to work with the working copy at" in typstr(e) or \
+                    "No module named 'pysvn'" in typstr(e):
                 cmd = "svn ls -r HEAD \"%s\"" % full.replace("\\", "/")
                 out, err = run_cmd(cmd,
                                    wait=True,
@@ -181,14 +185,15 @@ def get_repo_log(path=None, file_detail=False, commandline=True):
                 include_merged_revisions=False,
             )
         except Exception as e:
-            if "is not a working copy" in str(e):
+            typstr = str  # unicode#
+            if "is not a working copy" in typstr(e):
                 return [
                     ("",
                      __get_version_from_version_txt(path),
                      datetime.datetime.now(),
                      "no repository")]
-            elif "This client is too old to work with the working copy at" in str(e) or \
-                    "No module named 'pysvn'" in str(e):
+            elif "This client is too old to work with the working copy at" in typstr(e) or \
+                    "No module named 'pysvn'" in typstr(e):
                 return get_repo_log(path, file_detail, commandline=True)
             else:
                 raise e
@@ -258,10 +263,11 @@ def get_repo_version(path=None, commandline=True, log=False):
             revision = max(revv)
             return revision
         except Exception as e:
-            if "This client is too old to work with the working copy at" in str(e) or \
-                    "No module named 'pysvn'" in str(e):
+            typstr = str  # unicode#
+            if "This client is too old to work with the working copy at" in typstr(e) or \
+                    "No module named 'pysvn'" in typstr(e):
                 return get_repo_version(path, commandline=True)
-            elif "is not a working copy" in str(e):
+            elif "is not a working copy" in typstr(e):
                 return __get_version_from_version_txt(path)
             else:
                 raise e

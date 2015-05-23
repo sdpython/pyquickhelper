@@ -10,6 +10,10 @@ import shlex
 import subprocess
 from ..loghelper import noLOG, run_cmd
 from ..loghelper.flog import get_interpreter_path
+from .open_script_file import open_script
+
+if sys.version_info[0] == 2:
+    from codecs import open
 
 
 def call_setup_hook(folder, module_name, fLOG=noLOG, must_be=False,
@@ -80,9 +84,10 @@ def call_setup_hook(folder, module_name, fLOG=noLOG, must_be=False,
 
         if exit != 0:
             init = os.path.join(src, module_name, "__init__.py")
-            with open(init, "r") as f:
+            with open_script(init, "r") as f:
                 content = f.read()
-            if 'def {0}'.format(function_name) not in content:
+            sdef = 'def {0}'.format(function_name)
+            if sdef not in content:
                 exit = 0
                 err = "ImportError: cannot import name '{0}'".format(
                     function_name)
@@ -97,7 +102,8 @@ def call_setup_hook(folder, module_name, fLOG=noLOG, must_be=False,
                                                                                      out, err, cmd, exit)
         return mes
 
-    if not must_be and "ImportError: cannot import name '{0}'".format(function_name) in err:
+    if not must_be and ("ImportError: cannot import name '{0}'".format(function_name) in err \
+            or "ImportError: cannot import name {0}".format(function_name) in err):
         # no _setup_hook
         return out, "no {0}".format(function_name)
     if "Error while finding spec " in err:

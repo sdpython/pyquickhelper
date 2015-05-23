@@ -40,7 +40,8 @@ class TestCallSetupHook(unittest.TestCase):
             init, "pyquickhelper", fLOG=fLOG, function_name="______")
         fLOG(err)
         fLOG(out)
-        assert err == "no ______" or "linux" in out
+        if not(err == "no ______" or "linux" in out):
+            raise Exception("OUT:\n{0}\nERR:\n{1}".format(out, err))
 
         out, err = call_setup_hook(init, "pyquickhelper", fLOG=fLOG)
         fLOG(err)
@@ -60,7 +61,8 @@ class TestCallSetupHook(unittest.TestCase):
             init, "pyquickhelper", fLOG=fLOG, function_name="______", force_call=True)
         fLOG(err)
         fLOG(out)
-        assert err == "no ______" or "linux" in out
+        if not(err == "no ______" or "linux" in out):
+            raise Exception("OUT:\n{0}\nERR:\n{1}".format(out, err))
 
         out, err = call_setup_hook(
             init, "pyquickhelper", fLOG=fLOG, force_call=True,

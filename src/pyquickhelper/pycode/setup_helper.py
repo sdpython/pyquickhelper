@@ -18,6 +18,9 @@ from .build_helper import get_build_script, get_script_command, get_extra_script
 from ..filehelper import get_url_content_timeout
 from .call_setup_hook import call_setup_hook
 
+if sys.version_info[0] == 2:
+    from codecs import open
+
 
 def get_script_extension():
     """

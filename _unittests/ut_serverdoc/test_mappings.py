@@ -35,10 +35,11 @@ class TestMappings(unittest.TestCase):
         path = os.path.abspath(os.path.split(__file__)[0])
         data = os.path.join(path, "data")
         fold = os.path.normpath(os.path.join(path, ".."))
+        fold = os.path.normpath(fold)
         fLOG(fold)
         res = get_jenkins_mappings(fold, loc="data2")
-        fLOG(res)
-        assert len(res) > 0
+        if len(res) <= 0 and sys.version_info[0] != 2:
+            raise Exception("{0} - {1}".format(res, fold))
 
 
 if __name__ == "__main__":
