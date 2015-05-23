@@ -23,6 +23,7 @@ except ImportError:
 
 from src.pyquickhelper.loghelper.flog import fLOG, run_cmd
 from src.pyquickhelper.helpgen.sphinx_main import process_notebooks, add_notebook_page
+from src.pyquickhelper import get_temp_folder
 
 if sys.version_info[0] == 2:
     from codecs import open
@@ -50,12 +51,8 @@ class TestNotebookConversion (unittest.TestCase):
         nb = os.path.join(fold, "example_pyquickhelper.ipynb")
         assert os.path.exists(nb)
 
-        temp = os.path.join(path, "temp_nb")
-        if not os.path.exists(temp):
-            os.mkdir(temp)
-        for file in os.listdir(temp):
-            os.remove(os.path.join(temp, file))
-
+        temp = get_temp_folder(__file__, "temp_nb")
+        
         if sys.platform.startswith("win"):
             p1 = r"C:\Program Files\MiKTeX 2.9\miktex\bin\x64"
             p2 = r"%USERPROFILE%\AppData\Local\Pandoc"

@@ -167,9 +167,6 @@ def process_notebooks(notebooks,
         if not os.path.exists(build_slide):
             os.mkdir(build_slide)
 
-        # for some reason, sometimes, the folder is not in write mode
-        change_file_status(build_slide)
-
     if "WinPython" in sys.executable:
         # pip, or any program in Scripts cannot find python.exe
         # for the distribution WinPython

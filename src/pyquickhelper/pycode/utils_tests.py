@@ -8,6 +8,7 @@
 from __future__ import print_function
 
 import os
+import stat
 import sys
 import glob
 import re
@@ -48,12 +49,20 @@ def get_temp_folder(thisfile, name, clean=True, create=True):
     if not os.path.exists(local):
         if create:
             os.mkdir(local)
+            mode = os.stat(local).st_mode
+            nmode = mode | stat.S_IWRITE
+            if nmode != mode:
+                os.chmod(local, nmode)
     else:
         if clean:
             remove_folder(local)
             time.sleep(0.1)
         if create and not os.path.exists(local):
             os.mkdir(local)
+            mode = os.stat(local).st_mode
+            nmode = mode | stat.S_IWRITE
+            if nmode != mode:
+                os.chmod(local, nmode)
 
     return local
 
