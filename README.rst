@@ -71,7 +71,7 @@ This project contains the following folders:
 Versions / Changes
 ------------------
 
-* **1.1 - 2015/??/??**
+* **1.1 - 2015/05/23**
     * **fix:** shorten setup.py, move functionalities to the module, move utils_test.py to subfolder pycode
     * **change:** improve the generation of automated documentation
     * **change:** function :func:`create_visual_diff_through_html_files <pyquickhelper.filehelper.visual_sync.create_visual_diff_through_html_files>` 
@@ -96,7 +96,8 @@ Versions / Changes
       to automatically add a menu in a notebook 
       (which still shows up when the notebook is converted into another format)
     * **add:** the automated documentation now generates files .chm if it is done on Windows.
-    * **new:** method :meth:`merge_notebook <pyquickhelper.ipythonhelper.notebook_runner.NotebookRunner.mege_notebook>` to merge notebooks into one
+    * **new:** method :meth:`merge_notebook <pyquickhelper.ipythonhelper.notebook_runner.NotebookRunner.merge_notebook>` to merge notebooks into one
+    * **new:** method :func:`nb2slides<pyquickhelper.helpgen.process_notebook_api.nb2slides>` to convert a notebook into slides
 * **1.0 - 2015/04/21**
     * **new:** function to run a notebook end to end :func:`run_notebook <pyquickhelper.ipythonhelper.notebook_helper.run_notebook>`
     * **change:** function :func:`str_to_datetime <pyquickhelper.loghelper.convert_helper.str_to_datetime>` implicitely handles more formats

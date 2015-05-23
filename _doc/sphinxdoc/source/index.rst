@@ -47,11 +47,12 @@ Functionalities
   automatically adds a menu in the notebook based on sections
 * method to add metadata when converting a notebook into slides 
   :meth:`add_tag_slide <pyquickhelper.ipythonhelper.notebook_runner.NotebookRunner.add_tag_slide>`
-* method to merge notebooks :meth:`merge_notebook <pyquickhelper.ipythonhelper.notebook_runner.NotebookRunner.mege_notebook>`
+* method to merge notebooks :meth:`merge_notebook <pyquickhelper.ipythonhelper.notebook_runner.NotebookRunner.merge_notebook>`
 * :class:`MagicCommandParser <pyquickhelper.ipythonhelper.magic_parser.MagicCommandParser>`, 
   :class:`MagicClassWithHelpers <pyquickhelper.ipythonhelper.magic_class.MagicClassWithHelpers>` to help 
   creating magic command for IPython notebooks,
   the parser tries to interpret values passed to the magic commands
+* method :func:`nb2slides<pyquickhelper.helpgen.process_notebook_api.nb2slides>` to convert a notebook into slides
   
 *unit tests:*
 

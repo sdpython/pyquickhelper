@@ -471,7 +471,7 @@ class NotebookRunner(object):
             raise NotImplementedError(
                 "cell type: {0}\nCELL:\n{1}".format(kind, cell))
 
-    def add_tag_slide(self, max_nb_cell=8, max_nb_line=30):
+    def add_tag_slide(self, max_nb_cell=8, max_nb_line=25):
         """
         tries to add tags for a slide show when they are too few
 
