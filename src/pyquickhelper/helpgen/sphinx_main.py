@@ -173,6 +173,10 @@ def generate_help_sphinx(project_var_name,
         instead of the absolute url to the website. It must be replaced before uploaded
         or the parameter *blog_root* can be specified in the configuration file ``conf.py``.
 
+    @warning Parameter *add_htmlhelp* calls `Html Help WorkShop <https://msdn.microsoft.com/en-us/library/windows/desktop/ms669985%28v=vs.85%29.aspx>`_.
+             It also changes the encoding of the HTMLoutput into cp1552 (encoding for Windows)
+             instead of utf-8.
+
     .. versionchanged:: 1.0
         Assumes IPython 3 is installed. It might no work for earlier versions (notebooks).
         Parameters *from_repo*, *use_run_cmd* were added.
@@ -501,12 +505,14 @@ def generate_help_sphinx(project_var_name,
         lays.append(lay)
 
         if add_htmlhelp and lay == "html":
-            cmd = "sphinx-build -b {1}help -d {0}/doctrees{2}{3} source {0}/{1}".format(
+            # we cannot execute htmlhelp in the same folder
+            # as it changes the encoding
+            cmd = "sphinx-build -b {1}help -d {0}/doctrees{2}{3} source {0}/{1}help".format(
                 build, lay, over, sconf)
             cmds.append(cmd)
             fLOG("run:", cmd)
             lays.append(lay)
-            hhp = os.path.join(build, lay, module_name + "_doc.hhp")
+            hhp = os.path.join(build, lay + "help", module_name + "_doc.hhp")
             cmdp = '"C:\\Program Files (x86)\\HTML Help Workshop\\hhc.exe" ' + \
                 '"%s"' % hhp
             cmds_post.append(cmdp)
