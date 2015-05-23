@@ -523,7 +523,8 @@ def main_wrapper_tests(codefile,
                        processes=False,
                        add_coverage=False,
                        report_folder=None,
-                       skip_function=default_skip_function):
+                       skip_function=default_skip_function,
+                       setup_params=None):
     """
     calls function :func:`main <pyquickhelper.unittests.utils_tests.main>` and throw an exception if it fails
 
@@ -536,6 +537,7 @@ def main_wrapper_tests(codefile,
     @param      report_folder   folder where the coverage report will be stored, if None, it will be placed in:
                                 ``os.path.join(os.path.dirname(codefile), "..", "_doc","sphinxdoc","source", "coverage")``
     @param      skip_function   function(filename,content) --> boolean to skip a unit test
+    @param      setup_params    parameters sent to @see fn call_setup_hook
 
     @FAQ(How to build pyquickhelper with Jenkins?)
     `Jenkins <http://jenkins-ci.org/>`_ is a task scheduler for continuous integration.
@@ -574,6 +576,11 @@ def main_wrapper_tests(codefile,
         Parameter *tested_module* was added, the function then checks the presence of
         function @see fn _setup_hook, it is the case, it runs it.
 
+        Parameter *setup_params* was added. A mechanism was put in place
+        to let the module to test a possibility to run some preprocessing steps
+        in a separate process. They are described in @see fn _setup_hook
+        which must be found in the main file ``__init__.py``.
+
     """
     runner = unittest.TextTestRunner(verbosity=0, stream=io.StringIO())
     path = os.path.abspath(os.path.join(os.path.split(codefile)[0]))
@@ -598,10 +605,12 @@ def main_wrapper_tests(codefile,
     print("MODULES (2): matplotlib imported",
           "matplotlib" in sys.modules, _first_execution, r)
 
-    def tested_module(folder, project_var_name):
+    def tested_module(folder, project_var_name, setup_params):
         # module mod
+        if setup_params is None:
+            setup_params = {}
         out, err = call_setup_hook(
-            folder, project_var_name, fLOG=fLOG, use_print=True)
+            folder, project_var_name, fLOG=fLOG, use_print=True, **setup_params)
         if len(err) > 0 and err != "no _setup_hook":
             raise Exception(
                 "unable to run _setup_hook\n**OUT:\n{0}\n**ERR:\n{1}\n**FOLDER:\n{2}\n**NAME:\n{3}"
@@ -634,7 +643,7 @@ def main_wrapper_tests(codefile,
                 os.path.abspath(os.path.dirname(codefile)), "..", "_doc", "sphinxdoc", "source", "coverage")
 
         print("call _setup_hook", src_abs, "name=", project_var_name)
-        tested_module(src_abs, project_var_name)
+        tested_module(src_abs, project_var_name, setup_params)
         print("end _setup_hook")
 
         print("current folder", os.getcwd())

@@ -63,7 +63,9 @@ class TestCallSetupHook(unittest.TestCase):
         assert err == "no ______" or "linux" in out
 
         out, err = call_setup_hook(
-            init, "pyquickhelper", fLOG=fLOG, force_call=True)
+            init, "pyquickhelper", fLOG=fLOG, force_call=True,
+            additional_paths=["not a path"],
+            unit_test=True)
         fLOG(err)
         fLOG(out)
         assert len(err) == 0

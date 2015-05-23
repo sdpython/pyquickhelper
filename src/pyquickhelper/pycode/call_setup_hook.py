@@ -14,29 +14,44 @@ from ..loghelper.flog import get_interpreter_path
 
 def call_setup_hook(folder, module_name, fLOG=noLOG, must_be=False,
                     function_name="_setup_hook", use_print=False,
-                    force_call=False):
+                    force_call=False, additional_paths=None,
+                    **args):
     """
     calls function @see fn _setup_hook for a specific module,
     it is called in a separate process
 
-    @param      folder          folder which contains the setup
-    @param      module_name     module name
-    @param      fLOG            logging function
-    @param      must_be         raises an exception if @see fn _setup_hook is not found
-    @param      function_name   function to call by default
-    @param      use_print       use print to display information
-    @param      force_call      use *subprocess.call* instead of @see fn run_cmd
-    @return                     stdout, stderr
+    @param      folder              folder which contains the setup
+    @param      module_name         module name
+    @param      fLOG                logging function
+    @param      must_be             raises an exception if @see fn _setup_hook is not found
+    @param      function_name       function to call by default
+    @param      use_print           use print to display information
+    @param      force_call          use *subprocess.call* instead of @see fn run_cmd
+    @param      additional_paths    additional_paths to add to *sys.path* before call the function
+    @param      args                additional parameter (dictionary)
+    @return                         stdout, stderr
 
     The function expects to find file ``__init__.py`` in
     ``<folder>/src/<module_name>``.
     """
     src = os.path.abspath(os.path.join(folder, "src"))
-    code = ["import sys",
-            "sys.path.append('{0}')".format(src.replace("\\", "/")),
-            "from {0} import {1}".format(module_name, function_name),
-            "{0}(use_print={1})".format(function_name, use_print),
-            "sys.exit(0)"]
+    if additional_paths is None:
+        additional_paths = [src]
+    else:
+        additional_paths = [src] + additional_paths
+
+    if args is None or len(args) == 0:
+        str_args = ""
+    else:
+        typstr = str  # unicode#
+        str_args = "**" + typstr(args)
+
+    code = ["import sys", ]
+    code.extend(["sys.path.append('{0}')".format(
+        d.replace("\\", "/")) for d in additional_paths])
+    code.extend(["from {0} import {1}".format(module_name, function_name),
+                 "{0}({1})".format(function_name, str_args),
+                 "sys.exit(0)"])
     code = ";".join(code)
     if use_print:
         print("CODE:\n", code)

@@ -40,16 +40,19 @@ def check():
     return True
 
 
-def _setup_hook(use_print=False):
+def _setup_hook(add_print=False, unit_test=False):
     """
     if this function is added to the module,
     the help automation and unit tests call it first before
     anything goes on as an initialization step.
     It should be run in a separate process.
+
+    @param      add_print       print *Success: _setup_hook*
+    @param      unit_test       used only for unit testing purpose
     """
     # we can check many things, needed module
     # any others things before unit tests are started
-    if use_print:
+    if add_print:
         print("Success: _setup_hook")
 
 

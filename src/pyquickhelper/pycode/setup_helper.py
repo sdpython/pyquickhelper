@@ -139,14 +139,15 @@ def standard_help_for_setup(file_or_folder, project_var_name, module_name=None, 
                                  add_htmlhelp=add_htmlhelp)
 
 
-def run_unittests_for_setup(file_or_folder, skip_function=default_skip_function):
+def run_unittests_for_setup(file_or_folder, skip_function=default_skip_function, setup_params=None):
     """
     run the unit tests and compute the coverage, stores
     the results in ``_doc/sphinxdoc/source/coverage``
     assuming the module follows the same design as *pyquickhelper*
 
     @param      file_or_folder      file ``setup.py`` or folder which contains it
-    @param      skip_functino       @see fn main_wrapper_tests
+    @param      skip_function       @see fn main_wrapper_tests
+    @param      setup_params        @see fn main_wrapper_tests
     """
     ffolder = get_folder(file_or_folder)
     funit = os.path.join(ffolder, "_unittests")
@@ -160,7 +161,7 @@ def run_unittests_for_setup(file_or_folder, skip_function=default_skip_function)
             "the folder {0} should contain run_unittests.py".format(funit))
 
     main_wrapper_tests(
-        run_unit, add_coverage=True, skip_function=skip_function)
+        run_unit, add_coverage=True, skip_function=skip_function, setup_params=setup_params)
 
 
 def copy27_for_setup(file_or_folder):
@@ -208,7 +209,8 @@ def process_standard_options_for_setup(argv,
                                        blog_list=None,
                                        default_engine_paths=None,
                                        extra_ext=None,
-                                       add_htmlhelp=False):
+                                       add_htmlhelp=False,
+                                       setup_params=None):
     """
     process the standard options the module pyquickhelper is
     able to process assuming the module which calls this function
@@ -237,6 +239,7 @@ def process_standard_options_for_setup(argv,
     @param      default_engine_paths    define the default location for python engine, should be dictionary *{ engine: path }*, see below.
     @param      extra_ext               extra file extension to process (add a page for each of them, ex ``["doc"]``)
     @param      add_htmlhelp            run HTML Help too (only on Windows)
+    @param      setup_params            parameters send to @see fn call_setup_hook
     @return                             True (an option was processed) or False,
                                         the file ``setup.py`` should call function ``setup``
 
@@ -271,9 +274,12 @@ def process_standard_options_for_setup(argv,
         return True
 
     elif "build_sphinx" in sys.argv:
+        if setup_params is None:
+            setup_params = {}
         out, err = call_setup_hook(folder,
                                    project_var_name if module_name is None else module_name,
-                                   fLOG=fLOG)
+                                   fLOG=fLOG,
+                                   **setup_params)
         if len(err) > 0 and err != "no _setup_hook":
             raise Exception(
                 "unable to run _setup_hook\nOUT:\n{0}\nERR:\n{1}".format(out, err))
@@ -283,19 +289,21 @@ def process_standard_options_for_setup(argv,
         return True
 
     elif "unittests" in sys.argv:
-        run_unittests_for_setup(file_or_folder)
+        run_unittests_for_setup(file_or_folder, setup_params=setup_params)
         return True
 
     elif "unittests_LONG" in sys.argv:
         def skip_long(name, code):
             return "test_LONG_" not in name
-        run_unittests_for_setup(file_or_folder, skip_function=skip_long)
+        run_unittests_for_setup(
+            file_or_folder, skip_function=skip_long, setup_params=setup_params)
         return True
 
     elif "unittests_SKIP" in sys.argv:
         def skip_skip(name, code):
             return "test_LONG_" not in name
-        run_unittests_for_setup(file_or_folder, skip_function=skip_skip)
+        run_unittests_for_setup(
+            file_or_folder, skip_function=skip_skip, setup_params=setup_params)
         return True
 
     elif "build_script" in sys.argv:
