@@ -151,6 +151,7 @@ def set_sphinx_variables(fileconf,
     source_suffix = '.rst'
     source_encoding = 'utf-8'
     master_doc = 'index'
+    html_output_encoding = 'utf-8'
 
     # settings
     exclude_patterns = []
