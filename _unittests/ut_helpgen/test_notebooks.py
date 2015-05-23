@@ -1,5 +1,5 @@
 """
-@brief      test log(time=18s)
+@brief      test log(time=23s)
 @author     Xavier Dupre
 """
 
@@ -23,6 +23,7 @@ except ImportError:
 
 from src.pyquickhelper.loghelper.flog import fLOG, run_cmd
 from src.pyquickhelper.helpgen.sphinx_main import process_notebooks, add_notebook_page
+from src.pyquickhelper.helpgen.process_notebooks import get_ipython_program
 from src.pyquickhelper import get_temp_folder
 
 if sys.version_info[0] == 2:
@@ -52,7 +53,7 @@ class TestNotebookConversion (unittest.TestCase):
         assert os.path.exists(nb)
 
         temp = get_temp_folder(__file__, "temp_nb")
-        
+
         if sys.platform.startswith("win"):
             p1 = r"C:\Program Files\MiKTeX 2.9\miktex\bin\x64"
             p2 = r"%USERPROFILE%\AppData\Local\Pandoc"
@@ -120,29 +121,24 @@ class TestNotebookConversion (unittest.TestCase):
             __file__,
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
-        return
-        if sys.platform.startswith("win"):
-            return
-        home = os.environ["HOME"]
-        f = "{0}/github/pyquickhelper/_doc/notebooks/example_pyquickhelper.ipynb".format(
-            home)
-        fo = "{0}/github/pyquickhelper/_unittests/ut_helpgen/temp_nb/example_pyquickhelper.html".format(
-            home)
-        if os.path.exists(fo):
-            os.remove(fo)
-        assert not os.path.exists(fo)
-        if os.path.exists(f):
-            cmd = '{0}/anaconda3/bin/ipython nbconvert --to html {0}/github/pyquickhelper/_doc/notebooks/example_pyquickhelper.ipynb --template full --output={0}/github/pyquickhelper/_unittests/ut_helpgen/temp_nb/example_pyquickhelper'
-            cmd = cmd.format(home)
-            out, err = run_cmd(cmd, shell=False, wait=True, communicate=False)
-            # fLOG(out)
-            # fLOG("******************",err)
-            assert "[NbConvertApp] Writing" in err
-            if not os.path.exists(fo):
-                fLOG(fo)
-                fLOG(os.path.abspath(os.path.dirname(fo)))
-                fLOG(os.listdir(os.path.dirname(fo)))
-                assert False
+
+        temp = get_temp_folder(__file__, "temp_nb_cmd")
+        f = os.path.join(
+            temp, "..", "notebooks_rst", "having_a_form_in_a_notebook.ipynb")
+        fo = os.path.join(temp, "having_a_form_in_a_notebook.html")
+
+        ipy = get_ipython_program()
+        cmd = '{2} nbconvert --to html {0} --template full --output={1}'
+        cmd = cmd.format(f, fo, ipy)
+        out, err = run_cmd(cmd, shell=False, wait=True, communicate=False)
+        fLOG(out)
+        fLOG("******************", err)
+        assert "[NbConvertApp] Writing" in err
+        if not os.path.exists(fo):
+            fLOG(fo)
+            fLOG(os.path.abspath(os.path.dirname(fo)))
+            fLOG(os.listdir(os.path.dirname(fo)))
+            assert False
         else:
             fLOG("unfound ", f)
 

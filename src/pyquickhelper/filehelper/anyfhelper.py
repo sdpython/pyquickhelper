@@ -39,7 +39,7 @@ def change_file_status(folder, status=stat.S_IWRITE, strict=False,
         else:
             todo = [folder]
         res = []
-        
+
         for f in todo:
             mode = os.stat(f).st_mode
             if strict:

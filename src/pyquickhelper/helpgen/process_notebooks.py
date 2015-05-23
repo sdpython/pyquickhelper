@@ -39,6 +39,47 @@ Another list
 """
 
 
+def get_ipython_program(exe=None, pandoc_path=None):
+    """
+    get ipython executable + fix an issue with PANDOC
+
+    @param      exe             path to python executable
+    @param      pandoc_path     if None, call @see fn find_pandoc_path
+    @return                     ipython executable
+    """
+    if exe is None:
+        exe = os.path.dirname(sys.executable)
+    if pandoc_path is None:
+        pandoc_path = find_pandoc_path()
+    if sys.platform.startswith("win"):
+        user = os.environ["USERPROFILE"]
+        path = pandoc_path.replace("%USERPROFILE%", user)
+        p = os.environ["PATH"]
+        if path not in p:
+            p += ";%WINPYDIR%\DLLs;" + path
+            os.environ["WINPYDIR"] = exe
+            os.environ["PATH"] = p
+
+        if not exe.endswith("Scripts"):
+            ipy = os.path.join(exe, "Scripts", "ipython3.exe")
+            if not os.path.exists(ipy):
+                # Anaconda is different
+                ipy = os.path.join(exe, "Scripts", "ipython.exe")
+                if not os.path.exists(ipy):
+                    raise FileNotFoundError(ipy)
+        else:
+            ipy = os.path.join(exe, "ipython3.exe")
+            if not os.path.exists(ipy):
+                # Anaconda is different
+                ipy = os.path.join(exe, "ipython.exe")
+                if not os.path.exists(ipy):
+                    raise FileNotFoundError(ipy)
+    else:
+        ipy = os.path.join(exe, "ipython")
+
+    return ipy
+
+
 def process_notebooks(notebooks,
                       outfold,
                       build,
@@ -132,31 +173,7 @@ def process_notebooks(notebooks,
                   "slides": ".slides.html",
                   }
 
-    if sys.platform.startswith("win"):
-        user = os.environ["USERPROFILE"]
-        path = pandoc_path.replace("%USERPROFILE%", user)
-        p = os.environ["PATH"]
-        if path not in p:
-            p += ";%WINPYDIR%\DLLs;" + path
-            os.environ["WINPYDIR"] = exe
-            os.environ["PATH"] = p
-
-        if not exe.endswith("Scripts"):
-            ipy = os.path.join(exe, "Scripts", "ipython3.exe")
-            if not os.path.exists(ipy):
-                # Anaconda is different
-                ipy = os.path.join(exe, "Scripts", "ipython.exe")
-                if not os.path.exists(ipy):
-                    raise FileNotFoundError(ipy)
-        else:
-            ipy = os.path.join(exe, "ipython3.exe")
-            if not os.path.exists(ipy):
-                # Anaconda is different
-                ipy = os.path.join(exe, "ipython.exe")
-                if not os.path.exists(ipy):
-                    raise FileNotFoundError(ipy)
-    else:
-        ipy = os.path.join(exe, "ipython")
+    ipy = get_ipython_program(exe, pandoc_path)
 
     cmd = '{0} nbconvert --to {1} "{2}"{5} --output="{3}/{4}"'
     files = []
