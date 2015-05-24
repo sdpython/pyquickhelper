@@ -59,6 +59,28 @@ windows_setup = "%pythonexe% -u setup.py"
 jenkins_windows_setup = "%jenkinspythonexe% -u setup.py"
 
 #################
+#: build setup script for Windows
+#################
+
+windows_build_setup = """
+if "%1"=="" goto default_value:
+if "%1"=="default" goto default_value:
+set pythonexe=%1
+goto custom_python:
+
+:default_value:
+set pythonexe=__PY34_X64__\\python
+
+:custom_python:
+%pythonexe% setup.py write_version
+if %errorlevel% neq 0 exit /b %errorlevel%
+%pythonexe% setup.py sdist %2 --formats=gztar,zip --verbose
+if %errorlevel% neq 0 exit /b %errorlevel%
+%pythonexe% setup.py bdist_wheel %2
+if %errorlevel% neq 0 exit /b %errorlevel%
+"""
+
+#################
 #: build script for Windows
 #################
 windows_build = """
@@ -435,7 +457,7 @@ windows_blogpost = """
 """
 
 #####################
-#: documenation server
+#: documentation server
 #####################
 windows_docserver = """
 %pythonexe% auto_doc_server.py

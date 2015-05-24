@@ -82,7 +82,7 @@ class TestBuilScript(unittest.TestCase):
 
             for c in {"notebook", "publish", "publish_doc", "local_pypi", "run27",
                       "build27", "setupdep", "copy_dist",
-                      "any_setup_command"}:
+                      "any_setup_command", "build_dist"}:
                 sc = get_extra_script_command(
                     c, project_var_name, requirements=requirements, port=port)
                 assert len(sc) > 0
