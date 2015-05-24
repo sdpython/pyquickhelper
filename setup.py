@@ -10,8 +10,6 @@ from setuptools import find_packages
 # settings
 #########
 
-print("************pq",sys.argv)
-
 project_var_name = "pyquickhelper"
 sversion = "1.1"
 versionPython = "%s.%s" % (sys.version_info.major, sys.version_info.minor)
@@ -77,6 +75,10 @@ def is_local():
        "test_local_pypi" in sys.argv or \
        "upload_docs" in sys.argv or \
        "write_version" in sys.argv:
+        try:
+            import_pyquickhelper()
+        except ImportError:
+            return False
         return True
     else:
         return False
@@ -190,11 +192,4 @@ if not r:
             "docutils",
             "requests",
             "sphinxjp.themes.revealjs"],
-        extras_require={
-            'helpgen': [
-                "six",
-                "requests",
-                "flake8",
-                "pep8==1.5.7"],
-        }
     )
