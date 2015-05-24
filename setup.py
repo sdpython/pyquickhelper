@@ -10,6 +10,8 @@ from setuptools import find_packages
 # settings
 #########
 
+print("************pq",sys.argv)
+
 project_var_name = "pyquickhelper"
 sversion = "1.1"
 versionPython = "%s.%s" % (sys.version_info.major, sys.version_info.minor)
@@ -158,6 +160,7 @@ else:
     r = False
 
 if len(sys.argv) == 1 and "--help" in sys.argv:
+    pyquickhelper = import_pyquickhelper()
     pyquickhelper.process_standard_options_for_setup_help()
 
 if not r:
