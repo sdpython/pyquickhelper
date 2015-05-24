@@ -82,7 +82,8 @@ def nb2slides(nb_file, outfile, add_tag=True):
     if isinstance(nb_file, NotebookRunner):
         nb = nb_file.nb
     else:
-        nb = read_nb(nb_file)
+        nbr = read_nb(nb_file)
+        nb = nbr.nb
 
     if add_tag:
         run = NotebookRunner(nb)
@@ -122,7 +123,8 @@ def nb2html(nb_file, outfile):
     if isinstance(nb_file, NotebookRunner):
         nb = nb_file.nb
     else:
-        nb = read_nb(nb_file)
+        nbr = read_nb(nb_file)
+        nb = nbr.nb
 
     exporter = get_exporter("html")()
     source, meta = exporter.from_notebook_node(nb)

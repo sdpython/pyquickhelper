@@ -36,7 +36,7 @@ def store_notebook_path(name="theNotebook"):
         theNotebook
 
     See notebook :ref:`exempleoffixmenurst`.
-    Same function as @see fn set_notebook_name_theNotebook.
+    Try function @see fn set_notebook_name_theNotebook if this one does not work.
 
     .. versionadded:: 1.1
     """
@@ -50,12 +50,14 @@ def store_notebook_path(name="theNotebook"):
     return Javascript(js)
 
 
-def set_notebook_name_theNotebook():
+def set_notebook_name_theNotebook(name="theNotebook"):
     """
     This function must be called from the notebook
     you want to know the name. It relies on
     a javascript piece of code. It populates
     the variable ``theNotebook`` with the notebook name.
+
+    @param      name        name of the variable to create
 
     This solution was found at
     `How to I get the current IPython Notebook name <http://stackoverflow.com/questions/12544056/how-to-i-get-the-current-ipython-notebook-name>`_.
@@ -63,14 +65,14 @@ def set_notebook_name_theNotebook():
     The function can be called in a cell.
     The variable ``theNotebook`` will be available in the next cells.
 
-    Same function as @see fn store_notebook_path.
+    Try function @see fn store_notebook_path if this one does not work.
 
     .. versionadded:: 1.1
     """
     code = """var kernel = IPython.notebook.kernel;
               var body = document.body, attribs = body.attributes;
-              var command = "theNotebook = " + "'"+attribs['data-notebook-name'].value+"'";
-              kernel.execute(command);""".replace("              ", "")
+              var command = "__NAME__ = " + "'"+attribs['data-notebook-name'].value+"'";
+              kernel.execute(command);""".replace("              ", "").replace("__NAME__", name)
 
     def get_name():
         from IPython.core.display import Javascript, display

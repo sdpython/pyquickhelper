@@ -12,9 +12,6 @@ from ..loghelper import noLOG, run_cmd
 from ..loghelper.flog import get_interpreter_path
 from .open_script_file import open_script
 
-if sys.version_info[0] == 2:
-    from codecs import open
-
 
 def call_setup_hook(folder, module_name, fLOG=noLOG, must_be=False,
                     function_name="_setup_hook", use_print=False,

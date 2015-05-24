@@ -11,7 +11,6 @@ import sys
 import shutil
 
 from ..loghelper.flog import run_cmd, fLOG
-from ..filehelper import change_file_status
 from .utils_sphinx_doc_helpers import HelpGenException, find_latex_path, find_pandoc_path
 from ..filehelper.synchelper import has_been_updated
 from .post_process import post_process_latex_output, post_process_latex_output_any, post_process_rst_output, post_process_html_output, post_process_slides_output
