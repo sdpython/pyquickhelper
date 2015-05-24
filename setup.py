@@ -185,6 +185,7 @@ if not r:
             "sphinx",
             "pandas",
             "docutils",
+            "requests",
             "sphinxjp.themes.revealjs"],
         extras_require={
             'helpgen': [
