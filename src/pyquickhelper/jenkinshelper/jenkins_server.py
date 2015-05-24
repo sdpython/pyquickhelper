@@ -273,10 +273,10 @@ class JenkinsExt(jenkins.Jenkins):
                         "__COMMAND__", "build_sphinx")
                 elif "[setup]" in spl:
                     # setup
-                    cmd = "auto_cmd_build_dist.bat __PYTHON__"
+                    cmd = "__PYTHON__ setup.py build_script\nauto_cmd_build_dist.bat __PYTHON__"
                 elif "[setup_big]" in spl:
                     # setup + [big]
-                    cmd = "auto_cmd_build_dist.bat __PYTHON__ [big]"
+                    cmd = "__PYTHON__ setup.py build_script\nauto_cmd_build_dist.bat __PYTHON__ [big]"
                 else:
                     cmd = modified_windows_jenkins
                     for pl in spl[1:]:
