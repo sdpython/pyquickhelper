@@ -129,7 +129,7 @@ class JenkinsExt(jenkins.Jenkins):
         @param      job     str
         @return             name
         """
-        for prefix in ["doc", "anaconda", "anaconda2", "winpython"]:
+        for prefix in ["doc", "anaconda", "anaconda2", "winpython", "setup", "setup_big"]:
             p = "[%s]" % prefix
             if p in job:
                 job = p + " " + job.replace(" " + p, "")
