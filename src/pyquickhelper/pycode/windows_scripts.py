@@ -368,7 +368,7 @@ set pythonexe_rel=%jenkinspythonexe%
 %pythonexe_rel% auto_setup_dep.py install
 if %errorlevel% neq 0 exit /b %errorlevel%
 cd ..\\..
-%jenkinspythonpip% install --no-cache-dir --extra-index-url http://localhost:__PORT__/simple/ pyquickhelper
+%jenkinspythonpip% install --no-index --no-cache-dir --find-links http://localhost:__PORT__/simple/ pyquickhelper
 if %errorlevel% neq 0 exit /b %errorlevel%
 
 echo #######################################################_requirements_begin

@@ -223,7 +223,7 @@ class JenkinsExt(jenkins.Jenkins):
             if module_name == "pyquickhelper":
                 lines = res.split("\n")
                 for i, line in enumerate(lines):
-                    if "/simple/ pyquickhelper" in line and "--extra-index-url http://localhost" in line:
+                    if "/simple/ pyquickhelper" in line and "--find-links http://localhost" in line:
                         lines[i] = ""
                 res = "\n".join(lines)
 
