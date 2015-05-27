@@ -48,12 +48,16 @@ class TestPipHelper(unittest.TestCase):
             OutputPrint=__name__ == "__main__")
 
         info = get_package_info("pandas")
-        assert "License" in info
-        assert "Version" in info
+        if "License" not in info:
+            raise Exception(str(info))
+        if "Version" not in info:
+            raise Exception(str(info))
 
         info = get_package_info("sphinx-py3doc-enhanced-theme")
-        assert "License" in info
-        assert "Version" in info
+        if "License" not in info:
+            raise Exception(str(info))
+        if "Version" not in info:
+            raise Exception(str(info))
         fLOG(info)
 
     def test_pip_show_all(self):
