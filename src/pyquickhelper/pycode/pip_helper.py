@@ -70,13 +70,17 @@ def get_package_info(name=None, start=0, end=-1):
         packs = get_packages_list()
         if end == -1:
             end = len(packs)
-        for i, cp in enumerate(packs[start:end]):
+        subp = packs[start:end]
+        if len(subp) == 0:
+            raise PQPipError(
+                "no package, start={0}, end={1}, len(subp)={2}, len(packs)={3}".format(start, end, len(subp), len(packs)))
+        for i, cp in enumerate(subp):
             pack = cp.project_name
             info = get_package_info(pack)
             res.append(info)
-        if len(res) == 0:
+        if len(res) == 0 and len(subp) > 0:
             raise PQPipError(
-                "empty list, unexpected, start={0}, end={1}".format(start, end))
+                "empty list, unexpected, start={0}, end={1}, len(subp)={3}".format(start, end, len(subp)))
         return res
     else:
         res = [_ for _ in search_packages_info([name])]

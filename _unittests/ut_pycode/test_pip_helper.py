@@ -48,14 +48,14 @@ class TestPipHelper(unittest.TestCase):
             OutputPrint=__name__ == "__main__")
 
         info = get_package_info("pandas")
-        #if "license" not in info:
+        # if "license" not in info:
         #    raise Exception(str(info))
         if "version" not in info:
             raise Exception(str(info))
 
         if "travis" not in sys.executable:
             info = get_package_info("sphinx-py3doc-enhanced-theme")
-            #if "license" not in info:
+            # if "license" not in info:
             #    raise Exception(str(info))
             if "version" not in info:
                 raise Exception(str(info))
@@ -66,7 +66,7 @@ class TestPipHelper(unittest.TestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
-        info = get_package_info(start=5, end=8)
+        info = get_package_info(start=0, end=2)
         df = pandas.DataFrame(info)
         assert len(info) > 0
         assert isinstance(info[0], dict)
