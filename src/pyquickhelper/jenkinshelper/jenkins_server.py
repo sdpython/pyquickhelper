@@ -375,7 +375,8 @@ class JenkinsExt(jenkins.Jenkins):
                             platform=sys.platform,
                             py27=False,
                             description=None,
-                            default_engine_paths=None
+                            default_engine_paths=None,
+                            success_only=False
                             ):
         """
         add a job to the jenkins server
@@ -395,6 +396,7 @@ class JenkinsExt(jenkins.Jenkins):
         @param      py27                    python 2.7 (True) or Python 3 (False)
         @param      description             add a description to the job
         @param      default_engine_paths    define the default location for python engine, should be dictionary *{ engine: path }*, see below.
+        @param      success_only            only triggers the job if the previous one was successful
 
         The job can be modified on Jenkins. To add a time trigger::
 
@@ -403,6 +405,10 @@ class JenkinsExt(jenkins.Jenkins):
         Same trigger but once every week and not every day (Sunday for example)::
 
             H H(13-14) * * 0
+
+        .. versionchanged:: 1.2
+            Parameter *success_only* was added to prevent a job from running if the previous one failed.
+            Options *success_only* must be specified.
 
         """
         if script is None:
@@ -419,8 +425,9 @@ class JenkinsExt(jenkins.Jenkins):
                 "upstreams and scheduler cannot be not null at the same time: {0}".format(name))
 
         if upstreams is not None and len(upstreams) > 0:
-            trigger = JenkinsExt._trigger_up.replace(
-                "__UP__", ",".join(upstreams))
+            trigger = JenkinsExt._trigger_up \
+                .replace("__UP__", ",".join(upstreams)) \
+                .replace("__FAILURE__", "SUCCESS" if success_only else "FAILURE")
         elif scheduler is not None:
             trigger = JenkinsExt._trigger_time.replace(
                 "__SCHEDULER__", scheduler)
@@ -766,6 +773,14 @@ class JenkinsExt(jenkins.Jenkins):
                         fLOG("delete job", jname)
                         js.delete_job(jname)
 
+                    # success_only
+                    if "success_only" in options:
+                        success_only = options["success_only"]
+                        del options["success_only"]
+                    else:
+                        success_only = False
+
+                    # script
                     script = get_jenkins_script(
                         job, pythonexe, winpython, anaconda, anaconda2, platform, port)
 
@@ -821,7 +836,8 @@ class JenkinsExt(jenkins.Jenkins):
                                                    py27="[27]" in job,
                                                    description=description,
                                                    default_engine_paths=default_engine_paths,
-                                                   credentials=credentials)
+                                                   credentials=credentials,
+                                                   success_only=success_only)
 
                         # check some inconsistencies
                         if "[27]" in job and "Anaconda3" in script:

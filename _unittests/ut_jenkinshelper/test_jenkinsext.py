@@ -106,7 +106,7 @@ class TestJenkinsExt(unittest.TestCase):
                 "standalone [local_pypi]",
                 # pyquickhelper,
                 ("pyquickhelper", "H H(10-11) * * 0"),
-                "pymyinstall",
+                ("pymyinstall", None, dict(success_only=True)),
                 ["pyquickhelper [anaconda]", "pyquickhelper [winpython]",
                  "pyquickhelper [27] [anaconda2]"],
                 ["pyensae", ],
@@ -146,7 +146,7 @@ class TestJenkinsExt(unittest.TestCase):
                 "standalone [local_pypi]",
                 # pyquickhelper,
                 ("pyquickhelper", "H H(10-11) * * 0"),
-                "pymyinstall",
+                ("pymyinstall", None, dict(success_only=True)),
                 ["pyquickhelper [anaconda]", "pyquickhelper [winpython]",
                  "pyquickhelper [27] [anaconda2]"],
                 ["pyensae", ],
@@ -214,6 +214,12 @@ class TestJenkinsExt(unittest.TestCase):
                 raise Exception(conf)
             if "notebook" in conf:
                 raise Exception(conf)
+
+            if "pymyinstall" in r[0] and "[" not in r[0]:
+                if "FAILURE" in conf:
+                    raise Exception(conf)
+                if "SUCCESS" not in conf:
+                    raise Exception(conf)
 
             if "[27]" in r[0] and "pyquickhelper" in r[0]:
                 if "localhost" in conf:

@@ -41,7 +41,7 @@ _trigger_up = """
         <spec></spec>
         <upstreamProjects>__UP__</upstreamProjects>
         <threshold>
-            <name>FAILURE</name>
+            <name>__FAILURE__</name>
             <ordinal>2</ordinal>
             <color>RED</color>
             <completeBuild>true</completeBuild>
