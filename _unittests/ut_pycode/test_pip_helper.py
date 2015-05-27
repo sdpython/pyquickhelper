@@ -1,5 +1,5 @@
 """
-@brief      test tree node (time=11s)
+@brief      test tree node (time=2s)
 """
 
 import sys
@@ -48,15 +48,15 @@ class TestPipHelper(unittest.TestCase):
             OutputPrint=__name__ == "__main__")
 
         info = get_package_info("pandas")
-        if "License" not in info:
+        if "license" not in info:
             raise Exception(str(info))
-        if "Version" not in info:
+        if "version" not in info:
             raise Exception(str(info))
 
         info = get_package_info("sphinx-py3doc-enhanced-theme")
-        if "License" not in info:
+        if "license" not in info:
             raise Exception(str(info))
-        if "Version" not in info:
+        if "version" not in info:
             raise Exception(str(info))
         fLOG(info)
 
@@ -66,7 +66,7 @@ class TestPipHelper(unittest.TestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
-        info = get_package_info(fLOG=fLOG, start=5, end=8)
+        info = get_package_info(start=5, end=8)
         df = pandas.DataFrame(info)
         assert len(info) > 0
         assert isinstance(info[0], dict)
