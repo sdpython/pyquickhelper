@@ -71,7 +71,10 @@ This project contains the following folders:
 Versions / Changes
 ------------------
 
-* **1.1 - 2015/05/23**
+* **1.2 - 2015/??/??**
+    * **change:** parameter prog was added to :class:`MagicCommandParser <pyquickhelper.ipythonhelper.magic_parser>`_
+      *this might break classes taking dependency on it*
+* **1.1 - 2015/05/24**
     * **fix:** shorten setup.py, move functionalities to the module, move utils_test.py to subfolder pycode
     * **change:** improve the generation of automated documentation
     * **change:** function :func:`create_visual_diff_through_html_files <pyquickhelper.filehelper.visual_sync.create_visual_diff_through_html_files>` 
@@ -117,21 +120,3 @@ Versions / Changes
     * **change:** migration to IPython 3.1 (changes when running a notebook offline, converting a notebook)
     * **new:** some functionalities of pyquickhelper are now available in python 2.7, 
       not all the functionalities using string were migrated (too much of a pain)
-* **0.9 - 2015/01/25**
-    * **add:** function to remove extra spaces in a file :func:`remove_extra_spaces <pyquickhelper.pycode.code_helper.remove_extra_spaces>`
-    * **add:** function :func:`create_visual_diff_through_html_files <pyquickhelper.filehelper.visual_sync.create_visual_diff_through_html_files>`
-    * **fix:** the setup does not need the file ``README.rst`` anymore
-    * **add:** function :func:`open_html_form <pyquickhelper.ipythonhelper.html_forms.open_html_form>`
-    * **fix:** fix a bad link to `MathJax <http://www.mathjax.org/>`_ when converting notebook to HTML format
-    * **add:** add parameter timeout in function :func:`run_cmd <pyquickhelper.loghelper.flog.run_cmd>`
-    * **fix:** :func:`run_cmd <pyquickhelper.loghelper.flog.run_cmd>` now accepts something on the standard input
-    * **new:** class :class:`MagicCommandParser <pyquickhelper.ipythonhelper.magic_parser.MagicCommandParser>`
-    * **fix:** better behavior while running the unit test, add an option to compute the coverage
-    * **change:** catch warnings when running the unit tests
-    * **change:** expose the function :func:`process_notebooks <pyquickhelper.helpgen.process_notebooks.process_notebooks>` to convert a notebook into html, pdf, rst, docx formats
-    * **add:** add simple statistics while generation the documentation
-    * **add:** add function :func:`clone <pyquickhelper.loghelper.repositories.pygit_helper.clone>` and :func:`rebase <pyquickhelper.loghelper.repositories.pygit_helper.rebase>` to clone or pull rebase a git repository
-    * **new:** function :func:`set_sphinx_variables <pyquickhelper.helpgen.default_conf.set_sphinx_variables>` to avoid copying the same configuration file over multiple projects
-    * **del:** remove folder *sync*, move everything to *filehelper*
-    * **new:** function :func:`zip7_files <pyquickhelper.filehelper.compression_helper.zip7_files>`
-    * **new:** class :class:`MagicClassWithHelpers <pyquickhelper.ipythonhelper.magic_class.MagicClassWithHelpers>`

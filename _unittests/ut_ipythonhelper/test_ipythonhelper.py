@@ -75,7 +75,7 @@ class TestAutoCompletion (unittest.TestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
         params = {"x": 3, "y": 4}
-        cl = MagicCommandParser()
+        cl = MagicCommandParser(prog="test_command")
         res = cl.eval("x+y", params, fLOG=fLOG)
         fLOG(res)
         assert res == 7
@@ -85,8 +85,8 @@ class TestAutoCompletion (unittest.TestCase):
             __file__,
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
-        parser = MagicCommandParser(
-            description='display the first lines of a text file')
+        parser = MagicCommandParser(prog="test_command",
+                                    description='display the first lines of a text file')
         parser.add_argument('f', type=str  # unicode#
                             , help='filename')
         parser.add_argument(
@@ -103,6 +103,10 @@ class TestAutoCompletion (unittest.TestCase):
         params = {"x": 3, "y": 4}
         res = parser.parse_cmd('this.py -n x+y', context=params, fLOG=fLOG)
         fLOG(res.__dict__)
+        r = parser.format_help()
+        assert "usage: test_command [-h] [-n N] [-e ENCODING] f" in r
+        fLOG("###\n", r, "###\n")
+        fLOG(parser.usage)
         assert res.n == 7
 
     def test_class_magic(self):
@@ -112,7 +116,10 @@ class TestAutoCompletion (unittest.TestCase):
             OutputPrint=__name__ == "__main__")
         cl = MagicClassWithHelpers()
         assert cl.Context is None
-        pa = cl.get_parser(MagicCommandParser, "parser_unittest")
+
+        def call_MagicCommandParser():
+            return MagicCommandParser(prog="parser_unittest")
+        pa = cl.get_parser(call_MagicCommandParser, name="parser_unittest")
         pa.add_argument('f', type=str  # unicode#
                         , help='filename')
         pa.add_argument(

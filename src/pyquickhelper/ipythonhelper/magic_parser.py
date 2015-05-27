@@ -18,11 +18,16 @@ class MagicCommandParser (argparse.ArgumentParser):
     .. versionadded:: 0.9
     """
 
-    def __init__(self, *l, **p):
+    def __init__(self, prog, *l, **p):
         """
         custom constructor, see `ArgumentParser <https://docs.python.org/3.4/library/argparse.html>`_
+
+        @param  prog        command name
+
+        .. versionchanged:: 1.2
+            Parameter *prog* was made explicit in to force having a proper message for *usage()*
         """
-        argparse.ArgumentParser.__init__(self, *l, **p)
+        argparse.ArgumentParser.__init__(self, prog=prog, *l, **p)
         self._keep_args = {}
 
     @staticmethod
@@ -48,6 +53,9 @@ class MagicCommandParser (argparse.ArgumentParser):
         if args != ('-h', '--help'):
             name = MagicCommandParser._private_get_name(*args)
             self._keep_args[name] = (args, kwargs)
+        elif kwargs.get("action", "") != "help":
+            raise ValueError(
+                "unable to add parameter -h, --help, already taken for help")
 
     def has_choices(self, name):
         """
