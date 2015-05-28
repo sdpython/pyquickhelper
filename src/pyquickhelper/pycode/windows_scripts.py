@@ -437,6 +437,8 @@ setup(
         "matplotlib",
         "sphinx",
         "pandas",
+        "sphinxjp.themes.revealjs",
+        "dateutils",
         "docutils", ],
 )
 """
