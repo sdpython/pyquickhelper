@@ -427,7 +427,9 @@ class JenkinsExt(jenkins.Jenkins):
         if upstreams is not None and len(upstreams) > 0:
             trigger = JenkinsExt._trigger_up \
                 .replace("__UP__", ",".join(upstreams)) \
-                .replace("__FAILURE__", "SUCCESS" if success_only else "FAILURE")
+                .replace("__FAILURE__", "SUCCESS" if success_only else "FAILURE") \
+                .replace("__ORDINAL__", "0" if success_only else "2") \
+                .replace("__COLOR__", "BLUE" if success_only else "RED")
         elif scheduler is not None:
             trigger = JenkinsExt._trigger_time.replace(
                 "__SCHEDULER__", scheduler)

@@ -221,10 +221,6 @@ class TestJenkinsExt(unittest.TestCase):
                 if "SUCCESS" not in conf:
                     raise Exception(conf)
 
-            if "[27]" in r[0] and "pyquickhelper" in r[0]:
-                if "localhost" in conf:
-                    raise Exception(conf)
-
             if i == 0:
                 if "conda update" not in conf:
                     raise Exception(conf)

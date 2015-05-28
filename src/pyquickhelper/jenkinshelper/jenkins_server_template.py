@@ -42,8 +42,8 @@ _trigger_up = """
         <upstreamProjects>__UP__</upstreamProjects>
         <threshold>
             <name>__FAILURE__</name>
-            <ordinal>2</ordinal>
-            <color>RED</color>
+            <ordinal>__ORDINAL__</ordinal>
+            <color>__COLOR__</color>
             <completeBuild>true</completeBuild>
         </threshold>
     </jenkins.triggers.ReverseBuildTrigger>
