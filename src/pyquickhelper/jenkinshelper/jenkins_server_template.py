@@ -21,8 +21,8 @@ _config_job = """<?xml version='1.0' encoding='UTF-8'?>
     __GITREPOXML__
     <canRoam>true</canRoam>
     <disabled>false</disabled>
-    <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
-    <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+    <blockBuildWhenDownstreamBuilding>true</blockBuildWhenDownstreamBuilding>
+    <blockBuildWhenUpstreamBuilding>true</blockBuildWhenUpstreamBuilding>
     __TRIGGER__
     <concurrentBuild>false</concurrentBuild>
     __LOCATION__

@@ -38,7 +38,20 @@ modified_windows_jenkins_any = windows_jenkins_any \
 class JenkinsExt(jenkins.Jenkins):
 
     """
-    extension for the `Jenkins <https://jenkins-ci.org/>`_ server
+    extensions for the `Jenkins <https://jenkins-ci.org/>`_ server
+    based on module `python-jenkins <http://pythonhosted.org/python-jenkins/>`_
+
+    .. index:: Jenkins, Jenkins extensions
+
+    some useful Jenkins extensions:
+
+    * `Credentials Plugin <https://wiki.jenkins-ci.org/display/JENKINS/Credentials+Plugin>`_
+    * `Extrea Column Plugin <https://wiki.jenkins-ci.org/display/JENKINS/Extra+Columns+Plugin>`_
+    * `Git Client Plugin <https://wiki.jenkins-ci.org/display/JENKINS/Git+Client+Plugin>`_
+    * `GitHub Client Plugin <https://wiki.jenkins-ci.org/display/JENKINS/Github+Plugin>`_
+    * `GitLab Client Plugin <https://wiki.jenkins-ci.org/display/JENKINS/GitLab+Plugin>`_
+    * `Matrix Project Plugin <https://wiki.jenkins-ci.org/display/JENKINS/Matrix+Project+Plugin>`_
+    * `Build Pipeline Plugin <https://wiki.jenkins-ci.org/display/JENKINS/Build+Pipeline+Plugin>`_
     """
 
     _config_job = _config_job
@@ -376,7 +389,8 @@ class JenkinsExt(jenkins.Jenkins):
                             py27=False,
                             description=None,
                             default_engine_paths=None,
-                            success_only=False
+                            success_only=False,
+                            update=False
                             ):
         """
         add a job to the jenkins server
@@ -397,6 +411,7 @@ class JenkinsExt(jenkins.Jenkins):
         @param      description             add a description to the job
         @param      default_engine_paths    define the default location for python engine, should be dictionary *{ engine: path }*, see below.
         @param      success_only            only triggers the job if the previous one was successful
+        @param      update                  update the job instead of creating it
 
         The job can be modified on Jenkins. To add a time trigger::
 
@@ -409,6 +424,7 @@ class JenkinsExt(jenkins.Jenkins):
         .. versionchanged:: 1.2
             Parameter *success_only* was added to prevent a job from running if the previous one failed.
             Options *success_only* must be specified.
+            Parameter *update* was added to update a job instead of creating it.
 
         """
         if script is None:
@@ -503,6 +519,8 @@ class JenkinsExt(jenkins.Jenkins):
 
         if self._mock:
             return conf
+        elif update:
+            return self.reconfig_job(name, conf.encode("utf-8"))
         else:
             return self.create_job(name, conf.encode("utf-8"))
 
@@ -547,7 +565,8 @@ class JenkinsExt(jenkins.Jenkins):
                              platform=sys.platform,
                              port=8067,
                              default_engine_paths=None,
-                             credentials=""):
+                             credentials="",
+                             update=True):
         """
         Set up many jobs on Jenkins
 
@@ -570,6 +589,7 @@ class JenkinsExt(jenkins.Jenkins):
         @param      default_engine_paths    define the default location for python engine, should be dictionary *{ engine: path }*, see below.
         @param      credentials             credentials to use for the job
         @param      fLOG                    logging function
+        @param      update                  update job instead of deleting it if the job already exists
         @return                             list of created jobs
 
         The function *get_jenkins_script* is called with the following parameters:
@@ -694,6 +714,9 @@ class JenkinsExt(jenkins.Jenkins):
             js.setup_jenkins_server(location=r"c:\jenkins\pymy",
                     overwrite=True,
                     fLOG=print)
+                    
+        .. versionchanged:: 1.2
+            Parameter *update* was added.
         """
         if anaconda == anaconda2:
             raise JenkinsExtException("same paths:\n{0}".format(
@@ -771,9 +794,13 @@ class JenkinsExt(jenkins.Jenkins):
 
                 if overwrite or j is None:
 
+                    update_job = False
                     if j is not None:
-                        fLOG("delete job", jname)
-                        js.delete_job(jname)
+                        if update:
+                            update_job = True
+                        else:
+                            fLOG("delete job", jname)
+                            js.delete_job(jname)
 
                     # success_only
                     if "success_only" in options:
@@ -839,7 +866,8 @@ class JenkinsExt(jenkins.Jenkins):
                                                    description=description,
                                                    default_engine_paths=default_engine_paths,
                                                    credentials=credentials,
-                                                   success_only=success_only)
+                                                   success_only=success_only,
+                                                   update=update_job)
 
                         # check some inconsistencies
                         if "[27]" in job and "Anaconda3" in script:
