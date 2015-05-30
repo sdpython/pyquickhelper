@@ -714,7 +714,7 @@ class JenkinsExt(jenkins.Jenkins):
             js.setup_jenkins_server(location=r"c:\jenkins\pymy",
                     overwrite=True,
                     fLOG=print)
-                    
+
         .. versionchanged:: 1.2
             Parameter *update* was added.
         """
