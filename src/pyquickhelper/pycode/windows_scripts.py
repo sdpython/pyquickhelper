@@ -221,7 +221,7 @@ if %errorlevel% neq 0 exit /b %errorlevel%
 :end:
 rem we copy the wheel on a local folder to let a pypiserver take it
 if not exist ..\\..\\local_pypi mkdir ..\\..\\local_pypi
-if not exist ..\\..local_pypi\\local_pypi_server mkdir ..\\..\\local_pypi\\local_pypi_server
+if not exist ..\\..\\local_pypi\\local_pypi_server mkdir ..\\..\\local_pypi\\local_pypi_server
 copy /Y dist\\*.whl ..\\..\\local_pypi\\local_pypi_server
 """
 
@@ -449,7 +449,7 @@ setup(
 copy_dist_to_local_pypi = """
 if not exist ..\\..\\local_pypi mkdir ..\\..\\local_pypi
 if not exist ..\\..\\local_pypi\\local_pypi_server mkdir ..\\..\\local_pypi\\local_pypi_server
-copy /Y dist\\*.whl ..\\..local_pypi\\local_pypi_server
+copy /Y dist\\*.whl ..\\..\\local_pypi\\local_pypi_server
 """
 
 ###############
