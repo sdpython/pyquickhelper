@@ -11,6 +11,7 @@ import textwrap
 from docutils import core
 from .utils_sphinx_doc import migrating_doxygen_doc
 from ..loghelper.flog import noLOG
+from . helpgen_exceptions import HelpGenConvertError
 
 # -- HELP BEGIN EXCLUDE --
 
@@ -141,7 +142,8 @@ def docstring2html(function_or_string, format="html", fLOG=noLOG):
         try:
             html = rst2html(ded, fLOG=fLOG)
         except Exception as e:
-            raise Exception("unable to process:\n{0}".format(ded)) from e
+            raise HelpGenConvertError(
+                "unable to process:\n{0}".format(ded)) from e
 
     if format == "html":
         from IPython.core.display import HTML

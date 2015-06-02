@@ -12,40 +12,11 @@ import sys
 import importlib
 from ..pandashelper.tblformat import df2rst
 from ..loghelper.flog import noLOG
+from .helpgen_exceptions import HelpGenException, ImportErrorHelpGen
 
 if sys.version_info[0] == 2:
     from codecs import open
 
-
-class HelpGenException(Exception):
-
-    """
-    custom exception
-    """
-
-    def __init__(self, message, file=None):
-        """
-        redefines the message sent to an exception
-
-        @param      message     message
-        @param      file        filename
-        """
-        if file is None:
-            Exception.__init__(self, message)
-        else:
-            mes = '{0}\n  File "{1}", line 1'.format(message, file)
-            Exception.__init__(self, mes)
-
-
-class ImportErrorHelpGen(ImportError):
-
-    """
-    a custom exception to detect a specific location when
-    *ImportError* happens in the process
-
-    .. versionadded:: 1.0
-    """
-    pass
 
 #: max length for short summaries
 _length_truncated_doc = 120

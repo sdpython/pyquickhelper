@@ -28,3 +28,4 @@ from .blog_post_list import BlogPostList
 from .sphinx_blog_extension import BlogPostDirective, BlogPostDirectiveAgg
 from .sphinx_helper import sphinx_add_scripts
 from .process_notebook_api import nb2slides, nb2html
+from .helpgen_exceptions import HelpGenException, ImportErrorHelpGen, HelpGenConvertError
