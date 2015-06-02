@@ -326,9 +326,11 @@ ipython3 notebook --notebook-dir=_doc\\notebooks --matplotlib=inline
 #################
 windows_publish = """
 %pythonexe% setup.py rotate --match=.zip --keep=1
-%pythonexe% setup.py rotate --match=.tar.gz --keep=3
+%pythonexe% setup.py rotate --match=.tar.gz --keep=10
+%pythonexe% setup.py rotate --match=.whl --keep=10
 rem %pythonexe% setup.py sdist register
 %pythonexe% setup.py sdist --formats=gztar upload
+%pythonexe% setup.py bdist_wheel upload
 """
 
 #################
