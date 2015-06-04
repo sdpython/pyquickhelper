@@ -81,6 +81,9 @@ documentation follows the same design as this module.
 Installation
 ------------
 
+The module works for Python 3.4. Most of the functionalities were recently ported to Python 2.7 as well (not the same source code).
+Both versions are available on `pipy <https://pypi.python.org/pypi/pyquickhelper>`_.
+
 :: 
 
     pip install pyquickhelper
@@ -89,12 +92,6 @@ And to avoid installing the dependencies::
 
     pip install pyquickhelper --no-deps
     
-To install it on Python 2.7::
-
-    pip install http://www.xavierdupre.fr/app/pyquickhelper/pyquickhelper-1.1.611-py2-none-any.whl
-    
-The latest version is available at `Python Extensions <http://www.xavierdupre.fr/site2013/index_code.html>`_.
-
     
 Navigation
 ----------
