@@ -142,7 +142,8 @@ def standard_help_for_setup(file_or_folder, project_var_name, module_name=None, 
                                  add_htmlhelp=add_htmlhelp)
 
 
-def run_unittests_for_setup(file_or_folder, skip_function=default_skip_function, setup_params=None):
+def run_unittests_for_setup(file_or_folder, skip_function=default_skip_function, setup_params=None,
+                            only_setup_hook=False):
     """
     run the unit tests and compute the coverage, stores
     the results in ``_doc/sphinxdoc/source/coverage``
@@ -151,6 +152,7 @@ def run_unittests_for_setup(file_or_folder, skip_function=default_skip_function,
     @param      file_or_folder      file ``setup.py`` or folder which contains it
     @param      skip_function       @see fn main_wrapper_tests
     @param      setup_params        @see fn main_wrapper_tests
+    @param      only_setup_hook     @see fn main_wrapper_tests
     """
     ffolder = get_folder(file_or_folder)
     funit = os.path.join(ffolder, "_unittests")
@@ -164,7 +166,8 @@ def run_unittests_for_setup(file_or_folder, skip_function=default_skip_function,
             "the folder {0} should contain run_unittests.py".format(funit))
 
     main_wrapper_tests(
-        run_unit, add_coverage=True, skip_function=skip_function, setup_params=setup_params)
+        run_unit, add_coverage=True, skip_function=skip_function, setup_params=setup_params,
+        only_setup_hook=only_setup_hook)
 
 
 def copy27_for_setup(file_or_folder):
@@ -295,6 +298,11 @@ def process_standard_options_for_setup(argv,
         run_unittests_for_setup(file_or_folder, setup_params=setup_params)
         return True
 
+    elif "setup_hook" in sys.argv:
+        run_unittests_for_setup(
+            file_or_folder, setup_params=setup_params, only_setup_hook=True)
+        return True
+
     elif "unittests_LONG" in sys.argv:
         def skip_long(name, code):
             return "test_LONG_" not in name
@@ -323,7 +331,7 @@ def process_standard_options_for_setup(argv,
                   "write_version", "clean_pyd",
                   "build_sphinx", "unittests",
                   "unittests_LONG", "unittests_SKIP",
-                  "copy27", "test_local_pypi"}:
+                  "setup_hook", "copy27", "test_local_pypi"}:
             sc = get_script_command(
                 c, project_var_name, requirements=requirements, port=port, platform=sys.platform,
                 default_engine_paths=default_engine_paths)

@@ -74,6 +74,8 @@ set pythonexe=__PY34_X64__\\python
 :custom_python:
 %pythonexe% setup.py write_version
 if %errorlevel% neq 0 exit /b %errorlevel%
+%pythonexe% setup.py setup_hook
+if %errorlevel% neq 0 exit /b %errorlevel%
 %pythonexe% setup.py sdist %2 --formats=gztar,zip --verbose
 if %errorlevel% neq 0 exit /b %errorlevel%
 %pythonexe% setup.py bdist_wheel %2
@@ -405,6 +407,7 @@ windows_jenkins_27 = [
     "set jenkinspythonexe=__PYTHON__\n" + jenkins_windows_setup + " build_script\n" +
     windows_error + "\nauto_setup_copy27.bat %jenkinspythonexe%\n" +
     windows_error,
+    "%jenkinspythonexe% setup.py setup_hook\n" + windows_error,
     "set jenkinspythonexe=__PYTHON27__\n\n" +
     windows_jenkins_unittest27 +
     "\n\n__REQUIREMENTS__\n\n" +

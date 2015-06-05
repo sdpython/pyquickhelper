@@ -22,10 +22,20 @@ except ImportError:
     import src
 
 from src.pyquickhelper import fLOG
-from src.pyquickhelper.pycode.call_setup_hook import call_setup_hook
+from src.pyquickhelper.pycode.call_setup_hook import call_setup_hook, call_setup_hook_cmd
 
 
 class TestCallSetupHook(unittest.TestCase):
+
+    def test_call_setup_hook_cmd(self):
+        fLOG(
+            __file__,
+            self._testMethodName,
+            OutputPrint=__name__ == "__main__")
+        cmd, code = call_setup_hook_cmd(
+            "c:/__MOCK__", "pyquickhelper", interpreter_path="__PYTHON__")
+        exp = '''__PYTHON__ -c "import sys;sys.path.append('c:/__MOCK__/src');from pyquickhelper import _setup_hook;_setup_hook();sys.exit(0)"'''
+        assert exp == cmd
 
     def test_call_setup_hook(self):
         fLOG(

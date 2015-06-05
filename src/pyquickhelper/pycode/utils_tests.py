@@ -533,7 +533,8 @@ def main_wrapper_tests(codefile,
                        add_coverage=False,
                        report_folder=None,
                        skip_function=default_skip_function,
-                       setup_params=None):
+                       setup_params=None,
+                       only_setup_hook=False):
     """
     calls function :func:`main <pyquickhelper.unittests.utils_tests.main>` and throw an exception if it fails
 
@@ -547,6 +548,7 @@ def main_wrapper_tests(codefile,
                                 ``os.path.join(os.path.dirname(codefile), "..", "_doc","sphinxdoc","source", "coverage")``
     @param      skip_function   function(filename,content) --> boolean to skip a unit test
     @param      setup_params    parameters sent to @see fn call_setup_hook
+    @param      only_setup_hook calls only @see fn call_setup_hook, do not run the unit test
 
     @FAQ(How to build pyquickhelper with Jenkins?)
     `Jenkins <http://jenkins-ci.org/>`_ is a task scheduler for continuous integration.
@@ -589,6 +591,9 @@ def main_wrapper_tests(codefile,
         to let the module to test a possibility to run some preprocessing steps
         in a separate process. They are described in @see fn _setup_hook
         which must be found in the main file ``__init__.py``.
+
+    .. versionchanged:: 1.2
+        Parameter *only_setup_hook* was added.
 
     """
     runner = unittest.TextTestRunner(verbosity=0, stream=io.StringIO())
@@ -645,37 +650,41 @@ def main_wrapper_tests(codefile,
         raise Exception(
             "The location of the source should not contain USERNAME: " + srcp)
 
-    # coverage
-    if add_coverage:
-        if report_folder is None:
-            report_folder = os.path.join(
-                os.path.abspath(os.path.dirname(codefile)), "..", "_doc", "sphinxdoc", "source", "coverage")
-
-        print("call _setup_hook", src_abs, "name=", project_var_name)
+    if only_setup_hook:
         tested_module(src_abs, project_var_name, setup_params)
-        print("end _setup_hook")
-
-        print("current folder", os.getcwd())
-        print("enabling coverage", srcp)
-        from coverage import coverage
-        cov = coverage(source=[srcp])
-        cov.exclude('if __name__ == "__main__"')
-        cov.start()
-
-        res = run_main()
-
-        cov.stop()
-        cov.html_report(directory=report_folder)
 
     else:
-        tested_module(src_abs, project_var_name)
-        res = run_main()
+        # coverage
+        if add_coverage:
+            if report_folder is None:
+                report_folder = os.path.join(
+                    os.path.abspath(os.path.dirname(codefile)), "..", "_doc", "sphinxdoc", "source", "coverage")
 
-    for r in res["tests"]:
-        k = str(r[1])
-        if "errors=0" not in k or "failures=0" not in k:
-            print("*", r[1], r[0])
+            print("call _setup_hook", src_abs, "name=", project_var_name)
+            tested_module(src_abs, project_var_name, setup_params)
+            print("end _setup_hook")
 
-    err = res.get("err", "")
-    if len(err) > 0:
-        raise Exception(err)
+            print("current folder", os.getcwd())
+            print("enabling coverage", srcp)
+            from coverage import coverage
+            cov = coverage(source=[srcp])
+            cov.exclude('if __name__ == "__main__"')
+            cov.start()
+
+            res = run_main()
+
+            cov.stop()
+            cov.html_report(directory=report_folder)
+
+        else:
+            tested_module(src_abs, project_var_name)
+            res = run_main()
+
+        for r in res["tests"]:
+            k = str(r[1])
+            if "errors=0" not in k or "failures=0" not in k:
+                print("*", r[1], r[0])
+
+        err = res.get("err", "")
+        if len(err) > 0:
+            raise Exception(err)

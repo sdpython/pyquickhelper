@@ -74,7 +74,8 @@ class TestBuilScript(unittest.TestCase):
                       "write_version", "clean_pyd",
                       "build_sphinx", "unittests",
                       "unittests_LONG", "unittests_SKIP",
-                      "copy27", "test_local_pypi"}:
+                      "copy27", "test_local_pypi",
+                      "setup_hook"}:
                 sc = get_script_command(
                     c, project_var_name, requirements=requirements, port=port)
                 assert len(sc) > 0
