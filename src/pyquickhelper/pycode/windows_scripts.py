@@ -405,9 +405,10 @@ echo %jenkinspythonpip%
 
 windows_jenkins_27 = [
     "set jenkinspythonexe=__PYTHON__\n" + jenkins_windows_setup + " build_script\n" +
-    windows_error + "\nauto_setup_copy27.bat %jenkinspythonexe%\n" +
+    windows_error + 
+    "%jenkinspythonexe% setup.py setup_hook\n" + windows_error +
+    "\nauto_setup_copy27.bat %jenkinspythonexe%\n" +
     windows_error,
-    "%jenkinspythonexe% setup.py setup_hook\n" + windows_error,
     "set jenkinspythonexe=__PYTHON27__\n\n" +
     windows_jenkins_unittest27 +
     "\n\n__REQUIREMENTS__\n\n" +
