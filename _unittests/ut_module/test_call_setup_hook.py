@@ -39,6 +39,7 @@ class TestCallSetupHook(unittest.TestCase):
         exp = '''__PYTHON__ -c "import sys;sys.path.append('c:/__MOCK__/src');sys.path.append('__PYQ__');from pyquickhelper import _setup_hook;_setup_hook();sys.exit(0)"'''
         exp = exp.replace("__PYQ__", pyq.replace("\\", "/"))
         cmd = cmd.replace("/home/travis/build/sdpython/pyquickhelper/", "")
+        exp = exp.replace("/home/travis/build/sdpython/pyquickhelper/", "")
         if exp != cmd:
             raise Exception("\nCMD: {0}\nEXP: {1}".format(cmd, exp))
 
