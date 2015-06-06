@@ -22,6 +22,7 @@ except ImportError:
     import src
 
 from src.pyquickhelper import fLOG
+from src.pyquickhelper import __file__ as PYQ
 from src.pyquickhelper.pycode.call_setup_hook import call_setup_hook, call_setup_hook_cmd
 
 
@@ -34,10 +35,12 @@ class TestCallSetupHook(unittest.TestCase):
             OutputPrint=__name__ == "__main__")
         cmd, code = call_setup_hook_cmd(
             "c:/__MOCK__", "pyquickhelper", interpreter_path="__PYTHON__")
-        exp = '''__PYTHON__ -c "import sys;sys.path.append('c:/__MOCK__/src');from pyquickhelper import _setup_hook;_setup_hook();sys.exit(0)"'''
+        pyq = os.path.normpath(os.path.join(os.path.abspath(PYQ), "..", ".."))
+        exp = '''__PYTHON__ -c "import sys;sys.path.append('c:/__MOCK__/src');sys.path.append('__PYQ__');from pyquickhelper import _setup_hook;_setup_hook();sys.exit(0)"'''
+        exp = exp.replace("__PYQ__", pyq.replace("\\", "/"))
         cmd = cmd.replace("/home/travis/build/sdpython/pyquickhelper/", "")
         if exp != cmd:
-            raise Exception(cmd)
+            raise Exception("\nCMD: {0}\nEXP: {1}".format(cmd, exp))
 
     def test_call_setup_hook(self):
         fLOG(
