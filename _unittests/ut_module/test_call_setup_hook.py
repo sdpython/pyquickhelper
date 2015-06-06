@@ -35,6 +35,7 @@ class TestCallSetupHook(unittest.TestCase):
         cmd, code = call_setup_hook_cmd(
             "c:/__MOCK__", "pyquickhelper", interpreter_path="__PYTHON__")
         exp = '''__PYTHON__ -c "import sys;sys.path.append('c:/__MOCK__/src');from pyquickhelper import _setup_hook;_setup_hook();sys.exit(0)"'''
+        cmd = cmd.replace("/home/travis/build/sdpython/pyquickhelper/", "")
         if exp != cmd:
             raise Exception(cmd)
 
