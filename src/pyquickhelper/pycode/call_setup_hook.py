@@ -33,11 +33,13 @@ def call_setup_hook_cmd(folder, module_name, function_name="_setup_hook",
     .. versionadded:: 1.2
         Split function @see fn call_setup_hook in 2 functions.
     """
+    this = os.path.abspath(os.path.dirname(__file__))
+    this = os.path.normpath(os.path.join(this, "..", ".."))
     src = os.path.abspath(os.path.join(folder, "src"))
     if additional_paths is None:
-        additional_paths = [src]
+        additional_paths = [src, this]
     else:
-        additional_paths = [src] + additional_paths
+        additional_paths = [src, this] + additional_paths
 
     if args is None or len(args) == 0:
         str_args = ""

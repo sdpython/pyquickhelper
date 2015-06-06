@@ -63,6 +63,7 @@ class BlogPost:
         overrides = {}
         overrides['input_encoding'] = encoding
         overrides["out_blogpostlist"] = []
+        overrides["blog_background"] = False
 
         output, pub = publish_programmatically(
             source_class=docio.StringInput,
@@ -137,10 +138,15 @@ class BlogPost:
         """
         return the fields as a dictionary
         """
-        return dict(title=self.title,
-                    date=self.date,
-                    keywords=self.Keywords,
-                    categories=self.Categories)
+        res = dict(title=self.title,
+                   date=self.date,
+                   keywords=self.Keywords,
+                   categories=self.Categories)
+        if self.BlogBackground is not None:
+            res["blog_ground"] = self.BlogBackground
+        if self.Author is not None:
+            res["author"] = self.Author
+        return res
 
     @property
     def Tag(self):
@@ -174,6 +180,20 @@ class BlogPost:
         return the title
         """
         return self.title
+
+    @property
+    def BlogBackground(self):
+        """
+        return the blog background or None if not defined
+        """
+        return self.blog_ground if hasattr(self, "blog_ground") else None
+
+    @property
+    def Author(self):
+        """
+        return the author or None if not defined
+        """
+        return self.author if hasattr(self, "author") else None
 
     @property
     def Date(self):

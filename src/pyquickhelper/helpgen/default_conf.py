@@ -153,6 +153,9 @@ def set_sphinx_variables(fileconf,
     master_doc = 'index'
     html_output_encoding = 'utf-8'
 
+    # blogs (custom parameter)
+    blog_background = True
+
     # settings
     exclude_patterns = []
     html_show_sphinx = False
@@ -339,7 +342,9 @@ def custom_setup(app, author):
     app.connect("autodoc-skip-member", skip)
     app.add_config_value('author', author, True)
 
-    #app.add_config_value('blogpost_include_s', False, False)
+    # this command enables the parameter blog_background to be part of the
+    # configuration
+    app.add_config_value('blog_background', True, 'env')
 
     # app.add_node(blogpostlist)
     app.add_node(blogpost_node,

@@ -46,6 +46,7 @@ class BlogPostDirective(Directive):
                    'keywords': directives.unchanged,
                    'categories': directives.unchanged,
                    'author': directives.unchanged,
+                   'blog_background': directives.unchanged,
                    }
     has_content = True
     add_index = True
@@ -60,17 +61,28 @@ class BlogPostDirective(Directive):
         """
         # settings
         sett = self.state.document.settings
-
+        language_code = sett.language_code
         if hasattr(sett, "out_blogpostlist"):
             sett.out_blogpostlist.append(self)
 
+        # env
         if hasattr(self.state.document.settings, "env"):
             env = self.state.document.settings.env
         else:
             env = None
 
         if env is None:
+            # we need an access to the environment to process the blog post
+            # this path is used by the BlogPost class to extract the content of
+            # the job
             return []
+        else:
+            # otherwise, it means sphinx is running
+            pass
+
+        # settings and configuration
+        config = env.config
+        blog_background = config.blog_background
 
         # post
         p = {
@@ -80,6 +92,7 @@ class BlogPostDirective(Directive):
             'title': self.options["title"],
             'keywords': [_.strip() for _ in self.options["keywords"].split(",")],
             'categories': [_.strip() for _ in self.options["categories"].split(",")],
+            'blog_background': self.options.get("blog_background", str(blog_background)).strip() in ("True", "true", "1"),
         }
 
         # label
@@ -109,8 +122,8 @@ class BlogPostDirective(Directive):
                                              rawfile=self.options.get(
                                                  "rawfile", None),
                                              linktitle=p["title"],
-                                             lg=sett.language_code)
-        node['classes'] += idb
+                                             lg=language_code,
+                                             blog_background=p["blog_background"])
         node += section
 
         # we add the date
@@ -118,10 +131,13 @@ class BlogPostDirective(Directive):
         content = content + self.content
 
         # parse the content into sphinx directive, we add it to section
-        self.state.nested_parse(content, self.content_offset, section)
-        textnodes, messages = self.state.inline_text(p["title"], self.lineno)
-
+        paragraph = nodes.paragraph()
+        self.state.nested_parse(content, self.content_offset, paragraph)
+        node += paragraph
         p['blogpost'] = node
+
+        # classes
+        node['classes'] += "-blogpost"
 
         # create a reference
         refnode = nodes.reference('', '', internal=True)
@@ -159,6 +175,7 @@ class BlogPostDirectiveAgg(BlogPostDirective):
                    'categories': directives.unchanged,
                    'author': directives.unchanged,
                    'rawfile': directives.unchanged,
+                   'blog_background': directives.unchanged,
                    }
 
 
@@ -169,7 +186,9 @@ def visit_blogpost_node(self, node):
     depending on the format, or the setup should
     specify a different function for each.
     """
-    self.visit_admonition(node)
+    if node["blog_background"]:
+        # the node will be in a box
+        self.visit_admonition(node)
 
 
 def depart_blogpost_node(self, node):
@@ -179,7 +198,9 @@ def depart_blogpost_node(self, node):
     depending on the format, or the setup should
     specify a different function for each.
     """
-    self.depart_admonition(node)
+    if node["blog_background"]:
+        # the node will be in a box
+        self.depart_admonition(node)
 
 
 def visit_blogpostagg_node(self, node):
@@ -189,7 +210,9 @@ def visit_blogpostagg_node(self, node):
     depending on the format, or the setup should
     specify a different function for each.
     """
-    self.visit_admonition(node)
+    if node["blog_background"]:
+        # the node will be in a box
+        self.visit_admonition(node)
 
 
 def depart_blogpostagg_node(self, node):
@@ -212,7 +235,9 @@ def depart_blogpostagg_node(self, node):
             link = """<p><a class="reference internal" href="{0}/{2}" title="{1}">{3}</a></p>""" \
                 .format(year, linktitle, name, TITLES[lg]["more"])
             self.body.append(link)
-    self.depart_admonition(node)
+    if node["blog_background"]:
+        # the node will be in a box
+        self.depart_admonition(node)
 
 
 ######################
