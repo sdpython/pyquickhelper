@@ -10,6 +10,7 @@ import shutil
 from .blog_post import BlogPost
 from .build_rss import build_rss
 from .texts_language import TITLES
+from ..texthelper.diacritic_helper import remove_diacritics
 
 if sys.version_info[0] == 2:
     from codecs import open
@@ -45,6 +46,18 @@ class BlogPostList:
         self._blogposts = [_[1] for _ in self._blogposts]
         self._encoding = encoding
         self._language = language
+        
+    @staticmethod
+    def category2url(cat):
+        """
+        remove accent and spaces to get a clean url
+        
+        @param      cat     category name
+        @return             cleaned category
+        
+        .. versionadded:: 1.2
+        """
+        return remove_diacritics(cat).replace(" ", "_")
 
     @property
     def Lang(self):
@@ -147,7 +160,7 @@ class BlogPostList:
         """
         links = []
         for m, v in sorted(self.get_categories_group().items()):
-            link = ":ref:`{0} ({1}) <ap-cat-{0}-0>`".format(m, len(v))
+            link = ":ref:`{0} ({1}) <ap-cat-{0}-0>`".format(BlogPostList.category2url(m), len(v))
             links.append(link)
         return links
 
@@ -315,7 +328,7 @@ class BlogPostList:
             add = BlogPostList.write_aggregated_post_list(folder=folder,
                                                           l=posts,
                                                           division=division,
-                                                          prefix="cat-" + cat,
+                                                          prefix="cat-" + BlogPostList.category2url(cat),
                                                           encoding=self._encoding,
                                                           rst_links_up=rst_links_up,
                                                           rst_links_down=rst_links_down,
@@ -366,7 +379,7 @@ class BlogPostList:
             ["* :ref:`{0} <ap-main-0>`".format(TITLES[self.Lang]["page1"]), "", ""])
         res.extend([TITLES[self.Lang]["by category:"], "", ""])
         for cat, nb in cats:
-            res.append("* :ref:`{0} ({1}) <ap-cat-{0}-0>`".format(cat, nb))
+            res.append("* :ref:`{0} ({1}) <ap-cat-{0}-0>`".format(BlogPostList.category2url(cat), nb))
         res.extend(["", "", ""])
         res.extend([TITLES[self.Lang]["by month:"], "", ""])
         res.extend(["", "", ""])
