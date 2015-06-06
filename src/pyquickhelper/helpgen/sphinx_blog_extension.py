@@ -7,16 +7,16 @@ See `Tutorial: Writing a simple extension <http://sphinx-doc.org/extdev/tutorial
 import os
 from docutils import nodes
 from docutils.parsers.rst import Directive
-from sphinx.util.compat import make_admonition
 from sphinx.locale import _ as _locale
 from docutils.parsers.rst import directives
+from docutils.statemachine import StringList
 from sphinx import addnodes
 from sphinx.util.nodes import set_source_info, process_index_entry
 from .blog_post import BlogPost
 from .texts_language import TITLES
 
 
-class blogpost_node(nodes.Admonition, nodes.Element):
+class blogpost_node(nodes.Structural, nodes.Element):
 
     """
     defines *blogpost* node
@@ -24,7 +24,7 @@ class blogpost_node(nodes.Admonition, nodes.Element):
     pass
 
 
-class blogpostagg_node(nodes.Admonition, nodes.Element):
+class blogpostagg_node(nodes.Structural, nodes.Element):
 
     """
     defines *blogpostagg* node
@@ -51,24 +51,6 @@ class BlogPostDirective(Directive):
     add_index = True
     blogpost_class = blogpost_node
 
-    def _make_ad(self, year, title, tagid, rawfile):
-        """
-        private function
-        """
-        # self.content  contains the content of the blog as a list
-        # self.block_text contains the raw text including the sphinx command
-        ad = make_admonition(self.__class__.blogpost_class,
-                             self.name,
-                             [_locale(self.options["date"]) + " "],
-                             self.options,
-                             self.content,
-                             self.lineno,
-                             self.content_offset,
-                             self.block_text,
-                             self.state,
-                             self.state_machine)
-        return ad
-
     def run(self):
         """
         extracts the information in a dictionary and displays it
@@ -76,6 +58,7 @@ class BlogPostDirective(Directive):
 
         @return      a list of nodes
         """
+        # settings
         sett = self.state.document.settings
 
         if hasattr(sett, "out_blogpostlist"):
@@ -108,18 +91,37 @@ class BlogPostDirective(Directive):
         targetnode = nodes.target('', '', ids=[tag])
         p["target"] = targetnode
 
-        ad = self._make_ad(
-            p["date"][:4], p["title"], tag, self.options.get("rawfile", None),)
-
-        p['blogpost'] = ad[0].deepcopy()
-
         if not hasattr(env, 'blogpost_all'):
             env.blogpost_all = []
         env.blogpost_all.append(p)
 
         # we add a title
-        section = nodes.section()
-        section += nodes.title(text=p["title"])
+        idb = nodes.make_id("blog-" + p["date"] + "-" + p["title"])
+        idbp = nodes.make_id("blogcl-" + p["date"] + "-" + p["title"])
+        section = nodes.section(ids=[idb])
+
+        textnodes, messages = self.state.inline_text(p["title"], self.lineno)
+        section += nodes.title(p["title"], '', *textnodes)
+        section += messages
+
+        # build node
+        node = self.__class__.blogpost_class(ids=[idbp], year=p["date"][:4],
+                                             rawfile=self.options.get(
+                                                 "rawfile", None),
+                                             linktitle=p["title"],
+                                             lg=sett.language_code)
+        node['classes'] += idb
+        node += section
+
+        # we add the date
+        content = StringList(["**{0}**".format(p["date"]), ""])
+        content = content + self.content
+
+        # parse the content into sphinx directive, we add it to section
+        self.state.nested_parse(content, self.content_offset, section)
+        textnodes, messages = self.state.inline_text(p["title"], self.lineno)
+
+        p['blogpost'] = node
 
         # create a reference
         refnode = nodes.reference('', '', internal=True)
@@ -129,7 +131,6 @@ class BlogPostDirective(Directive):
 
         # index (see site-packages/sphinx/directives/code.py, class Index)
         if self.__class__.add_index:
-
             # we add an index
             self.state.document.note_explicit_target(targetnode)
             indexnode = addnodes.index()
@@ -138,11 +139,11 @@ class BlogPostDirective(Directive):
             set_source_info(self, indexnode)
             for entry in set(p["keywords"] + p["categories"] + [p["date"]]):
                 ne.extend(process_index_entry(entry, tag))  # targetid))
-            ns = [indexnode, targetnode, section]
+            ns = [indexnode, targetnode, node]
         else:
-            ns = [targetnode, section]
+            ns = [targetnode, node]
 
-        return ns + ad
+        return ns
 
 
 class BlogPostDirectiveAgg(BlogPostDirective):
@@ -159,22 +160,6 @@ class BlogPostDirectiveAgg(BlogPostDirective):
                    'author': directives.unchanged,
                    'rawfile': directives.unchanged,
                    }
-
-    def _make_ad(self, year, title, tagid, rawfile):
-        """
-        We could overload the method to
-        update what to do.
-        """
-        ad = BlogPostDirective._make_ad(self, year, title, tagid, rawfile)
-
-        # we add fields Year, Tag, Title
-        for a in ad:
-            if isinstance(a, BlogPostDirectiveAgg.blogpost_class):
-                a.Year = year
-                a.Tag = tagid
-                a.Title = title
-                a.RawFile = rawfile
-        return ad
 
 
 def visit_blogpost_node(self, node):
@@ -214,16 +199,18 @@ def depart_blogpostagg_node(self, node):
     depending on the format, or the setup should
     specify a different function for each.
     """
-    if "Year" in node.__dict__:
-        rawfile = node.RawFile
+    if node.hasattr("year"):
+        rawfile = node["rawfile"]
         if rawfile is not None:
             # there is probably better to do
             # module name is something list doctuils.../[xx].py
-            lg = os.path.splitext(os.path.split(self.language.__file__)[-1])[0]
+            lg = node["lg"]
             name = os.path.splitext(os.path.split(rawfile)[-1])[0]
             name += ".html"
-            link = """<p><a class="reference internal" href="{0.Year}/{1}" title="{0.Title}">{2}</a></p>""" \
-                .format(node, name, TITLES[lg]["more"])
+            year = node["year"]
+            linktitle = node["linktitle"]
+            link = """<p><a class="reference internal" href="{0}/{2}" title="{1}">{3}</a></p>""" \
+                .format(year, linktitle, name, TITLES[lg]["more"])
             self.body.append(link)
     self.depart_admonition(node)
 

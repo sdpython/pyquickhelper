@@ -72,7 +72,7 @@ Versions / Changes
 ------------------
 
 * **1.2 - 2015/??/??**
-    * **change:** parameter prog was added to :class:`MagicCommandParser <pyquickhelper.ipythonhelper.magic_parser>`_
+    * **change:** parameter prog was added to :class:`MagicCommandParser <pyquickhelper.ipythonhelper.magic_parser.MagicCommandParser>`
       *this might break classes taking dependency on it*
 * **1.1 - 2015/05/24**
     * **fix:** shorten setup.py, move functionalities to the module, move utils_test.py to subfolder pycode
