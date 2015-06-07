@@ -24,8 +24,6 @@ README / Changes
     :alt: MIT License
     :target: http://opensource.org/licenses/MIT
 
-.. image:: https://coveralls.io/repos/sdpython/pyquickhelper/badge.svg
-    :target: https://coveralls.io/r/sdpython/pyquickhelper
 
 **Links:**
     * `pypi/pyquickhelper <https://pypi.python.org/pypi/pyquickhelper/>`_
