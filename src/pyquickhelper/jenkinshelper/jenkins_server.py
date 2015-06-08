@@ -142,11 +142,14 @@ class JenkinsExt(jenkins.Jenkins):
         @param      job     str
         @return             name
         """
-        for prefix in ["doc", "anaconda", "anaconda2", "winpython", "setup", "setup_big"]:
-            p = "[%s]" % prefix
-            if p in job:
-                job = p + " " + job.replace(" " + p, "")
-        return job.replace(" ", "_").replace("[", "").replace("]", "")
+        if job.startswith("custom "):
+            return job.replace(" ", "_").replace("[", "").replace("]", "")
+        else:
+            for prefix in ["doc", "anaconda", "anaconda2", "winpython", "setup", "setup_big"]:
+                p = "[%s]" % prefix
+                if p in job:
+                    job = p + " " + job.replace(" " + p, "")
+            return job.replace(" ", "_").replace("[", "").replace("]", "")
 
     @staticmethod
     def get_cmd_standalone(job, pythonexe, winpython, anaconda, anaconda2, platform, port):
@@ -184,6 +187,29 @@ class JenkinsExt(jenkins.Jenkins):
             return cmd
         else:
             raise NotImplementedError()
+
+    @staticmethod
+    def get_cmd_custom(job, pythonexe, winpython, anaconda, anaconda2, platform, port):
+        """
+        Custom script for jenkins
+
+        @param      job             module and options
+        @param      pythonexe       unused
+        @param      anaconda        location of anaconda (3)
+        @param      anaconda2       location of anaconda 2
+        @param      winpython       location of winpython
+        @param      platform        platform, Windows or Linux or ...
+        @param      port            port for the local pypi server
+        @return                     script
+
+        .. versionadded:: 1.2
+        """
+        spl = job.split()
+        if spl[0] != "custom":
+            raise JenkinsExtException(
+                "the job should start by custom: " + job)
+        # we expect __SCRIPTOPTIONS__ to be replaced by a script later on
+        return "__SCRIPTOPTIONS__"
 
     @staticmethod
     def hash_string(s, l=5):
@@ -262,6 +288,11 @@ class JenkinsExt(jenkins.Jenkins):
             elif spl[0] == "standalone":
                 # conda update
                 return JenkinsExt.get_cmd_standalone(
+                    job, pythonexe, winpython, anaconda, anaconda2, platform, port)
+
+            elif spl[0] == "custom":
+                # custom script
+                return JenkinsExt.get_cmd_custom(
                     job, pythonexe, winpython, anaconda, anaconda2, platform, port)
 
             elif spl[0] == "empty":
@@ -543,6 +574,8 @@ class JenkinsExt(jenkins.Jenkins):
                 script = [v + "\n" + _ for _ in script]
             elif k == "post_set":
                 script = [_ + "\n" + v for _ in script]
+            elif k == "script":
+                script = [_.replace("__SCRIPTOPTIONS__", v) for _ in script]
             else:
                 raise JenkinsJobException(
                     "unable to interpret options: " + str(options))
@@ -647,6 +680,7 @@ class JenkinsExt(jenkins.Jenkins):
 
         * pre: defines a string to insert at the beginning of a job
         * post: defines a string to insert at the end of a job
+        * script: defines a full script if the job to execute is ``custom``
 
         Example ::
 
@@ -843,7 +877,7 @@ class JenkinsExt(jenkins.Jenkins):
                             description.append(scheduler)
                         description = " - ".join(description)
 
-                        if mod == "standalone":
+                        if mod in ("standalone", "custom"):
                             gpar = None
                         elif gitrepo is None:
                             raise JenkinsJobException(

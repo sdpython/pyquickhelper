@@ -138,6 +138,8 @@ class TestJenkinsExt(unittest.TestCase):
                 ["actuariat_python [doc]", "code_beatrix [doc]"],
                 ("ensae_teachings_cs [doc]", None,
                  dict(pre="rem pre", post="rem post")),
+                ("custom [any_name]", "H H(3-4) * * 1",
+                 dict(script="any_script.bat")),
             ]
         else:
             modules = [  # update anaconda
