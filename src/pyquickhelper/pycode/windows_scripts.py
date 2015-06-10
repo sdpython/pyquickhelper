@@ -299,6 +299,9 @@ echo #######################################################_requirements_end
 echo #######################################################_clean
 %pythonexe% -u setup.py clean_space
 if %errorlevel% neq 0 exit /b %errorlevel%
+echo #######################################################_setup_hook
+%pythonexe% -u setup.py setup_hook
+if %errorlevel% neq 0 exit /b %errorlevel%
 echo #######################################################_unit
 %pythonexe% -u setup.py %script_command%
 if %errorlevel% neq 0 exit /b %errorlevel%
