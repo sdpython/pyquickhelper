@@ -134,10 +134,10 @@ def read_content_ufs(file_url_stream, encoding="utf8"):
     """
     if isinstance(file_url_stream, str  # unicode#
                   ):
-        if os.path.exists(file_url_stream):
+        if len(file_url_stream) < 5000 and os.path.exists(file_url_stream):
             with open(file_url_stream, "r", encoding=encoding) as f:
                 return f.read()
-        elif file_url_stream.startswith("http"):
+        elif len(file_url_stream) < 5000 and file_url_stream.startswith("http"):
             return read_url(file_url_stream, encoding=encoding)
         else:
             return file_url_stream
