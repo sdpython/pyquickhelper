@@ -489,7 +489,12 @@ def main(runner,
         if len(lw) > 0:
             memout.write("WARN: {0}\n".format(fi))
             for i, w in enumerate(lw):
-                memout.write("  w{0}: {1}\n".format(i, str(w)))
+                try:
+                    sw = str(w)
+                except UnicodeEncodeError:
+                    sw = "Unable to convert a warnings of type {0} into a string".format(
+                        type(w))
+                memout.write("  w{0}: {1}\n".format(i, sw))
 
     flogp("END of unit tests")
 
