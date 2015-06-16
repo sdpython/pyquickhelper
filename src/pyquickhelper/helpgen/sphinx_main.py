@@ -987,7 +987,7 @@ def replace_placeholder_by_recent_blogpost(all_tocs, plist, placeholder, nb_post
     """
     def make_link(post):
         name = os.path.splitext(os.path.split(post.FileName)[-1])[0]
-        s = """<a href="{{ pathto('',1) }}/blog/%s/%s">{{ _('%s - %s') }}</a>""" % (
+        s = """<a href="{{ pathto('',1) }}/blog/%s/%s.html">{{ _('%s - %s') }}</a>""" % (
             post.Year, name, post.Date, post.Title)
         return s
 
