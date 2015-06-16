@@ -47,6 +47,12 @@ class BlogPostList:
         self._encoding = encoding
         self._language = language
 
+    def __getitem__(self, key):
+        """
+        usual
+        """
+        return self._blogposts[key]
+
     @staticmethod
     def category2url(cat):
         """

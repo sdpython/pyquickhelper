@@ -1025,8 +1025,8 @@ def prepare_file_for_sphinx_help_generation(
                 if _.file is not None and len(_.file) > 0:
                     na = os.path.splitext(_.rst)[0].replace(
                         "\\", "/").split("/")
-                    if len(na) > 3:
-                        na = na[3:]
+                    if "source" in na:
+                        na = na[na.index("source") + 1:]
                     na = "/".join(na)
                     toc.append("    " + na)
             v += "\n".join(toc)

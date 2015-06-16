@@ -222,13 +222,17 @@ def generate_help_sphinx(project_var_name,
         raise ImportError("module conf was imported, this function expects not to:\n{0}".format(
             sys.modules["conf"].__file__))
 
+    ############
     # root_source
+    ############
     root = os.path.abspath(root)
     froot = root
     root_sphinxdoc = os.path.join(root, "_doc", "sphinxdoc")
     root_source = os.path.join(root_sphinxdoc, "source")
 
+    ###############################################
     # we import conf_base, specific to ensae_teaching_cs
+    ###############################################
     confb = os.path.join(root_source, "conf_base.py")
     if os.path.exists(confb):
         try:
@@ -245,11 +249,14 @@ def generate_help_sphinx(project_var_name,
     # stores static path for every layout, we store them to copy
     html_static_paths = []
     build_paths = []
+    all_tocs = []
 
+    ###################################
     # import others conf, we must do it now
     # it takes too long to do it after if there is an error
     # we assume the configuration are not too different
     # about language for example, latex_path, pandoc_path
+    #################################################
     for t3 in layout:
         lay, build, override, newconf = lay_build_override_newconf(t3)
         fLOG("newconf:", newconf, t3)
@@ -275,7 +282,8 @@ def generate_help_sphinx(project_var_name,
         if thenewconf is None:
             raise ImportError(
                 "unable to import {0} which defines the help generation".format(newconf))
-        add_missing_files(root, thenewconf)
+        tocs = add_missing_files(root, thenewconf, "__INSERT__")
+        all_tocs.extend(tocs)
         del sys.modules["conf"]
 
         # we store the html_static_path in html_static_paths
@@ -289,10 +297,14 @@ def generate_help_sphinx(project_var_name,
         html_static_paths.append(html_static_path)
         build_paths.append(build)
 
+    ################################################################
     # we add the source path to the list of path to considered before importing
+    ################################################################
     sys.path.append(root_source)
 
+    ###############
     # import conf.py
+    ###############
     try:
         theconf = importlib.import_module('conf')
     except ImportError as e:
@@ -304,9 +316,12 @@ def generate_help_sphinx(project_var_name,
     if theconf is None:
         raise ImportError(
             "unable to import conf.py which defines the help generation")
-    add_missing_files(root, theconf)
+    tocs = add_missing_files(root, theconf, "__INSERT__")
+    all_tocs.extend(tocs)
 
+    ##############################################################
     # we store the html_static_path in html_static_paths for the base conf
+    ##############################################################
     html_static_path = theconf.__dict__.get("html_static_path", "phdoc_static")
     if isinstance(html_static_path, list):
         html_static_path = html_static_path[0]
@@ -317,42 +332,55 @@ def generate_help_sphinx(project_var_name,
     build_paths.append(
         os.path.normpath(os.path.join(html_static_path, "..", "..", "build", "html")))
 
+    ####################################
     # modifies the version number in conf.py
+    ####################################
     shutil.copy(os.path.join(root, "README.rst"), root_source)
     shutil.copy(os.path.join(root, "LICENSE.txt"), root_source)
 
+    ##########
     # language
+    ##########
     language = theconf.__dict__.get("language", "en")
 
     latex_path = theconf.__dict__.get("latex_path", find_latex_path())
     # graphviz_dot = theconf.__dict__.get("graphviz_dot", find_graphviz_dot())
     pandoc_path = theconf.__dict__.get("pandoc_path", find_pandoc_path())
 
+    #########
     # changes
+    #########
     chan = os.path.join(root, "_doc", "sphinxdoc", "source", "filechanges.rst")
     generate_changes_repo(
         chan, root, filter_commit=filter_commit, exception_if_empty=from_repo)
 
+    ######################################
     # we copy javascript dependencies, reveal.js
+    ######################################
     fLOG("JAVASCRIPT:", html_static_paths)
     fLOG("BUILD:", build_paths)
     for html_static_path in html_static_paths:
         install_javascript_tools(
             root_sphinxdoc, dest=html_static_path, fLOG=fLOG)
 
+    ##############
     # copy the files
+    ##############
     optional_dirs = []
-
     mapped_function = [(".*[.]%s$" % ext.strip("."), None)
                        for ext in extra_ext]
 
+    ###################################
+    # we save the module already imported
+    ###################################
     if module_name is None:
         module_name = project_var_name
 
-    # we save the module already imported
     sys_modules = set(sys.modules.keys())
 
+    ####################
     # generates extra files
+    ####################
     try:
 
         prepare_file_for_sphinx_help_generation(
@@ -382,7 +410,9 @@ def generate_help_sphinx(project_var_name,
 
     fLOG("**** end of prepare_file_for_sphinx_help_generation")
 
+    ######
     # blog
+    ######
     blog_fold = os.path.join(
         os.path.join(root, "_doc/sphinxdoc/source", "blog"))
 
@@ -394,8 +424,12 @@ def generate_help_sphinx(project_var_name,
                                blog_description=theconf.__dict__.get(
                                    "blog_description", "blog associated to " + project_var_name),
                                blog_root=theconf.__dict__.get("blog_root", "__BLOG_ROOT__"))
+    else:
+        plist = None
 
+    ###########
     # notebooks
+    ###########
     notebook_dir = os.path.abspath(os.path.join(root, "_doc", "notebooks"))
     notebook_doc = os.path.abspath(
         os.path.join(root, "_doc", "sphinxdoc", "source", "notebooks"))
@@ -429,7 +463,15 @@ def generate_help_sphinx(project_var_name,
             for img in imgs:
                 shutil.copy(img, notebook_doc)
 
+    #############################################
+    # replace placeholder as blog posts list into tocs files
+    #############################################
+    if plist is not None:
+        replace_placeholder_by_recent_blogpost(all_tocs, plist, "__INSERT__")
+
+    #################################
     #  run the documentation generation
+    #################################
     temp = os.environ["PATH"]
     pyts = get_executables_path()
     sepj = ";" if sys.platform.startswith("win") else ":"
@@ -443,7 +485,9 @@ def generate_help_sphinx(project_var_name,
     thispath = os.path.normpath(root)
     docpath = os.path.normpath(os.path.join(thispath, "_doc", "sphinxdoc"))
 
+    ################
     # checks encoding
+    ################
     fLOG("checking encoding utf8...")
     for root, dirs, files in os.walk(docpath):
         for name in files:
@@ -475,7 +519,9 @@ def generate_help_sphinx(project_var_name,
 
     os.chdir(docpath)
 
+    #####################
     # builds command lines
+    #####################
     cmds = []
     lays = []
     cmds_post = []
@@ -519,7 +565,9 @@ def generate_help_sphinx(project_var_name,
 
     # cmd = "make {0}".format(lay)
 
+    ###############################################################
     # run cmds (prefer to use os.system instread of run_cmd if it gets stuck)
+    ###############################################################
     for cmd in cmds:
         fLOG(
             "##################################################################################################")
@@ -557,7 +605,9 @@ def generate_help_sphinx(project_var_name,
                     "Sphinx went through errors. Check if any of them is important.\nOUT:\n{0}\nERR:\n{1}".format(out, err))
         fLOG("### end run HTMLHELP #######################")
 
+    #####################################
     # we copy the coverage files if it is missing
+    #####################################
     covfold = os.path.join(docpath, "source", "coverage")
     if os.path.exists(covfold):
         fLOG("## coverage folder:", covfold)
@@ -580,7 +630,9 @@ def generate_help_sphinx(project_var_name,
     else:
         fLOG("## no coverage files", covfold)
 
+    #########################################################
     # we copy javascript dependencies to build _download/javascript
+    #########################################################
     # for every layout
     fLOG("JAVASCRIPT: COPY", html_static_paths)
     fLOG("BUILD:", build_paths)
@@ -595,7 +647,9 @@ def generate_help_sphinx(project_var_name,
                 html_static_path, builddoc, copy_1to2=True)
             fLOG("javascript", len(copy), "files copied")
 
+    ######
     # next
+    ######
     if "latex" in lays:
         fLOG("---- post_process_latex_output", froot)
         post_process_latex_output(froot, False)
@@ -611,17 +665,21 @@ def generate_help_sphinx(project_var_name,
             post_process_html_nb_output_static_file(
                 os.path.join(build, "html", "_downloads"), fLOG=fLOG)
 
+    #####
     # end
+    #####
     os.chdir(pa)
 
 
-def add_missing_files(root, conf):
+def add_missing_files(root, conf, blog_list):
     """
     add missing files for the documentation,
     ``moduletoc.html``, ``blogtoc.html``
 
     @param      root        root
     @param      conf        configuration module (to guess the template folder)
+    @param      blog_list   list of recent blog posts to add to the navigational bar (list) or a name for a placeholder (such as ``__INSERT__``)
+    @return                 list of modified files
     """
     fold = conf.templates_path
     if isinstance(fold, list):
@@ -636,21 +694,43 @@ def add_missing_files(root, conf):
     if not os.path.exists(loc):
         os.makedirs(loc)
 
+    tocs = []
+
     # moduletoc.html
     mt = os.path.join(loc, "moduletoc.html")
-    if not os.path.exists(mt):
-        with open(mt, "w", encoding="utf8") as f:
-            f.write(
-                """<h3><a href="{{ pathto(master_doc) }}">{{ _('%s') }}</a></h3>\n""" % TITLES[language]["toc"])
-            f.write("""{{ toctree() }}""")
+    tocs.append(mt)
+    with open(mt, "w", encoding="utf8") as f:
+        f.write(
+            """<h3><a href="{{ pathto(master_doc) }}">{{ _('%s') }}</a></h3>\n""" % TITLES[language]["toc"])
+        f.write(
+            """<a href="{{ pathto('',1) }}/blog/main_0000.html">{{ _('Blog') }}\n</a>""")
+        f.write(
+            """<br /><a href="{{ pathto('',1) }}/genindex.html">{{ _('Index') }}\n</a>""")
+        f.write(
+            """<br /><a href="{{ pathto('',1) }}/py-modindex.html">{{ _('Module') }}\n</a>""")
+        f.write(
+            """<br /><a href="{{ pathto('',1) }}/README.html">{{ _('README') }}\n</a>""")
+        f.write("""{{ toctree() }}""")
 
     # blogtoc.html
     mt = os.path.join(loc, "blogtoc.html")
-    if not os.path.exists(mt):
-        with open(mt, "w", encoding="utf8") as f:
-            f.write(
-                """<h3><a href="{{ pathto(master_doc) }}">{{ _('Blog') }}</a></h3>\n""")
-            f.write("""{{ toctree() }}""")
+    tocs.append(mt)
+    with open(mt, "w", encoding="utf8") as f:
+        f.write(
+            """<a href="{{ pathto('',1) }}/genindex.html">{{ _('Index') }}</a>\n""")
+        f.write(
+            """<br /><a href="{{ pathto('',1) }}/py-modindex.html">{{ _('Module') }}</a>\n""")
+        f.write(
+            """<h3><a href="{{ pathto('',1) }}/blog/main_0000.html">{{ _('Blog') }}</a></h3>\n""")
+        if isinstance(blog_list, str  # unicode#
+                      ):
+            f.write(blog_list)
+        elif isinstance(blog_list, list):
+            f.write("\n<br />".join(blog_list))
+        else:
+            raise TypeError(type(blog_list))
+
+    return tocs
 
 
 def get_executables_path():
@@ -894,3 +974,30 @@ def compile_latex_output_final(root, latex_path, doall, afile=None):
             out, err = run_cmd(c, wait=True, do_not_log=False, log_error=False)
             if len(err) > 0:
                 raise HelpGenException(err)
+
+
+def replace_placeholder_by_recent_blogpost(all_tocs, plist, placeholder, nb_post=5):
+    """
+    replaces a place holder by a list of blog post
+
+    @param      all_tocs        list of files to look into
+    @param      plist           list of blog post
+    @param      placeholder     place holder to replace
+    @param      nb_post         number of blog post to display
+    """
+    def make_link(post):
+        name = os.path.splitext(os.path.split(post.FileName)[-1])[0]
+        s = """<a href="{{ pathto('',1) }}/blog/%s/%s">{{ _('%s - %s') }}</a>""" % (
+            post.Year, name, post.Date, post.Title)
+        return s
+
+    end = min(nb_post, len(plist))
+    for toc in all_tocs:
+        with open(toc, "r", encoding="utf8") as f:
+            content = f.read()
+        if placeholder in content:
+            fLOG("  *** update", toc)
+            links = [make_link(post) for post in plist[:end]]
+            content = content.replace(placeholder, "\n<br />".join(links))
+            with open(toc, "w", encoding="utf8") as f:
+                f.write(content)
