@@ -17,6 +17,7 @@ from ..helpgen import get_help_usage
 from .build_helper import get_build_script, get_script_command, get_extra_script_command, get_script_module
 from ..filehelper import get_url_content_timeout
 from .call_setup_hook import call_setup_hook
+from .tkinter_helper import fix_tkinter_issues_virtualenv
 
 if sys.version_info[0] == 2:
     from codecs import open
@@ -165,6 +166,7 @@ def run_unittests_for_setup(file_or_folder, skip_function=default_skip_function,
         raise FileNotFoundError(
             "the folder {0} should contain run_unittests.py".format(funit))
 
+    fix_tkinter_issues_virtualenv()
     main_wrapper_tests(
         run_unit, add_coverage=True, skip_function=skip_function, setup_params=setup_params,
         only_setup_hook=only_setup_hook)

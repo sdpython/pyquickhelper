@@ -72,11 +72,6 @@ from .helpgen.convert_doc_helper import docstring2html
 from .helpgen.process_notebook_api import nb2slides, nb2html
 from .helpgen.utils_sphinx_config import NbImage
 from .serverdoc.documentation_server import run_doc_server
-from .ipythonhelper import read_nb
-from .ipythonhelper.kindofcompletion import AutoCompletion, AutoCompletionFile
-from .ipythonhelper.html_forms import open_html_form
-from .ipythonhelper.magic_parser import MagicCommandParser
-from .ipythonhelper.magic_class import MagicClassWithHelpers
 from .filehelper.visual_sync import create_visual_diff_through_html, create_visual_diff_through_html_files
 from .filehelper.synchelper import explore_folder, synchronize_folder, has_been_updated, remove_folder
 from .filehelper.synchelper import explore_folder_iterfile, explore_folder_iterfile_repo
@@ -94,3 +89,8 @@ from .pycode.clean_helper import clean_exts
 from .pycode.py3to2 import py3to2_convert_tree, py3to2_convert
 from .pycode.setup_helper import write_version_for_setup, clean_space_for_setup, standard_help_for_setup, main_wrapper_tests, process_standard_options_for_setup
 from .pycode.setup_helper import write_module_scripts
+# from .ipythonhelper import read_nb
+# from .ipythonhelper.kindofcompletion import AutoCompletion, AutoCompletionFile
+# from .ipythonhelper.html_forms import open_html_form
+# from .ipythonhelper.magic_parser import MagicCommandParser
+# from .ipythonhelper.magic_class import MagicClassWithHelpers

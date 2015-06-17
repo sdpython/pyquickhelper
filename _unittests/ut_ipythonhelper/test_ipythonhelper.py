@@ -21,7 +21,8 @@ except ImportError:
         sys.path.append(path)
     import src
 
-from src.pyquickhelper import AutoCompletion, fLOG, AutoCompletionFile, open_html_form, MagicCommandParser, MagicClassWithHelpers
+from src.pyquickhelper import fLOG
+from src.pyquickhelper.ipythonhelper import AutoCompletion, AutoCompletionFile, MagicCommandParser, MagicClassWithHelpers, open_html_form
 
 
 class TestAutoCompletion (unittest.TestCase):

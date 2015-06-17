@@ -21,7 +21,8 @@ except ImportError:
         sys.path.append(path)
     import src
 
-from src.pyquickhelper import fLOG, get_temp_folder, nb2slides, read_nb, nb2html
+from src.pyquickhelper import fLOG, get_temp_folder, nb2slides, nb2html
+from src.pyquickhelper.ipythonhelper import read_nb
 
 if sys.version_info[0] == 2:
     from codecs import open

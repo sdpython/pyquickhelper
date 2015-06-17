@@ -14,7 +14,6 @@ from ..loghelper.flog import run_cmd, fLOG
 from .utils_sphinx_doc_helpers import HelpGenException, find_latex_path, find_pandoc_path
 from ..filehelper.synchelper import has_been_updated
 from .post_process import post_process_latex_output, post_process_latex_output_any, post_process_rst_output, post_process_html_output, post_process_slides_output
-from ..ipythonhelper import read_nb
 
 if sys.version_info[0] == 2:
     from codecs import open
@@ -562,6 +561,7 @@ def add_tag_for_slideshow(ipy, folder, encoding="utf8"):
     @param      encoding    encoding
     @return                 written file
     """
+    from ..ipythonhelper import read_nb
     filename = os.path.split(ipy)[-1]
     output = os.path.join(folder, filename)
     nb = read_nb(ipy, encoding=encoding)
