@@ -490,7 +490,7 @@ def main(runner,
             memout.write("WARN: {0}\n".format(fi))
             for i, w in enumerate(lw):
                 try:
-                    sw = "  w{0}: {1}\n".format(i, sw)
+                    sw = "  w{0}: {1}\n".format(i, w)
                 except UnicodeEncodeError:
                     sw = "  w{0}: Unable to convert a warnings of type {0} into a string (1)".format(
                         i, type(w))
