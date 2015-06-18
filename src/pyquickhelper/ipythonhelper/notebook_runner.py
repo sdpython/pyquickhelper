@@ -452,6 +452,8 @@ class NotebookRunner(object):
                         elif k == "application/javascript":
                             # rough estimation
                             nbl += len(v.split("\n")) // 2
+                        elif k == "image/svg+xml":
+                            nbl += len(v) // 5
                         elif k == "text/html":
                             nbl += len(v.split("\n"))
                         elif k == "image/png" or k == "image/jpg" or k == "image/jpeg":
