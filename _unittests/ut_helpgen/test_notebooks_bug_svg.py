@@ -23,25 +23,26 @@ except ImportError:
     import src
 
 from src.pyquickhelper import fLOG, process_notebooks
+from src.pyquickhelper.helpgen.sphinx_main import setup_environment_for_help
 
 if sys.version_info[0] == 2:
     from codecs import open
 
 
-class TestNoteBooksBugRst(unittest.TestCase):
+class TestNoteBooksBugSvg(unittest.TestCase):
 
-    def test_notebook_rst(self):
+    def test_notebook_svg(self):
         fLOG(
             __file__,
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
         path = os.path.abspath(os.path.split(__file__)[0])
-        fold = os.path.normpath(os.path.join(path, "notebooks_rst"))
+        fold = os.path.normpath(os.path.join(path, "notebooks_svg"))
         nbs = [os.path.join(fold, _)
                for _ in os.listdir(fold) if ".ipynb" in _]
-        formats = ["rst", ]
+        formats = ["latex", ]
 
-        temp = os.path.join(path, "temp_nb_bug_rst")
+        temp = os.path.join(path, "temp_nb_bug_svg")
         if not os.path.exists(temp):
             os.mkdir(temp)
         for file in os.listdir(temp):
@@ -50,16 +51,18 @@ class TestNoteBooksBugRst(unittest.TestCase):
         if "travis" in sys.executable:
             return
 
+        setup_environment_for_help()
+
         res = process_notebooks(nbs, temp, temp, formats=formats)
         fLOG("*****", len(res))
         for _ in res:
             fLOG(_)
             assert os.path.exists(_[0])
 
-        with open(os.path.join(temp, "having_a_form_in_a_notebook.rst"), "r", encoding="utf8") as f:
+        with open(os.path.join(temp, "seance4_projection_population_correction.tex"), "r", encoding="utf8") as f:
             content = f.read()
-        exp = "<#Animated-output>`"
-        if exp in content or exp.lower() not in content:
+        exp = "seance4_projection_population_correction_50_0.pdf"
+        if exp not in content:
             raise Exception(content)
 
 

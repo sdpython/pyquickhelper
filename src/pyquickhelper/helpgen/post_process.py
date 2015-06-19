@@ -409,6 +409,9 @@ def post_process_latex(st, doall, info=None):
     @param      info    for more understandable error messages
     @return             string
 
+    SVG included in a notebook (or in RST file) requires `Inkscape <https://inkscape.org/>`_
+    to be converted into Latex.
+
     ..versionchanged:: 0.9
         add parameter *info*, add tableofcontent in the document
 

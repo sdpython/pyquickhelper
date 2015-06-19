@@ -293,7 +293,8 @@ def process_notebooks(notebooks,
                         # there might be some errors because the latex script needs to be post-processed
                         # sometimes (wrong characters such as " or formulas not
                         # captured as formulas)
-                        pass
+                        fLOG("LATEX ERR\n" + err)
+                        fLOG("LATEX OUT\n" + out)
                     else:
                         err = err.lower()
                         if "error" in err or "critical" in err or "bad config" in err:

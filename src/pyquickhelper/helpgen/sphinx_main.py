@@ -177,6 +177,13 @@ def generate_help_sphinx(project_var_name,
              It also changes the encoding of the HTMLoutput into cp1552 (encoding for Windows)
              instead of utf-8.
 
+    .. index:: SVG, Inkscape
+
+    **Others necessary tools:**
+
+    SVG included in a notebook (or any RST file) requires `Inkscape <https://inkscape.org/>`_
+    to be converted into Latex.
+
     .. versionchanged:: 1.0
         Assumes IPython 3 is installed. It might no work for earlier versions (notebooks).
         Parameters *from_repo*, *use_run_cmd* were added.
@@ -190,6 +197,8 @@ def generate_help_sphinx(project_var_name,
             "C:\\Program Files (x86)\\HTML Help Workshop\\hhc.exe" build\\htmlhelp\\<module>.hhp
 
     """
+    setup_environment_for_help()
+
     if add_htmlhelp:
         if not sys.platform.startswith("win"):
             raise ValueError("add_htmlhelp is True and the OS is not Windows")
@@ -669,6 +678,27 @@ def generate_help_sphinx(project_var_name,
     # end
     #####
     os.chdir(pa)
+
+
+def setup_environment_for_help():
+    """
+    modifies environment variables to be able to use external tools
+    such as `Inkscape <https://inkscape.org/>`_
+
+    .. versionadded:: 1.2
+    """
+    if sys.platform.startswith("win"):
+        prog = os.environ["ProgramFiles"]
+        inkscape = os.path.join(prog, "Inkscape")
+        if not os.path.exists(inkscape):
+            raise FileNotFoundError(
+                "Inkscape is not installed, expected at: {0}".format(inkscape))
+        path = os.environ["PATH"]
+        if inkscape not in path:
+            fLOG("SETUP: add path to %path%", inkscape)
+            os.environ["PATH"] = path + ";" + inkscape
+    else:
+        pass
 
 
 def add_missing_files(root, conf, blog_list):

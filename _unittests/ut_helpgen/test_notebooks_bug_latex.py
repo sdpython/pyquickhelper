@@ -27,7 +27,7 @@ from src.pyquickhelper import fLOG, process_notebooks
 
 class TestNoteBooksBugLatex(unittest.TestCase):
 
-    def test_notebook(self):
+    def test_notebook_latex(self):
         fLOG(
             __file__,
             self._testMethodName,
