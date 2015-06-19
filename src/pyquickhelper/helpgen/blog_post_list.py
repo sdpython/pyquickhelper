@@ -330,7 +330,7 @@ class BlogPostList:
         """
         cats = self.get_categories()
         res = []
-        for cat in cats:
+        for im, cat in enumerate(cats):
             posts = [_ for _ in self if cat in _.Categories]
             add = BlogPostList.write_aggregated_post_list(folder=folder,
                                                           l=posts,
@@ -359,7 +359,7 @@ class BlogPostList:
         """
         mo = self.get_months()
         res = []
-        for m in mo:
+        for im, m in enumerate(mo):
             posts = [_ for _ in self if _.Date.startswith(m)]
             add = BlogPostList.write_aggregated_post_list(folder=folder,
                                                           l=posts,
@@ -535,6 +535,11 @@ class BlogPostList:
         rows.append("")
         rows.append(".. _%s:" % this)
         rows.append("")
+
+        if bold_title is not None:
+            rows.append(bold_title)
+            rows.append("+" * len(bold_title))
+
         for post in l:
             text = post.post_as_rst(language=language)
             rows.append(text)
