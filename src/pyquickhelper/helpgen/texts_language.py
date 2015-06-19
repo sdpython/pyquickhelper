@@ -16,6 +16,7 @@ TITLES = {
            "catsmaonths": "All categories and months",
            "more": "post",
            "main": "blog home",
+           "main_title": "blog page",
            },
     'fr': {"blogpost": "article",
            "toc": "Contenu",
@@ -28,5 +29,6 @@ TITLES = {
            "catsmaonths": "Catégories et mois",
            "more": "article",
            "main": "page principale du blog",
+           "main_title": "page de blog",
            }
 }

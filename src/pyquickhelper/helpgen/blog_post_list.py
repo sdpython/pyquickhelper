@@ -315,7 +315,8 @@ class BlogPostList:
                                                        rst_links_up=rst_links_up,
                                                        rst_links_down=rst_links_down,
                                                        index_terms=["blog"],
-                                                       language=self.Lang)
+                                                       language=self.Lang,
+                                                       bold_title=TITLES[self.Lang]["main_title"])
 
     def write_aggregated_categories(self, folder, division=10,
                                     rst_links_up=None, rst_links_down=None):
@@ -539,6 +540,7 @@ class BlogPostList:
         if bold_title is not None:
             rows.append(bold_title)
             rows.append("+" * len(bold_title))
+            rows.append("")
 
         for post in l:
             text = post.post_as_rst(language=language)
