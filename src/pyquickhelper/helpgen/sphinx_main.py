@@ -701,15 +701,15 @@ def add_missing_files(root, conf, blog_list):
     tocs.append(mt)
     with open(mt, "w", encoding="utf8") as f:
         f.write(
-            """<h3><a href="{{ pathto(master_doc) }}">{{ _('%s') }}</a></h3>\n""" % TITLES[language]["toc"])
-        f.write(
             """<a href="{{ pathto('',1) }}/blog/main_0000.html">{{ _('Blog') }}\n</a>""")
         f.write(
             """<br /><a href="{{ pathto('',1) }}/genindex.html">{{ _('Index') }}\n</a>""")
         f.write(
-            """<br /><a href="{{ pathto('',1) }}/py-modindex.html">{{ _('Module') }}\n</a>""")
+            """<a href="{{ pathto('',1) }}/py-modindex.html">{{ _('Module') }}\n</a>""")
         f.write(
             """<br /><a href="{{ pathto('',1) }}/README.html">{{ _('README') }}\n</a>""")
+        f.write(
+            """<h3><a href="{{ pathto(master_doc) }}">{{ _('%s') }}</a></h3>\n""" % TITLES[language]["toc"])
         f.write("""{{ toctree() }}""")
 
     # blogtoc.html
@@ -719,7 +719,7 @@ def add_missing_files(root, conf, blog_list):
         f.write(
             """<a href="{{ pathto('',1) }}/genindex.html">{{ _('Index') }}</a>\n""")
         f.write(
-            """<br /><a href="{{ pathto('',1) }}/py-modindex.html">{{ _('Module') }}</a>\n""")
+            """<a href="{{ pathto('',1) }}/py-modindex.html">{{ _('Module') }}</a>\n""")
         f.write(
             """<h3><a href="{{ pathto('',1) }}/blog/main_0000.html">{{ _('Blog') }}</a></h3>\n""")
         if isinstance(blog_list, str  # unicode#
