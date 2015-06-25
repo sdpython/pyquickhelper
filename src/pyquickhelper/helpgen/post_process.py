@@ -323,13 +323,13 @@ def post_process_slides_output(file, pdf, python, slides):
     text = "\n".join(lines)
 
     """
-<link rel="stylesheet" href="reveal.js/css/reveal.css">
-<link rel="stylesheet" href="reveal.js/css/theme/solarized.css" id="theme">
-<link rel="stylesheet" href="reveal.js/lib/css/zenburn.css">
-<link rel="stylesheet" href="reveal.js/revealjs.css" type="text/css" />
+        <link rel="stylesheet" href="reveal.js/css/reveal.css">
+        <link rel="stylesheet" href="reveal.js/css/theme/solarized.css" id="theme">
+        <link rel="stylesheet" href="reveal.js/lib/css/zenburn.css">
+        <link rel="stylesheet" href="reveal.js/revealjs.css" type="text/css" />
 
-<link rel="stylesheet" href="reveal.js/css/reveal.css">
-<link rel="stylesheet" href="reveal.js/css/theme/simple.css" id="theme">
+        <link rel="stylesheet" href="reveal.js/css/reveal.css">
+        <link rel="stylesheet" href="reveal.js/css/theme/simple.css" id="theme">
 
         width: 1076,
         height: 750,
@@ -373,21 +373,17 @@ def post_process_slides_output(file, pdf, python, slides):
 
         transition: Reveal.getQueryHash().transition || "linear",
 
-// Optional libraries used to extend on reveal.js
-dependencies: [
+        // Optional libraries used to extend on reveal.js
+        dependencies: [
            { src: '_static/lib/js/classList.js', condition: function() { return !document.body.classList; } },
            { src: '_static/plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
            { src: '_static/plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
            { src: '_static/plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
            { src: '_static/plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
            { src: '_static/plugin/leap/leap.js', async: true, condition: function() { return !!document.body.classList; } },
-
            { src: '_static/plugin/multiplex/master.js', async: true, condition: function() { return !!document.body.classList; } },
-
            { src: '_static/plugin/remotes/remotes.js_static/plugin/notes-server/client.js', async: true, condition: function() { return !!document.body.classList; } },
-
            { src: '_static/plugin/math/math.js', async: true, condition: function() { return !!document.body.classList; } },
-
            { src: '_static/plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
 
     """
@@ -412,8 +408,11 @@ def post_process_latex(st, doall, info=None):
     SVG included in a notebook (or in RST file) requires `Inkscape <https://inkscape.org/>`_
     to be converted into Latex.
 
-    ..versionchanged:: 0.9
+    .. versionchanged:: 0.9
         add parameter *info*, add tableofcontent in the document
+
+    .. versionchanged:: 1.2
+        remove ascii character in *[0..31]* in each line, replace them by space.
 
     @todo Check latex is properly converted in HTML files
     """
@@ -523,7 +522,26 @@ def post_process_latex(st, doall, info=None):
             # shoud be cleaner with regular expressions
             line = line + \
                 "\n\n\\tableofcontents\n\n\\noindent\\rule{4cm}{0.4pt}\n\n"
-            lines[i] = line
+            lines[i] = remove_character_under32(line)
     st = "\n".join(lines)
 
     return st
+
+
+def remove_character_under32(s):
+    """
+    remove ascii characters in *[0..31]*
+
+    @param      s       string to process
+    @return             filtered string
+
+    .. versionadded:: 1.2
+    """
+    l = ""
+    for c in s:
+        d = ord(c)
+        if 0 <= d < 32:
+            l += " "
+        else:
+            l += c
+    return l
