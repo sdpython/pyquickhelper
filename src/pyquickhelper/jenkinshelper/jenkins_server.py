@@ -157,7 +157,7 @@ class JenkinsExt(jenkins.Jenkins):
         Custom command for jenkins (such as updating conda)
 
         @param      job             module and options
-        @param      pythonexe       unused
+        @param      pythonexe       location of python
         @param      anaconda        location of anaconda (3)
         @param      anaconda2       location of anaconda 2
         @param      winpython       location of winpython
@@ -180,8 +180,12 @@ class JenkinsExt(jenkins.Jenkins):
                 cmd = "if not exist ..\\local_pypi mkdir ..\\local_pypi"
                 cmd += "\nif not exist ..\\..\\local_pypi\\local_pypi_server mkdir ..\\..\\local_pypi\\local_pypi_server"
                 cmd += "\necho __PYTHON__\\Scripts\\pypi-server.exe -u -p __PORT__ --disable-fallback ..\\..\\local_pypi\\local_pypi_server > ..\\..\\local_pypi\\local_pypi_server\\start_local_pypi.bat"
-                cmd = cmd.replace("__PYTHON__", os.path.dirname(sys.executable)) \
+                cmd = cmd.replace("__PYTHON__", os.path.dirname(pythonexe)) \
                          .replace("__PORT__", str(port))
+            elif "[update]" in spl:
+                cmd = "%s -c 'import pymyinstall;pymyinstall.update_all(temp_folder='build/update_modules', verbose=True)" % pythonexe
+            elif "[winpython_update]" in spl:
+                cmd = "%s -c 'import pymyinstall;pymyinstall.update_all(temp_folder='build/update_modules', verbose=True)" % winpython
             else:
                 raise JenkinsExtException("cannot interpret job: " + job)
             return cmd
@@ -303,6 +307,8 @@ class JenkinsExt(jenkins.Jenkins):
 
                 if "[test_local_pypi]" in spl:
                     cmd = "auto_setup_test_local_pypi.bat __PYTHON__"
+                elif "[update_modules]" in spl:
+                    cmd = "auto_update_modules.bat __PYTHON__"
                 elif "[LONG]" in spl:
                     cmd = modified_windows_jenkins_any.replace(
                         "__COMMAND__", "unittests_LONG")
@@ -699,6 +705,8 @@ class JenkinsExt(jenkins.Jenkins):
                       ["pymmails [anaconda]", "pysqllike [anaconda]", "pyrsslocal [anaconda]",
                        "python3_module_template [anaconda]", "python3_module_template [27] [anaconda2]",
                        "pymyinstall [LONG]"],
+                      # update modules
+                      ("pymyinstall [update_modules]", "H H(10-11) * * 5"),
                       # actuariat
                       [("actuariat_python", "H H(12-13) * * 0")],
                       ["actuariat_python [winpython]",

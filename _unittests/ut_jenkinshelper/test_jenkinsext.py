@@ -104,6 +104,8 @@ class TestJenkinsExt(unittest.TestCase):
                 ("standalone [conda_update]", "H H(8-9) * * 0"),
                 "standalone [conda_update27]",
                 "standalone [local_pypi]",
+                "standalone [update]",
+                "standalone [winpython_update]",
                 # pyquickhelper,
                 ("pyquickhelper", "H H(10-11) * * 0"),
                 ("pymyinstall", None, dict(success_only=True)),
@@ -116,6 +118,8 @@ class TestJenkinsExt(unittest.TestCase):
                  "python3_module_template [anaconda]",
                  "python3_module_template [27] [anaconda2]",
                  "pymyinstall [LONG]"],
+                # update
+                ("pymyinstall [update_modules]", "H H(10-11) * * 5"),
                 # actuariat
                 [("actuariat_python", "H H(12-13) * * 0")],
                 ["actuariat_python [winpython]",
@@ -146,6 +150,8 @@ class TestJenkinsExt(unittest.TestCase):
                 ("standalone [conda_update]", "H H(8-9) * * 0"),
                 "standalone [conda_update27]",
                 "standalone [local_pypi]",
+                # update
+                ("pymyinstall [update_modules]", "H H(10-11) * * 5"),
                 # pyquickhelper,
                 ("pyquickhelper", "H H(10-11) * * 0"),
                 ("pymyinstall", None, dict(success_only=True)),
@@ -233,7 +239,7 @@ class TestJenkinsExt(unittest.TestCase):
                 if "github" in conf:
                     raise Exception(conf)
 
-            if i == 3:
+            if i == 5:
                 if "pyquickhelper" not in conf:
                     raise Exception(conf)
                 if "H H(10-11) * * 0" not in conf:
@@ -268,7 +274,7 @@ class TestJenkinsExt(unittest.TestCase):
                 if "auto_cmd_any_setup_command.bat custom_left" not in conf:
                     raise Exception(conf)
 
-            if ">F0" in conf:
+            if ">G0" in conf:
                 if "auto_cmd_any_setup_command.bat build_sphinx" not in conf:
                     raise Exception(conf)
 
