@@ -731,15 +731,15 @@ def add_missing_files(root, conf, blog_list):
     tocs.append(mt)
     with open(mt, "w", encoding="utf8") as f:
         f.write(
-            """<a href="{{ pathto('',1) }}/blog/main_0000.html">{{ _('Blog') }}\n</a>""")
+            """<a href="{{ pathto('',1) }}/blog/main_0000.html">{{ 'Blog' }}\n</a>""")
         f.write(
-            """<br /><a href="{{ pathto('',1) }}/genindex.html">{{ _('Index') }}\n</a>""")
+            """<br /><a href="{{ pathto('',1) }}/genindex.html">{{ 'Index' }}\n</a>""")
         f.write(
-            """<a href="{{ pathto('',1) }}/py-modindex.html">{{ _('Module') }}\n</a>""")
+            """<a href="{{ pathto('',1) }}/py-modindex.html">{{ 'Module' }}\n</a>""")
         f.write(
-            """<br /><a href="{{ pathto('',1) }}/README.html">{{ _('README') }}\n</a>""")
+            """<br /><a href="{{ pathto('',1) }}/README.html">{{ 'README' }}\n</a>""")
         f.write(
-            """<h3><a href="{{ pathto(master_doc) }}">{{ _('%s') }}</a></h3>\n""" % TITLES[language]["toc"])
+            """<h3><a href="{{ pathto(master_doc) }}">{{ '%s' }}</a></h3>\n""" % TITLES[language]["toc"])
         f.write("""{{ toctree() }}""")
 
     # blogtoc.html
@@ -747,11 +747,11 @@ def add_missing_files(root, conf, blog_list):
     tocs.append(mt)
     with open(mt, "w", encoding="utf8") as f:
         f.write(
-            """<a href="{{ pathto('',1) }}/genindex.html">{{ _('Index') }}</a>\n""")
+            """<a href="{{ pathto('',1) }}/genindex.html">{{ 'Index' }}</a>\n""")
         f.write(
-            """<a href="{{ pathto('',1) }}/py-modindex.html">{{ _('Module') }}</a>\n""")
+            """<a href="{{ pathto('',1) }}/py-modindex.html">{{ 'Module' }}</a>\n""")
         f.write(
-            """<h3><a href="{{ pathto('',1) }}/blog/main_0000.html">{{ _('Blog') }}</a></h3>\n""")
+            """<h3><a href="{{ pathto('',1) }}/blog/main_0000.html">{{ 'Blog' }}</a></h3>\n""")
         if isinstance(blog_list, str  # unicode#
                       ):
             f.write(blog_list)
@@ -1017,7 +1017,7 @@ def replace_placeholder_by_recent_blogpost(all_tocs, plist, placeholder, nb_post
     """
     def make_link(post):
         name = os.path.splitext(os.path.split(post.FileName)[-1])[0]
-        s = """<a href="{{ pathto('',1) }}/blog/%s/%s.html">{{ _('%s - %s') }}</a>""" % (
+        s = """<a href="{{ pathto('',1) }}/blog/%s/%s.html">{{ '%s - %s' }}</a>""" % (
             post.Year, name, post.Date, post.Title)
         return s
 
