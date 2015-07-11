@@ -62,8 +62,9 @@ def ie_layout_html():
         else:
             return True
     else:
-        raise FileNotFoundError(
-            "Sphinx is not properly installed, unable to find: " + layout)
+        warnings.warn(
+            "Sphinx does not seem to be properly installed, unable to find: " + layout + \
+            ".\nThis happens on virtual environment for Anaconda on Windows")
 
 
 def fix_ie_layout_html():
