@@ -41,7 +41,7 @@ def post_process_latex_output(root, doall):
     @param      root        root path or latex file to process
     @param      doall       do all transformations
     """
-    if os.path.isfile(root):
+    if len(root) < 5000 and os.path.isfile(root):
         file = root
         with open(file, "r", encoding="utf8") as f:
             content = f.read()
@@ -501,30 +501,28 @@ def post_process_latex(st, doall, info=None):
     st = st.replace("\\newchapter", "\\chapter")
     if "\\usepackage{multirow}" in st:
         st = st.replace(
-            "\\usepackage{multirow}", "\\usepackage{multirow}\\usepackage{amssymb}\\usepackage{latexsym}\\usepackage{amsfonts}\\usepackage{ulem}\\usepackage{textcomp}")
+            "\\usepackage{svg}\\usepackage{multirow}", "\\usepackage{multirow}\\usepackage{amssymb}\\usepackage{latexsym}\\usepackage{amsfonts}\\usepackage{ulem}\\usepackage{textcomp}")
     elif "\\usepackage{hyperref}" in st:
         st = st.replace(
-            "\\usepackage{hyperref}", "\\usepackage{hyperref}\\usepackage{amssymb}\\usepackage{latexsym}\\usepackage{amsfonts}\\usepackage{ulem}\\usepackage{textcomp}")
+            "\\usepackage{svg}\\usepackage{hyperref}", "\\usepackage{hyperref}\\usepackage{amssymb}\\usepackage{latexsym}\\usepackage{amsfonts}\\usepackage{ulem}\\usepackage{textcomp}")
     else:
         raise HelpGenException(
             "unable to add new instructions usepackage in file {0}".format(info))
 
     if "\\usepackage[utf8]" in st:
         st = st.replace(
-            "\\usepackage[utf8]{inputenc}", r"\\usepackage{ucs}\\usepackage[utf8x]{inputenc}")
+            "\\usepackage[utf8]{inputenc}", "\\usepackage{silence}\\usepackage{ucs}\\usepackage[utf8x]{inputenc}")
         st = st.replace(
-            r"\DeclareUnicodeCharacter{00A0}{\nobreakspace}", r"%\DeclareUnicodeCharacter{00A0}{\nobreakspace}")
+            "\\DeclareUnicodeCharacter{00A0}{\\nobreakspace}", "%\\DeclareUnicodeCharacter{00A0}{\\nobreakspace}")
 
-    # add tableofcontents
-    lines = st.split("\n")
-    for i, line in enumerate(lines):
-        if "\\section" in line and "{" in line and "}" in line:
-            # shoud be cleaner with regular expressions
-            line = line + \
-                "\n\n\\tableofcontents\n\n\\noindent\\rule{4cm}{0.4pt}\n\n"
-            lines[i] = remove_character_under32(line)
-    st = "\n".join(lines)
+    # SVG does not work unless it is converted (nbconvert should handle that
+    # case)
+    reg = re.compile("([\\\\]includegraphics[{].*?[.]svg[}])")
+    fall = reg.findall(st)
+    for found in fall:
+        st = st.replace(found, "%" + found)
 
+    # end
     return st
 
 
