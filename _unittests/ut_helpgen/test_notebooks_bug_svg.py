@@ -32,7 +32,7 @@ if sys.version_info[0] == 2:
 
 class TestNoteBooksBugSvg(unittest.TestCase):
 
-    def _test_notebook_svg(self):
+    def test_notebook_svg(self):
         fLOG(
             __file__,
             self._testMethodName,
