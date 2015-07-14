@@ -41,7 +41,7 @@ def post_process_latex_output(root, doall):
     @param      root        root path or latex file to process
     @param      doall       do all transformations
     """
-    if len(root) < 5000 and os.path.isfile(root):
+    if os.path.isfile(root):
         file = root
         with open(file, "r", encoding="utf8") as f:
             content = f.read()
