@@ -34,7 +34,7 @@ class TestMissingFunction(unittest.TestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
-        if "travis" in sys.executable:
+        if "travis" in sys.executable or "anaconda" in sys.executable:
             return
 
         if not ie_layout_html():

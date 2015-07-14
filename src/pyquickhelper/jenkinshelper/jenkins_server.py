@@ -317,6 +317,12 @@ class JenkinsExt(jenkins.Jenkins):
                         "__COMMAND__", "unittests_SKIP")
                 elif "[27]" in spl:
                     cmd = modified_windows_jenkins_27
+                    if spl[0] == "pyquickhelper":
+                        # exception for this job, we don't want to import pyquickhelper
+                        # c:\jenkins\pymy\anaconda2_pyquickhelper_27\..\virtual\pyquickhelper_conda27vir\Scripts\pip install --no-cache-dir --index http://localhost:8067/simple/ pyquickhelper 
+                        lines = cml.split("\n")
+                        lines = [ _ for _ in lines if "simple/ pyquickhelper" not in _ ]
+                        cmd = "\n".join(lines)
                 elif "[doc]" in spl:
                     # documentation
                     cmd = modified_windows_jenkins_any.replace(
