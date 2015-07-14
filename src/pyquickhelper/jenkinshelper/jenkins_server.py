@@ -557,9 +557,9 @@ class JenkinsExt(jenkins.Jenkins):
         if self._mock:
             return conf
         elif update:
-            return self.reconfig_job(name, conf.encode("utf-8"))
+            return self.reconfig_job(name, conf)
         else:
-            return self.create_job(name, conf.encode("utf-8"))
+            return self.create_job(name, conf)
 
     def process_options(self, script, options):
         """
