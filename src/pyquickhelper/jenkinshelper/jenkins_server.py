@@ -322,12 +322,14 @@ class JenkinsExt(jenkins.Jenkins):
                     else:
                         cmd = list(cmd)
                     if spl[0] == "pyquickhelper":
-                        print('****',spl)
                         # exception for this job, we don't want to import pyquickhelper
-                        # c:/jenkins/pymy/anaconda2_pyquickhelper_27/../virtual/pyquickhelper_conda27vir/Scripts/pip install --no-cache-dir --index http://localhost:8067/simple/ pyquickhelper 
+                        # c:/jenkins/pymy/anaconda2_pyquickhelper_27/../virtual/pyquickhelper_conda27vir/Scripts/pip
+                        # install --no-cache-dir --index
+                        # http://localhost:8067/simple/ pyquickhelper
                         for i in range(0, len(cmd)):
                             lines = cmd[i].split("\n")
-                            lines = [(_ if "simple/ pyquickhelper" not in _ else "rem do not import pyquickhelper") for _ in lines]
+                            lines = [
+                                (_ if "simple/ pyquickhelper" not in _ else "rem do not import pyquickhelper") for _ in lines]
                             cmd[i] = "\n".join(lines)
                 elif "[doc]" in spl:
                     # documentation
