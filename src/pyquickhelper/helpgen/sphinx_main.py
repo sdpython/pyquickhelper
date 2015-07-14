@@ -555,7 +555,7 @@ def generate_help_sphinx(project_var_name,
 
         cmd = "sphinx-build -b {1} -d {0}/doctrees{2}{3} source {0}/{1}".format(
             build, lay, over, sconf)
-        cmds.append(cmd)
+        cmds.append((cmd, build, lay))
         fLOG("run:", cmd)
         lays.append(lay)
 
@@ -564,7 +564,7 @@ def generate_help_sphinx(project_var_name,
             # as it changes the encoding
             cmd = "sphinx-build -b {1}help -d {0}/doctrees{2}{3} source {0}/{1}help".format(
                 build, lay, over, sconf)
-            cmds.append(cmd)
+            cmds.append((cmd, build, "add_htmlhelp"))
             fLOG("run:", cmd)
             lays.append(lay)
             hhp = os.path.join(build, lay + "help", module_name + "_doc.hhp")
@@ -577,7 +577,7 @@ def generate_help_sphinx(project_var_name,
     ###############################################################
     # run cmds (prefer to use os.system instread of run_cmd if it gets stuck)
     ###############################################################
-    for cmd in cmds:
+    for cmd, build, kind in cmds:
         fLOG(
             "##################################################################################################")
         fLOG(
@@ -595,6 +595,13 @@ def generate_help_sphinx(project_var_name,
                     "Sphinx went through errors. Check if any of them is important.\nOUT:\n{0}\nERR:\n{1}".format(out, err))
         else:
             os.system(cmd)
+
+        if kind != "add_htmlhelp":
+            findex = os.path.join(build, "index.html")
+            if not os.path.exists(findex):
+                raise FileNotFoundError("something went wrong, unable to find {0}\nCMD\n{1}\nOUT\n{2}\nERR\n{3}".format(findex,
+                                            cmd, out, err))
+
         fLOG(
             "##################################################################################################")
         fLOG(
