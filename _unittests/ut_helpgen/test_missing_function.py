@@ -7,6 +7,7 @@ import sys
 import os
 import unittest
 import shutil
+import warnings
 
 
 try:
@@ -34,7 +35,8 @@ class TestMissingFunction(unittest.TestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
-        if "travis" in sys.executable or "anaconda" in sys.executable:
+        if "travis" in sys.executable or "anaconda" in sys.executable.lower():
+            warnings.warn("skipping on travis and with anaconda: " + sys.executable)
             return
 
         if not ie_layout_html():
