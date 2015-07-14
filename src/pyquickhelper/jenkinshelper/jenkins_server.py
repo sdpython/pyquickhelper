@@ -308,7 +308,7 @@ class JenkinsExt(jenkins.Jenkins):
                 if "[test_local_pypi]" in spl:
                     cmd = "auto_setup_test_local_pypi.bat __PYTHON__"
                 elif "[update_modules]" in spl:
-                    cmd = "auto_update_modules.bat __PYTHON__"
+                    cmd = "__PYTHON__ setup.py build_script\nauto_update_modules.bat __PYTHON__"
                 elif "[LONG]" in spl:
                     cmd = modified_windows_jenkins_any.replace(
                         "__COMMAND__", "unittests_LONG")
