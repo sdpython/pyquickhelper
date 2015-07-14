@@ -147,15 +147,20 @@ def add_notebook_menu(menu_id="my_id_menu_nb", raw=False, format="html", header=
                         if (title.length == 0) {
                             continue;
                         }
-                        if (level > memo_level) {
+                        while (level > memo_level) {
                             text_menu += "<ul>\\n";
+                            memo_level += 1;
                         }
                         text_menu += repeat_indent_string(level-2) + __FORMAT__;
-                        if (level < memo_level) {
+                        while (level < memo_level) {
                             text_menu += "</ul>\\n";
+                            memo_level -= 1;
                         }
-                        memo_level = level;
                     }
+                    while (0 < memo_level) {
+                        text_menu += "</ul>\\n";
+                        memo_level -= 1;
+                    }                    
                     text_menu += "__END__";
                     var menu = document.getElementById("__MENUID__");
                     menu.innerHTML=text_menu;
