@@ -80,7 +80,7 @@ def set_notebook_name_theNotebook(name="theNotebook"):
     return get_name()
 
 
-def add_notebook_menu(menu_id="my_id_menu_nb", raw=False, format="html", header=None, 
+def add_notebook_menu(menu_id="my_id_menu_nb", raw=False, format="html", header=None,
                       first_level=2, last_level=4):
     """
     add javascript and HTML to the notebook which gathers all in the notebook and builds a menu
