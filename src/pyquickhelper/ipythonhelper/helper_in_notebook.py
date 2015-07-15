@@ -80,15 +80,18 @@ def set_notebook_name_theNotebook(name="theNotebook"):
     return get_name()
 
 
-def add_notebook_menu(menu_id="my_id_menu_nb", raw=False, format="html", header=None):
+def add_notebook_menu(menu_id="my_id_menu_nb", raw=False, format="html", header=None, 
+                      first_level=2, last_level=4):
     """
     add javascript and HTML to the notebook which gathers all in the notebook and builds a menu
 
-    @param      menu_id     menu_id
-    @param      raw         raw HTML and Javascript
-    @param      format      *html* or *rst*
-    @param      header      title of the menu (None for None)
-    @return                 HTML object
+    @param      menu_id         menu_id
+    @param      raw             raw HTML and Javascript
+    @param      format          *html* or *rst*
+    @param      header          title of the menu (None for None)
+    @param      first_level     first level to consider
+    @param      last_level      last level to consider
+    @return                     HTML object
 
     In a notebook, it is easier to do by using a magic command
     ``%%html`` for the HTML and another one
@@ -123,7 +126,7 @@ def add_notebook_menu(menu_id="my_id_menu_nb", raw=False, format="html", header=
                     var i;
                     var text_menu = "__BEGIN__";
                     var ind = "";
-                    var memo_level = 0;
+                    var memo_level = 1;
                     var href;
                     for (i = 0; i < anchors.length; i++) {
                         var child = anchors[i].children[0];
@@ -138,11 +141,11 @@ def add_notebook_menu(menu_id="my_id_menu_nb", raw=False, format="html", header=
                         }
                         var title = child.textContent;
                         var level = parseInt(child.tagName.substring(1,2));
-                        if ((level <= 1) || (level >= 5)) {
+                        if ((level <= __FIRST__) || (level > __LAST__)) {
                             continue ;
                         }
                         if (title.endsWith('¶')) {
-                            title = title.substring(0,title.length-1);
+                            title = title.substring(0,title.length-1).replace("<", "&lt;").replace(">", "&gt;").replace("&", "&amp;")
                         }
                         if (title.length == 0) {
                             continue;
@@ -151,13 +154,13 @@ def add_notebook_menu(menu_id="my_id_menu_nb", raw=False, format="html", header=
                             text_menu += "<ul>\\n";
                             memo_level += 1;
                         }
-                        text_menu += repeat_indent_string(level-2) + __FORMAT__;
                         while (level < memo_level) {
                             text_menu += "</ul>\\n";
                             memo_level -= 1;
                         }
+                        text_menu += repeat_indent_string(level-2) + __FORMAT__;
                     }
-                    while (0 < memo_level) {
+                    while (1 < memo_level) {
                         text_menu += "</ul>\\n";
                         memo_level -= 1;
                     }
@@ -167,7 +170,9 @@ def add_notebook_menu(menu_id="my_id_menu_nb", raw=False, format="html", header=
                 };
                 window.setTimeout(update_menu,2000);
             """.replace("                ", "") \
-               .replace("__MENUID__", menu_id)
+               .replace("__MENUID__", menu_id) \
+               .replace("__FIRST__", str(first_level)) \
+               .replace("__LAST__", str(last_level))
 
     full = "{0}\n<script>{1}</script>".format(html, js)
 
@@ -187,10 +192,10 @@ def add_notebook_menu(menu_id="my_id_menu_nb", raw=False, format="html", header=
             header = ""
         full = header + \
             full.replace("__FORMAT__", """'* [' + title + '](#' + href + ')\\n'""") \
-            .replace("<ul>", "") \
-            .replace("</ul>", "") \
-            .replace("__BEGIN__", "<pre>\\n") \
-            .replace("__END__", "</pre>\\n")
+                .replace("<ul>", "") \
+                .replace("</ul>", "") \
+                .replace("__BEGIN__", "<pre>\\n") \
+                .replace("__END__", "</pre>\\n")
     else:
         raise ValueError("format must be html or rst")
 
