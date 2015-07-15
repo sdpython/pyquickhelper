@@ -36,7 +36,8 @@ class TestMissingFunction(unittest.TestCase):
             OutputPrint=__name__ == "__main__")
 
         if "travis" in sys.executable or "anaconda" in sys.executable.lower():
-            warnings.warn("skipping on travis and with anaconda: " + sys.executable)
+            warnings.warn(
+                "skipping on travis and with anaconda: " + sys.executable)
             return
 
         if not ie_layout_html():

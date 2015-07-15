@@ -160,7 +160,7 @@ def add_notebook_menu(menu_id="my_id_menu_nb", raw=False, format="html", header=
                     while (0 < memo_level) {
                         text_menu += "</ul>\\n";
                         memo_level -= 1;
-                    }                    
+                    }
                     text_menu += "__END__";
                     var menu = document.getElementById("__MENUID__");
                     menu.innerHTML=text_menu;

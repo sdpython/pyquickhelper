@@ -596,11 +596,11 @@ def generate_help_sphinx(project_var_name,
         else:
             os.system(cmd)
 
-        if kind != "add_htmlhelp":
-            findex = os.path.join(build, "index.html")
+        if kind == "html":
+            findex = os.path.join(build, lay, "index.html")
             if not os.path.exists(findex):
-                raise FileNotFoundError("something went wrong, unable to find {0}\nCMD\n{1}\nOUT\n{2}\nERR\n{3}".format(findex,
-                                            cmd, out, err))
+                raise FileNotFoundError("something went wrong, unable to find {0}\nCMD\n{1}\nOUT\n{2}\nERR\n{3}\nLAY\n{4}\nINDEX\n{5}".format(findex,
+                                            cmd, out, err, lay, os.path.abspath(findex)))
 
         fLOG(
             "##################################################################################################")
@@ -653,8 +653,8 @@ def generate_help_sphinx(project_var_name,
     # we copy javascript dependencies to build _download/javascript
     #########################################################
     # for every layout
-    fLOG("JAVASCRIPT: COPY", html_static_paths)
-    fLOG("BUILD:", build_paths)
+    fLOG("[revealjs] JAVASCRIPT: COPY", html_static_paths)
+    fLOG("[revealjs] BUILD:", build_paths)
     for html_static_path, build_path in zip(html_static_paths, build_paths):
         builddoc = os.path.join(build_path, "_downloads")
         if os.path.exists(builddoc):
@@ -665,6 +665,8 @@ def generate_help_sphinx(project_var_name,
             copy = synchronize_folder(
                 html_static_path, builddoc, copy_1to2=True)
             fLOG("javascript", len(copy), "files copied")
+        else:
+            fLOG("[revealjs] no need, no folder", builddoc)
 
     ######
     # next
