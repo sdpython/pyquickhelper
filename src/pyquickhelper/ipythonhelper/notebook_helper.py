@@ -105,7 +105,7 @@ def run_notebook(filename,
 
     @example(Run a notebook end to end)
     @code
-    from pyquickhelper.ipythonhelper.notebook_helper import run_notebook
+    from pyquickhelper.ipythonhelper import run_notebook
     run_notebook("source.ipynb", working_dir="temp",
                 outfilename="modified.ipynb",
                 additional_path = [ "c:/temp/mymodule/src" ] )

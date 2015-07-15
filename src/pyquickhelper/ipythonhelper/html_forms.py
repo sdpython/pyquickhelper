@@ -38,6 +38,7 @@ def open_html_form(params,
 
     Cell 1:
     @code
+    from pyquickhelper.ipythonhelper import open_html_form
     params = { "module":, "version":"v..." }
     open_html_form (params, title="try the password *", key_save="form1")
     @endcode

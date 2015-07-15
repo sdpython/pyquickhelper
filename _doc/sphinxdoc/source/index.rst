@@ -35,6 +35,17 @@ pyquickhelper documentation
 :ref:`l-README`,
 :ref:`blog <ap-main-0>`
 
+
+Tutorial
+--------
+
+.. toctree::
+    :max_depth: 1
+    
+    all_example
+    all_notebooks
+    
+
 Functionalities
 ---------------
 

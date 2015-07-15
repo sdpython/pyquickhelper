@@ -96,6 +96,7 @@ class AutoCompletionFile(AutoCompletion):
     The following code:
 
     @code
+    from pyquickhelper.ipythonhelper import AutoCompletionFile
     d = AutoCompletionFile(".")
     @endcode
 

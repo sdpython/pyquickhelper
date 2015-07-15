@@ -595,12 +595,13 @@ def generate_help_sphinx(project_var_name,
                     "Sphinx went through errors. Check if any of them is important.\nOUT:\n{0}\nERR:\n{1}".format(out, err))
         else:
             os.system(cmd)
+            out, err = "unknown", "unknown"
 
         if kind == "html":
-            findex = os.path.join(build, lay, "index.html")
+            findex = os.path.join(build, kind, "index.html")
             if not os.path.exists(findex):
-                raise FileNotFoundError("something went wrong, unable to find {0}\nCMD\n{1}\nOUT\n{2}\nERR\n{3}\nLAY\n{4}\nINDEX\n{5}".format(findex,
-                                            cmd, out, err, lay, os.path.abspath(findex)))
+                raise FileNotFoundError("something went wrong, unable to find {0}\nCMD\n{1}\nOUT\n{2}\nERR\n{3}\nLAY\n{4}\nINDEX\n{5}"
+                                        .format(findex, cmd, out, err, kind, os.path.abspath(findex)))
 
         fLOG(
             "##################################################################################################")
@@ -635,7 +636,8 @@ def generate_help_sphinx(project_var_name,
             allfiles = [_ for _ in allfiles if os.path.isfile(_)]
             for lay in lays:
                 layfolder = os.path.join(docpath, build, lay)
-                fLOG("## coverage[docpath]:", docpath, " -- ", build, " -- ", lay, " ---- ", layfolder)
+                fLOG("## coverage[docpath]:", docpath, " -- ",
+                     build, " -- ", lay, " ---- ", layfolder)
                 if os.path.exists(layfolder):
                     covbuild = os.path.join(layfolder, "coverage")
                     fLOG("covbuild", covbuild)

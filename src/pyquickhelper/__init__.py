@@ -89,6 +89,8 @@ from .pycode.clean_helper import clean_exts
 from .pycode.py3to2 import py3to2_convert_tree, py3to2_convert
 from .pycode.setup_helper import write_version_for_setup, clean_space_for_setup, standard_help_for_setup, main_wrapper_tests, process_standard_options_for_setup
 from .pycode.setup_helper import write_module_scripts
+
+# in case IPython is not here, these lines are commented out
 # from .ipythonhelper import read_nb
 # from .ipythonhelper.kindofcompletion import AutoCompletion, AutoCompletionFile
 # from .ipythonhelper.html_forms import open_html_form
