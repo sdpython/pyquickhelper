@@ -40,7 +40,7 @@ Tutorial
 --------
 
 .. toctree::
-    :max_depth: 1
+    :maxdepth: 1
     
     all_example
     all_notebooks
