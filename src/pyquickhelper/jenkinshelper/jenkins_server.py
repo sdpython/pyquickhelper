@@ -183,9 +183,9 @@ class JenkinsExt(jenkins.Jenkins):
                 cmd = cmd.replace("__PYTHON__", os.path.dirname(pythonexe)) \
                          .replace("__PORT__", str(port))
             elif "[update]" in spl:
-                cmd = "%s\\python -c \"import pymyinstall;pymyinstall.update_all(temp_folder='build/update_modules', verbose=True)\"" % pythonexe
+                cmd = "%s\\python -u -c \"import pymyinstall;pymyinstall.update_all(temp_folder='build/update_modules', verbose=True)\"" % pythonexe
             elif "[winpython_update]" in spl:
-                cmd = "%s\\python -c \"import pymyinstall;pymyinstall.update_all(temp_folder='build/update_modules', verbose=True)\"" % winpython
+                cmd = "%s\\python -u -c \"import pymyinstall;pymyinstall.update_all(temp_folder='build/update_modules', verbose=True)\"" % winpython
             else:
                 raise JenkinsExtException("cannot interpret job: " + job)
             return cmd
@@ -687,6 +687,8 @@ class JenkinsExt(jenkins.Jenkins):
         * ``[conda_update]``: update conda distribution
         * ``[conda_update27]``: update conda distribution for python 2.7
         * ``[local_pypi]``: write a script to run a local pypi server on port 8067 (default option)
+        * ``pymyinstall [update_modules]``: run a script to update all modules 
+          (might have to be ran a couple of times before being successful)
 
         *modules* is a list defined as follows:
 
