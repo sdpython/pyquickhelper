@@ -10,7 +10,7 @@ import os
 from .windows_scripts import windows_error, windows_prefix, windows_setup, windows_notebook
 from .windows_scripts import windows_publish, windows_publish_doc, windows_pypi, setup_script_dependency_py
 from .windows_scripts import windows_prefix_27, windows_unittest27, copy_dist_to_local_pypi
-from .windows_scripts import windows_any_setup_command, windows_blogpost, windows_docserver, windows_build_setup
+from .windows_scripts import windows_any_setup_command, windows_blogpost, windows_docserver, windows_build_setup, windows_build
 
 #: nick name for no folder
 _default_nofolder = "__NOFOLDERSHOULDNOTEXIST__"
@@ -121,7 +121,6 @@ def get_build_script(module, requirements=None, port=8067, default_engine_paths=
     @param      default_engine_paths    define the default location for python engine, should be dictionary *{ engine: path }*, see below.
     @return                             scripts
     """
-    global windows_build
     if requirements is None:
         requirements = []
     return private_script_replacements(windows_build, module, requirements, port,
