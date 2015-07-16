@@ -296,6 +296,8 @@ def py3to2_imported_local_modules(content, unittest_modules):
 
         if (s1 in content or s2 in content or s4 in content) and s3 in content:
             for i, line in enumerate(lines):
+                if " in " in line or "ModuleInstall" in line:
+                    continue
                 if s1 in line:
                     line = line.replace(
                         s1, '"..", "{0}", "dist_module27"'.format(alias))

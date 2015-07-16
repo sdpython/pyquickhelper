@@ -687,7 +687,7 @@ class JenkinsExt(jenkins.Jenkins):
         * ``[conda_update]``: update conda distribution
         * ``[conda_update27]``: update conda distribution for python 2.7
         * ``[local_pypi]``: write a script to run a local pypi server on port 8067 (default option)
-        * ``pymyinstall [update_modules]``: run a script to update all modules 
+        * ``pymyinstall [update_modules]``: run a script to update all modules
           (might have to be ran a couple of times before being successful)
 
         *modules* is a list defined as follows:

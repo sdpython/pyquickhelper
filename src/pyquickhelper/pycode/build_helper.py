@@ -7,7 +7,7 @@
 
 import sys
 import os
-from .windows_scripts import windows_error, windows_prefix, windows_setup, windows_build, windows_notebook
+from .windows_scripts import windows_error, windows_prefix, windows_setup, windows_notebook
 from .windows_scripts import windows_publish, windows_publish_doc, windows_pypi, setup_script_dependency_py
 from .windows_scripts import windows_prefix_27, windows_unittest27, copy_dist_to_local_pypi
 from .windows_scripts import windows_any_setup_command, windows_blogpost, windows_docserver, windows_build_setup
