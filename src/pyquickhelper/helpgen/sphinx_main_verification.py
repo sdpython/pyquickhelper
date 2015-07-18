@@ -79,7 +79,7 @@ def verification_html_file(item, fLOG=noLOG):
 
     errors = []
     for i, line in enumerate(lines):
-        if "<h1>Source code for " in line:
+        if "<h1>Source code for " in line or "<h1>Code source de " in line:
             # no need to go further
             # the source takes place after this substring
             break
