@@ -280,7 +280,7 @@ class BlogPostList:
                 f.write("\n")
 
             f.write("\n")
-            f.write(".. image:: feed-icon-16x16.png\n")
+            f.write(".. image:: feed-icon-16x16.png\n\n")
             f.write(":download:`{0} rss <rss.xml>`\n".format(
                 TITLES[self.Lang]["download"]))
             f.write("\n\n\n")

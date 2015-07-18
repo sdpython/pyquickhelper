@@ -53,6 +53,7 @@ Documentation
 
 .. automodule:: __FULLNAMENOEXT__
     :members:
+    :special-members: __init__
     :show-inheritance:
 
 __ADDEDMEMBERS__
@@ -107,7 +108,7 @@ def compute_truncated_documentation(doc,
         doc = doc.strip("\n\r\t ")
         doc = doc.replace("\n", " ").replace("\r", "").strip("\n\r\t ")
 
-        for subs in ["@" + "param", "@" + "return", ":param", ":return"]:
+        for subs in ["@" + "param", "@" + "return", ":param", ":return", ":ref:", "`"]:
             if subs in doc:
                 doc = doc[:doc.find(subs)].strip("\r\t ")
 
@@ -134,14 +135,15 @@ class ModuleMemberDoc:
 
     See `inspect <https://docs.python.org/3.4/library/inspect.html>`_
 
-    @var    obj         object
-    @var    type        (str) type
-    @var    cl          (class) class it belongs to
-    @var    name        (str) name
-    @var    module      (str) module name
-    @var    doc         (str) documentation
-    @var    truncdoc    (str) truncated documentation
-    @var    owner       (module)
+    Attributes:
+      obj (object): object
+      type (str): type
+      cl (object): class it belongs to
+      name (str): name
+      module (str): module name
+      doc (str): documentation
+      truncdoc (str): truncated documentation
+      owner (object): module
     """
 
     def __init__(self, obj, ty=None, cl=None, name=None, module=None):
@@ -285,8 +287,10 @@ class ModuleMemberDoc:
                                             :%s:`%s <%s>`               or
                                             :%s:`%s <%s>` (class)
         """
-        cor = {"function": "func", "method": "meth",
-               "staticmethod": "meth", "property": "meth"}
+        cor = {"function": "func",
+               "method": "meth",
+               "staticmethod": "meth",
+               "property": "meth"}
 
         if self.type in ["method", "staticmethod", "property"]:
             path = "%s.%s.%s" % (self.module, self.cl.__name__, self.name)

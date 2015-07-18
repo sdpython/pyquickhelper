@@ -25,6 +25,7 @@ from .sphinx_helper import post_process_html_nb_output_static_file
 from .install_js_dep import install_javascript_tools
 from ..filehelper import synchronize_folder
 from .sphinx_main_helper import setup_environment_for_help, add_missing_files, get_executables_path, generate_changes_repo, compile_latex_output_final, replace_placeholder_by_recent_blogpost
+from .sphinx_main_verification import verification_html_format
 
 
 if sys.version_info[0] == 2:
@@ -590,10 +591,17 @@ def generate_help_sphinx(project_var_name,
             out, err = "unknown", "unknown"
 
         if kind == "html":
+            fLOG(
+                "##############################################################")
+            fLOG("check that index.html exists")
             findex = os.path.join(build, kind, "index.html")
             if not os.path.exists(findex):
                 raise FileNotFoundError("something went wrong, unable to find {0}\nCMD\n{1}\nOUT\n{2}\nERR\n{3}\nLAY\n{4}\nINDEX\n{5}"
                                         .format(findex, cmd, out, err, kind, os.path.abspath(findex)))
+
+            fLOG(
+                "##############################################################")
+            verification_html_format(os.path.join(build, kind), fLOG=fLOG)
 
         fLOG(
             "##################################################################################################")

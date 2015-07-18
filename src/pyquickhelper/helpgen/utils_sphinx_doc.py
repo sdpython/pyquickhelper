@@ -686,6 +686,12 @@ def produces_indexes(
             if ":meth:`_" in row[1]:
                 row[1] = row[1].replace(":meth:`_", ":py:meth:`_")
 
+        # we filter private method or functions
+        values = [
+            row for row in values if ":meth:`__" in row or ":meth:`_" not in row]
+        values = [
+            row for row in values if ":func:`__" in row or ":func:`_" not in row]
+
         tbl = DataFrame(
             columns=["_", k, "class parent", "truncated documentation"], data=values)
         if len(tbl.columns) >= 2:
