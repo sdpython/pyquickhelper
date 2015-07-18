@@ -24,7 +24,7 @@ except ImportError:
     import src
 
 from src.pyquickhelper.loghelper.flog import fLOG
-from src.pyquickhelper.helpgen.sphinx_main import generate_changes_repo, produce_code_graph_changes
+from src.pyquickhelper.helpgen.sphinx_main_helper import generate_changes_repo, produce_code_graph_changes
 from src.pyquickhelper.pycode import fix_tkinter_issues_virtualenv
 
 
