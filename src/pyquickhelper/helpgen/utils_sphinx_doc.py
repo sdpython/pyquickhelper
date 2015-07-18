@@ -1598,7 +1598,7 @@ def private_migrating_doxygen_doc(
             refl = refe.search(rows[i])
             while refl:
                 see = "see" in refl.groups()[1]
-                see = " " if see else ""
+                see = ""  # " " if see else ""
                 ty = refl.groups()[4]
                 name = refl.groups()[-2]
                 if len(name) == 0:

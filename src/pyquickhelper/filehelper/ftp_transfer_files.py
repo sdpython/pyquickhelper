@@ -219,7 +219,7 @@ class FolderTransferFTP:
         """
         Applies some preprocessing to the file to transfer.
         It adds the footer for example.
-        It returns a stream which should be closed by using method @see me close_stream
+        It returns a stream which should be closed by using method @see me close_stream.
 
         @param      path            file name
         @param      force_binary    impose a binary transfer

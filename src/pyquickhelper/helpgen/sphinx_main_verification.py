@@ -79,20 +79,24 @@ def verification_html_file(item, fLOG=noLOG):
 
     errors = []
     for i, line in enumerate(lines):
+        if "<h1>Source code for " in line:
+            # no need to go further
+            # the source takes place after this substring
+            break
         if ":ref:`" in line:
-            errors.append((i, "wrong :ref:`"))
+            errors.append((i, "wrong :ref:` in " + line.strp("\n\r ")))
         if ":func:`" in line:
-            errors.append((i, "wrong :func:`"))
+            errors.append((i, "wrong :func:` in " + line.strp("\n\r ")))
         if ":class:`" in line:
-            errors.append((i, "wrong :class:`"))
+            errors.append((i, "wrong :class:` in " + line.strp("\n\r ")))
         if ":meth:`" in line:
-            errors.append((i, "wrong :meth:`"))
+            errors.append((i, "wrong :meth:` in " + line.strp("\n\r ")))
         if ":method:`" in line:
-            errors.append((i, "wrong :method:`"))
+            errors.append((i, "wrong :method:` in " + line.strp("\n\r ")))
         if ">`" in line:
-            errors.append((i, "wrong >`, missing _"))
+            errors.append((i, "wrong >`, missing _ in " + line.strp("\n\r ")))
         find = reg.findall(line)
         if len(find) > 0:
-            errors.append((i, "label or index remaining: " + str(find)))
+            errors.append((i, "label or index remaining: " + str(find) + " in " + line.strp("\n\r ")))
 
     return errors
