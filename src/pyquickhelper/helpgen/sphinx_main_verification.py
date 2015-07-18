@@ -97,6 +97,7 @@ def verification_html_file(item, fLOG=noLOG):
             errors.append((i, "wrong >`, missing _ in " + line.strip("\n\r ")))
         find = reg.findall(line)
         if len(find) > 0:
-            errors.append((i, "label or index remaining: " + str(find) + " in " + line.strip("\n\r ")))
+            errors.append(
+                (i, "label or index remaining: " + str(find) + " in " + line.strip("\n\r ")))
 
     return errors
