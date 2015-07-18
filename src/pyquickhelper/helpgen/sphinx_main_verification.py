@@ -84,19 +84,19 @@ def verification_html_file(item, fLOG=noLOG):
             # the source takes place after this substring
             break
         if ":ref:`" in line:
-            errors.append((i, "wrong :ref:` in " + line.strp("\n\r ")))
+            errors.append((i, "wrong :ref:` in " + line.strip("\n\r ")))
         if ":func:`" in line:
-            errors.append((i, "wrong :func:` in " + line.strp("\n\r ")))
+            errors.append((i, "wrong :func:` in " + line.strip("\n\r ")))
         if ":class:`" in line:
-            errors.append((i, "wrong :class:` in " + line.strp("\n\r ")))
+            errors.append((i, "wrong :class:` in " + line.strip("\n\r ")))
         if ":meth:`" in line:
-            errors.append((i, "wrong :meth:` in " + line.strp("\n\r ")))
+            errors.append((i, "wrong :meth:` in " + line.strip("\n\r ")))
         if ":method:`" in line:
-            errors.append((i, "wrong :method:` in " + line.strp("\n\r ")))
+            errors.append((i, "wrong :method:` in " + line.strip("\n\r ")))
         if ">`" in line:
-            errors.append((i, "wrong >`, missing _ in " + line.strp("\n\r ")))
+            errors.append((i, "wrong >`, missing _ in " + line.strip("\n\r ")))
         find = reg.findall(line)
         if len(find) > 0:
-            errors.append((i, "label or index remaining: " + str(find) + " in " + line.strp("\n\r ")))
+            errors.append((i, "label or index remaining: " + str(find) + " in " + line.strip("\n\r ")))
 
     return errors
