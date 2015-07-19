@@ -436,9 +436,9 @@ class IndexInformation:
         @return     rst link
         """
         if self.label.startswith("_"):
-            return ":ref:`%s`" % self.label[1:]
+            return ":ref:`%s <%s>`" % (self.name, self.label[1:])
         else:
-            return ":ref:`%s`" % self.label
+            return ":ref:`%s <%s>`" % (self.name, self.label)
 
 
 class RstFileHelp:

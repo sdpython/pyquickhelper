@@ -269,14 +269,15 @@ class BlogPostList:
             f.write("\n")
             for item in self:
                 f.write(
-                    "    {0} - {1} <{2}/{3}>\n".format(item.Date, item.Title, item.Date[:4], os.path.split(item.FileName)[-1]))
+                    "    {0} - {1} <{2}/{3}>\n".format(item.Date, item.Title, item.Date[:4], 
+                                os.path.splitext(os.path.split(item.FileName)[-1])[0]))
             f.write("\n\n")
             if hidden_files is not None:
                 f.write(".. toctree::\n")
                 f.write("    :hidden:\n")
                 f.write("\n")
                 for h in hidden_files:
-                    f.write("    " + os.path.split(h)[-1] + "\n")
+                    f.write("    " + os.path.splitext(os.path.split(h)[-1])[0] + "\n")
                 f.write("\n")
 
             f.write("\n")
