@@ -644,7 +644,7 @@ def main_wrapper_tests(codefile,
     folder = os.path.normpath(
         os.path.join(os.path.dirname(codefile), "..", "src"))
     content = [_ for _ in os.listdir(folder) if not _.startswith(
-        "_") and os.path.isdir(os.path.join(folder, _))]
+        "_") and not _.startswith(".") and os.path.isdir(os.path.join(folder, _))]
     if len(content) != 1:
         raise FileNotFoundError(
             "unable to guess the project name in {0}\n{1}".format(folder, "\n".join(content)))
