@@ -287,7 +287,7 @@ class BlogPostList:
             f.write("\n\n\n")
 
             f.write(
-                ":ref:`{0} <blog-blog>`, ".format(TITLES[self.Lang]["main"]))
+                ":ref:`{0} <hblog-blog>`, ".format(TITLES[self.Lang]["main"]))
             f.write(
                 ":ref:`{0} <ap-main-0>`".format(TITLES[self.Lang]["main"]))
             f.write("\n\n\n")
@@ -385,7 +385,7 @@ class BlogPostList:
                        for k, v in self.get_categories_group().items()])
         months = sorted(
             [(k, len(v)) for k, v in self.get_months_group().items()], reverse=True)
-        res = ["", ".. _blog-blog:", "", "", "Blog", "====", "", ""]
+        res = ["", ".. _hblog-blog:", "", "", "Blog", "====", "", ""]
         res.extend(
             ["* :ref:`{0} <ap-main-0>`".format(TITLES[self.Lang]["page1"]), "", ""])
         res.extend([TITLES[self.Lang]["by category:"], "", ""])

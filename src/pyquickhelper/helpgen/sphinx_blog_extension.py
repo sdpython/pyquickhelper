@@ -109,8 +109,8 @@ class BlogPostDirective(Directive):
         env.blogpost_all.append(p)
 
         # we add a title
-        idb = nodes.make_id("blog-" + p["date"] + "-" + p["title"])
-        idbp = nodes.make_id("blogcl-" + p["date"] + "-" + p["title"])
+        idb = nodes.make_id("hblog-" + p["date"] + "-" + p["title"])
+        idbp = nodes.make_id("hblogcl-" + p["date"] + "-" + p["title"])
         section = nodes.section(ids=[idb])
 
         textnodes, messages = self.state.inline_text(p["title"], self.lineno)
