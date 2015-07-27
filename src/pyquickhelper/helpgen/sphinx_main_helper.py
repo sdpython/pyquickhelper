@@ -97,7 +97,7 @@ def add_missing_files(root, conf, blog_list):
         f.write(
             """<br /><a href="{{ pathto('',1) }}/genindex.html">Index</a>\n""")
         f.write(
-            """<a href="{{ pathto('',1) }}/py-modindex.html">Module</a>\n""")
+            """<br /><a href="{{ pathto('',1) }}/py-modindex.html">Module</a>\n""")
         f.write(
             """<br /><a href="{{ pathto('',1) }}/README.html">README</a>\n""")
         f.write(
