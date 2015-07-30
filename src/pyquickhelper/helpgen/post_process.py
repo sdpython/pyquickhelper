@@ -466,6 +466,7 @@ def post_process_latex(st, doall, info=None):
     st = st.replace(r"DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}",
                     r"DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\},fontsize=\small}")
     st = st.replace("\\textquotesingle{}", "'")
+    st = st.replace("\u0001", "\\u1")
 
     # hyperref
     if doall and "%post_process_latex" not in st:

@@ -14,8 +14,8 @@ from .code_helper import remove_extra_spaces_folder
 from .py3to2 import py3to2_convert_tree
 from ..pycode.utils_tests import main_wrapper_tests, default_skip_function
 from ..helpgen import get_help_usage
-from .build_helper import get_build_script, get_script_command, get_extra_script_command, get_script_module
-from ..filehelper import get_url_content_timeout
+from .build_helper import get_build_script, get_script_command, get_extra_script_command, get_script_module, get_pyproj_project
+from ..filehelper import get_url_content_timeout, explore_folder_iterfile
 from .call_setup_hook import call_setup_hook
 from .tkinter_helper import fix_tkinter_issues_virtualenv
 
@@ -186,6 +186,42 @@ def copy27_for_setup(file_or_folder):
     root = os.path.normpath(root)
     dest = os.path.join(root, "dist_module27")
     py3to2_convert_tree(root, dest)
+
+
+def write_pyproj(file_or_folder, location=None):
+    """
+    create a pyproj project to work with `PTVS <>`_ (Python Tools for Visual Studio)
+
+    @param      file_or_folder      file ``setup.py`` or folder which contains it
+    @param      location            if not None, stores the project into this folder
+    """
+    avoid = ["dist", "build", "dist_module27", "_doc"]
+
+    def filter(name):
+        if os.path.splitext(name)[-1] != ".py":
+            return False
+        if "temp_" in name:
+            return False
+        for a in avoid:
+            if name.startswith(a + "\\"):
+                return False
+            if name.startswith(a + "/"):
+                return False
+        return True
+
+    root = get_folder(file_or_folder)
+    root = os.path.normpath(root)
+    name = os.path.split(root)[-1]
+    if location is None:
+        dest = os.path.join(root, "ptvs_project.pyproj")
+    else:
+        dest = os.path.join(location, "ptvs_project.pyproj")
+    all_files = [os.path.relpath(_, root)
+                 for _ in explore_folder_iterfile(root)]
+    all_files = [_ for _ in all_files if filter(_)]
+    pyproj = get_pyproj_project(name, all_files)
+    with open(dest, "w", encoding="utf8") as f:
+        f.write(pyproj.strip())
 
 
 def process_standard_options_for_setup_help():
@@ -363,10 +399,14 @@ def process_standard_options_for_setup(argv,
             else:
                 with open(os.path.join(folder, "auto_cmd_%s.%s" % (c, get_script_extension())), "w") as f:
                     f.write(sc)
-        # script for anybody
 
+        # script for anybody
         write_module_scripts(
             folder, platform=sys.platform, blog_list=blog_list, default_engine_paths=default_engine_paths)
+
+        # pyproj for PTVS
+        if sys.platform.startswith("win"):
+            write_pyproj(folder)
 
         return True
 

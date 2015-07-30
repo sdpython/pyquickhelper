@@ -1,5 +1,5 @@
 """
-@brief      test tree node (time=5s)
+@brief      test tree node (time=10s)
 """
 
 
@@ -23,11 +23,12 @@ except ImportError:
         sys.path.append(path)
     import src
 
-from src.pyquickhelper import fLOG
+from src.pyquickhelper import fLOG, get_temp_folder
 from src.pyquickhelper.pycode.build_helper import get_build_script, get_script_command, get_extra_script_command, _default_nofolder
+from src.pyquickhelper.pycode.setup_helper import write_pyproj
 
 
-class TestBuilScript(unittest.TestCase):
+class TestBuildScript(unittest.TestCase):
 
     def test_build_script(self):
         fLOG(
@@ -94,6 +95,21 @@ class TestBuilScript(unittest.TestCase):
         else:
             # not yet implemented for this platform
             return
+
+    def test_build_pyproj(self):
+        fLOG(
+            __file__,
+            self._testMethodName,
+            OutputPrint=__name__ == "__main__")
+
+        temp = get_temp_folder(__file__, "temp_pyproj")
+        root = os.path.normpath(os.path.join(temp, "..", "..", ".."))
+        write_pyproj(root, temp)
+
+        with open(os.path.join(temp, "ptvs_project.pyproj"), "r", encoding="utf8") as f:
+            content = f.read()
+        assert "build\\" not in content
+        assert "setup_helper.py" in content
 
 
 if __name__ == "__main__":

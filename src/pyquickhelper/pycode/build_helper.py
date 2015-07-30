@@ -7,10 +7,12 @@
 
 import sys
 import os
+import uuid
 from .windows_scripts import windows_error, windows_prefix, windows_setup, windows_notebook
 from .windows_scripts import windows_publish, windows_publish_doc, windows_pypi, setup_script_dependency_py
 from .windows_scripts import windows_prefix_27, windows_unittest27, copy_dist_to_local_pypi
 from .windows_scripts import windows_any_setup_command, windows_blogpost, windows_docserver, windows_build_setup, windows_build
+from .windows_scripts import pyproj_template
 
 #: nick name for no folder
 _default_nofolder = "__NOFOLDERSHOULDNOTEXIST__"
@@ -299,4 +301,25 @@ def get_script_module(command, platform=sys.platform, blog_list=None,
         else:
             script[i] = private_script_replacements(
                 item, None, None, None, default_engine_paths=default_engine_paths)
+    return script
+
+
+def get_pyproj_project(name, file_list):
+    """
+    returns a string which corresponds to a pyproj project
+
+    @param      name            project name
+    @param      file_list       file_list
+    @return                     string
+    """
+    guid = uuid.uuid3(uuid.NAMESPACE_DNS, name)
+    folders = list(_ for _ in sorted(set(os.path.dirname(f)
+                                         for f in file_list)) if len(_) > 0)
+    sfold = "\n".join('    <Folder Include="%s\" />' % _ for _ in folders)
+    sfiles = "\n".join('    <Compile Include="%s\" />' % _ for _ in file_list)
+
+    script = pyproj_template.replace("__GUID__", str(guid)) \
+                            .replace("__NAME__", name) \
+                            .replace("__INCLUDEFILES__", sfiles) \
+                            .replace("__INCLUDEFOLDERS__", sfold)
     return script

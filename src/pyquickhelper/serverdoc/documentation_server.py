@@ -397,7 +397,7 @@ class DocumentationHandler(BaseHTTPRequestHandler):
                 else:
                     # we do not expect the documentation to point to the root
                     # it must be relative paths
-                    localpath = link.lstrip("/")  
+                    localpath = link.lstrip("/")
                     if localpath in [None, "/", ""]:
                         localpath = "index.html"
                     fullpath = os.path.join(value, localpath)

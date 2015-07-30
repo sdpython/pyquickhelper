@@ -12,6 +12,7 @@ tmp/
 *.bak
 *.swp
 *~.nib
+*.pyproj
 local.properties
 .classpath
 .settings/
