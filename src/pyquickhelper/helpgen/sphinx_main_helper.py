@@ -88,21 +88,34 @@ def add_missing_files(root, conf, blog_list):
 
     tocs = []
 
+    # link
+    link = """\n<li class="toctree-l1"><a class="reference internal" href="{0}">{1}</a></li>"""
+
     # moduletoc.html
     mt = os.path.join(loc, "moduletoc.html")
     tocs.append(mt)
     with open(mt, "w", encoding="utf8") as f:
+        f.write("\n<h3>{0}</h3>".format(TITLES[language]["toc0"]))
+        f.write("\n<ul>")
+        f.write(link.format("{{ pathto('',1) }}/blog/main_0000.html", "Blog"))
+        f.write(link.format("{{ pathto('',1) }}/genindex.html", "Index"))
+        f.write(link.format("{{ pathto('',1) }}/py-modindex.html", "Module"))
+        f.write("\n</ul>")
         f.write(
-            """<a href="{{ pathto('',1) }}/blog/main_0000.html">Blog</a>\n""")
-        f.write(
-            """<br /><a href="{{ pathto('',1) }}/genindex.html">Index</a>\n""")
-        f.write(
-            """<br /><a href="{{ pathto('',1) }}/py-modindex.html">Module</a>\n""")
-        f.write(
-            """<br /><a href="{{ pathto('',1) }}/README.html">README</a>\n""")
-        f.write(
-            """<h3><a href="{{ pathto(master_doc) }}">%s</a></h3>\n""" % TITLES[language]["toc"])
+            """\n<h3><a href="{{ pathto(master_doc) }}">%s</a></h3>\n""" % TITLES[language]["toc"])
         f.write("""{{ toctree() }}""")
+        f.write("\n<h3>{0}</h3>".format(TITLES[language]["toc1"]))
+        f.write("\n<ul>")
+        f.write(
+            link.format("{{ pathto('',1) }}/all_FAQ.html", TITLES[language]["FAQ"]))
+        f.write(
+            link.format("{{ pathto('',1) }}/glossary.html", TITLES[language]["glossary"]))
+        f.write(link.format("{{ pathto('',1) }}/README.html", "README"))
+        f.write(
+            link.format("{{ pathto('',1) }}/changes.html", TITLES[language]["changes"]))
+        f.write(
+            link.format("{{ pathto('',1) }}/license.html", TITLES[language]["license"]))
+        f.write("\n</ul>")
 
     # blogtoc.html
     mt = os.path.join(loc, "blogtoc.html")
