@@ -24,6 +24,7 @@ def len_modified(s):
 def df2rst(df, add_line=True, align=None):
     """
     builds a string in RST format from a dataframe
+
     @param      df              dataframe
     @param      add_line        (bool) add a line separator between each row
     @param      align           a string in [l,r,c,p{5cm}] or a list of the same,
@@ -31,6 +32,7 @@ def df2rst(df, add_line=True, align=None):
                                 between column (alignment is left)
     @return                     string
 
+    None values are replaced by empty string (4 spaces).
     It produces the following results:
 
     @code
@@ -101,6 +103,8 @@ def df2rst(df, add_line=True, align=None):
 
     def complete(cool):
         s, i = cool
+        if s is None:
+            s = "    "
         s = str(s) + " "
         i -= 2
         if len_modified(s) < i:
