@@ -91,11 +91,10 @@ Versions / Changes
       see function process_standard_options_for_setup
     * **add:** add format *slides* when converting a notebook
     * **add:** add function write_module_scripts which writes some helpful scripts
-    * **add:** form interacting with Python functions in a notebook, 
-      see notebook :ref:`havingaforminanotebookrst`.
+    * **add:** form interacting with Python functions in a notebook
     * **new:** the automated documentation now tries to split notebooks in slides by adding
-      metadata, see method :meth:`add_tag_slide <pyquickhelper.ipythonhelper.notebook_runner.NotebookRunner.add_tag_slide>`
-    * **add:** function :func:`add_notebook_menu <pyquickhelper.ipythonhelper.helper_in_notebook.add_notebook_menu>` 
+      metadata, see method *pyquickhelper.ipythonhelper.notebook_runner.NotebookRunner.add_tag_slide*
+    * **add:** function *pyquickhelper.ipythonhelper.helper_in_notebook.add_notebook_menu*
       to automatically add a menu in a notebook 
       (which still shows up when the notebook is converted into another format)
     * **add:** the automated documentation now generates files .chm if it is done on Windows.
