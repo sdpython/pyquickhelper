@@ -145,8 +145,15 @@ def df2html(self, class_table=None, class_td=None, class_tr=None,
                                                    clth).join(self.columns) + "</th></tr>")
     septd = "</td><td%s>" % cltd
     strtd = "<tr%s><td%s>" % (cltr, cltd)
+
+    def conv(s):
+        if s is None:
+            return ""
+        else:
+            return str(s)
+
     for row in self.values:
-        s = septd.join([str(_) for _ in row])
+        s = septd.join(conv(_) for _ in row)
         rows.append(strtd + s + "</td></tr>")
     rows.append("</table>")
     rows.append("")
