@@ -55,17 +55,15 @@ This project contains the following folders:
 
 * a source folder: ``src``
 * a unit test folder: ``_unittests``, go to this folder and run ``run_unittests.py``
-* a _doc folder: ``_doc``, it will contain the documentation
+* a folder: ``_doc``, it will contain the documentation, a subfolder ``_doc/sphinxdox/source/blog`` contains blog post
+  to communicate on the module
 * a file ``setup.py`` to build and to install the module, if the source were retrieve from GitHub,
  the script can also be called with the following extra options (``python setup.py <option>``):
     * clean_space: remove extra spaces in the code
-    * clean_pyd: remove files *.pyd
     * build_sphinx: builds the documentation
-    * unittests: run the unit tests, compute the code coverage
-    
-* a script ``build_setup_help_on_windows.bat`` which run the unit tests, builds the setups and generate the documentaton on Windows
-* a script ``build_setup_help_on_linux.sh`` which does almost the same on Linux
-* a script ``publish_on_pipy.bat``
+    * unittests: run the unit tests, compute the code coverage    
+* a script ``build_script.bat`` which produces many script on Windows to easily run the setup,
+  generate the documentation, run the unit tests.
 
 Versions / Changes
 ------------------
@@ -75,6 +73,7 @@ Versions / Changes
       *this might break classes taking dependency on it*
     * **add:** function write_pyproj to generate a file ``.pyproj``
       to be used by `PTVS <http://microsoft.github.io/PTVS/>`_.
+    * **add:** directive RunPythonDirective to generate documentation from a script
 * **1.1 - 2015/05/24**
     * **fix:** shorten setup.py, move functionalities to the module, move utils_test.py to subfolder pycode
     * **change:** improve the generation of automated documentation

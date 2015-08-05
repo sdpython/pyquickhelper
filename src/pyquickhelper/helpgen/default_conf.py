@@ -338,6 +338,8 @@ def custom_setup(app, author):
     from .sphinx_blog_extension import visit_blogpostagg_node, depart_blogpostagg_node
     from .sphinx_blog_extension import blogpost_node, blogpostagg_node
     from .sphinx_blog_extension import BlogPostDirective, BlogPostDirectiveAgg
+    from .sphinx_run_script_extension import RunPythonDirective
+    from .sphinx_run_script_extension import runpython_node, visit_runpython_node, depart_runpython_node
 
     app.connect("autodoc-skip-member", skip)
     app.add_config_value('author', author, True)
@@ -357,8 +359,14 @@ def custom_setup(app, author):
                  latex=(visit_blogpostagg_node, depart_blogpostagg_node),
                  text=(visit_blogpostagg_node, depart_blogpostagg_node))
 
+    app.add_node(runpython_node,
+                 html=(visit_runpython_node, depart_runpython_node),
+                 latex=(visit_runpython_node, depart_runpython_node),
+                 text=(visit_runpython_node, depart_runpython_node))
+
     app.add_directive('blogpost', BlogPostDirective)
     app.add_directive('blogpostagg', BlogPostDirectiveAgg)
+    app.add_directive('runpython', RunPythonDirective)
     #app.add_directive('blogpostlist', BlogPostListDirective)
     #app.connect('doctree-resolved', process_blogpost_nodes)
     #app.connect('env-purge-doc', purge_blogpost)

@@ -19,6 +19,7 @@ from ..filehelper.synchelper import explore_folder
 from .utils_sphinx_config import ie_layout_html
 from .blog_post_list import BlogPostList
 from .sphinx_blog_extension import BlogPostDirective, BlogPostDirectiveAgg
+from .sphinx_run_script_extension import RunPythonDirective
 from .post_process import post_process_latex_output
 from .process_notebooks import process_notebooks, add_notebook_page
 from .sphinx_helper import post_process_html_nb_output_static_file
@@ -189,6 +190,11 @@ def generate_help_sphinx(project_var_name,
 
             "C:\\Program Files (x86)\\HTML Help Workshop\\hhc.exe" build\\htmlhelp\\<module>.hhp
 
+    .. versionadded:: 1.2
+        The documentation includes blog (with sphinx command ``.. blogpost::``
+        and python scripts ``.. runpython::``. The second command runs a python
+        script which outputs RST documntation adds it to the current documentation.
+
     """
     setup_environment_for_help()
 
@@ -219,6 +225,7 @@ def generate_help_sphinx(project_var_name,
 
     directives.register_directive("blogpost", BlogPostDirective)
     directives.register_directive("blogpostagg", BlogPostDirectiveAgg)
+    directives.register_directive("runpython", RunPythonDirective)
 
     if "conf" in sys.modules:
         raise ImportError("module conf was imported, this function expects not to:\n{0}".format(
