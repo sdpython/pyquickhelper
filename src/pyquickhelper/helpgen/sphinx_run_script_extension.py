@@ -6,15 +6,10 @@ See `Tutorial: Writing a simple extension <http://sphinx-doc.org/extdev/tutorial
 
 .. versionadded:: 1.2
 """
-import os
 import sys
-from docutils import nodes, parsers, core
+from docutils import nodes, core
 from docutils.parsers.rst import Directive
-from sphinx.locale import _ as _locale
 from docutils.parsers.rst import directives
-from docutils.statemachine import StringList
-from sphinx import addnodes
-from sphinx.util.nodes import set_source_info, process_index_entry
 from .texts_language import TITLES
 from io import StringIO
 
@@ -143,9 +138,6 @@ class RunPythonDirective(Directive):
         else:
             # otherwise, it means sphinx is running
             pass
-
-        # settings and configuration
-        config = env.config
 
         # post
         p = {

@@ -685,6 +685,8 @@ def main_wrapper_tests(codefile,
 
             cov.stop()
             cov.html_report(directory=report_folder)
+            outfile = os.path.join(report_folder, "coverage_report.xml")
+            cov.xml_report(outfile=outfile)
 
         else:
             tested_module(src_abs, project_var_name)
