@@ -85,7 +85,7 @@ class RunPythonDirective(Directive):
         * ``:sin:<text_for_in>`` which text to display before the code (by default *In*)
         * ``:sout:<text_for_in>`` which text to display before the output (by default *Out*)
 
-    Option *rst* can be used the following way:
+    Option *rst* can be used the following way::
 
         .. runpython::
             :rst:
