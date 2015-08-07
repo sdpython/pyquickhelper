@@ -604,7 +604,7 @@ def main_wrapper_tests(codefile,
 
     .. versionchanged:: 1.2
         Parameter *only_setup_hook* was added.
-
+        Save the report in XML format, binary format, replace full paths by relative path.
     """
     runner = unittest.TextTestRunner(verbosity=0, stream=io.StringIO())
     path = os.path.abspath(os.path.join(os.path.split(codefile)[0]))
@@ -676,8 +676,16 @@ def main_wrapper_tests(codefile,
 
             print("current folder", os.getcwd())
             print("enabling coverage", srcp)
+            dfile = os.path.join(report_folder, ".coverage")
+
+            # we clean previous report
+            for afile in os.listdir(report_folder):
+                full = os.path.join(report_folder, afile)
+                os.remove(full)
+
+            # we run the coverage
             from coverage import coverage
-            cov = coverage(source=[srcp])
+            cov = coverage(source=[srcp], data_file=dfile)
             cov.exclude('if __name__ == "__main__"')
             cov.start()
 
@@ -687,6 +695,22 @@ def main_wrapper_tests(codefile,
             cov.html_report(directory=report_folder)
             outfile = os.path.join(report_folder, "coverage_report.xml")
             cov.xml_report(outfile=outfile)
+            cov.save()
+
+            # we clean absolute path from the produced files
+            print("replace ", srcp, ' by ', project_var_name)
+            srcp = [os.path.abspath(os.path.normpath(srcp)),
+                    os.path.normpath(srcp)]
+            bsrcp = [bytes(b, encoding="utf-8") for b in srcp]
+            bproj = bytes(project_var_name, encoding="utf-8")
+            for afile in os.listdir(report_folder):
+                full = os.path.join(report_folder, afile)
+                with open(full, "rb") as f:
+                    content = f.read()
+                for b in bsrcp:
+                    content = content.replace(b, bproj)
+                with open(full, "wb") as f:
+                    f.write(content)
 
         else:
             tested_module(src_abs, project_var_name)
