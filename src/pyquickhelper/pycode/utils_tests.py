@@ -679,9 +679,10 @@ def main_wrapper_tests(codefile,
             dfile = os.path.join(report_folder, ".coverage")
 
             # we clean previous report
-            for afile in os.listdir(report_folder):
-                full = os.path.join(report_folder, afile)
-                os.remove(full)
+            if os.path.exists(report_folder):
+                for afile in os.listdir(report_folder):
+                    full = os.path.join(report_folder, afile)
+                    os.remove(full)
 
             # we run the coverage
             from coverage import coverage
