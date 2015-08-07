@@ -23,6 +23,8 @@ TITLES = {
            "license": "License",
            "changes": "Changes",
            "FAQ": "FAQ",
+           "In": "In",
+           "Out": "Out",
            },
     'fr': {"blogpost": "article",
            "toc": "Contenu",
@@ -42,5 +44,7 @@ TITLES = {
            "license": "Licence",
            "changes": "Changements",
            "FAQ": "FAQ",
+           "In": "Code",
+           "Out": "Sortie",
            }
 }

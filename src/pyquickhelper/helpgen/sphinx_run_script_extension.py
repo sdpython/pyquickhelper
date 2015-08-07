@@ -8,7 +8,7 @@ See `Tutorial: Writing a simple extension <http://sphinx-doc.org/extdev/tutorial
 """
 import os
 import sys
-from docutils import nodes
+from docutils import nodes, parsers, core
 from docutils.parsers.rst import Directive
 from sphinx.locale import _ as _locale
 from docutils.parsers.rst import directives
@@ -67,24 +67,55 @@ class RunPythonDirective(Directive):
     The following code prints the version of Python
     on the standard output. It it added to the documentation::
 
-        import sys
-        print("::")
-        print("    " + str(sys.version_info))
+        .. runpython::
+            :showcode:
+
+            import sys
+            print("sys.version_info=",str(sys.version_info))
 
     If give the following results:
 
     .. runpython::
+        :showcode:
 
         import sys
-        print("::")
-        print("    " + str(sys.version_info))
+        print("sys.version_info=",str(sys.version_info))
 
     @endexample
+
+    The directive has three options:
+        * ``:indent:<int>`` to indent the output
+        * ``:showcode:`` to show the code before its output
+        * ``:rst:`` to interpret the output, otherwise, it is condered as raw text
+        * ``:sin:<text_for_in>`` which text to display before the code (by default *In*)
+        * ``:sout:<text_for_in>`` which text to display before the output (by default *Out*)
+
+    Option *rst* can be used the following way:
+
+        .. runpython::
+            :rst:
+
+            for l in range(0,10):
+                print("**line**", "*" +str(l)+"*")
+                print('')
+
+    Which displays interpreted RST:
+
+    .. runpython::
+        :rst:
+
+        for l in range(0,10):
+            print("**line**", "*" +str(l)+"*")
+            print('')
     """
     required_arguments = 0
     optional_arguments = 0
     final_argument_whitespace = True
     option_spec = {'indent': directives.unchanged,
+                   'showcode': directives.unchanged,
+                   'rst': directives.unchanged,
+                   'sin': directives.unchanged,
+                   'sout': directives.unchanged,
                    }
     has_content = True
     runpython_class = runpython_node
@@ -119,19 +150,18 @@ class RunPythonDirective(Directive):
         # post
         p = {
             'indent': int(self.options.get("indent", 1)),
+            'showcode': 'showcode' in self.options,
+            'rst': 'rst' in self.options,
+            'sin': self.options.get('sin', TITLES[language_code]["In"]),
+            'sout': self.options.get('sout', TITLES[language_code]["Out"]),
         }
-
-        # build node
-        node = self.__class__.runpython_class(ids=[], indent=p["indent"])
-
-        # we add the date
-        content = self.content
 
         # run the script
         content = ["if True:"]
         for line in self.content:
             content.append("    " + line)
         script = "\n".join(content)
+        script_disp = "\n".join(content[1:])
         out, err = run_python_script(script)
         content = out
         if len(err) > 0:
@@ -141,13 +171,42 @@ class RunPythonDirective(Directive):
         lines = content.split("\n")
         if p['indent'] > 0:
             lines = [(" " * p['indent'] + _) for _ in lines]
+        content = "\n".join(lines)
 
-        content = StringList(lines)
+        # not needed
+        # lines_content = StringList(lines)
 
-        # parse the content into sphinx directive, we add it to section
-        paragraph = nodes.paragraph()
-        self.state.nested_parse(content, self.content_offset, paragraph)
-        node += paragraph
+        # build node
+        node = self.__class__.runpython_class(rawsource=content,
+                                              indent=p["indent"],
+                                              showcode=p["showcode"],
+                                              rst=p["rst"],
+                                              sin=p["sin"],
+                                              sout=p["sout"])
+
+        if p["showcode"]:
+            pin = nodes.paragraph(text=p["sin"])
+            pcode = nodes.literal_block(script_disp, script_disp)
+            node += pin
+            node += pcode
+            pin = nodes.paragraph(text=p["sout"])
+            node += pin
+
+        if p["rst"]:
+
+            settings_overrides = {'output_encoding': 'unicode',
+                                  'doctitle_xform': True,
+                                  'initial_header_level': 2,
+                                  'warning_stream': StringIO()}
+
+            dt = core.publish_doctree(
+                content, settings_overrides=settings_overrides)
+            for ch in dt.children:
+                node += ch
+        else:
+            pout = nodes.literal_block(content, content)
+            node += pout
+
         p['runpython'] = node
 
         # classes
