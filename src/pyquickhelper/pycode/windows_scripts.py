@@ -59,8 +59,8 @@ set PYTHONPATH=
 cd dist_module27\\_unittests
 
 for /d %%d in (ut_*) do (
-    @echo ~CALL %pythonexe27%\\..\\Scripts\\nosetests.exe -w %%d
-    %pythonexe27%\\..\\Scripts\\nosetests.exe -w %%d
+    @echo ~CALL %pythonexe27%\\..\\Scripts\\nosetests.exe -w %%d --stop
+    %pythonexe27%\\..\\Scripts\\nosetests.exe -w %%d --stop
     if %errorlevel% neq 0 exit /b %errorlevel%
 )
 
