@@ -62,7 +62,7 @@ This project contains the following folders:
 * a folder: *_doc*, it will contain the documentation, a subfolder *_doc/sphinxdox/source/blog* contains blog post
   to communicate on the module
 * a file *setup.py* to build and to install the module, if the source were retrieve from GitHub,
- the script can also be called with the following extra options (*python setup.py <option>*):
+  the script can also be called with the following extra options (*python setup.py <option>*):
     * clean_space: remove extra spaces in the code
     * build_sphinx: builds the documentation
     * unittests: run the unit tests, compute the code coverage    
@@ -104,4 +104,3 @@ Versions, Changes
     * **add:** the automated documentation now generates files .chm if it is done on Windows.
     * **new:** method merge_notebook to merge notebooks into one
     * **new:** method nb2slides to convert a notebook into slides
-

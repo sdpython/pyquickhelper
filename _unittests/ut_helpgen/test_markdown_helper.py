@@ -23,7 +23,7 @@ except ImportError:
     import src
 
 from src.pyquickhelper.loghelper.flog import fLOG
-from src.pyquickhelper.helpgen.markdown_helper import parse_markdown
+from src.pyquickhelper.helpgen.markdown_helper import parse_markdown, yield_sphinx_only_markup_for_pipy
 from src.pyquickhelper.helpgen import rst2html
 
 if sys.version_info[0] == 2:
@@ -62,7 +62,11 @@ class TestHelperMarkdown(unittest.TestCase):
             raise Exception("IN\n{0}\nOUT:{1}".format(m, str(r)))
 
         ht = rst2html(content)
-        fLOG(ht)
+        # fLOG(ht)
+        assert len(ht) > 0
+        spl = content.split("\n")
+        r = list(yield_sphinx_only_markup_for_pipy(spl))
+        assert len(r) == len(spl)
 
     def test_parse_readme_cb(self):
         fLOG(
@@ -85,7 +89,12 @@ class TestHelperMarkdown(unittest.TestCase):
             raise Exception("IN\n{0}\nOUT:{1}".format(m, str(r)))
 
         ht = rst2html(content)
-        fLOG(ht)
+        # fLOG(ht)
+        assert len(ht) > 0
+
+        spl = content.split("\n")
+        r = list(yield_sphinx_only_markup_for_pipy(spl))
+        assert len(r) == len(spl)
 
 if __name__ == "__main__":
     unittest.main()
