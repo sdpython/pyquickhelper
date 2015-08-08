@@ -3,7 +3,6 @@
 @brief Helpers for markdown functionalities, it requires dependencies on `mistune <https://pypi.python.org/pypi/mistune>`_.
 """
 import re
-import io
 
 
 def parse_markdown(text):
@@ -67,8 +66,7 @@ def yield_sphinx_only_markup_for_pipy(lines):
             for (regex, sub) in regex_subs:
                 line = regex.sub(sub, line)
         except Exception as ex:
-            print("ERROR: %s, (line(%s)" % (regex, sub))
-            raise ex
+            raise Exception("ERROR: %s, (line(%s)" % (regex, sub)) from ex
 
         return line
 

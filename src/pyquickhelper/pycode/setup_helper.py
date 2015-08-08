@@ -305,6 +305,7 @@ def process_standard_options_for_setup(argv,
     """
     folder = file_or_folder if os.path.isdir(
         file_or_folder) else os.path.dirname(file_or_folder)
+    unit_test_folder = os.path.join(folder, "_unittests")
 
     if "clean_space" in argv:
         rem = clean_space_for_setup(file_or_folder)
@@ -389,7 +390,8 @@ def process_standard_options_for_setup(argv,
                 continue
             sc = get_extra_script_command(
                 c, project_var_name, requirements=requirements, port=port, platform=sys.platform,
-                default_engine_paths=default_engine_paths)
+                default_engine_paths=default_engine_paths,
+                unit_test_folder=unit_test_folder)
             if sc is None:
                 continue
             if c == "setupdep":

@@ -58,11 +58,14 @@ set PYTHONPATH=
 @echo ~SET PYTHONPATH=
 cd dist_module27\\_unittests
 
-for /d %%d in (ut_*) do (
-    @echo ~CALL %pythonexe27%\\..\\Scripts\\nosetests.exe -w %%d --stop
-    %pythonexe27%\\..\\Scripts\\nosetests.exe -w %%d --stop
-    if %errorlevel% neq 0 exit /b %errorlevel%
-)
+rem errorlevel does not work well in a loop
+rem for /d %%d in (ut_*) do (
+rem     @echo ~CALL %pythonexe27%\\..\\Scripts\\nosetests.exe -w %%d
+rem     %pythonexe27%\\..\\Scripts\\nosetests.exe -w %%d
+rem     if %errorlevel% neq 0 exit /b %errorlevel%
+rem )
+
+__LOOP_UNITTEST_FOLDERS__
 
 """ + windows_error + "\ncd ..\.."
 

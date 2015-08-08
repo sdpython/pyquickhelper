@@ -164,7 +164,7 @@ def get_script_command(command, module, requirements, port=8067, platform=sys.pl
 
 
 def get_extra_script_command(command, module, requirements, port=8067, blog_list=None, platform=sys.platform,
-                             default_engine_paths=None):
+                             default_engine_paths=None, unit_test_folder=None):
     """
     produces a script which runs the notebook, a documentation server, which
     publishes...
@@ -177,6 +177,7 @@ def get_extra_script_command(command, module, requirements, port=8067, blog_list
     @param      blog_list               list of blog to listen for this module (usually stored in ``module.__blog__``)
     @param      platform                platform (only Windows)
     @param      default_engine_paths    define the default location for python engine, should be dictionary *{ engine: path }*, see below.
+    @param      unit_test_folder        unit test folders, used for command ``run27``
     @return                             scripts
 
     The available list of commands is given by function @see fn process_standard_options_for_setup.
@@ -196,6 +197,16 @@ def get_extra_script_command(command, module, requirements, port=8067, blog_list
     elif command == "run27":
         script = "\n".join(
             [windows_prefix_27, windows_unittest27, windows_error])
+        if unit_test_folder is None:
+            raise FileNotFoundError(
+                "the unit test folder must be specified and cannot be None")
+        if not os.path.exists(unit_test_folder):
+            raise FileNotFoundError(
+                "the unit test folder must exist: " + unit_test_folder)
+        ut_ = [("%pythonexe27%\\..\\Scripts\\nosetests.exe -w " + _)
+               for _ in os.listdir(unit_test_folder) if _.startswith("ut_")]
+        stut = "\nif %errorlevel% neq 0 exit /b %errorlevel%\n".join(ut_)
+        script = script.replace("__LOOP_UNITTEST_FOLDERS__", stut)
     elif command == "build27":
         script = "\n".join([windows_prefix_27, "cd dist_module27", "rmdir /S /Q dist",
                             windows_setup.replace(
