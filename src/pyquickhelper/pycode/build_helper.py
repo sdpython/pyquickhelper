@@ -312,7 +312,12 @@ def get_pyproj_project(name, file_list):
     @param      file_list       file_list
     @return                     string
     """
-    guid = uuid.uuid3(uuid.NAMESPACE_DNS, name)
+    if sys.version_info[0] == 2:
+        n = "".join([c for c in name if "a" <= c <=
+                     "z" or "A" <= c <= "Z" or "0" <= c <= "9"])
+        guid = uuid.uuid3(uuid.NAMESPACE_DNS, n)
+    else:
+        guid = uuid.uuid3(uuid.NAMESPACE_DNS, name)
     folders = list(_ for _ in sorted(set(os.path.dirname(f)
                                          for f in file_list)) if len(_) > 0)
     sfold = "\n".join('    <Folder Include="%s\" />' % _ for _ in folders)

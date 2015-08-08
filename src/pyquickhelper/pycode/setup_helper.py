@@ -194,6 +194,8 @@ def write_pyproj(file_or_folder, location=None):
 
     @param      file_or_folder      file ``setup.py`` or folder which contains it
     @param      location            if not None, stores the project into this folder
+
+    This functionality fails with Python 2.7 (encoding).
     """
     avoid = ["dist", "build", "dist_module27", "_doc"]
 

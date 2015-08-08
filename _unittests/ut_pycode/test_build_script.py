@@ -104,6 +104,11 @@ class TestBuildScript(unittest.TestCase):
 
         temp = get_temp_folder(__file__, "temp_pyproj")
         root = os.path.normpath(os.path.join(temp, "..", "..", ".."))
+
+        if sys.version_info[0] == 2:
+            # not available
+            return
+
         write_pyproj(root, temp)
 
         with open(os.path.join(temp, "ptvs_project.pyproj"), "r", encoding="utf8") as f:
