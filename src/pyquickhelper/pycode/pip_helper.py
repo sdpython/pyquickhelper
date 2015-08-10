@@ -1,6 +1,6 @@
 """
 @file
-@brief Various function aruond pip
+@brief Helpers for pip
 
 Some links to look:
 
@@ -13,7 +13,6 @@ from pip.commands.show import search_packages_info
 
 
 class PQPipError (Exception):
-
     """
     any exception raised by one of the following function
     """
