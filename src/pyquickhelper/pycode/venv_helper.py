@@ -35,7 +35,7 @@ def build_venv_cmd(params, posparams):
 
 
 def create_virtual_env(where, symlinks=False, system_site_packages=False,
-                       clear=True, packages=None, fLOG=noLOG,
+                       clear=True, packages=None, fLOG=print,
                        temp_folder=None):
     """
     .. index:: virtual environment
@@ -81,18 +81,34 @@ def create_virtual_env(where, symlinks=False, system_site_packages=False,
         raise VirtualEnvError(
             "unable to create virtual environement at {2}\nCMD:\n{3}\nOUT:\n{0}\nERR:\n{1}".format(out, err, where, cmd))
 
+    if sys.platform.startswith("win"):
+        scripts = os.path.join(where, "Scripts")
+    else:
+        scripts = os.path.join(where, "bin")
+
+    if not os.path.exists(scripts):
+        files = "\n  ".join(os.listdir(where))
+        raise FileNotFoundError(
+            "unable to find {0}, content:\n  {1}".format(scripts, files))
+
+    in_scripts = os.listdir(scripts)
+    pips = [_ for _ in in_scripts if _.startswith("pip")]
+    if len(pips) == 0:
+        out += venv_install(where, "pip", fLOG=fLOG,
+                            temp_folder=temp_folder)
+    out += venv_install(where, "pymyinstall", fLOG=fLOG,
+                        temp_folder=temp_folder)
+
     if packages is not None and len(packages) > 0:
         fLOG("install packages in:", where)
-        if "pymyinstall" in packages:
-            packages = [_ for _ in packages if _ != "pymyinstall"]
-        out += venv_install(where, "pymyinstall", fLOG=fLOG,
-                            temp_folder=temp_folder)
-        out += venv_install(where, packages, fLOG=fLOG,
-                            temp_folder=temp_folder)
+        packages = [_ for _ in packages if _ != "pymyinstall" and _ != "pip"]
+        if len(packages) > 0:
+            out += venv_install(where, packages, fLOG=fLOG,
+                                temp_folder=temp_folder)
     return out
 
 
-def venv_install(venv, packages, fLOG=noLOG, temp_folder=None):
+def venv_install(venv, packages, fLOG=print, temp_folder=None):
     """
     install a package or a list of packages in a virtual environment
 
@@ -106,39 +122,69 @@ def venv_install(venv, packages, fLOG=noLOG, temp_folder=None):
         temp_folder = os.path.join(venv, "download")
 
     if isinstance(packages, str):
-        if packages == "pymyinstall":
+        packages = [packages]
+
+    if packages == "pip":
+        from .get_pip import __file__ as pip_loc
+        ppath = os.path.abspath(pip_loc.replace(".pyc", ".py"))
+        script = ["-m", ppath]
+        return run_venv_script(venv, script, fLOG=fLOG, is_cmd=True)
+    elif packages == "pymyinstall":
+        if sys.platform.startswith("win"):
             pip = os.path.join(venv, "Scripts", "pip")
-            cmd = pip + " install pymyinstall"
-            out, err = run_cmd(cmd, wait=True, fLOG=fLOG)
-            if len(err) > 0:
-                raise VirtualEnvError(
-                    "unable to install pymyinstall at {2}\nCMD:\n{3}\nOUT:\n{0}\nERR:\n{1}".format(out, err, venv, cmd))
-            return out
         else:
-            packages = [packages]
+            pip = os.path.join(venv, "bin", "pip")
+        cmd = pip + " install pymyinstall"
+        out, err = run_cmd(cmd, wait=True, fLOG=fLOG)
+        if len(err) > 0:
+            raise VirtualEnvError(
+                "unable to install pymyinstall at {2}\nCMD:\n{3}\nOUT:\n{0}\nERR:\n{1}".format(out, err, venv, cmd))
+        return out
+    else:
+        p = os.path.normpath(os.path.join(
+            os.path.abspath(os.path.dirname(__file__)), "..", ".."))
+        l = ','.join("'{0}'".format(_) for _ in packages)
+        script = ["import sys",
+                  "sys.path.append('{0}')".format(p.replace("\\", "\\\\")),
+                  "import pymyinstall",
+                  "ps=[{0}]".format(l),
+                  "t='{0}'".format(temp_folder.replace("\\", "\\\\")),
+                  "pymyinstall.packaged.install_all(temp_folder=t,list_module=ps)"]
+        return run_venv_script(venv, "\n".join(script), fLOG=fLOG)
 
-    l = ','.join("'{0}'".format(_) for _ in packages)
-    script = ["import pymyinstall",
-              "ps=[{0}]".format(l),
-              "t='{0}'".format(temp_folder.replace("\\", "\\\\")),
-              "pymyinstall.packaged.install_all(temp_folder=t,list_module=ps)"]
-    return run_venv_script(venv, "\n".join(script), fLOG=fLOG)
 
-
-def run_venv_script(venv, script, fLOG=noLOG):
+def run_venv_script(venv, script, fLOG=print, file=False, is_cmd=False):
     """
     run a script on a vritual environment (the script should be simple
 
     @param      venv        virtual environment
     @param      script      script as a string (not a file)
     @param      fLOG        logging function
+    @param      file        is script a file or a string to execute
+    @param      is_cmd      if True, script is a command line to run (as a list) for python executable
     @return                 output
     """
-    script = ";".join(script.split("\n"))
-    exe = os.path.join(venv, "Scripts", "python")
-    cmd = " ".join([exe, "-u", "-c", '"{0}"'.format(script)])
-    out, err = run_cmd(cmd, wait=True, fLOG=fLOG)
-    if len(err) > 0:
-        raise VirtualEnvError(
-            "unable to install packages at {2}\nCMD:\n{3}\nOUT:\n{0}\nERR:\n{1}".format(out, err, venv, cmd))
-    return out
+    if sys.platform.startswith("win"):
+        exe = os.path.join(venv, "Scripts", "python")
+    else:
+        exe = os.path.join(venv, "bin", "python")
+    if is_cmd:
+        cmd = " ".join(script)
+        out, err = run_cmd(cmd, wait=True, fLOG=fLOG)
+        if len(err) > 0:
+            raise VirtualEnvError(
+                "unable to run cmd at {2}\nCMD:\n{3}\nOUT:\n{0}\nERR:\n{1}".format(out, err, venv, cmd))
+        return out
+    else:
+        script = ";".join(script.split("\n"))
+        if file:
+            if not os.path.exists(script):
+                raise FileNotFoundError(script)
+            cmd = " ".join([exe, "-u", '"{0}"'.format(script)])
+        else:
+            cmd = " ".join([exe, "-u", "-c", '"{0}"'.format(script)])
+        out, err = run_cmd(cmd, wait=True, fLOG=fLOG)
+        if len(err) > 0:
+            raise VirtualEnvError(
+                "unable to run script at {2}\nCMD:\n{3}\nOUT:\n{0}\nERR:\n{1}".format(out, err, venv, cmd))
+        return out

@@ -42,23 +42,40 @@ class TestReadme(unittest.TestCase):
         with open(readme, "r", encoding="utf8") as f:
             content = f.read()
 
-        spl = content.split("\n")
-        r = list(yield_sphinx_only_markup_for_pipy(spl))
-        assert len(r) == len(spl)
-
         temp = get_temp_folder(__file__, "temp_readme")
         out = create_virtual_env(temp, fLOG=fLOG, packages=["docutils==0.8"])
         outfile = os.path.join(temp, "conv_readme.html")
 
         script = ["from docutils import core",
+                  "import io",
+                  'from docutils.readers.standalone import Reader',
+                  'from docutils.parsers.rst import Parser',
+                  'from docutils.parsers.rst.directives.images import Image',
+                  'from docutils.parsers.rst.directives import _directives',
+                  'from docutils.writers.html4css1 import Writer',
+                  "from docutils.languages import _languages",
+                  "from docutils.languages import en, fr",
+                  "_languages['en'] = en",
+                  "_languages['fr'] = fr",
+                  "_directives['image'] = Image",
+                  "with open('{0}', 'r', encoding='utf8') as g: s = g.read()".format(
+                      readme.replace("\\", "\\\\")),
                   "settings_overrides = {'output_encoding': 'unicode', 'doctitle_xform': True, 'initial_header_level': 2, 'warning_stream': io.StringIO()}",
-                  "parts = core.publish_parts(source=s, source_path=None, destination_path=None, writer_name='html', settings_overrides=settings_overrides)",
-                  "with open('{0}', 'w', encoding='utf8') as f:".format(
-                      outfile),
-                  "    f.write(parts['whole']",
+                  "parts = core.publish_parts(source=s, parser=Parser(), reader=Reader(), source_path=None, destination_path=None, writer=Writer(), settings_overrides=settings_overrides)",
+                  "with open('{0}', 'w', encoding='utf8') as f: f.write(parts['whole'])".format(
+                      outfile.replace("\\", "\\\\")),
                   ]
 
-        out = run_venv_script(temp, "\n".join(script), fLOG=fLOG)
+        file_script = os.path.join(temp, "testreadme.py")
+        with open(file_script, "w") as f:
+            f.write("\n".join(script))
+
+        out = run_venv_script(temp, file_script, fLOG=fLOG, file=True)
+        with open(outfile, "r", encoding="utf8") as h:
+            content = h.read()
+
+        if "System Message" in content:
+            raise Exception(content)
 
 
 if __name__ == "__main__":
