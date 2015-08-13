@@ -198,6 +198,7 @@ if not r:
             "notebook",
             "nbformat",
             "ipython_genutils",
+            "jupyter_console",
             "traitlets",
             "pickleshare",
             "path.py",
