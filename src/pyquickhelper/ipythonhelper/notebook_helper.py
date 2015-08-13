@@ -6,11 +6,18 @@ import io
 import os
 import sys
 import time
-from IPython.nbformat import versions
-from IPython.nbformat.reader import reads
+
+try:
+    from nbformat import versions
+    from nbformat.reader import reads
+    from nbformat.v4 import upgrade
+except ImportError:
+    from IPython.nbformat import versions
+    from IPython.nbformat.reader import reads
+    from IPython.nbformat.v4 import upgrade
+
 from .notebook_runner import NotebookRunner
 from ..loghelper.flog import noLOG
-from IPython.nbformat.v4 import upgrade
 from .notebook_exception import NotebookException
 
 if sys.version_info[0] == 2:

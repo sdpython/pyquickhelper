@@ -24,31 +24,58 @@ def get_exporter(format):
     available formats: slides, pdf, latex, markdown, html, rst, python, notebook, template
     """
     if format == "python":
-        from IPython.nbconvert import PythonExporter
+        try:
+            from nbconvert import PythonExporter
+        except ImportError:
+            from IPython.nbconvert import PythonExporter
         return PythonExporter
     elif format == "slides":
-        from IPython.nbconvert import SlidesExporter
+        try:
+            from nbconvert import SlidesExporter
+        except ImportError:
+            from IPython.nbconvert import SlidesExporter
         return SlidesExporter
     elif format == "html":
-        from IPython.nbconvert import HTMLExporter
+        try:
+            from nbconvert import HTMLExporter
+        except ImportError:
+            from IPython.nbconvert import HTMLExporter
         return HTMLExporter
     elif format == "pdf":
-        from IPython.nbconvert import PDFExporter
+        try:
+            from nbconvert import PDFExporter
+        except ImportError:
+            from IPython.nbconvert import PDFExporter
         return PDFExporter
     elif format == "template":
-        from IPython.nbconvert import TemplateExporter
+        try:
+            from nbconvert import TemplateExporter
+        except ImportError:
+            from IPython.nbconvert import TemplateExporter
         return TemplateExporter
     elif format == "markdown":
-        from IPython.nbconvert import MarkdownExporter
+        try:
+            from nbconvert import MarkdownExporter
+        except ImportError:
+            from IPython.nbconvert import MarkdownExporter
         return MarkdownExporter
     elif format == "notebook":
-        from IPython.nbconvert import NotebookExporter
+        try:
+            from nbconvert import NotebookExporter
+        except ImportError:
+            from IPython.nbconvert import NotebookExporter
         return NotebookExporter
     elif format == "rst":
-        from IPython.nbconvert import RSTExporter
+        try:
+            from nbconvert import RSTExporter
+        except ImportError:
+            from IPython.nbconvert import RSTExporter
         return RSTExporter
     elif format == "lagex":
-        from IPython.nbconvert import LatexExporter
+        try:
+            from nbconvert import LatexExporter
+        except ImportError:
+            from IPython.nbconvert import LatexExporter
         return LatexExporter
     else:
         form = "slides, pdf, latex, markdown, html, rst, python, notebook, template"

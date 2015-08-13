@@ -41,7 +41,7 @@ class TestReadme(unittest.TestCase):
         assert os.path.exists(readme)
         with open(readme, "r", encoding="utf8") as f:
             content = f.read()
-            
+
         return
         # temporarily
 

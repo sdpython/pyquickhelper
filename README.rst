@@ -79,6 +79,8 @@ Versions, Changes
       to be used by `PTVS <http://microsoft.github.io/PTVS/>`_.
     * **add:** directive RunPythonDirective to generate documentation from a script
     * **new:** function *create_virtual_env* to create a virtual environment and write unit tests using them
+    * **new:** update to Jupyter 4.0 (add dependencies on notebook, nbformat, ...)
+
 * **1.1 - 2015/05/24**
     * **fix:** shorten setup.py, move functionalities to the module, 
       move utils_test.py to subfolder pycode

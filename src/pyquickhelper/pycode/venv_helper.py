@@ -23,6 +23,9 @@ def build_venv_cmd(params, posparams):
     @return                 string
     """
     import venv
+    v = venv.__version__
+    if v is None:
+        raise ImportError("module venv should have a version number")
     exe = sys.executable
     cmd = [exe, "-m", "venv"]
     for k, v in params.items():
@@ -35,7 +38,7 @@ def build_venv_cmd(params, posparams):
 
 
 def create_virtual_env(where, symlinks=False, system_site_packages=False,
-                       clear=True, packages=None, fLOG=print,
+                       clear=True, packages=None, fLOG=noLOG,
                        temp_folder=None):
     """
     .. index:: virtual environment
@@ -101,7 +104,7 @@ def create_virtual_env(where, symlinks=False, system_site_packages=False,
     if len(pips) == 0:
         raise FileNotFoundError(
             "unable to find pip in {0}, content:\n  {1}".format(scripts, in_scripts))
-                            
+
     out += venv_install(where, "pymyinstall", fLOG=fLOG,
                         temp_folder=temp_folder)
 
@@ -114,7 +117,7 @@ def create_virtual_env(where, symlinks=False, system_site_packages=False,
     return out
 
 
-def venv_install(venv, packages, fLOG=print, temp_folder=None):
+def venv_install(venv, packages, fLOG=noLOG, temp_folder=None):
     """
     install a package or a list of packages in a virtual environment
 
@@ -159,7 +162,7 @@ def venv_install(venv, packages, fLOG=print, temp_folder=None):
         return run_venv_script(venv, "\n".join(script), fLOG=fLOG)
 
 
-def run_venv_script(venv, script, fLOG=print, file=False, is_cmd=False):
+def run_venv_script(venv, script, fLOG=noLOG, file=False, is_cmd=False):
     """
     run a script on a vritual environment (the script should be simple
 

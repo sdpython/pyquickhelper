@@ -10,10 +10,15 @@ import io
 import sys
 from queue import Empty
 
-from IPython.nbformat.v3 import NotebookNode
-from IPython.kernel import KernelManager
-from IPython.nbformat import writes
 
+try:
+    from nbformat.v3 import NotebookNode
+    from nbformat import writes
+    from jupyter_client import KernelManager
+except ImportError:
+    from IPython.nbformat.v3 import NotebookNode
+    from IPython.nbformat import writes
+    from IPython.kernel import KernelManager
 from ..loghelper.flog import noLOG
 
 if sys.version_info[0] == 2:
