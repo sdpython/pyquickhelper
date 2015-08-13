@@ -136,7 +136,7 @@ def venv_install(venv, packages, fLOG=noLOG, temp_folder=None):
     if packages == "pip" or packages == ["pip"]:
         from .get_pip import __file__ as pip_loc
         ppath = os.path.abspath(pip_loc.replace(".pyc", ".py"))
-        script = ["-m", ppath]
+        script = ["-u", ppath]
         return run_venv_script(venv, script, fLOG=fLOG, is_cmd=True)
     elif packages == "pymyinstall" or packages == ["pymyinstall"]:
         if sys.platform.startswith("win"):
@@ -178,7 +178,7 @@ def run_venv_script(venv, script, fLOG=noLOG, file=False, is_cmd=False):
     else:
         exe = os.path.join(venv, "bin", "python")
     if is_cmd:
-        cmd = " ".join(script)
+        cmd = " ".join([exe] + script)
         out, err = run_cmd(cmd, wait=True, fLOG=fLOG)
         if len(err) > 0:
             raise VirtualEnvError(

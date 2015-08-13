@@ -34,7 +34,7 @@ class TestVenvHelper(unittest.TestCase):
             __file__,
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
-            
+
         return
         # to be fixed later
 
