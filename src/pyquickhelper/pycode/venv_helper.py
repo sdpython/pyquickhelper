@@ -23,7 +23,7 @@ def build_venv_cmd(params, posparams):
     @return                 string
     """
     import venv
-    v = venv.__version__
+    v = venv.__file__
     if v is None:
         raise ImportError("module venv should have a version number")
     exe = sys.executable
