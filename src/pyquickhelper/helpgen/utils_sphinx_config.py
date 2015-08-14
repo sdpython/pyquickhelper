@@ -48,7 +48,7 @@ def ie_layout_html():
 
     if not os.path.exists(sitep):
         raise FileNotFoundError("unable to find site-packages, tried: {0}\nALL:\n{1}".format(sitep,
-                                                                                             "\n".join(site.getsitepackages())))
+                                "\n".join(site.getsitepackages())))
 
     layout = os.path.join(sitep, "sphinx", "themes", "basic", "layout.html")
     if os.path.exists(layout):
@@ -87,7 +87,11 @@ def fix_ie_layout_html():
 
     if not os.path.exists(sitep):
         raise FileNotFoundError("unable to find site-packages, tried: {0}\nALL:\n{1}".format(sitep,
-                                                                                             "\n".join(site.getsitepackages())))
+                                "\n".join(site.getsitepackages())))
+                                
+    if sys.version_info[0] == 2:
+        warnings.warn("function fix_ie_layout_html is disabled on Python 2.7")
+        return True
 
     layout = os.path.join(sitep, "sphinx", "themes", "basic", "layout.html")
     if os.path.exists(layout):
