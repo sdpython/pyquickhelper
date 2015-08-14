@@ -183,9 +183,9 @@ class JenkinsExt(jenkins.Jenkins):
                 cmd = cmd.replace("__PYTHON__", os.path.dirname(pythonexe)) \
                          .replace("__PORT__", str(port))
             elif "[update]" in spl:
-                cmd = "%s\\python -u -c \"import pymyinstall;pymyinstall.update_all(temp_folder='build/update_modules', verbose=True)\"" % pythonexe
+                cmd = "%s\\python -u -c \"from pymyinstall.packaged update_all;update_all(temp_folder='build/update_modules', verbose=True)\"" % pythonexe
             elif "[winpython_update]" in spl:
-                cmd = "%s\\python -u -c \"import pymyinstall;pymyinstall.update_all(temp_folder='build/update_modules', verbose=True)\"" % winpython
+                cmd = "%s\\python -u -c \"from pymyinstall.packaged update_all;update_all(temp_folder='build/update_modules', verbose=True)\"" % winpython
             else:
                 raise JenkinsExtException("cannot interpret job: " + job)
             return cmd
