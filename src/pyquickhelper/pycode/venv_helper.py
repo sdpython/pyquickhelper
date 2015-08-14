@@ -93,7 +93,7 @@ def build_venv_cmd(params, posparams):
     v = venv.__file__
     if v is None:
         raise ImportError("module venv should have a version number")
-    exe = sys.executable
+    exe = sys.executable.replace("w.exe", "").replace(".exe", "")
     cmd = [exe, "-m", "venv"]
     for k, v in params.items():
         if v is None:
@@ -213,14 +213,14 @@ def venv_install(venv, packages, fLOG=noLOG, temp_folder=None):
         local_setup = os.path.abspath(os.path.join(os.path.dirname(
             __file__), "..", "..", "..", "..", "pymyinstall", "setup.py"))
         if os.path.exists(local_setup):
-            cmd = sys.executable + " " + local_setup + " install"
-            out, err = run_cmd(cmd, wait=True, fLOG=fLOG)
-            if len(err) > 0:
-                raise VirtualEnvError(
-                    "unable to install pymyinstall at {2}\nCMD:\n{3}\nOUT:\n{0}\nERR:\n{1}".format(out, err, venv, cmd))
+            cwd = os.getcwd()
+            os.chdir(os.path.dirname(local_setup))
+            script = ["-u", local_setup, "install"]
+            out = run_venv_script(venv, script, fLOG=fLOG, is_cmd=True,
+                                  skip_err_if="Finished processing dependencies for pymyinstall==")
+            os.chdir(cwd)
             return out
         else:
-            stop
             cmd = pip + " install pymyinstall"
             out, err = run_cmd(cmd, wait=True, fLOG=fLOG)
             if len(err) > 0:
@@ -236,11 +236,12 @@ def venv_install(venv, packages, fLOG=noLOG, temp_folder=None):
                   "import pymyinstall",
                   "ps=[{0}]".format(l),
                   "t='{0}'".format(temp_folder.replace("\\", "\\\\")),
-                  "pymyinstall.packaged.install_all(temp_folder=t,list_module=ps)"]
+                  "pymyinstall.packaged.install_all(temp_folder=t,list_module=ps,up_pip=False)"]
         return run_venv_script(venv, "\n".join(script), fLOG=fLOG)
 
 
-def run_venv_script(venv, script, fLOG=noLOG, file=False, is_cmd=False):
+def run_venv_script(venv, script, fLOG=noLOG, file=False, is_cmd=False,
+                    skip_err_if=None):
     """
     run a script on a vritual environment (the script should be simple
 
@@ -249,6 +250,7 @@ def run_venv_script(venv, script, fLOG=noLOG, file=False, is_cmd=False):
     @param      fLOG        logging function
     @param      file        is script a file or a string to execute
     @param      is_cmd      if True, script is a command line to run (as a list) for python executable
+    @param      skip_err_if do not pay attention to standard error if this string was found in standard output
     @return                 output
     """
     if sys.platform.startswith("win"):
@@ -258,7 +260,7 @@ def run_venv_script(venv, script, fLOG=noLOG, file=False, is_cmd=False):
     if is_cmd:
         cmd = " ".join([exe] + script)
         out, err = run_cmd(cmd, wait=True, fLOG=fLOG)
-        if len(err) > 0:
+        if len(err) > 0 and (skip_err_if is None or skip_err_if not in out):
             raise VirtualEnvError(
                 "unable to run cmd at {2}\nCMD:\n{3}\nOUT:\n{0}\nERR:\n{1}".format(out, err, venv, cmd))
         return out
