@@ -35,9 +35,6 @@ class TestVenvHelper(unittest.TestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
-        return
-        # to be fixed later
-
         temp = get_temp_folder(__file__, "temp_venv_empty")
         out = create_virtual_env(temp, fLOG=fLOG)
         fLOG("-----")

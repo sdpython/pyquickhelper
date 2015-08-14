@@ -43,6 +43,11 @@ class TestReadme(unittest.TestCase):
             content = f.read()
 
         temp = get_temp_folder(__file__, "temp_readme")
+
+        if __name__ != "__main__":
+            # does not work from a virtual environment
+            return
+
         out = create_virtual_env(temp, fLOG=fLOG, packages=["docutils==0.8"])
         outfile = os.path.join(temp, "conv_readme.html")
 
