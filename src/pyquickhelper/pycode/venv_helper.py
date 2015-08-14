@@ -1,6 +1,8 @@
 """
 @file
 @brief Helpers for virtualenv
+
+.. versionadded:: 1.2
 """
 import os
 import sys
@@ -12,6 +14,71 @@ class VirtualEnvError(Exception):
     exception raised by the function implemented in this file
     """
     pass
+
+
+def numeric_module_version(vers):
+    """
+    convert a string into a tuple with numbers whever possible
+
+    @param      vers    string
+    @return             tuple
+    """
+    if isinstance(vers, tuple):
+        return vers
+    spl = vers.split(".")
+    r = []
+    for _ in spl:
+        try:
+            i = int(_)
+            r.append(i)
+        except:
+            r.append(_)
+    return tuple(r)
+
+
+def compare_module_version(num, vers):
+    """
+    compare two versions
+
+    @param      num     first version
+    @param      vers    second version
+    @return             -1, 0, 1
+    """
+    if num is None:
+        if vers is None:
+            return 0
+        else:
+            return 1
+    if vers is None:
+        return -1
+
+    if not isinstance(vers, tuple):
+        vers = numeric_module_version(vers)
+    if not isinstance(num, tuple):
+        num = numeric_module_version(num)
+
+    if len(num) == len(vers):
+        for a, b in zip(num, vers):
+            if isinstance(a, int) and isinstance(b, int):
+                if a < b:
+                    return -1
+                elif a > b:
+                    return 1
+            else:
+                a = str(a)
+                b = str(b)
+                if a < b:
+                    return -1
+                elif a > b:
+                    return 1
+        return 0
+    else:
+        if len(num) < len(vers):
+            num = num + (0,) * (len(vers) - len(num))
+            return ModuleInstall.compare_version(num, vers)
+        else:
+            vers = vers + (0,) * (len(num) - len(vers))
+            return ModuleInstall.compare_version(num, vers)
 
 
 def build_venv_cmd(params, posparams):
@@ -143,12 +210,23 @@ def venv_install(venv, packages, fLOG=noLOG, temp_folder=None):
             pip = os.path.join(venv, "Scripts", "pip")
         else:
             pip = os.path.join(venv, "bin", "pip")
-        cmd = pip + " install pymyinstall"
-        out, err = run_cmd(cmd, wait=True, fLOG=fLOG)
-        if len(err) > 0:
-            raise VirtualEnvError(
-                "unable to install pymyinstall at {2}\nCMD:\n{3}\nOUT:\n{0}\nERR:\n{1}".format(out, err, venv, cmd))
-        return out
+        local_setup = os.path.abspath(os.path.join(os.path.dirname(
+            __file__), "..", "..", "..", "..", "pymyinstall", "setup.py"))
+        if os.path.exists(local_setup):
+            cmd = sys.executable + " " + local_setup + " install"
+            out, err = run_cmd(cmd, wait=True, fLOG=fLOG)
+            if len(err) > 0:
+                raise VirtualEnvError(
+                    "unable to install pymyinstall at {2}\nCMD:\n{3}\nOUT:\n{0}\nERR:\n{1}".format(out, err, venv, cmd))
+            return out
+        else:
+            stop
+            cmd = pip + " install pymyinstall"
+            out, err = run_cmd(cmd, wait=True, fLOG=fLOG)
+            if len(err) > 0:
+                raise VirtualEnvError(
+                    "unable to install pymyinstall at {2}\nCMD:\n{3}\nOUT:\n{0}\nERR:\n{1}".format(out, err, venv, cmd))
+            return out
     else:
         p = os.path.normpath(os.path.join(
             os.path.abspath(os.path.dirname(__file__)), "..", ".."))

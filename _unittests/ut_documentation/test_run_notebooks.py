@@ -24,6 +24,8 @@ except ImportError:
 
 from src.pyquickhelper import fLOG, get_temp_folder
 from src.pyquickhelper.ipythonhelper import execute_notebook_list
+from src.pyquickhelper.pycode import compare_module_version
+import IPython
 
 
 class TestRunNotebooks(unittest.TestCase):
@@ -36,6 +38,10 @@ class TestRunNotebooks(unittest.TestCase):
 
         if sys.version_info[0] == 2:
             # notebooks are not converted into python 2.7, so not tested
+            return
+
+        if compare_module_version(IPython.__version__, "4.0.0") < 0:
+            # IPython is not recnt enough
             return
 
         temp = get_temp_folder(__file__, "temp_run_notebooks")
