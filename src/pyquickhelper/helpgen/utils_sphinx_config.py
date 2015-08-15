@@ -116,7 +116,7 @@ def fix_ie_layout_html():
             return False
     else:
         raise FileNotFoundError(
-            "Sphinx is not properly installed, unable to find: " + layout)
+            "Sphinx is not properly installed, unable to find: " + layout + "\nEXE: " + sys.executable)
 
 
 def locate_image_documentation(image_name):
