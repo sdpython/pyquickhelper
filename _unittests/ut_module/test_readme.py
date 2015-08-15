@@ -27,6 +27,9 @@ from src.pyquickhelper import fLOG, get_temp_folder
 from src.pyquickhelper.pycode.venv_helper import create_virtual_env, run_venv_script
 from src.pyquickhelper.helpgen.markdown_helper import yield_sphinx_only_markup_for_pipy
 
+if sys.version_info[0] == 2:
+    from codecs import open
+
 
 class TestReadme(unittest.TestCase):
 
