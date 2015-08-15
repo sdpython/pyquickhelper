@@ -35,7 +35,8 @@ class TestMissingFunction(unittest.TestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
-        if "travis" in sys.executable or "anaconda" in sys.executable.lower() or sys.version_info[0] == 2:
+        if "travis" in sys.executable or "anaconda" in sys.executable.lower() or sys.version_info[0] == 2 \
+           or "yquickhelper_condavir" in sys.executable:
             warnings.warn(
                 "skipping on travis and with anaconda or python 2.7: " + sys.executable)
             return
