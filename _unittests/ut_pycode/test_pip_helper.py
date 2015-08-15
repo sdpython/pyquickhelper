@@ -53,7 +53,7 @@ class TestPipHelper(unittest.TestCase):
         if "version" not in info:
             raise Exception(str(info))
 
-        if "travis" not in sys.executable:
+        if "travis" not in sys.executable and sys.version_info[0] >= 3:
             info = get_package_info("sphinx-py3doc-enhanced-theme")
             # if "license" not in info:
             #    raise Exception(str(info))
