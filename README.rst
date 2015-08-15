@@ -72,7 +72,7 @@ This project contains the following folders:
 Versions, Changes
 -----------------
 
-* **1.2 - 2015/??/??**
+* **1.2 - 2015/08/15**
     * **change:** parameter prog was added to class MagicCommandParser
       *this might break classes taking dependency on it*
     * **add:** function write_pyproj to generate a file *.pyproj*
@@ -80,6 +80,8 @@ Versions, Changes
     * **add:** directive RunPythonDirective to generate documentation from a script
     * **new:** function *create_virtual_env* to create a virtual environment and write unit tests using them
     * **new:** update to Jupyter 4.0 (add dependencies on notebook, nbformat, ...)
+    * **fix:** many fixes in documentation generatation, possibility to add blogs with directive *BlogPostDirection*, 
+      better sidebar, languages, update the default configuration
 
 * **1.1 - 2015/05/24**
     * **fix:** shorten setup.py, move functionalities to the module, 

@@ -35,6 +35,10 @@ class TestVenvHelper(unittest.TestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
+        if __name__ != "__main__":
+            # does not accept virtual environment
+            return
+
         temp = get_temp_folder(__file__, "temp_venv_empty")
         out = create_virtual_env(temp, fLOG=fLOG)
         fLOG("-----")
