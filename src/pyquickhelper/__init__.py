@@ -3,7 +3,7 @@
 Main files, contains the version, the url to the documention.
 """
 
-__version__ = "1.2"
+__version__ = "1.3"
 __author__ = "Xavier Dupré"
 __github__ = "https://github.com/sdpython/pyquickhelper"
 __url__ = "http://www.xavierdupre.fr/app/pyquickhelper/helpsphinx/index.html"

@@ -16,6 +16,27 @@ class VirtualEnvError(Exception):
     pass
 
 
+def is_virtual_environment():
+    """
+    tells if the script is run from a virtual environment
+
+    @return     boolean
+
+    .. versionadded:: 1.3
+    """
+    return sys.base_exec_prefix != sys.exec_prefix
+
+
+class NotImplementedErrorFromVirtualEnvironment(NotImplementedError):
+    """
+    defines an exception when a function does not work
+    in a virtual environment
+
+    .. versionadded:: 1.3
+    """
+    pass
+
+
 def numeric_module_version(vers):
     """
     convert a string into a tuple with numbers whever possible
@@ -43,6 +64,9 @@ def compare_module_version(num, vers):
     @param      num     first version
     @param      vers    second version
     @return             -1, 0, 1
+
+    .. versionchanged:: 1.3
+        Fix a bug (do not use ModuleInstall)
     """
     if num is None:
         if vers is None:
@@ -75,10 +99,10 @@ def compare_module_version(num, vers):
     else:
         if len(num) < len(vers):
             num = num + (0,) * (len(vers) - len(num))
-            return ModuleInstall.compare_version(num, vers)
+            return compare_module_version(num, vers)
         else:
             vers = vers + (0,) * (len(num) - len(vers))
-            return ModuleInstall.compare_version(num, vers)
+            return compare_module_version(num, vers)
 
 
 def build_venv_cmd(params, posparams):
@@ -136,7 +160,12 @@ def create_virtual_env(where, symlinks=False, system_site_packages=False,
     @endcode
 
     @endexample
+
+    The function does not work from a virtual environment.
     """
+    if is_virtual_environment():
+        raise NotImplementedErrorFromVirtualEnvironment()
+
     fLOG("create virtual environment at:", where)
     params = {}
     if symlinks:
@@ -193,7 +222,12 @@ def venv_install(venv, packages, fLOG=noLOG, temp_folder=None):
     @param      fLOG            logging function
     @param      temp_folder     temporary folder (to download module if needed), by default ``<where>/download``
     @return                     standard output
+
+    The function does not work from a virtual environment.
     """
+    if is_virtual_environment():
+        raise NotImplementedErrorFromVirtualEnvironment()
+
     if temp_folder is None:
         temp_folder = os.path.join(venv, "download")
 
@@ -252,7 +286,12 @@ def run_venv_script(venv, script, fLOG=noLOG, file=False, is_cmd=False,
     @param      is_cmd      if True, script is a command line to run (as a list) for python executable
     @param      skip_err_if do not pay attention to standard error if this string was found in standard output
     @return                 output
+
+    The function does not work from a virtual environment.
     """
+    if is_virtual_environment():
+        raise NotImplementedErrorFromVirtualEnvironment()
+
     if sys.platform.startswith("win"):
         exe = os.path.join(venv, "Scripts", "python")
     else:
@@ -277,3 +316,69 @@ def run_venv_script(venv, script, fLOG=noLOG, file=False, is_cmd=False,
             raise VirtualEnvError(
                 "unable to run script at {2}\nCMD:\n{3}\nOUT:\n{0}\nERR:\n{1}".format(out, err, venv, cmd))
         return out
+
+
+def check_readme_syntax(readme, folder, version="0.8", fLOG=noLOG):
+    """
+    check the syntax of the file readme.rst which describes a python project
+
+    @param      readme          file to check
+    @param      folder          location for the virtual environment
+    @param      version         version of docutils
+    @param      fLOG            logging function
+    @return                     output or SyntaxError exception
+
+    `pipy server <https://pypi.python.org/pypi/>`_ is based on
+    `docutils <https://pypi.python.org/pypi/docutils/>`_ ==0.8.
+    The most simple way to check its syntax is to create a virtual environment,
+    to install docutils==0.8 and to compile the file.
+    This is what this function does.
+
+    Unfortunately, this functionality does not work yet
+    from a virtual environment.
+
+    .. versionadded:: 1.3
+    """
+    if is_virtual_environment():
+        raise NotImplementedErrorFromVirtualEnvironment()
+
+    if not os.path.exists(folder):
+        os.makedirs(folder)
+
+    out = create_virtual_env(folder, fLOG=fLOG, packages=[
+                             "docutils==" + version])
+    outfile = os.path.join(folder, "conv_readme.html")
+
+    script = ["from docutils import core",
+              "import io",
+              'from docutils.readers.standalone import Reader',
+              'from docutils.parsers.rst import Parser',
+              'from docutils.parsers.rst.directives.images import Image',
+              'from docutils.parsers.rst.directives import _directives',
+              'from docutils.writers.html4css1 import Writer',
+              "from docutils.languages import _languages",
+              "from docutils.languages import en, fr",
+              "_languages['en'] = en",
+              "_languages['fr'] = fr",
+              "_directives['image'] = Image",
+              "with open('{0}', 'r', encoding='utf8') as g: s = g.read()".format(
+                  readme.replace("\\", "\\\\")),
+              "settings_overrides = {'output_encoding': 'unicode', 'doctitle_xform': True, 'initial_header_level': 2, 'warning_stream': io.StringIO()}",
+              "parts = core.publish_parts(source=s, parser=Parser(), reader=Reader(), source_path=None, destination_path=None, writer=Writer(), settings_overrides=settings_overrides)",
+              "with open('{0}', 'w', encoding='utf8') as f: f.write(parts['whole'])".format(
+                  outfile.replace("\\", "\\\\")),
+              ]
+
+    file_script = os.path.join(folder, "test_" + os.path.split(readme)[-1])
+    with open(file_script, "w") as f:
+        f.write("\n".join(script))
+
+    out = run_venv_script(folder, file_script, fLOG=fLOG, file=True)
+    with open(outfile, "r", encoding="utf8") as h:
+        content = h.read()
+
+    if "System Message" in content:
+        raise SyntaxError(
+            "unable to parse a file with docutils==" + version + "\nCONTENT:\n" + content)
+
+    return out

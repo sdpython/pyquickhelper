@@ -72,7 +72,12 @@ This project contains the following folders:
 Versions, Changes
 -----------------
 
-* **1.2 - 2015/08/15**
+* **1.3 - 2015/??/??**
+    * **add:** add function check_readme_syntax to check the syntax of file readme.rst 
+      (pipy uses an earlier version of docutils)
+    * **fix:** fix a bug in function compare_module_version
+
+* **1.2.781 - 2015/08/15**
     * **change:** parameter prog was added to class MagicCommandParser
       *this might break classes taking dependency on it*
     * **add:** function write_pyproj to generate a file *.pyproj*
