@@ -391,7 +391,8 @@ def process_standard_options_for_setup(argv,
             sc = get_extra_script_command(
                 c, project_var_name, requirements=requirements, port=port, platform=sys.platform,
                 default_engine_paths=default_engine_paths,
-                unit_test_folder=unit_test_folder)
+                unit_test_folder=unit_test_folder,
+                unittest_modules=unittest_modules)
             if sc is None:
                 continue
             if c == "setupdep":

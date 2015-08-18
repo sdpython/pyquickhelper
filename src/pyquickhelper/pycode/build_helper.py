@@ -164,7 +164,7 @@ def get_script_command(command, module, requirements, port=8067, platform=sys.pl
 
 
 def get_extra_script_command(command, module, requirements, port=8067, blog_list=None, platform=sys.platform,
-                             default_engine_paths=None, unit_test_folder=None):
+                             default_engine_paths=None, unit_test_folder=None, unittest_modules=None):
     """
     produces a script which runs the notebook, a documentation server, which
     publishes...
@@ -181,6 +181,10 @@ def get_extra_script_command(command, module, requirements, port=8067, blog_list
     @return                             scripts
 
     The available list of commands is given by function @see fn process_standard_options_for_setup.
+
+    .. versionchanged:: 1.3
+        Parameter *unittest_modules* to add local dependencies when running a notebook.
+        For development purposes.
     """
     if not platform.startswith("win"):
         raise NotImplementedError("linux not yet available")
@@ -188,6 +192,10 @@ def get_extra_script_command(command, module, requirements, port=8067, blog_list
     script = None
     if command == "notebook":
         script = windows_notebook
+        if unittest_modules is not None and len(unittest_modules) > 0:
+            rows = ["%current%\\..\\" + _ + "\\src" for _ in unittest_modules]
+            rep = ";" + ";".join(rows)
+            script = script.replace("__ADDITIONAL_LOCAL_PATH__", rep)
     elif command == "publish":
         script = "\n".join([windows_prefix, windows_publish])
     elif command == "publish_doc":

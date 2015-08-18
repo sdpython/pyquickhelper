@@ -451,7 +451,7 @@ set path=%path%;%pythonexe%;%pythonexe%\\Scripts
 @echo ~SET path=%path%;%pythonexe%;%pythonexe%\\Scripts
 @echo ~CALL jupyter-notebook --notebook-dir=_doc\\notebooks --matplotlib=inline
 set PYTHONPATH=%PYTHONPATH%;%current%\\src
-@echo ~SET PYTHONPATH=%PYTHONPATH%;%current%\\src
+@echo ~SET PYTHONPATH=%PYTHONPATH%;%current%\\src__ADDITIONAL_LOCAL_PATH__
 jupyter-notebook --notebook-dir=_doc\\notebooks --matplotlib=inline
 """
 
