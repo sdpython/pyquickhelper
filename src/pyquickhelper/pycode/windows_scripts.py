@@ -596,6 +596,7 @@ setup(
         "numpy",
         "dateutils",
         "IPython",
+        "jupyter",
         "matplotlib",
         "sphinx",
         "pandas",

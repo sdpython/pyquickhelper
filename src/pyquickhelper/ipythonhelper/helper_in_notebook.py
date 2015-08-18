@@ -5,16 +5,7 @@
 
 .. versionadded:: 1.1
 """
-import os
-import sys
 from IPython.display import Javascript, HTML
-
-try:
-    from notebook.services.config import ConfigManager
-except ImportError:
-    from IPython.html.services.config import ConfigManager
-
-from .notebook_exception import InNotebookException
 
 
 def store_notebook_path(name="theNotebook"):
