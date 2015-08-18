@@ -74,6 +74,10 @@ class TestRunNotebooks(unittest.TestCase):
 
         addpaths = [os.path.normpath(os.path.join(
             os.path.abspath(os.path.dirname(__file__)), "..", "..", "src"))]
+
+        if "travis" in sys.executable:
+            keepnote = [_ for _ in keepnote if "javascript_extension" not in _]
+
         res = execute_notebook_list(
             temp, keepnote, fLOG=fLOG, valid=valid, additional_path=addpaths)
         assert len(res) > 0
