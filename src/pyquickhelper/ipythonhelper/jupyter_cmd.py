@@ -47,7 +47,10 @@ def jupyter_cmd(exe=None, args=None, fLOG=noLOG):
         args = ["-h"]
     cmd = jup + " " + " ".join(args)
     out, err = run_cmd(cmd, wait=True, fLOG=fLOG)
-    if len(err) > 0:
-        raise JupyterException(
-            "unable to run\nCMD:\n{0}\nOUT:\n{1}\nERR:\n{2}".format(cmd, out, err))
+    if args == ["-h"]:
+        out += "\n" + err
+    elif:
+        if len(err) > 0:
+            raise JupyterException(
+                "unable to run\nCMD:\n{0}\nOUT:\n{1}\nERR:\n{2}".format(cmd, out, err))
     return out

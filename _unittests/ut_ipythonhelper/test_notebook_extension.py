@@ -38,7 +38,11 @@ class TestNotebookExtensions(unittest.TestCase):
         fLOG("get_jupyter_datadir", d)
 
         fLOG("extension")
-        ext = get_installed_notebook_extension()
+        try:
+            ext = get_installed_notebook_extension()
+        except FileNotFoundError:
+            ext = []
+
         if len(ext) == 0:
             fLOG("installation")
             out = install_notebook_extension()
