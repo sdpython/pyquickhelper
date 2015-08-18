@@ -196,6 +196,8 @@ def get_extra_script_command(command, module, requirements, port=8067, blog_list
             rows = ["%current%\\..\\" + _ + "\\src" for _ in unittest_modules]
             rep = ";" + ";".join(rows)
             script = script.replace("__ADDITIONAL_LOCAL_PATH__", rep)
+        else:
+            script = script.replace("__ADDITIONAL_LOCAL_PATH__", "")
     elif command == "publish":
         script = "\n".join([windows_prefix, windows_publish])
     elif command == "publish_doc":

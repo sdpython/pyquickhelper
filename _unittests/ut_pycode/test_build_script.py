@@ -91,7 +91,8 @@ class TestBuildScript(unittest.TestCase):
                     c, project_var_name, requirements=requirements, port=port,
                     unit_test_folder=unit_test_folder)
                 assert len(sc) > 0
-                assert "__" not in sc
+                if "__" in sc:
+                    raise Exception(sc)
                 if c == "run27":
                     if "nosetest" not in sc:
                         raise Exception(sc)
