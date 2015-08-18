@@ -44,6 +44,8 @@ def get_ipython_program(exe=None, pandoc_path=None):
     @param      exe             path to python executable
     @param      pandoc_path     if None, call @see fn find_pandoc_path
     @return                     ipython executable
+
+    The program ``jupyter-nbconvert.exe`` does not exist (yet?) on Windows. Postponing.
     """
     if exe is None:
         exe = os.path.dirname(sys.executable)

@@ -2,7 +2,6 @@
 @file
 @brief Some automation helpers about notebooks
 """
-import io
 import os
 import sys
 import time
@@ -11,14 +10,24 @@ try:
     from nbformat import versions
     from nbformat.reader import reads
     from nbformat.v4 import upgrade
+    from jupyter_client.kernelspec import find_kernel_specs, get_kernel_spec, KernelSpecManager
+    from notebook.nbextensions import install_nbextension, _get_nbext_dir
 except ImportError:
     from IPython.nbformat import versions
     from IPython.nbformat.reader import reads
     from IPython.nbformat.v4 import upgrade
+    from IPython.kernelspec import find_kernel_specs, get_kernel_spec, KernelSpecManager
+    from IPython.html.nbextensions import install_nbextension, _get_nbext_dir
+
+if sys.version_info[0] == 2:
+    from StringIO import StringIO
+else:
+    from io import StringIO
 
 from .notebook_runner import NotebookRunner
 from ..loghelper.flog import noLOG
 from .notebook_exception import NotebookException
+from ..filehelper import explore_folder_iterfile
 
 if sys.version_info[0] == 2:
     from codecs import open
@@ -91,22 +100,29 @@ def run_notebook(filename,
                  valid=None,
                  clean_function=None,
                  code_init=None,
-                 fLOG=noLOG):
+                 fLOG=noLOG,
+                 kernel_name="python",
+                 log_level="30",
+                 extended_args=None):
     """
     run a notebook end to end, it uses module `runipy <https://github.com/paulgb/runipy/>`_
 
-    @param      filename        notebook filename
-    @param      profile_dir     profile directory
-    @param      working_dir     working directory
-    @param      skip_exceptions skip exceptions
-    @param      outfilename     if not None, saves the output in this notebook
-    @param      encoding        encoding for the notebooks
-    @param      additional_path additional paths for import
-    @param      valid           if not None, valid is a function which returns wether or not the cell should be executed or not
-    @param      clean_function  function which cleans a cell's code before executing it (None for None)
-    @param      code_init       code to run before the execution of the notebook as if it was a cell
-    @param      fLOG            logging function
-    @return                     tuple (statistics, output)
+    @param      filename            notebook filename
+    @param      profile_dir         profile directory
+    @param      working_dir         working directory
+    @param      skip_exceptions     skip exceptions
+    @param      outfilename         if not None, saves the output in this notebook
+    @param      encoding            encoding for the notebooks
+    @param      additional_path     additional paths for import
+    @param      valid               if not None, valid is a function which returns wether or not the cell should be executed or not
+    @param      clean_function      function which cleans a cell's code before executing it (None for None)
+    @param      code_init           code to run before the execution of the notebook as if it was a cell
+    @param      fLOG                logging function
+    @param      kernel_name         kernel name, it can be None
+    @param      log_level           Choices: (0, 10, 20, 30=default, 40, 50, 'DEBUG', 'INFO', 'WARN', 'ERROR', 'CRITICAL')
+    @param      extended_args       others arguments to pass to the command line ('--KernelManager.autorestar=True' for example),
+                                    see :ref:`l-ipython_notebook_args` for a full list
+    @return                         tuple (statistics, output)
 
     @warning The function calls `basicConfig <https://docs.python.org/3.4/library/logging.html#logging.basicConfig>`_.
 
@@ -126,11 +142,14 @@ def run_notebook(filename,
         the absolute file name of the notebook.
         Parameter *code_init* was added.
         Return type was changed. It now returns *stat*, *output*
+
+    .. versionchanged:: 1.3
+        Parameters *log_level*, *extended_args*, *kernel_name* were added.
     """
     with open(filename, "r", encoding=encoding) as payload:
         nb = reads(payload.read())
 
-        out = io.StringIO()
+        out = StringIO()
 
         def flogging(*l, **p):
             if len(l) > 0:
@@ -143,7 +162,8 @@ def run_notebook(filename,
         nb_runner = NotebookRunner(
             nb, profile_dir, working_dir, fLOG=flogging, comment=filename,
             theNotebook=os.path.abspath(filename),
-            code_init=code_init)
+            code_init=code_init, log_level=log_level,
+            extended_args=extended_args, kernel_name=kernel_name)
         stat = nb_runner.run_notebook(skip_exceptions=skip_exceptions, additional_path=additional_path,
                                       valid=valid, clean_function=clean_function)
 
@@ -193,7 +213,10 @@ def execute_notebook_list(folder,
                           valid=None,
                           fLOG=noLOG,
                           additional_path=None,
-                          deepfLOG=noLOG):
+                          deepfLOG=noLOG,
+                          kernel_name="python",
+                          log_level="30",
+                          extended_args=None):
     """
     execute a list of notebooks
 
@@ -204,6 +227,10 @@ def execute_notebook_list(folder,
     @param      fLOG                logging function
     @param      deepfLOG            logging function used to run the notebook
     @param      additional_path     path to add to *sys.path* before running the notebook
+    @param      kernel_name         kernel name, it can be None
+    @param      log_level           Choices: (0, 10, 20, 30=default, 40, 50, 'DEBUG', 'INFO', 'WARN', 'ERROR', 'CRITICAL')
+    @param      extended_args       others arguments to pass to the command line ('--KernelManager.autorestar=True' for example),
+                                    see :ref:`l-ipython_notebook_args` for a full list
     @return                         dictionary { notebook_file: (isSuccess, statistics, outout) }
 
     If *isSucess* is False, *statistics* contains the execution time, *output* is the exception
@@ -218,6 +245,9 @@ def execute_notebook_list(folder,
         def clean_function(cell) : return new_cell_content
 
     .. versionadded:: 1.1
+
+    .. versionchanged:: 1.3
+        Parameters *log_level*, *extended_args*, *kernel_name* were added.
     """
     if additional_path is None:
         additional_path = []
@@ -240,7 +270,10 @@ def execute_notebook_list(folder,
                                          valid=valid,
                                          clean_function=clean_function,
                                          fLOG=deepfLOG,
-                                         code_init=code_init
+                                         code_init=code_init,
+                                         kernel_name=kernel_name,
+                                         log_level=log_level,
+                                         extended_args=extended_args
                                          )
                 if not os.path.exists(outfile):
                     raise FileNotFoundError(outfile)
@@ -249,3 +282,156 @@ def execute_notebook_list(folder,
                 etime = time.clock() - cl
                 results[note] = (False, dict(time=etime), e)
     return results
+
+
+def find_notebook_kernel():
+    """
+    .. index:: notebook, kernel
+
+    return a dict mapping kernel names to resource directories
+
+    @return     dict
+
+    The list of installed kernels is described at
+    `Making kernel for Jupyter <http://jupyter-client.readthedocs.org/en/latest/kernels.html#kernelspecs>`_.
+    The function only works with Jupyter>=4.0.
+
+    .. versionadded:: 1.3
+    """
+    return find_kernel_specs()
+
+
+def get_notebook_kernel(name):
+    """
+    return a `KernelSpec <https://ipython.org/ipython-doc/dev/api/generated/IPython.kernel.kernelspec.html>`_
+
+    @return     KernelSpec
+
+    The function only works with Jupyter>=4.0.
+
+    .. versionadded:: 1.3
+    """
+    return get_kernel_spec(name)
+
+
+def install_notebook_extension(path=None,
+                               overwrite=False,
+                               symlink=False,
+                               user=False,
+                               prefix=None,
+                               nbextensions_dir=None,
+                               destination=None,
+                               verbose=1):
+    """
+    install notebook extensions,
+    see `install_nbextension <https://ipython.org/ipython-doc/dev/api/generated/IPython.html.nbextensions.html#IPython.html.nbextensions.install_nbextension>`_
+    for documentation
+
+    @param      path    if None, use default value
+    @return             standard output
+
+    Default value is
+    `https://github.com/ipython-contrib/IPython-notebook-extensions/archive/master.zip <https://github.com/ipython-contrib/IPython-notebook-extensions/archive/master.zip>`_.
+
+    .. versionadded:: 1.3
+    """
+    if path is None:
+        path = "https://github.com/ipython-contrib/IPython-notebook-extensions/archive/master.zip"
+
+    cout = sys.stdout
+    cerr = sys.stderr
+    sys.stdout = StringIO()
+    sys.stderr = StringIO()
+    install_nbextension(path=path, overwrite=overwrite, symlink=symlink,
+                        user=user, prefix=prefix, nbextensions_dir=nbextensions_dir,
+                        destination=destination, verbose=verbose)
+
+    out = sys.stdout.getvalue()
+    err = sys.stderr.getvalue()
+    sys.stdout = cout
+    sys.stderr = cerr
+    if len(err) != 0:
+        raise NotebookException(
+            "unable to install exception from: {0}\nOUT:\n{1}\nERR:\n{2}".format(path, out, err))
+    return out
+
+
+def get_jupyter_datadir():
+    """
+    return the data directory for the notebook
+
+    @return     path
+
+    .. versionadded:: 1.3
+    """
+    return KernelSpecManager().data_dir
+
+
+def get_jupyter_extension_dir(user=False,
+                              prefix=None,
+                              nbextensions_dir=None):
+    """
+    Parameters
+    ----------
+
+    files : list(paths)
+        a list of relative paths within nbextensions.
+    user : bool [default: False]
+        Whether to check the user's .ipython/nbextensions directory.
+        Otherwise check a system-wide install (e.g. /usr/local/share/jupyter/nbextensions).
+    prefix : str [optional]
+        Specify install prefix, if it should differ from default (e.g. /usr/local).
+        Will check prefix/share/jupyter/nbextensions
+    nbextensions_dir : str [optional]
+        Specify absolute path of nbextensions directory explicitly.
+
+    Return
+    ------
+
+        path to installed extensions (by the user)
+
+    """
+    return _get_nbext_dir(nbextensions_dir=nbextensions_dir, user=user, prefix=prefix)
+
+
+def get_installed_notebook_extension(user=False,
+                                     prefix=None,
+                                     nbextensions_dir=None):
+    """
+    Parameters
+    ----------
+
+    files : list(paths)
+        a list of relative paths within nbextensions.
+    user : bool [default: False]
+        Whether to check the user's .ipython/nbextensions directory.
+        Otherwise check a system-wide install (e.g. /usr/local/share/jupyter/nbextensions).
+    prefix : str [optional]
+        Specify install prefix, if it should differ from default (e.g. /usr/local).
+        Will check prefix/share/jupyter/nbextensions
+    nbextensions_dir : str [optional]
+        Specify absolute path of nbextensions directory explicitly.
+
+    Return
+    ------
+
+        list of installed notebook extension (by the user)
+
+    You can install extensions with function @see fn install_notebook_extension.
+
+    .. versionadded:: 1.3
+    """
+    path = get_jupyter_extension_dir(
+        user=user, prefix=prefix, nbextensions_dir=nbextensions_dir)
+    if not os.path.exists(path):
+        raise FileNotFoundError(path)
+
+    res = []
+    for file in explore_folder_iterfile(path):
+        rel = os.path.relpath(file, path)
+        spl = os.path.split(rel)
+        name = spl[-1]
+        if name == "main.js":
+            fold = "/".join(spl[:-1]).replace("\\", "/") + "/main"
+            res.append(fold)
+    return res

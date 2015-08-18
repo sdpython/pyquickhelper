@@ -5,8 +5,16 @@
 
 .. versionadded:: 1.1
 """
-
+import os
+import sys
 from IPython.display import Javascript, HTML
+
+try:
+    from notebook.services.config import ConfigManager
+except ImportError:
+    from IPython.html.services.config import ConfigManager
+
+from .notebook_exception import InNotebookException
 
 
 def store_notebook_path(name="theNotebook"):
@@ -203,3 +211,13 @@ def add_notebook_menu(menu_id="my_id_menu_nb", raw=False, format="html", header=
         return full
     else:
         return HTML(full)
+
+
+def load_extension(name):
+    """
+    install an extension, checks first it exists,
+    if not displays an exception with the list of them
+
+    @param      name        extension name
+    """
+    return Javascript("IPython.utils.load_extensions('%s')" % name)

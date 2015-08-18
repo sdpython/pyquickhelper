@@ -41,6 +41,14 @@ class NotebookRunner(object):
     map from kernel types to notebook format types.
 
     This classes executes a notebook end to end.
+
+    .. index:: kernel, notebook
+
+    The class can use different kernels. The next links gives more
+    information on how to create or test a kernel:
+
+    * `jupyter_kernel_test <https://github.com/jupyter/jupyter_kernel_test>`_
+    * `simple_kernel <https://github.com/dsblank/simple_kernel>`_
     """
 
     #. available output types
@@ -55,7 +63,8 @@ class NotebookRunner(object):
     }
 
     def __init__(self, nb, profile_dir=None, working_dir=None,
-                 comment="", fLOG=noLOG, theNotebook=None, code_init=None):
+                 comment="", fLOG=noLOG, theNotebook=None, code_init=None,
+                 kernel_name="python", log_level="30", extended_args=None):
         """
         constuctor
 
@@ -66,11 +75,19 @@ class NotebookRunner(object):
         @param      theNotebook     if not None, populate the variable *theNotebook* with this value in the notebook
         @param      code_init       to initialize the notebook with a python code as if it was a cell
         @param      fLOG            logging function
+        @param      log_level       Choices: (0, 10, 20, 30=default, 40, 50, 'DEBUG', 'INFO', 'WARN', 'ERROR', 'CRITICAL')
+        @param      kernel_name     kernel name, it can be None
+        @param      extended_args   others arguments to pass to the command line ('--KernelManager.autorestar=True' for example),
+                                    see :ref:`l-ipython_notebook_args` for a full list
 
         .. versionchanged:: 1.1
             Parameters *theNotebook*, *code_init* were added.
+
+        .. versionchanged:: 1.3
+            Parameters *log_level*, *extended_args*, *kernel_name* were added.
         """
-        self.km = KernelManager()
+        self.km = KernelManager(
+            kernel_name=kernel_name) if kernel_name is not None else KernelManager()
         self.fLOG = fLOG
         self.theNotebook = theNotebook
         self.code_init = code_init
@@ -78,6 +95,18 @@ class NotebookRunner(object):
 
         if profile_dir:
             args.append('--profile-dir=%s' % os.path.abspath(profile_dir))
+        if log_level:
+            args.append('--log-level=%s' % log_level)
+
+        if extended_args is not None and len(extended_args) > 0:
+            for opt in extended_args:
+                if not opt.startswith("--"):
+                    raise SyntaxError(
+                        "every option should start with '--': " + opt)
+                if "=" not in opt:
+                    raise SyntaxError(
+                        "every option should be assigned a value: " + opt)
+                args.append(opt)
 
         cwd = os.getcwd()
 

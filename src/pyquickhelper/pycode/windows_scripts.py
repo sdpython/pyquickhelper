@@ -72,7 +72,7 @@ __LOOP_UNITTEST_FOLDERS__
 #################
 #: call the setup
 #################
-windows_setup = "%pythonexe% -u setup.py"
+windows_setup = "rem set PYTHONPATH=additional_path\n%pythonexe% -u setup.py"
 jenkins_windows_setup = "%jenkinspythonexe% -u setup.py"
 
 #################
@@ -269,6 +269,7 @@ if %errorlevel% neq 0 exit /b %errorlevel%
 if %errorlevel% neq 0 exit /b %errorlevel%
 @echo #######################################################_unit
 @echo ~CALL %pythonexe% -u setup.py unittests
+rem set PYTHONPATH=additional_path
 %pythonexe% -u setup.py unittests
 if %errorlevel% neq 0 exit /b %errorlevel%
 @echo #######################################################6
@@ -416,10 +417,12 @@ more version.txt
 if %errorlevel% neq 0 exit /b %errorlevel%
 @echo #######################################################_setup_hook
 @echo ~CALL %pythonexe% -u setup.py setup_hook
+rem set PYTHONPATH=additional_path
 %pythonexe% -u setup.py setup_hook
 if %errorlevel% neq 0 exit /b %errorlevel%
 @echo #######################################################_unit
 @echo ~CALL %pythonexe% -u setup.py %script_command%
+rem set PYTHONPATH=additional_path
 %pythonexe% -u setup.py %script_command%
 if %errorlevel% neq 0 exit /b %errorlevel%
 @echo #######################################################6
@@ -430,6 +433,7 @@ if %errorlevel% neq 0 exit /b %errorlevel%
 #: notebooks
 #################
 windows_notebook = """
+@echo off
 if "%1"=="" goto default_value:
 if "%1"=="default" goto default_value:
 set pythonexe=%1
@@ -442,10 +446,13 @@ set pythonexe=__PY34_X64__
 
 :nextn:
 @echo ~LABEL nextn
+set current=%~dp0
 set path=%path%;%pythonexe%;%pythonexe%\\Scripts
 @echo ~SET path=%path%;%pythonexe%;%pythonexe%\\Scripts
-@echo ~CALL ipython3 notebook --notebook-dir=_doc\\notebooks --matplotlib=inline
-ipython3 notebook --notebook-dir=_doc\\notebooks --matplotlib=inline
+@echo ~CALL jupyter-notebook --notebook-dir=_doc\\notebooks --matplotlib=inline
+set PYTHONPATH=%PYTHONPATH%;%current%\\src
+@echo ~SET PYTHONPATH=%PYTHONPATH%;%current%\\src
+jupyter-notebook --notebook-dir=_doc\\notebooks --matplotlib=inline
 """
 
 #################
