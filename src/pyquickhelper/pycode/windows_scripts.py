@@ -98,6 +98,8 @@ set pythonexe=__PY34_X64__\\python
 @echo ~VERSION
 more version.txt
 if %errorlevel% neq 0 exit /b %errorlevel%
+set PYTHONPATH=%PYTHONPATH%;%current%\\src
+@echo ~SET PYTHONPATH=%PYTHONPATH%;%current%\\src__ADDITIONAL_LOCAL_PATH__
 @echo ~CALL %pythonexe% setup.py setup_hook
 %pythonexe% setup.py setup_hook
 if %errorlevel% neq 0 exit /b %errorlevel%

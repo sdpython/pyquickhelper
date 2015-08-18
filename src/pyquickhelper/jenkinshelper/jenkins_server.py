@@ -763,10 +763,10 @@ class JenkinsExt(jenkins.Jenkins):
         Another example::
 
             import sys
-            sys.path.append(r"C:\<path>\ensae_teaching_cs\src")
-            sys.path.append(r"C:\<path>\pyquickhelper\src")
-            sys.path.append(r"C:\<path>\pyensae\src")
-            sys.path.append(r"C:\<path>\pyrsslocal\src")
+            sys.path.append(r"C:\\<path>\\ensae_teaching_cs\\src")
+            sys.path.append(r"C:\\<path>\\pyquickhelper\\src")
+            sys.path.append(r"C:\\<path>\\pyensae\\src")
+            sys.path.append(r"C:\\<path>\\pyrsslocal\\src")
             from ensae_teaching_cs.automation.jenkins_helper import setup_jenkins_server, JenkinsExt
             js = JenkinsExt("http://<machine>:8080/", <user>, <password>)
             js.setup_jenkins_server(location=r"c:\jenkins\pymy",
