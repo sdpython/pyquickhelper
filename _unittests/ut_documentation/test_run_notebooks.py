@@ -25,6 +25,7 @@ except ImportError:
 from src.pyquickhelper import fLOG, get_temp_folder
 from src.pyquickhelper.ipythonhelper import execute_notebook_list
 from src.pyquickhelper.pycode import compare_module_version
+from src.pyquickhelper.ipythonhelper import install_python_kernel_for_unittest
 import IPython
 
 
@@ -43,6 +44,8 @@ class TestRunNotebooks(unittest.TestCase):
         if compare_module_version(IPython.__version__, "4.0.0") < 0:
             # IPython is not recnt enough
             return
+
+        kernel_name = install_python_kernel_for_unittest("pyquickhelper")
 
         temp = get_temp_folder(__file__, "temp_run_notebooks")
 
@@ -79,7 +82,7 @@ class TestRunNotebooks(unittest.TestCase):
             keepnote = [_ for _ in keepnote if "javascript_extension" not in _]
 
         res = execute_notebook_list(
-            temp, keepnote, fLOG=fLOG, valid=valid, additional_path=addpaths)
+            temp, keepnote, fLOG=fLOG, valid=valid, additional_path=addpaths, kernel_name=kernel_name)
         assert len(res) > 0
         fails = [(os.path.split(k)[-1], v)
                  for k, v in sorted(res.items()) if not v[0]]

@@ -5,6 +5,7 @@
 import os
 import sys
 import time
+import json
 
 try:
     from nbformat import versions
@@ -12,12 +13,14 @@ try:
     from nbformat.v4 import upgrade
     from jupyter_client.kernelspec import find_kernel_specs, get_kernel_spec, KernelSpecManager
     from notebook.nbextensions import install_nbextension, _get_nbext_dir
+    from ipykernel.kernelspec import install as install_k
 except ImportError:
     from IPython.nbformat import versions
     from IPython.nbformat.reader import reads
     from IPython.nbformat.v4 import upgrade
     from IPython.kernelspec import find_kernel_specs, get_kernel_spec, KernelSpecManager
     from IPython.html.nbextensions import install_nbextension, _get_nbext_dir
+    from IPython.kernel.kernelspec import install as install_k
 
 if sys.version_info[0] == 2:
     from StringIO import StringIO
@@ -27,7 +30,7 @@ else:
 from .notebook_runner import NotebookRunner
 from ..loghelper.flog import noLOG
 from .notebook_exception import NotebookException
-from ..filehelper import explore_folder_iterfile
+from ..filehelper import explore_folder_iterfile, remove_folder
 
 if sys.version_info[0] == 2:
     from codecs import open
@@ -284,13 +287,16 @@ def execute_notebook_list(folder,
     return results
 
 
-def find_notebook_kernel():
+def find_notebook_kernel(kernel_spec_manager=None):
     """
     .. index:: notebook, kernel
 
     return a dict mapping kernel names to resource directories
 
-    @return     dict
+    @param      kernel_spec_manager     see `KernelSpecManager <http://jupyter-client.readthedocs.org/en/latest/api/kernelspec.html#jupyter_client.kernelspec.KernelSpecManager>`_
+                                        A KernelSpecManager to use for installation.
+                                        If none provided, a default instance will be created.
+    @return                             dict
 
     The list of installed kernels is described at
     `Making kernel for Jupyter <http://jupyter-client.readthedocs.org/en/latest/kernels.html#kernelspecs>`_.
@@ -298,20 +304,28 @@ def find_notebook_kernel():
 
     .. versionadded:: 1.3
     """
-    return find_kernel_specs()
+    if kernel_spec_manager is None:
+        kernel_spec_manager = KernelSpecManager()
+    return kernel_spec_manager.find_kernel_specs()
 
 
-def get_notebook_kernel(name):
+def get_notebook_kernel(kernel_name, kernel_spec_manager=None):
     """
     return a `KernelSpec <https://ipython.org/ipython-doc/dev/api/generated/IPython.kernel.kernelspec.html>`_
 
-    @return     KernelSpec
+    @param      kernel_spec_manager     see `KernelSpecManager <http://jupyter-client.readthedocs.org/en/latest/api/kernelspec.html#jupyter_client.kernelspec.KernelSpecManager>`_
+                                        A KernelSpecManager to use for installation.
+                                        If none provided, a default instance will be created.
+    @param      kernel_name             kernel name
+    @return                             KernelSpec
 
     The function only works with Jupyter>=4.0.
 
     .. versionadded:: 1.3
     """
-    return get_kernel_spec(name)
+    if kernel_spec_manager is None:
+        kernel_spec_manager = KernelSpecManager()
+    return kernel_spec_manager.get_kernel_spec(kernel_name)
 
 
 def install_notebook_extension(path=None,
@@ -390,6 +404,8 @@ def get_jupyter_extension_dir(user=False,
 
         path to installed extensions (by the user)
 
+
+    .. versionadded:: 1.3
     """
     return _get_nbext_dir(nbextensions_dir=nbextensions_dir, user=user, prefix=prefix)
 
@@ -435,3 +451,114 @@ def get_installed_notebook_extension(user=False,
             fold = "/".join(spl[:-1]).replace("\\", "/") + "/main"
             res.append(fold)
     return res
+
+
+def install_jupyter_kernel(exe=sys.executable, kernel_spec_manager=None, user=False, kernel_name=None, prefix=None):
+    """
+    Install a kernel based on executable (this python by default)
+
+    Parameters
+    ----------
+    exe: Python executable
+        current one by default
+    kernel_spec_manager: KernelSpecManager [optional]
+        A KernelSpecManager to use for installation.
+        If none provided, a default instance will be created.
+    user: bool [default: False]
+        Whether to do a user-only install, or system-wide.
+    kernel_name: str, optional
+        Specify a name for the kernelspec.
+        This is needed for having multiple IPython kernels for different environments.
+    prefix: str, optional
+        Specify an install prefix for the kernelspec.
+        This is needed to install into a non-default location, such as a conda/virtual-env.
+
+    Returns
+    -------
+
+    The path where the kernelspec was installed.
+
+    A kernel is defined by the following fields::
+
+        {
+            "display_name": "Python 3 (ENSAE)",
+            "language": "python",
+            "argv": [ "c:\\\\PythonENSAE\\\\python\\\\python.exe",
+                      "-m",
+                      "IPython.kernel",
+                      "-f",
+                      "{connection_file}"
+                    ]
+         }
+
+    For R, it looks like::
+
+        {
+            "display_name": "R (ENSAE)",
+            "language": "R",
+            "argv": [ "c:\\\\PythonENSAE\\\\tools\\\\R\\\\bin\\\\x64\\\\R.exe",
+                      "--quiet",
+                      "-e",
+                      "IRkernel::main()",
+                      "--args",
+                      "{connection_file}"
+                    ]
+        }
+
+    .. versionadded:: 1.3
+    """
+    exe = exe.replace("pythonw.exe", "python.exe")
+    dest = install_k(kernel_spec_manager=kernel_spec_manager,
+                     user=user, kernel_name=kernel_name, prefix=prefix)
+    kernel_file = os.path.join(dest, "kernel.json")
+    kernel = dict(display_name=kernel_name,
+                  language="python",
+                  argv=[exe, "-m", "IPython.kernel", "-f", "{connection_file}"])
+
+    s = json.dumps(kernel)
+    with open(kernel_file, "w") as f:
+        f.write(s)
+
+    return dest
+
+
+def install_python_kernel_for_unittest(suffix=None):
+    """
+    install a kernel based on this python (sys.executable) for unit test purposes
+
+    @param      suffix      suffix to add to the kernel name
+    @return                 kernel name
+
+    .. versionadded:: 1.3
+    """
+    exe = os.path.split(sys.executable)[0].replace("pythonw", "python")
+    exe = exe.replace("\\", "/").replace("/",
+                                         "_").replace(".", "_").replace(":", "")
+    kern = "ut_" + exe + "_" + str(sys.version_info[0])
+    if suffix is not None:
+        kern += "_" + suffix
+    kern = kern.lower()
+    install_jupyter_kernel(kernel_name=kern)
+    return kern
+
+
+def remove_kernel(kernel_name, kernel_spec_manager=None):
+    """
+    @param      kernel_spec_manager     see `KernelSpecManager <http://jupyter-client.readthedocs.org/en/latest/api/kernelspec.html#jupyter_client.kernelspec.KernelSpecManager>`_
+                                        A KernelSpecManager to use for installation.
+                                        If none provided, a default instance will be created.
+    @param      kernel_name             kernel name
+
+    The function only works with Jupyter>=4.0.
+
+    .. versionadded:: 1.3
+    """
+    kernels = find_notebook_kernel(kernel_spec_manager=kernel_spec_manager)
+    if kernel_name in kernels:
+        fold = kernels[kernel_name]
+        if not os.path.exists(fold):
+            raise FileNotFoundError("unable to remove folder " + fold)
+        remove_folder(fold)
+    else:
+        raise NotebookException("unable to find kernel {0} in {1}".format(
+            kernel_name, ", ".join(kernels.keys())))

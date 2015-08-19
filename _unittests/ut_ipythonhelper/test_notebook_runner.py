@@ -21,7 +21,7 @@ except ImportError:
         sys.path.append(path)
     import src
 
-from src.pyquickhelper.ipythonhelper.notebook_helper import run_notebook
+from src.pyquickhelper.ipythonhelper.notebook_helper import run_notebook, install_python_kernel_for_unittest
 from src.pyquickhelper import get_temp_folder, fLOG
 
 
@@ -44,8 +44,10 @@ class TestNotebookRunner (unittest.TestCase):
         if sys.version_info[0] == 2:
             return
 
+        kernel_name = install_python_kernel_for_unittest("pyquickhelper")
         stat, out = run_notebook(nbfile, working_dir=temp, outfilename=outfile,
-                                 additional_path=[addpath])
+                                 additional_path=[addpath],
+                                 kernel_name=kernel_name)
         fLOG(stat)
         fLOG(out)
         assert os.path.exists(outfile)
