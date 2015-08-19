@@ -11,14 +11,14 @@ try:
     from nbformat import versions
     from nbformat.reader import reads
     from nbformat.v4 import upgrade
-    from jupyter_client.kernelspec import find_kernel_specs, get_kernel_spec, KernelSpecManager
+    from jupyter_client.kernelspec import KernelSpecManager
     from notebook.nbextensions import install_nbextension, _get_nbext_dir
     from ipykernel.kernelspec import install as install_k
 except ImportError:
     from IPython.nbformat import versions
     from IPython.nbformat.reader import reads
     from IPython.nbformat.v4 import upgrade
-    from IPython.kernelspec import find_kernel_specs, get_kernel_spec, KernelSpecManager
+    from IPython.kernelspec import KernelSpecManager
     from IPython.html.nbextensions import install_nbextension, _get_nbext_dir
     from IPython.kernel.kernelspec import install as install_k
 

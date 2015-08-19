@@ -7,6 +7,7 @@ import sys
 import os
 import unittest
 import re
+import warnings
 
 
 try:
@@ -50,6 +51,8 @@ class TestNoteBooksBugSvg(unittest.TestCase):
             os.remove(os.path.join(temp, file))
 
         if "travis" in sys.executable:
+            warnings.warn(
+                "travis, unable to test TestNoteBooksBugSvg.test_notebook_svg")
             return
 
         setup_environment_for_help()

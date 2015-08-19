@@ -8,6 +8,7 @@ import sys
 import os
 import unittest
 import re
+import warnings
 
 try:
     import src
@@ -49,6 +50,8 @@ class TestNotebookKernels(unittest.TestCase):
 
         if "travis" in sys.executable:
             # permission issue on travis
+            warnings.warn(
+                "travis, unable to test TestNotebookKernels.test_notebook_kernel_install")
             return
 
         kern = "ut_" + sys.executable.replace("\\", "/").replace("/", "_").replace(

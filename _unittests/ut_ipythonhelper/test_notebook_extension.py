@@ -8,6 +8,7 @@ import sys
 import os
 import unittest
 import re
+import warnings
 
 try:
     import src
@@ -43,6 +44,8 @@ class TestNotebookExtensions(unittest.TestCase):
         except FileNotFoundError:
             if "travis" in sys.executable:
                 # does not work on travis due to permission error
+                warnings.warn(
+                    "travis, unable to test TestNotebookExtensions.test_notebook_extension")
                 return
             ext = []
 

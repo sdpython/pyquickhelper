@@ -7,7 +7,7 @@ import sys
 import os
 import unittest
 import re
-
+import warnings
 
 try:
     import src
@@ -45,6 +45,8 @@ class TestNoteBooksBugDocx(unittest.TestCase):
             os.remove(os.path.join(temp, file))
 
         if "travis" in sys.executable:
+            warnings.warn(
+                "travis, unable to test TestNoteBooksBugDocx.test_notebook_docx")
             return
 
         res = process_notebooks(nbs, temp, temp, formats=formats)

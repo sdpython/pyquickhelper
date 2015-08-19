@@ -6,6 +6,7 @@ import os
 import sys
 import unittest
 import shutil
+import warnings
 
 
 try:
@@ -43,6 +44,8 @@ class TestSphinxDocFull (unittest.TestCase):
             # AttributeError: 'module' object has no attribute
             # 'getsitepackages'
             # it also fails for python 2.7 (encoding issue)
+            warnings.warn(
+                "travis, unable to test TestSphinxDocFull.test_full_documentation")
             return
 
         temp = get_temp_folder(__file__, "temp_full_doc_template")
