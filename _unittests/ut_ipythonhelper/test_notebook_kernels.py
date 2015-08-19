@@ -50,7 +50,7 @@ class TestNotebookKernels(unittest.TestCase):
         if "travis" in sys.executable:
             # permission issue on travis
             return
-            
+
         kern = "ut_" + sys.executable.replace("\\", "/").replace("/", "_").replace(
             ".", "_").replace(":", "") + "_" + str(sys.version_info[0])
         kern = kern.lower()

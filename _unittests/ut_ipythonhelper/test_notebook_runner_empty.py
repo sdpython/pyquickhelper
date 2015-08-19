@@ -42,7 +42,8 @@ class TestNotebookRunnerEmpty (unittest.TestCase):
         addpath = os.path.normpath(os.path.join(temp, "..", "..", "..", "src"))
         assert os.path.exists(addpath)
 
-        kernel_name = None if "travis" in sys.executable else install_python_kernel_for_unittest("pyquickhelper")
+        kernel_name = None if "travis" in sys.executable else install_python_kernel_for_unittest(
+            "pyquickhelper")
 
         outfile = os.path.join(temp, "out_notebook.ipynb")
         assert not os.path.exists(outfile)

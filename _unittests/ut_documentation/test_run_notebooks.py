@@ -45,7 +45,8 @@ class TestRunNotebooks(unittest.TestCase):
             # IPython is not recnt enough
             return
 
-        kernel_name = None if "travis" in sys.executable else install_python_kernel_for_unittest("pyquickhelper")
+        kernel_name = None if "travis" in sys.executable else install_python_kernel_for_unittest(
+            "pyquickhelper")
 
         temp = get_temp_folder(__file__, "temp_run_notebooks")
 
