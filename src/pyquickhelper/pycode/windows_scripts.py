@@ -98,7 +98,7 @@ set pythonexe=__PY34_X64__\\python
 @echo ~VERSION
 more version.txt
 if %errorlevel% neq 0 exit /b %errorlevel%
-set PYTHONPATH=%PYTHONPATH%;%current%\\src
+set PYTHONPATH=%PYTHONPATH%;%current%\\src__ADDITIONAL_LOCAL_PATH__
 @echo ~SET PYTHONPATH=%PYTHONPATH%;%current%\\src__ADDITIONAL_LOCAL_PATH__
 @echo ~CALL %pythonexe% setup.py setup_hook
 %pythonexe% setup.py setup_hook
@@ -452,7 +452,7 @@ set current=%~dp0
 set path=%path%;%pythonexe%;%pythonexe%\\Scripts
 @echo ~SET path=%path%;%pythonexe%;%pythonexe%\\Scripts
 @echo ~CALL jupyter-notebook --notebook-dir=_doc\\notebooks --matplotlib=inline
-set PYTHONPATH=%PYTHONPATH%;%current%\\src
+set PYTHONPATH=%PYTHONPATH%;%current%\\src__ADDITIONAL_LOCAL_PATH__
 @echo ~SET PYTHONPATH=%PYTHONPATH%;%current%\\src__ADDITIONAL_LOCAL_PATH__
 jupyter-notebook --notebook-dir=_doc\\notebooks --matplotlib=inline
 """

@@ -1,0 +1,44 @@
+
+
+.. index:: babel, sphinx, issue
+
+.. blogpost::
+    :title: Issue with module babel
+    :keywords: babel, sphinx, exception, issue
+    :date: 2015-08-17
+    :categories: sphinx, modules
+
+    I went through the following issue with the latest version
+    of `babel <https://pypi.python.org/pypi/Babel>`_ (2.0). 
+    It happens when I try to generate the documentation for this module.
+    It gave me the following exception::
+    
+          File "c:\python34_x64\lib\site-packages\sphinx\__init__.py", line 51, in main
+            sys.exit(build_main(argv))
+          File "c:\python34_x64\lib\site-packages\sphinx\__init__.py", line 61, in build_main
+            from sphinx import cmdline
+          File "c:\python34_x64\lib\site-packages\sphinx\cmdline.py", line 23, in <module>
+            from sphinx.application import Sphinx
+          File "c:\python34_x64\lib\site-packages\sphinx\application.py", line 37, in <module>
+            from sphinx.builders import BUILTIN_BUILDERS
+          File "c:\python34_x64\lib\site-packages\sphinx\builders\__init__.py", line 23, in <module>
+            from sphinx.util import i18n, path_stabilize
+          File "c:\python34_x64\lib\site-packages\sphinx\util\i18n.py", line 15, in <module>
+            from babel.messages.pofile import read_po
+          File "c:\python34_x64\lib\site-packages\babel\messages\__init__.py", line 12, in <module>
+            from babel.messages.catalog import *
+          File "c:\python34_x64\lib\site-packages\babel\messages\catalog.py", line 23, in <module>
+            from babel.dates import format_datetime
+          File "c:\python34_x64\lib\site-packages\babel\dates.py", line 28, in <module>
+            from babel.util import UTC, LOCALTZ
+          File "c:\python34_x64\lib\site-packages\babel\util.py", line 278, in <module>
+            from babel import localtime
+          File "c:\python34_x64\lib\site-packages\babel\localtime\__init__.py", line 21, in <module>
+            from babel.localtime._win32 import _get_localzone
+          File "c:\python34_x64\lib\site-packages\babel\localtime\_win32.py", line 18, in <module>
+            tz_names = get_global('windows_zone_mapping')
+          File "c:\python34_x64\lib\site-packages\babel\core.py", line 58, in get_global
+            _global_data = pickle.load(fileobj)
+        TypeError: an integer is required (got type str)
+        
+    The exception disappeared after I reverted to babel 1.3.
