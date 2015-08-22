@@ -144,16 +144,24 @@ def standard_help_for_setup(file_or_folder, project_var_name, module_name=None, 
 
 
 def run_unittests_for_setup(file_or_folder, skip_function=default_skip_function, setup_params=None,
-                            only_setup_hook=False):
+                            only_setup_hook=False,
+                            coverage_options=None,
+                            coverage_exclude_lines=None):
     """
     run the unit tests and compute the coverage, stores
     the results in ``_doc/sphinxdoc/source/coverage``
     assuming the module follows the same design as *pyquickhelper*
 
-    @param      file_or_folder      file ``setup.py`` or folder which contains it
-    @param      skip_function       @see fn main_wrapper_tests
-    @param      setup_params        @see fn main_wrapper_tests
-    @param      only_setup_hook     @see fn main_wrapper_tests
+    @param      file_or_folder          file ``setup.py`` or folder which contains it
+    @param      skip_function           see @see fn main_wrapper_tests
+    @param      setup_params            see @see fn main_wrapper_tests
+    @param      only_setup_hook         see @see fn main_wrapper_tests
+    @param      coverage_options        see @see fn main_wrapper_tests
+    @param      coverage_exclude_lines  see @see fn main_wrapper_tests
+
+    .. versionchanged:: 1.3
+        Parameters *coverage_options*, *coverage_exclude_lines* were added.
+        See function @see fn main_wrapper_tests.
     """
     ffolder = get_folder(file_or_folder)
     funit = os.path.join(ffolder, "_unittests")
@@ -169,7 +177,8 @@ def run_unittests_for_setup(file_or_folder, skip_function=default_skip_function,
     fix_tkinter_issues_virtualenv()
     main_wrapper_tests(
         run_unit, add_coverage=True, skip_function=skip_function, setup_params=setup_params,
-        only_setup_hook=only_setup_hook)
+        only_setup_hook=only_setup_hook, coverage_options=coverage_options,
+        coverage_exclude_lines=coverage_exclude_lines)
 
 
 def copy27_for_setup(file_or_folder):
@@ -256,7 +265,9 @@ def process_standard_options_for_setup(argv,
                                        default_engine_paths=None,
                                        extra_ext=None,
                                        add_htmlhelp=False,
-                                       setup_params=None):
+                                       setup_params=None,
+                                       coverage_options=None,
+                                       coverage_exclude_lines=None):
     """
     process the standard options the module pyquickhelper is
     able to process assuming the module which calls this function
@@ -286,6 +297,9 @@ def process_standard_options_for_setup(argv,
     @param      extra_ext               extra file extension to process (add a page for each of them, ex ``["doc"]``)
     @param      add_htmlhelp            run HTML Help too (only on Windows)
     @param      setup_params            parameters send to @see fn call_setup_hook
+    @param      coverage_options        see @see fn main_wrapper_tests
+    @param      coverage_exclude_lines  see @see fn main_wrapper_tests
+
     @return                             True (an option was processed) or False,
                                         the file ``setup.py`` should call function ``setup``
 
@@ -302,6 +316,9 @@ def process_standard_options_for_setup(argv,
             },
         }
 
+    .. versionchanged:: 1.3
+        Parameters *coverage_options*, *coverage_exclude_lines* were added.
+        See function @see fn main_wrapper_tests.
     """
     folder = file_or_folder if os.path.isdir(
         file_or_folder) else os.path.dirname(file_or_folder)
@@ -336,26 +353,30 @@ def process_standard_options_for_setup(argv,
         return True
 
     elif "unittests" in sys.argv:
-        run_unittests_for_setup(file_or_folder, setup_params=setup_params)
+        run_unittests_for_setup(file_or_folder, setup_params=setup_params,
+                                coverage_options=coverage_options, coverage_exclude_lines=coverage_exclude_lines)
         return True
 
     elif "setup_hook" in sys.argv:
         run_unittests_for_setup(
-            file_or_folder, setup_params=setup_params, only_setup_hook=True)
+            file_or_folder, setup_params=setup_params, only_setup_hook=True,
+            coverage_options=coverage_options, coverage_exclude_lines=coverage_exclude_lines)
         return True
 
     elif "unittests_LONG" in sys.argv:
         def skip_long(name, code):
             return "test_LONG_" not in name
         run_unittests_for_setup(
-            file_or_folder, skip_function=skip_long, setup_params=setup_params)
+            file_or_folder, skip_function=skip_long, setup_params=setup_params,
+            coverage_options=coverage_options, coverage_exclude_lines=coverage_exclude_lines)
         return True
 
     elif "unittests_SKIP" in sys.argv:
         def skip_skip(name, code):
-            return "test_LONG_" not in name
+            return "test_SKIP_" not in name
         run_unittests_for_setup(
-            file_or_folder, skip_function=skip_skip, setup_params=setup_params)
+            file_or_folder, skip_function=skip_skip, setup_params=setup_params,
+            coverage_options=coverage_options, coverage_exclude_lines=coverage_exclude_lines)
         return True
 
     elif "build_script" in sys.argv:

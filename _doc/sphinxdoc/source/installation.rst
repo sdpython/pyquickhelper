@@ -31,9 +31,8 @@ you might need to add ``--pre`` to force the installation::
 
     pip install pyquickhelper --pre
     
-The version for Python 2.7 is not available through pypi
-but it can be installed from `Python Extensions <http://www.xavierdupre.fr/site2013/index_code.html>`_
-which indicates the latest available version for this platform::
+Some versions are available at `Python Extensions <http://www.xavierdupre.fr/site2013/index_code.html>`_,
+usually development versions. You can install it using:
 
-    pip install http://www.xavierdupre.fr/app/pyquickhelper/pyquickhelper-1.1.611-py2-none-any.whl
+    pip install http://www.xavierdupre.fr/app/pyquickhelper/pyquickhelper-<version>.whl
     

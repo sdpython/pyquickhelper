@@ -116,14 +116,18 @@ Both versions are available on `pipy <https://pypi.python.org/pypi/pyquickhelper
 And to avoid installing the dependencies::
 
     pip install pyquickhelper --no-deps
-    
+
+Others options are described at: :ref:`l-moreinstall`.
+
     
 Navigation
 ----------
 
-The most simple way is with *pip*: ``pip install pyquickhelper``. 
-Others options are described at: :ref:`l-moreinstall`.
-    
+.. toctree::
+    :maxdepth: 1
+
+    indexmenu
+
 
 +----------------------+---------------------+---------------------+--------------------+------------------------+------------------------------------------------+
 | :ref:`l-modules`     |  :ref:`l-functions` | :ref:`l-classes`    | :ref:`l-methods`   | :ref:`l-staticmethods` | :ref:`l-properties`                            |
@@ -134,7 +138,3 @@ Others options are described at: :ref:`l-moreinstall`.
 +----------------------+---------------------+---------------------+--------------------+------------------------+------------------------------------------------+
 
 
-.. toctree::
-    :maxdepth: 1
-
-    indexmenu

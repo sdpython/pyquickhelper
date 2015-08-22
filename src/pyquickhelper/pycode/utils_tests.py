@@ -544,21 +544,25 @@ def main_wrapper_tests(codefile,
                        report_folder=None,
                        skip_function=default_skip_function,
                        setup_params=None,
-                       only_setup_hook=False):
+                       only_setup_hook=False,
+                       coverage_options=None,
+                       coverage_exclude_lines=None):
     """
     calls function :func:`main <pyquickhelper.unittests.utils_tests.main>` and throw an exception if it fails
 
-    @param      codefile        ``__file__`` or ``run_unittests.py``
-    @param      skip_list       to skip a list of unit tests (by index, starting by 1)
-    @param      processes       to run the unit test in a separate process (with function @see fn run_cmd),
-                                however, to make that happen, you need to specify
-                                ``exit=False`` for each test file, see `unittest.main <https://docs.python.org/3.4/library/unittest.html#unittest.main>`_
-    @param      add_coverage    run the unit tests and measure the coverage at the same time
-    @param      report_folder   folder where the coverage report will be stored, if None, it will be placed in:
-                                ``os.path.join(os.path.dirname(codefile), "..", "_doc","sphinxdoc","source", "coverage")``
-    @param      skip_function   function(filename,content) --> boolean to skip a unit test
-    @param      setup_params    parameters sent to @see fn call_setup_hook
-    @param      only_setup_hook calls only @see fn call_setup_hook, do not run the unit test
+    @param      codefile                ``__file__`` or ``run_unittests.py``
+    @param      skip_list               to skip a list of unit tests (by index, starting by 1)
+    @param      processes               to run the unit test in a separate process (with function @see fn run_cmd),
+                                        however, to make that happen, you need to specify
+                                        ``exit=False`` for each test file, see `unittest.main <https://docs.python.org/3.4/library/unittest.html#unittest.main>`_
+    @param      add_coverage            run the unit tests and measure the coverage at the same time
+    @param      report_folder           folder where the coverage report will be stored, if None, it will be placed in:
+                                        ``os.path.join(os.path.dirname(codefile), "..", "_doc","sphinxdoc","source", "coverage")``
+    @param      skip_function           function(filename,content) --> boolean to skip a unit test
+    @param      setup_params            parameters sent to @see fn call_setup_hook
+    @param      only_setup_hook         calls only @see fn call_setup_hook, do not run the unit test
+    @param      coverage_options        (dictionary) options for module coverage as a dictionary, see below, default is None
+    @param      coverage_exclude_lines  (list) options for module coverage, lines to exclude from the coverage report, defaul is None
 
     @FAQ(How to build pyquickhelper with Jenkins?)
     `Jenkins <http://jenkins-ci.org/>`_ is a task scheduler for continuous integration.
@@ -605,6 +609,17 @@ def main_wrapper_tests(codefile,
     .. versionchanged:: 1.2
         Parameter *only_setup_hook* was added.
         Save the report in XML format, binary format, replace full paths by relative path.
+
+    .. versionchanged:: 1.3
+        Parameters *coverage_options*, *coverage_exclude_lines* was added.
+        See class `Coverage <http://coverage.readthedocs.org/en/coverage-4.0b1/api_coverage.html?highlight=coverage#coverage.Coverage.__init__>`_
+        and `Configuration files <http://coverage.readthedocs.org/en/coverage-4.0b1/config.html>`_
+        to specify those options. If both values are left to None, this function will
+        compute the code coverage for all files in this module. The function
+        now exports the coverage options which were used.
+        For example, to exclude files from the coverage report::
+
+            coverage_options=dict(omit=["*exclude*.py"])
     """
     runner = unittest.TextTestRunner(verbosity=0, stream=io.StringIO())
     path = os.path.abspath(os.path.join(os.path.split(codefile)[0]))
@@ -685,9 +700,22 @@ def main_wrapper_tests(codefile,
                     os.remove(full)
 
             # we run the coverage
+            if coverage_options is None:
+                coverage_options = {}
+            if "source" in coverage_options:
+                coverage_options["source"].append(srcp)
+            else:
+                coverage_options["source"] = [srcp]
+            if "data_file" not in coverage_options:
+                coverage_options["data_file"] = dfile
+
             from coverage import coverage
-            cov = coverage(source=[srcp], data_file=dfile)
-            cov.exclude('if __name__ == "__main__"')
+            cov = coverage(**coverage_options)
+            if coverage_exclude_lines is not None:
+                for line in coverage_exclude_lines:
+                    cov.exclude(line)
+            else:
+                cov.exclude("raise NotImplementedError")
             cov.start()
 
             res = run_main()
@@ -700,9 +728,9 @@ def main_wrapper_tests(codefile,
 
             # we clean absolute path from the produced files
             print("replace ", srcp, ' by ', project_var_name)
-            srcp = [os.path.abspath(os.path.normpath(srcp)),
-                    os.path.normpath(srcp)]
-            bsrcp = [bytes(b, encoding="utf-8") for b in srcp]
+            srcp_s = [os.path.abspath(os.path.normpath(srcp)),
+                      os.path.normpath(srcp)]
+            bsrcp = [bytes(b, encoding="utf-8") for b in srcp_s]
             bproj = bytes(project_var_name, encoding="utf-8")
             for afile in os.listdir(report_folder):
                 full = os.path.join(report_folder, afile)
@@ -712,6 +740,41 @@ def main_wrapper_tests(codefile,
                     content = content.replace(b, bproj)
                 with open(full, "wb") as f:
                     f.write(content)
+
+            # we print debug information for the coverage
+            outcov = os.path.join(report_folder, "covlog.txt")
+            rows = []
+            rows.append("COVERAGE OPTIONS")
+            for k, v in sorted(coverage_options.items()):
+                rows.append("{0}={1}".format(k, v))
+            rows.append("")
+            rows.append("EXCLUDE LINES")
+            for k in cov.get_exclude_list():
+                rows.append(k)
+            rows.append("")
+            rows.append("OPTIONS")
+            for option_spec in sorted(cov.config.CONFIG_FILE_OPTIONS):
+                attr, where = option_spec[:2]
+                v = getattr(cov.config, attr)
+                st = "{0}={2}".format(attr, where, v)
+                rows.append(st)
+            rows.append("")
+            content = "\n".join(rows)
+
+            reps = []
+            for _ in srcp_s[:1]:
+                __ = os.path.normpath(os.path.join(_, "..", "..", ".."))
+                __ += "/"
+                reps.append(__)
+                reps.append(__.replace("/", "\\"))
+                reps.append(__.replace("/", "\\\\"))
+                reps.append(__.replace("\\", "\\\\"))
+
+            for s in reps:
+                content = content.replace(s, "")
+
+            with open(outcov, "w", encoding="utf8") as f:
+                f.write(content)
 
         else:
             tested_module(src_abs, project_var_name)
