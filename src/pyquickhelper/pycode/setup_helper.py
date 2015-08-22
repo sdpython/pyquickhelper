@@ -319,10 +319,30 @@ def process_standard_options_for_setup(argv,
     .. versionchanged:: 1.3
         Parameters *coverage_options*, *coverage_exclude_lines* were added.
         See function @see fn main_wrapper_tests.
+
+        Parameter *unittest_modules* now accepts a list of string and 2-uple.
+        If it is a 2-uple, the first string is used to convert Python 3 code into Python 2
+        (in case the local folder is different from the module name),
+        the second string is used to add local path to the variable ``PYTHON_PATH``.
+        If it is a single string, it means both name strings are equal.
     """
     folder = file_or_folder if os.path.isdir(
         file_or_folder) else os.path.dirname(file_or_folder)
     unit_test_folder = os.path.join(folder, "_unittests")
+
+    if unittest_modules is None:
+        unittest_modules_py3to2 = None
+        unittest_modules_script = None
+    else:
+        unittest_modules_py3to2 = []
+        unittest_modules_script = []
+        for mod in unittest_modules:
+            if isinstance(mod, tuple):
+                unittest_modules_py3to2.append(mod[0])
+                unittest_modules_script.append(mod[1])
+            else:
+                unittest_modules_py3to2.append(mod)
+                unittest_modules_script.append(mod)
 
     if "clean_space" in argv:
         rem = clean_space_for_setup(file_or_folder)
@@ -413,7 +433,7 @@ def process_standard_options_for_setup(argv,
                 c, project_var_name, requirements=requirements, port=port, platform=sys.platform,
                 default_engine_paths=default_engine_paths,
                 unit_test_folder=unit_test_folder,
-                unittest_modules=unittest_modules)
+                unittest_modules=unittest_modules_script)
             if sc is None:
                 continue
             if c == "setupdep":
@@ -443,7 +463,7 @@ def process_standard_options_for_setup(argv,
         root = os.path.normpath(root)
         dest = os.path.join(root, "dist_module27")
         py3to2_convert_tree(
-            root, dest, unittest_modules=unittest_modules, pattern_copy=pattern_copy)
+            root, dest, unittest_modules=unittest_modules_py3to2, pattern_copy=pattern_copy)
         return True
 
     elif "test_local_pypi" in sys.argv:
