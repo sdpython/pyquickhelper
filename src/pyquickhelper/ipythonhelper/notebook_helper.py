@@ -18,7 +18,7 @@ except ImportError:
     from IPython.nbformat import versions
     from IPython.nbformat.reader import reads
     from IPython.nbformat.v4 import upgrade
-    from IPython.kernelspec import KernelSpecManager
+    from IPython.kernel.kernelspec import KernelSpecManager
     from IPython.html.nbextensions import install_nbextension, _get_nbext_dir
     from IPython.kernel.kernelspec import install as install_k
 
