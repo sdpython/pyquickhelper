@@ -84,6 +84,8 @@ Versions, Changes
     * **add:** function *install_jupyter_kernel* to install a kernel for a notebook
     * **add:** add a filtering option to remove file from the coverage report
     * **fix:** run unit tests having SKIP in their names (it was LONG before)
+    * **add:** add functions to run before and after the documentation generation 
+      (to add extra files, to remove, to modify, ...)
 
 * **1.2.781 - 2015/08/15**
     * **change:** parameter prog was added to class MagicCommandParser

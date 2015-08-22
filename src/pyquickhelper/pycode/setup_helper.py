@@ -267,7 +267,9 @@ def process_standard_options_for_setup(argv,
                                        add_htmlhelp=False,
                                        setup_params=None,
                                        coverage_options=None,
-                                       coverage_exclude_lines=None):
+                                       coverage_exclude_lines=None,
+                                       func_sphinx_begin=None,
+                                       func_sphinx_end=None):
     """
     process the standard options the module pyquickhelper is
     able to process assuming the module which calls this function
@@ -299,6 +301,12 @@ def process_standard_options_for_setup(argv,
     @param      setup_params            parameters send to @see fn call_setup_hook
     @param      coverage_options        see @see fn main_wrapper_tests
     @param      coverage_exclude_lines  see @see fn main_wrapper_tests
+    @param      func_sphinx_begin       function called before the documentation generation,
+                                        it gets the same parameters as this function (all named),
+                                        use ``**args**``
+    @param      func_sphinx_end         function called after the documentation generation,
+                                        it gets the same parameters as this function (all named),
+                                        use ``**args**``
 
     @return                             True (an option was processed) or False,
                                         the file ``setup.py`` should call function ``setup``
@@ -325,6 +333,8 @@ def process_standard_options_for_setup(argv,
         (in case the local folder is different from the module name),
         the second string is used to add local path to the variable ``PYTHON_PATH``.
         If it is a single string, it means both name strings are equal.
+        Parameters *func_sphinx_begin* and *func_sphinx_end* were added
+        to pre-process or post-process the documentation
     """
     folder = file_or_folder if os.path.isdir(
         file_or_folder) else os.path.dirname(file_or_folder)
@@ -367,9 +377,24 @@ def process_standard_options_for_setup(argv,
         if len(err) > 0 and err != "no _setup_hook":
             raise Exception(
                 "unable to run _setup_hook\nOUT:\n{0}\nERR:\n{1}".format(out, err))
+
+        if func_sphinx_begin is not None:
+            func_sphinx_begin(argv=argv, file_or_folder=file_or_folder, project_var_name=project_var_name,
+                              module_name=module_name, unittest_modules=unittest_modules, pattern_copy=pattern_copy,
+                              requirements=requirements, port=port, blog_list=blog_list, default_engine_paths=default_engine_paths,
+                              extra_ext=extra_ext, add_htmlhelp=add_htmlhelp, setup_params=setup_params, coverage_options=coverage_options,
+                              coverage_exclude_lines=coverage_exclude_lines, func_sphinx_begin=func_sphinx_begin, func_sphinx_end=func_sphinx_end)
         standard_help_for_setup(
             file_or_folder, project_var_name, module_name=module_name, extra_ext=extra_ext,
             add_htmlhelp=add_htmlhelp)
+
+        if func_sphinx_end is not None:
+            func_sphinx_end(argv=argv, file_or_folder=file_or_folder, project_var_name=project_var_name,
+                            module_name=module_name, unittest_modules=unittest_modules, pattern_copy=pattern_copy,
+                            requirements=requirements, port=port, blog_list=blog_list, default_engine_paths=default_engine_paths,
+                            extra_ext=extra_ext, add_htmlhelp=add_htmlhelp, setup_params=setup_params, coverage_options=coverage_options,
+                            coverage_exclude_lines=coverage_exclude_lines, func_sphinx_begin=func_sphinx_begin, func_sphinx_end=func_sphinx_end)
+
         return True
 
     elif "unittests" in sys.argv:
