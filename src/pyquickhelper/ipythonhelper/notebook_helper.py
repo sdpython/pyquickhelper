@@ -23,43 +23,7 @@ except ImportError:
     try:
         from IPython.kernel.kernelspec import install as install_k
     except ImportError:
-        import shutil
-        import tempfile
-        from IPython.kernel.launcher import make_ipkernel_cmd
-
-        def get_kernel_dict():
-            return {
-                'argv': make_ipkernel_cmd(),
-                'display_name': 'Python %i' % sys.version_info[0],
-                'language': 'python'}
-
-        def write_kernel_spec(path=None):
-            """
-            This code should be removed when Anaconda updates to the latest jupyter.
-            """
-            if path is None:
-                path = os.path.join(tempfile.mkdtemp(
-                    suffix='_kernels'), 'python%i' % sys.version_info[0])
-            shutil.copytree(os.path.join(os.path.dirname(
-                file_kernelspec), 'resources'), path)
-            with open(os.path.join(path, 'kernel.json'), 'w') as f:
-                json.dump(get_kernel_dict(), f, indent=1)
-            return path
-
-        def install_k(kernel_spec_manager=None, user=False, kernel_name=None, prefix=None):
-            """
-            copy from ipykernel.kernelspec,
-            issue in Anaconda (Python 2)
-            """
-            if kernel_spec_manager is None:
-                kernel_spec_manager = KernelSpecManager()
-            if kernel_name is None:
-                kernel_name = 'python%i' % sys.version_info[0]
-            path = write_kernel_spec()
-            dest = kernel_spec_manager.install_kernel_spec(
-                path, kernel_name=kernel_name, user=user, prefix=prefix)
-            shutil.rmtree(path)
-            return dest
+        raise ImportError("upgrade IPython, this one is not recent enough: {0}".format(IPython.__version__))
 
 
 if sys.version_info[0] == 2:
