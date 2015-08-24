@@ -33,6 +33,7 @@ jupyter_core
 lxml
 matplotlib
 mechanize
+metakernel
 nbformat
 notebook
 numpy

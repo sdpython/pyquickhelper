@@ -195,6 +195,7 @@ if not r:
             "jupyter_core",
             "ipykernel",
             "ipywidgets",
+            "metakernel",
             "notebook",
             "nbformat",
             "ipython_genutils",
