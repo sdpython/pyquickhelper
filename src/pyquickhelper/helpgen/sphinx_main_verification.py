@@ -73,8 +73,12 @@ def verification_html_file(item, fLOG=noLOG):
     The first line is 0.
     """
     with open(item, "r", encoding="utf8") as f:
-        lines = f.readlines()
+        content = f.read()
 
+    content = content.replace("\r", "").replace("\n", "_#!#_LINES_#_")
+    content = re.sub("<pre>(.*?)</pre>", "<pre></pre>", content)
+    content = content.replace("_#!#_LINES_#_", "\n")
+    lines = content.split("\n")
     reg = re.compile("([.][.] _[-a-z_A-Z0-9][:.])")
 
     errors = []

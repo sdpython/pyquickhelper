@@ -23,7 +23,8 @@ except ImportError:
     try:
         from IPython.kernel.kernelspec import install as install_k
     except ImportError:
-        raise ImportError("upgrade IPython, this one is not recent enough: {0}".format(IPython.__version__))
+        raise ImportError("upgrade IPython, this one is not recent enough: {0}".format(
+            IPython.__version__))
 
 
 if sys.version_info[0] == 2:
