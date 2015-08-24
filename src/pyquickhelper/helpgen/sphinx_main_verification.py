@@ -4,6 +4,7 @@
 @brief Function to verify the files produced by Sphinx
 
 """
+import sys
 import os
 import re
 import warnings
