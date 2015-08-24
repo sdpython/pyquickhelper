@@ -10,6 +10,9 @@ import warnings
 from ..loghelper.flog import noLOG
 from ..filehelper.synchelper import explore_folder_iterfile
 
+if sys.version_info[0] == 2:
+    from codecs import open
+
 
 class SphinxVerificationException(Exception):
 
