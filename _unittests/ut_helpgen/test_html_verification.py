@@ -36,7 +36,7 @@ class TestHtmlVerification(unittest.TestCase):
             OutputPrint=__name__ == "__main__")
 
         fold = os.path.join(os.path.abspath(
-            os.path.dirname(__file__)), "data", "html_example2.html")
+            os.path.dirname(__file__)), "data", "html_example2.txt")
         errors = verification_html_file(fold, fLOG=fLOG)
         if len(errors) > 0:
             ok = ":ref:`link0`"
