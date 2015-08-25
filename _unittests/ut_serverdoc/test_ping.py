@@ -25,6 +25,14 @@ from src.pyquickhelper.serverdoc import ping_machine, regular_ping_machine
 
 
 class TestPing(unittest.TestCase):
+    
+    def get_machine(self):
+        if sys.platform.startswith("win"):
+            return os.environ["COMPUTERNAME"]
+        else:
+            r = os.environ.get("HOSTNAME", None)
+            if r is None:
+                raise Exception(str(os.environ))
 
     def test_ping(self):
         fLOG(
@@ -32,7 +40,7 @@ class TestPing(unittest.TestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
-        machine = os.environ["COMPUTERNAME"]
+        machine = self.get_machine()
         out = ping_machine(machine, fLOG=fLOG)
         fLOG(out)
         assert len(out) > 0
@@ -43,7 +51,7 @@ class TestPing(unittest.TestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
-        machine = os.environ["COMPUTERNAME"]
+        machine = self.get_machine()
         out = regular_ping_machine(machine, delay=0.1, nb_max=3, fLOG=fLOG)
         fLOG(out)
         assert len(out) > 0
