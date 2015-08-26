@@ -183,9 +183,13 @@ class JenkinsExt(jenkins.Jenkins):
                 cmd = cmd.replace("__PYTHON__", os.path.dirname(pythonexe)) \
                          .replace("__PORT__", str(port))
             elif "[update]" in spl:
-                cmd = "%s\\python -u -c \"from pymyinstall.packaged update_all;update_all(temp_folder='build/update_modules', verbose=True)\"" % pythonexe
+                cmd = "%s\\python -u -c \"from pymyinstall.packaged import update_all;update_all(temp_folder='build/update_modules', verbose=True)\"" % pythonexe
+            elif "[install]" in spl:
+                cmd = "%s\\python -u -c \"from pymyinstall.packaged import install_all;install_all(temp_folder='build/update_modules', verbose=True)\"" % pythonexe
             elif "[winpython_update]" in spl:
-                cmd = "%s\\python -u -c \"from pymyinstall.packaged update_all;update_all(temp_folder='build/update_modules', verbose=True)\"" % winpython
+                cmd = "%s\\python -u -c \"from pymyinstall.packaged import update_all;update_all(temp_folder='build/update_modules', verbose=True)\"" % winpython
+            elif "[winpython_install]" in spl:
+                cmd = "%s\\python -u -c \"from pymyinstall.packaged import install_all;install_all(temp_folder='build/update_modules', verbose=True)\"" % winpython
             else:
                 raise JenkinsExtException("cannot interpret job: " + job)
             return cmd
@@ -710,6 +714,8 @@ class JenkinsExt(jenkins.Jenkins):
                         ("standalone [conda_update]", "H H(8-9) * * 0"),
                         "standalone [conda_update27]",
                         "standalone [local_pypi]",
+                        "standalone [update]",
+                        "standalone [install]",
                         # pyquickhelper and others,
                        ("pyquickhelper", "H H(10-11) * * 0"),
                         "pymyinstall",

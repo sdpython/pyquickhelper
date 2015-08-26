@@ -777,7 +777,7 @@ def main_wrapper_tests(codefile,
                 f.write(content)
 
         else:
-            tested_module(src_abs, project_var_name)
+            tested_module(src_abs, project_var_name, setup_params)
             res = run_main()
 
         for r in res["tests"]:
