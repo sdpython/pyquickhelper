@@ -39,7 +39,8 @@ def process_standard_options_for_setup(argv,
                                        coverage_options=None,
                                        coverage_exclude_lines=None,
                                        func_sphinx_begin=None,
-                                       func_sphinx_end=None):
+                                       func_sphinx_end=None,
+                                       additional_notebook_path=None):
     """
     process the standard options the module pyquickhelper is
     able to process assuming the module which calls this function
@@ -56,30 +57,31 @@ def process_standard_options_for_setup(argv,
         * ``unittests_SKIP``: run the unit tests beginning by ``test_SKIP_``
         * ``write_version``: write a file ``version.txt`` with the version number (needs an access to GitHub)
 
-    @param      argv                    = *sys.argv*
-    @param      file_or_folder          file ``setup.py`` or folder which contains it
-    @param      project_var_name        display name of the module
-    @param      module_name             module name, None if equal to *project_var_name* (``import <module_name>``)
-    @param      unittest_modules        modules added for the unit tests, see @see fn py3to2_convert_tree
-    @param      pattern_copy            see @see fn py3to2_convert_tree
-    @param      requirements            dependencies
-    @param      port                    port for the local pipy server
-    @param      blog_list               list of blog to listen for this module (usually stored in ``module.__blog__``)
-    @param      default_engine_paths    define the default location for python engine, should be dictionary *{ engine: path }*, see below.
-    @param      extra_ext               extra file extension to process (add a page for each of them, ex ``["doc"]``)
-    @param      add_htmlhelp            run HTML Help too (only on Windows)
-    @param      setup_params            parameters send to @see fn call_setup_hook
-    @param      coverage_options        see @see fn main_wrapper_tests
-    @param      coverage_exclude_lines  see @see fn main_wrapper_tests
-    @param      func_sphinx_begin       function called before the documentation generation,
-                                        it gets the same parameters as this function (all named),
-                                        use ``**args**``
-    @param      func_sphinx_end         function called after the documentation generation,
-                                        it gets the same parameters as this function (all named),
-                                        use ``**args**``
+    @param      argv                        = *sys.argv*
+    @param      file_or_folder              file ``setup.py`` or folder which contains it
+    @param      project_var_name            display name of the module
+    @param      module_name                 module name, None if equal to *project_var_name* (``import <module_name>``)
+    @param      unittest_modules            modules added for the unit tests, see @see fn py3to2_convert_tree
+    @param      pattern_copy                see @see fn py3to2_convert_tree
+    @param      requirements                dependencies
+    @param      port                        port for the local pipy server
+    @param      blog_list                   list of blog to listen for this module (usually stored in ``module.__blog__``)
+    @param      default_engine_paths        define the default location for python engine, should be dictionary *{ engine: path }*, see below.
+    @param      extra_ext                   extra file extension to process (add a page for each of them, ex ``["doc"]``)
+    @param      add_htmlhelp                run HTML Help too (only on Windows)
+    @param      setup_params                parameters send to @see fn call_setup_hook
+    @param      coverage_options            see @see fn main_wrapper_tests
+    @param      coverage_exclude_lines      see @see fn main_wrapper_tests
+    @param      func_sphinx_begin           function called before the documentation generation,
+                                            it gets the same parameters as this function (all named),
+                                            use ``**args**``
+    @param      func_sphinx_end             function called after the documentation generation,
+                                            it gets the same parameters as this function (all named),
+                                            use ``**args**``
+    @param      additional_notebook_path    additiona paths to add when launching the notebook
 
-    @return                             True (an option was processed) or False,
-                                        the file ``setup.py`` should call function ``setup``
+    @return                                 True (an option was processed) or False,
+                                            the file ``setup.py`` should call function ``setup``
 
     The command ``build_script`` is used, the flag ``--private`` can be used to
     avoid producing scripts to publish the module on `Pypi <https://pypi.python.org/pypi>`_.
@@ -104,7 +106,9 @@ def process_standard_options_for_setup(argv,
         the second string is used to add local path to the variable ``PYTHON_PATH``.
         If it is a single string, it means both name strings are equal.
         Parameters *func_sphinx_begin* and *func_sphinx_end* were added
-        to pre-process or post-process the documentation
+        to pre-process or post-process the documentation.
+        Parameter *additional_notebook_path* was added to specify some additional
+        paths when preparing the script *auto_cmd_notebook.bat*.
     """
     folder = file_or_folder if os.path.isdir(
         file_or_folder) else os.path.dirname(file_or_folder)
@@ -153,7 +157,8 @@ def process_standard_options_for_setup(argv,
                               module_name=module_name, unittest_modules=unittest_modules, pattern_copy=pattern_copy,
                               requirements=requirements, port=port, blog_list=blog_list, default_engine_paths=default_engine_paths,
                               extra_ext=extra_ext, add_htmlhelp=add_htmlhelp, setup_params=setup_params, coverage_options=coverage_options,
-                              coverage_exclude_lines=coverage_exclude_lines, func_sphinx_begin=func_sphinx_begin, func_sphinx_end=func_sphinx_end)
+                              coverage_exclude_lines=coverage_exclude_lines, func_sphinx_begin=func_sphinx_begin, func_sphinx_end=func_sphinx_end,
+                              additional_notebook_path=additional_notebook_path)
         standard_help_for_setup(
             file_or_folder, project_var_name, module_name=module_name, extra_ext=extra_ext,
             add_htmlhelp=add_htmlhelp)
@@ -163,13 +168,15 @@ def process_standard_options_for_setup(argv,
                             module_name=module_name, unittest_modules=unittest_modules, pattern_copy=pattern_copy,
                             requirements=requirements, port=port, blog_list=blog_list, default_engine_paths=default_engine_paths,
                             extra_ext=extra_ext, add_htmlhelp=add_htmlhelp, setup_params=setup_params, coverage_options=coverage_options,
-                            coverage_exclude_lines=coverage_exclude_lines, func_sphinx_begin=func_sphinx_begin, func_sphinx_end=func_sphinx_end)
+                            coverage_exclude_lines=coverage_exclude_lines, func_sphinx_begin=func_sphinx_begin, func_sphinx_end=func_sphinx_end,
+                            additional_notebook_path=additional_notebook_path)
 
         return True
 
     elif "unittests" in sys.argv:
         run_unittests_for_setup(file_or_folder, setup_params=setup_params,
-                                coverage_options=coverage_options, coverage_exclude_lines=coverage_exclude_lines)
+                                coverage_options=coverage_options,
+                                coverage_exclude_lines=coverage_exclude_lines)
         return True
 
     elif "setup_hook" in sys.argv:
@@ -224,11 +231,12 @@ def process_standard_options_for_setup(argv,
                 # we skip this to avoid producing scripts for publish
                 # functionalities
                 continue
-            sc = get_extra_script_command(
-                c, project_var_name, requirements=requirements, port=port, platform=sys.platform,
-                default_engine_paths=default_engine_paths,
-                unit_test_folder=unit_test_folder,
-                unittest_modules=unittest_modules_script)
+            sc = get_extra_script_command(c, project_var_name, requirements=requirements,
+                                          port=port, platform=sys.platform,
+                                          default_engine_paths=default_engine_paths,
+                                          unit_test_folder=unit_test_folder,
+                                          unittest_modules=unittest_modules_script,
+                                          additional_notebook_path=additional_notebook_path)
             if sc is None:
                 continue
             if c == "setupdep":
