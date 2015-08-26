@@ -25,7 +25,7 @@ from src.pyquickhelper.serverdoc import ping_machine, regular_ping_machine
 
 
 class TestPing(unittest.TestCase):
-    
+
     def get_machine(self):
         if sys.platform.startswith("win"):
             return os.environ["COMPUTERNAME"]
