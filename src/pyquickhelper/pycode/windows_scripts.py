@@ -29,6 +29,7 @@ set pythonexe=__PY34_X64__\\python
 
 :start_script:
 @echo ~LABEL start_script
+set current=%~dp0
 """
 
 #################
@@ -271,7 +272,7 @@ if %errorlevel% neq 0 exit /b %errorlevel%
 if %errorlevel% neq 0 exit /b %errorlevel%
 @echo #######################################################_unit
 @echo ~CALL %pythonexe% -u setup.py unittests
-rem set PYTHONPATH=additional_path
+rem set PYTHONPATH=additional_path --> we use a virtual environment here
 %pythonexe% -u setup.py unittests
 if %errorlevel% neq 0 exit /b %errorlevel%
 @echo #######################################################6
@@ -419,7 +420,7 @@ more version.txt
 if %errorlevel% neq 0 exit /b %errorlevel%
 @echo #######################################################_setup_hook
 @echo ~CALL %pythonexe% -u setup.py setup_hook
-rem set PYTHONPATH=additional_path
+rem set PYTHONPATH=additional_path --> we assume it is run from a virtual environment
 %pythonexe% -u setup.py setup_hook
 if %errorlevel% neq 0 exit /b %errorlevel%
 @echo #######################################################_unit

@@ -130,7 +130,7 @@ def get_build_script(module, requirements=None, port=8067, default_engine_paths=
 
 
 def get_script_command(command, module, requirements, port=8067, platform=sys.platform,
-                       default_engine_paths=None):
+                       default_engine_paths=None, additional_local_path=None):
     """
     produces a script which runs a command available through the setup
 
@@ -140,15 +140,31 @@ def get_script_command(command, module, requirements, port=8067, platform=sys.pl
     @param      port                    port for the local pypi_server which gives the dependencies
     @param      platform                platform (only Windows)
     @param      default_engine_paths    define the default location for python engine, should be dictionary *{ engine: path }*, see below.
+    @param      additional_local_path   additional local path to add before running command ``setup.py <command>``
     @return                             scripts
 
     The available list of commands is given by function @see fn process_standard_options_for_setup.
+
+    .. versionchanged:: 1.3
+        Parameter *additional_local_path* was added
     """
     if not platform.startswith("win"):
         raise NotImplementedError("not yet available on linux")
     global windows_error, windows_prefix, windows_setup
     rows = [windows_prefix]
-    rows.append(windows_setup + " " + command)
+
+    if additional_local_path is not None and len(additional_local_path):
+        def choice(s):
+            if "/" not in s and "\\" not in s:
+                return os.path.join("%current%", "..", s, "src")
+            else:
+                return s
+        addp = "set PYTHONPATH=%PYTHONPATH%;" + \
+            ";".join(choice(_) for _ in additional_local_path)
+    else:
+        addp = ""
+    rows.append(windows_setup.replace(
+        "rem set PYTHONPATH=additional_path", addp) + " " + command)
     rows.append(windows_error)
     sc = "\n".join(rows)
     res = private_script_replacements(
@@ -237,7 +253,7 @@ def get_extra_script_command(command, module, requirements, port=8067, blog_list
                 if "/" in s or "\\" in s:
                     return s
                 else:
-                    return "%current%\\..\\" + s + "\\src"
+                    return os.path.join("%current%", "..", s, "src")
             rows = [choice(_) for _ in additional_notebook_path]
             rep = ";" + ";".join(rows)
             script = script.replace("__ADDITIONAL_LOCAL_PATH__", rep)

@@ -40,7 +40,8 @@ def process_standard_options_for_setup(argv,
                                        coverage_exclude_lines=None,
                                        func_sphinx_begin=None,
                                        func_sphinx_end=None,
-                                       additional_notebook_path=None):
+                                       additional_notebook_path=None,
+                                       additional_local_path=None):
     """
     process the standard options the module pyquickhelper is
     able to process assuming the module which calls this function
@@ -63,7 +64,7 @@ def process_standard_options_for_setup(argv,
     @param      module_name                 module name, None if equal to *project_var_name* (``import <module_name>``)
     @param      unittest_modules            modules added for the unit tests, see @see fn py3to2_convert_tree
     @param      pattern_copy                see @see fn py3to2_convert_tree
-    @param      requirements                dependencies
+    @param      requirements                dependencies, fetched with a local pipy server from ``http://localhost:port/``
     @param      port                        port for the local pipy server
     @param      blog_list                   list of blog to listen for this module (usually stored in ``module.__blog__``)
     @param      default_engine_paths        define the default location for python engine, should be dictionary *{ engine: path }*, see below.
@@ -78,7 +79,8 @@ def process_standard_options_for_setup(argv,
     @param      func_sphinx_end             function called after the documentation generation,
                                             it gets the same parameters as this function (all named),
                                             use ``**args**``
-    @param      additional_notebook_path    additiona paths to add when launching the notebook
+    @param      additional_notebook_path    additional paths to add when launching the notebook
+    @param      additional_local_path       additional paths to add when running a local command
 
     @return                                 True (an option was processed) or False,
                                             the file ``setup.py`` should call function ``setup``
@@ -218,7 +220,7 @@ def process_standard_options_for_setup(argv,
                   "setup_hook", "copy27", "test_local_pypi"}:
             sc = get_script_command(
                 c, project_var_name, requirements=requirements, port=port, platform=sys.platform,
-                default_engine_paths=default_engine_paths)
+                default_engine_paths=default_engine_paths, additional_local_path=additional_local_path)
             with open(os.path.join(folder, "auto_setup_%s.%s" % (c, get_script_extension())), "w") as f:
                 f.write(sc)
 
