@@ -346,7 +346,8 @@ def check_readme_syntax(readme, folder, version="0.8", fLOG=noLOG):
         os.makedirs(folder)
 
     out = create_virtual_env(folder, fLOG=fLOG, packages=[
-                             "docutils==" + version])
+                             "docutils==" + version,
+                             "pipdeptree"])
     outfile = os.path.join(folder, "conv_readme.html")
 
     script = ["from docutils import core",
