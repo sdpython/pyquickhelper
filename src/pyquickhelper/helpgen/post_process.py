@@ -460,11 +460,11 @@ def post_process_latex(st, doall, info=None):
 
     st = st.replace("%5C", "/") \
            .replace("%3A", ":") \
-           .replace("\\includegraphics{notebooks\\", "\\includegraphics{")
+           .replace("\\includegraphics{notebooks\\", "\\includegraphics {")
     st = st.replace(
         r"\begin{document}", r"\setlength{\parindent}{0cm}%s\begin {document}" % "\n")
     st = st.replace(r"DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}",
-                    r"DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\},fontsize=\small}")
+                    r"DefineVerbatimEnvironment{Highlighting}{Verbatim} {commandchars=\\\{\},fontsize=\small}")
     st = st.replace("\\textquotesingle{}", "'")
     st = st.replace("\u0001", "\\u1")
 
@@ -502,10 +502,12 @@ def post_process_latex(st, doall, info=None):
     st = st.replace("\\newchapter", "\\chapter")
     if "\\usepackage{multirow}" in st:
         st = st.replace(
-            "\\usepackage{svg}\\usepackage{multirow}", "\\usepackage{multirow}\\usepackage{amssymb}\\usepackage{latexsym}\\usepackage{amsfonts}\\usepackage{ulem}\\usepackage{textcomp}")
+            "\\usepackage{svg}\\usepackage{multirow}",
+            "\\usepackage{multirow}\\usepackage{amssymb}\\usepackage{latexsym}\\usepackage{amsfonts}\\usepackage{ulem}\\usepackage{textcomp}")
     elif "\\usepackage{hyperref}" in st:
         st = st.replace(
-            "\\usepackage{svg}\\usepackage{hyperref}", "\\usepackage{hyperref}\\usepackage{amssymb}\\usepackage{latexsym}\\usepackage{amsfonts}\\usepackage{ulem}\\usepackage{textcomp}")
+            "\\usepackage{svg}\\usepackage{hyperref}",
+            "\\usepackage{hyperref}\\usepackage{amssymb}\\usepackage{latexsym}\\usepackage{amsfonts}\\usepackage{ulem}\\usepackage{textcomp}")
     else:
         raise HelpGenException(
             "unable to add new instructions usepackage in file {0}".format(info))

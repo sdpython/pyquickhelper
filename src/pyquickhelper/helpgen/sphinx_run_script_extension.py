@@ -14,15 +14,39 @@ from .texts_language import TITLES
 from io import StringIO
 
 
-def run_python_script(script, params={}):
+class RunPythonCompileError(Exception):
+    """
+    exception raised when a piece of code
+    included in the documentation does not compile
+    """
+    pass
+
+
+class RunPythonExecutionError(Exception):
+    """
+    exception raised when a piece of code
+    included in the documentation raises en exception
+    """
+    pass
+
+
+def run_python_script(script, params={}, comment=None):
     """
     execute a script python as a string
 
     @param  script      python script
     @param  params      params to add before the execution
+    @param  comment     message to add in a exception when the script fails
     @return             stdout, stderr
     """
-    obj = compile(script, "", "exec")
+    try:
+        obj = compile(script, "", "exec")
+    except Exception as ec:
+        if comment is None:
+            comment = ""
+        message = "SCRIPT:\n{0}\nPARAMS\n{1}\nCOMMENT\n{1}".format(
+            script, params, comment)
+        raise RunPythonCompileError(message) from ec
 
     loc = locals()
     for k, v in params.items():
@@ -36,7 +60,14 @@ def run_python_script(script, params={}):
     sys.stdout = sout
     sys.stderr = serr
 
-    exec(obj, globals(), loc)
+    try:
+        exec(obj, globals(), loc)
+    except Exception as ee:
+        if comment is None:
+            comment = ""
+        message = "SCRIPT:\n{0}\nPARAMS\n{1}\nCOMMENT\n{1}".format(
+            script, params, comment)
+        raise RunPythonExecutionError(message) from ee
 
     sys.stdout = kout
     sys.stderr = kerr
@@ -125,6 +156,7 @@ class RunPythonDirective(Directive):
         # settings
         sett = self.state.document.settings
         language_code = sett.language_code
+        lineno = self.lineno
 
         # env
         if hasattr(self.state.document.settings, "env"):
@@ -137,7 +169,7 @@ class RunPythonDirective(Directive):
             return []
         else:
             # otherwise, it means sphinx is running
-            pass
+            docname = env.docname
 
         # post
         p = {
@@ -154,7 +186,13 @@ class RunPythonDirective(Directive):
             content.append("    " + line)
         script = "\n".join(content)
         script_disp = "\n".join(content[1:])
-        out, err = run_python_script(script)
+
+        # if an exception is raised, the documentation should report
+        # a warning
+        # return [document.reporter.warning('messagr', line=self.lineno)]
+
+        out, err = run_python_script(
+            script, comment='  File "{0}", line {1}'.format(docname, lineno))
         content = out
         if len(err) > 0:
             content += "\n\nERROR:\n\n" + err
