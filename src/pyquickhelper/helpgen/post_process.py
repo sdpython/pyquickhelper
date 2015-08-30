@@ -433,7 +433,7 @@ def post_process_latex(st, doall, info=None):
 
     def clean_unicode(c):
         if ord(c) >= 255:
-            return "\\textquestiondown"
+            return "\\textquestiondown "
         else:
             return c
 
