@@ -414,9 +414,31 @@ def post_process_latex(st, doall, info=None):
     .. versionchanged:: 1.2
         remove ascii character in *[0..31]* in each line, replace them by space.
 
+
+    .. index:: chinese characters, latex, unicode
+
+    @warning Unicode, chinese characters are an issue because the latex compiler
+             prompts on those if the necessary packages are not installed.
+             `pdflatex <https://en.wikipedia.org/w/index.php?title=PdfTeX&redirect=no>`_
+             does not accepts inline chinese
+             characters, `xetex <https://en.wikipedia.org/wiki/XeTeX>`_
+             should be used instead:
+             see `How to input Traditional Chinese in pdfLaTeX <http://tex.stackexchange.com/questions/200449/how-to-input-traditional-chinese-in-pdflatex>`_.
+             Until this is being implemetend, the unicode will unfortunately be removed
+             in this function.
+
     @todo Check latex is properly converted in HTML files
     """
     fLOG("   ** enter post_process_latex", doall, "%post_process_latex" in st)
+
+    def clean_unicode(c):
+        if ord(c) >= 255:
+            return "\\textquestiondown"
+        else:
+            return c
+
+    lines = st.split("\n")
+    st = "\n".join("".join(map(clean_unicode, line)) for line in lines)
 
     # we count the number of times we have \$ (which is unexpected unless the
     # currency is used.
@@ -511,12 +533,6 @@ def post_process_latex(st, doall, info=None):
     else:
         raise HelpGenException(
             "unable to add new instructions usepackage in file {0}".format(info))
-
-    if "\\usepackage[utf8]" in st:
-        st = st.replace(
-            "\\usepackage[utf8]{inputenc}", "\\usepackage{silence}\\usepackage{ucs}\\usepackage[utf8x]{inputenc}")
-        st = st.replace(
-            "\\DeclareUnicodeCharacter{00A0}{\\nobreakspace}", "%\\DeclareUnicodeCharacter{00A0}{\\nobreakspace}")
 
     # SVG does not work unless it is converted (nbconvert should handle that
     # case)

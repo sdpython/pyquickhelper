@@ -63,9 +63,9 @@ class TestNoteBooksBugUtf8(unittest.TestCase):
             fLOG(_)
             assert os.path.exists(_[0])
 
-        with open(os.path.join(temp, "seance4_projection_population_correction.tex"), "r", encoding="utf8") as f:
+        with open(os.path.join(temp, "simple_example.tex"), "r", encoding="utf8") as f:
             content = f.read()
-        exp = "seance4_projection_population_correction_50_0.pdf"
+        exp = "textquestiondown"
         if exp not in content:
             raise Exception(content)
 
