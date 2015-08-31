@@ -42,7 +42,7 @@ class TestNoteBooksBugUtf8(unittest.TestCase):
         fold = os.path.normpath(os.path.join(path, "notebooks_utf8"))
         nbs = [os.path.join(fold, _)
                for _ in os.listdir(fold) if ".ipynb" in _]
-        formats = ["latex", "pdf"]
+        formats = ["latex", "pdf", "rst", "html"]
 
         temp = os.path.join(path, "temp_nb_bug_utf8")
         if not os.path.exists(temp):

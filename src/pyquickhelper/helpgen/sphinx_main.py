@@ -516,11 +516,11 @@ def generate_help_sphinx(project_var_name,
                     try:
                         f.read().splitlines()
                     except UnicodeDecodeError as e:
-                        raise HelpGenException(
-                            "issue with encoding for file ", thn) from e
+                        warnings.warn(
+                            "*** potential issue with encoding for file " + thn + "\n" + str(e))
                     except Exception as e:
                         raise HelpGenException(
-                            "issue with file (2) ", thn) from e
+                            "issue with file ", thn) from e
 
     fLOG("running sphinx... from", docpath)
     if not os.path.exists(docpath):
