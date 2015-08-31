@@ -18,11 +18,12 @@ except ImportError:
     from IPython.nbformat import versions
     from IPython.nbformat.reader import reads
     from IPython.nbformat.v4 import upgrade
-    from IPython.kernel.kernelspec import KernelSpecManager, __file__ as file_kernelspec
+    from IPython.kernel.kernelspec import KernelSpecManager
     from IPython.html.nbextensions import install_nbextension, _get_nbext_dir
     try:
         from IPython.kernel.kernelspec import install as install_k
     except ImportError:
+        import IPython
         raise ImportError("upgrade IPython, this one is not recent enough: {0}".format(
             IPython.__version__))
 
