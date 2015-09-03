@@ -19,7 +19,7 @@ import time
 
 from ..filehelper.synchelper import remove_folder
 from ..loghelper.flog import fLOG, run_cmd
-from ..pycode.call_setup_hook import call_setup_hook
+from .call_setup_hook import call_setup_hook
 
 
 __all__ = ["get_temp_folder", "main_wrapper_tests"]
