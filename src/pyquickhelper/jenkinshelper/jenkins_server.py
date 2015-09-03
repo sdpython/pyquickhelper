@@ -220,7 +220,7 @@ class JenkinsExt(jenkins.Jenkins):
         return "__SCRIPTOPTIONS__"
 
     @staticmethod
-    def hash_string(s, l=5):
+    def hash_string(s, l=8):
         """
         hash a string
 
