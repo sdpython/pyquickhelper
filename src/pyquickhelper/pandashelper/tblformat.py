@@ -51,16 +51,15 @@ def df2rst(df, add_line=True, align=None):
         for i, v in enumerate(row):
             length[i] = max(length[i], len_modified(str  # unicode#
                                                     (v)))
-
+    typstr = str  #unicode#
     if align is not None:
-        if isinstance(align, str  # unicode#
-                      ):
+        if isinstance(align, typstr):
             align = [align] * len_modified(length)
 
         if isinstance(align, list):
             if len(align) != len(length):
                 raise ValueError(
-                    "align has not a good length: {0} and {1}".format(str(align), str(df.columns)))
+                    "align has not a good length: {0} and {1}".format(typstr(align), typstr(df.columns)))
             ratio = len([_ for _ in align if "x" in _]) > 0
             if ratio:
                 head = ""
@@ -71,7 +70,7 @@ def df2rst(df, add_line=True, align=None):
                         ratio.append(i)
                     except:
                         raise ValueError(
-                            "unable to parse {0} in {1}".format(_, str(align)))
+                            "unable to parse {0} in {1}".format(_, typstr(align)))
 
                 mini = max(length)
                 length2 = [mini * r for r in ratio]
@@ -89,7 +88,7 @@ def df2rst(df, add_line=True, align=None):
                 head = ".. tabularcolumns:: " + \
                     "|%s|" % "|".join(align) + "\n\n"
         else:
-            raise TypeError(str(type(align)))
+            raise TypeError(typstr(type(align)))
     else:
         head = ""
 
@@ -105,7 +104,7 @@ def df2rst(df, add_line=True, align=None):
         s, i = cool
         if s is None:
             s = "    "
-        s = str(s) + " "
+        s = typstr(s) + " "
         i -= 2
         if len_modified(s) < i:
             s += " " * (i - len_modified(s))
@@ -145,12 +144,14 @@ def df2html(self, class_table=None, class_td=None, class_tr=None,
                                                    clth).join(self.columns) + "</th></tr>")
     septd = "</td><td%s>" % cltd
     strtd = "<tr%s><td%s>" % (cltr, cltd)
+    
+    typstr = str  # unicode#
 
     def conv(s):
         if s is None:
             return ""
         else:
-            return str(s)
+            return typstr(s)
 
     for row in self.values:
         s = septd.join(conv(_) for _ in row)
