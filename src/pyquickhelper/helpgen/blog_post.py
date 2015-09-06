@@ -13,7 +13,7 @@ if sys.version_info[0] == 2:
     from codecs import open
 
 
-class BlogPostPareError(Exception):
+class BlogPostParseError(Exception):
 
     """
     exceptions when a error comes after a blogpost was parsed
@@ -88,7 +88,7 @@ class BlogPost:
         objects = pub.settings.out_blogpostlist
 
         if len(objects) != 1:
-            raise BlogPostPareError(
+            raise BlogPostParseError(
                 'no blog post (#={1}) in\n  File "{0}", line 1'.format(filename, len(objects)))
 
         post = objects[0]
