@@ -107,8 +107,9 @@ def rst2html(s, fLOG=noLOG, writer="sphinx", keep_warnings=False,
         doc_directives.register_directive("runpython", RunPythonDirective)
         writer = HTMLWriterWithCustomDirectives()
         writer_name = 'pseudoxml'
-        for cl in [blogpost_node, blogpostagg_node, runpython_node]:
-            nodes._add_node_class_names([cl.__name__])
+        # not necessary
+        #for cl in [blogpost_node, blogpostagg_node, runpython_node]:
+        #    nodes._add_node_class_names([cl.__name__])
     else:
         writer_name = 'html'
 
@@ -123,7 +124,8 @@ def rst2html(s, fLOG=noLOG, writer="sphinx", keep_warnings=False,
                     "directives is a list of tuple with 5 elements, check the documentation")
             name, cl, node, f1, f2 = tu
             doc_directives.register_directive(name, cl)
-            nodes._add_node_class_names([node.__name__])
+            # not necessary
+            #nodes._add_node_class_names([node.__name__])
             writer.connect_directive_node(node.__name__, f1, f2)
 
     settings_overrides = {'output_encoding': 'unicode',
