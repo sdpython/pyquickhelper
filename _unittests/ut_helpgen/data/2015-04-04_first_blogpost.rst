@@ -1,3 +1,6 @@
+
+Text before the blog post.
+
 .. blogpost::
     :title: An example of a blog post included in the documentation
     :keywords: example, blogpost, documentation
@@ -23,3 +26,10 @@
     `What's the best available static blog/website generator in Python <http://www.quora.com/Whats-the-best-available-static-blog-website-generator-in-Python>`_
     or this page which gathers many framework to build a static website:
     `StaticGen Top Open-Source Static Site Generators <https://www.staticgen.com/>`_.
+
+    .. suite.
+
+    Text after the break.
+
+
+Text after the blog post.
