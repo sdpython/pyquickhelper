@@ -1,6 +1,9 @@
 """
-@brief      test log(time=4s)
+@brief      test log(time=100s)
 @author     Xavier Dupre
+
+This tesdt must be run last because it screws up with 
+*test_convert_doc_helper* and *test_full_documentation_module_template*.
 """
 
 import sys
@@ -44,7 +47,7 @@ class TestAppSphinx(unittest.TestCase):
 
         app = CustomSphinxApp(src, temp)
         app.build()
-        app.cleanup()
+        # app.cleanup()
 
         index = os.path.join(temp, "index.html")
         assert os.path.exists(index)

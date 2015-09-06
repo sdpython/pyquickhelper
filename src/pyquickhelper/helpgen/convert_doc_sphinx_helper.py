@@ -5,7 +5,7 @@
 .. versionadded:: 1.0
 """
 import sys
-from docutils import nodes
+# from docutils import nodes
 from sphinx.writers.html import HTMLWriter, HTMLTranslator
 from sphinx.builders.html import SingleFileHTMLBuilder, SerializingHTMLBuilder
 from sphinx.application import Sphinx

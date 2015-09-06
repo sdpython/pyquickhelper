@@ -7,14 +7,17 @@
 import sys
 import re
 import textwrap
-from docutils import core, nodes
+from docutils import core
+# from docutils import nodes
 from docutils.parsers.rst import directives as doc_directives
 
 from .utils_sphinx_doc import migrating_doxygen_doc
 from ..loghelper.flog import noLOG
 from . helpgen_exceptions import HelpGenConvertError
-from .sphinx_blog_extension import blogpostagg_node, blogpost_node, BlogPostDirective, BlogPostDirectiveAgg
-from .sphinx_runpython_extension import runpython_node, RunPythonDirective
+# from .sphinx_blog_extension import blogpostagg_node, blogpost_node
+from .sphinx_blog_extension import BlogPostDirective, BlogPostDirectiveAgg
+from .sphinx_runpython_extension import RunPythonDirective
+# from .sphinx_runpython_extension import runpython_node
 from .convert_doc_sphinx_helper import HTMLWriterWithCustomDirectives
 
 if sys.version_info[0] == 2:

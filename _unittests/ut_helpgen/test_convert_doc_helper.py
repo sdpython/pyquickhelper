@@ -1,9 +1,9 @@
 """
-@brief      test log(time=1s)
+@brief      test log(time=8s)
 @author     Xavier Dupre
 
-For some reason, the test fails if it is run after another one.
-Don't know which one, probably *test_blog_helper*.
+For some reason, the test fails if it is run after another one:
+*test_app_sphinx*.
 """
 
 import sys
