@@ -6,7 +6,7 @@
 import sys
 import os
 import unittest
-
+import warnings
 
 try:
     import src
@@ -134,7 +134,8 @@ class TestNotebookConversion (unittest.TestCase):
         fLOG(out)
         fLOG("******************", err)
         if "[NbConvertApp] Writing" not in err:
-            raise Exception(
+            # the output might be disabled
+            warnings.warn(
                 "[NbConvertApp] Writing is missing.\nOUT\n{0}\nERR\n{1}".format(out, err))
         if not os.path.exists(fo):
             fLOG(fo)
