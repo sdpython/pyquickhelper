@@ -21,7 +21,8 @@ else:
 
 class CustomSphinxApp(Sphinx):
     """
-    A subclass of :class:`Sphinx`, the goal is to interpret RST with custom directives
+    A subclass of class *Sphinx*, 
+    the goal is to interpret RST with custom directives.
     """
 
     def __init__(self, srcdir, outdir, confdir=None, doctreedir=None,

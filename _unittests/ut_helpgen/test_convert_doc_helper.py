@@ -71,11 +71,17 @@ class TestConvertDocHelper(unittest.TestCase):
 
             The same server can serves more than one project.
             More than one mappings can be sent.
+            
             .. endexample.
         """
         html = rst2html(rst, fLOG=fLOG)
         assert len(html) > 0
-        assert "example(run a local server which serves" in html
+        if ".. endexample." in html:
+            raise Exception(html)
+        if ".. example" in html:
+            raise Exception(html)
+        if "</pre>" not in html:
+            raise Exception(html)
 
     def test_doctring2html(self):
         fLOG(

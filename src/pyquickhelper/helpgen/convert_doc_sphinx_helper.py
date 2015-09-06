@@ -132,6 +132,8 @@ class _CustomSphinx(Sphinx):
 
         if doctreedir is None:
             doctreedir = "."
+        if srcdir is None:
+            srcdir = "."
 
         self.srcdir = srcdir
         self.confdir = confdir

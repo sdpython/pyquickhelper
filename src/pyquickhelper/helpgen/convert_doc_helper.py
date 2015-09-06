@@ -46,7 +46,7 @@ def rst2html(s, fLOG=noLOG, writer="sphinx", keep_warnings=False,
     *directives* is None or a list of 5-uple:
 
     * a directive name
-    * a directive class: see `Sphinx Directive <http://sphinx-doc.org/extdev/tutorial.html>`_, see also @see cl RunPython as an example
+    * a directive class: see `Sphinx Directive <http://sphinx-doc.org/extdev/tutorial.html>`_, see also @see cl RunPythonDirective as an example
     * a docutils node: see @see cl runpython_node as an example
     * two functions: see @see fn visit_runpython_node, @see fn depart_runpython_node as an example
 
@@ -112,7 +112,7 @@ def rst2html(s, fLOG=noLOG, writer="sphinx", keep_warnings=False,
     else:
         writer_name = 'html'
 
-    if writer is None and len(directives) > 0:
+    if writer is None and directives is not None and len(directives) > 0:
         raise NotImplementedError(
             "the writer must not be null if custom directives will be added, check the documentation of the fucntion")
 
@@ -191,7 +191,7 @@ def correct_indentation(text):
         return text
 
 
-def docstring2html(function_or_string, format="html", fLOG=noLOG, writer=None):
+def docstring2html(function_or_string, format="html", fLOG=noLOG, writer="sphinx"):
     """
     converts a docstring into a HTML format
 

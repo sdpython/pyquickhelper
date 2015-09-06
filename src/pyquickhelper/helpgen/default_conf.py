@@ -341,8 +341,8 @@ def custom_setup(app, author):
     from .sphinx_blog_extension import visit_blogpostagg_node, depart_blogpostagg_node
     from .sphinx_blog_extension import blogpost_node, blogpostagg_node
     from .sphinx_blog_extension import BlogPostDirective, BlogPostDirectiveAgg
-    from .sphinx_run_script_extension import RunPythonDirective
-    from .sphinx_run_script_extension import runpython_node, visit_runpython_node, depart_runpython_node
+    from .sphinx_runpython_extension import RunPythonDirective
+    from .sphinx_runpython_extension import runpython_node, visit_runpython_node, depart_runpython_node
 
     app.connect("autodoc-skip-member", skip)
     app.add_config_value('author', author, True)
