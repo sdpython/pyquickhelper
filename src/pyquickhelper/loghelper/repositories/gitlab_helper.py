@@ -4,7 +4,6 @@
 @brief Wrapper around GitLab API.
 """
 
-import requests
 import json
 
 
@@ -60,6 +59,7 @@ class GitLabAPI:
         @param      password    password
         @param      email       email
         """
+        import requests
         data = {"login": user, "password": password}
         url = "{0}/Session".format(self.api_url)
         request = requests.post(url, data=data, verify=self.verify_ssl,
@@ -81,6 +81,7 @@ class GitLabAPI:
 
         @return     list of dictionaries
         """
+        import requests
         data = {'page': page, 'per_page': per_page}
 
         request = requests.get(
