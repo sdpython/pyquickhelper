@@ -51,7 +51,7 @@ def df2rst(df, add_line=True, align=None):
         for i, v in enumerate(row):
             length[i] = max(length[i], len_modified(str  # unicode#
                                                     (v)))
-    typstr = str  #unicode#
+    typstr = str  # unicode#
     if align is not None:
         if isinstance(align, typstr):
             align = [align] * len_modified(length)
@@ -144,7 +144,7 @@ def df2html(self, class_table=None, class_td=None, class_tr=None,
                                                    clth).join(self.columns) + "</th></tr>")
     septd = "</td><td%s>" % cltd
     strtd = "<tr%s><td%s>" % (cltr, cltd)
-    
+
     typstr = str  # unicode#
 
     def conv(s):

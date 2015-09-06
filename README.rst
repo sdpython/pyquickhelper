@@ -86,6 +86,7 @@ Versions, Changes
     * **fix:** run unit tests having SKIP in their names (it was LONG before)
     * **add:** add functions to run before and after the documentation generation 
       (to add extra files, to remove, to modify, ...)
+    * **change:** function *rst2html* now interprets sphinx directives and not only directives
 
 * **1.2.781 - 2015/08/15**
     * **change:** parameter prog was added to class MagicCommandParser

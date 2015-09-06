@@ -158,6 +158,10 @@ class RunPythonDirective(Directive):
         language_code = sett.language_code
         lineno = self.lineno
 
+        # add the instance to the global settings
+        if hasattr(sett, "out_runpythonlist"):
+            sett.out_runpythonlist.append(self)
+
         # env
         if hasattr(self.state.document.settings, "env"):
             env = self.state.document.settings.env
@@ -165,10 +169,8 @@ class RunPythonDirective(Directive):
             env = None
 
         if env is None:
-            # we need an access to the environment to run the script
-            return []
+            docname = "___unknown_docname___"
         else:
-            # otherwise, it means sphinx is running
             docname = env.docname
 
         # post
@@ -197,6 +199,10 @@ class RunPythonDirective(Directive):
         if len(err) > 0:
             content += "\n\nERROR:\n\n" + err
 
+        # add member
+        self.exe_class = p.copy()
+        self.exe_class.update(dict(out=out, err=err, script=script))
+
         # add indent
         lines = content.split("\n")
         if p['indent'] > 0:
@@ -223,7 +229,6 @@ class RunPythonDirective(Directive):
             node += pin
 
         if p["rst"]:
-
             settings_overrides = {'output_encoding': 'unicode',
                                   'doctitle_xform': True,
                                   'initial_header_level': 2,

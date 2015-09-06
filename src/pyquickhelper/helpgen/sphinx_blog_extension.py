@@ -73,21 +73,19 @@ class BlogPostDirective(Directive):
             env = None
 
         if env is None:
-            # we need an access to the environment to process the blog post
-            # this path is used by the BlogPost class to extract the content of
-            # the job
-            return []
+            docname = "___unknown_docname___"
+            config = None
+            blog_background = False
         else:
             # otherwise, it means sphinx is running
-            pass
-
-        # settings and configuration
-        config = env.config
-        blog_background = config.blog_background
+            docname = env.docname
+            # settings and configuration
+            config = env.config
+            blog_background = config.blog_background
 
         # post
         p = {
-            'docname': env.docname,
+            'docname': docname,
             'lineno': self.lineno,
             'date': self.options["date"],
             'title': self.options["title"],
@@ -105,9 +103,10 @@ class BlogPostDirective(Directive):
         targetnode = nodes.target('', '', ids=[tag])
         p["target"] = targetnode
 
-        if not hasattr(env, 'blogpost_all'):
-            env.blogpost_all = []
-        env.blogpost_all.append(p)
+        if env is not None:
+            if not hasattr(env, 'blogpost_all'):
+                env.blogpost_all = []
+            env.blogpost_all.append(p)
 
         # we add a title
         idb = nodes.make_id("hblog-" + p["date"] + "-" + p["title"])
@@ -136,6 +135,10 @@ class BlogPostDirective(Directive):
         self.state.nested_parse(content, self.content_offset, paragraph)
         node += paragraph
         p['blogpost'] = node
+
+        # add content to the instance
+        self.exe_class = p.copy()
+        p["content"] = content
 
         # classes
         node['classes'] += "-blogpost"

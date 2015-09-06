@@ -6,6 +6,7 @@
 import sys
 import os
 import unittest
+import sphinx
 from docutils.parsers.rst import directives
 
 try:
@@ -24,7 +25,11 @@ except ImportError:
 from src.pyquickhelper.loghelper.flog import fLOG
 from src.pyquickhelper import get_temp_folder
 from src.pyquickhelper.helpgen.utils_sphinx_doc import private_migrating_doxygen_doc
-from src.pyquickhelper.helpgen import BlogPost, BlogPostList, BlogPostDirective
+from src.pyquickhelper.helpgen import BlogPost, BlogPostList, BlogPostDirective, BlogPostDirectiveAgg
+from src.pyquickhelper.helpgen import rst2html
+
+if sys.version_info[0] == 2:
+    from codecs import open
 
 
 class TestBlogHelper(unittest.TestCase):
@@ -54,10 +59,13 @@ class TestBlogHelper(unittest.TestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
+        # the test will fail if you add a file in data/blog others
+        # with rst files which is not a blog post
+
         directives.register_directive("blogpost", BlogPostDirective)
 
         path = os.path.abspath(os.path.split(__file__)[0])
-        fold = os.path.join(path, "data")
+        fold = os.path.join(path, "data", "blog")
         out = get_temp_folder(__file__, "temp_post_list")
         p = BlogPostList(fold)
         cats = p.get_categories()
@@ -71,6 +79,86 @@ class TestBlogHelper(unittest.TestCase):
         assert len(res) >= 4
         for r in res:
             assert os.path.exists(r)
+
+    def test_directive_with_rst2html(self):
+        fLOG(
+            __file__,
+            self._testMethodName,
+            OutputPrint=__name__ == "__main__")
+
+        path = os.path.abspath(os.path.split(__file__)[0])
+        file = os.path.join(path, "data", "2015-04-04_first_blogpost.rst")
+        with open(file, "r", encoding="utf8") as f:
+            content = f.read()
+
+        html = rst2html(content, fLOG=fLOG,
+                        writer="custom", keep_warnings=True)
+
+        t1 = "<p>Text before the blog post.</p>"
+        t2 = "<p>Text after the blog post.</p>"
+        assert t1 in html
+        assert t2 in html
+        if "it was difficult" not in html:
+            p1 = html.find(t1) + len(t1)
+            p2 = html.find(t2)
+            fLOG("--------------ERRORS\n", html[p1:p2], "------------")
+
+    def test_docutils(self):
+        fLOG(
+            __file__,
+            self._testMethodName,
+            OutputPrint=__name__ == "__main__")
+
+        # from https://gist.github.com/mastbaum/2655700
+        import docutils.core
+        from docutils.nodes import TextElement, Inline
+        from docutils.parsers.rst import Directive, directives
+        from docutils.writers.html4css1 import Writer, HTMLTranslator
+
+        class foo(Inline, TextElement):
+            pass
+
+        class Foo(Directive):
+            required_arguments = 1
+            optional_arguments = 0
+            has_content = True
+
+            def run(self):
+                thenode = foo(text=self.arguments[0])
+                return [thenode]
+
+        class MyHTMLTranslator(HTMLTranslator):
+
+            def __init__(self, document):
+                HTMLTranslator.__init__(self, document)
+
+            def visit_foo(self, node):
+                self.body.append(self.starttag(
+                    node, 'span', '', style='background:red'))
+                self.body.append("<!--foo-->")
+
+            def depart_foo(self, node):
+                self.body.append('<!--foo--></span>')
+
+        directives.register_directive('foo', Foo)
+        html_writer = Writer()
+        html_writer.translator_class = MyHTMLTranslator
+
+        rest_text = '''
+        this is a test
+        ==============
+        it is only a test
+
+        .. foo:: whee
+
+        '''.replace("        ", "")
+
+        bhtml = docutils.core.publish_string(
+            source=rest_text, writer=html_writer)
+        typstr = str  # unicode#
+        html = typstr(bhtml, encoding="utf8")
+        if "<!--foo-->" not in html:
+            raise Exception(html)
 
 
 if __name__ == "__main__":
