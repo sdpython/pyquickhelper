@@ -252,8 +252,11 @@ def docstring2html(function_or_string, format="html", fLOG=noLOG, writer="sphinx
         try:
             html = rst2html(ded, fLOG=fLOG, writer=writer)
         except Exception as e:
+            lines = ded.split("\n")
+            lines = ["%04d  %s" % (i + 1, _.strip("\n\r"))
+                     for i, _ in enumerate(lines)]
             raise HelpGenConvertError(
-                "unable to process:\n{0}".format(ded)) from e
+                "unable to process:\n{0}".format("\n".join(lines))) from e
 
     if format == "html":
         from IPython.core.display import HTML

@@ -21,7 +21,7 @@ else:
 
 class CustomSphinxApp(Sphinx):
     """
-    A subclass of class *Sphinx*, 
+    A subclass of class *Sphinx*,
     the goal is to interpret RST with custom directives.
     """
 

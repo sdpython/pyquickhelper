@@ -5,6 +5,7 @@
 .. versionadded:: 1.0
 """
 import sys
+from docutils import nodes
 from sphinx.writers.html import HTMLWriter, HTMLTranslator
 from sphinx.builders.html import SingleFileHTMLBuilder, SerializingHTMLBuilder
 from sphinx.application import Sphinx
@@ -68,6 +69,20 @@ class HTMLTranslatorWithCustomDirectives(HTMLTranslator):
         @see fn depart_runpython_node
         """
         ext_depart_runpython_node(self, node)
+
+    def add_secnumber(self, node):
+        """
+        overwrites this method to catch errors due when
+        it is a single document being processed
+        """
+        if node.get('secnumber'):
+            HTMLTranslator.add_secnumber(self, node)
+        elif len(node.parent['ids']) > 0:
+            HTMLTranslator.add_secnumber(self, node)
+        else:
+            n = len(self.builder.secnumbers)
+            node.parent['ids'].append("custom_label_%d" % n)
+            HTMLTranslator.add_secnumber(self, node)
 
 
 class HTMLWriterWithCustomDirectives(HTMLWriter):

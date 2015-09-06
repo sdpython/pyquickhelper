@@ -1,5 +1,5 @@
 """
-@brief      test log(time=8s)
+@brief      test log(time=4s)
 @author     Xavier Dupre
 """
 
@@ -71,7 +71,7 @@ class TestConvertDocHelper(unittest.TestCase):
 
             The same server can serves more than one project.
             More than one mappings can be sent.
-            
+
             .. endexample.
         """
         html = rst2html(rst, fLOG=fLOG)
