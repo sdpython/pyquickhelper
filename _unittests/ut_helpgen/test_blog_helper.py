@@ -27,6 +27,8 @@ from src.pyquickhelper import get_temp_folder
 from src.pyquickhelper.helpgen.utils_sphinx_doc import private_migrating_doxygen_doc
 from src.pyquickhelper.helpgen import BlogPost, BlogPostList, BlogPostDirective, BlogPostDirectiveAgg
 from src.pyquickhelper.helpgen import rst2html
+from src.pyquickhelper.helpgen import RunPythonDirective, runpython_node
+from src.pyquickhelper.helpgen.sphinx_runpython_extension import visit_runpython_node, depart_runpython_node
 
 if sys.version_info[0] == 2:
     from codecs import open
@@ -158,6 +160,51 @@ class TestBlogHelper(unittest.TestCase):
         typstr = str  # unicode#
         html = typstr(bhtml, encoding="utf8")
         if "<!--foo-->" not in html:
+            raise Exception(html)
+
+    def test_newdirective_with_rst2html(self):
+        fLOG(
+            __file__,
+            self._testMethodName,
+            OutputPrint=__name__ == "__main__")
+
+        from docutils import nodes
+
+        class runpythonthis_node(nodes.Structural, nodes.Element):
+            pass
+
+        class RunPythonThisDirective (RunPythonDirective):
+            runpython_class = runpythonthis_node
+
+        def visit_node(self, node):
+            self.body.append("<p><b>visit_node</b></p>")
+
+        def depart_node(self, node):
+            self.body.append("<p><b>depart_node</b></p>")
+
+        content = """
+                    test a directive
+                    ================
+
+                    .. runpythonthis::
+
+                        print("this code shoud appear" + "___")
+                    """.replace("                    ", "")
+
+        tives = [("runpythonthis", RunPythonThisDirective, runpythonthis_node,
+                  visit_node, depart_node)]
+
+        html = rst2html(content, fLOG=fLOG,
+                        writer="custom", keep_warnings=True,
+                        directives=tives)
+
+        t1 = "this code shoud appear___"
+        assert t1 in html
+        ta = "<p><b>visit_node</b></p>"
+        if ta not in html:
+            raise Exception(html)
+        tb = "<p><b>depart_node</b></p>"
+        if tb not in html:
             raise Exception(html)
 
 

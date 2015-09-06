@@ -30,5 +30,5 @@ from .sphinx_blog_extension import BlogPostDirective, BlogPostDirectiveAgg
 from .sphinx_custom_app import CustomSphinxApp
 from .sphinx_helper import sphinx_add_scripts
 from .sphinx_main import generate_help_sphinx, process_notebooks
-from .sphinx_runpython_extension import RunPythonDirective
+from .sphinx_runpython_extension import RunPythonDirective, runpython_node
 from .utils_sphinx_config import NbImage
