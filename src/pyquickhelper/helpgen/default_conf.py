@@ -61,6 +61,9 @@ def set_sphinx_variables(fileconf,
                             "solar_theme",
                             solar_theme.theme_path,
                             locals())
+
+    # custom settings
+    ...
     @endcode
 
     *setup.py* must contain a string such as ``__version__ = 3.4``.
