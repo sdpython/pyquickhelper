@@ -19,7 +19,7 @@ from ..filehelper.synchelper import explore_folder
 from .utils_sphinx_config import ie_layout_html
 from .blog_post_list import BlogPostList
 from .sphinx_blog_extension import BlogPostDirective, BlogPostDirectiveAgg
-from .sphinx_run_script_extension import RunPythonDirective
+from .sphinx_runpython_extension import RunPythonDirective
 from .post_process import post_process_latex_output
 from .process_notebooks import process_notebooks, add_notebook_page
 from .sphinx_helper import post_process_html_nb_output_static_file
