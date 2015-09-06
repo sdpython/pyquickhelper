@@ -988,9 +988,10 @@ class JenkinsExt(jenkins.Jenkins):
                     break
 
         if len(dependencies) != len(res) and "[-nodep]" not in job:
-            pattern = "lower number of dependencies, requested:\n{0}\nFOUND:\n{1}\nLOCATIONS:\n{2}"
+            pattern = "lower number of dependencies for job: {3}\nrequested:\n{0}\nFOUND:\n{1}\nLOCATIONS:\n{2}"
             raise Exception(pattern.format(", ".join(dependencies), "\n".join(
                 "{0} : {1}".format(k, v) for k, v in sorted(res.items())),
-                "\n".join("{0} : {1}".format(k, v) for k, v in locations)))
+                "\n".join("{0} : {1}".format(k, v) for k, v in locations),
+                job))
 
         return res
