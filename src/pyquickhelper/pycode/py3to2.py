@@ -24,7 +24,7 @@ def py3to2_convert_tree(folder,
                         dest,
                         encoding="utf8",
                         pattern=".*[.]py$",
-                        pattern_copy=".*[.]((ico)|(dll)|(rst)|(ipynb)|(png)|(txt)|(zip)|(gz))$",
+                        pattern_copy=".*[.]((ico)|(dll)|(rst)|(ipynb)|(png)|(txt)|(zip)|(gz)|(html)|(exe))$",
                         unittest_modules=None,
                         fLOG=noLOG):
     """
