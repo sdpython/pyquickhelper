@@ -96,6 +96,7 @@ def remove_extra_spaces_folder(
                 and "/dist/" not in fl \
                 and "/build2/" not in fl \
                 and "/build3/" not in fl \
+                and "/dist_module27" not in fl \
                 and os.stat(f).st_size < 100000:
             ext = os.path.splitext(f)[-1]
             if ext in extensions:

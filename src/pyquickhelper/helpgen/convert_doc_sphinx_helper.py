@@ -152,7 +152,6 @@ class _CustomSphinx(Sphinx):
         constructor
         '''
         from sphinx.application import BUILTIN_DOMAINS, BUILTIN_BUILDERS, events, bold, Tags, Config, CONFIG_FILENAME, ConfigError, VersionRequirementError
-        from sphinx import __display_version__
         update_docutils_languages()
         self.verbosity = verbosity
         self.next_listener_id = 0
@@ -197,7 +196,7 @@ class _CustomSphinx(Sphinx):
         self.messagelog = deque(maxlen=10)
 
         # say hello to the world
-        self.info(bold('Running Sphinx v%s' % __display_version__))
+        self.info(bold('Running Sphinx v%s' % "CUSTOM 1.3"))
 
         # status code for command-line application
         self.statuscode = 0
@@ -236,14 +235,10 @@ class _CustomSphinx(Sphinx):
                 )
 
         # now that we know all config values, collect them from conf.py
-        self.config.init_values(self.warn)
-
-        # check the Sphinx version if requested
-        if self.config.needs_sphinx and \
-           self.config.needs_sphinx > __display_version__[:3]:
-            raise VersionRequirementError(
-                'This project needs at least Sphinx v%s and therefore cannot '
-                'be built with this version.' % self.config.needs_sphinx)
+        if sys.version_info[0] == 2:
+            self.config.init_values()
+        else:
+            self.config.init_values(self.warn)
 
         # check extension versions if requested
         if self.config.needs_extensions:

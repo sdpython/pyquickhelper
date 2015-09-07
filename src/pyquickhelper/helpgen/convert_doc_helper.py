@@ -186,7 +186,10 @@ def correct_indentation(text):
         if len(tit) > 0 and tit[0] in "-+=*^" and tit == tit[0] * len(tit):
             title[ind] = title.get(ind, 0) + 1
 
-    mint = min(title.keys())
+    if len(title) > 0:
+        mint = min(title.keys())
+    else:
+        mint = 0
     if mint > 0:
         newrows = []
         for row in rows:

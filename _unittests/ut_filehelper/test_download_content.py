@@ -46,6 +46,9 @@ class TestDownloadContent (unittest.TestCase):
         typstr = str  # unicode#
 
         file = typstr(__file__)
+        file_, ext = os.path.splitext(file)
+        if ext != ".py":
+            file = file_ + ".py"
         content = read_content_ufs(file, encoding="utf8")
         assert "TestDownloadContent" in content
 
