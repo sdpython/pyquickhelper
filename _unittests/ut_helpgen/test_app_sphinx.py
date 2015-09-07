@@ -2,7 +2,7 @@
 @brief      test log(time=100s)
 @author     Xavier Dupre
 
-This tesdt must be run last because it screws up with 
+This tesdt must be run last because it screws up with
 *test_convert_doc_helper* and *test_full_documentation_module_template*.
 """
 
