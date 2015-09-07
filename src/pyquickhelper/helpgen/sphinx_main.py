@@ -422,11 +422,14 @@ def generate_help_sphinx(project_var_name,
     ######
     # blog
     ######
+    fLOG("**** begin blogs")
     blog_fold = os.path.join(
         os.path.join(root, "_doc/sphinxdoc/source", "blog"))
 
     if os.path.exists(blog_fold):
-        plist = BlogPostList(blog_fold, language=language)
+        fLOG("    BlogPostList")
+        plist = BlogPostList(blog_fold, language=language, fLOG=fLOG)
+        fLOG("    BlogPostList.write_aggregated")
         plist.write_aggregated(blog_fold,
                                blog_title=theconf.__dict__.get(
                                    "blog_title", project_var_name),
@@ -436,9 +439,12 @@ def generate_help_sphinx(project_var_name,
     else:
         plist = None
 
+    fLOG("**** end blogs")
+
     ###########
     # notebooks
     ###########
+    fLOG("**** begin notebooks")
     notebook_dir = os.path.abspath(os.path.join(root, "_doc", "notebooks"))
     notebook_doc = os.path.abspath(
         os.path.join(root, "_doc", "sphinxdoc", "source", "notebooks"))
@@ -472,15 +478,19 @@ def generate_help_sphinx(project_var_name,
             for img in imgs:
                 shutil.copy(img, notebook_doc)
 
+    fLOG("**** end notebooks")
+
     #############################################
     # replace placeholder as blog posts list into tocs files
     #############################################
+    fLOG("**** blog placeholder")
     if plist is not None:
         replace_placeholder_by_recent_blogpost(all_tocs, plist, "__INSERT__")
 
     #################################
     #  run the documentation generation
     #################################
+    fLOG("**** prepare for SPHINX")
     temp = os.environ["PATH"]
     pyts = get_executables_path()
     sepj = ";" if sys.platform.startswith("win") else ":"
@@ -497,7 +507,7 @@ def generate_help_sphinx(project_var_name,
     ################
     # checks encoding
     ################
-    fLOG("checking encoding utf8...")
+    fLOG("**** checking encoding utf8...")
     for root, dirs, files in os.walk(docpath):
         for name in files:
             thn = os.path.join(root, name)
@@ -531,6 +541,7 @@ def generate_help_sphinx(project_var_name,
     #####################
     # builds command lines
     #####################
+    fLOG("**** sphinx command lines")
     cmds = []
     lays = []
     cmds_post = []
@@ -577,6 +588,7 @@ def generate_help_sphinx(project_var_name,
     ###############################################################
     # run cmds (prefer to use os.system instread of run_cmd if it gets stuck)
     ###############################################################
+    fLOG("**** RUN SPHINX")
     for cmd, build, kind in cmds:
         fLOG(
             "##################################################################################################")
@@ -632,6 +644,7 @@ def generate_help_sphinx(project_var_name,
     #####################################
     # we copy the coverage files if it is missing
     #####################################
+    fLOG("**** copy copverage")
     covfold = os.path.join(docpath, "source", "coverage")
     if os.path.exists(covfold):
         fLOG("## coverage[folder]:", covfold)
@@ -680,6 +693,7 @@ def generate_help_sphinx(project_var_name,
     ######
     # next
     ######
+    fLOG("**** LATEX")
     if "latex" in lays:
         fLOG("---- post_process_latex_output", froot)
         post_process_latex_output(froot, False)

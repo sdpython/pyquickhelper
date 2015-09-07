@@ -11,6 +11,7 @@ from .blog_post import BlogPost
 from .build_rss import build_rss
 from .texts_language import TITLES
 from ..texthelper.diacritic_helper import remove_diacritics
+from ..loghelper import noLOG
 
 if sys.version_info[0] == 2:
     from codecs import open
@@ -22,13 +23,14 @@ class BlogPostList:
     defines a list of @see cl BlogPost
     """
 
-    def __init__(self, folder, encoding="utf8", language="en"):
+    def __init__(self, folder, encoding="utf8", language="en", fLOG=noLOG):
         """
         create a list of BlogPost, we assume each blog post belongs to a sub-folder *YYYY*
 
         @param      folder          folder when to find files
         @param      encoding        encoding
         @param      language        language
+        @param      fLOG            logging function
 
         """
         self._blogposts = []
@@ -36,12 +38,15 @@ class BlogPostList:
         for s in sub:
             full = os.path.join(folder, s)
             if os.path.isdir(full):
+                fLOG("    reading folder", full)
                 posts = os.listdir(full)
                 for post in posts:
                     if os.path.splitext(post)[-1] in [".rst"]:
                         fpost = os.path.join(full, post)
+                        fLOG("    reading post", fpost)
                         obj = BlogPost(fpost, encoding=encoding)
                         self._blogposts.append((obj.date, obj))
+        fLOG("    end reading post")
         self._blogposts.sort(reverse=True)
         self._blogposts = [_[1] for _ in self._blogposts]
         self._encoding = encoding

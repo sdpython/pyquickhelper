@@ -6,9 +6,10 @@
 
 import os
 import sys
-import warnings
 from docutils import io as docio
 from docutils.core import publish_programmatically
+from sphinx.environment import BuildEnvironment
+from sphinx.config import Config
 
 if sys.version_info[0] == 2:
     from codecs import open
@@ -75,6 +76,19 @@ class BlogPost:
         overrides['input_encoding'] = encoding
         overrides["out_blogpostlist"] = []
         overrides["blog_background"] = False
+
+        overrides.update({'doctitle_xform': True,
+                          'initial_header_level': 2,
+                          'warning_stream': StringIO(),
+                          'out_blogpostlist': [],
+                          'out_runpythonlist': [],
+                          })
+
+        config = Config(None, None, overrides=overrides, tags=None)
+        config.blog_background = False
+        env = BuildEnvironment(None, None, config=config)
+        env.temp_data["docname"] = "string"
+        overrides["env"] = env
 
         errst = sys.stderr
         keeperr = StringIO()
