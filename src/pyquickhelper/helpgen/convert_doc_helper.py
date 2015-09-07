@@ -10,6 +10,8 @@ import textwrap
 from docutils import core
 # from docutils import nodes
 from docutils.parsers.rst import directives as doc_directives
+from sphinx.environment import BuildEnvironment, default_settings
+from sphinx.config import Config
 
 from .utils_sphinx_doc import migrating_doxygen_doc
 from ..loghelper.flog import noLOG
@@ -131,15 +133,22 @@ def rst2html(s, fLOG=noLOG, writer="sphinx", keep_warnings=False,
             # nodes._add_node_class_names([node.__name__])
             writer.connect_directive_node(node.__name__, f1, f2)
 
-    settings_overrides = {'output_encoding': 'unicode',
-                          'doctitle_xform': True,
-                          'initial_header_level': 2,
-                          'warning_stream': StringIO(),
-                          'input_encoding': 'utf8',
-                          'out_blogpostlist': [],
-                          'out_runpythonlist': [],
-                          'blog_background': False,
-                          }
+    settings_overrides = default_settings.copy()
+    settings_overrides.update({'output_encoding': 'unicode',
+                               'doctitle_xform': True,
+                               'initial_header_level': 2,
+                               'warning_stream': StringIO(),
+                               'input_encoding': 'utf8',
+                               'out_blogpostlist': [],
+                               'out_runpythonlist': [],
+                               'blog_background': False,
+                               })
+
+    config = Config(None, None, overrides=settings_overrides, tags=None)
+    config.blog_background = False
+    env = BuildEnvironment(None, None, config=config)
+    env.temp_data["docname"] = "string"
+    settings_overrides["env"] = env
 
     parts = core.publish_parts(source=s, source_path=None,
                                destination_path=None, writer=writer,

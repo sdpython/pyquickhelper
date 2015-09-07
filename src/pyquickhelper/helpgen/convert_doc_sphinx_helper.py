@@ -2,10 +2,11 @@
 @file
 @brief Helpers to convert docstring to various format
 
-.. versionadded:: 1.0
+.. versionadded:: 1.3
 """
 import sys
 # from docutils import nodes
+from docutils.languages import en as docutils_en
 from sphinx.writers.html import HTMLWriter, HTMLTranslator
 from sphinx.builders.html import SingleFileHTMLBuilder, SerializingHTMLBuilder
 from sphinx.application import Sphinx
@@ -18,6 +19,23 @@ if sys.version_info[0] == 2:
     from StringIO import StringIO
 else:
     from io import StringIO
+
+
+def update_docutils_languages(values=None):
+    """
+    update ``docutils/languages/en.py`` with missing labels
+
+    does that for languages:
+
+    * en
+
+    @param      values      consider values in this dictionaries first
+    """
+    if values is None:
+        values = dict()
+    lab = docutils_en.labels
+    if 'versionmodified' not in lab:
+        lab['versionmodified'] = values.get('versionmodified', '')
 
 
 class HTMLTranslatorWithCustomDirectives(HTMLTranslator):
@@ -135,6 +153,7 @@ class _CustomSphinx(Sphinx):
         '''
         from sphinx.application import BUILTIN_DOMAINS, BUILTIN_BUILDERS, events, bold, Tags, Config, CONFIG_FILENAME, ConfigError, VersionRequirementError
         from sphinx import __display_version__
+        update_docutils_languages()
         self.verbosity = verbosity
         self.next_listener_id = 0
         self._extensions = {}

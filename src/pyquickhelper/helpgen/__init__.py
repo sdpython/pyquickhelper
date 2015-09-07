@@ -32,3 +32,4 @@ from .sphinx_helper import sphinx_add_scripts
 from .sphinx_main import generate_help_sphinx, process_notebooks
 from .sphinx_runpython_extension import RunPythonDirective, runpython_node
 from .utils_sphinx_config import NbImage
+from .utils_pywin32 import import_pywin32

@@ -207,6 +207,50 @@ class TestBlogHelper(unittest.TestCase):
         if tb not in html:
             raise Exception(html)
 
+    def test_newdirective_with_rst2html_bug(self):
+        fLOG(
+            __file__,
+            self._testMethodName,
+            OutputPrint=__name__ == "__main__")
+
+        from docutils import nodes
+
+        class runpythonthis_node(nodes.Structural, nodes.Element):
+            pass
+
+        class RunPythonThisDirective (RunPythonDirective):
+            runpython_class = runpythonthis_node
+
+        def visit_node(self, node):
+            self.body.append("<p><b>visit_node</b></p>")
+
+        def depart_node(self, node):
+            self.body.append("<p><b>depart_node</b></p>")
+
+        content = """
+
+                        description
+                        -----------
+
+                        .. deprecated:: 0.3
+                            to add
+
+                        this code shoud appear___
+
+                    """.replace("                        ", "")
+
+        tives = [("runpythonthis", RunPythonThisDirective, runpythonthis_node,
+                  visit_node, depart_node)]
+
+        html = rst2html(content, fLOG=fLOG,
+                        writer="custom", keep_warnings=True,
+                        directives=tives)
+
+        t1 = "this code shoud appear___"
+        assert t1 in html
+        ta = "Deprecated since version 0.3"
+        if ta not in html:
+            raise Exception(html)
 
 if __name__ == "__main__":
     unittest.main()
