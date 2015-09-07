@@ -7,7 +7,7 @@ import sys
 import unittest
 import shutil
 import warnings
-
+from docutils.parsers.rst import roles
 
 try:
     import src
@@ -82,6 +82,8 @@ class TestSphinxDocFull (unittest.TestCase):
 
             if "conf" in sys.modules:
                 del sys.modules["conf"]
+
+            fLOG("****", list(roles._roles.keys()))
 
             generate_help_sphinx(var, module_name=var, root=root,
                                  layout=["pdf", "html"],
