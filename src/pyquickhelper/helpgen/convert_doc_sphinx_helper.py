@@ -236,12 +236,18 @@ class _CustomSphinx(Sphinx):
 
         # now that we know all config values, collect them from conf.py
         if sys.version_info[0] == 2:
-            self.config.init_values()
+            try:
+                self.config.init_values()
+            except TypeError as e:
+                if "takes exactly 2 arguments" in str(e):
+                    self.config.init_values(self.warn)
+                else:
+                    raise e
         else:
             self.config.init_values(self.warn)
 
         # check extension versions if requested
-        if self.config.needs_extensions:
+        if sys.version_info[0] >= 3 and self.config.needs_extensions:
             for extname, needs_ver in self.config.needs_extensions.items():
                 if extname not in self._extensions:
                     self.warn('needs_extensions config value specifies a '
@@ -258,7 +264,8 @@ class _CustomSphinx(Sphinx):
         # set up translation infrastructure
         self._init_i18n()
         # check all configuration values for permissible types
-        self.config.check_types(self.warn)
+        if sys.version_info[0] >= 3:
+            self.config.check_types(self.warn)
         # set up the build environment
         self._init_env(freshenv)
         # set up the builder

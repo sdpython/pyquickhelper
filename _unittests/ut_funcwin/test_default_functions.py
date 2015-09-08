@@ -50,7 +50,7 @@ class TestWindows (unittest.TestCase):
         temp = get_temp_folder(__file__, "temp_" + self._testMethodName)
         out = os.path.join(temp, "out.5.py")
         assert not os.path.exists(out)
-        head = file_head(__file__.replace(".pyc", "py"), out=out, head=5)
+        head = file_head(__file__.replace(".pyc", ".py"), out=out, head=5)
         assert os.path.exists(head)
 
     def test_file_grep(self):

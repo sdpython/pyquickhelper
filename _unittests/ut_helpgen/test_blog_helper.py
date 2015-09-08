@@ -7,6 +7,7 @@ import sys
 import os
 import unittest
 import sphinx
+import warnings
 from docutils.parsers.rst import directives
 
 try:
@@ -168,6 +169,11 @@ class TestBlogHelper(unittest.TestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
+        if sys.version_info[0] == 2:
+            warnings.warn(
+                "test_newdirective_with_rst2html not run on Python 2.7")
+            return
+
         from docutils import nodes
 
         class runpythonthis_node(nodes.Structural, nodes.Element):
@@ -188,8 +194,10 @@ class TestBlogHelper(unittest.TestCase):
 
                     .. runpythonthis::
 
-                        print("this code shoud appear" + "___")
+                        print(u"this code shoud appear" + u"___")
                     """.replace("                    ", "")
+        if sys.version_info[0] >= 3:
+            content = content.replace('u"', '"')
 
         tives = [("runpythonthis", RunPythonThisDirective, runpythonthis_node,
                   visit_node, depart_node)]

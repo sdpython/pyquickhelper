@@ -94,6 +94,8 @@ def rst2html(s, fLOG=noLOG, writer="sphinx", keep_warnings=False,
                         writer="custom", keep_warnings=True,
                         directives=tives)
 
+    Unfortunately, this functionality is only tested on Python 3.
+    It might only work on Python 2.7.
 
     @endexample
 
