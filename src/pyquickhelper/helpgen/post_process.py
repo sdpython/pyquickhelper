@@ -430,9 +430,10 @@ def post_process_latex(st, doall, info=None):
     @todo Check latex is properly converted in HTML files
     """
     fLOG("   ** enter post_process_latex", doall, "%post_process_latex" in st)
+    weird_character = set(chr(i) for i in range(1,9))
 
     def clean_unicode(c):
-        if ord(c) >= 255:
+        if ord(c) >= 255 or c in weird_character:
             return "\\textquestiondown "
         else:
             return c
