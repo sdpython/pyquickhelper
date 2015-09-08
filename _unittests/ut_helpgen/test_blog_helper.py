@@ -182,11 +182,11 @@ class TestBlogHelper(unittest.TestCase):
         class RunPythonThisDirective (RunPythonDirective):
             runpython_class = runpythonthis_node
 
-        def visit_node(self, node):
-            self.body.append("<p><b>visit_node</b></p>")
+        def visit_rp_node(self, node):
+            self.body.append("<p><b>visit_rp_node</b></p>")
 
-        def depart_node(self, node):
-            self.body.append("<p><b>depart_node</b></p>")
+        def depart_rp_node(self, node):
+            self.body.append("<p><b>depart_rp_node</b></p>")
 
         content = """
                     test a directive
@@ -200,18 +200,19 @@ class TestBlogHelper(unittest.TestCase):
             content = content.replace('u"', '"')
 
         tives = [("runpythonthis", RunPythonThisDirective, runpythonthis_node,
-                  visit_node, depart_node)]
+                  visit_rp_node, depart_rp_node)]
 
         html = rst2html(content, fLOG=fLOG,
                         writer="custom", keep_warnings=True,
                         directives=tives)
 
         t1 = "this code shoud appear___"
-        assert t1 in html
-        ta = "<p><b>visit_node</b></p>"
+        if t1 not in html:
+            raise Exception(html)
+        ta = "<p><b>visit_rp_node</b></p>"
         if ta not in html:
             raise Exception(html)
-        tb = "<p><b>depart_node</b></p>"
+        tb = "<p><b>depart_rp_node</b></p>"
         if tb not in html:
             raise Exception(html)
 

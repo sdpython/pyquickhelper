@@ -60,17 +60,19 @@ def run_python_script(script, params={}, comment=None):
     sys.stdout = sout
     sys.stderr = serr
 
-    gout = sout.getvalue()
-    gerr = serr.getvalue()
-
     try:
         exec(obj, globals(), loc)
     except Exception as ee:
         if comment is None:
             comment = ""
+        gout = sout.getvalue()
+        gerr = serr.getvalue()
         message = "SCRIPT:\n{0}\nPARAMS\n{1}\nCOMMENT\n{2}\nERR\n{3}\nOUT\n{4}".format(
             script, params, comment, gout, gerr)
         raise RunPythonExecutionError(message) from ee
+
+    gout = sout.getvalue()
+    gerr = serr.getvalue()
 
     sys.stdout = kout
     sys.stderr = kerr
