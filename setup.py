@@ -188,7 +188,7 @@ if not r:
         install_requires=[
             "autopep8",
             "numpy",
-            "dateutils",
+            "python-dateutil",
             "IPython",
             "jupyter",
             "jupyter_client",
