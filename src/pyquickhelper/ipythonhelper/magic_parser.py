@@ -58,13 +58,13 @@ class MagicCommandParser (argparse.ArgumentParser):
         """
         if kwargs.get("no_eval", False):
             name = MagicCommandParser._private_get_name(*args)
-            self._keep_args[name] = (args, kwargs)
+            self._keep_args[name] = (args, kwargs.copy())
             del kwargs["no_eval"]
         super(argparse.ArgumentParser, self).add_argument(*args, **kwargs)
         if args != ('-h', '--help'):
             name = MagicCommandParser._private_get_name(*args)
             if name not in self._keep_args:
-                self._keep_args[name] = (args, kwargs)
+                self._keep_args[name] = (args, kwargs.copy())
         elif kwargs.get("action", "") != "help":
             raise ValueError(
                 "unable to add parameter -h, --help, already taken for help")
