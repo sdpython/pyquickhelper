@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 @file
-@brief Magic command to handle files
+@brief Magic parser to parse magic commands
 """
 import argparse
 import shlex
@@ -29,6 +29,7 @@ class MagicCommandParser (argparse.ArgumentParser):
         """
         argparse.ArgumentParser.__init__(self, prog=prog, *l, **p)
         self._keep_args = {}
+        self._do_not_eval = {}
 
     @staticmethod
     def _private_get_name(*args):
@@ -48,11 +49,23 @@ class MagicCommandParser (argparse.ArgumentParser):
     def add_argument(self, *args, **kwargs):
         """
         overloads the methods, see `ArgumentParser <https://docs.python.org/3.4/library/argparse.html>`_
+
+        @param      no_eval     avoid considering the parameter
+                                value as a potential variable stored in the notebook workspace.
+
+        .. versionchanged:: 1.3
+            The method adds parameter *no_eval* to avoid considering the parameter
+            value as a potential variable stored in the notebook workspace.
         """
+        if kwargs.get("no_eval", False):
+            name = MagicCommandParser._private_get_name(*args)
+            self._keep_args[name] = (args, kwargs)
+            del kwargs["no_eval"]
         super(argparse.ArgumentParser, self).add_argument(*args, **kwargs)
         if args != ('-h', '--help'):
             name = MagicCommandParser._private_get_name(*args)
-            self._keep_args[name] = (args, kwargs)
+            if name not in self._keep_args:
+                self._keep_args[name] = (args, kwargs)
         elif kwargs.get("action", "") != "help":
             raise ValueError(
                 "unable to add parameter -h, --help, already taken for help")
@@ -68,6 +81,19 @@ class MagicCommandParser (argparse.ArgumentParser):
             raise KeyError("unable to find parameter name: {0} in {1}".format(
                 name, list(self._keep_args.keys())))
         return "choices" in self._keep_args[name][1]
+
+    def has_eval(self, name):
+        """
+        tells if a parameter value should be consider as a variable or some python code
+        to evaluate
+
+        @param      name        parameter name
+        @return                 boolean
+        """
+        if name not in self._keep_args:
+            raise KeyError("unable to find parameter name: {0} in {1}".format(
+                name, list(self._keep_args.keys())))
+        return "no_eval" not in self._keep_args[name][1]
 
     def parse_cmd(self, line, context=None, fLOG=noLOG):
         """
@@ -85,11 +111,11 @@ class MagicCommandParser (argparse.ArgumentParser):
         if context is not None:
             up = {}
             for k, v in res.__dict__.items():
-                if self.has_choices(k):
+                if self.has_choices(k) or self.has_eval(k):
                     up[k] = v
                 else:
                     ev = self.eval(v, context=context, fLOG=fLOG)
-                    if ev != v:
+                    if ev is not None and (type(v) != type(ev) or v != ev):
                         up[k] = ev
 
             if len(up) > 0:

@@ -87,6 +87,8 @@ Versions, Changes
     * **add:** add functions to run before and after the documentation generation 
       (to add extra files, to remove, to modify, ...)
     * **change:** function *rst2html* now interprets sphinx directives and not only directives
+    * **add:** parameter *no_eval* to method *add_argument* for parsers used for magic command lines, 
+      it avoids the value of the parameter to be considered as a python expression
 
 * **1.2.781 - 2015/08/15**
     * **change:** parameter prog was added to class MagicCommandParser
