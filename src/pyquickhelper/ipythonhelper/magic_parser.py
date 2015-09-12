@@ -51,23 +51,30 @@ class MagicCommandParser (argparse.ArgumentParser):
 
         @param      no_eval     avoid considering the parameter
                                 value as a potential variable stored in the notebook workspace.
+        @param      eval_type   *type* can be used for parsing and *eval_type*
+                                is the expected return type.
 
         .. versionchanged:: 1.3
             The method adds parameter *no_eval* to avoid considering the parameter
             value as a potential variable stored in the notebook workspace.
         """
-        if kwargs.get("no_eval", False):
-            name = MagicCommandParser._private_get_name(*args)
+        name = MagicCommandParser._private_get_name(*args)
+        if name in ["help", "-h", "--h"]:
+            super(argparse.ArgumentParser, self).add_argument(*args, **kwargs)
+        else:
             self._keep_args[name] = (args, kwargs.copy())
-            del kwargs["no_eval"]
-        super(argparse.ArgumentParser, self).add_argument(*args, **kwargs)
-        if args != ('-h', '--help'):
-            name = MagicCommandParser._private_get_name(*args)
-            if name not in self._keep_args:
-                self._keep_args[name] = (args, kwargs.copy())
-        elif kwargs.get("action", "") != "help":
-            raise ValueError(
-                "unable to add parameter -h, --help, already taken for help")
+            if kwargs.get("no_eval", False):
+                del kwargs["no_eval"]
+            if kwargs.get("eval_type", None):
+                del kwargs["eval_type"]
+
+            super(argparse.ArgumentParser, self).add_argument(*args, **kwargs)
+
+            if args != ('-h', '--help'):
+                pass
+            elif kwargs.get("action", "") != "help":
+                raise ValueError(
+                    "unable to add parameter -h, --help, already taken for help")
 
     def has_choices(self, name):
         """
@@ -88,11 +95,42 @@ class MagicCommandParser (argparse.ArgumentParser):
 
         @param      name        parameter name
         @return                 boolean
+
+        .. versionadded:: 1.3
         """
         if name not in self._keep_args:
             raise KeyError("unable to find parameter name: {0} in {1}".format(
                 name, list(self._keep_args.keys())))
         return "no_eval" not in self._keep_args[name][1]
+
+    def expected_type(self, name):
+        """
+        return the expected type for the parameter
+
+        @param      name        parameter name
+        @return                 type or None of unknown
+
+        .. versionadded:: 1.3
+        """
+        if name in self._keep_args:
+            return self._keep_args[name][1].get("type", None)
+        else:
+            return None
+
+    def expected_eval_type(self, name):
+        """
+        return the expected evaluation type for the parameter
+        (if the value is interpreter as a python expression)
+
+        @param      name        parameter name
+        @return                 type or None of unknown
+
+        .. versionadded:: 1.3
+        """
+        if name in self._keep_args:
+            return self._keep_args[name][1].get("eval_type", None)
+        else:
+            return None
 
     def parse_cmd(self, line, context=None, fLOG=noLOG):
         """
@@ -103,6 +141,10 @@ class MagicCommandParser (argparse.ArgumentParser):
         @param      context     if not None, tries to evaluate expression the command may contain
         @param      fLOG        logging function
         @return                 list of strings
+
+        The function distinguishes between the type used to parse
+        the command line (type) and the expected type after the evaluation
+        *eval_type*.
         """
         args = shlex.split(line, posix=False)
         res = self.parse_args(args)
@@ -114,8 +156,12 @@ class MagicCommandParser (argparse.ArgumentParser):
                     up[k] = v
                 else:
                     ev = self.eval(v, context=context, fLOG=fLOG)
-                    if ev is not None and (type(v) != type(ev) or v != ev):
+                    v_exp = self.expected_eval_type(k)
+                    if ev is not None and (v_exp is None or v_exp == type(ev)) and \
+                            (type(v) != type(ev) or v != ev):
                         up[k] = ev
+                    elif v_exp is not None and type(v) != v_exp:
+                        up[k] = v_exp(v)
 
             if len(up) > 0:
                 for k, v in up.items():
