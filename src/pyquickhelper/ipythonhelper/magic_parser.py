@@ -36,14 +36,16 @@ class MagicCommandParser (argparse.ArgumentParser):
         guesses the name of a parameter knowning the argument
         given to @see me add_argument
         """
+        if args == ('-h', '--help'):
+            return "help"
+        typstr = str  # unicode#
         for i, a in enumerate(args):
-            if isinstance(a, str  # unicode#
-                          ):
+            if isinstance(a, typstr):
                 if a[0] != "-":
                     return a
                 elif a.startswith("--"):
                     return a[2:].replace("-", "_")
-        raise KeyError("unable to find parameter name in: " + str(args))
+        raise KeyError("unable to find parameter name in: " + typstr(args))
 
     def add_argument(self, *args, **kwargs):
         """
@@ -184,8 +186,8 @@ class MagicCommandParser (argparse.ArgumentParser):
         if value in context:
             return context[value]
 
-        if isinstance(value, str  # unicode#
-                      ) and (
+        typstr = str  # unicode#
+        if isinstance(value, typstr) and (
                 "[" in value or "]" in value or "+" in value or "*" in value or
                 value.split(".")[0] in context):
             try:
@@ -193,7 +195,7 @@ class MagicCommandParser (argparse.ArgumentParser):
                 return res
             except Exception as e:
                 fLOG(
-                    "unable to interpret: " + str(value), " exception ", str(e))
+                    "unable to interpret: " + typstr(value), " exception ", typstr(e))
                 return value
         else:
             return value
