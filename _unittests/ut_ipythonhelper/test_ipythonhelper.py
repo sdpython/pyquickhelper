@@ -108,7 +108,7 @@ class TestAutoCompletion (unittest.TestCase):
         assert "usage: test_command [-h] [-n N] [-e ENCODING] f" in r
         fLOG("###\n", r, "###\n")
         fLOG(parser.usage)
-        assert res.n == 7
+        self.assertEqual(res.n, 7)
 
     def test_class_magic(self):
         fLOG(

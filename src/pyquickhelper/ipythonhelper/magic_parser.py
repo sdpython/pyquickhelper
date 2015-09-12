@@ -29,7 +29,6 @@ class MagicCommandParser (argparse.ArgumentParser):
         """
         argparse.ArgumentParser.__init__(self, prog=prog, *l, **p)
         self._keep_args = {}
-        self._do_not_eval = {}
 
     @staticmethod
     def _private_get_name(*args):
@@ -111,7 +110,7 @@ class MagicCommandParser (argparse.ArgumentParser):
         if context is not None:
             up = {}
             for k, v in res.__dict__.items():
-                if self.has_choices(k) or self.has_eval(k):
+                if self.has_choices(k) or not self.has_eval(k):
                     up[k] = v
                 else:
                     ev = self.eval(v, context=context, fLOG=fLOG)
