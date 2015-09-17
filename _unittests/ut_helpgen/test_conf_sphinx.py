@@ -45,15 +45,15 @@ class TestConfSphinx(unittest.TestCase):
         if sys.version_info[0] == 2:
             return
         assert os.path.exists(ff)
-        import solar_theme
+        import sphinx_rtd_theme
         d = {}
         set_sphinx_variables(
             ff,
             "thisname",
             "XD",
             2014,
-            "solar_theme",
-            solar_theme.theme_path,
+            "sphinx_rtd_theme",
+            None,  # sphinx_rtd_theme.theme_path,
             d)
         for k, v in d.items():
             fLOG(k, "\t=", v)

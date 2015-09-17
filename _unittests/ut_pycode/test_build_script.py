@@ -39,7 +39,9 @@ class TestBuildScript(unittest.TestCase):
         if sys.platform.startswith("win"):
             sc = get_build_script("pyquickhelper")
             # fLOG(sc)
-            assert "c:\\Python34_x64vir%virtual_env_suffix%\\install" in sc
+            ver = "%d%s" % sys.version_info[:2]
+            assert "c:\\Python{0}_x64vir%virtual_env_suffix%\\install".format(
+                ver) in sc
             lines = sc.split("\n")
             for line in lines:
                 if "__" in line and _default_nofolder not in line:

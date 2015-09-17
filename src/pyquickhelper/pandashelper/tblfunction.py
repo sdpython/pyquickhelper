@@ -3,8 +3,6 @@
 @brief Various function to deal with pandas tables
 """
 
-import numpy
-
 
 def isempty(s):
     """
@@ -12,12 +10,17 @@ def isempty(s):
 
     @param      s       ``str`` or ``numpy.NaN``
     @return             boolean
+
+    .. versionchanged:: 1.3
+        We import numpy in the function (delayed import).
     """
     if s is None:
         return True
     if isinstance(s, str  # unicode#
                   ):
         return len(s) == 0
+
+    import numpy
     if numpy.isnan(s):
         return True
     return False
@@ -31,8 +34,12 @@ def isnan(s):
     @return             boolean
 
     @raise      TypeError   if ``s`` is not a ``float``
+
+    .. versionchanged:: 1.3
+        We import numpy in the function (delayed import).
     """
     if isinstance(s, float):
+        import numpy
         return numpy.isnan(s)
     else:
         raise TypeError(

@@ -35,6 +35,8 @@ def choose_path(*paths):
 #: default values, to be replaced in the build script
 default_values = {
     "windows": {
+        "__PY35__": choose_path("c:\\Python35", _default_nofolder),
+        "__PY35_X64__": choose_path("c:\\Python35_x64", _default_nofolder),
         "__PY34__": choose_path("c:\\Python34", _default_nofolder),
         "__PY34_X64__": choose_path("c:\\Python34_x64", "c:\\Anaconda3", _default_nofolder),
         "__PY27_X64__": choose_path("c:\\Python27_x64", "c:\\Anaconda2", "c:\\Anaconda", _default_nofolder),
@@ -61,7 +63,9 @@ def private_script_replacements(script, module, requirements, port, raise_except
         default_engine_paths = {
             "windows": {
                 "__PY34__": None,
+                "__PY35__": None,
                 "__PY34_X64__": "c:\\Python34_x64",
+                "__PY35_X64__": "c:\\Python35_x64",
                 "__PY27_X64__": "c:\\Anaconda2",
             },
         }

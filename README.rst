@@ -90,6 +90,7 @@ Versions, Changes
     * **add:** parameters *no_eval*, *eval_type* to method *add_argument* for parsers used for magic command lines, 
       it avoids the value of the parameter to be considered as a python expression or enforce the 
       type of the returned value
+    * **change:** update the module to handle Python 3.5
 
 * **1.2.781 - 2015/08/15**
     * **change:** parameter prog was added to class MagicCommandParser

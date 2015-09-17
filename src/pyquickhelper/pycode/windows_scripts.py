@@ -4,6 +4,11 @@
 
 .. versionadded:: 1.1
 """
+import sys
+
+
+def _sversion():
+    return "PY%d%d" % sys.version_info[:2]
 
 #################
 #: stop if error
@@ -24,13 +29,13 @@ goto start_script:
 
 :default_value_python:
 @echo ~LABEL default_value_python
-set pythonexe=__PY34_X64__\\python
-@echo ~SET pythonexe=__PY34_X64__\\python
+set pythonexe=__PY??_X64__\\python
+@echo ~SET pythonexe=__PY??_X64__\\python
 
 :start_script:
 @echo ~LABEL start_script
 set current=%~dp0
-"""
+""".replace("PY??", _sversion())
 
 #################
 #: prefix 27
@@ -90,7 +95,7 @@ goto custom_python:
 
 :default_value:
 @echo ~LABEL default_value
-set pythonexe=__PY34_X64__\\python
+set pythonexe=__PY??_X64__\\python
 
 :custom_python:
 @echo ~LABEL custom_python
@@ -110,7 +115,7 @@ if %errorlevel% neq 0 exit /b %errorlevel%
 @echo ~CALL %pythonexe% setup.py bdist_wheel %2
 %pythonexe% setup.py bdist_wheel %2
 if %errorlevel% neq 0 exit /b %errorlevel%
-"""
+""".replace("PY??", _sversion())
 
 #################
 #: build script for Windows
@@ -133,51 +138,51 @@ goto custom_python:
 
 :default_value:
 @echo ~LABEL default_value
-IF NOT EXIST __PY34__ GOTO checkinstall64:
+IF NOT EXIST __PY??__ GOTO checkinstall64:
 
 :checkinstall:
 @echo ~LABEL checkinstall
-IF EXIST __PY34__vir%virtual_env_suffix% GOTO nexta:
-mkdir __PY34__vir%virtual_env_suffix%
+IF EXIST __PY??__vir%virtual_env_suffix% GOTO nexta:
+mkdir __PY??__vir%virtual_env_suffix%
 
 :nexta:
 @echo ~LABEL nexta
-IF EXIST __PY34__vir%virtual_env_suffix%\\install GOTO fullsetupa:
-__PY34__\\Scripts\\virtualenv __PY34__vir%virtual_env_suffix%\\install --system-site-packages
+IF EXIST __PY??__vir%virtual_env_suffix%\\install GOTO fullsetupa:
+__PY??__\\Scripts\\virtualenv __PY??__vir%virtual_env_suffix%\\install --system-site-packages
 if %errorlevel% neq 0 exit /b %errorlevel%
 
 :fullsetupa:
 @echo ~LABEL fullsetupa
 @echo #######################################################0
-@echo ~CALL __PY34__vir%virtual_env_suffix%\\install\\Scripts\\python -u setup.py install
-__PY34__vir%virtual_env_suffix%\\install\\Scripts\\python -u setup.py install
+@echo ~CALL __PY??__vir%virtual_env_suffix%\\install\\Scripts\\python -u setup.py install
+__PY??__vir%virtual_env_suffix%\\install\\Scripts\\python -u setup.py install
 if %errorlevel% neq 0 exit /b %errorlevel%
 @echo #######################################################1
 
 :checkinstall64:
 @echo ~LABEL checkinstall64
-IF EXIST __PY34_X64__vir%virtual_env_suffix% GOTO nextb:
-mkdir __PY34_X64__vir%virtual_env_suffix%
+IF EXIST __PY??_X64__vir%virtual_env_suffix% GOTO nextb:
+mkdir __PY??_X64__vir%virtual_env_suffix%
 
 :nextb:
 @echo ~LABEL nextb
-IF EXIST __PY34_X64__vir%virtual_env_suffix%\\install GOTO fullsetupb:
-__PY34_X64__\\Scripts\\virtualenv __PY34_X64__vir%virtual_env_suffix%\\install --system-site-packages
+IF EXIST __PY??_X64__vir%virtual_env_suffix%\\install GOTO fullsetupb:
+__PY??_X64__\\Scripts\\virtualenv __PY??_X64__vir%virtual_env_suffix%\\install --system-site-packages
 if %errorlevel% neq 0 exit /b %errorlevel%
 
 :fullsetupb:
 @echo ~LABEL fullsetupb
 @echo #######################################################2
-@echo ~CALL __PY34_X64__vir%virtual_env_suffix%\\install\\Scripts\\python -u setup.py install
-__PY34_X64__vir%virtual_env_suffix%\\install\\Scripts\\python -u setup.py install
+@echo ~CALL __PY??_X64__vir%virtual_env_suffix%\\install\\Scripts\\python -u setup.py install
+__PY??_X64__vir%virtual_env_suffix%\\install\\Scripts\\python -u setup.py install
 if %errorlevel% neq 0 exit /b %errorlevel%
 @echo #######################################################3
 
-:setup34:
-@echo ~LABEL setup34
-IF NOT EXIST __PY34__ GOTO utpy34_64:
-set pythonexe=__PY34__\\python
-@echo ~SET set pythonexe=__PY34__\\python
+:setup3x:
+@echo ~LABEL setup3x
+IF NOT EXIST __PY??__ GOTO utpy3x_64:
+set pythonexe=__PY??__\\python
+@echo ~SET set pythonexe=__PY??__\\python
 @echo ~CALL %pythonexe% setup.py write_version
 %pythonexe% setup.py write_version
 @echo ~VERSION
@@ -189,10 +194,10 @@ more version.txt
 if %errorlevel% neq 0 exit /b %errorlevel%
 @echo #######################################################4
 
-:utpy34_64:
-@echo ~LABEL utpy34_64
-set pythonexe=__PY34_X64__\\python
-@echo ~SET pythonexe=__PY34_X64__\\python
+:utpy3x_64:
+@echo ~LABEL utpy3x_64
+set pythonexe=__PY??_X64__\\python
+@echo ~SET pythonexe=__PY??_X64__\\python
 
 :custom_python:
 @echo ~LABEL custom_python
@@ -318,7 +323,7 @@ if not exist ..\\..\\local_pypi mkdir ..\\..\\local_pypi
 if not exist ..\\..\\local_pypi\\local_pypi_server mkdir ..\\..\\local_pypi\\local_pypi_server
 @echo ~CALL copy /Y dist\\*.whl ..\\..\\local_pypi\\local_pypi_server
 copy /Y dist\\*.whl ..\\..\\local_pypi\\local_pypi_server
-"""
+""".replace("PY??", _sversion())
 
 ####################################################
 #: build any script for Windows from a virtual environment
@@ -346,8 +351,8 @@ goto custom_python:
 
 :default_value:
 @echo ~LABEL default_value
-set pythonexe=__PY34_X64__\\python
-@echo ~SET pythonexe=__PY34_X64__\\python
+set pythonexe=__PY??_X64__\\python
+@echo ~SET pythonexe=__PY??_X64__\\python
 
 :custom_python:
 @echo ~LABEL custom_python
@@ -430,7 +435,7 @@ rem set PYTHONPATH=additional_path
 if %errorlevel% neq 0 exit /b %errorlevel%
 @echo #######################################################6
 
-"""
+""".replace("PY??", _sversion())
 
 #################
 #: notebooks
@@ -444,8 +449,8 @@ goto nextn:
 
 :default_value:
 @echo ~LABEL default_value
-set pythonexe=__PY34_X64__
-@echo ~SET pythonexe=__PY34_X64__
+set pythonexe=__PY??_X64__
+@echo ~SET pythonexe=__PY??_X64__
 
 :nextn:
 @echo ~LABEL nextn
@@ -456,7 +461,7 @@ set path=%path%;%pythonexe%;%pythonexe%\\Scripts
 set PYTHONPATH=%PYTHONPATH%;%current%\\src__ADDITIONAL_LOCAL_PATH__
 @echo ~SET PYTHONPATH=%PYTHONPATH%;%current%\\src__ADDITIONAL_LOCAL_PATH__
 jupyter-notebook --notebook-dir=_doc\\notebooks --matplotlib=inline
-"""
+""".replace("PY??", _sversion())
 
 #################
 #: publish a module
@@ -481,8 +486,8 @@ windows_publish_doc = """
 #: run a pypi server
 #################
 windows_pypi = """
-set pythonexe=__PY34_X64__
-@echo ~SET pythonexe=__PY34_X64__
+set pythonexe=__PY??_X64__
+@echo ~SET pythonexe=__PY??_X64__
 
 :custom_python:
 @echo ~LABEL custom_python
@@ -501,7 +506,7 @@ set portpy=__PORT__
 @echo ~LABEL run
 @echo ~CALL %pythonexe%\Scripts\pypi-server.exe -u -p %portpy% --disable-fallback ..\\..\\local_pypi\\local_pypi_server
 %pythonexe%\Scripts\pypi-server.exe -u -p %portpy% --disable-fallback ..\\..\\local_pypi\\local_pypi_server
-"""
+""".replace("PY??", _sversion())
 
 #################
 #: script for Jenkins
@@ -557,7 +562,7 @@ if %errorlevel% neq 0 exit /b %errorlevel%
 
 @echo #######################################################_requirements_begin
 echo ~SET %jenkinspythonpip%
-"""
+""".replace("PY??", _sversion())
 
 
 windows_jenkins_27 = [

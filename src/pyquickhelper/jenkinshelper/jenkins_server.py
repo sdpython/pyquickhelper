@@ -19,6 +19,8 @@ from .jenkins_server_template import _config_job, _trigger_up, _trigger_time, _g
 
 _default_engine_paths = {
     "windows": {
+        "__PY35__": "__PY35__",
+        "__PY35_X64__": "__PY35_X64__",
         "__PY34__": "__PY34__",
         "__PY34_X64__": "__PY34_X64__",
         "__PY27_X64__": "__PY27_X64__",

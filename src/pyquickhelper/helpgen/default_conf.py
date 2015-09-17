@@ -192,8 +192,14 @@ def set_sphinx_variables(fileconf,
                   #'matplotlib.sphinxext.ipython_directive',
                   'IPython.sphinxext.ipython_console_highlighting',
                   'sphinx.ext.napoleon',
-                  'bokeh.sphinxext.bokeh_plot',
                   ]
+
+    try:
+        import bokeh
+        extensions.append('bokeh.sphinxext.bokeh_plot')
+    except ImportError as e:
+        # bokeh is not installed
+        pass
 
     if add_extensions is not None:
         extensions.extend(add_extensions)
