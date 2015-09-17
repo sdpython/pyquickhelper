@@ -4,8 +4,11 @@
 
 .. versionadded:: 1.1
 """
-
 import sys
+import socket
+import gzip
+import warnings
+
 if sys.version_info[0] == 2:
     import urllib2 as urllib_error
     import urllib2 as urllib_request
@@ -21,10 +24,6 @@ else:
     import urllib.error as urllib_error
     import urllib.request as urllib_request
     import http.client as http_client
-
-import socket
-import gzip
-import warnings
 
 
 class InternetException(Exception):

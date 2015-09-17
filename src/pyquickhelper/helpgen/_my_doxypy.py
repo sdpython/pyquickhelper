@@ -10,6 +10,9 @@ The main tweaks are:
 - it uses a function to modify every line of documentation to use rst syntax.
 """
 from __future__ import print_function
+import sys
+import re
+from optparse import OptionParser
 
 __applicationName__ = "doxypy"
 __blurb__ = """
@@ -50,9 +53,6 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
-import sys
-import re
-from optparse import OptionParser
 
 
 class FSM(object):

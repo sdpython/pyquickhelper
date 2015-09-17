@@ -2,6 +2,9 @@
 @file
 @brief Gather functions about downloading from internet, ...
 """
+from ..loghelper.flog import noLOG, _get_file_url
+from .fexceptions import FileException
+from ..loghelper.flog import _first_more_recent
 
 import os
 import sys
@@ -9,9 +12,6 @@ if sys.version_info[0] == 2:
     import urllib2 as urllib_request
 else:
     import urllib.request as urllib_request
-from ..loghelper.flog import noLOG, _get_file_url
-from .fexceptions import FileException
-from ..loghelper.flog import _first_more_recent
 
 
 def download(url, path_download=".", outfile=None, fLOG=noLOG):

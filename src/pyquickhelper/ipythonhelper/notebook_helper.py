@@ -2,6 +2,11 @@
 @file
 @brief Some automation helpers about notebooks
 """
+from .notebook_runner import NotebookRunner
+from ..loghelper.flog import noLOG
+from .notebook_exception import NotebookException
+from ..filehelper import explore_folder_iterfile, remove_folder
+
 import os
 import sys
 import time
@@ -33,10 +38,6 @@ if sys.version_info[0] == 2:
 else:
     from io import StringIO
 
-from .notebook_runner import NotebookRunner
-from ..loghelper.flog import noLOG
-from .notebook_exception import NotebookException
-from ..filehelper import explore_folder_iterfile, remove_folder
 
 if sys.version_info[0] == 2:
     from codecs import open

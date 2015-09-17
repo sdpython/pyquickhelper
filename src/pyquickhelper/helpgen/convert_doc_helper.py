@@ -4,35 +4,32 @@
 
 .. versionadded:: 1.0
 """
-import sys
-import re
-import textwrap
-from docutils import core
-# from docutils import nodes
-from docutils.parsers.rst import directives as doc_directives
-from sphinx.environment import BuildEnvironment, default_settings
-from sphinx.config import Config
-
-from .utils_sphinx_doc import migrating_doxygen_doc
-from ..loghelper.flog import noLOG
-from . helpgen_exceptions import HelpGenConvertError
-# from .sphinx_blog_extension import blogpostagg_node, blogpost_node
-from .sphinx_blog_extension import BlogPostDirective, BlogPostDirectiveAgg
-from .sphinx_runpython_extension import RunPythonDirective
-# from .sphinx_runpython_extension import runpython_node
-from .convert_doc_sphinx_helper import HTMLWriterWithCustomDirectives
-
-if sys.version_info[0] == 2:
-    from StringIO import StringIO
-else:
-    from io import StringIO
-
-
 # -- HELP BEGIN EXCLUDE --
 
 from .utils_sphinx_doc import private_migrating_doxygen_doc
 
 # -- HELP END EXCLUDE --
+
+from .utils_sphinx_doc import migrating_doxygen_doc
+from ..loghelper.flog import noLOG
+from . helpgen_exceptions import HelpGenConvertError
+from .sphinx_blog_extension import BlogPostDirective, BlogPostDirectiveAgg
+from .sphinx_runpython_extension import RunPythonDirective
+from .convert_doc_sphinx_helper import HTMLWriterWithCustomDirectives
+
+import sys
+import re
+import textwrap
+from docutils import core
+from docutils.parsers.rst import directives as doc_directives
+from sphinx.environment import BuildEnvironment, default_settings
+from sphinx.config import Config
+
+
+if sys.version_info[0] == 2:
+    from StringIO import StringIO
+else:
+    from io import StringIO
 
 
 def rst2html(s, fLOG=noLOG, writer="sphinx", keep_warnings=False,

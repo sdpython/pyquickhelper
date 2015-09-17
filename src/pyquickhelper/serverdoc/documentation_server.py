@@ -3,11 +3,6 @@
 @file
 @brief This file defines a simple local server delivering generating documentation.
 """
-
-"""
-@file
-@brief  This modules contains a class which implements a simple server.
-"""
 import sys
 import os
 import subprocess

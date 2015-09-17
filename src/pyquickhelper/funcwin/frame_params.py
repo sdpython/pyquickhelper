@@ -4,15 +4,16 @@
 
 @brief  defines @see cl FrameParams
 """
+from .tk_window import create_tk
+from .function_helper import private_adjust_parameters
+from .storing_functions import _private_restore, _private_store, interpret_parameter
+
 import sys
 import os
 if sys.version_info[0] == 2:
     import Tkinter as tkinter
 else:
     import tkinter
-from .tk_window import create_tk
-from .function_helper import private_adjust_parameters
-from .storing_functions import _private_restore, _private_store, interpret_parameter
 
 
 class FrameParams (tkinter.Frame):
