@@ -36,7 +36,7 @@ class TestBuildScript(unittest.TestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
-        if sys.platform.startswith("win"):
+        if sys.platform.startswith("win") and sys.version_info[0] != 2:
             sc = get_build_script("pyquickhelper")
             # fLOG(sc)
             ver = "%d%s" % sys.version_info[:2]
