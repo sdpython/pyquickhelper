@@ -6,12 +6,17 @@ See `Tutorial: Writing a simple extension <http://sphinx-doc.org/extdev/tutorial
 
 .. versionadded:: 1.2
 """
+from .texts_language import TITLES
 import sys
 from docutils import nodes, core
 from docutils.parsers.rst import Directive
 from docutils.parsers.rst import directives
-from .texts_language import TITLES
-from io import StringIO
+import traceback
+
+if sys.version_info[0] == 2:
+    from StringIO import StringIO
+else:
+    from io import StringIO
 
 
 class RunPythonCompileError(Exception):
