@@ -1470,7 +1470,8 @@ def private_migrating_doxygen_doc(
                         img = img.strip("~")
                         spl_path = filename.replace("\\", "/").split("/")
                         pos = spl_path.index("src")
-                        ref = "/".join([".."] * (len(spl_path) - pos - 2)) + "/"
+                        ref = "/".join([".."] *
+                                       (len(spl_path) - pos - 2)) + "/"
                     else:
                         ref = ""
 

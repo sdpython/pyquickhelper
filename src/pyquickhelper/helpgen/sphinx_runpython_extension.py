@@ -239,10 +239,24 @@ class RunPythonDirective(Directive):
                                   'initial_header_level': 2,
                                   'warning_stream': StringIO()}
 
-            dt = core.publish_doctree(
-                content, settings_overrides=settings_overrides)
-            for ch in dt.children:
-                node += ch
+            try:
+                dt = core.publish_doctree(
+                    content, settings_overrides=settings_overrides)
+            except Exception as e:
+                content = ["::"]
+                st = StringIO()
+                traceback.print_exc(file=st)
+                content.append("")
+                trace = st.getvalue()
+                content.extend("    " + _ for _ in trace.split("\n"))
+                content = "\n".join(content)
+                pout = nodes.literal_block(content, content)
+                node += pout
+                dt = None
+
+            if dt is not None:
+                for ch in dt.children:
+                    node += ch
         else:
             pout = nodes.literal_block(content, content)
             node += pout
