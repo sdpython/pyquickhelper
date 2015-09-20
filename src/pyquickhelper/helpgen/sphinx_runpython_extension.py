@@ -143,10 +143,10 @@ class RunPythonDirective(Directive):
         for l in range(0,10):
             print("**line**", "*" +str(l)+"*")
             print('')
-            
+
     If the directives produced RST text to be included later in the documentation,
     it fails making references to the documentation. It does not interpret
-    `Sphinx directives <http://sphinx-doc.org/rest.html>`_, 
+    `Sphinx directives <http://sphinx-doc.org/rest.html>`_,
     only `docutils directives <http://docutils.sourceforge.net/docs/ref/rst/directives.html>`_.
     """
     required_arguments = 0
