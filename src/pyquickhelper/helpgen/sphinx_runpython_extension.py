@@ -248,12 +248,16 @@ class RunPythonDirective(Directive):
                 dt = core.publish_doctree(
                     content, settings_overrides=settings_overrides)
             except Exception as e:
+                tab = content
                 content = ["::"]
                 st = StringIO()
                 traceback.print_exc(file=st)
                 content.append("")
                 trace = st.getvalue()
                 content.extend("    " + _ for _ in trace.split("\n"))
+                content.append("")
+                content.append("")
+                content.extend("    " + _ for _ in tab.split("\n"))
                 content = "\n".join(content)
                 pout = nodes.literal_block(content, content)
                 node += pout
