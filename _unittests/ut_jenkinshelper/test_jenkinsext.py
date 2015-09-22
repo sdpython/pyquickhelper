@@ -34,7 +34,8 @@ class TestJenkinsExt(unittest.TestCase):
             OutputPrint=__name__ == "__main__")
 
         srv = JenkinsExt(
-            "http://localhost:8080/", "user", "password", mock=True)
+            "http://localhost:8080/", "user", "password",
+            mock=True, fLOG=fLOG)
         github = "https://github.com/sdpython/"
 
         if not sys.platform.startswith("win"):
@@ -47,8 +48,7 @@ class TestJenkinsExt(unittest.TestCase):
                                        upstreams=None,
                                        location=r"/home/username/jenkins/",
                                        dependencies={
-                                           "myversion": "/home/username/mymodule/src/", },
-                                       platform="win32")
+                                           "myversion": "/home/username/mymodule/src/", })
         assert "MYVERSION=/home/username/mymodule/src/" in conf
         assert "auto_unittest_setup_help.bat" in conf
 
@@ -59,8 +59,7 @@ class TestJenkinsExt(unittest.TestCase):
                                        location=r"/home/username/jenkins/",
                                        dependencies={
                                            "myversion": "/home/username/mymodule/src/", },
-                                       scheduler="H H(13-14) * * *",
-                                       platform="win32")
+                                       scheduler="H H(13-14) * * *")
         assert "H H(13-14) * * *" in conf
 
         try:
@@ -71,8 +70,7 @@ class TestJenkinsExt(unittest.TestCase):
                                            location=r"/home/username/jenkins/",
                                            dependencies={
                                                "myversion": "/home/username/mymodule/src/", },
-                                           scheduler="H H(13-14) * * *",
-                                           platform="win32")
+                                           scheduler="H H(13-14) * * *")
             raise Exception("should not happen")
         except JenkinsExtException:
             pass
@@ -84,8 +82,7 @@ class TestJenkinsExt(unittest.TestCase):
                                        location=r"/home/username/jenkins/",
                                        dependencies={
                                            "myversion": "/home/username/mymodule/src/", },
-                                       scheduler=None,
-                                       platform="win32")
+                                       scheduler=None)
         assert "pyquickhelper" in conf
 
     def test_jenkins_ext_setup_server(self):
@@ -94,94 +91,55 @@ class TestJenkinsExt(unittest.TestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
-        srv = JenkinsExt(
-            "http://localhost:8080/", "user", "password", mock=True)
-
         github = "https://github.com/sdpython/"
 
-        if sys.platform.startswith("win"):
-            modules = [  # update anaconda
-                ("standalone [conda_update]", "H H(8-9) * * 0"),
-                "standalone [conda_update27]",
-                "standalone [local_pypi]",
-                "standalone [update]",
-                "standalone [winpython_update]",
-                # pyquickhelper,
-                ("pyquickhelper", "H H(10-11) * * 0"),
-                ("pymyinstall", None, dict(success_only=True)),
-                ["pyquickhelper [anaconda]", "pyquickhelper [winpython]",
-                 "pyquickhelper [27] [anaconda2]"],
-                ["pyensae", ],
-                ["pymmails", "pysqllike", "pyrsslocal", "pymyinstall [27] [anaconda2]",
-                 "python3_module_template", "pyensae [anaconda]", "pyensae [winpython]"],
-                ["pymmails [anaconda]", "pysqllike [anaconda]", "pyrsslocal [anaconda]",
-                 "python3_module_template [anaconda]",
-                 "python3_module_template [27] [anaconda2]",
-                 "pymyinstall [LONG]"],
-                # update
-                ("pymyinstall [update_modules]", "H H(10-11) * * 5"),
-                # actuariat
-                [("actuariat_python", "H H(12-13) * * 0")],
-                ["actuariat_python [winpython]",
-                 "actuariat_python [anaconda]"],
-                # code_beatrix
-                ("code_beatrix", "H H(14-15) * * 0"),
-                "code_beatrix [winpython]",
-                "code_beatrix [anaconda]",
-                # teachings
-                ("ensae_teaching_cs", "H H(15-16) * * 0"),
-                ["ensae_teaching_cs [winpython]",
-                 "ensae_teaching_cs [anaconda]"],
-                "ensae_teaching_cs [custom_left]",
-                "ensae_teaching_cs [winpython] [custom_left]",
-                "ensae_teaching_cs [anaconda] [custom_left]",
-                # documentation
-                ("pyquickhelper [doc]", "H H(3-4) * * 1"),
-                ["pymyinstall [doc]", "pysqllike [doc]", "pymmails [doc]",
-                 "pyrsslocal [doc]", "pyensae [doc]"],
-                ["actuariat_python [doc]", "code_beatrix [doc]"],
-                ("ensae_teachings_cs [doc]", None,
-                 dict(pre="rem pre", post="rem post")),
-                ("custom [any_name]", "H H(3-4) * * 1",
-                 dict(script="any_script.bat")),
-            ]
-        else:
-            modules = [  # update anaconda
-                ("standalone [conda_update]", "H H(8-9) * * 0"),
-                "standalone [conda_update27]",
-                "standalone [local_pypi]",
-                # update
-                ("pymyinstall [update_modules]", "H H(10-11) * * 5"),
-                # pyquickhelper,
-                ("pyquickhelper", "H H(10-11) * * 0"),
-                ("pymyinstall", None, dict(success_only=True)),
-                ["pyquickhelper [anaconda]", "pyquickhelper [winpython]",
-                 "pyquickhelper [27] [anaconda2]"],
-                ["pyensae", ],
-                ["pymmails", "pysqllike", "pyrsslocal", "pymyinstall [27] [anaconda2]",
-                 "python3_module_template", "pyensae [anaconda]"],
-                ["pymmails [anaconda]", "pysqllike [anaconda]", "pyrsslocal [anaconda]",
-                 "python3_module_template [anaconda]",
-                 "python3_module_template [27] [anaconda2]",
-                 "pymyinstall [LONG]"],
-                # actuariat
-                [("actuariat_python", "H H(12-13) * * 0")],
-                ["actuariat_python [anaconda]"],
-                # code_beatrix
-                ("code_beatrix", "H H(14-15) * * 0"),
-                ["code_beatrix [anaconda]"],
-                # teachings
-                ("ensae_teaching_cs", "H H(15-16) * * 0"),
-                ["ensae_teaching_cs [anaconda]"],
-                "ensae_teaching_cs [custom_left]",
-                ["ensae_teaching_cs [anaconda] [custom_left]", ],
-                # documentation
-                ("pyquickhelper [doc]", "H H(3-4) * * 1"),
-                ["pymyinstall [doc]", "pysqllike [doc]", "pymmails [doc]",
-                 "pyrsslocal [doc]", "pyensae [doc]"],
-                ["actuariat_python [doc]", "code_beatrix [doc]"],
-                "ensae_teachings_cs [doc]",
-            ]
+        modules = [  # update anaconda
+            ("standalone [conda_update] [Anaconda3]", "H H(8-9) * * 0"),
+            "standalone [conda_update] [Anaconda2]",
+            "standalone [local_pypi]",
+            "standalone [update] [Anaconda3]",
+            "standalone [update] [WinPython]",
+            "standalone [update]",
+            "standalone [install] [Anaconda2]",
+            # pyquickhelper,
+            ("pyquickhelper", "H H(10-11) * * 0"),
+            ("pymyinstall", None, dict(success_only=True)),
+            ["pyquickhelper [Anaconda3]", "pyquickhelper [WinPython]",
+             "pyquickhelper [27] [Anaconda2]", "pyquickhelper [py35]"],
+            ["pyensae", ],
+            ["pymmails", "pysqllike", "pyrsslocal", "pymyinstall [27] [Anaconda2]",
+             "python3_module_template", "pyensae [Anaconda3]", "pyensae [WinPython]"],
+            ["pymmails [Anaconda3]", "pysqllike [Anaconda3]", "pyrsslocal [Anaconda3]",
+             "python3_module_template [Anaconda3]",
+             "python3_module_template [27] [Anaconda2]",
+             "pymyinstall [LONG]"],
+            # update
+            ("pymyinstall [update_modules]", "H H(10-11) * * 5"),
+            # actuariat
+            [("actuariat_python", "H H(12-13) * * 0")],
+            ["actuariat_python [WinPython]",
+             "actuariat_python [Anaconda3]"],
+            # code_beatrix
+            ("code_beatrix", "H H(14-15) * * 0"),
+            "code_beatrix [WinPython]",
+            "code_beatrix [Anaconda3]",
+            # teachings
+            ("ensae_teaching_cs", "H H(15-16) * * 0"),
+            ["ensae_teaching_cs [WinPython]",
+             "ensae_teaching_cs [Anaconda3]"],
+            "ensae_teaching_cs [custom_left]",
+            "ensae_teaching_cs [WinPython] [custom_left]",
+            "ensae_teaching_cs [Anaconda3] [custom_left]",
+            # documentation
+            ("pyquickhelper [doc]", "H H(3-4) * * 1"),
+            ["pymyinstall [doc]", "pysqllike [doc]", "pymmails [doc]",
+             "pyrsslocal [doc]", "pyensae [doc]"],
+            ["actuariat_python [doc]", "code_beatrix [doc]"],
+            ("ensae_teachings_cs [doc]", None,
+             dict(pre="rem pre", post="rem post")),
+            ("custom [any_name]", "H H(3-4) * * 1",
+             dict(script="any_script.bat")),
+        ]
 
         pythonexe = os.path.dirname(sys.executable)
         location = None
@@ -193,21 +151,27 @@ class TestJenkinsExt(unittest.TestCase):
                         'code_beatrix': ['pyquickhelper', 'pyensae', 'pyrsslocal', 'pymmails'],
                         }
 
+        engines = dict(Anaconda2="C:\\Anaconda2",
+                       Anaconda3="C:\\Anaconda3",
+                       WinPython="C:\\WinPython\\Python",
+                       default="c:\\Python34_x64",
+                       py35="c:\\Python35_x64")
+
+        srv = JenkinsExt(
+            "http://localhost:8080/", "user", "password", mock=True,
+            engines=engines, fLOG=fLOG)
+
         if not sys.platform.startswith("win"):
             # not yet implemented
             return
 
-        res = srv.setup_jenkins_server(github=github, modules=modules, pythonexe=pythonexe,
+        res = srv.setup_jenkins_server(github=github, modules=modules,
                                        overwrite=True,
-                                       fLOG=fLOG, dependencies=dependencies,
+                                       dependencies=dependencies,
                                        location="anything/")
-        df_ = 0
         reg = re.compile("<description>(.*)</description>")
         for i, r in enumerate(res):
             conf = r[-1]
-
-            if "DF_" in conf:
-                df_ += 1
 
             if not conf.startswith("<?xml version='1.0' encoding='UTF-8'?>"):
                 raise Exception(conf)
@@ -216,7 +180,8 @@ class TestJenkinsExt(unittest.TestCase):
             if not search:
                 raise Exception(conf)
 
-            fLOG(search.groups()[0], r[0], r[1])
+            job = r[0]
+            fLOG(search.groups()[0], "--", job, "--", r[1])
 
             if "__" in conf and "pyquickhelper_vir" not in conf:
                 raise Exception(conf)
@@ -239,7 +204,7 @@ class TestJenkinsExt(unittest.TestCase):
                 if "github" in conf:
                     raise Exception(conf)
 
-            if i == 5:
+            if i == 7:
                 if "pyquickhelper" not in conf:
                     raise Exception(conf)
                 if "H H(10-11) * * 0" not in conf:
@@ -282,8 +247,19 @@ class TestJenkinsExt(unittest.TestCase):
                 if "rem pre" not in conf or "rem post" not in conf:
                     raise Exception(conf)
 
+            if "[Anaconda3]" in job:
+                if "C:\\Anaconda3" not in conf:
+                    raise Exception(conf)
+
+            if "[Anaconda2]" in job:
+                if "C:\\Anaconda2" not in conf:
+                    raise Exception(conf)
+
+            if "[py35]" in job:
+                if "c:\\Python35_x64" not in conf:
+                    raise Exception(conf)
+
         assert i > 0
-        assert df_ > 0
 
 
 if __name__ == "__main__":
