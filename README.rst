@@ -91,6 +91,8 @@ Versions, Changes
       it avoids the value of the parameter to be considered as a python expression or enforce the 
       type of the returned value
     * **change:** update the module to handle Python 3.5
+    * **add:** add method *delete_all_jobs* to class *JenkinsExt*
+    * **change:** refactor class *JenkinsExt* to handle more python versions
 
 * **1.2.781 - 2015/08/15**
     * **change:** parameter prog was added to class MagicCommandParser
