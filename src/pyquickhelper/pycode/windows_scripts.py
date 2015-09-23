@@ -566,7 +566,7 @@ echo ~SET %jenkinspythonpip%
 
 
 windows_jenkins_27 = [
-    "set jenkinspythonexe=__PYTHON__\n@echo ~SET jenkinspythonexe=__PYTHON__\n" +
+    "set jenkinspythonexe=__DEFAULTPYTHON__\n@echo ~SET jenkinspythonexe=__DEFAULTPYTHON__\n" +
     jenkins_windows_setup + " build_script\n" +
     windows_error +
     "\n@echo ~CALL %jenkinspythonexe% setup.py setup_hook\n%jenkinspythonexe% setup.py setup_hook\n" +

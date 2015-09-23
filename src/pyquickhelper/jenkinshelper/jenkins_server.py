@@ -334,6 +334,12 @@ class JenkinsExt(jenkins.Jenkins):
                      .replace("__MODULE__", module_name)  # suffix for the virtual environment and module name
             if "[27]" in job:
                 res = res.replace("__PYTHON27__", python)
+                if "__DEFAULTPYTHON__" in res:
+                    if "default" not in self.engines:
+                        raise JenkinsExtException(
+                            "a default engine (Python 3.4) must be defined for script using Python 27, job={}".format(job))
+                res = res.replace("__DEFAULTPYTHON__",
+                                  os.path.join(self.engines["default"]))
 
             if "__" in res:
                 raise JenkinsJobException(
