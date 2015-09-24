@@ -72,7 +72,7 @@ class JenkinsExt(jenkins.Jenkins):
                  mock=False,
                  engines=None,
                  platform=sys.platform,
-                 pypi_port=8886,
+                 pypi_port=8067,
                  fLOG=noLOG):
         """
         constructor
