@@ -339,7 +339,7 @@ class JenkinsExt(jenkins.Jenkins):
                         raise JenkinsExtException(
                             "a default engine (Python 3.4) must be defined for script using Python 27, job={}".format(job))
                 res = res.replace("__DEFAULTPYTHON__",
-                                  os.path.join(self.engines["default"]))
+                                  os.path.join(self.engines["default"], "python"))
 
             if "__" in res:
                 raise JenkinsJobException(
