@@ -12,8 +12,8 @@ import socket
 import hashlib
 from ..loghelper.flog import noLOG
 from ..pycode.windows_scripts import windows_jenkins, windows_jenkins_27, windows_jenkins_any
-from ..pycode.build_helper import private_script_replacements, choose_path
-from .jenkins_exceptions import JenkinsExtException, JenkinsExtPyException, JenkinsJobException
+from ..pycode.build_helper import private_script_replacements
+from .jenkins_exceptions import JenkinsExtException, JenkinsJobException
 from .jenkins_server_template import _config_job, _trigger_up, _trigger_time, _git_repo, _task_batch
 
 
@@ -971,7 +971,7 @@ class JenkinsExt(jenkins.Jenkins):
                         # check some inconsistencies
                         if "[27]" in job and "Anaconda3" in script:
                             raise JenkinsExtException(
-                                "incoherence for job {0}, script:\n{1}\npaths:\n{2}".format(job, scrip))
+                                "incoherence for job {0}, script:\n{1}\npaths:\n{2}".format(job, script))
 
                         locations.append((job, loc))
                         created.append((job, name, loc, job, r))

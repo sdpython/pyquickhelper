@@ -252,7 +252,7 @@ class RunPythonDirective(Directive):
             try:
                 dt = core.publish_doctree(
                     content, settings_overrides=settings_overrides)
-            except Exception as e:
+            except Exception:
                 tab = content
                 content = ["::"]
                 st = StringIO()
