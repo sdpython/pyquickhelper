@@ -117,13 +117,14 @@ def add_notebook_menu(menu_id="my_id_menu_nb", raw=False, format="html", header=
                     }
                     return a;
                 }
-                var update_menu = function() {
+                var update_menu_string = function(begin, lfirst, llast, sformat) {
                     var anchors = document.getElementsByClassName("section");
                     if (anchors.length == 0) {
                         anchors = document.getElementsByClassName("text_cell_render rendered_html");
                     }
                     var i;
-                    var text_menu = "__BEGIN__";
+                    var text_menu = begin;
+                    var text_memo = "<pre>\n";
                     var ind = "";
                     var memo_level = 1;
                     var href;
@@ -131,16 +132,19 @@ def add_notebook_menu(menu_id="my_id_menu_nb", raw=False, format="html", header=
                         var child = anchors[i].children[0];
                         if (anchors[i].hasAttribute("id")) {
                             href = anchors[i].id;
+                            text_memo += "#1-" + href + "\n";
                         }
                         else if (child.hasAttribute("id")) {
                             href = child.id;
+                            text_memo += "#2-" + href + "\n";
                         }
                         else {
+                            text_memo += "#3-" + "*" + "\n";
                             continue;
                         }
                         var title = child.textContent;
                         var level = parseInt(child.tagName.substring(1,2));
-                        if ((level <= __FIRST__) || (level > __LAST__)) {
+                        if ((level <= lfirst) || (level > llast)) {
                             continue ;
                         }
                         if (title.endsWith('¶')) {
@@ -157,13 +161,19 @@ def add_notebook_menu(menu_id="my_id_menu_nb", raw=False, format="html", header=
                             text_menu += "</ul>\\n";
                             memo_level -= 1;
                         }
-                        text_menu += repeat_indent_string(level-2) + __FORMAT__;
+                        text_menu += repeat_indent_string(level-2) + sformat;
                     }
                     while (1 < memo_level) {
                         text_menu += "</ul>\\n";
                         memo_level -= 1;
                     }
                     text_menu += "__END__";
+                    if (text_menu.length == 0) {
+                    }
+                    return text_menu;
+                };
+                var update_menu = function() {
+                    var text_menu = update_menu_string("__BEGIN__", __FIRST__, __LAST__, __FORMAT__);
                     var menu = document.getElementById("__MENUID__");
                     menu.innerHTML=text_menu;
                 };
