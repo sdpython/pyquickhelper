@@ -93,6 +93,8 @@ Versions, Changes
     * **change:** update the module to handle Python 3.5
     * **add:** add method *delete_all_jobs* to class *JenkinsExt*
     * **change:** refactor class *JenkinsExt* to handle more python versions
+    * **update:** javascript producing the automated menu in a notebook was adapted to be efficient
+      in a RST converted notebook
 
 * **1.2.781 - 2015/08/15**
     * **change:** parameter prog was added to class MagicCommandParser
