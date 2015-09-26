@@ -117,39 +117,46 @@ def add_notebook_menu(menu_id="my_id_menu_nb", raw=False, format="html", header=
                     }
                     return a;
                 }
-                var update_menu_string = function(begin, lfirst, llast, sformat) {
+                var update_menu_string = function(begin, lfirst, llast, sformat, send) {
                     var anchors = document.getElementsByClassName("section");
                     if (anchors.length == 0) {
                         anchors = document.getElementsByClassName("text_cell_render rendered_html");
                     }
                     var i;
                     var text_menu = begin;
-                    var text_memo = "<pre>\n";
+                    var text_memo = "<pre>\\nlength:" + anchors.length + "\\n";
                     var ind = "";
                     var memo_level = 1;
                     var href;
                     for (i = 0; i < anchors.length; i++) {
                         var child = anchors[i].children[0];
                         if (anchors[i].hasAttribute("id")) {
+                            // when converted in RST
                             href = anchors[i].id;
-                            text_memo += "#1-" + href + "\n";
+                            text_memo += "#1-" + href;
+                            // passer à child suivant (le chercher)
                         }
                         else if (child.hasAttribute("id")) {
+                            // in a notebook
                             href = child.id;
-                            text_memo += "#2-" + href + "\n";
+                            text_memo += "#2-" + href;
                         }
                         else {
-                            text_memo += "#3-" + "*" + "\n";
+                            text_memo += "#3-" + "*" + "\\n";
                             continue;
                         }
                         var title = child.textContent;
                         var level = parseInt(child.tagName.substring(1,2));
+                        
+                        text_memo += "--" + level + "?" + lfirst + "--" + title + "\\n";
+                        
                         if ((level <= lfirst) || (level > llast)) {
                             continue ;
                         }
                         if (title.endsWith('¶')) {
                             title = title.substring(0,title.length-1).replace("<", "&lt;").replace(">", "&gt;").replace("&", "&amp;")
                         }
+                        
                         if (title.length == 0) {
                             continue;
                         }
@@ -161,19 +168,21 @@ def add_notebook_menu(menu_id="my_id_menu_nb", raw=False, format="html", header=
                             text_menu += "</ul>\\n";
                             memo_level -= 1;
                         }
-                        text_menu += repeat_indent_string(level-2) + sformat;
+                        text_menu += repeat_indent_string(level-2) + sformat.replace("__HREF__", href).replace("__TITLE__", title);
                     }
                     while (1 < memo_level) {
                         text_menu += "</ul>\\n";
                         memo_level -= 1;
                     }
-                    text_menu += "__END__";
-                    if (text_menu.length == 0) {
-                    }
+                    text_menu += send;
+                    text_menu += "\\n" + text_memo;
                     return text_menu;
                 };
                 var update_menu = function() {
-                    var text_menu = update_menu_string("__BEGIN__", __FIRST__, __LAST__, __FORMAT__);
+                    var sbegin = "__BEGIN__";
+                    var sformat = __FORMAT__;
+                    var send = "__END__";
+                    var text_menu = update_menu_string(sbegin, __FIRST__, __LAST__, sformat, send);
                     var menu = document.getElementById("__MENUID__");
                     menu.innerHTML=text_menu;
                 };
@@ -182,7 +191,7 @@ def add_notebook_menu(menu_id="my_id_menu_nb", raw=False, format="html", header=
                .replace("__MENUID__", menu_id) \
                .replace("__FIRST__", str(first_level)) \
                .replace("__LAST__", str(last_level))
-
+               
     full = "{0}\n<script>{1}</script>".format(html, js)
 
     if format == "html":
@@ -191,7 +200,7 @@ def add_notebook_menu(menu_id="my_id_menu_nb", raw=False, format="html", header=
         else:
             header = ""
         full = header + \
-            full.replace("__FORMAT__", """'<li><a href="#' + href + '">' + title + '</a></li>'""") \
+            full.replace("__FORMAT__", """'<li><a href="#__HREF__">__TITLE__</a></li>'""") \
             .replace("__BEGIN__", "") \
             .replace("__END__", "")
     elif format == "rst":
