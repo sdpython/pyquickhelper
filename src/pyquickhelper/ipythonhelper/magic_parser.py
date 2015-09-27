@@ -182,11 +182,21 @@ class MagicCommandParser (argparse.ArgumentParser):
         @param      value       string
         @param      context     something like ``self.shell.user_ns``
         @return                 *value* or its evaluation
-        """
-        if value in context:
-            return context[value]
 
+        .. versionchanged:: 1.3
+            The method now interprets variable inside list, tuple or dictionaries (for *value*).
+        """
         typstr = str  # unicode#
+        if isinstance(value, typstr):
+            if value in context:
+                return context[value]
+        elif isinstance(value, list):
+            return [self.eval(v, context, fLOG=fLOG) for v in value]
+        elif isinstance(value, tuple):
+            return tuple(self.eval(v, context, fLOG=fLOG) for v in value)
+        elif isinstance(value, dict):
+            return {k:self.eval(v, context, fLOG=fLOG) for k,v in value.items()}
+
         if isinstance(value, typstr) and (
                 "[" in value or "]" in value or "+" in value or "*" in value or
                 value.split(".")[0] in context):
