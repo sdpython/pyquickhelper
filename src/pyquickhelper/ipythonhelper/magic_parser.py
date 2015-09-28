@@ -195,7 +195,7 @@ class MagicCommandParser (argparse.ArgumentParser):
         elif isinstance(value, tuple):
             return tuple(self.eval(v, context, fLOG=fLOG) for v in value)
         elif isinstance(value, dict):
-            return {k:self.eval(v, context, fLOG=fLOG) for k,v in value.items()}
+            return {k: self.eval(v, context, fLOG=fLOG) for k, v in value.items()}
 
         if isinstance(value, typstr) and (
                 "[" in value or "]" in value or "+" in value or "*" in value or
