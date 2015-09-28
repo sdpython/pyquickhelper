@@ -129,7 +129,7 @@ def add_notebook_menu(menu_id="my_id_menu_nb", raw=False, format="html", header=
                     var memo_level = 1;
                     var href;
                     var tags = [];
-                    for (i = lfirst; i <= llast; i++) {
+                    for (i = 0; i <= llast; i++) {
                         tags.push("h" + i);
                     }
 
