@@ -4,12 +4,6 @@
 @brief Contains helpers for the main function @see fn generate_help_sphinx
 
 """
-try:
-    import pandas
-    has_pandas = True
-except ImportError:
-    has_pandas = False
-
 import os
 import sys
 import datetime
@@ -210,6 +204,9 @@ def produce_code_graph_changes(df):
         a = now - datetime.timedelta(alldays)
         val.append({"dt": a, "week": to_str(a), "commits": 0})
 
+    # we move pandas here because it imports matplotlib
+    # which is not always wise when you need to modify the backend
+    import pandas
     df = pandas.concat([df, pandas.DataFrame(val)])
 
     gr = df[["week", "commits"]].groupby("week", as_index=False).sum()
@@ -322,6 +319,7 @@ def generate_changes_repo(chan,
             "Logs were not empty but there was no comment starting with '*' from " + source + "\n" + "\n".join([typstr(_) for _ in logs]))
 
     if len(values) > 0:
+        import pandas
         tbl = pandas.DataFrame(
             columns=["#", "change number", "date", "comment"], data=values)
         rows.append(

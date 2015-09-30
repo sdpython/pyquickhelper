@@ -488,10 +488,15 @@ def import_module(
         # no init
         return "No __init__.py, unable to import %s" % (filename), fmod
 
-    # we remove every path ending by "src"
+    # we remove every path ending by "src" except if it is found in PYTHONPATH
+    pythonpath = os.environ.get("PYTHONPATH", None)
+    if pythonpath is not None:
+        pypaths = [ os.path.normpath(_) for _ in pythonpath.split(";") if len(_) > 0]
+    else:
+        pypaths = []
     rem = []
     for i, p in enumerate(sys.path):
-        if p.endswith("src") or ".zip" in p:
+        if (p.endswith("src") and p not in pypaths) or ".zip" in p:
             rem.append(i)
     rem.reverse()
     for r in rem:
