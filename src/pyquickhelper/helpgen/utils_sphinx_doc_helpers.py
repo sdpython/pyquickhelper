@@ -491,7 +491,8 @@ def import_module(
     # we remove every path ending by "src" except if it is found in PYTHONPATH
     pythonpath = os.environ.get("PYTHONPATH", None)
     if pythonpath is not None:
-        pypaths = [ os.path.normpath(_) for _ in pythonpath.split(";") if len(_) > 0]
+        pypaths = [os.path.normpath(_)
+                   for _ in pythonpath.split(";") if len(_) > 0]
     else:
         pypaths = []
     rem = []

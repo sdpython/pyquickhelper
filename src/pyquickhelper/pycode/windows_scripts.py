@@ -325,6 +325,17 @@ if not exist ..\\..\\local_pypi\\local_pypi_server mkdir ..\\..\\local_pypi\\loc
 copy /Y dist\\*.whl ..\\..\\local_pypi\\local_pypi_server
 """.replace("PY??", _sversion())
 
+copy_sphinx_to_dist = """
+if not exist dist\\html mkdir dist\\html
+@echo ~CALL xcopy /E /C /I /Y _doc\\sphinxdoc\\build\\html dist\\html
+xcopy /E /C /I /Y _doc\\sphinxdoc\\build\\html dist\\html
+@echo ~COPY chm
+if exist _doc\\sphinxdoc\\build\\htmlhelp copy _doc\\sphinxdoc\\build\\htmlhelp\\*.chm dist\\html
+@echo ~COPY pdf
+if exist _doc\\sphinxdoc\\build\\latex xcopy /E /C /I /Y _doc\\sphinxdoc\\build\\latex\\*.pdf dist\\html
+if %errorlevel% neq 0 exit /b %errorlevel%
+"""
+
 ####################################################
 #: build any script for Windows from a virtual environment
 ####################################################

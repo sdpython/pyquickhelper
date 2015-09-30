@@ -12,7 +12,7 @@ from .windows_scripts import windows_error, windows_prefix, windows_setup, windo
 from .windows_scripts import windows_publish, windows_publish_doc, windows_pypi, setup_script_dependency_py
 from .windows_scripts import windows_prefix_27, windows_unittest27, copy_dist_to_local_pypi
 from .windows_scripts import windows_any_setup_command, windows_blogpost, windows_docserver, windows_build_setup, windows_build
-from .windows_scripts import pyproj_template
+from .windows_scripts import pyproj_template, copy_sphinx_to_dist
 
 #: nick name for no folder
 _default_nofolder = "__NOFOLDERSHOULDNOTEXIST__"
@@ -241,6 +241,8 @@ def get_extra_script_command(command, module, requirements, port=8067, blog_list
                             windows_error, "cd ..", "copy dist_module27\\dist\\*.whl dist"])
     elif command == "copy_dist":
         script = copy_dist_to_local_pypi
+    elif command == "copy_sphinx":
+        script = copy_sphinx_to_dist
     elif command == "setupdep":
         script = setup_script_dependency_py
     elif command == "any_setup_command":

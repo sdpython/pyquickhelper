@@ -92,7 +92,7 @@ Functionalities
 * function :func:`rst2html <pyquickhelper.helpgen.convert_doc_helper.rst2html>` to convert RST into HTML
 * Sphinx directive :class:`BlogPostDirective <pyquickhelper.helpgen.sphinx_blog_extension.BlogPostDirective>` 
   to add a directive ``blogpost`` into the docutmention
-* Sphinx directive :class:`RunPythonDirective <pyquickhelper.helpgen.sphinx_run_script_extension.RunPythonDirective>` 
+* Sphinx directive :class:`RunPythonDirective <pyquickhelper.helpgen.sphinx_runpython_extension.RunPythonDirective>` 
   to generate documentation from a script
   
 *automation:*

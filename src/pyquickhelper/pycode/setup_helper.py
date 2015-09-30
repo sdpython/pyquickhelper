@@ -230,7 +230,8 @@ def process_standard_options_for_setup(argv,
 
         for c in {"notebook", "publish", "publish_doc", "local_pypi", "run27",
                   "build27", "setupdep", "copy_dist",
-                  "any_setup_command", "build_dist"}:
+                  "any_setup_command", "build_dist",
+                  "copy_sphinx"}:
             if "--private" in argv and "publish" in c:
                 # we skip this to avoid producing scripts for publish
                 # functionalities

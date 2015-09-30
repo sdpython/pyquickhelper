@@ -95,6 +95,7 @@ Versions, Changes
     * **change:** refactor class *JenkinsExt* to handle more python versions
     * **update:** javascript producing the automated menu in a notebook was adapted to be efficient
       in a RST converted notebook
+    * **add:** add script ``auto_cmd_copy_sphinx.bat`` which copies the documentation from ``_doc/sphinxdoc/build`` to ``dist``
 
 * **1.2.781 - 2015/08/15**
     * **change:** parameter prog was added to class MagicCommandParser
