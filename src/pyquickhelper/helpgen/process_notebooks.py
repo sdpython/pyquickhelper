@@ -175,7 +175,10 @@ def process_notebooks(notebooks,
 
     ipy = get_ipython_program(exe, pandoc_path)
 
-    cmd = '{0} nbconvert --to {1} "{2}"{5} --output="{3}/{4}"'
+    if sys.platform.startswith("win"):
+        cmd = '{0} nbconvert --to {1} "{2}"{5} --output="{3}\\{4}"'
+    else:
+        cmd = '{0} nbconvert --to {1} "{2}"{5} --output="{3}/{4}"'
     files = []
     skipped = []
 
