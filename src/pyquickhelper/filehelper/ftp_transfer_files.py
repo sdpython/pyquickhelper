@@ -251,7 +251,7 @@ class FolderTransferFTP:
                     spl = content.split("</body>")
                     if len(spl) == 1:
                         raise FolderTransferFTPException(
-                            "tag </body> was not found, it must be written in lower case, file: {0}".format(path))
+                            'tag </body> was not found, it must be written in lower case,\n  File "{0}", line 1'.format(path))
 
                     if len(spl) != 2:
                         spl = ["</body>".join(spl[:-1]), spl[-1]]
