@@ -248,3 +248,4 @@ auto_*.py
 auto_*.xml
 auto_*.db3
 t.bat
+build_sphinx_all.bat
