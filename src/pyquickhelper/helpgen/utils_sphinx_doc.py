@@ -1066,7 +1066,7 @@ def prepare_file_for_sphinx_help_generation(
     except AttributeError:
         # for pandas < 0.17
         df = df.groupby(
-            "extension/kind", as_index=False).sum().sort_values("extension/kind")
+            "extension/kind", as_index=False).sum().sort("extension/kind")
 
 
     # reports
