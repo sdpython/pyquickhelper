@@ -1059,8 +1059,15 @@ def prepare_file_for_sphinx_help_generation(
     from pandas import DataFrame
     df = DataFrame(
         data=rows, columns=["extension/kind", "nb lines", "nb doc lines", "nb files"])
-    df = df.groupby(
-        "extension/kind", as_index=False).sum().sort_values("extension/kind")
+    try:
+        # for pandas >= 0.17
+        df = df.groupby(
+            "extension/kind", as_index=False).sum().sort_values("extension/kind")
+    except AttributeError:
+        # for pandas < 0.17
+        df = df.groupby(
+            "extension/kind", as_index=False).sum().sort_values("extension/kind")
+
 
     # reports
     all_report = os.path.join(output, "all_report.rst")
