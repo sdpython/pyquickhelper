@@ -122,6 +122,7 @@ def process_notebooks(notebooks,
 
     @example(convert a notebook into multiple formats)
     @code
+    from pyquickhelper import process_notebooks
     process_notebooks("td1a_correction_session7.ipynb",
                       "dest_folder",
                       "dest_folder",
