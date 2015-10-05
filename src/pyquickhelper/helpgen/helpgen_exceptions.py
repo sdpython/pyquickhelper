@@ -44,3 +44,13 @@ class HelpGenConvertError(Exception):
     .. versionadded:: 1.2
     """
     pass
+
+
+class NotebookConvertError(Exception):
+
+    """
+    exception raised when a conversion failed
+
+    .. versionadded:: 1.3
+    """
+    pass

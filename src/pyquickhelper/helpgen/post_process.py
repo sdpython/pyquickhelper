@@ -63,6 +63,37 @@ def post_process_latex_output(root, doall):
                     f.write(content)
 
 
+def post_process_python_output(root, doall):
+    """
+    post process the python file produced by sphinx
+
+    @param      root        root path or python file to process
+    @param      doall       unused
+
+    .. versionadded:: 1.3
+    """
+    if os.path.isfile(root):
+        file = root
+        with open(file, "r", encoding="utf8") as f:
+            content = f.read()
+        content = post_process_python(content, doall)
+        with open(file, "w", encoding="utf8") as f:
+            f.write(content)
+    else:
+        build = os.path.join(root, "_doc", "sphinxdoc", "build", "latex")
+        if not os.path.exists(build):
+            raise FileNotFoundError(build)
+        for tex in os.listdir(build):
+            if tex.endswith(".tex"):
+                file = os.path.join(build, tex)
+                fLOG("modify file", file)
+                with open(file, "r", encoding="utf8") as f:
+                    content = f.read()
+                content = post_process_python(content, doall, info=file)
+                with open(file, "w", encoding="utf8") as f:
+                    f.write(content)
+
+
 def post_process_latex_output_any(file):
     """
     post process the latex file produced by sphinx
@@ -543,6 +574,22 @@ def post_process_latex(st, doall, info=None):
         st = st.replace(found, "%" + found)
 
     # end
+    return st
+
+
+def post_process_python(st, doall, info=None):
+    """
+    modifies a python file after its generation by sphinx
+
+    @param      st      string
+    @param      doall   do all transformations
+    @param      info    for more understandable error messages
+    @return             string
+
+    .. versionadded:: 1.3
+    """
+    st = st.strip("\n \r\t")
+    st = st.replace("# coding: utf-8", "# -*- coding: utf-8 -*-")
     return st
 
 

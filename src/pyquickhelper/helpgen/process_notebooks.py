@@ -13,7 +13,8 @@ import shutil
 from ..loghelper.flog import run_cmd, fLOG
 from .utils_sphinx_doc_helpers import HelpGenException, find_latex_path, find_pandoc_path
 from ..filehelper.synchelper import has_been_updated
-from .post_process import post_process_latex_output, post_process_latex_output_any, post_process_rst_output, post_process_html_output, post_process_slides_output
+from .post_process import post_process_latex_output, post_process_latex_output_any, post_process_rst_output, post_process_html_output, post_process_slides_output, post_process_python_output
+from .helpgen_exceptions import NotebookConvertError
 
 if sys.version_info[0] == 2:
     from codecs import open
@@ -206,6 +207,10 @@ def process_notebooks(notebooks,
                 "spaces are not allowed in notebooks file names: {0}".format(notebook))
         nbout = os.path.splitext(nbout)[0]
         for format in formats:
+
+            if format not in extensions:
+                raise NotebookConvertError("unable to find format: {} in {}".format(
+                    format, ", ".join(extensions.keys())))
 
             # output
             trueoutputfile = os.path.join(build, nbout + extensions[format])
@@ -407,8 +412,8 @@ def process_notebooks(notebooks,
                 thisfiles += add_link_to_notebook(outputfile,
                                                   notebook, False, False, False, False)
 
-            elif format == "py":
-                pass
+            elif format in ("py", "python"):
+                post_process_python_output(outputfile, True)
 
             elif format in ["docx", "word"]:
                 pass
@@ -521,6 +526,9 @@ def add_link_to_notebook(file, nb, pdf, html, python, slides):
         return res
     elif ext == ".tex":
         post_process_latex_output(file, True)
+        return res
+    elif ext == ".py":
+        post_process_python_output(file, True)
         return res
     elif ext == ".rst":
         post_process_rst_output(
