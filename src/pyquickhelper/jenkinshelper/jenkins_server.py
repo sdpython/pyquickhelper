@@ -693,9 +693,14 @@ class JenkinsExt(jenkins.Jenkins):
         @param      no_dep                  if True, do not add dependencies
         @param      prefix                  add a prefix to the name
         @param      dependencies            some modules depend on others also being tested, this parameter gives the list
-        @param      credentials             credentials to use for the job
+        @param      credentials             credentials to use for the job (string or dictionary)
         @param      update                  update job instead of deleting it if the job already exists
         @return                             list of created jobs
+
+        If *credentials* are a dictionary, the function looks up
+        into it by using the git repository as a key. If it does not find
+        it, it looks for default key. If there is not found,
+        the function assumes, there is not credentials for this git repository.
 
         The function *get_jenkins_script* is called with the following parameters:
 
@@ -823,6 +828,10 @@ class JenkinsExt(jenkins.Jenkins):
 
         .. versionchanged:: 1.2
             Parameter *update* was added.
+
+        .. versionchanged:: 1.3
+            Parameter *credential* can be a dictionary where the key is
+            the git repository.
         """
         if get_jenkins_script is None:
             get_jenkins_script = JenkinsExt.get_jenkins_script
@@ -954,6 +963,13 @@ class JenkinsExt(jenkins.Jenkins):
                         else:
                             gpar = gitrepo + "%s/" % mod
 
+                        if isinstance(credentials, dict):
+                            cred = credentials.get(gitrepo, None)
+                            if cred is None:
+                                cred = credentials.get("default", "")
+                        else:
+                            cred = credentials
+
                         # create the template
                         r = js.create_job_template(jname,
                                                    git_repo=gpar,
@@ -964,7 +980,7 @@ class JenkinsExt(jenkins.Jenkins):
                                                    scheduler=scheduler,
                                                    py27="[27]" in job,
                                                    description=description,
-                                                   credentials=credentials,
+                                                   credentials=cred,
                                                    success_only=success_only,
                                                    update=update_job)
 

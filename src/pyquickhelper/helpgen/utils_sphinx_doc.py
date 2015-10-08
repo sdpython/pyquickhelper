@@ -1068,7 +1068,6 @@ def prepare_file_for_sphinx_help_generation(
         df = df.groupby(
             "extension/kind", as_index=False).sum().sort("extension/kind")
 
-
     # reports
     all_report = os.path.join(output, "all_report.rst")
     with open(all_report, "w") as falli:

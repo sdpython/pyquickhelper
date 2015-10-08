@@ -202,9 +202,10 @@ set pythonexe=__PY??_X64__\\python
 :custom_python:
 @echo ~LABEL custom_python
 echo ###----################################################5
-if not exist ..\\virtual mkdir ..\\virtual
-set virtual_env_py=..\\virtual\\__MODULE__
-@echo ~SET virtual_env_py=..\\virtual\\__MODULE__
+SET =.\\_virtualenv
+if not exist %ROOT_VIRTUAL_ENV% mkdir .\\_virtualenv
+set virtual_env_py=%ROOT_VIRTUAL_ENV%\\__MODULE__
+@echo ~SET virtual_env_py=%ROOT_VIRTUAL_ENV%\\__MODULE__
 if not exist %pythonexe%\\..\\Scripts\\virtualenv.exe goto conda_virtual_env:
 
 if exist %virtual_env_py%_vir%virtual_env_suffix% rmdir /Q /S %virtual_env_py%_vir%virtual_env_suffix%
@@ -368,9 +369,10 @@ set pythonexe=__PY??_X64__\\python
 :custom_python:
 @echo ~LABEL custom_python
 echo ###----################################################5
-if not exist ..\\virtual mkdir ..\\virtual
-set virtual_env_py=..\\virtual\\__MODULE__
-@echo ~SET virtual_env_py=..\\virtual\\__MODULE__
+set ROOT_VIRTUAL_ENV=.\\_virtualenv
+if not exist %ROOT_VIRTUAL_ENV% mkdir %ROOT_VIRTUAL_ENV%
+set virtual_env_py=%ROOT_VIRTUAL_ENV%\\__MODULE__
+@echo ~SET virtual_env_py=%ROOT_VIRTUAL_ENV%\\__MODULE__
 if not exist %pythonexe%\\..\\Scripts\\virtualenv.exe goto conda_virtual_env:
 
 if exist %virtual_env_py%_vir%virtual_env_suffix% rmdir /Q /S %virtual_env_py%_vir%virtual_env_suffix%
@@ -539,8 +541,9 @@ windows_jenkins_unittest27 = """
 @echo off
 set CURRENT_PATH=%WORKSPACE%
 @echo ~SET CURRENT_PATH=%WORKSPACE%
-set virtual_env_py=%CURRENT_PATH%\\..\\virtual\\__MODULE__
-@echo ~SET virtual_env_py=%CURRENT_PATH%\\..\\virtual\\__MODULE__
+set ROOT_VIRTUAL_ENV=%CURRENT_PATH%\\_virtualenv27
+set virtual_env_py=%ROOT_VIRTUAL_ENV%\\__MODULE__
+@echo ~SET virtual_env_py=%ROOT_VIRTUAL_ENV%\\__MODULE__
 if exist %virtual_env_py%_conda27vir rmdir /Q /S %virtual_env_py%_conda27vir
 @echo ~CALL %jenkinspythonexe%\\..\\Scripts\\conda create -p %virtual_env_py%_conda27vir --clone %jenkinspythonexe%\\.. --offline
 %jenkinspythonexe%\\..\\Scripts\\conda create -p %virtual_env_py%_conda27vir --clone %jenkinspythonexe%\\.. --offline
@@ -590,7 +593,8 @@ windows_jenkins_27 = [
     "\nauto_cmd_run27.bat %jenkinspythonexe%\n" + windows_error,
     "set jenkinspythonexe=__PYTHON27__\n@echo ~SET jenkinspythonexe=__PYTHON27__\n" +
     "set CURRENT_PATH=%WORKSPACE%\n@echo ~SET CURRENT_PATH=%WORKSPACE%\n" +
-    "set virtual_env_py=%CURRENT_PATH%\\..\\virtual\\__MODULE__\n@echo ~SET virtual_env_py=%CURRENT_PATH%\\..\\virtual\\__MODULE__\n" +
+    "set ROOT_VIRTUAL_ENV=%CURRENT_PATH%\\_virtualenv\n" +
+    "set virtual_env_py=%ROOT_VIRTUAL_ENV%\\__MODULE__\n@echo ~SET virtual_env_py=%ROOT_VIRTUAL_ENV%\\__MODULE__\n" +
     "set jenkinspythonexe=%virtual_env_py%_conda27vir\\python\n@echo ~SET jenkinspythonexe=%virtual_env_py%_conda27vir\\python\n" +
     "\nauto_cmd_build27.bat %jenkinspythonexe%\n" + windows_error,
     "copy dist_module27\\dist\\*.whl ..\\..\\local_pypi\\local_pypi_server"]
