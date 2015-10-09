@@ -57,7 +57,7 @@ def generate_help_sphinx(project_var_name,
                          extra_ext=None,
                          nbformats=[
                              "ipynb", "html", "python", "rst", "slides", "pdf"],
-                         layout=[("html", "build", {})],
+                         layout=[("html", "build", {}), ("epub", "build", {})],
                          module_name=None,
                          from_repo=True,
                          use_run_cmd=False,

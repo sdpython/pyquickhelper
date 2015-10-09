@@ -394,7 +394,7 @@ def standard_help_for_setup(file_or_folder, project_var_name, module_name=None, 
 
         if sys.platform.startswith("win"):
             generate_help_sphinx(project_name, module_name=module_name,
-                                 layout=["html", "pdf"],
+                                 layout=["html", "pdf", "epub"],
                                  extra_ext=extra_ext,
                                  add_htmlhelp=add_htmlhelp)
         else:
