@@ -203,7 +203,7 @@ set pythonexe=__PY??_X64__\\python
 :custom_python:
 @echo ~LABEL custom_python
 echo ###----################################################5
-SET ROOT_VIRTUAL_ENV=CURRENT_THIS_virtualenv
+SET ROOT_VIRTUAL_ENV=%CURRENT_THIS%_virtualenv
 if not exist %ROOT_VIRTUAL_ENV% mkdir %ROOT_VIRTUAL_ENV%
 set virtual_env_py=%ROOT_VIRTUAL_ENV%\\__MODULE__
 @echo ~SET virtual_env_py=%ROOT_VIRTUAL_ENV%\\__MODULE__
@@ -371,7 +371,7 @@ set pythonexe=__PY??_X64__\\python
 :custom_python:
 @echo ~LABEL custom_python
 echo ###----################################################5
-SET ROOT_VIRTUAL_ENV=CURRENT_THIS_virtualenv
+SET ROOT_VIRTUAL_ENV=%CURRENT_THIS%_virtualenv
 if not exist %ROOT_VIRTUAL_ENV% mkdir %ROOT_VIRTUAL_ENV%
 set virtual_env_py=%ROOT_VIRTUAL_ENV%\\__MODULE__
 @echo ~SET virtual_env_py=%ROOT_VIRTUAL_ENV%\\__MODULE__
