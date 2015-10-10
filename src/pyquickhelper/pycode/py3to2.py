@@ -103,7 +103,8 @@ def py3to2_convert_tree(folder,
         ex = False
         for exc in exclude:
             if file.startswith(exc) or "\\temp_" in file or \
-               "/temp_" in file or "dist_module27" in file:
+               "/temp_" in file or "dist_module27" in file or \
+               "_virtualenv" in file:
                 ex = True
                 break
         if ex:

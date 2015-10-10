@@ -11,7 +11,8 @@ import sys
 import shutil
 
 from ..loghelper.flog import run_cmd, fLOG
-from .utils_sphinx_doc_helpers import HelpGenException, find_latex_path, find_pandoc_path
+from .utils_sphinx_doc_helpers import HelpGenException
+from .conf_path_tools import find_latex_path, find_pandoc_path
 from ..filehelper.synchelper import has_been_updated
 from .post_process import post_process_latex_output, post_process_latex_output_any, post_process_rst_output, post_process_html_output, post_process_slides_output, post_process_python_output
 from .helpgen_exceptions import NotebookConvertError

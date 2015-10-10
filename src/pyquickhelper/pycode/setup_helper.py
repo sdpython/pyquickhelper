@@ -462,7 +462,8 @@ def copy27_for_setup(file_or_folder):
 
 def write_pyproj(file_or_folder, location=None):
     """
-    create a pyproj project to work with `PTVS <>`_ (Python Tools for Visual Studio)
+    create a pyproj project to work with `PTVS <https://pytools.codeplex.com/>`_
+    (Python Tools for Visual Studio)
 
     @param      file_or_folder      file ``setup.py`` or folder which contains it
     @param      location            if not None, stores the project into this folder

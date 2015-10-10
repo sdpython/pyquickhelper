@@ -125,6 +125,7 @@ windows_build = """
 IF EXIST dist del /Q dist\\*.*
 
 set virtual_env_suffix=%2
+set CURRENT_THIS=%~dp0
 
 if "%1"=="" goto default_value:
 if "%1"=="default" goto default_value:
@@ -202,8 +203,8 @@ set pythonexe=__PY??_X64__\\python
 :custom_python:
 @echo ~LABEL custom_python
 echo ###----################################################5
-SET ROOT_VIRTUAL_ENV=.\\_virtualenv
-if not exist %ROOT_VIRTUAL_ENV% mkdir .\\_virtualenv
+SET ROOT_VIRTUAL_ENV=CURRENT_THIS_virtualenv
+if not exist %ROOT_VIRTUAL_ENV% mkdir %ROOT_VIRTUAL_ENV%
 set virtual_env_py=%ROOT_VIRTUAL_ENV%\\__MODULE__
 @echo ~SET virtual_env_py=%ROOT_VIRTUAL_ENV%\\__MODULE__
 if not exist %pythonexe%\\..\\Scripts\\virtualenv.exe goto conda_virtual_env:
@@ -343,6 +344,7 @@ if %errorlevel% neq 0 exit /b %errorlevel%
 windows_any_setup_command = """
 @echo off
 if "%1"=="" @echo usage: SCRIPT command [pythonpath] [suffix]
+set CURRENT_THIS=%~dp0
 
 IF EXIST dist del /Q dist\\*.*
 
@@ -369,7 +371,7 @@ set pythonexe=__PY??_X64__\\python
 :custom_python:
 @echo ~LABEL custom_python
 echo ###----################################################5
-set ROOT_VIRTUAL_ENV=.\\_virtualenv
+SET ROOT_VIRTUAL_ENV=CURRENT_THIS_virtualenv
 if not exist %ROOT_VIRTUAL_ENV% mkdir %ROOT_VIRTUAL_ENV%
 set virtual_env_py=%ROOT_VIRTUAL_ENV%\\__MODULE__
 @echo ~SET virtual_env_py=%ROOT_VIRTUAL_ENV%\\__MODULE__

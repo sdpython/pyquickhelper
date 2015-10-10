@@ -24,6 +24,9 @@ def remove_extra_spaces_and_pep8(filename, apply_pep8=True):
             lines = f.readlines()
     except PermissionError as e:
         raise PermissionError(filename) from e
+    except UnicodeDecodeError as e:
+        raise Exception(
+            "unable to load file {} due to unicode errors".format(filename)) from e
 
     if len(lines) > 0 and "#-*-coding:utf-8-*-" in lines[0].replace(" ", ""):
         with open(filename, "r", encoding="utf8") as f:
@@ -96,6 +99,7 @@ def remove_extra_spaces_folder(
                 and "/dist/" not in fl \
                 and "/build2/" not in fl \
                 and "/build3/" not in fl \
+                and "/_virtualenv/" not in fl \
                 and "/dist_module27" not in fl \
                 and os.stat(f).st_size < 100000:
             ext = os.path.splitext(f)[-1]

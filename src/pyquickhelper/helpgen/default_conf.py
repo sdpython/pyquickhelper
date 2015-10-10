@@ -25,7 +25,8 @@ def set_sphinx_variables(fileconf,
                          add_extensions=None,
                          bootswatch_theme="spacelab",
                          bootswatch_navbar_links=None,
-                         description_latex=""):
+                         description_latex="",
+                         use_mathjax=False):
     """
     defines variables for Sphinx
 
@@ -40,6 +41,9 @@ def set_sphinx_variables(fileconf,
     @param      bootswatch_theme        for example, ``spacelab``, look at ` <http://bootswatch.com/spacelab/>`_
     @param      bootswatch_navbar_links see `sphinx-bootstrap-theme <http://ryan-roemer.github.io/sphinx-bootstrap-theme/README.html>`_
     @param      description latex       description latex
+    @param      use_mathjax             set up the documentation to use mathjax,
+                                        see `sphinx.ext.mathjax <http://sphinx-doc.org/ext/math.html?highlight=math#module-sphinx.ext.mathjax>`_,
+                                        default option is True
 
     @example(Simple configuration file for Sphinx)
 
@@ -71,6 +75,9 @@ def set_sphinx_variables(fileconf,
     You overwrite a value by giving a variable another value after the fucntion is called.
 
     @endexample
+
+    .. versionchanged:: 1.3
+        Add parameter *use_mathjax*.
     """
     # version .txt
     dirconf = os.path.abspath(os.path.dirname(fileconf))
@@ -179,7 +186,7 @@ def set_sphinx_variables(fileconf,
     extensions = ['sphinx.ext.autodoc',
                   'sphinx.ext.todo',
                   'sphinx.ext.coverage',
-                  'sphinx.ext.pngmath',
+                  'sphinx.ext.mathjax' if use_mathjax else 'sphinx.ext.pngmath',
                   'sphinx.ext.ifconfig',
                   'sphinx.ext.viewcode',
                   'sphinxcontrib.images',
@@ -193,6 +200,21 @@ def set_sphinx_variables(fileconf,
                   'IPython.sphinxext.ipython_console_highlighting',
                   'sphinx.ext.napoleon',
                   ]
+
+    if False:
+        # disabled for the time being
+        from .conf_path_tools import find_latex_path
+
+        pngmath_latex = find_latex_path()
+        if not use_mathjax:
+            pngmath_dvipng = os.path.join(pngmath_latex, "dvipng.exe")
+            if not os.path.exists(pngmath_dvipng):
+                raise FileNotFoundError(pngmath_dvipng)
+        env_path = os.environ.get("PATH", "")
+        if pngmath_latex not in env_path:
+            if len(env_path) > 0:
+                env_path += ";"
+            env_path += pngmath_latex
 
     try:
         import bokeh

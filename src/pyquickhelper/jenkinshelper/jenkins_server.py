@@ -10,6 +10,7 @@ import sys
 import jenkins
 import socket
 import hashlib
+import re
 from ..loghelper.flog import noLOG
 from ..pycode.windows_scripts import windows_jenkins, windows_jenkins_27, windows_jenkins_any
 from ..pycode.build_helper import private_script_replacements
@@ -582,12 +583,16 @@ class JenkinsExt(jenkins.Jenkins):
         if not isinstance(script, list):
             script = [script]
 
+        underscore = re.compile("(__[A-Z_]+__)")
+
         # we modify the scripts
         script_mod = []
         for scr in script:
-            if "__" in scr:
-                raise ValueError("script still contains __\ndefault_engine_paths:" +
-                                 str(default_engine_paths) + "\n\n" + scr)
+            search = underscore.search(scr)
+            if search:
+                mes = "script still contains __\ndefault_engine_paths: {}\nfound: {}\nscr:\nSCRIPT:\n{}\n".format(
+                    default_engine_paths, search.groups()[0], scr, str(script))
+                raise ValueError(mes)
 
             if len(dependencies) > 0:
                 rows = []

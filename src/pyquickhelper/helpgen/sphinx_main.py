@@ -14,7 +14,8 @@ from docutils.parsers.rst import directives
 
 from ..loghelper.flog import run_cmd, fLOG
 from .utils_sphinx_doc import prepare_file_for_sphinx_help_generation
-from .utils_sphinx_doc_helpers import HelpGenException, find_latex_path, find_pandoc_path, ImportErrorHelpGen
+from .utils_sphinx_doc_helpers import HelpGenException, ImportErrorHelpGen
+from .conf_path_tools import find_latex_path, find_pandoc_path
 from ..filehelper.synchelper import explore_folder
 from .utils_sphinx_config import ie_layout_html
 from .blog_post_list import BlogPostList
@@ -355,6 +356,8 @@ def generate_help_sphinx(project_var_name,
     latex_path = theconf.__dict__.get("latex_path", find_latex_path())
     # graphviz_dot = theconf.__dict__.get("graphviz_dot", find_graphviz_dot())
     pandoc_path = theconf.__dict__.get("pandoc_path", find_pandoc_path())
+    if os.path.isfile(latex_path):
+        latex_path = os.path.dirname(latex_path)
 
     #########
     # changes
