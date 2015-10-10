@@ -54,7 +54,8 @@ class TestConfSphinx(unittest.TestCase):
             2014,
             "sphinx_rtd_theme",
             None,  # sphinx_rtd_theme.theme_path,
-            d)
+            d,
+            use_mathjax=True)
         for k, v in d.items():
             fLOG(k, "\t=", v)
 

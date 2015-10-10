@@ -208,27 +208,27 @@ def set_sphinx_variables(fileconf,
     # disabled for the time being
     from .conf_path_tools import find_latex_path
 
-    pngmath_latex = find_latex_path()
     if not use_mathjax:
+        pngmath_latex = find_latex_path()
         pngmath_dvipng = os.path.join(pngmath_latex, "dvipng.exe")
         if not os.path.exists(pngmath_dvipng):
             raise FileNotFoundError(pngmath_dvipng)
-    env_path = os.environ.get("PATH", "")
-    if pngmath_latex not in env_path:
-        if len(env_path) > 0:
-            env_path += ";"
-        env_path += pngmath_latex
+        env_path = os.environ.get("PATH", "")
+        if pngmath_latex not in env_path:
+            if len(env_path) > 0:
+                env_path += ";"
+            env_path += pngmath_latex
 
-    if sys.platform.startswith("win"):
-        pngmath_latex = os.path.join(pngmath_latex, "latex.exe")
-    else:
-        pngmath_latex = os.path.join(pngmath_latex, "latex")
+        if sys.platform.startswith("win"):
+            pngmath_latex = os.path.join(pngmath_latex, "latex.exe")
+        else:
+            pngmath_latex = os.path.join(pngmath_latex, "latex")
 
-    # verification
-    if not os.path.exists(pngmath_latex):
-        raise FileNotFoundError(pngmath_latex)
-    if not os.path.exists(pngmath_dvipng):
-        raise FileNotFoundError(pngmath_dvipng)
+        # verification
+        if not os.path.exists(pngmath_latex):
+            raise FileNotFoundError(pngmath_latex)
+        if not os.path.exists(pngmath_dvipng):
+            raise FileNotFoundError(pngmath_dvipng)
 
     # bokeh
     try:
