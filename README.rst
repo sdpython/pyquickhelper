@@ -96,6 +96,7 @@ Versions, Changes
     * **update:** javascript producing the automated menu in a notebook was adapted to be efficient
       in a RST converted notebook
     * **add:** add script ``auto_cmd_copy_sphinx.bat`` which copies the documentation from ``_doc/sphinxdoc/build`` to ``dist``
+    * **change:** use local latex engine instead of matplotlib engine to convert formulas into images
 
 * **1.2.781 - 2015/08/15**
     * **change:** parameter prog was added to class MagicCommandParser
