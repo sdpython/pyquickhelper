@@ -365,10 +365,10 @@ def process_notebooks(notebooks,
                 # it usually means there is something wrong (circular
                 # reference, ...)
                 if sys.platform.startswith("win"):
-                    c = r'"{0}\pandoc.exe" -f html -t {1} "{2}" -o "{3}"'.format(
+                    c = r'"{0}\pandoc.exe" +RTS -K32m -RTS -f html -t {1} "{2}" -o "{3}"'.format(
                         pandoc_path, pandoco, outputfile, outfilep)
                 else:
-                    c = r'pandoc -f html -t {1} "{2}" -o "{3}"'.format(
+                    c = r'pandoc +RTS -K32m -RTS -f html -t {1} "{2}" -o "{3}"'.format(
                         pandoc_path, pandoco, outputfile, outfilep)
 
                 if not sys.platform.startswith("win"):
