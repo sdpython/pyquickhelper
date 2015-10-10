@@ -704,13 +704,11 @@ def get_module_objects(mod):
 def process_var_tag(
         docstring, rst_replace=False, header=["attribute", "meaning"]):
     """
-    Process a docstring using tag ``@ var``, and return a list of 2-tuple
+    Process a docstring using tag ``@ var``, and return a list of 2-tuple::
 
-    @code
         @ var    filename        file name
         @ var    utf8            decode in utf8?
         @ var    errors          decoding in utf8 can raise some errors
-    @endcode
 
     @param      docstring       string
     @param      rst_replace     if True, replace the var bloc var a rst bloc
@@ -722,11 +720,20 @@ def process_var_tag(
 
     reg = re.compile("[@]var +([_a-zA-Z][a-zA-Z0-9_]*?) +((?:(?!@var).)+)")
 
-    docstring = docstring.split("\n")
-    docstring = [_.strip("\r \t") for _ in docstring]
-    docstring = [_ if len(_) > 0 else "\n\n" for _ in docstring]
-    docstring = "\n".join(docstring)
-    docstring = docstring.split("\n\n")
+    indent = len(docstring)
+    spl = docstring.split("\n")
+    docstring = []
+    bigrow = ""
+    for line in spl:
+        if len(line.strip("\r \t")) == 0:
+            docstring.append(bigrow)
+            bigrow = ""
+        else:
+            ind = len(line) - len(line.lstrip(" "))
+            indent = min(ind, indent)
+            bigrow += line + "\n"
+    if len(bigrow) > 0:
+        docstring.append(bigrow)
 
     values = []
     if rst_replace:
@@ -742,6 +749,9 @@ def process_var_tag(
                     align = ["1x"] * len(header)
                     align[-1] = "3x"
                     rst = df2rst(tbl, align=align)
+                    if indent > 0:
+                        rst = "\n".join((" " * indent) +
+                                        _ for _ in rst.split("\n"))
                     values.append(rst)
             else:
                 values.append(line)

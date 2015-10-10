@@ -410,10 +410,12 @@ class Doxypy(object):
         indent4 = "    " if len(self.defclass) > 0 else ""
         doxyStart = "%s\"\"\"" % indent4
         doxyEnd = "%s\"\"\"" % indent4
+
         commentLines = self.comment
 
         commentLines = ["%s%s%s" %
                         (self.indent, indent4, x) for x in commentLines]
+
         commentLines = self.process_comment(commentLines,
                                             self.information.get(
                                                 "first_row", 0) + self._index_row + 1,

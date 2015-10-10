@@ -1275,8 +1275,7 @@ def migrating_doxygen_doc(content, filename, silent=False, log=False, debug=Fals
     def print_in_rows(v, file=None):
         rows.append(v)
 
-    def local_private_migrating_doxygen_doc(r, index_first_line,
-                                            filename, debug=False, silent=False):
+    def local_private_migrating_doxygen_doc(r, index_first_line, filename):
         counts["docrows"] += len(r)
         return private_migrating_doxygen_doc(r, index_first_line,
                                              filename, debug=debug, silent=silent)
@@ -1387,6 +1386,11 @@ def private_migrating_doxygen_doc(
             html indente
 
     """
+    if debug:
+        fLOG("------------------ P0")
+        fLOG("\n".join(rows))
+        fLOG("------------------ P")
+
     debugrows = rows
     rows = [_.replace("\t", "    ") for _ in rows]
     pars = re.compile("([@]param( +)([a-zA-Z0-9_]+)) ")

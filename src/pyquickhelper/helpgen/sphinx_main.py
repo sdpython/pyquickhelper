@@ -269,6 +269,7 @@ def generate_help_sphinx(project_var_name,
     #################################################
     for t3 in layout:
         lay, build, override, newconf = lay_build_override_newconf(t3)
+        build = os.path.normpath(os.path.abspath(build))
         fLOG("newconf:", newconf, t3)
         if newconf is None:
             continue

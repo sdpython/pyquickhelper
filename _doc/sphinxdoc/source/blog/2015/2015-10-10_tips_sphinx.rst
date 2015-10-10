@@ -33,12 +33,9 @@
     
     The page `Math support in Sphinx <http://sphinx-doc.org/ext/math.html?highlight=math#module-sphinx.ext.mathbase>`_
     explains how to set up math environment (latex or mathjax).
-    Matplotlib engine can also be used to 
-    to convert equations into images::
-    
-        matplotlib.sphinxext.mathmpl
-    
-    But this extension has some limitations. ``\text`` does not work.
+    But if you add matplotlib to convert equations into images (*matplotlib.sphinxext.mathmpl*),
+    the sphinx extension *sphinx.ext.pngmath* is disabled.
+    Matplotlib extension has some limitations. ``\text`` does not work.
     
     **formulas in docstring**
     
