@@ -139,7 +139,7 @@ class FolderTransferFTP:
 
         @param      file_tree_node      @see cl FileTreeNode
         @param      ftp_transfer        @see cl TransferFTP
-        @param      file_status         file keeping the status file
+        @param      file_status         file keeping the status for each file (date, hash of the content for the last upload)
         @param      root_local          local root
         @param      root_web            remote root on the website
         @param      footer_html         append  this HTML code to any uploaded page (such a javascript code to count the audience)

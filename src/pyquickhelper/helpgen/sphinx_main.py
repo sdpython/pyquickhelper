@@ -717,3 +717,6 @@ def generate_help_sphinx(project_var_name,
     # end
     #####
     os.chdir(pa)
+    fLOG("################################")
+    fLOG("#### END - check log for success")
+    fLOG("################################")

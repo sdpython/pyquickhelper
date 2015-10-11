@@ -342,10 +342,10 @@ def process_notebooks(notebooks,
                     if not sys.platform.startswith("win"):
                         c = c.replace('"', '')
                     out, err = run_cmd(
-                        c, wait=True, do_not_log=False, log_error=False, shell=sys.platform.startswith("win"))
+                        c, wait=True, do_not_log=False, log_error=False, shell=sys.platform.startswith("win"), catch_exit=True)
                     if len(err) > 0:
                         raise HelpGenException(
-                            "CMD:\n{0}\nERR:\n{1}".format(c, err))
+                            "CMD:\n{0}\nERR:\n{1}\nOUT:\n{2}".format(c, err, out))
                     f = os.path.join(build, nbout + ".pdf")
                     if not os.path.exists(f):
                         raise HelpGenException(

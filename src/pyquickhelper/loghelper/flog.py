@@ -44,6 +44,13 @@ else:
 flog_static = FlogStatic()
 
 
+class RunCmdException(Exception):
+    """
+    raised by function @see fn run_cmd
+    """
+    pass
+
+
 def init(path=None, filename=None, create=True, path_add=None):
     """
     initialisation
@@ -860,6 +867,7 @@ def skip_run_cmd(cmd,
                  communicate=True,
                  preprocess=True,
                  timeout=None,
+                 catch_exit=False,
                  fLOG=fLOG):
     """
     has the same signature as @see fn run_cmd but does nothing
@@ -883,6 +891,7 @@ def run_cmd(cmd,
             communicate=True,
             preprocess=True,
             timeout=None,
+            catch_exit=False,
             fLOG=fLOG):
     """
     run a command line and wait for the result
@@ -903,6 +912,7 @@ def run_cmd(cmd,
                                     parameter ``wait`` must be True
     @param      preprocess          preprocess the command line if necessary (not available on Windows) (False to disable that option)
     @param      timeout             when data is sent to stdin (``sin``), a timeout is needed to avoid waiting for ever (*timeout* is in seconds)
+    @param      catch_exit          catch *SystemExit* exception
     @param      fLOG                logging function (if not None, bypass others parameters)
     @return                         content of stdout, stdres  (only if wait is True)
     @rtype      tuple
@@ -918,6 +928,9 @@ def run_cmd(cmd,
     .. versionchanged:: 0.9
         parameters *timeout*, *fLOG* were added,
         the function now works with stdin
+
+    .. versionchanged:: 1.3
+        Catches *SystemExit* exception. Add parameter *catch_exit*.
     """
     if secure is not None:
         with open(secure, "w") as f:
@@ -943,25 +956,51 @@ def run_cmd(cmd,
         startupinfo = subprocess.STARTUPINFO()
         startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
 
-        pproc = subprocess.Popen(cmd,
-                                 shell=shell,
-                                 stdin=subprocess.PIPE if sin is not None and len(
-                                     sin) > 0 else None,
-                                 stdout=subprocess.PIPE if wait else None,
-                                 stderr=subprocess.PIPE if wait else None,
-                                 startupinfo=startupinfo)
+        if catch_exit:
+            try:
+                pproc = subprocess.Popen(cmd,
+                                         shell=shell,
+                                         stdin=subprocess.PIPE if sin is not None and len(
+                                             sin) > 0 else None,
+                                         stdout=subprocess.PIPE if wait else None,
+                                         stderr=subprocess.PIPE if wait else None,
+                                         startupinfo=startupinfo)
+            except SystemExit as e:
+                raise RunCmdException("SystemExit raised (1)") from e
+
+        else:
+            pproc = subprocess.Popen(cmd,
+                                     shell=shell,
+                                     stdin=subprocess.PIPE if sin is not None and len(
+                                         sin) > 0 else None,
+                                     stdout=subprocess.PIPE if wait else None,
+                                     stderr=subprocess.PIPE if wait else None,
+                                     startupinfo=startupinfo)
+
     else:
         cmdl = split_cmp_command(cmd) if preprocess else cmd
         if fLOG is not None:
             fLOG("--linux", cmdl)
         elif not do_not_log:
             _this_fLOG("--linux", cmdl)
-        pproc = subprocess.Popen(cmdl,
-                                 shell=shell,
-                                 stdin=subprocess.PIPE if sin is not None and len(
-                                     sin) > 0 else None,
-                                 stdout=subprocess.PIPE if wait else None,
-                                 stderr=subprocess.PIPE if wait else None)
+
+        if catch_exit:
+            try:
+                pproc = subprocess.Popen(cmdl,
+                                         shell=shell,
+                                         stdin=subprocess.PIPE if sin is not None and len(
+                                             sin) > 0 else None,
+                                         stdout=subprocess.PIPE if wait else None,
+                                         stderr=subprocess.PIPE if wait else None)
+            except SystemExit as e:
+                raise RunCmdException("SystemExit raised (2)") from e
+        else:
+            pproc = subprocess.Popen(cmdl,
+                                     shell=shell,
+                                     stdin=subprocess.PIPE if sin is not None and len(
+                                         sin) > 0 else None,
+                                     stdout=subprocess.PIPE if wait else None,
+                                     stderr=subprocess.PIPE if wait else None)
 
     if isinstance(cmd, list):
         cmd = " ".join(cmd)
@@ -978,14 +1017,29 @@ def run_cmd(cmd,
                     fLOG("input", [input])
                 elif not do_not_log:
                     _this_fLOG("input", [input])
-            if sys.version_info[0] == 2:
-                stdoutdata, stderrdata = pproc.communicate(input=input)
+
+            if catch_exit:
+                try:
+                    if sys.version_info[0] == 2:
+                        stdoutdata, stderrdata = pproc.communicate(input=input)
+                    else:
+                        stdoutdata, stderrdata = pproc.communicate(
+                            input=input, timeout=timeout)
+                except SystemExit as e:
+                    raise RunCmdException("SystemExit raised (3)") from e
             else:
-                stdoutdata, stderrdata = pproc.communicate(
-                    input=input, timeout=timeout)
+                if sys.version_info[0] == 2:
+                    stdoutdata, stderrdata = pproc.communicate(input=input)
+                else:
+                    stdoutdata, stderrdata = pproc.communicate(
+                        input=input, timeout=timeout)
+
             out = decode_outerr(stdoutdata, encoding, encerror, cmd)
             err = decode_outerr(stderrdata, encoding, encerror, cmd)
         else:
+            if catch_exit:
+                raise NotImplementedError(
+                    "catch_exit and not communicate are incompatible options")
             if sin is not None and len(sin) > 0:
                 raise Exception(
                     "communicate should be True to send something on stdin")

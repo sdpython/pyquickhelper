@@ -97,6 +97,7 @@ Versions, Changes
       in a RST converted notebook
     * **add:** add script ``auto_cmd_copy_sphinx.bat`` which copies the documentation from ``_doc/sphinxdoc/build`` to ``dist``
     * **change:** use local latex engine instead of matplotlib engine to convert formulas into images
+    * **add:** catch exception *SystemExit* in method *run_cmd* if required
 
 * **1.2.781 - 2015/08/15**
     * **change:** parameter prog was added to class MagicCommandParser
