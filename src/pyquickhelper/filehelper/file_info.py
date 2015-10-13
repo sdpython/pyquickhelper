@@ -30,26 +30,18 @@ def checksum_md5(filename):
     computes MD5 for a file
 
     @param      filename        filename
-    @return                     string or None if there was an error
+    @return                     string
     """
     fname = filename
     block_size = 0x10000
-    fd = open(fname, "rb")
-    try:
+    zero = hashlib.md5()
+    with open(fname, "rb") as fd:
         block = [fd.read(block_size)]
         while len(block[-1]) > 0:
             block.append(fd.read(block_size))
-        contents = block
-        zero = hashlib.md5()
-        i = 0
-        for el in contents:
-            i += 1
+        for el in block:
             zero.update(el)
-        m = zero
-        return m.hexdigest()
-    finally:
-        fd.close()
-        return None
+        return zero.hexdigest()
 
 
 class FileInfo:
