@@ -156,9 +156,13 @@ class FolderTransferFTP:
 
         If *filter_out* is a function, the signature is::
 
-            def filter_out(full_file_name):
+            def filter_out(full_file_name, filename):
                 # ...
                 return True # if the file is filtered out, False otherwise
+
+        .. versionchanged:: 1.3
+            Function *filter_out* receives another parameter (filename)
+            to give more information when raising an exception.
         """
         self._ftn = file_tree_node
         self._ftp = ftp_transfer
@@ -260,7 +264,7 @@ class FolderTransferFTP:
 
                 # filter
                 try:
-                    content = self._content_filter(content)
+                    content = self._content_filter(content, path)
                 except Exception as e:
                     raise FolderTransferFTPException(
                         "File {0} cannot be transferred (exception)".format(path)) from e

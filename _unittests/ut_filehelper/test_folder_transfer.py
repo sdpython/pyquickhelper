@@ -47,7 +47,7 @@ class TestFolderTransfer(unittest.TestCase):
             fLOG=fLOG)
         fftp = FolderTransferFTP(ftn, ftp, status,
                                  footer_html="<b>footer</b>",
-                                 content_filter=lambda c: c)
+                                 content_filter=lambda c, f: c)
 
         li = list(fftp.iter_eligible_files())
         assert len(li) > 0
