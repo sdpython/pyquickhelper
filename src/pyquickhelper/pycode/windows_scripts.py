@@ -601,7 +601,7 @@ windows_jenkins_27 = [
     "\nauto_cmd_run27.bat %jenkinspythonexe%\n" + windows_error,
     "set jenkinspythonexe=__PYTHON27__\n@echo ~SET jenkinspythonexe=__PYTHON27__\n" +
     "set CURRENT_PATH=%WORKSPACE%\n@echo ~SET CURRENT_PATH=%WORKSPACE%\n" +
-    "set ROOT_VIRTUAL_ENV=%CURRENT_PATH%\\_virtualenv\n" +
+    "set ROOT_VIRTUAL_ENV=%CURRENT_PATH%\\_virtualenv27\n" +
     "set virtual_env_py=%ROOT_VIRTUAL_ENV%\\__MODULE__\n@echo ~SET virtual_env_py=%ROOT_VIRTUAL_ENV%\\__MODULE__\n" +
     "set jenkinspythonexe=%virtual_env_py%_conda27vir\\python\n@echo ~SET jenkinspythonexe=%virtual_env_py%_conda27vir\\python\n" +
     "\nauto_cmd_build27.bat %jenkinspythonexe%\n" + windows_error,
