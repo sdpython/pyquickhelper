@@ -577,9 +577,6 @@ set pythonexe_rel=%jenkinspythonexe%
 %pythonexe_rel% auto_setup_dep.py install
 if %errorlevel% neq 0 exit /b %errorlevel%
 cd ..\\..
-@echo if the following step does not work, check that all dependencies needed for pyquickhelper are installed (sphinxjp.themes.revealjs, datetuils, ...)
-@echo ~CALL %jenkinspythonpip% install --no-cache-dir --index http://localhost:__PORT__/simple/ pyquickhelper
-%jenkinspythonpip% install --no-cache-dir --index http://localhost:__PORT__/simple/ pyquickhelper
 if %errorlevel% neq 0 exit /b %errorlevel%
 
 @echo #######################################################_requirements_begin
