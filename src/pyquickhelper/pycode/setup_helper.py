@@ -241,7 +241,8 @@ def process_standard_options_for_setup(argv,
                                           default_engine_paths=default_engine_paths,
                                           unit_test_folder=unit_test_folder,
                                           unittest_modules=unittest_modules_script,
-                                          additional_notebook_path=additional_notebook_path)
+                                          additional_notebook_path=additional_notebook_path,
+                                          additional_local_path=additional_local_path)
             if sc is None:
                 continue
             if c == "setupdep":

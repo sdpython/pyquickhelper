@@ -185,7 +185,7 @@ def get_script_command(command, module, requirements, port=8067, platform=sys.pl
 
 def get_extra_script_command(command, module, requirements, port=8067, blog_list=None, platform=sys.platform,
                              default_engine_paths=None, unit_test_folder=None, unittest_modules=None,
-                             additional_notebook_path=None):
+                             additional_notebook_path=None, additional_local_path=None):
     """
     produces a script which runs the notebook, a documentation server, which
     publishes...
@@ -200,13 +200,14 @@ def get_extra_script_command(command, module, requirements, port=8067, blog_list
     @param      default_engine_paths        define the default location for python engine, should be dictionary *{ engine: path }*, see below.
     @param      unit_test_folder            unit test folders, used for command ``run27``
     @param      additional_notebook_path    additional paths to add when running the script launching the notebooks
+    @param      additional_local_path       additional paths to add when running a local command
     @return                                 scripts
 
     The available list of commands is given by function @see fn process_standard_options_for_setup.
 
     .. versionchanged:: 1.3
         Parameter *unittest_modules*, was added.
-        Parameter *additional_notebook_path* to add local dependencies when
+        Parameters *additional_notebook_path*, *additional_local_path* were added to add local dependencies when
         running a notebook. Mostly for development purposes.
     """
     if not platform.startswith("win"):
@@ -254,21 +255,31 @@ def get_extra_script_command(command, module, requirements, port=8067, blog_list
 
     # additional paths
     if "__ADDITIONAL_LOCAL_PATH__" in script:
+        def choice(s):
+            if "/" in s or "\\" in s:
+                return s
+            else:
+                return os.path.join("%current%", "..", s, "src")
+
+        paths = []
         if command == "notebook" and additional_notebook_path is not None and len(additional_notebook_path) > 0:
-            def choice(s):
-                if "/" in s or "\\" in s:
-                    return s
-                else:
-                    return os.path.join("%current%", "..", s, "src")
-            rows = [choice(_) for _ in additional_notebook_path]
-            rep = ";" + ";".join(rows)
-            script = script.replace("__ADDITIONAL_LOCAL_PATH__", rep)
-        elif unittest_modules is not None and len(unittest_modules) > 0:
-            rows = ["%current%\\..\\" + _ + "\\src" for _ in unittest_modules]
+            paths.extend(additional_notebook_path)
+        if unittest_modules is not None and len(unittest_modules) > 0:
+            paths.extend(unittest_modules)
+        if additional_local_path is not None and len(additional_local_path) > 0:
+            paths.extend(additional_local_path)
+        if len(paths) > 0:
+            unique_paths = []
+            for p in paths:
+                if p not in unique_paths:
+                    unique_paths.append(p)
+            rows = [choice(_) for _ in unique_paths]
             rep = ";" + ";".join(rows)
             script = script.replace("__ADDITIONAL_LOCAL_PATH__", rep)
         else:
             script = script.replace("__ADDITIONAL_LOCAL_PATH__", "")
+
+        script = script.replace("__ADDITIONAL_NOTEBOOK_PATH__", "")
 
     # common post-processing
     if script is None:
