@@ -37,6 +37,10 @@ class TestDoxygen2rst (unittest.TestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
+        if sys.version_info[0] == 2:
+            #~ # not test on python 2
+            return
+
         file = os.path.join(os.path.abspath(
             os.path.dirname(__file__)), "data", "myexample2.py")
         with open(file, "r", encoding="utf8") as f:

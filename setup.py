@@ -214,6 +214,7 @@ if not r:
             "jupyter_core",
             "matplotlib",
             "metakernel",
+            "multi_key_dict",
             "nbformat",
             "notebook",
             "path.py",
