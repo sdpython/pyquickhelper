@@ -40,8 +40,9 @@ class TestBuildScript(unittest.TestCase):
             sc = get_build_script("pyquickhelper")
             # fLOG(sc)
             ver = "%d%s" % sys.version_info[:2]
-            assert "c:\\Python{0}_x64vir%virtual_env_suffix%\\install".format(
-                ver) in sc
+            if "c:\\Python{0}_x64vir%virtual_env_suffix%\\install".format(
+                ver) not in sc:
+                raise Exception("c:\\Python{0}_x64vir%virtual_env_suffix%\\install".format(ver))
             lines = sc.split("\n")
             for line in lines:
                 if "__" in line and _default_nofolder not in line:
@@ -82,7 +83,8 @@ class TestBuildScript(unittest.TestCase):
                 sc = get_script_command(
                     c, project_var_name, requirements=requirements, port=port)
                 assert len(sc) > 0
-                assert "__" not in sc
+                if "__" in sc:
+                    raise Exception(sc)
 
             unit_test_folder = os.path.abspath(
                 os.path.join(os.path.dirname(__file__), ".."))
@@ -119,8 +121,10 @@ class TestBuildScript(unittest.TestCase):
 
         with open(os.path.join(temp, "ptvs_project.pyproj"), "r", encoding="utf8") as f:
             content = f.read()
-        assert "build\\" not in content
-        assert "setup_helper.py" in content
+        if "build\\" in content:
+            raise Exception(content)
+        if "setup_helper.py" not in content:
+            raise Exception(content)
 
 
 if __name__ == "__main__":
