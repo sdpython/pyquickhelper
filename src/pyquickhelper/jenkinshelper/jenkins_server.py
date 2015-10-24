@@ -165,6 +165,7 @@ class JenkinsExt(jenkins.Jenkins):
         if self._mock:
             return
 
+        folder_url, short_name = self._get_job_folder(name)
         self.jenkins_open(jenkins.Request(
             self.server + jenkins.DELETE_JOB % self._get_encoded_params(locals()), b''))
         if self.job_exists(name):
