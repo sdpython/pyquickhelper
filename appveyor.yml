@@ -27,7 +27,7 @@ init:
 
 install:
   - "%PYTHON%\\Scripts\\pip install pymyinstall"
-  - "%PYTHON%\\Scripts\\pymyinstall3 --set=pyquickhelper"
+  - "%PYTHON%\\Scripts\\pymy_install3 --set=pyquickhelper"
 
 build: off
 

@@ -653,6 +653,7 @@ setup(
     name=project_var_name,
     version=versionPython,
     install_requires=[
+        "autopep8",
         "numpy",
         "dateutils",
         "IPython",
