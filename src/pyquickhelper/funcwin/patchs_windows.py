@@ -35,14 +35,20 @@ def fix_python35_dll(path1, path2, force=False):
         path1 = os.path.dirname(path1)
     if os.path.isfile(path2):
         path2 = os.path.dirname(path2)
+    paths2s = [path2]
+    path3 = os.path.join(paths2, "Scripts")
+    if os.path.exists(path3):
+        paths2s.append(path3)
     dll = os.listdir(path1)
     copy = []
     for f in dll:
         ext = os.path.splitext(f)[-1]
         if ext == ".dll":
             full = os.path.join(path1, f)
-            to = os.path.join(path2, f)
-            if not os.path.exists(to):
-                copy.append(to)
-                shutil.copy(full, path2)
+            for path2 in paths2s:
+                to = os.path.join(path2, f)
+                if not os.path.exists(to):
+                    copy.append(to)
+                    shutil.copy(full, path2)
+            
     return copy
