@@ -37,5 +37,6 @@ build: off
 
 test_script:
   - "dir"
-  - "build_script.bat"
+  - "build_script.bat %PYTHON%\\python"
+  - "dir"
   - "auto_setup_unittests.bat %PYTHON%\\python"
