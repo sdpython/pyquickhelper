@@ -31,10 +31,10 @@ init:
   - "ECHO %PYTHON% %PYTHON_VERSION% %PYTHON_ARCH%"
 
 install:
-  - "powershell appveyor\\install.ps1"
+  - "%PYTHON%\\Scripts\\pip install jupyter"
 
 build: off
 
 test_script:
   - "call build_script.bat"
-  - "call auto_setup_unittests.bat %PYTHON%/python"
+  - "call auto_setup_unittests.bat %PYTHON%\\python"
