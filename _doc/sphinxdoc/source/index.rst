@@ -9,7 +9,11 @@ pyquickhelper documentation
 
 .. image:: https://travis-ci.org/sdpython/pyquickhelper.svg?branch=master
     :target: https://travis-ci.org/sdpython/pyquickhelper
-    :alt: Build status
+    :alt: Build Status Linux
+    
+.. image:: https://ci.appveyor.com/api/projects/status/54vl69ssd8ud4l64?svg=true
+    :target: https://travis-ci.org/sdpython/pyquickhelper
+    :alt: Build Status Windows
     
 .. image:: https://badge.fury.io/py/pyquickhelper.svg
     :target: http://badge.fury.io/py/pyquickhelper
@@ -28,6 +32,7 @@ pyquickhelper documentation
 
 .. image:: https://coveralls.io/repos/sdpython/pyquickhelper/badge.svg?branch=master&service=github 
     :target: https://coveralls.io/github/sdpython/pyquickhelper?branch=master     
+
 
 
 **Links:** `pypi <https://pypi.python.org/pypi/pyquickhelper/>`_, 

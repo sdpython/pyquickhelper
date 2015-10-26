@@ -26,13 +26,12 @@ init:
   - "ECHO %PYTHON% %PYTHON_VERSION% %PYTHON_ARCH%"
 
 install:
-  - "%PYTHON%\\Scripts\\pip install jupyter"
-  - "%PYTHON%\\Scripts\\pip install docutils"
+  - "%PYTHON%\\Scripts\\pip install pymyinstall"
+  - "%PYTHON%\\Scripts\\pymyinstall3 --set=pyquickhelper"
 
 build: off
 
 test_script:
   - "dir"
-  - "dir src"
   - "%PYTHON%\\python -u setup.py build_script"
   - "%PYTHON%\\python -u setup.py unittests"
