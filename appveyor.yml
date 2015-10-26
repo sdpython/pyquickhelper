@@ -27,6 +27,7 @@ init:
 
 install:
   - "%PYTHON%\\Scripts\\pip install jupyter"
+  - "%PYTHON%\\Scripts\\pip install docutils"
 
 build: off
 
