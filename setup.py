@@ -52,6 +52,7 @@ package_data = {project_var_name + ".funcwin": ["*.ico"],
 def is_local():
     file = os.path.abspath(__file__).replace("\\", "/").lower()
     if "/temp/" in file and "pip-" in file:
+        print("is_local returns False due to: " + file)
         return False
     if \
        "bdist_msi" in sys.argv or \
@@ -82,7 +83,8 @@ def is_local():
        "write_version" in sys.argv:
         try:
             import_pyquickhelper()
-        except ImportError:
+        except ImportError as e:
+            print(e)
             return False
         return True
     else:
