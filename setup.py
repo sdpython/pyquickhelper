@@ -104,10 +104,10 @@ def import_pyquickhelper():
         try:
             import pyquickhelper
         except ImportError as e:
-            message = "module pyquickhelper is needed to build the documentation ({0}), not found in path {1}".format(
+            message = "module pyquickhelper is needed to build the documentation ({0}), not found in path {1} - current {2}".format(
                 sys.executable,
-                sys.path[
-                    -1])
+                sys.path[-1],
+                os.getcwd())
             raise ImportError(message) from e
     return pyquickhelper
 
