@@ -52,7 +52,6 @@ package_data = {project_var_name + ".funcwin": ["*.ico"],
 def is_local():
     file = os.path.abspath(__file__).replace("\\", "/").lower()
     if "/temp/" in file and "pip-" in file:
-        print("is_local returns False due to: " + file)
         return False
     if \
        "bdist_msi" in sys.argv or \
@@ -81,11 +80,7 @@ def is_local():
        "setup_hook" in sys.argv or \
        "copy_sphinx" in sys.argv or \
        "write_version" in sys.argv:
-        try:
-            import_pyquickhelper()
-        except ImportError as e:
-            print(e)
-            return False
+        import_pyquickhelper()
         return True
     else:
         return False
@@ -104,7 +99,6 @@ def import_pyquickhelper():
         try:
             import pyquickhelper
         except ImportError as e:
-            print(e)
             message = "module pyquickhelper is needed to build the documentation ({0}), not found in path {1} - current {2}".format(
                 sys.executable,
                 sys.path[-1],
