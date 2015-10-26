@@ -23,3 +23,4 @@ def check_icon():
 from .frame_params import open_window_params
 from .frame_function import open_window_function
 from .main_window import main_loop_functions
+from .patchs_windows import fix_python35_dll

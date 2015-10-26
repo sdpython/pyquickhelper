@@ -41,8 +41,9 @@ class TestBuildScript(unittest.TestCase):
             # fLOG(sc)
             ver = "%d%s" % sys.version_info[:2]
             if "c:\\Python{0}_x64vir%virtual_env_suffix%\\install".format(
-                ver) not in sc:
-                raise Exception("c:\\Python{0}_x64vir%virtual_env_suffix%\\install".format(ver))
+                    ver) not in sc:
+                raise Exception(
+                    "c:\\Python{0}_x64vir%virtual_env_suffix%\\install".format(ver))
             lines = sc.split("\n")
             for line in lines:
                 if "__" in line and _default_nofolder not in line:
