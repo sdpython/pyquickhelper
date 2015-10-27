@@ -22,7 +22,7 @@ except ImportError:
         sys.path.append(path)
     import src
 
-from src.pyquickhelper import fLOG, get_temp_folder
+from src.pyquickhelper import fLOG, get_temp_folder, is_travis_or_appveyor
 from src.pyquickhelper.ipythonhelper import ipython_cython_extension
 
 
@@ -35,6 +35,11 @@ class TestCheckCython(unittest.TestCase):
             OutputPrint=__name__ == "__main__")
 
         if sys.version_info[0] == 2 or "condavir" in sys.executable:
+            return
+
+        if is_travis_or_appveyor() == "appveyor":
+            # we skip that as it would imply
+            # we modify the pyhon distribution
             return
 
         if sys.version_info[:2] <= (3, 4):

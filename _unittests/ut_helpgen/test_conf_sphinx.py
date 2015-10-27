@@ -22,8 +22,11 @@ except ImportError:
         sys.path.append(path)
     import src
 
-from src.pyquickhelper.loghelper.flog import fLOG
+from src.pyquickhelper.loghelper.flog import fLOG, is_travis_or_appveyor
 from src.pyquickhelper.helpgen.default_conf import set_sphinx_variables
+
+if sys.version_info[0] == 2:
+    FileNotFoundError = Exception
 
 
 class TestConfSphinx(unittest.TestCase):
@@ -47,15 +50,24 @@ class TestConfSphinx(unittest.TestCase):
         assert os.path.exists(ff)
         import sphinx_rtd_theme
         d = {}
-        set_sphinx_variables(
-            ff,
-            "thisname",
-            "XD",
-            2014,
-            "sphinx_rtd_theme",
-            None,  # sphinx_rtd_theme.theme_path,
-            d,
-            use_mathjax=True)
+        try:
+            set_sphinx_variables(
+                ff,
+                "thisname",
+                "XD",
+                2014,
+                "sphinx_rtd_theme",
+                None,  # sphinx_rtd_theme.theme_path,
+                d,
+                use_mathjax=True)
+        except FileNotFoundError as e:
+            if "dot.exe" in str(e) and is_travis_or_appveyor() == "appveyor":
+                # we skip unless we install graphviz --> too long automated
+                # build
+                return
+            else:
+                raise e
+
         for k, v in d.items():
             fLOG(k, "\t=", v)
 

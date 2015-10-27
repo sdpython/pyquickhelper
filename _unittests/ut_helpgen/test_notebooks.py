@@ -21,7 +21,7 @@ except ImportError:
         sys.path.append(path)
     import src
 
-from src.pyquickhelper.loghelper.flog import fLOG, run_cmd
+from src.pyquickhelper.loghelper.flog import fLOG, run_cmd, is_travis_or_appveyor
 from src.pyquickhelper.helpgen.sphinx_main import process_notebooks, add_notebook_page
 from src.pyquickhelper.helpgen.process_notebooks import get_ipython_program
 from src.pyquickhelper import get_temp_folder
@@ -76,8 +76,8 @@ class TestNotebookConversion (unittest.TestCase):
             exp.append("example_pyquickhelper.tex")
             exp.append("example_pyquickhelper.pdf")
 
-        # to be removed later
-        if not sys.platform.startswith("win"):
+        if is_travis_or_appveyor() is not None:
+            # it requires pandoc
             return
 
         res = process_notebooks(

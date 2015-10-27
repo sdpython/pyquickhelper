@@ -59,7 +59,8 @@ class TestNotebookExtensions(unittest.TestCase):
         assert len(ext) > 0
         for e in ext:
             fLOG(e)
-        assert "IPython-notebook-extensions-master/usability/search-replace/main" in ext
+        if "IPython-notebook-extensions-master/usability/search-replace/main" not in ext:
+            raise Exception(ext)
 
 
 if __name__ == "__main__":
