@@ -38,7 +38,7 @@ def fix_python35_dll(path1, path2, force=False):
     paths2s = [path2]
     path3 = os.path.join(path2, "Scripts")
     if os.path.exists(path3):
-        paths2s.append(path3)
+        paths2s = [path3]
     dll = os.listdir(path1)
     copy = []
     for f in dll:
