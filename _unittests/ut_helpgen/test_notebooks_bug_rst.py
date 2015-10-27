@@ -47,11 +47,6 @@ class TestNoteBooksBugRst(unittest.TestCase):
         for file in os.listdir(temp):
             os.remove(os.path.join(temp, file))
 
-        if "travis" in sys.executable:
-            warnings.warn(
-                "travis, unable to test TestNoteBooksBugRst.test_notebook_rst")
-            return
-
         res = process_notebooks(nbs, temp, temp, formats=formats)
         fLOG("*****", len(res))
         for _ in res:

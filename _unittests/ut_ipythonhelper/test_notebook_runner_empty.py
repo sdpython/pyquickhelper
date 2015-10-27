@@ -22,7 +22,7 @@ except ImportError:
     import src
 
 from src.pyquickhelper.ipythonhelper.notebook_helper import run_notebook, install_python_kernel_for_unittest
-from src.pyquickhelper import get_temp_folder, fLOG
+from src.pyquickhelper import get_temp_folder, fLOG, is_travis_or_appveyor
 
 
 class TestNotebookRunnerEmpty (unittest.TestCase):
@@ -42,7 +42,7 @@ class TestNotebookRunnerEmpty (unittest.TestCase):
         addpath = os.path.normpath(os.path.join(temp, "..", "..", "..", "src"))
         assert os.path.exists(addpath)
 
-        kernel_name = None if "travis" in sys.executable else install_python_kernel_for_unittest(
+        kernel_name = None if is_travis_or_appveyor() is not None else install_python_kernel_for_unittest(
             "pyquickhelper")
 
         outfile = os.path.join(temp, "out_notebook.ipynb")

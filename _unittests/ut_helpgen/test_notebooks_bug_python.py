@@ -50,11 +50,6 @@ class TestNoteBooksBugPython(unittest.TestCase):
         for file in os.listdir(temp):
             os.remove(os.path.join(temp, file))
 
-        if "travis" in sys.executable:
-            warnings.warn(
-                "travis, unable to test TestNoteBooksBugPython.test_notebook_python")
-            return
-
         setup_environment_for_help()
 
         res = process_notebooks(nbs, temp, temp, formats=formats)

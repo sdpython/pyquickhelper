@@ -17,16 +17,16 @@ environment:
       PYTHON_ARCH: "64"
       WINDOWS_SDK_VERSION: "v7.1"
 
-    - PYTHON: "C:\\Python35-x64"
-      PYTHON_VERSION: "3.5.x"
-      PYTHON_ARCH: "64"
-      WINDOWS_SDK_VERSION: "v7.2"
+  # DLL issues with Python 3.5
+  #  - PYTHON: "C:\\Python35-x64"
+  #    PYTHON_VERSION: "3.5.x"
+  #    PYTHON_ARCH: "64"
+  #    WINDOWS_SDK_VERSION: "v7.2"
 
 init:
   - "ECHO %PYTHON% %PYTHON_VERSION% %PYTHON_ARCH%"
 
 install:
-  - "set"
   - "%PYTHON%\\python -m pip install --upgrade pip"
   - "%PYTHON%\\Scripts\\pip install pymyinstall"
   - "%PYTHON%\\Scripts\\pymy_install3 --set=pyquickhelper"
@@ -34,6 +34,5 @@ install:
 build: off
 
 test_script:
-  - "dir"
   - "%PYTHON%\\python -u setup.py build_script"
   - "%PYTHON%\\python -u setup.py unittests"

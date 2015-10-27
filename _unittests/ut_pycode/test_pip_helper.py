@@ -23,7 +23,7 @@ except ImportError:
         sys.path.append(path)
     import src
 
-from src.pyquickhelper import fLOG
+from src.pyquickhelper import fLOG, is_travis_or_appveyor
 from src.pyquickhelper.pycode.pip_helper import get_packages_list, get_package_info, package2dict
 
 
@@ -53,7 +53,7 @@ class TestPipHelper(unittest.TestCase):
         if "version" not in info:
             raise Exception(str(info))
 
-        if "travis" not in sys.executable and sys.version_info[0] >= 3:
+        if is_travis_or_appveyor() != "travis" and sys.version_info[0] >= 3:
             info = get_package_info("sphinx")
             # if "license" not in info:
             #    raise Exception(str(info))

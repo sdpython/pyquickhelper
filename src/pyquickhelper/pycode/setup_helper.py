@@ -471,7 +471,8 @@ def write_pyproj(file_or_folder, location=None):
 
     This functionality fails with Python 2.7 (encoding).
     """
-    avoid = ["dist", "build", "dist_module27", "_doc", "_virtualenv", "_virtualenv27"]
+    avoid = ["dist", "build", "dist_module27",
+             "_doc", "_virtualenv", "_virtualenv27"]
 
     def filter(name):
         if os.path.splitext(name)[-1] != ".py":

@@ -26,7 +26,7 @@ except ImportError:
         sys.path.append(path)
     import src
 
-from src.pyquickhelper import fLOG, removedirs, run_cmd, explore_folder_iterfile, change_file_status
+from src.pyquickhelper import fLOG, removedirs, run_cmd, explore_folder_iterfile, change_file_status, is_travis_or_appveyor
 from src.pyquickhelper.loghelper.repositories.pygit_helper import clone, rebase
 
 
@@ -48,7 +48,7 @@ class TestGit(unittest.TestCase):
         if not os.path.exists(temp):
             os.mkdir(temp)
 
-        if "travis" in sys.executable:
+        if is_travis_or_appveyor() is not None:
             return
 
         to = os.path.join(temp, "pq")

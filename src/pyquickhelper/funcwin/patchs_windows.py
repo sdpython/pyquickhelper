@@ -50,5 +50,5 @@ def fix_python35_dll(path1, path2, force=False):
                 if not os.path.exists(to):
                     copy.append(to)
                     shutil.copy(full, path2)
-            
+
     return copy

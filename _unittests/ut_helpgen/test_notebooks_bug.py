@@ -22,7 +22,7 @@ except ImportError:
         sys.path.append(path)
     import src
 
-from src.pyquickhelper import fLOG, process_notebooks
+from src.pyquickhelper import fLOG, process_notebooks, is_travis_or_appveyor
 
 if sys.version_info[0] == 2:
     from codecs import open
@@ -73,9 +73,9 @@ class TestNoteBooksBug(unittest.TestCase):
         for file in os.listdir(temp):
             os.remove(os.path.join(temp, file))
 
-        if "travis" in sys.executable:
+        if is_travis_or_appveyor() is not None:
             warnings.warn(
-                "travis, unable to test TestNoteBooksBug.test_notebook")
+                "travis, appveyor, unable to test TestNoteBooksBug.test_notebook")
             return
 
         res = process_notebooks(nbs, temp, temp, formats=formats)
@@ -106,9 +106,9 @@ class TestNoteBooksBug(unittest.TestCase):
         for file in os.listdir(temp):
             os.remove(os.path.join(temp, file))
 
-        if "travis" in sys.executable:
+        if is_travis_or_appveyor() is not None:
             warnings.warn(
-                "travis, unable to test TestNoteBooksBug.test_notebook_pdf")
+                "travis, appveyor, unable to test TestNoteBooksBug.test_notebook_pdf")
             return
 
         res = process_notebooks(nbs, temp, temp, formats=formats)

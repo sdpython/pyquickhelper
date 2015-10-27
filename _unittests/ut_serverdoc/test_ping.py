@@ -20,7 +20,7 @@ except ImportError:
         sys.path.append(path)
     import src
 
-from src.pyquickhelper import fLOG
+from src.pyquickhelper import fLOG, is_travis_or_appveyor
 from src.pyquickhelper.serverdoc import ping_machine, regular_ping_machine
 
 
@@ -40,7 +40,7 @@ class TestPing(unittest.TestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
-        if "travis" in sys.executable:
+        if is_travis_or_appveyor() == "travis":
             return
         machine = self.get_machine()
         out = ping_machine(machine, fLOG=fLOG)

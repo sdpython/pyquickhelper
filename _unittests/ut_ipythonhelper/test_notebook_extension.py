@@ -23,7 +23,7 @@ except ImportError:
         sys.path.append(path)
     import src
 
-from src.pyquickhelper import fLOG, get_temp_folder
+from src.pyquickhelper import fLOG, get_temp_folder, is_travis_or_appveyor
 from src.pyquickhelper.ipythonhelper import install_notebook_extension, get_installed_notebook_extension, get_jupyter_datadir
 
 
@@ -42,7 +42,7 @@ class TestNotebookExtensions(unittest.TestCase):
         try:
             ext = get_installed_notebook_extension()
         except FileNotFoundError:
-            if "travis" in sys.executable:
+            if is_travis_or_appveyor() == "travis":
                 # does not work on travis due to permission error
                 warnings.warn(
                     "travis, unable to test TestNotebookExtensions.test_notebook_extension")

@@ -23,6 +23,7 @@ except ImportError:
         sys.path.append(path)
     import src
 
+from src.pyquickhelper import is_travis_or_appveyor
 from src.pyquickhelper.loghelper.flog import fLOG
 from src.pyquickhelper.helpgen.utils_sphinx_config import ie_layout_html, NbImage, fix_ie_layout_html
 
@@ -35,7 +36,7 @@ class TestMissingFunction(unittest.TestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
-        if "travis" in sys.executable or "anaconda" in sys.executable.lower() or sys.version_info[0] == 2 \
+        if is_travis_or_appveyor() == "travis" or "anaconda" in sys.executable.lower() or sys.version_info[0] == 2 \
            or "yquickhelper_condavir" in sys.executable:
             warnings.warn(
                 "skipping on travis and with anaconda or python 2.7: " + sys.executable)

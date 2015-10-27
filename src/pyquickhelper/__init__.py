@@ -56,6 +56,23 @@ def _setup_hook(add_print=False, unit_test=False):
         print("Success: _setup_hook")
 
 
+def is_travis_or_appveyor():
+    """
+    tells if is a travis environment or appveyor
+
+    @return        travis, appveyor or None
+
+    .. versionadded:: 1.3
+    """
+    import sys
+    if "travis" in sys.executable:
+        return "travis"
+    import os
+    if os.environ["USERNAME"] == "appveyor":
+        return "appveyor"
+    return None
+
+
 from .loghelper.flog import fLOG, run_cmd, skip_run_cmd, unzip, noLOG, removedirs, unzip_files
 from .loghelper.url_helper import get_url_content
 from .loghelper.convert_helper import str_to_datetime

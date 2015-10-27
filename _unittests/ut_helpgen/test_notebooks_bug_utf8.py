@@ -23,7 +23,7 @@ except ImportError:
         sys.path.append(path)
     import src
 
-from src.pyquickhelper import fLOG, process_notebooks
+from src.pyquickhelper import fLOG, process_notebooks, is_travis_or_appveyor
 from src.pyquickhelper.helpgen.sphinx_main import setup_environment_for_help
 from src.pyquickhelper.helpgen.post_process import post_process_latex
 
@@ -50,9 +50,9 @@ class TestNoteBooksBugUtf8(unittest.TestCase):
         for file in os.listdir(temp):
             os.remove(os.path.join(temp, file))
 
-        if "travis" in sys.executable:
+        if is_travis_or_appveyor() is not None:
             warnings.warn(
-                "travis, unable to test TestNoteBooksBugSvg.test_notebook_svg")
+                "travis, appveyor, unable to test TestNoteBooksBugSvg.test_notebook_svg")
             return
 
         setup_environment_for_help()

@@ -24,7 +24,7 @@ except ImportError:
         sys.path.append(path)
     import src
 
-from src.pyquickhelper import download, get_temp_folder, fLOG, gzip_files, zip_files, zip7_files
+from src.pyquickhelper import download, get_temp_folder, fLOG, gzip_files, zip_files, zip7_files, is_travis_or_appveyor
 from src.pyquickhelper.filehelper import check, read_url
 
 
@@ -52,7 +52,7 @@ class TestDownload (unittest.TestCase):
         fLOG(r)
         assert os.path.exists(out)
 
-        if "travis" not in sys.executable:
+        if is_travis_or_appveyor() is not None:
             out7 = os.path.join(fold, "try.7z")
             r = zip7_files(out7, [f, out], fLOG=fLOG, temp_folder=fold)
             fLOG(r)

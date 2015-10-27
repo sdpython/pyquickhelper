@@ -22,7 +22,7 @@ except ImportError:
     import src
 
 
-from src.pyquickhelper import fLOG, get_temp_folder
+from src.pyquickhelper import fLOG, get_temp_folder, is_travis_or_appveyor
 from src.pyquickhelper.ipythonhelper import execute_notebook_list
 from src.pyquickhelper.pycode import compare_module_version
 from src.pyquickhelper.ipythonhelper import install_python_kernel_for_unittest
@@ -45,7 +45,7 @@ class TestRunNotebooks(unittest.TestCase):
             # IPython is not recnt enough
             return
 
-        kernel_name = None if "travis" in sys.executable else install_python_kernel_for_unittest(
+        kernel_name = None if is_travis_or_appveyor() is not None else install_python_kernel_for_unittest(
             "pyquickhelper")
 
         temp = get_temp_folder(__file__, "temp_run_notebooks")
@@ -79,7 +79,7 @@ class TestRunNotebooks(unittest.TestCase):
         addpaths = [os.path.normpath(os.path.join(
             os.path.abspath(os.path.dirname(__file__)), "..", "..", "src"))]
 
-        if "travis" in sys.executable:
+        if is_travis_or_appveyor() == "travis":
             keepnote = [_ for _ in keepnote if "javascript_extension" not in _]
 
         res = execute_notebook_list(

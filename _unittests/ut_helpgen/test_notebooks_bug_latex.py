@@ -22,7 +22,7 @@ except ImportError:
         sys.path.append(path)
     import src
 
-from src.pyquickhelper import fLOG, process_notebooks
+from src.pyquickhelper import fLOG, process_notebooks, is_travis_or_appveyor
 
 
 class TestNoteBooksBugLatex(unittest.TestCase):
@@ -44,9 +44,9 @@ class TestNoteBooksBugLatex(unittest.TestCase):
         for file in os.listdir(temp):
             os.remove(os.path.join(temp, file))
 
-        if "travis" in sys.executable:
+        if is_travis_or_appveyor() is not None:
             warnings.warn(
-                "travis, unable to test TestNoteBooksBugLatex.test_notebook_latex")
+                "travis, appveyor, unable to test TestNoteBooksBugLatex.test_notebook_latex")
             return
 
         res = process_notebooks(nbs, temp, temp, formats=formats)

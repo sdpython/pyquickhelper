@@ -24,7 +24,7 @@ def get_call_stack():
     """
     returns a string showing the call stack
     when this function is called
-    
+
     @return                     string
     """
     s = StringIO()
