@@ -22,7 +22,7 @@ except ImportError:
         sys.path.append(path)
     import src
 
-from src.pyquickhelper import fLOG, process_notebooks
+from src.pyquickhelper import fLOG, process_notebooks, is_travis_or_appveyor
 
 if sys.version_info[0] == 2:
     from codecs import open
@@ -46,6 +46,11 @@ class TestNoteBooksBugRst(unittest.TestCase):
             os.mkdir(temp)
         for file in os.listdir(temp):
             os.remove(os.path.join(temp, file))
+            
+        if is_travis_or_appveyor() is not None:
+            warnings.warn(
+                "travis, appveyor, unable to test TestNoteBooksBugSvg.test_notebook_rst")
+            return
 
         res = process_notebooks(nbs, temp, temp, formats=formats)
         fLOG("*****", len(res))

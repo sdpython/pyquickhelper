@@ -52,7 +52,7 @@ class TestDownload (unittest.TestCase):
         fLOG(r)
         assert os.path.exists(out)
 
-        if is_travis_or_appveyor() is not None:
+        if is_travis_or_appveyor() is None:
             out7 = os.path.join(fold, "try.7z")
             r = zip7_files(out7, [f, out], fLOG=fLOG, temp_folder=fold)
             fLOG(r)
