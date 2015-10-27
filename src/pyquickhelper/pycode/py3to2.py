@@ -91,7 +91,7 @@ def py3to2_convert_tree(folder,
 
     .. versionadded:: 1.0
     """
-    exclude = "temp_", "dist", "_doc", "build", "extensions", "nbextensions", "dist_module27"
+    exclude = "temp_", "dist", "_doc", "build", "extensions", "nbextensions", "dist_module27", "_virtualenv"
     reg = re.compile(".*/ut_.*/.*/.*")
 
     conv = []
@@ -103,8 +103,7 @@ def py3to2_convert_tree(folder,
         ex = False
         for exc in exclude:
             if file.startswith(exc) or "\\temp_" in file or \
-               "/temp_" in file or "dist_module27" in file or \
-               "_virtualenv" in file:
+               "/temp_" in file or "dist_module27" in file:
                 ex = True
                 break
         if ex:
