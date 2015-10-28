@@ -21,7 +21,7 @@ except ImportError:
         sys.path.append(path)
     import src
 
-from src.pyquickhelper.loghelper.flog import fLOG, run_cmd, is_travis_or_appveyor
+from src.pyquickhelper import fLOG, run_cmd, is_travis_or_appveyor
 from src.pyquickhelper.helpgen.sphinx_main import process_notebooks, add_notebook_page
 from src.pyquickhelper.helpgen.process_notebooks import get_ipython_program
 from src.pyquickhelper import get_temp_folder
