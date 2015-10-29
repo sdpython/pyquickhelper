@@ -66,7 +66,6 @@ class TestNoteBooksComment(unittest.TestCase):
                 nb += 1
         # it should work if the module is able to deal with comments (not yet)
         # self.assertEqual(nb, 1)
-            
 
 
 if __name__ == "__main__":

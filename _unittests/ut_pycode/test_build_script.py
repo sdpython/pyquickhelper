@@ -41,7 +41,7 @@ class TestBuildScript(unittest.TestCase):
             # fLOG(sc)
             ver = "%d%s" % sys.version_info[:2]
             if "c:\\Python{0}_x64vir%virtual_env_suffix%\\install".format(ver) not in sc and \
-                "c:\\Python{0}-x64vir%virtual_env_suffix%\\install".format(ver) not in sc:
+                    "c:\\Python{0}-x64vir%virtual_env_suffix%\\install".format(ver) not in sc:
                 raise Exception(
                     "c:\\Python{0}_x64vir%virtual_env_suffix%\\install\nSCRIPT\n{1}".format(ver, sc))
             lines = sc.split("\n")

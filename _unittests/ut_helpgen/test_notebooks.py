@@ -127,7 +127,7 @@ class TestNotebookConversion (unittest.TestCase):
             temp, "..", "notebooks_rst", "having_a_form_in_a_notebook.ipynb")
         fo = os.path.join(temp, "having_a_form_in_a_notebook.html")
 
-        if is_travis_or_appveyor()  == "appveyor":
+        if is_travis_or_appveyor() == "appveyor":
             # disable on appveyor
             return
 
