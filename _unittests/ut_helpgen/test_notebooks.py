@@ -127,6 +127,10 @@ class TestNotebookConversion (unittest.TestCase):
             temp, "..", "notebooks_rst", "having_a_form_in_a_notebook.ipynb")
         fo = os.path.join(temp, "having_a_form_in_a_notebook.html")
 
+        if is_travis_or_appveyor()  == "appveyor":
+            # disable on appveyor
+            return
+
         ipy = get_ipython_program()
         cmd = '{2} nbconvert --to html {0} --template full --output={1}'
         cmd = cmd.format(f, fo, ipy)

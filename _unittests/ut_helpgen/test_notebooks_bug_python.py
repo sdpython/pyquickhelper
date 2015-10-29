@@ -50,12 +50,12 @@ class TestNoteBooksBugPython(unittest.TestCase):
         for file in os.listdir(temp):
             os.remove(os.path.join(temp, file))
 
-        setup_environment_for_help()
-
         if is_travis_or_appveyor() is not None:
             warnings.warn(
                 "travis, appveyor, unable to test TestNoteBooksBugPython.test_notebook_python")
             return
+
+        setup_environment_for_help()
 
         res = process_notebooks(nbs, temp, temp, formats=formats)
         fLOG("*****", len(res))
