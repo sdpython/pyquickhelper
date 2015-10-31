@@ -588,7 +588,7 @@ class JenkinsExt(jenkins.Jenkins):
         else:
             trigger = ""
 
-        cmd = "set" if self.platform.startswith("win") else "export"
+        # cmd = "set" if self.platform.startswith("win") else "export"
 
         if not isinstance(script, list):
             script = [script]

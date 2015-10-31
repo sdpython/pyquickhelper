@@ -5,7 +5,6 @@
 """
 
 import sys
-import warnings
 
 if sys.version_info[0] == 2:
     import Tkinter as tkinter
@@ -21,10 +20,11 @@ def X_is_running():
         p = Popen(["xset", "-q"], stdout=PIPE, stderr=PIPE)
         p.communicate()
         return p.returncode == 0
-    except Exception as e:
+    except Exception:
         # this function can fail on eBook
         # moved as a warning
         # also remove the warning at is not always meaningful
+        # import warnings
         #warnings.warn(
         #    "Unable to detected if X11 is running with command xset -q, we assume it is not.\n{0}".format(e))
         return False
