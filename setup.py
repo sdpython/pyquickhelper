@@ -161,6 +161,9 @@ if is_local():
         sys.argv, __file__, project_var_name, port=8067,
         requirements=requirements, blog_list=pyquickhelper.__blog__)
 
+    if not r:
+        raise Exception("unable to interpret command line: " + str(sys.argv))
+
     if "build_script" in sys.argv and sys.platform.startswith("win"):
         norm = os.path.normpath(os.path.abspath(
             os.path.join(os.path.dirname(__file__), "..")))
