@@ -99,10 +99,6 @@ set pythonexe=__PY??_X64__\\python
 
 :custom_python:
 @echo ~LABEL custom_python
-@echo ~CALL %pythonexe% setup.py write_version
-%pythonexe% setup.py write_version
-@echo ~VERSION
-more version.txt
 if %errorlevel% neq 0 exit /b %errorlevel%
 set PYTHONPATH=%PYTHONPATH%;%current%\\src__ADDITIONAL_LOCAL_PATH__
 @echo ~SET PYTHONPATH=%PYTHONPATH%;%current%\\src__ADDITIONAL_LOCAL_PATH__
@@ -131,88 +127,9 @@ if "%1"=="" goto default_value:
 if "%1"=="default" goto default_value:
 set pythonexe=%1
 @echo ~SET pythonexe=%1
-@echo ~CALL %pythonexe% setup.py write_version
-%pythonexe% setup.py write_version
-@echo ~VERSION
-more version.txt
-goto custom_python:
 
 :default_value:
-@echo ~LABEL default_value
-IF NOT EXIST __PY??__ GOTO checkinstall64:
-
-:checkinstall:
-@echo ~LABEL checkinstall
-IF EXIST __PY??__vir%virtual_env_suffix% GOTO nexta:
-mkdir __PY??__vir%virtual_env_suffix%
-
-:nexta:
-@echo ~LABEL nexta
-IF EXIST __PY??__vir%virtual_env_suffix%\\install GOTO fullsetupa:
-__PY??__\\Scripts\\virtualenv __PY??__vir%virtual_env_suffix%\\install --system-site-packages
-IF EXIST %CURRENT_THIS%..\_pyquickhelper (
-    SET KEEPPYTHONPATH=%PYTHONPATH%
-    SET PYTHONPATH=%PYTHONPATH%;%CURRENT_THIS%..\_pyquickhelper\src
-)
-@echo ~CALL __PY??__\\python -c "from pyquickhelper.funcwin import fix_python35_dll;fix_python35_dll(r'__PY??__', r'__PY??__vir%virtual_env_suffix%\\install')"
-__PY??__\\python -c "from pyquickhelper.funcwin import fix_python35_dll;fix_python35_dll(r'__PY??__', r'__PY??__vir%virtual_env_suffix%\\install')"
-if %errorlevel% neq 0 exit /b %errorlevel%
-IF EXIST %CURRENT_THIS%..\_pyquickhelper SET PYTHONPATH=%KEEPPYTHONPATH%
-if %errorlevel% neq 0 exit /b %errorlevel%
-
-:fullsetupa:
-@echo ~LABEL fullsetupa
-@echo #######################################################0
-@echo ~CALL __PY??__vir%virtual_env_suffix%\\install\\Scripts\\python -u setup.py install
-__PY??__vir%virtual_env_suffix%\\install\\Scripts\\python -u setup.py install
-if %errorlevel% neq 0 exit /b %errorlevel%
-@echo #######################################################1
-
-:checkinstall64:
-@echo ~LABEL checkinstall64
-IF EXIST __PY??_X64__vir%virtual_env_suffix% GOTO nextb:
-mkdir __PY??_X64__vir%virtual_env_suffix%
-
-:nextb:
-@echo ~LABEL nextb
-IF EXIST __PY??_X64__vir%virtual_env_suffix%\\install GOTO fullsetupb:
-__PY??_X64__\\Scripts\\virtualenv __PY??_X64__vir%virtual_env_suffix%\\install --system-site-packages
-IF EXIST %CURRENT_THIS%..\_pyquickhelper (
-    SET KEEPPYTHONPATH=%PYTHONPATH%
-    SET PYTHONPATH=%PYTHONPATH%;%CURRENT_THIS%..\_pyquickhelper\src
-)
-@echo ~CALL __PY??_X64__\\python -c "from pyquickhelper.funcwin import fix_python35_dll;fix_python35_dll(r'__PY??_X64__', r'__PY??_X64__vir%virtual_env_suffix%\\install')"
-__PY??_X64__\\python -c "from pyquickhelper.funcwin import fix_python35_dll;fix_python35_dll(r'__PY??_X64__', r'__PY??_X64__vir%virtual_env_suffix%\\install')"
-if %errorlevel% neq 0 exit /b %errorlevel%
-IF EXIST %CURRENT_THIS%..\_pyquickhelper SET PYTHONPATH=%KEEPPYTHONPATH%
-if %errorlevel% neq 0 exit /b %errorlevel%
-
-:fullsetupb:
-@echo ~LABEL fullsetupb
-@echo #######################################################2
-@echo ~CALL __PY??_X64__vir%virtual_env_suffix%\\install\\Scripts\\python -u setup.py install
-__PY??_X64__vir%virtual_env_suffix%\\install\\Scripts\\python -u setup.py install
-if %errorlevel% neq 0 exit /b %errorlevel%
-@echo #######################################################3
-
-:setup3x:
-@echo ~LABEL setup3x
-IF NOT EXIST __PY??__ GOTO utpy3x_64:
-set pythonexe=__PY??__\\python
-@echo ~SET set pythonexe=__PY??__\\python
-@echo ~CALL %pythonexe% setup.py write_version
-%pythonexe% setup.py write_version
-@echo ~VERSION
-more version.txt
-@echo ~CALL %pythonexe% setup.py clean_pyd
-%pythonexe% setup.py clean_pyd
-@echo ~CALL %pythonexe% setup.py build bdist_wininst --plat-name=win-amd64
-%pythonexe% setup.py build bdist_wininst --plat-name=win-amd64
-if %errorlevel% neq 0 exit /b %errorlevel%
-@echo #######################################################4
-
-:utpy3x_64:
-@echo ~LABEL utpy3x_64
+@echo ~LABEL default_value_python
 set pythonexe=__PY??_X64__\\python
 @echo ~SET pythonexe=__PY??_X64__\\python
 
@@ -235,17 +152,9 @@ set PATH=%pythonexe%\\..;%PATH%
 @echo ~SET PATH=%pythonexe%\\..;%PATH%
 @echo ~CALL %pythonexe%\\..\\Scripts\\virtualenv --system-site-packages %virtual_env_py%_vir%virtual_env_suffix%
 %pythonexe%\\..\\Scripts\\virtualenv --system-site-packages %virtual_env_py%_vir%virtual_env_suffix%
-IF EXIST %CURRENT_THIS%..\_pyquickhelper (
-    SET KEEPPYTHONPATH=%PYTHONPATH%
-    SET PYTHONPATH=%PYTHONPATH%;%CURRENT_THIS%..\_pyquickhelper\src
-)
-@echo ~CALL %pythonexe% -c "from pyquickhelper.funcwin import fix_python35_dll;fix_python35_dll(r'%pythonexe%', r'%virtual_env_py%_vir%virtual_env_suffix%')"
-%pythonexe% -c "from pyquickhelper.funcwin import fix_python35_dll;fix_python35_dll(r'%pythonexe%', r'%virtual_env_py%_vir%virtual_env_suffix%')"
-if %errorlevel% neq 0 exit /b %errorlevel%
-IF EXIST %CURRENT_THIS%..\_pyquickhelper SET PYTHONPATH=%KEEPPYTHONPATH%
-set PATH=%KEEPPATH%
-@echo ~SET PATH=%KEEPPATH%
-if %errorlevel% neq 0 exit /b %errorlevel%
+@echo ### VIRTUAL ENVIRONMENT CREATED in %virtual_env_py%_vir%virtual_env_suffix%
+
+rem __PATH_VIRTUAL_ENV__ fix_python35_dll
 
 :with_virtual:
 @echo ~LABEL with_virtual
@@ -417,16 +326,8 @@ set PATH=%pythonexe%\\..;%PATH%
 @echo ~SET PATH=%pythonexe%\\..;%PATH%
 @echo ~CALL %pythonexe%\\..\\Scripts\\virtualenv --system-site-packages %virtual_env_py%_vir%virtual_env_suffix%
 %pythonexe%\\..\\Scripts\\virtualenv --system-site-packages %virtual_env_py%_vir%virtual_env_suffix%
-IF EXIST %CURRENT_THIS%..\_pyquickhelper (
-    SET KEEPPYTHONPATH=%PYTHONPATH%
-    SET PYTHONPATH=%PYTHONPATH%;%CURRENT_THIS%..\_pyquickhelper\src
-)
-@echo ~CALL %pythonexe% -c "from pyquickhelper.funcwin import fix_python35_dll;fix_python35_dll(r'%pythonexe%', r'%virtual_env_py%_vir%virtual_env_suffix%')"
-%pythonexe% -c "from pyquickhelper.funcwin import fix_python35_dll;fix_python35_dll(r'%pythonexe%', r'%virtual_env_py%_vir%virtual_env_suffix%')"
-if %errorlevel% neq 0 exit /b %errorlevel%
-IF EXIST %CURRENT_THIS%..\_pyquickhelper SET PYTHONPATH=%KEEPPYTHONPATH%
-set PATH=%KEEPPATH%
-if %errorlevel% neq 0 exit /b %errorlevel%
+
+rem __PATH_VIRTUAL_ENV__ fix_python35_dll
 
 :with_virtual:
 @echo ~LABEL  with_virtual

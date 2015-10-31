@@ -25,7 +25,7 @@ def X_is_running():
         # moved as a warning
         # also remove the warning at is not always meaningful
         # import warnings
-        #warnings.warn(
+        # warnings.warn(
         #    "Unable to detected if X11 is running with command xset -q, we assume it is not.\n{0}".format(e))
         return False
 
