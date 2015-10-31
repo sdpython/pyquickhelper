@@ -118,7 +118,8 @@ def private_script_replacements(script, module, requirements, port, raise_except
                 r = "%pythonpip% install {0}".format(r)
                 rows.append(r)
             for r in requirements_local:
-                r = "%pythonpip% install --no-cache-dir --index http://localhost:{0}/simple/ {1}".format(
+                c = "%jenkinspythonpip%" if "jenkinspythonpip" in script else "%pythonpip%"
+                r = c + " install --no-cache-dir --index http://localhost:{0}/simple/ {1}".format(
                     port, r)
                 rows.append(r)
             reqs = "\n".join(rows)
