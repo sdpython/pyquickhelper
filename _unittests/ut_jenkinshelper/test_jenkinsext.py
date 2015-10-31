@@ -46,11 +46,8 @@ class TestJenkinsExt(unittest.TestCase):
                                        git_repo=github +
                                        "%s/" % "pyquickhelper",
                                        upstreams=None,
-                                       location=r"/home/username/jenkins/",
-                                       dependencies={
-                                           "myversion": "/home/username/mymodule/src/", })
+                                       location=r"/home/username/jenkins/")
 
-        assert "MYVERSION=/home/username/mymodule/src/" in conf
         assert "auto_unittest_setup_help.bat" in conf
 
         conf = srv.create_job_template("pyquickhelper",
@@ -58,8 +55,6 @@ class TestJenkinsExt(unittest.TestCase):
                                        "%s/" % "pyquickhelper",
                                        upstreams=None,
                                        location=r"/home/username/jenkins/",
-                                       dependencies={
-                                           "myversion": "/home/username/mymodule/src/", },
                                        scheduler="H H(13-14) * * *")
         assert "H H(13-14) * * *" in conf
 
@@ -69,8 +64,6 @@ class TestJenkinsExt(unittest.TestCase):
                                            "%s/" % "pyquickhelper",
                                            upstreams=["pyquickhelper"],
                                            location=r"/home/username/jenkins/",
-                                           dependencies={
-                                               "myversion": "/home/username/mymodule/src/", },
                                            scheduler="H H(13-14) * * *")
             raise Exception("should not happen")
         except JenkinsExtException:
@@ -81,8 +74,6 @@ class TestJenkinsExt(unittest.TestCase):
                                        "%s/" % "pyquickhelper",
                                        upstreams=["pyquickhelper"],
                                        location=r"/home/username/jenkins/",
-                                       dependencies={
-                                           "myversion": "/home/username/mymodule/src/", },
                                        scheduler=None)
         assert "pyquickhelper" in conf
 
@@ -104,54 +95,62 @@ class TestJenkinsExt(unittest.TestCase):
             "standalone [install] [Anaconda2]",
             # pyquickhelper,
             ("pyquickhelper", "H H(10-11) * * 0"),
-            ("pymyinstall", None, dict(success_only=True)),
-            ["pyquickhelper [Anaconda3]", "pyquickhelper [WinPython]",
-             "pyquickhelper [27] [Anaconda2]", "pyquickhelper [py35]"],
-            ["pyensae", ],
-            ["pymmails", "pysqllike", "pyrsslocal", "pymyinstall [27] [Anaconda2]",
-             "python3_module_template", "pyensae [Anaconda3]", "pyensae [WinPython]"],
-            ["pymmails [Anaconda3]", "pysqllike [Anaconda3]", "pyrsslocal [Anaconda3]",
-             "python3_module_template [Anaconda3]",
-             "python3_module_template [27] [Anaconda2]",
-             "pymyinstall [LONG]"],
+            ("pymyinstall <-- pyquickhelper", None, dict(success_only=True)),
+            ["pyquickhelper [Anaconda3]",
+             "pyquickhelper [WinPython]",
+             "pyquickhelper [27] [Anaconda2]",
+             "pyquickhelper [py35]"],
+            ["pyensae <-- pyquickhelper <---- qgrid"],
+            ["pymmails <-- pyquickhelper",
+             "pysqllike <-- pyquickhelper",
+             "pyrsslocal <-- pyquickhelper, pyensae",
+             "pymyinstall [27] [Anaconda2] <-- pyquickhelper <---- qgrid",
+             "python3_module_template <-- pyquickhelper",
+             "pyensae [Anaconda3] <-- pyquickhelper",
+             "pyensae [WinPython] <-- pyquickhelper"],
+            ["pymmails [Anaconda3] <-- pyquickhelper",
+             "pysqllike [Anaconda3] <-- pyquickhelper",
+             "pyrsslocal [Anaconda3] <-- pyquickhelper, pensae",
+             "python3_module_template [Anaconda3] <-- pyquickhelper",
+             "python3_module_template [27] [Anaconda2] <-- pyquickhelper",
+             "pymyinstall [LONG] <-- pyquickhelper"],
             # update
-            ("pymyinstall [update_modules]", "H H(10-11) * * 5"),
+            ("pymyinstall [update_modules] <-- pyquickhelper",
+             "H H(10-11) * * 5"),
             # actuariat
-            [("actuariat_python", "H H(12-13) * * 0")],
-            ["actuariat_python [WinPython]",
-             "actuariat_python [Anaconda3]"],
+            [("actuariat_python <-- pyquickhelper, pyensae, pymmails, pyrsslocal, pymyinstall", "H H(12-13) * * 0")],
+            ["actuariat_python [WinPython] <-- pyquickhelper, pyensae, pymmails, pyrsslocal, pymyinstall",
+             "actuariat_python [Anaconda3] <-- pyquickhelper, pyensae, pymmails, pyrsslocal, pymyinstall"],
             # code_beatrix
-            ("code_beatrix", "H H(14-15) * * 0"),
-            "code_beatrix [WinPython]",
-            "code_beatrix [Anaconda3]",
+            ("code_beatrix <-- pyquickhelper, pyensae, pymmails, pyrsslocal, pymyinstall",
+             "H H(14-15) * * 0"),
+            "code_beatrix [WinPython] <-- pyquickhelper, pyensae, pymmails, pyrsslocal, pymyinstall",
+            "code_beatrix [Anaconda3] <-- pyquickhelper, pyensae, pymmails, pyrsslocal, pymyinstall",
             # teachings
-            ("ensae_teaching_cs", "H H(15-16) * * 0"),
-            ["ensae_teaching_cs [WinPython]",
-             "ensae_teaching_cs [Anaconda3]"],
-            "ensae_teaching_cs [custom_left]",
-            "ensae_teaching_cs [WinPython] [custom_left]",
-            "ensae_teaching_cs [Anaconda3] [custom_left]",
+            ("ensae_teaching_cs <-- pyquickhelper, pyensae, pymmails, pyrsslocal, pymyinstall",
+             "H H(15-16) * * 0"),
+            ["ensae_teaching_cs [WinPython] <-- pyquickhelper, pyensae, pymmails, pyrsslocal, pymyinstall",
+             "ensae_teaching_cs [Anaconda3] <-- pyquickhelper, pyensae, pymmails, pyrsslocal, pymyinstall"],
+            "ensae_teaching_cs [custom_left] <-- pyquickhelper, pyensae, pymmails, pyrsslocal, pymyinstall",
+            "ensae_teaching_cs [WinPython] [custom_left] <-- pyquickhelper, pyensae, pymmails, pyrsslocal, pymyinstall",
+            "ensae_teaching_cs [Anaconda3] [custom_left] <-- pyquickhelper, pyensae, pymmails, pyrsslocal, pymyinstall",
             # documentation
-            ("pyquickhelper [doc]", "H H(3-4) * * 1"),
-            ["pymyinstall [doc]", "pysqllike [doc]", "pymmails [doc]",
-             "pyrsslocal [doc]", "pyensae [doc]"],
-            ["actuariat_python [doc]", "code_beatrix [doc]"],
-            ("ensae_teachings_cs [doc]", None,
-             dict(pre="rem pre", post="rem post")),
+            ("pyquickhelper [doc] <-- pyquickhelper", "H H(3-4) * * 1"),
+            ["pymyinstall [doc] <-- pyquickhelper",
+             "pysqllike [doc] <-- pyquickhelper",
+             "pymmails [doc] <-- pyquickhelper",
+             "pyrsslocal [doc] <-- pyquickhelper",
+             "pyensae [doc] <-- pyquickhelper"],
+            ["actuariat_python [doc] <-- pyquickhelper, pyensae, pymmails, pyrsslocal, pymyinstall",
+             "code_beatrix [doc] <-- pyquickhelper, pyensae, pymmails, pyrsslocal, pymyinstall"],
+            ("ensae_teachings_cs [doc] <-- pyquickhelper, pyensae, pymmails, pyrsslocal, pymyinstall",
+             None, dict(pre="rem pre", post="rem post")),
             ("custom [any_name]", "H H(3-4) * * 1",
              dict(script="any_script.bat")),
         ]
 
         pythonexe = os.path.dirname(sys.executable)
         location = None
-        dependencies = {'pymyinstall': ['pyquickhelper'],
-                        'pyensae': ['pyquickhelper'],
-                        'python3_module_template': ['pyquickhelper'],
-                        'ensae_teaching_cs': ['pyquickhelper', 'pyensae', 'pyrsslocal', 'pymmails'],
-                        'actuariat_python': ['pyquickhelper', 'pyensae', 'pyrsslocal', 'pymmails'],
-                        'code_beatrix': ['pyquickhelper', 'pyensae', 'pyrsslocal', 'pymmails'],
-                        }
-
         engines = dict(Anaconda2="C:\\Anaconda2",
                        Anaconda3="C:\\Anaconda3",
                        WinPython="C:\\WinPython\\Python",
@@ -166,9 +165,9 @@ class TestJenkinsExt(unittest.TestCase):
             # not yet implemented
             return
 
+        fLOG("---------------------")
         res = srv.setup_jenkins_server(github=github, modules=modules,
                                        overwrite=True,
-                                       dependencies=dependencies,
                                        location="anything/")
         reg = re.compile("<description>(.*)</description>")
         for i, r in enumerate(res):
@@ -184,14 +183,17 @@ class TestJenkinsExt(unittest.TestCase):
             job = r[0]
             fLOG(search.groups()[0], "--", job, "--", r[1])
 
+            if "PYQUICKHELPER27" in conf:
+                raise Exception(conf)
+
             if "__" in conf and "pyquickhelper_vir" not in conf:
                 raise Exception(conf)
             if "notebook" in conf:
                 raise Exception(conf)
 
-            if "pymyinstall" in r[0] and "[" not in r[0]:
+            if "pymyinstall" in r[0].split("<--")[0] and "[" not in r[0]:
                 if "FAILURE" in conf:
-                    raise Exception(conf)
+                    raise Exception("{0}\n----\n{1}".format(r[0], conf))
                 if "SUCCESS" not in conf:
                     raise Exception(conf)
 
@@ -216,11 +218,11 @@ class TestJenkinsExt(unittest.TestCase):
                     raise Exception(conf)
 
             if "python3_module_template [27]" in r[0]:
-                if "PYQUICKHELPER27=" not in conf:
+                if "PYQUICKHELPER27=" in conf:
                     raise Exception(conf)
-                if "PYQUICKHELPER=" not in conf:
+                if "PYQUICKHELPER=" in conf:
                     raise Exception(conf)
-                if "PYQUICKHELPER27=a" not in conf:
+                if "PYQUICKHELPER27=a" in conf:
                     raise Exception(conf)
                 if "dist_module27" not in conf:
                     raise Exception(conf)
@@ -258,6 +260,12 @@ class TestJenkinsExt(unittest.TestCase):
 
             if "[py35]" in job:
                 if "c:\\Python35_x64" not in conf:
+                    raise Exception(conf)
+
+            if "pymyinstall" in job and "[27]" in job:
+                if "%pythonpip% install --no-cache-dir --index http://localhost:8067/simple/ pyquickhelper" not in conf:
+                    raise Exception(conf)
+                if "%pythonpip% install qgrid" not in conf:
                     raise Exception(conf)
 
         assert i > 0

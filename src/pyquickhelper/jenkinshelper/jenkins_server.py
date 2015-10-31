@@ -28,14 +28,23 @@ _default_engine_paths = {
     },
 }
 
-modified_windows_jenkins = private_script_replacements(
-    windows_jenkins, "__MODULE__", None, "__PORT__", raise_exception=False,
-    default_engine_paths=_default_engine_paths)
-modified_windows_jenkins_27 = private_script_replacements(
-    windows_jenkins_27, "__MODULE__", None, "__PORT__", raise_exception=False,
-    default_engine_paths=_default_engine_paths)
-modified_windows_jenkins_any = windows_jenkins_any \
-    .replace("virtual_env_suffix=%2", "virtual_env_suffix=___SUFFIX__")
+
+def _modified_windows_jenkins(requirements_local, requirements_pypi, module="__MODULE__", port="__PORT__"):
+    return private_script_replacements(
+        windows_jenkins, module, (requirements_local,
+                                  requirements_pypi), port, raise_exception=False,
+        default_engine_paths=_default_engine_paths)
+
+
+def _modified_windows_jenkins_27(requirements_local, requirements_pypi, module="__MODULE__", port="__PORT__"):
+    return private_script_replacements(
+        windows_jenkins_27, module, (requirements_local,
+                                     requirements_pypi), port, raise_exception=False,
+        default_engine_paths=_default_engine_paths)
+
+
+def _modified_windows_jenkins_any(requirements_local, requirements_pypi, module="__MODULE__", port="__PORT__"):
+    return windows_jenkins_any.replace("virtual_env_suffix=%2", "virtual_env_suffix=___SUFFIX__")
 
 
 class JenkinsExt(jenkins.Jenkins):
@@ -206,6 +215,8 @@ class JenkinsExt(jenkins.Jenkins):
         @param      job     str
         @return             name
         """
+        if "<--" in job:
+            job = job.split("<--")[0]
         if job.startswith("custom "):
             return job.replace(" ", "_").replace("[", "").replace("]", "")
         else:
@@ -313,6 +324,34 @@ class JenkinsExt(jenkins.Jenkins):
         r = m.hexdigest().upper()
         return r if (l == -1 or len(r) <= l) else r[:l]
 
+    def extract_requirements(self, job):
+        """
+        exrract the requirements for a job
+
+        @param      job     job name
+        @return             3-tuple job, local requirements, pipy requirements
+
+        Example::
+
+            "pyensae <-- pyquickhelper <---- qgrid"
+
+        The function returns::
+
+            (pyensae, ["pyquickhelper"], ["qgrid"])
+        """
+        if "<--" in job:
+            spl = job.split("<--")
+            job = spl[0]
+            rl, rp = None, None
+            for o in spl[1:]:
+                if o.startswith("--"):
+                    rp = [_.strip("- ") for _ in o.split(",")]
+                else:
+                    rl = [_.strip() for _ in o.split(",")]
+            return job, rl, rp
+        else:
+            return job, None, None
+
     def get_jenkins_script(self, job):
         """
         build the jenkins script for a module and its options
@@ -327,6 +366,11 @@ class JenkinsExt(jenkins.Jenkins):
         run in a virtual environment as ``setup.py custom...``.
 
         job can be ``empty``, in that case, this function returns an empty string.
+
+        Requirements local and from pipy can be specified by added in the job name:
+
+        * ``<-- module1, module2`` for local requirements
+        * ``<---- module1, module2`` for local requirements
         """
         def replacements(cmd, engine, python, suffix):
             res = cmd.replace("__ENGINE__", engine) \
@@ -358,9 +402,14 @@ class JenkinsExt(jenkins.Jenkins):
 
             return res
 
+        # job hash
+        job_hash = JenkinsExt.hash_string(job)
+
+        # extact requirements
+        job, requirements_local, requirements_pypi = self.extract_requirements(
+            job)
         spl = job.split()
         module_name = spl[0]
-        job_hash = JenkinsExt.hash_string(job)
 
         if self.platform.startswith("win"):
             # windows
@@ -368,7 +417,8 @@ class JenkinsExt(jenkins.Jenkins):
             python = os.path.join(engine, "python.exe")
 
             if len(spl) == 1:
-                script = modified_windows_jenkins
+                script = _modified_windows_jenkins(
+                    requirements_local, requirements_pypi)
                 if not isinstance(script, list):
                     script = [script]
                 return [replacements(s, engine, python, namee + "_" + job_hash) for s in script]
@@ -395,13 +445,14 @@ class JenkinsExt(jenkins.Jenkins):
                 elif "[update_modules]" in spl:
                     cmd = "__PYTHON__ setup.py build_script\nauto_update_modules.bat __PYTHON__"
                 elif "[LONG]" in spl:
-                    cmd = modified_windows_jenkins_any.replace(
+                    cmd = _modified_windows_jenkins_any(requirements_local, requirements_pypi).replace(
                         "__COMMAND__", "unittests_LONG")
                 elif "[SKIP]" in spl:
-                    cmd = modified_windows_jenkins_any.replace(
+                    cmd = _modified_windows_jenkins_any(requirements_local, requirements_pypi).replace(
                         "__COMMAND__", "unittests_SKIP")
                 elif "[27]" in spl:
-                    cmd = modified_windows_jenkins_27
+                    cmd = _modified_windows_jenkins_27(
+                        requirements_local, requirements_pypi)
                     if not isinstance(cmd, list):
                         cmd = [cmd]
                     else:
@@ -418,7 +469,7 @@ class JenkinsExt(jenkins.Jenkins):
                             cmd[i] = "\n".join(lines)
                 elif "[doc]" in spl:
                     # documentation
-                    cmd = modified_windows_jenkins_any.replace(
+                    cmd = _modified_windows_jenkins_any(requirements_local, requirements_pypi).replace(
                         "__COMMAND__", "build_sphinx")
                 elif "[setup]" in spl:
                     # setup
@@ -427,11 +478,12 @@ class JenkinsExt(jenkins.Jenkins):
                     # setup + [big]
                     cmd = "__PYTHON__ setup.py build_script\nauto_cmd_build_dist.bat __PYTHON__ [big]"
                 else:
-                    cmd = modified_windows_jenkins
+                    cmd = _modified_windows_jenkins(
+                        requirements_local, requirements_pypi)
                     for pl in spl[1:]:
                         if pl.startswith("[custom_") and pl.endswith("]"):
                             cus = pl.strip("[]")
-                            cmd = modified_windows_jenkins_any.replace(
+                            cmd = _modified_windows_jenkins_any(requirements_local, requirements_pypi).replace(
                                 "__COMMAND__", cus)
 
                 # step 2: replacement (python __PYTHON__, virtual environnement
@@ -451,47 +503,6 @@ class JenkinsExt(jenkins.Jenkins):
             # linux
             raise NotImplementedError("On Linux, unable to interpret: " + job)
 
-    @staticmethod
-    def get_dependencies_path(job, locations, dependencies):
-        """
-        return the depeencies to add to the job based on the name and the past locations
-
-        @param      job             job description
-        @param      locations       list of 2-uple ( job description, location )
-        @param      dependencies    None or list of dependencies
-        @return                     dictionary { module, location }
-        """
-        if dependencies is None:
-            return {}
-
-        py27 = "[27]" in job
-
-        res = {}
-        for dep in dependencies:
-            for j, loc in locations:
-
-                if loc is None:
-                    raise JenkinsExtException("location is None for job {0}, dependency {1}".format(job, j) +
-                                              "\nyou need to set up the location if there are dependencies")
-                n = j.split()[0]
-                p27 = "[27]" in j
-
-                if n == dep and p27 == py27:
-                    if not p27:
-                        res[dep] = os.path.join(loc, "src")
-                    else:
-                        res[dep] = os.path.join(loc, "dist_module27", "src")
-                    break
-
-        if len(dependencies) != len(res) and "[-nodep]" not in job:
-            pattern = "lower number of dependencies for job: {3}\nrequested:\n{0}\nFOUND:\n{1}\nLOCATIONS:\n{2}"
-            raise Exception(pattern.format(", ".join(dependencies), "\n".join(
-                "{0} : {1}".format(k, v) for k, v in sorted(res.items())),
-                "\n".join("{0} : {1}".format(k, v) for k, v in locations),
-                job))
-
-        return res
-
     def create_job_template(self,
                             name,
                             git_repo,
@@ -500,33 +511,34 @@ class JenkinsExt(jenkins.Jenkins):
                             script=None,
                             location=None,
                             keep=30,
-                            dependencies=None,
                             scheduler=None,
                             py27=False,
                             description=None,
                             default_engine_paths=None,
                             success_only=False,
-                            update=False
+                            update=False,
+                            additional_requirements=None
                             ):
         """
         add a job to the jenkins server
 
-        @param      name                    name
-        @param      credentials             credentials
-        @param      git_repo                git repository
-        @param      upstreams               the build must run after... (even if failures),
-                                            must be None in that case
-        @param      script                  script to execute or list of scripts
-        @param      keep                    number of buils to keep
-        @param      location                location of the build
-        @param      dependencies            to add environment variable before
-                                            and to set them to empty after the script is done
-        @param      scheduler               add a schedule time (upstreams must be None in that case)
-        @param      py27                    python 2.7 (True) or Python 3 (False)
-        @param      description             add a description to the job
-        @param      default_engine_paths    define the default location for python engine, should be dictionary *{ engine: path }*, see below.
-        @param      success_only            only triggers the job if the previous one was successful
-        @param      update                  update the job instead of creating it
+        @param      name                        name
+        @param      credentials                 credentials
+        @param      git_repo                    git repository
+        @param      upstreams                   the build must run after... (even if failures),
+                                                must be None in that case
+        @param      script                      script to execute or list of scripts
+        @param      keep                        number of buils to keep
+        @param      location                    location of the build
+        @param      scheduler                   add a schedule time (upstreams must be None in that case)
+        @param      py27                        python 2.7 (True) or Python 3 (False)
+        @param      description                 add a description to the job
+        @param      default_engine_paths        define the default location for python engine, should be dictionary *{ engine: path }*, see below.
+        @param      success_only                only triggers the job if the previous one was successful
+        @param      update                      update the job instead of creating it
+        @param      additional_requirements     requirements for this module built by this Jenkins server,
+                                                otherthise, we assume they are available
+                                                on the installed distribution
 
         The job can be modified on Jenkins. To add a time trigger::
 
@@ -551,8 +563,8 @@ class JenkinsExt(jenkins.Jenkins):
                         windows={ver: pat, "__PYTHON__": pat})
 
                 script = private_script_replacements(
-                    windows_jenkins, "____", None, "____", raise_exception=False,
-                    platform=self.platform,
+                    windows_jenkins, "____", additional_requirements, "____",
+                    raise_exception=False, platform=self.platform,
                     default_engine_paths=default_engine_paths)
 
                 hash = JenkinsExt.hash_string(script)
@@ -576,9 +588,6 @@ class JenkinsExt(jenkins.Jenkins):
         else:
             trigger = ""
 
-        if dependencies is None:
-            dependencies = {}
-
         cmd = "set" if self.platform.startswith("win") else "export"
 
         if not isinstance(script, list):
@@ -594,25 +603,6 @@ class JenkinsExt(jenkins.Jenkins):
                 mes = "script still contains __\ndefault_engine_paths: {}\nfound: {}\nscr:\nSCRIPT:\n{}\n".format(
                     default_engine_paths, search.groups()[0], scr, str(script))
                 raise ValueError(mes)
-
-            if len(dependencies) > 0:
-                rows = []
-                end = []
-                for k, v in sorted(dependencies.items()):
-                    if py27:
-                        rows.append("{0} {1}27={2}".format(cmd, k.upper(), v))
-                        rows.append("{0} {1}=".format(cmd, k.upper()))
-                        end.append("{0} {1}27=".format(cmd, k.upper()))
-                    else:
-                        rows.append("{0} {1}={2}".format(cmd, k.upper(), v))
-                        rows.append("{0} {1}27=".format(cmd, k.upper()))
-                        end.append("{0} {1}=".format(cmd, k.upper()))
-                rows.append(scr)
-                rows.extend(end)
-                scr = "\n".join(rows)
-            else:
-                pass
-
             script_mod.append(scr)
 
         # repo
@@ -628,6 +618,8 @@ class JenkinsExt(jenkins.Jenkins):
             "__SCRIPT__", s) for s in script_mod]
 
         # location
+        if "<--" in location:
+            raise Exception("this should not happen")
         location = "" if location is None else "<customWorkspace>%s</customWorkspace>" % location
 
         # replacements
@@ -681,9 +673,7 @@ class JenkinsExt(jenkins.Jenkins):
                              get_jenkins_script=None,
                              overwrite=False,
                              location=None,
-                             no_dep=False,
                              prefix="",
-                             dependencies=None,
                              credentials="",
                              update=True):
         """
@@ -696,9 +686,7 @@ class JenkinsExt(jenkins.Jenkins):
         @param      get_jenkins_script      see @see me get_jenkins_script (default value if this parameter is None)
         @param      overwrite               do not create the job if it already exists
         @param      location                None for default or a local folder
-        @param      no_dep                  if True, do not add dependencies
         @param      prefix                  add a prefix to the name
-        @param      dependencies            some modules depend on others also being tested, this parameter gives the list
         @param      credentials             credentials to use for the job (string or dictionary)
         @param      update                  update job instead of deleting it if the job already exists
         @return                             list of created jobs
@@ -727,12 +715,10 @@ class JenkinsExt(jenkins.Jenkins):
         * `Python <https://wiki.jenkins-ci.org/display/JENKINS/Python+Plugin>`_
         * `Python Wrapper Plugin <https://wiki.jenkins-ci.org/display/JENKINS/Python+Wrapper+Plugin>`_
 
-
         Tag description:
 
         * ``[engine]``: to use this specific engine (Python path)
         * ``[27]``: run with python 2.7
-        * ``[-nodep]``: do not check dependencies
         * ``[LONG]``: run longer unit tests (files start by ``test_LONG``)
         * ``[SKIP]``: run skipped unit tests (files start by ``test_SKIP``)
         * ``[custom.+]``: run ``setup.py <custom.+>`` in a virtual environment
@@ -762,41 +748,115 @@ class JenkinsExt(jenkins.Jenkins):
 
         Example ::
 
-             modules=[  # update anaconda
-                        ("standalone [conda_update]", "H H(8-9) * * 0"),
-                        "standalone [conda_update27]",
-                        "standalone [local_pypi]",
-                        "standalone [install]",
-                        "standalone [update]",
-                        # pyquickhelper and others,
-                       ("pyquickhelper", "H H(10-11) * * 0"),
-                        "pymyinstall",
-                        ["pyquickhelper [anaconda]", "pyquickhelper [winpython]",
-                        "pyquickhelper [27] [anaconda2]"],
-                      ["pyensae", ],
-                      ["pymmails", "pysqllike", "pyrsslocal", "pymyinstall [27] [anaconda2]",
-                       "python3_module_template", "pyensae [anaconda]", "pyensae [winpython]"],
-                      ["pymmails [anaconda]", "pysqllike [anaconda]", "pyrsslocal [anaconda]",
-                       "python3_module_template [anaconda]", "python3_module_template [27] [anaconda2]",
-                       "pymyinstall [LONG]"],
-                      # update modules
-                      ("pymyinstall [update_modules]", "H H(10-11) * * 5"),
-                      # actuariat
-                      [("actuariat_python", "H H(12-13) * * 0")],
-                      ["actuariat_python [winpython]",
-                       "actuariat_python [anaconda]"],
-                      # code_beatrix
-                      ("code_beatrix", "H H(14-15) * * 0"),
-                      ["code_beatrix [winpython]",
-                       "code_beatrix [anaconda]"],
-                      # teachings
-                      ("ensae_teaching_cs", "H H(15-16) * * 0"),
-                      ["ensae_teaching_cs [winpython]",
-                       "ensae_teaching_cs [anaconda]"],
-                      "ensae_teaching_cs [custom_left]",
-                      ["ensae_teaching_cs [winpython] [custom_left]",
-                       "ensae_teaching_cs [anaconda] [custom_left]", ],
-                      ],
+            modules=[  # update anaconda
+                    ("standalone [conda_update] [anaconda3]",
+                     "H H(0-1) * * 0"),
+                    "standalone [conda_update] [anaconda2] [27]",
+                    "standalone [local_pypi]",
+                    #"standalone [install]",
+                    #"standalone [update]",
+                    #"standalone [install] [py35]",
+                    #"standalone [update] [py35]",
+                    #"standalone [install] [winpython]",
+                    #"standalone [update] [winpython]",
+             # pyquickhelper and others,
+             ("pyquickhelper", "H H(2-3) * * 0"),
+             ("pysqllike <-- pyquickhelper", None, dict(success_only=True)),
+             ["python3_module_template <-- pyquickhelper",
+                 "pyquickhelper [27] [anaconda2]"],
+             ["pyquickhelper [winpython]",
+                 "python3_module_template [27] [anaconda2] <-- pyquickhelper", ],
+             ["pymyinstall <-- pyquickhelper", "pyensae <-- pyquickhelper"],
+             ["pymmails <-- pyquickhelper", "pyrsslocal <-- pyquickhelper, pyensae"],
+             ["pymyinstall [27] [anaconda2] <-- pyquickhelper", "pymyinstall [LONG] <-- pyquickhelper"],
+             # update, do not move, it depends on pyquickhelper
+             ("pyquickhelper [anaconda3]", "H H(2-3) * * 1"),
+             ["pyquickhelper [winpython]", "pysqllike [anaconda3]",
+                        "pysqllike [winpython] <-- pyquickhelper", 
+                        "python3_module_template [anaconda3] <-- pyquickhelper",
+                        "python3_module_template [winpython] <-- pyquickhelper", 
+                        "pymmails [anaconda3] <-- pyquickhelper",
+                        "pymmails [winpython] <-- pyquickhelper", 
+                        "pymyinstall [anaconda3] <-- pyquickhelper",
+                        "pymyinstall [winpython] <-- pyquickhelper"],
+             ["pyensae [anaconda3] <-- pyquickhelper", 
+                        "pyensae [winpython] <-- pyquickhelper",
+                        "pyrsslocal [anaconda3] <-- pyquickhelper, pyensae",
+                        "pyrsslocal [winpython] <-- pyquickhelper"],
+             ("pymyinstall [update_modules]",
+                        "H H(0-1) * * 5"),
+             "pymyinstall [update_modules] [winpython]",
+             "pymyinstall [update_modules] [py35]",
+             "pymyinstall [update_modules] [anaconda2]",
+             "pymyinstall [update_modules] [anaconda3]",
+             # py35
+             ("pyquickhelper [py35]", "H H(2-3) * * 2"),
+             ["pysqllike [py35]", 
+                        "pymmails [py35] <-- pyquickhelper",
+                        "python3_module_template [py35] <-- pyquickhelper", 
+                        "pymyinstall [py35] <-- pyquickhelper"],
+             "pyensae [py35] <-- pyquickhelper",
+             "pyrsslocal [py35] <-- pyquickhelper, pyensae",
+             # actuariat
+             ("actuariat_python <-- pyquickhelper, pyensae, pymmails, pyrsslocal, pymyinstall", "H H(4-5) * * 0"),
+             [("actuariat_python [winpython] <-- pyquickhelper, pyensae, pymmails, pyrsslocal, pymyinstall", None, dict(success_only=True)),
+                        "actuariat_python [anaconda3] <-- pyquickhelper, pyensae, pymmails, pyrsslocal, pymyinstall", 
+                        "actuariat_python [py35] <-- pyquickhelper, pyensae, pymmails, pyrsslocal, pymyinstall"],
+             "actuariat_python [LONG] <-- pyquickhelper, pyensae, pymmails, pyrsslocal, pymyinstall",
+             ["actuariat_python [LONG] [winpython] <-- pyquickhelper, pyensae, pymmails, pyrsslocal, pymyinstall",
+                        "actuariat_python [LONG] [anaconda3] <-- pyquickhelper, pyensae, pymmails, pyrsslocal, pymyinstall", 
+                        "actuariat_python [LONG] [py35] <-- pyquickhelper, pyensae, pymmails, pyrsslocal, pymyinstall"],
+             # code_beatrix
+             ("code_beatrix <-- pyquickhelper, pyensae, pymmails, pyrsslocal, pymyinstall", "H H(4-5) * * 0"),
+             ("code_beatrix [winpython] <-- pyquickhelper, pyensae, pymmails, pyrsslocal, pymyinstall",
+                        None, dict(success_only=True)),
+             ["code_beatrix [anaconda3] <-- pyquickhelper, pyensae, pymmails, pyrsslocal, pymyinstall", 
+              "code_beatrix [py35] <-- pyquickhelper, pyensae, pymmails, pyrsslocal, pymyinstall"],
+             # teachings
+             ("ensae_teaching_cs <-- pyquickhelper, pyensae, pymmails, pyrsslocal, pymyinstall", "H H(5-6) * * 0"),   # 1.5h
+             # 1.5h
+             ["ensae_teaching_cs [SKIP] <-- pyquickhelper, pyensae, pymmails, pyrsslocal, pymyinstall",
+                 "ensae_teaching_cs [LONG] <-- pyquickhelper, pyensae, pymmails, pyrsslocal, pymyinstall"],  # 1h ish
+             ["ensae_teaching_cs [winpython] <-- pyquickhelper, pyensae, pymmails, pyrsslocal, pymyinstall",
+                        # 1.5h
+                        "ensae_teaching_cs [anaconda3] <-- pyquickhelper, pyensae, pymmails, pyrsslocal, pymyinstall",
+                        "ensae_teaching_cs [py35] <-- pyquickhelper, pyensae, pymmails, pyrsslocal, pymyinstall"],
+             "ensae_teaching_cs [LONG] [winpython] <-- pyquickhelper, pyensae, pymmails, pyrsslocal, pymyinstall",
+             "ensae_teaching_cs [SKIP] [winpython] <-- pyquickhelper, pyensae, pymmails, pyrsslocal, pymyinstall",
+             "ensae_teaching_cs [LONG] [anaconda3] <-- pyquickhelper, pyensae, pymmails, pyrsslocal, pymyinstall",
+             "ensae_teaching_cs [SKIP] [anaconda3] <-- pyquickhelper, pyensae, pymmails, pyrsslocal, pymyinstall",
+             "ensae_teaching_cs [LONG] [py35] <-- pyquickhelper, pyensae, pymmails, pyrsslocal, pymyinstall",
+             "ensae_teaching_cs [SKIP] [py35] <-- pyquickhelper, pyensae, pymmails, pyrsslocal, pymyinstall",
+             # 3h
+             ("ensae_teaching_cs [custom_left] <-- pyquickhelper, pyensae, pymmails, pyrsslocal, pymyinstall",
+                        "H H(10-11) * * 3"),
+             # 3h
+             "ensae_teaching_cs [winpython] [custom_left] <-- pyquickhelper, pyensae, pymmails, pyrsslocal, pymyinstall",
+             # 3h
+             "ensae_teaching_cs [anaconda3] [custom_left] <-- pyquickhelper, pyensae, pymmails, pyrsslocal, pymyinstall",
+             # 3h
+             "ensae_teaching_cs [py35] [custom_left] <-- pyquickhelper, pyensae, pymmails, pyrsslocal, pymyinstall",
+             # documentation
+             ("pyquickhelper [doc] <-- pyquickhelper", "H H(3-4) * * 1"),
+             ["pymyinstall [doc]", 
+                        "pysqllike [doc] <-- pyquickhelper", 
+                        "pymmails [doc] <-- pyquickhelper",
+                        "pyrsslocal [doc] <-- pyquickhelper", 
+                        "pyensae [doc] <-- pyquickhelper"],
+             ["actuariat_python [doc] <-- pyquickhelper, pyensae, pymmails, pyrsslocal, pymyinstall", 
+              "code_beatrix [doc] <-- pyquickhelper, pyensae, pymmails, pyrsslocal, pymyinstall"],
+             "ensae_teaching_cs [doc] <-- pyquickhelper, pyensae, pymmails, pyrsslocal, pymyinstall",
+             # setup
+             ("pyquickhelper [setup] <-- pyquickhelper", "H H(6-7) * * 1"),
+             ["pymyinstall [setup]", 
+                        "pysqllike [setup] <-- pyquickhelper", 
+                        "pymmails [setup] <-- pyquickhelper",
+                        "pyrsslocal [setup] <-- pyquickhelper, pyensae", 
+                        "pyensae [setup] <-- pyquickhelper"],
+             ["actuariat_python [setup] <-- pyquickhelper, pyensae, pymmails, pyrsslocal, pymyinstall",
+                 "code_beatrix [setup] <-- pyquickhelper, pyensae, pymmails, pyrsslocal, pymyinstall"],
+             "ensae_teaching_cs [setup] <-- pyquickhelper, pyensae, pymmails, pyrsslocal, pymyinstall",
+            ],
 
         Example::
 
@@ -836,14 +896,14 @@ class JenkinsExt(jenkins.Jenkins):
             Parameter *update* was added.
 
         .. versionchanged:: 1.3
-            Parameter *credential* can be a dictionary where the key is
-            the git repository.
+            Parameter *credentials* can be a dictionary where the key is
+            the git repository. Parameter *dependencies* and *no_dep*
+            were removed. Dependencies are now specified
+            in the job name using ``<--`` and they exclusively rely
+            on pipy (local or remote).
         """
         if get_jenkins_script is None:
             get_jenkins_script = JenkinsExt.get_jenkins_script
-
-        if dependencies is None:
-            dependencies = {}
 
         js = self
 
@@ -943,15 +1003,18 @@ class JenkinsExt(jenkins.Jenkins):
                     # if there is a script
                     if script is not None and len(script) > 0:
                         new_dep.append(name)
-                        upstreams = [] if (
-                            no_dep or scheduler is not None) else dep[-1:]
+                        upstreams = [] if (scheduler is not None) else dep[-1:]
                         self.fLOG("[jenkins] create job", jname, " - ", job,
                                   " : ", scheduler, " / ", upstreams)
-                        loc = None if location is None else os.path.join(
-                            location, jname)
 
-                        deps = JenkinsExt.get_dependencies_path(
-                            job, locations, dependencies.get(mod, None))
+                        # set up location
+                        if location is None:
+                            loc = None
+                        else:
+                            if "_" in jname:
+                                loc = os.path.join(location, jname)
+                            else:
+                                loc = os.path.join(location, "_" + jname)
 
                         # add a description to the job
                         description = ["%s%02d%02d" % (dozen, order, unit)]
@@ -982,7 +1045,6 @@ class JenkinsExt(jenkins.Jenkins):
                                                    upstreams=upstreams,
                                                    script=script,
                                                    location=loc,
-                                                   dependencies=deps,
                                                    scheduler=scheduler,
                                                    py27="[27]" in job,
                                                    description=description,

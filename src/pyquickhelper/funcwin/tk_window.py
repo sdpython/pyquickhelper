@@ -25,7 +25,7 @@ def X_is_running():
         # this function can fail on eBook
         # moved as a warning
         warnings.warn(
-            "Unable to detected is X11 is running with command xset -q, we assume it is not.\n{0}".format(e))
+            "Unable to detected if X11 is running with command xset -q, we assume it is not.\n{0}".format(e))
         return False
 
 

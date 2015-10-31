@@ -8,9 +8,6 @@ Some links to look:
 * `Calling pip programmatically <http://blog.ducky.io/python/2013/08/22/calling-pip-programmatically/>`_
 """
 
-from pip import get_installed_distributions
-from pip.commands.show import search_packages_info
-
 
 class PQPipError (Exception):
     """
@@ -35,6 +32,7 @@ def get_packages_list():
     """
     calls ``pip list`` to retrieve the list of packages
     """
+    from pip import get_installed_distributions
     return get_installed_distributions(local_only=True)
 
 
@@ -64,6 +62,7 @@ def get_package_info(name=None, start=0, end=-1):
     @param      end         end at package n, -1 for all
     @return                 dictionary or list of dictionaries
     """
+    from pip.commands.show import search_packages_info
     if name is None:
         res = []
         packs = get_packages_list()

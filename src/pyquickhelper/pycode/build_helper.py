@@ -51,7 +51,7 @@ def private_script_replacements(script, module, requirements, port, raise_except
 
     @param      script                  script or list of scripts
     @param      module                  module name
-    @param      requirements            requirements
+    @param      requirements            requirements - (list or 2-uple of lists)
     @param      port                    port
     @param      raise_exception         raise an exception if there is an error, otherwise, return None
     @param      platform                platform
@@ -70,6 +70,13 @@ def private_script_replacements(script, module, requirements, port, raise_except
             },
         }
 
+    Parameter *requirements* can a list of requirements,
+    we assume these requirements are available from a local PyPi server.
+    There can be extra requirements obtained from PiPy. In that case,
+    those can be specified as a tuple *(requirements_local, requirements_pipy)*.
+
+    .. versionchanged:: 1.3
+        Parameter *requirements* can be a list or a tuple.
     """
     if isinstance(script, list):
         return [private_script_replacements(s, module, requirements,
@@ -95,8 +102,22 @@ def private_script_replacements(script, module, requirements, port, raise_except
 
         # requirements
         if requirements is not None:
+            if isinstance(requirements, list):
+                requirements_pipy = []
+                requirements_local = requirements
+            else:
+                requirements_local, requirements_pipy = requirements
+
+            if requirements_pipy is None:
+                requirements_pipy = []
+            if requirements_local is None:
+                requirements_local = []
+
             rows = []
-            for r in requirements:
+            for r in requirements_pipy:
+                r = "%pythonpip% install {0}".format(r)
+                rows.append(r)
+            for r in requirements_local:
                 r = "%pythonpip% install --no-cache-dir --index http://localhost:{0}/simple/ {1}".format(
                     port, r)
                 rows.append(r)
