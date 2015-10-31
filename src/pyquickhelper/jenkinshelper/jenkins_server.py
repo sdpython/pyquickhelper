@@ -393,6 +393,21 @@ class JenkinsExt(jenkins.Jenkins):
                 res = res.replace("__DEFAULTPYTHON__",
                                   os.path.join(self.engines["default"], "python"))
 
+            # patch for pyquickhelper
+            if "PACTHPQ" in res:
+                if hasattr(self, "PACTHPQ"):
+                    if not hasattr(self, "pyquickhelper"):
+                        raise Exception(
+                            "this should not happen:\n{0}\n---\n{1}".format(job_verbose, res))
+                    repb = "set PYTHONPATH=%s" % self.pyquickhelper.replace(
+                        "\\\\", "\\")
+                    repe = "set PYTHONPATH="
+                else:
+                    repb = ""
+                    repe = ""
+                res = res.replace("__PACTHPQb__", repb).replace(
+                    "__PACTHPQe__", repe)
+
             if "__" in res:
                 raise JenkinsJobException(
                     "unable to interpret command line: {}\nCMD: {}\nRES:\n{}".format(job_verbose, cmd, res))
@@ -908,6 +923,22 @@ class JenkinsExt(jenkins.Jenkins):
             in the job name using ``<--`` and they exclusively rely
             on pipy (local or remote).
         """
+        # we do a patch for pyquickhelper
+        all_jobs = []
+        for jobs in modules:
+            jobs = jobs if isinstance(jobs, list) else [jobs]
+            for job in jobs:
+                if isinstance(job, tuple):
+                    job = job[0]
+                job = job.split("<--")[0]
+                name = self.get_jenkins_job_name(job)
+                all_jobs.append(name)
+        all_jobs = set(all_jobs)
+        if "pyquickhelper" in all_jobs:
+            self.PACTHPQ = True
+            self.pyquickhelper = os.path.join(location, "pyquickhelper", "src")
+
+        # rest of the function
         if get_jenkins_script is None:
             get_jenkins_script = JenkinsExt.get_jenkins_script
 
