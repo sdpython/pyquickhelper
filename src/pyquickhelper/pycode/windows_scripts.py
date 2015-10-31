@@ -525,12 +525,12 @@ windows_jenkins_27 = [
     "set jenkinspythonexe=__DEFAULTPYTHON__\n@echo ~SET jenkinspythonexe=__DEFAULTPYTHON__\n" +
     "\n__PACTHPQb__\n" + \
     jenkins_windows_setup + " build_script\n" +
-    "\n__PACTHPQe__\n" + \
     windows_error +
     "\n@echo ~CALL %jenkinspythonexe% setup.py setup_hook\n%jenkinspythonexe% setup.py setup_hook\n" +
     windows_error +
     "\nauto_setup_copy27.bat %jenkinspythonexe%\n" +
     windows_error,
+    "\n__PACTHPQe__\n" + \
     "set jenkinspythonexe=__PYTHON27__\n@echo ~SET jenkinspythonexe=__PYTHON27__\n" +
     windows_jenkins_unittest27 +
     "\n\n__REQUIREMENTS__\n\n" +
