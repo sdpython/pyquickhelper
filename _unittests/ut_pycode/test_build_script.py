@@ -40,10 +40,6 @@ class TestBuildScript(unittest.TestCase):
             sc = get_build_script("pyquickhelper")
             # fLOG(sc)
             ver = "%d%s" % sys.version_info[:2]
-            if "c:\\Python{0}_x64vir%virtual_env_suffix%\\install".format(ver) not in sc and \
-                    "c:\\Python{0}-x64vir%virtual_env_suffix%\\install".format(ver) not in sc:
-                raise Exception(
-                    "c:\\Python{0}_x64vir%virtual_env_suffix%\\install\nSCRIPT\n{1}".format(ver, sc))
             lines = sc.split("\n")
             for line in lines:
                 if "__" in line and _default_nofolder not in line:
@@ -97,7 +93,8 @@ class TestBuildScript(unittest.TestCase):
                     unit_test_folder=unit_test_folder)
                 assert len(sc) > 0
                 if "__" in sc:
-                    raise Exception(sc)
+                    raise Exception(
+                        sc + "\n\n" + "\n__\n".join(sc.split("__")))
                 if c == "run27":
                     if "nosetest" not in sc:
                         raise Exception(sc)

@@ -154,7 +154,7 @@ set PATH=%pythonexe%\\..;%PATH%
 %pythonexe%\\..\\Scripts\\virtualenv --system-site-packages %virtual_env_py%_vir%virtual_env_suffix%
 @echo ### VIRTUAL ENVIRONMENT CREATED in %virtual_env_py%_vir%virtual_env_suffix%
 
-rem __PATH_VIRTUAL_ENV__ fix_python35_dll
+rem _PATH_VIRTUAL_ENV_ fix_python35_dll
 
 :with_virtual:
 @echo ~LABEL with_virtual
@@ -327,7 +327,7 @@ set PATH=%pythonexe%\\..;%PATH%
 @echo ~CALL %pythonexe%\\..\\Scripts\\virtualenv --system-site-packages %virtual_env_py%_vir%virtual_env_suffix%
 %pythonexe%\\..\\Scripts\\virtualenv --system-site-packages %virtual_env_py%_vir%virtual_env_suffix%
 
-rem __PATH_VIRTUAL_ENV__ fix_python35_dll
+rem _PATH_VIRTUAL_ENV_ fix_python35_dll
 
 :with_virtual:
 @echo ~LABEL  with_virtual
