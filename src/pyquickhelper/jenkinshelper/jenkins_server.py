@@ -936,7 +936,8 @@ class JenkinsExt(jenkins.Jenkins):
         all_jobs = set(all_jobs)
         if "pyquickhelper" in all_jobs:
             self.PACTHPQ = True
-            self.pyquickhelper = os.path.join(location, "_pyquickhelper", "src")
+            self.pyquickhelper = os.path.join(
+                location, "_pyquickhelper", "src")
 
         # rest of the function
         if get_jenkins_script is None:

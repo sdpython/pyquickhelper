@@ -263,9 +263,9 @@ class TestJenkinsExt(unittest.TestCase):
                     raise Exception(conf)
 
             if "pymyinstall" in job and "[27]" in job:
-                if "%pythonpip% install --no-cache-dir --index http://localhost:8067/simple/ pyquickhelper" not in conf:
+                if "%jenkinspythonpip% install --no-cache-dir --index http://localhost:8067/simple/ pyquickhelper" not in conf:
                     raise Exception(conf)
-                if "%pythonpip% install qgrid" not in conf:
+                if "%jenkinspythonpip% install qgrid" not in conf:
                     raise Exception(conf)
 
         assert i > 0
