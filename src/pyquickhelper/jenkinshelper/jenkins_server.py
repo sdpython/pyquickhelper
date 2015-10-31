@@ -44,7 +44,11 @@ def _modified_windows_jenkins_27(requirements_local, requirements_pypi, module="
 
 
 def _modified_windows_jenkins_any(requirements_local, requirements_pypi, module="__MODULE__", port="__PORT__"):
-    return windows_jenkins_any.replace("virtual_env_suffix=%2", "virtual_env_suffix=___SUFFIX__")
+    res = private_script_replacements(
+        windows_jenkins_any, module, (requirements_local,
+                                      requirements_pypi), port, raise_exception=False,
+        default_engine_paths=_default_engine_paths)
+    return res.replace("virtual_env_suffix=%2", "virtual_env_suffix=___SUFFIX__")
 
 
 class JenkinsExt(jenkins.Jenkins):
@@ -218,7 +222,7 @@ class JenkinsExt(jenkins.Jenkins):
         if "<--" in job:
             job = job.split("<--")[0]
         if job.startswith("custom "):
-            return job.replace(" ", "_").replace("[", "").replace("]", "")
+            return job.replace(" ", "_").replace("[", "").replace("]", "").strip("_")
         else:
             def_prefix = ["doc", "setup", "setup_big"]
             def_prefix.extend(self.engines.keys())
@@ -226,7 +230,7 @@ class JenkinsExt(jenkins.Jenkins):
                 p = "[%s]" % prefix
                 if p in job:
                     job = p + " " + job.replace(" " + p, "")
-            return job.replace(" ", "_").replace("[", "").replace("]", "")
+            return job.replace(" ", "_").replace("[", "").replace("]", "").strip("_")
 
     def get_engine_from_job(self, job, return_key=False):
         """
@@ -372,6 +376,8 @@ class JenkinsExt(jenkins.Jenkins):
         * ``<-- module1, module2`` for local requirements
         * ``<---- module1, module2`` for local requirements
         """
+        job_verbose = job
+
         def replacements(cmd, engine, python, suffix):
             res = cmd.replace("__ENGINE__", engine) \
                      .replace("__PYTHON__", python) \
@@ -389,7 +395,7 @@ class JenkinsExt(jenkins.Jenkins):
 
             if "__" in res:
                 raise JenkinsJobException(
-                    "uanble to interpret command line: {}\n{}".format(cmd, res))
+                    "unable to interpret command line: {}\nCMD: {}\nRES:\n{}".format(job_verbose, cmd, res))
 
             # patch to avoid installing pyquickhelper when testing
             # pyquickhelper

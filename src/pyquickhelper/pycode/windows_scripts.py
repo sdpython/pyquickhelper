@@ -466,11 +466,13 @@ set portpy=__PORT__
 #: script for Jenkins
 #################
 windows_jenkins = "set jenkinspythonexe=__PYTHON__\n@echo ~SET jenkinspythonexe=__PYTHON__\n" + \
+    "\n__REQUIREMENTS__\n" + \
     jenkins_windows_setup + " build_script\n" + \
     windows_error + "\nauto_unittest_setup_help.bat %jenkinspythonexe% __SUFFIX__\n" + \
     windows_error
 
 windows_jenkins_any = "set jenkinspythonexe=__PYTHON__\n@echo ~SET jenkinspythonexe=__PYTHON__\n" + \
+    "\n__REQUIREMENTS__\n" + \
     jenkins_windows_setup + " build_script\n" + \
     windows_error + "\nauto_cmd_any_setup_command.bat __COMMAND__ %jenkinspythonexe% __SUFFIX__\n" + \
     windows_error
