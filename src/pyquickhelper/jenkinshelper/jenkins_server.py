@@ -378,7 +378,7 @@ class JenkinsExt(jenkins.Jenkins):
         """
         job_verbose = job
 
-        def replacements(cmd, engine, python, suffix):
+        def replacements(cmd, engine, python, suffix, module_name):
             res = cmd.replace("__ENGINE__", engine) \
                      .replace("__PYTHON__", python) \
                      .replace("__SUFFIX__", suffix + "_" + job_hash)  \
@@ -399,8 +399,11 @@ class JenkinsExt(jenkins.Jenkins):
                     if not hasattr(self, "pyquickhelper"):
                         raise Exception(
                             "this should not happen:\n{0}\n---\n{1}".format(job_verbose, res))
-                    repb = "set PYTHONPATH=%s" % self.pyquickhelper.replace(
-                        "\\\\", "\\")
+                    if "pyquickhelper" in module_name:
+                        repb = "src"
+                    else:
+                        repb = "set PYTHONPATH=%s" % self.pyquickhelper.replace(
+                            "\\\\", "\\")
                     repe = "set PYTHONPATH="
                 else:
                     repb = ""
@@ -442,7 +445,7 @@ class JenkinsExt(jenkins.Jenkins):
                     requirements_local, requirements_pypi)
                 if not isinstance(script, list):
                     script = [script]
-                return [replacements(s, engine, python, namee + "_" + job_hash) for s in script]
+                return [replacements(s, engine, python, namee + "_" + job_hash, module_name) for s in script]
 
             elif len(spl) == 0:
                 raise ValueError("job is empty")
@@ -464,7 +467,7 @@ class JenkinsExt(jenkins.Jenkins):
                 if "[test_local_pypi]" in spl:
                     cmd = "auto_setup_test_local_pypi.bat __PYTHON__"
                 elif "[update_modules]" in spl:
-                    cmd = "__PYTHON__ setup.py build_script\nauto_update_modules.bat __PYTHON__"
+                    cmd = "\n__PACTHPQb__\n__PYTHON__ setup.py build_script\n__PACTHPQe__\n\nauto_update_modules.bat __PYTHON__"
                 elif "[LONG]" in spl:
                     cmd = _modified_windows_jenkins_any(requirements_local, requirements_pypi).replace(
                         "__COMMAND__", "unittests_LONG")
@@ -494,10 +497,13 @@ class JenkinsExt(jenkins.Jenkins):
                         "__COMMAND__", "build_sphinx")
                 elif "[setup]" in spl:
                     # setup
-                    cmd = "__PYTHON__ setup.py build_script\nauto_cmd_build_dist.bat __PYTHON__"
+                    cmd = "\n__PACTHPQb__\n__PYTHON__ setup.py build_script\n__PACTHPQe__\n\nauto_cmd_build_dist.bat __PYTHON__"
                 elif "[setup_big]" in spl:
                     # setup + [big]
-                    cmd = "__PYTHON__ setup.py build_script\nauto_cmd_build_dist.bat __PYTHON__ [big]"
+                    cmd = "\n__PACTHPQb__\n__PYTHON__ setup.py build_script\n__PACTHPQe__\n\nauto_cmd_build_dist.bat __PYTHON__ [big]"
+                elif "[setup_v2]" in spl:
+                    # setup + [v2]
+                    cmd = "\n__PACTHPQb__\n__PYTHON__ setup.py build_script\n__PACTHPQe__\n\nauto_cmd_build_dist.bat __PYTHON__ [v2]"
                 else:
                     cmd = _modified_windows_jenkins(
                         requirements_local, requirements_pypi)
@@ -514,7 +520,7 @@ class JenkinsExt(jenkins.Jenkins):
                 res = []
                 for cmd in cmds:
                     cmd = replacements(cmd, engine, python,
-                                       namee + "_" + job_hash)
+                                       namee + "_" + job_hash, module_name)
                     res.append(cmd)
 
                 return res
