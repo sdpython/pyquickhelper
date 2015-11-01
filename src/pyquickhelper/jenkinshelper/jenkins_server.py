@@ -400,7 +400,7 @@ class JenkinsExt(jenkins.Jenkins):
                         raise Exception(
                             "this should not happen:\n{0}\n---\n{1}".format(job_verbose, res))
                     if "pyquickhelper" in module_name:
-                        repb = "src"
+                        repb = "set PYTHONPATH=src"
                     else:
                         repb = "set PYTHONPATH=%s" % self.pyquickhelper.replace(
                             "\\\\", "\\")
