@@ -75,8 +75,20 @@ def private_script_replacements(script, module, requirements, port, raise_except
     There can be extra requirements obtained from PiPy. In that case,
     those can be specified as a tuple *(requirements_local, requirements_pipy)*.
 
+    With Python 3.5, I get the following error on Windows::
+
+        Using base prefix 'c:\\\\python35_x64'
+        New python executable in c:\\jenkins\\pymy\\py35_pyquickhelper\\_virtualenv\\pyquickhelper_virpy35_22316CE015_22316CE015\\Scripts\\python.exe
+        ERROR: The executable c:\\jenkins\\pymy\\py35_pyquickhelper\\_virtualenv\\pyquickhelper_virpy35_22316CE015_22316CE015\\Scripts\\python.exe is not functioning
+        ERROR: It thinks sys.prefix is 'c:\\\\jenkins\\\\pymy\\\\py35_pyquickhelper' (should be 'c:\\\\jenkins\\\\pymy\\\\py35_pyquickhelper\\\\_virtualenv\\\\pyquickhelper_virpy35_22316ce015_22316ce015')
+        ERROR: virtualenv is not compatible with this system or executable
+        Note: some Windows users have reported this error when they installed Python for "Only this user" or have multiple versions of Python installed. Copying the appropriate PythonXX.dll to the virtualenv Scripts/ directory may fix this problem.
+
+    The function replaces ``rem _PATH_VIRTUAL_ENV_`` with an instruction to copy these DLLs.
+
     .. versionchanged:: 1.3
         Parameter *requirements* can be a list or a tuple.
+        Update for Python 3.5.
     """
     if isinstance(script, list):
         return [private_script_replacements(s, module, requirements,
@@ -130,6 +142,16 @@ def private_script_replacements(script, module, requirements, port, raise_except
         script = script.replace("__REQUIREMENTS__", reqs) \
                        .replace("__PORT__", str(port)) \
                        .replace("__USERNAME__", os.environ["USERNAME"])
+
+        if "rem _PATH_VIRTUAL_ENV_":
+            if sys.version_info[:2] == (3, 5):
+                # see documention about Python 3.5
+                cmd = "copy %pythonexe%\\..\\*.dll %virtual_env_py%_vir%virtual_env_suffix%\\Scripts"
+                script = script.replace("rem _PATH_VIRTUAL_ENV_", cmd)
+            else:
+                script = script.replace(
+                    "rem _PATH_VIRTUAL_ENV_", "rem nothing to do here")
+
         return script
 
     else:

@@ -52,3 +52,12 @@ def fix_python35_dll(path1, path2, force=False):
                     shutil.copy(full, path2)
 
     return copy
+
+
+if __name__ == "__main__":
+    arg = [_ for _ in sys.argv if ".py" not in _]
+    if len(arg) != 2:
+        print("Usage: {0} <path_to_python35> <virtual_env>".format(
+            os.path.split(__file__)[-1]))
+    else:
+        fix_python35_dll(*arg)
