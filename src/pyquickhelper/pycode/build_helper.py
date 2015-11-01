@@ -125,16 +125,35 @@ def private_script_replacements(script, module, requirements, port, raise_except
             if requirements_local is None:
                 requirements_local = []
 
-            cj = "%jenkinspythonpip%" if "jenkinspythonpip" in script else "%pythonpip%"
-            rows = []
-            for r in requirements_pipy:
-                r = cj + " install {0}".format(r)
-                rows.append(r)
-            for r in requirements_local:
-                r = cj + \
-                    " install --no-cache-dir --index http://localhost:{0}/simple/ {1}".format(
-                        port, r)
-                rows.append(r)
+            if sys.version_info[0] == (3, 5):
+                # virtual environment with Python 3.5 has issues, pip.exe is
+                # not always present
+                cj = "%jenkinspythonexe%" if "jenkinspythonexe" in script else "%pythonexe%"
+                patternr = "install {0}"
+                patternl = "install --no-cache-dir --index http://localhost:{0}/simple/ {1}"
+                rows = []
+                for r in requirements_pipy:
+                    r = cj + \
+                        " -u -c \"import pip;pip.main('" + \
+                        patternr.format(r) + "'.split())\""
+                    rows.append(r)
+                for r in requirements_local:
+                    r = cj + \
+                        " -u -c \"import pip;pip.main('" + \
+                        patternl.format(port, r) + "'.split())\""
+                    rows.append(r)
+            else:
+                cj = "%jenkinspythonpip%" if "jenkinspythonpip" in script else "%pythonpip%"
+                patternr = "install {0}"
+                patternl = "install --no-cache-dir --index http://localhost:{0}/simple/ {1}"
+                rows = []
+                for r in requirements_pipy:
+                    r = cj + " " + patternr.format(r)
+                    rows.append(r)
+                for r in requirements_local:
+                    r = cj + " " + patternl.format(port, r)
+                    rows.append(r)
+
             reqs = "\n".join(rows)
         else:
             reqs = ""
