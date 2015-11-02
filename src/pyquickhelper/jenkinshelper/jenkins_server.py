@@ -1070,7 +1070,7 @@ class JenkinsExt(jenkins.Jenkins):
                             gpar = None
                         elif gitrepo is None:
                             raise JenkinsJobException(
-                                "gitrepo cannot be none if standalone is not defined,\njob=" + str(job))
+                                "gitrepo cannot must not be None if standalone or custom is not defined,\njob=" + str(job))
                         elif gitrepo.endswith(".git"):
                             gpar = gitrepo
                         else:
