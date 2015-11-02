@@ -125,7 +125,7 @@ def private_script_replacements(script, module, requirements, port, raise_except
             if requirements_local is None:
                 requirements_local = []
 
-            if sys.version_info[0] == (3, 5):
+            if sys.version_info[:2] == (3, 5):
                 # virtual environment with Python 3.5 has issues, pip.exe is
                 # not always present
                 cj = "%jenkinspythonexe%" if "jenkinspythonexe" in script else "%pythonexe%"
