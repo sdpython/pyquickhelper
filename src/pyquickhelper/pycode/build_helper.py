@@ -165,7 +165,7 @@ def private_script_replacements(script, module, requirements, port, raise_except
         if "rem _PATH_VIRTUAL_ENV_":
             if sys.version_info[:2] == (3, 5):
                 # see documention about Python 3.5
-                cmd = "copy %pythonexe%\\..\\*.dll %virtual_env_py%_vir%virtual_env_suffix%\\Scripts"
+                cmd = "copy /Y %pythonexe%\\..\\*.dll %virtual_env_py%_vir%virtual_env_suffix%\\Scripts"
                 script = script.replace("rem _PATH_VIRTUAL_ENV_", cmd)
             else:
                 script = script.replace(
