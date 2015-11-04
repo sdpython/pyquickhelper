@@ -263,10 +263,18 @@ class TestJenkinsExt(unittest.TestCase):
                     raise Exception(conf)
 
             if "pymyinstall" in job and "[27]" in job:
-                if "%jenkinspythonpip% install --no-cache-dir --index http://localhost:8067/simple/ pyquickhelper" not in conf:
-                    raise Exception(conf)
-                if "%jenkinspythonpip% install qgrid" not in conf:
-                    raise Exception(conf)
+                if sys.version_info[:2] == (3, 5):
+                    s1 = '''%jenkinspythonexe% -u -c "import pip;pip.main('install --no-cache-dir --index http://localhost:8067/simple/ pyquickhelper'.split())"'''
+                    s2 = '''%jenkinspythonexe% -u -c "import pip;pip.main('install qgrid'.split())"'''
+                    if s1 not in conf:
+                        raise Exception(conf)
+                    if s2 not in conf:
+                        raise Exception(conf)
+                else:
+                    if "%jenkinspythonpip% install --no-cache-dir --index http://localhost:8067/simple/ pyquickhelper" not in conf:
+                        raise Exception(conf)
+                    if "%jenkinspythonpip% install qgrid" not in conf:
+                        raise Exception(conf)
 
         assert i > 0
 
