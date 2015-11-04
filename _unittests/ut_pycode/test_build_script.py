@@ -43,7 +43,8 @@ class TestBuildScript(unittest.TestCase):
             lines = sc.split("\n")
             for line in lines:
                 if "__" in line and _default_nofolder not in line:
-                    raise Exception("issue with __ in:\n" + line)
+                    raise Exception("issue with __ in:\n" +
+                                    line + "\nFULL\n" + sc)
 
             scc = get_script_command(
                 "unittest", "pyquickhelper", requirements=[])

@@ -23,18 +23,16 @@ windows_prefix = """
 if "%1"=="" goto default_value_python:
 if "%1"=="default" goto default_value_python:
 set pythonexe=%1
-@echo ~SET pythonexe=%1
 goto start_script:
-@echo ~LABEL start_script
 
 :default_value_python:
-@echo ~LABEL default_value_python
 set pythonexe=__PY??_X64__\\python
-@echo ~SET pythonexe=__PY??_X64__\\python
+
+@echo ~SET pythonexe=%pythonexe%
 
 :start_script:
-@echo ~LABEL start_script
 set current=%~dp0
+@echo ~SET current=%current%
 """.replace("PY??", _sversion())
 
 #################
@@ -45,14 +43,12 @@ windows_prefix_27 = """
 if "%1"=="" goto default_value_python:
 if "%1"=="default" goto default_value_python:
 set pythonexe27=%1
-@echo ~SET pythonexe27=%1
 goto start_script:
 
 :default_value_python:
-@echo ~LABEL default_value_python
 set pythonexe27=__PY27_X64__\\python
 :start_script:
-@echo ~LABEL start_script
+@echo ~SET pythonexe27=%pythonexe27%
 """
 
 #################
@@ -75,66 +71,40 @@ __LOOP_UNITTEST_FOLDERS__
 
 """ + windows_error + "\ncd ..\.."
 
-#################
-#: call the setup
-#################
-windows_setup = "rem set PYTHONPATH=additional_path\n%pythonexe% -u setup.py"
-jenkins_windows_setup = "%jenkinspythonexe% -u setup.py"
-
-#################
-#: build setup script for Windows
-#################
-
-windows_build_setup = """
+####################################################
+#: build any script for Windows from a virtual environment
+####################################################
+windows_any_setup_command_base = """
 @echo off
-if "%1"=="" goto default_value:
-if "%1"=="default" goto default_value:
-set pythonexe=%1
-@echo ~SET pythonexe=%1
-goto custom_python:
-
-:default_value:
-@echo ~LABEL default_value
-set pythonexe=__PY??_X64__\\python
-
-:custom_python:
-@echo ~LABEL custom_python
-if %errorlevel% neq 0 exit /b %errorlevel%
-set PYTHONPATH=%PYTHONPATH%;%current%\\src__ADDITIONAL_LOCAL_PATH__
-@echo ~SET PYTHONPATH=%PYTHONPATH%;%current%\\src__ADDITIONAL_LOCAL_PATH__
-@echo ~CALL %pythonexe% setup.py setup_hook
-%pythonexe% setup.py setup_hook
-if %errorlevel% neq 0 exit /b %errorlevel%
-@echo ~CALL %pythonexe% setup.py sdist %2 --formats=gztar,zip --verbose
-%pythonexe% setup.py sdist %2 --formats=gztar,zip --verbose
-if %errorlevel% neq 0 exit /b %errorlevel%
-@echo ~CALL %pythonexe% setup.py bdist_wheel %2
-%pythonexe% setup.py bdist_wheel %2
-if %errorlevel% neq 0 exit /b %errorlevel%
-""".replace("PY??", _sversion())
-
-#################
-#: build script for Windows
-#################
-windows_build = """
-@echo off
-IF EXIST dist del /Q dist\\*.*
-
-set virtual_env_suffix=%2
+if "%1"=="" @echo usage: SCRIPT [pythonpath] [suffix] [command] [...]
 set CURRENT_THIS=%~dp0
+@echo ~SET CURRENT_THIS=%CURRENT_THIS%
+
+IF EXIST dist del /Q dist\\*.*
+IF EXIST build del /Q build\\*.*
+
+if "%2"=="" goto default_value_suffix:
+if "%2"=="default" goto default_value_suffix:
+set virtual_env_suffix=%2
+goto default_value_suffix_next:
+:default_value_suffix:
+set virtual_env_suffix=_anyenv
+:default_value_suffix_next:
+@echo ~SET set virtual_env_suffix=%virtual_env_suffix%
 
 if "%1"=="" goto default_value:
 if "%1"=="default" goto default_value:
-set pythonexe=%1
-@echo ~SET pythonexe=%1
-
+set pythonexe=%2
+goto default_value_next:
 :default_value:
-@echo ~LABEL default_value_python
 set pythonexe=__PY??_X64__\\python
-@echo ~SET pythonexe=__PY??_X64__\\python
+:default_value_next:
+@echo ~SET pythonexe=%pythonexe%
+@echo ~CALL %pythonexe% setup.py write_version
+%pythonexe% setup.py write_version
+@echo ~VERSION
+more version.txt
 
-:custom_python:
-@echo ~LABEL custom_python
 echo ###----################################################5
 SET ROOT_VIRTUAL_ENV=%CURRENT_THIS%_virtualenv
 if not exist %ROOT_VIRTUAL_ENV% mkdir %ROOT_VIRTUAL_ENV%
@@ -184,7 +154,6 @@ set pythonpip=%virtual_env_py%_condavir%virtual_env_suffix%\\Scripts\\pip
 @echo ~SET pythonpip=%virtual_env_py%_condavir%virtual_env_suffix%\\Scripts\\pip
 
 :requirements:
-@echo ~LABEL requirements
 @echo #######################################################_auto_setup_dep.py
 cd build\\auto_setup
 set pythonexe_rel=..\\..\\%pythonexe%.exe
@@ -199,6 +168,7 @@ set pythonexe_rel=%pythonexe%
 %pythonexe_rel% auto_setup_dep.py install
 if %errorlevel% neq 0 exit /b %errorlevel%
 cd ..\\..
+@echo #######################################################_auto_setup_dep.py END
 
 @echo #######################################################_requirements_begin
 @echo ~SET %pythonpip%
@@ -208,10 +178,60 @@ if %errorlevel% neq 0 exit /b %errorlevel%
 
 @echo ~CALL %pythonexe% setup.py write_version
 %pythonexe% setup.py write_version
-@echo #######################################################_clean
-@echo ~CALL %pythonexe% -u setup.py clean_space
-%pythonexe% -u setup.py clean_space
+
+@echo #######################################################_PATH
+set PYTHONPATH=%PYTHONPATH%;%current%\\src__ADDITIONAL_LOCAL_PATH__
+@echo ~SET PYTHONPATH=%PYTHONPATH%;%current%\\src__ADDITIONAL_LOCAL_PATH__
+""".replace("PY??", _sversion())
+
+
+#################
+#: setup_hook for Windows
+#################
+
+windows_setup_hook = """
+@echo #######################################################_setup_hook
+@echo ~CALL %pythonexe% setup.py setup_hook
+%pythonexe% setup.py setup_hook
 if %errorlevel% neq 0 exit /b %errorlevel%
+@echo #######################################################_END_BASE
+"""
+
+#################
+#: build script for Windows
+#################
+
+windows_any_setup_command = windows_any_setup_command_base + windows_setup_hook + """
+@echo ~CALL %pythonexe% -u setup.py %3 %4 %5 %6 %7 %8 %9
+rem set PYTHONPATH=additional_path
+%pythonexe% -u setup.py %script_command%
+if %errorlevel% neq 0 exit /b %errorlevel%
+@echo #######################################################6
+"""
+
+#################
+#: call the setup
+#################
+windows_setup = "rem set PYTHONPATH=additional_path\n%pythonexe% -u setup.py"
+jenkins_windows_setup = "%jenkinspythonexe% -u setup.py"
+
+#################
+#: build setup script for Windows
+#################
+
+windows_build_setup = windows_any_setup_command_base + """
+@echo ~CALL %pythonexe% setup.py sdist %2 --formats=gztar,zip --verbose
+%pythonexe% setup.py sdist %2 --formats=gztar,zip --verbose
+if %errorlevel% neq 0 exit /b %errorlevel%
+@echo ~CALL %pythonexe% setup.py bdist_wheel %2
+%pythonexe% setup.py bdist_wheel %2
+if %errorlevel% neq 0 exit /b %errorlevel%
+"""
+
+#################
+#: build script MAIN SCRIPT
+#################
+windows_build = windows_any_setup_command_base + """
 @echo #######################################################_unit
 @echo ~CALL %pythonexe% -u setup.py unittests
 rem set PYTHONPATH=additional_path --> we use a virtual environment here
@@ -265,6 +285,10 @@ if not exist ..\\..\\local_pypi\\local_pypi_server mkdir ..\\..\\local_pypi\\loc
 copy /Y dist\\*.whl ..\\..\\local_pypi\\local_pypi_server
 """.replace("PY??", _sversion())
 
+#################
+#: build script for Windows BASE + virtual environment
+#################
+
 copy_sphinx_to_dist = """
 if not exist dist\\html mkdir dist\\html
 @echo ~CALL xcopy /E /C /I /Y _doc\\sphinxdoc\\build\\html dist\\html
@@ -278,122 +302,6 @@ if exist _doc\\sphinxdoc\\build\\htmlhelp copy _doc\\sphinxdoc\\build\\htmlhelp\
 if exist _doc\\sphinxdoc\\build\\latex xcopy /E /C /I /Y _doc\\sphinxdoc\\build\\latex\\*.pdf dist\\html
 if %errorlevel% neq 0 exit /b %errorlevel%
 """
-
-####################################################
-#: build any script for Windows from a virtual environment
-####################################################
-windows_any_setup_command = """
-@echo off
-if "%1"=="" @echo usage: SCRIPT command [pythonpath] [suffix]
-set CURRENT_THIS=%~dp0
-
-IF EXIST dist del /Q dist\\*.*
-
-set script_command=%1
-@echo ~SET script_command=%1
-set virtual_env_suffix=%3
-@echo ~SET set virtual_env_suffix=%3
-
-if "%2"=="" goto default_value:
-if "%2"=="default" goto default_value:
-set pythonexe=%2
-@echo ~SET pythonexe=%2
-@echo ~CALL %pythonexe% setup.py write_version
-%pythonexe% setup.py write_version
-@echo ~VERSION
-more version.txt
-goto custom_python:
-
-:default_value:
-@echo ~LABEL default_value
-set pythonexe=__PY??_X64__\\python
-@echo ~SET pythonexe=__PY??_X64__\\python
-
-:custom_python:
-@echo ~LABEL custom_python
-echo ###----################################################5
-SET ROOT_VIRTUAL_ENV=%CURRENT_THIS%_virtualenv
-if not exist %ROOT_VIRTUAL_ENV% mkdir %ROOT_VIRTUAL_ENV%
-set virtual_env_py=%ROOT_VIRTUAL_ENV%\\__MODULE__
-@echo ~SET virtual_env_py=%ROOT_VIRTUAL_ENV%\\__MODULE__
-if not exist %pythonexe%\\..\\Scripts\\virtualenv.exe goto conda_virtual_env:
-
-if exist %virtual_env_py%_vir%virtual_env_suffix% rmdir /Q /S %virtual_env_py%_vir%virtual_env_suffix%
-mkdir %virtual_env_py%_vir%virtual_env_suffix%
-
-if exist %virtual_env_py%_vir%virtual_env_suffix%\\python goto with_virtual:
-set KEEPPATH=%PATH%
-@echo ~SET KEEPPATH=%PATH%
-set PATH=%pythonexe%\\..;%PATH%
-@echo ~SET PATH=%pythonexe%\\..;%PATH%
-@echo ~CALL %pythonexe%\\..\\Scripts\\virtualenv --system-site-packages %virtual_env_py%_vir%virtual_env_suffix%
-%pythonexe%\\..\\Scripts\\virtualenv --system-site-packages %virtual_env_py%_vir%virtual_env_suffix%
-
-@echo on
-rem _PATH_VIRTUAL_ENV_
-@echo off
-
-:with_virtual:
-@echo ~LABEL  with_virtual
-set pythonexe=%virtual_env_py%_vir%virtual_env_suffix%\\Scripts\\python
-@echo ~SET pythonexe=%virtual_env_py%_vir%virtual_env_suffix%\\Scripts\\python
-set pythonpip=%virtual_env_py%_vir%virtual_env_suffix%\\Scripts\\pip
-@echo ~SET pythonpip=%virtual_env_py%_vir%virtual_env_suffix%\\Scripts\\pip
-goto requirements:
-
-:conda_virtual_env:
-@echo ~LABEL conda_virtual_env
-if exist %virtual_env_py%_condavir%virtual_env_suffix% rmdir /Q /S %virtual_env_py%_condavir%virtual_env_suffix%
-if exist %virtual_env_py%_condavir%virtual_env_suffix%\\python goto with_virtual_conda:
-@echo ~CALL %pythonexe%\\..\\Scripts\\conda create -p %virtual_env_py%_condavir%virtual_env_suffix% --clone %pythonexe%\\.. --offline
-%pythonexe%\\..\\Scripts\\conda create -p %virtual_env_py%_condavir%virtual_env_suffix% --clone %pythonexe%\\.. --offline
-if %errorlevel% neq 0 exit /b %errorlevel%
-
-:with_virtual_conda:
-@echo ~LABEL with_virtual_conda
-set pythonexe=%virtual_env_py%_condavir%virtual_env_suffix%\\python
-@echo ~SET pythonexe=%virtual_env_py%_condavir%virtual_env_suffix%\\python
-set pythonpip=%virtual_env_py%_condavir%virtual_env_suffix%\\Scripts\\pip
-@echo ~SET pythonpip=%virtual_env_py%_condavir%virtual_env_suffix%\\Scripts\\pip
-
-:requirements:
-@echo #######################################################_auto_setup_dep.py
-cd build\\auto_setup
-set pythonexe_rel=..\\..\\%pythonexe%.exe
-if exist %pythonexe_rel% goto auto_setup_relpath:
-set pythonexe_rel=%pythonexe%
-:auto_setup_relpath:
-%pythonexe_rel% auto_setup_dep.py install
-if %errorlevel% neq 0 exit /b %errorlevel%
-cd ..\\..
-
-@echo #######################################################_requirements_begin
-@echo ~SET %pythonpip%
-__REQUIREMENTS__
-if %errorlevel% neq 0 exit /b %errorlevel%
-@echo #######################################################_requirements_end
-
-@echo ~CALL %pythonexe% setup.py write_version
-%pythonexe% setup.py write_version
-@echo ~VERSION
-more version.txt
-@echo #######################################################_clean
-@echo ~CALL %pythonexe% -u setup.py clean_space
-%pythonexe% -u setup.py clean_space
-if %errorlevel% neq 0 exit /b %errorlevel%
-@echo #######################################################_setup_hook
-@echo ~CALL %pythonexe% -u setup.py setup_hook
-rem set PYTHONPATH=additional_path --> we assume it is run from a virtual environment
-%pythonexe% -u setup.py setup_hook
-if %errorlevel% neq 0 exit /b %errorlevel%
-@echo #######################################################_unit
-@echo ~CALL %pythonexe% -u setup.py %script_command%
-rem set PYTHONPATH=additional_path
-%pythonexe% -u setup.py %script_command%
-if %errorlevel% neq 0 exit /b %errorlevel%
-@echo #######################################################6
-
-""".replace("PY??", _sversion())
 
 #################
 #: notebooks
@@ -447,8 +355,6 @@ windows_pypi = """
 set pythonexe=__PY??_X64__
 @echo ~SET pythonexe=__PY??_X64__
 
-:custom_python:
-@echo ~LABEL custom_python
 if "%2"=="" goto default_port:
 if "%2"=="default" goto default_port:
 set portpy=%2

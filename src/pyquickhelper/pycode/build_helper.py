@@ -45,7 +45,7 @@ default_values = {
 
 
 def private_script_replacements(script, module, requirements, port, raise_exception=True, platform=sys.platform,
-                                default_engine_paths=None):
+                                default_engine_paths=None, additional_local_path=None):
     """
     run last replacements
 
@@ -56,6 +56,7 @@ def private_script_replacements(script, module, requirements, port, raise_except
     @param      raise_exception         raise an exception if there is an error, otherwise, return None
     @param      platform                platform
     @param      default_engine_paths    define the default location for python engine, should be dictionary *{ engine: path }*, see below.
+    @param      additional_local_path   additional local path to add to PYTHONPATH
     @return                             modified script
 
     An example for *default_engine_paths*::
@@ -88,6 +89,7 @@ def private_script_replacements(script, module, requirements, port, raise_except
 
     .. versionchanged:: 1.3
         Parameter *requirements* can be a list or a tuple.
+        Parameter *additional_local_path* was added.
         Update for Python 3.5.
     """
     if isinstance(script, list):
@@ -162,6 +164,27 @@ def private_script_replacements(script, module, requirements, port, raise_except
                        .replace("__PORT__", str(port)) \
                        .replace("__USERNAME__", os.environ["USERNAME"])
 
+        if "__ADDITIONAL_LOCAL_PATH__" in script:
+            def choice(s):
+                if "/" in s or "\\" in s:
+                    return s
+                else:
+                    return os.path.join("%current%", "..", s, "src")
+
+            paths = []
+            if additional_local_path is not None and len(additional_local_path) > 0:
+                paths.extend(additional_local_path)
+            if len(paths) > 0:
+                unique_paths = []
+                for p in paths:
+                    if p not in unique_paths:
+                        unique_paths.append(p)
+                rows = [choice(_) for _ in unique_paths]
+                rep = ";" + ";".join(rows)
+                script = script.replace("__ADDITIONAL_LOCAL_PATH__", rep)
+            else:
+                script = script.replace("__ADDITIONAL_LOCAL_PATH__", "")
+
         if "rem _PATH_VIRTUAL_ENV_":
             if sys.version_info[:2] == (3, 5):
                 # see documention about Python 3.5
@@ -181,7 +204,8 @@ def private_script_replacements(script, module, requirements, port, raise_except
             return None
 
 
-def get_build_script(module, requirements=None, port=8067, default_engine_paths=None):
+def get_build_script(module, requirements=None, port=8067, default_engine_paths=None,
+                     additional_local_path=None):
     """
     builds the build script which builds the setup, run the unit tests
     and the documentation
@@ -190,12 +214,17 @@ def get_build_script(module, requirements=None, port=8067, default_engine_paths=
     @param      requirements            list of dependencies (not in your python distribution)
     @param      port                    port for the local pypi_server which gives the dependencies
     @param      default_engine_paths    define the default location for python engine, should be dictionary *{ engine: path }*, see below.
+    @param      additional_local_path   additional paths to add to PYTHONPATH
     @return                             scripts
+
+    .. versionchanged:: 1.3
+        Parameter *additional_local_path* was added.
     """
     if requirements is None:
         requirements = []
     return private_script_replacements(windows_build, module, requirements, port,
-                                       default_engine_paths=default_engine_paths)
+                                       default_engine_paths=default_engine_paths,
+                                       additional_local_path=additional_local_path)
 
 
 def get_script_command(command, module, requirements, port=8067, platform=sys.platform,
@@ -237,7 +266,8 @@ def get_script_command(command, module, requirements, port=8067, platform=sys.pl
     rows.append(windows_error)
     sc = "\n".join(rows)
     res = private_script_replacements(
-        sc, module, requirements, port, default_engine_paths=default_engine_paths)
+        sc, module, requirements, port, default_engine_paths=default_engine_paths,
+        additional_local_path=additional_local_path)
     if command == "copy27" and sys.platform.startswith("win"):
         res = """
             if exist dist_module27 (
