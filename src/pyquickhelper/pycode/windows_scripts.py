@@ -94,7 +94,7 @@ set virtual_env_suffix=_anyenv
 
 if "%1"=="" goto default_value:
 if "%1"=="default" goto default_value:
-set pythonexe=%2
+set pythonexe=%1
 goto default_value_next:
 :default_value:
 set pythonexe=__PY??_X64__\\python
