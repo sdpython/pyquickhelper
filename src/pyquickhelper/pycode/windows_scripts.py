@@ -386,7 +386,7 @@ windows_jenkins_any = "set jenkinspythonexe=__PYTHON__\n@echo ~SET jenkinspython
     "\n__PACTHPQb__\n" + \
     jenkins_windows_setup + " build_script\n" + \
     "\n__PACTHPQe__\n" + \
-    windows_error + "\nauto_cmd_any_setup_command.bat __COMMAND__ %jenkinspythonexe% __SUFFIX__\n" + \
+    windows_error + "\nauto_cmd_any_setup_command.bat %jenkinspythonexe% __SUFFIX__ __COMMAND__\n" + \
     windows_error
 
 ####################
