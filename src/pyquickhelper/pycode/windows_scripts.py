@@ -99,11 +99,6 @@ goto default_value_next:
 :default_value:
 set pythonexe=__PY??_X64__\\python
 :default_value_next:
-@echo ~SET pythonexe=%pythonexe%
-@echo ~CALL %pythonexe% setup.py write_version
-%pythonexe% setup.py write_version
-@echo ~VERSION
-more version.txt
 
 echo ###----################################################5
 SET ROOT_VIRTUAL_ENV=%CURRENT_THIS%_virtualenv
@@ -176,8 +171,14 @@ __REQUIREMENTS__
 if %errorlevel% neq 0 exit /b %errorlevel%
 @echo #######################################################_requirements_end
 
+@echo ~SET pythonexe=%pythonexe%
 @echo ~CALL %pythonexe% setup.py write_version
 %pythonexe% setup.py write_version
+if %errorlevel% neq 0 exit /b %errorlevel%
+@echo ################# VERSION
+more version.txt
+if %errorlevel% neq 0 exit /b %errorlevel%
+@echo ################# VERSION
 
 @echo #######################################################_PATH
 set PYTHONPATH=%PYTHONPATH%;%current%\\src__ADDITIONAL_LOCAL_PATH__
