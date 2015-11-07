@@ -23,6 +23,7 @@ TITLES = {
            "license": "License",
            "changes": "Changes",
            "FAQ": "FAQ",
+           "Magic commands": "Magic commands",
            "In": "In",
            "Out": "Out",
            },
@@ -44,6 +45,7 @@ TITLES = {
            "license": "Licence",
            "changes": "Changements",
            "FAQ": "FAQ",
+           "Magic commands": "Commandes magiques",
            "In": "Code",
            "Out": "Sortie",
            }

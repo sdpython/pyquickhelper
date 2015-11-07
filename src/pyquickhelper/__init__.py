@@ -113,3 +113,13 @@ from .pycode.setup_helper import write_module_scripts
 # from .ipythonhelper.html_forms import open_html_form
 # from .ipythonhelper.magic_parser import MagicCommandParser
 # from .ipythonhelper.magic_class import MagicClassWithHelpers
+
+
+def load_ipython_extension(ip):
+    """
+    to allow the call ``%load_ext pyquickhelper``
+
+    @param      ip      from ``get_ipython()``
+    """
+    from .ipythonhelper.magic_class_example import register_file_magics
+    register_file_magics(ip)

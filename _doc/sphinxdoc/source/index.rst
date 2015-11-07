@@ -60,6 +60,7 @@ Quick start
     
     all_example
     all_notebooks
+    all_NB
     
 
 Functionalities
@@ -139,7 +140,7 @@ Navigation
 +----------------------+---------------------+---------------------+--------------------+------------------------+------------------------------------------------+
 | :ref:`modindex`      |  :ref:`l-example`   | :ref:`search`       | :ref:`l-license`   | :ref:`l-changes`       | :ref:`l-README`                                |
 +----------------------+---------------------+---------------------+--------------------+------------------------+------------------------------------------------+
-| :ref:`genindex`      |  :ref:`l-FAQ`       | :ref:`l-notebooks`  |                    | :ref:`l-statcode`      | `Unit Test Coverage <coverage/index.html>`_    |
+| :ref:`genindex`      |  :ref:`l-FAQ`       | :ref:`l-notebooks`  | :ref:`l-NB`        | :ref:`l-statcode`      | `Unit Test Coverage <coverage/index.html>`_    |
 +----------------------+---------------------+---------------------+--------------------+------------------------+------------------------------------------------+
 
 

@@ -1113,7 +1113,8 @@ def prepare_file_for_sphinx_help_generation(
     # look for FAQ and example
     app = []
     for tag, title in [("FAQ", "FAQ"),
-                       ("example", "Examples")]:
+                       ("example", "Examples"),
+                       ("NB", "Magic commands"), ]:
         onefiles = process_look_for_tag(tag, title, rsts)
         for page, onefile in onefiles:
             saveas = os.path.join(output, "all_%s%s.rst" %
@@ -1399,6 +1400,7 @@ def private_migrating_doxygen_doc(
     exce = re.compile("([@]exception( +)([a-zA-Z0-9_]+)) ")
     exem = re.compile("([@]example[(](.*?___)?(.*?)[)])")
     faq_ = re.compile("([@]FAQ[(](.*?___)?(.*?)[)])")
+    nb_ = re.compile("([@]NB[(](.*?___)?(.*?)[)])")
 
     indent = False
     openi = False
@@ -1425,7 +1427,7 @@ def private_migrating_doxygen_doc(
 
         strow = row.strip(" ")
 
-        if "@endFAQ" in strow or "@endexample" in strow:
+        if "@endFAQ" in strow or "@endexample" in strow or "@endNB" in strow:
             if "@endFAQ" in strow:
                 beginends["FAQ"] = beginends.get("FAQ", 0) - 1
                 sp = " " * row.index("@endFAQ")
@@ -1434,6 +1436,10 @@ def private_migrating_doxygen_doc(
                 beginends["example"] = beginends.get("example", 0) - 1
                 sp = " " * row.index("@endexample")
                 rows[i] = sp + ".. endexample."
+            if "@endNB" in strow:
+                beginends["NB"] = beginends.get("NB", 0) - 1
+                sp = " " * row.index("@endNB")
+                rows[i] = sp + ".. endNB."
             continue
 
         if indent:
@@ -1512,6 +1518,7 @@ def private_migrating_doxygen_doc(
             lexxce = exce.search(row)
             example = exem.search(row)
             faq = faq_.search(row)
+            nbreg = nb_.search(row)
 
             if look:
                 rep = look.groups()[0]
@@ -1583,6 +1590,28 @@ def private_migrating_doxygen_doc(
                     rows[i] = "\n" + rows[i]
                 beginends["FAQ"] = beginends.get("FAQ", 0) + 1
 
+            elif nbreg:
+                sp = " " * row.index("@NB")
+                rep = nbreg.groups()[0]
+                exa = nbreg.groups()[2].replace("[|", "(").replace("|]", ")")
+                pag = nbreg.groups()[1]
+                if pag is None:
+                    pag = ""
+                fil = os.path.splitext(os.path.split(filename)[-1])[0]
+                fil = re.sub(r'([^a-zA-Z0-9_])', "", fil)
+                ref = fil + "-l%d" % (i + index_first_line)
+                ref2 = make_label_index(exa, typstr(nbreg.groups()))
+                to = "\n\n%s.. _le-%s:\n\n%s.. _le-%s:\n\n%s**NB: %s**  \n\n%s.. NB(%s%s;;le-%s)." % (
+                    sp, ref, sp, ref2, sp, exa, sp, pag, exa, ref)
+                rows[i] = row.replace(rep, to)
+
+                # it requires an empty line before if the previous line does
+                # not start by :
+                if i > 0 and not rows[
+                        i - 1].strip().startswith(":") and len(rows[i - 1].strip()) > 0:
+                    rows[i] = "\n" + rows[i]
+                beginends["NB"] = beginends.get("NB", 0) + 1
+
             elif "@return" in row:
                 rows[i] = row.replace("@return", ":return:")
                 # it requires an empty line before if the previous line does
@@ -1628,7 +1657,7 @@ def private_migrating_doxygen_doc(
             if "@param" in row or "@return" in row or "@see" in row or "@warning" in row \
                     or "@todo" in row or "@code" in row or "@endcode" in row or "@brief" in row or "@file" in row \
                     or "@rtype" in row or "@exception" in row \
-                    or "@example" in row or "@FAQ" in row or "@endFAQ" in row or "@endexample" in row:
+                    or "@example" in row or "@NB" in row or "@endNB" in row or "@endexample" in row:
                 if not silent:
                     fLOG("#########################")
                     private_migrating_doxygen_doc(
