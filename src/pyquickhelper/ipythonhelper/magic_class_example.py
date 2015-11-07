@@ -8,21 +8,31 @@
 """
 from __future__ import print_function
 
-from IPython.core.magic import Magics, magics_class
+from .magic_class import MagicClassWithHelpers
+from .magic_parser import MagicCommandParser
 from ..helpgen import docstring2html
+from IPython.core.magic import magics_class, line_magic, cell_magic
 
 
 @magics_class
-class MagicClassExample(Magics):
+class MagicClassExample(MagicClassWithHelpers):
 
     """
-    @NB(example of a magic commands)
+    @NB(example of a magic command)
 
     This class is an example of how a magic commands can be defined
     with parameters as if it was a regular command in a terminal.
     The class @see cl MagicClassExample defines magic
     command ``htmlhelp`` and the associated parser.
     Function @see fn load_ipython_extension
+    register the magic command through ``%load_ext pyquickhelper``.
+    The magic command can be unit tested with::
+
+        mg = MagicClassExample()
+        mg.add_context(context={"MagicClassExample": MagicClassExample})
+        cmd = "MagicClassExample -f text"
+        res = mg.htmlhelp(cmd)
+        assert "@NB(example of a magic command)"
 
     @endNB
 
