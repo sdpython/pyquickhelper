@@ -205,7 +205,7 @@ if %errorlevel% neq 0 exit /b %errorlevel%
 windows_any_setup_command = windows_any_setup_command_base + windows_setup_hook + """
 @echo ~CALL %pythonexe% -u setup.py %3 %4 %5 %6 %7 %8 %9
 rem set PYTHONPATH=additional_path
-%pythonexe% -u setup.py %script_command%
+%pythonexe% -u setup.py %3 %4 %5 %6 %7 %8 %9
 if %errorlevel% neq 0 exit /b %errorlevel%
 @echo #######################################################6
 """

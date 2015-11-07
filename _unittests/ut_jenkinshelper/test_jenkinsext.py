@@ -281,6 +281,10 @@ class TestJenkinsExt(unittest.TestCase):
                     if "%jenkinspythonpip% install qgrid" not in conf:
                         raise Exception(conf)
 
+            if "[doc]" in job:
+                if "%jenkinspythonexe% -u setup.py build_script" not in conf:
+                    raise Exception(conf)
+
         assert i > 0
 
 
