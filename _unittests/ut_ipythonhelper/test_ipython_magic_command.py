@@ -35,7 +35,7 @@ class TestMagicCommands (unittest.TestCase):
 
         mg = MagicClassExample()
         mg.add_context({"MagicClassExample": MagicClassExample})
-        cmd = "MagicClassExample -f text"
+        cmd = "MagicClassExample -f text --no-print"
         fLOG("**", cmd)
         res = mg.htmlhelp(cmd)
         fLOG(res)

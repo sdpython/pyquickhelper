@@ -32,7 +32,7 @@ class MagicClassExample(MagicClassWithHelpers):
         mg.add_context(context={"MagicClassExample": MagicClassExample})
         cmd = "MagicClassExample -f text"
         res = mg.htmlhelp(cmd)
-        assert "@NB(example of a magic command)"
+        assert "NB(example of a magic command)"
 
     @endNB
 
