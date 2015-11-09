@@ -25,7 +25,7 @@ except ImportError:
 from src.pyquickhelper import read_url, fLOG, isempty, isnan
 
 
-class TestVersion (unittest.TestCase):
+class TestPandasHelper(unittest.TestCase):
 
     def test_version(self):
         fLOG(
