@@ -467,7 +467,7 @@ project_var_name = "dependencies___MODULE__"
 versionPython = "%s.%s" % (sys.version_info.major, sys.version_info.minor)
 path = "Lib/site-packages/" + project_var_name
 
-if "Anaconda" not in sys.version:
+if "Anaconda" not in sys.version or sys.version_info[0] == 2:
     jup = ["IPython", "jupyter"]
 else:
     jup = []
