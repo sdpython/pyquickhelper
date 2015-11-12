@@ -467,6 +467,11 @@ project_var_name = "dependencies___MODULE__"
 versionPython = "%s.%s" % (sys.version_info.major, sys.version_info.minor)
 path = "Lib/site-packages/" + project_var_name
 
+if "Anaconda" not in sys.version:
+    jup = ["IPython", "jupyter"]
+else:
+    jup = []
+
 setup(
     name=project_var_name,
     version=versionPython,
@@ -474,14 +479,12 @@ setup(
         "autopep8",
         "numpy",
         "dateutils",
-        "IPython",
-        "jupyter",
         "matplotlib",
         "sphinx",
         "pandas",
         "sphinxjp.themes.revealjs",
         "dateutils",
-        "docutils", ],
+        "docutils", ] + jup,
 )
 """
 #########################
