@@ -65,8 +65,10 @@ class TestBackupFiles(unittest.TestCase):
 
         enc.load_mapping()
         outfile = os.path.join(temp, "backed_test_backup_file.py")
-        s = enc.retrieve("ut_filehelper\\test_backup_file.py",
-                         filename=outfile)
+        fpth = "ut_filehelper\\test_backup_file.py"
+        if not sys.platform.startswith("win"):
+            fpth = fpth.replace("\\", "/")
+        s = enc.retrieve(fpth, filename=outfile)
 
         with open(outfile, "r") as f:
             c2 = f.read()

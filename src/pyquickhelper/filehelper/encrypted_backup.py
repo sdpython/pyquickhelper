@@ -8,6 +8,8 @@ import re
 import os
 import sys
 import datetime
+import zlib
+import lzma
 from .files_status import FilesStatus
 from ..loghelper.flog import noLOG
 from .transfer_api import TransferAPI_FileInfo
@@ -46,6 +48,7 @@ class EncryptedBackup:
                  filter_out=None,
                  threshold_size=2 ** 24,
                  algo="AES",
+                 compression="lzma",
                  fLOG=noLOG):
         """
         constructor
@@ -69,6 +72,7 @@ class EncryptedBackup:
         self._map = file_map
         self._algo = algo
         self._mapping = None
+        self._compress = compression
         self._threshold_size = threshold_size
         self._root_local = root_local if root_local is not None else file_tree_node.root
         self._root_remote = root_remote if root_remote is not None else ""
@@ -154,10 +158,45 @@ class EncryptedBackup:
         with open(fullname, "rb") as f:
             data = f.read(self._threshold_size)
             while data:
+                data = self.compress(data)
                 enc = encrypt_stream(
                     self._key, data, chunksize=None, algo=self._algo)
                 yield enc
                 data = f.read(self._threshold_size)
+
+    def compress(self, data):
+        """
+        compress data
+
+        @param      data        binary data
+        @return                 binary data
+        """
+        if self._compress == "zip":
+            return zlib.compress(data)
+        elif self._compress == "lzma":
+            return lzma.compress(data)
+        elif self._compress is None:
+            return data
+        else:
+            raise ValueError(
+                "unexpected compression algorithm {0}".format(self._compress))
+
+    def decompress(self, data):
+        """
+        decompress data
+
+        @param      data        binary data
+        @return                 binary data
+        """
+        if self._compress == "zip":
+            return zlib.decompress(data)
+        elif self._compress == "lzma":
+            return lzma.decompress(data)
+        elif self._compress is None:
+            return data
+        else:
+            raise ValueError(
+                "unexpected compression algorithm {0}".format(self._compress))
 
     def start_transfering(self):
         """
@@ -253,6 +292,7 @@ class EncryptedBackup:
                     data = self._api.retrieve(p)
                     data = decrypt_stream(
                         self._key, data, chunksize=None, algo=self._algo)
+                    data = self.decompress(data)
                     f.write(data)
             return filename
         else:
@@ -264,5 +304,6 @@ class EncryptedBackup:
                     data = self._api.retrieve(p)
                     data = decrypt_stream(
                         self._key, data, chunksize=None, algo=self._algo)
+                    data = self.decompress(data)
                     byt.write(data)
                 return byt.getvalue()
