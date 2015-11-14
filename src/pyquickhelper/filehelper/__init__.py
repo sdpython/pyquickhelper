@@ -31,3 +31,4 @@ from .anyfhelper import change_file_status, read_content_ufs
 from .download_helper import get_url_content_timeout, InternetException
 from .encryption import decrypt_stream, encrypt_stream
 from .encrypted_backup import EncryptedBackup
+from .transfer_api import TransferAPI

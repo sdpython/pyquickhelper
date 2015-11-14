@@ -105,15 +105,28 @@ class TransferAPI:
         returns the mapping
 
         @param      decrypt     decrypt function
-        @return     list of key,value pair
+        @return                 list of key,value pair
         """
-        raise NotImplementedError()
+        m = self.retrieve("__mapping__", exc=False)
+        if m is None:
+            return {}
+        else:
+            return TransferAPI.bytes2mapping(m)
 
     def transfer_mapping(self, mapping, encrypt, filename=None):
         """
-        stores the mapping
+        transfer the mapping
+
+        @param      mapping     mapping
+        @param      encrypt     encryption function
+        @param      filename    local filename
+        @return                 boolean
         """
-        raise NotImplementedError()
+        b = TransferAPI.mapping2bytes(mapping)
+        if filename is not None:
+            with open(filename, "wb") as f:
+                f.write(b)
+        return self.transfer("__mapping__", b)
 
     @staticmethod
     def mapping2bytes(mapping):
@@ -129,6 +142,7 @@ class TransferAPI:
             rows.append(r)
         return "\n".join(rows).encode()
 
+    @staticmethod
     def bytes2mapping(byt):
         """
         deserializes a mapping
@@ -166,7 +180,8 @@ class TransferAPI:
 
         hash of everything
         """
-        return TransferAPI.checksum_md5(name.encode() + data + str(piece).encode())
+        m1 = TransferAPI.checksum_md5(name.encode() + str(piece).encode())
+        m2 = TransferAPI.checksum_md5(data)
 
 
 class MockTransferAPI(TransferAPI):
@@ -210,31 +225,3 @@ class MockTransferAPI(TransferAPI):
                 return self._storage[path]
             except KeyError:
                 return None
-
-    def retrieve_mapping(self, decrypt):
-        """
-        returns the mapping
-
-        @param      decrypt     decrypt function
-        @return                 list of key,value pair
-        """
-        m = self.retrieve("__mapping__", exc=False)
-        if m is None:
-            return {}
-        else:
-            return TransferAPI.bytes2mapping(m)
-
-    def transfer_mapping(self, mapping, encrypt, filename=None):
-        """
-        transfer the mapping
-
-        @param      mapping     mapping
-        @param      encrypt     encryption function
-        @param      filename    local filename
-        @return                 boolean
-        """
-        b = TransferAPI.mapping2bytes(mapping)
-        if filename is not None:
-            with open(filename, "wb") as f:
-                f.write(b)
-        return self.transfer("__mapping__", b)

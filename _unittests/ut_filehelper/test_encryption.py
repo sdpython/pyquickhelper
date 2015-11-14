@@ -39,7 +39,13 @@ class TestEncryption(unittest.TestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
-        temp = get_temp_folder(__file__, "temp_encryption")
+        try:
+            import Crypto
+        except ImportError:
+            warnings.warn("pycrypto is not installed")
+            return
+
+        temp = get_temp_folder(__file__, "temp_encryption0")
 
         infile = os.path.abspath(__file__).replace(".pyc", ".py")
         outfile = os.path.join(temp, "out_crypted.enc")
@@ -69,7 +75,13 @@ class TestEncryption(unittest.TestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
-        temp = get_temp_folder(__file__, "temp_encryption")
+        try:
+            import Crypto
+        except ImportError:
+            warnings.warn("pycrypto is not installed")
+            return
+
+        temp = get_temp_folder(__file__, "temp_encryption1")
 
         infile = os.path.abspath(__file__).replace(".pyc", ".py")
         outfile = os.path.join(temp, "out_crypted.enc")
@@ -99,7 +111,13 @@ class TestEncryption(unittest.TestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
-        temp = get_temp_folder(__file__, "temp_encryption")
+        try:
+            import Crypto
+        except ImportError:
+            warnings.warn("pycrypto is not installed")
+            return
+
+        temp = get_temp_folder(__file__, "temp_encryption2")
 
         infile = bytes([0, 1, 2, 3, 4])
         r = encrypt_stream("key0" * 4, infile)
@@ -120,7 +138,13 @@ class TestEncryption(unittest.TestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
-        temp = get_temp_folder(__file__, "temp_encryption")
+        try:
+            import Crypto
+        except ImportError:
+            warnings.warn("pycrypto is not installed")
+            return
+
+        temp = get_temp_folder(__file__, "temp_encryption3")
 
         infile = StreamIO(bytes([0, 1, 2, 3, 4]))
         outst = StreamIO()
@@ -147,7 +171,7 @@ class TestEncryption(unittest.TestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
-        temp = get_temp_folder(__file__, "temp_encryption")
+        temp = get_temp_folder(__file__, "temp_encryption4")
 
         infile = StreamIO(bytes([0, 1, 2, 3, 4]))
         outst = StreamIO()
@@ -177,7 +201,7 @@ class TestEncryption(unittest.TestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
-        temp = get_temp_folder(__file__, "temp_encryption")
+        temp = get_temp_folder(__file__, "temp_encryption5")
 
         infile = StreamIO(bytes(list(i % 255 for i in range(0, 10000))))
         outst = StreamIO()

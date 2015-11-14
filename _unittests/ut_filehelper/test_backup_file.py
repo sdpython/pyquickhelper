@@ -40,6 +40,12 @@ class TestBackupFiles(unittest.TestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
+        try:
+            import Crypto
+            algo = "AES"
+        except ImportError:
+            algo = "fernet"
+
         temp = get_temp_folder(__file__, "temp_backup_files")
 
         root = os.path.normpath(os.path.join(temp, ".."))

@@ -32,7 +32,66 @@ class EncryptedBackupError(Exception):
 class EncryptedBackup:
 
     """
-    This class aims at keeping a backup of files
+    This class aims at keeping an encrypted and compressed backup of files.
+    Every file is compressed and then encrypted before being uploaded to the
+    remote location. Its name still contains the container but the
+    file name is a hash. A
+
+    @example(Encrypted and compressed backup)
+    Here is an example which stores everything on Azure.
+    The second run only modifies the modified files.
+    A modified file does not remove the previous version,
+    it creates a new file::
+
+        from pyquickhelper import fLOG
+        from pyquickhelper.filehelper import FileTreeNode, EncryptedBackup
+        from pyensae.remote import AzureTransferAPI
+
+        blobstorage = "<>"
+        key = "key"
+        key_crypt = "crypt"
+
+        local = os.path.normpath(os.path.join(os.path.dirname(__file__), ".."))
+        this = os.path.normpath(os.path.dirname(__file__))
+        file_status=os.path.join(this, "backup_status.txt")
+        file_map=os.path.join(this, "backup_mapping.txt")
+
+        backup = True
+        if backup:
+            # code to backup
+            root = os.path.normpath(os.path.join(os.path.dirname(__file__)))
+            api = AzureTransferAPI(blobstorage, key)
+            ft = FileTreeNode(root, repository=True)
+            enc = EncryptedBackup(
+                key=key_crypt,
+                file_tree_node=ft,
+                transfer_api=api,
+                root_local=local,
+                file_status=file_status,
+                file_map=file_map,
+                fLOG=print)
+
+            enc.start_transfering()
+
+        restore = not backup
+        if restore:
+            # code to restore
+            root = os.path.normpath(os.path.join(os.path.dirname(__file__)))
+            api = AzureTransferAPI(blobstorage, key)
+            enc = EncryptedBackup(
+                key=key_crypt,
+                file_tree_node=None,
+                transfer_api=api,
+                root_local=local,
+                file_status=file_status,
+                file_map=file_map,
+                fLOG=print)
+
+            dest=os.path.join(this, "_temp")
+            enc.retrieve_all(dest)
+
+    @endexample
+
 
     .. versionadded:: 1.3
     """
@@ -236,6 +295,7 @@ class EncryptedBackup:
             for i, data in enumerate(self.enumerate_read_encrypt(file.fullname)):
                 to = self._api.get_remote_path(data, relp, i)
                 to = "/".join(path.split("/")[:-1]) + "/" + to
+                to = to.lstrip("/")
                 r &= self.transfer(to, data)
                 maps.add_piece(to)
                 sum_bytes += len(data)
@@ -287,6 +347,9 @@ class EncryptedBackup:
         if root is not None:
             filename = os.path.join(root, path)
         if filename is not None:
+            dirname = os.path.dirname(filename)
+            if not os.path.exists(dirname):
+                os.makedirs(dirname)
             with open(filename, "wb") as f:
                 for p in info.pieces:
                     data = self._api.retrieve(p)
@@ -307,3 +370,25 @@ class EncryptedBackup:
                     data = self.decompress(data)
                     byt.write(data)
                 return byt.getvalue()
+
+    def retrieve_all(self, dest):
+        """
+        retrieve all backuped files
+
+        @param      dest        destination
+        @return                 list of restored files
+        """
+        self.fLOG("load mapping")
+        self.load_mapping()
+        self.fLOG("number of files", len(self.Mapping))
+        done = []
+        for k, v in sorted(self.Mapping.items()):
+            name = self.retrieve(k, root=dest)
+            size = os.stat(name).st_size
+            self.fLOG("[download % 8d bytes name=%s -- fullname=%s -- to=%s]" % (
+                size,
+                os.path.split(name)[-1],
+                dest,
+                os.path.dirname(name)))
+            done.append(name)
+        return done
