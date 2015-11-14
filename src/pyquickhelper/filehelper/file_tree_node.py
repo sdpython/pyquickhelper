@@ -50,8 +50,8 @@ class FileTreeNode:
         f1  = p1
         f2  = p2
 
-        node1 = FileTreeNode (f1, filter = filter, svn = svn1)
-        node2 = FileTreeNode (f2, filter = filter, svn = svn2)
+        node1 = FileTreeNode (f1, filter = filter, repository = svn1)
+        node2 = FileTreeNode (f2, filter = filter, repository = svn2)
         fLOG (len (node1), node1.max_date ())
         fLOG (len (node2), node2.max_date ())
 

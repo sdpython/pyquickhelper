@@ -11,7 +11,7 @@ from __future__ import print_function
 from .magic_class import MagicClassWithHelpers
 from .magic_parser import MagicCommandParser
 from ..helpgen import docstring2html
-from IPython.core.magic import magics_class, line_magic, cell_magic
+from IPython.core.magic import magics_class, line_magic
 
 
 @magics_class

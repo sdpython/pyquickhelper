@@ -76,3 +76,4 @@ mccabe
 pep8
 mistune
 pycrypto
+cryptography

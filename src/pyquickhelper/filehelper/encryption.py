@@ -10,6 +10,7 @@ import random
 import sys
 import os
 import struct
+import base64
 
 
 if sys.version_info[0] == 2:
@@ -85,14 +86,54 @@ def close_input_output(in_size, in_close, in_stream, out_close, out_return, out_
 
     if out_close:
         if out_return:
-            raise EncrpytionError("incompability")
+            raise EncryptionError("incompability")
         out_stream.close()
 
     if out_return:
         return out_stream.getvalue()
 
 
-def encrypt_stream(key, filename, out_filename=None, chunksize=2 ** 18):
+def get_encryptor(key, algo="AES", chunksize=2 ** 24, **params):
+    """
+    return a encryptor with method encrypt and decrypt
+
+    @param      algo        AES or fernet
+    @param      key         key
+    @param      iv          extra parameter for AES
+    @param      chunksize   Fernet does not allow streaming
+    @return                 encryptor, origsize
+    """
+    if algo == "fernet":
+        from cryptography.fernet import Fernet
+        bkey = base64.b64encode(key.encode())
+        encryptor = Fernet(bkey)
+        origsize = None
+        chunksize = None
+    elif algo == "AES":
+        from Crypto.Cipher import AES
+        ksize = {16, 32, 64, 128, 256}
+        chunksize = chunksize
+        if len(key) not in ksize:
+            raise EncryptionError(
+                "len(key)=={0} should be of length {1}".format(len(key), str(ksize)))
+        if "out_stream" in params:
+            iv = bytes([random.randint(0, 0xFF) for i in range(16)])
+            params["out_stream"].write(struct.pack('<Q', params["in_size"]))
+            params["out_stream"].write(iv)
+            encryptor = AES.new(key, AES.MODE_CBC, iv)
+            origsize = params["in_size"]
+        else:
+            origsize = struct.unpack(
+                '<Q', params["in_stream"].read(struct.calcsize('Q')))[0]
+            iv = params["in_stream"].read(16)
+            encryptor = AES.new(key, AES.MODE_CBC, iv)  # decryptor
+    else:
+        raise ValueError("unknown algorithm: {0}, should be in {1}".format(
+            algo, ["fernet", "AES"]))
+    return encryptor, origsize, chunksize
+
+
+def encrypt_stream(key, filename, out_filename=None, chunksize=2 ** 18, algo="AES"):
     """
     Encrypts a file using AES (CBC mode) with the given key.
 
@@ -108,32 +149,29 @@ def encrypt_stream(key, filename, out_filename=None, chunksize=2 ** 18):
                                 sizes can be faster for some files and machines.
                                 chunksize must be divisible by 16.
 
+    @param      algo            AES (PyCrypto) of or fernet (cryptography)
+
     @return                     filename or bytes
 
-    The function relies on module `pycrypto <https://pypi.python.org/pypi/pycrypto>`_
-    and algoritm `AES <https://fr.wikipedia.org/wiki/Advanced_Encryption_Standard>`_.
+    The function relies on module `pycrypto <https://pypi.python.org/pypi/pycrypto>`_,
+    `cryptography <http://cryptography.readthedocs.org/>`_,
+    algoritm `AES <https://fr.wikipedia.org/wiki/Advanced_Encryption_Standard>`_,
+    `Fernet <http://cryptography.readthedocs.org/en/latest/fernet/>`_.
+
+    .. versionadded:: 1.3
     """
-    from Crypto.Cipher import AES
 
     in_size, in_close, in_stream, out_close, out_return, out_stream = open_input_output(
         filename, out_filename)
 
-    ksize = {16, 32, 64, 128, 256}
-    if len(key) not in ksize:
-        raise EncryptionError(
-            "len(key)=={0} should be of length {1}".format(len(key), str(ksize)))
-
-    iv = bytes([random.randint(0, 0xFF) for i in range(16)])
-    encryptor = AES.new(key, AES.MODE_CBC, iv)
-
-    out_stream.write(struct.pack('<Q', in_size))
-    out_stream.write(iv)
+    encryptor, origsize, chunksize = get_encryptor(
+        key, algo, out_stream=out_stream, in_size=in_size, chunksize=chunksize)
 
     while True:
         chunk = in_stream.read(chunksize)
         if len(chunk) == 0:
             break
-        elif len(chunk) % 16 != 0:
+        elif len(chunk) % 16 != 0 and origsize is not None:
             chunk += b' ' * (16 - len(chunk) % 16)
 
         out_stream.write(encryptor.encrypt(chunk))
@@ -141,7 +179,7 @@ def encrypt_stream(key, filename, out_filename=None, chunksize=2 ** 18):
     return close_input_output(in_size, in_close, in_stream, out_close, out_return, out_stream)
 
 
-def decrypt_stream(key, filename, out_filename=None, chunksize=3 * 2 ** 13):
+def decrypt_stream(key, filename, out_filename=None, chunksize=3 * 2 ** 13, algo="AES"):
     """
     Decrypts a file using AES (CBC mode) with the given key.
 
@@ -157,16 +195,23 @@ def decrypt_stream(key, filename, out_filename=None, chunksize=3 * 2 ** 13):
                                 sizes can be faster for some files and machines.
                                 chunksize must be divisible by 16.
 
-    @return                     filename or bytes
-    """
-    from Crypto.Cipher import AES
+    @param      algo            AES (PyCrypto) of or fernet (cryptography)
 
+    @return                     filename or bytes
+
+
+    The function relies on module `pycrypto <https://pypi.python.org/pypi/pycrypto>`_,
+    `cryptography <http://cryptography.readthedocs.org/>`_,
+    algoritm `AES <https://fr.wikipedia.org/wiki/Advanced_Encryption_Standard>`_,
+    `Fernet <http://cryptography.readthedocs.org/en/latest/fernet/>`_.
+
+    .. versionadded:: 1.3
+    """
     in_size, in_close, in_stream, out_close, out_return, out_stream = open_input_output(
         filename, out_filename)
 
-    origsize = struct.unpack('<Q', in_stream.read(struct.calcsize('Q')))[0]
-    iv = in_stream.read(16)
-    decryptor = AES.new(key, AES.MODE_CBC, iv)
+    decryptor, origsize, chunksize = get_encryptor(
+        key, algo, in_stream=in_stream, chunksize=chunksize)
 
     while True:
         chunk = in_stream.read(chunksize)

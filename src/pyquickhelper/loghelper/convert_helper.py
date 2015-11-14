@@ -45,6 +45,18 @@ def str_to_datetime(dt, format=None):
         return datetime.datetime.strptime(dt, format)
 
 
+def datetime_to_str(dt):
+    """
+    convert a datetime into a string
+
+    @param      dt      datetime
+    @return             string
+
+    .. versionadded:: 1.3
+    """
+    return dt.strftime("%Y-%m-%d %H:%M:%S")
+
+
 def timestamp_to_datetime(timestamp):
     """
     convert a time into a datetime

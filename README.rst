@@ -104,6 +104,7 @@ Versions, Changes
     * **add:** catch exception *SystemExit* in method *run_cmd* if required
     * **new:** documentation builds a new page gathering all commands ``@NB``
     * **new:** add function to encrypt and decrypt files using AES and pycrypto
+    * **new:** add class EncryptedBackup to backup many files into a remote folder in encrypted format
 
 * **1.2.781 - 2015/08/15**
     * **change:** parameter prog was added to class MagicCommandParser
