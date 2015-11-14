@@ -182,6 +182,7 @@ class TransferAPI:
         """
         m1 = TransferAPI.checksum_md5(name.encode() + str(piece).encode())
         m2 = TransferAPI.checksum_md5(data)
+        return m1 + "_" + m2
 
 
 class MockTransferAPI(TransferAPI):
