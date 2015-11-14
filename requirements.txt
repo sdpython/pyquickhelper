@@ -75,3 +75,4 @@ pyflakes
 mccabe
 pep8
 mistune
+pycrypto

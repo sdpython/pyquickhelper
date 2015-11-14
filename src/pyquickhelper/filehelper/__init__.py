@@ -29,3 +29,4 @@ from .file_tree_node import FileTreeNode
 from .internet_helper import download, read_url
 from .anyfhelper import change_file_status, read_content_ufs
 from .download_helper import get_url_content_timeout, InternetException
+from .encryption import decrypt_stream, encrypt_stream
