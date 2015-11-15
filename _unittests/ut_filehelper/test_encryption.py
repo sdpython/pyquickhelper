@@ -39,6 +39,9 @@ class TestEncryption(unittest.TestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
+        if sys.version_info[0] == 2:
+            return
+
         try:
             import Crypto
         except ImportError:
@@ -74,6 +77,9 @@ class TestEncryption(unittest.TestCase):
             __file__,
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
+
+        if sys.version_info[0] == 2:
+            return
 
         try:
             import Crypto
@@ -111,6 +117,9 @@ class TestEncryption(unittest.TestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
+        if sys.version_info[0] == 2:
+            return
+
         try:
             import Crypto
         except ImportError:
@@ -137,6 +146,9 @@ class TestEncryption(unittest.TestCase):
             __file__,
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
+
+        if sys.version_info[0] == 2:
+            return
 
         try:
             import Crypto
@@ -171,6 +183,9 @@ class TestEncryption(unittest.TestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
+        if sys.version_info[0] == 2:
+            return
+
         temp = get_temp_folder(__file__, "temp_encryption4")
 
         infile = StreamIO(bytes([0, 1, 2, 3, 4]))
@@ -200,6 +215,9 @@ class TestEncryption(unittest.TestCase):
             __file__,
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
+
+        if sys.version_info[0] == 2:
+            return
 
         temp = get_temp_folder(__file__, "temp_encryption5")
 

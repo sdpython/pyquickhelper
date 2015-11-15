@@ -15,6 +15,7 @@ import base64
 
 if sys.version_info[0] == 2:
     from StringIO import StringIO as StreamIO
+    FileNotFoundError = Exception
 else:
     from io import BytesIO as StreamIO
 

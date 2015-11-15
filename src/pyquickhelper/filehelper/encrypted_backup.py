@@ -9,6 +9,7 @@ import os
 import sys
 import datetime
 import zlib
+import warnings
 from .files_status import FilesStatus
 from ..loghelper.flog import noLOG
 from .transfer_api import TransferAPI_FileInfo
@@ -124,6 +125,8 @@ class EncryptedBackup:
         @param      algo                encrypting algorithm
         @param      fLOG                logging function
         """
+        if sys.version_info[0] == 2:
+            warnings.warn("The code is not tested for this version of Python")
         self._key = key
         self.fLOG = fLOG
         self._ftn = file_tree_node
