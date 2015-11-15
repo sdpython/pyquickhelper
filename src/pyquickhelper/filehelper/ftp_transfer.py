@@ -135,6 +135,8 @@ class TransferFTP (FTP):
         """
         try:
             self.run_command(FTP.cwd, path)
+        except EOFError as e:
+            raise EOFError("unable to go to: {0}".format(path)) from e
         except Exception as e:
             if create and TransferFTP.errorNoDirectory in str(e):
                 self.mkd(path)

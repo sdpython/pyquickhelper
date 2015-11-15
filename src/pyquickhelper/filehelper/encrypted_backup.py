@@ -9,7 +9,6 @@ import os
 import sys
 import datetime
 import zlib
-import lzma
 from .files_status import FilesStatus
 from ..loghelper.flog import noLOG
 from .transfer_api import TransferAPI_FileInfo
@@ -20,6 +19,7 @@ if sys.version_info[0] == 2:
     from StringIO import StringIO as StreamIO
 else:
     from io import BytesIO as StreamIO
+    import lzma
 
 
 class EncryptedBackupError(Exception):
@@ -107,7 +107,7 @@ class EncryptedBackup:
                  filter_out=None,
                  threshold_size=2 ** 24,
                  algo="AES",
-                 compression="lzma",
+                 compression="lzma" if sys.version_info[0] >= 3 else "zip",
                  fLOG=noLOG):
         """
         constructor
