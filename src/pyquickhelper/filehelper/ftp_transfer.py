@@ -51,7 +51,7 @@ class TransferFTP (FTP):
     """
 
     errorNoDirectory = "Can't change directory"
-    blockSize = 2**20
+    blockSize = 2 ** 20
 
     def __init__(self, site, login, password, fLOG=noLOG):
         """
@@ -229,11 +229,14 @@ class TransferFTP (FTP):
             if not os.path.exists(file):
                 raise FileNotFoundError(file)
             with open(file, "rb") as f:
-                r = self.run_command(FTP.storbinary, 'STOR ' + name, f, TransferFTP.blockSize)
+                r = self.run_command(
+                    FTP.storbinary, 'STOR ' + name, f, TransferFTP.blockSize)
         elif isinstance(file, io.BytesIO):
-            r = self.run_command(FTP.storbinary, 'STOR ' + name, file, TransferFTP.blockSize)
+            r = self.run_command(FTP.storbinary, 'STOR ' +
+                                 name, file, TransferFTP.blockSize)
         else:
-            r = self.run_command(FTP.storbinary, 'STOR ' + name, file, TransferFTP.blockSize)
+            r = self.run_command(FTP.storbinary, 'STOR ' +
+                                 name, file, TransferFTP.blockSize)
 
         for p in path:
             self.cwd("..")
@@ -275,7 +278,8 @@ class TransferFTP (FTP):
             def callback(block):
                 file.write(block)
             try:
-                r = self.run_command(FTP.retrbinary, 'RETR ' + name, callback, TransferFTP.blockSize)
+                r = self.run_command(
+                    FTP.retrbinary, 'RETR ' + name, callback, TransferFTP.blockSize)
             except error_perm as e:
                 raise_exc = e
         else:
@@ -284,7 +288,8 @@ class TransferFTP (FTP):
             def callback(block):
                 b.write(block)
             try:
-                self.run_command(FTP.retrbinary, 'RETR ' + name, callback, TransferFTP.blockSize)
+                self.run_command(FTP.retrbinary, 'RETR ' + name,
+                                 callback, TransferFTP.blockSize)
             except error_perm as e:
                 raise_exc = e
 

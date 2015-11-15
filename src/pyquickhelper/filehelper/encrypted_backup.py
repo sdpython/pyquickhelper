@@ -218,13 +218,19 @@ class EncryptedBackup:
         @return                     iterator on chunk of data
         """
         with open(fullname, "rb") as f:
-            data = f.read(self._threshold_size)
-            while data:
-                data = self.compress(data)
-                enc = encrypt_stream(
-                    self._key, data, chunksize=None, algo=self._algo)
-                yield enc
+            try:
                 data = f.read(self._threshold_size)
+                cont = True
+            except PermissionError as e:
+                yield e
+                cont = False
+            if cont:
+                while data:
+                    data = self.compress(data)
+                    enc = encrypt_stream(
+                        self._key, data, chunksize=None, algo=self._algo)
+                    yield enc
+                    data = f.read(self._threshold_size)
 
     def compress(self, data):
         """
@@ -296,6 +302,11 @@ class EncryptedBackup:
             maps = TransferAPI_FileInfo(relp, [], datetime.datetime.now())
             r = True
             for i, data in enumerate(self.enumerate_read_encrypt(file.fullname)):
+                if data is None or isinstance(data, Exception):
+                    # it means something went wrong
+                    r = False
+                    err = data
+                    break
                 to = self._api.get_remote_path(data, relp, i)
                 to = "/".join(path.split("/")[:-1]) + "/" + to
                 to = to.lstrip("/")
@@ -310,14 +321,15 @@ class EncryptedBackup:
                 self.update_mapping(relp, maps)
                 done.append(relp)
             else:
-                issues.append((size, relp))
+                self.fLOG("   issue", err)
+                issues.append((relp, err))
 
             if len(issues) >= 5:
                 raise EncryptedBackupError("too many issues:\n{0}".format(
                     "\n".join("{0} -- {1}".format(a, b) for a, b in issues)))
 
         self.transfer_mapping()
-        return done
+        return done, issues
 
     def transfer(self, to, data):
         """

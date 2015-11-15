@@ -39,7 +39,7 @@ class TestBackupFiles(unittest.TestCase):
             __file__,
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
-            
+
         if sys.version_info[0] == 2:
             return
 
@@ -67,8 +67,9 @@ class TestBackupFiles(unittest.TestCase):
             fLOG=fLOG,
             algo=algo)
 
-        done = enc.start_transfering()
+        done, issue = enc.start_transfering()
         assert len(done) > 0
+        assert len(issue) == 0
 
         for k, v in sorted(enc.Mapping.items()):
             fLOG(k, len(v.pieces), v)
