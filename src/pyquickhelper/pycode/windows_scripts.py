@@ -160,8 +160,9 @@ set pythonexe_rel=%pythonexe%
 :auto_setup_relpath:
 @echo ~LABAL auto_setup_relpath
 @echo ~CALL %pythonexe_rel% auto_setup_dep.py install
-%pythonexe_rel% auto_setup_dep.py install
-if %errorlevel% neq 0 exit /b %errorlevel%
+%pythonexe_rel% auto_setup_dep.py install > auto_setup_dep.log
+rem if %errorlevel% neq 0 exit /b %errorlevel%
+rem we continue to run the script even if it seems to fail
 cd ..\\..
 @echo #######################################################_auto_setup_dep.py END
 
