@@ -27,7 +27,7 @@ class TransferAPIFtp(TransferAPI):
         @param      root        root on the website
         @param      fLOG        logging function
         """
-        self.fLOG = fLOG if fLOG else noLOG
+        TransferAPI.__init__(self, fLOG=fLOG)
         self._ftp = TransferFTP(site, login, password, fLOG=fLOG)
         self._root = root
 

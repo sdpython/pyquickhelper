@@ -33,3 +33,4 @@ from .encryption import decrypt_stream, encrypt_stream
 from .encrypted_backup import EncryptedBackup
 from .transfer_api import TransferAPI
 from .transfer_api_ftp import TransferAPIFtp
+from .transfer_api_file import TransferAPIFile

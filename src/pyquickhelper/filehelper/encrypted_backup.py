@@ -39,17 +39,16 @@ class EncryptedBackup:
     file name is a hash. A
 
     @example(Encrypted and compressed backup)
-    Here is an example which stores everything on Azure.
-    The second run only modifies the modified files.
+    Here is an example which stores everything on hard drive.
+    A second run only modifies files updated between the two processes.
     A modified file does not remove the previous version,
-    it creates a new file::
+    it creates a new file.
+    Example::
 
         from pyquickhelper import fLOG
         from pyquickhelper.filehelper import FileTreeNode, EncryptedBackup
-        from pyensae.remote import AzureTransferAPI
+        from pyensae.remote import TransferAPIFile
 
-        blobstorage = "<>"
-        key = "key"
         key_crypt = "crypt"
 
         local = os.path.normpath(os.path.join(os.path.dirname(__file__), ".."))
@@ -61,7 +60,7 @@ class EncryptedBackup:
         if backup:
             # code to backup
             root = os.path.normpath(os.path.join(os.path.dirname(__file__)))
-            api = AzureTransferAPI(blobstorage, key)
+            api = TransferAPIFile("f:\\\\mycryptedbackup")
             ft = FileTreeNode(root, repository=True)
             enc = EncryptedBackup(
                 key=key_crypt,
@@ -78,7 +77,7 @@ class EncryptedBackup:
         if restore:
             # code to restore
             root = os.path.normpath(os.path.join(os.path.dirname(__file__)))
-            api = AzureTransferAPI(blobstorage, key)
+            api = TransferAPIFile("f:\\\\mycryptedbackup")
             enc = EncryptedBackup(
                 key=key_crypt,
                 file_tree_node=None,
