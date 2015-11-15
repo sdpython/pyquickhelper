@@ -57,7 +57,7 @@ class TestBackupFiles(unittest.TestCase):
         api = MockTransferAPI()
         ft = FileTreeNode(root, filter=".*[.]py", repository=False)
         enc = EncryptedBackup(
-            key="unit" * 4,
+            key="unit" * 8,
             file_tree_node=ft,
             transfer_api=api,
             file_status=os.path.join(temp, "status.txt"),
