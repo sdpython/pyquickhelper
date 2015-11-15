@@ -105,6 +105,12 @@ Functionalities
 
 * function to create and delete jobs on `Jenkins <https://jenkins-ci.org/>`_, 
   see :class:`JenkinsExt <pyquickhelper.jenkinshelper.jenkins_server.JenkinsExt>`
+  based on build script produced by function 
+  :func:`process_standard_options_for_setup <pyquickhelper.pycode.setup_helper.process_standard_options_for_setup>`
+* encrypted backup, see :class:`EncryptedBackup <pyquickhelper.filehelper.encrypted_backup.EncryptedBackup>`,
+  the API allow to add others backup supports
+* folder synchronisation, see function :func:`synchronize_folder <pyquickhelper.filehelper.synchelper.synchronize_folder>`
+
   
 Many functionalities about automated documentation assume the current processed
 documentation follows the same design as this module.
