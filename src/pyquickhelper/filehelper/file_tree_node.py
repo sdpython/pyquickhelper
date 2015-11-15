@@ -317,9 +317,12 @@ class FileTreeNode:
         self._children = []
         for a in all:
             fu = os.path.join(full, a)
-            if self._log1:
+            isd = os.path.isdir(fu)
+            if self._log and isd:
                 self.fLOG("[FileTreeNode], entering", a)
-            if filter is None or filter(self._root, fi, a, os.path.isdir(fu)):
+            elif self._log1 and self._level <= 0:
+                self.fLOG("[FileTreeNode], entering", a)
+            if filter is None or filter(self._root, fi, a, isd):
                 try:
                     n = FileTreeNode(self._root,
                                      os.path.join(fi, a),

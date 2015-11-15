@@ -5,7 +5,7 @@
 .. versionadded:: 1.0
     moved from pyensae to pyquickhelper
 """
-from ftplib import FTP
+from ftplib import FTP, error_perm
 import os
 import io
 
@@ -234,6 +234,64 @@ class TransferFTP (FTP):
 
         for p in path:
             self.cwd("..")
+
+        return r
+
+    def retrieve(self, fold, name, file, debug=False):
+        """
+        downloads a file
+
+        @param      file        file name or stream (binary, BytesIO)
+        @param      fold        full remote path
+        @param      name        name of the stream on the website
+        @param      debug       if True, displays more information
+        @return                 status
+
+        .. versionadded:: 1.3
+        """
+        path = fold.split("/")
+        path = [_ for _ in path if len(_) > 0]
+
+        for p in path:
+            self.cwd(p, True)
+
+        raise_exc = None
+
+        if isinstance(file, str  # unicode#
+                      ):
+            with open(file, "wb") as f:
+                def callback(block):
+                    f.write(block)
+                try:
+                    data = self.run_command(
+                        FTP.retrbinary, 'RETR ' + name, callback)
+                    f.write(data)
+                except error_perm as e:
+                    raise_exc = e
+        elif isinstance(file, io.BytesIO):
+            def callback(block):
+                file.write(block)
+            try:
+                r = self.run_command(FTP.retrbinary, 'RETR ' + name, callback)
+            except error_perm as e:
+                raise_exc = e
+        else:
+            b = io.BytesIO()
+
+            def callback(block):
+                b.write(block)
+            try:
+                self.run_command(FTP.retrbinary, 'RETR ' + name, callback)
+            except error_perm as e:
+                raise_exc = e
+
+            r = b.getvalue()
+
+        for p in path:
+            self.cwd("..")
+
+        if raise_exc:
+            raise raise_exc
 
         return r
 

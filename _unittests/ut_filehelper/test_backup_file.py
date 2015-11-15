@@ -61,7 +61,8 @@ class TestBackupFiles(unittest.TestCase):
             file_map=os.path.join(temp, "mapping.txt"),
             root_local=os.path.join(temp, "..", ".."),
             threshold_size=2000,
-            fLOG=fLOG)
+            fLOG=fLOG,
+            algo=algo)
 
         done = enc.start_transfering()
         assert len(done) > 0
