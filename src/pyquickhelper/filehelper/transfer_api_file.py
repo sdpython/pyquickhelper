@@ -4,9 +4,8 @@
 
 .. versionadded:: 1.3
 """
-import ftplib
-import io
 import os
+import sys
 from ..loghelper import noLOG
 from .transfer_api import TransferAPI
 
