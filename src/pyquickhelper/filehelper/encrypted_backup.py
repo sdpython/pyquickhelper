@@ -307,7 +307,7 @@ class EncryptedBackup:
                     err = data
                     break
                 to = self._api.get_remote_path(data, relp, i)
-                to = "/".join(path.split("/")[:-1]) + "/" + to
+                to = path + "/" + to
                 to = to.lstrip("/")
                 r &= self.transfer(to, data)
                 maps.add_piece(to)
