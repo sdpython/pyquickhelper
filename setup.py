@@ -228,5 +228,9 @@ if not r:
             "sphinx",  # part of the minimal list
             "sphinxjp.themes.revealjs",
             "traitlets",
-        ]
-    )
+        ],
+        entry_points={
+            'console_scripts': [
+                'encrypt = pyquickhelper.cli.encryption_cli:encrypt',
+                'decrypt = pyquickhelper.cli.encryption_cli:decrypt',
+            ]})

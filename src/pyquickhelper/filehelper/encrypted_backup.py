@@ -135,7 +135,8 @@ class EncryptedBackup:
         self._mapping = None
         self._compress = compression
         self._threshold_size = threshold_size
-        self._root_local = root_local if root_local is not None else file_tree_node.root
+        self._root_local = root_local if root_local is not None else (
+            file_tree_node.root if file_tree_node else None)
         self._root_remote = root_remote if root_remote is not None else ""
         if filter_out is not None and not isinstance(filter_out, str  # unicode#
                                                      ):
@@ -146,7 +147,7 @@ class EncryptedBackup:
             self._filter_out = (lambda f: False) if filter_out is None else (
                 lambda f: self._filter_out_reg.search(f) is not None)
 
-        self._ft = FilesStatus(file_status)
+        self._ft = FilesStatus(file_status) if file_status else None
 
     def iter_eligible_files(self):
         """
@@ -357,33 +358,43 @@ class EncryptedBackup:
                 "the mapping is not up to date or file {0} cannot be found".format(path))
         info = self.Mapping[path]
         if len(info.pieces) == 0:
-            raise EncryptedBackupError("file {0} is empty".format(path))
-        if root is not None:
-            filename = os.path.join(root, path)
-        if filename is not None:
-            dirname = os.path.dirname(filename)
-            if not os.path.exists(dirname):
-                os.makedirs(dirname)
-            with open(filename, "wb") as f:
-                for p in info.pieces:
-                    data = self._api.retrieve(p)
-                    data = decrypt_stream(
-                        self._key, data, chunksize=None, algo=self._algo)
-                    data = self.decompress(data)
-                    f.write(data)
+            # the file is empty
+            if root is not None:
+                filename = os.path.join(root, path)
+            if filename is not None:
+                dirname = os.path.dirname(filename)
+                if not os.path.exists(dirname):
+                    os.makedirs(dirname)
+                with open(filename, "w") as f:
+                    pass
             return filename
         else:
-            if len(info.pieces) == 1:
-                return self._api.retrieve(info.pieces[0])
+            if root is not None:
+                filename = os.path.join(root, path)
+            if filename is not None:
+                dirname = os.path.dirname(filename)
+                if not os.path.exists(dirname):
+                    os.makedirs(dirname)
+                with open(filename, "wb") as f:
+                    for p in info.pieces:
+                        data = self._api.retrieve(p)
+                        data = decrypt_stream(
+                            self._key, data, chunksize=None, algo=self._algo)
+                        data = self.decompress(data)
+                        f.write(data)
+                return filename
             else:
-                byt = StreamIO()
-                for p in info.pieces:
-                    data = self._api.retrieve(p)
-                    data = decrypt_stream(
-                        self._key, data, chunksize=None, algo=self._algo)
-                    data = self.decompress(data)
-                    byt.write(data)
-                return byt.getvalue()
+                if len(info.pieces) == 1:
+                    return self._api.retrieve(info.pieces[0])
+                else:
+                    byt = StreamIO()
+                    for p in info.pieces:
+                        data = self._api.retrieve(p)
+                        data = decrypt_stream(
+                            self._key, data, chunksize=None, algo=self._algo)
+                        data = self.decompress(data)
+                        byt.write(data)
+                    return byt.getvalue()
 
     def retrieve_all(self, dest):
         """

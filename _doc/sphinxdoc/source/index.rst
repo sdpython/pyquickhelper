@@ -111,6 +111,13 @@ Functionalities
   the API allow to add others backup supports
 * folder synchronisation, see function :func:`synchronize_folder <pyquickhelper.filehelper.synchelper.synchronize_folder>`
 
+*encryption*
+
+The module proposes two commands ``encrypt`` and ``decrypt``::
+
+    usage: encrypt [-h] source dest password
+    usage: decrypt [-h] source dest password
+
   
 Many functionalities about automated documentation assume the current processed
 documentation follows the same design as this module.
