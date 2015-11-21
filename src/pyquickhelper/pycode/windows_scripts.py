@@ -101,6 +101,12 @@ set pythonexe=__PY??_X64__\\python
 :default_value_next:
 
 echo ###----################################################5
+echo ###----################################################5
+echo ###----################################################5
+echo %pythonexe%
+echo ###----################################################5
+echo ###----################################################5
+echo ###----################################################5
 SET ROOT_VIRTUAL_ENV=%CURRENT_THIS%_virtualenv
 if not exist %ROOT_VIRTUAL_ENV% mkdir %ROOT_VIRTUAL_ENV%
 set virtual_env_py=%ROOT_VIRTUAL_ENV%\\__MODULE__
