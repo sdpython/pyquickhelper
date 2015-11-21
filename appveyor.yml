@@ -31,8 +31,8 @@ install:
   - "%PYTHON%\\Scripts\\pip install pymyinstall"
   - "%PYTHON%\\Scripts\\pymy_install3 --set=pyquickhelper"
   - "%PYTHON%\\Scripts\\pip install cryptography"
-  - "dir C:\Program Files (x86)"
-  - dir "C:\Program Files"
+  - "dir C:\\Program Files (x86)"
+  - dir "C:\\Program Files"
 
 build: off
 
