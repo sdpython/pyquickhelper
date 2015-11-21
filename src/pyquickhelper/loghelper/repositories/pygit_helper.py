@@ -100,6 +100,9 @@ def repo_ls(full, commandline=True):
     else:
         if sys.platform.startswith("win32"):
             cmd = r'"C:\Program Files (x86)\Git\bin\git"'
+            if not os.path.exists(cmd):
+                # hoping git path is included in environment variable PATH
+                cmd = "git"
         else:
             cmd = 'git'
 
