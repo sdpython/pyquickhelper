@@ -93,10 +93,12 @@ def get_cmd_git():
     .. versionadded:: 1.3
     """
     if sys.platform.startswith("win32"):
-        cmd = r'"C:\Program Files (x86)\Git\bin\git.exe"'
+        cmd = r'"C:\Program Files\Git\bin\git.exe"'
         if not os.path.exists(cmd):
-            # hoping git path is included in environment variable PATH
-            cmd = "git"
+            cmd = r'"C:\Program Files (x86)\Git\bin\git.exe"'
+            if not os.path.exists(cmd):
+                # hoping git path is included in environment variable PATH
+                cmd = "git"
     else:
         cmd = 'git'
     return cmd
