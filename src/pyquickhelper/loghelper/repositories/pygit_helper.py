@@ -403,9 +403,11 @@ def get_nb_commits(path=None, commandline=True):
     else:
         if sys.platform.startswith("win32"):
             # %H for full commit hash
-            cmd = r'"C:\Program Files (x86)\Git\bin\git" rev-list HEAD --count'
+            cmd = '"C:\\Program Files (x86)\\Git\\bin\\git" rev-list HEAD --count'
+            exe = 'C:\\Program Files (x86)\\Git\\bin\\git.exe'
         else:
             cmd = 'git rev-list HEAD --count'
+            exe = None
 
         if path is not None:
             cmd += " \"%s\"" % path
@@ -422,8 +424,12 @@ def get_nb_commits(path=None, commandline=True):
                            shell=sys.platform.startswith("win32"))
 
         if len(err) > 0:
+            if exe is not None:
+                exi = os.path.exists(exe)
+            else:
+                exi = None
             raise Exception(
-                "unable to get commit number from path {0}\nERR:\n{1}\nCMD:\n{2}".format(path, err, cmd))
+                "unable to get commit number from path {0}\nERR:\n{1}\nCMD:\n{2}\nEXISTS:\n{3}--{4}".format(path, err, cmd, exi, exe))
 
         lines = out.strip()
         try:

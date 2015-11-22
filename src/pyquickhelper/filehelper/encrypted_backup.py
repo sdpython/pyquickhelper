@@ -225,12 +225,16 @@ class EncryptedBackup:
                 yield e
                 cont = False
             if cont:
-                while data:
+                while data and cont:
                     data = self.compress(data)
                     enc = encrypt_stream(
                         self._key, data, chunksize=None, algo=self._algo)
                     yield enc
-                    data = f.read(self._threshold_size)
+                    try:
+                        data = f.read(self._threshold_size)
+                    except PermissionError as e:
+                        yield e
+                        cont = False
 
     def compress(self, data):
         """
