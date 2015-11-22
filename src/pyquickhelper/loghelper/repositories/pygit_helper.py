@@ -219,8 +219,13 @@ def get_repo_log(path=None, file_detail=False, commandline=True):
             return get_repo_log(path, file_detail, True)
     else:
         cmd = get_cmd_git()
-        cmd += ' log --pretty=format:"<logentry revision=\\"%h\\"><author>%an</author><date>%ci</date><msg>%s</msg><hash>%H</hash></logentry>" ' + \
-            path
+        if sys.platform.startswith("win"):
+            cmd += ' log --pretty=format:"<logentry revision=\\"%h\\"><author>%an</author><date>%ci</date><msg>%s</msg><hash>%H</hash></logentry>" ' + \
+                path
+        else:
+            cmd = [cmd, 'log',
+                   '--pretty=format:<logentry revision="%h"><author>%an</author><date>%ci</date><msg>%s</msg><hash>%H</hash></logentry>',
+                   path]
 
         enc = sys.stdout.encoding if sys.version_info[
             0] != 2 and sys.stdout is not None else "utf8"
