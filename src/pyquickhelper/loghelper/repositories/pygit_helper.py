@@ -83,6 +83,23 @@ class RepoFile:
         """
         return self.name
 
+def get_cmd_git():
+    """
+    get the command line used to run git
+    
+    @return     string
+    
+    .. versionadded:: 1.3
+    """
+    if sys.platform.startswith("win32"):
+        cmd = r'"C:\Program Files (x86)\Git\bin\git.exe"'
+        if not os.path.exists(cmd):
+            # hoping git path is included in environment variable PATH
+            cmd = "git"
+    else:
+        cmd = 'git'
+    return cmd
+
 
 def repo_ls(full, commandline=True):
     """
@@ -98,14 +115,7 @@ def repo_ls(full, commandline=True):
         except Exception:
             return repo_ls(full, True)
     else:
-        if sys.platform.startswith("win32"):
-            cmd = r'"C:\Program Files (x86)\Git\bin\git"'
-            if not os.path.exists(cmd):
-                # hoping git path is included in environment variable PATH
-                cmd = "git"
-        else:
-            cmd = 'git'
-
+        cmd = get_cmd_git()
         cmd += " ls-tree -r HEAD \"%s\"" % full
         out, err = run_cmd(cmd,
                            wait=True,
@@ -207,14 +217,9 @@ def get_repo_log(path=None, file_detail=False, commandline=True):
         except Exception:
             return get_repo_log(path, file_detail, True)
     else:
-        if sys.platform.startswith("win32"):
-            cmd = r'"C:\Program Files (x86)\Git\bin\git"'
-            cmd += ' log --pretty=format:"<logentry revision=\\"%h\\"><author>%an</author><date>%ci</date><msg>%s</msg><hash>%H</hash></logentry>" ' + \
+        cmd = get_cmd_git()
+        cmd += ' log --pretty=format:"<logentry revision=\\"%h\\"><author>%an</author><date>%ci</date><msg>%s</msg><hash>%H</hash></logentry>" ' + \
                 path
-        else:
-            cmd = ['git']
-            cmd += ['log',
-                    '--pretty=format:<logentry revision="%h"><author>%an</author><date>%ci</date><msg>%s</msg><hash>%H</hash></logentry>', path]
 
         enc = sys.stdout.encoding if sys.version_info[
             0] != 2 and sys.stdout is not None else "utf8"
@@ -289,11 +294,8 @@ def get_repo_version(path=None, commandline=True, usedate=False, log=False):
             except Exception:
                 return get_repo_version(path, True)
         else:
-            if sys.platform.startswith("win32"):
-                # %H for full commit hash
-                cmd = r'"C:\Program Files (x86)\Git\bin\git" log --format="%h---%ci"'
-            else:
-                cmd = 'git log --format="%h---%ci"'
+            cmd = get_cmd_git()
+            cmd += ' git log --format="%h---%ci"'
 
             if path is not None:
                 cmd += " \"%s\"" % path
@@ -352,11 +354,7 @@ def get_master_location(path=None, commandline=True):
         except Exception:
             return get_repo_version(path, True)
     else:
-        if sys.platform.startswith("win32"):
-            cmd = r'"C:\Program Files (x86)\Git\bin\git"'
-        else:
-            cmd = 'git'
-
+        cmd = get_cmd_git()
         cmd += " config --get remote.origin.url"
 
         out, err = run_cmd(cmd,
@@ -401,13 +399,8 @@ def get_nb_commits(path=None, commandline=True):
         except Exception as e:
             return get_repo_version(path, True)
     else:
-        if sys.platform.startswith("win32"):
-            # %H for full commit hash
-            cmd = '"C:\\Program Files (x86)\\Git\\bin\\git" rev-list HEAD --count'
-            exe = 'C:\\Program Files (x86)\\Git\\bin\\git.exe'
-        else:
-            cmd = 'git rev-list HEAD --count'
-            exe = None
+        cmd = get_cmd_git()
+        cmd += ' rev-list HEAD --count'
 
         if path is not None:
             cmd += " \"%s\"" % path
@@ -424,12 +417,8 @@ def get_nb_commits(path=None, commandline=True):
                            shell=sys.platform.startswith("win32"))
 
         if len(err) > 0:
-            if exe is not None:
-                exi = os.path.exists(exe)
-            else:
-                exi = None
             raise Exception(
-                "unable to get commit number from path {0}\nERR:\n{1}\nCMD:\n{2}\nEXISTS:\n{3}--{4}".format(path, err, cmd, exi, exe))
+                "unable to get commit number from path {0}\nERR:\n{1}\nCMD:\n{2}".format(path, err, cmd))
 
         lines = out.strip()
         try:
@@ -476,7 +465,8 @@ def clone(location,
         address = "https://{2}/{3}/{4}.git".format(username,
                                                    password, srv, group, project)
 
-    cmd = "git clone " + address + " " + location
+    cmd = get_cmd_git()
+    cmd += " clone " + address + " " + location
     out, err = run_cmd(cmd, wait=True)
     if len(err) > 0 and "Cloning into" not in err:
         raise Exception(
@@ -512,7 +502,8 @@ def rebase(location,
 
     cwd = os.getcwd()
     os.chdir(location)
-    cmd = "git pull --rebase " + address
+    cmd = get_cmd_git()
+    cmd += " pull --rebase " + address
     out, err = run_cmd(cmd, wait=True)
     os.chdir(cwd)
     if len(err) > 0 and "-> FETCH_HEAD" not in err:
