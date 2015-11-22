@@ -39,11 +39,18 @@ def get_parser(encrypt):
             '--map',
             default="crypt_map.txt",
             help='mapping between raw files and crypted files')
+    else:
+        parser.add_argument(
+            '-r',
+            '--regex',
+            default="",
+            help='the script can retrieve only a subpart of the data defined by a regular expression')
+
     return parser
 
 
 def do_main(source, dest, password, encrypt,
-            crypt_file, crypt_map, fLOG=None):
+            crypt_file, crypt_map, regex=None, fLOG=None):
     """
     Encrypt or decrypt of folder, see @see cl EncryptedBackup.
 
@@ -51,6 +58,7 @@ def do_main(source, dest, password, encrypt,
     @param      dest        destination
     @param      password    password
     @param      encrypt     boolean, True to encrypt
+    @param      regex       regular expression to filter in files to retrieve
     @param      fLOG        logging function
     """
     if not os.path.exists(source):
@@ -95,7 +103,7 @@ def do_main(source, dest, password, encrypt,
             fLOG=fLOG)
 
         print("start restoration")
-        enc.retrieve_all(source)
+        enc.retrieve_all(source, regex=regex)
 
 
 def encrypt():
@@ -111,8 +119,7 @@ def encrypt():
 
     if args is not None:
         do_main(source=args.source, dest=args.dest, password=args.password,
-                encrypt=True, crypt_file=args.status, crypt_map=args.map,
-                fLOG=print)
+                encrypt=True, crypt_file=args.status, crypt_map=args.map, fLOG=print)
 
 
 def decrypt():
@@ -129,6 +136,7 @@ def decrypt():
     if args is not None:
         do_main(source=args.dest, dest=args.source, password=args.password,
                 encrypt=False, crypt_file=None, crypt_map=None,
+                regex=args.regex if args.regex else None,
                 fLOG=print)
 
 if __name__ == "__main__":

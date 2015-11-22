@@ -400,24 +400,34 @@ class EncryptedBackup:
                         byt.write(data)
                     return byt.getvalue()
 
-    def retrieve_all(self, dest):
+    def retrieve_all(self, dest, regex=None):
         """
         retrieve all backuped files
 
         @param      dest        destination
+        @param      regex       retrieve a subset matching the regular expression
         @return                 list of restored files
         """
+        rema = re.compile(regex) if regex else None
+
+        def match(na):
+            if rema:
+                return rema.search(na)
+            else:
+                return True
+
         self.fLOG("load mapping")
         self.load_mapping()
         self.fLOG("number of files", len(self.Mapping))
         done = []
         for k, v in sorted(self.Mapping.items()):
             name = self.retrieve(k, root=dest)
-            size = os.stat(name).st_size
-            self.fLOG("[download % 8d bytes name=%s -- fullname=%s -- to=%s]" % (
-                size,
-                os.path.split(name)[-1],
-                dest,
-                os.path.dirname(name)))
-            done.append(name)
+            if match(name):
+                size = os.stat(name).st_size
+                self.fLOG("[download % 8d bytes name=%s -- fullname=%s -- to=%s]" % (
+                    size,
+                    os.path.split(name)[-1],
+                    dest,
+                    os.path.dirname(name)))
+                done.append(name)
         return done

@@ -140,5 +140,10 @@ class TestBackupFiles(unittest.TestCase):
             c1 = f.read()
         self.assertEqual(c1, c2)
 
+        detemp = os.path.join(temp, "retrieved")
+        s = enc.retrieve_all(detemp, regex=".*[.]py")
+        assert len(s) > 0
+
+
 if __name__ == "__main__":
     unittest.main()

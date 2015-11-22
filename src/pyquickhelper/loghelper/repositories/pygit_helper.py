@@ -83,12 +83,13 @@ class RepoFile:
         """
         return self.name
 
+
 def get_cmd_git():
     """
     get the command line used to run git
-    
+
     @return     string
-    
+
     .. versionadded:: 1.3
     """
     if sys.platform.startswith("win32"):
@@ -219,7 +220,7 @@ def get_repo_log(path=None, file_detail=False, commandline=True):
     else:
         cmd = get_cmd_git()
         cmd += ' log --pretty=format:"<logentry revision=\\"%h\\"><author>%an</author><date>%ci</date><msg>%s</msg><hash>%H</hash></logentry>" ' + \
-                path
+            path
 
         enc = sys.stdout.encoding if sys.version_info[
             0] != 2 and sys.stdout is not None else "utf8"
