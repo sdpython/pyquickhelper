@@ -142,7 +142,7 @@ def _private_process_one_file(
     """
     ext = os.path.splitext(fullname)[-1]
 
-    if ext in [".pyd", ".png", ".dat", ".dll", ".o", ".so", ".exe"]:
+    if ext in [".pyd", ".png", ".dat", ".dll", ".o", ".so", ".exe", ".enc"]:
         if ext in [".pyd", ".so"]:
             # if the file is being executed, the copy might keep the properties of
             # the original (only Windows)
@@ -236,27 +236,32 @@ def copy_source_files(input,
                       softfile=lambda f: False,
                       fexclude=lambda f: False,
                       addfilter=None,
-                      replace_relative_import=False):
+                      replace_relative_import=False,
+                      copy_add_ext=None):
     """
     copy all sources files (input) into a folder (output),
     apply on each of them a modification
 
-    @param      input       input folder
-    @param      output      output folder (it will be cleaned each time)
-    @param      fmod        modifies the content of each file,
-                            this function takes a string and returns a string
-    @param      silent      if True, do not stop when facing an issue with doxygen documentation
-    @param      filter      if None, process only file related to python code, otherwise,
-                            use this filter to select file (regular expression). If this parameter
-                            is None or is empty, the default value is:
-                            ``"(.+[.]py$)|(.+[.]pyd$)|(.+[.]cpp$)|(.+[.]h$)|(.+[.]dll$)|(.+[.]o$)|(.+[.]def$)|(.+[.]exe$)|(.+[.]config$)"``.
-    @param      remove      if True, remove every files in the output folder first
-    @param      softfile    softfile is a function (f : filename --> True or False), when it is True,
-                            the documentation is lighter (no special members)
-    @param      fexclude    function to exclude some files from the help
-    @param      addfilter   additional filter, it should look like: ``"(.+[.]pyx$)|(.+[.]pyh$)"``
+    @param      input                       input folder
+    @param      output                      output folder (it will be cleaned each time)
+    @param      fmod                        modifies the content of each file,
+                                            this function takes a string and returns a string
+    @param      silent                      if True, do not stop when facing an issue with doxygen documentation
+    @param      filter                      if None, process only file related to python code, otherwise,
+                                            use this filter to select file (regular expression). If this parameter
+                                            is None or is empty, the default value is:
+                                            ``"(.+[.]py$)|(.+[.]pyd$)|(.+[.]cpp$)|(.+[.]h$)|(.+[.]dll$)|(.+[.]o$)|(.+[.]def$)|(.+[.]exe$)|(.+[.]config$)"``.
+    @param      remove                      if True, remove every files in the output folder first
+    @param      softfile                    softfile is a function (f : filename --> True or False), when it is True,
+                                            the documentation is lighter (no special members)
+    @param      fexclude                    function to exclude some files from the help
+    @param      addfilter                   additional filter, it should look like: ``"(.+[.]pyx$)|(.+[.]pyh$)"``
     @param      replace_relative_import     replace relative import
-    @return                 list of copied files
+    @param      copy_add_ext                additional extension file to copy
+    @return                                 list of copied files
+
+    .. versionchanged:: 1.3
+        Parameter *copy_add_ext* was added.
     """
     if not os.path.exists(output):
         os.makedirs(output)
@@ -265,6 +270,9 @@ def copy_source_files(input,
         remove_folder(output, False, raise_exception=False)
 
     deffilter = "(.+[.]py$)|(.+[.]pyd$)|(.+[.]cpp$)|(.+[.]h$)|(.+[.]dll$)|(.+[.]o$)|(.+[.]def$)|(.+[.]exe$)|(.+[.]config$)"
+    if copy_add_ext is not None:
+        res = ["(.+[.]%s$)" % e for e in copy_add_ext]
+        deffilter += "|" + "|".join(res)
 
     if addfilter is not None and len(addfilter) > 0:
         if filter is None or len(filter) == 0:
@@ -515,9 +523,9 @@ def add_file_rst(rootm,
                  rootrep=("_doc.sphinxdoc.source.pyquickhelper.", ""),
                  fmod=lambda v, filename: v,
                  softfile=lambda f: False,
-                 mapped_function=[],
+                 mapped_function=None,
                  indexes=None,
-                 additional_sys_path=[],
+                 additional_sys_path=None,
                  fLOG=noLOG):
     """
     creates a rst file for every source file
@@ -549,6 +557,11 @@ def add_file_rst(rootm,
         Paramater *fLOG* was added.
 
     """
+    if mapped_function is None:
+        mapped_function = []
+
+    if additional_sys_path is None:
+        additional_sys_path = []
 
     memo = {}
     app = []
@@ -598,28 +611,33 @@ def add_file_rst(rootm,
                     memo[pat] = re.compile(pat)
                 exp = memo[pat]
                 if exp.search(file):
-                    with open(to, "r", encoding="utf8") as g:
-                        content = g.read()
-                    if func is None:
-                        func = filecontent_to_rst
-                    content = func(to, content)
-
-                    if isinstance(content, tuple) and len(content) == 2:
-                        content, doc = content
+                    if isinstance(func, bool) and not func:
+                        # we copy but we do nothing with it
+                        pass
                     else:
-                        doc = ""
+                        with open(to, "r", encoding="utf8") as g:
+                            content = g.read()
+                        if func is None:
+                            func = filecontent_to_rst
+                        content = func(to, content)
 
-                    with open(rst, "w", encoding="utf8") as g:
-                        g.write(content)
-                    app.append(RstFileHelp(to, rst, ""))
+                        if isinstance(content, tuple) and len(content) == 2:
+                            content, doc = content
+                        else:
+                            doc = ""
 
-                    filenoext, ext = os.path.splitext(os.path.split(to)[-1])
-                    ext = ext.strip(".")
-                    label = IndexInformation.get_label(
-                        indexes, "ext-" + filenoext)
-                    indexes[label] = IndexInformation(
-                        "ext-" + ext, label, filenoext, doc, rst, to)
-                    fLOG("add ext into index ", indexes[label])
+                        with open(rst, "w", encoding="utf8") as g:
+                            g.write(content)
+                        app.append(RstFileHelp(to, rst, ""))
+
+                        filenoext, ext = os.path.splitext(
+                            os.path.split(to)[-1])
+                        ext = ext.strip(".")
+                        label = IndexInformation.get_label(
+                            indexes, "ext-" + filenoext)
+                        indexes[label] = IndexInformation(
+                            "ext-" + ext, label, filenoext, doc, rst, to)
+                        fLOG("add ext into index ", indexes[label])
 
     return app
 
@@ -846,15 +864,16 @@ def prepare_file_for_sphinx_help_generation(
         rootrep=("_doc.sphinxdoc.source.project_name.", ""),
         fmod_res=lambda v: v,
         silent=False,
-        optional_dirs=[],
+        optional_dirs=None,
         softfile=lambda f: False,
         fexclude=lambda f: False,
-        mapped_function=[],
+        mapped_function=None,
         fexclude_index=lambda f: False,
         issues=None,
-        additional_sys_path=[],
+        additional_sys_path=None,
         replace_relative_import=False,
-        module_name=None):
+        module_name=None,
+        copy_add_ext=None):
     """
     prepare all files for Sphinx generation
 
@@ -898,6 +917,7 @@ def prepare_file_for_sphinx_help_generation(
     @param      additional_sys_path     additional paths to includes to sys.path when import a module (will be removed afterwards)
     @param      replace_relative_import replace relative import
     @param      module_name     module name (cannot be None)
+    @param      copy_add_ext    additional file extension to copy
 
     @return                     list of written files stored in RstFileHelp
 
@@ -922,7 +942,19 @@ def prepare_file_for_sphinx_help_generation(
 
     .. versionchanged:: 1.0
         add parameter *module_name*, more robust to import issues
+
+    .. versionchanged:: 1.3
+        Parameter *copy_add_ext* was added.
     """
+    if optional_dirs is None:
+        optional_dirs = []
+
+    if mapped_function is None:
+        mapped_function = []
+
+    if additional_sys_path is None:
+        additional_sys_path = []
+
     if module_name is None:
         raise ValueError("module_name cannot be None")
 
@@ -971,7 +1003,8 @@ def prepare_file_for_sphinx_help_generation(
                                           fexclude=fexclude,
                                           addfilter="|".join(
                                               ['(%s)' % _[0] for _ in mapped_function]),
-                                          replace_relative_import=replace_relative_import)
+                                          replace_relative_import=replace_relative_import,
+                                          copy_add_ext=copy_add_ext)
 
             # without those two lines, importing the module might crash later
             if sys.version_info[0] != 2:
@@ -1012,7 +1045,8 @@ def prepare_file_for_sphinx_help_generation(
                           fexclude=fexclude,
                           addfilter="|".join(['(%s)' % _[0]
                                               for _ in mapped_function]),
-                          replace_relative_import=replace_relative_import)
+                          replace_relative_import=replace_relative_import,
+                          copy_add_ext=copy_add_ext)
 
     # processing all store_obj to compute some indices
     fLOG("extracted ", len(store_obj), " objects")

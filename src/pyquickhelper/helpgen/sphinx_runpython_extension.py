@@ -122,7 +122,7 @@ class RunPythonDirective(Directive):
     The directive has three options:
         * ``:indent:<int>`` to indent the output
         * ``:showcode:`` to show the code before its output
-        * ``:rst:`` to interpret the output, otherwise, it is condered as raw text
+        * ``:rst:`` to interpret the output, otherwise, it is considered as raw text
         * ``:sin:<text_for_in>`` which text to display before the code (by default *In*)
         * ``:sout:<text_for_in>`` which text to display before the output (by default *Out*)
 

@@ -41,7 +41,8 @@ def process_standard_options_for_setup(argv,
                                        func_sphinx_begin=None,
                                        func_sphinx_end=None,
                                        additional_notebook_path=None,
-                                       additional_local_path=None):
+                                       additional_local_path=None,
+                                       copy_add_ext=None):
     """
     process the standard options the module pyquickhelper is
     able to process assuming the module which calls this function
@@ -81,6 +82,7 @@ def process_standard_options_for_setup(argv,
                                             use ``**args**``
     @param      additional_notebook_path    additional paths to add when launching the notebook
     @param      additional_local_path       additional paths to add when running a local command
+    @param      copy_add_ext                additional file extensions to copy
 
     @return                                 True (an option was processed) or False,
                                             the file ``setup.py`` should call function ``setup``
@@ -101,7 +103,7 @@ def process_standard_options_for_setup(argv,
         }
 
     .. versionchanged:: 1.3
-        Parameters *coverage_options*, *coverage_exclude_lines* were added.
+        Parameters *coverage_options*, *coverage_exclude_lines*, *copy_add_ext* were added.
         See function @see fn main_wrapper_tests.
 
         Parameter *unittest_modules* now accepts a list of string and 2-uple.
@@ -165,7 +167,7 @@ def process_standard_options_for_setup(argv,
                               additional_notebook_path=additional_notebook_path)
         standard_help_for_setup(
             file_or_folder, project_var_name, module_name=module_name, extra_ext=extra_ext,
-            add_htmlhelp=add_htmlhelp)
+            add_htmlhelp=add_htmlhelp, copy_add_ext=copy_add_ext)
 
         if func_sphinx_end is not None:
             func_sphinx_end(argv=argv, file_or_folder=file_or_folder, project_var_name=project_var_name,
@@ -359,7 +361,7 @@ def clean_space_for_setup(file_or_folder):
 
 
 def standard_help_for_setup(file_or_folder, project_var_name, module_name=None, extra_ext=None,
-                            add_htmlhelp=False):
+                            add_htmlhelp=False, copy_add_ext=None):
     """
     standard function to generate help assuming they follow the same design
     as *pyquickhelper*
@@ -369,11 +371,15 @@ def standard_help_for_setup(file_or_folder, project_var_name, module_name=None, 
     @param      module_name         module name, None if equal to *project_var_name* (``import <module_name>``)
     @param      extra_ext           extra file extension to process (ex ``["doc"]``)
     @param      add_htmlhelp        run HTML Help too (only on Windows)
+    @param      copy_add_ext        additional extension of files to copy
 
     The function outputs some information through function @see fn fLOG.
 
     A page will be added for each extra file extension mentioned in *extra_ext* if
     some of these were found.
+
+    .. versionchanged:: 1.3
+        Parameter *copy_add_ext* was added.
     """
     if "--help" in sys.argv:
         print(get_help_usage())
@@ -397,7 +403,8 @@ def standard_help_for_setup(file_or_folder, project_var_name, module_name=None, 
             generate_help_sphinx(project_name, module_name=module_name,
                                  layout=["html", "pdf", "epub"],
                                  extra_ext=extra_ext,
-                                 add_htmlhelp=add_htmlhelp)
+                                 add_htmlhelp=add_htmlhelp,
+                                 copy_add_ext=copy_add_ext)
         else:
             # unable to test latex conversion due to adjustbox.sty missing
             # package

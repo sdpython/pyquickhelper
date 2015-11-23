@@ -62,7 +62,8 @@ def generate_help_sphinx(project_var_name,
                          module_name=None,
                          from_repo=True,
                          use_run_cmd=False,
-                         add_htmlhelp=False):
+                         add_htmlhelp=False,
+                         copy_add_ext=None):
     """
     runs the help generation
         - copies every file in another folder
@@ -84,6 +85,7 @@ def generate_help_sphinx(project_var_name,
                                     False otherwise
     @param      use_run_cmd         use @see fn run_cmd instead os ``os.system`` (default) to run Sphinx
     @param      add_htmlhelp        run HTML Help too (only on Windows)
+    @param      copy_add_ext        additional file extension to copy
 
     The result is stored in path: ``root/_doc/sphinxdoc/source``.
     We assume the file ``root/_doc/sphinxdoc/source/conf.py`` exists
@@ -196,6 +198,8 @@ def generate_help_sphinx(project_var_name,
         and python scripts ``.. runpython::``. The second command runs a python
         script which outputs RST documntation adds it to the current documentation.
 
+    .. versionadded:: 1.3
+        Parameter *copy_add_ext* was added.
     """
     setup_environment_for_help()
 
@@ -408,7 +412,8 @@ def generate_help_sphinx(project_var_name,
             optional_dirs=optional_dirs,
             mapped_function=mapped_function,
             replace_relative_import=False,
-            module_name=module_name)
+            module_name=module_name,
+            copy_add_ext=copy_add_ext)
 
     except ImportErrorHelpGen as e:
 
