@@ -227,7 +227,7 @@ jenkins_windows_setup = "%jenkinspythonexe% -u setup.py"
 #: build setup script for Windows
 #################
 
-windows_build_setup = windows_any_setup_command_base + """
+windows_build_setup = windows_any_setup_command_base + windows_setup_hook + """
 @echo ~CALL %pythonexe% setup.py sdist %2 --formats=gztar,zip --verbose
 %pythonexe% setup.py sdist %2 --formats=gztar,zip --verbose
 if %errorlevel% neq 0 exit /b %errorlevel%
@@ -239,7 +239,7 @@ if %errorlevel% neq 0 exit /b %errorlevel%
 #################
 #: build script MAIN SCRIPT
 #################
-windows_build = windows_any_setup_command_base + """
+windows_build = windows_any_setup_command_base + windows_setup_hook + """
 @echo #######################################################_unit
 @echo ~CALL %pythonexe% -u setup.py unittests
 rem set PYTHONPATH=additional_path --> we use a virtual environment here
