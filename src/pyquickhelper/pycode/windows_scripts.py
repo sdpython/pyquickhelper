@@ -71,6 +71,19 @@ __LOOP_UNITTEST_FOLDERS__
 
 """ + windows_error + "\ncd ..\.."
 
+############
+#: copy to local pypiserver
+############
+
+copy_to_pypiserver = """
+@echo ~LABEL end
+rem we copy the wheel on a local folder to let a pypiserver take it
+if not exist ..\\..\\local_pypi mkdir ..\\..\\local_pypi
+if not exist ..\\..\\local_pypi\\local_pypi_server mkdir ..\\..\\local_pypi\\local_pypi_server
+@echo ~CALL copy /Y dist\\*.whl ..\\..\\local_pypi\\local_pypi_server
+copy /Y dist\\*.whl ..\\..\\local_pypi\\local_pypi_server
+"""
+
 ####################################################
 #: build any script for Windows from a virtual environment
 ####################################################
@@ -215,7 +228,7 @@ rem set PYTHONPATH=additional_path
 %pythonexe% -u setup.py %3 %4 %5 %6 %7 %8 %9
 if %errorlevel% neq 0 exit /b %errorlevel%
 @echo #######################################################6
-"""
+""" + copy_to_pypiserver
 
 #################
 #: call the setup
@@ -234,7 +247,7 @@ if %errorlevel% neq 0 exit /b %errorlevel%
 @echo ~CALL %pythonexe% setup.py bdist_wheel %2
 %pythonexe% setup.py bdist_wheel %2
 if %errorlevel% neq 0 exit /b %errorlevel%
-"""
+""" + copy_to_pypiserver
 
 #################
 #: build script MAIN SCRIPT
@@ -285,13 +298,7 @@ if exist _doc\\sphinxdoc\\build\\latex xcopy /E /C /I /Y _doc\\sphinxdoc\\build\
 if %errorlevel% neq 0 exit /b %errorlevel%
 
 :end:
-@echo ~LABEL end
-rem we copy the wheel on a local folder to let a pypiserver take it
-if not exist ..\\..\\local_pypi mkdir ..\\..\\local_pypi
-if not exist ..\\..\\local_pypi\\local_pypi_server mkdir ..\\..\\local_pypi\\local_pypi_server
-@echo ~CALL copy /Y dist\\*.whl ..\\..\\local_pypi\\local_pypi_server
-copy /Y dist\\*.whl ..\\..\\local_pypi\\local_pypi_server
-""".replace("PY??", _sversion())
+""".replace("PY??", _sversion()) + copy_to_pypiserver
 
 #################
 #: build script for Windows BASE + virtual environment
