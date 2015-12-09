@@ -492,12 +492,11 @@ setup(
     install_requires=[
         "autopep8",
         "numpy",
-        "dateutils",
+        "python-dateutil",
         "matplotlib",
         "sphinx",
         "pandas",
         "sphinxjp.themes.revealjs",
-        "dateutils",
         "docutils", ] + jup,
 )
 """
