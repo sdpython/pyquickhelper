@@ -101,7 +101,7 @@ class RunPythonDirective(Directive):
 
     @example(A python script which generates documentation)
     The following code prints the version of Python
-    on the standard output. It it added to the documentation::
+    on the standard output. It is added to the documentation::
 
         .. runpython::
             :showcode:
@@ -144,7 +144,7 @@ class RunPythonDirective(Directive):
             print("**line**", "*" +str(l)+"*")
             print('')
 
-    If the directives produced RST text to be included later in the documentation,
+    If the directive produces RST text to be included later in the documentation,
     it fails making references to the documentation. It does not interpret
     `Sphinx directives <http://sphinx-doc.org/rest.html>`_,
     only `docutils directives <http://docutils.sourceforge.net/docs/ref/rst/directives.html>`_.
