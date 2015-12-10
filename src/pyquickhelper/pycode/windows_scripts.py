@@ -80,8 +80,8 @@ copy_to_pypiserver = """
 rem we copy the wheel on a local folder to let a pypiserver take it
 if not exist ..\\..\\local_pypi mkdir ..\\..\\local_pypi
 if not exist ..\\..\\local_pypi\\local_pypi_server mkdir ..\\..\\local_pypi\\local_pypi_server
-@echo ~CALL copy /Y dist\\*.whl ..\\..\\local_pypi\\local_pypi_server
-copy /Y dist\\*.whl ..\\..\\local_pypi\\local_pypi_server
+@echo ~CALL if exist dist copy /Y dist\\*.whl ..\\..\\local_pypi\\local_pypi_server
+if exist dist copy /Y dist\\*.whl ..\\..\\local_pypi\\local_pypi_server
 """
 
 ####################################################
