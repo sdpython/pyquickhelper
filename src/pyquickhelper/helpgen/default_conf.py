@@ -26,7 +26,8 @@ def set_sphinx_variables(fileconf,
                          bootswatch_theme="spacelab",
                          bootswatch_navbar_links=None,
                          description_latex="",
-                         use_mathjax=False):
+                         use_mathjax=False,
+                         use_lunrsearch=True):
     """
     defines variables for Sphinx
 
@@ -44,6 +45,8 @@ def set_sphinx_variables(fileconf,
     @param      use_mathjax             set up the documentation to use mathjax,
                                         see `sphinx.ext.mathjax <http://sphinx-doc.org/ext/math.html?highlight=math#module-sphinx.ext.mathjax>`_,
                                         default option is True
+    @param      use_lunrsearch          suggest autocompletion in sphinx,
+                                        see `sphinxcontrib-lunrsearch <https://github.com/rmcgibbo/sphinxcontrib-lunrsearch>`_
 
     @example(Simple configuration file for Sphinx)
 
@@ -77,7 +80,7 @@ def set_sphinx_variables(fileconf,
     @endexample
 
     .. versionchanged:: 1.3
-        Add parameter *use_mathjax*.
+        Add parameter *use_mathjax*, *use_lunrsearch*.
     """
     # version .txt
     dirconf = os.path.abspath(os.path.dirname(fileconf))
@@ -198,7 +201,11 @@ def set_sphinx_variables(fileconf,
                   #'matplotlib.sphinxext.ipython_directive',
                   'IPython.sphinxext.ipython_console_highlighting',
                   'sphinx.ext.napoleon',
+                  'sphinxcontrib.imagesvg',
+                  'sphinxcontrib.jsdemo',
                   ]
+    if use_lunrsearch:
+        extensions.append('sphinxcontrib.lunrsearch')
 
     if not use_mathjax:
         # extensions.append('matplotlib.sphinxext.mathmpl')
