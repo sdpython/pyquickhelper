@@ -5,7 +5,7 @@
 
 import os
 from ..loghelper.flog import noLOG
-from .install_custom import download_revealjs
+from .install_custom import download_revealjs, download_requirejs
 from ..filehelper import synchronize_folder, change_file_status
 
 
@@ -25,9 +25,9 @@ def install_javascript_tools(root, dest, fLOG=noLOG,
     if revealjs_github:
         rev = os.path.join(dest, "reveal.js")
         if not os.path.exists(rev):
-            download_revealjs(root, dest, fLOG=fLOG)
+            lfiles = download_revealjs(root, dest, fLOG=fLOG)
         else:
-            return []
+            lfiles = []
     else:
         rev = os.path.join(dest, "reveal.js")
         if not os.path.exists(rev):
@@ -43,6 +43,11 @@ def install_javascript_tools(root, dest, fLOG=noLOG,
             sync = synchronize_folder(js, rev, copy_1to2=True)
             fulls = [s[1].fullname for s in sync]
             change_file_status(rev)
-            return fulls
+            lfiles = fulls
         else:
-            return []
+            lfiles = []
+
+    # require.js
+    one = download_requirejs(root, dest, fLOG=fLOG)
+    lfiles.extend(one)
+    return lfiles

@@ -341,6 +341,7 @@ def post_process_slides_output(file, pdf, python, slides):
         text = f.read()
 
     # reveal.js
+    require = "require(" in text
     text = text.replace("reveal.js/js/reveal.js", "reveal.js/js/reveal.js")
     lines = text.split("\n")
     for i, line in enumerate(lines):
@@ -351,73 +352,10 @@ def post_process_slides_output(file, pdf, python, slides):
             lines[i] = ""
         if '<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>' in line:
             lines[i] = ""
+        if lines[i] == "</script>" and require:
+            lines[i] += '\n<script src="require.js"></script>'
+            require = False
     text = "\n".join(lines)
-
-    """
-        <link rel="stylesheet" href="reveal.js/css/reveal.css">
-        <link rel="stylesheet" href="reveal.js/css/theme/solarized.css" id="theme">
-        <link rel="stylesheet" href="reveal.js/lib/css/zenburn.css">
-        <link rel="stylesheet" href="reveal.js/revealjs.css" type="text/css" />
-
-        <link rel="stylesheet" href="reveal.js/css/reveal.css">
-        <link rel="stylesheet" href="reveal.js/css/theme/simple.css" id="theme">
-
-        width: 1076,
-        height: 750,
-
-        margin: 0.1,
-
-        minScale: 0.2,
-        maxScale: 1.0,
-
-        controls: true,
-        progress: true,
-        history: false,
-        center: true,
-
-        keyboard : true,
-        overview: true,
-        touch: true,
-        loop: false,
-        rtl: false,
-        fragments: true,
-
-        autoSlide: 0,
-        mouseWheel: true,
-        rollingLinks: true,
-        previewLinks: true,
-
-        transitionSpeed: "default",
-        backgroundTransition: "default",
-
-        slideNumber: true,
-        embedded: false,
-        autoSlideStoppable: true,
-        hideAddressBar: true,
-
-        parallaxBackgroundImage: "",
-        parallaxBackgroundSize: "",
-
-        focusBodyOnPageVisiblityChange: true,
-
-        viewDistance: 3,
-
-        transition: Reveal.getQueryHash().transition || "linear",
-
-        // Optional libraries used to extend on reveal.js
-        dependencies: [
-           { src: '_static/lib/js/classList.js', condition: function() { return !document.body.classList; } },
-           { src: '_static/plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
-           { src: '_static/plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
-           { src: '_static/plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
-           { src: '_static/plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
-           { src: '_static/plugin/leap/leap.js', async: true, condition: function() { return !!document.body.classList; } },
-           { src: '_static/plugin/multiplex/master.js', async: true, condition: function() { return !!document.body.classList; } },
-           { src: '_static/plugin/remotes/remotes.js_static/plugin/notes-server/client.js', async: true, condition: function() { return !!document.body.classList; } },
-           { src: '_static/plugin/math/math.js', async: true, condition: function() { return !!document.body.classList; } },
-           { src: '_static/plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
-
-    """
 
     # mathjax
     text = text.replace("https://c328740.ssl.cf1.rackcdn.com/mathjax/latest/MathJax.js?config=TeX-AMS_HTML",

@@ -79,3 +79,35 @@ def download_revealjs(
         os.remove(local)
 
     return keep
+
+
+def download_requirejs(
+        temp_folder=".",
+        unzip_to=".",
+        fLOG=print,
+        location="http://requirejs.org/docs/download.html",
+        clean=True):
+    """
+    Download `require.js <http://requirejs.org/docs/download.html>`_ release.
+
+    @param      temp_folder     where to download the setup
+    @param      unzip_to        where to unzip the files
+    @param      fLOG            logging function
+    @param      install         install (otherwise only download)
+    @param      location        location of require.js release
+    @param      clean           clean unnecessary files
+    @return                     list of downloaded and unzipped files
+    """
+    link = location
+    page = read_url(link, encoding="utf8")
+    reg = re.compile("href=\\\"(.*?minified/require[.]js)\\\"")
+    alls = reg.findall(page)
+    if len(alls) == 0:
+        raise Exception(
+            "unable to find a link on require.js file on page: " +
+            page)
+
+    filename = alls[0]
+    local = download(filename, temp_folder, fLOG=fLOG)
+    fLOG("local file", local)
+    return [local]

@@ -23,26 +23,29 @@ except ImportError:
 
 
 from src.pyquickhelper import fLOG, get_temp_folder
-from src.pyquickhelper.helpgen.install_custom import download_revealjs
-from src.pyquickhelper.helpgen.install_js_dep import install_javascript_tools
+from src.pyquickhelper.helpgen.install_custom import download_requirejs
 
 
-class TestRevealjs(unittest.TestCase):
+class TestRequirejs(unittest.TestCase):
 
-    def test_install_revealjs_github(self):
+    def test_download_requirejs(self):
         fLOG(
             __file__,
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
         fold = os.path.abspath(os.path.split(__file__)[0])
 
-        temp = get_temp_folder(__file__, "temp_install_revealjs_github")
-        dest = get_temp_folder(__file__, "temp_install_revealjs_github_dest")
-        fs = download_revealjs(temp, dest, fLOG=fLOG)
+        dest = get_temp_folder(__file__, "temp_install_revealjs_sphinx")
+        fs = download_requirejs(
+            dest, dest, fLOG=fLOG)
         fLOG(fs)
         assert len(fs) > 0
         for a in fs:
             assert os.path.exists(a)
+        r = os.path.join(dest, "require.js")
+        fLOG(r)
+        assert os.path.exists(r)
+
 
 if __name__ == "__main__":
     unittest.main()
