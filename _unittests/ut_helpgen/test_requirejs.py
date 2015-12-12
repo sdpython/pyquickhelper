@@ -36,8 +36,7 @@ class TestRequirejs(unittest.TestCase):
         fold = os.path.abspath(os.path.split(__file__)[0])
 
         dest = get_temp_folder(__file__, "temp_install_revealjs_sphinx")
-        fs = download_requirejs(
-            dest, dest, fLOG=fLOG)
+        fs = download_requirejs(dest, fLOG=fLOG)
         fLOG(fs)
         assert len(fs) > 0
         for a in fs:
