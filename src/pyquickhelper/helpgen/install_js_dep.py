@@ -48,6 +48,6 @@ def install_javascript_tools(root, dest, fLOG=noLOG,
             lfiles = []
 
     # require.js
-    one = download_requirejs(root, dest, fLOG=fLOG)
+    one = download_requirejs(dest, fLOG=fLOG)
     lfiles.extend(one)
     return lfiles

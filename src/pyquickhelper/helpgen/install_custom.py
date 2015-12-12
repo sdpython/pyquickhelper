@@ -82,8 +82,7 @@ def download_revealjs(
 
 
 def download_requirejs(
-        temp_folder=".",
-        unzip_to=".",
+        to=".",
         fLOG=print,
         location="http://requirejs.org/docs/download.html",
         clean=True):
@@ -91,7 +90,7 @@ def download_requirejs(
     Download `require.js <http://requirejs.org/docs/download.html>`_ release.
 
     @param      temp_folder     where to download the setup
-    @param      unzip_to        where to unzip the files
+    @param      to              where to unzip the files
     @param      fLOG            logging function
     @param      install         install (otherwise only download)
     @param      location        location of require.js release
@@ -108,6 +107,6 @@ def download_requirejs(
             page)
 
     filename = alls[0]
-    local = download(filename, temp_folder, fLOG=fLOG)
+    local = download(filename, to, fLOG=fLOG)
     fLOG("local file", local)
     return [local]
