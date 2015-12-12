@@ -33,7 +33,9 @@ pyquickhelper documentation
 .. image:: https://coveralls.io/repos/sdpython/pyquickhelper/badge.svg?branch=master&service=github 
     :target: https://coveralls.io/github/sdpython/pyquickhelper?branch=master     
 
-
+.. image:: https://landscape.io/github/sdpython/pyquickhelper/master/landscape.svg?style=flat
+   :target: https://landscape.io/github/sdpython/pyquickhelper/master
+   :alt: Code Health
 
 **Links:** `pypi <https://pypi.python.org/pypi/pyquickhelper/>`_, 
 `github <https://github.com/sdpython/pyquickhelper>`_,
