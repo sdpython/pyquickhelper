@@ -14,6 +14,7 @@ from ..pandashelper.tblformat import df2rst
 from .utils_sphinx_doc_helpers import HelpGenException
 from .post_process import post_process_latex_output
 from .texts_language import TITLES
+from .sphinx_main_missing_html_files import add_missing_files
 
 if sys.version_info[0] == 2:
     from codecs import open
@@ -55,81 +56,6 @@ def setup_environment_for_help():
             os.environ["PATH"] = path + ";" + inkscape
     else:
         pass
-
-
-def add_missing_files(root, conf, blog_list):
-    """
-    add missing files for the documentation,
-    ``moduletoc.html``, ``blogtoc.html``
-
-    @param      root        root
-    @param      conf        configuration module (to guess the template folder)
-    @param      blog_list   list of recent blog posts to add to the navigational bar (list) or a name for a placeholder (such as ``__INSERT__``)
-    @return                 list of modified files
-    """
-    fold = conf.templates_path
-    if isinstance(fold, list):
-        fold = fold[0]
-
-    if hasattr(conf, "language"):
-        language = conf.language
-    else:
-        language = "en"
-
-    loc = os.path.join(root, "_doc", "sphinxdoc", "source", fold)
-    if not os.path.exists(loc):
-        os.makedirs(loc)
-
-    tocs = []
-
-    # link
-    link = """\n<li class="toctree-l1"><a class="reference internal" href="{0}">{1}</a></li>"""
-
-    # moduletoc.html
-    mt = os.path.join(loc, "moduletoc.html")
-    tocs.append(mt)
-    with open(mt, "w", encoding="utf8") as f:
-        f.write("\n<h3>{0}</h3>".format(TITLES[language]["toc0"]))
-        f.write("\n<ul>")
-        f.write(link.format("{{ pathto('',1) }}/blog/main_0000.html", "Blog"))
-        f.write(link.format("{{ pathto('',1) }}/genindex.html", "Index"))
-        f.write(link.format("{{ pathto('',1) }}/py-modindex.html", "Module"))
-        f.write("\n</ul>")
-        f.write(
-            """\n<h3><a href="{{ pathto(master_doc) }}">%s</a></h3>\n""" % TITLES[language]["toc"])
-        f.write("""{{ toctree() }}""")
-        f.write("\n<h3>{0}</h3>".format(TITLES[language]["toc1"]))
-        f.write("\n<ul>")
-        f.write(
-            link.format("{{ pathto('',1) }}/all_FAQ.html", TITLES[language]["FAQ"]))
-        f.write(
-            link.format("{{ pathto('',1) }}/glossary.html", TITLES[language]["glossary"]))
-        f.write(link.format("{{ pathto('',1) }}/README.html", "README"))
-        f.write(
-            link.format("{{ pathto('',1) }}/changes.html", TITLES[language]["changes"]))
-        f.write(
-            link.format("{{ pathto('',1) }}/license.html", TITLES[language]["license"]))
-        f.write("\n</ul>")
-
-    # blogtoc.html
-    mt = os.path.join(loc, "blogtoc.html")
-    tocs.append(mt)
-    with open(mt, "w", encoding="utf8") as f:
-        f.write(
-            """<a href="{{ pathto('',1) }}/genindex.html">Index</a>\n""")
-        f.write(
-            """<a href="{{ pathto('',1) }}/py-modindex.html">Module</a>\n""")
-        f.write(
-            """<h3><a href="{{ pathto('',1) }}/blog/main_0000.html">Blog</a></h3>\n""")
-        if isinstance(blog_list, str  # unicode#
-                      ):
-            f.write(blog_list)
-        elif isinstance(blog_list, list):
-            f.write("\n<br />".join(blog_list))
-        else:
-            raise TypeError(type(blog_list))
-
-    return tocs
 
 
 def get_executables_path():

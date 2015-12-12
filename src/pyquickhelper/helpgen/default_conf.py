@@ -27,7 +27,7 @@ def set_sphinx_variables(fileconf,
                          bootswatch_navbar_links=None,
                          description_latex="",
                          use_mathjax=False,
-                         use_lunrsearch=True):
+                         use_lunrsearch=False):
     """
     defines variables for Sphinx
 
