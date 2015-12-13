@@ -9,8 +9,9 @@ See `Tutorial: Writing a simple extension <http://sphinx-doc.org/extdev/tutorial
 from .texts_language import TITLES
 import sys
 from docutils import nodes, core
-from docutils.parsers.rst import Directive
-from docutils.parsers.rst import directives
+from docutils.parsers.rst import Directive, directives
+from docutils.statemachine import StringList
+from sphinx.util.nodes import nested_parse_with_titles
 import traceback
 
 if sys.version_info[0] == 2:
@@ -72,8 +73,8 @@ def run_python_script(script, params={}, comment=None):
             comment = ""
         gout = sout.getvalue()
         gerr = serr.getvalue()
-        message = "SCRIPT:\n{0}\nPARAMS\n{1}\nCOMMENT\n{2}\nERR\n{3}\nOUT\n{4}".format(
-            script, params, comment, gout, gerr)
+        message = "SCRIPT:\n{0}\nPARAMS\n{1}\nCOMMENT\n{2}\nERR\n{3}\nOUT\n{4}\nEXC\n{5}".format(
+            script, params, comment, gout, gerr, ee)
         raise RunPythonExecutionError(message) from ee
 
     gout = sout.getvalue()
@@ -125,6 +126,10 @@ class RunPythonDirective(Directive):
         * ``:rst:`` to interpret the output, otherwise, it is considered as raw text
         * ``:sin:<text_for_in>`` which text to display before the code (by default *In*)
         * ``:sout:<text_for_in>`` which text to display before the output (by default *Out*)
+        * ``:showout`` if *:rst:* is set up, this flag adds the raw rst output to check what is happening
+        * ``:sphinx:`` by default, function `nested_parse_with_titles <http://sphinx-doc.org/extdev/markupapi.html?highlight=nested_parse>`_ is
+          used to parse the output of the script, if this option is set to false,
+          `public_doctree <http://code.nabla.net/doc/docutils/api/docutils/core/docutils.core.publish_doctree.html>`_.
 
     Option *rst* can be used the following way::
 
@@ -145,18 +150,25 @@ class RunPythonDirective(Directive):
             print('')
 
     If the directive produces RST text to be included later in the documentation,
-    it fails making references to the documentation. It does not interpret
-    `Sphinx directives <http://sphinx-doc.org/rest.html>`_,
-    only `docutils directives <http://docutils.sourceforge.net/docs/ref/rst/directives.html>`_.
+    it is able to interpret
+    `docutils directives <http://docutils.sourceforge.net/docs/ref/rst/directives.html>`_
+    and `Sphinx directives <http://sphinx-doc.org/rest.html>`_
+    with function `nested_parse_with_titles <http://sphinx-doc.org/extdev/markupapi.html?highlight=nested_parse>`_
+
+    .. versionchanged:: 1.3
+        Titles, references or label are now allowed.
     """
     required_arguments = 0
     optional_arguments = 0
     final_argument_whitespace = True
     option_spec = {'indent': directives.unchanged,
                    'showcode': directives.unchanged,
+                   'showout': directives.unchanged,
                    'rst': directives.unchanged,
                    'sin': directives.unchanged,
                    'sout': directives.unchanged,
+                   'sphinx': directives.unchanged,
+                   'sout2': directives.unchanged,
                    }
     has_content = True
     runpython_class = runpython_node
@@ -189,20 +201,25 @@ class RunPythonDirective(Directive):
             docname = env.docname
 
         # post
+        bool_set = (True, 1, "True", "1", "true")
         p = {
-            'indent': int(self.options.get("indent", 1)),
             'showcode': 'showcode' in self.options,
+            'showout': 'showout' in self.options,
             'rst': 'rst' in self.options,
             'sin': self.options.get('sin', TITLES[language_code]["In"]),
             'sout': self.options.get('sout', TITLES[language_code]["Out"]),
+            'sout2': self.options.get('sout2', TITLES[language_code]["Out2"]),
+            'sphinx': 'sphinx' not in self.options or self.options['sphinx'] in bool_set,
         }
+        dind = 0 if p['rst'] else 4
+        p['indent'] = int(self.options.get("indent", dind))
 
         # run the script
         content = ["if True:"]
         for line in self.content:
             content.append("    " + line)
         script = "\n".join(content)
-        script_disp = "\n".join(content[1:])
+        script_disp = "\n".join(self.content)
 
         # if an exception is raised, the documentation should report
         # a warning
@@ -219,13 +236,14 @@ class RunPythonDirective(Directive):
         self.exe_class.update(dict(out=out, err=err, script=script))
 
         # add indent
-        lines = content.split("\n")
-        if p['indent'] > 0:
-            lines = [(" " * p['indent'] + _) for _ in lines]
-        content = "\n".join(lines)
+        def add_indent(content, nbind):
+            lines = content.split("\n")
+            if nbind > 0:
+                lines = [(" " * nbind + _) for _ in lines]
+            content = "\n".join(lines)
+            return content
 
-        # not needed
-        # lines_content = StringList(lines)
+        content = add_indent(content, p['indent'])
 
         # build node
         node = self.__class__.runpython_class(rawsource=content,
@@ -244,21 +262,43 @@ class RunPythonDirective(Directive):
             node += pin
 
         if p["rst"]:
-            settings_overrides = {'output_encoding': 'unicode',
-                                  'doctitle_xform': True,
-                                  'initial_header_level': 2,
-                                  'warning_stream': StringIO()}
+            settings_overrides = {}
+            try:
+                v = sett.output_encoding
+            except KeyError:
+                settings_overrides["output_encoding"] = "unicode"
+            try:
+                v = sett.doctitle_xform
+            except KeyError:
+                settings_overrides["doctitle_xform"] = True
+            try:
+                v = sett.warning_stream
+            except KeyError:
+                settings_overrides["warning_stream"] = StringIO()
+            #'initial_header_level': 2,
 
             try:
-                dt = core.publish_doctree(
-                    content, settings_overrides=settings_overrides)
-            except Exception:
+                if p['sphinx']:
+                    st = StringList(content.replace("\r", "").split("\n"))
+                    nested_parse_with_titles(self.state, st, node)
+                    dt = None
+                else:
+                    dt = core.publish_doctree(
+                        content, settings=sett,
+                        settings_overrides=settings_overrides)
+            except Exception as e:
                 tab = content
                 content = ["::"]
                 st = StringIO()
                 traceback.print_exc(file=st)
                 content.append("")
                 trace = st.getvalue()
+                trace += "\n----------------------OPT\n" + str(p)
+                trace += "\n----------------------EXC\n" + str(e)
+                trace += "\n----------------------SETT\n" + str(sett)
+                trace += "\n----------------------ENV\n" + str(env)
+                trace += "\n----------------------DOCNAME\n" + str(docname)
+                trace += "\n----------------------CODE\n"
                 content.extend("    " + _ for _ in trace.split("\n"))
                 content.append("")
                 content.append("")
@@ -271,7 +311,10 @@ class RunPythonDirective(Directive):
             if dt is not None:
                 for ch in dt.children:
                     node += ch
-        else:
+
+        if not p["rst"] or p["showout"]:
+            pout2 = nodes.paragraph(text=p["sout2"])
+            node += pout2
             pout = nodes.literal_block(content, content)
             node += pout
 

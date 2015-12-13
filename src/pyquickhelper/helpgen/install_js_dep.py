@@ -48,6 +48,10 @@ def install_javascript_tools(root, dest, fLOG=noLOG,
             lfiles = []
 
     # require.js
-    one = download_requirejs(dest, fLOG=fLOG)
+    expected = os.path.join(dest, "require.js")
+    if not os.path.exists(expected):
+        one = download_requirejs(dest, fLOG=fLOG)
+    else:
+        one = expected
     lfiles.extend(one)
     return lfiles

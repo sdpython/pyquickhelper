@@ -112,4 +112,6 @@ Versions, Changes
     * **new:** add command line ``encrypt`` and ``decrypt``
     * **fix:** the conversion of notebooks now requires require.js, the script is downloaded
       whre it is needed by reveal.js
+    * **change:** sphinx command *runpython* now processes Sphinx commands such as links,
+      reference or titles
 

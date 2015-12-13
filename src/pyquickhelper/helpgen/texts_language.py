@@ -26,6 +26,7 @@ TITLES = {
            "Magic commands": "Magic commands",
            "In": "In",
            "Out": "Out",
+           "Out2": "Raw",
            },
     'fr': {"blogpost": "article",
            "toc": "Contenu",
@@ -48,5 +49,6 @@ TITLES = {
            "Magic commands": "Commandes magiques",
            "In": "Code",
            "Out": "Sortie",
+           "Out2": "Sortie brute",
            }
 }

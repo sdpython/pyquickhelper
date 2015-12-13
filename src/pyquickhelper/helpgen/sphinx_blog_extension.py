@@ -132,6 +132,7 @@ class BlogPostDirective(Directive):
 
         # parse the content into sphinx directive, we add it to section
         paragraph = nodes.paragraph()
+        # nested_parse_with_titles(self.state, content, paragraph)
         self.state.nested_parse(content, self.content_offset, paragraph)
         node += paragraph
         p['blogpost'] = node
