@@ -42,7 +42,10 @@ def process_standard_options_for_setup(argv,
                                        func_sphinx_end=None,
                                        additional_notebook_path=None,
                                        additional_local_path=None,
-                                       copy_add_ext=None):
+                                       copy_add_ext=None,
+                                       nbformats=[
+                                           "ipynb", "html", "python", "rst", "slides", "pdf"],
+                                       layout=["html", "pdf", "epub"]):
     """
     process the standard options the module pyquickhelper is
     able to process assuming the module which calls this function
@@ -83,6 +86,9 @@ def process_standard_options_for_setup(argv,
     @param      additional_notebook_path    additional paths to add when launching the notebook
     @param      additional_local_path       additional paths to add when running a local command
     @param      copy_add_ext                additional file extensions to copy
+    @param      nbformats                   requested formats for the notebooks conversion
+    @param      layout                      list of formats sphinx should generate such as html, latex, pdf, docx,
+                                            it is a list of tuple (layout, build directory, parameters to override)
 
     @return                                 True (an option was processed) or False,
                                             the file ``setup.py`` should call function ``setup``
@@ -115,6 +121,8 @@ def process_standard_options_for_setup(argv,
         to pre-process or post-process the documentation.
         Parameter *additional_notebook_path* was added to specify some additional
         paths when preparing the script *auto_cmd_notebook.bat*.
+
+        Parameters *layout*, *nbformats* were added. See function @see fn .
     """
     folder = file_or_folder if os.path.isdir(
         file_or_folder) else os.path.dirname(file_or_folder)
@@ -164,10 +172,10 @@ def process_standard_options_for_setup(argv,
                               requirements=requirements, port=port, blog_list=blog_list, default_engine_paths=default_engine_paths,
                               extra_ext=extra_ext, add_htmlhelp=add_htmlhelp, setup_params=setup_params, coverage_options=coverage_options,
                               coverage_exclude_lines=coverage_exclude_lines, func_sphinx_begin=func_sphinx_begin, func_sphinx_end=func_sphinx_end,
-                              additional_notebook_path=additional_notebook_path)
+                              additional_notebook_path=additional_notebook_path, nbformats=nbformats, layout=layout)
         standard_help_for_setup(
             file_or_folder, project_var_name, module_name=module_name, extra_ext=extra_ext,
-            add_htmlhelp=add_htmlhelp, copy_add_ext=copy_add_ext)
+            add_htmlhelp=add_htmlhelp, copy_add_ext=copy_add_ext, nbformats=nbformats, layout=layout)
 
         if func_sphinx_end is not None:
             func_sphinx_end(argv=argv, file_or_folder=file_or_folder, project_var_name=project_var_name,
@@ -175,7 +183,7 @@ def process_standard_options_for_setup(argv,
                             requirements=requirements, port=port, blog_list=blog_list, default_engine_paths=default_engine_paths,
                             extra_ext=extra_ext, add_htmlhelp=add_htmlhelp, setup_params=setup_params, coverage_options=coverage_options,
                             coverage_exclude_lines=coverage_exclude_lines, func_sphinx_begin=func_sphinx_begin, func_sphinx_end=func_sphinx_end,
-                            additional_notebook_path=additional_notebook_path)
+                            additional_notebook_path=additional_notebook_path, nbformats=nbformats, layout=layout)
 
         return True
 
@@ -361,7 +369,10 @@ def clean_space_for_setup(file_or_folder):
 
 
 def standard_help_for_setup(file_or_folder, project_var_name, module_name=None, extra_ext=None,
-                            add_htmlhelp=False, copy_add_ext=None):
+                            add_htmlhelp=False, copy_add_ext=None,
+                            nbformats=["ipynb", "html", "python",
+                                       "rst", "slides", "pdf"],
+                            layout=["html", "pdf", "epub"]):
     """
     standard function to generate help assuming they follow the same design
     as *pyquickhelper*
@@ -372,6 +383,8 @@ def standard_help_for_setup(file_or_folder, project_var_name, module_name=None, 
     @param      extra_ext           extra file extension to process (ex ``["doc"]``)
     @param      add_htmlhelp        run HTML Help too (only on Windows)
     @param      copy_add_ext        additional extension of files to copy
+    @param      nbformats           notebooks format to generate
+    @param      layout              layout for the documentation
 
     The function outputs some information through function @see fn fLOG.
 
@@ -379,7 +392,7 @@ def standard_help_for_setup(file_or_folder, project_var_name, module_name=None, 
     some of these were found.
 
     .. versionchanged:: 1.3
-        Parameter *copy_add_ext* was added.
+        Parameter *copy_add_ext*, *nbformats* was added.
     """
     if "--help" in sys.argv:
         print(get_help_usage())
@@ -399,19 +412,13 @@ def standard_help_for_setup(file_or_folder, project_var_name, module_name=None, 
         project_name = os.path.split(
             os.path.split(os.path.abspath(ffolder))[0])[-1]
 
-        if sys.platform.startswith("win"):
-            generate_help_sphinx(project_name, module_name=module_name,
-                                 layout=["html", "pdf", "epub"],
-                                 extra_ext=extra_ext,
-                                 add_htmlhelp=add_htmlhelp,
-                                 copy_add_ext=copy_add_ext)
-        else:
-            # unable to test latex conversion due to adjustbox.sty missing
-            # package
-            generate_help_sphinx(project_name, nbformats=["ipynb", "html", "python", "rst"],
-                                 module_name=project_var_name,
-                                 extra_ext=extra_ext,
-                                 add_htmlhelp=add_htmlhelp)
+        generate_help_sphinx(project_name,
+                             module_name=module_name,
+                             layout=layout,
+                             extra_ext=extra_ext,
+                             nbformats=nbformats,
+                             add_htmlhelp=add_htmlhelp,
+                             copy_add_ext=copy_add_ext)
 
 
 def run_unittests_for_setup(file_or_folder, skip_function=default_skip_function, setup_params=None,

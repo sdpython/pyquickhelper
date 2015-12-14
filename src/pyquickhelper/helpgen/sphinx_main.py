@@ -75,7 +75,7 @@ def generate_help_sphinx(project_var_name,
     @param      clean               if True, cleans the previous documentation first, does not work on linux yet
     @param      root                see below
     @param      filter_commit       function which accepts a commit to show on the documentation (based on the comment)
-    @param      extra_ext           list of file extensions (not .py)
+    @param      extra_ext           list of file extensions to document (not .py)
     @param      nbformats           requested formats for the notebooks conversion
     @param      layout              list of formats sphinx should generate such as html, latex, pdf, docx,
                                     it is a list of tuple (layout, build directory, parameters to override)

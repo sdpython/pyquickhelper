@@ -226,6 +226,8 @@ if not r:
             "requests",
             "simplegeneric",
             "sphinx",  # part of the minimal list
+            "sphinxcontrib-imagesvg",
+            "sphinxcontrib-jsdemo",
             "sphinxjp.themes.revealjs",
             "traitlets",
         ],
