@@ -1700,6 +1700,9 @@ def private_migrating_doxygen_doc(
                     mes = "  File \"%s\", line %d, in ???\n    unable to process: %s \nwhole blocks:\n%s" % (
                         filename, index_first_line + i + 1, row, "\n".join(rows))
                     fLOG("error: ", mes)
+                else:
+                    mes = "  File \"%s\", line %d, in ???\n    unable to process: %s \nwhole blocks:\n%s" % (
+                        filename, index_first_line + i + 1, row, "\n".join(rows))
                 raise SyntaxError(mes)
 
     for k, v in beginends.items():

@@ -122,7 +122,7 @@ def process_standard_options_for_setup(argv,
         Parameter *additional_notebook_path* was added to specify some additional
         paths when preparing the script *auto_cmd_notebook.bat*.
 
-        Parameters *layout*, *nbformats* were added. See function @see fn .
+        Parameters *layout*, *nbformats* were added. See function @see fn generate_help_sphinx.
     """
     folder = file_or_folder if os.path.isdir(
         file_or_folder) else os.path.dirname(file_or_folder)
