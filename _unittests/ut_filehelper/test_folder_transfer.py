@@ -25,7 +25,7 @@ except ImportError:
     import src
 
 from src.pyquickhelper import get_temp_folder, fLOG, FileTreeNode, TransferFTP, FolderTransferFTP
-from src.pyquickhelper.filehelper.ftp_transfer import MockTransferFTP
+from src.pyquickhelper.filehelper.ftp_transfer_mock import MockTransferFTP
 
 
 class TestFolderTransfer(unittest.TestCase):
