@@ -175,6 +175,19 @@ class TransferFTP (FTP):
 
         see :meth:`enumerate_ls <pyquickhelper.filehelper.ftp_transfer.TransferFTP.enumerate_ls>`
 
+        @example(List files from FTP site)
+
+        @code
+        from pyquickhelper.filehelper import TransferFTP
+        ftp = TransferFTP("ftp....", "login", "password")
+        res = ftp.ls("path")
+        for v in res:
+            print(v["name"])
+        ftp.close()
+        @endcode
+
+        @endexample
+
         .. versionchanged:: 1.0
         """
         return list(self.enumerate_ls(path))
@@ -234,6 +247,10 @@ class TransferFTP (FTP):
         elif isinstance(file, io.BytesIO):
             r = self.run_command(FTP.storbinary, 'STOR ' +
                                  name, file, TransferFTP.blockSize)
+        elif isinstance(file, bytes):
+            st = io.BytesIO(file)
+            r = self.run_command(FTP.storbinary, 'STOR ' +
+                                 name, st, TransferFTP.blockSize)
         else:
             r = self.run_command(FTP.storbinary, 'STOR ' +
                                  name, file, TransferFTP.blockSize)
@@ -302,29 +319,3 @@ class TransferFTP (FTP):
             raise raise_exc
 
         return r
-
-
-class MockTransferFTP (TransferFTP):
-
-    """
-    mocking FTP transfer
-    """
-
-    def __init__(self, site, login, password, fLOG=noLOG):
-        """
-        same signature as @see cl TransferFTP
-        """
-        self.LOG = fLOG
-        self._atts = dict(site=site)
-
-    def transfer(self, file, to, debug=False):
-        """
-        does nothing, returns True
-        """
-        return True
-
-    def close(self):
-        """
-        does noting
-        """
-        pass

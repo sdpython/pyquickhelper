@@ -26,8 +26,9 @@ from .process_notebooks import process_notebooks, add_notebook_page
 from .sphinx_helper import post_process_html_nb_output_static_file
 from .install_js_dep import install_javascript_tools
 from ..filehelper import synchronize_folder
-from .sphinx_main_helper import setup_environment_for_help, add_missing_files, get_executables_path, generate_changes_repo, compile_latex_output_final, replace_placeholder_by_recent_blogpost
+from .sphinx_main_helper import setup_environment_for_help, get_executables_path, generate_changes_repo, compile_latex_output_final, replace_placeholder_by_recent_blogpost
 from .sphinx_main_verification import verification_html_format
+from .sphinx_main_missing_html_files import add_missing_files
 
 
 if sys.version_info[0] == 2:

@@ -264,15 +264,15 @@ class RunPythonDirective(Directive):
         if p["rst"]:
             settings_overrides = {}
             try:
-                v = sett.output_encoding
+                sett.output_encoding
             except KeyError:
                 settings_overrides["output_encoding"] = "unicode"
             try:
-                v = sett.doctitle_xform
+                sett.doctitle_xform
             except KeyError:
                 settings_overrides["doctitle_xform"] = True
             try:
-                v = sett.warning_stream
+                sett.warning_stream
             except KeyError:
                 settings_overrides["warning_stream"] = StringIO()
             #'initial_header_level': 2,

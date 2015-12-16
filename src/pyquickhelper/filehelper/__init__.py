@@ -34,3 +34,4 @@ from .encrypted_backup import EncryptedBackup
 from .transfer_api import TransferAPI
 from .transfer_api_ftp import TransferAPIFtp
 from .transfer_api_file import TransferAPIFile
+from .ftp_transfer import TransferFTP

@@ -13,8 +13,6 @@ from ..loghelper.pyrepo_helper import SourceRepository
 from ..pandashelper.tblformat import df2rst
 from .utils_sphinx_doc_helpers import HelpGenException
 from .post_process import post_process_latex_output
-from .texts_language import TITLES
-from .sphinx_main_missing_html_files import add_missing_files
 
 if sys.version_info[0] == 2:
     from codecs import open
