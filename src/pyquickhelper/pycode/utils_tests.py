@@ -436,14 +436,31 @@ def main(runner,
             err = out.split("===========")
             err = err[-1]
             memout.write("\n")
-            memout.write(err)
+            try:
+                memout.write(err)
+            except UnicodeDecodeError:
+                err_e = err.decode("ascii", errors="ignore")
+                memout.write(err_e)
+            except UnicodeEncodeError:
+                err_e = err.encode("ascii", errors="ignore")
+                memout.write(err_e)
+
             fail += 1
 
             fullstderr.write("\n#-----" + lis[i] + "\n")
             fullstderr.write("OUT:\n")
             fullstderr.write(out)
             fullstderr.write("ERRo:\n")
-            fullstderr.write(err)
+
+            try:
+                fullstderr.write(err)
+            except UnicodeDecodeError:
+                err_e = err.decode("ascii", errors="ignore")
+                fullstderr.write(err_e)
+            except UnicodeEncodeError:
+                err_e = err.encode("ascii", errors="ignore")
+                fullstderr.write(err_e)
+
             fullstderr.write("WARN:\n")
             if len(list_warn) > 0:
                 fullstderr.write("WARN:\n")
