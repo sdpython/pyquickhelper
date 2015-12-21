@@ -27,6 +27,30 @@ from src.pyquickhelper.jenkinshelper.jenkins_server import JenkinsExt, JenkinsEx
 
 class TestJenkinsExt(unittest.TestCase):
 
+    def test_jenkins_job_verif(self):
+        fLOG(
+            __file__,
+            self._testMethodName,
+            OutputPrint=__name__ == "__main__")
+
+        engines_default = dict(anaconda2="c:\\Anaconda",
+                               anaconda3="c:\\Anaconda3",
+                               py35="c:\\Python35_x64",
+                               default="c:\\Python34_x64",
+                               winpython="c:\\APythonENSAE\\python")
+                               
+        srv = JenkinsExt(
+            "http://localhost:8080/", "user", "password",
+            mock=True, fLOG=fLOG, engines=engines_default)
+            
+        job = "standalone [conda_update] [anaconda3]"
+        cmd = srv.get_cmd_standalone(job)
+        assert "Anaconda3" in cmd
+        
+        job = "pyrsslocal [py35] <-- pyquickhelper, pyensae"
+        cmd = "\n".join(srv.get_jenkins_script(job))
+        assert "Python34" not in cmd
+
     def test_jenkins_ext(self):
         fLOG(
             __file__,

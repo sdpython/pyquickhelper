@@ -199,7 +199,6 @@ class JenkinsExt(jenkins.Jenkins):
         """
         delete all jobs permanently.
 
-        @param      fLOG        logging function
         @return                 list of deleted jobs
 
         .. versionadded:: 1.3
