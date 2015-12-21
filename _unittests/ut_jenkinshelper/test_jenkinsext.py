@@ -33,6 +33,10 @@ class TestJenkinsExt(unittest.TestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
+        if not sys.platform.startswith("win"):
+            # not yet implemented
+            return
+
         engines_default = dict(anaconda2="c:\\Anaconda",
                                anaconda3="c:\\Anaconda3",
                                py35="c:\\Python35_x64",
