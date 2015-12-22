@@ -34,6 +34,10 @@ README / Changes
 .. image:: https://landscape.io/github/sdpython/pyquickhelper/master/landscape.svg?style=flat
    :target: https://landscape.io/github/sdpython/pyquickhelper/master
    :alt: Code Health
+   
+.. image:: https://requires.io/github/sdpython/pyquickhelper/requirements.svg?branch=master
+     :target: https://requires.io/github/sdpython/pyquickhelper/requirements/?branch=master
+     :alt: Requirements Status   
     
 
 **Links:**
