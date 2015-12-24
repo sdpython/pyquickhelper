@@ -479,8 +479,9 @@ def run_unittests_for_setup(file_or_folder,
 
     run_unit = os.path.join(funit, "run_unittests.py")
     if not os.path.exists(run_unit):
+        content = os.listdir(funit)
         raise FileNotFoundError(
-            "the folder {0} should contain run_unittests.py".format(funit))
+            "the folder {0} should contain run_unittests.py\nCONTENT:\n{1}".format(funit, "\n".join(content)))
 
     fix_tkinter_issues_virtualenv()
 
