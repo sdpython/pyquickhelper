@@ -361,12 +361,11 @@ def main(runner,
     est = [get_estimation_time(l) for l in li]
     co = [(e, short_name(l), l) for e, l in zip(est, li)]
     co.sort()
-    cco = []
 
     # we check we do not run twice the same file
     done = {}
     duplicate = []
-    for a, cut, l in cco:
+    for a, cut, l in co:
         if cut in done:
             duplicate.append((cut, l))
         done[cut] = True
@@ -388,13 +387,16 @@ def main(runner,
         flogp("found ", len(co), " test files")
 
     # extract the test classes
+    cco = []
+    duration = {}
     index = 0
     for e, cut, l in co:
         if e > limit_max:
             continue
-        if skip == -1 or index >= skip:
-            flogp("% 3d - time " % (len(cco) + 1), "% 3d" % e, "s  --> ", cut)
         cco.append((e, l))
+        cut = os.path.split(l)
+        cut = os.path.split(cut[0])[-1] + "/" + cut[-1]
+        duration[cut] = e
         index += 1
 
     exp = re.compile("Ran ([0-9]+) tests? in ([.0-9]+)s")
@@ -427,8 +429,13 @@ def main(runner,
 
         cut = os.path.split(s[1])
         cut = os.path.split(cut[0])[-1] + "/" + cut[-1]
-        zzz = "\ntest % 3d, %s" % (i + 1, cut)
+        if cut not in duration:
+            raise Exception("{0} not found in\n{1}".format(cut, "\n".join(sorted(duration.keys()))))
+        else:
+            dur = duration[cut]
+        zzz = "\ntest % 3d (%04ds), %s" % (i + 1, dur, cut)
         memout.write(zzz)
+    memout.write("\n")
 
     # run all tests
     for i, s in enumerate(suite):
