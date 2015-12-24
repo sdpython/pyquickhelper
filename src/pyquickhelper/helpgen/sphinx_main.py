@@ -64,7 +64,8 @@ def generate_help_sphinx(project_var_name,
                          from_repo=True,
                          use_run_cmd=False,
                          add_htmlhelp=False,
-                         copy_add_ext=None):
+                         copy_add_ext=None,
+                         fLOG=fLOG):
     """
     runs the help generation
         - copies every file in another folder
@@ -87,6 +88,7 @@ def generate_help_sphinx(project_var_name,
     @param      use_run_cmd         use @see fn run_cmd instead os ``os.system`` (default) to run Sphinx
     @param      add_htmlhelp        run HTML Help too (only on Windows)
     @param      copy_add_ext        additional file extension to copy
+    @param      fLOG                logging function
 
     The result is stored in path: ``root/_doc/sphinxdoc/source``.
     We assume the file ``root/_doc/sphinxdoc/source/conf.py`` exists
@@ -201,6 +203,7 @@ def generate_help_sphinx(project_var_name,
 
     .. versionadded:: 1.3
         Parameter *copy_add_ext* was added.
+        Parameter *fLOG* was also added (work in progress).
     """
     setup_environment_for_help()
 
