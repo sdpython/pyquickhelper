@@ -18,7 +18,7 @@ import warnings
 import time
 
 from ..filehelper.synchelper import remove_folder
-from ..loghelper.flog import fLOG, run_cmd
+from ..loghelper.flog import run_cmd, noLOG
 from .call_setup_hook import call_setup_hook
 
 
@@ -67,17 +67,23 @@ def get_temp_folder(thisfile, name, clean=True, create=True):
     return local
 
 
-def get_test_file(filter, dir=None, no_subfolder=False):
+def get_test_file(filter, dir=None, no_subfolder=False, fLOG=noLOG, root=None):
     """
     return the list of test files
     @param      dir             path to look (or paths to look if it is a list)
     @param      filter          only select files matching the pattern (ex: test*)
     @param      no_subfolder    the function investigates the folder *dir* and does not try any subfolder in
                                 ``{"_nrt", "_unittest", "_unittests"}``
+    @param      fLOG            logging function
+    @param      root            root or folder which contains the project,
+                                rules applyong on folder name will not apply on it
     @return                     a list of test files
 
     .. versionchanged:: 1.1
         Parameter *no_subfolder* was added.
+
+    .. versionchanged:: 1.3
+        Paramerer *fLOG*, *root* were added.
     """
     if no_subfolder:
         dirs = [dir]
@@ -102,6 +108,7 @@ def get_test_file(filter, dir=None, no_subfolder=False):
                     raise FileNotFoundError(d)
 
     copypaths = list(sys.path)
+    fLOG("[unittests], inspecting", dirs)
 
     li = []
     for dir in dirs:
@@ -111,22 +118,35 @@ def get_test_file(filter, dir=None, no_subfolder=False):
             continue
         if dir not in sys.path and dir != ".":
             sys.path.append(dir)
-        li += glob.glob(dir + "/" + filter)
+        content = glob.glob(dir + "/" + filter)
         if filter != "temp_*":
-            li = [l for l in li if "test_" in l and ".py" in l and
-                  "test_main" not in l and
-                  "temp_" not in l and
-                  "out.test_copyfile.py.2.txt" not in l and
-                  ".pyc" not in l and
-                  ".pyd" not in l and
-                  ".so" not in l and
-                  ".py~" not in l and
-                  ".pyo" not in l]
+            if root is not None:
+                def remove_root(p):
+                    if p.startswith(root):
+                        return p[len(root):]
+                    else:
+                        return p
+                content = [(remove_root(l), l) for l in content]
+            else:
+                content = [(l, l) for l in content]
+
+            content = [fu for l, fu in content if "test_" in l and
+                       ".py" in l and
+                       "test_main" not in l and
+                       "temp_" not in l and
+                       "out.test_copyfile.py.2.txt" not in l and
+                       ".pyc" not in l and
+                       ".pyd" not in l and
+                       ".so" not in l and
+                       ".py~" not in l and
+                       ".pyo" not in l]
+        li.extend(content)
 
         lid = glob.glob(dir + "/*")
         for l in lid:
             if os.path.isdir(l):
-                temp = get_test_file(filter, l, no_subfolder=True)
+                temp = get_test_file(
+                    filter, l, no_subfolder=True, fLOG=fLOG, root=root)
                 temp = [t for t in temp]
                 li.extend(temp)
 
@@ -163,12 +183,17 @@ def get_estimation_time(file):
         return int(c.groups()[0])
 
 
-def import_files(li):
+def import_files(li, additional_ut_path=None, fLOG=noLOG):
     """
     run all tests in file list li
 
-    @param      li      list of files (python scripts)
-    @return             list of tests [ ( testsuite, file) ]
+    @param      li                      list of files (python scripts)
+    @param      additional_ut_path      additional paths to add when running the unit tests
+    @param      fLOG                    logging function
+    @return                             list of tests [ ( testsuite, file) ]
+
+    .. versionchanged:: 1.3
+        Parameters *fLOG*, *additional_ut_path* were added.
     """
     allsuite = []
     for l in li:
@@ -178,23 +203,26 @@ def import_files(li):
         sdir = os.path.split(l)[0]
         if sdir not in sys.path:
             sys.path.append(sdir)
+        if additional_ut_path:
+            for p in additional_ut_path:
+                if isinstance(p, tuple):
+                    if p[1]:
+                        sys.path.insert(0, p[0])
+                    else:
+                        sys.path.append(p[0])
+                else:
+                    sys.path.append(p)
         tl = os.path.split(l)[1]
         fi = tl.replace(".py", "")
 
-        if fi in ["neural_network", "test_c",
-                  "test_model", "test_look_up",
-                  "test_look_up.extract.txt"]:
-            try:
-                mo = __import__(fi)
-            except Exception as e:
-                print("unable to import ", fi)
-                mo = None
-        else:
-            try:
-                mo = __import__(fi)
-            except:
-                print("problem with ", fi)
-                mo = __import__(fi)
+        try:
+            mo = __import__(fi)
+        except:
+            fLOG("problem with ", fi)
+            fLOG("additional paths")
+            for p in sys.path:
+                fLOG("   ", p)
+            mo = __import__(fi)
 
         # some tests can mess up with the import path
         sys.path = copypath
@@ -226,12 +254,14 @@ def import_files(li):
     return allsuite
 
 
-def clean(dir=None):
+def clean(dir=None, fLOG=noLOG):
     """
     do the cleaning
+
+    @param      dir     directory
+    @param      fLOG    logging function
     """
     # do not use SVN here just in case some files are not checked in.
-    print()
     for log_file in ["temp_hal_log.txt", "temp_hal_log2.txt",
                      "temp_hal_log_.txt", "temp_log.txt", "temp_log2.txt", ]:
         li = get_test_file(log_file, dir=dir)
@@ -240,7 +270,7 @@ def clean(dir=None):
                 if os.path.isfile(l):
                     os.remove(l)
             except Exception as e:
-                print(
+                fLOG(
                     "unable to remove file", l, " --- ", str(e).replace("\n", " "))
 
     li = get_test_file("temp_*")
@@ -249,15 +279,15 @@ def clean(dir=None):
             if os.path.isfile(l):
                 os.remove(l)
         except Exception as e:
-            print("unable to remove file. ", l,
-                  " --- ", str(e).replace("\n", " "))
+            fLOG("unable to remove file. ", l,
+                 " --- ", str(e).replace("\n", " "))
     for l in li:
         try:
             if os.path.isdir(l):
                 remove_folder(l)
         except Exception as e:
-            print("unable to remove dir. ", l,
-                  " --- ", str(e).replace("\n", " "))
+            fLOG("unable to remove dir. ", l,
+                 " --- ", str(e).replace("\n", " "))
 
 
 def main(runner,
@@ -267,9 +297,11 @@ def main(runner,
          skip=-1,
          skip_list=None,
          on_stderr=False,
-         flogp=print,
+         flogp=noLOG,
          processes=False,
-         skip_function=None):
+         skip_function=None,
+         additional_ut_path=None,
+         fLOG=noLOG):
     """
     run all unit test
     the function looks into the folder _unittest and extract from all files
@@ -277,19 +309,21 @@ def main(runner,
     Each files should mention an execution time.
     Tests are sorted by increasing order.
 
-    @param      runner          unittest Runner
-    @param      path_test       path to look, if None, looks for defaults path related to this project
-    @param      limit_max       avoid running tests longer than limit seconds
-    @param      log             if True, enables intermediate files
-    @param      skip            if skip != -1, skip the first "skip" test files
-    @param      skip_list       skip unit test id in this list (by index, starting by 1)
-    @param      skip_function   function(filename,content) --> boolean to skip a unit test
-    @param      on_stderr       if True, publish everything on stderr at the end
-    @param      flogp           logging, printing function
-    @param      processes       to run the unit test in a separate process (with function @see fn run_cmd),
-                                however, to make that happen, you need to specify
-                                ``exit=False`` for each test file, see `unittest.main <https://docs.python.org/3.4/library/unittest.html#unittest.main>`_
-    @return                     dictionnary: ``{ "err": err, "tests":list of couple (file, test results) }``
+    @param      runner              unittest Runner
+    @param      path_test           path to look, if None, looks for defaults path related to this project
+    @param      limit_max           avoid running tests longer than limit seconds
+    @param      log                 if True, enables intermediate files
+    @param      skip                if skip != -1, skip the first "skip" test files
+    @param      skip_list           skip unit test id in this list (by index, starting by 1)
+    @param      skip_function       function(filename,content) --> boolean to skip a unit test
+    @param      on_stderr           if True, publish everything on stderr at the end
+    @param      flogp               logging, printing function
+    @param      processes           to run the unit test in a separate process (with function @see fn run_cmd),
+                                    however, to make that happen, you need to specify
+                                    ``exit=False`` for each test file, see `unittest.main <https://docs.python.org/3.4/library/unittest.html#unittest.main>`_
+    @param      additional_ut_path  additional paths to add when running the unit tests
+    @param      fLOG                logging function
+    @return                         dictionnary: ``{ "err": err, "tests":list of couple (file, test results) }``
 
     .. versionchanged:: 0.9
         change the result type into a dictionary, catches warning when running unit tests,
@@ -297,6 +331,9 @@ def main(runner,
 
     .. versionchanged:: 1.0
         parameter *skip_function* was added
+
+    .. versionchanged:: 1.3
+        Parameter *fLOG* was added.
     """
     if skip_list is None:
         skip_list = set()
@@ -317,8 +354,10 @@ def main(runner,
         return cut
 
     # sort the test by increasing expected time
-    print("path_test", path_test)
-    li = get_test_file("test*", dir=path_test)
+    fLOG("path_test", path_test)
+    li = get_test_file("test*", dir=path_test, fLOG=fLOG, root=path_test)
+    if len(li) == 0:
+        raise FileNotFoundError("no test files in " + path_test)
     est = [get_estimation_time(l) for l in li]
     co = [(e, short_name(l), l) for e, l in zip(est, li)]
     co.sort()
@@ -340,7 +379,7 @@ def main(runner,
 
     # check existing
     if len(co) == 0:
-        raise Exception(
+        raise FileNotFoundError(
             "unable to find any test files in {0}".format(path_test))
 
     if skip != -1:
@@ -363,7 +402,7 @@ def main(runner,
     # run the test
     li = [a[1] for a in cco]
     lis = [os.path.split(_)[-1] for _ in li]
-    suite = import_files(li)
+    suite = import_files(li, additional_ut_path=additional_ut_path, fLOG=fLOG)
     keep = []
 
     # redirect standard output, err
@@ -391,7 +430,7 @@ def main(runner,
         zzz += (60 - len(zzz)) * " "
         memout.write(zzz)
 
-        if log:
+        if log and fLOG is not print:
             fLOG(OutputPrint=True)
             fLOG(Lock=True)
 
@@ -416,10 +455,10 @@ def main(runner,
 
                 out = r.stream.getvalue()
             else:
-                print("running")
+                fLOG("running")
                 r = runner.run(s[0])
                 out = r.stream.getvalue()
-                print("end running")
+                fLOG("end running")
 
         ti = exp.findall(out)[-1]
         # don't modify it, PyCharm does not get it right (ti is a tuple)
@@ -450,24 +489,26 @@ def main(runner,
             fullstderr.write("\n#-----" + lis[i] + "\n")
             fullstderr.write("OUT:\n")
             fullstderr.write(out)
-            fullstderr.write("ERRo:\n")
 
-            try:
-                fullstderr.write(err)
-            except UnicodeDecodeError:
-                err_e = err.decode("ascii", errors="ignore")
-                fullstderr.write(err_e)
-            except UnicodeEncodeError:
-                err_e = err.encode("ascii", errors="ignore")
-                fullstderr.write(err_e)
+            if err:
+                fullstderr.write("ERRo:\n")
+                try:
+                    fullstderr.write(err)
+                except UnicodeDecodeError:
+                    err_e = err.decode("ascii", errors="ignore")
+                    fullstderr.write(err_e)
+                except UnicodeEncodeError:
+                    err_e = err.encode("ascii", errors="ignore")
+                    fullstderr.write(err_e)
 
-            fullstderr.write("WARN:\n")
             if len(list_warn) > 0:
                 fullstderr.write("WARN:\n")
                 for w in list_warn:
                     fullstderr.write("w{0}: {1}\n".format(i, str(w)))
-            fullstderr.write("ERR:\n")
-            fullstderr.write(newstdr.getvalue())
+            serr = newstdr.getvalue()
+            if serr.strip(" \n\r\t"):
+                fullstderr.write("ERRs:\n")
+                fullstderr.write(serr)
         else:
             allwarn.append((lis[i], list_warn))
             val = newstdr.getvalue()
@@ -477,8 +518,9 @@ def main(runner,
                     fullstderr.write("WARN:\n")
                     for w in list_warn:
                         fullstderr.write("w{0}: {1}\n".format(i, str(w)))
-                fullstderr.write("ERR:\n")
-                fullstderr.write(val)
+                if val.strip(" \n\r\t"):
+                    fullstderr.write("ERRv:\n")
+                    fullstderr.write(val)
 
         memout.write("\n")
 
@@ -563,7 +605,9 @@ def main_wrapper_tests(codefile,
                        setup_params=None,
                        only_setup_hook=False,
                        coverage_options=None,
-                       coverage_exclude_lines=None):
+                       coverage_exclude_lines=None,
+                       additional_ut_path=None,
+                       fLOG=noLOG):
     """
     calls function :func:`main <pyquickhelper.unittests.utils_tests.main>` and throw an exception if it fails
 
@@ -580,6 +624,8 @@ def main_wrapper_tests(codefile,
     @param      only_setup_hook         calls only @see fn call_setup_hook, do not run the unit test
     @param      coverage_options        (dictionary) options for module coverage as a dictionary, see below, default is None
     @param      coverage_exclude_lines  (list) options for module coverage, lines to exclude from the coverage report, defaul is None
+    @param      additional_ut_path      (list) additional paths to add when running the unit tests
+    @param      fLOG                    function(*l, **p), logging function
 
     @FAQ(How to build pyquickhelper with Jenkins?)
     `Jenkins <http://jenkins-ci.org/>`_ is a task scheduler for continuous integration.
@@ -628,7 +674,7 @@ def main_wrapper_tests(codefile,
         Save the report in XML format, binary format, replace full paths by relative path.
 
     .. versionchanged:: 1.3
-        Parameters *coverage_options*, *coverage_exclude_lines* was added.
+        Parameters *coverage_options*, *coverage_exclude_lines*, *additional_ut_path* were added.
         See class `Coverage <http://coverage.readthedocs.org/en/coverage-4.0b1/api_coverage.html?highlight=coverage#coverage.Coverage.__init__>`_
         and `Configuration files <http://coverage.readthedocs.org/en/coverage-4.0b1/config.html>`_
         to specify those options. If both values are left to None, this function will
@@ -642,8 +688,9 @@ def main_wrapper_tests(codefile,
     path = os.path.abspath(os.path.join(os.path.split(codefile)[0]))
 
     def run_main():
-        res = main(runner, path_test=path, skip=-1, skip_list=skip_list, processes=processes,
-                   skip_function=skip_function)
+        res = main(runner, path_test=path, skip=-1, skip_list=skip_list,
+                   processes=processes, skip_function=skip_function,
+                   additional_ut_path=additional_ut_path, fLOG=fLOG)
         return res
 
     if "win" not in sys.platform and "DISPLAY" not in os.environ:
@@ -655,11 +702,11 @@ def main_wrapper_tests(codefile,
     # to deal with: _tkinter.TclError: no display name and no $DISPLAY
     # environment variable
     from .tkinter_helper import fix_tkinter_issues_virtualenv, _first_execution
-    print("MODULES (1): matplotlib already imported",
-          "matplotlib" in sys.modules, _first_execution)
+    fLOG("MODULES (1): matplotlib already imported",
+         "matplotlib" in sys.modules, _first_execution)
     r = fix_tkinter_issues_virtualenv()
-    print("MODULES (2): matplotlib imported",
-          "matplotlib" in sys.modules, _first_execution, r)
+    fLOG("MODULES (2): matplotlib imported",
+         "matplotlib" in sys.modules, _first_execution, r)
 
     def tested_module(folder, project_var_name, setup_params):
         # module mod
@@ -702,15 +749,15 @@ def main_wrapper_tests(codefile,
                 report_folder = os.path.join(
                     os.path.abspath(os.path.dirname(codefile)), "..", "_doc", "sphinxdoc", "source", "coverage")
 
-            print("call _setup_hook", src_abs, "name=", project_var_name)
+            fLOG("call _setup_hook", src_abs, "name=", project_var_name)
             tested_module(src_abs, project_var_name, setup_params)
-            print("end _setup_hook")
+            fLOG("end _setup_hook")
 
-            print("current folder", os.getcwd())
-            print("enabling coverage", srcp)
+            fLOG("current folder", os.getcwd())
+            fLOG("enabling coverage", srcp)
             dfile = os.path.join(report_folder, ".coverage")
 
-            # we clean previous report
+            # we clean previous report or we create an empty folder
             if os.path.exists(report_folder):
                 for afile in os.listdir(report_folder):
                     full = os.path.join(report_folder, afile)
@@ -738,13 +785,14 @@ def main_wrapper_tests(codefile,
             res = run_main()
 
             cov.stop()
+
             cov.html_report(directory=report_folder)
             outfile = os.path.join(report_folder, "coverage_report.xml")
             cov.xml_report(outfile=outfile)
             cov.save()
 
             # we clean absolute path from the produced files
-            print("replace ", srcp, ' by ', project_var_name)
+            fLOG("replace ", srcp, ' by ', project_var_name)
             srcp_s = [os.path.abspath(os.path.normpath(srcp)),
                       os.path.normpath(srcp)]
             bsrcp = [bytes(b, encoding="utf-8") for b in srcp_s]
@@ -800,7 +848,7 @@ def main_wrapper_tests(codefile,
         for r in res["tests"]:
             k = str(r[1])
             if "errors=0" not in k or "failures=0" not in k:
-                print("*", r[1], r[0])
+                fLOG("*", r[1], r[0])
 
         err = res.get("err", "")
         if len(err) > 0:

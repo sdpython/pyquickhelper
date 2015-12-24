@@ -23,19 +23,17 @@ KEYWORDS = project_var_name + \
 DESCRIPTION = """Various functionalities: folder synchronization, a logging function, helpers
 to generate documentation with sphinx, generation of code for Python 2.7 from Python 3"""
 CLASSIFIERS = [
-    'Programming Language :: Python :: 3',
+    'Programming Language :: Python :: %d' % sys.version_info[0],
     'Intended Audience :: Developers',
     'Topic :: Scientific/Engineering',
     'Topic :: Education',
     'License :: OSI Approved :: MIT License',
-    'Development Status :: 5 - Production/Stable'
+    'Developments Status :: 5 - Production/Stable'
 ]
-
 
 #######
 # data
 #######
-
 
 packages = find_packages('src', exclude='src')
 package_dir = {k: "src/" + k.replace(".", "/") for k in packages}

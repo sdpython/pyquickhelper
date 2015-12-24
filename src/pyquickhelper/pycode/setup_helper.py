@@ -8,7 +8,7 @@
 import os
 import sys
 from ..loghelper.pyrepo_helper import SourceRepository
-from ..loghelper.flog import fLOG
+from ..loghelper.flog import noLOG
 from ..helpgen.sphinx_main import generate_help_sphinx
 from .code_helper import remove_extra_spaces_folder
 from .py3to2 import py3to2_convert_tree
@@ -45,7 +45,10 @@ def process_standard_options_for_setup(argv,
                                        copy_add_ext=None,
                                        nbformats=[
                                            "ipynb", "html", "python", "rst", "slides", "pdf"],
-                                       layout=["html", "pdf", "epub"]):
+                                       layout=["html", "pdf", "epub"],
+                                       additional_ut_path=None,
+                                       skip_function=default_skip_function,
+                                       fLOG=noLOG):
     """
     process the standard options the module pyquickhelper is
     able to process assuming the module which calls this function
@@ -89,6 +92,9 @@ def process_standard_options_for_setup(argv,
     @param      nbformats                   requested formats for the notebooks conversion
     @param      layout                      list of formats sphinx should generate such as html, latex, pdf, docx,
                                             it is a list of tuple (layout, build directory, parameters to override)
+    @param      additional_ut_path          additional paths to add when running unit tests
+    @param      skip_function               function to skip unit tests, see @ee fn main_wrapper_tests
+    @param      fLOG                        logging function
 
     @return                                 True (an option was processed) or False,
                                             the file ``setup.py`` should call function ``setup``
@@ -122,7 +128,12 @@ def process_standard_options_for_setup(argv,
         Parameter *additional_notebook_path* was added to specify some additional
         paths when preparing the script *auto_cmd_notebook.bat*.
 
-        Parameters *layout*, *nbformats* were added. See function @see fn generate_help_sphinx.
+        Parameters *layout*, *nbformats* were added.
+        See function @see fn generate_help_sphinx.
+
+        Parameters *fLOG*, *additional_ut_path*, *skip_function* were added.
+        The coverage computation can be disable by specifying
+        ``coverage_options["disable_coverage"] = True``.
     """
     folder = file_or_folder if os.path.isdir(
         file_or_folder) else os.path.dirname(file_or_folder)
@@ -151,11 +162,11 @@ def process_standard_options_for_setup(argv,
         write_version_for_setup(file_or_folder)
         return True
 
-    elif "clean_pyd" in sys.argv:
+    elif "clean_pyd" in argv:
         clean_space_for_setup(file_or_folder)
         return True
 
-    elif "build_sphinx" in sys.argv:
+    elif "build_sphinx" in argv:
         if setup_params is None:
             setup_params = {}
         out, err = call_setup_hook(folder,
@@ -172,7 +183,8 @@ def process_standard_options_for_setup(argv,
                               requirements=requirements, port=port, blog_list=blog_list, default_engine_paths=default_engine_paths,
                               extra_ext=extra_ext, add_htmlhelp=add_htmlhelp, setup_params=setup_params, coverage_options=coverage_options,
                               coverage_exclude_lines=coverage_exclude_lines, func_sphinx_begin=func_sphinx_begin, func_sphinx_end=func_sphinx_end,
-                              additional_notebook_path=additional_notebook_path, nbformats=nbformats, layout=layout)
+                              additional_notebook_path=additional_notebook_path, nbformats=nbformats, layout=layout,
+                              skip_function=skip_function, addition_ut_path=additional_ut_path, fLOG=fLOG)
         standard_help_for_setup(
             file_or_folder, project_var_name, module_name=module_name, extra_ext=extra_ext,
             add_htmlhelp=add_htmlhelp, copy_add_ext=copy_add_ext, nbformats=nbformats, layout=layout)
@@ -183,28 +195,33 @@ def process_standard_options_for_setup(argv,
                             requirements=requirements, port=port, blog_list=blog_list, default_engine_paths=default_engine_paths,
                             extra_ext=extra_ext, add_htmlhelp=add_htmlhelp, setup_params=setup_params, coverage_options=coverage_options,
                             coverage_exclude_lines=coverage_exclude_lines, func_sphinx_begin=func_sphinx_begin, func_sphinx_end=func_sphinx_end,
-                            additional_notebook_path=additional_notebook_path, nbformats=nbformats, layout=layout)
+                            additional_notebook_path=additional_notebook_path, nbformats=nbformats, layout=layout,
+                            skip_function=skip_function, addition_ut_path=additional_ut_path, fLOG=fLOG)
 
         return True
 
-    elif "unittests" in sys.argv:
+    elif "unittests" in argv:
         run_unittests_for_setup(file_or_folder, setup_params=setup_params,
                                 coverage_options=coverage_options,
-                                coverage_exclude_lines=coverage_exclude_lines)
+                                coverage_exclude_lines=coverage_exclude_lines,
+                                additional_ut_path=additional_ut_path,
+                                skip_function=skip_function, fLOG=fLOG)
         return True
 
-    elif "setup_hook" in sys.argv:
+    elif "setup_hook" in argv:
         run_unittests_for_setup(
             file_or_folder, setup_params=setup_params, only_setup_hook=True,
-            coverage_options=coverage_options, coverage_exclude_lines=coverage_exclude_lines)
+            coverage_options=coverage_options, coverage_exclude_lines=coverage_exclude_lines,
+            additional_ut_path=additional_ut_path, skip_function=skip_function, fLOG=fLOG)
         return True
 
-    elif "unittests_LONG" in sys.argv:
+    elif "unittests_LONG" in argv:
         def skip_long(name, code):
             return "test_LONG_" not in name
         run_unittests_for_setup(
             file_or_folder, skip_function=skip_long, setup_params=setup_params,
-            coverage_options=coverage_options, coverage_exclude_lines=coverage_exclude_lines)
+            coverage_options=coverage_options, coverage_exclude_lines=coverage_exclude_lines,
+            additional_ut_path=additional_ut_path, fLOG=fLOG)
         return True
 
     elif "unittests_SKIP" in sys.argv:
@@ -212,10 +229,11 @@ def process_standard_options_for_setup(argv,
             return "test_SKIP_" not in name
         run_unittests_for_setup(
             file_or_folder, skip_function=skip_skip, setup_params=setup_params,
-            coverage_options=coverage_options, coverage_exclude_lines=coverage_exclude_lines)
+            coverage_options=coverage_options, coverage_exclude_lines=coverage_exclude_lines,
+            additional_ut_path=additional_ut_path, fLOG=fLOG)
         return True
 
-    elif "build_script" in sys.argv:
+    elif "build_script" in argv:
 
         # script running setup.py
 
@@ -275,7 +293,7 @@ def process_standard_options_for_setup(argv,
 
         return True
 
-    elif "copy27" in sys.argv:
+    elif "copy27" in argv:
         if sys.version_info[0] < 3:
             raise Exception("Python needs to be Python3")
         root = os.path.abspath(os.path.dirname(file_or_folder))
@@ -285,7 +303,7 @@ def process_standard_options_for_setup(argv,
             root, dest, unittest_modules=unittest_modules_py3to2, pattern_copy=pattern_copy)
         return True
 
-    elif "test_local_pypi" in sys.argv:
+    elif "test_local_pypi" in argv:
         url = "http://localhost:{0}/".format(port)
         content = get_url_content_timeout(url, timeout=5)
         if content is None or len(content) == 0:
@@ -372,7 +390,7 @@ def standard_help_for_setup(file_or_folder, project_var_name, module_name=None, 
                             add_htmlhelp=False, copy_add_ext=None,
                             nbformats=["ipynb", "html", "python",
                                        "rst", "slides", "pdf"],
-                            layout=["html", "pdf", "epub"]):
+                            layout=["html", "pdf", "epub"], fLOG=noLOG):
     """
     standard function to generate help assuming they follow the same design
     as *pyquickhelper*
@@ -385,6 +403,7 @@ def standard_help_for_setup(file_or_folder, project_var_name, module_name=None, 
     @param      copy_add_ext        additional extension of files to copy
     @param      nbformats           notebooks format to generate
     @param      layout              layout for the documentation
+    @param      fLOG                logging function
 
     The function outputs some information through function @see fn fLOG.
 
@@ -394,7 +413,7 @@ def standard_help_for_setup(file_or_folder, project_var_name, module_name=None, 
     .. versionchanged:: 1.3
         Parameter *copy_add_ext*, *nbformats* was added.
     """
-    if "--help" in sys.argv:
+    if "--help" in argv:
         print(get_help_usage())
     else:
         if module_name is None:
@@ -418,13 +437,18 @@ def standard_help_for_setup(file_or_folder, project_var_name, module_name=None, 
                              extra_ext=extra_ext,
                              nbformats=nbformats,
                              add_htmlhelp=add_htmlhelp,
-                             copy_add_ext=copy_add_ext)
+                             copy_add_ext=copy_add_ext,
+                             fLOG=fLOG)
 
 
-def run_unittests_for_setup(file_or_folder, skip_function=default_skip_function, setup_params=None,
+def run_unittests_for_setup(file_or_folder,
+                            skip_function=default_skip_function,
+                            setup_params=None,
                             only_setup_hook=False,
                             coverage_options=None,
-                            coverage_exclude_lines=None):
+                            coverage_exclude_lines=None,
+                            additional_ut_path=None,
+                            fLOG=noLOG):
     """
     run the unit tests and compute the coverage, stores
     the results in ``_doc/sphinxdoc/source/coverage``
@@ -436,10 +460,14 @@ def run_unittests_for_setup(file_or_folder, skip_function=default_skip_function,
     @param      only_setup_hook         see @see fn main_wrapper_tests
     @param      coverage_options        see @see fn main_wrapper_tests
     @param      coverage_exclude_lines  see @see fn main_wrapper_tests
+    @param      additional_ut_path      see @see fn main_wrapper_tests
+    @param      fLOG                    logging function
 
     .. versionchanged:: 1.3
-        Parameters *coverage_options*, *coverage_exclude_lines* were added.
+        Parameters *coverage_options*, *coverage_exclude_lines*, *fLOG*, *additional_ut_path* were added.
         See function @see fn main_wrapper_tests.
+        The coverage computation can be disable by specifying
+        ``coverage_options["disable_coverage"] = True``.
     """
     ffolder = get_folder(file_or_folder)
     funit = os.path.join(ffolder, "_unittests")
@@ -453,10 +481,16 @@ def run_unittests_for_setup(file_or_folder, skip_function=default_skip_function,
             "the folder {0} should contain run_unittests.py".format(funit))
 
     fix_tkinter_issues_virtualenv()
+
+    cov = True
+    if coverage_options:
+        if "disable_coverage" in coverage_options and coverage_options["disable_coverage"]:
+            cov = False
+
     main_wrapper_tests(
-        run_unit, add_coverage=True, skip_function=skip_function, setup_params=setup_params,
+        run_unit, add_coverage=cov, skip_function=skip_function, setup_params=setup_params,
         only_setup_hook=only_setup_hook, coverage_options=coverage_options,
-        coverage_exclude_lines=coverage_exclude_lines)
+        coverage_exclude_lines=coverage_exclude_lines, additional_ut_path=additional_ut_path, fLOG=fLOG)
 
 
 def copy27_for_setup(file_or_folder):
