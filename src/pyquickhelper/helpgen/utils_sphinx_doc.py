@@ -873,7 +873,8 @@ def prepare_file_for_sphinx_help_generation(
         additional_sys_path=None,
         replace_relative_import=False,
         module_name=None,
-        copy_add_ext=None):
+        copy_add_ext=None,
+        fLOG=fLOG):
     """
     prepare all files for Sphinx generation
 
@@ -918,6 +919,7 @@ def prepare_file_for_sphinx_help_generation(
     @param      replace_relative_import replace relative import
     @param      module_name     module name (cannot be None)
     @param      copy_add_ext    additional file extension to copy
+    @param      fLOG            logging function
 
     @return                     list of written files stored in RstFileHelp
 
@@ -945,6 +947,7 @@ def prepare_file_for_sphinx_help_generation(
 
     .. versionchanged:: 1.3
         Parameter *copy_add_ext* was added.
+        Parameter *fLOG* was added.
     """
     if optional_dirs is None:
         optional_dirs = []

@@ -417,7 +417,8 @@ def generate_help_sphinx(project_var_name,
             mapped_function=mapped_function,
             replace_relative_import=False,
             module_name=module_name,
-            copy_add_ext=copy_add_ext)
+            copy_add_ext=copy_add_ext,
+            fLOG=fLOG)
 
     except ImportErrorHelpGen as e:
 
