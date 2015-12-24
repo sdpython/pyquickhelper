@@ -37,6 +37,10 @@ class TestUnitTestFull(unittest.TestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
+        if is_travis_or_appveyor() == "travis":
+            # disabled on travis
+            return
+
         temp = get_temp_folder(__file__, "temp_full_unit_test")
         url = "https://github.com/sdpython/python3_module_template/archive/master.zip"
         fLOG("download", url)
