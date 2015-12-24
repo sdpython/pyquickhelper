@@ -185,9 +185,9 @@ def process_standard_options_for_setup(argv,
                               coverage_exclude_lines=coverage_exclude_lines, func_sphinx_begin=func_sphinx_begin, func_sphinx_end=func_sphinx_end,
                               additional_notebook_path=additional_notebook_path, nbformats=nbformats, layout=layout,
                               skip_function=skip_function, addition_ut_path=additional_ut_path, fLOG=fLOG)
-        standard_help_for_setup(
-            file_or_folder, project_var_name, module_name=module_name, extra_ext=extra_ext,
-            add_htmlhelp=add_htmlhelp, copy_add_ext=copy_add_ext, nbformats=nbformats, layout=layout)
+        standard_help_for_setup(argv,
+                                file_or_folder, project_var_name, module_name=module_name, extra_ext=extra_ext,
+                                add_htmlhelp=add_htmlhelp, copy_add_ext=copy_add_ext, nbformats=nbformats, layout=layout)
 
         if func_sphinx_end is not None:
             func_sphinx_end(argv=argv, file_or_folder=file_or_folder, project_var_name=project_var_name,
@@ -386,7 +386,7 @@ def clean_space_for_setup(file_or_folder):
     return rem
 
 
-def standard_help_for_setup(file_or_folder, project_var_name, module_name=None, extra_ext=None,
+def standard_help_for_setup(argv, file_or_folder, project_var_name, module_name=None, extra_ext=None,
                             add_htmlhelp=False, copy_add_ext=None,
                             nbformats=["ipynb", "html", "python",
                                        "rst", "slides", "pdf"],
@@ -395,6 +395,7 @@ def standard_help_for_setup(file_or_folder, project_var_name, module_name=None, 
     standard function to generate help assuming they follow the same design
     as *pyquickhelper*
 
+    @param      argv                it should be ``sys.argv``
     @param      file_or_folder      file ``setup.py`` or folder which contains it
     @param      project_var_name    display name of the module
     @param      module_name         module name, None if equal to *project_var_name* (``import <module_name>``)
@@ -411,7 +412,7 @@ def standard_help_for_setup(file_or_folder, project_var_name, module_name=None, 
     some of these were found.
 
     .. versionchanged:: 1.3
-        Parameter *copy_add_ext*, *nbformats* was added.
+        Parameter *copy_add_ext*, *nbformats*, *argv* were added.
     """
     if "--help" in argv:
         print(get_help_usage())

@@ -413,6 +413,24 @@ def main(runner,
     stderr = sys.stderr
     fullstderr = io.StringIO()
 
+    # display all tests
+    for i, s in enumerate(suite):
+        if skip >= 0 and i < skip:
+            continue
+        if i + 1 in skip_list:
+            continue
+        if skip_function is not None:
+            with open(s[1], "r") as f:
+                content = f.read()
+            if skip_function(s[1], content):
+                continue
+
+        cut = os.path.split(s[1])
+        cut = os.path.split(cut[0])[-1] + "/" + cut[-1]
+        zzz = "\ntest % 3d, %s" % (i + 1, cut)
+        memout.write(zzz)
+
+    # run all tests
     for i, s in enumerate(suite):
         if skip >= 0 and i < skip:
             continue

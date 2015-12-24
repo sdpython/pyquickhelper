@@ -22,7 +22,7 @@ except ImportError:
         sys.path.append(path)
     import src
 
-from src.pyquickhelper.loghelper.flog import fLOG, download
+from src.pyquickhelper.loghelper.flog import fLOG, download, noLOG
 from src.pyquickhelper import get_temp_folder, is_travis_or_appveyor, process_standard_options_for_setup
 
 if sys.version_info[0] == 2:
@@ -59,7 +59,7 @@ class TestUnitTestFull(unittest.TestCase):
         r = process_standard_options_for_setup(
             ["unittests"], setup, "python3_module_template", port=8067,
             requirements=["pyquickhelper"], blog_list="http://blog/",
-            fLOG=fLOG, additional_ut_path=[pyq, (root, True)],
+            fLOG=noLOG, additional_ut_path=[pyq, (root, True)],
             skip_function=skip_function, coverage_options={"disable_coverage": True})
 
         if memo is not None:
