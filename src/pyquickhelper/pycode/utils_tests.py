@@ -249,7 +249,12 @@ def import_files(li, additional_ut_path=None, fLOG=noLOG):
                     compile("t = mo." + c + "(\"" + d + "\")", "", "exec"), globals(), loc)
                 t = loc["t"]
                 testsuite.addTest(t)
-            allsuite.append((testsuite, l))
+
+            if sys.version_info[0] == 2:
+                lu = unicode(l)
+            else:
+                lu = l
+            allsuite.append((testsuite, lu))
 
     return allsuite
 
