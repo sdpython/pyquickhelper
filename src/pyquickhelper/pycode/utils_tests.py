@@ -250,11 +250,7 @@ def import_files(li, additional_ut_path=None, fLOG=noLOG):
                 t = loc["t"]
                 testsuite.addTest(t)
 
-            if sys.version_info[0] == 2:
-                lu = unicode(l)
-            else:
-                lu = l
-            allsuite.append((testsuite, lu))
+            allsuite.append((testsuite, l))
 
     return allsuite
 

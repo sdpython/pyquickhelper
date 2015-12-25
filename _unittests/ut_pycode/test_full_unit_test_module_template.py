@@ -41,6 +41,10 @@ class TestUnitTestFull(unittest.TestCase):
             # disabled on travis
             return
 
+        if sys.version_info[0] == 2:
+            # the downloaded code is python 3
+            return
+
         temp = get_temp_folder(__file__, "temp_full_unit_test")
         url = "https://github.com/sdpython/python3_module_template/archive/master.zip"
         fLOG("download", url)
