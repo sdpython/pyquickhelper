@@ -140,7 +140,8 @@ def encrypt_stream(key, filename, out_filename=None, chunksize=2 ** 18, algo="AE
 
     @param      key             The encryption key - a string that must be
                                 either 16, 24 or 32 bytes long. Longer keys
-                                are more secure.
+                                are more secure. If the data to encrypt is in bytes,
+                                the key must be given in bytes too.
 
     @param      filename        bytes or Name of the input file
     @param      out_filename    if None, the returns bytes
@@ -186,7 +187,8 @@ def decrypt_stream(key, filename, out_filename=None, chunksize=3 * 2 ** 13, algo
 
     @param      key             The encryption key - a string that must be
                                 either 16, 24 or 32 bytes long. Longer keys
-                                are more secure.
+                                are more secure. If the data to encrypt is in bytes,
+                                the key must be given in bytes too.
 
     @param      filename        bytes or Name of the input file
     @param      out_filename    if None, the returns bytes
