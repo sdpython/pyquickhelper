@@ -28,7 +28,7 @@ CLASSIFIERS = [
     'Topic :: Scientific/Engineering',
     'Topic :: Education',
     'License :: OSI Approved :: MIT License',
-    'Developments Status :: 5 - Production/Stable'
+    'Development Status :: 5 - Production/Stable'
 ]
 
 #######
