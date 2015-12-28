@@ -416,6 +416,9 @@ def main(runner,
     stderr = sys.stderr
     fullstderr = io.StringIO()
 
+    # displays
+    memout.write("---- BEGIN UNIT TEST for {0}\n".format(path_test))
+
     # display all tests
     for i, s in enumerate(suite):
         if skip >= 0 and i < skip:
@@ -437,6 +440,9 @@ def main(runner,
         zzz = "\ntest % 3d (%04ds), %s" % (i + 1, dur, cut)
         memout.write(zzz)
     memout.write("\n")
+
+    # displays
+    memout.write("---- RUN UT\n")
 
     # run all tests
     for i, s in enumerate(suite):
@@ -551,6 +557,9 @@ def main(runner,
         memout.write("\n")
 
         keep.append((s[1], r))
+
+    # displays
+    memout.write("---- END UT\n")
 
     # end, catch standard output and err
     sys.stderr = stderr
