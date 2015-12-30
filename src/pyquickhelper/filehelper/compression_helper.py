@@ -16,14 +16,18 @@ if sys.version_info[0] == 2:
     from codecs import open
 
 
-def zip_files(filename, fileSet, fLOG=noLOG):
+def zip_files(filename, fileSet, root=None, fLOG=noLOG):
     """
     put all files from an iterator in a zip file
 
     @param      filename        final zip file
     @param      fileSet         iterator on file to add
+    @param      root            if not None, all path are relative to this path
     @param      fLOG            logging function
     @return                     number of added files
+
+    .. versionchanged:: 1.3
+        Parameter *root* was added.
     """
     nb = 0
     a1980 = datetime.datetime(1980, 1, 1)
@@ -40,7 +44,8 @@ def zip_files(filename, fileSet, fLOG=noLOG):
                 fLOG("zip_files: changing time timestamp for file ", file)
                 os.utime(file, (st.st_atime, new_mtime))
 
-            myzip.write(file)
+            arcname = os.path.relpath(file, root) if root else None
+            myzip.write(file, arcname=arcname)
             nb += 1
     return nb
 
