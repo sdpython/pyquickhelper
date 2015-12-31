@@ -434,7 +434,8 @@ def main(runner,
         cut = os.path.split(s[1])
         cut = os.path.split(cut[0])[-1] + "/" + cut[-1]
         if cut not in duration:
-            raise Exception("{0} not found in\n{1}".format(cut, "\n".join(sorted(duration.keys()))))
+            raise Exception("{0} not found in\n{1}".format(
+                cut, "\n".join(sorted(duration.keys()))))
         else:
             dur = duration[cut]
         zzz = "\ntest % 3d (%04ds), %s" % (i + 1, dur, cut)

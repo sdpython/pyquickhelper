@@ -236,4 +236,6 @@ if not r:
             'console_scripts': [
                 'encrypt = pyquickhelper.cli.encryption_cli:encrypt',
                 'decrypt = pyquickhelper.cli.encryption_cli:decrypt',
+                'encrypt_file = pyquickhelper.cli.encryption_file_cli:encrypt_file',
+                'decrypt_file = pyquickhelper.cli.encryption_file_cli:decrypt_file',
             ]})

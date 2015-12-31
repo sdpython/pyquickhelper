@@ -1,6 +1,8 @@
 """
 @file
 @brief encrypt and decrypt command lines
+
+.. versionadded:: 1.3
 """
 import os
 import argparse
@@ -27,7 +29,7 @@ def get_parser(encrypt):
         help='location of the %sed files' % task)
     parser.add_argument(
         'password',
-        help='password')
+        help='password, usually an ascii string with 16x characters')
     if encrypt:
         parser.add_argument(
             '-s',
@@ -70,6 +72,9 @@ def do_main(source, dest, password, encrypt,
             os.path.abspath(os.path.dirname(__file__)), "..", ".."))
         sys.path.append(folder)
         from pyquickhelper.filehelper import EncryptedBackup, TransferAPIFile, FileTreeNode
+
+    if sys.version_info[0] >= 3 and isinstance(password, str):
+        password = bytes(password, encoding="ascii")
 
     root = source
     local = root
@@ -138,6 +143,7 @@ def decrypt():
                 encrypt=False, crypt_file=None, crypt_map=None,
                 regex=args.regex if args.regex else None,
                 fLOG=print)
+
 
 if __name__ == "__main__":
     decrypt()

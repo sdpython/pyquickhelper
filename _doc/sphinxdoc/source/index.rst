@@ -120,10 +120,12 @@ Functionalities
 
 *encryption*
 
-The module proposes two commands ``encrypt`` and ``decrypt``::
+The module proposes two commands ``encrypt``, ``decrypt``, ``encrypt_file``, ``decrypt_file``::
 
     usage: encrypt [-h] source dest password
     usage: decrypt [-h] source dest password
+    usage: encrypt_file [-h] source dest password
+    usage: decrypt_file [-h] source dest password
 
   
 Many functionalities about automated documentation assume the current processed

@@ -187,7 +187,7 @@ def process_standard_options_for_setup(argv,
                               skip_function=skip_function, addition_ut_path=additional_ut_path, fLOG=fLOG)
         standard_help_for_setup(argv,
                                 file_or_folder, project_var_name, module_name=module_name, extra_ext=extra_ext,
-                                add_htmlhelp=add_htmlhelp, copy_add_ext=copy_add_ext, nbformats=nbformats, layout=layout, 
+                                add_htmlhelp=add_htmlhelp, copy_add_ext=copy_add_ext, nbformats=nbformats, layout=layout,
                                 fLOG=fLOG)
 
         if func_sphinx_end is not None:
