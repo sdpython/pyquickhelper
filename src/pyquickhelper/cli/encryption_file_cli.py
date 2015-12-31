@@ -85,7 +85,7 @@ def encrypt_file():
 
 def decrypt_file():
     """
-    decrypt using class @see cl decrypt_stream
+    decrypt using class @see fn decrypt_stream
     """
     parser = get_parser(False)
     try:
