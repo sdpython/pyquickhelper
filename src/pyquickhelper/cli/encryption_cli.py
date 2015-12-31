@@ -20,7 +20,8 @@ def get_parser(encrypt):
     parser = argparse.ArgumentParser(
         description='encrypt or %s a folder' % task +
                     '\nfor a second run, the program looks into file status' +
-                    '\nto avoid crypting same file gain, does only modified files')
+                    '\nto avoid crypting same file gain, does only modified files' +
+                    '\ndoes not work well in Python 2.7 with pycryptodome')
     parser.add_argument(
         'source',
         help='folder to %s' % task)
