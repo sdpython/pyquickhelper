@@ -9,7 +9,6 @@
 import os
 import sys
 from IPython.core.magic import magics_class, line_magic
-from IPython.core.display import HTML, display_html
 
 from .magic_class import MagicClassWithHelpers
 from .magic_parser import MagicCommandParser

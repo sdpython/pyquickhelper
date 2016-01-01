@@ -52,11 +52,11 @@ class TestEncryption(unittest.TestCase):
 
         infile = os.path.abspath(__file__).replace(".pyc", ".py")
         outfile = os.path.join(temp, "out_crypted.enc")
-        r = encrypt_stream("key0" * 4, infile, outfile)
+        r = encrypt_stream(b"key0" * 4, infile, outfile)
         assert r is None
 
         outfile2 = os.path.join(temp, "out_decrypted.enc")
-        r = decrypt_stream("key0" * 4, outfile, outfile2)
+        r = decrypt_stream(b"key0" * 4, outfile, outfile2)
         assert r is None
 
         with open(infile, "rb") as f:
@@ -66,7 +66,7 @@ class TestEncryption(unittest.TestCase):
         self.assertEqual(inc, ouc)
 
         outfile3 = os.path.join(temp, "out_decrypted2.enc")
-        r = decrypt_stream("key1" * 4, outfile, outfile3)
+        r = decrypt_stream(b"key1" * 4, outfile, outfile3)
         assert r is None
         with open(outfile3, "rb") as f:
             ouc3 = f.read()
@@ -91,11 +91,11 @@ class TestEncryption(unittest.TestCase):
 
         infile = os.path.abspath(__file__).replace(".pyc", ".py")
         outfile = os.path.join(temp, "out_crypted.enc")
-        r = encrypt_stream("key0" * 4, infile, outfile, chunksize=16)
+        r = encrypt_stream(b"key0" * 4, infile, outfile, chunksize=16)
         assert r is None
 
         outfile2 = os.path.join(temp, "out_decrypted.enc")
-        r = decrypt_stream("key0" * 4, outfile, outfile2, chunksize=16)
+        r = decrypt_stream(b"key0" * 4, outfile, outfile2, chunksize=16)
         assert r is None
 
         with open(infile, "rb") as f:
@@ -105,7 +105,7 @@ class TestEncryption(unittest.TestCase):
         self.assertEqual(inc, ouc)
 
         outfile3 = os.path.join(temp, "out_decrypted2.enc")
-        r = decrypt_stream("key1" * 4, outfile, outfile3, chunksize=16)
+        r = decrypt_stream(b"key1" * 4, outfile, outfile3, chunksize=16)
         assert r is None
         with open(outfile3, "rb") as f:
             ouc3 = f.read()
@@ -129,15 +129,15 @@ class TestEncryption(unittest.TestCase):
         temp = get_temp_folder(__file__, "temp_encryption2")
 
         infile = bytes([0, 1, 2, 3, 4])
-        r = encrypt_stream("key0" * 4, infile)
+        r = encrypt_stream(b"key0" * 4, infile)
         assert r is not None
 
-        r2 = decrypt_stream("key0" * 4, r)
+        r2 = decrypt_stream(b"key0" * 4, r)
         assert r2 is not None
 
         self.assertEqual(infile, r2)
 
-        r3 = decrypt_stream("key1" * 4, r)
+        r3 = decrypt_stream(b"key1" * 4, r)
         assert r3 is not None
         self.assertNotEqual(infile, r3)
 
@@ -161,19 +161,19 @@ class TestEncryption(unittest.TestCase):
         infile = StreamIO(bytes([0, 1, 2, 3, 4]))
         outst = StreamIO()
 
-        r = encrypt_stream("key0" * 4, infile, outst)
+        r = encrypt_stream(b"key0" * 4, infile, outst)
         assert r is None
 
         enc = StreamIO(outst.getvalue())
         enc2 = StreamIO(outst.getvalue())
         outdec = StreamIO()
-        r2 = decrypt_stream("key0" * 4, enc, outdec)
+        r2 = decrypt_stream(b"key0" * 4, enc, outdec)
         assert r2 is None
 
         self.assertEqual(infile.getvalue(), outdec.getvalue())
 
         outdec2 = StreamIO()
-        r3 = decrypt_stream("key1" * 4, enc2, outdec2)
+        r3 = decrypt_stream(b"key1" * 4, enc2, outdec2)
         assert r3 is None
         self.assertNotEqual(infile.getvalue(), outdec2.getvalue())
 
