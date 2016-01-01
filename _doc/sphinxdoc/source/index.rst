@@ -30,9 +30,6 @@ pyquickhelper documentation
     :alt: MIT License
     :target: http://opensource.org/licenses/MIT
 
-.. image:: https://coveralls.io/repos/sdpython/pyquickhelper/badge.svg?branch=master&service=github 
-    :target: https://coveralls.io/github/sdpython/pyquickhelper?branch=master     
-
 .. image:: https://landscape.io/github/sdpython/pyquickhelper/master/landscape.svg?style=flat
    :target: https://landscape.io/github/sdpython/pyquickhelper/master
    :alt: Code Health
