@@ -34,7 +34,10 @@ README / Changes
    
 .. image:: https://requires.io/github/sdpython/pyquickhelper/requirements.svg?branch=master
      :target: https://requires.io/github/sdpython/pyquickhelper/requirements/?branch=master
-     :alt: Requirements Status   
+     :alt: Requirements Status
+
+.. image:: https://codecov.io/github/codecov/pyquickhelper/coverage.svg?branch=master
+    :target: https://codecov.io/github/codecov/pyquickhelper?branch=master
     
 
 **Links:**
