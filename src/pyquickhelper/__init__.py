@@ -107,13 +107,6 @@ from .pycode.py3to2 import py3to2_convert_tree, py3to2_convert
 from .pycode.setup_helper import write_version_for_setup, clean_space_for_setup, standard_help_for_setup, main_wrapper_tests, process_standard_options_for_setup
 from .pycode.setup_helper import write_module_scripts
 
-# in case IPython is not here, these lines are commented out
-# from .ipythonhelper import read_nb
-# from .ipythonhelper.kindofcompletion import AutoCompletion, AutoCompletionFile
-# from .ipythonhelper.html_forms import open_html_form
-# from .ipythonhelper.magic_parser import MagicCommandParser
-# from .ipythonhelper.magic_class import MagicClassWithHelpers
-
 
 def load_ipython_extension(ip):
     """
@@ -121,5 +114,11 @@ def load_ipython_extension(ip):
 
     @param      ip      from ``get_ipython()``
     """
-    from .ipythonhelper.magic_class_example import register_file_magics
-    register_file_magics(ip)
+    from .ipythonhelper.magic_class_example import register_file_magics as freg
+    freg(ip)
+    from .ipythonhelper.magic_class_compress import register_file_magics as creg
+    creg(ip)
+    from .ipythonhelper.magic_class_diff import register_file_magics as dreg
+    dreg(ip)
+    from .ipythonhelper.magic_class_crypt import register_file_magics as ereg
+    ereg(ip)

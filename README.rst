@@ -84,7 +84,7 @@ This project contains the following folders:
 Versions, Changes
 -----------------
 
-* **1.3 - 2015/??/??**
+* **1.3 - 2016/??/??**
     * **add:** add function check_readme_syntax to check the syntax of file readme.rst 
       (pipy uses an earlier version of docutils)
     * **fix:** fix a bug in function *compare_module_version*
@@ -113,9 +113,10 @@ Versions, Changes
     * **new:** documentation builds a new page gathering all commands ``@NB``
     * **new:** add function to encrypt and decrypt files using AES and pycrypto
     * **new:** add class ``EncryptedBackup`` to backup many files into a remote folder in encrypted format
-    * **new:** add command line ``encrypt`` and ``decrypt``
-    * **fix:** the conversion of notebooks now requires require.js, the script is downloaded
-      whre it is needed by reveal.js
+    * **new:** add command line ``encrypt``, ``decrypt``, ``encrypt_file``, ``decrypt_file``
+    * **new:** add magic commands (notebooks) ``encrypt_file``, ``decrypt_file``
+    * **fix:** the conversion of notebooks now requires *require.js*, the script is downloaded
+      where it is needed by *reveal.js*
     * **change:** sphinx command *runpython* now processes Sphinx commands such as links,
       reference or titles
 

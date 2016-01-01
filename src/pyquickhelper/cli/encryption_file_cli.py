@@ -18,7 +18,7 @@ def get_parser(encrypt):
     """
     task = "encrypt" if encrypt else "decrypt"
     parser = argparse.ArgumentParser(
-        description='encrypt or %s a file' % task +
+        description='%s a file' % task +
                     '\ndoes not work well in Python 2.7 with pycryptodome')
     parser.add_argument(
         'source',

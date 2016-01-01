@@ -4,7 +4,7 @@
 @brief Example of a class which defines magic commands.
 
 .. versionadded:: 1.3
-
+    Magic commands coming from pyensae
 """
 from __future__ import print_function
 
@@ -37,7 +37,7 @@ class MagicClassExample(MagicClassWithHelpers):
     @endNB
 
     .. versionadded:: 1.3
-
+        Magic commands coming from pyensae
     """
 
     @staticmethod
@@ -86,8 +86,6 @@ class MagicClassExample(MagicClassWithHelpers):
         See function @see fn docstring2html.
 
         @endNB
-
-        .. versionadded:: 1.3
         """
         parser = self.get_parser(MagicClassExample.htmlhelp_parser, "htmlhelp")
         args = self.get_args(line, parser)
