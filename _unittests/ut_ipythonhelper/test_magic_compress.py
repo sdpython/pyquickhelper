@@ -7,6 +7,7 @@ import sys
 import os
 import unittest
 import shlex
+import warnings
 
 
 try:
