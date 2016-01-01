@@ -69,6 +69,8 @@ class SourceRepository:
                                         - change number (int)
                                         - date (datetime)
                                         - comment
+                                        - full hash
+                                        - link
 
         The function use a command line if an error occurred. It uses the xml format:
         @code
@@ -104,3 +106,12 @@ class SourceRepository:
         if self.module is None:
             self.SetGuessedType(path)
         return self.module.get_nb_commits(path, commandline=self.commandline)
+
+    def get_last_commit_hash(self, path=None):
+        """
+        returns the last commit
+
+        @param      path        path
+        @return                 last commit
+        """
+        return self.log(path)[0][-2]

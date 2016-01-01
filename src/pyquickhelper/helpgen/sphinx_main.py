@@ -658,7 +658,7 @@ def generate_help_sphinx(project_var_name,
     #####################################
     # we copy the coverage files if it is missing
     #####################################
-    fLOG("**** copy copverage")
+    fLOG("**** copy coverage")
     covfold = os.path.join(docpath, "source", "coverage")
     if os.path.exists(covfold):
         fLOG("## coverage[folder]:", covfold)

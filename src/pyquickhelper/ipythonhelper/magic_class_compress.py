@@ -79,7 +79,8 @@ class MagicCompress(MagicClassWithHelpers):
             elif format == "7z":
                 return zip7_files(dest, files)
             else:
-                raise ValueError("unexpected format: {0} from file {1}".format(format, dest))
+                raise ValueError(
+                    "unexpected format: {0} from file {1}".format(format, dest))
 
 
 def register_file_magics(ip=None):

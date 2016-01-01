@@ -34,6 +34,10 @@ class TestMagicDiff(unittest.TestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
+        if sys.version_info[0] == 2:
+            warnings.warn("disable on python 2.7")
+            return
+
         from IPython.core.display import Javascript
         mg = MagicDiff()
         mg.add_context(

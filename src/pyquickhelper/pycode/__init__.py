@@ -11,3 +11,4 @@ from .trace_execution import get_call_stack
 from .utils_tests import get_temp_folder, main_wrapper_tests
 from .venv_helper import create_virtual_env, run_venv_script, compare_module_version
 from .venv_helper import NotImplementedErrorFromVirtualEnvironment, is_virtual_environment, check_readme_syntax
+from .coverage_helper import publish_coverage_on_codecov

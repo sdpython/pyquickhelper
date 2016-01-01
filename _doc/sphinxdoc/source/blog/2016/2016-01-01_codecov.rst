@@ -1,5 +1,7 @@
 
 
+.. _blogpost_coverage_codecov:
+
 .. blogpost::
     :title: Badge for coverage
     :keywords: codecov, coveralls
@@ -19,4 +21,8 @@
     (or `github/codecov <https://github.com/codecov/codecov-python>`_).
     The coverage report is also available at 
     `pyquickhelper coverage <http://www.xavierdupre.fr/app/pyquickhelper/helpsphinx/coverage/index.html>`_.
-    but these kinds of website keep track of the changes.
+    but these kinds of website keep track of the changes. Others available websites
+    which provide badges are mentioned on the main page
+    `pyquickhelper <http://www.xavierdupre.fr/app/pyquickhelper/helpsphinx/index.html>`_.
+    
+    
