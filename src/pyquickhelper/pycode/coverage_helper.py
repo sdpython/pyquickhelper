@@ -4,6 +4,8 @@
 
 .. versionadded:: 1.3
 """
+import os
+import sys
 from ..loghelper import SourceRepository, noLOG, run_cmd
 
 
@@ -68,7 +70,7 @@ def publish_coverage_on_codecov(path, token, commandline=True, fLOG=noLOG):
     src = SourceRepository(commandline=commandline)
     last = src.get_last_commit_hash()
     cmd = get_codecov_program() + " --token={0} --file={1} --commit={2}".format(
-        token, report, hash)
+        token, report, last)
     out, err = run_cmd(cmd, wait=True)
     if err:
         raise Exception(
