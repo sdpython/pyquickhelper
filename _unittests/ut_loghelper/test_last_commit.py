@@ -1,10 +1,11 @@
 """
-@brief      test log(time=0s)
+@brief      test log(time=10s)
 """
 
 import sys
 import os
 import unittest
+import warnings
 
 if "temp_" in os.path.abspath(__file__):
     raise ImportError(
@@ -34,6 +35,10 @@ class TestLastCommit (unittest.TestCase):
             __file__,
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
+            
+        if sys.version_info[0] == 2:
+            warnings.warn("disable on Python 2.7")
+            return
 
         path = os.path.abspath(os.path.dirname(__file__))
         fold = os.path.normpath(os.path.join(path, "..", ".."))
