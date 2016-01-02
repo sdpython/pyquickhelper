@@ -95,7 +95,8 @@ def process_standard_options_for_setup(argv,
                                             it is a list of tuple (layout, build directory, parameters to override)
     @param      additional_ut_path          additional paths to add when running unit tests
     @param      skip_function               function to skip unit tests, see @ee fn main_wrapper_tests
-    @param      covtoken                    token used when publishing coverage report to `codecov <https://codecov.io/>`_
+    @param      covtoken                    token used when publishing coverage report to `codecov <https://codecov.io/>`_,
+                                            more in @see fn main_wrapper_tests
     @param      fLOG                        logging function
 
     @return                                 True (an option was processed) or False,

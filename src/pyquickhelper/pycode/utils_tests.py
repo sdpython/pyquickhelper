@@ -668,6 +668,11 @@ def main_wrapper_tests(codefile,
                                         or None to not publish
     @param      fLOG                    function(*l, **p), logging function
 
+    *covtoken* can be a string ``<token>`` or a
+    tuple ``(<token>, <condition>)``. The condition is evaluated
+    by the python interpreter and determines whether or not the coverage
+    needs to be published.
+
     @FAQ(How to build pyquickhelper with Jenkins?)
     `Jenkins <http://jenkins-ci.org/>`_ is a task scheduler for continuous integration.
     You can easily schedule batch command to build and run unit tests for a specific project.
@@ -886,12 +891,23 @@ def main_wrapper_tests(codefile,
                 f.write(content)
 
             if covtoken:
-                # publishing token
-                fLOG("publishing coverage to codecov")
-                publish_coverage_on_codecov(
-                    token=covtoken, path=outfile, fLOG=fLOG)
+                if isinstance(covtoken, tuple):
+                    if eval(covtoken[1]):
+                        # publishing token
+                        fLOG("publishing coverage to codecov",
+                             covtoken[0], "EVAL", covtoken[1])
+                        publish_coverage_on_codecov(
+                            token=covtoken[0], path=outfile, fLOG=fLOG)
+                    else:
+                        fLOG(
+                            "skip publishing coverage to codecov due to False:", covtoken[1])
+                else:
+                    # publishing token
+                    fLOG("publishing coverage to codecov", covtoken)
+                    publish_coverage_on_codecov(
+                        token=covtoken, path=outfile, fLOG=fLOG)
         else:
-            if covtoken:
+            if covtoken and (not isinstance(covtoken, tuple) or eval(covtoken[1])):
                 raise CoverageException(
                     "covtoken is not null but add_coverage is not True, coverage cannot be published")
             tested_module(src_abs, project_var_name, setup_params)

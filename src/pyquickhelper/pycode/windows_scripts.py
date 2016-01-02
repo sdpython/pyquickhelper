@@ -491,13 +491,14 @@ setup(
     version=versionPython,
     install_requires=[
         "autopep8",
-        "numpy",
-        "python-dateutil",
+        "codecov",
+        "docutils",
         "matplotlib",
+        "numpy",
         "sphinx",
         "pandas",
-        "sphinxjp.themes.revealjs",
-        "docutils", ] + jup,
+        "python-dateutil",
+        "sphinxjp.themes.revealjs", ] + jup,
 )
 """
 #########################
