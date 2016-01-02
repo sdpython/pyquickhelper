@@ -211,7 +211,7 @@ def process_standard_options_for_setup(argv,
                                 coverage_options=coverage_options,
                                 coverage_exclude_lines=coverage_exclude_lines,
                                 additional_ut_path=additional_ut_path,
-                                skip_function=skip_function, covtoken=covteken, fLOG=fLOG)
+                                skip_function=skip_function, covtoken=covtoken, fLOG=fLOG)
         return True
 
     elif "setup_hook" in argv:

@@ -119,4 +119,5 @@ Versions, Changes
       where it is needed by *reveal.js*
     * **change:** sphinx command *runpython* now processes Sphinx commands such as links,
       reference or titles
+    * **new:** publish coverage report to *codecov*
 
