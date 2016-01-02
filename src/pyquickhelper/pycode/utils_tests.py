@@ -891,7 +891,7 @@ def main_wrapper_tests(codefile,
                 publish_coverage_on_codecov(
                     token=covtoken, path=outfile, fLOG=fLOG)
         else:
-            if not covtoken:
+            if covtoken:
                 raise CoverageException(
                     "covtoken is not null but add_coverage is not True, coverage cannot be published")
             tested_module(src_abs, project_var_name, setup_params)
