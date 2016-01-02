@@ -1,8 +1,0 @@
-.ipynb_checkpoints
-example_about_files.ipynb
-example_completion.ipynb
-example_documentation.ipynb
-example_pyquickhelper.ipynb
-exemple_of_fix_menu.ipynb
-having_a_form_in_a_notebook.ipynb
-simple_example.ipynb

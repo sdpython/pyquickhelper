@@ -250,3 +250,6 @@ auto_*.xml
 auto_*.db3
 t.bat
 build_sphinx_all.bat
+_doc/notebooks/notebooks.enc
+_doc/notebooks/notebooks2.7z
+_doc/notebooks/listfiles7z.txt
