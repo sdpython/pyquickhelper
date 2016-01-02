@@ -38,8 +38,8 @@ pyquickhelper documentation
      :target: https://requires.io/github/sdpython/pyquickhelper/requirements/?branch=master
      :alt: Requirements Status   
    
-.. image:: https://codecov.io/github/codecov/pyquickhelper/coverage.svg?branch=master
-    :target: https://codecov.io/github/codecov/pyquickhelper?branch=master
+.. image:: https://codecov.io/github/sdpython/pyquickhelper/coverage.svg?branch=master
+    :target: https://codecov.io/github/sdpython/pyquickhelper?branch=master
 
 
 **Links:** `pypi <https://pypi.python.org/pypi/pyquickhelper/>`_, 
