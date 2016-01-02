@@ -64,13 +64,17 @@ def publish_coverage_on_codecov(path, token, commandline=True, fLOG=noLOG):
         report = os.path.join(path, "_doc", "sphinxdoc",
                               "source", "coverage", "coverage_report.xml")
 
+    report = os.path.normpath(report)
     if not os.path.exists(report):
         raise FileNotFoundError(report)
 
+    proj = os.path.normpath(os.path.join(
+        os.path.dirname(report), "..", "..", "..", ".."))
+
     src = SourceRepository(commandline=commandline)
-    last = src.get_last_commit_hash()
-    cmd = get_codecov_program() + " --token={0} --file={1} --commit={2}".format(
-        token, report, last)
+    last = src.get_last_commit_hash(proj)
+    cmd = get_codecov_program() + " --token={0} --file={1} --commit={2} --root={3} -X gcov".format(
+        token, report, last, proj)
     out, err = run_cmd(cmd, wait=True)
     if err:
         raise Exception(
