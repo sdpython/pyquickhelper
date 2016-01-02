@@ -26,8 +26,9 @@ except ImportError:
         sys.path.append(path)
     import src
 
-from src.pyquickhelper import fLOG, removedirs, run_cmd, explore_folder_iterfile, change_file_status, is_travis_or_appveyor
+from src.pyquickhelper import fLOG, removedirs, run_cmd, explore_folder_iterfile, change_file_status
 from src.pyquickhelper.loghelper.repositories.pygit_helper import clone, rebase
+from src.pyquickhelper.pycode import is_travis_or_appveyor
 
 
 class TestGit(unittest.TestCase):

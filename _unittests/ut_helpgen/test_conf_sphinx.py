@@ -22,8 +22,10 @@ except ImportError:
         sys.path.append(path)
     import src
 
-from src.pyquickhelper import is_travis_or_appveyor, fLOG
+from src.pyquickhelper import fLOG
 from src.pyquickhelper.helpgen.default_conf import set_sphinx_variables
+from src.pyquickhelper.pycode import is_travis_or_appveyor
+
 
 if sys.version_info[0] == 2:
     FileNotFoundError = Exception

@@ -24,7 +24,9 @@ except ImportError:
 
 from src.pyquickhelper.loghelper.flog import fLOG, download
 from src.pyquickhelper.helpgen import generate_help_sphinx
-from src.pyquickhelper import get_temp_folder, is_travis_or_appveyor
+from src.pyquickhelper import get_temp_folder
+from src.pyquickhelper.pycode import is_travis_or_appveyor
+
 
 if sys.version_info[0] == 2:
     from codecs import open

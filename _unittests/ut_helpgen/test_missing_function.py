@@ -23,9 +23,9 @@ except ImportError:
         sys.path.append(path)
     import src
 
-from src.pyquickhelper import is_travis_or_appveyor
 from src.pyquickhelper.loghelper.flog import fLOG
 from src.pyquickhelper.helpgen.utils_sphinx_config import ie_layout_html, NbImage, fix_ie_layout_html
+from src.pyquickhelper.pycode import is_travis_or_appveyor
 
 
 class TestMissingFunction(unittest.TestCase):

@@ -24,8 +24,9 @@ except ImportError:
         sys.path.append(path)
     import src
 
-from src.pyquickhelper import download, get_temp_folder, fLOG, gzip_files, zip_files, zip7_files, is_travis_or_appveyor
+from src.pyquickhelper import download, get_temp_folder, fLOG, gzip_files, zip_files, zip7_files
 from src.pyquickhelper.filehelper import check, read_url
+from src.pyquickhelper.pycode import is_travis_or_appveyor
 
 
 class TestDownload (unittest.TestCase):

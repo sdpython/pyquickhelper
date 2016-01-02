@@ -23,8 +23,9 @@ except ImportError:
         sys.path.append(path)
     import src
 
-from src.pyquickhelper import fLOG, get_temp_folder, is_travis_or_appveyor
+from src.pyquickhelper import fLOG, get_temp_folder
 from src.pyquickhelper.ipythonhelper import find_notebook_kernel, install_jupyter_kernel, get_notebook_kernel, remove_kernel
+from src.pyquickhelper.pycode import is_travis_or_appveyor
 
 
 class TestNotebookKernels(unittest.TestCase):

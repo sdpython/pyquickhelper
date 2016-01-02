@@ -23,8 +23,9 @@ except ImportError:
         sys.path.append(path)
     import src
 
-from src.pyquickhelper import fLOG, get_temp_folder, is_travis_or_appveyor
+from src.pyquickhelper import fLOG, get_temp_folder
 from src.pyquickhelper.ipythonhelper import install_notebook_extension, get_installed_notebook_extension, get_jupyter_datadir
+from src.pyquickhelper.pycode import is_travis_or_appveyor
 
 
 class TestNotebookExtensions(unittest.TestCase):

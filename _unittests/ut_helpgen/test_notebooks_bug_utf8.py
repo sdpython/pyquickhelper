@@ -23,9 +23,11 @@ except ImportError:
         sys.path.append(path)
     import src
 
-from src.pyquickhelper import fLOG, process_notebooks, is_travis_or_appveyor
+from src.pyquickhelper import fLOG, process_notebooks
 from src.pyquickhelper.helpgen.sphinx_main import setup_environment_for_help
 from src.pyquickhelper.helpgen.post_process import post_process_latex
+from src.pyquickhelper.pycode import is_travis_or_appveyor
+
 
 if sys.version_info[0] == 2:
     from codecs import open

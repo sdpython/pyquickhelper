@@ -22,7 +22,8 @@ except ImportError:
         sys.path.append(path)
     import src
 
-from src.pyquickhelper import fLOG, process_notebooks, is_travis_or_appveyor
+from src.pyquickhelper import fLOG, process_notebooks
+from src.pyquickhelper.pycode import is_travis_or_appveyor
 
 
 class TestNoteBooksBugDocx(unittest.TestCase):
