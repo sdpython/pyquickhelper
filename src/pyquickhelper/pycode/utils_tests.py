@@ -20,6 +20,8 @@ import time
 from ..filehelper.synchelper import remove_folder
 from ..loghelper.flog import run_cmd, noLOG
 from .call_setup_hook import call_setup_hook
+from .code_exceptions import CoverageException
+from .coverage_helper import publish_coverage_on_codecov
 
 
 __all__ = ["get_temp_folder", "main_wrapper_tests"]
@@ -643,6 +645,7 @@ def main_wrapper_tests(codefile,
                        coverage_options=None,
                        coverage_exclude_lines=None,
                        additional_ut_path=None,
+                       covtoken=None,
                        fLOG=noLOG):
     """
     calls function :func:`main <pyquickhelper.unittests.utils_tests.main>` and throw an exception if it fails
@@ -661,6 +664,8 @@ def main_wrapper_tests(codefile,
     @param      coverage_options        (dictionary) options for module coverage as a dictionary, see below, default is None
     @param      coverage_exclude_lines  (list) options for module coverage, lines to exclude from the coverage report, defaul is None
     @param      additional_ut_path      (list) additional paths to add when running the unit tests
+    @parm       covtoken                (str) token used when publishing coverage report to `codecov <https://codecov.io/>`_
+                                        or None to not publish
     @param      fLOG                    function(*l, **p), logging function
 
     @FAQ(How to build pyquickhelper with Jenkins?)
@@ -719,6 +724,9 @@ def main_wrapper_tests(codefile,
         For example, to exclude files from the coverage report::
 
             coverage_options=dict(omit=["*exclude*.py"])
+
+        Parameter *covtoken* as added to post the coverage report to
+        `codecov <https://codecov.io/>`_.
     """
     runner = unittest.TextTestRunner(verbosity=0, stream=io.StringIO())
     path = os.path.abspath(os.path.join(os.path.split(codefile)[0]))
@@ -877,7 +885,15 @@ def main_wrapper_tests(codefile,
             with open(outcov, "w", encoding="utf8") as f:
                 f.write(content)
 
+            if covtoken:
+                # publishing token
+                fLOG("publishing coverage to codecov")
+                publish_coverage_on_codecov(
+                    token=covtoken, path=outfile, fLOG=fLOG)
         else:
+            if not covtoken:
+                raise CoverageException(
+                    "covtoken is not null but add_coverage is not True, coverage cannot be published")
             tested_module(src_abs, project_var_name, setup_params)
             res = run_main()
 

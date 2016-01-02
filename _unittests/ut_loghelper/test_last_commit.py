@@ -35,7 +35,7 @@ class TestLastCommit (unittest.TestCase):
             __file__,
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
-            
+
         if sys.version_info[0] == 2:
             warnings.warn("disable on Python 2.7")
             return

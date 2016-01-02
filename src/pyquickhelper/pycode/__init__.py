@@ -1,5 +1,6 @@
 """
-shortcuts fror pycode
+@file
+@brief shortcuts fror pycode
 """
 
 from .code_helper import remove_extra_spaces_and_pep8, remove_extra_spaces_folder

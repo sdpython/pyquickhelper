@@ -48,6 +48,7 @@ def process_standard_options_for_setup(argv,
                                        layout=["html", "pdf", "epub"],
                                        additional_ut_path=None,
                                        skip_function=default_skip_function,
+                                       covtoken=None,
                                        fLOG=noLOG):
     """
     process the standard options the module pyquickhelper is
@@ -94,6 +95,7 @@ def process_standard_options_for_setup(argv,
                                             it is a list of tuple (layout, build directory, parameters to override)
     @param      additional_ut_path          additional paths to add when running unit tests
     @param      skip_function               function to skip unit tests, see @ee fn main_wrapper_tests
+    @param      covtoken                    token used when publishing coverage report to `codecov <https://codecov.io/>`_
     @param      fLOG                        logging function
 
     @return                                 True (an option was processed) or False,
@@ -134,6 +136,9 @@ def process_standard_options_for_setup(argv,
         Parameters *fLOG*, *additional_ut_path*, *skip_function* were added.
         The coverage computation can be disable by specifying
         ``coverage_options["disable_coverage"] = True``.
+
+        Parameter *covtoken* as added to post the coverage report to
+        `codecov <https://codecov.io/>`_.
     """
     folder = file_or_folder if os.path.isdir(
         file_or_folder) else os.path.dirname(file_or_folder)
@@ -206,7 +211,7 @@ def process_standard_options_for_setup(argv,
                                 coverage_options=coverage_options,
                                 coverage_exclude_lines=coverage_exclude_lines,
                                 additional_ut_path=additional_ut_path,
-                                skip_function=skip_function, fLOG=fLOG)
+                                skip_function=skip_function, covtoken=covteken, fLOG=fLOG)
         return True
 
     elif "setup_hook" in argv:
@@ -449,6 +454,7 @@ def run_unittests_for_setup(file_or_folder,
                             coverage_options=None,
                             coverage_exclude_lines=None,
                             additional_ut_path=None,
+                            covtoken=None,
                             fLOG=noLOG):
     """
     run the unit tests and compute the coverage, stores
@@ -462,6 +468,7 @@ def run_unittests_for_setup(file_or_folder,
     @param      coverage_options        see @see fn main_wrapper_tests
     @param      coverage_exclude_lines  see @see fn main_wrapper_tests
     @param      additional_ut_path      see @see fn main_wrapper_tests
+    @param      covtoken                see @see fn main_wrapper_tests
     @param      fLOG                    logging function
 
     .. versionchanged:: 1.3
@@ -469,6 +476,9 @@ def run_unittests_for_setup(file_or_folder,
         See function @see fn main_wrapper_tests.
         The coverage computation can be disable by specifying
         ``coverage_options["disable_coverage"] = True``.
+
+        Parameter *covtoken* as added to post the coverage report to
+        `codecov <https://codecov.io/>`_.
     """
     ffolder = get_folder(file_or_folder)
     funit = os.path.join(ffolder, "_unittests")
@@ -492,7 +502,8 @@ def run_unittests_for_setup(file_or_folder,
     main_wrapper_tests(
         run_unit, add_coverage=cov, skip_function=skip_function, setup_params=setup_params,
         only_setup_hook=only_setup_hook, coverage_options=coverage_options,
-        coverage_exclude_lines=coverage_exclude_lines, additional_ut_path=additional_ut_path, fLOG=fLOG)
+        coverage_exclude_lines=coverage_exclude_lines, additional_ut_path=additional_ut_path,
+        covtoken=covtoken, fLOG=fLOG)
 
 
 def copy27_for_setup(file_or_folder):
