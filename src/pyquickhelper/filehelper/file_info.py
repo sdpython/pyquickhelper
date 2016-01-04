@@ -7,6 +7,7 @@
 import datetime
 import hashlib
 import sys
+import re
 
 
 def convert_st_date_to_datetime(t):
@@ -42,6 +43,29 @@ def checksum_md5(filename):
         for el in block:
             zero.update(el)
         return zero.hexdigest()
+
+
+_allowed = re.compile("^([a-zA-Z]:)?[^:*?\"<>|]+$")
+
+
+def is_file_string(s):
+    """
+    says if the string s could be a filename
+
+    @param      s       string
+    @return             boolean
+
+    .. versionadded:: 1.3
+    """
+    if len(s) >= 3000:
+        return False
+    global _allowed
+    if not _allowed.search(s):
+        return False
+    for c in s:
+        if ord(c) < 32:
+            return False
+    return True
 
 
 class FileInfo:

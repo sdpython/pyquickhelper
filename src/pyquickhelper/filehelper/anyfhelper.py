@@ -12,6 +12,7 @@ import sys
 import warnings
 from .synchelper import explore_folder_iterfile
 from .internet_helper import read_url
+from .file_info import is_file_string
 
 if sys.version_info[0] == 2:
     from codecs import open
@@ -134,7 +135,7 @@ def read_content_ufs(file_url_stream, encoding="utf8"):
     """
     if isinstance(file_url_stream, str  # unicode#
                   ):
-        if len(file_url_stream) < 5000 and os.path.exists(file_url_stream):
+        if is_file_string(file_url_stream) and os.path.exists(file_url_stream):
             with open(file_url_stream, "r", encoding=encoding) as f:
                 return f.read()
         elif len(file_url_stream) < 5000 and file_url_stream.startswith("http"):

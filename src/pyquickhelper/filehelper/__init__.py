@@ -35,3 +35,4 @@ from .transfer_api import TransferAPI
 from .transfer_api_ftp import TransferAPIFtp
 from .transfer_api_file import TransferAPIFile
 from .ftp_transfer import TransferFTP
+from .file_info import FileInfo, is_file_string, checksum_md5

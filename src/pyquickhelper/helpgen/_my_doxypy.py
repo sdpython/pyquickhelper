@@ -14,6 +14,30 @@ import sys
 import re
 from optparse import OptionParser
 
+
+_allowed = re.compile("^([a-zA-Z]:)?[^:*?\"<>|]+$")
+
+
+def is_file_string(s):
+    """
+    says if the string s could be a filename
+
+    @param      s       string
+    @return             boolean
+
+    .. versionadded:: 1.3
+    """
+    if len(s) >= 3000:
+        return False
+    global _allowed
+    if not _allowed.search(s):
+        return False
+    for c in s:
+        if ord(c) < 32:
+            return False
+    return True
+
+
 __applicationName__ = "doxypy"
 __blurb__ = """
 doxypy is an input filter for Doxygen. It preprocesses python
@@ -459,7 +483,7 @@ class Doxypy(object):
                 self._index_row += 1
         else:
             import os
-            if len(filename) < 2000 and os.path.exists(filename):
+            if is_file_string(filename) and os.path.exists(filename):
                 with open(filename, 'r') as f:
                     for line in f:
                         self.parseLine(line.rstrip('\r\n'))

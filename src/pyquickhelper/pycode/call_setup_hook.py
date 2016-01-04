@@ -14,8 +14,7 @@ from .open_script_file import open_script
 
 
 def call_setup_hook_cmd(folder, module_name, function_name="_setup_hook",
-                        additional_paths=None,
-                        interpreter_path=None, **args):
+                        additional_paths=None, interpreter_path=None, **args):
     """
     prepares the command line to call function @see fn _setup_hook for a specific module
 

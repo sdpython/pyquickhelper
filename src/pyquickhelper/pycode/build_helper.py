@@ -13,6 +13,7 @@ from .windows_scripts import windows_publish, windows_publish_doc, windows_pypi,
 from .windows_scripts import windows_prefix_27, windows_unittest27, copy_dist_to_local_pypi
 from .windows_scripts import windows_any_setup_command, windows_blogpost, windows_docserver, windows_build_setup, windows_build
 from .windows_scripts import pyproj_template, copy_sphinx_to_dist
+from ..filehelper.file_info import is_file_string
 
 #: nick name for no folder
 _default_nofolder = "__NOFOLDERSHOULDNOTEXIST__"
@@ -421,7 +422,7 @@ def get_script_module(command, platform=sys.platform, blog_list=None,
             return None
         else:
             list_xml = blog_list.strip("\n\r\t ")
-            if '<?xml version="1.0" encoding="UTF-8"?>' not in list_xml and os.path.exists(list_xml):
+            if '<?xml version="1.0" encoding="UTF-8"?>' not in list_xml and is_file_string(list_xml) and os.path.exists(list_xml):
                 with open(list_xml, "r", encoding="utf8") as f:
                     list_xml = f.read()
             if "<body>" not in list_xml:
