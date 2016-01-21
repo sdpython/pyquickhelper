@@ -775,7 +775,7 @@ def main_wrapper_tests(codefile,
             if len(keep) > 0:
                 raise SetupHookException(
                     "unable to run _setup_hook\n**OUT:\n{0}\n**ERR:\n{1}\n**FOLDER:\n{2}\n**NAME:\n{3}\n**KEEP:\n{4}\n**"
-                    .format(out, err, folder, project_var_name), "\n".join(keep))
+                    .format(out, err, folder, project_var_name, "\n".join(keep)))
             else:
                 out += "\nWARNINGS:\n" + err
                 err = None
