@@ -20,7 +20,7 @@ import time
 from ..filehelper.synchelper import remove_folder
 from ..loghelper.flog import run_cmd, noLOG
 from .call_setup_hook import call_setup_hook
-from .code_exceptions import CoverageException
+from .code_exceptions import CoverageException, SetupHookException
 from .coverage_helper import publish_coverage_on_codecov
 
 
@@ -764,9 +764,22 @@ def main_wrapper_tests(codefile,
         out, err = call_setup_hook(
             folder, project_var_name, fLOG=fLOG, use_print=True, **setup_params)
         if len(err) > 0 and err != "no _setup_hook":
-            raise Exception(
-                "unable to run _setup_hook\n**OUT:\n{0}\n**ERR:\n{1}\n**FOLDER:\n{2}\n**NAME:\n{3}"
-                .format(out, err, folder, project_var_name))
+            # fix introduced because pip 8.0 displays annoying warnings
+            # RuntimeWarning: Config variable 'Py_DEBUG' is unset, Python ABI tag may be incorrect
+            # RuntimeWarning: Config variable 'WITH_PYMALLOC' is unset, Python ABI tag may be incorrect
+            lines = err.split("\n")
+            keep = []
+            for line in lines:
+                if not line.startswith(" ") and "RuntimeWarning: Config variable" not in line:
+                    keep.append(line)
+            if len(keep) > 0:
+                raise SetupHookException(
+                    "unable to run _setup_hook\n**OUT:\n{0}\n**ERR:\n{1}\n**FOLDER:\n{2}\n**NAME:\n{3}"
+                    .format(out, err, folder, project_var_name))
+            else:
+                out += "\nWARNINGS:\n" + err
+                err = None
+        return out, err
 
     # project_var_name
     folder = os.path.normpath(
