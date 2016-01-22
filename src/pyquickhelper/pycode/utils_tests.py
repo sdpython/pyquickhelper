@@ -770,7 +770,8 @@ def main_wrapper_tests(codefile,
             lines = err.split("\n")
             keep = []
             for line in lines:
-                if not line.startswith(" ") and "RuntimeWarning: Config variable" not in line:
+                line = line.rstrip("\r\t ")
+                if line and not line.startswith(" ") and "RuntimeWarning: Config variable" not in line:
                     keep.append(line)
             if len(keep) > 0:
                 raise SetupHookException(
