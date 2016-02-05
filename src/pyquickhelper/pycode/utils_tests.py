@@ -516,8 +516,12 @@ def main(runner,
                 err_e = err.decode("ascii", errors="ignore")
                 memout.write(err_e)
             except UnicodeEncodeError:
-                err_e = err.encode("ascii", errors="ignore")
-                memout.write(err_e)
+                try:
+                    err_e = err.encode("ascii", errors="ignore")
+                    memout.write(err_e)
+                except TypeError:
+                    err_e = err.encode("ascii", errors="ignore").decode('ascii', errors='ingore')
+                    memout.write(err_e)
 
             fail += 1
 
