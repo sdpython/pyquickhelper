@@ -520,7 +520,8 @@ def main(runner,
                     err_e = err.encode("ascii", errors="ignore")
                     memout.write(err_e)
                 except TypeError:
-                    err_e = err.encode("ascii", errors="ignore").decode('ascii', errors='ingore')
+                    err_e = err.encode("ascii", errors="ignore").decode(
+                        'ascii', errors='ingore')
                     memout.write(err_e)
 
             fail += 1
@@ -770,7 +771,8 @@ def main_wrapper_tests(codefile,
         if len(err) > 0 and err != "no _setup_hook":
             # fix introduced because pip 8.0 displays annoying warnings
             # RuntimeWarning: Config variable 'Py_DEBUG' is unset, Python ABI tag may be incorrect
-            # RuntimeWarning: Config variable 'WITH_PYMALLOC' is unset, Python ABI tag may be incorrect
+            # RuntimeWarning: Config variable 'WITH_PYMALLOC' is unset, Python
+            # ABI tag may be incorrect
             lines = err.split("\n")
             keep = []
             for line in lines:

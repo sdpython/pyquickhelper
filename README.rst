@@ -120,4 +120,5 @@ Versions, Changes
     * **change:** sphinx command *runpython* now processes Sphinx commands such as links,
       reference or titles
     * **new:** publish coverage report to *codecov*
+    * **new:** function *read_csv* to read a dataframe from a zip file (disable in the recent version of pandas)
 

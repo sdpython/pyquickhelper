@@ -6,7 +6,6 @@
 """
 
 import os
-import io
 import stat
 import sys
 import warnings
@@ -16,6 +15,10 @@ from .file_info import is_file_string
 
 if sys.version_info[0] == 2:
     from codecs import open
+    from StringIO import StringIO
+    BytesIO = StringIO
+else:
+    from io import BytesIO, StringIO
 
 
 def change_file_status(folder, status=stat.S_IWRITE, strict=False,
@@ -123,7 +126,7 @@ def change_file_status(folder, status=stat.S_IWRITE, strict=False,
         return res
 
 
-def read_content_ufs(file_url_stream, encoding="utf8"):
+def read_content_ufs(file_url_stream, encoding="utf8", asbytes=False):
     """
     read the content of a source, whether it is a url, a file, a stream
     or a string (in that case, it returns the string itself),
@@ -131,21 +134,37 @@ def read_content_ufs(file_url_stream, encoding="utf8"):
 
     @param      file_url_stream     file or url or stream or string
     @param      encoding            encoding
+    @param      asbytes             return bytes instead of chars
     @return                         content of the source (str)
+
+    .. versionchanged:: 1.3
+        Parameter *asbytes* was added. The function can return bytes.
     """
     if isinstance(file_url_stream, str  # unicode#
                   ):
         if is_file_string(file_url_stream) and os.path.exists(file_url_stream):
-            with open(file_url_stream, "r", encoding=encoding) as f:
-                return f.read()
+            if asbytes:
+                with open(file_url_stream, "rb") as f:
+                    return f.read()
+            else:
+                with open(file_url_stream, "r", encoding=encoding) as f:
+                    return f.read()
         elif len(file_url_stream) < 5000 and file_url_stream.startswith("http"):
             return read_url(file_url_stream, encoding=encoding)
+        elif is_url_string(file_url_stream):
+            if asbytes:
+                return read_url(file_url_stream)
+            else:
+                return read_url(file_url_stream, encoding=encoding)
         else:
+            # the stirng should the content itself
             return file_url_stream
-    elif isinstance(file_url_stream, io.StringIO):
-        return file_url_stream.getvalue()
-    elif isinstance(file_url_stream, io.BytesIO):
-        return file_url_stream.getvalue().decode(encoding=encoding)
+    elif isinstance(file_url_stream, StringIO):
+        v = file_url_stream.getvalue()
+        return v.encode(encoding=encoding) if v else v
+    elif isinstance(file_url_stream, BytesIO):
+        v = file_url_stream.getvalue()
+        return v if asbytes else v.decode(encoding=encoding)
     else:
         raise TypeError(
             "unexpected type for file_url_stream: {0}".format(type(file_url_stream)))

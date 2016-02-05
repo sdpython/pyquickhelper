@@ -9,6 +9,11 @@ import hashlib
 import sys
 import re
 
+if sys.version_info[0] == 2:
+    import urlparse
+else:
+    import urllib.parse as urlparse
+
 
 def convert_st_date_to_datetime(t):
     """
@@ -66,6 +71,18 @@ def is_file_string(s):
         if ord(c) < 32:
             return False
     return True
+
+
+def is_url_string(s):
+    """
+    says if the string s could be a url
+
+    @param      s       string
+    @return             boolean
+
+    .. versionadded:: 1.3
+    """
+    return urlparse.urlparse(s).scheme != ""
 
 
 class FileInfo:
