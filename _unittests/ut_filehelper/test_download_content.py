@@ -53,15 +53,15 @@ class TestDownloadContent (unittest.TestCase):
         assert "TestDownloadContent" in content
 
         content2 = read_content_ufs(content, encoding="utf8")
-        assert content2 == content
+        self.assertEqual(content2, content)
 
         st = io.StringIO(content)
         content2 = read_content_ufs(st, encoding="utf8")
-        assert content2 == content
+        self.assertEqual(content2, content)
 
         by = io.BytesIO(content.encode("utf8"))
         content2 = read_content_ufs(by, encoding="utf8")
-        assert content2 == content
+        self.assertEqual(content2, content)
 
 if __name__ == "__main__":
     unittest.main()

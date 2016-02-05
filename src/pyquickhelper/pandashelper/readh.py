@@ -36,7 +36,7 @@ def read_url(url, **args):
     """
     import pandas
     text = get_url_content(url)
-    return pandas.read_csv(io.StringIO(text), **args)
+    return pandas.read_csv(StringIO(text), **args)
 
 
 def read_csv(filepath_or_buffer, compression=None, fvalid=None, **params):

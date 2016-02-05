@@ -11,7 +11,8 @@ import sys
 import warnings
 from .synchelper import explore_folder_iterfile
 from .internet_helper import read_url
-from .file_info import is_file_string
+from .file_info import is_file_string, is_url_string
+
 
 if sys.version_info[0] == 2:
     from codecs import open
@@ -155,16 +156,34 @@ def read_content_ufs(file_url_stream, encoding="utf8", asbytes=False):
             if asbytes:
                 return read_url(file_url_stream)
             else:
+                if encoding is None:
+                    raise ValueError(
+                        "cannot return bytes if encoding is None for url: " + file_url_stream)
                 return read_url(file_url_stream, encoding=encoding)
-        else:
-            # the stirng should the content itself
+        elif sys.version_info[0] == 2:
+            # the string should the content itself
             return file_url_stream
+        else:
+            # the string should the content itself
+            if isinstance(file_url_stream, str  # unicode#
+                          ):
+                if asbytes:
+                    raise TypeError(
+                        "file_url_stream is str when expected bytes")
+                else:
+                    return file_url_stream
+            else:
+                if asbytes:
+                    return file_url_stream
+                else:
+                    raise TypeError(
+                        "file_url_stream is bytes when expected str")
     elif isinstance(file_url_stream, StringIO):
         v = file_url_stream.getvalue()
-        return v.encode(encoding=encoding) if v else v
+        return v.encode(encoding=encoding) if asbytes and v else v
     elif isinstance(file_url_stream, BytesIO):
         v = file_url_stream.getvalue()
-        return v if asbytes else v.decode(encoding=encoding)
+        return v if asbytes or not v else v.decode(encoding=encoding)
     else:
         raise TypeError(
             "unexpected type for file_url_stream: {0}".format(type(file_url_stream)))
