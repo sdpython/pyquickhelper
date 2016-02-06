@@ -29,7 +29,7 @@ from src.pyquickhelper.pandashelper import read_csv
 
 class TestPandasHelperZip(unittest.TestCase):
 
-    def test_isnull(self):
+    def test_zip_to_df(self):
         fLOG(
             __file__,
             self._testMethodName,

@@ -52,6 +52,8 @@ def read_csv(filepath_or_buffer, compression=None, fvalid=None, **params):
                                         validates which one must be returned based on its name,
                                         the function returns the content of the file in that case (bytes)
     @return                             dataframe or a dictionary (name, dataframe)
+
+    See blog post :ref:`blogpost_read_csv`.
     """
     import pandas
     if isinstance(filepath_or_buffer, str  # unicode#

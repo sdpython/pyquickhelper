@@ -1,0 +1,68 @@
+
+
+.. _blogpost_read_csv:
+
+.. blogpost::
+    :title: read_csv and zip files
+    :keywords: pandas, read_csv, zip
+    :date: 2016-02-06
+    :categories: pandas
+    
+    `read_csv <http://pandas.pydata.org/pandas-docs/stable/generated/pandas.read_csv.html>`_
+    is no longer able to extract a dataframe from a zip file. 
+    The parameter *format* changed for *compression* but
+    the zip format disappeared from the list. I assume
+    the reason is that zip files can contains many files.
+    
+    *pyquickhelper* now implements the function
+    :ref:`read_csv <pyquickhelper.pandashelper.readh.read_csv>`
+    which can extract all dataframe in a zip file or falls back
+    into the regular function if no zip format is detected.
+    In that case, it returns a dictionary of dataframes indexed by their name
+    in the zip file.
+    
+    ::
+    
+        from pyquickhelper.pandashelper import read_csv
+        dfs = read_csv("url_or_filename.zip", compression="zip")
+        print(dfs["dataframe.txt"].head())
+        
+    If only one file must be converted as a dataframe,
+    the parameter fvalid must be used:
+    
+    ::
+    
+        from pyquickhelper.pandashelper import read_csv
+        dfs = read_csv("url_or_filename.zip", compression="zip",
+                       fvalid=lambda name: name == "the_file.txt")
+        print(dfs["the_file.txt"].head())
+    
+    The others files will be loaded as text. In more details, 
+    when it is a zip file, the function reads a dataframe 
+    from a zip file by doing:
+    
+    ::
+    
+        import io, zipfile, pandas
+        
+        def read_zip(local_file, encoding="utf8"):
+        
+            with open(local_file, "rb") as local_file:
+                content = local_file.read()
+                
+            dfs = {}
+            with zipfile.ZipFile(io.BytesIO(content)) as myzip:
+                infos = myzip.infolist()
+                
+                for info in infos:
+                    name = info.filename
+                    with myzip.open(name, "r") as f:
+                        text = f.read()
+                
+                    text = text.decode(encoding="utf8")
+                    st = io.StringIO(text)
+                    df = pandas.read_csv(st, compression=compression, **params)
+                    dfs[name] = df
+                    
+            return dfs
+        
