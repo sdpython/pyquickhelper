@@ -202,8 +202,7 @@ def generate_help_sphinx(project_var_name,
         script which outputs RST documntation adds it to the current documentation.
 
     .. versionadded:: 1.3
-        Parameter *copy_add_ext* was added.
-        Parameter *fLOG* was also added (work in progress).
+        Parameters *copy_add_ext*, *fLOG* were added.
     """
     setup_environment_for_help()
 
@@ -361,6 +360,7 @@ def generate_help_sphinx(project_var_name,
     # language
     ##########
     language = theconf.__dict__.get("language", "en")
+    use_sys = theconf.__dict__.get("enable_disabled_parts", None)
 
     latex_path = theconf.__dict__.get("latex_path", find_latex_path())
     # graphviz_dot = theconf.__dict__.get("graphviz_dot", find_graphviz_dot())
@@ -418,6 +418,7 @@ def generate_help_sphinx(project_var_name,
             replace_relative_import=False,
             module_name=module_name,
             copy_add_ext=copy_add_ext,
+            use_sys=use_sys,
             fLOG=fLOG)
 
     except ImportErrorHelpGen as e:

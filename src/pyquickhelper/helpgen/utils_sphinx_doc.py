@@ -124,7 +124,7 @@ def replace_relative_import(fullname, content=None):
 
 
 def _private_process_one_file(
-        fullname, to, silent, fmod, replace_relative_import):
+        fullname, to, silent, fmod, replace_relative_import, use_sys):
     """
     Copy one file from the source to the documentation folder.
     It processes some comments in doxygen format (@ param, @ return).
@@ -135,10 +135,14 @@ def _private_process_one_file(
     @param      silent                      no logs if True
     @param      fmod                        modification functions
     @param      replace_relative_import     replace relative import
+    @param      use_sys                     @see fn remove_undesired_part_for_documentation
     @return                                 extension, number of lines, number of lines in documentation
 
     .. versionchanged:: 0.9
         return extension, number of lines
+
+    .. versionchanged:: 1.3
+        Parameter *use_sys* was added.
     """
     ext = os.path.splitext(fullname)[-1]
 
@@ -176,7 +180,8 @@ def _private_process_one_file(
                 counts = dict(docrows=0)
 
         content = fmod(content, fullname)
-        content = remove_undesired_part_for_documentation(content, fullname)
+        content = remove_undesired_part_for_documentation(
+            content, fullname, use_sys)
         fold = os.path.split(to)[0]
         if not os.path.exists(fold):
             os.makedirs(fold)
@@ -188,7 +193,7 @@ def _private_process_one_file(
         return os.path.splitext(fullname)[-1], nblines, counts["docrows"]
 
 
-def remove_undesired_part_for_documentation(content, filename):
+def remove_undesired_part_for_documentation(content, filename, use_sys):
     """
     Some files contains blocs inserted between the two lines:
         * ``# -- HELP BEGIN EXCLUDE --``
@@ -198,7 +203,23 @@ def remove_undesired_part_for_documentation(content, filename):
 
     @param      content     file content
     @param      filename    for error message
+    @param      use_sys     string or None, enables, disables a section based on variables added to sys module
     @return                 modified file content
+
+    If the parameter *use_sys* is false, the section of code
+    will be commented out. If true, the section can be enabled.
+    It relies on the following code::
+
+        import sys
+        if hasattr(sys, "<use_sys>") and sys.<use_sys>:
+
+            # section to enable or disables
+
+   The string ``<use_sys>`` will be replaced by the value of
+   parameter *use_sys*.
+
+    .. versionchanged:: 1.3
+        Parameter *use_sys* was added.
     """
     marker_in = "# -- HELP BEGIN EXCLUDE --"
     marker_out = "# -- HELP END EXCLUDE --"
@@ -206,12 +227,19 @@ def remove_undesired_part_for_documentation(content, filename):
     lines = content.split("\n")
     res = []
     inside = False
+    has_sys = False
     for line in lines:
+        if line.startswith("import sys"):
+            has_sys = True
         if line.startswith(marker_in):
             if inside:
                 raise HelpGenException(
                     "issues with undesired blocs in file " + filename + " with: " + marker_in + "|" + marker_out)
             inside = True
+            if use_sys:
+                if not has_sys:
+                    res.append("import sys")
+                res.append("if sys.%d:" % use_sys)
             res.append(line)
         elif line.startswith(marker_out):
             if not inside:
@@ -221,7 +249,10 @@ def remove_undesired_part_for_documentation(content, filename):
             res.append(line)
         else:
             if inside:
-                res.append("### " + line)
+                if use_sys:
+                    res.append("    " + line)
+                else:
+                    res.append("### " + line)
             else:
                 res.append(line)
     return "\n".join(res)
@@ -237,7 +268,8 @@ def copy_source_files(input,
                       fexclude=lambda f: False,
                       addfilter=None,
                       replace_relative_import=False,
-                      copy_add_ext=None):
+                      copy_add_ext=None,
+                      use_sys=None):
     """
     copy all sources files (input) into a folder (output),
     apply on each of them a modification
@@ -258,10 +290,11 @@ def copy_source_files(input,
     @param      addfilter                   additional filter, it should look like: ``"(.+[.]pyx$)|(.+[.]pyh$)"``
     @param      replace_relative_import     replace relative import
     @param      copy_add_ext                additional extension file to copy
+    @param      use_sys                     @see fn remove_undesired_part_for_documentation
     @return                                 list of copied files
 
     .. versionchanged:: 1.3
-        Parameter *copy_add_ext* was added.
+        Parameters *copy_add_ext*, *use_sys* were added.
     """
     if not os.path.exists(output):
         os.makedirs(output)
@@ -315,7 +348,7 @@ def copy_source_files(input,
         fLOG("copy_source_files: copy ", file.fullname, " to ", to)
 
         rext, rline, rdocline = _private_process_one_file(
-            file.fullname, to, silent, fmod, replace_relative_import)
+            file.fullname, to, silent, fmod, replace_relative_import, use_sys)
         ractions.append((a, file, dest, rext, rline, rdocline))
 
     return ractions
@@ -874,6 +907,7 @@ def prepare_file_for_sphinx_help_generation(
         replace_relative_import=False,
         module_name=None,
         copy_add_ext=None,
+        use_sys=None,
         fLOG=fLOG):
     """
     prepare all files for Sphinx generation
@@ -919,6 +953,7 @@ def prepare_file_for_sphinx_help_generation(
     @param      replace_relative_import replace relative import
     @param      module_name     module name (cannot be None)
     @param      copy_add_ext    additional file extension to copy
+    @param      use_sys         @see fn remove_undesired_part_for_documentation
     @param      fLOG            logging function
 
     @return                     list of written files stored in RstFileHelp
@@ -946,8 +981,7 @@ def prepare_file_for_sphinx_help_generation(
         add parameter *module_name*, more robust to import issues
 
     .. versionchanged:: 1.3
-        Parameter *copy_add_ext* was added.
-        Parameter *fLOG* was added.
+        Parameters *copy_add_ext*, *fLOG* were added.
     """
     if optional_dirs is None:
         optional_dirs = []
@@ -1007,7 +1041,8 @@ def prepare_file_for_sphinx_help_generation(
                                           addfilter="|".join(
                                               ['(%s)' % _[0] for _ in mapped_function]),
                                           replace_relative_import=replace_relative_import,
-                                          copy_add_ext=copy_add_ext)
+                                          copy_add_ext=copy_add_ext,
+                                          use_sys=use_sys)
 
             # without those two lines, importing the module might crash later
             if sys.version_info[0] != 2:

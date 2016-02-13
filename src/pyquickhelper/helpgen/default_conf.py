@@ -27,7 +27,8 @@ def set_sphinx_variables(fileconf,
                          bootswatch_navbar_links=None,
                          description_latex="",
                          use_mathjax=False,
-                         use_lunrsearch=False):
+                         use_lunrsearch=False,
+                         enable_disabled_parts="enable_disabled_documented_pieces_of_code"):
     """
     defines variables for Sphinx
 
@@ -47,6 +48,7 @@ def set_sphinx_variables(fileconf,
                                         default option is True
     @param      use_lunrsearch          suggest autocompletion in sphinx,
                                         see `sphinxcontrib-lunrsearch <https://github.com/rmcgibbo/sphinxcontrib-lunrsearch>`_
+    @param      enable_disabled_parts   @see fn remove_undesired_part_for_documentation,
 
     @example(Simple configuration file for Sphinx)
 
@@ -77,10 +79,24 @@ def set_sphinx_variables(fileconf,
     Close to the setup, there must be a file ``version.txt``.
     You overwrite a value by giving a variable another value after the fucntion is called.
 
+    Some parts of the code can be disabled before generating the documentation.
+    Those parts are surrounded by::
+
+        # -- HELP BEGIN EXCLUDE --
+        import module
+        # -- HELP END EXCLUDE --
+
+    If *enable_disabled_parts* is set to a string, these sections will become::
+
+        # -- HELP BEGIN EXCLUDE --
+        if hasattr(sys, <enable_disabled_parts>) and sys.<enable_disabled_parts>:
+            import module
+        # -- HELP END EXCLUDE --
+
     @endexample
 
     .. versionchanged:: 1.3
-        Add parameter *use_mathjax*, *use_lunrsearch*.
+        Add parameters *use_mathjax*, *use_lunrsearch*, *enable_disabled_parts*.
     """
     # version .txt
     dirconf = os.path.abspath(os.path.dirname(fileconf))
@@ -111,6 +127,7 @@ def set_sphinx_variables(fileconf,
     release = '%s.%s' % (version, first_line)
     html_title = "%s %s" % (project_var_name, release)
     htmlhelp_basename = '%s_doc' % project_var_name
+    enable_disabled_parts = enable_disabled_parts
 
     # personnalization latex
     latex_use_parts = False
