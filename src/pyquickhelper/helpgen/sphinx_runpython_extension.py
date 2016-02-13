@@ -36,15 +36,23 @@ class RunPythonExecutionError(Exception):
     pass
 
 
-def run_python_script(script, params={}, comment=None):
+def run_python_script(script, params=None, comment=None, setsysvar=None):
     """
     execute a script python as a string
 
     @param  script      python script
     @param  params      params to add before the execution
     @param  comment     message to add in a exception when the script fails
+    @param  setsysvar   if not None, add a member to module *sys*, set up this variable to True,
+                        if is remove after the execution
     @return             stdout, stderr
+
+    .. versionchanged:: 1.3
+        Parameter *setsysvar* was added.
     """
+    if params is None:
+        params = {}
+
     try:
         obj = compile(script, "", "exec")
     except Exception as ec:
@@ -66,9 +74,14 @@ def run_python_script(script, params={}, comment=None):
     sys.stdout = sout
     sys.stderr = serr
 
+    if setsysvar is not None:
+        sys.__dict__[setsysvar] = True
+
     try:
         exec(obj, globals(), loc)
     except Exception as ee:
+        if setsysvar is not None:
+            del sys.__dict__[setsysvar]
         if comment is None:
             comment = ""
         gout = sout.getvalue()
@@ -76,6 +89,9 @@ def run_python_script(script, params={}, comment=None):
         message = "SCRIPT:\n{0}\nPARAMS\n{1}\nCOMMENT\n{2}\nERR\n{3}\nOUT\n{4}\nEXC\n{5}".format(
             script, params, comment, gout, gerr, ee)
         raise RunPythonExecutionError(message) from ee
+
+    if setsysvar is not None:
+        del sys.__dict__[setsysvar]
 
     gout = sout.getvalue()
     gerr = serr.getvalue()
@@ -169,6 +185,7 @@ class RunPythonDirective(Directive):
                    'sout': directives.unchanged,
                    'sphinx': directives.unchanged,
                    'sout2': directives.unchanged,
+                   'setsysvar': directives.unchanged,
                    }
     has_content = True
     runpython_class = runpython_node
@@ -210,7 +227,10 @@ class RunPythonDirective(Directive):
             'sout': self.options.get('sout', TITLES[language_code]["Out"]),
             'sout2': self.options.get('sout2', TITLES[language_code]["Out2"]),
             'sphinx': 'sphinx' not in self.options or self.options['sphinx'] in bool_set,
+            'setsysvar': self.options.get('setsysvar', None),
         }
+        if len(p['setsysvar']) == 0:
+            p['setsysvar'] = 'enable_disabled_documented_pieces_of_code'
         dind = 0 if p['rst'] else 4
         p['indent'] = int(self.options.get("indent", dind))
 
@@ -226,7 +246,8 @@ class RunPythonDirective(Directive):
         # return [document.reporter.warning('messagr', line=self.lineno)]
 
         out, err = run_python_script(
-            script, comment='  File "{0}", line {1}'.format(docname, lineno))
+            script, comment='  File "{0}", line {1}'.format(docname, lineno),
+            setsysvar=p['setsysvar'])
         content = out
         if len(err) > 0:
             content += "\n\nERROR:\n\n" + err

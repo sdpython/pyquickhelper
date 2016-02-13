@@ -49,6 +49,9 @@ def process_standard_options_for_setup(argv,
                                        additional_ut_path=None,
                                        skip_function=default_skip_function,
                                        covtoken=None,
+                                       hook_print=True,
+                                       stdout=None,
+                                       stderr=None,
                                        fLOG=noLOG):
     """
     process the standard options the module pyquickhelper is
@@ -98,7 +101,9 @@ def process_standard_options_for_setup(argv,
     @param      covtoken                    token used when publishing coverage report to `codecov <https://codecov.io/>`_,
                                             more in @see fn main_wrapper_tests
     @param      fLOG                        logging function
-
+    @param      hook_print                  enable, disable print when calling *_setup_hook*
+    @paral      stdout                      redirect stdout for unit test if not None
+    @paral      stderr                      redirect stderr for unit test  if not None
     @return                                 True (an option was processed) or False,
                                             the file ``setup.py`` should call function ``setup``
 
@@ -140,6 +145,8 @@ def process_standard_options_for_setup(argv,
 
         Parameter *covtoken* as added to post the coverage report to
         `codecov <https://codecov.io/>`_.
+
+        Parameters *hook_print*, *stdout*, *stderr* were added.
     """
     folder = file_or_folder if os.path.isdir(
         file_or_folder) else os.path.dirname(file_or_folder)
@@ -212,14 +219,17 @@ def process_standard_options_for_setup(argv,
                                 coverage_options=coverage_options,
                                 coverage_exclude_lines=coverage_exclude_lines,
                                 additional_ut_path=additional_ut_path,
-                                skip_function=skip_function, covtoken=covtoken, fLOG=fLOG)
+                                skip_function=skip_function, covtoken=covtoken,
+                                hook_print=hook_print, stdout=stdout, stderr=stderr,
+                                fLOG=fLOG)
         return True
 
     elif "setup_hook" in argv:
         run_unittests_for_setup(
             file_or_folder, setup_params=setup_params, only_setup_hook=True,
             coverage_options=coverage_options, coverage_exclude_lines=coverage_exclude_lines,
-            additional_ut_path=additional_ut_path, skip_function=skip_function, fLOG=fLOG)
+            additional_ut_path=additional_ut_path, skip_function=skip_function,
+            hook_print=hook_print, stdout=stdout, stderr=stderr, fLOG=fLOG)
         return True
 
     elif "unittests_LONG" in argv:
@@ -228,7 +238,8 @@ def process_standard_options_for_setup(argv,
         run_unittests_for_setup(
             file_or_folder, skip_function=skip_long, setup_params=setup_params,
             coverage_options=coverage_options, coverage_exclude_lines=coverage_exclude_lines,
-            additional_ut_path=additional_ut_path, fLOG=fLOG)
+            additional_ut_path=additional_ut_path, hook_print=hook_print,
+            stdout=stdout, stderr=stderr, fLOG=fLOG)
         return True
 
     elif "unittests_SKIP" in sys.argv:
@@ -237,7 +248,8 @@ def process_standard_options_for_setup(argv,
         run_unittests_for_setup(
             file_or_folder, skip_function=skip_skip, setup_params=setup_params,
             coverage_options=coverage_options, coverage_exclude_lines=coverage_exclude_lines,
-            additional_ut_path=additional_ut_path, fLOG=fLOG)
+            additional_ut_path=additional_ut_path, hook_print=hook_print,
+            stdout=stdout, stderr=stderr, fLOG=fLOG)
         return True
 
     elif "build_script" in argv:
@@ -456,6 +468,9 @@ def run_unittests_for_setup(file_or_folder,
                             coverage_exclude_lines=None,
                             additional_ut_path=None,
                             covtoken=None,
+                            hook_print=True,
+                            stdout=None,
+                            stderr=None,
                             fLOG=noLOG):
     """
     run the unit tests and compute the coverage, stores
@@ -470,10 +485,14 @@ def run_unittests_for_setup(file_or_folder,
     @param      coverage_exclude_lines  see @see fn main_wrapper_tests
     @param      additional_ut_path      see @see fn main_wrapper_tests
     @param      covtoken                see @see fn main_wrapper_tests
+    @param      hook_print              see @see fn main_wrapper_tests
+    @param      stdout                  see @see fn main_wrapper_tests
+    @param      stderr                  see @see fn main_wrapper_tests
     @param      fLOG                    logging function
 
     .. versionchanged:: 1.3
-        Parameters *coverage_options*, *coverage_exclude_lines*, *fLOG*, *additional_ut_path* were added.
+        Parameters *coverage_options*, *coverage_exclude_lines*, *fLOG*,
+        *additional_ut_path*, *hook_print*, *stdout*, *stderr* were added.
         See function @see fn main_wrapper_tests.
         The coverage computation can be disable by specifying
         ``coverage_options["disable_coverage"] = True``.
@@ -504,7 +523,7 @@ def run_unittests_for_setup(file_or_folder,
         run_unit, add_coverage=cov, skip_function=skip_function, setup_params=setup_params,
         only_setup_hook=only_setup_hook, coverage_options=coverage_options,
         coverage_exclude_lines=coverage_exclude_lines, additional_ut_path=additional_ut_path,
-        covtoken=covtoken, fLOG=fLOG)
+        covtoken=covtoken, hook_print=hook_print, stdout=stdout, stderr=stderr, fLOG=fLOG)
 
 
 def copy27_for_setup(file_or_folder):

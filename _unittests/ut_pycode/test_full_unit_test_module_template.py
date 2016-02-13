@@ -28,6 +28,9 @@ from src.pyquickhelper.pycode import is_travis_or_appveyor
 
 if sys.version_info[0] == 2:
     from codecs import open
+    from StringIO import StringIO
+else:
+    from io import StringIO
 
 
 class TestUnitTestFull(unittest.TestCase):
@@ -64,12 +67,20 @@ class TestUnitTestFull(unittest.TestCase):
         def skip_function(name, code):
             return "test_example" not in name
 
+        stdout = StringIO()
+        stderr = StringIO()
+
         fLOG("unit tests", root)
         r = process_standard_options_for_setup(
             ["unittests"], setup, "python3_module_template", port=8067,
             requirements=["pyquickhelper"], blog_list="http://blog/",
             fLOG=noLOG, additional_ut_path=[pyq, (root, True)],
-            skip_function=skip_function, coverage_options={"disable_coverage": True})
+            skip_function=skip_function, coverage_options={
+                "disable_coverage": True},
+            hook_print=False, stdout=stdout, stderr=stderr)
+
+        fLOG("OUT:\n", stdout.getvalue())
+        fLOG("ERR:\n", stderr.getvalue())
 
         if memo is not None:
             sys.modules["src"] = memo

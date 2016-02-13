@@ -239,7 +239,7 @@ def remove_undesired_part_for_documentation(content, filename, use_sys):
             if use_sys:
                 if not has_sys:
                     res.append("import sys")
-                res.append("if sys.%d:" % use_sys)
+                res.append("if sys.%s:" % use_sys)
             res.append(line)
         elif line.startswith(marker_out):
             if not inside:

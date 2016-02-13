@@ -304,6 +304,8 @@ def main(runner,
          processes=False,
          skip_function=None,
          additional_ut_path=None,
+         stdout=None,
+         stderr=None,
          fLOG=noLOG):
     """
     run all unit test
@@ -325,6 +327,8 @@ def main(runner,
                                     however, to make that happen, you need to specify
                                     ``exit=False`` for each test file, see `unittest.main <https://docs.python.org/3.4/library/unittest.html#unittest.main>`_
     @param      additional_ut_path  additional paths to add when running the unit tests
+    @param      stdout              if not None, use this stream instead of *sys.stdout*
+    @param      stderr              if not None, use this stream instead of *sys.stderr*
     @param      fLOG                logging function
     @return                         dictionnary: ``{ "err": err, "tests":list of couple (file, test results) }``
 
@@ -336,7 +340,7 @@ def main(runner,
         parameter *skip_function* was added
 
     .. versionchanged:: 1.3
-        Parameter *fLOG* was added.
+        Parameters *fLOG*, *stdout*, *stderr* were added.
     """
     if skip_list is None:
         skip_list = set()
@@ -410,12 +414,14 @@ def main(runner,
     suite = import_files(li, additional_ut_path=additional_ut_path, fLOG=fLOG)
     keep = []
 
-    # redirect standard output, err
-    memout = sys.stdout
+    # redirect standard output, error
+    memo_stdout = sys.stdout
+    memout = sys.stdout if stdout is None else stdout
     fail = 0
     allwarn = []
 
-    stderr = sys.stderr
+    memo_stderr = sys.stderr
+    memerr = sys.stderr if stderr is None else stderr
     fullstderr = io.StringIO()
 
     # displays
@@ -570,8 +576,8 @@ def main(runner,
     memout.write("---- END UT\n")
 
     # end, catch standard output and err
-    sys.stderr = stderr
-    sys.stdout = memout
+    sys.stderr = memo_stderr
+    sys.stdout = memo_stdout
     val = fullstderr.getvalue()
 
     if len(val) > 0:
@@ -580,9 +586,9 @@ def main(runner,
         flogp("-- end STDERR on STDOUT")
 
         if on_stderr:
-            sys.stderr.write("##### STDERR (from unittests) #####\n")
-            sys.stderr.write(val)
-            sys.stderr.write("##### end STDERR #####\n")
+            memerr.write("##### STDERR (from unittests) #####\n")
+            memerr.write(val)
+            memerr.write("##### end STDERR #####\n")
 
     if fail == 0:
         clean()
@@ -651,6 +657,9 @@ def main_wrapper_tests(codefile,
                        coverage_exclude_lines=None,
                        additional_ut_path=None,
                        covtoken=None,
+                       hook_print=True,
+                       stdout=None,
+                       stderr=None,
                        fLOG=noLOG):
     """
     calls function :func:`main <pyquickhelper.unittests.utils_tests.main>` and throw an exception if it fails
@@ -669,8 +678,11 @@ def main_wrapper_tests(codefile,
     @param      coverage_options        (dictionary) options for module coverage as a dictionary, see below, default is None
     @param      coverage_exclude_lines  (list) options for module coverage, lines to exclude from the coverage report, defaul is None
     @param      additional_ut_path      (list) additional paths to add when running the unit tests
-    @parm       covtoken                (str) token used when publishing coverage report to `codecov <https://codecov.io/>`_
+    @param      covtoken                (str) token used when publishing coverage report to `codecov <https://codecov.io/>`_
                                         or None to not publish
+    @param      hook_print              enable print display when calling *_setup_hook*
+    @param      stdout                  if not None, write output on this stream instead of *sys.stdout*
+    @param      stderr                  if not None, write errors on this stream instead of *sys.stderr*
     @param      fLOG                    function(*l, **p), logging function
 
     *covtoken* can be a string ``<token>`` or a
@@ -725,7 +737,8 @@ def main_wrapper_tests(codefile,
         Save the report in XML format, binary format, replace full paths by relative path.
 
     .. versionchanged:: 1.3
-        Parameters *coverage_options*, *coverage_exclude_lines*, *additional_ut_path* were added.
+        Parameters *coverage_options*, *coverage_exclude_lines*,
+        *additional_ut_path* were added.
         See class `Coverage <http://coverage.readthedocs.org/en/coverage-4.0b1/api_coverage.html?highlight=coverage#coverage.Coverage.__init__>`_
         and `Configuration files <http://coverage.readthedocs.org/en/coverage-4.0b1/config.html>`_
         to specify those options. If both values are left to None, this function will
@@ -737,6 +750,8 @@ def main_wrapper_tests(codefile,
 
         Parameter *covtoken* as added to post the coverage report to
         `codecov <https://codecov.io/>`_.
+
+        Parameters *hook_print*, *stdout*, *stderr* were added.
     """
     runner = unittest.TextTestRunner(verbosity=0, stream=io.StringIO())
     path = os.path.abspath(os.path.join(os.path.split(codefile)[0]))
@@ -744,7 +759,8 @@ def main_wrapper_tests(codefile,
     def run_main():
         res = main(runner, path_test=path, skip=-1, skip_list=skip_list,
                    processes=processes, skip_function=skip_function,
-                   additional_ut_path=additional_ut_path, fLOG=fLOG)
+                   additional_ut_path=additional_ut_path, stdout=stdout, stderr=stderr,
+                   fLOG=fLOG)
         return res
 
     if "win" not in sys.platform and "DISPLAY" not in os.environ:
@@ -767,7 +783,7 @@ def main_wrapper_tests(codefile,
         if setup_params is None:
             setup_params = {}
         out, err = call_setup_hook(
-            folder, project_var_name, fLOG=fLOG, use_print=True, **setup_params)
+            folder, project_var_name, fLOG=fLOG, use_print=hook_print, **setup_params)
         if len(err) > 0 and err != "no _setup_hook":
             # fix introduced because pip 8.0 displays annoying warnings
             # RuntimeWarning: Config variable 'Py_DEBUG' is unset, Python ABI tag may be incorrect

@@ -121,4 +121,7 @@ Versions, Changes
       reference or titles
     * **new:** publish coverage report to *codecov*
     * **new:** function *read_csv* to read a dataframe from a zip file (disable in the recent version of pandas)
-
+    * **add:** catches stdout, stderr in function *main_wrapper_tests*
+    * **change:** disabled pieces of code for the automated generation of documentation can be 
+      enabled back when running extension *runpython*
+    * **add:** add parameter *setsysvar* to function *run_python_script* and directive *runpython*

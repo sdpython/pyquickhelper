@@ -694,7 +694,7 @@ def _check_url_file(url, path_download, outfile):
         if os.path.exists(dest) and not os.path.exists(nyet):
             try:
                 fLOG("trying to connect", url)
-                f1 = urllib.urlopen(url)
+                f1 = urllib_request.urlopen(url)
                 down = _first_more_recent(f1, dest)
                 newdate = down
                 f1.close()
