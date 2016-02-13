@@ -164,6 +164,9 @@ class TestBlogHelper(unittest.TestCase):
             raise Exception(html)
 
     def test_newdirective_with_rst2html(self):
+        """
+        this test also test the extension runpython
+        """
         fLOG(
             __file__,
             self._testMethodName,

@@ -229,7 +229,7 @@ class RunPythonDirective(Directive):
             'sphinx': 'sphinx' not in self.options or self.options['sphinx'] in bool_set,
             'setsysvar': self.options.get('setsysvar', None),
         }
-        if len(p['setsysvar']) == 0:
+        if p['setsysvar'] is not None and len(p['setsysvar']) == 0:
             p['setsysvar'] = 'enable_disabled_documented_pieces_of_code'
         dind = 0 if p['rst'] else 4
         p['indent'] = int(self.options.get("indent", dind))

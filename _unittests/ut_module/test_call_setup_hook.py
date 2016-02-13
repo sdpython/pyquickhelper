@@ -59,10 +59,11 @@ class TestCallSetupHook(unittest.TestCase):
         if not(err == "no ______" or "linux" in out):
             raise Exception("OUT:\n{0}\nERR:\n{1}".format(out, err))
 
-        out, err = call_setup_hook(init, "pyquickhelper", fLOG=fLOG)
+        out, err = call_setup_hook(
+            init, "pyquickhelper", fLOG=fLOG, use_print=False)
         fLOG(err)
         fLOG(out)
-        assert len(err) == 0
+        self.assertEqual(err, "")
 
     def test_call_setup_hook_call(self):
         fLOG(
@@ -83,10 +84,10 @@ class TestCallSetupHook(unittest.TestCase):
         out, err = call_setup_hook(
             init, "pyquickhelper", fLOG=fLOG, force_call=True,
             additional_paths=["not a path"],
-            unit_test=True)
+            unit_test=True, use_print=False)
         fLOG(err)
         fLOG(out)
-        assert len(err) == 0
+        self.assertEqual(err, "")
 
 if __name__ == "__main__":
     unittest.main()
