@@ -625,10 +625,11 @@ def _check_zip_file(filename, path_unzip, outfile):
                         return dest
 
                 fLOG("unzipping one file", dest)
-                f = open(dest, "w")
                 if isinstance(data, bytes):
-                    f.write(bytes.decode(data))
+                    f = open(dest, "wb")
+                    f.write(data)
                 else:
+                    f = open(dest, "w")
                     f.write(data)
                 f.close()
                 file.close()
