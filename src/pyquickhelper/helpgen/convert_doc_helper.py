@@ -16,6 +16,7 @@ from . helpgen_exceptions import HelpGenConvertError
 from .sphinx_blog_extension import BlogPostDirective, BlogPostDirectiveAgg
 from .sphinx_runpython_extension import RunPythonDirective
 from .sphinx_sharenet_extension import ShareNetDirective, sharenet_role
+from .sphinx_bigger_extension import bigger_role
 from .convert_doc_sphinx_helper import HTMLWriterWithCustomDirectives
 
 import sys
@@ -112,6 +113,7 @@ def rst2html(s, fLOG=noLOG, writer="sphinx", keep_warnings=False,
         doc_directives.register_directive("runpython", RunPythonDirective)
         doc_directives.register_directive("sharenet", ShareNetDirective)
         doc_roles.register_canonical_role("sharenet", sharenet_role)
+        doc_roles.register_canonical_role("bigger", bigger_role)
         writer = HTMLWriterWithCustomDirectives()
         writer_name = 'pseudoxml'
         # not necessary
@@ -144,6 +146,7 @@ def rst2html(s, fLOG=noLOG, writer="sphinx", keep_warnings=False,
                                'out_blogpostlist': [],
                                'out_runpythonlist': [],
                                'blog_background': False,
+                               'sharepost': None,
                                })
 
     config = Config(None, None, overrides=settings_overrides, tags=None)

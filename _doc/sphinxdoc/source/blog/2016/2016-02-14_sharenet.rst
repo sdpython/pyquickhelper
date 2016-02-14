@@ -2,7 +2,7 @@
 
 .. blogpost::
     :title: Share buttons on a page from the documenation.
-    :keywords: sharenet
+    :keywords: sharenet, custom role, role, custom directive, directive
     :date: 2016-02-14
     :categories: sphinx
     

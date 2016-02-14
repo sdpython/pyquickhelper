@@ -52,6 +52,7 @@ class BlogPostDirective(Directive):
                    }
     has_content = True
     add_index = True
+    add_share = True
     blogpost_class = blogpost_node
 
     def run(self):
@@ -77,12 +78,14 @@ class BlogPostDirective(Directive):
             docname = "___unknown_docname___"
             config = None
             blog_background = False
+            sharepost = None
         else:
             # otherwise, it means sphinx is running
             docname = env.docname
             # settings and configuration
             config = env.config
             blog_background = config.blog_background
+            sharepost = config.sharepost if self.__class__.add_share else None
 
         # post
         p = {
@@ -122,13 +125,17 @@ class BlogPostDirective(Directive):
         node = self.__class__.blogpost_class(ids=[idbp], year=p["date"][:4],
                                              rawfile=self.options.get(
                                                  "rawfile", None),
-                                             linktitle=p["title"],
-                                             lg=language_code,
+                                             linktitle=p[
+                                                 "title"], lg=language_code,
                                              blog_background=p["blog_background"])
         node += section
 
         # we add the date
-        content = StringList(["**{0}**".format(p["date"]), ""])
+        tnl = [":bigger:`::5:{0}`".format(p["date"])]
+        if sharepost is not None:
+            tnl.append(":sharenet:`{0}`".format(sharepost))
+        tnl.append('')
+        content = StringList(tnl)
         content = content + self.content
 
         # parse the content into sphinx directive, we add it to section
@@ -174,6 +181,7 @@ class BlogPostDirectiveAgg(BlogPostDirective):
     same but for the same post in a aggregated pages
     """
     add_index = False
+    add_share = False
     blogpost_class = blogpostagg_node
     option_spec = {'date': directives.unchanged,
                    'title': directives.unchanged,

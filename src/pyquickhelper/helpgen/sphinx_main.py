@@ -22,6 +22,7 @@ from .blog_post_list import BlogPostList
 from .sphinx_blog_extension import BlogPostDirective, BlogPostDirectiveAgg
 from .sphinx_runpython_extension import RunPythonDirective
 from .sphinx_sharenet_extension import ShareNetDirective, sharenet_role
+from .sphinx_bigger_extension import bigger_role
 from .post_process import post_process_latex_output
 from .process_notebooks import process_notebooks, add_notebook_page
 from .sphinx_helper import post_process_html_nb_output_static_file
@@ -204,6 +205,7 @@ def generate_help_sphinx(project_var_name,
 
     .. versionadded:: 1.3
         Parameters *copy_add_ext*, *fLOG* were added.
+        Automatically add custom role and custom directive ``sharenet``.
     """
     setup_environment_for_help()
 
@@ -237,6 +239,7 @@ def generate_help_sphinx(project_var_name,
     directives.register_directive("runpython", RunPythonDirective)
     directives.register_directive("sharenet", ShareNetDirective)
     roles.register_canonical_role("sharenet", sharenet_role)
+    roles.register_canonical_role("bigger", bigger_role)
     # app.add_role('bbissue', bbissue_role)
 
     if "conf" in sys.modules:

@@ -76,6 +76,7 @@ class BlogPost:
         overrides['input_encoding'] = encoding
         overrides["out_blogpostlist"] = []
         overrides["blog_background"] = False
+        overrides["sharepost"] = None
 
         overrides.update({'doctitle_xform': True,
                           'initial_header_level': 2,
@@ -86,6 +87,7 @@ class BlogPost:
 
         config = Config(None, None, overrides=overrides, tags=None)
         config.blog_background = False
+        config.sharepost = None
         env = BuildEnvironment(None, None, config=config)
         env.temp_data["docname"] = "string"
         overrides["env"] = env

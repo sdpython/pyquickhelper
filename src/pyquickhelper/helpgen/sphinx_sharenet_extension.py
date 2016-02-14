@@ -6,7 +6,7 @@
 .. versionadded:: 1.3
 """
 
-from docutils import nodes, core
+from docutils import nodes
 from docutils.parsers.rst import Directive, directives
 from sphinx.writers.html import HTMLTranslator
 
@@ -42,9 +42,6 @@ class ShareNetDirective(Directive):
     It is optional. The option ``:head: False`` specifies the javascript
     part is added to the html body and not the header.
     The header can be overwritten by other custom commands.
-
-    .. versionchanged:: 1.3
-        Titles, references or label are now allowed.
     """
     available_networks = {'facebook', 'linkedin', 'twitter'}
     required_arguments = 0
@@ -66,22 +63,6 @@ class ShareNetDirective(Directive):
 
         @return      a list of nodes
         """
-        # settings
-        sett = self.state.document.settings
-        language_code = sett.language_code
-        lineno = self.lineno
-
-        # env
-        if hasattr(self.state.document.settings, "env"):
-            env = self.state.document.settings.env
-        else:
-            env = None
-
-        if env is None:
-            docname = "___unknown_docname___"
-        else:
-            docname = env.docname
-
         def options_to_int(s):
             if s is None:
                 return -1
@@ -100,7 +81,7 @@ class ShareNetDirective(Directive):
         # build node
         node = self.__class__.sharenet_class(networks=p,
                                              size=self.options.get('size', 20),
-                                             inhead=self.options.get('head', True) in (True, 1, "True", "true"))
+                                             inhead=self.options.get('head', True) in bool_set)
         node['classes'] += "-sharenet"
         node['sharenet'] = node
         ns = [node]
@@ -111,7 +92,7 @@ def sharenet_role(role, rawtext, text, lineno, inliner,
                   options={}, content=[]):
     """
     Defines custom roles *sharenet*. The following instructions defines
-    buttons of size 20 (:sharenet:`facebook-linkedin-twitter-20`)::
+    buttons of size 20 (:sharenet:`facebook-linkedin-twitter-20-body`)::
 
         :sharenet:`facebook-linkedin-twitter-20-body`
 
@@ -150,7 +131,7 @@ def sharenet_role(role, rawtext, text, lineno, inliner,
 
     if len(networks) == 0:
         msg = inliner.reporter.error(
-            "no speified network from {0}".format(rawtext), line=lineno)
+            "no specified network from {0}".format(rawtext), line=lineno)
         prb = inliner.problematic(rawtext, rawtext, msg)
         return [prb], [msg]
 
@@ -179,7 +160,7 @@ def depart_sharenet_node(self, node):
     depending on the format, or the setup should
     specify a different function for each.
 
-    It does not html for the time being.
+    It does only html for the time being.
     """
     if not isinstance(self, HTMLTranslator):
         self.body.append("sharenet: output only available for HTML")
@@ -226,7 +207,6 @@ def depart_sharenet_node(self, node):
             rows = []
             for key in networks:
                 text = mapping[key]
-                cl = "canvas-" + text
                 l = link.format(urls[key], text, size)
                 rows.append(l)
 

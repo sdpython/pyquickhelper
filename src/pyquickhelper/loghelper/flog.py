@@ -29,7 +29,6 @@ import subprocess
 import random
 import math
 import decimal
-import urllib
 import copy
 import zipfile
 from .flog_fake_classes import FlogStatic, LogFakeFileStream, LogFileStream, PQHException

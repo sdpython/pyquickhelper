@@ -28,7 +28,8 @@ def set_sphinx_variables(fileconf,
                          description_latex="",
                          use_mathjax=False,
                          use_lunrsearch=False,
-                         enable_disabled_parts="enable_disabled_documented_pieces_of_code"):
+                         enable_disabled_parts="enable_disabled_documented_pieces_of_code",
+                         sharepost="facebook-linkedin-twitter-20-body"):
     """
     defines variables for Sphinx
 
@@ -48,7 +49,8 @@ def set_sphinx_variables(fileconf,
                                         default option is True
     @param      use_lunrsearch          suggest autocompletion in sphinx,
                                         see `sphinxcontrib-lunrsearch <https://github.com/rmcgibbo/sphinxcontrib-lunrsearch>`_
-    @param      enable_disabled_parts   @see fn remove_undesired_part_for_documentation,
+    @param      enable_disabled_parts   @see fn remove_undesired_part_for_documentation
+    @param      sharepost               add share button to share blog post on usual networks
 
     @example(Simple configuration file for Sphinx)
 
@@ -185,6 +187,7 @@ def set_sphinx_variables(fileconf,
 
     # blogs (custom parameter)
     blog_background = True
+    sharepost = sharepost
 
     # settings
     exclude_patterns = []
@@ -417,7 +420,9 @@ def custom_setup(app, author):
     from .sphinx_runpython_extension import RunPythonDirective
     from .sphinx_runpython_extension import runpython_node, visit_runpython_node, depart_runpython_node
     from .sphinx_sharenet_extension import ShareNetDirective, sharenet_role
+    from .sphinx_bigger_extension import bigger_role
     from .sphinx_sharenet_extension import sharenet_node, visit_sharenet_node, depart_sharenet_node
+    from .sphinx_bigger_extension import bigger_node, visit_bigger_node, depart_bigger_node
 
     app.connect("autodoc-skip-member", skip)
     app.add_config_value('author', author, True)
@@ -425,6 +430,7 @@ def custom_setup(app, author):
     # this command enables the parameter blog_background to be part of the
     # configuration
     app.add_config_value('blog_background', True, 'env')
+    app.add_config_value('sharepost', None, 'env')
 
     # app.add_node(blogpostlist)
     app.add_node(blogpost_node,
@@ -447,11 +453,17 @@ def custom_setup(app, author):
                  latex=(visit_sharenet_node, depart_sharenet_node),
                  text=(visit_sharenet_node, depart_sharenet_node))
 
+    app.add_node(bigger_node,
+                 html=(visit_bigger_node, depart_bigger_node),
+                 latex=(visit_bigger_node, depart_bigger_node),
+                 text=(visit_bigger_node, depart_bigger_node))
+
     app.add_directive('blogpost', BlogPostDirective)
     app.add_directive('blogpostagg', BlogPostDirectiveAgg)
     app.add_directive('runpython', RunPythonDirective)
     app.add_directive('sharenet', ShareNetDirective)
     app.add_role('sharenet', sharenet_role)
+    app.add_role('bigger', bigger_role)
     #app.add_directive('blogpostlist', BlogPostListDirective)
     #app.connect('doctree-resolved', process_blogpost_nodes)
     #app.connect('env-purge-doc', purge_blogpost)

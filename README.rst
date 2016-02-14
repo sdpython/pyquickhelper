@@ -126,3 +126,6 @@ Versions, Changes
       enabled back when running extension *runpython*
     * **add:** add parameter *setsysvar* to function *run_python_script* and directive *runpython*
     * **new:** custom role and directive *sharenet* to share a page on networks (facebook, twitter, linkedin)
+    * **new:** custom role *bigger* to add bigger text in a sphinx documentation
+    * **new:** blog post add share buttons to share the link with twitter, facebook or linkedin (by default),
+      to disable it, set variable *sharepost* to None in sphinx configuration
