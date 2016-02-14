@@ -10,7 +10,7 @@ import sys
 import shutil
 import importlib
 import warnings
-from docutils.parsers.rst import directives
+from docutils.parsers.rst import directives, roles
 
 from ..loghelper.flog import run_cmd, fLOG
 from .utils_sphinx_doc import prepare_file_for_sphinx_help_generation
@@ -21,6 +21,7 @@ from .utils_sphinx_config import ie_layout_html
 from .blog_post_list import BlogPostList
 from .sphinx_blog_extension import BlogPostDirective, BlogPostDirectiveAgg
 from .sphinx_runpython_extension import RunPythonDirective
+from .sphinx_sharenet_extension import ShareNetDirective, sharenet_role
 from .post_process import post_process_latex_output
 from .process_notebooks import process_notebooks, add_notebook_page
 from .sphinx_helper import post_process_html_nb_output_static_file
@@ -234,6 +235,9 @@ def generate_help_sphinx(project_var_name,
     directives.register_directive("blogpost", BlogPostDirective)
     directives.register_directive("blogpostagg", BlogPostDirectiveAgg)
     directives.register_directive("runpython", RunPythonDirective)
+    directives.register_directive("sharenet", ShareNetDirective)
+    roles.register_canonical_role("sharenet", sharenet_role)
+    # app.add_role('bbissue', bbissue_role)
 
     if "conf" in sys.modules:
         raise ImportError("module conf was imported, this function expects not to:\n{0}".format(

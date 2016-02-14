@@ -125,3 +125,4 @@ Versions, Changes
     * **change:** disabled pieces of code for the automated generation of documentation can be 
       enabled back when running extension *runpython*
     * **add:** add parameter *setsysvar* to function *run_python_script* and directive *runpython*
+    * **new:** custom role and directive *sharenet* to share a page on networks (facebook, twitter, linkedin)

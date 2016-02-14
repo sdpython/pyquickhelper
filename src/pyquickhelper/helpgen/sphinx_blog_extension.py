@@ -9,6 +9,7 @@ import os
 from docutils import nodes
 from docutils.parsers.rst import Directive
 from sphinx.locale import _ as _locale
+from sphinx.writers.html import HTMLTranslator
 from docutils.parsers.rst import directives
 from docutils.statemachine import StringList
 from sphinx import addnodes
@@ -227,6 +228,10 @@ def depart_blogpostagg_node(self, node):
     depending on the format, or the setup should
     specify a different function for each.
     """
+    if not isinstance(self, HTMLTranslator):
+        self.body.append("blogpostagg: output only available for HTML")
+        return
+
     if node.hasattr("year"):
         rawfile = node["rawfile"]
         if rawfile is not None:

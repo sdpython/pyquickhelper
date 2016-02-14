@@ -1,0 +1,67 @@
+
+
+.. blogpost::
+    :title: Share buttons on a page from the documenation.
+    :keywords: sharenet
+    :date: 2016-02-14
+    :categories: sphinx
+    
+    pyquickhelper now includes a directive and a role to share
+    a page from the documentation on networks. 
+    See :class:`ShareNetDirective <pyquickhelper.helpgen.sphinx_sharenet_extension.ShareNetDirective>`
+    and :func:`sharenet_role <pyquickhelper.helpgen.sphinx_sharenet_extension.sharenet_role>`.
+    The syntax is the following::
+    
+        :sharenet:`twitter-facebook-linkedin-20`
+        
+    The text must be different networks separated by ``-``.
+    The last integer indicates the size of the circles.
+    If the buttons do not show up on the page,
+    try to add ``-body``::
+
+        :sharenet:`twitter-facebook-linkedin-20-body`
+        
+    It specifies the javacript which draws the buttons
+    is included on the HTML body and not in the header.
+    The header section might be rewritten by other custom commands
+    such as ``autodoc``. The main javascript part is the following::
+    
+        <script>
+        function share_url(share) {
+            var url = share + encodeURIComponent(window.location.href);
+            window.location.href = url;
+        }
+
+        function share_icon(divid, text) {
+            var canvas = document.getElementById(divid);
+            var context = canvas.getContext('2d');
+            var centerX = canvas.width / 2;
+            var centerY = canvas.height / 2;
+            var radius = centerX;
+
+            context.beginPath();
+            context.arc(centerX, centerY, radius, 0, 2 * Math.PI, false);
+            context.fillStyle = '#444444';
+            context.fill();
+            context.font = '' + (centerX*4/3) + 'pt Calibri';
+            context.textAlign = 'center';
+            context.fillStyle = '#FFFFFF';
+            context.fillText(text, centerX, centerY+centerY*16/30);
+        }
+        </script>
+        
+    Then to add a button to share on facebook::
+    
+        <a href="#" onclick="share_url('https://www.facebook.com/sharer/sharer.php?u=');return false;"><canvas height="20" id="canvas-f" width="20"/></a>
+        <script>share_icon('canvas-f', 'f');</script>
+        
+    On Linkedin::
+    
+        <a href="#" onclick="share_url('https://www.linkedin.com/shareArticle?mini=true&amp;title=&amp;summary=&amp;source=&amp;url=');return false;"><canvas height="20" id="canvas-in" width="20"/></a>
+        <script>share_icon('canvas-in', 'in');</script>
+    
+    On twitter::
+    
+        <a href="#" onclick="share_url('https://twitter.com/home?status=');return false;"><canvas height="20" id="canvas-t" width="20"/></a>
+        <script>share_icon('canvas-t', 't');</script>        
+    

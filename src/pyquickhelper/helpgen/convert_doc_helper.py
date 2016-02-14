@@ -15,13 +15,14 @@ from ..loghelper.flog import noLOG
 from . helpgen_exceptions import HelpGenConvertError
 from .sphinx_blog_extension import BlogPostDirective, BlogPostDirectiveAgg
 from .sphinx_runpython_extension import RunPythonDirective
+from .sphinx_sharenet_extension import ShareNetDirective, sharenet_role
 from .convert_doc_sphinx_helper import HTMLWriterWithCustomDirectives
 
 import sys
 import re
 import textwrap
 from docutils import core
-from docutils.parsers.rst import directives as doc_directives
+from docutils.parsers.rst import directives as doc_directives, roles as doc_roles
 from sphinx.environment import BuildEnvironment, default_settings
 from sphinx.config import Config
 
@@ -109,6 +110,8 @@ def rst2html(s, fLOG=noLOG, writer="sphinx", keep_warnings=False,
         doc_directives.register_directive("blogpost", BlogPostDirective)
         doc_directives.register_directive("blogpostagg", BlogPostDirectiveAgg)
         doc_directives.register_directive("runpython", RunPythonDirective)
+        doc_directives.register_directive("sharenet", ShareNetDirective)
+        doc_roles.register_canonical_role("sharenet", sharenet_role)
         writer = HTMLWriterWithCustomDirectives()
         writer_name = 'pseudoxml'
         # not necessary

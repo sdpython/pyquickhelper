@@ -37,6 +37,14 @@ if sys.version_info[0] == 2:
 
 class TestRunPythonExtension(unittest.TestCase):
 
+    def test_post_parse(self):
+        fLOG(
+            __file__,
+            self._testMethodName,
+            OutputPrint=__name__ == "__main__")
+
+        directives.register_directive("runpython", RunPythonDirective)
+
     def test_runpython(self):
         """
         this test also test the extension runpython
@@ -48,7 +56,7 @@ class TestRunPythonExtension(unittest.TestCase):
 
         if sys.version_info[0] == 2:
             warnings.warn(
-                "test_newdirective_with_rst2html not run on Python 2.7")
+                "test_runpython not run on Python 2.7")
             return
 
         from docutils import nodes

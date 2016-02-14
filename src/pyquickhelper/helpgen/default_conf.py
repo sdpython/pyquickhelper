@@ -416,6 +416,8 @@ def custom_setup(app, author):
     from .sphinx_blog_extension import BlogPostDirective, BlogPostDirectiveAgg
     from .sphinx_runpython_extension import RunPythonDirective
     from .sphinx_runpython_extension import runpython_node, visit_runpython_node, depart_runpython_node
+    from .sphinx_sharenet_extension import ShareNetDirective, sharenet_role
+    from .sphinx_sharenet_extension import sharenet_node, visit_sharenet_node, depart_sharenet_node
 
     app.connect("autodoc-skip-member", skip)
     app.add_config_value('author', author, True)
@@ -440,9 +442,16 @@ def custom_setup(app, author):
                  latex=(visit_runpython_node, depart_runpython_node),
                  text=(visit_runpython_node, depart_runpython_node))
 
+    app.add_node(sharenet_node,
+                 html=(visit_sharenet_node, depart_sharenet_node),
+                 latex=(visit_sharenet_node, depart_sharenet_node),
+                 text=(visit_sharenet_node, depart_sharenet_node))
+
     app.add_directive('blogpost', BlogPostDirective)
     app.add_directive('blogpostagg', BlogPostDirectiveAgg)
     app.add_directive('runpython', RunPythonDirective)
+    app.add_directive('sharenet', ShareNetDirective)
+    app.add_role('sharenet', sharenet_role)
     #app.add_directive('blogpostlist', BlogPostListDirective)
     #app.connect('doctree-resolved', process_blogpost_nodes)
     #app.connect('env-purge-doc', purge_blogpost)

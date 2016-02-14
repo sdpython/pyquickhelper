@@ -12,6 +12,7 @@ from sphinx.builders.html import SingleFileHTMLBuilder, SerializingHTMLBuilder
 from sphinx.application import Sphinx
 from collections import deque
 from .sphinx_runpython_extension import visit_runpython_node as ext_visit_runpython_node, depart_runpython_node as ext_depart_runpython_node
+from .sphinx_sharenet_extension import visit_sharenet_node as ext_visit_sharenet_node, depart_sharenet_node as ext_depart_sharenet_node, sharenet_role
 from .sphinx_blog_extension import visit_blogpost_node as ext_visit_blogpost_node, depart_blogpost_node as ext_depart_blogpost_node
 from .sphinx_blog_extension import visit_blogpostagg_node as ext_visit_blogpostagg_node, depart_blogpostagg_node as ext_depart_blogpostagg_node
 
@@ -87,6 +88,18 @@ class HTMLTranslatorWithCustomDirectives(HTMLTranslator):
         @see fn depart_runpython_node
         """
         ext_depart_runpython_node(self, node)
+
+    def visit_sharenet_node(self, node):
+        """
+        @see fn visit_sharenet_node
+        """
+        ext_visit_sharenet_node(self, node)
+
+    def depart_sharenet_node(self, node):
+        """
+        @see fn depart_sharenet_node
+        """
+        ext_depart_sharenet_node(self, node)
 
     def add_secnumber(self, node):
         """
