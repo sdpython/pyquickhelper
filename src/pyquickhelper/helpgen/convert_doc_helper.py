@@ -151,6 +151,7 @@ def rst2html(s, fLOG=noLOG, writer="sphinx", keep_warnings=False,
 
     config = Config(None, None, overrides=settings_overrides, tags=None)
     config.blog_background = False
+    config.sharepost = None
     env = BuildEnvironment(None, None, config=config)
     env.temp_data["docname"] = "string"
     settings_overrides["env"] = env
