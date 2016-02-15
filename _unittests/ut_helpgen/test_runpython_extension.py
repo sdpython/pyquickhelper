@@ -224,6 +224,7 @@ class TestRunPythonExtension(unittest.TestCase):
                         :process:
                         :showcode:
 
+                        import pyquickhelper
                         print(u"this code shoud appear" + u"___")
                         import sys
                         print(u"setsysvar: " + str(sys.__dict__.get('enable_disabled_documented_pieces_of_code', None)))

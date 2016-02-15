@@ -8,6 +8,7 @@ See `Tutorial: Writing a simple extension <http://sphinx-doc.org/extdev/tutorial
 """
 from .texts_language import TITLES
 import sys
+import os
 from docutils import nodes, core
 from docutils.parsers.rst import Directive, directives
 from docutils.statemachine import StringList
@@ -57,9 +58,26 @@ def run_python_script(script, params=None, comment=None, setsysvar=None, process
 
     if process:
         cmd = sys.executable
+        header = ["import sys"]
         if setsysvar:
-            script = "import sys\nsys.{0} = True\n{1}".format(
-                setsysvar, script)
+            header.append("sys.{0} = True".format(setsysvar))
+        add = 0
+        for path in sys.path:
+            if path.endswith("source") or path.endswith("source/") or path.endswith("source\\"):
+                header.append("sys.path.append('{0}')".format(
+                    path.replace("\\", "\\\\")))
+                add += 1
+        if add == 0:
+            # we did not find any path linked to the copy of the current module
+            # in the documentation
+            # we assume the first path of sys.path is part of the unit test
+            path = sys.path[0]
+            path = os.path.join(path, "..", "..", "src")
+            if os.path.exists(path):
+                header.append("sys.path.append('{0}')".format(
+                    path.replace("\\", "\\\\")))
+        header.append('')
+        script = "\n".join(header) + script
         sin = script
         out, err = run_cmd(cmd, script, wait=True)
         return out, err
