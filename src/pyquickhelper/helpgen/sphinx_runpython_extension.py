@@ -68,6 +68,12 @@ def run_python_script(script, params=None, comment=None, setsysvar=None, process
                     path.replace("\\", "\\\\")))
                 add += 1
         if add == 0:
+            for path in sys.path:
+                if path.endswith("src") or path.endswith("src/") or path.endswith("src\\"):
+                    header.append("sys.path.append('{0}')".format(
+                        path.replace("\\", "\\\\")))
+                    add += 1
+        if add == 0:
             # we did not find any path linked to the copy of the current module
             # in the documentation
             # we assume the first path of sys.path is part of the unit test
