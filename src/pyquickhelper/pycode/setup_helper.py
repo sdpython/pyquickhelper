@@ -447,6 +447,10 @@ def standard_help_for_setup(argv, file_or_folder, project_var_name, module_name=
                 "you must get the source from GitHub to build the documentation,\nfolder {0} "
                 "should exist\n(file_or_folder={1})\n(ffolder={2})\n(cwd={3})".format(source, file_or_folder, ffolder, os.getcwd()))
 
+        if "conf" in sys.modules:
+            raise ImportError("module conf was imported, this function expects not to:\n{0}".format(
+                sys.modules["conf"].__file__))
+
         project_name = os.path.split(
             os.path.split(os.path.abspath(ffolder))[0])[-1]
 

@@ -240,7 +240,6 @@ def generate_help_sphinx(project_var_name,
     directives.register_directive("sharenet", ShareNetDirective)
     roles.register_canonical_role("sharenet", sharenet_role)
     roles.register_canonical_role("bigger", bigger_role)
-    # app.add_role('bbissue', bbissue_role)
 
     if "conf" in sys.modules:
         raise ImportError("module conf was imported, this function expects not to:\n{0}".format(

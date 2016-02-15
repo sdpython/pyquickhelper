@@ -13,6 +13,7 @@ from docutils.parsers.rst import Directive, directives
 from docutils.statemachine import StringList
 from sphinx.util.nodes import nested_parse_with_titles
 import traceback
+from ..loghelper.flog import run_cmd
 
 if sys.version_info[0] == 2:
     from StringIO import StringIO
@@ -36,7 +37,7 @@ class RunPythonExecutionError(Exception):
     pass
 
 
-def run_python_script(script, params=None, comment=None, setsysvar=None):
+def run_python_script(script, params=None, comment=None, setsysvar=None, process=False):
     """
     execute a script python as a string
 
@@ -45,61 +46,72 @@ def run_python_script(script, params=None, comment=None, setsysvar=None):
     @param  comment     message to add in a exception when the script fails
     @param  setsysvar   if not None, add a member to module *sys*, set up this variable to True,
                         if is remove after the execution
+    @param  process     run the script in a separate process
     @return             stdout, stderr
 
     .. versionchanged:: 1.3
-        Parameter *setsysvar* was added.
+        Parameters *setsysvar*, *process* were added.
     """
     if params is None:
         params = {}
 
-    try:
-        obj = compile(script, "", "exec")
-    except Exception as ec:
-        if comment is None:
-            comment = ""
-        message = "SCRIPT:\n{0}\nPARAMS\n{1}\nCOMMENT\n{1}".format(
-            script, params, comment)
-        raise RunPythonCompileError(message) from ec
+    if process:
+        cmd = sys.executable
+        if setsysvar:
+            script = "import sys\nsys.{0} = True\n{1}".format(
+                setsysvar, script)
+        sin = script
+        out, err = run_cmd(cmd, script, wait=True)
+        return out, err
+    else:
 
-    loc = locals()
-    for k, v in params.items():
-        loc[k] = v
-    loc["__dict__"] = params
+        try:
+            obj = compile(script, "", "exec")
+        except Exception as ec:
+            if comment is None:
+                comment = ""
+            message = "SCRIPT:\n{0}\nPARAMS\n{1}\nCOMMENT\n{1}".format(
+                script, params, comment)
+            raise RunPythonCompileError(message) from ec
 
-    kout = sys.stdout
-    kerr = sys.stderr
-    sout = StringIO()
-    serr = StringIO()
-    sys.stdout = sout
-    sys.stderr = serr
+        loc = locals()
+        for k, v in params.items():
+            loc[k] = v
+        loc["__dict__"] = params
 
-    if setsysvar is not None:
-        sys.__dict__[setsysvar] = True
+        kout = sys.stdout
+        kerr = sys.stderr
+        sout = StringIO()
+        serr = StringIO()
+        sys.stdout = sout
+        sys.stderr = serr
 
-    try:
-        exec(obj, globals(), loc)
-    except Exception as ee:
+        if setsysvar is not None:
+            sys.__dict__[setsysvar] = True
+
+        try:
+            exec(obj, globals(), loc)
+        except Exception as ee:
+            if setsysvar is not None:
+                del sys.__dict__[setsysvar]
+            if comment is None:
+                comment = ""
+            gout = sout.getvalue()
+            gerr = serr.getvalue()
+            message = "SCRIPT:\n{0}\nPARAMS\n{1}\nCOMMENT\n{2}\nERR\n{3}\nOUT\n{4}\nEXC\n{5}".format(
+                script, params, comment, gout, gerr, ee)
+            raise RunPythonExecutionError(message) from ee
+
         if setsysvar is not None:
             del sys.__dict__[setsysvar]
-        if comment is None:
-            comment = ""
+
         gout = sout.getvalue()
         gerr = serr.getvalue()
-        message = "SCRIPT:\n{0}\nPARAMS\n{1}\nCOMMENT\n{2}\nERR\n{3}\nOUT\n{4}\nEXC\n{5}".format(
-            script, params, comment, gout, gerr, ee)
-        raise RunPythonExecutionError(message) from ee
 
-    if setsysvar is not None:
-        del sys.__dict__[setsysvar]
+        sys.stdout = kout
+        sys.stderr = kerr
 
-    gout = sout.getvalue()
-    gerr = serr.getvalue()
-
-    sys.stdout = kout
-    sys.stderr = kerr
-
-    return gout, gerr
+        return gout, gerr
 
 
 class runpython_node(nodes.Structural, nodes.Element):
@@ -124,15 +136,18 @@ class RunPythonDirective(Directive):
             :showcode:
 
             import sys
-            print("sys.version_info=",str(sys.version_info))
+            print("sys.version_info=", str(sys.version_info))
 
     If give the following results:
 
     .. runpython::
-        :showcode:
 
         import sys
-        print("sys.version_info=",str(sys.version_info))
+        print("sys.version_info=", str(sys.version_info))
+
+    Options *showcode* can be used to display the code.
+    The option *rst* will assume the output is in RST format and must be
+    interpreted. *showout* will complement the RST output with the raw format.
 
     @endexample
 
@@ -146,6 +161,9 @@ class RunPythonDirective(Directive):
         * ``:sphinx:`` by default, function `nested_parse_with_titles <http://sphinx-doc.org/extdev/markupapi.html?highlight=nested_parse>`_ is
           used to parse the output of the script, if this option is set to false,
           `public_doctree <http://code.nabla.net/doc/docutils/api/docutils/core/docutils.core.publish_doctree.html>`_.
+        * ``setsysvar`` adds a member to *sys* modulen the module can act differently based on that information,
+          if the value is left empty, *sys.enable_disabled_documented_pieces_of_code* will be be set up to *True*.
+        * ``process`` run the script in an another process
 
     Option *rst* can be used the following way::
 
@@ -186,6 +204,7 @@ class RunPythonDirective(Directive):
                    'sphinx': directives.unchanged,
                    'sout2': directives.unchanged,
                    'setsysvar': directives.unchanged,
+                   'process': directives.unchanged,
                    }
     has_content = True
     runpython_class = runpython_node
@@ -219,6 +238,7 @@ class RunPythonDirective(Directive):
 
         # post
         bool_set = (True, 1, "True", "1", "true")
+        bool_set_ = (True, 1, "True", "1", "true", '')
         p = {
             'showcode': 'showcode' in self.options,
             'showout': 'showout' in self.options,
@@ -228,7 +248,9 @@ class RunPythonDirective(Directive):
             'sout2': self.options.get('sout2', TITLES[language_code]["Out2"]),
             'sphinx': 'sphinx' not in self.options or self.options['sphinx'] in bool_set,
             'setsysvar': self.options.get('setsysvar', None),
+            'process': 'process' in self.options and self.options['process'] in bool_set_,
         }
+
         if p['setsysvar'] is not None and len(p['setsysvar']) == 0:
             p['setsysvar'] = 'enable_disabled_documented_pieces_of_code'
         dind = 0 if p['rst'] else 4
@@ -245,9 +267,14 @@ class RunPythonDirective(Directive):
         # a warning
         # return [document.reporter.warning('messagr', line=self.lineno)]
 
-        out, err = run_python_script(
-            script, comment='  File "{0}", line {1}'.format(docname, lineno),
-            setsysvar=p['setsysvar'])
+        out, err = run_python_script(script,
+                                     comment='  File "{0}", line {1}'.format(
+                                         docname, lineno),
+                                     setsysvar=p['setsysvar'], process=p["process"])
+        if out is not None:
+            out = out.rstrip(" \n\r\t")
+        if err is not None:
+            err = err.rstrip(" \n\r\t")
         content = out
         if len(err) > 0:
             content += "\n\nERROR:\n\n" + err
@@ -279,8 +306,9 @@ class RunPythonDirective(Directive):
             pcode = nodes.literal_block(script_disp, script_disp)
             node += pin
             node += pcode
-            pin = nodes.paragraph(text=p["sout"])
-            node += pin
+        elif len(self.options.get('sout', '')) == 0:
+            p["sout"] = ''
+            p["sout2"] = ''
 
         if p["rst"]:
             settings_overrides = {}
@@ -297,6 +325,9 @@ class RunPythonDirective(Directive):
             except KeyError:
                 settings_overrides["warning_stream"] = StringIO()
             #'initial_header_level': 2,
+
+            if len(p["sout"]) > 0:
+                node += nodes.paragraph(text=p["sout"])
 
             try:
                 if p['sphinx']:
@@ -334,8 +365,10 @@ class RunPythonDirective(Directive):
                     node += ch
 
         if not p["rst"] or p["showout"]:
-            pout2 = nodes.paragraph(text=p["sout2"])
-            node += pout2
+            text = p["sout2"] if p["rst"] else p["sout"]
+            if len(text) > 0:
+                pout2 = nodes.paragraph(text=text)
+                node += pout2
             pout = nodes.literal_block(content, content)
             node += pout
 

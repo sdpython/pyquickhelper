@@ -126,3 +126,4 @@ Versions, Changes
     * **new:** custom role *bigger* to add bigger text in a sphinx documentation
     * **new:** blog post add share buttons to share the link with twitter, facebook or linkedin (by default),
       to disable it, set variable *sharepost* to None in sphinx configuration
+    * **add:** add option *process* to sphinx custom directive *runpython*

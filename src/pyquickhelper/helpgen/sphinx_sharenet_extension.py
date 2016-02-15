@@ -24,7 +24,7 @@ class ShareNetDirective(Directive):
     Adds buttons to share a page. It can be done by
     adding::
 
-        .. sharenet:
+        .. sharenet::
             :facebook: 1
             :linkedin: 2
             :twitter: 3
@@ -32,7 +32,7 @@ class ShareNetDirective(Directive):
 
     Which gives:
 
-    .. sharenet:
+    .. sharenet::
         :facebook: 1
         :linkedin: 2
         :twitter: 3
