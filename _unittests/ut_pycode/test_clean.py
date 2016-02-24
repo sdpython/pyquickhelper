@@ -56,6 +56,9 @@ class TestClean(unittest.TestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
+        if "Anaconda" in sys.executable:
+            # we disable it for Anaconda
+            return
         this = os.path.abspath(os.path.dirname(__file__))
         diff = clean_exts(this)
         assert isinstance(diff, list)
