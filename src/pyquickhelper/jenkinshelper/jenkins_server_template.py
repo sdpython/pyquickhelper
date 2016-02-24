@@ -30,7 +30,17 @@ _config_job = """<?xml version='1.0' encoding='UTF-8'?>
     __TASKS__
     </builders>
     <publishers />
-    <buildWrappers />
+    <buildWrappers>
+        <hudson.plugins.build__timeout.BuildTimeoutWrapper plugin="build-timeout@1.16">
+            <strategy class="hudson.plugins.build_timeout.impl.NoActivityTimeOutStrategy">
+                <timeoutSecondsString>60</timeoutSecondsString>
+            </strategy>
+            <operationList>
+                <hudson.plugins.build__timeout.operations.AbortOperation/>
+                <hudson.plugins.build__timeout.operations.FailOperation/>
+            </operationList>
+        </hudson.plugins.build__timeout.BuildTimeoutWrapper>
+    </buildWrappers>
 </project>
 """
 

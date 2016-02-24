@@ -740,6 +740,7 @@ class JenkinsExt(jenkins.Jenkins):
         * `GitLab Plugin <https://wiki.jenkins-ci.org/display/JENKINS/GitLab+Plugin>`_
         * `Python <https://wiki.jenkins-ci.org/display/JENKINS/Python+Plugin>`_
         * `Python Wrapper Plugin <https://wiki.jenkins-ci.org/display/JENKINS/Python+Wrapper+Plugin>`_
+        * `Build timeout plugin <https://wiki.jenkins-ci.org/display/JENKINS/Build-timeout+Plugin>`_
 
         Tag description:
 
@@ -926,7 +927,8 @@ class JenkinsExt(jenkins.Jenkins):
             the git repository. Parameter *dependencies* and *no_dep*
             were removed. Dependencies are now specified
             in the job name using ``<--`` and they exclusively rely
-            on pipy (local or remote).
+            on pipy (local or remote). Add options for module
+            *Build Timeout Plugin*.
         """
         # we do a patch for pyquickhelper
         all_jobs = []

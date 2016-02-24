@@ -214,8 +214,6 @@ class TestJenkinsExt(unittest.TestCase):
             if "PYQUICKHELPER27" in conf:
                 raise Exception(conf)
 
-            if "__" in conf and "pyquickhelper_vir" not in conf:
-                raise Exception(conf)
             if "notebook" in conf:
                 raise Exception(conf)
 
