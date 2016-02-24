@@ -84,7 +84,8 @@ def run_python_script(script, params=None, comment=None, setsysvar=None, process
                     path.replace("\\", "\\\\")))
                 add += 1
         if add == 0:
-            raise RunPythonExecutionError("unable to find a path to add:\n{0}".format("\n".join(sys.path)))
+            raise RunPythonExecutionError(
+                "unable to find a path to add:\n{0}".format("\n".join(sys.path)))
         header.append('')
         script = "\n".join(header) + script
         sin = script
