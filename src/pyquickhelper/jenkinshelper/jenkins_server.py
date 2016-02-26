@@ -658,7 +658,7 @@ class JenkinsExt(jenkins.Jenkins):
                    __LOCATION__=location,
                    __DESCRIPTION__="" if description is None else description,
                    __GITREPOXML__=git_repo_xml,
-                   __TIMEOUT__=timeout)
+                   __TIMEOUT__=str(timeout))
 
         for k, v in rep.items():
             conf = conf.replace(k, v)
