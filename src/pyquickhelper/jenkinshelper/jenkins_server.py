@@ -543,6 +543,7 @@ class JenkinsExt(jenkins.Jenkins):
                             default_engine_paths=None,
                             success_only=False,
                             update=False,
+                            timeout=1000,
                             additional_requirements=None
                             ):
         """
@@ -565,6 +566,7 @@ class JenkinsExt(jenkins.Jenkins):
         @param      additional_requirements     requirements for this module built by this Jenkins server,
                                                 otherthise, we assume they are available
                                                 on the installed distribution
+        @param      timeout                     specify a timeout
 
         The job can be modified on Jenkins. To add a time trigger::
 
@@ -655,7 +657,8 @@ class JenkinsExt(jenkins.Jenkins):
                    __TRIGGER__=trigger,
                    __LOCATION__=location,
                    __DESCRIPTION__="" if description is None else description,
-                   __GITREPOXML__=git_repo_xml)
+                   __GITREPOXML__=git_repo_xml,
+                   __TIMEOUT__=timeout)
 
         for k, v in rep.items():
             conf = conf.replace(k, v)
@@ -1031,6 +1034,13 @@ class JenkinsExt(jenkins.Jenkins):
                     else:
                         success_only = False
 
+                    # timeout
+                    if "timeout" in options:
+                        timeout = options["timeout"]
+                        del options["timeout"]
+                    else:
+                        timeout = 1000
+
                     # script
                     script = get_jenkins_script(self, job)
 
@@ -1095,7 +1105,8 @@ class JenkinsExt(jenkins.Jenkins):
                                                    description=description,
                                                    credentials=cred,
                                                    success_only=success_only,
-                                                   update=update_job)
+                                                   update=update_job,
+                                                   timeout=timeout)
 
                         # check some inconsistencies
                         if "[27]" in job and "Anaconda3" in script:
