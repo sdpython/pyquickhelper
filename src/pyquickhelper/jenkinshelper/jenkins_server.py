@@ -17,6 +17,7 @@ from ..pycode.build_helper import private_script_replacements
 from .jenkins_exceptions import JenkinsExtException, JenkinsJobException
 from .jenkins_server_template import _config_job, _trigger_up, _trigger_time, _git_repo, _task_batch
 
+_timeout_default = 1500
 
 _default_engine_paths = {
     "windows": {
@@ -543,7 +544,7 @@ class JenkinsExt(jenkins.Jenkins):
                             default_engine_paths=None,
                             success_only=False,
                             update=False,
-                            timeout=1000,
+                            timeout=_timeout_default,
                             additional_requirements=None
                             ):
         """
@@ -1039,7 +1040,7 @@ class JenkinsExt(jenkins.Jenkins):
                         timeout = options["timeout"]
                         del options["timeout"]
                     else:
-                        timeout = 1000
+                        timeout = _timeout_default
 
                     # script
                     script = get_jenkins_script(self, job)
