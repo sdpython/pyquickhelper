@@ -5,7 +5,12 @@
 import sys
 import os
 import unittest
-import io
+
+if sys.version_info[0] == 2:
+    from StringIO import StringIO
+    from io import BytesIO
+else:
+    from io import StringIO, BytesIO
 
 if "temp_" in os.path.abspath(__file__):
     raise ImportError(
@@ -55,11 +60,11 @@ class TestDownloadContent (unittest.TestCase):
         content2 = read_content_ufs(content, encoding="utf8")
         self.assertEqual(content2, content)
 
-        st = io.StringIO(content)
+        st = StringIO(content)
         content2 = read_content_ufs(st, encoding="utf8")
         self.assertEqual(content2, content)
 
-        by = io.BytesIO(content.encode("utf8"))
+        by = BytesIO(content.encode("utf8"))
         content2 = read_content_ufs(by, encoding="utf8")
         self.assertEqual(content2, content)
 

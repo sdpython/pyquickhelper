@@ -18,6 +18,7 @@ if sys.version_info[0] == 2:
     from codecs import open
     from StringIO import StringIO
     BytesIO = StringIO
+    import io
 else:
     from io import BytesIO, StringIO
 
@@ -185,5 +186,8 @@ def read_content_ufs(file_url_stream, encoding="utf8", asbytes=False):
         v = file_url_stream.getvalue()
         return v if asbytes or not v else v.decode(encoding=encoding)
     else:
+        if sys.version_info[0] == 2 and isinstance(file_url_stream, io.BytesIO):
+            v = file_url_stream.getvalue()
+            return v if asbytes or not v else v.decode(encoding=encoding)
         raise TypeError(
             "unexpected type for file_url_stream: {0}".format(type(file_url_stream)))
