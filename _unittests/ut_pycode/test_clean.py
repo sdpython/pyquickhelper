@@ -56,11 +56,15 @@ class TestClean(unittest.TestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
-        if "Anaconda" in sys.executable:
-            # we disable it for Anaconda
-            return
         this = os.path.abspath(os.path.dirname(__file__))
-        diff = clean_exts(this)
+        try:
+            diff = clean_exts(this)
+        except PermissionError as e:
+            if "Anaconda" in sys.executable:
+                # we disable it for Anaconda
+                return
+            raise Exception("unable to clean " + this +
+                            "\nexe: " + sys.executable) from e
         assert isinstance(diff, list)
 
 
