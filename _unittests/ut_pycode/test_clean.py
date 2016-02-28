@@ -60,7 +60,7 @@ class TestClean(unittest.TestCase):
         try:
             diff = clean_exts(this)
         except PermissionError as e:
-            if "Anaconda" in sys.executable:
+            if "anaconda" in sys.executable.lower():
                 # we disable it for Anaconda
                 return
             raise Exception("unable to clean " + this +
