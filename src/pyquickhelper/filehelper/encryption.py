@@ -111,7 +111,7 @@ def get_encryptor(key, algo="AES", chunksize=2 ** 24, **params):
         origsize = None
         chunksize = None
     elif algo == "AES":
-        from Crypto.Cipher import AES
+        from Cryptodome.Cipher import AES
         ksize = {16, 32, 64, 128, 256}
         chunksize = chunksize
         if len(key) not in ksize:
@@ -151,7 +151,7 @@ def encrypt_stream(key, filename, out_filename=None, chunksize=2 ** 18, algo="AE
                                 sizes can be faster for some files and machines.
                                 chunksize must be divisible by 16.
 
-    @param      algo            AES (PyCrypto) of or fernet (cryptography)
+    @param      algo            AES (PyCryptodomex) of or fernet (cryptography)
 
     @return                     filename or bytes
 
@@ -198,7 +198,7 @@ def decrypt_stream(key, filename, out_filename=None, chunksize=3 * 2 ** 13, algo
                                 sizes can be faster for some files and machines.
                                 chunksize must be divisible by 16.
 
-    @param      algo            AES (PyCrypto) of or fernet (cryptography)
+    @param      algo            AES (PyCryptodomex) of or fernet (cryptography)
 
     @return                     filename or bytes
 

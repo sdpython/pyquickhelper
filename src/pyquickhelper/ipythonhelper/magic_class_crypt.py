@@ -36,7 +36,7 @@ class MagicCrypt(MagicClassWithHelpers):
         task = "encrypt" if encrypt else "decrypt"
         parser = MagicCommandParser(prog="%scrypt_file" % task[:2],
                                     description='%s a file' % task +
-                                    '\ndoes not work well in Python 2.7 with pycryptodome')
+                                    '\ndoes not work well in Python 2.7 with pycryptodomex')
         parser.add_argument(
             'source',
             help='file to %s' % task)

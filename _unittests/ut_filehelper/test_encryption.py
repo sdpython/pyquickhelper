@@ -43,9 +43,9 @@ class TestEncryption(unittest.TestCase):
             return
 
         try:
-            import Crypto
+            import Cryptodome as Crypto
         except ImportError:
-            warnings.warn("pycrypto is not installed")
+            warnings.warn("pycryptodome is not installed")
             return
 
         temp = get_temp_folder(__file__, "temp_encryption0")
@@ -82,9 +82,9 @@ class TestEncryption(unittest.TestCase):
             return
 
         try:
-            import Crypto
+            import Cryptodome as Crypto
         except ImportError:
-            warnings.warn("pycrypto is not installed")
+            warnings.warn("pycryptodomex is not installed")
             return
 
         temp = get_temp_folder(__file__, "temp_encryption1")
@@ -121,9 +121,9 @@ class TestEncryption(unittest.TestCase):
             return
 
         try:
-            import Crypto
+            import Cryptodome as Crypto
         except ImportError:
-            warnings.warn("pycrypto is not installed")
+            warnings.warn("pycryptodomex is not installed")
             return
 
         temp = get_temp_folder(__file__, "temp_encryption2")
@@ -151,9 +151,9 @@ class TestEncryption(unittest.TestCase):
             return
 
         try:
-            import Crypto
+            import Cryptodome as Cryptopto
         except ImportError:
-            warnings.warn("pycrypto is not installed")
+            warnings.warn("pycryptodomex is not installed")
             return
 
         temp = get_temp_folder(__file__, "temp_encryption3")
