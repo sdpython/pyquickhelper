@@ -106,7 +106,12 @@ def get_encryptor(key, algo="AES", chunksize=2 ** 24, **params):
     """
     if algo == "fernet":
         from cryptography.fernet import Fernet
-        bkey = base64.b64encode(key.encode())
+        if hasattr(key, "encode"):
+            # it a string
+            bkey = key.encode()
+        else:
+            bkey = key
+        bkey = base64.b64encode(bkey)
         encryptor = Fernet(bkey)
         origsize = None
         chunksize = None
