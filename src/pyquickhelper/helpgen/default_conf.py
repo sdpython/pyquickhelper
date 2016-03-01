@@ -205,6 +205,9 @@ def set_sphinx_variables(fileconf,
     graphviz_output_format = "svg"
     graphviz_dot = get_graphviz_dot()
 
+    # todo
+    todo_include_todos = True
+
     # extensions
     extensions = ['sphinx.ext.autodoc',
                   'sphinx.ext.todo',
