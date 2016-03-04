@@ -8,6 +8,7 @@ import os
 import sys
 import datetime
 import xml.etree.ElementTree as ET
+from xml.sax.saxutils import escape
 
 from ..flog import fLOG, run_cmd
 
@@ -222,11 +223,11 @@ def get_repo_log(path=None, file_detail=False, commandline=True):
     else:
         cmd = get_cmd_git()
         if sys.platform.startswith("win"):
-            cmd += ' log --pretty=format:"<logentry revision=\\"%h\\"><author>%an</author><date>%ci</date><msg>%s</msg><hash>%H</hash></logentry>" ' + \
+            cmd += ' log --pretty=format:"<logentry revision=\\"%h\\"><author>%an</author><date>%ci</date><hash>%H</hash><msg>%s</msg></logentry>" ' + \
                 path
         else:
             cmd = [cmd, 'log',
-                   '--pretty=format:<logentry revision="%h"><author>%an</author><date>%ci</date><msg>%s</msg><hash>%H</hash></logentry>',
+                   '--pretty=format:<logentry revision="%h"><author>%an</author><date>%ci</date><hash>%H</hash><msg>%s</msg></logentry>',
                    path]
 
         enc = sys.stdout.encoding if sys.version_info[
@@ -255,11 +256,30 @@ def get_repo_log(path=None, file_detail=False, commandline=True):
             out = by.decode("utf8")
 
         out = out.replace("\n\n", "\n")
-        out = "<xml>%s</xml>" % out
+        out = "<xml>\n%s\n</xml>" % out
         try:
             root = ET.fromstring(out)
         except ET.ParseError as ee:
-            raise Exception("unable to parse:\n" + out) from ee
+            # it might be due to character such as << >>
+            lines = out.split("\n")
+            out = []
+            suffix = "</msg></logentry>"
+            for line in lines:
+                if line.endswith(suffix):
+                    pos = line.find("<msg>")
+                    if pos == -1:
+                        out.append(line)
+                        continue
+                    begin = line[:pos + 5]
+                    body = line[pos + 5:-len(suffix)]
+                    msg = escape(body)
+                    line = begin + msg + suffix
+                out.append(line)
+            out = "\n".join(out)
+            try:
+                root = ET.fromstring(out)
+            except ET.ParseError as eee:
+                raise Exception("unable to parse:\n" + out) from eee
 
         res = []
         for i in root.iter('logentry'):
