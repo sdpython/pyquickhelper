@@ -265,14 +265,14 @@ if %errorlevel% neq 0 exit /b %errorlevel%
 @echo ~CALL %pythonexe% setup.py sdist --formats=gztar,zip --verbose
 %pythonexe% setup.py sdist --formats=gztar,zip --verbose
 if %errorlevel% neq 0 exit /b %errorlevel%
-@echo ~CALL %pythonexe% setup.py bdist_wininst %2 --plat-name=win-amd64
-%pythonexe% setup.py bdist_wininst %2 --plat-name=win-amd64
+@echo ~CALL %pythonexe% setup.py bdist_wininst --plat-name=win-amd64
+%pythonexe% setup.py bdist_wininst --plat-name=win-amd64
 if %errorlevel% neq 0 exit /b %errorlevel%
-@echo ~CALL %pythonexe% setup.py bdist_msi %2
-%pythonexe% setup.py bdist_msi %2
+@echo ~CALL %pythonexe% setup.py bdist_msi
+%pythonexe% setup.py bdist_msi
 if %errorlevel% neq 0 exit /b %errorlevel%
-@echo ~CALL %pythonexe% setup.py bdist_wheel %2
-%pythonexe% setup.py bdist_wheel %2
+@echo ~CALL %pythonexe% setup.py bdist_wheel
+%pythonexe% setup.py bdist_wheel
 if %errorlevel% neq 0 exit /b %errorlevel%
 @echo #######################################################7
 
@@ -353,7 +353,7 @@ windows_publish = """
 %pythonexe% setup.py rotate --match=.whl --keep=10
 rem %pythonexe% setup.py sdist register
 %pythonexe% setup.py sdist --formats=gztar upload
-%pythonexe% setup.py bdist_wheel %2 upload
+%pythonexe% setup.py bdist_wheel upload
 """
 
 #################
