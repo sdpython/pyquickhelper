@@ -114,7 +114,7 @@ def get_test_file(filter, dir=None, no_subfolder=False, fLOG=noLOG, root=None):
 
     li = []
     for dir in dirs:
-        if "__pycache__" in dir:
+        if "__pycache__" in dir or "site-packages" in dir:
             continue
         if not os.path.exists(dir):
             continue
