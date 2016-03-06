@@ -13,6 +13,7 @@ import warnings
 
 if sys.version_info[0] == 2:
     from codecs import open
+    FileNotFoundError = Exception
 
 
 def set_sphinx_variables(fileconf,
@@ -29,7 +30,8 @@ def set_sphinx_variables(fileconf,
                          use_mathjax=False,
                          use_lunrsearch=False,
                          enable_disabled_parts="enable_disabled_documented_pieces_of_code",
-                         sharepost="facebook-linkedin-twitter-20-body"):
+                         sharepost="facebook-linkedin-twitter-20-body",
+                         custom_style=None):
     """
     defines variables for Sphinx
 
@@ -51,6 +53,10 @@ def set_sphinx_variables(fileconf,
                                         see `sphinxcontrib-lunrsearch <https://github.com/rmcgibbo/sphinxcontrib-lunrsearch>`_
     @param      enable_disabled_parts   @see fn remove_undesired_part_for_documentation
     @param      sharepost               add share button to share blog post on usual networks
+    @param      custom_style            custom style sheet
+
+    If the parameter *custom_style* is not None, it will call ``app.add_stylesheet(custom_style)``
+    in the setup.
 
     @example(Simple configuration file for Sphinx)
 
@@ -98,7 +104,8 @@ def set_sphinx_variables(fileconf,
     @endexample
 
     .. versionchanged:: 1.3
-        Add parameters *use_mathjax*, *use_lunrsearch*, *enable_disabled_parts*.
+        Add parameters *use_mathjax*, *use_lunrsearch*, *enable_disabled_parts*,
+        *custom_style*.
     """
     # version .txt
     dirconf = os.path.abspath(os.path.dirname(fileconf))
@@ -323,7 +330,20 @@ def set_sphinx_variables(fileconf,
         if not k.startswith("_"):
             ext_locals[k] = v
 
+    if custom_style is not None:
+        ex = False
+        for st in html_static_path:
+            full = os.path.join(dirconf, st, custom_style)
+            if os.path.exists(full):
+                ex = True
+                break
+        if not ex:
+            raise FileNotFoundError("unable to find {0} in\n{1}\nand\n{2}".format(
+                custom_style, dirconf, "\n".join(html_static_path)))
+
     def this_setup(app):
+        if custom_style is not None:
+            app.add_stylesheet(custom_style)
         return custom_setup(app, author)
 
     ext_locals["setup"] = this_setup
