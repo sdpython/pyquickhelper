@@ -581,7 +581,7 @@ def add_tag_for_slideshow(ipy, folder, encoding="utf8"):
     from ..ipythonhelper import read_nb
     filename = os.path.split(ipy)[-1]
     output = os.path.join(folder, filename)
-    nb = read_nb(ipy, encoding=encoding)
+    nb = read_nb(ipy, encoding=encoding, kernel=False)
     nb.add_tag_slide()
     nb.to_json(output)
     return output

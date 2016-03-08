@@ -36,7 +36,7 @@ class TestNotebookSlidesBug2 (unittest.TestCase):
         nbfile = os.path.join(
             temp, "..", "data", "simple_example_bis.ipynb")
         assert os.path.exists(nbfile)
-        nb = read_nb(nbfile)
+        nb = read_nb(nbfile, kernel=False)
         assert len(nb) > 0
         nb2slides(nbfile, os.path.join(temp, "ooooo.html"))
 

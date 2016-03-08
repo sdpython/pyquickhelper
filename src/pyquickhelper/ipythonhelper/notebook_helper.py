@@ -145,13 +145,8 @@ def run_notebook(filename,
     @endcode
     @endexample
 
-    .. versionadded:: 1.0
-
-    .. versionchanged:: 1.1
-        The function adds the local variable ``theNotebook`` with
-        the absolute file name of the notebook.
-        Parameter *code_init* was added.
-        Return type was changed. It now returns *stat*, *output*
+    The function adds the local variable ``theNotebook`` with
+    the absolute file name of the notebook.
 
     .. versionchanged:: 1.3
         Parameters *log_level*, *extended_args*, *kernel_name* were added.
@@ -192,16 +187,19 @@ def run_notebook(filename,
         return stat, out.getvalue()
 
 
-def read_nb(filename, profile_dir=None, encoding="utf8"):
+def read_nb(filename, profile_dir=None, encoding="utf8", kernel=True):
     """
     reads a notebook and return a @see cl NotebookRunner object
 
     @param      filename        notebook filename (or stream)
     @param      profile_dir     profile directory
     @param      encoding        encoding for the notebooks
+    @param      kernel          *kernel* is True by default, the notebook can be run, if False,
+                                the notebook can be read but not run
     @return                     @see cl NotebookRunner
 
-    .. versionadded:: 1.1
+    .. versionchanged:: 1.3
+        Parameter *kernel* was added.
     """
     if isinstance(filename, str  # unicode#
                   ):
@@ -209,11 +207,12 @@ def read_nb(filename, profile_dir=None, encoding="utf8"):
             nb = reads(payload.read())
 
             nb_runner = NotebookRunner(
-                nb, profile_dir, theNotebook=os.path.abspath(filename))
+                nb, profile_dir, theNotebook=os.path.abspath(filename),
+                kernel=kernel)
             return nb_runner
     else:
         nb = reads(filename.read())
-        nb_runner = NotebookRunner(nb, profile_dir)
+        nb_runner = NotebookRunner(nb, profile_dir, kernel=kernel)
         return nb_runner
 
 

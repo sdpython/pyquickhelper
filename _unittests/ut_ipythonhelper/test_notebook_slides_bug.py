@@ -36,7 +36,7 @@ class TestNotebookSlidesBug (unittest.TestCase):
         nbfile = os.path.join(
             temp, "..", "data", "pyensae_text2table.ipynb")
         assert os.path.exists(nbfile)
-        nb = read_nb(nbfile)
+        nb = read_nb(nbfile, kernel=False)
         for i, cell in enumerate(nb.iter_cells()):
             l = nb.cell_height(cell)
             #fLOG(i,"-",nb.cell_type(cell), l)

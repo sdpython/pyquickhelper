@@ -64,7 +64,8 @@ class NotebookRunner(object):
 
     def __init__(self, nb, profile_dir=None, working_dir=None,
                  comment="", fLOG=noLOG, theNotebook=None, code_init=None,
-                 kernel_name="python", log_level="30", extended_args=None):
+                 kernel_name="python", log_level="30", extended_args=None,
+                 kernel=True):
         """
         constuctor
 
@@ -79,15 +80,17 @@ class NotebookRunner(object):
         @param      kernel_name     kernel name, it can be None
         @param      extended_args   others arguments to pass to the command line ('--KernelManager.autorestar=True' for example),
                                     see :ref:`l-ipython_notebook_args` for a full list
-
-        .. versionchanged:: 1.1
-            Parameters *theNotebook*, *code_init* were added.
+        @param      kernel          *kernel* is True by default, the notebook can be run, if False,
+                                    the notebook can be read but not run
 
         .. versionchanged:: 1.3
-            Parameters *log_level*, *extended_args*, *kernel_name* were added.
+            Parameters *log_level*, *extended_args*, *kernel_name*, *kernel* were added.
         """
-        self.km = KernelManager(
-            kernel_name=kernel_name) if kernel_name is not None else KernelManager()
+        if kernel:
+            self.km = KernelManager(
+                kernel_name=kernel_name) if kernel_name is not None else KernelManager()
+        else:
+            self.km = None
         self.fLOG = fLOG
         self.theNotebook = theNotebook
         self.code_init = code_init
@@ -113,14 +116,18 @@ class NotebookRunner(object):
         if working_dir:
             os.chdir(working_dir)
 
-        self.km.start_kernel(extra_arguments=args)
+        if self.km is not None:
+            self.km.start_kernel(extra_arguments=args)
 
         os.chdir(cwd)
 
-        self.kc = self.km.client()
-        self.kc.start_channels()
-        # if it does not work, it probably means IPython < 3
-        self.kc.wait_for_ready()
+        if kernel:
+            self.kc = self.km.client()
+            self.kc.start_channels()
+            # if it does not work, it probably means IPython < 3
+            self.kc.wait_for_ready()
+        else:
+            self.kc = None
         self.nb = nb
         self.comment = comment
 
@@ -138,13 +145,14 @@ class NotebookRunner(object):
             filename.write(writes(self.nb))
 
     @staticmethod
-    def read_json(js, profile_dir=None, encoding="utf8"):
+    def read_json(js, profile_dir=None, encoding="utf8", kernel=True):
         """
         read a notebook from a JSON stream or string
 
         @param      js              string or stream
         @param      profile_dir     profile directory
         @param      encoding        encoding for the notebooks
+        @param      kernel          to start a kernel or not when reading the notebook (to execute it)
         @return                     instance of @see cl NotebookRunner
         """
         if isinstance(js, str  # unicode#
@@ -153,7 +161,7 @@ class NotebookRunner(object):
         else:
             st = js
         from .notebook_helper import read_nb
-        return read_nb(st, profile_dir=profile_dir, encoding=encoding)
+        return read_nb(st, profile_dir=profile_dir, encoding=encoding, kernel=kernel)
 
     def copy(self):
         """
@@ -183,6 +191,9 @@ class NotebookRunner(object):
         shut down kernel
         """
         self.fLOG('-- shutdown kernel')
+        if self.kc is None:
+            raise ValueError(
+                "No kernel was started, specify kernel=True when initializing the instance.")
         self.kc.stop_channels()
         self.km.shutdown_kernel(now=True)
 
@@ -251,6 +262,9 @@ class NotebookRunner(object):
             code = clean_function(code)
         if len(code) == 0:
             return ""
+        if self.kc is None:
+            raise ValueError(
+                "No kernel was started, specify kernel=True when initializing the instance.")
         self.kc.execute(code)
 
         reply = self.kc.get_shell_msg()
@@ -651,8 +665,8 @@ class NotebookRunner(object):
 
         @code
         from pyquickhelper.ipythonhelper import read_nb
-        nb1 = read_nb("<file1>")
-        nb2 = read_nb("<file2>")
+        nb1 = read_nb("<file1>", kernel=False)
+        nb2 = read_nb("<file2>", kernel=False)
         nb1.merge_notebook(nb2)
         nb1.to_json(outfile)
         @endcode
