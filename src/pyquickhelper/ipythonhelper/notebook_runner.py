@@ -8,7 +8,9 @@ import re
 import time
 import io
 import sys
+import platform
 from queue import Empty
+from time import sleep
 
 
 try:
@@ -119,11 +121,20 @@ class NotebookRunner(object):
         if self.km is not None:
             self.km.start_kernel(extra_arguments=args)
 
+            if platform.system() == 'Darwin':
+                # see http://www.pypedia.com/index.php/notebook_runner
+                # There is sometimes a race condition where the first
+                # execute command hits the kernel before it's ready.
+                # It appears to happen only on Darwin (Mac OS) and an
+                # easy (but clumsy) way to mitigate it is to sleep
+                # for a second.
+                sleep(1)
+
         os.chdir(cwd)
 
         if kernel:
             self.kc = self.km.client()
-            self.kc.start_channels()
+            self.kc.start_channels(stdin=False)
             # if it does not work, it probably means IPython < 3
             self.kc.wait_for_ready()
         else:
