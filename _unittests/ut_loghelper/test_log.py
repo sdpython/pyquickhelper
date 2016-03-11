@@ -115,7 +115,7 @@ class TestLog (unittest.TestCase):
             OutputPrint=__name__ == "__main__")
         p1 = get_prefix()
         p2 = get_prefix()
-        assert p1 != p2
+        self.assertNotEqual(p1, p2)
 
     def test_unzip(self):
         pat = os.path.abspath(
