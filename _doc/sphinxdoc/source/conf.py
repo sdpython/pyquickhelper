@@ -10,7 +10,7 @@ from pyquickhelper.helpgen.default_conf import set_sphinx_variables
 set_sphinx_variables(__file__,
                      "pyquickhelper",
                      "Xavier Dupré",
-                     2015,
+                     2016,
                      "solar_theme",
                      solar_theme.theme_path,
                      locals())
