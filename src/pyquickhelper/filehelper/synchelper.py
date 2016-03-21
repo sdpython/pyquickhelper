@@ -106,7 +106,8 @@ def synchronize_folder(p1,
                        operations=None,
                        file_date=None,
                        log1=False,
-                       copy_1to2=False):
+                       copy_1to2=False,
+                       fLOG=fLOG):
     """
     synchronize two folders (or copy if the second is empty), it only copies more recent files.
 
@@ -132,8 +133,9 @@ def synchronize_folder(p1,
     @param      file_date           filename which contains information about when the last sync was done
     @param      log1                @see cl FileTreeNode
     @param      copy_1to2           only copy files from *p1* to *p2*
-    @return                         list of operations done by the function
-                                        list of 3-uple: action, source_file, dest_file
+    @param      fLOG                logging function
+    @return                         list of operations done by the function,
+                                    list of 3-uple: action, source_file, dest_file
 
     if ``file_date`` is mentioned, the second folder is not explored. Only
     the modified files will be taken into account (except for the first sync).
@@ -166,6 +168,8 @@ def synchronize_folder(p1,
     .. versionchanged:: 1.1
         Parameter *copy_1to2* was added.
 
+    .. versionchanged:: 1.3
+        Parameter *fLOG* was added.
     """
 
     fLOG("form ", p1)
