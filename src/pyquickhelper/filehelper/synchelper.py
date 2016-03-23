@@ -8,6 +8,7 @@
 import os
 import re
 import sys
+import fnmatch
 from ..loghelper.flog import fLOG
 from .file_tree_node import FileTreeNode
 from .files_status import FilesStatus, checksum_md5
@@ -381,3 +382,34 @@ def has_been_updated(source, dest):
         return True, "md5"
 
     return False, None
+
+
+def walk(top, onerror=None, followlinks=False, neg_filter=None):
+    """
+    Does the same as `walk <https://docs.python.org/3.5/library/os.html#os.walk>`_
+    plus do not go through a sub-folder if this one is big. Folders such build or Debug or Release
+    may not need to be dug into.
+
+    @param      top             folder
+    @param      onerror         see `walk <https://docs.python.org/3.5/library/os.html#os.walk>`_
+    @param      followlinks     see `walk <https://docs.python.org/3.5/library/os.html#os.walk>`_
+    @param      neg_filter      filtering, a string, every folder verifying the filter will be excluded
+    @return                     see `walk <https://docs.python.org/3.5/library/os.html#os.walk>`_
+    """
+    if neg_filter is None:
+        for root, dirs, files in os.walk(top=top, onerror=onerror, followlinks=followlinks):
+            yield root, dirs, files
+    else:
+        typstr = str  # unicode #
+        f = not isinstance(neg_filter, typstr)
+        for root, dirs, files in os.walk(top, onerror=onerror, followlinks=followlinks):
+            rem = []
+            for i, d in enumerate(dirs):
+                if (f and neg_filter(d)) or (not f and fnmatch.fnmatch(d, neg_filter)):
+                    rem.append(i)
+            if rem:
+                rem.reverse()
+                for i in rem:
+                    del dirs[i]
+
+            yield root, dirs, files
