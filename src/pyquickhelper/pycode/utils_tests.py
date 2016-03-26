@@ -1007,7 +1007,7 @@ def check_pep8(folder, ignore=('E501', 'E265'), skip=None,
     printed by flake8.
     """
     from flake8.main import check_file
-    
+
     def extended_checkings(fname, content, buf, extended):
         for i, line in enumerate(content):
             for name, fu in extended:
@@ -1017,7 +1017,8 @@ def check_pep8(folder, ignore=('E501', 'E265'), skip=None,
                 else:
                     c = 1
                 if r is not None:
-                    buf.write("{0}:{1}:{4} F{2} {3}\n".format(fname, i+1, name,r, c))
+                    buf.write("{0}:{1}:{4} F{2} {3}\n".format(
+                        fname, i + 1, name, r, c))
 
     def fkeep(s):
         if len(s) == 0:

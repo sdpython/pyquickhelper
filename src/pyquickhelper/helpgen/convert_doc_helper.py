@@ -248,6 +248,9 @@ def docstring2html(function_or_string, format="html", fLOG=noLOG, writer="sphinx
 
     .. versionchanged:: 1.3
         Parameter *writer* was added to specifiy a custom writer.
+
+    .. versionchanged:: 1.4
+        Does not crash anymore when the documentation is None.
     """
     if not isinstance(function_or_string, str):
         doc = function_or_string.__doc__
@@ -256,6 +259,9 @@ def docstring2html(function_or_string, format="html", fLOG=noLOG, writer="sphinx
 
     if format == "text":
         return doc
+
+    if doc is None:
+        return ""
 
     stats, javadoc = migrating_doxygen_doc(doc, "None", log=False)
     rows = javadoc.split("\n")

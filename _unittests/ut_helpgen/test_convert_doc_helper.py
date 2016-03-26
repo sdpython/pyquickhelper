@@ -121,6 +121,46 @@ class TestConvertDocHelper(unittest.TestCase):
         if '<div class="system-message">' in html:
             raise Exception(html)
 
+    def test_object(self):
+        fLOG(
+            __file__,
+            self._testMethodName,
+            OutputPrint=__name__ == "__main__")
+
+        class AA:
+            """one doc"""
+
+            def __init__(self):
+                """constructor"""
+                pass
+
+            @property
+            def g(self):
+                """g"""
+                return ""
+
+            @staticmethod
+            def st():
+                """st"""
+                return ""
+
+        rst = docstring2html(pandas)
+        assert rst is not None
+        rst = docstring2html(AA)
+        assert rst is not None
+        rst = docstring2html(3)
+        assert rst is not None
+        rst = docstring2html(AA().__class__)
+        assert rst is not None
+        rst = docstring2html(AA.__init__)
+        assert rst is not None
+        rst = docstring2html(AA.g)
+        assert rst is not None
+        rst = docstring2html(AA.st)
+        assert rst is not None
+        rst = docstring2html(self)
+        assert rst is not None
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -165,7 +165,7 @@ def run_notebook(filename,
             fLOG(*l, **p)
 
         nb_runner = NotebookRunner(
-            nb, profile_dir, working_dir, fLOG=flogging, comment=filename,
+            nb, profile_dir, working_dir, fLOG=flogging, filename=filename,
             theNotebook=os.path.abspath(filename),
             code_init=code_init, log_level=log_level,
             extended_args=extended_args, kernel_name=kernel_name)

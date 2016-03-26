@@ -67,7 +67,7 @@ class NotebookRunner(object):
     def __init__(self, nb, profile_dir=None, working_dir=None,
                  comment="", fLOG=noLOG, theNotebook=None, code_init=None,
                  kernel_name="python", log_level="30", extended_args=None,
-                 kernel=True):
+                 kernel=True, filename=None):
         """
         constuctor
 
@@ -84,6 +84,7 @@ class NotebookRunner(object):
                                     see :ref:`l-ipython_notebook_args` for a full list
         @param      kernel          *kernel* is True by default, the notebook can be run, if False,
                                     the notebook can be read but not run
+        @param      filename        to add the notebook file if there is one in error messages
 
         .. versionchanged:: 1.3
             Parameters *log_level*, *extended_args*, *kernel_name*, *kernel* were added.
@@ -96,6 +97,7 @@ class NotebookRunner(object):
         self.fLOG = fLOG
         self.theNotebook = theNotebook
         self.code_init = code_init
+        self._filename = filename if filename is not None else "memory"
         args = []
 
         if profile_dir:
@@ -414,8 +416,10 @@ class NotebookRunner(object):
                 scode = [code]
             else:
                 scode = ""
-            raise NotebookError("{7}\nCELL status={8}, reason={9} -- {4} length={5} -- {6}:\n-----------------\n{0}\n-----------------\nTRACE:\n{1}\nRAW:\n{2}REPLY:\n{3}".format(
-                code, traceback_text, sraw, sreply, index_cell, len(code), scode, self.comment, status, reason))
+            raise NotebookError("FILENAME\n{10}:1:1\n{7}\nCELL status={8}, reason={9} -- {4} length={5} -- {6}:\n-----------------\n{0}\n-----------------\nTRACE:\n{1}\nRAW:\n{2}REPLY:\n{3}".format(
+                code, traceback_text, sraw, sreply, index_cell, len(
+                    code), scode, self.comment, status, reason,
+                self._filename))
         return outs
 
     def iter_code_cells(self):

@@ -120,8 +120,10 @@ class TestAutoCompletion (unittest.TestCase):
         pa = cl.get_parser(call_MagicCommandParser, name="parser_unittest")
         typstr = str  # unicode#
         pa.add_argument('f', type=typstr, help='filename')
-        pa.add_argument('-n', '--n', type=typstr, default=10, help='number of lines to display')
-        pa.add_argument('-e', '--encoding', default="utf8", help='file encoding')
+        pa.add_argument('-n', '--n', type=typstr, default=10,
+                        help='number of lines to display')
+        pa.add_argument('-e', '--encoding', default="utf8",
+                        help='file encoding')
         assert pa is not None
         cl.add_context({"x": 3, "y": 4})
         assert cl.Context == {"x": 3, "y": 4}
