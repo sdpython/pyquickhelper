@@ -128,7 +128,7 @@ def call_setup_hook(folder, module_name, fLOG=noLOG, must_be=False,
                                                                                      out, err, cmd, exit)
         return mes
 
-    if not must_be and ("ImportError: cannot import name '{0}'".format(function_name) in err or \
+    if not must_be and ("ImportError: cannot import name '{0}'".format(function_name) in err or
                         "ImportError: cannot import name {0}".format(function_name) in err):
         # no _setup_hook
         return out, "no {0}".format(function_name)
