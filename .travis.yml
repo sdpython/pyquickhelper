@@ -1,11 +1,29 @@
 language: python
 python:
+    - "2.7"
     - "3.4"
     - "3.5"
 install: 
     - pip install -r requirements.txt
     - pip install coveralls
 script:
-    - python setup.py unittests
+    - if [[ $TRAVIS_PYTHON_VERSION == 3* ]]; then python setup.py unittests; fi
+    - if [[ $TRAVIS_PYTHON_VERSION == 2* ]]; then python setup.py copy27; fi
+    - if [[ $TRAVIS_PYTHON_VERSION == 2* ]]; then nosetests -w dist_module27/_unittests/ut_cli
+    - if [[ $TRAVIS_PYTHON_VERSION == 2* ]]; then nosetests -w dist_module27/_unittests/ut_documentation
+    - if [[ $TRAVIS_PYTHON_VERSION == 2* ]]; then nosetests -w dist_module27/_unittests/ut_filehelper
+    - if [[ $TRAVIS_PYTHON_VERSION == 2* ]]; then nosetests -w dist_module27/_unittests/ut_funcwin
+    - if [[ $TRAVIS_PYTHON_VERSION == 2* ]]; then nosetests -w dist_module27/_unittests/ut_helpgen
+    - if [[ $TRAVIS_PYTHON_VERSION == 2* ]]; then nosetests -w dist_module27/_unittests/ut_ipythonhelper
+    - if [[ $TRAVIS_PYTHON_VERSION == 2* ]]; then nosetests -w dist_module27/_unittests/ut_jenkinshelper
+    - if [[ $TRAVIS_PYTHON_VERSION == 2* ]]; then nosetests -w dist_module27/_unittests/ut_loghelper
+    - if [[ $TRAVIS_PYTHON_VERSION == 2* ]]; then nosetests -w dist_module27/_unittests/ut_module
+    - if [[ $TRAVIS_PYTHON_VERSION == 2* ]]; then nosetests -w dist_module27/_unittests/ut_pandashelper
+    - if [[ $TRAVIS_PYTHON_VERSION == 2* ]]; then nosetests -w dist_module27/_unittests/ut_pycode
+    - if [[ $TRAVIS_PYTHON_VERSION == 2* ]]; then nosetests -w dist_module27/_unittests/ut_remotedrive
+    - if [[ $TRAVIS_PYTHON_VERSION == 2* ]]; then nosetests -w dist_module27/_unittests/ut_serverdoc
+    - if [[ $TRAVIS_PYTHON_VERSION == 2* ]]; then nosetests -w dist_module27/_unittests/ut_sync
+    - if [[ $TRAVIS_PYTHON_VERSION == 2* ]]; then nosetests -w dist_module27/_unittests/ut_text
+
 after_success:
   coveralls --verbose

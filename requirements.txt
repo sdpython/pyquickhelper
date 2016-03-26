@@ -77,3 +77,4 @@ pep8
 mistune
 pycryptodomex
 cryptography
+nose
