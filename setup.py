@@ -157,7 +157,8 @@ if is_local():
     pyquickhelper = import_pyquickhelper()
     logging_function = pyquickhelper.get_fLOG()
     logging_function(OutputPrint=True)
-    r = pyquickhelper.pycode.process_standard_options_for_setup(
+    from pyquickhelper.pycode import process_standard_options_for_setup
+    r = process_standard_options_for_setup(
         sys.argv, __file__, project_var_name, port=8067,
         requirements=requirements, blog_list=pyquickhelper.__blog__,
         fLOG=logging_function, covtoken=("69193a28-dc79-4a24-98ed-aedf441a8249", "'jenkins' in outfile"))
@@ -184,7 +185,8 @@ else:
 
 if len(sys.argv) == 1 and "--help" in sys.argv:
     pyquickhelper = import_pyquickhelper()
-    pyquickhelper.pycode.process_standard_options_for_setup_help()
+    from pyquickhelper.pycode import process_standard_options_for_setup_help
+    process_standard_options_for_setup_help()
 
 if not r:
     setup(
