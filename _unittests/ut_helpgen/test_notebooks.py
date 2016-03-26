@@ -21,10 +21,10 @@ except ImportError:
         sys.path.append(path)
     import src
 
-from src.pyquickhelper import fLOG, run_cmd
+from src.pyquickhelper.loghelper import fLOG, run_cmd
 from src.pyquickhelper.helpgen.sphinx_main import process_notebooks, add_notebook_page
 from src.pyquickhelper.helpgen.process_notebooks import get_ipython_program
-from src.pyquickhelper import get_temp_folder
+from src.pyquickhelper.pycode import get_temp_folder
 from src.pyquickhelper.pycode import is_travis_or_appveyor
 
 
@@ -115,7 +115,7 @@ class TestNotebookConversion (unittest.TestCase):
 
         with open(os.path.join(temp, "example_pyquickhelper.rst"), "r", encoding="utf8") as f:
             text = f.read()
-        assert "from pyquickhelper import fLOG\n    fLOG(OutputPrint=False)  # by default" in text
+        assert "from pyquickhelper.loghelper import fLOG\n    fLOG(OutputPrint=False)  # by default" in text
         assert ":linenos:" in text
 
     def test_short_cmd(self):

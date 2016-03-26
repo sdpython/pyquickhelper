@@ -9,8 +9,7 @@ This tesdt must be run last because it screws up with
 import sys
 import os
 import unittest
-import sphinx
-from docutils.parsers.rst import directives
+
 
 try:
     import src
@@ -26,12 +25,8 @@ except ImportError:
     import src
 
 from src.pyquickhelper.loghelper.flog import fLOG
-from src.pyquickhelper import get_temp_folder
-from src.pyquickhelper.helpgen.utils_sphinx_doc import private_migrating_doxygen_doc
+from src.pyquickhelper.pycode import get_temp_folder
 from src.pyquickhelper.helpgen import CustomSphinxApp
-
-if sys.version_info[0] == 2:
-    from codecs import open
 
 
 class TestAppSphinx(unittest.TestCase):
@@ -43,12 +38,12 @@ class TestAppSphinx(unittest.TestCase):
             OutputPrint=__name__ == "__main__")
 
         temp = get_temp_folder(__file__, "temp_app_sphinx")
-        src = os.path.join(temp, "..", "data", "doc")
+        src_ = os.path.join(temp, "..", "data", "doc")
 
         if sys.version_info[0] == 2:
             return
 
-        app = CustomSphinxApp(src, temp)
+        app = CustomSphinxApp(src_, temp)
         app.build()
         # app.cleanup()
 

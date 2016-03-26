@@ -21,7 +21,7 @@ except ImportError:
         sys.path.append(path)
     import src
 
-from src.pyquickhelper import fLOG
+from src.pyquickhelper.loghelper import fLOG
 from src.pyquickhelper.serverdoc import get_jenkins_mappings
 
 
@@ -33,7 +33,6 @@ class TestMappings(unittest.TestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
         path = os.path.abspath(os.path.split(__file__)[0])
-        data = os.path.join(path, "data")
         fold = os.path.normpath(os.path.join(path, ".."))
         fold = os.path.normpath(fold)
         fLOG(fold)

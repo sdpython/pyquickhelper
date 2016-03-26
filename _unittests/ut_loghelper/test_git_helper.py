@@ -5,8 +5,6 @@
 import sys
 import os
 import unittest
-import shutil
-import stat
 
 if "temp_" in os.path.abspath(__file__):
     raise ImportError(
@@ -26,7 +24,8 @@ except ImportError:
         sys.path.append(path)
     import src
 
-from src.pyquickhelper import fLOG, removedirs, run_cmd, explore_folder_iterfile, change_file_status
+from src.pyquickhelper.loghelper import fLOG, removedirs
+from src.pyquickhelper.filehelper import change_file_status
 from src.pyquickhelper.loghelper.repositories.pygit_helper import clone, rebase
 from src.pyquickhelper.pycode import is_travis_or_appveyor
 
@@ -68,7 +67,7 @@ class TestGit(unittest.TestCase):
         fLOG("OUT:", out)
         fLOG("ERR:", err)
 
-        r = changes = change_file_status(temp)
+        r = change_file_status(temp)
         assert len(r) > 0
 
 

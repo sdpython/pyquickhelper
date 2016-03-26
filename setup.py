@@ -11,7 +11,7 @@ from setuptools import find_packages
 #########
 
 project_var_name = "pyquickhelper"
-sversion = "1.3"
+sversion = "1.4"
 versionPython = "%s.%s" % (sys.version_info.major, sys.version_info.minor)
 path = "Lib/site-packages/" + project_var_name
 readme = 'README.rst'
@@ -120,7 +120,7 @@ def verbose():
 if is_local():
     def write_version():
         pyquickhelper = import_pyquickhelper()
-        from pyquickhelper import write_version_for_setup
+        from pyquickhelper.pycode import write_version_for_setup
         return write_version_for_setup(__file__)
 
     if sys.version_info[0] != 2:
@@ -155,9 +155,9 @@ if "--verbose" in sys.argv:
 
 if is_local():
     pyquickhelper = import_pyquickhelper()
-    logging_function = pyquickhelper.fLOG
+    logging_function = pyquickhelper.get_fLOG()
     logging_function(OutputPrint=True)
-    r = pyquickhelper.process_standard_options_for_setup(
+    r = pyquickhelper.pycode.process_standard_options_for_setup(
         sys.argv, __file__, project_var_name, port=8067,
         requirements=requirements, blog_list=pyquickhelper.__blog__,
         fLOG=logging_function, covtoken=("69193a28-dc79-4a24-98ed-aedf441a8249", "'jenkins' in outfile"))
@@ -184,7 +184,7 @@ else:
 
 if len(sys.argv) == 1 and "--help" in sys.argv:
     pyquickhelper = import_pyquickhelper()
-    pyquickhelper.process_standard_options_for_setup_help()
+    pyquickhelper.pycode.process_standard_options_for_setup_help()
 
 if not r:
     setup(

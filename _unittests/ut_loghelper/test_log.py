@@ -53,7 +53,7 @@ class TestLog (unittest.TestCase):
                 if __name__ == "__main__":
                     keys = sorted(sys.modules.keys())
                     for k in keys:
-                        if sys.modules[k] == None:
+                        if sys.modules[k] is None:
                             print("None ", k)
                 #raise Exception ("shit")
 
@@ -208,8 +208,8 @@ class TestLog (unittest.TestCase):
             '0001']
         res = guess_type_list(l)
         fLOG(res)
-        if res != (str  # unicode#
-                   , 8):
+        typstr = str  # unicode#
+        if res != (typstr, 8):
             raise Exception("different: {0}".format(res))
 
     def test_load_content_file_with_encoding(self):

@@ -5,9 +5,6 @@
 import sys
 import os
 import unittest
-import re
-import numpy
-import datetime
 import pandas
 
 
@@ -24,7 +21,7 @@ except ImportError:
         sys.path.append(path)
     import src
 
-from src.pyquickhelper import fLOG
+from src.pyquickhelper.loghelper import fLOG
 from src.pyquickhelper.pandashelper import df2rst
 
 

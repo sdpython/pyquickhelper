@@ -20,7 +20,7 @@ except ImportError:
         sys.path.append(path)
     import src
 
-from src.pyquickhelper import fLOG
+from src.pyquickhelper.loghelper import fLOG
 from src.pyquickhelper.serverdoc import ping_machine, regular_ping_machine
 from src.pyquickhelper.pycode import is_travis_or_appveyor
 

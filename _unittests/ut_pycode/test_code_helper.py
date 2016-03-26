@@ -6,7 +6,6 @@
 import sys
 import os
 import unittest
-import re
 import shutil
 import warnings
 
@@ -23,7 +22,9 @@ except ImportError:
         sys.path.append(path)
     import src
 
-from src.pyquickhelper import fLOG, remove_extra_spaces_and_pep8, create_visual_diff_through_html_files
+from src.pyquickhelper.loghelper import fLOG
+from src.pyquickhelper.pycode import remove_extra_spaces_and_pep8
+from src.pyquickhelper.filehelper import create_visual_diff_through_html_files
 
 
 class TestCodeHelper(unittest.TestCase):
@@ -35,7 +36,7 @@ class TestCodeHelper(unittest.TestCase):
             OutputPrint=__name__ == "__main__")
 
         try:
-            import pymyinstall
+            import pymyinstall as skip_
         except ImportError:
             path = os.path.normpath(
                 os.path.abspath(
@@ -49,7 +50,7 @@ class TestCodeHelper(unittest.TestCase):
             if path not in sys.path:
                 sys.path.append(path)
             try:
-                import pymyinstall
+                import pymyinstall as skip_
             except ImportError:
                 # we skip
                 warnings.warn(

@@ -128,7 +128,7 @@ class BlogPost:
                 #     all_err, self._filename, content))
                 pass
 
-        #document = pub.writer.document
+        # document = pub.writer.document
         objects = pub.settings.out_blogpostlist
 
         if len(objects) != 1:

@@ -7,9 +7,6 @@
 import sys
 import os
 import unittest
-import re
-import shutil
-import warnings
 
 try:
     import src
@@ -24,7 +21,7 @@ except ImportError:
         sys.path.append(path)
     import src
 
-from src.pyquickhelper import fLOG
+from src.pyquickhelper.loghelper import fLOG
 from src.pyquickhelper.pycode.open_script_file import open_script, detect_encoding
 
 
@@ -37,6 +34,7 @@ class TestOpenScript(unittest.TestCase):
             OutputPrint=__name__ == "__main__")
 
         s = "éé"
+        self.assertEqual(len(s), 2)
         file = __file__.replace(".pyc", ".py")
         enc = detect_encoding(file)
         if enc != "utf-8":

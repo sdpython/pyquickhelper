@@ -47,7 +47,6 @@ class TestSmallFunction(unittest.TestCase):
         ff = os.path.join(fold, "data", "divabsolute.rst")
         with open(ff, "r") as f:
             lines = f.readlines()
-        div = "[\\n ]+<div[\\n ]+style=.?position:absolute; .*?[.]{2} "
         reg = re.compile(
             "([.]{2} raw[:]{2} html[\\n ]+<div[\\n ]+style=.?position:absolute;(.|\\n)*?[.]{2} raw[:]{2} html[\\n ]+</div>)")
         fLOG("nb lines", len(lines))

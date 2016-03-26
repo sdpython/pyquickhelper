@@ -81,7 +81,13 @@ This project contains the following folders:
 Versions, Changes
 -----------------
 
-* **1.3 - 2016/??/??**
+* **1.4 - 2016/??/??**
+    * **change:** change behavior of function *df2rst*, more simple
+    * **change:** remove all shortcuts in main ``__init__.py``
+    * **change:** rename *str_to_datetime* into *str2datetime* and *datetime_to_str* into *datetime2str** 
+
+**1.3.1110 - 2016/03/08**
+    * **commit:** 2ab88f6545ab139c17562c1b995404e6a2d0714d
     * **add:** add function check_readme_syntax to check the syntax of file readme.rst 
       (pipy uses an earlier version of docutils)
     * **fix:** fix a bug in function *compare_module_version*
@@ -128,4 +134,3 @@ Versions, Changes
       to disable it, set variable *sharepost* to None in sphinx configuration
     * **add:** add option *process* to sphinx custom directive *runpython*
     * **add:** add parameter *custom_style* to the default configuration
-    * **change:** change behavior of function *df2rst*, more simple

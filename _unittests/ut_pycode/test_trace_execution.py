@@ -6,9 +6,7 @@
 import sys
 import os
 import unittest
-import re
-import shutil
-import warnings
+
 
 try:
     import src
@@ -23,7 +21,7 @@ except ImportError:
         sys.path.append(path)
     import src
 
-from src.pyquickhelper import fLOG, get_temp_folder, __blog__
+from src.pyquickhelper.loghelper import fLOG
 from src.pyquickhelper.pycode import get_call_stack
 
 

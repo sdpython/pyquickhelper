@@ -7,7 +7,7 @@
 import sys
 import os
 import unittest
-import re
+
 
 try:
     import src

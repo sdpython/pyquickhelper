@@ -21,7 +21,8 @@ except ImportError:
         sys.path.append(path)
     import src
 
-from src.pyquickhelper import __version__, fLOG
+from src.pyquickhelper import __version__
+from src.pyquickhelper.loghelper import fLOG
 
 
 class TestVersion (unittest.TestCase):

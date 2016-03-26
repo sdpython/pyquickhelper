@@ -5,11 +5,6 @@ import os
 import sys
 import unittest
 
-if sys.version_info[0] == 2:
-    import Tkinter as tkinter
-else:
-    import tkinter
-
 try:
     import src
 except ImportError:
@@ -25,8 +20,7 @@ except ImportError:
 
 from src.pyquickhelper.loghelper.flog import fLOG
 from src.pyquickhelper.funcwin.storing_functions import get_icon
-from src.pyquickhelper.funcwin.frame_function import open_window_function
-
+from src.pyquickhelper.funcwin import open_window_function, open_window_params
 from src.pyquickhelper.funcwin.default_functions import test_regular_expression
 
 

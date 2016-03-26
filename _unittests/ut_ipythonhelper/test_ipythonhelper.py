@@ -5,7 +5,6 @@
 import sys
 import os
 import unittest
-import re
 
 
 try:
@@ -21,7 +20,7 @@ except ImportError:
         sys.path.append(path)
     import src
 
-from src.pyquickhelper import fLOG
+from src.pyquickhelper.loghelper import fLOG
 from src.pyquickhelper.ipythonhelper import AutoCompletion, AutoCompletionFile, MagicCommandParser, MagicClassWithHelpers, open_html_form
 
 
@@ -88,13 +87,11 @@ class TestAutoCompletion (unittest.TestCase):
             OutputPrint=__name__ == "__main__")
         parser = MagicCommandParser(prog="test_command",
                                     description='display the first lines of a text file')
-        parser.add_argument('f', type=str  # unicode#
-                            , help='filename')
+        typstr = str  # unicode#
+        parser.add_argument('f', type=typstr, help='filename')
         parser.add_argument(
-            '-n',
-            '--n',
-            type=str  # unicode#
-            , default=10,
+            '-n', '--n',
+            type=typstr, default=10,
             help='number of lines to display')
         parser.add_argument(
             '-e',
@@ -121,20 +118,10 @@ class TestAutoCompletion (unittest.TestCase):
         def call_MagicCommandParser():
             return MagicCommandParser(prog="parser_unittest")
         pa = cl.get_parser(call_MagicCommandParser, name="parser_unittest")
-        pa.add_argument('f', type=str  # unicode#
-                        , help='filename')
-        pa.add_argument(
-            '-n',
-            '--n',
-            type=str  # unicode#
-            ,
-            default=10,
-            help='number of lines to display')
-        pa.add_argument(
-            '-e',
-            '--encoding',
-            default="utf8",
-            help='file encoding')
+        typstr = str  # unicode#
+        pa.add_argument('f', type=typstr, help='filename')
+        pa.add_argument('-n', '--n', type=typstr, default=10, help='number of lines to display')
+        pa.add_argument('-e', '--encoding', default="utf8", help='file encoding')
         assert pa is not None
         cl.add_context({"x": 3, "y": 4})
         assert cl.Context == {"x": 3, "y": 4}

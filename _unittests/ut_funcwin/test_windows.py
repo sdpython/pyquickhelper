@@ -4,7 +4,7 @@
 import os
 import sys
 import unittest
-import datetime
+
 if sys.version_info[0] == 2:
     from Tkinter import TclError
 else:
@@ -24,7 +24,7 @@ except ImportError:
     import src
 
 from src.pyquickhelper.loghelper.flog import fLOG
-from src.pyquickhelper import check, open_window_params, open_window_function
+from src.pyquickhelper.funcwin import open_window_params, open_window_function
 from src.pyquickhelper.funcwin.function_helper import get_function_list, has_unknown_parameters, private_get_function
 
 
@@ -78,8 +78,9 @@ class TestWindows (unittest.TestCase):
         funcs = get_function_list(src.pyquickhelper)
         assert isinstance(funcs, dict)
         assert len(funcs) > 0
-        assert "df2rst" in funcs
-        r = has_unknown_parameters(funcs["df2rst"])
+        if "load_ipython_extension" not in funcs:
+            raise Exception("\n".join(sorted(funcs.keys())))
+        r = has_unknown_parameters(funcs["load_ipython_extension"])
         assert not r
         f = private_get_function("os.listdir")
         fLOG("**", f)

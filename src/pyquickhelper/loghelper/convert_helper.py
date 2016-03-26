@@ -6,7 +6,7 @@
 import datetime
 
 
-def str_to_datetime(dt, format=None):
+def str2datetime(dt, format=None):
     """
     convert a string into a datetime object, it can be:
         - 2013-05-24 18:49:46
@@ -45,7 +45,7 @@ def str_to_datetime(dt, format=None):
         return datetime.datetime.strptime(dt, format)
 
 
-def datetime_to_str(dt):
+def datetime2str(dt):
     """
     convert a datetime into a string
 

@@ -5,8 +5,8 @@
 import sys
 import os
 import unittest
-import re
-
+import numpy as np
+import matplotlib.pyplot as plt
 
 try:
     import src
@@ -21,7 +21,7 @@ except ImportError:
         sys.path.append(path)
     import src
 
-from src.pyquickhelper import fLOG
+from src.pyquickhelper.loghelper import fLOG
 from src.pyquickhelper.ipythonhelper import StaticInteract, RangeWidget, RadioWidget
 
 

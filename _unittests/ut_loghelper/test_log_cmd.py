@@ -21,7 +21,7 @@ except ImportError:
         sys.path.append(path)
     import src
 
-from src.pyquickhelper import get_temp_folder
+from src.pyquickhelper.pycode import get_temp_folder
 from src.pyquickhelper.loghelper.flog import split_cmp_command, fLOG, run_cmd, skip_run_cmd
 
 

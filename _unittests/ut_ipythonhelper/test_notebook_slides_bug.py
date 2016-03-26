@@ -5,7 +5,6 @@
 import sys
 import os
 import unittest
-import re
 
 
 try:
@@ -21,8 +20,9 @@ except ImportError:
         sys.path.append(path)
     import src
 
-from src.pyquickhelper.ipythonhelper.notebook_helper import run_notebook, read_nb
-from src.pyquickhelper import get_temp_folder, fLOG
+from src.pyquickhelper.ipythonhelper.notebook_helper import read_nb
+from src.pyquickhelper.pycode import get_temp_folder
+from src.pyquickhelper.loghelper import fLOG
 
 
 class TestNotebookSlidesBug (unittest.TestCase):

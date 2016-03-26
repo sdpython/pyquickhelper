@@ -46,7 +46,7 @@ class TestSphinxDoc (unittest.TestCase):
         assert isinstance(ver, int) or isinstance(ver, str)
 
         try:
-            import pysvn
+            import pysvn as skip_
         except ImportError:
             return
 
@@ -60,16 +60,17 @@ class TestSphinxDoc (unittest.TestCase):
             OutputPrint=__name__ == "__main__")
 
         try:
-            import pysvn
+            import pysvn as skip__
         except ImportError:
             return
 
-        src = SourceRepository()
-        ver = src.log()
+        typstr = str  # unicode#
+        src_ = SourceRepository()
+        ver = src_.log()
         assert len(ver) > 0
         assert isinstance(ver, list)
         assert len(ver[0]) >= 4
-        assert isinstance(ver[0][1], int) or isinstance(ver[0][1], str)
+        assert isinstance(ver[0][1], int) or isinstance(ver[0][1], typstr)
         assert isinstance(ver[0][2], datetime.datetime)
         ver.sort(reverse=True)
         fLOG("logs", "\n" + "\n".join(map(str, ver[:10])))

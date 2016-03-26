@@ -24,7 +24,9 @@ except ImportError:
         sys.path.append(path)
     import src
 
-from src.pyquickhelper import get_temp_folder, fLOG, FileTreeNode, TransferFTP, FolderTransferFTP
+from src.pyquickhelper.pycode import get_temp_folder
+from src.pyquickhelper.loghelper import fLOG
+from src.pyquickhelper.filehelper import FileTreeNode, FolderTransferFTP
 from src.pyquickhelper.filehelper.ftp_transfer_mock import MockTransferFTP
 
 

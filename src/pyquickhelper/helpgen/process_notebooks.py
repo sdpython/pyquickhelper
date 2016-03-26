@@ -275,7 +275,7 @@ def process_notebooks(notebooks,
             else:
                 fmttpl = ""
 
-            c = cmd.format(ipy,  format,
+            c = cmd.format(ipy, format,
                            notebook if nb_slide is None else nb_slide,
                            build, nbout, fmttpl)
 

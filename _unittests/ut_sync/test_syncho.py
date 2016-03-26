@@ -35,7 +35,7 @@ class TestFileCol (unittest.TestCase):
             OutputPrint=__name__ == "__main__")
 
         try:
-            import pysvn
+            import pysvn as skip_
         except ImportError:
             fLOG("pysvn is not available")
             return

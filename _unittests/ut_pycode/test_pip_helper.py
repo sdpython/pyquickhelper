@@ -5,9 +5,6 @@
 import sys
 import os
 import unittest
-import re
-import shutil
-import warnings
 import pandas
 
 try:
@@ -23,7 +20,7 @@ except ImportError:
         sys.path.append(path)
     import src
 
-from src.pyquickhelper import fLOG
+from src.pyquickhelper.loghelper import fLOG
 from src.pyquickhelper.pycode.pip_helper import get_packages_list, get_package_info, package2dict
 from src.pyquickhelper.pycode import is_travis_or_appveyor
 

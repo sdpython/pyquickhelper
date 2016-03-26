@@ -7,7 +7,6 @@ import sys
 import os
 import unittest
 import pandas
-import datetime
 
 
 try:
@@ -24,7 +23,7 @@ except ImportError:
     import src
 
 from src.pyquickhelper.loghelper.flog import fLOG
-from src.pyquickhelper.helpgen.sphinx_main_helper import generate_changes_repo, produce_code_graph_changes
+from src.pyquickhelper.helpgen.sphinx_main_helper import produce_code_graph_changes
 from src.pyquickhelper.pycode import fix_tkinter_issues_virtualenv
 
 
@@ -78,9 +77,9 @@ class TestGraphChanges (unittest.TestCase):
             ax.set_title("commits")
 
         if sys.version_info[0] == 2:
-            import Tkinter as tkinter
+            import Tkinter as skip_
         else:
-            import tkinter
+            import tkinter as skip_
         if __name__ != "__main__":
             code = code.replace("plt.show", "#plt.show")
 

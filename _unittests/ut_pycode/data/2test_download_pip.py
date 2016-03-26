@@ -39,7 +39,8 @@ except ImportError:
 
 
 from src.pymyinstall.installhelper.module_install import ModuleInstall
-from pyquickhelper import fLOG, get_temp_folder
+from pyquickhelper.loghelper import fLOG
+from pyquickhelper.pycode import get_temp_folder
 
 
 class TestDownloadPip (unittest.TestCase):

@@ -11,12 +11,12 @@ import unittest
 if sys.version_info[0] == 2:
     pass
 else:
-    from http.server import HTTPServer
+    from http.server import HTTPServer as skip_
 
     try:
         import src
-        import pyquickhelper
-        import pyensae
+        import pyquickhelper as skip___
+        import pyensae as skip__
     except ImportError:
         path = os.path.normpath(
             os.path.abspath(
@@ -38,9 +38,10 @@ else:
         if path not in sys.path:
             sys.path.append(path)
         import src
-        import pyquickhelper
+        import pyquickhelper as skip___
 
-    from pyquickhelper import fLOG, run_doc_server, get_url_content
+    from pyquickhelper.loghelper import fLOG, get_url_content
+    from pyquickhelper.serverdoc import run_doc_server
 
 
 class TestDocumentationServer(unittest.TestCase):

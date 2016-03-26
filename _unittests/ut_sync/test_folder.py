@@ -42,7 +42,7 @@ class TestFolder (unittest.TestCase):
             os.remove(remone)
 
         try:
-            import pysvn
+            import pysvn as skip_
         except ImportError:
             return
 
@@ -106,7 +106,7 @@ class TestFolder (unittest.TestCase):
             os.remove(remone)
 
         try:
-            import pysvn
+            import pysvn as skip__
         except ImportError:
             return
 

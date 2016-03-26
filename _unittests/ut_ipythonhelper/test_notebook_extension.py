@@ -7,7 +7,6 @@ notebook test
 import sys
 import os
 import unittest
-import re
 import warnings
 
 try:
@@ -23,7 +22,7 @@ except ImportError:
         sys.path.append(path)
     import src
 
-from src.pyquickhelper import fLOG, get_temp_folder
+from src.pyquickhelper.loghelper import fLOG
 from src.pyquickhelper.ipythonhelper import install_notebook_extension, get_installed_notebook_extension, get_jupyter_datadir
 from src.pyquickhelper.pycode import is_travis_or_appveyor
 

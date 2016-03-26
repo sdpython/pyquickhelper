@@ -5,7 +5,6 @@
 import sys
 import os
 import unittest
-import re
 
 
 try:
@@ -21,7 +20,7 @@ except ImportError:
         sys.path.append(path)
     import src
 
-from src.pyquickhelper import fLOG
+from src.pyquickhelper.loghelper import fLOG
 from src.pyquickhelper.ipythonhelper import store_notebook_path, add_notebook_menu
 
 

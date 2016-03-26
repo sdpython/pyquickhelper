@@ -6,9 +6,6 @@
 import sys
 import os
 import unittest
-import re
-import shutil
-import warnings
 
 try:
     import src
@@ -23,7 +20,8 @@ except ImportError:
         sys.path.append(path)
     import src
 
-from src.pyquickhelper import fLOG, get_temp_folder
+from src.pyquickhelper.loghelper import fLOG
+from src.pyquickhelper.pycode import get_temp_folder
 from src.pyquickhelper.pycode.build_helper import get_build_script, get_script_command, get_extra_script_command, _default_nofolder
 from src.pyquickhelper.pycode.setup_helper import write_pyproj
 
@@ -38,8 +36,6 @@ class TestBuildScript(unittest.TestCase):
 
         if sys.platform.startswith("win") and sys.version_info[0] != 2:
             sc = get_build_script("pyquickhelper")
-            # fLOG(sc)
-            ver = "%d%s" % sys.version_info[:2]
             lines = sc.split("\n")
             for line in lines:
                 if "__" in line and _default_nofolder not in line:

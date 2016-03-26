@@ -6,7 +6,6 @@
 import sys
 import os
 import unittest
-import re
 
 try:
     import src
@@ -21,7 +20,8 @@ except ImportError:
         sys.path.append(path)
     import src
 
-from src.pyquickhelper import fLOG, get_temp_folder
+from src.pyquickhelper.loghelper import fLOG
+from src.pyquickhelper.pycode import get_temp_folder
 from src.pyquickhelper.cli.encryption_file_cli import encrypt_file, decrypt_file
 
 

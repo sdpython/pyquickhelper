@@ -24,8 +24,9 @@ except ImportError:
         sys.path.append(path)
     import src
 
-from src.pyquickhelper import download, get_temp_folder, fLOG, gzip_files, zip_files, zip7_files
-from src.pyquickhelper.filehelper import check, read_url
+from src.pyquickhelper.loghelper import fLOG
+from src.pyquickhelper.pycode import get_temp_folder
+from src.pyquickhelper.filehelper import check, read_url, gzip_files, zip_files, zip7_files, download
 from src.pyquickhelper.pycode import is_travis_or_appveyor
 
 
@@ -41,7 +42,8 @@ class TestDownload (unittest.TestCase):
         f = download(url, fold)
         fLOG(f)
         assert os.path.exists(f)
-        assert f.endswith("ftplib.html")
+        if not f.endswith("ftplib.html"):
+            raise Exception(f)
 
         out = os.path.join(fold, "try.html.gz")
         r = gzip_files(out, [f], fLOG=fLOG)

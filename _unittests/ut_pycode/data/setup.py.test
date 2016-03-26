@@ -115,7 +115,8 @@ if "build_sphinx" in sys.argv:
         if not os.path.exists("_doc/sphinxdoc/source"):
             raise FileNotFoundError("you must get the source from GitHub to build the documentation")
         
-        from pyquickhelper import fLOG, generate_help_sphinx
+        from pyquickhelper.loghelper import fLOG
+        from pyquickhelper.helpgen import generate_help_sphinx
 
         fLOG (OutputPrint = True)
         project_name = os.path.split(os.path.split(os.path.abspath(__file__))[0])[-1]

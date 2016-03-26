@@ -8,7 +8,7 @@ import sys
 import json
 import hashlib
 from ..loghelper.flog import noLOG
-from ..loghelper.convert_helper import str_to_datetime, datetime_to_str
+from ..loghelper.convert_helper import str2datetime, datetime2str
 
 if sys.version_info[0] == 2:
     from StringIO import StringIO
@@ -55,14 +55,14 @@ class TransferAPI_FileInfo:
         """
         st = StringIO(s)
         js = json.load(st)
-        js[2] = str_to_datetime(js[2])
+        js[2] = str2datetime(js[2])
         return TransferAPI_FileInfo(*js)
 
     def to_json(self):
         """
         serializes this class info JSON
         """
-        l = [self.name, self.pieces, datetime_to_str(self.last_update)]
+        l = [self.name, self.pieces, datetime2str(self.last_update)]
         return json.dumps(l)
 
 

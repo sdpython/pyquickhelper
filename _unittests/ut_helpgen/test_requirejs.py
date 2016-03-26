@@ -22,7 +22,8 @@ except ImportError:
     import src
 
 
-from src.pyquickhelper import fLOG, get_temp_folder
+from src.pyquickhelper.loghelper import fLOG
+from src.pyquickhelper.pycode import get_temp_folder
 from src.pyquickhelper.helpgen.install_custom import download_requirejs
 
 
@@ -33,7 +34,6 @@ class TestRequirejs(unittest.TestCase):
             __file__,
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
-        fold = os.path.abspath(os.path.split(__file__)[0])
 
         dest = get_temp_folder(__file__, "temp_install_revealjs_sphinx")
         fs = download_requirejs(dest, fLOG=fLOG)

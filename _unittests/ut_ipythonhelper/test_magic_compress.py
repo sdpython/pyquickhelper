@@ -6,7 +6,6 @@
 import sys
 import os
 import unittest
-import shlex
 import warnings
 
 
@@ -23,7 +22,8 @@ except ImportError:
         sys.path.append(path)
     import src
 
-from src.pyquickhelper import fLOG, get_temp_folder
+from src.pyquickhelper.loghelper import fLOG
+from src.pyquickhelper.pycode import get_temp_folder
 from src.pyquickhelper.ipythonhelper.magic_class_compress import MagicCompress
 
 

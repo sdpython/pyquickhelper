@@ -12,7 +12,7 @@ import datetime
 import xml.etree.ElementTree as ET
 
 from ..flog import fLOG, run_cmd
-from ..convert_helper import str_to_datetime
+from ..convert_helper import str2datetime
 
 if sys.version_info[0] == 2:
     from codecs import open
@@ -217,7 +217,7 @@ def get_repo_log(path=None, file_detail=False, commandline=True):
             t = i.find("msg").text
             msg = t.strip() if t is not None else "-"
             sdate = i.find("date").text.strip()
-            dt = str_to_datetime(sdate.replace("T", " ").strip("Z "))
+            dt = str2datetime(sdate.replace("T", " ").strip("Z "))
             row = [author, revision, dt, msg]
             res.append(row)
         return res

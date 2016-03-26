@@ -21,8 +21,9 @@ except ImportError:
         sys.path.append(path)
     import src
 
-from src.pyquickhelper import fLOG, get_temp_folder
-from src.pyquickhelper import create_visual_diff_through_html_files
+from src.pyquickhelper.loghelper import fLOG
+from src.pyquickhelper.pycode import get_temp_folder
+from src.pyquickhelper.filehelper import create_visual_diff_through_html_files
 
 if sys.version_info[0] == 2:
     from codecs import open
@@ -45,7 +46,7 @@ class TestVisualDiff(unittest.TestCase):
                 diff = create_visual_diff_through_html_files(f, f, page=page)
             except OSError as e:
                 try:
-                    import pymyinstall
+                    import pymyinstall as skip_
                     raise e
                 except ImportError:
                     return
@@ -54,7 +55,7 @@ class TestVisualDiff(unittest.TestCase):
                 diff = create_visual_diff_through_html_files(f, f, page=page)
             except FileNotFoundError as e:
                 try:
-                    import pymyinstall
+                    import pymyinstall as skip_
                     raise e
                 except ImportError:
                     return
@@ -78,7 +79,7 @@ class TestVisualDiff(unittest.TestCase):
             OutputPrint=__name__ == "__main__")
 
         try:
-            import IPython
+            import IPython as skip_
         except ImportError:
             warnings.warn("IPython is missing, cannot run that test")
             return
@@ -90,7 +91,7 @@ class TestVisualDiff(unittest.TestCase):
                     f, f, notebook=True)
             except OSError as e:
                 try:
-                    import pymyinstall
+                    import pymyinstall as skip__
                     raise e
                 except ImportError:
                     return
@@ -100,7 +101,7 @@ class TestVisualDiff(unittest.TestCase):
                     f, f, notebook=True)
             except FileNotFoundError as e:
                 try:
-                    import pymyinstall
+                    import pymyinstall as skip___
                     raise e
                 except ImportError:
                     return

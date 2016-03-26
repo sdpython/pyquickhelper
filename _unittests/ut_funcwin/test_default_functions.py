@@ -4,7 +4,7 @@
 import os
 import sys
 import unittest
-import datetime
+
 
 try:
     import src
@@ -19,7 +19,8 @@ except ImportError:
         sys.path.append(path)
     import src
 
-from src.pyquickhelper import fLOG, noLOG, get_temp_folder
+from src.pyquickhelper.loghelper import fLOG, noLOG
+from src.pyquickhelper.pycode import get_temp_folder
 from src.pyquickhelper.funcwin.default_functions import test_regular_expression, is_empty_string, IsEmptyString, file_head, file_grep
 
 

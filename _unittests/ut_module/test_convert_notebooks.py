@@ -5,7 +5,6 @@
 import sys
 import os
 import unittest
-import re
 
 
 try:
@@ -21,7 +20,8 @@ except ImportError:
         sys.path.append(path)
     import src
 
-from src.pyquickhelper import fLOG, explore_folder_iterfile
+from src.pyquickhelper.loghelper import fLOG
+from src.pyquickhelper.filehelper import explore_folder_iterfile
 from src.pyquickhelper.ipythonhelper import upgrade_notebook
 
 

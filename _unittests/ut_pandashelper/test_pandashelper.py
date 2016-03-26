@@ -5,7 +5,6 @@
 import sys
 import os
 import unittest
-import re
 import numpy
 
 
@@ -22,7 +21,8 @@ except ImportError:
         sys.path.append(path)
     import src
 
-from src.pyquickhelper import read_url, fLOG, isempty, isnan
+from src.pyquickhelper.loghelper import fLOG
+from src.pyquickhelper.pandashelper import isempty, isnan, read_url
 
 
 class TestPandasHelper(unittest.TestCase):

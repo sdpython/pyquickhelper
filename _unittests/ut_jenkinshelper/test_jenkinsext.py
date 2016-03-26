@@ -21,7 +21,7 @@ except ImportError:
         sys.path.append(path)
     import src
 
-from src.pyquickhelper import fLOG
+from src.pyquickhelper.loghelper import fLOG
 from src.pyquickhelper.jenkinshelper.jenkins_server import JenkinsExt, JenkinsExtException
 
 
@@ -177,8 +177,6 @@ class TestJenkinsExt(unittest.TestCase):
              dict(script="any_script.bat")),
         ]
 
-        pythonexe = os.path.dirname(sys.executable)
-        location = None
         engines = dict(Anaconda2="C:\\Anaconda2",
                        Anaconda3="C:\\Anaconda3",
                        WinPython="C:\\WinPython\\Python",

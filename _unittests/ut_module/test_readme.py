@@ -5,10 +5,6 @@
 import sys
 import os
 import unittest
-import re
-import shutil
-import warnings
-import pandas
 
 try:
     import src
@@ -23,9 +19,10 @@ except ImportError:
         sys.path.append(path)
     import src
 
-from src.pyquickhelper import fLOG, get_temp_folder
-from src.pyquickhelper.pycode.venv_helper import create_virtual_env, run_venv_script, check_readme_syntax
-from src.pyquickhelper.helpgen.markdown_helper import yield_sphinx_only_markup_for_pipy
+from src.pyquickhelper.loghelper import fLOG
+from src.pyquickhelper.pycode import get_temp_folder
+from src.pyquickhelper.pycode.venv_helper import check_readme_syntax
+
 
 if sys.version_info[0] == 2:
     from codecs import open
@@ -44,6 +41,8 @@ class TestReadme(unittest.TestCase):
         assert os.path.exists(readme)
         with open(readme, "r", encoding="utf8") as f:
             content = f.read()
+
+        assert len(content) > 0
 
         temp = get_temp_folder(__file__, "temp_readme")
 

@@ -4,11 +4,6 @@
 import os
 import sys
 import unittest
-import datetime
-if sys.version_info[0] == 2:
-    from Tkinter import TclError
-else:
-    from tkinter import TclError
 
 try:
     import src
@@ -23,7 +18,8 @@ except ImportError:
         sys.path.append(path)
     import src
 
-from src.pyquickhelper import fLOG, get_temp_folder
+from src.pyquickhelper.loghelper import fLOG
+from src.pyquickhelper.pycode import get_temp_folder
 from src.pyquickhelper.funcwin import fix_python35_dll
 
 

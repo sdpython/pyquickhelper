@@ -24,7 +24,7 @@ except ImportError:
         sys.path.append(path)
     import src
 
-from src.pyquickhelper import fLOG
+from src.pyquickhelper.loghelper import fLOG
 from src.pyquickhelper.filehelper import get_url_content_timeout, InternetException
 
 
@@ -58,7 +58,7 @@ class TestDownloadHelper(unittest.TestCase):
 
         url = "https://localhost:878777/should_not_exists"
         try:
-            content = get_url_content_timeout(url, encoding="utf8", timeout=2)
+            get_url_content_timeout(url, encoding="utf8", timeout=2)
         except InternetException:
             return
 

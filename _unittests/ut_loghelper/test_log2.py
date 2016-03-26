@@ -6,7 +6,6 @@
 import sys
 import os
 import unittest
-import re
 
 try:
     import src
@@ -22,7 +21,7 @@ except ImportError:
     import src
 
 from src.pyquickhelper.loghelper.flog import fLOG, _get_file_url, _get_file_txt, get_default_value_type, run_cmd, download
-from src.pyquickhelper import get_temp_folder
+from src.pyquickhelper.pycode import get_temp_folder
 
 
 class TestLog2 (unittest.TestCase):

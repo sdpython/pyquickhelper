@@ -6,7 +6,7 @@
 import sys
 import os
 import unittest
-import re
+
 
 try:
     import src
@@ -22,7 +22,8 @@ except ImportError:
     import src
 
 
-from src.pyquickhelper import fLOG, get_temp_folder
+from src.pyquickhelper.loghelper import fLOG
+from src.pyquickhelper.pycode import get_temp_folder
 from src.pyquickhelper.ipythonhelper import execute_notebook_list
 from src.pyquickhelper.pycode import compare_module_version, is_travis_or_appveyor
 from src.pyquickhelper.ipythonhelper import install_python_kernel_for_unittest

@@ -6,8 +6,6 @@
 import sys
 import os
 import unittest
-import shutil
-import warnings
 
 
 try:

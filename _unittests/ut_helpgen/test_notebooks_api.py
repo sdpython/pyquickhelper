@@ -21,11 +21,10 @@ except ImportError:
         sys.path.append(path)
     import src
 
-from src.pyquickhelper import fLOG, get_temp_folder, nb2slides, nb2html
+from src.pyquickhelper.loghelper import fLOG
+from src.pyquickhelper.pycode import get_temp_folder
+from src.pyquickhelper.helpgen import nb2slides, nb2html
 from src.pyquickhelper.ipythonhelper import read_nb
-
-if sys.version_info[0] == 2:
-    from codecs import open
 
 
 class TestNotebookAPI (unittest.TestCase):

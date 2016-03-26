@@ -6,7 +6,7 @@
 import sys
 import os
 import unittest
-import warnings
+
 
 try:
     import src
@@ -21,15 +21,13 @@ except ImportError:
         sys.path.append(path)
     import src
 
-from src.pyquickhelper import fLOG, get_temp_folder
-from src.pyquickhelper.filehelper import encrypt_stream, decrypt_stream, EncryptedBackup, FileTreeNode, TransferAPIFile
+from src.pyquickhelper.loghelper import fLOG
+from src.pyquickhelper.pycode import get_temp_folder
+from src.pyquickhelper.filehelper import EncryptedBackup, FileTreeNode, TransferAPIFile
 from src.pyquickhelper.filehelper.transfer_api import MockTransferAPI
 
 if sys.version_info[0] == 2:
     from codecs import open
-    from StringIO import StringIO as StreamIO
-else:
-    from io import BytesIO as StreamIO
 
 
 class TestBackupFiles(unittest.TestCase):
@@ -44,7 +42,7 @@ class TestBackupFiles(unittest.TestCase):
             return
 
         try:
-            import Crypto
+            import Crypto as skip_
             algo = "AES"
         except ImportError:
             algo = "fernet"
@@ -79,7 +77,7 @@ class TestBackupFiles(unittest.TestCase):
         fpth = "ut_filehelper\\test_backup_file.py"
         if not sys.platform.startswith("win"):
             fpth = fpth.replace("\\", "/")
-        s = enc.retrieve(fpth, filename=outfile)
+        enc.retrieve(fpth, filename=outfile)
 
         with open(outfile, "r") as f:
             c2 = f.read()
@@ -97,7 +95,7 @@ class TestBackupFiles(unittest.TestCase):
             return
 
         try:
-            import Crypto
+            import Crypto as skip__
             algo = "AES"
         except ImportError:
             algo = "fernet"

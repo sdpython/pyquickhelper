@@ -7,7 +7,7 @@
 import sys
 import os
 import unittest
-import re
+
 
 try:
     import src
@@ -22,7 +22,8 @@ except ImportError:
         sys.path.append(path)
     import src
 
-from src.pyquickhelper import fLOG, get_temp_folder
+from src.pyquickhelper.loghelper import fLOG
+from src.pyquickhelper.pycode import get_temp_folder
 from src.pyquickhelper.texthelper.html_helper import html_in_frame
 
 

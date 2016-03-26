@@ -5,7 +5,6 @@
 import sys
 import os
 import unittest
-import re
 
 
 try:
@@ -22,7 +21,8 @@ except ImportError:
     import src
 
 from src.pyquickhelper.ipythonhelper import read_nb
-from src.pyquickhelper import get_temp_folder, fLOG
+from src.pyquickhelper.pycode import get_temp_folder
+from src.pyquickhelper.loghelper import fLOG
 
 
 class TestNotebookRunnerOperation (unittest.TestCase):

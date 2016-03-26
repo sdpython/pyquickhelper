@@ -6,7 +6,6 @@
 import sys
 import os
 import unittest
-import warnings
 
 try:
     import src
@@ -21,7 +20,7 @@ except ImportError:
         sys.path.append(path)
     import src
 
-from src.pyquickhelper import fLOG, get_temp_folder
+from src.pyquickhelper.loghelper import fLOG
 from src.pyquickhelper.filehelper import walk
 
 

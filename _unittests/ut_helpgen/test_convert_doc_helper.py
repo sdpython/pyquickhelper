@@ -9,7 +9,6 @@ For some reason, the test fails if it is run after another one:
 import sys
 import os
 import unittest
-import shutil
 
 
 try:
@@ -27,7 +26,7 @@ except ImportError:
 
 from src.pyquickhelper.loghelper.flog import fLOG
 from src.pyquickhelper.helpgen.convert_doc_helper import rst2html, docstring2html
-from src.pyquickhelper import df2rst
+from src.pyquickhelper.pandashelper import df2rst
 
 from IPython.core.display import HTML
 import pandas

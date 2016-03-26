@@ -21,7 +21,8 @@ except ImportError:
         sys.path.append(path)
     import src
 
-from src.pyquickhelper import fLOG, get_temp_folder
+from src.pyquickhelper.loghelper import fLOG
+from src.pyquickhelper.pycode import get_temp_folder
 from src.pyquickhelper.filehelper import encrypt_stream, decrypt_stream
 
 if sys.version_info[0] == 2:
@@ -43,7 +44,7 @@ class TestEncryption(unittest.TestCase):
             return
 
         try:
-            import Cryptodome as Crypto
+            import Cryptodome as skip_
         except ImportError:
             warnings.warn("pycryptodome is not installed")
             return
@@ -82,7 +83,7 @@ class TestEncryption(unittest.TestCase):
             return
 
         try:
-            import Cryptodome as Crypto
+            import Cryptodome as skip__
         except ImportError:
             warnings.warn("pycryptodomex is not installed")
             return
@@ -121,12 +122,10 @@ class TestEncryption(unittest.TestCase):
             return
 
         try:
-            import Cryptodome as Crypto
+            import Cryptodome as skip__
         except ImportError:
             warnings.warn("pycryptodomex is not installed")
             return
-
-        temp = get_temp_folder(__file__, "temp_encryption2")
 
         infile = bytes([0, 1, 2, 3, 4])
         r = encrypt_stream(b"key0" * 4, infile)
@@ -151,12 +150,10 @@ class TestEncryption(unittest.TestCase):
             return
 
         try:
-            import Cryptodome as Cryptopto
+            import Cryptodome as skip___
         except ImportError:
             warnings.warn("pycryptodomex is not installed")
             return
-
-        temp = get_temp_folder(__file__, "temp_encryption3")
 
         infile = StreamIO(bytes([0, 1, 2, 3, 4]))
         outst = StreamIO()
@@ -185,8 +182,6 @@ class TestEncryption(unittest.TestCase):
 
         if sys.version_info[0] == 2:
             return
-
-        temp = get_temp_folder(__file__, "temp_encryption4")
 
         infile = StreamIO(bytes([0, 1, 2, 3, 4]))
         outst = StreamIO()
@@ -218,8 +213,6 @@ class TestEncryption(unittest.TestCase):
 
         if sys.version_info[0] == 2:
             return
-
-        temp = get_temp_folder(__file__, "temp_encryption5")
 
         infile = StreamIO(bytes(list(i % 255 for i in range(0, 10000))))
         outst = StreamIO()

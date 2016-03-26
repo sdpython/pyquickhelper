@@ -5,7 +5,6 @@
 import sys
 import os
 import unittest
-import re
 
 
 try:
@@ -21,7 +20,7 @@ except ImportError:
         sys.path.append(path)
     import src
 
-from src.pyquickhelper import fLOG
+from src.pyquickhelper.loghelper import fLOG
 from src.pyquickhelper import __file__ as PYQ
 from src.pyquickhelper.pycode.call_setup_hook import call_setup_hook, call_setup_hook_cmd
 

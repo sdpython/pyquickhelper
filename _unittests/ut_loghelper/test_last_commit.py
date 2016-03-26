@@ -43,15 +43,15 @@ class TestLastCommit (unittest.TestCase):
         path = os.path.abspath(os.path.dirname(__file__))
         fold = os.path.normpath(os.path.join(path, "..", ".."))
 
-        src = SourceRepository()
-        res = src.log(fold)
+        src_ = SourceRepository()
+        res = src_.log(fold)
         for r in res:
             fLOG(len(r), r[-2])
             for i, _ in enumerate(r):
                 fLOG(i, _)
             break
 
-        last = src.get_last_commit_hash()
+        last = src_.get_last_commit_hash()
         for c in last:
             if not ("0" <= c <= "9" or "a" <= c <= "z"):
                 raise Exception("last commit is not a hash:" + last + "-" + c)

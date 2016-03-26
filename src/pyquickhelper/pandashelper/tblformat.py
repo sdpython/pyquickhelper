@@ -37,7 +37,7 @@ def df2rst(df, add_line=True, align="l", column_size=None):
     length = [len(_) for _ in df.columns]
     for row in df.values:
         for i, v in enumerate(row):
-            length[i] = max(length[i], len(typstr(v)))
+            length[i] = max(length[i], len(typstr(v).strip()))
     if column_size is not None:
         if len(length) != len(column_size):
             raise ValueError("length and column_size should have the same size {0} != {1}".format(
@@ -79,7 +79,7 @@ def df2rst(df, add_line=True, align="l", column_size=None):
         else:
             s = typstr(s)
         i -= 2
-        s = align_string(s, align, i)
+        s = align_string(s.strip(), align, i)
         return s
 
     res.append("| %s |" % " | ".join(map(complete, zip(df.columns, length))))

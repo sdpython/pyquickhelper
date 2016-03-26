@@ -7,7 +7,7 @@
 import sys
 import os
 import unittest
-import re
+
 
 try:
     import src
@@ -22,7 +22,8 @@ except ImportError:
         sys.path.append(path)
     import src
 
-from src.pyquickhelper import fLOG, remove_diacritics
+from src.pyquickhelper.loghelper import fLOG
+from src.pyquickhelper.texthelper import remove_diacritics
 
 
 class TestDiacritic (unittest.TestCase):

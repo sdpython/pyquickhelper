@@ -6,7 +6,6 @@
 import sys
 import os
 import unittest
-import shutil
 
 
 try:
@@ -22,7 +21,7 @@ except ImportError:
         sys.path.append(path)
     import src
 
-from src.pyquickhelper import fLOG
+from src.pyquickhelper.loghelper import fLOG
 from src.pyquickhelper.helpgen.default_conf import set_sphinx_variables
 from src.pyquickhelper.pycode import is_travis_or_appveyor
 
@@ -50,7 +49,7 @@ class TestConfSphinx(unittest.TestCase):
         if sys.version_info[0] == 2:
             return
         assert os.path.exists(ff)
-        import sphinx_rtd_theme
+        import sphinx_rtd_theme as skip_
         d = {}
         try:
             set_sphinx_variables(

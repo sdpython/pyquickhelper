@@ -9,7 +9,7 @@ import copy
 import datetime
 import hashlib
 
-from ..loghelper.convert_helper import str_to_datetime
+from ..loghelper.convert_helper import str2datetime
 from ..loghelper.flog import fLOG, guess_machine_parameter
 
 if sys.version_info[0] == 2:
@@ -145,7 +145,7 @@ def interpret_parameter(ty, s):
             if s is None or len(s) == 0 or s == "None":
                 return None
             else:
-                return str_to_datetime(s)
+                return str2datetime(s)
         elif ty in [int, float]:
             return ty(s)
         elif ty == typstr:

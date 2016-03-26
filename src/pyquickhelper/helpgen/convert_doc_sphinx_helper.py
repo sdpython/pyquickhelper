@@ -51,8 +51,8 @@ class HTMLTranslatorWithCustomDirectives(HTMLTranslator):
         """
         HTMLTranslator.__init__(self, builder, *args, **kwds)
         for name, f1, f2 in builder._function_node:
-            setattr(self.__class__, "visit_" + name,  f1)
-            setattr(self.__class__, "depart_" + name,  f2)
+            setattr(self.__class__, "visit_" + name, f1)
+            setattr(self.__class__, "depart_" + name, f2)
 
     def visit_blogpost_node(self, node):
         """

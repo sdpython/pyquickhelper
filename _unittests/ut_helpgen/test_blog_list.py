@@ -6,7 +6,6 @@
 import sys
 import os
 import unittest
-import sphinx
 from docutils.parsers.rst import directives
 
 try:
@@ -23,15 +22,9 @@ except ImportError:
     import src
 
 from src.pyquickhelper.loghelper.flog import fLOG
-from src.pyquickhelper import get_temp_folder
-from src.pyquickhelper.helpgen.utils_sphinx_doc import private_migrating_doxygen_doc
-from src.pyquickhelper.helpgen import BlogPost, BlogPostList, BlogPostDirective, BlogPostDirectiveAgg
-from src.pyquickhelper.helpgen import rst2html
-from src.pyquickhelper.helpgen import RunPythonDirective, runpython_node
-from src.pyquickhelper.helpgen.sphinx_runpython_extension import visit_runpython_node, depart_runpython_node
+from src.pyquickhelper.helpgen import BlogPostList, BlogPostDirective
 
 if sys.version_info[0] == 2:
-    from codecs import open
     FileNotFoundError = Exception
 
 
@@ -54,7 +47,7 @@ class TestBlogList(unittest.TestCase):
             path, "..", "..", "_doc", "sphinxdoc", "source", "blog"))
         if not os.path.exists(blog):
             raise FileNotFoundError(blog)
-        bl = BlogPostList(blog, fLOG=fLOG)
+        BlogPostList(blog, fLOG=fLOG)
 
 if __name__ == "__main__":
     unittest.main()

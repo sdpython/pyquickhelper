@@ -6,7 +6,6 @@
 import sys
 import os
 import unittest
-import shutil
 
 
 try:
@@ -37,7 +36,7 @@ class TestHelperHelpGen(unittest.TestCase):
             OutputPrint=__name__ == "__main__")
         ie_layout_html()
 
-    def test_ie_layout_html(self):
+    def test_ie_layout_html2(self):
         fLOG(
             __file__,
             self._testMethodName,

@@ -22,7 +22,7 @@ except ImportError:
     import src
 
 from src.pyquickhelper.loghelper.flog import fLOG
-from src.pyquickhelper.helpgen.utils_sphinx_doc import private_migrating_doxygen_doc, migrating_doxygen_doc
+from src.pyquickhelper.helpgen.utils_sphinx_doc import migrating_doxygen_doc
 from src.pyquickhelper.helpgen.utils_sphinx_doc_helpers import process_var_tag
 
 if sys.version_info[0] == 2:
@@ -81,11 +81,11 @@ class TestDoxygen2rst (unittest.TestCase):
         exp = """
         This is the documentation for this class.
 
-        +------------+-------------------------------+
-        | attribute  | meaning                       |
-        +============+===============================+
-        | pa         | an example of an attribute.   |
-        +------------+-------------------------------+
+        +-----------+-----------------------------+
+        | attribute | meaning                     |
+        +===========+=============================+
+        | pa        | an example of an attribute. |
+        +-----------+-----------------------------+
 
         Inline :math:`x^2 + y + z`. Another equation to test:
 

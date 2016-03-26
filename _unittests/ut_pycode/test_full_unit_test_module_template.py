@@ -5,9 +5,6 @@
 import os
 import sys
 import unittest
-import shutil
-import warnings
-from docutils.parsers.rst import roles
 
 try:
     import src
@@ -23,11 +20,9 @@ except ImportError:
     import src
 
 from src.pyquickhelper.loghelper.flog import fLOG, download, noLOG
-from src.pyquickhelper import get_temp_folder, process_standard_options_for_setup
-from src.pyquickhelper.pycode import is_travis_or_appveyor
+from src.pyquickhelper.pycode import get_temp_folder, process_standard_options_for_setup, is_travis_or_appveyor
 
 if sys.version_info[0] == 2:
-    from codecs import open
     from StringIO import StringIO
 else:
     from io import StringIO

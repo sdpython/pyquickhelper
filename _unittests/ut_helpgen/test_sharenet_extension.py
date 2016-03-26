@@ -6,7 +6,6 @@
 import sys
 import os
 import unittest
-import sphinx
 import warnings
 from docutils.parsers.rst import directives
 
@@ -24,12 +23,9 @@ except ImportError:
     import src
 
 from src.pyquickhelper.loghelper.flog import fLOG
-from src.pyquickhelper import get_temp_folder
-from src.pyquickhelper.helpgen.utils_sphinx_doc import private_migrating_doxygen_doc
-from src.pyquickhelper.helpgen import BlogPost, BlogPostList, BlogPostDirective, BlogPostDirectiveAgg
+from src.pyquickhelper.pycode import get_temp_folder
 from src.pyquickhelper.helpgen import rst2html
-from src.pyquickhelper.helpgen import ShareNetDirective, sharenet_node
-from src.pyquickhelper.helpgen.sphinx_sharenet_extension import visit_sharenet_node, depart_sharenet_node
+from src.pyquickhelper.helpgen import ShareNetDirective
 
 if sys.version_info[0] == 2:
     from codecs import open
@@ -56,7 +52,7 @@ class TestShareNetExtension(unittest.TestCase):
                 "test_sharenet not run on Python 2.7")
             return
 
-        from docutils import nodes
+        from docutils import nodes as skip_
 
         content = """
                     test a directive
@@ -128,7 +124,7 @@ class TestShareNetExtension(unittest.TestCase):
                 "test_sharenet not run on Python 2.7")
             return
 
-        from docutils import nodes
+        from docutils import nodes as skip_
 
         content = """
                     test a directive

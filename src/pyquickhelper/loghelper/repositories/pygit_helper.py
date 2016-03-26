@@ -196,7 +196,7 @@ def get_repo_log(path=None, file_detail=False, commandline=True):
     More: `git pretty format <http://opensource.apple.com/source/Git/Git-19/src/git-htmldocs/pretty-formats.txt>`_
 
     .. versionchanged:: 1.0
-        For some searon, the call to @see fn str_to_datetime seemed to cause exception such as::
+        For some searon, the call to @see fn str2datetime seemed to cause exception such as::
 
             File "<frozen importlib._bootstrap>", line 2212, in _find_and_load_unlocked
             File "<frozen importlib._bootstrap>", line 321, in _call_with_frames_removed
@@ -259,7 +259,7 @@ def get_repo_log(path=None, file_detail=False, commandline=True):
         out = "<xml>\n%s\n</xml>" % out
         try:
             root = ET.fromstring(out)
-        except ET.ParseError as ee:
+        except ET.ParseError:
             # it might be due to character such as << >>
             lines = out.split("\n")
             out = []

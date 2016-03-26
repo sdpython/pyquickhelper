@@ -24,8 +24,8 @@ except ImportError:
         sys.path.append(path)
     import src
 
-from src.pyquickhelper import get_temp_folder, fLOG, FileTreeNode, TransferFTP, FolderTransferFTP
-from src.pyquickhelper.filehelper.ftp_transfer_mock import MockTransferFTP
+from src.pyquickhelper.loghelper import fLOG
+from src.pyquickhelper.filehelper import FileTreeNode
 from src.pyquickhelper.helpgen.utils_sphinx_doc import filecontent_to_rst, replace_relative_import
 
 

@@ -29,33 +29,30 @@ def yield_sphinx_only_markup_for_pipy(lines):
     substs = [
         # Selected Sphinx-only Roles.
         #
-        (r':abbr:`([^`]+)`',        r'\1'),
-        (r':ref:`([^`]+)`',         r'`\1`_'),
-        (r':term:`([^`]+)`',        r'**\1**'),
-        (r':dfn:`([^`]+)`',         r'**\1**'),
-        (r':(samp|guilabel|menuselection):`([^`]+)`',        r'``\2``'),
-
+        (':abbr:`([^`]+)`', '\\1'),
+        (':ref:`([^`]+)`', '`\\1`_'),
+        (':term:`([^`]+)`', '**\\1**'),
+        (':dfn:`([^`]+)`', '**\\1**'),
+        (':(samp|guilabel|menuselection):`([^`]+)`', '``\\2``'),
 
         # Sphinx-only roles:
         #        :foo:`bar`   --> foo(``bar``)
         #        :a:foo:`bar` XXX afoo(``bar``)
         #
         #(r'(:(\w+))?:(\w+):`([^`]*)`', r'\2\3(``\4``)'),
-        (r':(\w+):`([^`]*)`', r'\1(``\2``)'),
-
+        (':(\\w+):`([^`]*)`', '\\1(``\\2``)'),
 
         # Sphinx-only Directives.
         #
-        (r'\.\. doctest',           r'code-block'),
-        (r'\.\. plot::',            r'.. '),
-        (r'\.\. seealso',           r'info'),
-        (r'\.\. glossary',          r'rubric'),
-        (r'\.\. figure::',          r'.. '),
-
+        ('\\.\\. doctest', 'code-block'),
+        ('\\.\\. plot::', '.. '),
+        ('\\.\\. seealso', 'info'),
+        ('\\.\\. glossary', 'rubric'),
+        ('\\.\\. figure::', '.. '),
 
         # Other
         #
-        (r'\|version\|',              r'x.x.x'),
+        ('\\|version\\|', 'x.x.x'),
     ]
 
     regex_subs = [(re.compile(regex, re.IGNORECASE), sub)

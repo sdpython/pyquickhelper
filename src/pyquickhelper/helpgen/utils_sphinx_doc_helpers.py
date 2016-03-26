@@ -746,9 +746,7 @@ def process_var_tag(
                     val.append(list(a))
                 if len(val) > 0:
                     tbl = DataFrame(columns=header, data=val)
-                    align = ["1x"] * len(header)
-                    align[-1] = "3x"
-                    rst = df2rst(tbl, align=align)
+                    rst = df2rst(tbl)
                     if indent > 0:
                         rst = "\n".join((" " * indent) +
                                         _ for _ in rst.split("\n"))

@@ -6,7 +6,7 @@
 import sys
 import os
 import unittest
-import warnings
+
 
 try:
     import src
@@ -21,11 +21,8 @@ except ImportError:
         sys.path.append(path)
     import src
 
-from src.pyquickhelper import fLOG, get_temp_folder
+from src.pyquickhelper.loghelper import fLOG
 from src.pyquickhelper.filehelper import is_file_string
-
-if sys.version_info[0] == 2:
-    from codecs import open
 
 
 class TestFilename(unittest.TestCase):

@@ -17,11 +17,16 @@ import io
 import warnings
 import time
 
-from ..filehelper.synchelper import remove_folder
+from ..filehelper.synchelper import remove_folder, explore_folder_iterfile
 from ..loghelper.flog import run_cmd, noLOG
 from .call_setup_hook import call_setup_hook
 from .code_exceptions import CoverageException, SetupHookException
 from .coverage_helper import publish_coverage_on_codecov
+
+if sys.version_info[0] == 2:
+    from StringIO import StringIO
+else:
+    from io import StringIO
 
 
 __all__ = ["get_temp_folder", "main_wrapper_tests"]
@@ -957,3 +962,66 @@ def main_wrapper_tests(codefile,
         err = res.get("err", "")
         if len(err) > 0:
             raise Exception(err)
+
+
+def check_pep8(folder, ignore=('E501', 'E265'), skip=None,
+               complexity=-1, stop_after=100, fLOG=noLOG,
+               neg_filter=None):
+    """
+    Check if `PEP8 <https://www.python.org/dev/peps/pep-0008/>`_,
+    the function calls command `flake8 <https://flake8.readthedocs.org/en/latest/>`_
+    on a specific folder
+
+    @param      folder      folder to look into
+    @param      ignore      list of warnings to skip when raising an exception if
+                            PEP8 is not verified, see also
+                            `Error Codes <http://pep8.readthedocs.org/en/latest/intro.html#error-codes>`_
+    @param      complexity  see `check_file <http://flake8.readthedocs.org/en/latest/api.html#flake8.main.check_file>`_
+    @param      stop_after  stop after *stop_after* issues
+    @param      skip        skip a warning if a substring in this list is found
+    @param      neg_filter  skip files verifying this regular expressions
+    @param      fLOG        logging function
+    @return                 out
+    """
+    from flake8.main import check_file
+
+    def fkeep(s):
+        if len(s) == 0:
+            return False
+        if skip is not None:
+            for kip in skip:
+                if kip in s:
+                    return False
+        return True
+
+    if ignore is None:
+        ignore = tuple()
+    elif isinstance(ignore, list):
+        ignore = tuple(ignore)
+
+    regneg_filter = None if neg_filter is None else re.compile(neg_filter)
+
+    stdout = sys.stdout
+    buf = StringIO()
+    sys.stdout = buf
+    for file in explore_folder_iterfile(folder, pattern=".*[.]py$"):
+        if regneg_filter is not None:
+            if regneg_filter.search(file):
+                continue
+        if file.endswith("__init__.py"):
+            ig = ignore + ('F401',)
+        else:
+            ig = ignore
+        res = check_file(file, ignore=ig, complexity=complexity)
+        if res > 0:
+            lines = [_ for _ in buf.getvalue().split("\n") if fkeep(_)]
+            if len(lines) > stop_after:
+                raise Exception(
+                    "{0} lines\n{1}".format(len(lines), "\n".join(lines)))
+    sys.stdout = stdout
+
+    lines = [_ for _ in buf.getvalue().split("\n") if fkeep(_)]
+    if len(lines) > 0:
+        raise Exception(
+            "{0} lines\n{1}".format(len(lines), "\n".join(lines)))
+    return "\n".join(lines)

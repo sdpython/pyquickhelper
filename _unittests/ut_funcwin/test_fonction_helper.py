@@ -38,8 +38,8 @@ class TestFonctionHelper (unittest.TestCase):
             fLOG(k, res[k])
         for k in sorted(res["param"]):
             fLOG("--", k, res["param"][k], "-", res["types"][k])
-        if (res["types"]["file"] != str  # unicode#
-                ):
+        typstr = str  # unicode#
+        if res["types"]["file"] != typstr:
             raise Exception(
                 "type should be str not {0}\nres={1}".format(res["types"]["file"], res))
 
@@ -80,14 +80,14 @@ class TestFonctionHelper (unittest.TestCase):
             raise Exception(interpret_parameter(typstr, "er"))
         assert interpret_parameter(int, "0") == 0
         assert interpret_parameter(float, "1.3") == 1.3
-        assert interpret_parameter(bool, 1) == True
-        assert interpret_parameter(bool, "True") == True
-        assert interpret_parameter(bool, "false") == False
-        assert interpret_parameter(None, "None") == None
-        assert interpret_parameter(int, "None") == None
-        assert interpret_parameter(None, "none") == None
-        assert interpret_parameter(None, None) == None
-        assert interpret_parameter(datetime.datetime, "None") == None
+        assert interpret_parameter(bool, 1)
+        assert interpret_parameter(bool, "True")
+        assert not interpret_parameter(bool, "false")
+        assert interpret_parameter(None, "None") is None
+        assert interpret_parameter(int, "None") is None
+        assert interpret_parameter(None, "none") is None
+        assert interpret_parameter(None, None) is None
+        assert interpret_parameter(datetime.datetime, "None") is None
         r = interpret_parameter(datetime.datetime, "2015-02-03")
         if r != datetime.datetime(2015, 2, 3):
             raise Exception(r)

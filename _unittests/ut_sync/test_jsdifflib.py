@@ -35,7 +35,7 @@ class TestJsDiffLib(unittest.TestCase):
             OutputPrint=__name__ == "__main__")
 
         try:
-            import pymyinstall
+            import pymyinstall as skip_
         except ImportError:
             path = os.path.normpath(
                 os.path.abspath(
@@ -49,7 +49,7 @@ class TestJsDiffLib(unittest.TestCase):
             if path not in sys.path:
                 sys.path.append(path)
             try:
-                import pymyinstall
+                import pymyinstall as skip_
             except ImportError:
                 # we skip
                 warnings.warn("unable to test TestJsDiffLib.test_jsdifflib")
