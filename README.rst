@@ -128,3 +128,4 @@ Versions, Changes
       to disable it, set variable *sharepost* to None in sphinx configuration
     * **add:** add option *process* to sphinx custom directive *runpython*
     * **add:** add parameter *custom_style* to the default configuration
+    * **change:** change behavior of function *df2rst*, more simple

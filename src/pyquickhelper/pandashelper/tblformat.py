@@ -3,33 +3,17 @@
 @file
 @brief To format a pandas dataframe
 """
+import numpy
 
 
-def len_modified(s):
-    """
-    estimate the length of a string for rst (issues with utf8 characters)
-
-    @param      s       string
-    @return             length
-
-    The function is currently calling ``len`` but it returns some issues if the
-    encoding was not ``utf8``.
-    """
-    if not isinstance(s, str  # unicode#
-                      ):
-        raise TypeError("expect a string, got {0}".format(type(s)))
-    return len(s)
-
-
-def df2rst(df, add_line=True, align=None):
+def df2rst(df, add_line=True, align="l", column_size=None):
     """
     builds a string in RST format from a dataframe
 
     @param      df              dataframe
     @param      add_line        (bool) add a line separator between each row
-    @param      align           a string in [l,r,c,p{5cm}] or a list of the same,
-                                or something like ``['1x','2x','5x']`` to specify a ratio
-                                between column (alignment is left)
+    @param      align           ``r`` or ``l`` or ``c``
+    @param      column_size     something like ``[1,2,5]`` to multiply the column size
     @return                     string
 
     None values are replaced by empty string (4 spaces).
@@ -45,54 +29,25 @@ def df2rst(df, add_line=True, align=None):
     | body row 2             | ...        | ...      |          |
     +------------------------+------------+----------+----------+
     @endcode
+
+    .. versionchanged:: 1.3
+        Parameter *align* was changed, parameter *column_size* was added.
     """
-    length = [len_modified(_) for _ in df.columns]
+    typstr = str  # unicode#
+    length = [len(_) for _ in df.columns]
     for row in df.values:
         for i, v in enumerate(row):
-            length[i] = max(length[i], len_modified(str  # unicode#
-                                                    (v)))
-    typstr = str  # unicode#
-    if align is not None:
-        if isinstance(align, typstr):
-            align = [align] * len_modified(length)
+            length[i] = max(length[i], len(typstr(v)))
+    if column_size is not None:
+        if len(length) != len(column_size):
+            raise ValueError("length and column_size should have the same size {0} != {1}".format(
+                len(length), len(column_size)))
+        for i in range(len(length)):
+            if not isinstance(column_size[i], int):
+                raise TypeError("column_size[{0}] is not an integer".format(i))
+            length[i] *= column_size[i]
 
-        if isinstance(align, list):
-            if len(align) != len(length):
-                raise ValueError(
-                    "align has not a good length: {0} and {1}".format(typstr(align), typstr(df.columns)))
-            ratio = len([_ for _ in align if "x" in _]) > 0
-            if ratio:
-                head = ""
-                ratio = []
-                for _ in align:
-                    try:
-                        i = int(_.strip(" x"))
-                        ratio.append(i)
-                    except:
-                        raise ValueError(
-                            "unable to parse {0} in {1}".format(_, typstr(align)))
-
-                mini = max(length)
-                length2 = [mini * r for r in ratio]
-
-                # we reduce
-                for i in range(8, 1, -1):
-                    length3 = [k // i for k in length2]
-                    notgood = [k < l for k, l in zip(length3, length)]
-                    notgood = [_ for _ in notgood if _]
-                    if not notgood:
-                        length2 = length3
-                        break
-                length = length2
-            else:
-                head = ".. tabularcolumns:: " + \
-                    "|%s|" % "|".join(align) + "\n\n"
-        else:
-            raise TypeError(typstr(type(align)))
-    else:
-        head = ""
-
-    ic = 3
+    ic = 2
     length = [_ + ic for _ in length]
     line = ["-" * l for l in length]
     lineb = ["=" * l for l in length]
@@ -100,14 +55,31 @@ def df2rst(df, add_line=True, align=None):
     slineb = "+%s+" % ("+".join(lineb))
     res = [sline]
 
+    def align_string(s, align, length):
+        if len(s) < length:
+            if align == "l":
+                return s + " " * (length - len(s))
+            elif align == "r":
+                return " " * (length - len(s)) + s
+            elif align == "c":
+                m = (length - len(s)) // 2
+                return " " * m + s + " " * (length - m - len(s))
+            else:
+                raise ValueError(
+                    "align should be 'l', 'r', 'c' not '{0}'".format(align))
+        else:
+            return s
+
     def complete(cool):
         s, i = cool
         if s is None:
-            s = "    "
-        s = typstr(s) + " "
+            s = " " * 4
+        if isinstance(s, float) and numpy.isnan(s):
+            s = ""
+        else:
+            s = typstr(s)
         i -= 2
-        if len_modified(s) < i:
-            s += " " * (i - len_modified(s))
+        s = align_string(s, align, i)
         return s
 
     res.append("| %s |" % " | ".join(map(complete, zip(df.columns, length))))
@@ -121,7 +93,7 @@ def df2rst(df, add_line=True, align=None):
     res.append(sline)
     table = "\n".join(res) + "\n"
 
-    return head + table
+    return table
 
 
 def df2html(self, class_table=None, class_td=None, class_tr=None,
