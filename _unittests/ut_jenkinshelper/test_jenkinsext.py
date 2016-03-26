@@ -293,7 +293,8 @@ class TestJenkinsExt(unittest.TestCase):
 
             if "pymyinstall" in job and "[27]" in job:
                 if sys.version_info[:2] == (3, 5):
-                    s1 = '''%jenkinspythonexe% -u -c "import pip;pip.main('install --no-cache-dir --index http://localhost:8067/simple/ pyquickhelper'.split())"'''
+                    s1 = '''%jenkinspythonexe% -u -c "import pip;pip.main('install --no-cache-dir''' + \
+                         ''' --index http://localhost:8067/simple/ pyquickhelper'.split())"'''
                     s2 = '''%jenkinspythonexe% -u -c "import pip;pip.main('install qgrid'.split())"'''
                     if s1 not in conf:
                         raise Exception(conf)

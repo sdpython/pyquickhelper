@@ -24,7 +24,8 @@ except ImportError:
         sys.path.append(path)
     import src
 
-from src.pyquickhelper.loghelper.flog import fLOG, run_cmd, load_content_file_with_encoding, run_script, get_prefix, removedirs, unzip, guess_type_list, GetLogFile, get_relative_path
+from src.pyquickhelper.loghelper.flog import fLOG, run_cmd, load_content_file_with_encoding, run_script, get_prefix
+from src.pyquickhelper.loghelper.flog import removedirs, unzip, guess_type_list, GetLogFile, get_relative_path
 
 
 class TestLog (unittest.TestCase):

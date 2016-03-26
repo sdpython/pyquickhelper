@@ -983,23 +983,24 @@ def _extended_refectoring(filename, line):
 
 def check_pep8(folder, ignore=('E501', 'E265'), skip=None,
                complexity=-1, stop_after=100, fLOG=noLOG,
-               neg_filter=None, extended=None):
+               neg_filter=None, extended=None, max_line_length=162):
     """
     Check if `PEP8 <https://www.python.org/dev/peps/pep-0008/>`_,
     the function calls command `flake8 <https://flake8.readthedocs.org/en/latest/>`_
     on a specific folder
 
-    @param      folder      folder to look into
-    @param      ignore      list of warnings to skip when raising an exception if
-                            PEP8 is not verified, see also
-                            `Error Codes <http://pep8.readthedocs.org/en/latest/intro.html#error-codes>`_
-    @param      complexity  see `check_file <http://flake8.readthedocs.org/en/latest/api.html#flake8.main.check_file>`_
-    @param      stop_after  stop after *stop_after* issues
-    @param      skip        skip a warning if a substring in this list is found
-    @param      neg_filter  skip files verifying this regular expressions
-    @param      extended    list of tuple (name, function), see below
-    @param      fLOG        logging function
-    @return                 out
+    @param      folder              folder to look into
+    @param      ignore              list of warnings to skip when raising an exception if
+                                    PEP8 is not verified, see also
+                                    `Error Codes <http://pep8.readthedocs.org/en/latest/intro.html#error-codes>`_
+    @param      complexity          see `check_file <http://flake8.readthedocs.org/en/latest/api.html#flake8.main.check_file>`_
+    @param      stop_after          stop after *stop_after* issues
+    @param      skip                skip a warning if a substring in this list is found
+    @param      neg_filter          skip files verifying this regular expressions
+    @param      extended            list of tuple (name, function), see below
+    @param      max_line_length     maximum allowed length of a line of code
+    @param      fLOG                logging function
+    @return                         out
 
     Functions mentioned in *extended* takes two parameters (file name and line)
     and they returned None or an error message or a tuple (position in the line, error message).
@@ -1028,6 +1029,23 @@ def check_pep8(folder, ignore=('E501', 'E265'), skip=None,
                 if kip in s:
                     return False
         return True
+
+    if max_line_length is not None:
+        if extended is None:
+            extended = []
+        else:
+            extended = extended.copy()
+
+        def check_lenght_line(fname, line):
+            if len(line) > max_line_length and not line.lstrip().startswith('#'):
+                if ">`_" in line or ":math:`" in line or "ERROR: " in line:
+                    # we skip line containing url or comments
+                    pass
+                else:
+                    return "line too long {0} > {1}".format(len(line), max_line_length)
+            return None
+
+        extended.append(("ECL1", check_lenght_line))
 
     if ignore is None:
         ignore = tuple()

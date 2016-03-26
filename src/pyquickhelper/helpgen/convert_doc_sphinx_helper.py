@@ -177,7 +177,8 @@ class _CustomSphinx(Sphinx):
         '''
         constructor
         '''
-        from sphinx.application import BUILTIN_DOMAINS, BUILTIN_BUILDERS, events, bold, Tags, Config, CONFIG_FILENAME, ConfigError, VersionRequirementError
+        from sphinx.application import BUILTIN_DOMAINS, BUILTIN_BUILDERS, events, bold, Tags
+        from sphinx.application import Config, CONFIG_FILENAME, ConfigError, VersionRequirementError
         update_docutils_languages()
         self.verbosity = verbosity
         self.next_listener_id = 0

@@ -84,7 +84,9 @@ def private_script_replacements(script, module, requirements, port, raise_except
         ERROR: The executable c:\\jenkins\\pymy\\py35_pyquickhelper\\_virtualenv\\pyquickhelper_virpy35_22316CE015_22316CE015\\Scripts\\python.exe is not functioning
         ERROR: It thinks sys.prefix is 'c:\\\\jenkins\\\\pymy\\\\py35_pyquickhelper' (should be 'c:\\\\jenkins\\\\pymy\\\\py35_pyquickhelper\\\\_virtualenv\\\\pyquickhelper_virpy35_22316ce015_22316ce015')
         ERROR: virtualenv is not compatible with this system or executable
-        Note: some Windows users have reported this error when they installed Python for "Only this user" or have multiple versions of Python installed. Copying the appropriate PythonXX.dll to the virtualenv Scripts/ directory may fix this problem.
+        Note: some Windows users have reported this error when they installed Python for
+              "Only this user" or have multiple versions of Python installed. Copying the appropriate PythonXX.dll
+              to the virtualenv Scripts/ directory may fix this problem.
 
     The function replaces ``rem _PATH_VIRTUAL_ENV_`` with an instruction to copy these DLLs.
 

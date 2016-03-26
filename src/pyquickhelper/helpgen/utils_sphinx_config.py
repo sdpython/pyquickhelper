@@ -174,12 +174,14 @@ def NbImage(name, repository=None, force_github=False, width=None):
         pos = paths.index("notebooks") - 1
     except IndexError as e:
         # we are looking for the right path
-        raise IndexError(
-            "the image is not retrieve from a notebook from a folder ``_docs/notebooks`` or you changed the current folder:\n{0}".format(local)) from e
+        mes = "the image is not retrieve from a notebook from a folder ``_docs/notebooks``" + \
+              " or you changed the current folder:\n{0}"
+        raise IndexError(mes.format(local)) from e
     except ValueError as ee:
         # we are looking for the right path
-        raise IndexError(
-            "the image is not retrieve from a notebook from a folder ``_docs/notebooks`` or you changed the current folder:\n{0}".format(local)) from ee
+        mes = "the image is not retrieve from a notebook from a folder ``_docs/notebooks`` " + \
+              "or you changed the current folder:\n{0}"
+        raise IndexError(mes.format(local)) from ee
 
     if repository is None:
         module = paths[pos - 1]

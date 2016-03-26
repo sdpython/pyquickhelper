@@ -202,7 +202,8 @@ def depart_sharenet_node(self, node):
             urls = dict(facebook="https://www.facebook.com/sharer/sharer.php?u=",
                         twitter="https://twitter.com/home?status=",
                         linkedin="https://www.linkedin.com/shareArticle?mini=true&amp;title=&amp;summary=&amp;source=&amp;url=")
-            link = """<a href="#" onclick="share_url('{0}');return false;"><canvas height="{2}" id="canvas-{1}" width="{2}"/></a><script>share_icon('canvas-{1}', '{1}');</script>"""
+            link = """<a href="#" onclick="share_url('{0}');return false;"><canvas height="{2}" id="canvas-{1}" width="{2}"/>""" + \
+                   """</a><script>share_icon('canvas-{1}', '{1}');</script>"""
 
             rows = []
             for key in networks:

@@ -282,12 +282,15 @@ class JenkinsExt(jenkins.Jenkins):
             elif "[local_pypi]" in spl:
                 cmd = "if not exist ..\\local_pypi mkdir ..\\local_pypi"
                 cmd += "\nif not exist ..\\..\\local_pypi\\local_pypi_server mkdir ..\\..\\local_pypi\\local_pypi_server"
-                cmd += "\necho __ENGINE__\\..\\Scripts\\pypi-server.exe -u -p __PORT__ --disable-fallback ..\\..\\local_pypi\\local_pypi_server > ..\\..\\local_pypi\\local_pypi_server\\start_local_pypi.bat"
+                cmd += "\necho __ENGINE__\\..\\Scripts\\pypi-server.exe -u -p __PORT__ --disable-fallback "
+                cmd += "..\\..\\local_pypi\\local_pypi_server > ..\\..\\local_pypi\\local_pypi_server\\start_local_pypi.bat"
                 cmd = cmd.replace("__PORT__", str(self.pypi_port))
             elif "[update]" in spl:
-                cmd = "__ENGINE__\\python -u -c \"from pymyinstall.packaged import update_all;update_all(temp_folder='build/update_modules', verbose=True, source='2')\""
+                cmd = "__ENGINE__\\python -u -c \"from pymyinstall.packaged import update_all;update_all(temp_folder='build/update_modules', "
+                cmd += "verbose=True, source='2')\""
             elif "[install]" in spl:
-                cmd = "__ENGINE__\\python -u -c \"from pymyinstall.packaged import install_all;install_all(temp_folder='build/update_modules', verbose=True, source='2')\""
+                cmd = "__ENGINE__\\python -u -c \"from pymyinstall.packaged import install_all;install_all(temp_folder='build/update_modules', "
+                cmd += "verbose=True, source='2')\""
             else:
                 raise JenkinsExtException("cannot interpret job: " + job)
 

@@ -51,8 +51,10 @@ class TestSphinxDoc2 (unittest.TestCase):
             rootrep = ("pyquickhelper.dist_module27.src.pyquickhelper.", "")
 
         store_obj = {}
+
         def softfile(f):
             return False
+
         rst = utils_sphinx_doc.apply_modification_template(rootm,
                                                            store_obj,
                                                            utils_sphinx_doc.add_file_rst_template,
