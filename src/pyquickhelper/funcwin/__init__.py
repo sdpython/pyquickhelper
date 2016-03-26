@@ -1,6 +1,11 @@
 """
-shortcuts
+@file
+@brief shortcuts to funcwin
 """
+from .frame_params import open_window_params
+from .frame_function import open_window_function
+from .main_window import main_loop_functions
+from .patchs_windows import fix_python35_dll
 
 
 def check_icon():
@@ -20,7 +25,3 @@ def check_icon():
             raise FileNotFoundError(icon)
     return True
 
-from .frame_params import open_window_params
-from .frame_function import open_window_function
-from .main_window import main_loop_functions
-from .patchs_windows import fix_python35_dll

@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 """
 @file
-
 @brief Series of functions related to folder, explore, synchronize, remove (recursively).
 """
 
@@ -180,12 +179,19 @@ def synchronize_folder(p1,
         with open(file_date, "w", encoding="utf8") as f:
             f.write("")
 
+    def mytrue(v):
+        return True
+
+    typstr = str  # unicode#
     if filter is None:
-        tfilter = lambda v: True
-    elif isinstance(filter, str  # unicode#
-                    ):
+        tfilter = mytrue
+    elif isinstance(filter, typstr):
         exp = re.compile(filter)
-        tfilter = lambda be: (True if exp.search(be) else False)
+
+        def regtrue(be):
+            return (True if exp.search(be) else False)
+
+        tfilter = regtrue
     else:
         tfilter = filter
 

@@ -5,6 +5,9 @@
 """
 import sys
 import zipfile
+from ..loghelper.url_helper import get_url_content
+from ..filehelper import read_content_ufs
+
 
 if sys.version_info[0] == 2:
     from StringIO import StringIO
@@ -12,9 +15,6 @@ if sys.version_info[0] == 2:
     FileNotFoundError = Exception
 else:
     from io import StringIO, BytesIO
-
-from ..loghelper.url_helper import get_url_content
-from ..filehelper import read_content_ufs
 
 
 def read_url(url, **args):

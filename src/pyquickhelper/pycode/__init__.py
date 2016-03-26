@@ -2,7 +2,6 @@
 @file
 @brief shortcuts fror pycode
 """
-
 from .ci_helper import is_travis_or_appveyor
 from .code_helper import remove_extra_spaces_and_pep8, remove_extra_spaces_folder
 from .coverage_helper import publish_coverage_on_codecov
