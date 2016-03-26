@@ -404,6 +404,7 @@ def walk(top, onerror=None, followlinks=False, neg_filter=None):
     @param      onerror         see `walk <https://docs.python.org/3.5/library/os.html#os.walk>`_
     @param      followlinks     see `walk <https://docs.python.org/3.5/library/os.html#os.walk>`_
     @param      neg_filter      filtering, a string, every folder verifying the filter will be excluded
+                                (file pattern, not a regular expression pattern)
     @return                     see `walk <https://docs.python.org/3.5/library/os.html#os.walk>`_
     """
     if neg_filter is None:
