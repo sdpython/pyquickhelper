@@ -964,9 +964,26 @@ def main_wrapper_tests(codefile,
             raise Exception(err)
 
 
+def _extended_refectoring(filename, line):
+    """
+    Private function to do extra checkings when refactoring pyquickhelper
+
+    @param      filename        filename
+    @param      line            line
+    @return                     None or error message
+    """
+    if "from pyquickhelper import fLOG" in line:
+        if "test_flake8" not in filename:
+            return "issue with fLOG"
+    if "from pyquickhelper import get_temp_folder" in line:
+        if "test_flake8" not in filename:
+            return "issue with get_temp_folder"
+    return None
+
+
 def check_pep8(folder, ignore=('E501', 'E265'), skip=None,
                complexity=-1, stop_after=100, fLOG=noLOG,
-               neg_filter=None):
+               neg_filter=None, extended=None):
     """
     Check if `PEP8 <https://www.python.org/dev/peps/pep-0008/>`_,
     the function calls command `flake8 <https://flake8.readthedocs.org/en/latest/>`_
@@ -980,10 +997,27 @@ def check_pep8(folder, ignore=('E501', 'E265'), skip=None,
     @param      stop_after  stop after *stop_after* issues
     @param      skip        skip a warning if a substring in this list is found
     @param      neg_filter  skip files verifying this regular expressions
+    @param      extended    list of tuple (name, function), see below
     @param      fLOG        logging function
     @return                 out
+
+    Functions mentioned in *extended* takes two parameters (file name and line)
+    and they returned None or an error message or a tuple (position in the line, error message).
+    When the return is not empty, a warning will be added to the ones
+    printed by flake8.
     """
     from flake8.main import check_file
+    
+    def extended_checkings(fname, content, buf, extended):
+        for i, line in enumerate(content):
+            for name, fu in extended:
+                r = fu(fname, line)
+                if isinstance(r, tuple):
+                    c, r = r
+                else:
+                    c = 1
+                if r is not None:
+                    buf.write("{0}:{1}:{4} F{2} {3}\n".format(fname, i+1, name,r, c))
 
     def fkeep(s):
         if len(s) == 0:
@@ -1013,6 +1047,10 @@ def check_pep8(folder, ignore=('E501', 'E265'), skip=None,
         else:
             ig = ignore
         res = check_file(file, ignore=ig, complexity=complexity)
+        if extended is not None:
+            with open(file, "r", errors="ignore") as f:
+                content = f.readlines()
+            extended_checkings(file, content, buf, extended)
         if res > 0:
             lines = [_ for _ in buf.getvalue().split("\n") if fkeep(_)]
             if len(lines) > stop_after:
