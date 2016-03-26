@@ -24,4 +24,3 @@ def check_icon():
         else:
             raise FileNotFoundError(icon)
     return True
-

@@ -206,7 +206,11 @@ def synchronize_folder(p1,
     if isinstance(filter_copy, str  # unicode#
                   ):
         rg = re.compile(filter_copy)
-        filter_copy = lambda f, ex=rg: ex.search(f) is not None
+
+        def regtrue2(f):
+            return rg.search(f) is not None
+
+        filter_copy = regtrue2
 
     f1 = p1
     f2 = p2
