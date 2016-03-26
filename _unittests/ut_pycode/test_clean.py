@@ -23,6 +23,7 @@ except ImportError:
 from src.pyquickhelper.loghelper import fLOG
 from src.pyquickhelper.pycode.code_helper import remove_extra_spaces_and_pep8, remove_extra_spaces_folder
 from src.pyquickhelper.pycode.clean_helper import clean_exts
+from src.pyquickhelper.pycode.ci_helper import is_travis_or_appveyor
 
 
 class TestClean(unittest.TestCase):
@@ -32,6 +33,9 @@ class TestClean(unittest.TestCase):
             __file__,
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
+
+        if is_travis_or_appveyor():
+            return
 
         this = os.path.abspath(__file__.replace(".pyc", ".py"))
         diff = remove_extra_spaces_and_pep8(this)
