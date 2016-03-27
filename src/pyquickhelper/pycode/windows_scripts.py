@@ -77,10 +77,9 @@ rem )
 @echo run27: start the loop
 
 rem we are in a virtual environnement
-@echo if not exist %pythonexe27%\..\Scripts set pythonexe27=%pythonexe27%\..\..\Scripts 
-if not exist %pythonexe27%\..\Scripts set pythonexe27=%pythonexe27%\..\..\Scripts 
-@echo %pythonexe27%
-dir %pythonexe27%
+@echo if not exist %pythonexe27%\..\Scripts set pythonexe27=%pythonexe27%\..\..\Scripts
+if not exist %pythonexe27%\..\Scripts set pythonexe27=%pythonexe27%\..\..\Scripts
+@echo looking for nosetests.exe in %pythonexe27%
 
 __LOOP_UNITTEST_FOLDERS__
 
@@ -473,7 +472,10 @@ set jenkinspythonpip=%virtual_env_py%_conda27vir\\Scripts\\pip
 """ + _second_part).replace("PY??", _sversion())
 
 windows_jenkins_unittest27_def = ("""
-SET ROOT_VIRTUAL_ENV=%CURRENT_THIS%_virtualenv
+set CURRENT_PATH=%WORKSPACE%
+@echo ~SET CURRENT_PATH=%WORKSPACE%
+set ROOT_VIRTUAL_ENV=%CURRENT_PATH%\\_virtualenv27
+@echo set ROOT_VIRTUAL_ENV=%CURRENT_PATH%\\_virtualenv27
 if not exist %ROOT_VIRTUAL_ENV% mkdir %ROOT_VIRTUAL_ENV%
 set virtual_env_py=%ROOT_VIRTUAL_ENV%\\__MODULE__
 @echo ~SET virtual_env_py=%ROOT_VIRTUAL_ENV%\\__MODULE__
