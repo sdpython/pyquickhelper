@@ -20,7 +20,7 @@ windows_error = "if %errorlevel% neq 0 exit /b %errorlevel%"
 #################
 windows_prefix = """
 @echo off
-@echo SCRIPT: windows_prefix
+@echo SCRIPT: windows_prefix 
 if "%1"=="" goto default_value_python:
 if "%1"=="default" goto default_value_python:
 set pythonexe=%1
@@ -41,7 +41,7 @@ set current=%~dp0
 #################
 windows_prefix_27 = """
 @echo off
-@echo SCRIPT: windows_prefix_27
+@echo SCRIPT: windows_prefix_27 
 if "%1"=="" goto default_value_python:
 if "%1"=="default" goto default_value_python:
 set pythonexe27=%1
@@ -77,8 +77,8 @@ rem )
 @echo run27: start the loop
 
 rem we are in a virtual environnement
-@eecho if not exist %pythonexe27%\..\Scripts set pythonexe27=%pythonexe27%\..\..\Scripts
-if not exist %pythonexe27%\..\Scripts set pythonexe27=%pythonexe27%\..\..\Scripts
+@echo if not exist %pythonexe27%\..\Scripts set pythonexe27=%pythonexe27%\..\..\Scripts 
+if not exist %pythonexe27%\..\Scripts set pythonexe27=%pythonexe27%\..\..\Scripts 
 
 __LOOP_UNITTEST_FOLDERS__
 
