@@ -79,6 +79,8 @@ rem )
 rem we are in a virtual environnement
 @echo if not exist %pythonexe27%\..\Scripts set pythonexe27=%pythonexe27%\..\..\Scripts 
 if not exist %pythonexe27%\..\Scripts set pythonexe27=%pythonexe27%\..\..\Scripts 
+@echo %pythonexe27%
+dir %pythonexe27%
 
 __LOOP_UNITTEST_FOLDERS__
 
