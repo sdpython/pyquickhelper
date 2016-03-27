@@ -2,6 +2,7 @@ Cython
 Flask
 Flask-SQLAlchemy
 Jinja2
+mako
 Markdown
 MarkupSafe
 PyYAML
