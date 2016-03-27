@@ -12,7 +12,8 @@ import socket
 import hashlib
 import re
 from ..loghelper.flog import noLOG
-from ..pycode.windows_scripts import windows_jenkins, windows_jenkins_27, windows_jenkins_any
+from ..pycode.windows_scripts import windows_jenkins, windows_jenkins_any
+from ..pycode.windows_scripts import windows_jenkins_27_conda, windows_jenkins_27_def
 from ..pycode.build_helper import private_script_replacements
 from .jenkins_exceptions import JenkinsExtException, JenkinsJobException
 from .jenkins_server_template import _config_job, _trigger_up, _trigger_time, _git_repo, _task_batch
@@ -37,10 +38,12 @@ def _modified_windows_jenkins(requirements_local, requirements_pypi, module="__M
         default_engine_paths=_default_engine_paths)
 
 
-def _modified_windows_jenkins_27(requirements_local, requirements_pypi, module="__MODULE__", port="__PORT__"):
+def _modified_windows_jenkins_27(requirements_local, requirements_pypi, module="__MODULE__",
+                                 port="__PORT__", anaconda=True):
     return private_script_replacements(
-        windows_jenkins_27, module, (requirements_local,
-                                     requirements_pypi), port, raise_exception=False,
+        windows_jenkins_27_conda if anaconda else windows_jenkins_27_def,
+        module, (requirements_local,
+                 requirements_pypi), port, raise_exception=False,
         default_engine_paths=_default_engine_paths)
 
 
@@ -260,7 +263,9 @@ class JenkinsExt(jenkins.Jenkins):
             raise JenkinsJobException("unable to find engine in job {}, available: {}".format(
                 job, ", ".join(self.engines.keys())))
         else:
-            # self.fLOG("    {}={}   ---  {}                   --- {}".format(key, res, job, ",".join(self.engines.keys())))
+            if "[27]" in job and "python34" in res.lower():
+                raise ValueError("Python mismatch in version:\nJOB = {0}\nRES = {1}\nENGINES\n{2}".format(job, res,
+                                                                                                          "\n".join("  {0}={1}".format(k, v) for k, v in sorted(self.engines.items()))))
             return (res, key) if return_key else res
 
     def get_cmd_standalone(self, job):
@@ -479,7 +484,7 @@ class JenkinsExt(jenkins.Jenkins):
                         "__COMMAND__", "unittests_SKIP")
                 elif "[27]" in spl:
                     cmd = _modified_windows_jenkins_27(
-                        requirements_local, requirements_pypi)
+                        requirements_local, requirements_pypi, anaconda=" [anaconda" in job)
                     if not isinstance(cmd, list):
                         cmd = [cmd]
                     else:
@@ -522,9 +527,12 @@ class JenkinsExt(jenkins.Jenkins):
                 cmds = cmd if isinstance(cmd, list) else [cmd]
                 res = []
                 for cmd in cmds:
-                    cmd = replacements(cmd, engine, python,
-                                       namee + "_" + job_hash, module_name)
-                    res.append(cmd)
+                    cmdn = replacements(cmd, engine, python,
+                                        namee + "_" + job_hash, module_name)
+                    if "run27" in cmdn and ("Python34" in cmdn or "Python35" in cmdn):
+                        raise ValueError(
+                            "Python version mismatch\nENGINE\n{2}\n----BEFORE\n{0}\n-----\nAFTER\n-----\n{1}".format(cmd, cmdn, engine))
+                    res.append(cmdn)
 
                 return res
             else:
