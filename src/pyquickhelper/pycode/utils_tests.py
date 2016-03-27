@@ -975,9 +975,12 @@ def _extended_refectoring(filename, line):
     if "from pyquickhelper import fLOG" in line:
         if "test_flake8" not in filename:
             return "issue with fLOG"
-    if "from pyquickhelper import nofLOG" in line:
+    if "from pyquickhelper import noLOG" in line:
         if "test_flake8" not in filename:
-            return "issue with nofLOG"
+            return "issue with noLOG"
+    if "from pyquickhelper import run_cmd" in line:
+        if "test_flake8" not in filename:
+            return "issue with run_cmd"
     if "from pyquickhelper import get_temp_folder" in line:
         if "test_flake8" not in filename:
             return "issue with get_temp_folder"
