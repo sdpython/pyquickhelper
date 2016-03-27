@@ -20,7 +20,7 @@ windows_error = "if %errorlevel% neq 0 exit /b %errorlevel%"
 #################
 windows_prefix = """
 @echo off
-@echo SCRIPT: windows_prefix 
+@echo SCRIPT: windows_prefix
 if "%1"=="" goto default_value_python:
 if "%1"=="default" goto default_value_python:
 set pythonexe=%1
@@ -41,7 +41,7 @@ set current=%~dp0
 #################
 windows_prefix_27 = """
 @echo off
-@echo SCRIPT: windows_prefix_27 
+@echo SCRIPT: windows_prefix_27
 if "%1"=="" goto default_value_python:
 if "%1"=="default" goto default_value_python:
 set pythonexe27=%1
