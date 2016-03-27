@@ -20,6 +20,7 @@ from .helpgen_exceptions import NotebookConvertError
 
 if sys.version_info[0] == 2:
     from codecs import open
+    FileNotFoundError = Exception
 
 
 template_examples = """
