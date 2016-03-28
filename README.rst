@@ -86,6 +86,7 @@ Versions, Changes
     * **change:** remove all shortcuts in main ``__init__.py``
     * **change:** rename *str_to_datetime* into *str2datetime* and *datetime_to_str* into *datetime2str** 
     * **fix:** fix function *docstring2html*, does not crash when the documentation is None
+    * **fix:** fix class _CustomSphinx for Sphinx 1.4
 
 * **1.3.1110 - 2016/03/08**
     * **commit:** 2ab88f6545ab139c17562c1b995404e6a2d0714d
