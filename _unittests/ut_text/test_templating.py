@@ -23,7 +23,7 @@ except ImportError:
     import src
 
 from src.pyquickhelper.loghelper import fLOG
-from src.pyquickhelper.texthelper.templating import apply_template
+from src.pyquickhelper.texthelper.templating import apply_template, CustomTemplateException
 
 
 class TestTemplating(unittest.TestCase):
@@ -48,6 +48,32 @@ class TestTemplating(unittest.TestCase):
         self.assertEqual(res.replace(" ", "").replace("\n", ""),
                          exp.replace(" ", "").replace("\n", ""))
 
+    def test_mako_exceptions(self):
+        fLOG(
+            __file__,
+            self._testMethodName,
+            OutputPrint=__name__ == "__main__")
+        tmpl = """
+
+            % for i in range(0, len(l)):
+                print(${l[i]})
+            % end for
+        """
+        exp = """
+                print(0)
+                print(2)
+            """
+        try:
+            res = apply_template(tmpl, dict(l=[0, 2]))
+            assert False
+        except CustomTemplateException as e:
+            assert "0005" in str(e)
+            return
+        assert False
+        fLOG(res)
+        self.assertEqual(res.replace(" ", "").replace("\n", ""),
+                         exp.replace(" ", "").replace("\n", ""))
+
     def test_jinja2(self):
         fLOG(
             __file__,
@@ -64,6 +90,33 @@ class TestTemplating(unittest.TestCase):
                 print(2)
             """
         res = apply_template(tmpl, dict(l=[0, 2], len=len), engine="jinja2")
+        fLOG(res)
+        self.assertEqual(res.replace(" ", "").replace("\n", ""),
+                         exp.replace(" ", "").replace("\n", ""))
+
+    def test_jinja2_exception(self):
+        fLOG(
+            __file__,
+            self._testMethodName,
+            OutputPrint=__name__ == "__main__")
+        tmpl = """
+
+            {% for i in range(0, len(l)) %}
+                print({{l[i]}})
+            {% end for %}
+        """
+        exp = """
+                print(0)
+                print(2)
+            """
+        try:
+            res = apply_template(tmpl, dict(
+                l=[0, 2], len=len), engine="jinja2")
+            assert False
+        except CustomTemplateException as e:
+            assert "0005" in str(e)
+            return
+        assert False
         fLOG(res)
         self.assertEqual(res.replace(" ", "").replace("\n", ""),
                          exp.replace(" ", "").replace("\n", ""))

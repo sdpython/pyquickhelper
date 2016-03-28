@@ -264,8 +264,10 @@ class JenkinsExt(jenkins.Jenkins):
                 job, ", ".join(self.engines.keys())))
         else:
             if "[27]" in job and "python34" in res.lower():
-                mes = "\n".join("  {0}={1}".format(k, v) for k, v in sorted(self.engines.items()))
-                raise ValueError("Python mismatch in version:\nJOB = {0}\nRES = {1}\nENGINES\n{2}".format(job, res, mes))
+                mes = "\n".join("  {0}={1}".format(k, v)
+                                for k, v in sorted(self.engines.items()))
+                raise ValueError(
+                    "Python mismatch in version:\nJOB = {0}\nRES = {1}\nENGINES\n{2}".format(job, res, mes))
             return (res, key) if return_key else res
 
     def get_cmd_standalone(self, job):

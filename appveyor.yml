@@ -15,12 +15,10 @@ environment:
     - PYTHON: "C:\\Python34-x64"
       PYTHON_VERSION: "3.4.x"
       PYTHON_ARCH: "64"
-      WINDOWS_SDK_VERSION: "v7.1"
 
     - PYTHON: "C:\\Python35-x64"
       PYTHON_VERSION: "3.5.x"
       PYTHON_ARCH: "64"
-      WINDOWS_SDK_VERSION: "v7.2"
 
 init:
   - "ECHO %PYTHON% %PYTHON_VERSION% %PYTHON_ARCH%"
@@ -31,6 +29,7 @@ install:
   - "%PYTHON%\\Scripts\\pymy_install3 --set=pyquickhelper"
   - "%PYTHON%\\Scripts\\pip install cryptography"
   - "%PYTHON%\\Scripts\\pip install pycryptodomex"
+  - "%PYTHON%\\Scripts\\pip install mako"
 
 build: off
 

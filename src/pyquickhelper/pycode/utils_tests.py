@@ -16,6 +16,7 @@ import unittest
 import io
 import warnings
 import time
+import importlib
 
 from ..filehelper.synchelper import remove_folder, explore_folder_iterfile
 from ..loghelper.flog import run_cmd, noLOG
@@ -25,6 +26,7 @@ from .coverage_helper import publish_coverage_on_codecov
 
 if sys.version_info[0] == 2:
     from StringIO import StringIO
+    FileNotFoundError = Exception
 else:
     from io import StringIO
 
@@ -1012,6 +1014,8 @@ def check_pep8(folder, ignore=('E501', 'E265'), skip=None,
     and they returned None or an error message or a tuple (position in the line, error message).
     When the return is not empty, a warning will be added to the ones
     printed by flake8.
+
+    .. versionadded:: 1.4
     """
     from flake8.main import check_file
 
@@ -1088,3 +1092,52 @@ def check_pep8(folder, ignore=('E501', 'E265'), skip=None,
         raise Exception(
             "{0} lines\n{1}".format(len(lines), "\n".join(lines)))
     return "\n".join(lines)
+
+
+def add_missing_development_version(names, root):
+    """
+    look for development version of a given module and add paths to
+    ``sys.path`` after having checked they are working
+
+    @param      names       name or names of the module to import
+    @param      root        folder where to look (assuming all modules location
+                            at the same place in a flat hierarchy)
+    @return                 added paths
+
+    .. versionadded:: 1.4
+    """
+    if not isinstance(names, list):
+        names = [names]
+    root = os.path.abspath(root)
+    if os.path.isfile(root):
+        root = os.path.dirname(root)
+    if not os.path.exists(root):
+        raise FileNotFoundError(root)
+    spl = os.path.split(root)
+    if spl[-1].startswith("ut_"):
+        newroot = os.path.join(root, "..", "..", "..")
+    else:
+        newroot = root
+    newroot = os.path.normpath(os.path.abspath(newroot))
+    found = os.listdir(newroot)
+    dirs = [os.path.join(newroot, _) for _ in found]
+
+    paths = []
+    for name in names:
+        try:
+            importlib.import_module(name)
+            continue
+        except ImportError:
+            # it requires a path
+            pass
+        if name not in found:
+            raise FileNotFoundError("unable to find a subfolder '{0}' in '{1}'\nFOUND:\n{2}".format(
+                name, newroot, "\n".join(dirs)))
+        this = os.path.join(newroot, name, "src")
+        if not os.path.exists(this):
+            raise FileNotFoundError("unable to find a subfolder '{0}' in '{1}'\nFOUND:\n{2}".format(
+                this, newroot, "\n".join(dirs)))
+        sys.path.append(this)
+        importlib.import_module(name)
+        paths.append(this)
+    return this
