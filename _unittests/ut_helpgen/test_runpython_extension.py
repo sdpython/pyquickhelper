@@ -166,11 +166,13 @@ class TestRunPythonExtension(unittest.TestCase):
                         directives=tives)
 
         t1 = "this code shoud appear___"
-        if t1 not in html:
-            raise Exception(html)
+        for t in t1.split():
+            if t not in html:
+                raise Exception(html)
         t2 = "setsysvar: True"
-        if t2 not in html:
-            raise Exception(html)
+        for t in t2.split():
+            if t.strip(":") not in html:
+                raise Exception(html)
         t2 = "<p>In</p>"
         if t2 in html:
             raise Exception(html)
@@ -236,11 +238,13 @@ class TestRunPythonExtension(unittest.TestCase):
                         directives=tives)
 
         t1 = "this code shoud appear___"
-        if t1 not in html:
-            raise Exception(html)
+        for t in t1.split():
+            if t not in html:
+                raise Exception(html)
         t2 = "setsysvar: True"
-        if t2 not in html:
-            raise Exception(html)
+        for t in t2:
+            if t.strip(";") not in html:
+                raise Exception(html)
         t2 = "<p>In</p>"
         if t2 not in html:
             raise Exception(html)
