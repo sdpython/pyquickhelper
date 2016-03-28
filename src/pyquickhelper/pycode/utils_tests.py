@@ -1140,7 +1140,7 @@ def add_missing_development_version(names, root, hide=False):
                 this, newroot, "\n".join(dirs)))
         sys.path.append(this)
         if hide:
-            with warnings.catch_warnings(record=True) as w:
+            with warnings.catch_warnings(record=True):
                 importlib.import_module(name)
         else:
             importlib.import_module(name)
