@@ -1094,15 +1094,16 @@ def check_pep8(folder, ignore=('E501', 'E265'), skip=None,
     return "\n".join(lines)
 
 
-def add_missing_development_version(names, root):
+def add_missing_development_version(names, root, hide=False):
     """
     look for development version of a given module and add paths to
     ``sys.path`` after having checked they are working
 
-    @param      names       name or names of the module to import
-    @param      root        folder where to look (assuming all modules location
-                            at the same place in a flat hierarchy)
-    @return                 added paths
+    @param      names           name or names of the module to import
+    @param      root            folder where to look (assuming all modules location
+                                at the same place in a flat hierarchy)
+    @param      hide            hide warnings when importing a module (might be a lot)
+    @return                     added paths
 
     .. versionadded:: 1.4
     """
@@ -1138,6 +1139,10 @@ def add_missing_development_version(names, root):
             raise FileNotFoundError("unable to find a subfolder '{0}' in '{1}'\nFOUND:\n{2}".format(
                 this, newroot, "\n".join(dirs)))
         sys.path.append(this)
-        importlib.import_module(name)
+        if hide:
+            with warnings.catch_warnings(record=True) as w:
+                importlib.import_module(name)
+        else:
+            importlib.import_module(name)
         paths.append(this)
     return paths
