@@ -189,6 +189,7 @@ class _CustomSphinx(Sphinx):
         self.builderclasses = BUILTIN_BUILDERS.copy()
         self.builder = None
         self.env = None
+        self._setting_up_extension = ['?']
 
         if doctreedir is None:
             doctreedir = "."

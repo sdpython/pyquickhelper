@@ -207,15 +207,19 @@ class TestBlogHelper(unittest.TestCase):
                         writer="custom", keep_warnings=True,
                         directives=tives)
 
-        t1 = "this code shoud appear___"
-        if t1 not in html:
-            raise Exception(html)
         ta = "<p><b>visit_rp_node</b></p>"
         if ta not in html:
             raise Exception(html)
         tb = "<p><b>depart_rp_node</b></p>"
         if tb not in html:
             raise Exception(html)
+        t1 = "this code shoud appear___".split()
+        for t in t1:
+            if t not in html:
+                temp = get_temp_folder(__file__, "temp_newdirective_with_rst2html")
+                with open(os.path.join(temp, "bug.html"), "w", encoding="utf8") as f:
+                    f.write(html)
+                raise Exception(html)
 
     def test_newdirective_with_rst2html_bug(self):
         fLOG(
