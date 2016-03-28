@@ -1140,4 +1140,4 @@ def add_missing_development_version(names, root):
         sys.path.append(this)
         importlib.import_module(name)
         paths.append(this)
-    return this
+    return paths

@@ -26,13 +26,14 @@ from src.pyquickhelper.pycode import add_missing_development_version
 
 class TestReferences(unittest.TestCase):
 
-    def test_write_script(self):
+    def test_references(self):
         fLOG(
             __file__,
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
-        add_missing_development_version("pyquickhelper", __file__)
+        paths = add_missing_development_version("pyquickhelper", __file__)
+        self.assertEqual(len(paths), 1)
 
 if __name__ == "__main__":
     unittest.main()
