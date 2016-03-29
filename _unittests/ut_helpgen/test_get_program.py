@@ -23,6 +23,7 @@ except ImportError:
 
 from src.pyquickhelper.loghelper.flog import fLOG, run_cmd
 from src.pyquickhelper.helpgen.process_notebooks import get_ipython_program, get_jupyter_convert_program
+from src.pyquickhelper.pycode.ci_helper import is_travis_or_appveyor
 
 
 class TestGetProgram(unittest.TestCase):
@@ -33,6 +34,8 @@ class TestGetProgram(unittest.TestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
+        if is_travis_or_appveyor() == "travis":
+            return
         exe = get_ipython_program()
         cmd = exe + " help"
         out, err = run_cmd(cmd, wait=True)
@@ -45,6 +48,8 @@ class TestGetProgram(unittest.TestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
+        if is_travis_or_appveyor() == "travis":
+            return
         exe = get_jupyter_convert_program()
         cmd = exe + " --help"
         out, err = run_cmd(cmd, wait=True)

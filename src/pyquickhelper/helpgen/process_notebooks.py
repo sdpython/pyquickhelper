@@ -66,7 +66,7 @@ def get_ipython_program(exe=None, pandoc_path=None):
             os.environ["WINPYDIR"] = exe
             os.environ["PATH"] = p
 
-        if not exe.endswith("Scripts"):
+        if not exe.lower().endswith("scripts"):
             ipy = os.path.join(exe, "Scripts", "ipython%d.exe" % dver)
             if not os.path.exists(ipy):
                 # Anaconda is different
@@ -107,7 +107,7 @@ def get_jupyter_convert_program(exe=None, pandoc_path=None):
             os.environ["WINPYDIR"] = exe
             os.environ["PATH"] = p
 
-        if not exe.endswith("Scripts"):
+        if not exe.lower().endswith("scripts"):
             ipy = os.path.join(exe, "Scripts", "jupyter-nbconvert.exe")
             if not os.path.exists(ipy):
                 raise FileNotFoundError("ipy={0}\nexe={1}".format(ipy, exe))
