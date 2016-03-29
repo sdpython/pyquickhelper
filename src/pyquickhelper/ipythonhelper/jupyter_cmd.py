@@ -9,6 +9,10 @@ from ..loghelper import run_cmd, noLOG
 from .notebook_exception import JupyterException
 
 
+if sys.version_info[0] == 2:
+    FileNotFoundError = Exception
+
+
 def get_jupyter_program(exe=None):
     """
     get jupyter executable
