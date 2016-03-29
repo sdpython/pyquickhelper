@@ -48,13 +48,15 @@ def get_ipython_program(exe=None, pandoc_path=None):
     @param      exe             path to python executable
     @param      pandoc_path     if None, call @see fn find_pandoc_path
     @return                     ipython executable
-
-    The program ``jupyter-nbconvert.exe`` does not exist (yet?) on Windows. Postponing.
+    
+    .. deprecated::
+        ``ipython nbconvert`` will be deprecated with IPython 6.0.
     """
     if exe is None:
         exe = os.path.dirname(sys.executable)
     if pandoc_path is None:
         pandoc_path = find_pandoc_path()
+    dver = sys.version_info[0]
     if sys.platform.startswith("win"):
         user = os.environ["USERPROFILE"]
         path = pandoc_path.replace("%USERPROFILE%", user)
@@ -65,14 +67,14 @@ def get_ipython_program(exe=None, pandoc_path=None):
             os.environ["PATH"] = p
 
         if not exe.endswith("Scripts"):
-            ipy = os.path.join(exe, "Scripts", "ipython3.exe")
+            ipy = os.path.join(exe, "Scripts", "ipython%d.exe" % dver)
             if not os.path.exists(ipy):
                 # Anaconda is different
                 ipy = os.path.join(exe, "Scripts", "ipython.exe")
                 if not os.path.exists(ipy):
                     raise FileNotFoundError(ipy)
         else:
-            ipy = os.path.join(exe, "ipython3.exe")
+            ipy = os.path.join(exe, "ipython%d.exe" % dver)
             if not os.path.exists(ipy):
                 # Anaconda is different
                 ipy = os.path.join(exe, "ipython.exe")
@@ -80,6 +82,42 @@ def get_ipython_program(exe=None, pandoc_path=None):
                     raise FileNotFoundError(ipy)
     else:
         ipy = os.path.join(exe, "ipython")
+
+    return ipy
+
+
+def get_jupyter_convert_program(exe=None, pandoc_path=None):
+    """
+    get jupyter-convert executable + fix an issue with PANDOC
+
+    @param      exe             path to python executable
+    @param      pandoc_path     if None, call @see fn find_pandoc_path
+    @return                     ipython executable
+    """
+    if exe is None:
+        exe = os.path.dirname(sys.executable)
+    if pandoc_path is None:
+        pandoc_path = find_pandoc_path()
+    dver = sys.version_info[0]
+    if sys.platform.startswith("win"):
+        user = os.environ["USERPROFILE"]
+        path = pandoc_path.replace("%USERPROFILE%", user)
+        p = os.environ["PATH"]
+        if path not in p:
+            p += ";%WINPYDIR%\DLLs;" + path
+            os.environ["WINPYDIR"] = exe
+            os.environ["PATH"] = p
+
+        if not exe.endswith("Scripts"):
+            ipy = os.path.join(exe, "Scripts", "jupyter-nbconvert.exe")
+            if not os.path.exists(ipy):
+                raise FileNotFoundError(ipy)
+        else:
+            ipy = os.path.join(exe, "jupyter-nbconvert.exe")
+            if not os.path.exists(ipy):
+                raise FileNotFoundError(ipy)
+    else:
+        ipy = os.path.join(exe, "jupyter-nbconvert")
 
     return ipy
 
@@ -178,12 +216,12 @@ def process_notebooks(notebooks,
                   "slides": ".slides.html",
                   }
 
-    ipy = get_ipython_program(exe, pandoc_path)
+    ipy = get_jupyter_convert_program(exe, pandoc_path)
 
     if sys.platform.startswith("win"):
-        cmd = '{0} nbconvert --to {1} "{2}"{5} --output="{3}\\{4}"'
+        cmd = '{0} --to {1} "{2}"{5} --output="{3}\\{4}"'
     else:
-        cmd = '{0} nbconvert --to {1} "{2}"{5} --output="{3}/{4}"'
+        cmd = '{0} --to {1} "{2}"{5} --output="{3}/{4}"'
     files = []
     skipped = []
 
