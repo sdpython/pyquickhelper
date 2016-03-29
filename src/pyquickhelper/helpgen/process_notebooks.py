@@ -48,7 +48,7 @@ def get_ipython_program(exe=None, pandoc_path=None):
     @param      exe             path to python executable
     @param      pandoc_path     if None, call @see fn find_pandoc_path
     @return                     ipython executable
-    
+
     .. deprecated::
         ``ipython nbconvert`` will be deprecated with IPython 6.0.
     """
@@ -98,7 +98,6 @@ def get_jupyter_convert_program(exe=None, pandoc_path=None):
         exe = os.path.dirname(sys.executable)
     if pandoc_path is None:
         pandoc_path = find_pandoc_path()
-    dver = sys.version_info[0]
     if sys.platform.startswith("win"):
         user = os.environ["USERPROFILE"]
         path = pandoc_path.replace("%USERPROFILE%", user)
