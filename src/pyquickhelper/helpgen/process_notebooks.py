@@ -72,14 +72,14 @@ def get_ipython_program(exe=None, pandoc_path=None):
                 # Anaconda is different
                 ipy = os.path.join(exe, "Scripts", "ipython.exe")
                 if not os.path.exists(ipy):
-                    raise FileNotFoundError(ipy)
+                    raise FileNotFoundError("ipy={0}\nexe={1}".format(ipy, exe))
         else:
             ipy = os.path.join(exe, "ipython%d.exe" % dver)
             if not os.path.exists(ipy):
                 # Anaconda is different
                 ipy = os.path.join(exe, "ipython.exe")
                 if not os.path.exists(ipy):
-                    raise FileNotFoundError(ipy)
+                    raise FileNotFoundError("ipy={0}\nexe={1}".format(ipy, exe))
     else:
         ipy = os.path.join(exe, "ipython")
 
@@ -110,11 +110,11 @@ def get_jupyter_convert_program(exe=None, pandoc_path=None):
         if not exe.endswith("Scripts"):
             ipy = os.path.join(exe, "Scripts", "jupyter-nbconvert.exe")
             if not os.path.exists(ipy):
-                raise FileNotFoundError(ipy)
+                raise FileNotFoundError("ipy={0}\nexe={1}".format(ipy, exe))
         else:
             ipy = os.path.join(exe, "jupyter-nbconvert.exe")
             if not os.path.exists(ipy):
-                raise FileNotFoundError(ipy)
+                raise FileNotFoundError("ipy={0}\nexe={1}".format(ipy, exe))
     else:
         ipy = os.path.join(exe, "jupyter-nbconvert")
 
