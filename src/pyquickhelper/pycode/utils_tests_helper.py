@@ -241,17 +241,17 @@ def add_missing_development_version(names, root, hide=False):
             # it requires a path
             pass
         if name not in found:
-            raise FileNotFoundError("unable to find a subfolder '{0}' in '{1}'\nFOUND:\n{2}".format(
-                name, newroot, "\n".join(dirs)))
+            raise FileNotFoundError("unable to find a subfolder '{0}' in '{1}' (py27={3})\nFOUND:\n{2}".format(
+                name, newroot, py27, "\n".join(dirs)))
 
         if py27:
-            this = os.path.join(newroot, name, "dist_module", "src")
+            this = os.path.join(newroot, name, "dist_module27", "src")
         else:
             this = os.path.join(newroot, name, "src")
 
         if not os.path.exists(this):
-            raise FileNotFoundError("unable to find a subfolder '{0}' in '{1}'\nFOUND:\n{2}".format(
-                this, newroot, "\n".join(dirs)))
+            raise FileNotFoundError("unable to find a subfolder '{0}' in '{1}' (*py27={3})\nFOUND:\n{2}".format(
+                this, newroot, py27, "\n".join(dirs)))
         sys.path.append(this)
         if hide:
             with warnings.catch_warnings(record=True):
