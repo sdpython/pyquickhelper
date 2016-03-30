@@ -215,11 +215,19 @@ def add_missing_development_version(names, root, hide=False):
         root = os.path.dirname(root)
     if not os.path.exists(root):
         raise FileNotFoundError(root)
+
     spl = os.path.split(root)
+    py27 = False
     if spl[-1].startswith("ut_"):
-        newroot = os.path.join(root, "..", "..", "..")
+        if "dist_module27" in root:
+            # python 27
+            py27 = True
+            newroot = os.path.join(root, "..", "..", "..", "..")
+        else:
+            newroot = os.path.join(root, "..", "..", "..")
     else:
         newroot = root
+
     newroot = os.path.normpath(os.path.abspath(newroot))
     found = os.listdir(newroot)
     dirs = [os.path.join(newroot, _) for _ in found]
@@ -235,7 +243,12 @@ def add_missing_development_version(names, root, hide=False):
         if name not in found:
             raise FileNotFoundError("unable to find a subfolder '{0}' in '{1}'\nFOUND:\n{2}".format(
                 name, newroot, "\n".join(dirs)))
-        this = os.path.join(newroot, name, "src")
+
+        if py27:
+            this = os.path.join(newroot, name, "dist_module", "src")
+        else:
+            this = os.path.join(newroot, name, "src")
+
         if not os.path.exists(this):
             raise FileNotFoundError("unable to find a subfolder '{0}' in '{1}'\nFOUND:\n{2}".format(
                 this, newroot, "\n".join(dirs)))

@@ -216,7 +216,8 @@ class TestBlogHelper(unittest.TestCase):
         t1 = "this code shoud appear___".split()
         for t in t1:
             if t not in html:
-                temp = get_temp_folder(__file__, "temp_newdirective_with_rst2html")
+                temp = get_temp_folder(
+                    __file__, "temp_newdirective_with_rst2html")
                 with open(os.path.join(temp, "bug.html"), "w", encoding="utf8") as f:
                     f.write(html)
                 raise Exception(html)

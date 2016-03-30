@@ -584,6 +584,6 @@ def default_skip_function(name, code):
     @param      code        code of the test file
     @return                 True if skipped, False otherwise
     """
-    if "test_SKIP_" in name or "test_LONG_" in name:
+    if "test_SKIP_" in name or "test_LONG_" in name or "test_GUI_" in name:
         return True
     return False

@@ -70,6 +70,7 @@ def is_local():
        "unittests" in sys.argv or \
        "unittests_LONG" in sys.argv or \
        "unittests_SKIP" in sys.argv or \
+       "unittests_GUI" in sys.argv or \
        "run27" in sys.argv or \
        "sdist" in sys.argv or \
        "setupdep" in sys.argv or \

@@ -484,6 +484,9 @@ class JenkinsExt(jenkins.Jenkins):
                 elif "[SKIP]" in spl:
                     cmd = _modified_windows_jenkins_any(requirements_local, requirements_pypi).replace(
                         "__COMMAND__", "unittests_SKIP")
+                elif "[GUI]" in spl:
+                    cmd = _modified_windows_jenkins_any(requirements_local, requirements_pypi).replace(
+                        "__COMMAND__", "unittests_GUI")
                 elif "[27]" in spl:
                     cmd = _modified_windows_jenkins_27(
                         requirements_local, requirements_pypi, anaconda=" [anaconda" in job)
@@ -763,8 +766,9 @@ class JenkinsExt(jenkins.Jenkins):
 
         * ``[engine]``: to use this specific engine (Python path)
         * ``[27]``: run with python 2.7
-        * ``[LONG]``: run longer unit tests (files start by ``test_LONG``)
-        * ``[SKIP]``: run skipped unit tests (files start by ``test_SKIP``)
+        * ``[LONG]``: run longer unit tests (files start by ``test_LONG_``)
+        * ``[SKIP]``: run skipped unit tests (files start by ``test_SKIP_``)
+        * ``[GUI]``: run skipped unit tests (files start by ``test_GUI_``)
         * ``[custom.+]``: run ``setup.py <custom.+>`` in a virtual environment
 
         Others tags:

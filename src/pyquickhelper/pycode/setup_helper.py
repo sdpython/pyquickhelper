@@ -67,6 +67,7 @@ def process_standard_options_for_setup(argv,
         * ``unittests``: run the unit tests except those beginning by ``test_SKIP_`` or ``test_LONG_``.
         * ``unittests_LONG``: run the unit tests beginning by ``test_LONG_``
         * ``unittests_SKIP``: run the unit tests beginning by ``test_SKIP_``
+        * ``unittests_GUI``: run the unit tests beginning by ``test_GUI_``
         * ``write_version``: write a file ``version.txt`` with the version number (needs an access to GitHub)
 
     @param      argv                        = *sys.argv*
@@ -252,6 +253,16 @@ def process_standard_options_for_setup(argv,
             stdout=stdout, stderr=stderr, fLOG=fLOG)
         return True
 
+    elif "unittests_GUI" in sys.argv:
+        def skip_skip(name, code):
+            return "test_GUI_" not in name
+        run_unittests_for_setup(
+            file_or_folder, skip_function=skip_skip, setup_params=setup_params,
+            coverage_options=coverage_options, coverage_exclude_lines=coverage_exclude_lines,
+            additional_ut_path=additional_ut_path, hook_print=hook_print,
+            stdout=stdout, stderr=stderr, fLOG=fLOG)
+        return True
+
     elif "build_script" in argv:
 
         # script running setup.py
@@ -265,7 +276,7 @@ def process_standard_options_for_setup(argv,
         for c in {"build_script", "clean_space",
                   "write_version", "clean_pyd",
                   "build_sphinx", "unittests",
-                  "unittests_LONG", "unittests_SKIP",
+                  "unittests_LONG", "unittests_SKIP", "unittests_GUI",
                   "setup_hook", "copy27", "test_local_pypi"}:
             sc = get_script_command(
                 c, project_var_name, requirements=requirements, port=port, platform=sys.platform,
