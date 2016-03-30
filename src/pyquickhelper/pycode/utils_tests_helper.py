@@ -67,7 +67,7 @@ def get_temp_folder(thisfile, name, clean=True, create=True):
     return local
 
 
-def _extended_refectoring(filename, line):
+def _extended_refactoring(filename, line):
     """
     Private function to do extra checkings when refactoring pyquickhelper
 

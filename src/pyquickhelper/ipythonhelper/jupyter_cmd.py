@@ -26,11 +26,11 @@ def get_jupyter_program(exe=None):
         if not exe.lower().endswith("Scripts"):
             ipy = os.path.join(exe, "Scripts", "jupyter.exe")
             if not os.path.exists(ipy):
-                raise FileNotFoundError(ipy)
+                raise FileNotFoundError("ipy={0}\nexe={1}".format(ipy, exe))
         else:
             ipy = os.path.join(exe, "jupyter.exe")
             if not os.path.exists(ipy):
-                raise FileNotFoundError(ipy)
+                raise FileNotFoundError("ipy={0}\nexe={1}".format(ipy, exe))
     else:
         ipy = os.path.join(exe, "jupyter")
 
