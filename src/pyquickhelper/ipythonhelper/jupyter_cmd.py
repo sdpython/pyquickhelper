@@ -23,7 +23,7 @@ def get_jupyter_program(exe=None):
     if exe is None:
         exe = os.path.dirname(sys.executable)
     if sys.platform.startswith("win"):
-        if not exe.endswith("Scripts"):
+        if not exe.lower().endswith("Scripts"):
             ipy = os.path.join(exe, "Scripts", "jupyter.exe")
             if not os.path.exists(ipy):
                 raise FileNotFoundError(ipy)
