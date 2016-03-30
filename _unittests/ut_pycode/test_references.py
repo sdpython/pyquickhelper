@@ -32,6 +32,8 @@ class TestReferences(unittest.TestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
+        if sys.version_info[0] == 2:
+            return
         paths = add_missing_development_version("pyquickhelper", __file__)
         assert len(paths) <= 1  # no added paths if no need to add a path
 
