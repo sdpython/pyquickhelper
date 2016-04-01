@@ -308,7 +308,7 @@ def set_sphinx_variables(fileconf,
         if bootswatch_navbar_links is None:
             bootswatch_navbar_links = []
         html_logo = "project_ico_small.png"
-        navbar_links = True,
+        navbar_links = bootswatch_navbar_links
         html_theme_options = {
             'navbar_title': "home",
             'navbar_site_name': "Site",
