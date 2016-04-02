@@ -3,13 +3,11 @@
 @brief Some automation helpers about notebooks
 """
 from .notebook_runner import NotebookRunner
-from ..loghelper.flog import noLOG
 from .notebook_exception import NotebookException
 from ..filehelper import explore_folder_iterfile, remove_folder
 
 import os
 import sys
-import time
 import json
 
 try:
@@ -100,93 +98,6 @@ def upgrade_notebook(filename, encoding="utf8"):
         return True
 
 
-def run_notebook(filename,
-                 profile_dir=None,
-                 working_dir=None,
-                 skip_exceptions=False,
-                 outfilename=None,
-                 encoding="utf8",
-                 additional_path=None,
-                 valid=None,
-                 clean_function=None,
-                 code_init=None,
-                 fLOG=noLOG,
-                 kernel_name="python",
-                 log_level="30",
-                 extended_args=None):
-    """
-    run a notebook end to end, it uses module `runipy <https://github.com/paulgb/runipy/>`_
-
-    @param      filename            notebook filename
-    @param      profile_dir         profile directory
-    @param      working_dir         working directory
-    @param      skip_exceptions     skip exceptions
-    @param      outfilename         if not None, saves the output in this notebook
-    @param      encoding            encoding for the notebooks
-    @param      additional_path     additional paths for import
-    @param      valid               if not None, valid is a function which returns wether or not the cell should be executed or not
-    @param      clean_function      function which cleans a cell's code before executing it (None for None)
-    @param      code_init           code to run before the execution of the notebook as if it was a cell
-    @param      fLOG                logging function
-    @param      kernel_name         kernel name, it can be None
-    @param      log_level           Choices: (0, 10, 20, 30=default, 40, 50, 'DEBUG', 'INFO', 'WARN', 'ERROR', 'CRITICAL')
-    @param      extended_args       others arguments to pass to the command line ('--KernelManager.autorestar=True' for example),
-                                    see :ref:`l-ipython_notebook_args` for a full list
-    @return                         tuple (statistics, output)
-
-    @warning The function calls `basicConfig <https://docs.python.org/3.4/library/logging.html#logging.basicConfig>`_.
-
-    @example(Run a notebook end to end)
-    @code
-    from pyquickhelper.ipythonhelper import run_notebook
-    run_notebook("source.ipynb", working_dir="temp",
-                outfilename="modified.ipynb",
-                additional_path = [ "c:/temp/mymodule/src" ] )
-    @endcode
-    @endexample
-
-    The function adds the local variable ``theNotebook`` with
-    the absolute file name of the notebook.
-
-    .. versionchanged:: 1.3
-        Parameters *log_level*, *extended_args*, *kernel_name* were added.
-    """
-    with open(filename, "r", encoding=encoding) as payload:
-        nb = reads(payload.read())
-
-        out = StringIO()
-
-        def flogging(*l, **p):
-            if len(l) > 0:
-                out.write(" ".join(l))
-            if len(p) > 0:
-                out.write(str(p))
-            out.write("\n")
-            fLOG(*l, **p)
-
-        nb_runner = NotebookRunner(
-            nb, profile_dir, working_dir, fLOG=flogging, filename=filename,
-            theNotebook=os.path.abspath(filename),
-            code_init=code_init, log_level=log_level,
-            extended_args=extended_args, kernel_name=kernel_name)
-        stat = nb_runner.run_notebook(skip_exceptions=skip_exceptions, additional_path=additional_path,
-                                      valid=valid, clean_function=clean_function)
-
-        if outfilename is not None:
-            with open(outfilename, 'w', encoding=encoding) as f:
-                try:
-                    s = writes(nb_runner.nb)
-                except NotebookException as e:
-                    raise NotebookException(
-                        "issue with notebook: " + filename) from e
-                if isinstance(s, bytes):
-                    s = s.decode('utf8')
-                f.write(s)
-
-        nb_runner.shutdown_kernel()
-        return stat, out.getvalue()
-
-
 def read_nb(filename, profile_dir=None, encoding="utf8", kernel=True):
     """
     reads a notebook and return a @see cl NotebookRunner object
@@ -214,83 +125,6 @@ def read_nb(filename, profile_dir=None, encoding="utf8", kernel=True):
         nb = reads(filename.read())
         nb_runner = NotebookRunner(nb, profile_dir, kernel=kernel)
         return nb_runner
-
-
-def execute_notebook_list(folder,
-                          notebooks,
-                          clean_function=None,
-                          valid=None,
-                          fLOG=noLOG,
-                          additional_path=None,
-                          deepfLOG=noLOG,
-                          kernel_name="python",
-                          log_level="30",
-                          extended_args=None):
-    """
-    execute a list of notebooks
-
-    @param      folder              folder (where to execute the notebook, current folder for the notebook)
-    @param      notebooks           list of notebooks to execute (or a list of tuple(notebook, code which initializes the notebook))
-    @param      clean_function      function which transform the code before running it
-    @param      valid               function which tells if a cell should be executed based on its code
-    @param      fLOG                logging function
-    @param      deepfLOG            logging function used to run the notebook
-    @param      additional_path     path to add to *sys.path* before running the notebook
-    @param      kernel_name         kernel name, it can be None
-    @param      log_level           Choices: (0, 10, 20, 30=default, 40, 50, 'DEBUG', 'INFO', 'WARN', 'ERROR', 'CRITICAL')
-    @param      extended_args       others arguments to pass to the command line ('--KernelManager.autorestar=True' for example),
-                                    see :ref:`l-ipython_notebook_args` for a full list
-    @return                         dictionary { notebook_file: (isSuccess, statistics, outout) }
-
-    If *isSucess* is False, *statistics* contains the execution time, *output* is the exception
-    raised during the execution.
-
-    The signature of function ``valid_cell`` is::
-
-        def valid_cell(cell) : return True or False
-
-    The signature of function ``clean_function`` is::
-
-        def clean_function(cell) : return new_cell_content
-
-    .. versionadded:: 1.1
-
-    .. versionchanged:: 1.3
-        Parameters *log_level*, *extended_args*, *kernel_name* were added.
-    """
-    if additional_path is None:
-        additional_path = []
-
-    results = {}
-    for i, note in enumerate(notebooks):
-        if isinstance(note, tuple):
-            note, code_init = note
-        else:
-            code_init = None
-        if filter(i, note):
-            fLOG("******", i, os.path.split(note)[-1])
-            outfile = os.path.join(folder, "out_" + os.path.split(note)[-1])
-            cl = time.clock()
-            try:
-                stat, out = run_notebook(note,
-                                         working_dir=folder,
-                                         outfilename=outfile,
-                                         additional_path=additional_path,
-                                         valid=valid,
-                                         clean_function=clean_function,
-                                         fLOG=deepfLOG,
-                                         code_init=code_init,
-                                         kernel_name=kernel_name,
-                                         log_level=log_level,
-                                         extended_args=extended_args
-                                         )
-                if not os.path.exists(outfile):
-                    raise FileNotFoundError(outfile)
-                results[note] = (True, stat, out)
-            except Exception as e:
-                etime = time.clock() - cl
-                results[note] = (False, dict(time=etime), e)
-    return results
 
 
 def find_notebook_kernel(kernel_spec_manager=None):

@@ -48,7 +48,7 @@ class TestGetProgram(unittest.TestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
-        if is_travis_or_appveyor() == "travis":
+        if is_travis_or_appveyor():
             return
         exe = get_jupyter_convert_program()
         cmd = exe + " --help"

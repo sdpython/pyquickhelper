@@ -206,6 +206,8 @@ cd ..\\..
 __REQUIREMENTS__
 if %errorlevel% neq 0 exit /b %errorlevel%
 @echo #######################################################_requirements_end
+%pythonpip% freeze
+@echo #######################################################_requirements_list
 
 @echo ~SET pythonexe=%pythonexe%
 @echo ~CALL %pythonexe% setup.py write_version
@@ -516,7 +518,7 @@ windows_jenkins_27_conda = [
     "\n__PACTHPQe__\n" +
     "set jenkinspythonexe=__PYTHON27__\n@echo ~SET jenkinspythonexe=__PYTHON27__\n" +
     windows_jenkins_unittest27_conda +
-    "\n\n__REQUIREMENTS__\n\n" +
+    "\n\n__REQUIREMENTS__\n\n%jenkinspythonpip% freeze\n" +
     "\nauto_cmd_run27.bat %jenkinspythonexe%\n" + windows_error,
     "set jenkinspythonexe=__PYTHON27__\n@echo ~SET jenkinspythonexe=__PYTHON27__\n" +
     "set CURRENT_PATH=%WORKSPACE%\n@echo ~SET CURRENT_PATH=%WORKSPACE%\n" +

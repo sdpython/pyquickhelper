@@ -8,6 +8,7 @@ from ..loghelper.flog import _first_more_recent
 
 import os
 import sys
+import shutil
 if sys.version_info[0] == 2:
     import urllib2 as urllib_request
 else:
@@ -38,7 +39,20 @@ def download(url, path_download=".", outfile=None, fLOG=noLOG):
 
     """
     lurl = url.lower()
-    if "http://" in lurl or "https://" in lurl or "ftp://":
+    if lurl.startswith("file://"):
+        if outfile is None:
+            last = os.path.split(url)[-1]
+            if last.startswith("__cached__"):
+                last = last[len("__cached__"):]
+            dest = os.path.join(path_download, last)
+        elif outfile == "":
+            dest = _get_file_url(url, path_download)
+        else:
+            dest = outfile
+
+        shutil.copy(url[7:].lstrip("/"), dest)
+        return dest
+    elif "http://" in lurl or "https://" in lurl or "ftp://":
         if outfile is None:
             dest = os.path.join(path_download, os.path.split(url)[-1])
         elif outfile == "":

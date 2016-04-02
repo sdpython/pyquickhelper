@@ -67,7 +67,7 @@ class NotebookRunner(object):
     def __init__(self, nb, profile_dir=None, working_dir=None,
                  comment="", fLOG=noLOG, theNotebook=None, code_init=None,
                  kernel_name="python", log_level="30", extended_args=None,
-                 kernel=True, filename=None):
+                 kernel=True, filename=None, replacements=None):
         """
         constuctor
 
@@ -85,9 +85,14 @@ class NotebookRunner(object):
         @param      kernel          *kernel* is True by default, the notebook can be run, if False,
                                     the notebook can be read but not run
         @param      filename        to add the notebook file if there is one in error messages
+        @param      replacements    replacements to make in every cell before running it,
+                                    dictionary ``{ string: string }``
 
         .. versionchanged:: 1.3
             Parameters *log_level*, *extended_args*, *kernel_name*, *kernel* were added.
+
+        .. versionchanged:: 1.4
+            Parameter *replacements* was added.
         """
         if kernel:
             self.km = KernelManager(
@@ -98,6 +103,7 @@ class NotebookRunner(object):
         self.theNotebook = theNotebook
         self.code_init = code_init
         self._filename = filename if filename is not None else "memory"
+        self.replacements = replacements
         args = []
 
         if profile_dir:
@@ -217,6 +223,9 @@ class NotebookRunner(object):
 
         @param      code        code (string)
         @return                 cleaned code
+
+        .. versionchanged:: 1.4
+            Do replacements.
         """
         has_bokeh = "bokeh." in code or "from bokeh" in code or "import bokeh" in code
         if code is None:
@@ -233,6 +242,9 @@ class NotebookRunner(object):
                     line = line.replace("output_notebook", "#output_notebook")
                 else:
                     show_is_last = False
+                if self.replacements is not None:
+                    for k, v in self.replacements.items():
+                        line = line.replace(k, v)
                 res.append(line)
                 if show_is_last:
                     res.append('"nothing to show"')

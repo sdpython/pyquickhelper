@@ -156,12 +156,15 @@ class TestJenkinsExt(unittest.TestCase):
             "code_beatrix [Anaconda3] <-- pyquickhelper, pyensae, pymmails, pyrsslocal, pymyinstall",
             # teachings
             ("ensae_teaching_cs <-- pyquickhelper, pyensae, pymmails, pyrsslocal, pymyinstall",
-             "H H(15-16) * * 0"),
-            ["ensae_teaching_cs [WinPython] <-- pyquickhelper, pyensae, pymmails, pyrsslocal, pymyinstall",
-             "ensae_teaching_cs [Anaconda3] <-- pyquickhelper, pyensae, pymmails, pyrsslocal, pymyinstall"],
-            "ensae_teaching_cs [custom_left] <-- pyquickhelper, pyensae, pymmails, pyrsslocal, pymyinstall",
-            "ensae_teaching_cs [WinPython] [custom_left] <-- pyquickhelper, pyensae, pymmails, pyrsslocal, pymyinstall",
-            "ensae_teaching_cs [Anaconda3] [custom_left] <-- pyquickhelper, pyensae, pymmails, pyrsslocal, pymyinstall",
+             "H H(15-16) * * 0", dict(timeout=4799)),
+            [("ensae_teaching_cs [WinPython] <-- pyquickhelper, pyensae, pymmails, pyrsslocal, pymyinstall", None, dict(timeout=4800)),
+             ("ensae_teaching_cs [Anaconda3] <-- pyquickhelper, pyensae, pymmails, pyrsslocal, pymyinstall", None, dict(timeout=4801))],
+            ("ensae_teaching_cs [custom_left] <-- pyquickhelper, pyensae, pymmails, pyrsslocal, pymyinstall",
+             None, dict(timeout=4802)),
+            ("ensae_teaching_cs [WinPython] [custom_left] <-- pyquickhelper, pyensae, pymmails, pyrsslocal, pymyinstall",
+             None, dict(timeout=4803)),
+            ("ensae_teaching_cs [Anaconda3] [custom_left] <-- pyquickhelper, pyensae, pymmails, pyrsslocal, pymyinstall",
+             None, dict(timeout=4804)),
             # documentation
             ("pyquickhelper [doc] <-- pyquickhelper", "H H(3-4) * * 1"),
             ["pymyinstall [doc] <-- pyquickhelper",
@@ -172,7 +175,7 @@ class TestJenkinsExt(unittest.TestCase):
             ["actuariat_python [doc] <-- pyquickhelper, pyensae, pymmails, pyrsslocal, pymyinstall",
              "code_beatrix [doc] <-- pyquickhelper, pyensae, pymmails, pyrsslocal, pymyinstall"],
             ("ensae_teachings_cs [doc] <-- pyquickhelper, pyensae, pymmails, pyrsslocal, pymyinstall",
-             None, dict(pre="rem pre", post="rem post")),
+             None, dict(pre="rem pre", post="rem post", timeout=4805)),
             ("custom [any_name]", "H H(3-4) * * 1",
              dict(script="any_script.bat")),
         ]
@@ -305,6 +308,10 @@ class TestJenkinsExt(unittest.TestCase):
                         raise Exception(conf)
                     if "%jenkinspythonpip% install qgrid" not in conf:
                         raise Exception(conf)
+
+            if "ensae_teaching" in job:
+                if "<timeoutSecondsString>4799" not in conf and "<timeoutSecondsString>480" not in conf:
+                    raise Exception(conf)
 
             if "[doc]" in job:
                 if "%jenkinspythonexe% -u setup.py build_script" not in conf:

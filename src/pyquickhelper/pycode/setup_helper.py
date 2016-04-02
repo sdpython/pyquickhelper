@@ -7,6 +7,7 @@
 
 import os
 import sys
+import warnings
 from ..loghelper.pyrepo_helper import SourceRepository
 from ..loghelper.flog import noLOG
 from ..helpgen.sphinx_main import generate_help_sphinx
@@ -459,8 +460,9 @@ def standard_help_for_setup(argv, file_or_folder, project_var_name, module_name=
                 "should exist\n(file_or_folder={1})\n(ffolder={2})\n(cwd={3})".format(source, file_or_folder, ffolder, os.getcwd()))
 
         if "conf" in sys.modules:
-            raise ImportError("module conf was imported, this function expects not to:\n{0}".format(
+            warnings.warn("module conf was imported, this function expects not to:\n{0}".format(
                 sys.modules["conf"].__file__))
+            del sys.modules["conf"]
 
         project_name = os.path.split(
             os.path.split(os.path.abspath(ffolder))[0])[-1]
