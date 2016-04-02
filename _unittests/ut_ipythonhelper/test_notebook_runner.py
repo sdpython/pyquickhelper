@@ -20,7 +20,8 @@ except ImportError:
         sys.path.append(path)
     import src
 
-from src.pyquickhelper.ipythonhelper.notebook_helper import run_notebook, install_python_kernel_for_unittest
+from src.pyquickhelper.ipythonhelper.notebook_helper import install_python_kernel_for_unittest
+from src.pyquickhelper.ipythonhelper import run_notebook
 from src.pyquickhelper.pycode import get_temp_folder
 from src.pyquickhelper.loghelper import fLOG
 from src.pyquickhelper.pycode import is_travis_or_appveyor
