@@ -219,7 +219,7 @@ def set_sphinx_variables(fileconf,
     extensions = ['sphinx.ext.autodoc',
                   'sphinx.ext.todo',
                   'sphinx.ext.coverage',
-                  'sphinx.ext.mathjax' if use_mathjax else 'sphinx.ext.pngmath',
+                  'sphinx.ext.mathjax' if use_mathjax else 'sphinx.ext.imgmath',
                   'sphinx.ext.ifconfig',
                   'sphinx.ext.viewcode',
                   'sphinxcontrib.images',
@@ -239,33 +239,33 @@ def set_sphinx_variables(fileconf,
 
     if not use_mathjax:
         # extensions.append('matplotlib.sphinxext.mathmpl')
-        # this extension disables sphinx.ext.pngmath
+        # this extension disables sphinx.ext.imgmath
         pass
 
     # disabled for the time being
     from .conf_path_tools import find_latex_path
 
     if not use_mathjax:
-        pngmath_latex = find_latex_path()
-        pngmath_dvipng = os.path.join(pngmath_latex, "dvipng.exe")
-        if not os.path.exists(pngmath_dvipng):
-            raise FileNotFoundError(pngmath_dvipng)
+        imgmath_latex = find_latex_path()
+        imgmath_dvipng = os.path.join(imgmath_latex, "dvipng.exe")
+        if not os.path.exists(imgmath_dvipng):
+            raise FileNotFoundError(imgmath_dvipng)
         env_path = os.environ.get("PATH", "")
-        if pngmath_latex not in env_path:
+        if imgmath_latex not in env_path:
             if len(env_path) > 0:
                 env_path += ";"
-            env_path += pngmath_latex
+            env_path += imgmath_latex
 
         if sys.platform.startswith("win"):
-            pngmath_latex = os.path.join(pngmath_latex, "latex.exe")
+            imgmath_latex = os.path.join(imgmath_latex, "latex.exe")
         else:
-            pngmath_latex = os.path.join(pngmath_latex, "latex")
+            imgmath_latex = os.path.join(imgmath_latex, "latex")
 
         # verification
-        if not os.path.exists(pngmath_latex):
-            raise FileNotFoundError(pngmath_latex)
-        if not os.path.exists(pngmath_dvipng):
-            raise FileNotFoundError(pngmath_dvipng)
+        if not os.path.exists(imgmath_latex):
+            raise FileNotFoundError(imgmath_latex)
+        if not os.path.exists(imgmath_dvipng):
+            raise FileNotFoundError(imgmath_dvipng)
 
     # bokeh
     try:
@@ -325,6 +325,14 @@ def set_sphinx_variables(fileconf,
             'bootstrap_version': "3",
         }
 
+    # latex
+    imgmath_latex_preamble = """
+                    \\newcommand{\\acc}[1]{\\left\\{#1\\right\\}}
+                    \\newcommand{\\cro}[1]{\\left[#1\\right]}
+                    \\newcommand{\\pa}[1]{\\left(#1\\right)}
+                    """
+
+    # collect local variables
     loc = locals()
     for k, v in loc.items():
         if not k.startswith("_"):
