@@ -33,6 +33,8 @@ def zip_files(filename, fileSet, root=None, fLOG=noLOG):
     a1980 = datetime.datetime(1980, 1, 1)
     with zipfile.ZipFile(filename, 'w') as myzip:
         for file in fileSet:
+            if not os.path.exists(file):
+                continue
             st = os.stat(file)
             atime = datetime.datetime.fromtimestamp(st.st_atime)
             mtime = datetime.datetime.fromtimestamp(st.st_mtime)
