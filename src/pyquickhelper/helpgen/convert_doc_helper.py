@@ -13,10 +13,10 @@ from .utils_sphinx_doc import private_migrating_doxygen_doc
 from .utils_sphinx_doc import migrating_doxygen_doc
 from ..loghelper.flog import noLOG
 from . helpgen_exceptions import HelpGenConvertError
-from .sphinx_blog_extension import BlogPostDirective, BlogPostDirectiveAgg
-from .sphinx_runpython_extension import RunPythonDirective
-from .sphinx_sharenet_extension import ShareNetDirective, sharenet_role
-from .sphinx_bigger_extension import bigger_role
+from ..sphinxext.sphinx_blog_extension import BlogPostDirective, BlogPostDirectiveAgg
+from ..sphinxext.sphinx_runpython_extension import RunPythonDirective
+from ..sphinxext.sphinx_sharenet_extension import ShareNetDirective, sharenet_role
+from ..sphinxext.sphinx_bigger_extension import bigger_role
 from .convert_doc_sphinx_helper import HTMLWriterWithCustomDirectives
 
 import sys

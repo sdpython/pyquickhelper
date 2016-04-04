@@ -8,8 +8,8 @@
     
     pyquickhelper now includes a directive and a role to share
     a page from the documentation on networks. 
-    See :class:`ShareNetDirective <pyquickhelper.helpgen.sphinx_sharenet_extension.ShareNetDirective>`
-    and :func:`sharenet_role <pyquickhelper.helpgen.sphinx_sharenet_extension.sharenet_role>`.
+    See :class:`ShareNetDirective <pyquickhelper.sphinxext.sphinx_sharenet_extension.ShareNetDirective>`
+    and :func:`sharenet_role <pyquickhelper.sphinxext.sphinx_sharenet_extension.sharenet_role>`.
     The syntax is the following::
     
         :sharenet:`twitter-facebook-linkedin-20`

@@ -444,16 +444,16 @@ def custom_setup(app, author):
     """
     see `Sphinx core events <http://sphinx-doc.org/extdev/appapi.html?highlight=setup#sphinx-core-events>`_
     """
-    from .sphinx_blog_extension import visit_blogpost_node, depart_blogpost_node
-    from .sphinx_blog_extension import visit_blogpostagg_node, depart_blogpostagg_node
-    from .sphinx_blog_extension import blogpost_node, blogpostagg_node
-    from .sphinx_blog_extension import BlogPostDirective, BlogPostDirectiveAgg
-    from .sphinx_runpython_extension import RunPythonDirective
-    from .sphinx_runpython_extension import runpython_node, visit_runpython_node, depart_runpython_node
-    from .sphinx_sharenet_extension import ShareNetDirective, sharenet_role
-    from .sphinx_bigger_extension import bigger_role
-    from .sphinx_sharenet_extension import sharenet_node, visit_sharenet_node, depart_sharenet_node
-    from .sphinx_bigger_extension import bigger_node, visit_bigger_node, depart_bigger_node
+    from ..sphinxext.sphinx_blog_extension import visit_blogpost_node, depart_blogpost_node
+    from ..sphinxext.sphinx_blog_extension import visit_blogpostagg_node, depart_blogpostagg_node
+    from ..sphinxext.sphinx_blog_extension import blogpost_node, blogpostagg_node
+    from ..sphinxext.sphinx_blog_extension import BlogPostDirective, BlogPostDirectiveAgg
+    from ..sphinxext.sphinx_runpython_extension import RunPythonDirective
+    from ..sphinxext.sphinx_runpython_extension import runpython_node, visit_runpython_node, depart_runpython_node
+    from ..sphinxext.sphinx_sharenet_extension import ShareNetDirective, sharenet_role
+    from ..sphinxext.sphinx_bigger_extension import bigger_role
+    from ..sphinxext.sphinx_sharenet_extension import sharenet_node, visit_sharenet_node, depart_sharenet_node
+    from ..sphinxext.sphinx_bigger_extension import bigger_node, visit_bigger_node, depart_bigger_node
 
     app.connect("autodoc-skip-member", skip)
     app.add_config_value('author', author, True)

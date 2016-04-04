@@ -38,7 +38,7 @@ CLASSIFIERS = [
 packages = find_packages('src', exclude='src')
 package_dir = {k: "src/" + k.replace(".", "/") for k in packages}
 package_data = {project_var_name + ".funcwin": ["*.ico"],
-                project_var_name + ".helpgen": ["*.png"],
+                project_var_name + ".sphinxext": ["*.png"],
                 project_var_name + ".filehelper": ["*.js", "*.css"],
                 }
 

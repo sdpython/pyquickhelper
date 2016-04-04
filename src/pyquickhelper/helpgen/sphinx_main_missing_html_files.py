@@ -4,7 +4,7 @@
 """
 import os
 import sys
-from .texts_language import TITLES
+from ..texthelper.texts_language import TITLES
 
 if sys.version_info[0] == 2:
     from codecs import open

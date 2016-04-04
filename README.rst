@@ -88,6 +88,7 @@ Versions, Changes
     * **fix:** fix function *docstring2html*, does not crash when the documentation is None
     * **fix:** fix class _CustomSphinx for Sphinx 1.4
     * **change:** cache urls testing notebooks
+    * **move:** move all sphinx extension to a specific folder *sphinxext*
 
 * **1.3.1110 - 2016/03/08**
     * **commit:** 2ab88f6545ab139c17562c1b995404e6a2d0714d

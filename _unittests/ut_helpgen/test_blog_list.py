@@ -22,7 +22,7 @@ except ImportError:
     import src
 
 from src.pyquickhelper.loghelper.flog import fLOG
-from src.pyquickhelper.helpgen import BlogPostList, BlogPostDirective
+from src.pyquickhelper.sphinxext import BlogPostList, BlogPostDirective
 
 if sys.version_info[0] == 2:
     FileNotFoundError = Exception

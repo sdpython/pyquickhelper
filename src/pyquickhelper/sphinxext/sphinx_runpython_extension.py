@@ -6,7 +6,6 @@ See `Tutorial: Writing a simple extension <http://sphinx-doc.org/extdev/tutorial
 
 .. versionadded:: 1.2
 """
-from .texts_language import TITLES
 import sys
 import os
 from docutils import nodes, core
@@ -15,6 +14,7 @@ from docutils.statemachine import StringList
 from sphinx.util.nodes import nested_parse_with_titles
 import traceback
 from ..loghelper.flog import run_cmd
+from ..texthelper.texts_language import TITLES
 
 if sys.version_info[0] == 2:
     from StringIO import StringIO

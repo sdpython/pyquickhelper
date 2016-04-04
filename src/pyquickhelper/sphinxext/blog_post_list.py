@@ -9,7 +9,7 @@ import sys
 import shutil
 from .blog_post import BlogPost
 from .build_rss import build_rss
-from .texts_language import TITLES
+from ..texthelper.texts_language import TITLES
 from ..texthelper.diacritic_helper import remove_diacritics
 from ..loghelper import noLOG
 

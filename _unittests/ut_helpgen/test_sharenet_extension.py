@@ -25,7 +25,7 @@ except ImportError:
 from src.pyquickhelper.loghelper.flog import fLOG
 from src.pyquickhelper.pycode import get_temp_folder
 from src.pyquickhelper.helpgen import rst2html
-from src.pyquickhelper.helpgen import ShareNetDirective
+from src.pyquickhelper.sphinxext import ShareNetDirective
 
 if sys.version_info[0] == 2:
     from codecs import open

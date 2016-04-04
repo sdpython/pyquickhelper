@@ -50,7 +50,8 @@ def download(url, path_download=".", outfile=None, fLOG=noLOG):
         else:
             dest = outfile
 
-        src = url[7:].lstrip("/") if sys.platform.startswith("win") else url[7:]
+        src = url[7:].lstrip(
+            "/") if sys.platform.startswith("win") else url[7:]
         shutil.copy(src, dest)
         return dest
     elif "http://" in lurl or "https://" in lurl or "ftp://":

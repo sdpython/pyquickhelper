@@ -15,7 +15,7 @@ from docutils.statemachine import StringList
 from sphinx import addnodes
 from sphinx.util.nodes import set_source_info, process_index_entry
 from .blog_post import BlogPost
-from .texts_language import TITLES
+from ..texthelper.texts_language import TITLES
 
 
 class blogpost_node(nodes.Structural, nodes.Element):
