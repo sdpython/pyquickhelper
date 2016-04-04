@@ -8,6 +8,7 @@ See `Tutorial: Writing a simple extension <http://sphinx-doc.org/extdev/tutorial
 """
 import sys
 import os
+import sphinx
 from docutils import nodes, core
 from docutils.parsers.rst import Directive, directives
 from docutils.statemachine import StringList
@@ -426,3 +427,16 @@ def depart_runpython_node(self, node):
     specify a different function for each.
     """
     pass
+
+
+def setup(app):
+    """
+    setup for ``runpython`` (sphinx)
+    """
+    app.add_node(runpython_node,
+                 html=(visit_runpython_node, depart_runpython_node),
+                 latex=(visit_runpython_node, depart_runpython_node),
+                 text=(visit_runpython_node, depart_runpython_node))
+
+    app.add_directive('runpython', RunPythonDirective)
+    return {'version': sphinx.__display_version__, 'parallel_read_safe': True}

@@ -6,6 +6,7 @@ See `Tutorial: Writing a simple extension <http://sphinx-doc.org/extdev/tutorial
 `Creating reStructuredText Directives <http://docutils.readthedocs.org/en/sphinx-docs/howto/rst-directives.html>`_
 """
 import os
+import sphinx
 from docutils import nodes
 from docutils.parsers.rst import Directive
 from sphinx.locale import _ as _locale
@@ -334,3 +335,30 @@ def process_blogpost_nodes(app, doctree, fromdocname):
             content.append(para)
 
         node.replace_self(content)
+
+
+def setup(app):
+    """
+    setup for ``blogpost`` (sphinx)
+    """
+    # this command enables the parameter blog_background to be part of the
+    # configuration
+    app.add_config_value('blog_background', True, 'env')
+
+    # app.add_node(blogpostlist)
+    app.add_node(blogpost_node,
+                 html=(visit_blogpost_node, depart_blogpost_node),
+                 latex=(visit_blogpost_node, depart_blogpost_node),
+                 text=(visit_blogpost_node, depart_blogpost_node))
+
+    app.add_node(blogpostagg_node,
+                 html=(visit_blogpostagg_node, depart_blogpostagg_node),
+                 latex=(visit_blogpostagg_node, depart_blogpostagg_node),
+                 text=(visit_blogpostagg_node, depart_blogpostagg_node))
+
+    app.add_directive('blogpost', BlogPostDirective)
+    app.add_directive('blogpostagg', BlogPostDirectiveAgg)
+    #app.add_directive('blogpostlist', BlogPostListDirective)
+    #app.connect('doctree-resolved', process_blogpost_nodes)
+    #app.connect('env-purge-doc', purge_blogpost)
+    return {'version': sphinx.__display_version__, 'parallel_read_safe': True}

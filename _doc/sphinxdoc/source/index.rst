@@ -130,6 +130,7 @@ The module proposes two commands ``encrypt``, ``decrypt``, ``encrypt_file``, ``d
   
 Many functionalities about automated documentation assume the current processed
 documentation follows the same design as this module.
+Future enhancements are covered by :ref:`l-issues-todolist`.
       
 Installation
 ------------

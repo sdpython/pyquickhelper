@@ -11,21 +11,26 @@ from .utils_sphinx_doc import private_migrating_doxygen_doc
 # -- HELP END EXCLUDE --
 
 from .utils_sphinx_doc import migrating_doxygen_doc
+from ..texthelper.texts_language import TITLES
 from ..loghelper.flog import noLOG
 from . helpgen_exceptions import HelpGenConvertError
-from ..sphinxext.sphinx_blog_extension import BlogPostDirective, BlogPostDirectiveAgg
-from ..sphinxext.sphinx_runpython_extension import RunPythonDirective
-from ..sphinxext.sphinx_sharenet_extension import ShareNetDirective, sharenet_role
+from ..sphinxext.sphinx_blog_extension import BlogPostDirective, BlogPostDirectiveAgg, visit_blogpost_node, depart_blogpost_node
+from ..sphinxext.sphinx_runpython_extension import RunPythonDirective, visit_runpython_node, depart_runpython_node
+from ..sphinxext.sphinx_sharenet_extension import ShareNetDirective, sharenet_role, visit_sharenet_node, depart_sharenet_node
 from ..sphinxext.sphinx_bigger_extension import bigger_role
+from ..sphinxext.sphinx_todoext_extension import TodoExt, TodoExtList, visit_todoext_node, depart_todoext_node
+from ..sphinxext.sphinx_todoext_extension import visit_todoextlist_node, depart_todoextlist_node
+# from ..sphinxext.sphinx_todoext_extension import process_todoext_nodes, process_todoext_nodes, purge_todosext, merge_infoext
 from .convert_doc_sphinx_helper import HTMLWriterWithCustomDirectives
 
 import sys
 import re
 import textwrap
-from docutils import core
+from docutils import core, languages
 from docutils.parsers.rst import directives as doc_directives, roles as doc_roles
 from sphinx.environment import BuildEnvironment, default_settings
 from sphinx.config import Config
+from sphinx.ext.todo import Todo, TodoList, visit_todo_node, depart_todo_node
 
 
 if sys.version_info[0] == 2:
@@ -35,7 +40,7 @@ else:
 
 
 def rst2html(s, fLOG=noLOG, writer="sphinx", keep_warnings=False,
-             directives=None):
+             directives=None, language="en"):
     """
     converts a string into HTML format
 
@@ -45,6 +50,7 @@ def rst2html(s, fLOG=noLOG, writer="sphinx", keep_warnings=False,
                                 ``custom`` or ``sphinx``
     @param      keep_warnings   keep_warnings in the final HTML
     @param      directives      new directives to add (see below)
+    @param      language        language
     @return                     HTML format
 
     *directives* is None or a list of 5-uple:
@@ -98,6 +104,12 @@ def rst2html(s, fLOG=noLOG, writer="sphinx", keep_warnings=False,
 
     @endexample
 
+    .. todoext::
+        :title: make function rst2html handle todoextlist
+
+        The function @see fn rst2html handles the sphinx custom directive
+        *todoextlist* but the content is empty.
+
     .. versionadded:: 1.0
 
     .. versionchanged:: 1.3
@@ -105,20 +117,45 @@ def rst2html(s, fLOG=noLOG, writer="sphinx", keep_warnings=False,
         and to keep the warnings. By default, the function now interprets *Sphinx*
         directives and not only *docutils* ones.
         Parameter *directives* was added to add a directive before parsing the RST.
+
+    .. versionchanged:: 1.4
+        Add directives *todoext* and *todo*, parameter *language* was added.
     """
+    title_names = []
 
     if writer in ["custom", "sphinx"]:
-        doc_directives.register_directive("blogpost", BlogPostDirective)
-        doc_directives.register_directive("blogpostagg", BlogPostDirectiveAgg)
-        doc_directives.register_directive("runpython", RunPythonDirective)
-        doc_directives.register_directive("sharenet", ShareNetDirective)
-        doc_roles.register_canonical_role("sharenet", sharenet_role)
-        doc_roles.register_canonical_role("bigger", bigger_role)
         writer = HTMLWriterWithCustomDirectives()
         writer_name = 'pseudoxml'
-        # not necessary
-        # for cl in [blogpost_node, blogpostagg_node, runpython_node]:
-        #    nodes._add_node_class_names([cl.__name__])
+
+        doc_directives.register_directive("blogpost", BlogPostDirective)
+        doc_directives.register_directive("blogpostagg", BlogPostDirectiveAgg)
+        writer.connect_directive_node(
+            "blogpost", visit_blogpost_node, depart_blogpost_node)
+
+        doc_directives.register_directive("runpython", RunPythonDirective)
+        writer.connect_directive_node(
+            "runpython", visit_runpython_node, depart_runpython_node)
+
+        doc_directives.register_directive("sharenet", ShareNetDirective)
+        writer.connect_directive_node(
+            "sharenet", visit_sharenet_node, depart_sharenet_node)
+
+        doc_directives.register_directive("todoext", TodoExt)
+        doc_directives.register_directive("todoextlist", TodoExtList)
+        writer.connect_directive_node(
+            "todoext", visit_todoext_node, depart_todoext_node)
+        writer.connect_directive_node(
+            "todoextlist", visit_todoextlist_node, depart_todoextlist_node)
+        title_names.append("todoext_node")
+
+        doc_directives.register_directive("todo", Todo)
+        doc_directives.register_directive("todolist", TodoList)
+        writer.connect_directive_node(
+            "todo", visit_todo_node, depart_todo_node)
+        title_names.append("todo_node")
+
+        doc_roles.register_canonical_role("sharenet", sharenet_role)
+        doc_roles.register_canonical_role("bigger", bigger_role)
     else:
         writer_name = 'html'
 
@@ -138,23 +175,27 @@ def rst2html(s, fLOG=noLOG, writer="sphinx", keep_warnings=False,
             writer.connect_directive_node(node.__name__, f1, f2)
 
     settings_overrides = default_settings.copy()
-    settings_overrides.update({'output_encoding': 'unicode',
-                               'doctitle_xform': True,
-                               'initial_header_level': 2,
-                               'warning_stream': StringIO(),
-                               'input_encoding': 'utf8',
-                               'out_blogpostlist': [],
-                               'out_runpythonlist': [],
-                               'blog_background': False,
-                               'sharepost': None,
+    settings_overrides.update({'output_encoding': 'unicode', 'doctitle_xform': True,
+                               'initial_header_level': 2, 'warning_stream': StringIO(),
+                               'input_encoding': 'utf8', 'out_blogpostlist': [],
+                               'out_runpythonlist': [], 'blog_background': False, 'sharepost': None,
+                               'todoext_include_todosext': [], 'todoext_link_only': False,
+                               'todo_include_todos': [], 'todo_link_only': False,
+                               'language': language,
                                })
 
     config = Config(None, None, overrides=settings_overrides, tags=None)
     config.blog_background = False
     config.sharepost = None
+
     env = BuildEnvironment(None, None, config=config)
     env.temp_data["docname"] = "string"
     settings_overrides["env"] = env
+
+    lang = languages.get_language(language)
+    for name in title_names:
+        if name not in lang.labels:
+            lang.labels[name] = TITLES[language][name]
 
     parts = core.publish_parts(source=s, source_path=None,
                                destination_path=None, writer=writer,

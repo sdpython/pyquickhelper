@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
 """
 @file
-@brief Defines a sphinx extension to bigger text
+@brief Defines a sphinx extension to display bigger text
 
 .. versionadded:: 1.3
 """
 
 import cgi
+import sphinx
 from docutils import nodes
 from sphinx.writers.html import HTMLTranslator
 
@@ -74,3 +75,16 @@ def depart_bigger_node(self, node):
 
     self.body.append(
         '<font size="{1}">{0}</font>'.format(cgi.escape(node["text"]), node["size"]))
+
+
+def setup(app):
+    """
+    setup for ``bigger`` (sphinx)
+    """
+    app.add_node(bigger_node,
+                 html=(visit_bigger_node, depart_bigger_node),
+                 latex=(visit_bigger_node, depart_bigger_node),
+                 text=(visit_bigger_node, depart_bigger_node))
+
+    app.add_role('bigger', bigger_role)
+    return {'version': sphinx.__display_version__, 'parallel_read_safe': True}

@@ -182,6 +182,14 @@ def process_notebooks(notebooks,
 
     .. versionchanged:: 1.1
         Add format slides. Return type was changed.
+
+    .. todoext::
+        :title: Allow hidden rst instruction in notebook (for references)
+
+        We should be able to add references to the documentation in the documentation
+        without referencing the absolute path of the referenced page. One option
+        is to add hidden HTML or comments and to publish it when converting the
+        notebook to RST.
     """
     if pandoc_path is None:
         pandoc_path = find_pandoc_path()

@@ -5,7 +5,7 @@
 
 .. versionadded:: 1.3
 """
-
+import sphinx
 from docutils import nodes
 from docutils.parsers.rst import Directive, directives
 from sphinx.writers.html import HTMLTranslator
@@ -217,3 +217,19 @@ def depart_sharenet_node(self, node):
                 else:
                     self.body.append(script)
                 self.body.extend(rows)
+
+
+def setup(app):
+    """
+    setup for ``sharenet`` (sphinx)
+    """
+    app.add_config_value('sharepost', None, 'env')
+
+    app.add_node(sharenet_node,
+                 html=(visit_sharenet_node, depart_sharenet_node),
+                 latex=(visit_sharenet_node, depart_sharenet_node),
+                 text=(visit_sharenet_node, depart_sharenet_node))
+
+    app.add_directive('sharenet', ShareNetDirective)
+    app.add_role('sharenet', sharenet_role)
+    return {'version': sphinx.__display_version__, 'parallel_read_safe': True}

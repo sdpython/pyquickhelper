@@ -214,6 +214,7 @@ def set_sphinx_variables(fileconf,
 
     # todo
     todo_include_todos = True
+    todoext_include_todos = True
 
     # extensions
     extensions = ['sphinx.ext.autodoc',
@@ -444,57 +445,17 @@ def custom_setup(app, author):
     """
     see `Sphinx core events <http://sphinx-doc.org/extdev/appapi.html?highlight=setup#sphinx-core-events>`_
     """
-    from ..sphinxext.sphinx_blog_extension import visit_blogpost_node, depart_blogpost_node
-    from ..sphinxext.sphinx_blog_extension import visit_blogpostagg_node, depart_blogpostagg_node
-    from ..sphinxext.sphinx_blog_extension import blogpost_node, blogpostagg_node
-    from ..sphinxext.sphinx_blog_extension import BlogPostDirective, BlogPostDirectiveAgg
-    from ..sphinxext.sphinx_runpython_extension import RunPythonDirective
-    from ..sphinxext.sphinx_runpython_extension import runpython_node, visit_runpython_node, depart_runpython_node
-    from ..sphinxext.sphinx_sharenet_extension import ShareNetDirective, sharenet_role
-    from ..sphinxext.sphinx_bigger_extension import bigger_role
-    from ..sphinxext.sphinx_sharenet_extension import sharenet_node, visit_sharenet_node, depart_sharenet_node
-    from ..sphinxext.sphinx_bigger_extension import bigger_node, visit_bigger_node, depart_bigger_node
+    from ..sphinxext.sphinx_runpython_extension import setup as setup_runpython
+    from ..sphinxext.sphinx_bigger_extension import setup as setup_bigger
+    from ..sphinxext.sphinx_sharenet_extension import setup as setup_sharenet
+    from ..sphinxext.sphinx_todoext_extension import setup as setup_todoext
+    from ..sphinxext.sphinx_blogpost_extension import setup as setup_blogpost
 
     app.connect("autodoc-skip-member", skip)
     app.add_config_value('author', author, True)
 
-    # this command enables the parameter blog_background to be part of the
-    # configuration
-    app.add_config_value('blog_background', True, 'env')
-    app.add_config_value('sharepost', None, 'env')
-
-    # app.add_node(blogpostlist)
-    app.add_node(blogpost_node,
-                 html=(visit_blogpost_node, depart_blogpost_node),
-                 latex=(visit_blogpost_node, depart_blogpost_node),
-                 text=(visit_blogpost_node, depart_blogpost_node))
-
-    app.add_node(blogpostagg_node,
-                 html=(visit_blogpostagg_node, depart_blogpostagg_node),
-                 latex=(visit_blogpostagg_node, depart_blogpostagg_node),
-                 text=(visit_blogpostagg_node, depart_blogpostagg_node))
-
-    app.add_node(runpython_node,
-                 html=(visit_runpython_node, depart_runpython_node),
-                 latex=(visit_runpython_node, depart_runpython_node),
-                 text=(visit_runpython_node, depart_runpython_node))
-
-    app.add_node(sharenet_node,
-                 html=(visit_sharenet_node, depart_sharenet_node),
-                 latex=(visit_sharenet_node, depart_sharenet_node),
-                 text=(visit_sharenet_node, depart_sharenet_node))
-
-    app.add_node(bigger_node,
-                 html=(visit_bigger_node, depart_bigger_node),
-                 latex=(visit_bigger_node, depart_bigger_node),
-                 text=(visit_bigger_node, depart_bigger_node))
-
-    app.add_directive('blogpost', BlogPostDirective)
-    app.add_directive('blogpostagg', BlogPostDirectiveAgg)
-    app.add_directive('runpython', RunPythonDirective)
-    app.add_directive('sharenet', ShareNetDirective)
-    app.add_role('sharenet', sharenet_role)
-    app.add_role('bigger', bigger_role)
-    #app.add_directive('blogpostlist', BlogPostListDirective)
-    #app.connect('doctree-resolved', process_blogpost_nodes)
-    #app.connect('env-purge-doc', purge_blogpost)
+    setup_runpython(app)
+    setup_bigger(app)
+    setup_sharenet(app)
+    setup_todoext(app)
+    setup_blogpost(app)

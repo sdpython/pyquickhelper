@@ -22,4 +22,5 @@ through documentation
     all_example_otherpageofexamples
     all_example_pagewithanaccentinthetitle
     index_module
-    blog/blogindex.rst
+    blog/blogindex
+    issues_todoextlist

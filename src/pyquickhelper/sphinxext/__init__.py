@@ -8,3 +8,4 @@ from .sphinx_runpython_extension import RunPythonDirective, runpython_node
 from .sphinx_sharenet_extension import ShareNetDirective, sharenet_node, sharenet_role
 from .sphinx_bigger_extension import bigger_node, bigger_role
 from .sphinx_blog_extension import BlogPostDirective, BlogPostDirectiveAgg
+from .sphinx_todoext_extension import TodoExt, TodoExtList

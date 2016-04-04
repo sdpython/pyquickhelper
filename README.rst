@@ -89,6 +89,7 @@ Versions, Changes
     * **fix:** fix class _CustomSphinx for Sphinx 1.4
     * **change:** cache urls testing notebooks
     * **move:** move all sphinx extension to a specific folder *sphinxext*
+    * **add:** add directive todoext, refactoring of the custom directives
 
 * **1.3.1110 - 2016/03/08**
     * **commit:** 2ab88f6545ab139c17562c1b995404e6a2d0714d

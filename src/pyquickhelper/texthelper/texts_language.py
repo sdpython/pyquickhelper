@@ -27,6 +27,9 @@ TITLES = {
            "In": "In",
            "Out": "Out",
            "Out2": "Raw",
+           'todo': 'Todo',
+           'todo_node': 'Todo',
+           'todoext_node': '',
            },
     'fr': {"blogpost": "article",
            "toc": "Contenu",
@@ -50,5 +53,8 @@ TITLES = {
            "In": "Code",
            "Out": "Sortie",
            "Out2": "Sortie brute",
+           'todo': 'A faire',
+           'todo_node': 'A faire',
+           'todoext_node': '',
            }
 }
