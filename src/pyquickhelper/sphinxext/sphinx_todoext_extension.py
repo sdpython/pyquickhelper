@@ -263,7 +263,7 @@ def setup(app):
 
     app.add_directive('todoext', TodoExt)
     app.add_directive('todoextlist', TodoExtList)
-    app.connect('doctree-read', process_todoext_nodes)
+    app.connect('doctree-read', process_todoexts)
     app.connect('doctree-resolved', process_todoext_nodes)
     app.connect('env-purge-doc', purge_todosext)
     app.connect('env-merge-info', merge_infoext)

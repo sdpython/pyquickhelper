@@ -449,7 +449,7 @@ def custom_setup(app, author):
     from ..sphinxext.sphinx_bigger_extension import setup as setup_bigger
     from ..sphinxext.sphinx_sharenet_extension import setup as setup_sharenet
     from ..sphinxext.sphinx_todoext_extension import setup as setup_todoext
-    from ..sphinxext.sphinx_blogpost_extension import setup as setup_blogpost
+    from ..sphinxext.sphinx_blog_extension import setup as setup_blogpost
 
     app.connect("autodoc-skip-member", skip)
     app.add_config_value('author', author, True)
