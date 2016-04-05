@@ -214,7 +214,7 @@ def set_sphinx_variables(fileconf,
 
     # todo
     todo_include_todos = True
-    todoext_include_todos = True
+    todoext_include_todosext = True
 
     # extensions
     extensions = ['sphinx.ext.autodoc',
