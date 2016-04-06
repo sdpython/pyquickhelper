@@ -185,6 +185,7 @@ def process_notebooks(notebooks,
 
     .. todoext::
         :title: Allow hidden rst instruction in notebook (for references)
+        :tag: enhancement
 
         We should be able to add references to the documentation in the documentation
         without referencing the absolute path of the referenced page. One option

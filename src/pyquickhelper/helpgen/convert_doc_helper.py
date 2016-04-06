@@ -106,6 +106,7 @@ def rst2html(s, fLOG=noLOG, writer="sphinx", keep_warnings=False,
 
     .. todoext::
         :title: make function rst2html handle todoextlist
+        :tag: issue
 
         The function @see fn rst2html handles the sphinx custom directive
         *todoextlist* but the content is empty.

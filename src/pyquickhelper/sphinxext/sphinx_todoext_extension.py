@@ -6,7 +6,7 @@ inspired from `todo.py <https://github.com/sphinx-doc/sphinx/blob/master/sphinx/
 
 .. versionadded:: 1.4
 """
-
+import os
 from docutils import nodes
 from docutils.parsers.rst import directives
 
@@ -37,6 +37,18 @@ class todoextlist(nodes.General, nodes.Element):
 class TodoExt(BaseAdmonition):
     """
     A ``todoext`` entry, displayed in the form of an admonition.
+    It takes the following options:
+
+    * title: a title for the todo
+    * tag: a tag to have several categories of todo
+
+    Example::
+
+        .. todoext::
+                :title: title for the todo
+                :tag: issue
+
+                Description of the todo
     """
 
     node_class = todoext_node
@@ -47,6 +59,7 @@ class TodoExt(BaseAdmonition):
     option_spec = {
         'class': directives.class_option,
         'title': directives.unchanged,
+        'tag': directives.unchanged,
     }
 
     def run(self):
@@ -74,17 +87,23 @@ class TodoExt(BaseAdmonition):
             return [todoext]
 
         title = self.options.get('title', "").strip()
+        todotag = self.options.get('tag', '').strip()
         if len(title) > 0:
             title = ": " + title
         prefix = TITLES[language_code]["todo"]
+        if len(todotag) > 0:
+            prefix += ' (%s)' % todotag
 
         todoext.insert(0, nodes.title(text=_(prefix + title)))
+        todoext['todotag'] = todotag
         set_source_info(self, todoext)
 
-        env = self.state.document.settings.env
-        targetid = 'index-%s' % env.new_serialno('index')
-        targetnode = nodes.target(legend, legend, ids=[targetid])
-        return [targetnode, todoext]
+        if env is not None:
+            targetid = 'index-%s' % env.new_serialno('index')
+            targetnode = nodes.target(legend, legend, ids=[targetid])
+            return [targetnode, todoext]
+        else:
+            return [todoext]
 
 
 def process_todoexts(app, doctree):
@@ -104,33 +123,57 @@ def process_todoexts(app, doctree):
         except IndexError:
             targetnode = None
         newnode = node.deepcopy()
+        todotag = newnode['todotag']
         del newnode['ids']
+        del newnode['todotag']
         env.todoext_all_todosext.append({
             'docname': env.docname,
             'source': node.source or env.doc2path(env.docname),
             'lineno': node.line,
             'todoext': newnode,
             'target': targetnode,
+            'todotag': todotag,
         })
 
 
 class TodoExtList(Directive):
     """
-    A list of all todoext entries.
+    A list of all todoext entries, for a specific tag.
+
+    * tag: a tag to have several categories of todo
+
+    Example::
+
+        .. todoextlist::
+                :tag: issue
     """
 
     has_content = False
     required_arguments = 0
     optional_arguments = 0
     final_argument_whitespace = False
-    option_spec = {}
+    option_spec = {
+        'tag': directives.unchanged,
+    }
 
     def run(self):
         """
         Simply insert an empty todoextlist node which will be replaced later
         when process_todoext_nodes is called
         """
-        return [todoextlist('')]
+        env = self.state.document.settings.env if hasattr(
+            self.state.document.settings, "env") else None
+        tag = self.options.get('tag', '').strip()
+        if env is not None:
+            targetid = 'index-%s' % env.new_serialno('index')
+            targetnode = nodes.target('', '', ids=[targetid])
+            n = todoextlist('')
+            n["todotag"] = tag
+            return [targetnode, n]
+        else:
+            n = todoextlist('')
+            n["todotag"] = tag
+            return [n]
 
 
 def process_todoext_nodes(app, doctree, fromdocname):
@@ -144,25 +187,36 @@ def process_todoext_nodes(app, doctree, fromdocname):
     # Replace all todoextlist nodes with a list of the collected todosext.
     # Augment each todoext with a backlink to the original location.
     env = app.builder.env
+    if hasattr(env, "settings") and hasattr(env.settings, "language_code"):
+        lang = env.settings.language_code
+    else:
+        lang = "en"
+
+    orig_entry = TITLES[lang]["original entry"]
+    todomes = TITLES[lang]["todomes"]
 
     if not hasattr(env, 'todoext_all_todosext'):
         env.todoext_all_todosext = []
 
-    for node in doctree.traverse(todoextlist):
+    for ilist, node in enumerate(doctree.traverse(todoextlist)):
         if not app.config['todoext_include_todosext']:
             node.replace_self([])
             continue
 
         content = []
+        todotag = node["todotag"]
 
-        for todoext_info in env.todoext_all_todosext:
+        for n, todoext_info in enumerate(env.todoext_all_todosext):
+            if todoext_info["todotag"] != todotag:
+                continue
             para = nodes.paragraph(classes=['todoext-source'])
             if app.config['todoext_link_only']:
-                description = _('<<original entry>>')
+                description = _('<<%s>>' % orig_entry)
             else:
                 description = (
-                    _('(The <<original entry>> is located in %s, line %d.)') %
-                    (todoext_info['source'], todoext_info['lineno'])
+                    _(todomes) %
+                    (orig_entry, os.path.split(todoext_info['source'])[-1],
+                     todoext_info['lineno'])
                 )
             desc1 = description[:description.find('<<')]
             desc2 = description[description.find('>>') + 2:]
@@ -171,7 +225,7 @@ def process_todoext_nodes(app, doctree, fromdocname):
             # Create a reference
             newnode = nodes.reference('', '', internal=True)
             innernode = nodes.emphasis(
-                _('original entry'), _('original entry'))
+                _(orig_entry), _(orig_entry))
             try:
                 newnode['refuri'] = app.builder.get_relative_uri(
                     fromdocname, todoext_info['docname'])
@@ -185,6 +239,9 @@ def process_todoext_nodes(app, doctree, fromdocname):
 
             # (Recursively) resolve references in the todoext content
             todoext_entry = todoext_info['todoext']
+            todoext_entry["ids"] = ["index-todoext-%d-%d" % (ilist, n)]
+            # it apparently requires an attributes ids
+
             env.resolve_references(todoext_entry, todoext_info['docname'],
                                    app.builder)
 

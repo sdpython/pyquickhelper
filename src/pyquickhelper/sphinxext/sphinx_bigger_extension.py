@@ -6,10 +6,16 @@
 .. versionadded:: 1.3
 """
 
-import cgi
+import sys
 import sphinx
 from docutils import nodes
 from sphinx.writers.html import HTMLTranslator
+
+
+if sys.version_info[0] == 2:
+    import cgi as cgiesc
+else:
+    import html as cgiesc
 
 
 class bigger_node(nodes.Element):
@@ -74,7 +80,7 @@ def depart_bigger_node(self, node):
         return
 
     self.body.append(
-        '<font size="{1}">{0}</font>'.format(cgi.escape(node["text"]), node["size"]))
+        '<font size="{1}">{0}</font>'.format(cgiesc.escape(node["text"]), node["size"]))
 
 
 def setup(app):
