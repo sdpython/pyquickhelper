@@ -36,13 +36,22 @@ def apply_template(text, context, engine="mako"):
         except CompileException as ee:
             mes = ["%04d %s" % (i + 1, _)
                    for i, _ in enumerate(text.split("\n"))]
+            import mako.exceptions
+            exc = mako.exceptions.text_error_template()
+            text = exc.render()
             raise CustomTemplateException(
-                "unable to compile with mako\n" + "\n".join(mes)) from ee
-        res = tmpl.render(**context)
+                "unable to compile with mako\n{0}\nCODE:\n{1}".format(text, "\n".join(mes))) from ee
+        try:
+            res = tmpl.render(**context)
+        except Exception as ee:
+            import mako.exceptions
+            exc = mako.exceptions.text_error_template()
+            text = exc.render()
+            raise CustomTemplateException("Some parameters are missing or mispelled.\n" + text) from ee
         return res
     elif engine == "jinja2":
         from jinja2 import Template
-        from jinja2.exceptions import TemplateSyntaxError
+        from jinja2.exceptions import TemplateSyntaxError, UndefinedError
         try:
             template = Template(text)
         except TemplateSyntaxError as eee:
@@ -50,7 +59,10 @@ def apply_template(text, context, engine="mako"):
                    for i, _ in enumerate(text.split("\n"))]
             raise CustomTemplateException(
                 "unable to compile with jinja2\n" + "\n".join(mes)) from eee
-        res = template.render(**context)
+        try:
+            res = template.render(**context)
+        except UndefinedError as ee:
+            raise CustomTemplateException("Some parameters are missing or mispelled.") from ee
         return res
     else:
         raise ValueError(
