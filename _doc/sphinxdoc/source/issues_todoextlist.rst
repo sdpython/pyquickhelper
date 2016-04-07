@@ -7,6 +7,9 @@ Issues and enhancement
 
 .. index:: issues, todo
 
+.. contents::
+
+
 Issues
 ++++++
 
