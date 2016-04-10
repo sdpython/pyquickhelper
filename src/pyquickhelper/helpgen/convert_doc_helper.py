@@ -51,6 +51,7 @@ def default_sphinx_options(fLOG=noLOG, **options):
     .. runpython::
 
         from pyquickhelper.helpgen.convert_doc_helper import default_sphinx_options
+        options = default_sphinx_options()
         for k, v in sorted(options.items()):
             print("{0} = {1}".format(k, v)
 
