@@ -14,23 +14,27 @@ from .utils_sphinx_doc import migrating_doxygen_doc
 from ..texthelper.texts_language import TITLES
 from ..loghelper.flog import noLOG
 from . helpgen_exceptions import HelpGenConvertError
-from ..sphinxext.sphinx_blog_extension import BlogPostDirective, BlogPostDirectiveAgg, visit_blogpost_node, depart_blogpost_node
-from ..sphinxext.sphinx_runpython_extension import RunPythonDirective, visit_runpython_node, depart_runpython_node
-from ..sphinxext.sphinx_sharenet_extension import ShareNetDirective, sharenet_role, visit_sharenet_node, depart_sharenet_node
-from ..sphinxext.sphinx_bigger_extension import bigger_role
-from ..sphinxext.sphinx_todoext_extension import TodoExt, TodoExtList, visit_todoext_node, depart_todoext_node
-from ..sphinxext.sphinx_todoext_extension import visit_todoextlist_node, depart_todoextlist_node
+from ..sphinxext.sphinx_blog_extension import setup as setup_blog
+from ..sphinxext.sphinx_runpython_extension import setup as setup_runpython
+from ..sphinxext.sphinx_sharenet_extension import setup as setup_sharenet
+from ..sphinxext.sphinx_bigger_extension import setup as setup_bigger
+from ..sphinxext.sphinx_todoext_extension import setup as setup_todoext
 # from ..sphinxext.sphinx_todoext_extension import process_todoext_nodes, process_todoext_nodes, purge_todosext, merge_infoext
 from .convert_doc_sphinx_helper import HTMLWriterWithCustomDirectives
+from .conf_path_tools import get_graphviz_dot, find_latex_path
 
 import sys
 import re
 import textwrap
+import os
+import warnings
 from docutils import core, languages
 from docutils.parsers.rst import directives as doc_directives, roles as doc_roles
 from sphinx.environment import BuildEnvironment, default_settings
 from sphinx.config import Config
-from sphinx.ext.todo import Todo, TodoList, visit_todo_node, depart_todo_node
+from sphinx.ext.graphviz import setup as setup_graphviz
+from sphinx.ext.imgmath import setup as setup_math
+from sphinx.ext.todo import setup as setup_todo
 
 
 if sys.version_info[0] == 2:
@@ -39,8 +43,116 @@ else:
     from io import StringIO
 
 
+def default_sphinx_options(**options):
+    """
+    Define or override default options for Sphinx, listed below.
+
+    .. runpython::
+
+        from pyquickhelper.helpgen.convert_doc_helper import default_sphinx_options
+        for k, v in sorted(options.items()):
+            print("{0} = {1}".format(k, v)
+
+    .. versionadded:: 1.4
+    """
+    res = {'output_encoding': options.get('output_encoding', 'unicode'),
+           'doctitle_xform': options.get('doctitle_xform', True),
+           'initial_header_level': options.get('initial_header_level', 2),
+           'input_encoding': options.get('input_encoding', 'utf8'),
+           'blog_background': options.get('blog_background', False),
+           'sharepost': options.get('sharepost', None),
+           'todoext_link_only': options.get('todoext_link_only', False),
+           'todo_link_only': options.get('todo_link_only', False),
+           'language': options.get('language', 'en'),
+           'outdir': options.get('outdir', '.'),
+           'imagedir': options.get('imagedir', '.'),
+           # graphviz
+           'graphviz_output_format': options.get('graphviz_output_format', 'png'),
+           'graphviz_dot': options.get('graphviz_dot', get_graphviz_dot()),
+           # latex
+           'imgmath_image_format': options.get('imgmath_image_format', 'png'),
+           # containers
+           'todo_include_todos': [],
+           'out_blogpostlist': [],
+           'out_runpythonlist': [],
+           'todoext_include_todosext': [],
+           'warning_stream': StringIO(),
+           }
+
+    if res['imgmath_image_format'] == 'png':
+        res['imgmath_latex'] = options.get('imgmath_latex', find_latex_path())
+        res['imgmath_dvipng'] = options.get(
+            'imgmath_dvipng', os.path.join(res['imgmath_latex'], "dvipng.exe"))
+        if not os.path.exists(res['imgmath_dvipng']):
+            raise FileNotFoundError(res['imgmath_dvipng'])
+        env_path = os.environ.get("PATH", "")
+        if res['imgmath_latex'] not in env_path:
+            if len(env_path) > 0:
+                env_path += ";"
+            env_path += res['imgmath_latex']
+
+        if sys.platform.startswith("win"):
+            res['imgmath_latex'] = os.path.join(
+                res['imgmath_latex'], "latex.exe")
+        else:
+            res['imgmath_latex'] = os.path.join(res['imgmath_latex'], "latex")
+
+    return res
+
+
+class MockSphinxApp:
+    """
+    Mock Sphinx application
+    """
+
+    def __init__(self, writer):
+        self.new_options = {}
+        self.writer = writer
+        self.mapping = {"<class 'sphinx.ext.todo.todo_node'>": "todo",
+                        "<class 'sphinx.ext.graphviz.graphviz'>": "graphviz",
+                        "<class 'sphinx.ext.mathbase.math'>": "math",
+                        "<class 'sphinx.ext.mathbase.displaymath'>": "displaymath",
+                        "<class 'sphinx.ext.mathbase.eqref'>": "eqref",
+                        }
+        self.mapping_connect = {}
+        self.config = Config(None, None, overrides={}, tags=None)
+
+    def add_directive(self, name, cl):
+        doc_directives.register_directive(name, cl)
+        self.mapping[str(cl)] = name
+
+    def add_role(self, name, cl):
+        doc_roles.register_canonical_role(name, cl)
+        self.mapping[str(cl)] = name
+
+    def add_mapping(self, name, cl):
+        self.mapping[str(cl)] = name
+
+    def add_config_value(self, name, default, rebuild, types=()):
+        if name in self.config.values:
+            raise Exception('Config value %r already present' % name)
+        if rebuild in (False, True):
+            rebuild = rebuild and 'env' or ''
+        self.new_options[name] = (default, rebuild, types)
+        self.config.values[name] = (default, rebuild, types)
+
+    def get_default_values(self):
+        return {k: v[0] for k, v in self.new_options.items()}
+
+    def add_node(self, clnode, html=None, latex=None, text=None, man=None,
+                 texinfo=None, override=True):
+        if override:
+            if html is not None:
+                self.writer.connect_directive_node(
+                    self.mapping[str(clnode)], html[0], html[1])
+
+    def connect(self, node, func):
+        self.mapping_connect[node] = func
+
+
 def rst2html(s, fLOG=noLOG, writer="sphinx", keep_warnings=False,
-             directives=None, language="en"):
+             directives=None, language="en", warnings_log=False,
+             **options):
     """
     converts a string into HTML format
 
@@ -51,6 +163,9 @@ def rst2html(s, fLOG=noLOG, writer="sphinx", keep_warnings=False,
     @param      keep_warnings   keep_warnings in the final HTML
     @param      directives      new directives to add (see below)
     @param      language        language
+    @param      options         Sphinx options see `Render math as images <http://www.sphinx-doc.org/en/stable/ext/math.html#module-sphinx.ext.imgmath>`_,
+                                a subset of options is used, see @see fn default_sphinx_options
+    @param      warnings_log    send warnings to log (True) or to the warning stream(False)
     @return                     HTML format
 
     *directives* is None or a list of 5-uple:
@@ -101,6 +216,7 @@ def rst2html(s, fLOG=noLOG, writer="sphinx", keep_warnings=False,
 
     Unfortunately, this functionality is only tested on Python 3.
     It might only work on Python 2.7.
+    The function produces files if the document contains latex converted into image.
 
     @endexample
 
@@ -121,44 +237,34 @@ def rst2html(s, fLOG=noLOG, writer="sphinx", keep_warnings=False,
 
     .. versionchanged:: 1.4
         Add directives *todoext* and *todo*, parameter *language* was added.
+        Add directives *graphviz*, *math*.
     """
     title_names = []
 
     if writer in ["custom", "sphinx"]:
         writer = HTMLWriterWithCustomDirectives()
         writer_name = 'pseudoxml'
+        mockapp = MockSphinxApp(writer)
 
-        doc_directives.register_directive("blogpost", BlogPostDirective)
-        doc_directives.register_directive("blogpostagg", BlogPostDirectiveAgg)
-        writer.connect_directive_node(
-            "blogpost", visit_blogpost_node, depart_blogpost_node)
+        # directives from pyquickhelper
+        setup_blog(mockapp)
+        setup_runpython(mockapp)
+        setup_sharenet(mockapp)
+        setup_todoext(mockapp)
+        setup_bigger(mockapp)
+        setup_runpython(mockapp)
+        setup_todo(mockapp)
 
-        doc_directives.register_directive("runpython", RunPythonDirective)
-        writer.connect_directive_node(
-            "runpython", visit_runpython_node, depart_runpython_node)
+        # directives from sphinx
+        setup_graphviz(mockapp)
+        setup_math(mockapp)
 
-        doc_directives.register_directive("sharenet", ShareNetDirective)
-        writer.connect_directive_node(
-            "sharenet", visit_sharenet_node, depart_sharenet_node)
-
-        doc_directives.register_directive("todoext", TodoExt)
-        doc_directives.register_directive("todoextlist", TodoExtList)
-        writer.connect_directive_node(
-            "todoext", visit_todoext_node, depart_todoext_node)
-        writer.connect_directive_node(
-            "todoextlist", visit_todoextlist_node, depart_todoextlist_node)
         title_names.append("todoext_node")
-
-        doc_directives.register_directive("todo", Todo)
-        doc_directives.register_directive("todolist", TodoList)
-        writer.connect_directive_node(
-            "todo", visit_todo_node, depart_todo_node)
         title_names.append("todo_node")
 
-        doc_roles.register_canonical_role("sharenet", sharenet_role)
-        doc_roles.register_canonical_role("bigger", bigger_role)
     else:
         writer_name = 'html'
+        mockapp = MockSphinxApp(None)
 
     if writer is None and directives is not None and len(directives) > 0:
         raise NotImplementedError(
@@ -176,18 +282,18 @@ def rst2html(s, fLOG=noLOG, writer="sphinx", keep_warnings=False,
             writer.connect_directive_node(node.__name__, f1, f2)
 
     settings_overrides = default_settings.copy()
-    settings_overrides.update({'output_encoding': 'unicode', 'doctitle_xform': True,
-                               'initial_header_level': 2, 'warning_stream': StringIO(),
-                               'input_encoding': 'utf8', 'out_blogpostlist': [],
-                               'out_runpythonlist': [], 'blog_background': False, 'sharepost': None,
-                               'todoext_include_todosext': [], 'todoext_link_only': False,
-                               'todo_include_todos': [], 'todo_link_only': False,
-                               'language': language,
-                               })
+    settings_overrides.update({k: v[0]
+                               for k, v in mockapp.new_options.items()})
+    settings_overrides.update(default_sphinx_options(**options))
 
-    config = Config(None, None, overrides=settings_overrides, tags=None)
+    config = mockapp.config
+    config.init_values(fLOG)
     config.blog_background = False
     config.sharepost = None
+
+    writer.add_configuration_options(mockapp.new_options)
+    for k in {'outdir', 'imagedir'}:
+        setattr(writer.builder, k, settings_overrides[k])
 
     env = BuildEnvironment(None, None, config=config)
     env.temp_data["docname"] = "string"
@@ -198,12 +304,22 @@ def rst2html(s, fLOG=noLOG, writer="sphinx", keep_warnings=False,
         if name not in lang.labels:
             lang.labels[name] = TITLES[language][name]
 
+    for k, v in sorted(settings_overrides.items()):
+        fLOG("[rst2html] {0}={1}{2}".format(
+            k, v, " --- added" if hasattr(config, k) else ""))
+    for k, v in sorted(settings_overrides.items()):
+        if hasattr(writer.builder.config, k) and writer.builder.config[k] != v:
+            writer.builder.config[k] = v
+
     parts = core.publish_parts(source=s, source_path=None,
                                destination_path=None, writer=writer,
                                writer_name=writer_name,
                                settings_overrides=settings_overrides)
 
-    fLOG(settings_overrides["warning_stream"].getvalue())
+    if warnings_log:
+        fLOG(settings_overrides["warning_stream"].getvalue())
+    else:
+        warnings.warn(settings_overrides["warning_stream"].getvalue())
 
     if not keep_warnings:
         exp = re.sub(

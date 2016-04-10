@@ -153,6 +153,7 @@ class HTMLWriterWithCustomDirectives(HTMLWriter):
         self.builder.translator_class = self.translator_class
         self.builder.secnumbers = {}
         self.builder._function_node = []
+        self.builder.current_docname = None
 
     def connect_directive_node(self, name, f_visit, f_depart):
         """
@@ -163,6 +164,15 @@ class HTMLWriterWithCustomDirectives(HTMLWriter):
         @param      f_depart    depart function
         """
         self.builder._function_node.append((name, f_visit, f_depart))
+
+    def add_configuration_options(self, new_options):
+        """
+        add new options
+
+        @param      new_options     new options
+        """
+        for k, v in new_options.items():
+            self.builder.config.values[k] = new_options[k]
 
 
 class _CustomSphinx(Sphinx):

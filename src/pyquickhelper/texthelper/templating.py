@@ -47,7 +47,8 @@ def apply_template(text, context, engine="mako"):
             import mako.exceptions
             exc = mako.exceptions.text_error_template()
             text = exc.render()
-            raise CustomTemplateException("Some parameters are missing or mispelled.\n" + text) from ee
+            raise CustomTemplateException(
+                "Some parameters are missing or mispelled.\n" + text) from ee
         return res
     elif engine == "jinja2":
         from jinja2 import Template
@@ -62,7 +63,8 @@ def apply_template(text, context, engine="mako"):
         try:
             res = template.render(**context)
         except UndefinedError as ee:
-            raise CustomTemplateException("Some parameters are missing or mispelled.") from ee
+            raise CustomTemplateException(
+                "Some parameters are missing or mispelled.") from ee
         return res
     else:
         raise ValueError(

@@ -208,6 +208,9 @@ def set_sphinx_variables(fileconf,
     autoclass_content = 'both'
     autosummary_generate = True
 
+    # import helpers to find tools to build the documentation
+    from .conf_path_tools import find_latex_path, get_graphviz_dot
+
     # graphviz
     graphviz_output_format = "svg"
     graphviz_dot = get_graphviz_dot()
@@ -242,9 +245,6 @@ def set_sphinx_variables(fileconf,
         # extensions.append('matplotlib.sphinxext.mathmpl')
         # this extension disables sphinx.ext.imgmath
         pass
-
-    # disabled for the time being
-    from .conf_path_tools import find_latex_path
 
     if not use_mathjax:
         imgmath_latex = find_latex_path()
@@ -394,30 +394,6 @@ def get_first_line(filename):
         first_line = "xxx"
     return first_line
 
-
-def get_graphviz_dot():
-    """
-    finds Graphviz executable dot, does something specific for Windows
-    """
-    if sys.platform.startswith("win"):
-        # appveyor
-        graphviz_dot = "C:\\ProgramData\\chocolatey\\lib\\graphviz.portable\\tools\\release\\bin\\dot.exe"
-        if os.path.exists(graphviz_dot):
-            return graphviz_dot
-
-        version = range(34, 42)
-        for v in version:
-            graphviz_dot = r"C:\Program Files (x86)\Graphviz2.{0}\bin\dot.exe".format(
-                v)
-            if os.path.exists(graphviz_dot):
-                break
-
-    if sys.platform.startswith("win"):
-        if not os.path.exists(graphviz_dot):
-            raise FileNotFoundError(graphviz_dot)
-    else:
-        graphviz_dot = "dot"
-    return graphviz_dot
 
 #################
 # sphinx functions

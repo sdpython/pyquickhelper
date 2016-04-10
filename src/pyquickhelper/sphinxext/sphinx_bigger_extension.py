@@ -87,6 +87,9 @@ def setup(app):
     """
     setup for ``bigger`` (sphinx)
     """
+    if hasattr(app, "add_mapping"):
+        app.add_mapping('bigger', bigger_node)
+
     app.add_node(bigger_node,
                  html=(visit_bigger_node, depart_bigger_node),
                  latex=(visit_bigger_node, depart_bigger_node),

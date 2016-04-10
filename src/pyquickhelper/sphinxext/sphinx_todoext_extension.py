@@ -307,6 +307,10 @@ def setup(app):
     """
     setup for ``todoext`` (sphinx)
     """
+    if hasattr(app, "add_mapping"):
+        app.add_mapping('todoext', todoext_node)
+        app.add_mapping('todoextlist', todoextlist)
+
     app.add_config_value('todoext_include_todosext', False, 'html')
     app.add_config_value('todoext_link_only', False, 'html')
 
