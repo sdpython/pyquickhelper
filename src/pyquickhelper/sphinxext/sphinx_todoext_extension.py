@@ -290,7 +290,7 @@ def depart_todoext_node(self, node):
 
 def visit_todoextlist_node(self, node):
     """
-    visit_todoext_node
+    visit_todoextlist_node
     see https://github.com/sphinx-doc/sphinx/blob/master/sphinx/writers/html.py
     """
     self.visit_admonition(node)
@@ -314,7 +314,12 @@ def setup(app):
     app.add_config_value('todoext_include_todosext', False, 'html')
     app.add_config_value('todoext_link_only', False, 'html')
 
-    app.add_node(todoextlist)
+    app.add_node(todoextlist,
+                 html=(visit_todoextlist_node, depart_todoextlist_node),
+                 latex=(visit_todoextlist_node, depart_todoextlist_node),
+                 text=(visit_todoextlist_node, depart_todoextlist_node),
+                 man=(visit_todoextlist_node, depart_todoextlist_node),
+                 texinfo=(visit_todoextlist_node, depart_todoextlist_node))
     app.add_node(todoext_node,
                  html=(visit_todoext_node, depart_todoext_node),
                  latex=(visit_todoext_node, depart_todoext_node),

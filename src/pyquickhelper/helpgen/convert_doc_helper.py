@@ -44,7 +44,7 @@ else:
     from io import StringIO
 
 
-def default_sphinx_options(**options):
+def default_sphinx_options(fLOG=noLOG, **options):
     """
     Define or override default options for Sphinx, listed below.
 
@@ -87,7 +87,8 @@ def default_sphinx_options(**options):
         res['imgmath_dvipng'] = options.get(
             'imgmath_dvipng', os.path.join(res['imgmath_latex'], "dvipng.exe"))
         if not os.path.exists(res['imgmath_dvipng']):
-            raise FileNotFoundError(res['imgmath_dvipng'])
+            fLOG("[warning], unable to find: " + str(res['imgmath_dvipng']))
+            #we pass as latex is not necessarily installed or needed
         env_path = os.environ.get("PATH", "")
         if res['imgmath_latex'] not in env_path:
             if len(env_path) > 0:
