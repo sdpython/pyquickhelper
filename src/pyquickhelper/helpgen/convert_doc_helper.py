@@ -33,9 +33,10 @@ from docutils.parsers.rst import directives as doc_directives, roles as doc_role
 from sphinx.environment import BuildEnvironment, default_settings
 from sphinx.config import Config
 from sphinx.ext.graphviz import setup as setup_graphviz
-from sphinx.ext.imgmath import setup as setup_math
+from sphinx.ext.imgmath import setup as setup_math, html_visit_displaymath
 from sphinx.ext.todo import setup as setup_todo
-
+from matplotlib.sphinxext.plot_directive import setup as setup_plot
+from matplotlib.sphinxext.only_directives import setup as setup_only
 
 if sys.version_info[0] == 2:
     from StringIO import StringIO
@@ -66,6 +67,8 @@ def default_sphinx_options(**options):
            'language': options.get('language', 'en'),
            'outdir': options.get('outdir', '.'),
            'imagedir': options.get('imagedir', '.'),
+           'confdir': options.get('confdir', '.'),
+           'doctreedir': options.get('doctreedir', '.'),
            # graphviz
            'graphviz_output_format': options.get('graphviz_output_format', 'png'),
            'graphviz_dot': options.get('graphviz_dot', get_graphviz_dot()),
@@ -97,57 +100,11 @@ def default_sphinx_options(**options):
         else:
             res['imgmath_latex'] = os.path.join(res['imgmath_latex'], "latex")
 
+    for k, v in options.items():
+        if k not in res:
+            res[k] = v
+
     return res
-
-
-class MockSphinxApp:
-    """
-    Mock Sphinx application
-    """
-
-    def __init__(self, writer):
-        self.new_options = {}
-        self.writer = writer
-        self.mapping = {"<class 'sphinx.ext.todo.todo_node'>": "todo",
-                        "<class 'sphinx.ext.graphviz.graphviz'>": "graphviz",
-                        "<class 'sphinx.ext.mathbase.math'>": "math",
-                        "<class 'sphinx.ext.mathbase.displaymath'>": "displaymath",
-                        "<class 'sphinx.ext.mathbase.eqref'>": "eqref",
-                        }
-        self.mapping_connect = {}
-        self.config = Config(None, None, overrides={}, tags=None)
-
-    def add_directive(self, name, cl):
-        doc_directives.register_directive(name, cl)
-        self.mapping[str(cl)] = name
-
-    def add_role(self, name, cl):
-        doc_roles.register_canonical_role(name, cl)
-        self.mapping[str(cl)] = name
-
-    def add_mapping(self, name, cl):
-        self.mapping[str(cl)] = name
-
-    def add_config_value(self, name, default, rebuild, types=()):
-        if name in self.config.values:
-            raise Exception('Config value %r already present' % name)
-        if rebuild in (False, True):
-            rebuild = rebuild and 'env' or ''
-        self.new_options[name] = (default, rebuild, types)
-        self.config.values[name] = (default, rebuild, types)
-
-    def get_default_values(self):
-        return {k: v[0] for k, v in self.new_options.items()}
-
-    def add_node(self, clnode, html=None, latex=None, text=None, man=None,
-                 texinfo=None, override=True):
-        if override:
-            if html is not None:
-                self.writer.connect_directive_node(
-                    self.mapping[str(clnode)], html[0], html[1])
-
-    def connect(self, node, func):
-        self.mapping_connect[node] = func
 
 
 def rst2html(s, fLOG=noLOG, writer="sphinx", keep_warnings=False,
@@ -220,6 +177,29 @@ def rst2html(s, fLOG=noLOG, writer="sphinx", keep_warnings=False,
 
     @endexample
 
+    @FAQ(How to get more about latex errors?)
+
+    Sphinx is not easy to use when it comes to debug latex expressions.
+    I did not find an easy way to read the error returned by latex about
+    a missing bracket or an unknown command. I fianlly added a short piece
+    of code in ``sphinx.ext.imgmath.py`` just after the call to
+    the executable indicated by *imgmath_latex*
+
+    ::
+        if b'...' in stdout:
+            print(self.builder.config.imgmath_latex_preamble)
+            print(p.returncode)
+            print("################")
+            print(latex)
+            print("..........")
+            print(stdout.decode("ascii").replace("\r", ""))
+            print("-----")
+            print(stderr)
+
+    It displays the output if an error happened.
+
+    @endFAQ
+
     .. todoext::
         :title: make function rst2html handle todoextlist
         :tag: issue
@@ -238,13 +218,84 @@ def rst2html(s, fLOG=noLOG, writer="sphinx", keep_warnings=False,
     .. versionchanged:: 1.4
         Add directives *todoext* and *todo*, parameter *language* was added.
         Add directives *graphviz*, *math*.
+        Parse more extensive Sphinx syntax.
     """
+    _nbeq = [0, None]
+
+    def custom_html_visit_displaymath(self, node):
+        if not hasattr(node, "number"):
+            node["number"] = _nbeq[0]
+            _nbeq[0] += 1
+        return html_visit_displaymath(self, node)
+
+    class MockSphinxApp:
+        """
+        Mock Sphinx application
+        """
+
+        def __init__(self, writer, app):
+            self.app = app
+            self.new_options = {}
+            self.writer = writer
+            self.mapping = {"<class 'sphinx.ext.todo.todo_node'>": "todo",
+                            "<class 'sphinx.ext.graphviz.graphviz'>": "graphviz",
+                            "<class 'sphinx.ext.mathbase.math'>": "math",
+                            "<class 'sphinx.ext.mathbase.displaymath'>": "displaymath",
+                            "<class 'sphinx.ext.mathbase.eqref'>": "eqref",
+                            "<class 'matplotlib.sphinxext.only_directives.html_only'>": "only",
+                            "<class 'matplotlib.sphinxext.only_directives.latex_only'>": "only",
+                            }
+            self.mapping_connect = {}
+            self.config = Config(None, None, overrides={}, tags=None)
+            self.confdir = "."
+            self.doctreedir = "."
+            self.builder = writer.builder
+
+        def add_directive(self, name, cl, *args, **options):
+            doc_directives.register_directive(name, cl)
+            self.mapping[str(cl)] = name
+            self.app.add_directive(name, cl, *args, **options)
+
+        def add_role(self, name, cl):
+            doc_roles.register_canonical_role(name, cl)
+            self.mapping[str(cl)] = name
+            self.app.add_role(name, cl)
+
+        def add_mapping(self, name, cl):
+            self.mapping[str(cl)] = name
+
+        def add_config_value(self, name, default, rebuild, types=()):
+            if name in self.config.values:
+                raise Exception('Config value %r already present' % name)
+            if rebuild in (False, True):
+                rebuild = rebuild and 'env' or ''
+            self.new_options[name] = (default, rebuild, types)
+            self.config.values[name] = (default, rebuild, types)
+
+        def get_default_values(self):
+            return {k: v[0] for k, v in self.new_options.items()}
+
+        def add_node(self, clnode, html=None, latex=None, text=None, man=None,
+                     texinfo=None, override=True):
+            if override and html is not None:
+                name = str(clnode)
+                if "displaymath" in name:
+                    self.writer.connect_directive_node(
+                        self.mapping[name], custom_html_visit_displaymath, html[1])
+                else:
+                    self.writer.connect_directive_node(
+                        self.mapping[name], html[0], html[1])
+
+        def connect(self, node, func):
+            self.mapping_connect[node] = func
+            self.app.connect(node, func)
+
     title_names = []
 
     if writer in ["custom", "sphinx"]:
         writer = HTMLWriterWithCustomDirectives()
         writer_name = 'pseudoxml'
-        mockapp = MockSphinxApp(writer)
+        mockapp = MockSphinxApp(writer, writer.app)
 
         # directives from pyquickhelper
         setup_blog(mockapp)
@@ -253,12 +304,15 @@ def rst2html(s, fLOG=noLOG, writer="sphinx", keep_warnings=False,
         setup_todoext(mockapp)
         setup_bigger(mockapp)
         setup_runpython(mockapp)
-        setup_todo(mockapp)
 
         # directives from sphinx
         setup_graphviz(mockapp)
         setup_math(mockapp)
+        setup_todo(mockapp)
+        setup_plot(mockapp)
+        setup_only(mockapp)
 
+        # titles
         title_names.append("todoext_node")
         title_names.append("todo_node")
 
@@ -284,7 +338,10 @@ def rst2html(s, fLOG=noLOG, writer="sphinx", keep_warnings=False,
     settings_overrides = default_settings.copy()
     settings_overrides.update({k: v[0]
                                for k, v in mockapp.new_options.items()})
-    settings_overrides.update(default_sphinx_options(**options))
+    defopt = default_sphinx_options(**options)
+    settings_overrides.update(defopt)
+    warning_stringio = defopt["warning_stream"]
+    _nbeq[1] = warning_stringio
 
     config = mockapp.config
     config.init_values(fLOG)
@@ -292,7 +349,7 @@ def rst2html(s, fLOG=noLOG, writer="sphinx", keep_warnings=False,
     config.sharepost = None
 
     writer.add_configuration_options(mockapp.new_options)
-    for k in {'outdir', 'imagedir'}:
+    for k in {'outdir', 'imagedir', 'confdir', 'doctreedir'}:
         setattr(writer.builder, k, settings_overrides[k])
 
     env = BuildEnvironment(None, None, config=config)

@@ -72,6 +72,27 @@ class TestRst2Html(unittest.TestCase):
         with open(ji, "w", encoding="utf-8") as f:
             f.write(text)
 
+    def test_rst2html_plot(self):
+        fLOG(
+            __file__,
+            self._testMethodName,
+            OutputPrint=__name__ == "__main__")
+
+        # disabled because it does not handle inline graph
+        # or I did not found
+        return
+
+        temp = get_temp_folder(__file__, "temp_rst2html_plot")
+        rst = os.path.join(os.path.abspath(
+            os.path.dirname(__file__)), "data", "rstplot.rst")
+        with open(rst, "r", encoding="utf-8") as f:
+            content = f.read()
+        text = rst2html(content, fLOG=fLOG, outdir=temp)
+        # fLOG(text)
+        ji = os.path.join(temp, "out.html")
+        with open(ji, "w", encoding="utf-8") as f:
+            f.write(text)
+
 
 if __name__ == "__main__":
     unittest.main()
