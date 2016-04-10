@@ -89,7 +89,7 @@ def default_sphinx_options(fLOG=noLOG, **options):
             'imgmath_dvipng', os.path.join(res['imgmath_latex'], "dvipng.exe"))
         if not os.path.exists(res['imgmath_dvipng']):
             fLOG("[warning], unable to find: " + str(res['imgmath_dvipng']))
-            #we pass as latex is not necessarily installed or needed
+            # we pass as latex is not necessarily installed or needed
         env_path = os.environ.get("PATH", "")
         if res['imgmath_latex'] not in env_path:
             if len(env_path) > 0:
@@ -188,7 +188,7 @@ def rst2html(s, fLOG=noLOG, writer="sphinx", keep_warnings=False,
     the executable indicated by *imgmath_latex*
 
     ::
-        if b'...' in stdout:
+        if b'...' in stdout or b'LaTeX Error' in stdout:
             print(self.builder.config.imgmath_latex_preamble)
             print(p.returncode)
             print("################")
@@ -199,6 +199,21 @@ def rst2html(s, fLOG=noLOG, writer="sphinx", keep_warnings=False,
             print(stderr)
 
     It displays the output if an error happened.
+
+    @endFAQ
+
+    @FAQ(How to hide command line window while compiling latex?)
+
+    Sphinx calls latex through command line. On Windows, a command line window
+    can annoyingly show up anytime a formula is compile. The following
+    line can be added to hide it:
+
+    ::
+
+        startupinfo = STARTUPINFO()
+        startupinfo.dwFlags |= STARTF_USESHOWWINDOW
+
+    And ``, startupinfo=startupinfo`` must be added to lines ``p = Popen(...``.
 
     @endFAQ
 
@@ -226,8 +241,7 @@ def rst2html(s, fLOG=noLOG, writer="sphinx", keep_warnings=False,
 
     def custom_html_visit_displaymath(self, node):
         if not hasattr(node, "number"):
-            node["number"] = _nbeq[0]
-            _nbeq[0] += 1
+            node["number"] = None
         return html_visit_displaymath(self, node)
 
     class MockSphinxApp:
@@ -317,7 +331,6 @@ def rst2html(s, fLOG=noLOG, writer="sphinx", keep_warnings=False,
         # titles
         title_names.append("todoext_node")
         title_names.append("todo_node")
-
     else:
         writer_name = 'html'
         mockapp = MockSphinxApp(None)
@@ -340,6 +353,8 @@ def rst2html(s, fLOG=noLOG, writer="sphinx", keep_warnings=False,
     settings_overrides = default_settings.copy()
     settings_overrides.update({k: v[0]
                                for k, v in mockapp.new_options.items()})
+
+    # next
     defopt = default_sphinx_options(**options)
     settings_overrides.update(defopt)
     warning_stringio = defopt["warning_stream"]
