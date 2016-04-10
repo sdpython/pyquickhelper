@@ -2,6 +2,7 @@
 @file
 @brief Subpart related to the documentation generation.
 """
+from .conf_path_tools import get_graphviz_dot
 from .convert_doc_helper import rst2html, docstring2html, HTMLWriterWithCustomDirectives
 from .default_conf import set_sphinx_variables, custom_setup
 from .helpgen_exceptions import HelpGenException, ImportErrorHelpGen, HelpGenConvertError
