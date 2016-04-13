@@ -70,6 +70,7 @@ def default_sphinx_options(fLOG=noLOG, **options):
            'imagedir': options.get('imagedir', '.'),
            'confdir': options.get('confdir', '.'),
            'doctreedir': options.get('doctreedir', '.'),
+           'math_number_all': options.get('math_number_all', False),
            # graphviz
            'graphviz_output_format': options.get('graphviz_output_format', 'png'),
            'graphviz_dot': options.get('graphviz_dot', get_graphviz_dot()),
