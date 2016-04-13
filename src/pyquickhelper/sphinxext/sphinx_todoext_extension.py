@@ -6,6 +6,7 @@ inspired from `todo.py <https://github.com/sphinx-doc/sphinx/blob/master/sphinx/
 
 .. versionadded:: 1.4
 """
+import sys
 import os
 from docutils import nodes
 from docutils.parsers.rst import directives
@@ -329,8 +330,15 @@ def setup(app):
 
     app.add_directive('todoext', TodoExt)
     app.add_directive('todoextlist', TodoExtList)
-    app.connect('doctree-read', process_todoexts)
-    app.connect('doctree-resolved', process_todoext_nodes)
-    app.connect('env-purge-doc', purge_todosext)
-    app.connect('env-merge-info', merge_infoext)
+    if sys.version_info[0] == 2:
+        # Sphinx does not accept unicode here
+        app.connect('doctree-read'.encode("ascii"), process_todoexts)
+        app.connect('doctree-resolved'.encode("ascii"), process_todoext_nodes)
+        app.connect('env-purge-doc'.encode("ascii"), purge_todosext)
+        app.connect('env-merge-info'.encode("ascii"), merge_infoext)
+    else:
+        app.connect('doctree-read', process_todoexts)
+        app.connect('doctree-resolved', process_todoext_nodes)
+        app.connect('env-purge-doc', purge_todosext)
+        app.connect('env-merge-info', merge_infoext)
     return {'version': sphinx.__display_version__, 'parallel_read_safe': True}
