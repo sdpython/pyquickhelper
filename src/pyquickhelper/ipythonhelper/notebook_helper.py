@@ -9,26 +9,12 @@ from ..filehelper import explore_folder_iterfile, remove_folder
 import os
 import sys
 import json
-
-try:
-    from nbformat import versions
-    from nbformat.reader import reads
-    from nbformat.v4 import upgrade
-    from jupyter_client.kernelspec import KernelSpecManager
-    from notebook.nbextensions import install_nbextension, _get_nbext_dir
-    from ipykernel.kernelspec import install as install_k
-except ImportError:
-    from IPython.nbformat import versions
-    from IPython.nbformat.reader import reads
-    from IPython.nbformat.v4 import upgrade
-    from IPython.kernel.kernelspec import KernelSpecManager
-    from IPython.html.nbextensions import install_nbextension, _get_nbext_dir
-    try:
-        from IPython.kernel.kernelspec import install as install_k
-    except ImportError:
-        import IPython
-        raise ImportError("upgrade IPython, this one is not recent enough: {0}".format(
-            IPython.__version__))
+from nbformat import versions
+from nbformat.reader import reads
+from nbformat.v4 import upgrade
+from jupyter_client.kernelspec import KernelSpecManager
+from notebook.nbextensions import install_nbextension, _get_nbextension_dir
+from ipykernel.kernelspec import install as install_k
 
 
 if sys.version_info[0] == 2:
@@ -168,14 +154,9 @@ def get_notebook_kernel(kernel_name, kernel_spec_manager=None):
     return kernel_spec_manager.get_kernel_spec(kernel_name)
 
 
-def install_notebook_extension(path=None,
-                               overwrite=False,
-                               symlink=False,
-                               user=False,
-                               prefix=None,
-                               nbextensions_dir=None,
-                               destination=None,
-                               verbose=1):
+def install_notebook_extension(path=None, overwrite=False, symlink=False,
+                               user=False, prefix=None, nbextensions_dir=None,
+                               destination=None, verbose=1):
     """
     install notebook extensions,
     see `install_nbextension <https://ipython.org/ipython-doc/dev/api/generated/IPython.html.nbextensions.html#IPython.html.nbextensions.install_nbextension>`_
@@ -221,8 +202,7 @@ def get_jupyter_datadir():
     return KernelSpecManager().data_dir
 
 
-def get_jupyter_extension_dir(user=False,
-                              prefix=None,
+def get_jupyter_extension_dir(user=False, prefix=None,
                               nbextensions_dir=None):
     """
     Parameters
@@ -247,11 +227,10 @@ def get_jupyter_extension_dir(user=False,
 
     .. versionadded:: 1.3
     """
-    return _get_nbext_dir(nbextensions_dir=nbextensions_dir, user=user, prefix=prefix)
+    return _get_nbextension_dir(nbextensions_dir=nbextensions_dir, user=user, prefix=prefix)
 
 
-def get_installed_notebook_extension(user=False,
-                                     prefix=None,
+def get_installed_notebook_extension(user=False, prefix=None,
                                      nbextensions_dir=None):
     """
     Parameters
