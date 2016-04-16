@@ -90,7 +90,8 @@ class TestNoteBooksBug(unittest.TestCase):
         check = os.path.join(temp, "td1a_correction_session4.tex")
         with open(check, "r", encoding="utf8") as f:
             content = f.read()
-        assert "textquotesingle" not in content
+        if "\\subsection{" not in content:
+            raise Exception(content)
 
     def test_notebook_pdf(self):
         fLOG(
@@ -123,7 +124,8 @@ class TestNoteBooksBug(unittest.TestCase):
         check = os.path.join(temp, "td1a_correction_session4.tex")
         with open(check, "r", encoding="utf8") as f:
             content = f.read()
-        assert "textquotesingle" not in content
+        if "\\subsection{" not in content:
+            raise Exception(content)
 
 
 if __name__ == "__main__":
