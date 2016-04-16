@@ -91,6 +91,7 @@ Versions, Changes
     * **move:** move all sphinx extension to a specific folder *sphinxext*
     * **add:** add directive todoext, refactoring of the custom directives
     * **add:** rst2html is more robust, it allows latex expressions
+    * **change:** update import for the latest version of Jupyter
 
 * **1.3.1110 - 2016/03/08**
     * **commit:** 2ab88f6545ab139c17562c1b995404e6a2d0714d
