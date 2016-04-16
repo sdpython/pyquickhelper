@@ -74,7 +74,7 @@ def run_notebook(filename, profile_dir=None, working_dir=None, skip_exceptions=F
                  outfilename=None, encoding="utf8", additional_path=None,
                  valid=None, clean_function=None, code_init=None,
                  fLOG=noLOG, kernel_name="python", log_level="30",
-                 extended_args=None, cache_urls=None):
+                 extended_args=None, cache_urls=None, replacements=None):
     """
     run a notebook end to end, it uses module `runipy <https://github.com/paulgb/runipy/>`_
 
@@ -94,6 +94,7 @@ def run_notebook(filename, profile_dir=None, working_dir=None, skip_exceptions=F
     @param      extended_args       others arguments to pass to the command line ('--KernelManager.autorestar=True' for example),
                                     see :ref:`l-ipython_notebook_args` for a full list
     @param      cache_urls          list of urls to cache
+    @param      replacements        list of additional replacements, list of tuple
     @return                         tuple (statistics, output)
 
     @warning The function calls `basicConfig <https://docs.python.org/3.4/library/logging.html#logging.basicConfig>`_.
@@ -121,7 +122,11 @@ def run_notebook(filename, profile_dir=None, working_dir=None, skip_exceptions=F
     .. versionchanged:: 1.4
         Parameter *cache_urls* was added.
     """
-    replacements = _cache_url_to_file(cache_urls, working_dir, fLOG=fLOG)
+    cached_rep = _cache_url_to_file(cache_urls, working_dir, fLOG=fLOG)
+    if replacements is None:
+        replacements = cached_rep
+    elif cached_rep is not None:
+        cached_rep.update(replacements)
 
     with open(filename, "r", encoding=encoding) as payload:
         nb = reads(payload.read())
@@ -162,7 +167,8 @@ def run_notebook(filename, profile_dir=None, working_dir=None, skip_exceptions=F
 
 def execute_notebook_list(folder, notebooks, clean_function=None, valid=None, fLOG=noLOG,
                           additional_path=None, deepfLOG=noLOG, kernel_name="python",
-                          log_level="30", extended_args=None, cache_urls=None):
+                          log_level="30", extended_args=None, cache_urls=None,
+                          replacements=None):
     """
     execute a list of notebooks
 
@@ -178,6 +184,7 @@ def execute_notebook_list(folder, notebooks, clean_function=None, valid=None, fL
     @param      extended_args       others arguments to pass to the command line ('--KernelManager.autorestar=True' for example),
                                     see :ref:`l-ipython_notebook_args` for a full list
     @param      cache_urls          list of urls to cache
+    @param      replacements        additional replacements
     @return                         dictionary ``{ notebook_file: (isSuccess, statistics, outout) }``
 
     If *isSucess* is False, *statistics* contains the execution time, *output* is the exception
@@ -226,7 +233,7 @@ def execute_notebook_list(folder, notebooks, clean_function=None, valid=None, fL
                                          clean_function=clean_function, fLOG=deepfLOG,
                                          code_init=code_init, kernel_name=kernel_name,
                                          log_level=log_level, extended_args=extended_args,
-                                         cache_urls=cache_urls)
+                                         cache_urls=cache_urls, replacements=replacements)
                 if not os.path.exists(outfile):
                     raise FileNotFoundError(outfile)
                 results[note] = (True, stat, out)
