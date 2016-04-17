@@ -73,7 +73,7 @@ def default_sphinx_options(fLOG=noLOG, **options):
            'math_number_all': options.get('math_number_all', False),
            # graphviz
            'graphviz_output_format': options.get('graphviz_output_format', 'png'),
-           'graphviz_dot': options.get('graphviz_dot', get_graphviz_dot(False)),
+           'graphviz_dot': options.get('graphviz_dot', get_graphviz_dot(exc=False)),
            # latex
            'imgmath_image_format': options.get('imgmath_image_format', 'png'),
            # containers
@@ -85,7 +85,8 @@ def default_sphinx_options(fLOG=noLOG, **options):
            }
 
     if res['imgmath_image_format'] == 'png':
-        res['imgmath_latex'] = options.get('imgmath_latex', find_latex_path())
+        res['imgmath_latex'] = options.get(
+            'imgmath_latex', find_latex_path(exc=False))
         res['imgmath_dvipng'] = options.get(
             'imgmath_dvipng', os.path.join(res['imgmath_latex'], "dvipng.exe"))
         if not os.path.exists(res['imgmath_dvipng']):
