@@ -19,6 +19,7 @@ cloud-sptheme
 codecov
 coverage
 docutils
+entrypoints
 hachibee-sphinx-theme
 ipykernel
 ipyparallel

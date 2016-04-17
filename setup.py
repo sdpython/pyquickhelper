@@ -209,6 +209,7 @@ if not r:
             "autopep8",     # part of the minimal list
             "babel!=2.0",   # babel 2.0 has issue
             "docutils",
+            "entrypoints",
             "numpy",
             "IPython",
             "ipykernel",
@@ -221,8 +222,9 @@ if not r:
             "matplotlib",
             "metakernel",
             "multi_key_dict",
+            "nbconvert>=4.2.0",
             "nbformat",
-            "notebook",
+            "notebook>=4.2.0",            
             "path.py",
             "pickleshare",
             "pandas",

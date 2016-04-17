@@ -359,10 +359,10 @@ set pythonexe=__PY??_X64__
 set current=%~dp0
 set path=%path%;%pythonexe%;%pythonexe%\\Scripts
 @echo ~SET path=%path%;%pythonexe%;%pythonexe%\\Scripts
-@echo ~CALL jupyter-notebook --notebook-dir=_doc\\notebooks --matplotlib=inline
+@echo ~CALL jupyter-notebook --notebook-dir=_doc\\notebooks
 set PYTHONPATH=%PYTHONPATH%;%current%\\src__ADDITIONAL_LOCAL_PATH__
 @echo ~SET PYTHONPATH=%PYTHONPATH%;%current%\\src__ADDITIONAL_LOCAL_PATH__
-jupyter-notebook --notebook-dir=_doc\\notebooks --matplotlib=inline
+jupyter-notebook --notebook-dir=_doc\\notebooks
 """.replace("PY??", _sversion())
 
 #################

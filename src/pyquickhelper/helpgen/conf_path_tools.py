@@ -114,9 +114,12 @@ def find_pandoc_path():
         return ""
 
 
-def get_graphviz_dot():
+def get_graphviz_dot(exc=True):
     """
     finds Graphviz executable dot, does something specific for Windows
+
+    @param      exc     returns an exception or None if it was not found
+    @return             path
     """
     if sys.platform.startswith("win"):
         # appveyor
@@ -133,7 +136,10 @@ def get_graphviz_dot():
 
     if sys.platform.startswith("win"):
         if not os.path.exists(graphviz_dot):
-            raise FileNotFoundError(graphviz_dot)
+            if exc:
+                raise FileNotFoundError(graphviz_dot)
+            else:
+                return None
     else:
         graphviz_dot = "dot"
     return graphviz_dot

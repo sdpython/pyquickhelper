@@ -73,7 +73,7 @@ def default_sphinx_options(fLOG=noLOG, **options):
            'math_number_all': options.get('math_number_all', False),
            # graphviz
            'graphviz_output_format': options.get('graphviz_output_format', 'png'),
-           'graphviz_dot': options.get('graphviz_dot', get_graphviz_dot()),
+           'graphviz_dot': options.get('graphviz_dot', get_graphviz_dot(False)),
            # latex
            'imgmath_image_format': options.get('imgmath_image_format', 'png'),
            # containers
