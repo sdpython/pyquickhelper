@@ -36,6 +36,7 @@ from .flog_fake_classes import FlogStatic, LogFakeFileStream, LogFileStream, PQH
 if sys.version_info[0] == 2:
     from codecs import open
     import urllib2 as urllib_request
+    FileNotFoundError = Exception
 else:
     import urllib.request as urllib_request
 
@@ -404,14 +405,34 @@ def unzip_files(zipf, where_to, fLOG=noLOG):
                 data = file.read(info.filename)
                 tos = os.path.join(where_to, info.filename)
                 if not os.path.exists(tos):
+                    if sys.platform.startswith("win"):
+                        tos = tos.replace("/", "\\")
                     finalfolder = os.path.split(tos)[0]
                     if not os.path.exists(finalfolder):
                         fLOG("    creating folder ", finalfolder)
                         os.makedirs(finalfolder)
                     if not info.filename.endswith("/"):
-                        u = open(tos, "wb")
-                        u.write(data)
-                        u.close()
+                        try:
+                            with open(tos, "wb") as u:
+                                u.write(data)
+                        except FileNotFoundError as e:
+                            # probably an issue in the path name
+                            # the next lines are just here to distinguish
+                            # between the two cases
+                            if not os.path.exists(finalfolder):
+                                raise e
+                            else:
+                                newname = info.filename.replace(
+                                    " ", "_").replace(",", "_")
+                                if sys.platform.startswith("win"):
+                                    newname = newname.replace("/", "\\")
+                                tos = os.path.join(where_to, newname)
+                                finalfolder = os.path.split(tos)[0]
+                                if not os.path.exists(finalfolder):
+                                    fLOG("    creating folder ", finalfolder)
+                                    os.makedirs(finalfolder)
+                                with open(tos, "wb") as u:
+                                    u.write(data)
                         files.append(tos)
                         fLOG("    unzipped ", info.filename, " to ", tos)
                 elif not tos.endswith("/"):
