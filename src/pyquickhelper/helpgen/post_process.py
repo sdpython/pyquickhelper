@@ -223,13 +223,13 @@ def post_process_rst_output(file, html, pdf, python, slides, is_notebook=False):
     # links
     links = ['**Links:** :download:`notebook <{0}.ipynb>`'.format(noext)]
     if html:
-        links.append('`html <{0}.html>`_'.format(noext))
+        links.append('`html <../_downloads/{0}.html>`_ :download:`. <{0}.html>`'.format(noext))
     if pdf:
         links.append(':download:`PDF <{0}.pdf>`'.format(noext))
     if python:
         links.append(':download:`python <{0}.py>`'.format(noext))
     if slides:
-        links.append('`slides <{0}.slides.html>`_'.format(noext))
+        links.append('`slides <../_downloads/{0}.slides.html>`_ :download:`. <{0}.slides.html>`'.format(noext))
     lines[pos] = "{0}\n\n{1}\n\n".format(lines[pos], ", ".join(links))
 
     # we remove the
