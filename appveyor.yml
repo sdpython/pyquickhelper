@@ -32,7 +32,7 @@ install:
   - "%PYTHON%\\Scripts\\pip install pycryptodomex"
   - "%PYTHON%\\Scripts\\pip install mako"
   - "%PYTHON%\\Scripts\\pip install imagesize"
-  - "%PYTHON%\\Scripts\\pip install backports.ssl_match_hostname"
+  - "%PYTHON%\\Scripts\\pip install backports.shutil-get-terminal-size"
 
 build: off
 
