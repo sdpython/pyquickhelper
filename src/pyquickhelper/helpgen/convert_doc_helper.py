@@ -88,21 +88,23 @@ def default_sphinx_options(fLOG=noLOG, **options):
         res['imgmath_latex'] = options.get(
             'imgmath_latex', find_latex_path(exc=False))
         res['imgmath_dvipng'] = options.get(
-            'imgmath_dvipng', os.path.join(res['imgmath_latex'], "dvipng.exe"))
-        if not os.path.exists(res['imgmath_dvipng']):
+            'imgmath_dvipng', os.path.join(res['imgmath_latex'], "dvipng.exe") if res['imgmath_latex'] is not None else None)
+        if res['imgmath_dvipng'] is not None and not os.path.exists(res['imgmath_dvipng']):
             fLOG("[warning], unable to find: " + str(res['imgmath_dvipng']))
             # we pass as latex is not necessarily installed or needed
         env_path = os.environ.get("PATH", "")
-        if res['imgmath_latex'] not in env_path:
+        if res['imgmath_latex'] is not None and res['imgmath_latex'] not in env_path:
             if len(env_path) > 0:
                 env_path += ";"
             env_path += res['imgmath_latex']
 
-        if sys.platform.startswith("win"):
-            res['imgmath_latex'] = os.path.join(
-                res['imgmath_latex'], "latex.exe")
-        else:
-            res['imgmath_latex'] = os.path.join(res['imgmath_latex'], "latex")
+        if res['imgmath_latex'] is not None:
+            if sys.platform.startswith("win"):
+                res['imgmath_latex'] = os.path.join(
+                    res['imgmath_latex'], "latex.exe")
+            else:
+                res['imgmath_latex'] = os.path.join(
+                    res['imgmath_latex'], "latex")
 
     for k, v in options.items():
         if k not in res:

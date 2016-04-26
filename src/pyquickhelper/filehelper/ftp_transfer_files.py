@@ -321,7 +321,8 @@ class FolderTransferFTP:
                 try:
                     data = self.preprocess_before_transfering(file.fullname)
                 except FolderTransferFTPException as ex:
-                    warnings.warn("unable to transfer '{0}' due to {1}".format(file.fullname, ex))
+                    warnings.warn(
+                        "unable to transfer '{0}' due to {1}".format(file.fullname, ex))
                     continue
 
             try:
