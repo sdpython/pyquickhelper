@@ -392,10 +392,12 @@ def rst2html(s, fLOG=noLOG, writer="sphinx", keep_warnings=False,
                                writer_name=writer_name,
                                settings_overrides=settings_overrides)
 
-    if warnings_log:
-        fLOG(settings_overrides["warning_stream"].getvalue())
-    else:
-        warnings.warn(settings_overrides["warning_stream"].getvalue())
+    warnval = settings_overrides["warning_stream"].getvalue()
+    if warnval is not None and len(warnval) > 0:
+        if warnings_log:
+            fLOG(warnval)
+        else:
+            warnings.warn(warnval)
 
     if not keep_warnings:
         exp = re.sub(
