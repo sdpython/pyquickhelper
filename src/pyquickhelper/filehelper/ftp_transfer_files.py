@@ -122,18 +122,10 @@ class FolderTransferFTP:
     .. versionadded:: 1.0
     """
 
-    def __init__(self,
-                 file_tree_node,
-                 ftp_transfer,
-                 file_status,
-                 root_local=None,
-                 root_web=None,
-                 footer_html=None,
-                 content_filter=None,
-                 is_binary=content_as_binary,
-                 text_transform=None,
-                 filter_out=None,
-                 fLOG=noLOG):
+    def __init__(self, file_tree_node, ftp_transfer, file_status, root_local=None,
+                 root_web=None, footer_html=None, content_filter=None,
+                 is_binary=content_as_binary, text_transform=None, filter_out=None,
+                 exc=False, fLOG=noLOG):
         """
         constructor
 
@@ -150,6 +142,7 @@ class FolderTransferFTP:
         @param      is_binary           function which determines if content of a files is binary or not
         @param      text_transform      function to transform the content of a text file before uploading it
         @param      filter_out          regular expression to exclude some files, it can also be a function.
+        @param      exc                 raise exception if not able to transfer
         @param      fLOG                logging function
 
         Function *text_transform(self, filename, content)* returns the modified content.
@@ -173,6 +166,7 @@ class FolderTransferFTP:
         self._footer_html = footer_html
         self._content_filter = content_filter
         self._is_binary = is_binary
+        self._exc = exc
         if filter_out is not None and not isinstance(filter_out, str  # unicode#
                                                      ):
             self._filter_out = filter_out
@@ -321,7 +315,14 @@ class FolderTransferFTP:
                 file.fullname,
                 path))
 
-            data = self.preprocess_before_transfering(file.fullname)
+            if self._exc:
+                data = self.preprocess_before_transfering(file.fullname)
+            else:
+                try:
+                    data = self.preprocess_before_transfering(file.fullname)
+                except FolderTransferFTPException as ex:
+                    warnings.warn("unable to transfer '{0}' due to {1}".format(file.fullname, ex))
+                    continue
 
             try:
                 r = self._ftp.transfer(
