@@ -165,12 +165,16 @@ class BlogPostList:
 
     def get_rst_links_up(self):
         """
-        builds the rst links to months or categories to displays the beginning of the aggregated pages
+        builds the rst links to months or categories to displays
+        at the beginning of the aggregated pages
 
         @return         list of rst_links
         """
         links = []
         for m, v in sorted(self.get_categories_group().items()):
+            if len(v) <= 1:
+                # we skip categories with less than 1 blog post
+                continue
             link = ":ref:`{0} ({1}) <ap-cat-{0}-0>`".format(
                 BlogPostList.category2url(m), len(v))
             links.append(link)
