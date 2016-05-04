@@ -58,10 +58,10 @@ class TestFlake8(unittest.TestCase):
         thi = os.path.abspath(os.path.dirname(__file__))
         test = os.path.normpath(os.path.join(thi, "..", ))
         check_pep8(test, fLOG=fLOG, neg_filter="temp_.*",
-                   skip=["'src' imported but unused",
-                         "'skip_' imported but unused",
-                         "'skip__' imported but unused",
-                         "'skip___' imported but unused",
+                   skip=["src' imported but unused",
+                         "skip_' imported but unused",
+                         "skip__' imported but unused",
+                         "skip___' imported but unused",
                          "2test_download_pip.py",
                          "E402 module ",
                          ])
