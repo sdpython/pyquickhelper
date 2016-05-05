@@ -180,7 +180,10 @@ def check_pep8(folder, ignore=('E501', 'E265'), skip=None,
             raise TypeError("file cannot be None")
         if len(file) == 0:
             raise TypeError("file cannot be empty")
-        res = check_file(file, ignore=ig, complexity=complexity)
+        try:
+            res = check_file(file, ignore=ig, complexity=complexity)
+        except TypeError as e:
+            raise TypeError("issue with flake8 for module '{0}' ig={1} complexity={2}".format(file, ig, complexity)) from e
         if extended is not None:
             with open(file, "r", errors="ignore") as f:
                 content = f.readlines()
