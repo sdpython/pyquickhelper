@@ -850,11 +850,16 @@ def decode_outerr(outerr, encoding, encerror, msg):
     decode the output or the error after running a command line instructions
 
     @param      outerr      output or error
-    @param      encoding    encoding
+    @param      encoding    encoding (if None, it is replaced by ascii)
     @param      encerror    how to handle errors
-    @param      msg         part of the error to add message
+    @param      msg         to add to the exception message
     @return                 converted string
+
+    .. versionchanged:: 1.4
+        If *encoding* is None, it is replaced by ``'ascii'``.
     """
+    if encoding is None:
+        encoding = "ascii"
     typstr = str  # unicode#
     if not isinstance(outerr, bytes):
         raise TypeError(

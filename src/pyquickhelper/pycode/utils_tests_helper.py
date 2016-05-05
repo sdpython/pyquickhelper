@@ -176,6 +176,10 @@ def check_pep8(folder, ignore=('E501', 'E265'), skip=None,
             ig = ignore + ('F401',)
         else:
             ig = ignore
+        if file is None:
+            raise TypeError("file cannot be None")
+        if len(file) == 0:
+            raise TypeError("file cannot be empty")
         res = check_file(file, ignore=ig, complexity=complexity)
         if extended is not None:
             with open(file, "r", errors="ignore") as f:

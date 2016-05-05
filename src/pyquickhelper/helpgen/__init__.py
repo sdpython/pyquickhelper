@@ -5,9 +5,9 @@
 .. todoext::
     :title: add subfolder when building indexes of notebooks
     :tag: enhancement
-    
+
     When there are too many notebooks, the notebook index is difficult to read.
-    
+
 """
 from .conf_path_tools import get_graphviz_dot
 from .convert_doc_helper import rst2html, docstring2html, HTMLWriterWithCustomDirectives
