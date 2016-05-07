@@ -246,7 +246,15 @@ def rst2html(s, fLOG=noLOG, writer="sphinx", keep_warnings=False,
     def custom_html_visit_displaymath(self, node):
         if not hasattr(node, "number"):
             node["number"] = None
-        return html_visit_displaymath(self, node)
+        try:
+            return html_visit_displaymath(self, node)
+        except AttributeError as e:
+            if "math_number_all" in str(e) and sys.version_info[:2] <= (2, 7):
+                # for Python 2.7
+                del node["number"]
+                return html_visit_displaymath(self, node)
+            else:
+                raise e
 
     class MockSphinxApp:
         """
