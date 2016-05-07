@@ -250,9 +250,10 @@ def rst2html(s, fLOG=noLOG, writer="sphinx", keep_warnings=False,
             return html_visit_displaymath(self, node)
         except AttributeError as e:
             if "math_number_all" in str(e) and sys.version_info[:2] <= (2, 7):
-                # for Python 2.7
-                del node["number"]
-                return html_visit_displaymath(self, node)
+                # Python 2.7 produces the following error:
+                # AttributeError: No such config value: math_number_all
+                # we skip
+                return []
             else:
                 raise e
 
