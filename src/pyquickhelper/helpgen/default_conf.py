@@ -327,6 +327,7 @@ def set_sphinx_variables(fileconf,
         }
 
     # latex
+    math_number_all = False
     imgmath_latex_preamble = """
                     \\newcommand{\\acc}[1]{\\left\\{#1\\right\\}}
                     \\newcommand{\\cro}[1]{\\left[#1\\right]}
