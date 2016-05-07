@@ -1,19 +1,15 @@
 """
 @file
 @brief Function which starts a server to grab and read blog post for a mobule
-based on pyqcuikhelper design. It relies on module `pyrsslocal <http://www.xavierdupre.fr/app/pyrsslocal/helpsphinx/index.html>`_.
+based on pyqcuikhelper design. It relies on module
+`pyrsslocal <http://www.xavierdupre.fr/app/pyrsslocal/helpsphinx/index.html>`_.
 """
 
 import os
 
 
-def rss_update_run_server(dbfile=None,
-                          xml_blogs=None,
-                          port=8093,
-                          browser=None,
-                          period="week",
-                          server=None,
-                          thread=False):
+def rss_update_run_server(dbfile=None, xml_blogs=None, port=8093, browser=None,
+                          period="week", server=None, thread=False):
     """
     create a database if it does not exists, add a table for blogs and posts,
     update the database, starts a server and open a browser,
@@ -38,13 +34,10 @@ def rss_update_run_server(dbfile=None,
         rss_teachings_update_run_server(browser="firefox")
     """
     from pyrsslocal import rss_update_run_server
-
     if xml_blogs is None:
-        from .. import __blog__
-        xml_blogs = __blog__
-
+        raise ValueError("xml_blogs cannot be None")
     if dbfile is None:
         dbfile = os.path.join(os.path.dirname(xml_blogs), "rss_blog_posts.db3")
 
-    return rss_update_run_server(dbfile=dbfile, xml_blogs=xml_blogs, port=port, browser=browser, period=period,
-                                 server=server, thread=thread)
+    return rss_update_run_server(dbfile=dbfile, xml_blogs=xml_blogs, port=port, browser=browser,
+                                 period=period, server=server, thread=thread)
