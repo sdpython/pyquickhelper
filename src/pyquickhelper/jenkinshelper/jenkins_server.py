@@ -83,15 +83,8 @@ class JenkinsExt(jenkins.Jenkins):
     _git_repo = _git_repo
     _task_batch = _task_batch
 
-    def __init__(self, url,
-                 username=None,
-                 password=None,
-                 timeout=socket._GLOBAL_DEFAULT_TIMEOUT,
-                 mock=False,
-                 engines=None,
-                 platform=sys.platform,
-                 pypi_port=8067,
-                 fLOG=noLOG):
+    def __init__(self, url, username=None, password=None, timeout=socket._GLOBAL_DEFAULT_TIMEOUT,
+                 mock=False, engines=None, platform=sys.platform, pypi_port=8067, fLOG=noLOG):
         """
         constructor
 

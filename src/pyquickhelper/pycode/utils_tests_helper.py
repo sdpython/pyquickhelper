@@ -184,7 +184,8 @@ def check_pep8(folder, ignore=('E501', 'E265'), skip=None,
             res = check_file(file, ignore=ig, complexity=complexity)
         except TypeError as e:
             ext = "This is often due to an instruction from . import... The imported module has no name."
-            raise TypeError("Issue with flake8 for module '{0}' ig={1} complexity={2}\n{3}".format(file, ig, complexity, ext)) from e
+            raise TypeError("Issue with flake8 for module '{0}' ig={1} complexity={2}\n{3}".format(
+                file, ig, complexity, ext)) from e
         if extended is not None:
             with open(file, "r", errors="ignore") as f:
                 content = f.readlines()
