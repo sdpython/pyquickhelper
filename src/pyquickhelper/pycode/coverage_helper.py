@@ -9,6 +9,10 @@ import sys
 from ..loghelper import SourceRepository, noLOG, run_cmd
 
 
+if sys.version_info[0] == 2:
+    FileNotFoundError = Exception
+
+
 def get_codecov_program(exe=None):
     """
     get codecov executable
