@@ -26,6 +26,7 @@ except ImportError:
 
 from src.pyquickhelper.loghelper.flog import fLOG
 from src.pyquickhelper.helpgen.conf_path_tools import find_in_PATH, find_graphviz_dot, find_latex_path, find_pandoc_path, get_graphviz_dot
+from src.pyquickhelper.pycode.ci_helper import is_travis_or_appveyor
 
 
 class TestPaths(unittest.TestCase):
@@ -36,6 +37,8 @@ class TestPaths(unittest.TestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
+        if is_travis_or_appveyor() == "travis":
+            return
         exe = find_in_PATH("Microsoft")
         assert exe is not None
         dot = find_graphviz_dot()
