@@ -411,7 +411,8 @@ def get_master_location(path=None, commandline=True):
         res = lines[0]
 
         if len(res) == 0:
-            raise GitException("the command 'git help' should return something")
+            raise GitException(
+                "the command 'git help' should return something")
 
         return res
 

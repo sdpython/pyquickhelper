@@ -4,7 +4,7 @@
 
 .. versionadded:: 1.4
 """
-
+import sys
 from ftplib import FTP
 from ..loghelper.flog import noLOG
 from .ftp_transfer import TransferFTP
@@ -28,8 +28,10 @@ class MockTransferFTP(TransferFTP):
         """
         Mock method :meth:`run_command <pyquickhelper.filehelper.ftp_transfer.TransferFTP.run_commnad>`
         """
-        if command == FTP.mlsd and args == ('.',):
+        if sys.version_info[0] != 2 and command == FTP.mlsd and args == ('.',):
             return [('setup.py', {'name': 'setup.py'})]
+        elif sys.version_info[0] == 2 and command == FTP.nlst and args == ('.',):
+            return ['setup.py']
         elif command == FTP.cwd and args == ('.',):
             return None
         elif command == FTP.cwd and args == ('..',):
@@ -48,7 +50,10 @@ class MockTransferFTP(TransferFTP):
             return None
         elif command == FTP.retrbinary and args[0] == 'RETR setup.py':
             b = self._store[args[0].replace("RETR", "STOR")][1]
-            s = b.getbuffer()
+            if sys.version_info[0] == 2:
+                s = b.getvalue()
+            else:
+                s = b.getbuffer()
             args[1](s)
             return len(s)
         else:

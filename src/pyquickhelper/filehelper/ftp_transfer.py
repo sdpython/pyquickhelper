@@ -8,6 +8,7 @@
 from ftplib import FTP, error_perm
 import os
 import io
+import sys
 
 from ..loghelper.flog import noLOG
 
@@ -216,10 +217,15 @@ class TransferFTP(FTP):
 
         .. versionadded:: 1.0
         """
-        for a in self.run_command(FTP.mlsd, path):
-            r = dict(name=a[0])
-            r.update(a[1])
-            yield r
+        if sys.version_info[0] == 2:
+            for a in self.run_command(FTP.nlst, path):
+                r = dict(name=a)
+                yield r
+        else:
+            for a in self.run_command(FTP.mlsd, path):
+                r = dict(name=a[0])
+                r.update(a[1])
+                yield r
 
     def transfer(self, file, to, name, debug=False):
         """
