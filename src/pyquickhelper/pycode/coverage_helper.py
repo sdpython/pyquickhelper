@@ -71,12 +71,16 @@ def publish_coverage_on_codecov(path, token, commandline=True, fLOG=noLOG):
     proj = os.path.normpath(os.path.join(
         os.path.dirname(report), "..", "..", "..", ".."))
 
+    exe = get_codecov_program()
     src = SourceRepository(commandline=commandline)
     last = src.get_last_commit_hash(proj)
-    cmd = get_codecov_program() + " --token={0} --file={1} --commit={2} --root={3} -X gcov".format(
+    cmd = exe + " --token={0} --file={1} --commit={2} --root={3} -X gcov".format(
         token, report, last, proj)
-    out, err = run_cmd(cmd, wait=True)
-    if err:
-        raise Exception(
-            "unable to run:\nCMD:\n{0}\nOUT:\n{1}\nERR:\n{2}".format(cmd, out, err))
-    return out, err
+    if token is not None:
+        out, err = run_cmd(cmd, wait=True)
+        if err:
+            raise Exception(
+                "unable to run:\nCMD:\n{0}\nOUT:\n{1}\nERR:\n{2}".format(cmd, out, err))
+        return out, err
+    else:
+        return cmd

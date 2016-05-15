@@ -16,6 +16,13 @@ if sys.version_info[0] == 2:
     from codecs import open
 
 
+class GitException(Exception):
+    """
+    exception raised by this module
+    """
+    pass
+
+
 def my_date_conversion(sdate):
     """
     converts a date into a datetime
@@ -132,7 +139,7 @@ def repo_ls(full, commandline=True):
                            shell=sys.platform.startswith("win32"))
         if len(err) > 0:
             fLOG("problem with file ", full, err)
-            raise Exception(err)
+            raise GitException(err)
 
         res = [RepoFile(name=os.path.join(full, _.strip().split("\t")[-1]))
                for _ in out.split("\n") if len(_) > 0]
@@ -244,7 +251,7 @@ def get_repo_log(path=None, file_detail=False, commandline=True):
 
         if len(err) > 0:
             fLOG("problem with file ", path, err)
-            raise Exception(
+            raise GitException(
                 err + "\nCMD:\n" + cmd + "\nOUT:\n" + out + "\nERR:\n" + err + "\nCMD:\n" + cmd)
 
         master = get_master_location(path, commandline)
@@ -279,7 +286,7 @@ def get_repo_log(path=None, file_detail=False, commandline=True):
             try:
                 root = ET.fromstring(out)
             except ET.ParseError as eee:
-                raise Exception("unable to parse:\n" + out) from eee
+                raise GitException("unable to parse:\n" + out) from eee
 
         res = []
         for i in root.iter('logentry'):
@@ -345,7 +352,7 @@ def get_repo_version(path=None, commandline=True, usedate=False, log=False):
                 if log:
                     return "OUT\n{0}\nERR:{1}\nCMD:\n{2}".format(out, err, cmd)
                 else:
-                    raise Exception(err)
+                    raise GitException(err)
 
             lines = out.split("\n")
             lines = [_.split("---") for _ in lines if len(_) > 0]
@@ -358,7 +365,7 @@ def get_repo_version(path=None, commandline=True, usedate=False, log=False):
                 res = temp[0]
 
             if len(res) == 0:
-                raise Exception(
+                raise GitException(
                     "the command 'git help' should return something")
 
             return res
@@ -398,13 +405,13 @@ def get_master_location(path=None, commandline=True):
 
         if len(err) > 0:
             fLOG("problem with file ", path, err)
-            raise Exception(err)
+            raise GitException(err)
         lines = out.split("\n")
         lines = [_ for _ in lines if len(_) > 0]
         res = lines[0]
 
         if len(res) == 0:
-            raise Exception("the command 'git help' should return something")
+            raise GitException("the command 'git help' should return something")
 
         return res
 
@@ -445,7 +452,7 @@ def get_nb_commits(path=None, commandline=True):
                            shell=sys.platform.startswith("win32"))
 
         if len(err) > 0:
-            raise Exception(
+            raise GitException(
                 "unable to get commit number from path {0}\nERR:\n{1}\nCMD:\n{2}".format(path, err, cmd))
 
         lines = out.strip()
@@ -497,7 +504,7 @@ def clone(location,
     cmd += " clone " + address + " " + location
     out, err = run_cmd(cmd, wait=True)
     if len(err) > 0 and "Cloning into" not in err:
-        raise Exception(
+        raise GitException(
             "unable to clone {0}\nERR:\n{1}\nCMD:\n{2}".format(address, err, cmd))
     return out, err
 
@@ -535,6 +542,6 @@ def rebase(location,
     out, err = run_cmd(cmd, wait=True)
     os.chdir(cwd)
     if len(err) > 0 and "-> FETCH_HEAD" not in err:
-        raise Exception(
+        raise GitException(
             "unable to rebase {0}\nERR:\n{1}\nCMD:\n{2}".format(address, err, cmd))
     return out, err

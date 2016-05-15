@@ -12,7 +12,7 @@ import io
 from ..loghelper.flog import noLOG
 
 
-class TransferFTP (FTP):
+class TransferFTP(FTP):
 
     """
     this class uploads files to a website,
@@ -47,7 +47,7 @@ class TransferFTP (FTP):
     @endexample
 
     .. versionadded:: 1.0
-        Moved prom pyense to pyquickhelper.
+        Moved prom pyensee to pyquickhelper.
     """
 
     errorNoDirectory = "Can't change directory"
@@ -62,7 +62,11 @@ class TransferFTP (FTP):
         @param      password    password
         @param      fLOG        logging function
         """
-        FTP.__init__(self, site, login, password)
+        if site is not None:
+            FTP.__init__(self, site, login, password)
+        else:
+            # mocking
+            pass
         self.LOG = fLOG
         self._atts = dict(site=site)
 
@@ -289,8 +293,10 @@ class TransferFTP (FTP):
                     data = self.run_command(
                         FTP.retrbinary, 'RETR ' + name, callback, TransferFTP.blockSize)
                     f.write(data)
+                    r = True
                 except error_perm as e:
                     raise_exc = e
+                    r = False
         elif isinstance(file, io.BytesIO):
             def callback(block):
                 file.write(block)
@@ -299,6 +305,7 @@ class TransferFTP (FTP):
                     FTP.retrbinary, 'RETR ' + name, callback, TransferFTP.blockSize)
             except error_perm as e:
                 raise_exc = e
+                r = False
         else:
             b = io.BytesIO()
 

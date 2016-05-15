@@ -9,6 +9,7 @@ import io
 from ..loghelper import noLOG
 from .transfer_api import TransferAPI
 from .ftp_transfer import TransferFTP
+from .ftp_mock import MockTransferFTP
 
 
 class TransferAPIFtp(TransferAPI):
@@ -28,7 +29,8 @@ class TransferAPIFtp(TransferAPI):
         @param      fLOG        logging function
         """
         TransferAPI.__init__(self, fLOG=fLOG)
-        self._ftp = TransferFTP(site, login, password, fLOG=fLOG)
+        self._ftp = TransferFTP(
+            site, login, password, fLOG=fLOG) if site else MockTransferFTP(fLOG=fLOG)
         self._root = root
 
     def connect(self):
