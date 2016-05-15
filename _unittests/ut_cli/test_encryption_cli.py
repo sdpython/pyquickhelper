@@ -73,7 +73,8 @@ class TestEncryptionCli(unittest.TestCase):
 
         temp = get_temp_folder(__file__, "temp_encrypt")
         temp2 = get_temp_folder(__file__, "temp_encrypt2")
-        sys.argv = ["", src, temp, password]
+        srcf = os.path.join(temp, "..")
+        sys.argv = ["", srcf, temp, password]
         encrypt()
 
         sys.argv = ["", temp, temp2, password]
