@@ -1,0 +1,54 @@
+"""
+@brief      test log(time=100s)
+@author     Xavier Dupre
+
+This tesdt must be run last because it screws up with
+*test_convert_doc_helper* and *test_full_documentation_module_template*.
+"""
+
+import sys
+import os
+import unittest
+
+
+try:
+    import src
+except ImportError:
+    path = os.path.normpath(
+        os.path.abspath(
+            os.path.join(
+                os.path.split(__file__)[0],
+                "..",
+                "..")))
+    if path not in sys.path:
+        sys.path.append(path)
+    import src
+
+from src.pyquickhelper.loghelper.flog import fLOG
+from src.pyquickhelper.helpgen.conf_path_tools import find_in_PATH, find_graphviz_dot, find_latex_path, find_pandoc_path, get_graphviz_dot
+
+
+class TestPaths(unittest.TestCase):
+
+    def test_paths(self):
+        fLOG(
+            __file__,
+            self._testMethodName,
+            OutputPrint=__name__ == "__main__")
+
+        exe = find_in_PATH("Microsoft")
+        assert exe is not None
+        dot = find_graphviz_dot()
+        assert "dot" in dot
+        dot = get_graphviz_dot()
+        assert "dot" in dot
+        pandoc = find_pandoc_path()
+        if "pandoc" not in pandoc.lower():
+            raise Exception(pandoc)
+        latex = find_latex_path()
+        if "latex" not in latex and "miktex" not in latex:
+            raise Exception(latex)
+
+
+if __name__ == "__main__":
+    unittest.main()
