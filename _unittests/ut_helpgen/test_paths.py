@@ -37,7 +37,7 @@ class TestPaths(unittest.TestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
-        if is_travis_or_appveyor() == "travis":
+        if is_travis_or_appveyor():
             return
         exe = find_in_PATH("Microsoft")
         assert exe is not None

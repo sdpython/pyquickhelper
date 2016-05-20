@@ -7,7 +7,7 @@ import re
 import os
 
 from ..filehelper import download, read_url
-from ..loghelper.flog import unzip_files
+from ..filehelper.compression_helper import unzip_files
 from ..filehelper.synchelper import explore_folder_iterfile
 
 

@@ -33,6 +33,7 @@ import copy
 import zipfile
 from .flog_fake_classes import FlogStatic, LogFakeFileStream, LogFileStream, PQHException
 
+
 if sys.version_info[0] == 2:
     from codecs import open
     import urllib2 as urllib_request
@@ -389,59 +390,6 @@ def unzip(file, path_unzip=None, outfile=None):
     return file
 
 
-def unzip_files(zipf, where_to, fLOG=noLOG):
-    """
-    unzip files from a zip archive
-
-    @param      zipf        archive
-    @param      where_to    destination folder
-    @param      fLOG        logging function
-    @return                 list of unzipped files
-    """
-    files = []
-    with zipfile.ZipFile(zipf, "r") as file:
-        for info in file.infolist():
-            if not os.path.exists(info.filename):
-                data = file.read(info.filename)
-                tos = os.path.join(where_to, info.filename)
-                if not os.path.exists(tos):
-                    if sys.platform.startswith("win"):
-                        tos = tos.replace("/", "\\")
-                    finalfolder = os.path.split(tos)[0]
-                    if not os.path.exists(finalfolder):
-                        fLOG("    creating folder ", finalfolder)
-                        os.makedirs(finalfolder)
-                    if not info.filename.endswith("/"):
-                        try:
-                            with open(tos, "wb") as u:
-                                u.write(data)
-                        except FileNotFoundError as e:
-                            # probably an issue in the path name
-                            # the next lines are just here to distinguish
-                            # between the two cases
-                            if not os.path.exists(finalfolder):
-                                raise e
-                            else:
-                                newname = info.filename.replace(
-                                    " ", "_").replace(",", "_")
-                                if sys.platform.startswith("win"):
-                                    newname = newname.replace("/", "\\")
-                                tos = os.path.join(where_to, newname)
-                                finalfolder = os.path.split(tos)[0]
-                                if not os.path.exists(finalfolder):
-                                    fLOG("    creating folder ", finalfolder)
-                                    os.makedirs(finalfolder)
-                                with open(tos, "wb") as u:
-                                    u.write(data)
-                        files.append(tos)
-                        fLOG("    unzipped ", info.filename, " to ", tos)
-                elif not tos.endswith("/"):
-                    files.append(tos)
-            elif not info.filename.endswith("/"):
-                files.append(info.filename)
-    return files
-
-
 def _get_file_url(url, path):
     """
     build a filename knowing an url
@@ -544,7 +492,6 @@ def _check_zip_file(filename, path_unzip, outfile):
 
     if ext == ".zip":
 
-        import zipfile
         try:
             file = zipfile.ZipFile(filename, "r")
         except Exception as e:
