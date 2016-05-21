@@ -85,6 +85,7 @@ class TestCompressHelper(unittest.TestCase):
                 raise FileNotFoundError(out7)
         else:
             fLOG("skip 7z")
+            return
 
         if sys.version_info[0] == 2:
             typbytes = bytearray
