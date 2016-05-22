@@ -107,8 +107,8 @@ class TestCompressHelper(unittest.TestCase):
         fold = get_temp_folder(__file__, "temp_compress_7zip2")
         res = un7zip_files(out7, where_to=fold, fLOG=fLOG)
         self.assertEqual(len(res), 1)
-        if not res[0].replace(
-            "\\", "/").endswith("pyquickhelper/_unittests/ut_filehelper/temp_compress_7zip2/ftplib.html"):
+        s = res[0].replace("\\", "/")
+        if not s.endswith("pyquickhelper/_unittests/ut_filehelper/temp_compress_7zip2/ftplib.html"):
             raise Exception(res[0])
 
 
