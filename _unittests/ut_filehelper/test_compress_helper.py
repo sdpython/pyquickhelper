@@ -48,7 +48,7 @@ class TestCompressHelper(unittest.TestCase):
 
         rz = zip_files(None, [f], fLOG=fLOG)
         fLOG(len(rz), type(rz))
-        if not isinstance(rz, typbytes):
+        if not isinstance(rz, (typbytes, str)):
             raise TypeError(type(rz))
 
         res = unzip_files(rz)
@@ -107,8 +107,9 @@ class TestCompressHelper(unittest.TestCase):
         fold = get_temp_folder(__file__, "temp_compress_7zip2")
         res = un7zip_files(out7, where_to=fold, fLOG=fLOG)
         self.assertEqual(len(res), 1)
-        assert res[0].replace(
-            "\\", "/").endswith("pyquickhelper/_unittests/ut_filehelper/temp_compress_7zip2/ftplib.html")
+        if not res[0].replace(
+            "\\", "/").endswith("pyquickhelper/_unittests/ut_filehelper/temp_compress_7zip2/ftplib.html"):
+            raise Exception(res[0])
 
 
 if __name__ == "__main__":
