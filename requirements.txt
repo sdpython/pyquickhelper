@@ -80,3 +80,4 @@ mistune
 pycryptodomex
 cryptography
 nose
+pylzma

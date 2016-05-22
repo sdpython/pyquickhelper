@@ -48,23 +48,27 @@ class TestCompressHelper(unittest.TestCase):
 
         rz = zip_files(None, [f], fLOG=fLOG)
         fLOG(len(rz), type(rz))
-        assert isinstance(rz, typbytes)
+        if not isinstance(rz, typbytes):
+            raise TypeError(type(rz))
 
         res = unzip_files(rz)
         assert isinstance(res, list)
         self.assertEqual(len(res), 1)
-        assert isinstance(res[0][1], typbytes)
+        if not isinstance(res[0][1], typbytes):
+            raise TypeError(type(res[0][1]))
         assert res[0][0].endswith(
             "_unittests/ut_filehelper/test_compress_helper.py")
 
         rg = gzip_files(None, [f], fLOG=fLOG)
         fLOG(len(rg), type(rg))
-        assert isinstance(rg, typbytes)
+        if not isinstance(rg, typbytes):
+            raise TypeError(type(rg))
 
         res = ungzip_files(rg)
         assert isinstance(res, list)
         self.assertEqual(len(res), 1)
-        assert isinstance(res[0][1], typbytes)
+        if not isinstance(res[0][1], typbytes):
+            raise TypeError(type(res[0][1]))
         assert res[0][0].endswith(
             "_unittests/ut_filehelper/test_compress_helper.py")
 
