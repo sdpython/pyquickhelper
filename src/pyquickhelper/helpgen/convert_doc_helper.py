@@ -32,11 +32,7 @@ from docutils import core, languages
 from docutils.parsers.rst import directives as doc_directives, roles as doc_roles
 from sphinx.environment import BuildEnvironment, default_settings
 from sphinx.config import Config
-from sphinx.ext.graphviz import setup as setup_graphviz
-from sphinx.ext.imgmath import setup as setup_math, html_visit_displaymath
-from sphinx.ext.todo import setup as setup_todo
-from matplotlib.sphinxext.plot_directive import setup as setup_plot
-from matplotlib.sphinxext.only_directives import setup as setup_only
+
 
 if sys.version_info[0] == 2:
     from StringIO import StringIO
@@ -326,6 +322,10 @@ def rst2html(s, fLOG=noLOG, writer="sphinx", keep_warnings=False,
         writer_name = 'pseudoxml'
         mockapp = MockSphinxApp(writer, writer.app)
 
+        from sphinx.ext.graphviz import setup as setup_graphviz
+        from sphinx.ext.imgmath import setup as setup_math, html_visit_displaymath
+        from sphinx.ext.todo import setup as setup_todo
+
         # directives from pyquickhelper
         setup_blog(mockapp)
         setup_runpython(mockapp)
@@ -338,6 +338,11 @@ def rst2html(s, fLOG=noLOG, writer="sphinx", keep_warnings=False,
         setup_graphviz(mockapp)
         setup_math(mockapp)
         setup_todo(mockapp)
+
+        # don't move this import to the beginning of file
+        # it changes matplotlib backend
+        from matplotlib.sphinxext.plot_directive import setup as setup_plot
+        from matplotlib.sphinxext.only_directives import setup as setup_only
         setup_plot(mockapp)
         setup_only(mockapp)
 
