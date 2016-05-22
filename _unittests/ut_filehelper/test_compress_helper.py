@@ -54,7 +54,7 @@ class TestCompressHelper(unittest.TestCase):
         res = unzip_files(rz)
         assert isinstance(res, list)
         self.assertEqual(len(res), 1)
-        if not isinstance(res[0][1], typbytes):
+        if not isinstance(res[0][1], (typbytes, str)):
             raise TypeError(type(res[0][1]))
         assert res[0][0].endswith(
             "_unittests/ut_filehelper/test_compress_helper.py")
@@ -67,7 +67,7 @@ class TestCompressHelper(unittest.TestCase):
         res = ungzip_files(rg)
         assert isinstance(res, list)
         self.assertEqual(len(res), 1)
-        if not isinstance(res[0][1], typbytes):
+        if not isinstance(res[0][1], (typbytes, str)):
             raise TypeError(type(res[0][1]))
         assert res[0][0].endswith(
             "_unittests/ut_filehelper/test_compress_helper.py")
@@ -100,7 +100,8 @@ class TestCompressHelper(unittest.TestCase):
         assert isinstance(res, list)
         self.assertEqual(len(res), 1)
         fLOG(res[0][0])
-        assert isinstance(res[0][1], typbytes)
+        if not isinstance(res[0][1], (typbytes, str)):
+            raise TypeError(type(res[0][1]))
         assert res[0][0].endswith("ftplib.html")
 
         fold = get_temp_folder(__file__, "temp_compress_7zip2")
