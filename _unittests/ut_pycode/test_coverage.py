@@ -33,6 +33,9 @@ class TestCoverage(unittest.TestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
+        if sys.version_info[0] == 2:
+            return
+
         temp = os.path.abspath(os.path.dirname(__file__))
         cov = os.path.join(temp, "data", "coverage_report.xml")
 
