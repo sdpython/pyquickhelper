@@ -51,6 +51,9 @@ class TestCompressHelper(unittest.TestCase):
         if not isinstance(rz, (typbytes, str)):
             raise TypeError(type(rz))
 
+        if sys.version_info[0] == 2:
+            return
+
         res = unzip_files(rz)
         assert isinstance(res, list)
         self.assertEqual(len(res), 1)
