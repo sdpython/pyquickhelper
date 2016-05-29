@@ -101,6 +101,10 @@ class TestUnitTestFull(unittest.TestCase):
                         "setup_hook", "build_script", "copy27",
                         "unittests", "unittests_LONG", "unittests_SKIP",
                         "build_sphinx"]:
+            if comand == "build_sphinx" and is_travis_or_appveyor():
+                # InkScape not installed for AppVeyor
+                continue
+
             fLOG("#######################################################")
             fLOG(command)
             fLOG("#######################################################")
