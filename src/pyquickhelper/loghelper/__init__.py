@@ -6,6 +6,7 @@ from .flog import run_cmd, fLOG, noLOG, PQHException, download, unzip, decode_ou
 from .convert_helper import str2datetime, timestamp_to_datetime
 from .url_helper import get_url_content
 from .pyrepo_helper import SourceRepository
+from .repositories.pygit_helper import clone as git_clone
 
 
 def check_log():

@@ -465,14 +465,9 @@ def get_nb_commits(path=None, commandline=True):
         return nb
 
 
-def clone(location,
-          srv,
-          group,
-          project,
-          username=None,
-          password=None):
+def clone(location, srv, group, project, username=None, password=None):
     """
-    clone a repository
+    clone a git repository
 
     @param      location    location of the clone
     @param      srv         git server
@@ -487,7 +482,7 @@ def clone(location,
     @example(Clone a git repository)
 
     @code
-    clone(r"local_folder", "github.com", "sdpython", "pyquickhelper")
+    clone("local_folder", "github.com", "sdpython", "pyquickhelper")
     @endcode
 
     @endexample

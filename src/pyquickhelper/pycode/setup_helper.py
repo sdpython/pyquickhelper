@@ -53,6 +53,7 @@ def process_standard_options_for_setup(argv,
                                        hook_print=True,
                                        stdout=None,
                                        stderr=None,
+                                       use_run_cmd=False,
                                        fLOG=noLOG):
     """
     process the standard options the module pyquickhelper is
@@ -104,8 +105,9 @@ def process_standard_options_for_setup(argv,
                                             more in @see fn main_wrapper_tests
     @param      fLOG                        logging function
     @param      hook_print                  enable, disable print when calling *_setup_hook*
-    @paral      stdout                      redirect stdout for unit test if not None
-    @paral      stderr                      redirect stderr for unit test  if not None
+    @param      stdout                      redirect stdout for unit test if not None
+    @param      stderr                      redirect stderr for unit test  if not None
+    @param      use_run_cmd                 to run the sphinx documentation with @see fn run_cmd and not ``os.system``
     @return                                 True (an option was processed) or False,
                                             the file ``setup.py`` should call function ``setup``
 
@@ -149,6 +151,9 @@ def process_standard_options_for_setup(argv,
         `codecov <https://codecov.io/>`_.
 
         Parameters *hook_print*, *stdout*, *stderr* were added.
+
+    .. versionchanged:: 1.4
+        Parameter *use_run_cmd* was added.
     """
     folder = file_or_folder if os.path.isdir(
         file_or_folder) else os.path.dirname(file_or_folder)
@@ -203,7 +208,7 @@ def process_standard_options_for_setup(argv,
         standard_help_for_setup(argv,
                                 file_or_folder, project_var_name, module_name=module_name, extra_ext=extra_ext,
                                 add_htmlhelp=add_htmlhelp, copy_add_ext=copy_add_ext, nbformats=nbformats, layout=layout,
-                                fLOG=fLOG)
+                                use_run_cmd=use_run_cmd, fLOG=fLOG)
 
         if func_sphinx_end is not None:
             func_sphinx_end(argv=argv, file_or_folder=file_or_folder, project_var_name=project_var_name,
@@ -421,7 +426,9 @@ def standard_help_for_setup(argv, file_or_folder, project_var_name, module_name=
                             add_htmlhelp=False, copy_add_ext=None,
                             nbformats=["ipynb", "html", "python",
                                        "rst", "slides", "pdf"],
-                            layout=["html", "pdf", "epub"], fLOG=noLOG):
+                            layout=["html", "pdf", "epub"],
+                            use_run_cmd=False,
+                            fLOG=noLOG):
     """
     standard function to generate help assuming they follow the same design
     as *pyquickhelper*
@@ -435,6 +442,8 @@ def standard_help_for_setup(argv, file_or_folder, project_var_name, module_name=
     @param      copy_add_ext        additional extension of files to copy
     @param      nbformats           notebooks format to generate
     @param      layout              layout for the documentation
+    @param      use_run_cmd         use function @see fn run_cmd instead of ``os.system``
+                                    to build the documentation
     @param      fLOG                logging function
 
     The function outputs some information through function @see fn fLOG.
@@ -444,6 +453,9 @@ def standard_help_for_setup(argv, file_or_folder, project_var_name, module_name=
 
     .. versionchanged:: 1.3
         Parameter *copy_add_ext*, *nbformats*, *argv* were added.
+
+    .. versionchanged:: 1.4
+        Parameter *use_run_cmd* was added.
     """
     if "--help" in argv:
         print(get_help_usage())
@@ -474,7 +486,8 @@ def standard_help_for_setup(argv, file_or_folder, project_var_name, module_name=
                              nbformats=nbformats,
                              add_htmlhelp=add_htmlhelp,
                              copy_add_ext=copy_add_ext,
-                             fLOG=fLOG)
+                             fLOG=fLOG, root=ffolder,
+                             use_run_cmd=use_run_cmd)
 
 
 def run_unittests_for_setup(file_or_folder,
