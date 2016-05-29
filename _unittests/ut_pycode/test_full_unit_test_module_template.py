@@ -135,9 +135,6 @@ class TestUnitTestFull(unittest.TestCase):
         if memo is not None:
             sys.modules["src"] = memo
 
-        fLOG(r)
-        assert r
-
 
 if __name__ == "__main__":
     unittest.main()
