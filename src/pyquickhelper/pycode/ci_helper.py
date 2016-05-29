@@ -10,7 +10,7 @@ def is_travis_or_appveyor():
     """
     tells if is a travis environment or appveyor
 
-    @return        travis, appveyor or None
+    @return        ``'travis'``, ``'appveyor'`` or ``None``
 
     The function should rely more on environement variables
     ``CI``, ``TRAVIS``, ``APPVEYOR``.
