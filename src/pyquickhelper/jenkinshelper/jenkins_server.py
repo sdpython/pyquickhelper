@@ -796,8 +796,8 @@ class JenkinsExt(jenkins.Jenkins):
                     "standalone [local_pypi]",
                     #"standalone [install]",
                     #"standalone [update]",
-                    #"standalone [install] [py35]",
-                    #"standalone [update] [py35]",
+                    #"standalone [install] [py34]",
+                    #"standalone [update] [py34]",
                     #"standalone [install] [winpython]",
                     #"standalone [update] [winpython]",
              # pyquickhelper and others,
@@ -827,76 +827,17 @@ class JenkinsExt(jenkins.Jenkins):
              ("pymyinstall [update_modules]",
                         "H H(0-1) * * 5"),
              "pymyinstall [update_modules] [winpython]",
-             "pymyinstall [update_modules] [py35]",
+             "pymyinstall [update_modules] [py34]",
              "pymyinstall [update_modules] [anaconda2]",
              "pymyinstall [update_modules] [anaconda3]",
              # py35
-             ("pyquickhelper [py35]", "H H(2-3) * * 2"),
-             ["pysqllike [py35]",
-                        "pymmails [py35] <-- pyquickhelper",
-                        "python3_module_template [py35] <-- pyquickhelper",
-                        "pymyinstall [py35] <-- pyquickhelper"],
-             "pyensae [py35] <-- pyquickhelper",
-             "pyrsslocal [py35] <-- pyquickhelper, pyensae",
-             # actuariat
-             ("actuariat_python <-- pyquickhelper, pyensae, pymmails, pyrsslocal, pymyinstall", "H H(4-5) * * 0"),
-             [("actuariat_python [winpython] <-- pyquickhelper, pyensae, pymmails, pyrsslocal, pymyinstall", None, dict(success_only=True)),
-                        "actuariat_python [anaconda3] <-- pyquickhelper, pyensae, pymmails, pyrsslocal, pymyinstall",
-                        "actuariat_python [py35] <-- pyquickhelper, pyensae, pymmails, pyrsslocal, pymyinstall"],
-             "actuariat_python [LONG] <-- pyquickhelper, pyensae, pymmails, pyrsslocal, pymyinstall",
-             ["actuariat_python [LONG] [winpython] <-- pyquickhelper, pyensae, pymmails, pyrsslocal, pymyinstall",
-                        "actuariat_python [LONG] [anaconda3] <-- pyquickhelper, pyensae, pymmails, pyrsslocal, pymyinstall",
-                        "actuariat_python [LONG] [py35] <-- pyquickhelper, pyensae, pymmails, pyrsslocal, pymyinstall"],
-             # code_beatrix
-             ("code_beatrix <-- pyquickhelper, pyensae, pymmails, pyrsslocal, pymyinstall", "H H(4-5) * * 0"),
-             ("code_beatrix [winpython] <-- pyquickhelper, pyensae, pymmails, pyrsslocal, pymyinstall",
-                        None, dict(success_only=True)),
-             ["code_beatrix [anaconda3] <-- pyquickhelper, pyensae, pymmails, pyrsslocal, pymyinstall",
-              "code_beatrix [py35] <-- pyquickhelper, pyensae, pymmails, pyrsslocal, pymyinstall"],
-             # teachings
-             ("ensae_teaching_cs <-- pyquickhelper, pyensae, pymmails, pyrsslocal, pymyinstall", "H H(5-6) * * 0"),   # 1.5h
-             # 1.5h
-             ["ensae_teaching_cs [SKIP] <-- pyquickhelper, pyensae, pymmails, pyrsslocal, pymyinstall",
-                 "ensae_teaching_cs [LONG] <-- pyquickhelper, pyensae, pymmails, pyrsslocal, pymyinstall"],  # 1h ish
-             ["ensae_teaching_cs [winpython] <-- pyquickhelper, pyensae, pymmails, pyrsslocal, pymyinstall",
-                        # 1.5h
-                        "ensae_teaching_cs [anaconda3] <-- pyquickhelper, pyensae, pymmails, pyrsslocal, pymyinstall",
-                        "ensae_teaching_cs [py35] <-- pyquickhelper, pyensae, pymmails, pyrsslocal, pymyinstall"],
-             "ensae_teaching_cs [LONG] [winpython] <-- pyquickhelper, pyensae, pymmails, pyrsslocal, pymyinstall",
-             "ensae_teaching_cs [SKIP] [winpython] <-- pyquickhelper, pyensae, pymmails, pyrsslocal, pymyinstall",
-             "ensae_teaching_cs [LONG] [anaconda3] <-- pyquickhelper, pyensae, pymmails, pyrsslocal, pymyinstall",
-             "ensae_teaching_cs [SKIP] [anaconda3] <-- pyquickhelper, pyensae, pymmails, pyrsslocal, pymyinstall",
-             "ensae_teaching_cs [LONG] [py35] <-- pyquickhelper, pyensae, pymmails, pyrsslocal, pymyinstall",
-             "ensae_teaching_cs [SKIP] [py35] <-- pyquickhelper, pyensae, pymmails, pyrsslocal, pymyinstall",
-             # 3h
-             ("ensae_teaching_cs [custom_left] <-- pyquickhelper, pyensae, pymmails, pyrsslocal, pymyinstall",
-                        "H H(10-11) * * 3"),
-             # 3h
-             "ensae_teaching_cs [winpython] [custom_left] <-- pyquickhelper, pyensae, pymmails, pyrsslocal, pymyinstall",
-             # 3h
-             "ensae_teaching_cs [anaconda3] [custom_left] <-- pyquickhelper, pyensae, pymmails, pyrsslocal, pymyinstall",
-             # 3h
-             "ensae_teaching_cs [py35] [custom_left] <-- pyquickhelper, pyensae, pymmails, pyrsslocal, pymyinstall",
-             # documentation
-             ("pyquickhelper [doc] <-- pyquickhelper", "H H(3-4) * * 1"),
-             ["pymyinstall [doc]",
-                        "pysqllike [doc] <-- pyquickhelper",
-                        "pymmails [doc] <-- pyquickhelper",
-                        "pyrsslocal [doc] <-- pyquickhelper",
-                        "pyensae [doc] <-- pyquickhelper"],
-             ["actuariat_python [doc] <-- pyquickhelper, pyensae, pymmails, pyrsslocal, pymyinstall",
-              "code_beatrix [doc] <-- pyquickhelper, pyensae, pymmails, pyrsslocal, pymyinstall"],
-             "ensae_teaching_cs [doc] <-- pyquickhelper, pyensae, pymmails, pyrsslocal, pymyinstall",
-             # setup
-             ("pyquickhelper [setup] <-- pyquickhelper", "H H(6-7) * * 1"),
-             ["pymyinstall [setup]",
-                        "pysqllike [setup] <-- pyquickhelper",
-                        "pymmails [setup] <-- pyquickhelper",
-                        "pyrsslocal [setup] <-- pyquickhelper, pyensae",
-                        "pyensae [setup] <-- pyquickhelper"],
-             ["actuariat_python [setup] <-- pyquickhelper, pyensae, pymmails, pyrsslocal, pymyinstall",
-                 "code_beatrix [setup] <-- pyquickhelper, pyensae, pymmails, pyrsslocal, pymyinstall"],
-             "ensae_teaching_cs [setup] <-- pyquickhelper, pyensae, pymmails, pyrsslocal, pymyinstall",
+             ("pyquickhelper [py34]", "H H(2-3) * * 2"),
+             ["pysqllike [py34]",
+                        "pymmails [py34] <-- pyquickhelper",
+                        "python3_module_template [py34] <-- pyquickhelper",
+                        "pymyinstall [py34] <-- pyquickhelper"],
+             "pyensae [py34] <-- pyquickhelper",
+             "pyrsslocal [py34] <-- pyquickhelper, pyensae",
             ],
 
         Example::
@@ -908,6 +849,7 @@ class JenkinsExt(jenkins.Jenkins):
                            Anaconda3=r"C:\\Anaconda3",
                            py34=r"c:\\Python34_x64",
                            py35=r"c:\\Python35_x64",
+                           default=r"c:\\Python35_x64",
                            custom=r"c:\\CustomPython")
 
             js = JenkinsExt('http://machine:8080/', "user", "password", engines=engines)
