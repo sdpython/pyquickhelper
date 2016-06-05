@@ -81,37 +81,7 @@ def set_notebook_name_theNotebook(name="theNotebook"):
     return get_name()
 
 
-def add_notebook_menu(menu_id="my_id_menu_nb", raw=False, format="html", header=None,
-                      first_level=2, last_level=4):
-    """
-    add javascript and HTML to the notebook which gathers all in the notebook and builds a menu
-
-    @param      menu_id         menu_id
-    @param      raw             raw HTML and Javascript
-    @param      format          *html* or *rst*
-    @param      header          title of the menu (None for None)
-    @param      first_level     first level to consider
-    @param      last_level      last level to consider
-    @return                     HTML object
-
-    In a notebook, it is easier to do by using a magic command
-    ``%%html`` for the HTML and another one
-    ``%%javascript`` for the Javascript.
-    This function returns a full text with HTML and
-    Javascript.
-
-    If the format is RST, the menu can be copied/pasted in a text cell.
-
-    On the notebook, the instruction would work::
-
-        var anchors = document.getElementsByClassName("anchor-link");
-
-    But it fails during the conversion from a notebook to format RST.
-    """
-    html = '<div id="{0}">run previous cell, wait for 2 seconds</div>'.format(
-        menu_id)
-
-    js = """
+add_notebook_menu_js = """
                 function repeat_indent_string(n){
                     var a = "" ;
                     for ( ; n > 0 ; --n) {
@@ -208,10 +178,44 @@ def add_notebook_menu(menu_id="my_id_menu_nb", raw=False, format="html", header=
                     menu.innerHTML=text_menu;
                 };
                 window.setTimeout(update_menu,2000);
-            """.replace("                ", "") \
-               .replace("__MENUID__", menu_id) \
-               .replace("__FIRST__", str(first_level)) \
-               .replace("__LAST__", str(last_level))
+            """
+
+
+def add_notebook_menu(menu_id="my_id_menu_nb", raw=False, format="html", header=None,
+                      first_level=2, last_level=4):
+    """
+    add javascript and HTML to the notebook which gathers all in the notebook and builds a menu
+
+    @param      menu_id         menu_id
+    @param      raw             raw HTML and Javascript
+    @param      format          *html* or *rst*
+    @param      header          title of the menu (None for None)
+    @param      first_level     first level to consider
+    @param      last_level      last level to consider
+    @return                     HTML object
+
+    In a notebook, it is easier to do by using a magic command
+    ``%%html`` for the HTML and another one
+    ``%%javascript`` for the Javascript.
+    This function returns a full text with HTML and
+    Javascript.
+
+    If the format is RST, the menu can be copied/pasted in a text cell.
+
+    On the notebook, the instruction would work::
+
+        var anchors = document.getElementsByClassName("anchor-link");
+
+    But it fails during the conversion from a notebook to format RST.
+    """
+    html = '<div id="{0}">run previous cell, wait for 2 seconds</div>'.format(
+        menu_id)
+
+    global add_notebook_menu_js
+    js = add_notebook_menu_js.replace("                ", "") \
+                             .replace("__MENUID__", menu_id) \
+                             .replace("__FIRST__", str(first_level)) \
+                             .replace("__LAST__", str(last_level))
 
     full = "{0}\n<script>{1}</script>".format(html, js)
 

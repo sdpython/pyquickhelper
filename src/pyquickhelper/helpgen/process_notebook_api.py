@@ -12,6 +12,9 @@ from .post_process import post_process_slides_output, post_process_html_output
 
 if sys.version_info[0] == 2:
     from codecs import open
+    from StringIO import StringIO
+else:
+    from io import StringIO
 
 
 def get_exporter(format):
@@ -124,7 +127,7 @@ def nb2slides(nb_file, outfile, add_tag=True):
         fh.writelines(source)
 
     # post_processing
-    post_process_slides_output(outfile, False, False, False)
+    post_process_slides_output(outfile, False, False, False, False)
     res = [outfile]
 
     # we copy javascript dependencies, reveal.js
@@ -134,6 +137,42 @@ def nb2slides(nb_file, outfile, add_tag=True):
         cp = install_javascript_tools(None, dest=dirname)
         res.extend(cp)
 
+    return res
+
+
+def nb2present(nb_file, outfile, add_tag=True):
+    """
+    convert a notebooks into slides, it copies
+    reveal.js if not present in the folder of the output
+
+    @param      nb_file         notebook file or a stream or a @see fn read_nb
+    @param      outfile         output file (a string)
+    @param      add_tag         call @see me add_tag_slide
+    @return                     impacted files
+
+    .. versionadded:: 1.4
+    """
+    from ..ipythonhelper import NotebookRunner, read_nb
+
+    if isinstance(nb_file, NotebookRunner):
+        nb = nb_file.nb
+    else:
+        nbr = read_nb(nb_file, kernel=False)
+        nb = nbr.nb
+
+    if add_tag:
+        run = NotebookRunner(nb, kernel=False)
+        run.add_tag_slide()
+        nb = run.nb
+
+    # to be implemented
+    from nbpresent import export
+    st = StringIO(str(nb))
+    export(st, outfile, out_format="html")
+
+    # post_processing
+    post_process_slides_output(outfile, False, False, False, False)
+    res = [outfile]
     return res
 
 

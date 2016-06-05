@@ -224,6 +224,7 @@ if not r:
             "multi_key_dict",
             "nbconvert>=4.2.0",
             "nbformat",
+            "nbpresent",
             "notebook>=4.2.0",
             "path.py",
             "pickleshare",

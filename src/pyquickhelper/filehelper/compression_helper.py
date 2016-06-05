@@ -108,7 +108,8 @@ def unzip_files(zipf, where_to=None, fLOG=noLOG, fvalid=None, remove_space=True)
                             tos = tos.replace("/", "\\")
                         finalfolder = os.path.split(tos)[0]
                         if not os.path.exists(finalfolder):
-                            fLOG("    creating folder (zip)", os.path.abspath(finalfolder))
+                            fLOG("    creating folder (zip)",
+                                 os.path.abspath(finalfolder))
                             try:
                                 os.makedirs(finalfolder)
                             except FileNotFoundError as e:
@@ -133,7 +134,8 @@ def unzip_files(zipf, where_to=None, fLOG=noLOG, fvalid=None, remove_space=True)
                                     tos = os.path.join(where_to, newname)
                                     finalfolder = os.path.split(tos)[0]
                                     if not os.path.exists(finalfolder):
-                                        fLOG("    creating folder (zip)", os.path.abspath(finalfolder))
+                                        fLOG("    creating folder (zip)",
+                                             os.path.abspath(finalfolder))
                                         os.makedirs(finalfolder)
                                     with open(tos, "wb") as u:
                                         u.write(data)
@@ -289,7 +291,8 @@ def un7zip_files(zipf, where_to=None, fLOG=noLOG, fvalid=None, remove_space=True
                         tos = tos.replace("/", "\\")
                     finalfolder = os.path.split(tos)[0]
                     if not os.path.exists(finalfolder):
-                        fLOG("    creating folder (7z)", os.path.abspath(finalfolder))
+                        fLOG("    creating folder (7z)",
+                             os.path.abspath(finalfolder))
                         try:
                             os.makedirs(finalfolder)
                         except FileNotFoundError as e:
@@ -314,7 +317,8 @@ def un7zip_files(zipf, where_to=None, fLOG=noLOG, fvalid=None, remove_space=True
                                 tos = os.path.join(where_to, newname)
                                 finalfolder = os.path.split(tos)[0]
                                 if not os.path.exists(finalfolder):
-                                    fLOG("    creating folder (7z)", os.path.abspath(finalfolder))
+                                    fLOG("    creating folder (7z)",
+                                         os.path.abspath(finalfolder))
                                     os.makedirs(finalfolder)
                                 with open(tos, "wb") as u:
                                     u.write(data)

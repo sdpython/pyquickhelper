@@ -108,7 +108,7 @@ def post_process_latex_output_any(file):
         f.write(content)
 
 
-def post_process_rst_output(file, html, pdf, python, slides, is_notebook=False):
+def post_process_rst_output(file, html, pdf, python, slides, present, is_notebook=False):
     """
     process a RST file generated from the conversion of a notebook
 
@@ -117,10 +117,11 @@ def post_process_rst_output(file, html, pdf, python, slides, is_notebook=False):
     @param      html            if True, add a link to the HTML conversion
     @param      python          if True, add a link to the Python conversion
     @param      slides          if True, add a link to the slides conversion
+    @param      present         if True, add a link to the slides conversion (with *nbpresent*)
     @param      is_notebook     does something more if the file is a notebook
 
-    .. versionchanged:: 1.1
-        Parameters *slides*, *is_notebook* were added.
+    .. versionchanged:: 1.4
+        Parameter *present* was added.
     """
     fLOG("    post_process_rst_output", file)
 
@@ -232,6 +233,9 @@ def post_process_rst_output(file, html, pdf, python, slides, is_notebook=False):
     if slides:
         links.append(
             '`slides <../_downloads/{0}.slides.html>`_ :download:`. <{0}.slides.html>`'.format(noext))
+    if present:
+        links.append(
+            '`presentation <../_downloads/{0}.slides2p.html>`_ :download:`. <{0}.slides2p.html>`'.format(noext))
     lines[pos] = "{0}\n\n{1}\n\n".format(lines[pos], ", ".join(links))
 
     # we remove the
@@ -296,7 +300,7 @@ def post_process_rst_output(file, html, pdf, python, slides, is_notebook=False):
         f.write("".join(lines))
 
 
-def post_process_html_output(file, pdf, python, slides):
+def post_process_html_output(file, pdf, python, slides, present):
     """
     process a HTML file generated from the conversion of a notebook
 
@@ -304,12 +308,10 @@ def post_process_html_output(file, pdf, python, slides):
     @param      pdf         if True, add a link to the PDF, assuming it will exists at the same location
     @param      python      if True, add a link to the Python conversion
     @param      slides      if True, add a link to the slides conversion
+    @param      present     if True, add a link to the slides conversion (with *nbpresent*)
 
-    .. versionchanged:: 0.9
-        For HTML conversion, read the following blog about mathjax: `nbconvert: Math is not displayed in the html output <https://github.com/ipython/ipython/issues/6440>`_.
-
-    .. versionchanged:: 1.1
-        Parameters *slides* was added.
+    .. versionchanged:: 1.4
+        Parameter *present* was added.
     """
     fold, name = os.path.split(file)
     if not os.path.exists(file):
@@ -325,7 +327,7 @@ def post_process_html_output(file, pdf, python, slides):
         f.write(text)
 
 
-def post_process_slides_output(file, pdf, python, slides):
+def post_process_slides_output(file, pdf, python, slides, present):
     """
     process a HTML file generated from the conversion of a notebook
 
@@ -333,8 +335,10 @@ def post_process_slides_output(file, pdf, python, slides):
     @param      pdf         if True, add a link to the PDF, assuming it will exists at the same location
     @param      python      if True, add a link to the Python conversion
     @param      slides      if True, add a link to the slides conversion
+    @param      present     if True, add a link to the slides conversion (with *nbpresent*)
 
-    .. versionadded:: 1.1
+    .. versionchanged:: 1.4
+        Parameter *present* was added.
     """
     fold, name = os.path.split(file)
     if not os.path.exists(file):

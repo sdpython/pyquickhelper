@@ -123,13 +123,39 @@ def get_jupyter_convert_program(exe=None, pandoc_path=None):
     return ipy
 
 
+def get_convert_present_program(exe=None):
+    """
+    get present.exe executable
+
+    @param      exe             path to python executable
+    @return                     ipython executable
+
+    .. versionadded:: 1.4
+    """
+    if exe is None:
+        exe = os.path.dirname(sys.executable)
+    if sys.platform.startswith("win"):
+        if not exe.lower().endswith("scripts"):
+            ipy = os.path.join(exe, "Scripts", "nbpresent.exe")
+            if not os.path.exists(ipy):
+                raise FileNotFoundError("ipy={0}\nexe={1}".format(ipy, exe))
+        else:
+            ipy = os.path.join(exe, "nbpresent.exe")
+            if not os.path.exists(ipy):
+                raise FileNotFoundError("ipy={0}\nexe={1}".format(ipy, exe))
+    else:
+        ipy = os.path.join(exe, "nbpresent")
+
+    return ipy
+
+
 def process_notebooks(notebooks,
                       outfold,
                       build,
                       latex_path=None,
                       pandoc_path=None,
-                      formats=[
-                          "ipynb", "html", "python", "rst", "slides", "pdf"]
+                      formats=("ipynb", "html", "python", "rst",
+                               "slides", "pdf", "present")
                       ):
     """
     Converts notebooks into html, rst, latex, pdf, python, docx using
@@ -169,19 +195,12 @@ def process_notebooks(notebooks,
     process_notebooks("td1a_correction_session7.ipynb",
                       "dest_folder",
                       "dest_folder",
-                      formats=["ipynb", "html", "python", "rst", "slides", "pdf", "docx"])
+                      formats=("ipynb", "html", "python", "rst", "slides", "pdf", "docx", "present")])
     @endcode
     @endexample
 
-    .. versionchanged:: 0.9
-        For HTML conversion, read the following blog about mathjax: `nbconvert: Math is not displayed in the html output <https://github.com/ipython/ipython/issues/6440>`_.
-        Add defaults values for *pandoc_path*, *latex_path*.
-
-    .. versionchanged:: 1.0
-        Assumes IPython 3 is installed. It might no work for earlier versions.
-
-    .. versionchanged:: 1.1
-        Add format slides. Return type was changed.
+    .. versionchanged:: 1.4
+        Add another format for the slides (with `nbpresent <https://pypi.python.org/pypi/nbpresent>`_).
 
     .. todoext::
         :title: Allow hidden rst instruction in notebook (for references)
@@ -215,23 +234,19 @@ def process_notebooks(notebooks,
             import_pywin32()
         exe = os.path.split(sys.executable)[0]
 
-    extensions = {"ipynb": ".ipynb",
-                  "latex": ".tex",
-                  "pdf": ".pdf",
-                  "html": ".html",
-                  "rst": ".rst",
-                  "python": ".py",
-                  "docx": ".docx",
-                  "word": ".docx",
-                  "slides": ".slides.html",
+    extensions = {"ipynb": ".ipynb", "latex": ".tex", "pdf": ".pdf", "html": ".html", "rst": ".rst",
+                  "python": ".py", "docx": ".docx", "word": ".docx", "slides": ".slides.html",
+                  "present": ".slides2p.html"
                   }
 
     ipy = get_jupyter_convert_program(exe, pandoc_path)
 
     if sys.platform.startswith("win"):
-        cmd = '{0} --to {1} "{2}"{5} --output="{3}\\{4}"'
+        cmd_convert = '{0} --to {1} "{2}"{5} --output="{3}\\{4}"'
+        cmd_present = '{0} -i "{2}"{5} -o "{3}\\{4}.slides2p.html"'
     else:
-        cmd = '{0} --to {1} "{2}"{5} --output="{3}/{4}"'
+        cmd_convert = '{0} --to {1} "{2}"{5} --output="{3}/{4}"'
+        cmd_present = '{0} -i "{2}"{5} -o "{3}/{4}.slides2p.html"'
     files = []
     skipped = []
 
@@ -239,6 +254,12 @@ def process_notebooks(notebooks,
         build_slide = os.path.join(build, "bslides")
         if not os.path.exists(build_slide):
             os.mkdir(build_slide)
+
+    if "present" in formats:
+        build_present = os.path.join(build, "bslides_present")
+        if not os.path.exists(build_present):
+            os.mkdir(build_present)
+        inbp = get_convert_present_program(exe)
 
     if "WinPython" in sys.executable:
         # pip, or any program in Scripts cannot find python.exe
@@ -266,7 +287,7 @@ def process_notebooks(notebooks,
             # output
             trueoutputfile = os.path.join(build, nbout + extensions[format])
             fLOG("--- produce ", trueoutputfile)
-            pandoco = "docx" if format in ["word", "docx"] else None
+            pandoco = "docx" if format in ("word", "docx") else None
 
             # we chech it was not done before
             if os.path.exists(trueoutputfile):
@@ -290,12 +311,19 @@ def process_notebooks(notebooks,
             # if the format is slides, we update the metadata
             if format == "slides":
                 nb_slide = add_tag_for_slideshow(notebook, build_slide)
+                nbcexe = ipy
                 fLOG("NB SLIDE: run add_tag_for_slideshow", nb_slide)
+            elif format == "present":
+                nb_slide = add_tag_for_slideshow(notebook, build_present)
+                nbcexe = inbp
+                fLOG("NB PRESENT: run add_tag_for_slideshow", nb_slide)
             else:
                 nb_slide = None
+                nbcexe = ipy
 
             # next
             options = ""
+            cmd = cmd_convert
             if format == "pdf":
                 title = os.path.splitext(
                     os.path.split(notebook)[-1])[0].replace("_", " ")
@@ -303,11 +331,15 @@ def process_notebooks(notebooks,
                     title)
                 format = "latex"
                 compilation = True
-            elif format in ["word", "docx"]:
+            elif format in ("word", "docx"):
                 format = "html"
                 compilation = False
-            elif format in ["slides"]:
+            elif format in ("slides", ):
                 options += " --reveal-prefix reveal.js"
+                compilation = False
+            elif format in ("present", ):
+                cmd = cmd_present
+                options += " -f html"
                 compilation = False
             else:
                 compilation = False
@@ -325,7 +357,7 @@ def process_notebooks(notebooks,
             else:
                 fmttpl = ""
 
-            c = cmd.format(ipy, format,
+            c = cmd.format(nbcexe, format,
                            notebook if nb_slide is None else nb_slide,
                            build, nbout, fmttpl)
 
@@ -360,7 +392,8 @@ def process_notebooks(notebooks,
                     else:
                         err = err.lower()
                         if "error" in err or "critical" in err or "bad config" in err:
-                            raise HelpGenException(err)
+                            raise HelpGenException(
+                                "CMD:\n{0}\nERR:\n{1}".format(c, err))
 
             format = extensions[format].strip(".")
 
@@ -436,7 +469,7 @@ def process_notebooks(notebooks,
                         os.listdir(os.path.dirname(outputfile))) + "\nERR:\n" + err + "\nOUT:\n" + out + "\nCMD:\n" + c)
                 thisfiles += add_link_to_notebook(outputfile, notebook,
                                                   "pdf" in formats, False, "python" in formats,
-                                                  "slides" in formats)
+                                                  "slides" in formats, "present" in formats)
 
             elif format == "slides.html":
                 # we add a link to the notebook
@@ -445,23 +478,32 @@ def process_notebooks(notebooks,
                         os.listdir(os.path.dirname(outputfile))) + "\nERR:\n" + err + "\nOUT:\n" + out + "\nCMD:\n" + c)
                 thisfiles += add_link_to_notebook(outputfile, notebook,
                                                   "pdf" in formats, False, "python" in formats,
-                                                  "slides" in formats)
+                                                  "slides" in formats, "present" in formats)
+
+            elif format == "slides2p.html":
+                # we add a link to the notebook
+                if not os.path.exists(outputfile):
+                    raise FileNotFoundError(outputfile + "\nCONTENT in " + os.path.dirname(outputfile) + ":\n" + "\n".join(
+                        os.listdir(os.path.dirname(outputfile))) + "\nERR:\n" + err + "\nOUT:\n" + out + "\nCMD:\n" + c)
+                thisfiles += add_link_to_notebook(outputfile, notebook,
+                                                  "pdf" in formats, False, "python" in formats,
+                                                  "slides" in formats, "present" in formats)
 
             elif format == "ipynb":
                 # we just copy the notebook
                 thisfiles += add_link_to_notebook(outputfile, notebook,
                                                   "ipynb" in formats, False, "python" in formats,
-                                                  "slides" in formats)
+                                                  "slides" in formats, "present" in formats)
 
             elif format == "rst":
                 # we add a link to the notebook
                 thisfiles += add_link_to_notebook(
                     outputfile, notebook, "pdf" in formats, "html" in formats, "python" in formats,
-                    "slides" in formats)
+                    "slides" in formats, "present" in formats)
 
             elif format in ("tex", "latex", "pdf"):
                 thisfiles += add_link_to_notebook(outputfile,
-                                                  notebook, False, False, False, False)
+                                                  notebook, False, False, False, False, False)
 
             elif format in ("py", "python"):
                 post_process_python_output(outputfile, True)
@@ -536,7 +578,7 @@ def process_notebooks(notebooks,
     return copy + [(_, False) for _ in skipped]
 
 
-def add_link_to_notebook(file, nb, pdf, html, python, slides):
+def add_link_to_notebook(file, nb, pdf, html, python, slides, present):
     """
     add a link to the notebook in HTML format and does a little bit of cleaning
     for various format
@@ -547,12 +589,13 @@ def add_link_to_notebook(file, nb, pdf, html, python, slides):
     @param      html        if True, add a link to the HTML conversion
     @param      python      if True, add a link to the Python conversion
     @param      slides      if True, add a link to the HTML slides
+    @param      present     if True, add a link to the HTML present
     @return                 list of generated files
 
     The function does some cleaning too in the files.
 
-    .. versionadded:: 1.1
-        Parameter slides was added.
+    .. versionchanged:: 1.4
+        Parameter present was added.
     """
     core, ext = os.path.splitext(file)
     if core.endswith(".slides"):
@@ -570,10 +613,13 @@ def add_link_to_notebook(file, nb, pdf, html, python, slides):
     elif ext == ".pdf":
         return res
     elif ext == ".html":
-        post_process_html_output(file, pdf, python, slides)
+        post_process_html_output(file, pdf, python, slides, present)
         return res
     elif ext == ".slides.html":
-        post_process_slides_output(file, pdf, python, slides)
+        post_process_slides_output(file, pdf, python, slides, present)
+        return res
+    elif ext == ".slides2p.html":
+        post_process_slides_output(file, pdf, python, slides, present)
         return res
     elif ext == ".tex":
         post_process_latex_output(file, True)
@@ -583,7 +629,7 @@ def add_link_to_notebook(file, nb, pdf, html, python, slides):
         return res
     elif ext == ".rst":
         post_process_rst_output(
-            file, html, pdf, python, slides, is_notebook=True)
+            file, html, pdf, python, slides, present, is_notebook=True)
         return res
     else:
         raise HelpGenException(

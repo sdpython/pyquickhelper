@@ -24,7 +24,7 @@ except ImportError:
 
 from src.pyquickhelper.loghelper import fLOG
 from src.pyquickhelper.helpgen import process_notebooks
-from src.pyquickhelper.pycode import is_travis_or_appveyor
+from src.pyquickhelper.pycode import is_travis_or_appveyor, get_temp_folder
 
 
 if sys.version_info[0] == 2:
@@ -68,13 +68,10 @@ class TestNoteBooksBug(unittest.TestCase):
         fold = os.path.normpath(os.path.join(path, "notebooks"))
         nbs = [os.path.join(fold, _)
                for _ in os.listdir(fold) if ".ipynb" in _]
-        formats = ["ipynb", "html", "python", "rst", "latex", "pdf", "docx"]
+        formats = ["present", "ipynb", "html",
+                   "python", "rst", "latex", "pdf", "docx"]
 
-        temp = os.path.join(path, "temp_nb_bug")
-        if not os.path.exists(temp):
-            os.mkdir(temp)
-        for file in os.listdir(temp):
-            os.remove(os.path.join(temp, file))
+        temp = get_temp_folder(__file__, "temp_nb_bug")
 
         if is_travis_or_appveyor() is not None:
             warnings.warn(
