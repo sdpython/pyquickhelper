@@ -340,11 +340,16 @@ def post_process_slides_output(file, pdf, python, slides, present):
     .. versionchanged:: 1.4
         Parameter *present* was added.
     """
-    fold, name = os.path.split(file)
-    if not os.path.exists(file):
-        raise FileNotFoundError(file)
-    with open(file, "r", encoding="utf8") as f:
-        text = f.read()
+    if (len(file) > 5000 or not os.path.exists(file)) and "<html" in file:
+        text = file
+        save = False
+    else:
+        if not os.path.exists(file):
+            raise FileNotFoundError(file)
+        fold, name = os.path.split(file)
+        with open(file, "r", encoding="utf8") as f:
+            text = f.read()
+        save = True
 
     # reveal.js
     require = "require(" in text
@@ -367,8 +372,11 @@ def post_process_slides_output(file, pdf, python, slides, present):
     text = text.replace("https://c328740.ssl.cf1.rackcdn.com/mathjax/latest/MathJax.js?config=TeX-AMS_HTML",
                         "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML")
 
-    with open(file, "w", encoding="utf8") as f:
-        f.write(text)
+    if save:
+        with open(file, "w", encoding="utf8") as f:
+            f.write(text)
+    else:
+        return text
 
 
 def post_process_latex(st, doall, info=None):

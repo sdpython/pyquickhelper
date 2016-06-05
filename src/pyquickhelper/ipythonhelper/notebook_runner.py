@@ -25,6 +25,9 @@ from ..loghelper.flog import noLOG
 
 if sys.version_info[0] == 2:
     from codecs import open
+    from StringIO import StringIO
+else:
+    from io import StringIO
 
 
 class NotebookError(Exception):
@@ -88,9 +91,6 @@ class NotebookRunner(object):
         @param      replacements    replacements to make in every cell before running it,
                                     dictionary ``{ string: string }``
 
-        .. versionchanged:: 1.3
-            Parameters *log_level*, *extended_args*, *kernel_name*, *kernel* were added.
-
         .. versionchanged:: 1.4
             Parameter *replacements* was added.
         """
@@ -150,16 +150,25 @@ class NotebookRunner(object):
         self.nb = nb
         self.comment = comment
 
-    def to_json(self, filename, encoding="utf8"):
+    def to_json(self, filename=None, encoding="utf8"):
         """
         convert the notebook into json
 
-        @param      filename       filename or stream
+        @param      filename        filename or stream
+        @param      encoding        encoding
+        @return                     Json string if filename is None, None otherwise
+
+        .. versionchanged:: 1.4
+            The function now returns the json string if filename is None.
         """
         if isinstance(filename, str  # unicode#
                       ):
             with open(filename, "w", encoding=encoding) as payload:
                 self.to_json(payload)
+        elif filename is None:
+            st = StringIO()
+            st.write(writes(self.nb))
+            return st.getvalue()
         else:
             filename.write(writes(self.nb))
 

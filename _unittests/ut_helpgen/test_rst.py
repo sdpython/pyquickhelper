@@ -42,7 +42,7 @@ class TestRst(unittest.TestCase):
         if os.path.exists(dest):
             os.remove(dest)
         shutil.copy(file, temp)
-        post_process_rst_output(dest, False, False, False, False)
+        post_process_rst_output(dest, False, False, False, False, False)
 
 
 if __name__ == "__main__":
