@@ -69,6 +69,8 @@ class TestNotebookConversion (unittest.TestCase):
                "example_pyquickhelper.py",
                "example_pyquickhelper.rst",
                "example_pyquickhelper.ipynb",
+               "example_pyquickhelper.slides.html",
+               "example_pyquickhelper.slides2p.html",
                ]
 
         if sys.platform.startswith("win"):
