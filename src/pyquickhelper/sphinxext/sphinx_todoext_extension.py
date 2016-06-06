@@ -84,11 +84,6 @@ class TodoExt(BaseAdmonition):
         else:
             legend = ''
 
-        if env is None:
-            extlinks = None
-        else:
-            extlinks = env.config.extlinks if hasattr(env.config, 'extlinks') else None
-
         if not self.options.get('class'):
             self.options['class'] = ['admonition-todoext']
 
@@ -111,9 +106,15 @@ class TodoExt(BaseAdmonition):
         set_source_info(self, todoext)
 
         if issue is not None and len(issue) > 0:
-            if extlinks is None:
+            if hasattr(sett, "extlinks"):
+                extlinks = sett.extlinks
+            elif env is not None and hasattr(env.config, "extlinks"):
+                extlinks = env.config.extlinks
+            else:
                 available = "\n".join(sorted(sett.__dict__.keys()))
-                raise ValueError("extlinks is not defined in the documentation settings, available:\n" + available)
+                available2 = "\n".join(sorted(env.config.__dict__.keys())) if env is not None else ""
+                raise ValueError("extlinks is not defined in the documentation settings, available in sett\n{0}\nCONFIG\n{1}".format(available, available2))
+
             if "issue" not in extlinks:
                 raise KeyError("key 'issue' is not present in extlinks")
             url, label = extlinks["issue"]
