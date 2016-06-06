@@ -580,6 +580,7 @@ setup(
         "codecov",
         "docutils",
         "matplotlib",
+        "nbpresent",
         "numpy",
         "sphinx",
         "pandas",
