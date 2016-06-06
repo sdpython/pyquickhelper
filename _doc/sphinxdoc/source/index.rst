@@ -22,10 +22,6 @@ pyquickhelper documentation
     :alt: PYPI Package
     :target: https://pypi.python.org/pypi/pyquickhelper
 
-.. image:: http://img.shields.io/github/issues/sdpython/pyquickhelper.png
-    :alt: GitHub Issues
-    :target: https://github.com/sdpython/pyquickhelper/issues
-    
 .. image:: https://img.shields.io/badge/license-MIT-blue.svg
     :alt: MIT License
     :target: http://opensource.org/licenses/MIT
@@ -41,6 +37,13 @@ pyquickhelper documentation
 .. image:: https://codecov.io/github/sdpython/pyquickhelper/coverage.svg?branch=master
     :target: https://codecov.io/github/sdpython/pyquickhelper?branch=master
 
+.. image:: http://img.shields.io/github/issues/sdpython/pyquickhelper.png
+    :alt: GitHub Issues
+    :target: https://github.com/sdpython/pyquickhelper/issues
+    
+.. image:: https://badge.waffle.io/sdpython/pyquickhelper.png?label=ready&title=Ready
+    :alt: GitHub Issues
+    :target: https://waffle.io/sdpython/pyquickhelper
 
 **Links:** `pypi <https://pypi.python.org/pypi/pyquickhelper/>`_, 
 `github <https://github.com/sdpython/pyquickhelper>`_,
