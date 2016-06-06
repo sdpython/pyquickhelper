@@ -344,8 +344,7 @@ def set_sphinx_variables(fileconf,
             ext_locals[k] = v
     if extlinks is None:
         extlinks = dict()
-    if extlinks:
-        ext_locals["extlinks"] = extlinks
+    ext_locals["extlinks"] = extlinks
 
     if custom_style is not None:
         ex = False

@@ -74,7 +74,6 @@ class TodoExt(BaseAdmonition):
         sett = self.state.document.settings
         language_code = sett.language_code
         lineno = self.lineno
-        extlinks = sett.extlinks if hasattr(sett, 'extlinks') else None
 
         env = self.state.document.settings.env if hasattr(
             self.state.document.settings, "env") else None
@@ -84,6 +83,11 @@ class TodoExt(BaseAdmonition):
             legend = "{0}:{1}".format(docname, lineno)
         else:
             legend = ''
+
+        if env is None:
+            extlinks = None
+        else:
+            extlinks = env.config.extlinks if hasattr(env.config, 'extlinks') else None
 
         if not self.options.get('class'):
             self.options['class'] = ['admonition-todoext']
@@ -108,7 +112,8 @@ class TodoExt(BaseAdmonition):
 
         if issue is not None and len(issue) > 0:
             if extlinks is None:
-                raise ValueError("extlinks is not defined in the documentation settings")
+                available = "\n".join(sorted(sett.__dict__.keys()))
+                raise ValueError("extlinks is not defined in the documentation settings, available:\n" + available)
             if "issue" not in extlinks:
                 raise KeyError("key 'issue' is not present in extlinks")
             url, label = extlinks["issue"]
