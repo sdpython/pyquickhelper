@@ -7,12 +7,8 @@ import solar_theme
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.split(__file__)[0])))
 from pyquickhelper.helpgen.default_conf import set_sphinx_variables
-set_sphinx_variables(__file__,
-                     "pyquickhelper",
-                     "Xavier Dupré",
-                     2016,
-                     "solar_theme",
-                     solar_theme.theme_path,
-                     locals())
+set_sphinx_variables(__file__, "pyquickhelper", "Xavier Dupré", 2016,
+                     "solar_theme", solar_theme.theme_path, locals(),
+                     extlinks=dict(issue=('https://github.com/sdpython/pyquickhelper/issues/%d', 'issue')))
 
 blog_root = "http://www.xavierdupre.fr/app/pyquickhelper/helpsphinx/"
