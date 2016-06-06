@@ -342,6 +342,8 @@ def set_sphinx_variables(fileconf,
     for k, v in loc.items():
         if not k.startswith("_"):
             ext_locals[k] = v
+    if extlinks is None:
+        extlinks = dict()
     if extlinks:
         ext_locals["extlinks"] = extlinks
 
