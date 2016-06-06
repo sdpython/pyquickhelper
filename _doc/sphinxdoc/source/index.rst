@@ -42,7 +42,7 @@ pyquickhelper documentation
     :target: https://github.com/sdpython/pyquickhelper/issues
     
 .. image:: https://badge.waffle.io/sdpython/pyquickhelper.png?label=ready&title=Ready
-    :alt: GitHub Issues
+    :alt: Waffle
     :target: https://waffle.io/sdpython/pyquickhelper
 
 **Links:** `pypi <https://pypi.python.org/pypi/pyquickhelper/>`_, 
