@@ -59,6 +59,8 @@ class TestTodoExtExtension(unittest.TestCase):
 
                     .. todoext::
                         :title: first todo
+                        :tag: bug
+                        :issue: 7
 
                         this code shoud appear___
 
@@ -72,7 +74,7 @@ class TestTodoExtExtension(unittest.TestCase):
 
         html = rst2html(content, fLOG=fLOG,
                         writer="custom", keep_warnings=True,
-                        directives=tives)
+                        directives=tives, extlinks={'issue': ('http://%s', '_issue_')})
 
         temp = get_temp_folder(__file__, "temp_todoext")
         with open(os.path.join(temp, "out_todoext.html"), "w", encoding="utf8") as f:
@@ -87,6 +89,14 @@ class TestTodoExtExtension(unittest.TestCase):
             raise Exception(html)
 
         t1 = "first todo"
+        if t1 not in html:
+            raise Exception(html)
+
+        t1 = "(bug)"
+        if t1 not in html:
+            raise Exception(html)
+
+        t1 = 'href="http://7"'
         if t1 not in html:
             raise Exception(html)
 

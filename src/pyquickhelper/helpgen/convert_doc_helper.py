@@ -142,7 +142,7 @@ def rst2html(s, fLOG=noLOG, writer="sphinx", keep_warnings=False,
     ::
 
         from docutils import nodes
-        from pyquickhelper import rst2html
+        from pyquickhelper.helpgen import rst2html
 
         class runpythonthis_node(nodes.Structural, nodes.Element):
             pass
@@ -216,13 +216,6 @@ def rst2html(s, fLOG=noLOG, writer="sphinx", keep_warnings=False,
     And ``, startupinfo=startupinfo`` must be added to lines ``p = Popen(...``.
 
     @endFAQ
-
-    .. todoext::
-        :title: make function rst2html handle todoextlist
-        :tag: issue
-
-        The function @see fn rst2html handles the sphinx custom directive
-        *todoextlist* but the content is empty.
 
     .. versionadded:: 1.0
 
@@ -482,7 +475,7 @@ def docstring2html(function_or_string, format="html", fLOG=noLOG, writer="sphinx
     to display it in a notebook.
 
     @code
-    from pyquickhelper import docstring2html
+    from pyquickhelper.helpgen import docstring2html
     import sklearn.linear_model
     docstring2html(sklearn.linear_model.LogisticRegression)
     @endcode

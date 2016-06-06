@@ -45,7 +45,7 @@ class EncryptedBackup:
     it creates a new file.
     Example::
 
-        from pyquickhelper import fLOG
+        from pyquickhelper.loghelper import fLOG
         from pyquickhelper.filehelper import FileTreeNode, EncryptedBackup
         from pyensae.remote import TransferAPIFile
 

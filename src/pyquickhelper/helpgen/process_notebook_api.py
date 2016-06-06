@@ -102,7 +102,7 @@ def nb2slides(nb_file, outfile, add_tag=True):
     By default, the function automatically adds sections if there is none
     and it copies the javascript from reveal.js at the right place.
     @code
-    from pyquickhelper import nb2slides
+    from pyquickhelper.helpgen import nb2slides
     nb2slides("nb.ipynb", "convert.slides.html")
     @endcode
     @endexample

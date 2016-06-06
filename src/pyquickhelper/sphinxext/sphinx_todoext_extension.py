@@ -42,12 +42,15 @@ class TodoExt(BaseAdmonition):
 
     * title: a title for the todo
     * tag: a tag to have several categories of todo
+    * issue: the issue requires `extlinks <http://www.sphinx-doc.org/en/stable/ext/extlinks.html#confval-extlinks>`_
+      to be defined and must contain key ``'issue'``
 
     Example::
 
         .. todoext::
                 :title: title for the todo
                 :tag: issue
+                :issue: issue number
 
                 Description of the todo
     """
@@ -61,6 +64,7 @@ class TodoExt(BaseAdmonition):
         'class': directives.class_option,
         'title': directives.unchanged,
         'tag': directives.unchanged,
+        'issue': directives.unchanged,
     }
 
     def run(self):
@@ -70,6 +74,7 @@ class TodoExt(BaseAdmonition):
         sett = self.state.document.settings
         language_code = sett.language_code
         lineno = self.lineno
+        extlinks = sett.extlinks if hasattr(sett, 'extlinks') else None
 
         env = self.state.document.settings.env if hasattr(
             self.state.document.settings, "env") else None
@@ -88,16 +93,28 @@ class TodoExt(BaseAdmonition):
             return [todoext]
 
         title = self.options.get('title', "").strip()
+        issue = self.options.get('issue', "").strip()
         todotag = self.options.get('tag', '').strip()
         if len(title) > 0:
             title = ": " + title
         prefix = TITLES[language_code]["todo"]
         if len(todotag) > 0:
-            prefix += ' (%s)' % todotag
+            prefix += ' (%s) ' % todotag
 
-        todoext.insert(0, nodes.title(text=_(prefix + title)))
+        title = nodes.title(text=_(prefix + title))
+        todoext.insert(0, title)
         todoext['todotag'] = todotag
         set_source_info(self, todoext)
+
+        if issue is not None and len(issue) > 0:
+            if extlinks is None:
+                raise ValueError("extlinks is not defined in the documentation settings")
+            if "issue" not in extlinks:
+                raise KeyError("key 'issue' is not present in extlinks")
+            url, label = extlinks["issue"]
+            url = url % str(issue)
+            link = nodes.reference(label, _(label), refuri=url)
+            title.append(link)
 
         if env is not None:
             targetid = 'index-%s' % env.new_serialno('index')

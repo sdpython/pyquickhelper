@@ -31,7 +31,8 @@ def set_sphinx_variables(fileconf,
                          use_lunrsearch=False,
                          enable_disabled_parts="enable_disabled_documented_pieces_of_code",
                          sharepost="facebook-linkedin-twitter-20-body",
-                         custom_style=None):
+                         custom_style=None,
+                         extlinks=None):
     """
     defines variables for Sphinx
 
@@ -54,6 +55,8 @@ def set_sphinx_variables(fileconf,
     @param      enable_disabled_parts   @see fn remove_undesired_part_for_documentation
     @param      sharepost               add share button to share blog post on usual networks
     @param      custom_style            custom style sheet
+    @param      extlinks                parameter `extlinks <http://www.sphinx-doc.org/en/stable/ext/extlinks.html#confval-extlinks>`_,
+                                        example: ```{'issue': ('https://github.com/sdpython/pyquickhelper/issues/%s', 'issue ')}``
 
     If the parameter *custom_style* is not None, it will call ``app.add_stylesheet(custom_style)``
     in the setup.
@@ -103,9 +106,9 @@ def set_sphinx_variables(fileconf,
 
     @endexample
 
-    .. versionchanged:: 1.3
-        Add parameters *use_mathjax*, *use_lunrsearch*, *enable_disabled_parts*,
-        *custom_style*.
+    .. versionchanged:: 1.4
+        Add parameter *extlinks*, add extension
+        `extlinks <http://www.sphinx-doc.org/en/stable/ext/extlinks.html#module-sphinx.ext.extlinks>`_.
     """
     # version .txt
     dirconf = os.path.abspath(os.path.dirname(fileconf))
@@ -221,22 +224,22 @@ def set_sphinx_variables(fileconf,
 
     # extensions
     extensions = ['sphinx.ext.autodoc',
-                  'sphinx.ext.todo',
+                  'sphinx.ext.autosummary',
                   'sphinx.ext.coverage',
-                  'sphinx.ext.mathjax' if use_mathjax else 'sphinx.ext.imgmath',
+                  'sphinx.ext.extlinks',
+                  'sphinx.ext.graphviz',
                   'sphinx.ext.ifconfig',
+                  'sphinx.ext.inheritance_diagram',
+                  'sphinx.ext.mathjax' if use_mathjax else 'sphinx.ext.imgmath',
+                  'sphinx.ext.napoleon',
+                  'sphinx.ext.todo',
                   'sphinx.ext.viewcode',
                   'sphinxcontrib.images',
-                  'sphinx.ext.autosummary',
-                  'sphinx.ext.graphviz',
-                  'sphinx.ext.inheritance_diagram',
-                  'matplotlib.sphinxext.plot_directive',
-                  'matplotlib.sphinxext.only_directives',
-                  # 'matplotlib.sphinxext.ipython_directive',
-                  'IPython.sphinxext.ipython_console_highlighting',
-                  'sphinx.ext.napoleon',
                   'sphinxcontrib.imagesvg',
                   'sphinxcontrib.jsdemo',
+                  'IPython.sphinxext.ipython_console_highlighting',
+                  'matplotlib.sphinxext.plot_directive',
+                  'matplotlib.sphinxext.only_directives',
                   ]
     if use_lunrsearch:
         extensions.append('sphinxcontrib.lunrsearch')
@@ -339,6 +342,8 @@ def set_sphinx_variables(fileconf,
     for k, v in loc.items():
         if not k.startswith("_"):
             ext_locals[k] = v
+    if extlinks:
+        ext_locals["extlinks"] = extlinks
 
     if custom_style is not None:
         ex = False

@@ -191,7 +191,7 @@ def process_notebooks(notebooks,
 
     @example(convert a notebook into multiple formats)
     @code
-    from pyquickhelper import process_notebooks
+    from pyquickhelper.ipythonhelper import process_notebooks
     process_notebooks("td1a_correction_session7.ipynb",
                       "dest_folder",
                       "dest_folder",
@@ -205,6 +205,7 @@ def process_notebooks(notebooks,
     .. todoext::
         :title: Allow hidden rst instruction in notebook (for references)
         :tag: enhancement
+        :issue: 10
 
         We should be able to add references to the documentation in the documentation
         without referencing the absolute path of the referenced page. One option

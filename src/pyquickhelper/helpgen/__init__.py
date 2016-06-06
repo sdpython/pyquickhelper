@@ -5,6 +5,7 @@
 .. todoext::
     :title: add subfolder when building indexes of notebooks
     :tag: enhancement
+    :issue: 9
 
     When there are too many notebooks, the notebook index is difficult to read.
 

@@ -655,7 +655,7 @@ def write_module_scripts(folder, platform=sys.platform, blog_list=None,
     in the documentation (it uses module
     `pyrsslocal <http://www.xavierdupre.fr/app/pyrsslocal/helpsphinx/index.html>`_)::
 
-        from pyquickhelper import write_module_scripts, __blog__
+        from pyquickhelper.pycode import write_module_scripts, __blog__
         write_module_scripts(".", blog_list=__blog__, command="blog")
 
     @endexample

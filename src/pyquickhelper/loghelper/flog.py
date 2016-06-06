@@ -892,6 +892,7 @@ def run_cmd(cmd,
 
     @example(run a program using the command line)
     @code
+    from pyquickhelper.loghelper import run_cmd
     out,err = run_cmd( "python setup.py install", wait=True)
     @endcode
     @endexample
