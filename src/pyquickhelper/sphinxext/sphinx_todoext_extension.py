@@ -45,6 +45,7 @@ class TodoExt(BaseAdmonition):
     * issue: the issue requires `extlinks <http://www.sphinx-doc.org/en/stable/ext/extlinks.html#confval-extlinks>`_
       to be defined and must contain key ``'issue'``
     * cost: a cost if the todo were to be fixed
+    * priority: to prioritize items
 
     Example::
 
@@ -67,6 +68,7 @@ class TodoExt(BaseAdmonition):
         'tag': directives.unchanged,
         'issue': directives.unchanged,
         'cost': directives.unchanged,
+        'priority': directives.unchanged,
     }
 
     def run(self):
@@ -122,6 +124,9 @@ class TodoExt(BaseAdmonition):
         else:
             fcost = 0.0
 
+        # priority
+        prio = self.options.get('priority', "").strip()
+
         # body
         (todoext,) = super(TodoExt, self).run()
         if isinstance(todoext, nodes.system_message):
@@ -139,19 +144,26 @@ class TodoExt(BaseAdmonition):
 
         # prefix
         prefix = TITLES[language_code]["todo"]
+        infos = []
         if len(todotag) > 0:
-            prefix += ' (%s) ' % todotag
+            infos.append(todotag)
+        if len(prio) > 0:
+            infos.append('P=%s' % prio)
         if fcost > 0:
             if int(fcost) == fcost:
-                prefix += ' (cost: %d) ' % int(fcost)
+                infos.append('C=%d' % int(fcost))
             else:
-                prefix += ' (cost: %1.1f) ' % fcost
+                infos.append('C=%1.1f' % fcost)
+        if infos:
+            prefix += "({0})".format(" - ".join(infos))
 
         # main node
         title = nodes.title(text=_(prefix + title))
         todoext.insert(0, title)
         todoext['todotag'] = todotag
         todoext['todocost'] = fcost
+        todoext['todoprio'] = prio
+        todoext['todotitle'] = self.options.get('title', "").strip()
         set_source_info(self, todoext)
 
         if env is not None:
@@ -181,6 +193,8 @@ def process_todoexts(app, doctree):
         newnode = node.deepcopy()
         todotag = newnode['todotag']
         todocost = newnode['todocost']
+        todoprio = newnode['todoprio']
+        todotitle = newnode['todotitle']
         del newnode['ids']
         del newnode['todotag']
         env.todoext_all_todosext.append({
@@ -191,6 +205,8 @@ def process_todoexts(app, doctree):
             'target': targetnode,
             'todotag': todotag,
             'todocost': todocost,
+            'todoprio': todoprio,
+            'todotitle': todotitle,
         })
 
 
@@ -267,8 +283,10 @@ def process_todoext_nodes(app, doctree, fromdocname):
         fcost = 0
         content = []
         todotag = node["todotag"]
-
-        for n, todoext_info in enumerate(env.todoext_all_todosext):
+        double_list = [(info.get('todoprio', ''), info.get('todotitle', ''), info) for info in env.todoext_all_todosext]
+        double_list.sort(key=lambda x: x[:2])
+        for n, todoext_info_ in enumerate(double_list):
+            todoext_info = todoext_info_[2]
             if todoext_info["todotag"] != todotag:
                 continue
 
