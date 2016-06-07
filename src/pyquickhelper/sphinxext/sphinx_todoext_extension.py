@@ -87,24 +87,8 @@ class TodoExt(BaseAdmonition):
         if not self.options.get('class'):
             self.options['class'] = ['admonition-todoext']
 
-        (todoext,) = super(TodoExt, self).run()
-        if isinstance(todoext, nodes.system_message):
-            return [todoext]
-
-        title = self.options.get('title', "").strip()
+        # link to issue
         issue = self.options.get('issue', "").strip()
-        todotag = self.options.get('tag', '').strip()
-        if len(title) > 0:
-            title = ": " + title
-        prefix = TITLES[language_code]["todo"]
-        if len(todotag) > 0:
-            prefix += ' (%s) ' % todotag
-
-        title = nodes.title(text=_(prefix + title))
-        todoext.insert(0, title)
-        todoext['todotag'] = todotag
-        set_source_info(self, todoext)
-
         if issue is not None and len(issue) > 0:
             if hasattr(sett, "extlinks"):
                 extlinks = sett.extlinks
@@ -119,11 +103,34 @@ class TodoExt(BaseAdmonition):
                 raise KeyError("key 'issue' is not present in extlinks")
             url, label = extlinks["issue"]
             url = url % str(issue)
-            link = nodes.reference(label, _(label), refuri=url)
-            title.append(link)
+            linkin = nodes.reference(label, _(label), refuri=url)
+            link = nodes.paragraph()
+            link += linkin
+        else:
+            link = None
+
+        # body
+        (todoext,) = super(TodoExt, self).run()
+        if isinstance(todoext, nodes.system_message):
+            return [todoext]
+
+        if link:
+            todoext += link
+        title = self.options.get('title', "").strip()
+        todotag = self.options.get('tag', '').strip()
+        if len(title) > 0:
+            title = ": " + title
+        prefix = TITLES[language_code]["todo"]
+        if len(todotag) > 0:
+            prefix += ' (%s) ' % todotag
+
+        title = nodes.title(text=_(prefix + title))
+        todoext.insert(0, title)
+        todoext['todotag'] = todotag
+        set_source_info(self, todoext)
 
         if env is not None:
-            targetid = 'index-%s' % env.new_serialno('index')
+            targetid = 'indextodoe-%s' % env.new_serialno('indextodoe')
             targetnode = nodes.target(legend, legend, ids=[targetid])
             return [targetnode, todoext]
         else:
@@ -169,7 +176,7 @@ class TodoExtList(Directive):
     Example::
 
         .. todoextlist::
-                :tag: issue
+            :tag: issue
     """
 
     has_content = False
@@ -189,7 +196,7 @@ class TodoExtList(Directive):
             self.state.document.settings, "env") else None
         tag = self.options.get('tag', '').strip()
         if env is not None:
-            targetid = 'index-%s' % env.new_serialno('index')
+            targetid = 'indextodoelist-%s' % env.new_serialno('indextodoelist')
             targetnode = nodes.target('', '', ids=[targetid])
             n = todoextlist('')
             n["todotag"] = tag
@@ -222,7 +229,11 @@ def process_todoext_nodes(app, doctree, fromdocname):
     if not hasattr(env, 'todoext_all_todosext'):
         env.todoext_all_todosext = []
 
+    nbtodo = 0
     for ilist, node in enumerate(doctree.traverse(todoextlist)):
+        if 'ids' in node:
+            node['ids'] = None
+        nbtodo += 1
         if not app.config['todoext_include_todosext']:
             node.replace_self([])
             continue
