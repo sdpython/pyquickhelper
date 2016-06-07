@@ -44,6 +44,7 @@ class TodoExt(BaseAdmonition):
     * tag: a tag to have several categories of todo
     * issue: the issue requires `extlinks <http://www.sphinx-doc.org/en/stable/ext/extlinks.html#confval-extlinks>`_
       to be defined and must contain key ``'issue'``
+    * cost: a cost if the todo were to be fixed
 
     Example::
 
@@ -65,6 +66,7 @@ class TodoExt(BaseAdmonition):
         'title': directives.unchanged,
         'tag': directives.unchanged,
         'issue': directives.unchanged,
+        'cost': directives.unchanged,
     }
 
     def run(self):
@@ -103,30 +105,53 @@ class TodoExt(BaseAdmonition):
                 raise KeyError("key 'issue' is not present in extlinks")
             url, label = extlinks["issue"]
             url = url % str(issue)
-            linkin = nodes.reference(label, _(label), refuri=url)
+            lab = label.format(issue)
+            linkin = nodes.reference(lab, _(lab), refuri=url)
             link = nodes.paragraph()
             link += linkin
         else:
             link = None
+
+        # cost
+        cost = self.options.get('cost', "").strip()
+        if cost:
+            try:
+                fcost = float(cost)
+            except ValueError:
+                raise ValueError("unable to convert cost '{0}' into float".format(cost))
+        else:
+            fcost = 0.0
 
         # body
         (todoext,) = super(TodoExt, self).run()
         if isinstance(todoext, nodes.system_message):
             return [todoext]
 
+        # link
         if link:
             todoext += link
+
+        # title
         title = self.options.get('title', "").strip()
         todotag = self.options.get('tag', '').strip()
         if len(title) > 0:
             title = ": " + title
+
+        # prefix
         prefix = TITLES[language_code]["todo"]
         if len(todotag) > 0:
             prefix += ' (%s) ' % todotag
+        if fcost > 0:
+            if int(fcost) == fcost:
+                prefix += ' (cost: %d) ' % int(fcost)
+            else:
+                prefix += ' (cost: %1.1f) ' % fcost
 
+        # main node
         title = nodes.title(text=_(prefix + title))
         todoext.insert(0, title)
         todoext['todotag'] = todotag
+        todoext['todocost'] = fcost
         set_source_info(self, todoext)
 
         if env is not None:
@@ -155,6 +180,7 @@ def process_todoexts(app, doctree):
             targetnode = None
         newnode = node.deepcopy()
         todotag = newnode['todotag']
+        todocost = newnode['todocost']
         del newnode['ids']
         del newnode['todotag']
         env.todoext_all_todosext.append({
@@ -164,6 +190,7 @@ def process_todoexts(app, doctree):
             'todoext': newnode,
             'target': targetnode,
             'todotag': todotag,
+            'todocost': todocost,
         })
 
 
@@ -229,21 +256,25 @@ def process_todoext_nodes(app, doctree, fromdocname):
     if not hasattr(env, 'todoext_all_todosext'):
         env.todoext_all_todosext = []
 
-    nbtodo = 0
     for ilist, node in enumerate(doctree.traverse(todoextlist)):
         if 'ids' in node:
-            node['ids'] = None
-        nbtodo += 1
+            node['ids'] = []
         if not app.config['todoext_include_todosext']:
             node.replace_self([])
             continue
 
+        nbtodo = 0
+        fcost = 0
         content = []
         todotag = node["todotag"]
 
         for n, todoext_info in enumerate(env.todoext_all_todosext):
             if todoext_info["todotag"] != todotag:
                 continue
+
+            nbtodo += 1
+            fcost += todoext_info.get("todocost", 0.0)
+
             para = nodes.paragraph(classes=['todoext-source'])
             if app.config['todoext_link_only']:
                 description = _('<<%s>>' % orig_entry)
@@ -283,6 +314,17 @@ def process_todoext_nodes(app, doctree, fromdocname):
             # Insert into the todoextlist
             content.append(todoext_entry)
             content.append(para)
+
+        if fcost > 0:
+            cost = nodes.paragraph()
+            lab = "{0} items, cost: {1}".format(nbtodo, fcost)
+            cost += nodes.Text(lab)
+            content.append(cost)
+        else:
+            cost = nodes.paragraph()
+            lab = "{0} items".format(nbtodo)
+            cost += nodes.Text(lab)
+            content.append(cost)
 
         node.replace_self(content)
 

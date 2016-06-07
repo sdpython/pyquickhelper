@@ -56,7 +56,7 @@ def set_sphinx_variables(fileconf,
     @param      sharepost               add share button to share blog post on usual networks
     @param      custom_style            custom style sheet
     @param      extlinks                parameter `extlinks <http://www.sphinx-doc.org/en/stable/ext/extlinks.html#confval-extlinks>`_,
-                                        example: ```{'issue': ('https://github.com/sdpython/pyquickhelper/issues/%s', 'issue ')}``
+                                        example: ```{'issue': ('https://github.com/sdpython/pyquickhelper/issues/%s', 'issue {0} on GitHub')}``
 
     If the parameter *custom_style* is not None, it will call ``app.add_stylesheet(custom_style)``
     in the setup.

@@ -207,6 +207,14 @@ def generate_help_sphinx(project_var_name,
     .. versionadded:: 1.3
         Parameters *copy_add_ext*, *fLOG* were added.
         Automatically add custom role and custom directive ``sharenet``.
+
+    .. todoext::
+        :title: add subfolder when building indexes of notebooks
+        :tag: enhancement
+        :issue: 9
+        :cost: 1
+
+        When there are too many notebooks, the notebook index is difficult to read.
     """
     setup_environment_for_help()
 
@@ -625,8 +633,12 @@ def generate_help_sphinx(project_var_name,
             out, err = run_cmd(cmd, wait=True, fLOG=fLOG)
             fLOG(out)
             if len(err) > 0:
-                warnings.warn(
-                    "Sphinx went through errors. Check if any of them is important.\nOUT:\n{0}\nERR:\n{1}".format(out, err))
+                if "Exception occurred:" in err:
+                    raise HelpGenException(
+                        "Sphinx raised an exception:\nOUT:\n{0}\nERR:\n{1}".format(out, err))
+                else:
+                    warnings.warn(
+                        "Sphinx went through errors. Check if any of them is important.\nOUT:\n{0}\nERR:\n{1}".format(out, err))
         else:
             os.system(cmd)
             out, err = "unknown", "unknown"
