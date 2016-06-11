@@ -356,6 +356,7 @@ def set_sphinx_variables(fileconf,
                 'github_user': github_user,
                 'github_repo': github_repo,
             }
+        pygments_style = 'monokai'
 
     # latex
     math_number_all = False
