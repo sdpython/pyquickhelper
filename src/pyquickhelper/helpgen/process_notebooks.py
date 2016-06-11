@@ -271,9 +271,25 @@ def process_notebooks(notebooks,
     else:
         path_modified = False
 
+    copied_images = dict()
+
     for notebook in notebooks:
         thisfiles = []
 
+        # we copy available images (only notebook folder) in case they are used
+        # in latex
+        currentdir = os.path.dirname(notebook)
+        for curfile in os.listdir(currentdir):
+            ext = os.path.splitext(curfile)[1]
+            if ext in {'.png', '.jpg', '.bmp', '.gif'}:
+                src = os.path.join(currentdir, curfile)
+                if src not in copied_images:
+                    dest = os.path.join(build, curfile)
+                    shutil.copy(src, build)
+                    fLOG("copy ", src, " to ", build)
+                    copied_images[src] = dest
+
+        # next
         nbout = os.path.split(notebook)[-1]
         if " " in nbout:
             raise HelpGenException(
