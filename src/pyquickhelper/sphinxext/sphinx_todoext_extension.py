@@ -100,8 +100,10 @@ class TodoExt(BaseAdmonition):
                 extlinks = env.config.extlinks
             else:
                 available = "\n".join(sorted(sett.__dict__.keys()))
-                available2 = "\n".join(sorted(env.config.__dict__.keys())) if env is not None else ""
-                raise ValueError("extlinks is not defined in the documentation settings, available in sett\n{0}\nCONFIG\n{1}".format(available, available2))
+                available2 = "\n".join(
+                    sorted(env.config.__dict__.keys())) if env is not None else ""
+                raise ValueError("extlinks is not defined in the documentation settings, available in sett\n{0}\nCONFIG\n{1}".format(
+                    available, available2))
 
             if "issue" not in extlinks:
                 raise KeyError("key 'issue' is not present in extlinks")
@@ -120,7 +122,8 @@ class TodoExt(BaseAdmonition):
             try:
                 fcost = float(cost)
             except ValueError:
-                raise ValueError("unable to convert cost '{0}' into float".format(cost))
+                raise ValueError(
+                    "unable to convert cost '{0}' into float".format(cost))
         else:
             fcost = 0.0
 
@@ -283,7 +286,8 @@ def process_todoext_nodes(app, doctree, fromdocname):
         fcost = 0
         content = []
         todotag = node["todotag"]
-        double_list = [(info.get('todoprio', ''), info.get('todotitle', ''), info) for info in env.todoext_all_todosext]
+        double_list = [(info.get('todoprio', ''), info.get(
+            'todotitle', ''), info) for info in env.todoext_all_todosext]
         double_list.sort(key=lambda x: x[:2])
         for n, todoext_info_ in enumerate(double_list):
             todoext_info = todoext_info_[2]

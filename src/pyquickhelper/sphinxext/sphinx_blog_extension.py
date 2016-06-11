@@ -19,7 +19,7 @@ from .blog_post import BlogPost
 from ..texthelper.texts_language import TITLES
 
 
-class blogpost_node(nodes.Structural, nodes.Element):
+class blogpost_node(nodes.Element):
 
     """
     defines *blogpost* node
@@ -27,7 +27,7 @@ class blogpost_node(nodes.Structural, nodes.Element):
     pass
 
 
-class blogpostagg_node(nodes.Structural, nodes.Element):
+class blogpostagg_node(nodes.Element):
 
     """
     defines *blogpostagg* node
@@ -50,6 +50,7 @@ class BlogPostDirective(Directive):
                    'categories': directives.unchanged,
                    'author': directives.unchanged,
                    'blog_background': directives.unchanged,
+                   'lid': directives.unchanged,
                    }
     has_content = True
     add_index = True
@@ -97,30 +98,19 @@ class BlogPostDirective(Directive):
             'keywords': [_.strip() for _ in self.options["keywords"].split(",")],
             'categories': [_.strip() for _ in self.options["categories"].split(",")],
             'blog_background': self.options.get("blog_background", str(blog_background)).strip() in ("True", "true", "1"),
+            'lid': self.options.get("lid", None),
         }
 
-        # label
-        #targetid = "blogpost-%d" % env.new_serialno('blogpost')
-        #targetnode = nodes.target('', '', ids=[targetid])
-        #p["target"] = targetnode
-
-        tag = BlogPost.build_tag(p["date"], p["title"])
-        targetnode = nodes.target('', '', ids=[tag])
+        tag = BlogPost.build_tag(p["date"], p["title"]) if p[
+            'lid'] is None else p['lid']
+        targetnode = nodes.target(p['title'], '', ids=[tag])
         p["target"] = targetnode
+        idbp = tag + "-container"
 
         if env is not None:
             if not hasattr(env, 'blogpost_all'):
                 env.blogpost_all = []
             env.blogpost_all.append(p)
-
-        # we add a title
-        idb = nodes.make_id("hblog-" + p["date"] + "-" + p["title"])
-        idbp = nodes.make_id("hblogcl-" + p["date"] + "-" + p["title"])
-        section = nodes.section(ids=[idb])
-
-        textnodes, messages = self.state.inline_text(p["title"], self.lineno)
-        section += nodes.title(p["title"], '', *textnodes)
-        section += messages
 
         # build node
         node = self.__class__.blogpost_class(ids=[idbp], year=p["date"][:4],
@@ -129,9 +119,22 @@ class BlogPostDirective(Directive):
                                              linktitle=p[
                                                  "title"], lg=language_code,
                                              blog_background=p["blog_background"])
-        node += section
 
-        # we add the date
+        # add a label
+        container = nodes.container()
+        tnl = [".. _{0}:".format(tag), ""]
+        content = StringList(tnl)
+        self.state.nested_parse(content, self.content_offset, container)
+        node += container
+
+        # add title
+        section = nodes.section()
+        node += section
+        textnodes, messages = self.state.inline_text(p["title"], self.lineno)
+        section += nodes.title(p["title"], '', *textnodes)
+        section += messages
+
+        # add date and share buttons
         tnl = [":bigger:`::5:{0}`".format(p["date"])]
         if sharepost is not None:
             tnl.append(":sharenet:`{0}`".format(sharepost))
@@ -140,29 +143,21 @@ class BlogPostDirective(Directive):
         content = content + self.content
 
         # parse the content into sphinx directive, we add it to section
-        paragraph = nodes.paragraph()
+        container = nodes.container()
         # nested_parse_with_titles(self.state, content, paragraph)
-        self.state.nested_parse(content, self.content_offset, paragraph)
-        node += paragraph
-        p['blogpost'] = node
+        self.state.nested_parse(content, self.content_offset, container)
+        section += container
 
-        # add content to the instance
+        # final
+        p['blogpost'] = node
         self.exe_class = p.copy()
         p["content"] = content
-
-        # classes
         node['classes'] += "-blogpost"
-
-        # create a reference
-        refnode = nodes.reference('', '', internal=True)
-        refnode['refid'] = tag
-        refnode['reftitle'] = p["title"]
-        # still does not work
 
         # index (see site-packages/sphinx/directives/code.py, class Index)
         if self.__class__.add_index:
             # we add an index
-            self.state.document.note_explicit_target(targetnode)
+            # self.state.document.note_explicit_target(targetnode)
             indexnode = addnodes.index()
             indexnode['entries'] = ne = []
             indexnode['inline'] = False
