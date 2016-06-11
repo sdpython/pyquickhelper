@@ -89,7 +89,7 @@ add_notebook_menu_js = """
                     }
                     return a;
                 }
-                var update_menu_string = function(begin, lfirst, llast, sformat, send) {
+                var update_menu_string = function(begin, lfirst, llast, sformat, send, keep_item) {
                     var anchors = document.getElementsByClassName("section");
                     if (anchors.length == 0) {
                         anchors = document.getElementsByClassName("text_cell_render rendered_html");
@@ -101,6 +101,7 @@ add_notebook_menu_js = """
                     var memo_level = 1;
                     var href;
                     var tags = [];
+                    var main_item = 0;
                     for (i = 0; i <= llast; i++) {
                         tags.push("h" + i);
                     }
@@ -120,7 +121,6 @@ add_notebook_menu_js = """
                             text_memo += "null\\n";
                             continue;
                         }
-
                         if (anchors[i].hasAttribute("id")) {
                             // when converted in RST
                             href = anchors[i].id;
@@ -151,13 +151,21 @@ add_notebook_menu_js = """
                         if (title.length == 0) {
                             continue;
                         }
-                        while (level > memo_level) {
-                            text_menu += "<ul>\\n";
-                            memo_level += 1;
-                        }
+
                         while (level < memo_level) {
                             text_menu += "</ul>\\n";
                             memo_level -= 1;
+                        }
+                        if (level == lfirst) {
+                            main_item += 1;
+                        }
+                        if (keep_item != -1 && main_item != keep_item + 1) {
+                            // alert(main_item + " - " + level + " - " + keep_item);
+                            continue;
+                        }
+                        while (level > memo_level) {
+                            text_menu += "<ul>\\n";
+                            memo_level += 1;
                         }
                         text_menu += repeat_indent_string(level-2) + sformat.replace("__HREF__", href).replace("__TITLE__", title);
                     }
@@ -173,7 +181,8 @@ add_notebook_menu_js = """
                     var sbegin = "__BEGIN__";
                     var sformat = __FORMAT__;
                     var send = "__END__";
-                    var text_menu = update_menu_string(sbegin, __FIRST__, __LAST__, sformat, send);
+                    var keep_item = __KEEP_ITEM__;
+                    var text_menu = update_menu_string(sbegin, __FIRST__, __LAST__, sformat, send, keep_item);
                     var menu = document.getElementById("__MENUID__");
                     menu.innerHTML=text_menu;
                 };
@@ -182,7 +191,7 @@ add_notebook_menu_js = """
 
 
 def add_notebook_menu(menu_id="my_id_menu_nb", raw=False, format="html", header=None,
-                      first_level=2, last_level=4):
+                      first_level=2, last_level=4, keep_item=None):
     """
     add javascript and HTML to the notebook which gathers all in the notebook and builds a menu
 
@@ -192,6 +201,8 @@ def add_notebook_menu(menu_id="my_id_menu_nb", raw=False, format="html", header=
     @param      header          title of the menu (None for None)
     @param      first_level     first level to consider
     @param      last_level      last level to consider
+    @param      keep_item       None or integer (starts at 0), reduce the number of displayed items to 1
+                                and its descendant
     @return                     HTML object
 
     In a notebook, it is easier to do by using a magic command
@@ -208,6 +219,8 @@ def add_notebook_menu(menu_id="my_id_menu_nb", raw=False, format="html", header=
 
     But it fails during the conversion from a notebook to format RST.
     """
+    if keep_item is not None:
+        menu_id += str(keep_item)
     html = '<div id="{0}">run previous cell, wait for 2 seconds</div>'.format(
         menu_id)
 
@@ -218,6 +231,8 @@ def add_notebook_menu(menu_id="my_id_menu_nb", raw=False, format="html", header=
                              .replace("__LAST__", str(last_level))
 
     full = "{0}\n<script>{1}</script>".format(html, js)
+    if keep_item is None:
+        keep_item = -1
 
     if format == "html":
         if header is not None and len(header) > 0:
@@ -227,7 +242,8 @@ def add_notebook_menu(menu_id="my_id_menu_nb", raw=False, format="html", header=
         full = header + \
             full.replace("__FORMAT__", """'<li><a href="#__HREF__">__TITLE__</a></li>'""") \
             .replace("__BEGIN__", "") \
-            .replace("__END__", "")
+            .replace("__END__", "") \
+            .replace("__KEEP_ITEM__", str(keep_item))
     elif format == "rst":
         if header is not None and len(header) > 0:
             header = "{0}\n\n".format(header)
@@ -238,7 +254,8 @@ def add_notebook_menu(menu_id="my_id_menu_nb", raw=False, format="html", header=
                 .replace("<ul>", "") \
                 .replace("</ul>", "") \
                 .replace("__BEGIN__", "<pre>\\n") \
-                .replace("__END__", "</pre>\\n")
+                .replace("__END__", "</pre>\\n") \
+                .replace("__KEEP_ITEM__", str(keep_item))
     else:
         raise ValueError("format must be html or rst")
 
