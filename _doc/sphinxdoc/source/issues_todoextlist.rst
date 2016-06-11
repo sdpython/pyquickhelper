@@ -17,8 +17,8 @@ Issues
     :tag: issue
 
 
-Enhancement
-+++++++++++
+Enhancements
+++++++++++++
 
 .. todoextlist::
     :tag: enhancement

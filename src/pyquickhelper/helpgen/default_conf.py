@@ -32,7 +32,9 @@ def set_sphinx_variables(fileconf,
                          enable_disabled_parts="enable_disabled_documented_pieces_of_code",
                          sharepost="facebook-linkedin-twitter-20-body",
                          custom_style=None,
-                         extlinks=None):
+                         extlinks=None,
+                         github_user=None,
+                         github_repo=None):
     """
     defines variables for Sphinx
 
@@ -57,6 +59,8 @@ def set_sphinx_variables(fileconf,
     @param      custom_style            custom style sheet
     @param      extlinks                parameter `extlinks <http://www.sphinx-doc.org/en/stable/ext/extlinks.html#confval-extlinks>`_,
                                         example: ```{'issue': ('https://github.com/sdpython/pyquickhelper/issues/%s', 'issue {0} on GitHub')}``
+    @param      github_user             github user
+    @param      github_repo             github project
 
     If the parameter *custom_style* is not None, it will call ``app.add_stylesheet(custom_style)``
     in the setup.
@@ -241,6 +245,7 @@ def set_sphinx_variables(fileconf,
                   'matplotlib.sphinxext.plot_directive',
                   'matplotlib.sphinxext.only_directives',
                   ]
+
     if use_lunrsearch:
         extensions.append('sphinxcontrib.lunrsearch')
 
@@ -328,6 +333,29 @@ def set_sphinx_variables(fileconf,
             'bootswatch_theme': bootswatch_theme,
             'bootstrap_version': "3",
         }
+    elif html_theme == "guzzle_sphinx_theme":
+        html_translator_class = 'guzzle_sphinx_theme.HTMLTranslator'
+        if "guzzle_sphinx_theme" not in extensions:
+            extensions.append('guzzle_sphinx_theme')
+        html_theme_options = {
+            "project_nav_name": module_name,
+            # specified, then no sitemap will be built.
+            # "base_url": ""
+            # "homepage": "index",
+            # "projectlink": "http://myproject.url",
+        }
+    elif html_theme == "foundation_sphinx_theme":
+        import foundation_sphinx_theme
+        html_theme_path = foundation_sphinx_theme.HTML_THEME_PATH
+        if "foundation_sphinx_theme" not in extensions:
+            extensions.append('foundation_sphinx_theme')
+            html_theme_options = {
+                'logo_screen': 'project_ico.png',
+                'logo_mobile': 'project_ico.ico',
+                'favicon': 'project_ico.ico',
+                'github_user': github_user,
+                'github_repo': github_repo,
+            }
 
     # latex
     math_number_all = False
