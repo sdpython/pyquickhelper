@@ -538,10 +538,18 @@ class NotebookRunner(object):
                         elif k == "application/javascript":
                             # rough estimation
                             nbl += len(v.split("\n")) // 2
+                        elif k == "application/json":
+                            # rough estimation
+                            try:
+                                nbl += len(v.split("{"))
+                            except AttributeError:
+                                nbl += len(v) // 5 + 1
                         elif k == "image/svg+xml":
                             nbl += len(v) // 5
                         elif k == "text/html":
                             nbl += len(v.split("\n"))
+                        elif k == "text/latex":
+                            nbl += len(v.split("\\\\")) * 2
                         elif k == "image/png" or k == "image/jpg" or k == "image/jpeg":
                             nbl += len(v) // 50
                         else:
