@@ -563,6 +563,7 @@ def process_notebooks(notebooks,
     for image in os.listdir(build):
         if image.endswith(".png") or image.endswith(".html") or \
            image.endswith(".pdf") or image.endswith(".svg") or \
+           image.endswith(".jpg") or image.endswith(".gif") or \
            image.endswith(".xml"):
             image = os.path.join(build, image)
             dest = os.path.join(outfold, os.path.split(image)[-1])
