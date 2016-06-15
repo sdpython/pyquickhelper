@@ -260,7 +260,7 @@ def post_process_rst_output(file, html, pdf, python, slides, present, is_noteboo
         if pos == 0:
             continue
         if len(line) > 0 and (line.startswith("- ") or line.startswith("* ")) \
-                and pos < len(lines):
+                and pos < len(lines) - 1:
             next = lines[pos + 1]
             prev = lines[pos - 1]
             if (next.startswith("- ") or next.startswith("* ")) \
