@@ -137,11 +137,6 @@ def get_graphviz_dot(exc=True):
     @return             path
     """
     if sys.platform.startswith("win"):
-        # appveyor
-        graphviz_dot = "C:\\ProgramData\\chocolatey\\lib\\graphviz.portable\\tools\\release\\bin\\dot.exe"
-        if os.path.exists(graphviz_dot):
-            return graphviz_dot
-
         version = range(34, 42)
         for v in version:
             graphviz_dot = r"C:\Program Files (x86)\Graphviz2.{0}\bin\dot.exe".format(
