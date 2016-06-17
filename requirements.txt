@@ -45,6 +45,7 @@ path.py
 pep8
 pickleshare
 pkgtools
+pycodestyle
 pycparser
 pycryptodomex
 pyflakes

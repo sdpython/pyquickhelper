@@ -26,6 +26,7 @@ install:
   - "%PYTHON%\\Scripts\\pip install imagesize"
   - "%PYTHON%\\Scripts\\pip install nbpresent"
   - "%PYTHON%\\Scripts\\pip install backports.shutil-get-terminal-size"
+  - "%PYTHON%\\Scripts\\pip install pycodestyle"
   - "%PYTHON%\\Scripts\\pip install python-jenkins"
 
 build: off
