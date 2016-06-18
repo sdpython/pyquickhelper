@@ -29,7 +29,7 @@ from .sphinx_helper import post_process_html_nb_output_static_file
 from .install_js_dep import install_javascript_tools
 from ..filehelper import synchronize_folder
 from .sphinx_main_helper import setup_environment_for_help, get_executables_path, generate_changes_repo
-from .sphinx_main_helper import compile_latex_output_final, replace_placeholder_by_recent_blogpost
+from .sphinx_main_helper import compile_latex_output_final, replace_placeholder_by_recent_blogpost, enumerate_copy_images_for_slides
 from .sphinx_main_verification import verification_html_format
 from .sphinx_main_missing_html_files import add_missing_files
 
@@ -728,7 +728,7 @@ def generate_help_sphinx(project_var_name,
     # next
     ######
     fLOG("**** LATEX")
-    if "latex" in lays:
+    if "latex" in layout:
         fLOG("---- post_process_latex_output", froot)
         post_process_latex_output(froot, False)
 
@@ -742,6 +742,14 @@ def generate_help_sphinx(project_var_name,
             post_process_html_nb_output_static_file(nbf, fLOG=fLOG)
             post_process_html_nb_output_static_file(
                 os.path.join(build, "html", "_downloads"), fLOG=fLOG)
+
+    for build_path in build_paths:
+        src = os.path.join(build_path, "_images")
+        dest = os.path.join(build_path, "_downloads")
+        if os.path.exists(src) and os.path.exists(dest):
+            fLOG("[imgs] look for images in ", src)
+            for img in enumerate_copy_images_for_slides(src, dest):
+                fLOG("[imgs]    copy image for slides:", img)
 
     #####
     # end

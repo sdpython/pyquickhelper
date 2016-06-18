@@ -147,9 +147,13 @@ class TestSphinxDocFull (unittest.TestCase):
                 content = f.read()
             assert '"slide"' in content
 
-            # reveal.js
+            # reveal.js + images
             rev = [os.path.join(root, "_doc", "sphinxdoc", "source", "phdoc_static", "reveal.js"),
-                   os.path.join(root, "_doc", "sphinxdoc", "build", "html", "_downloads", "reveal.js"), ]
+                   os.path.join(root, "_doc", "sphinxdoc", "build",
+                                "html", "_downloads", "reveal.js"),
+                   os.path.join(root, "_doc", "sphinxdoc", "build", "html",
+                                "_downloads", "Python_logo_and_wordmark.png"),
+                   ]
             for r in rev:
                 if not os.path.exists(r):
                     raise FileNotFoundError(r)

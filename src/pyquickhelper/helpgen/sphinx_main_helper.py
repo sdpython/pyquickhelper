@@ -7,10 +7,12 @@
 import os
 import sys
 import datetime
+import shutil
 
 from ..loghelper.flog import run_cmd, fLOG
 from ..loghelper.pyrepo_helper import SourceRepository
 from ..pandashelper.tblformat import df2rst
+from ..filehelper import explore_folder_iterfile
 from .utils_sphinx_doc_helpers import HelpGenException
 from .post_process import post_process_latex_output
 
@@ -328,3 +330,26 @@ def replace_placeholder_by_recent_blogpost(all_tocs, plist, placeholder, nb_post
             content = content.replace(placeholder, "\n<br />".join(links))
             with open(toc, "w", encoding="utf8") as f:
                 f.write(content)
+
+
+_pattern_images = ".*(([.]png)|([.gif])|([.jpg])|([.svg]))$"
+
+
+def enumerate_copy_images_for_slides(src, dest, pattern=_pattern_images):
+    """
+    copy images, initial intent was for slides,
+    once converted into html, link to images are relative to
+    the folder which contains them, we copy the images from
+    ``_images`` to ``_downloads``.
+
+    @param      src     sources
+    @param      dest    destination
+    @return             enumerator of copied files
+    """
+    iter = explore_folder_iterfile(src, pattern=pattern)
+    for img in iter:
+        d = os.path.join(dest, os.path.split(img)[-1])
+        if os.path.exists(d):
+            os.remove(d)
+        shutil.copy(img, dest)
+        yield d
