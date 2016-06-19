@@ -34,7 +34,9 @@ def set_sphinx_variables(fileconf,
                          custom_style=None,
                          extlinks=None,
                          github_user=None,
-                         github_repo=None):
+                         github_repo=None,
+                         title=None,
+                         book=False):
     """
     defines variables for Sphinx
 
@@ -61,6 +63,9 @@ def set_sphinx_variables(fileconf,
                                         example: ```{'issue': ('https://github.com/sdpython/pyquickhelper/issues/%s', 'issue {0} on GitHub')}``
     @param      github_user             github user
     @param      github_repo             github project
+    @param      title                   if not None, use *title* instead of *module_name*
+                                        as a title
+    @param      book                    the output is a book
 
     If the parameter *custom_style* is not None, it will call ``app.add_stylesheet(custom_style)``
     in the setup.
@@ -111,7 +116,8 @@ def set_sphinx_variables(fileconf,
     @endexample
 
     .. versionchanged:: 1.4
-        Add parameter *extlinks*, add extension
+        Add parameters *extlinks*, *github_user*, *github_repo*,
+        *title*. Add extension
         `extlinks <http://www.sphinx-doc.org/en/stable/ext/extlinks.html#module-sphinx.ext.extlinks>`_.
     """
     # version .txt
@@ -138,24 +144,31 @@ def set_sphinx_variables(fileconf,
     author = author
     year = str(year)
     modindex_common_prefix = [project_var_name + ".", ]
-    project = project_var_name + ' documentation'
+    project = (project_var_name + ' documentation') if title is None else title
     copyright = str(year) + ", " + author
     release = '%s.%s' % (version, first_line)
-    html_title = "%s %s" % (project_var_name, release)
+    html_title = ("%s %s" % (project_var_name, release)
+                  ) if title is None else title
     htmlhelp_basename = '%s_doc' % project_var_name
     enable_disabled_parts = enable_disabled_parts
 
     # personnalization latex
+    latex_book = book
     latex_use_parts = False
     latex_documents = [('index', '%s_doc.tex' % project_var_name,
-                        '%s' % project_var_name, author, 'manual', True), ]
+                        project_var_name if title is None else title,
+                        author, 'manual', True), ]
     man_pages = [('index', '%s_doc' % project_var_name,
-                  '%s Documentation' % project_var_name, [author], 1)]
+                  ('%s Documentation' %
+                   project_var_name) if title is None else title,
+                  [author], 1)]
     texinfo_documents = [('index',
-                          '%s_documentation' % project_var_name,
-                          '%s' % project_var_name,
+                          ('%s_documentation' %
+                           project_var_name) if title is None else title,
+                          ('%s' % project_var_name) if title is None else title,
                           author,
-                          '%s documentation' % project_var_name,
+                          ('%s documentation' %
+                           project_var_name) if title is None else title,
                           description_latex,
                           'Miscellaneous'),
                          ]
@@ -166,7 +179,7 @@ def set_sphinx_variables(fileconf,
             \\usepackage{cmap} % fix search and cut-and-paste in Acrobat
             \\usepackage[raccourcis]{fast-diagram}
             \\usepackage{titlesec}
-            %%% Redifined titleformat
+            %%% Redefined titleformat
             \\setlength{\\parindent}{0cm}
             \\setlength{\\parskip}{1ex plus 0.5ex minus 0.2ex}
             \\newcommand{\\hsp}{\\hspace{20pt}}

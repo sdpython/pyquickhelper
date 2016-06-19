@@ -266,7 +266,7 @@ def generate_changes_repo(chan,
     return final
 
 
-def compile_latex_output_final(root, latex_path, doall, afile=None):
+def compile_latex_output_final(root, latex_path, doall, afile=None, latex_book=False):
     """
     compiles the latex documents
 
@@ -274,6 +274,7 @@ def compile_latex_output_final(root, latex_path, doall, afile=None):
     @param      latex_path  path to the compiler
     @param      doall       do more transformation of the latex file before compiling it
     @param      afile       process a specific file
+    @param      latex_book  do some customized transformation for a book
     """
     if sys.platform.startswith("win"):
         lat = os.path.join(latex_path, "pdflatex.exe")
@@ -292,7 +293,7 @@ def compile_latex_output_final(root, latex_path, doall, afile=None):
                 c = '"{0}" "{1}" -interaction=batchmode -output-directory="{2}"'.format(
                     lat, file, build)
             fLOG("   ** LATEX compilation (c)", c)
-            post_process_latex_output(file, doall)
+            post_process_latex_output(file, doall, latex_book=latex_book)
             out, err = run_cmd(c, wait=True, do_not_log=False,
                                log_error=False, catch_exit=True)
             if len(err) > 0:

@@ -34,18 +34,19 @@ Another list
 """
 
 
-def post_process_latex_output(root, doall):
+def post_process_latex_output(root, doall, latex_book):
     """
     post process the latex file produced by sphinx
 
     @param      root        root path or latex file to process
     @param      doall       do all transformations
+    @param      latex_book  customized for a book
     """
     if os.path.isfile(root):
         file = root
         with open(file, "r", encoding="utf8") as f:
             content = f.read()
-        content = post_process_latex(content, doall)
+        content = post_process_latex(content, doall, latex_book=latex_book)
         with open(file, "w", encoding="utf8") as f:
             f.write(content)
     else:
@@ -58,7 +59,8 @@ def post_process_latex_output(root, doall):
                 fLOG("modify file", file)
                 with open(file, "r", encoding="utf8") as f:
                     content = f.read()
-                content = post_process_latex(content, doall, info=file)
+                content = post_process_latex(
+                    content, doall, info=file, latex_book=latex_book)
                 with open(file, "w", encoding="utf8") as f:
                     f.write(content)
 
@@ -379,14 +381,15 @@ def post_process_slides_output(file, pdf, python, slides, present):
         return text
 
 
-def post_process_latex(st, doall, info=None):
+def post_process_latex(st, doall, info=None, latex_book=False):
     """
     modifies a latex file after its generation by sphinx
 
-    @param      st      string
-    @param      doall   do all transformations
-    @param      info    for more understandable error messages
-    @return             string
+    @param      st              string
+    @param      doall           do all transformations
+    @param      info            for more understandable error messages
+    @param      latex_book      customized for a book
+    @return                     string
 
     SVG included in a notebook (or in RST file) requires `Inkscape <https://inkscape.org/>`_
     to be converted into Latex.
@@ -397,6 +400,8 @@ def post_process_latex(st, doall, info=None):
     .. versionchanged:: 1.2
         remove ascii character in *[0..31]* in each line, replace them by space.
 
+    .. versionchanged:: 1.4
+        Parameter *latex_book* was added.
 
     .. index:: chinese characters, latex, unicode
 
@@ -460,7 +465,7 @@ def post_process_latex(st, doall, info=None):
     st = st.replace("<br />", "\\\\")
     st = st.replace("»", '"')
 
-    if not doall:
+    if not doall and not latex_book:
         st = st.replace(
             "\\maketitle", "\\maketitle\n\n\\newchapter{Introduction}")
 
@@ -468,9 +473,9 @@ def post_process_latex(st, doall, info=None):
            .replace("%3A", ":") \
            .replace("\\includegraphics{notebooks\\", "\\includegraphics {")
     st = st.replace(
-        r"\begin{document}", r"\setlength{\parindent}{0cm}%s\begin {document}" % "\n")
-    st = st.replace(r"DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}",
-                    r"DefineVerbatimEnvironment{Highlighting}{Verbatim} {commandchars=\\\{\},fontsize=\small}")
+        "\\begin{document}", "\\setlength{\\parindent}{0cm}%s\\begin {document}" % "\n")
+    st = st.replace("DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\\\\{\\}}",
+                    "DefineVerbatimEnvironment{Highlighting}{Verbatim} {commandchars=\\\\\\{\\},fontsize=\\small}")
     st = st.replace("\\textquotesingle{}", "'")
     st = st.replace("\u0001", "\\u1")
 
@@ -483,7 +488,7 @@ def post_process_latex(st, doall, info=None):
         for id, section in allhyp:
             sec = r"\subsection{%s} \label{%s}" % (section, id)
             sections.append((id, section, sec))
-    elif not doall:
+    elif not doall and not latex_book:
         sections = []
         # first section
         lines = st.split("\n")
@@ -504,8 +509,9 @@ def post_process_latex(st, doall, info=None):
                     lines[i] = sec
         st = "\n".join(lines)
 
-    st = st.replace("\\chapter", "\\section")
-    st = st.replace("\\newchapter", "\\chapter")
+    if not latex_book:
+        st = st.replace("\\chapter", "\\section")
+        st = st.replace("\\newchapter", "\\chapter")
     if "\\usepackage{multirow}" in st:
         st = st.replace(
             "\\usepackage{svg}\\usepackage{multirow}",

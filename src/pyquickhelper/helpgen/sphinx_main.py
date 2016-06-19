@@ -282,6 +282,7 @@ def generate_help_sphinx(project_var_name,
     html_static_paths = []
     build_paths = []
     all_tocs = []
+    parameters = []
 
     ###################################
     # import others conf, we must do it now
@@ -329,6 +330,7 @@ def generate_help_sphinx(project_var_name,
             raise FileNotFoundError("no static path:" + html_static_path)
         html_static_paths.append(html_static_path)
         build_paths.append(build)
+        parameters.append(dict(latex_book=thenewconf.latex_book))
 
     ################################################################
     # we add the source path to the list of path to considered before importing
@@ -376,6 +378,7 @@ def generate_help_sphinx(project_var_name,
     ##########
     language = theconf.__dict__.get("language", "en")
     use_sys = theconf.__dict__.get("enable_disabled_parts", None)
+    latex_book = theconf.__dict__.get('latex_book', False)
 
     latex_path = theconf.__dict__.get("latex_path", find_latex_path())
     # graphviz_dot = theconf.__dict__.get("graphviz_dot", find_graphviz_dot())
@@ -734,7 +737,8 @@ def generate_help_sphinx(project_var_name,
 
     if "pdf" in layout:
         fLOG("---- compile_latex_output_final", froot, "**", latex_path)
-        compile_latex_output_final(froot, latex_path, False)
+        compile_latex_output_final(
+            froot, latex_path, False, latex_book=latex_book)
 
     if "html" in layout:
         nbf = os.path.join(build, "html", "notebooks")
