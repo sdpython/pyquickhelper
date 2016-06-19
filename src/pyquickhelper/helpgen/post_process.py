@@ -34,7 +34,7 @@ Another list
 """
 
 
-def post_process_latex_output(root, doall, latex_book):
+def post_process_latex_output(root, doall, latex_book=False):
     """
     post process the latex file produced by sphinx
 
