@@ -17,7 +17,7 @@ from sphinx.environment import NoUri
 from sphinx.util.nodes import set_source_info
 from docutils.parsers.rst import Directive
 from docutils.parsers.rst.directives.admonitions import BaseAdmonition
-
+from docutils.statemachine import StringList
 from ..texthelper.texts_language import TITLES
 
 
@@ -91,6 +91,16 @@ class MathDef(BaseAdmonition):
         if isinstance(mathdef, nodes.system_message):
             return [mathdef]
 
+        # add a label
+        lid = self.options.get('lid', None)
+        if lid:
+            container = nodes.container()
+            tnl = [".. _{0}:".format(lid), ""]
+            content = StringList(tnl)
+            self.state.nested_parse(content, self.content_offset, container)
+        else:
+            container = None
+
         # mid
         mathtag = self.options.get('tag', '').strip()
         if len(mathtag) == 0:
@@ -108,20 +118,22 @@ class MathDef(BaseAdmonition):
             raise ValueError("title is empty")
 
         # main node
+        ttitle = title
         title = nodes.title(text=_(title))
-        mathdef.insert(0, title)
+        if container is not None:
+            mathdef.insert(0, title)
+            mathdef.insert(0, container)
+        else:
+            mathdef.insert(0, title)
         mathdef['mathtag'] = mathtag
         mathdef['mathmid'] = mid
-        mathdef['mathtitle'] = title
+        mathdef['mathtitle'] = ttitle
         set_source_info(self, mathdef)
 
         if env is not None:
             targetid = 'indexmathe-%s%s' % (mathtag,
                                             env.new_serialno('indexmathe%s' % mathtag))
             ids = [targetid]
-            lid = self.options.get('lid', None)
-            if lid:
-                ids.append(lid)
             targetnode = nodes.target(legend, legend, ids=ids)
             return [targetnode, mathdef]
         else:

@@ -179,6 +179,13 @@ def set_sphinx_variables(fileconf,
             \\usepackage{cmap} % fix search and cut-and-paste in Acrobat
             \\usepackage[raccourcis]{fast-diagram}
             \\usepackage{titlesec}
+            \\usepackage{amsmath}
+            \\usepackage{amssymb}
+            \\usepackage{amsfonts}
+            \\usepackage{graphics}
+            \\usepackage{epic}
+            \\usepackage{eepic}
+            %\\usepackage{pict2e}
             %%% Redefined titleformat
             \\setlength{\\parindent}{0cm}
             \\setlength{\\parskip}{1ex plus 0.5ex minus 0.2ex}
@@ -381,6 +388,7 @@ def set_sphinx_variables(fileconf,
     # latex
     math_number_all = False
     imgmath_latex_preamble = """
+                    \\usepackage{epic}
                     \\newcommand{\\acc}[1]{\\left\\{#1\\right\\}}
                     \\newcommand{\\cro}[1]{\\left[#1\\right]}
                     \\newcommand{\\pa}[1]{\\left(#1\\right)}
