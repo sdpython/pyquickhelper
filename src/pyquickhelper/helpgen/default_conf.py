@@ -183,6 +183,10 @@ def set_sphinx_variables(fileconf,
             \\setlength{\\parindent}{0cm}
             \\setlength{\\parskip}{1ex plus 0.5ex minus 0.2ex}
             \\newcommand{\\hsp}{\\hspace{20pt}}
+            \\newcommand{\\acc}[1]{\\left\\{#1\\right\\}}
+            \\newcommand{\\cro}[1]{\\left[#1\\right]}
+            \\newcommand{\\pa}[1]{\\left(#1\\right)}
+            \\newcommand{\\R}{\\mathbb{R}}
             \\newcommand{\\HRule}{\\rule{\\linewidth}{0.5mm}}
             %\\titleformat{\\chapter}[hang]{\\Huge\\bfseries\\sffamily}{\\thechapter\\hsp}{0pt}{\\Huge\\bfseries\\sffamily}
             '''.replace("            ", "")
@@ -238,6 +242,9 @@ def set_sphinx_variables(fileconf,
     # todo
     todo_include_todos = True
     todoext_include_todosext = True
+
+    # mathdef
+    mathdef_include_mathsext = True
 
     # extensions
     extensions = ['sphinx.ext.autodoc',
@@ -377,6 +384,7 @@ def set_sphinx_variables(fileconf,
                     \\newcommand{\\acc}[1]{\\left\\{#1\\right\\}}
                     \\newcommand{\\cro}[1]{\\left[#1\\right]}
                     \\newcommand{\\pa}[1]{\\left(#1\\right)}
+                    \\newcommand{\\R}{\\mathbb{R}}
                     """
 
     # collect local variables
@@ -475,6 +483,7 @@ def custom_setup(app, author):
     from ..sphinxext.sphinx_sharenet_extension import setup as setup_sharenet
     from ..sphinxext.sphinx_todoext_extension import setup as setup_todoext
     from ..sphinxext.sphinx_blog_extension import setup as setup_blogpost
+    from ..sphinxext.sphinx_mathdef_extension import setup as setup_mathdef
 
     app.connect("autodoc-skip-member", skip)
     app.add_config_value('author', author, True)
@@ -484,3 +493,4 @@ def custom_setup(app, author):
     setup_sharenet(app)
     setup_todoext(app)
     setup_blogpost(app)
+    setup_mathdef(app)

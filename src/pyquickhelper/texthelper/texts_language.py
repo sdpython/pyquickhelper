@@ -30,8 +30,10 @@ TITLES = {
            'todo': 'Todo',
            'todo_node': 'Todo',
            'todoext_node': '',
+           'mathdef_node': '',
            'original entry': 'original entry',
            'todomes': '(The <<%s>> is located in %s, line %d.)',
+           'mathmes': '(<<%s>> : %s, line %d)',
            },
     'fr': {"blogpost": "article",
            "toc": "Contenu",
@@ -58,7 +60,9 @@ TITLES = {
            'todo': 'A faire',
            'todo_node': 'A faire',
            'todoext_node': '',
+           'mathdef_node': '',
            'original entry': 'source',
            'todomes': '(<<%s>> : %s, ligne %d)',
+           'mathmes': '(<<%s>> : %s, ligne %d)',
            }
 }

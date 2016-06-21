@@ -19,6 +19,7 @@ from ..sphinxext.sphinx_runpython_extension import setup as setup_runpython
 from ..sphinxext.sphinx_sharenet_extension import setup as setup_sharenet
 from ..sphinxext.sphinx_bigger_extension import setup as setup_bigger
 from ..sphinxext.sphinx_todoext_extension import setup as setup_todoext
+from ..sphinxext.sphinx_mathdef_extension import setup as setup_mathdef
 # from ..sphinxext.sphinx_todoext_extension import process_todoext_nodes, process_todoext_nodes, purge_todosext, merge_infoext
 from .convert_doc_sphinx_helper import HTMLWriterWithCustomDirectives
 from .conf_path_tools import get_graphviz_dot, find_latex_path
@@ -60,6 +61,7 @@ def default_sphinx_options(fLOG=noLOG, **options):
            'blog_background': options.get('blog_background', False),
            'sharepost': options.get('sharepost', None),
            'todoext_link_only': options.get('todoext_link_only', False),
+           'mathdef_link_only': options.get('mathdef_link_only', False),
            'todo_link_only': options.get('todo_link_only', False),
            'language': options.get('language', 'en'),
            'outdir': options.get('outdir', '.'),
@@ -77,6 +79,7 @@ def default_sphinx_options(fLOG=noLOG, **options):
            'out_blogpostlist': [],
            'out_runpythonlist': [],
            'todoext_include_todosext': [],
+           'mathdef_include_mathsext': [],
            'warning_stream': StringIO(),
            }
 
@@ -226,7 +229,7 @@ def rst2html(s, fLOG=noLOG, writer="sphinx", keep_warnings=False,
         Parameter *directives* was added to add a directive before parsing the RST.
 
     .. versionchanged:: 1.4
-        Add directives *todoext* and *todo*, parameter *language* was added.
+        Add directives *todoext*, *todo*, *mathdef*, parameter *language* was added.
         Add directives *graphviz*, *math*.
         Parse more extensive Sphinx syntax.
     """
@@ -326,6 +329,7 @@ def rst2html(s, fLOG=noLOG, writer="sphinx", keep_warnings=False,
         setup_todoext(mockapp)
         setup_bigger(mockapp)
         setup_runpython(mockapp)
+        setup_mathdef(mockapp)
 
         # directives from sphinx
         setup_graphviz(mockapp)
@@ -342,6 +346,7 @@ def rst2html(s, fLOG=noLOG, writer="sphinx", keep_warnings=False,
         # titles
         title_names.append("todoext_node")
         title_names.append("todo_node")
+        title_names.append("mathdef_node")
     else:
         writer_name = 'html'
         mockapp = MockSphinxApp(None)

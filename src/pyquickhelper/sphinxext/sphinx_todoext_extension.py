@@ -179,7 +179,7 @@ class TodoExt(BaseAdmonition):
 
 def process_todoexts(app, doctree):
     """
-    collect all todos in the environment
+    collect all todoexts in the environment
     this is not done in the directive itself because it some transformations
     must have already been run, e.g. substitutions
     """
@@ -217,7 +217,7 @@ class TodoExtList(Directive):
     """
     A list of all todoext entries, for a specific tag.
 
-    * tag: a tag to have several categories of todo
+    * tag: a tag to have several categories of todoext
 
     Example::
 
@@ -361,9 +361,9 @@ def purge_todosext(app, env, docname):
                                 if todoext['docname'] != docname]
 
 
-def merge_infoext(app, env, docnames, other):
+def merge_todoext(app, env, docnames, other):
     """
-    merge_infoext
+    merge_todoext
     """
     if not hasattr(other, 'todoext_all_todosext'):
         return
@@ -433,10 +433,10 @@ def setup(app):
         app.connect('doctree-read'.encode("ascii"), process_todoexts)
         app.connect('doctree-resolved'.encode("ascii"), process_todoext_nodes)
         app.connect('env-purge-doc'.encode("ascii"), purge_todosext)
-        app.connect('env-merge-info'.encode("ascii"), merge_infoext)
+        app.connect('env-merge-info'.encode("ascii"), merge_todoext)
     else:
         app.connect('doctree-read', process_todoexts)
         app.connect('doctree-resolved', process_todoext_nodes)
         app.connect('env-purge-doc', purge_todosext)
-        app.connect('env-merge-info', merge_infoext)
+        app.connect('env-merge-info', merge_todoext)
     return {'version': sphinx.__display_version__, 'parallel_read_safe': True}

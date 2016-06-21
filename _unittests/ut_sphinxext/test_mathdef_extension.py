@@ -24,15 +24,15 @@ except ImportError:
 from src.pyquickhelper.loghelper.flog import fLOG
 from src.pyquickhelper.pycode import get_temp_folder
 from src.pyquickhelper.helpgen import rst2html
-from src.pyquickhelper.sphinxext import TodoExt, TodoExtList
-from src.pyquickhelper.sphinxext.sphinx_todoext_extension import todoext_node, visit_todoext_node, depart_todoext_node
+from src.pyquickhelper.sphinxext import MathDef, MathDefList
+from src.pyquickhelper.sphinxext.sphinx_mathdef_extension import mathdef_node, visit_mathdef_node, depart_mathdef_node
 
 
 if sys.version_info[0] == 2:
     from codecs import open
 
 
-class TestTodoExtExtension(unittest.TestCase):
+class TestMathDefExtension(unittest.TestCase):
 
     def test_post_parse_sn_todoext(self):
         fLOG(
@@ -40,10 +40,10 @@ class TestTodoExtExtension(unittest.TestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
-        directives.register_directive("todoext", TodoExt)
-        directives.register_directive("todoextlist", TodoExtList)
+        directives.register_directive("mathdef", MathDef)
+        directives.register_directive("mathdeflist", MathDefList)
 
-    def test_todoext(self):
+    def test_mathdef(self):
         fLOG(
             __file__,
             self._testMethodName,
@@ -57,30 +57,30 @@ class TestTodoExtExtension(unittest.TestCase):
 
                     before
 
-                    .. todoext::
-                        :title: first todo
-                        :tag: bug
-                        :issue: 7
+                    .. mathdef::
+                        :title: first def
+                        :tag: definition
+                        :lid: label1
 
-                        this code shoud appear___
+                        this code should appear___
 
                     after
                     """.replace("                    ", "")
         if sys.version_info[0] >= 3:
             content = content.replace('u"', '"')
 
-        tives = [("todoext", TodoExt, todoext_node,
-                  visit_todoext_node, depart_todoext_node)]
+        tives = [("mathdef", MathDef, mathdef_node,
+                  visit_mathdef_node, depart_mathdef_node)]
 
         html = rst2html(content, fLOG=fLOG,
                         writer="custom", keep_warnings=True,
                         directives=tives, extlinks={'issue': ('http://%s', '_issue_')})
 
-        temp = get_temp_folder(__file__, "temp_todoext")
-        with open(os.path.join(temp, "out_todoext.html"), "w", encoding="utf8") as f:
+        temp = get_temp_folder(__file__, "temp_mathdef")
+        with open(os.path.join(temp, "out_mathdef.html"), "w", encoding="utf8") as f:
             f.write(html)
 
-        t1 = "this code shoud appear"
+        t1 = "this code should appear"
         if t1 not in html:
             raise Exception(html)
 
@@ -88,19 +88,11 @@ class TestTodoExtExtension(unittest.TestCase):
         if t1 not in html:
             raise Exception(html)
 
-        t1 = "first todo"
+        t1 = "first def"
         if t1 not in html:
             raise Exception(html)
 
-        t1 = "(bug)"
-        if t1 not in html:
-            raise Exception(html)
-
-        t1 = 'href="http://7"'
-        if t1 not in html:
-            raise Exception(html)
-
-    def test_todoextlist(self):
+    def test_mathdeflist(self):
         fLOG(
             __file__,
             self._testMethodName,
@@ -114,29 +106,31 @@ class TestTodoExtExtension(unittest.TestCase):
 
                     before
 
-                    .. todoext::
-                        :title: first todo
+                    .. mathdef::
+                        :title: first def2
+                        :tag: Theoreme
 
                         this code shoud appear___
 
                     middle
 
-                    .. todoextlist::
+                    .. mathdeflist::
+                        :tag: definition
 
                     after
                     """.replace("                    ", "")
         if sys.version_info[0] >= 3:
             content = content.replace('u"', '"')
 
-        tives = [("todoext", TodoExt, todoext_node,
-                  visit_todoext_node, depart_todoext_node)]
+        tives = [("mathdef", MathDef, mathdef_node,
+                  visit_mathdef_node, depart_mathdef_node)]
 
         html = rst2html(content, fLOG=fLOG,
                         writer="custom", keep_warnings=True,
                         directives=tives)
 
-        temp = get_temp_folder(__file__, "temp_todoextlist")
-        with open(os.path.join(temp, "out_todoext.html"), "w", encoding="utf8") as f:
+        temp = get_temp_folder(__file__, "temp_mathdeflist")
+        with open(os.path.join(temp, "out_mathdef.html"), "w", encoding="utf8") as f:
             f.write(html)
 
         t1 = "this code shoud appear"
@@ -147,7 +141,7 @@ class TestTodoExtExtension(unittest.TestCase):
         if t1 not in html:
             raise Exception(html)
 
-        t1 = "first todo"
+        t1 = "first def2"
         if t1 not in html:
             raise Exception(html)
 
