@@ -1500,15 +1500,15 @@ def private_migrating_doxygen_doc(
             if "@endFAQ" in strow:
                 beginends["FAQ"] = beginends.get("FAQ", 0) - 1
                 sp = " " * row.index("@endFAQ")
-                rows[i] = sp + ".. endFAQ."
+                rows[i] = "\n" + sp + ".. endFAQ.\n"
             if "@endexample" in strow:
                 beginends["example"] = beginends.get("example", 0) - 1
                 sp = " " * row.index("@endexample")
-                rows[i] = sp + ".. endexample."
+                rows[i] = "\n" + sp + ".. endexample.\n"
             if "@endNB" in strow:
                 beginends["NB"] = beginends.get("NB", 0) - 1
                 sp = " " * row.index("@endNB")
-                rows[i] = sp + ".. endNB."
+                rows[i] = "\n" + sp + ".. endNB.\n"
             continue
 
         if indent:
