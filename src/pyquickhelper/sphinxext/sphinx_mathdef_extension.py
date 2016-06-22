@@ -106,7 +106,7 @@ class MathDef(BaseAdmonition):
         if len(mathtag) == 0:
             raise ValueError("tag is empty")
         if env is not None:
-            mid = str(int(env.new_serialno('indexmathe%s' % mathtag)) + 1)
+            mid = str(int(env.new_serialno('indexmathe-u-%s' % mathtag)) + 1)
         else:
             mid = "???"
 
@@ -131,8 +131,7 @@ class MathDef(BaseAdmonition):
         set_source_info(self, mathdef)
 
         if env is not None:
-            targetid = 'indexmathe-%s%s' % (mathtag,
-                                            env.new_serialno('indexmathe%s' % mathtag))
+            targetid = 'indexmathe-%s%s' % (mathtag, env.new_serialno('indexmathe%s' % mathtag))
             ids = [targetid]
             targetnode = nodes.target(legend, legend, ids=ids)
             return [targetnode, mathdef]
