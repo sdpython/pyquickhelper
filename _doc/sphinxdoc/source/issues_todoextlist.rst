@@ -2,8 +2,8 @@
 
 .. _l-issues-todolist:
 
-Issues and enhancements
-=======================
+Issues
+======
 
 .. index:: issues, todo
 

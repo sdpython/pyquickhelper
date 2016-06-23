@@ -40,12 +40,16 @@ class TodoExt(BaseAdmonition):
     A ``todoext`` entry, displayed in the form of an admonition.
     It takes the following options:
 
-    * title: a title for the todo
-    * tag: a tag to have several categories of todo
-    * issue: the issue requires `extlinks <http://www.sphinx-doc.org/en/stable/ext/extlinks.html#confval-extlinks>`_
-      to be defined and must contain key ``'issue'``
-    * cost: a cost if the todo were to be fixed
-    * priority: to prioritize items
+    * **title:** a title for the todo (mandatory)
+    * **tag:** a tag to have several categories of todo (mandatory)
+    * **issue:** the issue requires `extlinks <http://www.sphinx-doc.org/en/stable/ext/extlinks.html#confval-extlinks>`_
+      to be defined and must contain key ``'issue'`` (optional)
+    * **cost:** a cost if the todo were to be fixed (optional)
+    * **priority:** to prioritize items (optional)
+    * **hidden:** if true, the todo does not appear where it is inserted but it
+      will with a todolist (optional)
+    * **date:** date (optional)
+    * **release:** release number (optional)
 
     Example::
 
@@ -55,6 +59,18 @@ class TodoExt(BaseAdmonition):
                 :issue: issue number
 
                 Description of the todo
+
+    .. todoext::
+        :title: add option hidden to hide the item
+        :tag: done
+        :date: 2016-06-23
+        :hidden:
+        :issue: 17
+        :release: 1.4
+        :cost: 0.2
+
+        Once an item is done, it can be hidden from the documentation
+        and show up in a another page.
     """
 
     node_class = todoext_node
@@ -69,6 +85,9 @@ class TodoExt(BaseAdmonition):
         'issue': directives.unchanged,
         'cost': directives.unchanged,
         'priority': directives.unchanged,
+        'hidden': directives.unchanged,
+        'date': directives.unchanged,
+        'release': directives.unchanged,
     }
 
     def run(self):
@@ -130,6 +149,10 @@ class TodoExt(BaseAdmonition):
         # priority
         prio = self.options.get('priority', "").strip()
 
+        # hidden
+        hidden = self.options.get('hidden', "false").strip().lower() in {
+            'true', '1', ''}
+
         # body
         (todoext,) = super(TodoExt, self).run()
         if isinstance(todoext, nodes.system_message):
@@ -147,6 +170,8 @@ class TodoExt(BaseAdmonition):
 
         # prefix
         prefix = TITLES[language_code]["todo"]
+        tododate = self.options.get('date', "").strip()
+        todorelease = self.options.get('release', "").strip()
         infos = []
         if len(todotag) > 0:
             infos.append(todotag)
@@ -157,6 +182,10 @@ class TodoExt(BaseAdmonition):
                 infos.append('C=%d' % int(fcost))
             else:
                 infos.append('C=%1.1f' % fcost)
+        if todorelease:
+            infos.append('v{0}'.format(todorelease))
+        if tododate:
+            infos.append(tododate)
         if infos:
             prefix += "({0})".format(" - ".join(infos))
 
@@ -166,8 +195,15 @@ class TodoExt(BaseAdmonition):
         todoext['todotag'] = todotag
         todoext['todocost'] = fcost
         todoext['todoprio'] = prio
+        todoext['todohidden'] = hidden
+        todoext['tododate'] = tododate
+        todoext['todorelease'] = todorelease
         todoext['todotitle'] = self.options.get('title', "").strip()
         set_source_info(self, todoext)
+
+        if hidden:
+            todoext['todoext_copy'] = todoext.deepcopy()
+            todoext.clear()
 
         if env is not None:
             targetid = 'indextodoe-%s' % env.new_serialno('indextodoe')
@@ -195,21 +231,27 @@ def process_todoexts(app, doctree):
             targetnode = None
         newnode = node.deepcopy()
         todotag = newnode['todotag']
-        todocost = newnode['todocost']
-        todoprio = newnode['todoprio']
         todotitle = newnode['todotitle']
+        todoext_copy = node.get('todoext_copy', None)
         del newnode['ids']
         del newnode['todotag']
+        if todoext_copy is not None:
+            del newnode['todoext_copy']
         env.todoext_all_todosext.append({
             'docname': env.docname,
             'source': node.source or env.doc2path(env.docname),
+            'todosource': node.source or env.doc2path(env.docname),
             'lineno': node.line,
             'todoext': newnode,
             'target': targetnode,
             'todotag': todotag,
-            'todocost': todocost,
-            'todoprio': todoprio,
+            'todocost': newnode['todocost'],
+            'todoprio': newnode['todoprio'],
             'todotitle': todotitle,
+            'tododate': newnode['tododate'],
+            'todorelease': newnode['todorelease'],
+            'todohidden': newnode['todohidden'],
+            'todoext_copy': todoext_copy,
         })
 
 
@@ -231,6 +273,7 @@ class TodoExtList(Directive):
     final_argument_whitespace = False
     option_spec = {
         'tag': directives.unchanged,
+        'sort': directives.unchanged,
     }
 
     def run(self):
@@ -241,15 +284,18 @@ class TodoExtList(Directive):
         env = self.state.document.settings.env if hasattr(
             self.state.document.settings, "env") else None
         tag = self.options.get('tag', '').strip()
+        tsort = self.options.get('sort', '').strip()
         if env is not None:
             targetid = 'indextodoelist-%s' % env.new_serialno('indextodoelist')
             targetnode = nodes.target('', '', ids=[targetid])
             n = todoextlist('')
             n["todotag"] = tag
+            n["todosort"] = tsort
             return [targetnode, n]
         else:
             n = todoextlist('')
             n["todotag"] = tag
+            n["todosort"] = tsort
             return [n]
 
 
@@ -271,6 +317,7 @@ def process_todoext_nodes(app, doctree, fromdocname):
 
     orig_entry = TITLES[lang]["original entry"]
     todomes = TITLES[lang]["todomes"]
+    allowed_tsort = {'date', 'prio', 'title', 'release', 'source'}
 
     if not hasattr(env, 'todoext_all_todosext'):
         env.todoext_all_todosext = []
@@ -286,8 +333,15 @@ def process_todoext_nodes(app, doctree, fromdocname):
         fcost = 0
         content = []
         todotag = node["todotag"]
-        double_list = [(info.get('todoprio', ''), info.get(
-            'todotitle', ''), info) for info in env.todoext_all_todosext]
+        tsort = node["todosort"]
+        if tsort == '':
+            tsort = 'source'
+        if tsort not in allowed_tsort:
+            raise ValueError("option sort must in {0}, '{1}' is not".format(allowed_tsort, tsort))
+
+        double_list = [(info.get('todo%s' % tsort, ''),
+                        info.get('todotitle', ''), info)
+                       for info in env.todoext_all_todosext]
         double_list.sort(key=lambda x: x[:2])
         for n, todoext_info_ in enumerate(double_list):
             todoext_info = todoext_info_[2]
@@ -326,7 +380,9 @@ def process_todoext_nodes(app, doctree, fromdocname):
             para += nodes.Text(desc2, desc2)
 
             # (Recursively) resolve references in the todoext content
-            todoext_entry = todoext_info['todoext']
+            todoext_entry = todoext_info.get('todoext_copy', None)
+            if todoext_entry is None:
+                todoext_entry = todoext_info['todoext']
             todoext_entry["ids"] = ["index-todoext-%d-%d" % (ilist, n)]
             # it apparently requires an attributes ids
 

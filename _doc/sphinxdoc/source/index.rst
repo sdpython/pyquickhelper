@@ -52,7 +52,8 @@ pyquickhelper documentation
 `travis <https://travis-ci.org/sdpython/pyquickhelper>`_,
 :ref:`l-README`,
 :ref:`blog <ap-main-0>`,
-:ref:`l-issues-todolist`
+:ref:`l-issues-todolist`,
+:ref:`l-completed-todolist`
 
 
 What is it?
