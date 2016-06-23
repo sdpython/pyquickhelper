@@ -48,7 +48,7 @@ def set_sphinx_variables(fileconf,
     @param      theme_path              themepath
     @param      ext_locals              context (see `locals <https://docs.python.org/2/library/functions.html#locals>`_)
     @param      add_extensions          additional extensions
-    @param      bootswatch_theme        for example, ``spacelab``, look at ` <http://bootswatch.com/spacelab/>`_
+    @param      bootswatch_theme        for example, ``spacelab``, look at `spacelab <http://bootswatch.com/spacelab/>`_
     @param      bootswatch_navbar_links see `sphinx-bootstrap-theme <http://ryan-roemer.github.io/sphinx-bootstrap-theme/README.html>`_
     @param      description latex       description latex
     @param      use_mathjax             set up the documentation to use mathjax,
@@ -60,11 +60,10 @@ def set_sphinx_variables(fileconf,
     @param      sharepost               add share button to share blog post on usual networks
     @param      custom_style            custom style sheet
     @param      extlinks                parameter `extlinks <http://www.sphinx-doc.org/en/stable/ext/extlinks.html#confval-extlinks>`_,
-                                        example: ```{'issue': ('https://github.com/sdpython/pyquickhelper/issues/%s', 'issue {0} on GitHub')}``
+                                        example: ``{'issue': ('https://github.com/sdpython/pyquickhelper/issues/%s', 'issue {0} on GitHub')}``
     @param      github_user             github user
     @param      github_repo             github project
-    @param      title                   if not None, use *title* instead of *module_name*
-                                        as a title
+    @param      title                   if not None, use *title* instead of *module_name* as a title
     @param      book                    the output is a book
 
     If the parameter *custom_style* is not None, it will call ``app.add_stylesheet(custom_style)``
@@ -252,6 +251,9 @@ def set_sphinx_variables(fileconf,
 
     # mathdef
     mathdef_include_mathsext = True
+
+    # blocref
+    blocref_include_blocrefs = True
 
     # extensions
     extensions = ['sphinx.ext.autodoc',
@@ -492,6 +494,7 @@ def custom_setup(app, author):
     from ..sphinxext.sphinx_todoext_extension import setup as setup_todoext
     from ..sphinxext.sphinx_blog_extension import setup as setup_blogpost
     from ..sphinxext.sphinx_mathdef_extension import setup as setup_mathdef
+    from ..sphinxext.sphinx_blocref_extension import setup as setup_blocref
 
     app.connect("autodoc-skip-member", skip)
     app.add_config_value('author', author, True)
@@ -502,3 +505,4 @@ def custom_setup(app, author):
     setup_todoext(app)
     setup_blogpost(app)
     setup_mathdef(app)
+    setup_blocref(app)

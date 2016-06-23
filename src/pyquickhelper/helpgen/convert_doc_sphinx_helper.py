@@ -18,6 +18,7 @@ from ..sphinxext.sphinx_blog_extension import visit_blogpost_node as ext_visit_b
 from ..sphinxext.sphinx_blog_extension import visit_blogpostagg_node as ext_visit_blogpostagg_node, depart_blogpostagg_node as ext_depart_blogpostagg_node
 from ..sphinxext.sphinx_todoext_extension import visit_todoext_node as ext_visit_todoext_node, depart_todoext_node as ext_depart_todoext_node
 from ..sphinxext.sphinx_mathdef_extension import visit_mathdef_node as ext_visit_mathdef_node, depart_mathdef_node as ext_depart_mathdef_node
+from ..sphinxext.sphinx_blocref_extension import visit_blocref_node as ext_visit_blocref_node, depart_blocref_node as ext_depart_blocref_node
 
 if sys.version_info[0] == 2:
     from StringIO import StringIO
@@ -139,6 +140,18 @@ class HTMLTranslatorWithCustomDirectives(HTMLTranslator):
         @see fn depart_mathdef_node
         """
         ext_depart_mathdef_node(self, node)
+
+    def visit_blocref_node(self, node):
+        """
+        @see fn visit_blocref_node
+        """
+        ext_visit_blocref_node(self, node)
+
+    def depart_blocref_node(self, node):
+        """
+        @see fn depart_blocref_node
+        """
+        ext_depart_blocref_node(self, node)
 
     def add_secnumber(self, node):
         """
