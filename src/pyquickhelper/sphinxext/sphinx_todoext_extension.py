@@ -71,6 +71,11 @@ class TodoExt(BaseAdmonition):
 
         Once an item is done, it can be hidden from the documentation
         and show up in a another page.
+
+    If the option ``issue`` is filled, the configuration must contain a key in ``extlinks``:
+
+        extlinks=dict(issue=('https://link/%s',
+                             'issue {0} on somewhere')))
     """
 
     node_class = todoext_node
@@ -120,8 +125,8 @@ class TodoExt(BaseAdmonition):
             else:
                 available = "\n".join(sorted(sett.__dict__.keys()))
                 available2 = "\n".join(
-                    sorted(env.config.__dict__.keys())) if env is not None else ""
-                raise ValueError("extlinks is not defined in the documentation settings, available in sett\n{0}\nCONFIG\n{1}".format(
+                    sorted(env.config.__dict__.keys())) if env is not None else "-"
+                raise ValueError("extlinks (wih a key 'issue') is not defined in the documentation settings, available in sett\n{0}\nCONFIG\n{1}".format(
                     available, available2))
 
             if "issue" not in extlinks:
@@ -337,7 +342,8 @@ def process_todoext_nodes(app, doctree, fromdocname):
         if tsort == '':
             tsort = 'source'
         if tsort not in allowed_tsort:
-            raise ValueError("option sort must in {0}, '{1}' is not".format(allowed_tsort, tsort))
+            raise ValueError(
+                "option sort must in {0}, '{1}' is not".format(allowed_tsort, tsort))
 
         double_list = [(info.get('todo%s' % tsort, ''),
                         info.get('todotitle', ''), info)

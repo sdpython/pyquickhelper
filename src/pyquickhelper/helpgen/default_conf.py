@@ -397,14 +397,14 @@ def set_sphinx_variables(fileconf,
                     \\newcommand{\\R}{\\mathbb{R}}
                     """
 
+    if extlinks is None:
+        extlinks = dict()
+
     # collect local variables
     loc = locals()
     for k, v in loc.items():
         if not k.startswith("_"):
             ext_locals[k] = v
-    if extlinks is None:
-        extlinks = dict()
-    ext_locals["extlinks"] = extlinks
 
     if custom_style is not None:
         ex = False
