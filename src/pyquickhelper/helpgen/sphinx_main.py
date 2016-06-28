@@ -11,6 +11,7 @@ import shutil
 import importlib
 import warnings
 from docutils.parsers.rst import directives, roles
+from pyquickhelper.filehelper import remove_folder
 
 from ..loghelper.flog import run_cmd, fLOG
 from .utils_sphinx_doc import prepare_file_for_sphinx_help_generation
@@ -59,7 +60,7 @@ Another list
 
 
 def generate_help_sphinx(project_var_name,
-                         clean=True,
+                         clean=False,
                          root=".",
                          filter_commit=lambda c: c.strip() != "documentation",
                          extra_ext=None,
@@ -80,7 +81,7 @@ def generate_help_sphinx(project_var_name,
         - calls sphinx to generate the documentation.
 
     @param      project_var_name    project name
-    @param      clean               if True, cleans the previous documentation first, does not work on linux yet
+    @param      clean               if True, cleans the previous documentation first (html files)
     @param      root                see below
     @param      filter_commit       function which accepts a commit to show on the documentation (based on the comment)
     @param      extra_ext           list of file extensions to document (not .py)
@@ -593,10 +594,8 @@ def generate_help_sphinx(project_var_name,
         if clean and sys.platform.startswith("win"):
             if os.path.exists(build):
                 for fold in os.listdir(build):
-                    cmd = "rmdir /q /s {0}\\{1}".format(build, fold)
-                    run_cmd(cmd, wait=True)
-            cmd = r"del /q /s {0}\*".format(build)
-            run_cmd(cmd, wait=True)
+                    remove_folder(os.path.join(build, fold))
+                remove_folder(build)
 
         over = [" -D {0}={1}".format(k, v) for k, v in override.items()]
         over = "".join(over)

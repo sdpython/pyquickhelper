@@ -53,6 +53,10 @@ def add_missing_files(root, conf, blog_list):
         f.write(link.format("{{ pathto('',1) }}/blog/main_0000.html", "Blog"))
         f.write(link.format("{{ pathto('',1) }}/genindex.html", "Index"))
         f.write(link.format("{{ pathto('',1) }}/py-modindex.html", "Module"))
+        # f.write("""{%- if prev or next %}<li class="toctree-l1">
+        #        {%- if prev %}<a href="{{ prev.link|e }}">&lt;--</a>{%- endif %}
+        #        {%- if next %}<a href="{{ next.link|e }}">--&gt;</a>{%- endif %}
+        #        </li>{%- endif %}""")
         f.write("\n</ul>")
         f.write(
             """\n<h3><a href="{{ pathto(master_doc) }}">%s</a></h3>\n""" % TITLES[language]["toc"])
