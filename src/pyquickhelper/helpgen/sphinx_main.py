@@ -11,8 +11,7 @@ import shutil
 import importlib
 import warnings
 from docutils.parsers.rst import directives, roles
-from pyquickhelper.filehelper import remove_folder
-
+from ..filehelper import remove_folder
 from ..loghelper.flog import run_cmd, fLOG
 from .utils_sphinx_doc import prepare_file_for_sphinx_help_generation
 from .utils_sphinx_doc_helpers import HelpGenException, ImportErrorHelpGen

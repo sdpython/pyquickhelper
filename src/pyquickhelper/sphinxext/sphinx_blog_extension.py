@@ -154,6 +154,9 @@ class BlogPostDirective(Directive):
         p["content"] = content
         node['classes'] += "-blogpost"
 
+        # target
+        # self.state.add_target(p['title'], '', tag, lineno)
+
         # index (see site-packages/sphinx/directives/code.py, class Index)
         if self.__class__.add_index:
             # we add an index

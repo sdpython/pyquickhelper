@@ -134,7 +134,8 @@ class MathDef(BaseAdmonition):
             targetid = 'indexmathe-%s%s' % (mathtag,
                                             env.new_serialno('indexmathe%s' % mathtag))
             ids = [targetid]
-            targetnode = nodes.target(legend, legend, ids=ids)
+            targetnode = nodes.target(legend, legend, ids=ids[0])
+            # self.state.add_target(targetnode, legend, '', ids[0], lineno)
             return [targetnode, mathdef]
         else:
             return [mathdef]

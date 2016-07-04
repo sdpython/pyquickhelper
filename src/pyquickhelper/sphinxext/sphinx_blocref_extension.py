@@ -163,6 +163,7 @@ class BlocRef(BaseAdmonition):
                 breftag, env.new_serialno('indexbrefe%s' % breftag))
             ids = [targetid]
             targetnode = nodes.target(legend, legend, ids=ids)
+            # self.state.add_target(targetnode, legend, '', ids[0], lineno)
             return [targetnode, blocref]
         else:
             return [blocref]
