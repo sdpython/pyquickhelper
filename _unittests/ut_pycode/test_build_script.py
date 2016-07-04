@@ -82,8 +82,8 @@ class TestBuildScript(unittest.TestCase):
 
             unit_test_folder = os.path.abspath(
                 os.path.join(os.path.dirname(__file__), ".."))
-            for c in {"notebook", "publish", "publish_doc", "local_pypi", "run27",
-                      "build27", "setupdep", "copy_dist",
+            for c in {"notebook", "publish", "publish_doc", "local_pypi",
+                      "setupdep", "copy_dist",
                       "any_setup_command", "build_dist"}:
                 sc = get_extra_script_command(
                     c, project_var_name, requirements=requirements, port=port,
@@ -91,7 +91,7 @@ class TestBuildScript(unittest.TestCase):
                 assert len(sc) > 0
                 if "__" in sc:
                     raise Exception(
-                        sc + "\n\n" + "\n__\n".join(sc.split("__")))
+                        c + "\n\n" + "\n__##__##__##__\n".join(sc.split("__")))
                 if c == "run27":
                     if "nosetest" not in sc:
                         raise Exception(sc)
