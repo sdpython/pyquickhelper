@@ -213,7 +213,7 @@ class TodoExt(BaseAdmonition):
         if env is not None:
             targetid = 'indextodoe-%s' % env.new_serialno('indextodoe')
             targetnode = nodes.target(legend, legend, ids=[targetid])
-            self.state.add_target(targetnode, '', targetid, lineno)
+            self.state.add_target(targetid, '', targetnode, lineno)
             return [targetnode, todoext]
         else:
             return [todoext]
