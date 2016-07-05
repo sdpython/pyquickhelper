@@ -82,7 +82,7 @@ Functionalities
 *notebooks (ipython):*
 
 * simple forms in notebooks (see :func:`open_html_form <pyquickhelper.ipythonhelper.html_forms.open_html_form>`)
-* function to run a notebook offline :func:`run_notebook <pyquickhelper.ipythonhelper.notebook_helper.run_notebook>`
+* function to run a notebook offline :func:`run_notebook <pyquickhelper.ipythonhelper.run_notebook.run_notebook>`
 * form interacting with Python functions in a notebook, see notebook :ref:`havingaforminanotebookrst`
 * function :func:`add_notebook_menu <pyquickhelper.ipythonhelper.helper_in_notebook.add_notebook_menu>` 
   automatically adds a menu in the notebook based on sections
@@ -108,10 +108,16 @@ Functionalities
 * simple server to server sphinx documentation 
   (see :func:`run_doc_server <pyquickhelper.serverdoc.documentation_server.run_doc_server>`)
 * function :func:`rst2html <pyquickhelper.helpgen.convert_doc_helper.rst2html>` to convert RST into HTML
-* Sphinx directive :class:`BlogPostDirective <pyquickhelper.helpgen.sphinx_blog_extension.BlogPostDirective>` 
+* Sphinx directive :class:`BlogPostDirective <pyquickhelper.sphinxext.sphinx_blog_extension.BlogPostDirective>` 
   to add a directive ``blogpost`` into the docutmention
-* Sphinx directive :class:`RunPythonDirective <pyquickhelper.helpgen.sphinx_runpython_extension.RunPythonDirective>` 
+* Sphinx directive :class:`RunPythonDirective <pyquickhelper.sphinxext.sphinx_runpython_extension.RunPythonDirective>` 
   to generate documentation from a script
+* :class:`TodoExt <pyquickhelper.sphinxext.sphinx_todoext_extension.TodoExt>`
+  for a richer ``todo`` directive
+* :class:`ShareNetDirective <pyquickhelper.sphinxext.sphinx_sharenet_extension.ShareNetDirective>`
+  to add share buttons on Facebook, Linkedin, Twitter
+* :class:`MathDef <pyquickhelper.sphinxext.sphinx_mathdef_extension.MathDef>`
+  defines ``mathdef`` directive, helps for documentation with mathematics
   
 *automation:*
 

@@ -54,6 +54,7 @@ def process_standard_options_for_setup(argv,
                                        stdout=None,
                                        stderr=None,
                                        use_run_cmd=False,
+                                       filter_warning=None,
                                        fLOG=noLOG):
     """
     process the standard options the module pyquickhelper is
@@ -108,6 +109,7 @@ def process_standard_options_for_setup(argv,
     @param      stdout                      redirect stdout for unit test if not None
     @param      stderr                      redirect stderr for unit test  if not None
     @param      use_run_cmd                 to run the sphinx documentation with @see fn run_cmd and not ``os.system``
+    @param      filter_warning              see @see fn main_wrapper_tests
     @return                                 True (an option was processed) or False,
                                             the file ``setup.py`` should call function ``setup``
 
@@ -153,7 +155,7 @@ def process_standard_options_for_setup(argv,
         Parameters *hook_print*, *stdout*, *stderr* were added.
 
     .. versionchanged:: 1.4
-        Parameter *use_run_cmd* was added.
+        Parameters *use_run_cmd*, *filter_warning* were added.
     """
     folder = file_or_folder if os.path.isdir(
         file_or_folder) else os.path.dirname(file_or_folder)
@@ -228,7 +230,7 @@ def process_standard_options_for_setup(argv,
                                 additional_ut_path=additional_ut_path,
                                 skip_function=skip_function, covtoken=covtoken,
                                 hook_print=hook_print, stdout=stdout, stderr=stderr,
-                                fLOG=fLOG)
+                                filter_warning=filter_warning, fLOG=fLOG)
         return True
 
     elif "setup_hook" in argv:
@@ -490,18 +492,10 @@ def standard_help_for_setup(argv, file_or_folder, project_var_name, module_name=
                              use_run_cmd=use_run_cmd)
 
 
-def run_unittests_for_setup(file_or_folder,
-                            skip_function=default_skip_function,
-                            setup_params=None,
-                            only_setup_hook=False,
-                            coverage_options=None,
-                            coverage_exclude_lines=None,
-                            additional_ut_path=None,
-                            covtoken=None,
-                            hook_print=True,
-                            stdout=None,
-                            stderr=None,
-                            fLOG=noLOG):
+def run_unittests_for_setup(file_or_folder, skip_function=default_skip_function, setup_params=None,
+                            only_setup_hook=False, coverage_options=None, coverage_exclude_lines=None,
+                            additional_ut_path=None, covtoken=None, hook_print=True, stdout=None,
+                            stderr=None, filter_warning=None, fLOG=noLOG):
     """
     run the unit tests and compute the coverage, stores
     the results in ``_doc/sphinxdoc/source/coverage``
@@ -518,6 +512,7 @@ def run_unittests_for_setup(file_or_folder,
     @param      hook_print              see @see fn main_wrapper_tests
     @param      stdout                  see @see fn main_wrapper_tests
     @param      stderr                  see @see fn main_wrapper_tests
+    @param      filter_warning          see @see fn main_wrapper_tests
     @param      fLOG                    logging function
 
     .. versionchanged:: 1.3
@@ -529,6 +524,9 @@ def run_unittests_for_setup(file_or_folder,
 
         Parameter *covtoken* as added to post the coverage report to
         `codecov <https://codecov.io/>`_.
+
+    .. versionchanged:: 1.4
+        Parameter *filter_warning* was added.
     """
     ffolder = get_folder(file_or_folder)
     funit = os.path.join(ffolder, "_unittests")
@@ -553,7 +551,8 @@ def run_unittests_for_setup(file_or_folder,
         run_unit, add_coverage=cov, skip_function=skip_function, setup_params=setup_params,
         only_setup_hook=only_setup_hook, coverage_options=coverage_options,
         coverage_exclude_lines=coverage_exclude_lines, additional_ut_path=additional_ut_path,
-        covtoken=covtoken, hook_print=hook_print, stdout=stdout, stderr=stderr, fLOG=fLOG)
+        covtoken=covtoken, hook_print=hook_print, stdout=stdout, stderr=stderr,
+        filter_warning=filter_warning, fLOG=fLOG)
 
 
 def copy27_for_setup(file_or_folder):

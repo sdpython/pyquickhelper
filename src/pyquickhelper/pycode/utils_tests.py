@@ -31,7 +31,8 @@ else:
 def main_wrapper_tests(codefile, skip_list=None, processes=False, add_coverage=False, report_folder=None,
                        skip_function=default_skip_function, setup_params=None, only_setup_hook=False,
                        coverage_options=None, coverage_exclude_lines=None, additional_ut_path=None,
-                       covtoken=None, hook_print=True, stdout=None, stderr=None, fLOG=noLOG):
+                       covtoken=None, hook_print=True, stdout=None, stderr=None, filter_warning=None,
+                       fLOG=noLOG):
     """
     calls function :func:`main <pyquickhelper.unittests.utils_tests.main>` and throw an exception if it fails
 
@@ -54,6 +55,10 @@ def main_wrapper_tests(codefile, skip_list=None, processes=False, add_coverage=F
     @param      hook_print              enable print display when calling *_setup_hook*
     @param      stdout                  if not None, write output on this stream instead of *sys.stdout*
     @param      stderr                  if not None, write errors on this stream instead of *sys.stderr*
+    @param      filter_warning          function which removes some warnings in the final output,
+                                        if None, the function filters out some recurrent warnings
+                                        in jupyter (signature: ``def filter_warning(w: warning) -> bool``),
+                                        @see fn default_filter_warning
     @param      fLOG                    function(*l, **p), logging function
 
     *covtoken* can be a string ``<token>`` or a
@@ -123,6 +128,9 @@ def main_wrapper_tests(codefile, skip_list=None, processes=False, add_coverage=F
         `codecov <https://codecov.io/>`_.
 
         Parameters *hook_print*, *stdout*, *stderr* were added.
+
+    .. versionchanged:: 1.4
+        Parameter *filter_warning* was added.
     """
     runner = unittest.TextTestRunner(verbosity=0, stream=StringIO())
     path = os.path.abspath(os.path.join(os.path.split(codefile)[0]))
@@ -131,7 +139,7 @@ def main_wrapper_tests(codefile, skip_list=None, processes=False, add_coverage=F
         res = main_run_test(runner, path_test=path, skip=-1, skip_list=skip_list,
                             processes=processes, skip_function=skip_function,
                             additional_ut_path=additional_ut_path, stdout=stdout, stderr=stderr,
-                            fLOG=fLOG)
+                            filter_warning=filter_warning, fLOG=fLOG)
         return res
 
     if "win" not in sys.platform and "DISPLAY" not in os.environ:

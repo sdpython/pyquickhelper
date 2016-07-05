@@ -248,9 +248,42 @@ def clean(dir=None, fLOG=noLOG):
                  " --- ", str(e).replace("\n", " "))
 
 
+def default_filter_warning(w):
+    """
+    filters out warning
+
+    @param      w       warning
+    @return             boolean (True to keep it)
+
+    Interesting fields: ``w.message``, ``w.category``, ``w.filename``, ``w.lineno``.
+
+    .. todoext::
+        :title: filter warnings after the unit tests
+        :tag: done
+        :date: 2016-07-05
+        :hidden:
+        :issue: 19
+        :release: 1.4
+        :cost: 0.2
+
+        Parameter *filter_warning* was added to give users
+        a way to define their own filtering.
+    """
+    if isinstance(w.message, DeprecationWarning):
+        if w.filename.endswith("kernelspec.py"):
+            return False
+        if "jupyter_client" in w.filename:
+            return False
+    elif isinstance(w.message, ImportWarning):
+        if w.filename.endswith("_bootstrap_external.py"):
+            return False
+    return True
+
+
 def main_run_test(runner, path_test=None, limit_max=1e9, log=False, skip=-1, skip_list=None,
                   on_stderr=False, flogp=noLOG, processes=False, skip_function=None,
-                  additional_ut_path=None, stdout=None, stderr=None, fLOG=noLOG):
+                  additional_ut_path=None, stdout=None, stderr=None, filter_warning=None,
+                  fLOG=noLOG):
     """
     run all unit test
     the function looks into the folder _unittest and extract from all files
@@ -273,6 +306,10 @@ def main_run_test(runner, path_test=None, limit_max=1e9, log=False, skip=-1, ski
     @param      additional_ut_path  additional paths to add when running the unit tests
     @param      stdout              if not None, use this stream instead of *sys.stdout*
     @param      stderr              if not None, use this stream instead of *sys.stderr*
+    @param      filter_warning      function which removes some warnings in the final output,
+                                    if None, the function filters out some recurrent warnings
+                                    in jupyter (signature: ``def filter_warning(w: warning) -> bool``),
+                                    @see fn default_filter_warning
     @param      fLOG                logging function
     @return                         dictionnary: ``{ "err": err, "tests":list of couple (file, test results) }``
 
@@ -285,11 +322,16 @@ def main_run_test(runner, path_test=None, limit_max=1e9, log=False, skip=-1, ski
 
     .. versionchanged:: 1.3
         Parameters *fLOG*, *stdout*, *stderr* were added.
+
+    .. versionchanged:: 1.4
+        Parameter *filter_warning* was added.
     """
     if skip_list is None:
         skip_list = set()
     else:
         skip_list = set(skip_list)
+    if filter_warning is None:
+        filter_warning = default_filter_warning
 
     # checking that the module does not belong to the installed modules
     if path_test is not None:
@@ -494,7 +536,8 @@ def main_run_test(runner, path_test=None, limit_max=1e9, log=False, skip=-1, ski
             if len(list_warn) > 0:
                 fullstderr.write("WARN:\n")
                 for w in list_warn:
-                    fullstderr.write("w{0}: {1}\n".format(i, str(w)))
+                    if filter_warning(w):
+                        fullstderr.write("w{0}: {1}\n".format(i, str(w)))
             serr = newstdr.getvalue()
             if serr.strip(" \n\r\t"):
                 fullstderr.write("ERRs:\n")
@@ -507,7 +550,8 @@ def main_run_test(runner, path_test=None, limit_max=1e9, log=False, skip=-1, ski
                 if len(list_warn) > 0:
                     fullstderr.write("WARN:\n")
                     for w in list_warn:
-                        fullstderr.write("w{0}: {1}\n".format(i, str(w)))
+                        if filter_warning(w):
+                            fullstderr.write("w{0}: {1}\n".format(i, str(w)))
                 if val.strip(" \n\r\t"):
                     fullstderr.write("ERRv:\n")
                     fullstderr.write(val)
@@ -541,17 +585,18 @@ def main_run_test(runner, path_test=None, limit_max=1e9, log=False, skip=-1, ski
         if len(lw) > 0:
             memout.write("WARN: {0}\n".format(fi))
             for i, w in enumerate(lw):
-                try:
-                    sw = "  w{0}: {1}\n".format(i, w)
-                except UnicodeEncodeError:
-                    sw = "  w{0}: Unable to convert a warnings of type {0} into a string (1)".format(
-                        i, type(w))
-                try:
-                    memout.write(sw)
-                except UnicodeEncodeError:
-                    sw = "  w{0}: Unable to convert a warnings of type {0} into a string (2)".format(
-                        i, type(w))
-                    memout.write(sw)
+                if filter_warning(w):
+                    try:
+                        sw = "  w{0}: {1}\n".format(i, w)
+                    except UnicodeEncodeError:
+                        sw = "  w{0}: Unable to convert a warnings of type {0} into a string (1)".format(
+                            i, type(w))
+                    try:
+                        memout.write(sw)
+                    except UnicodeEncodeError:
+                        sw = "  w{0}: Unable to convert a warnings of type {0} into a string (2)".format(
+                            i, type(w))
+                        memout.write(sw)
 
     flogp("END of unit tests")
 

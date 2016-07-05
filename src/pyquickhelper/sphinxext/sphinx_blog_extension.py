@@ -57,6 +57,15 @@ class BlogPostDirective(Directive):
     add_share = True
     blogpost_class = blogpost_node
 
+    def suffix_label(self):
+        """
+        returns a suffix to add to a label,
+        it should not be empty for aggregated pages
+
+        @return     str
+        """
+        return ""
+
     def run(self):
         """
         extracts the information in a dictionary and displays it
@@ -121,8 +130,9 @@ class BlogPostDirective(Directive):
                                              blog_background=p["blog_background"])
 
         # add a label
+        suffix_label = self.suffix_label()
         container = nodes.container()
-        tnl = [".. _{0}:".format(tag), ""]
+        tnl = [".. _{0}{1}:".format(tag, suffix_label), ""]
         content = StringList(tnl)
         self.state.nested_parse(content, self.content_offset, container)
         node += container
@@ -190,6 +200,22 @@ class BlogPostDirectiveAgg(BlogPostDirective):
                    'rawfile': directives.unchanged,
                    'blog_background': directives.unchanged,
                    }
+
+    def suffix_label(self):
+        """
+        returns a suffix to add to a label,
+        it should not be empty for aggregated pages
+
+        @return     str
+        """
+        if hasattr(self.state.document.settings, "env"):
+            env = self.state.document.settings.env
+            docname = os.path.split(env.docname)[-1]
+            docname = os.path.splitext(docname)[0]
+        else:
+            env = None
+            docname = ""
+        return "-agg" + docname
 
 
 def visit_blogpost_node(self, node):
