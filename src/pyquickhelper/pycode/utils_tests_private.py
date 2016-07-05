@@ -274,6 +274,34 @@ def default_filter_warning(w):
             return False
         if "jupyter_client" in w.filename:
             return False
+        if "IPython" in w.filename:
+            if "DisplayFormatter." in str(w.message):
+                return False
+            if "ScriptMagics." in str(w.message):
+                return False
+            if "HistoryManager." in str(w.message):
+                return False
+            if "ProfileDir." in str(w.message):
+                return False
+            if "InteractiveShell." in str(w.message):
+                return False
+            if "on_trait_change" in str(w.message):
+                return False
+            if "PlainTextFormatter." in str(w.message):
+                return False
+        elif "nbconvert" in w.filename:
+            if "SlidesExporter." in str(w.message):
+                return False
+            if "TemplateExporter." in str(w.message):
+                return False
+            if "HTMLExporter." in str(w.message):
+                return False
+            if "SVG2PDFPreprocessor." in str(w.message):
+                return False
+            if "on_trait_change" in str(w.message):
+                return False
+            if "PresentExporter." in str(w.message):
+                return False
     elif isinstance(w.message, ImportWarning):
         if w.filename.endswith("_bootstrap_external.py"):
             return False
