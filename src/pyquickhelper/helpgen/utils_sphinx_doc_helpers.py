@@ -887,6 +887,7 @@ def process_look_for_tag(tag, title, files):
             {2}
 
             .. contents::
+                :local:
 
             """.replace("            ", "").format(tag, tit, "=" * len(tit), suf)]
 
