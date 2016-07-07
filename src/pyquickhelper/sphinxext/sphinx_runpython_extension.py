@@ -224,17 +224,18 @@ class RunPythonDirective(Directive):
     required_arguments = 0
     optional_arguments = 0
     final_argument_whitespace = True
-    option_spec = {'indent': directives.unchanged,
-                   'showcode': directives.unchanged,
-                   'showout': directives.unchanged,
-                   'rst': directives.unchanged,
-                   'sin': directives.unchanged,
-                   'sout': directives.unchanged,
-                   'sphinx': directives.unchanged,
-                   'sout2': directives.unchanged,
-                   'setsysvar': directives.unchanged,
-                   'process': directives.unchanged,
-                   }
+    option_spec = {
+        'indent': directives.unchanged,
+        'showcode': directives.unchanged,
+        'showout': directives.unchanged,
+        'rst': directives.unchanged,
+        'sin': directives.unchanged,
+        'sout': directives.unchanged,
+        'sphinx': directives.unchanged,
+        'sout2': directives.unchanged,
+        'setsysvar': directives.unchanged,
+        'process': directives.unchanged,
+    }
     has_content = True
     runpython_class = runpython_node
 

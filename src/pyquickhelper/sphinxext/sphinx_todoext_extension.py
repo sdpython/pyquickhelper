@@ -14,10 +14,10 @@ from docutils.parsers.rst import directives
 import sphinx
 from sphinx.locale import _
 from sphinx.environment import NoUri
-from sphinx.util.nodes import set_source_info
 from docutils.parsers.rst import Directive
 from docutils.parsers.rst.directives.admonitions import BaseAdmonition
-
+from sphinx.util.nodes import set_source_info, process_index_entry
+from sphinx import addnodes
 from ..texthelper.texts_language import TITLES
 
 
@@ -93,6 +93,7 @@ class TodoExt(BaseAdmonition):
         'hidden': directives.unchanged,
         'date': directives.unchanged,
         'release': directives.unchanged,
+        'index': directives.unchanged,
     }
 
     def run(self):
@@ -214,9 +215,23 @@ class TodoExt(BaseAdmonition):
             targetid = 'indextodoe-%s' % env.new_serialno('indextodoe')
             targetnode = nodes.target(legend, legend, ids=[targetid])
             self.state.add_target(targetid, '', targetnode, lineno)
-            return [targetnode, todoext]
+
+            # index node
+            index = self.options.get('index', None)
+            if index is not None:
+                indexnode = addnodes.index()
+                indexnode['entries'] = ne = []
+                indexnode['inline'] = False
+                set_source_info(self, indexnode)
+                for entry in index.split(","):
+                    ne.extend(process_index_entry(entry, targetid))
+            else:
+                indexnode = None
         else:
-            return [todoext]
+            targetnode = None
+            indexnode = None
+
+        return [_ for _ in [indexnode, targetnode, todoext] if _ is not None]
 
 
 def process_todoexts(app, doctree):

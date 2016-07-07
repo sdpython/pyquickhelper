@@ -13,10 +13,11 @@ from docutils.parsers.rst import directives
 import sphinx
 from sphinx.locale import _
 from sphinx.environment import NoUri
-from sphinx.util.nodes import set_source_info
 from docutils.parsers.rst import Directive
 from docutils.parsers.rst.directives.admonitions import BaseAdmonition
 from docutils.statemachine import StringList
+from sphinx.util.nodes import set_source_info, process_index_entry
+from sphinx import addnodes
 from ..texthelper.texts_language import TITLES
 
 
@@ -92,6 +93,7 @@ class BlocRef(BaseAdmonition):
         'title': directives.unchanged,
         'tag': directives.unchanged,
         'lid': directives.unchanged,
+        'index': directives.unchanged,
     }
 
     def run(self):
@@ -164,9 +166,23 @@ class BlocRef(BaseAdmonition):
             ids = [targetid]
             targetnode = nodes.target(legend, legend, ids=ids)
             # self.state.add_target(ids[0], legend, '', targetnode, lineno)
-            return [targetnode, blocref]
+
+            # index node
+            index = self.options.get('index', None)
+            if index is not None:
+                indexnode = addnodes.index()
+                indexnode['entries'] = ne = []
+                indexnode['inline'] = False
+                set_source_info(self, indexnode)
+                for entry in index.split(","):
+                    ne.extend(process_index_entry(entry, targetid))
+            else:
+                indexnode = None
         else:
-            return [blocref]
+            targetnode = None
+            indexnode = None
+
+        return [_ for _ in [indexnode, targetnode, blocref] if _ is not None]
 
 
 def process_blocrefs(app, doctree):
