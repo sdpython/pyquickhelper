@@ -201,6 +201,9 @@ def set_sphinx_variables(fileconf,
                       'preamble': preamble,
                       }
 
+    # figure
+    numfig = True
+
     # theme
     html_theme = theme
     shtml_theme_options = {"bodyfont": "Calibri"}
