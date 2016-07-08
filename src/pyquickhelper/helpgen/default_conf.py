@@ -239,11 +239,11 @@ def set_sphinx_variables(fileconf,
     autosummary_generate = True
 
     # import helpers to find tools to build the documentation
-    from .conf_path_tools import find_latex_path, get_graphviz_dot
+    from .conf_path_tools import find_latex_path, find_graphviz_dot
 
     # graphviz
     graphviz_output_format = "svg"
-    graphviz_dot = get_graphviz_dot()
+    graphviz_dot = find_graphviz_dot()
 
     # todo
     todo_include_todos = True

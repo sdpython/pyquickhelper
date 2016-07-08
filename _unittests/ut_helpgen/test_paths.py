@@ -25,7 +25,7 @@ except ImportError:
     import src
 
 from src.pyquickhelper.loghelper.flog import fLOG
-from src.pyquickhelper.helpgen.conf_path_tools import find_in_PATH, find_graphviz_dot, find_latex_path, find_pandoc_path, get_graphviz_dot
+from src.pyquickhelper.helpgen.conf_path_tools import find_in_PATH, find_graphviz_dot, find_latex_path, find_pandoc_path, find_graphviz_dot
 from src.pyquickhelper.pycode.ci_helper import is_travis_or_appveyor
 
 
@@ -43,7 +43,7 @@ class TestPaths(unittest.TestCase):
         assert exe is not None
         dot = find_graphviz_dot()
         assert "dot" in dot
-        dot = get_graphviz_dot()
+        dot = find_graphviz_dot()
         assert "dot" in dot
         pandoc = find_pandoc_path()
         if "pandoc" not in pandoc.lower():

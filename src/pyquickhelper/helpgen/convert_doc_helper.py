@@ -23,7 +23,7 @@ from ..sphinxext.sphinx_mathdef_extension import setup as setup_mathdef
 from ..sphinxext.sphinx_blocref_extension import setup as setup_blocref
 # from ..sphinxext.sphinx_todoext_extension import process_todoext_nodes, process_todoext_nodes, purge_todosext, merge_infoext
 from .convert_doc_sphinx_helper import HTMLWriterWithCustomDirectives
-from .conf_path_tools import get_graphviz_dot, find_latex_path
+from .conf_path_tools import find_graphviz_dot, find_latex_path
 
 import sys
 import re
@@ -73,7 +73,7 @@ def default_sphinx_options(fLOG=noLOG, **options):
            'math_number_all': options.get('math_number_all', False),
            # graphviz
            'graphviz_output_format': options.get('graphviz_output_format', 'png'),
-           'graphviz_dot': options.get('graphviz_dot', get_graphviz_dot(exc=False)),
+           'graphviz_dot': options.get('graphviz_dot', find_graphviz_dot(exc=False)),
            # latex
            'imgmath_image_format': options.get('imgmath_image_format', 'png'),
            # containers
