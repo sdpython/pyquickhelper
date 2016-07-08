@@ -78,7 +78,7 @@ class TestBuildScript(unittest.TestCase):
                     c, project_var_name, requirements=requirements, port=port)
                 assert len(sc) > 0
                 if "__" in sc:
-                    raise Exception(sc)
+                    raise Exception("{0}\n----------\n{1}".format(c, sc))
 
             unit_test_folder = os.path.abspath(
                 os.path.join(os.path.dirname(__file__), ".."))
