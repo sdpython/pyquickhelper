@@ -76,7 +76,7 @@ class ShareNetDirective(Directive):
         p = [(options_to_int(self.options.get(net, None)), net)
              for net in ShareNetDirective.available_networks]
         p.sort()
-        p = [_[1] for _ in p if _[0] >= 0]
+        p = [a[1] for a in p if a[0] >= 0]
 
         # build node
         node = self.__class__.sharenet_class(networks=p,
@@ -108,7 +108,7 @@ def sharenet_role(role, rawtext, text, lineno, inliner,
     :param options: Directive options for customization.
     :param content: The directive content for customization.
     """
-    spl = [_.strip().lower() for _ in text.split('-')]
+    spl = [a.strip().lower() for a in text.split('-')]
     networks = []
     size = 20
     inhead = True

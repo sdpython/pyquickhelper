@@ -104,8 +104,8 @@ class BlogPostDirective(Directive):
             'lineno': self.lineno,
             'date': self.options["date"],
             'title': self.options["title"],
-            'keywords': [_.strip() for _ in self.options["keywords"].split(",")],
-            'categories': [_.strip() for _ in self.options["categories"].split(",")],
+            'keywords': [a.strip() for a in self.options["keywords"].split(",")],
+            'categories': [a.strip() for a in self.options["categories"].split(",")],
             'blog_background': self.options.get("blog_background", str(blog_background)).strip() in ("True", "true", "1"),
             'lid': self.options.get("lid", None),
         }

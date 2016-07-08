@@ -182,7 +182,7 @@ class BlocRef(BaseAdmonition):
             targetnode = None
             indexnode = None
 
-        return [_ for _ in [indexnode, targetnode, blocref] if _ is not None]
+        return [a for a in [indexnode, targetnode, blocref] if a is not None]
 
 
 def process_blocrefs(app, doctree):

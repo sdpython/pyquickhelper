@@ -231,7 +231,7 @@ class TodoExt(BaseAdmonition):
             targetnode = None
             indexnode = None
 
-        return [_ for _ in [indexnode, targetnode, todoext] if _ is not None]
+        return [a for a in [indexnode, targetnode, todoext] if a is not None]
 
 
 def process_todoexts(app, doctree):

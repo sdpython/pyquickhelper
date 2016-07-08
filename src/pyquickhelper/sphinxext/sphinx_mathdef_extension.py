@@ -154,7 +154,7 @@ class MathDef(BaseAdmonition):
             targetnode = None
             indexnode = None
 
-        return [_ for _ in [indexnode, targetnode, mathdef] if _ is not None]
+        return [a for a in [indexnode, targetnode, mathdef] if a is not None]
 
 
 def process_mathdefs(app, doctree):
