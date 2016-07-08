@@ -281,11 +281,11 @@ def process_standard_options_for_setup(argv,
         with open(os.path.join(folder, "auto_unittest_setup_help.%s" % get_script_extension()), "w") as f:
             f.write(script)
 
-        for c in {"build_script", "clean_space",
+        for c in ("build_script", "clean_space",
                   "write_version", "clean_pyd",
                   "build_sphinx", "unittests",
                   "unittests_LONG", "unittests_SKIP", "unittests_GUI",
-                  "setup_hook", "copy27", "test_local_pypi"}:
+                  "setup_hook", "copy27", "test_local_pypi"):
             sc = get_script_command(
                 c, project_var_name, requirements=requirements, port=port, platform=sys.platform,
                 default_engine_paths=default_engine_paths, additional_local_path=additional_local_path)
