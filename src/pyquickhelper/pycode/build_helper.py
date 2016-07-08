@@ -40,7 +40,7 @@ default_values = {
         "__PY35_X64__": choose_path("c:\\Python35_x64", "c:\\Python35-x64", _default_nofolder),
         "__PY34__": choose_path("c:\\Python34", _default_nofolder),
         "__PY34_X64__": choose_path("c:\\Python34_x64", "c:\\Python34-x64", "c:\\Anaconda3", _default_nofolder),
-        "__PY27_X64__": choose_path("c:\\Python27_x64", "c:\\Python27-x64", "c:\\Anaconda2", "c:\\Anaconda", _default_nofolder),
+        "__PY27_X64__": choose_path("c:\\Python27_x64", "c:\\Python27", "c:\\Python27-x64", "c:\\Anaconda2", "c:\\Anaconda", _default_nofolder),
     },
 }
 
