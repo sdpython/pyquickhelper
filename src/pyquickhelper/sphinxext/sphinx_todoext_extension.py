@@ -12,7 +12,7 @@ from docutils import nodes
 from docutils.parsers.rst import directives
 
 import sphinx
-from sphinx.locale import _
+from sphinx.locale import _ as locale_
 from sphinx.environment import NoUri
 from docutils.parsers.rst import Directive
 from docutils.parsers.rst.directives.admonitions import BaseAdmonition
@@ -135,7 +135,7 @@ class TodoExt(BaseAdmonition):
             url, label = extlinks["issue"]
             url = url % str(issue)
             lab = label.format(issue)
-            linkin = nodes.reference(lab, _(lab), refuri=url)
+            linkin = nodes.reference(lab, locale_(lab), refuri=url)
             link = nodes.paragraph()
             link += linkin
         else:
@@ -196,7 +196,7 @@ class TodoExt(BaseAdmonition):
             prefix += "({0})".format(" - ".join(infos))
 
         # main node
-        title = nodes.title(text=_(prefix + title))
+        title = nodes.title(text=locale_(prefix + title))
         todoext.insert(0, title)
         todoext['todotag'] = todotag
         todoext['todocost'] = fcost
@@ -375,10 +375,10 @@ def process_todoext_nodes(app, doctree, fromdocname):
 
             para = nodes.paragraph(classes=['todoext-source'])
             if app.config['todoext_link_only']:
-                description = _('<<%s>>' % orig_entry)
+                description = locale_('<<%s>>' % orig_entry)
             else:
                 description = (
-                    _(todomes) %
+                    locale_(todomes) %
                     (orig_entry, os.path.split(todoext_info['source'])[-1],
                      todoext_info['lineno'])
                 )
@@ -389,7 +389,7 @@ def process_todoext_nodes(app, doctree, fromdocname):
             # Create a reference
             newnode = nodes.reference('', '', internal=True)
             innernode = nodes.emphasis(
-                _(orig_entry), _(orig_entry))
+                locale_(orig_entry), locale_(orig_entry))
             try:
                 newnode['refuri'] = app.builder.get_relative_uri(
                     fromdocname, todoext_info['docname'])
