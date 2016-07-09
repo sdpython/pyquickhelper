@@ -141,6 +141,11 @@ class MathDef(BaseAdmonition):
 
             # index node
             index = self.options.get('index', None)
+            imposed = ",".join(a for a in [mathtag, title] if a)
+            if index is None or len(index.strip()) == 0:
+                index = imposed
+            else:
+                index += "," + imposed
             if index is not None:
                 indexnode = addnodes.index()
                 indexnode['entries'] = ne = []
