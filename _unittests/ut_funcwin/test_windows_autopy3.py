@@ -1,5 +1,5 @@
 """
-@brief      test log(time=1s)
+@brief      test log(time=2s)
 """
 import os
 import sys
@@ -32,7 +32,7 @@ from src.pyquickhelper.pycode import get_temp_folder
 from src.pyquickhelper.funcwin import main_loop_functions
 
 
-def my_tst_function(a, b):
+def my_tst_function2(a, b):
     """
     return a+b
     @param      a   (float) float
@@ -58,7 +58,7 @@ class TestWindowsAutopy3(unittest.TestCase):
             import autopy3.key
             import autopy3.mouse
             import autopy3.screen
-            autop = True
+            autop = __name__ == "__main__"
         except ImportError:
             warnings.warn("autopy3 is not installed")
             autop = False
@@ -102,18 +102,36 @@ class TestWindowsAutopy3(unittest.TestCase):
                     autopy3.mouse.move(end[0], end[1])
                     autopy3.mouse.click(button=autopy3.mouse.LEFT_BUTTON)
 
-            if not autop:
-                time.sleep(2)
-            root[0].event_generate("<Alt-F4>")
+            time.sleep(2)
+
+            it = 0
+            while root[0] is not None:
+                fLOG("stop", it)
+                # the window does not die if it does have the docus
+                root[0].event_generate("<Alt-F4>")
+                time.sleep(1)
+                it += 1
+                if it > 3:
+                    root[0].destroy()
+                    break
 
         th = threading.Thread(target=f)
         th.start()
 
         try:
             r = main_loop_functions(
-                dict(my_tst_function=my_tst_function), init_pos=(100, 100), mainloop=False)
+                dict(my_tst_function2=my_tst_function2), init_pos=(100, 100), mainloop=False)
+            if __name__ != "__main__":
+                # does not work very well
+                return
             root[0] = r
             r.mainloop()
+            root[0] = None
+            try:
+                r.destroy()
+                del r
+            except Exception as e:
+                fLOG(e)
         except TclError as e:
             warnings.warn("TclError" + str(e))
 
