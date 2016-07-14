@@ -4,6 +4,7 @@
 import os
 import sys
 import unittest
+import warnings
 
 if sys.version_info[0] == 2:
     from Tkinter import TclError
@@ -48,7 +49,8 @@ class TestWindows (unittest.TestCase):
         params = dict(p1="p1", p2=3)
         try:
             win = open_window_params(params, do_not_open=True)
-        except TclError:
+        except TclError as e:
+            warnings.warn("TclError" + str(e))
             return
         fLOG(type(win))
         assert isinstance(
@@ -63,7 +65,8 @@ class TestWindows (unittest.TestCase):
         func = my_tst_function
         try:
             win = open_window_function(func, do_not_open=True)
-        except TclError:
+        except TclError as e:
+            warnings.warn("TclError" + str(e))
             return
         fLOG(type(win))
         assert isinstance(

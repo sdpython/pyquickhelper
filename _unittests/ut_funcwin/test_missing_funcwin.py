@@ -61,7 +61,8 @@ class TestMissingFuncWin (unittest.TestCase):
             assert len(s) > 0
             sa += len(s)
         assert 0 < sa <= size
-        self.assertEqual(sa + nb + 1, size)
+        if sa not in (size, size - nb - 1, size - nb, size - 1):
+            raise Exception("{0} != {1}, nb={2}".format(sa, size, nb))
 
 if __name__ == "__main__":
     unittest.main()
