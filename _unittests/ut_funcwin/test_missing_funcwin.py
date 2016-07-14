@@ -21,12 +21,12 @@ except ImportError:
     import src
 
 from src.pyquickhelper.loghelper import fLOG
-from src.pyquickhelper.funcwin.default_functions import _clean_name_variable, _get_format_zero_nb_integer, file_list
+from src.pyquickhelper.funcwin.default_functions import _clean_name_variable, _get_format_zero_nb_integer, file_list, file_split
 
 
 class TestMissingFuncWin (unittest.TestCase):
 
-    def test_missing_funcwin(self):
+    def test_missing_funcwin_file_list(self):
         fLOG(
             __file__,
             self._testMethodName,
@@ -38,6 +38,30 @@ class TestMissingFuncWin (unittest.TestCase):
         file_list(os.path.abspath(os.path.dirname(__file__)), out=ioout)
         s = ioout.getvalue()
         assert len(s) > 0
+
+    def test_missing_funcwin_file_split(self):
+        fLOG(
+            __file__,
+            self._testMethodName,
+            OutputPrint=__name__ == "__main__")
+
+        assert _clean_name_variable("s-6") == "s_6"
+        assert _get_format_zero_nb_integer(5006) == "%04d"
+        ioout = [io.StringIO(), io.StringIO()]
+        file_split(os.path.abspath(__file__), out=ioout, header=True)
+        ioout = [io.StringIO(), io.StringIO()]
+        s1 = ioout[0].getvalue()
+        s2 = ioout[0].getvalue()
+        self.assertEqual(s1[:5], s2[:5])
+        nb = file_split(os.path.abspath(__file__), out=ioout, header=False)
+        size = os.stat(os.path.abspath(__file__)).st_size
+        sa = 0
+        for l in ioout:
+            s = l.getvalue()
+            assert len(s) > 0
+            sa += len(s)
+        assert 0 < sa <= size
+        self.assertEqual(sa + nb + 1, size)
 
 if __name__ == "__main__":
     unittest.main()

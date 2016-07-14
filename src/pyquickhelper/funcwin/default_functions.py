@@ -119,12 +119,14 @@ def file_split(file="",
     """
     keep the head of a file
 
-    @param      file        file name
+    @param      file        file name or stream
     @param      nb          number of files
     @param      out         output file, if == None or empty, then, it becomes:
-                                file + ".split.%d.ext" % head
+                            ``file + ".split.%d.ext" % i``, it must contain ``%d``
+                            or it must a a list or strings or streams
     @param      header      consider a header or not
     @param      rnd         randomly draw the file which receives the current line
+    @return                 number of processed lines
     """
     if not os.path.exists(file):
         raise Exception("unable to find file %s" % file)
@@ -132,16 +134,25 @@ def file_split(file="",
     if is_empty_string(out):
         f, ext = os.path.splitext(file)
         out = "%s.split.%s%s" % (file, _get_format_zero_nb_integer(nb), ext)
+    elif not isinstance(out, list) and "%d" not in out:
+        raise ValueError("%d should be present in out='{0}'".format(out))
 
     size = os.stat(file).st_size
-    f = open(file, "r")
+    typstr = str  # unicode#
+    f = open(file, "r") if isinstance(file, typstr) else file
     g = {}
     tot = 0
     for i, line in enumerate(f):
         if i == 0 and header:
             for n in range(0, nb):
                 if n not in g:
-                    g[n] = open(out % n, "w")
+                    if isinstance(out, list):
+                        if isinstance(out[n], typstr):
+                            g[n] = open(out[n], "w")
+                        else:
+                            g[n] = out[n]
+                    else:
+                        g[n] = open(out % n, "w")
                 g[n].write(line)
             continue
 
@@ -152,16 +163,25 @@ def file_split(file="",
             tot += len(line)
 
         if n not in g:
-            g[n] = open(out % n, "w")
+            if isinstance(out, list):
+                if isinstance(out[n], typstr):
+                    g[n] = open(out[n], "w")
+                else:
+                    g[n] = out[n]
+            else:
+                g[n] = open(out % n, "w")
         g[n].write(line)
 
         if (i + 1) % 10000 == 0:
             fLOG("    processed ", i, " bytes ", tot,
                  " out of ", size, " lines in ", out)
 
-    f.close()
+    if isinstance(file, typstr):
+        f.close()
     for k, v in g.items():
-        v.close()
+        if not isinstance(out, list) or isinstance(out[k], typstr):
+            v.close()
+    return i
 
 
 def file_list(folder, out=""):
