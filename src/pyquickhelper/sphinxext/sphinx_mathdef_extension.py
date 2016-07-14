@@ -44,6 +44,7 @@ class MathDef(BaseAdmonition):
     * title: a title for the math
     * tag: a tag to have several categories of math
     * lid: a label to refer to
+    * index: to add an entry to the index (comma separated)
 
     Example::
 

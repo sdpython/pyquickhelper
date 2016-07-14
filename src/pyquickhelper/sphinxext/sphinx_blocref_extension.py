@@ -43,6 +43,7 @@ class BlocRef(BaseAdmonition):
     * title: a title for the bloc
     * tag: a tag to have several categories of blocs
     * lid: a label to refer to
+    * index: to add an entry to the index (comma separated)
 
     Example::
 
@@ -73,7 +74,7 @@ class BlocRef(BaseAdmonition):
             :tag: dummy_example
             :sort: title
 
-    Only examples tagged as ``example`` will be inserted here.
+    Only examples tagged as ``dummy_example`` will be inserted here.
     The option ``sort`` sorts items by *title*, *number*, *file*.
     You also link to it by typing ``:ref:'anchor <id-you-can-choose>' `` which gives
     something like :ref:`link_to_blocref <id-you-can-choose>`. The link must receive a name.
@@ -84,6 +85,7 @@ class BlocRef(BaseAdmonition):
     """
 
     node_class = blocref_node
+    name_sphinx = "blocref"
     has_content = True
     required_arguments = 0
     optional_arguments = 0
@@ -100,6 +102,7 @@ class BlocRef(BaseAdmonition):
         """
         builds the blocref text
         """
+        name_desc = self.__class__.name_sphinx
         # sett = self.state.document.settings
         # language_code = sett.language_code
         lineno = self.lineno
@@ -114,7 +117,7 @@ class BlocRef(BaseAdmonition):
             legend = ''
 
         if not self.options.get('class'):
-            self.options['class'] = ['admonition-blocref']
+            self.options['class'] = ['admonition-%s' % name_desc]
 
         # body
         (blocref,) = super(BlocRef, self).run()
@@ -136,7 +139,8 @@ class BlocRef(BaseAdmonition):
         if len(breftag) == 0:
             raise ValueError("tag is empty")
         if env is not None:
-            mid = int(env.new_serialno('indexbrefeu-%s' % breftag)) + 1
+            mid = int(env.new_serialno('index%s-%s' %
+                                       (name_desc, breftag))) + 1
         else:
             mid = -1
 
@@ -162,7 +166,7 @@ class BlocRef(BaseAdmonition):
 
         if env is not None:
             targetid = 'indexbrefe%s%s' % (
-                breftag, env.new_serialno('indexbrefe%s' % breftag))
+                breftag, env.new_serialno('index%s%s' % (name_desc, breftag)))
             ids = [targetid]
             targetnode = nodes.target(legend, '', ids=ids)
             self.state.add_target(targetid, '', targetnode, lineno)
@@ -191,10 +195,21 @@ def process_blocrefs(app, doctree):
     this is not done in the directive itself because it some transformations
     must have already been run, e.g. substitutions
     """
+    process_blocrefs_generic(
+        app, doctree, bloc_name="blocref", class_node=blocref_node)
+
+
+def process_blocrefs_generic(app, doctree, bloc_name, class_node):
+    """
+    collect all blocrefs in the environment
+    this is not done in the directive itself because it some transformations
+    must have already been run, e.g. substitutions
+    """
     env = app.builder.env
-    if not hasattr(env, 'blocref_all_blocrefs'):
-        env.blocref_all_blocrefs = []
-    for node in doctree.traverse(blocref_node):
+    attr = '%s_all_%ss' % (bloc_name, bloc_name)
+    if not hasattr(env, attr):
+        setattr(env, attr, [])
+    for node in doctree.traverse(class_node):
         try:
             targetnode = node.parent[node.parent.index(node) - 1]
             if not isinstance(targetnode, nodes.target):
@@ -234,7 +249,8 @@ class BlocRefList(Directive):
         .. blocreflist::
             :tag: issue
     """
-
+    name_sphinx = "blocreflist"
+    node_class = blocreflist
     has_content = False
     required_arguments = 0
     optional_arguments = 0
@@ -249,18 +265,20 @@ class BlocRefList(Directive):
         Simply insert an empty blocreflist node which will be replaced later
         when process_blocref_nodes is called
         """
+        name_desc = self.__class__.name_sphinx
         env = self.state.document.settings.env if hasattr(
             self.state.document.settings, "env") else None
         tag = self.options.get('tag', '').strip()
         if env is not None:
-            targetid = 'indexbrefelist-%s' % env.new_serialno('indexbrefelist')
+            targetid = 'index%slist-%s' % (name_desc,
+                                           env.new_serialno('index%slist' % name_desc))
             targetnode = nodes.target('', '', ids=[targetid])
-            n = blocreflist('')
+            n = self.__class__.node_class('')
             n["breftag"] = tag
             n["brefsort"] = self.options.get('sort', '').strip()
             return [targetnode, n]
         else:
-            n = blocreflist('')
+            n = self.__class__.node_class('')
             n["breftag"] = tag
             n["brefsort"] = self.options.get('sort', '').strip()
             return [n]
@@ -270,7 +288,17 @@ def process_blocref_nodes(app, doctree, fromdocname):
     """
     process_blocref_nodes
     """
-    if not app.config['blocref_include_blocrefs']:
+    process_blocref_nodes_generic(app, doctree, fromdocname, class_name='blocref',
+                                  entry_name="brefmes")
+
+
+def process_blocref_nodes_generic(app, doctree, fromdocname, class_name,
+                                  entry_name):
+    """
+    process_blocref_nodes
+    """
+    incconf = '%s_include_%ss' % (class_name, class_name)
+    if not app.config[incconf]:
         for node in doctree.traverse(blocref_node):
             node.parent.remove(node)
 
@@ -283,15 +311,15 @@ def process_blocref_nodes(app, doctree, fromdocname):
         lang = "en"
 
     orig_entry = TITLES[lang]["original entry"]
-    brefmes = TITLES[lang]["brefmes"]
+    brefmes = TITLES[lang][entry_name]
 
-    if not hasattr(env, 'blocref_all_blocrefs'):
+    if not hasattr(env, '%s_all_%ss' % (class_name, class_name)):
         env.blocref_all_blocrefs = []
 
     for ilist, node in enumerate(doctree.traverse(blocreflist)):
         if 'ids' in node:
             node['ids'] = []
-        if not app.config['blocref_include_blocrefs']:
+        if not app.config[incconf]:
             node.replace_self([])
             continue
 
@@ -323,8 +351,8 @@ def process_blocref_nodes(app, doctree, fromdocname):
                 continue
 
             nbbref += 1
-            para = nodes.paragraph(classes=['blocref-source'])
-            if app.config['blocref_link_only']:
+            para = nodes.paragraph(classes=['%s-source' % class_name])
+            if app.config['%s_link_only' % class_name]:
                 description = _('<<%s>>' % orig_entry)
             else:
                 description = (
@@ -353,7 +381,7 @@ def process_blocref_nodes(app, doctree, fromdocname):
 
             # (Recursively) resolve references in the blocref content
             blocref_entry = blocref_info['blocref']
-            blocref_entry["ids"] = ["index-blocref-%d-%d" % (ilist, n)]
+            blocref_entry["ids"] = ["index-%s-%d-%d" % (class_name, ilist, n)]
             # it apparently requires an attributes ids
 
             env.resolve_references(blocref_entry, blocref_info['docname'],

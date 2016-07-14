@@ -11,3 +11,4 @@ from .sphinx_blog_extension import BlogPostDirective, BlogPostDirectiveAgg
 from .sphinx_todoext_extension import TodoExt, TodoExtList
 from .sphinx_mathdef_extension import MathDef, MathDefList
 from .sphinx_blocref_extension import BlocRef, BlocRefList
+from .sphinx_faqref_extension import FaqRef, FaqRefList

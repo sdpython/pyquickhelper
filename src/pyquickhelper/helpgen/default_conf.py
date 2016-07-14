@@ -498,6 +498,7 @@ def custom_setup(app, author):
     from ..sphinxext.sphinx_blog_extension import setup as setup_blogpost
     from ..sphinxext.sphinx_mathdef_extension import setup as setup_mathdef
     from ..sphinxext.sphinx_blocref_extension import setup as setup_blocref
+    from ..sphinxext.sphinx_faqref_extension import setup as setup_faqref
 
     app.connect("autodoc-skip-member", skip)
     app.add_config_value('author', author, True)
@@ -509,3 +510,4 @@ def custom_setup(app, author):
     setup_blogpost(app)
     setup_mathdef(app)
     setup_blocref(app)
+    setup_faqref(app)

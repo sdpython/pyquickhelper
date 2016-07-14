@@ -66,25 +66,28 @@ def main_wrapper_tests(codefile, skip_list=None, processes=False, add_coverage=F
     by the python interpreter and determines whether or not the coverage
     needs to be published.
 
-    @FAQ(How to build pyquickhelper with Jenkins?)
-    `Jenkins <http://jenkins-ci.org/>`_ is a task scheduler for continuous integration.
-    You can easily schedule batch command to build and run unit tests for a specific project.
-    To build pyquickhelper, you need to install `python <https://www.python.org/>`_,
-    `pymyinstall <http://www.xavierdupre.fr/app/pymyinstall/helpsphinx/>`_,
-    `miktex <http://miktex.org/>`_,
-    `pandoc <http://johnmacfarlane.net/pandoc/>`_,
-    `sphinx <http://sphinx-doc.org/>`_.
+    .. faqref::
+        :title: How to build pyquickhelper with Jenkins?
+        :tag: main
+        :index: Jenkins
 
-    Once Jenkins is installed, the command to schedule is::
+        `Jenkins <http://jenkins-ci.org/>`_ is a task scheduler for continuous integration.
+        You can easily schedule batch command to build and run unit tests for a specific project.
+        To build pyquickhelper, you need to install `python <https://www.python.org/>`_,
+        `pymyinstall <http://www.xavierdupre.fr/app/pymyinstall/helpsphinx/>`_,
+        `miktex <http://miktex.org/>`_,
+        `pandoc <http://johnmacfarlane.net/pandoc/>`_,
+        `sphinx <http://sphinx-doc.org/>`_.
 
-        set PATH=%PATH%;%USERPOFILE%\AppData\Local\Pandoc
-        build_setup_help_on_windows.bat
+        Once Jenkins is installed, the command to schedule is::
 
-    This works if you installed Jenkins with your credentials.
-    Otherwise the path to ``pandoc.exe`` needs to be changed.
+            set PATH=%PATH%;%USERPOFILE%\AppData\Local\Pandoc
+            build_setup_help_on_windows.bat
 
-    And you can also read `Schedule builds with Jenkins <http://www.xavierdupre.fr/blog/2014-12-06_nojs.html>`_.
-    @endFAQ
+        This works if you installed Jenkins with your credentials.
+        Otherwise the path to ``pandoc.exe`` needs to be changed.
+
+        And you can also read `Schedule builds with Jenkins <http://www.xavierdupre.fr/blog/2014-12-06_nojs.html>`_.
 
     .. versionchanged:: 0.9
         Parameters *add_coverage* and *report_folder* were added to compute the coverage

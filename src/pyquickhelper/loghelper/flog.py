@@ -199,18 +199,19 @@ def fLOG(*l, **p):
     @endcode
     @endexample
 
-    @FAQ(How to activate the logs?)
-    The following instruction will do:
-    @code
-    fLOG(OutputPrint=True)
-    @endcode
+    .. faqref::
+        :title: How to activate the logs?
+        :tag: main
 
-    To log everything into a file:
-    @code
-    fLOG(OutputPrint=True, LogFile="log_file.txt")
-    @endcode
+        The following instruction will do:
+        @code
+        fLOG(OutputPrint=True)
+        @endcode
 
-    @endFAQ
+        To log everything into a file:
+        @code
+        fLOG(OutputPrint=True, LogFile="log_file.txt")
+        @endcode
     """
     path_add = p.get("LogPathAdd", [])
 

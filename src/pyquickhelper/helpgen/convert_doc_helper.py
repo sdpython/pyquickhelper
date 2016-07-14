@@ -21,6 +21,7 @@ from ..sphinxext.sphinx_bigger_extension import setup as setup_bigger
 from ..sphinxext.sphinx_todoext_extension import setup as setup_todoext
 from ..sphinxext.sphinx_mathdef_extension import setup as setup_mathdef
 from ..sphinxext.sphinx_blocref_extension import setup as setup_blocref
+from ..sphinxext.sphinx_faqref_extension import setup as setup_faqref
 # from ..sphinxext.sphinx_todoext_extension import process_todoext_nodes, process_todoext_nodes, purge_todosext, merge_infoext
 from .convert_doc_sphinx_helper import HTMLWriterWithCustomDirectives
 from .conf_path_tools import find_graphviz_dot, find_latex_path
@@ -83,6 +84,7 @@ def default_sphinx_options(fLOG=noLOG, **options):
            'todoext_include_todosext': [],
            'mathdef_include_mathsext': [],
            'blocref_include_blocrefs': [],
+           'faqref_include_faqrefs': [],
            'warning_stream': StringIO(),
            }
 
@@ -185,43 +187,45 @@ def rst2html(s, fLOG=noLOG, writer="sphinx", keep_warnings=False,
 
     @endexample
 
-    @FAQ(How to get more about latex errors?)
+   .. faqref::
+       :title: How to get more about latex errors?
+       :tag: main
+       :index: latex
 
-    Sphinx is not easy to use when it comes to debug latex expressions.
-    I did not find an easy way to read the error returned by latex about
-    a missing bracket or an unknown command. I fianlly added a short piece
-    of code in ``sphinx.ext.imgmath.py`` just after the call to
-    the executable indicated by *imgmath_latex*
+        Sphinx is not easy to use when it comes to debug latex expressions.
+        I did not find an easy way to read the error returned by latex about
+        a missing bracket or an unknown command. I fianlly added a short piece
+        of code in ``sphinx.ext.imgmath.py`` just after the call to
+        the executable indicated by *imgmath_latex*
 
-    ::
-        if b'...' in stdout or b'LaTeX Error' in stdout:
-            print(self.builder.config.imgmath_latex_preamble)
-            print(p.returncode)
-            print("################")
-            print(latex)
-            print("..........")
-            print(stdout.decode("ascii").replace("\r", ""))
-            print("-----")
-            print(stderr)
+        ::
+            if b'...' in stdout or b'LaTeX Error' in stdout:
+                print(self.builder.config.imgmath_latex_preamble)
+                print(p.returncode)
+                print("################")
+                print(latex)
+                print("..........")
+                print(stdout.decode("ascii").replace("\r", ""))
+                print("-----")
+                print(stderr)
 
-    It displays the output if an error happened.
+        It displays the output if an error happened.
 
-    @endFAQ
+    .. faqref::
+        :title: How to hide command line window while compiling latex?
+        :tag: main
+        :lid: command line window
 
-    @FAQ(How to hide command line window while compiling latex?)
+        Sphinx calls latex through command line. On Windows, a command line window
+        can annoyingly show up anytime a formula is compile. The following
+        line can be added to hide it:
 
-    Sphinx calls latex through command line. On Windows, a command line window
-    can annoyingly show up anytime a formula is compile. The following
-    line can be added to hide it:
+        ::
 
-    ::
+            startupinfo = STARTUPINFO()
+            startupinfo.dwFlags |= STARTF_USESHOWWINDOW
 
-        startupinfo = STARTUPINFO()
-        startupinfo.dwFlags |= STARTF_USESHOWWINDOW
-
-    And ``, startupinfo=startupinfo`` must be added to lines ``p = Popen(...``.
-
-    @endFAQ
+        And ``, startupinfo=startupinfo`` must be added to lines ``p = Popen(...``.
 
     .. versionadded:: 1.0
 
@@ -232,7 +236,7 @@ def rst2html(s, fLOG=noLOG, writer="sphinx", keep_warnings=False,
         Parameter *directives* was added to add a directive before parsing the RST.
 
     .. versionchanged:: 1.4
-        Add directives *todoext*, *todo*, *mathdef*, *blocref*, parameter *language* was added.
+        Add directives *todoext*, *todo*, *mathdef*, *blocref*, *faqref*, parameter *language* was added.
         Add directives *graphviz*, *math*.
         Parse more extensive Sphinx syntax.
     """
@@ -334,6 +338,7 @@ def rst2html(s, fLOG=noLOG, writer="sphinx", keep_warnings=False,
         setup_runpython(mockapp)
         setup_mathdef(mockapp)
         setup_blocref(mockapp)
+        setup_faqref(mockapp)
 
         # directives from sphinx
         setup_graphviz(mockapp)
@@ -352,6 +357,7 @@ def rst2html(s, fLOG=noLOG, writer="sphinx", keep_warnings=False,
         title_names.append("todo_node")
         title_names.append("mathdef_node")
         title_names.append("blocref_node")
+        title_names.append("faqref_node")
     else:
         writer_name = 'html'
         mockapp = MockSphinxApp(None)

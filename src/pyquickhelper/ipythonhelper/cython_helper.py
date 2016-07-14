@@ -17,22 +17,21 @@ def ipython_cython_extension():
     In that case, the function displays a message with some indications
     on how to fix it.
 
-    @FAQ(Cython does not work on Windows?)
+    .. faqref::
+        :title: Cython does not work on Windows?
+        :index: vcvarsall, cython
+        :tag: main
 
-    .. index:: vcvarsall, cython
+        This raises the following message::
 
-    This raises the following message::
+            Unable to find vcvarsall.bat
 
-        Unable to find vcvarsall.bat
+        The blogpost
+        `Build a Python 64 bit extension on Windows <http://www.xavierdupre.fr/blog/2013-07-07_nojs.html>`_
+        answers that question.
+        One file needs to be modified::
 
-    The blogpost
-    `Build a Python 64 bit extension on Windows <http://www.xavierdupre.fr/blog/2013-07-07_nojs.html>`_
-    answers that question.
-    One file needs to be modified::
-
-        <python>\lib\distutils\msvc9compiler.py
-
-    @endFAQ
+            <python>\lib\distutils\msvc9compiler.py
     """
     if not sys.platform.startswith("win"):
         return True
