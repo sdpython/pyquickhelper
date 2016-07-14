@@ -37,6 +37,7 @@ TITLES = {
            'todomes': '(The <<%s>> is located in %s, line %d.)',
            'mathmes': '(<<%s>> : %s, line %d)',
            'brefmes': '(<<%s>> : %s, line %d)',
+           'faqmes': '(<<%s>> : %s, line %d)',
            },
     'fr': {"blogpost": "article",
            "toc": "Contenu",
@@ -70,5 +71,6 @@ TITLES = {
            'todomes': '(<<%s>> : %s, ligne %d)',
            'mathmes': '(<<%s>> : %s, ligne %d)',
            'brefmes': '(<<%s>> : %s, ligne %d)',
+           'faqmes': '(<<%s>> : %s, ligne %d)',
            }
 }

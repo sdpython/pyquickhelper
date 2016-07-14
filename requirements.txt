@@ -2,7 +2,6 @@ ansi2html
 ansiconv
 argparse
 autopep8
-autopy3
 brewer2mpl
 cloud-sptheme
 codecov

@@ -84,7 +84,7 @@ def process_faqrefs(app, doctree):
     this is not done in the directive itself because it some transformations
     must have already been run, e.g. substitutions
     """
-    process_blocrefs_generic(app, doctree, "faqref")
+    process_blocrefs_generic(app, doctree, "faqref", class_node=faqref_node)
 
 
 class FaqRefList(BlocRefList):

@@ -32,11 +32,10 @@ class TestMakeWindow2 (unittest.TestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
-        if __name__ == "__main__":
-            functions = {"test_regular_expression": test_regular_expression,
-                         "test_edit_distance": file_grep,
-                         "file_head": file_head}
-            main_loop_functions(functions, title="title: TestMakeWindow2")
+        functions = {"test_regular_expression": test_regular_expression,
+                     "test_edit_distance": file_grep,
+                     "file_head": file_head}
+        main_loop_functions(functions, title="title: TestMakeWindow2", mainloop=False)
 
 
 if __name__ == "__main__":

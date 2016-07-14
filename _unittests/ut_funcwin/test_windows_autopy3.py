@@ -53,49 +53,58 @@ class TestWindowsAutopy3(unittest.TestCase):
         if sys.version_info[0] == 2:
             return
 
-        import autopy3
-        import autopy3.key
-        import autopy3.mouse
-        import autopy3.screen
+        try:
+            import autopy3
+            import autopy3.key
+            import autopy3.mouse
+            import autopy3.screen
+            autop = True
+        except ImportError:
+            warnings.warn("autopy3 is not installed")
+            autop = False
+
         temp = get_temp_folder(__file__, "temp_autopy3")
         root = [None]
 
         def f():
-            fLOG("size", autopy3.screen.get_size())
-            icon = autopy3.bitmap.Bitmap.open(
-                os.path.join(temp, "..", "data", "icon.png"))
-            img = os.path.join(temp, "screen.png")
-            screen = autopy3.bitmap.capture_screen()
-            pos = screen.find_bitmap(icon)
-            iter = 0
-            while not pos and iter < 3:
-                if iter > 1:
-                    fLOG("iter", iter, pos)
-                time.sleep(1)
+            if autop:
+                fLOG("size", autopy3.screen.get_size())
+                icon = autopy3.bitmap.Bitmap.open(
+                    os.path.join(temp, "..", "data", "icon.png"))
+                img = os.path.join(temp, "screen.png")
                 screen = autopy3.bitmap.capture_screen()
                 pos = screen.find_bitmap(icon)
-                iter += 1
-            if not pos:
-                warnings.warn("unable to find icon in the screen")
-                pos = (117, 108)
-            screen.save(img)
-            fLOG("pos=", pos)
+                iter = 0
+                while not pos and iter < 3:
+                    if iter > 1:
+                        fLOG("iter", iter, pos)
+                    time.sleep(1)
+                    screen = autopy3.bitmap.capture_screen()
+                    pos = screen.find_bitmap(icon)
+                    iter += 1
+                if not pos:
+                    warnings.warn("unable to find icon in the screen")
+                    pos = (117, 108)
+                screen.save(img)
+                fLOG("pos=", pos)
 
-            # test
-            fLOG((1, 1), autopy3.screen.point_visible(
-                1, 1), autopy3.screen.get_size())
-            if not autopy3.screen.point_visible(1, 1):
-                warnings.warn("autopy3.screen.point_visible is False")
+                # test
+                fLOG((1, 1), autopy3.screen.point_visible(
+                    1, 1), autopy3.screen.get_size())
+                if not autopy3.screen.point_visible(1, 1):
+                    warnings.warn("autopy3.screen.point_visible is False")
 
-            # closes the window
-            if False and autopy3.screen.point_visible(1, 1):
-                # does not seem to work (point not visible)
-                dend = (986 - 117, 116 - 108)
-                end = (dend[0] + pos[0], dend[1] + pos[1])
-                autopy3.mouse.move(end[0], end[1])
-                autopy3.mouse.click(button=autopy3.mouse.LEFT_BUTTON)
-            else:
-                root[0].event_generate("<Alt-F4>")
+                # closes the window
+                if False and autopy3.screen.point_visible(1, 1):
+                    # does not seem to work (point not visible)
+                    dend = (986 - 117, 116 - 108)
+                    end = (dend[0] + pos[0], dend[1] + pos[1])
+                    autopy3.mouse.move(end[0], end[1])
+                    autopy3.mouse.click(button=autopy3.mouse.LEFT_BUTTON)
+
+            if not autop:
+                time.sleep(2)
+            root[0].event_generate("<Alt-F4>")
 
         th = threading.Thread(target=f)
         th.start()

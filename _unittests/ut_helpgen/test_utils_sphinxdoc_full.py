@@ -85,7 +85,6 @@ class TestSphinxDocFull (unittest.TestCase):
             os.path.join(temp, "index_method.rst"),
             os.path.join(temp, "all_example.rst"),
             os.path.join(temp, "all_example_otherpageofexamples.rst"),
-            os.path.join(temp, "all_FAQ.rst"),
             os.path.join(
                 temp,
                 "all_example_pagewithanaccentinthetitle.rst"),
