@@ -60,6 +60,7 @@ class TestBlocRefExtension(unittest.TestCase):
                     .. blocref::
                         :title: first todo
                         :tag: bug
+                        :lid: id3
 
                         this code shoud appear___
 
@@ -108,6 +109,7 @@ class TestBlocRefExtension(unittest.TestCase):
                     .. blocref::
                         :title: first todo
                         :tag: freg
+                        :lid: id3
 
                         this code shoud appear___
 

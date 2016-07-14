@@ -107,7 +107,7 @@ class BlocRef(BaseAdmonition):
         env = self.state.document.settings.env if hasattr(
             self.state.document.settings, "env") else None
         docname = None if env is None else env.docname
-        if docname is None:
+        if docname is not None:
             docname = docname.replace("\\", "/").split("/")[-1]
             legend = "{0}:{1}".format(docname, lineno)
         else:
@@ -164,8 +164,8 @@ class BlocRef(BaseAdmonition):
             targetid = 'indexbrefe%s%s' % (
                 breftag, env.new_serialno('indexbrefe%s' % breftag))
             ids = [targetid]
-            targetnode = nodes.target(legend, legend, ids=ids)
-            # self.state.add_target(ids[0], legend, '', targetnode, lineno)
+            targetnode = nodes.target(legend, '', ids=ids)
+            self.state.add_target(targetid, '', targetnode, lineno)
 
             # index node
             index = self.options.get('index', None)

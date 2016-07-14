@@ -79,7 +79,7 @@ class MathDef(BaseAdmonition):
         env = self.state.document.settings.env if hasattr(
             self.state.document.settings, "env") else None
         docname = None if env is None else env.docname
-        if docname is None:
+        if docname is not None:
             docname = docname.replace("\\", "/").split("/")[-1]
             legend = "{0}:{1}".format(docname, lineno)
         else:
@@ -136,8 +136,8 @@ class MathDef(BaseAdmonition):
             targetid = 'indexmathe-%s%s' % (mathtag,
                                             env.new_serialno('indexmathe%s' % mathtag))
             ids = [targetid]
-            targetnode = nodes.target(legend, legend, ids=ids[0])
-            # self.state.add_target( ids[0], legend, '', targetnode, lineno)
+            targetnode = nodes.target(legend, '', ids=ids[0])
+            self.state.add_target(targetid, '', targetnode, lineno)
 
             # index node
             index = self.options.get('index', None)

@@ -107,7 +107,7 @@ class TodoExt(BaseAdmonition):
         env = self.state.document.settings.env if hasattr(
             self.state.document.settings, "env") else None
         docname = None if env is None else env.docname
-        if docname is None:
+        if docname is not None:
             docname = docname.replace("\\", "/").split("/")[-1]
             legend = "{0}:{1}".format(docname, lineno)
         else:
@@ -213,7 +213,7 @@ class TodoExt(BaseAdmonition):
 
         if env is not None:
             targetid = 'indextodoe-%s' % env.new_serialno('indextodoe')
-            targetnode = nodes.target(legend, legend, ids=[targetid])
+            targetnode = nodes.target('', legend, ids=[targetid])
             self.state.add_target(targetid, '', targetnode, lineno)
 
             # index node
