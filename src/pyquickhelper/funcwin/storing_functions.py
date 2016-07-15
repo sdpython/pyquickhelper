@@ -68,9 +68,10 @@ def _private_store(function_name, param):
 
     history.append(param)
 
+    typstr = str  # unicode#
     with open(filename, "w", encoding="utf8") as f:
         for param in history:
-            spar = str(param).replace("\n", "#*###n####*#")
+            spar = typstr(param).replace("\n", "#*###n####*#")
             f.write(spar + "\n")
 
 

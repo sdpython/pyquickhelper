@@ -103,6 +103,8 @@ def extract_function_information(function):
         p[a.strip()] = b.strip()
     res["helpparam"] = p
 
+    typstr = str  # unicode#
+
     reg = re.compile(
         "@" + "param +([a-zA-Z_][a-zA-Z_0-9]*?) +[(]([a-zA-Z]+?)[)]")
     alls = reg.findall(res["help"])
@@ -117,7 +119,7 @@ def extract_function_information(function):
                     e = eval(e)
                     ee = eval(ee)
                     res["types"][a] = lambda v, e=e, ee=ee: ee if (
-                        len(v) == 0 or v == str(ee)) else e(v)
+                        len(v) == 0 or v == typstr(ee)) else e(v)
                 elif b == "datetime":
                     res["types"][a] = datetime.datetime
                 else:
