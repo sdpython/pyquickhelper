@@ -718,7 +718,6 @@ class NotebookRunner(object):
             nb1.merge_notebook(nb2)
             nb1.to_json(outfile)
             @endcode
-            @endexample
 
         .. versionadded:: 1.1
         """

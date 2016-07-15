@@ -83,8 +83,6 @@ class TestSphinxDocFull (unittest.TestCase):
             os.path.join(temp, "index_module.rst"),
             os.path.join(temp, "index_property.rst"),
             os.path.join(temp, "index_method.rst"),
-            os.path.join(temp, "all_example.rst"),
-            os.path.join(temp, "all_example_otherpageofexamples.rst"),
             os.path.join(
                 temp,
                 "all_example_pagewithanaccentinthetitle.rst"),
@@ -93,16 +91,6 @@ class TestSphinxDocFull (unittest.TestCase):
         for f in files:
             if not os.path.exists(f):
                 raise FileNotFoundError(f + "\nabspath: " + os.path.abspath(f))
-            if "all_example_otherpageofexamples" in f:
-                with open(f, "r", encoding="utf8") as ff:
-                    content = ff.read()
-                if "This example is exactly the same as the previous" not in content:
-                    raise Exception("file " + f + " is empty:\n" + content)
-            if "all_example_pagewithanaccentinthetitle" in f:
-                with open(f, "r", encoding="utf8") as ff:
-                    content = ff.read()
-                if "Same page with an accent." not in content:
-                    raise Exception("file " + f + " is empty:\n" + content)
             if "report" in f:
                 with open(f, "r", encoding="utf8") as ff:
                     content = ff.read()
@@ -150,13 +138,6 @@ class TestSphinxDocFull (unittest.TestCase):
         assert "### class useless_class_UnicodeStringIOThreadSafe(str):" not in content
         if '###             elif strow.startswith("@ingroup"):' not in content:
             raise Exception(content)
-
-        # test content
-        content = os.path.join(temp, "all_example.rst")
-        assert os.path.exists(content)
-        with open(content, "r", encoding="utf8") as f:
-            content = f.read()
-        assert ":math:`\\left \\{ \\begin{array}{l} \\min_{x,y} \\left \\{ x" in content
 
 if __name__ == "__main__":
     unittest.main()
