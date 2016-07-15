@@ -8,3 +8,5 @@ Magic commands
     :local:
 
 .. nbreflist::
+    :contents:
+

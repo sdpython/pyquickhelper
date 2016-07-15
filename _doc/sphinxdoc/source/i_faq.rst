@@ -8,3 +8,4 @@ FAQ
     :local:
 
 .. faqreflist::
+    :contents:
