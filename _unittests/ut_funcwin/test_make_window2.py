@@ -35,8 +35,12 @@ class TestMakeWindow2 (unittest.TestCase):
         functions = {"test_regular_expression": test_regular_expression,
                      "test_edit_distance": file_grep,
                      "file_head": file_head}
-        main_loop_functions(
-            functions, title="title: TestMakeWindow2", mainloop=False)
+        try:
+            main_loop_functions(
+                functions, title="title: TestMakeWindow2", mainloop=False)
+        except TclError as e:
+            warnings.warn("TclError" + str(e))
+            return
 
 
 if __name__ == "__main__":
