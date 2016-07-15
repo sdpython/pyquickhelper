@@ -5,6 +5,12 @@
 import os
 import sys
 import unittest
+import warnings
+
+if sys.version_info[0] == 2:
+    from Tkinter import TclError
+else:
+    from tkinter import TclError
 
 try:
     import src

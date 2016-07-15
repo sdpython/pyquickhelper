@@ -201,7 +201,6 @@ def fLOG(*l, **p):
 
     .. faqref::
         :title: How to activate the logs?
-        :tag: main
 
         The following instruction will do:
         @code

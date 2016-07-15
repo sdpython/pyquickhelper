@@ -45,24 +45,21 @@ class MagicCompress(MagicClassWithHelpers):
     @line_magic
     def compress(self, line):
         """
-        define ``%compress``
+        .. nbref::
+            :title: %compress
 
-        @NB(compress)
+            It compresses a list of files,
+            it returns the number of compressed files::
 
-        It compress a list of files,
-        it returns the number of compressed files::
-
-            from pyquickhelper import zip_files, gzip_files, zip7_files
-            if format == "zip":
-                zip_files(dest, files)
-            elif format == "gzip":
-                gzip_files(dest, files)
-            elif format == "7z":
-                zip7_files(dest, files)
-            else:
-                raise ValueError("unexpected format: " + format)
-
-        @endNB
+                from pyquickhelper import zip_files, gzip_files, zip7_files
+                if format == "zip":
+                    zip_files(dest, files)
+                elif format == "gzip":
+                    gzip_files(dest, files)
+                elif format == "7z":
+                    zip7_files(dest, files)
+                else:
+                    raise ValueError("unexpected format: " + format)
         """
         parser = self.get_parser(MagicCompress.compress_parser, "compress")
         args = self.get_args(line, parser)

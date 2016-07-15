@@ -51,7 +51,13 @@ def verification_html_format(folder, fLOG=noLOG, raise_above=0.1):
     for item in explore_folder_iterfile(folder, ".[.]html", fullname=True):
         fLOG("[verification_html_format]", item)
         err = verification_html_file(item, fLOG=fLOG)
-        errors.extend([(os.path.abspath(item), line, m) for line, m in err])
+        if len(err) > 0:
+            fitem = os.path.abspath(item)
+            if "html/coverage" in fitem.replace("\\", "/"):
+                # we skip as it comes from coverage report.
+                pass
+            else:
+                errors.extend((fitem, line, m) for line, m in err)
         nbfile += 1
     fLOG("[verification_html_format] checked:{0} errors:{1}".format(
         nbfile, len(errors)))

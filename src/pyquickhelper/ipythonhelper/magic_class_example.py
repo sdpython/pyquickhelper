@@ -18,23 +18,22 @@ from IPython.core.magic import magics_class, line_magic
 class MagicClassExample(MagicClassWithHelpers):
 
     """
-    @NB(example of a magic command)
+    .. faqref::
+        :title: Define a magic command
 
-    This class is an example of how a magic commands can be defined
-    with parameters as if it was a regular command in a terminal.
-    The class @see cl MagicClassExample defines magic
-    command ``htmlhelp`` and the associated parser.
-    Function @see fn load_ipython_extension
-    register the magic command through ``%load_ext pyquickhelper``.
-    The magic command can be unit tested with::
+        This class is an example of how a magic commands can be defined
+        with parameters as if it was a regular command in a terminal.
+        The class @see cl MagicClassExample defines magic
+        command ``htmlhelp`` and the associated parser.
+        Function @see fn load_ipython_extension
+        register the magic command through ``%load_ext pyquickhelper``.
+        The magic command can be unit tested with::
 
-        mg = MagicClassExample()
-        mg.add_context(context={"MagicClassExample": MagicClassExample})
-        cmd = "MagicClassExample -f text"
-        res = mg.htmlhelp(cmd)
-        assert "NB(example of a magic command)"
-
-    @endNB
+            mg = MagicClassExample()
+            mg.add_context(context={"MagicClassExample": MagicClassExample})
+            cmd = "MagicClassExample -f text"
+            res = mg.htmlhelp(cmd)
+            assert "NB(example of a magic command)"
 
     .. versionadded:: 1.3
         Magic commands coming from pyensae

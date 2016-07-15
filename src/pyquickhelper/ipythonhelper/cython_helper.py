@@ -20,7 +20,6 @@ def ipython_cython_extension():
     .. faqref::
         :title: Cython does not work on Windows?
         :index: vcvarsall, cython
-        :tag: main
 
         This raises the following message::
 

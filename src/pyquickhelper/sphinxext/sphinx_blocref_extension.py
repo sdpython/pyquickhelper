@@ -180,6 +180,7 @@ class BlocRef(BaseAdmonition):
         if env is not None:
             targetid = 'index%s%s' % (
                 breftag, env.new_serialno('index%s%s' % (name_desc, breftag)))
+            blocref["breftargetid"] = targetid
             ids = [targetid]
             targetnode = nodes.target(legend, '', ids=ids)
             self.state.add_target(targetid, '', targetnode, lineno)
@@ -310,10 +311,13 @@ def process_blocref_nodes(app, doctree, fromdocname):
 def process_blocref_nodes_generic(app, doctree, fromdocname, class_name,
                                   entry_name, class_node, class_node_list):
     """
-    process_blocref_nodes and other kinds of nodes
+    process_blocref_nodes and other kinds of nodes,
+
+    If the configuration file specifies a variable ``blocref_include_blocrefs`` equals to False,
+    all nodes are removed.
     """
     incconf = '%s_include_%ss' % (class_name, class_name)
-    if not app.config[incconf]:
+    if app.config[incconf] and not app.config[incconf]:
         for node in doctree.traverse(class_node):
             node.parent.remove(node)
 

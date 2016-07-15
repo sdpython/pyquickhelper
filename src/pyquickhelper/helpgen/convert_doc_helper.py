@@ -14,14 +14,15 @@ from .utils_sphinx_doc import migrating_doxygen_doc
 from ..texthelper.texts_language import TITLES
 from ..loghelper.flog import noLOG
 from . helpgen_exceptions import HelpGenConvertError
+from ..sphinxext.sphinx_bigger_extension import setup as setup_bigger
+from ..sphinxext.sphinx_blocref_extension import setup as setup_blocref
 from ..sphinxext.sphinx_blog_extension import setup as setup_blog
+from ..sphinxext.sphinx_faqref_extension import setup as setup_faqref
+from ..sphinxext.sphinx_mathdef_extension import setup as setup_mathdef
+from ..sphinxext.sphinx_nbref_extension import setup as setup_nbref
 from ..sphinxext.sphinx_runpython_extension import setup as setup_runpython
 from ..sphinxext.sphinx_sharenet_extension import setup as setup_sharenet
-from ..sphinxext.sphinx_bigger_extension import setup as setup_bigger
 from ..sphinxext.sphinx_todoext_extension import setup as setup_todoext
-from ..sphinxext.sphinx_mathdef_extension import setup as setup_mathdef
-from ..sphinxext.sphinx_blocref_extension import setup as setup_blocref
-from ..sphinxext.sphinx_faqref_extension import setup as setup_faqref
 # from ..sphinxext.sphinx_todoext_extension import process_todoext_nodes, process_todoext_nodes, purge_todosext, merge_infoext
 from .convert_doc_sphinx_helper import HTMLWriterWithCustomDirectives
 from .conf_path_tools import find_graphviz_dot, find_latex_path
@@ -85,6 +86,7 @@ def default_sphinx_options(fLOG=noLOG, **options):
            'mathdef_include_mathsext': [],
            'blocref_include_blocrefs': [],
            'faqref_include_faqrefs': [],
+           'nbref_include_nbrefs': [],
            'warning_stream': StringIO(),
            }
 
@@ -190,7 +192,6 @@ def rst2html(s, fLOG=noLOG, writer="sphinx", keep_warnings=False,
 
    .. faqref::
        :title: How to get more about latex errors?
-       :tag: main
        :index: latex
 
         Sphinx is not easy to use when it comes to debug latex expressions.
@@ -215,7 +216,6 @@ def rst2html(s, fLOG=noLOG, writer="sphinx", keep_warnings=False,
 
     .. faqref::
         :title: How to hide command line window while compiling latex?
-        :tag: main
         :lid: command line window
 
         Sphinx calls latex through command line. On Windows, a command line window
@@ -238,7 +238,8 @@ def rst2html(s, fLOG=noLOG, writer="sphinx", keep_warnings=False,
         Parameter *directives* was added to add a directive before parsing the RST.
 
     .. versionchanged:: 1.4
-        Add directives *todoext*, *todo*, *mathdef*, *blocref*, *faqref*, parameter *language* was added.
+        Add directives *todoext*, *todo*, *mathdef*, *blocref*, *faqref*,*nbref*,
+        parameter *language* was added.
         Add directives *graphviz*, *math*.
         Parse more extensive Sphinx syntax.
     """
@@ -341,6 +342,7 @@ def rst2html(s, fLOG=noLOG, writer="sphinx", keep_warnings=False,
         setup_mathdef(mockapp)
         setup_blocref(mockapp)
         setup_faqref(mockapp)
+        setup_nbref(mockapp)
 
         # directives from sphinx
         setup_graphviz(mockapp)
@@ -360,6 +362,7 @@ def rst2html(s, fLOG=noLOG, writer="sphinx", keep_warnings=False,
         title_names.append("mathdef_node")
         title_names.append("blocref_node")
         title_names.append("faqref_node")
+        title_names.append("nbref_node")
     else:
         writer_name = 'html'
         mockapp = MockSphinxApp(None)

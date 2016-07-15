@@ -24,26 +24,26 @@ except ImportError:
 from src.pyquickhelper.loghelper.flog import fLOG
 from src.pyquickhelper.pycode import get_temp_folder
 from src.pyquickhelper.helpgen import rst2html
-from src.pyquickhelper.sphinxext import FaqRef, FaqRefList
-from src.pyquickhelper.sphinxext.sphinx_faqref_extension import faqref_node, visit_faqref_node, depart_faqref_node
+from src.pyquickhelper.sphinxext import NbRef, NbRefList
+from src.pyquickhelper.sphinxext.sphinx_nbref_extension import nbref_node, visit_nbref_node, depart_nbref_node
 
 
 if sys.version_info[0] == 2:
     from codecs import open
 
 
-class TestFaqRefExtension(unittest.TestCase):
+class TestNbRefExtension(unittest.TestCase):
 
-    def test_post_parse_faqref(self):
+    def test_post_parse_nbref(self):
         fLOG(
             __file__,
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
-        directives.register_directive("faqref", FaqRef)
-        directives.register_directive("faqreflist", FaqRefList)
+        directives.register_directive("nbref", NbRef)
+        directives.register_directive("nbreflist", NbRefList)
 
-    def test_faqref(self):
+    def test_nbref(self):
         fLOG(
             __file__,
             self._testMethodName,
@@ -57,7 +57,7 @@ class TestFaqRefExtension(unittest.TestCase):
 
                     before
 
-                    .. faqref::
+                    .. nbref::
                         :title: first todo
                         :tag: bug
                         :lid: id3
@@ -69,15 +69,15 @@ class TestFaqRefExtension(unittest.TestCase):
         if sys.version_info[0] >= 3:
             content = content.replace('u"', '"')
 
-        tives = [("faqref", FaqRef, faqref_node,
-                  visit_faqref_node, depart_faqref_node)]
+        tives = [("nbref", NbRef, nbref_node,
+                  visit_nbref_node, depart_nbref_node)]
 
         html = rst2html(content, fLOG=fLOG,
                         writer="custom", keep_warnings=True,
                         directives=tives, extlinks={'issue': ('http://%s', '_issue_')})
 
-        temp = get_temp_folder(__file__, "temp_faqref")
-        with open(os.path.join(temp, "out_faqref.html"), "w", encoding="utf8") as f:
+        temp = get_temp_folder(__file__, "temp_nbref")
+        with open(os.path.join(temp, "out_nbref.html"), "w", encoding="utf8") as f:
             f.write(html)
 
         t1 = "this code shoud appear"
@@ -92,7 +92,7 @@ class TestFaqRefExtension(unittest.TestCase):
         if t1 not in html:
             raise Exception(html)
 
-    def test_faqreflist(self):
+    def test_nbreflist(self):
         fLOG(
             __file__,
             self._testMethodName,
@@ -106,7 +106,7 @@ class TestFaqRefExtension(unittest.TestCase):
 
                     before
 
-                    .. faqref::
+                    .. nbref::
                         :title: first todo
                         :tag: freg
                         :lid: id3
@@ -115,7 +115,7 @@ class TestFaqRefExtension(unittest.TestCase):
 
                     middle
 
-                    .. faqreflist::
+                    .. nbreflist::
                         :tag: freg
                         :sort: title
 
@@ -124,17 +124,17 @@ class TestFaqRefExtension(unittest.TestCase):
         if sys.version_info[0] >= 3:
             content = content.replace('u"', '"')
 
-        tives = [("faqref", FaqRef, faqref_node,
-                  visit_faqref_node, depart_faqref_node)]
+        tives = [("nbref", NbRef, nbref_node,
+                  visit_nbref_node, depart_nbref_node)]
 
         html = rst2html(content, fLOG=fLOG,
                         writer="custom", keep_warnings=True,
                         directives=tives)
-        if "admonition-faqref faqref_node admonition" not in html:
+        if "admonition-nbref nbref_node admonition" not in html:
             raise html
 
-        temp = get_temp_folder(__file__, "temp_faqreflist")
-        with open(os.path.join(temp, "out_faqref.html"), "w", encoding="utf8") as f:
+        temp = get_temp_folder(__file__, "temp_nbreflist")
+        with open(os.path.join(temp, "out_nbref.html"), "w", encoding="utf8") as f:
             f.write(html)
 
         t1 = "this code shoud appear"

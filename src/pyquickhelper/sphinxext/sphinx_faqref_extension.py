@@ -32,14 +32,14 @@ class FaqRef(BlocRef):
     It takes the following options:
 
     * title: a title for the bloc
-    * tag: a tag to have several categories of blocs
+    * tag: a tag to have several categories of blocs (optional)
     * lid: a label to refer to
+    * index: to add an entry to the index (comma separated)
 
     Example::
 
         .. faqref::
             :title: example of a blocref
-            :tag: main
             :lid: id-you-can-choose
 
             An example of code:
@@ -81,6 +81,14 @@ class FaqRef(BlocRef):
     node_class = faqref_node
     name_sphinx = "faqref"
 
+    def run(self):
+        """
+        calls run from @see cl BlocRef and add defaut tag
+        """
+        if "tag" not in self.options:
+            self.options["tag"] = "faq"
+        return BlocRef.run(self)
+
 
 def process_faqrefs(app, doctree):
     """
@@ -105,6 +113,14 @@ class FaqRefList(BlocRefList):
     """
     name_sphinx = "faqreflist"
     node_class = faqreflist
+
+    def run(self):
+        """
+        calls run from @see cl BlocRefList and add default tag if not present
+        """
+        if "tag" not in self.options:
+            self.options["tag"] = "faq"
+        return BlocRefList.run(self)
 
 
 def process_faqref_nodes(app, doctree, fromdocname):

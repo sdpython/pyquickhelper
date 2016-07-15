@@ -68,7 +68,6 @@ def main_wrapper_tests(codefile, skip_list=None, processes=False, add_coverage=F
 
     .. faqref::
         :title: How to build pyquickhelper with Jenkins?
-        :tag: main
         :index: Jenkins
 
         `Jenkins <http://jenkins-ci.org/>`_ is a task scheduler for continuous integration.

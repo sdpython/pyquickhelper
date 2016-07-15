@@ -4,5 +4,7 @@
 FAQ
 ===
 
+.. contents::
+    :local:
+
 .. faqreflist::
-    :tag: main

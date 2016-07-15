@@ -66,26 +66,24 @@ class MagicCrypt(MagicClassWithHelpers):
     @line_magic
     def encrypt_file(self, line):
         """
-        defines ``%encrypt_file``
+        .. nbref::
+            :title: %encrypt_file
+            :tag: nb
+            :lid: l-nb-encrypt-file
 
-        @NB(encrypt_file)
+            The magic command is equivalent to::
 
-        The magic command is equivalent to::
+                from pyquickhelper.filehelper import encrypt_stream
 
-            from pyquickhelper.filehelper import encrypt_stream
+                password = "password"
+                source = "file source"
+                dest = "file destination"
 
-            password = "password"
-            source = "file source"
-            dest = "file destination"
+                if isinstance(password, str):
+                    password = bytes(password, encoding="ascii")
 
-            if isinstance(password, str):
-                password = bytes(password, encoding="ascii")
-
-            encrypt_stream(key=password, filename=source, out_filename=dest,
-                           chunksize=os.stat(source).st_size * 2 + 1)
-
-        @endNB
-
+                encrypt_stream(key=password, filename=source, out_filename=dest,
+                               chunksize=os.stat(source).st_size * 2 + 1)
         """
         parser = self.get_parser(
             MagicCrypt.encrypt_file_parser, "encrypt_file")
@@ -105,26 +103,22 @@ class MagicCrypt(MagicClassWithHelpers):
     @line_magic
     def decrypt_file(self, line):
         """
-        defines ``%decrypt_file``
+        .. nbref::
+            :title: %decrypt_file
 
-        @NB(decrypt_file)
+            The magic command is equivalent to::
 
-        The magic command is equivalent to::
+                from pyquickhelper.filehelper import decrypt_stream
 
-            from pyquickhelper.filehelper import decrypt_stream
+                password = "password"
+                source = "file source"
+                dest = "file destination"
 
-            password = "password"
-            source = "file source"
-            dest = "file destination"
+                if isinstance(password, str):
+                    password = bytes(password, encoding="ascii")
 
-            if isinstance(password, str):
-                password = bytes(password, encoding="ascii")
-
-            decrypt_stream(key=password, filename=source, out_filename=dest,
-                           chunksize=os.stat(source).st_size * 2 + 1)
-
-        @endNB
-
+                decrypt_stream(key=password, filename=source, out_filename=dest,
+                               chunksize=os.stat(source).st_size * 2 + 1)
         """
         parser = self.get_parser(
             MagicCrypt.decrypt_file_parser, "decrypt_file")

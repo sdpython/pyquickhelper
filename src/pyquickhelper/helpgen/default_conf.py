@@ -261,6 +261,9 @@ def set_sphinx_variables(fileconf,
     # faqref
     faqref_include_faqrefs = True
 
+    # faqref
+    nbref_include_nbrefs = True
+
     # extensions
     extensions = ['sphinx.ext.autodoc',
                   'sphinx.ext.autosummary',
@@ -494,14 +497,15 @@ def custom_setup(app, author):
     """
     see `Sphinx core events <http://sphinx-doc.org/extdev/appapi.html?highlight=setup#sphinx-core-events>`_
     """
-    from ..sphinxext.sphinx_runpython_extension import setup as setup_runpython
     from ..sphinxext.sphinx_bigger_extension import setup as setup_bigger
-    from ..sphinxext.sphinx_sharenet_extension import setup as setup_sharenet
-    from ..sphinxext.sphinx_todoext_extension import setup as setup_todoext
     from ..sphinxext.sphinx_blog_extension import setup as setup_blogpost
-    from ..sphinxext.sphinx_mathdef_extension import setup as setup_mathdef
     from ..sphinxext.sphinx_blocref_extension import setup as setup_blocref
     from ..sphinxext.sphinx_faqref_extension import setup as setup_faqref
+    from ..sphinxext.sphinx_mathdef_extension import setup as setup_mathdef
+    from ..sphinxext.sphinx_nbref_extension import setup as setup_nbref
+    from ..sphinxext.sphinx_runpython_extension import setup as setup_runpython
+    from ..sphinxext.sphinx_sharenet_extension import setup as setup_sharenet
+    from ..sphinxext.sphinx_todoext_extension import setup as setup_todoext
 
     app.connect("autodoc-skip-member", skip)
     app.add_config_value('author', author, True)
@@ -514,3 +518,4 @@ def custom_setup(app, author):
     setup_mathdef(app)
     setup_blocref(app)
     setup_faqref(app)
+    setup_nbref(app)

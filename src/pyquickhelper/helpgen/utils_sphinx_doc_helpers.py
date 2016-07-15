@@ -106,6 +106,17 @@ def compute_truncated_documentation(doc,
             doc = doc[-1]
 
         doc = doc.strip("\n\r\t ")
+
+        def filter_line(line):
+            s = line.strip()
+            if s.startswith(".. ") and s.endswith("::"):
+                return ""
+            elif s.startswith(":title:"):
+                return line.replace(":title:", "")
+            elif s.startswith(":tag:") or s.startswith(":lid:"):
+                return ""
+            return line
+        doc = "\n".join(filter_line(line) for line in doc.split("\n"))
         doc = doc.replace("\n", " ").replace("\r", "").strip("\n\r\t ")
 
         for subs in ["@" + "param", "@" + "return", ":param", ":return", ":ref:", "`"]:
@@ -125,6 +136,7 @@ def compute_truncated_documentation(doc,
 
         if raise_exception and len(doc) == 0:
             raise ValueError("bad format for docstring: " + doc_)
+
         return doc
 
 

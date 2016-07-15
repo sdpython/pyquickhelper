@@ -54,25 +54,23 @@ class MagicDiff(MagicClassWithHelpers):
     @line_magic
     def textdiff(self, line):
         """
-        defines ``%textdiff``
-        which displays differences between two text files, two strings, two urls,
-        it is based on `create_visual_diff_through_html_files <http://www.xavierdupre.fr/app/pyquickhelper/helpsphinx/pyquickhelper/filehelper/visual_sync.html?highlight=create#pyquickhelper.filehelper.visual_sync.create_visual_diff_through_html_files>`_
+        .. nbref::
+            :title: %textdiff
+            :tag: nb
 
-        Check blog post :ref:`b-textdiff` to see an example.
+            It displays differences between two text files, two strings, two urls,
+            it is based on `create_visual_diff_through_html_files <http://www.xavierdupre.fr/app/pyquickhelper/helpsphinx/pyquickhelper/filehelper/visual_sync.html?highlight=create#pyquickhelper.filehelper.visual_sync.create_visual_diff_through_html_files>`_
+            Check blog post :ref:`b-textdiff` to see an example.
 
-        @NB(textdiff)
+            The magic command is equivalent to::
 
-        The magic command is equivalent to::
-
-            from IPython.core.display import display_html, display_javascript
-            from pyquickhelper import docstring2html, create_visual_diff_through_html_files
-            html, js = create_visual_diff_through_html_files(<f1>, <f2>, encoding=<encoding>, notebook=True,
-                                                             context_size=None if <context> in [None, ""] else int(<context>),
-                                                             inline_view=<inline>)
-            display_html(html)
-            display_javascript(js)
-
-        @endNB
+                from IPython.core.display import display_html, display_javascript
+                from pyquickhelper import docstring2html, create_visual_diff_through_html_files
+                html, js = create_visual_diff_through_html_files(<f1>, <f2>, encoding=<encoding>, notebook=True,
+                                                                 context_size=None if <context> in [None, ""] else int(<context>),
+                                                                 inline_view=<inline>)
+                display_html(html)
+                display_javascript(js)
 
         """
         parser = self.get_parser(MagicDiff.textdiff_parser, "textdiff")
