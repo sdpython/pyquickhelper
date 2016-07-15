@@ -306,6 +306,9 @@ def default_filter_warning(w):
                 return False
             if "Metadata should be set using the .tag()" in str(w.message):
                 return False
+        elif "sympy" in w.filename:
+            if "inspect.getargspec() is deprecated" in str(w.message):
+                return False
     elif isinstance(w.message, ImportWarning):
         if w.filename.endswith("_bootstrap_external.py"):
             return False
