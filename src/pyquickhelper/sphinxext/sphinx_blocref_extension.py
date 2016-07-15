@@ -276,12 +276,12 @@ class BlocRefList(Directive):
             targetnode = nodes.target('', '', ids=[targetid])
             n = self.__class__.node_class('')
             n["breftag"] = tag
-            n["brefsort"] = self.options.get('sort', '').strip()
+            n["brefsort"] = self.options.get('sort', 'title').strip()
             return [targetnode, n]
         else:
             n = self.__class__.node_class('')
             n["breftag"] = tag
-            n["brefsort"] = self.options.get('sort', '').strip()
+            n["brefsort"] = self.options.get('sort', 'title').strip()
             return [n]
 
 
