@@ -2,8 +2,8 @@
 
 .. _l-completed-todolist:
 
-Completeted
-===========
+Completed
+=========
 
 
 .. todoextlist::
