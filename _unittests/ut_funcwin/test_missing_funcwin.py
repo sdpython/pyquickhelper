@@ -5,6 +5,7 @@ import os
 import sys
 import unittest
 import io
+import warnings
 
 
 try:
