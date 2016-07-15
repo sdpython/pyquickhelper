@@ -25,6 +25,7 @@ from ..sphinxext.sphinx_sharenet_extension import ShareNetDirective, sharenet_ro
 from ..sphinxext.sphinx_bigger_extension import bigger_role
 from ..sphinxext.sphinx_mathdef_extension import MathDef
 from ..sphinxext.sphinx_blocref_extension import BlocRef
+from ..sphinxext.sphinx_exref_extension import ExRef
 from ..sphinxext.sphinx_faqref_extension import FaqRef
 from ..sphinxext.sphinx_nbref_extension import NbRef
 from ..sphinxext.sphinx_todoext_extension import TodoExt
@@ -256,6 +257,7 @@ def generate_help_sphinx(project_var_name,
     directives.register_directive("todoext", TodoExt)
     directives.register_directive("mathdef", MathDef)
     directives.register_directive("blocref", BlocRef)
+    directives.register_directive("exref", ExRef)
     directives.register_directive("faqref", FaqRef)
     directives.register_directive("nbref", NbRef)
     roles.register_canonical_role("sharenet", sharenet_role)

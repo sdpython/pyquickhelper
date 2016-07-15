@@ -261,7 +261,10 @@ def set_sphinx_variables(fileconf,
     # faqref
     faqref_include_faqrefs = True
 
-    # faqref
+    # exref
+    exref_include_exrefs = True
+
+    # nbref
     nbref_include_nbrefs = True
 
     # extensions
@@ -500,6 +503,7 @@ def custom_setup(app, author):
     from ..sphinxext.sphinx_bigger_extension import setup as setup_bigger
     from ..sphinxext.sphinx_blog_extension import setup as setup_blogpost
     from ..sphinxext.sphinx_blocref_extension import setup as setup_blocref
+    from ..sphinxext.sphinx_exref_extension import setup as setup_exref
     from ..sphinxext.sphinx_faqref_extension import setup as setup_faqref
     from ..sphinxext.sphinx_mathdef_extension import setup as setup_mathdef
     from ..sphinxext.sphinx_nbref_extension import setup as setup_nbref
@@ -517,5 +521,6 @@ def custom_setup(app, author):
     setup_blogpost(app)
     setup_mathdef(app)
     setup_blocref(app)
+    setup_exref(app)
     setup_faqref(app)
     setup_nbref(app)

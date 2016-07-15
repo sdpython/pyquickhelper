@@ -17,6 +17,7 @@ from . helpgen_exceptions import HelpGenConvertError
 from ..sphinxext.sphinx_bigger_extension import setup as setup_bigger
 from ..sphinxext.sphinx_blocref_extension import setup as setup_blocref
 from ..sphinxext.sphinx_blog_extension import setup as setup_blog
+from ..sphinxext.sphinx_exref_extension import setup as setup_exref
 from ..sphinxext.sphinx_faqref_extension import setup as setup_faqref
 from ..sphinxext.sphinx_mathdef_extension import setup as setup_mathdef
 from ..sphinxext.sphinx_nbref_extension import setup as setup_nbref
@@ -86,6 +87,7 @@ def default_sphinx_options(fLOG=noLOG, **options):
            'mathdef_include_mathsext': [],
            'blocref_include_blocrefs': [],
            'faqref_include_faqrefs': [],
+           'exref_include_exrefs': [],
            'nbref_include_nbrefs': [],
            'warning_stream': StringIO(),
            }
@@ -238,7 +240,7 @@ def rst2html(s, fLOG=noLOG, writer="sphinx", keep_warnings=False,
         Parameter *directives* was added to add a directive before parsing the RST.
 
     .. versionchanged:: 1.4
-        Add directives *todoext*, *todo*, *mathdef*, *blocref*, *faqref*,*nbref*,
+        Add directives *todoext*, *todo*, *mathdef*, *blocref*, *faqref*,*nbref*, *exref*,
         parameter *language* was added.
         Add directives *graphviz*, *math*.
         Parse more extensive Sphinx syntax.
@@ -342,6 +344,7 @@ def rst2html(s, fLOG=noLOG, writer="sphinx", keep_warnings=False,
         setup_mathdef(mockapp)
         setup_blocref(mockapp)
         setup_faqref(mockapp)
+        setup_exref(mockapp)
         setup_nbref(mockapp)
 
         # directives from sphinx
@@ -363,6 +366,7 @@ def rst2html(s, fLOG=noLOG, writer="sphinx", keep_warnings=False,
         title_names.append("blocref_node")
         title_names.append("faqref_node")
         title_names.append("nbref_node")
+        title_names.append("exref_node")
     else:
         writer_name = 'html'
         mockapp = MockSphinxApp(None)

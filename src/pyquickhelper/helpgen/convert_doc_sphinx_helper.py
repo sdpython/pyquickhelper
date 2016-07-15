@@ -15,6 +15,7 @@ from ..sphinxext.sphinx_bigger_extension import visit_bigger_node as ext_visit_b
 from ..sphinxext.sphinx_blocref_extension import visit_blocref_node as ext_visit_blocref_node, depart_blocref_node as ext_depart_blocref_node
 from ..sphinxext.sphinx_blog_extension import visit_blogpost_node as ext_visit_blogpost_node, depart_blogpost_node as ext_depart_blogpost_node
 from ..sphinxext.sphinx_blog_extension import visit_blogpostagg_node as ext_visit_blogpostagg_node, depart_blogpostagg_node as ext_depart_blogpostagg_node
+from ..sphinxext.sphinx_exref_extension import visit_exref_node as ext_visit_exref_node, depart_exref_node as ext_depart_exref_node
 from ..sphinxext.sphinx_faqref_extension import visit_faqref_node as ext_visit_faqref_node, depart_faqref_node as ext_depart_faqref_node
 from ..sphinxext.sphinx_mathdef_extension import visit_mathdef_node as ext_visit_mathdef_node, depart_mathdef_node as ext_depart_mathdef_node
 from ..sphinxext.sphinx_nbref_extension import visit_nbref_node as ext_visit_nbref_node, depart_nbref_node as ext_depart_nbref_node
@@ -178,6 +179,18 @@ class HTMLTranslatorWithCustomDirectives(HTMLTranslator):
         @see fn depart_nbref_node
         """
         ext_depart_nbref_node(self, node)
+
+    def visit_exref_node(self, node):
+        """
+        @see fn visit_exref_node
+        """
+        ext_visit_exref_node(self, node)
+
+    def depart_exref_node(self, node):
+        """
+        @see fn depart_exref_node
+        """
+        ext_depart_exref_node(self, node)
 
     def add_secnumber(self, node):
         """

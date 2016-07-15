@@ -10,7 +10,7 @@
     :hidden:
     :issue: 21
     :release: 1.4
-    :cost: 0.5
+    :cost: 1
 
     Multiplies sphinx extension to highlight a bloc about
     anything (blocref), a question (faqref), a magic command (nbref),
@@ -267,12 +267,13 @@ class BlocRefList(Directive):
 
     * tag: a tag to filter bloc having this tag
     * sort: a way to sort the blocs based on the title, file, number, default: *title*
-    * contents: add a section with links to added documents
+    * contents: add a bullet list with links to added blocs
 
     Example::
 
         .. blocreflist::
             :tag: issue
+            :contents:
     """
     name_sphinx = "blocreflist"
     node_class = blocreflist
@@ -367,7 +368,7 @@ def process_blocref_nodes_generic(app, doctree, fromdocname, class_name,
         para_links = nodes.paragraph()
 
         if add_contents:
-            bullets = nodes.bullet_list()
+            bullets = nodes.enumerated_list()
             para_links += bullets
             content.append(bullets)
 

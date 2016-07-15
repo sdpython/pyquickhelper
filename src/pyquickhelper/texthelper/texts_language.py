@@ -32,6 +32,7 @@ TITLES = {
            'todoext_node': '',
            'mathdef_node': '',
            'blocref_node': '',
+           'exref_node': 'Examples',
            'faqref_node': 'FAQ',
            'nbref_node': 'Magic command',
            'original entry': 'original entry',
@@ -40,6 +41,7 @@ TITLES = {
            'brefmes': '(<<%s>> : %s, line %d)',
            'faqmes': '(<<%s>> : %s, line %d)',
            'nbmes': '(<<%s>> : %s, line %d)',
+           'exmes': '(<<%s>> : %s, line %d)',
            },
     'fr': {"blogpost": "article",
            "toc": "Contenu",
@@ -68,6 +70,7 @@ TITLES = {
            'todoext_node': '',
            'mathdef_node': '',
            'blocref_node': '',
+           'exref_node': 'Exemples',
            'faqref_node': 'FAQ',
            'nbref_node': 'Commande magique',
            'original entry': 'source',
@@ -76,5 +79,6 @@ TITLES = {
            'brefmes': '(<<%s>> : %s, ligne %d)',
            'faqmes': '(<<%s>> : %s, ligne %d)',
            'nbmes': '(<<%s>> : %s, ligne %d)',
+           'exmes': '(<<%s>> : %s, ligne %d)',
            }
 }

@@ -104,7 +104,9 @@ class FaqRefList(BlocRefList):
     """
     A list of all blocref entries, for a specific tag.
 
-    * tag: a tag to have several categories of faqref
+    * tag: a tag to filter bloc having this tag
+    * sort: a way to sort the blocs based on the title, file, number, default: *title*
+    * contents: add a bullet list with links to added blocs
 
     Example::
 
