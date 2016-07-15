@@ -83,9 +83,6 @@ class TestSphinxDocFull (unittest.TestCase):
             os.path.join(temp, "index_module.rst"),
             os.path.join(temp, "index_property.rst"),
             os.path.join(temp, "index_method.rst"),
-            os.path.join(
-                temp,
-                "all_example_pagewithanaccentinthetitle.rst"),
             os.path.join(temp, "all_report.rst"),
         ]
         for f in files:
