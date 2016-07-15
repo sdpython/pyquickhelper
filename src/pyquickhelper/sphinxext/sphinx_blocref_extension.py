@@ -111,6 +111,12 @@ class BlocRef(BaseAdmonition):
         'index': directives.unchanged,
     }
 
+    def _update_title(self, title, tag, lid):
+        """
+        update the title for the bloc itself
+        """
+        return title
+
     def run(self):
         """
         builds the blocref text
@@ -158,9 +164,10 @@ class BlocRef(BaseAdmonition):
             mid = -1
 
         # title
-        title = self.options.get('title', "").strip()
-        if len(title) == 0:
+        titleo = self.options.get('title', "").strip()
+        if len(titleo) == 0:
             raise ValueError("title is empty")
+        title = self._update_title(titleo, breftag, mid)
 
         # main node
         ttitle = title
@@ -173,6 +180,7 @@ class BlocRef(BaseAdmonition):
         blocref['breftag'] = breftag
         blocref['brefmid'] = mid
         blocref['breftitle'] = ttitle
+        blocref['breftitleo'] = titleo
         blocref['brefline'] = lineno
         blocref['breffile'] = docname
         set_source_info(self, blocref)
@@ -257,7 +265,9 @@ class BlocRefList(Directive):
     """
     A list of all blocref entries, for a specific tag.
 
-    * tag: a tag to have several categories of blocref
+    * tag: a tag to filter bloc having this tag
+    * sort: a way to sort the blocs based on the title, file, number, default: *title*
+    * contents: add a section with links to added documents
 
     Example::
 
@@ -273,6 +283,7 @@ class BlocRefList(Directive):
     option_spec = {
         'tag': directives.unchanged,
         'sort': directives.unchanged,
+        'contents': directives.unchanged,
     }
 
     def run(self):
@@ -283,19 +294,22 @@ class BlocRefList(Directive):
         name_desc = self.__class__.name_sphinx
         env = self.state.document.settings.env if hasattr(
             self.state.document.settings, "env") else None
+        docname = None if env is None else env.docname
         tag = self.options.get('tag', '').strip()
+        n = self.__class__.node_class('')
+        n["breftag"] = tag
+        n["brefsort"] = self.options.get('sort', 'title').strip()
+        n["brefsection"] = self.options.get(
+            'section', True) in (True, "True", "true", 1, "1")
+        n["brefcontents"] = self.options.get(
+            'contents', False) in (True, "True", "true", 1, "1")
+        n['docname'] = docname
         if env is not None:
             targetid = 'index%slist-%s' % (name_desc,
                                            env.new_serialno('index%slist' % name_desc))
             targetnode = nodes.target('', '', ids=[targetid])
-            n = self.__class__.node_class('')
-            n["breftag"] = tag
-            n["brefsort"] = self.options.get('sort', 'title').strip()
             return [targetnode, n]
         else:
-            n = self.__class__.node_class('')
-            n["breftag"] = tag
-            n["brefsort"] = self.options.get('sort', 'title').strip()
             return [n]
 
 
@@ -348,6 +362,14 @@ def process_blocref_nodes_generic(app, doctree, fromdocname, class_name,
         content = []
         breftag = node["breftag"]
         brefsort = node["brefsort"]
+        add_contents = node["brefcontents"]
+        brefdocname = node["docname"]
+        para_links = nodes.paragraph()
+
+        if add_contents:
+            bullets = nodes.bullet_list()
+            para_links += bullets
+            content.append(bullets)
 
         # sorting
         if brefsort == 'title':
@@ -373,6 +395,7 @@ def process_blocref_nodes_generic(app, doctree, fromdocname, class_name,
 
             nbbref += 1
             para = nodes.paragraph(classes=['%s-source' % class_name])
+
             if app.config['%s_link_only' % class_name]:
                 description = _('<<%s>>' % orig_entry)
             else:
@@ -397,18 +420,35 @@ def process_blocref_nodes_generic(app, doctree, fromdocname, class_name,
                 # ignore if no URI can be determined, e.g. for LaTeX output
                 pass
             newnode.append(innernode)
+
             para += newnode
             para += nodes.Text(desc2, desc2)
 
-            # (Recursively) resolve references in the blocref content
             blocref_entry = blocref_info['blocref']
-            blocref_entry["ids"] = ["index-%s-%d-%d" % (class_name, ilist, n)]
-            # it apparently requires an attributes ids
-
-            env.resolve_references(blocref_entry, blocref_info['docname'],
-                                   app.builder)
+            idss = ["index-%s-%d-%d" % (class_name, ilist, n)]
 
             # Insert into the blocreflist
+            if add_contents:
+                title = blocref_info['breftitle']
+                item = nodes.list_item()
+                p = nodes.paragraph()
+                item += p
+                newnode = nodes.reference('', '', internal=True)
+                innernode = nodes.paragraph(text=title)
+                try:
+                    newnode['refuri'] = app.builder.get_relative_uri(
+                        fromdocname, brefdocname)
+                    newnode['refuri'] += '#' + idss[0]
+                except NoUri:
+                    # ignore if no URI can be determined, e.g. for LaTeX output
+                    pass
+                newnode.append(innernode)
+                p += newnode
+                bullets += item
+
+            blocref_entry["ids"] = idss
+            env.resolve_references(blocref_entry, blocref_info[
+                                   'docname'], app.builder)
             content.append(blocref_entry)
             content.append(para)
 
@@ -474,7 +514,7 @@ def setup(app):
         app.add_mapping('blocref', blocref_node)
         app.add_mapping('blocreflist', blocreflist)
 
-    app.add_config_value('blocref_include_blocrefs', False, 'html')
+    app.add_config_value('blocref_include_blocrefs', True, 'html')
     app.add_config_value('blocref_link_only', False, 'html')
 
     app.add_node(blocreflist,

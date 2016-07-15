@@ -171,7 +171,7 @@ def setup(app):
         app.add_mapping('nbref', nbref_node)
         app.add_mapping('nbreflist', nbreflist)
 
-    app.add_config_value('nbref_include_nbrefs', False, 'html')
+    app.add_config_value('nbref_include_nbrefs', True, 'html')
     app.add_config_value('nbref_link_only', False, 'html')
 
     app.add_node(nbreflist,

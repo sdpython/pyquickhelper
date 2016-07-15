@@ -43,7 +43,7 @@ class TestBlocRefExtension(unittest.TestCase):
         directives.register_directive("blocref", BlocRef)
         directives.register_directive("blocreflist", BlocRefList)
 
-    def test_blocre(self):
+    def test_blocref(self):
         fLOG(
             __file__,
             self._testMethodName,
@@ -118,6 +118,7 @@ class TestBlocRefExtension(unittest.TestCase):
                     .. blocreflist::
                         :tag: freg
                         :sort: title
+                        :contents: 1
 
                     after
                     """.replace("                    ", "")

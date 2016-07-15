@@ -191,7 +191,7 @@ def setup(app):
         app.add_mapping('faqref', faqref_node)
         app.add_mapping('faqreflist', faqreflist)
 
-    app.add_config_value('faqref_include_faqrefs', False, 'html')
+    app.add_config_value('faqref_include_faqrefs', True, 'html')
     app.add_config_value('faqref_link_only', False, 'html')
 
     app.add_node(faqreflist,
