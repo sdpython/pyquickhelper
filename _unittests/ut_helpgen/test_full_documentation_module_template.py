@@ -93,11 +93,11 @@ class TestSphinxDocFull (unittest.TestCase):
                                  use_run_cmd=True)
 
             files = [os.path.join(root, "_doc", "sphinxdoc", "build", "html", "index.html"),
-                os.path.join(
-                root, "_doc", "sphinxdoc", "build", "html", "all_indexes.html"),
-                os.path.join(
-                root, "_doc", "sphinxdoc", "build", "html", "all_notebooks.html"),
-            ]
+                     os.path.join(root, "_doc", "sphinxdoc",
+                                  "build", "html", "all_indexes.html"),
+                     os.path.join(root, "_doc", "sphinxdoc",
+                                  "build", "html", "all_notebooks.html"),
+                     ]
             for f in files:
                 if not os.path.exists(f):
                     raise FileNotFoundError(f)
