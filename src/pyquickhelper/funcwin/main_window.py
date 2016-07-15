@@ -160,17 +160,18 @@ def main_loop_functions(functions, first=None, restore=True, width=100,
     @param      mainloop        run the mainloop
     @return                     main window
 
-    @example(open a window to run a function from a predefined list of functions)
-    @code
-    functions = {   "test_regular_expression":test_regular_expression,
-                    "test_edit_distance":file_grep,
-                    "file_head":file_head }
-    main_loop_functions ( functions, title = "title: TestMakeWindow2")
-    @endcode
+    .. exref::
+        :title: Open a window to run a function from a predefined list of functions
 
-    @image images/open_functionl.png
+        @code
+        functions = {   "test_regular_expression":test_regular_expression,
+                        "test_edit_distance":file_grep,
+                        "file_head":file_head }
+        main_loop_functions ( functions, title = "title: TestMakeWindow2")
+        @endcode
 
-    @endexample
+        @image images/open_functionl.png
+
     """
     if overwrite is None:
         overwrite = {}

@@ -51,22 +51,22 @@ class FolderTransferFTP:
     it checks that a file was updated before transfering,
     @see cl TransferFTP .
 
-    @example(Transfer updated files to a website)
+    .. exref::
+        :title: Transfer updated files to a website
 
-    The following code shows how to transfer the content of a folder to
-    website through FTP protocol.
+        The following code shows how to transfer the content of a folder to
+        website through FTP protocol.
 
-    @code
-    ftn  = FileTreeNode("c:/somefolder")
-    ftp  = TransferFTP("ftp.website.fr", "login", "password", fLOG=print)
-    fftp = FolderTransferFTP (ftn, ftp, "status_file.txt",
-            root_web = "/www/htdocs/app/pyquickhelper/helpsphinx")
+        @code
+        ftn  = FileTreeNode("c:/somefolder")
+        ftp  = TransferFTP("ftp.website.fr", "login", "password", fLOG=print)
+        fftp = FolderTransferFTP (ftn, ftp, "status_file.txt",
+                root_web = "/www/htdocs/app/pyquickhelper/helpsphinx")
 
-    fftp.start_transfering()
+        fftp.start_transfering()
 
-    ftp.close()
-    @endcode
-    @endexample
+        ftp.close()
+        @endcode
 
     The following example is more complete:
 

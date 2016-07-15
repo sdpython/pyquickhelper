@@ -340,22 +340,23 @@ def open_window_params(params,
     The window looks like:
     @image images/open_window_params.png
 
-    @example(open a tkinter window to ask parameters to a user)
-    @code
-    params = { "user":os.environ["USERNAME"],
-               "password":"" }
-    newparams = open_window_params (params, title="try the password *", help_string = "unit test", key_save="my_key")
-    @endcode
+    .. exref::
+        :title: Open a tkinter window to ask parameters to a user
 
-    The program opens a window like the following one:
+        @code
+        params = { "user":os.environ["USERNAME"],
+                "password":"" }
+        newparams = open_window_params (params, title="try the password *", help_string = "unit test", key_save="my_key")
+        @endcode
 
-    @image images/open_params.png
+        The program opens a window like the following one:
 
-    The parameters ``key_save`` can be ignored but if you use this function
-    with different parameters, they should all appear after a couple of runs.
-    That is because the function uses ``key_save`` ot unique the file uses
-    to store the values for the parameters used in previous execution.
-    @endexample
+        @image images/open_params.png
+
+        The parameters ``key_save`` can be ignored but if you use this function
+        with different parameters, they should all appear after a couple of runs.
+        That is because the function uses ``key_save`` ot unique the file uses
+        to store the values for the parameters used in previous execution.
 
     Password are not stored in a text file. You must type them again next time.
 

@@ -989,14 +989,13 @@ def example_function_latex():
     """
     This function only contains an example with latex to check it is working fine.
 
-    @example(How to display a formula)
+    .. exref::
+        :title: How to display a formula
 
-    We want to check this formula to successfully converted.
+        We want to check this formula to successfully converted.
 
-    :math:`\\left \\{ \\begin{array}{l} \\min_{x,y} \\left \\{ x^2 + y^2 - xy + y \\right \\}  \\\\ \\text{sous contrainte} \\; x + 2y = 1 \\end{array}\\right .`
+        :math:`\\left \\{ \\begin{array}{l} \\min_{x,y} \\left \\{ x^2 + y^2 - xy + y \\right \\}  \\\\ \\text{sous contrainte} \\; x + 2y = 1 \\end{array}\\right .`
 
-    Brackets and baskslash might be an issue.
-
-    @endexample
+        Brackets and baskslash might be an issue.
     """
     pass

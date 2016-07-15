@@ -98,14 +98,15 @@ def nb2slides(nb_file, outfile, add_tag=True):
 
     See `How do I convert a IPython Notebook into a Python file via commandline? <http://stackoverflow.com/questions/17077494/how-do-i-convert-a-ipython-notebook-into-a-python-file-via-commandline>`_
 
-    @example(Convert a notebook into slides)
-    By default, the function automatically adds sections if there is none
-    and it copies the javascript from reveal.js at the right place.
-    @code
-    from pyquickhelper.helpgen import nb2slides
-    nb2slides("nb.ipynb", "convert.slides.html")
-    @endcode
-    @endexample
+    .. exref::
+        :title: Convert a notebook into slides
+
+        By default, the function automatically adds sections if there is none
+        and it copies the javascript from reveal.js at the right place.
+        @code
+        from pyquickhelper.helpgen import nb2slides
+        nb2slides("nb.ipynb", "convert.slides.html")
+        @endcode
     """
     from ..ipythonhelper import NotebookRunner, read_nb
 

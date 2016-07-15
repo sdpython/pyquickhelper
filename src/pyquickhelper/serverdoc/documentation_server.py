@@ -548,19 +548,18 @@ def run_doc_server(server,
     @param      port        port to use
     @return                 server if thread is False, the thread otherwise (the thread is started)
 
-    @example(run a local server which serves the documentation)
+    .. faqref::
+        :title: How to run a local server which serves the documentation?
 
-    The following code will create a local server: `http://localhost:8079/pyquickhelper/ <http://localhost:8079/pyquickhelper/>`_.
-    @code
-    this_fold = os.path.dirname(pyquickhelper.serverdoc.documentation_server.__file__)
-    this_path = os.path.abspath( os.path.join( this_fold, "..", "..", "..", "dist", "html") )
-    run_doc_server(None, mappings = { "pyquickhelper": this_path } )
-    @endcode
+        The following code will create a local server: `http://localhost:8079/pyquickhelper/ <http://localhost:8079/pyquickhelper/>`_.
+        @code
+        this_fold = os.path.dirname(pyquickhelper.serverdoc.documentation_server.__file__)
+        this_path = os.path.abspath( os.path.join( this_fold, "..", "..", "..", "dist", "html") )
+        run_doc_server(None, mappings = { "pyquickhelper": this_path } )
+        @endcode
 
-    The same server can serves more than one project.
-    More than one mappings can be sent.
-    @endexample
-
+        The same server can serves more than one project.
+        More than one mappings can be sent.
     """
     for k, v in mappings.items():
         DocumentationHandler.add_mapping(k, v)

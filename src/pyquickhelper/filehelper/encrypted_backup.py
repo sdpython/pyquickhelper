@@ -38,60 +38,59 @@ class EncryptedBackup:
     remote location. Its name still contains the container but the
     file name is a hash. A
 
-    @example(Encrypted and compressed backup)
-    Here is an example which stores everything on hard drive.
-    A second run only modifies files updated between the two processes.
-    A modified file does not remove the previous version,
-    it creates a new file.
-    Example::
+    .. exref::
+        :title: Encrypted and compressed backup
 
-        from pyquickhelper.loghelper import fLOG
-        from pyquickhelper.filehelper import FileTreeNode, EncryptedBackup
-        from pyensae.remote import TransferAPIFile
+        Here is an example which stores everything on hard drive.
+        A second run only modifies files updated between the two processes.
+        A modified file does not remove the previous version,
+        it creates a new file.
+        Example::
 
-        key_crypt = "crypt"
+            from pyquickhelper.loghelper import fLOG
+            from pyquickhelper.filehelper import FileTreeNode, EncryptedBackup
+            from pyensae.remote import TransferAPIFile
 
-        local = os.path.normpath(os.path.join(os.path.dirname(__file__), ".."))
-        this = os.path.normpath(os.path.dirname(__file__))
-        file_status=os.path.join(this, "backup_status.txt")
-        file_map=os.path.join(this, "backup_mapping.txt")
+            key_crypt = "crypt"
 
-        backup = True
-        if backup:
-            # code to backup
-            root = os.path.normpath(os.path.join(os.path.dirname(__file__)))
-            api = TransferAPIFile("f:\\\\mycryptedbackup")
-            ft = FileTreeNode(root, repository=True)
-            enc = EncryptedBackup(
-                key=key_crypt,
-                file_tree_node=ft,
-                transfer_api=api,
-                root_local=local,
-                file_status=file_status,
-                file_map=file_map,
-                fLOG=print)
+            local = os.path.normpath(os.path.join(os.path.dirname(__file__), ".."))
+            this = os.path.normpath(os.path.dirname(__file__))
+            file_status=os.path.join(this, "backup_status.txt")
+            file_map=os.path.join(this, "backup_mapping.txt")
 
-            enc.start_transfering()
+            backup = True
+            if backup:
+                # code to backup
+                root = os.path.normpath(os.path.join(os.path.dirname(__file__)))
+                api = TransferAPIFile("f:\\\\mycryptedbackup")
+                ft = FileTreeNode(root, repository=True)
+                enc = EncryptedBackup(
+                    key=key_crypt,
+                    file_tree_node=ft,
+                    transfer_api=api,
+                    root_local=local,
+                    file_status=file_status,
+                    file_map=file_map,
+                    fLOG=print)
 
-        restore = not backup
-        if restore:
-            # code to restore
-            root = os.path.normpath(os.path.join(os.path.dirname(__file__)))
-            api = TransferAPIFile("f:\\\\mycryptedbackup")
-            enc = EncryptedBackup(
-                key=key_crypt,
-                file_tree_node=None,
-                transfer_api=api,
-                root_local=local,
-                file_status=file_status,
-                file_map=file_map,
-                fLOG=print)
+                enc.start_transfering()
 
-            dest=os.path.join(this, "_temp")
-            enc.retrieve_all(dest)
+            restore = not backup
+            if restore:
+                # code to restore
+                root = os.path.normpath(os.path.join(os.path.dirname(__file__)))
+                api = TransferAPIFile("f:\\\\mycryptedbackup")
+                enc = EncryptedBackup(
+                    key=key_crypt,
+                    file_tree_node=None,
+                    transfer_api=api,
+                    root_local=local,
+                    file_status=file_status,
+                    file_map=file_map,
+                    fLOG=print)
 
-    @endexample
-
+                dest=os.path.join(this, "_temp")
+                enc.retrieve_all(dest)
 
     .. versionadded:: 1.3
     """

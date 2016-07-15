@@ -53,35 +53,17 @@ After the documentation is generated, everything is copied into folder ``pyquick
 (see :func:`process_standard_options_for_setup <pyquickhelper.pycode.setup_helper.process_standard_options_for_setup>`).
 
 
-Extensions to install
+Default configuration
 +++++++++++++++++++++
 
 * `Sphinx <http://sphinx-doc.org/>`_
 * `coverage <http://nedbatchelder.com/code/coverage/>`_
-
-Default extensions::
-
-    extensions = ['sphinx.ext.autodoc',
-                  'sphinx.ext.todo',
-                  'sphinx.ext.coverage',
-                  'sphinx.ext.pngmath',
-                  'sphinx.ext.ifconfig',
-                  'sphinx.ext.viewcode',
-                  'sphinxcontrib.images',
-                  'sphinx.ext.autosummary',
-                  'sphinx.ext.graphviz',
-                  'sphinx.ext.inheritance_diagram',
-                  'matplotlib.sphinxext.plot_directive',
-                  'matplotlib.sphinxext.mathmpl',
-                  'matplotlib.sphinxext.only_directives',
-                  'IPython.sphinxext.ipython_console_highlighting',
-                  'sphinx.ext.napoleon',
-                  'bokeh.sphinxext.bokeh_plot', ]
+* Extension, see code of `set_sphinx_variables <pyquickhelper.helpgen.default_conf.set_sphinx_variables>`
 
 As the documentation creates graphs to represent the dependencies,
 Graphviz needs to be installed. Here is the list of tools usually used:
 
-* `Python 3.4 64 bit <https://www.python.org/downloads/>`_
+* `Python 64 bit <https://www.python.org/downloads/>`_
 * `7zip <http://www.7-zip.org/>`_
 * `Miktex <http://miktex.org/>`_
 * `Jenkins <https://jenkins-ci.org/>`_ (+ `GitHub <https://wiki.jenkins-ci.org/display/JENKINS/GitHub+Plugin>`_, 
@@ -102,17 +84,5 @@ Notebooks
 +++++++++
 
 Notebooks in folder ``pyquickhelper/_doc/notebooks`` will be automatically
-be convected into *html* and *pdf* formats but that requires
+converted into *html*, *rst*, *pdf*, *slides* formats but that requires
 latex and `pandoc <http://pandoc.org/>`_.
-
-Themes
-++++++
-
-Depending on the module, themes might be needed.
-
-* `sphinxcontrib-images <http://pythonhosted.org//sphinxcontrib-images/>`_
-* `sphinxjp.themes.sphinxjp <https://pypi.python.org/pypi/sphinxjp.themes.sphinxjp>`_ 
-* `sphinx_rtd_theme <https://github.com/snide/sphinx_rtd_theme>`_ 
-* `sphinx_bootstrap_theme <http://ryan-roemer.github.io/sphinx-bootstrap-theme/>`_ 
-* `sphinxjp.themes.basicstrap <https://pythonhosted.org/sphinxjp.themes.basicstrap/>`_ 
-* `sphinx_py3doc_enhanced_theme <https://pypi.python.org/pypi/sphinx_py3doc_enhanced_theme>`_

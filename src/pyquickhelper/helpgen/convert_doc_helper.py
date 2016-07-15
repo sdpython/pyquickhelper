@@ -146,51 +146,50 @@ def rst2html(s, fLOG=noLOG, writer="sphinx", keep_warnings=False,
     * a docutils node: see @see cl runpython_node as an example
     * two functions: see @see fn visit_runpython_node, @see fn depart_runpython_node as an example
 
-    @example(How to test a Sphinx directive?)
+    .. exref::
+        :title: How to test a Sphinx directive?
 
-    The following code defines a simple directive defined based on an existing one.
-    It also defined what to do if a new node is inserted in the documentation.
+        The following code defines a simple directive defined based on an existing one.
+        It also defined what to do if a new node is inserted in the documentation.
 
-    ::
+        ::
 
-        from docutils import nodes
-        from pyquickhelper.helpgen import rst2html
+            from docutils import nodes
+            from pyquickhelper.helpgen import rst2html
 
-        class runpythonthis_node(nodes.Structural, nodes.Element):
-            pass
+            class runpythonthis_node(nodes.Structural, nodes.Element):
+                pass
 
-        class RunPythonThisDirective (RunPythonDirective):
-            runpython_class = runpythonthis_node
+            class RunPythonThisDirective (RunPythonDirective):
+                runpython_class = runpythonthis_node
 
-        def visit_node(self, node):
-            self.body.append("<p><b>visit_node</b></p>")
-        def depart_node(self, node):
-            self.body.append("<p><b>depart_node</b></p>")
+            def visit_node(self, node):
+                self.body.append("<p><b>visit_node</b></p>")
+            def depart_node(self, node):
+                self.body.append("<p><b>depart_node</b></p>")
 
-        content = '''
-                    test a directive
-                    ================
+            content = '''
+                        test a directive
+                        ================
 
-                    .. runpythonthis::
+                        .. runpythonthis::
 
-                        print("this code shoud appear" + "___")
-                    '''.replace("                    ", "")
-                    # to remove spaces at the beginning of the line
+                            print("this code shoud appear" + "___")
+                        '''.replace("                    ", "")
+                        # to remove spaces at the beginning of the line
 
-        tives = [ ("runpythonthis", RunPythonThisDirective,
-                  runpythonthis_node,
-                  visit_node, depart_node) ]
+            tives = [ ("runpythonthis", RunPythonThisDirective,
+                    runpythonthis_node,
+                    visit_node, depart_node) ]
 
-        html = rst2html(content, fLOG=fLOG,
-                        writer="custom", keep_warnings=True,
-                        directives=tives)
+            html = rst2html(content, fLOG=fLOG,
+                            writer="custom", keep_warnings=True,
+                            directives=tives)
 
-    Unfortunately, this functionality is only tested on Python 3.
-    It might only work on Python 2.7.
-    The function produces files if the document contains latex
-    converted into image.
-
-    @endexample
+        Unfortunately, this functionality is only tested on Python 3.
+        It might only work on Python 2.7.
+        The function produces files if the document contains latex
+        converted into image.
 
    .. faqref::
        :title: How to get more about latex errors?
@@ -494,18 +493,17 @@ def docstring2html(function_or_string, format="html", fLOG=noLOG, writer="sphinx
     @param      writer                  *None* or an instance such as ``HTMLWriterWithCustomDirectives()``
     @return                             (str) HTML format or (IPython.core.display.HTML)
 
-    @example(Produce HTML documentation for a function or class)
+    .. exref::
+        :title: Produce HTML documentation for a function or class
 
-    The following code can display the dosstring in HTML format
-    to display it in a notebook.
+        The following code can display the dosstring in HTML format
+        to display it in a notebook.
 
-    @code
-    from pyquickhelper.helpgen import docstring2html
-    import sklearn.linear_model
-    docstring2html(sklearn.linear_model.LogisticRegression)
-    @endcode
-
-    @endexample
+        @code
+        from pyquickhelper.helpgen import docstring2html
+        import sklearn.linear_model
+        docstring2html(sklearn.linear_model.LogisticRegression)
+        @endcode
 
     The output format is defined by:
 

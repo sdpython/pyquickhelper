@@ -492,20 +492,21 @@ def open_window_function(func,
     The window looks like:
     @image images/open_window_function.png
 
-    @example(open a tkinter windows to run a function)
-    @code
-    open_window_function (test_regular_expression)
-    @endcode
+    .. exref::
+        :title: Open a tkinter windows to run a function
 
-    The functions opens a window which looks like the following one:
+        @code
+        open_window_function (test_regular_expression)
+        @endcode
 
-    @image images/open_function.png
+        The functions opens a window which looks like the following one:
 
-    The parameters ``key_save`` can be ignored but if you use this function
-    with different parameters, they should all appear after a couple of runs.
-    That is because the function uses ``key_save`` ot unique the file uses
-    to store the values for the parameters used in previous execution.
-    @endexample
+        @image images/open_function.png
+
+        The parameters ``key_save`` can be ignored but if you use this function
+        with different parameters, they should all appear after a couple of runs.
+        That is because the function uses ``key_save`` ot unique the file uses
+        to store the values for the parameters used in previous execution.
 
     .. versionadded:: 1.0
         Parameter *do_not_open* was added.

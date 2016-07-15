@@ -147,19 +147,19 @@ def create_virtual_env(where, symlinks=False, system_site_packages=False,
     @param      temp_folder             temporary folder (to download module if needed), by default ``<where>/download``
     @return                             stand output
 
-    @example(Create a virtual environment)
-    The following example creates a virtual environment.
-    Packages can be added by specifying the parameter *package*.
+    .. faqref::
+        :title: How to create a virtual environment?
 
-    @code
-    from pyquickhelper.pycode import create_virtual_env
-    fold = "my_env"
-    if not os.path.exists(fold):
-        os.mkdir(fold)
-    create_virtual_env(fold)
-    @endcode
+        The following example creates a virtual environment.
+        Packages can be added by specifying the parameter *package*.
 
-    @endexample
+        @code
+        from pyquickhelper.pycode import create_virtual_env
+        fold = "my_env"
+        if not os.path.exists(fold):
+            os.mkdir(fold)
+        create_virtual_env(fold)
+        @endcode
 
     The function does not work from a virtual environment.
     """

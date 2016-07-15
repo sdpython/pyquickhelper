@@ -91,21 +91,19 @@ class AutoCompletionFile(AutoCompletion):
     builds a tree based on a list of files,
     the class adds ``A__`` before every folder or file starting with ``_``
 
-    @example(file autocompletion in IPython)
+    .. exref::
+        :title: File autocompletion in IPython
 
-    The following code:
+        The following code:
 
-    @code
-    from pyquickhelper.ipythonhelper import AutoCompletionFile
-    d = AutoCompletionFile(".")
-    @endcode
+        @code
+        from pyquickhelper.ipythonhelper import AutoCompletionFile
+        d = AutoCompletionFile(".")
+        @endcode
 
-    Will produce the following auto completion picture:
+        Will produce the following auto completion picture:
 
-    @image images/completion.png
-
-    @endexample
-
+        @image images/completion.png
     """
 
     def __init__(self, value):

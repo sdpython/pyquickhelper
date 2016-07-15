@@ -479,13 +479,12 @@ def clone(location, srv, group, project, username=None, password=None):
 
     see `How to provide username and password when run "git clone git@remote.git"? <http://stackoverflow.com/questions/10054318/how-to-provide-username-and-password-when-run-git-clone-gitremote-git>`_
 
-    @example(Clone a git repository)
+    .. exref::
+        :title: Clone a git repository
 
-    @code
-    clone("local_folder", "github.com", "sdpython", "pyquickhelper")
-    @endcode
-
-    @endexample
+        @code
+        clone("local_folder", "github.com", "sdpython", "pyquickhelper")
+        @endcode
 
     .. versionadded:: 0.9
     """

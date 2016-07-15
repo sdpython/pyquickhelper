@@ -116,34 +116,36 @@ def generate_help_sphinx(project_var_name,
     pandoc_path = r"%USERPROFILE%/AppData/Local/Pandoc"
     @endcode
 
-    @example(run help generation)
-    @code
-    # from the main folder which contains folder src
-    generate_help_sphinx("pyquickhelper")
-    @endcode
-    @endexample
+    .. exref::
+        :title: Run help generation
+        :index: extension, extra extension, ext
 
-    .. index:: extension, extra extension, ext
+        @code
+        # from the main folder which contains folder src
+        generate_help_sphinx("pyquickhelper")
+        @endcode
 
     By default, the function only consider files end by ``.py`` and ``.rst`` but you could
     add other files sharing the same extensions by adding this one
     in the ``extra_ext`` list.
 
-    @example(other page of examples___run help generation)
-    This example is exactly the same as the previous one but will be generated on another page of examples.
-    @code
-    # from the main folder which contains folder src
-    generate_help_sphinx("pyquickhelper")
-    @endcode
-    @endexample
+    .. exref::
+        :title: Other page of examples___run help generation
 
-    @example(page with an accent -é- in the title___run help generation)
-    Same page with an accent.
-    @code
-    # from the main folder which contains folder src
-    generate_help_sphinx("pyquickhelper")
-    @endcode
-    @endexample
+        This example is exactly the same as the previous one but will be generated on another page of examples.
+        @code
+        # from the main folder which contains folder src
+        generate_help_sphinx("pyquickhelper")
+        @endcode
+
+    .. exref::
+        :title: Page with an accent -é- in the title___run help generation
+
+        Same page with an accent.
+        @code
+        # from the main folder which contains folder src
+        generate_help_sphinx("pyquickhelper")
+        @endcode
 
     The function requires:
 

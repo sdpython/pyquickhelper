@@ -193,12 +193,6 @@ def fLOG(*l, **p):
 
     @exception  OSError     When the log file cannot be created.
 
-    @example(activate the logs)
-    @code
-    fLOG(OutputPrint=True)
-    @endcode
-    @endexample
-
     .. faqref::
         :title: How to activate the logs?
 
@@ -890,12 +884,13 @@ def run_cmd(cmd,
     @return                         content of stdout, stdres  (only if wait is True)
     @rtype      tuple
 
-    @example(run a program using the command line)
-    @code
-    from pyquickhelper.loghelper import run_cmd
-    out,err = run_cmd( "python setup.py install", wait=True)
-    @endcode
-    @endexample
+    .. exref::
+        :title: Run a program using the command line)
+
+        @code
+        from pyquickhelper.loghelper import run_cmd
+        out,err = run_cmd( "python setup.py install", wait=True)
+        @endcode
 
     If you are using this function to run git function, parameter ``shell`` must be True.
 

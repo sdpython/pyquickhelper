@@ -19,33 +19,33 @@ class TransferFTP(FTP):
     this class uploads files to a website,
     if the remote does not exists, it creates it first
 
-    @example(Transfer files to webste through FTP)
+    .. exref::
+        :title: Transfer files to webste through FTP
 
-    Simple sketch to transfer a list of ``files`` to
-    a website through FTP
+        Simple sketch to transfer a list of ``files`` to
+        a website through FTP
 
-    @code
-    ftp = TransferFTP('ftp.<website>', alias, password, fLOG=print)
+        @code
+        ftp = TransferFTP('ftp.<website>', alias, password, fLOG=print)
 
-    issues = [ ]
-    done = [ ]
-    notdone = [ ]
-    for file in files :
+        issues = [ ]
+        done = [ ]
+        notdone = [ ]
+        for file in files :
+
+            try :
+                r = ftp.transfer (file, path)
+                if r : done.append( (file, path) )
+                else : notdone.append ( (file, path) )
+            except Exception as e :
+                issues.append( (file, e) )
 
         try :
-            r = ftp.transfer (file, path)
-            if r : done.append( (file, path) )
-            else : notdone.append ( (file, path) )
+            ftp.close()
         except Exception as e :
-            issues.append( (file, e) )
+            print ("unable to close FTP connection using ftp.close")
 
-    try :
-        ftp.close()
-    except Exception as e :
-        print ("unable to close FTP connection using ftp.close")
-
-    @endcode
-    @endexample
+        @endcode
 
     .. versionadded:: 1.0
         Moved prom pyensee to pyquickhelper.
@@ -180,18 +180,17 @@ class TransferFTP(FTP):
 
         see :meth:`enumerate_ls <pyquickhelper.filehelper.ftp_transfer.TransferFTP.enumerate_ls>`
 
-        @example(List files from FTP site)
+        .. exref::
+            :title: List files from FTP site
 
-        @code
-        from pyquickhelper.filehelper import TransferFTP
-        ftp = TransferFTP("ftp....", "login", "password")
-        res = ftp.ls("path")
-        for v in res:
-            print(v["name"])
-        ftp.close()
-        @endcode
-
-        @endexample
+            @code
+            from pyquickhelper.filehelper import TransferFTP
+            ftp = TransferFTP("ftp....", "login", "password")
+            res = ftp.ls("path")
+            for v in res:
+                print(v["name"])
+            ftp.close()
+            @endcode
 
         .. versionchanged:: 1.0
         """

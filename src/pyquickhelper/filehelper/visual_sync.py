@@ -170,16 +170,17 @@ def create_visual_diff_through_html(string1, string2, notebook=False, context_si
     @return                     html page or (`HTML <https://ipython.org/ipython-doc/stable/api/generated/IPython.display.html?highlight=display#IPython.display.HTML>`_,
                                 `Javascript <https://ipython.org/ipython-doc/stable/api/generated/IPython.display.html?highlight=display#IPython.display.Javascript>`_) object if *notebook* is True
 
-    @example(Visualize the difference between two text files or strings)
-    @code
-    with open("file1.txt","r",encoding="utf8") as f : text1 = f.read()
-    with open("file2.txt","r",encoding="utf8") as f : text2 = f.read()
-    pg = create_visual_diff_through_html(text1,text2)
-    with open("page.html","w",encoding="utf8") as f : f.write(pg)
-    import webbrowser
-    webbrowser.open("page.html")
-    @endcode
-    @endexample
+    .. exref::
+        :title: Visualize the difference between two text files or strings
+
+        @code
+        with open("file1.txt","r",encoding="utf8") as f : text1 = f.read()
+        with open("file2.txt","r",encoding="utf8") as f : text2 = f.read()
+        pg = create_visual_diff_through_html(text1,text2)
+        with open("page.html","w",encoding="utf8") as f : f.write(pg)
+        import webbrowser
+        webbrowser.open("page.html")
+        @endcode
 
     .. versionchanged:: 1.1
         Parameter *notebook*, *context_size*, *inline_view* were added.

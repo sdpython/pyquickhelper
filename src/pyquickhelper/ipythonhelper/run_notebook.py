@@ -99,14 +99,15 @@ def run_notebook(filename, profile_dir=None, working_dir=None, skip_exceptions=F
 
     @warning The function calls `basicConfig <https://docs.python.org/3.4/library/logging.html#logging.basicConfig>`_.
 
-    @example(Run a notebook end to end)
-    @code
-    from pyquickhelper.ipythonhelper import run_notebook
-    run_notebook("source.ipynb", working_dir="temp",
-                outfilename="modified.ipynb",
-                additional_path = [ "c:/temp/mymodule/src" ] )
-    @endcode
-    @endexample
+    .. exref::
+        :title: Run a notebook end to end
+
+        @code
+        from pyquickhelper.ipythonhelper import run_notebook
+        run_notebook("source.ipynb", working_dir="temp",
+                    outfilename="modified.ipynb",
+                    additional_path = [ "c:/temp/mymodule/src" ] )
+        @endcode
 
     The function adds the local variable ``theNotebook`` with
     the absolute file name of the notebook.

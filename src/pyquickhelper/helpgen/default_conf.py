@@ -69,50 +69,49 @@ def set_sphinx_variables(fileconf,
     If the parameter *custom_style* is not None, it will call ``app.add_stylesheet(custom_style)``
     in the setup.
 
-    @example(Simple configuration file for Sphinx)
+    .. exref::
+        :title: Simple configuration file for Sphinx
 
-    We assume a module is configurated using the same
-    structure as `pyquickhelper <https://github.com/sdpython/pyquickhelper/>`_.
-    The file ``conf.py`` could just contain:
+        We assume a module is configurated using the same
+        structure as `pyquickhelper <https://github.com/sdpython/pyquickhelper/>`_.
+        The file ``conf.py`` could just contain:
 
-    @code
-    # -*- coding: utf-8 -*-
-    import sys, os, datetime, re
-    import solar_theme
-    from pyquickhelper.helpgen.default_conf import set_sphinx_variables
+        @code
+        # -*- coding: utf-8 -*-
+        import sys, os, datetime, re
+        import solar_theme
+        from pyquickhelper.helpgen.default_conf import set_sphinx_variables
 
-    sys.path.insert(0, os.path.abspath(os.path.join(os.path.split(__file__)[0])))
-    set_sphinx_variables(   __file__,
-                            "pyquickhelper",
-                            "Xavier Dupré",
-                            2014,
-                            "solar_theme",
-                            solar_theme.theme_path,
-                            locals())
+        sys.path.insert(0, os.path.abspath(os.path.join(os.path.split(__file__)[0])))
+        set_sphinx_variables(   __file__,
+                                "pyquickhelper",
+                                "Xavier Dupré",
+                                2014,
+                                "solar_theme",
+                                solar_theme.theme_path,
+                                locals())
 
-    # custom settings
-    ...
-    @endcode
+        # custom settings
+        ...
+        @endcode
 
-    *setup.py* must contain a string such as ``__version__ = 3.4``.
-    Close to the setup, there must be a file ``version.txt``.
-    You overwrite a value by giving a variable another value after the fucntion is called.
+        *setup.py* must contain a string such as ``__version__ = 3.4``.
+        Close to the setup, there must be a file ``version.txt``.
+        You overwrite a value by giving a variable another value after the fucntion is called.
 
-    Some parts of the code can be disabled before generating the documentation.
-    Those parts are surrounded by::
+        Some parts of the code can be disabled before generating the documentation.
+        Those parts are surrounded by::
 
-        # -- HELP BEGIN EXCLUDE --
-        import module
-        # -- HELP END EXCLUDE --
-
-    If *enable_disabled_parts* is set to a string, these sections will become::
-
-        # -- HELP BEGIN EXCLUDE --
-        if hasattr(sys, <enable_disabled_parts>) and sys.<enable_disabled_parts>:
+            # -- HELP BEGIN EXCLUDE --
             import module
-        # -- HELP END EXCLUDE --
+            # -- HELP END EXCLUDE --
 
-    @endexample
+        If *enable_disabled_parts* is set to a string, these sections will become::
+
+            # -- HELP BEGIN EXCLUDE --
+            if hasattr(sys, <enable_disabled_parts>) and sys.<enable_disabled_parts>:
+                import module
+            # -- HELP END EXCLUDE --
 
     .. versionchanged:: 1.4
         Add parameters *extlinks*, *github_user*, *github_repo*,

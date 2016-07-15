@@ -189,15 +189,16 @@ def process_notebooks(notebooks,
     If *pandoc_path* is None, uses @see fn find_pandoc_path to guess it.
     If *latex_path* is None, uses @see fn find_latex_path to guess it.
 
-    @example(convert a notebook into multiple formats)
-    @code
-    from pyquickhelper.ipythonhelper import process_notebooks
-    process_notebooks("td1a_correction_session7.ipynb",
-                      "dest_folder",
-                      "dest_folder",
-                      formats=("ipynb", "html", "python", "rst", "slides", "pdf", "docx", "present")])
-    @endcode
-    @endexample
+    .. exref::
+        :title: Convert a notebook into multiple formats
+
+        @code
+        from pyquickhelper.ipythonhelper import process_notebooks
+        process_notebooks("td1a_correction_session7.ipynb",
+                        "dest_folder",
+                        "dest_folder",
+                        formats=("ipynb", "html", "python", "rst", "slides", "pdf", "docx", "present")])
+        @endcode
 
     .. versionchanged:: 1.4
         Add another format for the slides (with `nbpresent <https://pypi.python.org/pypi/nbpresent>`_).

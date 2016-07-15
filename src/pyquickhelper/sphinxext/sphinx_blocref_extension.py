@@ -16,6 +16,18 @@
     anything (blocref), a question (faqref), a magic command (nbref),
     an example (exref).
 
+.. todoext::
+    :title: add index option in sphinx extensions
+    :tag: done
+    :date: 2016-07-15
+    :hidden:
+    :issue: 20
+    :release: 1.4
+    :cost: 0.5
+
+    Add option *index* to most of the sphinx extension
+    so that the documentation can refer to it.
+
 .. versionadded:: 1.4
 """
 import sys

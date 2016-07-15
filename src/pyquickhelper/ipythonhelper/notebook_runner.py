@@ -705,18 +705,20 @@ class NotebookRunner(object):
         @param      nb      notebook or list of notebook (@see cl NotebookRunner)
         @return             number of added cells
 
-        @example(How to merge notebook?)
-        The following code merges two notebooks into the first one
-        and stores the result unto a file.
+        .. faqref::
+            :title: How to merge notebook?
 
-        @code
-        from pyquickhelper.ipythonhelper import read_nb
-        nb1 = read_nb("<file1>", kernel=False)
-        nb2 = read_nb("<file2>", kernel=False)
-        nb1.merge_notebook(nb2)
-        nb1.to_json(outfile)
-        @endcode
-        @endexample
+            The following code merges two notebooks into the first one
+            and stores the result unto a file.
+
+            @code
+            from pyquickhelper.ipythonhelper import read_nb
+            nb1 = read_nb("<file1>", kernel=False)
+            nb2 = read_nb("<file2>", kernel=False)
+            nb1.merge_notebook(nb2)
+            nb1.to_json(outfile)
+            @endcode
+            @endexample
 
         .. versionadded:: 1.1
         """

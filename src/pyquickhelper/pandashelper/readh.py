@@ -27,12 +27,13 @@ def read_url(url, **args):
     @param      args    parameter given to function `read_csv <http://pandas.pydata.org/pandas-docs/stable/generated/pandas.io.parsers.read_csv.html>`_
     @return             a DataFrame
 
-    @example(create a pandas DataFrame from a file on internet)
-    @code
-    url = "http://www.xavierdupre.fr/enseignement/complements/marathon.txt"
-    df = read_url(url, sep="\t", names=["ville", "annee", "temps","secondes"])
-    @endcode
-    @endexample
+    .. exref::
+        :title: Create a pandas DataFrame from a file on internet
+
+        @code
+        url = "http://www.xavierdupre.fr/enseignement/complements/marathon.txt"
+        df = read_url(url, sep="\t", names=["ville", "annee", "temps","secondes"])
+        @endcode
     """
     import pandas
     text = get_url_content(url)

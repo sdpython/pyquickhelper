@@ -140,30 +140,30 @@ def synchronize_folder(p1,
     if ``file_date`` is mentioned, the second folder is not explored. Only
     the modified files will be taken into account (except for the first sync).
 
-    @example(synchronize two folders)
-    The following function synchronizes a folder with another one
-    on a USB drive or a network drive. To minimize the number of access
-    to the other location, it stores the status of the previous
-    synchronization in a file (``status_copy.txt`` in the below example).
-    Next time, the function goes through the directory and sub-directories
-    to synchronize and only propagates the modifications which happened
-    since the last modification.
-    The function ``filter_copy`` defines what file to synchronize or not.
-    @code
-    def filter_copy(file):
-        return "_don_t_synchronize_" not in file
+    .. exref::
+        :title: synchronize two folders
 
-    synchronize_folder( "c:/mydata",
-                        "g:/mybackup",
-                        hash_size = 0,
-                        filter_copy = filter_copy,
-                        file_date = "c:/status_copy.txt")
-    @endcode
+        The following function synchronizes a folder with another one
+        on a USB drive or a network drive. To minimize the number of access
+        to the other location, it stores the status of the previous
+        synchronization in a file (``status_copy.txt`` in the below example).
+        Next time, the function goes through the directory and sub-directories
+        to synchronize and only propagates the modifications which happened
+        since the last modification.
+        The function ``filter_copy`` defines what file to synchronize or not.
+        @code
+        def filter_copy(file):
+            return "_don_t_synchronize_" not in file
 
-    The function is able to go through 90.000 files and 90 Gb
-    in 12 minutes (for an update).
+        synchronize_folder( "c:/mydata",
+                            "g:/mybackup",
+                            hash_size = 0,
+                            filter_copy = filter_copy,
+                            file_date = "c:/status_copy.txt")
+        @endcode
 
-    @endexample
+        The function is able to go through 90.000 files and 90 Gb
+        in 12 minutes (for an update).
 
     .. versionchanged:: 1.1
         Parameter *copy_1to2* was added.
