@@ -28,12 +28,14 @@ if sys.version_info[0] == 2:
 
 
 def writes(nb, **kwargs):
-    """Write a notebook to a string in a given format in the current nbformat version.
+    """
+    Write a notebook to a string in a given format in the current nbformat version.
 
     This function always writes the notebook in the current nbformat version.
 
     Parameters
-    ----------
+    ++++++++++
+
     nb : NotebookNode
         The notebook to write.
     version : int
@@ -41,7 +43,8 @@ def writes(nb, **kwargs):
         Used for downgrading notebooks.
 
     Returns
-    -------
+    +++++++
+
     s : unicode
         The notebook string.
     """
@@ -115,8 +118,6 @@ def read_nb(filename, profile_dir=None, encoding="utf8", kernel=True):
 
 def find_notebook_kernel(kernel_spec_manager=None):
     """
-    .. index:: notebook, kernel
-
     return a dict mapping kernel names to resource directories
 
     @param      kernel_spec_manager     see `KernelSpecManager <http://jupyter-client.readthedocs.org/en/latest/api/kernelspec.html#jupyter_client.kernelspec.KernelSpecManager>`_
@@ -206,7 +207,7 @@ def get_jupyter_extension_dir(user=False, prefix=None,
                               nbextensions_dir=None):
     """
     Parameters
-    ----------
+    ++++++++++
 
     files : list(paths)
         a list of relative paths within nbextensions.
@@ -220,9 +221,9 @@ def get_jupyter_extension_dir(user=False, prefix=None,
         Specify absolute path of nbextensions directory explicitly.
 
     Return
-    ------
+    ++++++
 
-        path to installed extensions (by the user)
+    path: path to installed extensions (by the user)
 
 
     .. versionadded:: 1.3
@@ -234,7 +235,7 @@ def get_installed_notebook_extension(user=False, prefix=None,
                                      nbextensions_dir=None):
     """
     Parameters
-    ----------
+    ++++++++++
 
     files : list(paths)
         a list of relative paths within nbextensions.
@@ -248,9 +249,9 @@ def get_installed_notebook_extension(user=False, prefix=None,
         Specify absolute path of nbextensions directory explicitly.
 
     Return
-    ------
+    ++++++
 
-        list of installed notebook extension (by the user)
+    list: list of installed notebook extension (by the user)
 
     You can install extensions with function @see fn install_notebook_extension.
 
@@ -277,7 +278,8 @@ def install_jupyter_kernel(exe=sys.executable, kernel_spec_manager=None, user=Fa
     Install a kernel based on executable (this python by default)
 
     Parameters
-    ----------
+    ++++++++++
+
     exe: Python executable
         current one by default
     kernel_spec_manager: KernelSpecManager [optional]
@@ -293,11 +295,13 @@ def install_jupyter_kernel(exe=sys.executable, kernel_spec_manager=None, user=Fa
         This is needed to install into a non-default location, such as a conda/virtual-env.
 
     Returns
-    -------
+    +++++++
 
-    The path where the kernelspec was installed.
+    path: The path where the kernelspec was installed.
 
-    A kernel is defined by the following fields::
+    A kernel is defined by the following fields:
+
+    ::
 
         {
             "display_name": "Python 3 (ENSAE)",
@@ -310,7 +314,9 @@ def install_jupyter_kernel(exe=sys.executable, kernel_spec_manager=None, user=Fa
                     ]
          }
 
-    For R, it looks like::
+    For R, it looks like
+
+    ::
 
         {
             "display_name": "R (ENSAE)",

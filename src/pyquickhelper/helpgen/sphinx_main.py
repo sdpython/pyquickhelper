@@ -106,8 +106,8 @@ def generate_help_sphinx(project_var_name,
 
     You can exclud some part while generating the documentation by adding:
 
-        * ``# -- HELP BEGIN EXCLUDE --``
-        * ``# -- HELP END EXCLUDE --``
+    * ``# -- HELP BEGIN EXCLUDE --``
+    * ``# -- HELP END EXCLUDE --``
 
     @code
     latex_path  = r"C:/Program Files/MiKTeX 2.9/miktex/bin/x64"
@@ -144,8 +144,9 @@ def generate_help_sphinx(project_var_name,
     @endexample
 
     The function requires:
-        - pandoc
-        - latex
+
+    - pandoc
+    - latex
 
     @warning Some themes such as `Bootstrap Sphinx Theme <http://ryan-roemer.github.io/sphinx-bootstrap-theme/>`_
              do not work on Internet Explorer. In that case, the

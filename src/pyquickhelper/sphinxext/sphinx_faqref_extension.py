@@ -42,7 +42,9 @@ class FaqRef(BlocRef):
             :tag: main
             :lid: id-you-can-choose
 
-            An example of code::
+            An example of code:
+
+            ::
 
                 print("mignon")
 
@@ -51,26 +53,28 @@ class FaqRef(BlocRef):
 
     .. faqref::
         :title: example of a faqref
-        :tag: dummy_example
-        :lid: id-you-can-choose
+        :tag: dummy_example2
+        :lid: id-you-can-choose2
 
-        An example of code::
+        An example of code:
+
+        ::
 
             print("mignon")
 
     All blocs can be displayed in another page by using ``faqreflist``::
 
         .. faqreflist::
-            :tag: dummy_example
+            :tag: dummy_example2
             :sort: title
 
     Only blocs tagged as ``dummy_example`` will be inserted here.
     The option ``sort`` sorts items by *title*, *number*, *file*.
-    You also link to it by typing ``:ref:'anchor <id-you-can-choose>' `` which gives
-    something like :ref:`link_to_blocref <id-you-can-choose>`. The link must receive a name.
+    You also link to it by typing ``:ref:'anchor <id-you-can-choose2>' `` which gives
+    something like :ref:`link_to_blocref <id-you-can-choose2>`. The link must receive a name.
 
     .. faqreflist::
-        :tag: dummy_example
+        :tag: dummy_example2
         :sort: title
     """
 
@@ -84,7 +88,8 @@ def process_faqrefs(app, doctree):
     this is not done in the directive itself because it some transformations
     must have already been run, e.g. substitutions
     """
-    process_blocrefs_generic(app, doctree, "faqref", class_node=faqref_node)
+    process_blocrefs_generic(
+        app, doctree, bloc_name="faqref", class_node=faqref_node)
 
 
 class FaqRefList(BlocRefList):
@@ -95,7 +100,7 @@ class FaqRefList(BlocRefList):
 
     Example::
 
-        .. gaqreflist::
+        .. faqreflist::
             :tag: issue
     """
     name_sphinx = "faqreflist"
@@ -107,7 +112,8 @@ def process_faqref_nodes(app, doctree, fromdocname):
     process_blocref_nodes
     """
     process_blocref_nodes_generic(app, doctree, fromdocname, class_name='faqref',
-                                  entry_name="faqmes")
+                                  entry_name="faqmes", class_node=faqref_node,
+                                  class_node_list=faqreflist)
 
 
 def purge_faqrefs(app, env, docname):

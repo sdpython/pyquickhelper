@@ -64,7 +64,7 @@ def add_missing_files(root, conf, blog_list):
         f.write("\n<h3>{0}</h3>".format(TITLES[language]["toc1"]))
         f.write("\n<ul>")
         f.write(
-            link.format("{{ pathto('',1) }}/all_FAQ.html", TITLES[language]["FAQ"]))
+            link.format("{{ pathto('',1) }}/i_FAQ.html", TITLES[language]["FAQ"]))
         f.write(
             link.format("{{ pathto('',1) }}/glossary.html", TITLES[language]["glossary"]))
         f.write(link.format("{{ pathto('',1) }}/README.html", "README"))

@@ -35,7 +35,8 @@ class TestMakeWindow2 (unittest.TestCase):
         functions = {"test_regular_expression": test_regular_expression,
                      "test_edit_distance": file_grep,
                      "file_head": file_head}
-        main_loop_functions(functions, title="title: TestMakeWindow2", mainloop=False)
+        main_loop_functions(
+            functions, title="title: TestMakeWindow2", mainloop=False)
 
 
 if __name__ == "__main__":

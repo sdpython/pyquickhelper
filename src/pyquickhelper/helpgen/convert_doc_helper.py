@@ -183,7 +183,8 @@ def rst2html(s, fLOG=noLOG, writer="sphinx", keep_warnings=False,
 
     Unfortunately, this functionality is only tested on Python 3.
     It might only work on Python 2.7.
-    The function produces files if the document contains latex converted into image.
+    The function produces files if the document contains latex
+    converted into image.
 
     @endexample
 
@@ -199,6 +200,7 @@ def rst2html(s, fLOG=noLOG, writer="sphinx", keep_warnings=False,
         the executable indicated by *imgmath_latex*
 
         ::
+
             if b'...' in stdout or b'LaTeX Error' in stdout:
                 print(self.builder.config.imgmath_latex_preamble)
                 print(p.returncode)

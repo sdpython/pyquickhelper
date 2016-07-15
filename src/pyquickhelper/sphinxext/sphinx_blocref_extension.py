@@ -165,7 +165,7 @@ class BlocRef(BaseAdmonition):
         set_source_info(self, blocref)
 
         if env is not None:
-            targetid = 'indexbrefe%s%s' % (
+            targetid = 'index%s%s' % (
                 breftag, env.new_serialno('index%s%s' % (name_desc, breftag)))
             ids = [targetid]
             targetnode = nodes.target(legend, '', ids=ids)
@@ -209,6 +209,7 @@ def process_blocrefs_generic(app, doctree, bloc_name, class_node):
     attr = '%s_all_%ss' % (bloc_name, bloc_name)
     if not hasattr(env, attr):
         setattr(env, attr, [])
+    attr_list = getattr(env, attr)
     for node in doctree.traverse(class_node):
         try:
             targetnode = node.parent[node.parent.index(node) - 1]
@@ -224,7 +225,7 @@ def process_blocrefs_generic(app, doctree, bloc_name, class_node):
         breffile = newnode['breffile']
         del newnode['ids']
         del newnode['breftag']
-        env.blocref_all_blocrefs.append({
+        attr_list.append({
             'docname': env.docname,
             'source': node.source or env.doc2path(env.docname),
             'lineno': node.line,
@@ -289,17 +290,18 @@ def process_blocref_nodes(app, doctree, fromdocname):
     process_blocref_nodes
     """
     process_blocref_nodes_generic(app, doctree, fromdocname, class_name='blocref',
-                                  entry_name="brefmes")
+                                  entry_name="brefmes", class_node=blocref_node,
+                                  class_node_list=blocreflist)
 
 
 def process_blocref_nodes_generic(app, doctree, fromdocname, class_name,
-                                  entry_name):
+                                  entry_name, class_node, class_node_list):
     """
-    process_blocref_nodes
+    process_blocref_nodes and other kinds of nodes
     """
     incconf = '%s_include_%ss' % (class_name, class_name)
     if not app.config[incconf]:
-        for node in doctree.traverse(blocref_node):
+        for node in doctree.traverse(class_node):
             node.parent.remove(node)
 
     # Replace all blocreflist nodes with a list of the collected blocrefs.
@@ -313,10 +315,12 @@ def process_blocref_nodes_generic(app, doctree, fromdocname, class_name,
     orig_entry = TITLES[lang]["original entry"]
     brefmes = TITLES[lang][entry_name]
 
-    if not hasattr(env, '%s_all_%ss' % (class_name, class_name)):
-        env.blocref_all_blocrefs = []
+    attr_name = '%s_all_%ss' % (class_name, class_name)
+    if not hasattr(env, attr_name):
+        setattr(env, attr_name, [])
+    bloc_list_env = getattr(env, attr_name)
 
-    for ilist, node in enumerate(doctree.traverse(blocreflist)):
+    for ilist, node in enumerate(doctree.traverse(class_node_list)):
         if 'ids' in node:
             node['ids'] = []
         if not app.config[incconf]:
@@ -331,15 +335,15 @@ def process_blocref_nodes_generic(app, doctree, fromdocname, class_name,
         # sorting
         if brefsort == 'title':
             double_list = [(info.get('breftitle', ''), info)
-                           for info in env.blocref_all_blocrefs]
+                           for info in bloc_list_env]
             double_list.sort(key=lambda x: x[:1])
         elif brefsort == 'file':
             double_list = [((info.get('breffile', ''), info.get('brefline', '')), info)
-                           for info in env.blocref_all_blocrefs]
+                           for info in bloc_list_env]
             double_list.sort(key=lambda x: x[:1])
         elif brefsort == 'number':
             double_list = [(info.get('brefmid', ''), info)
-                           for info in env.blocref_all_blocrefs]
+                           for info in bloc_list_env]
             double_list.sort(key=lambda x: x[:1])
         else:
             raise ValueError("sort option should be file, number, title")

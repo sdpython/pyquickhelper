@@ -258,6 +258,9 @@ def set_sphinx_variables(fileconf,
     # blocref
     blocref_include_blocrefs = True
 
+    # faqref
+    faqref_include_faqrefs = True
+
     # extensions
     extensions = ['sphinx.ext.autodoc',
                   'sphinx.ext.autosummary',
