@@ -3,6 +3,19 @@
 @file
 @brief Defines a sphinx extension to keep track of blocs such as examples, FAQ, ...
 
+.. todoext::
+    :title: add sphinx extensions blocref, faqref, nbref, exref
+    :tag: done
+    :date: 2016-07-15
+    :hidden:
+    :issue: 21
+    :release: 1.4
+    :cost: 0.5
+
+    Multiplies sphinx extension to highlight a bloc about
+    anything (blocref), a question (faqref), a magic command (nbref),
+    an example (exref).
+
 .. versionadded:: 1.4
 """
 import sys
