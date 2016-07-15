@@ -48,14 +48,14 @@ class TestMissingFuncWin (unittest.TestCase):
         assert _clean_name_variable("s-6") == "s_6"
         assert _get_format_zero_nb_integer(5006) == "%04d"
         ioout = [io.StringIO(), io.StringIO()]
+        if sys.version_info[0] == 2:
+            warnings.warn("skip testing Python 2.7")
+            return
         file_split(os.path.abspath(__file__), out=ioout, header=True)
         ioout = [io.StringIO(), io.StringIO()]
         s1 = ioout[0].getvalue()
         s2 = ioout[0].getvalue()
         self.assertEqual(s1[:5], s2[:5])
-        if sys.version_info[0] == 2:
-            warnings.warn("skip testing Python 2.7")
-            return
         nb = file_split(os.path.abspath(__file__), out=ioout, header=False)
         size = os.stat(os.path.abspath(__file__)).st_size
         sa = 0
