@@ -28,6 +28,7 @@ def _clean_name_variable(st):
 
 
 def _get_format_zero_nb_integer(nb):
+    typstr = str  # unicode#
     h = nb
     c = 0
     while h > 0:
@@ -35,8 +36,8 @@ def _get_format_zero_nb_integer(nb):
         c += 1
     if c > 20:
         raise Exception(
-            "this should not be that high %s (nb=%s)" % (str(c), str(nb)))
-    return "%0" + str(int(c)) + "d"
+            "this should not be that high %s (nb=%s)" % (typstr(c), typstr(nb)))
+    return "%0" + typstr(int(c)) + "d"
 
 
 def test_regular_expression(exp=".*",
@@ -192,8 +193,8 @@ def file_list(folder, out=""):
     @param      out         result
     @return                 out
     """
-
-    if out is None or isinstance(out, str):
+    typstr = str  # unicode#
+    if out is None or isinstance(out, typstr):
         if is_empty_string(out):
             out = "%s_.list_of_files.txt" % folder
         f = open(out, "w")
@@ -209,7 +210,7 @@ def file_list(folder, out=""):
             f.write(l)
             f.write(GetSepLine())
 
-    if isinstance(out, str):
+    if isinstance(out, typstr):
         f.close()
 
     return out
