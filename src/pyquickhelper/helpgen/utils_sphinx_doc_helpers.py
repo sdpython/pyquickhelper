@@ -105,7 +105,8 @@ def compute_truncated_documentation(doc,
             doc = doc.split("@brief ")
             doc = doc[-1]
 
-        doc = doc.strip("\n\r\t ")
+        # we stop at the first todoext
+        doc = doc.strip("\n\r\t ").split(".. todoext::")[0]
 
         def filter_line(line):
             s = line.strip()
