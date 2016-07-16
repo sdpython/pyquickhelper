@@ -381,7 +381,7 @@ def setup(app):
         app.add_mapping('mathdeflist', mathdeflist)
 
     app.add_config_value('mathdef_include_mathsext', True, 'html')
-    app.add_config_value('mathdef_link_only', False, 'html')
+    app.add_config_value('mathdef_link_only', True, 'html')
 
     app.add_node(mathdeflist,
                  html=(visit_mathdeflist_node, depart_mathdeflist_node),
