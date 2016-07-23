@@ -171,7 +171,7 @@ def gzip_files(filename, file_set, fLOG=noLOG):
     return filename.getvalue() if isinstance(filename, BytesIO) else None
 
 
-def ungzip_files(filename, where_to=None, fLOG=noLOG, fvalid=None, remove_space=True):
+def ungzip_files(filename, where_to=None, fLOG=noLOG, fvalid=None, remove_space=True, unzip=True):
     """
     decompress files from a gzip file
 
@@ -181,7 +181,8 @@ def ungzip_files(filename, where_to=None, fLOG=noLOG, fvalid=None, remove_space=
     @param      fvalid          function which takes two paths (zip name, local name) and return True if the file
                                 must be unzipped, False otherwise, if None, the default answer is True
     @param      remove_space    remove spaces in created local path (+ ``',()``)
-    @return                     number of added files
+    @param      unzip           unzip file after gzip
+    @return                     list of unzipped files
 
     .. versionadded:: 1.4
     """
@@ -194,7 +195,13 @@ def ungzip_files(filename, where_to=None, fLOG=noLOG, fvalid=None, remove_space=
     f = gzip.open(filename, 'rb')
     content = f.read()
     f.close()
-    return unzip_files(content, where_to=where_to, fLOG=fLOG)
+    if unzip:
+        return unzip_files(content, where_to=where_to, fLOG=fLOG)
+    else:
+        filename = filename.replace(".gz", "")
+        with open(filename, "wb") as f:
+            f.write(content)
+        return filename
 
 
 def zip7_files(filename_7z, file_set, fLOG=noLOG, temp_folder="."):
