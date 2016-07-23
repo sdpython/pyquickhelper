@@ -34,7 +34,7 @@ class InternetException(Exception):
     pass
 
 
-def get_url_content_timeout(url, timeout=10, output=None, encoding="utf8", raise_exception=True):
+def get_url_content_timeout(url, timeout=10, output=None, encoding="utf8", raise_exception=True, chunk=None, fLOG=None):
     """
     download a file from internet (we assume it is text information, otherwise, encoding should be None)
 
@@ -43,6 +43,8 @@ def get_url_content_timeout(url, timeout=10, output=None, encoding="utf8", raise
     @param      output              (str) if None, the content is stored in that file
     @param      encoding            (str) utf8 by default, but if it is None, the returned information is binary
     @param      raise_exception     (bool) True to raise an exception, False to send a warnings
+    @param      chunk               (int|None) save data every chunk (only if output is not None)
+    @param      fLOG                logging function (only applies when chunk is not None)
     @return                         content of the url
 
     If the function automatically detects that the downloaded data is in gzip
@@ -52,9 +54,24 @@ def get_url_content_timeout(url, timeout=10, output=None, encoding="utf8", raise
 
     .. versionadded:: 1.1
         It comes from `pyrsslocal <http://www.xavierdupre.fr/app/pyrsslocal/helpsphinx/index.html>`_.
+
+    .. versionadded:: 1.4
+        Parameters *chunk*, *fLOG* were added.
     """
+    def save_content(content, append=False):
+        app = "a" if append else "w"
+        if encoding is not None:
+            with open(output, app, encoding=encoding) as f:
+                f.write(content)
+        else:
+            with open(output, app + "b") as f:
+                f.write(content)
+
     try:
         if sys.version_info[0] == 2:
+            if chunk is not None:
+                raise NotImplementedError(
+                    "for python 2.7, chunk must be None")
             if timeout != -1:
                 raise NotImplementedError(
                     "for python 2.7, timeout cannot be -1")
@@ -63,12 +80,40 @@ def get_url_content_timeout(url, timeout=10, output=None, encoding="utf8", raise
                 res = fu.read()
                 fu.close()
         else:
-            if timeout != -1:
-                with urllib_request.urlopen(url, timeout=timeout) as ur:
-                    res = ur.read()
+            if chunk is not None:
+                app = False
+                size = 0
+                if timeout != -1:
+                    with urllib_request.urlopen(url, timeout=timeout) as ur:
+                        while True:
+                            res = ur.read(chunk)
+                            size += len(res)
+                            if fLOG is not None:
+                                fLOG("downloaded", size, "bytes")
+                            if len(res) > 0:
+                                save_content(res, app)
+                            else:
+                                break
+                            app = True
+                else:
+                    with urllib_request.urlopen(url) as ur:
+                        while True:
+                            res = ur.read(chunk)
+                            size += len(res)
+                            if fLOG is not None:
+                                fLOG("downloaded", size, "bytes")
+                            if len(res) > 0:
+                                save_content(res, app)
+                            else:
+                                break
+                            app = True
             else:
-                with urllib_request.urlopen(url) as ur:
-                    res = ur.read()
+                if timeout != -1:
+                    with urllib_request.urlopen(url, timeout=timeout) as ur:
+                        res = ur.read()
+                else:
+                    with urllib_request.urlopen(url) as ur:
+                        res = ur.read()
     except (urllib_error.HTTPError, urllib_error.URLError) as e:
         if raise_exception:
             raise InternetException(
@@ -143,12 +188,7 @@ def get_url_content_timeout(url, timeout=10, output=None, encoding="utf8", raise
     else:
         content = res
 
-    if output is not None:
-        if encoding is not None:
-            with open(output, "w", encoding=encoding) as f:
-                f.write(content)
-        else:
-            with open(output, "wb") as f:
-                f.write(content)
+    if output is not None and chunk is None:
+        save_content(content)
 
     return content
