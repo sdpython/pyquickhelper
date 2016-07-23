@@ -26,7 +26,7 @@ class TransferFTP(FTP):
         a website through FTP
 
         ::
-        
+
             ftp = TransferFTP('ftp.<website>', alias, password, fLOG=print)
 
             issues = [ ]
