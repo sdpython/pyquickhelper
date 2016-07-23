@@ -2,6 +2,20 @@
 @file
 @brief  Helper for the setup
 
+.. todoext::
+    :title: run unit test if their estimated time is below a certain threshold
+    :hidden:
+    :issue: 3
+    :tag: enhancement
+    :cost: 0.2
+    :date: 2016-07-24
+
+    Example::
+
+        python setup.py unittests -d 1
+
+    Run all unit test for which the estimated duration is below 1s.
+
 .. versionadded:: 1.1
 """
 
@@ -161,7 +175,7 @@ def process_standard_options_for_setup(argv,
             if l >= len(argv) - 1:
                 raise ValueError(
                     "Option -d should be follow by a duration in seconds.")
-            d = int(argv[l + 1])
+            d = float(argv[l + 1])
         else:
             d = None
         if "-f" in argv:
