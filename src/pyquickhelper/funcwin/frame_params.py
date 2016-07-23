@@ -273,7 +273,7 @@ class FrameParams (tkinter.Frame):
         @param      help_string             help to de displayed
         @param      top_level_window        if you want this window to depend on a top level window from tkinter
         @param      params                  if not None, overwrite values for some parameters,
-                                                it will be updated by the function (= returned value)
+                                            it will be updated by the function (= returned value)
         @param      key_save                parameters are saved and restore from a file, key_save will make this file unique
         @param      title                   title of the window
         @param      do_not_open             do not open the window, let you do it

@@ -199,11 +199,9 @@ def ungzip_files(filename, where_to=None, fLOG=noLOG, fvalid=None, remove_space=
 
 def zip7_files(filename_7z, file_set, fLOG=noLOG, temp_folder="."):
     """
-
-    If `7z <http://www.7-zip.org/>`_ is installed, the function uses it
-    to compress file into 7z format. The file *filename_7z* must not exist.
-
-    .. index:: 7zip, 7z
+    If *7z* is installed, the function uses it
+    to compress file into 7z format. The file *filename_7z* must not exist
+    (`7z <http://www.7-zip.org/>`_).
 
     @param      filename_7z     final destination
     @param      fileSet         list of files to compress

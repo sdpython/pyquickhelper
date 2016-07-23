@@ -25,27 +25,26 @@ class TransferFTP(FTP):
         Simple sketch to transfer a list of ``files`` to
         a website through FTP
 
-        @code
-        ftp = TransferFTP('ftp.<website>', alias, password, fLOG=print)
+        ::
+        
+            ftp = TransferFTP('ftp.<website>', alias, password, fLOG=print)
 
-        issues = [ ]
-        done = [ ]
-        notdone = [ ]
-        for file in files :
+            issues = [ ]
+            done = [ ]
+            notdone = [ ]
+            for file in files :
+
+                try :
+                    r = ftp.transfer (file, path)
+                    if r : done.append( (file, path) )
+                    else : notdone.append ( (file, path) )
+                except Exception as e :
+                    issues.append( (file, e) )
 
             try :
-                r = ftp.transfer (file, path)
-                if r : done.append( (file, path) )
-                else : notdone.append ( (file, path) )
+                ftp.close()
             except Exception as e :
-                issues.append( (file, e) )
-
-        try :
-            ftp.close()
-        except Exception as e :
-            print ("unable to close FTP connection using ftp.close")
-
-        @endcode
+                print ("unable to close FTP connection using ftp.close")
 
     .. versionadded:: 1.0
         Moved prom pyensee to pyquickhelper.
