@@ -1,5 +1,5 @@
 """
-@brief      test log(time=1s)
+@brief      test log(time=12s)
 """
 
 

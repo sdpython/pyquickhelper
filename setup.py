@@ -17,7 +17,6 @@ path = "Lib/site-packages/" + project_var_name
 readme = 'README.rst'
 requirements = None
 
-
 KEYWORDS = project_var_name + \
     ', synchronization, files, documentation, Xavier, Dupré'
 DESCRIPTION = """Various functionalities: folder synchronization, a logging function, helpers
@@ -118,7 +117,7 @@ def verbose():
 # version
 ##########
 
-if is_local():
+if is_local() and "--help" not in sys.argv and "--help-commands" not in sys.argv:
     def write_version():
         pyquickhelper = import_pyquickhelper()
         from pyquickhelper.pycode import write_version_for_setup
@@ -184,12 +183,12 @@ if is_local():
 else:
     r = False
 
-if len(sys.argv) == 1 and "--help" in sys.argv:
-    pyquickhelper = import_pyquickhelper()
-    from pyquickhelper.pycode import process_standard_options_for_setup_help
-    process_standard_options_for_setup_help()
-
 if not r:
+    if len(sys.argv) in (1, 2) and sys.argv[-1] in ("--help-commands",):
+        pyquickhelper = import_pyquickhelper()
+        from pyquickhelper.pycode import process_standard_options_for_setup_help
+        process_standard_options_for_setup_help(sys.argv)
+
     setup(
         name=project_var_name,
         version='%s%s' % (sversion, subversion),
@@ -232,7 +231,7 @@ if not r:
             "python-dateutil",
             "requests",
             "simplegeneric",
-            "sphinx",  # part of the minimal list
+            "sphinx",
             "sphinxcontrib-imagesvg",
             "sphinxcontrib-jsdemo",
             "sphinxjp.themes.revealjs",

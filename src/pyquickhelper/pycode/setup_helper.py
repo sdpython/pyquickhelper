@@ -61,17 +61,11 @@ def process_standard_options_for_setup(argv,
     able to process assuming the module which calls this function
     follows the same design as *pyquickhelper*, it will process the following
     options:
-        * ``build_script``: produce various scripts to build the module
-        * ``build_sphinx``: build the documentation
-        * ``clean_pyd``: clean file ``*.pyd``
-        * ``clean_space``: clean unnecessary spaces in the code
-        * ``copy27``: create a modified copy of the module to run on Python 2.7
-        * ``test_local_pypi``: test a local pypi server
-        * ``unittests``: run the unit tests except those beginning by ``test_SKIP_`` or ``test_LONG_``.
-        * ``unittests_LONG``: run the unit tests beginning by ``test_LONG_``
-        * ``unittests_SKIP``: run the unit tests beginning by ``test_SKIP_``
-        * ``unittests_GUI``: run the unit tests beginning by ``test_GUI_``
-        * ``write_version``: write a file ``version.txt`` with the version number (needs an access to GitHub)
+
+    .. runpython::
+
+        from pyquickhelper.pycode import process_standard_options_for_setup_help
+        process_standard_options_for_setup_help("--help-commands")
 
     @param      argv                        = *sys.argv*
     @param      file_or_folder              file ``setup.py`` or folder which contains it
@@ -157,6 +151,44 @@ def process_standard_options_for_setup(argv,
     .. versionchanged:: 1.4
         Parameters *use_run_cmd*, *filter_warning* were added.
     """
+    if "--help" in argv or "--help-commands" in argv:
+        process_standard_options_for_setup_help(argv)
+        return True
+
+    def process_argv_for_unittest(argv):
+        if "-d" in argv:
+            l = argv.index("-d")
+            if l >= len(argv) - 1:
+                raise ValueError(
+                    "Option -d should be follow by a duration in seconds.")
+            d = int(argv[l + 1])
+        else:
+            d = None
+        if "-f" in argv:
+            l = argv.index("-f")
+            if l >= len(argv) - 1:
+                raise ValueError(
+                    "Option -d should be follow by a duration in seconds.")
+            f = argv[l + 1]
+        else:
+            f = None
+
+        if f is None and d is None:
+            return skip_function
+        elif f is not None:
+            if d is not None:
+                raise NotImplementedError(
+                    "Options -f and -d cannot be specified at the same time.")
+
+            def allow(name, code, duration):
+                return f not in name
+            return allow
+        else:
+            # d is not None
+            def allowd(name, code, duration):
+                return duration is None or duration > d
+            return allowd
+
     folder = file_or_folder if os.path.isdir(
         file_or_folder) else os.path.dirname(file_or_folder)
     unit_test_folder = os.path.join(folder, "_unittests")
@@ -224,11 +256,12 @@ def process_standard_options_for_setup(argv,
         return True
 
     elif "unittests" in argv:
+        skip_f = process_argv_for_unittest(argv)
         run_unittests_for_setup(file_or_folder, setup_params=setup_params,
                                 coverage_options=coverage_options,
                                 coverage_exclude_lines=coverage_exclude_lines,
                                 additional_ut_path=additional_ut_path,
-                                skip_function=skip_function, covtoken=covtoken,
+                                skip_function=skip_f, covtoken=covtoken,
                                 hook_print=hook_print, stdout=stdout, stderr=stderr,
                                 filter_warning=filter_warning, fLOG=fLOG)
         return True
@@ -611,22 +644,46 @@ def write_pyproj(file_or_folder, location=None):
         f.write(pyproj.strip())
 
 
-def process_standard_options_for_setup_help():
+def process_standard_options_for_setup_help(argv):
     """
     print the added options available through this module
     """
-    print("""
-        Help for options added by pyquickhelper:
+    commands = {
+        "build_script": "produce various scripts to build the module",
+        "build_sphinx": "build the documentation",
+        "build_wheel": "build the wheel",
+        "build27": "build the wheel for Python 2.7 (if available), it requires to run copy27 first",
+        "clean_space": "clean unnecessary spaces in the code, applies flake8 on all files",
+        "clean_pyd": "clean file ``*.pyd``",
+        "copy_dist": "copy documentation to folder dist",
+        "copy_sphinx": "modify and copy sources to _doc/sphinxdoc/source/<module>",
+        "copy27": "create a modified copy of the module to run on Python 2.7 (if available), it requires to run copy27 first",
+        "run27": "run the unit tests for the Python 2.7",
+        "setup_hook": "call function setup_hook which initializes the module before running unit tests",
+        "unittests": "run the unit tests which do not contain test_LONG, test_SKIP or test_GUI in their file name",
+        "unittests_LONG": "run the unit tests which contain test_LONG their file name",
+        "unittests_SKIP": "run the unit tests which contain test_SKIP their file name",
+        "unittests_GUI": "run the unit tests which contain test_GUI their file name",
+        "write_version": "write a file ``version.txt`` with the version number (assuming sources are host with git)",
+    }
 
-        build_script    produce various scripts to build the module
-        clean_space     clean unnecessary spaces in the code
-        write_version   write a file ``version.txt`` with the version number (needs an access to GitHub)
-        clean_pyd       clean file ``*.pyd``
-        build_sphinx    build the documentation
-        unittests       run the unit tests
-        copy27          create a modified copy of the module to run on Python 2.7
-
-        """)
+    if "--help-commands" in argv:
+        print("Commands processed by pyquickhelper:")
+        for k, v in sorted(commands.items()):
+            print("  {0}{1}{2}".format(
+                k, " " * (len("copy27            ") - len(k)), v))
+        print()
+    elif "--help" in sys.argv:
+        for k, v in sorted(commands.items()):
+            if k in argv:
+                print("\n  {0}\n\n  {1}".format(k, v))
+                if k == "unittests":
+                    print(
+                        "\n  {0} [-d seconds] [-f file]\n\n  {1}".format(k, v))
+                    print(
+                        "  -d seconds     run all unit tests for which predicted duration is below a given threshold.")
+                    print(
+                        "  -f file        run all unit tests in file (do not use the full path)")
 
 
 def write_module_scripts(folder, platform=sys.platform, blog_list=None,

@@ -332,7 +332,7 @@ def main_run_test(runner, path_test=None, limit_max=1e9, log=False, skip=-1, ski
     @param      log                 if True, enables intermediate files
     @param      skip                if skip != -1, skip the first "skip" test files
     @param      skip_list           skip unit test id in this list (by index, starting by 1)
-    @param      skip_function       function(filename,content) --> boolean to skip a unit test
+    @param      skip_function       *function(filename,content,duration) --> boolean* to skip a unit test
     @param      on_stderr           if True, publish everything on stderr at the end
     @param      flogp               logging, printing function
     @param      processes           to run the unit test in a separate process (with function @see fn run_cmd),
@@ -454,14 +454,14 @@ def main_run_test(runner, path_test=None, limit_max=1e9, log=False, skip=-1, ski
             continue
         if i + 1 in skip_list:
             continue
+        cut = os.path.split(s[1])
+        cut = os.path.split(cut[0])[-1] + "/" + cut[-1]
         if skip_function is not None:
             with open(s[1], "r") as f:
                 content = f.read()
-            if skip_function(s[1], content):
+            if skip_function(s[1], content, duration.get(cut, None)):
                 continue
 
-        cut = os.path.split(s[1])
-        cut = os.path.split(cut[0])[-1] + "/" + cut[-1]
         if cut not in duration:
             raise Exception("{0} not found in\n{1}".format(
                 cut, "\n".join(sorted(duration.keys()))))
@@ -480,14 +480,14 @@ def main_run_test(runner, path_test=None, limit_max=1e9, log=False, skip=-1, ski
             continue
         if i + 1 in skip_list:
             continue
+        cut = os.path.split(s[1])
+        cut = os.path.split(cut[0])[-1] + "/" + cut[-1]
         if skip_function is not None:
             with open(s[1], "r") as f:
                 content = f.read()
-            if skip_function(s[1], content):
+            if skip_function(s[1], content, duration.get(cut, None)):
                 continue
 
-        cut = os.path.split(s[1])
-        cut = os.path.split(cut[0])[-1] + "/" + cut[-1]
         zzz = "running test % 3d, %s" % (i + 1, cut)
         zzz += (60 - len(zzz)) * " "
         memout.write(zzz)
@@ -656,12 +656,13 @@ def is_valid_error(error):
     return False
 
 
-def default_skip_function(name, code):
+def default_skip_function(name, code, duration):
     """
     default skip function for function @see fn main_wrapper_tests.
 
     @param      name        name of the test file
     @param      code        code of the test file
+    @param      duration    estimated duration of the tests (specified in the file documentation)
     @return                 True if skipped, False otherwise
     """
     if "test_SKIP_" in name or "test_LONG_" in name or "test_GUI_" in name:

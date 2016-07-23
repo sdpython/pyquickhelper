@@ -44,7 +44,7 @@ def main_wrapper_tests(codefile, skip_list=None, processes=False, add_coverage=F
     @param      add_coverage            run the unit tests and measure the coverage at the same time
     @param      report_folder           folder where the coverage report will be stored, if None, it will be placed in:
                                         ``os.path.join(os.path.dirname(codefile), "..", "_doc","sphinxdoc","source", "coverage")``
-    @param      skip_function           function(filename,content) --> boolean to skip a unit test
+    @param      skip_function           *function(filename,content,duration) --> boolean* to skip a unit test
     @param      setup_params            parameters sent to @see fn call_setup_hook
     @param      only_setup_hook         calls only @see fn call_setup_hook, do not run the unit test
     @param      coverage_options        (dictionary) options for module coverage as a dictionary, see below, default is None
