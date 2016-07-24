@@ -289,7 +289,7 @@ def process_standard_options_for_setup(argv,
         return True
 
     elif "unittests_LONG" in argv:
-        def skip_long(name, code):
+        def skip_long(name, code, duration):
             return "test_LONG_" not in name
         run_unittests_for_setup(
             file_or_folder, skip_function=skip_long, setup_params=setup_params,
@@ -299,7 +299,7 @@ def process_standard_options_for_setup(argv,
         return True
 
     elif "unittests_SKIP" in sys.argv:
-        def skip_skip(name, code):
+        def skip_skip(name, code, duration):
             return "test_SKIP_" not in name
         run_unittests_for_setup(
             file_or_folder, skip_function=skip_skip, setup_params=setup_params,
@@ -309,7 +309,7 @@ def process_standard_options_for_setup(argv,
         return True
 
     elif "unittests_GUI" in sys.argv:
-        def skip_skip(name, code):
+        def skip_skip(name, code, duration):
             return "test_GUI_" not in name
         run_unittests_for_setup(
             file_or_folder, skip_function=skip_skip, setup_params=setup_params,

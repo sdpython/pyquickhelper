@@ -71,7 +71,7 @@ class TestUnitTestFull(unittest.TestCase):
         else:
             memo = None
 
-        def skip_function(name, code):
+        def skip_function(name, code, duration):
             return "test_example" not in name
 
         blog_list = """
