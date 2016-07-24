@@ -178,6 +178,7 @@ class TestJenkinsExt(unittest.TestCase):
              None, dict(pre="rem pre", post="rem post", timeout=4805)),
             ("custom [any_name]", "H H(3-4) * * 1",
              dict(script="any_script.bat")),
+            ["pyensae [UT] {-d_10} <-- pyquickhelper <---- qgrid"],
         ]
 
         engines = dict(Anaconda2="C:\\Anaconda2",
@@ -223,6 +224,14 @@ class TestJenkinsExt(unittest.TestCase):
                     raise Exception("{0}\n----\n{1}".format(r[0], conf))
                 if "SUCCESS" not in conf:
                     raise Exception(conf)
+
+            if "[UT]" in job:
+                if "-d 10" not in conf:
+                    raise Exception("{0}\n-----------\n{1}".format(job, conf))
+                if "%1" in conf:
+                    raise Exception("{0}\n-----------\n{1}".format(job, conf))
+                if " -d 10" not in conf:
+                    raise Exception("{0}\n-----------\n{1}".format(job, conf))
 
             if i == 0:
                 if "conda update" not in conf:

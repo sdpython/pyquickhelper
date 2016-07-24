@@ -5,7 +5,7 @@
 .. todoext::
     :title: run unit test if their estimated time is below a certain threshold
     :hidden:
-    :issue: 3
+    :issue: 23
     :tag: enhancement
     :cost: 0.2
     :date: 2016-07-24
@@ -164,6 +164,8 @@ def process_standard_options_for_setup(argv,
 
     .. versionchanged:: 1.4
         Parameters *use_run_cmd*, *filter_warning* were added.
+        command *unittests -d 10* and *unittests -d 5* was added to run unit
+        tests below 10 or 5 seconds.
     """
     if "--help" in argv or "--help-commands" in argv:
         process_standard_options_for_setup_help(argv)
@@ -332,11 +334,13 @@ def process_standard_options_for_setup(argv,
                   "write_version", "clean_pyd",
                   "build_sphinx", "unittests",
                   "unittests_LONG", "unittests_SKIP", "unittests_GUI",
+                  "unittests -d 10", "unittests -d 5",
                   "setup_hook", "copy27", "test_local_pypi"):
             sc = get_script_command(
                 c, project_var_name, requirements=requirements, port=port, platform=sys.platform,
                 default_engine_paths=default_engine_paths, additional_local_path=additional_local_path)
-            with open(os.path.join(folder, "auto_setup_%s.%s" % (c, get_script_extension())), "w") as f:
+            cn = c.replace(" ", "_")
+            with open(os.path.join(folder, "auto_setup_%s.%s" % (cn, get_script_extension())), "w") as f:
                 f.write(sc)
 
         # script running for a developper

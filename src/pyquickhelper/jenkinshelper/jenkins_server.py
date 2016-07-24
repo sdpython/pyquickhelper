@@ -2,6 +2,21 @@
 @file
 @brief Extends Jenkins Server from `python-jenkins <http://python-jenkins.readthedocs.org/en/latest/>`_
 
+.. todoext::
+    :title: handle command unittests line with parameters with jenkins
+    :hidden:
+    :tag: enhancement
+    :cost: 0.1
+    :date: 2016-07-25
+    :issue: 24
+
+    Example::
+
+        pyquickhelper [UT] {-d_10}
+
+    This adds a job which runs all unit tests with an estimated duration
+    below 10 seconds.
+
 .. versionadded:: 1.1
 """
 
@@ -377,7 +392,6 @@ class JenkinsExt(jenkins.Jenkins):
         Requirements local and from pipy can be specified by added in the job name:
 
         * ``<-- module1, module2`` for local requirements
-        * ``<---- module1, module2`` for local requirements
         """
         job_verbose = job
 
@@ -464,13 +478,22 @@ class JenkinsExt(jenkins.Jenkins):
             elif spl[0] == "empty":
                 return ""
 
-            elif len(spl) in [2, 3, 4]:
+            elif len(spl) in [2, 3, 4, 5]:
                 # step 1: define the script
 
                 if "[test_local_pypi]" in spl:
                     cmd = "auto_setup_test_local_pypi.bat __PYTHON__"
                 elif "[update_modules]" in spl:
                     cmd = "\n__PACTHPQb__\n__PYTHON__ setup.py build_script\n__PACTHPQe__\n\nauto_update_modules.bat __PYTHON__"
+                elif "[UT]" in spl:
+                    parameters = [_ for _ in spl if _.startswith(
+                        "{") and _.endswith("}")]
+                    if len(parameters) != 1:
+                        raise ValueError(
+                            "unable to extract parameters for the unittests:\n{0}".format(" ".join(spl)))
+                    p = parameters[0].replace("_", " ").strip("{}")
+                    cmd = _modified_windows_jenkins_any(requirements_local, requirements_pypi).replace(
+                        "__COMMAND__", "unittests " + p)
                 elif "[LONG]" in spl:
                     cmd = _modified_windows_jenkins_any(requirements_local, requirements_pypi).replace(
                         "__COMMAND__", "unittests_LONG")
@@ -763,6 +786,7 @@ class JenkinsExt(jenkins.Jenkins):
         * ``[SKIP]``: run skipped unit tests (files start by ``test_SKIP_``)
         * ``[GUI]``: run skipped unit tests (files start by ``test_GUI_``)
         * ``[custom.+]``: run ``setup.py <custom.+>`` in a virtual environment
+        * ``[UT] {-d_10}``: run ``setup.py unittests -d 10`` in a virtual environment, ``-d 10`` is one of the possible parameters
 
         Others tags:
 
