@@ -9,7 +9,6 @@ cryptography
 Cython
 docutils
 entrypoints
-flake8
 Flask
 Flask-SQLAlchemy
 hachibee-sphinx-theme
@@ -29,7 +28,6 @@ mako
 Markdown
 MarkupSafe
 matplotlib
-mccabe
 mechanize
 metakernel
 mistune

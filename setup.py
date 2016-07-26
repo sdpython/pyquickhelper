@@ -209,7 +209,6 @@ if not r:
             "babel!=2.0",   # babel 2.0 has issue
             "docutils",
             "entrypoints",
-            "flake8>=3.0.0",
             "numpy",
             "IPython",
             "ipykernel",
@@ -239,6 +238,9 @@ if not r:
             "sphinxjp.themes.revealjs",
             "traitlets",
         ],
+        extras_require={
+            'jenkinshelper': ['python-jenkins'],
+        },
         entry_points={
             'console_scripts': [
                 'encrypt = pyquickhelper.cli.encryption_cli:encrypt',
