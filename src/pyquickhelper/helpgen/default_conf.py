@@ -320,7 +320,7 @@ def set_sphinx_variables(fileconf,
     try:
         import bokeh
         extensions.append('%s.sphinxext.bokeh_plot' % bokeh.__name__)
-        # this ticks avoid being noticed by flake8
+        # this ticks avoid being noticed by flake8 or pycodestyle
     except ImportError as e:
         # bokeh is not installed
         pass

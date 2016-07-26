@@ -95,14 +95,14 @@ def check_pep8(folder, ignore=('E501', 'E265'), skip=None,
                neg_filter=None, extended=None, max_line_length=162):
     """
     Check if `PEP8 <https://www.python.org/dev/peps/pep-0008/>`_,
-    the function calls command `flake8 <https://flake8.readthedocs.org/en/latest/>`_
+    the function calls command `pycodestyle <http://pycodestyle.readthedocs.io/>`_
     on a specific folder
 
     @param      folder              folder to look into
     @param      ignore              list of warnings to skip when raising an exception if
                                     PEP8 is not verified, see also
                                     `Error Codes <http://pep8.readthedocs.org/en/latest/intro.html#error-codes>`_
-    @param      complexity          see `check_file <http://flake8.readthedocs.org/en/latest/api.html#flake8.main.check_file>`_
+    @param      complexity          see `check_file <http://pycodestyle.readthedocs.io/en/latest/api.html?highlight=styleguide#pycodestyle.StyleGuide.check_files>`_
     @param      stop_after          stop after *stop_after* issues
     @param      skip                skip a warning if a substring in this list is found
     @param      neg_filter          skip files verifying this regular expressions
@@ -114,11 +114,11 @@ def check_pep8(folder, ignore=('E501', 'E265'), skip=None,
     Functions mentioned in *extended* takes two parameters (file name and line)
     and they returned None or an error message or a tuple (position in the line, error message).
     When the return is not empty, a warning will be added to the ones
-    printed by flake8.
+    printed by flake8 or pycodestyle.
 
     .. versionadded:: 1.4
     """
-    from flake8.main import check_file
+    import pycodestyle
 
     def extended_checkings(fname, content, buf, extended):
         for i, line in enumerate(content):
@@ -181,16 +181,19 @@ def check_pep8(folder, ignore=('E501', 'E265'), skip=None,
         if len(file) == 0:
             raise TypeError("file cannot be empty")
         try:
-            res = check_file(file, ignore=ig, complexity=complexity)
+            style = pycodestyle.StyleGuide(
+                ignore=ig, complexity=complexity, format='pylint')
+            res = style.check_files([file])
         except TypeError as e:
             ext = "This is often due to an instruction from . import... The imported module has no name."
-            raise TypeError("Issue with flake8 for module '{0}' ig={1} complexity={2}\n{3}".format(
+            raise TypeError("Issue with flake8 or pycodesyle for module '{0}' ig={1} complexity={2}\n{3}".format(
                 file, ig, complexity, ext)) from e
         if extended is not None:
             with open(file, "r", errors="ignore") as f:
                 content = f.readlines()
             extended_checkings(file, content, buf, extended)
-        if res > 0:
+        if res.total_errors + res.file_errors > 0:
+            res.print_filename = True
             lines = [_ for _ in buf.getvalue().split("\n") if fkeep(_)]
             if len(lines) > stop_after:
                 raise Exception(

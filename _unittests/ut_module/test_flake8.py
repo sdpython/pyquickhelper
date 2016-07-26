@@ -63,7 +63,7 @@ class TestFlake8(unittest.TestCase):
                          "skip__' imported but unused",
                          "skip___' imported but unused",
                          "2test_download_pip.py",
-                         "E402 module ",
+                         "[E402] module ",
                          ])
 
 
