@@ -286,6 +286,9 @@ def main_wrapper_tests(codefile, skip_list=None, processes=False, add_coverage=F
             rows.append("OPTIONS")
             for option_spec in sorted(cov.config.CONFIG_FILE_OPTIONS):
                 attr, where = option_spec[:2]
+                if attr == "sort":
+                    # we skip, it raises an exception with coverage 4.2
+                    continue
                 v = getattr(cov.config, attr)
                 st = "{0}={2}".format(attr, where, v)
                 rows.append(st)
