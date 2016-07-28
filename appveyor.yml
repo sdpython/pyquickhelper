@@ -29,6 +29,7 @@ install:
   - "%PYTHON%\\Scripts\\pip install pycodestyle"
   - "%PYTHON%\\Scripts\\pip install python-jenkins"
   - "%PYTHON%\\Scripts\\pip install prompt_toolkit"
+  - "%PYTHON%\\Scripts\\pip install https://github.com/ipython-contrib/jupyter_contrib_nbextensions/tarball/master"
   - "%PYTHON%\\Scripts\\jupyter nbextension enable --py --sys-prefix widgetsnbextension"
 
 build: off
