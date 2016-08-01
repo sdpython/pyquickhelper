@@ -61,7 +61,7 @@ class TestNotebookExtensions(unittest.TestCase):
             fLOG(e)
         if "IPython-notebook-extensions-master/usability/search-replace/main" not in ext and \
             'IPython-notebook-extensions-master/nbextensions/usability/search-replace/main' not in ext and \
-            'jupyter_contrib_nbextensions-master/src/jupyter_contrib_nbextensions/nbextensions/search-replace/main' not in ext:
+                'jupyter_contrib_nbextensions-master/src/jupyter_contrib_nbextensions/nbextensions/search-replace/main' not in ext:
             raise Exception(ext)
 
 
