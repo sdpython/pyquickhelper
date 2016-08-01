@@ -68,9 +68,11 @@ def do_main(source, dest, password, encrypt, fLOG=None):
                        chunksize=os.stat(source).st_size * 2 + 1)
 
 
-def encrypt_file():
+def encrypt_file(fLOG=print):
     """
     encrypt using class @see fn encrypt_stream
+
+    @param      fLOG        logging function
     """
     parser = get_parser(True)
     try:
@@ -81,12 +83,15 @@ def encrypt_file():
 
     if args is not None:
         do_main(source=args.source, dest=args.dest,
-                password=args.password, encrypt=True)
+                password=args.password, encrypt=True,
+                fLOG=fLOG)
 
 
-def decrypt_file():
+def decrypt_file(fLOG=print):
     """
     decrypt using class @see fn decrypt_stream
+
+    @param      fLOG        logging function
     """
     parser = get_parser(False)
     try:
@@ -97,7 +102,8 @@ def decrypt_file():
 
     if args is not None:
         do_main(source=args.source, dest=args.dest,
-                password=args.password, encrypt=False)
+                password=args.password, encrypt=False,
+                fLOG=fLOG)
 
 
 if __name__ == "__main__":

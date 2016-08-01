@@ -113,9 +113,11 @@ def do_main(source, dest, password, encrypt,
         enc.retrieve_all(source, regex=regex)
 
 
-def encrypt():
+def encrypt(fLOG=print):
     """
     encrypt using class @see cl EncryptedBackup
+
+    @param      fLOG        logging function
     """
     parser = get_parser(True)
     try:
@@ -126,12 +128,14 @@ def encrypt():
 
     if args is not None:
         do_main(source=args.source, dest=args.dest, password=args.password,
-                encrypt=True, crypt_file=args.status, crypt_map=args.map, fLOG=print)
+                encrypt=True, crypt_file=args.status, crypt_map=args.map, fLOG=fLOG)
 
 
-def decrypt():
+def decrypt(fLOG=print):
     """
     decrypt using class @see cl EncryptedBackup
+
+    @param      fLOG        logging function
     """
     parser = get_parser(False)
     try:
@@ -144,7 +148,7 @@ def decrypt():
         do_main(source=args.dest, dest=args.source, password=args.password,
                 encrypt=False, crypt_file=None, crypt_map=None,
                 regex=args.regex if args.regex else None,
-                fLOG=print)
+                fLOG=fLOG)
 
 
 if __name__ == "__main__":

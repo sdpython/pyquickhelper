@@ -44,11 +44,11 @@ class TestEncryptionCli(unittest.TestCase):
         temp = get_temp_folder(__file__, "temp_encrypt_file")
         dest = os.path.join(temp, "__file__.enc")
         sys.argv = ["", __file__, dest, password]
-        encrypt_file()
+        encrypt_file(fLOG=fLOG)
 
         dest2 = os.path.join(temp, "__file__.py")
         sys.argv = ["", dest, dest2, password]
-        decrypt_file()
+        decrypt_file(fLOG=fLOG)
 
         with open(__file__, "rb") as f:
             c1 = f.read()
@@ -75,10 +75,10 @@ class TestEncryptionCli(unittest.TestCase):
         temp2 = get_temp_folder(__file__, "temp_encrypt2")
         srcf = os.path.join(temp, "..")
         sys.argv = ["", srcf, temp, password]
-        encrypt()
+        encrypt(fLOG=fLOG)
 
         sys.argv = ["", temp, temp2, password]
-        decrypt()
+        decrypt(fLOG=fLOG)
 
         with open(__file__, "rb") as f:
             c1 = f.read()
