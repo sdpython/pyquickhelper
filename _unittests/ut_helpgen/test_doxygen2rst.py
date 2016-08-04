@@ -100,6 +100,31 @@ class TestDoxygen2rst (unittest.TestCase):
         self.assertEqual(rst.strip("\n ").replace(" ", ""),
                          exp.strip("\n ").replace(" ", ""))
 
+    def test_doxygen2rst_bug(self):
+        fLOG(
+            __file__,
+            self._testMethodName,
+            OutputPrint=__name__ == "__main__")
+
+        if sys.version_info[0] == 2:
+            #~ # not test on python 2
+            return
+
+        file = os.path.join(os.path.abspath(
+            os.path.dirname(__file__)), "data", "completion.py")
+        with open(file, "r", encoding="utf8") as f:
+            content = f.read()
+
+        res = migrating_doxygen_doc(
+            content, __file__, debug=False, silent=True, log=False)
+        rst = res[1]
+        lines = rst.split("\n")
+        eq = [_ for _ in lines if "@param" in _ or "@see" in _]
+        for e in eq:
+            if e.lstrip() == e:
+                raise ValueError(
+                    "no indentation: -{}-\nCONTENT\n{}".format(e, rst))
+
 
 if __name__ == "__main__":
     unittest.main()
