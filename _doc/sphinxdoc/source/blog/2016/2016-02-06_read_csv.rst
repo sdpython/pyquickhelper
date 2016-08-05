@@ -1,12 +1,10 @@
 
-
-.. _blogpost_read_csv:
-
 .. blogpost::
     :title: read_csv and zip files
     :keywords: pandas, read_csv, zip
     :date: 2016-02-06
     :categories: pandas
+    :lid: blogpost_read_csv
     
     `read_csv <http://pandas.pydata.org/pandas-docs/stable/generated/pandas.read_csv.html>`_
     is no longer able to extract a dataframe from a zip file. 
@@ -15,7 +13,7 @@
     the reason is that zip files can contains many files.
     
     *pyquickhelper* now implements the function
-    :ref:`read_csv <pyquickhelper.pandashelper.readh.read_csv>`
+    :func:`read_csv <pyquickhelper.pandashelper.readh.read_csv>`
     which can extract all dataframe in a zip file or falls back
     into the regular function if no zip format is detected.
     In that case, it returns a dictionary of dataframes indexed by their name

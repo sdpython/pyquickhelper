@@ -36,7 +36,7 @@ class NbRef(BlocRef):
     * lid: a label to refer to
     * index: to add an additional entry to the index (comma separated)
 
-    See :ref:`l-nb-encrypt-file` for an example.
+    See :ref:`%encrypt_file <l-nb-encrypt-file>` for an example.
     All entries can be aggregated per tag with ``nbreflist``::
 
         .. nbreflist::

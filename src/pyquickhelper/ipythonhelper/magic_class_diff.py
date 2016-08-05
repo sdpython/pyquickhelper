@@ -60,7 +60,7 @@ class MagicDiff(MagicClassWithHelpers):
 
             It displays differences between two text files, two strings, two urls,
             it is based on `create_visual_diff_through_html_files <http://www.xavierdupre.fr/app/pyquickhelper/helpsphinx/pyquickhelper/filehelper/visual_sync.html?highlight=create#pyquickhelper.filehelper.visual_sync.create_visual_diff_through_html_files>`_
-            Check blog post :ref:`b-textdiff` to see an example.
+            Check blog post :ref:`b-diffview` to see an example.
 
             The magic command is equivalent to::
 

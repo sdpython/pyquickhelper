@@ -1,12 +1,11 @@
 
 
-.. _b-migration-py2py3:
-
 .. blogpost::
     :title: Producing a version for Python 2.7 from Python 3
     :keywords: python 2.7, migration
     :date: 2015-04-17
     :categories: documentation, Python 2.7
+    :lid: b-migration-py2py3
     
     I tried to make most of the unit tests run under Python 2.7.
     Most of the function deals with strings for the documentation

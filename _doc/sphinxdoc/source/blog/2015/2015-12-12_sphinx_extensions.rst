@@ -25,6 +25,7 @@
     * `lunrsearch <https://github.com/rmcgibbo/sphinxcontrib-lunrsearch>`_
     
     Their are now part of the default configuration
-    proposed by this module. See :ref:`set_sphinx_variables <pyquickhelper.helpgen.default_conf.set_sphinx_variables>`.
+    proposed by this module. See 
+    :func:`set_sphinx_variables <pyquickhelper.helpgen.default_conf.set_sphinx_variables>`.
     
        

@@ -1,12 +1,11 @@
 
 
-.. _b-diffview:
-
 .. blogpost::
     :title: Visualize differences between two files in a notebook
     :keywords: diffview, difflib.js, differences
     :date: 2015-04-23
     :categories: javascript, notebook
+    :lid: b-diffview
     
     It is now possible to visualize the differences between two files
     directly from a notebook:

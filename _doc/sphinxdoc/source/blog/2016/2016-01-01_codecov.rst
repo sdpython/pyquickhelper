@@ -1,12 +1,11 @@
 
 
-.. _blogpost_coverage_codecov:
-
 .. blogpost::
     :title: Badge for coverage
     :keywords: codecov, coveralls
     :date: 2016-01-01
     :categories: coverage
+    :lid: blogpost_coverage_codecov
     
     *pyquickhelper* is using `coverage <https://pypi.python.org/pypi/coverage>`_
     to measure the coverage of the unit tests.

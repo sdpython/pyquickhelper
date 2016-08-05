@@ -200,6 +200,8 @@ def set_sphinx_variables(fileconf,
                       'preamble': preamble,
                       }
 
+    # latex_additional_files = ["mfgan-bw.sty", "_static/cover.png"]
+
     # figure
     numfig = True
 
@@ -282,8 +284,11 @@ def set_sphinx_variables(fileconf,
                   'sphinxcontrib.imagesvg',
                   'sphinxcontrib.jsdemo',
                   'IPython.sphinxext.ipython_console_highlighting',
+                  # 'matplotlib.sphinxext.only_directives',
+                  # 'matplotlib.sphinxext.mathmpl',
+                  # 'matplotlib.sphinxext.only_directives',
                   'matplotlib.sphinxext.plot_directive',
-                  'matplotlib.sphinxext.only_directives',
+                  # 'matplotlib.sphinxext.ipython_directive',
                   ]
 
     if use_lunrsearch:
@@ -340,7 +345,7 @@ def set_sphinx_variables(fileconf,
     # html_use_opensearch = ''
     # html_file_suffix = None
     # latex_logo = None
-    # latex_show_urls = False
+    latex_show_urls = 'footnote'
     # latex_appendices = []
     # latex_domain_indices = True
     # texinfo_appendices = []
@@ -348,6 +353,7 @@ def set_sphinx_variables(fileconf,
     # texinfo_show_urls = 'footnote'
 
     # it modifies the set of things to display inside the sidebar
+    # see http://www.sphinx-doc.org/en/stable/config.html#confval-html_sidebars
     html_sidebars = {
         '[!blog]**': ['searchbox.html', 'moduletoc.html', 'relations.html', 'sourcelink.html', ],
         'blog/**': ['searchbox.html', 'blogtoc.html', 'localtoc.html', 'sourcelink.html', ],
@@ -523,3 +529,6 @@ def custom_setup(app, author):
     setup_exref(app)
     setup_faqref(app)
     setup_nbref(app)
+
+    from sphinx.util.texescape import tex_replacements
+    tex_replacements += [('oe', '\\oe '), ]

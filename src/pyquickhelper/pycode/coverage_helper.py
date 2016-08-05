@@ -55,6 +55,7 @@ def get_codecov_program(exe=None):
 
 def publish_coverage_on_codecov(path, token, commandline=True, fLOG=noLOG):
     """
+    Publish the coverage report on `codecov <https://codecov.io/>`_.
     See blog post :ref:`blogpost_coverage_codecov`.
 
     @param      path            path to source
