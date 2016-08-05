@@ -1,6 +1,13 @@
 """
 @file
 @brief Subpart related to sphinx extensions
+
+.. todoext::
+    :title: add directive for a sortable table
+    :tag: enhancement
+    :issue: 27
+
+    Based on `slickgrid <https://github.com/mleibman/SlickGrid/tree/master/examples>`_.
 """
 from .blog_post import BlogPost
 from .blog_post_list import BlogPostList
