@@ -530,5 +530,5 @@ def custom_setup(app, author):
     setup_faqref(app)
     setup_nbref(app)
 
-    from sphinx.util.texescape import tex_replacements
-    tex_replacements += [('oe', '\\oe '), ]
+    # from sphinx.util.texescape import tex_replacements
+    # tex_replacements += [('oe', '\\oe '), ]
