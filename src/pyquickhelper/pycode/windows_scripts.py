@@ -568,7 +568,7 @@ versionPython = "%s.%s" % (sys.version_info.major, sys.version_info.minor)
 path = "Lib/site-packages/" + project_var_name
 
 if "Anaconda" not in sys.version or sys.version_info[0] == 2:
-    jup = ["IPython", "jupyter"]
+    jup = ["IPython>=5.0.0", "jupyter"]
 else:
     jup = []
 
@@ -579,11 +579,11 @@ setup(
         "autopep8",
         "codecov",
         "docutils",
-        "matplotlib",
+        "matplotlib>=1.5.1",
         "nbpresent",
-        "numpy",
-        "sphinx",
-        "pandas",
+        "numpy>=1.11.1",
+        "sphinx>=1.4.5",
+        "pandas>=0.18.1",
         "python-dateutil",
         "sphinxjp.themes.revealjs", ] + jup,
 )
