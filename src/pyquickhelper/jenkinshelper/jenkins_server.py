@@ -33,7 +33,7 @@ from ..pycode.build_helper import private_script_replacements
 from .jenkins_exceptions import JenkinsExtException, JenkinsJobException
 from .jenkins_server_template import _config_job, _trigger_up, _trigger_time, _git_repo, _task_batch
 
-_timeout_default = 1500
+_timeout_default = 3600
 
 _default_engine_paths = {
     "windows": {

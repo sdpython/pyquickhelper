@@ -610,7 +610,7 @@ def generate_help_sphinx(project_var_name,
 
         sconf = "" if newconf is None else " -c {0}".format(newconf)
 
-        cmd = "sphinx-build -b {1} -d {0}/doctrees{2}{3} source {0}/{1}".format(
+        cmd = "sphinx-build -j 2 -v -T -b {1} -d {0}/doctrees{2}{3} source {0}/{1}".format(
             build, lay, over, sconf)
         cmds.append((cmd, build, lay))
         fLOG("run:", cmd)
@@ -619,7 +619,7 @@ def generate_help_sphinx(project_var_name,
         if add_htmlhelp and lay == "html":
             # we cannot execute htmlhelp in the same folder
             # as it changes the encoding
-            cmd = "sphinx-build -b {1}help -d {0}/doctrees{2}{3} source {0}/{1}help".format(
+            cmd = "sphinx-build -j 2 -v -T -b {1}help -d {0}/doctrees{2}{3} source {0}/{1}help".format(
                 build, lay, over, sconf)
             cmds.append((cmd, build, "add_htmlhelp"))
             fLOG("run:", cmd)
