@@ -44,6 +44,7 @@ from docutils.statemachine import StringList
 from sphinx.util.nodes import set_source_info, process_index_entry
 from sphinx import addnodes
 from ..texthelper.texts_language import TITLES
+from .sphinx_ext_helper import info_blocref
 
 
 class blocref_node(nodes.admonition):
@@ -343,6 +344,22 @@ def process_blocref_nodes_generic(app, doctree, fromdocname, class_name,
     If the configuration file specifies a variable ``blocref_include_blocrefs`` equals to False,
     all nodes are removed.
     """
+    # logging
+    cont = info_blocref(app, doctree, fromdocname, class_name,
+                        entry_name, class_node, class_node_list)
+    if not cont:
+        return
+
+    # check this is something to process
+    env = app.builder.env
+    attr_name = '%s_all_%ss' % (class_name, class_name)
+    if not hasattr(env, attr_name):
+        setattr(env, attr_name, [])
+    bloc_list_env = getattr(env, attr_name)
+    if len(bloc_list_env) == 0:
+        return
+
+    # content
     incconf = '%s_include_%ss' % (class_name, class_name)
     if app.config[incconf] and not app.config[incconf]:
         for node in doctree.traverse(class_node):
@@ -350,7 +367,6 @@ def process_blocref_nodes_generic(app, doctree, fromdocname, class_name,
 
     # Replace all blocreflist nodes with a list of the collected blocrefs.
     # Augment each blocref with a backlink to the original location.
-    env = app.builder.env
     if hasattr(env, "settings") and hasattr(env.settings, "language_code"):
         lang = env.settings.language_code
     else:
@@ -358,11 +374,6 @@ def process_blocref_nodes_generic(app, doctree, fromdocname, class_name,
 
     orig_entry = TITLES[lang]["original entry"]
     brefmes = TITLES[lang][entry_name]
-
-    attr_name = '%s_all_%ss' % (class_name, class_name)
-    if not hasattr(env, attr_name):
-        setattr(env, attr_name, [])
-    bloc_list_env = getattr(env, attr_name)
 
     for ilist, node in enumerate(doctree.traverse(class_node_list)):
         if 'ids' in node:
