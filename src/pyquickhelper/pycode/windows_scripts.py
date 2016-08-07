@@ -178,6 +178,7 @@ if %errorlevel% neq 0 exit /b %errorlevel%
 @echo #######################################################conda update -y --all
 @echo ~%pythonexe%\\..\\Scripts\\conda update -p %virtual_env_py%_condavir%virtual_env_suffix% -y --all
 %pythonexe%\\..\\Scripts\\conda update -p %virtual_env_py%_condavir%virtual_env_suffix% -y --all
+if %errorlevel% neq 0 exit /b %errorlevel%
 @echo #######################################################conda update -y --all END
 
 :with_virtual_conda:
