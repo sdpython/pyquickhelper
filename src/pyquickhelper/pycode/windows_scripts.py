@@ -175,6 +175,10 @@ if exist %virtual_env_py%_condavir%virtual_env_suffix%\\python goto with_virtual
 @echo ~CALL %pythonexe%\\..\\Scripts\\conda create -p %virtual_env_py%_condavir%virtual_env_suffix% --clone %pythonexe%\\.. --offline
 %pythonexe%\\..\\Scripts\\conda create -p %virtual_env_py%_condavir%virtual_env_suffix% --clone %pythonexe%\\.. --offline
 if %errorlevel% neq 0 exit /b %errorlevel%
+@echo #######################################################conda update -y --all
+@echo ~%pythonexe%\\..\\Scripts\\conda update -p %virtual_env_py%_condavir%virtual_env_suffix% -y --all
+%pythonexe%\\..\\Scripts\\conda update -p %virtual_env_py%_condavir%virtual_env_suffix% -y --all
+@echo #######################################################conda update -y --all END
 
 :with_virtual_conda:
 @echo ~LABEL with_virtual_conda
@@ -184,10 +188,6 @@ set pythonpip=%virtual_env_py%_condavir%virtual_env_suffix%\\Scripts\\pip
 @echo ~SET pythonpip=%virtual_env_py%_condavir%virtual_env_suffix%\\Scripts\\pip
 set pythonconda=%virtual_env_py%_condavir%virtual_env_suffix%\\Scripts\\conda
 @echo ~SET pythonconda=%virtual_env_py%_condavir%virtual_env_suffix%\\Scripts\\conda
-@echo #######################################################conda update -y --all
-@echo ~%pythonexe%\\..\\Scripts\\conda update -p %virtual_env_py%_condavir%virtual_env_suffix% -y --all
-%pythonexe%\\..\\Scripts\\conda update -p %virtual_env_py%_condavir%virtual_env_suffix% -y --all
-@echo #######################################################conda update -y --all END
 
 
 :requirements:
