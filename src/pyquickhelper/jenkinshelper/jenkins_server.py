@@ -333,7 +333,7 @@ class JenkinsExt(jenkins.Jenkins):
         return "__SCRIPTOPTIONS__"
 
     @staticmethod
-    def hash_string(s, l=10):
+    def hash_string(s, l=4):
         """
         hash a string
 
@@ -344,7 +344,11 @@ class JenkinsExt(jenkins.Jenkins):
         m = hashlib.md5()
         m.update(s.encode("ascii"))
         r = m.hexdigest().upper()
-        return r if (l == -1 or len(r) <= l) else r[:l]
+        if len(r) < l:
+            return r
+        else:
+            m = l // 2
+            return r[:m] + r[len(r)-l + m:]
 
     def extract_requirements(self, job):
         """

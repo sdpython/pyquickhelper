@@ -182,6 +182,12 @@ set pythonexe=%virtual_env_py%_condavir%virtual_env_suffix%\\python
 @echo ~SET pythonexe=%virtual_env_py%_condavir%virtual_env_suffix%\\python
 set pythonpip=%virtual_env_py%_condavir%virtual_env_suffix%\\Scripts\\pip
 @echo ~SET pythonpip=%virtual_env_py%_condavir%virtual_env_suffix%\\Scripts\\pip
+set pythonconda=%virtual_env_py%_condavir%virtual_env_suffix%\\Scripts\\conda
+@echo ~SET pythonconda=%virtual_env_py%_condavir%virtual_env_suffix%\\Scripts\\conda
+@echo #######################################################conda update -y --all
+%pythonconda% update -y --all
+@echo #######################################################conda update -y --all END
+
 
 :requirements:
 @echo #######################################################_auto_setup_dep.py
