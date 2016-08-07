@@ -23,7 +23,7 @@ class MockTransferFTP (TransferFTP):
         self.LOG = fLOG
         self._atts = dict(site=site)
 
-    def transfer(self, file, to, debug=False):
+    def transfer(self, file, to, debug=False, blocksize=None, callback=None):
         """
         does nothing, returns True
         """
