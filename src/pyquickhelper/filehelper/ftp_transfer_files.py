@@ -10,6 +10,7 @@ import os
 import io
 import warnings
 import sys
+import ftplib
 from .files_status import FilesStatus
 from ..loghelper.flog import noLOG
 
@@ -222,14 +223,20 @@ class FolderTransferFTP:
 
         @param      path            file name
         @param      force_binary    impose a binary transfer
-        @return                     binary stream
+        @return                     binary stream, size
+
+        .. versionchanged:: 1.4
+            Returns also size.
         """
         if force_binary or self._is_binary(path):
-            return open(path, "rb")
+            size = os.stat(path).st_size
+            return open(path, "rb"), size
         else:
             if self._footer_html is None and self._content_filter is None:
-                return open(path, "rb")
+                size = os.stat(path).st_size
+                return open(path, "rb"), size
             else:
+                size = os.stat(path).st_size
                 with open(path, "r", encoding="utf8") as f:
                     try:
                         content = f.read()
@@ -273,7 +280,7 @@ class FolderTransferFTP:
 
                 # to binary
                 bcont = content.encode("utf8")
-                return io.BytesIO(bcont)
+                return io.BytesIO(bcont), len(bcont)
 
     def close_stream(self, stream):
         """
@@ -317,21 +324,57 @@ class FolderTransferFTP:
                 path))
 
             if self._exc:
-                data = self.preprocess_before_transfering(file.fullname)
+                data, size = self.preprocess_before_transfering(file.fullname)
             else:
                 try:
-                    data = self.preprocess_before_transfering(file.fullname)
+                    data, size = self.preprocess_before_transfering(
+                        file.fullname)
                 except FolderTransferFTPException as ex:
                     warnings.warn(
                         "unable to transfer '{0}' due to {1}".format(file.fullname, ex))
                     continue
 
-            try:
+            if size > 2**18:
+                blocksize = 2**15
+                transfered = 0
+
+                def callback_function(*l, blocksize=blocksize, transfered=transfered, size=size, **p):
+                    transfered += blocksize
+                    self.fLOG("  transfered: %1.3f - %d/%d" %
+                              (1.0 * transfered / size, transfered, size))
+                cb = callback_function
+            else:
+                blocksize = None
+                cb = None
+
+            if self._exc:
                 r = self._ftp.transfer(
-                    data, path, os.path.split(file.fullname)[-1])
-            except FileNotFoundError:
-                r = False
-                issues.append((file.fullname, "not found"))
+                    data, path, os.path.split(file.fullname)[-1], blocksize=blocksize, callback=cb)
+            else:
+                try:
+                    r = self._ftp.transfer(
+                        data, path, os.path.split(file.fullname)[-1], blocksize=blocksize, callback=cb)
+                except FileNotFoundError as e:
+                    r = False
+                    issues.append((file.fullname, "not found", e))
+                    self.fLOG("    issue", e)
+                except ftplib.error_perm as ee:
+                    r = False
+                    issues.append((file.fullname, str(ee), ee))
+                    self.fLOG("    issue", ee)
+                except TimeoutError as eee:
+                    r = False
+                    issues.append((file.fullname, "TimeoutError", eee))
+                    self.fLOG("    issue", eee)
+                except EOFError as eeee:
+                    r = False
+                    issues.append((file.fullname, "EOFError", eeee))
+                    self.fLOG("    issue", eeee)
+                except ConnectionAbortedError as eeeee:
+                    r = False
+                    issues.append(
+                        (file.fullname, "ConnectionAbortedError", eeeee))
+                    self.fLOG("    issue", eeeee)
 
             self.close_stream(data)
 
@@ -341,8 +384,8 @@ class FolderTransferFTP:
                 fi = self.update_status(file.fullname)
                 done.append(fi)
 
-            if len(issues) >= 5:
+            if len(issues) >= 10:
                 raise FolderTransferFTPException("too many issues:\n{0}".format(
-                    "\n".join("{0} -- {1}".format(a, b) for a, b in issues)))
+                    "\n".join("{0} -- {1} --- {2}".format(a, b, type(c)) for a, b, c in issues)))
 
         return done

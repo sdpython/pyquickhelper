@@ -9,8 +9,17 @@ from ftplib import FTP, error_perm
 import os
 import io
 import sys
+import time
 
 from ..loghelper.flog import noLOG
+
+
+class CannotReturnToFolderException(Exception):
+    """
+    raised when a transfer is interrupted by an exception
+    and the class cannot return to the original folder
+    """
+    pass
 
 
 class TransferFTP(FTP):
@@ -225,7 +234,7 @@ class TransferFTP(FTP):
                 r.update(a[1])
                 yield r
 
-    def transfer(self, file, to, name, debug=False):
+    def transfer(self, file, to, name, debug=False, blocksize=None, callback=None):
         """
         transfers a file
 
@@ -233,40 +242,74 @@ class TransferFTP(FTP):
         @param      to          destination (a folder)
         @param      name        name of the stream on the website
         @param      debug       if True, displays more information
+        @param      blocksize   see `storbinary <https://docs.python.org/3.5/library/ftplib.html#ftplib.FTP.storbinary>`_
+        @param      callback    see `storbinary <https://docs.python.org/3.5/library/ftplib.html#ftplib.FTP.storbinary>`_
         @return                 status
 
         .. versionchanged:: 1.0
             file can be a file name or a stream,
             parameter *name* was added
+
+        .. versionchanged:: 1.4
+            When an error happens, the original current directory is restored.
+            Parameters *blocksize*, *callback* were added.
         """
         path = to.split("/")
         path = [_ for _ in path if len(_) > 0]
 
+        done = []
+        exc = None
         for p in path:
-            self.cwd(p, True)
+            try:
+                self.cwd(p, True)
+            except Exception as e:
+                exc = e
+                break
+            done.append(p)
 
-        if isinstance(file, str  # unicode#
-                      ):
-            if not os.path.exists(file):
-                raise FileNotFoundError(file)
-            with open(file, "rb") as f:
-                r = self.run_command(
-                    FTP.storbinary, 'STOR ' + name, f, TransferFTP.blockSize)
-        elif isinstance(file, io.BytesIO):
-            r = self.run_command(FTP.storbinary, 'STOR ' +
-                                 name, file, TransferFTP.blockSize)
-        elif isinstance(file, bytes):
-            st = io.BytesIO(file)
-            r = self.run_command(FTP.storbinary, 'STOR ' +
-                                 name, st, TransferFTP.blockSize)
+        bs = blocksize if blocksize else TransferFTP.blockSize
+        if exc is None:
+            try:
+                if isinstance(file, str  # unicode#
+                              ):
+                    if not os.path.exists(file):
+                        raise FileNotFoundError(file)
+                    with open(file, "rb") as f:
+                        r = self.run_command(
+                            FTP.storbinary, 'STOR ' + name, f, bs, callback)
+                elif isinstance(file, io.BytesIO):
+                    r = self.run_command(FTP.storbinary, 'STOR ' +
+                                         name, file, bs, callback)
+                elif isinstance(file, bytes):
+                    st = io.BytesIO(file)
+                    r = self.run_command(FTP.storbinary, 'STOR ' +
+                                         name, st, bs, callback)
+                else:
+                    r = self.run_command(FTP.storbinary, 'STOR ' +
+                                         name, file, bs, callback)
+            except Exception as ee:
+                exc = ee
+
+        # It may fail here, we hope not.
+        nbtry = 0
+        nbth = len(done) * 2 + 1
+        while len(done) > 0:
+            nbtry += 1
+            try:
+                self.cwd("..")
+                done.pop()
+            except Exception as e:
+                time.sleep(0.5)
+                self.LOG(
+                    "    issue with command .. len(done) == {0}".format(len(done)))
+                if nbtry > nbth:
+                    raise CannotReturnToFolderException(
+                        "len(path)={0} nbtry={1} exc={2}".format(len(done), nbtry, exc)) from e
+
+        if exc is not None:
+            raise exc
         else:
-            r = self.run_command(FTP.storbinary, 'STOR ' +
-                                 name, file, TransferFTP.blockSize)
-
-        for p in path:
-            self.cwd("..")
-
-        return r
+            return r
 
     def retrieve(self, fold, name, file, debug=False):
         """
