@@ -337,6 +337,7 @@ class FolderTransferFTP:
             if size > 2**19:
                 blocksize = 2**18
                 transfered = 0
+
                 def callback_function(*l, private_p=[blocksize, transfered, size], **p):
                     private_p[1] += private_p[0]
                     self.fLOG("  transfered: %1.3f - %d/%d" %
