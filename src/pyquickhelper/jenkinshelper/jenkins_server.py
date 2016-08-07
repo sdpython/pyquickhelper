@@ -348,7 +348,7 @@ class JenkinsExt(jenkins.Jenkins):
             return r
         else:
             m = l // 2
-            return r[:m] + r[len(r)-l + m:]
+            return r[:m] + r[len(r) - l + m:]
 
     def extract_requirements(self, job):
         """
