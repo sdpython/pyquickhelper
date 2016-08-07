@@ -275,9 +275,9 @@ class TestJenkinsExt(unittest.TestCase):
                 raise Exception(conf)
 
             if "custom_left" in conf:
-                if "auto_cmd_any_setup_command.bat %jenkinspythonexe% default_87A9DF3CDA_87A9DF3CDA custom_left" not in conf and \
-                        "auto_cmd_any_setup_command.bat %jenkinspythonexe% WinPython_0691970A69_0691970A69 custom_left" not in conf and \
-                        "auto_cmd_any_setup_command.bat %jenkinspythonexe% Anaconda3_326DC012DF_326DC012DF custom_left" not in conf:
+                if "auto_cmd_any_setup_command.bat %jenkinspythonexe% default_87E5_87E5 custom_left" not in conf and \
+                        "auto_cmd_any_setup_command.bat %jenkinspythonexe% WinPython_0640_0640 custom_left" not in conf and \
+                        "auto_cmd_any_setup_command.bat %jenkinspythonexe% Anaconda3_3279_3279 custom_left" not in conf:
                     raise Exception(conf)
 
             if ">G0" in conf:
