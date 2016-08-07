@@ -334,17 +334,16 @@ class FolderTransferFTP:
                         "unable to transfer '{0}' due to {1}".format(file.fullname, ex))
                     continue
 
-            if size > 2**18:
-                blocksize = 2**15
+            if size > 2**19:
+                blocksize = 2**18
                 transfered = 0
-
-                def callback_function(*l, blocksize=blocksize, transfered=transfered, size=size, **p):
-                    transfered += blocksize
+                def callback_function(*l, private_p=[blocksize, transfered, size], **p):
+                    private_p[1] += private_p[0]
                     self.fLOG("  transfered: %1.3f - %d/%d" %
-                              (1.0 * transfered / size, transfered, size))
+                              (1.0 * private_p[1] / private_p[2], private_p[1], private_p[2]))
                 cb = callback_function
             else:
-                blocksize = None
+                blocksize = 2**15
                 cb = None
 
             if self._exc:
