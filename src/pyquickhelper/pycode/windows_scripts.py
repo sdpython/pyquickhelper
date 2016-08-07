@@ -185,7 +185,8 @@ set pythonpip=%virtual_env_py%_condavir%virtual_env_suffix%\\Scripts\\pip
 set pythonconda=%virtual_env_py%_condavir%virtual_env_suffix%\\Scripts\\conda
 @echo ~SET pythonconda=%virtual_env_py%_condavir%virtual_env_suffix%\\Scripts\\conda
 @echo #######################################################conda update -y --all
-%pythonconda% update -y --all
+@echo ~%pythonexe%\\..\\Scripts\\conda update -p %virtual_env_py%_condavir%virtual_env_suffix% -y --all
+%pythonexe%\\..\\Scripts\\conda update -p %virtual_env_py%_condavir%virtual_env_suffix% -y --all
 @echo #######################################################conda update -y --all END
 
 
