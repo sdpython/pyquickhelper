@@ -48,7 +48,11 @@ def _private_store(function_name, param):
         param = param.copy()
         for k in ["password", "password1", "password2", "password3"]:
             if k in param:
-                param[k] = hashlib.sha1(param[k].encode("utf8")).hexdigest()
+                if param[k] is None:
+                    param[k] = ""
+                else:
+                    param[k] = hashlib.sha1(
+                        param[k].encode("utf8")).hexdigest()
         fLOG(
             "this class contains a parameter 'password' --> it will be encrypted")
 

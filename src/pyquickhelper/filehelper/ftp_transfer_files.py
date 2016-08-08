@@ -334,17 +334,18 @@ class FolderTransferFTP:
                         "unable to transfer '{0}' due to {1}".format(file.fullname, ex))
                     continue
 
-            if size > 2**19:
-                blocksize = 2**18
+            if size > 2**20:
+                blocksize = 2**20
                 transfered = 0
 
                 def callback_function(*l, private_p=[blocksize, transfered, size], **p):
                     private_p[1] += private_p[0]
+                    private_p[1] = min(private_p[1], size)
                     self.fLOG("  transfered: %1.3f - %d/%d" %
                               (1.0 * private_p[1] / private_p[2], private_p[1], private_p[2]))
                 cb = callback_function
             else:
-                blocksize = 2**15
+                blocksize = None
                 cb = None
 
             if self._exc:
@@ -375,6 +376,11 @@ class FolderTransferFTP:
                     issues.append(
                         (file.fullname, "ConnectionAbortedError", eeeee))
                     self.fLOG("    issue", eeeee)
+                except ConnectionResetError as eeeeee:
+                    r = False
+                    issues.append(
+                        (file.fullname, "ConnectionResetError", eeeeee))
+                    self.fLOG("    issue", eeeeee)
 
             self.close_stream(data)
 
