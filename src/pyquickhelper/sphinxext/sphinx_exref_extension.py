@@ -70,7 +70,7 @@ class ExRef(BlocRef):
 
     Only blocs tagged as ``dummy_example`` will be inserted here.
     The option ``sort`` sorts items by *title*, *number*, *file*.
-    You also link to it by typing ``:ref:'anchor <id-you-can-choose2>' `` which gives
+    You also link to it by typing ``:ref:'anchor <id-you-can-choose2>'`` which gives
     something like :ref:`link_to_blocref <id-you-can-choose2>`. The link must receive a name.
 
     .. exreflist::

@@ -103,7 +103,7 @@ class BlocRef(BaseAdmonition):
 
     Only examples tagged as ``dummy_example`` will be inserted here.
     The option ``sort`` sorts items by *title*, *number*, *file*.
-    You also link to it by typing ``:ref:'anchor <id-you-can-choose>' `` which gives
+    You also link to it by typing ``:ref:'anchor <id-you-can-choose>'`` which gives
     something like :ref:`link_to_blocref <id-you-can-choose>`. The link must receive a name.
 
     .. blocreflist::
