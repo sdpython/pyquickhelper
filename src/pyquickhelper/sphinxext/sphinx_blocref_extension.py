@@ -424,7 +424,7 @@ def process_blocref_nodes_generic(app, doctree, fromdocname, class_name,
             if len(double_list) % 5 == 0:
                 now = datetime.datetime.now()
                 app.info("    {0} - process tag '{1}' node={2}/{3}".format(now,
-                                                                           breftag, nbref, len(double_list)))
+                                                                           breftag, nbbref, len(double_list)))
 
             para = nodes.paragraph(classes=['%s-source' % class_name])
 
