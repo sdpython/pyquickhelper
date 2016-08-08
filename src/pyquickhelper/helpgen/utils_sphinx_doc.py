@@ -1159,6 +1159,7 @@ def prepare_file_for_sphinx_help_generation(
         falli.write("===========\n")
         falli.write("\n\n")
         falli.write(".. toctree::\n")
+        falli.write("    :maxdepth: 2\n")
         falli.write("\n")
         for k in sorted(allfiles):
             falli.write("    %s\n" % k)

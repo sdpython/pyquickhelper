@@ -34,7 +34,7 @@ def info_blocref(app, doctree, fromdocname, class_name,
     else:
         bloc_list_env = []
 
-    rows = ["[info_blocref]",
+    rows = ["  [info_blocref]",
             "len(bloc_list_env)={0}".format(len(bloc_list_env)), ]
     rows.extend(rows2)
     rows.extend(["fromdocname='{0}'".format(fromdocname),

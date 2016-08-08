@@ -32,6 +32,7 @@
 """
 import sys
 import os
+import datetime
 from docutils import nodes
 from docutils.parsers.rst import directives
 
@@ -316,7 +317,7 @@ class BlocRefList(Directive):
         n["brefsection"] = self.options.get(
             'section', True) in (True, "True", "true", 1, "1")
         n["brefcontents"] = self.options.get(
-            'contents', False) in (True, "True", "true", 1, "1")
+            'contents', False) in (True, "True", "true", 1, "1", "", None, "None")
         n['docname'] = docname
         if env is not None:
             targetid = 'index%slist-%s' % (name_desc,
@@ -398,26 +399,33 @@ def process_blocref_nodes_generic(app, doctree, fromdocname, class_name,
         # sorting
         if brefsort == 'title':
             double_list = [(info.get('breftitle', ''), info)
-                           for info in bloc_list_env]
+                           for info in bloc_list_env if info['breftag'] == breftag]
             double_list.sort(key=lambda x: x[:1])
         elif brefsort == 'file':
             double_list = [((info.get('breffile', ''), info.get('brefline', '')), info)
-                           for info in bloc_list_env]
+                           for info in bloc_list_env if info['breftag'] == breftag]
             double_list.sort(key=lambda x: x[:1])
         elif brefsort == 'number':
             double_list = [(info.get('brefmid', ''), info)
-                           for info in bloc_list_env]
+                           for info in bloc_list_env if info['breftag'] == breftag]
             double_list.sort(key=lambda x: x[:1])
         else:
             raise ValueError("sort option should be file, number, title")
 
         # printing
+        now = datetime.datetime.now()
+        app.info("    {0} - process tag '{1}' #={2}".format(now,
+                                                            breftag, len(double_list)))
         for n, blocref_info_ in enumerate(double_list):
             blocref_info = blocref_info_[1]
-            if blocref_info["breftag"] != breftag:
-                continue
 
             nbbref += 1
+
+            if len(double_list) % 5 == 0:
+                now = datetime.datetime.now()
+                app.info("    {0} - process tag '{1}' node={2}/{3}".format(now,
+                                                                           breftag, nbref, len(double_list)))
+
             para = nodes.paragraph(classes=['%s-source' % class_name])
 
             if app.config['%s_link_only' % class_name]:

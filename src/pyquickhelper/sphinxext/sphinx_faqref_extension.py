@@ -112,6 +112,7 @@ class FaqRefList(BlocRefList):
 
         .. faqreflist::
             :tag: issue
+            :contents:
     """
     name_sphinx = "faqreflist"
     node_class = faqreflist

@@ -85,6 +85,7 @@ class NbRefList(BlocRefList):
     A list of all blocref entries, for a specific tag.
 
     * tag: a tag to have several categories of nbref
+    * contents: add a bullet list with links to added blocs
 
     Example::
 
