@@ -21,7 +21,10 @@ class MockTransferFTP (TransferFTP):
         """
         same signature as @see cl TransferFTP
         """
-        TransferFTP.__init__(self, site, fLOG=fLOG, login=None, password=None)
+        self._logins = []
+        self._ftp = FTP(None)
+        self.LOG = fLOG
+        self._atts = dict(site=site, login=login, password=password)
 
     def transfer(self, file, to, debug=False, blocksize=None, callback=None):
         """

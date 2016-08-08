@@ -484,7 +484,9 @@ def process_blocref_nodes_generic(app, doctree, fromdocname, class_name,
             content.append(blocref_entry)
             content.append(para)
 
+        app.info("    {0} - replace - '{1}'".format(now, breftag))
         node.replace_self(content)
+        app.info("    {0} - END - '{1}'".format(now, breftag))
 
 
 def purge_blocrefs(app, env, docname):
