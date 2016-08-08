@@ -28,27 +28,29 @@ class MockTransferFTP(TransferFTP):
         """
         Mock method :meth:`run_command <pyquickhelper.filehelper.ftp_transfer.TransferFTP.run_commnad>`
         """
-        if sys.version_info[0] != 2 and command == FTP.mlsd and args == ('.',):
+        if sys.version_info[0] != 2 and command == self._ftp.mlsd and args == ('.',):
             return [('setup.py', {'name': 'setup.py'})]
-        elif sys.version_info[0] == 2 and command == FTP.nlst and args == ('.',):
+        elif sys.version_info[0] == 2 and command == self._ftp.nlst and args == ('.',):
             return ['setup.py']
-        elif command == FTP.cwd and args == ('.',):
+        elif command == self._ftp.cwd and args == ('.',):
             return None
-        elif command == FTP.cwd and args == ('..',):
+        elif command == self._ftp.pwd and len(args) == 0:
+            return "."
+        elif command == self._ftp.cwd and args == ('..',):
             return None
-        elif command == FTP.storbinary and args[0] == 'STOR test_transfer_ftp.py':
+        elif command == self._ftp.storbinary and args[0] == 'STOR test_transfer_ftp.py':
             self._store[args[0]] = args
             return None
-        elif command == FTP.retrbinary and args[0] == 'RETR test_transfer_ftp.py':
+        elif command == self._ftp.retrbinary and args[0] == 'RETR test_transfer_ftp.py':
             b = self._store[args[0].replace("RETR", "STOR")][1]
             return b'ee'
-        elif command == FTP.cwd and args == ('backup',):
+        elif command == self._ftp.cwd and args == ('backup',):
             self._store[args[0]] = args
             return None
-        elif command == FTP.storbinary and args[0] == 'STOR setup.py':
+        elif command == self._ftp.storbinary and args[0] == 'STOR setup.py':
             self._store[args[0]] = args
             return None
-        elif command == FTP.retrbinary and args[0] == 'RETR setup.py':
+        elif command == self._ftp.retrbinary and args[0] == 'RETR setup.py':
             b = self._store[args[0].replace("RETR", "STOR")][1]
             if sys.version_info[0] == 2:
                 s = b.getvalue()

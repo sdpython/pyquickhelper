@@ -34,6 +34,7 @@ class TestTransferFTP(unittest.TestCase):
             OutputPrint=__name__ == "__main__")
 
         mock = MockTransferFTP(fLOG=fLOG)
+        assert mock._ftp
         r = mock.ls(".")
         self.assertEqual(r, [{'name': 'setup.py'}])
         this = os.path.abspath(__file__)

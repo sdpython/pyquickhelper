@@ -8,6 +8,7 @@
 
 from ..loghelper.flog import noLOG
 from .ftp_transfer import TransferFTP
+from ftplib import FTP
 
 
 class MockTransferFTP (TransferFTP):
@@ -20,9 +21,7 @@ class MockTransferFTP (TransferFTP):
         """
         same signature as @see cl TransferFTP
         """
-        self.LOG = fLOG
-        self._atts = dict(site=site)
-        self._logins = []
+        TransferFTP.__init__(self, site, fLOG=fLOG, login=None, password=None)
 
     def transfer(self, file, to, debug=False, blocksize=None, callback=None):
         """

@@ -85,6 +85,7 @@ class TransferFTP:
         else:
             # mocking
             self._logins = []
+            self._ftp = FTP(site)
         self.LOG = fLOG
         self._atts = dict(site=site, login=login, password=password)
 
