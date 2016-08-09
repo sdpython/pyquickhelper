@@ -182,8 +182,8 @@ set pythonexe=%virtual_env_py%_condavir%virtual_env_suffix%\\python
 @echo ~SET pythonexe=%virtual_env_py%_condavir%virtual_env_suffix%\\python
 set pythonpip=%virtual_env_py%_condavir%virtual_env_suffix%\\Scripts\\pip
 @echo ~SET pythonpip=%virtual_env_py%_condavir%virtual_env_suffix%\\Scripts\\pip
-%pythonpip% install sphinx --upgrade
-@echo ~%pythonpip% install sphinx --upgrade
+%pythonpip% install sphinx --upgrade --cache-dir=%virtual_env_py%_condavir%virtual_env_suffix%
+@echo ~%pythonpip% install sphinx --upgrade --cache-dir=%virtual_env_py%_condavir%virtual_env_suffix%
 
 :requirements:
 @echo #######################################################_auto_setup_dep.py
