@@ -426,7 +426,7 @@ class FrameFunction_ThreadFunction (threading.Thread):
 
     """
     class associated to FrameFunction, it runs the function
-    is a separate thread (in order to be able to stop its execution
+    in a separate thread (in order to be able to stop its execution
     from the interface).
     """
 

@@ -347,7 +347,8 @@ class FolderTransferFTP:
                     self.fLOG("  transfered: %1.3f - %d/%d" %
                               (1.0 * private_p[1] / private_p[2], private_p[1], private_p[2]))
 
-                cb = lambda *l, **p: callback_function_(*l, private_p=[blocksize, transfered, size], **p)
+                cb = lambda *l, **p: callback_function_(
+                    *l, private_p=[blocksize, transfered, size], **p)
             else:
                 blocksize = None
                 cb = None

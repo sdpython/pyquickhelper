@@ -73,6 +73,11 @@ class TestDocumentationServer(unittest.TestCase):
         assert "Please activate JavaScript to enable the search" in cont
         assert "http://sphinx.pocoo.org/" in cont
 
+        cont = get_url_content(url, True)
+        assert len(cont) > 0
+        assert "Please activate JavaScript to enable the search" in cont
+        assert "http://sphinx.pocoo.org/" in cont
+
         thread.shutdown()
         if thread.is_alive():
             fLOG("thread is still alive?", thread.is_alive())

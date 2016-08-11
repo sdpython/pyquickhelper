@@ -20,7 +20,7 @@ except ImportError:
         sys.path.append(path)
     import src
 
-from src.pyquickhelper.loghelper.flog import fLOG
+from src.pyquickhelper.loghelper.flog import fLOG, IsEmptyString
 from src.pyquickhelper.loghelper.pqh_exception import PQHException
 
 
@@ -36,6 +36,16 @@ class TestMissing(unittest.TestCase):
             raise PQHException("error", True)
         except PQHException:
             pass
+
+    def test_is_missing(self):
+        fLOG(
+            __file__,
+            self._testMethodName,
+            OutputPrint=__name__ == "__main__")
+
+        assert IsEmptyString("")
+        assert IsEmptyString(None)
+        assert not IsEmptyString("-")
 
 
 if __name__ == "__main__":

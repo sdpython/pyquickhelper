@@ -36,7 +36,7 @@ def my_tst_function(a, b):
     @param      b   (float) float
     @return         a+b
     """
-    return a + b
+    return (a or 1) + (b or 1)
 
 
 class TestWindows (unittest.TestCase):
@@ -72,6 +72,9 @@ class TestWindows (unittest.TestCase):
         assert isinstance(
             win,
             src.pyquickhelper.funcwin.frame_function.FrameFunction)
+        win.refresh()
+        win.update()
+        win.run_function(0, 1)
 
     def test_get_function_list(self):
         fLOG(

@@ -19,7 +19,7 @@ def get_url_content(url, use_mozilla=False):
     """
     if use_mozilla:
         req = urllib_request.Request(
-            url, headers={'User-agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64)' if sys.platform.startwith("win") else 'Mozilla/5.0'})
+            url, headers={'User-agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64)' if sys.platform.startswith("win") else 'Mozilla/5.0'})
         u = urllib_request.urlopen(req)
         text = u.read()
         u.close()

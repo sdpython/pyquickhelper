@@ -42,7 +42,7 @@ def find_graphviz_dot(exc=True):
     if sys.platform.startswith("win"):
         version = range(34, 45)
         for v in version:
-            graphviz_dot = r"C:\Program Files (x86)\Graphviz2.{0}\bin\dot.exe".format(
+            graphviz_dot = "C:\\Program Files (x86)\\Graphviz2.{0}\\bin\\dot.exe".format(
                 v)
             if os.path.exists(graphviz_dot):
                 return graphviz_dot
