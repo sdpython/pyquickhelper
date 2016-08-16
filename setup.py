@@ -239,7 +239,7 @@ if not r:
             "traitlets",
         ],
         extras_require={
-            'jenkinshelper': ['python-jenkins'],
+            'jenkinshelper': ['python-jenkins', 'pyyaml'],
         },
         entry_points={
             'console_scripts': [
