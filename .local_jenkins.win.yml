@@ -3,11 +3,11 @@ python:
   - {{Python34}}
   - {{Python35}}
   - {{Python27}}
-  - {{Anaconda35}}
-  - {{Anaconda27}}
+  - conda|{{Anaconda35}}
+  - conda|{{Anaconda27}}
   - {{WinPython35}}
 virtualenv:
-  - path: {{project_name}}
+  - path: {{root_path}}/_virtualenv/{{project_name}}
 install:
   - pip install -r requirements.txt
 script:
