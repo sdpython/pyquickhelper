@@ -31,10 +31,10 @@ class NbRef(BlocRef):
     A ``nbref`` entry, displayed in the form of an admonition.
     It takes the following options:
 
-    * title: a title for the bloc
-    * tag: a tag to have several categories of blocs, if not specified, it will be equal to *nb*
-    * lid: a label to refer to
-    * index: to add an additional entry to the index (comma separated)
+    * *title*: a title for the bloc
+    * *tag*: a tag to have several categories of blocs, if not specified, it will be equal to *nb*
+    * *lid* or *label*: a label to refer to
+    * *index*: to add an additional entry to the index (comma separated)
 
     See :ref:`%encrypt_file <l-nb-encrypt-file>` for an example.
     All entries can be aggregated per tag with ``nbreflist``::

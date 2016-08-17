@@ -67,10 +67,10 @@ class BlocRef(BaseAdmonition):
     A ``blocref`` entry, displayed in the form of an admonition.
     It takes the following options:
 
-    * title: a title for the bloc
-    * tag: a tag to have several categories of blocs
-    * lid: a label to refer to
-    * index: to add an entry to the index (comma separated)
+    * *title*: a title for the bloc
+    * *tag*: a tag to have several categories of blocs
+    * *lid* or *label*: a label to refer to
+    * *index*: to add an entry to the index (comma separated)
 
     Example::
 
@@ -122,6 +122,7 @@ class BlocRef(BaseAdmonition):
         'title': directives.unchanged,
         'tag': directives.unchanged,
         'lid': directives.unchanged,
+        'label': directives.unchanged,
         'index': directives.unchanged,
     }
 
@@ -158,7 +159,7 @@ class BlocRef(BaseAdmonition):
             return [blocref]
 
         # add a label
-        lid = self.options.get('lid', None)
+        lid = self.options.get('lid', self.options.get('label', None))
         if lid:
             container = nodes.container()
             tnl = [".. _{0}:".format(lid), ""]

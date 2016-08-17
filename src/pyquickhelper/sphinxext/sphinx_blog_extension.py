@@ -38,8 +38,17 @@ class blogpostagg_node(nodes.Element):
 class BlogPostDirective(Directive):
 
     """
-    extracts information about a blog post described by a directive ``.. blogpost::``
-    and modifies the documentation if *env* is not null
+    Extracts information about a blog post described by a directive ``.. blogpost::``
+    and modifies the documentation if *env* is not null. The directive handles the following
+    options:
+
+    * *date*: date of the blog (mandatory)
+    * *title*: title (mandatory)
+    * *keywords*: keywords, comma separated (mandatory)
+    * *categories*: categories, comma separated (mandatory)
+    * *author*: author (optional)
+    * *blog_background*: can change the blog background (boolean)
+    * *lid* or *label*: an id to refer to (optional)
     """
     required_arguments = 0
     optional_arguments = 0
@@ -51,6 +60,7 @@ class BlogPostDirective(Directive):
                    'author': directives.unchanged,
                    'blog_background': directives.unchanged,
                    'lid': directives.unchanged,
+                   'label': directives.unchanged,
                    }
     has_content = True
     add_index = True
@@ -107,7 +117,7 @@ class BlogPostDirective(Directive):
             'keywords': [a.strip() for a in self.options["keywords"].split(",")],
             'categories': [a.strip() for a in self.options["categories"].split(",")],
             'blog_background': self.options.get("blog_background", str(blog_background)).strip() in ("True", "true", "1"),
-            'lid': self.options.get("lid", None),
+            'lid': self.options.get("lid", self.options.get("label", None)),
         }
 
         tag = BlogPost.build_tag(p["date"], p["title"]) if p[

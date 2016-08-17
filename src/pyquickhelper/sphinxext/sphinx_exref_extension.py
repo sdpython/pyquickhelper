@@ -31,10 +31,10 @@ class ExRef(BlocRef):
     A ``exref`` entry, displayed in the form of an admonition.
     It takes the following options:
 
-    * title: a title for the bloc
-    * tag: a tag to have several categories of blocs (optional)
-    * lid: a label to refer to
-    * index: to add an entry to the index (comma separated)
+    * *title*: a title for the bloc
+    * *tag*: a tag to have several categories of blocs (optional)
+    * *lid* or *label*: a label to refer to
+    * *index*: to add an entry to the index (comma separated)
 
     Example::
 
