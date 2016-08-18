@@ -220,84 +220,91 @@ def convert_sequence_into_batch_file(seq, platform=None):
     if platform is None:
         platform = sys.platform
     rows = []
-    if platform.startswith("win"):
-        error_level = "if %errorlevel% neq 0 exit /b %errorlevel%"
-        interpreter = None
-        pip = None
-        venv = None
-        anaconda = False
-        conda = None
-        rows.append("@echo off")
+    iswin = platform.startswith("win")
 
-        def add_path_win(rows, interpreter, pip):
-            path_inter = ospathdirname(interpreter)
-            if len(path_inter) == 0:
-                raise ValueError(
-                    "Unable to guess interpreter path from '{0}'".format(interpreter))
+    error_level = "if %errorlevel% neq 0 exit /b %errorlevel%"
+    interpreter = None
+    pip = None
+    venv = None
+    anaconda = False
+    conda = None
+    rows.append("@echo off")
+
+    def add_path_win(rows, interpreter, pip, platform):
+        path_inter = ospathdirname(interpreter, platform)
+        if len(path_inter) == 0:
+            raise ValueError(
+                "Unable to guess interpreter path from '{0}', platform={1}".format(interpreter, platform))
+        if iswin:
             rows.append("set PATH={0};%PATH%".format(path_inter))
-            path_pip = ospathdirname(pip)
-            if path_pip != path_inter:
+        else:
+            rows.append("export PATH={0}:$PATH".format(path_inter))
+        path_pip = ospathdirname(pip, platform)
+        if path_pip != path_inter:
+            if iswin:
                 rows.append("set PATH={0};%PATH%".format(path_pip))
-
-        for key, value in seq:
-
-            if key == "python":
-                if value.startswith("conda|"):
-                    anaconda = True
-                    interpreter = ospathjoin(
-                        value[6:], "python", platform=platform)
-                    pip = ospathjoin(value[6:], "Scripts",
-                                     "pip", platform=platform)
-                    venv = ospathjoin(
-                        value[6:], "Scripts", "virtualenv", platform=platform)
-                    conda = ospathjoin(
-                        value[6:], "Scripts", "conda", platform=platform)
-                else:
-                    interpreter = ospathjoin(
-                        value, "python", platform=platform)
-                    pip = ospathjoin(value, "Scripts",
-                                     "pip", platform=platform)
-                    venv = ospathjoin(value, "Scripts",
-                                      "virtualenv", platform=platform)
-
-            elif key == "virtualenv":
-                if isinstance(value, list):
-                    if len(value) != 1:
-                        raise ValueError(
-                            "Expecting one value for the path of the virtual environment:\n{0}".format(value))
-                    value = value[0]
-                p = value["path"] if isinstance(value, dict) else value
-                rows.append("")
-                rows.append("@echo CREATE VIRTUAL ENVIRONMENT in %s" % p)
-                rows.append('if not exist "{0}" mkdir "{0}"'.format(p))
-                if anaconda:
-                    rows.append(
-                        '"{0}" create -p "{1}" --clone "{2}" --offline'.format(conda, p, pinter))
-                    interpreter = ospathjoin(
-                        p, "python", platform=platform)
-                    pip = ospathjoin(p, "Scripts", "pip",
-                                     platform=platform)
-                else:
-                    rows.append(
-                        '"{0}" --system-site-packages "{1}"'.format(venv, p))
-                    interpreter = ospathjoin(
-                        p, "Scripts", "python", platform=platform)
-                    pip = ospathjoin(p, "Scripts", "pip",
-                                     platform=platform)
-                rows.append(error_level)
-
-            elif key in {"install", "before_script", "script", "after_script", "documentation"}:
-                if value is not None:
-                    rows.append("")
-                    rows.append("@echo " + key.upper())
-                    add_path_win(rows, interpreter, pip)
-                    if not isinstance(value, list):
-                        value = [value]
-                    rows.extend(value)
-                    rows.append(error_level)
             else:
-                raise ValueError("unexpected key '{0}'".format(key))
-        return "\n".join(rows)
-    else:
-        raise NotImplementedError(
-            "not implemented (convert_sequence_into_batch_file): " + platform)
+                rows.append("export PATH={0}:$PATH".format(path_pip))
+
+    for key, value in seq:
+
+        if key == "python":
+            if value.startswith("conda|"):
+                anaconda = True
+                interpreter = ospathjoin(
+                    value[6:], "python", platform=platform)
+                pip = ospathjoin(value[6:], "Scripts",
+                                 "pip", platform=platform)
+                venv = ospathjoin(
+                    value[6:], "Scripts", "virtualenv", platform=platform)
+                conda = ospathjoin(
+                    value[6:], "Scripts", "conda", platform=platform)
+            else:
+                interpreter = ospathjoin(
+                    value, "python", platform=platform)
+                pip = ospathjoin(value, "Scripts",
+                                 "pip", platform=platform)
+                venv = ospathjoin(value, "Scripts",
+                                  "virtualenv", platform=platform)
+
+        elif key == "virtualenv":
+            if isinstance(value, list):
+                if len(value) != 1:
+                    raise ValueError(
+                        "Expecting one value for the path of the virtual environment:\n{0}".format(value))
+                value = value[0]
+            p = value["path"] if isinstance(value, dict) else value
+            rows.append("")
+            rows.append("@echo CREATE VIRTUAL ENVIRONMENT in %s" % p)
+            if iswin:
+                rows.append('if not exist "{0}" mkdir "{0}"'.format(p))
+            else:
+                rows.append('if [-f {0}]; then mkdir "{0}" fi'.format(p))
+            if anaconda:
+                rows.append(
+                    '"{0}" create -p "{1}" --clone "{2}" --offline'.format(conda, p, pinter))
+                interpreter = ospathjoin(
+                    p, "python", platform=platform)
+                pip = ospathjoin(p, "Scripts", "pip",
+                                 platform=platform)
+            else:
+                rows.append(
+                    '"{0}" --system-site-packages "{1}"'.format(venv, p))
+                interpreter = ospathjoin(
+                    p, "Scripts", "python", platform=platform)
+                pip = ospathjoin(p, "Scripts", "pip",
+                                 platform=platform)
+            rows.append(error_level)
+
+        elif key in {"install", "before_script", "script", "after_script", "documentation"}:
+            if value is not None:
+                rows.append("")
+                rows.append("@echo " + key.upper())
+                add_path_win(rows, interpreter, pip, platform)
+                if not isinstance(value, list):
+                    value = [value]
+                rows.extend(value)
+                rows.append(error_level)
+        else:
+            raise ValueError("unexpected key '{0}'".format(key))
+    return "\n".join(rows)

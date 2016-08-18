@@ -91,7 +91,7 @@ class TestYamlExe(unittest.TestCase):
             obj, variables=context))
         for r in res:
             conv = convert_sequence_into_batch_file(r)
-            assert "dir win" in conv
+            assert ("%s " % command) in conv
             fLOG("####", conv)
             name = os.path.join(temp, "yml.bat")
             with open(name, "w") as f:
