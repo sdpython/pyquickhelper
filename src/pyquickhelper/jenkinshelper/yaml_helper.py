@@ -222,7 +222,10 @@ def convert_sequence_into_batch_file(seq, platform=None):
     rows = []
     iswin = platform.startswith("win")
 
-    error_level = "if %errorlevel% neq 0 exit /b %errorlevel%"
+    if iswin:
+        error_level = "if %errorlevel% neq 0 exit /b %errorlevel%"
+    else:
+        error_level = "if [ $? -eq 0 ]; then exit $? fi"
     interpreter = None
     pip = None
     venv = None

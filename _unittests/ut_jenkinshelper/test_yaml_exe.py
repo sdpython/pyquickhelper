@@ -100,11 +100,11 @@ class TestYamlExe(unittest.TestCase):
             fLOG("###")
             fLOG(out)
             if "BEFORE_SCRIPT" not in out:
-                raise Exception("{0}\n#########\n{1}".format(out, conv))
+                raise Exception("{0}\nERR\n{2}\n#########\n{1}".format(out, conv, err))
             if "AFTER_SCRIPT" not in out:
-                raise Exception("{0}\n#########\n{1}".format(out, conv))
+                raise Exception("{0}\nERR\n{2}\n#########\n{1}".format(out, conv, err))
             if "SCRIPT" not in out:
-                raise Exception("{0}\n#########\n{1}".format(out, conv))
+                raise Exception("{0}\nERR\n{2}\n#########\n{1}".format(out, conv, err))
 
 
 if __name__ == "__main__":
