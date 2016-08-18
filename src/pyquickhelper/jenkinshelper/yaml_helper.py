@@ -231,6 +231,9 @@ def convert_sequence_into_batch_file(seq, platform=None):
 
         def add_path_win(rows, interpreter, pip):
             path_inter = ospathdirname(interpreter)
+            if len(path_inter) == 0:
+                raise ValueError(
+                    "Unable to guess interpreter path from '{0}'".format(interpreter))
             rows.append("set PATH={0};%PATH%".format(path_inter))
             path_pip = ospathdirname(pip)
             if path_pip != path_inter:
