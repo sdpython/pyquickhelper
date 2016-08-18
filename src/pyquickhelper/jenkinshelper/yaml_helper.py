@@ -182,6 +182,22 @@ def ospathjoin(*l, platform=None):
         return "/".join(l)
 
 
+def ospathdirname(l, platform=None):
+    """
+    simple ``o.path.dirname`` for a specific platform
+
+    @param      l           path
+    @param      platform    platform
+    @return                 path
+    """
+    if platform is None:
+        return os.path.dirname(l)
+    elif platform.startswith("win"):
+        return "\\".join(l.replace("/", "\\").split("\\")[:-1])
+    else:
+        return "/".join(l.replace("\\", "/").split("/")[:-1])
+
+
 def convert_sequence_into_batch_file(seq, platform=None):
     """
     converts a sequence of instructions into a batch file
@@ -200,8 +216,17 @@ def convert_sequence_into_batch_file(seq, platform=None):
         venv = None
         anaconda = False
         conda = None
-        pinter = None
+        rows.append("@echo off")
+
+        def add_path_win(rows):
+            path_inter = ospathdirname(interpreter)
+            rows.append("set PATH={0};%PATH%".format(path_inter))
+            path_pip = ospathdirname(pip)
+            if path_pip != path_inter:
+                rows.append("set PATH={0};%PATH%".format(path_pip))
+
         for key, value in seq:
+
             if key == "python":
                 if value.startswith("conda|"):
                     anaconda = True
@@ -220,7 +245,7 @@ def convert_sequence_into_batch_file(seq, platform=None):
                                      "pip.exe", platform=platform)
                     venv = ospathjoin(value, "Scripts",
                                       "virtualenv.exe", platform=platform)
-                pinter = value
+
             elif key == "virtualenv":
                 if isinstance(value, list):
                     if len(value) != 1:
@@ -228,6 +253,8 @@ def convert_sequence_into_batch_file(seq, platform=None):
                             "Expecting one value for the path of the virtual environment:\n{0}".format(value))
                     value = value[0]
                 p = value["path"] if isinstance(value, dict) else value
+                rows.append("")
+                rows.append("@echo CREATE VIRTUAL ENVIRONMENT in %s" % p)
                 rows.append('if not exist "{0}" mkdir "{0}"'.format(p))
                 if anaconda:
                     rows.append(
@@ -244,16 +271,16 @@ def convert_sequence_into_batch_file(seq, platform=None):
                     pip = ospathjoin(p, "Scripts", "pip.exe",
                                      platform=platform)
                 rows.append(error_level)
-            elif key == "install":
-                pass
-            elif key == "before_script":
-                pass
-            elif key == "script":
-                pass
-            elif key == "after_script":
-                pass
-            elif key == "documentation":
-                pass
+
+            elif key in {"install", "before_script", "script", "after_script", "documentation"}:
+                if value is not None:
+                    rows.append("")
+                    rows.append("@echo " + key.upper())
+                    add_path_win(rows)
+                    if not isinstance(value, list):
+                        value = [value]
+                    rows.extend(value)
+                    rows.append(error_level)
             else:
                 raise ValueError("unexpected key '{0}'".format(key))
         return "\n".join(rows)

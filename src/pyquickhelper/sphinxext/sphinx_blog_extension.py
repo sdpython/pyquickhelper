@@ -337,6 +337,11 @@ def process_blogpost_nodes(app, doctree, fromdocname):
     # Replace all blogpostlist nodes with a list of the collected blogposts.
     # Augment each blogpost with a backlink to the original location.
     env = app.builder.env
+    if hasattr(env, "settings") and hasattr(env.settings, "language_code"):
+        lang = env.settings.language_code
+    else:
+        lang = "en"
+    blogmes = TITLES[lang]["blog_entry"]
 
     for node in doctree.traverse(blogpostlist_node):
         if not app.config.blogpost_include_s:
@@ -348,9 +353,7 @@ def process_blogpost_nodes(app, doctree, fromdocname):
         for post_info in env.blogpost_all:
             para = nodes.paragraph()
             filename = env.doc2path(post_info['docname'], base=None)
-            description = (
-                _locale('(The original entry is located in %s, line %d and can be found ') %
-                (filename, post_info['lineno']))
+            description = (_locale(blogmes) % (filename, post_info['lineno']))
             para += nodes.Text(description, description)
 
             # Create a reference

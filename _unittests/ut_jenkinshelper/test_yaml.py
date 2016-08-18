@@ -111,6 +111,13 @@ class TestYaml(unittest.TestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
+        try:
+            self.a_test_jconvert_sequence_into_batch_file(sys.platform)
+        except NotImplementedError as e:
+            pass
+        self.a_test_jconvert_sequence_into_batch_file("win")
+
+    def a_test_jconvert_sequence_into_batch_file(self, platform):
         this = os.path.abspath(os.path.dirname(__file__))
         yml = os.path.abspath(os.path.join(
             this, "..", "..", ".local_jenkins.win.yml"))
@@ -123,10 +130,39 @@ class TestYaml(unittest.TestCase):
         obj = load_yaml(yml, context=context)
         res = list(enumerate_convert_yaml_into_instructions(obj))
         for r in res:
-            conv = convert_sequence_into_batch_file(r)
-            fLOG("####", conv)
+            conv = convert_sequence_into_batch_file(r, platform=platform)
+            # fLOG("####", conv)
             assert isinstance(conv, str)
         assert len(res) > 0
+
+        if platform.startswith("win"):
+            expected = """
+            @echo off
+
+            @echo CREATE VIRTUAL ENVIRONMENT in ROOT\\_virtualenv\\pyquickhelper
+            if not exist "ROOT\\_virtualenv\\pyquickhelper" mkdir "ROOT\\_virtualenv\\pyquickhelper"
+            "C:\\Python35_x64\\pythonw.exe\\Scripts\\virtualenv.exe" --system-site-packages "ROOT\\_virtualenv\\pyquickhelper"
+            if %errorlevel% neq 0 exit /b %errorlevel%
+
+            @echo INSTALL
+            set PATH=ROOT\\_virtualenv\\pyquickhelper\\Scripts;%PATH%
+            pip install -r requirements.txt
+            if %errorlevel% neq 0 exit /b %errorlevel%
+
+            @echo SCRIPT
+            set PATH=ROOT\\_virtualenv\\pyquickhelper\\Scripts;%PATH%
+            python setup.py unittests [SKIP]
+            if %errorlevel% neq 0 exit /b %errorlevel%
+
+            @echo DOCUMENTATION
+            set PATH=ROOT\\_virtualenv\\pyquickhelper\\Scripts;%PATH%
+            python setup.py build_sphinx
+            if %errorlevel% neq 0 exit /b %errorlevel%
+            """.replace("            ", "").strip("\n \t\r")
+            val = conv.strip("\n \t\r")
+            if expected != val:
+                mes = "EXP:\n{0}\n###########\nGOT:\n{1}".format(expected, val)
+                raise Exception(mes)
 
 
 if __name__ == "__main__":
