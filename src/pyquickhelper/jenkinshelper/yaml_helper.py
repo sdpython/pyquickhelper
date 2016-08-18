@@ -231,7 +231,9 @@ def convert_sequence_into_batch_file(seq, platform=None):
     venv = None
     anaconda = False
     conda = None
-    rows.append("@echo off")
+    echo = "@echo" if iswin else "echo"
+    if iswin:
+        rows.append("@echo off")
 
     def add_path_win(rows, interpreter, pip, platform):
         path_inter = ospathdirname(interpreter, platform)
@@ -253,6 +255,7 @@ def convert_sequence_into_batch_file(seq, platform=None):
 
         if key == "python":
             if value.startswith("conda|"):
+                rows.append(echo + " conda")
                 anaconda = True
                 interpreter = ospathjoin(
                     value[6:], "python", platform=platform)
@@ -269,7 +272,7 @@ def convert_sequence_into_batch_file(seq, platform=None):
                                  "pip", platform=platform)
                 venv = ospathjoin(value, "Scripts",
                                   "virtualenv", platform=platform)
-
+            rows.append(echo + " interpreter=" + interpreter)
         elif key == "virtualenv":
             if isinstance(value, list):
                 if len(value) != 1:
@@ -278,7 +281,7 @@ def convert_sequence_into_batch_file(seq, platform=None):
                 value = value[0]
             p = value["path"] if isinstance(value, dict) else value
             rows.append("")
-            rows.append("@echo CREATE VIRTUAL ENVIRONMENT in %s" % p)
+            rows.append(echo + " CREATE VIRTUAL ENVIRONMENT in %s" % p)
             if iswin:
                 rows.append('if not exist "{0}" mkdir "{0}"'.format(p))
             else:
@@ -302,7 +305,7 @@ def convert_sequence_into_batch_file(seq, platform=None):
         elif key in {"install", "before_script", "script", "after_script", "documentation"}:
             if value is not None:
                 rows.append("")
-                rows.append("@echo " + key.upper())
+                rows.append(echo + " " + key.upper())
                 add_path_win(rows, interpreter, pip, platform)
                 if not isinstance(value, list):
                     value = [value]

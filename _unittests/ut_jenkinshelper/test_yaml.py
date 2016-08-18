@@ -138,6 +138,7 @@ class TestYaml(unittest.TestCase):
         if platform.startswith("win"):
             expected = """
             @echo off
+            @echo interpreter=C:\\Python35_x64\\python
 
             @echo CREATE VIRTUAL ENVIRONMENT in ROOT\\_virtualenv\\pyquickhelper
             if not exist "ROOT\\_virtualenv\\pyquickhelper" mkdir "ROOT\\_virtualenv\\pyquickhelper"
