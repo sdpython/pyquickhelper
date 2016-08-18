@@ -123,7 +123,7 @@ class TestYaml(unittest.TestCase):
             this, "..", "..", ".local_jenkins.win.yml"))
         if not os.path.exists(yml):
             raise FileNotFoundError(yml)
-        context = dict(Python34="fake", Python35=sys.executable,
+        context = dict(Python34="fake", Python35="C:\\Python35_x64",
                        Python27=None, Anaconda3=None, Anaconda2=None,
                        WinPython35=None, project_name="pyquickhelper",
                        root_path="ROOT")
@@ -141,7 +141,7 @@ class TestYaml(unittest.TestCase):
 
             @echo CREATE VIRTUAL ENVIRONMENT in ROOT\\_virtualenv\\pyquickhelper
             if not exist "ROOT\\_virtualenv\\pyquickhelper" mkdir "ROOT\\_virtualenv\\pyquickhelper"
-            "C:\\Python35_x64\\pythonw.exe\\Scripts\\virtualenv.exe" --system-site-packages "ROOT\\_virtualenv\\pyquickhelper"
+            "C:\\Python35_x64\\Scripts\\virtualenv.exe" --system-site-packages "ROOT\\_virtualenv\\pyquickhelper"
             if %errorlevel% neq 0 exit /b %errorlevel%
 
             @echo INSTALL
