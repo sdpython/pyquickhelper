@@ -76,7 +76,7 @@ def interpret_instruction(inst, variables=None):
 
     Example of a statement::
 
-        if [ ${PYTHON} == "C:\\\\Python35_x64" ] then python setup.py build_sphinx fi
+        if [ ${PYTHON} == "C:\\\\Python35_x64" ]; then python setup.py build_sphinx; fi
     """
     if isinstance(inst, list):
         res = [interpret_instruction(_, variables) for _ in inst]
@@ -225,7 +225,7 @@ def convert_sequence_into_batch_file(seq, platform=None):
     if iswin:
         error_level = "if %errorlevel% neq 0 exit /b %errorlevel%"
     else:
-        error_level = "if [ $? -eq 0 ]; then exit $? fi"
+        error_level = "if [ $? -eq 0 ]; then exit $?; fi"
     interpreter = None
     pip = None
     venv = None
@@ -285,7 +285,7 @@ def convert_sequence_into_batch_file(seq, platform=None):
             if iswin:
                 rows.append('if not exist "{0}" mkdir "{0}"'.format(p))
             else:
-                rows.append('if [-f {0}]; then mkdir "{0}" fi'.format(p))
+                rows.append('if [-f {0}]; then mkdir "{0}"; fi'.format(p))
             if anaconda:
                 rows.append(
                     '"{0}" create -p "{1}" --clone "{2}" --offline'.format(conda, p, pinter))
