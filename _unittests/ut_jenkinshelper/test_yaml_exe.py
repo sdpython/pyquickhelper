@@ -93,7 +93,8 @@ class TestYamlExe(unittest.TestCase):
             conv = convert_sequence_into_batch_file(r)
             assert ("%s " % command) in conv
             fLOG("####", conv)
-            name = os.path.join(temp, "yml.bat")
+            ext = "bat" if command == "dir" else "sh"
+            name = os.path.join(temp, "yml.%s" % ext)
             with open(name, "w") as f:
                 f.write(conv)
             out, err = run_cmd(name, wait=True)
