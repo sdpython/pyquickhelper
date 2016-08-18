@@ -99,9 +99,12 @@ class TestYamlExe(unittest.TestCase):
             out, err = run_cmd(name, wait=True)
             fLOG("###")
             fLOG(out)
-            assert "BEFORE_SCRIPT" in out
-            assert "SCRIPT" in out
-            assert "AFTER_SCRIPT" in out
+            if "BEFORE_SCRIPT" not in out:
+                raise Exception(out)
+            if "AFTER_SCRIPT" not in out:
+                raise Exception(out)
+            if "SCRIPT" not in out:
+                raise Exception(out)
 
 
 if __name__ == "__main__":
