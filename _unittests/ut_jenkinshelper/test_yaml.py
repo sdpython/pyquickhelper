@@ -38,10 +38,10 @@ class TestYaml(unittest.TestCase):
 
         this = os.path.abspath(os.path.dirname(__file__))
         yml = os.path.abspath(os.path.join(
-            this, "..", "..", ".local_jenkins.win.yml"))
+            this, "..", "..", ".local.jenkins.win.yml"))
         if not os.path.exists(yml):
             raise FileNotFoundError(yml)
-        context = dict(Python34=None, Python35=sys.executable,
+        context = dict(Python34=None, Python35=os.path.dirname(sys.executable),
                        Python27=None, Anaconda3=None, Anaconda2=None,
                        WinPython35=None, project_name="pyquickhelper",
                        root_path="ROOT")
@@ -82,10 +82,10 @@ class TestYaml(unittest.TestCase):
 
         this = os.path.abspath(os.path.dirname(__file__))
         yml = os.path.abspath(os.path.join(
-            this, "..", "..", ".local_jenkins.win.yml"))
+            this, "..", "..", ".local.jenkins.win.yml"))
         if not os.path.exists(yml):
             raise FileNotFoundError(yml)
-        context = dict(Python34="fake", Python35=sys.executable,
+        context = dict(Python34="fake", Python35=os.path.dirname(sys.executable),
                        Python27=None, Anaconda3=None, Anaconda2=None,
                        WinPython35=None, project_name="pyquickhelper",
                        root_path="ROOT")
@@ -120,7 +120,7 @@ class TestYaml(unittest.TestCase):
     def a_test_jconvert_sequence_into_batch_file(self, platform):
         this = os.path.abspath(os.path.dirname(__file__))
         yml = os.path.abspath(os.path.join(
-            this, "..", "..", ".local_jenkins.win.yml"))
+            this, "..", "..", ".local.jenkins.win.yml"))
         if not os.path.exists(yml):
             raise FileNotFoundError(yml)
         context = dict(Python34="fake", Python35="C:\\Python35_x64",
@@ -141,7 +141,7 @@ class TestYaml(unittest.TestCase):
 
             @echo CREATE VIRTUAL ENVIRONMENT in ROOT\\_virtualenv\\pyquickhelper
             if not exist "ROOT\\_virtualenv\\pyquickhelper" mkdir "ROOT\\_virtualenv\\pyquickhelper"
-            "C:\\Python35_x64\\Scripts\\virtualenv.exe" --system-site-packages "ROOT\\_virtualenv\\pyquickhelper"
+            "C:\\Python35_x64\\Scripts\\virtualenv" --system-site-packages "ROOT\\_virtualenv\\pyquickhelper"
             if %errorlevel% neq 0 exit /b %errorlevel%
 
             @echo INSTALL
@@ -162,6 +162,10 @@ class TestYaml(unittest.TestCase):
             val = conv.strip("\n \t\r")
             if expected != val:
                 mes = "EXP:\n{0}\n###########\nGOT:\n{1}".format(expected, val)
+                for a, b in zip(expected.split("\n"), val.split("\n")):
+                    if a != b:
+                        raise Exception(
+                            "error on line:\nEXP:\n{0}\nGOT:\n{1}\n#######\n{2}".format(a, b, mes))
                 raise Exception(mes)
 
 

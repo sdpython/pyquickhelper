@@ -50,7 +50,7 @@ def evaluate_condition(cond, variables=None):
 
     Example of a condition::
 
-        [ ${PYTHON} == "C:\\Python35_x64\\pythonw.exe" ]
+        [ ${PYTHON} == "C:\\Python35_x64" ]
     """
     if variables is not None:
         for k, v in variables.items():
@@ -76,7 +76,7 @@ def interpret_instruction(inst, variables=None):
 
     Example of a statement::
 
-        if [ ${PYTHON} == "C:\\\\Python35_x64\\\\pythonw.exe" ] then python setup.py build_sphinx fi
+        if [ ${PYTHON} == "C:\\\\Python35_x64" ] then python setup.py build_sphinx fi
     """
     if isinstance(inst, list):
         res = [interpret_instruction(_, variables) for _ in inst]
@@ -100,12 +100,13 @@ def interpret_instruction(inst, variables=None):
             return inst
 
 
-def enumerate_convert_yaml_into_instructions(obj):
+def enumerate_convert_yaml_into_instructions(obj, variables=None):
     """
     convert a yaml file into sequences of instructions
 
-    @param      obj     yaml objects (@see fn load_yaml)
-    @return             list of instructions
+    @param      obj         yaml objects (@see fn load_yaml)
+    @param      variables   additional variables to be used
+    @return                 list of instructions
 
     The function expects the following list
     of steps in this order:
@@ -122,11 +123,16 @@ def enumerate_convert_yaml_into_instructions(obj):
     Each step *multiplies jobs* creates a sequence of jobs
     and a Jenkins job.
     """
+    if variables is None:
+        def_variables = {}
+    else:
+        def_variables = variables.copy()
     sequences = []
     count = {}
-    for key in ["language", "python", "virtualenv", "install",
-                "before_script", "script", "after_script",
-                "documentation"]:
+    steps = ["language", "python", "virtualenv", "install",
+             "before_script", "script", "after_script",
+             "documentation"]
+    for key in steps:
         value = obj.get(key, None)
         if key == "language":
             if value != "python":
@@ -138,6 +144,11 @@ def enumerate_convert_yaml_into_instructions(obj):
             count[key] = len(value)
             sequences.append((key, value))
 
+    for k in obj:
+        if k not in steps:
+            raise ValueError(
+                "Unexpected key '{0}' found in yaml file".format(k))
+
     # multiplications
     i_python = 0
     i_script = 0
@@ -145,7 +156,7 @@ def enumerate_convert_yaml_into_instructions(obj):
     while notstop:
         seq = []
         add = True
-        variables = {}
+        variables = def_variables.copy()
         for key, value in sequences:
             if key == "python":
                 value = value[i_python]
@@ -218,7 +229,7 @@ def convert_sequence_into_batch_file(seq, platform=None):
         conda = None
         rows.append("@echo off")
 
-        def add_path_win(rows):
+        def add_path_win(rows, interpreter, pip):
             path_inter = ospathdirname(interpreter)
             rows.append("set PATH={0};%PATH%".format(path_inter))
             path_pip = ospathdirname(pip)
@@ -231,20 +242,20 @@ def convert_sequence_into_batch_file(seq, platform=None):
                 if value.startswith("conda|"):
                     anaconda = True
                     interpreter = ospathjoin(
-                        value[6:], "python.exe", platform=platform)
+                        value[6:], "python", platform=platform)
                     pip = ospathjoin(value[6:], "Scripts",
-                                     "pip.exe", platform=platform)
+                                     "pip", platform=platform)
                     venv = ospathjoin(
-                        value[6:], "Scripts", "virtualenv.exe", platform=platform)
+                        value[6:], "Scripts", "virtualenv", platform=platform)
                     conda = ospathjoin(
-                        value[6:], "Scripts", "conda.exe", platform=platform)
+                        value[6:], "Scripts", "conda", platform=platform)
                 else:
                     interpreter = ospathjoin(
-                        value, "python.exe", platform=platform)
+                        value, "python", platform=platform)
                     pip = ospathjoin(value, "Scripts",
-                                     "pip.exe", platform=platform)
+                                     "pip", platform=platform)
                     venv = ospathjoin(value, "Scripts",
-                                      "virtualenv.exe", platform=platform)
+                                      "virtualenv", platform=platform)
 
             elif key == "virtualenv":
                 if isinstance(value, list):
@@ -260,15 +271,15 @@ def convert_sequence_into_batch_file(seq, platform=None):
                     rows.append(
                         '"{0}" create -p "{1}" --clone "{2}" --offline'.format(conda, p, pinter))
                     interpreter = ospathjoin(
-                        p, "python.exe", platform=platform)
-                    pip = ospathjoin(p, "Scripts", "pip.exe",
+                        p, "python", platform=platform)
+                    pip = ospathjoin(p, "Scripts", "pip",
                                      platform=platform)
                 else:
                     rows.append(
                         '"{0}" --system-site-packages "{1}"'.format(venv, p))
                     interpreter = ospathjoin(
-                        p, "Scripts", "python.exe", platform=platform)
-                    pip = ospathjoin(p, "Scripts", "pip.exe",
+                        p, "Scripts", "python", platform=platform)
+                    pip = ospathjoin(p, "Scripts", "pip",
                                      platform=platform)
                 rows.append(error_level)
 
@@ -276,7 +287,7 @@ def convert_sequence_into_batch_file(seq, platform=None):
                 if value is not None:
                     rows.append("")
                     rows.append("@echo " + key.upper())
-                    add_path_win(rows)
+                    add_path_win(rows, interpreter, pip)
                     if not isinstance(value, list):
                         value = [value]
                     rows.extend(value)
