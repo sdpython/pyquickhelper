@@ -6,6 +6,7 @@ import sys
 import os
 import unittest
 import re
+import warnings
 
 
 try:
@@ -22,7 +23,7 @@ except ImportError:
     import src
 
 from src.pyquickhelper.loghelper import fLOG, run_cmd
-from src.pyquickhelper.pycode import get_temp_folder
+from src.pyquickhelper.pycode import get_temp_folder, is_travis_or_appveyor
 from src.pyquickhelper.jenkinshelper.yaml_helper import load_yaml, enumerate_convert_yaml_into_instructions, evaluate_condition, convert_sequence_into_batch_file
 
 if sys.version_info[0] == 2:
@@ -97,15 +98,18 @@ class TestYamlExe(unittest.TestCase):
             name = os.path.join(temp, "yml.%s" % ext)
             with open(name, "w") as f:
                 f.write(conv)
-            out, err = run_cmd(name, wait=True)
-            fLOG("###")
-            fLOG(out)
-            if "BEFORE_SCRIPT" not in out:
-                raise Exception("{0}\nERR\n{2}\n#########\n{1}".format(out, conv, err))
-            if "AFTER_SCRIPT" not in out:
-                raise Exception("{0}\nERR\n{2}\n#########\n{1}".format(out, conv, err))
-            if "SCRIPT" not in out:
-                raise Exception("{0}\nERR\n{2}\n#########\n{1}".format(out, conv, err))
+            if is_travis_or_appveyor() == "travis":
+                warnings.warn("Test disabled on travis")
+            else:
+                out, err = run_cmd(name, wait=True)
+                fLOG("###")
+                fLOG(out)
+                if "BEFORE_SCRIPT" not in out:
+                    raise Exception("{0}\nERR\n{2}\n#########\n{1}".format(out, conv, err))
+                if "AFTER_SCRIPT" not in out:
+                    raise Exception("{0}\nERR\n{2}\n#########\n{1}".format(out, conv, err))
+                if "SCRIPT" not in out:
+                    raise Exception("{0}\nERR\n{2}\n#########\n{1}".format(out, conv, err))
 
 
 if __name__ == "__main__":
