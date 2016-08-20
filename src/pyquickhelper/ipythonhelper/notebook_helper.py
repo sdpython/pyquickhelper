@@ -390,13 +390,14 @@ def remove_kernel(kernel_name, kernel_spec_manager=None):
             kernel_name, ", ".join(kernels.keys())))
 
 
-def remove_execution_number(infile, outfile=None, encoding="utf-8"):
+def remove_execution_number(infile, outfile=None, encoding="utf-8", indent=2):
     """
     remove execution number from a notebook
 
     @param      infile      filename of the notebook
     @param      outfile     None ot save the file
     @param      encoding    encoding
+    @param      indent      indentation
     @return                 modified string
 
     .. todoext::
@@ -425,7 +426,7 @@ def remove_execution_number(infile, outfile=None, encoding="utf-8"):
     js = json.loads(content, encoding=encoding)
     fixup(js, "execution_count", None)
     st = StringIO()
-    d = json.dump(js, st)
+    d = json.dump(js, st, indent=indent, sort_keys=True)
     res = st.getvalue()
     if outfile is not None:
         with open(outfile, "w", encoding=encoding) as f:
