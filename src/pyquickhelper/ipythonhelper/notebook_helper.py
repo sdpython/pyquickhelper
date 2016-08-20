@@ -15,6 +15,7 @@ from nbformat.v4 import upgrade
 from jupyter_client.kernelspec import KernelSpecManager
 from notebook.nbextensions import install_nbextension, _get_nbextension_dir
 from ipykernel.kernelspec import install as install_k
+from ..filehelper import read_content_ufs
 
 
 if sys.version_info[0] == 2:
@@ -387,3 +388,46 @@ def remove_kernel(kernel_name, kernel_spec_manager=None):
     else:
         raise NotebookException("unable to find kernel {0} in {1}".format(
             kernel_name, ", ".join(kernels.keys())))
+
+
+def remove_execution_number(infile, outfile=None, encoding="utf-8"):
+    """
+    remove execution number from a notebook
+
+    @param      infile      filename of the notebook
+    @param      outfile     None ot save the file
+    @param      encoding    encoding
+    @return                 modified string
+
+    .. todoext::
+        :title: remove execution number from notebook facilitate git versionning
+        :tag: enhancement
+        :issue: 18
+        :cost: 1
+        :hidden:
+
+        Remove execution number from the notebook
+        to avoid commiting changes only about those numbers
+    """
+
+    def fixup(adict, k, v):
+        for key in adict.keys():
+            if key == k:
+                adict[key] = v
+            elif isinstance(adict[key], dict):
+                fixup(adict[key], k, v)
+            elif isinstance(adict[key], list):
+                for el in adict[key]:
+                    if isinstance(el, dict):
+                        fixup(el, k, v)
+
+    content = read_content_ufs(infile)
+    js = json.loads(content, encoding=encoding)
+    fixup(js, "execution_count", None)
+    st = StringIO()
+    d = json.dump(js, st)
+    res = st.getvalue()
+    if outfile is not None:
+        with open(outfile, "w", encoding=encoding) as f:
+            f.write(res)
+    return res
