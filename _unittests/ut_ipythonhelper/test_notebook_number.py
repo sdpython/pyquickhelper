@@ -22,7 +22,7 @@ except ImportError:
 
 from src.pyquickhelper.ipythonhelper.notebook_helper import remove_execution_number
 from src.pyquickhelper.filehelper import change_file_status
-from src.pyquickhelper.pycode import get_temp_folder
+from src.pyquickhelper.pycode import get_temp_folder, is_travis_or_appveyor
 from src.pyquickhelper.loghelper import fLOG
 
 
@@ -42,7 +42,8 @@ class TestNotebookNumber(unittest.TestCase):
         assert os.path.exists(outfile)
         assert '"execution_count": null' in res
         change_file_status(outfile)
-        change_file_status(temp, strict=True)
+        if is_travis_or_appveyor() == "travis":
+            change_file_status(temp, strict=True)
 
 
 if __name__ == "__main__":
