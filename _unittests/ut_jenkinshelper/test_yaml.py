@@ -129,7 +129,7 @@ class TestYaml(unittest.TestCase):
                        Python27=None, Anaconda3=None, Anaconda2=None,
                        WinPython35=None, project_name="pyquickhelper",
                        root_path="ROOT")
-        obj = load_yaml(yml, context=context)
+        obj = load_yaml(yml, context=context, platform=platform)
         res = list(enumerate_convert_yaml_into_instructions(obj))
         for r, v in res:
             conv = convert_sequence_into_batch_file(

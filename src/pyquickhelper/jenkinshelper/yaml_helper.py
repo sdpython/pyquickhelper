@@ -21,7 +21,7 @@ import yaml
 from ..texthelper.templating import apply_template
 
 
-def load_yaml(file_or_buffer, context=None, engine="jinja2"):
+def load_yaml(file_or_buffer, context=None, engine="jinja2", platform=None):
     """
     loads a yaml file (.yml)
 
@@ -39,10 +39,14 @@ def load_yaml(file_or_buffer, context=None, engine="jinja2"):
     if len(file_or_buffer) < 5000 and os.path.exists(file_or_buffer):
         with open(file_or_buffer, "r", encoding="utf-8") as f:
             file_or_buffer = f.read()
+
+    def ospathjoinp(*l, platform=platform):
+        return ospathjoin(*l, platform=platform)
+
     if context is None:
-        context = dict(replace=replace, ospathjoin=ospathjoin)
+        context = dict(replace=replace, ospathjoin=ospathjoinp)
     else:
-        fs = [("replace", replace), ("ospathjoin", ospathjoin)]
+        fs = [("replace", replace), ("ospathjoin", ospathjoinp)]
         if any(_[0] not in context for _ in fs):
             context = context.copy()
             for k, f in fs:
@@ -361,7 +365,7 @@ def enumerate_processed_yml(file_or_buffer, context=None, engine="jinja2", platf
     Example of a yml file `.local.jenkins.win.yml <https://github.com/sdpython/pyquickhelper/blob/master/.local.jenkins.win.yml>`_.
     """
     project_name = '' if context is None else context.get("project_name", '')
-    obj = load_yaml(file_or_buffer, context=context)
+    obj = load_yaml(file_or_buffer, context=context, platform=platform)
     for seq, var in enumerate_convert_yaml_into_instructions(obj, variables=context):
         conv = convert_sequence_into_batch_file(
             seq, variables=var, platform=platform)
