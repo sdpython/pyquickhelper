@@ -41,7 +41,7 @@ class TestNotebookNumber(unittest.TestCase):
         assert res
         assert os.path.exists(outfile)
         assert '"execution_count": null' in res
-        if is_travis_or_appveyor() == "travis":
+        if is_travis_or_appveyor() != "travis":
             change_file_status(outfile)
             change_file_status(temp, strict=True)
 
