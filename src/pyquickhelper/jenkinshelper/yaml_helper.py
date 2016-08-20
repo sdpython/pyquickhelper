@@ -30,12 +30,24 @@ def load_yaml(file_or_buffer, context=None, engine="jinja2"):
     @param      engine              see @see fn apply_template
     @return                         see `PyYAML <http://pyyaml.org/wiki/PyYAMLDocumentation>`_
     """
+    def replace(val, rep, into):
+        if val is None:
+            return val
+        else:
+            return val.replace(rep, into)
     typstr = str  # unicode#
     if len(file_or_buffer) < 5000 and os.path.exists(file_or_buffer):
         with open(file_or_buffer, "r", encoding="utf-8") as f:
             file_or_buffer = f.read()
     if context is None:
-        context = dict()
+        context = dict(replace=replace, ospathjoin=ospathjoin)
+    else:
+        fs = [("replace", replace), ("ospathjoin", ospathjoin)]
+        if any(_[0] not in context for _ in fs):
+            context = context.copy()
+            for k, f in fs:
+                if k not in context:
+                    context[k] = f
     file_or_buffer = apply_template(file_or_buffer, context, engine)
     return yaml.load(file_or_buffer)
 
@@ -80,10 +92,10 @@ def interpret_instruction(inst, variables=None):
     """
     if isinstance(inst, list):
         res = [interpret_instruction(_, variables) for _ in inst]
-        if len(res) == 1 and res[0] is None:
-            return None
+        if any(res):
+            return [_ for _ in res if _ is not None]
         else:
-            return res
+            return None
     elif isinstance(inst, tuple):
         return (inst[0], interpret_instruction(inst[1], variables))
     elif isinstance(inst, dict):
@@ -106,7 +118,7 @@ def enumerate_convert_yaml_into_instructions(obj, variables=None):
 
     @param      obj         yaml objects (@see fn load_yaml)
     @param      variables   additional variables to be used
-    @return                 list of instructions
+    @return                 list of tuple(instructions, variables)
 
     The function expects the following list
     of steps in this order:
@@ -160,6 +172,14 @@ def enumerate_convert_yaml_into_instructions(obj, variables=None):
         for key, value in sequences:
             if key == "python":
                 value = value[i_python]
+                if isinstance(value, dict):
+                    if 'PATH' not in value:
+                        raise KeyError(
+                            "The dictionary should include key 'path': {0}".format(value))
+                    for k, v in value.items():
+                        if k != 'PATH':
+                            variables[k] = v
+                    value = value["PATH"]
             elif key == "script":
                 value = value[i_script]
                 i_script += 1
@@ -168,13 +188,15 @@ def enumerate_convert_yaml_into_instructions(obj, variables=None):
                     i_python += 1
                     if i_python >= count['python']:
                         notstop = False
-            if value is not None and value != 'None' and value != "conda|":
+            if value is not None and value != 'None':
                 seq.append((key, value))
                 variables[key] = value
             else:
                 add = False
         if add:
-            yield interpret_instruction(seq, variables)
+            r = interpret_instruction(seq, variables)
+            if r is not None:
+                yield r, variables
 
 
 def ospathjoin(*l, platform=None):
@@ -209,11 +231,12 @@ def ospathdirname(l, platform=None):
         return "/".join(l.replace("\\", "/").split("/")[:-1])
 
 
-def convert_sequence_into_batch_file(seq, platform=None):
+def convert_sequence_into_batch_file(seq, variables=None, platform=None):
     """
     converts a sequence of instructions into a batch file
 
     @param      seq         sequence of instructions
+    @param      variables   list of variables
     @param      platform    ``sys.platform`` if None
     @return                 (str) batch file
     """
@@ -252,19 +275,18 @@ def convert_sequence_into_batch_file(seq, platform=None):
                 rows.append("export PATH={0}:$PATH".format(path_pip))
 
     for key, value in seq:
-
         if key == "python":
-            if value.startswith("conda|"):
+            if variables.get('DIST', None) == "conda":
                 rows.append(echo + " conda")
                 anaconda = True
                 interpreter = ospathjoin(
-                    value[6:], "python", platform=platform)
-                pip = ospathjoin(value[6:], "Scripts",
+                    value, "python", platform=platform)
+                pip = ospathjoin(value, "Scripts",
                                  "pip", platform=platform)
                 venv = ospathjoin(
-                    value[6:], "Scripts", "virtualenv", platform=platform)
+                    value, "Scripts", "virtualenv", platform=platform)
                 conda = ospathjoin(
-                    value[6:], "Scripts", "conda", platform=platform)
+                    value, "Scripts", "conda", platform=platform)
             else:
                 interpreter = ospathjoin(
                     value, "python", platform=platform)
@@ -273,6 +295,7 @@ def convert_sequence_into_batch_file(seq, platform=None):
                 venv = ospathjoin(value, "Scripts",
                                   "virtualenv", platform=platform)
             rows.append(echo + " interpreter=" + interpreter)
+
         elif key == "virtualenv":
             if isinstance(value, list):
                 if len(value) != 1:
@@ -287,6 +310,7 @@ def convert_sequence_into_batch_file(seq, platform=None):
             else:
                 rows.append('if [-f {0}]; then mkdir "{0}"; fi'.format(p))
             if anaconda:
+                pinter = ospathdirname(interpreter, platform=platform)
                 rows.append(
                     '"{0}" create -p "{1}" --clone "{2}" --offline'.format(conda, p, pinter))
                 interpreter = ospathjoin(
@@ -313,4 +337,38 @@ def convert_sequence_into_batch_file(seq, platform=None):
                 rows.append(error_level)
         else:
             raise ValueError("unexpected key '{0}'".format(key))
-    return "\n".join(rows)
+    try:
+        return "\n".join(rows)
+    except TypeError as e:
+        raise TypeError("Unexpected type\n{0}".format(
+            "\n".join([str((type(_), _)) for _ in rows]))) from e
+
+
+def enumerate_processed_yml(file_or_buffer, context=None, engine="jinja2", platform=None,
+                            server=None, git_repo=None, **kwargs):
+    """
+    submit jobs based on the content of a yml file
+
+    @param      file_or_buffer      file or string
+    @param      context             variables to replace in the configuration
+    @param      engine              see @see fn apply_template
+    @param      server              see @see cl JenkinsExt
+    @param      platform            plaform where the job will be executed
+    @param      git_repo            git repository (if *server* is not None)
+    @param      kwargs              see @see me create_job_template
+    @return                         enumerator for jobs
+
+    Example of a yml file `.local.jenkins.win.yml <https://github.com/sdpython/pyquickhelper/blob/master/.local.jenkins.win.yml>`_.
+    """
+    project_name = '' if context is None else context.get("project_name", '')
+    obj = load_yaml(file_or_buffer, context=context)
+    for seq, var in enumerate_convert_yaml_into_instructions(obj, variables=context):
+        conv = convert_sequence_into_batch_file(
+            seq, variables=var, platform=platform)
+        if server is not None:
+            name = "_".join([project_name, var.get('NAME', ''),
+                             str(var.get("VERSION", '')).replace(".", ""),
+                             var.get('DIST', '')])
+            yield server.create_job_template(name, script=conv, git_repo=git_repo, **kwargs)
+        else:
+            yield conv

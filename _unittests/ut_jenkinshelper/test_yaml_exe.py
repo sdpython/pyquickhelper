@@ -90,8 +90,8 @@ class TestYamlExe(unittest.TestCase):
         obj = load_yaml(yml, context=context)
         res = list(enumerate_convert_yaml_into_instructions(
             obj, variables=context))
-        for r in res:
-            conv = convert_sequence_into_batch_file(r)
+        for r, var in res:
+            conv = convert_sequence_into_batch_file(r, variables=var)
             assert ("%s " % command) in conv
             fLOG("####", conv)
             ext = "bat" if command == "dir" else "sh"
@@ -105,11 +105,14 @@ class TestYamlExe(unittest.TestCase):
                 fLOG("###")
                 fLOG(out)
                 if "BEFORE_SCRIPT" not in out:
-                    raise Exception("{0}\nERR\n{2}\n#########\n{1}".format(out, conv, err))
+                    raise Exception(
+                        "{0}\nERR\n{2}\n#########\n{1}".format(out, conv, err))
                 if "AFTER_SCRIPT" not in out:
-                    raise Exception("{0}\nERR\n{2}\n#########\n{1}".format(out, conv, err))
+                    raise Exception(
+                        "{0}\nERR\n{2}\n#########\n{1}".format(out, conv, err))
                 if "SCRIPT" not in out:
-                    raise Exception("{0}\nERR\n{2}\n#########\n{1}".format(out, conv, err))
+                    raise Exception(
+                        "{0}\nERR\n{2}\n#########\n{1}".format(out, conv, err))
 
 
 if __name__ == "__main__":

@@ -566,23 +566,11 @@ class JenkinsExt(jenkins.Jenkins):
             # linux
             raise NotImplementedError("On Linux, unable to interpret: " + job)
 
-    def create_job_template(self,
-                            name,
-                            git_repo,
-                            credentials="",
-                            upstreams=None,
-                            script=None,
-                            location=None,
-                            keep=30,
-                            scheduler=None,
-                            py27=False,
-                            description=None,
-                            default_engine_paths=None,
-                            success_only=False,
-                            update=False,
-                            timeout=_timeout_default,
-                            additional_requirements=None
-                            ):
+    def create_job_template(self, name, git_repo, credentials="", upstreams=None, script=None,
+                            location=None, keep=30, scheduler=None, py27=False, description=None,
+                            default_engine_paths=None, success_only=False, update=False,
+                            timeout=_timeout_default, additional_requirements=None,
+                            return_job=False):
         """
         add a job to the jenkins server
 
@@ -604,6 +592,7 @@ class JenkinsExt(jenkins.Jenkins):
                                                 otherthise, we assume they are available
                                                 on the installed distribution
         @param      timeout                     specify a timeout
+        @param      return_job                  return job instead of submitting the job
 
         The job can be modified on Jenkins. To add a time trigger::
 
@@ -683,7 +672,7 @@ class JenkinsExt(jenkins.Jenkins):
             "__SCRIPT__", s) for s in script_mod]
 
         # location
-        if "<--" in location:
+        if location is not None and "<--" in location:
             raise Exception("this should not happen")
         location = "" if location is None else "<customWorkspace>%s</customWorkspace>" % location
 
@@ -700,7 +689,7 @@ class JenkinsExt(jenkins.Jenkins):
         for k, v in rep.items():
             conf = conf.replace(k, v)
 
-        if self._mock:
+        if self._mock or return_job:
             return conf
         elif update:
             return self.reconfig_job(name, conf)

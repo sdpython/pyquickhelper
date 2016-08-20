@@ -1,19 +1,24 @@
 language: python
 python:
-  - {{Python34}}
-  - {{Python35}}
-  - {{Python27}}
-  - conda|{{Anaconda35}}
-  - conda|{{Anaconda27}}
-  - {{WinPython35}}
+  - { PATH: "{{replace(Python34, '\\', '\\\\')}}", VERSION: 3.4 }
+  - { PATH: "{{replace(Python35, '\\', '\\\\')}}", VERSION: 3.4 }
+  - { PATH: "{{replace(Python27, '\\', '\\\\')}}", VERSION: 2.7 }
+  - { PATH: "{{replace(Anaconda3, '\\', '\\\\')}}", VERSION: 3.5, DIST: conda }
+  - { PATH: "{{replace(Anaconda2, '\\', '\\\\')}}", VERSION: 2.7, DIST: conda }
+  - { PATH: "{{replace(WinPython35, '\\', '\\\\')}}", VERSION: 3.5 }
 virtualenv:
-  - path: {{root_path}}\_virtualenv\{{project_name}}
+  - path: {{ospathjoin(root_path, project_name, "_venv")}}
 install:
   - pip install -r requirements.txt
+before_script:
+  - if [ ${VERSION} == "2.7" ] then python setup.py copy27 fi
+  - if [ ${VERSION} == "2.7" ] then cd dist_module27 fi
 script:
   - python setup.py unittests
   - python setup.py unittests [LONG]
   - python setup.py unittests [SKIP]
+after_script:
+  - if [ ${VERSION} == "2.7" ] then cd .. fi
 documentation:
   - if [ ${PYTHON} == "{{Python35}}" ] then
     python setup.py build_sphinx
