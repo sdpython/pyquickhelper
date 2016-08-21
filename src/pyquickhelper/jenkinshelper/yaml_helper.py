@@ -21,6 +21,20 @@ import yaml
 from ..texthelper.templating import apply_template
 
 
+def pickname(*l):
+    """
+    pick the first string non null in the list
+    
+    @param      l   list of string
+    @return         string
+    """
+    for s in l:
+        s = s.strip()
+        if s:
+            return s
+    raise ValueError("Unable to find a non empty string in {0}".format(l))
+
+
 def load_yaml(file_or_buffer, context=None, engine="jinja2", platform=None):
     """
     loads a yaml file (.yml)
@@ -47,9 +61,9 @@ def load_yaml(file_or_buffer, context=None, engine="jinja2", platform=None):
         return ospathjoin(*l, platform=platform)
 
     if context is None:
-        context = dict(replace=replace, ospathjoin=ospathjoinp)
+        context = dict(replace=replace, ospathjoin=ospathjoinp, pickname=pickname)
     else:
-        fs = [("replace", replace), ("ospathjoin", ospathjoinp)]
+        fs = [("replace", replace), ("ospathjoin", ospathjoinp), ("pickname", pickname)]
         if any(_[0] not in context for _ in fs):
             context = context.copy()
             for k, f in fs:
@@ -394,7 +408,8 @@ def infer_project_name(file_or_buffer):
 
 
 def enumerate_processed_yml(file_or_buffer, context=None, engine="jinja2", platform=None,
-                            server=None, git_repo=None, add_environ=True, **kwargs):
+                            server=None, git_repo=None, add_environ=True, overwrite=False, 
+                            build_location=None, **kwargs):
     """
     submit or enumerate jobs based on the content of a yml file
 
@@ -405,6 +420,8 @@ def enumerate_processed_yml(file_or_buffer, context=None, engine="jinja2", platf
     @param      platform            plaform where the job will be executed
     @param      git_repo            git repository (if *server* is not None)
     @param      add_environ         add environment variable before interpreting the job
+    @param      overwrite           overwrite the job if it already exists in Jenkins
+    @param      build_location      location for the build
     @param      kwargs              see @see me create_job_template
     @return                         enumerator for *(job, name, variables)*
 
@@ -430,6 +447,35 @@ def enumerate_processed_yml(file_or_buffer, context=None, engine="jinja2", platf
         if server is not None:
             name = "_".join([project_name, var.get('NAME', ''), str(var.get("VERSION", '')).replace(".", ""),
                              var.get('DIST', '')])
-            yield server.create_job_template(name, script=conv, git_repo=git_repo, **kwargs), name, var
+            conv = "SET NAME_JENKINS=" + name + "\n" + conv
+            import jenkins
+            try:
+                j = server.get_job_config(name) if not server._mock else None
+            except jenkins.NotFoundException:
+                j = None
+            except jenkins.JenkinsException as e:
+                raise JenkinsExtException(
+                    "unable to retrieve job config for job={0}, name={1}".format(job, name)) from e
+
+            update_job = False
+            if j is not None:
+                if kwargs.get('update', True):
+                    update_job = True
+                else:
+                    self.fLOG("[jenkins] delete job", name)
+                    server.delete_job(jname)
+
+            if project_name not in git_repo:
+                git_repo += project_name
+                
+            # set up location
+            if build_location is None:
+                loc = None
+            else:
+                loc = os.path.join(build_location, name)
+                
+            if overwrite or j is None:
+                yield server.create_job_template(name, script=conv, git_repo=git_repo, 
+                                                 update=update_job, location=loc, **kwargs), name, var
         else:
             yield conv, None, var

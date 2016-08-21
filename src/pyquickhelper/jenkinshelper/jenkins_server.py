@@ -982,74 +982,71 @@ class JenkinsExt(jenkins.Jenkins):
                     options = {}
 
                 counts[dozen] = counts.get(dozen, 0) + 1
+                
+                # success_only
+                if "success_only" in options:
+                    success_only = options["success_only"]
+                    del options["success_only"]
+                else:
+                    success_only = False
+
+                # timeout
+                if "timeout" in options:
+                    timeout = options["timeout"]
+                    del options["timeout"]
+                else:
+                    timeout = _timeout_default
+
+                # script
+                if not is_yml:
+                    script = get_jenkins_script(self, job)
+
+                # we process the repository
+                if "repo" in options:
+                    gitrepo = options["repo"]
+                    options = options.copy()
+                    del options["repo"]
+                else:
+                    gitrepo = github
+
+                # add a description to the job
+                description = ["%s%02d%02d" % (dozen, order, unit)]
+                if scheduler is not None:
+                    description.append(scheduler)
+                description = " - ".join(description)
+
+                # credentials
+                if isinstance(credentials, dict):
+                    cred = credentials.get(gitrepo, None)
+                    if cred is None:
+                        cred = credentials.get("default", "")
+                else:
+                    cred = credentials
 
                 if not is_yml:
                     mod = job.split()[0]
                     name = self.get_jenkins_job_name(job)
                     jname = prefix + name
 
-                try:
-                    j = js.get_job_config(
-                        jname, is_yml=is_yml) if not js._mock else None
-                except jenkins.NotFoundException:
-                    j = None
-                except jenkins.JenkinsException as e:
-                    raise JenkinsExtException(
-                        "unable to retrieve job config for job={0}, name={1}".format(job, jname)) from e
+                    try:
+                        j = js.get_job_config(jname) if not js._mock else None
+                    except jenkins.NotFoundException:
+                        j = None
+                    except jenkins.JenkinsException as e:
+                        raise JenkinsExtException(
+                            "unable to retrieve job config for job={0}, name={1}".format(job, jname)) from e
 
-                if overwrite or j is None:
+                    if overwrite or j is None:
 
-                    update_job = False
-                    if j is not None:
-                        if update:
-                            update_job = True
-                        else:
-                            self.fLOG("[jenkins] delete job", jname)
-                            js.delete_job(jname)
+                        update_job = False
+                        if j is not None:
+                            if update:
+                                update_job = True
+                            else:
+                                self.fLOG("[jenkins] delete job", jname)
+                                js.delete_job(jname)
 
-                    # success_only
-                    if "success_only" in options:
-                        success_only = options["success_only"]
-                        del options["success_only"]
-                    else:
-                        success_only = False
-
-                    # timeout
-                    if "timeout" in options:
-                        timeout = options["timeout"]
-                        del options["timeout"]
-                    else:
-                        timeout = _timeout_default
-
-                    # script
-                    if not is_yml:
-                        script = get_jenkins_script(self, job)
-
-                    # we process the repository
-                    if "repo" in options:
-                        gitrepo = options["repo"]
-                        options = options.copy()
-                        del options["repo"]
-                    else:
-                        gitrepo = github
-
-                    # add a description to the job
-                    description = ["%s%02d%02d" % (dozen, order, unit)]
-                    if scheduler is not None:
-                        description.append(scheduler)
-                    description = " - ".join(description)
-
-                    # credentials
-                    if isinstance(credentials, dict):
-                        cred = credentials.get(gitrepo, None)
-                        if cred is None:
-                            cred = credentials.get("default", "")
-                    else:
-                        cred = credentials
-
-                    # we post process the script
-                    if not is_yml:
-                        # no yml file
+                        # we post process the script
                         script = self.process_options(script, options)
 
                         # if there is a script
@@ -1099,30 +1096,32 @@ class JenkinsExt(jenkins.Jenkins):
                             locations.append((job, loc))
                             self.fLOG("[jenkins] skipping",
                                       job, "location", loc)
-                    else:
-                        # yml file
-                        if location is not None:
-                            options["root_path"] = location
-                        for k, v in self.engines.items():
-                            if k not in options:
-                                options[k] = v
-                        jobdef = job[0] if isinstance(job, tuple) else job
-                        done = {}
-                        for aj, name, var in enumerate_processed_yml(jobdef, context=options, engine=yml_engine,
-                                                                     add_environ=add_environ, server=self, git_repo=gitrepo, scheduler=scheduler,
-                                                                     description=description, credentials=cred, success_only=success_only,
-                                                                     update=update_job, timeout=timeout, platform=yml_platform):
-                            if name in done:
-                                s = "A name '{0}' was already used for a job, from:\n{1}\nPROCESS:\n{2}"
-                                raise ValueError(s.format(name, jobdef, "\n".join(sorted(set(done.keys())))))
-                            done[name] = (aj, name, var)
-                            loc = None if location is None else os.path.join(
-                                location, name)
-                            self.fLOG("[jenkins] adding", name, "var", var)
-                            created.append((job, name, loc, job, aj))
+                    elif j is not None:
+                        new_dep.append(name)
 
-                elif j is not None:
-                    new_dep.append(name)
+                else:
+                    # yml file
+                    if location is not None:
+                        options["root_path"] = location
+                    for k, v in self.engines.items():
+                        if k not in options:
+                            options[k] = v
+                    jobdef = job[0] if isinstance(job, tuple) else job
+            
+                    done = {}
+                    for aj, name, var in enumerate_processed_yml(jobdef, context=options, engine=yml_engine,
+                                                                 add_environ=add_environ, server=self, git_repo=gitrepo, scheduler=scheduler,
+                                                                 description=description, credentials=cred, success_only=success_only,
+                                                                 timeout=timeout, platform=yml_platform,
+                                                                 overwrite=overwrite, build_location=location):
+                        if name in done:
+                            s = "A name '{0}' was already used for a job, from:\n{1}\nPROCESS:\n{2}"
+                            raise ValueError(s.format(name, jobdef, "\n".join(sorted(set(done.keys())))))
+                        done[name] = (aj, name, var)
+                        loc = None if location is None else os.path.join(
+                            location, name)
+                        self.fLOG("[jenkins] adding", name, "var", var)
+                        created.append((job, name, loc, job, aj))
 
             dep = new_dep
 
