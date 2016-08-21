@@ -141,6 +141,7 @@ class TestYaml(unittest.TestCase):
         if platform.startswith("win"):
             expected = """
             @echo off
+            set PATH0=%PATH%
             @echo interpreter=C:\\Python35_x64\\python
 
             @echo CREATE VIRTUAL ENVIRONMENT in ROOT\\pyquickhelper\\_venv

@@ -5,7 +5,7 @@
 .. todoext::
     :title: define Jenkins job with .yml
     :tag: enhancement
-    :cost: 0.1
+    :cost: 4
     :date: 2016-08-16
     :issue: 29
 
@@ -116,12 +116,16 @@ def interpret_instruction(inst, variables=None):
             return inst
 
 
-def enumerate_convert_yaml_into_instructions(obj, variables=None):
+def enumerate_convert_yaml_into_instructions(obj, variables=None, add_environ=True):
     """
-    convert a yaml file into sequences of instructions
+    convert a yaml file into sequences of instructions,
+    conditions are interpreted
 
     @param      obj         yaml objects (@see fn load_yaml)
     @param      variables   additional variables to be used
+    @param      add_environ add environment variables available, does not
+                            overwrite existing variables
+                            when the job is generated
     @return                 list of tuple(instructions, variables)
 
     The function expects the following list
@@ -143,6 +147,10 @@ def enumerate_convert_yaml_into_instructions(obj, variables=None):
         def_variables = {}
     else:
         def_variables = variables.copy()
+    if add_environ:
+        for k, v in os.environ.items():
+            if k not in def_variables:
+                def_variables[k] = v
     sequences = []
     count = {}
     steps = ["language", "python", "virtualenv", "install",
@@ -261,6 +269,7 @@ def convert_sequence_into_batch_file(seq, variables=None, platform=None):
     echo = "@echo" if iswin else "echo"
     if iswin:
         rows.append("@echo off")
+        rows.append("set PATH0=%PATH%")
 
     def add_path_win(rows, interpreter, pip, platform):
         path_inter = ospathdirname(interpreter, platform)
