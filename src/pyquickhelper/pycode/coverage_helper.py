@@ -42,7 +42,17 @@ def publish_coverage_on_codecov(path, token, commandline=True, fLOG=noLOG):
            "--commit={0}".format(last), "--root={0} -X gcov".format(proj)]
     if token is not None:
         import codecov
-        codecov.main(cmd)
+        out = sys.stdout
+        err = sys.stderr
+        new_out = StringIO()
+        new_err = StringIO()
+        sys.stdout = new_out
+        sys.stderr = new_err
+        codecov.main(*cmd)
+        sys.stdout = out
+        sys.stderr = err
+        out = new_out.getvalue()
+        err = new_err.getvalue()
         if err:
             raise Exception(
                 "unable to run:\nCMD:\n{0}\nOUT:\n{1}\nERR:\n{2}".format(cmd, out, err))
