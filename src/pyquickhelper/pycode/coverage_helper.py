@@ -13,46 +13,6 @@ if sys.version_info[0] == 2:
     FileNotFoundError = Exception
 
 
-def get_codecov_program(exe=None):
-    """
-    get codecov executable
-
-    @param      exe             path to python executable
-    @return                     codecov executable
-    """
-    tried = []
-    if exe is None:
-        exe = os.path.dirname(sys.executable)
-    if sys.platform.startswith("win"):
-        if not exe.endswith("Scripts"):
-            pi = os.path.join(exe, "Scripts", "codecov.exe")
-            tried.append(pi)
-            if not os.path.exists(pi):
-                # Anaconda is different
-                pi = os.path.join(exe, "Scripts", "codecov.exe")
-                tried.append(pi)
-                if not os.path.exists(pi):
-                    raise FileNotFoundError(
-                        "tried (1):\n" + "\n".join(tried))
-        else:
-            pi = os.path.join(exe, "codecov.exe")
-            tried.append(pi)
-            if not os.path.exists(pi):
-                # Anaconda is different
-                pi = os.path.join(exe, "codecov.exe")
-                tried.append(pi)
-                if not os.path.exists(pi):
-                    raise FileNotFoundError(
-                        "tried (2):\n" + "\n".join(tried))
-    else:
-        if exe is None:
-            return "codecov"
-        else:
-            pi = os.path.join(exe, "codecov")
-
-    return pi
-
-
 def publish_coverage_on_codecov(path, token, commandline=True, fLOG=noLOG):
     """
     Publish the coverage report on `codecov <https://codecov.io/>`_.
@@ -76,13 +36,13 @@ def publish_coverage_on_codecov(path, token, commandline=True, fLOG=noLOG):
     proj = os.path.normpath(os.path.join(
         os.path.dirname(report), "..", "..", "..", ".."))
 
-    exe = get_codecov_program()
     src = SourceRepository(commandline=commandline)
     last = src.get_last_commit_hash(proj)
-    cmd = exe + " --token={0} --file={1} --commit={2} --root={3} -X gcov".format(
-        token, report, last, proj)
+    cmd = ["--token={0}".format(token), "--file={0}".format(report),
+           "--commit={0}".format(last), "--root={3} -X gcov".format(proj)]
     if token is not None:
-        out, err = run_cmd(cmd, wait=True)
+        import codecov
+        codecov.main(cmd)
         if err:
             raise Exception(
                 "unable to run:\nCMD:\n{0}\nOUT:\n{1}\nERR:\n{2}".format(cmd, out, err))
