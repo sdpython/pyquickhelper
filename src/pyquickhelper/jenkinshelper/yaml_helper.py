@@ -56,8 +56,7 @@ def load_yaml(file_or_buffer, context=None, engine="jinja2", platform=None):
                 if k not in context:
                     context[k] = f
     if "project_name" not in context and path_project is not None:
-        fold = os.path.dirname(path_project)
-        last = os.path.split(fold)[-1]
+        last = infer_project_name(file_or_buffer)
         context["project_name"] = last
 
     file_or_buffer = apply_template(file_or_buffer, context, engine)
@@ -111,6 +110,8 @@ def interpret_instruction(inst, variables=None):
     elif isinstance(inst, tuple):
         return (inst[0], interpret_instruction(inst[1], variables))
     elif isinstance(inst, dict):
+        return inst
+    elif isinstance(inst, (int, float)):
         return inst
     else:
         inst = inst.replace("\n", " ")
@@ -196,12 +197,16 @@ def enumerate_convert_yaml_into_instructions(obj, variables=None, add_environ=Tr
                     if 'PATH' not in value:
                         raise KeyError(
                             "The dictionary should include key 'path': {0}".format(value))
-                    for k, v in value.items():
+                    for k, v in sorted(value.items()):
                         if k != 'PATH':
                             variables[k] = v
+                            seq.append(('INFO', (k, v)))
                     value = value["PATH"]
             elif key == "script":
                 value = value[i_script]
+                if isinstance(value, dict) and "NAME" in value:
+                    seq.append(('INFO', ('NAME', value["NAME"])))
+                    variables["NAME"] = value["NAME"]
                 i_script += 1
                 if i_script >= count['script']:
                     i_script = 0
@@ -275,9 +280,10 @@ def convert_sequence_into_batch_file(seq, variables=None, platform=None):
     anaconda = False
     conda = None
     echo = "@echo" if iswin else "echo"
+    rowsset = []
     if iswin:
-        rows.append("@echo off")
-        rows.append("set PATH0=%PATH%")
+        rowsset.append("@echo off")
+        rowsset.append("set PATH0=%PATH%")
 
     def add_path_win(rows, interpreter, pip, platform):
         path_inter = ospathdirname(interpreter, platform)
@@ -349,6 +355,13 @@ def convert_sequence_into_batch_file(seq, variables=None, platform=None):
 
         elif key in {"install", "before_script", "script", "after_script", "documentation"}:
             if value is not None:
+                if isinstance(value, dict):
+                    if "CMD" not in value:
+                        raise KeyError(
+                            "A script defined by a dictionary must contain key '{0}' in \n{1}".format("CMD", value))
+                    if "NAME" in value:
+                        rows.append("set JOB_NAME=%s" % value["NAME"])
+                    value = value["CMD"]
                 rows.append("")
                 rows.append(echo + " " + key.upper())
                 add_path_win(rows, interpreter, pip, platform)
@@ -356,8 +369,11 @@ def convert_sequence_into_batch_file(seq, variables=None, platform=None):
                     value = [value]
                 rows.extend(value)
                 rows.append(error_level)
+        elif key == 'INFO':
+            rowsset.append("SET {0}={1}".format(value[0], value[1]))
         else:
             raise ValueError("unexpected key '{0}'".format(key))
+    rows = rowsset + rows
     try:
         return "\n".join(rows)
     except TypeError as e:
@@ -365,19 +381,32 @@ def convert_sequence_into_batch_file(seq, variables=None, platform=None):
             "\n".join([str((type(_), _)) for _ in rows]))) from e
 
 
+def infer_project_name(file_or_buffer):
+    """
+    infer a project name based on yaml file
+
+    @param      file_or_buffer      file name
+    @return                         name
+    """
+    fold = os.path.dirname(file_or_buffer)
+    last = os.path.split(fold)[-1]
+    return last
+
+
 def enumerate_processed_yml(file_or_buffer, context=None, engine="jinja2", platform=None,
-                            server=None, git_repo=None, **kwargs):
+                            server=None, git_repo=None, add_environ=True, **kwargs):
     """
     submit or enumerate jobs based on the content of a yml file
 
-    @param      file_or_buffer      file or string
+    @param      file_or_buffer      filename or string
     @param      context             variables to replace in the configuration
     @param      engine              see @see fn apply_template
     @param      server              see @see cl JenkinsExt
     @param      platform            plaform where the job will be executed
     @param      git_repo            git repository (if *server* is not None)
+    @param      add_environ         add environment variable before interpreting the job
     @param      kwargs              see @see me create_job_template
-    @return                         enumerator for jobs
+    @return                         enumerator for *(job, name, variables)*
 
     Example of a yml file `.local.jenkins.win.yml <https://github.com/sdpython/pyquickhelper/blob/master/.local.jenkins.win.yml>`_.
     """
@@ -385,23 +414,22 @@ def enumerate_processed_yml(file_or_buffer, context=None, engine="jinja2", platf
         "project_name", None)
     if project_name is None:
         if len(file_or_buffer) <= 5000 and os.path.exists(file_or_buffer):
-            fold = os.path.dirname(file_or_buffer)
-            last = os.path.split(fold)[-1]
-            project_name = last
+            project_name = infer_project_name(file_or_buffer)
             if context is not None and "project_name" not in context:
                 context = context.copy()
-                context["project_name"] = last
+                context["project_name"] = project_name
         else:
             project_name = ''
 
     obj = load_yaml(file_or_buffer, context=context, platform=platform)
-    for seq, var in enumerate_convert_yaml_into_instructions(obj, variables=context):
+    for seq, var in enumerate_convert_yaml_into_instructions(obj, variables=context, add_environ=add_environ):
         conv = convert_sequence_into_batch_file(
             seq, variables=var, platform=platform)
+
+        # we extract a suffix from the command line
         if server is not None:
-            name = "_".join([project_name, var.get('NAME', ''),
-                             str(var.get("VERSION", '')).replace(".", ""),
+            name = "_".join([project_name, var.get('NAME', ''), str(var.get("VERSION", '')).replace(".", ""),
                              var.get('DIST', '')])
-            yield server.create_job_template(name, script=conv, git_repo=git_repo, **kwargs)
+            yield server.create_job_template(name, script=conv, git_repo=git_repo, **kwargs), name, var
         else:
-            yield conv
+            yield conv, None, var

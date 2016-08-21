@@ -1,22 +1,20 @@
 language: python
 python:
-  - { PATH: "{{replace(Python34, '\\', '\\\\')}}", VERSION: 3.4 }
-  - { PATH: "{{replace(Python35, '\\', '\\\\')}}", VERSION: 3.4 }
-  - { PATH: "{{replace(Python27, '\\', '\\\\')}}", VERSION: 2.7 }
+  - { PATH: "{{replace(Python34, '\\', '\\\\')}}", VERSION: 3.4, DIST: std }
+  - { PATH: "{{replace(Python35, '\\', '\\\\')}}", VERSION: 3.5, DIST: std }
+  - { PATH: "{{replace(Python27, '\\', '\\\\')}}", VERSION: 2.7, DIST: std }
   - { PATH: "{{replace(Anaconda3, '\\', '\\\\')}}", VERSION: 3.5, DIST: conda }
   - { PATH: "{{replace(Anaconda2, '\\', '\\\\')}}", VERSION: 2.7, DIST: conda }
-  - { PATH: "{{replace(WinPython35, '\\', '\\\\')}}", VERSION: 3.5 }
+  - { PATH: "{{replace(WinPython35, '\\', '\\\\')}}", VERSION: 3.5, DIST: winpython }
 virtualenv:
-  - path: {{ospathjoin(root_path, project_name, "_venv")}}
+  - path: {{ospathjoin(root_path, project_name + "_%VERSION%_%DIST%_%NAME%", "_venv")}}
 install:
   - pip install -r requirements.txt
 before_script:
   - if [ ${VERSION} == "2.7" ] then python setup.py copy27 fi
   - if [ ${VERSION} == "2.7" ] then cd dist_module27 fi
 script:
-  - python setup.py unittests
-  - python setup.py unittests [LONG]
-  - python setup.py unittests [SKIP]
+  - { CMD: "python setup.py unittests", NAME: "UT" }
 after_script:
   - if [ ${VERSION} == "2.7" ] then cd .. fi
 documentation:

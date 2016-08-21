@@ -86,7 +86,7 @@ class TestYaml(unittest.TestCase):
         if not os.path.exists(yml):
             raise FileNotFoundError(yml)
         context = dict(Python34="fake", Python35=os.path.dirname(sys.executable),
-                       Python27=None, Anaconda3=None, Anaconda2=None,
+                       Python27="fake2", Anaconda3=None, Anaconda2=None,
                        WinPython35=None, root_path="ROOT")
         obj = load_yaml(yml, context=context)
         res = list(enumerate_convert_yaml_into_instructions(obj))
@@ -95,16 +95,16 @@ class TestYaml(unittest.TestCase):
         for r, v in res:
             if None in r:
                 raise Exception(r)
-            if r[0][0] != "python":
+            if r[0][0] != "python" and r[0][0] != "INFO":
                 raise Exception(r)
-        if len(res) != 6:
+        if len(res) != 3:
             rows = [str(_) for _ in res]
             raise Exception("\n".join(rows))
 
         doc = [[s[0] for s in seq if s[1] is not None] for seq, _ in res]
         fLOG("------", doc)
         doc = [s for s in doc if "documentation" in s]
-        self.assertEqual(len(doc), 3)
+        self.assertEqual(len(doc), 1)
 
     def test_jconvert_sequence_into_batch_file(self):
         fLOG(
@@ -141,25 +141,29 @@ class TestYaml(unittest.TestCase):
             expected = """
             @echo off
             set PATH0=%PATH%
+            SET DIST=std
+            SET VERSION=3.5
+            SET NAME=UT
             @echo interpreter=C:\\Python35_x64\\python
 
-            @echo CREATE VIRTUAL ENVIRONMENT in ROOT\\pyquickhelper\\_venv
-            if not exist "ROOT\\pyquickhelper\\_venv" mkdir "ROOT\\pyquickhelper\\_venv"
-            "C:\\Python35_x64\\Scripts\\virtualenv" --system-site-packages "ROOT\\pyquickhelper\\_venv"
+            @echo CREATE VIRTUAL ENVIRONMENT in ROOT\\pyquickhelper_%VERSION%_%DIST%_%NAME%\\_venv
+            if not exist "ROOT\\pyquickhelper_%VERSION%_%DIST%_%NAME%\\_venv" mkdir "ROOT\\pyquickhelper_%VERSION%_%DIST%_%NAME%\\_venv"
+            "C:\\Python35_x64\\Scripts\\virtualenv" --system-site-packages "ROOT\\pyquickhelper_%VERSION%_%DIST%_%NAME%\\_venv"
             if %errorlevel% neq 0 exit /b %errorlevel%
 
             @echo INSTALL
-            set PATH=ROOT\\pyquickhelper\\_venv\\Scripts;%PATH%
+            set PATH=ROOT\\pyquickhelper_%VERSION%_%DIST%_%NAME%\\_venv\\Scripts;%PATH%
             pip install -r requirements.txt
             if %errorlevel% neq 0 exit /b %errorlevel%
+            set JOB_NAME=UT
 
             @echo SCRIPT
-            set PATH=ROOT\\pyquickhelper\\_venv\\Scripts;%PATH%
-            python setup.py unittests [SKIP]
+            set PATH=ROOT\\pyquickhelper_%VERSION%_%DIST%_%NAME%\\_venv\\Scripts;%PATH%
+            python setup.py unittests
             if %errorlevel% neq 0 exit /b %errorlevel%
 
             @echo DOCUMENTATION
-            set PATH=ROOT\\pyquickhelper\\_venv\\Scripts;%PATH%
+            set PATH=ROOT\\pyquickhelper_%VERSION%_%DIST%_%NAME%\\_venv\\Scripts;%PATH%
             python setup.py build_sphinx
             if %errorlevel% neq 0 exit /b %errorlevel%
             """.replace("            ", "").strip("\n \t\r")
