@@ -118,7 +118,7 @@ class TestYamlJenkins(unittest.TestCase):
                 raise Exception(conf)
             if "SET DIST=" not in conf:
                 raise Exception(conf)
-            if "anything\\pyquickhelper_%VERSION%_%DIST%_%NAME%" not in conf:
+            if "anything\\%NAME_JENKINS%" not in conf:
                 raise Exception(conf)
 
         assert i > 0
