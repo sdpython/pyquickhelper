@@ -39,7 +39,7 @@ def publish_coverage_on_codecov(path, token, commandline=True, fLOG=noLOG):
     src = SourceRepository(commandline=commandline)
     last = src.get_last_commit_hash(proj)
     cmd = ["--token={0}".format(token), "--file={0}".format(report),
-           "--commit={0}".format(last), "--root={3} -X gcov".format(proj)]
+           "--commit={0}".format(last), "--root={0} -X gcov".format(proj)]
     if token is not None:
         import codecov
         codecov.main(cmd)
