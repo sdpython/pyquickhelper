@@ -571,7 +571,7 @@ class JenkinsExt(jenkins.Jenkins):
                             location=None, keep=30, scheduler=None, py27=False, description=None,
                             default_engine_paths=None, success_only=False, update=False,
                             timeout=_timeout_default, additional_requirements=None,
-                            return_job=False):
+                            return_job=False, **kwargs):
         """
         add a job to the jenkins server
 
@@ -593,6 +593,7 @@ class JenkinsExt(jenkins.Jenkins):
                                                 otherthise, we assume they are available
                                                 on the installed distribution
         @param      timeout                     specify a timeout
+        @param      kwargs                      additional parameters
         @param      return_job                  return job instead of submitting the job
 
         The job can be modified on Jenkins. To add a time trigger::
@@ -982,7 +983,7 @@ class JenkinsExt(jenkins.Jenkins):
                     options = {}
 
                 counts[dozen] = counts.get(dozen, 0) + 1
-                
+
                 # success_only
                 if "success_only" in options:
                     success_only = options["success_only"]
@@ -1107,7 +1108,7 @@ class JenkinsExt(jenkins.Jenkins):
                         if k not in options:
                             options[k] = v
                     jobdef = job[0] if isinstance(job, tuple) else job
-            
+
                     done = {}
                     for aj, name, var in enumerate_processed_yml(jobdef, context=options, engine=yml_engine,
                                                                  add_environ=add_environ, server=self, git_repo=gitrepo, scheduler=scheduler,
@@ -1116,7 +1117,8 @@ class JenkinsExt(jenkins.Jenkins):
                                                                  overwrite=overwrite, build_location=location):
                         if name in done:
                             s = "A name '{0}' was already used for a job, from:\n{1}\nPROCESS:\n{2}"
-                            raise ValueError(s.format(name, jobdef, "\n".join(sorted(set(done.keys())))))
+                            raise ValueError(
+                                s.format(name, jobdef, "\n".join(sorted(set(done.keys())))))
                         done[name] = (aj, name, var)
                         loc = None if location is None else os.path.join(
                             location, name)
