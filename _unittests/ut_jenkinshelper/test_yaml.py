@@ -146,24 +146,24 @@ class TestYaml(unittest.TestCase):
             SET NAME=UT
             @echo interpreter=C:\\Python35_x64\\python
 
-            @echo CREATE VIRTUAL ENVIRONMENT in ROOT\\pyquickhelper_%VERSION%_%DIST%_%NAME%\\_venv
-            if not exist "ROOT\\pyquickhelper_%VERSION%_%DIST%_%NAME%\\_venv" mkdir "ROOT\\pyquickhelper_%VERSION%_%DIST%_%NAME%\\_venv"
-            "C:\\Python35_x64\\Scripts\\virtualenv" --system-site-packages "ROOT\\pyquickhelper_%VERSION%_%DIST%_%NAME%\\_venv"
+            @echo CREATE VIRTUAL ENVIRONMENT in ROOT\\%NAME_JENKINS%\\_venv
+            if not exist "ROOT\\%NAME_JENKINS%\\_venv" mkdir "ROOT\\%NAME_JENKINS%\\_venv"
+            "C:\\Python35_x64\\Scripts\\virtualenv" --system-site-packages "ROOT\\%NAME_JENKINS%\\_venv"
             if %errorlevel% neq 0 exit /b %errorlevel%
 
             @echo INSTALL
-            set PATH=ROOT\\pyquickhelper_%VERSION%_%DIST%_%NAME%\\_venv\\Scripts;%PATH%
+            set PATH=ROOT\\%NAME_JENKINS%\\_venv\\Scripts;%PATH%
             pip install -r requirements.txt
             if %errorlevel% neq 0 exit /b %errorlevel%
             set JOB_NAME=UT
 
             @echo SCRIPT
-            set PATH=ROOT\\pyquickhelper_%VERSION%_%DIST%_%NAME%\\_venv\\Scripts;%PATH%
+            set PATH=ROOT\\%NAME_JENKINS%\\_venv\\Scripts;%PATH%
             python setup.py unittests
             if %errorlevel% neq 0 exit /b %errorlevel%
 
             @echo DOCUMENTATION
-            set PATH=ROOT\\pyquickhelper_%VERSION%_%DIST%_%NAME%\\_venv\\Scripts;%PATH%
+            set PATH=ROOT\\%NAME_JENKINS%\\_venv\\Scripts;%PATH%
             python setup.py build_sphinx
             if %errorlevel% neq 0 exit /b %errorlevel%
             """.replace("            ", "").strip("\n \t\r")
