@@ -7,7 +7,7 @@ python:
   - { PATH: "{{replace(Anaconda2, '\\', '\\\\')}}", VERSION: 2.7, DIST: conda }
   - { PATH: "{{replace(WinPython35, '\\', '\\\\')}}", VERSION: 3.5, DIST: winpython }
 virtualenv:
-  - path: {{ospathjoin(root_path, project_name + "_%VERSION%_%DIST%_%NAME%", "_venv")}}
+  - path: {{ospathjoin(root_path, pickname("%NAME_JENKINS%", project_name + "_%VERSION%_%DIST%_%NAME%"), "_venv")}}
 install:
   - pip install -r requirements.txt
 before_script:
