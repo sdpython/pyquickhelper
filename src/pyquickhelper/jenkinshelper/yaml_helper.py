@@ -37,8 +37,11 @@ def load_yaml(file_or_buffer, context=None, engine="jinja2", platform=None):
             return val.replace(rep, into)
     typstr = str  # unicode#
     if len(file_or_buffer) < 5000 and os.path.exists(file_or_buffer):
+        path_project = file_or_buffer
         with open(file_or_buffer, "r", encoding="utf-8") as f:
             file_or_buffer = f.read()
+    else:
+        path_project = None
 
     def ospathjoinp(*l, platform=platform):
         return ospathjoin(*l, platform=platform)
@@ -52,6 +55,11 @@ def load_yaml(file_or_buffer, context=None, engine="jinja2", platform=None):
             for k, f in fs:
                 if k not in context:
                     context[k] = f
+    if "project_name" not in context and path_project is not None:
+        fold = os.path.dirname(path_project)
+        last = os.path.split(fold)[-1]
+        context["project_name"] = last
+
     file_or_buffer = apply_template(file_or_buffer, context, engine)
     return yaml.load(file_or_buffer)
 
@@ -360,7 +368,7 @@ def convert_sequence_into_batch_file(seq, variables=None, platform=None):
 def enumerate_processed_yml(file_or_buffer, context=None, engine="jinja2", platform=None,
                             server=None, git_repo=None, **kwargs):
     """
-    submit jobs based on the content of a yml file
+    submit or enumerate jobs based on the content of a yml file
 
     @param      file_or_buffer      file or string
     @param      context             variables to replace in the configuration
@@ -373,7 +381,19 @@ def enumerate_processed_yml(file_or_buffer, context=None, engine="jinja2", platf
 
     Example of a yml file `.local.jenkins.win.yml <https://github.com/sdpython/pyquickhelper/blob/master/.local.jenkins.win.yml>`_.
     """
-    project_name = '' if context is None else context.get("project_name", '')
+    project_name = None if context is None else context.get(
+        "project_name", None)
+    if project_name is None:
+        if len(file_or_buffer) <= 5000 and os.path.exists(file_or_buffer):
+            fold = os.path.dirname(file_or_buffer)
+            last = os.path.split(fold)[-1]
+            project_name = last
+            if context is not None and "project_name" not in context:
+                context = context.copy()
+                context["project_name"] = last
+        else:
+            project_name = ''
+
     obj = load_yaml(file_or_buffer, context=context, platform=platform)
     for seq, var in enumerate_convert_yaml_into_instructions(obj, variables=context):
         conv = convert_sequence_into_batch_file(

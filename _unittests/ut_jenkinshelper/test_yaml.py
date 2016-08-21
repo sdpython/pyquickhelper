@@ -87,8 +87,7 @@ class TestYaml(unittest.TestCase):
             raise FileNotFoundError(yml)
         context = dict(Python34="fake", Python35=os.path.dirname(sys.executable),
                        Python27=None, Anaconda3=None, Anaconda2=None,
-                       WinPython35=None, project_name="pyquickhelper",
-                       root_path="ROOT")
+                       WinPython35=None, root_path="ROOT")
         obj = load_yaml(yml, context=context)
         res = list(enumerate_convert_yaml_into_instructions(obj))
         fLOG(len(res))
