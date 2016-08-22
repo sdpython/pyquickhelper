@@ -18,7 +18,7 @@ from .post_process import post_process_latex_output, post_process_latex_output_a
 from .post_process import post_process_html_output, post_process_slides_output, post_process_python_output
 from .helpgen_exceptions import NotebookConvertError
 from multiprocessing import Process, Queue
-from nbconvert.nbconvertapp import main as nbconvert_main
+
 
 if sys.version_info[0] == 2:
     from codecs import open
@@ -149,6 +149,7 @@ def _process_notebooks_in_private_cmd(fnbcexe, list_args, options_args, fLOG):
 def _process_notebooks_in(notebooks, outfold, build, latex_path=None, pandoc_path=None,
                           formats=("ipynb", "html", "python", "rst",
                                    "slides", "pdf", "present")):
+    from nbconvert.nbconvertapp import main as nbconvert_main
     if pandoc_path is None:
         pandoc_path = find_pandoc_path()
 

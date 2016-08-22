@@ -154,6 +154,7 @@ class TestYaml(unittest.TestCase):
             @echo INSTALL
             set PATH=ROOT\\%NAME_JENKINS%\\_venv\\Scripts;%PATH%
             pip install -r requirements.txt
+            pip freeze
             if %errorlevel% neq 0 exit /b %errorlevel%
             set JOB_NAME=UT
 

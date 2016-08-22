@@ -10,6 +10,7 @@ virtualenv:
   - path: {{ospathjoin(root_path, pickname("%NAME_JENKINS%", project_name + "_%VERSION%_%DIST%_%NAME%"), "_venv")}}
 install:
   - pip install -r requirements.txt
+  - pip freeze
 before_script:
   - if [ ${VERSION} == "2.7" ] then python setup.py copy27 fi
   - if [ ${VERSION} == "2.7" ] then cd dist_module27 fi
