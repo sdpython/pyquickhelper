@@ -422,7 +422,8 @@ def rst2html(s, fLOG=noLOG, writer="sphinx", keep_warnings=False,
         if hasattr(writer.builder.config, k) and writer.builder.config[k] != v:
             writer.builder.config[k] = v
 
-    # nbconvert is somehow screwing up sphinx and makes this function
+    # something is screwing with sphinx or docutils, it is due to
+    # direct call to nbconvert or sphinx
     # raise an exception for unknown role pending_xref
     parts = core.publish_parts(source=s, source_path=None,
                                destination_path=None, writer=writer,

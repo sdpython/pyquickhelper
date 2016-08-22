@@ -1,5 +1,5 @@
 """
-@brief      test log(time=98s)
+@brief      test log(time=2s)
 @author     Xavier Dupre
 
 For some reason, the test fails if it is run after another one:
