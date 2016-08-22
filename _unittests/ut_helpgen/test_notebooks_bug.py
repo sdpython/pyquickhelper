@@ -33,7 +33,7 @@ if sys.version_info[0] == 2:
 
 class TestNoteBooksBug(unittest.TestCase):
 
-    def test_regex(self):
+    def _test_regex(self):
         fLOG(
             __file__,
             self._testMethodName,
@@ -69,7 +69,7 @@ class TestNoteBooksBug(unittest.TestCase):
         nbs = [os.path.join(fold, _)
                for _ in os.listdir(fold) if ".ipynb" in _]
         formats = ["present", "ipynb", "html",
-                   "python", "rst", "latex", "pdf", "docx"]
+                   "python", "rst", "pdf", "docx"]
 
         temp = get_temp_folder(__file__, "temp_nb_bug")
 
@@ -90,7 +90,7 @@ class TestNoteBooksBug(unittest.TestCase):
         if "\\subsection{" not in content:
             raise Exception(content)
 
-    def test_notebook_pdf(self):
+    def _test_notebook_pdf(self):
         fLOG(
             __file__,
             self._testMethodName,

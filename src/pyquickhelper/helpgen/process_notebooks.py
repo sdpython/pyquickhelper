@@ -21,6 +21,9 @@ from .helpgen_exceptions import NotebookConvertError
 if sys.version_info[0] == 2:
     from codecs import open
     FileNotFoundError = Exception
+    from StringIO import StringIO
+else:
+    from io import StringIO
 
 
 template_examples = """
@@ -39,114 +42,6 @@ Another list
 ++++++++++++
 
 """
-
-
-def get_ipython_program(exe=None, pandoc_path=None):
-    """
-    get ipython executable + fix an issue with PANDOC
-
-    @param      exe             path to python executable
-    @param      pandoc_path     if None, call @see fn find_pandoc_path
-    @return                     ipython executable
-
-    .. deprecated::
-        ``ipython nbconvert`` will be deprecated with IPython 6.0.
-    """
-    if exe is None:
-        exe = os.path.dirname(sys.executable)
-    if pandoc_path is None:
-        pandoc_path = find_pandoc_path()
-    dver = sys.version_info[0]
-    if sys.platform.startswith("win"):
-        user = os.environ["USERPROFILE"]
-        path = pandoc_path.replace("%USERPROFILE%", user)
-        p = os.environ["PATH"]
-        if path not in p:
-            p += ";%WINPYDIR%\DLLs;" + path
-            os.environ["WINPYDIR"] = exe
-            os.environ["PATH"] = p
-
-        if not exe.lower().endswith("scripts"):
-            ipy = os.path.join(exe, "Scripts", "ipython%d.exe" % dver)
-            if not os.path.exists(ipy):
-                # Anaconda is different
-                ipy = os.path.join(exe, "Scripts", "ipython.exe")
-                if not os.path.exists(ipy):
-                    raise FileNotFoundError(
-                        "ipy={0}\nexe={1}".format(ipy, exe))
-        else:
-            ipy = os.path.join(exe, "ipython%d.exe" % dver)
-            if not os.path.exists(ipy):
-                # Anaconda is different
-                ipy = os.path.join(exe, "ipython.exe")
-                if not os.path.exists(ipy):
-                    raise FileNotFoundError(
-                        "ipy={0}\nexe={1}".format(ipy, exe))
-    else:
-        ipy = os.path.join(exe, "ipython")
-
-    return ipy
-
-
-def get_jupyter_convert_program(exe=None, pandoc_path=None):
-    """
-    get jupyter-convert executable + fix an issue with PANDOC
-
-    @param      exe             path to python executable
-    @param      pandoc_path     if None, call @see fn find_pandoc_path
-    @return                     ipython executable
-    """
-    if exe is None:
-        exe = os.path.dirname(sys.executable)
-    if pandoc_path is None:
-        pandoc_path = find_pandoc_path()
-    if sys.platform.startswith("win"):
-        user = os.environ["USERPROFILE"]
-        path = pandoc_path.replace("%USERPROFILE%", user)
-        p = os.environ["PATH"]
-        if path not in p:
-            p += ";%WINPYDIR%\DLLs;" + path
-            os.environ["WINPYDIR"] = exe
-            os.environ["PATH"] = p
-
-        if not exe.lower().endswith("scripts"):
-            ipy = os.path.join(exe, "Scripts", "jupyter-nbconvert.exe")
-            if not os.path.exists(ipy):
-                raise FileNotFoundError("ipy={0}\nexe={1}".format(ipy, exe))
-        else:
-            ipy = os.path.join(exe, "jupyter-nbconvert.exe")
-            if not os.path.exists(ipy):
-                raise FileNotFoundError("ipy={0}\nexe={1}".format(ipy, exe))
-    else:
-        ipy = os.path.join(exe, "jupyter-nbconvert")
-
-    return ipy
-
-
-def get_convert_present_program(exe=None):
-    """
-    get present.exe executable
-
-    @param      exe             path to python executable
-    @return                     ipython executable
-
-    .. versionadded:: 1.4
-    """
-    if exe is None:
-        exe = os.path.dirname(sys.executable)
-    if sys.platform.startswith("win"):
-        if not exe.lower().endswith("scripts"):
-            ipy = os.path.join(exe, "Scripts", "nbpresent.exe")
-            if not os.path.exists(ipy):
-                raise FileNotFoundError("ipy={0}\nexe={1}".format(ipy, exe))
-        else:
-            ipy = os.path.join(exe, "nbpresent.exe")
-            if not os.path.exists(ipy):
-                raise FileNotFoundError("ipy={0}\nexe={1}".format(ipy, exe))
-    else:
-        ipy = os.path.join(exe, "nbpresent")
-
-    return ipy
 
 
 def process_notebooks(notebooks,
@@ -241,16 +136,12 @@ def process_notebooks(notebooks,
                   "present": ".slides2p.html"
                   }
 
-    ipy = get_jupyter_convert_program(exe, pandoc_path)
-
-    if sys.platform.startswith("win"):
-        cmd_convert = '{0} --to {1} "{2}"{5} --output="{3}\\{4}"'
-        cmd_present = '{0} -i "{2}"{5} -o "{3}\\{4}.slides2p.html"'
-    else:
-        cmd_convert = '{0} --to {1} "{2}"{5} --output="{3}/{4}"'
-        cmd_present = '{0} -i "{2}"{5} -o "{3}/{4}.slides2p.html"'
     files = []
     skipped = []
+
+    from nbconvert.nbconvertapp import main as nbconvert_main
+    # main(argv=None, **kwargs)
+    fnbc = nbconvert_main
 
     if "slides" in formats:
         build_slide = os.path.join(build, "bslides")
@@ -261,16 +152,9 @@ def process_notebooks(notebooks,
         build_present = os.path.join(build, "bslides_present")
         if not os.path.exists(build_present):
             os.mkdir(build_present)
-        inbp = get_convert_present_program(exe)
-
-    if "WinPython" in sys.executable:
-        # pip, or any program in Scripts cannot find python.exe
-        # for the distribution WinPython
-        keep_path = os.environ["PATH"]
-        os.environ["PATH"] = os.path.dirname(sys.executable) + ";" + keep_path
-        path_modified = True
-    else:
-        path_modified = False
+        from nbpresent.export import export as nbpresent_main
+        # def export(ipynb=None, outfile=None, out_format=None, verbose=None):
+        fnbp = nbpresent_main
 
     copied_images = dict()
 
@@ -303,8 +187,9 @@ def process_notebooks(notebooks,
                     format, ", ".join(extensions.keys())))
 
             # output
-            trueoutputfile = os.path.join(build, nbout + extensions[format])
-            fLOG("--- produce ", trueoutputfile)
+            outputfile_noext = os.path.join(build, nbout)
+            outputfile = outputfile_noext + extensions[format]
+            trueoutputfile = outputfile
             pandoco = "docx" if format in ("word", "docx") else None
 
             # we chech it was not done before
@@ -327,73 +212,83 @@ def process_notebooks(notebooks,
                             continue
 
             # if the format is slides, we update the metadata
+            options_args = {}
             if format == "slides":
                 nb_slide = add_tag_for_slideshow(notebook, build_slide)
-                nbcexe = ipy
-                fLOG("NB SLIDE: run add_tag_for_slideshow", nb_slide)
+                fnbcexe = fnbc
             elif format == "present":
                 nb_slide = add_tag_for_slideshow(notebook, build_present)
-                nbcexe = inbp
-                fLOG("NB PRESENT: run add_tag_for_slideshow", nb_slide)
+                fnbcexe = fnbp
+                options_args["ipynb"] = notebook
             else:
                 nb_slide = None
-                nbcexe = ipy
+                fnbcexe = fnbc
 
-            # next
+            # compilation
+            list_args = []
             options = ""
-            cmd = cmd_convert
             if format == "pdf":
                 title = os.path.splitext(
                     os.path.split(notebook)[-1])[0].replace("_", " ")
-                options = ' --SphinxTransformer.author="" --SphinxTransformer.overridetitle="{0}"'.format(
-                    title)
+                list_args.extend(['--SphinxTransformer.author=""',
+                                  '--SphinxTransformer.overridetitle="{0}"'.format(title)])
                 format = "latex"
                 compilation = True
+                thisfiles.append(os.path.splitext(outputfile)[0] + ".tex")
             elif format in ("word", "docx"):
                 format = "html"
                 compilation = False
             elif format in ("slides", ):
-                options += " --reveal-prefix reveal.js"
+                list_args.extend(["--reveal-prefix", "reveal.js"])
                 compilation = False
             elif format in ("present", ):
-                cmd = cmd_present
-                options += " -f html"
+                options_args["out_format"] = "html"
                 compilation = False
             else:
                 compilation = False
 
             # output
-            outputfile = os.path.join(build, nbout + extensions[format])
-            fLOG("--- produce ", outputfile)
-
-            templ = "full" if format != "latex" else "article"
+            templ = {'html': 'full', 'latex': 'article'}.get(format, format)
             fLOG("### convert into ", format, " NB: ", notebook,
                  " ### ", os.path.exists(outputfile), ":", outputfile)
 
-            if format == "html":
-                fmttpl = " --template {0}".format(templ)
+            if format in ('present', ):
+                options_args["outfile"] = outputfile
             else:
-                fmttpl = ""
+                list_args.extend(["--output", outputfile_noext])
+                if templ is not None and format != "slides":
+                    list_args.extend(["--template", templ])
 
-            c = cmd.format(nbcexe, format,
-                           notebook if nb_slide is None else nb_slide,
-                           build, nbout, fmttpl)
+            # execution
+            if format not in ("ipynb", ):
+                # arguments
+                if options_args:
+                    fLOG("NBp:", format, options_args)
+                else:
+                    list_args.extend(["--to", format,
+                                      notebook if nb_slide is None else nb_slide])
+                    fLOG("NBc:", format, list_args)
 
-            c += options
-            fLOG("NB:", c)
-
-            #
-            if format not in ["ipynb"]:
                 # for latex file
                 if format == "latex":
                     cwd = os.getcwd()
                     os.chdir(build)
 
-                if not sys.platform.startswith("win"):
-                    c = c.replace('"', '')
-                # , shell = sys.platform.startswith("win"))
-                out, err = run_cmd(
-                    c, wait=True, do_not_log=True, log_error=False)
+                # direct call
+                out = StringIO()
+                err = StringIO()
+                memo_out = sys.stdout
+                memo_err = sys.stderr
+                sys.stdout = out
+                sys.stderr = out
+                if list_args:
+                    fnbcexe(argv=list_args, **options_args)
+                else:
+                    fnbcexe(**options_args)
+                sys.stdout = memo_out
+                sys.stderr = memo_err
+                out = out.getvalue()
+                err = err.getvalue()
 
                 if format == "latex":
                     os.chdir(cwd)
@@ -412,6 +307,10 @@ def process_notebooks(notebooks,
                         if "error" in err or "critical" in err or "bad config" in err:
                             raise HelpGenException(
                                 "CMD:\n{0}\nERR:\n{1}".format(c, err))
+            else:
+                # format ipynb
+                # we do nothing
+                pass
 
             format = extensions[format].strip(".")
 
@@ -419,7 +318,7 @@ def process_notebooks(notebooks,
             if outputfile not in thisfiles:
                 thisfiles.append(outputfile)
 
-            fLOG("******", format, compilation, outputfile)
+            fLOG("    -", format, compilation, outputfile)
 
             if compilation:
                 # compilation latex
@@ -433,7 +332,7 @@ def process_notebooks(notebooks,
                         _ for _ in thisfiles if os.path.splitext(_)[-1] == ".tex"]
                     if len(tex) != 1:
                         raise FileNotFoundError(
-                            "no latex file was generated or more than one (={0}), nb={1}".format(len(tex), notebook))
+                            "no latex file was generated or more than one (={0}), nb={1}\nthisfile=\n{2}".format(len(tex), notebook, "\n".join(thisfiles)))
                     tex = tex[0]
                     post_process_latex_output_any(tex)
                     # -interaction=batchmode
@@ -458,6 +357,7 @@ def process_notebooks(notebooks,
             elif pandoco is not None:
                 # compilation pandoc
                 fLOG("   ** pandoc compilation (b)", pandoco)
+                inputfile = os.path.splitext(outputfile)[0] + ".html"
                 outfilep = os.path.splitext(outputfile)[0] + "." + pandoco
 
                 # for some files, the following error might appear:
@@ -467,7 +367,7 @@ def process_notebooks(notebooks,
                 # reference, ...)
                 if sys.platform.startswith("win"):
                     c = r'"{0}\pandoc.exe" +RTS -K32m -RTS -f html -t {1} "{2}" -o "{3}"'.format(
-                        pandoc_path, pandoco, outputfile, outfilep)
+                        pandoc_path, pandoco, inputfile, outfilep)
                 else:
                     c = r'pandoc +RTS -K32m -RTS -f html -t {1} "{2}" -o "{3}"'.format(
                         pandoc_path, pandoco, outputfile, outfilep)
@@ -479,6 +379,8 @@ def process_notebooks(notebooks,
                 if len(err) > 0:
                     raise HelpGenException(
                         "issue with cmd: %s\nERR:\n%s" % (c, err))
+                outputfile = outfilep
+                format = "docx"
 
             if format == "html":
                 # we add a link to the notebook
@@ -493,7 +395,7 @@ def process_notebooks(notebooks,
                 # we add a link to the notebook
                 if not os.path.exists(outputfile):
                     raise FileNotFoundError(outputfile + "\nCONTENT in " + os.path.dirname(outputfile) + ":\n" + "\n".join(
-                        os.listdir(os.path.dirname(outputfile))) + "\nERR:\n" + err + "\nOUT:\n" + out + "\nCMD:\n" + c)
+                        os.listdir(os.path.dirname(outputfile))) + "\nERR:\n" + err + "\nOUT:\n" + out + "\nCMD:\n" + str(list_args))
                 thisfiles += add_link_to_notebook(outputfile, notebook,
                                                   "pdf" in formats, False, "python" in formats,
                                                   "slides" in formats, "present" in formats)
@@ -589,10 +491,6 @@ def process_notebooks(notebooks,
             if not os.path.exists(dest):
                 raise FileNotFoundError(dest)
             copy.append((dest, True))
-
-    # for the distribution WinPython
-    if path_modified:
-        os.environ["PATH"] = keep_path
 
     return copy + [(_, False) for _ in skipped]
 

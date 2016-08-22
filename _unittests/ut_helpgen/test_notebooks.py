@@ -23,7 +23,6 @@ except ImportError:
 
 from src.pyquickhelper.loghelper import fLOG, run_cmd
 from src.pyquickhelper.helpgen.sphinx_main import process_notebooks, add_notebook_page
-from src.pyquickhelper.helpgen.process_notebooks import get_ipython_program
 from src.pyquickhelper.pycode import get_temp_folder
 from src.pyquickhelper.pycode import is_travis_or_appveyor
 
@@ -118,39 +117,6 @@ class TestNotebookConversion (unittest.TestCase):
             text = f.read()
         assert "from pyquickhelper.loghelper import fLOG\n    fLOG(OutputPrint=False)  # by default" in text
         assert ":linenos:" in text
-
-    def test_short_cmd(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
-        temp = get_temp_folder(__file__, "temp_nb_cmd")
-        f = os.path.join(
-            temp, "..", "notebooks_rst", "having_a_form_in_a_notebook.ipynb")
-        fo = os.path.join(temp, "having_a_form_in_a_notebook.html")
-
-        if is_travis_or_appveyor() == "appveyor":
-            # disable on appveyor
-            return
-
-        ipy = get_ipython_program()
-        cmd = '{2} nbconvert --to html {0} --template full --output={1}'
-        cmd = cmd.format(f, fo, ipy)
-        out, err = run_cmd(cmd, shell=False, wait=True, communicate=False)
-        fLOG(out)
-        fLOG("******************", err)
-        if "[NbConvertApp] Writing" not in err:
-            # the output might be disabled
-            warnings.warn(
-                "[NbConvertApp] Writing is missing.\nOUT\n{0}\nERR\n{1}".format(out, err))
-        if not os.path.exists(fo):
-            fLOG(fo)
-            fLOG(os.path.abspath(os.path.dirname(fo)))
-            fLOG(os.listdir(os.path.dirname(fo)))
-            assert False
-        else:
-            fLOG("unfound ", f)
 
 
 if __name__ == "__main__":
