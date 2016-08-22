@@ -311,6 +311,7 @@ def _process_notebooks_in(notebooks, outfold, build, latex_path=None, pandoc_pat
                     fLOG("NBc:", format, list_args)
                     fLOG(os.getcwd())
 
+                if nbconvert_main != fnbcexe:  # or format not in {"slides"}:
                     out, err = _process_notebooks_in_private(
                         fnbcexe, list_args, options_args)
                 else:
