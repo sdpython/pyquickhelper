@@ -104,7 +104,8 @@ class TestYaml(unittest.TestCase):
         doc = [[s[0] for s in seq if s[1] is not None] for seq, _ in res]
         fLOG("------", doc)
         doc = [s for s in doc if "documentation" in s]
-        self.assertEqual(len(doc), 1)
+        if len(doc) != 1:
+            raise Exception("\n".join(doc))
 
     def test_jconvert_sequence_into_batch_file(self):
         fLOG(

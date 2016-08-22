@@ -560,15 +560,9 @@ def standard_help_for_setup(argv, file_or_folder, project_var_name, module_name=
         project_name = os.path.split(
             os.path.split(os.path.abspath(ffolder))[0])[-1]
 
-        generate_help_sphinx(project_name,
-                             module_name=module_name,
-                             layout=layout,
-                             extra_ext=extra_ext,
-                             nbformats=nbformats,
-                             add_htmlhelp=add_htmlhelp,
-                             copy_add_ext=copy_add_ext,
-                             fLOG=fLOG, root=ffolder,
-                             use_run_cmd=use_run_cmd)
+        generate_help_sphinx(project_name, module_name=module_name, layout=layout,
+                             extra_ext=extra_ext, nbformats=nbformats, add_htmlhelp=add_htmlhelp,
+                             copy_add_ext=copy_add_ext, fLOG=fLOG, root=ffolder)
 
 
 def run_unittests_for_setup(file_or_folder, skip_function=default_skip_function, setup_params=None,
