@@ -17,6 +17,8 @@ from ..filehelper.synchelper import has_been_updated
 from .post_process import post_process_latex_output, post_process_latex_output_any, post_process_rst_output
 from .post_process import post_process_html_output, post_process_slides_output, post_process_python_output
 from .helpgen_exceptions import NotebookConvertError
+from multiprocessing import Process, Queue
+from nbconvert.nbconvertapp import main as nbconvert_main
 
 if sys.version_info[0] == 2:
     from codecs import open
@@ -44,14 +46,9 @@ Another list
 """
 
 
-def process_notebooks(notebooks,
-                      outfold,
-                      build,
-                      latex_path=None,
-                      pandoc_path=None,
+def process_notebooks(notebooks, outfold, build, latex_path=None, pandoc_path=None,
                       formats=("ipynb", "html", "python", "rst",
-                               "slides", "pdf", "present")
-                      ):
+                               "slides", "pdf", "present")):
     """
     Converts notebooks into html, rst, latex, pdf, python, docx using
     `nbconvert <http://ipython.org/ipython-doc/rel-1.0.0/interactive/nbconvert.html>`_.
@@ -97,6 +94,9 @@ def process_notebooks(notebooks,
 
     .. versionchanged:: 1.4
         Add another format for the slides (with `nbpresent <https://pypi.python.org/pypi/nbpresent>`_).
+        Replace command line by direct call to
+        `nbconvert <https://nbconvert.readthedocs.io/en/latest/>`_,
+        `nbpresent <https://github.com/Anaconda-Platform/nbpresent>`_.
 
     .. todoext::
         :title: Allow hidden rst instruction in notebook (for references)
@@ -108,6 +108,47 @@ def process_notebooks(notebooks,
         is to add hidden HTML or comments and to publish it when converting the
         notebook to RST.
     """
+    return _process_notebooks_in(notebooks=notebooks, outfold=outfold, build=build,
+                                 latex_path=latex_path, pandoc_path=pandoc_path,
+                                 formats=formats)
+
+
+def _process_notebooks_in_private(fnbcexe, list_args, options_args):
+    out = StringIO()
+    err = StringIO()
+    memo_out = sys.stdout
+    memo_err = sys.stderr
+    sys.stdout = out
+    sys.stderr = err
+    if list_args:
+        fnbcexe(argv=list_args, **options_args)
+    else:
+        fnbcexe(**options_args)
+    sys.stdout = memo_out
+    sys.stderr = memo_err
+    out = out.getvalue()
+    err = err.getvalue()
+    return out, err
+
+
+def _process_notebooks_in_private_cmd(fnbcexe, list_args, options_args, fLOG):
+    this = os.path.join(os.path.dirname(
+        os.path.abspath(__file__)), "process_notebooks_cmd.py")
+    res = []
+    for c in list_args:
+        if c[0] == '"' or c[-1] == '"' or ' ' not in c:
+            res.append(c)
+        else:
+            res.append('"{0}"'.format(c))
+    sargs = " ".join(res)
+    cmd = '"{0}" "{1}" {2}'.format(sys.executable, this, sargs)
+    fLOG("    ", cmd)
+    return run_cmd(cmd, wait=True)
+
+
+def _process_notebooks_in(notebooks, outfold, build, latex_path=None, pandoc_path=None,
+                          formats=("ipynb", "html", "python", "rst",
+                                   "slides", "pdf", "present")):
     if pandoc_path is None:
         pandoc_path = find_pandoc_path()
 
@@ -133,13 +174,11 @@ def process_notebooks(notebooks,
 
     extensions = {"ipynb": ".ipynb", "latex": ".tex", "pdf": ".pdf", "html": ".html", "rst": ".rst",
                   "python": ".py", "docx": ".docx", "word": ".docx", "slides": ".slides.html",
-                  "present": ".slides2p.html"
-                  }
+                  "present": ".slides2p.html"}
 
     files = []
     skipped = []
 
-    from nbconvert.nbconvertapp import main as nbconvert_main
     # main(argv=None, **kwargs)
     fnbc = nbconvert_main
 
@@ -187,6 +226,7 @@ def process_notebooks(notebooks,
                     format, ", ".join(extensions.keys())))
 
             # output
+            format_ = format
             outputfile_noext = os.path.join(build, nbout)
             outputfile = outputfile_noext + extensions[format]
             trueoutputfile = outputfile
@@ -249,7 +289,7 @@ def process_notebooks(notebooks,
 
             # output
             templ = {'html': 'full', 'latex': 'article'}.get(format, format)
-            fLOG("### convert into ", format, " NB: ", notebook,
+            fLOG("### convert into ", format_, " NB: ", notebook,
                  " ### ", os.path.exists(outputfile), ":", outputfile)
 
             if format in ('present', ):
@@ -268,30 +308,16 @@ def process_notebooks(notebooks,
                     list_args.extend(["--to", format,
                                       notebook if nb_slide is None else nb_slide])
                     fLOG("NBc:", format, list_args)
+                    fLOG(os.getcwd())
 
-                # for latex file
-                if format == "latex":
-                    cwd = os.getcwd()
-                    os.chdir(build)
-
-                # direct call
-                out = StringIO()
-                err = StringIO()
-                memo_out = sys.stdout
-                memo_err = sys.stderr
-                sys.stdout = out
-                sys.stderr = out
-                if list_args:
-                    fnbcexe(argv=list_args, **options_args)
+                if nbconvert_main != fnbcexe or format not in {"slides"}:
+                    out, err = _process_notebooks_in_private(
+                        fnbcexe, list_args, options_args)
                 else:
-                    fnbcexe(**options_args)
-                sys.stdout = memo_out
-                sys.stderr = memo_err
-                out = out.getvalue()
-                err = err.getvalue()
-
-                if format == "latex":
-                    os.chdir(cwd)
+                    # conversion into slides alter Jinja2 environment
+                    # jinja2.exceptions.TemplateNotFound: rst
+                    out, err = _process_notebooks_in_private_cmd(
+                        fnbcexe, list_args, options_args, fLOG)
 
                 if "raise ImportError" in err:
                     raise ImportError(err)
@@ -304,9 +330,9 @@ def process_notebooks(notebooks,
                         fLOG("LATEX OUT\n" + out)
                     else:
                         err = err.lower()
-                        if "error" in err or "critical" in err or "bad config" in err:
+                        if "critical" in err or "bad config" in err:
                             raise HelpGenException(
-                                "CMD:\n{0}\nERR:\n{1}".format(c, err))
+                                "CMD:\n{0}\nERR:\n{1}".format(list_args, err))
             else:
                 # format ipynb
                 # we do nothing
@@ -328,12 +354,12 @@ def process_notebooks(notebooks,
                     else:
                         lat = "pdflatex"
 
-                    tex = [
-                        _ for _ in thisfiles if os.path.splitext(_)[-1] == ".tex"]
+                    tex = set(_ for _ in thisfiles if os.path.splitext(
+                        _)[-1] == ".tex")
                     if len(tex) != 1:
                         raise FileNotFoundError(
                             "no latex file was generated or more than one (={0}), nb={1}\nthisfile=\n{2}".format(len(tex), notebook, "\n".join(thisfiles)))
-                    tex = tex[0]
+                    tex = list(tex)[0]
                     post_process_latex_output_any(tex)
                     # -interaction=batchmode
                     c = '"{0}" "{1}" -output-directory="{2}"'.format(

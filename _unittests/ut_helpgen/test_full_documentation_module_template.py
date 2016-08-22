@@ -89,8 +89,7 @@ class TestSphinxDocFull (unittest.TestCase):
             generate_help_sphinx(var, module_name=var, root=root,
                                  layout=["pdf", "html"],
                                  extra_ext=["tohelp"],
-                                 from_repo=False,
-                                 use_run_cmd=True)
+                                 from_repo=False)
 
             files = [os.path.join(root, "_doc", "sphinxdoc", "build", "html", "index.html"),
                      os.path.join(root, "_doc", "sphinxdoc",

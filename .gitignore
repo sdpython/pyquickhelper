@@ -260,3 +260,4 @@ _unittests/ut_cli/crypt_map.txt
 _unittests/ut_cli/crypt_status.txt
 crypt_status.txt
 crypt_map.txt
+_doc/notebooks/example_pyquickhelper.tex

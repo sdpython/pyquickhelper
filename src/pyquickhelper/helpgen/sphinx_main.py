@@ -11,6 +11,7 @@ import shutil
 import importlib
 import warnings
 from docutils.parsers.rst import directives, roles
+from sphinx import build_main
 from ..filehelper import remove_folder
 from ..loghelper.flog import run_cmd, fLOG
 from .utils_sphinx_doc import prepare_file_for_sphinx_help_generation
@@ -42,6 +43,9 @@ from .sphinx_main_missing_html_files import add_missing_files
 
 if sys.version_info[0] == 2:
     from codecs import open
+    from StringIO import StringIO
+else:
+    from io import StringIO
 
 template_examples = """
 
@@ -61,20 +65,14 @@ Another list
 """
 
 
-def generate_help_sphinx(project_var_name,
-                         clean=False,
-                         root=".",
+def generate_help_sphinx(project_var_name, clean=False, root=".",
                          filter_commit=lambda c: c.strip() != "documentation",
                          extra_ext=None,
-                         nbformats=("ipynb", "html", "python",
-                                    "rst", "slides", "pdf", "present"),
+                         nbformats=("ipynb", "slides", "html", "python",
+                                    "rst", "pdf", "present"),
                          layout=[("html", "build", {}), ("epub", "build", {})],
-                         module_name=None,
-                         from_repo=True,
-                         use_run_cmd=False,
-                         add_htmlhelp=False,
-                         copy_add_ext=None,
-                         fLOG=fLOG):
+                         module_name=None, from_repo=True, add_htmlhelp=False,
+                         copy_add_ext=None, fLOG=fLOG):
     """
     runs the help generation
         - copies every file in another folder
@@ -94,7 +92,6 @@ def generate_help_sphinx(project_var_name,
                                     will be replaced by *project_var_name*
     @param      from_repo           if True, assumes the sources come from a source repository,
                                     False otherwise
-    @param      use_run_cmd         use @see fn run_cmd instead os ``os.system`` (default) to run Sphinx
     @param      add_htmlhelp        run HTML Help too (only on Windows)
     @param      copy_add_ext        additional file extension to copy
     @param      fLOG                logging function
@@ -217,6 +214,13 @@ def generate_help_sphinx(project_var_name,
         Parameters *copy_add_ext*, *fLOG* were added.
         Automatically add custom role and custom directive ``sharenet``.
 
+    .. versionchanged:: 1.4
+        Replace command line by direct call to
+        `sphinx <http://www.sphinx-doc.org/en/stable/>`_,
+        `nbconvert <https://nbconvert.readthedocs.io/en/latest/>`_,
+        `nbpresent <https://github.com/Anaconda-Platform/nbpresent>`_.
+        Remove parameter *use_run_cmd*.
+
     .. todoext::
         :title: add subfolder when building indexes of notebooks
         :tag: enhancement
@@ -224,6 +228,16 @@ def generate_help_sphinx(project_var_name,
         :cost: 1
 
         When there are too many notebooks, the notebook index is difficult to read.
+
+
+    .. todoext::
+        :title: replace command line by direct call to sphinx, nbconvert, nbpresent
+        :tag: enhancement
+        :issue: 30
+        :cost: 1
+
+        It does not require to get script location.
+        Not enough stable from virtual environment.
     """
     setup_environment_for_help()
 
@@ -509,11 +523,8 @@ def generate_help_sphinx(project_var_name,
                 os.makedirs(build)
             if not os.path.exists(notebook_doc):
                 os.mkdir(notebook_doc)
-            nbs_all = process_notebooks(notebooks,
-                                        build=build,
-                                        outfold=notebook_doc,
-                                        formats=nbformats,
-                                        latex_path=latex_path,
+            nbs_all = process_notebooks(notebooks, build=build, outfold=notebook_doc,
+                                        formats=nbformats, latex_path=latex_path,
                                         pandoc_path=pandoc_path)
             nbs = list(set(_[0] for _ in nbs_all))
             fLOG("*******NB, add:", nbs)
@@ -610,8 +621,9 @@ def generate_help_sphinx(project_var_name,
 
         sconf = "" if newconf is None else " -c {0}".format(newconf)
 
-        cmd = "sphinx-build -j 2 -v -T -b {1} -d {0}/doctrees{2}{3} source {0}/{1}".format(
-            build, lay, over, sconf)
+        cmd = ["sphinx-build", "-j", "2", "-v", "-T", "-b", "{0}".format(lay),
+               "-d", "{0}/doctrees{1}{2}".format(build, over, sconf),
+               "source", "{0}/{1}".format(build, lay)]
         cmds.append((cmd, build, lay))
         fLOG("run:", cmd)
         lays.append(lay)
@@ -619,8 +631,9 @@ def generate_help_sphinx(project_var_name,
         if add_htmlhelp and lay == "html":
             # we cannot execute htmlhelp in the same folder
             # as it changes the encoding
-            cmd = "sphinx-build -j 2 -v -T -b {1}help -d {0}/doctrees{2}{3} source {0}/{1}help".format(
-                build, lay, over, sconf)
+            cmd = ["sphinx-build", "-j", "2", "-v", "-T", "-b", "{0}help".format(lay),
+                   "-d", "{0}/doctrees{1}{2}".format(build, over, sconf),
+                   "source", "{0}/{1}html".format(build, lay)]
             cmds.append((cmd, build, "add_htmlhelp"))
             fLOG("run:", cmd)
             lays.append(lay)
@@ -645,19 +658,27 @@ def generate_help_sphinx(project_var_name,
         fLOG("#####", cmd)
         fLOG("##### from ", os.getcwd())
         fLOG("##### PATH ", os.environ["PATH"])
-        if use_run_cmd:
-            out, err = run_cmd(cmd, wait=True, fLOG=fLOG)
-            fLOG(out)
-            if len(err) > 0:
-                if "Exception occurred:" in err:
-                    raise HelpGenException(
-                        "Sphinx raised an exception:\nOUT:\n{0}\nERR:\n{1}".format(out, err))
-                else:
-                    warnings.warn(
-                        "Sphinx went through errors. Check if any of them is important.\nOUT:\n{0}\nERR:\n{1}".format(out, err))
-        else:
-            os.system(cmd)
-            out, err = "unknown", "unknown"
+
+        # direct call
+        out = StringIO()
+        err = StringIO()
+        memo_out = sys.stdout
+        memo_err = sys.stderr
+        sys.stdout = out
+        sys.stderr = out
+        build_main(cmd)
+        sys.stdout = memo_out
+        sys.stderr = memo_err
+        out = out.getvalue()
+        err = err.getvalue()
+
+        if len(err) > 0:
+            if "Exception occurred:" in err:
+                raise HelpGenException(
+                    "Sphinx raised an exception:\nOUT:\n{0}\nERR:\n{1}".format(out, err))
+            else:
+                warnings.warn(
+                    "Sphinx went through errors. Check if any of them is important.\nOUT:\n{0}\nERR:\n{1}".format(out, err))
 
         if kind == "html":
             fLOG(

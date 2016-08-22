@@ -1,5 +1,5 @@
 """
-@brief      test log(time=23s)
+@brief      test log(time=15s)
 @author     Xavier Dupre
 """
 
@@ -38,6 +38,14 @@ class TestNotebookConversion (unittest.TestCase):
             __file__,
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
+        fLOG("---------------------------------------------------", 1)
+        self.a_test_notebook(1)
+        # on the second run, the following error happens
+        # jinja2.exceptions.TemplateNotFound: article
+        fLOG("---------------------------------------------------", 2)
+        self.a_test_notebook(2)
+
+    def a_test_notebook(self, iteration):
 
         if sys.version_info[0] == 2:
             return
@@ -53,7 +61,7 @@ class TestNotebookConversion (unittest.TestCase):
         nb = os.path.join(fold, "example_pyquickhelper.ipynb")
         assert os.path.exists(nb)
 
-        temp = get_temp_folder(__file__, "temp_nb")
+        temp = get_temp_folder(__file__, "temp_nb_%d" % iteration)
 
         if sys.platform.startswith("win"):
             p1 = r"C:\Program Files\MiKTeX 2.9\miktex\bin\x64"
@@ -83,12 +91,7 @@ class TestNotebookConversion (unittest.TestCase):
             return
 
         res = process_notebooks(
-            nb,
-            temp,
-            temp,
-            latex_path=p1,
-            pandoc_path=p2,
-            formats=formats)
+            nb, temp, temp, latex_path=p1, pandoc_path=p2, formats=formats)
         for _ in res:
             fLOG(_)
             assert os.path.exists(_[0])
@@ -104,10 +107,7 @@ class TestNotebookConversion (unittest.TestCase):
             if i != j:
                 raise Exception(
                     "{0} != {1}\nfou=\n{2}\nexp=\n{3}".format(
-                        i,
-                        j,
-                        str(fou),
-                        str(exp)))
+                        i, j, str(fou), str(exp)))
 
         file = os.path.join(temp, "all_notebooks.rst")
         add_notebook_page([_[0] for _ in res], file)
