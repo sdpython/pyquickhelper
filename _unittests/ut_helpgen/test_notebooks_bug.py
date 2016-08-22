@@ -33,7 +33,7 @@ if sys.version_info[0] == 2:
 
 class TestNoteBooksBug(unittest.TestCase):
 
-    def _test_regex(self):
+    def test_regex(self):
         fLOG(
             __file__,
             self._testMethodName,
@@ -90,7 +90,7 @@ class TestNoteBooksBug(unittest.TestCase):
         if "\\subsection{" not in content:
             raise Exception(content)
 
-    def _test_notebook_pdf(self):
+    def test_notebook_pdf(self):
         fLOG(
             __file__,
             self._testMethodName,
