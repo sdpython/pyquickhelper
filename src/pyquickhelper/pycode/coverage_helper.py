@@ -11,6 +11,9 @@ from ..loghelper import SourceRepository, noLOG, run_cmd
 
 if sys.version_info[0] == 2:
     FileNotFoundError = Exception
+    from StringIO import StringIO
+else:
+    from io import StringIO
 
 
 def publish_coverage_on_codecov(path, token, commandline=True, fLOG=noLOG):
