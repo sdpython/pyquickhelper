@@ -50,7 +50,7 @@ def main_wrapper_tests(codefile, skip_list=None, processes=False, add_coverage=F
     @param      coverage_options        (dictionary) options for module coverage as a dictionary, see below, default is None
     @param      coverage_exclude_lines  (list) options for module coverage, lines to exclude from the coverage report, defaul is None
     @param      additional_ut_path      (list) additional paths to add when running the unit tests
-    @param      covtoken                (str) token used when publishing coverage report to `codecov <https://codecov.io/>`_
+    @param      covtoken                (str|tuple(str, str)) token used when publishing coverage report to `codecov <https://codecov.io/>`_
                                         or None to not publish
     @param      hook_print              enable print display when calling *_setup_hook*
     @param      stdout                  if not None, write output on this stream instead of *sys.stdout*
@@ -314,6 +314,9 @@ def main_wrapper_tests(codefile, skip_list=None, processes=False, add_coverage=F
                 if isinstance(covtoken, tuple):
                     if eval(covtoken[1]):
                         # publishing token
+                        if stdout is not None:
+                            stdout.write("PUBLISH COVERAGE to codecov '{0}' EVAL '{1}'\n".format(
+                                covtoken[0], covtoken[1]))
                         fLOG("publishing coverage to codecov",
                              covtoken[0], "EVAL", covtoken[1])
                         publish_coverage_on_codecov(
