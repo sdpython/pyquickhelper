@@ -99,6 +99,8 @@ class TestYamlJenkins(unittest.TestCase):
                                        location="anything", yml_platform="win")
         reg = re.compile("<description>(.*)</description>")
         nb = 0
+        sch = 0
+        desc = 0
         for i, r in enumerate(res):
             conf = r[-1]
 
@@ -125,9 +127,19 @@ class TestYamlJenkins(unittest.TestCase):
                 raise Exception(conf)
             if "python3_module_template_UT_35_std" in conf:
                 nb += 1
+            if "H H(20-21) * * 0" in conf:
+                sch += 1
+            if "H H(16-17) * * 0" in conf:
+                sch += 1
+            if "0101 - H H(20-21) * * 0" in conf:
+                desc += 1
+            if "0101 - H H(16-17) * * 0" in conf:
+                desc += 1
 
         assert i > 0
         assert nb > 0
+        self.assertEqual(sch, 2)
+        self.assertEqual(desc, 2)
 
 
 if __name__ == "__main__":

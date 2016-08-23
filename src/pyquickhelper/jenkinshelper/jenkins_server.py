@@ -567,11 +567,57 @@ class JenkinsExt(jenkins.Jenkins):
             # linux
             raise NotImplementedError("On Linux, unable to interpret: " + job)
 
+    def adjust_scheduler(self, scheduler, adjust_scheduler=True):
+        """
+        adjust the scheduler to avoid having two jobs starting at the same time,
+        jobs are delayed by an hour, two hours, three hours...
+
+        @param      scheduler           existing scheduler
+        @param      adjust_scheduler    True to change it
+        @return                         new scheduler (only hours are changed)
+
+        The function uses member ``_scheduled_jobs``.
+        It creates it if it does not exist.
+        """
+        if not adjust_scheduler:
+            return scheduler
+        if scheduler is None:
+            raise ValueError("scheduler is None")
+        if not hasattr(self, "_scheduled_jobs"):
+            self._scheduled_jobs = {}
+        if scheduler not in self._scheduled_jobs:
+            self._scheduled_jobs[scheduler] = 1
+            return scheduler
+        else:
+            reg = scheduler.split()
+            day = reg[-1]
+            if "H(" in scheduler:
+                cp = re.compile("H[(]([0-9]+-[0-9]+)[)]")
+                f = cp.findall(scheduler)
+                if len(f) != 1:
+                    raise ValueError(
+                        "Unable to find hours in the scheduler '{0}', expects 'H(a-b)'".format(scheduler))
+                a, b = f[0].split('-')
+                a0, b0 = a, b
+                a = int(a)
+                b = int(b)
+                new_value = scheduler
+                rep = 'H(%s)' % f[0]
+                while new_value in self._scheduled_jobs or (a0 == a):
+                    a += 1
+                    b += 1
+                    r = 'H(%d-%d)' % (a, b)
+                    new_value = scheduler.replace(rep, r)
+                scheduler = new_value
+            self._scheduled_jobs[
+                scheduler] = self._scheduled_jobs.get(scheduler, 0) + 1
+            return scheduler
+
     def create_job_template(self, name, git_repo, credentials="", upstreams=None, script=None,
                             location=None, keep=30, scheduler=None, py27=False, description=None,
                             default_engine_paths=None, success_only=False, update=False,
                             timeout=_timeout_default, additional_requirements=None,
-                            return_job=False, **kwargs):
+                            return_job=False, adjust_scheduler=True, **kwargs):
         """
         add a job to the jenkins server
 
@@ -594,6 +640,8 @@ class JenkinsExt(jenkins.Jenkins):
                                                 on the installed distribution
         @param      timeout                     specify a timeout
         @param      kwargs                      additional parameters
+        @param      adjust_scheduler            adjust the scheduler of a job so that it is delayed if this spot
+                                                is already taken
         @param      return_job                  return job instead of submitting the job
 
         The job can be modified on Jenkins. To add a time trigger::
@@ -609,6 +657,8 @@ class JenkinsExt(jenkins.Jenkins):
             Options *success_only* must be specified.
             Parameter *update* was added to update a job instead of creating it.
 
+        .. versionchanged:: 1.4
+            Parameter *adjust_scheduler* was added to delayed some jobs if a spot is already taken.
         """
         if script is None:
             if self.platform.startswith("win"):
@@ -639,8 +689,12 @@ class JenkinsExt(jenkins.Jenkins):
                 .replace("__ORDINAL__", "0" if success_only else "2") \
                 .replace("__COLOR__", "BLUE" if success_only else "RED")
         elif scheduler is not None:
+            new_scheduler = self.adjust_scheduler(scheduler, adjust_scheduler)
             trigger = JenkinsExt._trigger_time.replace(
-                "__SCHEDULER__", scheduler)
+                "__SCHEDULER__", new_scheduler)
+            if description is not None:
+                description = description.replace(scheduler, new_scheduler)
+            scheduler = new_scheduler
         else:
             trigger = ""
 
@@ -726,7 +780,7 @@ class JenkinsExt(jenkins.Jenkins):
 
     def setup_jenkins_server(self, github, modules, get_jenkins_script=None, overwrite=False,
                              location=None, prefix="", credentials="", update=True, yml_engine="jinja2",
-                             add_environ=True, yml_platform=None):
+                             add_environ=True, yml_platform=None, adjust_scheduler=True):
         """
         Set up many jobs on Jenkins
 
@@ -743,6 +797,8 @@ class JenkinsExt(jenkins.Jenkins):
         @param      yml_engine              templating engine used to process yaml config files
         @param      add_environ             use of local environment variables to interpret the job
         @param      yml_platform            yaml platform
+        @param      adjust_scheduler        adjust the scheduler of a job so that it is delayed if this spot
+                                            is already taken
         @return                             list of created jobs
 
         If *credentials* are a dictionary, the function looks up
@@ -1081,7 +1137,7 @@ class JenkinsExt(jenkins.Jenkins):
                             r = js.create_job_template(jname, git_repo=gpar, upstreams=upstreams, script=script,
                                                        location=loc, scheduler=scheduler, py27="[27]" in job,
                                                        description=description, credentials=cred, success_only=success_only,
-                                                       update=update_job, timeout=timeout)
+                                                       update=update_job, timeout=timeout, adjust_scheduler=adjust_scheduler)
 
                             # check some inconsistencies
                             if "[27]" in job and "Anaconda3" in script:
@@ -1113,7 +1169,7 @@ class JenkinsExt(jenkins.Jenkins):
                     for aj, name, var in enumerate_processed_yml(jobdef, context=options, engine=yml_engine,
                                                                  add_environ=add_environ, server=self, git_repo=gitrepo, scheduler=scheduler,
                                                                  description=description, credentials=cred, success_only=success_only,
-                                                                 timeout=timeout, platform=yml_platform,
+                                                                 timeout=timeout, platform=yml_platform, adjust_scheduler=adjust_scheduler,
                                                                  overwrite=overwrite, build_location=location):
                         if name in done:
                             s = "A name '{0}' was already used for a job, from:\n{1}\nPROCESS:\n{2}"
