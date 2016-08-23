@@ -55,7 +55,8 @@ class TestYamlExe(unittest.TestCase):
                        Python27=None, Anaconda3=None, Anaconda2=None,
                        WinPython35=None, project_name="pyquickhelper",
                        root_path="ROOT", PLATFORM="win")
-        obj = load_yaml(yml, context=context)
+        obj, name = load_yaml(yml, context=context)
+        assert name is not None
         try:
             res = list(enumerate_convert_yaml_into_instructions(
                 obj, variables=context))
@@ -87,7 +88,8 @@ class TestYamlExe(unittest.TestCase):
                        Python27=None, Anaconda3=None, Anaconda2=None,
                        WinPython35=None, project_name="pyquickhelper",
                        root_path="ROOT", PLATFORM="win")
-        obj = load_yaml(yml, context=context)
+        obj, name = load_yaml(yml, context=context)
+        assert name is not None
         res = list(enumerate_convert_yaml_into_instructions(
             obj, variables=context))
         for r, var in res:

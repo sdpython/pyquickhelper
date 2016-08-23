@@ -19,6 +19,7 @@ import re
 import sys
 import yaml
 from ..texthelper.templating import apply_template
+from ..filehelper import read_content_ufs
 
 
 def pickname(*l):
@@ -39,7 +40,7 @@ def load_yaml(file_or_buffer, context=None, engine="jinja2", platform=None):
     """
     loads a yaml file (.yml)
 
-    @param      file_or_buffer      string or physical file
+    @param      file_or_buffer      string or physical file or url
     @param      context             variables to replace in the configuration
     @param      engine              see @see fn apply_template
     @return                         see `PyYAML <http://pyyaml.org/wiki/PyYAMLDocumentation>`_
@@ -49,13 +50,8 @@ def load_yaml(file_or_buffer, context=None, engine="jinja2", platform=None):
             return val
         else:
             return val.replace(rep, into)
-    typstr = str  # unicode#
-    if len(file_or_buffer) < 5000 and os.path.exists(file_or_buffer):
-        path_project = file_or_buffer
-        with open(file_or_buffer, "r", encoding="utf-8") as f:
-            file_or_buffer = f.read()
-    else:
-        path_project = None
+    content, source = read_content_ufs(file_or_buffer, add_source=True)
+    project_name = infer_project_name(file_or_buffer, source)
 
     def ospathjoinp(*l, platform=platform):
         return ospathjoin(*l, platform=platform)
@@ -64,19 +60,18 @@ def load_yaml(file_or_buffer, context=None, engine="jinja2", platform=None):
         context = dict(replace=replace, ospathjoin=ospathjoinp,
                        pickname=pickname)
     else:
-        fs = [("replace", replace), ("ospathjoin",
-                                     ospathjoinp), ("pickname", pickname)]
+        fs = [("replace", replace), ("ospathjoin", ospathjoinp),
+              ("pickname", pickname)]
         if any(_[0] not in context for _ in fs):
             context = context.copy()
             for k, f in fs:
                 if k not in context:
                     context[k] = f
-    if "project_name" not in context and path_project is not None:
-        last = infer_project_name(file_or_buffer)
-        context["project_name"] = last
+    if "project_name" not in context and project_name is not None:
+        context["project_name"] = project_name
 
-    file_or_buffer = apply_template(file_or_buffer, context, engine)
-    return yaml.load(file_or_buffer)
+    content = apply_template(content, context, engine)
+    return yaml.load(content), project_name
 
 
 def evaluate_condition(cond, variables=None):
@@ -348,10 +343,11 @@ def convert_sequence_into_batch_file(seq, variables=None, platform=None):
             p = value["path"] if isinstance(value, dict) else value
             rows.append("")
             rows.append(echo + " CREATE VIRTUAL ENVIRONMENT in %s" % p)
-            if iswin:
-                rows.append('if not exist "{0}" mkdir "{0}"'.format(p))
-            else:
-                rows.append('if [-f {0}]; then mkdir "{0}"; fi'.format(p))
+            if not anaconda:
+                if iswin:
+                    rows.append('if not exist "{0}" mkdir "{0}"'.format(p))
+                else:
+                    rows.append('if [-f {0}]; then mkdir "{0}"; fi'.format(p))
             if anaconda:
                 pinter = ospathdirname(interpreter, platform=platform)
                 rows.append(
@@ -397,15 +393,41 @@ def convert_sequence_into_batch_file(seq, variables=None, platform=None):
             "\n".join([str((type(_), _)) for _ in rows]))) from e
 
 
-def infer_project_name(file_or_buffer):
+def infer_project_name(file_or_buffer, source):
     """
     infer a project name based on yaml file
 
     @param      file_or_buffer      file name
+    @param      source              second output of @see fn read_content_ufs
     @return                         name
+
+    The function can infer a name for *source* in ``{'r', 'u'}``.
+    For *source* equal to ``'s'``, it returns ``'<unknown>'``.
     """
-    fold = os.path.dirname(file_or_buffer)
-    last = os.path.split(fold)[-1]
+    if source == "r":
+        fold = os.path.dirname(file_or_buffer)
+        last = os.path.split(fold)[-1]
+    elif source == "u":
+        spl = file_or_buffer.split('/')
+        pos = -2
+        name = None
+        while len(spl) > -pos:
+            name = spl[pos]
+            if name in {'master'}:
+                pos -= 1
+            elif 'github' in name:
+                break
+            else:
+                break
+        if name is None:
+            raise ValueError(
+                "Unable to infer project name for '{0}'".format(file_or_buffer))
+        return name
+    elif source == "s":
+        return "<unknown>"
+    else:
+        raise ValueError("Unexpected value for add_source: '{0}' for '{1}'".format(
+            source, file_or_buffer))
     return last
 
 
@@ -431,16 +453,8 @@ def enumerate_processed_yml(file_or_buffer, context=None, engine="jinja2", platf
     """
     project_name = None if context is None else context.get(
         "project_name", None)
-    if project_name is None:
-        if len(file_or_buffer) <= 5000 and os.path.exists(file_or_buffer):
-            project_name = infer_project_name(file_or_buffer)
-            if context is not None and "project_name" not in context:
-                context = context.copy()
-                context["project_name"] = project_name
-        else:
-            project_name = ''
-
-    obj = load_yaml(file_or_buffer, context=context, platform=platform)
+    obj, project_name = load_yaml(
+        file_or_buffer, context=context, platform=platform)
     for seq, var in enumerate_convert_yaml_into_instructions(obj, variables=context, add_environ=add_environ):
         conv = convert_sequence_into_batch_file(
             seq, variables=var, platform=platform)

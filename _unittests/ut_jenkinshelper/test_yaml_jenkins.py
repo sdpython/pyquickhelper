@@ -71,10 +71,12 @@ class TestYamlJenkins(unittest.TestCase):
         this = os.path.abspath(os.path.dirname(__file__))
         yml = os.path.abspath(os.path.join(
             this, "..", "..", ".local.jenkins.win.yml"))
+        yml_url = "https://raw.githubusercontent.com/sdpython/python3_module_template/master/.local.jenkins.win.yml"
 
         github = "https://github.com/sdpython/"
 
-        modules = [("yml", yml, "H H(10-11) * * 0")]
+        modules = [("yml", yml, "H H(10-11) * * 0"),
+                   ("yml", yml_url, "H H(10-11) * * 0")]
 
         engines = dict(Python34="c:\\Python34_x64",
                        Python35=os.path.dirname(sys.executable),
@@ -96,6 +98,7 @@ class TestYamlJenkins(unittest.TestCase):
                                        overwrite=True, add_environ=False,
                                        location="anything", yml_platform="win")
         reg = re.compile("<description>(.*)</description>")
+        nb = 0
         for i, r in enumerate(res):
             conf = r[-1]
 
@@ -120,8 +123,11 @@ class TestYamlJenkins(unittest.TestCase):
                 raise Exception(conf)
             if "anything\\%NAME_JENKINS%" not in conf:
                 raise Exception(conf)
+            if "python3_module_template_UT_35_std" in conf:
+                nb += 1
 
         assert i > 0
+        assert nb > 0
 
 
 if __name__ == "__main__":

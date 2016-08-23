@@ -45,11 +45,12 @@ class TestYaml(unittest.TestCase):
                        Python27=None, Anaconda3=None, Anaconda2=None,
                        WinPython35=None, project_name="pyquickhelper",
                        root_path="ROOT")
-        obj = load_yaml(yml, context=context)
+        obj, name = load_yaml(yml, context=context)
         for k, v in obj.items():
             fLOG(k, type(v), v)
         assert "python" in obj
         assert isinstance(obj["python"], list)
+        assert name is not None
 
     def test_evaluate_condition(self):
         fLOG(
@@ -88,7 +89,8 @@ class TestYaml(unittest.TestCase):
         context = dict(Python34="fake", Python35=os.path.dirname(sys.executable),
                        Python27="fake2", Anaconda3=None, Anaconda2=None,
                        WinPython35=None, root_path="ROOT")
-        obj = load_yaml(yml, context=context)
+        obj, name = load_yaml(yml, context=context)
+        assert name is not None
         res = list(enumerate_convert_yaml_into_instructions(obj))
         fLOG(len(res))
 
@@ -129,7 +131,8 @@ class TestYaml(unittest.TestCase):
                        Python27=None, Anaconda3=None, Anaconda2=None,
                        WinPython35=None, project_name="pyquickhelper",
                        root_path="ROOT")
-        obj = load_yaml(yml, context=context, platform=platform)
+        obj, name = load_yaml(yml, context=context, platform=platform)
+        assert name is not None
         res = list(enumerate_convert_yaml_into_instructions(obj))
         for r, v in res:
             conv = convert_sequence_into_batch_file(
