@@ -586,24 +586,60 @@ def add_notebook_page(nbs, fileout):
     """
     creates a rst page with links to all notebooks
 
-    @param      nbs             list of notebooks to consider
+    @param      nbs             list of notebooks to consider or tuple(full path, rst)
     @param      fileout         file to create
     @return                     created file name
-    """
-    rst = [_ for _ in nbs if _.endswith(".rst")]
 
+    .. versionchanged:: 1.4
+        *nbs* can be a list of tuple
+    """
     rows = ["", ".. _l-notebooks:", "", "", "Notebooks", "=========", ""]
 
-    # exp = re.compile("[.][.] _([-a-zA-Z0-9_]+):")
-    rst = sorted(rst)
+    hier = set()
+    rst = []
+    for tu in nbs:
+        if isinstance(tu, tuple):
+            if tu[0] is None or ("/" not in tu[0] and "\\" not in tu[0]):
+                rst.append((tuple(), tu[1]))
+            else:
+                way = tuple(tu[0].replace("\\", "/")[:-1].split("/"))
+                hier.add(way)
+                rst.append((way, tu[1]))
+        else:
+            rst.append((tuple(), tu[1]))
+    rst.sort()
 
-    rows.append("")
-    rows.append(".. toctree::")
-    rows.append("    :maxdepth: 2")
-    rows.append("")
-    for file in rst:
-        rows.append(
-            "    notebooks/{0}".format(os.path.splitext(os.path.split(file)[-1])[0]))
+    if len(hier) == 0:
+        rows.append(".. toctree::")
+        rows.append("    :maxdepth: 2")
+        rows.append("")
+        for file in rst:
+            if isinstance(file, tuple):
+                file = file[1]
+            rs = os.path.splitext(os.path.split(file)[-1])[0]
+            rows.append("    notebooks/{0}".format(rs))
+    else:
+        level = "-+^"
+        rows.append("")
+        rows.append(".. contents::")
+        rows.append("    :depth: 2")
+        rows.append("")
+        last = None
+        for hi, r in rst:
+            rs = os.path.splitext(os.path.split(r)[-1])[0]
+            if hi != last:
+                for k in range(0, len(hi)):
+                    if last is None or k >= len(last) or hi[k] != last[k]:
+                        break
+                while k < len(hi):
+                    rows.append("")
+                    rows.append(hi[k])
+                    rows.append(level[min(k, len(level) - 1)] * len(hi[k]))
+                    rows.append("")
+                    k += 1
+                last = hi
+
+            rows.append("    notebooks/{0}".format(rs))
 
     rows.append("")
     with open(fileout, "w", encoding="utf8") as f:

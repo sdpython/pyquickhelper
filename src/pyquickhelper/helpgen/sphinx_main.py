@@ -507,6 +507,8 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
     # notebooks
     ###########
     fLOG("**** begin notebooks")
+    indextxtnote = None
+    indexlistnote = []
     notebook_dir = os.path.abspath(os.path.join(root, "_doc", "notebooks"))
     notebook_doc = os.path.abspath(
         os.path.join(root, "_doc", "sphinxdoc", "source", "notebooks"))
@@ -521,15 +523,27 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
             build = os.path.join(root, "build", "notebooks")
             if not os.path.exists(build):
                 os.makedirs(build)
+            indextxtnote = os.path.join(build, "index_notebooks.txt")
+            with open(indextxtnote, "w", encoding="utf-8") as f:
+                for note in notebooks:
+                    no = os.path.relpath(note, notebook_dir)
+                    indexlistnote.append((no, note))
+                    f.write(no + "\n")
             if not os.path.exists(notebook_doc):
                 os.mkdir(notebook_doc)
             nbs_all = process_notebooks(notebooks, build=build, outfold=notebook_doc,
                                         formats=nbformats, latex_path=latex_path,
                                         pandoc_path=pandoc_path)
-            nbs = list(set(_[0] for _ in nbs_all))
-            fLOG("*******NB, add:", nbs)
-            add_notebook_page(
-                nbs, os.path.join(notebook_doc, "..", "all_notebooks.rst"))
+            nbs_all = set(_[0]
+                          for _ in nbs_all if os.path.splitext(_[0])[-1] == ".rst")
+            if len(nbs_all) != len(indexlistnote):
+                raise ValueError("Different lengths {0} != {1}".format(
+                    len(nbs_all), len(indexlistnote)))
+            nbs = indexlistnote
+            fLOG("*******NB, add:", len(nbs))
+            nbs.sort()
+            add_notebook_page(nbs, os.path.join(
+                notebook_doc, "..", "all_notebooks.rst"))
 
         imgs = [os.path.join(notebook_dir, _)
                 for _ in os.listdir(notebook_dir) if ".png" in _]
