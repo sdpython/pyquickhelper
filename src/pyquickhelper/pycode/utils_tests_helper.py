@@ -119,6 +119,8 @@ def check_pep8(folder, ignore=('E501', 'E265'), skip=None,
     .. versionadded:: 1.4
     """
     import pycodestyle
+    from pyflakes.api import checkPath as check_code
+    from pyflakes.reporter import Reporter
 
     def extended_checkings(fname, content, buf, extended):
         for i, line in enumerate(content):
@@ -188,6 +190,15 @@ def check_pep8(folder, ignore=('E501', 'E265'), skip=None,
             ext = "This is often due to an instruction from . import... The imported module has no name."
             raise TypeError("Issue with flake8 or pycodesyle for module '{0}' ig={1} complexity={2}\n{3}".format(
                 file, ig, complexity, ext)) from e
+
+        if not file.endswith("__init__.py"):
+            flake_out = StringIO()
+            flake_err = StringIO()
+            reporter = Reporter(flake_out, flake_err)
+            check_code(file, reporter=reporter)
+            sys.stdout.write(flake_out.getvalue())
+            sys.stdout.write(flake_err.getvalue())
+
         if extended is not None:
             with open(file, "r", errors="ignore") as f:
                 content = f.readlines()

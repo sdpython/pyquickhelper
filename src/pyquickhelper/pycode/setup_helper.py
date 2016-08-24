@@ -21,6 +21,7 @@
 
 import os
 import sys
+import re
 import warnings
 from ..loghelper.pyrepo_helper import SourceRepository
 from ..loghelper.flog import noLOG

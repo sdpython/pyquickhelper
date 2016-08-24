@@ -5,7 +5,6 @@
 .. versionadded:: 1.4
 """
 import sys
-from ftplib import FTP
 from ..loghelper.flog import noLOG
 from .ftp_transfer import TransferFTP
 

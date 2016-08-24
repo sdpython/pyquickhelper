@@ -2,8 +2,9 @@
 @file
 @brief Shortcuts to loghelper functions
 """
-from .flog import run_cmd, fLOG, noLOG, PQHException, download, unzip, decode_outerr, run_script, removedirs
+from .flog import fLOG, noLOG, PQHException, download, unzip, removedirs
 from .convert_helper import str2datetime, timestamp_to_datetime
+from .run_cmd import run_cmd, decode_outerr, run_script
 from .url_helper import get_url_content
 from .pyrepo_helper import SourceRepository
 from .repositories.pygit_helper import clone as git_clone

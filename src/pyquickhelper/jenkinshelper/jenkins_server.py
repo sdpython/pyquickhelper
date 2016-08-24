@@ -589,8 +589,6 @@ class JenkinsExt(jenkins.Jenkins):
             self._scheduled_jobs[scheduler] = 1
             return scheduler
         else:
-            reg = scheduler.split()
-            day = reg[-1]
             if "H(" in scheduler:
                 cp = re.compile("H[(]([0-9]+-[0-9]+)[)]")
                 f = cp.findall(scheduler)
@@ -598,7 +596,7 @@ class JenkinsExt(jenkins.Jenkins):
                     raise ValueError(
                         "Unable to find hours in the scheduler '{0}', expects 'H(a-b)'".format(scheduler))
                 a, b = f[0].split('-')
-                a0, b0 = a, b
+                a0 = a
                 a = int(a)
                 b = int(b)
                 new_value = scheduler

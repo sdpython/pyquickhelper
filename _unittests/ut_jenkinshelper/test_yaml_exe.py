@@ -5,7 +5,6 @@
 import sys
 import os
 import unittest
-import re
 import warnings
 
 
@@ -24,7 +23,7 @@ except ImportError:
 
 from src.pyquickhelper.loghelper import fLOG, run_cmd
 from src.pyquickhelper.pycode import get_temp_folder, is_travis_or_appveyor
-from src.pyquickhelper.jenkinshelper.yaml_helper import load_yaml, enumerate_convert_yaml_into_instructions, evaluate_condition, convert_sequence_into_batch_file
+from src.pyquickhelper.jenkinshelper.yaml_helper import load_yaml, enumerate_convert_yaml_into_instructions, convert_sequence_into_batch_file
 
 if sys.version_info[0] == 2:
     FileNotFoundError = Exception
@@ -38,7 +37,6 @@ class TestYamlExe(unittest.TestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
-        this = os.path.abspath(os.path.dirname(__file__))
         command = "dir" if sys.platform.startswith("win32") else "ls"
         yml = """
         language: python
@@ -61,6 +59,7 @@ class TestYamlExe(unittest.TestCase):
             res = list(enumerate_convert_yaml_into_instructions(
                 obj, variables=context))
             assert False
+            assert res
         except ValueError as e:
             assert "'before'" in str(e)
 
@@ -70,8 +69,6 @@ class TestYamlExe(unittest.TestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
-        temp = get_temp_folder(__file__, "temp_exe")
-        this = os.path.abspath(os.path.dirname(__file__))
         command = "dir" if sys.platform.startswith("win32") else "ls"
         yml = """
         language: python
@@ -84,6 +81,7 @@ class TestYamlExe(unittest.TestCase):
         script:
             - %s
         """ % (command, command, command)
+        temp = get_temp_folder(__file__, "temp_yaml_exe")
         context = dict(Python34="fake", Python35=os.path.dirname(sys.executable),
                        Python27=None, Anaconda3=None, Anaconda2=None,
                        WinPython35=None, project_name="pyquickhelper",

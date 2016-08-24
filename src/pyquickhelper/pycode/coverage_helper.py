@@ -6,7 +6,7 @@
 """
 import os
 import sys
-from ..loghelper import SourceRepository, noLOG, run_cmd
+from ..loghelper import SourceRepository, noLOG
 
 
 if sys.version_info[0] == 2:

@@ -6,7 +6,7 @@
 import sys
 import os
 import unittest
-import warnings
+
 
 try:
     import src
@@ -21,7 +21,7 @@ except ImportError:
         sys.path.append(path)
     import src
 
-from src.pyquickhelper.loghelper import fLOG, run_cmd
+from src.pyquickhelper.loghelper import fLOG
 from src.pyquickhelper.helpgen.sphinx_main import process_notebooks, add_notebook_page
 from src.pyquickhelper.pycode import get_temp_folder
 from src.pyquickhelper.pycode import is_travis_or_appveyor

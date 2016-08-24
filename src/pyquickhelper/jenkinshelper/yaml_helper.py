@@ -451,6 +451,7 @@ def enumerate_processed_yml(file_or_buffer, context=None, engine="jinja2", platf
 
     Example of a yml file `.local.jenkins.win.yml <https://github.com/sdpython/pyquickhelper/blob/master/.local.jenkins.win.yml>`_.
     """
+    fLOG = kwargs.get('fLOG', None)
     project_name = None if context is None else context.get(
         "project_name", None)
     obj, project_name = load_yaml(
@@ -470,16 +471,18 @@ def enumerate_processed_yml(file_or_buffer, context=None, engine="jinja2", platf
             except jenkins.NotFoundException:
                 j = None
             except jenkins.JenkinsException as e:
+                from .jenkins_helper import JenkinsExtException
                 raise JenkinsExtException(
-                    "unable to retrieve job config for job={0}, name={1}".format(job, name)) from e
+                    "unable to retrieve job config for name={1}".format(name)) from e
 
             update_job = False
             if j is not None:
                 if kwargs.get('update', True):
                     update_job = True
                 else:
-                    self.fLOG("[jenkins] delete job", name)
-                    server.delete_job(jname)
+                    if fLOG is not None:
+                        fLOG("[jenkins] delete job", name)
+                    server.delete_job(name)
 
             if project_name not in git_repo:
                 git_repo += project_name

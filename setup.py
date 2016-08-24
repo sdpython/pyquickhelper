@@ -229,6 +229,7 @@ if not r:
             "pickleshare",
             "pandas>=0.18.1",
             "pycodestyle>=2.0.0",
+            "pyflakes",
             "python-dateutil",
             "requests",
             "simplegeneric",

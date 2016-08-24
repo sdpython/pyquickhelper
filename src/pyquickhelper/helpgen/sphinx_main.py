@@ -72,7 +72,7 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
                                     "rst", "pdf", "present"),
                          layout=[("html", "build", {}), ("epub", "build", {})],
                          module_name=None, from_repo=True, add_htmlhelp=False,
-                         copy_add_ext=None, fLOG=fLOG):
+                         copy_add_ext=None, direct_call=False, fLOG=fLOG):
     """
     runs the help generation
         - copies every file in another folder
@@ -94,6 +94,9 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
                                     False otherwise
     @param      add_htmlhelp        run HTML Help too (only on Windows)
     @param      copy_add_ext        additional file extension to copy
+    @param      direct_call         direct call to sphinx with *sphinx_build* if *True*
+                                    or run a command line in an another process to get
+                                    a clear environment
     @param      fLOG                logging function
 
     The result is stored in path: ``root/_doc/sphinxdoc/source``.
@@ -240,6 +243,9 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
         Not enough stable from virtual environment.
     """
     setup_environment_for_help()
+    # we keep a clean list of modules
+    # sphinx configuration is a module and the function loads and unloads it
+    list_modules_start = set(sys.modules.keys())
 
     if add_htmlhelp:
         if not sys.platform.startswith("win"):
@@ -673,18 +679,51 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
         fLOG("##### from ", os.getcwd())
         fLOG("##### PATH ", os.environ["PATH"])
 
+        existing = list(sorted(sys.modules.keys()))
+        for ex in existing:
+            if ex not in list_modules_start:
+                doesrem = True
+                for pr in ('pywintypes', 'pandas', 'IPython', 'jupyter', 'numpy', 'scipy', 'matplotlib',
+                           'pyquickhelper', 'yaml', 'xlsxwriter', '_csv',
+                           '_lsprof', '_multiprocessing', '_overlapped', '_sqlite3',
+                           'alabaster', 'asyncio', 'babel', 'bokeh', 'cProfile',
+                           'certifi', 'colorsys', 'concurrent', 'csv', 'cycler',
+                           'dateutil', 'decorator', 'docutils', 'fractions', 'gc',
+                           'getopt', 'getpass', 'hmac', 'http', 'imp', 'ipython_genutils',
+                           'jinja2', 'mimetypes', 'multiprocessing', 'pathlib',
+                           'pickleshare', 'profile', 'prompt_toolkit', 'pstats',
+                           'pydoc', 'py', 'pygments', 'requests', 'runpy', 'simplegeneric',
+                           'sphinx', 'sqlite3', 'tornado', 'traitlets', 'typing', 'wcwidth',
+                           'pythoncom', 'distutils', 'six', 'webbrowser', 'win32api', 'win32com',
+                           'sphinxcontrib', 'zmq', 'nbformat', 'nbpresent', 'nbconvert',
+                           'encodings', 'entrypoints', 'html', 'ipykernel', 'isodate',
+                           'jsonschema', 'jupyter_client', 'mistune', 'nbbrowserpdf',
+                           'notebook', 'pyparsing', 'zmq', 'jupyter_core',):
+                    if ex == pr or ex.startswith(pr + "."):
+                        doesrem = False
+                if doesrem:
+                    fLOG("remove '{0}' from sys.modules".format(ex))
+                    del sys.modules[ex]
+
+        fLOG(
+            "##################################################################################################")
+
         # direct call
-        out = StringIO()
-        err = StringIO()
-        memo_out = sys.stdout
-        memo_err = sys.stderr
-        sys.stdout = out
-        sys.stderr = out
-        build_main(cmd)
-        sys.stdout = memo_out
-        sys.stderr = memo_err
-        out = out.getvalue()
-        err = err.getvalue()
+        if direct_call:
+            # mostly to debug
+            out = StringIO()
+            err = StringIO()
+            memo_out = sys.stdout
+            memo_err = sys.stderr
+            sys.stdout = out
+            sys.stderr = out
+            build_main(cmd)
+            sys.stdout = memo_out
+            sys.stderr = memo_err
+            out = out.getvalue()
+            err = err.getvalue()
+        else:
+            out, err = _process_sphinx_in_private_cmd(cmd, fLOG=fLOG)
 
         if len(err) > 0:
             if "Exception occurred:" in err:
@@ -810,3 +849,18 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
     fLOG("################################")
     fLOG("#### END - check log for success")
     fLOG("################################")
+
+
+def _process_sphinx_in_private_cmd(list_args, fLOG):
+    this = os.path.join(os.path.dirname(
+        os.path.abspath(__file__)), "process_sphinx_cmd.py")
+    res = []
+    for c in list_args:
+        if c[0] == '"' or c[-1] == '"' or ' ' not in c:
+            res.append(c)
+        else:
+            res.append('"{0}"'.format(c))
+    sargs = " ".join(res)
+    cmd = '"{0}" "{1}" {2}'.format(sys.executable, this, sargs)
+    fLOG("    ", cmd)
+    return run_cmd(cmd, wait=True)

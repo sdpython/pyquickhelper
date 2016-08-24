@@ -426,7 +426,7 @@ def remove_execution_number(infile, outfile=None, encoding="utf-8", indent=2):
     js = json.loads(content, encoding=encoding)
     fixup(js, "execution_count", None)
     st = StringIO()
-    d = json.dump(js, st, indent=indent, sort_keys=True)
+    json.dump(js, st, indent=indent, sort_keys=True)
     res = st.getvalue()
     if outfile is not None:
         with open(outfile, "w", encoding=encoding) as f:

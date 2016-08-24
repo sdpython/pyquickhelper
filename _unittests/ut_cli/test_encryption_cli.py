@@ -73,16 +73,22 @@ class TestEncryptionCli(unittest.TestCase):
 
         temp = get_temp_folder(__file__, "temp_encrypt")
         temp2 = get_temp_folder(__file__, "temp_encrypt2")
-        srcf = os.path.join(temp, "..")
-        sys.argv = ["", srcf, temp, password]
+        tempmm = get_temp_folder(__file__, "temp_encrypt_status")
+        cstatus = os.path.join(tempmm, "crypt_status.txt")
+        cmap = os.path.join(tempmm, "crypt_map.txt")
+        srcf = os.path.abspath(os.path.join(temp, ".."))
+        sys.argv = ["", srcf, temp, password,
+                    "--status", cstatus,
+                    "--map", cmap]
         encrypt(fLOG=fLOG)
+        this = __file__
 
         sys.argv = ["", temp, temp2, password]
         decrypt(fLOG=fLOG)
 
         with open(__file__, "rb") as f:
             c1 = f.read()
-        with open(os.path.join(temp2, os.path.split(__file__)[-1]), "rb") as f:
+        with open(os.path.join(temp2, os.path.split(this)[-1]), "rb") as f:
             c2 = f.read()
 
         self.assertEqual(c1, c2)

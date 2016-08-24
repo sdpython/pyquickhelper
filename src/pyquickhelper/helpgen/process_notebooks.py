@@ -17,7 +17,6 @@ from ..filehelper.synchelper import has_been_updated
 from .post_process import post_process_latex_output, post_process_latex_output_any, post_process_rst_output
 from .post_process import post_process_html_output, post_process_slides_output, post_process_python_output
 from .helpgen_exceptions import NotebookConvertError
-from multiprocessing import Process, Queue
 
 
 if sys.version_info[0] == 2:
@@ -267,7 +266,6 @@ def _process_notebooks_in(notebooks, outfold, build, latex_path=None, pandoc_pat
 
             # compilation
             list_args = []
-            options = ""
             if format == "pdf":
                 title = os.path.splitext(
                     os.path.split(notebook)[-1])[0].replace("_", " ")

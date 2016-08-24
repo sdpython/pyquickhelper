@@ -304,7 +304,21 @@ def default_filter_warning(w):
                 return False
             if "PresentExporter." in str(w.message):
                 return False
+            if "NbConvertApp." in str(w.message):
+                return False
+            if "RSTExporter." in str(w.message):
+                return False
+            if "PythonExporter." in str(w.message):
+                return False
+            if "LatexExporter." in str(w.message):
+                return False
             if "Metadata should be set using the .tag()" in str(w.message):
+                return False
+        elif "jupyter_core" in w.filename:
+            if "JupyterApp." in str(w.message):
+                return False
+        elif "docutils" in w.filename:
+            if "'U' mode is deprecated" in str(w.message):
                 return False
         elif "sympy" in w.filename:
             if "inspect.getargspec() is deprecated" in str(w.message):

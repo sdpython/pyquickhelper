@@ -156,8 +156,6 @@ class CompletionTrieNode(object):
                 node = node.children[c]
                 nodes.append(node)
         nodes.reverse()
-        metric = len(word)
-        best = len(word)
         all_res = []
         for node in nodes:
             res = list(n[1] for n in node.iter_leaves())

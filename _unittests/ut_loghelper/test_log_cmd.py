@@ -22,7 +22,8 @@ except ImportError:
     import src
 
 from src.pyquickhelper.pycode import get_temp_folder
-from src.pyquickhelper.loghelper.flog import split_cmp_command, fLOG, run_cmd, skip_run_cmd
+from src.pyquickhelper.loghelper.flog import fLOG
+from src.pyquickhelper.loghelper.run_cmd import split_cmp_command, run_cmd, skip_run_cmd
 
 
 class TestLogFunc (unittest.TestCase):

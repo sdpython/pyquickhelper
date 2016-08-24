@@ -9,7 +9,7 @@ import sys
 import shlex
 import subprocess
 from ..loghelper import noLOG, run_cmd
-from ..loghelper.flog import get_interpreter_path
+from ..loghelper.run_cmd import get_interpreter_path
 from .open_script_file import open_script
 
 

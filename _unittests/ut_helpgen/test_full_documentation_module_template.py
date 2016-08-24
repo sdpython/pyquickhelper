@@ -73,7 +73,7 @@ class TestSphinxDocFull (unittest.TestCase):
             f.write("\n".join(lines))
 
         # test
-        for i in range(0, 2):
+        for i in range(0, 3):
             fLOG("\n")
             fLOG("\n")
             fLOG("\n")
@@ -89,7 +89,7 @@ class TestSphinxDocFull (unittest.TestCase):
             generate_help_sphinx(var, module_name=var, root=root,
                                  layout=["pdf", "html"],
                                  extra_ext=["tohelp"],
-                                 from_repo=False)
+                                 from_repo=False, direct_call=i % 2 == 0)
 
             files = [os.path.join(root, "_doc", "sphinxdoc", "build", "html", "index.html"),
                      os.path.join(root, "_doc", "sphinxdoc",

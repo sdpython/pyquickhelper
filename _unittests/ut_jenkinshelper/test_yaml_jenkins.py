@@ -6,7 +6,6 @@ import sys
 import os
 import unittest
 import re
-import warnings
 
 
 try:
@@ -22,7 +21,7 @@ except ImportError:
         sys.path.append(path)
     import src
 
-from src.pyquickhelper.loghelper import fLOG, run_cmd
+from src.pyquickhelper.loghelper import fLOG
 from src.pyquickhelper.pycode import get_temp_folder
 from src.pyquickhelper.jenkinshelper.jenkins_server import JenkinsExt
 from src.pyquickhelper.jenkinshelper.yaml_helper import enumerate_processed_yml
@@ -67,7 +66,6 @@ class TestYamlJenkins(unittest.TestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
-        temp = get_temp_folder(__file__, "temp_jenkins_yml")
         this = os.path.abspath(os.path.dirname(__file__))
         yml = os.path.abspath(os.path.join(
             this, "..", "..", ".local.jenkins.win.yml"))
