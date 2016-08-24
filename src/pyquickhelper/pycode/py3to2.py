@@ -20,13 +20,9 @@ class Convert3to2Exception(Exception):
     pass
 
 
-def py3to2_convert_tree(folder,
-                        dest,
-                        encoding="utf8",
-                        pattern=".*[.]py$",
+def py3to2_convert_tree(folder, dest, encoding="utf8", pattern=".*[.]py$",
                         pattern_copy=".*[.]((ico)|(dll)|(rst)|(ipynb)|(png)|(txt)|(zip)|(gz)|(html)|(exe))$",
-                        unittest_modules=None,
-                        fLOG=noLOG):
+                        unittest_modules=None, fLOG=noLOG):
     """
     Converts files in a folder and its subfolders from python 3 to python 2,
     the function only considers python script (verifying *pattern*).
@@ -98,6 +94,8 @@ def py3to2_convert_tree(folder,
     conv = []
     for file in explore_folder_iterfile(folder, pattern=pattern):
         full = os.path.join(folder, file)
+        if "site-packages" in full:
+            continue
         file = os.path.relpath(file, folder)
 
         # undesired sub folders

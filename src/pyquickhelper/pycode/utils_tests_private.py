@@ -584,9 +584,14 @@ def main_run_test(runner, path_test=None, limit_max=1e9, log=False, skip=-1, ski
 
             if len(list_warn) > 0:
                 fullstderr.write("WARN:\n")
+                warndone = set()
                 for w in list_warn:
                     if filter_warning(w):
-                        fullstderr.write("w{0}: {1}\n".format(i, str(w)))
+                        sw = str(w)
+                        if sw not in warndone:
+                            # we display only one time the same warning
+                            fullstderr.write("w{0}: {1}\n".format(i, str(w)))
+                            warndone.add(sw)
             serr = newstdr.getvalue()
             if serr.strip(" \n\r\t"):
                 fullstderr.write("ERRs:\n")
