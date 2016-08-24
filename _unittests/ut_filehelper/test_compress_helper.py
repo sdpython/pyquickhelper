@@ -115,7 +115,7 @@ class TestCompressHelper(unittest.TestCase):
 
         self.assertEqual(len(res), 1)
         s = res[0].replace("\\", "/")
-        if not s.endswith("pyquickhelper/_unittests/ut_filehelper/temp_compress_7zip2/ftplib.html"):
+        if not s.endswith("_unittests/ut_filehelper/temp_compress_7zip2/ftplib.html"):
             raise Exception(res[0])
 
 

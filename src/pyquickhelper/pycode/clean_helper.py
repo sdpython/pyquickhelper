@@ -23,7 +23,7 @@ def clean_exts(folder=".", fLOG=print, exts=[".pyd", ".so", ".o", ".def"]):
     for root, dirs, files in os.walk("."):
         for f in files:
             ext = os.path.splitext(f)[-1]
-            if ext in exts and "exe.win" not in root:
+            if ext in exts and "exe.win" not in root and "site-packages" not in root:
                 filename = os.path.join(root, f)
                 fLOG("removing ", filename)
                 os.remove(filename)
