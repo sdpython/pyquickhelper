@@ -41,7 +41,7 @@ class TestJenkinsExt(unittest.TestCase):
 
         srv = JenkinsExt(
             "http://localhost:8080/", "user", "password",
-            mock=True, fLOG=fLOG, engines=engines_default)
+            mock=True, fLOG=fLOG, engines=engines_default, platform="win")
 
         job = "standalone [conda_update] [anaconda3]"
         cmd = srv.get_cmd_standalone(job)
@@ -66,6 +66,7 @@ class TestJenkinsExt(unittest.TestCase):
                                        git_repo=github +
                                        "%s/" % "pyquickhelper",
                                        upstreams=None,
+                                       platform="win",
                                        location=r"/home/username/jenkins/")
 
         assert "auto_unittest_setup_help.bat" in conf
@@ -181,7 +182,7 @@ class TestJenkinsExt(unittest.TestCase):
 
         srv = JenkinsExt(
             "http://localhost:8080/", "user", "password", mock=True,
-            engines=engines, fLOG=fLOG)
+            platform="win", engines=engines, fLOG=fLOG)
 
         fLOG("---------------------")
         res = srv.setup_jenkins_server(github=github, modules=modules,
