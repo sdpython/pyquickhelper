@@ -86,7 +86,6 @@ def setup_jenkins_server_yml(js, github="sdpython", modules=default_jenkins_jobs
     """
     if delete_first:
         js.delete_all_jobs()
-    r = js.setup_jenkins_server(github=github, modules=modules, get_jenkins_script=None,
-                                overwrite=overwrite, location=location, prefix=prefix,
-                                **kwargs)
+    r = js.setup_jenkins_server(github=github, modules=modules, overwrite=overwrite, 
+                                location=location, prefix=prefix, **kwargs)
     return r

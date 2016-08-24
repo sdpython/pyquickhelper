@@ -16,11 +16,9 @@ from time import sleep
 try:
     from nbformat.v3 import NotebookNode
     from nbformat import writes
-    from jupyter_client import KernelManager
 except ImportError:
     from IPython.nbformat.v3 import NotebookNode
     from IPython.nbformat import writes
-    from IPython.kernel import KernelManager
 from ..loghelper.flog import noLOG
 
 if sys.version_info[0] == 2:
@@ -95,6 +93,10 @@ class NotebookRunner(object):
             Parameter *replacements* was added.
         """
         if kernel:
+            try:
+                from jupyter_client import KernelManager
+            except ImportError:
+                from IPython.kernel import KernelManager
             self.km = KernelManager(
                 kernel_name=kernel_name) if kernel_name is not None else KernelManager()
         else:

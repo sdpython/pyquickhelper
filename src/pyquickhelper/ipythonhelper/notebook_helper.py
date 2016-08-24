@@ -12,9 +12,6 @@ import json
 from nbformat import versions
 from nbformat.reader import reads
 from nbformat.v4 import upgrade
-from jupyter_client.kernelspec import KernelSpecManager
-from notebook.nbextensions import install_nbextension, _get_nbextension_dir
-from ipykernel.kernelspec import install as install_k
 from ..filehelper import read_content_ufs
 
 
@@ -133,6 +130,7 @@ def find_notebook_kernel(kernel_spec_manager=None):
     .. versionadded:: 1.3
     """
     if kernel_spec_manager is None:
+        from jupyter_client.kernelspec import KernelSpecManager
         kernel_spec_manager = KernelSpecManager()
     return kernel_spec_manager.find_kernel_specs()
 
@@ -152,6 +150,7 @@ def get_notebook_kernel(kernel_name, kernel_spec_manager=None):
     .. versionadded:: 1.3
     """
     if kernel_spec_manager is None:
+        from jupyter_client.kernelspec import KernelSpecManager
         kernel_spec_manager = KernelSpecManager()
     return kernel_spec_manager.get_kernel_spec(kernel_name)
 
@@ -179,6 +178,7 @@ def install_notebook_extension(path=None, overwrite=False, symlink=False,
     cerr = sys.stderr
     sys.stdout = StringIO()
     sys.stderr = StringIO()
+    from notebook.nbextensions import install_nbextension
     install_nbextension(path=path, overwrite=overwrite, symlink=symlink,
                         user=user, prefix=prefix, nbextensions_dir=nbextensions_dir,
                         destination=destination, verbose=verbose)
@@ -201,6 +201,7 @@ def get_jupyter_datadir():
 
     .. versionadded:: 1.3
     """
+    from jupyter_client.kernelspec import KernelSpecManager
     return KernelSpecManager().data_dir
 
 
@@ -229,6 +230,7 @@ def get_jupyter_extension_dir(user=False, prefix=None,
 
     .. versionadded:: 1.3
     """
+    from notebook.nbextensions import _get_nbextension_dir
     return _get_nbextension_dir(nbextensions_dir=nbextensions_dir, user=user, prefix=prefix)
 
 
@@ -334,6 +336,7 @@ def install_jupyter_kernel(exe=sys.executable, kernel_spec_manager=None, user=Fa
     .. versionadded:: 1.3
     """
     exe = exe.replace("pythonw.exe", "python.exe")
+    from ipykernel.kernelspec import install as install_k
     dest = install_k(kernel_spec_manager=kernel_spec_manager,
                      user=user, kernel_name=kernel_name, prefix=prefix)
     kernel_file = os.path.join(dest, "kernel.json")
