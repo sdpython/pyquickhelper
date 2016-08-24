@@ -782,9 +782,12 @@ class JenkinsExt(jenkins.Jenkins):
         """
         Set up many jobs on Jenkins
 
-        @param      js_url                  url or jenkins server (specially if you need credentials)
+        @param      js_url                  url or jenkins server
         @param      github                  github account if it does not start with *http://*,
-                                            the link to git repository of the project otherwise
+                                            the link to git repository of the project otherwise,
+                                            we assume all jobs in *modules* are located on the same
+                                            account otherwise the function will have to called twice with
+                                            different parameters
         @param      modules                 modules for which to generate the
         @param      get_jenkins_script      see @see me get_jenkins_script (default value if this parameter is None)
         @param      overwrite               do not create the job if it already exists

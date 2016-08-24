@@ -33,10 +33,6 @@ class TestJenkinsExt(unittest.TestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
-        if not sys.platform.startswith("win"):
-            # not yet implemented
-            return
-
         engines_default = dict(anaconda2="c:\\Anaconda",
                                anaconda3="c:\\Anaconda3",
                                py35="c:\\Python35_x64",
@@ -65,10 +61,6 @@ class TestJenkinsExt(unittest.TestCase):
             "http://localhost:8080/", "user", "password",
             mock=True, fLOG=fLOG)
         github = "https://github.com/sdpython/"
-
-        if not sys.platform.startswith("win"):
-            # not yet implemented
-            return
 
         conf = srv.create_job_template("pyquickhelper",
                                        git_repo=github +
@@ -190,10 +182,6 @@ class TestJenkinsExt(unittest.TestCase):
         srv = JenkinsExt(
             "http://localhost:8080/", "user", "password", mock=True,
             engines=engines, fLOG=fLOG)
-
-        if not sys.platform.startswith("win"):
-            # not yet implemented
-            return
 
         fLOG("---------------------")
         res = srv.setup_jenkins_server(github=github, modules=modules,
