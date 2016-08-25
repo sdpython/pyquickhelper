@@ -1,4 +1,10 @@
+
+# No other language is allowed.
 language: python
+
+# This defines the path to the interpreter the module is tested against.
+# A different script is generated for each PATH.
+# A path cannot be a virtual environment.
 python:
   - { PATH: "{{replace(Python34, '\\', '\\\\')}}", VERSION: 3.4, DIST: std }
   - { PATH: "{{replace(Python35, '\\', '\\\\')}}", VERSION: 3.5, DIST: std }
@@ -6,21 +12,40 @@ python:
   - { PATH: "{{replace(Anaconda3, '\\', '\\\\')}}", VERSION: 3.5, DIST: conda }
   - { PATH: "{{replace(Anaconda2, '\\', '\\\\')}}", VERSION: 2.7, DIST: conda }
   - { PATH: "{{replace(WinPython35, '\\', '\\\\')}}", VERSION: 3.5, DIST: winpython }
+  
+# The test happens in a virtual environment not with the original distribution.
 virtualenv:
   - path: {{ospathjoin(root_path, pickname("%NAME_JENKINS%", project_name + "_%VERSION%_%DIST%_%NAME%"), "_venv")}}
+  
+# Dependencies to install.
 install:
   - pip install -r requirements.txt
   - pip freeze
+
+# Depending on the version, some steps need to be run before the script itself.
+# The notation ${VERSION} refers to the version specified in section python.
+# Inside a condition ([]), the notation ${PYTHON} must be used.
+# Outside, the yaml interpreter only consider variables interpreted by Jinja2.
+# Environment variables are available but only those defined on the machine used to generate the Jenkins job.
 before_script:
   - if [ ${VERSION} == "2.7" ] then {{Python35}}\python setup.py copy27 fi
   - if [ ${VERSION} == "2.7" ] then cd dist_module27 fi
+  
+# The script to run.
+# Each row becomes a Jenkins job. pyquickhelper will generate nb(python) * nb(script) jobs to run on Jenkins.
+# Steps before_script and after_script are run for every script.
+# Variable NAME is added to the Job name on Jenkins in order to distinguish them.
 script:
   - { CMD: "python setup.py unittests", NAME: "UT" }
+
+# To run after the script.
 after_script:
   - python setup.py bdist_wheel
   - if [ ${VERSION} == "2.7" and ${DIST} != "conda" ] then copy dist\*.whl ..\..\..\local_pypi\local_pypi_server fi
   - if [ ${VERSION} == "2.7" ] then cd .. fi
   - if [ ${VERSION} != "2.7" and ${DIST} != "conda" and ${VERSION} != "3.4" ] then copy dist\*.whl ..\..\local_pypi\local_pypi_server fi
+
+# Same as after script.
 documentation:
   - if [ ${PYTHON} == "{{Python35}}" ] then
     python setup.py build_sphinx

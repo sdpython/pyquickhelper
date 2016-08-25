@@ -47,8 +47,6 @@ class TestLogFunc (unittest.TestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
-        temp = get_temp_folder(__file__, "temp_run_cmd_secure")
-
         cmd = "dir ."
         out1, err = run_cmd(cmd, wait=True, fLOG=fLOG)
         out2, err = run_cmd(cmd, wait=True, communicate=False, fLOG=fLOG)
@@ -56,10 +54,8 @@ class TestLogFunc (unittest.TestCase):
         fLOG("***", out1)
         fLOG("***", out2)
 
-        secure = os.path.join(temp, "out_log_secure.txt")
-
         out3, err = run_cmd(
-            cmd, wait=True, communicate=True, secure=secure, fLOG=fLOG)
+            cmd, wait=True, communicate=True, fLOG=fLOG)
         fLOG("***", out3)
 
         out, err = skip_run_cmd(cmd, wait=True)

@@ -73,6 +73,7 @@ Graphviz needs to be installed. Here is the list of tools usually used:
 * `pandoc <http://pandoc.org/>`_
 * `Git <http://git-scm.com/>`_ + `GitHub <https://github.com/>`_
 * `GraphViz <http://www.graphviz.org/>`_
+* `InkScape <https://inkscape.org/en/>`_
 
 If you need to use `Antlr <http://www.antlr.org/>`_:
 

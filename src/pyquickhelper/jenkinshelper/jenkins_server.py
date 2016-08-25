@@ -48,27 +48,27 @@ _default_engine_paths = {
 }
 
 
-def _modified_windows_jenkins(requirements_local, requirements_pypi, module="__MODULE__", port="__PORT__"):
+def _modified_windows_jenkins(requirements_local, requirements_pypi, module="__MODULE__", port="__PORT__", platform=sys.platform):
     return private_script_replacements(
         windows_jenkins, module, (requirements_local,
                                   requirements_pypi), port, raise_exception=False,
-        default_engine_paths=_default_engine_paths)
+        default_engine_paths=_default_engine_paths, platform=platform)
 
 
 def _modified_windows_jenkins_27(requirements_local, requirements_pypi, module="__MODULE__",
-                                 port="__PORT__", anaconda=True):
+                                 port="__PORT__", anaconda=True, platform=sys.platform):
     return private_script_replacements(
         windows_jenkins_27_conda if anaconda else windows_jenkins_27_def,
         module, (requirements_local,
                  requirements_pypi), port, raise_exception=False,
-        default_engine_paths=_default_engine_paths)
+        default_engine_paths=_default_engine_paths, platform=platform)
 
 
-def _modified_windows_jenkins_any(requirements_local, requirements_pypi, module="__MODULE__", port="__PORT__"):
+def _modified_windows_jenkins_any(requirements_local, requirements_pypi, module="__MODULE__", port="__PORT__", platform=sys.platform):
     res = private_script_replacements(
         windows_jenkins_any, module, (requirements_local,
                                       requirements_pypi), port, raise_exception=False,
-        default_engine_paths=_default_engine_paths)
+        default_engine_paths=_default_engine_paths, platform=platform)
     return res.replace("virtual_env_suffix=%2", "virtual_env_suffix=___SUFFIX__")
 
 
@@ -465,7 +465,7 @@ class JenkinsExt(jenkins.Jenkins):
 
             if len(spl) == 1:
                 script = _modified_windows_jenkins(
-                    requirements_local, requirements_pypi)
+                    requirements_local, requirements_pypi, platform=self.platform)
                 if not isinstance(script, list):
                     script = [script]
                 return [replacements(s, engine, python, namee + "_" + job_hash, module_name) for s in script]
@@ -498,20 +498,20 @@ class JenkinsExt(jenkins.Jenkins):
                         raise ValueError(
                             "unable to extract parameters for the unittests:\n{0}".format(" ".join(spl)))
                     p = parameters[0].replace("_", " ").strip("{}")
-                    cmd = _modified_windows_jenkins_any(requirements_local, requirements_pypi).replace(
+                    cmd = _modified_windows_jenkins_any(requirements_local, requirements_pypi, platform=self.platform).replace(
                         "__COMMAND__", "unittests " + p)
                 elif "[LONG]" in spl:
-                    cmd = _modified_windows_jenkins_any(requirements_local, requirements_pypi).replace(
+                    cmd = _modified_windows_jenkins_any(requirements_local, requirements_pypi, platform=self.platform).replace(
                         "__COMMAND__", "unittests_LONG")
                 elif "[SKIP]" in spl:
-                    cmd = _modified_windows_jenkins_any(requirements_local, requirements_pypi).replace(
+                    cmd = _modified_windows_jenkins_any(requirements_local, requirements_pypi, platform=self.platform).replace(
                         "__COMMAND__", "unittests_SKIP")
                 elif "[GUI]" in spl:
-                    cmd = _modified_windows_jenkins_any(requirements_local, requirements_pypi).replace(
+                    cmd = _modified_windows_jenkins_any(requirements_local, requirements_pypi, platform=self.platform).replace(
                         "__COMMAND__", "unittests_GUI")
                 elif "[27]" in spl:
                     cmd = _modified_windows_jenkins_27(
-                        requirements_local, requirements_pypi, anaconda=" [anaconda" in job)
+                        requirements_local, requirements_pypi, anaconda=" [anaconda" in job, platform=self.platform)
                     if not isinstance(cmd, list):
                         cmd = [cmd]
                     else:
@@ -528,7 +528,7 @@ class JenkinsExt(jenkins.Jenkins):
                             cmd[i] = "\n".join(lines)
                 elif "[doc]" in spl:
                     # documentation
-                    cmd = _modified_windows_jenkins_any(requirements_local, requirements_pypi).replace(
+                    cmd = _modified_windows_jenkins_any(requirements_local, requirements_pypi, platform=self.platform).replace(
                         "__COMMAND__", "build_sphinx")
                 elif "[setup]" in spl:
                     # setup
@@ -541,11 +541,11 @@ class JenkinsExt(jenkins.Jenkins):
                     cmd = "\n__PACTHPQb__\n__PYTHON__ setup.py build_script\n__PACTHPQe__\n\nauto_cmd_build_dist.bat __PYTHON__ [v2]"
                 else:
                     cmd = _modified_windows_jenkins(
-                        requirements_local, requirements_pypi)
+                        requirements_local, requirements_pypi, platform=self.platform)
                     for pl in spl[1:]:
                         if pl.startswith("[custom_") and pl.endswith("]"):
                             cus = pl.strip("[]")
-                            cmd = _modified_windows_jenkins_any(requirements_local, requirements_pypi).replace(
+                            cmd = _modified_windows_jenkins_any(requirements_local, requirements_pypi, platform=self.platform).replace(
                                 "__COMMAND__", cus)
 
                 # step 2: replacement (python __PYTHON__, virtual environnement

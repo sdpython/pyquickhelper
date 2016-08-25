@@ -1,14 +1,23 @@
+
+.. _l-ci-jenkins:
+
 Continuous Integration
 ======================
 
-The module is tested with `Travis <https://travis-ci.org/sdpython/pyquickhelper>`_.
-I use `Jenkins <https://jenkins-ci.org/>`_ on an Azure machine to run the unit tests, generate
-the documentation and the setup. Everything is fully tested on Windows with the standard distribution,
-`Anaconda <http://continuum.io/downloads>`_ and `WinPython <https://winpython.github.io/>`_.
-The list of jobs I used to get it done is defined by the function
-`setup_jenkins_server <http://www.xavierdupre.fr/app/ensae_teaching_cs/helpsphinx3/ensae_teaching_cs/automation/jenkins_helper.html#ensae_teaching_cs.automation.jenkins_helper.setup_jenkins_server>`_.
+The module is tested with `Travis <https://travis-ci.org/sdpython/pyquickhelper>`_, 
+`AppVeyor <https://www.appveyor.com/>`_ and local testing with
+`Jenkins <https://jenkins-ci.org/>`_ for a exhaustive list of unit tests,
+the documentation, the setup. Everything is fully tested on Windows with the standard distribution and 
+`Anaconda <http://continuum.io/downloads>`_.
+There are three builds definition:
 
-The continuous integration for Windows may move to `AppVeyor <http://www.appveyor.com/>`_ some day.
+* Travis: `.travis.yml <https://github.com/sdpython/pyquickhelper/blob/master/.travis.yml>`_
+* AppVeyor: `appveyor.yml <https://github.com/sdpython/pyquickhelper/blob/master/appveyor.yml>`_
+* Jenkins: `.local.jenkins.win.yml <https://github.com/sdpython/pyquickhelper/blob/master/.local.jenkins.win.yml>`_
+
+The third file by processed by *pyquickhelper* itself to produce a series of Jenkins jobs
+uploaded to a server. See :func:`setup_jenkins_server_yml <pyquickhelper.jenkinshelper.jenkins_helper.setup_jenkins_server_yml>`
+to configurate a local Jenkins server.
 
 When modules depend on others modules also being tested, the 
 unit tests and the documentation generation uses a local pypi server (port=8079).

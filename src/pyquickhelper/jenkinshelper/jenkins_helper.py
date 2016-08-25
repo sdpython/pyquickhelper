@@ -57,7 +57,7 @@ def setup_jenkins_server_yml(js, github="sdpython", modules=default_jenkins_jobs
                              overwrite=False, location=None, prefix="",
                              delete_first=False, fLOG=noLOG, **kwargs):
     """
-    Set up many jobs on Jenkins
+    Set up many jobs on Jenkins.
 
     @param      js                      @see cl JenkinsExt, jenkins server
     @param      github                  github account if it does not start with *http://*,
@@ -83,6 +83,9 @@ def setup_jenkins_server_yml(js, github="sdpython", modules=default_jenkins_jobs
         setup_jenkins_server_yml(js, github="sdpython", modules=modules, fLOG=print,
                             overwrite = True, delete_first=True, engines=engines,
                             location = "d:\\\\jenkins\\\\pymy")
+
+    See `.local.jenkins.win.yml <https://github.com/sdpython/pyquickhelper/blob/master/.local.jenkins.win.yml>`_
+    about the syntax of a yaml job description.
     """
     if delete_first:
         js.delete_all_jobs()

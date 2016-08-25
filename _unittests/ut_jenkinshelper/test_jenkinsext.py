@@ -33,6 +33,10 @@ class TestJenkinsExt(unittest.TestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
+        for platform in {'win', 'linux'}:
+            self.a_test_jenkins_job_verif(platform)
+
+    def a_test_jenkins_job_verif(self, platform):
         engines_default = dict(anaconda2="c:\\Anaconda",
                                anaconda3="c:\\Anaconda3",
                                py35="c:\\Python35_x64",
@@ -41,15 +45,22 @@ class TestJenkinsExt(unittest.TestCase):
 
         srv = JenkinsExt(
             "http://localhost:8080/", "user", "password",
-            mock=True, fLOG=fLOG, engines=engines_default, platform="win")
+            mock=True, fLOG=fLOG, engines=engines_default, platform=platform)
 
-        job = "standalone [conda_update] [anaconda3]"
-        cmd = srv.get_cmd_standalone(job)
-        assert "Anaconda3" in cmd
+        if platform == "win":
+            job = "standalone [conda_update] [anaconda3]"
+            cmd = srv.get_cmd_standalone(job)
+            assert "Anaconda3" in cmd
 
-        job = "pyrsslocal [py35] <-- pyquickhelper, pyensae"
-        cmd = "\n".join(srv.get_jenkins_script(job))
-        assert "Python34" not in cmd
+        if platform == "win":
+            job = "pyrsslocal [py35] <-- pyquickhelper, pyensae"
+            cmd = "\n".join(srv.get_jenkins_script(job))
+            assert "Python34" not in cmd
+        else:
+            try:
+                job = "pyrsslocal [py35] <-- pyquickhelper, pyensae"
+            except NotImplementedError:
+                fLOG("OK FOR", platform)
 
     def test_jenkins_ext(self):
         fLOG(

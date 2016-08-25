@@ -126,7 +126,7 @@ Functionalities
   see :class:`JenkinsExt <pyquickhelper.jenkinshelper.jenkins_server.JenkinsExt>`
   based on build script produced by function 
   :func:`process_standard_options_for_setup <pyquickhelper.pycode.setup_helper.process_standard_options_for_setup>`,
-  Jenkisn jobs can be defined based on YAML script similar to Travis.
+  Jenkisn jobs can be defined based on YAML script. See :ref:`l-ci-jenkins`.
 * encrypted backup, see :class:`EncryptedBackup <pyquickhelper.filehelper.encrypted_backup.EncryptedBackup>`,
   the API allow to add others backup supports
 * folder synchronisation, see function :func:`synchronize_folder <pyquickhelper.filehelper.synchelper.synchronize_folder>`
