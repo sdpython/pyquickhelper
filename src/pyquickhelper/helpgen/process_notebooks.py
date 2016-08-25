@@ -369,7 +369,7 @@ def _process_notebooks_in(notebooks, outfold, build, latex_path=None, pandoc_pat
                     if not sys.platform.startswith("win"):
                         c = c.replace('"', '')
                     out, err = run_cmd(
-                        c, wait=True, do_not_log=False, log_error=False, shell=sys.platform.startswith("win"), catch_exit=True)
+                        c, wait=True, log_error=False, shell=sys.platform.startswith("win"), catch_exit=True)
                     if len(err) > 0:
                         raise HelpGenException(
                             "CMD:\n{0}\nERR:\n{1}\nOUT:\n{2}".format(c, err, out))
@@ -402,7 +402,7 @@ def _process_notebooks_in(notebooks, outfold, build, latex_path=None, pandoc_pat
                 if not sys.platform.startswith("win"):
                     c = c.replace('"', '')
                 out, err = run_cmd(
-                    c, wait=True, do_not_log=False, log_error=False, shell=sys.platform.startswith("win"))
+                    c, wait=True, log_error=False, shell=sys.platform.startswith("win"))
                 if len(err) > 0:
                     raise HelpGenException(
                         "issue with cmd: %s\nERR:\n%s" % (c, err))

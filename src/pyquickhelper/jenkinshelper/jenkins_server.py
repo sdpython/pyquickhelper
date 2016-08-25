@@ -778,7 +778,7 @@ class JenkinsExt(jenkins.Jenkins):
 
     def setup_jenkins_server(self, github, modules, get_jenkins_script=None, overwrite=False,
                              location=None, prefix="", credentials="", update=True, yml_engine="jinja2",
-                             add_environ=True, yml_platform=None, adjust_scheduler=True):
+                             add_environ=True, adjust_scheduler=True):
         """
         Set up many jobs on Jenkins
 
@@ -797,7 +797,6 @@ class JenkinsExt(jenkins.Jenkins):
         @param      update                  update job instead of deleting it if the job already exists
         @param      yml_engine              templating engine used to process yaml config files
         @param      add_environ             use of local environment variables to interpret the job
-        @param      yml_platform            yaml platform
         @param      adjust_scheduler        adjust the scheduler of a job so that it is delayed if this spot
                                             is already taken
         @return                             list of created jobs
@@ -1170,7 +1169,7 @@ class JenkinsExt(jenkins.Jenkins):
                     for aj, name, var in enumerate_processed_yml(jobdef, context=options, engine=yml_engine,
                                                                  add_environ=add_environ, server=self, git_repo=gitrepo, scheduler=scheduler,
                                                                  description=description, credentials=cred, success_only=success_only,
-                                                                 timeout=timeout, platform=yml_platform, adjust_scheduler=adjust_scheduler,
+                                                                 timeout=timeout, platform=self.platform, adjust_scheduler=adjust_scheduler,
                                                                  overwrite=overwrite, build_location=location):
                         if name in done:
                             s = "A name '{0}' was already used for a job, from:\n{1}\nPROCESS:\n{2}"

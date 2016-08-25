@@ -87,7 +87,6 @@ def repo_ls(full, commandline=True):
                 cmd = "svn ls -r HEAD \"%s\"" % full.replace("\\", "/")
                 out, err = run_cmd(cmd,
                                    wait=True,
-                                   do_not_log=True,
                                    encerror="strict",
                                    encoding=sys.stdout.encoding if sys.version_info[0] != 2 and sys.stdout is not None else "utf8")
                 if len(err) > 0:
@@ -103,7 +102,6 @@ def repo_ls(full, commandline=True):
         try:
             out, err = run_cmd(cmd,
                                wait=True,
-                               do_not_log=True,
                                encerror="strict",
                                encoding=sys.stdout.encoding if sys.version_info[0] != 2 and sys.stdout is not None else "utf8")
         except Exception as e:
@@ -202,7 +200,6 @@ def get_repo_log(path=None, file_detail=False, commandline=True):
         cmd = "svn log -r HEAD:1 --xml \"%s\"" % path.replace("\\", "/")
         out, err = run_cmd(cmd,
                            wait=True,
-                           do_not_log=True,
                            encerror="strict",
                            encoding=sys.stdout.encoding if sys.version_info[0] != 2 and sys.stdout is not None else "utf8")
         if len(err) > 0:
@@ -277,7 +274,6 @@ def get_repo_version(path=None, commandline=True, log=False):
             cmd += " \"%s\"" % path.replace("\\", "/")
         out, err = run_cmd(cmd,
                            wait=True,
-                           do_not_log=True,
                            encerror="ignore",
                            encoding=sys.stdout.encoding if sys.version_info[
                                0] != 2 and sys.stdout is not None else "utf8",

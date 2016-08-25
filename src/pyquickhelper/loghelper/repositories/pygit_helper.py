@@ -130,7 +130,6 @@ def repo_ls(full, commandline=True):
         cmd += " ls-tree -r HEAD \"%s\"" % full
         out, err = run_cmd(cmd,
                            wait=True,
-                           do_not_log=True,
                            encerror="strict",
                            encoding=sys.stdout.encoding if sys.version_info[
                                0] != 2 and sys.stdout is not None else "utf8",
@@ -241,7 +240,6 @@ def get_repo_log(path=None, file_detail=False, commandline=True):
             0] != 2 and sys.stdout is not None else "utf8"
         out, err = run_cmd(cmd,
                            wait=True,
-                           do_not_log=True,
                            encerror="strict",
                            encoding=enc,
                            change_path=os.path.split(
@@ -337,7 +335,6 @@ def get_repo_version(path=None, commandline=True, usedate=False, log=False):
 
             out, err = run_cmd(cmd,
                                wait=True,
-                               do_not_log=True,
                                encerror="strict",
                                encoding=sys.stdout.encoding if sys.version_info[
                                    0] != 2 and sys.stdout is not None else "utf8",
@@ -394,7 +391,6 @@ def get_master_location(path=None, commandline=True):
 
         out, err = run_cmd(cmd,
                            wait=True,
-                           do_not_log=True,
                            encerror="strict",
                            encoding=sys.stdout.encoding if sys.version_info[
                                0] != 2 and sys.stdout is not None else "utf8",
@@ -443,7 +439,6 @@ def get_nb_commits(path=None, commandline=True):
 
         out, err = run_cmd(cmd,
                            wait=True,
-                           do_not_log=True,
                            encerror="strict",
                            encoding=sys.stdout.encoding if sys.version_info[
                                0] != 2 and sys.stdout is not None else "utf8",

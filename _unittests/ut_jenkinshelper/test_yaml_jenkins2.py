@@ -39,12 +39,12 @@ class TestYamlJenkins2(unittest.TestCase):
 
         srv = JenkinsExt(
             "http://localhost:8080/", "user", "password", mock=True,
-            engines=default_engines(), fLOG=fLOG)
+            engines=default_engines(), fLOG=fLOG, platform="win")
 
         fLOG("---------------------")
         res = setup_jenkins_server_yml(srv, github="sdpython", modules=default_jenkins_jobs(),
                                        overwrite=True, add_environ=False,
-                                       location="anything", yml_platform="win")
+                                       location="anything")
         reg = re.compile("<description>(.*)</description>")
         nb = 0
         sch = 0

@@ -863,4 +863,4 @@ def _process_sphinx_in_private_cmd(list_args, fLOG):
     sargs = " ".join(res)
     cmd = '"{0}" "{1}" {2}'.format(sys.executable, this, sargs)
     fLOG("    ", cmd)
-    return run_cmd(cmd, wait=True)
+    return run_cmd(cmd, wait=True, fLOG=fLOG, communicate=False)

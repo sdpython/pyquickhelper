@@ -85,7 +85,7 @@ class TestYamlJenkins(unittest.TestCase):
 
         srv = JenkinsExt(
             "http://localhost:8080/", "user", "password", mock=True,
-            engines=engines, fLOG=fLOG)
+            engines=engines, fLOG=fLOG, platform="win")
 
         if not sys.platform.startswith("win"):
             # not yet implemented
@@ -94,7 +94,7 @@ class TestYamlJenkins(unittest.TestCase):
         fLOG("---------------------")
         res = srv.setup_jenkins_server(github=github, modules=modules,
                                        overwrite=True, add_environ=False,
-                                       location="anything", yml_platform="win")
+                                       location="anything")
         reg = re.compile("<description>(.*)</description>")
         nb = 0
         sch = 0
