@@ -166,6 +166,12 @@ class TestYaml(unittest.TestCase):
             python setup.py unittests
             if %errorlevel% neq 0 exit /b %errorlevel%
 
+            @echo AFTER_SCRIPT
+            set PATH=ROOT\%NAME_JENKINS%\_venv\Scripts;%PATH%
+            python setup.py bdist_wheel
+            copy dist\*.whl ..\..\local_pypi\local_pypi_server
+            if %errorlevel% neq 0 exit /b %errorlevel%
+
             @echo DOCUMENTATION
             set PATH=ROOT\\%NAME_JENKINS%\\_venv\\Scripts;%PATH%
             python setup.py build_sphinx
