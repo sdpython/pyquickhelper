@@ -98,10 +98,11 @@ def decode_outerr(outerr, encoding, encerror, msg):
     raise Exception("complete issue with cmd:" + typstr(msg))
 
 
-def skip_run_cmd(cmd, sin="", shell=True, wait=False, log_error=True, secure=None,
-                 stop_waiting_if=None, encerror="ignore",
+def skip_run_cmd(cmd, sin="", shell=True, wait=False, log_error=True,
+                 stop_running_if=None, encerror="ignore",
                  encoding="utf8", change_path=None, communicate=True,
-                 preprocess=True, timeout=None, catch_exit=False, fLOG=None):
+                 preprocess=True, timeout=None, catch_exit=False, fLOG=None,
+                 timeout_listen=None, tell_if_no_output=600):
     """
     has the same signature as @see fn run_cmd but does nothing
 
@@ -110,10 +111,10 @@ def skip_run_cmd(cmd, sin="", shell=True, wait=False, log_error=True, secure=Non
     return "", ""
 
 
-def run_cmd(cmd, sin="", shell=True, wait=False, log_error=True, secure=None,
-            stop_waiting_if=None, encerror="ignore", encoding="utf8",
+def run_cmd(cmd, sin="", shell=True, wait=False, log_error=True,
+            stop_running_if=None, encerror="ignore", encoding="utf8",
             change_path=None, communicate=True, preprocess=True, timeout=None, catch_exit=False,
-            fLOG=None):
+            fLOG=None, tell_if_no_output=None):
     """
     run a command line and wait for the result
     @param      cmd                 command line
@@ -121,10 +122,12 @@ def run_cmd(cmd, sin="", shell=True, wait=False, log_error=True, secure=None,
     @param      shell               if True, cmd is a shell command (and no command window is opened)
     @param      wait                call ``proc.wait``
     @param      log_error           if log_error, call fLOG (error)
-    @param      secure              if secure is a string (a valid filename), the function stores the output in a file
-                                    and reads it continuously
-    @param      stop_waiting_if     the function stops waiting if some condition is fulfilled.
+    @param      stop_running_if     the function stops waiting if some condition is fulfilled.
                                     The function received the last line from the logs.
+                                    Signature: ``stop_waiting_if(last_out, last_err) -> bool``.
+                                    The function must return True to stop waiting.
+                                    This function can also be used to intercept the standard output
+                                    and the standard error while running.
     @param      encerror            encoding errors (ignore by default) while converting the output into a string
     @param      encoding            encoding of the output
     @param      change_path         change the current path if  not None (put it back after the execution)
@@ -147,6 +150,20 @@ def run_cmd(cmd, sin="", shell=True, wait=False, log_error=True, secure=None,
 
     If you are using this function to run git function, parameter ``shell`` must be True.
 
+    .. todoext::
+        :title: refactor run_cmd
+        :tag: bug
+        :cost: 2
+        :date: 2016-08-25
+        :issue: 33
+        :hidden:
+        :release:1.4
+
+        Some options were not implemented, unused parameters were removed.
+        When communicate is False, the command is run within a thread which gives
+        more freedom to the main program to listen or stop the command line
+        execution.
+
     .. versionchanged:: 0.9
         parameters *timeout*, *fLOG* were added,
         the function now works with stdin
@@ -155,20 +172,12 @@ def run_cmd(cmd, sin="", shell=True, wait=False, log_error=True, secure=None,
         Catches *SystemExit* exception. Add parameter *catch_exit*.
 
     .. versionchanged:: 1.4
-        Changed *fLOG* default value to None. Remove parameter *do_not_log*.
+        Changed *fLOG* default value to None. Remove parameter *do_not_log*, *secure*, *stop_waiting_if*.
+        Implements parameter *stop_running_if*.
         Improve the behavior of the function.
         See `Constantly print Subprocess output while process is running <http://stackoverflow.com/questions/4417546/constantly-print-subprocess-output-while-process-is-running/4417735>`_.
+        Parameter *tell_if_no_output*, *stop_running_if* were added.
     """
-    if secure is not None:
-        with open(secure, "w") as f:
-            f.write("")
-        add = ">%s" % secure
-        if isinstance(cmd, str  # unicode#
-                      ):
-            cmd += " " + add
-        else:
-            cmd.append(add)
-
     if fLOG is not None:
         fLOG("execute", cmd)
 
@@ -237,6 +246,12 @@ def run_cmd(cmd, sin="", shell=True, wait=False, log_error=True, secure=None,
         skip_waiting = False
 
         if communicate:
+            if tell_if_no_output is not None:
+                raise NotImplementedError(
+                    "tell_if_no_output is not implemented when communicate is True")
+            if stop_running_if is not None:
+                raise NotImplementedError(
+                    "stop_running_if is not implemented when communicate is True")
             input = sin if sin is None else sin.encode()
             if input is not None and len(input) > 0:
                 if fLOG is not None:
@@ -245,6 +260,9 @@ def run_cmd(cmd, sin="", shell=True, wait=False, log_error=True, secure=None,
             if catch_exit:
                 try:
                     if sys.version_info[0] == 2:
+                        if timeout is not None:
+                            raise NotImplementedError(
+                                "timeout is only available with Python 2")
                         stdoutdata, stderrdata = pproc.communicate(input=input)
                     else:
                         stdoutdata, stderrdata = pproc.communicate(
@@ -253,6 +271,9 @@ def run_cmd(cmd, sin="", shell=True, wait=False, log_error=True, secure=None,
                     raise RunCmdException("SystemExit raised (3)") from e
             else:
                 if sys.version_info[0] == 2:
+                    if timeout is not None:
+                        raise NotImplementedError(
+                            "timeout is only available with Python 2")
                     stdoutdata, stderrdata = pproc.communicate(input=input)
                 else:
                     stdoutdata, stderrdata = pproc.communicate(
@@ -269,77 +290,63 @@ def run_cmd(cmd, sin="", shell=True, wait=False, log_error=True, secure=None,
                     "communicate should be True to send something on stdin")
             stdout, stderr = pproc.stdout, pproc.stderr
 
-            if secure is None:
-                if False:
-                    # version without thread, still blocked, unused
-                    lines_iterator = iter(stdout.readline, b"")
-                    while pproc.poll() is None:
-                        for line in lines_iterator:
-                            decol = decode_outerr(
-                                line, encoding, encerror, cmd)
-                            if fLOG is not None:
-                                fLOG(decol.strip("\n\r"))
+            begin = time.clock()
+            last_update = begin
+            # with threads
+            (stdoutReader, stdoutQueue) = _AsyncLineReader.getForFd(stdout)
+            (stderrReader, stderrQueue) = _AsyncLineReader.getForFd(stderr)
+            runloop = True
 
-                            out.append(decol.strip("\n\r"))
-                            if stop_waiting_if is not None and stop_waiting_if(decol):
-                                skip_waiting = True
-                                break
-                            print(pproc.poll())
-                            if line == b'' and pproc.poll() is not None:
-                                break
-                else:
-                    # with threads
-                    (stdoutReader, stdoutQueue) = _AsyncLineReader.getForFd(stdout)
-                    (stderrReader, stderrQueue) = _AsyncLineReader.getForFd(stderr)
+            while (not stdoutReader.eof() or not stderrReader.eof()) and runloop:
+                while not stdoutQueue.empty():
+                    line = stdoutQueue.get()
+                    decol = decode_outerr(
+                        line, encoding, encerror, cmd)
+                    if fLOG is not None:
+                        fLOG(decol.strip("\n\r"))
+                    out.append(decol.strip("\n\r"))
+                    last_update = time.clock()
+                    if stop_running_if is not None and stop_running_if(decol, None):
+                        runloop = False
+                        break
 
-                    while not stdoutReader.eof() or not stderrReader.eof():
-                        while not stdoutQueue.empty():
-                            line = stdoutQueue.get()
-                            decol = decode_outerr(
-                                line, encoding, encerror, cmd)
-                            if fLOG is not None:
-                                fLOG(decol.strip("\n\r"))
-                            out.append(decol.strip("\n\r"))
+                while not stderrQueue.empty():
+                    line = stderrQueue.get()
+                    decol = decode_outerr(
+                        line, encoding, encerror, cmd)
+                    if fLOG is not None:
+                        fLOG(decol.strip("\n\r"))
+                    err.append(decol.strip("\n\r"))
+                    last_update = time.clock()
+                    if stop_running_if is not None and stop_running_if(None, decol):
+                        runloop = False
+                        break
+                time.sleep(0.05)
 
-                        while not stderrQueue.empty():
-                            line = stderrQueue.get()
-                            decol = decode_outerr(
-                                line, encoding, encerror, cmd)
-                            if fLOG is not None:
-                                fLOG(decol.strip("\n\r"))
-                            err.append(decol.strip("\n\r"))
-                        time.sleep(0.05)
+                delta = time.clock() - last_update
+                if tell_if_no_output is not None and delta >= tell_if_no_output:
+                    fLOG("[run_cmd] No update in {0} seconds".format(delta))
 
-                    # Waiting for async readers to finish...
-                    stdoutReader.join()
-                    stderrReader.join()
+            if runloop:
+                # Waiting for async readers to finish...
+                stdoutReader.join()
+                stderrReader.join()
 
-                    # Waiting for process to exit...
-                    returnCode = pproc.wait()
-                    err_read = True
+                # Waiting for process to exit...
+                returnCode = pproc.wait()
+                err_read = True
 
-                    if returnCode != 0:
-                        raise subprocess.CalledProcessError(returnCode, cmd)
+                if returnCode != 0:
+                    raise subprocess.CalledProcessError(returnCode, cmd)
+
+                if not skip_waiting:
+                    pproc.wait()
             else:
-                last = []
-                while pproc.poll() is None:
-                    if os.path.exists(secure):
-                        with open(secure, "r") as f:
-                            lines = f.readlines()
-                        if len(lines) > len(last):
-                            for line in lines[len(last):]:
-                                if fLOG is not None:
-                                    fLOG(line.strip("\n\r"))
-                                out.append(line.strip("\n\r"))
-                            last = lines
-                        if stop_waiting_if is not None and len(
-                                last) > 0 and stop_waiting_if(last[-1]):
-                            skip_waiting = True
-                            break
-                    time.sleep(0.1)
-
-            if not skip_waiting:
-                pproc.wait()
+                out.append("[run_cmd] killing process.")
+                fLOG("[run_cmd] killing process because stop_running_if returned True.")
+                pproc.kill()
+                err_read = True
+                fLOG("[run_cmd] process killed.")
 
             out = "\n".join(out)
             if err_read:
@@ -354,6 +361,7 @@ def run_cmd(cmd, sin="", shell=True, wait=False, log_error=True, secure=None,
             stdout.close()
             stderr.close()
 
+        # same path for whether communicate is False or True
         err = err.replace("\r\n", "\n")
         if fLOG is not None:
             fLOG("end of execution", cmd)

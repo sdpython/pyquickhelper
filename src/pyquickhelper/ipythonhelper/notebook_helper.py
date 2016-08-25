@@ -409,6 +409,8 @@ def remove_execution_number(infile, outfile=None, encoding="utf-8", indent=2):
         :issue: 18
         :cost: 1
         :hidden:
+        :date: 2016-08-23
+        :release: 1.4
 
         Remove execution number from the notebook
         to avoid commiting changes only about those numbers

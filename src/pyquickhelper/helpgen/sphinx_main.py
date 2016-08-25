@@ -229,6 +229,9 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
         :tag: enhancement
         :issue: 9
         :cost: 1
+        :release: 1.4
+        :date: 2016-08-23
+        :hidden:
 
         When there are too many notebooks, the notebook index is difficult to read.
 
@@ -237,7 +240,10 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
         :title: replace command line by direct call to sphinx, nbconvert, nbpresent
         :tag: enhancement
         :issue: 30
-        :cost: 1
+        :cost: 3
+        :release: 1.4
+        :date: 2016-08-25
+        :hidden:
 
         It does not require to get script location.
         Not enough stable from virtual environment.
@@ -863,4 +869,4 @@ def _process_sphinx_in_private_cmd(list_args, fLOG):
     sargs = " ".join(res)
     cmd = '"{0}" "{1}" {2}'.format(sys.executable, this, sargs)
     fLOG("    ", cmd)
-    return run_cmd(cmd, wait=True, fLOG=fLOG, communicate=False)
+    return run_cmd(cmd, wait=True, fLOG=fLOG, communicate=False, tell_if_no_output=600)

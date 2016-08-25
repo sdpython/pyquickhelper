@@ -9,6 +9,7 @@
     :cost: 0.1
     :date: 2016-07-25
     :issue: 24
+    :release: 1.4
 
     Example::
 

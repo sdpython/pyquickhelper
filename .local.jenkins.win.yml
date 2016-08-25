@@ -12,15 +12,15 @@ install:
   - pip install -r requirements.txt
   - pip freeze
 before_script:
-  - if [ ${VERSION} == "2.7" ] then python setup.py copy27 fi
+  - if [ ${VERSION} == "2.7" ] then {{Python35}}\python setup.py copy27 fi
   - if [ ${VERSION} == "2.7" ] then cd dist_module27 fi
 script:
   - { CMD: "python setup.py unittests", NAME: "UT" }
 after_script:
   - python setup.py bdist_wheel
-  - if [ ${VERSION} == "2.7" ] then copy dist\*.whl ..\..\..\local_pypi\local_pypi_server fi
+  - if [ ${VERSION} == "2.7" and ${DIST} != "conda" ] then copy dist\*.whl ..\..\..\local_pypi\local_pypi_server fi
   - if [ ${VERSION} == "2.7" ] then cd .. fi
-  - if [ ${VERSION} != "2.7" ] then copy dist\*.whl ..\..\local_pypi\local_pypi_server fi
+  - if [ ${VERSION} != "2.7" and ${DIST} != "conda" and ${VERSION} != "3.4" ] then copy dist\*.whl ..\..\local_pypi\local_pypi_server fi
 documentation:
   - if [ ${PYTHON} == "{{Python35}}" ] then
     python setup.py build_sphinx
