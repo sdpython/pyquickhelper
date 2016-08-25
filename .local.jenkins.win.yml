@@ -17,7 +17,10 @@ before_script:
 script:
   - { CMD: "python setup.py unittests", NAME: "UT" }
 after_script:
+  - python setup.py bdist_wheel
+  - if [ ${VERSION} == "2.7" ] copy dist\*.whl ..\..\..\local_pypi\local_pypi_server
   - if [ ${VERSION} == "2.7" ] then cd .. fi
+  - if [ ${VERSION} != "2.7" ] copy dist\*.whl ..\..\local_pypi\local_pypi_server
 documentation:
   - if [ ${PYTHON} == "{{Python35}}" ] then
     python setup.py build_sphinx
