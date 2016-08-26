@@ -178,6 +178,14 @@ class TestYaml(unittest.TestCase):
             set PATH=ROOT\\%NAME_JENKINS%\\_venv\\Scripts;%PATH%
             python setup.py build_sphinx
             if %errorlevel% neq 0 exit /b %errorlevel%
+            xcopy /E /C /I /Y _doc\\sphinxdoc\\build\\html dist\\html
+            if %errorlevel% neq 0 exit /b %errorlevel%
+            xcopy /E /C /I /Y _doc\\sphinxdoc\\build\\epub dist\\epub
+            if %errorlevel% neq 0 exit /b %errorlevel%
+            copy _doc\\sphinxdoc\\build\\htmlhelp\\*.chm dist\\html
+            if %errorlevel% neq 0 exit /b %errorlevel%
+            xcopy /E /C /I /Y _doc\\sphinxdoc\\build\\latex\\*.pdf dist\\html
+            if %errorlevel% neq 0 exit /b %errorlevel%
             """.replace("            ", "").strip("\n \t\r")
             val = conv.strip("\n \t\r")
             if expected != val:
