@@ -73,7 +73,11 @@ def load_yaml(file_or_buffer, context=None, engine="jinja2", platform=None):
         context["project_name"] = project_name
 
     content = apply_template(content, context, engine)
-    return yaml.load(content), project_name
+    try:
+        return yaml.load(content), project_name
+    except Exception as e:
+        raise SyntaxError(
+            "unable to parse content\n{0}".format(content)) from e
 
 
 def evaluate_condition(cond, variables=None):
@@ -133,7 +137,19 @@ def interpret_instruction(inst, variables=None):
         if find:
             gr = find.groups()
             e = evaluate_condition(gr[0], variables)
-            return gr[1] if e else gr[3]
+            g = gr[1] if e else gr[3]
+            return None if g is None else interpret_instruction(g, variables)
+        elif inst.startswith('--'):
+            # one format like --CMD=...; --NAME==...;
+            exp = re.compile("--([a-zA-Z]+?)=(.+?);")
+            find = exp.findall(inst)
+            if find:
+                inst = {k.strip(): v.strip() for k, v in find}
+                inst = {k: (None if not v or len(v) == 0 else v)
+                        for k, v in inst.items()}
+                return inst
+            else:
+                return inst
         else:
             return inst
 
@@ -216,7 +232,7 @@ def enumerate_convert_yaml_into_instructions(obj, variables=None, add_environ=Tr
                             seq.append(('INFO', (k, v)))
                     value = value["PATH"]
             elif key == "script":
-                value = value[i_script]
+                value = interpret_instruction(value[i_script], variables)
                 if isinstance(value, dict) and "NAME" in value:
                     seq.append(('INFO', ('NAME', value["NAME"])))
                     variables["NAME"] = value["NAME"]

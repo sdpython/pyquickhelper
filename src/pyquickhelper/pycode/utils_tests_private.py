@@ -20,6 +20,7 @@ from ..loghelper.flog import run_cmd, noLOG
 if sys.version_info[0] == 2:
     from StringIO import StringIO
     FileNotFoundError = Exception
+    from codecs import open
 else:
     from io import StringIO
 
@@ -132,7 +133,11 @@ def get_estimation_time(file):
         except Exception as ee:
             raise Exception("issue with %s\n%s" % (file, str(ee)))
 
-    s = ''.join(li)
+    try:
+        s = ''.join(li)
+    except Exception as e:
+        raise Exception(
+            "Probably an econding issue for file '{0}'\n{1}".format(file, e)) from e
     c = re.compile("[(]time=([0-9]+)s[)]").search(s)
     if c is None:
         return 0

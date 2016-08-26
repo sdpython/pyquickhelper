@@ -37,6 +37,11 @@ before_script:
 # Variable NAME is added to the Job name on Jenkins in order to distinguish them.
 script:
   - { CMD: "python setup.py unittests", NAME: "UT" }
+  - if [ ${VERSION} == "3.5" and ${DIST} == "std" ]
+      then 
+        --CMD=python setup.py build_sphinx;
+        --NAME=DOC;
+      fi
 
 # To run after the script.
 after_script:

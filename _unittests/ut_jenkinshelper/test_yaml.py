@@ -98,7 +98,7 @@ class TestYaml(unittest.TestCase):
                 raise Exception(r)
             if r[0][0] != "python" and r[0][0] != "INFO":
                 raise Exception(r)
-        if len(res) != 3:
+        if len(res) != 4:
             rows = [str(_) for _ in res]
             raise Exception("\n".join(rows))
 
@@ -133,13 +133,16 @@ class TestYaml(unittest.TestCase):
         obj, name = load_yaml(yml, context=context, platform=platform)
         assert name is not None
         res = list(enumerate_convert_yaml_into_instructions(obj))
+        convs = []
         for r, v in res:
             conv = convert_sequence_into_batch_file(
                 r, variables=v, platform=platform)
             # fLOG("####", conv)
+            convs.append(conv)
             assert isinstance(conv, str)
         assert len(res) > 0
 
+        conv = [_ for _ in convs if "SET NAME=UT" in _ and "VERSION=3.5" in _][0]
         if platform.startswith("win"):
             expected = """
             @echo off
@@ -185,6 +188,51 @@ class TestYaml(unittest.TestCase):
             copy _doc\\sphinxdoc\\build\\htmlhelp\\*.chm dist\\html
             if %errorlevel% neq 0 exit /b %errorlevel%
             xcopy /E /C /I /Y _doc\\sphinxdoc\\build\\latex\\*.pdf dist\\html
+            if %errorlevel% neq 0 exit /b %errorlevel%
+            """.replace("            ", "").strip("\n \t\r")
+            val = conv.strip("\n \t\r")
+            if expected != val:
+                mes = "EXP:\n{0}\n###########\nGOT:\n{1}".format(expected, val)
+                for a, b in zip(expected.split("\n"), val.split("\n")):
+                    if a != b:
+                        raise Exception(
+                            "error on line:\nEXP:\n{0}\nGOT:\n{1}\n#######\n{2}".format(a, b, mes))
+                raise Exception(mes)
+
+        conv = [_ for _ in convs if "SET NAME=DOC" in _]
+        if len(conv) != 1:
+            raise Exception("################################".format(conv))
+        conv = conv[0]
+        if platform.startswith("win"):
+            expected = """
+            @echo off
+            set PATH0=%PATH%
+            SET DIST=std
+            SET VERSION=3.5
+            SET NAME=DOC
+            @echo interpreter=C:\\Python35_x64\\python
+
+            @echo CREATE VIRTUAL ENVIRONMENT in ROOT\\%NAME_JENKINS%\\_venv
+            if not exist "ROOT\\%NAME_JENKINS%\\_venv" mkdir "ROOT\\%NAME_JENKINS%\\_venv"
+            "C:\\Python35_x64\\Scripts\\virtualenv" --system-site-packages "ROOT\\%NAME_JENKINS%\\_venv"
+            if %errorlevel% neq 0 exit /b %errorlevel%
+
+            @echo INSTALL
+            set PATH=ROOT\\%NAME_JENKINS%\\_venv\\Scripts;%PATH%
+            pip install -r requirements.txt
+            if %errorlevel% neq 0 exit /b %errorlevel%
+            pip freeze
+            if %errorlevel% neq 0 exit /b %errorlevel%
+            set JOB_NAME=DOC
+
+            @echo SCRIPT
+            set PATH=ROOT\\%NAME_JENKINS%\\_venv\\Scripts;%PATH%
+            python setup.py build_sphinx
+            if %errorlevel% neq 0 exit /b %errorlevel%
+
+            @echo AFTER_SCRIPT
+            set PATH=ROOT\%NAME_JENKINS%\_venv\Scripts;%PATH%
+            python setup.py bdist_wheel
             if %errorlevel% neq 0 exit /b %errorlevel%
             """.replace("            ", "").strip("\n \t\r")
             val = conv.strip("\n \t\r")
