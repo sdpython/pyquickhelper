@@ -70,14 +70,13 @@ class TestJenkinsExt(unittest.TestCase):
 
         srv = JenkinsExt(
             "http://localhost:8080/", "user", "password",
-            mock=True, fLOG=fLOG)
+            mock=True, fLOG=fLOG, platform="win")
         github = "https://github.com/sdpython/"
 
         conf = srv.create_job_template("pyquickhelper",
                                        git_repo=github +
                                        "%s/" % "pyquickhelper",
                                        upstreams=None,
-                                       platform="win",
                                        location=r"/home/username/jenkins/")
 
         assert "auto_unittest_setup_help.bat" in conf

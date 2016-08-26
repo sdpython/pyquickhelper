@@ -55,8 +55,14 @@ class TestfLOGPrivate(unittest.TestCase):
         f1 = URL.urlopen(url)
         r = _first_more_recent(f1, dest)
         f1.close()
-
         assert isinstance(r, bool)
+
+        url = "http://www.lemonde.fr/"
+        f1 = URL.urlopen(url)
+        r = _first_more_recent(f1, dest)
+        f1.close()
+        assert isinstance(r, bool)
+        fLOG(r)
 
 
 if __name__ == "__main__":

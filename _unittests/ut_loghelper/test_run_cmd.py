@@ -79,6 +79,25 @@ class TestRunCmd(unittest.TestCase):
         if len(counts["err"]) > 0:
             raise Exception(counts["err"])
 
+    def test_run_cmd_more(self):
+        fLOG(
+            __file__,
+            self._testMethodName,
+            OutputPrint=__name__ == "__main__")
+
+        cmd = "more " + os.path.abspath(__file__)
+
+        try:
+            run_cmd(cmd, wait=True, communicate=False,
+                    tell_if_no_output=600, fLOG=fLOG, sin="\n\n\n" * 100)
+        except:
+            pass
+
+        out, err = run_cmd(cmd, wait=True, communicate=True,
+                           fLOG=fLOG, sin="\n\n\n" * 100)
+        assert len(out) > 10
+        assert len(err) == 0
+
 
 if __name__ == "__main__":
     unittest.main()

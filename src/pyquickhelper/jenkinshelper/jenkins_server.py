@@ -659,6 +659,9 @@ class JenkinsExt(jenkins.Jenkins):
         .. versionchanged:: 1.4
             Parameter *adjust_scheduler* was added to delayed some jobs if a spot is already taken.
         """
+        if 'platform' in kwargs:
+            raise NameError(
+                "Parameter 'platform' should be set up in the constructor.")
         if script is None:
             if self.platform.startswith("win"):
                 if default_engine_paths is None and "default" in self.engines:

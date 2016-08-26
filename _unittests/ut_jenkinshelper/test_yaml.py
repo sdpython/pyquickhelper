@@ -157,6 +157,7 @@ class TestYaml(unittest.TestCase):
             @echo INSTALL
             set PATH=ROOT\\%NAME_JENKINS%\\_venv\\Scripts;%PATH%
             pip install -r requirements.txt
+            if %errorlevel% neq 0 exit /b %errorlevel%
             pip freeze
             if %errorlevel% neq 0 exit /b %errorlevel%
             set JOB_NAME=UT
@@ -169,6 +170,7 @@ class TestYaml(unittest.TestCase):
             @echo AFTER_SCRIPT
             set PATH=ROOT\%NAME_JENKINS%\_venv\Scripts;%PATH%
             python setup.py bdist_wheel
+            if %errorlevel% neq 0 exit /b %errorlevel%
             copy dist\*.whl ..\..\local_pypi\local_pypi_server
             if %errorlevel% neq 0 exit /b %errorlevel%
 
@@ -234,12 +236,14 @@ class TestYaml(unittest.TestCase):
             @echo INSTALL
             set PATH=ROOT\\%NAME_JENKINS%\\_venv\\Scripts;%PATH%
             pip install -r requirements.txt
+            if %errorlevel% neq 0 exit /b %errorlevel%
             pip freeze
             if %errorlevel% neq 0 exit /b %errorlevel%
 
             @echo BEFORE_SCRIPT
             set PATH=ROOT\\%NAME_JENKINS%\\_venv\\Scripts;%PATH%
             C:\\Python35_x64\\python setup.py copy27
+            if %errorlevel% neq 0 exit /b %errorlevel%
             cd dist_module27
             if %errorlevel% neq 0 exit /b %errorlevel%
             set JOB_NAME=UT
@@ -252,7 +256,9 @@ class TestYaml(unittest.TestCase):
             @echo AFTER_SCRIPT
             set PATH=ROOT\\%NAME_JENKINS%\\_venv\\Scripts;%PATH%
             python setup.py bdist_wheel
+            if %errorlevel% neq 0 exit /b %errorlevel%
             copy dist\\*.whl ..\\..\\..\\local_pypi\\local_pypi_server
+            if %errorlevel% neq 0 exit /b %errorlevel%
             cd ..
             if %errorlevel% neq 0 exit /b %errorlevel%
             """.replace("            ", "").strip("\n \t\r")

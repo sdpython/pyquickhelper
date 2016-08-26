@@ -614,8 +614,8 @@ def _first_more_recent(f1, path):
     if gr is None:
         return True
     gr = gr.groups()
-    da = datetime.datetime(int(gr[2]), flog_static.store_log_values["month_date"][gr[1].lower()], int(gr[0]),
-                           int(gr[3]), int(gr[4]), int(gr[5]))
+    dau = datetime.datetime(int(gr[2]), flog_static.store_log_values["month_date"][gr[1].lower()], int(gr[0]),
+                            int(gr[3]), int(gr[4]), int(gr[5]))
 
     p = time.ctime(os.path.getmtime(path))
     gr = re.compile(
@@ -627,8 +627,7 @@ def _first_more_recent(f1, path):
                            int(gr[2]), int(gr[3]), int(gr[4]))
 
     file = da
-
-    return da > file
+    return dau > file
 
 
 def _check_url_file(url, path_download, outfile):

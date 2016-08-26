@@ -380,9 +380,14 @@ def convert_sequence_into_batch_file(seq, variables=None, platform=None):
                 rows.append(echo + " " + key.upper())
                 add_path_win(rows, interpreter, pip, platform)
                 if not isinstance(value, list):
-                    value = [value]
+                    value = [value, error_level]
+                else:
+                    keep = value
+                    value = []
+                    for v in keep:
+                        value.append(v)
+                        value.append(error_level)
                 rows.extend(value)
-                rows.append(error_level)
         elif key == 'INFO':
             rowsset.append("SET {0}={1}".format(value[0], value[1]))
         else:

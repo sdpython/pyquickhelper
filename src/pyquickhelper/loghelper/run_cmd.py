@@ -186,54 +186,26 @@ def run_cmd(cmd, sin="", shell=True, wait=False, log_error=True,
         os.chdir(change_path)
 
     if sys.platform.startswith("win"):
+        cmdl = cmd
 
-        startupinfo = subprocess.STARTUPINFO()
-        #startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
-
-        if catch_exit:
-            try:
-                pproc = subprocess.Popen(cmd,
-                                         shell=shell,
-                                         stdin=subprocess.PIPE if sin is not None and len(
-                                             sin) > 0 else None,
-                                         stdout=subprocess.PIPE if wait else None,
-                                         stderr=subprocess.PIPE if wait else None,
-                                         startupinfo=startupinfo)
-            except SystemExit as e:
-                raise RunCmdException("SystemExit raised (1)") from e
-
-        else:
-            pproc = subprocess.Popen(cmd,
-                                     shell=shell,
-                                     stdin=subprocess.PIPE if sin is not None and len(
-                                         sin) > 0 else None,
-                                     stdout=subprocess.PIPE if wait else None,
-                                     stderr=subprocess.PIPE if wait else None
-                                     # startupinfo=startupinfo)
-                                     )
-
-    else:
-        cmdl = split_cmp_command(cmd) if preprocess else cmd
-        if fLOG is not None:
-            fLOG("--linux", cmdl)
-
-        if catch_exit:
-            try:
-                pproc = subprocess.Popen(cmdl,
-                                         shell=shell,
-                                         stdin=subprocess.PIPE if sin is not None and len(
-                                             sin) > 0 else None,
-                                         stdout=subprocess.PIPE if wait else None,
-                                         stderr=subprocess.PIPE if wait else None)
-            except SystemExit as e:
-                raise RunCmdException("SystemExit raised (2)") from e
-        else:
+    if catch_exit:
+        try:
             pproc = subprocess.Popen(cmdl,
                                      shell=shell,
                                      stdin=subprocess.PIPE if sin is not None and len(
                                          sin) > 0 else None,
                                      stdout=subprocess.PIPE if wait else None,
                                      stderr=subprocess.PIPE if wait else None)
+        except SystemExit as e:
+            raise RunCmdException("SystemExit raised (1)") from e
+
+    else:
+        pproc = subprocess.Popen(cmdl,
+                                 shell=shell,
+                                 stdin=subprocess.PIPE if sin is not None and len(
+                                     sin) > 0 else None,
+                                 stdout=subprocess.PIPE if wait else None,
+                                 stderr=subprocess.PIPE if wait else None)
 
     if isinstance(cmd, list):
         cmd = " ".join(cmd)
@@ -325,7 +297,9 @@ def run_cmd(cmd, sin="", shell=True, wait=False, log_error=True,
 
                 delta = time.clock() - last_update
                 if tell_if_no_output is not None and delta >= tell_if_no_output:
-                    fLOG("[run_cmd] No update in {0} seconds".format(delta))
+                    last_update = time.clock()
+                    fLOG("[run_cmd] No update in {0} seconds".format(
+                        last_update - begin))
 
             if runloop:
                 # Waiting for async readers to finish...

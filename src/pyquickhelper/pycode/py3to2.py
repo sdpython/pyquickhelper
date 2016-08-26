@@ -165,7 +165,7 @@ def py3to2_convert(script, unittest_modules):
         try:
             with open(script, "r", encoding="utf8") as f:
                 content = f.read()
-        except UnicodeEncodeError:
+        except (UnicodeEncodeError, UnicodeDecodeError):
             with open(script, "r") as f:
                 content = f.read()
 
