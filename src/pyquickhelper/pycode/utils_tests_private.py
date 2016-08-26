@@ -126,7 +126,8 @@ def get_estimation_time(file):
         li = f.readlines()
         f.close()
     except Exception as e:
-        raise Exception("issue with %s\n%s" % (file, str(e)))
+        warnings.warn("issue with '{0}'\n{1}\n{2}".format(file, type(e), str(e)))
+        return 10
 
     try:
         s = ''.join(li)
