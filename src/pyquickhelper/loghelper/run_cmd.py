@@ -187,6 +187,8 @@ def run_cmd(cmd, sin="", shell=True, wait=False, log_error=True,
 
     if sys.platform.startswith("win"):
         cmdl = cmd
+    else:
+        cmdl = split_cmp_command(cmd) if preprocess else cmd
 
     if catch_exit:
         try:
