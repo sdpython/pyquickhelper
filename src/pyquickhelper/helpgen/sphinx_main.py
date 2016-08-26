@@ -687,7 +687,9 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
 
         existing = list(sorted(sys.modules.keys()))
         for ex in existing:
-            if ex not in list_modules_start:
+            if ex[0] == '_':
+                doesrem = False
+            elif ex not in list_modules_start:
                 doesrem = True
                 for pr in ('pywintypes', 'pandas', 'IPython', 'jupyter', 'numpy', 'scipy', 'matplotlib',
                            'pyquickhelper', 'yaml', 'xlsxwriter', '_csv',
@@ -704,12 +706,15 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
                            'sphinxcontrib', 'zmq', 'nbformat', 'nbpresent', 'nbconvert',
                            'encodings', 'entrypoints', 'html', 'ipykernel', 'isodate',
                            'jsonschema', 'jupyter_client', 'mistune', 'nbbrowserpdf',
-                           'notebook', 'pyparsing', 'zmq', 'jupyter_core',):
+                           'notebook', 'pyparsing', 'zmq', 'jupyter_core',
+                           'timeit', 'sphinxcontrib_images_lightbox2', 'win32con'):
                     if ex == pr or ex.startswith(pr + "."):
                         doesrem = False
-                if doesrem:
-                    fLOG("remove '{0}' from sys.modules".format(ex))
-                    del sys.modules[ex]
+            else:
+                doesrem = False
+            if doesrem:
+                fLOG("remove '{0}' from sys.modules".format(ex))
+                del sys.modules[ex]
 
         fLOG(
             "##################################################################################################")

@@ -8,6 +8,7 @@ import os
 import sys
 import datetime
 import shutil
+import subprocess
 
 from ..loghelper.flog import run_cmd, fLOG
 from ..loghelper.pyrepo_helper import SourceRepository
@@ -290,7 +291,7 @@ def compile_latex_output_final(root, latex_path, doall, afile=None, latex_book=F
                 c = '"{0}" "{1}" -output-directory="{2}"'.format(
                     lat, file, build)
             else:
-                c = '"{0}" "{1}" -interaction=batchmode -output-directory="{2}"'.format(
+                c = '"{0}" "{1}" -interaction=nonstopmode -output-directory="{2}"'.format(
                     lat, file, build)
             fLOG("~~~~ LATEX compilation (c)", c)
             post_process_latex_output(file, doall, latex_book=latex_book)
@@ -302,8 +303,12 @@ def compile_latex_output_final(root, latex_path, doall, afile=None, latex_book=F
             fLOG("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
             fLOG("~~~~ LATEX compilation (d)", c)
             fLOG("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
-            out, err = run_cmd(
-                c, wait=True, log_error=False, communicate=False)
+            try:
+                out, err = run_cmd(
+                    c, wait=True, log_error=False, communicate=False, fLOG=fLOG)
+            except subprocess.CalledProcessError:
+                fLOG("~~~~ LATEX ERROR: check the logs")
+                err = ""
             fLOG("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
             fLOG("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
             if len(err) > 0:

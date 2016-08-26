@@ -16,26 +16,12 @@ if sys.version_info[0] == 2:
     FileNotFoundError = Exception
 
 
-def set_sphinx_variables(fileconf,
-                         module_name,
-                         author,
-                         year,
-                         theme,
-                         theme_path,
-                         ext_locals,
-                         add_extensions=None,
-                         bootswatch_theme="spacelab",
-                         bootswatch_navbar_links=None,
-                         description_latex="",
-                         use_mathjax=False,
-                         use_lunrsearch=False,
+def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path, ext_locals,
+                         add_extensions=None, bootswatch_theme="spacelab", bootswatch_navbar_links=None,
+                         description_latex="", use_mathjax=False, use_lunrsearch=False,
                          enable_disabled_parts="enable_disabled_documented_pieces_of_code",
-                         sharepost="facebook-linkedin-twitter-20-body",
-                         custom_style=None,
-                         extlinks=None,
-                         github_user=None,
-                         github_repo=None,
-                         title=None,
+                         sharepost="facebook-linkedin-twitter-20-body", custom_style=None,
+                         extlinks=None, github_user=None, github_repo=None, title=None,
                          book=False):
     """
     defines variables for Sphinx
@@ -151,22 +137,21 @@ def set_sphinx_variables(fileconf,
     enable_disabled_parts = enable_disabled_parts
 
     # personnalization latex
+    _proj = project_var_name.replace("_", "\\_")
     latex_book = book
     latex_use_parts = False
-    latex_documents = [('index', '%s_doc.tex' % project_var_name,
-                        project_var_name if title is None else title,
+    latex_documents = [('index', '%s_doc.tex' % project_var_name, _proj if title is None else title,
                         author, 'manual', True), ]
     man_pages = [('index', '%s_doc' % project_var_name,
-                  ('%s Documentation' %
-                   project_var_name) if title is None else title,
+                  ('%s Documentation' % _proj) if title is None else title,
                   [author], 1)]
     texinfo_documents = [('index',
-                          ('%s_documentation' %
-                           project_var_name) if title is None else title,
-                          ('%s' % project_var_name) if title is None else title,
+                          ('%s documentation' %
+                           _proj) if title is None else title,
+                          ('%s' % _proj) if title is None else title,
                           author,
                           ('%s documentation' %
-                           project_var_name) if title is None else title,
+                           _proj) if title is None else title,
                           description_latex,
                           'Miscellaneous'),
                          ]
