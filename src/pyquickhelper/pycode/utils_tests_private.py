@@ -127,11 +127,16 @@ def get_estimation_time(file):
         f.close()
     except UnicodeDecodeError:
         try:
-            f = open(file, "r", encoding="latin-1")
+            f = open(file, "r", encoding="utf-8")
             li = f.readlines()
             f.close()
         except Exception as ee:
-            raise Exception("issue with %s\n%s" % (file, str(ee)))
+            try:
+                f = open(file, "r", encoding="latin-1")
+                li = f.readlines()
+                f.close()
+            except Exception as ee:
+                raise Exception("issue with %s\n%s" % (file, str(ee)))
 
     try:
         s = ''.join(li)
