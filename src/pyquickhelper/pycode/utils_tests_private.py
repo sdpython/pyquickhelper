@@ -126,14 +126,13 @@ def get_estimation_time(file):
         li = f.readlines()
         f.close()
     except Exception as e:
-        warnings.warn("issue with '{0}'\n{1}\n{2}".format(file, type(e), str(e)))
+        warnings.warn("issue with '{0}'\n{1}\n{2}".format(file, type(e), e))
         return 10
-
     try:
         s = ''.join(li)
     except Exception as e:
-        raise Exception(
-            "Probably an econding issue for file '{0}'\n{1}".format(file, e)) from e
+        warnings.warn("Probably an enconding issue for file '{0}'\n{1}\n{2}".format(file, type(e), e))
+        return 10
     c = re.compile("[(]time=([0-9]+)s[)]").search(s)
     if c is None:
         return 0
