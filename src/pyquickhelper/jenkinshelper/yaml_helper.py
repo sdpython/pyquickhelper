@@ -476,6 +476,7 @@ def enumerate_processed_yml(file_or_buffer, context=None, engine="jinja2", platf
 
     Example of a yml file `.local.jenkins.win.yml <https://github.com/sdpython/pyquickhelper/blob/master/.local.jenkins.win.yml>`_.
     """
+    typstr = str  # unicode#
     fLOG = kwargs.get('fLOG', None)
     project_name = None if context is None else context.get(
         "project_name", None)
@@ -487,7 +488,7 @@ def enumerate_processed_yml(file_or_buffer, context=None, engine="jinja2", platf
 
         # we extract a suffix from the command line
         if server is not None:
-            name = "_".join([project_name, var.get('NAME', ''), str(var.get("VERSION", '')).replace(".", ""),
+            name = "_".join([project_name, var.get('NAME', ''), typstr(var.get("VERSION", '')).replace(".", ""),
                              var.get('DIST', '')])
             conv = "SET NAME_JENKINS=" + name + "\n" + conv
             import jenkins

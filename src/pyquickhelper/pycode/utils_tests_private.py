@@ -131,7 +131,8 @@ def get_estimation_time(file):
     try:
         s = ''.join(li)
     except Exception as e:
-        warnings.warn("Probably an enconding issue for file '{0}'\n{1}\n{2}".format(file, type(e), e))
+        warnings.warn(
+            "Probably an enconding issue for file '{0}'\n{1}\n{2}".format(file, type(e), e))
         return 10
     c = re.compile("[(]time=([0-9]+)s[)]").search(s)
     if c is None:

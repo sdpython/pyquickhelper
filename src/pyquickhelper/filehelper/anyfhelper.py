@@ -157,6 +157,7 @@ def read_content_ufs(file_url_stream, encoding="utf8", asbytes=False, add_source
 
     .. versionchanged:: 1.4
         Parameter *add_source* was added.
+        The returned *source* is not reliable on Python 2.7.
     """
     if isinstance(file_url_stream, str  # unicode#
                   ):

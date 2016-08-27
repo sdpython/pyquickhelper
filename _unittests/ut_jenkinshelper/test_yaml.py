@@ -278,7 +278,9 @@ class TestYaml(unittest.TestCase):
             conv = convert_sequence_into_batch_file(
                 r, variables=v, platform=platform)
             # fLOG("####", conv)
-            assert isinstance(conv, str)
+            typstr = str  # unicode#
+            if not isinstance(conv, typstr):
+                raise TypeError(type(conv))
             convs.append(conv)
         fLOG("number of jobs", len(res))
         convs = [_ for _ in convs if "VERSION=2.7" in _]
