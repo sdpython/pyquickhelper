@@ -134,11 +134,13 @@ class NotebookRunner(object):
                 # I did not find a way to make it work
                 args = None
                 warnings.warn("args is not None: {0}, unable to use it in Python 2.7".format(args))
-            try:
-                self.km.start_kernel(extra_arguments=args)
-            except Exception as e:
-                raise Exception(
-                    "Failure with args: {0}\nand error:\n{1}".format(args, str(e))) from e
+                self.km.start_kernel()
+            else:
+                try:
+                    self.km.start_kernel(extra_arguments=args)
+                except Exception as e:
+                    raise Exception(
+                        "Failure with args: {0}\nand error:\n{1}".format(args, str(e))) from e
 
             if platform.system() == 'Darwin':
                 # see http://www.pypedia.com/index.php/notebook_runner
