@@ -42,12 +42,15 @@ else:
 
     from pyquickhelper.loghelper import fLOG, get_url_content
     from pyquickhelper.serverdoc import run_doc_server
+    from pyquickhelper.pycode import is_travis_or_appveyor
 
 
 class TestDocumentationServer(unittest.TestCase):
 
     def test_server_start_run(self):
         if sys.version_info[0] == 2:
+            return
+        if is_travis_or_appveyor() == "appveyor":
             return
 
         fLOG(
