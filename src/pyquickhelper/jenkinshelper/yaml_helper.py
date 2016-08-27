@@ -55,8 +55,9 @@ def load_yaml(file_or_buffer, context=None, engine="jinja2", platform=None):
     content, source = read_content_ufs(file_or_buffer, add_source=True)
     project_name = infer_project_name(file_or_buffer, source)
 
-    def ospathjoinp(*l, platform=platform):
-        return ospathjoin(*l, platform=platform)
+    def ospathjoinp(*l, **kwargs):
+        p = kwargs.get('platform', platform)
+        return ospathjoin(*l, platform=p)
 
     if context is None:
         context = dict(replace=replace, ospathjoin=ospathjoinp,
@@ -253,7 +254,7 @@ def enumerate_convert_yaml_into_instructions(obj, variables=None, add_environ=Tr
                 yield r, variables
 
 
-def ospathjoin(*l, platform=None):
+def ospathjoin(*l, **kwargs):
     """
     simple ``o.path.join`` for a specific platform
 
@@ -261,6 +262,7 @@ def ospathjoin(*l, platform=None):
     @param      platform    platform
     @return                 path
     """
+    platform = kwargs.get('platform', None)
     if platform is None:
         return os.path.join(*l)
     elif platform.startswith("win"):
