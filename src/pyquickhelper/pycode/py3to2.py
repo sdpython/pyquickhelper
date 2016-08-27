@@ -88,7 +88,7 @@ def py3to2_convert_tree(folder, dest, encoding="utf8", pattern=".*[.]py$",
     .. versionadded:: 1.0
     """
     exclude = ("temp_", "dist", "_doc", "build", "extensions",
-               "nbextensions", "dist_module27", "_virtualenv")
+               "nbextensions", "dist_module27", "_virtualenv", "_venv")
     reg = re.compile(".*/ut_.*/.*/.*")
 
     conv = []

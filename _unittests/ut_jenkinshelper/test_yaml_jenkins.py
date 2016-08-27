@@ -79,7 +79,8 @@ class TestYamlJenkins(unittest.TestCase):
 
         if sys.version_info[0] == 2:
             modules = modules[:1]
-            warnings.warn("We don't test the url way on Python 2.7, too annoying.")
+            warnings.warn(
+                "We don't test the url way on Python 2.7, too annoying.")
 
         engines = dict(Python34="c:\\Python34_x64",
                        Python35=os.path.dirname(sys.executable),

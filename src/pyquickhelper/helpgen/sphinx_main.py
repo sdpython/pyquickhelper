@@ -642,14 +642,16 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
                     remove_folder(os.path.join(build, fold))
                 remove_folder(build)
 
-        over = [" -D {0}={1}".format(k, v) for k, v in override.items()]
-        over = "".join(over)
+        over_ = ["{0}={1}".format(k, v) for k, v in override.items()]
+        over = []
+        for o in over_:
+            over.append("-D")
+            over.append(o)
 
-        sconf = "" if newconf is None else " -c {0}".format(newconf)
+        sconf = [] if newconf is None else ["-c", newconf]
 
         cmd = ["sphinx-build", "-j", "2", "-v", "-T", "-b", "{0}".format(lay),
-               "-d", "{0}/doctrees{1}{2}".format(build, over, sconf),
-               "source", "{0}/{1}".format(build, lay)]
+               "-d", "{0}/doctrees".format(build)] + over + sconf + ["source", "{0}/{1}".format(build, lay)]
         cmds.append((cmd, build, lay))
         fLOG("~~~~ run:", cmd)
         lays.append(lay)
@@ -658,8 +660,7 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
             # we cannot execute htmlhelp in the same folder
             # as it changes the encoding
             cmd = ["sphinx-build", "-j", "2", "-v", "-T", "-b", "{0}help".format(lay),
-                   "-d", "{0}/doctrees{1}{2}".format(build, over, sconf),
-                   "source", "{0}/{1}html".format(build, lay)]
+                   "-d", "{0}/doctrees".format(build)] + over + sconf + ["source", "{0}/{1}html".format(build, lay)]
             cmds.append((cmd, build, "add_htmlhelp"))
             fLOG("~~~~ run:", cmd)
             lays.append(lay)
