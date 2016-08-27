@@ -261,8 +261,12 @@ def main_wrapper_tests(codefile, skip_list=None, processes=False, add_coverage=F
             fLOG("replace ", srcp, ' by ', project_var_name)
             srcp_s = [os.path.abspath(os.path.normpath(srcp)),
                       os.path.normpath(srcp)]
-            bsrcp = [bytes(b, encoding="utf-8") for b in srcp_s]
-            bproj = bytes(project_var_name, encoding="utf-8")
+            if sys.version_info[0] == 2:
+                bsrcp = [b.encode(encoding="utf-8") for b in srcp_s]
+                bproj = project_var_name.encode(encoding="utf-8")
+            else:
+                bsrcp = [bytes(b, encoding="utf-8") for b in srcp_s]
+                bproj = bytes(project_var_name, encoding="utf-8")
             for afile in os.listdir(report_folder):
                 full = os.path.join(report_folder, afile)
                 with open(full, "rb") as f:
