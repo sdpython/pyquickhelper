@@ -24,6 +24,7 @@ from .utils_tests_private import default_skip_function, main_run_test
 if sys.version_info[0] == 2:
     from StringIO import StringIO
     FileNotFoundError = Exception
+    from codecs import open
 else:
     from io import StringIO
 
