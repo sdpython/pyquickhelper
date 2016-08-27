@@ -9,6 +9,7 @@ import time
 import io
 import sys
 import platform
+import warnings
 from queue import Empty
 from time import sleep
 
@@ -129,8 +130,10 @@ class NotebookRunner(object):
             os.chdir(working_dir)
 
         if self.km is not None:
-            if sys.version_info[0] == 2:
-                args = [str(_) for _ in args]
+            if sys.version_info[0] == 2 and args is not None:
+                # I did not find a way to make it work
+                args = None
+                warnings.warn("args is not None: {0}, unable to use it in Python 2.7".format(args))
             try:
                 self.km.start_kernel(extra_arguments=args)
             except Exception as e:
