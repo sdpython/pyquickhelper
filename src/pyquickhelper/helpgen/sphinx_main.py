@@ -196,6 +196,13 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
     SVG included in a notebook (or any RST file) requires `Inkscape <https://inkscape.org/>`_
     to be converted into Latex.
 
+    .. faqref::
+        :title: How to dd an extra layer to the documentation?
+
+        The following `commit <https://github.com/sdpython/python3_module_template/commit/75d765a293f65a37b3208601d17d3b0daa891af6>`_
+        on project `python3_module_template <https://github.com/sdpython/python3_module_template/>`_
+        shows which changes needs to be done to add an extra layer of for the documentation.
+
     .. versionchanged:: 1.0
         Assumes IPython 3 is installed. It might no work for earlier versions (notebooks).
         Parameters *from_repo*, *use_run_cmd* were added.
