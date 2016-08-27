@@ -81,6 +81,16 @@ class TestSphinxDocFull (unittest.TestCase):
             fLOG("#################################################", i)
             fLOG("#################################################", i)
 
+            # we add access to pyquickhelper
+            p = os.path.abspath(os.path.dirname(src.__file__))
+            fLOG("PYTHONPATH=", p)
+            os.environ["PYTHONPATH"] = p
+            if p not in sys.path:
+                pos = len(sys.path)
+                sys.path.append(p)
+            else:
+                pos = -1
+
             if "conf" in sys.modules:
                 del sys.modules["conf"]
 
@@ -91,6 +101,14 @@ class TestSphinxDocFull (unittest.TestCase):
                                  extra_ext=["tohelp"],
                                  from_repo=False, direct_call=i % 2 == 0)
 
+            # we clean
+            if "pyquickhelper" in sys.modules:
+                del sys.modules["pyquickhelper"]
+            os.environ["PYTHONPATH"] = ""
+            if pos >= 0:
+                del sys.path[pos]
+
+            # checkings
             files = [os.path.join(root, "_doc", "sphinxdoc", "build", "html", "index.html"),
                      os.path.join(root, "_doc", "sphinxdoc",
                                   "build", "html", "all_indexes.html"),
@@ -154,7 +172,6 @@ class TestSphinxDocFull (unittest.TestCase):
             for r in rev:
                 if not os.path.exists(r):
                     raise FileNotFoundError(r)
-
 
 if __name__ == "__main__":
     unittest.main()

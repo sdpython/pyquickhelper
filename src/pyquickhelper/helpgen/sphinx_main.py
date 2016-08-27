@@ -310,9 +310,9 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
     root_sphinxdoc = os.path.join(root, "_doc", "sphinxdoc")
     root_source = os.path.join(root_sphinxdoc, "source")
 
-    ###############################################
-    # we import conf_base, specific to ensae_teaching_cs
-    ###############################################
+    ########################################
+    # we import conf_base, specific to multi layers
+    ########################################
     confb = os.path.join(root_source, "conf_base.py")
     if os.path.exists(confb):
         try:
