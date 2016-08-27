@@ -136,9 +136,12 @@ def read_url(url, encoding=None):
     """
     request = urllib_request.Request(url)
     if sys.version_info[0] == 2:
-        fu = urllib_request.urlopen(request)
-        content = fu.read()
-        fu.close()
+        try:
+            fu = urllib_request.urlopen(request)
+            content = fu.read()
+            fu.close()
+        except Exception as e:
+            raise Exception("unable to read url '{0}'\nERROR:\n{1}".format(url, e))
     else:
         with urllib_request.urlopen(request) as fu:
             content = fu.read()
