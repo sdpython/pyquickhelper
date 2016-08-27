@@ -36,6 +36,9 @@ class TestNotebookReadWrite (unittest.TestCase):
             __file__,
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
+        if sys.version_info[0] == 2:
+            # written in Python 3
+            return
         temp = get_temp_folder(__file__, "temp_notebook_read_write")
         nbfile = os.path.join(temp, "..", "data", "simple_example.ipynb")
         assert os.path.exists(nbfile)

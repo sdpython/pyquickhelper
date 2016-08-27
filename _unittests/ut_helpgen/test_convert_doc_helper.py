@@ -101,6 +101,8 @@ class TestConvertDocHelper(unittest.TestCase):
             __file__,
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
+        if sys.version_info[0] == 2:
+            return
         html = docstring2html(pandas.read_csv, "rawhtml", fLOG=fLOG)
         assert len(html) > 0
 
@@ -109,6 +111,8 @@ class TestConvertDocHelper(unittest.TestCase):
             __file__,
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
+        if sys.version_info[0] == 2:
+            return
         try:
             import sklearn.linear_model
         except ImportError:
