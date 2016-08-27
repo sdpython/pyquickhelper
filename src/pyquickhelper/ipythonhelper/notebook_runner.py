@@ -129,6 +129,9 @@ class NotebookRunner(object):
             os.chdir(working_dir)
 
         if self.km is not None:
+            if sys.version_info[0] == 2:
+                typstr = str  # unicode#
+                args = [typstr(_) for _ in args]
             self.km.start_kernel(extra_arguments=args)
 
             if platform.system() == 'Darwin':

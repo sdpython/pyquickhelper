@@ -184,7 +184,7 @@ def read_content_ufs(file_url_stream, encoding="utf8", asbytes=False, add_source
                 return (content, "u") if add_source else content
         elif sys.version_info[0] == 2:
             # the string should the content itself
-            return (file_url_stream, "s") if add_source else content
+            return (file_url_stream, "s") if add_source else file_url_stream
         else:
             # the string should the content itself
             if isinstance(file_url_stream, str  # unicode#

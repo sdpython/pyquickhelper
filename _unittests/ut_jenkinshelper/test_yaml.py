@@ -39,6 +39,9 @@ class TestYaml(unittest.TestCase):
         yml = os.path.abspath(os.path.join(
             this, "..", "..", ".local.jenkins.win.yml"))
         if not os.path.exists(yml):
+            yml = os.path.abspath(os.path.join(
+                this, "..", "..", "..", ".local.jenkins.win.yml"))
+        if not os.path.exists(yml):
             raise FileNotFoundError(yml)
         context = dict(Python34=None, Python35=os.path.dirname(sys.executable),
                        Python27=None, Anaconda3=None, Anaconda2=None,
@@ -84,6 +87,9 @@ class TestYaml(unittest.TestCase):
         yml = os.path.abspath(os.path.join(
             this, "..", "..", ".local.jenkins.win.yml"))
         if not os.path.exists(yml):
+            yml = os.path.abspath(os.path.join(
+                this, "..", "..", "..", ".local.jenkins.win.yml"))
+        if not os.path.exists(yml):
             raise FileNotFoundError(yml)
         context = dict(Python34="fake", Python35=os.path.dirname(sys.executable),
                        Python27="fake2", Anaconda3=None, Anaconda2=None,
@@ -124,6 +130,9 @@ class TestYaml(unittest.TestCase):
         this = os.path.abspath(os.path.dirname(__file__))
         yml = os.path.abspath(os.path.join(
             this, "..", "..", ".local.jenkins.win.yml"))
+        if not os.path.exists(yml):
+            yml = os.path.abspath(os.path.join(
+                this, "..", "..", "..", ".local.jenkins.win.yml"))
         if not os.path.exists(yml):
             raise FileNotFoundError(yml)
         context = dict(Python34="fake", Python35="C:\\Python35_x64",
@@ -184,8 +193,6 @@ class TestYaml(unittest.TestCase):
             xcopy /E /C /I /Y _doc\\sphinxdoc\\build\\html dist\\html
             if %errorlevel% neq 0 exit /b %errorlevel%
             xcopy /E /C /I /Y _doc\\sphinxdoc\\build\\epub dist\\epub
-            if %errorlevel% neq 0 exit /b %errorlevel%
-            copy _doc\\sphinxdoc\\build\\htmlhelp\\*.chm dist\\html
             if %errorlevel% neq 0 exit /b %errorlevel%
             xcopy /E /C /I /Y _doc\\sphinxdoc\\build\\latex\\*.pdf dist\\html
             if %errorlevel% neq 0 exit /b %errorlevel%
@@ -254,6 +261,9 @@ class TestYaml(unittest.TestCase):
         this = os.path.abspath(os.path.dirname(__file__))
         yml = os.path.abspath(os.path.join(
             this, "..", "..", ".local.jenkins.win.yml"))
+        if not os.path.exists(yml):
+            yml = os.path.abspath(os.path.join(
+                this, "..", "..", "..", ".local.jenkins.win.yml"))
         if not os.path.exists(yml):
             raise FileNotFoundError(yml)
         context = dict(Python34=None, Python35="C:\\Python35_x64",

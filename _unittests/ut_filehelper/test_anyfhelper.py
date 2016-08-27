@@ -46,7 +46,8 @@ class TestAnyFHelper(unittest.TestCase):
         content1 = read_content_ufs(this)
         content2, source = read_content_ufs(this, add_source=True)
         self.assertEqual(content1, content2)
-        self.assertEqual(source, "r")
+        if sys.version_info[0] != 2:
+            self.assertEqual(source, "r")
         content0 = content1
 
         content3, source = read_content_ufs(content1, add_source=True)
@@ -64,6 +65,8 @@ class TestAnyFHelper(unittest.TestCase):
         self.assertEqual(source, "SB")
 
         # asbytes
+        if sys.version_info[0] != 2:
+            return
 
         content1 = read_content_ufs(this, asbytes=True)
         content2, source = read_content_ufs(
