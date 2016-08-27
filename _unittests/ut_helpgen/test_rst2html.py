@@ -40,6 +40,8 @@ class TestRst2Html(unittest.TestCase):
         if is_travis_or_appveyor():
             # it requires latex
             return
+        if sys.version_info[0] == 2:
+            return
 
         temp = get_temp_folder(__file__, "temp_rst2html_png")
         rst = os.path.join(os.path.abspath(
@@ -58,8 +60,8 @@ class TestRst2Html(unittest.TestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
-        return
-        # miktex does not work
+        if sys.version_info[0] == 2:
+            return
         temp = get_temp_folder(__file__, "temp_rst2html_svg")
         rst = os.path.join(os.path.abspath(
             os.path.dirname(__file__)), "data", "hermionne.rst")
