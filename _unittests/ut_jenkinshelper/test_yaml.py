@@ -148,7 +148,8 @@ class TestYaml(unittest.TestCase):
                 r, variables=v, platform=platform)
             # fLOG("####", conv)
             convs.append(conv)
-            assert isinstance(conv, str)
+            typstr = str  # unicode#
+            assert isinstance(conv, typstr)
         assert len(res) > 0
 
         conv = [_ for _ in convs if "SET NAME=UT" in _ and "VERSION=3.5" in _][0]

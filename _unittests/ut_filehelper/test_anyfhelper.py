@@ -70,7 +70,8 @@ class TestAnyFHelper(unittest.TestCase):
             self.assertEqual(source, "SB")
 
         # asbytes
-        if sys.version_info[0] != 2:
+        if sys.version_info[0] == 2:
+            warnings.warn("read_content_ufs not tested for bytes on Python 2.7")
             return
 
         content1 = read_content_ufs(this, asbytes=True)

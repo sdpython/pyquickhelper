@@ -131,7 +131,10 @@ class NotebookRunner(object):
         if self.km is not None:
             if sys.version_info[0] == 2:
                 args = [str(_) for _ in args]
-            self.km.start_kernel(extra_arguments=args)
+            try:
+                self.km.start_kernel(extra_arguments=args)
+            except Exception as e:
+                raise Exception("Failure with args: {0}\nand error {1}".format(args, str(e))) from e
 
             if platform.system() == 'Darwin':
                 # see http://www.pypedia.com/index.php/notebook_runner
