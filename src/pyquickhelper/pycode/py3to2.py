@@ -21,7 +21,7 @@ class Convert3to2Exception(Exception):
 
 
 def py3to2_convert_tree(folder, dest, encoding="utf8", pattern=".*[.]py$",
-                        pattern_copy=".*[.]((ico)|(dll)|(rst)|(ipynb)|(png)|(txt)|(zip)|(gz)|(html)|(exe))$",
+                        pattern_copy=".*[.]((ico)|(dll)|(yml)|(rst)|(ipynb)|(png)|(txt)|(zip)|(gz)|(html)|(exe))$",
                         unittest_modules=None, fLOG=noLOG):
     """
     Converts files in a folder and its subfolders from python 3 to python 2,

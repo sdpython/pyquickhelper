@@ -283,7 +283,8 @@ def copy_source_files(input,
     @param      filter                      if None, process only file related to python code, otherwise,
                                             use this filter to select file (regular expression). If this parameter
                                             is None or is empty, the default value is:
-                                            ``"(.+[.]py$)|(.+[.]pyd$)|(.+[.]cpp$)|(.+[.]h$)|(.+[.]dll$)|(.+[.]o$)|(.+[.]def$)|(.+[.]exe$)|(.+[.]config$)"``.
+                                            ``"(.+[.]py$)|(.+[.]pyd$)|(.+[.]cpp$)|(.+[.]h$)|(.+[.]dll$)|(.+[.]yml$)|" +``
+                                            ``"(.+[.]o$)|(.+[.]def$)|(.+[.]exe$)|(.+[.]config$)"``.
     @param      remove                      if True, remove every files in the output folder first
     @param      softfile                    softfile is a function (f : filename --> True or False), when it is True,
                                             the documentation is lighter (no special members)
@@ -303,7 +304,7 @@ def copy_source_files(input,
     if remove:
         remove_folder(output, False, raise_exception=False)
 
-    deffilter = "(.+[.]py$)|(.+[.]pyd$)|(.+[.]cpp$)|(.+[.]h$)|(.+[.]dll$)|(.+[.]o$)|(.+[.]def$)|(.+[.]exe$)|(.+[.]config$)"
+    deffilter = "(.+[.]py$)|(.+[.]pyd$)|(.+[.]cpp$)|(.+[.]h$)|(.+[.]dll$)|(.+[.]yml$)|(.+[.]o$)|(.+[.]def$)|(.+[.]exe$)|(.+[.]config$)"
     if copy_add_ext is not None:
         res = ["(.+[.]%s$)" % e for e in copy_add_ext]
         deffilter += "|" + "|".join(res)

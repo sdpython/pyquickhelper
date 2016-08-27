@@ -130,8 +130,7 @@ class NotebookRunner(object):
 
         if self.km is not None:
             if sys.version_info[0] == 2:
-                typstr = str  # unicode#
-                args = [typstr(_) for _ in args]
+                args = [str(_) for _ in args]
             try:
                 self.km.start_kernel(extra_arguments=args)
             except Exception as e:

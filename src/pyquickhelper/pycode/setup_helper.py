@@ -40,7 +40,7 @@ if sys.version_info[0] == 2:
 
 
 def process_standard_options_for_setup(argv, file_or_folder, project_var_name, module_name=None, unittest_modules=None,
-                                       pattern_copy=".*[.]((ico)|(dll)|(rst)|(ipynb)|(png)|(txt)|(zip)|(gz)|(html)|(exe)|(js)|(css))$",
+                                       pattern_copy=".*[.]((ico)|(dll)|(yml)|(rst)|(ipynb)|(png)|(txt)|(zip)|(gz)|(html)|(exe)|(js)|(css))$",
                                        requirements=None, port=8067, blog_list=None, default_engine_paths=None,
                                        extra_ext=None, add_htmlhelp=False, setup_params=None, coverage_options=None,
                                        coverage_exclude_lines=None, func_sphinx_begin=None, func_sphinx_end=None,
