@@ -35,7 +35,7 @@ from .jenkins_exceptions import JenkinsExtException, JenkinsJobException
 from .jenkins_server_template import _config_job, _trigger_up, _trigger_time, _git_repo, _task_batch
 from .yaml_helper import enumerate_processed_yml
 
-_timeout_default = 7200
+_timeout_default = 1200
 
 _default_engine_paths = {
     "windows": {
