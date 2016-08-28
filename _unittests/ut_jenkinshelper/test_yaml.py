@@ -94,10 +94,10 @@ class TestYaml(unittest.TestCase):
         context = dict(Python34="fake", Python35=os.path.dirname(sys.executable),
                        Python27="fake2", Anaconda3=None, Anaconda2=None,
                        WinPython35=None, root_path="ROOT")
-        obj, name = load_yaml(yml, context=context)
+        obj, name = load_yaml(yml, context=context, platform="win")
         assert name is not None
-        res = list(enumerate_convert_yaml_into_instructions(obj))
-        fLOG(len(res))
+        res = list(enumerate_convert_yaml_into_instructions(
+            obj, add_environ=False))
 
         for r, v in res:
             if None in r:
@@ -109,10 +109,12 @@ class TestYaml(unittest.TestCase):
             raise Exception("\n".join(rows))
 
         doc = [[s[0] for s in seq if s[1] is not None] for seq, _ in res]
-        fLOG("------", doc)
+        fLOG(doc)
         doc = [s for s in doc if "documentation" in s]
         if len(doc) != 1:
             raise Exception("\n".join(str(_) for _ in doc))
+        else:
+            fLOG("**", doc)
 
     def test_jconvert_sequence_into_batch_file(self):
         fLOG(

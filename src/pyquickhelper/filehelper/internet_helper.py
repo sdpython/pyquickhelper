@@ -141,7 +141,8 @@ def read_url(url, encoding=None):
             content = fu.read()
             fu.close()
         except Exception as e:
-            raise Exception("unable to read url '{0}'\nERROR:\n{1}".format(url, e))
+            raise Exception(
+                "unable to read url '{0}'\nERROR:\n{1}".format(url, e))
     else:
         with urllib_request.urlopen(request) as fu:
             content = fu.read()

@@ -133,7 +133,8 @@ class NotebookRunner(object):
             if sys.version_info[0] == 2 and args is not None:
                 # I did not find a way to make it work
                 args = None
-                warnings.warn("args is not None: {0}, unable to use it in Python 2.7".format(args))
+                warnings.warn(
+                    "args is not None: {0}, unable to use it in Python 2.7".format(args))
                 self.km.start_kernel()
             else:
                 try:
