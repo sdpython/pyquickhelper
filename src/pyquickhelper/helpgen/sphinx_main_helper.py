@@ -295,7 +295,7 @@ def compile_latex_output_final(root, latex_path, doall, afile=None, latex_book=F
                     lat, file, build)
             fLOG("~~~~ LATEX compilation (c)", c)
             post_process_latex_output(file, doall, latex_book=latex_book)
-            out, err = run_cmd(c, wait=True, log_error=False, catch_exit=True)
+            out, err = run_cmd(c, wait=True, log_error=False, catch_exit=True, communicate=False, tell_if_no_output=600)
             if len(err) > 0:
                 raise HelpGenException(
                     "CMD:\n{0}\nERR:\n{1}\nOUT:\n{2}".format(c, err, out))
@@ -305,7 +305,7 @@ def compile_latex_output_final(root, latex_path, doall, afile=None, latex_book=F
             fLOG("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
             try:
                 out, err = run_cmd(
-                    c, wait=True, log_error=False, communicate=False, fLOG=fLOG)
+                    c, wait=True, log_error=False, communicate=False, fLOG=fLOG, tell_if_no_output=600)
             except subprocess.CalledProcessError:
                 fLOG("~~~~ LATEX ERROR: check the logs")
                 err = ""

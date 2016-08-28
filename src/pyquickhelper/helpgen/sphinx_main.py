@@ -782,7 +782,7 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
         fLOG("### run HTMLHELP ###########################")
         for cmd in cmds_post:
             fLOG("running", cmd)
-            out, err = run_cmd(cmd, wait=True, fLOG=fLOG)
+            out, err = run_cmd(cmd, wait=True, fLOG=fLOG, communicate=False, timeout=600)
             fLOG(out)
             if len(err) > 0:
                 warnings.warn(
