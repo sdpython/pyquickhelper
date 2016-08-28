@@ -213,7 +213,7 @@ def run_cmd(cmd, sin="", shell=True, wait=False, log_error=True,
         cmd = " ".join(cmd)
 
     if wait:
-
+        skip_out_err = False
         out = []
         err = []
         err_read = False
@@ -302,6 +302,11 @@ def run_cmd(cmd, sin="", shell=True, wait=False, log_error=True,
                     fLOG("[run_cmd] No update in {0} seconds".format(
                         last_update - begin))
                     last_update = time.clock()
+                full_delta = time.clock() - begin
+                if timeout is not None and full_delta > timeout:
+                    runloop = False
+                    fLOG("[run_cmd] Timeout after {0} seconds".format(full_delta))
+                    break
 
             if runloop:
                 # Waiting for async readers to finish...
@@ -323,19 +328,22 @@ def run_cmd(cmd, sin="", shell=True, wait=False, log_error=True,
                 pproc.kill()
                 err_read = True
                 fLOG("[run_cmd] process killed.")
+                skip_out_err = True
 
             out = "\n".join(out)
-            if err_read:
-                err = "\n".join(err)
+            if skip_out_err:
+                err = "Process killed."
             else:
-                temp = err = stderr.read()
-                try:
-                    err = decode_outerr(temp, encoding, encerror, cmd)
-                except:
-                    err = decode_outerr(temp, encoding, "ignore", cmd)
-
-            stdout.close()
-            stderr.close()
+                if err_read:
+                    err = "\n".join(err)
+                else:
+                    temp = err = stderr.read()
+                    try:
+                        err = decode_outerr(temp, encoding, encerror, cmd)
+                    except:
+                        err = decode_outerr(temp, encoding, "ignore", cmd)
+                stdout.close()
+                stderr.close()
 
         # same path for whether communicate is False or True
         err = err.replace("\r\n", "\n")
