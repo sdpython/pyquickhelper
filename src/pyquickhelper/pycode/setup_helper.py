@@ -39,6 +39,34 @@ if sys.version_info[0] == 2:
     from codecs import open
 
 
+def available_commands_list(argv):
+    """
+    checks that on command handled by pyquickhelper is part of the arguments
+
+    @param      argv        sys.arg
+    @return                 bool
+    """
+    commands = {"bdist_msi", "build_script", "build_sphinx",
+                "bdist_wheel", "bdist_wininst",
+                "clean_pyd", "clean_space", "copy_dist",
+                "copy27", "run27", "build27",
+                "local_pypi", "test_local_pypi",
+                "notebook",
+                "publish", "publish_doc",
+                "register", "unittests",
+                "unittests_LONG", "unittests_SKIP", "unittests_GUI",
+                "sdist",
+                "setupdep",
+                "upload_docs",
+                "setup_hook",
+                "copy_sphinx",
+                "write_version"}
+    for c in commands:
+        if c in argv:
+            return True
+    return False
+
+
 def process_standard_options_for_setup(argv, file_or_folder, project_var_name, module_name=None, unittest_modules=None,
                                        pattern_copy=".*[.]((ico)|(dll)|(yml)|(rst)|(ipynb)|(png)|(txt)|(zip)|(gz)|(html)|(exe)|(js)|(css))$",
                                        requirements=None, port=8067, blog_list=None, default_engine_paths=None,

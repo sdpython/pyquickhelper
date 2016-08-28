@@ -8,6 +8,7 @@ from .coverage_helper import publish_coverage_on_codecov
 from .pip_helper import get_packages_list, get_package_info
 from .py3to2 import py3to2_convert_tree, py3to2_convert
 from .setup_helper import process_standard_options_for_setup, write_version_for_setup, process_standard_options_for_setup_help
+from .setup_helper import available_commands_list
 from .tkinter_helper import fix_tkinter_issues_virtualenv
 from .trace_execution import get_call_stack
 from .utils_tests import main_wrapper_tests
