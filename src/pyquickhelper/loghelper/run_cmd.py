@@ -102,7 +102,7 @@ def skip_run_cmd(cmd, sin="", shell=True, wait=False, log_error=True,
                  stop_running_if=None, encerror="ignore",
                  encoding="utf8", change_path=None, communicate=True,
                  preprocess=True, timeout=None, catch_exit=False, fLOG=None,
-                 timeout_listen=None, tell_if_no_output=600):
+                 timeout_listen=None, tell_if_no_output=None):
     """
     has the same signature as @see fn run_cmd but does nothing
 
@@ -113,8 +113,8 @@ def skip_run_cmd(cmd, sin="", shell=True, wait=False, log_error=True,
 
 def run_cmd(cmd, sin="", shell=True, wait=False, log_error=True,
             stop_running_if=None, encerror="ignore", encoding="utf8",
-            change_path=None, communicate=True, preprocess=True, timeout=None, catch_exit=False,
-            fLOG=None, tell_if_no_output=None):
+            change_path=None, communicate=True, preprocess=True, timeout=None,
+            catch_exit=False, fLOG=None, tell_if_no_output=None):
     """
     run a command line and wait for the result
     @param      cmd                 command line
@@ -137,8 +137,8 @@ def run_cmd(cmd, sin="", shell=True, wait=False, log_error=True,
     @param      timeout             when data is sent to stdin (``sin``), a timeout is needed to avoid waiting for ever (*timeout* is in seconds)
     @param      catch_exit          catch *SystemExit* exception
     @param      fLOG                logging function (if not None, bypass others parameters)
+    @param      tell_if_no_output   tells if there is no output every *tell_if_no_output* seconds
     @return                         content of stdout, stdres  (only if wait is True)
-    @rtype      tuple
 
     .. exref::
         :title: Run a program using the command line)
@@ -299,9 +299,9 @@ def run_cmd(cmd, sin="", shell=True, wait=False, log_error=True,
 
                 delta = time.clock() - last_update
                 if tell_if_no_output is not None and delta >= tell_if_no_output:
-                    last_update = time.clock()
                     fLOG("[run_cmd] No update in {0} seconds".format(
                         last_update - begin))
+                    last_update = time.clock()
 
             if runloop:
                 # Waiting for async readers to finish...
