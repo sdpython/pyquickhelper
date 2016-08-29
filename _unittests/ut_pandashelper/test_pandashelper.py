@@ -33,14 +33,22 @@ class TestPandasHelper(unittest.TestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
         url = "http://www.xavierdupre.fr/enseignement/complements/marathon.txt"
-        df = read_url(
-            url,
-            sep="\t",
-            names=[
-                "ville",
-                "annee",
-                "temps",
-                "secondes"])
+        repeat = 0
+        while True:
+            try:
+                df = read_url(
+                    url,
+                    sep="\t",
+                    names=[
+                        "ville",
+                        "annee",
+                        "temps",
+                        "secondes"])
+                break
+            except ConnectionResetError as e:
+                if repeat >= 2:
+                    raise e
+                repeat += 1
         assert len(df) > 0
         assert len(df.columns) == 4
         fLOG(df.head())
