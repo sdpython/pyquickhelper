@@ -157,7 +157,7 @@ def run_cmd(cmd, sin="", shell=True, wait=False, log_error=True,
         :date: 2016-08-25
         :issue: 33
         :hidden:
-        :release:1.4
+        :release: 1.4
 
         Some options were not implemented, unused parameters were removed.
         When communicate is False, the command is run within a thread which gives
@@ -258,7 +258,6 @@ def run_cmd(cmd, sin="", shell=True, wait=False, log_error=True,
             err = decode_outerr(stderrdata, encoding, encerror, cmd)
         else:
             # communicate is False: use of threads
-            fLOG("BEGIN CMD", tell_if_no_output, cmd)
             if sin is not None and len(sin) > 0:
                 raise Exception(
                     "communicate should be True to send something on stdin")
@@ -302,16 +301,15 @@ def run_cmd(cmd, sin="", shell=True, wait=False, log_error=True,
                 delta = time.clock() - last_update
                 if tell_if_no_output is not None and delta >= tell_if_no_output:
                     fLOG("[run_cmd] No update in {0} seconds for cmd: {1}".format(
-                        last_update - begin, cmd))
+                        "%5.1f" % (last_update - begin), cmd))
                     last_update = time.clock()
                 full_delta = time.clock() - begin
                 if timeout is not None and full_delta > timeout:
                     runloop = False
                     fLOG("[run_cmd] Timeout after {0} seconds for cmd: {1}".format(
-                        full_delta, cmd))
+                        "%5.1f" % full_delta, cmd))
                     break
 
-            fLOG("END CMD", tell_if_no_output, cmd)
             if runloop:
                 # Waiting for async readers to finish...
                 stdoutReader.join()

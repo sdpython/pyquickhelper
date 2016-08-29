@@ -83,13 +83,13 @@ def process_notebooks(notebooks, outfold, build, latex_path=None, pandoc_path=No
     .. exref::
         :title: Convert a notebook into multiple formats
 
-        @code
-        from pyquickhelper.ipythonhelper import process_notebooks
-        process_notebooks("td1a_correction_session7.ipynb",
-                        "dest_folder",
-                        "dest_folder",
-                        formats=("ipynb", "html", "python", "rst", "slides", "pdf", "docx", "present")])
-        @endcode
+        ::
+
+            from pyquickhelper.ipythonhelper import process_notebooks
+            process_notebooks("td1a_correction_session7.ipynb",
+                            "dest_folder",
+                            "dest_folder",
+                            formats=("ipynb", "html", "python", "rst", "slides", "pdf", "docx", "present")])
 
     .. versionchanged:: 1.4
         Add another format for the slides (with `nbpresent <https://pypi.python.org/pypi/nbpresent>`_).

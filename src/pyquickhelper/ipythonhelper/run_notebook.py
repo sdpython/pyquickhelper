@@ -102,12 +102,12 @@ def run_notebook(filename, profile_dir=None, working_dir=None, skip_exceptions=F
     .. exref::
         :title: Run a notebook end to end
 
-        @code
-        from pyquickhelper.ipythonhelper import run_notebook
-        run_notebook("source.ipynb", working_dir="temp",
-                    outfilename="modified.ipynb",
-                    additional_path = [ "c:/temp/mymodule/src" ] )
-        @endcode
+        ::
+
+            from pyquickhelper.ipythonhelper import run_notebook
+            run_notebook("source.ipynb", working_dir="temp",
+                        outfilename="modified.ipynb",
+                        additional_path = [ "c:/temp/mymodule/src" ] )
 
     The function adds the local variable ``theNotebook`` with
     the absolute file name of the notebook.

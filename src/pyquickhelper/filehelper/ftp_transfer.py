@@ -215,14 +215,14 @@ class TransferFTP:
         .. exref::
             :title: List files from FTP site
 
-            @code
-            from pyquickhelper.filehelper import TransferFTP
-            ftp = TransferFTP("ftp....", "login", "password")
-            res = ftp.ls("path")
-            for v in res:
-                print(v["name"])
-            ftp.close()
-            @endcode
+            ::
+
+                from pyquickhelper.filehelper import TransferFTP
+                ftp = TransferFTP("ftp....", "login", "password")
+                res = ftp.ls("path")
+                for v in res:
+                    print(v["name"])
+                ftp.close()
 
         .. versionchanged:: 1.0
         """
