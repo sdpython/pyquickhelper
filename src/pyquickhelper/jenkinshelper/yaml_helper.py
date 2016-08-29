@@ -9,7 +9,7 @@
     :date: 2016-08-25
     :issue: 29
     :hidden:
-    :release:1.4
+    :release: 1.4
 
     The current build system is not easy to read.
     This should make things more clear and easier to maintain.

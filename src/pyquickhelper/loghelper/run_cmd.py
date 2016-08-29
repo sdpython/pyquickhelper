@@ -258,6 +258,7 @@ def run_cmd(cmd, sin="", shell=True, wait=False, log_error=True,
             err = decode_outerr(stderrdata, encoding, encerror, cmd)
         else:
             # communicate is False: use of threads
+            fLOG("BEGIN CMD", tell_if_no_output, cmd)
             if sin is not None and len(sin) > 0:
                 raise Exception(
                     "communicate should be True to send something on stdin")
@@ -310,6 +311,7 @@ def run_cmd(cmd, sin="", shell=True, wait=False, log_error=True,
                         full_delta, cmd))
                     break
 
+            fLOG("END CMD", tell_if_no_output, cmd)
             if runloop:
                 # Waiting for async readers to finish...
                 stdoutReader.join()
