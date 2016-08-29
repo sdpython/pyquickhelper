@@ -271,23 +271,23 @@ def depart_blogpostagg_node(self, node):
     depending on the format, or the setup should
     specify a different function for each.
     """
-    if not isinstance(self, HTMLTranslator):
-        self.body.append("blogpostagg: output only available for HTML")
-        return
-
     if node.hasattr("year"):
-        rawfile = node["rawfile"]
-        if rawfile is not None:
-            # there is probably better to do
-            # module name is something list doctuils.../[xx].py
-            lg = node["lg"]
-            name = os.path.splitext(os.path.split(rawfile)[-1])[0]
-            name += ".html"
-            year = node["year"]
-            linktitle = node["linktitle"]
-            link = """<p><a class="reference internal" href="{0}/{2}" title="{1}">{3}</a></p>""" \
-                .format(year, linktitle, name, TITLES[lg]["more"])
-            self.body.append(link)
+        if isinstance(self, HTMLTranslator):
+            rawfile = node["rawfile"]
+            if rawfile is not None:
+                # there is probably better to do
+                # module name is something list doctuils.../[xx].py
+                lg = node["lg"]
+                name = os.path.splitext(os.path.split(rawfile)[-1])[0]
+                name += ".html"
+                year = node["year"]
+                linktitle = node["linktitle"]
+                link = """<p><a class="reference internal" href="{0}/{2}" title="{1}">{3}</a></p>""" \
+                    .format(year, linktitle, name, TITLES[lg]["more"])
+                self.body.append(link)
+        else:
+            self.body.append(
+                "%blogpostagg: link to source only available for HTML\n")
     if node["blog_background"]:
         # the node will be in a box
         self.depart_admonition(node)

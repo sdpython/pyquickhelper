@@ -76,7 +76,7 @@ def depart_bigger_node(self, node):
     It does only html for the time being.
     """
     if not isinstance(self, HTMLTranslator):
-        self.body.append("bigger: output only available for HTML")
+        self.body.append("%bigger: output only available for HTML\n")
         return
 
     self.body.append(

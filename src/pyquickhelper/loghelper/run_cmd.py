@@ -220,6 +220,7 @@ def run_cmd(cmd, sin="", shell=True, wait=False, log_error=True,
         skip_waiting = False
 
         if communicate:
+            # communicate is True
             if tell_if_no_output is not None:
                 raise NotImplementedError(
                     "tell_if_no_output is not implemented when communicate is True")
@@ -236,18 +237,18 @@ def run_cmd(cmd, sin="", shell=True, wait=False, log_error=True,
                     if sys.version_info[0] == 2:
                         if timeout is not None:
                             raise NotImplementedError(
-                                "timeout is only available with Python 2")
+                                "timeout is only available with Python 3")
                         stdoutdata, stderrdata = pproc.communicate(input=input)
                     else:
                         stdoutdata, stderrdata = pproc.communicate(
                             input=input, timeout=timeout)
                 except SystemExit as e:
-                    raise RunCmdException("SystemExit raised (3)") from e
+                    raise RunCmdException("SystemExit raised (2)") from e
             else:
                 if sys.version_info[0] == 2:
                     if timeout is not None:
                         raise NotImplementedError(
-                            "timeout is only available with Python 2")
+                            "timeout is only available with Python 3")
                     stdoutdata, stderrdata = pproc.communicate(input=input)
                 else:
                     stdoutdata, stderrdata = pproc.communicate(
@@ -256,9 +257,7 @@ def run_cmd(cmd, sin="", shell=True, wait=False, log_error=True,
             out = decode_outerr(stdoutdata, encoding, encerror, cmd)
             err = decode_outerr(stderrdata, encoding, encerror, cmd)
         else:
-            if catch_exit:
-                raise NotImplementedError(
-                    "catch_exit and not communicate are incompatible options")
+            # communicate is False: use of threads
             if sin is not None and len(sin) > 0:
                 raise Exception(
                     "communicate should be True to send something on stdin")
@@ -267,8 +266,10 @@ def run_cmd(cmd, sin="", shell=True, wait=False, log_error=True,
             begin = time.clock()
             last_update = begin
             # with threads
-            (stdoutReader, stdoutQueue) = _AsyncLineReader.getForFd(stdout)
-            (stderrReader, stderrQueue) = _AsyncLineReader.getForFd(stderr)
+            (stdoutReader, stdoutQueue) = _AsyncLineReader.getForFd(
+                stdout, catch_exit=catch_exit)
+            (stderrReader, stderrQueue) = _AsyncLineReader.getForFd(
+                stderr, catch_exit=catch_exit)
             runloop = True
 
             while (not stdoutReader.eof() or not stderrReader.eof()) and runloop:
@@ -299,13 +300,14 @@ def run_cmd(cmd, sin="", shell=True, wait=False, log_error=True,
 
                 delta = time.clock() - last_update
                 if tell_if_no_output is not None and delta >= tell_if_no_output:
-                    fLOG("[run_cmd] No update in {0} seconds".format(
-                        last_update - begin))
+                    fLOG("[run_cmd] No update in {0} seconds for cmd: {1}".format(
+                        last_update - begin, cmd))
                     last_update = time.clock()
                 full_delta = time.clock() - begin
                 if timeout is not None and full_delta > timeout:
                     runloop = False
-                    fLOG("[run_cmd] Timeout after {0} seconds".format(full_delta))
+                    fLOG("[run_cmd] Timeout after {0} seconds for cmd: {1}".format(
+                        full_delta, cmd))
                     break
 
             if runloop:
@@ -318,7 +320,11 @@ def run_cmd(cmd, sin="", shell=True, wait=False, log_error=True,
                 err_read = True
 
                 if returnCode != 0:
-                    raise subprocess.CalledProcessError(returnCode, cmd)
+                    if catch_exit:
+                        raise RunCmdException("SystemExit raised with error code {0}\nOUT:\n{1}\nERR:\n{2}".format(
+                            returnCode, "\n".join(out), "\n".join(err)))
+                    else:
+                        raise subprocess.CalledProcessError(returnCode, cmd)
 
                 if not skip_waiting:
                     pproc.wait()
@@ -388,26 +394,35 @@ def run_script(script, *l):
 
 class _AsyncLineReader(threading.Thread):
 
-    def __init__(self, fd, outputQueue):
+    def __init__(self, fd, outputQueue, catch_exit):
         threading.Thread.__init__(self)
 
         assert isinstance(outputQueue, queue.Queue)
         assert callable(fd.readline)
 
         self.fd = fd
+        self.catch_exit = catch_exit
         self.outputQueue = outputQueue
 
     def run(self):
-        for _ in map(self.outputQueue.put, iter(self.fd.readline, b'')):
-            pass
+        if self.catch_exit:
+            try:
+                for _ in map(self.outputQueue.put, iter(self.fd.readline, b'')):
+                    pass
+            except SystemExit as e:
+                self.outputQueue.put(str(e))
+                raise RunCmdException("SystemExit raised (3)") from e
+        else:
+            for _ in map(self.outputQueue.put, iter(self.fd.readline, b'')):
+                pass
 
     def eof(self):
         return not self.is_alive() and self.outputQueue.empty()
 
     @classmethod
-    def getForFd(cls, fd, start=True):
+    def getForFd(cls, fd, start=True, catch_exit=False):
         q = queue.Queue()
-        reader = cls(fd, q)
+        reader = cls(fd, q, catch_exit)
 
         if start:
             reader.start()

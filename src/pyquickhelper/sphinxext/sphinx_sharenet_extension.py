@@ -163,7 +163,7 @@ def depart_sharenet_node(self, node):
     It does only html for the time being.
     """
     if not isinstance(self, HTMLTranslator):
-        self.body.append("sharenet: output only available for HTML")
+        self.body.append("%sharenet: output only available for HTML\n")
         return
 
     if node.hasattr("networks"):

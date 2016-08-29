@@ -35,7 +35,8 @@ class TestRunCmdTimeout(unittest.TestCase):
 
         if __name__ == "__main__":
             cmd = "more"
-            out, err = run_cmd(cmd, wait=True, fLOG=fLOG, tell_if_no_output=1, communicate=False, timeout=3)
+            out, err = run_cmd(cmd, wait=True, fLOG=fLOG,
+                               tell_if_no_output=1, communicate=False, timeout=3)
             fLOG(out)
             fLOG(err)
             assert "Process killed" in err

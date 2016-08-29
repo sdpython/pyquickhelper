@@ -782,7 +782,8 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
         fLOG("### run HTMLHELP ###########################")
         for cmd in cmds_post:
             fLOG("running", cmd)
-            out, err = run_cmd(cmd, wait=True, fLOG=fLOG, communicate=False, timeout=600)
+            out, err = run_cmd(cmd, wait=True, fLOG=fLOG,
+                               communicate=False, timeout=600)
             fLOG(out)
             if len(err) > 0:
                 warnings.warn(
@@ -849,7 +850,7 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
     if "pdf" in layout:
         fLOG("~~~~ compile_latex_output_final", froot, "**", latex_path)
         compile_latex_output_final(
-            froot, latex_path, False, latex_book=latex_book)
+            froot, latex_path, False, latex_book=latex_book, fLOG=fLOG)
 
     if "html" in layout:
         nbf = os.path.join(build, "html", "notebooks")
@@ -888,6 +889,7 @@ def _process_sphinx_in_private_cmd(list_args, fLOG):
     cmd = '"{0}" "{1}" {2}'.format(sys.executable, this, sargs)
     fLOG("    ", cmd)
     fLOG("~~~~~~~~~~~~~~~~~~~~~~~~~~~ _process_sphinx_in_private_cmd BEGIN")
-    ok = run_cmd(cmd, wait=True, fLOG=fLOG, communicate=False, tell_if_no_output=600)
+    ok = run_cmd(cmd, wait=True, fLOG=fLOG,
+                 communicate=False, tell_if_no_output=120)
     fLOG("~~~~~~~~~~~~~~~~~~~~~~~~~~~ _process_sphinx_in_private_cmd END")
     return ok
