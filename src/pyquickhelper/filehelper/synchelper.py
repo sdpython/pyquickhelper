@@ -93,21 +93,10 @@ def explore_folder_iterfile_repo(folder, log=fLOG):
         yield file
 
 
-def synchronize_folder(p1,
-                       p2,
-                       hash_size=1024 ** 2,
-                       repo1=False,
-                       repo2=False,
-                       size_different=True,
-                       no_deletion=False,
-                       filter=None,
-                       filter_copy=None,
-                       avoid_copy=False,
-                       operations=None,
-                       file_date=None,
-                       log1=False,
-                       copy_1to2=False,
-                       fLOG=fLOG):
+def synchronize_folder(p1, p2, hash_size=1024 ** 2, repo1=False, repo2=False,
+                       size_different=True, no_deletion=False, filter=None,
+                       filter_copy=None, avoid_copy=False, operations=None,
+                       file_date=None, log1=False, copy_1to2=False, fLOG=fLOG):
     """
     synchronize two folders (or copy if the second is empty), it only copies more recent files.
 
@@ -172,7 +161,7 @@ def synchronize_folder(p1,
         Parameter *fLOG* was added.
     """
 
-    fLOG("form ", p1)
+    fLOG("from ", p1)
     fLOG("to   ", p2)
 
     if file_date is not None and not os.path.exists(file_date):

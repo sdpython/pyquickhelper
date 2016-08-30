@@ -8,7 +8,7 @@ import os
 import sys
 
 from ..filehelper import synchronize_folder, explore_folder_iterfile
-from ..loghelper.flog import noLOG
+from ..loghelper.flog import noLOG, fLOG
 
 if sys.version_info[0] == 2:
     from codecs import open
@@ -23,7 +23,7 @@ def everything_but_python(fullname):
     return os.path.splitext(fullname)[-1] not in [".py", ".pyc"]
 
 
-def sphinx_add_scripts(source, dest, filter=everything_but_python):
+def sphinx_add_scripts(source, dest, filter=everything_but_python, fLOG=fLOG):
     """
     copy additional scripts to a folder for sphinx documentation
 
@@ -36,7 +36,7 @@ def sphinx_add_scripts(source, dest, filter=everything_but_python):
         os.makedirs(dest)
 
     res = synchronize_folder(
-        source, dest, repo1=False, repo2=False, filter=filter)
+        source, dest, repo1=False, repo2=False, filter=filter, fLOG=fLOG)
     return res
 
 

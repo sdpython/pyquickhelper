@@ -47,7 +47,7 @@ Another list
 
 def process_notebooks(notebooks, outfold, build, latex_path=None, pandoc_path=None,
                       formats=("ipynb", "html", "python", "rst",
-                               "slides", "pdf", "present")):
+                               "slides", "pdf", "present"), fLOG=fLOG):
     """
     Converts notebooks into html, rst, latex, pdf, python, docx using
     `nbconvert <http://ipython.org/ipython-doc/rel-1.0.0/interactive/nbconvert.html>`_.
@@ -58,6 +58,7 @@ def process_notebooks(notebooks, outfold, build, latex_path=None, pandoc_path=No
     @param      pandoc_path path to pandoc
     @param      formats     list of formats to convert into (pdf format means latex then compilation)
     @param      latex_path  path to the latex compiler
+    @param      fLOG        logging function
     @return                 list of tuple *[(file, created or skipped)]*
 
     This function relies on `pandoc <http://johnmacfarlane.net/pandoc/index.html>`_.
@@ -109,7 +110,7 @@ def process_notebooks(notebooks, outfold, build, latex_path=None, pandoc_path=No
     """
     return _process_notebooks_in(notebooks=notebooks, outfold=outfold, build=build,
                                  latex_path=latex_path, pandoc_path=pandoc_path,
-                                 formats=formats)
+                                 formats=formats, fLOG=fLOG)
 
 
 def _process_notebooks_in_private(fnbcexe, list_args, options_args):
@@ -147,7 +148,8 @@ def _process_notebooks_in_private_cmd(fnbcexe, list_args, options_args, fLOG):
 
 def _process_notebooks_in(notebooks, outfold, build, latex_path=None, pandoc_path=None,
                           formats=("ipynb", "html", "python", "rst",
-                                   "slides", "pdf", "present")):
+                                   "slides", "pdf", "present"),
+                          fLOG=fLOG):
     from nbconvert.nbconvertapp import main as nbconvert_main
     if pandoc_path is None:
         pandoc_path = find_pandoc_path()
@@ -313,7 +315,7 @@ def _process_notebooks_in(notebooks, outfold, build, latex_path=None, pandoc_pat
                 # docutils if format is slides, not sure about the others
                 if nbconvert_main != fnbcexe or format not in {"slides"}:
                     out, err = _process_notebooks_in_private(
-                        fnbcexe, list_args, options_args)
+                        fnbcexe, list_args, options_args, fLOG=fLOG)
                 else:
                     # conversion into slides alter Jinja2 environment
                     # jinja2.exceptions.TemplateNotFound: rst

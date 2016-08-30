@@ -123,7 +123,7 @@ class TestYaml(unittest.TestCase):
             OutputPrint=__name__ == "__main__")
 
         try:
-            self.a_test_jconvert_sequence_into_batch_file(sys.platform)
+            self.a_test_jconvert_sequence_into_batch_file("linux")
         except NotImplementedError as e:
             pass
         self.a_test_jconvert_sequence_into_batch_file("win")

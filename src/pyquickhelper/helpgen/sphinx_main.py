@@ -70,7 +70,8 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
                          extra_ext=None,
                          nbformats=("ipynb", "slides", "html", "python",
                                     "rst", "pdf", "present"),
-                         layout=[("html", "build", {}), ],  # ("epub", "build", {})],
+                         # ("epub", "build", {})],
+                         layout=[("html", "build", {}), ],
                          module_name=None, from_repo=True, add_htmlhelp=False,
                          copy_add_ext=None, direct_call=False, fLOG=fLOG):
     """
@@ -242,7 +243,6 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
 
         When there are too many notebooks, the notebook index is difficult to read.
 
-
     .. todoext::
         :title: replace command line by direct call to sphinx, nbconvert, nbpresent
         :tag: enhancement
@@ -255,7 +255,7 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
         It does not require to get script location.
         Not enough stable from virtual environment.
     """
-    setup_environment_for_help()
+    setup_environment_for_help(fLOG=fLOG)
     # we keep a clean list of modules
     # sphinx configuration is a module and the function loads and unloads it
     list_modules_start = set(sys.modules.keys())
@@ -439,7 +439,7 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
     #########
     chan = os.path.join(root, "_doc", "sphinxdoc", "source", "filechanges.rst")
     generate_changes_repo(
-        chan, root, filter_commit=filter_commit, exception_if_empty=from_repo)
+        chan, root, filter_commit=filter_commit, exception_if_empty=from_repo, fLOG=fLOG)
 
     ######################################
     # we copy javascript dependencies, reveal.js
@@ -470,22 +470,18 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
     ####################
     try:
 
-        prepare_file_for_sphinx_help_generation(
-            {},
-            root,
-            os.path.join(root, "_doc", "sphinxdoc", "source"),
-            subfolders=[
-                ("src/" + module_name, module_name),
-            ],
-            silent=True,
-            rootrep=("_doc.sphinxdoc.source.%s." % (module_name,), ""),
-            optional_dirs=optional_dirs,
-            mapped_function=mapped_function,
-            replace_relative_import=False,
-            module_name=module_name,
-            copy_add_ext=copy_add_ext,
-            use_sys=use_sys,
-            fLOG=fLOG)
+        prepare_file_for_sphinx_help_generation({}, root,
+                                                os.path.join(
+                                                    root, "_doc", "sphinxdoc", "source"),
+                                                subfolders=[
+                                                    ("src/" + module_name, module_name), ],
+                                                silent=True,
+                                                rootrep=("_doc.sphinxdoc.source.%s." % (
+                                                    module_name,), ""),
+                                                optional_dirs=optional_dirs, mapped_function=mapped_function,
+                                                replace_relative_import=False, module_name=module_name,
+                                                copy_add_ext=copy_add_ext, use_sys=use_sys,
+                                                fLOG=fLOG)
 
     except ImportErrorHelpGen as e:
 
@@ -552,7 +548,7 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
                 os.mkdir(notebook_doc)
             nbs_all = process_notebooks(notebooks, build=build, outfold=notebook_doc,
                                         formats=nbformats, latex_path=latex_path,
-                                        pandoc_path=pandoc_path)
+                                        pandoc_path=pandoc_path, fLOG=fLOG)
             nbs_all = set(_[0]
                           for _ in nbs_all if os.path.splitext(_[0])[-1] == ".rst")
             if len(nbs_all) != len(indexlistnote):
@@ -577,7 +573,8 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
     #############################################
     fLOG("~~~~ blog placeholder")
     if plist is not None:
-        replace_placeholder_by_recent_blogpost(all_tocs, plist, "__INSERT__")
+        replace_placeholder_by_recent_blogpost(
+            all_tocs, plist, "__INSERT__", fLOG=fLOG)
 
     #################################
     #  run the documentation generation
@@ -834,7 +831,7 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
             fLOG("copy javascript static files from",
                  html_static_path, "to", builddoc)
             copy = synchronize_folder(
-                html_static_path, builddoc, copy_1to2=True)
+                html_static_path, builddoc, copy_1to2=True, fLOG=fLOG)
             fLOG("javascript", len(copy), "files copied")
         else:
             fLOG("[revealjs] no need, no folder", builddoc)

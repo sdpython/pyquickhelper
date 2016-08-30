@@ -20,7 +20,7 @@ except ImportError:
         sys.path.append(path)
     import src
 
-from src.pyquickhelper.loghelper.flog import fLOG, noLOG
+from src.pyquickhelper.loghelper.flog import fLOG
 from src.pyquickhelper.pycode import get_temp_folder, process_standard_options_for_setup, is_travis_or_appveyor
 from src.pyquickhelper.loghelper import git_clone
 
@@ -99,12 +99,14 @@ class TestUnitTestFull(unittest.TestCase):
         fLOG("unit tests", root)
         for command in ["version", "write_version", "clean_pyd",
                         "setup_hook", "build_script", "copy27",
+                        "unittests -g .*ext.*",
                         "unittests", "unittests_LONG", "unittests_SKIP",
                         "build_sphinx"]:
             if command == "build_sphinx" and is_travis_or_appveyor():
                 # InkScape not installed for AppVeyor
                 continue
 
+            fLOG("#######################################################")
             fLOG("#######################################################")
             fLOG(command)
             fLOG("#######################################################")
@@ -115,20 +117,49 @@ class TestUnitTestFull(unittest.TestCase):
             if command == "build_sphinx":
                 if thispath not in sys.path:
                     sys.path.append(thispath)
-                    fLOG("add", thispath)
+                    fLOG("UT add", thispath)
                     rem = True
+            log_lines = []
+
+            def logging_custom(*l, **p):
+                log_lines.append(l)
+            lcmd = command.split() if ' ' in command else [command]
+            stdout2 = StringIO()
+            stderr2 = StringIO()
+
             r = process_standard_options_for_setup(
-                [command], setup, "python3_module_template", module_name="project_name",
+                lcmd, setup, "python3_module_template", module_name="project_name",
                 port=8067, requirements=["pyquickhelper"], blog_list=blog_list,
-                fLOG=noLOG, additional_ut_path=[pyq, (root, True)],
+                fLOG=logging_custom, additional_ut_path=[pyq, (root, True)],
                 skip_function=skip_function, coverage_options={
                     "disable_coverage": True},
-                hook_print=False, stdout=stdout, stderr=stderr, use_run_cmd=True)
-            fLOG(r)
+                hook_print=False, stdout=stdout2, stderr=stderr2, use_run_cmd=True)
+            vout = stdout2.getvalue()
+            stdout.write(vout)
+            verr = stderr2.getvalue()
+            stderr.write(verr)
+            if "unittests" in command:
+                if not r:
+                    raise Exception("{0}-{1}".format(r, command))
+                for line in log_lines:
+                    fLOG("  ", line)
+                if len(log_lines) == 0:
+                    raise Exception(
+                        "command={0}\nOUT:\n{1}\nERR:\n{2}".format(command, vout, verr))
+                if "-e" in command and "running test   1, ut_module/test_convert_notebooks.py" in vout:
+                    raise Exception(vout)
+                if "-e" in command and "_ext" not in vout:
+                    raise Exception(vout)
+                if "LONG" in command and "running test   1, ut_module/test_convert_notebooks.py" in vout:
+                    raise Exception(vout)
+                if "LONG" not in command and "LONG" in vout:
+                    raise Exception(vout)
             if rem:
                 del sys.path[sys.path.index(thispath)]
             os.environ["PYTHONPATH"] = PYTHONPATH
 
+        fLOG("#######################################################")
+        fLOG("#######################################################")
         fLOG("OUT:\n", stdout.getvalue())
         fLOG("ERR:\n", stderr.getvalue())
 

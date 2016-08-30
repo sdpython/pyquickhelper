@@ -259,18 +259,12 @@ def remove_undesired_part_for_documentation(content, filename, use_sys):
     return "\n".join(res)
 
 
-def copy_source_files(input,
-                      output,
-                      fmod=lambda v, filename: v,
-                      silent=False,
-                      filter=None,
-                      remove=True,
+def copy_source_files(input, output, fmod=lambda v, filename: v,
+                      silent=False, filter=None, remove=True,
                       softfile=lambda f: False,
                       fexclude=lambda f: False,
-                      addfilter=None,
-                      replace_relative_import=False,
-                      copy_add_ext=None,
-                      use_sys=None):
+                      addfilter=None, replace_relative_import=False,
+                      copy_add_ext=None, use_sys=None, fLOG=fLOG):
     """
     copy all sources files (input) into a folder (output),
     apply on each of them a modification
@@ -293,10 +287,14 @@ def copy_source_files(input,
     @param      replace_relative_import     replace relative import
     @param      copy_add_ext                additional extension file to copy
     @param      use_sys                     @see fn remove_undesired_part_for_documentation
+    @param      fLOG                        logging function
     @return                                 list of copied files
 
     .. versionchanged:: 1.3
         Parameters *copy_add_ext*, *use_sys* were added.
+
+    .. versionchanged:: 1.4
+        Parameter *fLOG* was added.
     """
     if not os.path.exists(output):
         os.makedirs(output)
@@ -316,15 +314,11 @@ def copy_source_files(input,
             filter = "|".join([filter, addfilter])
 
     if filter is None:
-        actions = synchronize_folder(input,
-                                     output,
-                                     filter=deffilter,
-                                     avoid_copy=True)
+        actions = synchronize_folder(input, output, filter=deffilter,
+                                     avoid_copy=True, fLOG=fLOG)
     else:
-        actions = synchronize_folder(input,
-                                     output,
-                                     filter=filter,
-                                     avoid_copy=True)
+        actions = synchronize_folder(input, output, filter=filter,
+                                     avoid_copy=True, fLOG=fLOG)
 
     if len(actions) == 0:
         raise FileNotFoundError("empty folder: " + input)
@@ -678,21 +672,22 @@ def add_file_rst(rootm,
 
 
 def produces_indexes(
-    store_obj,
-    indexes,
-    fexclude_index,
-    titles={"method": "Methods",
-            "staticmethod": "Static Methods",
-            "property": "Properties",
-            "function": "Functions",
-            "class": "Classes",
-            "module": "Modules"},
-    correspondances={"method": "l-methods",
-                     "function": "l-functions",
-                     "staticmethod": "l-staticmethods",
-                               "property": "l-properties",
-                               "class": "l-classes",
-                               "module": "l-modules"}):
+        store_obj,
+        indexes,
+        fexclude_index,
+        titles={"method": "Methods",
+                "staticmethod": "Static Methods",
+                "property": "Properties",
+                "function": "Functions",
+                "class": "Classes",
+                "module": "Modules"},
+        correspondances={"method": "l-methods",
+                         "function": "l-functions",
+                         "staticmethod": "l-staticmethods",
+                                   "property": "l-properties",
+                                   "class": "l-classes",
+                                   "module": "l-modules"},
+        fLOG=fLOG):
     """
     produces a file for each category of object found in the module
     @param      store_obj           list of collected object, it is a dictionary
@@ -701,6 +696,7 @@ def produces_indexes(
     @param      fexclude_index      to exclude files from the indices
     @param      titles              each type is mapped to a title to add to the rst file
     @param      correspondances     each type is mapped to a label to add to the rst file
+    @param      fLOG                logging function
     @return                         dictionary: { type : rst content of the index }
     """
     from pandas import DataFrame
@@ -885,28 +881,18 @@ def filecontent_to_rst(filename, content):
     return "\n".join(rows), "no documentation"
 
 
-def prepare_file_for_sphinx_help_generation(
-        store_obj,
-        input,
-        output,
-        subfolders,
-        fmod_copy=lambda v, filename: v,
-        template=add_file_rst_template,
-        rootrep=("_doc.sphinxdoc.source.project_name.", ""),
-        fmod_res=lambda v: v,
-        silent=False,
-        optional_dirs=None,
-        softfile=lambda f: False,
-        fexclude=lambda f: False,
-        mapped_function=None,
-        fexclude_index=lambda f: False,
-        issues=None,
-        additional_sys_path=None,
-        replace_relative_import=False,
-        module_name=None,
-        copy_add_ext=None,
-        use_sys=None,
-        fLOG=fLOG):
+def prepare_file_for_sphinx_help_generation(store_obj, input, output,
+                                            subfolders, fmod_copy=lambda v, filename: v,
+                                            template=add_file_rst_template,
+                                            rootrep=(
+                                                "_doc.sphinxdoc.source.project_name.", ""),
+                                            fmod_res=lambda v: v, silent=False,
+                                            optional_dirs=None, softfile=lambda f: False,
+                                            fexclude=lambda f: False, mapped_function=None,
+                                            fexclude_index=lambda f: False, issues=None,
+                                            additional_sys_path=None, replace_relative_import=False,
+                                            module_name=None, copy_add_ext=None, use_sys=None,
+                                            fLOG=fLOG):
     """
     prepare all files for Sphinx generation
 
@@ -1015,45 +1001,31 @@ def prepare_file_for_sphinx_help_generation(
 
             temp = os.path.split(dst)
             actions_t = [(">", temp[1], temp[0], 0, 0)]
-            rstadd = add_file_rst(rootm,
-                                  store_obj,
-                                  actions_t,
-                                  template,
-                                  rootrep,
-                                  fmod_res,
+            rstadd = add_file_rst(rootm, store_obj, actions_t,
+                                  template, rootrep, fmod_res,
                                   softfile=softfile,
                                   mapped_function=mapped_function,
                                   indexes=indexes,
                                   additional_sys_path=additional_sys_path,
-                                  fLOG=fLOG
-                                  )
+                                  fLOG=fLOG)
             rsts += rstadd
         else:
 
-            actions_t = copy_source_files(src,
-                                          dst,
-                                          fmod_copy,
-                                          silent=silent,
-                                          softfile=softfile,
-                                          fexclude=fexclude,
+            actions_t = copy_source_files(src, dst, fmod_copy, silent=silent,
+                                          softfile=softfile, fexclude=fexclude,
                                           addfilter="|".join(
                                               ['(%s)' % _[0] for _ in mapped_function]),
                                           replace_relative_import=replace_relative_import,
                                           copy_add_ext=copy_add_ext,
-                                          use_sys=use_sys)
+                                          use_sys=use_sys, fLOG=fLOG)
 
             # without those two lines, importing the module might crash later
             if sys.version_info[0] != 2:
                 importlib.invalidate_caches()
                 importlib.util.find_spec(module_name)
 
-            rsts += add_file_rst(rootm,
-                                 store_obj,
-                                 actions_t,
-                                 template,
-                                 rootrep,
-                                 fmod_res,
-                                 softfile=softfile,
+            rsts += add_file_rst(rootm, store_obj, actions_t, template,
+                                 rootrep, fmod_res, softfile=softfile,
                                  mapped_function=mapped_function,
                                  indexes=indexes,
                                  additional_sys_path=additional_sys_path,
@@ -1073,20 +1045,16 @@ def prepare_file_for_sphinx_help_generation(
             fLOG("creating folder (sphinx) ", dest)
             os.makedirs(dest)
 
-        copy_source_files(fold,
-                          dest,
-                          silent=silent,
-                          filter=filt,
-                          softfile=softfile,
-                          fexclude=fexclude,
+        copy_source_files(fold, dest, silent=silent, filter=filt,
+                          softfile=softfile, fexclude=fexclude,
                           addfilter="|".join(['(%s)' % _[0]
                                               for _ in mapped_function]),
                           replace_relative_import=replace_relative_import,
-                          copy_add_ext=copy_add_ext)
+                          copy_add_ext=copy_add_ext, fLOG=fLOG)
 
     # processing all store_obj to compute some indices
     fLOG("extracted ", len(store_obj), " objects")
-    res = produces_indexes(store_obj, indexes, fexclude_index)
+    res = produces_indexes(store_obj, indexes, fexclude_index, fLOG=fLOG)
 
     fLOG("generating ", len(res), " indexes for ", ", ".join(list(res.keys())))
     allfiles = []
@@ -1178,7 +1146,7 @@ def prepare_file_for_sphinx_help_generation(
     # fixes indexed objects with incomplete names
     # :class:`name`  --> :class:`name <...>`
     fLOG("+looking for incomplete references", output)
-    fix_incomplete_references(output, store_obj, issues=issues)
+    fix_incomplete_references(output, store_obj, issues=issues, fLOG=fLOG)
     # for t,so in store_obj.items() :
 
     # look for FAQ and example
@@ -1238,7 +1206,7 @@ def process_copy_images(folder_source, folder_images):
     return cop
 
 
-def fix_incomplete_references(folder_source, store_obj, issues=None):
+def fix_incomplete_references(folder_source, store_obj, issues=None, fLOG=fLOG):
     """
     look into every file .rst or .py for incomplete reference. Example::
 
@@ -1248,6 +1216,7 @@ def fix_incomplete_references(folder_source, store_obj, issues=None):
     @param      folder_source       folder where to look for sources
     @param      store_obj           container for indexed objects
     @param      issues              if not None (a list), it will add issues (function, message)
+    @param      fLOG                logging function
     @return                         list of fixed references
     """
     cor = {"func": ["function"],

@@ -66,7 +66,6 @@ def get_test_file(filter, dir=None, no_subfolder=False, fLOG=noLOG, root=None):
                     raise FileNotFoundError(d)
 
     copypaths = list(sys.path)
-    fLOG("[unittests], inspecting", dirs)
 
     li = []
     for dir in dirs:
@@ -99,6 +98,7 @@ def get_test_file(filter, dir=None, no_subfolder=False, fLOG=noLOG, root=None):
                        ".py~" not in l and
                        ".pyo" not in l]
         li.extend(content)
+        fLOG("[unittests], inspecting", dirs)
 
         lid = glob.glob(dir + "/*")
         for l in lid:
@@ -331,7 +331,7 @@ def default_filter_warning(w):
 
 
 def main_run_test(runner, path_test=None, limit_max=1e9, log=False, skip=-1, skip_list=None,
-                  on_stderr=False, flogp=noLOG, processes=False, skip_function=None,
+                  on_stderr=False, processes=False, skip_function=None,
                   additional_ut_path=None, stdout=None, stderr=None, filter_warning=None,
                   fLOG=noLOG):
     """
@@ -349,7 +349,6 @@ def main_run_test(runner, path_test=None, limit_max=1e9, log=False, skip=-1, ski
     @param      skip_list           skip unit test id in this list (by index, starting by 1)
     @param      skip_function       *function(filename,content,duration) --> boolean* to skip a unit test
     @param      on_stderr           if True, publish everything on stderr at the end
-    @param      flogp               logging, printing function
     @param      processes           to run the unit test in a separate process (with function @see fn run_cmd),
                                     however, to make that happen, you need to specify
                                     ``exit=False`` for each test file, see `unittest.main <https://docs.python.org/3.4/library/unittest.html#unittest.main>`_
@@ -397,7 +396,7 @@ def main_run_test(runner, path_test=None, limit_max=1e9, log=False, skip=-1, ski
         return cut
 
     # sort the test by increasing expected time
-    fLOG("path_test", path_test)
+    fLOG("[main_run_test] path_test", path_test)
     li = get_test_file("test*", dir=path_test, fLOG=fLOG, root=path_test)
     if len(li) == 0:
         raise FileNotFoundError("no test files in " + path_test)
@@ -425,9 +424,9 @@ def main_run_test(runner, path_test=None, limit_max=1e9, log=False, skip=-1, ski
             "unable to find any test files in {0}".format(path_test))
 
     if skip != -1:
-        flogp("found ", len(co), " test files skipping", skip)
+        fLOG("found ", len(co), " test files skipping", skip)
     else:
-        flogp("found ", len(co), " test files")
+        fLOG("found ", len(co), " test files")
 
     # extract the test classes
     cco = []
@@ -507,10 +506,6 @@ def main_run_test(runner, path_test=None, limit_max=1e9, log=False, skip=-1, ski
         zzz += (60 - len(zzz)) * " "
         memout.write(zzz)
 
-        if log and fLOG is not print:
-            fLOG(OutputPrint=True)
-            fLOG(Lock=True)
-
         newstdr = StringIO()
         keepstdr = sys.stderr
         sys.stderr = newstdr
@@ -542,9 +537,6 @@ def main_run_test(runner, path_test=None, limit_max=1e9, log=False, skip=-1, ski
         add = " ran %s tests in %ss" % ti
 
         sys.stderr = keepstdr
-
-        if log:
-            fLOG(Lock=False)
 
         memout.write(add)
 
@@ -624,9 +616,9 @@ def main_run_test(runner, path_test=None, limit_max=1e9, log=False, skip=-1, ski
     val = fullstderr.getvalue()
 
     if len(val) > 0:
-        flogp("-- STDERR (from unittests) on STDOUT")
-        flogp(val)
-        flogp("-- end STDERR on STDOUT")
+        fLOG("-- STDERR (from unittests) on STDOUT")
+        fLOG(val)
+        fLOG("-- end STDERR on STDOUT")
 
         if on_stderr:
             memerr.write("##### STDERR (from unittests) #####\n")
@@ -653,7 +645,7 @@ def main_run_test(runner, path_test=None, limit_max=1e9, log=False, skip=-1, ski
                             i, type(w))
                         memout.write(sw)
 
-    flogp("END of unit tests")
+    fLOG("END of unit tests")
 
     return dict(err=val, tests=keep)
 

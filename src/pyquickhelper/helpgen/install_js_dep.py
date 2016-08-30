@@ -40,7 +40,7 @@ def install_javascript_tools(root, dest, fLOG=noLOG,
             folder = os.path.dirname(sphinxjp.themes.revealjs.__file__)
             js = os.path.join(folder, "templates", "revealjs", "static")
             os.mkdir(rev)
-            sync = synchronize_folder(js, rev, copy_1to2=True)
+            sync = synchronize_folder(js, rev, copy_1to2=True, fLOG=fLOG)
             fulls = [s[1].fullname for s in sync]
             change_file_status(rev)
             lfiles = fulls

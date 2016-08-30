@@ -38,7 +38,7 @@ Another list
 """
 
 
-def setup_environment_for_help():
+def setup_environment_for_help(fLOG=fLOG):
     """
     modifies environment variables to be able to use external tools
     such as `Inkscape <https://inkscape.org/>`_
@@ -172,7 +172,8 @@ def produce_code_graph_changes(df):
 def generate_changes_repo(chan,
                           source,
                           exception_if_empty=True,
-                          filter_commit=lambda c: c.strip() != "documentation"):
+                          filter_commit=lambda c: c.strip() != "documentation",
+                          fLOG=fLOG):
     """
     Generates a rst tables containing the changes stored by a svn or git repository,
     the outcome is stored in a file.
@@ -182,6 +183,7 @@ def generate_changes_repo(chan,
     @param          source              source folder to get changes for
     @param          exception_if_empty  raises an exception if empty
     @param          filter_commit       function which accepts a commit to show on the documentation (based on the comment)
+    @param          fLOG                logging function
     @return                             string (rst tables with the changes)
 
     .. versionchanged:: 1.0
@@ -340,7 +342,7 @@ def compile_latex_output_final(root, latex_path, doall, afile=None, latex_book=F
                 raise HelpGenException(err)
 
 
-def replace_placeholder_by_recent_blogpost(all_tocs, plist, placeholder, nb_post=5):
+def replace_placeholder_by_recent_blogpost(all_tocs, plist, placeholder, nb_post=5, fLOG=fLOG):
     """
     replaces a place holder by a list of blog post
 
@@ -348,6 +350,7 @@ def replace_placeholder_by_recent_blogpost(all_tocs, plist, placeholder, nb_post
     @param      plist           list of blog post
     @param      placeholder     place holder to replace
     @param      nb_post         number of blog post to display
+    @param      fLOG            logging function
     """
     def make_link(post):
         name = os.path.splitext(os.path.split(post.FileName)[-1])[0]

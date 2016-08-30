@@ -181,6 +181,7 @@ def process_standard_options_for_setup(argv, file_or_folder, project_var_name, m
     if "--help" in argv or "--help-commands" in argv:
         process_standard_options_for_setup_help(argv)
         return True
+    fLOG("[process_standard_options_for_setup]", argv)
 
     def process_argv_for_unittest(argv):
         if "-d" in argv:
@@ -207,6 +208,7 @@ def process_standard_options_for_setup(argv, file_or_folder, project_var_name, m
                 raise ValueError(
                     "Option -e should be follow by a regular expression.")
             e = re.compile(argv[l + 1])
+            fLOG("compile regular expression for unittests", e.pattern)
         else:
             e = None
 
@@ -240,12 +242,13 @@ def process_standard_options_for_setup(argv, file_or_folder, project_var_name, m
             else:
                 # d is not None
                 def allowd(name, code, duration):
-                    return (duration is None or duration > d) and ereg(name) and not greg(name)
+                    return (duration is None or d is None or duration > d) and ereg(name) and not greg(name)
                 return allowd
 
     folder = file_or_folder if os.path.isdir(
         file_or_folder) else os.path.dirname(file_or_folder)
     unit_test_folder = os.path.join(folder, "_unittests")
+    fLOG("unittest_modules={0}".format(unittest_modules))
 
     if unittest_modules is None:
         unittest_modules_py3to2 = None
@@ -338,7 +341,7 @@ def process_standard_options_for_setup(argv, file_or_folder, project_var_name, m
             stdout=stdout, stderr=stderr, fLOG=fLOG)
         return True
 
-    elif "unittests_SKIP" in sys.argv:
+    elif "unittests_SKIP" in argv:
         def skip_skip(name, code, duration):
             return "test_SKIP_" not in name
         run_unittests_for_setup(
@@ -348,7 +351,7 @@ def process_standard_options_for_setup(argv, file_or_folder, project_var_name, m
             stdout=stdout, stderr=stderr, fLOG=fLOG)
         return True
 
-    elif "unittests_GUI" in sys.argv:
+    elif "unittests_GUI" in argv:
         def skip_skip(name, code, duration):
             return "test_GUI_" not in name
         run_unittests_for_setup(
