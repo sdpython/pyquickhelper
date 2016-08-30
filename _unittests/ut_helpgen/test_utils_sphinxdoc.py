@@ -97,7 +97,8 @@ class TestSphinxDoc (unittest.TestCase):
         snewc = newc[:len(newc) // 2]
         assert "pass" in newc
         assert ":param" in newc
-        assert "@param" not in snewc
+        if "@param" in snewc:
+            raise Exception(snewc)
         assert "docrows" in stats
 
     def test_sphinx_doc_all(self):

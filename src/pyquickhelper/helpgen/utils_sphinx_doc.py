@@ -269,26 +269,29 @@ def copy_source_files(input, output, fmod=lambda v, filename: v,
     copy all sources files (input) into a folder (output),
     apply on each of them a modification
 
-    @param      input                       input folder
-    @param      output                      output folder (it will be cleaned each time)
-    @param      fmod                        modifies the content of each file,
+    :param      input:                      input folder
+    :param      output:                     output folder (it will be cleaned each time)
+    :param      fmod:                       modifies the content of each file,
                                             this function takes a string and returns a string
-    @param      silent                      if True, do not stop when facing an issue with doxygen documentation
-    @param      filter                      if None, process only file related to python code, otherwise,
+
+    :param      silent:                     if True, do not stop when facing an issue with doxygen documentation
+    :param      filter:                     if None, process only file related to python code, otherwise,
                                             use this filter to select file (regular expression). If this parameter
                                             is None or is empty, the default value is:
-                                            ``"(.+[.]py$)|(.+[.]pyd$)|(.+[.]cpp$)|(.+[.]h$)|(.+[.]dll$)|(.+[.]yml$)|" +``
-                                            ``"(.+[.]o$)|(.+[.]def$)|(.+[.]exe$)|(.+[.]config$)"``.
-    @param      remove                      if True, remove every files in the output folder first
-    @param      softfile                    softfile is a function (f : filename --> True or False), when it is True,
+                                            ``"(.+[.]py$)|(.+[.]pyd$)|(.+[.]cpp$)|(.+[.]h$)|(.+[.]dll$)|(.+[.]o$)|(.+[.]def$)|(.+[.]exe$)|(.+[.]config$)"``.
+
+    :param      remove:                     if True, remove every files in the output folder first
+    :param      softfile:                   softfile is a function (f : filename --> True or False), when it is True,
                                             the documentation is lighter (no special members)
-    @param      fexclude                    function to exclude some files from the help
-    @param      addfilter                   additional filter, it should look like: ``"(.+[.]pyx$)|(.+[.]pyh$)"``
-    @param      replace_relative_import     replace relative import
-    @param      copy_add_ext                additional extension file to copy
-    @param      use_sys                     @see fn remove_undesired_part_for_documentation
-    @param      fLOG                        logging function
-    @return                                 list of copied files
+
+    :param      fexclude:                   function to exclude some files from the help
+    :param      addfilter:                  additional filter, it should look like: ``"(.+[.]pyx$)|(.+[.]pyh$)"``
+    :param      replace_relative_import:    replace relative import
+    :param      copy_add_ext:               additional extension file to copy
+    :param      use_sys:                    see :func:`remove_undesired_part_for_documentation
+                                            <pyquickhelper.helpgen.utils_sphinx_doc.remove_undesired_part_for_documentation>`
+    :param      fLOG:                       logging function
+    :return:                                list of copied files
 
     .. versionchanged:: 1.3
         Parameters *copy_add_ext*, *use_sys* were added.
