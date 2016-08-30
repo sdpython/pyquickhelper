@@ -143,7 +143,7 @@ def _process_notebooks_in_private_cmd(fnbcexe, list_args, options_args, fLOG):
     sargs = " ".join(res)
     cmd = '"{0}" "{1}" {2}'.format(sys.executable, this, sargs)
     fLOG("    ", cmd)
-    return run_cmd(cmd, wait=True)
+    return run_cmd(cmd, wait=True, fLOG=fLOG)
 
 
 def _process_notebooks_in(notebooks, outfold, build, latex_path=None, pandoc_path=None,
@@ -315,7 +315,7 @@ def _process_notebooks_in(notebooks, outfold, build, latex_path=None, pandoc_pat
                 # docutils if format is slides, not sure about the others
                 if nbconvert_main != fnbcexe or format not in {"slides"}:
                     out, err = _process_notebooks_in_private(
-                        fnbcexe, list_args, options_args, fLOG=fLOG)
+                        fnbcexe, list_args, options_args)
                 else:
                     # conversion into slides alter Jinja2 environment
                     # jinja2.exceptions.TemplateNotFound: rst
