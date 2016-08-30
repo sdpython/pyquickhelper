@@ -8,6 +8,7 @@ import os
 import time
 import subprocess
 import threading
+import warnings
 from .flog_fake_classes import PQHException
 if sys.version_info[0] == 2:
     import Queue as queue
@@ -199,6 +200,8 @@ def run_cmd(cmd, sin="", shell=True, wait=False, log_error=True,
                                      stdout=subprocess.PIPE if wait else None,
                                      stderr=subprocess.PIPE if wait else None)
         except SystemExit as e:
+            if change_path is not None:
+                os.chdir(current)
             raise RunCmdException("SystemExit raised (1)") from e
 
     else:
@@ -243,6 +246,8 @@ def run_cmd(cmd, sin="", shell=True, wait=False, log_error=True,
                         stdoutdata, stderrdata = pproc.communicate(
                             input=input, timeout=timeout)
                 except SystemExit as e:
+                    if change_path is not None:
+                        os.chdir(current)
                     raise RunCmdException("SystemExit raised (2)") from e
             else:
                 if sys.version_info[0] == 2:
@@ -259,6 +264,8 @@ def run_cmd(cmd, sin="", shell=True, wait=False, log_error=True,
         else:
             # communicate is False: use of threads
             if sin is not None and len(sin) > 0:
+                if change_path is not None:
+                    os.chdir(current)
                 raise Exception(
                     "communicate should be True to send something on stdin")
             stdout, stderr = pproc.stdout, pproc.stderr
@@ -320,6 +327,14 @@ def run_cmd(cmd, sin="", shell=True, wait=False, log_error=True,
                 err_read = True
 
                 if returnCode != 0:
+                    if change_path is not None:
+                        os.chdir(current)
+                    try:
+                        # we try to close the ressources
+                        stdout.close()
+                        stderr.close()
+                    except Exception as e:
+                        warnings.warn("Unable to close stdout and sterr.")
                     if catch_exit:
                         raise RunCmdException("SystemExit raised with error code {0}\nOUT:\n{1}\nERR:\n{2}".format(
                             returnCode, "\n".join(out), "\n".join(err)))

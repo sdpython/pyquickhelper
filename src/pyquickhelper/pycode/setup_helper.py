@@ -75,7 +75,8 @@ def process_standard_options_for_setup(argv, file_or_folder, project_var_name, m
                                        additional_notebook_path=None, additional_local_path=None, copy_add_ext=None,
                                        nbformats=(
                                            "ipynb", "html", "python", "rst", "slides", "pdf", "present"),
-                                       layout=["html", "pdf", "epub"], additional_ut_path=None,
+                                       layout=["html", "pdf"],  # , "epub"],
+                                       additional_ut_path=None,
                                        skip_function=default_skip_function, covtoken=None, hook_print=True,
                                        stdout=None, stderr=None, use_run_cmd=False, filter_warning=None,
                                        fLOG=noLOG):
@@ -516,7 +517,7 @@ def standard_help_for_setup(argv, file_or_folder, project_var_name, module_name=
                             add_htmlhelp=False, copy_add_ext=None,
                             nbformats=("ipynb", "html", "python",
                                        "rst", "slides", "pdf", "present"),
-                            layout=["html", "pdf", "epub"],
+                            layout=["html", "pdf"],  # , "epub"],
                             use_run_cmd=False,
                             fLOG=noLOG):
     """

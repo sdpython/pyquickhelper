@@ -101,6 +101,7 @@ def remove_extra_spaces_folder(
                 and "/build3/" not in fl \
                 and "/_virtualenv/" not in fl \
                 and "/_venv/" not in fl \
+                and "/_todo/" not in fl \
                 and "/dist_module27" not in fl \
                 and os.stat(f).st_size < 100000:
             ext = os.path.splitext(f)[-1]

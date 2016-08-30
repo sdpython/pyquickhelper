@@ -10,7 +10,7 @@ import datetime
 import shutil
 import subprocess
 
-from ..loghelper.flog import run_cmd, fLOG
+from ..loghelper import run_cmd, RunCmdException, fLOG
 from ..loghelper.pyrepo_helper import SourceRepository
 from ..pandashelper.tblformat import df2rst
 from ..filehelper import explore_folder_iterfile
@@ -278,6 +278,26 @@ def compile_latex_output_final(root, latex_path, doall, afile=None, latex_book=F
     @param      latex_book  do some customized transformation for a book
     @param      fLOG        logging function
 
+    .. faqreq:
+        :title: The PDF is corrupted, SVG are not there
+
+        SVG graphs are not well processed by the latex compilation.
+        It usually goes through the following instruction:
+
+        ::
+
+            \\sphinxincludegraphics{{seance4_projection_population_correction_51_0}.svg}
+
+        And produces the following error:
+
+        ::
+
+            ! LaTeX Error: Unknown graphics extension: .svg.
+
+        This function does not stop if the latex compilation but if the PDF
+        is corrupted, the log should be checked to see the errors.
+
+
     .. versionchanged:: 1.4
         Parameter *fLOG* was added.
     """
@@ -300,7 +320,7 @@ def compile_latex_output_final(root, latex_path, doall, afile=None, latex_book=F
             fLOG("~~~~ LATEX compilation (c)", c)
             post_process_latex_output(file, doall, latex_book=latex_book)
             out, err = run_cmd(c, wait=True, log_error=False, catch_exit=True, communicate=False,
-                               tell_if_no_output=600, fLOG=fLOG)
+                               tell_if_no_output=120, fLOG=fLOG)
             if len(err) > 0:
                 raise HelpGenException(
                     "CMD:\n{0}\nERR:\n{1}\nOUT:\n{2}".format(c, err, out))
@@ -311,7 +331,7 @@ def compile_latex_output_final(root, latex_path, doall, afile=None, latex_book=F
             try:
                 out, err = run_cmd(
                     c, wait=True, log_error=False, communicate=False, fLOG=fLOG, tell_if_no_output=600)
-            except subprocess.CalledProcessError:
+            except (subprocess.CalledProcessError, RunCmdException):
                 fLOG("~~~~ LATEX ERROR: check the logs")
                 err = ""
             fLOG("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")

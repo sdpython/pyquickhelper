@@ -70,7 +70,7 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
                          extra_ext=None,
                          nbformats=("ipynb", "slides", "html", "python",
                                     "rst", "pdf", "present"),
-                         layout=[("html", "build", {}), ("epub", "build", {})],
+                         layout=[("html", "build", {}), ],  # ("epub", "build", {})],
                          module_name=None, from_repo=True, add_htmlhelp=False,
                          copy_add_ext=None, direct_call=False, fLOG=fLOG):
     """
