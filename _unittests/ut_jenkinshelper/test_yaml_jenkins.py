@@ -105,6 +105,7 @@ class TestYamlJenkins(unittest.TestCase):
         nb = 0
         sch = 0
         desc = 0
+        to = 0
         for i, r in enumerate(res):
             conf = r[-1]
 
@@ -139,12 +140,16 @@ class TestYamlJenkins(unittest.TestCase):
                 desc += 1
             if "0101 - H H(16-17) * * 0" in conf:
                 desc += 1
+            if "<timeoutSecondsString>900</timeoutSecondsString>" in conf:
+                to += 1
 
         if sys.version_info[0] != 2:
             assert i > 0
             assert nb > 0
+            assert to > 0
             self.assertEqual(sch, 2)
             self.assertEqual(desc, 2)
+            fLOG(to)
         else:
             warnings.warn("disable the test on Python 2.7")
 

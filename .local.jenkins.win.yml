@@ -35,8 +35,10 @@ before_script:
 # Each row becomes a Jenkins job. pyquickhelper will generate nb(python) * nb(script) jobs to run on Jenkins.
 # Steps before_script and after_script are run for every script.
 # Variable NAME is added to the Job name on Jenkins in order to distinguish them.
+# By default, the timeout for the job (only used in Jenkins) is set to 1200 (20 minutes).
+# This means the job will be stop if it produces no output for 20 minutes.
 script:
-  - { CMD: "python setup.py unittests", NAME: "UT" }
+  - { CMD: "python setup.py unittests", NAME: "UT", TIMEOUT: 900 }
   - if [ ${VERSION} == "3.5" and ${DIST} == "std" ]
       then 
         --CMD=python setup.py build_sphinx;

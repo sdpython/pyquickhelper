@@ -234,9 +234,12 @@ def enumerate_convert_yaml_into_instructions(obj, variables=None, add_environ=Tr
                     value = value["PATH"]
             elif key == "script":
                 value = interpret_instruction(value[i_script], variables)
-                if isinstance(value, dict) and "NAME" in value:
-                    seq.append(('INFO', ('NAME', value["NAME"])))
-                    variables["NAME"] = value["NAME"]
+                if isinstance(value, dict):
+                    for k, v in sorted(value.items()):
+                        if k != "CMD":
+                            seq.append(('INFO', (k, v)))
+                            variables[k] = v
+
                 i_script += 1
                 if i_script >= count['script']:
                     i_script = 0
@@ -491,6 +494,7 @@ def enumerate_processed_yml(file_or_buffer, context=None, engine="jinja2", platf
             name = "_".join([project_name, var.get('NAME', ''), typstr(var.get("VERSION", '')).replace(".", ""),
                              var.get('DIST', '')])
             conv = "SET NAME_JENKINS=" + name + "\n" + conv
+            timeout = var.get("TIMEOUT", None)
             import jenkins
             try:
                 j = server.get_job_config(name) if not server._mock else None
@@ -520,6 +524,8 @@ def enumerate_processed_yml(file_or_buffer, context=None, engine="jinja2", platf
                 loc = os.path.join(build_location, name)
 
             if overwrite or j is None:
+                if timeout is not None:
+                    kwargs["timeout"] = timeout
                 yield server.create_job_template(name, script=conv, git_repo=git_repo,
                                                  update=update_job, location=loc, **kwargs), name, var
         else:

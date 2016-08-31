@@ -162,6 +162,7 @@ class TestYaml(unittest.TestCase):
             SET DIST=std
             SET VERSION=3.5
             SET NAME=UT
+            SET TIMEOUT=900
             @echo interpreter=C:\\Python35_x64\\python
 
             @echo CREATE VIRTUAL ENVIRONMENT in ROOT\\%NAME_JENKINS%\\_venv
@@ -293,6 +294,7 @@ class TestYaml(unittest.TestCase):
             SET DIST=std
             SET VERSION=2.7
             SET NAME=UT
+            SET TIMEOUT=900
             @echo interpreter=C:\\Python27_x64\\python
 
             @echo CREATE VIRTUAL ENVIRONMENT in ROOT\\%NAME_JENKINS%\\_venv

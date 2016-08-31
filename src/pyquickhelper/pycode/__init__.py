@@ -13,5 +13,5 @@ from .tkinter_helper import fix_tkinter_issues_virtualenv
 from .trace_execution import get_call_stack
 from .utils_tests import main_wrapper_tests
 from .utils_tests_helper import get_temp_folder, check_pep8, add_missing_development_version
-from .venv_helper import create_virtual_env, run_venv_script, compare_module_version
+from .venv_helper import create_virtual_env, run_venv_script, compare_module_version, run_base_script
 from .venv_helper import NotImplementedErrorFromVirtualEnvironment, is_virtual_environment, check_readme_syntax
