@@ -20,7 +20,7 @@ except ImportError:
     import src
 
 from src.pyquickhelper.loghelper import fLOG
-from src.pyquickhelper.pycopde import is_travis_or_appveyor
+from src.pyquickhelper.pycode import is_travis_or_appveyor
 from src.pyquickhelper.pycode.venv_helper import run_base_script, is_virtual_environment
 
 
