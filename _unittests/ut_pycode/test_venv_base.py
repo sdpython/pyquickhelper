@@ -20,6 +20,7 @@ except ImportError:
     import src
 
 from src.pyquickhelper.loghelper import fLOG
+from src.pyquickhelper.pycopde import is_travis_or_appveyor
 from src.pyquickhelper.pycode.venv_helper import run_base_script, is_virtual_environment
 
 
@@ -30,6 +31,10 @@ class TestVenvBase(unittest.TestCase):
             __file__,
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
+
+        if is_travis_or_appveyor() == "travis":
+            # no end on travis
+            return
 
         this = os.path.abspath(__file__)
         this = os.path.join(os.path.dirname(

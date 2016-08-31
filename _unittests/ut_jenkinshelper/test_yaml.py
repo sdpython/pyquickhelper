@@ -143,18 +143,20 @@ class TestYaml(unittest.TestCase):
                        root_path="ROOT")
         obj, name = load_yaml(yml, context=context, platform=platform)
         assert name is not None
-        res = list(enumerate_convert_yaml_into_instructions(obj))
+        res = list(enumerate_convert_yaml_into_instructions(
+            obj, add_environ=False))
         convs = []
         for r, v in res:
             conv = convert_sequence_into_batch_file(
                 r, variables=v, platform=platform)
-            # fLOG("####", conv)
             convs.append(conv)
             typstr = str  # unicode#
             assert isinstance(conv, typstr)
         assert len(res) > 0
 
-        conv = [_ for _ in convs if "SET NAME=UT" in _ and "VERSION=3.5" in _][0]
+        conv = [_ for _ in convs if "SET NAME=UT" in _ and "VERSION=3.5" in _]
+        self.assertEqual(len(conv), 1)
+        conv = conv[0]
         if platform.startswith("win"):
             expected = """
             @echo off
@@ -272,12 +274,12 @@ class TestYaml(unittest.TestCase):
                        root_path="ROOT")
         obj, name = load_yaml(yml, context=context, platform=platform)
         assert name is not None
-        res = list(enumerate_convert_yaml_into_instructions(obj))
+        res = list(enumerate_convert_yaml_into_instructions(
+            obj, add_environ=False))
         convs = []
         for r, v in res:
             conv = convert_sequence_into_batch_file(
                 r, variables=v, platform=platform)
-            # fLOG("####", conv)
             typstr = str  # unicode#
             if not isinstance(conv, typstr):
                 raise TypeError(type(conv))
