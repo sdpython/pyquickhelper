@@ -35,8 +35,10 @@ class TestVenvBase(unittest.TestCase):
         this = os.path.join(os.path.dirname(
             this), "example_venv_base_simple.py")
         if is_virtual_environment():
+            fLOG("virtual_environment")
             out = run_base_script(this, file=True, fLOG=fLOG)
         else:
+            fLOG("no virtual_environment")
             out = run_base_script(this, file=True, fLOG=fLOG)
         if "example_venv_base_simple.py execution" not in out:
             raise Exception(out)
