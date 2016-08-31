@@ -275,7 +275,7 @@ def venv_install(venv, packages, fLOG=noLOG, temp_folder=None):
 
 
 def run_venv_script(venv, script, fLOG=noLOG, file=False, is_cmd=False,
-                    skip_err_if=None):
+                    skip_err_if=None, **kwargs):
     """
     run a script on a vritual environment (the script should be simple
 
@@ -285,6 +285,7 @@ def run_venv_script(venv, script, fLOG=noLOG, file=False, is_cmd=False,
     @param      file        is script a file or a string to execute
     @param      is_cmd      if True, script is a command line to run (as a list) for python executable
     @param      skip_err_if do not pay attention to standard error if this string was found in standard output
+    @param      kwargs      others arguments for function @see fn run_cmd.
     @return                 output
 
     The function does not work from a virtual environment.
@@ -298,7 +299,7 @@ def run_venv_script(venv, script, fLOG=noLOG, file=False, is_cmd=False,
         exe = os.path.join(venv, "bin", "python")
     if is_cmd:
         cmd = " ".join([exe] + script)
-        out, err = run_cmd(cmd, wait=True, fLOG=fLOG)
+        out, err = run_cmd(cmd, wait=True, fLOG=fLOG, **kwargs)
         if len(err) > 0 and (skip_err_if is None or skip_err_if not in out):
             raise VirtualEnvError(
                 "unable to run cmd at {2}\nCMD:\n{3}\nOUT:\n{0}\nERR:\n{1}".format(out, err, venv, cmd))
@@ -311,10 +312,49 @@ def run_venv_script(venv, script, fLOG=noLOG, file=False, is_cmd=False,
             cmd = " ".join([exe, "-u", '"{0}"'.format(script)])
         else:
             cmd = " ".join([exe, "-u", "-c", '"{0}"'.format(script)])
-        out, err = run_cmd(cmd, wait=True, fLOG=fLOG)
+        out, err = run_cmd(cmd, wait=True, fLOG=fLOG, **kwargs)
         if len(err) > 0:
             raise VirtualEnvError(
                 "unable to run script at {2}\nCMD:\n{3}\nOUT:\n{0}\nERR:\n{1}".format(out, err, venv, cmd))
+        return out
+
+
+def run_base_script(script, fLOG=noLOG, file=False, is_cmd=False,
+                    skip_err_if=None, **kwargs):
+    """
+    run a script with the original intepreter even if this function
+    is run from a virtual environment
+
+    @param      script      script as a string (not a file)
+    @param      fLOG        logging function
+    @param      file        is script a file or a string to execute
+    @param      is_cmd      if True, script is a command line to run (as a list) for python executable
+    @param      skip_err_if do not pay attention to standard error if this string was found in standard output
+    @param      kwargs      others arguments for function @see fn run_cmd.
+    @return                 output
+
+    The function does not work from a virtual environment.
+    """
+    exe = os.path.join(sys.base_exec_prefix, "python")
+    if is_cmd:
+        cmd = " ".join([exe] + script)
+        out, err = run_cmd(cmd, wait=True, fLOG=fLOG, **kwargs)
+        if len(err) > 0 and (skip_err_if is None or skip_err_if not in out):
+            raise VirtualEnvError(
+                "unable to run cmd at {2}\nCMD:\n{3}\nOUT:\n{0}\nERR:\n{1}".format(out, err, sys.base_prefix, cmd))
+        return out
+    else:
+        script = ";".join(script.split("\n"))
+        if file:
+            if not os.path.exists(script):
+                raise FileNotFoundError(script)
+            cmd = " ".join([exe, "-u", '"{0}"'.format(script)])
+        else:
+            cmd = " ".join([exe, "-u", "-c", '"{0}"'.format(script)])
+        out, err = run_cmd(cmd, wait=True, fLOG=fLOG, **kwargs)
+        if len(err) > 0:
+            raise VirtualEnvError(
+                "unable to run script with {2}\nCMD:\n{3}\nOUT:\n{0}\nERR:\n{1}".format(out, err, sys.base_prefix, cmd))
         return out
 
 
