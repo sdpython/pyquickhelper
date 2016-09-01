@@ -19,14 +19,12 @@ from .call_setup_hook import call_setup_hook
 from .code_exceptions import CoverageException, SetupHookException
 from .coverage_helper import publish_coverage_on_codecov
 from .utils_tests_private import default_skip_function, main_run_test
+from .utils_tests_stringio import StringIOAndFile
 
 
 if sys.version_info[0] == 2:
-    from StringIO import StringIO
     FileNotFoundError = Exception
     from codecs import open
-else:
-    from io import StringIO
 
 
 def main_wrapper_tests(codefile, skip_list=None, processes=False, add_coverage=False, report_folder=None,
@@ -135,7 +133,8 @@ def main_wrapper_tests(codefile, skip_list=None, processes=False, add_coverage=F
     .. versionchanged:: 1.4
         Parameter *filter_warning* was added.
     """
-    runner = unittest.TextTestRunner(verbosity=0, stream=StringIO())
+    whole_ouput = StringIOAndFile(codefile + ".out")
+    runner = unittest.TextTestRunner(verbosity=0, stream=whole_ouput)
     path = os.path.abspath(os.path.join(os.path.split(codefile)[0]))
 
     def run_main():

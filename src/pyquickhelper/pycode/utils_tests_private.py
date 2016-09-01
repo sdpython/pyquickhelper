@@ -13,6 +13,7 @@ import glob
 import re
 import unittest
 import warnings
+from .utils_tests_stringio import StringIOAndFile
 
 from ..filehelper.synchelper import remove_folder
 from ..loghelper.flog import run_cmd, noLOG
@@ -506,7 +507,8 @@ def main_run_test(runner, path_test=None, limit_max=1e9, log=False, skip=-1, ski
         zzz += (60 - len(zzz)) * " "
         memout.write(zzz)
 
-        newstdr = StringIO()
+        # the errors are logged into a file just beside the test file
+        newstdr = StringIOAndFile(s[1] + ".err")
         keepstdr = sys.stderr
         sys.stderr = newstdr
         list_warn = []

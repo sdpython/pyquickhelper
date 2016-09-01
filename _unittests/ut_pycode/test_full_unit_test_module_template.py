@@ -166,6 +166,10 @@ class TestUnitTestFull(unittest.TestCase):
         if memo is not None:
             sys.modules["src"] = memo
 
+        out = os.path.join(temp, "_unittests", "run_unittests.py.out")
+        if not os.path.exists(out):
+            raise Exception("not found: " + out)
+
 
 if __name__ == "__main__":
     unittest.main()
