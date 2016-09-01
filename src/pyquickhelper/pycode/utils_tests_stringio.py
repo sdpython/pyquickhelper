@@ -30,13 +30,18 @@ class StringIOAndFile(StringIO):
         if os.path.exists(filename):
             os.remove(filename)
         self.handle = None
+        self.redirect = {}
+        self.to = None
 
     def write(self, s):
         """
         @param   s      add a string to the stream
         @return         self
         """
-        StringIO.write(self, s)
+        if self.to is not None:
+            self.redirect[self.to].write(s)
+        else:
+            StringIO.write(self, s)
         if not self.handle:
             self.handle = open(self.filename, "w",
                                encoding="utf-8", errors="ignore")
@@ -59,3 +64,36 @@ class StringIOAndFile(StringIO):
         StringIO.close(self)
         if self.handle:
             self.handle.close()
+
+    def begin_test(self, name):
+        """
+        redirect output to a StringIO
+
+        @param      name        name
+        """
+        if self.to is not None:
+            raise Exception("A test has not finished: '{0}'".format(self.to))
+        if name is None:
+            raise ValueError("name is None")
+        self.to = name
+        self.redirect[name] = StringIO()
+
+    def end_test(self, name):
+        """
+        end the redirection
+
+        @param      name        name
+        """
+        if name != self.to:
+            raise ValueError(
+                "Inconsistency in test name '{0}' != '{1}'".format(name, self.to))
+        self.to = None
+
+    def getvalue(self):
+        """
+        return the content of the buffer
+        """
+        if self.to is not None:
+            return self.redirect[self.to].getvalue()
+        else:
+            return StringIO.getvalue(self)

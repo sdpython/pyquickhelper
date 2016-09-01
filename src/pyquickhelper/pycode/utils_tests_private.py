@@ -90,6 +90,9 @@ def get_test_file(filter, dir=None, no_subfolder=False, fLOG=noLOG, root=None):
 
             content = [fu for l, fu in content if "test_" in l and
                        ".py" in l and
+                       ".py.err" not in l and
+                       ".py.out" not in l and
+                       ".py.warn" not in l and
                        "test_main" not in l and
                        "temp_" not in l and
                        "out.test_copyfile.py.2.txt" not in l and
@@ -488,6 +491,8 @@ def main_run_test(runner, path_test=None, limit_max=1e9, log=False, skip=-1, ski
 
     # displays
     memout.write("---- RUN UT\n")
+    original_stream = runner.stream.stream if isinstance(
+        runner.stream.stream, StringIOAndFile) else None
 
     # run all tests
     for i, s in enumerate(suite):
@@ -522,16 +527,23 @@ def main_run_test(runner, path_test=None, limit_max=1e9, log=False, skip=-1, ski
             if sys.version_info[0] >= 3:
                 with warnings.catch_warnings(record=True) as w:
                     warnings.simplefilter("always")
+                    if original_stream is not None:
+                        original_stream.begin_test(s[1])
                     r = runner.run(s[0])
+                    out = r.stream.getvalue()
+                    if original_stream is not None:
+                        original_stream.end_test(s[1])
                     for ww in w:
                         list_warn.append(ww)
                     warnings.resetwarnings()
-
-                out = r.stream.getvalue()
             else:
                 fLOG("running")
+                if original_stream is not None:
+                    original_stream.begin_test(s[1])
                 r = runner.run(s[0])
                 out = r.stream.getvalue()
+                if original_stream is not None:
+                    original_stream.end_test(s[1])
                 fLOG("end running")
 
         ti = exp.findall(out)[-1]
@@ -559,6 +571,10 @@ def main_run_test(runner, path_test=None, limit_max=1e9, log=False, skip=-1, ski
                     err_e = err.encode("ascii", errors="ignore").decode(
                         'ascii', errors='ingore')
                     memout.write(err_e)
+
+            # stores the output in case of an error
+            with open(s[1] + ".err", "w", encoding="utf-8", errors="ignore") as f:
+                f.write(out)
 
             fail += 1
 
