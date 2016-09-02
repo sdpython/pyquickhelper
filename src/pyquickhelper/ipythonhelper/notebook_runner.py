@@ -97,7 +97,7 @@ class NotebookRunner(object):
             try:
                 from jupyter_client import KernelManager
             except ImportError:
-                from IPython.kernel import KernelManager
+                from ipykernel import KernelManager
             self.km = KernelManager(
                 kernel_name=kernel_name) if kernel_name is not None else KernelManager()
         else:

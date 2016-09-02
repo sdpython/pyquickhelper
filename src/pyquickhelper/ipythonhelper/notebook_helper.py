@@ -311,7 +311,7 @@ def install_jupyter_kernel(exe=sys.executable, kernel_spec_manager=None, user=Fa
             "language": "python",
             "argv": [ "c:\\\\PythonENSAE\\\\python\\\\python.exe",
                       "-m",
-                      "IPython.kernel",
+                      "ipykernel",
                       "-f",
                       "{connection_file}"
                     ]
@@ -342,7 +342,7 @@ def install_jupyter_kernel(exe=sys.executable, kernel_spec_manager=None, user=Fa
     kernel_file = os.path.join(dest, "kernel.json")
     kernel = dict(display_name=kernel_name,
                   language="python",
-                  argv=[exe, "-m", "IPython.kernel", "-f", "{connection_file}"])
+                  argv=[exe, "-m", "ipykernel", "-f", "{connection_file}"])
 
     s = json.dumps(kernel)
     with open(kernel_file, "w") as f:
