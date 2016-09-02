@@ -85,7 +85,10 @@ def run_notebook(filename, profile_dir=None, working_dir=None, skip_exceptions=F
     @param      outfilename         if not None, saves the output in this notebook
     @param      encoding            encoding for the notebooks
     @param      additional_path     additional paths for import
-    @param      valid               if not None, valid is a function which returns wether or not the cell should be executed or not
+    @param      valid               if not None, valid is a function which returns whether
+                                    or not the cell should be executed or not, if the function
+                                    returns None, the execution of the notebooks and skip the execution
+                                    of the other cells
     @param      clean_function      function which cleans a cell's code before executing it (None for None)
     @param      code_init           code to run before the execution of the notebook as if it was a cell
     @param      fLOG                logging function
@@ -122,6 +125,7 @@ def run_notebook(filename, profile_dir=None, working_dir=None, skip_exceptions=F
 
     .. versionchanged:: 1.4
         Parameter *cache_urls* was added.
+        Function *valid* can return None and stops the execution of the notebook.
     """
     cached_rep = _cache_url_to_file(cache_urls, working_dir, fLOG=fLOG)
     if replacements is None:
@@ -176,7 +180,10 @@ def execute_notebook_list(folder, notebooks, clean_function=None, valid=None, fL
     @param      folder              folder (where to execute the notebook, current folder for the notebook)
     @param      notebooks           list of notebooks to execute (or a list of tuple(notebook, code which initializes the notebook))
     @param      clean_function      function which transform the code before running it
-    @param      valid               function which tells if a cell should be executed based on its code
+    @param      valid               if not None, valid is a function which returns whether
+                                    or not the cell should be executed or not, if the function
+                                    returns None, the execution of the notebooks and skip the execution
+                                    of the other cells
     @param      fLOG                logging function
     @param      deepfLOG            logging function used to run the notebook
     @param      additional_path     path to add to *sys.path* before running the notebook
@@ -193,7 +200,7 @@ def execute_notebook_list(folder, notebooks, clean_function=None, valid=None, fL
 
     The signature of function ``valid_cell`` is::
 
-        def valid_cell(cell) : return True or False
+        def valid_cell(cell) : return True or False or None to stop execution of the notebook before this cell
 
     The signature of function ``clean_function`` is::
 
@@ -211,6 +218,7 @@ def execute_notebook_list(folder, notebooks, clean_function=None, valid=None, fL
 
     .. versionchanged:: 1.4
         Parameter *cache_urls* was added.
+        Function *valid* can return None.
     """
     if additional_path is None:
         additional_path = []

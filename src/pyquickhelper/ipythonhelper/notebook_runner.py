@@ -648,13 +648,20 @@ class NotebookRunner(object):
         @param      skip_exceptions     skip exception
         @param      progress_callback   call back function
         @param      additional_path     additional paths (as a list or None if none)
-        @param      valid               if not None, valid is a function which returns wether or not the cell should be executed or not
+        @param      valid               if not None, valid is a function which returns whether
+                                        or not the cell should be executed or not, if the function
+                                        returns None, the execution of the notebooks and skip the execution
+                                        of the other cells
         @param      clean_function      function which cleans a cell's code before executing it (None for None)
         @return                         dictionary with statistics
 
         .. versionchanged:: 1.1
             The function adds the local variable ``theNotebook`` with
             the absolute file name of the notebook.
+
+        .. versionchanged:: 1.4
+            Function *valid* can now return None to stop the execution of the notebook
+            before this cell.
         '''
         # additional path
         if additional_path is not None:
@@ -684,8 +691,12 @@ class NotebookRunner(object):
         for i, cell in enumerate(self.iter_code_cells()):
             nbcell += 1
             iscell, codei = NotebookRunner.get_cell_code(cell)
-            if valid is not None and not valid(codei):
-                continue
+            if valid is not None:
+                r = valid(codei)
+                if r is None:
+                    break
+                elif not r:
+                    continue
             try:
                 nbrun += 1
                 self.run_cell(i, cell, clean_function=clean_function)
