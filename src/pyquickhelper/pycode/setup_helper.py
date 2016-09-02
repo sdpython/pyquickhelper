@@ -237,11 +237,13 @@ def process_standard_options_for_setup(argv, file_or_folder, project_var_name, m
                         "Options -f and -d cannot be specified at the same time.")
 
                 def allow(name, code, duration):
+                    name = os.path.split(name)[-1]
                     return f not in name and ereg(name) and not greg(name)
                 return allow
             else:
                 # d is not None
                 def allowd(name, code, duration):
+                    name = os.path.split(name)[-1]
                     return (duration is None or d is None or duration > d) and ereg(name) and not greg(name)
                 return allowd
 
