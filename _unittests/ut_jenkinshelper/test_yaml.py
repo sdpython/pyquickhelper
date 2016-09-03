@@ -182,19 +182,19 @@ class TestYaml(unittest.TestCase):
 
             @echo SCRIPT
             set PATH=ROOT\\%NAME_JENKINS%\\_venv\\Scripts;%PATH%
-            python setup.py unittests
+            python -u setup.py unittests
             if %errorlevel% neq 0 exit /b %errorlevel%
 
             @echo AFTER_SCRIPT
             set PATH=ROOT\%NAME_JENKINS%\_venv\Scripts;%PATH%
-            python setup.py bdist_wheel
+            python -u setup.py bdist_wheel
             if %errorlevel% neq 0 exit /b %errorlevel%
             copy dist\*.whl ..\..\local_pypi\local_pypi_server
             if %errorlevel% neq 0 exit /b %errorlevel%
 
             @echo DOCUMENTATION
             set PATH=ROOT\\%NAME_JENKINS%\\_venv\\Scripts;%PATH%
-            python setup.py build_sphinx
+            python -u setup.py build_sphinx
             if %errorlevel% neq 0 exit /b %errorlevel%
             xcopy /E /C /I /Y _doc\\sphinxdoc\\build\\html dist\\html
             if %errorlevel% neq 0 exit /b %errorlevel%
@@ -236,12 +236,12 @@ class TestYaml(unittest.TestCase):
 
             @echo SCRIPT
             set PATH=ROOT\\%NAME_JENKINS%\\_venv\\Scripts;%PATH%
-            python setup.py build_sphinx
+            python -u setup.py build_sphinx
             if %errorlevel% neq 0 exit /b %errorlevel%
 
             @echo AFTER_SCRIPT
             set PATH=ROOT\%NAME_JENKINS%\_venv\Scripts;%PATH%
-            python setup.py bdist_wheel
+            python -u setup.py bdist_wheel
             if %errorlevel% neq 0 exit /b %errorlevel%
             """.replace("            ", "").strip("\n \t\r")
             val = conv.strip("\n \t\r")
@@ -313,7 +313,7 @@ class TestYaml(unittest.TestCase):
 
             @echo BEFORE_SCRIPT
             set PATH=ROOT\\%NAME_JENKINS%\\_venv\\Scripts;%PATH%
-            C:\\Python35_x64\\python setup.py copy27
+            C:\\Python35_x64\\python -u setup.py copy27
             if %errorlevel% neq 0 exit /b %errorlevel%
             cd dist_module27
             if %errorlevel% neq 0 exit /b %errorlevel%
@@ -321,12 +321,12 @@ class TestYaml(unittest.TestCase):
 
             @echo SCRIPT
             set PATH=ROOT\\%NAME_JENKINS%\\_venv\\Scripts;%PATH%
-            python setup.py unittests
+            python -u setup.py unittests
             if %errorlevel% neq 0 exit /b %errorlevel%
 
             @echo AFTER_SCRIPT
             set PATH=ROOT\\%NAME_JENKINS%\\_venv\\Scripts;%PATH%
-            python setup.py bdist_wheel
+            python -u setup.py bdist_wheel
             if %errorlevel% neq 0 exit /b %errorlevel%
             copy dist\\*.whl ..\\..\\..\\local_pypi\\local_pypi_server
             if %errorlevel% neq 0 exit /b %errorlevel%
