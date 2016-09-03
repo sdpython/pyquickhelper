@@ -325,6 +325,8 @@ def default_filter_warning(w):
         elif "docutils" in w.filename:
             if "'U' mode is deprecated" in str(w.message):
                 return False
+            if "Metadata should be set using the .tag()" in str(w.message):
+                return False
         elif "sympy" in w.filename:
             if "inspect.getargspec() is deprecated" in str(w.message):
                 return False
