@@ -28,7 +28,7 @@ install:
 # Outside, the yaml interpreter only consider variables interpreted by Jinja2.
 # Environment variables are available but only those defined on the machine used to generate the Jenkins job.
 before_script:
-  - if [ ${VERSION} == "2.7" ] then {{Python35}}\python setup.py copy27 fi
+  - if [ ${VERSION} == "2.7" ] then {{Python35}}\python -u setup.py copy27 fi
   - if [ ${VERSION} == "2.7" ] then cd dist_module27 fi
   
 # The script to run.
@@ -38,21 +38,21 @@ before_script:
 # By default, the timeout for the job (only used in Jenkins) is set to 1200 (20 minutes).
 # This means the job will be stop if it produces no output for 20 minutes.
 script:
-  - { CMD: "python setup.py unittests", NAME: "UT", TIMEOUT: 900 }
+  - { CMD: "python -u setup.py unittests", NAME: "UT", TIMEOUT: 900 }
   - if [ ${VERSION} == "3.5" and ${DIST} == "std" ]
       then 
-        --CMD=python setup.py build_sphinx;
+        --CMD=python -u setup.py build_sphinx;
         --NAME=DOC;
       fi
 
 # To run after the script.
 after_script:
-  - python setup.py bdist_wheel
+  - python -u setup.py bdist_wheel
   - if [ ${VERSION} == "2.7" and ${DIST} != "conda" ] then copy dist\*.whl ..\..\..\local_pypi\local_pypi_server fi
   - if [ ${VERSION} == "2.7" ] then cd .. fi
   - if [ ${VERSION} != "2.7" and ${DIST} != "conda" and ${VERSION} != "3.4" and ${NAME} == "UT" ] then copy dist\*.whl ..\..\local_pypi\local_pypi_server fi
 
 # Same as after script.
 documentation:
-  - if [ ${PYTHON} == "{{Python35}}" and ${NAME} == "UT" ] then python setup.py build_sphinx fi
+  - if [ ${PYTHON} == "{{Python35}}" and ${NAME} == "UT" ] then python -u setup.py build_sphinx fi
   - if [ ${PYTHON} == "{{Python35}}" and ${NAME} == "UT" ] then xcopy /E /C /I /Y _doc\sphinxdoc\build\html dist\html fi
