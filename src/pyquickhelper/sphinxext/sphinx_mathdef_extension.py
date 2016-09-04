@@ -49,11 +49,11 @@ class MathDef(BaseAdmonition):
     Example::
 
         .. mathdef::
-                :title: title
-                :tag: definition or theorem or ...
-                :lid: id (used for further reference)
+            :title: title
+            :tag: definition or theorem or ...
+            :lid: id (used for further reference)
 
-                Description of the math
+            Description of the math
     """
 
     node_class = mathdef_node
@@ -139,7 +139,11 @@ class MathDef(BaseAdmonition):
                                             env.new_serialno('indexmathe%s' % mathtag))
             ids = [targetid]
             targetnode = nodes.target(legend, '', ids=ids[0])
-            self.state.add_target(targetid, '', targetnode, lineno)
+            try:
+                self.state.add_target(targetid, '', targetnode, lineno)
+            except Exception as e:
+                raise Exception("Issue in\n  File '{0}', line {1}\ntid={2}\ntnode={3}".format(
+                    None if env is None else env.docname, lineno, targetid, targetnode)) from e
 
             # index node
             index = self.options.get('index', None)
