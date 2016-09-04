@@ -877,13 +877,16 @@ def _process_sphinx_in_private_cmd(list_args, fLOG):
     this = os.path.join(os.path.dirname(
         os.path.abspath(__file__)), "process_sphinx_cmd.py")
     res = []
-    for c in list_args:
+    for i, c in enumerate(list_args):
+        if i == 0 and c in ("sphinx-main", "sphinx-build"):
+            continue
         if c[0] == '"' or c[-1] == '"' or ' ' not in c:
             res.append(c)
         else:
             res.append('"{0}"'.format(c))
     sargs = " ".join(res)
-    cmd = '"{0}" "{1}" {2}'.format(sys.executable, this, sargs)
+    cmd = '"{0}" "{1}" {2}'.format(
+        sys.executable.replace("w.exe", ".exe"), this, sargs)
     fLOG("    ", cmd)
     fLOG("~~~~~~~~~~~~~~~~~~~~~~~~~~~ _process_sphinx_in_private_cmd BEGIN")
     ok = run_cmd(cmd, wait=True, fLOG=fLOG,

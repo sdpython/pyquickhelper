@@ -11,7 +11,7 @@ def run_sphinx_build(argv):
 
 
 def main():
-    run_sphinx_build(sys.argv[1:])
+    run_sphinx_build(sys.argv)
 
 
 if __name__ == "__main__":

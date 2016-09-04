@@ -141,7 +141,8 @@ def _process_notebooks_in_private_cmd(fnbcexe, list_args, options_args, fLOG):
         else:
             res.append('"{0}"'.format(c))
     sargs = " ".join(res)
-    cmd = '"{0}" "{1}" {2}'.format(sys.executable, this, sargs)
+    cmd = '"{0}" "{1}" {2}'.format(
+        sys.executable.replace("w.exe", ".exe"), this, sargs)
     fLOG("    ", cmd)
     return run_cmd(cmd, wait=True, fLOG=fLOG)
 
