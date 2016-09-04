@@ -18,12 +18,12 @@ else:
 
 class TransferAPI_FileInfo:
     """
-    keeps tracks of transfered files
+    keeps tracks of transferred files
     """
 
     def __init__(self, name, pieces, last_update):
         """
-        information about a transfered file
+        information about a transferred file
 
         @param      name            name of the file
         @param      pieces          list of pieces contributing to the file

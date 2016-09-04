@@ -273,7 +273,7 @@ class EncryptedBackup:
         """
         starts transfering files to the remote website
 
-        @return         list of transfered @see cl FileInfo
+        @return         list of transferred @see cl FileInfo
         @exception      the class raises an exception (@see cl FolderTransferFTPException)
                         if more than 5 issues happened
         """

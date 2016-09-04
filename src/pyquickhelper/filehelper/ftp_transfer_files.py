@@ -297,7 +297,7 @@ class FolderTransferFTP:
         """
         starts transfering files to the remote website
 
-        @return         list of transfered @see cl FileInfo
+        @return         list of transferred @see cl FileInfo
         @exception      the class raises an exception (@see cl FolderTransferFTPException)
                         if more than 5 issues happened
         """
@@ -344,7 +344,7 @@ class FolderTransferFTP:
                         raise ValueError("private_p cannot be None")
                     private_p[1] += private_p[0]
                     private_p[1] = min(private_p[1], size)
-                    self.fLOG("  transfered: %1.3f - %d/%d" %
+                    self.fLOG("  transferred: %1.3f - %d/%d" %
                               (1.0 * private_p[1] / private_p[2], private_p[1], private_p[2]))
 
                 cb = lambda *l, **p: callback_function_(
