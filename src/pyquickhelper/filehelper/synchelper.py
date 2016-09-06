@@ -17,18 +17,24 @@ if sys.version_info[0] == 2:
     from codecs import open
 
 
-def explore_folder(folder, pattern=None, fullname=False):
+def explore_folder(folder, pattern=None, neg_pattern=None, fullname=False):
     """
     returns the list of files included in a folder and in the subfolder
 
     @param          folder      (str) folder
     @param          pattern     (str) if None, get all files, otherwise, it is a regular expression,
                                 the filename must verify (with the folder if fullname is True)
+    @param          neg_pattern (str) negative pattern
     @param          fullname    (bool) if True, include the subfolder while checking the regex (pattern)
     @return                     (list, list), a list of folders, a list of files (the folder is not included the path name)
+
+    .. versionchanged:: 1.4
+        Parameter *neg_pattern* was added.
     """
     if pattern is not None:
         pattern = re.compile(pattern)
+    if neg_pattern is not None:
+        neg_pattern = re.compile(neg_pattern)
 
     file, rep = [], {}
     for r, d, f in os.walk(folder):
@@ -41,6 +47,13 @@ def explore_folder(folder, pattern=None, fullname=False):
                 else:
                     if not pattern.search(a):
                         continue
+            if neg_pattern is not None:
+                if fullname:
+                    if neg_pattern.search(temp):
+                        continue
+                else:
+                    if pattern.search(a):
+                        continue
             file.append(temp)
             r = os.path.split(temp)[0]
             rep[r] = None
@@ -49,7 +62,7 @@ def explore_folder(folder, pattern=None, fullname=False):
     return keys, file
 
 
-def explore_folder_iterfile(folder, pattern=None, fullname=False):
+def explore_folder_iterfile(folder, pattern=None, neg_pattern=None, fullname=False):
     """
     iterator on the list of files...
 
@@ -59,9 +72,14 @@ def explore_folder_iterfile(folder, pattern=None, fullname=False):
                                 the filename must verify (with the folder is fullname is True)
     @param          fullname    if True, include the subfolder while checking the regex
     @return                     iterator on files
+
+    .. versionchanged:: 1.4
+        Parameter *neg_pattern* was added.
     """
     if pattern is not None:
         pattern = re.compile(pattern)
+    if neg_pattern is not None:
+        neg_pattern = re.compile(neg_pattern)
 
     rep = {}
     for r, d, f in os.walk(folder):
@@ -73,6 +91,13 @@ def explore_folder_iterfile(folder, pattern=None, fullname=False):
                         continue
                 else:
                     if not pattern.search(a):
+                        continue
+            if neg_pattern is not None:
+                if fullname:
+                    if neg_pattern.search(temp):
+                        continue
+                else:
+                    if pattern.search(a):
                         continue
             yield temp
             r = os.path.split(temp)[0]

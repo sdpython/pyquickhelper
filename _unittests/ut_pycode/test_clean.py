@@ -22,6 +22,7 @@ except ImportError:
     import src
 
 from src.pyquickhelper.loghelper import fLOG
+from src.pyquickhelper.pycode import get_temp_folder
 from src.pyquickhelper.pycode.code_helper import remove_extra_spaces_and_pep8, remove_extra_spaces_folder
 from src.pyquickhelper.pycode.clean_helper import clean_exts
 from src.pyquickhelper.pycode.ci_helper import is_travis_or_appveyor
@@ -76,6 +77,38 @@ class TestClean(unittest.TestCase):
             raise Exception("unable to clean " + this +
                             "\nexe: " + sys.executable) from e
         assert isinstance(diff, list)
+
+    def test_clean_pep8(self):
+        fLOG(
+            __file__,
+            self._testMethodName,
+            OutputPrint=__name__ == "__main__")
+        temp = get_temp_folder(__file__, "temp_pep8_clean")
+        name = os.path.join(temp, "python_try.py")
+        with open(name, "w") as f:
+            f.write("""
+                import sys
+                import os
+
+                def f1 () :
+                    #g
+                    return [2,3]
+                """.replace("                ", ""))
+        r = remove_extra_spaces_and_pep8(name)
+        assert r > 0
+        with open(name, "r") as f:
+            content = f.read()
+        self.assertEqual(content.strip(), """
+                import sys
+                import os
+
+
+                def f1():
+                    # g
+                    return [2, 3]
+                """.replace("                ", "").strip())
+        r = remove_extra_spaces_and_pep8(name)
+        self.assertEqual(r, 0)
 
 
 if __name__ == "__main__":

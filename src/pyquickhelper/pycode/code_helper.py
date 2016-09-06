@@ -38,14 +38,18 @@ def remove_extra_spaces_and_pep8(filename, apply_pep8=True):
     else:
         encoding = None
 
-    lines2 = [_.rstrip(" \r\n") for _ in lines]
-    last = len(lines2) - 1
-    while last >= 0 and len(lines2[last]) == 0:
-        last -= 1
-    last += 1
-    lines2 = lines2[:last]
+    def cdiff(lines):
+        lines2 = [_.rstrip(" \r\n") for _ in lines]
+        last = len(lines2) - 1
+        while last >= 0 and len(lines2[last]) == 0:
+            last -= 1
+        last += 1
+        lines2 = lines2[:last]
 
-    diff = len("".join(lines)) - len("\n".join(lines2))
+        diff = len("".join(lines)) - len("\n".join(lines2)) + len(lines)
+        return diff, lines2
+
+    diff, lines2 = cdiff(lines)
 
     if os.path.splitext(filename)[-1] == ".py":
         r = autopep8.fix_lines(
@@ -58,6 +62,10 @@ def remove_extra_spaces_and_pep8(filename, apply_pep8=True):
         else:
             with open(filename, "w", encoding="utf8") as f:
                 f.write(r)
+        if r != "".join(lines):
+            diff, lines2 = cdiff(r.split("\n"))
+        else:
+            diff = 0
 
     elif diff != 0:
         if encoding is None:
@@ -91,7 +99,9 @@ def remove_extra_spaces_folder(
     .. versionchanged:: 1.0
         Parameter *apply_pep8* was added.
     """
-    files = explore_folder(folder)[1]
+    neg_pattern = "|".join("[/\\\\]{0}[/\\\\]".format(_) for _ in ["build", "build2", "build3",
+                                                                   "dist", "_venv", "_todo", "dist_module27", "_virtualenv"])
+    files = explore_folder(folder, neg_pattern=neg_pattern, fullname=True)[1]
     mod = []
     for f in files:
         fl = f.lower().replace("\\", "/")
@@ -100,10 +110,11 @@ def remove_extra_spaces_folder(
                 and "/build2/" not in fl \
                 and "/build3/" not in fl \
                 and "/_virtualenv/" not in fl \
+                and ".egg/" not in fl \
                 and "/_venv/" not in fl \
                 and "/_todo/" not in fl \
                 and "/dist_module27" not in fl \
-                and os.stat(f).st_size < 100000:
+                and os.stat(f).st_size < 200000:
             ext = os.path.splitext(f)[-1]
             if ext in extensions:
                 d = remove_extra_spaces_and_pep8(f, apply_pep8=apply_pep8)
