@@ -70,7 +70,8 @@ class TestCodeHelper(unittest.TestCase):
         d = remove_extra_spaces_and_pep8(dest)
         fLOG("removed", d)
         assert d > 0
-        assert d < 100
+        if d >= 300:
+            raise Exception("d={0}".format(d))
         if __name__ == "__main__":
             create_visual_diff_through_html_files(filename, dest,
                                                   page=os.path.join(
