@@ -365,7 +365,8 @@ def process_blogpost_nodes(app, doctree, fromdocname):
             try:
                 newnode['refuri'] += '#' + post_info['target']['refid']
             except Exception as e:
-                raise KeyError("refid in not present in '{0}'".format(post_info['target'])) from e
+                raise KeyError("refid in not present in '{0}'".format(
+                    post_info['target'])) from e
             newnode.append(innernode)
             para += newnode
             para += nodes.Text('.)', '.)')

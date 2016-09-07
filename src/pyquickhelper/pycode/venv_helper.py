@@ -367,8 +367,9 @@ def run_base_script(script, fLOG=noLOG, file=False, is_cmd=False,
             cmd += " " + " ".join(argv)
         out, err = run_cmd(cmd, wait=True, fLOG=fLOG, **kwargs)
         if len(err) > 0 and (skip_err_if is None or skip_err_if not in out) and true_err(err):
+            p = sys.base_prefix if hasattr(sys, "base_prefix") else sys.prefix
             raise VirtualEnvError(
-                "unable to run cmd at {2}\nCMD:\n{3}\nOUT:\n{0}\nERR:\n{1}".format(out, err, sys.base_prefix, cmd))
+                "unable to run cmd at {2}\nCMD:\n{3}\nOUT:\n{0}\nERR:\n{1}".format(out, err, p, cmd))
         return out
     else:
         script = ";".join(script.split("\n"))

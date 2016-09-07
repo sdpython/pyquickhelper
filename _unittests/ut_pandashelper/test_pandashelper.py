@@ -25,6 +25,10 @@ from src.pyquickhelper.loghelper import fLOG
 from src.pyquickhelper.pandashelper import isempty, isnan, read_url
 
 
+if sys.version_info[0] == 2:
+    ConnectionResetError = Exception
+
+
 class TestPandasHelper(unittest.TestCase):
 
     def test_version(self):

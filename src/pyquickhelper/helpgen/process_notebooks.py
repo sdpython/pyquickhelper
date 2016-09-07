@@ -133,8 +133,10 @@ def _process_notebooks_in_private(fnbcexe, list_args, options_args):
     out = out.getvalue()
     err = err.getvalue()
     if exc:
-        env = "\n".join("{0}={1}".format(k, v) for k, v in sorted(os.environ.items()))
-        raise Exception("Notebook conversion failed.\nARGS:\n{0}\nOUT\n{1}\nERR\n{2}\nENVIRON\n{3}".format(list_args, out, err, env)) from exc
+        env = "\n".join("{0}={1}".format(k, v)
+                        for k, v in sorted(os.environ.items()))
+        raise Exception("Notebook conversion failed.\nARGS:\n{0}\nOUT\n{1}\nERR\n{2}\nENVIRON\n{3}".format(
+            list_args, out, err, env)) from exc
     return out, err
 
 
