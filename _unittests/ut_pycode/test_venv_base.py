@@ -45,8 +45,12 @@ class TestVenvBase(unittest.TestCase):
         else:
             fLOG("no virtual_environment")
             out = run_base_script(this, file=True, fLOG=fLOG)
-        if "example_venv_base_simple.py execution" not in out:
-            raise Exception(out)
+        if sys.version_info[0] == 2:
+            if "(u'example_venv_base_simple.py', u'execution')" not in out:
+                raise Exception(out)
+        else:
+            if "example_venv_base_simple.py execution" not in out:
+                raise Exception(out)
 
 
 if __name__ == "__main__":
