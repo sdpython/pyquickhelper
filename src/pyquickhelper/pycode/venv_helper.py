@@ -24,7 +24,7 @@ def is_virtual_environment():
 
     .. versionadded:: 1.3
     """
-    return (sys.base_exec_prefix != sys.exec_prefix) or hasattr(sys, 'real_prefix')
+    return (getattr(sys, "base_exec_prefix", sys.exec_prefix) != sys.exec_prefix) or hasattr(sys, 'real_prefix')
 
 
 class NotImplementedErrorFromVirtualEnvironment(NotImplementedError):
@@ -353,8 +353,10 @@ def run_base_script(script, fLOG=noLOG, file=False, is_cmd=False,
 
     if hasattr(sys, 'real_prefix'):
         exe = sys.real_prefix
-    else:
+    elif hasattr(sys, "base_exec_prefix"):
         exe = sys.base_exec_prefix
+    else:
+        exe = sys.exec_prefix
     if sys.platform.startswith("win"):
         exe = os.path.join(exe, "python")
     else:
