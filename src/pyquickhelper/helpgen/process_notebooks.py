@@ -612,7 +612,7 @@ def add_notebook_page(nbs, fileout):
             if tu[0] is None or ("/" not in tu[0] and "\\" not in tu[0]):
                 rst.append((tuple(), tu[1]))
             else:
-                way = tuple(tu[0].replace("\\", "/")[:-1].split("/"))
+                way = tuple(tu[0].replace("\\", "/").split("/")[:-1])
                 hier.add(way)
                 rst.append((way, tu[1]))
         else:
@@ -648,6 +648,9 @@ def add_notebook_page(nbs, fileout):
                     rows.append("")
                     k += 1
                 last = hi
+                rows.append(".. toctree::")
+                rows.append("    :maxdepth: 2")
+                rows.append("")
 
             rows.append("    notebooks/{0}".format(rs))
 
