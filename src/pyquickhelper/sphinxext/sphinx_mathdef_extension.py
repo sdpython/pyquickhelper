@@ -303,7 +303,10 @@ def process_mathdef_nodes(app, doctree, fromdocname):
             try:
                 newnode['refuri'] = app.builder.get_relative_uri(
                     fromdocname, mathdef_info['docname'])
-                newnode['refuri'] += '#' + mathdef_info['target']['refid']
+                try:
+                    newnode['refuri'] += '#' + mathdef_info['target']['refid']
+                except Exception as e:
+                    raise KeyError("refid in not present in '{0}'".format(mathdef_info['target'])) from e
             except NoUri:
                 # ignore if no URI can be determined, e.g. for LaTeX output
                 pass

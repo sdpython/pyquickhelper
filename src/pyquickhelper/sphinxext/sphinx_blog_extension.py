@@ -362,7 +362,10 @@ def process_blogpost_nodes(app, doctree, fromdocname):
             newnode['refdocname'] = post_info['docname']
             newnode['refuri'] = app.builder.get_relative_uri(
                 fromdocname, post_info['docname'])
-            newnode['refuri'] += '#' + post_info['target']['refid']
+            try:
+                newnode['refuri'] += '#' + post_info['target']['refid']
+            except Exception as e:
+                raise KeyError("refid in not present in '{0}'".format(post_info['target'])) from e
             newnode.append(innernode)
             para += newnode
             para += nodes.Text('.)', '.)')

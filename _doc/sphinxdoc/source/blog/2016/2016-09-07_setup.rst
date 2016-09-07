@@ -1,0 +1,24 @@
+
+
+.. blogpost::
+    :title: Issue with package_data (setup.py)
+    :keywords: setup.py, package_data
+    :date: 2016-09-07
+    :categories: setup
+    
+    File ``setup.py`` usually defines something like:
+    
+    ::
+    
+         setup(
+                # ...
+                packages=packages,
+                package_dir=package_dir,
+                # ...
+                package_data=package_data,
+                # ...
+                )
+
+    You need to be careful on Windows because the setup
+    is case sensitive. So, if you don't see any file in your setup,
+    don't forget that.

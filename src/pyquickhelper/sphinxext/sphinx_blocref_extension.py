@@ -448,7 +448,10 @@ def process_blocref_nodes_generic(app, doctree, fromdocname, class_name,
             try:
                 newnode['refuri'] = app.builder.get_relative_uri(
                     fromdocname, blocref_info['docname'])
-                newnode['refuri'] += '#' + blocref_info['target']['refid']
+                try:
+                    newnode['refuri'] += '#' + blocref_info['target']['refid']
+                except Exception as e:
+                    raise KeyError("refid in not present in '{0}'".format(blocref_info['target'])) from e
             except NoUri:
                 # ignore if no URI can be determined, e.g. for LaTeX output
                 pass

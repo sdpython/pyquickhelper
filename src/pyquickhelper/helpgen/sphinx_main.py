@@ -428,11 +428,18 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
     use_sys = theconf.__dict__.get("enable_disabled_parts", None)
     latex_book = theconf.__dict__.get('latex_book', False)
 
+    ospath = os.environ["PATH"]
     latex_path = theconf.__dict__.get("latex_path", find_latex_path())
     # graphviz_dot = theconf.__dict__.get("graphviz_dot", find_graphviz_dot())
     pandoc_path = theconf.__dict__.get("pandoc_path", find_pandoc_path())
     if os.path.isfile(latex_path):
         latex_path = os.path.dirname(latex_path)
+
+    # add to PATH
+    if latex_path not in ospath:
+        os.environ["PATH"] += ";" + latex_path
+    if pandoc_path not in ospath:
+        os.environ["PATH"] += ";" + pandoc_path
 
     #########
     # changes
@@ -780,7 +787,7 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
         for cmd in cmds_post:
             fLOG("running", cmd)
             out, err = run_cmd(cmd, wait=True, fLOG=fLOG,
-                               communicate=False, timeout=600)
+                               communicate=True, timeout=600)
             fLOG(out)
             if len(err) > 0:
                 warnings.warn(

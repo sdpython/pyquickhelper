@@ -28,10 +28,10 @@ class FileTreeNode:
 
     @code
     def example (p1, p2, hash_size = 1024**2*2, svn1 = True, svn2 = False) :
-        extout = re.compile (FileTreeNode.build_expression ("dvi bbl blg ilg ind old out pyc pyd " \
-                                      "bak idx obj log aux pdb sbr ncb res idb suo dep " \
+        extout = re.compile (FileTreeNode.build_expression ("dvi bbl blg ilg ind old out pyc pyd " \\
+                                      "bak idx obj log aux pdb sbr ncb res idb suo dep " \\
                                       "ogm manifest dsp dsz user ilk bsc exp eps".split ()))
-        extfou = re.compile ("(exeinterpreter[/\\\\].*[.]dll)|([/\\\\]upgradereport)|" \
+        extfou = re.compile ("(exeinterpreter[/\\\\].*[.]dll)|([/\\\\]upgradereport)|" \\
                              "(thumbs[.]db)|([.]svn)|(temp[_/\\\\].*)")
 
         def filter (root, path, f, d) :

@@ -393,7 +393,10 @@ def process_todoext_nodes(app, doctree, fromdocname):
             try:
                 newnode['refuri'] = app.builder.get_relative_uri(
                     fromdocname, todoext_info['docname'])
-                newnode['refuri'] += '#' + todoext_info['target']['refid']
+                try:
+                    newnode['refuri'] += '#' + todoext_info['target']['refid']
+                except Exception as e:
+                    raise KeyError("refid in not present in '{0}'".format(todoext_info['target'])) from e
             except NoUri:
                 # ignore if no URI can be determined, e.g. for LaTeX output
                 pass

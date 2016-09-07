@@ -120,14 +120,21 @@ def _process_notebooks_in_private(fnbcexe, list_args, options_args):
     memo_err = sys.stderr
     sys.stdout = out
     sys.stderr = err
-    if list_args:
-        fnbcexe(argv=list_args, **options_args)
-    else:
-        fnbcexe(**options_args)
+    try:
+        if list_args:
+            fnbcexe(argv=list_args, **options_args)
+        else:
+            fnbcexe(**options_args)
+        exc = None
+    except SystemExit as e:
+        exc = e
     sys.stdout = memo_out
     sys.stderr = memo_err
     out = out.getvalue()
     err = err.getvalue()
+    if exc:
+        env = "\n".join("{0}={1}".format(k, v) for k, v in sorted(os.environ.items()))
+        raise Exception("Notebook conversion failed.\nARGS:\n{0}\nOUT\n{1}\nERR\n{2}\nENVIRON\n{3}".format(list_args, out, err, env)) from exc
     return out, err
 
 

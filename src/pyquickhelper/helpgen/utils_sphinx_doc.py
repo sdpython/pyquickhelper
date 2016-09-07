@@ -341,8 +341,7 @@ def copy_source_files(input, output, fmod=lambda v, filename: v,
         to = os.path.join(dest, file.name)
         dd = os.path.split(to)[0]
         if not os.path.exists(dd):
-            fLOG("copy_source_files: create ", dd,
-                 softfile=softfile, fexclude=fexclude)
+            fLOG("copy_source_files: create ", dd, "softfile={0} fexclude={1}".format(softfile, fexclude))
             os.makedirs(dd)
         fLOG("copy_source_files: copy ", file.fullname, " to ", to)
 
