@@ -904,7 +904,7 @@ def process_look_for_tag(tag, title, files):
 
             """.replace("            ", "").format(tag, tit, "=" * len(tit), suf)]
 
-        if os.environ.get("USERNAME", "````````````") in rows[0]:
+        if os.environ.get("USERNAME", os.environ.get("USER", "````````````")) in rows[0]:
             raise HelpGenException(
                 "the title is probably wrong: {0}\ntag={1}\ntit={1}".format(rows[0], tag, tit))
 

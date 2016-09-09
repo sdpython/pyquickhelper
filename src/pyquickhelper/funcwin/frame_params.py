@@ -346,7 +346,7 @@ def open_window_params(params,
         :title: Open a tkinter window to ask parameters to a user
 
         @code
-        params = { "user":os.environ["USERNAME"],
+        params = { "user": os.environ.get("USERNAME", os.environ["USER"]),
                 "password":"" }
         newparams = open_window_params (params, title="try the password *", help_string = "unit test", key_save="my_key")
         @endcode

@@ -148,7 +148,7 @@ def private_adjust_parameters(param):
     res = guess_machine_parameter()
     for k in param:
         if param[k] is None and k.lower() in ["user", "username"]:
-            res[k] = res["USERNAME"]
+            res[k] = res.get("USERNAME", res["USER"])
 
 
 def private_get_function(function_name):

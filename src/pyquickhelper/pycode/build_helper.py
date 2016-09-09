@@ -165,7 +165,7 @@ def private_script_replacements(script, module, requirements, port, raise_except
 
         script = script.replace("__REQUIREMENTS__", reqs) \
                        .replace("__PORT__", str(port)) \
-                       .replace("__USERNAME__", os.environ.get("USERNAME", os.environ.get("USER", "UNKNOWN-UER")))
+                       .replace("__USERNAME__", os.environ.get("USERNAME", os.environ.get("USER", "UNKNOWN-USER")))
 
         if "__ADDITIONAL_LOCAL_PATH__" in script:
             def choice(s):

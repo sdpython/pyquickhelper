@@ -393,7 +393,7 @@ def apply_modification_template(rootm,
     fullnamenoext = fullname[:-3] if fullname.endswith(".py") else fullname
     pythonname = None
 
-    if os.environ.get("USERNAME", "````````````") in fullnamenoext:
+    if os.environ.get("USERNAME", os.environ.get("USER", "````````````")) in fullnamenoext:
         raise HelpGenException("the title is probably wrong: {0}\nnoext={1}\npython={2}\nrootm={3}\nrootrep={4}\nfullname={5}\nkeepf={6}".format(
             fullnamenoext, filenoext, pythonname, rootm, rootrep, fullname, keepf))
 
@@ -515,7 +515,7 @@ def apply_modification_template(rootm,
     if filenoext.endswith(".__init__"):
         filenoext = filenoext[: -len(".__init__")]
 
-    if os.environ.get("USERNAME", "````````````") in fullnamenoext:
+    if os.environ.get("USERNAME", os.environ.get("USER", "````````````")) in fullnamenoext:
         raise HelpGenException("the title is probably wrong: {0}\nnoext={1}\npython={2}\nrootm={3}\nrootrep={4}\nfullname={5}\nkeepf={6}".format(
             fullnamenoext, filenoext, pythonname, rootm, rootrep, fullname, keepf))
 
@@ -801,7 +801,7 @@ def produces_indexes(
         title = titles.get(k, k)
         under = "=" * len(title)
 
-        if os.environ.get("USERNAME", "````````````") in title:
+        if os.environ.get("USERNAME", os.environ.get("USER", "````````````")) in title:
             raise HelpGenException(
                 "the title is probably wrong: {0}".format(title))
 
@@ -822,7 +822,7 @@ def filecontent_to_rst(filename, content):
     file = os.path.split(filename)[-1]
     full = file + "\n" + ("=" * len(file)) + "\n"
 
-    if os.environ.get("USERNAME", "````````````") in file:
+    if os.environ.get("USERNAME", os.environ.get("USER", "````````````")) in file:
         raise HelpGenException("the title is probably wrong: {0}".format(file))
 
     rows = ["", ".. _f-%s:" % file, "", "", full, "",

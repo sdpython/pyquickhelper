@@ -941,7 +941,7 @@ def guess_machine_parameter():
     """
     val = ["COMPUTERNAME", "NUMBER_OF_PROCESSORS", "OS",
            "PATH", "USERDOMAIN", "USERNAME", "USERPROFILE",
-           "windir", "TEMP"]
+           "windir", "TEMP", "USER"]
     res = {}
     for v in val:
         if v == "PATH":

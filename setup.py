@@ -208,6 +208,7 @@ if not r:
         install_requires=[
             "autopep8",     # part of the minimal list
             "babel!=2.0",   # babel 2.0 has issue
+            "coverage",
             "docutils",
             "entrypoints",
             "numpy>=1.11.1",
