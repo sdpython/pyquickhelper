@@ -112,7 +112,7 @@ def skip_run_cmd(cmd, sin="", shell=True, wait=False, log_error=True,
     return "", ""
 
 
-def run_cmd(cmd, sin="", shell=True, wait=False, log_error=True,
+def run_cmd(cmd, sin="", shell=sys.platform.startswith("win"), wait=False, log_error=True,
             stop_running_if=None, encerror="ignore", encoding="utf8",
             change_path=None, communicate=True, preprocess=True, timeout=None,
             catch_exit=False, fLOG=None, tell_if_no_output=None):
