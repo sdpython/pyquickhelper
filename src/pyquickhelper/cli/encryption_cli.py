@@ -83,7 +83,8 @@ def do_main(source, dest, password, encrypt,
     api = TransferAPIFile(dest)
 
     if encrypt:
-        print("looking for file in", root)
+        if fLOG:        
+            print("looking for file in", root)
         ft = FileTreeNode(root, repository=False, fLOG=fLOG, log1=True)
         enc = EncryptedBackup(
             key=password,
@@ -94,11 +95,13 @@ def do_main(source, dest, password, encrypt,
             file_map=crypt_map,
             fLOG=fLOG)
 
-        print("start backup")
+        if fLOG:
+            fLOG("start backup")
         done, issue = enc.start_transfering()
 
         for file, exc in issue:
-            print("{0} -- {1}".format(file, exc))
+            if fLOG:
+                fLOG("{0} -- {1}".format(file, exc))
     else:
         enc = EncryptedBackup(
             key=password,
@@ -108,8 +111,8 @@ def do_main(source, dest, password, encrypt,
             file_status=None,
             file_map=None,
             fLOG=fLOG)
-
-        print("start restoration")
+        if fLOG:
+            print("start restoration")
         enc.retrieve_all(source, regex=regex)
 
 
@@ -123,7 +126,8 @@ def encrypt(fLOG=print):
     try:
         args = parser.parse_args()
     except SystemExit:
-        print(parser.format_usage())
+        if fLOG:
+            print(parser.format_usage())
         args = None
 
     if args is not None:
@@ -141,7 +145,8 @@ def decrypt(fLOG=print):
     try:
         args = parser.parse_args()
     except SystemExit:
-        print(parser.format_usage())
+        if fLOG:
+            print(parser.format_usage())
         args = None
 
     if args is not None:
