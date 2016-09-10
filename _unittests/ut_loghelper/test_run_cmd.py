@@ -33,7 +33,7 @@ class TestRunCmd(unittest.TestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
-        cmd = "set"
+        cmd = "set" if sys.platform.startswith("win") else "env"
         fLOG("##########")
         out1, err = run_cmd(cmd, wait=True, fLOG=fLOG)
         fLOG("##########")
@@ -48,7 +48,7 @@ class TestRunCmd(unittest.TestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
-        cmd = "set"
+        cmd = "set" if sys.platform.startswith("win") else "env"
 
         out3, err = run_cmd(
             cmd, wait=True, communicate=False, tell_if_no_output=600, fLOG=fLOG)
