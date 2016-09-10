@@ -83,7 +83,7 @@ def do_main(source, dest, password, encrypt,
     api = TransferAPIFile(dest)
 
     if encrypt:
-        if fLOG:        
+        if fLOG:
             print("looking for file in", root)
         ft = FileTreeNode(root, repository=False, fLOG=fLOG, log1=True)
         enc = EncryptedBackup(
