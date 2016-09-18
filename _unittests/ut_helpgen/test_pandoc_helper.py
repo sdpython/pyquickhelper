@@ -6,6 +6,7 @@
 import sys
 import os
 import unittest
+import warnings
 
 
 try:
@@ -22,7 +23,7 @@ except ImportError:
     import src
 
 from src.pyquickhelper.loghelper.flog import fLOG
-from src.pyquickhelper.pycode import get_temp_folder
+from src.pyquickhelper.pycode import get_temp_folder, is_travis_or_appveyor
 from src.pyquickhelper.helpgen import latex2rst
 
 
@@ -33,14 +34,15 @@ class TestPandocHelper(unittest.TestCase):
             __file__,
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
+        if is_travis_or_appveyor():
+            warnings.warn("unable to test it due to pandoc")
+            return
         temp = get_temp_folder(__file__, "temp_latex2rst")
         data = os.path.join(temp, "..", "data", "chap9_thread.tex")
         output = os.path.join(temp, "chap9_thread.rst")
         temp_file = os.path.join(temp, "chap_utf8.tex")
         out, err = latex2rst(data, output, encoding="latin-1",
                              fLOG=fLOG, temp_file=temp_file)
-        fLOG("*", out)
-        fLOG("*", err)
         assert os.path.exists(output)
 
 if __name__ == "__main__":
