@@ -1,0 +1,286 @@
+\begin{document}
+
+%-------------------------------------------------------------------------------------------------------------
+\chapter{Threads}
+\label{chap_thread}
+%-------------------------------------------------------------------------------------------------------------
+\indexfr{thread}\indexfr{fil d'exécution}
+
+
+Jusqu'aux années 2003-2004, l'évolution des microprocesseurs était une course vers une augmentation de la puissance, autant en terme de nombre de transistors qu'en fréquence de fonctionnement. Arrivant aux limites de la technologie actuelle, cette évolution s'est tournée maintenant vers la construction de processeurs multic\oe urs, c'est-à-dire des machines capables d'exécuter des programmes simultanément, de maintenir plusieurs \textit{fils d'exécution} en parallèle. \indexfr{multic\oe urs}\indexfr{processeur}\indexfr{fil d'exécution}
+
+Les threads ou fils d'exécution ont trois usages principaux. Le premier est relié au calcul distribué ou calcul parallèle.\indexfrr{calcul}{distribué}\indexfrr{calcul}{parallèle}\indexfr{parallélisation} Par exemple, le calcul d'une intégrale sur un intervalle peut être effectué sur deux intervalles disjoints. Le résultat final est la somme des deux résultats sur chacun des intervalles. De plus, ces deux calculs sont indépendants et peuvent être menés de front. Le calcul intégral sera donc deux fois plus rapide puisque les deux intervalles seront traités en même temps. C'est la parallélisation des calculs~: les deux calculs sur chaque intervalle seront affectés à deux threads simultanés.
+
+\indextk{thread}
+\indextk{réactivité}
+Le second usage est couplé aux interfaces graphiques. Lorsque l'utilisateur entame un processus long après avoir cliqué sur un bouton, l'interface graphique ne réagit plus jusqu'à ce que ce processus s'achève. Afin d'éviter cet inconvénient, l'interface graphique va commencer un thread qui va exécuter ce processus. L'interface graphique n'a plus qu'à attendre la fin du thread, et pendant tout ce temps, elle sera également capable de traiter tout autre événement provenant de l'utilisateur.
+
+Le dernier usage concerne la communication entre ordinateurs ou plus généralement la communication Internet. C'est une communication asynchrone~: \indexfr{asynchrone} l'ordinateur effectue des tâches en même temps qu'il écoute un \emph{port}\indexfr{port} par lequel d'autres ordinateurs communiquent avec lui. Plus précisément, le programme suit deux fils d'exécution~: le fil principal et un thread qui ne fait qu'attendre et traiter les messages qu'il reçoit via un port.
+
+\indexfr{synchronisation}La synchronisation est un point commun à ces trois usages. Ce terme désigne la dépendance entre les threads. Lors d'un calcul distribué, le résultat final dépend des résultats retournés par chaque thread, il faut donc attendre que les deux fils d'exécution aient produit le résultat attendu~: il faut que les deux fils d'exécution se synchronisent.
+
+Ce document ne s'étendra pas longuement sur les threads bien qu'ils soient amenés à devenir un élément incontournable de tout programme désirant tirer parti des derniers processeurs. 
+
+
+
+
+
+\section{Premier thread}
+\label{chap_thread_intro_section}
+\indexfr{fil d'exécution}
+
+\indexfrr{thread}{fil d'exécution}
+Le premier exemple consiste à exécuter un thread uniquement destiné à faire des affichages. Deux fils d'exécution vont être lancés en parallèle affichant chacun un message différent. Les affichages vont s'entremêler. Il existe plusieurs manières d'exécuter un thread, une seule sera présentée en utilisant la classe \codes{Thread} du module \codes{threading}.\indexclass{Thread}\indexmoduleint{threading} Pour créer un thread, il suffit de surcharger la méthode \codes{run} de la classe \codes{Thread}. Si le thread a besoin de données lors de son exécution, il faut surcharger son constructeur sans oublier d'appeler le constructeur de la classe mère. L'exécution de thread commence par la création d'une instance et l'appel à la méthode \codes{start}.\indexmethod{run}\indexmethod{start}\indexthread{run}\indexthread{start}\indexthread{Thread}\indexthread{threading} En résumé, il faut retenir les éléments suivants~:
+
+\begin{small}
+\begin{enumerate}
+\item surcharger la classe \codesmall{threading.Thread},
+\item surcharger le constructeur sans oublier d'appeler le constructeur \codesmall{threading.Thread.\_\_init\_\_},
+\item surcharger la méthode \codesmall{run}, c'est le code que devra exécuter le thread,
+\item créer une instance de la nouvelle classe et appeler la méthode \codesmall{start} pour lancer le thread secondaire qui formera le second fil d'exécution.
+\end{enumerate}
+\end{small}
+
+Le programme principal est appelé le thread principal. Voici ce que cela donne dans un exemple~:
+\vspaceneg
+\inputcode{../python_cours/programme/thread1.py}{premier thread}
+\vspaceneg
+Le programme affiche des lignes qui proviennent du thread principal et du thread secondaire dont les affichages diffèrent.
+\vspaceneg
+\begin{verbatimx}
+programme  0
+thread  0
+thread  1
+programme  1
+thread  2
+programme  2
+programme  3
+thread  3
+programme  4
+thread  4
+...
+\end{verbatimx}
+\vspaceneg
+
+
+Le précédent programme a été adapté pour lancer deux threads secondaires en plus du thread principal. Les lignes modifiées par rapport au programme précédent sont commentées.
+\vspaceneg
+\inputcode{../python_cours/programme/thread2.py}{deux threads secondaires}
+\vspaceneg
+
+\begin{center}\begin{tabular}{@{}lr@{}}
+\begin{minipage}{4cm}
+\begin{verbatimx}
+thread  A  :  0
+programme  0
+thread  B  :  0
+thread  A  :  1
+thread  B  :  1
+programme  1
+thread  B  :  2
+thread  A  :  2
+...
+\end{verbatimx}
+\end{minipage}
+&
+\begin{minipage}{9.4cm}
+\begin{xremark}{utilisation le la fonction \codes{sleep}}
+Tous les exemples présentés dans ce chapitre font souvent intervenir l'instruction\indexthread{sleep} \codes{time.sleep(...)}.\indexmoduleint{time}\indexfonction{sleep} A moins que ce ne soit explicitement précisé, elle sert la plupart du temps à ralentir l'exécution du programme cité en exemple afin que celle-ci soit humainement observable ou pour exagérer un défaut de synchronisation. Cette fonction est d'ordinaire beaucoup moins fréquente.
+\end{xremark}
+\end{minipage}
+\end{tabular}\end{center}
+\vspaceneg
+
+
+\section{Synchronisation}
+
+\subsection{Attente}
+\indexfr{synchronisation}\indexfrr{variable}{statique}
+
+La première situation dans laquelle on a besoin de synchroniser deux threads est l'attente d'un thread secondaire par le thread principal. Et pour ce faire, on a besoin de l'accès par les deux fils d'exécution à une même variable qui indiquera l'état du thread. Dans le programme suivant, on ajoute l'attribut \codes{etat} à la classe \codes{MonThread} qui va indiquer l'état du thread~:
+
+\begin{small}
+\begin{itemize}
+\item \codesmall{True} pour en marche
+\item \codesmall{False} pour à l'arrêt
+\end{itemize}
+\end{small}
+
+Le thread principal va simplement vérifier l'état du thread de temps en temps. Le premier point important est tout d'abord d'attendre que le thread se lance car sans la première boucle, le thread pourrait passer à l'état \codes{True} après être passé dans la seconde boucle d'attente.\indexfonction{sleep}\indexthread{sleep} Le second point important est de ne pas oublier d'insérer la fonction \codes{sleep} du module \codes{time} afin de permettre au thread principal de temporiser.\indexmoduleint{time} Dans le cas contraire, le thread principal passe l'essentiel de son temps à vérifier l'état du thread secondaire, ce faisant, il ralentit l'ordinateur par la répétition inutile de la même action un trop grand nombre de fois. Ici, le thread principal vérifie l'état du thread secondaire tous les 100 millisecondes. Cette durée dépend de ce que fait le thread secondaire.
+
+\vspaceneg 
+\inputcodes{../python_cours/programme/thread_attente.py}{attendre un thread}{ (1)}
+\vspaceneg
+
+Ce mécanisme d'attente peut également être codé en utilisation les objets \codes{Condition}\indexthread{Condition} et \codes{Event}\indexthread{Event} du module \codes{threading}. Ces deux objets permettent d'éviter l'utilisation de la méthode \codes{sleep}. 
+
+\vspaceneg
+\inputcodes{../python_cours/programme/thread_attente2.py}{attendre un thread}{ (2)}
+\vspaceneg
+
+La méthode \codes{wait} de l'objet \codes{Event} attend que l'objet soit activé. Elle peut attendre indéfiniment ou attendre pendant une durée donnée seulement.\indexthread{wait}\indexmethod{wait} Pour afficher la durée d'attente, on pourrait utiliser une boucle comme la suivante~:
+\vspaceneg
+
+
+\begin{center}\begin{tabular}{@{}lr@{}}
+\begin{minipage}{4.5cm}
+\begin{verbatimx}
+m.start ()
+while not event.isSet ():
+    print "j'attends"
+    event.wait (0.1)
+print "fin"
+\end{verbatimx}
+\end{minipage}
+&
+\begin{minipage}{8.9cm}
+La méthode \codes{isSet}\indexmethod{isSet}\indexthread{Event}\indexthread{isSet} permet de savoir si l'événement est bloquant ou non. Le programme affiche \codes{"j'attends"} puis attend le thread un dixième de secondes. Au delà de cette durée, il vérifie l'état de l'événement puis recommence si le thread n'est pas fini.
+\end{minipage}
+\end{tabular}\end{center}
+\vspaceneg
+
+
+Ces objets de synchronisation sont plus efficaces que le mécanisme décrit dans le premier programme car il fait appel aux fonctions du système d'exploitation. 
+
+\subsection{Partage d'informations}
+\indexfr{synchronisation}\indexfrr{variable}{statique}
+\indexfrr{thread}{verrou}
+
+La seconde situation dans laquelle on a besoin de synchroniser est l'accès par deux fils d'exécution aux mêmes informations ou plutôt aux mêmes variables. Un problème survient quand parfois un thread lit ou modifie en même temps qu'un autre modifie la même variable. Le second cas de synchronisation est l'ajout de verrous qui permettent de protéger une partie du code d'un programme contre plusieurs accès simultanés.\indexfrr{thread}{verrou} Ce verrou est également un objet du module \codes{threading}.\indexthread{Lock}\indexmoduleint{threading}
+
+Dans cet exemple, l'information partagée est la chaîne de caractères \codes{message}, le verrou sert à protéger la fonction \codes{ajoute} contre des ajouts simultanés. Si les deux threads veulent modifier \codes{message} en même temps, un thread va entrer dans la fonction \codes{ajoute} alors que l'autre n'en est pas encore sorti. Les résultats seraient imprévisibles car cette fonction modifie la variable qu'ils utilisent. On aboutit à l'exemple suivant~:
+
+\vspaceneg
+\inputcode{../python_cours/programme/thread_partage.py}{partager des données}
+\vspaceneg
+
+Les trois instructions protégées pourraient être résumées en une seule~: \texttt{message += c}~; le résultat resterait inchangé. En revanche, en commentant les instructions \codes{verrou.acquire()} et \codes{verrou.release()}\indexthread{acquire}\indexthread{release}\indexfrr{thread}{verrou} de ce programme\footnote{Celles marquées d'une étoile \codesnote{(*)}.}, la longueur du résultat final \codes{message} est variable alors qu'elle devrait être de 20 puisque les deux threads appellent chacun 10 fois dans la fonction \codes{ajoute}. Le tableau suivant montre l'évolution des variables \codes{message}, \codes{c}, \codes{s} durant deux premiers appels qui s'entremêlent. Le résultat devrait être \codes{"12"} pour message mais un caractère a été perdu. Il faut retenir que si la variable \codes{message} est globale, les deux autres \codes{c}, \codes{s} sont locales et donc différentes pour les deux threads.
+
+\begin{center}\begin{tabular}{c|l|l|l|l|l}
+\textbf{ordre} & \textbf{thread 1} &\textbf{thread 2} 		& \textbf{\codes{message}} 	& \textbf{\codes{c}} & \textbf{\codes{s}}\\ \hline
+1&\codes{s = message + c}      	&             								& 	\codes{""}							&  \codes{"1"}	 	& \codes{"1"} \\
+2&      												&  \codes{s = message + c} 		&   \codes{""}							&  \codes{"2"}	 	& \codes{"2"} \\
+3&\codes{time.sleep (0.001)}   	&             								&   \codes{""}							&  \codes{"1"}	 	& \codes{"1"} \\ 
+4&   														&  \codes{time.sleep (0.001)} &   \codes{""}							&  \codes{"2"}	 	& \codes{"2"} \\ 
+5&\codes{message = s}          	&             								&		\codes{"1"}							&  \codes{"1"}	 	& \codes{"1"} \\
+6&          										&  \codes{message = s}      	&   \codes{"2"}							&  \codes{"2"}	 	& \codes{"2"} \\
+\end{tabular}\end{center}
+
+
+
+Le verrou empêche d'exécuter une même portion de code en même temps, un code qui modifie des données partagées. C'est pourquoi le verrou est souvent déclaré au même endroit que les données qu'il protège. Le verrou de type \codes{Lock}\indexthread{Lock} n'autorise qu'un seul thread à la fois à l'intérieur de la portion de code protégée ce qui aboutit au schéma suivant~:
+
+\begin{center}\begin{tabular}{c|l|l|l|l|l}
+\textbf{ordre} & \textbf{thread 1} &\textbf{thread 2} 		& \textbf{\codes{message}} 	& \textbf{\codes{c}} & \textbf{\codes{s}}\\ \hline
+1&\codes{s = message + c}      	&             								& 	\codes{""}							&  \codes{"1"}	 	& \codes{"1"} \\
+2&\codes{time.sleep (0.001)}   	&             								&   \codes{""}							&  \codes{"1"}	 	& \codes{"1"} \\ 
+3&\codes{message = s}          	&             								&		\codes{"1"}							&  \codes{"1"}	 	& \codes{"1"} \\
+4&      												&  \codes{s = message + c} 		&   \codes{"1"}							&  \codes{"2"}	 	& \codes{"12"} \\
+5&   														&  \codes{time.sleep (0.001)} &   \codes{"1"}							&  \codes{"2"}	 	& \codes{"12"} \\ 
+6&          										&  \codes{message = s}      	&   \codes{"12"}							&  \codes{"2"}	 	& \codes{"12"} \\
+\end{tabular}\end{center}
+
+\begin{xremark}{réduction des accès à quelques threads}
+Le verrou de type \codes{Semaphore}\indexthread{Semaphore} autorise un nombre maximal de thread à parcourir le même code. Ce procédé est parfois utile si le code en question permet d'imprimer un document. Cela permet de limiter sans interdire les accès simultanés aux ressources de l'ordinateur.
+\end{xremark}
+
+\begin{xremark}{blocage d'un programme}
+Ce mécanisme de verrou peut aboutir à des blocages avec deux threads et deux portions de code protégées. Chaque thread est "coincé" dans une section attendant que l'autre libère la sienne. Dans ce cas de figure, il est conseillé d'utiliser le même verrou pour protéger les deux sections. Ainsi, chaque thread ne pourra pas entrer dans l'une ou l'autre des portions de code protégées tant que l'une d'entre elles est visitée par l'autre thread.
+\end{xremark}
+
+
+
+\section{Interface graphique}
+\indextk{thread}\label{thread_interface_graphique}
+
+Un programme bâti autour d'une interface graphique inclut nécessairement une boucle de message. Celle-ci attend les messages en provenance de l'interface. Lorsqu'un de ceux-ci lui commande de lancer un traitement long, l'interface graphique n'est plus en mesure de réagir aux événements qui lui viennent pendant ce temps. Afin de remédier cela, il suffit d'insérer le traitement dans un thread. A la fin de ce dernier, un événement sera envoyé à l'interface afin de lui signifier la fin du traitement. \indextkk{event\_generate}\indexthread{event\_generate}  
+
+Le paragraphe~\ref{parag_graph_bind} a montré comment associer un événement particulier à une fenêtre. La différence ici est que l'événement accroché à la fenêtre n'est pas prédéfini par le module \codes{Tkinter} mais par le programme lui-même -~dans cet exemple \texttt{<}\texttt{<thread\_fini>}\texttt{>}\footnote{Les symboles \texttt{<}\texttt{<} et \texttt{>}\texttt{>} au début et à la fin du nom de l'événement sont la seule contrainte.}~-. La méthode \codes{event\_generate} permet d'insérer un message dans la boucle de messages de façon à ce que celui-ci soit traité au même titre qu'un clic de souris, la pression d'une touche, ...
+%
+\vspaceneg
+\inputcode{../python_cours/programme/thread_interface.py}{thread et interface graphique}
+\vspaceneg
+%
+La figure~\ref{thread_window_affichage} contient la fenêtre affichée par le programme lorsqu'elle attend la pression du bouton qui lance le thread et lorsqu'elle attend la fin de l'exécution de ce thread.
+
+\begin{xremark}{méthode \codes{event\_generate}}
+Le\label{event_generate_subtilite} programme précédent utilise une astuce pour retourner un résultat autrement qu'un utilisant un paramètre global. On peut adjoindre lors de l'appel à la méthode \codes{event\_generate} quelques informations supplémentaires attachées à l'événement en utilisant les attributs prédéfinis de la classe \codes{Event}.\indextkk{event\_generate}\indextkk{Event} Dans cet exemple, on utilise l'attribut \codes{x} pour retourner le dernier entier tiré aléatoirement.
+\end{xremark}
+
+	\begin{figure}[ht]
+	\figureoneimagetrup{ 		\caption{	La première image est la fenêtre après trois exécutions du thread. 
+									La liste 										\codescaption{thread\_resultat} contient
+						trois nombres. Une fois l'unique bouton pressé, la fenêtre change d'aspect pour devenir comme la seconde image.
+						Cette transition est assurée par la fonction \codescaption{lance\_thread} reliée au bouton. La transition inverse 
+						est assurée par la fonction \codescaption{thread\_fini\_fonction} qui est reliée à l'événement
+						que génère le thread lorsqu'il a terminé.} }
+	{ \includegraphics[width=4cm]{\filextellipse{../python_cours/image/threadim1}{../python_cours/image_ellipse/threadim1}} }
+	{ \includegraphics[width=5cm]{\filextellipse{../python_cours/image/threadim2}{../python_cours/image_ellipse/threadim2}} }
+	{\label{thread_window_affichage}}
+	\end{figure}
+
+
+
+				\if 0
+				\begin{figure}[ht]
+				\begin{center}\begin{tabular}{|c|}\hline
+    		\includegraphics[width=6cm]{\filextellipse{../python_cours/image/window1}} \\ \hline
+    		\end{tabular}\end{center}
+    		\caption{	Exemple d'une fenêtre graphique. Celle-ci permet de sélectionner un fichier.
+    							La première boîte contient une liste de fichiers et de répertoires (ceux-ci
+    							sont précédés du signe +). Parmi les quatre boutons, le premier intitulé "Précédent"
+    							permet de descendre d'un cran dans l'arborescence des fichiers. Le second "Entre"
+    							permet d'entrer dans un répertoire. Le troisième "Annuler" ferme la fenêtre sans 
+    							sélectionner de fichier. Le dernier "Ok" ferme la fenêtre et sélectionne un fichier.}
+    		{\label{fenetre_exemple_1}}
+    		\end{figure}
+    		\fi
+    		
+\section{Files de messages}
+
+Les trois usages principaux des threads sont le calcul distribué, la conception d'une interface graphique réactive et l'attente permanente d'événements. En ce qui concernent les deux premiers usages, on peut considérer qu'il existe un thread principal qui lance et attend l'exécution de threads secondaires. Les échanges d'informations ont lieu au début et à la fin de chaque thread. Il n'est pas toujours nécessaire de partager des variables en cours d'exécution~: l'usage de verrous est peu fréquent pour ces deux schémas sauf pour partager des informations en cours d'exécution.
+
+En ce qui concerne le troisième usage, c'est un cas où tout au long du programme, il y a constamment au moins deux threads actifs~: un thread principal et un thread qui attend. Dans ce cas, l'échange et la synchronisation d'informations est inévitable et il est souvent fastidieux de concevoir la synchronisation. C'est pourquoi on la conçoit presque toujours sous forme de messages que les threads s'envoient.
+
+Il existe un objet \codes{Queue} du module \codes{Queue}\indexmoduleint{Queue} qui facilite cet aspect. C'est une liste qui possède son propre verrou de sorte que n'importe quel thread peut ajouter ou retirer des éléments de cette liste. Elle est utilisée principalement via quatre méthodes. Deux méthodes \codes{get} sont utilisées au sein du thread qui possède la pile. Deux méthodes \codes{put} sont appelées par des threads étrangers.
+
+\begin{center}\begin{tabularx}{\textwidth}{|l|X|} \hline
+\codes{get([timeout=...])}  & Retourne un élément de la liste ou attend qu'il y en ait un, le supprime si elle en trouve un. Si \codes{timeout} est renseigné, la fonction attend au plus \codes{timeout} secondes, sinon, elle déclenche l'exception \codes{Queue.Empty}. \indexmethod{get}\\ \hline
+\codes{get\_nowait ()} & Retourne un élément de la liste s'il y a en un, dans ce cas, cet élément est supprimé. Dans le cas contraire, la méthode déclenche l'exception \codes{Queue.Empty}. \indexmethod{get\_nowait}\\ \hline
+\codes{put (e[,timeout=...])} & Ajoute l'élément \codes{e} à la liste ou attend qu'une place se libère si la liste est pleine. Si \codes{timeout} est renseigné, la fonction attend au plus \codes{timeout} secondes, sinon, elle déclenche l'exception \codes{Queue.Full}. \indexmethod{put} \\ \hline
+\codes{put\_nowait (e)} & Ajoute l'élément \codes{e} à la liste ou déclenche l'exception \codes{Queue.Full} si la liste est pleine. \indexmethod{put\_nowait} \\ \hline
+\codes{qsize()} & Retourne la taille de la pile. \indexmethod{qsize} \\ \hline
+\end{tabularx}\end{center}
+
+%
+Cette pile est utilisée dans l'exemple qui suit pour simuler deux joueurs qui essaye de découvrir le nombre que l'autre joueur a tiré au hasard. A chaque essai, un joueur envoie un message de type \codes{("essai", n)} à l'autre joueur pour dire qu'il joue le nombre \codes{n}. Ce joueur lui répond avec des messages de type \codes{("dessous", n)}, \codes{("dessus", n)}, \codes{("gagne", n)}.
+%
+\vspaceneg
+\inputcode{../python_cours/programme/threadqueue.py}{joueurs asynchrones}
+\vspaceneg
+%
+Si la méthode \codes{get} est choisie, les joueurs doivent attendre une tentative de l'adversaire avant de proposer la leur. Dans l'autre cas, la méthode \codes{get\_nowait} permet de ne pas attendre sa réponse et d'envoyer plusieurs propositions à l'adversaire qui ne répondra pas plus vite pour autant. Dans cette configuration, le joueur \codes{A} est trois fois plus réactif ce qui explique les résultats qui suivent.
+%
+\vspaceneg
+\begin{verbatimx}
+A  : je joue ( 8 )
+B  : je joue ( 569 )
+A  : je tente  42  écart  1000  à traiter  0
+A  : je tente  791  écart  1000  à traiter  0
+...
+A  : je tente  528  écart  62  à traiter  0
+B  : je tente  20  écart  43  à traiter  57
+A  : je tente  508  écart  62  à traiter  0
+A  : je tente  548  écart  62  à traiter  0
+B  : je tente  8  écart  43  à traiter  59
+A  : j'ai perdu après  67  essais
+A  : j'arrête
+B  : j'ai gagné en  23  essais, solution  8
+B  : j'arrête
+\end{verbatimx}
+%
+\vspaceneg
+Les affichages se chevauchent parfois, il faudrait pour éviter cela synchroniser l'affichage à l'aide d'un verrou.   		
+
+
+\end{document}
