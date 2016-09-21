@@ -34,8 +34,9 @@ class TestTransferFTPTrue(unittest.TestCase):
             OutputPrint=__name__ == "__main__")
 
         import keyring
-        user = keyring.get_password("web", os.environ["COMPUTERNAME"] + "user")
-        pwd = keyring.get_password("web", os.environ["COMPUTERNAME"] + "pwd")
+        machine = os.environ.get("COMPUTERNAME", os.environ.get("HOSTNAME", "CI"))
+        user = keyring.get_password("web", machine + "user")
+        pwd = keyring.get_password("web", machine + "pwd")
         if user is None:
             if not is_travis_or_appveyor():
                 raise Exception("user password is empty")
