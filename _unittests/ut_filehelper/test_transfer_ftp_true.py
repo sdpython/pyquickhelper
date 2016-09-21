@@ -27,7 +27,7 @@ from src.pyquickhelper.pycode import is_travis_or_appveyor
 
 class TestTransferFTPTrue(unittest.TestCase):
 
-    def test_transfer_ftp(self):
+    def test_transfer_ftp_true(self):
         fLOG(
             __file__,
             self._testMethodName,
@@ -35,8 +35,12 @@ class TestTransferFTPTrue(unittest.TestCase):
 
         import keyring
         machine = os.environ.get("COMPUTERNAME", os.environ.get("HOSTNAME", "CI"))
-        user = keyring.get_password("web", machine + "user")
-        pwd = keyring.get_password("web", machine + "pwd")
+        try:
+            user = keyring.get_password("web", machine + "user")
+            pwd = keyring.get_password("web", machine + "pwd")
+        except RuntimeError:
+            user = None
+            pwd = None
         if user is None:
             if not is_travis_or_appveyor():
                 raise Exception("user password is empty")
