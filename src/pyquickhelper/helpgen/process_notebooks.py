@@ -641,7 +641,7 @@ def add_notebook_page(nbs, fileout):
                 for k in range(0, len(hi)):
                     if last is None or k >= len(last) or hi[k] != last[k]:
                         break
-                while k < len(hi):
+                while len(hi) > 0 and k < len(hi):
                     rows.append("")
                     rows.append(hi[k])
                     rows.append(level[min(k, len(level) - 1)] * len(hi[k]))

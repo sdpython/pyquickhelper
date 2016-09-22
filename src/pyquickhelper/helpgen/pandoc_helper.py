@@ -45,7 +45,8 @@ def latex2rst(input, output, encoding="utf-8", fLOG=noLOG, temp_file=None):
         with open(input, "r", encoding=encoding) as f:
             content = f.read()
         if temp_file is None:
-            raise ValueError("temp_file cannot be None, encoding is not utf-8")
+            raise ValueError("temp_file cannot be None, encoding is not utf-8 and a temporary " +
+                             "file will be used to do the conversion.")
         with open(temp_file, "w", encoding="utf-8") as f:
             f.write(content)
         input = temp_file

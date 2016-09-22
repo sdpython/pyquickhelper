@@ -34,7 +34,8 @@ class TestTransferFTPTrue(unittest.TestCase):
             OutputPrint=__name__ == "__main__")
 
         import keyring
-        machine = os.environ.get("COMPUTERNAME", os.environ.get("HOSTNAME", "CI"))
+        machine = os.environ.get(
+            "COMPUTERNAME", os.environ.get("HOSTNAME", "CI"))
         try:
             user = keyring.get_password("web", machine + "user")
             pwd = keyring.get_password("web", machine + "pwd")
