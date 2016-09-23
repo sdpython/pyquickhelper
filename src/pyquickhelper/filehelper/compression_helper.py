@@ -217,6 +217,11 @@ def zip7_files(filename_7z, file_set, fLOG=noLOG, temp_folder="."):
                                 folder *temp_folder*, it will be removed afterwords
     @return                     number of added files
 
+    .. versionchanged:: 1.5
+        The module `pylzma <https://pypi.python.org/pypi/pylzma>`_
+        failed to decompress the file produced by the latest version
+        of `7z <http://www.7-zip.org/>`_ (2016-09-23). The compression
+        was changed by tweaking the command line. LZMA is used instead LZMA2.
     """
     if sys.platform.startswith("win"):
         exe = r"C:\Program Files\7-Zip\7z.exe"
@@ -237,8 +242,12 @@ def zip7_files(filename_7z, file_set, fLOG=noLOG, temp_folder="."):
     with open(flist, "w", encoding="utf8") as f:
         f.write("\n".join(file_set))
 
-    cmd = '"{0}" a "{1}" @"{2}"'.format(exe, filename_7z, flist)
-    run_cmd(cmd, wait=True)
+    cmd = '"{0}" -m0=lzma -mfb=64 a "{1}" @"{2}"'.format(
+        exe, filename_7z, flist)
+    out, err = run_cmd(cmd, wait=True)
+    fLOG("CMD\n", cmd)
+    fLOG("OUT\n", out)
+    fLOG("ERR\n", err)
     return len(file_set)
 
 

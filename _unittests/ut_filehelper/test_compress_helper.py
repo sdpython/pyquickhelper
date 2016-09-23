@@ -75,6 +75,17 @@ class TestCompressHelper(unittest.TestCase):
         assert res[0][0].endswith(
             "_unittests/ut_filehelper/test_compress_helper.py")
 
+    def test_uncompress_7zip(self):
+        fLOG(
+            __file__,
+            self._testMethodName,
+            OutputPrint=__name__ == "__main__")
+
+        fold = get_temp_folder(__file__, "temp_uncompress_7zip")
+        data = os.path.join(fold, "..", "data", "ftplib.7z")
+        files = un7zip_files(data, where_to=fold, fLOG=fLOG)
+        self.assertEqual(len(files), 1)
+
     def test_compress_7zip(self):
         fLOG(
             __file__,
@@ -99,6 +110,8 @@ class TestCompressHelper(unittest.TestCase):
         else:
             typbytes = bytes
 
+        from py7zlib import COMPRESSION_METHOD_COPY
+        fLOG("***", COMPRESSION_METHOD_COPY)
         res = un7zip_files(out7)
         assert isinstance(res, list)
         self.assertEqual(len(res), 1)
