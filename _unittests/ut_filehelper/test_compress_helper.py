@@ -81,6 +81,11 @@ class TestCompressHelper(unittest.TestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
+        import pylzma
+        if pylzma.__version__ == "0.4.8":
+            # this version does not include a fix to read file produced by the latest version of 7z
+            return
+
         fold = get_temp_folder(__file__, "temp_uncompress_7zip")
         data = os.path.join(fold, "..", "data", "ftplib.7z")
         files = un7zip_files(data, where_to=fold, fLOG=fLOG)

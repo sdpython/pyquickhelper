@@ -222,6 +222,8 @@ def zip7_files(filename_7z, file_set, fLOG=noLOG, temp_folder="."):
         failed to decompress the file produced by the latest version
         of `7z <http://www.7-zip.org/>`_ (2016-09-23). The compression
         was changed by tweaking the command line. LZMA is used instead LZMA2.
+        The current version does not include this
+        `commit <https://github.com/fancycode/pylzma/commit/b5c3c2bd4ab7abfb65de772861ecc600fe37394b>`_.
     """
     if sys.platform.startswith("win"):
         exe = r"C:\Program Files\7-Zip\7z.exe"

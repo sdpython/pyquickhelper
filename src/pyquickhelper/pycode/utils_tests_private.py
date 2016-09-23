@@ -330,6 +330,9 @@ def default_filter_warning(w):
         elif "sympy" in w.filename:
             if "inspect.getargspec() is deprecated" in str(w.message):
                 return False
+        elif "_mode_cbc.py" in w.filename:
+            if "will be forbidden in the future" in str(w.message):
+                return False
     elif isinstance(w.message, ImportWarning):
         if w.filename.endswith("_bootstrap_external.py"):
             return False
