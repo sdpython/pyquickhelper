@@ -109,7 +109,7 @@ class TransferFTP:
             if "You're already logged in" in se:
                 return
             elif "An existing connection was forcibly closed by the remote host" in se or \
-               "An established connection was aborted by the software in your host machine" in se:
+                 "An established connection was aborted by the software in your host machine" in se:
                 # we start a new connection
                 self.LOG("reconnecting failed, starting a new connection",
                          self.Site, " - ", len(self._logins))
@@ -141,7 +141,10 @@ class TransferFTP:
             self.LOG(e)
             self.LOG("    ** run exc ", str(command), str(args))
             self._private_login()
-            t = command(self, *args)
+            if sys.version_info[0] == 2:
+                t = command(self, *[str(_) for _ in args])
+            else:
+                t = command(self, *args)
             self.LOG("    ** run ", str(command), str(args))
             return t
 
