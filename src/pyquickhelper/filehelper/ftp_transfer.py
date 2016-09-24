@@ -106,7 +106,9 @@ class TransferFTP:
             self._logins.append((datetime.datetime.now(), self.Site))
         except Exception as e:
             se = str(e)
-            if "An existing connection was forcibly closed by the remote host" in se or \
+            if "You're already logged in" in se:
+                return
+            elif "An existing connection was forcibly closed by the remote host" in se or \
                "An established connection was aborted by the software in your host machine" in se:
                 # we start a new connection
                 self.LOG("reconnecting failed, starting a new connection",

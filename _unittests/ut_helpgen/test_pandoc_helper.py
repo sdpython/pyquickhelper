@@ -27,6 +27,10 @@ from src.pyquickhelper.pycode import get_temp_folder, is_travis_or_appveyor
 from src.pyquickhelper.helpgen import latex2rst
 
 
+if sys.version_info[0] == 2:
+    from codecs import open
+
+
 class TestPandocHelper(unittest.TestCase):
 
     def test_latex2rst(self):
