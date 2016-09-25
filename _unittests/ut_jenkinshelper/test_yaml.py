@@ -174,6 +174,8 @@ class TestYaml(unittest.TestCase):
 
             @echo INSTALL
             set PATH=ROOT\\%NAME_JENKINS%\\_venv\\Scripts;%PATH%
+            pip install --no-cache-dir --no-deps --index http://localhost:8067/simple/ jyquickhelper
+            if %errorlevel% neq 0 exit /b %errorlevel%
             pip install -r requirements.txt
             if %errorlevel% neq 0 exit /b %errorlevel%
             pip freeze
@@ -228,6 +230,8 @@ class TestYaml(unittest.TestCase):
 
             @echo INSTALL
             set PATH=ROOT\\%NAME_JENKINS%\\_venv\\Scripts;%PATH%
+            pip install --no-cache-dir --no-deps --index http://localhost:8067/simple/ jyquickhelper
+            if %errorlevel% neq 0 exit /b %errorlevel%
             pip install -r requirements.txt
             if %errorlevel% neq 0 exit /b %errorlevel%
             pip freeze
@@ -306,6 +310,8 @@ class TestYaml(unittest.TestCase):
 
             @echo INSTALL
             set PATH=ROOT\\%NAME_JENKINS%\\_venv\\Scripts;%PATH%
+            pip install --no-cache-dir --no-deps --index http://localhost:8067/simple/ jyquickhelper
+            if %errorlevel% neq 0 exit /b %errorlevel%
             pip install -r requirements.txt
             if %errorlevel% neq 0 exit /b %errorlevel%
             pip freeze
