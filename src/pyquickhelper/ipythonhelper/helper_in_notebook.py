@@ -6,10 +6,6 @@
 .. versionadded:: 1.1
 """
 import warnings
-from jyquickhelper import store_notebook_path as _store_notebook_path
-from jyquickhelper.helper_in_notebook import set_notebook_name_theNotebook as _set_notebook_name_theNotebook
-from jyquickhelper import add_notebook_menu as _add_notebook_menu
-from jyquickhelper.helper_in_notebook import load_extension as _load_extension
 
 
 def store_notebook_path(name="theNotebook"):
@@ -17,6 +13,7 @@ def store_notebook_path(name="theNotebook"):
     See  `store_notebook_path <http://www.xavierdupre.fr/app/pyquickhelper/helpsphinx/jyquickhelper/helpers_in_notebook.html>`_.
     """
     warnings.warn("The function has been moved to jyquickhelper.")
+    from jyquickhelper import store_notebook_path as _store_notebook_path
     return _store_notebook_path(name)
 
 
@@ -25,6 +22,7 @@ def set_notebook_name_theNotebook(name="theNotebook"):
     See  `set_notebook_name_theNotebook <http://www.xavierdupre.fr/app/pyquickhelper/helpsphinx/jyquickhelper/helpers_in_notebook.html>`_.
     """
     warnings.warn("The function has been moved to jyquickhelper.")
+    from jyquickhelper.helper_in_notebook import set_notebook_name_theNotebook as _set_notebook_name_theNotebook
     return _set_notebook_name_theNotebook(name)
 
 
@@ -34,6 +32,7 @@ def add_notebook_menu(menu_id="my_id_menu_nb", raw=False, format="html", header=
     See  `add_notebook_menu <http://www.xavierdupre.fr/app/pyquickhelper/helpsphinx/jyquickhelper/helpers_in_notebook.html>`_.
     """
     warnings.warn("The function has been moved to jyquickhelper.")
+    from jyquickhelper import add_notebook_menu as _add_notebook_menu
     return _add_notebook_menu(menu_id=menu_id, raw=raw, format=format, header=header,
                               first_level=first_level, last_level=last_level, keep_item=keep_item)
 
@@ -43,4 +42,5 @@ def load_extension(name):
     See  `load_extension <http://www.xavierdupre.fr/app/pyquickhelper/helpsphinx/jyquickhelper/helpers_in_notebook.html>`_.
     """
     warnings.warn("The function has been moved to jyquickhelper.")
+    from jyquickhelper.helper_in_notebook import load_extension as _load_extension
     return _load_extension(name)
