@@ -7,9 +7,9 @@
 """
 import warnings
 from jyquickhelper import store_notebook_path as _store_notebook_path
-from jyquickhelper import set_notebook_name_theNotebook as _set_notebook_name_theNotebook
+from jyquickhelper.helper_in_notebook import set_notebook_name_theNotebook as _set_notebook_name_theNotebook
 from jyquickhelper import add_notebook_menu as _add_notebook_menu
-from jyquickhelper import load_extension as _load_extension
+from jyquickhelper.helper_in_notebook import load_extension as _load_extension
 
 
 def store_notebook_path(name="theNotebook"):
