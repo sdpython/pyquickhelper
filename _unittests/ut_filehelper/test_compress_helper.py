@@ -83,7 +83,8 @@ class TestCompressHelper(unittest.TestCase):
 
         import pylzma
         if pylzma.__version__ == "0.4.8":
-            # this version does not include a fix to read file produced by the latest version of 7z
+            # this version does not include a fix to read file produced by the
+            # latest version of 7z
             return
 
         fold = get_temp_folder(__file__, "temp_uncompress_7zip")

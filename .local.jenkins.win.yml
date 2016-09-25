@@ -19,6 +19,7 @@ virtualenv:
   
 # Dependencies to install.
 install:
+  - pip install --no-cache-dir --no-deps --index http://localhost:8067/simple/ jyquickhelper
   - pip install -r requirements.txt
   - pip freeze
 

@@ -220,6 +220,7 @@ if not r:
             "jupyter_client",
             "jupyter_console",
             "jupyter_core",
+            "jyquickhelper",
             "matplotlib",
             "metakernel",
             "multi_key_dict",
