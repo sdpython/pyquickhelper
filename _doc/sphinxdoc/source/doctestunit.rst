@@ -55,3 +55,15 @@ This test file must begin by ``test_`` and must look like the following::
 
     if __name__ == "__main__"  :
         unittest.main ()
+        
+Passwords
+---------
+
+A couple of unit test requires a login and a password 
+to test FTP functionalities. It should look like the following:
+
+::
+
+    import keyring
+    keyring.set_password("web", os.environ["COMPUTERNAME"] + "user", "...")
+    keyring.set_password("web", os.environ["COMPUTERNAME"] + "pwd", "...")
