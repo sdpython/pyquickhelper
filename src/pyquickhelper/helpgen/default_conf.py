@@ -517,3 +517,4 @@ def custom_setup(app, author):
 
     # from sphinx.util.texescape import tex_replacements
     # tex_replacements += [('oe', '\\oe '), ]
+    app.add_javascript("require.js")

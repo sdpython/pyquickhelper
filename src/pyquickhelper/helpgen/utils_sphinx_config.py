@@ -125,11 +125,29 @@ def locate_image_documentation(image_name):
 
     @param      image_name      path
     @return                     local file
+
+    .. todoext::
+        :title: Fix infinite loop
+        :tag: done
+        :date: 2016-09-29
+        :cost: 1
+        :release: 1.5
+        :issue: 35
+
+        When a notebook is taken out from the sources, the image using NbImage
+        cannot be displayed because the function cannot guess from which project
+        it was taken. The function was entering an infinite loop.
     """
     folder, filename = os.path.split(image_name)
     while len(folder) > 0 and "_doc" not in os.listdir(folder):
-        folder = os.path.split(folder)[0]
+        fold = os.path.split(folder)[0]
+        if fold == folder:
+            break
+        folder = fold
     doc = os.path.join(folder, "_doc")
+    if not os.path.exists(doc):
+        raise FileNotFoundError(
+            "unable to find a folder called _doc, the function cannot locate an image\n{0}".format(image_name))
     for root, dirs, files in os.walk(doc):
         for name in files:
             t = os.path.join(root, name)
@@ -200,6 +218,7 @@ def NbImage(name, repository=None, force_github=False, width=None):
     url = repository + "/" + loc
     url = url.replace("github.com", "raw.githubusercontent.com")
     return Image(url, width=width)
+
 
 if __name__ == "__main__":
     ie_layout_html()
