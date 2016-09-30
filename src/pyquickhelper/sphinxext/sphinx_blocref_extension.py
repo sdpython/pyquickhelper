@@ -206,7 +206,10 @@ class BlocRef(BaseAdmonition):
             blocref["breftargetid"] = targetid
             ids = [targetid]
             targetnode = nodes.target(legend, '', ids=ids)
-            self.state.add_target(targetid, '', targetnode, lineno)
+            try:
+                self.state.add_target(targetid, '', targetnode, lineno)
+            except Exception as e:
+                raise Exception("Issue in \n  File '{0}', line {1}".format(docname, lineno)) from e
 
             # index node
             index = self.options.get('index', None)
