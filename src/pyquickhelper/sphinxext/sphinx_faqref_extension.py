@@ -48,7 +48,6 @@ class FaqRef(BlocRef):
 
                 print("mignon")
 
-
     Which renders as:
 
     .. faqref::
@@ -92,7 +91,7 @@ class FaqRef(BlocRef):
 
 def process_faqrefs(app, doctree):
     """
-    collect all blocrefs in the environment
+    collect all *faqref* in the environment
     this is not done in the directive itself because it some transformations
     must have already been run, e.g. substitutions
     """
@@ -102,7 +101,7 @@ def process_faqrefs(app, doctree):
 
 class FaqRefList(BlocRefList):
     """
-    A list of all blocref entries, for a specific tag.
+    A list of all *faqref* entries, for a specific tag.
 
     * tag: a tag to filter bloc having this tag
     * sort: a way to sort the blocs based on the title, file, number, default: *title*
@@ -128,7 +127,7 @@ class FaqRefList(BlocRefList):
 
 def process_faqref_nodes(app, doctree, fromdocname):
     """
-    process_blocref_nodes
+    process_faqref_nodes
     """
     process_blocref_nodes_generic(app, doctree, fromdocname, class_name='faqref',
                                   entry_name="faqmes", class_node=faqref_node,

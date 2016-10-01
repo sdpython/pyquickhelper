@@ -201,15 +201,16 @@ class BlocRef(BaseAdmonition):
         set_source_info(self, blocref)
 
         if env is not None:
-            targetid = 'index%s%s' % (
-                breftag, env.new_serialno('index%s%s' % (name_desc, breftag)))
+            targetid = 'index%s-%s%s' % (name_desc,
+                                         breftag, env.new_serialno('index%s%s' % (name_desc, breftag)))
             blocref["breftargetid"] = targetid
             ids = [targetid]
             targetnode = nodes.target(legend, '', ids=ids)
             try:
                 self.state.add_target(targetid, '', targetnode, lineno)
             except Exception as e:
-                raise Exception("Issue in \n  File '{0}', line {1}".format(docname, lineno)) from e
+                raise Exception("Issue in \n  File '{0}', line {1}\ntitle={2}\ntag={3}\ntargetid={4}".format(docname,
+                                                                                                             lineno, title, breftag, targetid)) from e
 
             # index node
             index = self.options.get('index', None)
