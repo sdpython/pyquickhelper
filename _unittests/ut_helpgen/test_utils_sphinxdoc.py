@@ -119,7 +119,7 @@ class TestSphinxDoc (unittest.TestCase):
         for fi in files:
             if "run_setup_pause.py" in fi:
                 continue
-            if "setup.py" not in fi \
+            if "setup.py" not in fi and "_nbconvert_config.py" not in fi \
                     and utils_sphinx_doc.validate_file_for_help(fi, lambda f: "_externals" in f and ("/test" in f or "\\test" in f)):
                 well = fi.replace("\\", "/")
                 well = well[well.find("src"):]
