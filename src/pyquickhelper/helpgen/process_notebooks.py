@@ -98,6 +98,10 @@ def process_notebooks(notebooks, outfold, build, latex_path=None, pandoc_path=No
         `nbconvert <https://nbconvert.readthedocs.io/en/latest/>`_,
         `nbpresent <https://github.com/Anaconda-Platform/nbpresent>`_.
 
+    .. versionchanged:: 1.5
+        For latex and pdf, a custom processor was added to handle raw data
+        and add ``\\begin{verbatim}`` and ``\\end{verbatim}``.
+
     .. todoext::
         :title: Allow hidden rst instruction in notebook (for references)
         :tag: enhancement
@@ -107,6 +111,13 @@ def process_notebooks(notebooks, outfold, build, latex_path=None, pandoc_path=No
         without referencing the absolute path of the referenced page. One option
         is to add hidden HTML or comments and to publish it when converting the
         notebook to RST.
+
+    .. todoext::
+        :title: check differences between _process_notebooks_in_private and _process_notebooks_in_private_cmd
+        :tag: bug
+
+        For Latex and PDF, the custom preprocessor is not taken into account.
+        by function _process_notebooks_in_private.
     """
     return _process_notebooks_in(notebooks=notebooks, outfold=outfold, build=build,
                                  latex_path=latex_path, pandoc_path=pandoc_path,
@@ -278,14 +289,24 @@ def _process_notebooks_in(notebooks, outfold, build, latex_path=None, pandoc_pat
 
             # compilation
             list_args = []
+            custom_config = os.path.join(os.path.abspath(
+                os.path.dirname(__file__)), "_nbconvert_config.py")
             if format == "pdf":
+                if not os.path.exists(custom_config):
+                    raise FileNotFoundError(custom_config)
                 title = os.path.splitext(
                     os.path.split(notebook)[-1])[0].replace("_", " ")
-                list_args.extend(['--SphinxTransformer.author=""',
+                list_args.extend(['--config', '"%s"' % custom_config,
+                                  '--SphinxTransformer.author=""',
                                   '--SphinxTransformer.overridetitle="{0}"'.format(title)])
                 format = "latex"
                 compilation = True
                 thisfiles.append(os.path.splitext(outputfile)[0] + ".tex")
+            elif format == "latex":
+                if not os.path.exists(custom_config):
+                    raise FileNotFoundError(custom_config)
+                list_args.extend(['--config', '"%s"' % custom_config])
+                compilation = False
             elif format in ("word", "docx"):
                 format = "html"
                 compilation = False
@@ -323,7 +344,7 @@ def _process_notebooks_in(notebooks, outfold, build, latex_path=None, pandoc_pat
 
                 # nbconvert is messing up with static variables in sphinx or
                 # docutils if format is slides, not sure about the others
-                if nbconvert_main != fnbcexe or format not in {"slides"}:
+                if nbconvert_main != fnbcexe or format not in {"slides", "latex", "pdf"}:
                     out, err = _process_notebooks_in_private(
                         fnbcexe, list_args, options_args)
                 else:

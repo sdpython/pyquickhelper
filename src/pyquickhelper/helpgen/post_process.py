@@ -285,7 +285,7 @@ def post_process_rst_output(file, html, pdf, python, slides, present, is_noteboo
     if i < len(lines):
         del lines[i:]
 
-    # specific treatement for notebooks
+    # specific treatment for notebooks
     if is_notebook:
         # change links <#Alink --> <#alink
         reg = re.compile("(<#[A-Z][a-zA-Z0-9_+-]+>)")

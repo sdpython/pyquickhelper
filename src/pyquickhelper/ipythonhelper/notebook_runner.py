@@ -537,6 +537,11 @@ class NotebookRunner(object):
             lines = content.split("\n")
             nbs = sum(1 + len(line) // 80 for line in lines)
             return nbs
+        elif kind == "raw":
+            content = cell.source
+            lines = content.split("\n")
+            nbs = sum(1 + len(line) // 80 for line in lines)
+            return nbs
         elif kind == "code":
             content = cell.source
             lines = content.split("\n")
