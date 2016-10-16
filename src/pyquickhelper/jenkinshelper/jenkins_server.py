@@ -1193,7 +1193,7 @@ class JenkinsExt(jenkins.Jenkins):
                                                                  add_environ=add_environ, server=self, git_repo=gitrepo, scheduler=scheduler,
                                                                  description=description, credentials=cred, success_only=success_only,
                                                                  timeout=timeout, platform=self.platform, adjust_scheduler=adjust_scheduler,
-                                                                 overwrite=overwrite, build_location=location):
+                                                                 overwrite=overwrite, build_location=location, mails=self.mails):
                         if name in done:
                             s = "A name '{0}' was already used for a job, from:\n{1}\nPROCESS:\n{2}"
                             raise ValueError(
