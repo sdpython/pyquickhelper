@@ -29,7 +29,9 @@ _config_job = """<?xml version='1.0' encoding='UTF-8'?>
     <builders>
     __TASKS__
     </builders>
-    <publishers />
+    <publishers>
+    __PUBLISHERS__
+    </publishers>
     <buildWrappers>
         <hudson.plugins.build__timeout.BuildTimeoutWrapper plugin="build-timeout@1.16">
             <strategy class="hudson.plugins.build_timeout.impl.NoActivityTimeOutStrategy">
@@ -98,4 +100,13 @@ _task_batch = """
     <command>__SCRIPT__
     </command>
 </hudson.tasks.BatchFile>
+"""
+
+# mails
+_publishers = """
+<hudson.tasks.Mailer plugin="mailer">
+    <recipients>__MAIL__</recipients>
+    <dontNotifyEveryUnstableBuild>false</dontNotifyEveryUnstableBuild>
+    <sendToIndividuals>true</sendToIndividuals>
+</hudson.tasks.Mailer>
 """

@@ -32,7 +32,7 @@ from ..pycode.windows_scripts import windows_jenkins, windows_jenkins_any
 from ..pycode.windows_scripts import windows_jenkins_27_conda, windows_jenkins_27_def
 from ..pycode.build_helper import private_script_replacements
 from .jenkins_exceptions import JenkinsExtException, JenkinsJobException
-from .jenkins_server_template import _config_job, _trigger_up, _trigger_time, _git_repo, _task_batch
+from .jenkins_server_template import _config_job, _trigger_up, _trigger_time, _git_repo, _task_batch, _publishers
 from .yaml_helper import enumerate_processed_yml
 
 _timeout_default = 1200
@@ -92,6 +92,9 @@ class JenkinsExt(jenkins.Jenkins):
 
     .. versionchanged:: 1.3
         The whole class was changed to defined many different engines.
+
+    .. versionchanged:: 1.4
+        Add mail handling. A job can now send a mail at the end of the job execution.
     """
 
     _config_job = _config_job
@@ -99,9 +102,11 @@ class JenkinsExt(jenkins.Jenkins):
     _trigger_time = _trigger_time
     _git_repo = _git_repo
     _task_batch = _task_batch
+    _publishers = _publishers
 
     def __init__(self, url, username=None, password=None, timeout=socket._GLOBAL_DEFAULT_TIMEOUT,
-                 mock=False, engines=None, platform=sys.platform, pypi_port=8067, fLOG=noLOG):
+                 mock=False, engines=None, platform=sys.platform, pypi_port=8067, fLOG=noLOG,
+                 mails=None):
         """
         constructor
 
@@ -113,15 +118,20 @@ class JenkinsExt(jenkins.Jenkins):
         @param      engines     list of Python engines *{name: path to python.exe}*
         @param      platform    platform of the Jenkins server
         @param      pypi_port   pypi port used for the documentation server
+        @param      mails       (str) list of mails to contact in case of a mistaje
         @param      fLOG        logging function
 
         .. versionchanged:: 1.3
             Parameter *engines*, *fLOG* were added to rationalize Python engines.
+
+        .. versionchanged:: 1.5
+            Parameter *mails* was added.
         """
         jenkins.Jenkins.__init__(self, url, username, password)
         self._mock = mock
         self.platform = platform
         self.pypi_port = pypi_port
+        self.mails = mails
         self.fLOG = fLOG
         if engines is None:
             engines = {"default": os.path.dirname(sys.executable)}
@@ -734,6 +744,13 @@ class JenkinsExt(jenkins.Jenkins):
             raise Exception("this should not happen")
         location = "" if location is None else "<customWorkspace>%s</customWorkspace>" % location
 
+        # emailing
+        publishers = []
+        mails = kwargs.get("mails", None)
+        if mails is not None:
+            publishers.append(
+                JenkinsExt._publishers.replace("__MAIL__", mails))
+
         # replacements
         conf = JenkinsExt._config_job
         rep = dict(__KEEP__=str(keep),
@@ -742,7 +759,8 @@ class JenkinsExt(jenkins.Jenkins):
                    __LOCATION__=location,
                    __DESCRIPTION__="" if description is None else description,
                    __GITREPOXML__=git_repo_xml,
-                   __TIMEOUT__=str(timeout))
+                   __TIMEOUT__=str(timeout),
+                   __PUBLISHERS__="\n".join(publishers))
 
         for k, v in rep.items():
             conf = conf.replace(k, v)
@@ -1141,7 +1159,8 @@ class JenkinsExt(jenkins.Jenkins):
                             r = js.create_job_template(jname, git_repo=gpar, upstreams=upstreams, script=script,
                                                        location=loc, scheduler=scheduler, py27="[27]" in job,
                                                        description=description, credentials=cred, success_only=success_only,
-                                                       update=update_job, timeout=timeout, adjust_scheduler=adjust_scheduler)
+                                                       update=update_job, timeout=timeout, adjust_scheduler=adjust_scheduler,
+                                                       mails=self.mails)
 
                             # check some inconsistencies
                             if "[27]" in job and "Anaconda3" in script:
