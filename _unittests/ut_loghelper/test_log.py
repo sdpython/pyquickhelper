@@ -5,6 +5,8 @@
 import sys
 import os
 import unittest
+import time
+
 
 if "temp_" in os.path.abspath(__file__):
     raise ImportError(
@@ -116,6 +118,7 @@ class TestLog (unittest.TestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
         p1 = get_prefix()
+        time.sleep(1)
         p2 = get_prefix()
         self.assertNotEqual(p1, p2)
 

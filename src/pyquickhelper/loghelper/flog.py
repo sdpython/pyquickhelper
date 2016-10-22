@@ -743,7 +743,7 @@ def get_prefix():
     typstr = str  # unicode#
     t = datetime.datetime(2010, 1, 1).now()
     t = typstr(t).replace(":", "_").replace("/", "_").replace(" ", "_")
-    t += "_" + typstr(random.randint(0, 1000)) + "_"
+    t += "_" + typstr(random.randint(0, 1000000)) + "_"
     return os.path.join(GetPath(), "temp_" + t)
 
 
