@@ -498,9 +498,11 @@ class JenkinsExt(jenkins.Jenkins):
                 # step 1: define the script
 
                 if "[test_local_pypi]" in spl:
+                    cmd = """__PYTHON__ -u setup.py test_local_pypi"""
                     cmd = "auto_setup_test_local_pypi.bat __PYTHON__"
                 elif "[update_modules]" in spl:
-                    cmd = "\n__PACTHPQb__\n__PYTHON__ setup.py build_script\n__PACTHPQe__\n\nauto_update_modules.bat __PYTHON__"
+                    cmd = """__PYTHON__ -u -c "import sys;sys.path.append('src');from pymyinstall.packaged import update_all;""" + \
+                          """update_all(temp_folder='build/update_modules', verbose=True, source='2')" """
                 elif "[UT]" in spl:
                     parameters = [_ for _ in spl if _.startswith(
                         "{") and _.endswith("}")]
@@ -540,15 +542,6 @@ class JenkinsExt(jenkins.Jenkins):
                     # documentation
                     cmd = _modified_windows_jenkins_any(requirements_local, requirements_pypi, platform=self.platform).replace(
                         "__COMMAND__", "build_sphinx")
-                elif "[setup]" in spl:
-                    # setup
-                    cmd = "\n__PACTHPQb__\n__PYTHON__ setup.py build_script\n__PACTHPQe__\n\nauto_cmd_build_dist.bat __PYTHON__"
-                elif "[setup_big]" in spl:
-                    # setup + [big]
-                    cmd = "\n__PACTHPQb__\n__PYTHON__ setup.py build_script\n__PACTHPQe__\n\nauto_cmd_build_dist.bat __PYTHON__ [big]"
-                elif "[setup_v2]" in spl:
-                    # setup + [v2]
-                    cmd = "\n__PACTHPQb__\n__PYTHON__ setup.py build_script\n__PACTHPQe__\n\nauto_cmd_build_dist.bat __PYTHON__ [v2]"
                 else:
                     cmd = _modified_windows_jenkins(
                         requirements_local, requirements_pypi, platform=self.platform)
