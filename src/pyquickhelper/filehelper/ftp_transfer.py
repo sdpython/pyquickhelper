@@ -127,26 +127,42 @@ class TransferFTP:
         @param      args        list of argument
         @return                 output of the command or True for success, False for failure
         """
-        try:
-            t = command(*args)
-            if command == self._ftp.pwd or command == self._ftp.dir or \
-                    command == self._ftp.mlsd or command == self._ftp.nlst:
-                return t
-            elif command != self._ftp.cwd:
-                pass
-            return True
-        except Exception as e:
-            if TransferFTP.errorNoDirectory in str(e):
-                raise e
-            self.LOG(e)
-            self.LOG("    ** run exc ", str(command), str(args))
-            self._private_login()
-            if sys.version_info[0] == 2:
+        if sys.version_info[0] == 2:
+            try:
+                t = command(*args)
+                if command == self._ftp.pwd or command == self._ftp.dir or \
+                        command == self._ftp.nlst:
+                    return t
+                elif command != self._ftp.cwd:
+                    pass
+                return True
+            except Exception as e:
+                if TransferFTP.errorNoDirectory in str(e):
+                    raise e
+                self.LOG(e)
+                self.LOG("    ** run exc ", str(command), str(args))
+                self._private_login()
                 t = command(self, *[str(_) for _ in args])
-            else:
+                self.LOG("    ** run ", str(command), str(args))
+                return t
+        else:
+            try:
+                t = command(*args)
+                if command == self._ftp.pwd or command == self._ftp.dir or \
+                        command == self._ftp.mlsd or command == self._ftp.nlst:
+                    return t
+                elif command != self._ftp.cwd:
+                    pass
+                return True
+            except Exception as e:
+                if TransferFTP.errorNoDirectory in str(e):
+                    raise e
+                self.LOG(e)
+                self.LOG("    ** run exc ", str(command), str(args))
+                self._private_login()
                 t = command(self, *args)
-            self.LOG("    ** run ", str(command), str(args))
-            return t
+                self.LOG("    ** run ", str(command), str(args))
+                return t
 
     def print_list(self):
         """
