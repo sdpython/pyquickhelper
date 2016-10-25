@@ -40,13 +40,12 @@ To generate a zip or gz setup:
 
     python setup.py sdist --formats=gztar,zip
 
-To generate a file *.whl*
-(the module `wheel <https://pypi.python.org/pypi/wheel>`_ must be installed):
+To generate a file *.whl:
 
 ::
 
     python setup.py bdist_wheel
-
+    
 
 Unit tests
 ==========
@@ -78,8 +77,8 @@ You can get them with:
 The process first calls the function :func:`_setup_hook <pyquickhelper._setup_hook>`. 
 It can be used to initialize the module even if it is most of the time unused.
 The process ends the code coverage (with module `coverage <https://coverage.readthedocs.io/en/coverage-4.2/>`_)
-and publishes the report in folder ``_doc/sphinxdoc/source/coverage``.
-If options ``-e`` and ``-g`` are left empty, files containing ``test_LONG_``, ``test_SKIP_``, ``test_GUI_`` in their
+and publishes the report in folder `_doc/sphinxdoc/source/coverage`.
+If options ``-e`` and ``-g`` are left empty, files containing `test_LONG_`, `test_SKIP_`, `test_GUI_` in their
 name are included. You can run them with a specific command:
 
 ::
@@ -89,7 +88,7 @@ name are included. You can run them with a specific command:
     python setup.py unittests_GUI
 
 This was introduced to explicitely exclude long tests used to check a long process was not broken.
-These commands do not accept parameters. Coverage report are not merged.
+These commands do not accept parameters. Coverage reports are not merged.
 
 
 Run one unit test
@@ -99,21 +98,20 @@ All unit tests must follow the convention:
 
 ::
 
-    _unittests/<subfolder>/test_<filename>.py
+    _unittests/ut_<subfolder>/test_<filename>.py
 
-This test file must begin by ``test_`` and must look like the following::
+This test file must begin by `test_` and must look like the following::
 
     """
-    @brief       <comment> (time=5s)
-
-    You should indicate a time in seconds. The program ``run_unittests.py``
-    will sort all test files by increasing time and run them.
+    @file
+    @brief  test log(time=2s)
     """
     import sys
     import os
     import unittest
 
     # to import files from the module
+    # and to make sure we do not use another installed version 
     try :
         import src
     except ImportError :
@@ -155,12 +153,13 @@ You can create a temporary folder next to the test file by running:
     from pyquickhelper.pycode import get_temp_folder
     temp = get_temp_folder(__file__, "temp_<name>")
     
-This folder is automatically removed if it exists.
+This folder is automatically removed if it exists
+when the function is called.
 
 Specific unit tests
 +++++++++++++++++++
 
-The unit test ``test_flake8.py`` ensures the all the code follows the
+The unit test `test_flake8.py` ensures all the code follows the
 `pep8 <https://www.python.org/dev/peps/pep-0008/>`_ style.
 It will break it is not the case and will indicate where it breaks.
 The code can be automatically modified to follow that convention
@@ -170,12 +169,12 @@ by running:
 
     python setup.py clean_space
 
-The unit test ``test_readme.py`` checks the syntax of file ``readme.py``.
+The unit test `test_readme.py` checks the syntax of file `readme.rst`.
 `PyPi <https://pypi.python.org/pypi>`_ runs on an older version of 
 `docutils <http://docutils.sourceforge.net/>`_. 
 It checks this file follows this syntax.
 
-The unit test ``test_convert_notebooks.py`` checks the syntax of every notebook
+The unit test `test_convert_notebooks.py` checks the syntax of every notebook
 looks ok. This tests also removes all execution number and reformat the JSON.
 It must be run before a commit if you add or modifies the notebook.
 Removing the execution number makes it easy to compare two versions of the same
@@ -191,7 +190,8 @@ Use passwords
 +++++++++++++
 
 If a couple of unit test requires a login and a password 
-to test FTP functionalities, you should get them with `keyring <https://pypi.python.org/pypi/keyring>`_.
+to test FTP functionalities for example,
+you should get them with `keyring <https://pypi.python.org/pypi/keyring>`_.
 
 ::
 
@@ -215,13 +215,13 @@ Python 2.7
 
 The sources can not be used with Python 2.7. The syntax first needs to be converted.
 That what does the following instruction based on Python 3.
-The results will located in ``dist_module27``.
+The results will located in `dist_module27`.
 
 ::
 
     python setup.py copy27
     
-From folder ``dist_module27``, the unit test can be run he same way:
+From folder `dist_module27`, the unit test can be run he same way:
 
 ::
 
@@ -257,14 +257,14 @@ contains the documentation.
 It will go through the following steps:
 
 * It gets a version number from `git <https://git-scm.com/>`_ (the sources must be on `git <https://git-scm.com/>`_).
-* It will copy all files found in ``src`` in folder ``_doc/sphinxdoc/source/[project_name]``.
-* It will generates a file *.rst* for each python file in ``_doc/sphinxdoc/source/[project_name]``.
+* It will copy all files found in `src` in folder `_doc/sphinxdoc/source/[project_name]`.
+* It will generates a file *.rst* for each python file in `_doc/sphinxdoc/source/[project_name]`.
 * It will run the generation of the documentation using Sphinx.
-* Notebooks can be placed in ``_doc/notebooks``, they will be added to the documentation.
+* Notebooks can be placed in `_doc/notebooks`, they will be added to the documentation.
 * It will generated aggregated pages for blog posts added to 
-  ``_doc/sphinxdoc/source/blog/YYYY/<anything>.rst``.
+  `_doc/sphinxdoc/source/blog/YYYY/<anything>.rst`.
 
-The results are stored in folder ``_doc/sphinxdoc/build``.
+The results are stored in folder `_doc/sphinxdoc/build`.
 The process requires dependencies:
 
 * `Sphinx <http://sphinx-doc.org/>`_
@@ -304,13 +304,13 @@ Write documentation
 
 The documentation is organized as follows:
 
-* ``src/<module_name>``: contains the sources of the modules
-* ``_doc/notebooks``: contains the notebooks included in the documentation
-* ``_doc/sphinxdoc/source``: contains the sphinx documentation
-* ``_doc/sphinxdoc/blog/YYYY``: contains the blog posts for year ``YYYY``
+* `src/<module_name>`: contains the sources of the modules
+* `_doc/notebooks`: contains the notebooks included in the documentation
+* `_doc/sphinxdoc/source`: contains the sphinx documentation
+* `_doc/sphinxdoc/blog/YYYY`: contains the blog posts for year `YYYY`
 
 When the documentation is being generated,
-the sources are copied into ``pyquickhelper/_unittests/_doc/sphinxdoc/source/pyquickhelper``.
+the sources are copied into `pyquickhelper/_unittests/_doc/sphinxdoc/source/pyquickhelper`.
 The documentation can be in `javadoc <http://en.wikipedia.org/wiki/Javadoc>`_ 
 format is replaced by the RST syntax. Various
 files are automatically generated (indexes, examples, FAQ).
@@ -329,7 +329,7 @@ in :ref:`l-example-documentation`.
       to list all definitions
     * :ref:`blogpost <pyquickhelper.sphinxext.sphinx_blog_extension.>`: 
       to add a blog post, this command does not behave like the others,
-      it should only be used in folder ``_doc/sphinxdoc/source/blog``
+      it should only be used in folder `_doc/sphinxdoc/source/blog`
     * :ref:`blogpostagg <pyquickhelper.sphinxext.sphinx_blog_extension.>`: 
       to aggregate blog post, this should be manually added, the module 
       *pyquickhelper* is preprocessing the documentation to produce pages containing such commands
@@ -362,7 +362,7 @@ in :ref:`l-example-documentation`.
 Notebooks
 +++++++++
 
-Notebooks in folder ``_doc/notebooks`` will be automatically
+Notebooks in folder `_doc/notebooks` will be automatically
 converted into *html*, *rst*, *pdf*, *slides* formats. 
 That requires latex and `pandoc <http://pandoc.org/>`_.
 
