@@ -76,7 +76,7 @@ You can get them with:
 
 The process first calls the function :func:`_setup_hook <pyquickhelper._setup_hook>`. 
 It can be used to initialize the module even if it is most of the time unused.
-The process ends the code coverage (with module `coverage <https://coverage.readthedocs.io/en/coverage-4.2/>`_)
+The process ends the code coverage (with module `coverage <https://coverage.readthedocs.io/en/>`_)
 and publishes the report in folder `_doc/sphinxdoc/source/coverage`.
 If options ``-e`` and ``-g`` are left empty, files containing `test_LONG_`, `test_SKIP_`, `test_GUI_` in their
 name are included. You can run them with a specific command:
@@ -91,8 +91,8 @@ This was introduced to explicitely exclude long tests used to check a long proce
 These commands do not accept parameters. Coverage reports are not merged.
 
 
-Run one unit test
-+++++++++++++++++
+Write and run one unit test
++++++++++++++++++++++++++++
 
 All unit tests must follow the convention: 
 
@@ -214,7 +214,7 @@ Python 2.7
 ++++++++++
 
 The sources can not be used with Python 2.7. The syntax first needs to be converted.
-That what does the following instruction based on Python 3.
+This is what the following instruction based on Python 3 does.
 The results will located in `dist_module27`.
 
 ::
@@ -319,43 +319,44 @@ Then `sphinx <http://sphinx-doc.org/>`_ is run.
 You will find some examples of custom sphinx commands
 in :ref:`l-example-documentation`.
 
-.. faqref:: List of Sphinx commands added by pyquickhelper?
+.. faqref:: 
+    :title: List of Sphinx commands added by pyquickhelper?
 
-    * :ref:`bigger <pyquickhelper.sphinxext.sphinx_bigger_extension.bigger_role>`: 
+    * :class:`bigger <pyquickhelper.sphinxext.sphinx_bigger_extension.bigger_role>`: 
       to write with a custom size
-    * :ref:`blocref <pyquickhelper.sphinxext.sphinx_blocref_extension.BlocRef>`: 
+    * :class:`blocref <pyquickhelper.sphinxext.sphinx_blocref_extension.BlocRef>`: 
       to add a definition (or any kind of definition)
-    * :ref:`blocreflist <pyquickhelper.sphinxext.sphinx_blocref_extension.BlocRefList>`: 
+    * :class:`blocreflist <pyquickhelper.sphinxext.sphinx_blocref_extension.BlocRefList>`: 
       to list all definitions
-    * :ref:`blogpost <pyquickhelper.sphinxext.sphinx_blog_extension.>`: 
+    * :class:`blogpost <pyquickhelper.sphinxext.sphinx_blog_extension.>`: 
       to add a blog post, this command does not behave like the others,
       it should only be used in folder `_doc/sphinxdoc/source/blog`
-    * :ref:`blogpostagg <pyquickhelper.sphinxext.sphinx_blog_extension.>`: 
+    * :class:`blogpostagg <pyquickhelper.sphinxext.sphinx_blog_extension.>`: 
       to aggregate blog post, this should be manually added, the module 
       *pyquickhelper* is preprocessing the documentation to produce pages containing such commands
-    * :ref:`exref <pyquickhelper.sphinxext.sphinx_exref_extension.ExRef>`: 
+    * :class:`exref <pyquickhelper.sphinxext.sphinx_exref_extension.ExRef>`: 
       to add an example
-    * :ref:`exreflist <pyquickhelper.sphinxext.sphinx_exref_extension.ExRef>`: 
+    * :class:`exreflist <pyquickhelper.sphinxext.sphinx_exref_extension.ExRef>`: 
       to list all example
-    * :ref:`faqref <pyquickhelper.sphinxext.sphinx_faqref_extension.FaqRef>`: 
+    * :class:`faqref <pyquickhelper.sphinxext.sphinx_faqref_extension.FaqRef>`: 
       to add a FAQ
-    * :ref:`faqreflist <pyquickhelper.sphinxext.sphinx_faqref_extension.FaqRefList>`: 
+    * :class:`faqreflist <pyquickhelper.sphinxext.sphinx_faqref_extension.FaqRefList>`: 
       to list all FAQ
-    * :ref:`mathdef <pyquickhelper.sphinxext.sphinx_mathdef_extension.MathDef>`: 
+    * :class:`mathdef <pyquickhelper.sphinxext.sphinx_mathdef_extension.MathDef>`: 
       to add a mathematical definition (or any kind of definition)
-    * :ref:`mathdeflist <pyquickhelper.sphinxext.sphinx_mathdef_extension.MathDefList>`: 
+    * :class:`mathdeflist <pyquickhelper.sphinxext.sphinx_mathdef_extension.MathDefList>`: 
       to list all definitions
-    * :ref:`nbref <pyquickhelper.sphinxext.sphinx_nbref_extension.NbRef>`: 
+    * :class:`nbref <pyquickhelper.sphinxext.sphinx_nbref_extension.NbRef>`: 
       to add a magic command 
-    * :ref:`nbreflist <pyquickhelper.sphinxext.sphinx_nbref_extension.NbRefList>`: 
+    * :class:`nbreflist <pyquickhelper.sphinxext.sphinx_nbref_extension.NbRefList>`: 
       to list all magic commands
-    * :ref:`runpython <pyquickhelper.sphinxext.sphinx_runpython_extension.RunPythonDirective>`: 
+    * :class:`runpython <pyquickhelper.sphinxext.sphinx_runpython_extension.RunPythonDirective>`: 
       to run a script and display the output, it can be used to generate documentation
-    * :ref:`sharenet <pyquickhelper.sphinxext.sphinx_sharenet_extension.ShareNetDirective>`: 
+    * :class:`sharenet <pyquickhelper.sphinxext.sphinx_sharenet_extension.ShareNetDirective>`: 
       to add buttons to share the page on a socal network
-    * :ref:`todoext <pyquickhelper.sphinxext.sphinx_todoext_extension.TodoExt>`: 
+    * :class:`todoext <pyquickhelper.sphinxext.sphinx_todoext_extension.TodoExt>`: 
       to add an issue or a work item
-    * :ref:`todoextlist <pyquickhelper.sphinxext.sphinx_todoext_extension.TodoExtList>`: 
+    * :class:`todoextlist <pyquickhelper.sphinxext.sphinx_todoext_extension.TodoExtList>`: 
       to list all issues or work item 
     
 
