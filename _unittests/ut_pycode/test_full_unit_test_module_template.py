@@ -21,7 +21,7 @@ except ImportError:
     import src
 
 try:
-    import jyquickhelper
+    import jyquickhelper as skip_
 except ImportError:
     path = os.path.normpath(
         os.path.abspath(
@@ -34,7 +34,7 @@ except ImportError:
                 "src")))
     if path not in sys.path:
         sys.path.append(path)
-    import jyquickhelper
+    import jyquickhelper as skip_
 
 from src.pyquickhelper.loghelper.flog import fLOG
 from src.pyquickhelper.pycode import get_temp_folder, process_standard_options_for_setup, is_travis_or_appveyor
@@ -112,8 +112,7 @@ class TestUnitTestFull(unittest.TestCase):
         thispath = os.path.abspath(os.path.dirname(__file__))
         thispath = os.path.normpath(os.path.join(thispath, "..", "..", "src"))
         import jyquickhelper
-        jyqpath = os.path.abspath(os.path.join(
-            os.path.split(jyquickhelper.__file__)[0], ".."))
+        jyqpath = os.path.abspath(os.path.join(os.path.split(jyquickhelper.__file__)[0], ".."))
 
         fLOG("unit tests", root)
         for command in ["version", "write_version", "clean_pyd",
@@ -172,8 +171,7 @@ class TestUnitTestFull(unittest.TestCase):
                 if "LONG" in command and "running test   1, ut_module/test_convert_notebooks.py" in vout:
                     raise Exception(vout)
                 if "LONG" not in command and "LONG" in vout and "-g" not in command:
-                    raise Exception(
-                        "command={0}\nOUT\n{1}".format(command, vout))
+                    raise Exception("command={0}\nOUT\n{1}".format(command, vout))
             if rem:
                 del sys.path[sys.path.index(thispath)]
             os.environ["PYTHONPATH"] = PYTHONPATH
