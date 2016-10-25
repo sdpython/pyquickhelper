@@ -328,10 +328,10 @@ in :ref:`l-example-documentation`.
       to add a definition (or any kind of definition)
     * :class:`blocreflist <pyquickhelper.sphinxext.sphinx_blocref_extension.BlocRefList>`: 
       to list all definitions
-    * :class:`blogpost <pyquickhelper.sphinxext.sphinx_blog_extension.>`: 
+    * :class:`blogpost <pyquickhelper.sphinxext.sphinx_blog_extension.BlogPostDirective>`: 
       to add a blog post, this command does not behave like the others,
       it should only be used in folder `_doc/sphinxdoc/source/blog`
-    * :class:`blogpostagg <pyquickhelper.sphinxext.sphinx_blog_extension.>`: 
+    * :class:`blogpostagg <pyquickhelper.sphinxext.sphinx_blog_extension.BlogPostDirectiveAgg>`: 
       to aggregate blog post, this should be manually added, the module 
       *pyquickhelper* is preprocessing the documentation to produce pages containing such commands
     * :class:`exref <pyquickhelper.sphinxext.sphinx_exref_extension.ExRef>`: 
