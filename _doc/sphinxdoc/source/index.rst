@@ -164,6 +164,10 @@ Navigation
 .. toctree::
     :maxdepth: 1
 
+    license
+    contribute
+    glossary
+    issues_todoextlist
     indexmenu
 
 

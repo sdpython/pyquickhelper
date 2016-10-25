@@ -51,16 +51,11 @@ def available_commands_list(argv):
                 "clean_pyd", "clean_space", "copy_dist",
                 "copy27", "run27", "build27",
                 "local_pypi", "test_local_pypi",
-                "notebook",
-                "publish", "publish_doc",
+                "notebook", "publish", "publish_doc",
                 "register", "unittests",
                 "unittests_LONG", "unittests_SKIP", "unittests_GUI",
-                "sdist",
-                "setupdep",
-                "upload_docs",
-                "setup_hook",
-                "copy_sphinx",
-                "write_version"}
+                "sdist", "setupdep", "upload_docs",
+                "setup_hook", "copy_sphinx", "write_version"}
     for c in commands:
         if c in argv:
             return True
@@ -176,7 +171,7 @@ def process_standard_options_for_setup(argv, file_or_folder, project_var_name, m
         Parameters *use_run_cmd*, *filter_warning* were added.
         command *unittests -d 10* and *unittests -d 5* was added to run unit
         tests below 10 or 5 seconds. Option ``-e`` and ``-g`` were added to
-        filter file by regular expression (in with *e*, out with *g*).
+        filter file by regular expressions (in with *e*, out with *g*).
     """
     if "--help" in argv or "--help-commands" in argv:
         process_standard_options_for_setup_help(argv)
@@ -208,7 +203,6 @@ def process_standard_options_for_setup(argv, file_or_folder, project_var_name, m
                 raise ValueError(
                     "Option -e should be follow by a regular expression.")
             e = re.compile(argv[l + 1])
-            fLOG("compile regular expression for unittests", e.pattern)
         else:
             e = None
 
@@ -226,10 +220,10 @@ def process_standard_options_for_setup(argv, file_or_folder, project_var_name, m
         else:
 
             def ereg(name):
-                return e is None or e.search(name)
+                return (e is None) or (e.search(name) is not None)
 
             def greg(name):
-                return g is not None and g.search(name)
+                return (g is None) or (g.search(name) is None)
 
             if f is not None:
                 if d is not None:
@@ -238,14 +232,16 @@ def process_standard_options_for_setup(argv, file_or_folder, project_var_name, m
 
                 def allow(name, code, duration):
                     name = os.path.split(name)[-1]
-                    return f not in name and ereg(name) and not greg(name)
+                    return f not in name and ereg(name) and greg(name)
                 return allow
             else:
                 # d is not None
-                def allowd(name, code, duration):
+                def skip_allowd(name, code, duration):
                     name = os.path.split(name)[-1]
-                    return (duration is None or d is None or duration > d) and ereg(name) and not greg(name)
-                return allowd
+                    cond = (duration is None or d is None or duration >
+                            d) and ereg(name) and greg(name)
+                    return not cond
+                return skip_allowd
 
     folder = file_or_folder if os.path.isdir(
         file_or_folder) else os.path.dirname(file_or_folder)
@@ -734,11 +730,15 @@ def process_standard_options_for_setup_help(argv):
                 print("\n  {0}\n\n  {1}".format(k, v))
                 if k == "unittests":
                     print(
-                        "\n  {0} [-d seconds] [-f file]\n\n  {1}".format(k, v))
+                        "\n  {0} [-d seconds] [-f file] [-e regex] [-g regex]\n\n  {1}".format(k, v))
                     print(
                         "  -d seconds     run all unit tests for which predicted duration is below a given threshold.")
                     print(
                         "  -f file        run all unit tests in file (do not use the full path)")
+                    print(
+                        "  -e regex       run all unit tests files matching the regular expression")
+                    print(
+                        "  -g regex       run all unit tests files not matching the regular expression")
 
 
 def write_module_scripts(folder, platform=sys.platform, blog_list=None,

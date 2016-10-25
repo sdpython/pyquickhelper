@@ -261,3 +261,5 @@ _unittests/ut_cli/crypt_status.txt
 crypt_status.txt
 crypt_map.txt
 _doc/notebooks/example_pyquickhelper.tex
+_unittests/run_unittests.py.out
+*.err

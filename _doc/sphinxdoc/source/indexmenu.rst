@@ -5,13 +5,6 @@ through documentation
 .. toctree::
     :maxdepth: 2
 
-    doctestunit
-    generatedoc
-    generatesetup
-    installation
-    ci
-    glossary
-    license
     filechanges
     README
     all_indexes
@@ -19,4 +12,4 @@ through documentation
     all_notebooks
     index_module
     blog/blogindex
-    issues_todoextlist
+    documentation_example

@@ -1,4 +1,5 @@
 
+.. _l-example-documentation:
 
 Examples for the documentation
 ==============================
