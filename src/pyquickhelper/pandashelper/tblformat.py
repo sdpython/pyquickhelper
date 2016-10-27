@@ -19,16 +19,16 @@ def df2rst(df, add_line=True, align="l", column_size=None):
     None values are replaced by empty string (4 spaces).
     It produces the following results:
 
-    @code
-    +------------------------+------------+----------+----------+
-    | Header row, column 1   | Header 2   | Header 3 | Header 4 |
-    | (header rows optional) |            |          |          |
-    +========================+============+==========+==========+
-    | body row 1, column 1   | column 2   | column 3 | column 4 |
-    +------------------------+------------+----------+----------+
-    | body row 2             | ...        | ...      |          |
-    +------------------------+------------+----------+----------+
-    @endcode
+    ::
+
+        +------------------------+------------+----------+----------+
+        | Header row, column 1   | Header 2   | Header 3 | Header 4 |
+        | (header rows optional) |            |          |          |
+        +========================+============+==========+==========+
+        | body row 1, column 1   | column 2   | column 3 | column 4 |
+        +------------------------+------------+----------+----------+
+        | body row 2             | ...        | ...      |          |
+        +------------------------+------------+----------+----------+
 
     .. versionchanged:: 1.3
         Parameter *align* was changed, parameter *column_size* was added.

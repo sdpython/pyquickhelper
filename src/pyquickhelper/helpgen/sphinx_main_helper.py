@@ -169,9 +169,7 @@ def produce_code_graph_changes(df):
     return code
 
 
-def generate_changes_repo(chan,
-                          source,
-                          exception_if_empty=True,
+def generate_changes_repo(chan, source, exception_if_empty=True,
                           filter_commit=lambda c: c.strip() != "documentation",
                           fLOG=fLOG):
     """
@@ -199,6 +197,8 @@ def generate_changes_repo(chan,
 
         Doing that helps. The cause still remains obscure.
 
+    .. versionchanged:: 1.5
+        Add the author the table of changes.
     """
     # builds the changes files
     try:
@@ -229,7 +229,7 @@ def generate_changes_repo(chan,
     values = []
     for i, row in enumerate(logs):
         n = len(logs) - i
-        code, nbch, date, comment = row[:4]
+        author, nbch, date, comment = row[:4]
         last = row[-1]
         if last.startswith("http"):
             nbch = "`%s <%s>`_" % (typstr(nbch), last)
@@ -238,10 +238,10 @@ def generate_changes_repo(chan,
         if filter_commit(comment):
             if isinstance(nbch, int):
                 values.append(
-                    ["%d" % n, "%04d" % nbch, "%s" % ds, comment.strip("*")])
+                    ["%d" % n, "%04d" % nbch, "%s" % ds, author, comment.strip("*")])
             else:
                 values.append(
-                    ["%d" % n, "%s" % nbch, "%s" % ds, comment.strip("*")])
+                    ["%d" % n, "%s" % nbch, "%s" % ds, author, comment.strip("*")])
 
     if len(values) == 0 and exception_if_empty:
         raise HelpGenException(
@@ -250,8 +250,9 @@ def generate_changes_repo(chan,
     if len(values) > 0:
         import pandas
         tbl = pandas.DataFrame(
-            columns=["#", "change number", "date", "comment"], data=values)
-        rows.append("\n\n" + df2rst(tbl) + "\n\n")
+            columns=["#", "change number", "date", "author", "comment"], data=values)
+        rows.append(
+            "\n\n" + df2rst(tbl, column_size=[5, 1, 10, 5, 5]) + "\n\n")
 
     final = "\n".join(rows)
 
