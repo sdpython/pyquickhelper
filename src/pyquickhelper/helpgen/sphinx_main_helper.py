@@ -252,7 +252,7 @@ def generate_changes_repo(chan, source, exception_if_empty=True,
         tbl = pandas.DataFrame(
             columns=["#", "change number", "date", "author", "comment"], data=values)
         rows.append(
-            "\n\n" + df2rst(tbl, column_size=[5, 1, 10, 5, 5]) + "\n\n")
+            "\n\n" + df2rst(tbl, column_size=[5, 1, 13, 5, 5]) + "\n\n")
 
     final = "\n".join(rows)
 
