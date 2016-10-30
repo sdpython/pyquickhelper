@@ -75,6 +75,8 @@ def default_filter_warning(w):
         elif "jupyter_core" in w.filename:
             if "JupyterApp." in str(w.message):
                 return False
+            if "metadata should be set using the .tag()" in str(w.message):
+                return False
         elif "docutils" in w.filename:
             if "'U' mode is deprecated" in str(w.message):
                 return False
