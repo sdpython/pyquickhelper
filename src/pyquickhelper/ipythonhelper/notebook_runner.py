@@ -59,6 +59,7 @@ class NotebookRunner(object):
     MIME_MAP = {
         'image/jpeg': 'jpeg',
         'image/png': 'png',
+        'image/gif': 'gif',
         'text/plain': 'text',
         'text/html': 'html',
         'text/latex': 'latex',
@@ -569,7 +570,7 @@ class NotebookRunner(object):
                             nbl += len(v.split("\n"))
                         elif k == "text/latex":
                             nbl += len(v.split("\\\\")) * 2
-                        elif k == "image/png" or k == "image/jpg" or k == "image/jpeg":
+                        elif k in {"image/png", "image/jpg", "image/jpeg", "image/gif"}:
                             nbl += len(v) // 50
                         else:
                             raise NotImplementedError("cell type: {0}\nk={1}\nv={2}\nCELL:\n{3}".format(kind,

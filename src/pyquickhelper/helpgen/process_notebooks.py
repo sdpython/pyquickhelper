@@ -228,7 +228,7 @@ def _process_notebooks_in(notebooks, outfold, build, latex_path=None, pandoc_pat
         currentdir = os.path.dirname(notebook)
         for curfile in os.listdir(currentdir):
             ext = os.path.splitext(curfile)[1]
-            if ext in {'.png', '.jpg', '.bmp', '.gif'}:
+            if ext in {'.png', '.jpg', '.bmp', '.gif', '.jpeg'}:
                 src = os.path.join(currentdir, curfile)
                 if src not in copied_images:
                     dest = os.path.join(build, curfile)
