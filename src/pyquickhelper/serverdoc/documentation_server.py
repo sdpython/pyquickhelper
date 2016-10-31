@@ -132,6 +132,7 @@ class DocumentationHandler(BaseHTTPRequestHandler):
         ".html": ('text/html', 'r'),
         ".py": ('text/html', 'execute'),
         ".png": ('image/png', 'rb'),
+        ".jpeg": ('image/jpeg', 'rb'),
         ".jpg": ('image/jpeg', 'rb'),
         ".ico": ('image/x-icon', 'rb'),
         ".gif": ('image/gif', 'rb'),

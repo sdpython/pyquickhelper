@@ -371,7 +371,7 @@ def replace_placeholder_by_recent_blogpost(all_tocs, plist, placeholder, nb_post
                 f.write(content)
 
 
-_pattern_images = ".*(([.]png)|([.gif])|([.jpg])|([.svg]))$"
+_pattern_images = ".*(([.]png)|([.]gif])|([.]jpeg])|([.]jpg])|([.]svg]))$"
 
 
 def enumerate_copy_images_for_slides(src, dest, pattern=_pattern_images):
