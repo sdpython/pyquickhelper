@@ -201,13 +201,17 @@ def nb2present(nb_file, outfile, add_tag=True):
     return res
 
 
-def nb2html(nb_file, outfile):
+def nb2html(nb_file, outfile, exc=True):
     """
     convert a notebooks into html
 
     @param      nb_file         notebook file or a stream or a @see fn read_nb
     @param      outfile         output file (a string)
+    @param      exc             raises an exception (True) or a warning (False)
     @return                     impacted files
+
+    .. versionchanged:: 1.5
+        Parameter *exc* was added.
     """
     from ..ipythonhelper import NotebookRunner, read_nb
 
@@ -224,6 +228,6 @@ def nb2html(nb_file, outfile):
         fh.writelines(source)
 
     # post_processing
-    post_process_html_output(outfile, False, False, False, False)
+    post_process_html_output(outfile, False, False, False, False, exc=exc)
     res = [outfile]
     return res
