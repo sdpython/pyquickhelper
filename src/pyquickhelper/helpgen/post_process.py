@@ -110,7 +110,7 @@ def post_process_latex_output_any(file):
         f.write(content)
 
 
-def post_process_rst_output(file, html, pdf, python, slides, present, is_notebook=False):
+def post_process_rst_output(file, html, pdf, python, slides, present, is_notebook=False, exc=True):
     """
     process a RST file generated from the conversion of a notebook
 
@@ -121,9 +121,13 @@ def post_process_rst_output(file, html, pdf, python, slides, present, is_noteboo
     @param      slides          if True, add a link to the slides conversion
     @param      present         if True, add a link to the slides conversion (with *nbpresent*)
     @param      is_notebook     does something more if the file is a notebook
+    @param      exc             raises an exception (True) or a warning (False)
 
     .. versionchanged:: 1.4
         Parameter *present* was added.
+
+    .. versionchanged:: 1.5::
+        Parameter *exc* was added.
     """
     fLOG("    post_process_rst_output", file)
 
@@ -215,7 +219,11 @@ def post_process_rst_output(file, html, pdf, python, slides, present, is_noteboo
 
     pos += 1
     if pos >= len(lines):
-        raise HelpGenException("unable to find a title")
+        mes = "unable to find a title in notebook '{0}'".format(file)
+        if exc:
+            raise HelpGenException(mes)
+        else:
+            warnings.warn(mes)
 
     # label
     labelname = name.replace(" ", "").replace("_", "").replace(
@@ -302,7 +310,7 @@ def post_process_rst_output(file, html, pdf, python, slides, present, is_noteboo
         f.write("".join(lines))
 
 
-def post_process_html_output(file, pdf, python, slides, present):
+def post_process_html_output(file, pdf, python, slides, present, exc=True):
     """
     process a HTML file generated from the conversion of a notebook
 
@@ -311,9 +319,13 @@ def post_process_html_output(file, pdf, python, slides, present):
     @param      python      if True, add a link to the Python conversion
     @param      slides      if True, add a link to the slides conversion
     @param      present     if True, add a link to the slides conversion (with *nbpresent*)
+    @param      exc         raises an exception (True) or a warning (False)
 
     .. versionchanged:: 1.4
         Parameter *present* was added.
+
+    .. versionchanged:: 1.5
+        Parameter *exc* was added.
     """
     fold, name = os.path.split(file)
     if not os.path.exists(file):
@@ -329,7 +341,7 @@ def post_process_html_output(file, pdf, python, slides, present):
         f.write(text)
 
 
-def post_process_slides_output(file, pdf, python, slides, present):
+def post_process_slides_output(file, pdf, python, slides, present, exc=True):
     """
     process a HTML file generated from the conversion of a notebook
 
@@ -338,9 +350,13 @@ def post_process_slides_output(file, pdf, python, slides, present):
     @param      python      if True, add a link to the Python conversion
     @param      slides      if True, add a link to the slides conversion
     @param      present     if True, add a link to the slides conversion (with *nbpresent*)
+    @param      exc         raises an exception (True) or a warning (False)
 
     .. versionchanged:: 1.4
         Parameter *present* was added.
+
+    .. versionchanged:: 1.5
+        Parameter *exc* was added.
     """
     if (len(file) > 5000 or not os.path.exists(file)) and "<html" in file:
         text = file

@@ -68,7 +68,7 @@ def upgrade_notebook(filename, encoding="utf8"):
 
     nb = reads(content)
 
-    if not hasattr(nb, "format") or nb.nbformat >= 4:
+    if not hasattr(nb, "nbformat") or nb.nbformat >= 4:
         return False
 
     upgrade(nb, from_version=nb.nbformat)
