@@ -801,11 +801,13 @@ def produces_indexes(
         title = titles.get(k, k)
         under = "=" * len(title)
 
+        content = "\n".join([".. contents::", "    :local:", "    :maxdepth: 1", "", "", "Summary", "+++++++"])
+
         if os.environ.get("USERNAME", os.environ.get("USER", "````````````")) in title:
             raise HelpGenException(
                 "the title is probably wrong: {0}".format(title))
 
-        res[k] = "\n.. _%s:\n\n%s\n%s\n\n%s" % (label, title, under, res[k])
+        res[k] = "\n.. _%s:\n\n%s\n%s\n\n%s\n\n%s" % (label, title, under, content, res[k])
 
     return res
 
