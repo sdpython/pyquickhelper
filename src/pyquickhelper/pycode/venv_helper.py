@@ -264,11 +264,11 @@ def venv_install(venv, packages, fLOG=noLOG, temp_folder=None):
     else:
         p = os.path.normpath(os.path.join(
             os.path.abspath(os.path.dirname(__file__)), "..", ".."))
-        l = ','.join("'{0}'".format(_) for _ in packages)
+        ls = ','.join("'{0}'".format(_) for _ in packages)
         script = ["import sys",
                   "sys.path.append('{0}')".format(p.replace("\\", "\\\\")),
                   "import pymyinstall",
-                  "ps=[{0}]".format(l),
+                  "ps=[{0}]".format(ls),
                   "t='{0}'".format(temp_folder.replace("\\", "\\\\")),
                   "pymyinstall.packaged.install_all(temp_folder=t,list_module=ps,up_pip=False)"]
         return run_venv_script(venv, "\n".join(script), fLOG=fLOG)

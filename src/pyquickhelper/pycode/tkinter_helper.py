@@ -51,9 +51,9 @@ def fix_tkinter_issues_virtualenv():
 
     def look_for(where, prefix):
         lst = sorted(os.listdir(where), reverse=True)
-        l = len(prefix)
+        lp = len(prefix)
         for _ in lst:
-            if _.startswith(prefix) and "0" <= _[l] <= "9" and ".lib" not in _:
+            if _.startswith(prefix) and "0" <= _[lp] <= "9" and ".lib" not in _:
                 return os.path.join(where, _)
         raise FileNotFoundError("unable to find any folder starting with {0} in {1}\nLIST:\n{2}".format(
             prefix, where, ", ".join(lst)))

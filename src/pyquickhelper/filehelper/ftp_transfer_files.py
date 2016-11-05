@@ -25,6 +25,7 @@ class FolderTransferFTPException(Exception):
     """
     pass
 
+
 _text_extensions = {".ipynb", ".html", ".py", ".cpp", ".h", ".hpp", ".c",
                     ".cs", ".txt", ".csv", ".xml", ".css", ".js", ".r", ".doc",
                     ".ind", ".buildinfo", ".rst", ".aux", ".out", ".log",
@@ -348,8 +349,8 @@ class FolderTransferFTP:
                               (1.0 * private_p[1] / private_p[2], private_p[1], private_p[2]))
 
                 tp_ = [blocksize, transfered, size]
-                cb = lambda *l, **p: callback_function_(
-                    *l, private_p=tp_, **p)
+                cb = lambda *ll, **p: callback_function_(
+                    *ll, private_p=tp_, **p)
             else:
                 blocksize = None
                 cb = None

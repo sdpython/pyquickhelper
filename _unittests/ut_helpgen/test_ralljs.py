@@ -45,5 +45,6 @@ class TestAlljs(unittest.TestCase):
         r = os.path.join(dest, "reveal.js", "js", "reveal.min.js")
         assert os.path.exists(r)
 
+
 if __name__ == "__main__":
     unittest.main()

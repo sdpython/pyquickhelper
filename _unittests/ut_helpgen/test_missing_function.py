@@ -60,5 +60,6 @@ class TestMissingFunction(unittest.TestCase):
         r = NbImage("completion.png")
         assert r is not None
 
+
 if __name__ == "__main__":
     unittest.main()

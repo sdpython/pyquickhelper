@@ -83,5 +83,6 @@ class TestDownload (unittest.TestCase):
         assert isinstance(content, str  # unicode#
                           )
 
+
 if __name__ == "__main__":
     unittest.main()

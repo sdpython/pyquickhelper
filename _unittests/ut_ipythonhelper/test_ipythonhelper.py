@@ -41,9 +41,9 @@ class TestAutoCompletion (unittest.TestCase):
              (root))
         fLOG("\n" + s)
         assert " |   |- method2" in s
-        l = len(root)
-        fLOG("l=", l)
-        assert l == 6
+        ls = len(root)
+        fLOG("l=", ls)
+        assert ls == 6
         fLOG(root._)
 
     def test_completion_file(self):
@@ -54,8 +54,8 @@ class TestAutoCompletion (unittest.TestCase):
         fold = os.path.abspath(os.path.split(__file__)[0])
         fold = os.path.join(fold, "..", "..", "src")
         this = AutoCompletionFile(fold)
-        l = len(this)
-        assert l > 30
+        ls = len(this)
+        assert ls > 30
 
     def test_html_form(self):
         fLOG(

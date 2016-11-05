@@ -56,5 +56,6 @@ class TestSmallFunction(unittest.TestCase):
             fLOG(_)
         assert len(r) > 0
 
+
 if __name__ == "__main__":
     unittest.main()

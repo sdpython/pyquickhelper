@@ -95,5 +95,6 @@ class TestHelperMarkdown(unittest.TestCase):
         r = list(yield_sphinx_only_markup_for_pipy(spl))
         assert len(r) == len(spl)
 
+
 if __name__ == "__main__":
     unittest.main()

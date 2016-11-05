@@ -89,5 +89,6 @@ class TestCallSetupHook(unittest.TestCase):
         fLOG(out)
         self.assertEqual(err, "")
 
+
 if __name__ == "__main__":
     unittest.main()

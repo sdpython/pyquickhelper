@@ -110,5 +110,6 @@ class TestVisualDiff(unittest.TestCase):
         assert isinstance(html, HTML)
         assert isinstance(js, Javascript)
 
+
 if __name__ == "__main__":
     unittest.main()

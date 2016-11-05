@@ -38,10 +38,10 @@ class TestNotebookSlidesBug (unittest.TestCase):
         assert os.path.exists(nbfile)
         nb = read_nb(nbfile, kernel=False)
         for i, cell in enumerate(nb.iter_cells()):
-            l = nb.cell_height(cell)
+            ls = nb.cell_height(cell)
             #fLOG(i,"-",nb.cell_type(cell), l)
             #if l > 400: fLOG(cell)
-            assert l > 0
+            assert ls > 0
 
         new_tags = nb.add_tag_slide()
         for k, v in sorted(new_tags.items()):

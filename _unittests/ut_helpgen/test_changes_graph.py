@@ -95,5 +95,6 @@ class TestGraphChanges (unittest.TestCase):
         except Exception as e:
             raise Exception("unable to run code:\n{0}".format(code)) from e
 
+
 if __name__ == "__main__":
     unittest.main()

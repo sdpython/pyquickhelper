@@ -348,5 +348,6 @@ class TestYaml(unittest.TestCase):
                             "error on line:\nEXP:\n{0}\nGOT:\n{1}\n#######\n{2}".format(a, b, mes))
                 raise Exception(mes)
 
+
 if __name__ == "__main__":
     unittest.main()

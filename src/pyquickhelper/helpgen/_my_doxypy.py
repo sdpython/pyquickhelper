@@ -445,11 +445,11 @@ class Doxypy(object):
                                                 "first_row", 0) + self._index_row + 1,
                                             self.information.get("filename", "filename is not present"))
 
-        l = [self.indent + doxyStart]
-        l.extend(commentLines)
-        l.append(self.indent + doxyEnd)
+        li = [self.indent + doxyStart]
+        li.extend(commentLines)
+        li.append(self.indent + doxyEnd)
 
-        return l
+        return li
 
     def parse(self, input):
         """
@@ -554,6 +554,8 @@ class Opt:
     def __init__(self):
         self.debug = False
         self.autobrief = True
+
+
 options = Opt()
 
 
@@ -577,6 +579,7 @@ def process_string(content,
                  process_comment,
                  {"filename": filename, "first_row": first_row})
     fsm.parseFile(content)
+
 
 if __name__ == "__main__":
     with open(__file__, "r") as f:

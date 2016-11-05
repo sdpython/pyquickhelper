@@ -267,5 +267,6 @@ class TestBlogHelper(unittest.TestCase):
         if ta not in html:
             raise Exception(html)
 
+
 if __name__ == "__main__":
     unittest.main()

@@ -125,5 +125,6 @@ class TestSphinxDoc2 (unittest.TestCase):
             raise Exception("{0}".format(str(ty)))
         assert ty["method"] > 0
 
+
 if __name__ == "__main__":
     unittest.main()

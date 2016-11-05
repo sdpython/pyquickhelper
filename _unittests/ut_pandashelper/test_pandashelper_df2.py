@@ -41,5 +41,6 @@ class TestPandasHelper_df2(unittest.TestCase):
         assert conv.startswith("<table>")
         assert conv.endswith("</table>\n")
 
+
 if __name__ == "__main__":
     unittest.main()

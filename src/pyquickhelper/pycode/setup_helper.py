@@ -180,38 +180,38 @@ def process_standard_options_for_setup(argv, file_or_folder, project_var_name, m
 
     def process_argv_for_unittest(argv):
         if "-d" in argv:
-            l = argv.index("-d")
-            if l >= len(argv) - 1:
+            ld = argv.index("-d")
+            if ld >= len(argv) - 1:
                 raise ValueError(
                     "Option -d should be follow by a duration in seconds.")
-            d = float(argv[l + 1])
+            d = float(argv[ld + 1])
         else:
             d = None
 
         if "-f" in argv:
-            l = argv.index("-f")
-            if l >= len(argv) - 1:
+            lf = argv.index("-f")
+            if lf >= len(argv) - 1:
                 raise ValueError(
                     "Option -d should be follow by a duration in seconds.")
-            f = argv[l + 1]
+            f = argv[lf + 1]
         else:
             f = None
 
         if "-e" in argv:
-            l = argv.index("-e")
-            if l >= len(argv) - 1:
+            le = argv.index("-e")
+            if le >= len(argv) - 1:
                 raise ValueError(
                     "Option -e should be follow by a regular expression.")
-            e = re.compile(argv[l + 1])
+            e = re.compile(argv[le + 1])
         else:
             e = None
 
         if "-g" in argv:
-            l = argv.index("-g")
-            if l >= len(argv) - 1:
+            lg = argv.index("-g")
+            if lg >= len(argv) - 1:
                 raise ValueError(
                     "Option -g should be follow by a regular expression.")
-            g = re.compile(argv[l + 1])
+            g = re.compile(argv[lg + 1])
         else:
             g = None
 

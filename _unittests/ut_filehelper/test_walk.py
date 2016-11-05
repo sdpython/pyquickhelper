@@ -59,5 +59,6 @@ class TestWalk(unittest.TestCase):
         assert nb3 > 0
         assert nb3 < nb2
 
+
 if __name__ == "__main__":
     unittest.main()

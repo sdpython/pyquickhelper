@@ -61,5 +61,6 @@ class TestHelperHelpGen(unittest.TestCase):
         r = NbImage("completion.png")
         assert isinstance(r, Image)
 
+
 if __name__ == "__main__":
     unittest.main()

@@ -580,6 +580,7 @@ def run_doc_server(server,
         server.serve_forever()
         return server
 
+
 if __name__ == '__main__':
 
     if True:

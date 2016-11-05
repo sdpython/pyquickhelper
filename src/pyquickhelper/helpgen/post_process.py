@@ -207,8 +207,8 @@ def post_process_rst_output(file, html, pdf, python, slides, present, is_noteboo
         if len(line) > 0 and line == "=" * len(line):
             lines[pos] = lines[pos].replace("=", "*")
             pos2 = pos - 1
-            l = len(lines[pos])
-            while len(lines[pos2]) != l:
+            li = len(lines[pos])
+            while len(lines[pos2]) != li:
                 pos2 -= 1
             sep = "" if lines[pos2].endswith("\n") else "\n"
             lines[pos2] = "{0}{2}{1}".format(lines[pos], lines[pos2], sep)
@@ -577,11 +577,11 @@ def remove_character_under32(s):
 
     .. versionadded:: 1.2
     """
-    l = ""
+    ls = ""
     for c in s:
         d = ord(c)
         if 0 <= d < 32:
-            l += " "
+            ls += " "
         else:
-            l += c
-    return l
+            ls += c
+    return ls

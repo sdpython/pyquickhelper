@@ -53,5 +53,6 @@ class TestTransferFTPTrue(unittest.TestCase):
         fLOG(r)
         assert isinstance(r, list)
 
+
 if __name__ == "__main__":
     unittest.main()

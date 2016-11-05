@@ -49,5 +49,6 @@ class TestBlogList(unittest.TestCase):
             raise FileNotFoundError(blog)
         BlogPostList(blog, fLOG=fLOG)
 
+
 if __name__ == "__main__":
     unittest.main()

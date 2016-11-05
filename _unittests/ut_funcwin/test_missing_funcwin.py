@@ -68,5 +68,6 @@ class TestMissingFuncWin (unittest.TestCase):
         if sa not in (size, size - nb - 1, size - nb, size - 1):
             raise Exception("{0} != {1}, nb={2}".format(sa, size, nb))
 
+
 if __name__ == "__main__":
     unittest.main()

@@ -143,16 +143,16 @@ class FilesStatus:
                     str(st.st_size), typstr(obj.size))
                 res = True
             else:
-                l = obj.mdate
+                ld = obj.mdate
                 _m = st.st_mtime
                 d = convert_st_date_to_datetime(_m)
-                if d != l:
+                if d != ld:
                     # dates are different but files might be the same
                     if obj.checksum is not None:
                         ch = checksum_md5(file)
                         if ch != obj.checksum:
                             reason = "date/md5 %s != old date %s  md5 %s != %s" % (
-                                typstr(l), typstr(d), obj.checksum, ch)
+                                typstr(ld), typstr(d), obj.checksum, ch)
                             res = True
                         else:
                             res = False

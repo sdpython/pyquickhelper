@@ -173,5 +173,6 @@ class TestSphinxDocFull (unittest.TestCase):
                 if not os.path.exists(r):
                     raise FileNotFoundError(r)
 
+
 if __name__ == "__main__":
     unittest.main()

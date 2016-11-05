@@ -488,9 +488,9 @@ def import_module(
         Parameter *fLOG* was added.
     """
     memo = copy.deepcopy(sys.path)
-    l = filename.replace("\\", "/")
-    sdir = os.path.abspath(os.path.split(l)[0])
-    relpath = os.path.relpath(l, rootm).replace("\\", "/")
+    li = filename.replace("\\", "/")
+    sdir = os.path.abspath(os.path.split(li)[0])
+    relpath = os.path.relpath(li, rootm).replace("\\", "/")
     spl = relpath.split("/")
     fmod = spl[0]  # this is the prefix
     relpath = "/".join(spl[1:])
@@ -542,7 +542,7 @@ def import_module(
             fi = fi[:-len(".__init__")]
     else:
         root = sdir
-        tl = os.path.split(l)[1]
+        tl = os.path.split(li)[1]
         fi = tl.replace(".py", "")
         context = None
 

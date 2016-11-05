@@ -35,16 +35,16 @@ class TestLog (unittest.TestCase):
 
     def test_random_curve(self):
         fold = os.path.abspath(os.path.split(__file__)[0])
-        l = os.path.join(fold, "temp_log.txt")
-        if os.path.exists(l):
-            os.remove(l)
+        ld = os.path.join(fold, "temp_log.txt")
+        if os.path.exists(ld):
+            os.remove(ld)
         fLOG(
             __file__,
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
         fLOG("message", "ok", option1="k", option2=2,
              LogFile=os.path.join(fold, "temp_log.txt"))
-        if not os.path.exists(l):
+        if not os.path.exists(ld):
             raise FileNotFoundError(os.path.join(fold, "temp_log.txt"))
 
     def test_import_problem(self):
@@ -188,7 +188,7 @@ class TestLog (unittest.TestCase):
             __file__,
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
-        l = [
+        li = [
             '0002',
             '0003',
             '0001',
@@ -211,7 +211,7 @@ class TestLog (unittest.TestCase):
             '0001',
             '0002',
             '0001']
-        res = guess_type_list(l)
+        res = guess_type_list(li)
         fLOG(res)
         typstr = str  # unicode#
         if res != (typstr, 8):

@@ -132,5 +132,6 @@ class TestFileCol (unittest.TestCase):
         assert os.path.exists(stay)
         assert not os.path.exists(stay.replace("notfile.txt", "file.txt"))
 
+
 if __name__ == "__main__":
     unittest.main()

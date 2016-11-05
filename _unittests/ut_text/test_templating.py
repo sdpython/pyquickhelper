@@ -35,15 +35,15 @@ class TestTemplating(unittest.TestCase):
             OutputPrint=__name__ == "__main__")
         tmpl = """
 
-            % for i in range(0, len(l)):
-                print(${l[i]})
+            % for i in range(0, len(ll)):
+                print(${ll[i]})
             % endfor
         """
         exp = """
                 print(0)
                 print(2)
             """
-        res = apply_template(tmpl, dict(l=[0, 2]))
+        res = apply_template(tmpl, dict(ll=[0, 2]))
         fLOG(res)
         self.assertEqual(res.replace(" ", "").replace("\n", ""),
                          exp.replace(" ", "").replace("\n", ""))
@@ -55,8 +55,8 @@ class TestTemplating(unittest.TestCase):
             OutputPrint=__name__ == "__main__")
         tmpl = """
 
-            % for i in range(0, len(l)):
-                print(${l[i]})
+            % for i in range(0, len(ll)):
+                print(${ll[i]})
             % end for
         """
         exp = """
@@ -64,7 +64,7 @@ class TestTemplating(unittest.TestCase):
                 print(2)
             """
         try:
-            res = apply_template(tmpl, dict(l=[0, 2]))
+            res = apply_template(tmpl, dict(ll=[0, 2]))
             assert False
         except CustomTemplateException as e:
             assert "0005" in str(e)
@@ -81,7 +81,7 @@ class TestTemplating(unittest.TestCase):
             OutputPrint=__name__ == "__main__")
         tmpl = """
 
-            % for i in range(0, len(l)):
+            % for i in range(0, len(lll)):
                 print(${ll[i]})
             % endfor
         """
@@ -90,7 +90,7 @@ class TestTemplating(unittest.TestCase):
                 print(2)
             """
         try:
-            res = apply_template(tmpl, dict(l=[0, 2]))
+            res = apply_template(tmpl, dict(lll=[0, 2]))
             assert False
         except CustomTemplateException as e:
             # fLOG(str(e))
@@ -108,15 +108,15 @@ class TestTemplating(unittest.TestCase):
             OutputPrint=__name__ == "__main__")
         tmpl = """
 
-            {% for i in range(0, len(l)) %}
-                print({{l[i]}})
+            {% for i in range(0, len(ll)) %}
+                print({{ll[i]}})
             {% endfor %}
         """
         exp = """
                 print(0)
                 print(2)
             """
-        res = apply_template(tmpl, dict(l=[0, 2], len=len), engine="jinja2")
+        res = apply_template(tmpl, dict(ll=[0, 2], len=len), engine="jinja2")
         fLOG(res)
         self.assertEqual(res.replace(" ", "").replace("\n", ""),
                          exp.replace(" ", "").replace("\n", ""))
@@ -128,8 +128,8 @@ class TestTemplating(unittest.TestCase):
             OutputPrint=__name__ == "__main__")
         tmpl = """
 
-            {% for i in range(0, len(l)) %}
-                print({{l[i]}})
+            {% for i in range(0, len(ll)) %}
+                print({{ll[i]}})
             {% end for %}
         """
         exp = """
@@ -138,7 +138,7 @@ class TestTemplating(unittest.TestCase):
             """
         try:
             res = apply_template(tmpl, dict(
-                l=[0, 2], len=len), engine="jinja2")
+                ll=[0, 2], len=len), engine="jinja2")
             assert False
         except CustomTemplateException as e:
             assert "0005" in str(e)
@@ -155,7 +155,7 @@ class TestTemplating(unittest.TestCase):
             OutputPrint=__name__ == "__main__")
         tmpl = """
 
-            {% for i in range(0, len(l)) %}
+            {% for i in range(0, len(lll)) %}
                 print({{ll[i]}})
             {% endfor %}
         """
@@ -165,7 +165,7 @@ class TestTemplating(unittest.TestCase):
             """
         try:
             res = apply_template(tmpl, dict(
-                l=[0, 2], len=len), engine="jinja2")
+                lll=[0, 2], len=len), engine="jinja2")
             assert False
         except CustomTemplateException as e:
             if "Some parameters are missing or mispelled" not in str(e):

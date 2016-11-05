@@ -208,8 +208,8 @@ def depart_sharenet_node(self, node):
             rows = []
             for key in networks:
                 text = mapping[key]
-                l = link.format(urls[key], text, size)
-                rows.append(l)
+                ld = link.format(urls[key], text, size)
+                rows.append(ld)
 
             if len(rows) > 0:
                 if inhead:

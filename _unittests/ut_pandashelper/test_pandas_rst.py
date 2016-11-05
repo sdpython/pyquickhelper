@@ -95,5 +95,6 @@ class TestPandasRst(unittest.TestCase):
                  """.replace("                 ", "")
         self.assertEqual(rst, exp)
 
+
 if __name__ == "__main__":
     unittest.main()

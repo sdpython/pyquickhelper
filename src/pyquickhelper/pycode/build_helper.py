@@ -33,7 +33,10 @@ def choose_path(*paths):
         raise FileNotFoundError("not path exist in: " + ", ".join(paths))
     return _default_nofolder
 
+
 #: default values, to be replaced in the build script
+
+
 default_values = {
     "windows": {
         "__PY35__": choose_path("c:\\Python35", _default_nofolder),

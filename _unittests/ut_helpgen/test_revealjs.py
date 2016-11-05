@@ -46,5 +46,6 @@ class TestRevealjs(unittest.TestCase):
         for a in fs:
             assert os.path.exists(a)
 
+
 if __name__ == "__main__":
     unittest.main()

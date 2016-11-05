@@ -37,5 +37,6 @@ class TestDiacritic (unittest.TestCase):
             return
         assert remove_diacritics("enguérand") == "enguerand"
 
+
 if __name__ == "__main__":
     unittest.main()

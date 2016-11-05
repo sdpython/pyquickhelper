@@ -136,5 +136,6 @@ class TestSphinxDocFull (unittest.TestCase):
         if '###             elif strow.startswith("@ingroup"):' not in content:
             raise Exception(content)
 
+
 if __name__ == "__main__":
     unittest.main()

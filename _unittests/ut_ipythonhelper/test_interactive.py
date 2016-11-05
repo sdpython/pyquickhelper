@@ -68,5 +68,6 @@ class TestInteractive(unittest.TestCase):
                              color=RadioWidget(['blue', 'green'], default='blue'))
         assert res is not None
 
+
 if __name__ == "__main__":
     unittest.main()

@@ -42,5 +42,6 @@ class TestHtmlHelper(unittest.TestCase):
         with open(tempf, "w") as f:
             f.write(body)
 
+
 if __name__ == "__main__":
     unittest.main()

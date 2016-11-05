@@ -70,5 +70,6 @@ class TestNotebookKernels(unittest.TestCase):
         kernels = find_notebook_kernel()
         assert kern not in kernels
 
+
 if __name__ == "__main__":
     unittest.main()

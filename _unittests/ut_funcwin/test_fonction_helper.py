@@ -93,5 +93,6 @@ class TestFonctionHelper (unittest.TestCase):
             raise Exception(r)
         assert interpret_parameter(object, "['3']") == ['3']
 
+
 if __name__ == "__main__":
     unittest.main()

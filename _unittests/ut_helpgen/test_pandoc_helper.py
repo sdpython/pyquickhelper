@@ -45,5 +45,6 @@ class TestPandocHelper(unittest.TestCase):
                              fLOG=fLOG, temp_file=temp_file)
         assert os.path.exists(output)
 
+
 if __name__ == "__main__":
     unittest.main()

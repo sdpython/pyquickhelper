@@ -39,5 +39,6 @@ class TestGetfLOG(unittest.TestCase):
         assert f2
         assert f1 != f2
 
+
 if __name__ == "__main__":
     unittest.main()

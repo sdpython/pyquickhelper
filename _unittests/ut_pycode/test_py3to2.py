@@ -77,5 +77,6 @@ class TestPy3to2(unittest.TestCase):
         else:
             fLOG("python 2.7 was not found")
 
+
 if __name__ == "__main__":
     unittest.main()

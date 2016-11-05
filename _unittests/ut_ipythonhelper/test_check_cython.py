@@ -45,5 +45,6 @@ class TestCheckCython(unittest.TestCase):
         if sys.version_info[:2] <= (3, 4):
             ipython_cython_extension()
 
+
 if __name__ == "__main__":
     unittest.main()

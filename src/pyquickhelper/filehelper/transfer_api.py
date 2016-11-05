@@ -62,8 +62,8 @@ class TransferAPI_FileInfo:
         """
         serializes this class info JSON
         """
-        l = [self.name, self.pieces, datetime2str(self.last_update)]
-        return json.dumps(l)
+        li = [self.name, self.pieces, datetime2str(self.last_update)]
+        return json.dumps(li)
 
 
 class TransferAPI:

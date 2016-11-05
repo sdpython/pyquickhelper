@@ -66,5 +66,6 @@ class TestSyncFolder (unittest.TestCase):
                 "bugged",
                 "Présentation.pdf.txt"))
 
+
 if __name__ == "__main__":
     unittest.main()

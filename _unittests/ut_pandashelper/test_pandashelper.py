@@ -71,5 +71,6 @@ class TestPandasHelper(unittest.TestCase):
         assert isnan(numpy.nan)
         assert not isnan(0.0)
 
+
 if __name__ == "__main__":
     unittest.main()

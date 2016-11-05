@@ -45,5 +45,6 @@ class TestPandasHelperZip(unittest.TestCase):
         full = dfs["bank-full.csv"]
         assert isinstance(full, pandas.DataFrame)
 
+
 if __name__ == "__main__":
     unittest.main()

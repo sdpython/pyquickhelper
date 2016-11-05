@@ -319,7 +319,7 @@ class BlogPostList:
         @return                     list of produced files
         """
         return BlogPostList.write_aggregated_post_list(folder=folder,
-                                                       l=list(_ for _ in self),
+                                                       lp=list(_ for _ in self),
                                                        division=division,
                                                        prefix="main",
                                                        encoding=self._encoding,
@@ -345,7 +345,7 @@ class BlogPostList:
         for im, cat in enumerate(cats):
             posts = [_ for _ in self if cat in _.Categories]
             add = BlogPostList.write_aggregated_post_list(folder=folder,
-                                                          l=posts,
+                                                          lp=posts,
                                                           division=division,
                                                           prefix="cat-" +
                                                           BlogPostList.category2url(
@@ -374,7 +374,7 @@ class BlogPostList:
         for im, m in enumerate(mo):
             posts = [_ for _ in self if _.Date.startswith(m)]
             add = BlogPostList.write_aggregated_post_list(folder=folder,
-                                                          l=posts,
+                                                          lp=posts,
                                                           division=division,
                                                           prefix="month-" + m,
                                                           encoding=self._encoding,
@@ -444,14 +444,14 @@ class BlogPostList:
         return buckets
 
     @staticmethod
-    def write_aggregated_post_list(folder, l, division, prefix, encoding,
+    def write_aggregated_post_list(folder, lp, division, prefix, encoding,
                                    rst_links_up=None, rst_links_down=None, index_terms=None,
                                    bold_title=None, language="en"):
         """
         write list of posts in an aggregated manners
 
         @param      folder          when to write the aggregated posts
-        @param      l               list of posts
+        @param      lp              list of posts
         @param      division        bucket size
         @param      prefix          prefix name for the files
         @param      encoding        encoding for the written files
@@ -463,7 +463,7 @@ class BlogPostList:
         @return                     list of produced files
         """
         res = []
-        buckets = BlogPostList.divide_list(l, division)
+        buckets = BlogPostList.divide_list(lp, division)
         for i, b in enumerate(buckets):
             if bold_title is not None:
                 title = "{0} - {1}/{2}".format(bold_title, i + 1, len(buckets))
