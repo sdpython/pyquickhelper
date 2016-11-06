@@ -34,19 +34,23 @@ Another list
 """
 
 
-def post_process_latex_output(root, doall, latex_book=False):
+def post_process_latex_output(root, doall, latex_book=False, exc=True):
     """
     post process the latex file produced by sphinx
 
     @param      root        root path or latex file to process
     @param      doall       do all transformations
     @param      latex_book  customized for a book
+    @param      exc         raise an exception or a warning
+
+    .. versionchanged:: 1.5
+        Parameter *exc* was added.
     """
     if os.path.isfile(root):
         file = root
         with open(file, "r", encoding="utf8") as f:
             content = f.read()
-        content = post_process_latex(content, doall, latex_book=latex_book)
+        content = post_process_latex(content, doall, latex_book=latex_book, exc=exc)
         with open(file, "w", encoding="utf8") as f:
             f.write(content)
     else:
@@ -60,7 +64,7 @@ def post_process_latex_output(root, doall, latex_book=False):
                 with open(file, "r", encoding="utf8") as f:
                     content = f.read()
                 content = post_process_latex(
-                    content, doall, info=file, latex_book=latex_book)
+                    content, doall, info=file, latex_book=latex_book, exc=exc)
                 with open(file, "w", encoding="utf8") as f:
                     f.write(content)
 
@@ -397,7 +401,7 @@ def post_process_slides_output(file, pdf, python, slides, present, exc=True):
         return text
 
 
-def post_process_latex(st, doall, info=None, latex_book=False):
+def post_process_latex(st, doall, info=None, latex_book=False, exc=True):
     """
     modifies a latex file after its generation by sphinx
 
@@ -405,6 +409,7 @@ def post_process_latex(st, doall, info=None, latex_book=False):
     @param      doall           do all transformations
     @param      info            for more understandable error messages
     @param      latex_book      customized for a book
+    @param      exc             raises an exception or a warning
     @return                     string
 
     SVG included in a notebook (or in RST file) requires `Inkscape <https://inkscape.org/>`_
@@ -418,6 +423,9 @@ def post_process_latex(st, doall, info=None, latex_book=False):
 
     .. versionchanged:: 1.4
         Parameter *latex_book* was added.
+
+    .. versionchanged:: 1.5
+        Parameter *exc* was added.
 
     .. index:: chinese characters, latex, unicode
 
