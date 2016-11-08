@@ -397,14 +397,10 @@ class JenkinsExt(jenkins.Jenkins):
         @param      job             module and options
         @return                     script
 
-        Method @see me setup_jenkins_server describes which tags
-        this method can interpret.
-
+        Method @see me setup_jenkins_server describes which tags this method can interpret.
         The method allow command such as ``[custom...]``, they will be
         run in a virtual environment as ``setup.py custom...``.
-
-        job can be ``empty``, in that case, this function returns an empty string.
-
+        Parameter *job* can be ``empty``, in that case, this function returns an empty string.
         Requirements local and from pipy can be specified by added in the job name:
 
         * ``<-- module1, module2`` for local requirements
@@ -793,7 +789,7 @@ class JenkinsExt(jenkins.Jenkins):
 
     def setup_jenkins_server(self, github, modules, get_jenkins_script=None, overwrite=False,
                              location=None, prefix="", credentials="", update=True, yml_engine="jinja2",
-                             add_environ=True, adjust_scheduler=True):
+                             add_environ=True, disable_schedule=False, adjust_scheduler=True):
         """
         Set up many jobs on Jenkins
 
@@ -812,8 +808,8 @@ class JenkinsExt(jenkins.Jenkins):
         @param      update                  update job instead of deleting it if the job already exists
         @param      yml_engine              templating engine used to process yaml config files
         @param      add_environ             use of local environment variables to interpret the job
-        @param      adjust_scheduler        adjust the scheduler of a job so that it is delayed if this spot
-                                            is already taken
+        @param      adjust_scheduler        adjust the scheduler of a job so that it is delayed if this spot is already taken
+        @param      disable_schedule        disable scheduling for all jobs
         @return                             list of created jobs
 
         If *credentials* are a dictionary, the function looks up
@@ -942,12 +938,9 @@ class JenkinsExt(jenkins.Jenkins):
             js = JenkinsExt('http://machine:8080/', "user", "password", engines=engines)
 
             if True:
-                js.setup_jenkins_server(github="sdpython",
-                                    overwrite = True,
-                                    location = r"c:\\jenkins\\pymy")
+                js.setup_jenkins_server(github="sdpython", overwrite = True,
+                                        location = r"c:\\jenkins\\pymy")
 
-
-        For WinPython, version 3.4.3+ is mandatory to get the latest version of IPython/Jupyter.
 
         Another example::
 
@@ -958,24 +951,21 @@ class JenkinsExt(jenkins.Jenkins):
             sys.path.append(r"C:\\<path>\\pyrsslocal\\src")
             from ensae_teaching_cs.automation.jenkins_helper import setup_jenkins_server, JenkinsExt
             js = JenkinsExt("http://<machine>:8080/", <user>, <password>)
-            js.setup_jenkins_server(location=r"c:\\jenkins\\pymy",
-                    overwrite=True,
-                    engines=engines)
+            js.setup_jenkins_server(location=r"c:\\jenkins\\pymy", overwrite=True, engines=engines)
 
-        .. versionchanged:: 1.2
-            Parameter *update* was added.
-
-        .. versionchanged:: 1.3
-            Parameter *credentials* can be a dictionary where the key is
-            the git repository. Parameter *dependencies* and *no_dep*
-            were removed. Dependencies are now specified
-            in the job name using ``<--`` and they exclusively rely
-            on pipy (local or remote). Add options for module
-            *Build Timeout Plugin*.
+        Parameter *credentials* can be a dictionary where the key is
+        the git repository. Parameter *dependencies* and *no_dep*
+        were removed. Dependencies are now specified
+        in the job name using ``<--`` and they exclusively rely
+        on pipy (local or remote). Add options for module
+        *Build Timeout Plugin*.
 
         .. versionchanged:: 1.4
             Parameters *yml_engine*, *add_environ*, *yml_platform* were added.
-            Modificaion to handle yaml files.
+            Modification to handle yaml files.
+
+        .. versionchanged:: 1.5
+            Parameter *disable_schedule* was added.
         """
         # we do a patch for pyquickhelper
         all_jobs = []
@@ -997,206 +987,248 @@ class JenkinsExt(jenkins.Jenkins):
         if get_jenkins_script is None:
             get_jenkins_script = JenkinsExt.get_jenkins_script
 
-        js = self
-
         if github is not None and "https://" not in github:
             github = "https://github.com/" + github + "/"
 
-        dep = []
+        deps = []
         created = []
         locations = []
-        order = 0
-        dozen = "A"
+        indexes = dict(order=0, dozen="A")
         counts = {}
         for jobs in modules:
-
-            if not isinstance(jobs, list):
-                jobs = [jobs]
-
-            unit = 0
-            new_dep = []
-            for i, job in enumerate(jobs):
-                unit += 1
-
-                if isinstance(job, tuple):
-                    if len(job) < 2:
-                        raise JenkinsJobException(
-                            "the tuple must contain at least two elements:\nJOB:\n" + str(job))
-
-                    if job[0] == "yml":
-                        is_yml = True
-                        job = job[1:]
-                    else:
-                        is_yml = False
-
-                    # we extract options if any
-                    if len(job) == 3:
-                        options = job[2]
-                        if not isinstance(options, dict):
-                            raise JenkinsJobException(
-                                "the last element of the tuple must be a dictionary:\nJOB:\n" + str(options))
-                    else:
-                        options = {}
-
-                    # job and scheduler
-                    job, scheduler = job[:2]
-                    if scheduler is not None:
-                        order = 1
-                        if counts.get(dozen, 0) > 0:
-                            dozen = chr(ord(dozen) + 1)
-                    else:
-                        if i == 0:
-                            order += 1
-                else:
-                    scheduler = None
-                    if i == 0:
-                        order += 1
-                    options = {}
-
-                counts[dozen] = counts.get(dozen, 0) + 1
-
-                # success_only
-                if "success_only" in options:
-                    success_only = options["success_only"]
-                    del options["success_only"]
-                else:
-                    success_only = False
-
-                # timeout
-                if "timeout" in options:
-                    timeout = options["timeout"]
-                    del options["timeout"]
-                else:
-                    timeout = _timeout_default
-
-                # script
-                if not is_yml:
-                    script = get_jenkins_script(self, job)
-
-                # we process the repository
-                if "repo" in options:
-                    gitrepo = options["repo"]
-                    options = options.copy()
-                    del options["repo"]
-                else:
-                    gitrepo = github
-
-                # add a description to the job
-                description = ["%s%02d%02d" % (dozen, order, unit)]
-                if scheduler is not None:
-                    description.append(scheduler)
-                description = " - ".join(description)
-
-                # credentials
-                if isinstance(credentials, dict):
-                    cred = credentials.get(gitrepo, None)
-                    if cred is None:
-                        cred = credentials.get("default", "")
-                else:
-                    cred = credentials
-
-                if not is_yml:
-                    mod = job.split()[0]
-                    name = self.get_jenkins_job_name(job)
-                    jname = prefix + name
-
-                    try:
-                        j = js.get_job_config(jname) if not js._mock else None
-                    except jenkins.NotFoundException:
-                        j = None
-                    except jenkins.JenkinsException as e:
-                        raise JenkinsExtException(
-                            "unable to retrieve job config for job={0}, name={1}".format(job, jname)) from e
-
-                    if overwrite or j is None:
-
-                        update_job = False
-                        if j is not None:
-                            if update:
-                                update_job = True
-                            else:
-                                self.fLOG("[jenkins] delete job", jname)
-                                js.delete_job(jname)
-
-                        # we post process the script
-                        script = self.process_options(script, options)
-
-                        # if there is a script
-                        if script is not None and len(script) > 0:
-                            new_dep.append(name)
-                            upstreams = [] if (
-                                scheduler is not None) else dep[-1:]
-                            self.fLOG("[jenkins] create job", jname, " - ", job,
-                                      " : ", scheduler, " / ", upstreams)
-
-                            # set up location
-                            if location is None:
-                                loc = None
-                            else:
-                                if "_" in jname:
-                                    loc = os.path.join(location, jname)
-                                else:
-                                    loc = os.path.join(location, "_" + jname)
-
-                            if mod in ("standalone", "custom"):
-                                gpar = None
-                            elif gitrepo is None:
-                                raise JenkinsJobException(
-                                    "gitrepo cannot must not be None if standalone or custom is not defined,\njob=" + str(job))
-                            elif gitrepo.endswith(".git"):
-                                gpar = gitrepo
-                            else:
-                                gpar = gitrepo + "%s/" % mod
-
-                            # create the template
-                            r = js.create_job_template(jname, git_repo=gpar, upstreams=upstreams, script=script,
-                                                       location=loc, scheduler=scheduler, py27="[27]" in job,
-                                                       description=description, credentials=cred, success_only=success_only,
-                                                       update=update_job, timeout=timeout, adjust_scheduler=adjust_scheduler,
-                                                       mails=self.mails)
-
-                            # check some inconsistencies
-                            if "[27]" in job and "Anaconda3" in script:
-                                raise JenkinsExtException(
-                                    "incoherence for job {0}, script:\n{1}\npaths:\n{2}".format(job, script))
-
-                            locations.append((job, loc))
-                            created.append((job, name, loc, job, r))
-                        else:
-                            # skip the job
-                            loc = None if location is None else os.path.join(
-                                location, jname)
-                            locations.append((job, loc))
-                            self.fLOG("[jenkins] skipping",
-                                      job, "location", loc)
-                    elif j is not None:
-                        new_dep.append(name)
-
-                else:
-                    # yml file
-                    if location is not None:
-                        options["root_path"] = location
-                    for k, v in self.engines.items():
-                        if k not in options:
-                            options[k] = v
-                    jobdef = job[0] if isinstance(job, tuple) else job
-
-                    done = {}
-                    for aj, name, var in enumerate_processed_yml(jobdef, context=options, engine=yml_engine,
-                                                                 add_environ=add_environ, server=self, git_repo=gitrepo, scheduler=scheduler,
-                                                                 description=description, credentials=cred, success_only=success_only,
-                                                                 timeout=timeout, platform=self.platform, adjust_scheduler=adjust_scheduler,
-                                                                 overwrite=overwrite, build_location=location, mails=self.mails):
-                        if name in done:
-                            s = "A name '{0}' was already used for a job, from:\n{1}\nPROCESS:\n{2}"
-                            raise ValueError(
-                                s.format(name, jobdef, "\n".join(sorted(set(done.keys())))))
-                        done[name] = (aj, name, var)
-                        loc = None if location is None else os.path.join(
-                            location, name)
-                        self.fLOG("[jenkins] adding", name, "var", var)
-                        created.append((job, name, loc, job, aj))
-
-            dep = new_dep
-
+            cre, ds, locs = self._setup_jenkins_server_modules_loop(jobs=jobs, counts=counts,
+                                                                    get_jenkins_script=get_jenkins_script,
+                                                                    location=location, adjust_scheduler=adjust_scheduler,
+                                                                    add_environ=add_environ, yml_engine=yml_engine, overwrite=overwrite,
+                                                                    prefix=prefix, credentials=credentials, github=github,
+                                                                    disable_schedule=disable_schedule, jenkins_server=self,
+                                                                    update=update, indexes=indexes, deps=deps)
+            created.extend(cre)
+            locations.extend(locs)
+            deps.extend(ds)
         return created
+
+    def _setup_jenkins_server_modules_loop(self, jobs, counts, get_jenkins_script, location, adjust_scheduler,
+                                           add_environ, yml_engine, overwrite, prefix, credentials, github,
+                                           disable_schedule, jenkins_server, update, indexes, deps):
+        if not isinstance(jobs, list):
+            jobs = [jobs]
+        indexes["unit"] = 0
+        new_dep = []
+        created = []
+        locations = []
+        for i, job in enumerate(jobs):
+            indexes["unit"] += 1
+            cre, dep, loc = self._setup_jenkins_server_job_iteration(job, counts=counts,
+                                                                     get_jenkins_script=get_jenkins_script,
+                                                                     location=location, adjust_scheduler=adjust_scheduler,
+                                                                     add_environ=add_environ, yml_engine=yml_engine, overwrite=overwrite,
+                                                                     prefix=prefix, credentials=credentials, github=github,
+                                                                     disable_schedule=disable_schedule, jenkins_server=jenkins_server,
+                                                                     update=update, indexes=indexes, deps=deps, i=i)
+            created.extend(cre)
+            new_dep.extend(dep)
+            locations.extend(loc)
+            if len(new_dep) > 20000:
+                raise JenkinsExtException(
+                    "unreasonable number of dependencies: {0}".format(len(new_dep)))
+        return created, new_dep, locations
+
+    def _setup_jenkins_server_job_iteration(self, job, get_jenkins_script, location, adjust_scheduler,
+                                            add_environ, yml_engine, overwrite, prefix, credentials, github,
+                                            disable_schedule, jenkins_server, update, indexes, deps, i, counts):
+        order = indexes["order"]
+        dozen = indexes["dozen"]
+        unit = indexes["unit"]
+        new_dep = []
+        created = []
+        locations = []
+
+        if isinstance(job, tuple):
+            if len(job) < 2:
+                raise JenkinsJobException(
+                    "the tuple must contain at least two elements:\nJOB:\n" + str(job))
+
+            if job[0] == "yml":
+                is_yml = True
+                job = job[1:]
+            else:
+                is_yml = False
+
+            # we extract options if any
+            if len(job) == 3:
+                options = job[2]
+                if not isinstance(options, dict):
+                    raise JenkinsJobException(
+                        "the last element of the tuple must be a dictionary:\nJOB:\n" + str(options))
+            else:
+                options = {}
+
+            # job and scheduler
+            job, scheduler = job[:2]
+            if scheduler is not None:
+                order = 1
+                if counts.get(dozen, 0) > 0:
+                    dozen = chr(ord(dozen) + 1)
+            else:
+                if i == 0:
+                    order += 1
+        else:
+            scheduler = None
+            if i == 0:
+                order += 1
+            options = {}
+            is_yml = False
+
+        # all schedule are disabled if disable_schedule is True
+        if disable_schedule:
+            scheduler = None
+        counts[dozen] = counts.get(dozen, 0) + 1
+
+        # success_only
+        if "success_only" in options:
+            success_only = options["success_only"]
+            del options["success_only"]
+        else:
+            success_only = False
+
+        # timeout
+        if "timeout" in options:
+            timeout = options["timeout"]
+            del options["timeout"]
+        else:
+            timeout = _timeout_default
+
+        # script
+        if not is_yml:
+            script = get_jenkins_script(self, job)
+
+        # we process the repository
+        if "repo" in options:
+            gitrepo = options["repo"]
+            options = options.copy()
+            del options["repo"]
+        else:
+            gitrepo = github
+
+        # add a description to the job
+        description = ["%s%02d%02d" % (dozen, order, unit)]
+        if scheduler is not None:
+            description.append(scheduler)
+        description = " - ".join(description)
+
+        # credentials
+        if isinstance(credentials, dict):
+            cred = credentials.get(gitrepo, None)
+            if cred is None:
+                cred = credentials.get("default", "")
+        else:
+            cred = credentials
+
+        if not is_yml:
+            mod = job.split()[0]
+            name = self.get_jenkins_job_name(job)
+            jname = prefix + name
+
+            try:
+                j = jenkins_server.get_job_config(
+                    jname) if not jenkins_server._mock else None
+            except jenkins.NotFoundException:
+                j = None
+            except jenkins.JenkinsException as e:
+                raise JenkinsExtException(
+                    "unable to retrieve job config for job={0}, name={1}".format(job, jname)) from e
+
+            if overwrite or j is None:
+
+                update_job = False
+                if j is not None:
+                    if update:
+                        update_job = True
+                    else:
+                        self.fLOG("[jenkins] delete job", jname)
+                        jenkins_server.delete_job(jname)
+
+                # we post process the script
+                script = self.process_options(script, options)
+
+                # if there is a script
+                if script is not None and len(script) > 0:
+                    new_dep.append(name)
+                    upstreams = [] if (
+                        scheduler is not None) else deps[-1:]
+                    self.fLOG("[jenkins] create job", jname, " - ", job,
+                              " : ", scheduler, " / ", upstreams)
+
+                    # set up location
+                    if location is None:
+                        loc = None
+                    else:
+                        if "_" in jname:
+                            loc = os.path.join(location, jname)
+                        else:
+                            loc = os.path.join(location, "_" + jname)
+
+                    if mod in ("standalone", "custom"):
+                        gpar = None
+                    elif gitrepo is None:
+                        raise JenkinsJobException(
+                            "gitrepo cannot must not be None if standalone or custom is not defined,\njob=" + str(job))
+                    elif gitrepo.endswith(".git"):
+                        gpar = gitrepo
+                    else:
+                        gpar = gitrepo + "%s/" % mod
+
+                    # create the template
+                    r = jenkins_server.create_job_template(jname, git_repo=gpar, upstreams=upstreams, script=script,
+                                                           location=loc, scheduler=scheduler, py27="[27]" in job,
+                                                           description=description, credentials=cred, success_only=success_only,
+                                                           update=update_job, timeout=timeout, adjust_scheduler=adjust_scheduler,
+                                                           mails=self.mails)
+
+                    # check some inconsistencies
+                    if "[27]" in job and "Anaconda3" in script:
+                        raise JenkinsExtException(
+                            "incoherence for job {0}, script:\n{1}\npaths:\n{2}".format(job, script))
+
+                    locations.append((job, loc))
+                    created.append((job, name, loc, job, r))
+                else:
+                    # skip the job
+                    loc = None if location is None else os.path.join(
+                        location, jname)
+                    locations.append((job, loc))
+                    self.fLOG("[jenkins] skipping",
+                              job, "location", loc)
+            elif j is not None:
+                new_dep.append(name)
+
+        else:
+            # yml file
+            if location is not None:
+                options["root_path"] = location
+            for k, v in self.engines.items():
+                if k not in options:
+                    options[k] = v
+            jobdef = job[0] if isinstance(job, tuple) else job
+
+            done = {}
+            for aj, name, var in enumerate_processed_yml(jobdef, context=options, engine=yml_engine,
+                                                         add_environ=add_environ, server=self, git_repo=gitrepo, scheduler=scheduler,
+                                                         description=description, credentials=cred, success_only=success_only,
+                                                         timeout=timeout, platform=self.platform, adjust_scheduler=adjust_scheduler,
+                                                         overwrite=overwrite, build_location=location, mails=self.mails):
+                if name in done:
+                    s = "A name '{0}' was already used for a job, from:\n{1}\nPROCESS:\n{2}"
+                    raise ValueError(
+                        s.format(name, jobdef, "\n".join(sorted(set(done.keys())))))
+                done[name] = (aj, name, var)
+                loc = None if location is None else os.path.join(
+                    location, name)
+                self.fLOG("[jenkins] adding", name, "var", var)
+                created.append((job, name, loc, job, aj))
+
+        indexes["order"] = order
+        indexes["dozen"] = dozen
+        indexes["unit"] = unit
+        return created, new_dep, locations

@@ -50,7 +50,8 @@ def post_process_latex_output(root, doall, latex_book=False, exc=True):
         file = root
         with open(file, "r", encoding="utf8") as f:
             content = f.read()
-        content = post_process_latex(content, doall, latex_book=latex_book, exc=exc)
+        content = post_process_latex(
+            content, doall, latex_book=latex_book, exc=exc)
         with open(file, "w", encoding="utf8") as f:
             f.write(content)
     else:

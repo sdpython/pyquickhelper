@@ -319,7 +319,8 @@ class BlogPostList:
         @return                     list of produced files
         """
         return BlogPostList.write_aggregated_post_list(folder=folder,
-                                                       lp=list(_ for _ in self),
+                                                       lp=list(
+                                                           _ for _ in self),
                                                        division=division,
                                                        prefix="main",
                                                        encoding=self._encoding,

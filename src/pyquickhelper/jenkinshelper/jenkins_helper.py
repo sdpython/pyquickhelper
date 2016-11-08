@@ -55,7 +55,7 @@ def default_jenkins_jobs():
 
 def setup_jenkins_server_yml(js, github="sdpython", modules=default_jenkins_jobs(),
                              overwrite=False, location=None, prefix="",
-                             delete_first=False, fLOG=noLOG, **kwargs):
+                             delete_first=False, disable_schedule=False, fLOG=noLOG, **kwargs):
     """
     Set up many jobs on Jenkins.
 
@@ -69,6 +69,7 @@ def setup_jenkins_server_yml(js, github="sdpython", modules=default_jenkins_jobs
     @param      location                None for default or a local folder
     @param      prefix                  add a prefix to the name
     @param      delete_first            removes all jobs before adding new ones
+    @param      disable_schedule        disable scheduling for all jobs
     @param      fLOG                    logging function
     @param      kwargs                  see method @see me setup_jenkins_server
     @return                             list of created jobs
@@ -86,9 +87,12 @@ def setup_jenkins_server_yml(js, github="sdpython", modules=default_jenkins_jobs
 
     See `.local.jenkins.win.yml <https://github.com/sdpython/pyquickhelper/blob/master/.local.jenkins.win.yml>`_
     about the syntax of a yaml job description.
+
+    .. versionchanged:: 1.5
+        Parameter *disable_schedule* was added.
     """
     if delete_first:
         js.delete_all_jobs()
     r = js.setup_jenkins_server(github=github, modules=modules, overwrite=overwrite,
-                                location=location, prefix=prefix, **kwargs)
+                                location=location, prefix=prefix, disable_schedule=disable_schedule, **kwargs)
     return r

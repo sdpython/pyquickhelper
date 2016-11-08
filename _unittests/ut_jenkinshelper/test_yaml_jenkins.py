@@ -1,5 +1,5 @@
 """
-@brief      test log(time=2s)
+@brief      test log(time=5s)
 """
 
 import sys
@@ -66,6 +66,20 @@ class TestYamlJenkins(unittest.TestCase):
             __file__,
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
+        self.private_test_jenkins_ext_setup_server_yaml(False)
+
+    def test_jenkins_ext_setup_server_yaml_disabled(self):
+        fLOG(
+            __file__,
+            self._testMethodName,
+            OutputPrint=__name__ == "__main__")
+        self.private_test_jenkins_ext_setup_server_yaml(True)
+
+    def private_test_jenkins_ext_setup_server_yaml(self, disable_schedule):
+        fLOG(
+            __file__,
+            self._testMethodName,
+            OutputPrint=__name__ == "__main__")
 
         this = os.path.abspath(os.path.dirname(__file__))
         yml = os.path.abspath(os.path.join(
@@ -100,7 +114,7 @@ class TestYamlJenkins(unittest.TestCase):
         fLOG("---------------------")
         res = srv.setup_jenkins_server(github=github, modules=modules,
                                        overwrite=True, add_environ=False,
-                                       location="anything")
+                                       location="anything", disable_schedule=disable_schedule)
         reg = re.compile("<description>(.*)</description>")
         nb = 0
         sch = 0
@@ -147,8 +161,12 @@ class TestYamlJenkins(unittest.TestCase):
             assert i > 0
             assert nb > 0
             assert to > 0
-            self.assertEqual(sch, 2)
-            self.assertEqual(desc, 2)
+            if disable_schedule:
+                self.assertEqual(sch, 0)
+                self.assertEqual(desc, 0)
+            else:
+                self.assertEqual(sch, 2)
+                self.assertEqual(desc, 2)
             fLOG(to)
         else:
             warnings.warn("disable the test on Python 2.7")
