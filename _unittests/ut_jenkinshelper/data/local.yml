@@ -1,0 +1,24 @@
+language: python
+
+python:
+  - { PATH: "{{replace(Python35, '\\', '\\\\')}}", VERSION: 3.4, DIST: std }
+  - { PATH: "{{replace(Python36, '\\', '\\\\')}}", VERSION: 3.5, DIST: std }
+  
+virtualenv:
+  - path: {{ospathjoin(root_path, pickname("%NAME_JENKINS%", project_name + "_%VERSION%_%DIST%_%NAME%"), "_venv")}}
+  
+install:
+  - pip freeze
+  - JENKINS_SPLIT
+
+before_script:
+  - rem
+  
+script:
+  - { CMD: "python -u setup.py unittests", NAME: "UT", TIMEOUT: 900 }
+
+after_script:
+  - python -u setup.py bdist_wheel
+
+documentation:
+  - python -u setup.py build_sphinx fi

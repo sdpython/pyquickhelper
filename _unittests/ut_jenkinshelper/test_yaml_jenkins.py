@@ -66,16 +66,23 @@ class TestYamlJenkins(unittest.TestCase):
             __file__,
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
-        self.private_test_jenkins_ext_setup_server_yaml(False)
+        self.private_test_jenkins_ext_setup_server_yaml(False, None)
 
     def test_jenkins_ext_setup_server_yaml_disabled(self):
         fLOG(
             __file__,
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
-        self.private_test_jenkins_ext_setup_server_yaml(True)
+        self.private_test_jenkins_ext_setup_server_yaml(True, None)
 
-    def private_test_jenkins_ext_setup_server_yaml(self, disable_schedule):
+    def test_jenkins_ext_setup_server_yaml_cred(self):
+        fLOG(
+            __file__,
+            self._testMethodName,
+            OutputPrint=__name__ == "__main__")
+        self.private_test_jenkins_ext_setup_server_yaml(True, "FFFF")
+
+    def private_test_jenkins_ext_setup_server_yaml(self, disable_schedule, credentials):
         fLOG(
             __file__,
             self._testMethodName,
@@ -114,7 +121,8 @@ class TestYamlJenkins(unittest.TestCase):
         fLOG("---------------------")
         res = srv.setup_jenkins_server(github=github, modules=modules,
                                        overwrite=True, add_environ=False,
-                                       location="anything", disable_schedule=disable_schedule)
+                                       location="anything", disable_schedule=disable_schedule,
+                                       credentials=credentials)
         reg = re.compile("<description>(.*)</description>")
         nb = 0
         sch = 0
@@ -168,6 +176,12 @@ class TestYamlJenkins(unittest.TestCase):
                 self.assertEqual(sch, 2)
                 self.assertEqual(desc, 2)
             fLOG(to)
+            if credentials:
+                if "credentialsId" not in conf:
+                    raise Exception(conf)
+            else:
+                if "<credentialsId>None" not in conf:
+                    raise Exception(conf)
         else:
             warnings.warn("disable the test on Python 2.7")
 
