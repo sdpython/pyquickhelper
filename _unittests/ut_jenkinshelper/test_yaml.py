@@ -104,7 +104,7 @@ class TestYaml(unittest.TestCase):
                 raise Exception(r)
             if r[0][0] != "python" and r[0][0] != "INFO":
                 raise Exception(r)
-        if len(res) != 4:
+        if len(res) != 7:
             rows = [str(_) for _ in res]
             raise Exception("\n".join(rows))
 
@@ -155,7 +155,9 @@ class TestYaml(unittest.TestCase):
         assert len(res) > 0
 
         conv = [_ for _ in convs if "SET NAME=UT" in _ and "VERSION=3.5" in _]
-        self.assertEqual(len(conv), 1)
+        if len(conv) != 2:
+            rows = [str(_) for _ in conv]
+            raise Exception("\n".join(rows))
         conv = conv[0]
         if platform.startswith("win"):
             expected = """
