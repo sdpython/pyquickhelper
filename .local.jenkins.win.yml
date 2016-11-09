@@ -40,6 +40,7 @@ before_script:
 # This means the job will be stop if it produces no output for 20 minutes.
 script:
   - { CMD: "python -u setup.py unittests", NAME: "UT", TIMEOUT: 900 }
+  - { CMD: "python -u setup.py unittests_SKIP", NAME: "UT_SKIP", TIMEOUT: 900 }
   - if [ ${VERSION} == "3.5" and ${DIST} == "std" ]
       then 
         --CMD=python -u setup.py build_sphinx;
