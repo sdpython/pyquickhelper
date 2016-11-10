@@ -269,7 +269,7 @@ def un7zip_files(zipf, where_to=None, fLOG=noLOG, fvalid=None, remove_space=True
 
     .. versionadded:: 1.4
     """
-    from py7zlib import Archive7z
+    from py7zlib import Archive7z, FormatError
     if not isinstance(zipf, BytesIO):
         if sys.version_info[0] == 2:
             if isinstance(zipf, bytearray):
@@ -283,7 +283,11 @@ def un7zip_files(zipf, where_to=None, fLOG=noLOG, fvalid=None, remove_space=True
                 zipf = open(zipf, "rb")
 
     files = []
-    file = Archive7z(zipf)
+    try:
+        file = Archive7z(zipf)
+    except FormatError as e:
+        raise Exception("The module py7zlib on pypi is not up to date (2016/11). You should replace it by "
+                        "using the version on github: https://github.com/fancycode/pylzma/blob/master/py7zlib.py.") from e
     for info in file.files:
         if where_to is None:
             files.append((info.filename, info.read()))
