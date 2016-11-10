@@ -32,7 +32,7 @@ def IsRepo(location, commandline=True, log=False):
             os.path.join(os.path.split(__file__)[0], "..", "..", "..", "..")))
     try:
         r = get_repo_version(location, commandline, log=log)
-        return True
+        return True and r is not None
     except Exception:
         if log:
             return get_repo_version(location, commandline, log=log)
