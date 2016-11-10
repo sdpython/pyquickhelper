@@ -35,8 +35,7 @@ def IsRepo(location, commandline=True, log=False):
         return True
     except Exception:
         if log:
-            r = get_repo_version(location, commandline, log=log)
-            return r
+            return get_repo_version(location, commandline, log=log)
         else:
             return False
 

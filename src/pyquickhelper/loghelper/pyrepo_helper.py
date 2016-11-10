@@ -37,9 +37,9 @@ class SourceRepository:
             git = GIT.IsRepo(location, commandline=self.commandline)
             if not git:
                 logsvn = SVN.IsRepo(
-                    location, commandline=self.commandline, log=True)
+                    location, commandline=self.commandline, log=False)
                 loggit = GIT.IsRepo(
-                    location, commandline=self.commandline, log=True)
+                    location, commandline=self.commandline, log=False)
                 raise Exception("unable to guess source repository type for location " + location +
                                 " - (cmd={0})\nSVN:\n{1}\nGIT:\n{2}".format(self.commandline, logsvn, loggit))
             else:
