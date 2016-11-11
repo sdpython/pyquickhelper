@@ -144,8 +144,17 @@ def read_url(url, encoding=None):
             raise Exception(
                 "unable to read url '{0}'\nERROR:\n{1}".format(url, e))
     else:
-        with urllib_request.urlopen(request) as fu:
-            content = fu.read()
+        try:
+            with urllib_request.urlopen(request) as fu:
+                content = fu.read()
+        except Exception as e:
+            if sys.version_info[0] == 2:
+                import urlparse
+            else:
+                import urllib.parse as urlparse
+            res = urlparse.urlparse(url)
+            raise Exception(
+                "unable to open url '{0}' scheme: {1}".format(url, res))
 
     if encoding is None:
         return content
