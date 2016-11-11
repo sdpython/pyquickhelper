@@ -136,6 +136,7 @@ def main_wrapper_tests(codefile, skip_list=None, processes=False, add_coverage=F
     whole_ouput = StringIOAndFile(codefile + ".out")
     runner = unittest.TextTestRunner(verbosity=0, stream=whole_ouput)
     path = os.path.abspath(os.path.join(os.path.split(codefile)[0]))
+    stdout_this = stdout if stdout else sys.stdout
 
     def run_main():
         res = main_run_test(runner, path_test=path, skip=-1, skip_list=skip_list,
@@ -212,6 +213,7 @@ def main_wrapper_tests(codefile, skip_list=None, processes=False, add_coverage=F
     else:
         # coverage
         if add_coverage:
+            stdout_this.write("--- COVERAGE BEGIN ---\n")
             if report_folder is None:
                 report_folder = os.path.join(
                     os.path.abspath(os.path.dirname(codefile)), "..", "_doc", "sphinxdoc", "source", "coverage")
@@ -337,12 +339,15 @@ def main_wrapper_tests(codefile, skip_list=None, processes=False, add_coverage=F
                     fLOG("[main_wrapper_tests] publishing coverage to codecov", covtoken)
                     publish_coverage_on_codecov(
                         token=covtoken, path=outfile, fLOG=fLOG)
+            stdout_this.write("--- COVERAGE END ---\n")
         else:
+            stdout_this.write("--- NO COVERAGE BEGIN ---\n")
             if covtoken and (not isinstance(covtoken, tuple) or eval(covtoken[1])):
                 raise CoverageException(
                     "covtoken is not null but add_coverage is not True, coverage cannot be published")
             tested_module(src_abs, project_var_name, setup_params)
             res = run_main()
+            stdout_this.write("--- NO COVERAGE END ---\n")
 
         fLOG("[main_wrapper_tests] SUMMARY -------------------------")
         for r in res["tests"]:

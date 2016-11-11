@@ -514,7 +514,7 @@ def main_run_test(runner, path_test=None, limit_max=1e9, log=False, skip=-1, ski
 
             list_warn = [(w, s) for w, s in list_warn if filter_warning(w)]
             if len(list_warn) > 0:
-                fullstderr.write("WARN:\n")
+                fullstderr.write("*WARN:\n")
                 warndone = set()
                 for w, s in list_warn:
                     sw = str(w)
@@ -533,7 +533,7 @@ def main_run_test(runner, path_test=None, limit_max=1e9, log=False, skip=-1, ski
             if len(val) > 0 and is_valid_error(val):
                 fullstderr.write("\n*-----" + lis[i] + "\n")
                 if len(list_warn) > 0:
-                    fullstderr.write("WARN:\n")
+                    fullstderr.write("+WARN:\n")
                     for w, s in list_warn:
                         fullstderr.write("w{0}: {1}\n".format(i, str(w)))
                 if val.strip(" \n\r\t"):
@@ -570,7 +570,7 @@ def main_run_test(runner, path_test=None, limit_max=1e9, log=False, skip=-1, ski
 
     for fi, lw in allwarn:
         if len(lw) > 0:
-            memout.write("WARN: {0}\n".format(fi))
+            memout.write("-WARN: {0}\n".format(fi))
             for i, (w, s) in enumerate(lw):
                 try:
                     sw = "  w{0}: {1}\n".format(i, w)
@@ -585,6 +585,7 @@ def main_run_test(runner, path_test=None, limit_max=1e9, log=False, skip=-1, ski
                     memout.write(sw)
 
     fLOG("[main_run_test] END of unit tests")
+    memout.write("[main_run_test] END of unit tests\n")
 
     return dict(err=val, tests=keep)
 

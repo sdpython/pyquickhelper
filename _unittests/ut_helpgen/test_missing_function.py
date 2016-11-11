@@ -37,8 +37,12 @@ class TestMissingFunction(unittest.TestCase):
 
         if is_travis_or_appveyor() == "travis" or "anaconda" in sys.executable.lower() or sys.version_info[0] == 2 \
            or "yquickhelper_condavir" in sys.executable:
-            warnings.warn(
-                "skipping on travis and with anaconda or python 2.7: " + sys.executable)
+            if sys.version_info[0] == 2:
+                warnings.warn(
+                    "skipping on travis and with anaconda or python 2.7: " + sys.executable)
+            else:
+                warnings.warn(
+                    "skipping on travis and with anaconda: " + sys.executable)
             return
 
         if not ie_layout_html():
