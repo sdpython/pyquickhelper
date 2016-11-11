@@ -50,7 +50,6 @@ pycparser
 pycryptodomex
 pyflakes
 Pygments
-pylzma
 pyparsing
 pyreadline
 python-dateutil
