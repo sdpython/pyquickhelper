@@ -5,6 +5,7 @@
 import sys
 import os
 import unittest
+import warnings
 
 if "temp_" in os.path.abspath(__file__):
     raise ImportError(
@@ -82,10 +83,10 @@ class TestCompressHelper(unittest.TestCase):
             OutputPrint=__name__ == "__main__")
 
         import pylzma
-        if pylzma.__version__ == "0.4.8":
-            # this version does not include a fix to read file produced by the
-            # latest version of 7z
-            return
+        # use github version, not pypi version (2016-11-11)
+        # this version does not include a fix to read file produced by the
+        # latest version of 7z
+        assert pylzma
 
         fold = get_temp_folder(__file__, "temp_uncompress_7zip")
         data = os.path.join(fold, "..", "data", "ftplib.7z")
@@ -101,14 +102,14 @@ class TestCompressHelper(unittest.TestCase):
         url = "https://docs.python.org/3.5/library/ftplib.html"
         f = download(url, fold)
 
-        if is_travis_or_appveyor() is None:
+        if is_travis_or_appveyor() != "travis":
             out7 = os.path.join(fold, "try.7z")
             r = zip7_files(out7, [f], fLOG=fLOG, temp_folder=fold)
             fLOG(r)
             if not os.path.exists(out7):
                 raise FileNotFoundError(out7)
         else:
-            fLOG("skip 7z")
+            warnings.warn("zipping files with 7z on travis is not tested")
             return
 
         if sys.version_info[0] == 2:

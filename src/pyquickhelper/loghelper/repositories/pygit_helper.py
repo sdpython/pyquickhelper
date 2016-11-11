@@ -38,13 +38,12 @@ def my_date_conversion(sdate):
     return datetime.datetime(int(trois[0]), int(trois[1]), int(trois[2]))
 
 
-def IsRepo(location, commandline=True, log=False):
+def IsRepo(location, commandline=True):
     """
     says if it a repository GIT
 
     @param      location        (str) location
     @param      commandline     (bool) use commandline or not
-    @param      log             if True, return the log not a boolean
     @return                     bool
     """
     if location is None:
@@ -52,13 +51,10 @@ def IsRepo(location, commandline=True, log=False):
             os.path.join(os.path.split(__file__)[0], "..", "..", "..", "..")))
 
     try:
-        get_repo_version(location, commandline, log=log)
+        get_repo_version(location, commandline, log=False)
         return True
     except Exception:
-        if log:
-            return get_repo_version(location, commandline, log=log)
-        else:
-            return False
+        return False
 
 
 class RepoFile:

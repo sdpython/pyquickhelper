@@ -18,26 +18,22 @@ if sys.version_info[0] == 2:
     from codecs import open
 
 
-def IsRepo(location, commandline=True, log=False):
+def IsRepo(location, commandline=True):
     """
     says if it a repository SVN
 
     @param      location        (str) location
     @param      commandline     (bool) use commandline or not
-    @param      log             if True, return the log not a boolean
     @return                     bool
     """
     if location is None:
         location = os.path.normpath(os.path.abspath(
             os.path.join(os.path.split(__file__)[0], "..", "..", "..", "..")))
     try:
-        r = get_repo_version(location, commandline, log=log)
+        r = get_repo_version(location, commandline, log=False)
         return True and r is not None
     except Exception:
-        if log:
-            return get_repo_version(location, commandline, log=log)
-        else:
-            return False
+        return False
 
 
 class RepoFile:
