@@ -109,13 +109,18 @@ class TestCompressHelper(unittest.TestCase):
             if not os.path.exists(out7):
                 raise FileNotFoundError(out7)
         else:
-            warnings.warn("zipping files with 7z on travis is not tested")
+            warnings.warn("zipping files with 7z on a is not tested")
             return
 
         if sys.version_info[0] == 2:
             typbytes = bytearray
         else:
             typbytes = bytes
+
+        if is_travis_or_appveyor() == "appveyor":
+            warnings.warn(
+                "py7zlib.py requires to be updated with the github version")
+            return
 
         from py7zlib import COMPRESSION_METHOD_COPY
         fLOG("***", COMPRESSION_METHOD_COPY)

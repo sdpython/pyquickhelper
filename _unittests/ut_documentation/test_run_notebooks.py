@@ -21,6 +21,21 @@ except ImportError:
         sys.path.append(path)
     import src
 
+try:
+    import jyquickhelper as skip_
+except ImportError:
+    path = os.path.normpath(
+        os.path.abspath(
+            os.path.join(
+                os.path.split(__file__)[0],
+                "..",
+                "..",
+                "..",
+                "jyquickhelper",
+                "src")))
+    if path not in sys.path:
+        sys.path.append(path)
+    import jyquickhelper as skip_
 
 from src.pyquickhelper.loghelper import fLOG
 from src.pyquickhelper.pycode import get_temp_folder
@@ -77,8 +92,10 @@ class TestRunNotebooks(unittest.TestCase):
                 return False
             return True
 
+        import jyquickhelper
         addpaths = [os.path.normpath(os.path.join(
-            os.path.abspath(os.path.dirname(__file__)), "..", "..", "src"))]
+            os.path.abspath(os.path.dirname(__file__)), "..", "..", "src")),
+            os.path.normpath(os.path.join(os.path.abspath(os.path.dirname(jyquickhelper.__file__)), ".."))]
 
         if is_travis_or_appveyor() == "travis":
             keepnote = [_ for _ in keepnote if "javascript_extension" not in _]
