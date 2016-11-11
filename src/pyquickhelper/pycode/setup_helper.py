@@ -238,7 +238,7 @@ def process_standard_options_for_setup(argv, file_or_folder, project_var_name, m
                 # d is not None
                 def skip_allowd(name, code, duration):
                     name = os.path.split(name)[-1]
-                    cond = (duration is None or d is None or duration >
+                    cond = (duration is None or d is None or duration <=
                             d) and ereg(name) and greg(name)
                     return not cond
                 return skip_allowd
