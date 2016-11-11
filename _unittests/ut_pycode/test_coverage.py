@@ -37,7 +37,7 @@ class TestCoverage(unittest.TestCase):
             return
 
         temp = os.path.abspath(os.path.dirname(__file__))
-        cov = os.path.join(temp, "data", "coverage_report.xml")
+        cov = os.path.join(temp, "data", "coverage", "coverage_report.xml")
 
         try:
             cmd = publish_coverage_on_codecov(cov, None)
