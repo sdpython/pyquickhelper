@@ -32,7 +32,6 @@ class SourceRepository:
         @param      location    location
         @return                 module to use
         """
-        stop
         svn = SVN.IsRepo(location, commandline=self.commandline)
         if not svn:
             git = GIT.IsRepo(location, commandline=self.commandline)
