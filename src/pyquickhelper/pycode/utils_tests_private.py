@@ -103,7 +103,7 @@ def get_test_file(filter, dir=None, no_subfolder=False, fLOG=noLOG, root=None):
                        ".py~" not in l and
                        ".pyo" not in l]
         li.extend(content)
-        fLOG("[unittests], inspecting", dirs)
+        fLOG("[get_test_file], inspecting", dirs)
 
         lid = glob.glob(dir + "/*")
         for l in lid:
@@ -181,8 +181,8 @@ def import_files(li, additional_ut_path=None, fLOG=noLOG):
         try:
             mo = __import__(fi)
         except:
-            fLOG("problem with ", fi)
-            fLOG("additional paths")
+            fLOG("[import_file] problem with ", fi)
+            fLOG("[import_file] additional paths")
             for p in sys.path:
                 fLOG("   ", p)
             mo = __import__(fi)
@@ -235,7 +235,7 @@ def clean(dir=None, fLOG=noLOG):
                     os.remove(l)
             except Exception as e:
                 fLOG(
-                    "unable to remove file", l, " --- ", str(e).replace("\n", " "))
+                    "[clean] unable to remove file", l, " --- ", str(e).replace("\n", " "))
 
     li = get_test_file("temp_*")
     for l in li:
@@ -243,14 +243,14 @@ def clean(dir=None, fLOG=noLOG):
             if os.path.isfile(l):
                 os.remove(l)
         except Exception as e:
-            fLOG("unable to remove file. ", l,
+            fLOG("[clean] unable to remove file. ", l,
                  " --- ", str(e).replace("\n", " "))
     for l in li:
         try:
             if os.path.isdir(l):
                 remove_folder(l)
         except Exception as e:
-            fLOG("unable to remove dir. ", l,
+            fLOG("[clean] unable to remove dir. ", l,
                  " --- ", str(e).replace("\n", " "))
 
 
@@ -348,9 +348,9 @@ def main_run_test(runner, path_test=None, limit_max=1e9, log=False, skip=-1, ski
             "unable to find any test files in {0}".format(path_test))
 
     if skip != -1:
-        fLOG("found ", len(co), " test files skipping", skip)
+        fLOG("[main_run_test] found ", len(co), " test files skipping", skip)
     else:
-        fLOG("found ", len(co), " test files")
+        fLOG("[main_run_test] found ", len(co), " test files")
 
     # extract the test classes
     cco = []
@@ -374,6 +374,7 @@ def main_run_test(runner, path_test=None, limit_max=1e9, log=False, skip=-1, ski
     keep = []
 
     # redirect standard output, error
+    fLOG("[main_run_test] redirect stdout, stderr")
     memo_stdout = sys.stdout
     memout = sys.stdout if stdout is None else stdout
     fail = 0
@@ -454,17 +455,15 @@ def main_run_test(runner, path_test=None, limit_max=1e9, log=False, skip=-1, ski
                     if original_stream is not None:
                         original_stream.end_test(s[1])
                     for ww in w:
-                        list_warn.append(ww)
+                        list_warn.append((ww, s))
                     warnings.resetwarnings()
             else:
-                fLOG("running")
                 if original_stream is not None:
                     original_stream.begin_test(s[1])
                 r = runner.run(s[0])
                 out = r.stream.getvalue()
                 if original_stream is not None:
                     original_stream.end_test(s[1])
-                fLOG("end running")
 
         ti = exp.findall(out)[-1]
         # don't modify it, PyCharm does not get it right (ti is a tuple)
@@ -513,40 +512,41 @@ def main_run_test(runner, path_test=None, limit_max=1e9, log=False, skip=-1, ski
                     err_e = err.encode("ascii", errors="ignore")
                     fullstderr.write(err_e)
 
+            list_warn = [(w, s) for w, s in list_warn if filter_warning(w)]
             if len(list_warn) > 0:
                 fullstderr.write("WARN:\n")
                 warndone = set()
-                for w in list_warn:
-                    if filter_warning(w):
-                        sw = str(w)
-                        if sw not in warndone:
-                            # we display only one time the same warning
-                            fullstderr.write("w{0}: {1}\n".format(i, str(w)))
-                            warndone.add(sw)
+                for w, s in list_warn:
+                    sw = str(w)
+                    if sw not in warndone:
+                        # we display only one time the same warning
+                        fullstderr.write("w{0}: {1}\n".format(i, str(w)))
+                        warndone.add(sw)
             serr = newstdr.getvalue()
             if serr.strip(" \n\r\t"):
                 fullstderr.write("ERRs:\n")
                 fullstderr.write(serr)
         else:
+            list_warn = [(w, s) for w, s in list_warn if filter_warning(w)]
             allwarn.append((lis[i], list_warn))
             val = newstdr.getvalue()
             if len(val) > 0 and is_valid_error(val):
                 fullstderr.write("\n*-----" + lis[i] + "\n")
                 if len(list_warn) > 0:
                     fullstderr.write("WARN:\n")
-                    for w in list_warn:
-                        if filter_warning(w):
-                            fullstderr.write("w{0}: {1}\n".format(i, str(w)))
+                    for w, s in list_warn:
+                        fullstderr.write("w{0}: {1}\n".format(i, str(w)))
                 if val.strip(" \n\r\t"):
                     fullstderr.write("ERRv:\n")
                     fullstderr.write(val)
 
         memout.write("\n")
-
         keep.append((s[1], r))
 
     # displays
     memout.write("---- END UT\n")
+
+    fLOG("[main_run_test] restore stdout, stderr")
 
     # end, catch standard output and err
     sys.stderr = memo_stderr
@@ -564,26 +564,27 @@ def main_run_test(runner, path_test=None, limit_max=1e9, log=False, skip=-1, ski
             memerr.write("##### end STDERR #####\n")
 
     if fail == 0:
-        clean()
+        clean(fLOG=fLOG)
+
+    fLOG("[main_run_test] printing warnings")
 
     for fi, lw in allwarn:
         if len(lw) > 0:
             memout.write("WARN: {0}\n".format(fi))
-            for i, w in enumerate(lw):
-                if filter_warning(w):
-                    try:
-                        sw = "  w{0}: {1}\n".format(i, w)
-                    except UnicodeEncodeError:
-                        sw = "  w{0}: Unable to convert a warnings of type {0} into a string (1)".format(
-                            i, type(w))
-                    try:
-                        memout.write(sw)
-                    except UnicodeEncodeError:
-                        sw = "  w{0}: Unable to convert a warnings of type {0} into a string (2)".format(
-                            i, type(w))
-                        memout.write(sw)
+            for i, (w, s) in enumerate(lw):
+                try:
+                    sw = "  w{0}: {1}\n".format(i, w)
+                except UnicodeEncodeError:
+                    sw = "  w{0}: Unable to convert a warnings of type {0} into a string (1)".format(
+                        i, type(w))
+                try:
+                    memout.write(sw)
+                except UnicodeEncodeError:
+                    sw = "  w{0}: Unable to convert a warnings of type {0} into a string (2)".format(
+                        i, type(w))
+                    memout.write(sw)
 
-    fLOG("END of unit tests")
+    fLOG("[main_run_test] END of unit tests")
 
     return dict(err=val, tests=keep)
 

@@ -153,11 +153,12 @@ def main_wrapper_tests(codefile, skip_list=None, processes=False, add_coverage=F
     # to deal with: _tkinter.TclError: no display name and no $DISPLAY
     # environment variable
     from .tkinter_helper import fix_tkinter_issues_virtualenv, _first_execution
-    fLOG("MODULES (1): matplotlib already imported",
-         "matplotlib" in sys.modules, _first_execution)
+    fLOG("[main_wrapper_tests] MODULES (1): matplotlib already imported",
+         "matplotlib" in sys.modules, "first execution", _first_execution)
     r = fix_tkinter_issues_virtualenv()
-    fLOG("MODULES (2): matplotlib imported",
-         "matplotlib" in sys.modules, _first_execution, r)
+    fLOG("[main_wrapper_tests] MODULES (2): matplotlib imported",
+         "matplotlib" in sys.modules, "first execution", _first_execution)
+    fLOG("[main_wrapper_tests] fix_tkinter_issues_virtualenv", r)
 
     def tested_module(folder, project_var_name, setup_params):
         # module mod
@@ -215,12 +216,12 @@ def main_wrapper_tests(codefile, skip_list=None, processes=False, add_coverage=F
                 report_folder = os.path.join(
                     os.path.abspath(os.path.dirname(codefile)), "..", "_doc", "sphinxdoc", "source", "coverage")
 
-            fLOG("call _setup_hook", src_abs, "name=", project_var_name)
+            fLOG("[main_wrapper_tests] call _setup_hook", src_abs, "name=", project_var_name)
             tested_module(src_abs, project_var_name, setup_params)
-            fLOG("end _setup_hook")
+            fLOG("[main_wrapper_tests] end _setup_hook")
 
-            fLOG("current folder", os.getcwd())
-            fLOG("enabling coverage", srcp)
+            fLOG("[main_wrapper_tests] current folder", os.getcwd())
+            fLOG("[main_wrapper_tests] enabling coverage", srcp)
             dfile = os.path.join(report_folder, ".coverage")
 
             # we clean previous report or we create an empty folder
@@ -246,11 +247,13 @@ def main_wrapper_tests(codefile, skip_list=None, processes=False, add_coverage=F
                     cov.exclude(line)
             else:
                 cov.exclude("raise NotImplementedError")
+            fLOG("[main_wrapper_tests] ENABLE COVERAGE")
             cov.start()
 
             res = run_main()
 
             cov.stop()
+            fLOG("[main_wrapper_tests] STOP COVERAGE + REPORT")
 
             cov.html_report(directory=report_folder)
             outfile = os.path.join(report_folder, "coverage_report.xml")
@@ -258,7 +261,7 @@ def main_wrapper_tests(codefile, skip_list=None, processes=False, add_coverage=F
             cov.save()
 
             # we clean absolute path from the produced files
-            fLOG("replace ", srcp, ' by ', project_var_name)
+            fLOG("[main_wrapper_tests] replace ", srcp, ' by ', project_var_name)
             srcp_s = [os.path.abspath(os.path.normpath(srcp)),
                       os.path.normpath(srcp)]
             if sys.version_info[0] == 2:
@@ -277,6 +280,7 @@ def main_wrapper_tests(codefile, skip_list=None, processes=False, add_coverage=F
                     f.write(content)
 
             # we print debug information for the coverage
+            fLOG("[main_wrapper_tests] add debug information")
             outcov = os.path.join(report_folder, "covlog.txt")
             rows = []
             rows.append("COVERAGE OPTIONS")
@@ -327,10 +331,10 @@ def main_wrapper_tests(codefile, skip_list=None, processes=False, add_coverage=F
                             token=covtoken[0], path=outfile, fLOG=fLOG)
                     else:
                         fLOG(
-                            "skip publishing coverage to codecov due to False:", covtoken[1])
+                            "[main_wrapper_tests] skip publishing coverage to codecov due to False:", covtoken[1])
                 else:
                     # publishing token
-                    fLOG("publishing coverage to codecov", covtoken)
+                    fLOG("[main_wrapper_tests] publishing coverage to codecov", covtoken)
                     publish_coverage_on_codecov(
                         token=covtoken, path=outfile, fLOG=fLOG)
         else:
@@ -340,11 +344,15 @@ def main_wrapper_tests(codefile, skip_list=None, processes=False, add_coverage=F
             tested_module(src_abs, project_var_name, setup_params)
             res = run_main()
 
+        fLOG("[main_wrapper_tests] SUMMARY -------------------------")
         for r in res["tests"]:
             k = str(r[1])
             if "errors=0" not in k or "failures=0" not in k:
                 fLOG("*", r[1], r[0])
 
+        fLOG("[main_wrapper_tests] CHECK EXCEPTION -----------------")
         err = res.get("err", "")
         if len(err) > 0:
             raise Exception(err)
+
+        fLOG("[main_wrapper_tests] END")

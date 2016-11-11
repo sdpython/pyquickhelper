@@ -47,8 +47,9 @@ class TestAnyFHelper(unittest.TestCase):
         content1 = read_content_ufs(this)
         content2, source = read_content_ufs(this, add_source=True)
         self.assertEqual(content1, content2)
-        if sys.version_info[0] != 2:
+        if sys.version_info[0] == 2:
             warnings.warn("source is not reliable on Python 2.7")
+        else:
             self.assertEqual(source, "r")
         content0 = content1
 
