@@ -87,7 +87,7 @@ class TestNoteBooksBug(unittest.TestCase):
         check = os.path.join(temp, "td1a_correction_session4.tex")
         with open(check, "r", encoding="utf8") as f:
             content = f.read()
-        if "\\subsection{" not in content:
+        if "\\section{" not in content:
             raise Exception(content)
 
     def test_notebook_pdf(self):
@@ -121,7 +121,7 @@ class TestNoteBooksBug(unittest.TestCase):
         check = os.path.join(temp, "td1a_correction_session4.tex")
         with open(check, "r", encoding="utf8") as f:
             content = f.read()
-        if "\\subsection{" not in content:
+        if "\\section{" not in content:
             raise Exception(content)
 
 
