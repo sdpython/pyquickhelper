@@ -82,7 +82,12 @@ def is_url_string(s):
 
     .. versionadded:: 1.3
     """
-    return urlparse.urlparse(s).scheme != ""
+    if "\n" in s:
+        return False
+    sch = urlparse.urlparse(s)
+    if len(sch.scheme) > 10:
+        return False
+    return sch.scheme.lower() not in ("", None, "warning")
 
 
 class FileInfo:
