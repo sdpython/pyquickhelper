@@ -16,7 +16,7 @@ import unittest
 
 from ..loghelper.flog import noLOG
 from .call_setup_hook import call_setup_hook
-from .code_exceptions import CoverageException, SetupHookException
+from .code_exceptions import SetupHookException  # , CoverageException
 from .coverage_helper import publish_coverage_on_codecov
 from .utils_tests_private import default_skip_function, main_run_test
 from .utils_tests_stringio import StringIOAndFile
@@ -342,9 +342,9 @@ def main_wrapper_tests(codefile, skip_list=None, processes=False, add_coverage=F
             stdout_this.write("--- COVERAGE END ---\n")
         else:
             stdout_this.write("--- NO COVERAGE BEGIN ---\n")
-            if covtoken and (not isinstance(covtoken, tuple) or eval(covtoken[1])):
-                raise CoverageException(
-                    "covtoken is not null but add_coverage is not True, coverage cannot be published")
+            # if covtoken and (not isinstance(covtoken, tuple) or eval(covtoken[1])):
+            #    raise CoverageException(
+            #        "covtoken is not null but add_coverage is not True, coverage cannot be published")
             tested_module(src_abs, project_var_name, setup_params)
             res = run_main()
             stdout_this.write("--- NO COVERAGE END ---\n")
