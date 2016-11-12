@@ -193,7 +193,7 @@ if is_local():
                 f.write("call auto_cmd_copy_sphinx.bat\n")
 
     if r:
-        sys.exi()
+        sys.exit()
 else:
     r = False
 
