@@ -1,5 +1,5 @@
 """
-@brief      test tree node (time=5s)
+@brief      test tree node (time=6s)
 """
 
 
