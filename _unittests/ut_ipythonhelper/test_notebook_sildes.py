@@ -49,7 +49,7 @@ class TestNotebookSlides(unittest.TestCase):
             #fLOG(i,"-",nb.cell_type(cell), l)
             #if l > 400: fLOG(cell)
             assert ls > 0
-
+        return
         new_tags = nb.add_tag_slide()
         for k, v in sorted(new_tags.items()):
             a, b, c = v
