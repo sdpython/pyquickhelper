@@ -42,8 +42,8 @@ class TestNotebookReadWrite (unittest.TestCase):
         temp = get_temp_folder(__file__, "temp_notebook_read_write")
         nbfile = os.path.join(temp, "..", "data", "simple_example.ipynb")
         assert os.path.exists(nbfile)
-        nb = read_nb(nbfile)
         return
+        nb = read_nb(nbfile)
         outfile = os.path.join(temp, "out_notebook.ipynb")
         nb.to_json(outfile)
         assert os.path.exists(outfile)
