@@ -25,10 +25,6 @@ from src.pyquickhelper.pycode import get_temp_folder
 from src.pyquickhelper.loghelper import fLOG
 
 
-if sys.version_info[0] == 2:
-    from codecs import open
-
-
 class TestNotebookSlides(unittest.TestCase):
 
     def test_notebook_iter(self):
