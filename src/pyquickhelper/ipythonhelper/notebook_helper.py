@@ -104,10 +104,10 @@ def read_nb(filename, profile_dir=None, encoding="utf8", kernel=True):
         with open(filename, "r", encoding=encoding) as payload:
             nb = reads(payload.read())
 
-            nb_runner = NotebookRunner(
-                nb, profile_dir, theNotebook=os.path.abspath(filename),
-                kernel=kernel)
-            return nb_runner
+        nb_runner = NotebookRunner(
+            nb, profile_dir, theNotebook=os.path.abspath(filename),
+            kernel=kernel)
+        return nb_runner
     else:
         nb = reads(filename.read())
         nb_runner = NotebookRunner(nb, profile_dir, kernel=kernel)
