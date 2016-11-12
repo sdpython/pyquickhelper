@@ -1,5 +1,5 @@
 """
-@brief      test tree node (time=5s)
+@brief      test tree node (time=12s)
 """
 
 
@@ -22,6 +22,7 @@ except ImportError:
     import src
 
 from src.pyquickhelper.loghelper.flog import fLOG
+from src.pyquickhelper.pycode import get_temp_folder
 from src.pyquickhelper.filehelper.file_tree_node import FileTreeNode
 
 
@@ -33,20 +34,15 @@ class TestFileCol (unittest.TestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
-        try:
-            import pysvn as skip_
-        except ImportError:
-            fLOG("pysvn is not available")
-            return
-
         path = os.path.split(__file__)[0]
-        p1 = os.path.join(path, "data")
-        p2 = "c:\\temp\\pyapptemp"
+        p1 = os.path.normpath(os.path.abspath(
+            os.path.join(path, "data", "..", "..", "..")))
+        p2 = get_temp_folder(__file__, "temp_syncho_whole")
         if not os.path.exists(p2):
             os.mkdir(p2)
         fLOG("form ", p1)
         fLOG("to   ", p2)
-        exp = re.compile("[.]svn")
+        exp = re.compile("[.]git")
 
         def filter(root, path, f, d):
             root = root.lower()

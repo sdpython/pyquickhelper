@@ -1,5 +1,5 @@
 """
-@brief      test tree node (time=5s)
+@brief      test tree node (time=6s)
 """
 
 
@@ -122,11 +122,8 @@ class TestFileCol (unittest.TestCase):
         if sys.version_info[0] == 2:
             return
 
-        synchronize_folder(data,
-                           troi,
-                           hash_size=0,
-                           repo1=True,
-                           filter_copy=filter_copy)
+        synchronize_folder(data, troi, hash_size=0,
+                           repo1=True, filter_copy=filter_copy)
 
         assert os.path.exists(os.path.join(troi, "sub", "filetwo.txt"))
         assert os.path.exists(stay)

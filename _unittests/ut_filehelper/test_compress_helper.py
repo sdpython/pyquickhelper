@@ -89,7 +89,8 @@ class TestCompressHelper(unittest.TestCase):
         assert pylzma
 
         if is_travis_or_appveyor() == "appveyor":
-            warnings.warn("unzipping files with 7z on a is not tested on appveyor")
+            warnings.warn(
+                "unzipping files with 7z on a is not tested on appveyor")
             return
 
         fold = get_temp_folder(__file__, "temp_uncompress_7zip")
@@ -113,7 +114,8 @@ class TestCompressHelper(unittest.TestCase):
             if not os.path.exists(out7):
                 raise FileNotFoundError(out7)
         else:
-            warnings.warn("unzipping files with 7z on a is not tested on appveyor")
+            warnings.warn(
+                "unzipping files with 7z on a is not tested on appveyor")
             return
 
         if sys.version_info[0] == 2:

@@ -218,7 +218,8 @@ def main_wrapper_tests(codefile, skip_list=None, processes=False, add_coverage=F
                 report_folder = os.path.join(
                     os.path.abspath(os.path.dirname(codefile)), "..", "_doc", "sphinxdoc", "source", "coverage")
 
-            fLOG("[main_wrapper_tests] call _setup_hook", src_abs, "name=", project_var_name)
+            fLOG("[main_wrapper_tests] call _setup_hook",
+                 src_abs, "name=", project_var_name)
             tested_module(src_abs, project_var_name, setup_params)
             fLOG("[main_wrapper_tests] end _setup_hook")
 
@@ -263,7 +264,8 @@ def main_wrapper_tests(codefile, skip_list=None, processes=False, add_coverage=F
             cov.save()
 
             # we clean absolute path from the produced files
-            fLOG("[main_wrapper_tests] replace ", srcp, ' by ', project_var_name)
+            fLOG("[main_wrapper_tests] replace ",
+                 srcp, ' by ', project_var_name)
             srcp_s = [os.path.abspath(os.path.normpath(srcp)),
                       os.path.normpath(srcp)]
             if sys.version_info[0] == 2:
@@ -336,7 +338,8 @@ def main_wrapper_tests(codefile, skip_list=None, processes=False, add_coverage=F
                             "[main_wrapper_tests] skip publishing coverage to codecov due to False:", covtoken[1])
                 else:
                     # publishing token
-                    fLOG("[main_wrapper_tests] publishing coverage to codecov", covtoken)
+                    fLOG(
+                        "[main_wrapper_tests] publishing coverage to codecov", covtoken)
                     publish_coverage_on_codecov(
                         token=covtoken, path=outfile, fLOG=fLOG)
             stdout_this.write("--- COVERAGE END ---\n")

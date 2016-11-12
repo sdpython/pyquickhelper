@@ -1,5 +1,5 @@
 """
-@brief      test tree node (time=5s)
+@brief      test tree node (time=6s)
 """
 
 
@@ -73,25 +73,16 @@ class TestSynchoHash (unittest.TestCase):
         if os.path.exists(file_date):
             os.remove(file_date)
 
-        a = synchronize_folder(data,
-                               troi,
-                               hash_size=0,
-                               repo1=True,
-                               filter_copy=filter_copy,
-                               file_date=file_date,
-                               log1=True)
+        a = synchronize_folder(data, troi, hash_size=0, repo1=True, filter_copy=filter_copy,
+                               file_date=file_date, log1=True)
 
         assert os.path.exists(file_date)
         assert os.path.exists(os.path.join(troi, "sub", "filetwo.txt"))
         assert os.path.exists(stay)
         assert not os.path.exists(stay.replace("notfile.txt", "file.txt"))
 
-        b = synchronize_folder(data,
-                               troi,
-                               hash_size=0,
-                               repo1=True,
-                               filter_copy=filter_copy,
-                               file_date=file_date)
+        b = synchronize_folder(data, troi, hash_size=0, repo1=True,
+                               filter_copy=filter_copy, file_date=file_date)
 
         if len(a)not in [2, 3]:
             raise Exception(
@@ -107,24 +98,16 @@ class TestSynchoHash (unittest.TestCase):
         if os.path.exists(file_date):
             os.remove(file_date)
 
-        c = synchronize_folder(troi,
-                               troi2,
-                               hash_size=0,
-                               repo1=False,
-                               filter_copy=filter_copy,
-                               file_date=file_date)
+        c = synchronize_folder(troi, troi2, hash_size=0, repo1=False,
+                               filter_copy=filter_copy, file_date=file_date)
 
         onefile = os.path.join(troi, "onefile.txt")
         os.remove(onefile)
         with open(file_date, "r") as f:
             all_b = f.readlines()
 
-        c = synchronize_folder(troi,
-                               troi2,
-                               hash_size=0,
-                               repo1=False,
-                               filter_copy=filter_copy,
-                               file_date=file_date)
+        c = synchronize_folder(troi, troi2, hash_size=0, repo1=False,
+                               filter_copy=filter_copy, file_date=file_date)
 
         with open(file_date, "r") as f:
             all_c = f.readlines()
