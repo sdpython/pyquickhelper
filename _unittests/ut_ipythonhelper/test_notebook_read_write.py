@@ -5,6 +5,7 @@
 import sys
 import os
 import unittest
+import warnings
 
 
 try:
@@ -21,7 +22,7 @@ except ImportError:
     import src
 
 from src.pyquickhelper.ipythonhelper.notebook_helper import read_nb
-from src.pyquickhelper.pycode import get_temp_folder
+from src.pyquickhelper.pycode import get_temp_folder, is_travis_or_appveyor
 from src.pyquickhelper.loghelper import fLOG
 
 
@@ -42,7 +43,12 @@ class TestNotebookReadWrite (unittest.TestCase):
         temp = get_temp_folder(__file__, "temp_notebook_read_write")
         nbfile = os.path.join(temp, "..", "data", "simple_example.ipynb")
         assert os.path.exists(nbfile)
-        return
+        # For some reason, if this instruction is included in the build,
+        # the travis build completes but never ends.
+        # This is removed from the whole list on tavis.
+        if is_travis_or_appveyor() == "travis":
+            warnings.warn("This test prevents travis from ending. The process never stops.")
+            return
         nb = read_nb(nbfile)
         outfile = os.path.join(temp, "out_notebook.ipynb")
         nb.to_json(outfile)
