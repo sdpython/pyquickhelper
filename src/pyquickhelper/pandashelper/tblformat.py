@@ -3,7 +3,6 @@
 @file
 @brief To format a pandas dataframe
 """
-import numpy
 
 
 def df2rst(df, add_line=True, align="l", column_size=None):
@@ -33,6 +32,7 @@ def df2rst(df, add_line=True, align="l", column_size=None):
     .. versionchanged:: 1.3
         Parameter *align* was changed, parameter *column_size* was added.
     """
+    import numpy
     typstr = str  # unicode#
     length = [len(_) for _ in df.columns]
     for row in df.values:
