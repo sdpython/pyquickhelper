@@ -1,5 +1,5 @@
 """
-@brief      test log(time=5s)
+@brief      test log(time=6s)
 """
 
 import sys
@@ -23,6 +23,10 @@ except ImportError:
 from src.pyquickhelper.ipythonhelper.notebook_helper import read_nb
 from src.pyquickhelper.pycode import get_temp_folder
 from src.pyquickhelper.loghelper import fLOG
+
+
+if sys.version_info[0] == 2:
+    from codecs import open
 
 
 class TestNotebookSlides(unittest.TestCase):
