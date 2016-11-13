@@ -12,13 +12,15 @@ import sys
 import os
 import inspect
 import threading
-import io
+
 if sys.version_info[0] == 2:
     import Tkinter as tkinter
     import tkFont
+    from StringIO import StringIO
 else:
     import tkinter
     import tkinter.font as tkFont
+    from io import StringIO
 
 
 class FrameFunction (tkinter.Frame):
@@ -85,7 +87,7 @@ class FrameFunction (tkinter.Frame):
                 fLOG(__file__, function)  # , OutputPrint = False)
             else:
                 fLOG(__file__, function,  # , OutputPrint = False,
-                     LogFile=io.StringIO())
+                     LogFile=StringIO())
 
             function = private_get_function(function)
             self.function = function
@@ -97,10 +99,10 @@ class FrameFunction (tkinter.Frame):
 
             if self.hide:
                 fLOG(__file__, self.info["name"],  # , OutputPrint = False,
-                     LogFile=io.StringIO())
+                     LogFile=StringIO())
             else:
                 fLOG(__file__, self.info["name"],  # , OutputPrint = False,
-                     LogFile=io.StringIO())
+                     LogFile=StringIO())
 
         if restore:
             self._history = _private_restore(

@@ -7,7 +7,6 @@
 from __future__ import print_function
 import re
 import os
-import io
 import warnings
 import sys
 import ftplib
@@ -16,6 +15,10 @@ from ..loghelper.flog import noLOG
 
 if sys.version_info[0] == 2:
     from codecs import open
+    from StringIO import StringIO
+    BytesIO = StringIO
+else:
+    from io import BytesIO
 
 
 class FolderTransferFTPException(Exception):
@@ -281,7 +284,7 @@ class FolderTransferFTP:
 
                 # to binary
                 bcont = content.encode("utf8")
-                return io.BytesIO(bcont), len(bcont)
+                return BytesIO(bcont), len(bcont)
 
     def close_stream(self, stream):
         """
@@ -289,7 +292,7 @@ class FolderTransferFTP:
 
         @param      stream      stream to close
         """
-        if isinstance(stream, io.BytesIO):
+        if isinstance(stream, BytesIO):
             pass
         else:
             stream.close()

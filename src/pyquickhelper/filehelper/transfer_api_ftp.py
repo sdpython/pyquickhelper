@@ -4,12 +4,19 @@
 
 .. versionadded:: 1.3
 """
+import sys
 import ftplib
-import io
 from ..loghelper import noLOG
 from .transfer_api import TransferAPI
 from .ftp_transfer import TransferFTP
 from .ftp_mock import MockTransferFTP
+
+
+if sys.version_info[0] == 2:
+    from StringIO import StringIO
+    BytesIO = StringIO
+else:
+    from io import BytesIO
 
 
 class TransferAPIFtp(TransferAPI):
@@ -59,7 +66,7 @@ class TransferAPIFtp(TransferAPI):
         spl = path.split("/")
         to = self._root + "/" + "/".join(spl[:-1])
         to = to.strip("/")
-        byt = io.BytesIO(data)
+        byt = BytesIO(data)
         r = self._ftp.transfer(byt, to, spl[-1])
         return r
 

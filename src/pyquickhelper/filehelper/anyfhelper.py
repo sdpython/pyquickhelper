@@ -18,7 +18,6 @@ if sys.version_info[0] == 2:
     from codecs import open
     from StringIO import StringIO
     BytesIO = StringIO
-    import io
 else:
     from io import BytesIO, StringIO
 
@@ -222,7 +221,7 @@ def read_content_ufs(file_url_stream, encoding="utf8", asbytes=False, add_source
             content = v.decode(encoding=encoding)
             return (content, "SB") if add_source else content
     else:
-        if sys.version_info[0] == 2 and isinstance(file_url_stream, io.BytesIO):
+        if sys.version_info[0] == 2 and isinstance(file_url_stream, BytesIO):
             v = file_url_stream.getvalue()
             if asbytes or not v:
                 return (v, "SBb") if add_source else v

@@ -6,7 +6,6 @@
 import os
 import re
 import time
-import io
 import sys
 import platform
 import warnings
@@ -200,7 +199,7 @@ class NotebookRunner(object):
         """
         if isinstance(js, str  # unicode#
                       ):
-            st = io.StringIO(js)
+            st = StringIO(js)
         else:
             st = js
         from .notebook_helper import read_nb
@@ -214,7 +213,7 @@ class NotebookRunner(object):
 
         .. versionadded:: 1.1
         """
-        st = io.StringIO()
+        st = StringIO()
         self.to_json(st)
         return NotebookRunner.read_json(st.getvalue())
 

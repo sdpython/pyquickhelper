@@ -7,12 +7,17 @@
 """
 from ftplib import FTP, error_perm
 import os
-import io
 import sys
 import time
 import datetime
 
 from ..loghelper.flog import noLOG
+
+if sys.version_info[0] == 2:
+    from StringIO import StringIO
+    BytesIO = StringIO
+else:
+    from io import BytesIO
 
 
 class CannotReturnToFolderException(Exception):
@@ -328,11 +333,11 @@ class TransferFTP:
                     with open(file, "rb") as f:
                         r = self.run_command(
                             self._ftp.storbinary, 'STOR ' + name, f, bs, callback)
-                elif isinstance(file, io.BytesIO):
+                elif isinstance(file, BytesIO):
                     r = self.run_command(self._ftp.storbinary, 'STOR ' +
                                          name, file, bs, callback)
                 elif isinstance(file, bytes):
-                    st = io.BytesIO(file)
+                    st = BytesIO(file)
                     r = self.run_command(self._ftp.storbinary, 'STOR ' +
                                          name, st, bs, callback)
                 else:
@@ -411,7 +416,7 @@ class TransferFTP:
                 except error_perm as e:
                     raise_exc = e
                     r = False
-        elif isinstance(file, io.BytesIO):
+        elif isinstance(file, BytesIO):
             def callback(block):
                 file.write(block)
             try:
@@ -421,7 +426,7 @@ class TransferFTP:
                 raise_exc = e
                 r = False
         else:
-            b = io.BytesIO()
+            b = BytesIO()
 
             def callback(block):
                 b.write(block)
