@@ -15,7 +15,7 @@ from time import sleep
 
 
 try:
-    from nbformat.v3 import NotebookNode
+    from nbformat import NotebookNode
     from nbformat import writes
 except ImportError:
     from IPython.nbformat.v3 import NotebookNode
