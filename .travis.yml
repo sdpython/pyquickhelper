@@ -5,4 +5,4 @@ install:
     - pip install -r requirements.txt
     - pip install git+https://github.com/fancycode/pylzma.git
 script:
-    - python setup.py unittests -d 1999
+    - python setup.py unittests
