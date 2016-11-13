@@ -47,9 +47,6 @@ class TestNotebookRunnerOperation (unittest.TestCase):
         n2 = len(nb2)
         add = nb1 + nb2
         nb1.merge_notebook([nb2])
-        if is_travis_or_appveyor() == "travis":
-            warnings.warn("This test is not run on travis, it prevents the script from completing.")
-            return
         n3a = len(add)
         n3 = len(nb1)
         if n1 + n2 != n3:
