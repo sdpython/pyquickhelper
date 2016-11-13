@@ -69,7 +69,7 @@ class NotebookRunner(object):
     def __init__(self, nb, profile_dir=None, working_dir=None,
                  comment="", fLOG=noLOG, theNotebook=None, code_init=None,
                  kernel_name="python", log_level="30", extended_args=None,
-                 kernel=True, filename=None, replacements=None):
+                 kernel=False, filename=None, replacements=None):
         """
         constuctor
 
@@ -107,6 +107,10 @@ class NotebookRunner(object):
         self.code_init = code_init
         self._filename = filename if filename is not None else "memory"
         self.replacements = replacements
+        self.init_args = dict(profile_dir=profile_dir, working_dir=working_dir,
+                              comment=comment, fLOG=fLOG, theNotebook=theNotebook, code_init=code_init,
+                              kernel_name="python", log_level="30", extended_args=None,
+                              kernel=kernel, filename=filename, replacements=replacements)
         args = []
 
         if profile_dir:
@@ -124,42 +128,43 @@ class NotebookRunner(object):
                         "every option should be assigned a value: " + opt)
                 args.append(opt)
 
-        cwd = os.getcwd()
-
-        if working_dir:
-            os.chdir(working_dir)
-
-        if self.km is not None:
-            if sys.version_info[0] == 2 and args is not None:
-                # I did not find a way to make it work
-                args = None
-                warnings.warn(
-                    "args is not None: {0}, unable to use it in Python 2.7".format(args))
-                self.km.start_kernel()
-            else:
-                try:
-                    self.km.start_kernel(extra_arguments=args)
-                except Exception as e:
-                    raise Exception(
-                        "Failure with args: {0}\nand error:\n{1}".format(args, str(e))) from e
-
-            if platform.system() == 'Darwin':
-                # see http://www.pypedia.com/index.php/notebook_runner
-                # There is sometimes a race condition where the first
-                # execute command hits the kernel before it's ready.
-                # It appears to happen only on Darwin (Mac OS) and an
-                # easy (but clumsy) way to mitigate it is to sleep
-                # for a second.
-                sleep(1)
-
-        os.chdir(cwd)
-
         if kernel:
+            cwd = os.getcwd()
+
+            if working_dir:
+                os.chdir(working_dir)
+
+            if self.km is not None:
+                if sys.version_info[0] == 2 and args is not None:
+                    # I did not find a way to make it work
+                    args = None
+                    warnings.warn(
+                        "args is not None: {0}, unable to use it in Python 2.7".format(args))
+                    self.km.start_kernel()
+                else:
+                    try:
+                        self.km.start_kernel(extra_arguments=args)
+                    except Exception as e:
+                        raise Exception(
+                            "Failure with args: {0}\nand error:\n{1}".format(args, str(e))) from e
+
+                if platform.system() == 'Darwin':
+                    # see http://www.pypedia.com/index.php/notebook_runner
+                    # There is sometimes a race condition where the first
+                    # execute command hits the kernel before it's ready.
+                    # It appears to happen only on Darwin (Mac OS) and an
+                    # easy (but clumsy) way to mitigate it is to sleep
+                    # for a second.
+                    sleep(1)
+
+            os.chdir(cwd)
+
             self.kc = self.km.client()
             self.kc.start_channels(stdin=False)
             # if it does not work, it probably means IPython < 3
             self.kc.wait_for_ready()
         else:
+            self.km = None
             self.kc = None
         self.nb = nb
         self.comment = comment
@@ -187,7 +192,10 @@ class NotebookRunner(object):
             filename.write(writes(self.nb))
 
     @staticmethod
-    def read_json(js, profile_dir=None, encoding="utf8", kernel=True):
+    def read_json(js, profile_dir=None, encoding="utf8",
+                  working_dir=None, comment="", fLOG=noLOG, code_init=None,
+                  kernel_name="python", log_level="30", extended_args=None,
+                  kernel=False, replacements=None):
         """
         read a notebook from a JSON stream or string
 
@@ -195,7 +203,22 @@ class NotebookRunner(object):
         @param      profile_dir     profile directory
         @param      encoding        encoding for the notebooks
         @param      kernel          to start a kernel or not when reading the notebook (to execute it)
+        @param      working_dir     working directory
+        @param      comment         additional information added to error message
+        @param      code_init       to initialize the notebook with a python code as if it was a cell
+        @param      fLOG            logging function
+        @param      log_level       Choices: (0, 10, 20, 30=default, 40, 50, 'DEBUG', 'INFO', 'WARN', 'ERROR', 'CRITICAL')
+        @param      kernel_name     kernel name, it can be None
+        @param      extended_args   others arguments to pass to the command line ('--KernelManager.autorestar=True' for example),
+                                    see :ref:`l-ipython_notebook_args` for a full list
+        @param      kernel          *kernel* is True by default, the notebook can be run, if False,
+                                    the notebook can be read but not run
+        @param      replacements    replacements to make in every cell before running it,
+                                    dictionary ``{ string: string }``
         @return                     instance of @see cl NotebookRunner
+
+        .. versionchanged:: 1.5
+            Add constructor parameters.
         """
         if isinstance(js, str  # unicode#
                       ):
@@ -203,7 +226,11 @@ class NotebookRunner(object):
         else:
             st = js
         from .notebook_helper import read_nb
-        return read_nb(st, profile_dir=profile_dir, encoding=encoding, kernel=kernel)
+        return read_nb(st, encoding=encoding, kernel=kernel,
+                       profile_dir=profile_dir, working_dir=working_dir,
+                       comment=comment, fLOG=fLOG, code_init=code_init,
+                       kernel_name="python", log_level="30", extended_args=None,
+                       replacements=replacements)
 
     def copy(self):
         """
@@ -212,10 +239,17 @@ class NotebookRunner(object):
         @return         instance of @see cl NotebookRunner
 
         .. versionadded:: 1.1
+
+        .. versionchanged:: 1.5
+            Add constructor parameters.
         """
         st = StringIO()
         self.to_json(st)
-        return NotebookRunner.read_json(st.getvalue())
+        args = self.init_args.copy()
+        for name in ["theNotebook", "filename"]:
+            if name in args:
+                del args[name]
+        return NotebookRunner.read_json(st.getvalue(), **args)
 
     def __add__(self, nb):
         """

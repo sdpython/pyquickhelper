@@ -13,6 +13,7 @@ from nbformat import versions
 from nbformat.reader import reads
 from nbformat.v4 import upgrade
 from ..filehelper import read_content_ufs
+from ..loghelper import noLOG
 
 
 if sys.version_info[0] == 2:
@@ -85,19 +86,35 @@ def upgrade_notebook(filename, encoding="utf8"):
         return True
 
 
-def read_nb(filename, profile_dir=None, encoding="utf8", kernel=True):
+def read_nb(filename, profile_dir=None, encoding="utf8", working_dir=None,
+            comment="", fLOG=noLOG, code_init=None,
+            kernel_name="python", log_level="30", extended_args=None,
+            kernel=False, replacements=None):
     """
     reads a notebook and return a @see cl NotebookRunner object
 
     @param      filename        notebook filename (or stream)
     @param      profile_dir     profile directory
     @param      encoding        encoding for the notebooks
+    @param      working_dir     working directory
+    @param      comment         additional information added to error message
+    @param      code_init       to initialize the notebook with a python code as if it was a cell
+    @param      fLOG            logging function
+    @param      log_level       Choices: (0, 10, 20, 30=default, 40, 50, 'DEBUG', 'INFO', 'WARN', 'ERROR', 'CRITICAL')
+    @param      kernel_name     kernel name, it can be None
+    @param      extended_args   others arguments to pass to the command line ('--KernelManager.autorestar=True' for example),
+                                see :ref:`l-ipython_notebook_args` for a full list
     @param      kernel          *kernel* is True by default, the notebook can be run, if False,
                                 the notebook can be read but not run
+    @param      replacements    replacements to make in every cell before running it,
+                                dictionary ``{ string: string }``
     @return                     @see cl NotebookRunner
 
     .. versionchanged:: 1.3
         Parameter *kernel* was added.
+
+    .. versionchanged:: 1.5
+        Parameters from NotebookRunner were added.
     """
     if isinstance(filename, str  # unicode#
                   ):
@@ -105,12 +122,19 @@ def read_nb(filename, profile_dir=None, encoding="utf8", kernel=True):
             nb = reads(payload.read())
 
         nb_runner = NotebookRunner(
-            nb, profile_dir, theNotebook=os.path.abspath(filename),
-            kernel=kernel)
+            nb, profile_dir=profile_dir, theNotebook=os.path.abspath(filename),
+            kernel=kernel, working_dir=working_dir,
+            comment=comment, fLOG=fLOG, code_init=code_init,
+            kernel_name="python", log_level="30", extended_args=None,
+            filename=filename, replacements=replacements)
         return nb_runner
     else:
         nb = reads(filename.read())
-        nb_runner = NotebookRunner(nb, profile_dir, kernel=kernel)
+        nb_runner = NotebookRunner(nb, kernel=kernel,
+                                   profile_dir=profile_dir, working_dir=working_dir,
+                                   comment=comment, fLOG=fLOG, code_init=code_init,
+                                   kernel_name="python", log_level="30", extended_args=None,
+                                   filename=filename, replacements=replacements)
         return nb_runner
 
 
