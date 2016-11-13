@@ -22,7 +22,7 @@ except ImportError:
     import src
 
 from src.pyquickhelper.ipythonhelper import read_nb
-from src.pyquickhelper.pycode import get_temp_folder
+from src.pyquickhelper.pycode import get_temp_folder, is_travis_or_appveyor
 from src.pyquickhelper.loghelper import fLOG
 
 
