@@ -52,6 +52,17 @@ class NotebookRunner(object):
 
     * `jupyter_kernel_test <https://github.com/jupyter/jupyter_kernel_test>`_
     * `simple_kernel <https://github.com/dsblank/simple_kernel>`_
+
+    .. faq::
+        :title: Do I need to shutdown the kernel after running a notebook?
+
+        .. index:: travis
+
+        If the class is instantiated with *kernel=True*, a kernel will
+        be started. It must be shutdown otherwise the program might
+        be waiting for it for ever. That is one of the reasons why the
+        travis build does not complete. The build finished but cannot temrinate
+        until all kernels are shutdown.
     """
 
     #. available output types
