@@ -46,6 +46,9 @@ class TestNotebookRunnerOperation (unittest.TestCase):
         nb2 = read_nb(nbfile2, kernel=False)
         n2 = len(nb2)
         add = nb1 + nb2
+        if is_travis_or_appveyor() == "travis":
+            warnings.warn("This test is not run on travis, it prevents the script from completing.")
+            return
         nb1.merge_notebook([nb2])
         n3a = len(add)
         n3 = len(nb1)
@@ -54,9 +57,6 @@ class TestNotebookRunnerOperation (unittest.TestCase):
         if n3a != n3:
             raise Exception("{0} != {1}".format(n3a, n3))
 
-        if is_travis_or_appveyor() == "travis":
-            warnings.warn("This test is not run on travis, it prevents the script from completing.")
-            return
         fLOG(n1, n2, n3, n3a)
         outfile = os.path.join(temp, "merge_nb.ipynb")
         nb1.to_json(outfile)
