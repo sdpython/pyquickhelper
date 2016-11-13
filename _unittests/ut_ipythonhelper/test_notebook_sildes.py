@@ -39,7 +39,7 @@ class TestNotebookSlides(unittest.TestCase):
         nbfile = os.path.join(
             temp, "..", "data", "having_a_form_in_a_notebook.ipynb")
         assert os.path.exists(nbfile)
-        nb = read_nb(nbfile)
+        nb = read_nb(nbfile, kernel=False)
         for i, cell in enumerate(nb.iter_cells()):
             ls = nb.cell_height(cell)
             #fLOG(i,"-",nb.cell_type(cell), l)

@@ -40,9 +40,9 @@ class TestNotebookRunnerOperation (unittest.TestCase):
         nbfile = os.path.join(temp, "..", "data", "simple_example.ipynb")
         nbfile2 = os.path.join(
             temp, "..", "data", "td2a_cenonce_session_4B.ipynb")
-        nb1 = read_nb(nbfile)
+        nb1 = read_nb(nbfile, kernel=False)
         n1 = len(nb1)
-        nb2 = read_nb(nbfile2)
+        nb2 = read_nb(nbfile2, kernel=False)
         n2 = len(nb2)
         add = nb1 + nb2
         nb1.merge_notebook([nb2])
