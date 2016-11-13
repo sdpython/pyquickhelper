@@ -191,9 +191,6 @@ if is_local():
                 f.write("call build_script.bat\n")
                 f.write("call auto_setup_build_sphinx.bat\n")
                 f.write("call auto_cmd_copy_sphinx.bat\n")
-
-    if r:
-        sys.exit()
 else:
     r = False
 
