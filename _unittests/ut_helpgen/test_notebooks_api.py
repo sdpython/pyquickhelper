@@ -48,7 +48,7 @@ class TestNotebookAPI (unittest.TestCase):
                 "notebooks"))
         nb = os.path.join(fold, "example_pyquickhelper.ipynb")
         assert os.path.exists(nb)
-        nbr = read_nb(nb)
+        nbr = read_nb(nb, kernel=False)
 
         temp = get_temp_folder(__file__, "temp_nb_api")
         outfile = os.path.join(temp, "out_nb_slides.slides.html")

@@ -49,7 +49,7 @@ class TestNotebookReadWrite (unittest.TestCase):
         if is_travis_or_appveyor() == "travis":
             warnings.warn("This test prevents travis from ending. The process never stops.")
             return
-        nb = read_nb(nbfile)
+        nb = read_nb(nbfile, kernel=False)
         outfile = os.path.join(temp, "out_notebook.ipynb")
         nb.to_json(outfile)
         assert os.path.exists(outfile)
