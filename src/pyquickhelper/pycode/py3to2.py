@@ -10,6 +10,7 @@ import re
 import shutil
 from ..filehelper.synchelper import explore_folder_iterfile
 from ..loghelper.flog import noLOG
+from .default_regular_expression import _setup_pattern_copy
 
 
 class Convert3to2Exception(Exception):
@@ -21,7 +22,7 @@ class Convert3to2Exception(Exception):
 
 
 def py3to2_convert_tree(folder, dest, encoding="utf8", pattern=".*[.]py$",
-                        pattern_copy=".*[.]((ico)|(7z)|(dll)|(yml)|(rst)|(ipynb)|(gif)|(jpe?g)|(png)|(txt)|(zip)|(gz)|(html)|(exe))$",
+                        pattern_copy=_setup_pattern_copy,
                         unittest_modules=None, fLOG=noLOG):
     """
     Converts files in a folder and its subfolders from python 3 to python 2,

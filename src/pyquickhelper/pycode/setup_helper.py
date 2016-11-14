@@ -34,6 +34,7 @@ from .build_helper import get_build_script, get_script_command, get_extra_script
 from ..filehelper import get_url_content_timeout, explore_folder_iterfile
 from .call_setup_hook import call_setup_hook
 from .tkinter_helper import fix_tkinter_issues_virtualenv
+from .default_regular_expression import _setup_pattern_copy
 
 if sys.version_info[0] == 2:
     from codecs import open
@@ -63,7 +64,7 @@ def available_commands_list(argv):
 
 
 def process_standard_options_for_setup(argv, file_or_folder, project_var_name, module_name=None, unittest_modules=None,
-                                       pattern_copy=".*[.]((ico)|(7z)|(dll)|(yml)|(rst)|(ipynb)|(gif)|(jpe?g)|(png)|(txt)|(zip)|(gz)|(html)|(exe)|(js)|(css)|(tex))$",
+                                       pattern_copy=_setup_pattern_copy,
                                        requirements=None, port=8067, blog_list=None, default_engine_paths=None,
                                        extra_ext=None, add_htmlhelp=False, setup_params=None, coverage_options=None,
                                        coverage_exclude_lines=None, func_sphinx_begin=None, func_sphinx_end=None,
