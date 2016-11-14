@@ -66,23 +66,23 @@ class TestYamlJenkins(unittest.TestCase):
             __file__,
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
-        self.private_test_jenkins_ext_setup_server_yaml(False, None)
+        self.private_tst_jenkins_ext_setup_server_yaml(False, None)
 
     def test_jenkins_ext_setup_server_yaml_disabled(self):
         fLOG(
             __file__,
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
-        self.private_test_jenkins_ext_setup_server_yaml(True, None)
+        self.private_tst_jenkins_ext_setup_server_yaml(True, None)
 
     def test_jenkins_ext_setup_server_yaml_cred(self):
         fLOG(
             __file__,
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
-        self.private_test_jenkins_ext_setup_server_yaml(True, "FFFF")
+        self.private_tst_jenkins_ext_setup_server_yaml(True, "FFFF")
 
-    def private_test_jenkins_ext_setup_server_yaml(self, disable_schedule, credentials):
+    def private_tst_jenkins_ext_setup_server_yaml(self, disable_schedule, credentials):
         fLOG(
             __file__,
             self._testMethodName,

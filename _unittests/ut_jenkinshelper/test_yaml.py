@@ -123,12 +123,12 @@ class TestYaml(unittest.TestCase):
             OutputPrint=__name__ == "__main__")
 
         try:
-            self.a_test_jconvert_sequence_into_batch_file("linux")
+            self.zz_st_jconvert_sequence_into_batch_file("linux")
         except NotImplementedError as e:
             pass
-        self.a_test_jconvert_sequence_into_batch_file("win")
+        self.zz_st_jconvert_sequence_into_batch_file("win")
 
-    def a_test_jconvert_sequence_into_batch_file(self, platform):
+    def zz_st_jconvert_sequence_into_batch_file(self, platform):
         this = os.path.abspath(os.path.dirname(__file__))
         yml = os.path.abspath(os.path.join(
             this, "..", "..", ".local.jenkins.win.yml"))

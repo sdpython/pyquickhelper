@@ -35,9 +35,9 @@ class TestYamlSplit(unittest.TestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
-        self.a_test_jconvert_sequence_into_batch_file_split("win")
+        self.zz_st_jconvert_sequence_into_batch_file_split("win")
 
-    def a_test_jconvert_sequence_into_batch_file_split(self, platform):
+    def zz_st_jconvert_sequence_into_batch_file_split(self, platform):
         this = os.path.abspath(os.path.dirname(__file__))
         yml = os.path.abspath(os.path.join(
             this, "data", "local.yml"))

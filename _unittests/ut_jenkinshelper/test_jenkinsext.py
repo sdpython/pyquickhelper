@@ -34,9 +34,9 @@ class TestJenkinsExt(unittest.TestCase):
             OutputPrint=__name__ == "__main__")
 
         for platform in {'win', 'linux'}:
-            self.a_test_jenkins_job_verif(platform)
+            TestJenkinsExt.zz_st_jenkins_job_verif(self, platform)
 
-    def a_test_jenkins_job_verif(self, platform):
+    def zz_st_jenkins_job_verif(self, platform):
         engines_default = dict(anaconda2="c:\\Anaconda",
                                anaconda3="c:\\Anaconda3",
                                py35="c:\\Python35_x64",

@@ -64,9 +64,10 @@ class TestDownloadContent (unittest.TestCase):
         content2 = read_content_ufs(st, encoding="utf8")
         self.assertEqual(content2, content)
 
-        by = BytesIO(content.encode("utf8"))
-        content2 = read_content_ufs(by, encoding="utf8")
-        self.assertEqual(content2, content)
+        if sys.version_info[0] > 2:
+            by = BytesIO(content.encode("utf8"))
+            content2 = read_content_ufs(by, encoding="utf8")
+            self.assertEqual(content2, content)
 
 
 if __name__ == "__main__":
