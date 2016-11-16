@@ -452,6 +452,7 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
     # we copy javascript dependencies, reveal.js
     ######################################
     fLOG("~~~~ JAVASCRIPT:", html_static_paths)
+    fLOG("~~~~ ROOT:", root_sphinxdoc)
     fLOG("~~~~ BUILD:", build_paths)
     for html_static_path in html_static_paths:
         install_javascript_tools(
@@ -830,18 +831,19 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
     # for every layout
     fLOG("[revealjs] JAVASCRIPT: COPY", html_static_paths)
     fLOG("[revealjs] BUILD:", build_paths)
-    for html_static_path, build_path in zip(html_static_paths, build_paths):
-        builddoc = os.path.join(build_path, "_downloads")
-        if os.path.exists(builddoc):
-            # no download, there is probably no notebooks
-            # so it is not needed
-            fLOG("copy javascript static files from",
-                 html_static_path, "to", builddoc)
-            copy = synchronize_folder(
-                html_static_path, builddoc, copy_1to2=True, fLOG=fLOG)
-            fLOG("javascript", len(copy), "files copied")
-        else:
-            fLOG("[revealjs] no need, no folder", builddoc)
+    for subf in ["html", "epub"]:
+        for html_static_path, build_path in zip(html_static_paths, build_paths):
+            builddoc = os.path.join(build_path, subf, "_downloads")
+            if os.path.exists(builddoc):
+                # no download, there is probably no notebooks
+                # so it is not needed
+                fLOG("copy javascript static files from",
+                     html_static_path, "to", builddoc)
+                copy = synchronize_folder(
+                    html_static_path, builddoc, copy_1to2=True, fLOG=fLOG)
+                fLOG("javascript", len(copy), "files copied")
+            else:
+                fLOG("[revealjs] no need, no folder", builddoc)
 
     ######
     # next

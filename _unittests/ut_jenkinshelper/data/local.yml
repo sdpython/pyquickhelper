@@ -12,7 +12,7 @@ install:
   - JENKINS_SPLIT
 
 before_script:
-  - rem
+  - rem b
   
 script:
   - { CMD: "python -u setup.py unittests", NAME: "UT", TIMEOUT: 900 }

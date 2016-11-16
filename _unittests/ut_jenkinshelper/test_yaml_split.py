@@ -53,16 +53,24 @@ class TestYamlSplit(unittest.TestCase):
         for r, v in res:
             conv = convert_sequence_into_batch_file(
                 r, variables=v, platform=platform)
+            if not isinstance(conv, list):
+                raise TypeError(type(conv))
             convs.append(conv)
-            typstr = str  # unicode#
-            assert isinstance(conv, typstr)
         assert len(res) > 0
 
-        conv = [_ for _ in convs if "SET NAME=UT" in _ and "VERSION=3.5" in _]
-        self.assertEqual(len(conv), 1)
-        conv = conv[0]
+        self.assertEqual(len(convs), 2)
+        conv = convs[0]
         assert conv
-        fLOG(conv)
+        assert isinstance(conv, list)
+        fr = 0
+        for c in conv:
+            if "JENKINS_SPLIT" in c:
+                raise Exception(c)
+            if "pip freeze" in c:
+                fr += 1
+            fLOG("-------------------------------")
+            fLOG(c)
+        self.assertEqual(fr, 1)
 
 
 if __name__ == "__main__":

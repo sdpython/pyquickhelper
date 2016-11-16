@@ -24,6 +24,9 @@ from ..texthelper.templating import apply_template
 from ..filehelper import read_content_ufs
 
 
+_jenkins_split = "JENKINS_SPLIT"
+
+
 def pickname(*l):
     """
     pick the first string non null in the list
@@ -297,11 +300,14 @@ def convert_sequence_into_batch_file(seq, variables=None, platform=None):
     @param      seq         sequence of instructions
     @param      variables   list of variables
     @param      platform    ``sys.platform`` if None
-    @return                 (str) batch file
+    @return                 (str) batch file or a list of batch file if the constant ``JENKINS_SPLIT``
+                            was found in section install (this tweak is needed when the job has to be split
+                            for Jenkins.
     """
+    global _jenkins_split
     if platform is None:
         platform = sys.platform
-    rows = []
+
     iswin = platform.startswith("win")
 
     if iswin:
@@ -314,6 +320,7 @@ def convert_sequence_into_batch_file(seq, variables=None, platform=None):
     anaconda = False
     conda = None
     echo = "@echo" if iswin else "echo"
+
     rowsset = []
     if iswin:
         rowsset.append("@echo off")
@@ -334,6 +341,9 @@ def convert_sequence_into_batch_file(seq, variables=None, platform=None):
                 rows.append("set PATH={0};%PATH%".format(path_pip))
             else:
                 rows.append("export PATH={0}:$PATH".format(path_pip))
+
+    rows = []
+    splits = [rows]
 
     for key, value in seq:
         if key == "python":
@@ -397,6 +407,12 @@ def convert_sequence_into_batch_file(seq, variables=None, platform=None):
                     if "NAME" in value:
                         rows.append("set JOB_NAME=%s" % value["NAME"])
                     value = value["CMD"]
+                elif isinstance(value, list):
+                    starter = rows.copy()
+                else:
+                    raise TypeError(
+                        "value must of type list, dict, not '{0}'".format(type(value)))
+
                 rows.append("")
                 rows.append(echo + " " + key.upper())
                 add_path_win(rows, interpreter, pip, platform)
@@ -406,19 +422,34 @@ def convert_sequence_into_batch_file(seq, variables=None, platform=None):
                     keep = value
                     value = []
                     for v in keep:
-                        value.append(v)
-                        value.append(error_level)
+                        if v == _jenkins_split:
+                            rows.extend(value)
+                            value = []
+                            splits.append(starter.copy())
+                            rows = splits[-1]
+                            add_path_win(rows, interpreter, pip, platform)
+                        else:
+                            value.append(v)
+                            value.append(error_level)
                 rows.extend(value)
         elif key == 'INFO':
             rowsset.append("SET {0}={1}".format(value[0], value[1]))
         else:
             raise ValueError("unexpected key '{0}'".format(key))
-    rows = rowsset + rows
-    try:
-        return "\n".join(rows)
-    except TypeError as e:
-        raise TypeError("Unexpected type\n{0}".format(
-            "\n".join([str((type(_), _)) for _ in rows]))) from e
+
+    splits = [rowsset + _ for _ in splits]
+    allres = []
+    for rows in splits:
+        try:
+            res = "\n".join(rows)
+        except TypeError as e:
+            raise TypeError("Unexpected type\n{0}".format(
+                "\n".join([str((type(_), _)) for _ in rows]))) from e
+        if _jenkins_split in res:
+            raise ValueError(
+                "Constant '{0}' is present in the generated script. It can only be added to the install section.".format(_jenkins_split))
+        allres.append(res)
+    return allres if len(allres) > 1 else allres[0]
 
 
 def infer_project_name(file_or_buffer, source):
@@ -493,7 +524,10 @@ def enumerate_processed_yml(file_or_buffer, context=None, engine="jinja2", platf
         if server is not None:
             name = "_".join([project_name, var.get('NAME', ''), typstr(var.get("VERSION", '')).replace(".", ""),
                              var.get('DIST', '')])
-            conv = "SET NAME_JENKINS=" + name + "\n" + conv
+            if isinstance(conv, list):
+                conv = ["SET NAME_JENKINS=" + name + "\n" + _ for _ in conv]
+            else:
+                conv = "SET NAME_JENKINS=" + name + "\n" + conv
             timeout = var.get("TIMEOUT", None)
             import jenkins
             try:
