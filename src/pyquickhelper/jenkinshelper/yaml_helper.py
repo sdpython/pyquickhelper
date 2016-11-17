@@ -344,6 +344,7 @@ def convert_sequence_into_batch_file(seq, variables=None, platform=None):
 
     rows = []
     splits = [rows]
+    typstr = str  # unicode#
 
     for key, value in seq:
         if key == "python":
@@ -409,9 +410,11 @@ def convert_sequence_into_batch_file(seq, variables=None, platform=None):
                     value = value["CMD"]
                 elif isinstance(value, list):
                     starter = rows.copy()
+                elif isinstance(value, typstr):
+                    pass
                 else:
                     raise TypeError(
-                        "value must of type list, dict, not '{0}'".format(type(value)))
+                        "value must of type list, dict, not '{0}'\n{1}".format(type(value), value))
 
                 rows.append("")
                 rows.append(echo + " " + key.upper())
