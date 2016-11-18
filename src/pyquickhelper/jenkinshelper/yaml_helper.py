@@ -409,7 +409,7 @@ def convert_sequence_into_batch_file(seq, variables=None, platform=None):
                         rows.append("set JOB_NAME=%s" % value["NAME"])
                     value = value["CMD"]
                 elif isinstance(value, list):
-                    starter = rows.copy()
+                    starter = list(rows)
                 elif isinstance(value, typstr):
                     pass
                 else:
@@ -425,10 +425,22 @@ def convert_sequence_into_batch_file(seq, variables=None, platform=None):
                     keep = value
                     value = []
                     for v in keep:
-                        if v == _jenkins_split:
+                        if v.startswith(_jenkins_split):
+                            if "-" in v:
+                                nbrem = v.split("-")[-1]
+                                try:
+                                    nbrem = int(nbrem)
+                                except ValueError as e:
+                                    raise ValueError(
+                                        "Unable to interpret '{0}'".format(v))
+                            else:
+                                nbrem = 0
                             rows.extend(value)
                             value = []
-                            splits.append(starter.copy())
+                            st = starter.copy()
+                            if nbrem > 0:
+                                st = st[:-nbrem]
+                            splits.append(st)
                             rows = splits[-1]
                             add_path_win(rows, interpreter, pip, platform)
                         else:

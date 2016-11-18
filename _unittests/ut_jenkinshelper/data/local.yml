@@ -9,7 +9,7 @@ virtualenv:
   
 install:
   - pip freeze
-  - JENKINS_SPLIT
+  - JENKINS_SPLIT-1
 
 before_script:
   - rem b
