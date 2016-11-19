@@ -21,7 +21,7 @@ else:
 class bigger_node(nodes.Element):
 
     """
-    defines *sharenet* node
+    defines *bigger* node
     """
     pass
 
@@ -29,7 +29,7 @@ class bigger_node(nodes.Element):
 def bigger_role(role, rawtext, text, lineno, inliner,
                 options={}, content=[]):
     """
-    Defines custom roles *bigger*. The following instructions defines
+    Defines custom role *bigger*. The following instructions defines
     buttons of size 20 (:bigger:`text`)::
 
         :bigger:`text`
@@ -58,7 +58,7 @@ def bigger_role(role, rawtext, text, lineno, inliner,
 
 def visit_bigger_node(self, node):
     """
-    what to do when visiting a node sharenet
+    what to do when visiting a node *bigger*
     the function should have different behaviour,
     depending on the format, or the setup should
     specify a different function for each.
@@ -68,7 +68,7 @@ def visit_bigger_node(self, node):
 
 def depart_bigger_node(self, node):
     """
-    what to do when leaving a node sharenet
+    what to do when leaving a node *bigger*
     the function should have different behaviour,
     depending on the format, or the setup should
     specify a different function for each.

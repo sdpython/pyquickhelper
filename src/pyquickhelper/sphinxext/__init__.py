@@ -12,6 +12,7 @@
 from .blog_post import BlogPost
 from .blog_post_list import BlogPostList
 from .sphinx_bigger_extension import bigger_node, bigger_role
+from .sphinx_githublink_extension import githublink_node, githublink_role
 from .sphinx_blocref_extension import BlocRef, BlocRefList
 from .sphinx_blog_extension import BlogPostDirective, BlogPostDirectiveAgg
 from .sphinx_exref_extension import ExRef, ExRefList

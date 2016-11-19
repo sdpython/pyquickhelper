@@ -181,18 +181,19 @@ class RunPythonDirective(Directive):
         interpreted. *showout* will complement the RST output with the raw format.
 
     The directive has three options:
-        * ``:indent:<int>`` to indent the output
-        * ``:showcode:`` to show the code before its output
-        * ``:rst:`` to interpret the output, otherwise, it is considered as raw text
-        * ``:sin:<text_for_in>`` which text to display before the code (by default *In*)
-        * ``:sout:<text_for_in>`` which text to display before the output (by default *Out*)
-        * ``:showout`` if *:rst:* is set up, this flag adds the raw rst output to check what is happening
-        * ``:sphinx:`` by default, function `nested_parse_with_titles <http://sphinx-doc.org/extdev/markupapi.html?highlight=nested_parse>`_ is
-          used to parse the output of the script, if this option is set to false,
-          `public_doctree <http://code.nabla.net/doc/docutils/api/docutils/core/docutils.core.publish_doctree.html>`_.
-        * ``setsysvar`` adds a member to *sys* modulen the module can act differently based on that information,
-          if the value is left empty, *sys.enable_disabled_documented_pieces_of_code* will be be set up to *True*.
-        * ``process`` run the script in an another process
+
+    * ``:indent:<int>`` to indent the output
+    * ``:showcode:`` to show the code before its output
+    * ``:rst:`` to interpret the output, otherwise, it is considered as raw text
+    * ``:sin:<text_for_in>`` which text to display before the code (by default *In*)
+    * ``:sout:<text_for_in>`` which text to display before the output (by default *Out*)
+    * ``:showout`` if *:rst:* is set up, this flag adds the raw rst output to check what is happening
+    * ``:sphinx:`` by default, function `nested_parse_with_titles <http://sphinx-doc.org/extdev/markupapi.html?highlight=nested_parse>`_ is
+      used to parse the output of the script, if this option is set to false,
+      `public_doctree <http://code.nabla.net/doc/docutils/api/docutils/core/docutils.core.publish_doctree.html>`_.
+    * ``setsysvar`` adds a member to *sys* modulen the module can act differently based on that information,
+      if the value is left empty, *sys.enable_disabled_documented_pieces_of_code* will be be set up to *True*.
+    * ``process`` run the script in an another process
 
     Option *rst* can be used the following way::
 

@@ -15,6 +15,7 @@ from ..texthelper.texts_language import TITLES
 from ..loghelper.flog import noLOG
 from . helpgen_exceptions import HelpGenConvertError
 from ..sphinxext.sphinx_bigger_extension import setup as setup_bigger
+from ..sphinxext.sphinx_githublink_extension import setup as setup_githublink
 from ..sphinxext.sphinx_blocref_extension import setup as setup_blocref
 from ..sphinxext.sphinx_blog_extension import setup as setup_blog
 from ..sphinxext.sphinx_exref_extension import setup as setup_exref
@@ -341,6 +342,7 @@ def rst2html(s, fLOG=noLOG, writer="sphinx", keep_warnings=False,
         setup_sharenet(mockapp)
         setup_todoext(mockapp)
         setup_bigger(mockapp)
+        setup_githublink(mockapp)
         setup_runpython(mockapp)
         setup_mathdef(mockapp)
         setup_blocref(mockapp)

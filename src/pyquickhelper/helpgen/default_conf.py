@@ -401,6 +401,13 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
 
     if extlinks is None:
         extlinks = dict()
+        githublink_options = None
+    elif 'issue' in extlinks:
+        issue = extlinks['issue'].split('/')
+        len = len(issue)
+        user = issue[-4]
+        project = issue[-3]
+        githublink_options = dict(user=user, project=project)
 
     # collect local variables
     loc = locals()
@@ -491,6 +498,7 @@ def custom_setup(app, author):
     see `Sphinx core events <http://sphinx-doc.org/extdev/appapi.html?highlight=setup#sphinx-core-events>`_
     """
     from ..sphinxext.sphinx_bigger_extension import setup as setup_bigger
+    from ..sphinxext.sphinx_githublink_extension import setup as setup_githublink
     from ..sphinxext.sphinx_blog_extension import setup as setup_blogpost
     from ..sphinxext.sphinx_blocref_extension import setup as setup_blocref
     from ..sphinxext.sphinx_exref_extension import setup as setup_exref
@@ -506,6 +514,7 @@ def custom_setup(app, author):
 
     setup_runpython(app)
     setup_bigger(app)
+    setup_githublink(app)
     setup_sharenet(app)
     setup_todoext(app)
     setup_blogpost(app)
