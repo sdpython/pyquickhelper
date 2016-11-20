@@ -22,7 +22,8 @@ KEYWORDS = project_var_name + \
 DESCRIPTION = """Various functionalities: folder synchronization, a logging function, helpers
 to generate documentation with sphinx, generation of code for Python 2.7 from Python 3"""
 CLASSIFIERS = [
-    'Programming Language :: Python :: %d' % sys.version_info[0],
+    'Programming Language :: Python :: 3',
+    'Programming Language :: Python :: 2.7',
     'Intended Audience :: Developers',
     'Topic :: Scientific/Engineering',
     'Topic :: Education',
