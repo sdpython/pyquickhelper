@@ -399,15 +399,27 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
                     \\newcommand{\\R}{\\mathbb{R}}
                     """
 
+    if github_user:
+        githublink_options = dict(user=github_user)
+    else:
+        githublink_options = None
+    if github_repo:
+        githublink_options['project'] = github_repo.strip("/").split("/")[-1]
+
     if extlinks is None:
         extlinks = dict()
-        githublink_options = None
     elif 'issue' in extlinks:
-        issue = extlinks['issue'].split('/')
-        len = len(issue)
-        user = issue[-4]
-        project = issue[-3]
-        githublink_options = dict(user=user, project=project)
+        issue = extlinks['issue'][0].split('/')
+        le = len(issue)
+        if le > 0:
+            user = issue[-4]
+            project = issue[-3]
+            if githublink_options is None:
+                githublink_options = {}
+            if 'user' not in githublink_options:
+                githublink_options["user"] = user
+            if 'project' not in githublink_options:
+                githublink_options["project"] = project
 
     # collect local variables
     loc = locals()

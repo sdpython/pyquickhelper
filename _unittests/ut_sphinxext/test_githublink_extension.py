@@ -60,9 +60,15 @@ class TestGitHubLinkExtension(unittest.TestCase):
 
                     before
 
-                    :githublink:`j`
+                    :githublink:`j|py`
 
                     after
+
+                    :githublink:`j`
+
+                    again
+
+                    :githublink:`j|py|84`
 
                     this code shoud appear
                     """.replace("                    ", "")
@@ -72,13 +78,25 @@ class TestGitHubLinkExtension(unittest.TestCase):
         html = rst2html(content, fLOG=fLOG,
                         writer="custom", keep_warnings=True,
                         directives=None,
-                        github_options=dict(user="sdpython", project="pyquickhelper"))
+                        githublink_options=dict(user="sdpython", project="pyquickhelper"))
 
         t1 = "this code shoud not appear"
         if t1 in html:
             raise Exception(html)
 
         t1 = "this code shoud appear"
+        if t1 not in html:
+            raise Exception(html)
+
+        t1 = "https://github.com/sdpython/pyquickhelper/blob/master/src/string.py#L7"
+        if t1 not in html:
+            raise Exception(html)
+
+        t1 = "https://github.com/sdpython/pyquickhelper/blob/master/src/string#L11"
+        if t1 not in html:
+            raise Exception(html)
+
+        t1 = "https://github.com/sdpython/pyquickhelper/blob/master/src/string.py#L84"
         if t1 not in html:
             raise Exception(html)
 

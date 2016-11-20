@@ -802,7 +802,7 @@ def produces_indexes(
         under = "=" * len(title)
 
         content = "\n".join([".. contents::", "    :local:",
-                             "    :maxdepth: 1", "", "", "Summary", "+++++++"])
+                             "    :depth: 1", "", "", "Summary", "+++++++"])
 
         if os.environ.get("USERNAME", os.environ.get("USER", "````````````")) in title:
             raise HelpGenException(
