@@ -367,7 +367,7 @@ def apply_modification_template(rootm,
 
     @param      rootm       root of the module
     @param      store_obj   keep track of all objects extracted from the module
-    @param      action      output from copy_source_files
+    @param      action      output from @see fn copy_source_files
     @param      template    rst template to produce
     @param      rootrep     file name in the documentation contains some folders which are not desired in the documentation
     @param      softfile    softfile is a function (f : filename --> True or False), when it is True,
@@ -436,6 +436,8 @@ def apply_modification_template(rootm,
 
                 doc = "\n".join(doc)
                 doc = "module ``" + mo.__name__ + "``\n\n" + doc
+                if ":githublink:" not in doc:
+                    doc += "\n\n:githublink:`GitHub|py|*`"
             else:
                 doc = ""
                 shortdoc = "empty"
@@ -1328,23 +1330,15 @@ def migrating_doxygen_doc(content, filename, silent=False, log=False, debug=Fals
         return private_migrating_doxygen_doc(r, index_first_line,
                                              filename, debug=debug, silent=silent)
 
-    process_string(content,
-                   print_in_rows,
-                   local_private_migrating_doxygen_doc,
-                   filename,
-                   0,
-                   debug=debug)
+    process_string(content, print_in_rows, local_private_migrating_doxygen_doc,
+                   filename, 0, debug=debug)
     return counts, "\n".join(rows)
 
 # -- HELP BEGIN EXCLUDE --
 
 
-def private_migrating_doxygen_doc(
-        rows,
-        index_first_line,
-        filename,
-        debug=False,
-        silent=False):
+def private_migrating_doxygen_doc(rows, index_first_line, filename,
+                                  debug=False, silent=False):
     """
     process a block help (from doxygen to rst):
 
@@ -1725,6 +1719,11 @@ def private_migrating_doxygen_doc(
             fLOG("error: ", mes)
             raise SyntaxError(mes)
 
+    # add githublink
+    link = [_ for _ in rows if ":githublink:" in _]
+    if len(link) == 0:
+        rows.append("")
+        rows.append(":githublink:`source on GitHub|py|{0}`".format(index_first_line))
     return rows
 
 # -- HELP END EXCLUDE --
