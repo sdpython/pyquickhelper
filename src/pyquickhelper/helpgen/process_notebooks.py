@@ -247,6 +247,10 @@ def _process_notebooks_in(notebooks, outfold, build, latex_path=None, pandoc_pat
         nbout = os.path.splitext(nbout)[0]
         for format in formats:
 
+            if format == "github":
+                # we add a link on the rst page in that case
+                continue
+
             if format not in extensions:
                 raise NotebookConvertError("unable to find format: {} in {}".format(
                     format, ", ".join(extensions.keys())))
