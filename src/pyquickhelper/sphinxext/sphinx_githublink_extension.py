@@ -68,8 +68,8 @@ def make_link_node(rawtext, app, path, anchor, lineno, options, settings):
             raise AttributeError(
                 "settings does not have a key githublink_options, app does not have a member config.\n{0}".format(lines))
     except AttributeError as err:
-        raise ValueError(
-            'githublink_options configuration value is not set (%s)' % str(err))
+        # it just means the role will be ignored
+        return None
     user = opt["user"]
     project = opt["project"]
     ref = "https://github.com/{0}/{1}/blob/master/{2}".format(user, project, path)
@@ -140,7 +140,10 @@ def githublink_role(role, rawtext, text, lineno, inliner,
                                      line=lineno)
         prb = inliner.problematic(rawtext, rawtext, msg)
         return [prb], [msg]
-    return [node], []
+    if node is None:
+        return [], []
+    else:
+        return [node], []
 
 
 def setup(app):
