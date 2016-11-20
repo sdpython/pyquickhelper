@@ -115,7 +115,8 @@ def post_process_latex_output_any(file):
         f.write(content)
 
 
-def post_process_rst_output(file, html, pdf, python, slides, present, is_notebook=False, exc=True):
+def post_process_rst_output(file, html, pdf, python, slides, present, is_notebook=False,
+                            exc=True, github=False, notebook=None):
     """
     process a RST file generated from the conversion of a notebook
 
@@ -127,12 +128,14 @@ def post_process_rst_output(file, html, pdf, python, slides, present, is_noteboo
     @param      present         if True, add a link to the slides conversion (with *nbpresent*)
     @param      is_notebook     does something more if the file is a notebook
     @param      exc             raises an exception (True) or a warning (False)
+    @param      github          add a link to the notebook on github
+    @param      notebook        location of the notebook, file might be a copy
 
     .. versionchanged:: 1.4
         Parameter *present* was added.
 
     .. versionchanged:: 1.5::
-        Parameter *exc* was added.
+        Parameters *exc*, *github*, *notebook* were added.
     """
     fLOG("    post_process_rst_output", file)
 
@@ -251,6 +254,18 @@ def post_process_rst_output(file, html, pdf, python, slides, present, is_noteboo
     if present:
         links.append(
             '`presentation <../_downloads/{0}.slides2p.html>`_ :download:`. <{0}.slides2p.html>`'.format(noext))
+    if github:
+        if notebook is None:
+            raise ValueError("cannot add a link on github, notebook is None for file='{0}'".format(file))
+        docname = notebook
+        folder = docname
+        git = os.path.join(folder, ".git")
+        while len(folder) > 0 and not os.path.exists(git):
+            folder = os.path.split(folder)[0]
+            git = os.path.join(folder, ".git")
+        if len(folder) > 0:
+            path = docname[len(folder):]
+        links.append(":githublink:`GitHub|{0}|*`".format(path.replace("\\", "/").lstrip("/")))
     lines[pos] = "{0}\n\n{1}\n\n".format(lines[pos], ", ".join(links))
 
     # we remove the

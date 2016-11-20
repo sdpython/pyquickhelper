@@ -70,7 +70,8 @@ def process_standard_options_for_setup(argv, file_or_folder, project_var_name, m
                                        coverage_exclude_lines=None, func_sphinx_begin=None, func_sphinx_end=None,
                                        additional_notebook_path=None, additional_local_path=None, copy_add_ext=None,
                                        nbformats=(
-                                           "ipynb", "html", "python", "rst", "slides", "pdf", "present"),
+                                           "ipynb", "html", "python", "rst", "slides",
+                                           "pdf", "present", "github"),
                                        layout=["html", "pdf"],  # , "epub"],
                                        additional_ut_path=None,
                                        skip_function=default_skip_function, covtoken=None, hook_print=True,

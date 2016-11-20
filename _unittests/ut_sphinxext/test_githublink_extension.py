@@ -70,6 +70,14 @@ class TestGitHubLinkExtension(unittest.TestCase):
 
                     :githublink:`j|py|84`
 
+                    again
+
+                    :githublink:`j|myfile.ipynb|83`
+
+                    again
+
+                    :githublink:`j|myfile.ipynb|*`
+
                     this code shoud appear
                     """.replace("                    ", "")
         if sys.version_info[0] >= 3:
@@ -97,6 +105,14 @@ class TestGitHubLinkExtension(unittest.TestCase):
             raise Exception(html)
 
         t1 = "https://github.com/sdpython/pyquickhelper/blob/master/src/string.py#L84"
+        if t1 not in html:
+            raise Exception(html)
+
+        t1 = "https://github.com/sdpython/pyquickhelper/blob/master/myfile.ipynb#L83"
+        if t1 not in html:
+            raise Exception(html)
+
+        t1 = "https://github.com/sdpython/pyquickhelper/blob/master/myfile.ipynb"
         if t1 not in html:
             raise Exception(html)
 

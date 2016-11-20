@@ -47,7 +47,7 @@ Another list
 
 def process_notebooks(notebooks, outfold, build, latex_path=None, pandoc_path=None,
                       formats=("ipynb", "html", "python", "rst",
-                               "slides", "pdf", "present"), fLOG=fLOG, exc=True):
+                               "slides", "pdf", "present", "github"), fLOG=fLOG, exc=True):
     """
     Converts notebooks into html, rst, latex, pdf, python, docx using
     `nbconvert <http://ipython.org/ipython-doc/rel-1.0.0/interactive/nbconvert.html>`_.
@@ -91,7 +91,7 @@ def process_notebooks(notebooks, outfold, build, latex_path=None, pandoc_path=No
             process_notebooks("td1a_correction_session7.ipynb",
                             "dest_folder",
                             "dest_folder",
-                            formats=("ipynb", "html", "python", "rst", "slides", "pdf", "docx", "present")])
+                            formats=("ipynb", "html", "python", "rst", "slides", "pdf", "docx", "present", "github")])
 
     .. versionchanged:: 1.4
         Add another format for the slides (with `nbpresent <https://pypi.python.org/pypi/nbpresent>`_).
@@ -103,6 +103,7 @@ def process_notebooks(notebooks, outfold, build, latex_path=None, pandoc_path=No
         For latex and pdf, a custom processor was added to handle raw data
         and add ``\\begin{verbatim}`` and ``\\end{verbatim}``.
         Parameter *exc* was added.
+        Format *github* was added, it adds a link to file on github.
 
     .. todoext::
         :title: Allow hidden rst instruction in notebook (for references)
@@ -171,7 +172,7 @@ def _process_notebooks_in_private_cmd(fnbcexe, list_args, options_args, fLOG):
 
 def _process_notebooks_in(notebooks, outfold, build, latex_path=None, pandoc_path=None,
                           formats=("ipynb", "html", "python", "rst",
-                                   "slides", "pdf", "present"),
+                                   "slides", "pdf", "present", "github"),
                           fLOG=fLOG, exc=True):
     from nbconvert.nbconvertapp import main as nbconvert_main
     if pandoc_path is None:
@@ -481,7 +482,8 @@ def _process_notebooks_in(notebooks, outfold, build, latex_path=None, pandoc_pat
                 # we add a link to the notebook
                 thisfiles += add_link_to_notebook(
                     outputfile, notebook, "pdf" in formats, "html" in formats, "python" in formats,
-                    "slides" in formats, "present" in formats, exc=exc)
+                    "slides" in formats, "present" in formats, exc=exc, github="github" in formats,
+                    notebook=notebook)
 
             elif format in ("tex", "latex", "pdf"):
                 thisfiles += add_link_to_notebook(outputfile, notebook, False, False,
@@ -557,7 +559,8 @@ def _process_notebooks_in(notebooks, outfold, build, latex_path=None, pandoc_pat
     return copy + [(_, False) for _ in skipped]
 
 
-def add_link_to_notebook(file, nb, pdf, html, python, slides, present, exc=True):
+def add_link_to_notebook(file, nb, pdf, html, python, slides, present, exc=True,
+                         github=False, notebook=None):
     """
     add a link to the notebook in HTML format and does a little bit of cleaning
     for various format
@@ -570,6 +573,8 @@ def add_link_to_notebook(file, nb, pdf, html, python, slides, present, exc=True)
     @param      slides      if True, add a link to the HTML slides
     @param      present     if True, add a link to the HTML present
     @param      exc         raises an exception (True) or a warning (False)
+    @param      github      add a link to the notebook on github
+    @param      notebook    location of the notebook (file might be a copy)
     @return                 list of generated files
 
     The function does some cleaning too in the files.
@@ -578,7 +583,7 @@ def add_link_to_notebook(file, nb, pdf, html, python, slides, present, exc=True)
         Parameter *present* was added.
 
     .. versionchanged:: 1.5
-        Parameter *exc* was added.
+        Parameters *exc*, *github*, *notebook* were added.
     """
     core, ext = os.path.splitext(file)
     if core.endswith(".slides"):
@@ -612,7 +617,8 @@ def add_link_to_notebook(file, nb, pdf, html, python, slides, present, exc=True)
         return res
     elif ext == ".rst":
         post_process_rst_output(
-            file, html, pdf, python, slides, present, is_notebook=True, exc=exc)
+            file, html, pdf, python, slides, present, is_notebook=True, exc=exc,
+            github=github, notebook=notebook)
         return res
     else:
         raise HelpGenException(

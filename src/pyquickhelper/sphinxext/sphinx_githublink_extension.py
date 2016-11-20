@@ -4,6 +4,17 @@
 @brief Defines a sphinx extension to display a link on github.
 
 .. versionadded:: 1.5
+
+
+.. todoext::
+    :title: add link to github code for each function, class...
+    :cost: 2
+    :hidden:
+    :date: 2016-11-20
+    :tag: done
+
+    Add a link to the source on GitHub in the documentation for every function,
+    class, notebook.
 """
 import os
 import sphinx
@@ -61,8 +72,9 @@ def make_link_node(rawtext, app, path, anchor, lineno, options, settings):
             'githublink_options configuration value is not set (%s)' % str(err))
     user = opt["user"]
     project = opt["project"]
-    ref = "https://github.com/{0}/{1}/blob/master/{2}#L{3}".format(
-        user, project, path, lineno)
+    ref = "https://github.com/{0}/{1}/blob/master/{2}".format(user, project, path)
+    if lineno:
+        ref += "#L{0}".format(lineno)
     set_classes(options)
     node = nodes.reference(rawtext, anchor, refuri=ref, **options)
     return node
@@ -109,8 +121,11 @@ def githublink_role(role, rawtext, text, lineno, inliner,
         spl = text.split("|")
         if len(spl) == 3:
             text, ext, no = spl
-            path += "." + ext
-            lineno = int(no)
+            if len(ext) > 5 or "." in ext:
+                path = ext
+            else:
+                path += "." + ext
+            lineno = int(no) if no != "*" else None
         elif len(spl) != 2:
             raise ValueError("unable to interpret '{0}'".format(text))
         else:
