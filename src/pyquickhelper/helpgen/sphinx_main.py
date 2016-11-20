@@ -342,7 +342,6 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
     #################################################
     for t3 in layout:
         lay, build, override, newconf = lay_build_override_newconf(t3)
-        build = os.path.normpath(os.path.abspath(build))
         fLOG("~~~~ newconf:", newconf, t3)
         if newconf is None:
             continue
@@ -379,7 +378,8 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
         if not os.path.exists(html_static_path):
             raise FileNotFoundError("no static path:" + html_static_path)
         html_static_paths.append(html_static_path)
-        build_paths.append(build)
+        build_paths.append(
+            os.path.normpath(os.path.join(html_static_path, "..", "..", build, "html")))
         parameters.append(dict(latex_book=thenewconf.latex_book))
 
     ################################################################
@@ -459,12 +459,14 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
     for html_static_path in html_static_paths:
         install_javascript_tools(
             root_sphinxdoc, dest=html_static_path, fLOG=fLOG)
-    for build in build_paths:
-        dest = os.path.join(build, "_downloads")
-        if not os.path.exists(dest):
-            os.makedirs(dest)
-        install_javascript_tools(
-            root_sphinxdoc, dest=dest, fLOG=fLOG)
+
+    # We should not need that.
+    # for build in build_paths:
+    #     dest = os.path.join(build, "_downloads")
+    #     if not os.path.exists(dest):
+    #         os.makedirs(dest)
+    #     install_javascript_tools(
+    #         root_sphinxdoc, dest=dest, fLOG=fLOG)
 
     ##############
     # copy the files
