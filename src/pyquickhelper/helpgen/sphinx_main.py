@@ -459,6 +459,12 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
     for html_static_path in html_static_paths:
         install_javascript_tools(
             root_sphinxdoc, dest=html_static_path, fLOG=fLOG)
+    for build in build_paths:
+        dest = os.path.join(build, "_downloads")
+        if not os.path.exists(dest):
+            os.makedirs(dest)
+        install_javascript_tools(
+            root_sphinxdoc, dest=dest, fLOG=fLOG)
 
     ##############
     # copy the files

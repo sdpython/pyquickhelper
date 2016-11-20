@@ -166,8 +166,7 @@ def _nbpresent_export(ipynb=None, outfile=None, out_format=None, verbose=None):
 
 def nb2present(nb_file, outfile, add_tag=True):
     """
-    convert a notebooks into slides, it copies
-    reveal.js if not present in the folder of the output
+    convert a notebooks into slides with *format=present*.
 
     @param      nb_file         notebook file or a stream or a @see fn read_nb
     @param      outfile         output file (a string)

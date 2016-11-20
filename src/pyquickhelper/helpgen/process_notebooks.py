@@ -17,6 +17,7 @@ from ..filehelper.synchelper import has_been_updated
 from .post_process import post_process_latex_output, post_process_latex_output_any, post_process_rst_output
 from .post_process import post_process_html_output, post_process_slides_output, post_process_python_output
 from .helpgen_exceptions import NotebookConvertError
+from .install_js_dep import install_javascript_tools
 
 
 if sys.version_info[0] == 2:
@@ -106,7 +107,7 @@ def process_notebooks(notebooks, outfold, build, latex_path=None, pandoc_path=No
         Format *github* was added, it adds a link to file on github.
 
     .. todoext::
-        :title: Allow hidden rst instruction in notebook (for references)
+        :title: Allow hidden rst instructions in notebook (for references)
         :tag: enhancement
         :issue: 10
 
@@ -122,9 +123,18 @@ def process_notebooks(notebooks, outfold, build, latex_path=None, pandoc_path=No
         For Latex and PDF, the custom preprocessor is not taken into account.
         by function _process_notebooks_in_private.
     """
-    return _process_notebooks_in(notebooks=notebooks, outfold=outfold, build=build,
-                                 latex_path=latex_path, pandoc_path=pandoc_path,
-                                 formats=formats, fLOG=fLOG, exc=exc)
+    res = _process_notebooks_in(notebooks=notebooks, outfold=outfold, build=build,
+                                latex_path=latex_path, pandoc_path=pandoc_path,
+                                formats=formats, fLOG=fLOG, exc=exc)
+    if "slides" in formats:
+        # we copy javascript dependencies, reveal.js
+        reveal = os.path.join(outfold, "reveal.js")
+        if not os.path.exists(reveal):
+            install_javascript_tools(None, dest=outfold)
+        reveal = os.path.join(build, "reveal.js")
+        if not os.path.exists(reveal):
+            install_javascript_tools(None, dest=build)
+    return res
 
 
 def _process_notebooks_in_private(fnbcexe, list_args, options_args):
