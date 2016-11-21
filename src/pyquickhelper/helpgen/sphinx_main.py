@@ -844,6 +844,10 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
     for subf in ["html", "epub"]:
         for html_static_path, build_path in zip(html_static_paths, build_paths):
             builddoc = os.path.join(build_path, subf, "_downloads")
+            if not os.path.exists(builddoc):
+                builddoc = os.path.join(build_path, "..", subf, "_downloads")
+            if not os.path.exists(builddoc):
+                builddoc = os.path.join(build_path, "_downloads")
             if os.path.exists(builddoc):
                 # no download, there is probably no notebooks
                 # so it is not needed
