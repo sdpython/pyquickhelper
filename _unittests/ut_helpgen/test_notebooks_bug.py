@@ -92,7 +92,8 @@ class TestNoteBooksBug(unittest.TestCase):
             content = f.read()
         if "\\section{" not in content:
             raise Exception(content)
-        checks = [os.path.join(temp, "reveal.js"), os.path.join(temp, "require.js")]
+        checks = [os.path.join(temp, "reveal.js"),
+                  os.path.join(temp, "require.js")]
         for check in checks:
             if not os.path.exists(check):
                 raise Exception(check)

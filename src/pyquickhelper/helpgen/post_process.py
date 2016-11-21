@@ -256,7 +256,8 @@ def post_process_rst_output(file, html, pdf, python, slides, present, is_noteboo
             '`presentation <../_downloads/{0}.slides2p.html>`_ :download:`. <{0}.slides2p.html>`'.format(noext))
     if github:
         if notebook is None:
-            raise ValueError("cannot add a link on github, notebook is None for file='{0}'".format(file))
+            raise ValueError(
+                "cannot add a link on github, notebook is None for file='{0}'".format(file))
         docname = notebook
         folder = docname
         git = os.path.join(folder, ".git")
@@ -265,7 +266,8 @@ def post_process_rst_output(file, html, pdf, python, slides, present, is_noteboo
             git = os.path.join(folder, ".git")
         if len(folder) > 0:
             path = docname[len(folder):]
-        links.append(":githublink:`GitHub|{0}|*`".format(path.replace("\\", "/").lstrip("/")))
+        links.append(
+            ":githublink:`GitHub|{0}|*`".format(path.replace("\\", "/").lstrip("/")))
     lines[pos] = "{0}\n\n{1}\n\n".format(lines[pos], ", ".join(links))
 
     # we remove the

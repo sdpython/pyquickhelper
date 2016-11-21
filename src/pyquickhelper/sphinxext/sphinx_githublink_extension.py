@@ -41,6 +41,27 @@ def make_link_node(rawtext, app, path, anchor, lineno, options, settings):
     :param anchor: anchor
     :param options: Options dictionary passed to role func.
     :param settings: settings
+
+    The configuration of the documentation must contain
+    a member ``githublink_options`` (a dictionary) which contains the following fields
+    either the pair:
+
+    * *user*, *project*: to form the url
+      ``https://github.com/<user>/<project>``
+
+    Or the field:
+
+    * *processor*: function with takes a path and a line number and returns an url.
+
+    Example:
+
+    ::
+
+        def processor_github(path, lineno):
+            url = "https://github.com/{0}/{1}/blob/master/{2}".format(user, project, path)
+            if lineno:
+                url += "#L{0}".format(lineno)
+            return url
     """
     try:
         exc = []
@@ -70,18 +91,22 @@ def make_link_node(rawtext, app, path, anchor, lineno, options, settings):
     except AttributeError as err:
         # it just means the role will be ignored
         return None
-    user = opt["user"]
-    project = opt["project"]
-    ref = "https://github.com/{0}/{1}/blob/master/{2}".format(user, project, path)
-    if lineno:
-        ref += "#L{0}".format(lineno)
+    if "processor" not in opt:
+        user = opt["user"]
+        project = opt["project"]
+        ref = "https://github.com/{0}/{1}/blob/master/{2}".format(
+            user, project, path)
+        if lineno:
+            ref += "#L{0}".format(lineno)
+    else:
+        ref = opt["processor"](path, lineno)
     set_classes(options)
     node = nodes.reference(rawtext, anchor, refuri=ref, **options)
     return node
 
 
 def githublink_role(role, rawtext, text, lineno, inliner,
-                    options={}, content=[]):
+                    options=None, content=None):
     """
     Defines custom role *githublink*. The following instruction add
     a link to the documentation on github.
@@ -93,14 +118,17 @@ def githublink_role(role, rawtext, text, lineno, inliner,
     :param text: The text marked with the role.
     :param lineno: The line number where rawtext appears in the input.
     :param inliner: The inliner instance that called us.
-    :param options: Directive options for customization.
-    :param content: The directive content for customization.
+    :param options: Directive options for customization (dictionary)
+    :param content: The directive content for customization (list)
     :return: ``[node], []``
-
 
     The pipe ``|`` indicates that  an extension must be added to
     *docname* to get the true url.
     """
+    if options is None:
+        options = {}
+    if content is None:
+        content = []
     if not rawtext or len(rawtext) == 0:
         rawtext = "github"
     app = inliner.document.settings.env.app

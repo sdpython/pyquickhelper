@@ -1443,6 +1443,11 @@ def private_migrating_doxygen_doc(rows, index_first_line, filename,
     faq_ = re.compile("([@]FAQ[(](.*?___)?(.*?)[)])")
     nb_ = re.compile("([@]NB[(](.*?___)?(.*?)[)])")
 
+    # min indent
+    space_rows = [(r.lstrip(), r) for r in rows if len(r.strip()) > 0]
+    min_indent = min(len(r[1]) - len(r[0]) for r in space_rows)
+
+    # processing doxygen documentation
     indent = False
     openi = False
     beginends = {}
@@ -1723,7 +1728,8 @@ def private_migrating_doxygen_doc(rows, index_first_line, filename,
     link = [_ for _ in rows if ":githublink:" in _]
     if len(link) == 0:
         rows.append("")
-        rows.append(":githublink:`source on GitHub|py|{0}`".format(index_first_line))
+        rows.append("{1}:githublink:`source on GitHub|py|{0}`".format(
+            index_first_line, " " * min_indent))
     return rows
 
 # -- HELP END EXCLUDE --

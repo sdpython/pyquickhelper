@@ -364,7 +364,7 @@ class JenkinsExt(jenkins.Jenkins):
 
     def extract_requirements(self, job):
         """
-        exrract the requirements for a job
+        extract the requirements for a job
 
         @param      job     job name
         @return             3-tuple job, local requirements, pipy requirements
