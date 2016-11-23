@@ -47,8 +47,8 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
     @param      custom_style            custom style sheet
     @param      extlinks                parameter `extlinks <http://www.sphinx-doc.org/en/stable/ext/extlinks.html#confval-extlinks>`_,
                                         example: ``{'issue': ('https://github.com/sdpython/pyquickhelper/issues/%s', 'issue {0} on GitHub')}``
-    @param      github_user             github user
-    @param      github_repo             github project
+    @param      github_user             git(hub) user
+    @param      github_repo             git(hub) project
     @param      title                   if not None, use *title* instead of *module_name* as a title
     @param      book                    the output is a book
 
@@ -234,40 +234,22 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
     graphviz_output_format = "svg"
     graphviz_dot = find_graphviz_dot()
 
-    # todo
+    # todo, mathdef, blocref, faqref, exref, nbref
     todo_include_todos = True
     todoext_include_todosext = True
-
-    # mathdef
     mathdef_include_mathsext = True
-
-    # blocref
     blocref_include_blocrefs = True
-
-    # faqref
     faqref_include_faqrefs = True
-
-    # exref
     exref_include_exrefs = True
-
-    # nbref
     nbref_include_nbrefs = True
 
     # extensions
-    extensions = ['sphinx.ext.autodoc',
-                  'sphinx.ext.autosummary',
-                  'sphinx.ext.coverage',
-                  'sphinx.ext.extlinks',
-                  'sphinx.ext.graphviz',
-                  'sphinx.ext.ifconfig',
+    extensions = ['sphinx.ext.autodoc', 'sphinx.ext.autosummary', 'sphinx.ext.coverage',
+                  'sphinx.ext.extlinks', 'sphinx.ext.graphviz', 'sphinx.ext.ifconfig',
                   'sphinx.ext.inheritance_diagram',
                   'sphinx.ext.mathjax' if use_mathjax else 'sphinx.ext.imgmath',
-                  'sphinx.ext.napoleon',
-                  'sphinx.ext.todo',
-                  'sphinx.ext.viewcode',
-                  'sphinxcontrib.images',
-                  'sphinxcontrib.imagesvg',
-                  'sphinxcontrib.jsdemo',
+                  'sphinx.ext.napoleon', 'sphinx.ext.todo', 'sphinx.ext.viewcode',
+                  'sphinxcontrib.images', 'sphinxcontrib.imagesvg', 'sphinxcontrib.jsdemo',
                   'IPython.sphinxext.ipython_console_highlighting',
                   # 'matplotlib.sphinxext.only_directives',
                   # 'matplotlib.sphinxext.mathmpl',
@@ -399,12 +381,19 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
                     \\newcommand{\\R}{\\mathbb{R}}
                     """
 
+    # github or git link
     if github_user:
         githublink_options = dict(user=github_user)
+        github_anchor = "source on GitHub"
     else:
         githublink_options = None
     if github_repo:
+        if githublink_options is None:
+            githublink_options = {}
         githublink_options['project'] = github_repo.strip("/").split("/")[-1]
+
+        if "github" in github_repo.lower():
+            githublink_options['anchor'] = "source on GitHub"
 
     if extlinks is None:
         extlinks = dict()
@@ -420,6 +409,8 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
                 githublink_options["user"] = user
             if 'project' not in githublink_options:
                 githublink_options["project"] = project
+            if 'anchor' not in githublink_options and 'github' in extlinks['issue'][0].lower():
+                githublink_options["project"] = 'source on GitHub'
 
     # collect local variables
     loc = locals()

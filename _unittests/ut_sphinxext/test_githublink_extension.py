@@ -78,6 +78,10 @@ class TestGitHubLinkExtension(unittest.TestCase):
 
                     :githublink:`j|myfile.ipynb|*`
 
+                    again
+
+                    :githublink:`%|myfile.ipynb|*`
+
                     this code shoud appear
                     """.replace("                    ", "")
         if sys.version_info[0] >= 3:
@@ -86,7 +90,7 @@ class TestGitHubLinkExtension(unittest.TestCase):
         html = rst2html(content, fLOG=fLOG,
                         writer="custom", keep_warnings=True,
                         directives=None,
-                        githublink_options=dict(user="sdpython", project="pyquickhelper"))
+                        githublink_options=dict(user="sdpython", project="pyquickhelper", anchor="ANCHOR"))
 
         t1 = "this code shoud not appear"
         if t1 in html:
@@ -113,6 +117,10 @@ class TestGitHubLinkExtension(unittest.TestCase):
             raise Exception(html)
 
         t1 = "https://github.com/sdpython/pyquickhelper/blob/master/myfile.ipynb"
+        if t1 not in html:
+            raise Exception(html)
+
+        t1 = 'href="https://github.com/sdpython/pyquickhelper/blob/master/myfile.ipynb">ANCHOR</a></p>'
         if t1 not in html:
             raise Exception(html)
 
@@ -163,7 +171,7 @@ class TestGitHubLinkExtension(unittest.TestCase):
             content = content.replace('u"', '"')
 
         def processor(path, lineno):
-            return "[{0}:{1}]".format(path, lineno)
+            return "[{0}:{1}]".format(path, lineno), "my_sources"
 
         html = rst2html(content, fLOG=fLOG,
                         writer="custom", keep_warnings=True,

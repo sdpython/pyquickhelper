@@ -437,7 +437,7 @@ def convert_sequence_into_batch_file(seq, variables=None, platform=None):
                                 nbrem = 0
                             rows.extend(value)
                             value = []
-                            st = starter.copy()
+                            st = list(starter)
                             if nbrem > 0:
                                 st = st[:-nbrem]
                             splits.append(st)

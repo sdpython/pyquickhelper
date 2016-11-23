@@ -1731,7 +1731,7 @@ def private_migrating_doxygen_doc(rows, index_first_line, filename,
     link = [_ for _ in rows if ":githublink:" in _]
     if len(link) == 0:
         rows.append("")
-        rows.append("{1}:githublink:`source on GitHub|py|{0}`".format(
+        rows.append("{1}:githublink:`%|py|{0}`".format(
             index_first_line, " " * min_indent))
     return rows
 

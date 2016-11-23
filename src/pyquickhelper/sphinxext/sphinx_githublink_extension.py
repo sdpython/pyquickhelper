@@ -51,7 +51,7 @@ def make_link_node(rawtext, app, path, anchor, lineno, options, settings):
 
     Or the field:
 
-    * *processor*: function with takes a path and a line number and returns an url.
+    * *processor*: function with takes a path and a line number and returns an url and an anchor name
 
     Example:
 
@@ -61,7 +61,7 @@ def make_link_node(rawtext, app, path, anchor, lineno, options, settings):
             url = "https://github.com/{0}/{1}/blob/master/{2}".format(user, project, path)
             if lineno:
                 url += "#L{0}".format(lineno)
-            return url
+            return url, "source on GitHub"
     """
     try:
         exc = []
@@ -99,7 +99,9 @@ def make_link_node(rawtext, app, path, anchor, lineno, options, settings):
         if lineno:
             ref += "#L{0}".format(lineno)
     else:
-        ref = opt["processor"](path, lineno)
+        ref, anchor = opt["processor"](path, lineno)
+    if anchor == "%" and 'anchor' in opt:
+        anchor = opt['anchor']
     set_classes(options)
     node = nodes.reference(rawtext, anchor, refuri=ref, **options)
     return node
@@ -124,13 +126,20 @@ def githublink_role(role, rawtext, text, lineno, inliner,
 
     The pipe ``|`` indicates that  an extension must be added to
     *docname* to get the true url.
+
+    Different formats handled by the role:
+
+    * ``anchor``: anchor = filename, line number is guess form the position in the file
+    * ``anchor|py|*``: extension *.py* is added to the anchor, no line number
+    * ``anchor|py|45``: extension *.py* is added to the anchor, line number is 45
+    * ``%|py|45``: the anchor name comes from the variable ``githublink_options['anchor']`` in the configuration file
     """
     if options is None:
         options = {}
     if content is None:
         content = []
     if not rawtext or len(rawtext) == 0:
-        rawtext = "github"
+        rawtext = "source"
     app = inliner.document.settings.env.app
     docname = inliner.document.settings.env.docname
     folder = docname
