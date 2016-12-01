@@ -413,7 +413,7 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
             if 'project' not in githublink_options:
                 githublink_options["project"] = project
             if 'anchor' not in githublink_options and 'github' in extlinks['issue'][0].lower():
-                githublink_options["project"] = 'source on GitHub'
+                githublink_options["anchor"] = 'source on GitHub'
             if not github_repo and extlinks['issue'][0].startswith("https://github.com"):
                 github_repo = "https://github.com/{0}/{1}.git".format(user, project)
 
