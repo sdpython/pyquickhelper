@@ -326,51 +326,6 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
         'blog/**': ['searchbox.html', 'blogtoc.html', 'localtoc.html', 'sourcelink.html', ],
     }
 
-    if html_theme == "bootstrap":
-        if bootswatch_navbar_links is None:
-            bootswatch_navbar_links = []
-        html_logo = "project_ico_small.png"
-        navbar_links = bootswatch_navbar_links
-        html_theme_options = {
-            'navbar_title': "home",
-            'navbar_site_name': "Site",
-            'navbar_links': navbar_links,
-            'navbar_sidebarrel': True,
-            'navbar_pagenav': True,
-            'navbar_pagenav_name': "Page",
-            'globaltoc_depth': 3,
-            'globaltoc_includehidden': "true",
-            'navbar_class': "navbar navbar-inverse",
-            'navbar_fixed_top': "true",
-            'source_link_position': "nav",
-            'bootswatch_theme': bootswatch_theme,
-            'bootstrap_version': "3",
-        }
-    elif html_theme == "guzzle_sphinx_theme":
-        html_translator_class = 'guzzle_sphinx_theme.HTMLTranslator'
-        if "guzzle_sphinx_theme" not in extensions:
-            extensions.append('guzzle_sphinx_theme')
-        html_theme_options = {
-            "project_nav_name": module_name,
-            # specified, then no sitemap will be built.
-            # "base_url": ""
-            # "homepage": "index",
-            # "projectlink": "http://myproject.url",
-        }
-    elif html_theme == "foundation_sphinx_theme":
-        import foundation_sphinx_theme
-        html_theme_path = foundation_sphinx_theme.HTML_THEME_PATH
-        if "foundation_sphinx_theme" not in extensions:
-            extensions.append('foundation_sphinx_theme')
-            html_theme_options = {
-                'logo_screen': 'project_ico.png',
-                'logo_mobile': 'project_ico.ico',
-                'favicon': 'project_ico.ico',
-                'github_user': github_user,
-                'github_repo': github_repo,
-            }
-        pygments_style = 'monokai'
-
     # latex
     math_number_all = False
     imgmath_latex_preamble = """
@@ -416,6 +371,52 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
                 githublink_options["anchor"] = 'source on GitHub'
             if not github_repo and extlinks['issue'][0].startswith("https://github.com"):
                 github_repo = "https://github.com/{0}/{1}.git".format(user, project)
+
+    # themes
+    if html_theme == "bootstrap":
+        if bootswatch_navbar_links is None:
+            bootswatch_navbar_links = []
+        html_logo = "project_ico_small.png"
+        navbar_links = bootswatch_navbar_links
+        html_theme_options = {
+            'navbar_title': "home",
+            'navbar_site_name': "Site",
+            'navbar_links': navbar_links,
+            'navbar_sidebarrel': True,
+            'navbar_pagenav': True,
+            'navbar_pagenav_name': "Page",
+            'globaltoc_depth': 3,
+            'globaltoc_includehidden': "true",
+            'navbar_class': "navbar navbar-inverse",
+            'navbar_fixed_top': "true",
+            'source_link_position': "nav",
+            'bootswatch_theme': bootswatch_theme,
+            'bootstrap_version': "3",
+        }
+    elif html_theme == "guzzle_sphinx_theme":
+        html_translator_class = 'guzzle_sphinx_theme.HTMLTranslator'
+        if "guzzle_sphinx_theme" not in extensions:
+            extensions.append('guzzle_sphinx_theme')
+        html_theme_options = {
+            "project_nav_name": module_name,
+            # specified, then no sitemap will be built.
+            # "base_url": ""
+            # "homepage": "index",
+            # "projectlink": "http://myproject.url",
+        }
+    elif html_theme == "foundation_sphinx_theme":
+        import foundation_sphinx_theme
+        html_theme_path = foundation_sphinx_theme.HTML_THEME_PATH
+        if "foundation_sphinx_theme" not in extensions:
+            extensions.append('foundation_sphinx_theme')
+            html_theme_options = {
+                'logo_screen': 'project_ico.png',
+                'logo_mobile': 'project_ico.ico',
+                'favicon': 'project_ico.ico',
+                'github_user': github_user,
+                'github_repo': github_repo,
+            }
+        pygments_style = 'monokai'
 
     # collect local variables
     loc = locals()
