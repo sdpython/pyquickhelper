@@ -16,10 +16,6 @@ README
 .. image:: https://badge.fury.io/py/pyquickhelper.svg
     :target: http://badge.fury.io/py/pyquickhelper
         
-.. image:: http://img.shields.io/pypi/dm/pyquickhelper.png
-    :alt: PYPI Package
-    :target: https://pypi.python.org/pypi/pyquickhelper
-    
 .. image:: https://img.shields.io/badge/license-MIT-blue.svg
     :alt: MIT License
     :target: http://opensource.org/licenses/MIT
