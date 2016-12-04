@@ -6,7 +6,6 @@ language: python
 # A different script is generated for each PATH.
 # A path cannot be a virtual environment.
 python:
-  - { PATH: "{{replace(Python34, '\\', '\\\\')}}", VERSION: 3.4, DIST: std }
   - { PATH: "{{replace(Python35, '\\', '\\\\')}}", VERSION: 3.5, DIST: std }
   - { PATH: "{{replace(Python27, '\\', '\\\\')}}", VERSION: 2.7, DIST: std }
   - { PATH: "{{replace(Anaconda3, '\\', '\\\\')}}", VERSION: 3.5, DIST: conda }
