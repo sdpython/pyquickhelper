@@ -104,7 +104,7 @@ class TestYaml(unittest.TestCase):
                 raise Exception(r)
             if r[0][0] != "python" and r[0][0] != "INFO":
                 raise Exception(r)
-        if len(res) != 7:
+        if len(res) != 5:
             rows = [str(_) for _ in res]
             raise Exception("\n".join(rows))
 
