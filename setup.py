@@ -19,8 +19,8 @@ requirements = None
 
 KEYWORDS = project_var_name + \
     ', synchronization, files, documentation, Xavier, Dupré'
-DESCRIPTION = """Various functionalities: folder synchronization, a logging function, helpers
-to generate documentation with sphinx, generation of code for Python 2.7 from Python 3"""
+DESCRIPTION = "Various functionalities: folder synchronization, a logging function, " + \
+              "helpers to generate documentation with sphinx, generation of code for Python 2.7 from Python 3"
 CLASSIFIERS = [
     'Programming Language :: Python :: 3',
     'Programming Language :: Python :: 2.7',
@@ -205,7 +205,7 @@ if not r:
         name=project_var_name,
         version='%s%s' % (sversion, subversion),
         author='Xavier Dupré',
-        author_email='xavier.dupre AT gmail.com',
+        author_email='xavier.dupre@gmail.com',
         url="http://www.xavierdupre.fr/app/pyquickhelper/helpsphinx/index.html",
         download_url="https://github.com/sdpython/pyquickhelper",
         description=DESCRIPTION,
