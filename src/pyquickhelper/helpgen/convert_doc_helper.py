@@ -285,6 +285,8 @@ def rst2html(s, fLOG=noLOG, writer="sphinx", keep_warnings=False,
             self.confdir = "."
             self.doctreedir = "."
             self.builder = writer.builder
+            self.domains = {}
+            self._events = {}
 
         def add_directive(self, name, cl, *args, **options):
             doc_directives.register_directive(name, cl)
@@ -324,6 +326,17 @@ def rst2html(s, fLOG=noLOG, writer="sphinx", keep_warnings=False,
         def connect(self, node, func):
             self.mapping_connect[node] = func
             self.app.connect(node, func)
+
+        def add_domain(self, domain):
+            if domain.name in self.domains:
+                raise ExtensionError(
+                    'domain %s already registered' % domain.name)
+            self.domains[domain.name] = domain
+
+        def add_event(self, name):
+            if name in self._events:
+                raise ExtensionError('Event %r already present' % name)
+            self._events[name] = ''
 
     title_names = []
 

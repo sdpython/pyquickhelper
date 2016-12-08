@@ -264,21 +264,72 @@ class _CustomSphinx(Sphinx):
                  parallel=0):
         '''
         constructor
+
+        Some insights about domains:
+
+        ::
+
+            {'cpp': sphinx.domains.cpp.CPPDomain,
+             'js': sphinx.domains.javascript.JavaScriptDomain,
+             'std': sphinx.domains.std.StandardDomain,
+             'py': sphinx.domains.python.PythonDomain,
+             'rst': sphinx.domains.rst.ReSTDomain,
+             'c': sphinx.domains.c.CDomain}
+
+        And builders:
+
+        ::
+
+            {'epub': ('epub', 'EpubBuilder'),
+            'singlehtml': ('html', 'SingleFileHTMLBuilder'),
+            'qthelp': ('qthelp', 'QtHelpBuilder'),
+            'epub3': ('epub3', 'Epub3Builder'),
+            'man': ('manpage', 'ManualPageBuilder'),
+            'dummy': ('dummy', 'DummyBuilder'),
+            'json': ('html', 'JSONHTMLBuilder'),
+            'html': ('html', 'StandaloneHTMLBuilder'),
+            'xml': ('xml', 'XMLBuilder'),
+            'texinfo': ('texinfo', 'TexinfoBuilder'),
+            'devhelp': ('devhelp', 'DevhelpBuilder'),
+            'web': ('html', 'PickleHTMLBuilder'),
+            'pickle': ('html', 'PickleHTMLBuilder'),
+            'htmlhelp': ('htmlhelp', 'HTMLHelpBuilder'),
+            'applehelp': ('applehelp', 'AppleHelpBuilder'),
+            'linkcheck': ('linkcheck', 'CheckExternalLinksBuilder'),
+            'dirhtml': ('html', 'DirectoryHTMLBuilder'),
+            'latex': ('latex', 'LaTeXBuilder'),
+            'text': ('text', 'TextBuilder'),
+            'changes': ('changes', 'ChangesBuilder'),
+            'websupport': ('websupport', 'WebSupportBuilder'),
+            'gettext': ('gettext', 'MessageCatalogBuilder'),
+            'pseudoxml': ('xml', 'PseudoXMLBuilder')}
         '''
-        from sphinx.application import BUILTIN_DOMAINS, BUILTIN_BUILDERS, events, bold, Tags
+        from sphinx.application import events, bold, Tags, builtin_extensions
         from sphinx.application import Config, CONFIG_FILENAME, ConfigError, VersionRequirementError
+        from sphinx.domains.cpp import CPPDomain
+        # from sphinx.domains.javascript import JavaScriptDomain
+        # from sphinx.domains.python import PythonDomain
+        # from sphinx.domains.std import StandardDomain
+        # from sphinx.domains.rst import ReSTDomain
+        # from sphinx.domains.c import CDomain
         update_docutils_languages()
         self.verbosity = verbosity
         self.next_listener_id = 0
         self._extensions = {}
         self._extension_metadata = {}
+        self._additional_source_parsers = {}
         self._listeners = {}
-        self.domains = BUILTIN_DOMAINS.copy()
-        self.builderclasses = BUILTIN_BUILDERS.copy()
+        self._setting_up_extension = ['?']
+        self.domains = {}
+        # { 'cpp': CPPDomain, 'js': JavaScriptDomain,
+        # 'std': StandardDomain, 'py': PythonDomain,
+        # 'rst': ReSTDomain, 'c': CDomain}
+        self.buildername = buildername
+        self.builderclasses = dict(SingleFileHTMLBuilder=SingleFileHTMLBuilder,
+                                   SerializingHTMLBuilder=SerializingHTMLBuilder)
         self.builder = None
         self.env = None
-        self._setting_up_extension = ['?']
-
+        self.enumerable_nodes = {}
         if doctreedir is None:
             doctreedir = "."
         if srcdir is None:
@@ -312,7 +363,7 @@ class _CustomSphinx(Sphinx):
         self.messagelog = deque(maxlen=10)
 
         # say hello to the world
-        self.info(bold('Running Sphinx v%s' % "CUSTOM 1.3"))
+        self.info(bold('Running Sphinx v%s' % "CUSTOM 1.5"))
 
         # status code for command-line application
         self.statuscode = 0
@@ -324,10 +375,29 @@ class _CustomSphinx(Sphinx):
         self.config.check_unicode(self.warn)
         # defer checking types until i18n has been initialized
 
+        # initialize some limited config variables before loading extensions
+        self.config.pre_init_values(self.warn)
+
+        # check the Sphinx version if requested
+        if self.config.needs_sphinx and self.config.needs_sphinx > sphinx.__display_version__:
+            raise VersionRequirementError(
+                'This project needs at least Sphinx v%s and therefore cannot '
+                'be built with this version.' % self.config.needs_sphinx)
+
+        # force preload html_translator_class
+        if self.config.html_translator_class:
+            translator_class = self.import_object(self.config.html_translator_class,
+                                                  'html_translator_class setting')
+            self.set_translator('html', translator_class)
+
         # set confdir to srcdir if -C given (!= no confdir); a few pieces
         # of code expect a confdir to be set
         if self.confdir is None:
             self.confdir = self.srcdir
+
+        # load all built-in extension modules
+        for extension in builtin_extensions:
+            self.setup_extension(extension)
 
         # extension loading support for alabaster theme
         # self.config.html_theme is not set from conf.py at here
@@ -349,6 +419,12 @@ class _CustomSphinx(Sphinx):
                     "callable. Please provide a callable `setup` function " +
                     "in order to behave as a sphinx extension conf.py itself."
                 )
+
+        # additional variables
+        if "html_extra_path" not in self.config.__dict__:
+            self.config.html_extra_path = []
+        if "gettext_compact" not in self.config.__dict__:
+            self.config.gettext_compact = False
 
         # now that we know all config values, collect them from conf.py
         if sys.version_info[0] == 2:
@@ -377,14 +453,22 @@ class _CustomSphinx(Sphinx):
                         'version %s and therefore cannot be built with the '
                         'loaded version (%s).' % (extname, needs_ver, has_ver))
 
+        # check primary_domain if requested
+        if self.config.primary_domain and self.config.primary_domain not in self.domains:
+            self.warn('primary_domain %r not found, ignored.' %
+                      self.config.primary_domain)
+
         # set up translation infrastructure
         self._init_i18n()
         # check all configuration values for permissible types
         if sys.version_info[0] >= 3:
             self.config.check_types(self.warn)
+        # set up source_parsers
+        self._init_source_parsers()
         # set up the build environment
         self._init_env(freshenv)
         # set up the builder
-        self.builderclasses = dict(SingleFileHTMLBuilder=SingleFileHTMLBuilder,
-                                   SerializingHTMLBuilder=SerializingHTMLBuilder)
+        self._init_builder(self.buildername)
+        # set up the enumerable nodes
+        self._init_enumerable_nodes()
         self._init_builder(buildername)
