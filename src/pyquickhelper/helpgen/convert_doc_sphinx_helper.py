@@ -226,6 +226,7 @@ class HTMLWriterWithCustomDirectives(HTMLWriter):
         self.app = _CustomSphinx(srcdir=None, confdir=None, outdir=None, doctreedir=None,
                                  buildername='SerializingHTMLBuilder')
         builder = self.app.builder
+        builder.fignumbers = {}
         HTMLWriter.__init__(self, builder)
         self.translator_class = HTMLTranslatorWithCustomDirectives
         self.builder.translator_class = self.translator_class
@@ -306,7 +307,8 @@ class _CustomSphinx(Sphinx):
         '''
         from sphinx.application import events, bold, Tags, builtin_extensions
         from sphinx.application import Config, CONFIG_FILENAME, ConfigError, VersionRequirementError
-        from sphinx.domains.cpp import CPPDomain
+        from sphinx import __display_version__
+        # from sphinx.domains.cpp import CPPDomain
         # from sphinx.domains.javascript import JavaScriptDomain
         # from sphinx.domains.python import PythonDomain
         # from sphinx.domains.std import StandardDomain
@@ -379,7 +381,7 @@ class _CustomSphinx(Sphinx):
         self.config.pre_init_values(self.warn)
 
         # check the Sphinx version if requested
-        if self.config.needs_sphinx and self.config.needs_sphinx > sphinx.__display_version__:
+        if self.config.needs_sphinx and self.config.needs_sphinx > __display_version__:
             raise VersionRequirementError(
                 'This project needs at least Sphinx v%s and therefore cannot '
                 'be built with this version.' % self.config.needs_sphinx)

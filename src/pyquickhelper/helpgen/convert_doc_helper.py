@@ -329,13 +329,13 @@ def rst2html(s, fLOG=noLOG, writer="sphinx", keep_warnings=False,
 
         def add_domain(self, domain):
             if domain.name in self.domains:
-                raise ExtensionError(
+                raise Exception(
                     'domain %s already registered' % domain.name)
             self.domains[domain.name] = domain
 
         def add_event(self, name):
             if name in self._events:
-                raise ExtensionError('Event %r already present' % name)
+                raise Exception('Event %r already present' % name)
             self._events[name] = ''
 
     title_names = []
