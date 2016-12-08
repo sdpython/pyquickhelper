@@ -171,7 +171,7 @@ def produce_code_graph_changes(df):
 
 def generate_changes_repo(chan, source, exception_if_empty=True,
                           filter_commit=lambda c: c.strip() != "documentation",
-                          fLOG=fLOG):
+                          fLOG=fLOG, modify_commit=None):
     """
     Generates a rst tables containing the changes stored by a svn or git repository,
     the outcome is stored in a file.
@@ -182,6 +182,7 @@ def generate_changes_repo(chan, source, exception_if_empty=True,
     @param          exception_if_empty  raises an exception if empty
     @param          filter_commit       function which accepts a commit to show on the documentation (based on the comment)
     @param          fLOG                logging function
+    @param          modify_commit       function which rewrite the commit text (see below)
     @return                             string (rst tables with the changes)
 
     .. versionchanged:: 1.0
@@ -197,8 +198,16 @@ def generate_changes_repo(chan, source, exception_if_empty=True,
 
         Doing that helps. The cause still remains obscure.
 
+    If not None, function *modify_commit* is called the following way (see below).
+    *nbch* is the commit number. *date* can be returned as a datetime or a string.
+
+    ::
+
+        nbch, date, author, comment = modify_commit(nbch, date, author, comment)
+
     .. versionchanged:: 1.5
         Add the author the table of changes.
+        Add parameter *modify_commit*.
     """
     # builds the changes files
     try:
@@ -234,8 +243,14 @@ def generate_changes_repo(chan, source, exception_if_empty=True,
         if last.startswith("http"):
             nbch = "`%s <%s>`_" % (typstr(nbch), last)
 
-        ds = "%04d-%02d-%02d" % (date.year, date.month, date.day)
         if filter_commit(comment):
+            if modify_commit is not None:
+                nbch, date, author, comment = modify_commit(
+                    nbch, date, author, comment)
+            if isinstance(date, datetime.datetime):
+                ds = "%04d-%02d-%02d" % (date.year, date.month, date.day)
+            else:
+                ds = date
             if isinstance(nbch, int):
                 values.append(
                     ["%d" % n, "%04d" % nbch, "%s" % ds, author, comment.strip("*")])

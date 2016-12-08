@@ -50,6 +50,9 @@ class TestChanges (unittest.TestCase):
                 # encoding, encoding...
                 return
 
+            def modifiy_commit(nbch, date, author, comment):
+                return nbch, date, author, comment
+
             generate_changes_repo(file, fold)
             with open(file, "r", encoding="utf8") as f:
                 content = f.read()

@@ -370,7 +370,8 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
             if 'anchor' not in githublink_options and 'github' in extlinks['issue'][0].lower():
                 githublink_options["anchor"] = 'source on GitHub'
             if not github_repo and extlinks['issue'][0].startswith("https://github.com"):
-                github_repo = "https://github.com/{0}/{1}.git".format(user, project)
+                github_repo = "https://github.com/{0}/{1}.git".format(
+                    user, project)
 
     # themes
     if html_theme == "bootstrap":

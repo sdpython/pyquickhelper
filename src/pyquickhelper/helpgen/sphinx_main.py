@@ -447,8 +447,13 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
     # changes
     #########
     chan = os.path.join(root, "_doc", "sphinxdoc", "source", "filechanges.rst")
+    if "modify_commit" in theconf.__dict__:
+        modify_commit = theconf.modify_commit
+    else:
+        modify_commit = None
     generate_changes_repo(
-        chan, root, filter_commit=filter_commit, exception_if_empty=from_repo, fLOG=fLOG)
+        chan, root, filter_commit=filter_commit, exception_if_empty=from_repo,
+        fLOG=fLOG, modify_commit=modify_commit)
 
     ######################################
     # we copy javascript dependencies, reveal.js
