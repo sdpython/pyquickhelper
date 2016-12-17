@@ -490,7 +490,7 @@ def post_process_latex(st, doall, info=None, latex_book=False, exc=True):
             sub = st[p1:p2].strip(" \r\n").replace(
                 "\n", " ").replace("\r", "").replace("\t", " ")
             sub2 = sub[-10:]
-            records.append((info, p1, p2, sub, sub2, temp))
+            records.append((info, p1, p2, sub, sub2, ""))
         if len(records) > 0:
             messages = [str(i) + ":" + ("unexpected \\$ in a latex file:\n    {0}\n    at position: {1},{2}\n" +
                                         "    substring: {3}\n    around: {4}\n    temp=[{5}]").format(*rec)
