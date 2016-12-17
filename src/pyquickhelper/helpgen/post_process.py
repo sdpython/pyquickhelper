@@ -445,6 +445,9 @@ def post_process_latex(st, doall, info=None, latex_book=False, exc=True):
     .. versionchanged:: 1.5
         Parameter *exc* was added.
 
+    .. versionchanged:: 1.6
+        The function is less strict on the checking of `$`.
+
     .. index:: chinese characters, latex, unicode
 
     @warning Unicode, chinese characters are an issue because the latex compiler
@@ -476,27 +479,18 @@ def post_process_latex(st, doall, info=None, latex_book=False, exc=True):
     dollar = st.split("\\$")
     if len(dollar) > 0 and (
             info is None or os.path.splitext(info)[-1] != ".html"):
-        # probably an issue, for the time being, we are strict,
-        # no dollar as a currency in latex
-        # we do not check HTML files, for the time being, the formulas appears
-        # in pseudo latex
-        exp = re.compile(r"(.{3}[\\]\$)")
+        # it could be an issue, for the time being, we raise
+        # an exception if a formula is too long
+        exp = re.compile(r"(.{200}[\\]\$\$)")
         found = 0
         records = []
         for m in exp.finditer(st):
             found += 1
             p1, p2 = m.start(), m.end()
-            sub = st[p1:p2].strip(" \r\n")
-            sub2 = st[max(p1 - 10, 0):min(len(st), p2 + 10)]
-            # very quick and dirty
-            if sub not in [".*)\\$", "r`\\$}", "ar`\\$", "tt{\\$"] and \
-               not sub.endswith("'\\$") and not sub.endswith("{\\$"):
-                if p1 > 30:
-                    temp = st[p1 - 25:p2]
-                else:
-                    temp = st[0:p2]
-                records.append((info, p1, p2, sub, sub2, temp))
-
+            sub = st[p1:p2].strip(" \r\n").replace(
+                "\n", " ").replace("\r", "").replace("\t", " ")
+            sub2 = sub[-10:]
+            records.append((info, p1, p2, sub, sub2, temp))
         if len(records) > 0:
             messages = [str(i) + ":" + ("unexpected \\$ in a latex file:\n    {0}\n    at position: {1},{2}\n" +
                                         "    substring: {3}\n    around: {4}\n    temp=[{5}]").format(*rec)
