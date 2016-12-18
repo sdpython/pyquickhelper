@@ -118,9 +118,9 @@ class FileTreeNode:
         self.fLOG = fLOG
 
         if not os.path.exists(root):
-            raise PQHException("path %s does not exist" % root)
+            raise PQHException("path '%s' does not exist" % root)
         if not os.path.isdir(root):
-            raise PQHException("path %s is not a folder" % root)
+            raise PQHException("path '%s' is not a folder" % root)
 
         if self._file is not None:
             if not self.exists():

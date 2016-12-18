@@ -251,6 +251,7 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
                   'sphinx.ext.napoleon', 'sphinx.ext.todo', 'sphinx.ext.viewcode',
                   'sphinxcontrib.images', 'sphinxcontrib.imagesvg', 'sphinxcontrib.jsdemo',
                   'IPython.sphinxext.ipython_console_highlighting',
+                  'sphinx_gallery.gen_gallery',
                   # 'matplotlib.sphinxext.only_directives',
                   # 'matplotlib.sphinxext.mathmpl',
                   # 'matplotlib.sphinxext.only_directives',
@@ -418,6 +419,62 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
                 'github_repo': github_repo,
             }
         pygments_style = 'monokai'
+
+    # mapping
+
+    intersphinx_mapping = {'python': (
+        'https://docs.python.org/{0}.{1}'.format(*(sys.version_info[:2])), None)}
+    intersphinx_mapping['matplotlib'] = ('http://matplotlib.org/', None)
+    try:
+        import numpy
+        intersphinx_mapping['numpy'] = (
+            'http://www.numpy.org/{0}'.format(numpy.__version__), None)
+    except ImportError:
+        pass
+    try:
+        import pandas
+        intersphinx_mapping['pandas'] = (
+            'http://pandas.pydata.org/pandas-docs/version/{0}'.format(pandas.__version__), None)
+    except ImportError:
+        pass
+
+    # disable some checkings
+    check_ie_layout_html = False
+
+    # sphinx gallery
+    dirname = os.path.dirname(fileconf)
+    exa = os.path.join(dirname, "..", "..", "..", "_doc", "examples")
+    if os.path.exists(exa):
+        exa = os.path.normpath(exa)
+        import pathlib
+        pp = pathlib.Path(exa)
+        readmes = pp.glob("**/README.txt")
+        examples_dirs = []
+        gallery_dirs = []
+        for res in readmes:
+            nn = res.parent
+            examples_dirs.append(str(nn))
+            last = res.parts[-2]
+            dest = os.path.join(dirname, last)
+            if dest in gallery_dirs:
+                raise ValueError(
+                    "Gallery '{0}' already exists (source: '{1}'.".format(dest, nn))
+            gallery_dirs.append(dest)
+        if len(examples_dirs) == 0:
+            raise ValueError(
+                "Unable to find any 'README.txt' in '{0}'.".foramt(exa))
+        reference_url = {k: v[0] for k, v in intersphinx_mapping.items()}
+        example_dir = os.path.join(dirname, "gallery")
+        if not os.path.exists(example_dir):
+            os.makedirs(example_dir)
+        sphinx_gallery_conf = {
+            'doc_module': (module_name),
+            'reference_url': {},
+            'examples_dirs': examples_dirs,
+            'gallery_dirs': gallery_dirs,
+            'mod_example_dir': example_dir,
+            'expected_failing_examples': [],
+        }
 
     # collect local variables
     loc = locals()

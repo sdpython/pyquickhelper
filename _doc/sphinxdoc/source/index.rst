@@ -62,6 +62,7 @@ Quick start
 .. toctree::
     :maxdepth: 1
     
+    examples/index
     i_ex
     all_notebooks
     i_nb

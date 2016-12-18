@@ -66,6 +66,7 @@ six
 solar-theme
 Sphinx
 sphinx-bootstrap-theme
+sphinx-gallery
 sphinx-readable-theme
 sphinx-rtd-theme
 sphinxcontrib-fancybox

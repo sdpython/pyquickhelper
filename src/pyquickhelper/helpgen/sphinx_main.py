@@ -4,6 +4,18 @@
 @brief Contains the main function to generate the documentation
 for a module designed the same way as this one, @see fn generate_help_sphinx.
 
+.. todoext::
+    :title: Add support for sphinx-gallery
+    :tag: done
+    :date: 2016-12-18
+    :cost: 1
+    :release: 1
+    :issue: 36
+
+    The default configuration pyquickhelper is setting up
+    automatically considers folder ``_doc\\examples``
+    and add it to the documentation. To add a link to the gallery:
+    ``examples/index``.
 """
 import os
 import sys
@@ -284,8 +296,6 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
             lay, build, override, newconf = t3
         return lay, build, override, newconf
 
-    ie_layout_html()
-
     directives.register_directive("blogpost", BlogPostDirective)
     directives.register_directive("blogpostagg", BlogPostDirectiveAgg)
     directives.register_directive("runpython", RunPythonDirective)
@@ -368,6 +378,12 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
         tocs = add_missing_files(root, thenewconf, "__INSERT__")
         all_tocs.extend(tocs)
         del sys.modules["conf"]
+
+        # check if we need to run ie_layout_html
+        check_ie_layout_html = thenewconf.__dict__.get(
+            "check_ie_layout_html", True)
+        if check_ie_layout_html:
+            ie_layout_html()
 
         # we store the html_static_path in html_static_paths
         html_static_path = thenewconf.__dict__.get(
