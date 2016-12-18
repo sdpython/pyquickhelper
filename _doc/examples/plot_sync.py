@@ -18,5 +18,5 @@ else:
     print("folder already created", dest)
 
 ###############################
-synchronize_folder(os.path.abspath(os.path.dirname(__file__)),
+synchronize_folder(os.path.abspath("."),
                    dest, fLOG=print)
