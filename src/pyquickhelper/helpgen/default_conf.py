@@ -251,7 +251,6 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
                   'sphinx.ext.napoleon', 'sphinx.ext.todo', 'sphinx.ext.viewcode',
                   'sphinxcontrib.images', 'sphinxcontrib.imagesvg', 'sphinxcontrib.jsdemo',
                   'IPython.sphinxext.ipython_console_highlighting',
-                  'sphinx_gallery.gen_gallery',
                   # 'matplotlib.sphinxext.only_directives',
                   # 'matplotlib.sphinxext.mathmpl',
                   # 'matplotlib.sphinxext.only_directives',
@@ -460,6 +459,7 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
                 raise ValueError(
                     "Gallery '{0}' already exists (source: '{1}'.".format(dest, nn))
             gallery_dirs.append(dest)
+        extensions.append('sphinx_gallery.gen_gallery')
         if len(examples_dirs) == 0:
             raise ValueError(
                 "Unable to find any 'README.txt' in '{0}'.".foramt(exa))
