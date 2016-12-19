@@ -446,7 +446,7 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
     use_sys = theconf.__dict__.get("enable_disabled_parts", None)
     latex_book = theconf.__dict__.get('latex_book', False)
     nbexamples_conf = theconf.__dict__.get('example_gallery_config', None)
-    examples_conf = theconf.__dict__.get('sphinx_gallery_conf', None)
+    # examples_conf = theconf.__dict__.get('sphinx_gallery_conf', None)
 
     ospath = os.environ["PATH"]
     latex_path = theconf.__dict__.get("latex_path", find_latex_path())
