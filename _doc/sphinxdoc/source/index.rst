@@ -62,11 +62,19 @@ Quick start
 .. toctree::
     :maxdepth: 1
     
-    examples/index
     i_ex
     all_notebooks
     i_nb
     i_faq
+    
+Galleries
+---------
+
+.. toctree::
+    :maxdepth: 2
+
+    gyexamples/index
+    gynotebooks/index
     
 
 Functionalities

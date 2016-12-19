@@ -249,6 +249,7 @@ if not r:
             "simplegeneric",
             "sphinx>=1.5",
             "sphinx-gallery",
+            "sphinx-nbexamples",
             "sphinxcontrib-imagesvg",
             "sphinxcontrib-jsdemo",
             "sphinxjp.themes.revealjs",

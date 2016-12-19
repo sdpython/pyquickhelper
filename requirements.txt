@@ -67,6 +67,7 @@ solar-theme
 Sphinx
 sphinx-bootstrap-theme
 sphinx-gallery
+sphinx-nbexamples
 sphinx-readable-theme
 sphinx-rtd-theme
 sphinxcontrib-fancybox

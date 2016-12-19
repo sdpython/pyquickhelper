@@ -10,7 +10,9 @@ from pyquickhelper.helpgen.default_conf import set_sphinx_variables
 set_sphinx_variables(__file__, "pyquickhelper", "Xavier Dupré", 2016,
                      "solar_theme", solar_theme.theme_path, locals(),
                      github_repo="https://github.com/sdpython/pyquickhelper.git",
-                     extlinks=dict(issue=('https://github.com/sdpython/pyquickhelper/issues/%s', 'issue {0} on GitHub')))
+                     extlinks=dict(issue=(
+                         'https://github.com/sdpython/pyquickhelper/issues/%s', 'issue {0} on GitHub')),
+                     link_resolve="http://www.xavierdupre.fr/app/")
 
 # there is an issue with this attribute on Anaconda math_number_all
 assert math_number_all or not math_number_all

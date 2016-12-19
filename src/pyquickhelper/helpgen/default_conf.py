@@ -22,7 +22,7 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
                          enable_disabled_parts="enable_disabled_documented_pieces_of_code",
                          sharepost="facebook-linkedin-twitter-20-body", custom_style=None,
                          extlinks=None, github_user=None, github_repo=None, title=None,
-                         book=False):
+                         book=False, link_resolve=None):
     """
     defines variables for Sphinx
 
@@ -51,6 +51,8 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
     @param      github_repo             git(hub) project
     @param      title                   if not None, use *title* instead of *module_name* as a title
     @param      book                    the output is a book
+    @param      link_resolve            url where the documentation is published,
+                                        used for parameter *linkcode_resolve*
 
     If the parameter *custom_style* is not None, it will call ``app.add_stylesheet(custom_style)``
     in the setup.
@@ -440,6 +442,29 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
     # disable some checkings
     check_ie_layout_html = False
 
+    # information about code
+    def linkcode_resolve_function(domain, info):
+        if link_resolve is None:
+            return None
+        if domain != 'py':
+            return None
+        if not info['module']:
+            return None
+        filename = info['module'].replace('.', '/')
+        return "%s/%s.py" % (link_resolve, filename)
+
+    if link_resolve is not None:
+        linkcode_resolve = linkcode_resolve_function
+        extensions.append("sphinx.ext.linkcode")
+
+    # commit modification
+    def modify_commit_function(nbch, date, author, comment):
+        if author is not None and "@" in author:
+            author = author.split("@")[0]
+        return nbch, date, author, comment
+
+    modify_commit = modify_commit_function
+
     # sphinx gallery
     dirname = os.path.dirname(fileconf)
     exa = os.path.join(dirname, "..", "..", "..", "_doc", "examples")
@@ -454,6 +479,10 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
             nn = res.parent
             examples_dirs.append(str(nn))
             last = res.parts[-2]
+            if last in ("notebooks", "examples"):
+                last = "gy" + last
+            if last.startswith("temp_"):
+                continue
             dest = os.path.join(dirname, last)
             if dest in gallery_dirs:
                 raise ValueError(
@@ -475,6 +504,42 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
             'mod_example_dir': example_dir,
             'expected_failing_examples': [],
         }
+
+    # notebook gallery
+    dirname = os.path.dirname(fileconf)
+    exa = os.path.join(dirname, "..", "..", "..", "_doc", "notebooks")
+    if os.path.exists(exa):
+        exa = os.path.normpath(exa)
+        import pathlib
+        pp = pathlib.Path(exa)
+        readmes = pp.glob("**/README.txt")
+        examples_dirs = []
+        gallery_dirs = []
+        for res in readmes:
+            nn = res.parent
+            examples_dirs.append(str(nn))
+            last = res.parts[-2]
+            if last in ("notebooks", "examples"):
+                last = "gy" + last
+            if last.startswith("temp_"):
+                continue
+            dest = os.path.join(dirname, last)
+            if dest in gallery_dirs:
+                raise ValueError(
+                    "Gallery '{0}' already exists (source: '{1}'.".format(dest, nn))
+            gallery_dirs.append(dest)
+        if len(examples_dirs) > 0:
+            reference_url = {k: v[0] for k, v in intersphinx_mapping.items()}
+            example_dir = os.path.join(dirname, "gallerynb")
+            if not os.path.exists(example_dir):
+                os.makedirs(example_dir)
+            example_gallery_config = {
+                'pattern': '.+.ipynb',
+                'examples_dirs': examples_dirs,
+                'gallery_dirs': gallery_dirs,
+                'preprocess': False,
+            }
+            extensions.append('sphinx_nbexamples')
 
     # collect local variables
     loc = locals()

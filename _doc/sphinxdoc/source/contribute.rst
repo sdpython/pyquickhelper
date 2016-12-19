@@ -182,7 +182,7 @@ notebook.
 
 Notebooks are not tested by default but they should wherever it is possible.
 This can be done by using function 
-:func:`execute_notebook_list <pyquickhelper.ipythonhelper.run_notebook.execute_notebook_list>`_.
+:func:`execute_notebook_list <pyquickhelper.ipythonhelper.run_notebook.execute_notebook_list>`.
 
     
         

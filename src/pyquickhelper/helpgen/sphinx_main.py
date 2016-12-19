@@ -445,6 +445,8 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
     language = theconf.__dict__.get("language", "en")
     use_sys = theconf.__dict__.get("enable_disabled_parts", None)
     latex_book = theconf.__dict__.get('latex_book', False)
+    nbexamples_conf = theconf.__dict__.get('example_gallery_config', None)
+    examples_conf = theconf.__dict__.get('sphinx_gallery_conf', None)
 
     ospath = os.environ["PATH"]
     latex_path = theconf.__dict__.get("latex_path", find_latex_path())
@@ -602,8 +604,15 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
         imgs = [os.path.join(notebook_dir, _)
                 for _ in os.listdir(notebook_dir) if ".png" in _]
         if len(imgs) > 0:
+            gallery_dirs = nbexamples_conf.get(
+                'gallery_dirs', None) if nbexamples_conf else None
             for img in imgs:
                 shutil.copy(img, notebook_doc)
+                if gallery_dirs:
+                    for d in gallery_dirs:
+                        if not os.path.exists(d):
+                            os.makedirs(d)
+                        shutil.copy(img, d)
 
     fLOG("~~~~ end notebooks")
 

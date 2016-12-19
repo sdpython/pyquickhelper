@@ -53,7 +53,7 @@ class NotebookRunner(object):
     * `jupyter_kernel_test <https://github.com/jupyter/jupyter_kernel_test>`_
     * `simple_kernel <https://github.com/dsblank/simple_kernel>`_
 
-    .. faq::
+    .. faqref::
         :title: Do I need to shutdown the kernel after running a notebook?
 
         .. index:: travis

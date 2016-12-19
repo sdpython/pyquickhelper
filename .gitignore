@@ -226,8 +226,11 @@ out_*
 */sphinxdoc/source/LICENSE.txt
 */sphinxdoc/source/filechanges.*
 */sphinxdoc/source/notebooks/*
+*/sphinxdoc/source/gynotebooks/*
+_doc/sphinxdoc/source/gyexamples/*
 _doc/sphinxdoc/source/examples/*
 _doc/sphinxdoc/source/gallery/*
+_doc/sphinxdoc/source/gallerynb/*
 version.txt
 */sphinxdoc/source/pyquickhelper/*
 */sphinxdoc/source/all*.rst

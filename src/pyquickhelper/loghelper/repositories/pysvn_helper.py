@@ -68,6 +68,14 @@ def repo_ls(full, commandline=True):
     @param      full            full path
     @param      commandline use command line instead of pysvn
     @return                     output of client.ls
+
+    .. versionchanged:: 1.5
+        When a path includes a symbol ``@``, another one must added to the path
+        to avoid the following error to happen:
+
+        ::
+
+            svn: E205000: Syntax error parsing peg revision 'something@somewhere.fr-'
     """
     if not commandline:
         try:
@@ -79,6 +87,11 @@ def repo_ls(full, commandline=True):
             typstr = str  # unicode#
             if "This client is too old to work with the working copy at" in typstr(e) or \
                     "No module named 'pysvn'" in typstr(e):
+                if "@" in full:
+                    clean = full
+                    full += "@"
+                else:
+                    clean = None
                 cmd = "svn ls -r HEAD \"%s\"" % full.replace("\\", "/")
                 out, err = run_cmd(cmd,
                                    wait=True,
@@ -87,12 +100,23 @@ def repo_ls(full, commandline=True):
                 if len(err) > 0:
                     fLOG("problem with file ", full, err)
                     raise Exception(err)
-                res = [RepoFile(name=os.path.join(full, _.strip()))
+
+                def cleanf(s):
+                    if clean is None:
+                        return s
+                    else:
+                        return s.replace(clean + "@", clean)
+                res = [RepoFile(name=os.path.join(cleanf(full), _.strip()))
                        for _ in out.split("\n") if len(_) > 0]
                 return res
             else:
                 raise Exception("problem with file " + full) from e
     else:
+        if "@" in full:
+            clean = full
+            full += "@"
+        else:
+            clean = None
         cmd = "svn ls -r HEAD \"%s\"" % full.replace("\\", "/")
         try:
             out, err = run_cmd(cmd,
@@ -106,7 +130,12 @@ def repo_ls(full, commandline=True):
             fLOG("problem with file ", full, err)
             raise Exception(err)
 
-        res = [RepoFile(name=os.path.join(full, _.strip()))
+        def cleanf(s):
+            if clean is None:
+                return s
+            else:
+                return s.replace(clean + "@", clean)
+        res = [RepoFile(name=os.path.join(cleanf(full), _.strip()))
                for _ in out.split("\n") if len(_) > 0]
         return res
 
@@ -156,6 +185,14 @@ def get_repo_log(path=None, file_detail=False, commandline=True):
         <msg>pyquickhelper: first version</msg>
     </logentry>
     @endcode
+
+    .. versionchanged:: 1.5
+        When a path includes a symbol ``@``, another one must added to the path
+        to avoid the following error to happen:
+
+        ::
+
+            svn: E205000: Syntax error parsing peg revision 'something@somewhere.fr-'
     """
     if path is None:
         path = os.path.normpath(
@@ -165,6 +202,8 @@ def get_repo_log(path=None, file_detail=False, commandline=True):
         try:
             import pysvn
             svnClient = pysvn.Client()
+            if "@" in path:
+                path += "@"
             version = get_repo_version(path)
             log = svnClient.log(
                 path,
@@ -192,6 +231,8 @@ def get_repo_log(path=None, file_detail=False, commandline=True):
                 raise e
 
     else:
+        if "@" in path:
+            path += "@"
         cmd = "svn log -r HEAD:1 --xml \"%s\"" % path.replace("\\", "/")
         out, err = run_cmd(cmd,
                            wait=True,
@@ -240,6 +281,14 @@ def get_repo_version(path=None, commandline=True, log=False):
     @param      commandline     if True, use the command line to get the version number, otherwise it uses pysvn
     @param      log             if True, returns the output instead of a boolean
     @return                     integer (check in number)
+
+    .. versionchanged:: 1.5
+        When a path includes a symbol ``@``, another one must added to the path
+        to avoid the following error to happen:
+
+        ::
+
+            svn: E205000: Syntax error parsing peg revision 'something@somewhere.fr-'
     """
     if path is None:
         path = os.path.normpath(
@@ -249,7 +298,10 @@ def get_repo_version(path=None, commandline=True, log=False):
         try:
             import pysvn
             svnClient = pysvn.Client()
-            info = svnClient.info2(".")
+            path = "." if path is None else path.replace("\\", "/")
+            if "@" in path:
+                path += "@"
+            info = svnClient.info2()
             infos = [_[1] for _ in info]
             revv = [_["rev"].number for _ in infos]
             revision = max(revv)
@@ -265,6 +317,8 @@ def get_repo_version(path=None, commandline=True, log=False):
                 raise e
     else:
         cmd = "svn info -r HEAD"
+        if "@" in path:
+            path += "@"
         if path is not None:
             cmd += " \"%s\"" % path.replace("\\", "/")
         out, err = run_cmd(cmd,
