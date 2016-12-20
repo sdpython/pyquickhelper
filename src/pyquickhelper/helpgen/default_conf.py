@@ -337,6 +337,9 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
                     \\newcommand{\\pa}[1]{\\left(#1\\right)}
                     \\newcommand{\\R}{\\mathbb{R}}
                     """
+    # post processing of the full latex file
+    # it should be a function, None by default
+    custom_latex_processing = None
 
     # github or git link
     if github_user:

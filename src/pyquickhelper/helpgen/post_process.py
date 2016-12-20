@@ -34,17 +34,18 @@ Another list
 """
 
 
-def post_process_latex_output(root, doall, latex_book=False, exc=True):
+def post_process_latex_output(root, doall, latex_book=False, exc=True, custom_latex_processing=None):
     """
     post process the latex file produced by sphinx
 
-    @param      root        root path or latex file to process
-    @param      doall       do all transformations
-    @param      latex_book  customized for a book
-    @param      exc         raise an exception or a warning
+    @param      root                        root path or latex file to process
+    @param      doall                       do all transformations
+    @param      latex_book                  customized for a book
+    @param      exc                         raise an exception or a warning
+    @param      custom_latex_processing     function which does some post processing of the full latex file
 
     .. versionchanged:: 1.5
-        Parameter *exc* was added.
+        Parameters *exc*, *custom_latex_processing* were added.
     """
     if os.path.isfile(root):
         file = root
@@ -66,6 +67,8 @@ def post_process_latex_output(root, doall, latex_book=False, exc=True):
                     content = f.read()
                 content = post_process_latex(
                     content, doall, info=file, latex_book=latex_book, exc=exc)
+                if custom_latex_processing is not None:
+                    content = custom_latex_processing(content)
                 with open(file, "w", encoding="utf8") as f:
                     f.write(content)
 

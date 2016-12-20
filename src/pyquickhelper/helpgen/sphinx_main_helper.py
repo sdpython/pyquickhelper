@@ -285,16 +285,18 @@ def generate_changes_repo(chan, source, exception_if_empty=True,
     return final
 
 
-def compile_latex_output_final(root, latex_path, doall, afile=None, latex_book=False, fLOG=fLOG):
+def compile_latex_output_final(root, latex_path, doall, afile=None, latex_book=False, fLOG=fLOG,
+                               custom_latex_processing=None):
     """
     compiles the latex documents
 
-    @param      root        root
-    @param      latex_path  path to the compiler
-    @param      doall       do more transformation of the latex file before compiling it
-    @param      afile       process a specific file
-    @param      latex_book  do some customized transformation for a book
-    @param      fLOG        logging function
+    @param      root                        root
+    @param      latex_path                  path to the compiler
+    @param      doall                       do more transformation of the latex file before compiling it
+    @param      afile                       process a specific file
+    @param      latex_book                  do some customized transformation for a book
+    @param      fLOG                        logging function
+    @param      custom_latex_processing     function which does some post processing of the full latex file
 
     .. faqreq:
         :title: The PDF is corrupted, SVG are not there
@@ -318,6 +320,9 @@ def compile_latex_output_final(root, latex_path, doall, afile=None, latex_book=F
 
     .. versionchanged:: 1.4
         Parameter *fLOG* was added.
+
+    .. versionadded:: 1.5
+        Parameter *custom_latex_processing* was added.
     """
     if sys.platform.startswith("win"):
         lat = os.path.join(latex_path, "pdflatex.exe")
@@ -336,7 +341,8 @@ def compile_latex_output_final(root, latex_path, doall, afile=None, latex_book=F
                 c = '"{0}" "{1}" -interaction=nonstopmode -output-directory="{2}"'.format(
                     lat, file, build)
             fLOG("~~~~ LATEX compilation (c)", c)
-            post_process_latex_output(file, doall, latex_book=latex_book)
+            post_process_latex_output(file, doall, latex_book=latex_book,
+                                      custom_latex_processing=custom_latex_processing)
             try:
                 out, err = run_cmd(c, wait=True, log_error=False, catch_exit=True, communicate=False,
                                    tell_if_no_output=120, fLOG=fLOG)

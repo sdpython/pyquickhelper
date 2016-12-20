@@ -422,6 +422,7 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
 
     ##############################################################
     # we store the html_static_path in html_static_paths for the base conf
+    # we extract other information from the configuration
     ##############################################################
     html_static_path = theconf.__dict__.get("html_static_path", "phdoc_static")
     if isinstance(html_static_path, list):
@@ -432,6 +433,8 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
     html_static_paths.append(html_static_path)
     build_paths.append(
         os.path.normpath(os.path.join(html_static_path, "..", "..", "build", "html")))
+    custom_latex_processing = theconf.__dict__.get(
+        "custom_latex_processing", None)
 
     ####################################
     # modifies the version number in conf.py
@@ -900,7 +903,8 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
     if "pdf" in layout:
         fLOG("~~~~ compile_latex_output_final", froot, "**", latex_path)
         compile_latex_output_final(
-            froot, latex_path, False, latex_book=latex_book, fLOG=fLOG)
+            froot, latex_path, False, latex_book=latex_book, fLOG=fLOG,
+            custom_latex_processing=custom_latex_processing)
 
     if "html" in layout:
         nbf = os.path.join(build, "html", "notebooks")
