@@ -328,8 +328,6 @@ def compile_latex_output_final(root, latex_path, doall, afile=None, latex_book=F
         lat = os.path.join(latex_path, "pdflatex.exe")
     else:
         lat = "pdflatex"
-    if custom_latex_processing is None:
-        raise Exception("custom_latex_processing is None")
 
     build = os.path.join(root, "_doc", "sphinxdoc", "build", "latex")
     for tex in os.listdir(build):
