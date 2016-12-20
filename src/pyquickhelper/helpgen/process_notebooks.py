@@ -411,7 +411,8 @@ def _process_notebooks_in(notebooks, outfold, build, latex_path=None, pandoc_pat
                         raise FileNotFoundError(
                             "no latex file was generated or more than one (={0}), nb={1}\nthisfile=\n{2}".format(len(tex), notebook, "\n".join(thisfiles)))
                     tex = list(tex)[0]
-                    post_process_latex_output_any(tex)
+                    post_process_latex_output_any(
+                        tex, custom_latex_processing=None)
                     # -interaction=batchmode
                     c = '"{0}" "{1}" -output-directory="{2}"'.format(
                         lat, tex, os.path.split(tex)[0])

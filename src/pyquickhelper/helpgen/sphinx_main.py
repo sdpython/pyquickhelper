@@ -435,6 +435,13 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
         os.path.normpath(os.path.join(html_static_path, "..", "..", "build", "html")))
     custom_latex_processing = theconf.__dict__.get(
         "custom_latex_processing", None)
+    if custom_latex_processing is not None:
+        try:
+            res = custom_latex_processing("dummy phrase")
+            if res is None:
+                raise ValueError("result should be None")
+        except ValueError as e:
+            pass
 
     ####################################
     # modifies the version number in conf.py
@@ -898,7 +905,8 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
     fLOG("~~~~ LATEX")
     if "latex" in layout:
         fLOG("~~~~ post_process_latex_output", froot)
-        post_process_latex_output(froot, False)
+        post_process_latex_output(
+            froot, False, custom_latex_processing=custom_latex_processing)
 
     if "pdf" in layout:
         fLOG("~~~~ compile_latex_output_final", froot, "**", latex_path)

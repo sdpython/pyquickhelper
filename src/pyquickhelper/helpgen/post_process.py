@@ -52,7 +52,8 @@ def post_process_latex_output(root, doall, latex_book=False, exc=True, custom_la
         with open(file, "r", encoding="utf8") as f:
             content = f.read()
         content = post_process_latex(
-            content, doall, latex_book=latex_book, exc=exc)
+            content, doall, latex_book=latex_book, exc=exc,
+            custom_latex_processing=custom_latex_processing)
         with open(file, "w", encoding="utf8") as f:
             f.write(content)
     else:
@@ -66,9 +67,8 @@ def post_process_latex_output(root, doall, latex_book=False, exc=True, custom_la
                 with open(file, "r", encoding="utf8") as f:
                     content = f.read()
                 content = post_process_latex(
-                    content, doall, info=file, latex_book=latex_book, exc=exc)
-                if custom_latex_processing is not None:
-                    content = custom_latex_processing(content)
+                    content, doall, info=file, latex_book=latex_book, exc=exc,
+                    custom_latex_processing=custom_latex_processing)
                 with open(file, "w", encoding="utf8") as f:
                     f.write(content)
 
@@ -104,11 +104,15 @@ def post_process_python_output(root, doall):
                     f.write(content)
 
 
-def post_process_latex_output_any(file):
+def post_process_latex_output_any(file, custom_latex_processing):
     """
     post process the latex file produced by sphinx
 
-    @param      file        latex filename
+    @param      file                        latex filename
+    @param      custom_latex_processing     function which does some post processing of the full latex file
+
+    .. versionchanged:: 1.5
+        Parameter *custom_latex_processing* was added.
     """
     fLOG("   ** post_process_latex_output_any ", file)
     with open(file, "r", encoding="utf8") as f:
@@ -422,7 +426,8 @@ def post_process_slides_output(file, pdf, python, slides, present, exc=True):
         return text
 
 
-def post_process_latex(st, doall, info=None, latex_book=False, exc=True):
+def post_process_latex(st, doall, info=None, latex_book=False, exc=True,
+                       custom_latex_processing=None):
     """
     modifies a latex file after its generation by sphinx
 
@@ -572,6 +577,8 @@ def post_process_latex(st, doall, info=None, latex_book=False, exc=True):
         st = st.replace(found, "%" + found)
 
     # end
+    if custom_latex_processing is not None:
+        st = custom_latex_processing(st)
     return st
 
 
