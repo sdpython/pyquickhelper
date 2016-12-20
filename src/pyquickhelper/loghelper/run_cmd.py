@@ -336,8 +336,8 @@ def run_cmd(cmd, sin="", shell=sys.platform.startswith("win"), wait=False, log_e
                     except Exception as e:
                         warnings.warn("Unable to close stdout and sterr.")
                     if catch_exit:
-                        raise RunCmdException("SystemExit raised with error code {0}\nOUT:\n{1}\nERR:\n{2}".format(
-                            returnCode, "\n".join(out), "\n".join(err)))
+                        raise RunCmdException("SystemExit raised with error code {0}\nCMD:\n{1}\nCWD:\n{2}\nOUT:\n{3}\nERR:\n{4}".format(
+                            returnCode, cmd, os.getcwd(), "\n".join(out), "\n".join(err)))
                     else:
                         raise subprocess.CalledProcessError(returnCode, cmd)
 

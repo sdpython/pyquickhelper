@@ -337,8 +337,11 @@ def compile_latex_output_final(root, latex_path, doall, afile=None, latex_book=F
                     lat, file, build)
             fLOG("~~~~ LATEX compilation (c)", c)
             post_process_latex_output(file, doall, latex_book=latex_book)
-            out, err = run_cmd(c, wait=True, log_error=False, catch_exit=True, communicate=False,
-                               tell_if_no_output=120, fLOG=fLOG)
+            try:
+                out, err = run_cmd(c, wait=True, log_error=False, catch_exit=True, communicate=False,
+                                   tell_if_no_output=120, fLOG=fLOG)
+            except Exception as e:
+                raise OSError("Unable to execute\n{0}".format(c)) from e
             if len(err) > 0:
                 raise HelpGenException(
                     "CMD:\n{0}\nERR:\n{1}\nOUT:\n{2}".format(c, err, out))
