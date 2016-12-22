@@ -105,8 +105,8 @@ def compute_truncated_documentation(doc, length=_length_truncated_doc,
             doc = doc[-1]
 
         doc = doc.strip("\n\r\t ").replace("\t", "    ")
-        
-        # we stop at the first .. 
+
+        # we stop at the first ...
         lines = [li.rstrip() for li in doc.split("\n")]
         pos = None
         for i, li in enumerate(lines):
