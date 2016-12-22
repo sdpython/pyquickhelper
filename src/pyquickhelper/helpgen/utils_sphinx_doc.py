@@ -353,15 +353,8 @@ def copy_source_files(input, output, fmod=lambda v, filename: v,
     return ractions
 
 
-def apply_modification_template(rootm,
-                                store_obj,
-                                template,
-                                fullname,
-                                rootrep,
-                                softfile,
-                                indexes,
-                                additional_sys_path,
-                                fLOG=noLOG):
+def apply_modification_template(rootm, store_obj, template, fullname, rootrep,
+                                softfile, indexes, additional_sys_path, fLOG=noLOG):
     """
     @see fn add_file_rst
 
@@ -550,17 +543,11 @@ def apply_modification_template(rootm,
     return res
 
 
-def add_file_rst(rootm,
-                 store_obj,
-                 actions,
-                 template=add_file_rst_template,
+def add_file_rst(rootm, store_obj, actions, template=add_file_rst_template,
                  rootrep=("_doc.sphinxdoc.source.pyquickhelper.", ""),
-                 fmod=lambda v, filename: v,
-                 softfile=lambda f: False,
-                 mapped_function=None,
-                 indexes=None,
-                 additional_sys_path=None,
-                 fLOG=noLOG):
+                 fmod=lambda v, filename: v, softfile=lambda f: False,
+                 mapped_function=None, indexes=None,
+                 additional_sys_path=None, fLOG=noLOG):
     """
     creates a rst file for every source file
 

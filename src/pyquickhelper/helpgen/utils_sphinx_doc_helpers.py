@@ -86,8 +86,7 @@ add_file_rst_template_title = {"class": "Classes",
 #
 
 
-def compute_truncated_documentation(doc,
-                                    length=_length_truncated_doc,
+def compute_truncated_documentation(doc, length=_length_truncated_doc,
                                     raise_exception=False):
     """
     produces a truncated version of a docstring
@@ -105,22 +104,30 @@ def compute_truncated_documentation(doc,
             doc = doc.split("@brief ")
             doc = doc[-1]
 
-        # we stop at the first todoext
-        doc = doc.strip("\n\r\t ").split(".. todoext::")[0]
+        doc = doc.strip("\n\r\t ").replace("\t", "    ")
+        
+        # we stop at the first .. 
+        lines = [li.rstrip() for li in doc.split("\n")]
+        pos = None
+        for i, li in enumerate(lines):
+            if li.lstrip().startswith(".. ") and li.endswith("::"):
+                pos = i
+                break
+        if pos is not None:
+            lines = lines[:pos]
 
+        # we filter out other stuff
         def filter_line(line):
             s = line.strip()
-            if s.startswith(".. ") and s.endswith("::"):
-                return ""
-            elif s.startswith(":title:"):
+            if s.startswith(":title:"):
                 return line.replace(":title:", "")
             elif s.startswith(":tag:") or s.startswith(":lid:"):
                 return ""
             return line
-        doc = "\n".join(filter_line(line) for line in doc.split("\n"))
+        doc = "\n".join(filter_line(line) for line in lines)
         doc = doc.replace("\n", " ").replace("\r", "").strip("\n\r\t ")
 
-        for subs in ["@" + "param", "@" + "return", ":param", ":return", ":ref:", "`"]:
+        for subs in ["@" + "param", "@" + "return", ":param", ":return", ":ref:", "`", ".. "]:
             if subs in doc:
                 doc = doc[:doc.find(subs)].strip("\r\t ")
 
