@@ -3,6 +3,7 @@
 @brief Modified version of `runipy.notebook_runner <https://github.com/paulgb/runipy/blob/master/runipy/notebook_runner.py>`_.
 """
 
+import base64
 import os
 import re
 import time
@@ -11,6 +12,7 @@ import platform
 import warnings
 from queue import Empty
 from time import sleep
+from collections import Counter
 
 
 try:
@@ -24,8 +26,9 @@ from ..loghelper.flog import noLOG
 if sys.version_info[0] == 2:
     from codecs import open
     from StringIO import StringIO
+    BytesIO = StringIO
 else:
-    from io import StringIO
+    from io import StringIO, BytesIO
 
 
 class NotebookError(Exception):
@@ -524,6 +527,13 @@ class NotebookRunner(object):
             for cell in self.nb.cells:
                 yield cell
 
+    def first_cell(self):
+        """
+        Returns the first cell.
+        """
+        for cell in self.iter_cells():
+            return cell
+
     def _cell_container(self):
         """
         returns a cells container, it may change according to the format
@@ -568,6 +578,175 @@ class NotebookRunner(object):
         @return                 metadata
         """
         return cell.metadata
+
+    def _check_thumbnail_tuple(self, b):
+        """
+        checks types for a thumbnail
+
+        @param      b       tuple   image, format
+        @return             b
+
+        The function raises an exception if the type is incorrect.
+        """
+        if not isinstance(b, tuple):
+            raise TypeError("tuple expected, not {0}".format(type(b)))
+        if len(b) != 2:
+            raise TypeError(
+                "tuple expected of lengh 2, not {0}".format(len(b)))
+        if b[1] == "svg":
+            if not isinstance(b[0], str):
+                raise TypeError(
+                    "str expected for svg, not {0}".format(type(b[0])))
+        else:
+            if not isinstance(b[0], bytes):
+                raise TypeError(
+                    "bytes expected for images, not {0}".format(type(b[0])))
+        return b
+
+    def create_picture_from(self, text, format, asbytes=True, context=None):
+        """
+        Creates a picture from text.
+
+        @param      text        the text
+        @param      format      text, json, ...
+        @param      context     (str) indication on the content of text (error, ...)
+        @param      asbytes     results as bytes or as an image
+        @return                 tuple (picture, format) or PIL.Image (if asbytes is False)
+
+        The picture will be bytes, the format png, bmp...
+        The size of the picture will depend on the text.
+        The longer, the bigger. The method relies on matplotlib
+        and then convert the image into a PIL image.
+
+        HTML could be rendered with QWebPage from PyQt (not implemented).
+        """
+        if len(text) > 200:
+            text = text[:200]
+        size = len(text) // 10
+        figsize = (3 + size, 3 + size)
+        lines = text.replace("\t", " ").replace("\r", "").split("\n")
+
+        import matplotlib.pyplot as plt
+        from matplotlib.textpath import TextPath
+        from matplotlib.font_manager import FontProperties
+        fig = plt.figure(figsize=figsize)
+        ax = fig.add_subplot(111)
+        fp = FontProperties(size=200)
+
+        dx = 0
+        dy = 0
+        for i, line in enumerate(lines):
+            if len(line.strip()) > 0:
+                ax.text(0, -dy, line, fontproperties=fp, va='top')
+                tp = TextPath((0, -dy), line, prop=fp)
+                bb = tp.get_extents()
+                dy += bb.height
+                dx = max(dx, bb.width)
+
+        ratio = abs(dx) / max(abs(dy), 1)
+        ratio = min(ratio, 3)
+        fig.set_size_inches(int((1 + size) * ratio), 1 + size)
+        ax.set_xlim([0, dx])
+        ax.set_ylim([-dy, 0])
+        ax.set_axis_off()
+        sio = BytesIO()
+        fig.savefig(sio, format="png")
+
+        if asbytes:
+            b = sio.getvalue(), "png"
+            self._check_thumbnail_tuple(b)
+
+            try:
+                from PIL import Image
+            except ImportError:
+                import Image
+            img = Image.open(sio)
+            img.save("c:\\temp\\i{0}.png".format(id(img)))
+
+            return b
+        else:
+            try:
+                from PIL import Image
+            except ImportError:
+                import Image
+            img = Image.open(sio)
+            img.save("c:\\temp\\i{0}.png".format(id(img)))
+            return img
+
+    def cell_image(self, cell, image_from_text=False):
+        """
+        returns the cell image or None if not found
+
+        @param      cell            cell to examine
+        @param      image_from_text produce an image even if it is not one
+        @return                     None for no image or a list of tuple (image as bytes, extension)
+                                    for each output of the cell
+        """
+        kind = self.cell_type(cell)
+        if kind != "code":
+            return None
+        results = []
+        for output in cell.outputs:
+            if output["output_type"] in {"execute_result", "display_data"}:
+                data = output["data"]
+                for k, v in data.items():
+                    if k == "text/plain":
+                        if image_from_text:
+                            b = self.create_picture_from(
+                                v, "text", context=output["output_type"])
+                            results.append(b)
+                    elif k == "application/javascript":
+                        if image_from_text:
+                            b = self.create_picture_from(v, "js")
+                            results.append(b)
+                    elif k == "application/json":
+                        if image_from_text:
+                            b = self.create_picture_from(v, "json")
+                            results.append(b)
+                    elif k == "image/svg+xml":
+                        if not isinstance(v, str):
+                            raise TypeError(
+                                "This should be str not '{0}' (=SVG).".format(type(v)))
+                        results.append((v, "svg"))
+                    elif k == "text/html":
+                        if image_from_text:
+                            b = self.create_picture_from(v, "html")
+                            results.append(b)
+                    elif k == "text/latex":
+                        if image_from_text:
+                            b = self.create_picture_from(v, "latex")
+                            results.append(b)
+                    elif k in {"image/png", "image/jpg", "image/jpeg", "image/gif"}:
+                        if not isinstance(v, bytes):
+                            v = base64.b64decode(v)
+                        if not isinstance(v, bytes):
+                            raise TypeError(
+                                "This should be bytes not '{0}' (=IMG:{1}).".format(type(v), k))
+                        results.append((v, k.split("/")[-1]))
+                    else:
+                        raise NotImplementedError("cell type: {0}\nk={1}\nv={2}\nCELL:\n{3}".format(kind,
+                                                                                                    k, v, cell))
+            elif output["output_type"] == "error":
+                vl = output["traceback"]
+                if image_from_text:
+                    for v in vl:
+                        b = self.create_picture_from(
+                            v, "text", context="error")
+                        results.append(b)
+            elif output["output_type"] == "stream":
+                v = output["text"]
+                if image_from_text:
+                    b = self.create_picture_from(v, "text")
+                    results.append(b)
+            else:
+                raise NotImplementedError("cell type: {0}\noutput type: {1}\nOUT:\n{2}\nCELL:\n{3}"
+                                          .format(kind, output["output_type"], output, cell))
+        if len(results) > 0:
+            res = self._merge_images(results)
+            self._check_thumbnail_tuple(res)
+            return res
+        else:
+            return None
 
     def cell_height(self, cell):
         """
@@ -808,3 +987,213 @@ class NotebookRunner(object):
                 last.append(cell)
                 s += 1
             return s
+
+    def get_description(self):
+        """
+        Get summary and description of this notebook.
+        We expect the first cell to contain a title and a description
+        of its content.
+
+        @return             header, description
+
+        .. versionadded:: 1.5
+        """
+        def split_header(s, get_header=True):
+            s = s.lstrip().rstrip()
+            parts = s.splitlines()
+            if parts[0].startswith('#'):
+                if get_header:
+                    header = re.sub('#+\s*', '', parts.pop(0))
+                    if not parts:
+                        return header, ''
+                else:
+                    header = ''
+                rest = '\n'.join(parts).lstrip().split('\n\n')
+                desc = rest[0].replace('\n', ' ')
+                return header, desc
+            else:
+                if get_header:
+                    if parts[0].startswith(('=', '-')):
+                        parts = parts[1:]
+                    header = parts.pop(0)
+                    if parts and parts[0].startswith(('=', '-')):
+                        parts.pop(0)
+                    if not parts:
+                        return header, ''
+                else:
+                    header = ''
+                rest = '\n'.join(parts).lstrip().split('\n\n')
+                desc = rest[0].replace('\n', ' ')
+                return header, desc
+
+        first_cell = self.first_cell()
+
+        if not first_cell['cell_type'] == 'markdown':
+            raise ValueError("The first cell is not in markdown but '{0}'.".format(
+                first_cell['cell_type']))
+
+        header, desc = split_header(first_cell['source'])
+        if not desc and len(self.nb['cells']) > 1:
+            second_cell = self.nb['cells'][1]
+            if second_cell['cell_type'] == 'markdown':
+                _, desc = split_header(second_cell['source'], False)
+
+        reg_link = "(\\[(.*)\\]\\(([^ ]*)\\))"
+        reg = re.compile(reg_link)
+        new_desc = reg.sub("\\2", desc)
+        return header, new_desc.replace('"', "")
+
+    def get_thumbnail(self, max_width=200, max_height=200):
+        """
+        Process the notebook and create one picture based on the outputs
+        to illustrate a notebook.
+
+        @param      max_width       maximum size of the thumbnail
+        @param      max_height      maximum size of the thumbnail
+        @return                     string (SVG) or Image (PIL)
+
+        .. versionadded:: 1.5
+        """
+        images = []
+        cells = list(self.iter_cells())
+        cells.reverse()
+        for cell in cells:
+            c = self.cell_image(cell, False)
+            if c is not None and len(c) > 0 and len(c[0]) > 0:
+                self._check_thumbnail_tuple(c)
+                images.append(c)
+        if len(images) == 0:
+            for cell in cells:
+                c = self.cell_image(cell, True)
+                if c is not None and len(c) > 0 and len(c[0]) > 0:
+                    self._check_thumbnail_tuple(c)
+                    images.append(c)
+                    if len(c[0]) >= 1000:
+                        break
+        if len(images) == 0:
+            # no image, we need to consider the default one
+            no_image = os.path.join(
+                os.path.dirname(__file__), 'no_image_nb.png')
+            with open(no_image, "rb") as f:
+                c = (f.read(), "png")
+                self._check_thumbnail_tuple(c)
+                images.append(c)
+
+        # select the image
+        if len(images) == 0:
+            raise ValueError("There should be at least one image.")
+        elif len(images) == 1:
+            image = images[0]
+        else:
+            # maybe later we'll implement a different logic
+            # we pick the last one
+            image = images[0]
+
+        # zoom
+        if image[1] != "svg":
+            img = self._scale_image(
+                image[0], image[1], max_width=max_width, max_height=max_height)
+            return img
+        else:
+            return image[0]
+
+    def _scale_image(self, in_bytes, format=None, max_width=200, max_height=200):
+        """
+        Scales an image with the same aspect ratio centered in an
+        image with a given max_width and max_height.
+
+        @param      in_bytes        image as bytes
+        @param      format          indication of the format (can be empty)
+        @param      max_width       maximum size of the thumbnail
+        @param      max_height      maximum size of the thumbnail
+        @return                     Image (PIL)
+
+        .. versionadded:: 1.5
+        """
+        # local import to avoid testing dependency on PIL:
+        try:
+            from PIL import Image
+        except ImportError:
+            import Image
+
+        if isinstance(in_bytes, tuple):
+            in_bytes = in_bytes[0]
+        if not isinstance(in_bytes, bytes):
+            raise TypeError("bytes expected, not {0}".format(type(in_bytes)))
+        img = Image.open(BytesIO(in_bytes))
+        width_in, height_in = img.size
+        scale_w = max_width / float(width_in)
+        scale_h = max_height / float(height_in)
+
+        if height_in * scale_w <= max_height:
+            scale = scale_w
+        else:
+            scale = scale_h
+
+        if scale >= 1.0:
+            return img
+
+        width_sc = int(round(scale * width_in))
+        height_sc = int(round(scale * height_in))
+
+        # resize the image and center
+        img.thumbnail((width_sc, height_sc), Image.ANTIALIAS)
+        thumb = Image.new('RGB', (max_width, max_height), (255, 255, 255))
+        pos_insert = ((max_width - width_sc) // 2,
+                      (max_height - height_sc) // 2)
+        thumb.paste(img, pos_insert)
+        return thumb
+
+    def _merge_images(self, results):
+        """
+        Merges images defined by (buffer, format).
+        The method uses PIL to merge images when possible.
+
+        @return                     [ (image, format) ]
+
+        .. versionadded:: 1.5
+        """
+        if len(results) == 1:
+            results = results[0]
+            self._check_thumbnail_tuple(results)
+            return results
+        elif len(results) == 0:
+            return None
+        formats_counts = Counter(_[1] for _ in results)
+        if len(formats_counts) == 1:
+            format = results[0][1]
+        else:
+            items = sorted(((v, k) for k, v in formats_counts.items()), False)
+            for it in items:
+                format = it
+                break
+
+        results = [_ for _ in results if _[1] == format]
+        if format == "svg":
+            return ("\n".join(_[0] for _ in results), format)
+        else:
+            # local import to avoid testing dependency on PIL:
+            try:
+                from PIL import Image
+            except ImportError:
+                import Image
+
+            dx = 0.
+            dy = 0.
+            over = 0.7
+            imgs = []
+            for in_bytes, f in results:
+                img = Image.open(BytesIO(in_bytes))
+                imgs.append(img)
+                dx = max(dx, img.size[0])
+                dy += img.size[1] * over
+
+            new_im = Image.new('RGB', (int(dx), int(dy)), (220, 220, 220))
+            for img in imgs:
+                dy -= img.size[1] * over
+                new_im.paste(img, (0, max(int(dy), 0)))
+
+            image_buffer = BytesIO()
+            new_im.save(image_buffer, "PNG")
+            b = image_buffer.getvalue(), "png"
+            return b

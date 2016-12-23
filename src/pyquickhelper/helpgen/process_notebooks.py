@@ -18,6 +18,8 @@ from .post_process import post_process_latex_output, post_process_latex_output_a
 from .post_process import post_process_html_output, post_process_slides_output, post_process_python_output
 from .helpgen_exceptions import NotebookConvertError
 from .install_js_dep import install_javascript_tools
+from .style_css_template import THUMBNAIL_TEMPLATE
+from ..ipythonhelper import read_nb
 
 
 if sys.version_info[0] == 2:
@@ -640,9 +642,44 @@ def add_link_to_notebook(file, nb, pdf, html, python, slides, present, exc=True,
             "unable to add a link to this extension: " + ext)
 
 
+def build_thumbail_in_gallery(nbfile, folder_snippet, relative, rst_link):
+    """
+    Returns RST code for a notebook.
+
+    @param      nbfile          notebook file
+    @param      folder_snippet  where to store the snippet
+    @parm       relative        the path to the snippet will be relative to this folder
+    @param      rst_link        rst link
+    @return                     RST
+    """
+    nb = read_nb(nbfile)
+    title, desc = nb.get_description()
+    image = nb.get_thumbnail()
+    name = os.path.splitext(os.path.split(nbfile)[-1])[0]
+    name += ".thumb"
+    full = os.path.join(folder_snippet, name)
+
+    if isinstance(image, str):
+        # SVG
+        full += ".svg"
+        name += ".svg"
+        with open(full, "w", encoding="utf-8") as f:
+            f.write(image)
+    else:
+        # Image
+        full += ".png"
+        name += ".png"
+        image.save(full)
+
+    rel = os.path.relpath(full, start=relative).replace("\\", "/")
+    rst = THUMBNAIL_TEMPLATE.format(
+        snippet=desc, thumbnail=rel, ref_name=rst_link)
+    return rst
+
+
 def add_notebook_page(nbs, fileout):
     """
-    creates a rst page with links to all notebooks
+    Creates a rst page with links to all notebooks.
 
     @param      nbs             list of notebooks to consider or tuple(full path, rst)
     @param      fileout         file to create
@@ -650,8 +687,12 @@ def add_notebook_page(nbs, fileout):
 
     .. versionchanged:: 1.4
         *nbs* can be a list of tuple
+
+    .. versionchanged:: 1.5
+        Add snippet.
     """
-    rows = ["", ".. _l-notebooks:", "", "", "Notebooks", "=========", ""]
+    rows = ["", ".. _l-notebooks-gallery:", "", "", "Notebooks Gallery",
+            "=================", ""]
 
     hier = set()
     rst = []
@@ -667,15 +708,29 @@ def add_notebook_page(nbs, fileout):
             rst.append((tuple(), tu[1]))
     rst.sort()
 
+    folder_index = os.path.dirname(os.path.normpath(fileout))
+    folder = os.path.join(folder_index, "notebooks")
+
     if len(hier) == 0:
         rows.append(".. toctree::")
-        rows.append("    :maxdepth: 2")
+        rows.append("    :maxdepth: 1")
         rows.append("")
         for file in rst:
             if isinstance(file, tuple):
                 file = file[1]
             rs = os.path.splitext(os.path.split(file)[-1])[0]
             rows.append("    notebooks/{0}".format(rs))
+
+        for file in rst:
+            if isinstance(file, tuple):
+                no, file = file
+            else:
+                raise ValueError("tuple is expected, not {0}.".format(file))
+
+            link = os.path.splitext(os.path.split(file)[-1])[0]
+            link = link.replace("_", "") + "rst"
+            rst = build_thumbail_in_gallery(file, folder, folder_index, link)
+            rows.append(rst)
     else:
         level = "-+^"
         rows.append("")
@@ -697,10 +752,16 @@ def add_notebook_page(nbs, fileout):
                     k += 1
                 last = hi
                 rows.append(".. toctree::")
-                rows.append("    :maxdepth: 2")
+                rows.append("    :maxdepth: 1")
                 rows.append("")
 
             rows.append("    notebooks/{0}".format(rs))
+
+        for hi, r in rst:
+            rs = os.path.splitext(os.path.split(r)[-1])[0]
+            link = rs.replace("_", "") + "rst"
+            rst = build_thumbail_in_gallery(hi, folder, folder_index, link)
+            rows.append(rst)
 
     rows.append("")
     with open(fileout, "w", encoding="utf8") as f:

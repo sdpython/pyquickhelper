@@ -10,6 +10,7 @@ import os
 import datetime
 import re
 import warnings
+from .style_css_template import style_figure_notebook
 
 if sys.version_info[0] == 2:
     from codecs import open
@@ -190,7 +191,7 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
     # latex_additional_files = ["mfgan-bw.sty", "_static/cover.png"]
 
     # figure
-    numfig = True
+    numfig = False
 
     # theme
     html_theme = theme
@@ -508,42 +509,6 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
             'expected_failing_examples': [],
         }
 
-    # notebook gallery
-    dirname = os.path.dirname(fileconf)
-    exa = os.path.join(dirname, "..", "..", "..", "_doc", "notebooks")
-    if os.path.exists(exa):
-        exa = os.path.normpath(exa)
-        import pathlib
-        pp = pathlib.Path(exa)
-        readmes = pp.glob("**/README.txt")
-        examples_dirs = []
-        gallery_dirs = []
-        for res in readmes:
-            nn = res.parent
-            examples_dirs.append(str(nn))
-            last = res.parts[-2]
-            if last in ("notebooks", "examples"):
-                last = "gy" + last
-            if last.startswith("temp_"):
-                continue
-            dest = os.path.join(dirname, last)
-            if dest in gallery_dirs:
-                raise ValueError(
-                    "Gallery '{0}' already exists (source: '{1}'.".format(dest, nn))
-            gallery_dirs.append(dest)
-        if len(examples_dirs) > 0:
-            reference_url = {k: v[0] for k, v in intersphinx_mapping.items()}
-            example_dir = os.path.join(dirname, "gallerynb")
-            if not os.path.exists(example_dir):
-                os.makedirs(example_dir)
-            example_gallery_config = {
-                'pattern': '.+.ipynb',
-                'examples_dirs': examples_dirs,
-                'gallery_dirs': gallery_dirs,
-                'preprocess': False,
-            }
-            extensions.append('sphinx_nbexamples')
-
     # collect local variables
     loc = locals()
     for k, v in loc.items():
@@ -662,3 +627,6 @@ def custom_setup(app, author):
     # from sphinx.util.texescape import tex_replacements
     # tex_replacements += [('oe', '\\oe '), ]
     app.add_javascript("require.js")
+
+    # style for notebooks
+    app.add_stylesheet(style_figure_notebook[0])

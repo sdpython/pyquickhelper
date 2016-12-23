@@ -52,6 +52,7 @@ from .sphinx_main_helper import setup_environment_for_help, get_executables_path
 from .sphinx_main_helper import compile_latex_output_final, replace_placeholder_by_recent_blogpost, enumerate_copy_images_for_slides
 from .sphinx_main_verification import verification_html_format
 from .sphinx_main_missing_html_files import add_missing_files
+from .style_css_template import style_figure_notebook
 
 
 if sys.version_info[0] == 2:
@@ -492,6 +493,13 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
     for html_static_path in html_static_paths:
         install_javascript_tools(
             root_sphinxdoc, dest=html_static_path, fLOG=fLOG)
+
+    ############################
+    # we copy the extended styles (notebook, snippets)
+    for html_static_path in html_static_paths:
+        dest = os.path.join(html_static_path, style_figure_notebook[0])
+        with open(dest, "w", encoding="utf-8") as f:
+            f.write(style_figure_notebook[1])
 
     # We should not need that.
     # for build in build_paths:

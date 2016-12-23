@@ -39,6 +39,7 @@ packages = find_packages('src', exclude='src')
 package_dir = {k: "src/" + k.replace(".", "/") for k in packages}
 package_data = {project_var_name + ".funcwin": ["*.ico"],
                 project_var_name + ".sphinxext": ["*.png"],
+                project_var_name + ".ipythonhelper": ["*.png"],
                 project_var_name + ".filehelper": ["*.js", "*.css"],
                 }
 
@@ -249,7 +250,6 @@ if not r:
             "simplegeneric",
             "sphinx>=1.5",
             "sphinx-gallery",
-            "sphinx-nbexamples",
             "sphinxcontrib-imagesvg",
             "sphinxcontrib-jsdemo",
             "sphinxjp.themes.revealjs",
