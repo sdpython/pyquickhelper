@@ -644,7 +644,7 @@ class NotebookRunner(object):
                 dx = max(dx, bb.width)
 
         ratio = abs(dx) / max(abs(dy), 1)
-        ratio = min(ratio, 3)
+        ratio = max(min(ratio, 3), 1)
         fig.set_size_inches(int((1 + size) * ratio), 1 + size)
         ax.set_xlim([0, dx])
         ax.set_ylim([-dy, 0])
