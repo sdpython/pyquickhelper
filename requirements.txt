@@ -44,6 +44,7 @@ pandas
 path.py
 pep8
 pickleshare
+pillow
 pkgtools
 pycodestyle
 pycparser
