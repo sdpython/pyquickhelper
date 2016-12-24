@@ -659,6 +659,11 @@ def build_thumbail_in_gallery(nbfile, folder_snippet, relative, rst_link):
     name += ".thumb"
     full = os.path.join(folder_snippet, name)
 
+    dirname = os.path.dirname(full)
+    if not os.path.exists(dirname):
+        raise FileNotFoundError("Unable to find folder '{0}'\nfolder_snippet='{1}'\nrelative='{2}'\nnbfile='{3}'".format(
+            dirname, folder_snippet, relative, nbfile))
+
     if isinstance(image, str):
         # SVG
         full += ".svg"
@@ -697,7 +702,7 @@ def add_notebook_page(nbs, fileout):
     hier = set()
     rst = []
     for tu in nbs:
-        if isinstance(tu, tuple):
+        if isinstance(tu, (tuple, list)):
             if tu[0] is None or ("/" not in tu[0] and "\\" not in tu[0]):
                 rst.append((tuple(), tu[1]))
             else:
@@ -705,11 +710,17 @@ def add_notebook_page(nbs, fileout):
                 hier.add(way)
                 rst.append((way, tu[1]))
         else:
-            rst.append((tuple(), tu[1]))
+            rst.append((tuple(), tu))
+        ext = os.path.splitext(rst[-1][1])[-1]
+        if ext != ".ipynb":
+            raise ValueError(
+                "One file is not a notebook: {0}".format(rst[-1][1]))
     rst.sort()
 
     folder_index = os.path.dirname(os.path.normpath(fileout))
     folder = os.path.join(folder_index, "notebooks")
+    if not os.path.exists(folder):
+        os.mkdir(folder)
 
     if len(hier) == 0:
         rows.append(".. toctree::")
@@ -729,18 +740,32 @@ def add_notebook_page(nbs, fileout):
 
             link = os.path.splitext(os.path.split(file)[-1])[0]
             link = link.replace("_", "") + "rst"
-            rst = build_thumbail_in_gallery(file, folder, folder_index, link)
-            rows.append(rst)
+            if not os.path.exists(file):
+                raise FileNotFoundError("Unable to find: '{0}'\nRST=\n{1}".format(
+                    file, "\n".join(str(_) for _ in rst)))
+            r = build_thumbail_in_gallery(file, folder, folder_index, link)
+            rows.append(r)
     else:
         level = "-+^"
         rows.append("")
         rows.append(".. contents::")
         rows.append("    :depth: 2")
         rows.append("")
+        stack_file = []
         last = None
         for hi, r in rst:
             rs = os.path.splitext(os.path.split(r)[-1])[0]
+            r0 = r
             if hi != last:
+
+                for nbf in stack_file:
+                    rs = os.path.splitext(os.path.split(nbf)[-1])[0]
+                    link = rs.replace("_", "") + "rst"
+                    r = build_thumbail_in_gallery(
+                        nbf, folder, folder_index, link)
+                    rows.append(r)
+                stack_file = []
+
                 for k in range(0, len(hi)):
                     if last is None or k >= len(last) or hi[k] != last[k]:
                         break
@@ -756,12 +781,14 @@ def add_notebook_page(nbs, fileout):
                 rows.append("")
 
             rows.append("    notebooks/{0}".format(rs))
+            stack_file.append(r0)
 
-        for hi, r in rst:
-            rs = os.path.splitext(os.path.split(r)[-1])[0]
-            link = rs.replace("_", "") + "rst"
-            rst = build_thumbail_in_gallery(hi, folder, folder_index, link)
-            rows.append(rst)
+        if len(stack_file) > 0:
+            for nbf in stack_file:
+                rs = os.path.splitext(os.path.split(nbf)[-1])[0]
+                link = rs.replace("_", "") + "rst"
+                r = build_thumbail_in_gallery(nbf, folder, folder_index, link)
+                rows.append(r)
 
     rows.append("")
     with open(fileout, "w", encoding="utf8") as f:

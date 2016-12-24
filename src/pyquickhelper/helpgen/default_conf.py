@@ -23,7 +23,7 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
                          enable_disabled_parts="enable_disabled_documented_pieces_of_code",
                          sharepost="facebook-linkedin-twitter-20-body", custom_style=None,
                          extlinks=None, github_user=None, github_repo=None, title=None,
-                         book=False, link_resolve=None):
+                         book=True, link_resolve=None):
     """
     defines variables for Sphinx
 
@@ -630,3 +630,25 @@ def custom_setup(app, author):
 
     # style for notebooks
     app.add_stylesheet(style_figure_notebook[0])
+
+
+def get_default_stylesheet():
+    """
+    Returns the style of additional style sheets
+
+    @return         list of files
+
+    .. versionadded:: 1.5
+    """
+    return ["_static/" + style_figure_notebook[0]]
+
+
+def get_default_javascript():
+    """
+    Returns the style of additional style sheets
+
+    @return         list of files
+
+    .. versionadded:: 1.5
+    """
+    return ["_static/require.js"]
