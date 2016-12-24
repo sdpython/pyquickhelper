@@ -498,6 +498,7 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
     # we copy the extended styles (notebook, snippets)
     for html_static_path in html_static_paths:
         dest = os.path.join(html_static_path, style_figure_notebook[0])
+        fLOG("    CREATE-CSS", dest)
         with open(dest, "w", encoding="utf-8") as f:
             f.write(style_figure_notebook[1])
 
