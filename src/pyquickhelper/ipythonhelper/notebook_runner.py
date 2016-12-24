@@ -620,6 +620,14 @@ class NotebookRunner(object):
 
         HTML could be rendered with QWebPage from PyQt (not implemented).
         """
+        if not isinstance(text, (str, bytes)):
+            text = str(text)
+            if "\n" not in text:
+                rows = []
+                for i in range(0, len(text), 20):
+                    end = min(i + 20, len(text))
+                    rows.append(text[i:end])
+                text = "\n".join(text)
         if len(text) > 200:
             text = text[:200]
         size = len(text) // 10
