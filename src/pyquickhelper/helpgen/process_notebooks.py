@@ -696,7 +696,7 @@ def add_notebook_page(nbs, fileout):
     .. versionchanged:: 1.5
         Add snippet.
     """
-    rows = ["", ".. _l-notebooks-gallery:", "", "", "Notebooks Gallery",
+    rows = ["", ".. _l-notebooks:", "", "", "Notebooks Gallery",
             "=================", ""]
 
     hier = set()
