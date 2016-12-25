@@ -752,11 +752,6 @@ def add_notebook_page(nbs, fileout):
     if len(containers) == 0:
         raise ValueError("Inconsistency, no containers for\n{0}".format(
             "\n".join(str(_) for _ in rst)))
-    if not root.endswith("notebooks"):
-        mes = "\n".join(_[0] for _ in containers)
-        nnn = "\n".join(str(_) for _ in nbs)
-        raise ValueError(
-            "Inconsistency root='{0}'\nCONTAINERS:\n{1}\nNBS\n{2}".format(root, mes, nnn))
     exp = os.path.join(containers[0][0], "README.txt")
     if os.path.exists(exp):
         with open(exp, "r", encoding="utf-8") as f:
