@@ -684,23 +684,33 @@ def build_thumbail_in_gallery(nbfile, folder_snippet, relative, rst_link):
 
 def add_notebook_page(nbs, fileout):
     """
-    Creates a rst page with links to all notebooks.
+    Creates a rst page (gallery) with links to all notebooks.
+    For each notebook, it creates a snippet.
 
     @param      nbs             list of notebooks to consider or tuple(full path, rst)
     @param      fileout         file to create
     @return                     created file name
 
+    Example for parameter *nbs*:
+
+    ::
+
+        ('challenges\\city_tour\\city_tour_1.ipynb', 'ensae_projects\\_doc\\notebooks\\challenges\\city_tour\\city_tour_1.ipynb')
+        ('challenges\\city_tour\\city_tour_1_solution.ipynb', 'ensae_projects\\_doc\\notebooks\\challenges\\city_tour\\city_tour_1_solution.ipynb')
+        ('challenges\\city_tour\\city_tour_data_preparation.ipynb', 'ensae_projects\\_doc\\notebooks\\challenges\\city_tour\\city_tour_data_preparation.ipynb')
+        ('challenges\\city_tour\\city_tour_long.ipynb', 'ensae_projects\\_doc\\notebooks\\challenges\\city_tour\\city_tour_long.ipynb')
+        ('cheat_sheets\\chsh_files.ipynb', 'ensae_projects\\_doc\\notebooks\\cheat_sheets\\chsh_files.ipynb')
+        ('cheat_sheets\\chsh_geo.ipynb', 'ensae_projects\\_doc\\notebooks\\cheat_sheets\\chsh_geo.ipynb')
+
     .. versionchanged:: 1.4
         *nbs* can be a list of tuple
 
     .. versionchanged:: 1.5
-        Add snippet.
+        Add a thumbnail, organize the list of notebook as a gallery.
     """
-    rows = ["", ".. _l-notebooks:", "", "", "Notebooks Gallery",
-            "=================", ""]
-
     hier = set()
     rst = []
+    containers = {}
     for tu in nbs:
         if isinstance(tu, (tuple, list)):
             if tu[0] is None or ("/" not in tu[0] and "\\" not in tu[0]):
@@ -711,10 +721,15 @@ def add_notebook_page(nbs, fileout):
                 rst.append((way, tu[1]))
         else:
             rst.append((tuple(), tu))
-        ext = os.path.splitext(rst[-1][1])[-1]
+        name = rst[-1][1]
+        ext = os.path.splitext(name)[-1]
         if ext != ".ipynb":
             raise ValueError(
                 "One file is not a notebook: {0}".format(rst[-1][1]))
+        dirname, na = os.path.split(name)
+        if dirname not in containers:
+            containers[dirname] = []
+        containers[dirname].append(na)
     rst.sort()
 
     folder_index = os.path.dirname(os.path.normpath(fileout))
@@ -722,7 +737,36 @@ def add_notebook_page(nbs, fileout):
     if not os.path.exists(folder):
         os.mkdir(folder)
 
+    containers = list(sorted((k, v) for k, v in containers.items()))
+
+    # find root
+    hi, rs = rst[0]
+    if len(hi) == 0:
+        root = os.path.dirname(rs)
+    else:
+        spl = rs.replace("\\", "/").split("/")
+        ro = spl[:-len(hi) - 1]
+        root = os.path.join(*ro)
+
+    # look for README.txt
+    if len(containers) == 0:
+        raise ValueError("Inconsistency, no containers for\n{0}".format(
+            "\n".join(str(_) for _ in rst)))
+    if not root.endswith("notebooks"):
+        mes = "\n".join(_[0] for _ in containers)
+        nnn = "\n".join(str(_) for _ in nbs)
+        raise ValueError(
+            "Inconsistency root='{0}'\nCONTAINERS:\n{1}\nNBS\n{2}".format(root, mes, nnn))
+    exp = os.path.join(containers[0][0], "README.txt")
+    if os.path.exists(exp):
+        with open(exp, "r", encoding="utf-8") as f:
+            rows = ["", ".. _l-notebooks:", "", f.read(), ""]
+    else:
+        rows = ["", ".. _l-notebooks:", "", "", "Notebooks Gallery",
+                "=================", ""]
+
     if len(hier) == 0:
+        # case where there is no hierarchy
         rows.append(".. toctree::")
         rows.append("    :maxdepth: 1")
         rows.append("")
@@ -746,6 +790,7 @@ def add_notebook_page(nbs, fileout):
             r = build_thumbail_in_gallery(file, folder, folder_index, link)
             rows.append(r)
     else:
+        # case where there are subfolders
         level = "-+^"
         rows.append("")
         rows.append(".. contents::")
@@ -758,6 +803,7 @@ def add_notebook_page(nbs, fileout):
             r0 = r
             if hi != last:
 
+                # we add the thumbnail
                 for nbf in stack_file:
                     rs = os.path.splitext(os.path.split(nbf)[-1])[0]
                     link = rs.replace("_", "") + "rst"
@@ -766,30 +812,49 @@ def add_notebook_page(nbs, fileout):
                     rows.append(r)
                 stack_file = []
 
+                # we swith to the next gallery
+                rows.append(".. raw:: html")
+                rows.append("")
+                rows.append("   <div style='clear:both'></div>")
+                rows.append("")
+
+                # we add menus and subfolders
                 for k in range(0, len(hi)):
                     if last is None or k >= len(last) or hi[k] != last[k]:
                         break
+
                 while len(hi) > 0 and k < len(hi):
-                    rows.append("")
-                    rows.append(hi[k])
-                    rows.append(level[min(k, len(level) - 1)] * len(hi[k]))
-                    rows.append("")
+                    fo = [root] + list(hi[:k + 1])
+                    readme = os.path.join(*fo, "README.txt")
+                    if os.path.exists(readme):
+                        with open(readme, "r", encoding="utf-8") as f:
+                            rows.extend(["", f.read(), ""])
+                    else:
+                        rows.append("")
+                        rows.append(hi[k])
+                        rows.append(level[min(k, len(level) - 1)] * len(hi[k]))
+                        rows.append("")
                     k += 1
+
+                # we start the next gallery
                 last = hi
                 rows.append(".. toctree::")
                 rows.append("    :maxdepth: 1")
                 rows.append("")
 
+            # append a link to a notebook
             rows.append("    notebooks/{0}".format(rs))
             stack_file.append(r0)
 
         if len(stack_file) > 0:
+            # we add the thumbnails
             for nbf in stack_file:
                 rs = os.path.splitext(os.path.split(nbf)[-1])[0]
                 link = rs.replace("_", "") + "rst"
                 r = build_thumbail_in_gallery(nbf, folder, folder_index, link)
                 rows.append(r)
 
+    # done
     rows.append("")
     with open(fileout, "w", encoding="utf8") as f:
         f.write("\n".join(rows))

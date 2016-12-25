@@ -843,6 +843,15 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
         fLOG(
             "##################################################################################################")
 
+    # we copy the extended styles (notebook, snippets) (again in build folders)
+    # we should not need that
+    for build_path in build_paths:
+        dest = os.path.join(build_path, "_static", style_figure_notebook[0])
+        if not os.path.exists(dest):
+            fLOG("    CREATE-CSS2", dest)
+            with open(dest, "w", encoding="utf-8") as f:
+                f.write(style_figure_notebook[1])
+
     if add_htmlhelp:
         # we call HtmlHelp
         fLOG("### run HTMLHELP ###########################")
