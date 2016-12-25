@@ -702,6 +702,17 @@ def add_notebook_page(nbs, fileout):
         ('cheat_sheets\\chsh_files.ipynb', 'ensae_projects\\_doc\\notebooks\\cheat_sheets\\chsh_files.ipynb')
         ('cheat_sheets\\chsh_geo.ipynb', 'ensae_projects\\_doc\\notebooks\\cheat_sheets\\chsh_geo.ipynb')
 
+    .. todoext::
+        :title: merge functionalities from sphinx_nbexamples
+        :tag: done
+        :hidden: true
+        :date: 2016-12-25
+        :cost: 2
+        :issue: 40
+        :release: 1.5
+
+        See blog :ref:`Gallery of notebooks <blog-notebook-gallery>`.
+
     .. versionchanged:: 1.4
         *nbs* can be a list of tuple
 

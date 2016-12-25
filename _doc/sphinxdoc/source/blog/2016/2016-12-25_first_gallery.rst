@@ -5,6 +5,7 @@
     :keywords: gallery, documentation, notebook, thumbnail
     :date: 2016-12-25
     :categories: notebook
+    :lid: blog-notebook-gallery
     
     The module `sphinx-gallery <https://github.com/sphinx-gallery/sphinx-gallery>`_
     became quite popular. I discovered that
