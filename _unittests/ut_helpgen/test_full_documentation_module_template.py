@@ -146,7 +146,8 @@ class TestSphinxDocFull (unittest.TestCase):
                                  "_doc", "sphinxdoc", "build", "html", "all_notebooks.html")
             with open(fhtml, "r", encoding="utf8") as f:
                 content = f.read()
-            assert '<a href="notebooks/custom_notebooks.html" title="Custom Notebooks"' in content
+            if '<img alt="_images/custom_notebooks.thumb.png" src="_images/custom_notebooks.thumb.png" />' not in content:
+                raise Exception(content)
 
             # checks some links were processed
             fhtml = os.path.join(temp, "python3_module_template-master",
