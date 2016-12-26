@@ -757,13 +757,10 @@ def add_notebook_page(nbs, fileout):
     else:
         spl = rs.replace("\\", "/").split("/")
         ro = spl[:-len(hi) - 1]
-        root = os.path.join(*ro)
+        root = "/".join(ro)
 
     # look for README.txt
-    if len(containers) == 0:
-        raise ValueError("Inconsistency, no containers for\n{0}".format(
-            "\n".join(str(_) for _ in rst)))
-    exp = os.path.join(containers[0][0], "README.txt")
+    exp = os.path.join(root, "README.txt")
     if os.path.exists(exp):
         with open(exp, "r", encoding="utf-8") as f:
             rows = ["", ".. _l-notebooks:", "", f.read(), ""]
@@ -774,6 +771,7 @@ def add_notebook_page(nbs, fileout):
     if len(hier) == 0:
         # case where there is no hierarchy
         rows.append(".. toctree::")
+        rows.append("    :local:")
         rows.append("    :maxdepth: 1")
         rows.append("")
         for file in rst:
@@ -797,11 +795,14 @@ def add_notebook_page(nbs, fileout):
             rows.append(r)
     else:
         # case where there are subfolders
+        already = "\n".join(rows)
         level = "-+^"
         rows.append("")
-        rows.append(".. contents::")
-        rows.append("    :depth: 2")
-        rows.append("")
+        if ".. contents::" not in already:
+            rows.append(".. contents::")
+            rows.append("    :local:")
+            rows.append("    :depth: 2")
+            rows.append("")
         stack_file = []
         last = None
         for hi, r in rst:
@@ -845,6 +846,7 @@ def add_notebook_page(nbs, fileout):
                 # we start the next gallery
                 last = hi
                 rows.append(".. toctree::")
+                rows.append("    :local:")
                 rows.append("    :maxdepth: 1")
                 rows.append("")
 
