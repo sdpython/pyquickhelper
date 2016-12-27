@@ -663,14 +663,6 @@ class NotebookRunner(object):
         if asbytes:
             b = sio.getvalue(), "png"
             self._check_thumbnail_tuple(b)
-
-            try:
-                from PIL import Image
-            except ImportError:
-                import Image
-            img = Image.open(sio)
-            img.save("c:\\temp\\i{0}.png".format(id(img)))
-
             return b
         else:
             try:
@@ -678,7 +670,6 @@ class NotebookRunner(object):
             except ImportError:
                 import Image
             img = Image.open(sio)
-            img.save("c:\\temp\\i{0}.png".format(id(img)))
             return img
 
     def cell_image(self, cell, image_from_text=False):

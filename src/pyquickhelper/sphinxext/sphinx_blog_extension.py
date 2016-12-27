@@ -147,8 +147,17 @@ class BlogPostDirective(Directive):
         self.state.nested_parse(content, self.content_offset, container)
         node += container
 
+        # id section
+        if env is not None:
+            mid = int(env.new_serialno('indexblog-u-%s' % p["date"][:4])) + 1
+        else:
+            mid = -1
+
         # add title
-        section = nodes.section()
+        sids = "y{0}-{1}".format(p["date"][:4], mid)
+        section = nodes.section(ids=[sids])
+        section['year'] = p["date"][:4]
+        section['blogmid'] = mid
         node += section
         textnodes, messages = self.state.inline_text(p["title"], self.lineno)
         section += nodes.title(p["title"], '', *textnodes)
