@@ -39,7 +39,7 @@ class RunPythonExecutionError(Exception):
     pass
 
 
-def run_python_script(script, params=None, comment=None, setsysvar=None, process=False):
+def run_python_script(script, params=None, comment=None, setsysvar=None, process=False, exception=False):
     """
     execute a script python as a string
 
@@ -49,10 +49,16 @@ def run_python_script(script, params=None, comment=None, setsysvar=None, process
     @param  setsysvar   if not None, add a member to module *sys*, set up this variable to True,
                         if is remove after the execution
     @param  process     run the script in a separate process
+    @param  exception   expects an exception to be raised,
+                        fails if it is not, the function returns no output and the
+                        error message
     @return             stdout, stderr
 
     .. versionchanged:: 1.3
         Parameters *setsysvar*, *process* were added.
+
+    .. versionchanged:: 1.5
+        Parameter *exception* was added.
     """
     if params is None:
         params = {}
@@ -90,8 +96,16 @@ def run_python_script(script, params=None, comment=None, setsysvar=None, process
         header.append('')
         script = "\n".join(header) + script
         sin = script
-        out, err = run_cmd(cmd, script, wait=True)
-        return out, err
+        try:
+            out, err = run_cmd(cmd, script, wait=True)
+            return out, err
+        except Exception as ee:
+            if not exception:
+                message = "SCRIPT:\n{0}\nPARAMS\n{1}\nCOMMENT\n{2}\nERR\n{3}\nOUT\n{4}\nEXC\n{5}".format(
+                    script, params, comment, "", str(ee), ee)
+                raise RunPythonExecutionError(message) from ee
+            else:
+                return str(ee), str(ee)
     else:
 
         try:
@@ -127,9 +141,21 @@ def run_python_script(script, params=None, comment=None, setsysvar=None, process
                 comment = ""
             gout = sout.getvalue()
             gerr = serr.getvalue()
-            message = "SCRIPT:\n{0}\nPARAMS\n{1}\nCOMMENT\n{2}\nERR\n{3}\nOUT\n{4}\nEXC\n{5}".format(
-                script, params, comment, gout, gerr, ee)
-            raise RunPythonExecutionError(message) from ee
+            sys.stdout = kout
+            sys.stderr = kerr
+
+            import traceback
+            excs = traceback.format_exc()
+            lines = excs.split("\n")
+            excs = "\n".join(
+                _ for _ in lines if "sphinx_runpython_extension.py" not in _)
+
+            if not exception:
+                message = "SCRIPT:\n{0}\nPARAMS\n{1}\nCOMMENT\n{2}\nERR\n{3}\nOUT\n{4}\nEXC\n{5}\nTRACEBACK\n{6}".format(
+                    script, params, comment, gout, gerr, ee, excs)
+                raise RunPythonExecutionError(message) from ee
+            else:
+                return (gout + "\n" + gerr), (gerr + "\n" + excs)
 
         if setsysvar is not None:
             del sys.__dict__[setsysvar]
@@ -193,7 +219,8 @@ class RunPythonDirective(Directive):
       `public_doctree <http://code.nabla.net/doc/docutils/api/docutils/core/docutils.core.publish_doctree.html>`_.
     * ``setsysvar`` adds a member to *sys* modulen the module can act differently based on that information,
       if the value is left empty, *sys.enable_disabled_documented_pieces_of_code* will be be set up to *True*.
-    * ``process`` run the script in an another process
+    * ``:process:`` run the script in an another process
+    * ``:exception:`` the code throws an exception but it expected. The error is displayed.
 
     Option *rst* can be used the following way::
 
@@ -221,6 +248,9 @@ class RunPythonDirective(Directive):
 
     .. versionchanged:: 1.3
         Titles, references or label are now allowed.
+
+    .. versionchanged:: 1.5
+        Exception is now caught. It fails if no error is thrown.
     """
     required_arguments = 0
     optional_arguments = 0
@@ -236,6 +266,7 @@ class RunPythonDirective(Directive):
         'sout2': directives.unchanged,
         'setsysvar': directives.unchanged,
         'process': directives.unchanged,
+        'exception': directives.unchanged,
     }
     has_content = True
     runpython_class = runpython_node
@@ -280,6 +311,7 @@ class RunPythonDirective(Directive):
             'sphinx': 'sphinx' not in self.options or self.options['sphinx'] in bool_set,
             'setsysvar': self.options.get('setsysvar', None),
             'process': 'process' in self.options and self.options['process'] in bool_set_,
+            'exception': 'exception' in self.options and self.options['exception'] in bool_set_,
         }
 
         if p['setsysvar'] is not None and len(p['setsysvar']) == 0:
@@ -301,7 +333,10 @@ class RunPythonDirective(Directive):
         out, err = run_python_script(script,
                                      comment='  File "{0}", line {1}'.format(
                                          docname, lineno),
-                                     setsysvar=p['setsysvar'], process=p["process"])
+                                     setsysvar=p['setsysvar'], process=p[
+                                         "process"],
+                                     exception=p['exception'])
+
         if out is not None:
             out = out.rstrip(" \n\r\t")
         if err is not None:
