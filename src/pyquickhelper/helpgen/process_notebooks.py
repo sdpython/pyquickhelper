@@ -771,7 +771,6 @@ def add_notebook_page(nbs, fileout):
     if len(hier) == 0:
         # case where there is no hierarchy
         rows.append(".. toctree::")
-        rows.append("    :local:")
         rows.append("    :maxdepth: 1")
         rows.append("")
         for file in rst:
@@ -846,7 +845,6 @@ def add_notebook_page(nbs, fileout):
                 # we start the next gallery
                 last = hi
                 rows.append(".. toctree::")
-                rows.append("    :local:")
                 rows.append("    :maxdepth: 1")
                 rows.append("")
 
