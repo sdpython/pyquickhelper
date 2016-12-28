@@ -80,12 +80,20 @@ def remove_extra_spaces_and_pep8(filename, apply_pep8=True):
             if i >= 1 and lines2[i] == lines2[i - 1] == "":
                 rem.add(i)
         lines2 = [_ for i, _ in enumerate(lines2) if i not in rem]
-        if encoding is None:
-            with open(filename, "w") as f:
-                f.write("\n".join(lines2))
+        if len(lines) > 0 and len(lines2[-1]) > 0:
+            lines2.append("")
+        rl = "".join(lines)
+        r2 = "\n".join(lines2)
+        if r2 != rl:
+            if encoding is None:
+                with open(filename, "w") as f:
+                    f.write("\n".join(lines2))
+            else:
+                with open(filename, "w", encoding="utf8") as f:
+                    f.write("\n".join(lines2))
+            diff = max(1, diff)
         else:
-            with open(filename, "w", encoding="utf8") as f:
-                f.write("\n".join(lines2))
+            diff = 0
     elif diff != 0:
         if encoding is None:
             with open(filename, "w") as f:

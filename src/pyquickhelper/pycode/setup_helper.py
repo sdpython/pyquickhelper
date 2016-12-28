@@ -35,6 +35,8 @@ from ..filehelper import get_url_content_timeout, explore_folder_iterfile
 from .call_setup_hook import call_setup_hook
 from .tkinter_helper import fix_tkinter_issues_virtualenv
 from .default_regular_expression import _setup_pattern_copy
+from ..ipythonhelper import upgrade_notebook, remove_execution_number
+
 
 if sys.version_info[0] == 2:
     from codecs import open
@@ -266,7 +268,9 @@ def process_standard_options_for_setup(argv, file_or_folder, project_var_name, m
 
     if "clean_space" in argv:
         rem = clean_space_for_setup(file_or_folder)
-        print("number of impacted files", len(rem))
+        print("number of impacted files (pep8 + rst):", len(rem))
+        rem = clean_notebooks_for_numbers(file_or_folder)
+        print("number of impacted notebooks:", len(rem))
         return True
 
     elif "write_version" in argv:
@@ -503,7 +507,7 @@ def clean_space_for_setup(file_or_folder):
     does some cleaning within the module, apply pep8 rules
 
     @param      file_or_folder      file ``setup.py`` or folder which contains it
-    @return                         deleted files
+    @return                         impacted files
     """
     ffolder = get_folder(file_or_folder)
     rem = remove_extra_spaces_folder(
@@ -515,6 +519,31 @@ def clean_space_for_setup(file_or_folder):
             ".bat",
             ".sh"])
     return rem
+
+
+def clean_notebooks_for_numbers(file_or_folder):
+    """
+    .. index:: ntoebooks
+
+    Upgrade notebooks to the latest format and
+    clean notebooks execution numbers and rearrange the JSON file
+
+    @param      file_or_folder      file ``setup.py`` or folder which contains it
+    @return                         impacted files
+    """
+    ffolder = get_folder(file_or_folder)
+    fold2 = os.path.normpath(
+        os.path.join(ffolder, "_doc", "notebooks"))
+    mod = []
+    for nbf in explore_folder_iterfile(fold2, pattern=".*[.]ipynb"):
+        t = upgrade_notebook(nbf)
+        if t:
+            mod.append(nbf)
+        # remove numbers
+        s = remove_execution_number(nbf, nbf)
+        if s:
+            mod.append(nbf)
+    return mod
 
 
 def standard_help_for_setup(argv, file_or_folder, project_var_name, module_name=None, extra_ext=None,

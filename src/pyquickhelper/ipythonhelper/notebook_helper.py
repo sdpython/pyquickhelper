@@ -425,7 +425,7 @@ def remove_execution_number(infile, outfile=None, encoding="utf-8", indent=2):
     @param      outfile     None ot save the file
     @param      encoding    encoding
     @param      indent      indentation
-    @return                 modified string
+    @return                 modified string or None if outfile is not None and the file was not modified
 
     .. todoext::
         :title: remove execution number from notebook facilitate git versionning
@@ -438,6 +438,9 @@ def remove_execution_number(infile, outfile=None, encoding="utf-8", indent=2):
 
         Remove execution number from the notebook
         to avoid commiting changes only about those numbers
+
+    .. versionchanged:: 1.5
+        The behavior was changed when outfile is not None.
     """
 
     def fixup(adict, k, v):
@@ -458,6 +461,11 @@ def remove_execution_number(infile, outfile=None, encoding="utf-8", indent=2):
     json.dump(js, st, indent=indent, sort_keys=True)
     res = st.getvalue()
     if outfile is not None:
-        with open(outfile, "w", encoding=encoding) as f:
-            f.write(res)
-    return res
+        if content != res:
+            with open(outfile, "w", encoding=encoding) as f:
+                f.write(res)
+            return content
+        else:
+            return None
+    else:
+        return res
