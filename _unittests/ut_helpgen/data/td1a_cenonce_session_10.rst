@@ -4,7 +4,6 @@
 TD 10 : DataFrame et Matrice
 ============================
 
-
 **Links:**
 
     * :download:`notebook <td1a_cenonce_session_10.ipynb>`
@@ -186,9 +185,6 @@ chaque colonne comme les variables d'une table
     df = pandas.DataFrame(l)
     df
 
-
-
-
 .. raw:: html
 
     <div style="max-height:1000px;max-width:1500px;overflow:auto;">
@@ -232,9 +228,6 @@ chaque colonne comme les variables d'une table
     <p>2 rows × 3 columns</p>
     </div>
 
-
-
-
 Avec une valeur manquante :
 
 ::
@@ -245,8 +238,6 @@ Avec une valeur manquante :
     df = pandas.DataFrame(l)
 
     df
-
-
 
 .. raw:: html
 
@@ -291,9 +282,6 @@ Avec une valeur manquante :
     <p>2 rows × 3 columns</p>
     </div>
 
-
-
-
 `NaN <http://docs.scipy.org/doc/numpy/reference/generated/numpy.isnan.html#numpy.isnan>`__
 est une convention pour une valeur manquante. On extrait la variable
 ``prix`` :
@@ -302,18 +290,12 @@ est une convention pour une valeur manquante. On extrait la variable
 
     df.prix
 
-
-
-
 .. parsed-literal::
 
     0    220
 
     1    NaN
     Name: prix, dtype: float64
-
-
-
 
 Ou :
 
@@ -321,9 +303,6 @@ Ou :
 
     df["prix"]
 
-
-
-
 .. parsed-literal::
 
     0    220
@@ -331,17 +310,11 @@ Ou :
     1    NaN
     Name: prix, dtype: float64
 
-
-
-
 Pour extraire plusieurs colonnes :
 
 ::
 
     df [["date","prix"]]
-
-
-
 
 .. raw:: html
 
@@ -382,8 +355,6 @@ Pour extraire plusieurs colonnes :
 
     </div>
 
-
-
 .. raw:: html
 
    <h3 id="io">
@@ -413,21 +384,17 @@ obligatoire mais conseillée lorsque les données contiennent des accents
 
     df = pandas.DataFrame(l)
 
-
     # écriture au format texte
     df.to_csv("exemple.txt",sep="\t",encoding="utf-8", index=False)
-
 
     # on regarde ce qui a été enregistré
 
     with open("exemple.txt", "r", encoding="utf-8") as f : text = f.read()
     print(text)
 
-
     # on enregistre au format Excel
 
     df.to_excel("exemple.xlsx", index=False)
-
 
     # on ouvre Excel sur ce fichier (sous Windows)
     from pyquickhelper import run_cmd
@@ -440,10 +407,6 @@ obligatoire mais conseillée lorsque les données contiennent des accents
 
     2014-06-22	euros	220.0
     2014-06-23	euros	221.0
-
-
-
-
 
 On peut récupérer des données directement depuis Internet ou une chaîne
 de caractères et afficher le début
@@ -463,8 +426,6 @@ ou la fin
                             names=["ville", "annee", "temps","secondes"])
 
     df.head()
-
-
 
 .. raw:: html
 
@@ -545,9 +506,6 @@ ou la fin
     <p>5 rows × 4 columns</p>
     </div>
 
-
-
-
 .. raw:: html
 
    <h3 id="index">
@@ -570,9 +528,6 @@ lignes peuvent être désignées par un entier.
 
     df = pandas.DataFrame(l)
     df
-
-
-
 
 .. raw:: html
 
@@ -617,9 +572,6 @@ lignes peuvent être désignées par un entier.
     <p>2 rows × 3 columns</p>
     </div>
 
-
-
-
 On extrait une ligne
 (`ix <http://pandas.pydata.org/pandas-docs/dev/generated/pandas.DataFrame.ix.html>`__)
 :
@@ -627,9 +579,6 @@ On extrait une ligne
 ::
 
     df.ix[1]
-
-
-
 
 .. parsed-literal::
 
@@ -639,8 +588,6 @@ On extrait une ligne
     prix             221
 
     Name: 1, dtype: object
-
-
 
 Mais il est possible d'utiliser une colonne ou plusieurs colonnes comme
 index
@@ -652,8 +599,6 @@ index
     dfi = df.set_index("date")
 
     dfi
-
-
 
 .. raw:: html
 
@@ -701,17 +646,11 @@ index
     <p>2 rows × 2 columns</p>
     </div>
 
-
-
-
 On peut maintenant désigner une ligne par une date :
 
 ::
 
     dfi.ix["2014-06-23"]
-
-
-
 
 .. parsed-literal::
 
@@ -719,9 +658,6 @@ On peut maintenant désigner une ligne par une date :
 
     prix        221
     Name: 2014-06-23, dtype: object
-
-
-
 
 Il est possible d'utiliser plusieurs colonnes comme index :
 
@@ -734,15 +670,11 @@ Il est possible d'utiliser plusieurs colonnes comme index :
 
     dfi.ix["dupré","xavier"]
 
-
-
 .. parsed-literal::
 
     arrondissement    18
 
     Name: (dupré, xavier), dtype: int64
-
-
 
 Si on veut changer l'index ou le supprimer
 (`reset\_index <http://pandas.pydata.org/pandas-docs/stable/generated/pandas.DataFrame.reset_index.html>`__)
@@ -759,8 +691,6 @@ Si on veut changer l'index ou le supprimer
     dfi.set_index(["nom", "arrondissement"],inplace=True)
 
     dfi
-
-
 
 .. raw:: html
 
@@ -807,8 +737,6 @@ Si on veut changer l'index ou le supprimer
 
     </div>
 
-
-
 .. raw:: html
 
    <h3 id="ix">
@@ -832,8 +760,6 @@ Le symbole ``:`` désigne une plage de valeur.
                             names=["ville", "annee", "temps","secondes"])
 
     df.head()
-
-
 
 .. raw:: html
 
@@ -914,17 +840,11 @@ Le symbole ``:`` désigne une plage de valeur.
     <p>5 rows × 4 columns</p>
     </div>
 
-
-
-
 On peut sélectionner un sous-ensemble de lignes :
 
 ::
 
     df[3:6]
-
-
-
 
 .. raw:: html
 
@@ -984,17 +904,11 @@ On peut sélectionner un sous-ensemble de lignes :
     <p>3 rows × 4 columns</p>
     </div>
 
-
-
-
 On extrait la même plage mais avec deux colonnes seulement :
 
 ::
 
     df.ix[3:6,["annee","temps"]]
-
-
-
 
 .. raw:: html
 
@@ -1050,8 +964,6 @@ On extrait la même plage mais avec deux colonnes seulement :
 
     </div>
 
-
-
 Le même code pour lequel on renomme les colonnes extraites :
 
 ::
@@ -1060,9 +972,6 @@ Le même code pour lequel on renomme les colonnes extraites :
 
     sub.columns = ["year","time"]
     sub
-
-
-
 
 .. raw:: html
 
@@ -1118,8 +1027,6 @@ Le même code pour lequel on renomme les colonnes extraites :
 
     </div>
 
-
-
 .. raw:: html
 
    <h3 id="exo1">
@@ -1129,8 +1036,6 @@ Exercice 1 : créer un fichier Excel
 .. raw:: html
 
    </h3>
-
-
 
 On souhaite récupérer les données
 `marathon.txt <http://www.xavierdupre.fr/enseignement/complements/marathon.txt>`__,

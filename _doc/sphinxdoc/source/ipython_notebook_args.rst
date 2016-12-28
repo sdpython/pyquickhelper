@@ -9,7 +9,7 @@ Jupyter Notebook Arguments
 This is the output of command line::
 
     jupyter notebook --help-all
-    
+
 These arguments can be specified in :class:`NotebookRunner <pyquickhelper.ipythonhelper.notebook_runner>`.
 They were generated with Jupyter 4.0 on 07/06/2016.
 
@@ -30,16 +30,12 @@ They were generated with Jupyter 4.0 on 07/06/2016.
 
         List currently running notebook servers.
 
-
     Options
     -------
-
-
 
     Arguments that take values are actually convenience aliases to full
     Configurables, whose aliases are listed on the help line. For more information
     on full configurables, see '--help-all'.
-
 
     --script
 
@@ -64,11 +60,11 @@ They were generated with Jupyter 4.0 on 07/06/2016.
     --no-mathjax
 
         Disable MathJax
-        
+
         MathJax is the javascript library Jupyter uses to render math/LaTeX. It is
         very large, so you may want to disable it if you have a slow internet
         connection, or for offline use of the notebook.
-        
+
         When disabled, equations etc. will appear as their untransformed TeX source.
 
     --generate-config
@@ -617,4 +613,3 @@ They were generated with Jupyter 4.0 on 07/06/2016.
 
         jupyter notebook                       # start the notebook
         jupyter notebook --certfile=mycert.pem # use SSL/TLS certificate
-

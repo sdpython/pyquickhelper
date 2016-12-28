@@ -1,15 +1,14 @@
 
-
 .. blogpost::
     :title: Issue with package_data (setup.py)
     :keywords: setup.py, package_data
     :date: 2016-09-07
     :categories: setup
-    
+
     File ``setup.py`` usually defines something like:
-    
+
     ::
-    
+
          setup(
                 # ...
                 packages=packages,

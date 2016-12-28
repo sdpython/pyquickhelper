@@ -1,20 +1,19 @@
 
-
 .. blogpost::
     :title: Bigger text in the documentation
     :keywords: bigger, custom role, role
     :date: 2016-02-14
     :categories: sphinx
-    
+
     pyquickhelper now includes a role *bigger* which
     make a text :bigger:`bigger` ::
-    
+
         :bigger:`bigger`
-        
+
     Or :bigger:`::1:smaller` ::
-    
+
         :bigger:`::1:smaller`
-        
+
     Or :bigger:`::6:even bigger` ::
-    
-        :bigger:`::6:even bigger` 
+
+        :bigger:`::6:even bigger`

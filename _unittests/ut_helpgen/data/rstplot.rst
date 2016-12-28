@@ -1,14 +1,10 @@
 
-
-
-
 .. _l-plot:
-
 
 exemple de graph
 ================
 
-.. plot:: 
+.. plot::
 
    import matplotlib.pyplot as plt
    import numpy as np

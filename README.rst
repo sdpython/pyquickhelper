@@ -1,5 +1,4 @@
 
-
 .. _l-README:
 
 README
@@ -8,37 +7,36 @@ README
 .. image:: https://travis-ci.org/sdpython/pyquickhelper.svg?branch=master
     :target: https://travis-ci.org/sdpython/pyquickhelper
     :alt: Build status
-    
+
 .. image:: https://ci.appveyor.com/api/projects/status/54vl69ssd8ud4l64?svg=true
     :target: https://ci.appveyor.com/project/sdpython/pyquickhelper
     :alt: Build Status Windows
-    
+
 .. image:: https://badge.fury.io/py/pyquickhelper.svg
     :target: http://badge.fury.io/py/pyquickhelper
-        
+
 .. image:: https://img.shields.io/badge/license-MIT-blue.svg
     :alt: MIT License
     :target: http://opensource.org/licenses/MIT
-    
+
 .. image:: https://landscape.io/github/sdpython/pyquickhelper/master/landscape.svg?style=flat
    :target: https://landscape.io/github/sdpython/pyquickhelper/master
    :alt: Code Health
-   
+
 .. image:: https://requires.io/github/sdpython/pyquickhelper/requirements.svg?branch=master
      :target: https://requires.io/github/sdpython/pyquickhelper/requirements/?branch=master
      :alt: Requirements Status
 
 .. image:: https://codecov.io/github/sdpython/pyquickhelper/coverage.svg?branch=master
     :target: https://codecov.io/github/sdpython/pyquickhelper?branch=master
-    
+
 .. image:: http://img.shields.io/github/issues/sdpython/pyquickhelper.png
     :alt: GitHub Issues
     :target: https://github.com/sdpython/pyquickhelper/issues
-    
+
 .. image:: https://badge.waffle.io/sdpython/pyquickhelper.png?label=ready&title=Ready
     :alt: Waffle
     :target: https://waffle.io/sdpython/pyquickhelper
-    
 
 **Links:**
 
@@ -74,10 +72,9 @@ This project contains the following folders:
   the script can also be called with the following extra options (*python setup.py <option>*):
   * clean_space: remove extra spaces in the code
   * build_sphinx: builds the documentation
-  * unittests: run the unit tests, compute the code coverage    
+  * unittests: run the unit tests, compute the code coverage
 * a script *build_script.bat* which produces many script on Windows to easily run the setup,
   generate the documentation, run the unit tests.
-
 
 Examples
 --------
@@ -88,7 +85,7 @@ Convert a notebook into slides:
 
     from pyquickhelper.helpgen import nb2slides
     nb2slides("nb.ipynb", "convert.slides.html")
-    
+
 Merge two notebooks:
 
 ::
@@ -98,7 +95,7 @@ Merge two notebooks:
     nb2 = read_nb("<file2>", kernel=False)
     nb1.merge_notebook(nb2)
     nb1.to_json(outfile)
-    
+
 Run a notebook:
 
 ::
@@ -114,7 +111,7 @@ Run a command line program:
 
     from pyquickhelper.loghelper import run_cmd
     out,err = run_cmd("python setup.py install", wait=True)
-    
+
 A sphinx extension to generate python documentation from a script:
 
 ::

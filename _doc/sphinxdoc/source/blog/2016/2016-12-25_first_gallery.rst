@@ -1,12 +1,11 @@
 
-
 .. blogpost::
     :title: Gallery of notebook
     :keywords: gallery, documentation, notebook, thumbnail
     :date: 2016-12-25
     :categories: notebook
     :lid: blog-notebook-gallery
-    
+
     The module `sphinx-gallery <https://github.com/sphinx-gallery/sphinx-gallery>`_
     became quite popular. I discovered that
     `sphinx-nbexamples <https://github.com/Chilipp/sphinx-nbexamples>`_ was doing the same.

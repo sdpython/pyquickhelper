@@ -9,4 +9,3 @@ Examples
 
 .. exreflist::
     :contents:
-

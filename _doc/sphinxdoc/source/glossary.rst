@@ -1,8 +1,5 @@
 
-
 .. index:: glossary
-
-
 
 Glossary
 ========

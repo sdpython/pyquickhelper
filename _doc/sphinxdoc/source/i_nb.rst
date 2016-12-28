@@ -9,4 +9,3 @@ Magic commands
 
 .. nbreflist::
     :contents:
-

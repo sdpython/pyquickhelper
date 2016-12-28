@@ -22,5 +22,4 @@ example with bokeh
     p.line(x, y, line_width=2)
     p.circle(x, y, size=10, fill_color="white")
 
-    show(p) 
-    
+    show(p)

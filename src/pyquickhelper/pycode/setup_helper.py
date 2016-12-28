@@ -510,7 +510,8 @@ def clean_space_for_setup(file_or_folder):
         ffolder,
         extensions=[
             ".py",
-            "rst",
+            ".rst",
+            ".md",
             ".bat",
             ".sh"])
     return rem

@@ -6,8 +6,8 @@ Text before the blog post.
     :keywords: example, blogpost, documentation
     :date: 2015-04-04
     :categories: documentation, example
-    
-    This blogpost is an example of a blogpost 
+
+    This blogpost is an example of a blogpost
     which can be added to the documentation.
     Unfortunately, it does not rely on an existing python blog generator
     as it was difficult to entirely change the existing framework
@@ -20,7 +20,6 @@ Text before the blog post.
             :keywords: example, blogpost, documentation
             :date: 2015-04-04
             :categories: documentation, example
-        
 
     However, you can check some of the following to power your blog:
     `What's the best available static blog/website generator in Python <http://www.quora.com/Whats-the-best-available-static-blog-website-generator-in-Python>`_
@@ -30,6 +29,5 @@ Text before the blog post.
     .. suite.
 
     Text after the break.
-
 
 Text after the blog post.

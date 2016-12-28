@@ -57,7 +57,8 @@ def remove_extra_spaces_and_pep8(filename, apply_pep8=True):
 
     diff, lines2 = cdiff(lines)
 
-    if os.path.splitext(filename)[-1] == ".py":
+    ext = os.path.splitext(filename)[-1]
+    if ext == ".py":
         r = autopep8.fix_lines(
             lines2,
             options=autopep8.parse_args(['']))
@@ -72,7 +73,19 @@ def remove_extra_spaces_and_pep8(filename, apply_pep8=True):
             diff, lines2 = cdiff(r.split("\n"))
         else:
             diff = 0
-
+    elif ext in (".rst", ".md"):
+        lines2 = [_.replace("\r", "").rstrip("\n ") for _ in lines]
+        rem = set()
+        for i, line in enumerate(lines2):
+            if i >= 1 and lines2[i] == lines2[i - 1] == "":
+                rem.add(i)
+        lines2 = [_ for i, _ in enumerate(lines2) if i not in rem]
+        if encoding is None:
+            with open(filename, "w") as f:
+                f.write("\n".join(lines2))
+        else:
+            with open(filename, "w", encoding="utf8") as f:
+                f.write("\n".join(lines2))
     elif diff != 0:
         if encoding is None:
             with open(filename, "w") as f:
@@ -88,7 +101,7 @@ def remove_extra_spaces_and_pep8(filename, apply_pep8=True):
 
 
 def remove_extra_spaces_folder(
-        folder, extensions=(".py", ".rst"), apply_pep8=True):
+        folder, extensions=(".py", ".rst", ".md"), apply_pep8=True):
     """
     removes extra files in a folder for specific file extensions
 

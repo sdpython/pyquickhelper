@@ -1,15 +1,14 @@
 
-
 .. blogpost::
     :title: Visualize differences between two files in a notebook
     :keywords: diffview, difflib.js, differences
     :date: 2015-04-23
     :categories: javascript, notebook
     :lid: b-diffview
-    
+
     It is now possible to visualize the differences between two files
     directly from a notebook:
-    
+
     .. image:: diffview.png
-    
+
     See function :func:`create_visual_diff_through_html_files <pyquickhelper.filehelper.visual_sync.create_visual_diff_through_html_files>`.

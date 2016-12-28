@@ -1,55 +1,52 @@
 
-
 .. blogpost::
     :title: Producing a version for Python 2.7 from Python 3
     :keywords: python 2.7, migration
     :date: 2015-04-17
     :categories: documentation, Python 2.7
     :lid: b-migration-py2py3
-    
+
     I tried to make most of the unit tests run under Python 2.7.
     Most of the function deals with strings for the documentation
     and it is a real pain to think again about
     str, `unicode <https://docs.python.org/2/howto/unicode.html>`_, bytes.
     Some of the functions only works in Python 3 but the goal
-    was more to see what needed to be done. 
-    
+    was more to see what needed to be done.
+
     The first issue came from exception::
-    
+
         try:
             something
         except Exception as e:
             raise Exception("other message") from e
-            
-    This syntax is not available and to avoid losing it, I decided to 
+
+    This syntax is not available and to avoid losing it, I decided to
     have two separate versions of the same module.
     I created a function
     `py3to2_convert_tree <pyquickhelper.pycode.py3to2.py3to2_convert_tree>`
-    which copies the source and deals with this case (it removes everything it can). 
+    which copies the source and deals with this case (it removes everything it can).
 
     I also had an issue with code like ``isinstance(v, long)`` as the long type
     does not exists. So I added the string ``int #long#``
     to be replaced by ``long`` by a function. The one
     I use the most is ``str  #unicode#`` replaced by ``unicode``.
-    
+
     The second issue is the function open. I usually use the following trick::
-    
+
         if sys.version_info[0]==2:
             from codecs import open
-            
-    It does not solve everything (strings become unicode) and will melt 
-    with strings because I do not use ``u"..."`` which I could implement in 
-    the function 
+
+    It does not solve everything (strings become unicode) and will melt
+    with strings because I do not use ``u"..."`` which I could implement in
+    the function
     `py3to2_convert_tree <pyquickhelper.pycode.py3to2.py3to2_convert_tree>`.
-    
+
     Running out of courage,
     I disabled some unit tests because they were not passing due to the encoding issues.
     I had to add in some files but maybe I should have added that everywhere::
-    
+
         from __future__ import print_function
-        
+
     The following is added everywhere::
-    
+
         from __future__ import unicode_literals
-        
-    

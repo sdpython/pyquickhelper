@@ -1,27 +1,24 @@
 
-
 .. blogpost::
     :title: Badge for coverage
     :keywords: codecov, coveralls
     :date: 2016-01-01
     :categories: coverage
     :lid: blogpost_coverage_codecov
-    
+
     *pyquickhelper* is using `coverage <https://pypi.python.org/pypi/coverage>`_
     to measure the coverage of the unit tests.
     `coveralls <https://coveralls.io/>`_ cannot ingest these reports
     when `codecov <https://codecov.io/>`_ does with a simple command line such as::
-    
-        codecov --token=69193a28-dc79-4a24-98ed-aedf441a8249 
-                --file=D:\jenkins\pymy\_pyquickhelper\_doc\sphinxdoc\source\coverage\coverage_report.xml 
+
+        codecov --token=69193a28-dc79-4a24-98ed-aedf441a8249
+                --file=D:\jenkins\pymy\_pyquickhelper\_doc\sphinxdoc\source\coverage\coverage_report.xml
                 --commit=f30c095f5da096e5db2ba6e5e0f7e07e833a8c81
-                
+
     It is provided by module `codecov <https://pypi.python.org/pypi/codecov/1.5.1>`_
     (or `github/codecov <https://github.com/codecov/codecov-python>`_).
-    The coverage report is also available at 
+    The coverage report is also available at
     `pyquickhelper coverage <http://www.xavierdupre.fr/app/pyquickhelper/helpsphinx/coverage/index.html>`_.
     but these kinds of website keep track of the changes. Others available websites
     which provide badges are mentioned on the main page
     `pyquickhelper <http://www.xavierdupre.fr/app/pyquickhelper/helpsphinx/index.html>`_.
-    
-    
