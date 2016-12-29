@@ -41,7 +41,7 @@ class RunPythonExecutionError(Exception):
 
 def run_python_script(script, params=None, comment=None, setsysvar=None, process=False, exception=False):
     """
-    execute a script python as a string
+    Execute a script python as a string.
 
     @param  script      python script
     @param  params      params to add before the execution
@@ -53,6 +53,35 @@ def run_python_script(script, params=None, comment=None, setsysvar=None, process
                         fails if it is not, the function returns no output and the
                         error message
     @return             stdout, stderr
+
+    If the execution throws an exception such as
+    ``NameError: name 'math' is not defined`` after importing
+    the module ``math``. It comes from the fact
+    the domain name used by the function
+    `exec <https://docs.python.org/3/library/functions.html#exec>`_
+    contains the declared objects. Example:
+
+    ::
+
+        import math
+        def coordonnees_polaires(x,y):
+            rho     = math.sqrt(x*x+y*y)
+            theta   = math.atan2 (y,x)
+            return rho, theta
+        coordonnees_polaires(1, 1)
+
+    The code can be modified into:
+
+    ::
+
+        def fake_function():
+            import math
+            def coordonnees_polaires(x,y):
+                rho     = math.sqrt(x*x+y*y)
+                theta   = math.atan2 (y,x)
+                return rho, theta
+            coordonnees_polaires(1, 1)
+        fake_function()
 
     .. versionchanged:: 1.3
         Parameters *setsysvar*, *process* were added.
@@ -162,10 +191,8 @@ def run_python_script(script, params=None, comment=None, setsysvar=None, process
 
         gout = sout.getvalue()
         gerr = serr.getvalue()
-
         sys.stdout = kout
         sys.stderr = kerr
-
         return gout, gerr
 
 
@@ -320,9 +347,11 @@ class RunPythonDirective(Directive):
         p['indent'] = int(self.options.get("indent", dind))
 
         # run the script
-        content = ["if True:"]
+        name = "run_python_script_{0}".format(id(p))
+        content = ["def {0}():".format(name)]
         for line in self.content:
             content.append("    " + line)
+        content.append("{0}()".format(name))
         script = "\n".join(content)
         script_disp = "\n".join(self.content)
 
