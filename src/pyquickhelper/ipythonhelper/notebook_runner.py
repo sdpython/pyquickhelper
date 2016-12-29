@@ -1037,7 +1037,7 @@ class NotebookRunner(object):
             if second_cell['cell_type'] == 'markdown':
                 _, desc = split_header(second_cell['source'], False)
 
-        reg_link = "(\\[(.*)\\]\\(([^ ]*)\\))"
+        reg_link = "(\\[(.*?)\\]\\(([^ ]*)\\))"
         reg = re.compile(reg_link)
         new_desc = reg.sub("\\2", desc)
         if "http://" in new_desc or "https://" in new_desc:
