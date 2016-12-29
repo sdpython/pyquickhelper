@@ -273,6 +273,8 @@ class RunPythonDirective(Directive):
     and `Sphinx directives <http://sphinx-doc.org/rest.html>`_
     with function `nested_parse_with_titles <http://sphinx-doc.org/extdev/markupapi.html?highlight=nested_parse>`_
 
+    Unless *process* option is enabled, global variables cannot be used.
+
     .. versionchanged:: 1.3
         Titles, references or label are now allowed.
 
@@ -348,10 +350,14 @@ class RunPythonDirective(Directive):
 
         # run the script
         name = "run_python_script_{0}".format(id(p))
-        content = ["def {0}():".format(name)]
+        if p['process']:
+            content = ["if True:"]
+        else:
+            content = ["def {0}():".format(name)]
         for line in self.content:
             content.append("    " + line)
-        content.append("{0}()".format(name))
+        if not p['process']:
+            content.append("{0}()".format(name))
         script = "\n".join(content)
         script_disp = "\n".join(self.content)
 
