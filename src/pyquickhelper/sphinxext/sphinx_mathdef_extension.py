@@ -241,11 +241,13 @@ class MathDefList(Directive):
             n = mathdeflist('')
             n["mathtag"] = tag
             n["mathcontents"] = contents
+            n['docname'] = env.docname if env else "none"
             return [targetnode, n]
         else:
             n = mathdeflist('')
             n["mathtag"] = tag
             n["mathcontents"] = contents
+            n['docname'] = env.docname if env else "none"
             return [n]
 
 
@@ -282,10 +284,12 @@ def process_mathdef_nodes(app, doctree, fromdocname):
         content = []
         mathtag = node["mathtag"]
         add_contents = node["mathcontents"]
+        mathdocname = node["docname"]
+
         if add_contents:
             bullets = nodes.enumerated_list()
-            para_links += bullets
             content.append(bullets)
+
         double_list = [(info.get('mathtitle', ''), info)
                        for info in env.mathdef_all_mathsext]
         double_list.sort(key=lambda x: x[:1])
@@ -332,7 +336,7 @@ def process_mathdef_nodes(app, doctree, fromdocname):
             idss = ["index-mathdef-%d-%d" % (ilist, n)]
             # Insert into the mathreflist
             if add_contents:
-                title = mathref_info['mathtitle']
+                title = mathdef_info['mathtitle']
                 item = nodes.list_item()
                 p = nodes.paragraph()
                 item += p
@@ -340,7 +344,7 @@ def process_mathdef_nodes(app, doctree, fromdocname):
                 innernode = nodes.paragraph(text=title)
                 try:
                     newnode['refuri'] = app.builder.get_relative_uri(
-                        fromdocname, brefdocname)
+                        fromdocname, mathdocname)
                     newnode['refuri'] += '#' + idss[0]
                 except NoUri:
                     # ignore if no URI can be determined, e.g. for LaTeX output

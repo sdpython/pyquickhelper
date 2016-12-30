@@ -10,10 +10,10 @@ import os
 import sys
 import shutil
 
-from ..loghelper.flog import run_cmd, fLOG
+from ..loghelper.flog import run_cmd, fLOG, noLOG
 from .utils_sphinx_doc_helpers import HelpGenException
 from .conf_path_tools import find_latex_path, find_pandoc_path
-from ..filehelper.synchelper import has_been_updated
+from ..filehelper.synchelper import has_been_updated, explore_folder
 from .post_process import post_process_latex_output, post_process_latex_output_any, post_process_rst_output
 from .post_process import post_process_html_output, post_process_slides_output, post_process_python_output
 from .helpgen_exceptions import NotebookConvertError
@@ -682,13 +682,32 @@ def build_thumbail_in_gallery(nbfile, folder_snippet, relative, rst_link):
     return rst
 
 
-def add_notebook_page(nbs, fileout):
+def add_tag_for_slideshow(ipy, folder, encoding="utf8"):
+    """
+    modifes a notebook to add tag for a slideshow
+
+    @param      ipy         notebook file
+    @param      folder      where to write the new notebook
+    @param      encoding    encoding
+    @return                 written file
+    """
+    from ..ipythonhelper import read_nb
+    filename = os.path.split(ipy)[-1]
+    output = os.path.join(folder, filename)
+    nb = read_nb(ipy, encoding=encoding, kernel=False)
+    nb.add_tag_slide()
+    nb.to_json(output)
+    return output
+
+
+def build_notebooks_gallery(nbs, fileout, fLOG=noLOG):
     """
     Creates a rst page (gallery) with links to all notebooks.
     For each notebook, it creates a snippet.
 
-    @param      nbs             list of notebooks to consider or tuple(full path, rst)
+    @param      nbs             list of notebooks to consider or tuple(full path, rst),
     @param      fileout         file to create
+    @param      fLOG            logging function
     @return                     created file name
 
     Example for parameter *nbs*:
@@ -701,6 +720,9 @@ def add_notebook_page(nbs, fileout):
         ('challenges\\city_tour\\city_tour_long.ipynb', 'ensae_projects\\_doc\\notebooks\\challenges\\city_tour\\city_tour_long.ipynb')
         ('cheat_sheets\\chsh_files.ipynb', 'ensae_projects\\_doc\\notebooks\\cheat_sheets\\chsh_files.ipynb')
         ('cheat_sheets\\chsh_geo.ipynb', 'ensae_projects\\_doc\\notebooks\\cheat_sheets\\chsh_geo.ipynb')
+
+    *nbs* can be a folder, in that case, the function will build
+    the list of all notebooks in that folder.
 
     .. todoext::
         :title: merge functionalities from sphinx_nbexamples
@@ -718,7 +740,18 @@ def add_notebook_page(nbs, fileout):
 
     .. versionchanged:: 1.5
         Add a thumbnail, organize the list of notebook as a gallery.
+        The function was renamed into *build_notebooks_gallery*
+        (previous name *add_notebook_page*).
     """
+    if not isinstance(nbs, list):
+        fold = nbs
+        nbs = explore_folder(fold, ".*[.]ipynb")[1]
+        if len(nbs) == 0:
+            raise FileNotFoundError(
+                "Unable to find notebooks in folder '{0}'.".format(nbs))
+        nbs = [(os.path.relpath(n, fold), n) for n in nbs]
+
+    fLOG("[build_notebooks_gallery]", len(nbs), "notebooks")
     hier = set()
     rst = []
     containers = {}
@@ -762,6 +795,7 @@ def add_notebook_page(nbs, fileout):
     # look for README.txt
     exp = os.path.join(root, "README.txt")
     if os.path.exists(exp):
+        fLOG("[build_notebooks_gallery] found", exp)
         with open(exp, "r", encoding="utf-8") as f:
             rows = ["", ".. _l-notebooks:", "", f.read(), ""]
     else:
@@ -770,6 +804,7 @@ def add_notebook_page(nbs, fileout):
 
     if len(hier) == 0:
         # case where there is no hierarchy
+        fLOG("[build_notebooks_gallery] no hierarchy")
         rows.append(".. toctree::")
         rows.append("    :maxdepth: 1")
         rows.append("")
@@ -777,6 +812,7 @@ def add_notebook_page(nbs, fileout):
             if isinstance(file, tuple):
                 file = file[1]
             rs = os.path.splitext(os.path.split(file)[-1])[0]
+            fLOG("[build_notebooks_gallery] adding", rs)
             rows.append("    notebooks/{0}".format(rs))
 
         for file in rst:
@@ -794,6 +830,7 @@ def add_notebook_page(nbs, fileout):
             rows.append(r)
     else:
         # case where there are subfolders
+        fLOG("[build_notebooks_gallery] subfolders")
         already = "\n".join(rows)
         level = "-+^"
         rows.append("")
@@ -805,10 +842,10 @@ def add_notebook_page(nbs, fileout):
         stack_file = []
         last = None
         for hi, r in rst:
-            rs = os.path.splitext(os.path.split(r)[-1])[0]
+            rs0 = os.path.splitext(os.path.split(r)[-1])[0]
             r0 = r
             if hi != last:
-
+                fLOG("[build_notebooks_gallery] new level", hi)
                 # we add the thumbnail
                 for nbf in stack_file:
                     rs = os.path.splitext(os.path.split(nbf)[-1])[0]
@@ -833,6 +870,7 @@ def add_notebook_page(nbs, fileout):
                     fo = [root] + list(hi[:k + 1])
                     readme = os.path.join(*fo, "README.txt")
                     if os.path.exists(readme):
+                        fLOG("[build_notebooks_gallery] found", readme)
                         with open(readme, "r", encoding="utf-8") as f:
                             rows.extend(["", f.read(), ""])
                     else:
@@ -849,7 +887,8 @@ def add_notebook_page(nbs, fileout):
                 rows.append("")
 
             # append a link to a notebook
-            rows.append("    notebooks/{0}".format(rs))
+            fLOG("[build_notebooks_gallery] adding", rs0)
+            rows.append("    notebooks/{0}".format(rs0))
             stack_file.append(r0)
 
         if len(stack_file) > 0:
@@ -865,21 +904,3 @@ def add_notebook_page(nbs, fileout):
     with open(fileout, "w", encoding="utf8") as f:
         f.write("\n".join(rows))
     return fileout
-
-
-def add_tag_for_slideshow(ipy, folder, encoding="utf8"):
-    """
-    modifes a notebook to add tag for a slideshow
-
-    @param      ipy         notebook file
-    @param      folder      where to write the new notebook
-    @param      encoding    encoding
-    @return                 written file
-    """
-    from ..ipythonhelper import read_nb
-    filename = os.path.split(ipy)[-1]
-    output = os.path.join(folder, filename)
-    nb = read_nb(ipy, encoding=encoding, kernel=False)
-    nb.add_tag_slide()
-    nb.to_json(output)
-    return output

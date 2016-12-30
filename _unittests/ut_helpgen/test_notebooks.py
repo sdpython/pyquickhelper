@@ -22,7 +22,7 @@ except ImportError:
     import src
 
 from src.pyquickhelper.loghelper import fLOG
-from src.pyquickhelper.helpgen.sphinx_main import process_notebooks, add_notebook_page
+from src.pyquickhelper.helpgen.sphinx_main import process_notebooks, build_notebooks_gallery
 from src.pyquickhelper.pycode import get_temp_folder
 from src.pyquickhelper.pycode import is_travis_or_appveyor
 
@@ -31,7 +31,7 @@ if sys.version_info[0] == 2:
     from codecs import open
 
 
-class TestNotebookConversion (unittest.TestCase):
+class TestNotebookConversion(unittest.TestCase):
 
     def test_notebook(self):
         fLOG(
@@ -110,7 +110,8 @@ class TestNotebookConversion (unittest.TestCase):
                         i, j, str(fou), str(exp)))
 
         file = os.path.join(temp, "all_notebooks.rst")
-        add_notebook_page([_[0] for _ in res if _[0].endswith(".ipynb")], file)
+        build_notebooks_gallery(
+            [_[0] for _ in res if _[0].endswith(".ipynb")], file)
         assert os.path.exists(file)
 
         with open(os.path.join(temp, "example_pyquickhelper.rst"), "r", encoding="utf8") as f:

@@ -394,11 +394,9 @@ def process_blocref_nodes_generic(app, doctree, fromdocname, class_name,
         brefsort = node["brefsort"]
         add_contents = node["brefcontents"]
         brefdocname = node["docname"]
-        para_links = nodes.paragraph()
 
         if add_contents:
             bullets = nodes.enumerated_list()
-            para_links += bullets
             content.append(bullets)
 
         # sorting

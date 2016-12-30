@@ -44,7 +44,7 @@ from ..sphinxext.sphinx_faqref_extension import FaqRef
 from ..sphinxext.sphinx_nbref_extension import NbRef
 from ..sphinxext.sphinx_todoext_extension import TodoExt
 from .post_process import post_process_latex_output
-from .process_notebooks import process_notebooks, add_notebook_page
+from .process_notebooks import process_notebooks, build_notebooks_gallery
 from .sphinx_helper import post_process_html_nb_output_static_file
 from .install_js_dep import install_javascript_tools
 from ..filehelper import synchronize_folder
@@ -619,8 +619,8 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
             nbs = indexlistnote
             fLOG("*******NB, add:", len(nbs))
             nbs.sort()
-            add_notebook_page(nbs, os.path.join(
-                notebook_doc, "..", "all_notebooks.rst"))
+            build_notebooks_gallery(nbs, os.path.join(
+                notebook_doc, "..", "all_notebooks.rst"), fLOG=fLOG)
 
         imgs = [os.path.join(notebook_dir, _)
                 for _ in os.listdir(notebook_dir) if ".png" in _]
