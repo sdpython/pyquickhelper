@@ -35,10 +35,10 @@ import textwrap
 import os
 import warnings
 from docutils import core, languages
+from docutils.io import StringInput, StringOutput
 from docutils.parsers.rst import directives as doc_directives, roles as doc_roles
 from sphinx.environment import BuildEnvironment, default_settings
 from sphinx.config import Config
-
 
 if sys.version_info[0] == 2:
     from StringIO import StringIO
@@ -335,8 +335,11 @@ def rst2html(s, fLOG=noLOG, writer="sphinx", keep_warnings=False,
 
         def add_event(self, name):
             if name in self._events:
-                raise Exception('Event %r already present' % name)
+                raise Exception('Event %s already present' % name)
             self._events[name] = ''
+
+        def emit(self, event, *args):
+            return self.app.emit(event, *args)
 
     title_names = []
 
@@ -423,6 +426,7 @@ def rst2html(s, fLOG=noLOG, writer="sphinx", keep_warnings=False,
 
     env = BuildEnvironment(None, None, config=config)
     env.temp_data["docname"] = "string"
+    mockapp.builder.env.temp_data["docname"] = "string"
     settings_overrides["env"] = env
 
     lang = languages.get_language(language)
@@ -440,10 +444,22 @@ def rst2html(s, fLOG=noLOG, writer="sphinx", keep_warnings=False,
     # something is screwing with sphinx or docutils, it is due to
     # direct call to nbconvert or sphinx
     # raise an exception for unknown role pending_xref
-    parts = core.publish_parts(source=s, source_path=None,
-                               destination_path=None, writer=writer,
-                               writer_name=writer_name,
-                               settings_overrides=settings_overrides)
+    output, pub = core.publish_programmatically(source=s, source_path=None,
+                                                destination_path=None, writer=writer,
+                                                writer_name=writer_name,
+                                                settings_overrides=settings_overrides,
+                                                source_class=StringInput,
+                                                destination_class=StringOutput,
+                                                destination=None,
+                                                reader=None, reader_name='standalone',
+                                                parser=None, parser_name='restructuredtext',
+                                                settings=None, settings_spec=None,
+                                                config_section=None,
+                                                enable_exit_status=False)
+
+    doctree = pub.document
+    mockapp.emit('doctree-read', doctree)
+    parts = pub.writer.parts
 
     warnval = settings_overrides["warning_stream"].getvalue()
     if warnval is not None and len(warnval) > 0:

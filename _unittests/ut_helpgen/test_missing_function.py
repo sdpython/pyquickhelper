@@ -25,6 +25,7 @@ except ImportError:
 from src.pyquickhelper.loghelper.flog import fLOG
 from src.pyquickhelper.helpgen.utils_sphinx_config import ie_layout_html, NbImage, fix_ie_layout_html
 from src.pyquickhelper.pycode import is_travis_or_appveyor
+from src.pyquickhelper.helpgen.post_process import remove_character_under32
 
 
 class TestMissingFunction(unittest.TestCase):
@@ -63,6 +64,15 @@ class TestMissingFunction(unittest.TestCase):
 
         r = NbImage("completion.png")
         assert r is not None
+
+    def test_remove_character_under32(self):
+        fLOG(
+            __file__,
+            self._testMethodName,
+            OutputPrint=__name__ == "__main__")
+        s = "a\na\r"
+        s2 = remove_character_under32(s)
+        self.assertEqual(s2, 'a a ')
 
 
 if __name__ == "__main__":
