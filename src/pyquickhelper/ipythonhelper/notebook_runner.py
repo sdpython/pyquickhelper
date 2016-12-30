@@ -659,6 +659,7 @@ class NotebookRunner(object):
         ax.set_axis_off()
         sio = BytesIO()
         fig.savefig(sio, format="png")
+        plt.close()
 
         if asbytes:
             b = sio.getvalue(), "png"

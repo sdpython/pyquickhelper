@@ -751,6 +751,7 @@ def build_notebooks_gallery(nbs, fileout, fLOG=noLOG):
                 "Unable to find notebooks in folder '{0}'.".format(nbs))
         nbs = [(os.path.relpath(n, fold), n) for n in nbs]
 
+    # go through the list of notebooks
     fLOG("[build_notebooks_gallery]", len(nbs), "notebooks")
     hier = set()
     rst = []
@@ -781,6 +782,18 @@ def build_notebooks_gallery(nbs, fileout, fLOG=noLOG):
     if not os.path.exists(folder):
         os.mkdir(folder)
 
+    # reordering based on titles
+    titles = {}
+    reord = []
+    for hi, nbf in rst:
+        nb = read_nb(nbf)
+        title, desc = nb.get_description()
+        titles[nbf] = title
+        reord.append((hi, title, nbf))
+    reord.sort()
+    rst = [_[:1] + _[-1:] for _ in reord]
+
+    # containers
     containers = list(sorted((k, v) for k, v in containers.items()))
 
     # find root
@@ -793,34 +806,31 @@ def build_notebooks_gallery(nbs, fileout, fLOG=noLOG):
         root = "/".join(ro)
 
     # look for README.txt
+    fLOG("[build_notebooks_gallery] root", root)
     exp = os.path.join(root, "README.txt")
     if os.path.exists(exp):
         fLOG("[build_notebooks_gallery] found", exp)
         with open(exp, "r", encoding="utf-8") as f:
             rows = ["", ".. _l-notebooks:", "", f.read(), ""]
     else:
+        fLOG("[build_notebooks_gallery] not found", exp)
         rows = ["", ".. _l-notebooks:", "", "", "Notebooks Gallery",
                 "=================", ""]
 
+    # produces the final files
     if len(hier) == 0:
         # case where there is no hierarchy
         fLOG("[build_notebooks_gallery] no hierarchy")
         rows.append(".. toctree::")
         rows.append("    :maxdepth: 1")
         rows.append("")
-        for file in rst:
-            if isinstance(file, tuple):
-                file = file[1]
+        for hi, file in rst:
             rs = os.path.splitext(os.path.split(file)[-1])[0]
-            fLOG("[build_notebooks_gallery] adding", rs)
+            fLOG("[build_notebooks_gallery] adding",
+                 rs, " title ", titles.get(file, None))
             rows.append("    notebooks/{0}".format(rs))
 
-        for file in rst:
-            if isinstance(file, tuple):
-                no, file = file
-            else:
-                raise ValueError("tuple is expected, not {0}.".format(file))
-
+        for no, file in rst:
             link = os.path.splitext(os.path.split(file)[-1])[0]
             link = link.replace("_", "") + "rst"
             if not os.path.exists(file):
@@ -874,6 +884,7 @@ def build_notebooks_gallery(nbs, fileout, fLOG=noLOG):
                         with open(readme, "r", encoding="utf-8") as f:
                             rows.extend(["", f.read(), ""])
                     else:
+                        fLOG("[build_notebooks_gallery] not found", readme)
                         rows.append("")
                         rows.append(hi[k])
                         rows.append(level[min(k, len(level) - 1)] * len(hi[k]))
@@ -887,7 +898,8 @@ def build_notebooks_gallery(nbs, fileout, fLOG=noLOG):
                 rows.append("")
 
             # append a link to a notebook
-            fLOG("[build_notebooks_gallery] adding", rs0)
+            fLOG("[build_notebooks_gallery] adding",
+                 rs0, " title ", titles.get(r0, None))
             rows.append("    notebooks/{0}".format(rs0))
             stack_file.append(r0)
 
