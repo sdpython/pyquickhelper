@@ -207,11 +207,13 @@ class MathDefList(Directive):
     A list of all mathdef entries, for a specific tag.
 
     * tag: a tag to have several categories of mathdef
+    * contents: add a bullet list with links to added blocs
 
     Example::
 
         .. mathdeflist::
             :tag: issue
+            :contents:
     """
 
     has_content = False
@@ -220,6 +222,7 @@ class MathDefList(Directive):
     final_argument_whitespace = False
     option_spec = {
         'tag': directives.unchanged,
+        'contents': directives.unchanged,
     }
 
     def run(self):
@@ -230,15 +233,19 @@ class MathDefList(Directive):
         env = self.state.document.settings.env if hasattr(
             self.state.document.settings, "env") else None
         tag = self.options.get('tag', '').strip()
+        contents = self.options.get(
+            'contents', False) in (True, "True", "true", 1, "1", "", None, "None")
         if env is not None:
             targetid = 'indexmathelist-%s' % env.new_serialno('indexmathelist')
             targetnode = nodes.target('', '', ids=[targetid])
             n = mathdeflist('')
             n["mathtag"] = tag
+            n["mathcontents"] = contents
             return [targetnode, n]
         else:
             n = mathdeflist('')
             n["mathtag"] = tag
+            n["mathcontents"] = contents
             return [n]
 
 
@@ -274,6 +281,11 @@ def process_mathdef_nodes(app, doctree, fromdocname):
         nbmath = 0
         content = []
         mathtag = node["mathtag"]
+        add_contents = node["mathcontents"]
+        if add_contents:
+            bullets = nodes.enumerated_list()
+            para_links += bullets
+            content.append(bullets)
         double_list = [(info.get('mathtitle', ''), info)
                        for info in env.mathdef_all_mathsext]
         double_list.sort(key=lambda x: x[:1])
@@ -317,9 +329,27 @@ def process_mathdef_nodes(app, doctree, fromdocname):
 
             # (Recursively) resolve references in the mathdef content
             mathdef_entry = mathdef_info['mathdef']
-            mathdef_entry["ids"] = ["index-mathdef-%d-%d" % (ilist, n)]
-            # it apparently requires an attributes ids
+            idss = ["index-mathdef-%d-%d" % (ilist, n)]
+            # Insert into the mathreflist
+            if add_contents:
+                title = mathref_info['mathtitle']
+                item = nodes.list_item()
+                p = nodes.paragraph()
+                item += p
+                newnode = nodes.reference('', '', internal=True)
+                innernode = nodes.paragraph(text=title)
+                try:
+                    newnode['refuri'] = app.builder.get_relative_uri(
+                        fromdocname, brefdocname)
+                    newnode['refuri'] += '#' + idss[0]
+                except NoUri:
+                    # ignore if no URI can be determined, e.g. for LaTeX output
+                    pass
+                newnode.append(innernode)
+                p += newnode
+                bullets += item
 
+            mathdef_entry["ids"] = idss
             env.resolve_references(mathdef_entry, mathdef_info['docname'],
                                    app.builder)
 

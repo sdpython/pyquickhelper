@@ -145,6 +145,60 @@ class TestMathDefExtension(unittest.TestCase):
         if t1 not in html:
             raise Exception(html)
 
+    def test_mathdeflist_contents(self):
+        fLOG(
+            __file__,
+            self._testMethodName,
+            OutputPrint=__name__ == "__main__")
+
+        from docutils import nodes as skip_
+
+        content = """
+                    test a directive
+                    ================
+
+                    before
+
+                    .. mathdef::
+                        :title: first def2
+                        :tag: Theoreme
+
+                        this code shoud appear___
+
+                    middle
+
+                    .. mathdeflist::
+                        :tag: definition
+                        :contents:
+
+                    after
+                    """.replace("                    ", "")
+        if sys.version_info[0] >= 3:
+            content = content.replace('u"', '"')
+
+        tives = [("mathdef", MathDef, mathdef_node,
+                  visit_mathdef_node, depart_mathdef_node)]
+
+        html = rst2html(content, fLOG=fLOG,
+                        writer="custom", keep_warnings=True,
+                        directives=tives)
+
+        temp = get_temp_folder(__file__, "temp_mathdeflist_contents")
+        with open(os.path.join(temp, "out_mathdef_contents.html"), "w", encoding="utf8") as f:
+            f.write(html)
+
+        t1 = "this code shoud appear"
+        if t1 not in html:
+            raise Exception(html)
+
+        t1 = "after"
+        if t1 not in html:
+            raise Exception(html)
+
+        t1 = "first def2"
+        if t1 not in html:
+            raise Exception(html)
+
 
 if __name__ == "__main__":
     unittest.main()
