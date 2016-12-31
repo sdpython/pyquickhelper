@@ -91,6 +91,8 @@ class MathDef(BaseAdmonition):
             number_format = env.settings.mathdef_link_number
         elif hasattr(self.state.document.settings, "mathdef_link_number"):
             number_format = self.state.document.settings.mathdef_link_number
+        elif hasattr(env, "config") and hasattr(env.config, "mathdef_link_number"):
+            number_format = env.config.mathdef_link_number
         else:
             raise ValueError(
                 "mathdef_link_number is not defined in the configuration")
@@ -125,8 +127,12 @@ class MathDef(BaseAdmonition):
         # id of the section
         first_letter = docname[0] if docname else ""
         number = mid
-        label_number = number_format.format(
-            number=number, first_letter=first_letter)
+        try:
+            label_number = number_format.format(
+                number=number, first_letter=first_letter)
+        except ValueError as e:
+            raise Exception(
+                "Unable to interpret format '{0}'.".format(number_format)) from e
 
         # title
         title = self.options.get('title', "").strip()
@@ -440,7 +446,7 @@ def setup(app):
     app.add_config_value('mathdef_include_mathsext', True, 'html')
     app.add_config_value('mathdef_link_only', True, 'html')
     app.add_config_value('mathdef_link_number',
-                         "{first_letter}.{number}", 'html')
+                         "{first_letter}{number}", 'html')
 
     app.add_node(mathdeflist,
                  html=(visit_mathdeflist_node, depart_mathdeflist_node),

@@ -245,6 +245,7 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
     faqref_include_faqrefs = True
     exref_include_exrefs = True
     nbref_include_nbrefs = True
+    mathdef_link_number = "{first_letter}{number}"
 
     # extensions
     extensions = ['sphinx.ext.autodoc', 'sphinx.ext.autosummary', 'sphinx.ext.coverage',
