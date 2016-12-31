@@ -87,6 +87,14 @@ class MathDef(BaseAdmonition):
         else:
             legend = ''
 
+        if hasattr(env, "settings") and hasattr(env.settings, "mathdef_link_number"):
+            number_format = env.settings.mathdef_link_number
+        elif hasattr(self.state.document.settings, "mathdef_link_number"):
+            number_format = self.state.document.settings.mathdef_link_number
+        else:
+            raise ValueError(
+                "mathdef_link_number is not defined in the configuration")
+
         if not self.options.get('class'):
             self.options['class'] = ['admonition-mathdef']
 
@@ -114,10 +122,16 @@ class MathDef(BaseAdmonition):
         else:
             mid = -1
 
+        # id of the section
+        first_letter = docname[0] if docname else ""
+        number = mid
+        label_number = number_format.format(
+            number=number, first_letter=first_letter)
+
         # title
         title = self.options.get('title', "").strip()
         if len(title) > 0:
-            title = "{0} {1} : {2}".format(mathtag, mid, title)
+            title = "{0} {1} : {2}".format(mathtag, label_number, title)
         else:
             raise ValueError("title is empty")
 
@@ -425,6 +439,8 @@ def setup(app):
 
     app.add_config_value('mathdef_include_mathsext', True, 'html')
     app.add_config_value('mathdef_link_only', True, 'html')
+    app.add_config_value('mathdef_link_number',
+                         "{first_letter}.{number}", 'html')
 
     app.add_node(mathdeflist,
                  html=(visit_mathdeflist_node, depart_mathdeflist_node),
