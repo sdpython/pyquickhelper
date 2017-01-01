@@ -41,6 +41,7 @@ default_values = {
     "windows": {
         "__PY35__": choose_path("c:\\Python35", _default_nofolder),
         "__PY35_X64__": choose_path("c:\\Python35_x64", "c:\\Python35-x64", _default_nofolder),
+        "__PY36_X64__": choose_path("c:\\Python36_x64", "c:\\Python36-x64", _default_nofolder),
         "__PY34__": choose_path("c:\\Python34", _default_nofolder),
         "__PY34_X64__": choose_path("c:\\Python34_x64", "c:\\Python34-x64", "c:\\Anaconda3", _default_nofolder),
         "__PY27_X64__": choose_path("c:\\Python27_x64", "c:\\Python27", "c:\\Python27-x64", "c:\\Anaconda2", "c:\\Anaconda", _default_nofolder),
@@ -71,6 +72,7 @@ def private_script_replacements(script, module, requirements, port, raise_except
                 "__PY35__": None,
                 "__PY34_X64__": "c:\\Python34_x64",
                 "__PY35_X64__": "c:\\Python35_x64",
+                "__PY36_X64__": "c:\\Python36_x64",
                 "__PY27_X64__": "c:\\Anaconda2",
             },
         }

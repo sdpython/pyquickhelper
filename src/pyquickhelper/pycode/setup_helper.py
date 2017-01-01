@@ -139,6 +139,7 @@ def process_standard_options_for_setup(argv, file_or_folder, project_var_name, m
             "windows": {
                 "__PY34__": None,
                 "__PY35__": None,
+                "__PY36_X64__": "c:\\Python36_x64",
                 "__PY35_X64__": "c:\\Python35_x64",
                 "__PY34_X64__": "c:\\Python34_x64",
                 "__PY27_X64__": "c:\\Anaconda2",
