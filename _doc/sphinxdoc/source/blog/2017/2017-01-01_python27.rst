@@ -1,0 +1,18 @@
+
+.. blogpost::
+    :title: Python 2.7 disconinued
+    :keywords: Python 2.7
+    :date: 2017-01-01
+    :categories: release
+
+    Support for Python 2.7 will be discontinued.
+    Too much work. No update on pypi for this version.
+    To install it from the source:
+
+    ::
+
+        <path_to_python3> setup.py copy27
+        cd dist_module27
+        <path_to_python2> setup.py install
+
+    Everything is not working under python 2.
