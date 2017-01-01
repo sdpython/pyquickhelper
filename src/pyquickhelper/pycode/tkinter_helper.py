@@ -38,9 +38,13 @@ def fix_tkinter_issues_virtualenv():
         if sys.platform.startswith("win"):
             site = os.path.join(rev, "tcl")
             if not os.path.exists(site):
-                mes = ", ".join(os.listdir(rev))
-                raise FileNotFoundError(
-                    "unable to find: {0},\nsubfolders: {1}".format(site, mes))
+                site2 = os.path.join(rev, "..", "tcl")
+                if os.path.exists(site2):
+                    site = site2
+                else:
+                    mes = ", ".join(os.listdir(rev))
+                    raise FileNotFoundError(
+                        "unable to find: {0},\nsubfolders: {1}".format(site, mes))
         else:
             site = os.path.join(rev, "..", "tcl")
             if not os.path.exists(site):
