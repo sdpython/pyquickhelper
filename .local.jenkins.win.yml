@@ -7,6 +7,7 @@ language: python
 # A path cannot be a virtual environment.
 python:
   - { PATH: "{{replace(Python35, '\\', '\\\\')}}", VERSION: 3.5, DIST: std }
+  - { PATH: "{{replace(Python36, '\\', '\\\\')}}", VERSION: 3.6, DIST: std }
   - { PATH: "{{replace(Python27, '\\', '\\\\')}}", VERSION: 2.7, DIST: std }
   - { PATH: "{{replace(Anaconda3, '\\', '\\\\')}}", VERSION: 3.5, DIST: conda }
   - { PATH: "{{replace(Anaconda2, '\\', '\\\\')}}", VERSION: 2.7, DIST: conda }
@@ -51,7 +52,7 @@ after_script:
   - python -u setup.py bdist_wheel
   - if [ ${VERSION} == "2.7" and ${DIST} != "conda" ] then copy dist\*.whl ..\..\..\local_pypi\local_pypi_server fi
   - if [ ${VERSION} == "2.7" ] then cd .. fi
-  - if [ ${VERSION} != "2.7" and ${DIST} != "conda" and ${VERSION} != "3.4" and ${NAME} == "UT" ] then copy dist\*.whl ..\..\local_pypi\local_pypi_server fi
+  - if [ ${VERSION} != "2.7" and ${DIST} != "conda" and ${VERSION} == "3.5" and ${NAME} == "UT" ] then copy dist\*.whl ..\..\local_pypi\local_pypi_server fi
 
 # Same as after script.
 documentation:
