@@ -878,7 +878,7 @@ def build_notebooks_gallery(nbs, fileout, fLOG=noLOG):
 
                 while len(hi) > 0 and k < len(hi):
                     fo = [root] + list(hi[:k + 1])
-                    readme = os.path.join(*fo, "README.txt")
+                    readme = os.path.join(*(fo + ["README.txt"]))
                     if os.path.exists(readme):
                         fLOG("[build_notebooks_gallery] found", readme)
                         with open(readme, "r", encoding="utf-8") as f:
