@@ -39,13 +39,13 @@ class TestNotebookConversion(unittest.TestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
         fLOG("---------------------------------------------------", 1)
-        self.a_test_notebook(1)
+        self.a_te_st_notebook(1)
         # on the second run, the following error happens
         # jinja2.exceptions.TemplateNotFound: article
         fLOG("---------------------------------------------------", 2)
-        self.a_test_notebook(2)
+        self.a_te_st_notebook(2)
 
-    def a_test_notebook(self, iteration):
+    def a_te_st_notebook(self, iteration):
 
         if sys.version_info[0] == 2:
             return

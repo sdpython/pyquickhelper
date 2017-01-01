@@ -1055,6 +1055,8 @@ class NotebookRunner(object):
         @param      max_height      maximum size of the thumbnail
         @return                     string (SVG) or Image (PIL)
 
+        This functionality might not works with Python 2.7.
+
         .. versionadded:: 1.5
         """
         images = []
