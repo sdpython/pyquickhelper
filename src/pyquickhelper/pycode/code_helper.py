@@ -19,30 +19,52 @@ def remove_extra_spaces_and_pep8(filename, apply_pep8=True):
     .. versionchanged:: 1.0
         Parameter *apply_pep8* was added.
     """
-    try:
-        with open(filename, "r") as f:
-            lines = f.readlines()
-        encoding = None
-    except PermissionError as e:
-        raise PermissionError(filename) from e
-    except UnicodeDecodeError as e:
+    ext = os.path.splitext(filename)[-1]
+    if ext in (".bat", ".py", ".sh"):
         try:
-            with open(filename, "r", encoding="utf-8") as f:
+            with open(filename, "r") as f:
+                lines = f.readlines()
+            encoding = None
+        except PermissionError as e:
+            raise PermissionError(filename) from e
+        except UnicodeDecodeError as e:
+            try:
+                with open(filename, "r", encoding="utf-8") as f:
+                    lines = f.readlines()
+                encoding = "utf-8"
+            except:
+                raise Exception(
+                    "unable to load file {} due to unicode errors".format(filename)) from e
+    else:
+        try:
+            with open(filename, "r", encoding="utf-8-sig") as f:
                 lines = f.readlines()
             encoding = "utf-8"
-        except:
-            raise Exception(
-                "unable to load file {} due to unicode errors".format(filename)) from e
-
-    if encoding is not None and len(lines) > 0 and "#-*-coding:utf-8-*-" in lines[0].replace(" ", ""):
-        with open(filename, "r", encoding="utf8") as f:
+        except PermissionError as e:
+            raise PermissionError(filename) from e
+        except UnicodeDecodeError as e:
             try:
-                lines = f.readlines()
-            except UnicodeDecodeError as e:
-                raise Exception("unable to read: " + filename) from e
-        encoding = "utf8"
-    else:
-        encoding = None
+                with open(filename, "r") as f:
+                    lines = f.readlines()
+                encoding = None
+            except:
+                raise Exception(
+                    "unable to load file {} due to unicode errors".format(filename)) from e
+
+    if len(lines) == 0 and not filename.endswith("__init__.py"):
+        raise ValueError(
+            "File '{0}' is empty, encoding='{1}'.".format(filename, encoding))
+
+    if ext == ".py":
+        if encoding is not None and len(lines) > 0 and "#-*-coding:utf-8-*-" in lines[0].replace(" ", ""):
+            with open(filename, "r", encoding="utf8") as f:
+                try:
+                    lines = f.readlines()
+                except UnicodeDecodeError as e:
+                    raise Exception("unable to read: " + filename) from e
+            encoding = "utf8"
+        else:
+            encoding = None
 
     def cdiff(lines):
         lines2 = [_.rstrip(" \r\n") for _ in lines]
@@ -63,6 +85,9 @@ def remove_extra_spaces_and_pep8(filename, apply_pep8=True):
             lines2,
             options=autopep8.parse_args(['']))
 
+        if len(lines) > 0 and (len(lines2) == 0 or len(lines2) < len(lines) // 2):
+            raise ValueError("Resulting file is empty for '{3}',\ninitial number of lines {0} encoding='{1}' diff={2}".format(
+                len(lines), encoding, diff, filename))
         if encoding is None:
             with open(filename, "w") as f:
                 f.write(r)
@@ -82,6 +107,9 @@ def remove_extra_spaces_and_pep8(filename, apply_pep8=True):
         lines2 = [_ for i, _ in enumerate(lines2) if i not in rem]
         if len(lines) > 0 and len(lines2[-1]) > 0:
             lines2.append("")
+        if len(lines) > 0 and (len(lines2) == 0 or len(lines2) < len(lines) // 2):
+            raise ValueError("Resulting file is empty for '{4}',\ninitial number of lines {0} encoding='{1}' len(rem)={2} diff={3}".format(
+                len(lines), encoding, len(rem), diff, filename))
         rl = "".join(lines)
         r2 = "\n".join(lines2)
         if r2 != rl:
@@ -95,12 +123,18 @@ def remove_extra_spaces_and_pep8(filename, apply_pep8=True):
         else:
             diff = 0
     elif diff != 0:
-        if encoding is None:
-            with open(filename, "w") as f:
-                f.write("\n".join(lines2))
-        else:
-            with open(filename, "w", encoding="utf8") as f:
-                f.write("\n".join(lines2))
+        if len(lines) > 0 and (len(lines2) == 0 or len(lines2) < len(lines) // 2):
+            raise ValueError("Resulting file is empty for '{3}',\ninitial number of lines {0} encoding='{1}' diff={2}".format(
+                len(lines), encoding, diff, filename))
+        r1 = "".join(lines)
+        r2 = "\n".join(lines2)
+        if r2 != r1:
+            if encoding is None:
+                with open(filename, "w") as f:
+                    f.write("\n".join(lines2))
+            else:
+                with open(filename, "w", encoding="utf8") as f:
+                    f.write("\n".join(lines2))
 
     if not os.path.exists(filename):
         raise FileNotFoundError(
