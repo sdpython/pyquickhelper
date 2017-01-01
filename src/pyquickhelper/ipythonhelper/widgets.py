@@ -37,7 +37,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
 
 import copy
-import numpy as np
 
 
 class StaticWidget(object):
@@ -136,6 +135,7 @@ class RangeWidget(StaticWidget):
         @return     all possible values
         """
         min, max, step = self.datarange
+        import numpy as np
         return np.arange(min, max + step, step)
 
     def html(self):
