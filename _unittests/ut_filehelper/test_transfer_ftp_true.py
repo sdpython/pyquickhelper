@@ -44,7 +44,7 @@ class TestTransferFTPTrue(unittest.TestCase):
             pwd = None
         if user is None:
             if not is_travis_or_appveyor():
-                raise Exception("user password is empty, machine='{0}'".format(machine))
+                raise Exception("user password is empty, machine='{0}', username='{1}'".format(machine, os.get("USERNAME", None)))
             else:
                 return
 
