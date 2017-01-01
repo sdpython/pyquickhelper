@@ -47,6 +47,7 @@ class TestYamlJenkins(unittest.TestCase):
             raise FileNotFoundError(yml)
         context = dict(Python34="c:\\Python34_x64",
                        Python35=os.path.dirname(sys.executable),
+                       Python36=os.path.dirname(sys.executable),
                        Python27="c:\\Python27_x64",
                        Anaconda3="c:\\Anaconda3", Anaconda2="c:\\Anaconda2",
                        WinPython35="c:\\PythonENSAE",
@@ -105,6 +106,7 @@ class TestYamlJenkins(unittest.TestCase):
 
         engines = dict(Python34="c:\\Python34_x64",
                        Python35=os.path.dirname(sys.executable),
+                       Python36=os.path.dirname(sys.executable),
                        Python27="c:\\Python27_x64",
                        Anaconda3="c:\\Anaconda3", Anaconda2="c:\\Anaconda2",
                        WinPython35="c:\\PythonENSAE",

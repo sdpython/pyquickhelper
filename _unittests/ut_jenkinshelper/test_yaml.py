@@ -44,6 +44,7 @@ class TestYaml(unittest.TestCase):
         if not os.path.exists(yml):
             raise FileNotFoundError(yml)
         context = dict(Python34=None, Python35=os.path.dirname(sys.executable),
+                       Python36=os.path.dirname(sys.executable),
                        Python27=None, Anaconda3=None, Anaconda2=None,
                        WinPython35=None, project_name="pyquickhelper",
                        root_path="ROOT")
@@ -91,7 +92,8 @@ class TestYaml(unittest.TestCase):
                 this, "..", "..", "..", ".local.jenkins.win.yml"))
         if not os.path.exists(yml):
             raise FileNotFoundError(yml)
-        context = dict(Python34="fake", Python35=os.path.dirname(sys.executable),
+        context = dict(Python34="fake", Python35=os.path.dirname(sys.executable) + "35",
+                       Python36=os.path.dirname(sys.executable) + "36",
                        Python27="fake2", Anaconda3=None, Anaconda2=None,
                        WinPython35=None, root_path="ROOT")
         obj, name = load_yaml(yml, context=context, platform="win")
@@ -104,7 +106,7 @@ class TestYaml(unittest.TestCase):
                 raise Exception(r)
             if r[0][0] != "python" and r[0][0] != "INFO":
                 raise Exception(r)
-        if len(res) != 5:
+        if len(res) != 7:
             rows = [str(_) for _ in res]
             raise Exception("\n".join(rows))
 
@@ -138,6 +140,7 @@ class TestYaml(unittest.TestCase):
         if not os.path.exists(yml):
             raise FileNotFoundError(yml)
         context = dict(Python34="fake", Python35="C:\\Python35_x64",
+                       Python36="C:\\Python36_x64",
                        Python27=None, Anaconda3=None, Anaconda2=None,
                        WinPython35=None, project_name="pyquickhelper",
                        root_path="ROOT")
@@ -275,6 +278,7 @@ class TestYaml(unittest.TestCase):
         if not os.path.exists(yml):
             raise FileNotFoundError(yml)
         context = dict(Python34=None, Python35="C:\\Python35_x64",
+                       Python36="C:\\Python36_x64",
                        Python27="C:\\Python27_x64", Anaconda3=None, Anaconda2=None,
                        WinPython35=None, project_name="pyquickhelper",
                        root_path="ROOT")

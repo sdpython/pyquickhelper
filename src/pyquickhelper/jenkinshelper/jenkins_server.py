@@ -40,7 +40,9 @@ _timeout_default = 1200
 _default_engine_paths = {
     "windows": {
         "__PY35__": "__PY35__",
+        "__PY36__": "__PY36__",
         "__PY35_X64__": "__PY35_X64__",
+        "__PY36_X64__": "__PY36_X64__",
         "__PY34__": "__PY34__",
         "__PY34_X64__": "__PY34_X64__",
         "__PY27_X64__": "__PY27_X64__",
@@ -555,7 +557,7 @@ class JenkinsExt(jenkins.Jenkins):
                 for cmd in cmds:
                     cmdn = replacements(cmd, engine, python,
                                         namee + "_" + job_hash, module_name)
-                    if "run27" in cmdn and ("Python34" in cmdn or "Python35" in cmdn):
+                    if "run27" in cmdn and ("Python34" in cmdn or "Python35" in cmdn or "Python36" in cmdn):
                         raise ValueError(
                             "Python version mismatch\nENGINE\n{2}\n----BEFORE\n{0}\n-----\nAFTER\n-----\n{1}".format(cmd, cmdn, engine))
                     res.append(cmdn)
@@ -930,9 +932,9 @@ class JenkinsExt(jenkins.Jenkins):
 
             engines = dict(Anaconda2=r"C:\\Anaconda2",
                            Anaconda3=r"C:\\Anaconda3",
-                           py34=r"c:\\Python34_x64",
                            py35=r"c:\\Python35_x64",
-                           default=r"c:\\Python35_x64",
+                           py36=r"c:\\Python36_x64",
+                           default=r"c:\\Python36_x64",
                            custom=r"c:\\CustomPython")
 
             js = JenkinsExt('http://machine:8080/', "user", "password", engines=engines)
