@@ -821,6 +821,9 @@ def write_module_scripts(folder, platform=sys.platform, blog_list=None,
             c, platform=sys.platform, blog_list=blog_list, default_engine_paths=default_engine_paths)
         if sc is None:
             continue
+        tobin = os.path.join(folder, "bin")
+        if not os.path.exists(tobin):
+            os.mkdir(tobin)
         for item in sc:
             if isinstance(item, tuple):
                 name = os.path.join(folder, "bin", item[0])
