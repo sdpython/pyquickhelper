@@ -29,6 +29,7 @@ install:
 # Outside, the yaml interpreter only consider variables interpreted by Jinja2.
 # Environment variables are available but only those defined on the machine used to generate the Jenkins job.
 before_script:
+  - if [ ${VERSION} == "2.7" ] then pip install jyquickhelper==0.1.26 pi
   - if [ ${VERSION} == "2.7" ] then {{Python35}}\python -u setup.py copy27 fi
   - if [ ${VERSION} == "2.7" ] then cd dist_module27 fi
   
