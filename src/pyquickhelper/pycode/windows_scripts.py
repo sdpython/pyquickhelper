@@ -35,7 +35,16 @@ set pythonexe=__PY??_X64__\\python
 
 :start_script:
 set current=%~dp0
+if EXIST %current%setup.py goto current_is_setup:
+set current=%current%..\\
+cd ..
+if EXIST %current%setup.py goto current_is_setup:
+@echo Unable to find %current%setup.py
+exit /b 1
+
+:current_is_setup:
 @echo ~SET current=%current%
+
 """.replace("PY??", _sversion())
 
 #################
@@ -105,10 +114,31 @@ if exist dist copy /Y dist\\*.whl ..\\..\\local_pypi\\local_pypi_server
 #: build any script for Windows from a virtual environment
 ####################################################
 windows_any_setup_command_base = """
+
+set current=%~dp0
+if EXIST %current%setup.py goto current_is_setup:
+set current=%current%..\\
+cd ..
+if EXIST %current%setup.py goto current_is_setup:
+@echo Unable to find %current%setup.py
+exit /b 1
+
+:current_is_setup:
+@echo ~SET current=%current%
+
 @echo SCRIPT: windows_any_setup_command_base
 @echo off
 if "%1"=="" @echo usage: SCRIPT [pythonpath] [suffix] [command] [...]
 set CURRENT_THIS=%~dp0
+
+if EXIST %current%setup.py goto current_is_setup:
+set current=%current%..\\
+cd ..
+if EXIST %current%setup.py goto current_is_setup:
+@echo Unable to find %current%setup.py
+exit /b 1
+
+:current_is_setup:
 @echo ~SET CURRENT_THIS=%CURRENT_THIS%
 
 IF EXIST dist del /Q dist\\*.*
@@ -361,6 +391,18 @@ set pythonexe=__PY??_X64__
 :nextn:
 @echo ~LABEL nextn
 set current=%~dp0
+
+set current=%~dp0
+if EXIST %current%setup.py goto current_is_setup:
+set current=%current%..\\
+cd ..
+if EXIST %current%setup.py goto current_is_setup:
+@echo Unable to find %current%setup.py
+exit /b 1
+
+:current_is_setup:
+@echo ~SET current=%current%
+
 set path=%path%;%pythonexe%;%pythonexe%\\Scripts
 @echo ~SET path=%path%;%pythonexe%;%pythonexe%\\Scripts
 @echo ~CALL jupyter-notebook --notebook-dir=_doc\\notebooks
@@ -597,6 +639,18 @@ setup(
 #########################
 
 copy_dist_to_local_pypi = """
+
+set current=%~dp0
+if EXIST %current%setup.py goto current_is_setup:
+set current=%current%..\\
+cd ..
+if EXIST %current%setup.py goto current_is_setup:
+@echo Unable to find %current%setup.py
+exit /b 1
+
+:current_is_setup:
+@echo ~SET current=%current%
+
 @echo SCRIPT: copy_dist_to_local_pypi
 if not exist ..\\..\\local_pypi mkdir ..\\..\\local_pypi
 if not exist ..\\..\\local_pypi\\local_pypi_server mkdir ..\\..\\local_pypi\\local_pypi_server

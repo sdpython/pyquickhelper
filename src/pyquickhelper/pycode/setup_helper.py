@@ -373,20 +373,22 @@ def process_standard_options_for_setup(argv, file_or_folder, project_var_name, m
         script = get_build_script(
             project_var_name, requirements=requirements, port=port,
             default_engine_paths=default_engine_paths)
-        with open(os.path.join(folder, "auto_unittest_setup_help.%s" % get_script_extension()), "w") as f:
+        binto = os.path.join(folder, "bin")
+        if not os.path.exists(binto):
+            os.mkdir(binto)
+        with open(os.path.join(folder, "bin", "auto_unittest_setup_help.%s" % get_script_extension()), "w") as f:
             f.write(script)
 
         for c in ("build_script", "clean_space",
                   "write_version", "clean_pyd",
                   "build_sphinx", "unittests",
                   "unittests_LONG", "unittests_SKIP", "unittests_GUI",
-                  "unittests -d 10", "unittests -d 5",
-                  "setup_hook", "copy27", "test_local_pypi"):
+                  "unittests -d 5", "setup_hook", "copy27", "test_local_pypi"):
             sc = get_script_command(
                 c, project_var_name, requirements=requirements, port=port, platform=sys.platform,
                 default_engine_paths=default_engine_paths, additional_local_path=additional_local_path)
             cn = c.replace(" ", "_")
-            with open(os.path.join(folder, "auto_setup_%s.%s" % (cn, get_script_extension())), "w") as f:
+            with open(os.path.join(folder, "bin", "auto_setup_%s.%s" % (cn, get_script_extension())), "w") as f:
                 f.write(sc)
 
         # script running for a developper
@@ -415,7 +417,7 @@ def process_standard_options_for_setup(argv, file_or_folder, project_var_name, m
                 with open(os.path.join(folder_setup, "auto_setup_dep.py"), "w") as f:
                     f.write(sc)
             else:
-                with open(os.path.join(folder, "auto_cmd_%s.%s" % (c, get_script_extension())), "w") as f:
+                with open(os.path.join(folder, "bin", "auto_cmd_%s.%s" % (c, get_script_extension())), "w") as f:
                     f.write(sc)
 
         # script for anybody
@@ -821,13 +823,13 @@ def write_module_scripts(folder, platform=sys.platform, blog_list=None,
             continue
         for item in sc:
             if isinstance(item, tuple):
-                name = os.path.join(folder, item[0])
+                name = os.path.join(folder, "bin", item[0])
                 with open(name, "w", encoding="utf8") as f:
                     f.write(item[1])
                 res.append(name)
             else:
                 name = os.path.join(
-                    folder, "auto_run_%s.%s" % (c, get_script_extension()))
+                    folder, "bin", "auto_run_%s.%s" % (c, get_script_extension()))
                 with open(name, "w") as f:
                     f.write(item)
                 res.append(name)

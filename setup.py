@@ -180,19 +180,6 @@ if is_local():
                        "bdist_wheel", "publish", "publish_doc", "register",
                        "upload_docs", "bdist_wininst"} & set(sys.argv)):
         raise Exception("unable to interpret command line: " + str(sys.argv))
-
-    if "build_script" in sys.argv and sys.platform.startswith("win"):
-        norm = os.path.normpath(os.path.abspath(
-            os.path.join(os.path.dirname(__file__), "..")))
-        folds = [os.path.join(norm, _) for _ in os.listdir(norm)]
-        folds = [_ for _ in folds if os.path.exists(
-            os.path.join(_, "build_script.bat"))]
-        with open("build_sphinx_all.bat", "w") as f:
-            for fold in folds:
-                f.write("cd {}\n".format(os.path.abspath(fold)))
-                f.write("call build_script.bat\n")
-                f.write("call auto_setup_build_sphinx.bat\n")
-                f.write("call auto_cmd_copy_sphinx.bat\n")
 else:
     r = False
 
