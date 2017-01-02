@@ -325,6 +325,8 @@ class TestYaml(unittest.TestCase):
 
             @echo BEFORE_SCRIPT
             set PATH=ROOT\\%NAME_JENKINS%\\_venv\\Scripts;%PATH%
+            pip install jyquickhelper==0.1.26
+            if %errorlevel% neq 0 exit /b %errorlevel%
             C:\\Python35_x64\\python -u setup.py copy27
             if %errorlevel% neq 0 exit /b %errorlevel%
             cd dist_module27
