@@ -113,7 +113,7 @@ class TestYaml(unittest.TestCase):
         doc = [[s[0] for s in seq if s[1] is not None] for seq, _ in res]
         fLOG(doc)
         doc = [s for s in doc if "documentation" in s]
-        if len(doc) != 1:
+        if len(doc) != 3:
             raise Exception("\n".join(str(_) for _ in doc))
         else:
             fLOG("**", doc)
@@ -345,6 +345,13 @@ class TestYaml(unittest.TestCase):
             copy dist\\*.whl ..\\..\\..\\local_pypi\\local_pypi_server
             if %errorlevel% neq 0 exit /b %errorlevel%
             cd ..
+            if %errorlevel% neq 0 exit /b %errorlevel%
+
+            @echo DOCUMENTATION
+            set PATH=ROOT\\%NAME_JENKINS%\\_venv\\Scripts;%PATH%
+            python -u setup.py build_sphinx
+            if %errorlevel% neq 0 exit /b %errorlevel%
+            xcopy /E /C /I /Y _doc\\sphinxdoc\\build\\html dist\\html
             if %errorlevel% neq 0 exit /b %errorlevel%
             """.replace("            ", "").strip("\n \t\r")
             val = conv.strip("\n \t\r")

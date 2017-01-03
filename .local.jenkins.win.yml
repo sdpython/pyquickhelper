@@ -57,5 +57,5 @@ after_script:
 
 # Same as after script.
 documentation:
-  - if [ ${PYTHON} == "{{Python35}}" and ${NAME} == "UT" ] then python -u setup.py build_sphinx fi
-  - if [ ${PYTHON} == "{{Python35}}" and ${NAME} == "UT" ] then xcopy /E /C /I /Y _doc\sphinxdoc\build\html dist\html fi
+  - if [ ${NAME} == "UT" ] then python -u setup.py build_sphinx fi
+  - if [ ${NAME} == "UT" ] then xcopy /E /C /I /Y _doc\sphinxdoc\build\html dist\html fi
