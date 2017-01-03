@@ -72,7 +72,7 @@ sphinx-readable-theme
 sphinx-rtd-theme
 sphinxcontrib-fancybox
 sphinxcontrib-images
-sphinxcontrib.imagesvg
+sphinxcontrib-imagesvg
 sphinxcontrib.youtube
 sphinxjp.themes.basicstrap
 sphinxjp.themes.revealjs
