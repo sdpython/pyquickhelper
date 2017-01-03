@@ -186,6 +186,11 @@ def _process_notebooks_in(notebooks, outfold, build, latex_path=None, pandoc_pat
                           formats=("ipynb", "html", "python", "rst",
                                    "slides", "pdf", "present", "github"),
                           fLOG=fLOG, exc=True):
+    """
+    The notebook conversion does not handle image from url
+    for PDF and docx. They could be downloaded first
+    and replaced by local files.
+    """
     from nbconvert.nbconvertapp import main as nbconvert_main
     if pandoc_path is None:
         pandoc_path = find_pandoc_path()
@@ -457,8 +462,18 @@ def _process_notebooks_in(notebooks, outfold, build, latex_path=None, pandoc_pat
                 out, err = run_cmd(
                     c, wait=True, log_error=False, shell=sys.platform.startswith("win"))
                 if len(err) > 0:
-                    raise HelpGenException(
-                        "issue with cmd: %s\nERR:\n%s" % (c, err))
+                    lines = err.strip("\r\n").split("\n")
+                    # we filter out the message
+                    # pandoc.exe: Could not find image `https://
+                    left = [
+                        _ for _ in lines if _ and "Could not find image `http" not in _]
+                    if len(left) > 0:
+                        raise HelpGenException(
+                            "issue with cmd: %s\nERR:\n%s" % (c, err))
+                    else:
+                        for _ in lines:
+                            fLOG("w, pandoc issue: {0}".format(
+                                _.strip("\n\r")))
                 outputfile = outfilep
                 format = "docx"
 
