@@ -68,11 +68,11 @@ solar-theme
 Sphinx
 sphinx-bootstrap-theme
 sphinx-gallery
-sphinx-nbexamples
 sphinx-readable-theme
 sphinx-rtd-theme
 sphinxcontrib-fancybox
 sphinxcontrib-images
+sphinxcontrib.imagesvg
 sphinxcontrib.youtube
 sphinxjp.themes.basicstrap
 sphinxjp.themes.revealjs
