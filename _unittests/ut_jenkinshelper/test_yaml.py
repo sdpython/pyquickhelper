@@ -185,6 +185,8 @@ class TestYaml(unittest.TestCase):
             if %errorlevel% neq 0 exit /b %errorlevel%
             pip freeze
             if %errorlevel% neq 0 exit /b %errorlevel%
+            pip freeze > pip_freeze.txt
+            if %errorlevel% neq 0 exit /b %errorlevel%
             set JOB_NAME=UT
 
             @echo SCRIPT
@@ -240,6 +242,8 @@ class TestYaml(unittest.TestCase):
             pip install -r requirements.txt
             if %errorlevel% neq 0 exit /b %errorlevel%
             pip freeze
+            if %errorlevel% neq 0 exit /b %errorlevel%
+            pip freeze > pip_freeze.txt
             if %errorlevel% neq 0 exit /b %errorlevel%
             set JOB_NAME=DOC
 
@@ -321,6 +325,8 @@ class TestYaml(unittest.TestCase):
             pip install -r requirements.txt
             if %errorlevel% neq 0 exit /b %errorlevel%
             pip freeze
+            if %errorlevel% neq 0 exit /b %errorlevel%
+            pip freeze > pip_freeze.txt
             if %errorlevel% neq 0 exit /b %errorlevel%
 
             @echo BEFORE_SCRIPT
