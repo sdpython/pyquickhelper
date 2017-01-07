@@ -975,9 +975,9 @@ def prepare_file_for_sphinx_help_generation(store_obj, input, output,
     if module_name is None:
         raise ValueError("module_name cannot be None")
 
-    fLOG("* starting documentation preparation in", output)
+    fLOG("[prepare_file_for_sphinx_help_generation] starting documentation preparation in", output)
     rootm = os.path.abspath(output)
-    fLOG("* module location", input)
+    fLOG("[prepare_file_for_sphinx_help_generation] module location", input)
 
     actions = []
     rsts = []
