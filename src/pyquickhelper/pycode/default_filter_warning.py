@@ -91,6 +91,11 @@ def default_filter_warning(w):
         elif "_mode_cbc.py" in w.filename:
             if "will be forbidden in the future" in str(w.message):
                 return False
+        elif "mpl_toolkits" in w.filename:
+            if "The ishold function was deprecated in version 2.0." in str(w.message):
+                return False
+            if "The hold function was deprecated in version 2.0." in str(w.message):
+                return False
     elif isinstance(w.message, ImportWarning):
         if w.filename.endswith("_bootstrap_external.py"):
             return False
