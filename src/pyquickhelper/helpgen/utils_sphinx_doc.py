@@ -993,6 +993,7 @@ def prepare_file_for_sphinx_help_generation(store_obj, input, output,
             dst = (output + "/" + sub[1]).replace("//", "/")
 
         if os.path.isfile(src):
+            fLOG("  [p] ", src)
             _private_process_one_file(src, dst, silent, fmod_copy)
 
             temp = os.path.split(dst)
@@ -1006,6 +1007,7 @@ def prepare_file_for_sphinx_help_generation(store_obj, input, output,
                                   fLOG=fLOG)
             rsts += rstadd
         else:
+            fLOG("[prepare_file_for_sphinx_help_generation] processing ", src)
 
             actions_t = copy_source_files(src, dst, fmod_copy, silent=silent,
                                           softfile=softfile, fexclude=fexclude,
@@ -1049,6 +1051,7 @@ def prepare_file_for_sphinx_help_generation(store_obj, input, output,
                           copy_add_ext=copy_add_ext, fLOG=fLOG)
 
     # processing all store_obj to compute some indices
+    fLOG("[prepare_file_for_sphinx_help_generation] processing all store_obj to compute some indices")
     fLOG("extracted ", len(store_obj), " objects")
     res = produces_indexes(store_obj, indexes, fexclude_index, fLOG=fLOG)
 
@@ -1103,6 +1106,7 @@ def prepare_file_for_sphinx_help_generation(store_obj, input, output,
             "extension/kind", as_index=False).sum().sort("extension/kind")
 
     # reports
+    fLOG("[prepare_file_for_sphinx_help_generation] writing ", "all_report.rst")
     all_report = os.path.join(output, "all_report.rst")
     with open(all_report, "w") as falli:
         falli.write("\n")
@@ -1117,6 +1121,7 @@ def prepare_file_for_sphinx_help_generation(store_obj, input, output,
     rsts.append(RstFileHelp(None, all_report, None))
 
     # all indexes
+    fLOG("[prepare_file_for_sphinx_help_generation] writing ", "all_indexes.rst")
     all_index = os.path.join(output, "all_indexes.rst")
     with open(all_index, "w") as falli:
         falli.write("\n")
@@ -1146,6 +1151,7 @@ def prepare_file_for_sphinx_help_generation(store_obj, input, output,
     # for t,so in store_obj.items() :
 
     # look for FAQ and example
+    fLOG("[prepare_file_for_sphinx_help_generation] FAQ + examples")
     app = []
     for tag, title in [("FAQ", "FAQ"),
                        ("example", "Examples"),
@@ -1160,7 +1166,7 @@ def prepare_file_for_sphinx_help_generation(store_obj, input, output,
             app.append(RstFileHelp(saveas, onefile, ""))
     rsts += app
 
-    fLOG("* end of documentation preparation in", output)
+    fLOG("[prepare_file_for_sphinx_help_generation] END", output)
     return actions, rsts
 
 
