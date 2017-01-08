@@ -131,7 +131,7 @@ class FolderTransferFTP:
     def __init__(self, file_tree_node, ftp_transfer, file_status, root_local=None,
                  root_web=None, footer_html=None, content_filter=None,
                  is_binary=content_as_binary, text_transform=None, filter_out=None,
-                 exc=False, fLOG=noLOG):
+                 exc=False, force_allow=None, fLOG=noLOG):
         """
         constructor
 
@@ -149,6 +149,8 @@ class FolderTransferFTP:
         @param      text_transform      function to transform the content of a text file before uploading it
         @param      filter_out          regular expression to exclude some files, it can also be a function.
         @param      exc                 raise exception if not able to transfer
+        @param      force_allow         the class does not transfer a file containing a set of specific strings
+                                        except if they are in the list
         @param      fLOG                logging function
 
         Function *text_transform(self, filename, content)* returns the modified content.
@@ -173,6 +175,7 @@ class FolderTransferFTP:
         self._content_filter = content_filter
         self._is_binary = is_binary
         self._exc = exc
+        self._force_allow = force_allow
         if filter_out is not None and not isinstance(filter_out, str  # unicode#
                                                      ):
             self._filter_out = filter_out
@@ -219,7 +222,7 @@ class FolderTransferFTP:
         self._ft.save_dates()
         return r
 
-    def preprocess_before_transfering(self, path, force_binary=False):
+    def preprocess_before_transfering(self, path, force_binary=False, force_allow=None):
         """
         Applies some preprocessing to the file to transfer.
         It adds the footer for example.
@@ -227,6 +230,7 @@ class FolderTransferFTP:
 
         @param      path            file name
         @param      force_binary    impose a binary transfer
+        @param      force_allow     allow these strings even if they seem to be credentials
         @return                     binary stream, size
 
         .. versionchanged:: 1.4
@@ -270,7 +274,8 @@ class FolderTransferFTP:
 
                 # filter
                 try:
-                    content = self._content_filter(content, path)
+                    content = self._content_filter(
+                        content, path, force_allow=force_allow)
                 except Exception as e:
                     raise FolderTransferFTPException(
                         "File {0} cannot be transferred (exception)".format(path)) from e
@@ -328,11 +333,12 @@ class FolderTransferFTP:
                 path))
 
             if self._exc:
-                data, size = self.preprocess_before_transfering(file.fullname)
+                data, size = self.preprocess_before_transfering(
+                    file.fullname, force_allow=self._force_allow)
             else:
                 try:
                     data, size = self.preprocess_before_transfering(
-                        file.fullname)
+                        file.fullname, force_allow=self._force_allow)
                 except FolderTransferFTPException as ex:
                     warnings.warn(
                         "unable to transfer '{0}' due to {1}".format(file.fullname, ex))
