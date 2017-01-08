@@ -3,6 +3,9 @@
 Syncing two folders
 ===================
 
+This example is about syncing two folders
+or creating a backup.
+
 """
 
 ###############################
