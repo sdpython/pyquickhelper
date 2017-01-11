@@ -302,13 +302,17 @@ class FolderTransferFTP:
         else:
             stream.close()
 
-    def start_transfering(self):
+    def start_transfering(self, max_errors=20):
         """
         starts transfering files to the remote website
 
+        @param          max_errors
         @return         list of transferred @see cl FileInfo
         @exception      the class raises an exception (@see cl FolderTransferFTPException)
-                        if more than 5 issues happened
+                        if more than *max_errors* issues happened
+
+        .. versionchanged:: 1.5
+            Raises an exception after *max_errors* failures.
         """
         issues = []
         done = []
@@ -327,10 +331,7 @@ class FolderTransferFTP:
 
             size = os.stat(file.fullname).st_size
             self.fLOG("[upload % 8d bytes name=%s -- fullname=%s -- to=%s]" % (
-                size,
-                os.path.split(file.fullname)[-1],
-                file.fullname,
-                path))
+                size, os.path.split(file.fullname)[-1], file.fullname, path))
 
             if self._exc:
                 data, size = self.preprocess_before_transfering(
@@ -341,7 +342,9 @@ class FolderTransferFTP:
                         file.fullname, force_allow=self._force_allow)
                 except FolderTransferFTPException as ex:
                     warnings.warn(
-                        "unable to transfer '{0}' due to {1}".format(file.fullname, ex))
+                        "Unable to transfer '{0}' due to [{1}].".format(file.fullname, ex))
+                    issues.append(
+                        (file.fullname, "FolderTransferFTPException", ex))
                     continue
 
             if size > 2**20:
@@ -406,7 +409,7 @@ class FolderTransferFTP:
                 fi = self.update_status(file.fullname)
                 done.append(fi)
 
-            if len(issues) >= 10:
+            if len(issues) >= max_errors:
                 raise FolderTransferFTPException("too many issues:\n{0}".format(
                     "\n".join("{0} -- {1} --- {2}".format(a, b, type(c)) for a, b, c in issues)))
 
