@@ -732,6 +732,7 @@ class JenkinsExt(jenkins.Jenkins):
         # additional scripts
         before = []
         if job_options is not None:
+            job_options = job_options.copy()
             if 'scripts' in job_options:
                 lscripts = job_options['scripts']
                 for scr in lscripts:

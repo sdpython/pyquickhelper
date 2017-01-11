@@ -17,7 +17,7 @@ try:
     import pyquickhelper
 except ImportError:
     import sys
-    sys.path.append("src")
+    sys.path.append("../../src")
     import pyquickhelper
 
 from pyquickhelper.jenkinshelper import setup_jenkins_server_yml, JenkinsExt
