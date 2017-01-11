@@ -667,7 +667,7 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
     updates_env = dict(BOKEH_DOCS_MISSING_API_KEY_OK=1)
     for k, v in updates_env.items():
         if k not in os.environ:
-            os.environ[k] = v
+            os.environ[k] = str(v)
 
     thispath = os.path.normpath(root)
     docpath = os.path.normpath(os.path.join(thispath, "_doc", "sphinxdoc"))
