@@ -6,6 +6,7 @@
 import sys
 import os
 import unittest
+import warnings
 
 try:
     import src
@@ -33,6 +34,10 @@ class TestTransferFTPTrue(unittest.TestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
+        if sys.version_info[0] < 3:
+            warnings.warn(
+                "No testing transfer FTP on Pyghon 2.7 (issue with str and bytes)")
+            return
         import keyring
         machine = os.environ.get(
             "COMPUTERNAME", os.environ.get("HOSTNAME", "CI"))

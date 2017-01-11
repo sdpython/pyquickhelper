@@ -246,6 +246,10 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
         `nbpresent <https://github.com/Anaconda-Platform/nbpresent>`_.
         Remove parameter *use_run_cmd*.
 
+    .. versionchanged:: 1.5
+        Set ``BOKEH_DOCS_MISSING_API_KEY_OK`` to 1.
+        bokeh sphinx extension requires that or a key for the google API (???).
+
     .. todoext::
         :title: add subfolder when building indexes of notebooks
         :tag: enhancement
@@ -658,6 +662,12 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
     os.environ["PATH"] = temp
     fLOG("~~~~ changing PATH", temp)
     pa = os.getcwd()
+
+    # bokeh trick
+    updates_env = dict(BOKEH_DOCS_MISSING_API_KEY_OK=1)
+    for k, v in updates_env.items():
+        if k not in os.environ:
+            os.environ[k] = v
 
     thispath = os.path.normpath(root)
     docpath = os.path.normpath(os.path.join(thispath, "_doc", "sphinxdoc"))
