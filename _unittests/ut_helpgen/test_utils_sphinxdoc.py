@@ -165,9 +165,7 @@ class TestSphinxDoc (unittest.TestCase):
 
             try:
                 newc = utils_sphinx_doc.migrating_doxygen_doc(
-                    content,
-                    fi,
-                    silent=True)
+                    content, fi, silent=True)
             except SyntaxError as e:
                 issue.append(
                     ("  File \"%s\", line 1," %
