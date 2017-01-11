@@ -102,11 +102,23 @@ _task_batch = """
 </hudson.tasks.BatchFile>
 """
 
-# mails
+#: mails
 _publishers = """
 <hudson.tasks.Mailer plugin="mailer">
     <recipients>__MAIL__</recipients>
     <dontNotifyEveryUnstableBuild>false</dontNotifyEveryUnstableBuild>
     <sendToIndividuals>true</sendToIndividuals>
 </hudson.tasks.Mailer>
+"""
+
+#: creation of a file
+_file_creation = """
+<com.etas.jenkins.plugins.CreateTextFile.CreateFileBuilder plugin="text-file-operations">
+  <textFilePath>__FILENAME__</textFilePath>
+  <textFileContent>
+__CONTENT__
+  </textFileContent>
+  <fileOption>overWrite</fileOption>
+  <useWorkspace>true</useWorkspace>
+</com.etas.jenkins.plugins.CreateTextFile.CreateFileBuilder>
 """

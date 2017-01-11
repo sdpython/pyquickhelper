@@ -107,7 +107,11 @@ def evaluate_condition(cond, variables=None):
         e = eval(cond)
         return all(e)
     else:
-        return eval(cond)
+        try:
+            return eval(cond)
+        except SyntaxError as e:
+            raise SyntaxError(
+                "Unable to interpret '{0}'\nvariables: {1}".format(cond, variables)) from e
 
 
 def interpret_instruction(inst, variables=None):
@@ -120,7 +124,7 @@ def interpret_instruction(inst, variables=None):
 
     Example of a statement::
 
-        if [ ${PYTHON} == "C:\\\\Python36_x64" ]; then python setup.py build_sphinx; fi
+        if [ ${PYTHON} == "C:\\\\Python36_x64" ] then python setup.py build_sphinx fi
     """
     if isinstance(inst, list):
         res = [interpret_instruction(_, variables) for _ in inst]
@@ -239,7 +243,7 @@ def enumerate_convert_yaml_into_instructions(obj, variables=None, add_environ=Tr
                 value = interpret_instruction(value[i_script], variables)
                 if isinstance(value, dict):
                     for k, v in sorted(value.items()):
-                        if k != "CMD":
+                        if k not in ('CMD', 'CMDPY'):
                             seq.append(('INFO', (k, v)))
                             variables[k] = v
 
@@ -348,6 +352,7 @@ def convert_sequence_into_batch_file(seq, variables=None, platform=None):
 
     for key, value in seq:
         if key == "python":
+            variables["YMLPYTHON"] = value
             if variables.get('DIST', None) == "conda":
                 rows.append(echo + " conda")
                 anaconda = True
@@ -402,12 +407,16 @@ def convert_sequence_into_batch_file(seq, variables=None, platform=None):
         elif key in {"install", "before_script", "script", "after_script", "documentation"}:
             if value is not None:
                 if isinstance(value, dict):
-                    if "CMD" not in value:
+                    if "CMD" not in value and "CMDPY" not in value:
                         raise KeyError(
-                            "A script defined by a dictionary must contain key '{0}' in \n{1}".format("CMD", value))
+                            "A script defined by a dictionary must contain key '{0}' or '{1}' in \n{2}".format("CMD", 'CMDPY', value))
                     if "NAME" in value:
                         rows.append("set JOB_NAME=%s" % value["NAME"])
-                    value = value["CMD"]
+                    if "CMD" in value:
+                        value = value["CMD"]
+                    else:
+                        value = evaluate_condition(
+                            value["CMDPY"], variables=variables)
                 elif isinstance(value, list):
                     starter = list(rows)
                 elif isinstance(value, typstr):
@@ -537,7 +546,8 @@ def enumerate_processed_yml(file_or_buffer, context=None, engine="jinja2", platf
 
         # we extract a suffix from the command line
         if server is not None:
-            name = "_".join([project_name, var.get('NAME', ''), typstr(var.get("VERSION", '')).replace(".", ""),
+            name = "_".join([project_name, var.get('NAME', ''),
+                             typstr(var.get("VERSION", '')).replace(".", ""),
                              var.get('DIST', '')])
             if isinstance(conv, list):
                 conv = ["SET NAME_JENKINS=" + name + "\n" + _ for _ in conv]
@@ -563,7 +573,7 @@ def enumerate_processed_yml(file_or_buffer, context=None, engine="jinja2", platf
                         fLOG("[jenkins] delete job", name)
                     server.delete_job(name)
 
-            if project_name not in git_repo:
+            if git_repo is not None and project_name not in git_repo:
                 git_repo += project_name
 
             # set up location

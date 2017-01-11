@@ -32,7 +32,7 @@ from ..pycode.windows_scripts import windows_jenkins, windows_jenkins_any
 from ..pycode.windows_scripts import windows_jenkins_27_conda, windows_jenkins_27_def
 from ..pycode.build_helper import private_script_replacements
 from .jenkins_exceptions import JenkinsExtException, JenkinsJobException
-from .jenkins_server_template import _config_job, _trigger_up, _trigger_time, _git_repo, _task_batch, _publishers
+from .jenkins_server_template import _config_job, _trigger_up, _trigger_time, _git_repo, _task_batch, _publishers, _file_creation
 from .yaml_helper import enumerate_processed_yml
 
 _timeout_default = 1200
@@ -282,7 +282,7 @@ class JenkinsExt(jenkins.Jenkins):
             res = self.engines["default"]
             key = "default"
         if res is None:
-            raise JenkinsJobException("unable to find engine in job {}, available: {}".format(
+            raise JenkinsJobException("Unable to find engine in job '{}', available: {}".format(
                 job, ", ".join(self.engines.keys())))
         else:
             if "[27]" in job and "python34" in res.lower():
@@ -659,6 +659,9 @@ class JenkinsExt(jenkins.Jenkins):
 
         .. versionchanged:: 1.4
             Parameter *adjust_scheduler* was added to delayed some jobs if a spot is already taken.
+
+        .. versionchanged:: 1.5
+            *kwargs* can contain option *job_options*.
         """
         if 'platform' in kwargs:
             raise NameError(
@@ -701,7 +704,7 @@ class JenkinsExt(jenkins.Jenkins):
         else:
             trigger = ""
 
-        # cmd = "set" if self.platform.startswith("win") else "export"
+        job_options = kwargs.get('job_options', None)
 
         if not isinstance(script, list):
             script = [script]
@@ -726,8 +729,25 @@ class JenkinsExt(jenkins.Jenkins):
                 .replace("__GITREPO__", git_repo) \
                 .replace("__CRED__", "<credentialsId>%s</credentialsId>" % credentials)
 
+        # additional scripts
+        before = []
+        if job_options is not None:
+            if 'scripts' in job_options:
+                lscripts = job_options['scripts']
+                for scr in lscripts:
+                    au = _file_creation.replace("__FILENAME__", scr["name"]) \
+                                       .replace("__CONTENT__", scr["content"])
+                    if "__" in au:
+                        raise Exception(
+                            "Unable to fully replace expected string in:\n{0}".format(au))
+                    before.append(au)
+                del job_options['scripts']
+            if len(job_options) > 0:
+                raise ValueError(
+                    "Unable to process options\n{0}".format(job_options))
+
         # scripts
-        tasks = [JenkinsExt._task_batch.replace(
+        tasks = before + [JenkinsExt._task_batch.replace(
             "__SCRIPT__", s) for s in script_mod]
 
         # location
@@ -998,6 +1018,13 @@ class JenkinsExt(jenkins.Jenkins):
         indexes = dict(order=0, dozen="A")
         counts = {}
         for jobs in modules:
+            if isinstance(jobs, tuple):
+                if len(jobs) == 0:
+                    raise ValueError("Empty jobs in the list.")
+                if jobs[0] == "yml" and len(jobs) != 3:
+                    raise ValueError(
+                        "If it is a yml jobs, the tuple should contain 3 elements: ('yml', filename, schedule or None or dictionary).\nNot: {0}".format(jobs))
+
             cre, ds, locs = self._setup_jenkins_server_modules_loop(jobs=jobs, counts=counts,
                                                                     get_jenkins_script=get_jenkins_script,
                                                                     location=location, adjust_scheduler=adjust_scheduler,
@@ -1067,7 +1094,12 @@ class JenkinsExt(jenkins.Jenkins):
                 options = {}
 
             # job and scheduler
-            job, scheduler = job[:2]
+            job, scheduler_options = job[:2]
+            if isinstance(scheduler_options, dict):
+                scheduler = scheduler_options.get('scheduler', None)
+            else:
+                scheduler = scheduler_options
+                scheduler_options = None
             if scheduler is not None:
                 order = 1
                 if counts.get(dozen, 0) > 0:
@@ -1219,7 +1251,8 @@ class JenkinsExt(jenkins.Jenkins):
                                                          add_environ=add_environ, server=self, git_repo=gitrepo, scheduler=scheduler,
                                                          description=description, credentials=cred, success_only=success_only,
                                                          timeout=timeout, platform=self.platform, adjust_scheduler=adjust_scheduler,
-                                                         overwrite=overwrite, build_location=location, mails=self.mails):
+                                                         overwrite=overwrite, build_location=location, mails=self.mails,
+                                                         job_options=scheduler_options):
                 if name in done:
                     s = "A name '{0}' was already used for a job, from:\n{1}\nPROCESS:\n{2}"
                     raise ValueError(
