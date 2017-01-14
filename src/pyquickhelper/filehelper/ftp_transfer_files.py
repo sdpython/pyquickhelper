@@ -257,20 +257,17 @@ class FolderTransferFTP:
                             return self.preprocess_before_transfering(path, True)
                         else:
                             raise FolderTransferFTPException(
-                                'unable to transfer:\n  File "{0}", line 1'.format(path)) from e
+                                'Unable to transfer:\n  File "{0}", line 1\nEXC:\n{1}'.format(path, e)) from e
 
                 # footer
                 if self._footer_html is not None and os.path.splitext(
                         path)[-1].lower() in (".htm", ".html"):
                     spl = content.split("</body>")
-                    if len(spl) == 1:
-                        raise FolderTransferFTPException(
-                            'tag </body> was not found, it must be written in lower case,\n  File "{0}", line 1'.format(path))
+                    if len(spl) > 1:
+                        if len(spl) != 2:
+                            spl = ["</body>".join(spl[:-1]), spl[-1]]
 
-                    if len(spl) != 2:
-                        spl = ["</body>".join(spl[:-1]), spl[-1]]
-
-                    content = spl[0] + self._footer_html + "</body>" + spl[-1]
+                        content = spl[0] + self._footer_html + "</body>" + spl[-1]
 
                 # filter
                 try:
@@ -278,10 +275,10 @@ class FolderTransferFTP:
                         content, path, force_allow=force_allow)
                 except Exception as e:
                     raise FolderTransferFTPException(
-                        "File '{0}' cannot be transferred (exception)".format(path)) from e
+                        "File '{0}' cannot be transferred (exception)\nEXC\n{1}".format(path, e)) from e
                 if content is None:
                     raise FolderTransferFTPException(
-                        "File '{0}' cannot be transferred due to its content".format(path))
+                        "File '{0}' cannot be transferred due to its content.".format(path))
 
                 # transform
                 if self._text_transform is not None:
@@ -410,7 +407,7 @@ class FolderTransferFTP:
                 done.append(fi)
 
             if len(issues) >= max_errors:
-                raise FolderTransferFTPException("too many issues:\n{0}".format(
+                raise FolderTransferFTPException("Too many issues:\n{0}".format(
                     "\n".join("{0} -- {1} --- {2}".format(a, b, type(c)) for a, b, c in issues)))
 
         return done
