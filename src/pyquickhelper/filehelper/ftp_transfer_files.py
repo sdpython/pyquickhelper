@@ -267,7 +267,8 @@ class FolderTransferFTP:
                         if len(spl) != 2:
                             spl = ["</body>".join(spl[:-1]), spl[-1]]
 
-                        content = spl[0] + self._footer_html + "</body>" + spl[-1]
+                        content = spl[0] + self._footer_html + \
+                            "</body>" + spl[-1]
 
                 # filter
                 try:

@@ -276,13 +276,26 @@ def get_script_command(command, module, requirements, port=8067, platform=sys.pl
     res = private_script_replacements(
         sc, module, requirements, port, default_engine_paths=default_engine_paths,
         additional_local_path=additional_local_path)
-    if command == "copy27" and sys.platform.startswith("win"):
-        res = """
-            if exist dist_module27 (
-                rmdir /Q /S dist_module27
+    if sys.platform.startswith("win"):
+        if command == "copy27":
+            res = """
+                if exist dist_module27 (
+                    rmdir /Q /S dist_module27
+                    if %errorlevel% neq 0 exit /b %errorlevel%
+                )
+                """.replace("                ", "") + res
+        elif command == "clean_space":
+            # Run the test which test pep8 and convert the convert the notebooks.
+            res += """
+                if not exist _unittests\\ut_module\\test_flake8.py goto end:
+                %pythonexe% -u _unittests\\ut_module\\test_flake8.py
                 if %errorlevel% neq 0 exit /b %errorlevel%
-            )
-            """.replace("            ", "") + res
+
+                if not exist _unittests\\ut_module\\test_convert_notebooks.py goto end:
+                %pythonexe% -u _unittests\\ut_module\\test_convert_notebooks.py
+                if %errorlevel% neq 0 exit /b %errorlevel%
+                )
+                """.replace("                ", "") + res
     return res
 
 

@@ -219,7 +219,7 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
     sharepost = sharepost
 
     # settings
-    exclude_patterns = []
+    exclude_patterns = ["*.py", "**/*.py"]
     html_show_sphinx = False
     html_show_copyright = False
     __html_last_updated_fmt_dt = datetime.datetime.now()

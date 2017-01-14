@@ -1,4 +1,8 @@
 #-*- coding: utf-8 -*-
+"""
+@file
+@brief Configuration for sphinx documentation.
+"""
 import sys
 import os
 import datetime
