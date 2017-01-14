@@ -256,8 +256,10 @@ class FolderTransferFTP:
                                 "FTP transfer, encoding issue with: " + path)
                             return self.preprocess_before_transfering(path, True)
                         else:
+                            stex = str(e).split("\n")
+                            stex = "\n    ".join(stex)
                             raise FolderTransferFTPException(
-                                'Unable to transfer:\n  File "{0}", line 1\nEXC:\n{1}'.format(path, e)) from e
+                                'Unable to transfer:\n  File "{0}", line 1\nEXC:\n{1}'.format(path, stex)) from e
 
                 # footer
                 if self._footer_html is not None and os.path.splitext(
@@ -275,8 +277,13 @@ class FolderTransferFTP:
                     content = self._content_filter(
                         content, path, force_allow=force_allow)
                 except Exception as e:
+                    import traceback
+                    exc_type, exc_value, exc_traceback = sys.exc_info()
+                    trace = traceback.format_exception(
+                        exc_type, exc_value, exc_traceback)
                     raise FolderTransferFTPException(
-                        "File '{0}' cannot be transferred (exception)\nEXC\n{1}".format(path, e)) from e
+                        "File '{0}' cannot be transferred (filtering exception)\nfunction:\n{1}\nEXC\n{2}\nStackTrace:\n{3}".format(
+                            path, self._content_filter, e, trace)) from e
                 if content is None:
                     raise FolderTransferFTPException(
                         "File '{0}' cannot be transferred due to its content.".format(path))
@@ -339,8 +346,10 @@ class FolderTransferFTP:
                     data, size = self.preprocess_before_transfering(
                         file.fullname, force_allow=self._force_allow)
                 except FolderTransferFTPException as ex:
+                    stex = str(ex).split("\n")
+                    stex = "\n    ".join(stex)
                     warnings.warn(
-                        "Unable to transfer '{0}' due to [{1}].".format(file.fullname, ex))
+                        "Unable to transfer '{0}' due to [{1}].".format(file.fullname, stex))
                     issues.append(
                         (file.fullname, "FolderTransferFTPException", ex))
                     continue

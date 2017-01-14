@@ -285,7 +285,8 @@ def get_script_command(command, module, requirements, port=8067, platform=sys.pl
                 )
                 """.replace("                ", "") + res
         elif command == "clean_space":
-            # Run the test which test pep8 and convert the convert the notebooks.
+            # Run the test which test pep8 and convert the convert the
+            # notebooks.
             res += """
                 if not exist _unittests\\ut_module\\test_flake8.py goto end:
                 %pythonexe% -u _unittests\\ut_module\\test_flake8.py
