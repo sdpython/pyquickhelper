@@ -281,6 +281,8 @@ class FolderTransferFTP:
                     exc_type, exc_value, exc_traceback = sys.exc_info()
                     trace = traceback.format_exception(
                         exc_type, exc_value, exc_traceback)
+                    if isinstance(trace, list):
+                        trace = "\n".join(trace)
                     raise FolderTransferFTPException(
                         "File '{0}' cannot be transferred (filtering exception)\nfunction:\n{1}\nEXC\n{2}\nStackTrace:\n{3}".format(
                             path, self._content_filter, e, trace)) from e
