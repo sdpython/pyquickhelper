@@ -606,7 +606,7 @@ class JenkinsExt(jenkins.Jenkins):
                 while new_value in self._scheduled_jobs or (a0 == a):
                     a += 1
                     b += 1
-                    r = 'H(%d-%d)' % (a, b)
+                    r = 'H(%d-%d)' % (a % 24, b % 24)
                     new_value = scheduler.replace(rep, r)
                 scheduler = new_value
             self._scheduled_jobs[
