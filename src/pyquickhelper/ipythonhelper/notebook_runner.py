@@ -1043,7 +1043,7 @@ class NotebookRunner(object):
         new_desc = reg.sub("\\2", desc)
         if "http://" in new_desc or "https://" in new_desc:
             raise ValueError(
-                "Wrong regular expression:\n{0}\nMODIFIED:\n{1}".format(desc, new_desc))
+                "Wrong regular expression in '{2}':\n{0}\nMODIFIED:\n{1}".format(desc, new_desc, self._filename))
         return header, new_desc.replace('"', "")
 
     def get_thumbnail(self, max_width=200, max_height=200):
