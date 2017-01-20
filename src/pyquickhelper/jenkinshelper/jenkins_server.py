@@ -688,6 +688,20 @@ class JenkinsExt(jenkins.Jenkins):
             raise JenkinsExtException(
                 "upstreams and scheduler cannot be not null at the same time: {0}".format(name))
 
+        # overwrite parameters with job_options
+        job_options = kwargs.get('job_options', None)
+        if job_options is not None:
+            job_options = job_options.copy()
+            if "scheduler" in job_options:
+                scheduler = job_options["scheduler"]
+                del job_options["scheduler"]
+            if "git_repo" in job_options:
+                git_repo = job_options["git_repo"]
+                del job_options["git_repo"]
+            if "credentials" in job_options:
+                credentials = job_options["credentials"]
+                del job_options["credentials"]
+
         if upstreams is not None and len(upstreams) > 0:
             trigger = JenkinsExt._trigger_up \
                 .replace("__UP__", ",".join(upstreams)) \
@@ -703,8 +717,6 @@ class JenkinsExt(jenkins.Jenkins):
             scheduler = new_scheduler
         else:
             trigger = ""
-
-        job_options = kwargs.get('job_options', None)
 
         if not isinstance(script, list):
             script = [script]
@@ -732,7 +744,6 @@ class JenkinsExt(jenkins.Jenkins):
         # additional scripts
         before = []
         if job_options is not None:
-            job_options = job_options.copy()
             if 'scripts' in job_options:
                 lscripts = job_options['scripts']
                 for scr in lscripts:
@@ -744,8 +755,10 @@ class JenkinsExt(jenkins.Jenkins):
                     before.append(au)
                 del job_options['scripts']
             if len(job_options) > 0:
+                keys = ", ".join(
+                    ["credentials", "git_repo", "scheduler", "scripts"])
                 raise ValueError(
-                    "Unable to process options\n{0}".format(job_options))
+                    "Unable to process options\n{0}\nYou can specify the following options:\n{1}".format(job_options, keys))
 
         # scripts
         tasks = before + [JenkinsExt._task_batch.replace(

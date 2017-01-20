@@ -57,7 +57,7 @@ js = JenkinsExt('http://localhost:8080/', user,
                 pwd, fLOG=fLOG, engines=engines)
 
 #################################
-# Defiens the Jenkins job.
+# Defines the Jenkins job.
 ymls = []
 for mod in ["polylearn", "dynd-python"]:
     new_content = content.replace("__MODULE__", mod)
