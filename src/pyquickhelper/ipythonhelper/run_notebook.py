@@ -178,7 +178,7 @@ def run_notebook(filename, profile_dir=None, working_dir=None, skip_exceptions=F
 def execute_notebook_list(folder, notebooks, clean_function=None, valid=None, fLOG=noLOG,
                           additional_path=None, deepfLOG=noLOG, kernel_name="python",
                           log_level="30", extended_args=None, cache_urls=None,
-                          replacements=None):
+                          replacements=None, detailed_log=None):
     """
     execute a list of notebooks
 
@@ -198,6 +198,7 @@ def execute_notebook_list(folder, notebooks, clean_function=None, valid=None, fL
                                     see :ref:`l-ipython_notebook_args` for a full list
     @param      cache_urls          list of urls to cache
     @param      replacements        additional replacements
+    @param      detailed_log        detailed log
     @return                         dictionary ``{ notebook_file: (isSuccess, statistics, outout) }``
 
     If *isSucess* is False, *statistics* contains the execution time, *output* is the exception
@@ -224,6 +225,9 @@ def execute_notebook_list(folder, notebooks, clean_function=None, valid=None, fL
     .. versionchanged:: 1.4
         Parameter *cache_urls* was added.
         Function *valid* can return None.
+
+    .. versionchanged:: 1.5
+        Parameter *detailed_log* was added.
     """
     if additional_path is None:
         additional_path = []
@@ -247,7 +251,8 @@ def execute_notebook_list(folder, notebooks, clean_function=None, valid=None, fL
                                          clean_function=clean_function, fLOG=deepfLOG,
                                          code_init=code_init, kernel_name=kernel_name,
                                          log_level=log_level, extended_args=extended_args,
-                                         cache_urls=cache_urls, replacements=replacements)
+                                         cache_urls=cache_urls, replacements=replacements,
+                                         detailed_log=detailed_log)
                 if not os.path.exists(outfile):
                     raise FileNotFoundError(outfile)
                 results[note] = (True, stat, out)
