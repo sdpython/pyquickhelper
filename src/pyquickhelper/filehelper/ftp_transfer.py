@@ -165,7 +165,7 @@ class TransferFTP:
                 self.LOG(e)
                 self.LOG("    ** run exc ", str(command), str(args))
                 self._private_login()
-                if command == self._ftp.pwd:
+                if command == self._ftp.pwd or command is self._ftp.pwd:
                     t = command(self)
                 else:
                     t = command(self, *args)
