@@ -25,18 +25,31 @@ else:
     from io import StringIO
 
 
-def get_temp_folder(thisfile, name, clean=True, create=True):
+def get_temp_folder(thisfile, name=None, clean=True, create=True):
     """
     return a local temporary folder to store files when unit testing
 
-    @param      thisfile        use ``__file__``
+    @param      thisfile        use ``__file__`` or the function which runs the test
     @param      name            name of the temporary folder
     @param      clean           if True, clean the folder first
     @param      create          if True, creates it (empty if clean is True)
     @return                     temporary folder
 
     .. versionadded:: 0.9
+
+    .. versionchanged:: 1.5
+        Parameter *thisfile* can be a function or a method.
+        The function will extract the file which runs this test and will name
+        the temporary folder base on the name of the method. *name* must be None.
     """
+    if name is None:
+        name = thisfile.__name__
+        if name.startswith("test_"):
+            name = "temp_" + name[5:]
+        elif not name.startswith("temp_"):
+            name = "temp_" + name
+        thisfile = os.path.abspath(thisfile.__func__.__code__.co_filename)
+
     if not name.startswith("temp_"):
         raise NameError("the folder {0} must begin with temp_".format(name))
 

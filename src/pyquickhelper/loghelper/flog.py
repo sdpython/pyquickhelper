@@ -7,17 +7,17 @@
 
 The function fLOG (or fLOG) is used to logged everything into a log file.
 
-@code
-from pyquickhelper.loghelper.flog import fLOG
-fLOG (OutputPrint = True)                 # the logs are also displayed in the output stream
-fLOG (LogPath     = "...")                # chanages the path returned by GetPath
-fLOG ("un", "deux", 4, ["gt"])            # log everything in a log file
+::
 
-from pyquickhelper.loghelper.flog import GetPath ()
-print GetPath ()                            # return the log path (file temp_log.txt)
+    from pyquickhelper.loghelper.flog import fLOG
+    fLOG (OutputPrint = True)                 # the logs are also displayed in the output stream
+    fLOG (LogPath     = "...")                # chanages the path returned by GetPath
+    fLOG ("un", "deux", 4, ["gt"])            # log everything in a log file
 
-fLOG (LogPath = "c:/temp/log_path")       # change the log path, creates it if it does not exist
-@endcode
+    from pyquickhelper.loghelper.flog import GetPath ()
+    print GetPath ()                            # return the log path (file temp_log.txt)
+
+    fLOG (LogPath = "c:/temp/log_path")       # change the log path, creates it if it does not exist
 
 @warning This module inserts static variable in module sys. I did it because I did not know how to deal with several instance of the same module.
 """
@@ -180,9 +180,10 @@ def fLOG(*l, **p):
                             - if p contains UnLock, it unlock option OutputPrint
 
                         example:
-                        @code
-                        fLOG (LogPath = "###", LogPathAdd = __file__, OutputPrint = True)
-                        @endcode
+
+                        ::
+
+                            fLOG (LogPath = "###", LogPathAdd = __file__, OutputPrint = True)
 
     @exception  OSError     When the log file cannot be created.
 
@@ -190,14 +191,16 @@ def fLOG(*l, **p):
         :title: How to activate the logs?
 
         The following instruction will do:
-        @code
-        fLOG(OutputPrint=True)
-        @endcode
+
+        ::
+
+            fLOG(OutputPrint=True)
 
         To log everything into a file:
-        @code
+
+        ::
+
         fLOG(OutputPrint=True, LogFile="log_file.txt")
-        @endcode
     """
     path_add = p.get("LogPathAdd", [])
 

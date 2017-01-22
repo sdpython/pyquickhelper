@@ -2,6 +2,7 @@
 @file
 @brief Shortcuts to loghelper functions
 """
+from .custom_log import CustomLog
 from .flog import fLOG, noLOG, PQHException, download, unzip, removedirs
 from .convert_helper import str2datetime, timestamp_to_datetime
 from .run_cmd import run_cmd, decode_outerr, run_script, RunCmdException

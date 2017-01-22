@@ -83,7 +83,7 @@ class NotebookRunner(object):
     def __init__(self, nb, profile_dir=None, working_dir=None,
                  comment="", fLOG=noLOG, theNotebook=None, code_init=None,
                  kernel_name="python", log_level="30", extended_args=None,
-                 kernel=False, filename=None, replacements=None):
+                 kernel=False, filename=None, replacements=None, detailed_log=None):
         """
         constuctor
 
@@ -103,9 +103,14 @@ class NotebookRunner(object):
         @param      filename        to add the notebook file if there is one in error messages
         @param      replacements    replacements to make in every cell before running it,
                                     dictionary ``{ string: string }``
+        @param      detailed_log    to log detailed information when executing the notebook, this should be a function
+                                    with the same signature as ``print`` or None
 
         .. versionchanged:: 1.4
             Parameter *replacements* was added.
+
+        .. versionchanged:: 1.5
+            Parameter *detailed_log* was added.
         """
         if kernel:
             try:
@@ -116,6 +121,7 @@ class NotebookRunner(object):
                 kernel_name=kernel_name) if kernel_name is not None else KernelManager()
         else:
             self.km = None
+        self.detailed_log = detailed_log
         self.fLOG = fLOG
         self.theNotebook = theNotebook
         self.code_init = code_init
@@ -182,6 +188,15 @@ class NotebookRunner(object):
             self.kc = None
         self.nb = nb
         self.comment = comment
+
+    def __del__(self):
+        """
+        We close the kernel.
+        """
+        if self.km is not None:
+            del self.km
+        if self.kc is not None:
+            del self.kc
 
     def to_json(self, filename=None, encoding="utf8"):
         """
@@ -349,13 +364,22 @@ class NotebookRunner(object):
         @param      clean_function      cleaning function to apply to the code before running it
         @return                         output of the cell
         '''
+        if self.detailed_log:
+            self.detailed_log("[run_cell] index_cell={0} clean_function={1}".format(
+                index_cell, clean_function))
         iscell, codei = NotebookRunner.get_cell_code(cell)
 
         self.fLOG('-- running cell:\n%s\n' % codei)
+        if self.detailed_log:
+            self.detailed_log('[run_cell] code=\n                        {0}'.format(
+                              "\n                        ".join(codei.split("\n"))))
 
         code = self.clean_code(codei)
         if clean_function is not None:
             code = clean_function(code)
+        if self.detailed_log:
+            self.detailed_log('    cleaned code=\n                        {0}'.format(
+                              "\n                        ".join(code.split("\n"))))
         if len(code) == 0:
             return ""
         if self.kc is None:
@@ -381,6 +405,9 @@ class NotebookRunner(object):
                     [_ for _ in reply['content']]
             traceback_text = '\n'.join(tr)
             self.fLOG("ERR:\n", traceback_text)
+            if self.detailed_log:
+                self.detailed_log('[run_cell] ERROR=\n    {0}'.format(
+                    "\n    ".join(traceback_text.split("\n"))))
         else:
             traceback_text = ''
             self.fLOG('-- cell returned')
@@ -407,6 +434,8 @@ class NotebookRunner(object):
 
             content = msg['content']
             msg_type = msg['msg_type']
+            if self.detailed_log:
+                self.detailed_log('    msg_type={0}'.format(msg_type))
 
             # IPython 3.0.0-dev writes pyerr/pyout in the notebook format but uses
             # error/execute_result in the message spec. This does the translation
@@ -460,6 +489,10 @@ class NotebookRunner(object):
                     'unhandled iopub message: %s' % msg_type + "\nCONTENT:\n" + dcontent)
 
             outs.append(out)
+            if self.detailed_log:
+                self.detailed_log('    out={0}'.format(type(out)))
+                if hasattr(out, "data"):
+                    self.detailed_log('    out={0}'.format(out.data))
 
         if iscell:
             cell['outputs'] = outs
@@ -478,6 +511,9 @@ class NotebookRunner(object):
 
         sraw = "\n".join(raw)
         self.fLOG(sraw)
+        if self.detailed_log:
+            self.detailed_log('    sraw=\n                        {0}'.format(
+                              "\n                        ".join(sraw.split("\n"))))
 
         def reply2string(reply):
             sreply = []
@@ -505,6 +541,8 @@ class NotebookRunner(object):
                 code, traceback_text, sraw, sreply, index_cell, len(
                     code), scode, self.comment, status, reason,
                 self._filename))
+        if self.detailed_log:
+            self.detailed_log('[run_cell] status={0}'.format(status))
         return outs
 
     def iter_code_cells(self):
@@ -861,12 +899,8 @@ class NotebookRunner(object):
 
         return res
 
-    def run_notebook(self,
-                     skip_exceptions=False,
-                     progress_callback=None,
-                     additional_path=None,
-                     valid=None,
-                     clean_function=None):
+    def run_notebook(self, skip_exceptions=False, progress_callback=None,
+                     additional_path=None, valid=None, clean_function=None):
         '''
         Run all the cells of a notebook in order and update
         the outputs in-place.
@@ -892,6 +926,9 @@ class NotebookRunner(object):
             Function *valid* can now return None to stop the execution of the notebook
             before this cell.
         '''
+        if self.detailed_log:
+            self.detailed_log(
+                "[run_notebook] Starting execution of '{0}'".format(self._filename))
         # additional path
         if additional_path is not None:
             if not isinstance(additional_path, list):
@@ -942,7 +979,14 @@ class NotebookRunner(object):
             if progress_callback:
                 progress_callback(i)
         etime = time.clock() - cl
-        return dict(nbcell=nbcell, nbrun=nbrun, nbvalid=nbnerr, time=etime)
+        res = dict(nbcell=nbcell, nbrun=nbrun, nbvalid=nbnerr, time=etime)
+        if self.detailed_log:
+            self.detailed_log(
+                "[run_notebook] end execution of '{0}'".format(self._filename))
+            self.detailed_log(
+                "[run_notebook] execution time: {0}".format(etime))
+            self.detailed_log("[run_notebook] statistics : {0}".format(res))
+        return res
 
     def count_code_cells(self):
         '''

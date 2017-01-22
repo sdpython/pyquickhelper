@@ -74,7 +74,8 @@ def run_notebook(filename, profile_dir=None, working_dir=None, skip_exceptions=F
                  outfilename=None, encoding="utf8", additional_path=None,
                  valid=None, clean_function=None, code_init=None,
                  fLOG=noLOG, kernel_name="python", log_level="30",
-                 extended_args=None, cache_urls=None, replacements=None):
+                 extended_args=None, cache_urls=None, replacements=None,
+                 detailed_log=None):
     """
     run a notebook end to end, it uses module `runipy <https://github.com/paulgb/runipy/>`_
 
@@ -98,6 +99,8 @@ def run_notebook(filename, profile_dir=None, working_dir=None, skip_exceptions=F
                                     see :ref:`l-ipython_notebook_args` for a full list
     @param      cache_urls          list of urls to cache
     @param      replacements        list of additional replacements, list of tuple
+    @param      detailed_log        a second function to log more information when executing the notebook,
+                                    this should be a function with the same signature as ``print`` or None
     @return                         tuple (statistics, output)
 
     @warning The function calls `basicConfig <https://docs.python.org/3.4/library/logging.html#logging.basicConfig>`_.
@@ -126,6 +129,9 @@ def run_notebook(filename, profile_dir=None, working_dir=None, skip_exceptions=F
     .. versionchanged:: 1.4
         Parameter *cache_urls* was added.
         Function *valid* can return None and stops the execution of the notebook.
+
+    .. versionchanged:: 1.5
+        Parameter *detailed_log* was added.
     """
     cached_rep = _cache_url_to_file(cache_urls, working_dir, fLOG=fLOG)
     if replacements is None:
@@ -146,12 +152,11 @@ def run_notebook(filename, profile_dir=None, working_dir=None, skip_exceptions=F
             out.write("\n")
             fLOG(*l, **p)
 
-        nb_runner = NotebookRunner(
-            nb, profile_dir, working_dir, fLOG=flogging, filename=filename,
-            theNotebook=os.path.abspath(filename),
-            code_init=code_init, log_level=log_level,
-            extended_args=extended_args, kernel_name=kernel_name,
-            replacements=replacements, kernel=True)
+        nb_runner = NotebookRunner(nb, profile_dir, working_dir, fLOG=flogging, filename=filename,
+                                   theNotebook=os.path.abspath(filename),
+                                   code_init=code_init, log_level=log_level,
+                                   extended_args=extended_args, kernel_name=kernel_name,
+                                   replacements=replacements, kernel=True, detailed_log=detailed_log)
         stat = nb_runner.run_notebook(skip_exceptions=skip_exceptions, additional_path=additional_path,
                                       valid=valid, clean_function=clean_function)
 
