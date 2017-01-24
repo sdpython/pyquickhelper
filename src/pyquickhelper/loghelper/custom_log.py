@@ -24,6 +24,7 @@ class CustomLog:
         @param      filename        new filename
         @param      create          force the creation
         """
+        folder = os.path.abspath(folder)
         self._folder = folder
         if not os.path.exists(folder):
             os.makedirs(folder)
