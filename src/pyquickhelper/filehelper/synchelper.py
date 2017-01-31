@@ -248,8 +248,13 @@ def synchronize_folder(p1, p2, hash_size=1024 ** 2, repo1=False, repo2=False,
     action = []
     modif = 0
 
+    fLOG("Starting synchronisation.")
+    nbcur = 0
     for op, file, n1, n2 in res:
-
+        nbcur += 1
+        if nbcur <= 50:
+            fLOG(
+                "... {0}/{1} (current: '{2}' - {3})".format(nbcur, len(res), file, op))
         if filter_copy is not None and not filter_copy(file):
             continue
 
@@ -259,6 +264,8 @@ def synchronize_folder(p1, p2, hash_size=1024 ** 2, repo1=False, repo2=False,
                 status.update_copied_file(n1.fullname)
                 modif += 1
                 if modif % 50 == 0:
+                    fLOG(
+                        "Processed {0}/{1} (current: '{2}')".format(nbcur, len(res), file))
                     status.save_dates()
         else:
 
@@ -272,6 +279,8 @@ def synchronize_folder(p1, p2, hash_size=1024 ** 2, repo1=False, repo2=False,
                             status.update_copied_file(n1.fullname)
                             modif += 1
                             if modif % 50 == 0:
+                                fLOG(
+                                    "Processed {0}/{1} (current: '{2}')".format(nbcur, len(res), file))
                                 status.save_dates()
                     else:
                         pass
@@ -299,6 +308,8 @@ def synchronize_folder(p1, p2, hash_size=1024 ** 2, repo1=False, repo2=False,
                                         file, delete=True)
                                     modif += 1
                                     if modif % 50 == 0:
+                                        fLOG(
+                                            "Processed {0}/{1} (current: '{2}')".format(nbcur, len(res), file))
                                         status.save_dates()
                             else:
                                 fLOG(
@@ -313,6 +324,8 @@ def synchronize_folder(p1, p2, hash_size=1024 ** 2, repo1=False, repo2=False,
                                     n1.fullname, delete=True)
                                 modif += 1
                                 if modif % 50 == 0:
+                                    fLOG(
+                                        "Processed {0}/{1} (current: '{2}')".format(nbcur, len(res), file))
                                     status.save_dates()
             elif n2 is not None and n1._size != n2._size and not n1.isdir():
                 fLOG("problem", "size are different for file %s (%d != %d) dates (%s,%s) (op %s)" % (
