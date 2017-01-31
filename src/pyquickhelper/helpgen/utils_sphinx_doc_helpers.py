@@ -277,7 +277,7 @@ class ModuleMemberDoc:
 
         try:
             self.file = self.module.__file__
-        except:
+        except Exception:
             self.file = ""
 
         # truncated documentation
@@ -714,7 +714,7 @@ def get_module_objects(mod):
             # if _.module != None :
             if _.module == mod.__name__:
                 res.append(_)
-        except:
+        except Exception:
             pass
 
     res.sort()
@@ -869,7 +869,7 @@ def process_look_for_tag(tag, title, files):
         try:
             with open(file.file, "r", encoding="utf8") as f:
                 content = f.read()
-        except:
+        except Exception:
             with open(file.file, "r") as f:
                 content = f.read()
         content = content.replace("\n", repl)

@@ -1187,7 +1187,7 @@ def process_copy_images(folder_source, folder_images):
         try:
             with open(fn, "r", encoding="utf8") as f:
                 content = f.read()
-        except:
+        except Exception:
             with open(fn, "r") as f:
                 content = f.read()
 
@@ -1234,7 +1234,7 @@ def fix_incomplete_references(folder_source, store_obj, issues=None, fLOG=fLOG):
             with open(fn, "r", encoding="utf8") as f:
                 content = f.read()
             encoding = "utf8"
-        except:
+        except Exception:
             with open(fn, "r") as f:
                 content = f.read()
             encoding = None

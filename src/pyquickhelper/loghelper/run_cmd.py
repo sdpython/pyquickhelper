@@ -361,7 +361,7 @@ def run_cmd(cmd, sin="", shell=sys.platform.startswith("win"), wait=False, log_e
                     temp = err = stderr.read()
                     try:
                         err = decode_outerr(temp, encoding, encerror, cmd)
-                    except:
+                    except Exception:
                         err = decode_outerr(temp, encoding, "ignore", cmd)
                 stdout.close()
                 stderr.close()

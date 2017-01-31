@@ -90,7 +90,7 @@ class TestRunCmd(unittest.TestCase):
         try:
             run_cmd(cmd, wait=True, communicate=False,
                     tell_if_no_output=600, fLOG=fLOG, sin="\n\n\n" * 100)
-        except:
+        except Exception:
             pass
 
         out, err = run_cmd(cmd, wait=True, communicate=True,

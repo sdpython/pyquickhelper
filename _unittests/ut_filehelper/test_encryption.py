@@ -200,7 +200,7 @@ class TestEncryption(unittest.TestCase):
         outdec2 = StreamIO()
         try:
             r3 = decrypt_stream("key1" * 8, enc2, outdec2, algo="fernet")
-        except:
+        except Exception:
             return
         assert r3 is None
         self.assertNotEqual(infile.getvalue(), outdec2.getvalue())
@@ -234,7 +234,7 @@ class TestEncryption(unittest.TestCase):
         try:
             r3 = decrypt_stream("key1" * 8, enc2, outdec2,
                                 algo="fernet", chunksize=256)
-        except:
+        except Exception:
             return
         assert r3 is None
         self.assertNotEqual(infile.getvalue(), outdec2.getvalue())

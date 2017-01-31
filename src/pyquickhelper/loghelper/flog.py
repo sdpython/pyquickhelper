@@ -828,11 +828,11 @@ def guess_type_value(x, none=None):
             return str  # unicode#
         else:
             return int if len(x) < 9 else str  # unicode#
-    except:
+    except ValueError:
         try:
             x = float(x)
             return float
-        except:
+        except ValueError:
             if none:
                 if x is None:
                     return None
@@ -841,7 +841,7 @@ def guess_type_value(x, none=None):
                         return str  # unicode#
                     else:
                         return None
-                except:
+                except Exception:
                     return None
             else:
                 return str  # unicode#
