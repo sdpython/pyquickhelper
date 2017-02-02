@@ -603,11 +603,16 @@ class JenkinsExt(jenkins.Jenkins):
                 b = int(b)
                 new_value = scheduler
                 rep = 'H(%s)' % f[0]
-                while new_value in self._scheduled_jobs or (a0 == a):
+                iter = 0
+                while iter < 100 and (new_value in self._scheduled_jobs or (a0 == a)):
                     a += 1
                     b += 1
-                    r = 'H(%d-%d)' % (a % 24, b % 24)
+                    if a >= 24 or b > 24:
+                        a = 0
+                        b = 1 + iter // 24
+                    r = 'H(%d-%d)' % (a, b)
                     new_value = scheduler.replace(rep, r)
+                    iter += 1
                 scheduler = new_value
             self._scheduled_jobs[
                 scheduler] = self._scheduled_jobs.get(scheduler, 0) + 1
@@ -1274,7 +1279,8 @@ class JenkinsExt(jenkins.Jenkins):
                 done[name] = (aj, name, var)
                 loc = None if location is None else os.path.join(
                     location, name)
-                self.fLOG("[jenkins] adding", name, "var", var)
+                self.fLOG("[jenkins] adding i={2}: '{0}' var='{1}'".format(
+                    name, var, len(created)))
                 created.append((job, name, loc, job, aj))
 
         indexes["order"] = order

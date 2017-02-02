@@ -181,7 +181,8 @@ def import_files(li, additional_ut_path=None, fLOG=noLOG):
         try:
             mo = __import__(fi)
         except Exception as e:
-            fLOG("[import_file] problem with ", fi, str(e).replace("\n", "---"))
+            fLOG("[import_file] problem with ",
+                 fi, str(e).replace("\n", "---"))
             fLOG("[import_file] additional paths")
             for p in sys.path:
                 fLOG("   ", p)
