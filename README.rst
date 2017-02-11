@@ -8,7 +8,7 @@ README
     :target: https://travis-ci.org/sdpython/pyquickhelper
     :alt: Build status
 
-.. image:: https://ci.appveyor.com/api/projects/status/54vl69ssd8ud4l64?svg=true
+.. image:: https://ci.appveyor.com/api/projects/status/t2g9olcgqgdvqq3l?svg=true
     :target: https://ci.appveyor.com/project/sdpython/pyquickhelper
     :alt: Build Status Windows
 
