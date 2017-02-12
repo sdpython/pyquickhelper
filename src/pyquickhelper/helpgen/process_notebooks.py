@@ -873,11 +873,14 @@ def build_notebooks_gallery(nbs, fileout, fLOG=noLOG):
                 fLOG("[build_notebooks_gallery] new level", hi)
                 # we add the thumbnail
                 for nbf in stack_file:
+                    fLOG("[build_notebooks_gallery]     ", nbf)
                     rs = os.path.splitext(os.path.split(nbf)[-1])[0]
                     link = rs.replace("_", "") + "rst"
                     r = build_thumbail_in_gallery(
                         nbf, folder, folder_index, link)
                     rows.append(r)
+                fLOG("[build_notebooks_gallery] saw {0} files".format(
+                    len(stack_file)))
                 stack_file = []
 
                 # we swith to the next gallery
