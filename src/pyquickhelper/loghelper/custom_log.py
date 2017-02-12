@@ -10,6 +10,10 @@ import sys
 import os
 
 
+if sys.version_info[0] == 2:
+    from codecs import open
+
+
 class CustomLog:
     """
     Implements a custom logging function.
