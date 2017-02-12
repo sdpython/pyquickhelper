@@ -72,7 +72,10 @@ def upgrade_notebook(filename, encoding="utf8"):
     if not hasattr(nb, "nbformat") or nb.nbformat >= 4:
         return False
 
-    upgrade(nb, from_version=nb.nbformat)
+    try:
+        upgrade(nb, from_version=nb.nbformat)
+    except ValueError as e:
+        raise ValueError("Unable to convert '{0}'.".format(filename)) from e
 
     s = writes(nb)
     if isinstance(s, bytes):
