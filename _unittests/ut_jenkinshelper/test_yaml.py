@@ -46,7 +46,7 @@ class TestYaml(unittest.TestCase):
         context = dict(Python34=None, Python35=os.path.dirname(sys.executable),
                        Python36=os.path.dirname(sys.executable),
                        Python27=None, Anaconda3=None, Anaconda2=None,
-                       WinPython35=None, project_name="pyquickhelper",
+                       WinPython36=None, project_name="pyquickhelper",
                        root_path="ROOT")
         obj, name = load_yaml(yml, context=context)
         for k, v in obj.items():
@@ -95,7 +95,7 @@ class TestYaml(unittest.TestCase):
         context = dict(Python34="fake", Python35=os.path.dirname(sys.executable) + "35",
                        Python36=os.path.dirname(sys.executable) + "36",
                        Python27="fake2", Anaconda3=None, Anaconda2=None,
-                       WinPython35=None, root_path="ROOT")
+                       WinPython36=None, root_path="ROOT")
         obj, name = load_yaml(yml, context=context, platform="win")
         assert name is not None
         res = list(enumerate_convert_yaml_into_instructions(
@@ -142,7 +142,7 @@ class TestYaml(unittest.TestCase):
         context = dict(Python34="fake", Python35="C:\\Python35_x64",
                        Python36="C:\\Python36_x64",
                        Python27=None, Anaconda3=None, Anaconda2=None,
-                       WinPython35=None, project_name="pyquickhelper",
+                       WinPython36=None, project_name="pyquickhelper",
                        root_path="ROOT")
         obj, name = load_yaml(yml, context=context, platform=platform)
         assert name is not None
@@ -284,7 +284,7 @@ class TestYaml(unittest.TestCase):
         context = dict(Python34=None, Python35="C:\\Python35_x64",
                        Python36="C:\\Python36_x64",
                        Python27="C:\\Python27_x64", Anaconda3=None, Anaconda2=None,
-                       WinPython35=None, project_name="pyquickhelper",
+                       WinPython36=None, project_name="pyquickhelper",
                        root_path="ROOT")
         obj, name = load_yaml(yml, context=context, platform=platform)
         assert name is not None

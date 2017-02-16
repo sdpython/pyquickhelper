@@ -50,7 +50,7 @@ class TestYamlJenkins(unittest.TestCase):
                        Python36=os.path.dirname(sys.executable),
                        Python27="c:\\Python27_x64",
                        Anaconda3="c:\\Anaconda3", Anaconda2="c:\\Anaconda2",
-                       WinPython35="c:\\PythonENSAE",
+                       WinPython36="c:\\PythonENSAE",
                        root_path="d:\\jenkins\\yml")
         git_repo = "https://github.com/sdpython/pyquickhelper.git"
         srv = JenkinsExt("http://localhost:8080/", "user", "password",
@@ -109,7 +109,7 @@ class TestYamlJenkins(unittest.TestCase):
                        Python36=os.path.dirname(sys.executable),
                        Python27="c:\\Python27_x64",
                        Anaconda3="c:\\Anaconda3", Anaconda2="c:\\Anaconda2",
-                       WinPython35="c:\\PythonENSAE",
+                       WinPython36="c:\\PythonENSAE",
                        root_path="d:\\jenkins\\yml")
 
         srv = JenkinsExt(
