@@ -8,7 +8,12 @@ import os
 import sys
 from docutils import io as docio
 from docutils.core import publish_programmatically
-from sphinx.environment import BuildEnvironment
+try:
+    from sphinx.environment import BuildEnvironment
+except ImportError as e:
+    # This import might fail on Anaconda. Changing that into a warning.
+    import warnings
+    warnings.warn("Could not import BuildEnvironment due to '{0}'".format(e))
 from sphinx.config import Config
 
 if sys.version_info[0] == 2:
