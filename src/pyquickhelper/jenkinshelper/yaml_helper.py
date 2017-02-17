@@ -321,6 +321,7 @@ def convert_sequence_into_batch_file(seq, variables=None, platform=None):
     interpreter = None
     pip = None
     venv = None
+    venv_interpreter = None
     anaconda = False
     conda = None
     echo = "@echo" if iswin else "echo"
@@ -360,6 +361,7 @@ def convert_sequence_into_batch_file(seq, variables=None, platform=None):
                     value, "python", platform=platform)
                 pip = ospathjoin(value, "Scripts",
                                  "pip", platform=platform)
+                venv_interpreter = value
                 venv = ospathjoin(
                     value, "Scripts", "virtualenv", platform=platform)
                 conda = ospathjoin(
@@ -369,6 +371,7 @@ def convert_sequence_into_batch_file(seq, variables=None, platform=None):
                     value, "python", platform=platform)
                 pip = ospathjoin(value, "Scripts",
                                  "pip", platform=platform)
+                venv_interpreter = value
                 venv = ospathjoin(value, "Scripts",
                                   "virtualenv", platform=platform)
             rows.append(echo + " interpreter=" + interpreter)
@@ -390,14 +393,17 @@ def convert_sequence_into_batch_file(seq, variables=None, platform=None):
             if anaconda:
                 pinter = ospathdirname(interpreter, platform=platform)
                 rows.append(
-                    '"{0}" create -p "{1}" --clone "{2}" --offline'.format(conda, p, pinter))
+                    '"{0}" create -y -v -p "{1}" --clone "{2}" --offline'.format(conda, p, pinter))
                 interpreter = ospathjoin(
                     p, "python", platform=platform)
                 pip = ospathjoin(p, "Scripts", "pip",
                                  platform=platform)
             else:
+                rows.append("set KEEPPATH=%PATH%")
+                rows.append("set PATH=%PATH%;{0}".format(venv_interpreter))
                 rows.append(
                     '"{0}" --system-site-packages "{1}"'.format(venv, p))
+                rows.append("set PATH=%KEEPPATH%")
                 interpreter = ospathjoin(
                     p, "Scripts", "python", platform=platform)
                 pip = ospathjoin(p, "Scripts", "pip",
