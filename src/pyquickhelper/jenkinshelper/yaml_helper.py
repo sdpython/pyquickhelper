@@ -393,7 +393,7 @@ def convert_sequence_into_batch_file(seq, variables=None, platform=None):
             if anaconda:
                 pinter = ospathdirname(interpreter, platform=platform)
                 rows.append(
-                    '"{0}" create -y -v -p "{1}" --clone "{2}" --offline'.format(conda, p, pinter))
+                    '"{0}" create -y -v -p "{1}" --clone "{2}" --offline --no-update-deps'.format(conda, p, pinter))
                 interpreter = ospathjoin(
                     p, "python", platform=platform)
                 pip = ospathjoin(p, "Scripts", "pip",
