@@ -174,7 +174,10 @@ class TestYaml(unittest.TestCase):
 
             @echo CREATE VIRTUAL ENVIRONMENT in ROOT\\%NAME_JENKINS%\\_venv
             if not exist "ROOT\\%NAME_JENKINS%\\_venv" mkdir "ROOT\\%NAME_JENKINS%\\_venv"
+            set KEEPPATH=%PATH%
+            set PATH=%PATH%;C:\Python35_x64
             "C:\\Python35_x64\\Scripts\\virtualenv" --system-site-packages "ROOT\\%NAME_JENKINS%\\_venv"
+            set PATH=%KEEPPATH%
             if %errorlevel% neq 0 exit /b %errorlevel%
 
             @echo INSTALL
@@ -232,7 +235,10 @@ class TestYaml(unittest.TestCase):
 
             @echo CREATE VIRTUAL ENVIRONMENT in ROOT\\%NAME_JENKINS%\\_venv
             if not exist "ROOT\\%NAME_JENKINS%\\_venv" mkdir "ROOT\\%NAME_JENKINS%\\_venv"
+            set KEEPPATH=%PATH%
+            set PATH=%PATH%;C:\Python35_x64
             "C:\\Python35_x64\\Scripts\\virtualenv" --system-site-packages "ROOT\\%NAME_JENKINS%\\_venv"
+            set PATH=%KEEPPATH%
             if %errorlevel% neq 0 exit /b %errorlevel%
 
             @echo INSTALL
@@ -315,7 +321,10 @@ class TestYaml(unittest.TestCase):
 
             @echo CREATE VIRTUAL ENVIRONMENT in ROOT\\%NAME_JENKINS%\\_venv
             if not exist "ROOT\\%NAME_JENKINS%\\_venv" mkdir "ROOT\\%NAME_JENKINS%\\_venv"
+            set KEEPPATH=%PATH%
+            set PATH=%PATH%;C:\Python27_x64
             "C:\\Python27_x64\\Scripts\\virtualenv" --system-site-packages "ROOT\\%NAME_JENKINS%\\_venv"
+            set PATH=%KEEPPATH%
             if %errorlevel% neq 0 exit /b %errorlevel%
 
             @echo INSTALL
