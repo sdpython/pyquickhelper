@@ -6,7 +6,6 @@ import sys
 import os
 import unittest
 import numpy as np
-import matplotlib.pyplot as plt
 
 try:
     import src
@@ -23,6 +22,7 @@ except ImportError:
 
 from src.pyquickhelper.loghelper import fLOG
 from src.pyquickhelper.ipythonhelper import StaticInteract, RangeWidget, RadioWidget
+from src.pyquickhelper.pycode import fix_tkinter_issues_virtualenv
 
 
 class TestInteractive(unittest.TestCase):
@@ -51,6 +51,9 @@ class TestInteractive(unittest.TestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
+        fix_tkinter_issues_virtualenv(fLOG=fLOG)
+        import matplotlib.pyplot as plt
+
         def plot(amplitude, color):
             fig, ax = plt.subplots(figsize=(4, 3),
                                    subplot_kw={'axisbg': '#EEEEEE',
@@ -67,6 +70,8 @@ class TestInteractive(unittest.TestCase):
                              amplitude=RangeWidget(0.1, 0.3, 0.1, default=0.2),
                              color=RadioWidget(['blue', 'green'], default='blue'))
         assert res is not None
+        plt.close('all')
+        fLOG("end")
 
 
 if __name__ == "__main__":

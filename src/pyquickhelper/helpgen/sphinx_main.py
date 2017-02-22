@@ -617,7 +617,8 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
                           for _ in nbs_all if os.path.splitext(_[0])[-1] == ".rst")
             if len(nbs_all) != len(indexlistnote):
                 ext1 = "nbs_all:\n{0}".format("\n".join(nbs_all))
-                ext2 = "indexlistnote:\n{0}".format("\n".join(indexlistnote))
+                ext2 = "indexlistnote:\n{0}".format(
+                    "\n".join(str(_) for _ in indexlistnote))
                 raise ValueError("Different lengths {0} != {1}\n{2}\n{3}".format(
                     len(nbs_all), len(indexlistnote), ext1, ext2))
             nbs = indexlistnote
