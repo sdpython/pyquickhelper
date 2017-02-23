@@ -148,12 +148,13 @@ def unzip_files(zipf, where_to=None, fLOG=noLOG, fvalid=None, remove_space=True)
     return files
 
 
-def gzip_files(filename, file_set, fLOG=noLOG):
+def gzip_files(filename, file_set, encoding=None, fLOG=noLOG):
     """
     put all files from an iterator in a zip file and then in a gzip file
 
     @param      filename        final gzip file (double compression, extension should something like .zip.gz)
     @param      file_set        iterator on file to add
+    @param      encoding        encoding of input files (no double compression then)
     @param      fLOG            logging function
     @return                     bytes (if filename is None) or None
 
@@ -161,17 +162,29 @@ def gzip_files(filename, file_set, fLOG=noLOG):
         Remove parameter *filename_zip*, compress in memory.
         Rename parameter *filename_gz* into *filename*, *fileSet* into *file_set*.
 
+    .. versionchanged:: 1.5
+        Add parameter *encoding*.
     """
-    content = zip_files(None, file_set, fLOG=fLOG)
     if filename is None:
         filename = BytesIO()
-    f = gzip.open(filename, 'wb')
-    f.write(content)
-    f.close()
-    return filename.getvalue() if isinstance(filename, BytesIO) else None
+    if encoding is None:
+        content = zip_files(None, file_set, fLOG=fLOG)
+        f = gzip.open(filename, 'wb')
+        f.write(content)
+        f.close()
+        return filename.getvalue() if isinstance(filename, BytesIO) else None
+    else:
+        f = gzip.open(filename, 'wt', encoding="utf-8")
+        for name in file_set:
+            with open(name, "r", encoding="utf-8") as ft:
+                content = ft.read()
+            f.write(content)
+        f.close()
+        return filename.getvalue() if isinstance(filename, BytesIO) else None
 
 
-def ungzip_files(filename, where_to=None, fLOG=noLOG, fvalid=None, remove_space=True, unzip=True):
+def ungzip_files(filename, where_to=None, fLOG=noLOG, fvalid=None, remove_space=True,
+                 unzip=True, encoding=None):
     """
     decompress files from a gzip file
 
@@ -185,23 +198,45 @@ def ungzip_files(filename, where_to=None, fLOG=noLOG, fvalid=None, remove_space=
     @return                     list of unzipped files
 
     .. versionadded:: 1.4
+
+    .. versionadded:: 1.5
+        Parameter *encoding* was added.
     """
     if sys.version_info[0] == 2:
         if isinstance(filename, bytearray):
+            is_file = False
             filename = BytesIO(filename)
+        else:
+            is_file = True
     else:
         if isinstance(filename, bytes):
+            is_file = False
             filename = BytesIO(filename)
-    f = gzip.open(filename, 'rb')
-    content = f.read()
-    f.close()
-    if unzip:
-        return unzip_files(content, where_to=where_to, fLOG=fLOG)
+        else:
+            is_file = True
+
+    if encoding is None:
+        f = gzip.open(filename, 'rb')
+        content = f.read()
+        f.close()
+        if unzip:
+            return unzip_files(content, where_to=where_to, fLOG=fLOG)
+        else:
+            filename = filename.replace(".gz", "")
+            with open(filename, "wb") as f:
+                f.write(content)
+            return filename
     else:
-        filename = filename.replace(".gz", "")
-        with open(filename, "wb") as f:
-            f.write(content)
-        return filename
+        f = gzip.open(filename, 'rt', encoding="utf-8")
+        content = f.read()
+        f.close()
+        if is_file:
+            filename = filename.replace(".gz", "")
+            with open(filename, "wb") as f:
+                f.write(content)
+            return filename
+        else:
+            return content
 
 
 def zip7_files(filename_7z, file_set, fLOG=noLOG, temp_folder="."):

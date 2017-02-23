@@ -63,6 +63,7 @@ class TestCompressHelper(unittest.TestCase):
         assert res[0][0].endswith(
             "_unittests/ut_filehelper/test_compress_helper.py")
 
+        # binary
         rg = gzip_files(None, [f], fLOG=fLOG)
         fLOG(len(rg), type(rg))
         if not isinstance(rg, typbytes):
@@ -75,6 +76,26 @@ class TestCompressHelper(unittest.TestCase):
             raise TypeError(type(res[0][1]))
         assert res[0][0].endswith(
             "_unittests/ut_filehelper/test_compress_helper.py")
+
+    def test_compress_helper_text(self):
+        fLOG(
+            __file__,
+            self._testMethodName,
+            OutputPrint=__name__ == "__main__")
+        # text
+        if sys.version_info[0] == 2:
+            typbytes = bytearray
+        else:
+            typbytes = bytes
+
+        f = os.path.abspath(__file__).replace(".pyc", ".py")
+        rg = gzip_files(None, [f], fLOG=fLOG, encoding="utf-8")
+        fLOG(len(rg), type(rg))
+        if not isinstance(rg, typbytes):
+            raise TypeError(type(rg))
+
+        res = ungzip_files(rg, encoding="utf-8")
+        assert "test_compress_helper_text" in res
 
     def test_uncompress_7zip(self):
         fLOG(
