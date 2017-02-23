@@ -95,7 +95,7 @@ class TestDoxygen2rst (unittest.TestCase):
 
         .. math::
 
-            \sum_{i=1}^n x^2
+            \\sum_{i=1}^n x^2
         """
         self.assertEqual(rst.strip("\n ").replace(" ", ""),
                          exp.strip("\n ").replace(" ", ""))

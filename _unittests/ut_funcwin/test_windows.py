@@ -25,6 +25,7 @@ except ImportError:
     import src
 
 from src.pyquickhelper.loghelper.flog import fLOG
+from src.pyquickhelper.pycode import fix_tkinter_issues_virtualenv
 from src.pyquickhelper.funcwin import open_window_params, open_window_function
 from src.pyquickhelper.funcwin.function_helper import get_function_list, has_unknown_parameters, private_get_function
 
@@ -46,6 +47,7 @@ class TestWindows (unittest.TestCase):
             __file__,
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
+        fix_tkinter_issues_virtualenv(fLOG=fLOG)
         params = dict(p1="p1", p2=3)
         try:
             win = open_window_params(params, do_not_open=True)
@@ -62,6 +64,7 @@ class TestWindows (unittest.TestCase):
             __file__,
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
+        fix_tkinter_issues_virtualenv(fLOG=fLOG)
         func = my_tst_function
         try:
             win = open_window_function(func, do_not_open=True)
@@ -81,6 +84,7 @@ class TestWindows (unittest.TestCase):
             __file__,
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
+        fix_tkinter_issues_virtualenv(fLOG=fLOG)
         funcs = get_function_list(src.pyquickhelper)
         assert isinstance(funcs, dict)
         assert len(funcs) > 0

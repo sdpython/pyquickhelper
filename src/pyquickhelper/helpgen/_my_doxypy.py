@@ -142,26 +142,26 @@ class Doxypy(object):
         string_prefixes = "[uU]?[rR]?"
 
         self.start_single_comment_re = re.compile(
-            "^\s*%s(''')" % string_prefixes)
-        self.end_single_comment_re = re.compile("(''')\s*$")
+            "^\\s*%s(''')" % string_prefixes)
+        self.end_single_comment_re = re.compile("(''')\\s*$")
 
         self.start_double_comment_re = re.compile(
-            "^\s*%s(\"\"\")" % string_prefixes)
-        self.end_double_comment_re = re.compile("(\"\"\")\s*$")
+            "^\\s*%s(\"\"\")" % string_prefixes)
+        self.end_double_comment_re = re.compile("(\"\"\")\\s*$")
 
         self.single_comment_re = re.compile(
-            "^\s*%s(''').*(''')\s*$" % string_prefixes)
+            "^\\s*%s(''').*(''')\\s*$" % string_prefixes)
         self.double_comment_re = re.compile(
-            "^\s*%s(\"\"\").*(\"\"\")\s*$" % string_prefixes)
+            "^\\s*%s(\"\"\").*(\"\"\")\\s*$" % string_prefixes)
 
-        self.defclass_re = re.compile("^(\s*)(def .+:|class .+:)")
-        self.empty_re = re.compile("^\s*$")
-        self.hashline_re = re.compile("^\s*#.*$")
-        self.importline_re = re.compile("^\s*(import |from .+ import)")
+        self.defclass_re = re.compile("^(\\s*)(def .+:|class .+:)")
+        self.empty_re = re.compile("^\\s*$")
+        self.hashline_re = re.compile("^\\s*#.*$")
+        self.importline_re = re.compile("^\\s*(import |from .+ import)")
 
         self.multiline_defclass_start_re = re.compile(
-            "^(\s*)(def|class)(\s.*)?$")
-        self.multiline_defclass_end_re = re.compile(":\s*$")
+            "^(\\s*)(def|class)(\\s.*)?$")
+        self.multiline_defclass_end_re = re.compile(":\\s*$")
         self.print_output = print_output
         self.process_comment = process_comment
         self.information = information

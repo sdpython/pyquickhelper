@@ -92,7 +92,7 @@ class FolderTransferFTP:
                     password,
                     fLOG=print)
 
-    location = r"local_location\GitHub\%s\dist\html"
+    location = r"local_location\\GitHub\\%s\\dist\\html"
     this = os.path.abspath(os.path.dirname(__file__))
     rootw = "/www/htdocs/app/%s/helpsphinx"
 

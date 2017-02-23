@@ -613,7 +613,7 @@ def _first_more_recent(f1, path):
 
     da = da.groups()[0]
     gr = re.compile(
-        "[\w, ]* ([ \d]{2}) ([\w]{3}) ([\d]{4}) ([\d]{2}):([\d]{2}):([\d]{2})").search(da)
+        "[\\w, ]* ([ \\d]{2}) ([\\w]{3}) ([\\d]{4}) ([\\d]{2}):([\\d]{2}):([\\d]{2})").search(da)
     if gr is None:
         return True
     gr = gr.groups()
@@ -622,7 +622,7 @@ def _first_more_recent(f1, path):
 
     p = time.ctime(os.path.getmtime(path))
     gr = re.compile(
-        "[\w, ]* ([\w]{3}) ([ \d]{2}) ([\d]{2}):([\d]{2}):([\d]{2}) ([\d]{4})").search(p)
+        "[\\w, ]* ([\\w]{3}) ([ \\d]{2}) ([\\d]{2}):([\\d]{2}):([\\d]{2}) ([\\d]{4})").search(p)
     if gr is None:
         return True
     gr = gr.groups()

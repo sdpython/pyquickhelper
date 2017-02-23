@@ -1047,7 +1047,7 @@ class NotebookRunner(object):
             parts = s.splitlines()
             if parts[0].startswith('#'):
                 if get_header:
-                    header = re.sub('#+\s*', '', parts.pop(0))
+                    header = re.sub('#+\\s*', '', parts.pop(0))
                     if not parts:
                         return header, ''
                 else:

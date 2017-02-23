@@ -88,13 +88,13 @@ rem )
 @echo run27: start the loop
 
 rem we are in a virtual environnement
-@echo if not exist %pythonexe27%\..\Scripts set pythonexe27=%pythonexe27%\..\..\Scripts
-if not exist %pythonexe27%\..\Scripts set pythonexe27=%pythonexe27%\..\..\Scripts
+@echo if not exist %pythonexe27%\\..\\Scripts set pythonexe27=%pythonexe27%\\..\\..\\Scripts
+if not exist %pythonexe27%\\..\\Scripts set pythonexe27=%pythonexe27%\\..\\..\\Scripts
 @echo looking for nosetests.exe in %pythonexe27%
 
 __LOOP_UNITTEST_FOLDERS__
 
-""" + windows_error + "\ncd ..\.."
+""" + windows_error + "\ncd ..\\.."
 
 ############
 #: copy to local pypiserver
@@ -453,8 +453,8 @@ set portpy=__PORT__
 
 :run:
 @echo ~LABEL run
-@echo ~CALL %pythonexe%\Scripts\pypi-server.exe -u -p %portpy% --disable-fallback ..\\..\\local_pypi\\local_pypi_server
-%pythonexe%\Scripts\pypi-server.exe -u -p %portpy% --disable-fallback ..\\..\\local_pypi\\local_pypi_server
+@echo ~CALL %pythonexe%\\Scripts\\pypi-server.exe -u -p %portpy% --disable-fallback ..\\..\\local_pypi\\local_pypi_server
+%pythonexe%\\Scripts\\pypi-server.exe -u -p %portpy% --disable-fallback ..\\..\\local_pypi\\local_pypi_server
 """.replace("PY??", _sversion())
 
 #################

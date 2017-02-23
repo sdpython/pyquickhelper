@@ -175,7 +175,7 @@ class TestYaml(unittest.TestCase):
             @echo CREATE VIRTUAL ENVIRONMENT in ROOT\\%NAME_JENKINS%\\_venv
             if not exist "ROOT\\%NAME_JENKINS%\\_venv" mkdir "ROOT\\%NAME_JENKINS%\\_venv"
             set KEEPPATH=%PATH%
-            set PATH=%PATH%;C:\Python35_x64
+            set PATH=%PATH%;C:\\Python35_x64
             "C:\\Python35_x64\\Scripts\\virtualenv" --system-site-packages "ROOT\\%NAME_JENKINS%\\_venv"
             set PATH=%KEEPPATH%
             if %errorlevel% neq 0 exit /b %errorlevel%
@@ -186,6 +186,8 @@ class TestYaml(unittest.TestCase):
             if %errorlevel% neq 0 exit /b %errorlevel%
             pip install -r requirements.txt
             if %errorlevel% neq 0 exit /b %errorlevel%
+            python --version
+            if %errorlevel% neq 0 exit /b %errorlevel%
             pip freeze
             if %errorlevel% neq 0 exit /b %errorlevel%
             pip freeze > pip_freeze.txt
@@ -194,14 +196,14 @@ class TestYaml(unittest.TestCase):
 
             @echo SCRIPT
             set PATH=ROOT\\%NAME_JENKINS%\\_venv\\Scripts;%PATH%
-            python -u setup.py unittests
+            python -X faulthandler -X showrefcount -u setup.py unittests
             if %errorlevel% neq 0 exit /b %errorlevel%
 
             @echo AFTER_SCRIPT
-            set PATH=ROOT\%NAME_JENKINS%\_venv\Scripts;%PATH%
+            set PATH=ROOT\\%NAME_JENKINS%\\_venv\\Scripts;%PATH%
             python -u setup.py bdist_wheel
             if %errorlevel% neq 0 exit /b %errorlevel%
-            copy dist\*.whl ..\..\local_pypi\local_pypi_server
+            copy dist\\*.whl ..\\..\\local_pypi\\local_pypi_server
             if %errorlevel% neq 0 exit /b %errorlevel%
 
             @echo DOCUMENTATION
@@ -236,7 +238,7 @@ class TestYaml(unittest.TestCase):
             @echo CREATE VIRTUAL ENVIRONMENT in ROOT\\%NAME_JENKINS%\\_venv
             if not exist "ROOT\\%NAME_JENKINS%\\_venv" mkdir "ROOT\\%NAME_JENKINS%\\_venv"
             set KEEPPATH=%PATH%
-            set PATH=%PATH%;C:\Python35_x64
+            set PATH=%PATH%;C:\\Python35_x64
             "C:\\Python35_x64\\Scripts\\virtualenv" --system-site-packages "ROOT\\%NAME_JENKINS%\\_venv"
             set PATH=%KEEPPATH%
             if %errorlevel% neq 0 exit /b %errorlevel%
@@ -246,6 +248,8 @@ class TestYaml(unittest.TestCase):
             pip install --no-cache-dir --no-deps --index http://localhost:8067/simple/ jyquickhelper --extra-index-url=https://pypi.python.org/simple/
             if %errorlevel% neq 0 exit /b %errorlevel%
             pip install -r requirements.txt
+            if %errorlevel% neq 0 exit /b %errorlevel%
+            python --version
             if %errorlevel% neq 0 exit /b %errorlevel%
             pip freeze
             if %errorlevel% neq 0 exit /b %errorlevel%
@@ -259,7 +263,7 @@ class TestYaml(unittest.TestCase):
             if %errorlevel% neq 0 exit /b %errorlevel%
 
             @echo AFTER_SCRIPT
-            set PATH=ROOT\%NAME_JENKINS%\_venv\Scripts;%PATH%
+            set PATH=ROOT\\%NAME_JENKINS%\\_venv\\Scripts;%PATH%
             python -u setup.py bdist_wheel
             if %errorlevel% neq 0 exit /b %errorlevel%
             """.replace("            ", "").strip("\n \t\r")
@@ -322,7 +326,7 @@ class TestYaml(unittest.TestCase):
             @echo CREATE VIRTUAL ENVIRONMENT in ROOT\\%NAME_JENKINS%\\_venv
             if not exist "ROOT\\%NAME_JENKINS%\\_venv" mkdir "ROOT\\%NAME_JENKINS%\\_venv"
             set KEEPPATH=%PATH%
-            set PATH=%PATH%;C:\Python27_x64
+            set PATH=%PATH%;C:\\Python27_x64
             "C:\\Python27_x64\\Scripts\\virtualenv" --system-site-packages "ROOT\\%NAME_JENKINS%\\_venv"
             set PATH=%KEEPPATH%
             if %errorlevel% neq 0 exit /b %errorlevel%
@@ -332,6 +336,8 @@ class TestYaml(unittest.TestCase):
             pip install --no-cache-dir --no-deps --index http://localhost:8067/simple/ jyquickhelper --extra-index-url=https://pypi.python.org/simple/
             if %errorlevel% neq 0 exit /b %errorlevel%
             pip install -r requirements.txt
+            if %errorlevel% neq 0 exit /b %errorlevel%
+            python --version
             if %errorlevel% neq 0 exit /b %errorlevel%
             pip freeze
             if %errorlevel% neq 0 exit /b %errorlevel%
@@ -350,7 +356,7 @@ class TestYaml(unittest.TestCase):
 
             @echo SCRIPT
             set PATH=ROOT\\%NAME_JENKINS%\\_venv\\Scripts;%PATH%
-            python -u setup.py unittests
+            python -X faulthandler -X showrefcount -u setup.py unittests
             if %errorlevel% neq 0 exit /b %errorlevel%
 
             @echo AFTER_SCRIPT

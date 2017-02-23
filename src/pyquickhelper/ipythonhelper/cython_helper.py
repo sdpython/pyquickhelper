@@ -30,7 +30,7 @@ def ipython_cython_extension():
         answers that question.
         One file needs to be modified::
 
-            <python>\lib\distutils\msvc9compiler.py
+            <python>\\lib\\distutils\\msvc9compiler.py
     """
     if not sys.platform.startswith("win"):
         return True

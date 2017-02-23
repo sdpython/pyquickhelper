@@ -79,7 +79,7 @@ def main_wrapper_tests(codefile, skip_list=None, processes=False, add_coverage=F
 
         Once Jenkins is installed, the command to schedule is::
 
-            set PATH=%PATH%;%USERPOFILE%\AppData\Local\Pandoc
+            set PATH=%PATH%;%USERPOFILE%\\AppData\\Local\\Pandoc
             build_setup_help_on_windows.bat
 
         This works if you installed Jenkins with your credentials.

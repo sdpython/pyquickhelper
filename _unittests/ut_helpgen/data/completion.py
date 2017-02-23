@@ -454,7 +454,7 @@ class CompletionTrieNode(object):
         must be called after @see me precompute_stat
         and computes dynamic mks (see :ref:`Dynamic Minimum Keystroke <def-mks2>`)
 
-        @param      delta       parameter :math:`\delta` in defintion
+        @param      delta       parameter :math:`\\delta` in defintion
                                 :ref:`Modified Dynamic KeyStroke <def-mks3>`
         @return                 number of iterations to converge
         """
@@ -542,7 +542,7 @@ class CompletionTrieNode(object):
             update dynamic minimum keystroke for the completions
 
             @param      lw      prefix length
-            @param      delta   parameter :math:`\delta` in defintion
+            @param      delta   parameter :math:`\\delta` in defintion
                                 :ref:`Modified Dynamic KeyStroke <def-mks3>`
             @return             number of updates
             """
