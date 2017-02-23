@@ -373,11 +373,8 @@ class FrameFunction (tkinter.Frame):
         self.thread_started.append(th)
 
     @staticmethod
-    def open_window(func,
-                    top_level_window=None,
-                    params=None,
-                    key_save="f",
-                    do_not_open=False):
+    def open_window(func, top_level_window=None, params=None,
+                    key_save="f", do_not_open=False):
         """
         Open a tkinter window to run a function. It adds entries for the parameters,
         it displays the help associated to this function,
@@ -474,11 +471,8 @@ class FrameFunction_ThreadFunction (threading.Thread):
         self.framewindow._already = False
 
 
-def open_window_function(func,
-                         top_level_window=None,
-                         params=None,
-                         key_save="f",
-                         do_not_open=False):
+def open_window_function(func, top_level_window=None, params=None,
+                         key_save="f", do_not_open=False):
     """
     Open a tkinter window to run a function. It adds entries for the parameters,
     it displays the help associated to this function,
@@ -515,8 +509,5 @@ def open_window_function(func,
     .. versionadded:: 1.0
         Parameter *do_not_open* was added.
     """
-    return FrameFunction.open_window(func=func,
-                                     top_level_window=top_level_window,
-                                     params=params,
-                                     key_save=key_save,
-                                     do_not_open=do_not_open)
+    return FrameFunction.open_window(func=func, top_level_window=top_level_window, params=params,
+                                     key_save=key_save, do_not_open=do_not_open)

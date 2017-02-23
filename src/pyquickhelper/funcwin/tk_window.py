@@ -44,8 +44,8 @@ _has_x_server = has_x_server()
 
 def create_tk():
     """
-    Calls `Tk <https://docs.python.org/3.4/library/tkinter.html#tkinter.Tk>`_
-    or `Tcl <https://docs.python.org/3.4/library/tkinter.html#tkinter.Tcl>`_
+    Calls `Tk <https://docs.python.org/3/library/tkinter.html#tkinter.Tk>`_
+    or `Tcl <https://docs.python.org/3/library/tkinter.html#tkinter.Tcl>`_
     depending on that fact there is a X server.
 
     @return         main window

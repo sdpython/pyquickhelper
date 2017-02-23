@@ -102,6 +102,13 @@ def fix_tkinter_issues_virtualenv(exc=True, fLOG=None):
                 fLOG("Change {0}: '{1}' --> '{2}'".format("TIX_LIBRARY",
                                                           os.environ.get("TIX_LIBRARY", None), p))
             os.environ["TIX_LIBRARY"] = p
+
+        if "DISPLAY" not in os.environ:
+            p = ":0"
+            if fLOG:
+                fLOG("Change {0}: '{1}' --> '{2}'".format("DISPLAY",
+                                                          os.environ.get("DISPLAY", None), p))
+            os.environ["DISPLAY"] = p
     else:
         # if "DISPLAY" not in os.environ:
         #    os.environ["DISPLAY"] = ':10.0'
