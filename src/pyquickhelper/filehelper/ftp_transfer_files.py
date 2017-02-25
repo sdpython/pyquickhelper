@@ -234,7 +234,10 @@ class FolderTransferFTP:
         @return                     binary stream, size
 
         .. versionchanged:: 1.4
-            Returns also size.
+            Returns also *size*.
+
+        .. versionchanged:: 1.5
+            Bypass utf-8 encoding checking when the extension is ``.rst.txt``.
         """
         if force_binary or self._is_binary(path):
             size = os.stat(path).st_size
@@ -250,7 +253,7 @@ class FolderTransferFTP:
                         content = f.read()
                     except UnicodeDecodeError as e:
                         ext = os.path.splitext(path)[-1]
-                        if ext in [".js"]:
+                        if ext in {".js"} or path.endswith(".rst.txt"):
                             # just a warning
                             warnings.warn(
                                 "FTP transfer, encoding issue with: " + path)
