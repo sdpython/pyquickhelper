@@ -22,6 +22,7 @@ except ImportError:
 
 from src.pyquickhelper.loghelper import fLOG
 from src.pyquickhelper.jenkinshelper.yaml_helper import load_yaml, enumerate_convert_yaml_into_instructions, evaluate_condition, convert_sequence_into_batch_file
+from src.pyquickhelper.jenkinshelper.jenkins_helper import jenkins_final_postprocessing
 
 if sys.version_info[0] == 2:
     FileNotFoundError = Exception
@@ -309,7 +310,8 @@ class TestYaml(unittest.TestCase):
                 raise TypeError(type(conv))
             convs.append(conv)
         fLOG("number of jobs", len(res))
-        convs = [_ for _ in convs if "VERSION=2.7" in _]
+        convs = [jenkins_final_postprocessing(
+            _, True) for _ in convs if "VERSION=2.7" in _]
         assert len(convs) > 0
         conv = convs[0]
 
@@ -356,7 +358,7 @@ class TestYaml(unittest.TestCase):
 
             @echo SCRIPT
             set PATH=ROOT\\%NAME_JENKINS%\\_venv\\Scripts;%PATH%
-            python -X faulthandler -X showrefcount -u setup.py unittests
+            python -u setup.py unittests
             if %errorlevel% neq 0 exit /b %errorlevel%
 
             @echo AFTER_SCRIPT

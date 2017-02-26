@@ -34,6 +34,7 @@ from ..pycode.build_helper import private_script_replacements
 from .jenkins_exceptions import JenkinsExtException, JenkinsJobException
 from .jenkins_server_template import _config_job, _trigger_up, _trigger_time, _git_repo, _task_batch, _publishers, _file_creation
 from .yaml_helper import enumerate_processed_yml
+from .jenkins_helper import jenkins_final_postprocessing
 
 _timeout_default = 1200
 
@@ -794,6 +795,9 @@ class JenkinsExt(jenkins.Jenkins):
 
         for k, v in rep.items():
             conf = conf.replace(k, v)
+
+        # final processing
+        conf = jenkins_final_postprocessing(conf, py27)
 
         if self._mock or return_job:
             return conf

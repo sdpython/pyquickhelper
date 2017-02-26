@@ -98,3 +98,20 @@ def setup_jenkins_server_yml(js, github="sdpython", modules=default_jenkins_jobs
     r = js.setup_jenkins_server(github=github, modules=modules, overwrite=overwrite,
                                 location=location, prefix=prefix, disable_schedule=disable_schedule, **kwargs)
     return r
+
+
+def jenkins_final_postprocessing(xml_job, py27):
+    """
+    Post process a job produced by Jenkins.
+
+    @param      xml_job     xml definition
+    @param      py27        is it for Python 27
+    @return                 new xml job
+
+    .. versionadded:: 1.5
+    """
+    if py27:
+        # options are not allowed
+        xml_job = xml_job.replace(
+            "python -X faulthandler -X showrefcount", "python")
+    return xml_job
