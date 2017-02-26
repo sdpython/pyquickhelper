@@ -109,8 +109,9 @@ class TestLog (unittest.TestCase):
             "loghelper",
             "flog_fake_classes.py")
         out, err = run_script(file)
-        assert len(out) == 0
-        assert len(err) == 0
+        assert out is not None
+        assert err is None
+        out.__exit__(None, None, None)
 
     def test_prefix(self):
         fLOG(

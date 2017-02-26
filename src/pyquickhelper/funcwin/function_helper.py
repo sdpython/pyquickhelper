@@ -35,8 +35,8 @@ def has_unknown_parameters(func):
     """
     # de = func.__defaults__
     # na = func.__code__.co_varnames
-    alls = inspect.getargspec(func)
-    return len(alls) > 2 and alls[2] is not None
+    keys = inspect.signature(func)
+    return "**" in str(keys)
 
 
 def extract_function_information(function):

@@ -149,7 +149,7 @@ class FrameFunction (tkinter.Frame):
                 self.info["param"][a] = b
                 self.types[a] = type(b)
 
-        params = inspect.getargspec(function)[0]
+        params = list(inspect.signature(function).parameters.keys())
         self._added = [_ for _ in self.info["param"] if _ not in params]
 
         self.fpar.bind('<Return>', self.run_function)

@@ -45,8 +45,8 @@ class TestConvertDocHelper(unittest.TestCase):
             :param      server:      if None, it becomes ``HTTPServer(('localhost', 8080), DocumentationHandler)``
             :param      mappings:    prefixes with local folders (dictionary)
             :param      thread:      if True, the server is run in a thread
-                                    and the function returns right away,
-                                    otherwise, it runs the server.
+                                     and the function returns right away,
+                                     otherwise, it runs the server.
 
             :param      port:        port to use
             :return:                 server if thread is False, the thread otherwise (the thread is started)
@@ -95,35 +95,6 @@ class TestConvertDocHelper(unittest.TestCase):
         assert "<p>&#64;code" not in html
         html = docstring2html(df2rst, "html", fLOG=fLOG)
         assert isinstance(html, HTML)
-
-    def test_doctring2html_pandas(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-        if sys.version_info[0] == 2:
-            return
-        html = docstring2html(pandas.read_csv, "rawhtml", fLOG=fLOG)
-        assert len(html) > 0
-
-    def test_doctring2html_sklearn(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-        if sys.version_info[0] == 2:
-            return
-        try:
-            import sklearn.linear_model
-        except ImportError:
-            return
-        html = docstring2html(
-            sklearn.linear_model.LogisticRegression,
-            "rawhtml",
-            fLOG=fLOG)
-        assert len(html) > 0
-        if '<div class="system-message">' in html:
-            raise Exception(html)
 
     def test_object(self):
         fLOG(

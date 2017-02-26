@@ -165,10 +165,6 @@ def run_cmd(cmd, sin="", shell=sys.platform.startswith("win"), wait=False, log_e
         more freedom to the main program to listen or stop the command line
         execution.
 
-    .. versionchanged:: 0.9
-        parameters *timeout*, *fLOG* were added,
-        the function now works with stdin
-
     .. versionchanged:: 1.3
         Catches *SystemExit* exception. Add parameter *catch_exit*.
 
@@ -178,6 +174,10 @@ def run_cmd(cmd, sin="", shell=sys.platform.startswith("win"), wait=False, log_e
         Improve the behavior of the function.
         See `Constantly print Subprocess output while process is running <http://stackoverflow.com/questions/4417546/constantly-print-subprocess-output-while-process-is-running/4417735>`_.
         Parameter *tell_if_no_output*, *stop_running_if* were added.
+
+    .. verionchanged:: 1.5
+        If *wait* is False, the function returns the started process.
+        ``__exit__`` should be called if wait if False.
     """
     if fLOG is not None:
         fLOG("execute", cmd)
@@ -212,6 +212,7 @@ def run_cmd(cmd, sin="", shell=sys.platform.startswith("win"), wait=False, log_e
                                  stdout=subprocess.PIPE if wait else None,
                                  stderr=subprocess.PIPE if wait else None)
 
+    pproc.__enter__()
     if isinstance(cmd, list):
         cmd = " ".join(cmd)
 
@@ -377,6 +378,7 @@ def run_cmd(cmd, sin="", shell=sys.platform.startswith("win"), wait=False, log_e
         if change_path is not None:
             os.chdir(current)
 
+        pproc.__exit__(None, None, None)
         if sys.platform.startswith("win"):
             return out.replace("\r\n", "\n"), err.replace("\r\n", "\n")
         else:
@@ -386,7 +388,7 @@ def run_cmd(cmd, sin="", shell=sys.platform.startswith("win"), wait=False, log_e
         if change_path is not None:
             os.chdir(current)
 
-        return "", ""
+        return pproc, None
 
 
 def run_script(script, *l):

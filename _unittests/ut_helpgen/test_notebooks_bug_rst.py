@@ -63,12 +63,15 @@ class TestNoteBooksBugRst(unittest.TestCase):
             fLOG(_)
             assert os.path.exists(_[0])
 
-        clog("final checking")
-        with open(os.path.join(temp, "having_a_form_in_a_notebook.rst"), "r", encoding="utf8") as f:
+        name = os.path.join(temp, "having_a_form_in_a_notebook.rst")
+        clog("final checking", name)
+        with open(name, "r", encoding="utf8") as f:
             content = f.read()
+        clog("final read", name)
         exp = "<#Animated-output>`"
         if exp in content or exp.lower() not in content:
             raise Exception(content)
+        clog("done")
 
 
 if __name__ == "__main__":
