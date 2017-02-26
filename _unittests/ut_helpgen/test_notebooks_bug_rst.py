@@ -21,9 +21,9 @@ except ImportError:
         sys.path.append(path)
     import src
 
-from src.pyquickhelper.loghelper import fLOG
+from src.pyquickhelper.loghelper import fLOG, CustomLog
 from src.pyquickhelper.helpgen import process_notebooks
-from src.pyquickhelper.pycode import is_travis_or_appveyor
+from src.pyquickhelper.pycode import is_travis_or_appveyor, get_temp_folder
 
 
 if sys.version_info[0] == 2:
@@ -46,23 +46,24 @@ class TestNoteBooksBugRst(unittest.TestCase):
                for _ in os.listdir(fold) if ".ipynb" in _]
         formats = ["rst", ]
 
-        temp = os.path.join(path, "temp_nb_bug_rst")
-        if not os.path.exists(temp):
-            os.mkdir(temp)
-        for file in os.listdir(temp):
-            os.remove(os.path.join(temp, file))
+        temp = get_temp_folder(__file__, "temp_nb_bug_rst")
+        clog = CustomLog(temp)
+        clog("test_notebook_rst")
 
         if is_travis_or_appveyor() is not None:
             warnings.warn(
                 "travis, appveyor, unable to test TestNoteBooksBugRst.test_notebook_rst")
             return
 
-        res = process_notebooks(nbs, temp, temp, formats=formats)
+        clog("process_notebooks: begin")
+        res = process_notebooks(nbs, temp, temp, formats=formats, fLOG=clog)
+        clog("process_notebooks: end")
         fLOG("*****", len(res))
         for _ in res:
             fLOG(_)
             assert os.path.exists(_[0])
 
+        clog("final checking")
         with open(os.path.join(temp, "having_a_form_in_a_notebook.rst"), "r", encoding="utf8") as f:
             content = f.read()
         exp = "<#Animated-output>`"
