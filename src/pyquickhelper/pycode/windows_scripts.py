@@ -453,8 +453,8 @@ set portpy=__PORT__
 
 :run:
 @echo ~LABEL run
-@echo ~CALL %pythonexe%\\Scripts\\pypi-server.exe -u -p %portpy% --disable-fallback ..\\..\\local_pypi\\local_pypi_server
-%pythonexe%\\Scripts\\pypi-server.exe -u -p %portpy% --disable-fallback ..\\..\\local_pypi\\local_pypi_server
+@echo ~CALL %pythonexe%\\Scripts\\pypi-server.exe -v -u -p %portpy% --disable-fallback ..\\..\\local_pypi\\local_pypi_server
+%pythonexe%\\Scripts\\pypi-server.exe -v -u -p %portpy% --disable-fallback ..\\..\\local_pypi\\local_pypi_server
 """.replace("PY??", _sversion())
 
 #################

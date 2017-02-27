@@ -312,7 +312,7 @@ class JenkinsExt(jenkins.Jenkins):
             elif "[local_pypi]" in spl:
                 cmd = "if not exist ..\\local_pypi mkdir ..\\local_pypi"
                 cmd += "\nif not exist ..\\..\\local_pypi\\local_pypi_server mkdir ..\\..\\local_pypi\\local_pypi_server"
-                cmd += "\necho __ENGINE__\\..\\Scripts\\pypi-server.exe -u -p __PORT__ --disable-fallback "
+                cmd += "\necho __ENGINE__\\..\\Scripts\\pypi-server.exe -v -u -p __PORT__ --disable-fallback "
                 cmd += "..\\..\\local_pypi\\local_pypi_server > ..\\..\\local_pypi\\local_pypi_server\\start_local_pypi.bat"
                 cmd = cmd.replace("__PORT__", str(self.pypi_port))
             elif "[update]" in spl:
