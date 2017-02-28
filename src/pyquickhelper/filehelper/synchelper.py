@@ -250,11 +250,13 @@ def synchronize_folder(p1, p2, hash_size=1024 ** 2, repo1=False, repo2=False,
 
     fLOG("Starting synchronisation.")
     nbcur = 0
+    nbprint = 0
     for op, file, n1, n2 in res:
         nbcur += 1
-        if nbcur <= 50:
+        if nbprint <= 50 and op != "==":
             fLOG(
-                "... {0}/{1} (current: '{2}' - {3})".format(nbcur, len(res), file, op))
+                "... {0}/{1} (current: '{2}' :: {3})".format(nbcur, len(res), file, op))
+            nbprint += 1
         if filter_copy is not None and not filter_copy(file):
             continue
 

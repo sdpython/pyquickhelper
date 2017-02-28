@@ -452,9 +452,8 @@ def post_process_latex(st, doall, info=None, latex_book=False, exc=True,
 
     .. versionchanged:: 1.5
         Parameter *exc* was added.
-
-    .. versionchanged:: 1.6
         The function is less strict on the checking of `$`.
+        The function replaces ``\\mathbb{1}`` by ``\\mathbf{1\\!\\!1}``.
 
     .. index:: chinese characters, latex, unicode
 
@@ -508,6 +507,7 @@ def post_process_latex(st, doall, info=None, latex_book=False, exc=True,
 
     st = st.replace("<br />", "\\\\")
     st = st.replace("»", '"')
+    st = st.replace("\\mathbb{1}", "\\mathbf{1\\!\\!1}")
 
     if not doall and not latex_book:
         st = st.replace(
