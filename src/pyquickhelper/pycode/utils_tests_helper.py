@@ -50,14 +50,15 @@ def get_temp_folder(thisfile, name=None, clean=True, create=True):
             name = "temp_" + name
         thisfile = os.path.abspath(thisfile.__func__.__code__.co_filename)
 
-    if not name.startswith("temp_"):
-        raise NameError("the folder {0} must begin with temp_".format(name))
+    final = os.path.split(name)[-1]
+    if not final.startswith("temp_"):
+        raise NameError("the folder '{0}' must begin with temp_".format(name))
 
     local = os.path.join(
         os.path.normpath(os.path.abspath(os.path.dirname(thisfile))), name)
     if name == local:
         raise NameError(
-            "the folder {0} must be relative, not absolute".format(name))
+            "the folder '{0}' must be relative, not absolute".format(name))
 
     if not os.path.exists(local):
         if create:
