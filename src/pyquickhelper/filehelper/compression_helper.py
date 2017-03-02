@@ -43,6 +43,8 @@ def zip_files(filename, file_set, root=None, fLOG=noLOG):
         for file in file_set:
             if not os.path.exists(file):
                 continue
+            if fLOG:
+                fLOG("zip", file)
             st = os.stat(file)
             atime = datetime.datetime.fromtimestamp(st.st_atime)
             mtime = datetime.datetime.fromtimestamp(st.st_mtime)
@@ -86,6 +88,8 @@ def unzip_files(zipf, where_to=None, fLOG=noLOG, fvalid=None, remove_space=True)
     files = []
     with zipfile.ZipFile(zipf, "r") as file:
         for info in file.infolist():
+            if fLOG:
+                fLOG("unzip", info.filename)
             if where_to is None:
                 files.append((info.filename, file.read(info.filename)))
             else:
