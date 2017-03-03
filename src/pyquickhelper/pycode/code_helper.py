@@ -176,6 +176,8 @@ def remove_extra_spaces_folder(
                 and "/_venv/" not in fl \
                 and "/_todo/" not in fl \
                 and "/dist_module27" not in fl \
+                and "automation_done.rst" not in fl \
+                and "auto_import.rst" not in fl \
                 and os.stat(f).st_size < 200000:
             ext = os.path.splitext(f)[-1]
             if ext in extensions:
