@@ -58,9 +58,11 @@ class TestBenchMark(unittest.TestCase):
         assert ht
         report = os.path.join(temp, "report.html")
         csv = os.path.join(temp, "report.csv")
-        bench.report(filehtml=report, filecsv=csv)
+        rst = os.path.join(temp, "report.rst")
+        bench.report(filehtml=report, filecsv=csv, filerst=rst)
         assert os.path.exists(report)
         assert os.path.exists(csv)
+        assert os.path.exists(rst)
 
 
 if __name__ == "__main__":

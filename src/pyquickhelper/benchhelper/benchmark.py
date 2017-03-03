@@ -9,6 +9,7 @@ from datetime import datetime
 from time import clock
 from ..loghelper import noLOG, CustomLog
 from ..texthelper import apply_template
+from ..pandashelper import df2rst
 
 
 if sys.version_info[0] == 2:
@@ -64,6 +65,37 @@ class BenchMark:
         """
         pass
 
+    class LocalGraph:
+        """
+        Information about graphs.
+        """
+
+        def __init__(self, filename=None, title=None):
+            """
+            constructor
+
+            @param      filename        filename
+            @param      title           title
+            """
+            self.filename = filename
+            self.title = title
+
+        def add(self, name, value):
+            """
+            add an attribute
+
+            @param      name        name of the attribute
+            @param      value       value
+            """
+            setattr(self, name, value)
+
+        def to_html(self):
+            """
+            render as html
+            """
+            # deal with relatif path.
+            return '<img src="{0}" alt="{1}" />'.format(self.filename, self.title)
+
     def graphs(self, path_to_images):
         """
         builds graphs after the benchmark was run
@@ -100,12 +132,17 @@ class BenchMark:
             if not isinstance(di, dict):
                 raise TypeError("params_list must be a list of dictionaries")
 
+        self._metrics = []
+        self._metadata = []
+        meta = dict(level="BenchMarck", name=self.Name, nb=len(
+            params_list), time_begin=datetime.now())
+        self._metadata.append(meta)
+
         self.fLOG("[BenchMark.run] init {0} do".format(self.Name))
         self.init()
         self.fLOG("[BenchMark.run] init {0} done".format(self.Name))
 
         self.fLOG("[BenchMark.run] start {0}".format(self.Name))
-        self._metrics = []
         for i, di in enumerate(params_list):
             self.fLOG(
                 "[BenchMark.run] {0}/{1}: {2}".format(i + 1, len(params_list), di))
@@ -113,6 +150,7 @@ class BenchMark:
             cl = clock()
             met = self.bench(**di)
             cl = clock() - cl
+            met["_date"] = dt
             dt = datetime.now() - dt
             if not isinstance(met, dict):
                 raise TypeError("metrics should be a dictionary")
@@ -141,6 +179,7 @@ class BenchMark:
         self.fLOG("[BenchMark.run] end {0} do".format(self.Name))
         self.end()
         self.fLOG("[BenchMark.run] end {0} done".format(self.Name))
+        meta["time_end"] = datetime.now()
 
     @property
     def Metrics(self):
@@ -148,23 +187,58 @@ class BenchMark:
         Return the metrics.
         """
         if not hasattr(self, "_metrics"):
-            raise KeyError("Method run was not run, no metris was found.")
+            raise KeyError("Method run was not run, no metrics was found.")
         return self._metrics
 
-    def to_df(self):
+    @property
+    def Metadata(self):
+        """
+        Return the metrics.
+        """
+        if not hasattr(self, "_metadata"):
+            raise KeyError("Method run was not run, no metadata was found.")
+        return self._metadata
+
+    def to_df(self, convert=False):
         """
         Converts the metrics into a dataframe.
 
-        @return       dataframe
+        @param          convert         if True, calls method *_convert* on each cell
+        @return                         dataframe
         """
         import pandas
         df = pandas.DataFrame(self.Metrics)
+        if convert:
+            for c, d in zip(df.columns, df.dtypes):
+                cols = []
+                for i in range(df.shape[0]):
+                    cols.append(self._convert(df, i, c, d, df.ix[i, c]))
+                df[c] = cols
+        col1 = list(sorted(_ for _ in df.columns if _.startswith("_")))
+        col2 = list(sorted(_ for _ in df.columns if not _.startswith("_")))
+        return df[col1 + col2]
+
+    def meta_to_df(self, convert=False):
+        """
+        Converts meta data into a dataframe
+
+        @param          convert         if True, calls method *_convert* on each cell
+        @return                         dataframe
+        """
+        import pandas
+        df = pandas.DataFrame(self.Metadata)
+        if convert:
+            for c, d in zip(df.columns, df.dtypes):
+                cols = []
+                for i in range(df.shape[0]):
+                    cols.append(self._convert(df, i, c, d, df.ix[i, c]))
+                df[c] = cols
         col1 = list(sorted(_ for _ in df.columns if _.startswith("_")))
         col2 = list(sorted(_ for _ in df.columns if not _.startswith("_")))
         return df[col1 + col2]
 
     def report(self, css=None, template=None, engine="mako", filecsv=None,
-               filehtml=None, params_html=None):
+               filehtml=None, filerst=None, params_html=None):
         """
         Produces a report.
 
@@ -173,6 +247,7 @@ class BenchMark:
         @param      engine      Mako or Jinja2
         @param      filehtml    report will written in this file if not None
         @param      filecsv     metrics will be written as a flat table
+        @param      filerst     metrics will be written as a RST table
         @param      params_html parameter to send to function `to_html <http://pandas.pydata.org/pandas-docs/stable/generated/pandas.DataFrame.to_html.html>`_
         @return                 result (string)
         """
@@ -182,16 +257,36 @@ class BenchMark:
             css = BenchMark.default_css
         if params_html is None:
             params_html = dict()
-            params_html["float_format"] = "%1.3f"
-            params_html["index"] = False
+        for gr in self.Graphs:
+            gr.add("root", filehtml)
         res = apply_template(template, dict(
             css=css, bench=self, params_html=params_html))
         if filehtml is not None:
             with open(filehtml, "w", encoding="utf-8") as f:
                 f.write(res)
-        if filecsv is not None:
-            self.to_df().to_csv(filecsv, encoding="utf-8", index=False)
+        if filecsv is not None or filerst is not None:
+            df = self.to_df()
+            if filecsv is not None:
+                df.to_csv(filecsv, encoding="utf-8", index=False, sep="\t")
+            if filerst is not None:
+                content = df2rst(df)
+                with open(filerst, "w", encoding="utf-8") as f:
+                    f.write(content)
         return res
+
+    def _convert(self, df, i, col, ty, value):
+        """
+        Converts a value knowing its column, its type
+        into something readable.
+
+        @param      df      dataframe
+        @param      i       line index
+        @param      col     column name
+        @param      ty      type
+        @param      value   value to convert
+        @return             value
+        """
+        return value
 
     @property
     def Graphs(self):
@@ -244,14 +339,18 @@ class BenchMark:
                 </style>
                 <body>
                 <h1> ${bench.Name}</h1>
+                <h2>Metadata</h2>
+                <div class="datagrid">
+                ${bench.meta_to_df(convert=True).to_html(**params_html)}
+                </div>
                 <h2>Metrics</h2>
                 <div class="datagrid">
-                ${bench.to_df().to_html(**params_html)}
+                ${bench.to_df(convert=True).to_html(**params_html)}
                 </div>
                 % if len(bench.Graphs) > 0:
                 <h2>Graphs</h2>
                 % for gr in bench.Graphs:
-                <img src="${gr.name}" />
+                    ${gr.to_html()}
                 % endfor
                 % endif
                 </body>
