@@ -27,10 +27,6 @@ from src.pyquickhelper.pycode import get_temp_folder
 from src.pyquickhelper.benchhelper import BenchMark
 
 
-if sys.version_info[0] == 2:
-    from codecs import open
-
-
 class TestBenchMark_(BenchMark):
 
     def init(self):
