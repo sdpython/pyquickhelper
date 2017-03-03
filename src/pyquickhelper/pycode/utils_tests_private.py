@@ -370,8 +370,8 @@ def main_run_test(runner, path_test=None, limit_max=1e9, log=False, skip=-1, ski
 
     # run the test
     li = [a[1] for a in cco]
-    lis = [os.path.split(_)[-1] for _ in li]
     suite = import_files(li, additional_ut_path=additional_ut_path, fLOG=fLOG)
+    lis = [os.path.split(name)[-1] for _, name in suite]
     keep = []
 
     # redirect standard output, error
