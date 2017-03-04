@@ -56,8 +56,10 @@ class TestBenchMark(unittest.TestCase):
         link = local_graph.to_html()
         self.assertEqual(link, '<img src="zzz/g.png" alt="agraph"/>')
 
-        bench = TestBenchMark_("TestName", fLOG=fLOG, clog=temp)
-        params = [dict(value=random.randint(10, 20)) for i in range(0, 100)]
+        params = [dict(value=random.randint(10, 20)) for i in range(0, 20)]
+
+        bench = TestBenchMark_("TestName", fLOG=fLOG, clog=temp,
+                               cache_file=os.path.join(temp, "cache.pickle"))
         bench.run(params)
         df = bench.to_df()
         ht = df.to_html(float_format="%1.3f", index=False)
@@ -70,6 +72,18 @@ class TestBenchMark(unittest.TestCase):
         assert os.path.exists(report)
         assert os.path.exists(csv)
         assert os.path.exists(rst)
+
+        df1 = bench.to_df()
+
+        fLOG("NEW RUN")
+        bench = TestBenchMark_("TestName", fLOG=fLOG, clog=temp,
+                               cache_file=os.path.join(temp, "cache.pickle"))
+        bench.run(params)
+        meta = bench.Metadata
+        fLOG(meta)
+        self.assertEqual(meta[0]["nb_cached"], 20)
+        df2 = bench.to_df()
+        self.assertEqual(df1.shape, df2.shape)
 
 
 if __name__ == "__main__":

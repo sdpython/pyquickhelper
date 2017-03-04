@@ -8,6 +8,7 @@ import os
 import sys
 from datetime import datetime
 from time import clock
+import pickle
 from ..loghelper import noLOG, CustomLog
 from ..texthelper import apply_template
 from ..pandashelper import df2rst
@@ -24,7 +25,8 @@ class BenchMark:
     *init*, *bench*, *end*, *graphs*.
     """
 
-    def __init__(self, name, clog=None, fLOG=noLOG, path_to_images=".", **params):
+    def __init__(self, name, clog=None, fLOG=noLOG, path_to_images=".",
+                 cache_file=None, **params):
         """
         initialisation
 
@@ -33,6 +35,11 @@ class BenchMark:
         @param      fLOG            logging function
         @param      params          extra parameters
         @param      path_to_images  path to images
+        @param      cache_file      cache file
+
+        If *cache_file* is specified, the class will store the results of the
+        method @see me bench. On a second run, the function load the cache
+        and run modified or new run (in *param_list*).
         """
         self._fLOG = fLOG
         self._name = name
@@ -45,6 +52,11 @@ class BenchMark:
             self._clog = CustomLog(clog)
         self._params = params
         self._path_to_images = path_to_images
+        self._cache_file = cache_file
+
+    ##
+    # methods to overwrite
+    ##
 
     def init(self):
         """
@@ -58,6 +70,8 @@ class BenchMark:
 
         @param      params      parameters
         @return                 metrics as a dictionary, appendix as a dictionary
+
+        The results of this method will be cached if a *cache_file* was specified in the constructor.
         """
         raise NotImplementedError("It should be overwritten.")
 
@@ -66,6 +80,16 @@ class BenchMark:
         clean, overwrite this method
         """
         raise NotImplementedError("It should be overwritten.")
+
+    def uncache(self, cache):
+        """
+        overwrite this method to uncache some previous run
+        """
+        pass
+
+    ##
+    # end of methods to overwrite
+    ##
 
     class LocalGraph:
         """
@@ -153,9 +177,28 @@ class BenchMark:
             if not isinstance(di, dict):
                 raise TypeError("params_list must be a list of dictionaries")
 
+        # cache
+
+        if self._cache_file is not None and os.path.exists(self._cache_file):
+            self.fLOG("[BenchMark.run] retrieve cache '{0}'".format(
+                self._cache_file))
+            with open(self._cache_file, "rb") as f:
+                cached = pickle.load(f)
+            self.fLOG("[BenchMark.run] number of cached run: {0}".format(
+                len(cached["params_list"])))
+        else:
+            if self._cache_file is not None:
+                self.fLOG("[BenchMark.run] cache not found '{0}'".format(
+                    self._cache_file))
+            cached = dict(metrics=[], appendix=[], params_list=[])
+        self.uncache(cached)
+
+        # run
+
         self._metrics = []
         self._metadata = []
         self._appendix = []
+
         meta = dict(level="BenchMark", name=self.Name, nb=len(
             params_list), time_begin=datetime.now())
         self._metadata.append(meta)
@@ -163,9 +206,32 @@ class BenchMark:
         self.fLOG("[BenchMark.run] init {0} do".format(self.Name))
         self.init()
         self.fLOG("[BenchMark.run] init {0} done".format(self.Name))
-
         self.fLOG("[BenchMark.run] start {0}".format(self.Name))
+        nb_cached = 0
+
         for i, di in enumerate(params_list):
+
+            # check the cache
+            if i < len(cached["params_list"]) and cached["params_list"][i] == di:
+                can = True
+                for k, v in cached.items():
+                    if i >= len(v):
+                        # cannot cache
+                        can = False
+                        break
+
+                if can:
+                    # can
+                    self._metrics.append(cached["metrics"][i])
+                    self._appendix.append(cached["appendix"][i])
+                    self.fLOG(
+                        "[BenchMark.run] retrieved cached {0}/{1}: {2}".format(i + 1, len(params_list), di))
+                    nb_cached += 1
+                    continue
+
+                # cache is available
+
+            # no cache
             self.fLOG(
                 "[BenchMark.run] {0}/{1}: {2}".format(i + 1, len(params_list), di))
             dt = datetime.now()
@@ -216,6 +282,16 @@ class BenchMark:
         self.end()
         self.fLOG("[BenchMark.run] end {0} done".format(self.Name))
         meta["time_end"] = datetime.now()
+        meta["nb_cached"] = nb_cached
+
+        if self._cache_file is not None:
+            self.fLOG("[BenchMark.run] save cache '{0}'".format(
+                self._cache_file))
+            cached = dict(metrics=self._metrics,
+                          appendix=self._appendix, params_list=params_list)
+            with open(self._cache_file, "wb") as f:
+                pickle.dump(cached, f)
+            self.fLOG("[BenchMark.run] done.")
 
     @property
     def Metrics(self):
