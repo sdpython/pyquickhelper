@@ -49,6 +49,13 @@ class TestBenchMark(unittest.TestCase):
             OutputPrint=__name__ == "__main__")
 
         temp = get_temp_folder(__file__, "temp_benchmark")
+
+        local_graph = BenchMark.LocalGraph(filename=os.path.join(
+            temp, "zzz/g.png"), title="agraph", root=temp)
+        local_graph.add("alt", "h")
+        link = local_graph.to_html()
+        self.assertEqual(link, '<img src="zzz/g.png" alt="agraph"/>')
+
         bench = TestBenchMark_("TestName", fLOG=fLOG, clog=temp)
         params = [dict(value=random.randint(10, 20)) for i in range(0, 100)]
         bench.run(params)

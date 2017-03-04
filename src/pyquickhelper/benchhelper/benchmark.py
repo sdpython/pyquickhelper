@@ -4,12 +4,14 @@
 
 .. versionadded:: 1.5
 """
+import os
 import sys
 from datetime import datetime
 from time import clock
 from ..loghelper import noLOG, CustomLog
 from ..texthelper import apply_template
 from ..pandashelper import df2rst
+from ..loghelper.flog import get_relative_path
 
 
 if sys.version_info[0] == 2:
@@ -70,15 +72,19 @@ class BenchMark:
         Information about graphs.
         """
 
-        def __init__(self, filename=None, title=None):
+        def __init__(self, filename=None, title=None, root=None):
             """
             constructor
 
             @param      filename        filename
             @param      title           title
+            @param      root            path should be relative to this one
             """
-            self.filename = filename
-            self.title = title
+            if filename is not None:
+                self.filename = filename
+            if title is not None:
+                self.title = title
+            self.root = root
 
         def add(self, name, value):
             """
@@ -94,7 +100,22 @@ class BenchMark:
             render as html
             """
             # deal with relatif path.
-            return '<img src="{0}" alt="{1}" />'.format(self.filename, self.title)
+            if hasattr(self, "filename"):
+                attr = {}
+                for k in {"title", "alt", "width", "height"}:
+                    if k not in attr and hasattr(self, k):
+                        attr[k if k != "title" else "alt"] = getattr(self, k)
+                merge = " ".join('{0}="{1}"'.format(k, v)
+                                 for k, v in attr.items())
+                if self.root is not None:
+                    filename = get_relative_path(
+                        self.root, self.filename, exists=False, absolute=False)
+                else:
+                    filename = self.filename
+                filename = filename.replace("\\", "/")
+                return '<img src="{0}" {1}/>'.format(filename, merge)
+            else:
+                raise NotImplementedError("only files are allowed")
 
     def graphs(self, path_to_images):
         """
@@ -300,7 +321,7 @@ class BenchMark:
             params_html["escape"] = False
 
         for gr in self.Graphs:
-            gr.add("root", filehtml)
+            gr.add("root", os.path.dirname(filehtml))
         res = apply_template(template, dict(
             css=css, bench=self, params_html=params_html))
         if filehtml is not None:

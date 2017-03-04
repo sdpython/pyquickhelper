@@ -305,28 +305,39 @@ def _this_fLOG(*l, **p):
     fLOG(*l, **p)
 
 
-def get_relative_path(folder, file):
+def get_relative_path(folder, file, exists=True, absolute=True):
     """
     private function, return the relative path or absolute between a folder and a file,
-    use `relpath <https://docs.python.org/3.4/library/os.path.html#os.path.relpath>`_
+    use `relpath <https://docs.python.org/3/library/os.path.html#os.path.relpath>`_
 
     @param      folder      folder
     @param      file        file
+    @param      exists      check existence
+    @param      absolute    if True return a path which starts from the root
     @return                 relative path
     @rtype                  str
+
+    .. versionchanged:: 1.5
+        Parameter *exists* was added.
     """
-    if not os.path.exists(folder):
-        raise PQHException(folder + " does not exist.")
-    if not os.path.exists(file):
-        raise PQHException(file + " does not exist.")
-    sd = folder.replace("\\", "/").split("/")
-    sf = file.replace("\\", "/").split("/")
-    for i in range(0, len(sd)):
+    if exists:
+        if not os.path.exists(folder):
+            raise PQHException(folder + " does not exist.")
+        if not os.path.exists(file):
+            raise PQHException(file + " does not exist.")
+    sd = os.path.normpath(folder).replace("\\", "/").split("/")
+    sf = os.path.normpath(file).replace("\\", "/").split("/")
+    i = 0
+    while i < len(sd):
         if i >= len(sf):
             break
         elif sf[i] != sd[i]:
             break
-    res = copy.copy(sd)
+        i += 1
+    if absolute:
+        res = copy.copy(sd)
+    else:
+        res = []
     j = i
     while i < len(sd):
         i += 1
