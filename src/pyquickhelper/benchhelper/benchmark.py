@@ -221,11 +221,20 @@ class BenchMark:
                         break
 
                 if can:
-                    # can
+                    # can, we check a file is present
+                    look = "{0}.{1}.clean_cache".format(
+                        self._cache_file, cached["metrics"][i]["_btry"])
+                    if not os.path.exists(look):
+                        can = False
+                        self.fLOG(
+                            "[BenchMark.run] file '{0}' was not found --> run again.".format(look))
+                if can:
                     self._metrics.append(cached["metrics"][i])
                     self._appendix.append(cached["appendix"][i])
                     self.fLOG(
                         "[BenchMark.run] retrieved cached {0}/{1}: {2}".format(i + 1, len(params_list), di))
+                    self.fLOG(
+                        "[BenchMark.run] file '{0}' was found.".format(look))
                     nb_cached += 1
                     continue
 
@@ -284,6 +293,8 @@ class BenchMark:
         meta["time_end"] = datetime.now()
         meta["nb_cached"] = nb_cached
 
+        # write information about run experiments
+
         if self._cache_file is not None:
             self.fLOG("[BenchMark.run] save cache '{0}'".format(
                 self._cache_file))
@@ -291,6 +302,13 @@ class BenchMark:
                           appendix=self._appendix, params_list=params_list)
             with open(self._cache_file, "wb") as f:
                 pickle.dump(cached, f)
+            for di in self._metrics:
+                look = "{0}.{1}.clean_cache".format(
+                    self._cache_file, di["_btry"])
+                with open(look, "w") as f:
+                    f.write("Remove this file if you want to force a new run.")
+                self.fLOG("[BenchMark.run] wrote '{0}'.".format(look))
+
             self.fLOG("[BenchMark.run] done.")
 
     @property

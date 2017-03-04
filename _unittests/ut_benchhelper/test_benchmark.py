@@ -72,8 +72,9 @@ class TestBenchMark(unittest.TestCase):
         assert os.path.exists(report)
         assert os.path.exists(csv)
         assert os.path.exists(rst)
-
         df1 = bench.to_df()
+
+        # second run
 
         fLOG("NEW RUN")
         bench = TestBenchMark_("TestName", fLOG=fLOG, clog=temp,
@@ -82,6 +83,25 @@ class TestBenchMark(unittest.TestCase):
         meta = bench.Metadata
         fLOG(meta)
         self.assertEqual(meta[0]["nb_cached"], 20)
+        df2 = bench.to_df()
+        self.assertEqual(df1.shape, df2.shape)
+
+        # clear one cache
+        name = bench._metrics[0]["_btry"]
+        look = os.path.join(temp, "cache.pickle.{0}.clean_cache".format(name))
+        if not os.path.exists(look):
+            raise FileNotFoundError(look)
+        os.remove(look)
+
+        # third run
+
+        fLOG("NEW RUN")
+        bench = TestBenchMark_("TestName", fLOG=fLOG, clog=temp,
+                               cache_file=os.path.join(temp, "cache.pickle"))
+        bench.run(params)
+        meta = bench.Metadata
+        fLOG(meta)
+        self.assertEqual(meta[0]["nb_cached"], 19)
         df2 = bench.to_df()
         self.assertEqual(df1.shape, df2.shape)
 
