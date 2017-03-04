@@ -48,22 +48,22 @@ class BenchMark:
         """
         initialisation, overwrite this method
         """
-        pass
+        raise NotImplementedError("It should be overwritten.")
 
     def bench(self, **params):
         """
         run the benchmark, overwrite this method
 
         @param      params      parameters
-        @return                 metrics as a dictionary
+        @return                 metrics as a dictionary, appendix as a dictionary
         """
-        pass
+        raise NotImplementedError("It should be overwritten.")
 
     def end(self):
         """
         clean, overwrite this method
         """
-        pass
+        raise NotImplementedError("It should be overwritten.")
 
     class LocalGraph:
         """
@@ -134,7 +134,8 @@ class BenchMark:
 
         self._metrics = []
         self._metadata = []
-        meta = dict(level="BenchMarck", name=self.Name, nb=len(
+        self._appendix = []
+        meta = dict(level="BenchMark", name=self.Name, nb=len(
             params_list), time_begin=datetime.now())
         self._metadata.append(meta)
 
@@ -148,8 +149,20 @@ class BenchMark:
                 "[BenchMark.run] {0}/{1}: {2}".format(i + 1, len(params_list), di))
             dt = datetime.now()
             cl = clock()
-            met = self.bench(**di)
+            tu = self.bench(**di)
+            met, app = tu
             cl = clock() - cl
+
+            if not isinstance(tu, tuple):
+                raise TypeError("Method run should return a tuple.")
+            if len(tu) != 2:
+                raise TypeError(
+                    "Method run should return a tuple with 2 elements.")
+            if "_btry" not in met:
+                raise KeyError("Metrics should contain key '_btry'.")
+            if "_btry" not in app:
+                raise KeyError("Appendix should contain key '_btry'.")
+
             met["_date"] = dt
             dt = datetime.now() - dt
             if not isinstance(met, dict):
@@ -167,6 +180,8 @@ class BenchMark:
             met["_i"] = i
             met["_name"] = self.Name
             self._metrics.append(met)
+            app["_i"] = i
+            self._appendix.append(app)
             self.fLOG(
                 "[BenchMark.run] {0}/{1} end {2}".format(i + 1, len(params_list), met))
 
@@ -199,11 +214,21 @@ class BenchMark:
             raise KeyError("Method run was not run, no metadata was found.")
         return self._metadata
 
-    def to_df(self, convert=False):
+    @property
+    def Appendix(self):
+        """
+        Return the metrics.
+        """
+        if not hasattr(self, "_appendix"):
+            raise KeyError("Method run was not run, no metadata was found.")
+        return self._appendix
+
+    def to_df(self, convert=False, add_link=False):
         """
         Converts the metrics into a dataframe.
 
         @param          convert         if True, calls method *_convert* on each cell
+        @param          add_link        add hyperlink
         @return                         dataframe
         """
         import pandas
@@ -216,13 +241,21 @@ class BenchMark:
                 df[c] = cols
         col1 = list(sorted(_ for _ in df.columns if _.startswith("_")))
         col2 = list(sorted(_ for _ in df.columns if not _.startswith("_")))
-        return df[col1 + col2]
+        df = df[col1 + col2]
+        if add_link and "_i" in df.columns:
+            if "_btry" in df.columns:
+                df["_btry"] = df.apply(
+                    lambda row: '<a href="#{0}">{1}</a>'.format(row["_i"], row["_btry"]), axis=1)
+            df["_i"] = df["_i"].apply(
+                lambda s: '<a href="#{0}">{0}</a>'.format(s))
+        return df
 
-    def meta_to_df(self, convert=False):
+    def meta_to_df(self, convert=False, add_link=False):
         """
         Converts meta data into a dataframe
 
         @param          convert         if True, calls method *_convert* on each cell
+        @param          add_link        add hyperlink
         @return                         dataframe
         """
         import pandas
@@ -235,6 +268,12 @@ class BenchMark:
                 df[c] = cols
         col1 = list(sorted(_ for _ in df.columns if _.startswith("_")))
         col2 = list(sorted(_ for _ in df.columns if not _.startswith("_")))
+        if add_link and "_i" in df.columns:
+            if "_btry" in df.columns:
+                df["_btry"] = df.apply(
+                    lambda row: '<a href="#{0}">{1}</a>'.format(row["_i"], row["_btry"]), axis=1)
+            df["_i"] = df["_i"].apply(
+                lambda s: '<a href="#{0}">{0}</a>'.format(s))
         return df[col1 + col2]
 
     def report(self, css=None, template=None, engine="mako", filecsv=None,
@@ -257,6 +296,9 @@ class BenchMark:
             css = BenchMark.default_css
         if params_html is None:
             params_html = dict()
+        if "escape" not in params_html:
+            params_html["escape"] = False
+
         for gr in self.Graphs:
             gr.add("root", filehtml)
         res = apply_template(template, dict(
@@ -300,10 +342,10 @@ class BenchMark:
     default_css = """
                 .datagrid table { border-collapse: collapse; text-align: left; width: 100%; }
                 .datagrid {font: normal 12px/150% Arial, Helvetica, sans-serif; background: #fff; overflow: hidden;
-                    border: 1px solid #006699; -webkit-border-radius: 3px; -moz-border-radius: 3px; border-radius: 3px; }
-                .datagrid table td,
-                .datagrid table th { padding: 3px 10px; }
-                .datagrid table thead th {background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #006699), color-stop(1, #00557F) );
+                    border: 1px solid #BBBBBB; -webkit-border-radius: 3px; -moz-border-radius: 3px; border-radius: 3px; }
+                .datagrid table td, .datagrid table th { padding: 3px 10px; }
+                .datagrid table thead th {background:-webkit-gradient( linear, left top, left bottom,
+                    color-stop(0.05, #BBBBBB), color-stop(1, #BBBBBB) );
                     background:-moz-linear-gradient( center top, #006699 5%, #00557F 100% );
                     filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#006699', endColorstr='#00557F');background-color:#006699;
                     color:#FFFFFF; font-size: 15px; font-weight: bold; border-left: 1px solid #0070A8; text-align: center; }
@@ -329,6 +371,9 @@ class BenchMark:
                 .datagrid table tfoot ul a:hover { text-decoration: none;border-color: #006699; color: #FFFFFF; background: none;
                     background-color:#00557F;}
                 div.dhtmlx_window_active, div.dhx_modal_cover_dv { position: fixed !important; }
+                .appendix pre { background-color: rgb(220,220,220); padding: 0.5em;
+                                font-family: monospace; margin: 0.5em 0;
+                                width: 60%;}
                 """.replace("                ", "")
 
     default_template = """
@@ -341,11 +386,11 @@ class BenchMark:
                 <h1> ${bench.Name}</h1>
                 <h2>Metadata</h2>
                 <div class="datagrid">
-                ${bench.meta_to_df(convert=True).to_html(**params_html)}
+                ${bench.meta_to_df(convert=True, add_link=True).to_html(**params_html)}
                 </div>
                 <h2>Metrics</h2>
                 <div class="datagrid">
-                ${bench.to_df(convert=True).to_html(**params_html)}
+                ${bench.to_df(convert=True, add_link=True).to_html(**params_html)}
                 </div>
                 % if len(bench.Graphs) > 0:
                 <h2>Graphs</h2>
@@ -353,6 +398,23 @@ class BenchMark:
                     ${gr.to_html()}
                 % endfor
                 % endif
+                % if len(bench.Appendix) > 0:
+                <h2>Appendix</h2>
+                <div class="appendix">
+                % for app in bench.Appendix:
+                    <h3 id="${app["_i"]}">${app["_btry"]}</h3>
+                    <ul>
+                    % for k, v in sorted(app.items()):
+                        % if isinstance(v, str) and "\\n" in v:
+                            <li><b>${k}</b>: <pre>${v}</pre></li>
+                        % else:
+                            <li><b>${k}</b>: ${v}</li>
+                        % endif
+                    % endfor
+                    </ul>
+                % endfor
+                % endif
+                </div>
                 </body>
                 </html>
                 """.replace("                ", "")

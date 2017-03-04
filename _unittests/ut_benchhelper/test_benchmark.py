@@ -34,7 +34,7 @@ class TestBenchMark_(BenchMark):
 
     def bench(self, **p):
         h = random.randint(1, 100)
-        return dict(nb=h, value=p["value"])
+        return dict(nb=h, value=p["value"], _btry=str(h)), dict(nb=h, script="a\nb", _btry=str(h))
 
     def end(self):
         pass
