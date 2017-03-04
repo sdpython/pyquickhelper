@@ -374,18 +374,19 @@ class BenchMark:
         return df[col1 + col2]
 
     def report(self, css=None, template=None, engine="mako", filecsv=None,
-               filehtml=None, filerst=None, params_html=None):
+               filehtml=None, filerst=None, params_html=None, description=None):
         """
         Produces a report.
 
-        @param      css         css (will take the default one if empty)
-        @param      template    template (Mako or Jinja2)
-        @param      engine      Mako or Jinja2
-        @param      filehtml    report will written in this file if not None
-        @param      filecsv     metrics will be written as a flat table
-        @param      filerst     metrics will be written as a RST table
-        @param      params_html parameter to send to function `to_html <http://pandas.pydata.org/pandas-docs/stable/generated/pandas.DataFrame.to_html.html>`_
-        @return                 result (string)
+        @param      css             css (will take the default one if empty)
+        @param      template        template (Mako or Jinja2)
+        @param      engine          Mako or Jinja2
+        @param      filehtml        report will written in this file if not None
+        @param      filecsv         metrics will be written as a flat table
+        @param      filerst         metrics will be written as a RST table
+        @param      params_html     parameter to send to function `to_html <http://pandas.pydata.org/pandas-docs/stable/generated/pandas.DataFrame.to_html.html>`_
+        @param      description     add a description
+        @return                     result (string)
         """
         if template is None:
             template = BenchMark.default_template
@@ -398,8 +399,21 @@ class BenchMark:
 
         for gr in self.Graphs:
             gr.add("root", os.path.dirname(filehtml))
-        res = apply_template(template, dict(
-            css=css, bench=self, params_html=params_html))
+
+        # I don't like that too much as it is not multithreaded.
+        # Avoid truncation.
+        import pandas
+        old_width = pandas.get_option('display.max_colwidth')
+        pandas.set_option('display.max_colwidth', -1)
+
+        if description is None:
+            description = ""
+        res = apply_template(template, dict(description=description,
+                                            css=css, bench=self, params_html=params_html))
+
+        # Restore previous value.
+        pandas.set_option('display.max_colwidth', old_width)
+
         if filehtml is not None:
             with open(filehtml, "w", encoding="utf-8") as f:
                 f.write(res)
@@ -481,22 +495,29 @@ class BenchMark:
                 </style>
                 <body>
                 <h1> ${bench.Name}</h1>
-                <h2>Metadata</h2>
+                ${description}
+                <ul>
+                <li><a href="#metadata">Metadata</a></li>
+                <li><a href="#metrics">Metrics</a></li>
+                <li><a href="#graphs">Graphs</a></li>
+                <li><a href="#appendix">Appendix</a></li>
+                </ul>
+                <h2 id="metadata">Metadata</h2>
                 <div class="datagrid">
                 ${bench.meta_to_df(convert=True, add_link=True).to_html(**params_html)}
                 </div>
-                <h2>Metrics</h2>
+                <h2 id="metrics">Metrics</h2>
                 <div class="datagrid">
                 ${bench.to_df(convert=True, add_link=True).to_html(**params_html)}
                 </div>
                 % if len(bench.Graphs) > 0:
-                <h2>Graphs</h2>
+                <h2 id="graphs">Graphs</h2>
                 % for gr in bench.Graphs:
                     ${gr.to_html()}
                 % endfor
                 % endif
                 % if len(bench.Appendix) > 0:
-                <h2>Appendix</h2>
+                <h2 id="appendix">Appendix</h2>
                 <div class="appendix">
                 % for app in bench.Appendix:
                     <h3 id="${app["_i"]}">${app["_btry"]}</h3>
