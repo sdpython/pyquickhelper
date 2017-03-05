@@ -5,7 +5,7 @@
 """
 
 
-def df2rst(df, add_line=True, align="l", column_size=None):
+def df2rst(df, add_line=True, align="l", column_size=None, index=False):
     """
     builds a string in RST format from a dataframe
 
@@ -13,6 +13,7 @@ def df2rst(df, add_line=True, align="l", column_size=None):
     @param      add_line        (bool) add a line separator between each row
     @param      align           ``r`` or ``l`` or ``c``
     @param      column_size     something like ``[1,2,5]`` to multiply the column size
+    @param      index           add the index
     @return                     string
 
     None values are replaced by empty string (4 spaces).
@@ -31,7 +32,15 @@ def df2rst(df, add_line=True, align="l", column_size=None):
 
     .. versionchanged:: 1.3
         Parameter *align* was changed, parameter *column_size* was added.
+
+    .. versionchanged:: 1.5
+        Parameter *index* was added.
     """
+    if index:
+        df = df.reset_index(drop=False).copy()
+        ind = df.columns[0]
+        df[ind] = df[ind].apply(lambda x: "**{0}**".format(x))
+
     import numpy
     typstr = str  # unicode#
     length = [len(_) for _ in df.columns]

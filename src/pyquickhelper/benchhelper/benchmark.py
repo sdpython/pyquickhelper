@@ -141,6 +141,23 @@ class BenchMark:
             else:
                 raise NotImplementedError("only files are allowed")
 
+        def to_rst(self):
+            """
+            render as htmrst
+            """
+            # do not consider width or height
+            # deal with relatif path
+            if hasattr(self, "filename"):
+                if self.root is not None:
+                    filename = get_relative_path(
+                        self.root, self.filename, exists=False, absolute=False)
+                else:
+                    filename = self.filename
+                filename = filename.replace("\\", "/")
+                return '.. image:: {0}'.format(filename)
+            else:
+                raise NotImplementedError("only files are allowed")
+
     def graphs(self, path_to_images):
         """
         builds graphs after the benchmark was run
@@ -338,12 +355,13 @@ class BenchMark:
             raise KeyError("Method run was not run, no metadata was found.")
         return self._appendix
 
-    def to_df(self, convert=False, add_link=False):
+    def to_df(self, convert=False, add_link=False, format="html"):
         """
         Converts the metrics into a dataframe.
 
         @param          convert         if True, calls method *_convert* on each cell
         @param          add_link        add hyperlink
+        @param          format          format for hyperlinks (html or rst)
         @return                         dataframe
         """
         import pandas
@@ -358,19 +376,29 @@ class BenchMark:
         col2 = list(sorted(_ for _ in df.columns if not _.startswith("_")))
         df = df[col1 + col2]
         if add_link and "_i" in df.columns:
-            if "_btry" in df.columns:
-                df["_btry"] = df.apply(
-                    lambda row: '<a href="#{0}">{1}</a>'.format(row["_i"], row["_btry"]), axis=1)
-            df["_i"] = df["_i"].apply(
-                lambda s: '<a href="#{0}">{0}</a>'.format(s))
+            if format == "html":
+                if "_btry" in df.columns:
+                    df["_btry"] = df.apply(
+                        lambda row: '<a href="#{0}">{1}</a>'.format(row["_i"], row["_btry"]), axis=1)
+                df["_i"] = df["_i"].apply(
+                    lambda s: '<a href="#{0}">{0}</a>'.format(s))
+            elif format == "rst":
+                if "_btry" in df.columns:
+                    df["_btry"] = df.apply(
+                        lambda row: ':ref:`{1} <l-{2}-{0}>`'.format(row["_i"], row["_btry"], self.Name), axis=1)
+                df["_i"] = df["_i"].apply(
+                    lambda s: ':ref:`{0} <l-{1}-{0}>'.format(s, self.Name))
+            else:
+                raise ValueError("Format should be rst or html.")
         return df
 
-    def meta_to_df(self, convert=False, add_link=False):
+    def meta_to_df(self, convert=False, add_link=False, format="html"):
         """
         Converts meta data into a dataframe
 
         @param          convert         if True, calls method *_convert* on each cell
         @param          add_link        add hyperlink
+        @param          format          format for hyperlinks (html or rst)
         @return                         dataframe
         """
         import pandas
@@ -384,34 +412,53 @@ class BenchMark:
         col1 = list(sorted(_ for _ in df.columns if _.startswith("_")))
         col2 = list(sorted(_ for _ in df.columns if not _.startswith("_")))
         if add_link and "_i" in df.columns:
-            if "_btry" in df.columns:
-                df["_btry"] = df.apply(
-                    lambda row: '<a href="#{0}">{1}</a>'.format(row["_i"], row["_btry"]), axis=1)
-            df["_i"] = df["_i"].apply(
-                lambda s: '<a href="#{0}">{0}</a>'.format(s))
+            if format == "html":
+                if "_btry" in df.columns:
+                    df["_btry"] = df.apply(
+                        lambda row: '<a href="#{0}">{1}</a>'.format(row["_i"], row["_btry"]), axis=1)
+                df["_i"] = df["_i"].apply(
+                    lambda s: '<a href="#{0}">{0}</a>'.format(s))
+            elif format == "rst":
+                if "_btry" in df.columns:
+                    df["_btry"] = df.apply(
+                        lambda row: ':ref:`{1} <l-{2}-{0}>`'.format(row["_i"], row["_btry"], self.Name), axis=1)
+                df["_i"] = df["_i"].apply(
+                    lambda s: ':ref:`{0} <l-{1}-{0}>'.format(s, self.Name))
+            else:
+                raise ValueError("Format should be rst or html.")
         return df[col1 + col2]
 
-    def report(self, css=None, template=None, engine="mako", filecsv=None,
-               filehtml=None, filerst=None, params_html=None, description=None):
+    def report(self, css=None, template_html=None, template_rst=None, engine="mako", filecsv=None,
+               filehtml=None, filerst=None, params_html=None, title=None, description=None):
         """
         Produces a report.
 
         @param      css             css (will take the default one if empty)
-        @param      template        template (Mako or Jinja2)
+        @param      template_html   template HTML (Mako or Jinja2)
+        @param      template_rst    template RST (Mako or Jinja2)
         @param      engine          Mako or Jinja2
         @param      filehtml        report will written in this file if not None
         @param      filecsv         metrics will be written as a flat table
         @param      filerst         metrics will be written as a RST table
         @param      params_html     parameter to send to function `to_html <http://pandas.pydata.org/pandas-docs/stable/generated/pandas.DataFrame.to_html.html>`_
+        @param      title           title (Name if any)
         @param      description     add a description
-        @return                     result (string)
+        @return                     dictionary {format: content}
+
+        You can define your own template by looking into the default ones
+        defines in this class (see the bottom of this file).
+        By default, HTML and RST report are generated.
         """
-        if template is None:
-            template = BenchMark.default_template
+        if template_html is None:
+            template_html = BenchMark.default_template_html
+        if template_rst is None:
+            template_rst = BenchMark.default_template_rst
         if css is None:
             css = BenchMark.default_css
         if params_html is None:
             params_html = dict()
+        if title is None:
+            title = self.Name
         if "escape" not in params_html:
             params_html["escape"] = False
 
@@ -421,29 +468,46 @@ class BenchMark:
         # I don't like that too much as it is not multithreaded.
         # Avoid truncation.
         import pandas
-        old_width = pandas.get_option('display.max_colwidth')
-        pandas.set_option('display.max_colwidth', -1)
 
         if description is None:
             description = ""
-        res = apply_template(template, dict(description=description,
-                                            css=css, bench=self, params_html=params_html))
 
-        # Restore previous value.
-        pandas.set_option('display.max_colwidth', old_width)
+        contents = {'df': self.to_df()}
 
-        if filehtml is not None:
-            with open(filehtml, "w", encoding="utf-8") as f:
+        # HTML
+        if template_html is not None and len(template_html) > 0:
+            old_width = pandas.get_option('display.max_colwidth')
+            pandas.set_option('display.max_colwidth', -1)
+            res = apply_template(template_html, dict(description=description, title=title,
+                                                     css=css, bench=self, params_html=params_html))
+            # Restore previous value.
+            pandas.set_option('display.max_colwidth', old_width)
+
+            if filehtml is not None:
+                with open(filehtml, "w", encoding="utf-8") as f:
+                    f.write(res)
+            contents["html"] = res
+
+        # RST
+        if template_rst is not None and len(template_rst) > 0:
+            old_width = pandas.get_option('display.max_colwidth')
+            pandas.set_option('display.max_colwidth', -1)
+
+            res = apply_template(template_rst, dict(description=description,
+                                                    title=title, bench=self, df2rst=df2rst))
+
+            # Restore previous value.
+            pandas.set_option('display.max_colwidth', old_width)
+
+            with open(filerst, "w", encoding="utf-8") as f:
                 f.write(res)
-        if filecsv is not None or filerst is not None:
-            df = self.to_df()
-            if filecsv is not None:
-                df.to_csv(filecsv, encoding="utf-8", index=False, sep="\t")
-            if filerst is not None:
-                content = df2rst(df)
-                with open(filerst, "w", encoding="utf-8") as f:
-                    f.write(content)
-        return res
+            contents["rst"] = res
+
+        # CSV
+        if filecsv is not None:
+            contents['df'].to_csv(
+                filecsv, encoding="utf-8", index=False, sep="\t")
+        return contents
 
     def _convert(self, df, i, col, ty, value):
         """
@@ -505,14 +569,14 @@ class BenchMark:
                                 width: 60%;}
                 """.replace("                ", "")
 
-    default_template = """
+    default_template_html = """
                 <html>
                 <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
                 <style>
                 ${css}
                 </style>
                 <body>
-                <h1> ${bench.Name}</h1>
+                <h1>${title}</h1>
                 ${description}
                 <ul>
                 <li><a href="#metadata">Metadata</a></li>
@@ -553,4 +617,59 @@ class BenchMark:
                 </div>
                 </body>
                 </html>
+                """.replace("                ", "")
+
+    default_template_rst = """
+                ${title}
+                ${"=" * len(title)}
+
+                .. contents::
+                    :local:
+
+                Metadata
+                --------
+
+                ${df2rst(bench.meta_to_df(convert=True, add_link=True, format="rst"), index=True)}
+
+                Metrics
+                --------
+
+                ${df2rst(bench.to_df(convert=True, add_link=True, format="rst"), index=True)}
+
+                % if len(bench.Graphs) > 0:
+
+                Graphs
+                ------
+
+                % for gr in bench.Graphs:
+                    ${gr.to_rst()}
+                % endfor
+
+                % endif
+
+                % if len(bench.Appendix) > 0:
+
+                Appendix
+                --------
+
+                % for app in bench.Appendix:
+
+                .. _l-${bench.Name}-${app["_i"]}:
+
+                ${app["_btry"]}
+                ${"+" * len(app["_btry"])}
+
+                % for k, v in sorted(app.items()):
+                    % if isinstance(v, str) and "\\n" in v:
+                * **${k}**:
+                  ::
+
+                    ${"\\n    ".join(v.split("\\n"))}
+
+                    % else:
+                * **${k}**: ${v}
+                    % endif
+                % endfor
+                % endfor
+                % endif
                 """.replace("                ", "")

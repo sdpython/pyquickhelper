@@ -68,7 +68,8 @@ class TestBenchMark(unittest.TestCase):
         report = os.path.join(temp, "report.html")
         csv = os.path.join(temp, "report.csv")
         rst = os.path.join(temp, "report.rst")
-        bench.report(filehtml=report, filecsv=csv, filerst=rst)
+        bench.report(filehtml=report, filecsv=csv, filerst=rst,
+                     title="A Title", description="description")
         assert os.path.exists(report)
         assert os.path.exists(csv)
         assert os.path.exists(rst)
