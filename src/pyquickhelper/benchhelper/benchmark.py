@@ -387,7 +387,7 @@ class BenchMark:
                     df["_btry"] = df.apply(
                         lambda row: ':ref:`{1} <l-{2}-{0}>`'.format(row["_i"], row["_btry"], self.Name), axis=1)
                 df["_i"] = df["_i"].apply(
-                    lambda s: ':ref:`{0} <l-{1}-{0}>'.format(s, self.Name))
+                    lambda s: ':ref:`{0} <l-{1}-{0}>`'.format(s, self.Name))
             else:
                 raise ValueError("Format should be rst or html.")
         return df
@@ -620,11 +620,16 @@ class BenchMark:
                 """.replace("                ", "")
 
     default_template_rst = """
+
+                .. _lb-${bench.Name}:
+
                 ${title}
                 ${"=" * len(title)}
 
                 .. contents::
                     :local:
+
+                ${description}
 
                 Metadata
                 --------
@@ -642,7 +647,7 @@ class BenchMark:
                 ------
 
                 % for gr in bench.Graphs:
-                    ${gr.to_rst()}
+                ${gr.to_rst()}
                 % endfor
 
                 % endif
