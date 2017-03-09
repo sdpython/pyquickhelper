@@ -263,40 +263,52 @@ class BenchMark:
             dt = datetime.now()
             cl = clock()
             tu = self.bench(**di)
-            met, app = tu
             cl = clock() - cl
 
-            if not isinstance(tu, tuple):
-                raise TypeError("Method run should return a tuple.")
-            if len(tu) != 2:
+            if isinstance(tu, tuple):
+                tus = [tu]
+            elif isinstance(tu, list):
+                tus = tu
+            else:
                 raise TypeError(
-                    "Method run should return a tuple with 2 elements.")
-            if "_btry" not in met:
-                raise KeyError("Metrics should contain key '_btry'.")
-            if "_btry" not in app:
-                raise KeyError("Appendix should contain key '_btry'.")
+                    "return of method bench must be a tuple of a list")
 
-            met["_date"] = dt
-            dt = datetime.now() - dt
-            if not isinstance(met, dict):
-                raise TypeError("metrics should be a dictionary")
-            if "_time" in met:
-                raise KeyError("key _time should not be the returned metrics")
-            if "_span" in met:
-                raise KeyError("key _span should not be the returned metrics")
-            if "_i" in met:
-                raise KeyError("key _i should not be the returned metrics")
-            if "_name" in met:
-                raise KeyError("key _name should not be the returned metrics")
-            met["_time"] = cl
-            met["_span"] = dt
-            met["_i"] = i
-            met["_name"] = self.Name
-            self._metrics.append(met)
-            app["_i"] = i
-            self._appendix.append(app)
-            self.fLOG(
-                "[BenchMark.run] {0}/{1} end {2}".format(i + 1, len(params_list), met))
+            # checkings
+            for tu in tus:
+                met, app = tu
+                if len(tu) != 2:
+                    raise TypeError(
+                        "Method run should return a tuple with 2 elements.")
+                if "_btry" not in met:
+                    raise KeyError("Metrics should contain key '_btry'.")
+                if "_btry" not in app:
+                    raise KeyError("Appendix should contain key '_btry'.")
+
+            for met, app in tus:
+                met["_date"] = dt
+                dt = datetime.now() - dt
+                if not isinstance(met, dict):
+                    raise TypeError("metrics should be a dictionary")
+                if "_time" in met:
+                    raise KeyError(
+                        "key _time should not be the returned metrics")
+                if "_span" in met:
+                    raise KeyError(
+                        "key _span should not be the returned metrics")
+                if "_i" in met:
+                    raise KeyError("key _i should not be the returned metrics")
+                if "_name" in met:
+                    raise KeyError(
+                        "key _name should not be the returned metrics")
+                met["_time"] = cl
+                met["_span"] = dt
+                met["_i"] = i
+                met["_name"] = self.Name
+                self._metrics.append(met)
+                app["_i"] = i
+                self._appendix.append(app)
+                self.fLOG(
+                    "[BenchMark.run] {0}/{1} end {2}".format(i + 1, len(params_list), met))
 
         self.fLOG("[BenchMark.run] graph {0} do".format(self.Name))
         self._graphs = self.graphs(self._path_to_images)
