@@ -40,6 +40,19 @@ class TestBenchMark_(BenchMark):
         pass
 
 
+class TestBenchMark2_(BenchMark):
+
+    def init(self):
+        pass
+
+    def bench(self, **p):
+        h = random.randint(1, 100)
+        return [(dict(nb=h, value=p["value"], _btry=str(h)), dict(nb=h, script="a\nb", _btry=str(h)))]
+
+    def end(self):
+        pass
+
+
 class TestBenchMark(unittest.TestCase):
 
     def test_benchmark(self):
@@ -105,6 +118,38 @@ class TestBenchMark(unittest.TestCase):
         assert meta[0]["nb_cached"] < 20
         df2 = bench.to_df()
         self.assertEqual(df1.shape, df2.shape)
+
+    def test_benchmark_list(self):
+        fLOG(
+            __file__,
+            self._testMethodName,
+            OutputPrint=__name__ == "__main__")
+
+        temp = get_temp_folder(__file__, "temp_benchmark2")
+
+        local_graph = BenchMark.LocalGraph(filename=os.path.join(
+            temp, "zzz/g.png"), title="agraph", root=temp)
+        local_graph.add("alt", "h")
+        link = local_graph.to_html()
+        self.assertEqual(link, '<img src="zzz/g.png" alt="agraph"/>')
+
+        params = [dict(value=random.randint(10, 20)) for i in range(0, 20)]
+
+        bench = TestBenchMark2_("TestName", fLOG=fLOG, clog=temp,
+                                cache_file=os.path.join(temp, "cache.pickle"))
+        bench.run(params)
+        df = bench.to_df()
+        ht = df.to_html(float_format="%1.3f", index=False)
+        assert len(df) > 0
+        assert ht
+        report = os.path.join(temp, "report.html")
+        csv = os.path.join(temp, "report.csv")
+        rst = os.path.join(temp, "report.rst")
+        bench.report(filehtml=report, filecsv=csv, filerst=rst,
+                     title="A Title", description="description")
+        assert os.path.exists(report)
+        assert os.path.exists(csv)
+        assert os.path.exists(rst)
 
 
 if __name__ == "__main__":
