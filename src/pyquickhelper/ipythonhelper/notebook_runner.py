@@ -833,6 +833,8 @@ class NotebookRunner(object):
                             nbl += len(v.split("\\\\")) * 2
                         elif k in {"image/png", "image/jpg", "image/jpeg", "image/gif"}:
                             nbl += len(v) // 50
+                        elif k == "application/vnd.jupyter.widget-view+json":
+                            nbl += 5
                         else:
                             raise NotImplementedError("cell type: {0}\nk={1}\nv={2}\nCELL:\n{3}".format(kind,
                                                                                                         k, v, cell))
