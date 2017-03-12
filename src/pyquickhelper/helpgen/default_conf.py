@@ -260,6 +260,8 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
                   # 'matplotlib.sphinxext.only_directives',
                   'matplotlib.sphinxext.plot_directive',
                   # 'matplotlib.sphinxext.ipython_directive',
+                  'jupyter_sphinx.embed_widgets',
+                  "nbsphinx",
                   ]
 
     if use_lunrsearch:

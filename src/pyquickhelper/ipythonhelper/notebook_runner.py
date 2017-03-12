@@ -754,6 +754,15 @@ class NotebookRunner(object):
                         if image_from_text:
                             b = self.create_picture_from(v, "latex")
                             results.append(b)
+                    elif k == "application/vnd.jupyter.widget-view+json":
+                        # see
+                        # http://ipywidgets.readthedocs.io/en/latest/embedding.html
+                        if "model_id" not in v:
+                            raise KeyError(
+                                "model_id is missing from {0}".format(v))
+                        model_id = v["model_id"]
+                        self.fLOG(
+                            "[application/vnd.jupyter.widget-view+json] not rendered", model_id)
                     elif k in {"image/png", "image/jpg", "image/jpeg", "image/gif"}:
                         if not isinstance(v, bytes):
                             v = base64.b64decode(v)
