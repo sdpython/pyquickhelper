@@ -20,16 +20,18 @@ class CustomLog:
     This class is not protected against multithreading.
     """
 
-    def __init__(self, folder=None, filename=None, create=True):
+    def __init__(self, folder=None, filename=None, create=True, parent=None):
         """
         initialisation
 
         @param      folder          folder (created if not exists)
         @param      filename        new filename
         @param      create          force the creation
+        @param      parent          logging function (called after this one if not None)
         """
         folder = os.path.abspath(folder)
         self._folder = folder
+        self._parent = parent
         if not os.path.exists(folder):
             os.makedirs(folder)
         typstr = str  # unicode#
@@ -82,6 +84,8 @@ class CustomLog:
         Log anything.
         """
         self.fLOG(*l, **p)
+        if self._parent is not None:
+            self._parent(*l, **p)
 
     def fLOG(self, *l, **p):
         """
