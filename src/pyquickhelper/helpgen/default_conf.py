@@ -399,7 +399,7 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
             'globaltoc_includehidden': "true",
             'navbar_class': "navbar navbar-inverse",
             'navbar_fixed_top': "true",
-            'source_link_position': "nav",
+            'source_link_position': "footer",
             'bootswatch_theme': bootswatch_theme,
             'bootstrap_version': "3",
         }
