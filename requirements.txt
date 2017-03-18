@@ -30,7 +30,6 @@ mako
 Markdown
 MarkupSafe
 matplotlib
-mechanize
 metakernel
 mistune
 nbconvert
