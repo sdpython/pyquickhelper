@@ -3,6 +3,7 @@
 @file
 @brief To format a pandas dataframe
 """
+import warnings
 
 
 def df2rst(df, add_line=True, align="l", column_size=None, index=False):
@@ -39,7 +40,23 @@ def df2rst(df, add_line=True, align="l", column_size=None, index=False):
     if index:
         df = df.reset_index(drop=False).copy()
         ind = df.columns[0]
-        df[ind] = df[ind].apply(lambda x: "**{0}**".format(x))
+
+        def boldify(x):
+            try:
+                return "**{0}**".format(x)
+            except Exception as e:
+                raise Exception(
+                    "Unable to boldify type {0}".format(type(x))) from e
+
+        try:
+            values = df[ind].apply(boldify)
+        except Exception as e:
+            warnings.warn("Unable to boldify the index (1).")
+
+        try:
+            df[ind] = values
+        except Exception as e:
+            warnings.warn("Unable to boldify the index (2).")
 
     import numpy
     typstr = str  # unicode#
