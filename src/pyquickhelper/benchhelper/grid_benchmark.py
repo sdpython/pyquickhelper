@@ -142,49 +142,49 @@ class GridBenchMark(BenchMark):
         if "di" not in params:
             raise KeyError("key 'di' is missing from params")
         results = []
-        
+
         for iexp in range(self._repetition):
-            
+
             di = params["di"]
             shortname_model = params["shortname"]
             name_model = params["name"]
             shortname_ds = self._datasets[di]["shortname"]
             name_ds = self._datasets[di]["name"]
-            
+
             cl = clock()
             ds, appe, pars = self.preprocess_dataset(di, **params)
             split = clock() - cl
-                
+
             cl = clock()
             output = self.bench_experiment(ds, **pars)
             train = clock() - cl
-        
+
             cl = clock()
             metrics, appe_ = self.predict_score_experiment(ds, output)
             test = clock() - cl
-        
+
             metrics["time_preproc"] = split
             metrics["time_train"] = train
-            metrics["time_test"] = test                    
-            metrics["_btry"] = "{0}-{1}".format(shortname_model, shortname_ds)        
+            metrics["time_test"] = test
+            metrics["_btry"] = "{0}-{1}".format(shortname_model, shortname_ds)
             metrics["_iexp"] = iexp
             metrics["model_name"] = name_model
             metrics["ds_name"] = name_ds
             appe.update(appe_)
             appe["_iexp"] = iexp
             metrics.update(appe)
-        
+
             appe["_btry"] = metrics["_btry"]
             if "_i" in metrics:
                 del metrics["_i"]
             results.append((metrics, appe))
-            
+
         return results
-        
+
     def preprocess_dataset(self, dsi, **params):
         """
         split the dataset into train and test
-        
+
         @param      params      additional parameters
         @return                 list of (dataset (like info), dictionary for metrics, parameters)
         """
@@ -193,7 +193,7 @@ class GridBenchMark(BenchMark):
         params = params.copy()
         if "di" in params:
             del params["di"]
-        return  ds, appe, params
+        return ds, appe, params
 
     def bench_experiment(self, info, **params):
         """
