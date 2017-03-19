@@ -26,8 +26,7 @@ class bigger_node(nodes.Element):
     pass
 
 
-def bigger_role(role, rawtext, text, lineno, inliner,
-                options={}, content=[]):
+def bigger_role(role, rawtext, text, lineno, inliner, options=None, content=None):
     """
     Defines custom role *bigger*. The following instructions defines
     buttons of size 20 (:bigger:`text`)::
@@ -46,6 +45,10 @@ def bigger_role(role, rawtext, text, lineno, inliner,
     :param options: Directive options for customization.
     :param content: The directive content for customization.
     """
+    if options is None:
+        options = {}
+    if content is None:
+        content = []
     if text.startswith("::"):
         size, text = text[2:].split(':')
     else:

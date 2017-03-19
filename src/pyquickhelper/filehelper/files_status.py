@@ -182,8 +182,7 @@ class FilesStatus:
         @param      file    filename
         @return             True or False
         """
-        res, reason = self.has_been_modified_and_reason(
-            file, add_to_list=False)
+        res, reason = self.has_been_modified_and_reason(file)
         if res:
             self.add_modified_file(res, reason)
         return res

@@ -85,7 +85,7 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
                          nbformats=("ipynb", "slides", "html", "python",
                                     "rst", "pdf", "present", "github"),
                          # ("epub", "build", {})],
-                         layout=[("html", "build", {}), ],
+                         layout=None,
                          module_name=None, from_repo=True, add_htmlhelp=False,
                          copy_add_ext=None, direct_call=False, fLOG=fLOG):
     """
@@ -102,7 +102,8 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
     @param      extra_ext           list of file extensions to document (not .py)
     @param      nbformats           requested formats for the notebooks conversion
     @param      layout              list of formats sphinx should generate such as html, latex, pdf, docx,
-                                    it is a list of tuple (layout, build directory, parameters to override)
+                                    it is a list of tuple (layout, build directory, parameters to override),
+                                    if None --> ``[("html", "build", {})]``
     @param      module_name         name of the module (must be the folder name src/*name*, if None, *module_name*
                                     will be replaced by *project_var_name*
     @param      from_repo           if True, assumes the sources come from a source repository,
@@ -273,6 +274,8 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
         It does not require to get script location.
         Not enough stable from virtual environment.
     """
+    if layout is None:
+        layout = [("html", "build", {})]
     setup_environment_for_help(fLOG=fLOG)
     # we keep a clean list of modules
     # sphinx configuration is a module and the function loads and unloads it

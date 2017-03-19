@@ -8,12 +8,9 @@ import re
 _reg_var = re.compile("^[a-zA-Z_]([a-zA-Z_0-9]*)$")
 
 
-def open_html_form(params,
-                   title='',
-                   key_save="",
+def open_html_form(params, title='', key_save="",
                    style="background-color:gainsboro; padding:2px; border:0px;",
-                   raw=False,
-                   hook=None):
+                   raw=False, hook=None):
     """
     The function displays a form onto a notebook,
     it requires a notebook to be open.
@@ -75,7 +72,7 @@ def open_html_form(params,
 
     row = """<br />{0} <input type="{3}" id="{2}{0}" value="{1}" size="80" />"""
 
-    rows = ["""<div style="{0}"><b>{1}</b>""".format(style, title, key_save)]
+    rows = ["""<div style="{0}"><b>{1}</b>""".format(style, title)]
     for k, v in sorted(params.items()):
         if k.startswith("password"):
             typ = "password"

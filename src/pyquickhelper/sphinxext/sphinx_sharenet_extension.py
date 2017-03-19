@@ -89,7 +89,7 @@ class ShareNetDirective(Directive):
 
 
 def sharenet_role(role, rawtext, text, lineno, inliner,
-                  options={}, content=[]):
+                  options=None, content=None):
     """
     Defines custom roles *sharenet*. The following instructions defines
     buttons of size 20 (:sharenet:`facebook-linkedin-twitter-20-body`)::
@@ -108,6 +108,10 @@ def sharenet_role(role, rawtext, text, lineno, inliner,
     :param options: Directive options for customization.
     :param content: The directive content for customization.
     """
+    if options is None:
+        options = {}
+    if content is None:
+        content = []
     spl = [a.strip().lower() for a in text.split('-')]
     networks = []
     size = 20

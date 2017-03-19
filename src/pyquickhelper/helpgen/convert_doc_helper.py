@@ -387,8 +387,7 @@ def rst2html(s, fLOG=noLOG, writer="sphinx", keep_warnings=False,
         title_names.append("nbref_node")
         title_names.append("exref_node")
     else:
-        writer_name = 'html'
-        mockapp = MockSphinxApp(None)
+        raise NotImplementedError()
 
     if writer is None and directives is not None and len(directives) > 0:
         raise NotImplementedError(

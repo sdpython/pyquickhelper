@@ -117,7 +117,7 @@ class MainFrame(tkinter.Frame):
         if "selected" not in self.__dict__ or function != self.selected:
             self.selected = function
 
-        if "frameWindow" in self.__dict__:
+        if hasattr(self, "frameWindow"):
             self.frameWindow.pack_forget()
 
         self.frameWindow = FrameFunction(self.ffun,

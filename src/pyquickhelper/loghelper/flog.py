@@ -224,6 +224,26 @@ def fLOG(*l, **p):
     if "LogFile" in p:
         GetLogFile(True, filename=p["LogFile"])
 
+    message = fLOGFormat(flog_static.store_log_values["__log_file_sep"],
+                         *l, **p)
+    GetLogFile().write(message)
+    if flog_static.store_log_values["__log_display"]:
+        try:
+            myprint(message.strip("\r\n"))
+        except UnicodeEncodeError:
+            myprint("\n".join(repr(message.strip("\r\n")).split("\\n")))
+    GetLogFile().flush()
+
+
+def fLOGFormat(sep, *l, **p):
+    """
+    Formats a message.
+
+    @param      sep     line separator
+    @param      l       list of anything
+    @param      p       dictioanry of anything
+    @return             string
+    """
     dt = datetime.datetime(2009, 1, 1).now()
     typstr = str  # unicode#
     if len(l) > 0:
@@ -241,8 +261,8 @@ def fLOG(*l, **p):
                         raise Exception(
                             "unable to convert s into string: type(s)=" + typstr(type(s))) from e
             try:
-                message = typstr(dt).split(".")[0] + " " + " ".join([_str_process(s) for s in l]) + \
-                    flog_static.store_log_values["__log_file_sep"]
+                message = typstr(dt).split(
+                    ".")[0] + " " + " ".join([_str_process(s) for s in l]) + sep
             except UnicodeDecodeError:
                 message = "ENCODING ERROR WITH Python 2.7, will not fix it"
         else:
@@ -258,44 +278,21 @@ def fLOG(*l, **p):
                         raise Exception(
                             "unable to convert s into string: type(s)=" + str(type(s))) from e
 
-            message = str(dt).split(".")[0] + " " + " ".join([_str_process(s) for s in l]) + \
-                flog_static.store_log_values["__log_file_sep"]
-
-        if flog_static.store_log_values["__log_display"]:
-            try:
-                myprint(message.strip("\r\n"))
-            except UnicodeEncodeError:
-                try:
-                    myprint(
-                        "\n".join(repr(message.strip("\r\n")).split("\\n")))
-                except UnicodeEncodeError:
-                    try:
-                        rr = repr(message.strip("\r\n")).split("\\n")
-                        for r in rr:
-                            myprint(r.encode("utf8"))
-                    except UnicodeEncodeError:
-                        myprint("look error in log file")
-
-        GetLogFile().write(message)
+            message = str(dt).split(
+                ".")[0] + " " + " ".join([_str_process(s) for s in l]) + sep
         st = "                    "
     else:
-        st = typstr(dt).split(".")[0] + " "
+        message = typstr(dt).split(".")[0] + " "
+        st = "                    "
+
+    messages = [message]
 
     for k, v in p.items():
         if k == "OutputPrint" and v:
             continue
-        message = st + \
-            "%s = %s%s" % (
-                typstr(k), typstr(v), flog_static.store_log_values["__log_file_sep"])
-        if "INNER JOIN" in message:
-            break
-        GetLogFile().write(message)
-        if flog_static.store_log_values["__log_display"]:
-            try:
-                myprint(message.strip("\r\n"))
-            except UnicodeEncodeError:
-                myprint("\n".join(repr(message.strip("\r\n")).split("\\n")))
-    GetLogFile().flush()
+        message = st + "%s = %s%s" % (typstr(k), typstr(v), sep)
+        messages.append(message)
+    return sep.join(messages)
 
 
 def _this_fLOG(*l, **p):

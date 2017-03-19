@@ -451,11 +451,11 @@ def _process_notebooks_in(notebooks, outfold, build, latex_path=None, pandoc_pat
                 # it usually means there is something wrong (circular
                 # reference, ...)
                 if sys.platform.startswith("win"):
-                    c = r'"{0}\pandoc.exe" +RTS -K32m -RTS -f html -t {1} "{2}" -o "{3}"'.format(
+                    c = '"{0}\\pandoc.exe" +RTS -K32m -RTS -f html -t {1} "{2}" -o "{3}"'.format(
                         pandoc_path, pandoco, inputfile, outfilep)
                 else:
-                    c = r'pandoc +RTS -K32m -RTS -f html -t {1} "{2}" -o "{3}"'.format(
-                        pandoc_path, pandoco, outputfile, outfilep)
+                    c = 'pandoc +RTS -K32m -RTS -f html -t {0} "{1}" -o "{2}"'.format(
+                        pandoco, outputfile, outfilep)
 
                 if not sys.platform.startswith("win"):
                     c = c.replace('"', '')
@@ -543,7 +543,6 @@ def _process_notebooks_in(notebooks, outfold, build, latex_path=None, pandoc_pat
                     fLOG("copy ", f, " to ", outfold, "[", dest, "]")
                 except shutil.SameFileError:
                     fLOG("w,file ", dest, "already exists")
-                    pass
             else:
                 try:
                     shutil.copy(f, outfold)

@@ -734,7 +734,7 @@ class JenkinsExt(jenkins.Jenkins):
         for scr in script:
             search = underscore.search(scr)
             if search:
-                mes = "script still contains __\ndefault_engine_paths: {}\nfound: {}\nscr:\nSCRIPT:\n{}\n".format(
+                mes = "script still contains __\ndefault_engine_paths: {}\nfound: {}\nscr:\n{}\nSCRIPT:\n{}\n".format(
                     default_engine_paths, search.groups()[0], scr, str(script))
                 raise ValueError(mes)
             script_mod.append(scr)
@@ -1246,7 +1246,7 @@ class JenkinsExt(jenkins.Jenkins):
                     # check some inconsistencies
                     if "[27]" in job and "Anaconda3" in script:
                         raise JenkinsExtException(
-                            "incoherence for job {0}, script:\n{1}\npaths:\n{2}".format(job, script))
+                            "incoherence for job {0}, script:\n{1}".format(job, script))
 
                     locations.append((job, loc))
                     created.append((job, name, loc, job, r))

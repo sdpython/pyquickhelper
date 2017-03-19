@@ -7,6 +7,7 @@ import sys
 import os
 import unittest
 import random
+from tqdm import trange
 
 
 try:
@@ -137,6 +138,33 @@ class TestBenchMark(unittest.TestCase):
 
         bench = TestBenchMark2_("TestName", fLOG=fLOG, clog=temp,
                                 cache_file=os.path.join(temp, "cache.pickle"))
+        bench.run(params)
+        df = bench.to_df()
+        ht = df.to_html(float_format="%1.3f", index=False)
+        assert len(df) > 0
+        assert ht
+        report = os.path.join(temp, "report.html")
+        csv = os.path.join(temp, "report.csv")
+        rst = os.path.join(temp, "report.rst")
+        bench.report(filehtml=report, filecsv=csv, filerst=rst,
+                     title="A Title", description="description")
+        assert os.path.exists(report)
+        assert os.path.exists(csv)
+        assert os.path.exists(rst)
+
+    def test_benchmark_list_progressbar(self):
+        fLOG(
+            __file__,
+            self._testMethodName,
+            OutputPrint=__name__ == "__main__")
+
+        temp = get_temp_folder(__file__, "temp_benchmark_progress_bar")
+
+        params = [dict(value=random.randint(10, 20)) for i in range(0, 20)]
+
+        bench = TestBenchMark2_("TestName", clog=temp, fLOG=None,
+                                cache_file=os.path.join(temp, "cache.pickle"),
+                                progressbar=trange)
         bench.run(params)
         df = bench.to_df()
         ht = df.to_html(float_format="%1.3f", index=False)

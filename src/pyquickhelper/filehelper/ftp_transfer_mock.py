@@ -26,7 +26,7 @@ class MockTransferFTP (TransferFTP):
         self.LOG = fLOG
         self._atts = dict(site=site, login=login, password=password)
 
-    def transfer(self, file, to, debug=False, blocksize=None, callback=None):
+    def transfer(self, file, to, name, debug=False, blocksize=None, callback=None):
         """
         does nothing, returns True
         """

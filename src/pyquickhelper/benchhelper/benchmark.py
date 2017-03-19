@@ -9,7 +9,7 @@ import sys
 from datetime import datetime
 from time import clock
 import pickle
-from ..loghelper import noLOG, CustomLog
+from ..loghelper import noLOG, CustomLog, fLOGFormat
 from ..texthelper import apply_template
 from ..pandashelper import df2rst
 from ..loghelper.flog import get_relative_path
@@ -26,7 +26,8 @@ class BenchMark:
     """
 
     def __init__(self, name, clog=None, fLOG=noLOG, path_to_images=".",
-                 cache_file=None, **params):
+                 cache_file=None, pickle_module=None, progressbar=None,
+                 **params):
         """
         initialisation
 
@@ -36,6 +37,8 @@ class BenchMark:
         @param      params          extra parameters
         @param      path_to_images  path to images
         @param      cache_file      cache file
+        @param      pickle_module   pickle or dill if you need to serialize functions
+        @param      progressbar     relies on *tqdm*, example *tnrange*
 
         If *cache_file* is specified, the class will store the results of the
         method @see me bench. On a second run, the function load the cache
@@ -53,6 +56,9 @@ class BenchMark:
         self._params = params
         self._path_to_images = path_to_images
         self._cache_file = cache_file
+        self._pickle = pickle_module if pickle_module is not None else pickle
+        self._progressbar = progressbar
+        self._tracelogs = []
 
     ##
     # methods to overwrite
@@ -177,10 +183,16 @@ class BenchMark:
         """
         Log something.
         """
+        self._tracelogs.append(fLOGFormat("\n", *l, **p).strip("\n"))
         if self._clog:
             self._clog(*l, **p)
         if self._fLOG:
             self._fLOG(*l, **p)
+        if hasattr(self, "_progressbars") and self._progressbars and len(self._progressbars) > 0:
+            bar = self._progressbars[-1]
+            bar.set_description(fLOGFormat(
+                "\n", *l, **p).strip("\n").split("\n")[0])
+            bar.refresh()
 
     def run(self, params_list):
         """
@@ -194,151 +206,176 @@ class BenchMark:
             if not isinstance(di, dict):
                 raise TypeError("params_list must be a list of dictionaries")
 
-        # cache
-
-        if self._cache_file is not None and os.path.exists(self._cache_file):
-            self.fLOG("[BenchMark.run] retrieve cache '{0}'".format(
-                self._cache_file))
-            with open(self._cache_file, "rb") as f:
-                cached = pickle.load(f)
-            self.fLOG("[BenchMark.run] number of cached run: {0}".format(
-                len(cached["params_list"])))
-        else:
-            if self._cache_file is not None:
-                self.fLOG("[BenchMark.run] cache not found '{0}'".format(
-                    self._cache_file))
-            cached = dict(metrics=[], appendix=[], params_list=[])
-        self.uncache(cached)
-
-        # run
-
-        self._metrics = []
-        self._metadata = []
-        self._appendix = []
-
+        # shared variables
+        cached = {}
         meta = dict(level="BenchMark", name=self.Name, nb=len(
             params_list), time_begin=datetime.now())
+        self._metadata = []
         self._metadata.append(meta)
-
-        self.fLOG("[BenchMark.run] init {0} do".format(self.Name))
-        self.init()
-        self.fLOG("[BenchMark.run] init {0} done".format(self.Name))
-        self.fLOG("[BenchMark.run] start {0}".format(self.Name))
         nb_cached = 0
 
-        for i, di in enumerate(params_list):
-
-            # check the cache
-            if i < len(cached["params_list"]) and cached["params_list"][i] == di:
-                can = True
-                for k, v in cached.items():
-                    if i >= len(v):
-                        # cannot cache
-                        can = False
-                        break
-
-                if can:
-                    # can, we check a file is present
-                    look = "{0}.{1}.clean_cache".format(
-                        self._cache_file, cached["metrics"][i]["_btry"])
-                    if not os.path.exists(look):
-                        can = False
-                        self.fLOG(
-                            "[BenchMark.run] file '{0}' was not found --> run again.".format(look))
-                if can:
-                    self._metrics.append(cached["metrics"][i])
-                    self._appendix.append(cached["appendix"][i])
-                    self.fLOG(
-                        "[BenchMark.run] retrieved cached {0}/{1}: {2}".format(i + 1, len(params_list), di))
-                    self.fLOG(
-                        "[BenchMark.run] file '{0}' was found.".format(look))
-                    nb_cached += 1
-                    continue
-
-                # cache is available
-
-            # no cache
-            self.fLOG(
-                "[BenchMark.run] {0}/{1}: {2}".format(i + 1, len(params_list), di))
-            dt = datetime.now()
-            cl = clock()
-            tu = self.bench(**di)
-            cl = clock() - cl
-
-            if isinstance(tu, tuple):
-                tus = [tu]
-            elif isinstance(tu, list):
-                tus = tu
+        # cache
+        def cache_():
+            if self._cache_file is not None and os.path.exists(self._cache_file):
+                self.fLOG("[BenchMark.run] retrieve cache '{0}'".format(
+                    self._cache_file))
+                with open(self._cache_file, "rb") as f:
+                    cached.update(self._pickle.load(f))
+                self.fLOG("[BenchMark.run] number of cached run: {0}".format(
+                    len(cached["params_list"])))
             else:
-                raise TypeError(
-                    "return of method bench must be a tuple of a list")
+                if self._cache_file is not None:
+                    self.fLOG("[BenchMark.run] cache not found '{0}'".format(
+                        self._cache_file))
+                cached.update(dict(metrics=[], appendix=[], params_list=[]))
+            self.uncache(cached)
 
-            # checkings
-            for tu in tus:
-                met, app = tu
-                if len(tu) != 2:
-                    raise TypeError(
-                        "Method run should return a tuple with 2 elements.")
-                if "_btry" not in met:
-                    raise KeyError("Metrics should contain key '_btry'.")
-                if "_btry" not in app:
-                    raise KeyError("Appendix should contain key '_btry'.")
+        # run
+        def run_(pgar):
+            nonlocal nb_cached
+            self._metrics = []
+            self._appendix = []
 
-            for met, app in tus:
-                met["_date"] = dt
-                dt = datetime.now() - dt
-                if not isinstance(met, dict):
-                    raise TypeError("metrics should be a dictionary")
-                if "_time" in met:
-                    raise KeyError(
-                        "key _time should not be the returned metrics")
-                if "_span" in met:
-                    raise KeyError(
-                        "key _span should not be the returned metrics")
-                if "_i" in met:
-                    raise KeyError("key _i should not be the returned metrics")
-                if "_name" in met:
-                    raise KeyError(
-                        "key _name should not be the returned metrics")
-                met["_time"] = cl
-                met["_span"] = dt
-                met["_i"] = i
-                met["_name"] = self.Name
-                self._metrics.append(met)
-                app["_i"] = i
-                self._appendix.append(app)
+            self.fLOG("[BenchMark.run] init {0} do".format(self.Name))
+            self.init()
+            self.fLOG("[BenchMark.run] init {0} done".format(self.Name))
+            self.fLOG("[BenchMark.run] start {0}".format(self.Name))
+
+            for i in pgbar:
+                di = params_list[i]
+
+                # check the cache
+                if i < len(cached["params_list"]) and cached["params_list"][i] == di:
+                    can = True
+                    for k, v in cached.items():
+                        if i >= len(v):
+                            # cannot cache
+                            can = False
+                            break
+
+                    if can:
+                        # can, we check a file is present
+                        look = "{0}.{1}.clean_cache".format(
+                            self._cache_file, cached["metrics"][i]["_btry"])
+                        if not os.path.exists(look):
+                            can = False
+                            self.fLOG(
+                                "[BenchMark.run] file '{0}' was not found --> run again.".format(look))
+                    if can:
+                        self._metrics.append(cached["metrics"][i])
+                        self._appendix.append(cached["appendix"][i])
+                        self.fLOG(
+                            "[BenchMark.run] retrieved cached {0}/{1}: {2}".format(i + 1, len(params_list), di))
+                        self.fLOG(
+                            "[BenchMark.run] file '{0}' was found.".format(look))
+                        nb_cached += 1
+                        continue
+
+                    # cache is available
+
+                # no cache
                 self.fLOG(
-                    "[BenchMark.run] {0}/{1} end {2}".format(i + 1, len(params_list), met))
+                    "[BenchMark.run] {0}/{1}: {2}".format(i + 1, len(params_list), di))
+                dt = datetime.now()
+                cl = clock()
+                tu = self.bench(**di)
+                cl = clock() - cl
 
-        self.fLOG("[BenchMark.run] graph {0} do".format(self.Name))
-        self._graphs = self.graphs(self._path_to_images)
-        if self._graphs is None or not isinstance(self._graphs, list):
-            raise TypeError("Method graphs does not return anything.")
-        self.fLOG("[BenchMark.run] graph {0} done".format(self.Name))
+                if isinstance(tu, tuple):
+                    tus = [tu]
+                elif isinstance(tu, list):
+                    tus = tu
+                else:
+                    raise TypeError(
+                        "return of method bench must be a tuple of a list")
 
-        self.fLOG("[BenchMark.run] end {0} do".format(self.Name))
-        self.end()
-        self.fLOG("[BenchMark.run] end {0} done".format(self.Name))
-        meta["time_end"] = datetime.now()
-        meta["nb_cached"] = nb_cached
+                # checkings
+                for tu in tus:
+                    met, app = tu
+                    if len(tu) != 2:
+                        raise TypeError(
+                            "Method run should return a tuple with 2 elements.")
+                    if "_btry" not in met:
+                        raise KeyError("Metrics should contain key '_btry'.")
+                    if "_btry" not in app:
+                        raise KeyError("Appendix should contain key '_btry'.")
+
+                for met, app in tus:
+                    met["_date"] = dt
+                    dt = datetime.now() - dt
+                    if not isinstance(met, dict):
+                        raise TypeError("metrics should be a dictionary")
+                    if "_time" in met:
+                        raise KeyError(
+                            "key _time should not be the returned metrics")
+                    if "_span" in met:
+                        raise KeyError(
+                            "key _span should not be the returned metrics")
+                    if "_i" in met:
+                        raise KeyError(
+                            "key _i should not be in the returned metrics")
+                    if "_name" in met:
+                        raise KeyError(
+                            "key _name should not be the returned metrics")
+                    met["_time"] = cl
+                    met["_span"] = dt
+                    met["_i"] = i
+                    met["_name"] = self.Name
+                    self._metrics.append(met)
+                    app["_i"] = i
+                    self._appendix.append(app)
+                    self.fLOG(
+                        "[BenchMark.run] {0}/{1} end {2}".format(i + 1, len(params_list), met))
+
+        def graph_():
+            self.fLOG("[BenchMark.run] graph {0} do".format(self.Name))
+            self._graphs = self.graphs(self._path_to_images)
+            if self._graphs is None or not isinstance(self._graphs, list):
+                raise TypeError("Method graphs does not return anything.")
+            self.fLOG("[BenchMark.run] graph {0} done".format(self.Name))
+
+            self.fLOG("[BenchMark.run] end {0} do".format(self.Name))
+            self.end()
+            self.fLOG("[BenchMark.run] end {0} done".format(self.Name))
+            meta["time_end"] = datetime.now()
+            meta["nb_cached"] = nb_cached
 
         # write information about run experiments
+        def final_():
+            if self._cache_file is not None:
+                self.fLOG("[BenchMark.run] save cache '{0}'".format(
+                    self._cache_file))
+                cached = dict(metrics=self._metrics,
+                              appendix=self._appendix, params_list=params_list)
+                with open(self._cache_file, "wb") as f:
+                    self._pickle.dump(cached, f)
+                for di in self._metrics:
+                    look = "{0}.{1}.clean_cache".format(
+                        self._cache_file, di["_btry"])
+                    with open(look, "w") as f:
+                        f.write(
+                            "Remove this file if you want to force a new run.")
+                    self.fLOG("[BenchMark.run] wrote '{0}'.".format(look))
 
-        if self._cache_file is not None:
-            self.fLOG("[BenchMark.run] save cache '{0}'".format(
-                self._cache_file))
-            cached = dict(metrics=self._metrics,
-                          appendix=self._appendix, params_list=params_list)
-            with open(self._cache_file, "wb") as f:
-                pickle.dump(cached, f)
-            for di in self._metrics:
-                look = "{0}.{1}.clean_cache".format(
-                    self._cache_file, di["_btry"])
-                with open(look, "w") as f:
-                    f.write("Remove this file if you want to force a new run.")
-                self.fLOG("[BenchMark.run] wrote '{0}'.".format(look))
+                self.fLOG("[BenchMark.run] done.")
 
-            self.fLOG("[BenchMark.run] done.")
+        progress = self._progressbar if self._progressbar is not None else range
+        functions = [cache_, run_, graph_, final_]
+        pgbar0 = progress(0, len(functions))
+        if self._progressbar:
+            self._progressbars = [pgbar0]
+        for i in pgbar0:
+            if i == 1:
+                pgbar = progress(len(params_list))
+                if self._progressbar:
+                    self._progressbars.append(pgbar)
+                functions[i](pgbar)
+                if self._progressbar:
+                    self._progressbars.pop()
+            else:
+                functions[i]()
+
+        self._progressbars = None
 
     @property
     def Metrics(self):
@@ -546,7 +583,8 @@ class BenchMark:
 
     default_css = """
                 .datagrid table { border-collapse: collapse; border-spacing: 0; width: 100%;
-                        table-layout: fixed; font-family: Verdana; font-size: 12px; }
+                        table-layout: fixed; font-family: Verdana; font-size: 12px;
+                        word-wrap: break-word; }
 
                 .datagrid thead {
                   cursor: pointer;
@@ -608,14 +646,21 @@ class BenchMark:
                 % if len(bench.Appendix) > 0:
                 <h2 id="appendix">Appendix</h2>
                 <div class="appendix">
-                % for app in bench.Appendix:
+                % for met, app in zip(bench.Metrics, bench.Appendix):
                     <h3 id="${app["_i"]}">${app["_btry"]}</h3>
                     <ul>
                     % for k, v in sorted(app.items()):
                         % if isinstance(v, str) and "\\n" in v:
-                            <li><b>${k}</b>: <pre>${v}</pre></li>
+                            <li>I <b>${k}</b>: <pre>${v}</pre></li>
                         % else:
-                            <li><b>${k}</b>: ${v}</li>
+                            <li>I <b>${k}</b>: ${v}</li>
+                        % endif
+                    % endfor
+                    % for k, v in sorted(met.items()):
+                        % if isinstance(v, str) and "\\n" in v:
+                            <li>M <b>${k}</b>: <pre>${v}</pre></li>
+                        % else:
+                            <li>M <b>${k}</b>: ${v}</li>
                         % endif
                     % endfor
                     </ul>
@@ -664,7 +709,7 @@ class BenchMark:
                 Appendix
                 --------
 
-                % for app in bench.Appendix:
+                % for met, app in zip(bench.Metrics, bench.Appendix):
 
                 .. _l-${bench.Name}-${app["_i"]}:
 
@@ -672,6 +717,18 @@ class BenchMark:
                 ${"+" * len(app["_btry"])}
 
                 % for k, v in sorted(app.items()):
+                    % if isinstance(v, str) and "\\n" in v:
+                * I **${k}**:
+                  ::
+
+                    ${"\\n    ".join(v.split("\\n"))}
+
+                    % else:
+                * M **${k}**: ${v}
+                    % endif
+                % endfor
+
+                % for k, v in sorted(met.items()):
                     % if isinstance(v, str) and "\\n" in v:
                 * **${k}**:
                   ::
@@ -682,6 +739,7 @@ class BenchMark:
                 * **${k}**: ${v}
                     % endif
                 % endfor
+
                 % endfor
                 % endif
                 """.replace("                ", "")

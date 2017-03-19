@@ -76,6 +76,7 @@ sphinxcontrib.youtube
 sphinxjp.themes.basicstrap
 sphinxjp.themes.revealjs
 sphinxjp.themes.sphinxjp
+tqdm
 traitlets
 virtualenv
 wheel

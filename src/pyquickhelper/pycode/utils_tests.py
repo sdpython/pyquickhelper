@@ -302,7 +302,7 @@ def main_wrapper_tests(codefile, skip_list=None, processes=False, add_coverage=F
                     # we skip, it raises an exception with coverage 4.2
                     continue
                 v = getattr(cov.config, attr)
-                st = "{0}={2}".format(attr, where, v)
+                st = "{0}={1}".format(attr, v)
                 rows.append(st)
             rows.append("")
             content = "\n".join(rows)

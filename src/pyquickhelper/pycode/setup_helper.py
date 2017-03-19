@@ -74,7 +74,7 @@ def process_standard_options_for_setup(argv, file_or_folder, project_var_name, m
                                        nbformats=(
                                            "ipynb", "html", "python", "rst", "slides",
                                            "pdf", "present", "github"),
-                                       layout=["html", "pdf"],  # , "epub"],
+                                       layout=None,  # , "epub"],
                                        additional_ut_path=None,
                                        skip_function=default_skip_function, covtoken=None, hook_print=True,
                                        stdout=None, stderr=None, use_run_cmd=False, filter_warning=None,
@@ -116,7 +116,8 @@ def process_standard_options_for_setup(argv, file_or_folder, project_var_name, m
     @param      copy_add_ext                additional file extensions to copy
     @param      nbformats                   requested formats for the notebooks conversion
     @param      layout                      list of formats sphinx should generate such as html, latex, pdf, docx,
-                                            it is a list of tuple (layout, build directory, parameters to override)
+                                            it is a list of tuple (layout, build directory, parameters to override),
+                                            if None --> ``["html", "pdf"]``
     @param      additional_ut_path          additional paths to add when running unit tests
     @param      skip_function               function to skip unit tests, see @ee fn main_wrapper_tests
     @param      covtoken                    token used when publishing coverage report to `codecov <https://codecov.io/>`_,
@@ -178,6 +179,9 @@ def process_standard_options_for_setup(argv, file_or_folder, project_var_name, m
         tests below 10 or 5 seconds. Option ``-e`` and ``-g`` were added to
         filter file by regular expressions (in with *e*, out with *g*).
     """
+    if layout is None:
+        layout = ["html", "pdf"]
+
     if "--help" in argv or "--help-commands" in argv:
         process_standard_options_for_setup_help(argv)
         return True
@@ -553,7 +557,7 @@ def standard_help_for_setup(argv, file_or_folder, project_var_name, module_name=
                             add_htmlhelp=False, copy_add_ext=None,
                             nbformats=("ipynb", "html", "python",
                                        "rst", "slides", "pdf", "present"),
-                            layout=["html", "pdf"],  # , "epub"],
+                            layout=None,  # , "epub"],
                             use_run_cmd=False,
                             fLOG=noLOG):
     """
@@ -568,7 +572,7 @@ def standard_help_for_setup(argv, file_or_folder, project_var_name, module_name=
     @param      add_htmlhelp        run HTML Help too (only on Windows)
     @param      copy_add_ext        additional extension of files to copy
     @param      nbformats           notebooks format to generate
-    @param      layout              layout for the documentation
+    @param      layout              layout for the documentation, if None --> ``["html", "pdf"]``
     @param      use_run_cmd         use function @see fn run_cmd instead of ``os.system``
                                     to build the documentation
     @param      fLOG                logging function
@@ -587,6 +591,8 @@ def standard_help_for_setup(argv, file_or_folder, project_var_name, module_name=
     if "--help" in argv:
         print(get_help_usage())
     else:
+        if layout is None:
+            layout = ["html", "pdf"]
         if module_name is None:
             module_name = project_var_name
 

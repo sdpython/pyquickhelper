@@ -142,7 +142,7 @@ def run_python_script(script, params=None, comment=None, setsysvar=None, process
         except Exception as ec:
             if comment is None:
                 comment = ""
-            message = "SCRIPT:\n{0}\nPARAMS\n{1}\nCOMMENT\n{1}".format(
+            message = "SCRIPT:\n{0}\nPARAMS\n{1}\nCOMMENT\n{2}".format(
                 script, params, comment)
             raise RunPythonCompileError(message) from ec
 

@@ -994,7 +994,8 @@ def prepare_file_for_sphinx_help_generation(store_obj, input, output,
 
         if os.path.isfile(src):
             fLOG("  [p] ", src)
-            _private_process_one_file(src, dst, silent, fmod_copy)
+            _private_process_one_file(
+                src, dst, silent, fmod_copy, replace_relative_import, use_sys)
 
             temp = os.path.split(dst)
             actions_t = [(">", temp[1], temp[0], 0, 0)]

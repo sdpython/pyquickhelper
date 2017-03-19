@@ -73,14 +73,18 @@ def post_process_latex_output(root, doall, latex_book=False, exc=True, custom_la
                     f.write(content)
 
 
-def post_process_python_output(root, doall):
+def post_process_python_output(root, doall, exc=True):
     """
     post process the python file produced by sphinx
 
     @param      root        root path or python file to process
     @param      doall       unused
+    @param      exc         raise an exception if needed
 
     .. versionadded:: 1.3
+
+    .. versionchanged:: 1.5
+        Add parameter *exc*.
     """
     if os.path.isfile(root):
         file = root
@@ -91,7 +95,7 @@ def post_process_python_output(root, doall):
             f.write(content)
     else:
         build = os.path.join(root, "_doc", "sphinxdoc", "build", "latex")
-        if not os.path.exists(build):
+        if not os.path.exists(build) and exc:
             raise FileNotFoundError(build)
         for tex in os.listdir(build):
             if tex.endswith(".tex"):

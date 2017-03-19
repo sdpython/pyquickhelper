@@ -576,12 +576,12 @@ def main_run_test(runner, path_test=None, limit_max=1e9, log=False, skip=-1, ski
                 try:
                     sw = "  w{0}: {1}\n".format(i, w)
                 except UnicodeEncodeError:
-                    sw = "  w{0}: Unable to convert a warnings of type {0} into a string (1)".format(
+                    sw = "  w{0}: Unable to convert a warnings of type {1} into a string (1)".format(
                         i, type(w))
                 try:
                     memout.write(sw)
                 except UnicodeEncodeError:
-                    sw = "  w{0}: Unable to convert a warnings of type {0} into a string (2)".format(
+                    sw = "  w{0}: Unable to convert a warnings of type {1} into a string (2)".format(
                         i, type(w))
                     memout.write(sw)
 

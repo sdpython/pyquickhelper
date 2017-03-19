@@ -94,7 +94,9 @@ class FSM(object):
     @var current_transition hold the currently active transition
     """
 
-    def __init__(self, start_state=None, transitions=[]):
+    def __init__(self, start_state=None, transitions=None):
+        if transitions is None:
+            transitions = []
         self.transitions = transitions
         self.current_state = start_state
         self.current_input = None

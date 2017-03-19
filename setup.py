@@ -240,6 +240,7 @@ if not r:
             "sphinxcontrib-imagesvg",
             "sphinxcontrib-jsdemo",
             "sphinxjp.themes.revealjs",
+            "tqdm",
             "traitlets",
         ],
         extras_require={

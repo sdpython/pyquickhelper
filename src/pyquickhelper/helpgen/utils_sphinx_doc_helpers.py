@@ -479,7 +479,7 @@ class RstFileHelp:
 
 
 def import_module(
-        rootm, filename, log_function, additional_sys_path=[], fLOG=noLOG):
+        rootm, filename, log_function, additional_sys_path=None, fLOG=noLOG):
     """
     import a module using its filename
     @param      rootm                   root of the module (for relative import)
@@ -494,6 +494,8 @@ def import_module(
     .. versionadded:: 1.0
         Parameter *fLOG* was added.
     """
+    if additional_sys_path is None:
+        additional_sys_path = []
     memo = copy.deepcopy(sys.path)
     li = filename.replace("\\", "/")
     sdir = os.path.abspath(os.path.split(li)[0])
@@ -913,7 +915,7 @@ def process_look_for_tag(tag, title, files):
 
         if os.environ.get("USERNAME", os.environ.get("USER", "````````````")) in rows[0]:
             raise HelpGenException(
-                "the title is probably wrong: {0}\ntag={1}\ntit={1}".format(rows[0], tag, tit))
+                "the title is probably wrong: {0}\ntag={1}\ntit={2}".format(rows[0], tag, tit))
 
         for pa, a, b, c in coll:
             pan = re.sub(r'([^a-zA-Z0-9_])', "", pa)

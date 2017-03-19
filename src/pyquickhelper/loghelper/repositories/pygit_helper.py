@@ -483,8 +483,7 @@ def clone(location, srv, group, project, username=None, password=None):
         address = "https://{0}:{1}@{2}/{3}/{4}.git".format(username,
                                                            password, srv, group, project)
     else:
-        address = "https://{2}/{3}/{4}.git".format(username,
-                                                   password, srv, group, project)
+        address = "https://{0}/{1}/{2}.git".format(srv, group, project)
 
     cmd = get_cmd_git()
     cmd += " clone " + address + " " + location
