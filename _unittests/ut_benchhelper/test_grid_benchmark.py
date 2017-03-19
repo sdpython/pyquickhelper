@@ -63,17 +63,17 @@ class TestGridBenchMark(unittest.TestCase):
         bench.run(params)
         df = bench.to_df()
         ht = df.to_html(float_format="%1.3f", index=False)
-        assert len(df) > 0
-        assert ht
+        self.assertTrue(len(df) > 0)
+        self.assertTrue(ht is not None)
         self.assertEqual(df.shape[0], 4)
         report = os.path.join(temp, "report.html")
         csv = os.path.join(temp, "report.csv")
         rst = os.path.join(temp, "report.rst")
         bench.report(filehtml=report, filecsv=csv, filerst=rst,
                      title="A Title", description="description")
-        assert os.path.exists(report)
-        assert os.path.exists(csv)
-        assert os.path.exists(rst)
+        self.assertTrue(os.path.exists(report))
+        self.assertTrue(os.path.exists(csv))
+        self.assertTrue(os.path.exists(rst))
 
 
 if __name__ == "__main__":

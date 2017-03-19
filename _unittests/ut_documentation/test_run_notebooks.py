@@ -81,7 +81,7 @@ class TestRunNotebooks(unittest.TestCase):
                     keepnote.append((os.path.join(fnb, f), code_init))
                 else:
                     keepnote.append(os.path.join(fnb, f))
-        assert len(keepnote) > 0
+        self.assertTrue(len(keepnote) > 0)
 
         def valid(cell):
             if "open_html_form" in cell:
@@ -102,7 +102,7 @@ class TestRunNotebooks(unittest.TestCase):
 
         res = execute_notebook_list(
             temp, keepnote, fLOG=fLOG, valid=valid, additional_path=addpaths, kernel_name=kernel_name)
-        assert len(res) > 0
+        self.assertTrue(len(res) > 0)
         fails = [(os.path.split(k)[-1], v)
                  for k, v in sorted(res.items()) if not v[0]]
         for f in fails:

@@ -34,10 +34,10 @@ class TestGetfLOG(unittest.TestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
         f1 = get_fLOG(True)
-        assert f1
+        self.assertTrue(f1 is not None)
         f2 = get_fLOG(False)
-        assert f2
-        assert f1 != f2
+        self.assertTrue(f2 is not None)
+        self.assertTrue(f1 != f2)
 
 
 if __name__ == "__main__":

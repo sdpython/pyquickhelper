@@ -77,16 +77,16 @@ class TestBenchMark(unittest.TestCase):
         bench.run(params)
         df = bench.to_df()
         ht = df.to_html(float_format="%1.3f", index=False)
-        assert len(df) > 0
-        assert ht
+        self.assertTrue(len(df) > 0)
+        self.assertTrue(ht is not None)
         report = os.path.join(temp, "report.html")
         csv = os.path.join(temp, "report.csv")
         rst = os.path.join(temp, "report.rst")
         bench.report(filehtml=report, filecsv=csv, filerst=rst,
                      title="A Title", description="description")
-        assert os.path.exists(report)
-        assert os.path.exists(csv)
-        assert os.path.exists(rst)
+        self.assertTrue(os.path.exists(report))
+        self.assertTrue(os.path.exists(csv))
+        self.assertTrue(os.path.exists(rst))
         df1 = bench.to_df()
 
         # second run
@@ -116,7 +116,7 @@ class TestBenchMark(unittest.TestCase):
         bench.run(params)
         meta = bench.Metadata
         fLOG(meta)
-        assert meta[0]["nb_cached"] < 20
+        self.assertTrue(meta[0]["nb_cached"] < 20)
         df2 = bench.to_df()
         self.assertEqual(df1.shape, df2.shape)
 
@@ -141,16 +141,16 @@ class TestBenchMark(unittest.TestCase):
         bench.run(params)
         df = bench.to_df()
         ht = df.to_html(float_format="%1.3f", index=False)
-        assert len(df) > 0
-        assert ht
+        self.assertTrue(len(df) > 0)
+        self.assertTrue(ht is not None)
         report = os.path.join(temp, "report.html")
         csv = os.path.join(temp, "report.csv")
         rst = os.path.join(temp, "report.rst")
         bench.report(filehtml=report, filecsv=csv, filerst=rst,
                      title="A Title", description="description")
-        assert os.path.exists(report)
-        assert os.path.exists(csv)
-        assert os.path.exists(rst)
+        self.assertTrue(os.path.exists(report))
+        self.assertTrue(os.path.exists(csv))
+        self.assertTrue(os.path.exists(rst))
 
     def test_benchmark_list_progressbar(self):
         fLOG(
@@ -168,16 +168,16 @@ class TestBenchMark(unittest.TestCase):
         bench.run(params)
         df = bench.to_df()
         ht = df.to_html(float_format="%1.3f", index=False)
-        assert len(df) > 0
-        assert ht
+        self.assertTrue(len(df) > 0)
+        self.assertTrue(ht is not None)
         report = os.path.join(temp, "report.html")
         csv = os.path.join(temp, "report.csv")
         rst = os.path.join(temp, "report.rst")
         bench.report(filehtml=report, filecsv=csv, filerst=rst,
                      title="A Title", description="description")
-        assert os.path.exists(report)
-        assert os.path.exists(csv)
-        assert os.path.exists(rst)
+        self.assertTrue(os.path.exists(report))
+        self.assertTrue(os.path.exists(csv))
+        self.assertTrue(os.path.exists(rst))
 
 
 if __name__ == "__main__":
