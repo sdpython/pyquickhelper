@@ -64,7 +64,7 @@ class TestBenchMark(unittest.TestCase):
 
         temp = get_temp_folder(__file__, "temp_benchmark")
 
-        local_graph = BenchMark.LocalGraph(filename=os.path.join(
+        local_graph = BenchMark.LocalGraph(lambda ax: ax, filename=os.path.join(
             temp, "zzz/g.png"), title="agraph", root=temp)
         local_graph.add("alt", "h")
         link = local_graph.to_html()
@@ -128,7 +128,7 @@ class TestBenchMark(unittest.TestCase):
 
         temp = get_temp_folder(__file__, "temp_benchmark2")
 
-        local_graph = BenchMark.LocalGraph(filename=os.path.join(
+        local_graph = BenchMark.LocalGraph(lambda ax: ax, filename=os.path.join(
             temp, "zzz/g.png"), title="agraph", root=temp)
         local_graph.add("alt", "h")
         link = local_graph.to_html()

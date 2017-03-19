@@ -88,6 +88,47 @@ class BenchMark:
         """
         raise NotImplementedError("It should be overwritten.")
 
+    def graphs(self, path_to_images):
+        """
+        Builds graphs after the benchmark was run.
+
+        @param      path_to_images      path to images
+        @return                         a list of LocalGraph
+
+        Every returned graph must contain a function which creates
+        the graph. The function must accepts two parameters *ax* and
+        *text*. Example:
+
+        ::
+
+            def local_graph(ax=None, text=True, figsize=(5,5)):
+                vx = ...
+                vy = ...
+                btrys = set(df["_btry"])
+                ymin = df[vy].min()
+                ymax = df[vy].max()
+                decy = (ymax - ymin) / 50
+                colors = cm.rainbow(numpy.linspace(0, 1, len(btrys)))
+                if len(btrys) == 0:
+                    raise ValueError("The benchmark is empty.")
+                if ax is None:
+                    fig, ax = plt.subplots(1, 1, figsize=figsize)
+                    ax.grid(True)
+                for i, btry in enumerate(sorted(btrys)):
+                    subset = df[df["_btry"]==btry]
+                    if subset.shape[0] > 0:
+                        subset.plot(x=vx, y=vy, kind="scatter", label=btry, ax=ax, color=colors[i])
+                    if text:
+                        tx = subset[vx].mean()
+                        ty = subset[vy].mean()
+                        ax.text(tx, ty + decy, btry, size='small',
+                                color=colors[i], ha='center', va='bottom')
+                ax.set_xlabel(vx)
+                ax.set_ylabel(vy)
+                return ax
+        """
+        return []
+
     def uncache(self, cache):
         """
         overwrite this method to uncache some previous run
@@ -103,19 +144,34 @@ class BenchMark:
         Information about graphs.
         """
 
-        def __init__(self, filename=None, title=None, root=None):
+        def __init__(self, func_gen, filename=None, title=None, root=None):
             """
             constructor
 
+            @parm       func_gen        function generating the graph
             @param      filename        filename
             @param      title           title
             @param      root            path should be relative to this one
             """
+            if func_gen is None:
+                raise ValueError("func_gen cannot be None")
             if filename is not None:
                 self.filename = filename
             if title is not None:
                 self.title = title
             self.root = root
+            self.func_gen = func_gen
+
+        def plot(self, ax=None, text=True, **kwargs):
+            """
+            Draw the graph again
+
+            @param      ax          axis
+            @param      text        add text on the graph
+            @param      kwargs      additional parameters
+            @return                 axis
+            """
+            return self.func_gen(ax=ax, text=text, **kwargs)
 
         def add(self, name, value):
             """
@@ -164,14 +220,6 @@ class BenchMark:
                 return '.. image:: {0}'.format(filename)
             else:
                 raise NotImplementedError("only files are allowed")
-
-    def graphs(self, path_to_images):
-        """
-        builds graphs after the benchmark was run
-
-        @param      path_to_images      path to images
-        """
-        return []
 
     @property
     def Name(self):
@@ -333,8 +381,11 @@ class BenchMark:
             self._graphs = self.graphs(self._path_to_images)
             if self._graphs is None or not isinstance(self._graphs, list):
                 raise TypeError("Method graphs does not return anything.")
+            for tu in self._graphs:
+                if not isinstance(tu, self.LocalGraph):
+                    raise TypeError(
+                        "Method graphs should return a list of LocalGraph.")
             self.fLOG("[BenchMark.run] graph {0} done".format(self.Name))
-
             self.fLOG("[BenchMark.run] end {0} do".format(self.Name))
             self.end()
             self.fLOG("[BenchMark.run] end {0} done".format(self.Name))
