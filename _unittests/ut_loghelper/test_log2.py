@@ -34,9 +34,9 @@ class TestLog2 (unittest.TestCase):
 
         url = "http://www.xavierdupre.fr/?blogpost=1"
         uu = _get_file_url(url, "/this/")
-        assert uu == "/this//http!!www-xavierdupre-fr!_blogpost_1"
+        self.assertEqual(uu, "/this//http!!www-xavierdupre-fr!_blogpost_1")
         uu = _get_file_txt("/g/r.zip")
-        assert uu == "r.txt"
+        self.assertEqual(uu, "r.txt")
 
     def test_get_default_value_type(self):
         fLOG(
@@ -44,8 +44,8 @@ class TestLog2 (unittest.TestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
-        assert get_default_value_type(None) is None
-        assert get_default_value_type(int) == 0
+        self.assertIsNone(get_default_value_type(None))
+        self.assertEqual(get_default_value_type(int), 0)
 
     def test_run_cmd(self):
         fLOG(
@@ -74,8 +74,8 @@ class TestLog2 (unittest.TestCase):
         temp = get_temp_folder(__file__, "temp_download")
         url = "http://www.xavierdupre.fr/enseignement/complements/added.zip"
         down = download(url, temp)
-        assert os.path.exists(down)
-        assert down.endswith("added.txt")
+        self.assertTrue(os.path.exists(down))
+        self.assertTrue(down.endswith("added.txt"))
 
 
 if __name__ == "__main__":

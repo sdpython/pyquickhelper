@@ -30,7 +30,8 @@ class GridBenchMark(BenchMark):
         @param      progressbar     relies on *tqdm*, example *tnrange*
 
         If *cache_file* is specified, the class will store the results of the
-        method @see me bench. On a second run, the function load the cache
+        method :meth:`bench <pyquickhelper.benchhelper.benchmark.GridBenchMark.bench>`.
+        On a second run, the function load the cache
         and run modified or new run (in *param_list*).
 
         *datasets* should be a dictionary with dataframes a values
