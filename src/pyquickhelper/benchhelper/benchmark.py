@@ -386,6 +386,8 @@ class BenchMark:
                     raise TypeError(
                         "Method graphs should return a list of LocalGraph.")
             self.fLOG("[BenchMark.run] graph {0} done".format(self.Name))
+            self.fLOG("[BenchMark.run] Received {0} graphs.".format(
+                len(self._graphs)))
             self.fLOG("[BenchMark.run] end {0} do".format(self.Name))
             self.end()
             self.fLOG("[BenchMark.run] end {0} done".format(self.Name))
