@@ -253,7 +253,7 @@ def synchronize_folder(p1, p2, hash_size=1024 ** 2, repo1=False, repo2=False,
     nbprint = 0
     for op, file, n1, n2 in res:
         nbcur += 1
-        if nbprint <= 50 and op != "==":
+        if nbprint <= 50 and op not in ("==", '<', '<=') and (n1 is None or not n1.isdir()):
             fLOG(
                 "... {0}/{1} (current: '{2}' :: {3})".format(nbcur, len(res), file, op))
             nbprint += 1

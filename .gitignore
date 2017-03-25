@@ -270,3 +270,4 @@ _unittests/run_unittests.py.out
 *.err
 _unittests/ut_loghelper/custom_log_000.txt
 _unittests/ut_loghelper/log_custom_000.txt
+src/.vscode/settings.json
