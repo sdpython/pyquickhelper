@@ -231,7 +231,13 @@ def fLOG(*l, **p):
         try:
             myprint(message.strip("\r\n"))
         except UnicodeEncodeError:
-            myprint("\n".join(repr(message.strip("\r\n")).split("\\n")))
+            mes = "\n".join(repr(message.strip("\r\n")).split("\\n"))
+            try:
+                myprint(mes)
+            except UnicodeEncodeError:
+                mes2 = mes.encode("utf-8").decode("cp1252", errors="ignore")
+                myprint(mes2)
+
     GetLogFile().flush()
 
 
