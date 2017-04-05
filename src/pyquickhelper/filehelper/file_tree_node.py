@@ -39,26 +39,26 @@ class FileTreeNode:
             path = path.lower ()
             f    = f.lower ()
             if extout.search (f) :
-                if not d and not f.endswith (".pyc") : fLOG ("rejected (o1)", path, f)
+                if not d and not f.endswith(".pyc"): fLOG("rejected (o1)", path, f)
                 return False
             fu = os.path.join (path, f)
             if extfou.search (fu) :
-                if not d and not f.endswith (".pyc") : fLOG ("rejected (o2)", path, f)
+                if not d and not f.endswith(".pyc"): fLOG("rejected (o2)", path, f)
                 return False
             return True
 
         f1  = p1
         f2  = p2
 
-        node1 = FileTreeNode (f1, filter = filter, repository = svn1)
-        node2 = FileTreeNode (f2, filter = filter, repository = svn2)
-        fLOG (len (node1), node1.max_date ())
-        fLOG (len (node2), node2.max_date ())
+        node1 = FileTreeNode(f1, filter = filter, repository = svn1)
+        node2 = FileTreeNode(f2, filter = filter, repository = svn2)
+        fLOG(len(node1), node1.max_date())
+        fLOG(len(node2), node2.max_date())
 
-        res = node1.difference (node2, hash_size = hash_size)
+        res = node1.difference(node2, hash_size=hash_size)
         return res
 
-    fLOG (__file__, "synchro", OutputPrint = __name__ == "__main__")
+    fLOG(__file__, "synchro", OutputPrint = __name__ == "__main__")
     res = example (p1, p2)
     @endcode
     """
@@ -77,15 +77,8 @@ class FileTreeNode:
         return ".*[.]" + "|".join(["(%s$)" % e for e in ext])
     build_expression = staticmethod(build_expression)
 
-    def __init__(self, root,
-                 file=None,
-                 filter=None,
-                 level=0,
-                 parent=None,
-                 repository=False,
-                 log=False,
-                 log1=False,
-                 fLOG=noLOG):
+    def __init__(self, root, file=None, filter=None, level=0, parent=None,
+                 repository=False, log=False, log1=False, fLOG=noLOG):
         """
         define a file, relative to a root
         @param      root            root (it must exist)
@@ -324,15 +317,9 @@ class FileTreeNode:
                 self.fLOG("[FileTreeNode], entering", a)
             if filter is None or filter(self._root, fi, a, isd):
                 try:
-                    n = FileTreeNode(self._root,
-                                     os.path.join(fi, a),
-                                     filter,
-                                     level=self._level + 1,
-                                     parent=self,
-                                     repository=repository,
-                                     log=self._log,
-                                     log1=self._log1 or self._log,
-                                     fLOG=self.fLOG)
+                    n = FileTreeNode(self._root, os.path.join(fi, a), filter, level=self._level + 1,
+                                     parent=self, repository=repository, log=self._log,
+                                     log1=self._log1 or self._log, fLOG=self.fLOG)
                 except PQHException as e:
                     if "does not exist" in str(e):
                         self.fLOG(
