@@ -245,7 +245,7 @@ if %errorlevel% neq 0 exit /b %errorlevel%
 
 @echo ~SET pythonexe=%pythonexe%
 @echo ~CALL %pythonexe% setup.py write_version
-%pythonexe% setup.py write_version
+%pythonexe% %current%setup.py write_version
 if %errorlevel% neq 0 exit /b %errorlevel%
 @echo ################# VERSION
 more version.txt
@@ -266,7 +266,7 @@ windows_setup_hook = """
 @echo SCRIPT: windows_setup_hook
 @echo #######################################################_setup_hook
 @echo ~CALL %pythonexe% setup.py setup_hook
-%pythonexe% setup.py setup_hook
+%pythonexe% %current%setup.py setup_hook
 if %errorlevel% neq 0 exit /b %errorlevel%
 @echo #######################################################_END_BASE
 """
@@ -278,7 +278,7 @@ if %errorlevel% neq 0 exit /b %errorlevel%
 windows_any_setup_command = windows_any_setup_command_base + windows_setup_hook + """
 @echo ~CALL %pythonexe% -u setup.py %3 %4 %5 %6 %7 %8 %9
 rem set PYTHONPATH=additional_path
-%pythonexe% -u setup.py %3 %4 %5 %6 %7 %8 %9
+%pythonexe% -u %current%setup.py %3 %4 %5 %6 %7 %8 %9
 if %errorlevel% neq 0 exit /b %errorlevel%
 @echo #######################################################6
 """ + copy_to_pypiserver
@@ -286,8 +286,8 @@ if %errorlevel% neq 0 exit /b %errorlevel%
 #################
 #: call the setup
 #################
-windows_setup = "rem set PYTHONPATH=additional_path\n%pythonexe% -u setup.py"
-jenkins_windows_setup = "%jenkinspythonexe% -u setup.py"
+windows_setup = "rem set PYTHONPATH=additional_path\n%pythonexe% -u %current%setup.py"
+jenkins_windows_setup = "%jenkinspythonexe% -u %current%setup.py"
 
 #################
 #: build setup script for Windows
@@ -295,10 +295,10 @@ jenkins_windows_setup = "%jenkinspythonexe% -u setup.py"
 
 windows_build_setup = windows_any_setup_command_base + windows_setup_hook + """
 @echo ~CALL %pythonexe% setup.py sdist %2 --formats=gztar,zip --verbose
-%pythonexe% setup.py sdist %2 --formats=gztar,zip --verbose
+%pythonexe% %current%setup.py sdist %2 --formats=gztar,zip --verbose
 if %errorlevel% neq 0 exit /b %errorlevel%
 @echo ~CALL %pythonexe% setup.py bdist_wheel %2
-%pythonexe% setup.py bdist_wheel %2
+%pythonexe% %current%setup.py bdist_wheel %2
 if %errorlevel% neq 0 exit /b %errorlevel%
 """ + copy_to_pypiserver
 
@@ -309,30 +309,30 @@ windows_build = windows_any_setup_command_base + windows_setup_hook + """
 @echo #######################################################_unit
 @echo ~CALL %pythonexe% -u setup.py unittests
 rem set PYTHONPATH=additional_path --> we use a virtual environment here
-%pythonexe% -u setup.py unittests
+%pythonexe% -u %current%setup.py unittests
 if %errorlevel% neq 0 exit /b %errorlevel%
 @echo #######################################################6
 
 @echo ~CALL %pythonexe% setup.py clean_pyd
-%pythonexe% setup.py clean_pyd
+%pythonexe% %current%setup.py clean_pyd
 @echo ~CALL %pythonexe% setup.py sdist --formats=gztar,zip --verbose
-%pythonexe% setup.py sdist --formats=gztar,zip --verbose
+%pythonexe% %current%setup.py sdist --formats=gztar,zip --verbose
 if %errorlevel% neq 0 exit /b %errorlevel%
 @echo ~CALL %pythonexe% setup.py bdist_wininst --plat-name=win-amd64
-%pythonexe% setup.py bdist_wininst --plat-name=win-amd64
+%pythonexe% %current%setup.py bdist_wininst --plat-name=win-amd64
 if %errorlevel% neq 0 exit /b %errorlevel%
 @echo ~CALL %pythonexe% setup.py bdist_msi
-%pythonexe% setup.py bdist_msi
+%pythonexe% %current%setup.py bdist_msi
 if %errorlevel% neq 0 exit /b %errorlevel%
 @echo ~CALL %pythonexe% setup.py bdist_wheel
-%pythonexe% setup.py bdist_wheel
+%pythonexe% %current%setup.py bdist_wheel
 if %errorlevel% neq 0 exit /b %errorlevel%
 @echo #######################################################7
 
 :documentation:
 @echo ~LABEL documentation
 @echo ~CALL %pythonexe% -u setup.py build_sphinx
-%pythonexe% -u setup.py build_sphinx
+%pythonexe% -u %current%setup.py build_sphinx
 if %errorlevel% neq 0 exit /b %errorlevel%
 @echo #######################################################8
 
@@ -416,12 +416,12 @@ jupyter-notebook --notebook-dir=_doc\\notebooks
 #################
 windows_publish = """
 @echo SCRIPT: windows_publish
-%pythonexe% setup.py rotate --match=.zip --keep=1
-%pythonexe% setup.py rotate --match=.tar.gz --keep=10
-%pythonexe% setup.py rotate --match=.whl --keep=10
+%pythonexe% %current%setup.py rotate --match=.zip --keep=1
+%pythonexe% %current%setup.py rotate --match=.tar.gz --keep=10
+%pythonexe% %current%setup.py rotate --match=.whl --keep=10
 rem %pythonexe% setup.py sdist register
-%pythonexe% setup.py sdist --formats=gztar upload
-%pythonexe% setup.py bdist_wheel upload
+%pythonexe% %current%setup.py sdist --formats=gztar upload
+%pythonexe% %current%setup.py bdist_wheel upload
 """
 
 #################
@@ -429,7 +429,7 @@ rem %pythonexe% setup.py sdist register
 #################
 windows_publish_doc = """
 @echo SCRIPT: windows_publish_doc
-%pythonexe% -u setup.py upload_docs --upload-dir=dist/html
+%pythonexe% -u %current%setup.py upload_docs --upload-dir=dist/html
 """
 
 #################
@@ -559,7 +559,7 @@ windows_jenkins_27_conda = [
     "\n__PACTHPQb__\n" +
     jenkins_windows_setup + " build_script\n" +
     windows_error +
-    "\n@echo ~CALL %jenkinspythonexe% setup.py setup_hook\n%jenkinspythonexe% setup.py setup_hook\n" +
+    "\n@echo ~CALL %jenkinspythonexe% %current%setup.py setup_hook\n%jenkinspythonexe% %current%setup.py setup_hook\n" +
     windows_error +
     "\nauto_setup_copy27.bat %jenkinspythonexe%\n" +
     windows_error,  # next script #
@@ -581,7 +581,7 @@ windows_jenkins_27_def = [
     "\n__PACTHPQb__\n" +
     jenkins_windows_setup + " build_script\n" +
     windows_error +
-    "\n@echo ~CALL %jenkinspythonexe% setup.py setup_hook\n%jenkinspythonexe% setup.py setup_hook\n" +
+    "\n@echo ~CALL %jenkinspythonexe% %current%setup.py setup_hook\n%jenkinspythonexe% %current%setup.py setup_hook\n" +
     windows_error +
     "\nauto_setup_copy27.bat %jenkinspythonexe%\n" +
     windows_error,
