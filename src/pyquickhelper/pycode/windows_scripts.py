@@ -286,8 +286,8 @@ if %errorlevel% neq 0 exit /b %errorlevel%
 #################
 #: call the setup
 #################
-windows_setup = "rem set PYTHONPATH=additional_path\n%pythonexe% -u %current%setup.py"
-jenkins_windows_setup = "%jenkinspythonexe% -u %current%setup.py"
+windows_setup = "rem set PYTHONPATH=additional_path\n%pythonexe% -u setup.py"
+jenkins_windows_setup = "%jenkinspythonexe% -u setup.py"
 
 #################
 #: build setup script for Windows
