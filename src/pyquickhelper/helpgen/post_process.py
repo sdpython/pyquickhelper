@@ -34,6 +34,38 @@ Another list
 """
 
 
+def update_notebook_link(text, format):
+    """
+    A notebook can contain a link ``[anchor](find://...)``
+    and it will be converted into: ``:ref:...`` in rst format.
+
+    @param      text        text to look into
+    @param      format      format
+    @return                 modified text
+
+    .. versionadded:: 1.5
+    """
+    # check http://stackoverflow.com/questions/12597370/python-replace-string-pattern-with-output-of-function
+    # to customize the replacement
+    if format == "rst":
+        reg = re.compile("`([^`]+?) <find://([^`<>]+?)>`_")
+        new_text = reg.sub(":ref:`\\1 <\\2>`", text)
+    elif format == "html" or format == "slides" or format == "slides2":
+        reg = re.compile("<a href=\\\"find://([^\\\"]+?)\\\">([^`<>]+?)</a>")
+        new_text = reg.sub("<a href=\"\\1.html\">\\2</a>", text)
+    elif format == "ipynb" or format == "python":
+        reg = re.compile("[[]([^[]+?)[]][(]find://([^ ]+)[)]")
+        new_text = reg.sub("<a href=\"\\1.html\">\\2</a>", text)
+    elif format == "latex":
+        reg = re.compile("\\\\href{find://([^{}]+?)}{([^ {}]+)}")
+        new_text = reg.sub("\\href{\\1.html}{\\2}", text)
+        # {\hyperref[\detokenize{c_classes/classes:chap-classe}]{\sphinxcrossref{\DUrole{std,std-ref}{Classes}}}}
+    else:
+        raise NotImplementedError(
+            "Unsupported format '{0}'\n{1}".format(format, text))
+    return new_text
+
+
 def post_process_latex_output(root, doall, latex_book=False, exc=True, custom_latex_processing=None):
     """
     post process the latex file produced by sphinx
@@ -91,6 +123,9 @@ def post_process_python_output(root, doall, exc=True):
         with open(file, "r", encoding="utf8") as f:
             content = f.read()
         content = post_process_python(content, doall)
+        content = update_notebook_link(content, "python")
+        if "find://" in content:
+            raise Exception("find:// was found in '{0}'".format(file))
         with open(file, "w", encoding="utf8") as f:
             f.write(content)
     else:
@@ -104,6 +139,9 @@ def post_process_python_output(root, doall, exc=True):
                 with open(file, "r", encoding="utf8") as f:
                     content = f.read()
                 content = post_process_python(content, doall, info=file)
+                content = update_notebook_link(content, "python")
+                if "find://" in content:
+                    raise Exception("find:// was found in '{0}'".format(file))
                 with open(file, "w", encoding="utf8") as f:
                     f.write(content)
 
@@ -122,6 +160,10 @@ def post_process_latex_output_any(file, custom_latex_processing):
     with open(file, "r", encoding="utf8") as f:
         content = f.read()
     content = post_process_latex(content, True, info=file)
+    content = update_notebook_link(content, "latex")
+    if "find://" in content:
+        raise Exception(
+            "find:// was found in '{0}'\n{1}".format(file, content))
     with open(file, "w", encoding="utf8") as f:
         f.write(content)
 
@@ -339,8 +381,14 @@ def post_process_rst_output(file, html, pdf, python, slides, present, is_noteboo
                 line = line.replace(memo, new_memo)
                 lines[i] = line
 
+    # checking for find://
+    content = "".join(lines)
+    content = update_notebook_link(content, "rst")
+    if "find://" in content:
+        raise Exception("find:// was found in '{0}'".format(file))
+
     with open(file, "w", encoding="utf8") as f:
-        f.write("".join(lines))
+        f.write(content)
 
 
 def post_process_html_output(file, pdf, python, slides, present, exc=True):
@@ -369,6 +417,10 @@ def post_process_html_output(file, pdf, python, slides, present, exc=True):
     # mathjax
     text = text.replace("https://c328740.ssl.cf1.rackcdn.com/mathjax/latest/MathJax.js?config=TeX-AMS_HTML",
                         "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML")
+
+    text = update_notebook_link(text, "html")
+    if "find://" in text:
+        raise Exception("find:// was found in '{0}'".format(file))
 
     with open(file, "w", encoding="utf8") as f:
         f.write(text)
@@ -422,6 +474,9 @@ def post_process_slides_output(file, pdf, python, slides, present, exc=True):
     # mathjax
     text = text.replace("https://c328740.ssl.cf1.rackcdn.com/mathjax/latest/MathJax.js?config=TeX-AMS_HTML",
                         "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML")
+    text = update_notebook_link(text, "slides")
+    if "find://" in text:
+        raise Exception("find:// was found in '{0}'".format(file))
 
     if save:
         with open(file, "w", encoding="utf8") as f:
