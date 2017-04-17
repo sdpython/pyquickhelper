@@ -233,7 +233,7 @@ class RunPythonDirective(Directive):
         The option *rst* will assume the output is in RST format and must be
         interpreted. *showout* will complement the RST output with the raw format.
 
-    The directive has three options:
+    The directive has a couple of options:
 
     * ``:indent:<int>`` to indent the output
     * ``:showcode:`` to show the code before its output
@@ -244,7 +244,7 @@ class RunPythonDirective(Directive):
     * ``:sphinx:`` by default, function `nested_parse_with_titles <http://sphinx-doc.org/extdev/markupapi.html?highlight=nested_parse>`_ is
       used to parse the output of the script, if this option is set to false,
       `public_doctree <http://code.nabla.net/doc/docutils/api/docutils/core/docutils.core.publish_doctree.html>`_.
-    * ``setsysvar`` adds a member to *sys* modulen the module can act differently based on that information,
+    * ``:setsysvar:`` adds a member to *sys* module, the module can act differently based on that information,
       if the value is left empty, *sys.enable_disabled_documented_pieces_of_code* will be be set up to *True*.
     * ``:process:`` run the script in an another process
     * ``:exception:`` the code throws an exception but it expected. The error is displayed.
