@@ -58,7 +58,7 @@ def update_notebook_link(text, format, nblinks):
             snb = "\n".join("'{0}': '{1}'".format(k, v)
                             for k, v in sorted(nblinks.items()))
             raise Exception(
-                "Unable to find a replacement for '{0}' format='{1}' in \n{1}".format(url, format, snb))
+                "Unable to find a replacement for '{0}' format='{1}' in \n{2}".format(url, format, snb))
         return url
 
     if nblinks is None:
@@ -105,7 +105,8 @@ def update_notebook_link(text, format, nblinks):
     return new_text
 
 
-def post_process_latex_output(root, doall, latex_book=False, exc=True, custom_latex_processing=None):
+def post_process_latex_output(root, doall, latex_book=False, exc=True,
+                              custom_latex_processing=None, nblinks=None):
     """
     post process the latex file produced by sphinx
 
@@ -114,6 +115,7 @@ def post_process_latex_output(root, doall, latex_book=False, exc=True, custom_la
     @param      latex_book                  customized for a book
     @param      exc                         raise an exception or a warning
     @param      custom_latex_processing     function which does some post processing of the full latex file
+    @param      nblinks                     dictionary ``{ ref : url }`` where to look for references
 
     .. versionchanged:: 1.5
         Parameters *exc*, *custom_latex_processing* were added.
@@ -124,7 +126,7 @@ def post_process_latex_output(root, doall, latex_book=False, exc=True, custom_la
             content = f.read()
         content = post_process_latex(
             content, doall, latex_book=latex_book, exc=exc,
-            custom_latex_processing=custom_latex_processing)
+            custom_latex_processing=custom_latex_processing, nblinks=nblinks, file=file)
         with open(file, "w", encoding="utf8") as f:
             f.write(content)
     else:
@@ -139,7 +141,7 @@ def post_process_latex_output(root, doall, latex_book=False, exc=True, custom_la
                     content = f.read()
                 content = post_process_latex(
                     content, doall, info=file, latex_book=latex_book, exc=exc,
-                    custom_latex_processing=custom_latex_processing)
+                    custom_latex_processing=custom_latex_processing, nblinks=nblinks, file=file)
                 with open(file, "w", encoding="utf8") as f:
                     f.write(content)
 
@@ -162,10 +164,8 @@ def post_process_python_output(root, doall, exc=True, nblinks=None):
         file = root
         with open(file, "r", encoding="utf8") as f:
             content = f.read()
-        content = post_process_python(content, doall)
-        content = update_notebook_link(content, "python", nblinks=nblinks)
-        if "find://" in content:
-            raise Exception("find:// was found in '{0}'".format(file))
+        content = post_process_python(
+            content, doall, nblinks=nblinks, file=file)
         with open(file, "w", encoding="utf8") as f:
             f.write(content)
     else:
@@ -178,11 +178,8 @@ def post_process_python_output(root, doall, exc=True, nblinks=None):
                 fLOG("modify file", file)
                 with open(file, "r", encoding="utf8") as f:
                     content = f.read()
-                content = post_process_python(content, doall, info=file)
-                content = update_notebook_link(
-                    content, "python", nblinks=nblinks)
-                if "find://" in content:
-                    raise Exception("find:// was found in '{0}'".format(file))
+                content = post_process_python(
+                    content, doall, info=file, nblinks=nblinks, file=file)
                 with open(file, "w", encoding="utf8") as f:
                     f.write(content)
 
@@ -201,15 +198,8 @@ def post_process_latex_output_any(file, custom_latex_processing, nblinks=None):
     fLOG("   ** post_process_latex_output_any ", file)
     with open(file, "r", encoding="utf8") as f:
         content = f.read()
-    content = post_process_latex(content, True, info=file)
-    content = update_notebook_link(content, "latex", nblinks=nblinks)
-    if "find://" in content:
-        if nblinks is None or len(nblinks) == 0:
-            raise Exception(
-                "find:// was found in '{0}'\nYou should add nblinks in conf.py.\n{1}".format(file, content))
-        else:
-            raise Exception(
-                "find:// was found in '{0}'\nYou should extend nblinks in conf.py.\n{1}".format(file, content))
+    content = post_process_latex(
+        content, True, info=file, nblinks=nblinks, file=file)
     with open(file, "w", encoding="utf8") as f:
         f.write(content)
 
@@ -535,7 +525,7 @@ def post_process_slides_output(file, pdf, python, slides, present, exc=True, nbl
 
 
 def post_process_latex(st, doall, info=None, latex_book=False, exc=True,
-                       custom_latex_processing=None):
+                       custom_latex_processing=None, nblinks=None, file=None):
     """
     modifies a latex file after its generation by sphinx
 
@@ -544,6 +534,8 @@ def post_process_latex(st, doall, info=None, latex_book=False, exc=True,
     @param      info            for more understandable error messages
     @param      latex_book      customized for a book
     @param      exc             raises an exception or a warning
+    @param      nblinks         dictionary ``{ref: url}``
+    @param      file            only used when an exception is raised
     @return                     string
 
     SVG included in a notebook (or in RST file) requires `Inkscape <https://inkscape.org/>`_
@@ -559,7 +551,7 @@ def post_process_latex(st, doall, info=None, latex_book=False, exc=True,
         Parameter *latex_book* was added.
 
     .. versionchanged:: 1.5
-        Parameter *exc* was added.
+        Parameters *exc*, *nblinks* were added.
         The function is less strict on the checking of `$`.
         The function replaces ``\\mathbb{1}`` by ``\\mathbf{1\\!\\!1}``.
 
@@ -684,25 +676,44 @@ def post_process_latex(st, doall, info=None, latex_book=False, exc=True,
     for found in fall:
         st = st.replace(found, "%" + found)
 
+    # fix references
+    st = update_notebook_link(st, "latex", nblinks=nblinks)
+    if "find://" in st:
+        if nblinks is None or len(nblinks) == 0:
+            raise Exception(
+                "find:// was found in '{0}'\nYou should add nblinks in conf.py.\n{1}".format(file, st))
+        else:
+            raise Exception(
+                "find:// was found in '{0}'\nYou should extend nblinks in conf.py.\n{1}".format(file, st))
+
     # end
     if custom_latex_processing is not None:
         st = custom_latex_processing(st)
+
     return st
 
 
-def post_process_python(st, doall, info=None):
+def post_process_python(st, doall, info=None, nblinks=None, file=None):
     """
     modifies a python file after its generation by sphinx
 
     @param      st      string
     @param      doall   do all transformations
     @param      info    for more understandable error messages
+    @param      nblinks dictionary ``{ref: url}``
+    @param      file    used only when an exception is raised
     @return             string
 
     .. versionadded:: 1.3
+
+    .. versionchanged:: 1.5
+        Parameters *nblinks*, *file* were added.
     """
     st = st.strip("\n \r\t")
     st = st.replace("# coding: utf-8", "# -*- coding: utf-8 -*-")
+    st = update_notebook_link(st, "python", nblinks=nblinks)
+    if "find://" in st:
+        raise Exception("find:// was found in '{0}'".format(file))
     return st
 
 
