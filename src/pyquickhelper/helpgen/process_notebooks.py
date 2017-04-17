@@ -50,7 +50,8 @@ Another list
 
 def process_notebooks(notebooks, outfold, build, latex_path=None, pandoc_path=None,
                       formats=("ipynb", "html", "python", "rst",
-                               "slides", "pdf", "present", "github"), fLOG=fLOG, exc=True):
+                               "slides", "pdf", "present", "github"), fLOG=fLOG, exc=True,
+                      nblinks=None):
     """
     Converts notebooks into html, rst, latex, pdf, python, docx using
     `nbconvert <http://ipython.org/ipython-doc/rel-1.0.0/interactive/nbconvert.html>`_.
@@ -63,6 +64,7 @@ def process_notebooks(notebooks, outfold, build, latex_path=None, pandoc_path=No
     @param      latex_path  path to the latex compiler
     @param      fLOG        logging function
     @param      exc         raises an exception (True) or a warning (False) if an error happens
+    @param      nblinks     dictionary ``{ref: url}``
     @return                 list of tuple *[(file, created or skipped)]*
 
     This function relies on `pandoc <http://johnmacfarlane.net/pandoc/index.html>`_.
@@ -105,7 +107,7 @@ def process_notebooks(notebooks, outfold, build, latex_path=None, pandoc_path=No
     .. versionchanged:: 1.5
         For latex and pdf, a custom processor was added to handle raw data
         and add ``\\begin{verbatim}`` and ``\\end{verbatim}``.
-        Parameter *exc* was added.
+        Parameter *exc*, *nblinks* were added.
         Format *github* was added, it adds a link to file on github.
 
     .. todoext::
@@ -127,7 +129,7 @@ def process_notebooks(notebooks, outfold, build, latex_path=None, pandoc_path=No
     """
     res = _process_notebooks_in(notebooks=notebooks, outfold=outfold, build=build,
                                 latex_path=latex_path, pandoc_path=pandoc_path,
-                                formats=formats, fLOG=fLOG, exc=exc)
+                                formats=formats, fLOG=fLOG, exc=exc, nblinks=nblinks)
     if "slides" in formats:
         # we copy javascript dependencies, reveal.js
         reveal = os.path.join(outfold, "reveal.js")
@@ -185,7 +187,7 @@ def _process_notebooks_in_private_cmd(fnbcexe, list_args, options_args, fLOG):
 def _process_notebooks_in(notebooks, outfold, build, latex_path=None, pandoc_path=None,
                           formats=("ipynb", "html", "python", "rst",
                                    "slides", "pdf", "present", "github"),
-                          fLOG=fLOG, exc=True):
+                          fLOG=fLOG, exc=True, nblinks=None):
     """
     The notebook conversion does not handle image from url
     for PDF and docx. They could be downloaded first
@@ -419,7 +421,7 @@ def _process_notebooks_in(notebooks, outfold, build, latex_path=None, pandoc_pat
                             "no latex file was generated or more than one (={0}), nb={1}\nthisfile=\n{2}".format(len(tex), notebook, "\n".join(thisfiles)))
                     tex = list(tex)[0]
                     post_process_latex_output_any(
-                        tex, custom_latex_processing=None)
+                        tex, custom_latex_processing=None, nblinks=nblinks)
                     # -interaction=batchmode
                     c = '"{0}" "{1}" -output-directory="{2}"'.format(
                         lat, tex, os.path.split(tex)[0])
@@ -484,7 +486,8 @@ def _process_notebooks_in(notebooks, outfold, build, latex_path=None, pandoc_pat
                         os.listdir(os.path.dirname(outputfile))) + "\nERR:\n" + err + "\nOUT:\n" + out + "\nCMD:\n" + c)
                 thisfiles += add_link_to_notebook(outputfile, notebook,
                                                   "pdf" in formats, False, "python" in formats,
-                                                  "slides" in formats, "present" in formats, exc=exc)
+                                                  "slides" in formats, "present" in formats, exc=exc,
+                                                  nblinks=nblinks)
 
             elif format == "slides.html":
                 # we add a link to the notebook
@@ -493,7 +496,8 @@ def _process_notebooks_in(notebooks, outfold, build, latex_path=None, pandoc_pat
                         os.listdir(os.path.dirname(outputfile))) + "\nERR:\n" + err + "\nOUT:\n" + out + "\nCMD:\n" + str(list_args))
                 thisfiles += add_link_to_notebook(outputfile, notebook,
                                                   "pdf" in formats, False, "python" in formats,
-                                                  "slides" in formats, "present" in formats, exc=exc)
+                                                  "slides" in formats, "present" in formats, exc=exc,
+                                                  nblinks=nblinks)
 
             elif format == "slides2p.html":
                 # we add a link to the notebook
@@ -502,27 +506,29 @@ def _process_notebooks_in(notebooks, outfold, build, latex_path=None, pandoc_pat
                         os.listdir(os.path.dirname(outputfile))) + "\nERR:\n" + err + "\nOUT:\n" + out + "\nCMD:\n" + c)
                 thisfiles += add_link_to_notebook(outputfile, notebook,
                                                   "pdf" in formats, False, "python" in formats,
-                                                  "slides" in formats, "present" in formats, exc=exc)
+                                                  "slides" in formats, "present" in formats, exc=exc,
+                                                  nblinks=nblinks)
 
             elif format == "ipynb":
                 # we just copy the notebook
                 thisfiles += add_link_to_notebook(outputfile, notebook,
                                                   "ipynb" in formats, False, "python" in formats,
-                                                  "slides" in formats, "present" in formats, exc=exc)
+                                                  "slides" in formats, "present" in formats, exc=exc,
+                                                  nblinks=nblinks)
 
             elif format == "rst":
                 # we add a link to the notebook
                 thisfiles += add_link_to_notebook(
                     outputfile, notebook, "pdf" in formats, "html" in formats, "python" in formats,
                     "slides" in formats, "present" in formats, exc=exc, github="github" in formats,
-                    notebook=notebook)
+                    notebook=notebook, nblinks=nblinks)
 
             elif format in ("tex", "latex", "pdf"):
                 thisfiles += add_link_to_notebook(outputfile, notebook, False, False,
-                                                  False, False, False, exc=exc)
+                                                  False, False, False, exc=exc, nblinks=nblinks)
 
             elif format in ("py", "python"):
-                post_process_python_output(outputfile, True)
+                post_process_python_output(outputfile, True, nblinks=nblinks)
 
             elif format in ["docx", "word"]:
                 pass
@@ -591,7 +597,7 @@ def _process_notebooks_in(notebooks, outfold, build, latex_path=None, pandoc_pat
 
 
 def add_link_to_notebook(file, nb, pdf, html, python, slides, present, exc=True,
-                         github=False, notebook=None):
+                         github=False, notebook=None, nblinks=None):
     """
     add a link to the notebook in HTML format and does a little bit of cleaning
     for various format
@@ -606,6 +612,7 @@ def add_link_to_notebook(file, nb, pdf, html, python, slides, present, exc=True,
     @param      exc         raises an exception (True) or a warning (False)
     @param      github      add a link to the notebook on github
     @param      notebook    location of the notebook (file might be a copy)
+    @param      nblinks     dictionary ``{ref: url}``
     @return                 list of generated files
 
     The function does some cleaning too in the files.
@@ -632,24 +639,27 @@ def add_link_to_notebook(file, nb, pdf, html, python, slides, present, exc=True,
     elif ext == ".pdf":
         return res
     elif ext == ".html":
-        post_process_html_output(file, pdf, python, slides, present, exc=exc)
+        post_process_html_output(
+            file, pdf, python, slides, present, exc=exc, nblinks=nblinks)
         return res
     elif ext == ".slides.html":
-        post_process_slides_output(file, pdf, python, slides, present, exc=exc)
+        post_process_slides_output(
+            file, pdf, python, slides, present, exc=exc, nblinks=nblinks)
         return res
     elif ext == ".slides2p.html":
-        post_process_slides_output(file, pdf, python, slides, present, exc=exc)
+        post_process_slides_output(
+            file, pdf, python, slides, present, exc=exc, nblinks=nblinks)
         return res
     elif ext == ".tex":
-        post_process_latex_output(file, True, exc=exc)
+        post_process_latex_output(file, True, exc=exc, nblinks=nblinks)
         return res
     elif ext == ".py":
-        post_process_python_output(file, True, exc=exc)
+        post_process_python_output(file, True, exc=exc, nblinks=nblinks)
         return res
     elif ext == ".rst":
         post_process_rst_output(
             file, html, pdf, python, slides, present, is_notebook=True, exc=exc,
-            github=github, notebook=notebook)
+            github=github, notebook=notebook, nblinks=nblinks)
         return res
     else:
         raise HelpGenException(

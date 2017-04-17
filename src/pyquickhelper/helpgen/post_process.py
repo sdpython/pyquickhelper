@@ -34,31 +34,70 @@ Another list
 """
 
 
-def update_notebook_link(text, format):
+def update_notebook_link(text, format, nblinks):
     """
     A notebook can contain a link ``[anchor](find://...)``
     and it will be converted into: ``:ref:...`` in rst format.
 
     @param      text        text to look into
     @param      format      format
+    @param      nblinks     list of mappings *(reference: url)*
     @return                 modified text
 
     .. versionadded:: 1.5
     """
-    # check http://stackoverflow.com/questions/12597370/python-replace-string-pattern-with-output-of-function
-    # to customize the replacement
+    def get_url_from_nblinks(nblinks, url, format):
+        if isinstance(nblinks, dict):
+            if (url, format) in nblinks:
+                url = nblinks[url, format]
+            elif url in nblinks:
+                url = nblinks[url]
+        else:
+            url = nblinks(url, format)
+        if "find:" in url:
+            snb = "\n".join("'{0}': '{1}'".format(k, v)
+                            for k, v in sorted(nblinks.items()))
+            raise Exception(
+                "Unable to find a replacement for '{0}' format='{1}' in \n{1}".format(url, format, snb))
+        return url
+
+    if nblinks is None:
+        nblinks = {}
     if format == "rst":
+        def reprst(l):
+            anc, url = l.groups()
+            url = get_url_from_nblinks(nblinks, url, format)
+            return ":ref:`{0} <{1}>`".format(anc, url)
         reg = re.compile("`([^`]+?) <find://([^`<>]+?)>`_")
-        new_text = reg.sub(":ref:`\\1 <\\2>`", text)
+        new_text = reg.sub(reprst, text)
     elif format == "html" or format == "slides" or format == "slides2":
+        def rephtml(l):
+            anc, url = l.groups()
+            url = get_url_from_nblinks(nblinks, url, format)
+            return "<a href=\"{0}.html\">{1}</a>".format(anc, url)
         reg = re.compile("<a href=\\\"find://([^\\\"]+?)\\\">([^`<>]+?)</a>")
-        new_text = reg.sub("<a href=\"\\1.html\">\\2</a>", text)
+        new_text = reg.sub(rephtml, text)
     elif format == "ipynb" or format == "python":
+        def repipy(l):
+            anc, url = l.groups()
+            url = get_url_from_nblinks(nblinks, url, format)
+            if not url.startswith("http"):
+                mes = "\n".join("{0}: '{1}'".format(k, v)
+                                for k, v in sorted(nblinks.items()))
+                raise Exception(
+                    "A reference was no found: '{0}' - '{1}' format={2}\n{3}".format(anc, url, format, mes))
+            return "[{0}]({1})".format(anc, url)
         reg = re.compile("[[]([^[]+?)[]][(]find://([^ ]+)[)]")
-        new_text = reg.sub("<a href=\"\\1.html\">\\2</a>", text)
+        new_text = reg.sub(repipy, text)
     elif format == "latex":
-        reg = re.compile("\\\\href{find://([^{}]+?)}{([^ {}]+)}")
-        new_text = reg.sub("\\href{\\1.html}{\\2}", text)
+        def replat(l):
+            url, anc = l.groups()
+            url = get_url_from_nblinks(nblinks, url, format)
+            if not url.endswith(".html") and not url.endswith(".js") and not url.endswith(".css"):
+                url += ".html"
+            return "\\href{{{0}}}{{{1}}}".format(url, anc)
+        reg = re.compile("\\\\href{find://([^{} ]+?)}{([^{}]+)}")
+        new_text = reg.sub(replat, text)
         # {\hyperref[\detokenize{c_classes/classes:chap-classe}]{\sphinxcrossref{\DUrole{std,std-ref}{Classes}}}}
     else:
         raise NotImplementedError(
@@ -105,25 +144,26 @@ def post_process_latex_output(root, doall, latex_book=False, exc=True, custom_la
                     f.write(content)
 
 
-def post_process_python_output(root, doall, exc=True):
+def post_process_python_output(root, doall, exc=True, nblinks=None):
     """
     post process the python file produced by sphinx
 
     @param      root        root path or python file to process
     @param      doall       unused
     @param      exc         raise an exception if needed
+    @param      nblinks     dictionary ``{ref: url}``
 
     .. versionadded:: 1.3
 
     .. versionchanged:: 1.5
-        Add parameter *exc*.
+        Add parameter *exc*, *nblinks*.
     """
     if os.path.isfile(root):
         file = root
         with open(file, "r", encoding="utf8") as f:
             content = f.read()
         content = post_process_python(content, doall)
-        content = update_notebook_link(content, "python")
+        content = update_notebook_link(content, "python", nblinks=nblinks)
         if "find://" in content:
             raise Exception("find:// was found in '{0}'".format(file))
         with open(file, "w", encoding="utf8") as f:
@@ -139,37 +179,43 @@ def post_process_python_output(root, doall, exc=True):
                 with open(file, "r", encoding="utf8") as f:
                     content = f.read()
                 content = post_process_python(content, doall, info=file)
-                content = update_notebook_link(content, "python")
+                content = update_notebook_link(
+                    content, "python", nblinks=nblinks)
                 if "find://" in content:
                     raise Exception("find:// was found in '{0}'".format(file))
                 with open(file, "w", encoding="utf8") as f:
                     f.write(content)
 
 
-def post_process_latex_output_any(file, custom_latex_processing):
+def post_process_latex_output_any(file, custom_latex_processing, nblinks=None):
     """
     post process the latex file produced by sphinx
 
     @param      file                        latex filename
     @param      custom_latex_processing     function which does some post processing of the full latex file
+    @param      nblinks                     dictionary ``{url: link}``
 
     .. versionchanged:: 1.5
-        Parameter *custom_latex_processing* was added.
+        Parameters *custom_latex_processing*, *nblinks* were added.
     """
     fLOG("   ** post_process_latex_output_any ", file)
     with open(file, "r", encoding="utf8") as f:
         content = f.read()
     content = post_process_latex(content, True, info=file)
-    content = update_notebook_link(content, "latex")
+    content = update_notebook_link(content, "latex", nblinks=nblinks)
     if "find://" in content:
-        raise Exception(
-            "find:// was found in '{0}'\n{1}".format(file, content))
+        if nblinks is None or len(nblinks) == 0:
+            raise Exception(
+                "find:// was found in '{0}'\nYou should add nblinks in conf.py.\n{1}".format(file, content))
+        else:
+            raise Exception(
+                "find:// was found in '{0}'\nYou should extend nblinks in conf.py.\n{1}".format(file, content))
     with open(file, "w", encoding="utf8") as f:
         f.write(content)
 
 
 def post_process_rst_output(file, html, pdf, python, slides, present, is_notebook=False,
-                            exc=True, github=False, notebook=None):
+                            exc=True, github=False, notebook=None, nblinks=None):
     """
     process a RST file generated from the conversion of a notebook
 
@@ -183,6 +229,7 @@ def post_process_rst_output(file, html, pdf, python, slides, present, is_noteboo
     @param      exc             raises an exception (True) or a warning (False)
     @param      github          add a link to the notebook on github
     @param      notebook        location of the notebook, file might be a copy
+    @param      nblinks         links added to a notebook, dictionary ``{ref: url}``
 
     .. versionchanged:: 1.4
         Parameter *present* was added.
@@ -383,7 +430,7 @@ def post_process_rst_output(file, html, pdf, python, slides, present, is_noteboo
 
     # checking for find://
     content = "".join(lines)
-    content = update_notebook_link(content, "rst")
+    content = update_notebook_link(content, "rst", nblinks=nblinks)
     if "find://" in content:
         raise Exception("find:// was found in '{0}'".format(file))
 
@@ -391,7 +438,7 @@ def post_process_rst_output(file, html, pdf, python, slides, present, is_noteboo
         f.write(content)
 
 
-def post_process_html_output(file, pdf, python, slides, present, exc=True):
+def post_process_html_output(file, pdf, python, slides, present, exc=True, nblinks=None):
     """
     process a HTML file generated from the conversion of a notebook
 
@@ -401,12 +448,13 @@ def post_process_html_output(file, pdf, python, slides, present, exc=True):
     @param      slides      if True, add a link to the slides conversion
     @param      present     if True, add a link to the slides conversion (with *nbpresent*)
     @param      exc         raises an exception (True) or a warning (False)
+    @param      nblinks     dictionary ``{ref: url}``
 
     .. versionchanged:: 1.4
         Parameter *present* was added.
 
     .. versionchanged:: 1.5
-        Parameter *exc* was added.
+        Parameter *exc*, *nblinks* were added.
     """
     fold, name = os.path.split(file)
     if not os.path.exists(file):
@@ -418,7 +466,7 @@ def post_process_html_output(file, pdf, python, slides, present, exc=True):
     text = text.replace("https://c328740.ssl.cf1.rackcdn.com/mathjax/latest/MathJax.js?config=TeX-AMS_HTML",
                         "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML")
 
-    text = update_notebook_link(text, "html")
+    text = update_notebook_link(text, "html", nblinks=nblinks)
     if "find://" in text:
         raise Exception("find:// was found in '{0}'".format(file))
 
@@ -426,7 +474,7 @@ def post_process_html_output(file, pdf, python, slides, present, exc=True):
         f.write(text)
 
 
-def post_process_slides_output(file, pdf, python, slides, present, exc=True):
+def post_process_slides_output(file, pdf, python, slides, present, exc=True, nblinks=None):
     """
     process a HTML file generated from the conversion of a notebook
 
@@ -436,12 +484,13 @@ def post_process_slides_output(file, pdf, python, slides, present, exc=True):
     @param      slides      if True, add a link to the slides conversion
     @param      present     if True, add a link to the slides conversion (with *nbpresent*)
     @param      exc         raises an exception (True) or a warning (False)
+    @param      nblinks     dictionary ``{ref: url}``
 
     .. versionchanged:: 1.4
         Parameter *present* was added.
 
     .. versionchanged:: 1.5
-        Parameter *exc* was added.
+        Parameter *exc*, *nblinks* were added.
     """
     if (len(file) > 5000 or not os.path.exists(file)) and "<html" in file:
         text = file
@@ -474,7 +523,7 @@ def post_process_slides_output(file, pdf, python, slides, present, exc=True):
     # mathjax
     text = text.replace("https://c328740.ssl.cf1.rackcdn.com/mathjax/latest/MathJax.js?config=TeX-AMS_HTML",
                         "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML")
-    text = update_notebook_link(text, "slides")
+    text = update_notebook_link(text, "slides", nblinks=nblinks)
     if "find://" in text:
         raise Exception("find:// was found in '{0}'".format(file))
 

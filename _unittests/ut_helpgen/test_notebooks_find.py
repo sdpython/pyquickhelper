@@ -42,7 +42,7 @@ class TestNoteBooksFind(unittest.TestCase):
             OutputPrint=__name__ == "__main__")
 
         text = "a link `ahah <find://rstref>`_ hello"
-        link = update_notebook_link(text, "rst")
+        link = update_notebook_link(text, "rst", None)
         self.assertEqual(link, "a link :ref:`ahah <rstref>` hello")
 
     def test_update_link_html(self):
@@ -52,7 +52,7 @@ class TestNoteBooksFind(unittest.TestCase):
             OutputPrint=__name__ == "__main__")
 
         text = "a link <a href=\"find://rstref\">ahah</a> hello"
-        link = update_notebook_link(text, "html")
+        link = update_notebook_link(text, "html", None)
         self.assertEqual(link, 'a link <a href="rstref.html">ahah</a> hello')
 
     def test_update_link_python(self):
@@ -62,9 +62,9 @@ class TestNoteBooksFind(unittest.TestCase):
             OutputPrint=__name__ == "__main__")
 
         text = "a link [find://rstref](ahah) hello"
-        link = update_notebook_link(text, "python")
+        link = update_notebook_link(text, "python", None)
         self.assertEqual(link, 'a link [find://rstref](ahah) hello')
-        link = update_notebook_link(text, "ipynb")
+        link = update_notebook_link(text, "ipynb", None)
         self.assertEqual(link, 'a link [find://rstref](ahah) hello')
 
     def test_update_link_latex(self):
@@ -74,9 +74,15 @@ class TestNoteBooksFind(unittest.TestCase):
             OutputPrint=__name__ == "__main__")
 
         text = "a link \\href{find://reftag}{internal\\_link} hello"
-        link = update_notebook_link(text, "python")
+        link = update_notebook_link(text, "latex", None)
         self.assertEqual(
-            link, 'a link \\href{find://reftag}{internal\\_link} hello')
+            link, 'a link \\href{reftag.html}{internal\\_link} hello')
+
+        text = "notebook \\href{find://slideshowrst}{a link}"
+        link = update_notebook_link(
+            text, "latex", {'slideshowrst': 'http://sl.html'})
+        self.assertEqual(
+            link, 'notebook \\href{http://sl.html}{a link}')
 
     def test_notebook_find(self):
         fLOG(
@@ -107,7 +113,10 @@ class TestNoteBooksFind(unittest.TestCase):
             nbs2.append(r2)
             r = upgrade_notebook(r2)
             fLOG("change", r)
-        res = process_notebooks(nbs2, temp, temp, formats=formats, exc=False)
+        nblinks = {('reftag', 'ipynb'): 'http://something',
+                   ('reftag', 'python'): 'http://something'}
+        res = process_notebooks(
+            nbs2, temp, temp, formats=formats, exc=False, nblinks=nblinks)
         fLOG("*****", len(res))
         for _ in res:
             fLOG(_)

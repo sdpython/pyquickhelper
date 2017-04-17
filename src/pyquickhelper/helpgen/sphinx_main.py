@@ -473,6 +473,16 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
     if os.path.isfile(latex_path):
         latex_path = os.path.dirname(latex_path)
 
+    ##########
+    # nblinks: references for the notebooks, dictionary {(ref, format): link}
+    ##########
+    nblinks = theconf.__dict__.get("nblinks", None)
+    if nblinks is not None and len(nblinks) > 0:
+        fLOG("~~~~ NBLINKS - BEGIN")
+        for i, (k, v) in enumerate(sorted(nblinks.items())):
+            fLOG("     {0}/{1} - '{2}': '{3}'".format(i + 1, len(nblinks), k, v))
+        fLOG("~~~~ NBLINKS - END")
+
     # add to PATH
     if latex_path not in ospath:
         os.environ["PATH"] += ";" + latex_path
@@ -615,7 +625,7 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
                 os.mkdir(notebook_doc)
             nbs_all = process_notebooks(notebooks, build=build, outfold=notebook_doc,
                                         formats=nbformats, latex_path=latex_path,
-                                        pandoc_path=pandoc_path, fLOG=fLOG)
+                                        pandoc_path=pandoc_path, fLOG=fLOG, nblinks=nblinks)
             nbs_all = set(_[0]
                           for _ in nbs_all if os.path.splitext(_[0])[-1] == ".rst")
             if len(nbs_all) != len(indexlistnote):
