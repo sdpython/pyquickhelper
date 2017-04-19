@@ -103,7 +103,17 @@ def find_pandoc_path(exc=True):
     if sys.platform.startswith("win"):
         path = os.environ["USERPROFILE"]
         pandoc = os.path.join(path, "AppData", "Local", "Pandoc")
-        tries = [pandoc]
+        pdoc = os.path.join(pandoc, "pandoc.exe")
+        if os.path.exists(pdoc):
+            return pandoc
+
+        path = os.environ["ProgramFiles(x86)"]
+        pandoc = os.path.join(path, "Pandoc")
+        pdoc = os.path.join(pandoc, "pandoc.exe")
+        if os.path.exists(pdoc):
+            return pandoc
+
+        tries = [pandoc, pandoc2]
         if not os.path.exists(pandoc):
             # we try others users because pandoc goes into a user folder by
             # default
