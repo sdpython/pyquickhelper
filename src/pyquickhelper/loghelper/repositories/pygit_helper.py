@@ -76,10 +76,37 @@ class RepoFile:
                 #defa = sys.stdout.encoding if sys.stdout != None else "utf8"
                 self.name = self.name.replace('"', "")
                 #self.name = self.name.encode(defa).decode("utf-8")
-            if "\\303" in self.name:
+            if "\\303" in self.name or "\\302" in self.name or "\\342" in self.name:
                 # don't know yet how to avoid that
-                self.name = self.name.replace(r"\303\251", chr(233)) \
-                                     .replace(r"\303\250", chr(232))
+                name0 = self.name
+                # see http://www.utf8-chartable.de/unicode-utf8-table.pl?utf8=oct
+                # far from perfect
+                self.name = self.name.replace(r"\302\240", chr(160)) \
+                                     .replace(r"\302\246", "¦") \
+                                     .replace(r"\302\256", "®") \
+                                     .replace(r"\302\260", "°") \
+                                     .replace(r"\302\267", "·") \
+                                     .replace(r"\303\207", "Ç") \
+                                     .replace(r"\303\232", "Ú") \
+                                     .replace(r"\303\240", "à") \
+                                     .replace(r"\303\242", "â") \
+                                     .replace(r"\303\244", "ä") \
+                                     .replace(r"\303\246", "æ") \
+                                     .replace(r"\303\247", chr(231)) \
+                                     .replace(r"\303\250", chr(232)) \
+                                     .replace(r"\303\251", chr(233)) \
+                                     .replace(r"\303\252", "ê") \
+                                     .replace(r"\303\253", "ë") \
+                                     .replace(r"\303\256", "î") \
+                                     .replace(r"\303\257", "ï") \
+                                     .replace(r"\303\264", "ô") \
+                                     .replace(r"\303\266", "ö") \
+                                     .replace(r"\303\273", "û") \
+                                     .replace(r"\303\274", "ü") \
+                                     .replace(r"\342\200\231", "’")
+                if not os.path.exists(self.name):
+                    raise Exception(
+                        "The modification did not work\n'{0}'\nINTO\n'{1}'".format(name0, self.name))
 
     def __str__(self):
         """
