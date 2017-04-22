@@ -47,7 +47,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = 'pq_unit_test'
-copyright = '2015, xd'
+copyright = '2017, xd'
 author = 'xd'
 
 # The version info for the project you're documenting, acts as replacement for
