@@ -26,6 +26,12 @@ you need to fork and clone this reposity
 `sdpython/pyquickhelper <https://github.com/sdpython/pyquickhelper>`_.
 Otherwise, a zip file of the sources is enough.
 
+::
+
+    git clone https://github.com/sdpython/pyquickhelper.git
+    cd pyquickhelper
+    python setup.py install
+
 .. _l-doctestunit:
 
 Generate the setup
