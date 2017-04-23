@@ -125,3 +125,8 @@ A sphinx extension to generate python documentation from a script:
 
         import sys
         print("sys.version_info=", str(sys.version_info))
+
+
+.. image:: https://api.codacy.com/project/badge/Grade/793ffca6089d4d02b8292a50df74a8a4
+   :alt: Codacy Badge
+   :target: https://www.codacy.com/app/sdpython/pyquickhelper?utm_source=github.com&utm_medium=referral&utm_content=sdpython/pyquickhelper&utm_campaign=badger
