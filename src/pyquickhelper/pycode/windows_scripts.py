@@ -73,7 +73,7 @@ windows_unittest27 = """
 set PYTHONPATH=
 @echo run27: ~SET PYTHONPATH=
 @echo pythonexe27=%pythonexe27%
-cd dist_module27\\_unittests
+cd %current%dist_module27\\_unittests
 
 @echo run27: check existing for nose in %pythonexe27%\\..\\Scripts\\nosetests.exe
 if NOT EXIST %pythonexe27%\\..\\Scripts\\nosetests.exe dir %pythonexe27%\\..\\Scripts
