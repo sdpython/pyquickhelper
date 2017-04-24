@@ -281,6 +281,8 @@ class BenchMark:
 
         # run
         def run_(pgar):
+            if sys.version_info[0] == 2:
+                nb_cached = 0
             nonlocal nb_cached
             self._metrics = []
             self._appendix = []

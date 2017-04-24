@@ -189,6 +189,7 @@ def py3to2_convert(script, unittest_modules):
 
     # some other modification
     content = content.replace("from queue import", "from Queue import")
+    content = content.replace("nonlocal ", "# nonlocal ")
 
     # long and unicode
     content = content.replace("int  #long#", "long")
@@ -197,6 +198,7 @@ def py3to2_convert(script, unittest_modules):
     content = content.replace("str  # unicode#", "unicode")
     content = content.replace(
         "Programming Language :: Python :: 3", "Programming Language :: Python :: 2")
+    content = content.replace(', sep="\\t")', ', sep="\\t".encode("ascii"))')
 
     # imported modules
     if unittest_modules is not None:

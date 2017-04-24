@@ -97,7 +97,8 @@ class TestBenchMark(unittest.TestCase):
         bench.run(params)
         meta = bench.Metadata
         fLOG(meta)
-        self.assertEqual(meta[0]["nb_cached"], 20)
+        if sys.version_info[0] >= 3:
+            self.assertEqual(meta[0]["nb_cached"], 20)
         df2 = bench.to_df()
         self.assertEqual(df1.shape, df2.shape)
 
