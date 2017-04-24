@@ -1,0 +1,64 @@
+
+# No other language is allowed.
+language: python
+
+# This defines the path to the interpreter the module is tested against.
+# A different script is generated for each PATH.
+# A path cannot be a virtual environment.
+python:
+  - { PATH: "{{replace(Python35, '\\', '\\\\')}}", VERSION: 3.5, DIST: std }
+  - { PATH: "{{replace(Python36, '\\', '\\\\')}}", VERSION: 3.6, DIST: std }
+  - { PATH: "{{replace(Python27, '\\', '\\\\')}}", VERSION: 2.7, DIST: std }
+  - { PATH: "{{replace(Anaconda3, '\\', '\\\\')}}", VERSION: 3.6, DIST: conda }
+  - { PATH: "{{replace(Anaconda2, '\\', '\\\\')}}", VERSION: 2.7, DIST: conda }
+  - { PATH: "{{replace(WinPython36, '\\', '\\\\')}}", VERSION: 3.6, DIST: winpython }
+  
+# The test happens in a virtual environment not with the original distribution.
+virtualenv:
+  - path: {{ospathjoin(root_path, pickname("%NAME_JENKINS%", project_name + "_%VERSION%_%DIST%_%NAME%"), "_venv")}}
+  
+# Dependencies to install.
+install:
+  - pip install --no-cache-dir --no-deps --index http://localhost:8067/simple/ jyquickhelper --extra-index-url=https://pypi.python.org/simple/
+  - pip install -r requirements.txt
+  - python --version
+  - pip freeze
+  - pip freeze > pip_freeze.txt
+
+# Depending on the version, some steps need to be run before the script itself.
+# The notation ${VERSION} refers to the version specified in section python.
+# Inside a condition ([]), the notation ${PYTHON} must be used.
+# Outside, the yaml interpreter only consider variables interpreted by Jinja2.
+# Environment variables are available but only those defined on the machine used to generate the Jenkins job.
+before_script:
+  - if [ ${VERSION} == "2.7" ] then pip uninstall jyquickhelper fi
+  - if [ ${VERSION} == "2.7" ] then pip install bin\jyquickhelper-0.2-py2-none-any.whl fi
+  - if [ ${VERSION} == "2.7" ] then {{Python35}}\python -u setup.py copy27 fi
+  - if [ ${VERSION} == "2.7" ] then cd dist_module27 fi
+  
+# The script to run.
+# Each row becomes a Jenkins job. pyquickhelper will generate nb(python) * nb(script) jobs to run on Jenkins.
+# Steps before_script and after_script are run for every script.
+# Variable NAME is added to the Job name on Jenkins in order to distinguish them.
+# By default, the timeout for the job (only used in Jenkins) is set to 1200 (20 minutes).
+# This means the job will be stop if it produces no output for 20 minutes.
+script:
+  - { CMD: "python -u setup.py unittests", NAME: "UT", TIMEOUT: 900 }
+  - { CMD: "python -u setup.py unittests_SKIP", NAME: "UT_SKIP", TIMEOUT: 900 }
+  - if [ ${VERSION} == "3.5" and ${DIST} == "std" ]
+      then 
+        --CMD=python -u setup.py build_sphinx;
+        --NAME=DOC;
+      fi
+
+# To run after the script.
+after_script:
+  - python -u setup.py bdist_wheel
+  - if [ ${VERSION} == "2.7" and ${DIST} != "conda" ] then copy dist\*.whl ..\..\..\local_pypi\local_pypi_server fi
+  - if [ ${VERSION} == "2.7" ] then cd .. fi
+  - if [ ${VERSION} != "2.7" and ${DIST} != "conda" and ${VERSION} == "3.5" and ${NAME} == "UT" ] then copy dist\*.whl ..\..\local_pypi\local_pypi_server fi
+
+# Same as after script.
+documentation:
+  - if [ ${NAME} == "UT" and ${VERSION} != "2.7" ] then python -u setup.py build_sphinx fi
+  - if [ ${NAME} == "UT" and ${VERSION} != "2.7" ] then xcopy /E /C /I /Y _doc\sphinxdoc\build\html dist\html fi

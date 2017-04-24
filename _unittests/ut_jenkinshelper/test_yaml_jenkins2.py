@@ -31,18 +31,35 @@ if sys.version_info[0] == 2:
 
 class TestYamlJenkins2(unittest.TestCase):
 
-    def test_jenkins_ext_setup_server_yaml2(self):
+    def test_jenkins_ext_setup_server_yaml2_url(self):
         fLOG(
             __file__,
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
+        self._jenkins_ext_setup_server_yaml2(True)
+
+    def test_jenkins_ext_setup_server_yaml2_local(self):
+        fLOG(
+            __file__,
+            self._testMethodName,
+            OutputPrint=__name__ == "__main__")
+
+        self._jenkins_ext_setup_server_yaml2(True)
+
+    def _jenkins_ext_setup_server_yaml2(self, use_url):
         srv = JenkinsExt(
             "http://localhost:8080/", "user", "password", mock=True,
             engines=default_engines(), fLOG=fLOG, platform="win")
 
         fLOG("---------------------")
-        res = setup_jenkins_server_yml(srv, github="sdpython", modules=default_jenkins_jobs(),
+        modules = default_jenkins_jobs()
+        if not use_url:
+            this = os.path.abspath(os.path.dirname(__file__))
+            local_file = os.path.join(this, "data", ".local.jenkins.win.yml")
+            modules = [('yml', local_file, 'H H(5-6) * * 0')]
+        fLOG("[modules]", modules)
+        res = setup_jenkins_server_yml(srv, github="sdpython", modules=modules,
                                        overwrite=True, add_environ=False,
                                        location="anything")
         reg = re.compile("<description>(.*)</description>")

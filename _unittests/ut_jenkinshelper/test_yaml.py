@@ -197,7 +197,7 @@ class TestYaml(unittest.TestCase):
 
             @echo SCRIPT
             set PATH=ROOT\\%NAME_JENKINS%\\_venv\\Scripts;%PATH%
-            python -X faulthandler -X showrefcount -u setup.py unittests
+            python -u setup.py unittests
             if %errorlevel% neq 0 exit /b %errorlevel%
 
             @echo AFTER_SCRIPT
@@ -348,7 +348,9 @@ class TestYaml(unittest.TestCase):
 
             @echo BEFORE_SCRIPT
             set PATH=ROOT\\%NAME_JENKINS%\\_venv\\Scripts;%PATH%
-            pip install jyquickhelper==0.1.26
+            pip uninstall jyquickhelper
+            if %errorlevel% neq 0 exit /b %errorlevel%
+            pip install bin\\jyquickhelper-0.2-py2-none-any.whl
             if %errorlevel% neq 0 exit /b %errorlevel%
             C:\\Python35_x64\\python -u setup.py copy27
             if %errorlevel% neq 0 exit /b %errorlevel%
