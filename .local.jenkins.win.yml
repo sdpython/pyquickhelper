@@ -19,7 +19,6 @@ virtualenv:
   
 # Dependencies to install.
 install:
-    - if [ ${VERSION} == "2.7" ] then pip install bin\jyquickhelper-0.2-py2-none-any.whl fi
   - pip install --no-cache-dir --no-deps --index http://localhost:8067/simple/ jyquickhelper --extra-index-url=https://pypi.python.org/simple/
   - pip install -r requirements.txt
   - python --version
@@ -32,6 +31,8 @@ install:
 # Outside, the yaml interpreter only consider variables interpreted by Jinja2.
 # Environment variables are available but only those defined on the machine used to generate the Jenkins job.
 before_script:
+  - if [ ${VERSION} == "2.7" ] then pip uninstall jyquickhelper fi
+  - if [ ${VERSION} == "2.7" ] then pip install bin\jyquickhelper-0.2-py2-none-any.whl fi
   - if [ ${VERSION} == "2.7" ] then {{Python35}}\python -u setup.py copy27 fi
   - if [ ${VERSION} == "2.7" ] then cd dist_module27 fi
   
