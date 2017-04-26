@@ -261,7 +261,8 @@ class BenchMark:
             params_list), time_begin=datetime.now())
         self._metadata = []
         self._metadata.append(meta)
-        nb_cached = 0
+        if sys.version_info[0] < 3:
+            nb_cached = 0
 
         # cache
         def cache_():
