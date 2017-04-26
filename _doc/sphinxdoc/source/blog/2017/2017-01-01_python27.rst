@@ -1,6 +1,6 @@
 
 .. blogpost::
-    :title: Python 2.7 disconinued
+    :title: Python 2.7 discontinued
     :keywords: Python 2.7
     :date: 2017-01-01
     :categories: release

@@ -2,7 +2,7 @@
 .. blogpost::
     :title: List of tools needed to build the documentation
     :keywords: documentation, startup
-    :date: 2017-05-01
+    :date: 2017-04-27
     :categories: installation
 
     I have been setting up a couple of times

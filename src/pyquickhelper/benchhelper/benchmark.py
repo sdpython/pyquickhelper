@@ -261,8 +261,7 @@ class BenchMark:
             params_list), time_begin=datetime.now())
         self._metadata = []
         self._metadata.append(meta)
-        if sys.version_info[0] < 3:
-            nb_cached = 0
+        nb_cached = 0
 
         # cache
         def cache_():
@@ -282,9 +281,9 @@ class BenchMark:
 
         # run
         def run_(pgar):
-            if sys.version_info[0] == 2:
-                nb_cached = 0
             nonlocal nb_cached
+            if sys.version_info[0] < 3:
+                nb_cached = 0
             self._metrics = []
             self._appendix = []
 
