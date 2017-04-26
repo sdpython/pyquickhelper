@@ -505,7 +505,7 @@ class FileTreeNode:
         @warning If a file already exists at the new location, it checks the dates, if
         """
         if not os.path.exists(path):
-            raise PQHException("this path does not exist :" + path)
+            raise PQHException("this path does not exist: '{0}'".format(path))
         if self.isdir():
             raise PQHException(
                 "this node represents a folder " + self.get_fullname())

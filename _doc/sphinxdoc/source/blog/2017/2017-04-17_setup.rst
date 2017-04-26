@@ -1,0 +1,67 @@
+
+.. blogpost::
+    :title: List of tools needed to build the documentation
+    :keywords: documentation, startup
+    :date: 2017-05-01
+    :categories: installation
+
+    I have been setting up a couple of times
+    a machine to build this documentation and others
+    for my teachings. I do that on Windows.
+    Here is the list of tools I need:
+
+    * `Miktex <https://miktex.org/>`_: there is one question during the installation about
+      silent installation of new packages, change the default value to yes.
+    * `GraphViz <http://www.graphviz.org/>`_
+    * `InkScape <https://inkscape.org/en/>`_
+
+    About Python:
+
+    * `Python 3.6 <https://www.python.org/>`_
+
+    And the necessary modules:
+
+    ::
+
+        pip install pymyinstall
+        pymy_install --set=pyquickhelper
+        pip install pyquickhelper
+
+    A couple of others might be needed.
+    I usually use a couple of editors:
+
+    *  `SciTe <http://www.scintilla.org/SciTE.html>`_: the most simple one
+    * `TexnicCenter <http://www.texniccenter.org/>`_: for latex
+
+    And some useful tools:
+
+    * `7zip <http://www.7-zip.org/>`_
+
+    I usually installed
+    `Visual Studio Community Edition 2015 <http://www.xavierdupre.fr/app/pymyinstall/helpsphinx/blog/2017/2017-04-18_vs2015.html>`_
+    just in case a module requires C++.
+    Sometimes, I create a new module just for a new documentation with notebooks.
+    I start from this template
+    `python3_module_template <https://github.com/sdpython/python3_module_template/>`_.
+    I change the name, update the dependencies in
+    `setup.py <https://github.com/sdpython/python3_module_template/blob/master/setup.py>`_,
+    update the automated build if the project is open source (travis, appveyor...).
+    I then modify the file
+    `.local.jenkins.win.yml <https://github.com/sdpython/python3_module_template/blob/master/.local.jenkins.win.yml>`_
+    which I use to define an automated build on `Jenkins <https://jenkins.io/>`_.
+    The module is automated but still quite strict about its design.
+    Notebooks have to be placed into
+    `_doc/notebooks <https://github.com/sdpython/python3_module_template/tree/master/_doc/notebooks>`_,
+    examples into `_doc/examples <https://github.com/sdpython/python3_module_template/tree/master/_doc/examples>`_
+    and documentation into `_doc/sphinxdoc/source <https://github.com/sdpython/python3_module_template/tree/master/_doc/sphinxdoc/source>`_.
+    The documentation can be compiled by just running:
+
+    ::
+
+        python setup.py build_sphinx
+
+    The unit tests by running:
+
+    ::
+
+        python setup.py unittests
