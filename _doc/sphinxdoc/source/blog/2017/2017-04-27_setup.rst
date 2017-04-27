@@ -37,7 +37,7 @@
 
     * `7zip <http://www.7-zip.org/>`_
 
-    I usually installed
+    I usually install
     `Visual Studio Community Edition 2015 <http://www.xavierdupre.fr/app/pymyinstall/helpsphinx/blog/2017/2017-04-18_vs2015.html>`_
     just in case a module requires C++.
     Sometimes, I create a new module just for a new documentation with notebooks.
