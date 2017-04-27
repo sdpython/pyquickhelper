@@ -149,19 +149,21 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
         :title: Other page of examples___run help generation
 
         This example is exactly the same as the previous one but will be generated on another page of examples.
-        @code
-        # from the main folder which contains folder src
-        generate_help_sphinx("pyquickhelper")
-        @endcode
+
+        ::
+
+            # from the main folder which contains folder src
+            generate_help_sphinx("pyquickhelper")
 
     .. exref::
         :title: Page with an accent -é- in the title___run help generation
 
         Same page with an accent.
-        @code
-        # from the main folder which contains folder src
-        generate_help_sphinx("pyquickhelper")
-        @endcode
+
+        ::
+
+            # from the main folder which contains folder src
+            generate_help_sphinx("pyquickhelper")
 
     The function requires:
 
@@ -173,9 +175,9 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
              file ``<python_path>/Lib/site-packages/sphinx/themes/basic/layout.html``
              must be modified to add the following line (just below ``Content-Type``).
 
-             @code
-             <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-             @endcode
+             ::
+
+                <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 
     .. index:: PEP8, autopep8
 
