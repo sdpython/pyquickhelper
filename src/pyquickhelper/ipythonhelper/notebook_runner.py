@@ -545,6 +545,32 @@ class NotebookRunner(object):
             self.detailed_log('[run_cell] status={0}'.format(status))
         return outs
 
+    def to_python(self):
+        """
+        Converts the notebook into python.
+
+        @return         string
+        """
+        rows = []
+        for cell in self.iter_cells():
+            if cell.cell_type == "code":
+                iscell, codei = NotebookRunner.get_cell_code(cell)
+                rows.append(codei)
+            elif cell.cell_type in ("markdown", "raw"):
+                content = cell.source
+                lines = content.split("\n")
+                for line in lines:
+                    if line.startswith("#"):
+                        rows.append("###")
+                        rows.append(line)
+                    else:
+                        rows.append("# " + line)
+            else:
+                # No text, no code.
+                rows.append("# cell.type = {0}".format(cell.cell_type))
+            rows.append("")
+        return "\n".join(rows)
+
     def iter_code_cells(self):
         '''
         Iterate over the notebook cells containing code.

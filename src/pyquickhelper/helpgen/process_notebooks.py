@@ -156,6 +156,26 @@ def _process_notebooks_in_private(fnbcexe, list_args, options_args):
         exc = None
     except SystemExit as e:
         exc = e
+    except IndentationError as e:
+        # This is change in IPython 6.0.0. The conversion fails on IndentationError.
+        # We switch to another one.
+        i = list_args.index("--template")
+        format = list_args[i + 1]
+        if format == "python":
+            i = list_args.index("--output")
+            dest = list_args[i + 1]
+            if not dest.endswith(".py"):
+                dest += ".py"
+            src = list_args[-1]
+            from .. ipythonhelper import read_nb
+            nb = read_nb(src)
+            code = nb.to_python()
+            with open(dest, "w", encoding="utf-8") as f:
+                f.write(code)
+            exc = None
+        else:
+            # We do nothing in this case.
+            exc = e
     sys.stdout = memo_out
     sys.stderr = memo_err
     out = out.getvalue()

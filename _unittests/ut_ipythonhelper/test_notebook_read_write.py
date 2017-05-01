@@ -42,7 +42,7 @@ class TestNotebookReadWrite (unittest.TestCase):
             return
         temp = get_temp_folder(__file__, "temp_notebook_read_write")
         nbfile = os.path.join(temp, "..", "data", "simple_example.ipynb")
-        assert os.path.exists(nbfile)
+        self.assertTrue(os.path.exists(nbfile))
         # For some reason, if this instruction is included in the build,
         # the travis build completes but never ends.
         # This is removed from the whole list on tavis.
@@ -69,6 +69,31 @@ class TestNotebookReadWrite (unittest.TestCase):
                         "difference at line {0}\n1: [{1}]-[{3}]\n2: [{2}]-[{4}]".format(i, a, b, type(a), type(b)))
             if len(l1) != len(l2):
                 raise Exception("different length")
+
+    def test_notebook_to_python(self):
+        fLOG(
+            __file__,
+            self._testMethodName,
+            OutputPrint=__name__ == "__main__")
+        if sys.version_info[0] == 2:
+            # written in Python 3
+            return
+        temp = get_temp_folder(__file__, "temp_notebook_topython")
+        nbfile = os.path.join(temp, "..", "data", "simple_example.ipynb")
+        self.assertTrue(os.path.exists(nbfile))
+        # For some reason, if this instruction is included in the build,
+        # the travis build completes but never ends.
+        # This is removed from the whole list on tavis.
+        if is_travis_or_appveyor() == "travis":
+            warnings.warn(
+                "This test prevents travis from ending. The process never stops.")
+            return
+        nb = read_nb(nbfile, kernel=False)
+        outfile = os.path.join(temp, "out_notebook.py")
+        code = nb.to_python()
+        self.assertTrue(len(code) > 0)
+        with open(outfile, "w", encoding="utf-8") as f:
+            f.write(code)
 
 
 if __name__ == "__main__":
