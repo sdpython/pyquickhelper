@@ -175,7 +175,7 @@ def run_cmd(cmd, sin="", shell=sys.platform.startswith("win"), wait=False, log_e
         See `Constantly print Subprocess output while process is running <http://stackoverflow.com/questions/4417546/constantly-print-subprocess-output-while-process-is-running/4417735>`_.
         Parameter *tell_if_no_output*, *stop_running_if* were added.
 
-    .. verionchanged:: 1.5
+    .. versionchanged:: 1.5
         If *wait* is False, the function returns the started process.
         ``__exit__`` should be called if wait if False.
     """
