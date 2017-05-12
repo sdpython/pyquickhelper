@@ -8,54 +8,64 @@ import autopep8
 from ..filehelper.synchelper import explore_folder
 
 
-def remove_extra_spaces_and_pep8(filename, apply_pep8=True):
+def remove_extra_spaces_and_pep8(filename, apply_pep8=True, aggressive=False):
     """
-    removes extra spaces in a filename, replace the file in place
+    Removes extra spaces in a filename, replace the file in place
 
-    @param      filename        file name
+    @param      filename        file name or string (but it assumes it is python).
     @param      apply_pep8      if True, calls ``autopep8`` on the file
+    @param      aggressive      more aggressive
     @return                     number of removed extra spaces
 
     .. versionchanged:: 1.0
         Parameter *apply_pep8* was added.
+
+    .. versionchanged:: 1.5
+        Allow string and not only files, add parameter *aggressive*,
+        use ``fix_code`` instead of ``fix_line``.
     """
-    ext = os.path.splitext(filename)[-1]
-    if ext in (".bat", ".py", ".sh"):
-        try:
-            with open(filename, "r") as f:
-                lines = f.readlines()
-            encoding = None
-        except PermissionError as e:
-            raise PermissionError(filename) from e
-        except UnicodeDecodeError as e:
-            try:
-                with open(filename, "r", encoding="utf-8") as f:
-                    lines = f.readlines()
-                encoding = "utf-8"
-            except Exception:
-                raise Exception(
-                    "unable to load file {} due to unicode errors".format(filename)) from e
+    if "\n" in filename:
+        ext = ".py"
+        lines = filename.replace("\r", "").split("\n")
+        filename = None
     else:
-        try:
-            with open(filename, "r", encoding="utf-8-sig") as f:
-                lines = f.readlines()
-            encoding = "utf-8"
-        except PermissionError as e:
-            raise PermissionError(filename) from e
-        except UnicodeDecodeError as e:
+        ext = os.path.splitext(filename)[-1]
+        if ext in (".bat", ".py", ".sh"):
             try:
                 with open(filename, "r") as f:
                     lines = f.readlines()
                 encoding = None
-            except Exception:
-                raise Exception(
-                    "unable to load file {} due to unicode errors".format(filename)) from e
+            except PermissionError as e:
+                raise PermissionError(filename) from e
+            except UnicodeDecodeError as e:
+                try:
+                    with open(filename, "r", encoding="utf-8") as f:
+                        lines = f.readlines()
+                    encoding = "utf-8"
+                except Exception:
+                    raise Exception(
+                        "unable to load file {} due to unicode errors".format(filename)) from e
+        else:
+            try:
+                with open(filename, "r", encoding="utf-8-sig") as f:
+                    lines = f.readlines()
+                encoding = "utf-8"
+            except PermissionError as e:
+                raise PermissionError(filename) from e
+            except UnicodeDecodeError as e:
+                try:
+                    with open(filename, "r") as f:
+                        lines = f.readlines()
+                    encoding = None
+                except Exception:
+                    raise Exception(
+                        "unable to load file {} due to unicode errors".format(filename)) from e
 
-    if len(lines) == 0 and not filename.endswith("__init__.py"):
+    if filename is not None and len(lines) == 0 and not filename.endswith("__init__.py"):
         raise ValueError(
             "File '{0}' is empty, encoding='{1}'.".format(filename, encoding))
 
-    if ext == ".py":
+    if filename is not None and ext == ".py":
         if encoding is not None and len(lines) > 0 and "#-*-coding:utf-8-*-" in lines[0].replace(" ", ""):
             with open(filename, "r", encoding="utf8") as f:
                 try:
@@ -79,21 +89,25 @@ def remove_extra_spaces_and_pep8(filename, apply_pep8=True):
 
     diff, lines2 = cdiff(lines)
 
-    ext = os.path.splitext(filename)[-1]
+    if filename is not None:
+        ext = os.path.splitext(filename)[-1]
     if ext == ".py":
-        r = autopep8.fix_lines(
-            lines2,
-            options=autopep8.parse_args(['']))
+        options = ['', '-a'] if aggressive else ['']
+        r = autopep8.fix_code(
+            "\n".join(lines2), options=autopep8.parse_args(options))
 
         if len(lines) > 0 and (len(lines2) == 0 or len(lines2) < len(lines) // 2):
             raise ValueError("Resulting file is empty for '{3}',\ninitial number of lines {0} encoding='{1}' diff={2}".format(
                 len(lines), encoding, diff, filename))
-        if encoding is None:
-            with open(filename, "w") as f:
-                f.write(r)
+        if filename is None:
+            return r
         else:
-            with open(filename, "w", encoding="utf8") as f:
-                f.write(r)
+            if encoding is None:
+                with open(filename, "w") as f:
+                    f.write(r)
+            else:
+                with open(filename, "w", encoding="utf8") as f:
+                    f.write(r)
         if r != "".join(lines):
             diff, lines2 = cdiff(r.split("\n"))
         else:
