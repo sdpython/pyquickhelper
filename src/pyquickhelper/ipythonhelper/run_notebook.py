@@ -17,9 +17,10 @@ from .notebook_helper import writes
 
 try:
     from nbformat.reader import reads
+    from nbformat.reader import NotJSONError
 except ImportError:
     from IPython.nbformat.reader import reads
-
+    from IPython.nbformat.reader import NotJSONError
 
 if sys.version_info[0] == 2:
     from codecs import open
@@ -140,7 +141,11 @@ def run_notebook(filename, profile_dir=None, working_dir=None, skip_exceptions=F
         cached_rep.update(replacements)
 
     with open(filename, "r", encoding=encoding) as payload:
-        nb = reads(payload.read())
+        try:
+            nb = reads(payload.read())
+        except NotJSONError as e:
+            raise NotebookException(
+                "Unable to read file '{0}' encodig={1}.".format(filename, encoding)) from e
 
         out = StringIO()
 

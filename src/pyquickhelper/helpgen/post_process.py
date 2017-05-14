@@ -10,7 +10,6 @@ import re
 import warnings
 import sys
 
-from ..loghelper.flog import fLOG
 from .utils_sphinx_doc_helpers import HelpGenException
 
 if sys.version_info[0] == 2:
@@ -34,7 +33,7 @@ Another list
 """
 
 
-def update_notebook_link(text, format, nblinks):
+def update_notebook_link(text, format, nblinks, fLOG):
     """
     A notebook can contain a link ``[anchor](find://...)``
     and it will be converted into: ``:ref:...`` in rst format.
@@ -42,6 +41,7 @@ def update_notebook_link(text, format, nblinks):
     @param      text        text to look into
     @param      format      format
     @param      nblinks     list of mappings *(reference: url)*
+    @param      fLOG        logging function
     @return                 modified text
 
     .. versionadded:: 1.5
@@ -52,13 +52,21 @@ def update_notebook_link(text, format, nblinks):
                 url = nblinks[url, format]
             elif url in nblinks:
                 url = nblinks[url]
+            if url.startswith("find://"):
+                short = url[7:]
+                if (short, format) in nblinks:
+                    url = nblinks[short, format]
+                elif short in nblinks:
+                    url = nblinks[short]
         else:
             url = nblinks(url, format)
-        if "find:" in url:
+        if url.startswith("find://"):
             snb = "\n".join("'{0}': '{1}'".format(k, v)
                             for k, v in sorted(nblinks.items()))
+            extension = "You shoud add links into variable 'nblinks' into documentation configuration file."
+            extension += "\nnblinks={0}".format(nblinks)
             raise Exception(
-                "Unable to find a replacement for '{0}' format='{1}' in \n{2}".format(url, format, snb))
+                "Unable to find a replacement for '{0}' format='{1}' in \n{2}\n{3}".format(url, format, snb, extension))
         return url
 
     if nblinks is None:
@@ -67,26 +75,37 @@ def update_notebook_link(text, format, nblinks):
         def reprst(l):
             anc, url = l.groups()
             url = get_url_from_nblinks(nblinks, url, format)
-            return ":ref:`{0} <{1}>`".format(anc, url)
+            new_url = ":ref:`{0} <{1}>`".format(anc, url)
+            if fLOG:
+                fLOG("      NBLINKS: add in ", format, ":", new_url)
+            return new_url
         reg = re.compile("`([^`]+?) <find://([^`<>]+?)>`_")
         new_text = reg.sub(reprst, text)
     elif format == "html" or format == "slides" or format == "slides2":
         def rephtml(l):
             anc, url = l.groups()
             url = get_url_from_nblinks(nblinks, url, format)
-            return "<a href=\"{0}.html\">{1}</a>".format(anc, url)
+            new_url = "<a href=\"{0}.html\">{1}</a>".format(anc, url)
+            if fLOG:
+                fLOG("      NBLINKS: add in ", format, ":", new_url)
+            return new_url
         reg = re.compile("<a href=\\\"find://([^\\\"]+?)\\\">([^`<>]+?)</a>")
         new_text = reg.sub(rephtml, text)
     elif format == "ipynb" or format == "python":
         def repipy(l):
             anc, url = l.groups()
-            url = get_url_from_nblinks(nblinks, url, format)
+            url = get_url_from_nblinks(nblinks, "find://" + url, format)
             if not url.startswith("http"):
                 mes = "\n".join("{0}: '{1}'".format(k, v)
                                 for k, v in sorted(nblinks.items()))
+                extension = "You should add this link into the documentation configuration file in variable 'nblinks'."
+                extension += "nblinks={0}".format(nblinks)
                 raise Exception(
-                    "A reference was no found: '{0}' - '{1}' format={2}\n{3}".format(anc, url, format, mes))
-            return "[{0}]({1})".format(anc, url)
+                    "A reference was no found: '{0}' - '{1}' format={2}\n{3}\n{4}".format(anc, url, format, mes, extension))
+            new_url = "[{0}]({1})".format(anc, url)
+            if fLOG:
+                fLOG("      NBLINKS: add in ", format, ":", new_url)
+            return new_url
         reg = re.compile("[[]([^[]+?)[]][(]find://([^ ]+)[)]")
         new_text = reg.sub(repipy, text)
     elif format == "latex":
@@ -95,7 +114,10 @@ def update_notebook_link(text, format, nblinks):
             url = get_url_from_nblinks(nblinks, url, format)
             if not url.endswith(".html") and not url.endswith(".js") and not url.endswith(".css"):
                 url += ".html"
-            return "\\href{{{0}}}{{{1}}}".format(url, anc)
+            new_url = "\\href{{{0}}}{{{1}}}".format(url, anc)
+            if fLOG:
+                fLOG("      NBLINKS: add in ", format, ":", new_url)
+            return new_url
         reg = re.compile("\\\\href{find://([^{} ]+?)}{([^{}]+)}")
         new_text = reg.sub(replat, text)
         # {\hyperref[\detokenize{c_classes/classes:chap-classe}]{\sphinxcrossref{\DUrole{std,std-ref}{Classes}}}}
@@ -106,7 +128,7 @@ def update_notebook_link(text, format, nblinks):
 
 
 def post_process_latex_output(root, doall, latex_book=False, exc=True,
-                              custom_latex_processing=None, nblinks=None):
+                              custom_latex_processing=None, nblinks=None, fLOG=None):
     """
     post process the latex file produced by sphinx
 
@@ -116,9 +138,10 @@ def post_process_latex_output(root, doall, latex_book=False, exc=True,
     @param      exc                         raise an exception or a warning
     @param      custom_latex_processing     function which does some post processing of the full latex file
     @param      nblinks                     dictionary ``{ ref : url }`` where to look for references
+    @param      fLOG                        logging function
 
     .. versionchanged:: 1.5
-        Parameters *exc*, *custom_latex_processing* were added.
+        Parameters *exc*, *custom_latex_processing*, *fLOG* were added.
     """
     if os.path.isfile(root):
         file = root
@@ -126,7 +149,7 @@ def post_process_latex_output(root, doall, latex_book=False, exc=True,
             content = f.read()
         content = post_process_latex(
             content, doall, latex_book=latex_book, exc=exc,
-            custom_latex_processing=custom_latex_processing, nblinks=nblinks, file=file)
+            custom_latex_processing=custom_latex_processing, nblinks=nblinks, file=file, fLOG=fLOG)
         with open(file, "w", encoding="utf8") as f:
             f.write(content)
     else:
@@ -141,12 +164,12 @@ def post_process_latex_output(root, doall, latex_book=False, exc=True,
                     content = f.read()
                 content = post_process_latex(
                     content, doall, info=file, latex_book=latex_book, exc=exc,
-                    custom_latex_processing=custom_latex_processing, nblinks=nblinks, file=file)
+                    custom_latex_processing=custom_latex_processing, nblinks=nblinks, file=file, fLOG=fLOG)
                 with open(file, "w", encoding="utf8") as f:
                     f.write(content)
 
 
-def post_process_python_output(root, doall, exc=True, nblinks=None):
+def post_process_python_output(root, doall, exc=True, nblinks=None, fLOG=None):
     """
     post process the python file produced by sphinx
 
@@ -154,6 +177,7 @@ def post_process_python_output(root, doall, exc=True, nblinks=None):
     @param      doall       unused
     @param      exc         raise an exception if needed
     @param      nblinks     dictionary ``{ref: url}``
+    @param      fLOG        logging function
 
     .. versionadded:: 1.3
 
@@ -165,7 +189,7 @@ def post_process_python_output(root, doall, exc=True, nblinks=None):
         with open(file, "r", encoding="utf8") as f:
             content = f.read()
         content = post_process_python(
-            content, doall, nblinks=nblinks, file=file)
+            content, doall, nblinks=nblinks, file=file, fLOG=fLOG)
         with open(file, "w", encoding="utf8") as f:
             f.write(content)
     else:
@@ -179,33 +203,35 @@ def post_process_python_output(root, doall, exc=True, nblinks=None):
                 with open(file, "r", encoding="utf8") as f:
                     content = f.read()
                 content = post_process_python(
-                    content, doall, info=file, nblinks=nblinks, file=file)
+                    content, doall, info=file, nblinks=nblinks, file=file, fLOG=fLOG)
                 with open(file, "w", encoding="utf8") as f:
                     f.write(content)
 
 
-def post_process_latex_output_any(file, custom_latex_processing, nblinks=None):
+def post_process_latex_output_any(file, custom_latex_processing, nblinks=None, fLOG=None):
     """
     post process the latex file produced by sphinx
 
     @param      file                        latex filename
     @param      custom_latex_processing     function which does some post processing of the full latex file
     @param      nblinks                     dictionary ``{url: link}``
+    @param      fLOG                        logging function
 
     .. versionchanged:: 1.5
-        Parameters *custom_latex_processing*, *nblinks* were added.
+        Parameters *custom_latex_processing*, *nblinks*, *fLOG* were added.
     """
-    fLOG("   ** post_process_latex_output_any ", file)
+    if fLOG:
+        fLOG("   ** post_process_latex_output_any ", file)
     with open(file, "r", encoding="utf8") as f:
         content = f.read()
     content = post_process_latex(
-        content, True, info=file, nblinks=nblinks, file=file)
+        content, True, info=file, nblinks=nblinks, file=file, fLOG=fLOG)
     with open(file, "w", encoding="utf8") as f:
         f.write(content)
 
 
 def post_process_rst_output(file, html, pdf, python, slides, present, is_notebook=False,
-                            exc=True, github=False, notebook=None, nblinks=None):
+                            exc=True, github=False, notebook=None, nblinks=None, fLOG=None):
     """
     process a RST file generated from the conversion of a notebook
 
@@ -220,12 +246,13 @@ def post_process_rst_output(file, html, pdf, python, slides, present, is_noteboo
     @param      github          add a link to the notebook on github
     @param      notebook        location of the notebook, file might be a copy
     @param      nblinks         links added to a notebook, dictionary ``{ref: url}``
+    @param      fLOG            logging function
 
     .. versionchanged:: 1.4
         Parameter *present* was added.
 
     .. versionchanged:: 1.5::
-        Parameters *exc*, *github*, *notebook* were added.
+        Parameters *exc*, *github*, *notebook*, *fLOG* were added.
     """
     fLOG("    post_process_rst_output", file)
 
@@ -420,7 +447,7 @@ def post_process_rst_output(file, html, pdf, python, slides, present, is_noteboo
 
     # checking for find://
     content = "".join(lines)
-    content = update_notebook_link(content, "rst", nblinks=nblinks)
+    content = update_notebook_link(content, "rst", nblinks=nblinks, fLOG=fLOG)
     if "find://" in content:
         raise Exception("find:// was found in '{0}'".format(file))
 
@@ -428,7 +455,7 @@ def post_process_rst_output(file, html, pdf, python, slides, present, is_noteboo
         f.write(content)
 
 
-def post_process_html_output(file, pdf, python, slides, present, exc=True, nblinks=None):
+def post_process_html_output(file, pdf, python, slides, present, exc=True, nblinks=None, fLOG=None):
     """
     process a HTML file generated from the conversion of a notebook
 
@@ -439,12 +466,13 @@ def post_process_html_output(file, pdf, python, slides, present, exc=True, nblin
     @param      present     if True, add a link to the slides conversion (with *nbpresent*)
     @param      exc         raises an exception (True) or a warning (False)
     @param      nblinks     dictionary ``{ref: url}``
+    @param      fLOG                        logging function
 
     .. versionchanged:: 1.4
         Parameter *present* was added.
 
     .. versionchanged:: 1.5
-        Parameter *exc*, *nblinks* were added.
+        Parameter *exc*, *nblinks*, *fLOG* were added.
     """
     fold, name = os.path.split(file)
     if not os.path.exists(file):
@@ -456,7 +484,7 @@ def post_process_html_output(file, pdf, python, slides, present, exc=True, nblin
     text = text.replace("https://c328740.ssl.cf1.rackcdn.com/mathjax/latest/MathJax.js?config=TeX-AMS_HTML",
                         "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML")
 
-    text = update_notebook_link(text, "html", nblinks=nblinks)
+    text = update_notebook_link(text, "html", nblinks=nblinks, fLOG=fLOG)
     if "find://" in text:
         raise Exception("find:// was found in '{0}'".format(file))
 
@@ -464,7 +492,7 @@ def post_process_html_output(file, pdf, python, slides, present, exc=True, nblin
         f.write(text)
 
 
-def post_process_slides_output(file, pdf, python, slides, present, exc=True, nblinks=None):
+def post_process_slides_output(file, pdf, python, slides, present, exc=True, nblinks=None, fLOG=None):
     """
     process a HTML file generated from the conversion of a notebook
 
@@ -475,12 +503,13 @@ def post_process_slides_output(file, pdf, python, slides, present, exc=True, nbl
     @param      present     if True, add a link to the slides conversion (with *nbpresent*)
     @param      exc         raises an exception (True) or a warning (False)
     @param      nblinks     dictionary ``{ref: url}``
+    @param      fLOG        logging function
 
     .. versionchanged:: 1.4
         Parameter *present* was added.
 
     .. versionchanged:: 1.5
-        Parameter *exc*, *nblinks* were added.
+        Parameter *exc*, *nblinks*, *fLOG* were added.
     """
     if (len(file) > 5000 or not os.path.exists(file)) and "<html" in file:
         text = file
@@ -513,7 +542,7 @@ def post_process_slides_output(file, pdf, python, slides, present, exc=True, nbl
     # mathjax
     text = text.replace("https://c328740.ssl.cf1.rackcdn.com/mathjax/latest/MathJax.js?config=TeX-AMS_HTML",
                         "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML")
-    text = update_notebook_link(text, "slides", nblinks=nblinks)
+    text = update_notebook_link(text, "slides", nblinks=nblinks, fLOG=fLOG)
     if "find://" in text:
         raise Exception("find:// was found in '{0}'".format(file))
 
@@ -525,7 +554,7 @@ def post_process_slides_output(file, pdf, python, slides, present, exc=True, nbl
 
 
 def post_process_latex(st, doall, info=None, latex_book=False, exc=True,
-                       custom_latex_processing=None, nblinks=None, file=None):
+                       custom_latex_processing=None, nblinks=None, file=None, fLOG=None):
     """
     modifies a latex file after its generation by sphinx
 
@@ -536,22 +565,17 @@ def post_process_latex(st, doall, info=None, latex_book=False, exc=True,
     @param      exc             raises an exception or a warning
     @param      nblinks         dictionary ``{ref: url}``
     @param      file            only used when an exception is raised
+    @param      fLOG            logging function
     @return                     string
 
     SVG included in a notebook (or in RST file) requires `Inkscape <https://inkscape.org/>`_
     to be converted into Latex.
 
-    .. versionchanged:: 0.9
-        add parameter *info*, add tableofcontent in the document
-
-    .. versionchanged:: 1.2
-        remove ascii character in *[0..31]* in each line, replace them by space.
-
     .. versionchanged:: 1.4
         Parameter *latex_book* was added.
 
     .. versionchanged:: 1.5
-        Parameters *exc*, *nblinks* were added.
+        Parameters *exc*, *nblinks*, *fLOG* were added.
         The function is less strict on the checking of `$`.
         The function replaces ``\\mathbb{1}`` by ``\\mathbf{1\\!\\!1}``.
 
@@ -677,7 +701,7 @@ def post_process_latex(st, doall, info=None, latex_book=False, exc=True,
         st = st.replace(found, "%" + found)
 
     # fix references
-    st = update_notebook_link(st, "latex", nblinks=nblinks)
+    st = update_notebook_link(st, "latex", nblinks=nblinks, fLOG=fLOG)
     if "find://" in st:
         if nblinks is None or len(nblinks) == 0:
             raise Exception(
@@ -693,7 +717,7 @@ def post_process_latex(st, doall, info=None, latex_book=False, exc=True,
     return st
 
 
-def post_process_python(st, doall, info=None, nblinks=None, file=None):
+def post_process_python(st, doall, info=None, nblinks=None, file=None, fLOG=None):
     """
     modifies a python file after its generation by sphinx
 
@@ -702,6 +726,7 @@ def post_process_python(st, doall, info=None, nblinks=None, file=None):
     @param      info    for more understandable error messages
     @param      nblinks dictionary ``{ref: url}``
     @param      file    used only when an exception is raised
+    @param      fLOG    logging function
     @return             string
 
     .. versionadded:: 1.3
@@ -711,7 +736,7 @@ def post_process_python(st, doall, info=None, nblinks=None, file=None):
     """
     st = st.strip("\n \r\t")
     st = st.replace("# coding: utf-8", "# -*- coding: utf-8 -*-")
-    st = update_notebook_link(st, "python", nblinks=nblinks)
+    st = update_notebook_link(st, "python", nblinks=nblinks, fLOG=fLOG)
     if "find://" in st:
         raise Exception("find:// was found in '{0}'".format(file))
     return st
