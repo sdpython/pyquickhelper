@@ -254,7 +254,8 @@ def post_process_rst_output(file, html, pdf, python, slides, present, is_noteboo
     .. versionchanged:: 1.5::
         Parameters *exc*, *github*, *notebook*, *fLOG* were added.
     """
-    fLOG("    post_process_rst_output", file)
+    if fLOG:
+        fLOG("    post_process_rst_output", file)
 
     fold, name = os.path.split(file)
     noext = os.path.splitext(name)[0]
@@ -593,7 +594,8 @@ def post_process_latex(st, doall, info=None, latex_book=False, exc=True,
 
     @todo Check latex is properly converted in HTML files
     """
-    fLOG("   ** enter post_process_latex", doall, "%post_process_latex" in st)
+    if fLOG:
+        fLOG("   ** enter post_process_latex", doall, "%post_process_latex" in st)
     weird_character = set(chr(i) for i in range(1, 9))
 
     def clean_unicode(c):

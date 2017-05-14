@@ -42,7 +42,7 @@ class TestNoteBooksFind(unittest.TestCase):
             OutputPrint=__name__ == "__main__")
 
         text = "a link `ahah <find://rstref>`_ hello"
-        link = update_notebook_link(text, "rst", None)
+        link = update_notebook_link(text, "rst", None, fLOG)
         self.assertEqual(link, "a link :ref:`ahah <rstref>` hello")
 
     def test_update_link_html(self):
@@ -52,7 +52,7 @@ class TestNoteBooksFind(unittest.TestCase):
             OutputPrint=__name__ == "__main__")
 
         text = "a link <a href=\"find://rstref\">ahah</a> hello"
-        link = update_notebook_link(text, "html", None)
+        link = update_notebook_link(text, "html", None, fLOG)
         self.assertEqual(link, 'a link <a href="rstref.html">ahah</a> hello')
 
     def test_update_link_python(self):
@@ -62,9 +62,9 @@ class TestNoteBooksFind(unittest.TestCase):
             OutputPrint=__name__ == "__main__")
 
         text = "a link [find://rstref](ahah) hello"
-        link = update_notebook_link(text, "python", None)
+        link = update_notebook_link(text, "python", None, fLOG)
         self.assertEqual(link, 'a link [find://rstref](ahah) hello')
-        link = update_notebook_link(text, "ipynb", None)
+        link = update_notebook_link(text, "ipynb", None, fLOG)
         self.assertEqual(link, 'a link [find://rstref](ahah) hello')
 
     def test_update_link_latex(self):
@@ -74,13 +74,13 @@ class TestNoteBooksFind(unittest.TestCase):
             OutputPrint=__name__ == "__main__")
 
         text = "a link \\href{find://reftag}{internal\\_link} hello"
-        link = update_notebook_link(text, "latex", None)
+        link = update_notebook_link(text, "latex", None, fLOG)
         self.assertEqual(
             link, 'a link \\href{reftag.html}{internal\\_link} hello')
 
         text = "notebook \\href{find://slideshowrst}{a link}"
         link = update_notebook_link(
-            text, "latex", {'slideshowrst': 'http://sl.html'})
+            text, "latex", {'slideshowrst': 'http://sl.html'}, fLOG)
         self.assertEqual(
             link, 'notebook \\href{http://sl.html}{a link}')
 

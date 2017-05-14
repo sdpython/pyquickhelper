@@ -102,6 +102,9 @@ def default_filter_warning(w):
         elif "basemap" in w.filename:
             if "The ishold function was deprecated in version 2.0." in str(w.message):
                 return False
+        elif "pandas" in w.filename:
+            if "ix is deprecated" in str(w.message):
+                return False
     elif isinstance(w.message, ImportWarning):
         if w.filename.endswith("_bootstrap_external.py"):
             return False

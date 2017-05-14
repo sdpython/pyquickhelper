@@ -84,7 +84,7 @@ class TestNoteBooksBugSvg(unittest.TestCase):
                 \\includegraphics{seance4_projection_population_correction_50_0.svg}
                 \\begin{enumerate}
                 """
-        new_text = post_process_latex(text, True)
+        new_text = post_process_latex(text, True, fLOG=fLOG)
         if "%\\includegraphics" not in new_text:
             raise Exception(new_text)
 
