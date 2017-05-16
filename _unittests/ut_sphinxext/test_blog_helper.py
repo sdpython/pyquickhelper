@@ -35,7 +35,7 @@ if sys.version_info[0] == 2:
 
 class TestBlogHelper(unittest.TestCase):
 
-    def test_post_parse(self):
+    def _test_post_parse(self):
         fLOG(
             __file__,
             self._testMethodName,
@@ -47,14 +47,16 @@ class TestBlogHelper(unittest.TestCase):
         file = os.path.join(path, "data", "2015-04-04_first_blogpost.rst")
         p = BlogPost(file)
         fLOG(p.title)
-        assert p.title == "An example of a blog post included in the documentation"
-        assert p.date == "2015-04-04"
-        assert p.keywords == "example, blogpost, documentation"
-        assert p.categories == "documentation, example"
-        assert isinstance(p.Fields, dict)
-        assert p.Tag == "post-2015-04-04-anexampleofablogpostincludedinthedocumentation"
+        self.assertEqual(
+            p.title, "An example of a blog post included in the documentation")
+        self.assertEqual(p.date, "2015-04-04")
+        self.assertEqual(p.keywords, "example, blogpost, documentation")
+        self.assertEqual(p.categories, "documentation, example")
+        self.assertTrue(isinstance(p.Fields, dict))
+        self.assertEqual(
+            p.Tag, "post-2015-04-04-anexampleofablogpostincludedinthedocumentation")
 
-    def test_post_list(self):
+    def _test_post_list(self):
         fLOG(
             __file__,
             self._testMethodName,
@@ -73,15 +75,15 @@ class TestBlogHelper(unittest.TestCase):
         fLOG(cats)
         months = p.get_months()
         fLOG(months)
-        assert cats == ['documentation', 'example']
-        assert months == ['2015-04']
+        self.assertEqual(cats, ['documentation', 'example'])
+        self.assertEqual(months, ['2015-04'])
 
         res = p.write_aggregated(out)
-        assert len(res) >= 4
+        self.assertTrue(len(res) >= 4)
         for r in res:
-            assert os.path.exists(r)
+            self.assertTrue(os.path.exists(r))
 
-    def test_directive_with_rst2html(self):
+    def _test_directive_with_rst2html(self):
         fLOG(
             __file__,
             self._testMethodName,
@@ -97,14 +99,14 @@ class TestBlogHelper(unittest.TestCase):
 
         t1 = "<p>Text before the blog post.</p>"
         t2 = "<p>Text after the blog post.</p>"
-        assert t1 in html
-        assert t2 in html
+        self.assertTrue(t1 in html)
+        self.assertTrue(t2 in html)
         if "it was difficult" not in html:
             p1 = html.find(t1) + len(t1)
             p2 = html.find(t2)
             fLOG("--------------ERRORS\n", html[p1:p2], "------------")
 
-    def test_docutils(self):
+    def _test_docutils(self):
         fLOG(
             __file__,
             self._testMethodName,
@@ -222,7 +224,7 @@ class TestBlogHelper(unittest.TestCase):
                     f.write(html)
                 raise Exception(html)
 
-    def test_newdirective_with_rst2html_bug(self):
+    def _test_newdirective_with_rst2html_bug(self):
         fLOG(
             __file__,
             self._testMethodName,
@@ -262,7 +264,7 @@ class TestBlogHelper(unittest.TestCase):
                         directives=tives)
 
         t1 = "this code shoud appear___"
-        assert t1 in html
+        self.assertTrue(t1 in html)
         ta = "Deprecated since version 0.3"
         if ta not in html:
             raise Exception(html)

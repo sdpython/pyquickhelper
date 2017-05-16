@@ -13,6 +13,8 @@ from sphinx.writers.html import HTMLWriter
 from sphinx.builders.html import SingleFileHTMLBuilder, SerializingHTMLBuilder
 from sphinx.util.docutils import is_html5_writer_available, directive_helper
 from sphinx.application import Sphinx
+from sphinx.errors import ExtensionError
+from docutils import nodes
 from collections import deque
 from ..sphinxext.sphinx_bigger_extension import visit_bigger_node as ext_visit_bigger_node, depart_bigger_node as ext_depart_bigger_node
 from ..sphinxext.sphinx_blocref_extension import visit_blocref_node as ext_visit_blocref_node, depart_blocref_node as ext_depart_blocref_node
@@ -529,3 +531,47 @@ class _CustomSphinx(Sphinx):
                          type='app', subtype='add_generic_role')
         role = roles.GenericRole(name, nodeclass)
         roles.register_local_role(name, role)
+
+    def add_node(self, node, **kwds):
+        # type: (nodes.Node, Any) -> None
+        self.debug('[app] adding node: %r', (node, kwds))
+        if not kwds.pop('override', False) and \
+           hasattr(nodes.GenericNodeVisitor, 'visit_' + node.__name__):
+            self.warning(_('while setting up extension %s: node class %r is '
+                           'already registered, its visitors will be overridden'),
+                         self._setting_up_extension, node.__name__,
+                         type='app', subtype='add_node')
+        nodes._add_node_class_names([node.__name__])
+        for key, val in kwds.items():
+            try:
+                visit, depart = val
+            except ValueError:
+                raise ExtensionError(_('Value for key %r must be a '
+                                       '(visit, depart) function tuple') % key)
+            translator = self.registry.translators.get(key)
+            translators = []
+            if translator is not None:
+                translators.append(translator)
+            elif key == 'html':
+                from sphinx.writers.html import HTMLTranslator
+                translators.append(HTMLTranslator)
+                if is_html5_writer_available():
+                    from sphinx.writers.html5 import HTML5Translator
+                    translators.append(HTML5Translator)
+            elif key == 'latex':
+                from sphinx.writers.latex import LaTeXTranslator
+                translators.append(LaTeXTranslator)
+            elif key == 'text':
+                from sphinx.writers.text import TextTranslator
+                translators.append(TextTranslator)
+            elif key == 'man':
+                from sphinx.writers.manpage import ManualPageTranslator
+                translators.append(ManualPageTranslator)
+            elif key == 'texinfo':
+                from sphinx.writers.texinfo import TexinfoTranslator
+                translators.append(TexinfoTranslator)
+
+            for translator in translators:
+                setattr(translator, 'visit_' + node.__name__, visit)
+                if depart:
+                    setattr(translator, 'depart_' + node.__name__, depart)

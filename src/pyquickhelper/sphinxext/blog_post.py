@@ -8,12 +8,6 @@ import os
 import sys
 from docutils import io as docio
 from docutils.core import publish_programmatically
-try:
-    from sphinx.environment import BuildEnvironment
-except ImportError as e:
-    # This import might fail on Anaconda. Changing that into a warning.
-    import warnings
-    warnings.warn("Could not import BuildEnvironment due to '{0}'".format(e))
 from sphinx.config import Config
 
 if sys.version_info[0] == 2:
@@ -93,9 +87,9 @@ class BlogPost:
         config = Config(None, None, overrides=overrides, tags=None)
         config.blog_background = False
         config.sharepost = None
-        env = BuildEnvironment(None, None, config=config)
-        env.temp_data["docname"] = "string"
-        overrides["env"] = env
+        #env = BuildEnvironment()
+        #env.temp_data["docname"] = "string"
+        #overrides["env"] = env
 
         errst = sys.stderr
         keeperr = StringIO()

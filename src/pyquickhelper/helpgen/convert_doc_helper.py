@@ -34,11 +34,14 @@ import re
 import textwrap
 import os
 import warnings
+from docutils import nodes
 from docutils import core, languages
 from docutils.io import StringInput, StringOutput
 from docutils.parsers.rst import directives as doc_directives, roles as doc_roles
 from sphinx.environment import BuildEnvironment, default_settings
 from sphinx.config import Config
+from sphinx.util.docutils import is_html5_writer_available
+
 
 if sys.version_info[0] == 2:
     from StringIO import StringIO
@@ -293,11 +296,13 @@ def rst2html(s, fLOG=noLOG, writer="sphinx", keep_warnings=False,
             doc_directives.register_directive(name, cl)
             self.mapping[str(cl)] = name
             self.app.add_directive(name, cl, *args, **options)
+            self.writer.app.add_directive(name, cl, *args, **options)
 
         def add_role(self, name, cl):
             doc_roles.register_canonical_role(name, cl)
             self.mapping[str(cl)] = name
             self.app.add_role(name, cl)
+            self.writer.app.add_role(name, cl)
 
         def add_mapping(self, name, cl):
             self.mapping[str(cl)] = name
@@ -313,20 +318,45 @@ def rst2html(s, fLOG=noLOG, writer="sphinx", keep_warnings=False,
         def get_default_values(self):
             return {k: v[0] for k, v in self.new_options.items()}
 
-        def add_node(self, clnode, html=None, latex=None, text=None, man=None,
-                     texinfo=None, override=True):
-            if override and html is not None:
-                name = str(clnode)
-                if "displaymath" in name:
-                    self.writer.connect_directive_node(
-                        self.mapping[name], custom_html_visit_displaymath, html[1])
-                else:
-                    self.writer.connect_directive_node(
-                        self.mapping[name], html[0], html[1])
+        def add_node(self, node, **kwds):
+            # type: (nodes.Node, Any) -> None
+            nodes._add_node_class_names([node.__name__])
+            for key, val in kwds.items():
+                if not isinstance(val, tuple):
+                    continue
+                visit, depart = val
+                translator = self.writer.app.registry.translators.get(key)
+                translators = []
+                if translator is not None:
+                    translators.append(translator)
+                elif key == 'html':
+                    from sphinx.writers.html import HTMLTranslator
+                    translators.append(HTMLTranslator)
+                    if is_html5_writer_available():
+                        from sphinx.writers.html5 import HTML5Translator
+                        translators.append(HTML5Translator)
+                elif key == 'latex':
+                    from sphinx.writers.latex import LaTeXTranslator
+                    translators.append(LaTeXTranslator)
+                elif key == 'text':
+                    from sphinx.writers.text import TextTranslator
+                    translators.append(TextTranslator)
+                elif key == 'man':
+                    from sphinx.writers.manpage import ManualPageTranslator
+                    translators.append(ManualPageTranslator)
+                elif key == 'texinfo':
+                    from sphinx.writers.texinfo import TexinfoTranslator
+                    translators.append(TexinfoTranslator)
+
+                for translator in translators:
+                    setattr(translator, 'visit_' + node.__name__, visit)
+                    if depart:
+                        setattr(translator, 'depart_' + node.__name__, depart)
 
         def connect(self, node, func):
             self.mapping_connect[node] = func
             self.app.connect(node, func)
+            self.writer.app.connect(node, func)
 
         def add_domain(self, domain):
             if domain.name in self.domains:
@@ -402,6 +432,8 @@ def rst2html(s, fLOG=noLOG, writer="sphinx", keep_warnings=False,
                     "directives is a list of tuple with 5 elements, check the documentation")
             name, cl, node, f1, f2 = tu
             doc_directives.register_directive(name, cl)
+            mockapp.add_directive(name, cl)
+            mockapp.add_node(node, html=(f1, f2))
             # not necessary
             # nodes._add_node_class_names([node.__name__])
             writer.connect_directive_node(node.__name__, f1, f2)
@@ -445,18 +477,12 @@ def rst2html(s, fLOG=noLOG, writer="sphinx", keep_warnings=False,
     # something is screwing with sphinx or docutils, it is due to
     # direct call to nbconvert or sphinx
     # raise an exception for unknown role pending_xref
-    output, pub = core.publish_programmatically(source=s, source_path=None,
-                                                destination_path=None, writer=writer,
-                                                writer_name=writer_name,
-                                                settings_overrides=settings_overrides,
-                                                source_class=StringInput,
-                                                destination_class=StringOutput,
-                                                destination=None,
-                                                reader=None, reader_name='standalone',
-                                                parser=None, parser_name='restructuredtext',
-                                                settings=None, settings_spec=None,
-                                                config_section=None,
-                                                enable_exit_status=False)
+    output, pub = core.publish_programmatically(source=s, source_path=None, destination_path=None, writer=writer,
+                                                writer_name=writer_name, settings_overrides=settings_overrides,
+                                                source_class=StringInput, destination_class=StringOutput,
+                                                destination=None, reader=None, reader_name='standalone',
+                                                parser=None, parser_name='restructuredtext', settings=None,
+                                                settings_spec=None, config_section=None, enable_exit_status=False)
 
     doctree = pub.document
     mockapp.emit('doctree-read', doctree)
