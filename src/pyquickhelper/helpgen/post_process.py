@@ -595,7 +595,8 @@ def post_process_latex(st, doall, info=None, latex_book=False, exc=True,
     @todo Check latex is properly converted in HTML files
     """
     if fLOG:
-        fLOG("   ** enter post_process_latex", doall, "%post_process_latex" in st)
+        fLOG("   ** enter post_process_latex",
+             doall, "%post_process_latex" in st)
     weird_character = set(chr(i) for i in range(1, 9))
 
     def clean_unicode(c):

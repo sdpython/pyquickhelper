@@ -48,7 +48,7 @@ class TestRst2Html(unittest.TestCase):
             os.path.dirname(__file__)), "data", "hermionne.rst")
         with open(rst, "r", encoding="utf-8") as f:
             content = f.read()
-        text = rst2html(content, fLOG=fLOG, outdir=temp)
+        text = rst2html(content, fLOG=fLOG, outdir=temp, warnings_log=True)
         # fLOG(text)
         ji = os.path.join(temp, "out.html")
         with open(ji, "w", encoding="utf-8") as f:
@@ -68,7 +68,7 @@ class TestRst2Html(unittest.TestCase):
         with open(rst, "r", encoding="utf-8") as f:
             content = f.read()
         text = rst2html(content, fLOG=fLOG, outdir=temp,
-                        imgmath_image_format='svg')
+                        imgmath_image_format='svg', warnings_log=True)
         # fLOG(text)
         ji = os.path.join(temp, "out.html")
         with open(ji, "w", encoding="utf-8") as f:
@@ -89,7 +89,7 @@ class TestRst2Html(unittest.TestCase):
             os.path.dirname(__file__)), "data", "rstplot.rst")
         with open(rst, "r", encoding="utf-8") as f:
             content = f.read()
-        text = rst2html(content, fLOG=fLOG, outdir=temp)
+        text = rst2html(content, fLOG=fLOG, outdir=temp, warnings_log=True)
         # fLOG(text)
         ji = os.path.join(temp, "out.html")
         with open(ji, "w", encoding="utf-8") as f:

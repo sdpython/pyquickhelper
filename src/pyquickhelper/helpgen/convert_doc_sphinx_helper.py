@@ -6,9 +6,12 @@
 """
 import sys
 # from docutils import nodes
+from sphinx.locale import _
+from docutils.parsers.rst import directives, roles
 from docutils.languages import en as docutils_en
-from sphinx.writers.html import HTMLWriter, HTMLTranslator
+from sphinx.writers.html import HTMLWriter
 from sphinx.builders.html import SingleFileHTMLBuilder, SerializingHTMLBuilder
+from sphinx.util.docutils import is_html5_writer_available, directive_helper
 from sphinx.application import Sphinx
 from collections import deque
 from ..sphinxext.sphinx_bigger_extension import visit_bigger_node as ext_visit_bigger_node, depart_bigger_node as ext_depart_bigger_node
@@ -27,6 +30,11 @@ if sys.version_info[0] == 2:
     from StringIO import StringIO
 else:
     from io import StringIO
+
+if is_html5_writer_available():
+    from sphinx.writers.html5 import HTML5Translator as HTMLTranslator
+else:
+    from sphinx.writers.html import HTMLTranslator
 
 
 def update_docutils_languages(values=None):
@@ -224,12 +232,12 @@ class HTMLWriterWithCustomDirectives(HTMLWriter):
         constructor
         """
         self.app = _CustomSphinx(srcdir=None, confdir=None, outdir=None, doctreedir=None,
-                                 buildername='SerializingHTMLBuilder')
+                                 buildername='html')
         builder = self.app.builder
         builder.fignumbers = {}
         HTMLWriter.__init__(self, builder)
         self.translator_class = HTMLTranslatorWithCustomDirectives
-        self.builder.translator_class = self.translator_class
+        self.translator_class = self.translator_class
         self.builder.secnumbers = {}
         self.builder._function_node = []
         self.builder.current_docname = None
@@ -305,67 +313,65 @@ class _CustomSphinx(Sphinx):
             'gettext': ('gettext', 'MessageCatalogBuilder'),
             'pseudoxml': ('xml', 'PseudoXMLBuilder')}
         '''
-        from sphinx.application import events, bold, Tags, builtin_extensions
+        from sphinx.application import bold, Tags, builtin_extensions
         from sphinx.application import Config, CONFIG_FILENAME, ConfigError, VersionRequirementError
         from sphinx import __display_version__
+        from sphinx.registry import SphinxComponentRegistry
+        from sphinx.events import EventManager
+        from sphinx.extension import verify_required_extensions
+
         # from sphinx.domains.cpp import CPPDomain
         # from sphinx.domains.javascript import JavaScriptDomain
         # from sphinx.domains.python import PythonDomain
         # from sphinx.domains.std import StandardDomain
         # from sphinx.domains.rst import ReSTDomain
         # from sphinx.domains.c import CDomain
-        update_docutils_languages()
-        self.verbosity = verbosity
-        self.next_listener_id = 0
-        self._extensions = {}
-        self._extension_metadata = {}
-        self._additional_source_parsers = {}
-        self._listeners = {}
-        self._setting_up_extension = ['?']
-        self.domains = {}
-        # { 'cpp': CPPDomain, 'js': JavaScriptDomain,
-        # 'std': StandardDomain, 'py': PythonDomain,
-        # 'rst': ReSTDomain, 'c': CDomain}
-        self.buildername = buildername
-        self.builderclasses = dict(SingleFileHTMLBuilder=SingleFileHTMLBuilder,
-                                   SerializingHTMLBuilder=SerializingHTMLBuilder)
-        self.builder = None
-        self.env = None
-        self.enumerable_nodes = {}
+
         if doctreedir is None:
             doctreedir = "."
         if srcdir is None:
             srcdir = "."
+        update_docutils_languages()
+        self.verbosity = verbosity
+
+        # type: Dict[unicode, Extension]
+        self.extensions = {}
+        self._setting_up_extension = ['?']      # type: List[unicode]
+        self.builder = None                     # type: Builder
+        self.env = None                         # type: BuildEnvironment
+        self.registry = SphinxComponentRegistry()
+        self.enumerable_nodes = {}              # type: Dict[nodes.Node, Tuple[unicode, Callable]]  # NOQA
+        self.post_transforms = []               # type: List[Transform]
+        self.html_themes = {}                   # type: Dict[unicode, unicode]
 
         self.srcdir = srcdir
         self.confdir = confdir
         self.outdir = outdir
         self.doctreedir = doctreedir
-
         self.parallel = parallel
 
         if status is None:
-            self._status = StringIO()
+            self._status = StringIO()      # type: IO
             self.quiet = True
         else:
             self._status = status
             self.quiet = False
 
         if warning is None:
-            self._warning = StringIO()
+            self._warning = StringIO()     # type: IO
         else:
             self._warning = warning
         self._warncount = 0
         self.warningiserror = warningiserror
 
-        self._events = events.copy()
-        self._translators = {}
+        self.events = EventManager()
 
         # keep last few messages for traceback
-        self.messagelog = deque(maxlen=10)
+        # This will be filled by sphinx.util.logging.LastMessagesWriter
+        self.messagelog = deque(maxlen=10)  # type: deque
 
         # say hello to the world
-        self.info(bold('Running Sphinx v%s' % "CUSTOM 1.5"))
+        self.info(bold('Running Sphinx v%s' % "CUSTOM 1.6"))
 
         # status code for command-line application
         self.statuscode = 0
@@ -374,23 +380,21 @@ class _CustomSphinx(Sphinx):
         self.tags = Tags(tags)
         self.config = Config(confdir, CONFIG_FILENAME,
                              confoverrides or {}, self.tags)
-        self.config.check_unicode(self.warn)
+        self.config.check_unicode()
         # defer checking types until i18n has been initialized
 
-        # initialize some limited config variables before loading extensions
-        self.config.pre_init_values(self.warn)
+        # initialize some limited config variables before initialize i18n and loading
+        # extensions
+        self.config.pre_init_values()
+
+        # set up translation infrastructure
+        self._init_i18n()
 
         # check the Sphinx version if requested
         if self.config.needs_sphinx and self.config.needs_sphinx > __display_version__:
             raise VersionRequirementError(
-                'This project needs at least Sphinx v%s and therefore cannot '
-                'be built with this version.' % self.config.needs_sphinx)
-
-        # force preload html_translator_class
-        if self.config.html_translator_class:
-            translator_class = self.import_object(self.config.html_translator_class,
-                                                  'html_translator_class setting')
-            self.set_translator('html', translator_class)
+                _('This project needs at least Sphinx v%s and therefore cannot '
+                  'be built with this version.') % self.config.needs_sphinx)
 
         # set confdir to srcdir if -C given (!= no confdir); a few pieces
         # of code expect a confdir to be set
@@ -398,8 +402,13 @@ class _CustomSphinx(Sphinx):
             self.confdir = self.srcdir
 
         # load all built-in extension modules
-        for extension in builtin_extensions:
-            self.setup_extension(extension)
+        for extension in builtin_extensions[1:]:
+            try:
+                self.setup_extension(extension)
+            except Exception as e:
+                mes = "Unable to setup_extension '{0}'\nWHOLE LIST\n{1}".format(
+                    extension, "\n".join(builtin_extensions))
+                raise Exception(mes) from e
 
         # extension loading support for alabaster theme
         # self.config.html_theme is not set from conf.py at here
@@ -410,6 +419,14 @@ class _CustomSphinx(Sphinx):
         # load all user-given extension modules
         for extension in self.config.extensions:
             self.setup_extension(extension)
+
+        # add default HTML builders
+        self.add_builder(SingleFileHTMLBuilder)
+        self.add_builder(SerializingHTMLBuilder)
+
+        # preload builder module (before init config values)
+        self.preload_builder(buildername)
+
         # the config file itself can be an extension
         if self.config.setup:
             # py31 doesn't have 'callable' function for below check
@@ -417,60 +434,98 @@ class _CustomSphinx(Sphinx):
                 self.config.setup(self)
             else:
                 raise ConfigError(
-                    "'setup' that is specified in the conf.py has not been " +
-                    "callable. Please provide a callable `setup` function " +
-                    "in order to behave as a sphinx extension conf.py itself."
+                    _("'setup' as currently defined in conf.py isn't a Python callable. "
+                      "Please modify its definition to make it a callable function. This is "
+                      "needed for conf.py to behave as a Sphinx extension.")
                 )
 
-        # additional variables
-        if "html_extra_path" not in self.config.__dict__:
-            self.config.html_extra_path = []
-        if "gettext_compact" not in self.config.__dict__:
-            self.config.gettext_compact = False
-
         # now that we know all config values, collect them from conf.py
-        if sys.version_info[0] == 2:
-            try:
-                self.config.init_values()
-            except TypeError as e:
-                if "takes exactly 2 arguments" in str(e):
-                    self.config.init_values(self.warn)
-                else:
-                    raise e
-        else:
-            self.config.init_values(self.warn)
+        self.config.init_values()
 
         # check extension versions if requested
-        if sys.version_info[0] >= 3 and self.config.needs_extensions:
-            for extname, needs_ver in self.config.needs_extensions.items():
-                if extname not in self._extensions:
-                    self.warn('needs_extensions config value specifies a '
-                              'version requirement for extension %s, but it is '
-                              'not loaded' % extname)
-                    continue
-                has_ver = self._extension_metadata[extname]['version']
-                if has_ver == 'unknown version' or needs_ver > has_ver:
-                    raise VersionRequirementError(
-                        'This project needs the extension %s at least in '
-                        'version %s and therefore cannot be built with the '
-                        'loaded version (%s).' % (extname, needs_ver, has_ver))
+        verify_required_extensions(self, self.config.needs_extensions)
 
         # check primary_domain if requested
-        if self.config.primary_domain and self.config.primary_domain not in self.domains:
-            self.warn('primary_domain %r not found, ignored.' %
-                      self.config.primary_domain)
+        primary_domain = self.config.primary_domain
+        if primary_domain and not self.registry.has_domain(primary_domain):
+            self.warning(
+                _('primary_domain %r not found, ignored.'), primary_domain)
 
-        # set up translation infrastructure
-        self._init_i18n()
+        # create the builder
+        self.builder = self.create_builder(buildername)
         # check all configuration values for permissible types
-        if sys.version_info[0] >= 3:
-            self.config.check_types(self.warn)
+        self.config.check_types()
         # set up source_parsers
         self._init_source_parsers()
         # set up the build environment
         self._init_env(freshenv)
         # set up the builder
-        self._init_builder(self.buildername)
+        self._init_builder()
         # set up the enumerable nodes
         self._init_enumerable_nodes()
-        self._init_builder(buildername)
+
+    def add_builder(self, builder):
+        # type: (Type[Builder]) -> None
+        if builder.name not in self.registry.builders:
+            self.debug('[app] adding builder: %r', builder)
+            self.registry.add_builder(builder)
+        else:
+            self.debug('[app] already added builder: %r', builder)
+
+    def setup_extension(self, extname):
+        # type: (unicode) -> None
+        """Import and setup a Sphinx extension module. No-op if called twice."""
+        self.debug('[app] setting up extension: %r', extname)
+        try:
+            self.registry.load_extension(self, extname)
+        except Exception as e:
+            raise Exception(
+                "Unable to setup extension '{0}'".format(extname)) from e
+
+    def debug(self, message, *args, **kwargs):
+        pass
+
+    def warn(self, message, location=None, prefix=None,
+             type=None, subtype=None, colorfunc=None):
+        pass
+
+    def info(self, message='', nonl=False):
+        pass
+
+    def warning(self, message='', nonl=False, name=None, type=None, subtype=None):
+        pass
+
+    def add_directive(self, name, obj, content=None, arguments=None, **options):
+        # type: (unicode, Any, bool, Tuple[int, int, bool], Any) -> None
+        self.debug('[app] adding directive: %r',
+                   (name, obj, content, arguments, options))
+        if name in directives._directives:
+            self.warning(_('while setting up extension %s: directive %r is '
+                           'already registered, it will be overridden'),
+                         self._setting_up_extension[-1], name,
+                         type='app', subtype='add_directive')
+        directive = directive_helper(obj, content, arguments, **options)
+        directives.register_directive(name, directive)
+
+    def add_role(self, name, role):
+        # type: (unicode, Any) -> None
+        self.debug('[app] adding role: %r', (name, role))
+        if name in roles._roles:
+            self.warning(_('while setting up extension %s: role %r is '
+                           'already registered, it will be overridden'),
+                         self._setting_up_extension[-1], name,
+                         type='app', subtype='add_role')
+        roles.register_local_role(name, role)
+
+    def add_generic_role(self, name, nodeclass):
+        # type: (unicode, Any) -> None
+        # don't use roles.register_generic_role because it uses
+        # register_canonical_role
+        self.debug('[app] adding generic role: %r', (name, nodeclass))
+        if name in roles._roles:
+            self.warning(_('while setting up extension %s: role %r is '
+                           'already registered, it will be overridden'),
+                         self._setting_up_extension[-1], name,
+                         type='app', subtype='add_generic_role')
+        role = roles.GenericRole(name, nodeclass)
+        roles.register_local_role(name, role)

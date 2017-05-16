@@ -50,7 +50,7 @@ class TestRst2HtmlLatex(unittest.TestCase):
             os.path.dirname(__file__)), "data", "puzzle_girafe.rst")
         with open(rst, "r", encoding="utf-8") as f:
             content = f.read()
-        text = rst2html(content, fLOG=fLOG, outdir=temp,
+        text = rst2html(content, fLOG=fLOG, outdir=temp, warnings_log=True,
                         imgmath_latex_preamble="""
                     \\newcommand{\\acc}[1]{\\left\\{#1\\right\\}}
                     \\newcommand{\\cro}[1]{\\left[#1\\right]}

@@ -284,6 +284,7 @@ def rst2html(s, fLOG=noLOG, writer="sphinx", keep_warnings=False,
             self.config = Config(None, None, overrides={}, tags=None)
             self.confdir = "."
             self.doctreedir = "."
+            self.srcdir = "."
             self.builder = writer.builder
             self.domains = {}
             self._events = {}
@@ -351,32 +352,33 @@ def rst2html(s, fLOG=noLOG, writer="sphinx", keep_warnings=False,
         from sphinx.ext.graphviz import setup as setup_graphviz
         from sphinx.ext.imgmath import setup as setup_math, html_visit_displaymath
         from sphinx.ext.todo import setup as setup_todo
-
-        # directives from pyquickhelper
-        setup_blog(mockapp)
-        setup_runpython(mockapp)
-        setup_sharenet(mockapp)
-        setup_todoext(mockapp)
-        setup_bigger(mockapp)
-        setup_githublink(mockapp)
-        setup_runpython(mockapp)
-        setup_mathdef(mockapp)
-        setup_blocref(mockapp)
-        setup_faqref(mockapp)
-        setup_exref(mockapp)
-        setup_nbref(mockapp)
-
-        # directives from sphinx
-        setup_graphviz(mockapp)
-        setup_math(mockapp)
-        setup_todo(mockapp)
-
-        # don't move this import to the beginning of file
-        # it changes matplotlib backend
         from matplotlib.sphinxext.plot_directive import setup as setup_plot
         from matplotlib.sphinxext.only_directives import setup as setup_only
-        setup_plot(mockapp)
-        setup_only(mockapp)
+
+        # directives from pyquickhelper
+        for app in [mockapp, writer.app]:
+            setup_blog(app)
+            setup_runpython(app)
+            setup_sharenet(app)
+            setup_todoext(app)
+            setup_bigger(app)
+            setup_githublink(app)
+            setup_runpython(app)
+            setup_mathdef(app)
+            setup_blocref(app)
+            setup_faqref(app)
+            setup_exref(app)
+            setup_nbref(app)
+
+            # directives from sphinx
+            setup_graphviz(app)
+            setup_math(app)
+            setup_todo(app)
+
+            # don't move this import to the beginning of file
+            # it changes matplotlib backend
+            setup_plot(app)
+            setup_only(app)
 
         # titles
         title_names.append("todoext_node")
@@ -415,7 +417,7 @@ def rst2html(s, fLOG=noLOG, writer="sphinx", keep_warnings=False,
     _nbeq[1] = warning_stringio
 
     config = mockapp.config
-    config.init_values(fLOG)
+    config.init_values()
     config.blog_background = False
     config.sharepost = None
 
@@ -423,7 +425,7 @@ def rst2html(s, fLOG=noLOG, writer="sphinx", keep_warnings=False,
     for k in {'outdir', 'imagedir', 'confdir', 'doctreedir'}:
         setattr(writer.builder, k, settings_overrides[k])
 
-    env = BuildEnvironment(None, None, config=config)
+    env = BuildEnvironment(mockapp)
     env.temp_data["docname"] = "string"
     mockapp.builder.env.temp_data["docname"] = "string"
     settings_overrides["env"] = env
