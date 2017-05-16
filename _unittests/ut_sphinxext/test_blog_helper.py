@@ -35,7 +35,7 @@ if sys.version_info[0] == 2:
 
 class TestBlogHelper(unittest.TestCase):
 
-    def _test_post_parse(self):
+    def test_post_parse(self):
         fLOG(
             __file__,
             self._testMethodName,
@@ -56,7 +56,7 @@ class TestBlogHelper(unittest.TestCase):
         self.assertEqual(
             p.Tag, "post-2015-04-04-anexampleofablogpostincludedinthedocumentation")
 
-    def _test_post_list(self):
+    def test_post_list(self):
         fLOG(
             __file__,
             self._testMethodName,
@@ -83,7 +83,7 @@ class TestBlogHelper(unittest.TestCase):
         for r in res:
             self.assertTrue(os.path.exists(r))
 
-    def _test_directive_with_rst2html(self):
+    def test_directive_with_rst2html(self):
         fLOG(
             __file__,
             self._testMethodName,
@@ -106,7 +106,7 @@ class TestBlogHelper(unittest.TestCase):
             p2 = html.find(t2)
             fLOG("--------------ERRORS\n", html[p1:p2], "------------")
 
-    def _test_docutils(self):
+    def test_docutils(self):
         fLOG(
             __file__,
             self._testMethodName,
@@ -224,7 +224,7 @@ class TestBlogHelper(unittest.TestCase):
                     f.write(html)
                 raise Exception(html)
 
-    def _test_newdirective_with_rst2html_bug(self):
+    def test_newdirective_with_rst2html_bug(self):
         fLOG(
             __file__,
             self._testMethodName,
