@@ -48,7 +48,7 @@ class TestGraphChanges (unittest.TestCase):
         path = os.path.abspath(os.path.split(__file__)[0])
         data = os.path.join(path, "data", "changes.txt")
         df = pandas.read_csv(data, sep="\t")
-        fLOG(type(df.ix[0, "date"]), df.ix[0, "date"])
+        fLOG(type(df.loc[0, "date"]), df.loc[0, "date"])
         code = produce_code_graph_changes(df)
         fLOG(code)
 

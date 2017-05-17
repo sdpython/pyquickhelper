@@ -465,9 +465,10 @@ def apply_modification_template(rootm, store_obj, template, fullname, rootrep,
 
                     if len(tbl) > 0:
                         maxi = max([len(_) for _ in tbl[k]])
-                        s = 0 if tbl.ix[0, 1] is None else len(tbl.ix[0, 1])
-                        t = "" if tbl.ix[0, 1] is None else tbl.ix[0, 1]
-                        tbl.ix[0, 1] = t + (" " * (3 * maxi - s))
+                        s = 0 if tbl.iloc[0, 1] is None else len(
+                            tbl.iloc[0, 1])
+                        t = "" if tbl.iloc[0, 1] is None else tbl.iloc[0, 1]
+                        tbl.iloc[0, 1] = t + (" " * (3 * maxi - s))
                         sph = df2rst(tbl)
                         titl = "\n\n" + add_file_rst_template_title[k] + "\n"
                         titl += "+" * len(add_file_rst_template_title[k])
@@ -740,9 +741,9 @@ def produces_indexes(
 
         if len(tbl) > 0:
             maxi = max([len(_) for _ in tbl[k]])
-            s = 0 if tbl.ix[0, 1] is None else len(tbl.ix[0, 1])
-            t = "" if tbl.ix[0, 1] is None else tbl.ix[0, 1]
-            tbl.ix[0, 1] = t + (" " * (3 * maxi - s))
+            s = 0 if tbl.iloc[0, 1] is None else len(tbl.iloc[0, 1])
+            t = "" if tbl.iloc[0, 1] is None else tbl.iloc[0, 1]
+            tbl.iloc[0, 1] = t + (" " * (3 * maxi - s))
             sph = df2rst(tbl)
             res[k] = sph
 
@@ -778,8 +779,8 @@ def produces_indexes(
 
         if len(tbl) > 0:
             maxi = max([len(_) for _ in tbl[k]])
-            tbl.ix[0, 1] = tbl.ix[0, 1] + \
-                (" " * (3 * maxi - len(tbl.ix[0, 1])))
+            tbl.iloc[0, 1] = tbl.iloc[0, 1] + \
+                (" " * (3 * maxi - len(tbl.iloc[0, 1])))
             sph = df2rst(tbl)
             res[k] = sph
 

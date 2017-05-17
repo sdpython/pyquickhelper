@@ -6,5 +6,6 @@ python:
 install: 
     - pip install -r requirements.txt
     - pip install git+https://github.com/fancycode/pylzma.git
+    - pip install git+https://github.com/sdpython/sphinxcontrib-images.git
 script:
     - python setup.py unittests

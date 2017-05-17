@@ -48,7 +48,7 @@ class TestPandasTennis(unittest.TestCase):
 
         df = pandas.DataFrame(rows)
         df["equipe"] = 0
-        df.ix[(df.jour == 2) | (df.jour == 4), "equipe"] = 1
+        df.loc[(df.jour == 2) | (df.jour == 4), "equipe"] = 1
         df["equipe_sum"] = (df.equipe.cumsum() *
                             df["equipe"] + df["equipe"]) % 3
         df["equipe_sum"] += df["equipe"]

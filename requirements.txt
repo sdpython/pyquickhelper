@@ -64,7 +64,7 @@ simplegeneric
 simplejson
 six
 solar-theme
-Sphinx
+Sphinx>=1.6.1
 sphinx-bootstrap-theme
 sphinx-gallery
 sphinx-readable-theme

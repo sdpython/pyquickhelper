@@ -573,12 +573,12 @@ lignes peuvent être désignées par un entier.
     </div>
 
 On extrait une ligne
-(`ix <http://pandas.pydata.org/pandas-docs/dev/generated/pandas.DataFrame.ix.html>`__)
+(`iloc <http://pandas.pydata.org/pandas-docs/dev/generated/pandas.DataFrame.iloc.html>`__)
 :
 
 ::
 
-    df.ix[1]
+    df.iloc[1]
 
 .. parsed-literal::
 
@@ -650,7 +650,7 @@ On peut maintenant désigner une ligne par une date :
 
 ::
 
-    dfi.ix["2014-06-23"]
+    dfi.ilocix["2014-06-23"]
 
 .. parsed-literal::
 
@@ -668,7 +668,7 @@ Il est possible d'utiliser plusieurs colonnes comme index :
            {"prénom":"clémence", "nom":"dupré", "arrondissement":15 } ])
     dfi = df.set_index(["nom","prénom"])
 
-    dfi.ix["dupré","xavier"]
+    dfi.iloc["dupré","xavier"]
 
 .. parsed-literal::
 
@@ -908,7 +908,7 @@ On extrait la même plage mais avec deux colonnes seulement :
 
 ::
 
-    df.ix[3:6,["annee","temps"]]
+    df.iloc[3:6,["annee","temps"]]
 
 .. raw:: html
 
@@ -968,7 +968,7 @@ Le même code pour lequel on renomme les colonnes extraites :
 
 ::
 
-    sub = df.ix[3:6,["annee","temps"]]
+    sub = df.iloc[3:6,["annee","temps"]]
 
     sub.columns = ["year","time"]
     sub

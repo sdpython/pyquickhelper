@@ -475,7 +475,7 @@ class BenchMark:
             for c, d in zip(df.columns, df.dtypes):
                 cols = []
                 for i in range(df.shape[0]):
-                    cols.append(self._convert(df, i, c, d, df.ix[i, c]))
+                    cols.append(self._convert(df, i, c, d, df.loc[i, c]))
                 df[c] = cols
         col1 = list(sorted(_ for _ in df.columns if _.startswith("_")))
         col2 = list(sorted(_ for _ in df.columns if not _.startswith("_")))
@@ -512,7 +512,7 @@ class BenchMark:
             for c, d in zip(df.columns, df.dtypes):
                 cols = []
                 for i in range(df.shape[0]):
-                    cols.append(self._convert(df, i, c, d, df.ix[i, c]))
+                    cols.append(self._convert(df, i, c, d, df.loc[i, c]))
                 df[c] = cols
         col1 = list(sorted(_ for _ in df.columns if _.startswith("_")))
         col2 = list(sorted(_ for _ in df.columns if not _.startswith("_")))
