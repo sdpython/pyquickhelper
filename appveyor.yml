@@ -33,7 +33,7 @@ install:
   - "%PYTHON%\\Scripts\\pip install python-jenkins"
   - "%PYTHON%\\Scripts\\pip install prompt_toolkit et_xmlfile"
   - "%PYTHON%\\Scripts\\pip install https://github.com/ipython-contrib/jupyter_contrib_nbextensions/tarball/master"
-  - "%PYTHON%\\Scripts\\pip install git+https://github.com/sdpython/sphinxcontrib-images.git"
+  - "%PYTHON%\\Scripts\\pip install git+https://github.com/sdpython/sphinxcontrib-images.git --upgrade"
   - "dir %PYTHON%\\Scripts"
   - "%PYTHON%\\Scripts\\jupyter-nbextension enable --py --sys-prefix widgetsnbextension"
 
