@@ -40,8 +40,14 @@ from docutils.io import StringInput, StringOutput
 from docutils.parsers.rst import directives as doc_directives, roles as doc_roles
 from sphinx.environment import BuildEnvironment, default_settings
 from sphinx.config import Config
-from sphinx.util.docutils import is_html5_writer_available
+from sphinx import __display_version__ as sphinx__display_version__
 
+try:
+    from sphinx.util.docutils import is_html5_writer_available
+except ImportError:
+    # Available only after Sphinx >= 1.6.1.
+    def is_html5_writer_available():
+        return False
 
 if sys.version_info[0] == 2:
     from StringIO import StringIO
@@ -320,38 +326,42 @@ def rst2html(s, fLOG=noLOG, writer="sphinx", keep_warnings=False,
 
         def add_node(self, node, **kwds):
             # type: (nodes.Node, Any) -> None
-            nodes._add_node_class_names([node.__name__])
-            for key, val in kwds.items():
-                if not isinstance(val, tuple):
-                    continue
-                visit, depart = val
-                translator = self.writer.app.registry.translators.get(key)
-                translators = []
-                if translator is not None:
-                    translators.append(translator)
-                elif key == 'html':
-                    from sphinx.writers.html import HTMLTranslator
-                    translators.append(HTMLTranslator)
-                    if is_html5_writer_available():
-                        from sphinx.writers.html5 import HTML5Translator
-                        translators.append(HTML5Translator)
-                elif key == 'latex':
-                    from sphinx.writers.latex import LaTeXTranslator
-                    translators.append(LaTeXTranslator)
-                elif key == 'text':
-                    from sphinx.writers.text import TextTranslator
-                    translators.append(TextTranslator)
-                elif key == 'man':
-                    from sphinx.writers.manpage import ManualPageTranslator
-                    translators.append(ManualPageTranslator)
-                elif key == 'texinfo':
-                    from sphinx.writers.texinfo import TexinfoTranslator
-                    translators.append(TexinfoTranslator)
+            if sphinx__display_version__ >= "1.6":
+                nodes._add_node_class_names([node.__name__])
+                for key, val in kwds.items():
+                    if not isinstance(val, tuple):
+                        continue
+                    visit, depart = val
+                    translator = self.writer.app.registry.translators.get(key)
+                    translators = []
+                    if translator is not None:
+                        translators.append(translator)
+                    elif key == 'html':
+                        from sphinx.writers.html import HTMLTranslator
+                        translators.append(HTMLTranslator)
+                        if is_html5_writer_available():
+                            from sphinx.writers.html5 import HTML5Translator
+                            translators.append(HTML5Translator)
+                    elif key == 'latex':
+                        from sphinx.writers.latex import LaTeXTranslator
+                        translators.append(LaTeXTranslator)
+                    elif key == 'text':
+                        from sphinx.writers.text import TextTranslator
+                        translators.append(TextTranslator)
+                    elif key == 'man':
+                        from sphinx.writers.manpage import ManualPageTranslator
+                        translators.append(ManualPageTranslator)
+                    elif key == 'texinfo':
+                        from sphinx.writers.texinfo import TexinfoTranslator
+                        translators.append(TexinfoTranslator)
 
-                for translator in translators:
-                    setattr(translator, 'visit_' + node.__name__, visit)
-                    if depart:
-                        setattr(translator, 'depart_' + node.__name__, depart)
+                    for translator in translators:
+                        setattr(translator, 'visit_' + node.__name__, visit)
+                        if depart:
+                            setattr(translator, 'depart_' +
+                                    node.__name__, depart)
+            else:
+                self.app.add_node(node, **kwds)
 
         def connect(self, node, func):
             self.mapping_connect[node] = func
@@ -449,7 +459,10 @@ def rst2html(s, fLOG=noLOG, writer="sphinx", keep_warnings=False,
     _nbeq[1] = warning_stringio
 
     config = mockapp.config
-    config.init_values()
+    if sphinx__display_version__ >= "1.6":
+        config.init_values()
+    else:
+        config.init_values(fLOG)
     config.blog_background = False
     config.sharepost = None
 
@@ -457,7 +470,10 @@ def rst2html(s, fLOG=noLOG, writer="sphinx", keep_warnings=False,
     for k in {'outdir', 'imagedir', 'confdir', 'doctreedir'}:
         setattr(writer.builder, k, settings_overrides[k])
 
-    env = BuildEnvironment(mockapp)
+    if sphinx__display_version__ >= "1.6":
+        env = BuildEnvironment(mockapp)
+    else:
+        env = BuildEnvironment(None, None, config=config)
     env.temp_data["docname"] = "string"
     mockapp.builder.env.temp_data["docname"] = "string"
     settings_overrides["env"] = env

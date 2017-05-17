@@ -5,17 +5,44 @@
 .. versionadded:: 1.3
 """
 import sys
-# from docutils import nodes
+from collections import deque
+import types
+
 from sphinx.locale import _
 from docutils.parsers.rst import directives, roles
 from docutils.languages import en as docutils_en
 from sphinx.writers.html import HTMLWriter
 from sphinx.builders.html import SingleFileHTMLBuilder, SerializingHTMLBuilder
-from sphinx.util.docutils import is_html5_writer_available, directive_helper
+
 from sphinx.application import Sphinx
 from sphinx.errors import ExtensionError
 from docutils import nodes
-from collections import deque
+
+try:
+    from sphinx.util.docutils import is_html5_writer_available
+    from sphinx.util.docutils import directive_helper
+except ImportError:
+
+    from docutils.parsers.rst import convert_directive_function
+
+    # Available only after Sphinx >= 1.6.1.
+    def is_html5_writer_available():
+        return False
+
+    # from
+    # https://github.com/sphinx-doc/sphinx/blob/master/sphinx/util/docutils.py#L162
+    def directive_helper(obj, has_content=None, argument_spec=None, **option_spec):
+        if isinstance(obj, (types.FunctionType, types.MethodType)):
+            obj.content = has_content                       # type: ignore
+            obj.arguments = argument_spec or (0, 0, False)  # type: ignore
+            obj.options = option_spec                       # type: ignore
+            return convert_directive_function(obj)
+        else:
+            if has_content or argument_spec or option_spec:
+                raise ExtensionError(_('when adding directive classes, no '
+                                       'additional arguments may be given'))
+            return obj
+
 from ..sphinxext.sphinx_bigger_extension import visit_bigger_node as ext_visit_bigger_node, depart_bigger_node as ext_depart_bigger_node
 from ..sphinxext.sphinx_blocref_extension import visit_blocref_node as ext_visit_blocref_node, depart_blocref_node as ext_depart_blocref_node
 from ..sphinxext.sphinx_blog_extension import visit_blogpost_node as ext_visit_blogpost_node, depart_blogpost_node as ext_depart_blogpost_node
@@ -318,9 +345,23 @@ class _CustomSphinx(Sphinx):
         from sphinx.application import bold, Tags, builtin_extensions
         from sphinx.application import Config, CONFIG_FILENAME, ConfigError, VersionRequirementError
         from sphinx import __display_version__
-        from sphinx.registry import SphinxComponentRegistry
-        from sphinx.events import EventManager
-        from sphinx.extension import verify_required_extensions
+
+        try:
+            from sphinx.registry import SphinxComponentRegistry
+            from sphinx.events import EventManager
+            from sphinx.extension import verify_required_extensions
+        except ImportError:
+            from sphinx.application import events
+            # Available only after Sphinx >= 1.6.1
+
+            class SphinxComponentRegistry:
+                pass
+
+            class EventManager:
+                pass
+
+            def verify_required_extensions(*l):
+                return True
 
         # from sphinx.domains.cpp import CPPDomain
         # from sphinx.domains.javascript import JavaScriptDomain
@@ -382,12 +423,34 @@ class _CustomSphinx(Sphinx):
         self.tags = Tags(tags)
         self.config = Config(confdir, CONFIG_FILENAME,
                              confoverrides or {}, self.tags)
-        self.config.check_unicode()
-        # defer checking types until i18n has been initialized
+        self.sphinx__display_version__ = __display_version__
 
-        # initialize some limited config variables before initialize i18n and loading
-        # extensions
-        self.config.pre_init_values()
+        # Changes for Sphinx >= 1.6
+        if __display_version__ >= "1.6":
+            self.config.check_unicode()
+            self.config.pre_init_values()
+        else:
+            self.config.check_unicode(self.warn)
+            self.config.pre_init_values(self.warn)
+            self._extensions = {}
+            self._events = events.copy()
+            self._translators = {}
+
+            update_docutils_languages()
+            self.verbosity = verbosity
+            self.next_listener_id = 0
+            self._extensions = {}
+            self._extension_metadata = {}
+            self._additional_source_parsers = {}
+            self._listeners = {}
+            self._setting_up_extension = ['?']
+            self.domains = {}
+            self.buildername = buildername
+            self.builderclasses = dict(SingleFileHTMLBuilder=SingleFileHTMLBuilder,
+                                       SerializingHTMLBuilder=SerializingHTMLBuilder)
+            self.builder = None
+            self.env = None
+            self.enumerable_nodes = {}
 
         # set up translation infrastructure
         self._init_i18n()
@@ -404,7 +467,7 @@ class _CustomSphinx(Sphinx):
             self.confdir = self.srcdir
 
         # load all built-in extension modules
-        for extension in builtin_extensions[1:]:
+        for extension in builtin_extensions:
             try:
                 self.setup_extension(extension)
             except Exception as e:
@@ -427,7 +490,8 @@ class _CustomSphinx(Sphinx):
         self.add_builder(SerializingHTMLBuilder)
 
         # preload builder module (before init config values)
-        self.preload_builder(buildername)
+        if __display_version__ >= "1.6":
+            self.preload_builder(buildername)
 
         # the config file itself can be an extension
         if self.config.setup:
@@ -442,47 +506,66 @@ class _CustomSphinx(Sphinx):
                 )
 
         # now that we know all config values, collect them from conf.py
-        self.config.init_values()
+        if __display_version__ >= "1.6":
+            self.config.init_values()
+        else:
+            self.config.init_values(self.warn)
 
-        # check extension versions if requested
         verify_required_extensions(self, self.config.needs_extensions)
 
         # check primary_domain if requested
         primary_domain = self.config.primary_domain
-        if primary_domain and not self.registry.has_domain(primary_domain):
-            self.warning(
-                _('primary_domain %r not found, ignored.'), primary_domain)
+        if __display_version__ >= "1.6":
+            if primary_domain and not self.registry.has_domain(primary_domain):
+                self.warning(
+                    _('primary_domain %r not found, ignored.'), primary_domain)
 
         # create the builder
-        self.builder = self.create_builder(buildername)
-        # check all configuration values for permissible types
-        self.config.check_types()
+        if __display_version__ >= "1.6":
+            self.builder = self.create_builder(buildername)
+            # check all configuration values for permissible types
+            self.config.check_types()
+        else:
+            self.config.check_types(self.warn)
+
         # set up source_parsers
         self._init_source_parsers()
         # set up the build environment
         self._init_env(freshenv)
+
         # set up the builder
-        self._init_builder()
+        if __display_version__ >= "1.6":
+            self._init_builder()
+        else:
+            self._init_builder(self.buildername)
+
         # set up the enumerable nodes
         self._init_enumerable_nodes()
 
     def add_builder(self, builder):
         # type: (Type[Builder]) -> None
-        if builder.name not in self.registry.builders:
-            self.debug('[app] adding builder: %r', builder)
-            self.registry.add_builder(builder)
+        if self.sphinx__display_version__ >= "1.6":
+            if builder.name not in self.registry.builders:
+                self.debug('[app] adding builder: %r', builder)
+                self.registry.add_builder(builder)
+            else:
+                self.debug('[app] already added builder: %r', builder)
         else:
-            self.debug('[app] already added builder: %r', builder)
+            if builder.name not in self.builderclasses:
+                Sphinx.add_builder(self, builder)
 
     def setup_extension(self, extname):
         # type: (unicode) -> None
         """Import and setup a Sphinx extension module. No-op if called twice."""
-        self.debug('[app] setting up extension: %r', extname)
-        try:
-            self.registry.load_extension(self, extname)
-        except Exception as e:
-            raise Exception(
-                "Unable to setup extension '{0}'".format(extname)) from e
+        if self.sphinx__display_version__ >= "1.6":
+            self.debug('[app] setting up extension: %r', extname)
+            try:
+                self.registry.load_extension(self, extname)
+            except Exception as e:
+                raise Exception(
+                    "Unable to setup extension '{0}'".format(extname)) from e
+        else:
+            Sphinx.setup_extension(self, extname)
 
     def debug(self, message, *args, **kwargs):
         pass
@@ -499,79 +582,92 @@ class _CustomSphinx(Sphinx):
 
     def add_directive(self, name, obj, content=None, arguments=None, **options):
         # type: (unicode, Any, bool, Tuple[int, int, bool], Any) -> None
-        self.debug('[app] adding directive: %r',
-                   (name, obj, content, arguments, options))
-        if name in directives._directives:
-            self.warning(_('while setting up extension %s: directive %r is '
-                           'already registered, it will be overridden'),
-                         self._setting_up_extension[-1], name,
-                         type='app', subtype='add_directive')
-        directive = directive_helper(obj, content, arguments, **options)
-        directives.register_directive(name, directive)
+        if self.sphinx__display_version__ >= "1.6":
+            self.debug('[app] adding directive: %r',
+                       (name, obj, content, arguments, options))
+            if name in directives._directives:
+                self.warning(_('while setting up extension %s: directive %r is '
+                               'already registered, it will be overridden'),
+                             self._setting_up_extension[-1], name,
+                             type='app', subtype='add_directive')
+            directive = directive_helper(obj, content, arguments, **options)
+            directives.register_directive(name, directive)
+        else:
+            Sphinx.add_directive(
+                self, name, obj, content=None, arguments=None, **options)
 
     def add_role(self, name, role):
         # type: (unicode, Any) -> None
-        self.debug('[app] adding role: %r', (name, role))
-        if name in roles._roles:
-            self.warning(_('while setting up extension %s: role %r is '
-                           'already registered, it will be overridden'),
-                         self._setting_up_extension[-1], name,
-                         type='app', subtype='add_role')
-        roles.register_local_role(name, role)
+        if self.sphinx__display_version__ >= "1.6":
+            self.debug('[app] adding role: %r', (name, role))
+            if name in roles._roles:
+                self.warning(_('while setting up extension %s: role %r is '
+                               'already registered, it will be overridden'),
+                             self._setting_up_extension[-1], name,
+                             type='app', subtype='add_role')
+            roles.register_local_role(name, role)
+        else:
+            Sphinx.add_role(self, name, role)
 
     def add_generic_role(self, name, nodeclass):
         # type: (unicode, Any) -> None
         # don't use roles.register_generic_role because it uses
         # register_canonical_role
-        self.debug('[app] adding generic role: %r', (name, nodeclass))
-        if name in roles._roles:
-            self.warning(_('while setting up extension %s: role %r is '
-                           'already registered, it will be overridden'),
-                         self._setting_up_extension[-1], name,
-                         type='app', subtype='add_generic_role')
-        role = roles.GenericRole(name, nodeclass)
-        roles.register_local_role(name, role)
+        if self.sphinx__display_version__ >= "1.6":
+            self.debug('[app] adding generic role: %r', (name, nodeclass))
+            if name in roles._roles:
+                self.warning(_('while setting up extension %s: role %r is '
+                               'already registered, it will be overridden'),
+                             self._setting_up_extension[-1], name,
+                             type='app', subtype='add_generic_role')
+            role = roles.GenericRole(name, nodeclass)
+            roles.register_local_role(name, role)
+        else:
+            Sphinx.add_generic_role(self, name, nodeclass)
 
     def add_node(self, node, **kwds):
         # type: (nodes.Node, Any) -> None
-        self.debug('[app] adding node: %r', (node, kwds))
-        if not kwds.pop('override', False) and \
-           hasattr(nodes.GenericNodeVisitor, 'visit_' + node.__name__):
-            self.warning(_('while setting up extension %s: node class %r is '
-                           'already registered, its visitors will be overridden'),
-                         self._setting_up_extension, node.__name__,
-                         type='app', subtype='add_node')
-        nodes._add_node_class_names([node.__name__])
-        for key, val in kwds.items():
-            try:
-                visit, depart = val
-            except ValueError:
-                raise ExtensionError(_('Value for key %r must be a '
-                                       '(visit, depart) function tuple') % key)
-            translator = self.registry.translators.get(key)
-            translators = []
-            if translator is not None:
-                translators.append(translator)
-            elif key == 'html':
-                from sphinx.writers.html import HTMLTranslator
-                translators.append(HTMLTranslator)
-                if is_html5_writer_available():
-                    from sphinx.writers.html5 import HTML5Translator
-                    translators.append(HTML5Translator)
-            elif key == 'latex':
-                from sphinx.writers.latex import LaTeXTranslator
-                translators.append(LaTeXTranslator)
-            elif key == 'text':
-                from sphinx.writers.text import TextTranslator
-                translators.append(TextTranslator)
-            elif key == 'man':
-                from sphinx.writers.manpage import ManualPageTranslator
-                translators.append(ManualPageTranslator)
-            elif key == 'texinfo':
-                from sphinx.writers.texinfo import TexinfoTranslator
-                translators.append(TexinfoTranslator)
+        if self.sphinx__display_version__ >= "1.6":
+            self.debug('[app] adding node: %r', (node, kwds))
+            if not kwds.pop('override', False) and \
+               hasattr(nodes.GenericNodeVisitor, 'visit_' + node.__name__):
+                self.warning(_('while setting up extension %s: node class %r is '
+                               'already registered, its visitors will be overridden'),
+                             self._setting_up_extension, node.__name__,
+                             type='app', subtype='add_node')
+            nodes._add_node_class_names([node.__name__])
+            for key, val in kwds.items():
+                try:
+                    visit, depart = val
+                except ValueError:
+                    raise ExtensionError(_('Value for key %r must be a '
+                                           '(visit, depart) function tuple') % key)
+                translator = self.registry.translators.get(key)
+                translators = []
+                if translator is not None:
+                    translators.append(translator)
+                elif key == 'html':
+                    from sphinx.writers.html import HTMLTranslator
+                    translators.append(HTMLTranslator)
+                    if is_html5_writer_available():
+                        from sphinx.writers.html5 import HTML5Translator
+                        translators.append(HTML5Translator)
+                elif key == 'latex':
+                    from sphinx.writers.latex import LaTeXTranslator
+                    translators.append(LaTeXTranslator)
+                elif key == 'text':
+                    from sphinx.writers.text import TextTranslator
+                    translators.append(TextTranslator)
+                elif key == 'man':
+                    from sphinx.writers.manpage import ManualPageTranslator
+                    translators.append(ManualPageTranslator)
+                elif key == 'texinfo':
+                    from sphinx.writers.texinfo import TexinfoTranslator
+                    translators.append(TexinfoTranslator)
 
-            for translator in translators:
-                setattr(translator, 'visit_' + node.__name__, visit)
-                if depart:
-                    setattr(translator, 'depart_' + node.__name__, depart)
+                for translator in translators:
+                    setattr(translator, 'visit_' + node.__name__, visit)
+                    if depart:
+                        setattr(translator, 'depart_' + node.__name__, depart)
+        else:
+            Sphinx.add_node(self, node, **kwds)

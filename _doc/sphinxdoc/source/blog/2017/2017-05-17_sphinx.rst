@@ -1,0 +1,31 @@
+
+.. blogpost::
+    :title: Issues with Sphinx 1.6.1
+    :keywords: documentation, startup
+    :date: 2017-05-17
+    :categories: documentation
+
+    `Sphinx <http://www.sphinx-doc.org/en/stable/>`_
+    has released a new version 1.6.1 but it breaks a couple of
+    packages.
+    `sphinx_gallery <https://sphinx-gallery.readthedocs.io/en/latest/>`_
+    breaks with the following error:
+
+    ::
+
+          File "python\lib\site-packages\sphinx_gallery\gen_gallery.py", line 297, in setup
+            if 'sphinx.ext.autodoc' in app._extensions:
+        AttributeError: 'Sphinx' object has no attribute '_extensions'
+
+    This is probably going to be fixed anytime soon. In the meantime,
+    you can just avoid updating Sphinx or modify the code of
+    this package by removing the test.
+    `sphinxcontrib.images <https://github.com/spinus/sphinxcontrib-images>`_
+    also breaks. I recommand to postpone the update:
+
+    ::
+
+        pip install sphinx==1.5.6
+
+    *pyquickhelper* should work with both when the images
+    packages will be updated.
