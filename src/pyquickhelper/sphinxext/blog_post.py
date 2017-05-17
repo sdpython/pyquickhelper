@@ -9,12 +9,19 @@ import sys
 from docutils import io as docio
 from docutils.core import publish_programmatically
 from sphinx.config import Config
+from sphinx import __display_version__ as sphinx__display_version__
 
 if sys.version_info[0] == 2:
     from codecs import open
     from StringIO import StringIO
 else:
     from io import StringIO
+
+
+if sphinx__display_version__ >= "1.6":
+    pass
+else:
+    from sphinx.environment import BuildEnvironment
 
 
 class BlogPostParseError(Exception):
@@ -87,32 +94,24 @@ class BlogPost:
         config = Config(None, None, overrides=overrides, tags=None)
         config.blog_background = False
         config.sharepost = None
-        #env = BuildEnvironment()
-        #env.temp_data["docname"] = "string"
-        #overrides["env"] = env
+
+        if sphinx__display_version__ >= "1.6":
+            pass
+        else:
+            env = BuildEnvironment(None, None, config)
+            env.temp_data["docname"] = "string"
+            overrides["env"] = env
 
         errst = sys.stderr
         keeperr = StringIO()
         sys.stderr = keeperr
 
-        output, pub = publish_programmatically(
-            source_class=docio.StringInput,
-            source=content,
-            source_path=None,
-            destination_class=docio.StringOutput,
-            destination=None,
-            destination_path=None,
-            reader=None,
-            reader_name='standalone',
-            parser=None,
-            parser_name='restructuredtext',
-            writer=None,
-            writer_name='null',
-            settings=None,
-            settings_spec=None,
-            settings_overrides=overrides,
-            config_section=None,
-            enable_exit_status=None)
+        output, pub = publish_programmatically(source_class=docio.StringInput, source=content,
+                                               source_path=None, destination_class=docio.StringOutput, destination=None,
+                                               destination_path=None, reader=None, reader_name='standalone', parser=None,
+                                               parser_name='restructuredtext', writer=None, writer_name='null', settings=None,
+                                               settings_spec=None, settings_overrides=overrides, config_section=None,
+                                               enable_exit_status=None)
 
         sys.stderr = errst
         all_err = keeperr.getvalue()
