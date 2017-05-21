@@ -191,7 +191,7 @@ def get_notebook_kernel(kernel_name, kernel_spec_manager=None):
 
 def install_notebook_extension(path=None, overwrite=False, symlink=False,
                                user=False, prefix=None, nbextensions_dir=None,
-                               destination=None, verbose=1):
+                               destination=None):
     """
     install notebook extensions,
     see `install_nbextension <https://ipython.org/ipython-doc/dev/api/generated/IPython.html.nbextensions.html#IPython.html.nbextensions.install_nbextension>`_
@@ -215,7 +215,7 @@ def install_notebook_extension(path=None, overwrite=False, symlink=False,
     from notebook.nbextensions import install_nbextension
     install_nbextension(path=path, overwrite=overwrite, symlink=symlink,
                         user=user, prefix=prefix, nbextensions_dir=nbextensions_dir,
-                        destination=destination, verbose=verbose)
+                        destination=destination)
 
     out = sys.stdout.getvalue()
     err = sys.stderr.getvalue()
