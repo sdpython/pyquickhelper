@@ -7,7 +7,6 @@ __version__ = "1.5"
 __author__ = "Xavier Dupré"
 __github__ = "https://github.com/sdpython/pyquickhelper"
 __url__ = "http://www.xavierdupre.fr/app/pyquickhelper/helpsphinx/index.html"
-__downloadUrl__ = "http://www.xavierdupre.fr/site2013/index_code.html#pyquickhelper"
 __license__ = "MIT License"
 __blog__ = """
 <?xml version="1.0" encoding="UTF-8"?>
