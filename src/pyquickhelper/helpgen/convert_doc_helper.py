@@ -261,7 +261,7 @@ def rst2html(s, fLOG=noLOG, writer="sphinx", keep_warnings=False,
 
     if writer in ["custom", "sphinx"]:
         mockapp, writer, title_names = MockSphinxApp.create(
-            "writer", directives)
+            "sphinx", directives)
         writer_name = "pseudoxml"
     else:
         raise NotImplementedError()
