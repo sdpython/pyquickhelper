@@ -31,10 +31,17 @@ except ImportError:
 
 class MockSphinxApp:
     """
-    Mock Sphinx application
+    Mock Sphinx application.
+    In memory Sphinx application.
     """
 
     def __init__(self, writer, app):
+        """
+        Constructor
+
+        @param      writer      see static method create
+        @param      app         see static method create
+        """
         self.app = app
         self.new_options = {}
         self.writer = writer
@@ -56,21 +63,33 @@ class MockSphinxApp:
         self._events = {}
 
     def add_directive(self, name, cl, *args, **options):
+        """
+        See class `Sphinx <https://github.com/sphinx-doc/sphinx/blob/master/sphinx/application.py#L107>`_.
+        """
         doc_directives.register_directive(name, cl)
         self.mapping[str(cl)] = name
         self.app.add_directive(name, cl, *args, **options)
         self.writer.app.add_directive(name, cl, *args, **options)
 
     def add_role(self, name, cl):
+        """
+        See class `Sphinx <https://github.com/sphinx-doc/sphinx/blob/master/sphinx/application.py#L107>`_.
+        """
         doc_roles.register_canonical_role(name, cl)
         self.mapping[str(cl)] = name
         self.app.add_role(name, cl)
         self.writer.app.add_role(name, cl)
 
     def add_mapping(self, name, cl):
+        """
+        See class `Sphinx <https://github.com/sphinx-doc/sphinx/blob/master/sphinx/application.py#L107>`_.
+        """
         self.mapping[str(cl)] = name
 
     def add_config_value(self, name, default, rebuild, types=()):
+        """
+        See class `Sphinx <https://github.com/sphinx-doc/sphinx/blob/master/sphinx/application.py#L107>`_.
+        """
         if name in self.config.values:
             raise Exception('Config value %r already present' % name)
         if rebuild in (False, True):
@@ -79,9 +98,15 @@ class MockSphinxApp:
         self.config.values[name] = (default, rebuild, types)
 
     def get_default_values(self):
+        """
+        See class `Sphinx <https://github.com/sphinx-doc/sphinx/blob/master/sphinx/application.py#L107>`_.
+        """
         return {k: v[0] for k, v in self.new_options.items()}
 
     def add_node(self, node, **kwds):
+        """
+        See class `Sphinx <https://github.com/sphinx-doc/sphinx/blob/master/sphinx/application.py#L107>`_.
+        """
         # type: (nodes.Node, Any) -> None
         if sphinx__display_version__ >= "1.6":
             nodes._add_node_class_names([node.__name__])
@@ -121,22 +146,34 @@ class MockSphinxApp:
             self.app.add_node(node, **kwds)
 
     def connect(self, node, func):
+        """
+        See class `Sphinx <https://github.com/sphinx-doc/sphinx/blob/master/sphinx/application.py#L107>`_.
+        """
         self.mapping_connect[node] = func
         self.app.connect(node, func)
         self.writer.app.connect(node, func)
 
     def add_domain(self, domain):
+        """
+        See class `Sphinx <https://github.com/sphinx-doc/sphinx/blob/master/sphinx/application.py#L107>`_.
+        """
         if domain.name in self.domains:
             raise Exception(
                 'domain %s already registered' % domain.name)
         self.domains[domain.name] = domain
 
     def add_event(self, name):
+        """
+        See class `Sphinx <https://github.com/sphinx-doc/sphinx/blob/master/sphinx/application.py#L107>`_.
+        """
         if name in self._events:
             raise Exception('Event %s already present' % name)
         self._events[name] = ''
 
     def emit(self, event, *args):
+        """
+        See class `Sphinx <https://github.com/sphinx-doc/sphinx/blob/master/sphinx/application.py#L107>`_.
+        """
         return self.app.emit(event, *args)
 
     @staticmethod
@@ -151,10 +188,11 @@ class MockSphinxApp:
         *directives* is None or a list of 5-uple:
 
         * a directive name
-        * a directive class: see `Sphinx Directive <http://sphinx-doc.org/extdev/tutorial.html>`_, see also @see cl RunPythonDirective as an example
+        * a directive class: see `Sphinx Directive <http://sphinx-doc.org/extdev/tutorial.html>`_,
+          see also @see cl RunPythonDirective as an example
         * a docutils node: see @see cl runpython_node as an example
-        * two functions: see @see fn visit_runpython_node, @see fn depart_runpython_node as an example
-
+        * two functions: see @see fn visit_runpython_node,
+          @see fn depart_runpython_node as an example
         """
         if writer not in ("sphinx", "custom"):
             raise NotImplementedError("writer must be 'sphinx' or 'custom'")
