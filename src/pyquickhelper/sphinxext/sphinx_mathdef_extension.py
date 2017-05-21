@@ -10,6 +10,7 @@ import sys
 import os
 from docutils import nodes
 from docutils.parsers.rst import directives
+from docutils.frontend import Values
 
 import sphinx
 from sphinx.locale import _
@@ -159,6 +160,7 @@ class MathDef(BaseAdmonition):
                                             env.new_serialno('indexmathe%s' % mathtag))
             ids = [targetid]
             targetnode = nodes.target(legend, '', ids=ids[0])
+            set_source_info(self, targetnode)
             try:
                 self.state.add_target(targetid, '', targetnode, lineno)
             except Exception as e:
@@ -374,6 +376,12 @@ def process_mathdef_nodes(app, doctree, fromdocname):
                 bullets += item
 
             mathdef_entry["ids"] = idss
+
+            if not hasattr(mathdef_entry, "settings"):
+                mathdef_entry.settings = Values()
+                mathdef_entry.settings.env = env
+            # If an exception happens here, see blog 2017-05-21 from the
+            # documentation.
             env.resolve_references(mathdef_entry, mathdef_info['docname'],
                                    app.builder)
 

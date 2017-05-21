@@ -10,6 +10,7 @@ import sys
 import os
 from docutils import nodes
 from docutils.parsers.rst import directives
+from docutils.frontend import Values
 
 import sphinx
 from sphinx.locale import _ as locale_
@@ -214,6 +215,7 @@ class TodoExt(BaseAdmonition):
         if env is not None:
             targetid = 'indextodoe-%s' % env.new_serialno('indextodoe')
             targetnode = nodes.target(legend, '', ids=[targetid])
+            set_source_info(self, targetnode)
             self.state.add_target(targetid, '', targetnode, lineno)
 
             # index node
@@ -412,6 +414,11 @@ def process_todoext_nodes(app, doctree, fromdocname):
             todoext_entry["ids"] = ["index-todoext-%d-%d" % (ilist, n)]
             # it apparently requires an attributes ids
 
+            if not hasattr(todoext_entry, "settings"):
+                todoext_entry.settings = Values()
+                todoext_entry.settings.env = env
+            # If an exception happens here, see blog 2017-05-21 from the
+            # documentation.
             env.resolve_references(todoext_entry, todoext_info['docname'],
                                    app.builder)
 

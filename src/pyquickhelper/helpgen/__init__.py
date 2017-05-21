@@ -3,7 +3,7 @@
 @brief Subpart related to the documentation generation.
 """
 from .conf_path_tools import find_graphviz_dot
-from .convert_doc_helper import rst2html, docstring2html, HTMLWriterWithCustomDirectives
+from .convert_doc_helper import rst2html, docstring2html
 from .default_conf import set_sphinx_variables, custom_setup
 from .helpgen_exceptions import HelpGenException, ImportErrorHelpGen, HelpGenConvertError
 from .pandoc_helper import latex2rst

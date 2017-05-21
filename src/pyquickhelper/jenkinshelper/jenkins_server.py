@@ -1011,6 +1011,7 @@ class JenkinsExt(jenkins.Jenkins):
 
         .. versionchanged:: 1.5
             Parameter *disable_schedule* was added.
+            A subfolder was added to the location.
         """
         # we do a patch for pyquickhelper
         all_jobs = []
@@ -1222,9 +1223,9 @@ class JenkinsExt(jenkins.Jenkins):
                         loc = None
                     else:
                         if "_" in jname:
-                            loc = os.path.join(location, jname)
+                            loc = os.path.join(location, name, jname)
                         else:
-                            loc = os.path.join(location, "_" + jname)
+                            loc = os.path.join(location, name, "_" + jname)
 
                     if mod in ("standalone", "custom"):
                         gpar = None

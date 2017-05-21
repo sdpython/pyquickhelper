@@ -109,8 +109,12 @@ def fix_ie_layout_html():
                 raise ValueError(
                     "the format of layout.html has changed,\nthe string '{0}' cannot be found in\n{1}".format(topos, layout))
             content = "\n".join(lines)
-            with open(layout, "w", encoding="utf-8") as f:
-                f.write(content)
+            try:
+                with open(layout, "w", encoding="utf-8") as f:
+                    f.write(content)
+            except PermissionError as e:
+                warnings.warn(
+                    "You need admin right to do that.\n{0}".format(e))
             return True
         else:
             return False

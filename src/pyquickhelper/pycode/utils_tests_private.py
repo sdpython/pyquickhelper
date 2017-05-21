@@ -386,6 +386,7 @@ def main_run_test(runner, path_test=None, limit_max=1e9, log=False, skip=-1, ski
     fullstderr = StringIO()
 
     # displays
+    memout.write("---- JENKINS BEGIN UNIT TESTS ----")
     memout.write("---- BEGIN UNIT TEST for {0}\n".format(path_test))
 
     # display all tests
@@ -546,6 +547,7 @@ def main_run_test(runner, path_test=None, limit_max=1e9, log=False, skip=-1, ski
 
     # displays
     memout.write("---- END UT\n")
+    memout.write("---- JENKINS END UNIT TESTS ----")
 
     fLOG("[main_run_test] restore stdout, stderr")
 

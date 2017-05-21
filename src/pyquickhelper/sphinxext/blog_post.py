@@ -10,18 +10,14 @@ from docutils import io as docio
 from docutils.core import publish_programmatically
 from sphinx.config import Config
 from sphinx import __display_version__ as sphinx__display_version__
+from sphinx.environment import BuildEnvironment
+
 
 if sys.version_info[0] == 2:
     from codecs import open
     from StringIO import StringIO
 else:
     from io import StringIO
-
-
-if sphinx__display_version__ >= "1.6":
-    pass
-else:
-    from sphinx.environment import BuildEnvironment
 
 
 class BlogPostParseError(Exception):
@@ -96,11 +92,13 @@ class BlogPost:
         config.sharepost = None
 
         if sphinx__display_version__ >= "1.6":
-            pass
+            from ..helpgen.mock_app_sphinx import MockSphinxApp
+            app = MockSphinxApp.create()
+            env = BuildEnvironment(app[0])
         else:
             env = BuildEnvironment(None, None, config)
-            env.temp_data["docname"] = "string"
-            overrides["env"] = env
+        env.temp_data["docname"] = "string"
+        overrides["env"] = env
 
         errst = sys.stderr
         keeperr = StringIO()

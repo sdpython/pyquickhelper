@@ -237,7 +237,7 @@ if not r:
             "python-dateutil",
             "requests",
             "simplegeneric",
-            "sphinx==1.5.6",
+            "sphinx",
             "sphinx-gallery",
             "sphinxcontrib-imagesvg",
             "sphinxcontrib-jsdemo",

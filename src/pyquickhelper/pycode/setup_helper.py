@@ -279,7 +279,9 @@ def process_standard_options_for_setup(argv, file_or_folder, project_var_name, m
         return True
 
     elif "write_version" in argv:
+        fLOG("---- JENKINS BEGIN WRITE VERSION ----")
         write_version_for_setup(file_or_folder)
+        fLOG("---- JENKINS BEGIN END VERSION ----")
         return True
 
     elif "clean_pyd" in argv:
@@ -333,11 +335,13 @@ def process_standard_options_for_setup(argv, file_or_folder, project_var_name, m
         return True
 
     elif "setup_hook" in argv:
+        fLOG("---- JENKINS BEGIN SETUPHOOK ----")
         run_unittests_for_setup(
             file_or_folder, setup_params=setup_params, only_setup_hook=True,
             coverage_options=coverage_options, coverage_exclude_lines=coverage_exclude_lines,
             additional_ut_path=additional_ut_path, skip_function=skip_function,
             hook_print=hook_print, stdout=stdout, stderr=stderr, fLOG=fLOG)
+        fLOG("---- JENKINS END SETUPHOOK ----")
         return True
 
     elif "unittests_LONG" in argv:

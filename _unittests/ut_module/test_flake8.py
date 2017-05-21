@@ -42,7 +42,9 @@ class TestFlake8(unittest.TestCase):
         thi = os.path.abspath(os.path.dirname(__file__))
         src_ = os.path.normpath(os.path.join(thi, "..", "..", "src"))
         check_pep8(src_, fLOG=fLOG, skip=["tp_transfer_files.py:376: [E731]",
-                                          "_nbconvert_config.py:"])
+                                          "_nbconvert_config.py:",
+                                          "convert_doc_sphinx_helper.py:31: [E402]",
+                                          "magic_class.py:12: [E402]"])
 
     def test_flake8_test(self):
         fLOG(

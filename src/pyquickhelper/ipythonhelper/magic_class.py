@@ -7,8 +7,10 @@
 
 """
 from __future__ import print_function
-
+import warnings
+warnings.filterwarnings("ignore", category=DeprecationWarning)
 from IPython.core.magic import Magics, magics_class
+warnings.resetwarnings()
 
 
 @magics_class

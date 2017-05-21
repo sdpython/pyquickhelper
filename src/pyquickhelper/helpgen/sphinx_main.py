@@ -276,6 +276,7 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
         It does not require to get script location.
         Not enough stable from virtual environment.
     """
+    fLOG("---- JENKINS BEGIN DOCUMENTATION ----")
     if layout is None:
         layout = [("html", "build", {})]
     setup_environment_for_help(fLOG=fLOG)
@@ -532,6 +533,7 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
     ##############
     # copy the files
     ##############
+    fLOG("---- JENKINS BEGIN DOCUMENTATION COPY FILES ----")
     optional_dirs = []
     mapped_function = [(".*[.]%s$" % ext.strip("."), None)
                        for ext in extra_ext]
@@ -574,10 +576,12 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
         raise e
 
     fLOG("~~~~ end of prepare_file_for_sphinx_help_generation")
+    fLOG("---- JENKINS END DOCUMENTATION COPY FILES ----")
 
     ######
     # blog
     ######
+    fLOG("---- JENKINS BEGIN DOCUMENTATION BLOGS ----")
     fLOG("~~~~ begin blogs")
     blog_fold = os.path.join(
         os.path.join(root, "_doc/sphinxdoc/source", "blog"))
@@ -596,10 +600,12 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
         plist = None
 
     fLOG("~~~~ end blogs")
+    fLOG("---- JENKINS END DOCUMENTATION BLOGS ----")
 
     ###########
     # notebooks
     ###########
+    fLOG("---- JENKINS BEGIN DOCUMENTATION NOTEBOOKS ----")
     fLOG("~~~~ begin notebooks")
     indextxtnote = None
     indexlistnote = []
@@ -656,6 +662,7 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
                         shutil.copy(img, d)
 
     fLOG("~~~~ end notebooks")
+    fLOG("---- JENKINS END DOCUMENTATION NOTEBOOKS ----")
 
     #############################################
     # replace placeholder as blog posts list into tocs files
@@ -691,6 +698,7 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
     ################
     # checks encoding
     ################
+    fLOG("---- JENKINS BEGIN DOCUMENTATION ENCODING ----")
     fLOG("~~~~ checking encoding utf8...")
     for root, dirs, files in os.walk(docpath):
         for name in files:
@@ -719,6 +727,7 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
     fLOG("~~~~ running sphinx... from", docpath)
     if not os.path.exists(docpath):
         raise FileNotFoundError(docpath)
+    fLOG("---- JENKINS END DOCUMENTATION ENCODING ----")
 
     os.chdir(docpath)
 
@@ -775,6 +784,7 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
     ###############################################################
     fLOG("~~~~ RUN SPHINX")
     for cmd, build, kind in cmds:
+        fLOG("---- JENKINS BEGIN DOCUMENTATION SPHINX ----")
         fLOG(
             "##################################################################################################")
         fLOG(
@@ -868,6 +878,7 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
             "##################### end run sphinx #############################################################")
         fLOG(
             "##################################################################################################")
+        fLOG("---- JENKINS END DOCUMENTATION SPHINX ----")
 
     # we copy the extended styles (notebook, snippets) (again in build folders)
     # we should not need that
@@ -894,6 +905,7 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
     #####################################
     # we copy the coverage files if it is missing
     #####################################
+    fLOG("---- JENKINS BEGIN DOCUMENTATION COVERAGE ----")
     fLOG("**** copy coverage")
     covfold = os.path.join(docpath, "source", "coverage")
     if os.path.exists(covfold):
@@ -920,6 +932,7 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
             fLOG("## ERROR: coverage files with rst in", covfold)
     else:
         fLOG("## no coverage files", covfold)
+    fLOG("---- JENKINS END DOCUMENTATION COVERAGE ----")
 
     #########################################################
     # we copy javascript dependencies to build _download/javascript
@@ -982,6 +995,7 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
     fLOG("################################")
     fLOG("#### END - check log for success")
     fLOG("################################")
+    fLOG("---- JENKINS END DOCUMENTATION ----")
 
 
 def _process_sphinx_in_private_cmd(list_args, fLOG):

@@ -119,14 +119,14 @@ class TestSphinxDocFull (unittest.TestCase):
                 if not os.path.exists(f):
                     raise FileNotFoundError(f)
 
-            assert not os.path.exists(os.path.join(temp, "_doc"))
+            self.assertTrue(not os.path.exists(os.path.join(temp, "_doc")))
 
             rss = os.path.join(
                 root, "_doc", "sphinxdoc", "source", "blog", "rss.xml")
             with open(rss, "r", encoding="utf8") as f:
                 content_rss = f.read()
 
-            assert "__BLOG_ROOT__" not in content_rss
+            self.assertTrue("__BLOG_ROOT__" not in content_rss)
             # this should be replaced when uploading the stream onto the website
             # the website is unknown when producing the documentation
             # it should be resolved when uploading (the documentation could be
@@ -154,14 +154,14 @@ class TestSphinxDocFull (unittest.TestCase):
                                  "_doc", "sphinxdoc", "source", "all_notebooks.rst")
             with open(fhtml, "r", encoding="utf8") as f:
                 content = f.read()
-            assert 'notebooks/custom_notebooks' in content
+            self.assertTrue('notebooks/custom_notebooks' in content)
 
             # checks slideshow was added
             fhtml = os.path.join(temp, "python3_module_template-master",
                                  "build", "notebooks", "bslides", "custom_notebooks.ipynb")
             with open(fhtml, "r", encoding="utf8") as f:
                 content = f.read()
-            assert '"slide"' in content
+            self.assertTrue('"slide"' in content)
 
             # reveal.js + images
             rev = [os.path.join(root, "_doc", "sphinxdoc", "source", "phdoc_static", "reveal.js"),

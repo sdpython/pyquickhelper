@@ -1,0 +1,36 @@
+
+.. blogpost::
+    :title: Fixable issues with Sphinx 1.6.1
+    :keywords: documentation, startup
+    :date: 2017-05-21
+    :categories: documentation
+
+    `Sphinx <http://www.sphinx-doc.org/en/stable/>`_
+    has released a new version 1.6.1. Other packages
+    updated their code but some issues remain.
+    I had to modify the code of the file
+    `sphinx/transforms/__init__.py <https://github.com/sphinx-doc/sphinx/blob/master/sphinx/transforms/__init__.py>`_
+    to propage the environment *env* if not present.
+
+    ::
+
+        def apply_transforms(self):
+        # type: () -> None
+        if isinstance(self.document, nodes.document):
+            Transformer.apply_transforms(self)
+        else:
+            # wrap the target node by document node during transforming
+            try:
+                document = new_document('')
+                if self.env:
+                    document.settings.env = self.env
+                document += self.document
+                if not hasattr(document, "settings"):
+                    if hasattr(self.document, "settings"):
+                        document.settings = self.document.settings
+                elif not hasattr(document.settings, "env") and hasattr(self.document, "settings") and hasattr(self.document.settings, "env"):
+                    document.settings.env = self.document.settings.env
+                self.document = document
+                Transformer.apply_transforms(self)
+            finally:
+                self.document = self.document[0]

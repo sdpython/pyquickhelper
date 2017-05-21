@@ -379,3 +379,18 @@ to configurate a local Jenkins server.
 
 When modules depend on others modules also being tested, the
 unit tests and the documentation generation uses a local pypi server (port=8079).
+
+Console Output
+++++++++++++++
+
+The plugin `Collapsing Sections Plugins <https://wiki.jenkins-ci.org/display/JENKINS/Collapsing+Console+Sections+Plugin>`_ can help parsing the output. The following section are added:
+
+* ``---- JENKINS BEGIN UNIT TESTS ----``, * ``---- JENKINS END UNIT TESTS ----``
+* ``---- JENKINS BEGIN DOCUMENTATION ----``, ``---- JENKINS END DOCUMENTATION ----``
+* ``---- JENKINS BEGIN DOCUMENTATION NOTEBOOKS ----``, ``---- JENKINS END DOCUMENTATION NOTEBOOKS ----``
+* ``---- JENKINS BEGIN DOCUMENTATION BLOG ----``, ``---- JENKINS END DOCUMENTATION BLOG ----``
+* ``---- JENKINS BEGIN DOCUMENTATION COPY FILES ----``, ``---- JENKINS END DOCUMENTATION COPY FILES ----``
+* ``---- JENKINS BEGIN DOCUMENTATION ENCODING ----``, ``---- JENKINS END DOCUMENTATION ENCODING ----``
+* ``---- JENKINS BEGIN DOCUMENTATION SPHINX ----``, ``---- JENKINS END DOCUMENTATION SPHINX ----``
+* ``---- JENKINS BEGIN WRITE VERSION ----``, ``---- JENKINS END WRITE VERSION ----``
+* ``---- JENKINS BEGIN SETUPHOOK ----``, ``---- JENKINS END SETUPHOOK ----``

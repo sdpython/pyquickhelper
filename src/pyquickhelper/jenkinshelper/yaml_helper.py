@@ -539,6 +539,9 @@ def enumerate_processed_yml(file_or_buffer, context=None, engine="jinja2", platf
     @return                         enumerator for *(job, name, variables)*
 
     Example of a yml file `.local.jenkins.win.yml <https://github.com/sdpython/pyquickhelper/blob/master/.local.jenkins.win.yml>`_.
+
+    .. versionchanged:: 1.5
+        A subfolder was added to the project location.
     """
     typstr = str  # unicode#
     fLOG = kwargs.get('fLOG', None)
@@ -586,7 +589,7 @@ def enumerate_processed_yml(file_or_buffer, context=None, engine="jinja2", platf
             if build_location is None:
                 loc = None
             else:
-                loc = os.path.join(build_location, name)
+                loc = os.path.join(build_location, project_name, name)
 
             if overwrite or j is None:
                 if timeout is not None:

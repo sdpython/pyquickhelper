@@ -7,16 +7,29 @@
 import sys
 from collections import deque
 import types
-
+import warnings
 from sphinx.locale import _
 from docutils.parsers.rst import directives, roles
 from docutils.languages import en as docutils_en
 from sphinx.writers.html import HTMLWriter
-from sphinx.builders.html import SingleFileHTMLBuilder, SerializingHTMLBuilder
-
+from ..sphinxext.sphinx_bigger_extension import visit_bigger_node as ext_visit_bigger_node, depart_bigger_node as ext_depart_bigger_node
+from ..sphinxext.sphinx_blocref_extension import visit_blocref_node as ext_visit_blocref_node, depart_blocref_node as ext_depart_blocref_node
+from ..sphinxext.sphinx_blog_extension import visit_blogpost_node as ext_visit_blogpost_node, depart_blogpost_node as ext_depart_blogpost_node
+from ..sphinxext.sphinx_blog_extension import visit_blogpostagg_node as ext_visit_blogpostagg_node, depart_blogpostagg_node as ext_depart_blogpostagg_node
+from ..sphinxext.sphinx_exref_extension import visit_exref_node as ext_visit_exref_node, depart_exref_node as ext_depart_exref_node
+from ..sphinxext.sphinx_faqref_extension import visit_faqref_node as ext_visit_faqref_node, depart_faqref_node as ext_depart_faqref_node
+from ..sphinxext.sphinx_mathdef_extension import visit_mathdef_node as ext_visit_mathdef_node, depart_mathdef_node as ext_depart_mathdef_node
+from ..sphinxext.sphinx_nbref_extension import visit_nbref_node as ext_visit_nbref_node, depart_nbref_node as ext_depart_nbref_node
+from ..sphinxext.sphinx_runpython_extension import visit_runpython_node as ext_visit_runpython_node, depart_runpython_node as ext_depart_runpython_node
+from ..sphinxext.sphinx_sharenet_extension import visit_sharenet_node as ext_visit_sharenet_node, depart_sharenet_node as ext_depart_sharenet_node
+from ..sphinxext.sphinx_todoext_extension import visit_todoext_node as ext_visit_todoext_node, depart_todoext_node as ext_depart_todoext_node
 from sphinx.application import Sphinx
 from sphinx.errors import ExtensionError
 from docutils import nodes
+
+warnings.filterwarnings("ignore", category=DeprecationWarning)
+from sphinx.builders.html import SingleFileHTMLBuilder, SerializingHTMLBuilder
+warnings.resetwarnings()
 
 try:
     from sphinx.util.docutils import is_html5_writer_available
@@ -42,18 +55,6 @@ except ImportError:
                 raise ExtensionError(_('when adding directive classes, no '
                                        'additional arguments may be given'))
             return obj
-
-from ..sphinxext.sphinx_bigger_extension import visit_bigger_node as ext_visit_bigger_node, depart_bigger_node as ext_depart_bigger_node
-from ..sphinxext.sphinx_blocref_extension import visit_blocref_node as ext_visit_blocref_node, depart_blocref_node as ext_depart_blocref_node
-from ..sphinxext.sphinx_blog_extension import visit_blogpost_node as ext_visit_blogpost_node, depart_blogpost_node as ext_depart_blogpost_node
-from ..sphinxext.sphinx_blog_extension import visit_blogpostagg_node as ext_visit_blogpostagg_node, depart_blogpostagg_node as ext_depart_blogpostagg_node
-from ..sphinxext.sphinx_exref_extension import visit_exref_node as ext_visit_exref_node, depart_exref_node as ext_depart_exref_node
-from ..sphinxext.sphinx_faqref_extension import visit_faqref_node as ext_visit_faqref_node, depart_faqref_node as ext_depart_faqref_node
-from ..sphinxext.sphinx_mathdef_extension import visit_mathdef_node as ext_visit_mathdef_node, depart_mathdef_node as ext_depart_mathdef_node
-from ..sphinxext.sphinx_nbref_extension import visit_nbref_node as ext_visit_nbref_node, depart_nbref_node as ext_depart_nbref_node
-from ..sphinxext.sphinx_runpython_extension import visit_runpython_node as ext_visit_runpython_node, depart_runpython_node as ext_depart_runpython_node
-from ..sphinxext.sphinx_sharenet_extension import visit_sharenet_node as ext_visit_sharenet_node, depart_sharenet_node as ext_depart_sharenet_node
-from ..sphinxext.sphinx_todoext_extension import visit_todoext_node as ext_visit_todoext_node, depart_todoext_node as ext_depart_todoext_node
 
 if sys.version_info[0] == 2:
     from StringIO import StringIO
@@ -469,7 +470,9 @@ class _CustomSphinx(Sphinx):
         # load all built-in extension modules
         for extension in builtin_extensions:
             try:
+                warnings.filterwarnings("ignore", category=DeprecationWarning)
                 self.setup_extension(extension)
+                warnings.resetwarnings()
             except Exception as e:
                 mes = "Unable to setup_extension '{0}'\nWHOLE LIST\n{1}".format(
                     extension, "\n".join(builtin_extensions))
@@ -560,7 +563,9 @@ class _CustomSphinx(Sphinx):
         if self.sphinx__display_version__ >= "1.6":
             self.debug('[app] setting up extension: %r', extname)
             try:
+                warnings.filterwarnings("ignore", category=DeprecationWarning)
                 self.registry.load_extension(self, extname)
+                warnings.resetwarnings()
             except Exception as e:
                 raise Exception(
                     "Unable to setup extension '{0}'".format(extname)) from e

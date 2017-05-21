@@ -9,9 +9,16 @@ from ..filehelper import explore_folder_iterfile, remove_folder
 import os
 import sys
 import json
+import warnings
 from nbformat import versions
 from nbformat.reader import reads
 from nbformat.v4 import upgrade
+try:
+    from ipykernel.kernelspec import install as install_k
+except ImportError:
+    warnings.warn("ipykernel is not installed. pyquickhelper cannot execute a notebook.",
+                  category=warnings.ImportWarning)
+    pass
 from ..filehelper import read_content_ufs
 from ..loghelper import noLOG
 
@@ -363,7 +370,6 @@ def install_jupyter_kernel(exe=sys.executable, kernel_spec_manager=None, user=Fa
     .. versionadded:: 1.3
     """
     exe = exe.replace("pythonw.exe", "python.exe")
-    from ipykernel.kernelspec import install as install_k
     dest = install_k(kernel_spec_manager=kernel_spec_manager,
                      user=user, kernel_name=kernel_name, prefix=prefix)
     kernel_file = os.path.join(dest, "kernel.json")

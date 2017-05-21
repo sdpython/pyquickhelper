@@ -10,7 +10,11 @@ import os
 import datetime
 import re
 import warnings
+from sphinx import __display_version__ as sphinx__display_version
 from .style_css_template import style_figure_notebook
+
+if sphinx__display_version >= "1.6":
+    from sphinx.builders.html import Stylesheet
 
 if sys.version_info[0] == 2:
     from codecs import open
@@ -473,6 +477,7 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
     modify_commit = modify_commit_function
 
     # sphinx gallery
+    backreferences_dir = "backreferences_dir"
     dirname = os.path.dirname(fileconf)
     exa = os.path.join(dirname, "..", "..", "..", "_doc", "examples")
     if os.path.exists(exa):
@@ -643,7 +648,11 @@ def get_default_stylesheet():
 
     .. versionadded:: 1.5
     """
-    return ["_static/" + style_figure_notebook[0]]
+    if sphinx__display_version >= '1.6':
+        rel = "_static/" + style_figure_notebook[0]
+        return [Stylesheet(rel, "style_figure_notebook", rel)]
+    else:
+        return ["_static/" + style_figure_notebook[0]]
 
 
 def get_default_javascript():

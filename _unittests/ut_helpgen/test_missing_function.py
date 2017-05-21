@@ -49,12 +49,10 @@ class TestMissingFunction(unittest.TestCase):
         if not ie_layout_html():
             fLOG("updating layout.html")
             r = fix_ie_layout_html()
-            assert r
+            self.assertTrue(r)
 
-        try:
-            assert ie_layout_html()
-        except AttributeError:
-            return
+        if not ie_layout_html():
+            warnings.warn("The output is not optimized for IE.")
 
     def test_nb_image(self):
         fLOG(
@@ -63,7 +61,7 @@ class TestMissingFunction(unittest.TestCase):
             OutputPrint=__name__ == "__main__")
 
         r = NbImage("completion.png")
-        assert r is not None
+        self.assertTrue(r is not None)
 
     def test_remove_character_under32(self):
         fLOG(

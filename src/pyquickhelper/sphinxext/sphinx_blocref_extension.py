@@ -42,6 +42,7 @@ from sphinx.environment import NoUri
 from docutils.parsers.rst import Directive
 from docutils.parsers.rst.directives.admonitions import BaseAdmonition
 from docutils.statemachine import StringList
+from docutils.frontend import Values
 from sphinx.util.nodes import set_source_info, process_index_entry
 from sphinx import addnodes
 from ..texthelper.texts_language import TITLES
@@ -137,12 +138,10 @@ class BlocRef(BaseAdmonition):
         builds the blocref text
         """
         name_desc = self.__class__.name_sphinx
-        # sett = self.state.document.settings
-        # language_code = sett.language_code
         lineno = self.lineno
 
-        env = self.state.document.settings.env if hasattr(
-            self.state.document.settings, "env") else None
+        settings = self.state.document.settings
+        env = settings.env if hasattr(settings, "env") else None
         docname = None if env is None else env.docname
         if docname is not None:
             docname = docname.replace("\\", "/").split("/")[-1]
@@ -206,6 +205,7 @@ class BlocRef(BaseAdmonition):
             blocref["breftargetid"] = targetid
             ids = [targetid]
             targetnode = nodes.target(legend, '', ids=ids)
+            set_source_info(self, targetnode)
             try:
                 self.state.add_target(targetid, '', targetnode, lineno)
             except Exception as e:
@@ -312,8 +312,8 @@ class BlocRefList(Directive):
         when process_blocref_nodes is called
         """
         name_desc = self.__class__.name_sphinx
-        env = self.state.document.settings.env if hasattr(
-            self.state.document.settings, "env") else None
+        settings = self.state.document.settings
+        env = settings.env if hasattr(settings, "env") else None
         docname = None if env is None else env.docname
         tag = self.options.get('tag', '').strip()
         n = self.__class__.node_class('')
@@ -373,9 +373,14 @@ def process_blocref_nodes_generic(app, doctree, fromdocname, class_name,
 
     # Replace all blocreflist nodes with a list of the collected blocrefs.
     # Augment each blocref with a backlink to the original location.
-    if hasattr(env, "settings") and hasattr(env.settings, "language_code"):
-        lang = env.settings.language_code
+    if hasattr(env, "settings"):
+        settings = env.settings
+        if hasattr(settings, "language_code"):
+            lang = env.settings.language_code
+        else:
+            lang = "en"
     else:
+        settings = None
         lang = "en"
 
     orig_entry = TITLES[lang]["original entry"]
@@ -450,6 +455,8 @@ def process_blocref_nodes_generic(app, doctree, fromdocname, class_name,
             try:
                 newnode['refuri'] = app.builder.get_relative_uri(
                     fromdocname, blocref_info['docname'])
+                if blocref_info['target'] is None:
+                    raise NoUri
                 try:
                     newnode['refuri'] += '#' + blocref_info['target']['refid']
                 except Exception as e:
@@ -486,6 +493,11 @@ def process_blocref_nodes_generic(app, doctree, fromdocname, class_name,
                 bullets += item
 
             blocref_entry["ids"] = idss
+            if not hasattr(blocref_entry, "settings"):
+                blocref_entry.settings = Values()
+                blocref_entry.settings.env = env
+            # If an exception happens here, see blog 2017-05-21 from the
+            # documentation.
             env.resolve_references(blocref_entry, blocref_info[
                                    'docname'], app.builder)
             content.append(blocref_entry)

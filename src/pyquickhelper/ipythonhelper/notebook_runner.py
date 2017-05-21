@@ -117,8 +117,11 @@ class NotebookRunner(object):
                 from jupyter_client import KernelManager
             except ImportError:
                 from ipykernel import KernelManager
+
+            warnings.filterwarnings("ignore", category=DeprecationWarning)
             self.km = KernelManager(
                 kernel_name=kernel_name) if kernel_name is not None else KernelManager()
+            warnings.resetwarnings()
         else:
             self.km = None
         self.detailed_log = detailed_log
@@ -163,7 +166,10 @@ class NotebookRunner(object):
                     self.km.start_kernel()
                 else:
                     try:
+                        warnings.filterwarnings(
+                            "ignore", category=ResourceWarning)
                         self.km.start_kernel(extra_arguments=args)
+                        warnings.resetwarnings()
                     except Exception as e:
                         raise Exception(
                             "Failure with args: {0}\nand error:\n{1}".format(args, str(e))) from e
