@@ -91,9 +91,11 @@ def load_yaml(file_or_buffer, context=None, engine="jinja2", platform=None):
         if platform is None:
             platform = sys.platform
         if platform.startswith("win"):
-            addition = "set %current%={0}".format(context["root_path"])
+            addition = "set %current%={0}\\%NAME_JENKINS%".format(
+                context["root_path"])
         else:
-            addition = "export %current%={0}".format(context["root_path"])
+            addition = "export %current%={0}/%NAME_JENKINS%".format(
+                context["root_path"])
         content = "automatedsetup:\n  - {0}\n{1}".format(addition, content)
 
     content = apply_template(content, context, engine)

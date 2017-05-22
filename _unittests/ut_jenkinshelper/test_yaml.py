@@ -174,7 +174,7 @@ class TestYaml(unittest.TestCase):
             SET TIMEOUT=900
 
             @echo AUTOMATEDSETUP
-            set %current%=ROOT\\pyquickhelper
+            set %current%=ROOT\\pyquickhelper\\%NAME_JENKINS%
 
             @echo interpreter=C:\\Python35_x64\\python
 
@@ -241,7 +241,7 @@ class TestYaml(unittest.TestCase):
             SET NAME=DOC
 
             @echo AUTOMATEDSETUP
-            set %current%=ROOT\\pyquickhelper
+            set %current%=ROOT\\pyquickhelper\\%NAME_JENKINS%
 
             @echo interpreter=C:\\Python35_x64\\python
 
@@ -334,7 +334,7 @@ class TestYaml(unittest.TestCase):
             SET TIMEOUT=900
 
             @echo AUTOMATEDSETUP
-            set %current%=ROOT\\pyquickhelper
+            set %current%=ROOT\\pyquickhelper\\%NAME_JENKINS%
 
             @echo interpreter=C:\\Python27_x64\\python
 
@@ -380,7 +380,7 @@ class TestYaml(unittest.TestCase):
             set PATH=ROOT\\pyquickhelper\\%NAME_JENKINS%\\_venv\\Scripts;%PATH%
             python -u setup.py bdist_wheel
             if %errorlevel% neq 0 exit /b %errorlevel%
-            copy dist\\*.whl ROOT\\pyquickhelper\\..\\..\\..\\local_pypi\\local_pypi_server
+            copy dist\\*.whl ROOT\\pyquickhelper\\..\\..\\local_pypi\\local_pypi_server
             if %errorlevel% neq 0 exit /b %errorlevel%
             cd ..
             if %errorlevel% neq 0 exit /b %errorlevel%
