@@ -56,7 +56,13 @@ def load_yaml(file_or_buffer, context=None, engine="jinja2", platform=None):
         else:
             return val.replace(rep, into)
     content, source = read_content_ufs(file_or_buffer, add_source=True)
-    project_name = infer_project_name(file_or_buffer, source)
+    if "project_name" not in context:
+        project_name = infer_project_name(file_or_buffer, source)
+    else:
+        project_name = context["project_name"]
+    if project_name.endswith("__"):
+        raise ValueError(
+            "project_name is wrong, it cannot end by '__': '{0}'".format(project_name))
 
     def ospathjoinp(*l, **kwargs):
         p = kwargs.get('platform', platform)
