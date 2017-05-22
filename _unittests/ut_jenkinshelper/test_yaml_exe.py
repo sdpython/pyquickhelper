@@ -48,7 +48,7 @@ class TestYamlExe(unittest.TestCase):
             - %s {{PLATFORM}}
         script:
             - %s
-        """ % (command, command, command)
+        """.replace("        ", "") % (command, command, command)
         context = dict(Python34="fake", Python35=os.path.dirname(sys.executable),
                        Python27=None, Anaconda3=None, Anaconda2=None,
                        WinPython35=None, project_name="pyquickhelper",
@@ -58,10 +58,10 @@ class TestYamlExe(unittest.TestCase):
         try:
             res = list(enumerate_convert_yaml_into_instructions(
                 obj, variables=context))
-            assert False
-            assert res
+            self.assertTrue(False)
+            self.assertTrue(res)
         except ValueError as e:
-            assert "'before'" in str(e)
+            self.assertTrue("'before'" in str(e))
 
     def test_exe(self):
         fLOG(
@@ -80,19 +80,19 @@ class TestYamlExe(unittest.TestCase):
             - %s {{PLATFORM}}
         script:
             - %s
-        """ % (command, command, command)
+        """.replace("        ", "") % (command, command, command)
         temp = get_temp_folder(__file__, "temp_yaml_exe")
         context = dict(Python34="fake", Python35=os.path.dirname(sys.executable),
                        Python27=None, Anaconda3=None, Anaconda2=None,
                        WinPython35=None, project_name="pyquickhelper",
                        root_path="ROOT", PLATFORM="win")
         obj, name = load_yaml(yml, context=context)
-        assert name is not None
+        self.assertTrue(name is not None)
         res = list(enumerate_convert_yaml_into_instructions(
             obj, variables=context))
         for r, var in res:
             conv = convert_sequence_into_batch_file(r, variables=var)
-            assert ("%s " % command) in conv
+            self.assertTrue(("%s " % command) in conv)
             fLOG("####", conv)
             ext = "bat" if command == "dir" else "sh"
             name = os.path.join(temp, "yml.%s" % ext)

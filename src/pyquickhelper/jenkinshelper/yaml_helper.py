@@ -76,6 +76,11 @@ def load_yaml(file_or_buffer, context=None, engine="jinja2", platform=None):
     if "project_name" not in context and project_name is not None:
         context["project_name"] = project_name
 
+    if not context["root_path"].endswith(project_name):
+        context = context.copy()
+        context["root_path"] = ospathjoin(
+            context["root_path"], project_name, platform=platform)
+
     if "root_path" in context:
         if platform is None:
             platform = sys.platform
@@ -506,14 +511,14 @@ def convert_sequence_into_batch_file(seq, variables=None, platform=None):
 
 def infer_project_name(file_or_buffer, source):
     """
-    infer a project name based on yaml file
+    Infer a project name based on yaml file
 
     @param      file_or_buffer      file name
     @param      source              second output of @see fn read_content_ufs
     @return                         name
 
     The function can infer a name for *source* in ``{'r', 'u'}``.
-    For *source* equal to ``'s'``, it returns ``'<unknown>'``.
+    For *source* equal to ``'s'``, it returns ``'unknown_string'``.
     """
     if source == "r":
         fold = os.path.dirname(file_or_buffer)
@@ -535,7 +540,7 @@ def infer_project_name(file_or_buffer, source):
                 "Unable to infer project name for '{0}'".format(file_or_buffer))
         return name
     elif source == "s":
-        return "<unknown>"
+        return "unknown_string"
     else:
         raise ValueError("Unexpected value for add_source: '{0}' for '{1}'".format(
             source, file_or_buffer))
@@ -571,6 +576,7 @@ def enumerate_processed_yml(file_or_buffer, context=None, engine="jinja2", platf
         "project_name", None)
     obj, project_name = load_yaml(
         file_or_buffer, context=context, platform=platform)
+    platform_set = sys.platform if platform is None else platform
     for seq, var in enumerate_convert_yaml_into_instructions(obj, variables=context, add_environ=add_environ):
         conv = convert_sequence_into_batch_file(
             seq, variables=var, platform=platform)
@@ -580,10 +586,20 @@ def enumerate_processed_yml(file_or_buffer, context=None, engine="jinja2", platf
             name = "_".join([project_name, var.get('NAME', ''),
                              typstr(var.get("VERSION", '')).replace(".", ""),
                              var.get('DIST', '')])
-            if isinstance(conv, list):
-                conv = ["SET NAME_JENKINS=" + name + "\n" + _ for _ in conv]
+
+            if platform_set.startswith("win"):
+                if isinstance(conv, list):
+                    conv = ["SET NAME_JENKINS=" +
+                            name + "\n" + _ for _ in conv]
+                else:
+                    conv = "SET NAME_JENKINS=" + name + "\n" + conv
             else:
-                conv = "SET NAME_JENKINS=" + name + "\n" + conv
+                if isinstance(conv, list):
+                    conv = ["export NAME_JENKINS=" +
+                            name + "\n" + _ for _ in conv]
+                else:
+                    conv = "export NAME_JENKINS=" + name + "\n" + conv
+
             timeout = var.get("TIMEOUT", None)
             import jenkins
             try:
@@ -611,7 +627,7 @@ def enumerate_processed_yml(file_or_buffer, context=None, engine="jinja2", platf
             if build_location is None:
                 loc = None
             else:
-                loc = os.path.join(build_location, project_name, name)
+                loc = os.path.join(build_location, name)
 
             if overwrite or j is None:
                 if timeout is not None:

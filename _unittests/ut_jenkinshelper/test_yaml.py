@@ -156,7 +156,7 @@ class TestYaml(unittest.TestCase):
                 r, variables=v, platform=platform)
             convs.append(conv)
             typstr = str  # unicode#
-            assert isinstance(conv, typstr)
+            self.assertTrue(isinstance(conv, typstr))
         self.assertTrue(len(res) > 0)
 
         conv = [_ for _ in convs if "SET NAME=UT" in _ and "VERSION=3.5" in _]
@@ -174,20 +174,20 @@ class TestYaml(unittest.TestCase):
             SET TIMEOUT=900
 
             @echo AUTOMATEDSETUP
-            set %current%=ROOT
+            set %current%=ROOT\\pyquickhelper
 
             @echo interpreter=C:\\Python35_x64\\python
 
-            @echo CREATE VIRTUAL ENVIRONMENT in ROOT\\%NAME_JENKINS%\\_venv
-            if not exist "ROOT\\%NAME_JENKINS%\\_venv" mkdir "ROOT\\%NAME_JENKINS%\\_venv"
+            @echo CREATE VIRTUAL ENVIRONMENT in ROOT\\pyquickhelper\\%NAME_JENKINS%\\_venv
+            if not exist "ROOT\\pyquickhelper\\%NAME_JENKINS%\\_venv" mkdir "ROOT\\pyquickhelper\\%NAME_JENKINS%\\_venv"
             set KEEPPATH=%PATH%
             set PATH=%PATH%;C:\\Python35_x64
-            "C:\\Python35_x64\\Scripts\\virtualenv" --system-site-packages "ROOT\\%NAME_JENKINS%\\_venv"
+            "C:\\Python35_x64\\Scripts\\virtualenv" --system-site-packages "ROOT\\pyquickhelper\\%NAME_JENKINS%\\_venv"
             set PATH=%KEEPPATH%
             if %errorlevel% neq 0 exit /b %errorlevel%
 
             @echo INSTALL
-            set PATH=ROOT\\%NAME_JENKINS%\\_venv\\Scripts;%PATH%
+            set PATH=ROOT\\pyquickhelper\\%NAME_JENKINS%\\_venv\\Scripts;%PATH%
             pip install --no-cache-dir --no-deps --index http://localhost:8067/simple/ jyquickhelper --extra-index-url=https://pypi.python.org/simple/
             if %errorlevel% neq 0 exit /b %errorlevel%
             pip install -r requirements.txt
@@ -201,19 +201,19 @@ class TestYaml(unittest.TestCase):
             set JOB_NAME=UT
 
             @echo SCRIPT
-            set PATH=ROOT\\%NAME_JENKINS%\\_venv\\Scripts;%PATH%
+            set PATH=ROOT\\pyquickhelper\\%NAME_JENKINS%\\_venv\\Scripts;%PATH%
             python -u setup.py unittests
             if %errorlevel% neq 0 exit /b %errorlevel%
 
             @echo AFTER_SCRIPT
-            set PATH=ROOT\\%NAME_JENKINS%\\_venv\\Scripts;%PATH%
+            set PATH=ROOT\\pyquickhelper\\%NAME_JENKINS%\\_venv\\Scripts;%PATH%
             python -u setup.py bdist_wheel
             if %errorlevel% neq 0 exit /b %errorlevel%
-            copy dist\\*.whl ROOT\\..\\..\\local_pypi\\local_pypi_server
+            copy dist\\*.whl ROOT\\pyquickhelper\\..\\..\\..\\local_pypi\\local_pypi_server
             if %errorlevel% neq 0 exit /b %errorlevel%
 
             @echo DOCUMENTATION
-            set PATH=ROOT\\%NAME_JENKINS%\\_venv\\Scripts;%PATH%
+            set PATH=ROOT\\pyquickhelper\\%NAME_JENKINS%\\_venv\\Scripts;%PATH%
             python -u setup.py build_sphinx
             if %errorlevel% neq 0 exit /b %errorlevel%
             xcopy /E /C /I /Y _doc\\sphinxdoc\\build\\html dist\\html
@@ -241,20 +241,20 @@ class TestYaml(unittest.TestCase):
             SET NAME=DOC
 
             @echo AUTOMATEDSETUP
-            set %current%=ROOT
+            set %current%=ROOT\\pyquickhelper
 
             @echo interpreter=C:\\Python35_x64\\python
 
-            @echo CREATE VIRTUAL ENVIRONMENT in ROOT\\%NAME_JENKINS%\\_venv
-            if not exist "ROOT\\%NAME_JENKINS%\\_venv" mkdir "ROOT\\%NAME_JENKINS%\\_venv"
+            @echo CREATE VIRTUAL ENVIRONMENT in ROOT\\pyquickhelper\\%NAME_JENKINS%\\_venv
+            if not exist "ROOT\\pyquickhelper\\%NAME_JENKINS%\\_venv" mkdir "ROOT\\pyquickhelper\\%NAME_JENKINS%\\_venv"
             set KEEPPATH=%PATH%
             set PATH=%PATH%;C:\\Python35_x64
-            "C:\\Python35_x64\\Scripts\\virtualenv" --system-site-packages "ROOT\\%NAME_JENKINS%\\_venv"
+            "C:\\Python35_x64\\Scripts\\virtualenv" --system-site-packages "ROOT\\pyquickhelper\\%NAME_JENKINS%\\_venv"
             set PATH=%KEEPPATH%
             if %errorlevel% neq 0 exit /b %errorlevel%
 
             @echo INSTALL
-            set PATH=ROOT\\%NAME_JENKINS%\\_venv\\Scripts;%PATH%
+            set PATH=ROOT\\pyquickhelper\\%NAME_JENKINS%\\_venv\\Scripts;%PATH%
             pip install --no-cache-dir --no-deps --index http://localhost:8067/simple/ jyquickhelper --extra-index-url=https://pypi.python.org/simple/
             if %errorlevel% neq 0 exit /b %errorlevel%
             pip install -r requirements.txt
@@ -268,12 +268,12 @@ class TestYaml(unittest.TestCase):
             set JOB_NAME=DOC
 
             @echo SCRIPT
-            set PATH=ROOT\\%NAME_JENKINS%\\_venv\\Scripts;%PATH%
+            set PATH=ROOT\\pyquickhelper\\%NAME_JENKINS%\\_venv\\Scripts;%PATH%
             python -u setup.py build_sphinx
             if %errorlevel% neq 0 exit /b %errorlevel%
 
             @echo AFTER_SCRIPT
-            set PATH=ROOT\\%NAME_JENKINS%\\_venv\\Scripts;%PATH%
+            set PATH=ROOT\\pyquickhelper\\%NAME_JENKINS%\\_venv\\Scripts;%PATH%
             python -u setup.py bdist_wheel
             if %errorlevel% neq 0 exit /b %errorlevel%
             """.replace("            ", "").strip("\n \t\r")
@@ -307,7 +307,7 @@ class TestYaml(unittest.TestCase):
                        WinPython36=None, project_name="pyquickhelper",
                        root_path="ROOT")
         obj, name = load_yaml(yml, context=context, platform=platform)
-        assert name is not None
+        self.assertTrue(name is not None)
         res = list(enumerate_convert_yaml_into_instructions(
             obj, add_environ=False))
         convs = []
@@ -321,7 +321,7 @@ class TestYaml(unittest.TestCase):
         fLOG("number of jobs", len(res))
         convs = [jenkins_final_postprocessing(
             _, True) for _ in convs if "VERSION=2.7" in _]
-        assert len(convs) > 0
+        self.assertTrue(len(convs) > 0)
         conv = convs[0]
 
         if platform.startswith("win"):
@@ -334,20 +334,20 @@ class TestYaml(unittest.TestCase):
             SET TIMEOUT=900
 
             @echo AUTOMATEDSETUP
-            set %current%=ROOT
+            set %current%=ROOT\\pyquickhelper
 
             @echo interpreter=C:\\Python27_x64\\python
 
-            @echo CREATE VIRTUAL ENVIRONMENT in ROOT\\%NAME_JENKINS%\\_venv
-            if not exist "ROOT\\%NAME_JENKINS%\\_venv" mkdir "ROOT\\%NAME_JENKINS%\\_venv"
+            @echo CREATE VIRTUAL ENVIRONMENT in ROOT\\pyquickhelper\\%NAME_JENKINS%\\_venv
+            if not exist "ROOT\\pyquickhelper\\%NAME_JENKINS%\\_venv" mkdir "ROOT\\pyquickhelper\\%NAME_JENKINS%\\_venv"
             set KEEPPATH=%PATH%
             set PATH=%PATH%;C:\\Python27_x64
-            "C:\\Python27_x64\\Scripts\\virtualenv" --system-site-packages "ROOT\\%NAME_JENKINS%\\_venv"
+            "C:\\Python27_x64\\Scripts\\virtualenv" --system-site-packages "ROOT\\pyquickhelper\\%NAME_JENKINS%\\_venv"
             set PATH=%KEEPPATH%
             if %errorlevel% neq 0 exit /b %errorlevel%
 
             @echo INSTALL
-            set PATH=ROOT\\%NAME_JENKINS%\\_venv\\Scripts;%PATH%
+            set PATH=ROOT\\pyquickhelper\\%NAME_JENKINS%\\_venv\\Scripts;%PATH%
             pip install --no-cache-dir --no-deps --index http://localhost:8067/simple/ jyquickhelper --extra-index-url=https://pypi.python.org/simple/
             if %errorlevel% neq 0 exit /b %errorlevel%
             pip install -r requirements.txt
@@ -360,7 +360,7 @@ class TestYaml(unittest.TestCase):
             if %errorlevel% neq 0 exit /b %errorlevel%
 
             @echo BEFORE_SCRIPT
-            set PATH=ROOT\\%NAME_JENKINS%\\_venv\\Scripts;%PATH%
+            set PATH=ROOT\\pyquickhelper\\%NAME_JENKINS%\\_venv\\Scripts;%PATH%
             pip uninstall jyquickhelper
             if %errorlevel% neq 0 exit /b %errorlevel%
             pip install bin\\jyquickhelper-0.2-py2-none-any.whl
@@ -372,15 +372,15 @@ class TestYaml(unittest.TestCase):
             set JOB_NAME=UT
 
             @echo SCRIPT
-            set PATH=ROOT\\%NAME_JENKINS%\\_venv\\Scripts;%PATH%
+            set PATH=ROOT\\pyquickhelper\\%NAME_JENKINS%\\_venv\\Scripts;%PATH%
             python -u setup.py unittests
             if %errorlevel% neq 0 exit /b %errorlevel%
 
             @echo AFTER_SCRIPT
-            set PATH=ROOT\\%NAME_JENKINS%\\_venv\\Scripts;%PATH%
+            set PATH=ROOT\\pyquickhelper\\%NAME_JENKINS%\\_venv\\Scripts;%PATH%
             python -u setup.py bdist_wheel
             if %errorlevel% neq 0 exit /b %errorlevel%
-            copy dist\\*.whl ROOT\\..\\..\\local_pypi\\local_pypi_server
+            copy dist\\*.whl ROOT\\pyquickhelper\\..\\..\\..\\local_pypi\\local_pypi_server
             if %errorlevel% neq 0 exit /b %errorlevel%
             cd ..
             if %errorlevel% neq 0 exit /b %errorlevel%
