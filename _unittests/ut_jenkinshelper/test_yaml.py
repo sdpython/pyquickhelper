@@ -52,9 +52,9 @@ class TestYaml(unittest.TestCase):
         obj, name = load_yaml(yml, context=context)
         for k, v in obj.items():
             fLOG(k, type(v), v)
-        assert "python" in obj
-        assert isinstance(obj["python"], list)
-        assert name is not None
+        self.assertTrue("python" in obj)
+        self.assertTrue(isinstance(obj["python"], list))
+        self.assertTrue(name is not None)
 
     def test_evaluate_condition(self):
         fLOG(
@@ -64,20 +64,20 @@ class TestYaml(unittest.TestCase):
 
         r = evaluate_condition('[ ${PYTHON} == "C:\\Python35_x64\\pythonw.exe" ]',
                                dict(python="C:\\Python35_x64\\pythonw.exe"))
-        assert r
-        assert isinstance(r, bool)
+        self.assertTrue(r)
+        self.assertTrue(isinstance(r, bool))
         r = evaluate_condition('${PYTHON} == "C:\\Python35_x64\\pythonw.exe"',
                                dict(python="C:\\Python35_x64\\pythonw.exe"))
-        assert r
-        assert isinstance(r, bool)
+        self.assertTrue(r)
+        self.assertTrue(isinstance(r, bool))
         r = evaluate_condition('${PYTHON} != "C:\\Python35_x64\\pythonw.exe"',
                                dict(python="C:\\Python35_x64\\pythonw.exe"))
-        assert not r
-        assert isinstance(r, bool)
+        self.assertTrue(not r)
+        self.assertTrue(isinstance(r, bool))
         r = evaluate_condition('[${PYTHON} != "C:\\Python35_x64\\pythonw.exe", ${PYTHON} == "C:\\Python35_x64\\pythonw.exe"]',
                                dict(python="C:\\Python35_x64\\pythonw.exe"))
-        assert not r
-        assert isinstance(r, bool)
+        self.assertTrue(not r)
+        self.assertTrue(isinstance(r, bool))
 
     def test_jenkins_job_multiplication(self):
         fLOG(
@@ -98,18 +98,19 @@ class TestYaml(unittest.TestCase):
                        Python27="fake2", Anaconda3=None, Anaconda2=None,
                        WinPython36=None, root_path="ROOT")
         obj, name = load_yaml(yml, context=context, platform="win")
-        assert name is not None
+        self.assertTrue(name is not None)
         res = list(enumerate_convert_yaml_into_instructions(
             obj, add_environ=False))
 
         for r, v in res:
             if None in r:
                 raise Exception(r)
-            if r[0][0] != "python" and r[0][0] != "INFO":
+            if r[1][0] != "python" and r[1][0] != "INFO":
                 raise Exception(r)
         if len(res) != 7:
             rows = [str(_) for _ in res]
-            raise Exception("\n".join(rows))
+            raise Exception("len(res)={0}\n{1}".format(
+                len(res), "\n".join(rows)))
 
         doc = [[s[0] for s in seq if s[1] is not None] for seq, _ in res]
         fLOG(doc)
@@ -146,7 +147,7 @@ class TestYaml(unittest.TestCase):
                        WinPython36=None, project_name="pyquickhelper",
                        root_path="ROOT")
         obj, name = load_yaml(yml, context=context, platform=platform)
-        assert name is not None
+        self.assertTrue(name is not None)
         res = list(enumerate_convert_yaml_into_instructions(
             obj, add_environ=False))
         convs = []
@@ -156,7 +157,7 @@ class TestYaml(unittest.TestCase):
             convs.append(conv)
             typstr = str  # unicode#
             assert isinstance(conv, typstr)
-        assert len(res) > 0
+        self.assertTrue(len(res) > 0)
 
         conv = [_ for _ in convs if "SET NAME=UT" in _ and "VERSION=3.5" in _]
         if len(conv) != 2:
@@ -171,6 +172,10 @@ class TestYaml(unittest.TestCase):
             SET VERSION=3.5
             SET NAME=UT
             SET TIMEOUT=900
+
+            @echo AUTOMATEDSETUP
+            set %current%=ROOT
+
             @echo interpreter=C:\\Python35_x64\\python
 
             @echo CREATE VIRTUAL ENVIRONMENT in ROOT\\%NAME_JENKINS%\\_venv
@@ -204,7 +209,7 @@ class TestYaml(unittest.TestCase):
             set PATH=ROOT\\%NAME_JENKINS%\\_venv\\Scripts;%PATH%
             python -u setup.py bdist_wheel
             if %errorlevel% neq 0 exit /b %errorlevel%
-            copy dist\\*.whl ..\\..\\local_pypi\\local_pypi_server
+            copy dist\\*.whl ROOT\\..\\..\\local_pypi\\local_pypi_server
             if %errorlevel% neq 0 exit /b %errorlevel%
 
             @echo DOCUMENTATION
@@ -234,6 +239,10 @@ class TestYaml(unittest.TestCase):
             SET DIST=std
             SET VERSION=3.5
             SET NAME=DOC
+
+            @echo AUTOMATEDSETUP
+            set %current%=ROOT
+
             @echo interpreter=C:\\Python35_x64\\python
 
             @echo CREATE VIRTUAL ENVIRONMENT in ROOT\\%NAME_JENKINS%\\_venv
@@ -323,6 +332,10 @@ class TestYaml(unittest.TestCase):
             SET VERSION=2.7
             SET NAME=UT
             SET TIMEOUT=900
+
+            @echo AUTOMATEDSETUP
+            set %current%=ROOT
+
             @echo interpreter=C:\\Python27_x64\\python
 
             @echo CREATE VIRTUAL ENVIRONMENT in ROOT\\%NAME_JENKINS%\\_venv
@@ -367,7 +380,7 @@ class TestYaml(unittest.TestCase):
             set PATH=ROOT\\%NAME_JENKINS%\\_venv\\Scripts;%PATH%
             python -u setup.py bdist_wheel
             if %errorlevel% neq 0 exit /b %errorlevel%
-            copy dist\\*.whl ..\\..\\..\\local_pypi\\local_pypi_server
+            copy dist\\*.whl ROOT\\..\\..\\local_pypi\\local_pypi_server
             if %errorlevel% neq 0 exit /b %errorlevel%
             cd ..
             if %errorlevel% neq 0 exit /b %errorlevel%

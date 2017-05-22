@@ -54,9 +54,9 @@ script:
 # To run after the script.
 after_script:
   - python -u setup.py bdist_wheel
-  - if [ ${VERSION} == "2.7" and ${DIST} != "conda" ] then copy dist\*.whl ..\..\..\local_pypi\local_pypi_server fi
+  - if [ ${VERSION} == "2.7" and ${DIST} != "conda" ] then copy dist\*.whl {{root_path}}\..\..\local_pypi\local_pypi_server fi
   - if [ ${VERSION} == "2.7" ] then cd .. fi
-  - if [ ${VERSION} != "2.7" and ${DIST} != "conda" and ${VERSION} == "3.5" and ${NAME} == "UT" ] then copy dist\*.whl ..\..\local_pypi\local_pypi_server fi
+  - if [ ${VERSION} != "2.7" and ${DIST} != "conda" and ${VERSION} == "3.5" and ${NAME} == "UT" ] then copy dist\*.whl {{root_path}}\..\..\local_pypi\local_pypi_server fi
 
 # Same as after script.
 documentation:

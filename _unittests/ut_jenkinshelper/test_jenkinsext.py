@@ -322,7 +322,7 @@ class TestJenkinsExt(unittest.TestCase):
                     raise Exception(conf)
 
             if "[doc]" in job:
-                if "%jenkinspythonexe% -u setup.py build_script" not in conf:
+                if "%jenkinspythonexe% -u %current%setup.py build_script" not in conf:
                     raise Exception(conf)
 
         assert i > 0

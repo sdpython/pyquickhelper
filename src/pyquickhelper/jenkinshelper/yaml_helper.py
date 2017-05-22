@@ -76,12 +76,21 @@ def load_yaml(file_or_buffer, context=None, engine="jinja2", platform=None):
     if "project_name" not in context and project_name is not None:
         context["project_name"] = project_name
 
+    if "root_path" in context:
+        if platform is None:
+            platform = sys.platform
+        if platform.startswith("win"):
+            addition = "set %current%={0}".format(context["root_path"])
+        else:
+            addition = "export %current%={0}".format(context["root_path"])
+        content = "automatedsetup:\n  - {0}\n{1}".format(addition, content)
+
     content = apply_template(content, context, engine)
     try:
         return yaml.load(content), project_name
     except Exception as e:
         raise SyntaxError(
-            "unable to parse content\n{0}".format(content)) from e
+            "Unable to parse content\n{0}".format(content)) from e
 
 
 def evaluate_condition(cond, variables=None):
@@ -177,6 +186,7 @@ def enumerate_convert_yaml_into_instructions(obj, variables=None, add_environ=Tr
     The function expects the following list
     of steps in this order:
 
+    * automatedsetup: added by this module
     * language: should be python
     * python: list of interpreters (multiplies jobs)
     * virtualenv: name of the virtual environment
@@ -186,8 +196,7 @@ def enumerate_convert_yaml_into_instructions(obj, variables=None, add_environ=Tr
     * after_script: list of steps to run
     * documentation: documentation to run after the
 
-    Each step *multiplies jobs* creates a sequence of jobs
-    and a Jenkins job.
+    Each step *multiplies jobs* creates a sequence of jobs and a Jenkins job.
     """
     if variables is None:
         def_variables = {}
@@ -199,7 +208,7 @@ def enumerate_convert_yaml_into_instructions(obj, variables=None, add_environ=Tr
                 def_variables[k] = v
     sequences = []
     count = {}
-    steps = ["language", "python", "virtualenv", "install",
+    steps = ["automatedsetup", "language", "python", "virtualenv", "install",
              "before_script", "script", "after_script",
              "documentation"]
     for key in steps:
@@ -318,10 +327,12 @@ def convert_sequence_into_batch_file(seq, variables=None, platform=None):
         error_level = "if %errorlevel% neq 0 exit /b %errorlevel%"
     else:
         error_level = "if [ $? -ne 0 ]; then exit $?; fi"
+
     interpreter = None
     pip = None
     venv = None
     venv_interpreter = None
+    root_project = None
     anaconda = False
     conda = None
     echo = "@echo" if iswin else "echo"
@@ -331,7 +342,7 @@ def convert_sequence_into_batch_file(seq, variables=None, platform=None):
         rowsset.append("@echo off")
         rowsset.append("set PATH0=%PATH%")
 
-    def add_path_win(rows, interpreter, pip, platform):
+    def add_path_win(rows, interpreter, pip, platform, root_project):
         path_inter = ospathdirname(interpreter, platform)
         if len(path_inter) == 0:
             raise ValueError(
@@ -346,13 +357,23 @@ def convert_sequence_into_batch_file(seq, variables=None, platform=None):
                 rows.append("set PATH={0};%PATH%".format(path_pip))
             else:
                 rows.append("export PATH={0}:$PATH".format(path_pip))
+        if root_project is not None:
+            if iswin:
+                rows.append("set ROOTPROJECT={0}".format(root_project))
+            else:
+                rows.append("export ROOTPROJECT={0}".format(root_project))
 
     rows = []
     splits = [rows]
     typstr = str  # unicode#
 
     for key, value in seq:
-        if key == "python":
+        if key == "automatedsetup":
+            rows.append("")
+            rows.append(echo + " AUTOMATEDSETUP")
+            rows.append("\n".join(value))
+            rows.append("")
+        elif key == "python":
             variables["YMLPYTHON"] = value
             if variables.get('DIST', None) == "conda":
                 rows.append(echo + " conda")
@@ -433,7 +454,7 @@ def convert_sequence_into_batch_file(seq, variables=None, platform=None):
 
                 rows.append("")
                 rows.append(echo + " " + key.upper())
-                add_path_win(rows, interpreter, pip, platform)
+                add_path_win(rows, interpreter, pip, platform, root_project)
                 if not isinstance(value, list):
                     value = [value, error_level]
                 else:
@@ -457,7 +478,8 @@ def convert_sequence_into_batch_file(seq, variables=None, platform=None):
                                 st = st[:-nbrem]
                             splits.append(st)
                             rows = splits[-1]
-                            add_path_win(rows, interpreter, pip, platform)
+                            add_path_win(rows, interpreter, pip,
+                                         platform, root_project)
                         else:
                             value.append(v)
                             value.append(error_level)

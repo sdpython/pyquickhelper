@@ -217,6 +217,7 @@ if not r:
             "ipykernel",
             "ipython_genutils",
             "ipywidgets",
+            "isort",
             "jupyter",
             "jupyter_client",
             "jupyter_console",
