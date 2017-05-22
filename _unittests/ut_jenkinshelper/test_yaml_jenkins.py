@@ -130,6 +130,7 @@ class TestYamlJenkins(unittest.TestCase):
         sch = 0
         desc = 0
         to = 0
+        nb_jen = 0
         for i, r in enumerate(res):
             conf = r[-1]
 
@@ -152,8 +153,8 @@ class TestYamlJenkins(unittest.TestCase):
                 raise Exception(conf)
             if "SET DIST=" not in conf:
                 raise Exception(conf)
-            if "anything\\%NAME_JENKINS%" not in conf:
-                raise Exception(conf)
+            if "anything\\python3_module_template\\%NAME_JENKINS%" not in conf:
+                nb_jen += 1
             if "python3_module_template_UT_35_std" in conf:
                 nb += 1
             if "H H(20-21) * * 0" in conf:
@@ -168,9 +169,10 @@ class TestYamlJenkins(unittest.TestCase):
                 to += 1
 
         if sys.version_info[0] != 2:
-            assert i > 0
-            assert nb > 0
-            assert to > 0
+            self.assertTrue(i > 0)
+            self.assertTrue(nb > 0)
+            self.assertTrue(nb_jen > 0)
+            self.assertTrue(to > 0)
             if disable_schedule:
                 self.assertEqual(sch, 0)
                 self.assertEqual(desc, 0)

@@ -627,7 +627,8 @@ def enumerate_processed_yml(file_or_buffer, context=None, engine="jinja2", platf
             if build_location is None:
                 loc = None
             else:
-                loc = os.path.join(build_location, name)
+                loc = ospathjoin(build_location, project_name,
+                                 name, platform=platform)
 
             if overwrite or j is None:
                 if timeout is not None:
