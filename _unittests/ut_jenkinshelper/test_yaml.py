@@ -209,7 +209,7 @@ class TestYaml(unittest.TestCase):
             set PATH=ROOT\\pyquickhelper\\%NAME_JENKINS%\\_venv\\Scripts;%PATH%
             python -u setup.py bdist_wheel
             if %errorlevel% neq 0 exit /b %errorlevel%
-            copy dist\\*.whl ROOT\\pyquickhelper\\..\\..\\..\\local_pypi\\local_pypi_server
+            copy dist\\*.whl ROOT\\pyquickhelper\\..\\..\\local_pypi\\local_pypi_server
             if %errorlevel% neq 0 exit /b %errorlevel%
 
             @echo DOCUMENTATION
