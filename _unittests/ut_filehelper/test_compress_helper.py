@@ -177,6 +177,11 @@ class TestCompressHelper(unittest.TestCase):
             OutputPrint=__name__ == "__main__")
         # fold = get_temp_folder(__file__, "temp_compress_helper")
 
+        if is_travis_or_appveyor():
+            warnings.warn(
+                "7z not available")
+            return
+
         if sys.version_info[0] == 2:
             typbytes = bytearray
         else:
@@ -187,8 +192,8 @@ class TestCompressHelper(unittest.TestCase):
         res = unrar_files(rz, where_to=fold)
         self.assertTrue(isinstance(res, list))
         self.assertEqual(len(res), 2)
-        if not isinstance(res[0][1], (typbytes, str)):
-            raise TypeError(type(res[0][1]))
+        if not isinstance(res[0], (typbytes, str)):
+            raise TypeError(type(res[0]))
         res[0] = res[0].replace("\\", "/")
         if not res[0].endswith("ut_filehelper/temp_compress_rar/stest1.txt"):
             raise Exception(res[0])
