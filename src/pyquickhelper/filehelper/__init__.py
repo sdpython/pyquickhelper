@@ -4,7 +4,7 @@
 """
 import os
 from .anyfhelper import change_file_status, read_content_ufs
-from .compression_helper import zip_files, gzip_files, zip7_files, unzip_files, ungzip_files, un7zip_files
+from .compression_helper import zip_files, gzip_files, zip7_files, unzip_files, ungzip_files, un7zip_files, unrar_files
 from .download_helper import get_url_content_timeout, InternetException
 from .encrypted_backup import EncryptedBackup
 from .encryption import decrypt_stream, encrypt_stream

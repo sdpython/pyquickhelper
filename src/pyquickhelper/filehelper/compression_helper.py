@@ -13,6 +13,7 @@ from io import BytesIO
 from ..loghelper.flog import noLOG, run_cmd
 from .fexceptions import FileException
 from ..texthelper.diacritic_helper import remove_diacritics
+from .synchelper import explore_folder
 
 if sys.version_info[0] == 2:
     from codecs import open
@@ -388,3 +389,36 @@ def un7zip_files(zipf, where_to=None, fLOG=noLOG, fvalid=None, remove_space=True
             elif not info.filename.endswith("/"):
                 files.append(tos)
     return files
+
+
+def unrar_files(zipf, where_to=None, fLOG=noLOG, fvalid=None, remove_space=True):
+    """
+    Unrar files from a rar archive compress with 7z.
+    Very basic. Use 7z.
+
+    @param      zipf            archive (or bytes or BytesIO)
+    @param      where_to        destination folder (can be None, the result is a list of tuple)
+    @param      fLOG            logging function
+    @param      fvalid          function which takes two paths (zip name, local name) and return True if the file
+                                must be unzipped, False otherwise, if None, the default answer is True
+    @param      remove_space    remove spaces in created local path (+ ``',()``)
+    @return                     list of unzipped files
+
+    .. versionadded:: 1.5
+    """
+    if sys.platform.startswith("win"):
+        exe = r"C:\Program Files\7-Zip\7z.exe"
+        if not os.path.exists(exe):
+            raise FileNotFoundError("unable to find: {0}".format(exe))
+    else:
+        exe = "7z"
+
+    if where_to is None:
+        where_to = os.path.abspath(".")
+    cmd = '"{0}" x "{1}" -o{2}'.format(exe, zipf, where_to)
+    out, err = run_cmd(cmd, wait=True, fLOG=fLOG)
+    if len(err) > 0:
+        raise FileException(
+            "Unable to unrar file '{0}'\nOUT\n{1}\nERR\n{2}".format(zipf, out, err))
+
+    return explore_folder(where_to)[1]
