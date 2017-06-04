@@ -34,6 +34,7 @@ class TestRunCmdException(unittest.TestCase):
             OutputPrint=__name__ == "__main__")
 
         cmd = "unexpectedcommand"
+        ex = "not affected"
         try:
             out, err = run_cmd(cmd, wait=True, log_error=False, catch_exit=True, communicate=False,
                                tell_if_no_output=120, fLOG=fLOG)
@@ -45,11 +46,11 @@ class TestRunCmdException(unittest.TestCase):
             ex = e
         self.assertTrue(not no_exception)
         if out is None or err is None:
-            raise Exception("A\n" + str(e))
+            raise Exception("A\n" + str(ex))
         if len(out) > 0:
-            raise Exception("B\n" + str(e))
+            raise Exception("B\n" + str(ex))
         if len(err) == 0:
-            raise Exception("C\n" + str(e))
+            raise Exception("C\n" + str(ex))
 
 
 if __name__ == "__main__":
