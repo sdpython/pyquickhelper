@@ -27,7 +27,7 @@ from src.pyquickhelper.pycode import get_temp_folder
 from src.pyquickhelper.benchhelper import BenchMark
 
 
-class TestBenchMark_(BenchMark):
+class TestBenchMarkL_(BenchMark):
 
     def init(self):
         pass
@@ -40,7 +40,7 @@ class TestBenchMark_(BenchMark):
         pass
 
 
-class TestBenchMark2_(BenchMark):
+class TestBenchMarkL2_(BenchMark):
 
     def init(self):
         pass
@@ -53,15 +53,15 @@ class TestBenchMark2_(BenchMark):
         pass
 
 
-class TestBenchMark(unittest.TestCase):
+class TestBenchMarkList(unittest.TestCase):
 
-    def test_benchmark(self):
+    def test_benchmark_list(self):
         fLOG(
             __file__,
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
-        temp = get_temp_folder(__file__, "temp_benchmark")
+        temp = get_temp_folder(__file__, "temp_benchmark_list")
 
         local_graph = BenchMark.LocalGraph(lambda ax: ax, filename=os.path.join(
             temp, "zzz/g.png"), title="agraph", root=temp)
@@ -71,8 +71,8 @@ class TestBenchMark(unittest.TestCase):
 
         params = [dict(value=random.randint(10, 20)) for i in range(0, 20)]
 
-        bench = TestBenchMark_("TestName", fLOG=fLOG, clog=temp,
-                               cache_file=os.path.join(temp, "cache.pickle"))
+        bench = TestBenchMarkL2_("TestName", fLOG=fLOG, clog=temp,
+                                 cache_file=os.path.join(temp, "cache.pickle"))
         bench.run(params)
         df = bench.to_df()
         ht = df.to_html(float_format="%1.3f", index=False)
@@ -86,39 +86,6 @@ class TestBenchMark(unittest.TestCase):
         self.assertTrue(os.path.exists(report))
         self.assertTrue(os.path.exists(csv))
         self.assertTrue(os.path.exists(rst))
-        df1 = bench.to_df()
-
-        # second run
-
-        fLOG("NEW RUN")
-        bench = TestBenchMark_("TestName", fLOG=fLOG, clog=temp,
-                               cache_file=os.path.join(temp, "cache.pickle"))
-        bench.run(params)
-        meta = bench.Metadata
-        fLOG(meta)
-        if sys.version_info[0] >= 3:
-            self.assertEqual(meta[0]["nb_cached"], 20)
-        df2 = bench.to_df()
-        self.assertEqual(df1.shape, df2.shape)
-
-        # clear one cache
-        name = bench._metrics[0]["_btry"]
-        look = os.path.join(temp, "cache.pickle.{0}.clean_cache".format(name))
-        if not os.path.exists(look):
-            raise FileNotFoundError(look)
-        os.remove(look)
-
-        # third run
-
-        fLOG("NEW RUN")
-        bench = TestBenchMark_("TestName", fLOG=fLOG, clog=temp,
-                               cache_file=os.path.join(temp, "cache.pickle"))
-        bench.run(params)
-        meta = bench.Metadata
-        fLOG(meta)
-        self.assertTrue(meta[0]["nb_cached"] < 20)
-        df2 = bench.to_df()
-        self.assertEqual(df1.shape, df2.shape)
 
 
 if __name__ == "__main__":

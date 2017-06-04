@@ -27,7 +27,7 @@ from src.pyquickhelper.loghelper.run_cmd import run_cmd, parse_exception_message
 
 class TestRunCmdException(unittest.TestCase):
 
-    def test_run_cmd_timeout(self):
+    def test_run_cmd_exc(self):
         fLOG(
             __file__,
             self._testMethodName,
@@ -41,9 +41,9 @@ class TestRunCmdException(unittest.TestCase):
         except Exception as e:
             no_exception = False
             out, err = parse_exception_message(e)
+        self.assertTrue(not no_exception)
         self.assertTrue(out is not None)
         self.assertTrue(err is not None)
-        self.assertTrue(not no_exception)
         self.assertEqual(len(out), 0)
         self.assertTrue(len(err) > 0)
 
