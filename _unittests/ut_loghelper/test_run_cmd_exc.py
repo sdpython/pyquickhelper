@@ -45,12 +45,17 @@ class TestRunCmdException(unittest.TestCase):
             out, err = parse_exception_message(e)
             ex = e
         self.assertTrue(not no_exception)
-        if out is None or err is None:
-            raise Exception("A\n" + str(ex))
-        if len(out) > 0:
-            raise Exception("B\n" + str(ex))
-        if len(err) == 0:
-            raise Exception("C\n" + str(ex))
+        if sys.platform.startswith("win"):
+            if out is None or err is None:
+                raise Exception("A\n" + str(ex))
+            if len(out) > 0:
+                raise Exception("B\n" + str(ex))
+            if len(err) == 0:
+                raise Exception("C\n" + str(ex))
+        else:
+            self.assertTrue(out is None)
+            self.assertTrue(err is None)
+            self.assertTrue(isinstance(ex, Exception))
 
 
 if __name__ == "__main__":
