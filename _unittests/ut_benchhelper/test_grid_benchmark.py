@@ -28,7 +28,7 @@ from src.pyquickhelper.pycode import get_temp_folder
 from src.pyquickhelper.benchhelper import GridBenchMark
 
 
-class TestOverGridBenchMark(GridBenchMark):
+class ATestOverGridBenchMark(GridBenchMark):
 
     def init(self):
         pass
@@ -58,8 +58,8 @@ class TestGridBenchMark(unittest.TestCase):
         datasets = [dict(X=pandas.DataFrame([[0, 1], [0, 1]]), name="set1", shortname="s1"),
                     dict(X=pandas.DataFrame([[1, 1], [1, 1]]), name="set2", shortname="s2"), ]
 
-        bench = TestOverGridBenchMark("TestName", datasets, fLOG=fLOG, clog=temp,
-                                      cache_file=os.path.join(temp, "cache.pickle"))
+        bench = ATestOverGridBenchMark("TestName", datasets, fLOG=fLOG, clog=temp,
+                                       cache_file=os.path.join(temp, "cache.pickle"))
         bench.run(params)
         df = bench.to_df()
         ht = df.to_html(float_format="%1.3f", index=False)

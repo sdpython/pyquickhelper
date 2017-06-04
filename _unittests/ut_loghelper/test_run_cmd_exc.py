@@ -38,6 +38,7 @@ class TestRunCmdException(unittest.TestCase):
             out, err = run_cmd(cmd, wait=True, log_error=False, catch_exit=True, communicate=False,
                                tell_if_no_output=120, fLOG=fLOG)
             no_exception = True
+            e = None
         except Exception as e:
             no_exception = False
             out, err = parse_exception_message(e)

@@ -28,7 +28,7 @@ from src.pyquickhelper.pycode import get_temp_folder
 from src.pyquickhelper.benchhelper import BenchMark
 
 
-class TestBenchMarkB_(BenchMark):
+class ATestBenchMarkB_(BenchMark):
 
     def init(self):
         pass
@@ -41,7 +41,7 @@ class TestBenchMarkB_(BenchMark):
         pass
 
 
-class TestBenchMarkB2_(BenchMark):
+class ATestBenchMarkB2_(BenchMark):
 
     def init(self):
         pass
@@ -66,9 +66,10 @@ class TestBenchMarkBar(unittest.TestCase):
 
         params = [dict(value=random.randint(10, 20)) for i in range(0, 20)]
 
-        bench = TestBenchMarkB2_("TestName", clog=temp, fLOG=None,
-                                 cache_file=os.path.join(temp, "cache.pickle"),
-                                 progressbar=trange)
+        bench = ATestBenchMarkB2_("TestName", clog=temp, fLOG=None,
+                                  cache_file=os.path.join(
+                                      temp, "cache.pickle"),
+                                  progressbar=trange)
         bench.run(params)
         df = bench.to_df()
         ht = df.to_html(float_format="%1.3f", index=False)

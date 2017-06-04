@@ -27,7 +27,7 @@ from src.pyquickhelper.pycode import get_temp_folder
 from src.pyquickhelper.benchhelper import BenchMark
 
 
-class TestBenchMark_(BenchMark):
+class ATestBenchMark_(BenchMark):
 
     def init(self):
         pass
@@ -40,7 +40,7 @@ class TestBenchMark_(BenchMark):
         pass
 
 
-class TestBenchMark2_(BenchMark):
+class ATestBenchMark2_(BenchMark):
 
     def init(self):
         pass
@@ -71,8 +71,8 @@ class TestBenchMark(unittest.TestCase):
 
         params = [dict(value=random.randint(10, 20)) for i in range(0, 20)]
 
-        bench = TestBenchMark_("TestName", fLOG=fLOG, clog=temp,
-                               cache_file=os.path.join(temp, "cache.pickle"))
+        bench = ATestBenchMark_("TestName", fLOG=fLOG, clog=temp,
+                                cache_file=os.path.join(temp, "cache.pickle"))
         bench.run(params)
         df = bench.to_df()
         ht = df.to_html(float_format="%1.3f", index=False)
@@ -91,8 +91,8 @@ class TestBenchMark(unittest.TestCase):
         # second run
 
         fLOG("NEW RUN")
-        bench = TestBenchMark_("TestName", fLOG=fLOG, clog=temp,
-                               cache_file=os.path.join(temp, "cache.pickle"))
+        bench = ATestBenchMark_("TestName", fLOG=fLOG, clog=temp,
+                                cache_file=os.path.join(temp, "cache.pickle"))
         bench.run(params)
         meta = bench.Metadata
         fLOG(meta)
@@ -111,8 +111,8 @@ class TestBenchMark(unittest.TestCase):
         # third run
 
         fLOG("NEW RUN")
-        bench = TestBenchMark_("TestName", fLOG=fLOG, clog=temp,
-                               cache_file=os.path.join(temp, "cache.pickle"))
+        bench = ATestBenchMark_("TestName", fLOG=fLOG, clog=temp,
+                                cache_file=os.path.join(temp, "cache.pickle"))
         bench.run(params)
         meta = bench.Metadata
         fLOG(meta)
