@@ -42,10 +42,12 @@ class TestRunCmdException(unittest.TestCase):
             no_exception = False
             out, err = parse_exception_message(e)
         self.assertTrue(not no_exception)
-        self.assertTrue(out is not None)
-        self.assertTrue(err is not None)
-        self.assertEqual(len(out), 0)
-        self.assertTrue(len(err) > 0)
+        if out is None or err is None:
+            raise Exception("A\n" + str(e))
+        if len(out) > 0:
+            raise Exception("B\n" + str(e))
+        if len(err) == 0:
+            raise Exception("C\n" + str(e))
 
 
 if __name__ == "__main__":
