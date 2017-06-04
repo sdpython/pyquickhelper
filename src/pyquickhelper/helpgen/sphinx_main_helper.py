@@ -11,6 +11,7 @@ import shutil
 import subprocess
 
 from ..loghelper import run_cmd, RunCmdException, fLOG
+from ..loghelper.run_cmd import parse_exception_message
 from ..loghelper.pyrepo_helper import SourceRepository
 from ..pandashelper.tblformat import df2rst
 from ..filehelper import explore_folder_iterfile
@@ -347,7 +348,14 @@ def compile_latex_output_final(root, latex_path, doall, afile=None, latex_book=F
                 out, err = run_cmd(c, wait=True, log_error=False, catch_exit=True, communicate=False,
                                    tell_if_no_output=120, fLOG=fLOG)
             except Exception as e:
-                raise OSError("Unable to execute\n{0}".format(c)) from e
+                # An exception is raised when the return code is an error. We
+                # check that PDF file was written.
+                out, err = parse_exception_message(e)
+                if err is not None and len(err) == 0 and err is not None and "Output written" in out:
+                    # The output was produced. We ignore the return code.
+                    fLOG("WARNINGS: Latex compilation had warnings:", c)
+                else:
+                    raise OSError("Unable to execute\n{0}".format(c)) from e
             if len(err) > 0:
                 raise HelpGenException(
                     "CMD:\n{0}\nERR:\n{1}\nOUT:\n{2}".format(c, err, out))

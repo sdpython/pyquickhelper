@@ -16,6 +16,16 @@ for a module designed the same way as this one, @see fn generate_help_sphinx.
     automatically considers folder ``_doc\\examples``
     and add it to the documentation. To add a link to the gallery:
     ``examples/index``.
+
+.. todoext::
+    :title: Upgrade to sphinx 1.6
+    :tag: done
+    :date: 2017-06-04
+    :cost: 2
+    :release: 1
+    :issue: 46
+
+    Sphinx 1.6 introduced many changes.
 """
 import os
 import sys

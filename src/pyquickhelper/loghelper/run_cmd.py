@@ -9,6 +9,7 @@ import time
 import subprocess
 import threading
 import warnings
+import re
 from .flog_fake_classes import PQHException
 if sys.version_info[0] == 2:
     import Queue as queue
@@ -337,7 +338,7 @@ def run_cmd(cmd, sin="", shell=sys.platform.startswith("win"), wait=False, log_e
                     except Exception as e:
                         warnings.warn("Unable to close stdout and sterr.")
                     if catch_exit:
-                        raise RunCmdException("SystemExit raised with error code {0}\nCMD:\n{1}\nCWD:\n{2}\nOUT:\n{3}\nERR:\n{4}".format(
+                        raise RunCmdException("SystemExit raised with error code {0}\nCMD:\n{1}\nCWD:\n{2}\n#---OUT---#\n{3}\n#---ERR---#\n{4}".format(
                             returnCode, cmd, os.getcwd(), "\n".join(out), "\n".join(err)))
                     else:
                         raise subprocess.CalledProcessError(returnCode, cmd)
@@ -389,6 +390,25 @@ def run_cmd(cmd, sin="", shell=sys.platform.startswith("win"), wait=False, log_e
             os.chdir(current)
 
         return pproc, None
+
+
+def parse_exception_message(exc):
+    """
+    Parse the message embedded in an exception and returns the standard output and error
+    if it can be found.
+
+    @param      exc     exception coming from @see fn run_cmd
+    @return             out, err
+    """
+    mes = str(exc)
+    reg = re.compile(".*#---OUT---#(.*)#---ERR---#(.*)", re.DOTALL)
+    find = reg.search(mes.replace("\r", ""))
+    if find:
+        gr = find.groups()
+        out, err = gr[0], gr[1]
+        return out.strip("\n "), err.strip("\n ")
+    else:
+        return None, None
 
 
 def run_script(script, *l):
