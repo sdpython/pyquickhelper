@@ -38,10 +38,11 @@ class TestRunCmdException(unittest.TestCase):
             out, err = run_cmd(cmd, wait=True, log_error=False, catch_exit=True, communicate=False,
                                tell_if_no_output=120, fLOG=fLOG)
             no_exception = True
-            e = None
+            ex = None
         except Exception as e:
             no_exception = False
             out, err = parse_exception_message(e)
+            ex = e
         self.assertTrue(not no_exception)
         if out is None or err is None:
             raise Exception("A\n" + str(e))
