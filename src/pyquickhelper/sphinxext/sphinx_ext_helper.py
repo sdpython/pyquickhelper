@@ -5,6 +5,17 @@
 .. versionadded:: 1.4
 """
 
+try:
+    # Sphinx 1.6
+    from sphinx.util.logging import info
+
+    def app_info(app, message):
+        info(message)
+except ImportError:
+    # Sphinx 1.5
+    def app_info(app, message):
+        app.info(message)
+
 
 def info_blocref(app, doctree, fromdocname, class_name,
                  entry_name, class_node, class_node_list):
@@ -45,5 +56,5 @@ def info_blocref(app, doctree, fromdocname, class_name,
                  "doctree='{0}'".format(type(doctree)),
                  "#doctree={0}".format(len(doctree))])
     message = " ".join(rows)
-    app.info(message)
+    app_info(app, message)
     return True

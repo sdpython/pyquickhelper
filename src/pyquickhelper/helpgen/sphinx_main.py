@@ -137,19 +137,19 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
     * ``# -- HELP BEGIN EXCLUDE --``
     * ``# -- HELP END EXCLUDE --``
 
-    @code
-    latex_path  = r"C:/Program Files/MiKTeX 2.9/miktex/bin/x64"
-    pandoc_path = r"%USERPROFILE%/AppData/Local/Pandoc"
-    @endcode
+    ::
+
+        latex_path  = r"C:/Program Files/MiKTeX 2.9/miktex/bin/x64"
+        pandoc_path = r"%USERPROFILE%/AppData/Local/Pandoc"
 
     .. exref::
         :title: Run help generation
         :index: extension, extra extension, ext
 
-        @code
-        # from the main folder which contains folder src
-        generate_help_sphinx("pyquickhelper")
-        @endcode
+        ::
+
+            # from the main folder which contains folder src
+            generate_help_sphinx("pyquickhelper")
 
     By default, the function only consider files end by ``.py`` and ``.rst`` but you could
     add other files sharing the same extensions by adding this one
@@ -262,6 +262,10 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
     .. versionchanged:: 1.5
         Set ``BOKEH_DOCS_MISSING_API_KEY_OK`` to 1.
         bokeh sphinx extension requires that or a key for the google API (???).
+        The function was updated to use Sphinx 1.6.2.
+        However, you should read blog post
+        :ref:`Bug in Sphinx 1.6.2 for custom css <sphinx-162-bug-custom-css>`
+        if you have any trouble with custom css.
 
     .. todoext::
         :title: add subfolder when building indexes of notebooks
