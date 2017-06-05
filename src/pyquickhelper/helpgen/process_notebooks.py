@@ -450,6 +450,11 @@ def _process_notebooks_in(notebooks, outfold, build, latex_path=None, pandoc_pat
                         c = c.replace('"', '')
                     out, err = run_cmd(
                         c, wait=True, log_error=False, shell=sys.platform.startswith("win"), catch_exit=True)
+                    if err is not None and len(err) == 0 and out is not None and "Output written" in out:
+                        # The output was produced. We ignore the return code.
+                        fLOG("WARNINGS: Latex compilation had warnings:", c)
+                        out += "\nERR\n" + err
+                        err = ""
                     if len(err) > 0:
                         raise HelpGenException(
                             "CMD:\n{0}\nERR:\n{1}\nOUT:\n{2}".format(c, err, out))

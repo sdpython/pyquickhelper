@@ -351,7 +351,7 @@ def compile_latex_output_final(root, latex_path, doall, afile=None, latex_book=F
                 # An exception is raised when the return code is an error. We
                 # check that PDF file was written.
                 out, err = parse_exception_message(e)
-                if err is not None and len(err) == 0 and err is not None and "Output written" in out:
+                if err is not None and len(err) == 0 and out is not None and "Output written" in out:
                     # The output was produced. We ignore the return code.
                     fLOG("WARNINGS: Latex compilation had warnings:", c)
                 else:
