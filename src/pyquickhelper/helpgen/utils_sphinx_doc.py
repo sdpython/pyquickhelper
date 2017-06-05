@@ -242,11 +242,9 @@ def remove_undesired_part_for_documentation(content, filename, use_sys):
                     res.append("import sys")
                 res.append(
                     "if hasattr(sys, '{0}') and sys.{0}:".format(use_sys))
-            else:
-                res.append("if False:")
             res.append(line)
         elif line.startswith(marker_out):
-            if flask_trick:
+            if use_sys and flask_trick:
                 res.append("    pass")
             if not inside:
                 raise HelpGenException(
@@ -256,11 +254,11 @@ def remove_undesired_part_for_documentation(content, filename, use_sys):
             res.append(line)
         else:
             if inside:
-                # specific trick for Flask
-                if line.startswith("@app."):
-                    line = "# " + line
-                    flask_trick = True
                 if use_sys:
+                    # specific trick for Flask
+                    if line.startswith("@app."):
+                        line = "# " + line
+                        flask_trick = True
                     res.append("    " + line)
                 else:
                     res.append("### " + line)
