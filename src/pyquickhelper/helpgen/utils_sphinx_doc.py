@@ -228,6 +228,7 @@ def remove_undesired_part_for_documentation(content, filename, use_sys):
     res = []
     inside = False
     has_sys = False
+    flask_trick = False
     for line in lines:
         if line.startswith("import sys"):
             has_sys = True
@@ -241,15 +242,24 @@ def remove_undesired_part_for_documentation(content, filename, use_sys):
                     res.append("import sys")
                 res.append(
                     "if hasattr(sys, '{0}') and sys.{0}:".format(use_sys))
+            else:
+                res.append("if False:")
             res.append(line)
         elif line.startswith(marker_out):
+            if flask_trick:
+                res.append("    pass")
             if not inside:
                 raise HelpGenException(
                     "issues with undesired blocs in file " + filename + " with: " + marker_in + "|" + marker_out)
             inside = False
+            flask_trick = False
             res.append(line)
         else:
             if inside:
+                # specific trick for Flask
+                if line.startswith("@app."):
+                    line = "# " + line
+                    flask_trick = True
                 if use_sys:
                     res.append("    " + line)
                 else:

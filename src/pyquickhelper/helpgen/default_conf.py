@@ -513,7 +513,7 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
             'reference_url': {},
             'examples_dirs': examples_dirs,
             'gallery_dirs': gallery_dirs,
-            'mod_example_dir': example_dir,
+            'backreferences_dir': example_dir,
             'expected_failing_examples': [],
         }
 

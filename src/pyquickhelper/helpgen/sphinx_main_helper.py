@@ -336,10 +336,10 @@ def compile_latex_output_final(root, latex_path, doall, afile=None, latex_book=F
             file = os.path.join(build, tex)
             if doall:
                 # -interaction=batchmode
-                c = '"{0}" "{1}" -output-directory="{2}"'.format(
+                c = '"{0}" "{1}" -max-print-line=900 -output-directory="{2}"'.format(
                     lat, file, build)
             else:
-                c = '"{0}" "{1}" -interaction=nonstopmode -output-directory="{2}"'.format(
+                c = '"{0}" "{1}" -max-print-line=900 -interaction=nonstopmode -output-directory="{2}"'.format(
                     lat, file, build)
             fLOG("~~~~ LATEX compilation (c)", c)
             post_process_latex_output(file, doall, latex_book=latex_book,
