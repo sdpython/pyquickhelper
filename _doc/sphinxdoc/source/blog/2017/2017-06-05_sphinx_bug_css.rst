@@ -37,3 +37,14 @@
 
     This is really annoying. This probably means there is no
     unit test covering this functionality.
+
+    Another bug comes from
+    `sphinxcontrib.image <https://github.com/spinus/sphinxcontrib-images/blob/master/sphinxcontrib/images.py#L24>`_.
+    The following line is no longer valid with the new version of Sphinx:
+
+    ::
+
+        from sphinx.util.compat import make_admonition
+
+    It is already being included in a
+    `pull request <https://github.com/spinus/sphinxcontrib-images/pull/42>`_.
