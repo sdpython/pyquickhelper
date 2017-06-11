@@ -155,7 +155,7 @@ class TestYamlJenkins(unittest.TestCase):
                 raise Exception(conf)
             if "anything\\python3_module_template\\%NAME_JENKINS%" not in conf:
                 nb_jen += 1
-            if "python3_module_template_UT_35_std" in conf:
+            if "python3_module_template_UT_36_std" in conf:
                 nb += 1
             if "H H(20-21) * * 0" in conf:
                 sch += 1
@@ -177,8 +177,8 @@ class TestYamlJenkins(unittest.TestCase):
                 self.assertEqual(sch, 0)
                 self.assertEqual(desc, 0)
             else:
-                self.assertEqual(sch, 2)
-                self.assertEqual(desc, 2)
+                self.assertEqual(sch, 1)
+                self.assertEqual(desc, 1)
             fLOG(to)
             if credentials:
                 if "credentialsId" not in conf:

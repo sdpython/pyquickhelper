@@ -107,7 +107,7 @@ class TestYaml(unittest.TestCase):
                 raise Exception(r)
             if r[1][0] != "python" and r[1][0] != "INFO":
                 raise Exception(r)
-        if len(res) != 7:
+        if len(res) != 5:
             rows = [str(_) for _ in res]
             raise Exception("len(res)={0}\n{1}".format(
                 len(res), "\n".join(rows)))
@@ -115,8 +115,8 @@ class TestYaml(unittest.TestCase):
         doc = [[s[0] for s in seq if s[1] is not None] for seq, _ in res]
         fLOG(doc)
         doc = [s for s in doc if "documentation" in s]
-        if len(doc) != 2:
-            raise Exception("\n".join(str(_) for _ in doc))
+        if len(doc) != 1:
+            raise Exception("len(doc)={0}\n{1}".format(len(doc), "\n".join(str(_) for _ in doc)))
         else:
             fLOG("**", doc)
 
@@ -159,30 +159,30 @@ class TestYaml(unittest.TestCase):
             self.assertTrue(isinstance(conv, typstr))
         self.assertTrue(len(res) > 0)
 
-        conv = [_ for _ in convs if "SET NAME=UT" in _ and "VERSION=3.5" in _]
+        conv = [_ for _ in convs if "SET NAME=UT" in _ and "VERSION=3.6" in _]
         if len(conv) != 2:
             rows = [str(_) for _ in conv]
-            raise Exception("\n".join(rows))
+            raise Exception("len(conv)={0}\n{1}".format(len(conv), "\n".join(rows)))
         conv = conv[0]
         if platform.startswith("win"):
             expected = """
             @echo off
             set PATH0=%PATH%
             SET DIST=std
-            SET VERSION=3.5
+            SET VERSION=3.6
             SET NAME=UT
             SET TIMEOUT=900
 
             @echo AUTOMATEDSETUP
             set %current%=ROOT\\pyquickhelper\\%NAME_JENKINS%
 
-            @echo interpreter=C:\\Python35_x64\\python
+            @echo interpreter=C:\\Python36_x64\\python
 
             @echo CREATE VIRTUAL ENVIRONMENT in ROOT\\pyquickhelper\\%NAME_JENKINS%\\_venv
             if not exist "ROOT\\pyquickhelper\\%NAME_JENKINS%\\_venv" mkdir "ROOT\\pyquickhelper\\%NAME_JENKINS%\\_venv"
             set KEEPPATH=%PATH%
-            set PATH=%PATH%;C:\\Python35_x64
-            "C:\\Python35_x64\\Scripts\\virtualenv" --system-site-packages "ROOT\\pyquickhelper\\%NAME_JENKINS%\\_venv"
+            set PATH=%PATH%;C:\\Python36_x64
+            "C:\\Python36_x64\\Scripts\\virtualenv" --system-site-packages "ROOT\\pyquickhelper\\%NAME_JENKINS%\\_venv"
             set PATH=%KEEPPATH%
             if %errorlevel% neq 0 exit /b %errorlevel%
 
@@ -237,19 +237,19 @@ class TestYaml(unittest.TestCase):
             @echo off
             set PATH0=%PATH%
             SET DIST=std
-            SET VERSION=3.5
+            SET VERSION=3.6
             SET NAME=DOC
 
             @echo AUTOMATEDSETUP
             set %current%=ROOT\\pyquickhelper\\%NAME_JENKINS%
 
-            @echo interpreter=C:\\Python35_x64\\python
+            @echo interpreter=C:\\Python36_x64\\python
 
             @echo CREATE VIRTUAL ENVIRONMENT in ROOT\\pyquickhelper\\%NAME_JENKINS%\\_venv
             if not exist "ROOT\\pyquickhelper\\%NAME_JENKINS%\\_venv" mkdir "ROOT\\pyquickhelper\\%NAME_JENKINS%\\_venv"
             set KEEPPATH=%PATH%
-            set PATH=%PATH%;C:\\Python35_x64
-            "C:\\Python35_x64\\Scripts\\virtualenv" --system-site-packages "ROOT\\pyquickhelper\\%NAME_JENKINS%\\_venv"
+            set PATH=%PATH%;C:\\Python36_x64
+            "C:\\Python36_x64\\Scripts\\virtualenv" --system-site-packages "ROOT\\pyquickhelper\\%NAME_JENKINS%\\_venv"
             set PATH=%KEEPPATH%
             if %errorlevel% neq 0 exit /b %errorlevel%
 
@@ -365,7 +365,7 @@ class TestYaml(unittest.TestCase):
             if %errorlevel% neq 0 exit /b %errorlevel%
             pip install bin\\jyquickhelper-0.2-py2-none-any.whl
             if %errorlevel% neq 0 exit /b %errorlevel%
-            C:\\Python35_x64\\python -u setup.py copy27
+            C:\\Python36_x64\\python -u setup.py copy27
             if %errorlevel% neq 0 exit /b %errorlevel%
             cd dist_module27
             if %errorlevel% neq 0 exit /b %errorlevel%
