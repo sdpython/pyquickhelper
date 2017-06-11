@@ -89,15 +89,15 @@ class TestYamlJenkins2(unittest.TestCase):
                 raise Exception(conf)
             if "anything\\pyquickhelper\\%NAME_JENKINS%" not in conf:
                 raise Exception(conf)
-            if "pyquickhelper_UT_35_std" in conf:
+            if "pyquickhelper_UT_36_std" in conf:
                 nb += 1
             if "H H(5-6) * * 0" in conf:
                 sch += 1
             if "H H(6-7) * * 0" in conf:
                 sch += 1
 
-        assert i > 0
-        assert nb > 0
+        self.assertTrue(i > 0)
+        self.assertTrue(nb > 0)
         self.assertEqual(sch, 2)
 
 
