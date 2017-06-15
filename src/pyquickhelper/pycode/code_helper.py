@@ -158,22 +158,34 @@ def remove_extra_spaces_and_pep8(filename, apply_pep8=True, aggressive=False):
 
 
 def remove_extra_spaces_folder(
-        folder, extensions=(".py", ".rst", ".md"), apply_pep8=True):
+        folder, extensions=(".py", ".rst", ".md"), apply_pep8=True,
+        file_filter=None):
     """
     removes extra files in a folder for specific file extensions
 
-    @param      folder      folder to explore
-    @param      extensions  list of file extensions to process
+    @param      folder          folder to explore
+    @param      extensions      list of file extensions to process
     @param      apply_pep8      if True, calls ``autopep8`` on the file
-    @return                 the list of modified files
+    @param      file_filter     None of function which filters based on the filename
+    @return                     the list of modified files
 
     The function does not check files having
     ``/build/`` or ``/dist/`` or ``temp_``
     or ``/build2/`` or ``/build3/``
     in their name.
 
+    The signature of *file_filter* is the following:
+
+    ::
+
+        def file_filter(filename):
+            return True or False
+
     .. versionchanged:: 1.0
         Parameter *apply_pep8* was added.
+
+    .. versionchanged:: 1.5
+        Parameter *file_filter* was added.
     """
     neg_pattern = "|".join("[/\\\\]{0}[/\\\\]".format(_) for _ in ["build", "build2", "build3",
                                                                    "dist", "_venv", "_todo", "dist_module27", "_virtualenv"])
@@ -192,7 +204,8 @@ def remove_extra_spaces_folder(
                 and "/dist_module27" not in fl \
                 and "automation_done.rst" not in fl \
                 and "auto_import.rst" not in fl \
-                and os.stat(f).st_size < 200000:
+                and os.stat(f).st_size < 200000 \
+                and (file_filter is None or file_filter(f)):
             ext = os.path.splitext(f)[-1]
             if ext in extensions:
                 d = remove_extra_spaces_and_pep8(f, apply_pep8=apply_pep8)

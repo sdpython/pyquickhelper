@@ -116,7 +116,8 @@ class TestYaml(unittest.TestCase):
         fLOG(doc)
         doc = [s for s in doc if "documentation" in s]
         if len(doc) != 1:
-            raise Exception("len(doc)={0}\n{1}".format(len(doc), "\n".join(str(_) for _ in doc)))
+            raise Exception("len(doc)={0}\n{1}".format(
+                len(doc), "\n".join(str(_) for _ in doc)))
         else:
             fLOG("**", doc)
 
@@ -162,7 +163,8 @@ class TestYaml(unittest.TestCase):
         conv = [_ for _ in convs if "SET NAME=UT" in _ and "VERSION=3.6" in _]
         if len(conv) != 2:
             rows = [str(_) for _ in conv]
-            raise Exception("len(conv)={0}\n{1}".format(len(conv), "\n".join(rows)))
+            raise Exception("len(conv)={0}\n{1}".format(
+                len(conv), "\n".join(rows)))
         conv = conv[0]
         if platform.startswith("win"):
             expected = """

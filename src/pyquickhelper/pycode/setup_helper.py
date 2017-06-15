@@ -78,7 +78,7 @@ def process_standard_options_for_setup(argv, file_or_folder, project_var_name, m
                                        additional_ut_path=None,
                                        skip_function=default_skip_function, covtoken=None, hook_print=True,
                                        stdout=None, stderr=None, use_run_cmd=False, filter_warning=None,
-                                       fLOG=noLOG):
+                                       file_filter_pep8=None, fLOG=noLOG):
     """
     process the standard options the module pyquickhelper is
     able to process assuming the module which calls this function
@@ -128,6 +128,8 @@ def process_standard_options_for_setup(argv, file_or_folder, project_var_name, m
     @param      stderr                      redirect stderr for unit test  if not None
     @param      use_run_cmd                 to run the sphinx documentation with @see fn run_cmd and not ``os.system``
     @param      filter_warning              see @see fn main_wrapper_tests
+    @param      file_filter_pep8            function to filter out files for which checking pep8
+                                            (see @see fn remove_extra_spaces_folder)
     @return                                 True (an option was processed) or False,
                                             the file ``setup.py`` should call function ``setup``
 
@@ -178,6 +180,9 @@ def process_standard_options_for_setup(argv, file_or_folder, project_var_name, m
         command *unittests -d 10* and *unittests -d 5* was added to run unit
         tests below 10 or 5 seconds. Option ``-e`` and ``-g`` were added to
         filter file by regular expressions (in with *e*, out with *g*).
+
+    .. versionchanged:: 1.5
+        Parameter *file_filter_pep8* was added.
     """
     if layout is None:
         layout = ["html", "pdf"]
@@ -272,7 +277,8 @@ def process_standard_options_for_setup(argv, file_or_folder, project_var_name, m
                 unittest_modules_script.append(mod)
 
     if "clean_space" in argv:
-        rem = clean_space_for_setup(file_or_folder)
+        rem = clean_space_for_setup(
+            file_or_folder, file_filter=file_filter_pep8)
         print("number of impacted files (pep8 + rst):", len(rem))
         rem = clean_notebooks_for_numbers(file_or_folder)
         print("number of impacted notebooks:", len(rem))
@@ -511,14 +517,18 @@ def write_version_for_setup(file_or_folder):
     return version
 
 
-def clean_space_for_setup(file_or_folder):
+def clean_space_for_setup(file_or_folder, file_filter=None):
     """
     .. index:: pep8
 
     does some cleaning within the module, apply pep8 rules
 
     @param      file_or_folder      file ``setup.py`` or folder which contains it
+    @param      file_filter         file filter (see @see fn remove_extra_spaces_folder)
     @return                         impacted files
+
+    .. versionchanged:: 1.5
+        Parameter *file_filter* was added.
     """
     ffolder = get_folder(file_or_folder)
     rem = remove_extra_spaces_folder(
@@ -528,7 +538,8 @@ def clean_space_for_setup(file_or_folder):
             ".rst",
             ".md",
             ".bat",
-            ".sh"])
+            ".sh"],
+        file_filter=file_filter)
     return rem
 
 
