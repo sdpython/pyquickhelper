@@ -794,7 +794,7 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
     # cmd = "make {0}".format(lay)
 
     ###############################################################
-    # run cmds (prefer to use os.system instread of run_cmd if it gets stuck)
+    # run cmds (prefer to use os.system instead of run_cmd if it gets stuck)
     ###############################################################
     fLOG("~~~~ RUN SPHINX")
     for cmd, build, kind in cmds:
