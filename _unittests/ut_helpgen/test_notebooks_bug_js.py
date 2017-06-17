@@ -30,9 +30,9 @@ if sys.version_info[0] == 2:
     from codecs import open
 
 
-class TestNoteBooksBugQsGrid(unittest.TestCase):
+class TestNoteBooksBugJs(unittest.TestCase):
 
-    def test_notebook_qsgrid(self):
+    def test_notebook_js(self):
         fLOG(
             __file__,
             self._testMethodName,
