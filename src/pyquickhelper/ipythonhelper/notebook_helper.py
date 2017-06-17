@@ -13,15 +13,18 @@ import warnings
 from nbformat import versions
 from nbformat.reader import reads
 from nbformat.v4 import upgrade
-try:
-    from ipykernel.kernelspec import install as install_k
-except ImportError:
-    warnings.warn("ipykernel is not installed. pyquickhelper cannot execute a notebook.",
-                  category=warnings.ImportWarning)
-    pass
 from ..filehelper import read_content_ufs
 from ..loghelper import noLOG
 
+with warnings.catch_warnings():
+    warnings.simplefilter("ignore", category=ImportWarning)
+    try:
+        from ipykernel.kernelspec import install as install_k
+    except ImportError:
+        warnings.resetwarnings()
+        warnings.warn("ipykernel is not installed. pyquickhelper cannot execute a notebook.",
+                      category=ImportWarning)
+        pass
 
 if sys.version_info[0] == 2:
     from StringIO import StringIO
