@@ -802,6 +802,10 @@ class NotebookRunner(object):
                             raise TypeError(
                                 "This should be bytes not '{0}' (=IMG:{1}).".format(type(v), k))
                         results.append((v, k.split("/")[-1]))
+                    elif k == "text/vnd.plotly.v1+html":
+                        results.append((v, k.split("/")[-1]))
+                    elif k == "application/vnd.plotly.v1+json":
+                        results.append((v, k.split("/")[-1]))
                     else:
                         raise NotImplementedError("cell type: {0}\nk={1}\nv={2}\nCELL:\n{3}".format(kind,
                                                                                                     k, v, cell))
