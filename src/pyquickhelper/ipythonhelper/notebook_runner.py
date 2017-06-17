@@ -885,7 +885,7 @@ class NotebookRunner(object):
                         elif k == "application/vnd.plotly.v1+json":
                             nbl += 10
                         else:
-                            raise NotImplementedError("cell type: {0}\nk={1}\nv={2}\nCELL:\n{3}".format(kind,
+                            raise NotImplementedError("cell type: '{0}'\nk='{1}'\nv='{2}'\nCELL:\n{3}".format(kind,
                                                                                                         k, v, cell))
                 elif output["output_type"] == "stream":
                     v = output["text"]
