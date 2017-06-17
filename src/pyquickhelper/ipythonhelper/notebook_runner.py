@@ -667,10 +667,13 @@ class NotebookRunner(object):
             if not isinstance(b[0], str):
                 raise TypeError(
                     "str expected for svg, not {0}".format(type(b[0])))
+        elif b[1] == "vnd.plotly.v1+html":
+            # Don't know how to extract a snippet out of this.
+            pass
         else:
             if not isinstance(b[0], bytes):
                 raise TypeError(
-                    "bytes expected for images, not {0}".format(type(b[0])))
+                    "bytes expected for images, not {0}\n{1}".format(type(b[0]), b))
         return b
 
     def create_picture_from(self, text, format, asbytes=True, context=None):
@@ -826,6 +829,8 @@ class NotebookRunner(object):
                                           .format(kind, output["output_type"], output, cell))
         if len(results) > 0:
             res = self._merge_images(results)
+            if res[0] is None:
+                return None
             self._check_thumbnail_tuple(res)
             return res
         else:
@@ -886,7 +891,7 @@ class NotebookRunner(object):
                             nbl += 10
                         else:
                             raise NotImplementedError("cell type: '{0}'\nk='{1}'\nv='{2}'\nCELL:\n{3}".format(kind,
-                                                                                                        k, v, cell))
+                                                                                                              k, v, cell))
                 elif output["output_type"] == "stream":
                     v = output["text"]
                     nbl += len(v.split("\n"))
@@ -1159,7 +1164,7 @@ class NotebookRunner(object):
         cells.reverse()
         for cell in cells:
             c = self.cell_image(cell, False)
-            if c is not None and len(c) > 0 and len(c[0]) > 0:
+            if c is not None and len(c) > 0 and len(c[0]) > 0 and c[1] != "vnd.plotly.v1+html":
                 self._check_thumbnail_tuple(c)
                 images.append(c)
         if len(images) == 0:
@@ -1190,7 +1195,9 @@ class NotebookRunner(object):
             image = images[0]
 
         # zoom
-        if image[1] != "svg":
+        if image[1] == "vnd.plotly.v1+html":
+            return None
+        elif image[1] != "svg":
             img = self._scale_image(
                 image[0], image[1], max_width=max_width, max_height=max_height)
             return img
@@ -1263,7 +1270,8 @@ class NotebookRunner(object):
         if len(formats_counts) == 1:
             format = results[0][1]
         else:
-            items = sorted(((v, k) for k, v in formats_counts.items()), False)
+            items = sorted(((v, k)
+                            for k, v in formats_counts.items()), reverse=False)
             for it in items:
                 format = it
                 break
@@ -1293,7 +1301,11 @@ class NotebookRunner(object):
                 dy -= img.size[1] * over
                 new_im.paste(img, (0, max(int(dy), 0)))
 
-            image_buffer = BytesIO()
-            new_im.save(image_buffer, "PNG")
-            b = image_buffer.getvalue(), "png"
-            return b
+            if max(dx, dy) > 0:
+                image_buffer = BytesIO()
+                new_im.save(image_buffer, "PNG")
+                b = image_buffer.getvalue(), "png"
+                return b
+            else:
+                b = None, "png"
+                return b

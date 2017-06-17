@@ -44,7 +44,7 @@ class TestNotebookGalleryBug(unittest.TestCase):
         temp = get_temp_folder(__file__, "temp_gallery_bug")
         fold = os.path.normpath(os.path.join(
             temp, "..", "notebooks_js"))
-        assert os.path.exists(fold)
+        self.assertTrue(os.path.exists(fold))
 
         file = os.path.join(temp, "all_notebooks.rst")
         build_notebooks_gallery(fold, file, fLOG=fLOG)
