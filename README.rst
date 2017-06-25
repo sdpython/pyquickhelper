@@ -4,45 +4,43 @@
 README
 ======
 
-.. only:: html
+.. image:: https://travis-ci.org/sdpython/pyquickhelper.svg?branch=master
+    :target: https://travis-ci.org/sdpython/pyquickhelper
+    :alt: Build status
 
-    .. image:: https://travis-ci.org/sdpython/pyquickhelper.svg?branch=master
-        :target: https://travis-ci.org/sdpython/pyquickhelper
-        :alt: Build status
+.. image:: https://ci.appveyor.com/api/projects/status/t2g9olcgqgdvqq3l?svg=true
+    :target: https://ci.appveyor.com/project/sdpython/pyquickhelper
+    :alt: Build Status Windows
 
-    .. image:: https://ci.appveyor.com/api/projects/status/t2g9olcgqgdvqq3l?svg=true
-        :target: https://ci.appveyor.com/project/sdpython/pyquickhelper
-        :alt: Build Status Windows
+.. image:: https://badge.fury.io/py/pyquickhelper.svg
+    :target: http://badge.fury.io/py/pyquickhelper
 
-    .. image:: https://badge.fury.io/py/pyquickhelper.svg
-        :target: http://badge.fury.io/py/pyquickhelper
+.. image:: https://img.shields.io/badge/license-MIT-blue.svg
+    :alt: MIT License
+    :target: http://opensource.org/licenses/MIT
 
-    .. image:: https://img.shields.io/badge/license-MIT-blue.svg
-        :alt: MIT License
-        :target: http://opensource.org/licenses/MIT
+.. image:: https://landscape.io/github/sdpython/pyquickhelper/master/landscape.svg?style=flat
+   :target: https://landscape.io/github/sdpython/pyquickhelper/master
+   :alt: Code Health
 
-    .. image:: https://landscape.io/github/sdpython/pyquickhelper/master/landscape.svg?style=flat
-       :target: https://landscape.io/github/sdpython/pyquickhelper/master
-       :alt: Code Health
+.. image:: https://requires.io/github/sdpython/pyquickhelper/requirements.svg?branch=master
+     :target: https://requires.io/github/sdpython/pyquickhelper/requirements/?branch=master
+     :alt: Requirements Status
 
-    .. image:: https://requires.io/github/sdpython/pyquickhelper/requirements.svg?branch=master
-         :target: https://requires.io/github/sdpython/pyquickhelper/requirements/?branch=master
-         :alt: Requirements Status
+.. image:: https://codecov.io/github/sdpython/pyquickhelper/coverage.svg?branch=master
+    :target: https://codecov.io/github/sdpython/pyquickhelper?branch=master
 
-    .. image:: https://codecov.io/github/sdpython/pyquickhelper/coverage.svg?branch=master
-        :target: https://codecov.io/github/sdpython/pyquickhelper?branch=master
+.. image:: http://img.shields.io/github/issues/sdpython/pyquickhelper.png
+    :alt: GitHub Issues
+    :target: https://github.com/sdpython/pyquickhelper/issues
 
-    .. image:: http://img.shields.io/github/issues/sdpython/pyquickhelper.png
-        :alt: GitHub Issues
-        :target: https://github.com/sdpython/pyquickhelper/issues
+.. image:: https://badge.waffle.io/sdpython/pyquickhelper.png?label=ready&title=Ready
+    :alt: Waffle
+    :target: https://waffle.io/sdpython/pyquickhelper
 
-    .. image:: https://badge.waffle.io/sdpython/pyquickhelper.png?label=ready&title=Ready
-        :alt: Waffle
-        :target: https://waffle.io/sdpython/pyquickhelper
-
-    .. image:: https://api.codacy.com/project/badge/Grade/793ffca6089d4d02b8292a50df74a8a4
-        :target: https://www.codacy.com/app/sdpython/pyquickhelper?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=sdpython/pyquickhelper&amp;utm_campaign=Badge_Grade
-        :alt: Codacy Badge
+.. image:: https://api.codacy.com/project/badge/Grade/793ffca6089d4d02b8292a50df74a8a4
+    :target: https://www.codacy.com/app/sdpython/pyquickhelper?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=sdpython/pyquickhelper&amp;utm_campaign=Badge_Grade
+    :alt: Codacy Badge
 
 **Links:**
 
