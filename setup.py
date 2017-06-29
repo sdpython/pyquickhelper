@@ -177,7 +177,7 @@ if is_local():
         sys.argv, __file__, project_var_name, port=8067,
         requirements=requirements, blog_list=pyquickhelper.__blog__,
         layout=["html"], additional_notebook_path=["jyquickhelper"],
-        fLOG=logging_function, covtoken=("69193a28-dc79-4a24-98ed-aedf441a8249", "'_UT_35_std' in outfile"))
+        fLOG=logging_function, covtoken=("69193a28-dc79-4a24-98ed-aedf441a8249", "'_UT_36_std' in outfile"))
 
     if not r and not ({"bdist_msi", "sdist",
                        "bdist_wheel", "publish", "publish_doc", "register",
