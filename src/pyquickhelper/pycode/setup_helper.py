@@ -50,7 +50,7 @@ def available_commands_list(argv):
     @return                 bool
     """
     commands = {"bdist_msi", "build_script", "build_sphinx",
-                "bdist_wheel", "bdist_wininst",
+                "bdist_wheel", "bdist_wininst", "build_ext",
                 "clean_pyd", "clean_space", "copy_dist",
                 "copy27", "run27", "build27",
                 "local_pypi", "test_local_pypi",
