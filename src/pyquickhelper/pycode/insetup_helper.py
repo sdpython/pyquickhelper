@@ -39,7 +39,8 @@ def run_build_ext(setup_file):
     setup = os.path.join(os.path.abspath(
         os.path.dirname(setup_file)), "setup.py")
     cmd = "{0} {1} build_ext --inplace".format(exe, setup)
-    out, err = run_cmd(cmd, wait=True, change_path=os.path.dirname(setup_file))
+    chd = os.path.abspath(os.path.dirname(setup_file))
+    out, err = run_cmd(cmd, wait=True, change_path=chd)
     err0 = _filter_out_warning(err)
     if len(err0) > 0:
         raise Exception("Unable to run\n{0}\nERR:\n{1}".format(cmd,
