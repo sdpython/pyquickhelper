@@ -96,6 +96,8 @@ def default_filter_warning(w):
                 return False
             if "The hold function was deprecated in version 2.0." in str(w.message):
                 return False
+            if "axes.hold is deprecated." in str(w.message):
+                return False
         elif "_bootstrap.py" in w.filename:
             if "can't resolve package from __spec__" in str(w.message):
                 return False
