@@ -32,15 +32,15 @@ encryption
 sync
 ++++
 
-.. autofunction:: pyquickhelper.synchelper.sycnhelper.explore_folder_iterfile
+.. autofunction:: pyquickhelper.filehelper.synchelper.explore_folder_iterfile
 
-.. autofunction:: pyquickhelper.synchelper.sycnhelper.synchronize_folder
+.. autofunction:: pyquickhelper.filehelper.synchelper.synchronize_folder
 
-.. autofunction:: pyquickhelper.synchelper.sycnhelper.walk
+.. autofunction:: pyquickhelper.filehelper.synchelper.walk
 
 visual
 ++++++
 
-.. autofunction:: pyquickhelper.synchelper.visual_sync.create_visual_diff_through_html
+.. autofunction:: pyquickhelper.filehelper.visual_sync.create_visual_diff_through_html
 
-.. autofunction:: pyquickhelper.synchelper.visual_sync.create_visual_diff_through_html_files
+.. autofunction:: pyquickhelper.filehelper.visual_sync.create_visual_diff_through_html_files

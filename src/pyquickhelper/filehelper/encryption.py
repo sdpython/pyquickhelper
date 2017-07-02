@@ -98,9 +98,8 @@ def get_encryptor(key, algo="AES", chunksize=2 ** 24, **params):
     """
     return a encryptor with method encrypt and decrypt
 
-    @param      algo        AES or fernet
     @param      key         key
-    @param      iv          extra parameter for AES
+    @param      algo        AES or fernet
     @param      chunksize   Fernet does not allow streaming
     @return                 encryptor, origsize
     """

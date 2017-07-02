@@ -62,6 +62,8 @@ def do_main(source, dest, password, encrypt,
     @param      dest        destination
     @param      password    password
     @param      encrypt     boolean, True to encrypt
+    @param      crypt_file  encrypted file
+    @param      crypt_map   @see cl EncryptedBackup
     @param      regex       regular expression to filter in files to retrieve
     @param      fLOG        logging function
     """
@@ -86,14 +88,9 @@ def do_main(source, dest, password, encrypt,
         if fLOG:
             print("looking for file in", root)
         ft = FileTreeNode(root, repository=False, fLOG=fLOG, log1=True)
-        enc = EncryptedBackup(
-            key=password,
-            file_tree_node=ft,
-            transfer_api=api,
-            root_local=local,
-            file_status=crypt_file,
-            file_map=crypt_map,
-            fLOG=fLOG)
+        enc = EncryptedBackup(key=password, file_tree_node=ft,
+                              transfer_api=api, root_local=local, file_status=crypt_file,
+                              file_map=crypt_map, fLOG=fLOG)
 
         if fLOG:
             fLOG("start backup")
@@ -103,14 +100,9 @@ def do_main(source, dest, password, encrypt,
             if fLOG:
                 fLOG("{0} -- {1}".format(file, exc))
     else:
-        enc = EncryptedBackup(
-            key=password,
-            file_tree_node=None,
-            transfer_api=api,
-            root_local=None,
-            file_status=None,
-            file_map=None,
-            fLOG=fLOG)
+        enc = EncryptedBackup(key=password, file_tree_node=None,
+                              transfer_api=api, root_local=None, file_status=None,
+                              file_map=None, fLOG=fLOG)
         if fLOG:
             print("start restoration")
         enc.retrieve_all(source, regex=regex)

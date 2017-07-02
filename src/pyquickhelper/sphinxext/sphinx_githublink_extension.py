@@ -115,7 +115,7 @@ def githublink_role(role, rawtext, text, lineno, inliner,
 
         :githublink:`source on GitHub|py`
 
-    :param name: The role name used in the document.
+    :param role: The role name used in the document.
     :param rawtext: The entire markup snippet, with role.
     :param text: The text marked with the role.
     :param lineno: The line number where rawtext appears in the input.

@@ -265,8 +265,9 @@ def create_visual_diff_through_html_files(file1,
     calls function @see fn create_visual_diff_through_html
     with the content of two files
 
-    @param      string1         first string (anything such as an url, a file, a string, a stream)
-    @param      string2         second string (anything such as an url, a file, a string, a stream)
+    @param      file1           first file (anything such as an url, a file, a string, a stream)
+    @param      file2           second file (anything such as an url, a file, a string, a stream)
+    @param      encoding        encoding
     @param      page            if not None, saves the results in file
     @param      browser         open browser ?
     @param      notebook        if True, the function assumes the outcome will be displayed from a notebook and does

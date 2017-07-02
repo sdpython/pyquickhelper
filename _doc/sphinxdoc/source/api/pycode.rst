@@ -22,7 +22,7 @@ python2
 setup
 +++++
 
-.. autofunction:: pyquickhelper.pycode.setup_helper.import available_commands_list
+.. autofunction:: pyquickhelper.pycode.setup_helper.available_commands_list
 
 .. autofunction:: pyquickhelper.pycode.setup_helper.process_standard_options_for_setup
 

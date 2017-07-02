@@ -237,7 +237,6 @@ class NotebookRunner(object):
         @param      js              string or stream
         @param      profile_dir     profile directory
         @param      encoding        encoding for the notebooks
-        @param      kernel          to start a kernel or not when reading the notebook (to execute it)
         @param      working_dir     working directory
         @param      comment         additional information added to error message
         @param      code_init       to initialize the notebook with a python code as if it was a cell

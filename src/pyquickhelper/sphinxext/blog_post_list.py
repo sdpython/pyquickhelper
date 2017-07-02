@@ -203,7 +203,7 @@ class BlogPostList:
         @param      division            add a new page every *division* items
         @param      blog_title          blog title
         @param      blog_description    blog description
-        @param      blog_title          blog root (publish url)
+        @param      blog_root           blog root (publish url)
         @return                         list of produced files
         """
         link_up = self.get_rst_links_up()

@@ -125,11 +125,11 @@ def GetLogFile(physical=False, filename=None):
     """
     Returns a file name containing the log
 
-    @param      physical    use a physical file or not
-    @param      filename    file name (if physical is True, default value is ``temp_log.txt``)
-    @return                 a pointer to a log file
-    @rtype                  str
-    @exception  OSError     if this file cannot be created
+    :param physical: use a physical file or not
+    :param filename: file name (if physical is True, default value is ``temp_log.txt``)
+    :return: a pointer to a log file
+    :rtype: str
+    :raises OSError:     if this file cannot be created
 
     .. versionchanged:: 1.1
         Use module `logging <https://docs.python.org/3.4/library/logging.html>`_.
@@ -979,10 +979,10 @@ def IsEmptyString(s):
     """
     empty string or not?
 
-    @param      s               any string (str, None)
-    @return                     is it empty or not?
-    @rtype      bool
-    @exception  PQHException    When a type is unexpected
+    :param s: any string (str, None)
+    :return: is it empty or not?
+    :rtype: bool
+    :raises PQHException: when a type is unexpected
     """
     if s is None:
         return True

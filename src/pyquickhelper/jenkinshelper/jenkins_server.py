@@ -838,7 +838,6 @@ class JenkinsExt(jenkins.Jenkins):
         """
         Set up many jobs on Jenkins
 
-        @param      js_url                  url or jenkins server
         @param      github                  github account if it does not start with *http://*,
                                             the link to git repository of the project otherwise,
                                             we assume all jobs in *modules* are located on the same

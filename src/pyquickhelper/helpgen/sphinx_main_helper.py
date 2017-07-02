@@ -41,8 +41,8 @@ Another list
 
 def setup_environment_for_help(fLOG=fLOG):
     """
-    modifies environment variables to be able to use external tools
-    such as `Inkscape <https://inkscape.org/>`_
+    Modifies environment variables to be able to use external tools
+    such as `Inkscape <https://inkscape.org/>`_.
 
     .. versionadded:: 1.2
     """
@@ -62,7 +62,7 @@ def setup_environment_for_help(fLOG=fLOG):
 
 def get_executables_path():
     """
-    returns the paths to Python, Python Scripts
+    Return the paths to Python, Python Scripts.
 
     @return     a list of paths
     """
@@ -73,7 +73,7 @@ def get_executables_path():
 
 def my_date_conversion(sdate):
     """
-    converts a date into a datetime
+    Convert a date into a datetime.
 
     @param      sdate       string
     @return                 date
@@ -88,7 +88,7 @@ def my_date_conversion(sdate):
 
 def produce_code_graph_changes(df):
     """
-    return the code for a graph which counts the number of changes per week over the last year
+    Return the code for a graph which counts the number of changes per week over the last year.
 
     @param      df      dataframe (has a column date with format ``YYYY-MM-DD``)
     @return             graph
@@ -174,7 +174,7 @@ def generate_changes_repo(chan, source, exception_if_empty=True,
                           filter_commit=lambda c: c.strip() != "documentation",
                           fLOG=fLOG, modify_commit=None):
     """
-    Generates a rst tables containing the changes stored by a svn or git repository,
+    Generate a rst tables containing the changes stored by a svn or git repository,
     the outcome is stored in a file.
     The log comment must start with ``*`` to be taken into account.
 
@@ -289,7 +289,7 @@ def generate_changes_repo(chan, source, exception_if_empty=True,
 def compile_latex_output_final(root, latex_path, doall, afile=None, latex_book=False, fLOG=fLOG,
                                custom_latex_processing=None):
     """
-    compiles the latex documents
+    Compile the latex documents.
 
     @param      root                        root
     @param      latex_path                  path to the compiler
@@ -377,7 +377,7 @@ def compile_latex_output_final(root, latex_path, doall, afile=None, latex_book=F
 
 def replace_placeholder_by_recent_blogpost(all_tocs, plist, placeholder, nb_post=5, fLOG=fLOG):
     """
-    replaces a place holder by a list of blog post
+    Replace a place holder by a list of blog post.
 
     @param      all_tocs        list of files to look into
     @param      plist           list of blog post
@@ -408,13 +408,14 @@ _pattern_images = ".*(([.]png)|([.]gif])|([.]jpeg])|([.]jpg])|([.]svg]))$"
 
 def enumerate_copy_images_for_slides(src, dest, pattern=_pattern_images):
     """
-    copy images, initial intent was for slides,
+    Copy images, initial intent was for slides,
     once converted into html, link to images are relative to
     the folder which contains them, we copy the images from
     ``_images`` to ``_downloads``.
 
     @param      src     sources
     @param      dest    destination
+    @param      pattern see @see fn explore_folder_iterfile
     @return             enumerator of copied files
     """
     iter = explore_folder_iterfile(src, pattern=pattern)

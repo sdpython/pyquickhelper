@@ -200,6 +200,7 @@ def ungzip_files(filename, where_to=None, fLOG=noLOG, fvalid=None, remove_space=
                                 must be unzipped, False otherwise, if None, the default answer is True
     @param      remove_space    remove spaces in created local path (+ ``',()``)
     @param      unzip           unzip file after gzip
+    @param      encoding        encoding
     @return                     list of unzipped files
 
     .. versionadded:: 1.4
@@ -251,7 +252,7 @@ def zip7_files(filename_7z, file_set, fLOG=noLOG, temp_folder="."):
     (`7z <http://www.7-zip.org/>`_).
 
     @param      filename_7z     final destination
-    @param      fileSet         list of files to compress
+    @param      file_set        list of files to compress
     @param      fLOG            logging function
     @param      temp_folder     the function stores the list of files in a file in the
                                 folder *temp_folder*, it will be removed afterwords

@@ -186,6 +186,7 @@ class GridBenchMark(BenchMark):
         """
         split the dataset into train and test
 
+        @param      dsi         dataset index
         @param      params      additional parameters
         @return                 list of (dataset (like info), dictionary for metrics, parameters)
         """
@@ -211,6 +212,7 @@ class GridBenchMark(BenchMark):
         function to overload
 
         @param      info        dictionary with at least key ``'X'``
+        @param      output      output of the benchmark
         @return                 output of the experiment, tuple of dictionaries
         """
         raise NotImplementedError()

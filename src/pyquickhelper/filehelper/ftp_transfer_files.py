@@ -316,10 +316,11 @@ class FolderTransferFTP:
         """
         starts transfering files to the remote website
 
-        @param          max_errors      stops after this number of errors
-        @return                         list of transferred @see cl FileInfo
-        @exception                      the class raises an exception (@see cl FolderTransferFTPException)
-                                        if more than *max_errors* issues happened
+        :param max_errors: stops after this number of errors
+        :return: list of transferred @see cl FileInfo
+        :raises FolderTransferFTPException: the class raises
+            an exception (@see cl FolderTransferFTPException)
+            more than *max_errors* issues happened
 
         .. versionchanged:: 1.5
             Raises an exception after *max_errors* failures.

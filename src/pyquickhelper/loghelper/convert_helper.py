@@ -59,8 +59,8 @@ def datetime2str(dt):
 
 def timestamp_to_datetime(timestamp):
     """
-    convert a time into a datetime
-    @param      ctime       ctime object (time)
+    convert a timestamp into a datetime
+    @param      timestamp   timestamp
     @rtype                  datetime
     """
     return datetime.datetime.utcfromtimestamp(timestamp)

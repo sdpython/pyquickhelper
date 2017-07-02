@@ -181,7 +181,7 @@ class MockSphinxApp:
         """
         Create a MockApp
 
-        @param      write           ``'sphinx'`` is the only allowed value
+        @param      writer          ``'sphinx'`` is the only allowed value
         @param      directives      new directives to add (see below)
         @return                     mockapp, writer, list of added nodes
 

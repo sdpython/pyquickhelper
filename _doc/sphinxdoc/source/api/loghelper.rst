@@ -17,5 +17,5 @@ logging
 
 .. autofunction:: pyquickhelper.loghelper.flog.noLOG
 
-.. autoclass:: pyquickhelper.custom_log.CustomLog
+.. autoclass:: pyquickhelper.loghelper.custom_log.CustomLog
     :members:

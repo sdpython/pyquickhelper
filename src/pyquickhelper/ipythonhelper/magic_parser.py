@@ -23,6 +23,8 @@ class MagicCommandParser (argparse.ArgumentParser):
         custom constructor, see `ArgumentParser <https://docs.python.org/3.4/library/argparse.html>`_
 
         @param  prog        command name
+        @param  l           positional arguments
+        @param  p           named arguments
 
         .. versionchanged:: 1.2
             Parameter *prog* was made explicit in to force having a proper message for *usage()*
@@ -49,12 +51,14 @@ class MagicCommandParser (argparse.ArgumentParser):
 
     def add_argument(self, *args, **kwargs):
         """
-        overloads the methods, see `ArgumentParser <https://docs.python.org/3.4/library/argparse.html>`_
+        Overloads the method,
+        see `ArgumentParser <https://docs.python.org/3.4/library/argparse.html>`_.
+        Among the parameters:
 
-        @param      no_eval     avoid considering the parameter
-                                value as a potential variable stored in the notebook workspace.
-        @param      eval_type   *type* can be used for parsing and *eval_type*
-                                is the expected return type.
+        * *no_eval*: avoid considering the parameter
+          value as a potential variable stored in the notebook workspace.
+        * *eval_type*: *type* can be used for parsing and *eval_type*
+          is the expected return type.
 
         .. versionchanged:: 1.3
             The method adds parameter *no_eval* to avoid considering the parameter
@@ -181,6 +185,7 @@ class MagicCommandParser (argparse.ArgumentParser):
 
         @param      value       string
         @param      context     something like ``self.shell.user_ns``
+        @param      fLOG        logging function
         @return                 *value* or its evaluation
 
         .. versionchanged:: 1.3

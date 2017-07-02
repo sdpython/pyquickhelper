@@ -23,8 +23,7 @@ class SphinxVerificationException(Exception):
 
     def __init__(self, errors):
         """
-        @param      file        filename
-        @param      line        line
+        @param      errors     errors met
         """
         stack = []
         for name, line, m in errors:

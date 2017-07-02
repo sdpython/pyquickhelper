@@ -29,6 +29,8 @@ def sphinx_add_scripts(source, dest, filter=everything_but_python, fLOG=fLOG):
 
     @param  source      source
     @param  dest        destination folder (will be created if it does not exists)
+    @param  filter      @see fn synchronize_folder
+    @param  fLOG        logging function
     @return             @see fn synchronize_folder
     """
 
@@ -47,6 +49,7 @@ def post_process_html_nb_output_static_file(build, fLOG=noLOG):
     Sphinx static files)
 
     @param      build       build location
+    @param      fLOG        logging function
     @return                 list of modified files
 
     Static path in IPython start by ``/static``, they start by ``../_static``

@@ -18,7 +18,6 @@ controls
 ++++++++
 
 .. autofunction:: pyquickhelper.ipythonhelper.html_forms.open_html_form
-    :members:
 
 .. autoclass:: pyquickhelper.ipythonhelper.interact.StaticInteract
     :members:
@@ -75,9 +74,19 @@ magic commands
 notebook
 ++++++++
 
+.. autofunction:: pyquickhelper.helpgen.process_notebook_api.nb2html
+
+.. autofunction:: pyquickhelper.helpgen.process_notebook_api.nb2present
+
+.. autofunction:: pyquickhelper.helpgen.process_notebook_api.nb2slides
+
 .. autofunction:: pyquickhelper.ipythonhelper.run_notebook.execute_notebook_list
 
-.. autofunction:: pyquickhelper.ipythonhelper.helper_in_notebook.read_nb
+.. autofunction:: pyquickhelper.helpgen.utils_sphinx_config.NbImage
+
+.. autofunction:: pyquickhelper.helpgen.sphinx_main.process_notebooks
+
+.. autofunction:: pyquickhelper.ipythonhelper.notebook_helper.read_nb
 
 .. autofunction:: pyquickhelper.ipythonhelper.notebook_helper.remove_execution_number
 

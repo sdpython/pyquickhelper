@@ -42,6 +42,8 @@ class CustomSphinxApp(Sphinx):
         @param      freshenv                boolean
         @param      warningiserror          warning as errors?
         @param      tags                    additional documentation
+        @param      copy_srcdir_to_tmpdir   copy the source to a temporary directory
+        @param      create_new_srcdir       create a new source directory
         @param      cleanup_on_errors       force cleanup on errors
         @param      verbosity               integer
         @param      parallel                integer (number of threads)

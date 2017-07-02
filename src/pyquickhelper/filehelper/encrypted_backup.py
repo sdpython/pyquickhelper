@@ -95,17 +95,10 @@ class EncryptedBackup:
     .. versionadded:: 1.3
     """
 
-    def __init__(self,
-                 key,
-                 file_tree_node,
-                 transfer_api,
-                 file_status,
-                 file_map,
-                 root_local=None,
-                 root_remote=None,
-                 filter_out=None,
-                 threshold_size=2 ** 24,
-                 algo="AES",
+    def __init__(self, key, file_tree_node, transfer_api,
+                 file_status, file_map, root_local=None,
+                 root_remote=None, filter_out=None,
+                 threshold_size=2 ** 24, algo="AES",
                  compression="lzma" if sys.version_info[0] >= 3 else "zip",
                  fLOG=noLOG):
         """
@@ -113,13 +106,13 @@ class EncryptedBackup:
 
         @param      key                 key for encryption
         @param      file_tree_node      @see cl FileTreeNode
-        @param      ftp_transfer        @see cl TransferFTP
+        @param      transfer_api        @see cl TransferFTP
         @param      file_status         file keeping the status for each file (date, hash of the content for the last upload)
         @param      file_map            keep track of local filename and remote location
-        @param      filter_out          regular expression to exclude some files, it can also be a function.
-        @param      threshold_size      above that size, big files are split
         @param      root_local          local root
         @param      root_remote         remote root
+        @param      filter_out          regular expression to exclude some files, it can also be a function.
+        @param      threshold_size      above that size, big files are split
         @param      algo                encrypting algorithm
         @param      fLOG                logging function
         """
@@ -273,9 +266,10 @@ class EncryptedBackup:
         """
         starts transfering files to the remote website
 
-        @return         list of transferred @see cl FileInfo
-        @exception      the class raises an exception (@see cl FolderTransferFTPException)
-                        if more than 5 issues happened
+        :return: list of transferred @see cl FileInfo
+        :raises FolderTransferFTPException: The class raises an
+            exception (@see cl FolderTransferFTPException)
+            if more than 5 issues happened.
         """
         self.load_mapping()
 

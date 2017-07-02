@@ -6,6 +6,7 @@ API
     :maxdepth: 2
 
     filehelper
+    helpgen
     jenkins
     jupyter
     loghelper

@@ -67,11 +67,12 @@ def explore_folder_iterfile(folder, pattern=None, neg_pattern=None, fullname=Fal
     iterator on the list of files...
 
     included in a folder and in the subfolder
-    @param          folder      folder
-    @param          pattern     if None, get all files, otherwise, it is a regular expression,
-                                the filename must verify (with the folder is fullname is True)
-    @param          fullname    if True, include the subfolder while checking the regex
-    @return                     iterator on files
+    @param          folder          folder
+    @param          pattern         if None, get all files, otherwise, it is a regular expression,
+                                    the filename must verify (with the folder is fullname is True)
+    @param          neg_pattern     negative pattern to exclude files
+    @param          fullname        if True, include the subfolder while checking the regex
+    @return                         iterator on files
 
     .. versionchanged:: 1.4
         Parameter *neg_pattern* was added.

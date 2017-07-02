@@ -40,8 +40,8 @@ class GitLabAPI:
         """
         constructor
 
-        @param      host        git lab host
-        @param      use_ssl     use_ssl (SSL connection)
+        @param      host            git lab host
+        @param      verify_ssl      use_ssl (SSL connection)
         """
         self.host = host.rstrip("/")
         if not self.host.startswith(

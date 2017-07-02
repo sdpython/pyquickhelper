@@ -47,7 +47,8 @@ def writes(nb, **kwargs):
 
     nb : NotebookNode
         The notebook to write.
-    version : int
+    kwargs :
+        Among these parameters, *version* (int) which is
         The nbformat version to write.
         Used for downgrading notebooks.
 
@@ -200,8 +201,14 @@ def install_notebook_extension(path=None, overwrite=False, symlink=False,
     see `install_nbextension <https://ipython.org/ipython-doc/dev/api/generated/IPython.html.nbextensions.html#IPython.html.nbextensions.install_nbextension>`_
     for documentation
 
-    @param      path    if None, use default value
-    @return             standard output
+    @param      path                if None, use default value
+    @param      overwrite           overwrite the extension
+    @param      symlink             see the original function
+    @param      user                user
+    @param      prefix              see the original function
+    @param      nbextensions_dir    see the original function
+    @param      destination         see the original function
+    @return                         standard output
 
     Default value is
     `https://github.com/ipython-contrib/IPython-notebook-extensions/archive/master.zip <https://github.com/ipython-contrib/IPython-notebook-extensions/archive/master.zip>`_.
@@ -248,8 +255,6 @@ def get_jupyter_extension_dir(user=False, prefix=None,
     Parameters
     ++++++++++
 
-    files : list(paths)
-        a list of relative paths within nbextensions.
     user : bool [default: False]
         Whether to check the user's .ipython/nbextensions directory.
         Otherwise check a system-wide install (e.g. /usr/local/share/jupyter/nbextensions).
@@ -275,10 +280,8 @@ def get_installed_notebook_extension(user=False, prefix=None,
                                      nbextensions_dir=None):
     """
     Parameters
-    ++++++++++
+    ----------
 
-    files : list(paths)
-        a list of relative paths within nbextensions.
     user : bool [default: False]
         Whether to check the user's .ipython/nbextensions directory.
         Otherwise check a system-wide install (e.g. /usr/local/share/jupyter/nbextensions).
@@ -289,7 +292,7 @@ def get_installed_notebook_extension(user=False, prefix=None,
         Specify absolute path of nbextensions directory explicitly.
 
     Return
-    ++++++
+    ------
 
     list: list of installed notebook extension (by the user)
 
@@ -318,7 +321,7 @@ def install_jupyter_kernel(exe=sys.executable, kernel_spec_manager=None, user=Fa
     Install a kernel based on executable (this python by default)
 
     Parameters
-    ++++++++++
+    ----------
 
     exe: Python executable
         current one by default
@@ -335,7 +338,7 @@ def install_jupyter_kernel(exe=sys.executable, kernel_spec_manager=None, user=Fa
         This is needed to install into a non-default location, such as a conda/virtual-env.
 
     Returns
-    +++++++
+    -------
 
     path: The path where the kernelspec was installed.
 
@@ -354,7 +357,7 @@ def install_jupyter_kernel(exe=sys.executable, kernel_spec_manager=None, user=Fa
                     ]
          }
 
-    For R, it looks like
+    For R, it looks like:
 
     ::
 

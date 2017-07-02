@@ -162,7 +162,7 @@ class TransferAPI:
         """
         computes MD5 for a file
 
-        @param      filename        filename
+        @param      data            some data
         @return                     string
         """
         zero = hashlib.md5()

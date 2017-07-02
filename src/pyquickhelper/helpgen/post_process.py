@@ -559,15 +559,17 @@ def post_process_latex(st, doall, info=None, latex_book=False, exc=True,
     """
     modifies a latex file after its generation by sphinx
 
-    @param      st              string
-    @param      doall           do all transformations
-    @param      info            for more understandable error messages
-    @param      latex_book      customized for a book
-    @param      exc             raises an exception or a warning
-    @param      nblinks         dictionary ``{ref: url}``
-    @param      file            only used when an exception is raised
-    @param      fLOG            logging function
-    @return                     string
+    @param      st                      string
+    @param      doall                   do all transformations
+    @param      info                    for more understandable error messages
+    @param      latex_book              customized for a book
+    @param      exc                     raises an exception or a warning
+    @param      custom_latex_processing function which takes and returns a string,
+                                        final post processing
+    @param      nblinks                 dictionary ``{ref: url}``
+    @param      file                    only used when an exception is raised
+    @param      fLOG                    logging function
+    @return                             string
 
     SVG included in a notebook (or in RST file) requires `Inkscape <https://inkscape.org/>`_
     to be converted into Latex.

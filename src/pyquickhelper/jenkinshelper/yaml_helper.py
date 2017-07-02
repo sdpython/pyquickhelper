@@ -48,6 +48,7 @@ def load_yaml(file_or_buffer, context=None, engine="jinja2", platform=None):
     @param      file_or_buffer      string or physical file or url
     @param      context             variables to replace in the configuration
     @param      engine              see @see fn apply_template
+    @param      platform            for @see me ospathjoin
     @return                         see `PyYAML <http://pyyaml.org/wiki/PyYAMLDocumentation>`_
     """
     def replace(val, rep, into):
@@ -291,7 +292,8 @@ def ospathjoin(*l, **kwargs):
     simple ``o.path.join`` for a specific platform
 
     @param      l           list of paths
-    @param      platform    platform
+    @param      kwargs      additional parameters, among them,
+                            *platform* (win32 or ...)
     @return                 path
     """
     platform = kwargs.get('platform', None)

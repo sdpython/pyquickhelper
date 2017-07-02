@@ -14,9 +14,9 @@ def install_javascript_tools(root, dest, fLOG=noLOG,
     """
     install extra dependencies such as reveal.js
 
-    @param      temp_folder         temporary folder
     @param      root                location of the documentation
     @param      dest                location of static path
+    @param      fLOG                logging function
     @param      revealjs_github     to get reveal.js from github
 
     The function will create sub folders in folder *root*.

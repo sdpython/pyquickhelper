@@ -23,7 +23,6 @@ def validate_file_for_help(filename, fexclude=lambda f: False):
     """
     accept or reject a file to be copied in the help folder
     @param      filename        filename
-    @param      root            root
     @param      fexclude        function to exclude some files
     @return                     boolean
     """
@@ -368,8 +367,8 @@ def apply_modification_template(rootm, store_obj, template, fullname, rootrep,
 
     @param      rootm       root of the module
     @param      store_obj   keep track of all objects extracted from the module
-    @param      action      output from @see fn copy_source_files
     @param      template    rst template to produce
+    @param      fullname    full name of the file
     @param      rootrep     file name in the documentation contains some folders which are not desired in the documentation
     @param      softfile    softfile is a function (f : filename --> True or False), when it is True,
                             the documentation is lighter (no special members)
@@ -562,7 +561,7 @@ def add_file_rst(rootm, store_obj, actions, template=add_file_rst_template,
 
     @param      rootm           root of the module (for relative import)
     @param      store_obj       to keep table of all objects
-    @param      action          output from copy_source_files
+    @param      actions         output from copy_source_files
     @param      template        rst template to produce
     @param      rootrep         file name in the documentation contains some folders which are not desired in the documentation
     @param      fmod            applies modification to the instanciated template

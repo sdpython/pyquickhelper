@@ -105,6 +105,7 @@ class FileInfo:
         @param      size            size
         @param      date            date (str or datetime)
         @param      mdate           modification date (str or datetime)
+        @param      checksum        to check the file was modified
 
         Dates will be converted into datetime.
         """
@@ -173,7 +174,7 @@ class FileInfo:
         """
         set md5
 
-        @param  md5     byte
+        @param  checksum     checksum
         """
         self.checksum = checksum
         if not isinstance(checksum, str):

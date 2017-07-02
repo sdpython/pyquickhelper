@@ -43,7 +43,7 @@ class BenchMark:
         If *cache_file* is specified, the class will store the results of the
         method :meth:`bench <pyquickhelper.benchhelper.benchmark.GridBenchMark.bench>`.
         On a second run, the function load the cache
-        and run modified or new run (in *param_list*).
+        and run modified or new run (in *params_list*).
         """
         self._fLOG = fLOG
         self._name = name
@@ -247,7 +247,7 @@ class BenchMark:
         """
         Run the benchmark.
 
-        @param      param_list      list of dictionaries
+        @param      params_list     list of dictionaries
         """
         if not isinstance(params_list, list):
             raise TypeError("params_list must be a list")

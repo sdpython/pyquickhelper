@@ -37,7 +37,7 @@ def bigger_role(role, rawtext, text, lineno, inliner, options=None, content=None
 
         :bigger:`::5:size`
 
-    :param name: The role name used in the document.
+    :param role: The role name used in the document.
     :param rawtext: The entire markup snippet, with role.
     :param text: The text marked with the role.
     :param lineno: The line number where rawtext appears in the input.

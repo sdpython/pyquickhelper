@@ -19,6 +19,7 @@ def call_pandoc(params, fLOG=noLOG):
     calls `pandoc <http://pandoc.org/>`_
 
     @param      params  parameters
+    @param      fLOG    logging function
     @return             out, err
 
     .. versionadded:: 1.5

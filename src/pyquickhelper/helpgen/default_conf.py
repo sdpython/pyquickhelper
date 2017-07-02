@@ -29,7 +29,7 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
                          extlinks=None, github_user=None, github_repo=None, title=None,
                          book=True, link_resolve=None):
     """
-    defines variables for Sphinx
+    Define variables for Sphinx.
 
     @param      fileconf                location of the configuration file
     @param      module_name             name of the module
@@ -41,7 +41,7 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
     @param      add_extensions          additional extensions
     @param      bootswatch_theme        for example, ``spacelab``, look at `spacelab <http://bootswatch.com/spacelab/>`_
     @param      bootswatch_navbar_links see `sphinx-bootstrap-theme <http://ryan-roemer.github.io/sphinx-bootstrap-theme/README.html>`_
-    @param      description latex       description latex
+    @param      description_latex       description latex
     @param      use_mathjax             set up the documentation to use mathjax,
                                         see `sphinx.ext.mathjax <http://sphinx-doc.org/ext/math.html?highlight=math#module-sphinx.ext.mathjax>`_,
                                         default option is True
@@ -616,6 +616,7 @@ def custom_setup(app, author):
     from ..sphinxext.sphinx_runpython_extension import setup as setup_runpython
     from ..sphinxext.sphinx_sharenet_extension import setup as setup_sharenet
     from ..sphinxext.sphinx_todoext_extension import setup as setup_todoext
+    from ..sphinxext.sphinx_docassert_extension import setup as setup_docassert
 
     app.connect("autodoc-skip-member", skip)
     app.add_config_value('author', author, True)
@@ -631,6 +632,7 @@ def custom_setup(app, author):
     setup_exref(app)
     setup_faqref(app)
     setup_nbref(app)
+    setup_docassert(app)
 
     # from sphinx.util.texescape import tex_replacements
     # tex_replacements += [('oe', '\\oe '), ]

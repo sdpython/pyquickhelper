@@ -173,6 +173,7 @@ class ModuleMemberDoc:
         @param      ty      type (if you want to overwrite what the class will choose),
                             this type is a string (class, method, function)
         @param      cl      if is a method, class it belongs to
+        @param      module  module name if belongs to
         """
         if module is None:
             raise ValueError("module cannot be null")
@@ -410,7 +411,7 @@ class IndexInformation:
     def set_rst_file(self, rstfile):
         """
         sets the rst file and checks the label is present in it
-        @param      rst_file        rst_file
+        @param      rstfile        rst file
         """
         self.rstfile = rstfile
         if rstfile is not None:
