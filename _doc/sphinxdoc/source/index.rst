@@ -57,12 +57,10 @@ This module contains the automation process used by all the modules I write
 including my teachings. Magic commands, `Jenkins <https://jenkins-ci.org/>`_ jobs,
 notebook conversion into slides, scripts to build setups, documentation, unit tests.
 
-Quick start
------------
-
 .. toctree::
     :maxdepth: 1
 
+    api/index
     i_ex
     i_nb
     i_faq
