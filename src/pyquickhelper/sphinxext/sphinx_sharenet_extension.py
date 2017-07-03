@@ -8,7 +8,6 @@
 import sphinx
 from docutils import nodes
 from docutils.parsers.rst import Directive, directives
-from sphinx.writers.html import HTMLTranslator
 from sphinx.util.logging import getLogger
 
 try:
