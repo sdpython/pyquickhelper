@@ -101,6 +101,7 @@ def get_encryptor(key, algo="AES", chunksize=2 ** 24, **params):
     @param      key         key
     @param      algo        AES or fernet
     @param      chunksize   Fernet does not allow streaming
+    @param      params      additional parameters
     @return                 encryptor, origsize
     """
     if algo == "fernet":

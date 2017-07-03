@@ -173,6 +173,7 @@ class ModuleMemberDoc:
         @param      ty      type (if you want to overwrite what the class will choose),
                             this type is a string (class, method, function)
         @param      cl      if is a method, class it belongs to
+        @param      name    name of the object
         @param      module  module name if belongs to
         """
         if module is None:

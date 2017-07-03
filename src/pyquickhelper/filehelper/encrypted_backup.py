@@ -114,6 +114,7 @@ class EncryptedBackup:
         @param      filter_out          regular expression to exclude some files, it can also be a function.
         @param      threshold_size      above that size, big files are split
         @param      algo                encrypting algorithm
+        @param      compression         kind of compression ``'lzma'`` or ``'zip'``
         @param      fLOG                logging function
         """
         if sys.version_info[0] == 2:

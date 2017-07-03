@@ -279,7 +279,7 @@ def py3to2_imported_local_modules(content, unittest_modules):
     See function @see fn py3to2_convert_tree
     and documentation about parameter *unittest_modules*.
 
-    @param      script              script of filename
+    @param      content             script or filename
     @param      unittest_modules    modules used during unit test but not installed,
                                     @see fn py3to2_convert_tree
     """

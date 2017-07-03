@@ -803,11 +803,12 @@ def write_module_scripts(folder, platform=sys.platform, blog_list=None,
     Writes a couple of script which allow a user to be faster on some tasks
     or to easily get information about the module.
 
-    @param      folder      where to write the script
-    @param      platform    platform
-    @param      blog_list   blog list to follow, should be attribute ``__blog__`` of the module
-    @param      command     None to generate scripts for all commands or a value in *[blog, doc]*.
-    @return                 list of written scripts
+    @param      folder                  where to write the script
+    @param      platform                platform
+    @param      blog_list               blog list to follow, should be attribute ``__blog__`` of the module
+    @param      command                 None to generate scripts for all commands or a value in *[blog, doc]*.
+    @param      default_engine_paths    default engines (or python distributions)
+    @return                             list of written scripts
 
     The function produces the following files:
 

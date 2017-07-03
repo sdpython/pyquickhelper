@@ -20,8 +20,11 @@ except ImportError:
 
 if is_html5_writer_available():
     from sphinx.writers.html5 import HTML5Translator as HTMLTranslator
+    from sphinx.writers.html import HTMLTranslator as HTMLTranslatorOld
+    inheritance = (HTMLTranslator, HTMLTranslatorOld)
 else:
     from sphinx.writers.html import HTMLTranslator
+    inheritance = HTMLTranslator
 
 if sys.version_info[0] == 2:
     import cgi as cgiesc
@@ -89,9 +92,9 @@ def depart_bigger_node(self, node):
 
     It does only html for the time being.
     """
-    if not isinstance(self, HTMLTranslator):
+    if not isinstance(self, inheritance):
         logger = getLogger("bigger")
-        logger.warning("[depart_bigger_node] output only available for HTML not for '{0}' != '{1}'\n".format(
+        logger.warning("[depart_bigger_node] output only available for HTML not for '{0}' != '{1}'".format(
             type(self), HTMLTranslator))
         self.body.append("%bigger: output only available for HTML not for '{0}' != '{1}'\n".format(
             type(self), HTMLTranslator))

@@ -15,7 +15,8 @@ class GitLabException(Exception):
 
     def __init__(self, mes, req):
         """
-        @param  req     request
+        @param  mes     message
+        @param  req     request which caused the failure
         """
         Exception.__init__(self, mes)
         self.request = req
@@ -57,7 +58,6 @@ class GitLabAPI:
 
         @param      user        user
         @param      password    password
-        @param      email       email
         """
         import requests
         data = {"login": user, "password": password}

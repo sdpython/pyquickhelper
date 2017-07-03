@@ -148,7 +148,7 @@ class BenchMark:
             """
             constructor
 
-            @parm       func_gen        function generating the graph
+            @param      func_gen        function generating the graph
             @param      filename        filename
             @param      title           title
             @param      root            path should be relative to this one

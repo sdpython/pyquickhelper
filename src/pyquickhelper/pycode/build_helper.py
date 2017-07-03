@@ -318,6 +318,7 @@ def get_extra_script_command(command, module, requirements, port=8067, blog_list
     @param      unit_test_folder            unit test folders, used for command ``run27``
     @param      additional_notebook_path    additional paths to add when running the script launching the notebooks
     @param      additional_local_path       additional paths to add when running a local command
+    @param      unittest_modules            list of modules to be used during unit tests
     @return                                 scripts
 
     The available list of commands is given by function @see fn process_standard_options_for_setup.

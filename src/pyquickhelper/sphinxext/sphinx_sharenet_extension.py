@@ -19,8 +19,11 @@ except ImportError:
 
 if is_html5_writer_available():
     from sphinx.writers.html5 import HTML5Translator as HTMLTranslator
+    from sphinx.writers.html import HTMLTranslator as HTMLTranslatorOld
+    inheritance = (HTMLTranslator, HTMLTranslatorOld)
 else:
     from sphinx.writers.html import HTMLTranslator
+    inheritance = HTMLTranslator
 
 
 class sharenet_node(nodes.Structural, nodes.Element):
@@ -112,7 +115,7 @@ def sharenet_role(role, rawtext, text, lineno, inliner,
     HTML body instead of the head as this part might be tweaked by other
     custom commands.
 
-    :param name: The role name used in the document.
+    :param role: The role name used in the document.
     :param rawtext: The entire markup snippet, with role.
     :param text: The text marked with the role.
     :param lineno: The line number where rawtext appears in the input.
@@ -178,10 +181,10 @@ def depart_sharenet_node(self, node):
 
     It does only html for the time being.
     """
-    if not isinstance(self, HTMLTranslator):
+    if not isinstance(self, inheritance):
         logger = getLogger("sharenet")
         logger.warning(
-            "[depart_sharenet_node] output only available for HTML not for '{0}'\n".format(type(self)))
+            "[depart_sharenet_node] output only available for HTML not for '{0}'".format(type(self)))
         self.body.append(
             "%sharenet: output only available for HTML not for '{0}'\n".format(type(self)))
         return

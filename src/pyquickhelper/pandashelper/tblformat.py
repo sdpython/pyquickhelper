@@ -127,6 +127,7 @@ def df2html(self, class_table=None, class_td=None, class_tr=None,
     """
     convert the table into a html string
 
+    @param  self            dataframe (to be added as a class method)
     @param  class_table     adds a class to the tag ``table`` (None for none)
     @param  class_td        adds a class to the tag ``td`` (None for none)
     @param  class_tr        adds a class to the tag ``tr`` (None for none)

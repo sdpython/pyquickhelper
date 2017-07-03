@@ -24,6 +24,7 @@ def publish_coverage_on_codecov(path, token, commandline=True, fLOG=noLOG):
     @param      path            path to source
     @param      token           token on codecov
     @param      commandline     see @see cl SourceRepository
+    @param      fLOG            logging function
     @return                     out, err from function @see fn run_cmd
     """
     if os.path.isfile(path):

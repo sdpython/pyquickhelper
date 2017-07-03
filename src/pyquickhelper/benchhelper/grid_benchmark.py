@@ -212,7 +212,8 @@ class GridBenchMark(BenchMark):
         function to overload
 
         @param      info        dictionary with at least key ``'X'``
-        @param      output      output of the benchmark
+        @param      output      output of the benchmar
+        @param      params      additional parameters
         @return                 output of the experiment, tuple of dictionaries
         """
         raise NotImplementedError()

@@ -222,7 +222,7 @@ class MockSphinxApp:
         return self.app.emit(event, *args)
 
     @staticmethod
-    def create(writer="sphinx", directives=None, verbose=False, fLOG=None):
+    def create(writer="sphinx", directives=None, fLOG=None):
         """
         Create a MockApp
 

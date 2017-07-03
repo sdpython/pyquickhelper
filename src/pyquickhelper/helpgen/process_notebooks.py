@@ -703,7 +703,7 @@ def build_thumbail_in_gallery(nbfile, folder_snippet, relative, rst_link):
 
     @param      nbfile          notebook file
     @param      folder_snippet  where to store the snippet
-    @parm       relative        the path to the snippet will be relative to this folder
+    @param      relative        the path to the snippet will be relative to this folder
     @param      rst_link        rst link
     @return                     RST
     """

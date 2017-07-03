@@ -18,7 +18,7 @@ def import_object(docname, kind) -> Tuple[object, str]:
     """
     Extract an object defined by its name including the module name.
 
-    @param      docs        full name of the object
+    @param      docname     full name of the object
                             (example: ``pyquickhelper.sphinxext.sphinx_docassert_extension.import_object``)
     @param      kind        ``'function'`` or ``'class'`` or ``'kind'``
     @return                 tuple(object, name)
@@ -147,7 +147,6 @@ class OverrideDocFieldTransformer:
         Overwrite function `transform <https://github.com/sphinx-doc/sphinx/blob/master/sphinx/util/docfields.py#L271>`_.
         It only adds extra verification and returns results from the replaced function.
 
-        @param      replaced        replaced function
         @param      other_self      the builder
         @param      node            node the replaced function changes or replace
 
