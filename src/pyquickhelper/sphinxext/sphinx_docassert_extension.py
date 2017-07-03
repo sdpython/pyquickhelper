@@ -155,7 +155,6 @@ class OverrideDocFieldTransformer:
         by the function is the same the list of documented arguments.
         """
         typemap = other_self.typemap
-
         entries = []
         groupindices = {}  # type: Dict[unicode, int]
         types = {}  # type: Dict[unicode, Dict]
@@ -169,6 +168,8 @@ class OverrideDocFieldTransformer:
             except ValueError:
                 # maybe an argument-less field type?
                 fieldtype, fieldarg = fieldname.astext(), ''
+            if fieldtype != "param":
+                continue
             typedesc, is_typefield = typemap.get(fieldtype, (None, None))
 
             # sort out unknown fields

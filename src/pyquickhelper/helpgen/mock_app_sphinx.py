@@ -23,7 +23,6 @@ from docutils.parsers.rst import directives as doc_directives, roles as doc_role
 from sphinx.config import Config
 from sphinx.ext.autodoc import setup as setup_autodoc
 # from sphinx.ext.imgmath import setup as setup_imgmath
-from sphinxcontrib.images import setup as setup_images
 from sphinxcontrib.imagesvg import setup as setup_imagesvg
 # from sphinx.ext.autosummary import setup as setup_autosummary
 from sphinx.ext import autodoc
@@ -32,6 +31,8 @@ from sphinx.ext import autodoc
 # from sphinx.domains.python import setup as setup_python
 from sphinx import __display_version__ as sphinx__display_version__
 from sphinx.application import VersionRequirementError
+from sphinx.util.logging import getLogger
+
 
 try:
     from sphinx.util.docutils import is_html5_writer_available
@@ -277,7 +278,14 @@ class MockSphinxApp:
             setup_todo(app)
 
             setup_autodoc(app)
-            setup_images(app)
+            try:
+                from sphinxcontrib.images import setup as setup_images
+                setup_images(app)
+            except ImportError:
+                # Probably a mismatch between versions.
+                logger = getLogger("MockSphinxApp")
+                logger.warning(
+                    "[MockSphinxApp] unable to import 'sphinxcontrib.images'.")
             setup_imagesvg(app)
 
             # don't move this import to the beginning of file
