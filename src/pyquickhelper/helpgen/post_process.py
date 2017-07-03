@@ -75,9 +75,13 @@ def update_notebook_link(text, format, nblinks, fLOG):
         def reprst(l):
             anc, url = l.groups()
             url = get_url_from_nblinks(nblinks, url, format)
-            new_url = ":ref:`{0} <{1}>`".format(anc, url)
+            if "://" in url:
+                new_url = "`{0} <{1}>`_".format(anc, url)
+            else:
+                new_url = ":ref:`{0} <{1}>`".format(anc, url)
             if fLOG:
-                fLOG("      NBLINKS: add in ", format, ":", new_url)
+                fLOG("      [update_notebook_link]1 add in ",
+                     format, ":", new_url)
             return new_url
         reg = re.compile("`([^`]+?) <find://([^`<>]+?)>`_")
         new_text = reg.sub(reprst, text)
@@ -87,7 +91,8 @@ def update_notebook_link(text, format, nblinks, fLOG):
             url = get_url_from_nblinks(nblinks, url, format)
             new_url = "<a href=\"{0}.html\">{1}</a>".format(anc, url)
             if fLOG:
-                fLOG("      NBLINKS: add in ", format, ":", new_url)
+                fLOG("      [update_notebook_link]2 add in ",
+                     format, ":", new_url)
             return new_url
         reg = re.compile("<a href=\\\"find://([^\\\"]+?)\\\">([^`<>]+?)</a>")
         new_text = reg.sub(rephtml, text)
@@ -104,7 +109,8 @@ def update_notebook_link(text, format, nblinks, fLOG):
                     "A reference was no found: '{0}' - '{1}' format={2}\n{3}\n{4}".format(anc, url, format, mes, extension))
             new_url = "[{0}]({1})".format(anc, url)
             if fLOG:
-                fLOG("      NBLINKS: add in ", format, ":", new_url)
+                fLOG("      [update_notebook_link]3 add in ",
+                     format, ":", new_url)
             return new_url
         reg = re.compile("[[]([^[]+?)[]][(]find://([^ ]+)[)]")
         new_text = reg.sub(repipy, text)
@@ -116,7 +122,8 @@ def update_notebook_link(text, format, nblinks, fLOG):
                 url += ".html"
             new_url = "\\href{{{0}}}{{{1}}}".format(url, anc)
             if fLOG:
-                fLOG("      NBLINKS: add in ", format, ":", new_url)
+                fLOG("      [update_notebook_link]4 add in ",
+                     format, ":", new_url)
             return new_url
         reg = re.compile("\\\\href{find://([^{} ]+?)}{([^{}]+)}")
         new_text = reg.sub(replat, text)
