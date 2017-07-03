@@ -107,6 +107,9 @@ def default_filter_warning(w):
         elif "pandas" in w.filename:
             if "ix is deprecated" in str(w.message):
                 return False
+        elif "sphinx" in w.filename:
+            if "sphinx.util.compat.Directive is deprecated and will be removed" in str(w.message):
+                return False
     elif isinstance(w.message, ImportWarning):
         if w.filename.endswith("_bootstrap_external.py"):
             return False
