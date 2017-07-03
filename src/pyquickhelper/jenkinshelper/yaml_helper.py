@@ -48,7 +48,7 @@ def load_yaml(file_or_buffer, context=None, engine="jinja2", platform=None):
     @param      file_or_buffer      string or physical file or url
     @param      context             variables to replace in the configuration
     @param      engine              see @see fn apply_template
-    @param      platform            for @see me ospathjoin
+    @param      platform            to join path differently based on the OS
     @return                         see `PyYAML <http://pyyaml.org/wiki/PyYAMLDocumentation>`_
     """
     def replace(val, rep, into):

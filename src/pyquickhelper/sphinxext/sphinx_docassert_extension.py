@@ -296,7 +296,19 @@ class OverrideDocFieldTransformer:
 
 def setup(app):
     """
-    setup for ``sharenet`` (sphinx)
+    Setup for ``docassert`` extension (sphinx).
+    This changes ``DocFieldTransformer.transform`` and replaces
+    it by a function which calls the current function and does
+    extra checking on the list of parameters.
+
+    .. todoext::
+        :title: check parameters list in documentation
+        :tag: done
+        :hidden: true
+        :date: 2017-07-02
+        :cost: 3
+        :issue: 49
+        :release: 1.5
     """
     inst = OverrideDocFieldTransformer(DocFieldTransformer.transform)
 
