@@ -133,9 +133,9 @@ def rst2html(s, fLOG=noLOG, writer="sphinx", keep_warnings=False,
     @param      keep_warnings   keep_warnings in the final HTML
     @param      directives      new directives to add (see below)
     @param      language        language
+    @param      warnings_log    send warnings to log (True) or to the warning stream(False)
     @param      options         Sphinx options see `Render math as images <http://www.sphinx-doc.org/en/stable/ext/math.html#module-sphinx.ext.imgmath>`_,
                                 a subset of options is used, see @see fn default_sphinx_options
-    @param      warnings_log    send warnings to log (True) or to the warning stream(False)
     @return                     HTML format
 
     *directives* is None or a list of 5-uple:
@@ -242,6 +242,9 @@ def rst2html(s, fLOG=noLOG, writer="sphinx", keep_warnings=False,
         parameter *language* was added.
         Add directives *graphviz*, *math*.
         Parse more extensive Sphinx syntax.
+
+    .. versionchanged:: 1.5
+        More logging is done.
     """
     _nbeq = [0, None]
 
@@ -259,10 +262,10 @@ def rst2html(s, fLOG=noLOG, writer="sphinx", keep_warnings=False,
             else:
                 raise e
 
-    if writer in ["custom", "sphinx"]:
+    if writer in ["custom", "sphinx", "HTMLWriterWithCustomDirectives"]:
         mockapp, writer, title_names = MockSphinxApp.create(
-            "sphinx", directives)
-        writer_name = "pseudoxml"
+            "sphinx", directives, fLOG=fLOG)
+        writer_name = "HTMLWriterWithCustomDirectives"
     else:
         raise NotImplementedError()
 
@@ -293,7 +296,9 @@ def rst2html(s, fLOG=noLOG, writer="sphinx", keep_warnings=False,
         setattr(writer.builder, k, settings_overrides[k])
 
     if sphinx__display_version__ >= "1.6":
-        env = BuildEnvironment(mockapp)
+        env = mockapp.env
+        if env is None:
+            raise ValueError("No environment was built")
     else:
         env = BuildEnvironment(None, None, config=config)
     env.temp_data["docname"] = "string"

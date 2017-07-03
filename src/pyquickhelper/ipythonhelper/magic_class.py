@@ -8,9 +8,9 @@
 """
 from __future__ import print_function
 import warnings
-warnings.filterwarnings("ignore", category=DeprecationWarning)
-from IPython.core.magic import Magics, magics_class
-warnings.resetwarnings()
+with warnings.catch_warnings():
+    warnings.simplefilter("ignore")
+    from IPython.core.magic import Magics, magics_class
 
 
 @magics_class

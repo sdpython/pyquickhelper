@@ -116,7 +116,7 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
     version_file = os.path.join(dirconf, "..", "..", "..", "version.txt")
     if not os.path.exists(version_file):
         warnings.warn(
-            "a file must contain the commit number (or last part of the version): " + version_file)
+            "File '{0}' must contain the commit number (or last part of the version).".format(version_file))
         first_line = "0"
     else:
         first_line = get_first_line(version_file)

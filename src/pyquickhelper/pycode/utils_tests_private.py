@@ -458,7 +458,6 @@ def main_run_test(runner, path_test=None, limit_max=1e9, log=False, skip=-1, ski
                         original_stream.end_test(s[1])
                     for ww in w:
                         list_warn.append((ww, s))
-                    warnings.resetwarnings()
             else:
                 if original_stream is not None:
                     original_stream.begin_test(s[1])

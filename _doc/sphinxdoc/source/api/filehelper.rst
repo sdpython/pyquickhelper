@@ -4,9 +4,13 @@ filehelper: file manipulations
 
 .. contents::
     :local:
+    :depth: 2
 
 compression
 +++++++++++
+
+.. contents::
+    :local:
 
 .. autofunction:: pyquickhelper.filehelper.compression_helper.gzip_files
 

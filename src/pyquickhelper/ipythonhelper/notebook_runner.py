@@ -118,10 +118,10 @@ class NotebookRunner(object):
             except ImportError:
                 from ipykernel import KernelManager
 
-            warnings.filterwarnings("ignore", category=DeprecationWarning)
-            self.km = KernelManager(
-                kernel_name=kernel_name) if kernel_name is not None else KernelManager()
-            warnings.resetwarnings()
+            with warnings.catch_warnings():
+                warnings.filterwarnings("ignore", category=DeprecationWarning)
+                self.km = KernelManager(
+                    kernel_name=kernel_name) if kernel_name is not None else KernelManager()
         else:
             self.km = None
         self.detailed_log = detailed_log
@@ -166,10 +166,10 @@ class NotebookRunner(object):
                     self.km.start_kernel()
                 else:
                     try:
-                        warnings.filterwarnings(
-                            "ignore", category=ResourceWarning)
-                        self.km.start_kernel(extra_arguments=args)
-                        warnings.resetwarnings()
+                        with warnings.catch_warnings():
+                            warnings.filterwarnings(
+                                "ignore", category=ResourceWarning)
+                            self.km.start_kernel(extra_arguments=args)
                     except Exception as e:
                         raise Exception(
                             "Failure with args: {0}\nand error:\n{1}".format(args, str(e))) from e

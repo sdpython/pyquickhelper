@@ -104,7 +104,7 @@ def skip_run_cmd(cmd, sin="", shell=True, wait=False, log_error=True,
                  stop_running_if=None, encerror="ignore",
                  encoding="utf8", change_path=None, communicate=True,
                  preprocess=True, timeout=None, catch_exit=False, fLOG=None,
-                 timeout_listen=None, tell_if_no_output=None):
+                 timeout_listen=None, tell_if_no_output=None, prefix_log=None):
     """
     has the same signature as @see fn run_cmd but does nothing
 
@@ -116,7 +116,7 @@ def skip_run_cmd(cmd, sin="", shell=True, wait=False, log_error=True,
 def run_cmd(cmd, sin="", shell=sys.platform.startswith("win"), wait=False, log_error=True,
             stop_running_if=None, encerror="ignore", encoding="utf8",
             change_path=None, communicate=True, preprocess=True, timeout=None,
-            catch_exit=False, fLOG=None, tell_if_no_output=None):
+            catch_exit=False, fLOG=None, tell_if_no_output=None, prefix_log=None):
     """
     run a command line and wait for the result
     @param      cmd                 command line
@@ -140,6 +140,7 @@ def run_cmd(cmd, sin="", shell=sys.platform.startswith("win"), wait=False, log_e
     @param      catch_exit          catch *SystemExit* exception
     @param      fLOG                logging function (if not None, bypass others parameters)
     @param      tell_if_no_output   tells if there is no output every *tell_if_no_output* seconds
+    @param      prefix_log          add a prefix to a line before printing it
     @return                         content of stdout, stdres  (only if wait is True)
 
     .. exref::
@@ -179,9 +180,15 @@ def run_cmd(cmd, sin="", shell=sys.platform.startswith("win"), wait=False, log_e
     .. versionchanged:: 1.5
         If *wait* is False, the function returns the started process.
         ``__exit__`` should be called if wait if False.
+        Parameter *prefix_log* was added.
     """
+    if prefix_log is None:
+        prefix_log = ""
     if fLOG is not None:
-        fLOG("execute", cmd)
+        if isinstance(cmd, (list, tuple)):
+            fLOG(prefix_log + "[run_cmd] execute", " ".join(cmd))
+        else:
+            fLOG(prefix_log + "[run_cmd] execute", cmd)
 
     if change_path is not None:
         current = os.getcwd()
@@ -235,7 +242,7 @@ def run_cmd(cmd, sin="", shell=sys.platform.startswith("win"), wait=False, log_e
             input = sin if sin is None else sin.encode()
             if input is not None and len(input) > 0:
                 if fLOG is not None:
-                    fLOG("input", [input])
+                    fLOG(prefix_log + "[run_cmd] input", [input])
 
             if catch_exit:
                 try:
@@ -286,9 +293,10 @@ def run_cmd(cmd, sin="", shell=sys.platform.startswith("win"), wait=False, log_e
                     line = stdoutQueue.get()
                     decol = decode_outerr(
                         line, encoding, encerror, cmd)
+                    sdecol = decol.strip("\n\r")
                     if fLOG is not None:
-                        fLOG(decol.strip("\n\r"))
-                    out.append(decol.strip("\n\r"))
+                        fLOG(prefix_log + sdecol)
+                    out.append(sdecol)
                     last_update = time.clock()
                     if stop_running_if is not None and stop_running_if(decol, None):
                         runloop = False
@@ -298,9 +306,10 @@ def run_cmd(cmd, sin="", shell=sys.platform.startswith("win"), wait=False, log_e
                     line = stderrQueue.get()
                     decol = decode_outerr(
                         line, encoding, encerror, cmd)
+                    sdecol = decol.strip("\n\r")
                     if fLOG is not None:
-                        fLOG(decol.strip("\n\r"))
-                    err.append(decol.strip("\n\r"))
+                        fLOG(prefix_log + sdecol)
+                    err.append(sdecol)
                     last_update = time.clock()
                     if stop_running_if is not None and stop_running_if(None, decol):
                         runloop = False
@@ -309,13 +318,13 @@ def run_cmd(cmd, sin="", shell=sys.platform.startswith("win"), wait=False, log_e
 
                 delta = time.clock() - last_update
                 if tell_if_no_output is not None and delta >= tell_if_no_output:
-                    fLOG("[run_cmd] No update in {0} seconds for cmd: {1}".format(
+                    fLOG(prefix_log + "[run_cmd] No update in {0} seconds for cmd: {1}".format(
                         "%5.1f" % (last_update - begin), cmd))
                     last_update = time.clock()
                 full_delta = time.clock() - begin
                 if timeout is not None and full_delta > timeout:
                     runloop = False
-                    fLOG("[run_cmd] Timeout after {0} seconds for cmd: {1}".format(
+                    fLOG(prefix_log + "[run_cmd] Timeout after {0} seconds for cmd: {1}".format(
                         "%5.1f" % full_delta, cmd))
                     break
 
@@ -347,10 +356,11 @@ def run_cmd(cmd, sin="", shell=sys.platform.startswith("win"), wait=False, log_e
                     pproc.wait()
             else:
                 out.append("[run_cmd] killing process.")
-                fLOG("[run_cmd] killing process because stop_running_if returned True.")
+                fLOG(
+                    prefix_log + "[run_cmd] killing process because stop_running_if returned True.")
                 pproc.kill()
                 err_read = True
-                fLOG("[run_cmd] process killed.")
+                fLOG(prefix_log + "[run_cmd] process killed.")
                 skip_out_err = True
 
             out = "\n".join(out)
@@ -371,10 +381,15 @@ def run_cmd(cmd, sin="", shell=sys.platform.startswith("win"), wait=False, log_e
         # same path for whether communicate is False or True
         err = err.replace("\r\n", "\n")
         if fLOG is not None:
-            fLOG("end of execution", cmd)
+            fLOG(prefix_log + "end of execution", cmd)
 
         if len(err) > 0 and log_error and fLOG is not None:
-            fLOG("error (log)\n%s" % err)
+            if "\n" in err:
+                fLOG(prefix_log + "error (log)")
+                for eline in err.split("\n"):
+                    fLOG(prefix_log + eline)
+            else:
+                fLOG(prefix_log + "error (log)\n%s" % err)
 
         if change_path is not None:
             os.chdir(current)

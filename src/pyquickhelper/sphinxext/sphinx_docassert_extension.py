@@ -84,6 +84,14 @@ def check_typed_make_field(self,
     @param      function_name   function name these arguments belong to
     @param      docname         document which contains the object
     @param      kind            tells which kind of object *function_name* is (function, method or class)
+
+    Example of warnings it raises:
+
+    ::
+
+        [docassert] 'onefunction' has no parameter 'a' (in '...project_name\subproject\myexampleb.py').
+        [docassert] 'onefunction' has undocumented parameters 'a, b' (...project_name\subproject\myexampleb.py').
+
     """
     if parameters is None:
         parameters = None

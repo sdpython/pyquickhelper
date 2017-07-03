@@ -20,11 +20,12 @@ with warnings.catch_warnings():
     warnings.simplefilter("ignore", category=ImportWarning)
     try:
         from ipykernel.kernelspec import install as install_k
+        raisewarn = False
     except ImportError:
-        warnings.resetwarnings()
-        warnings.warn("ipykernel is not installed. pyquickhelper cannot execute a notebook.",
-                      category=ImportWarning)
-        pass
+        raisewarn = True
+if raisewarn:
+    warnings.warn("ipykernel is not installed. pyquickhelper cannot execute a notebook.",
+                  category=ImportWarning)
 
 if sys.version_info[0] == 2:
     from StringIO import StringIO
@@ -320,27 +321,23 @@ def install_jupyter_kernel(exe=sys.executable, kernel_spec_manager=None, user=Fa
     """
     Install a kernel based on executable (this python by default)
 
-    Parameters
-    ----------
+    @param  exe                 Python executable
+                                current one by default
+    @param  kernel_spec_manager (KernelSpecManager [optional]).
+                                A KernelSpecManager to use for installation.
+                                If none provided, a default instance will be created.
+    @param  user                (bool).
+                                Whether to do a user-only install, or system-wide.
+    @param  kernel_name         (str), optional.
+                                Specify a name for the kernelspec.
+                                This is needed for having multiple IPython
+                                kernels for different environments.
+    @param  prefix              (str), optional.
+                                Specify an install prefix for the kernelspec.
+                                This is needed to install into a non-default
+                                location, such as a conda/virtual-env.
 
-    exe: Python executable
-        current one by default
-    kernel_spec_manager: KernelSpecManager [optional]
-        A KernelSpecManager to use for installation.
-        If none provided, a default instance will be created.
-    user: bool [default: False]
-        Whether to do a user-only install, or system-wide.
-    kernel_name: str, optional
-        Specify a name for the kernelspec.
-        This is needed for having multiple IPython kernels for different environments.
-    prefix: str, optional
-        Specify an install prefix for the kernelspec.
-        This is needed to install into a non-default location, such as a conda/virtual-env.
-
-    Returns
-    -------
-
-    path: The path where the kernelspec was installed.
+    @return                     The path where the kernelspec was installed.
 
     A kernel is defined by the following fields:
 

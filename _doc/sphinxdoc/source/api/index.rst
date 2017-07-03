@@ -1,6 +1,6 @@
 
-API
-===
+Short API
+=========
 
 .. toctree::
     :maxdepth: 2

@@ -8,6 +8,7 @@ from ..sphinxext.sphinx_bigger_extension import setup as setup_bigger
 from ..sphinxext.sphinx_githublink_extension import setup as setup_githublink
 from ..sphinxext.sphinx_blocref_extension import setup as setup_blocref
 from ..sphinxext.sphinx_blog_extension import setup as setup_blog
+from ..sphinxext.sphinx_docassert_extension import setup as setup_docassert
 from ..sphinxext.sphinx_exref_extension import setup as setup_exref
 from ..sphinxext.sphinx_faqref_extension import setup as setup_faqref
 from ..sphinxext.sphinx_mathdef_extension import setup as setup_mathdef
@@ -17,9 +18,20 @@ from ..sphinxext.sphinx_sharenet_extension import setup as setup_sharenet
 from ..sphinxext.sphinx_todoext_extension import setup as setup_todoext
 from .convert_doc_sphinx_helper import HTMLWriterWithCustomDirectives
 from docutils import nodes
+from docutils.parsers.rst.directives import directive as rst_directive
 from docutils.parsers.rst import directives as doc_directives, roles as doc_roles
 from sphinx.config import Config
+from sphinx.ext.autodoc import setup as setup_autodoc
+# from sphinx.ext.imgmath import setup as setup_imgmath
+from sphinxcontrib.images import setup as setup_images
+from sphinxcontrib.imagesvg import setup as setup_imagesvg
+# from sphinx.ext.autosummary import setup as setup_autosummary
+from sphinx.ext import autodoc
+# from sphinx.events import EventManager
+# from sphinx.registry import SphinxComponentRegistry
+# from sphinx.domains.python import setup as setup_python
 from sphinx import __display_version__ as sphinx__display_version__
+from sphinx.application import VersionRequirementError
 
 try:
     from sphinx.util.docutils import is_html5_writer_available
@@ -43,6 +55,7 @@ class MockSphinxApp:
         @param      app         see static method create
         """
         self.app = app
+        self.env = app.env
         self.new_options = {}
         self.writer = writer
         self.mapping = {"<class 'sphinx.ext.todo.todo_node'>": "todo",
@@ -59,8 +72,12 @@ class MockSphinxApp:
         self.doctreedir = "."
         self.srcdir = "."
         self.builder = writer.builder
-        self.domains = {}
-        self._events = {}
+        # self.domains = {}
+        # self._events = {}
+        # self.events = EventManager()
+        # self.registry = SphinxComponentRegistry()
+        # self.extensions = {}
+        # self._setting_up_extension = ['?']
 
     def add_directive(self, name, cl, *args, **options):
         """
@@ -91,7 +108,8 @@ class MockSphinxApp:
         See class `Sphinx <https://github.com/sphinx-doc/sphinx/blob/master/sphinx/application.py#L107>`_.
         """
         if name in self.config.values:
-            raise Exception('Config value %r already present' % name)
+            # We do not add it a second time.
+            return
         if rebuild in (False, True):
             rebuild = rebuild and 'env' or ''
         self.new_options[name] = (default, rebuild, types)
@@ -145,6 +163,25 @@ class MockSphinxApp:
         else:
             self.app.add_node(node, **kwds)
 
+    def setup_extension(self, extname):
+        """
+        See class `Sphinx <https://github.com/sphinx-doc/sphinx/blob/master/sphinx/application.py>`_.
+        """
+        self.app.registry.load_extension(self, extname)
+
+    def emit_firstresult(self, event, *args):
+        """
+        See class `Sphinx <https://github.com/sphinx-doc/sphinx/blob/master/sphinx/application.py>`_.
+        """
+        return self.app.events.emit_firstresult(event, self, *args)
+
+    def add_autodocumenter(self, cls):
+        """
+        See class `Sphinx <https://github.com/sphinx-doc/sphinx/blob/master/sphinx/application.py>`_.
+        """
+        autodoc.add_documenter(cls)
+        self.app.add_directive('auto' + cls.objtype, autodoc.AutoDirective)
+
     def connect(self, node, func):
         """
         See class `Sphinx <https://github.com/sphinx-doc/sphinx/blob/master/sphinx/application.py#L107>`_.
@@ -157,18 +194,25 @@ class MockSphinxApp:
         """
         See class `Sphinx <https://github.com/sphinx-doc/sphinx/blob/master/sphinx/application.py#L107>`_.
         """
-        if domain.name in self.domains:
-            raise Exception(
-                'domain %s already registered' % domain.name)
-        self.domains[domain.name] = domain
+        if domain.name in self.app.domains:
+            # We do not register it a second time.
+            return
+        self.app.domains[domain.name] = domain
+
+    def require_sphinx(self, version):
+        # type: (unicode) -> None
+        # check the Sphinx version if requested
+        if version > sphinx__display_version__[:3]:
+            raise VersionRequirementError(version)
 
     def add_event(self, name):
         """
         See class `Sphinx <https://github.com/sphinx-doc/sphinx/blob/master/sphinx/application.py#L107>`_.
         """
-        if name in self._events:
-            raise Exception('Event %s already present' % name)
-        self._events[name] = ''
+        if name in self.app._events:
+            # We do not raise an exception if already present.
+            return
+        self.app._events[name] = ''
 
     def emit(self, event, *args):
         """
@@ -177,12 +221,13 @@ class MockSphinxApp:
         return self.app.emit(event, *args)
 
     @staticmethod
-    def create(writer="sphinx", directives=None):
+    def create(writer="sphinx", directives=None, verbose=False, fLOG=None):
         """
         Create a MockApp
 
         @param      writer          ``'sphinx'`` is the only allowed value
         @param      directives      new directives to add (see below)
+        @param      fLOG            logging function
         @return                     mockapp, writer, list of added nodes
 
         *directives* is None or a list of 5-uple:
@@ -193,8 +238,12 @@ class MockSphinxApp:
         * a docutils node: see @see cl runpython_node as an example
         * two functions: see @see fn visit_runpython_node,
           @see fn depart_runpython_node as an example
+
+        .. versionchanged:: 1.5
+            Parameter *fLOG* was added.
+            The class supports more extensions.
         """
-        if writer not in ("sphinx", "custom"):
+        if writer not in ("sphinx", "custom", "HTMLWriterWithCustomDirectives"):
             raise NotImplementedError("writer must be 'sphinx' or 'custom'")
 
         writer = HTMLWriterWithCustomDirectives()
@@ -220,11 +269,16 @@ class MockSphinxApp:
             setup_faqref(app)
             setup_exref(app)
             setup_nbref(app)
+            setup_docassert(app)
 
             # directives from sphinx
             setup_graphviz(app)
             setup_math(app)
             setup_todo(app)
+
+            setup_autodoc(app)
+            setup_images(app)
+            setup_imagesvg(app)
 
             # don't move this import to the beginning of file
             # it changes matplotlib backend
@@ -253,5 +307,33 @@ class MockSphinxApp:
                 # not necessary
                 # nodes._add_node_class_names([node.__name__])
                 writer.connect_directive_node(node.__name__, f1, f2)
+
+        if fLOG:
+            for app in [mockapp, writer.app]:
+                if hasattr(app, "_added_objects"):
+                    fLOG("[MockSphinxApp] list of added objects")
+                    for el in app._added_objects:
+                        fLOG("[MockSphinxApp]", el)
+                        if el[0] == "domain":
+                            fLOG("[MockSphinxApp]    NAME", el[1].name)
+                            for ro in el[1].roles:
+                                fLOG("[MockSphinxApp]    ROLES", ro)
+                            for ro in el[1].directives:
+                                fLOG("[MockSphinxApp]    DIREC", ro)
+            from docutils.parsers.rst.directives import _directives
+            for res in sorted(_directives):
+                fLOG("[MockSphinxApp] RST DIREC", res)
+
+            class bb:
+                def info(*l, line=0):
+                    fLOG("[MockSphinxApp]   -- ", *l)
+
+            class aa:
+                def __init__(self):
+                    self.reporter = bb()
+                    self.current_line = 0
+            from docutils.parsers.rst.languages import en
+            for dir_check in ['py:function']:
+                res = rst_directive(dir_check, en, aa())
 
         return mockapp, writer, title_names

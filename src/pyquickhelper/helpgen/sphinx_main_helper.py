@@ -346,7 +346,7 @@ def compile_latex_output_final(root, latex_path, doall, afile=None, latex_book=F
                                       custom_latex_processing=custom_latex_processing)
             try:
                 out, err = run_cmd(c, wait=True, log_error=False, catch_exit=True, communicate=False,
-                                   tell_if_no_output=120, fLOG=fLOG)
+                                   tell_if_no_output=120, fLOG=fLOG, prefix_log="[latex] ")
             except Exception as e:
                 # An exception is raised when the return code is an error. We
                 # check that PDF file was written.
@@ -365,7 +365,8 @@ def compile_latex_output_final(root, latex_path, doall, afile=None, latex_book=F
             fLOG("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
             try:
                 out, err = run_cmd(
-                    c, wait=True, log_error=False, communicate=False, fLOG=fLOG, tell_if_no_output=600)
+                    c, wait=True, log_error=False, communicate=False, fLOG=fLOG,
+                    tell_if_no_output=600, prefix_log="[latex] ")
             except (subprocess.CalledProcessError, RunCmdException):
                 fLOG("~~~~ LATEX ERROR: check the logs")
                 err = ""

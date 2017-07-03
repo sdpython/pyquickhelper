@@ -49,11 +49,12 @@ class TestSphinxDocFull (unittest.TestCase):
                 "travis, appveyor, unable to test TestSphinxDocFull.test_full_documentation")
             return
 
-        temp = get_temp_folder(__file__, "temp_full_doc_template")
+        temp = get_temp_folder(
+            __file__, "temp_full_doc_template", clean=__name__ != "__main__")
         url = "https://github.com/sdpython/python3_module_template/archive/master.zip"
         fLOG("download", url)
         download(url, temp)
-        assert not os.path.exists(os.path.join(temp, "src"))
+        self.assertTrue(not os.path.exists(os.path.join(temp, "src")))
         root = os.path.join(temp, "python3_module_template-master")
 
         fLOG("generate documentation", root)
@@ -94,12 +95,18 @@ class TestSphinxDocFull (unittest.TestCase):
             if "conf" in sys.modules:
                 del sys.modules["conf"]
 
-            fLOG("****", list(roles._roles.keys()))
+            fLOG("[test_full_documentation] **********************************")
+            fLOG("[test_full_documentation] begin", list(roles._roles.keys()))
+            fLOG("[test_full_documentation] **********************************")
 
             generate_help_sphinx(var, module_name=var, root=root,
                                  layout=["pdf", "html"],
                                  extra_ext=["tohelp"],
                                  from_repo=False, direct_call=i % 2 == 0)
+
+            fLOG("[test_full_documentation] **********************************")
+            fLOG("[test_full_documentation] END")
+            fLOG("[test_full_documentation] **********************************")
 
             # we clean
             if "pyquickhelper" in sys.modules:
