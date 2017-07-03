@@ -69,7 +69,7 @@ class TestBiggerExtension(unittest.TestCase):
         if sys.version_info[0] >= 3:
             content = content.replace('u"', '"')
 
-        html = rst2html(content, fLOG=fLOG,
+        html = rst2html(content,  # fLOG=fLOG,
                         writer="custom", keep_warnings=True,
                         directives=None)
 
@@ -123,7 +123,7 @@ class TestBiggerExtension(unittest.TestCase):
         if sys.version_info[0] >= 3:
             content = content.replace('u"', '"')
 
-        html = rst2html(content, fLOG=fLOG,
+        html = rst2html(content,  # fLOG=fLOG,
                         writer="custom", keep_warnings=True,
                         directives=None)
 

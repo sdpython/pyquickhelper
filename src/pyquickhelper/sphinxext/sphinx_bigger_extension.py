@@ -9,8 +9,19 @@
 import sys
 import sphinx
 from docutils import nodes
-from sphinx.writers.html import HTMLTranslator
+from sphinx.util.logging import getLogger
 
+try:
+    from sphinx.util.docutils import is_html5_writer_available
+except ImportError:
+    # Available only after Sphinx >= 1.6.1.
+    def is_html5_writer_available():
+        return False
+
+if is_html5_writer_available():
+    from sphinx.writers.html5 import HTML5Translator as HTMLTranslator
+else:
+    from sphinx.writers.html import HTMLTranslator
 
 if sys.version_info[0] == 2:
     import cgi as cgiesc
@@ -79,7 +90,11 @@ def depart_bigger_node(self, node):
     It does only html for the time being.
     """
     if not isinstance(self, HTMLTranslator):
-        self.body.append("%bigger: output only available for HTML\n")
+        logger = getLogger("bigger")
+        logger.warning("[depart_bigger_node] output only available for HTML not for '{0}' != '{1}'\n".format(
+            type(self), HTMLTranslator))
+        self.body.append("%bigger: output only available for HTML not for '{0}' != '{1}'\n".format(
+            type(self), HTMLTranslator))
         return
 
     self.body.append(

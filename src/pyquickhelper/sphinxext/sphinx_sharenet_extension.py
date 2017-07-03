@@ -9,6 +9,19 @@ import sphinx
 from docutils import nodes
 from docutils.parsers.rst import Directive, directives
 from sphinx.writers.html import HTMLTranslator
+from sphinx.util.logging import getLogger
+
+try:
+    from sphinx.util.docutils import is_html5_writer_available
+except ImportError:
+    # Available only after Sphinx >= 1.6.1.
+    def is_html5_writer_available():
+        return False
+
+if is_html5_writer_available():
+    from sphinx.writers.html5 import HTML5Translator as HTMLTranslator
+else:
+    from sphinx.writers.html import HTMLTranslator
 
 
 class sharenet_node(nodes.Structural, nodes.Element):
@@ -167,7 +180,11 @@ def depart_sharenet_node(self, node):
     It does only html for the time being.
     """
     if not isinstance(self, HTMLTranslator):
-        self.body.append("%sharenet: output only available for HTML\n")
+        logger = getLogger("sharenet")
+        logger.warning(
+            "[depart_sharenet_node] output only available for HTML not for '{0}'\n".format(type(self)))
+        self.body.append(
+            "%sharenet: output only available for HTML not for '{0}'\n".format(type(self)))
         return
 
     if node.hasattr("networks"):
