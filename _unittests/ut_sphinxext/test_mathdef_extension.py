@@ -145,6 +145,8 @@ class TestMathDefExtension(unittest.TestCase):
         if t1 not in html:
             raise Exception(html)
 
+        fLOG(html)
+
     def test_mathdeflist_contents(self):
         fLOG(
             __file__,

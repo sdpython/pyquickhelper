@@ -164,6 +164,14 @@ class MockSphinxApp:
         else:
             self.app.add_node(node, **kwds)
 
+    def finalize(self, doctree):
+        """
+        Finalize the documentation after it was parsed.
+
+        @param      doctree     doctree (or pub.document), available after publication
+        """
+        self.app.finalize(doctree)
+
     def setup_extension(self, extname):
         """
         See class `Sphinx <https://github.com/sphinx-doc/sphinx/blob/master/sphinx/application.py>`_.

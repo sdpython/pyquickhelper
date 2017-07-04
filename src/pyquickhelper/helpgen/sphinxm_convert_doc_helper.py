@@ -298,11 +298,11 @@ def rst2html(s, fLOG=noLOG, writer="sphinx", keep_warnings=False,
     if sphinx__display_version__ >= "1.6":
         env = mockapp.env
         if env is None:
-            raise ValueError("No environment was built")
+            raise ValueError("No environment was built.")
     else:
         env = BuildEnvironment(None, None, config=config)
     env.temp_data["docname"] = "string"
-    mockapp.builder.env.temp_data["docname"] = "string"
+    mockapp.builder.env.temp_data["docname"] = "<string>"
     settings_overrides["env"] = env
 
     lang = languages.get_language(language)
@@ -325,7 +325,7 @@ def rst2html(s, fLOG=noLOG, writer="sphinx", keep_warnings=False,
                                                 settings_spec=None, config_section=None, enable_exit_status=False)
 
     doctree = pub.document
-    mockapp.emit('doctree-read', doctree)
+    mockapp.finalize(doctree)
     parts = pub.writer.parts
 
     warnval = settings_overrides["warning_stream"].getvalue()

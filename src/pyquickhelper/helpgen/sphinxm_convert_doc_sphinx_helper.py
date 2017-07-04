@@ -12,6 +12,16 @@ from sphinx.locale import _
 from docutils.parsers.rst import directives, roles
 from docutils.languages import en as docutils_en
 from sphinx.writers.html import HTMLWriter
+from sphinx.application import Sphinx
+from sphinx.errors import ExtensionError
+from sphinx.environment import BuildEnvironment
+from docutils import nodes
+from docutils.utils import Reporter
+from sphinx.util.nodes import inline_all_toctrees
+from sphinx.util.console import bold, darkgreen
+from sphinx.util.docutils import WarningStream
+from sphinx.util import status_iterator, logging
+from sphinx.transforms import SphinxTransformer
 from ..sphinxext.sphinx_bigger_extension import visit_bigger_node as ext_visit_bigger_node, depart_bigger_node as ext_depart_bigger_node
 from ..sphinxext.sphinx_blocref_extension import visit_blocref_node as ext_visit_blocref_node, depart_blocref_node as ext_depart_blocref_node
 from ..sphinxext.sphinx_blog_extension import visit_blogpost_node as ext_visit_blogpost_node, depart_blogpost_node as ext_depart_blogpost_node
@@ -23,15 +33,11 @@ from ..sphinxext.sphinx_nbref_extension import visit_nbref_node as ext_visit_nbr
 from ..sphinxext.sphinx_runpython_extension import visit_runpython_node as ext_visit_runpython_node, depart_runpython_node as ext_depart_runpython_node
 from ..sphinxext.sphinx_sharenet_extension import visit_sharenet_node as ext_visit_sharenet_node, depart_sharenet_node as ext_depart_sharenet_node
 from ..sphinxext.sphinx_todoext_extension import visit_todoext_node as ext_visit_todoext_node, depart_todoext_node as ext_depart_todoext_node
-from sphinx.application import Sphinx
-from sphinx.errors import ExtensionError
-from sphinx.environment import BuildEnvironment
-from docutils import nodes
 
 
 with warnings.catch_warnings():
     warnings.simplefilter("ignore")
-    from sphinx.builders.html import SingleFileHTMLBuilder, SerializingHTMLBuilder
+    from sphinx.builders.html import SingleFileHTMLBuilder
 
 try:
     from sphinx.util.docutils import is_html5_writer_available
@@ -276,7 +282,7 @@ class HTMLWriterWithCustomDirectives(HTMLWriter):
         constructor
         """
         self.app = _CustomSphinx(srcdir=None, confdir=None, outdir=None, doctreedir=None,
-                                 buildername='html')
+                                 buildername='memoryhtml')
         builder = self.app.builder
         builder.fignumbers = {}
         HTMLWriter.__init__(self, builder)
@@ -336,12 +342,141 @@ class HTMLWriterWithCustomDirectives(HTMLWriter):
         self.clean_meta = ''.join(visitor.meta[2:])
 
 
+class MemoryHTMLBuilder(SingleFileHTMLBuilder):
+    """
+    Builds HTML output in memory.
+    The API is defined by the page
+    `builderapi <http://www.sphinx-doc.org/en/stable/extdev/builderapi.html?highlight=builder>`_.
+    """
+    name = 'memoryhtml'
+    format = 'html'
+    out_suffix = None  # ".memory.html"
+    supported_image_types = ['application/pdf', 'image/png', 'image/jpeg']
+    default_translator_class = HTMLTranslatorWithCustomDirectives
+    translator_class = HTMLTranslatorWithCustomDirectives
+    _writer_class = HTMLWriterWithCustomDirectives
+    supported_remote_images = True
+    supported_data_uri_images = True
+    html_scaled_image_link = True
+
+    def __init__(self, app):
+        """
+        Construct the builder.
+        Most of the parameter are static members of the class and cannot
+        be overwritten (yet).
+
+        :param app: `Sphinx application <http://www.sphinx-doc.org/en/stable/_modules/sphinx/application.html>`_
+        """
+        SingleFileHTMLBuilder.__init__(self, app)
+
+    def create_translator(self, *args):
+        """
+        Return an instance of translator.
+        This method returns an instance of ``default_translator_class`` by default.
+        Users can replace the translator class with ``app.set_translator()`` API.
+        """
+        translator_class = MemoryHTMLBuilder.translator_class
+        return translator_class(*args)
+
+    def _write_serial(self, docnames):
+        with logging.pending_warnings():
+            for docname in status_iterator(docnames, 'writing output... ', "darkgreen",
+                                           len(docnames), self.app.verbosity):
+                doctree = self.env.get_and_resolve_doctree(docname, self)
+                self.write_doc_serialized(docname, doctree)
+                self.write_doc(docname, doctree)
+
+    def _write_parallel(self, docnames, nproc):
+        """
+        Not supported.
+        """
+        raise NotImplementedError(
+            "Use parallel=0 when creating the sphinx application.")
+
+    def assemble_doctree(self):
+        # type: () -> nodes.Node
+        master = self.config.master_doc
+        if hasattr(self, "doctree_"):
+            tree = self.doctree_
+        else:
+            raise AttributeError(
+                "Attribute 'doctree_' is not present. Call method finalize().")
+        tree = inline_all_toctrees(
+            self, set(), master, tree, darkgreen, [master])
+        tree['docname'] = master
+        self.env.resolve_references(tree, master, self)
+        self.fix_refuris(tree)
+        return tree
+
+    def fix_refuris(self, tree):
+        # type: (nodes.Node) -> None
+        # fix refuris with double anchor
+        fname = "__" + self.config.master_doc + "__"
+        for refnode in tree.traverse(nodes.reference):
+            if 'refuri' not in refnode:
+                continue
+            refuri = refnode['refuri']
+            hashindex = refuri.find('#')
+            if hashindex < 0:
+                continue
+            hashindex = refuri.find('#', hashindex + 1)
+            if hashindex >= 0:
+                refnode['refuri'] = fname + refuri[hashindex:]
+
+    def get_target_uri(self, docname, typ=None):
+        # type: (unicode, unicode) -> unicode
+        if docname in self.env.all_docs:
+            # all references are on the same page...
+            return self.config.master_doc + '#document-' + docname
+        else:
+            raise KeyError(
+                "docname='{0}' should be in self.env.all_docs".format(docname))
+
+
+class _CustomBuildEnvironment(BuildEnvironment):
+    """
+    Overrides some functionalities of
+    `BuildEnvironment <http://www.sphinx-doc.org/en/stable/extdev/envapi.html>`_.
+    """
+
+    def __init__(self, app):
+        """
+        """
+        BuildEnvironment.__init__(self, app)
+        self.doctree_ = {}
+
+    def get_doctree(self, docname):
+        # type: (unicode) -> nodes.Node
+        """Read the doctree for a file from the pickle and return it."""
+        if hasattr(self, "doctree_") and docname in self.doctree_:
+            doctree = self.doctree_[docname]
+            doctree.settings.env = self
+            doctree.reporter = Reporter(self.doc2path(
+                docname), 2, 5, stream=WarningStream())
+            return doctree
+        else:
+            raise KeyError("Unable to find doctree for '{0}'.".format(docname))
+            # return BuildEnvironment.get_doctree(self, docname)
+
+    def apply_post_transforms(self, doctree, docname):
+        # type: (nodes.Node, unicode) -> None
+        """Apply all post-transforms."""
+        # set env.docname during applying post-transforms
+        self.temp_data['docname'] = docname
+
+        transformer = SphinxTransformer(doctree)
+        transformer.set_environment(self)
+        transformer.add_transforms(self.app.post_transforms)
+        transformer.apply_transforms()
+        self.temp_data.clear()
+
+
 class _CustomSphinx(Sphinx):
     """
     custom sphinx application to avoid using disk
     """
 
-    def __init__(self, srcdir, confdir, outdir, doctreedir, buildername,
+    def __init__(self, srcdir, confdir, outdir, doctreedir, buildername="memoryhtml",
                  confoverrides=None, status=None, warning=None,
                  freshenv=False, warningiserror=False, tags=None, verbosity=0,
                  parallel=0):
@@ -387,7 +522,7 @@ class _CustomSphinx(Sphinx):
             'gettext': ('gettext', 'MessageCatalogBuilder'),
             'pseudoxml': ('xml', 'PseudoXMLBuilder')}
         '''
-        from sphinx.application import bold, Tags, builtin_extensions
+        from sphinx.application import Tags, builtin_extensions
         from sphinx.application import Config, CONFIG_FILENAME, ConfigError, VersionRequirementError
         from sphinx import __display_version__
 
@@ -474,10 +609,7 @@ class _CustomSphinx(Sphinx):
         self.sphinx__display_version__ = __display_version__
 
         # create the environment
-        if __display_version__ >= "1.6":
-            self.env = BuildEnvironment(self)
-        else:
-            self.env = BuildEnvironment(None, None, config=None)
+        self.env = _CustomBuildEnvironment(self)
 
         # Changes for Sphinx >= 1.6
         if __display_version__ >= "1.6":
@@ -500,9 +632,7 @@ class _CustomSphinx(Sphinx):
             self._setting_up_extension = ['?']
             self.domains = {}
             self.buildername = buildername
-            self.builderclasses = dict(SingleFileHTMLBuilder=SingleFileHTMLBuilder,
-                                       SerializingHTMLBuilder=SerializingHTMLBuilder)
-            self.builder = None
+            self.builderclasses = dict(memoryhtml=MemoryHTMLBuilder)
             self.enumerable_nodes = {}
 
         # set up translation infrastructure
@@ -542,8 +672,7 @@ class _CustomSphinx(Sphinx):
             self.setup_extension(extension)
 
         # add default HTML builders
-        self.add_builder(SingleFileHTMLBuilder)
-        self.add_builder(SerializingHTMLBuilder)
+        self.add_builder(MemoryHTMLBuilder)
 
         # preload builder module (before init config values)
         if __display_version__ >= "1.6":
@@ -587,7 +716,15 @@ class _CustomSphinx(Sphinx):
         # set up source_parsers
         self._init_source_parsers()
         # set up the build environment
-        self._init_env(freshenv)
+        if freshenv:
+            self._init_env(freshenv)
+        else:
+            for domain in self.registry.create_domains(self.env):
+                self.env.domains[domain.name] = domain
+
+        if not isinstance(self.env, _CustomBuildEnvironment):
+            raise TypeError(
+                "self.env is not _CustomBuildEnvironment: '{0}'".format(type(self.env)))
 
         # set up the builder
         if __display_version__ >= "1.6":
@@ -601,6 +738,24 @@ class _CustomSphinx(Sphinx):
         # addition
         self.domains = {}
         self._events = {}
+
+    def finalize(self, doctree):
+        """
+        Finalize the documentation after it was parsed.
+
+        @param      doctree     doctree (or pub.document), available after publication
+        """
+        if not isinstance(self.env, _CustomBuildEnvironment):
+            raise TypeError(
+                "self.env is not _CustomBuildEnvironment: '{0}'".format(type(self.env)))
+        if not isinstance(self.builder.env, _CustomBuildEnvironment):
+            raise TypeError("self.builder.env is not _CustomBuildEnvironment: '{0}'".format(
+                type(self.builder.env)))
+        self.doctree_ = doctree
+        self.builder.doctree_ = doctree
+        self.env.doctree_[self.config.master_doc] = doctree
+        self.env.all_docs = {self.config.master_doc: self.config.master_doc}
+        self.builder.write(None, None, 'all')
 
     def debug(self, message, *args, **kwargs):
         pass
