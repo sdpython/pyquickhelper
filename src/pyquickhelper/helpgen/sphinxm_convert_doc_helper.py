@@ -26,7 +26,6 @@ from docutils import core, languages
 from docutils.io import StringInput, StringOutput
 from sphinx.environment import BuildEnvironment, default_settings
 from sphinx import __display_version__ as sphinx__display_version__
-from sphinx.ext.mathjax import html_visit_displaymath
 
 
 try:
@@ -417,14 +416,25 @@ def correct_indentation(text):
         return text
 
 
-def docstring2html(function_or_string, format="html", fLOG=noLOG, writer="sphinx"):
+def docstring2html(function_or_string, format="html", fLOG=noLOG, writer="sphinx",
+                   keep_warnings=False, directives=None, language="en", warnings_log=False,
+                   layout='docutils', **options):
     """
     converts a docstring into a HTML format
 
     @param      function_or_string      function, class, method or doctring
-    @param      format                  output format
+    @param      format                  output format (``'html'`` or '``rawhtml``')
     @param      fLOG                    logging function
-    @param      writer                  *None* or an instance such as ``HTMLWriterWithCustomDirectives()``
+    @param      writer                  *None* or an instance such as ``HTMLWriterWithCustomDirectives()`` or
+                                        ``custom`` or ``sphinx``
+    @param      keep_warnings           keep_warnings in the final HTML
+    @param      directives              new directives to add (see below)
+    @param      language                language
+    @param      warnings_log            send warnings to log (True) or to the warning stream(False)
+    @param      layout                  ``docutils``, ``sphinx``, ``sphinx_body``, see below.
+    @param      options                 Sphinx options see `Render math as images <http://www.sphinx-doc.org/en/stable/ext/math.html#module-sphinx.ext.imgmath>`_,
+                                        a subset of options is used, see @see fn default_sphinx_options.
+                                        By default, the theme (option *html_theme*) will ``'basic'``.
     @return                             (str) HTML format or (IPython.core.display.HTML)
 
     .. exref::
@@ -433,11 +443,11 @@ def docstring2html(function_or_string, format="html", fLOG=noLOG, writer="sphinx
         The following code can display the dosstring in HTML format
         to display it in a notebook.
 
-        @code
-        from pyquickhelper.helpgen import docstring2html
-        import sklearn.linear_model
-        docstring2html(sklearn.linear_model.LogisticRegression)
-        @endcode
+        ::
+
+            from pyquickhelper.helpgen import docstring2html
+            import sklearn.linear_model
+            docstring2html(sklearn.linear_model.LogisticRegression)
 
     The output format is defined by:
 
@@ -453,6 +463,9 @@ def docstring2html(function_or_string, format="html", fLOG=noLOG, writer="sphinx
 
     .. versionchanged:: 1.4
         Does not crash anymore when the documentation is None.
+
+    .. versionchanged:: 1.5
+        Changed the signature to be like @see fn rst2html.
     """
     if not isinstance(function_or_string, str):
         doc = function_or_string.__doc__
@@ -476,7 +489,10 @@ def docstring2html(function_or_string, format="html", fLOG=noLOG, writer="sphinx
         return ded
 
     try:
-        html = rst2html(ded, fLOG=fLOG, writer=writer)
+        html = rst2html(ded, fLOG=fLOG, writer=writer,
+                        keep_warnings=keep_warnings, directives=directives,
+                        language=language, warnings_log=warnings_log,
+                        layout=layout, **options)
     except Exception:
         # we check the indentation
         ded = correct_indentation(ded)

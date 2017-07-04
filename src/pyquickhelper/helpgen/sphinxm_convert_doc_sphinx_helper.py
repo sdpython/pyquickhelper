@@ -22,7 +22,8 @@ from sphinx.util.console import bold, darkgreen
 from sphinx.util.docutils import WarningStream
 from sphinx.util import status_iterator, logging
 from sphinx.transforms import SphinxTransformer
-from sphinx.util.osutil import SEP, os_path, relative_uri
+from sphinx.util.osutil import relative_uri
+from sphinx.util.logging import getLogger
 from ..sphinxext.sphinx_bigger_extension import visit_bigger_node as ext_visit_bigger_node, depart_bigger_node as ext_depart_bigger_node
 from ..sphinxext.sphinx_blocref_extension import visit_blocref_node as ext_visit_blocref_node, depart_blocref_node as ext_depart_blocref_node
 from ..sphinxext.sphinx_blog_extension import visit_blogpost_node as ext_visit_blogpost_node, depart_blogpost_node as ext_depart_blogpost_node
@@ -520,7 +521,8 @@ class MemoryHTMLBuilder(SingleFileHTMLBuilder):
         try:
             output = self.templates.render(templatename, ctx)
         except UnicodeError:
-            logger.warning("a Unicode error occurred when rendering the page %s. "
+            logger = getLogger("MockSphinxApp")
+            logger.warning("[MockSphinxApp] A unicode error occurred when rendering the page %s. "
                            "Please make sure all config values that contain "
                            "non-ASCII content are Unicode strings.", pagename)
             return
