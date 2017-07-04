@@ -72,7 +72,7 @@ class TestMathDefExtension(unittest.TestCase):
         tives = [("mathdef", MathDef, mathdef_node,
                   visit_mathdef_node, depart_mathdef_node)]
 
-        html = rst2html(content, fLOG=fLOG,
+        html = rst2html(content,  # fLOG=fLOG,
                         writer="custom", keep_warnings=True,
                         directives=tives, extlinks={'issue': ('http://%s', '_issue_')})
 
@@ -125,7 +125,7 @@ class TestMathDefExtension(unittest.TestCase):
         tives = [("mathdef", MathDef, mathdef_node,
                   visit_mathdef_node, depart_mathdef_node)]
 
-        html = rst2html(content, fLOG=fLOG,
+        html = rst2html(content,  # fLOG=fLOG,
                         writer="custom", keep_warnings=True,
                         directives=tives)
 
@@ -179,7 +179,7 @@ class TestMathDefExtension(unittest.TestCase):
         tives = [("mathdef", MathDef, mathdef_node,
                   visit_mathdef_node, depart_mathdef_node)]
 
-        html = rst2html(content, fLOG=fLOG,
+        html = rst2html(content,  # fLOG=fLOG,
                         writer="custom", keep_warnings=True,
                         directives=tives)
 

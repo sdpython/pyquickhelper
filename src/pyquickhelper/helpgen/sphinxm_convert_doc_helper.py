@@ -15,7 +15,7 @@ from ..texthelper.texts_language import TITLES
 from ..loghelper.flog import noLOG
 from . helpgen_exceptions import HelpGenConvertError
 from .conf_path_tools import find_graphviz_dot, find_latex_path
-from .mock_app_sphinx import MockSphinxApp
+from .sphinxm_mock_app import MockSphinxApp
 
 import sys
 import re
@@ -48,7 +48,7 @@ def default_sphinx_options(fLOG=noLOG, **options):
 
     .. runpython::
 
-        from pyquickhelper.helpgen.convert_doc_helper import default_sphinx_options
+        from pyquickhelper.helpgen.sphinxm_convert_doc_helper import default_sphinx_options
         options = default_sphinx_options()
         for k, v in sorted(options.items()):
             print("{0} = {1}".format(k, v))
@@ -317,9 +317,6 @@ def rst2html(s, fLOG=noLOG, writer="sphinx", keep_warnings=False,
         if hasattr(writer.builder.config, k) and writer.builder.config[k] != v:
             writer.builder.config[k] = v
 
-    # something is screwing with sphinx or docutils, it is due to
-    # direct call to nbconvert or sphinx
-    # raise an exception for unknown role pending_xref
     output, pub = core.publish_programmatically(source=s, source_path=None, destination_path=None, writer=writer,
                                                 writer_name=writer_name, settings_overrides=settings_overrides,
                                                 source_class=StringInput, destination_class=StringOutput,

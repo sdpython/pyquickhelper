@@ -3,12 +3,12 @@
 @brief Subpart related to the documentation generation.
 """
 from .conf_path_tools import find_graphviz_dot
-from .convert_doc_helper import rst2html, docstring2html
+from .sphinxm_convert_doc_helper import rst2html, docstring2html
 from .default_conf import set_sphinx_variables, custom_setup
 from .helpgen_exceptions import HelpGenException, ImportErrorHelpGen, HelpGenConvertError
 from .pandoc_helper import latex2rst
 from .process_notebook_api import nb2slides, nb2html, nb2present
-from .sphinx_custom_app import CustomSphinxApp
+from .sphinxm_custom_app import CustomSphinxApp
 from .sphinx_helper import sphinx_add_scripts
 from .sphinx_main import generate_help_sphinx, process_notebooks
 from .utils_sphinx_config import NbImage

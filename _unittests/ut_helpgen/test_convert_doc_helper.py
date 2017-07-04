@@ -25,7 +25,7 @@ except ImportError:
     import src
 
 from src.pyquickhelper.loghelper.flog import fLOG
-from src.pyquickhelper.helpgen.convert_doc_helper import rst2html, docstring2html
+from src.pyquickhelper.helpgen.sphinxm_convert_doc_helper import rst2html, docstring2html
 from src.pyquickhelper.pandashelper import df2rst
 
 from IPython.core.display import HTML

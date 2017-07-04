@@ -16,7 +16,7 @@ from ..sphinxext.sphinx_nbref_extension import setup as setup_nbref
 from ..sphinxext.sphinx_runpython_extension import setup as setup_runpython
 from ..sphinxext.sphinx_sharenet_extension import setup as setup_sharenet
 from ..sphinxext.sphinx_todoext_extension import setup as setup_todoext
-from .convert_doc_sphinx_helper import HTMLWriterWithCustomDirectives
+from .sphinxm_convert_doc_sphinx_helper import HTMLWriterWithCustomDirectives
 from docutils import nodes
 from docutils.parsers.rst.directives import directive as rst_directive
 from docutils.parsers.rst import directives as doc_directives, roles as doc_roles
@@ -170,6 +170,12 @@ class MockSphinxApp:
         """
         self.app.registry.load_extension(self, extname)
 
+    def emit(self, event, *args):
+        """
+        See class `Sphinx <https://github.com/sphinx-doc/sphinx/blob/master/sphinx/application.py#L107>`_.
+        """
+        return self.app.emit(event, *args)
+
     def emit_firstresult(self, event, *args):
         """
         See class `Sphinx <https://github.com/sphinx-doc/sphinx/blob/master/sphinx/application.py>`_.
@@ -214,12 +220,6 @@ class MockSphinxApp:
             # We do not raise an exception if already present.
             return
         self.app._events[name] = ''
-
-    def emit(self, event, *args):
-        """
-        See class `Sphinx <https://github.com/sphinx-doc/sphinx/blob/master/sphinx/application.py#L107>`_.
-        """
-        return self.app.emit(event, *args)
 
     @staticmethod
     def create(writer="sphinx", directives=None, fLOG=None):
