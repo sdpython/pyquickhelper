@@ -92,7 +92,7 @@ class BlogPost:
         config.sharepost = None
 
         if sphinx__display_version__ >= "1.6":
-            from ..helpgen.mock_app_sphinx import MockSphinxApp
+            from ..helpgen.sphinxm_mock_app import MockSphinxApp
             app = MockSphinxApp.create()
             env = BuildEnvironment(app[0])
         else:
