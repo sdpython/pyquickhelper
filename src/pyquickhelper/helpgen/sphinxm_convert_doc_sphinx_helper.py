@@ -22,6 +22,7 @@ from sphinx.util.console import bold, darkgreen
 from sphinx.util.docutils import WarningStream
 from sphinx.util import status_iterator, logging
 from sphinx.transforms import SphinxTransformer
+from sphinx.util.osutil import SEP, os_path, relative_uri
 from ..sphinxext.sphinx_bigger_extension import visit_bigger_node as ext_visit_bigger_node, depart_bigger_node as ext_depart_bigger_node
 from ..sphinxext.sphinx_blocref_extension import visit_blocref_node as ext_visit_blocref_node, depart_blocref_node as ext_depart_blocref_node
 from ..sphinxext.sphinx_blog_extension import visit_blogpost_node as ext_visit_blogpost_node, depart_blogpost_node as ext_depart_blogpost_node
@@ -277,12 +278,20 @@ class HTMLWriterWithCustomDirectives(HTMLWriter):
     when directives *RunPython* or *BlogPost* are met.
     """
 
-    def __init__(self):
+    def __init__(self, app=None):
         """
         constructor
+
+        @param      app     Sphinx application
+
+        ..versionchanged:: 1.5
+            Parameter *app* was added.
         """
-        self.app = _CustomSphinx(srcdir=None, confdir=None, outdir=None, doctreedir=None,
-                                 buildername='memoryhtml')
+        if app is None:
+            self.app = _CustomSphinx(srcdir=None, confdir=None, outdir=None, doctreedir=None,
+                                     buildername='memoryhtml')
+        else:
+            self.app = app
         builder = self.app.builder
         builder.fignumbers = {}
         HTMLWriter.__init__(self, builder)
@@ -368,6 +377,16 @@ class MemoryHTMLBuilder(SingleFileHTMLBuilder):
         :param app: `Sphinx application <http://www.sphinx-doc.org/en/stable/_modules/sphinx/application.html>`_
         """
         SingleFileHTMLBuilder.__init__(self, app)
+        self.built_pages = {}
+
+    def iter_pages(self):
+        """
+        Enumerate created pages.
+
+        @return     iterator on tuple(name, content)
+        """
+        for k, v in self.built_pages.items():
+            yield k, v.getvalue()
 
     def create_translator(self, *args):
         """
@@ -379,6 +398,9 @@ class MemoryHTMLBuilder(SingleFileHTMLBuilder):
         return translator_class(*args)
 
     def _write_serial(self, docnames):
+        """
+        Overwrite *_write_serial* to avoid writing on disk.
+        """
         with logging.pending_warnings():
             for docname in status_iterator(docnames, 'writing output... ', "darkgreen",
                                            len(docnames), self.app.verbosity):
@@ -394,7 +416,9 @@ class MemoryHTMLBuilder(SingleFileHTMLBuilder):
             "Use parallel=0 when creating the sphinx application.")
 
     def assemble_doctree(self):
-        # type: () -> nodes.Node
+        """
+        Overwrite *assemble_doctree* to control the doctree.
+        """
         master = self.config.master_doc
         if hasattr(self, "doctree_"):
             tree = self.doctree_
@@ -409,8 +433,9 @@ class MemoryHTMLBuilder(SingleFileHTMLBuilder):
         return tree
 
     def fix_refuris(self, tree):
-        # type: (nodes.Node) -> None
-        # fix refuris with double anchor
+        """
+        Overwrite *fix_refuris* to control the reference names.
+        """
         fname = "__" + self.config.master_doc + "__"
         for refnode in tree.traverse(nodes.reference):
             if 'refuri' not in refnode:
@@ -424,13 +449,89 @@ class MemoryHTMLBuilder(SingleFileHTMLBuilder):
                 refnode['refuri'] = fname + refuri[hashindex:]
 
     def get_target_uri(self, docname, typ=None):
+        """
+        Overwrite *get_target_uri* to control the page name.
+        """
         # type: (unicode, unicode) -> unicode
         if docname in self.env.all_docs:
             # all references are on the same page...
             return self.config.master_doc + '#document-' + docname
+        elif docname in ("genindex", "search"):
+            return self.config.master_doc + '-#' + docname
         else:
             raise KeyError(
                 "docname='{0}' should be in self.env.all_docs".format(docname))
+
+    def get_outfilename(self, pagename):
+        """
+        Overwrite *get_target_uri* to control file names.
+        """
+        return "{0}/{1}.m.html".format(self.outdir, pagename).replace("\\", "/")
+
+    def handle_page(self, pagename, addctx, templatename='page.html',
+                    outfilename=None, event_arg=None):
+        """
+        Override *handle_page* to write into stream instead of files.
+        """
+        ctx = self.globalcontext.copy()
+        ctx['warn'] = self.warn
+        # current_page_name is backwards compatibility
+        ctx['pagename'] = ctx['current_page_name'] = pagename
+        ctx['encoding'] = self.config.html_output_encoding
+        default_baseuri = self.get_target_uri(pagename)
+        # in the singlehtml builder, default_baseuri still contains an #anchor
+        # part, which relative_uri doesn't really like...
+        default_baseuri = default_baseuri.rsplit('#', 1)[0]
+
+        def pathto(otheruri, resource=False, baseuri=default_baseuri):
+            # type: (unicode, bool, unicode) -> unicode
+            if resource and '://' in otheruri:
+                # allow non-local resources given by scheme
+                return otheruri
+            elif not resource:
+                otheruri = self.get_target_uri(otheruri)
+            uri = relative_uri(baseuri, otheruri) or '#'
+            if uri == '#' and not self.allow_sharp_as_current_path:
+                uri = baseuri
+            return uri
+        ctx['pathto'] = pathto
+
+        def hasdoc(name):
+            # type: (unicode) -> bool
+            if name in self.env.all_docs:
+                return True
+            elif name == 'search' and self.search:
+                return True
+            elif name == 'genindex' and self.get_builder_config('use_index', 'html'):
+                return True
+            return False
+        ctx['hasdoc'] = hasdoc
+
+        ctx['toctree'] = lambda **kw: self._get_local_toctree(pagename, **kw)
+        self.add_sidebars(pagename, ctx)
+        ctx.update(addctx)
+
+        self.update_page_context(pagename, templatename, ctx, event_arg)
+        newtmpl = self.app.emit_firstresult('html-page-context', pagename,
+                                            templatename, ctx, event_arg)
+        if newtmpl:
+            templatename = newtmpl
+
+        try:
+            output = self.templates.render(templatename, ctx)
+        except UnicodeError:
+            logger.warning("a Unicode error occurred when rendering the page %s. "
+                           "Please make sure all config values that contain "
+                           "non-ASCII content are Unicode strings.", pagename)
+            return
+
+        if not outfilename:
+            outfilename = self.get_outfilename(pagename)
+        # outfilename's path is in general different from self.outdir
+        # ensuredir(path.dirname(outfilename))
+        if outfilename not in self.built_pages:
+            self.built_pages[outfilename] = StringIO()
+        self.built_pages[outfilename].write(output)
 
 
 class _CustomBuildEnvironment(BuildEnvironment):
@@ -690,12 +791,6 @@ class _CustomSphinx(Sphinx):
                       "needed for conf.py to behave as a Sphinx extension.")
                 )
 
-        # now that we know all config values, collect them from conf.py
-        if __display_version__ >= "1.6":
-            self.config.init_values()
-        else:
-            self.config.init_values(self.warn)
-
         verify_required_extensions(self, self.config.needs_extensions)
 
         # check primary_domain if requested
@@ -739,6 +834,12 @@ class _CustomSphinx(Sphinx):
         self.domains = {}
         self._events = {}
 
+        # now that we know all config values, collect them from conf.py
+        # if __display_version__ >= "1.6":
+        #     self.config.init_values()
+        # else:
+        #     self.config.init_values(self.warn)
+
     def finalize(self, doctree):
         """
         Finalize the documentation after it was parsed.
@@ -755,6 +856,8 @@ class _CustomSphinx(Sphinx):
         self.builder.doctree_ = doctree
         self.env.doctree_[self.config.master_doc] = doctree
         self.env.all_docs = {self.config.master_doc: self.config.master_doc}
+        self.emit('doctree-read', doctree)
+        self.emit('doctree-resolved', doctree, 'contents')
         self.builder.write(None, None, 'all')
 
     def debug(self, message, *args, **kwargs):

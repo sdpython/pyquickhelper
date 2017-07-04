@@ -16,7 +16,7 @@ from ..sphinxext.sphinx_nbref_extension import setup as setup_nbref
 from ..sphinxext.sphinx_runpython_extension import setup as setup_runpython
 from ..sphinxext.sphinx_sharenet_extension import setup as setup_sharenet
 from ..sphinxext.sphinx_todoext_extension import setup as setup_todoext
-from .sphinxm_convert_doc_sphinx_helper import HTMLWriterWithCustomDirectives
+from .sphinxm_convert_doc_sphinx_helper import HTMLWriterWithCustomDirectives, _CustomSphinx
 from docutils import nodes
 from docutils.parsers.rst.directives import directive as rst_directive
 from docutils.parsers.rst import directives as doc_directives, roles as doc_roles
@@ -48,13 +48,19 @@ class MockSphinxApp:
     In memory Sphinx application.
     """
 
-    def __init__(self, writer, app):
+    def __init__(self, writer, app, confoverrides):
         """
         Constructor
 
-        @param      writer      see static method create
-        @param      app         see static method create
+        @param      writer          see static method create
+        @param      app             see static method create
+        @param      confoverrides   default options
+
+        .. versionchanged:: 1.5
+            Parameter *confoverrides* was added.
         """
+        if confoverrides is None:
+            confoverrides = {}
         self.app = app
         self.env = app.env
         self.new_options = {}
@@ -68,7 +74,7 @@ class MockSphinxApp:
                         "<class 'matplotlib.sphinxext.only_directives.latex_only'>": "only",
                         }
         self.mapping_connect = {}
-        self.config = Config(None, None, overrides={}, tags=None)
+        self.config = Config(None, None, overrides=confoverrides, tags=None)
         self.confdir = "."
         self.doctreedir = "."
         self.srcdir = "."
@@ -230,12 +236,13 @@ class MockSphinxApp:
         self.app._events[name] = ''
 
     @staticmethod
-    def create(writer="sphinx", directives=None, fLOG=None):
+    def create(writer="sphinx", directives=None, confoverrides=None, fLOG=None):
         """
         Create a MockApp
 
         @param      writer          ``'sphinx'`` is the only allowed value
         @param      directives      new directives to add (see below)
+        @param      confoverrides   initial options
         @param      fLOG            logging function
         @return                     mockapp, writer, list of added nodes
 
@@ -249,14 +256,17 @@ class MockSphinxApp:
           @see fn depart_runpython_node as an example
 
         .. versionchanged:: 1.5
-            Parameter *fLOG* was added.
+            Parameters *fLOG*, *confoverrides* were added.
             The class supports more extensions.
         """
         if writer not in ("sphinx", "custom", "HTMLWriterWithCustomDirectives"):
             raise NotImplementedError("writer must be 'sphinx' or 'custom'")
 
-        writer = HTMLWriterWithCustomDirectives()
-        mockapp = MockSphinxApp(writer, writer.app)
+        app = _CustomSphinx(srcdir=None, confdir=None, outdir=None, doctreedir=None,
+                            buildername='memoryhtml', confoverrides=confoverrides)
+        writer = HTMLWriterWithCustomDirectives(app=app)
+        mockapp = MockSphinxApp(
+            writer, writer.app, confoverrides=confoverrides)
 
         from sphinx.ext.graphviz import setup as setup_graphviz
         from sphinx.ext.imgmath import setup as setup_math

@@ -122,7 +122,7 @@ def default_sphinx_options(fLOG=noLOG, **options):
 
 def rst2html(s, fLOG=noLOG, writer="sphinx", keep_warnings=False,
              directives=None, language="en", warnings_log=False,
-             **options):
+             layout='docutils', **options):
     """
     converts a string into HTML format
 
@@ -134,8 +134,10 @@ def rst2html(s, fLOG=noLOG, writer="sphinx", keep_warnings=False,
     @param      directives      new directives to add (see below)
     @param      language        language
     @param      warnings_log    send warnings to log (True) or to the warning stream(False)
+    @param      layout          ``docutils``, ``sphinx``, ``sphinx_body``, see below.
     @param      options         Sphinx options see `Render math as images <http://www.sphinx-doc.org/en/stable/ext/math.html#module-sphinx.ext.imgmath>`_,
-                                a subset of options is used, see @see fn default_sphinx_options
+                                a subset of options is used, see @see fn default_sphinx_options.
+                                By default, the theme (option *html_theme*) will ``'basic'``.
     @return                     HTML format
 
     *directives* is None or a list of 5-uple:
@@ -144,6 +146,15 @@ def rst2html(s, fLOG=noLOG, writer="sphinx", keep_warnings=False,
     * a directive class: see `Sphinx Directive <http://sphinx-doc.org/extdev/tutorial.html>`_, see also @see cl RunPythonDirective as an example
     * a docutils node: see @see cl runpython_node as an example
     * two functions: see @see fn visit_runpython_node, @see fn depart_runpython_node as an example
+
+    The parameter *layout* specify the kind of HTML you need.
+
+    * ``'docutils'``: very simple HTML, style is not included, recursive
+      directives are not processed (recursive means they modify the doctree).
+      The produced HTML only includes the body (no HTML header).
+    * ``'sphinx'``: in memory sphinx, the produced HTML includes the header, it is also recursive
+      as directives can modify the doctree.
+    * ``'sphinx_body'``: same as ``'sphinx'`` but only the body is returned.
 
     .. exref::
         :title: How to test a Sphinx directive?
@@ -196,7 +207,7 @@ def rst2html(s, fLOG=noLOG, writer="sphinx", keep_warnings=False,
 
         Sphinx is not easy to use when it comes to debug latex expressions.
         I did not find an easy way to read the error returned by latex about
-        a missing bracket or an unknown command. I fianlly added a short piece
+        a missing bracket or an unknown command. I finally added a short piece
         of code in ``sphinx.ext.imgmath.py`` just after the call to
         the executable indicated by *imgmath_latex*
 
@@ -244,27 +255,18 @@ def rst2html(s, fLOG=noLOG, writer="sphinx", keep_warnings=False,
         Parse more extensive Sphinx syntax.
 
     .. versionchanged:: 1.5
-        More logging is done.
+        More logging is done, the function is more consistent.
+        Parameter *layout* was added.
     """
     _nbeq = [0, None]
 
-    def custom_html_visit_displaymath(self, node):
-        if not hasattr(node, "number"):
-            node["number"] = None
-        try:
-            return html_visit_displaymath(self, node)
-        except AttributeError as e:
-            if "math_number_all" in str(e) and sys.version_info[:2] <= (2, 7):
-                # Python 2.7 produces the following error:
-                # AttributeError: No such config value: math_number_all
-                # we skip
-                return []
-            else:
-                raise e
+    if 'html_theme' not in options:
+        options['html_theme'] = 'basic'
+    defopt = default_sphinx_options(**options)
 
     if writer in ["custom", "sphinx", "HTMLWriterWithCustomDirectives"]:
         mockapp, writer, title_names = MockSphinxApp.create(
-            "sphinx", directives, fLOG=fLOG)
+            "sphinx", directives, confoverrides=defopt, fLOG=fLOG)
         writer_name = "HTMLWriterWithCustomDirectives"
     else:
         raise NotImplementedError()
@@ -278,16 +280,15 @@ def rst2html(s, fLOG=noLOG, writer="sphinx", keep_warnings=False,
                                for k, v in mockapp.new_options.items()})
 
     # next
-    defopt = default_sphinx_options(**options)
     settings_overrides.update(defopt)
     warning_stringio = defopt["warning_stream"]
     _nbeq[1] = warning_stringio
 
     config = mockapp.config
-    if sphinx__display_version__ >= "1.6":
-        config.init_values()
-    else:
-        config.init_values(fLOG)
+    # if sphinx__display_version__ >= "1.6":
+    #    config.init_values()
+    # else:
+    #    config.init_values(fLOG)
     config.blog_background = False
     config.sharepost = None
 
@@ -341,7 +342,37 @@ def rst2html(s, fLOG=noLOG, writer="sphinx", keep_warnings=False,
     else:
         exp = parts["whole"]
 
-    return exp
+    if layout == "docutils":
+        return exp
+    else:
+        page = None
+        pages = []
+        for k, v in writer.builder.iter_pages():
+            pages.append(k)
+            if k == "./contents.m.html":
+                page = v
+                break
+        if page is None:
+            raise ValueError(
+                "No page 'contents' was produced only '{0}'.".format(", ".join(pages)))
+        if layout == "sphinx":
+            return page
+        elif layout == "sphinx_body":
+            lines = page.split("\n")
+            keep = []
+            begin = False
+            for line in lines:
+                s = line.strip(" \n\r")
+                if s == "</body>":
+                    begin = False
+                if begin:
+                    keep.append(line)
+                if s == "<body>":
+                    begin = True
+            return "\n".join(keep)
+        else:
+            raise ValueError(
+                "unexpected value for layout '{0}'".format(layout))
 
 
 def correct_indentation(text):
