@@ -121,7 +121,7 @@ def default_sphinx_options(fLOG=noLOG, **options):
 
 def rst2html(s, fLOG=noLOG, writer="sphinx", keep_warnings=False,
              directives=None, language="en", warnings_log=False,
-             layout='docutils', **options):
+             layout='docutils', document_name="<string>", **options):
     """
     converts a string into HTML format
 
@@ -134,6 +134,7 @@ def rst2html(s, fLOG=noLOG, writer="sphinx", keep_warnings=False,
     @param      language        language
     @param      warnings_log    send warnings to log (True) or to the warning stream(False)
     @param      layout          ``docutils``, ``sphinx``, ``sphinx_body``, see below.
+    @param      document_name   document name, not really important since the input is a string
     @param      options         Sphinx options see `Render math as images <http://www.sphinx-doc.org/en/stable/ext/math.html#module-sphinx.ext.imgmath>`_,
                                 a subset of options is used, see @see fn default_sphinx_options.
                                 By default, the theme (option *html_theme*) will ``'basic'``.
@@ -255,7 +256,7 @@ def rst2html(s, fLOG=noLOG, writer="sphinx", keep_warnings=False,
 
     .. versionchanged:: 1.5
         More logging is done, the function is more consistent.
-        Parameter *layout* was added.
+        Parameter *layout*, *document_name* were added.
     """
     _nbeq = [0, None]
 
@@ -302,7 +303,7 @@ def rst2html(s, fLOG=noLOG, writer="sphinx", keep_warnings=False,
     else:
         env = BuildEnvironment(None, None, config=config)
     env.temp_data["docname"] = "string"
-    mockapp.builder.env.temp_data["docname"] = "<string>"
+    mockapp.builder.env.temp_data["docname"] = document_name
     settings_overrides["env"] = env
 
     lang = languages.get_language(language)
@@ -418,7 +419,7 @@ def correct_indentation(text):
 
 def docstring2html(function_or_string, format="html", fLOG=noLOG, writer="sphinx",
                    keep_warnings=False, directives=None, language="en", warnings_log=False,
-                   layout='docutils', **options):
+                   layout='docutils', document_name="<string>", **options):
     """
     converts a docstring into a HTML format
 
@@ -432,6 +433,7 @@ def docstring2html(function_or_string, format="html", fLOG=noLOG, writer="sphinx
     @param      language                language
     @param      warnings_log            send warnings to log (True) or to the warning stream(False)
     @param      layout                  ``docutils``, ``sphinx``, ``sphinx_body``, see below.
+    @param      document_name           document_name for this string
     @param      options                 Sphinx options see `Render math as images <http://www.sphinx-doc.org/en/stable/ext/math.html#module-sphinx.ext.imgmath>`_,
                                         a subset of options is used, see @see fn default_sphinx_options.
                                         By default, the theme (option *html_theme*) will ``'basic'``.

@@ -87,9 +87,9 @@ class TestGitHubLinkExtension(unittest.TestCase):
         if sys.version_info[0] >= 3:
             content = content.replace('u"', '"')
 
-        html = rst2html(content, fLOG=fLOG,
+        html = rst2html(content,  # fLOG=fLOG,
                         writer="custom", keep_warnings=True,
-                        directives=None,
+                        directives=None, document_name="string",
                         githublink_options=dict(user="sdpython", project="pyquickhelper", anchor="ANCHOR"))
 
         t1 = "this code shoud not appear"
@@ -173,10 +173,11 @@ class TestGitHubLinkExtension(unittest.TestCase):
         def processor(path, lineno):
             return "[{0}:{1}]".format(path, lineno), "my_sources"
 
-        html = rst2html(content, fLOG=fLOG,
+        html = rst2html(content,  # fLOG=fLOG,
                         writer="custom", keep_warnings=True,
                         directives=None,
-                        githublink_options=dict(processor=processor))
+                        githublink_options=dict(processor=processor),
+                        document_name="string")
 
         t1 = "this code shoud not appear"
         if t1 in html:
