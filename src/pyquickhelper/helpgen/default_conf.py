@@ -12,9 +12,8 @@ import re
 import warnings
 from sphinx import __display_version__ as sphinx__display_version
 from .style_css_template import style_figure_notebook
+from sphinx.builders.html import Stylesheet
 
-if sphinx__display_version >= "1.6":
-    from sphinx.builders.html import Stylesheet
 
 if sys.version_info[0] == 2:
     from codecs import open
@@ -650,11 +649,8 @@ def get_default_stylesheet():
 
     .. versionadded:: 1.5
     """
-    if sphinx__display_version >= '1.6':
-        rel = "_static/" + style_figure_notebook[0]
-        return [Stylesheet(rel, "style_figure_notebook", rel)]
-    else:
-        return ["_static/" + style_figure_notebook[0]]
+    rel = "_static/" + style_figure_notebook[0]
+    return [Stylesheet(rel, "style_figure_notebook", rel)]
 
 
 def get_default_javascript():

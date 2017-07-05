@@ -26,14 +26,8 @@ from docutils.io import StringInput, StringOutput
 from sphinx.environment import BuildEnvironment, default_settings
 from sphinx import __display_version__ as sphinx__display_version__
 from sphinx.util.logging import getLogger
+from sphinx.util.docutils import is_html5_writer_available
 
-
-try:
-    from sphinx.util.docutils import is_html5_writer_available
-except ImportError:
-    # Available only after Sphinx >= 1.6.1.
-    def is_html5_writer_available():
-        return False
 
 if sys.version_info[0] == 2:
     from StringIO import StringIO
@@ -116,7 +110,7 @@ def default_sphinx_options(fLOG=noLOG, **options):
 
 def rst2html(s, fLOG=noLOG, writer="sphinx", keep_warnings=False,
              directives=None, language="en",
-             layout='docutils', document_name="<string>", **options):
+             layout='docutils', document_name="<<string>>", **options):
     """
     converts a string into HTML format
 
@@ -285,12 +279,10 @@ def rst2html(s, fLOG=noLOG, writer="sphinx", keep_warnings=False,
     for k in {'outdir', 'imagedir', 'confdir', 'doctreedir'}:
         setattr(writer.builder, k, settings_overrides.get(k, ''))
 
-    if sphinx__display_version__ >= "1.6":
-        env = mockapp.env
-        if env is None:
-            raise ValueError("No environment was built.")
-    else:
-        env = BuildEnvironment(None, None, config=config)
+    env = mockapp.env
+    if env is None:
+        raise ValueError("No environment was built.")
+
     env.temp_data["docname"] = document_name
     mockapp.builder.env.temp_data["docname"] = document_name
     settings_overrides["env"] = env
@@ -402,7 +394,7 @@ def correct_indentation(text):
 
 def docstring2html(function_or_string, format="html", fLOG=noLOG, writer="sphinx",
                    keep_warnings=False, directives=None, language="en",
-                   layout='docutils', document_name="<string>", **options):
+                   layout='docutils', document_name="<<string>>", **options):
     """
     converts a docstring into a HTML format
 

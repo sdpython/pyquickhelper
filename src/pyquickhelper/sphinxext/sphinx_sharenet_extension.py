@@ -9,13 +9,8 @@ import sphinx
 from docutils import nodes
 from docutils.parsers.rst import Directive, directives
 from sphinx.util.logging import getLogger
+from sphinx.util.docutils import is_html5_writer_available
 
-try:
-    from sphinx.util.docutils import is_html5_writer_available
-except ImportError:
-    # Available only after Sphinx >= 1.6.1.
-    def is_html5_writer_available():
-        return False
 
 if is_html5_writer_available():
     from sphinx.writers.html5 import HTML5Translator as HTMLTranslator

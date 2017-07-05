@@ -77,18 +77,15 @@ class BlogPost:
         self._raw = content
 
         overrides = {}
-        overrides['input_encoding'] = encoding
         overrides["out_blogpostlist"] = []
         overrides["blog_background"] = False
         overrides["sharepost"] = None
 
-        overrides.update({'doctitle_xform': True,
-                          'initial_header_level': 2,
-                          # 'warning_stream': StringIO(),
-                          'out_blogpostlist': [],
-                          'out_runpythonlist': [],
-                          'master_doc': 'stringblog'
-                          })
+        overrides.update({  # 'warning_stream': StringIO(),
+            'out_blogpostlist': [],
+            'out_runpythonlist': [],
+            'master_doc': 'stringblog'
+        })
 
         if "extensions" not in overrides:
             if extensions is None:
@@ -97,15 +94,10 @@ class BlogPost:
                 extensions = get_default_extensions()
             overrides["extensions"] = extensions
 
-        if sphinx__display_version__ >= "1.6":
-
-            from ..helpgen.sphinxm_mock_app import MockSphinxApp
-            app = MockSphinxApp.create(confoverrides=overrides)
-            env = app[0].env
-            config = env.config
-        else:
-            config = Config(None, None, overrides=overrides, tags=None)
-            env = BuildEnvironment(None, None, config)
+        from ..helpgen.sphinxm_mock_app import MockSphinxApp
+        app = MockSphinxApp.create(confoverrides=overrides)
+        env = app[0].env
+        config = env.config
 
         if 'blog_background' not in config:
             raise AttributeError("Unable to find 'blog_background' in config:\n{0}".format(
@@ -113,6 +105,10 @@ class BlogPost:
 
         env.temp_data["docname"] = "stringblog"
         overrides["env"] = env
+
+        config.add('doctitle_xform', True, False, bool)
+        config.add('initial_header_level', 2, False, int)
+        config.add('input_encoding', encoding, False, str)
 
         errst = sys.stderr
         keeperr = StringIO()

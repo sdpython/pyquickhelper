@@ -6,7 +6,7 @@
 import sys
 import os
 import unittest
-
+import warnings
 
 try:
     import src
@@ -48,11 +48,17 @@ class TestRst2Html(unittest.TestCase):
             os.path.dirname(__file__)), "data", "hermionne.rst")
         with open(rst, "r", encoding="utf-8") as f:
             content = f.read()
-        text = rst2html(content, outdir=temp)
-        # fLOG(text)
+
+        text = rst2html(content)
+
         ji = os.path.join(temp, "out.html")
         with open(ji, "w", encoding="utf-8") as f:
             f.write(text)
+        text2 = rst2html(content, layout="sphinx")
+        ji = os.path.join(temp, "out_sphinx.html")
+        with open(ji, "w", encoding="utf-8") as f:
+            f.write(text)
+        self.assertTrue(len(text2) > len(text))
 
     def test_rst2html_svg(self):
         fLOG(
@@ -67,12 +73,16 @@ class TestRst2Html(unittest.TestCase):
             os.path.dirname(__file__)), "data", "hermionne.rst")
         with open(rst, "r", encoding="utf-8") as f:
             content = f.read()
-        text = rst2html(content, fLOG=fLOG, outdir=temp,
-                        imgmath_image_format='svg')
-        # fLOG(text)
+        text = rst2html(content, imgmath_image_format='svg')
+
         ji = os.path.join(temp, "out.html")
         with open(ji, "w", encoding="utf-8") as f:
             f.write(text)
+        text2 = rst2html(content, layout="sphinx")
+        ji = os.path.join(temp, "out_sphinx.html")
+        with open(ji, "w", encoding="utf-8") as f:
+            f.write(text)
+        self.assertTrue(len(text2) > len(text))
 
     def test_rst2html_plot(self):
         fLOG(
@@ -80,20 +90,24 @@ class TestRst2Html(unittest.TestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
-        # disabled because it does not handle inline graph
-        # or I did not found
-        return
-
         temp = get_temp_folder(__file__, "temp_rst2html_plot")
         rst = os.path.join(os.path.abspath(
             os.path.dirname(__file__)), "data", "rstplot.rst")
         with open(rst, "r", encoding="utf-8") as f:
             content = f.read()
-        text = rst2html(content, fLOG=fLOG, outdir=temp)
-        # fLOG(text)
+
+        warnings.warn("Not implemented for inline images.")
+        return
+        text = rst2html(content, document_name="out_string_plot")
+
         ji = os.path.join(temp, "out.html")
         with open(ji, "w", encoding="utf-8") as f:
             f.write(text)
+        text2 = rst2html(content, layout="sphinx")
+        ji = os.path.join(temp, "out_sphinx.html")
+        with open(ji, "w", encoding="utf-8") as f:
+            f.write(text)
+        self.assertTrue(len(text2) > len(text))
 
 
 if __name__ == "__main__":

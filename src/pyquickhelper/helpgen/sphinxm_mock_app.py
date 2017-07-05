@@ -18,14 +18,7 @@ from sphinx.ext import autodoc
 from sphinx import __display_version__ as sphinx__display_version__
 from sphinx.application import VersionRequirementError
 from ..sphinxext import get_default_extensions
-
-
-try:
-    from sphinx.util.docutils import is_html5_writer_available
-except ImportError:
-    # Available only after Sphinx >= 1.6.1.
-    def is_html5_writer_available():
-        return False
+from sphinx.util.docutils import is_html5_writer_available
 
 
 class MockSphinxApp:
@@ -119,42 +112,39 @@ class MockSphinxApp:
         See class `Sphinx <https://github.com/sphinx-doc/sphinx/blob/master/sphinx/application.py#L107>`_.
         """
         # type: (nodes.Node, Any) -> None
-        if sphinx__display_version__ >= "1.6":
-            nodes._add_node_class_names([node.__name__])
-            for key, val in kwds.items():
-                if not isinstance(val, tuple):
-                    continue
-                visit, depart = val
-                translator = self.writer.app.registry.translators.get(key)
-                translators = []
-                if translator is not None:
-                    translators.append(translator)
-                elif key == 'html':
-                    from sphinx.writers.html import HTMLTranslator
-                    translators.append(HTMLTranslator)
-                    if is_html5_writer_available():
-                        from sphinx.writers.html5 import HTML5Translator
-                        translators.append(HTML5Translator)
-                elif key == 'latex':
-                    from sphinx.writers.latex import LaTeXTranslator
-                    translators.append(LaTeXTranslator)
-                elif key == 'text':
-                    from sphinx.writers.text import TextTranslator
-                    translators.append(TextTranslator)
-                elif key == 'man':
-                    from sphinx.writers.manpage import ManualPageTranslator
-                    translators.append(ManualPageTranslator)
-                elif key == 'texinfo':
-                    from sphinx.writers.texinfo import TexinfoTranslator
-                    translators.append(TexinfoTranslator)
+        nodes._add_node_class_names([node.__name__])
+        for key, val in kwds.items():
+            if not isinstance(val, tuple):
+                continue
+            visit, depart = val
+            translator = self.writer.app.registry.translators.get(key)
+            translators = []
+            if translator is not None:
+                translators.append(translator)
+            elif key == 'html':
+                from sphinx.writers.html import HTMLTranslator
+                translators.append(HTMLTranslator)
+                if is_html5_writer_available():
+                    from sphinx.writers.html5 import HTML5Translator
+                    translators.append(HTML5Translator)
+            elif key == 'latex':
+                from sphinx.writers.latex import LaTeXTranslator
+                translators.append(LaTeXTranslator)
+            elif key == 'text':
+                from sphinx.writers.text import TextTranslator
+                translators.append(TextTranslator)
+            elif key == 'man':
+                from sphinx.writers.manpage import ManualPageTranslator
+                translators.append(ManualPageTranslator)
+            elif key == 'texinfo':
+                from sphinx.writers.texinfo import TexinfoTranslator
+                translators.append(TexinfoTranslator)
 
-                for translator in translators:
-                    setattr(translator, 'visit_' + node.__name__, visit)
-                    if depart:
-                        setattr(translator, 'depart_' +
-                                node.__name__, depart)
-        else:
-            self.app.add_node(node, **kwds)
+            for translator in translators:
+                setattr(translator, 'visit_' + node.__name__, visit)
+                if depart:
+                    setattr(translator, 'depart_' +
+                            node.__name__, depart)
 
     def finalize(self, doctree):
         """

@@ -272,3 +272,5 @@ _unittests/ut_loghelper/custom_log_000.txt
 _unittests/ut_loghelper/log_custom_000.txt
 src/.vscode/settings.json
 _unittests/ut_sphinxext/contents.memory.html
+_unittests/ut_helpgen/math/*.png
+_unittests/ut_helpgen/math/*.svg

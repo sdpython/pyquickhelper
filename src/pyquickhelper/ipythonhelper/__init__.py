@@ -10,7 +10,8 @@
     :cost: 0.3
 
     A couple of were functions were moved to a lighter module
-    `jyquickhelper <https://pypi.python.org/pypi/jyquickhelper>`_. They will be removed in release 1.6.
+    `jyquickhelper <https://pypi.python.org/pypi/jyquickhelper>`_.
+    They will be removed in release 1.6.
 
     * store_notebook_path
     * set_notebook_name_theNotebook

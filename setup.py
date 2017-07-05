@@ -240,7 +240,7 @@ if not r:
             "python-dateutil",
             "requests",
             "simplegeneric",
-            "sphinx",
+            "sphinx>=1.6",
             "sphinx-gallery",
             "sphinxcontrib-imagesvg",
             "sphinxcontrib-jsdemo",
