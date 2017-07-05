@@ -23,15 +23,20 @@ class BlogPostList:
     defines a list of @see cl BlogPost
     """
 
-    def __init__(self, folder, encoding="utf8", language="en", fLOG=noLOG):
+    def __init__(self, folder, encoding="utf8", language="en", extensions=None, fLOG=noLOG):
         """
         create a list of BlogPost, we assume each blog post belongs to a sub-folder *YYYY*
 
         @param      folder          folder when to find files
         @param      encoding        encoding
         @param      language        language
+        @param      extensions      list of extension to use to parse the content of the blog,
+                                    if None, it will consider a default list
+                                    (@see cl BlogPost and @see fn get_default_extensions)
         @param      fLOG            logging function
 
+        .. versionchanged:: 1.5
+            Parameter *extension* was added.
         """
         self._blogposts = []
         sub = os.listdir(folder)
@@ -44,7 +49,8 @@ class BlogPostList:
                     if os.path.splitext(post)[-1] in [".rst"]:
                         fpost = os.path.join(full, post)
                         fLOG("    reading post", fpost)
-                        obj = BlogPost(fpost, encoding=encoding)
+                        obj = BlogPost(fpost, encoding=encoding,
+                                       extensions=extensions)
                         self._blogposts.append((obj.date, obj))
         fLOG("    end reading post")
         self._blogposts.sort(reverse=True)

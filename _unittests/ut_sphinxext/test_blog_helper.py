@@ -70,6 +70,7 @@ class TestBlogHelper(unittest.TestCase):
         path = os.path.abspath(os.path.split(__file__)[0])
         fold = os.path.join(path, "data", "blog")
         out = get_temp_folder(__file__, "temp_post_list")
+        raise Exception("catch warning")
         p = BlogPostList(fold)
         cats = p.get_categories()
         fLOG(cats)
@@ -94,7 +95,7 @@ class TestBlogHelper(unittest.TestCase):
         with open(file, "r", encoding="utf8") as f:
             content = f.read()
 
-        html = rst2html(content, fLOG=fLOG,
+        html = rst2html(content,  # fLOG=fLOG,
                         writer="custom", keep_warnings=True)
 
         t1 = "<p>Text before the blog post.</p>"
@@ -205,7 +206,7 @@ class TestBlogHelper(unittest.TestCase):
         tives = [("runpythonthis", RunPythonThisDirective, runpythonthis_node,
                   visit_rp_node, depart_rp_node)]
 
-        html = rst2html(content, fLOG=fLOG,
+        html = rst2html(content,  # fLOG=fLOG,
                         writer="custom", keep_warnings=True,
                         directives=tives)
 
@@ -259,7 +260,7 @@ class TestBlogHelper(unittest.TestCase):
         tives = [("runpythonthis", RunPythonThisDirective, runpythonthis_node,
                   visit_node, depart_node)]
 
-        html = rst2html(content, fLOG=fLOG,
+        html = rst2html(content,  # fLOG=fLOG,
                         writer="custom", keep_warnings=True,
                         directives=tives)
 

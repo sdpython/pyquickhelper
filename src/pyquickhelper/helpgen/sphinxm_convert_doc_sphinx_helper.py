@@ -796,6 +796,8 @@ class _CustomSphinx(Sphinx):
         if __display_version__ >= "1.6":
             noallowed = []
             for k in confoverrides:
+                if k in {'initial_header_level', 'doctitle_xform', 'input_encoding'}:
+                    continue
                 if k not in self.config.values:
                     noallowed.append(k)
             if len(noallowed) > 0:

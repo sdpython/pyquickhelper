@@ -34,7 +34,7 @@ class BlogPost:
     defines a blog post,
     """
 
-    def __init__(self, filename, encoding='utf-8-sig', raise_exception=False):
+    def __init__(self, filename, encoding='utf-8-sig', raise_exception=False, extensions=None):
         """
         create an instance of a blog post from a file or a string
 
@@ -59,6 +59,8 @@ class BlogPost:
             interpreting it. The code used to throw warnings or errors due to
             unreferenced nodes.
 
+        .. versionchanged:: 1.5
+            Parameter *extensions* was added.
         """
         if os.path.exists(filename):
             with open(filename, "r", encoding=encoding) as f:
@@ -82,22 +84,34 @@ class BlogPost:
 
         overrides.update({'doctitle_xform': True,
                           'initial_header_level': 2,
-                          'warning_stream': StringIO(),
+                          # 'warning_stream': StringIO(),
                           'out_blogpostlist': [],
                           'out_runpythonlist': [],
+                          'master_doc': 'stringblog'
                           })
 
-        config = Config(None, None, overrides=overrides, tags=None)
-        config.blog_background = False
-        config.sharepost = None
+        if "extensions" not in overrides:
+            if extensions is None:
+                # To avoid circular references.
+                from . import get_default_extensions
+                extensions = get_default_extensions()
+            overrides["extensions"] = extensions
 
         if sphinx__display_version__ >= "1.6":
+
             from ..helpgen.sphinxm_mock_app import MockSphinxApp
-            app = MockSphinxApp.create()
-            env = BuildEnvironment(app[0])
+            app = MockSphinxApp.create(confoverrides=overrides)
+            env = app[0].env
+            config = env.config
         else:
+            config = Config(None, None, overrides=overrides, tags=None)
             env = BuildEnvironment(None, None, config)
-        env.temp_data["docname"] = "string"
+
+        if 'blog_background' not in config:
+            raise AttributeError("Unable to find 'blog_background' in config:\n{0}".format(
+                "\n".join(sorted(config.values))))
+
+        env.temp_data["docname"] = "stringblog"
         overrides["env"] = env
 
         errst = sys.stderr
@@ -112,6 +126,7 @@ class BlogPost:
                                                enable_exit_status=None)
 
         sys.stderr = errst
+
         all_err = keeperr.getvalue()
         if len(all_err) > 0:
             if raise_exception:

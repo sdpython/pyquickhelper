@@ -105,7 +105,11 @@ class BlogPostDirective(Directive):
             docname = env.docname
             # settings and configuration
             config = env.config
-            blog_background = config.blog_background
+            try:
+                blog_background = config.blog_background
+            except AttributeError as e:
+                raise AttributeError("Unable to find 'blog_background' in \n{0}".format(
+                    "\n".join(sorted(config.values)))) from e
             sharepost = config.sharepost if self.__class__.add_share else None
 
         # post

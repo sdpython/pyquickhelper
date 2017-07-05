@@ -4,31 +4,12 @@
 
 .. versionadded:: 1.0
 """
-from sphinx.ext.graphviz import setup as setup_graphviz
-from sphinx.ext.imgmath import setup as setup_math
-from sphinx.ext.todo import setup as setup_todo
-from matplotlib.sphinxext.plot_directive import setup as setup_plot
-from matplotlib.sphinxext.only_directives import setup as setup_only
-from ..sphinxext.sphinx_bigger_extension import setup as setup_bigger
-from ..sphinxext.sphinx_githublink_extension import setup as setup_githublink
-from ..sphinxext.sphinx_blocref_extension import setup as setup_blocref
-from ..sphinxext.sphinx_blog_extension import setup as setup_blog
-from ..sphinxext.sphinx_docassert_extension import setup as setup_docassert
-from ..sphinxext.sphinx_exref_extension import setup as setup_exref
-from ..sphinxext.sphinx_faqref_extension import setup as setup_faqref
-from ..sphinxext.sphinx_mathdef_extension import setup as setup_mathdef
-from ..sphinxext.sphinx_nbref_extension import setup as setup_nbref
-from ..sphinxext.sphinx_runpython_extension import setup as setup_runpython
-from ..sphinxext.sphinx_sharenet_extension import setup as setup_sharenet
-from ..sphinxext.sphinx_todoext_extension import setup as setup_todoext
+
 from .sphinxm_convert_doc_sphinx_helper import HTMLWriterWithCustomDirectives, _CustomSphinx
 from docutils import nodes
 from docutils.parsers.rst.directives import directive as rst_directive
 from docutils.parsers.rst import directives as doc_directives, roles as doc_roles
 from sphinx.config import Config
-from sphinx.ext.autodoc import setup as setup_autodoc
-from sphinx.ext.imgmath import setup as setup_imgmath
-from sphinxcontrib.imagesvg import setup as setup_imagesvg
 # from sphinx.ext.autosummary import setup as setup_autosummary
 from sphinx.ext import autodoc
 # from sphinx.events import EventManager
@@ -36,6 +17,7 @@ from sphinx.ext import autodoc
 # from sphinx.domains.python import setup as setup_python
 from sphinx import __display_version__ as sphinx__display_version__
 from sphinx.application import VersionRequirementError
+from ..sphinxext import get_default_extensions
 
 
 try:
@@ -266,20 +248,10 @@ class MockSphinxApp:
         if writer not in ("sphinx", "custom", "HTMLWriterWithCustomDirectives"):
             raise NotImplementedError("writer must be 'sphinx' or 'custom'")
 
+        if confoverrides is None:
+            confoverrides = {}
         if "extensions" not in confoverrides:
-            default_setups = [setup_blog, setup_runpython, setup_sharenet,
-                              setup_todoext, setup_bigger, setup_githublink,
-                              setup_runpython, setup_mathdef, setup_blocref,
-                              setup_faqref, setup_exref, setup_nbref,
-                              setup_docassert,
-                              # directives from sphinx
-                              setup_graphviz, setup_math, setup_todo,
-                              # the rest of it
-                              setup_autodoc, setup_imgmath, setup_imagesvg,
-                              setup_plot, setup_only]
-
-            confoverrides["extensions"] = [
-                mod.__module__ for mod in default_setups]
+            confoverrides["extensions"] = get_default_extensions()
 
         app = _CustomSphinx(srcdir=None, confdir=None, outdir=None, doctreedir=None,
                             buildername='memoryhtml', confoverrides=confoverrides)
