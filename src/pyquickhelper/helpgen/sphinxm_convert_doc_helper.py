@@ -21,11 +21,11 @@ import sys
 import re
 import textwrap
 import os
-import warnings
 from docutils import core, languages
 from docutils.io import StringInput, StringOutput
 from sphinx.environment import BuildEnvironment, default_settings
 from sphinx import __display_version__ as sphinx__display_version__
+from sphinx.util.logging import getLogger
 
 
 try:
@@ -54,41 +54,34 @@ def default_sphinx_options(fLOG=noLOG, **options):
 
     .. versionadded:: 1.4
     """
-    res = {'output_encoding': options.get('output_encoding', 'unicode'),
-           'doctitle_xform': options.get('doctitle_xform', True),
-           'initial_header_level': options.get('initial_header_level', 2),
-           'input_encoding': options.get('input_encoding', 'utf8'),
-           'blog_background': options.get('blog_background', False),
-           'sharepost': options.get('sharepost', None),
-           'todoext_link_only': options.get('todoext_link_only', False),
-           'mathdef_link_only': options.get('mathdef_link_only', True),
-           'blocref_link_only': options.get('blocref_link_only', False),
-           'faqref_link_only': options.get('faqref_link_only', False),
-           'nbref_link_only': options.get('nbref_link_only', False),
-           'todo_link_only': options.get('todo_link_only', False),
-           'language': options.get('language', 'en'),
-           'outdir': options.get('outdir', '.'),
-           'imagedir': options.get('imagedir', '.'),
-           'confdir': options.get('confdir', '.'),
-           'doctreedir': options.get('doctreedir', '.'),
-           'math_number_all': options.get('math_number_all', False),
-           # graphviz
-           'graphviz_output_format': options.get('graphviz_output_format', 'png'),
-           'graphviz_dot': options.get('graphviz_dot', find_graphviz_dot(exc=False)),
-           # latex
-           'imgmath_image_format': options.get('imgmath_image_format', 'png'),
-           # containers
-           'todo_include_todos': [],
-           'out_blogpostlist': [],
-           'out_runpythonlist': [],
-           'todoext_include_todosext': [],
-           'mathdef_include_mathsext': [],
-           'blocref_include_blocrefs': [],
-           'faqref_include_faqrefs': [],
-           'exref_include_exrefs': [],
-           'nbref_include_nbrefs': [],
-           'warning_stream': StringIO(),
-           }
+    res = {  # 'output_encoding': options.get('output_encoding', 'unicode'),
+        # 'doctitle_xform': options.get('doctitle_xform', True),
+        # 'initial_header_level': options.get('initial_header_level', 2),
+        # 'input_encoding': options.get('input_encoding', 'utf-8-sig'),
+        'blog_background': options.get('blog_background', False),
+        'sharepost': options.get('sharepost', None),
+        'todoext_link_only': options.get('todoext_link_only', False),
+        'mathdef_link_only': options.get('mathdef_link_only', True),
+        'blocref_link_only': options.get('blocref_link_only', False),
+        'faqref_link_only': options.get('faqref_link_only', False),
+        'nbref_link_only': options.get('nbref_link_only', False),
+        'todo_link_only': options.get('todo_link_only', False),
+        'language': options.get('language', 'en'),
+        # 'outdir': options.get('outdir', '.'),
+        # 'imagedir': options.get('imagedir', '.'),
+        # 'confdir': options.get('confdir', '.'),
+        # 'doctreedir': options.get('doctreedir', '.'),
+        'math_number_all': options.get('math_number_all', False),
+        # graphviz
+        'graphviz_output_format': options.get('graphviz_output_format', 'png'),
+        'graphviz_dot': options.get('graphviz_dot', find_graphviz_dot(exc=False)),
+        # latex
+        'imgmath_image_format': options.get('imgmath_image_format', 'png'),
+        # containers
+        'out_blogpostlist': [],
+        'out_runpythonlist': [],
+        # 'warning_stream': StringIO(),
+    }
 
     if res['imgmath_image_format'] == 'png':
         res['imgmath_latex'] = options.get(
@@ -96,7 +89,9 @@ def default_sphinx_options(fLOG=noLOG, **options):
         res['imgmath_dvipng'] = options.get(
             'imgmath_dvipng', os.path.join(res['imgmath_latex'], "dvipng.exe") if res['imgmath_latex'] is not None else None)
         if res['imgmath_dvipng'] is not None and not os.path.exists(res['imgmath_dvipng']):
-            fLOG("[warning], unable to find: " + str(res['imgmath_dvipng']))
+            logger = getLogger("default_sphinx_options")
+            logger.warning("[warning], unable to find: " +
+                           str(res['imgmath_dvipng']))
             # we pass as latex is not necessarily installed or needed
         env_path = os.environ.get("PATH", "")
         if res['imgmath_latex'] is not None and res['imgmath_latex'] not in env_path:
@@ -120,7 +115,7 @@ def default_sphinx_options(fLOG=noLOG, **options):
 
 
 def rst2html(s, fLOG=noLOG, writer="sphinx", keep_warnings=False,
-             directives=None, language="en", warnings_log=False,
+             directives=None, language="en",
              layout='docutils', document_name="<string>", **options):
     """
     converts a string into HTML format
@@ -132,7 +127,6 @@ def rst2html(s, fLOG=noLOG, writer="sphinx", keep_warnings=False,
     @param      keep_warnings   keep_warnings in the final HTML
     @param      directives      new directives to add (see below)
     @param      language        language
-    @param      warnings_log    send warnings to log (True) or to the warning stream(False)
     @param      layout          ``docutils``, ``sphinx``, ``sphinx_body``, see below.
     @param      document_name   document name, not really important since the input is a string
     @param      options         Sphinx options see `Render math as images <http://www.sphinx-doc.org/en/stable/ext/math.html#module-sphinx.ext.imgmath>`_,
@@ -258,11 +252,11 @@ def rst2html(s, fLOG=noLOG, writer="sphinx", keep_warnings=False,
         More logging is done, the function is more consistent.
         Parameter *layout*, *document_name* were added.
     """
-    _nbeq = [0, None]
-
     if 'html_theme' not in options:
         options['html_theme'] = 'basic'
     defopt = default_sphinx_options(**options)
+    if "master_doc" not in defopt:
+        defopt["master_doc"] = document_name
 
     if writer in ["custom", "sphinx", "HTMLWriterWithCustomDirectives"]:
         mockapp, writer, title_names = MockSphinxApp.create(
@@ -276,25 +270,20 @@ def rst2html(s, fLOG=noLOG, writer="sphinx", keep_warnings=False,
             "the writer must not be null if custom directives will be added, check the documentation of the fucntion")
 
     settings_overrides = default_settings.copy()
+    settings_overrides["warning_stream"] = StringIO()
     settings_overrides.update({k: v[0]
                                for k, v in mockapp.new_options.items()})
 
     # next
     settings_overrides.update(defopt)
-    warning_stringio = defopt["warning_stream"]
-    _nbeq[1] = warning_stringio
 
     config = mockapp.config
-    # if sphinx__display_version__ >= "1.6":
-    #    config.init_values()
-    # else:
-    #    config.init_values(fLOG)
     config.blog_background = False
     config.sharepost = None
 
     writer.add_configuration_options(mockapp.new_options)
     for k in {'outdir', 'imagedir', 'confdir', 'doctreedir'}:
-        setattr(writer.builder, k, settings_overrides[k])
+        setattr(writer.builder, k, settings_overrides.get(k, ''))
 
     if sphinx__display_version__ >= "1.6":
         env = mockapp.env
@@ -302,7 +291,7 @@ def rst2html(s, fLOG=noLOG, writer="sphinx", keep_warnings=False,
             raise ValueError("No environment was built.")
     else:
         env = BuildEnvironment(None, None, config=config)
-    env.temp_data["docname"] = "string"
+    env.temp_data["docname"] = document_name
     mockapp.builder.env.temp_data["docname"] = document_name
     settings_overrides["env"] = env
 
@@ -329,13 +318,6 @@ def rst2html(s, fLOG=noLOG, writer="sphinx", keep_warnings=False,
     mockapp.finalize(doctree)
     parts = pub.writer.parts
 
-    warnval = settings_overrides["warning_stream"].getvalue()
-    if warnval is not None and len(warnval) > 0:
-        if warnings_log:
-            fLOG(warnval)
-        else:
-            warnings.warn(warnval)
-
     if not keep_warnings:
         exp = re.sub(
             '(<div class="system-message">(.|\\n)*?</div>)', "", parts["whole"])
@@ -347,14 +329,15 @@ def rst2html(s, fLOG=noLOG, writer="sphinx", keep_warnings=False,
     else:
         page = None
         pages = []
+        main = "/{0}.m.html".format(document_name)
         for k, v in writer.builder.iter_pages():
             pages.append(k)
-            if k == "./contents.m.html":
+            if k == main:
                 page = v
                 break
         if page is None:
             raise ValueError(
-                "No page 'contents' was produced only '{0}'.".format(", ".join(pages)))
+                "No page contents was produced only '{0}'.".format(", ".join(pages)))
         if layout == "sphinx":
             return page
         elif layout == "sphinx_body":
@@ -418,7 +401,7 @@ def correct_indentation(text):
 
 
 def docstring2html(function_or_string, format="html", fLOG=noLOG, writer="sphinx",
-                   keep_warnings=False, directives=None, language="en", warnings_log=False,
+                   keep_warnings=False, directives=None, language="en",
                    layout='docutils', document_name="<string>", **options):
     """
     converts a docstring into a HTML format
@@ -431,7 +414,6 @@ def docstring2html(function_or_string, format="html", fLOG=noLOG, writer="sphinx
     @param      keep_warnings           keep_warnings in the final HTML
     @param      directives              new directives to add (see below)
     @param      language                language
-    @param      warnings_log            send warnings to log (True) or to the warning stream(False)
     @param      layout                  ``docutils``, ``sphinx``, ``sphinx_body``, see below.
     @param      document_name           document_name for this string
     @param      options                 Sphinx options see `Render math as images <http://www.sphinx-doc.org/en/stable/ext/math.html#module-sphinx.ext.imgmath>`_,
@@ -493,7 +475,7 @@ def docstring2html(function_or_string, format="html", fLOG=noLOG, writer="sphinx
     try:
         html = rst2html(ded, fLOG=fLOG, writer=writer,
                         keep_warnings=keep_warnings, directives=directives,
-                        language=language, warnings_log=warnings_log,
+                        language=language,
                         layout=layout, **options)
     except Exception:
         # we check the indentation

@@ -417,10 +417,10 @@ class RunPythonDirective(Directive):
                 sett.output_encoding
             except KeyError:
                 settings_overrides["output_encoding"] = "unicode"
-            try:
-                sett.doctitle_xform
-            except KeyError:
-                settings_overrides["doctitle_xform"] = True
+            # try:
+            #     sett.doctitle_xform
+            # except KeyError:
+            #     settings_overrides["doctitle_xform"] = True
             try:
                 sett.warning_stream
             except KeyError:
@@ -505,6 +505,7 @@ def setup(app):
     """
     setup for ``runpython`` (sphinx)
     """
+    app.add_config_value('out_runpythonlist', [], 'env')
     if hasattr(app, "add_mapping"):
         app.add_mapping('runpython', runpython_node)
 

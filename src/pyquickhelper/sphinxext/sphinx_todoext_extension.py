@@ -501,6 +501,7 @@ def setup(app):
 
     app.add_config_value('todoext_include_todosext', False, 'html')
     app.add_config_value('todoext_link_only', False, 'html')
+    app.add_config_value('extlinks', {}, 'env')
 
     app.add_node(todoextlist,
                  html=(visit_todoextlist_node, depart_todoextlist_node),

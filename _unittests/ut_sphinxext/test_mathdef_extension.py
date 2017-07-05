@@ -225,6 +225,12 @@ class TestMathDefExtension(unittest.TestCase):
                         :tag: definition
                         :contents:
 
+                    middle2
+
+                    .. mathdeflist::
+                        :tag: Theoreme
+                        :contents:
+
                     after
                     """.replace("                    ", "")
         if sys.version_info[0] >= 3:
@@ -250,24 +256,26 @@ class TestMathDefExtension(unittest.TestCase):
         with open(os.path.join(temp, "test_mathdeflist_contents_sphinx.html"), "w", encoding="utf8") as f:
             f.write(html)
 
-        return
-
         # not yet ready
 
         if "alabaster" in html:
             raise Exception(html)
 
         t1 = "this code shoud appear"
-        if t1 not in html:
-            raise Exception(html)
+        if t1 not in body:
+            raise Exception(body)
 
         t1 = "after"
-        if t1 not in html:
-            raise Exception(html)
+        if t1 not in body:
+            raise Exception(body)
 
         t1 = "first def2"
-        if t1 not in html:
-            raise Exception(html)
+        if t1 not in body:
+            raise Exception(body)
+
+        t1 = 'class="reference internal"'
+        if t1 not in body:
+            raise Exception(body)
 
 
 if __name__ == "__main__":

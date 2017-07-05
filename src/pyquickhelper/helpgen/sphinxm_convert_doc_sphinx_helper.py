@@ -461,7 +461,8 @@ class MemoryHTMLBuilder(SingleFileHTMLBuilder):
             return self.config.master_doc + '-#' + docname
         else:
             raise KeyError(
-                "docname='{0}' should be in self.env.all_docs".format(docname))
+                "docname='{0}' should be in 'self.env.all_docs' which contains: {1}".format(docname,
+                                                                                            ", ".join(sorted("'{0}'".format(_) for _ in self.env.all_docs))))
 
     def get_outfilename(self, pagename):
         """
@@ -475,7 +476,7 @@ class MemoryHTMLBuilder(SingleFileHTMLBuilder):
         Override *handle_page* to write into stream instead of files.
         """
         ctx = self.globalcontext.copy()
-        ctx['warn'] = self.warn
+        ctx['warn'] = self.warning if hasattr(self, "warning") else self.warn
         # current_page_name is backwards compatibility
         ctx['pagename'] = ctx['current_page_name'] = pagename
         ctx['encoding'] = self.config.html_output_encoding
@@ -580,7 +581,7 @@ class _CustomSphinx(Sphinx):
     """
 
     def __init__(self, srcdir, confdir, outdir, doctreedir, buildername="memoryhtml",
-                 confoverrides=None, status=None, warning=None,
+                 confoverrides=None, status=None,
                  freshenv=False, warningiserror=False, tags=None, verbosity=0,
                  parallel=0):
         '''
@@ -647,6 +648,7 @@ class _CustomSphinx(Sphinx):
                 return True
 
         # own purpose (to monitor)
+        self._logger = getLogger("_CustomSphinx")
         self._added_objects = []
 
         # from sphinx.domains.cpp import CPPDomain
@@ -667,7 +669,7 @@ class _CustomSphinx(Sphinx):
         self.extensions = {}
         self._setting_up_extension = ['?']      # type: List[unicode]
         self.builder = None                     # type: Builder
-
+        self.env = None                         # type: BuildEnvironment
         self.registry = SphinxComponentRegistry()
         self.enumerable_nodes = {}              # type: Dict[nodes.Node, Tuple[unicode, Callable]]  # NOQA
         self.post_transforms = []               # type: List[Transform]
@@ -677,6 +679,7 @@ class _CustomSphinx(Sphinx):
         self.confdir = confdir
         self.outdir = outdir
         self.doctreedir = doctreedir
+
         self.parallel = parallel
 
         if status is None:
@@ -686,12 +689,14 @@ class _CustomSphinx(Sphinx):
             self._status = status
             self.quiet = False
 
-        if warning is None:
-            self._warning = StringIO()     # type: IO
-        else:
-            self._warning = warning
-        self._warncount = 0
-        self.warningiserror = warningiserror
+        # warning = confoverrides.get('warning_stream', None)
+        # if warning is None:
+        #    self._warning = StringIO()     # type: IO
+        # else:
+        #    self._warning = warning
+        #self._warncount = 0
+        #self.warningiserror = warningiserror
+        # logging.setup(self, self._status, self._warning)
 
         self.events = EventManager()
 
@@ -719,8 +724,8 @@ class _CustomSphinx(Sphinx):
             self.config.check_unicode()
             self.config.pre_init_values()
         else:
-            self.config.check_unicode(self.warn)
-            self.config.pre_init_values(self.warn)
+            self.config.check_unicode(self.warning)
+            self.config.pre_init_values(self.warning)
             self._extensions = {}
             self._events = events.copy()
             self._translators = {}
@@ -760,15 +765,9 @@ class _CustomSphinx(Sphinx):
                         "ignore", category=DeprecationWarning)
                     self.setup_extension(extension)
             except Exception as e:
-                mes = "Unable to setup_extension '{0}'\nWHOLE LIST\n{1}".format(
+                mes = "Unable to run setup_extension '{0}'\nWHOLE LIST\n{1}".format(
                     extension, "\n".join(builtin_extensions))
                 raise Exception(mes) from e
-
-        # extension loading support for alabaster theme
-        # self.config.html_theme is not set from conf.py at here
-        # for now, sphinx always load a 'alabaster' extension.
-        if 'alabaster' not in self.config.extensions:
-            self.config.extensions.append('alabaster')
 
         # load all user-given extension modules
         for extension in self.config.extensions:
@@ -793,6 +792,21 @@ class _CustomSphinx(Sphinx):
                       "needed for conf.py to behave as a Sphinx extension.")
                 )
 
+        # now that we know all config values, collect them from conf.py
+        if __display_version__ >= "1.6":
+            noallowed = []
+            for k in confoverrides:
+                if k not in self.config.values:
+                    noallowed.append(k)
+            if len(noallowed) > 0:
+                raise ValueError("The following configuration values are declared in any extension.\n{0}\n--DECLARED--\n{1}".format(
+                    "\n".join(sorted(noallowed)),
+                    "\n".join(sorted(self.config.values))))
+            self.config.init_values()
+        else:
+            self.config.init_values(self.warning)
+
+        # check extension versions if requested
         verify_required_extensions(self, self.config.needs_extensions)
 
         # check primary_domain if requested
@@ -808,7 +822,7 @@ class _CustomSphinx(Sphinx):
             # check all configuration values for permissible types
             self.config.check_types()
         else:
-            self.config.check_types(self.warn)
+            self.config.check_types(self.warning)
 
         # set up source_parsers
         self._init_source_parsers()
@@ -833,14 +847,10 @@ class _CustomSphinx(Sphinx):
         self._init_enumerable_nodes()
 
         # addition
-        self.domains = {}
-        self._events = {}
-
-        # now that we know all config values, collect them from conf.py
-        # if __display_version__ >= "1.6":
-        #     self.config.init_values()
-        # else:
-        #     self.config.init_values(self.warn)
+        if not hasattr(self, "domains"):
+            self.domains = {}
+        if not hasattr(self, "_events"):
+            self._events = {}
 
     def finalize(self, doctree):
         """
@@ -859,21 +869,19 @@ class _CustomSphinx(Sphinx):
         self.env.doctree_[self.config.master_doc] = doctree
         self.env.all_docs = {self.config.master_doc: self.config.master_doc}
         self.emit('doctree-read', doctree)
-        self.emit('doctree-resolved', doctree, 'contents')
+        self.emit('doctree-resolved', doctree, self.config.master_doc)
         self.builder.write(None, None, 'all')
 
     def debug(self, message, *args, **kwargs):
-        pass
-
-    def warn(self, message, location=None, prefix=None,
-             type=None, subtype=None, colorfunc=None):
-        pass
+        self._logger.debug(message, *args, **kwargs)
 
     def info(self, message='', nonl=False):
-        pass
+        self._logger.info(message, nonl=nonl)
 
     def warning(self, message='', nonl=False, name=None, type=None, subtype=None):
-        pass
+        if "is already registered" not in message:
+            self._logger.warning(
+                "{0} -- {1}".format(message, name), nonl=nonl, type=type, subtype=subtype)
 
     def add_builder(self, builder):
         self._added_objects.append(('builder', builder))

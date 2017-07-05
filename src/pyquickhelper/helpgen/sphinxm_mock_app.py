@@ -4,6 +4,11 @@
 
 .. versionadded:: 1.0
 """
+from sphinx.ext.graphviz import setup as setup_graphviz
+from sphinx.ext.imgmath import setup as setup_math
+from sphinx.ext.todo import setup as setup_todo
+from matplotlib.sphinxext.plot_directive import setup as setup_plot
+from matplotlib.sphinxext.only_directives import setup as setup_only
 from ..sphinxext.sphinx_bigger_extension import setup as setup_bigger
 from ..sphinxext.sphinx_githublink_extension import setup as setup_githublink
 from ..sphinxext.sphinx_blocref_extension import setup as setup_blocref
@@ -22,7 +27,7 @@ from docutils.parsers.rst.directives import directive as rst_directive
 from docutils.parsers.rst import directives as doc_directives, roles as doc_roles
 from sphinx.config import Config
 from sphinx.ext.autodoc import setup as setup_autodoc
-# from sphinx.ext.imgmath import setup as setup_imgmath
+from sphinx.ext.imgmath import setup as setup_imgmath
 from sphinxcontrib.imagesvg import setup as setup_imagesvg
 # from sphinx.ext.autosummary import setup as setup_autosummary
 from sphinx.ext import autodoc
@@ -31,7 +36,6 @@ from sphinx.ext import autodoc
 # from sphinx.domains.python import setup as setup_python
 from sphinx import __display_version__ as sphinx__display_version__
 from sphinx.application import VersionRequirementError
-from sphinx.util.logging import getLogger
 
 
 try:
@@ -182,7 +186,7 @@ class MockSphinxApp:
         """
         See class `Sphinx <https://github.com/sphinx-doc/sphinx/blob/master/sphinx/application.py>`_.
         """
-        self.app.registry.load_extension(self, extname)
+        self.app.setup_extension(extname)
 
     def emit(self, event, *args):
         """
@@ -262,54 +266,26 @@ class MockSphinxApp:
         if writer not in ("sphinx", "custom", "HTMLWriterWithCustomDirectives"):
             raise NotImplementedError("writer must be 'sphinx' or 'custom'")
 
+        if "extensions" not in confoverrides:
+            default_setups = [setup_blog, setup_runpython, setup_sharenet,
+                              setup_todoext, setup_bigger, setup_githublink,
+                              setup_runpython, setup_mathdef, setup_blocref,
+                              setup_faqref, setup_exref, setup_nbref,
+                              setup_docassert,
+                              # directives from sphinx
+                              setup_graphviz, setup_math, setup_todo,
+                              # the rest of it
+                              setup_autodoc, setup_imgmath, setup_imagesvg,
+                              setup_plot, setup_only]
+
+            confoverrides["extensions"] = [
+                mod.__module__ for mod in default_setups]
+
         app = _CustomSphinx(srcdir=None, confdir=None, outdir=None, doctreedir=None,
                             buildername='memoryhtml', confoverrides=confoverrides)
         writer = HTMLWriterWithCustomDirectives(app=app)
         mockapp = MockSphinxApp(
             writer, writer.app, confoverrides=confoverrides)
-
-        from sphinx.ext.graphviz import setup as setup_graphviz
-        from sphinx.ext.imgmath import setup as setup_math
-        from sphinx.ext.todo import setup as setup_todo
-        from matplotlib.sphinxext.plot_directive import setup as setup_plot
-        from matplotlib.sphinxext.only_directives import setup as setup_only
-
-        # directives from pyquickhelper
-        for app in [mockapp, writer.app]:
-            setup_blog(app)
-            setup_runpython(app)
-            setup_sharenet(app)
-            setup_todoext(app)
-            setup_bigger(app)
-            setup_githublink(app)
-            setup_runpython(app)
-            setup_mathdef(app)
-            setup_blocref(app)
-            setup_faqref(app)
-            setup_exref(app)
-            setup_nbref(app)
-            setup_docassert(app)
-
-            # directives from sphinx
-            setup_graphviz(app)
-            setup_math(app)
-            setup_todo(app)
-
-            setup_autodoc(app)
-            try:
-                from sphinxcontrib.images import setup as setup_images
-                setup_images(app)
-            except ImportError:
-                # Probably a mismatch between versions.
-                logger = getLogger("MockSphinxApp")
-                logger.warning(
-                    "[MockSphinxApp] unable to import 'sphinxcontrib.images'.")
-            setup_imagesvg(app)
-
-            # don't move this import to the beginning of file
-            # it changes matplotlib backend
-            setup_plot(app)
-            setup_only(app)
 
         # titles
         title_names = []

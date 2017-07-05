@@ -100,6 +100,40 @@ class TestDocAssert(unittest.TestCase):
                         "This warning should not happen.\n{0}".format("\n".join(lines)))
         self.assertTrue("<strong>a</strong>" in html)
 
+    def test_docassert_html_bug(self):
+        fLOG(
+            __file__,
+            self._testMethodName,
+            OutputPrint=__name__ == "__main__")
+
+        logger1 = getLogger("MockSphinxApp")
+        logger2 = getLogger("docassert")
+
+        log_capture_string = StringIO()
+        ch = logging.StreamHandler(log_capture_string)
+        ch.setLevel(logging.DEBUG)
+        logger1.logger.addHandler(ch)
+        logger2.logger.addHandler(ch)
+
+        this = os.path.abspath(os.path.dirname(__file__))
+        data = os.path.join(this, "datadoc")
+        sys.path.append(data)
+        obj, name = import_object("exdocassert2.onefunction", "function")
+        newstring = ".. autofunction:: exdocassert2.onefunction"
+        html = rst2html(newstring)
+        self.assertTrue(html is not None)
+        sys.path.pop()
+
+        lines = log_capture_string.getvalue().split("\n")
+        if len(lines) > 0:
+            raise Exception("no warning")
+        nb = 0
+        for line in lines:
+            if "'onefunction' has no parameter 'c'" in line:
+                nb += 1
+        if nb == 0:
+            raise Exception("not the right warning")
+
 
 if __name__ == "__main__":
     unittest.main()

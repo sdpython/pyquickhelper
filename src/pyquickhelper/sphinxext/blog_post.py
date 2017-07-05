@@ -34,7 +34,7 @@ class BlogPost:
     defines a blog post,
     """
 
-    def __init__(self, filename, encoding="utf8", raise_exception=False):
+    def __init__(self, filename, encoding='utf-8-sig', raise_exception=False):
         """
         create an instance of a blog post from a file or a string
 
