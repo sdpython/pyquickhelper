@@ -70,7 +70,6 @@ class TestBlogHelper(unittest.TestCase):
         path = os.path.abspath(os.path.split(__file__)[0])
         fold = os.path.join(path, "data", "blog")
         out = get_temp_folder(__file__, "temp_post_list")
-        raise Exception("catch warning")
         p = BlogPostList(fold)
         cats = p.get_categories()
         fLOG(cats)
