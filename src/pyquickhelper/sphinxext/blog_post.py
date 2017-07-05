@@ -8,9 +8,6 @@ import os
 import sys
 from docutils import io as docio
 from docutils.core import publish_programmatically
-from sphinx.config import Config
-from sphinx import __display_version__ as sphinx__display_version__
-from sphinx.environment import BuildEnvironment
 
 
 if sys.version_info[0] == 2:

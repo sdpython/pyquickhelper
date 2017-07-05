@@ -10,7 +10,6 @@ import os
 import datetime
 import re
 import warnings
-from sphinx import __display_version__ as sphinx__display_version
 from .style_css_template import style_figure_notebook
 from sphinx.builders.html import Stylesheet
 

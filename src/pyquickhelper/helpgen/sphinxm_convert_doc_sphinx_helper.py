@@ -6,7 +6,6 @@
 """
 import sys
 from collections import deque
-import types
 import warnings
 from sphinx.locale import _
 from docutils.parsers.rst import directives, roles
@@ -24,6 +23,14 @@ from sphinx.util import status_iterator, logging
 from sphinx.transforms import SphinxTransformer
 from sphinx.util.osutil import relative_uri
 from sphinx.util.logging import getLogger
+from sphinx.util.docutils import is_html5_writer_available
+from sphinx.util.docutils import directive_helper
+from sphinx import __display_version__
+from sphinx.application import Tags, builtin_extensions
+from sphinx.application import Config, CONFIG_FILENAME, ConfigError, VersionRequirementError
+from sphinx.registry import SphinxComponentRegistry
+from sphinx.events import EventManager
+from sphinx.extension import verify_required_extensions
 from ..sphinxext.sphinx_bigger_extension import visit_bigger_node as ext_visit_bigger_node, depart_bigger_node as ext_depart_bigger_node
 from ..sphinxext.sphinx_blocref_extension import visit_blocref_node as ext_visit_blocref_node, depart_blocref_node as ext_depart_blocref_node
 from ..sphinxext.sphinx_blog_extension import visit_blogpost_node as ext_visit_blogpost_node, depart_blogpost_node as ext_depart_blogpost_node
@@ -39,15 +46,6 @@ from ..sphinxext.sphinx_todoext_extension import visit_todoext_node as ext_visit
 with warnings.catch_warnings():
     warnings.simplefilter("ignore")
     from sphinx.builders.html import SingleFileHTMLBuilder
-
-from sphinx.util.docutils import is_html5_writer_available
-from sphinx.util.docutils import directive_helper
-from sphinx import __display_version__
-from sphinx.application import Tags, builtin_extensions
-from sphinx.application import Config, CONFIG_FILENAME, ConfigError, VersionRequirementError
-from sphinx.registry import SphinxComponentRegistry
-from sphinx.events import EventManager
-from sphinx.extension import verify_required_extensions
 
 
 if sys.version_info[0] == 2:
@@ -939,9 +937,9 @@ class _CustomSphinx(Sphinx):
         self._added_objects.append(('event', name))
         Sphinx.add_event(self, name)
 
-    def add_config_value(self, name, default, rebuild, types=()):
+    def add_config_value(self, name, default, rebuild, types_=()):
         self._added_objects.append(('config_value', name))
-        Sphinx.add_config_value(self, name, default, rebuild, types)
+        Sphinx.add_config_value(self, name, default, rebuild, types_)
 
     def add_directive_to_domain(self, domain, name, obj,
                                 has_content=None, argument_spec=None, **option_spec):

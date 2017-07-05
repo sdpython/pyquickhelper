@@ -23,10 +23,8 @@ import textwrap
 import os
 from docutils import core, languages
 from docutils.io import StringInput, StringOutput
-from sphinx.environment import BuildEnvironment, default_settings
-from sphinx import __display_version__ as sphinx__display_version__
+from sphinx.environment import default_settings
 from sphinx.util.logging import getLogger
-from sphinx.util.docutils import is_html5_writer_available
 
 
 if sys.version_info[0] == 2:
