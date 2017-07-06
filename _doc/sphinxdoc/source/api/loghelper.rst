@@ -8,14 +8,14 @@ loghelper: logging, execution, command lines
 command line
 ++++++++++++
 
-.. autofunction:: pyquickhelper.loghelper.run_cmd.run_cmd
+.. autosignature:: pyquickhelper.loghelper.run_cmd.run_cmd
 
 logging
 +++++++
 
-.. autofunction:: pyquickhelper.loghelper.flog.fLOG
+.. autosignature:: pyquickhelper.loghelper.flog.fLOG
 
-.. autofunction:: pyquickhelper.loghelper.flog.noLOG
+.. autosignature:: pyquickhelper.loghelper.flog.noLOG
 
-.. autoclass:: pyquickhelper.loghelper.custom_log.CustomLog
+.. autosignature:: pyquickhelper.loghelper.custom_log.CustomLog
     :members:

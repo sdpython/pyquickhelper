@@ -483,7 +483,7 @@ class RunPythonDirective(Directive):
 
 def visit_runpython_node(self, node):
     """
-    what to do when visiting a node runpython
+    What to do when visiting a node @see cl runpython_node
     the function should have different behaviour,
     depending on the format, or the setup should
     specify a different function for each.
@@ -493,7 +493,7 @@ def visit_runpython_node(self, node):
 
 def depart_runpython_node(self, node):
     """
-    what to do when leaving a node runpython
+    What to do when leaving a node @see cl runpython_node
     the function should have different behaviour,
     depending on the format, or the setup should
     specify a different function for each.

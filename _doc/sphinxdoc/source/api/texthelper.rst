@@ -8,9 +8,9 @@ texthelper: text manipulations
 diacritices
 +++++++++++
 
-.. autofunction:: pyquickhelper.texthelper.diacritic_helper.remove_diacritics
+.. autosignature:: pyquickhelper.texthelper.diacritic_helper.remove_diacritics
 
 templating
 ++++++++++
 
-.. autofunction:: pyquickhelper.texthelper.templating.apply_template
+.. autosignature:: pyquickhelper.texthelper.templating.apply_template

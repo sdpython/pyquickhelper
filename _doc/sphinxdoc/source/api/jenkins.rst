@@ -8,4 +8,4 @@ jenkins: jenkins automation
 jenkins local server
 ++++++++++++++++++++
 
-.. autofunction:: pyquickhelper.jenkinshelper.jenkins_helper.setup_jenkins_server_yml
+.. autosignature:: pyquickhelper.jenkinshelper.jenkins_helper.setup_jenkins_server_yml

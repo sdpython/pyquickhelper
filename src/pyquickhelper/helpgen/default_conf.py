@@ -615,6 +615,7 @@ def custom_setup(app, author):
     from ..sphinxext.sphinx_sharenet_extension import setup as setup_sharenet
     from ..sphinxext.sphinx_todoext_extension import setup as setup_todoext
     from ..sphinxext.sphinx_docassert_extension import setup as setup_docassert
+    from ..sphinxext.sphinx_signature import setup as setup_signature
 
     app.connect("autodoc-skip-member", skip)
     app.add_config_value('author', author, True)
@@ -630,6 +631,7 @@ def custom_setup(app, author):
     setup_exref(app)
     setup_faqref(app)
     setup_nbref(app)
+    setup_signature
     setup_docassert(app)
 
     # from sphinx.util.texescape import tex_replacements

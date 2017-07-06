@@ -10,53 +10,7 @@ import inspect
 import sphinx
 from sphinx.util import logging
 from sphinx.util.docfields import DocFieldTransformer, _is_single_paragraph
-from typing import Tuple
-import warnings
-
-
-def import_object(docname, kind) -> Tuple[object, str]:
-    """
-    Extract an object defined by its name including the module name.
-
-    @param      docname     full name of the object
-                            (example: ``pyquickhelper.sphinxext.sphinx_docassert_extension.import_object``)
-    @param      kind        ``'function'`` or ``'class'`` or ``'kind'``
-    @return                 tuple(object, name)
-    """
-    spl = docname.split(".")
-    name = spl[-1]
-    context = {}
-    if kind == "function":
-        modname = ".".join(spl[:-1])
-        code = 'from {0} import {1}\nmyfunc = {1}'.format(modname, name)
-        codeobj = compile(code, 'conf.py', 'exec')
-    else:
-        modname = ".".join(spl[:-2])
-        classname = spl[-2]
-        code = 'from {0} import {1}\nmyfunc = {1}'.format(modname, classname)
-        codeobj = compile(code, 'conf.py', 'exec')
-
-    with warnings.catch_warnings():
-        warnings.simplefilter("ignore")
-        try:
-            exec(codeobj, context, context)
-        except Exception as e:
-            raise Exception(
-                "Unable to compile and execute '{0}'".format(code)) from e
-
-    myfunc = context["myfunc"]
-    if kind == "function":
-        name = spl[-1]
-    elif kind == "method":
-        myfunc = getattr(myfunc, spl[-1])
-        name = spl[-1]
-    elif kind == "class":
-        name = spl[-1]
-        myfunc = myfunc.__init__
-    else:
-        raise ValueError("Unknwon value for 'kind'")
-
-    return myfunc, name
+from .import_object_helper import import_object
 
 
 def check_typed_make_field(self,

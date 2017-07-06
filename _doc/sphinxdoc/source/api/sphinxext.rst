@@ -8,50 +8,50 @@ sphinxext: Sphinx extensions
 blocs
 +++++
 
-.. autoclass:: pyquickhelper.sphinxext.sphinx_blocref_extension.BlocRef
+.. autosignature:: pyquickhelper.sphinxext.sphinx_blocref_extension.BlocRef
 
-.. autoclass:: pyquickhelper.sphinxext.sphinx_blocref_extension.BlocRefList
+.. autosignature:: pyquickhelper.sphinxext.sphinx_blocref_extension.BlocRefList
 
-.. autoclass:: pyquickhelper.sphinxext.sphinx_exref_extension.ExRef
+.. autosignature:: pyquickhelper.sphinxext.sphinx_exref_extension.ExRef
 
-.. autoclass:: pyquickhelper.sphinxext.sphinx_exref_extension.ExRefList
+.. autosignature:: pyquickhelper.sphinxext.sphinx_exref_extension.ExRefList
 
-.. autoclass:: pyquickhelper.sphinxext.sphinx_faqref_extension.FaqRef
+.. autosignature:: pyquickhelper.sphinxext.sphinx_faqref_extension.FaqRef
 
-.. autoclass:: pyquickhelper.sphinxext.sphinx_faqref_extension.FaqRefList
+.. autosignature:: pyquickhelper.sphinxext.sphinx_faqref_extension.FaqRefList
 
-.. autoclass:: pyquickhelper.sphinxext.sphinx_mathdef_extension.MathDef
+.. autosignature:: pyquickhelper.sphinxext.sphinx_mathdef_extension.MathDef
 
-.. autoclass:: pyquickhelper.sphinxext.sphinx_mathdef_extension.MathDefList
+.. autosignature:: pyquickhelper.sphinxext.sphinx_mathdef_extension.MathDefList
 
-.. autoclass:: pyquickhelper.sphinxext.sphinx_nbref_extension.NbRef
+.. autosignature:: pyquickhelper.sphinxext.sphinx_nbref_extension.NbRef
 
-.. autoclass:: pyquickhelper.sphinxext.sphinx_nbref_extension.NbRefList
+.. autosignature:: pyquickhelper.sphinxext.sphinx_nbref_extension.NbRefList
 
-.. autoclass:: pyquickhelper.sphinxext.sphinx_todoext_extension.TodoExt
+.. autosignature:: pyquickhelper.sphinxext.sphinx_todoext_extension.TodoExt
 
-.. autoclass:: pyquickhelper.sphinxext.sphinx_todoext_extension.TodoExtList
+.. autosignature:: pyquickhelper.sphinxext.sphinx_todoext_extension.TodoExtList
 
 blog
 ++++
 
-.. autoclass:: pyquickhelper.sphinxext.blog_post.BlogPost
+.. autosignature:: pyquickhelper.sphinxext.blog_post.BlogPost
     :members:
 
-.. autoclass:: pyquickhelper.sphinxext.sphinx_blog_extension.BlogPostDirective
+.. autosignature:: pyquickhelper.sphinxext.sphinx_blog_extension.BlogPostDirective
 
-.. autoclass:: pyquickhelper.sphinxext.blog_post_list.BlogPostList
+.. autosignature:: pyquickhelper.sphinxext.blog_post_list.BlogPostList
     :members:
 
-.. autoclass:: pyquickhelper.sphinxext.sphinx_blog_extension.BlogPostDirectiveAgg
+.. autosignature:: pyquickhelper.sphinxext.sphinx_blog_extension.BlogPostDirectiveAgg
 
 style
 +++++
 
-.. autofunction:: pyquickhelper.sphinxext.sphinx_bigger_extension.bigger_role
+.. autosignature:: pyquickhelper.sphinxext.sphinx_bigger_extension.bigger_role
 
-.. autofunction:: pyquickhelper.sphinxext.sphinx_githublink_extension.githublink_role
+.. autosignature:: pyquickhelper.sphinxext.sphinx_githublink_extension.githublink_role
 
-.. autoclass:: pyquickhelper.sphinxext.sphinx_runpython_extension.RunPythonDirective
+.. autosignature:: pyquickhelper.sphinxext.sphinx_runpython_extension.RunPythonDirective
 
-.. autoclass:: pyquickhelper.sphinxext.sphinx_sharenet_extension.ShareNetDirective
+.. autosignature:: pyquickhelper.sphinxext.sphinx_sharenet_extension.ShareNetDirective

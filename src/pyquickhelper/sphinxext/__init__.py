@@ -44,6 +44,7 @@ from ..sphinxext.sphinx_nbref_extension import setup as setup_nbref
 from ..sphinxext.sphinx_runpython_extension import setup as setup_runpython
 from ..sphinxext.sphinx_sharenet_extension import setup as setup_sharenet
 from ..sphinxext.sphinx_todoext_extension import setup as setup_todoext
+from ..sphinxext.sphinx_autosignature import setup as setup_signature
 
 
 def get_default_extensions():
@@ -66,7 +67,7 @@ def get_default_extensions():
                       setup_todoext, setup_bigger, setup_githublink,
                       setup_runpython, setup_mathdef, setup_blocref,
                       setup_faqref, setup_exref, setup_nbref,
-                      setup_docassert,
+                      setup_docassert, setup_signature,
                       # directives from sphinx
                       setup_graphviz, setup_math, setup_todo,
                       # the rest of it
