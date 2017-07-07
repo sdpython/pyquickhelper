@@ -742,7 +742,7 @@ class _CustomSphinx(Sphinx):
         # now that we know all config values, collect them from conf.py
         noallowed = []
         for k in confoverrides:
-            if k in {'initial_header_level', 'doctitle_xform', 'input_encoding'}:
+                     'outdir', 'warnings_log'}:
                 continue
             if k not in self.config.values:
                 noallowed.append(k)
