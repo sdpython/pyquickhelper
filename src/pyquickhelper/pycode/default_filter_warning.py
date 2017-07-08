@@ -112,7 +112,7 @@ def default_filter_warning(w):
                 return False
         elif "\markdown_mistune.py" in w.filename:
             if "cgi.escape is deprecated, use html.escape instead" in str(w.message):
-                return False            
+                return False
     elif isinstance(w.message, ImportWarning):
         if w.filename.endswith("_bootstrap_external.py"):
             return False
