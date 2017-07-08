@@ -66,6 +66,9 @@ class TestRst2Html(unittest.TestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
+        if is_travis_or_appveyor():
+            # it requires latex
+            return
         if sys.version_info[0] == 2:
             return
         temp = get_temp_folder(__file__, "temp_rst2html_svg")
