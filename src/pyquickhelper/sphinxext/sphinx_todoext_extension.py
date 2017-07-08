@@ -20,6 +20,7 @@ from docutils.parsers.rst.directives.admonitions import BaseAdmonition
 from sphinx.util.nodes import set_source_info, process_index_entry
 from sphinx import addnodes
 from ..texthelper.texts_language import TITLES
+from .sphinxext_helper import try_add_config_value
 
 
 class todoext_node(nodes.admonition):
@@ -493,7 +494,7 @@ def depart_todoextlist_node(self, node):
 
 def setup(app):
     """
-    setup for ``todoext`` (sphinx)
+    Setup for ``todoext`` (sphinx).
     """
     if hasattr(app, "add_mapping"):
         app.add_mapping('todoext', todoext_node)
@@ -501,7 +502,10 @@ def setup(app):
 
     app.add_config_value('todoext_include_todosext', False, 'html')
     app.add_config_value('todoext_link_only', False, 'html')
-    app.add_config_value('extlinks', {}, 'env')
+
+    # The following variable is shared with extension
+    # `todo <http://www.sphinx-doc.org/en/stable/ext/todo.html>`_.
+    try_add_config_value(app, 'extlinks', {}, 'env')
 
     app.add_node(todoextlist,
                  html=(visit_todoextlist_node, depart_todoextlist_node),
