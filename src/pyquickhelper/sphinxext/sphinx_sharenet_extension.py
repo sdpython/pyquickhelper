@@ -244,8 +244,6 @@ def setup(app):
     if hasattr(app, "add_mapping"):
         app.add_mapping('sharenet', sharenet_node)
 
-    app.add_config_value('sharepost', None, 'env')
-
     app.add_node(sharenet_node,
                  html=(visit_sharenet_node, depart_sharenet_node),
                  latex=(visit_sharenet_node, depart_sharenet_node),

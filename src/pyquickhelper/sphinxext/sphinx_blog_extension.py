@@ -397,6 +397,7 @@ def setup(app):
     """
     # this command enables the parameter blog_background to be part of the
     # configuration
+    app.add_config_value('sharepost', None, 'env')
     app.add_config_value('blog_background', True, 'env')
     app.add_config_value('out_blogpostlist', [], 'env')
     if hasattr(app, "add_mapping"):

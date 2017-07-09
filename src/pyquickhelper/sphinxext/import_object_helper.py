@@ -134,7 +134,7 @@ def import_any_object(docname, use_init=True) -> Tuple[object, str, str]:
             # not this kind
             excs.append((kind, e))
 
-    sec = "\n".join("{0}-{1}-{2}".format(k, type(e), e).replace("\n", " ")
-                    for k, e in excs)
+    sec = " ### ".join("{0}-{1}-{2}".format(k, type(e), e).replace("\n", " ")
+                       for k, e in excs)
     raise ImportError(
-        "Unable to import '{0}'. Exceptions met:\n----\n{1}\n----".format(docname, sec))
+        "Unable to import '{0}'. Exceptions met: {1}".format(docname, sec))

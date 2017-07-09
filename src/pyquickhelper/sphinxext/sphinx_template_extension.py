@@ -76,13 +76,19 @@ def tpl_role(role, rawtext, text, lineno, inliner, options=None, content=None):
 
     ::
 
-        tpl_templte = {'template_name': 'some template'}
+        tpl_template = {'template_name': 'some template'}
 
     ``template_name`` can also be a function.
 
     ::
 
         tpl_template = {'py':python_link_doc}
+
+    And the corresponding line in the documentation:
+
+    ::
+
+        :tpl:`py,m='ftplib',o='FTP.storbinary'`
 
     :param role: The role name used in the document.
     :param rawtext: The entire markup snippet, with role.
@@ -99,8 +105,17 @@ def tpl_role(role, rawtext, text, lineno, inliner, options=None, content=None):
     else:
         context = ",".join(spl[1:])
 
-    settings = inliner.document.settings
-    tpl_template = settings.tpl_template
+    env = inliner.document.settings.env
+    app = env.app
+    config = app.config
+
+    try:
+        tpl_template = config.tpl_template
+    except AttributeError as e:
+        ma = "\n".join(sorted(str(_) for _ in app.config))
+        raise AttributeError(
+            "unable to find 'tpl_template' in configuration. Available:\n{0}".format(ma)) from e
+
     if template_name not in tpl_template:
         raise ValueError(
             "Unable to find template '{0}' in tpl_template.".format(template_name))
@@ -112,7 +127,7 @@ def tpl_role(role, rawtext, text, lineno, inliner, options=None, content=None):
     except Exception as e:
         raise Exception("Unable to compile '''{0}'''".format(code)) from e
 
-    if isinstance(tpl_content, str  # unicode #
+    if isinstance(tpl_content, str  # unicode#
                   ):
         res = evaluate_template(tpl_content, **val_context)
     else:
@@ -121,7 +136,6 @@ def tpl_role(role, rawtext, text, lineno, inliner, options=None, content=None):
     node = tpl_node(rawtext=rawtext)
     node['classes'] += "-tpl"
 
-    # app = inliner.document.settings.env.app
     memo = ClassStruct(document=inliner.document, reporter=inliner.reporter,
                        language=inliner.language)
     processed, messages = inliner.parse(res, lineno, memo, node)

@@ -295,8 +295,8 @@ class TransferFTP:
         @param      to          destination (a folder)
         @param      name        name of the stream on the website
         @param      debug       if True, displays more information
-        @param      blocksize   see :tpl:`py,m=ftplib,o=FTP.storbinary`
-        @param      callback    see :tpl:`py,m=ftplib,o=FTP.storbinary`
+        @param      blocksize   see :tpl:`py,m='ftplib',o='FTP.storbinary'`
+        @param      callback    see :tpl:`py,m='ftplib',o='FTP.storbinary'`
         @return                 status
 
         .. versionchanged:: 1.0

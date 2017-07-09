@@ -38,6 +38,9 @@ class BlogPost:
         @param      filename            filename or string
         @param      encoding            encoding
         @param      raise_exception     to raise an exception when the blog cannot be parsed
+        @param      extensions          list of extension to use to parse the content of the blog,
+                                        if None, it will consider a default list
+                                        (see @see cl BlogPost and @see fn get_default_extensions)
 
         The constructor creates the following members:
 

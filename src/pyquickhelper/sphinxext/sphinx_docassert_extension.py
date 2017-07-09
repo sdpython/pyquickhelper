@@ -76,8 +76,12 @@ def check_typed_make_field(self,
             check_params = list(check_params.items())
             nodoc = list(sorted(k for k, v in check_params if v == 0))
             if len(nodoc) > 0:
-                logger.warning("[docassert] '{0}' has undocumented parameters '{1}' (in '{2}').".format(
-                    function_name, ", ".join(nodoc), docname))
+                if len(nodoc) == 1 and nodoc[0] == 'self':
+                    # Behavior should be improved.
+                    pass
+                else:
+                    logger.warning("[docassert] '{0}' has undocumented parameters '{1}' (in '{2}').".format(
+                        function_name, ", ".join(nodoc), docname))
     else:
         # Documentation related to the return.
         pass
