@@ -258,6 +258,19 @@ def setup(app):
     it by a function which calls the current function and does
     extra checking on the list of parameters.
 
+    .. warning:: This class does not handle methods if the parameter name
+        for the class is different from *self*. Classes included in other
+        classes are not properly handled.
+
+    .. todoext::
+        :title: docassert: handle subclasses + parameter class different from self for method
+        :hidden: true
+        :date: 2017-07-09
+        :issue: 50
+        :release: 1.5
+
+        See warning.
+
     .. todoext::
         :title: check parameters list in documentation
         :tag: done
