@@ -61,7 +61,7 @@ notebook conversion into slides, scripts to build setups, documentation, unit te
     :maxdepth: 1
 
     api/index
-    Full API <modindex>
+    Full API <py-modindex>
     i_ex
     i_nb
     i_faq

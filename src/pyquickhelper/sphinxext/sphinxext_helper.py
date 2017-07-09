@@ -26,6 +26,5 @@ def try_add_config_value(app, name, default, rebuild, types_=()):
     """
     if name in app.config:
         return False
-    help(app.add_config_value)
     app.add_config_value(name, default, rebuild, types_)
     return True

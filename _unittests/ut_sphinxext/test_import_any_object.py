@@ -43,6 +43,23 @@ class TestImportAnyObject(unittest.TestCase):
         self.assertEqual(name, "clex")
         self.assertEqual(kind, "class")
 
+    def test_import_any_object_benchmark(self):
+        fLOG(
+            __file__,
+            self._testMethodName,
+            OutputPrint=__name__ == "__main__")
+
+        this = os.path.abspath(os.path.dirname(__file__))
+        data = os.path.join(this, "datadoc")
+        sys.path.append(data)
+        name = "src.pyquickhelper.benchhelper.grid_benchmark.GridBenchMark.bench_experiment"
+        obj, name, kind = import_any_object(name)
+        sys.path.pop()
+        self.assertTrue(obj is not None)
+        # self.assertTrue(obj.(4, 5), 9)
+        self.assertEqual(name, "bench_experiment")
+        self.assertEqual(kind, "method")
+
 
 if __name__ == "__main__":
     unittest.main()

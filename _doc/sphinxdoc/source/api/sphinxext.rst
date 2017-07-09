@@ -45,6 +45,13 @@ blog
 
 .. autosignature:: pyquickhelper.sphinxext.sphinx_blog_extension.BlogPostDirectiveAgg
 
+code
+++++
+
+.. autosignature:: pyquickhelper.sphinxext.sphinx_docassert_extension.setup
+
+.. autosignature:: pyquickhelper.sphinxext.sphinx_autosignature.AutoSignatureDirective
+
 style
 +++++
 

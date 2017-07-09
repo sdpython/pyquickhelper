@@ -29,7 +29,7 @@ except ImportError:
     import src
 
 from src.pyquickhelper.loghelper.flog import fLOG
-from src.pyquickhelper.sphinxext.sphinx_docassert_extension import import_object
+from src.pyquickhelper.sphinxext.import_object_helper import import_object
 from src.pyquickhelper.helpgen import rst2html
 from sphinx.util.logging import getLogger
 

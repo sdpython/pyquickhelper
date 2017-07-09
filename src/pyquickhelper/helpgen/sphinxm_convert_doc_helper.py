@@ -263,6 +263,7 @@ def rst2html(s, fLOG=noLOG, writer="sphinx", keep_warnings=False,
 
     settings_overrides = default_settings.copy()
     settings_overrides["warning_stream"] = StringIO()
+    settings_overrides["master_doc"] = document_name
     settings_overrides.update({k: v[0]
                                for k, v in mockapp.new_options.items()})
 
@@ -392,7 +393,7 @@ def correct_indentation(text):
 
 def docstring2html(function_or_string, format="html", fLOG=noLOG, writer="sphinx",
                    keep_warnings=False, directives=None, language="en",
-                   layout='docutils', document_name="<<string>>", **options):
+                   layout='docutils', document_name="<string>", **options):
     """
     converts a docstring into a HTML format
 

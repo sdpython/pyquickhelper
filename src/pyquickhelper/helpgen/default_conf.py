@@ -631,7 +631,7 @@ def custom_setup(app, author):
     setup_exref(app)
     setup_faqref(app)
     setup_nbref(app)
-    setup_signature
+    setup_signature(app)
     setup_docassert(app)
 
     # from sphinx.util.texescape import tex_replacements

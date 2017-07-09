@@ -10,7 +10,7 @@ import inspect
 import sphinx
 from sphinx.util import logging
 from sphinx.util.docfields import DocFieldTransformer, _is_single_paragraph
-from .import_object_helper import import_object
+from .import_object_helper import import_any_object
 
 
 def check_typed_make_field(self,
@@ -176,19 +176,13 @@ class OverrideDocFieldTransformer:
             docs = fieldbody.parent.source.split(":docstring of")[-1].strip()
 
             myfunc = None
-            name = None
             funckind = None
             function_name = None
             excs = []
-            for kind in ("function", "method", "class"):
-                try:
-                    myfunc, name = import_object(docs, kind)
-                    funckind = kind
-                    function_name = name
-                    break
-                except Exception as e:
-                    # not this kind
-                    excs.append(e)
+            try:
+                myfunc, function_name, funckind = import_any_object(docs)
+            except ImportError as e:
+                excs.append(e)
 
             if myfunc is None:
                 if len(excs) > 0:

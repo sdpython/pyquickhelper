@@ -39,7 +39,7 @@ def import_object(docname, kind, use_init=True) -> Tuple[object, str]:
             exec(codeobj, context, context)
         except Exception as e:
             raise Exception(
-                "Unable to compile and execute '{0}'".format(code)) from e
+                "Unable to compile and execute '{0}' due to \n{1}\ngiven:\n{2}".format(code.replace('\n', '\\n'), e, docname)) from e
 
     myfunc = context["myfunc"]
     if kind == "function":
@@ -47,9 +47,12 @@ def import_object(docname, kind, use_init=True) -> Tuple[object, str]:
             raise TypeError("'{0}' is not a function".format(docname))
         name = spl[-1]
     elif kind == "method":
-        if not inspect.ismethod(myfunc):
-            raise TypeError("'{0}' is not a method".format(docname))
+        if not inspect.isclass(myfunc):
+            raise TypeError("'{0}' is not a class".format(docname))
         myfunc = getattr(myfunc, spl[-1])
+        if not inspect.isfunction(myfunc) and not inspect.ismethod(myfunc):
+            raise TypeError(
+                "'{0}' is not a method - {1}".format(docname, myfunc))
         name = spl[-1]
     elif kind == "class":
         if not inspect.isclass(myfunc):
@@ -84,5 +87,8 @@ def import_any_object(docname, use_init=True) -> Tuple[object, str, str]:
         except Exception as e:
             # not this kind
             excs.append(e)
-    raise ImportError("Unable to import '{0}'. Exceptions met:\n----\n{1}\n----".format(docname,
-                                                                                        "\n".join(str(e).replace("\n", " ") for e in excs)))
+
+    sec = "\n".join("{0}-{1}".format(type(e), e).replace("\n", " ")
+                    for e in excs)
+    raise ImportError(
+        "Unable to import '{0}'. Exceptions met:\n----\n{1}\n----".format(docname, sec))
