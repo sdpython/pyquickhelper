@@ -426,16 +426,16 @@ def has_been_updated(source, dest):
 
 def walk(top, onerror=None, followlinks=False, neg_filter=None):
     """
-    Does the same as `walk <https://docs.python.org/3.5/library/os.html#os.walk>`_
+    Does the same as `walk <https://docs.python.org/3/library/os.html#os.walk>`_
     plus do not go through a sub-folder if this one is big. Folders such build or Debug or Release
     may not need to be dug into.
 
     @param      top             folder
-    @param      onerror         see `walk <https://docs.python.org/3.5/library/os.html#os.walk>`_
-    @param      followlinks     see `walk <https://docs.python.org/3.5/library/os.html#os.walk>`_
+    @param      onerror         see `walk <https://docs.python.org/3/library/os.html#os.walk>`_
+    @param      followlinks     see `walk <https://docs.python.org/3/library/os.html#os.walk>`_
     @param      neg_filter      filtering, a string, every folder verifying the filter will be excluded
                                 (file pattern, not a regular expression pattern)
-    @return                     see `walk <https://docs.python.org/3.5/library/os.html#os.walk>`_
+    @return                     see `walk <https://docs.python.org/3/library/os.html#os.walk>`_
     """
     if neg_filter is None:
         for root, dirs, files in os.walk(top=top, onerror=onerror, followlinks=followlinks):

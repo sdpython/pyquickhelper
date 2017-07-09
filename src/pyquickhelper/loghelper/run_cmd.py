@@ -133,7 +133,7 @@ def run_cmd(cmd, sin="", shell=sys.platform.startswith("win"), wait=False, log_e
     @param      encerror            encoding errors (ignore by default) while converting the output into a string
     @param      encoding            encoding of the output
     @param      change_path         change the current path if  not None (put it back after the execution)
-    @param      communicate         use method `communicate <https://docs.python.org/3.4/library/subprocess.html#subprocess.Popen.communicate>`_ which is supposed to be safer,
+    @param      communicate         use method `communicate <https://docs.python.org/3/library/subprocess.html#subprocess.Popen.communicate>`_ which is supposed to be safer,
                                     parameter ``wait`` must be True
     @param      preprocess          preprocess the command line if necessary (not available on Windows) (False to disable that option)
     @param      timeout             when data is sent to stdin (``sin``), a timeout is needed to avoid waiting for ever (*timeout* is in seconds)

@@ -104,7 +104,7 @@ def run_notebook(filename, profile_dir=None, working_dir=None, skip_exceptions=F
                                     this should be a function with the same signature as ``print`` or None
     @return                         tuple (statistics, output)
 
-    @warning The function calls `basicConfig <https://docs.python.org/3.4/library/logging.html#logging.basicConfig>`_.
+    @warning The function calls `basicConfig <https://docs.python.org/3/library/logging.html#logging.basicConfig>`_.
 
     .. exref::
         :title: Run a notebook end to end

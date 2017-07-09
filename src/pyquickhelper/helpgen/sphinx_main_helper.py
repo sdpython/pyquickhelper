@@ -94,7 +94,7 @@ def produce_code_graph_changes(df):
     @return             graph
 
     .. versionchanged:: 1.0
-        The call to `datetime.datetime.strptime <https://docs.python.org/3.4/library/datetime.html#strftime-strptime-behavior>`_
+        The call to `datetime.datetime.strptime <https://docs.python.org/3/library/datetime.html#strftime-strptime-behavior>`_
         introduced exceptions::
 
             File "<frozen importlib._bootstrap>", line 2212, in _find_and_load_unlocked

@@ -52,8 +52,8 @@ code
 
 .. autosignature:: pyquickhelper.sphinxext.sphinx_autosignature.AutoSignatureDirective
 
-style
-+++++
+style, content
+++++++++++++++
 
 .. autosignature:: pyquickhelper.sphinxext.sphinx_bigger_extension.bigger_role
 
@@ -62,3 +62,7 @@ style
 .. autosignature:: pyquickhelper.sphinxext.sphinx_runpython_extension.RunPythonDirective
 
 .. autosignature:: pyquickhelper.sphinxext.sphinx_sharenet_extension.ShareNetDirective
+
+.. autosignature:: pyquickhelper.sphinxext.sphinx_template_extension.tpl_role
+
+.. autosignature:: pyquickhelper.sphinxext.documentation_link.python_link_doc

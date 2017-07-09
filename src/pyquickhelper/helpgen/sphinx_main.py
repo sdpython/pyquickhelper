@@ -45,6 +45,7 @@ from ..sphinxext.blog_post_list import BlogPostList
 from ..sphinxext.sphinx_blog_extension import BlogPostDirective, BlogPostDirectiveAgg
 from ..sphinxext.sphinx_runpython_extension import RunPythonDirective
 from ..sphinxext.sphinx_sharenet_extension import ShareNetDirective, sharenet_role
+from ..sphinxext.sphinx_template_extension import tpl_role
 from ..sphinxext.sphinx_bigger_extension import bigger_role
 from ..sphinxext.sphinx_githublink_extension import githublink_role
 from ..sphinxext.sphinx_mathdef_extension import MathDef
@@ -334,6 +335,7 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
     roles.register_canonical_role("sharenet", sharenet_role)
     roles.register_canonical_role("bigger", bigger_role)
     roles.register_canonical_role("githublink", githublink_role)
+    roles.register_canonical_role("tpl", tpl_role)
 
     if "conf" in sys.modules:
         raise ImportError("module conf was imported, this function expects not to:\n{0}".format(

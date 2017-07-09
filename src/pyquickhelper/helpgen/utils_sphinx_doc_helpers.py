@@ -153,7 +153,7 @@ class ModuleMemberDoc:
     """
     represents a member in a module
 
-    See `inspect <https://docs.python.org/3.4/library/inspect.html>`_
+    See `inspect <https://docs.python.org/3/library/inspect.html>`_
 
     Attributes:
       obj (object): object

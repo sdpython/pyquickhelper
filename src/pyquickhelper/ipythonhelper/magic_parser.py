@@ -13,14 +13,14 @@ class MagicCommandParser (argparse.ArgumentParser):
 
     """
     add method ``parse_cmd`` to
-    `argparse.ArgumentParser <https://docs.python.org/3.4/library/argparse.html#argumentparser-objects>`_
+    `argparse.ArgumentParser <https://docs.python.org/3/library/argparse.html#argumentparser-objects>`_
 
     .. versionadded:: 0.9
     """
 
     def __init__(self, prog, *l, **p):
         """
-        custom constructor, see `ArgumentParser <https://docs.python.org/3.4/library/argparse.html>`_
+        custom constructor, see `ArgumentParser <https://docs.python.org/3/library/argparse.html>`_
 
         @param  prog        command name
         @param  l           positional arguments
@@ -52,7 +52,7 @@ class MagicCommandParser (argparse.ArgumentParser):
     def add_argument(self, *args, **kwargs):
         """
         Overloads the method,
-        see `ArgumentParser <https://docs.python.org/3.4/library/argparse.html>`_.
+        see `ArgumentParser <https://docs.python.org/3/library/argparse.html>`_.
         Among the parameters:
 
         * *no_eval*: avoid considering the parameter
@@ -140,8 +140,8 @@ class MagicCommandParser (argparse.ArgumentParser):
 
     def parse_cmd(self, line, context=None, fLOG=noLOG):
         """
-        split line using `shlex <https://docs.python.org/3.4/library/shlex.html>`_
-        and call `parse_args <https://docs.python.org/3.4/library/argparse.html#argparse.ArgumentParser.parse_args>`_
+        split line using `shlex <https://docs.python.org/3/library/shlex.html>`_
+        and call `parse_args <https://docs.python.org/3/library/argparse.html#argparse.ArgumentParser.parse_args>`_
 
         @param      line        string
         @param      context     if not None, tries to evaluate expression the command may contain
@@ -180,7 +180,7 @@ class MagicCommandParser (argparse.ArgumentParser):
         Evaluate a string knowing the context,
         it returns *value* if it does not belong to the context
         or if it contains brackets or symbols (+, *),
-        if the value cannot be evaluated (with function `eval <https://docs.python.org/3.4/library/functions.html#eval>`_),
+        if the value cannot be evaluated (with function `eval <https://docs.python.org/3/library/functions.html#eval>`_),
         it returns the value value
 
         @param      value       string

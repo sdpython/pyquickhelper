@@ -105,7 +105,8 @@ Functionalities
   (see :func:`generate_help_sphinx <pyquickhelper.helpgen.sphinx_main.generate_help_sphinx>`)
 * simple server to server sphinx documentation
   (see :func:`run_doc_server <pyquickhelper.serverdoc.documentation_server.run_doc_server>`)
-* function :func:`rst2html <pyquickhelper.helpgen.convert_doc_helper.rst2html>` to convert RST into HTML
+* function :func:`rst2html <pyquickhelper.helpgen.sphinxm_convert_doc_helper.rst2html>`
+  to convert RST into HTML
 * Sphinx directive :class:`BlogPostDirective <pyquickhelper.sphinxext.sphinx_blog_extension.BlogPostDirective>`
   to add a directive ``blogpost`` into the docutmention
 * Sphinx directive :class:`RunPythonDirective <pyquickhelper.sphinxext.sphinx_runpython_extension.RunPythonDirective>`

@@ -276,7 +276,7 @@ def main_run_test(runner, path_test=None, limit_max=1e9, log=False, skip=-1, ski
     @param      on_stderr           if True, publish everything on stderr at the end
     @param      processes           to run the unit test in a separate process (with function @see fn run_cmd),
                                     however, to make that happen, you need to specify
-                                    ``exit=False`` for each test file, see `unittest.main <https://docs.python.org/3.4/library/unittest.html#unittest.main>`_
+                                    ``exit=False`` for each test file, see `unittest.main <https://docs.python.org/3/library/unittest.html#unittest.main>`_
     @param      additional_ut_path  additional paths to add when running the unit tests
     @param      stdout              if not None, use this stream instead of *sys.stdout*
     @param      stderr              if not None, use this stream instead of *sys.stderr*

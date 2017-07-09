@@ -110,7 +110,7 @@ def rst2html(s, fLOG=noLOG, writer="sphinx", keep_warnings=False,
              directives=None, language="en",
              layout='docutils', document_name="<<string>>", **options):
     """
-    converts a string into HTML format
+    Converts a string into HTML format.
 
     @param      s               string to converts
     @param      fLOG            logging function (warnings will be logged)

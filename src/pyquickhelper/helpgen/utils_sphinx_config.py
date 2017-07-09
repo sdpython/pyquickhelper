@@ -16,7 +16,7 @@ if sys.version_info[0] == 2:
 
 def getsitepackages():
     """
-    overwrites function `getsitepackages <https://docs.python.org/3.4/library/site.html#site.getsitepackages>`_
+    overwrites function `getsitepackages <https://docs.python.org/3/library/site.html#site.getsitepackages>`_
     which does not work for a virtual environment
 
     @return         site-package somewhere

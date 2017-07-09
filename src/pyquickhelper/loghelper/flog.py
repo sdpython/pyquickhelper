@@ -132,7 +132,7 @@ def GetLogFile(physical=False, filename=None):
     :raises OSError:     if this file cannot be created
 
     .. versionchanged:: 1.1
-        Use module `logging <https://docs.python.org/3.4/library/logging.html>`_.
+        Use module `logging <https://docs.python.org/3/library/logging.html>`_.
         Parameter *filename* was added.
     """
     if flog_static.store_log_values["__log_file"] is None:
