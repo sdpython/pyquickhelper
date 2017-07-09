@@ -13,3 +13,8 @@ Short API
     pycode
     sphinxext
     texthelper
+
+API
+===
+
+:ref:`modindex`
