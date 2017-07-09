@@ -42,16 +42,16 @@ class TodoExt(BaseAdmonition):
     A ``todoext`` entry, displayed in the form of an admonition.
     It takes the following options:
 
-    * **title:** a title for the todo (mandatory)
-    * **tag:** a tag to have several categories of todo (mandatory)
-    * **issue:** the issue requires `extlinks <http://www.sphinx-doc.org/en/stable/ext/extlinks.html#confval-extlinks>`_
+    * *title:* a title for the todo (mandatory)
+    * *tag:* a tag to have several categories of todo (mandatory)
+    * *issue:* the issue requires `extlinks <http://www.sphinx-doc.org/en/stable/ext/extlinks.html#confval-extlinks>`_
       to be defined and must contain key ``'issue'`` (optional)
-    * **cost:** a cost if the todo were to be fixed (optional)
-    * **priority:** to prioritize items (optional)
-    * **hidden:** if true, the todo does not appear where it is inserted but it
+    * *cost:* a cost if the todo were to be fixed (optional)
+    * *priority:* to prioritize items (optional)
+    * *hidden:* if true, the todo does not appear where it is inserted but it
       will with a todolist (optional)
-    * **date:** date (optional)
-    * **release:** release number (optional)
+    * *date:* date (optional)
+    * *release:* release number (optional)
 
     Example::
 

@@ -37,11 +37,15 @@ class bigger_node(nodes.Element):
 def bigger_role(role, rawtext, text, lineno, inliner, options=None, content=None):
     """
     Defines custom role *bigger*. The following instructions defines
-    buttons of size 20 (:bigger:`text`)::
+    buttons of size 20 (:bigger:`text`):
+
+    ::
 
         :bigger:`text`
 
-    Or to specify a different :bigger:`::5:size` ::
+    Or to specify a different :bigger:`::5:size` :
+
+    ::
 
         :bigger:`::5:size`
 

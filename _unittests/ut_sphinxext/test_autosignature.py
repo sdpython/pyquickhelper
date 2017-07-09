@@ -22,7 +22,7 @@ except ImportError:
     import src
 
 from src.pyquickhelper.loghelper.flog import fLOG
-from src.pyquickhelper.sphinxext.sphinx_docassert_extension import import_object
+from src.pyquickhelper.sphinxext.import_object_helper import import_object
 from src.pyquickhelper.helpgen import rst2html
 
 
@@ -150,6 +150,45 @@ class TestDocAssert(unittest.TestCase):
         if "if a and b have different types" in html[0]:
             raise Exception(html[0])
         if "Return the addition of" not in html[0]:
+            raise Exception(html[0])
+
+    def test_autosignature_class_onemethod2(self):
+        fLOG(
+            __file__,
+            self._testMethodName,
+            OutputPrint=__name__ == "__main__")
+
+        this = os.path.abspath(os.path.dirname(__file__))
+        data = os.path.join(this, "datadoc")
+        sys.path.append(data)
+
+        newstring = ["AAAAAAAAAAAAAAAA",
+                     "",
+                     ".. autosignature:: exdocassert2.onefunction",
+                     "",
+                     "CCCCCCCCCCCCCCCC"]
+        newstring = "\n".join(newstring)
+        htmls = rst2html(newstring, layout="sphinx_body")
+        sys.path.pop()
+
+        html = htmls.split("CCCCCCCCCCCCCCCC")
+        if "onefunction" not in html[0]:
+            raise Exception(html[0])
+        if "<strong>a</strong>" in html[0]:
+            raise Exception(html[0])
+        if ":param a:" in html[0]:
+            raise Exception(html[0])
+        if "`" in html[0]:
+            raise Exception(html[0])
+        if "if a and b have different types" in html[0]:
+            raise Exception(html[0])
+        if "Return the addition of" not in html[0]:
+            raise Exception(html[0])
+        if "Second line should be aligned." not in html[0]:
+            raise Exception(html[0])
+        if "<p>Return the addition of" not in html[0]:
+            raise Exception(html[0])
+        if "should be aligned.</p>" not in html[0]:
             raise Exception(html[0])
 
 

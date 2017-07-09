@@ -13,9 +13,11 @@ configuration
 conversion
 ++++++++++
 
+.. autosignature:: pyquickhelper.helpgen.sphinxm_convert_doc_helper.docstring2html
+
 .. autosignature:: pyquickhelper.helpgen.pandoc_helper.latex2rst
 
-.. autosignature:: pyquickhelper.helpgen.convert_doc_helper.rst2html
+.. autosignature:: pyquickhelper.helpgen.sphinxm_convert_doc_helper.rst2html
 
 specific
 ++++++++
@@ -25,5 +27,5 @@ specific
 tweaking zone
 +++++++++++++
 
-.. autosignature:: pyquickhelper.helpgen.sphinx_custom_app.CustomSphinxApp
+.. autosignature:: pyquickhelper.helpgen.sphinxm_custom_app.CustomSphinxApp
     :members:

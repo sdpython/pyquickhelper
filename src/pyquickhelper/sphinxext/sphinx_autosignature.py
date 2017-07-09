@@ -105,10 +105,10 @@ class AutoSignatureDirective(Directive):
             try:
                 signature = inspect.signature(obj_sig)
                 parameters = signature.parameters
-            except TypeError:
+            except TypeError as e:
                 logger = logging.getLogger("autosignature")
                 logger.warning(
-                    "[autosignature] unable to get signature of '{0}'.".format(object_name))
+                    "[autosignature](1) unable to get signature of '{0}' - {2}.".format(object_name, str(e).replace("\n", "\\n")))
                 signature = None
                 parameters = None
 
@@ -124,22 +124,24 @@ class AutoSignatureDirective(Directive):
                     object_name, signature)
 
         if obj is not None and opt_summary:
-            doc = obj.__doc__ if kind != "class" else obj.__class__.__doc__
+            # Documentation.
+            doc = obj.__doc__  # if kind != "class" else obj.__class__.__doc__
+            if "type(object_or_name, bases, dict)" in doc:
+                raise Exception("issue with {0}\n{1}".format(obj, doc))
             if doc is None:
                 logger = logging.getLogger("autosignature")
                 logger.warning(
                     "[autosignature] docstring empty for '{0}'.".format(object_name))
             else:
                 docstring = self.build_summary(doc)
-                lines = "\n".join(
-                    map(lambda s: "    " + s, docstring.split("\n")))
-                text += "\n" + lines + "\n\n"
+                text += docstring + "\n\n"
 
         if opt_members is not None and kind == "class":
             docstring = self.build_members(obj, opt_members, object_name,
                                            opt_annotation, opt_summary)
-            lines = "\n".join(map(lambda s: "    " + s, docstring.split("\n")))
-            text += "\n" + lines + "\n\n"
+            docstring = "\n".join(
+                map(lambda s: "    " + s, docstring.split("\n")))
+            text += docstring + "\n\n"
 
         st = StringList(text.split("\n"))
         nested_parse_with_titles(self.state, st, node)
@@ -159,13 +161,16 @@ class AutoSignatureDirective(Directive):
         for name, value in methods:
             if name[0] == "_" or (members is not None and name not in members):
                 continue
+            if name not in cl.__dict__:
+                # Not a method of this class.
+                continue
             try:
                 signature = inspect.signature(value)
                 parameters = signature.parameters
-            except TypeError:
+            except TypeError as e:
                 logger = logging.getLogger("autosignature")
                 logger.warning(
-                    "[autosignature] unable to get signature of '{0}.{1}'.".format(object_name, name))
+                    "[autosignature](2) unable to get signature of '{0}.{1} - {2}'.".format(object_name, name, str(e).replace("\n", "\\n")))
                 signature = None
             except ValueError:
                 signature = None
@@ -204,14 +209,28 @@ class AutoSignatureDirective(Directive):
         keep = []
         for line in lines:
             sline = line.strip(" \r\t")
-            if sline.startswith(":param"):
-                break
-            if sline.startswith("@param"):
+            if sline.startswith(":param") or sline.startswith("@param"):
                 break
             if sline.startswith("Parameters"):
                 break
+            if sline.startswith(":returns:") or sline.startswith(":return:"):
+                break
+            if sline.startswith(":rtype:") or sline.startswith(":raises:"):
+                break
+            if sline.startswith(".. ") and "::" in sline:
+                break
+            if sline == "::":
+                break
+            if sline.startswith(":githublink:"):
+                break
+            if sline.startswith("@warning") or sline.startswith(".. warning::"):
+                break
             keep.append(line)
-        return "\n".join(keep)
+        res = "\n".join(keep).rstrip("\n\r\t ")
+        if res.endswith(":"):
+            res = res[:-1] + "..."
+        res = AutoSignatureDirective.reformat(res)
+        return res
 
     def build_parameters_list(self, parameters, annotation):
         """
@@ -236,6 +255,49 @@ class AutoSignatureDirective(Directive):
                     de = str(value.default)
                 pieces.append("`{0}`".format(de))
         return "".join(pieces)
+
+    @staticmethod
+    def reformat(text, indent=4):
+        """
+        Format the number of spaces in front every line
+        to be equal to a specific value.
+
+        @param      text        text to analyse
+        @return                 number
+        """
+        mins = None
+        spl = text.split("\n")
+        for line in spl:
+            wh = line.strip("\r\t ")
+            if len(wh) > 0:
+                wh = line.lstrip(" \t")
+                m = len(line) - len(wh)
+                mins = m if mins is None else min(mins, m)
+
+        if mins is None:
+            return text
+        dec = indent - mins
+        if dec > 0:
+            res = []
+            ins = " " * dec
+            for line in spl:
+                wh = line.strip("\r\t ")
+                if len(wh) > 0:
+                    res.append(ins + line)
+                else:
+                    res.append(wh)
+            text = "\n".join(res)
+        elif dec < 0:
+            res = []
+            dec = -dec
+            for line in spl:
+                wh = line.strip("\r\t ")
+                if len(wh) > 0:
+                    res.append(line[dec:])
+                else:
+                    res.append(wh)
+            text = "\n".join(res)
+        return text
 
 
 def visit_autosignature_node(self, node):

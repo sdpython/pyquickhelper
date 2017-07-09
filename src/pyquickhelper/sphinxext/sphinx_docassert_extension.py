@@ -52,6 +52,8 @@ def check_typed_make_field(self,
         check_params = {}
     else:
         parameters = list(parameters)
+        if kind == "method":
+            parameters = parameters[1:]
         check_params = {(p if isinstance(p, str) else p.name): 0 for p in parameters}
     logger = logging.getLogger("docassert")
 
@@ -67,13 +69,12 @@ def check_typed_make_field(self,
                     function_name, fieldarg, docname))
 
     if isinstance(items, list):
-        for fieldarg, content in items:
+        for i, (fieldarg, content) in enumerate(items):
             check_item(fieldarg, content, logger)
         mini = None if len(check_params) == 0 else min(check_params.values())
         if mini == 0:
-            nodoc = list(sorted(k for k, v in check_params.items() if v == 0))
-            if kind == "method":
-                nodoc = [_ for _ in nodoc if _ != "self"]
+            check_params = list(check_params.items())
+            nodoc = list(sorted(k for k, v in check_params if v == 0))
             if len(nodoc) > 0:
                 logger.warning("[docassert] '{0}' has undocumented parameters '{1}' (in '{2}').".format(
                     function_name, ", ".join(nodoc), docname))

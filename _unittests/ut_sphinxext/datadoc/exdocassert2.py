@@ -3,6 +3,7 @@
 def onefunction(a, b):
     """
     Return the addition of ``a+b``.
+    Second line should be aligned.
 
     :param a: first element
     :param c: second element

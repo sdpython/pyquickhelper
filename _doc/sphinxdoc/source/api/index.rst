@@ -1,6 +1,6 @@
 
-Short API
-=========
+API Summary
+===========
 
 .. toctree::
     :maxdepth: 2
@@ -13,8 +13,3 @@ Short API
     pycode
     sphinxext
     texthelper
-
-API
-===
-
-:ref:`modindex`

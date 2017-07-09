@@ -19,9 +19,6 @@ controls
 
 .. autosignature:: pyquickhelper.ipythonhelper.html_forms.open_html_form
 
-.. autosignature:: pyquickhelper.ipythonhelper.interact.StaticInteract
-    :members:
-
 .. autosignature:: pyquickhelper.ipythonhelper.widgets.DropDownWidget
     :members:
 
@@ -32,6 +29,9 @@ controls
     :members:
 
 .. autosignature:: pyquickhelper.ipythonhelper.widgets.RangeWidget
+    :members:
+
+.. autosignature:: pyquickhelper.ipythonhelper.interact.StaticInteract
     :members:
 
 extensions
@@ -84,7 +84,7 @@ notebook
 
 .. autosignature:: pyquickhelper.helpgen.utils_sphinx_config.NbImage
 
-.. autosignature:: pyquickhelper.helpgen.sphinx_main.process_notebooks
+.. autosignature:: pyquickhelper.helpgen.process_notebooks.process_notebooks
 
 .. autosignature:: pyquickhelper.ipythonhelper.notebook_helper.read_nb
 

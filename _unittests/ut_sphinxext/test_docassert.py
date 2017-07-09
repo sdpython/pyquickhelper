@@ -150,6 +150,59 @@ class TestDocAssert(unittest.TestCase):
         if nb == 0:
             raise Exception("not the right warning")
 
+    def test_docassert_html_method(self):
+        fLOG(
+            __file__,
+            self._testMethodName,
+            OutputPrint=__name__ == "__main__")
+
+        class MyStream:
+            def __init__(self):
+                self.rows = []
+
+            def write(self, text):
+                fLOG(
+                    "[warning*] {0} - '{1}'".format(len(self), text.strip("\n\r ")))
+                self.rows.append(text)
+
+            def getvalue(self):
+                return "\n".join(self.rows)
+
+            def __len__(self):
+                return len(self.rows)
+
+        logger1 = getLogger("MockSphinxApp")
+        logger2 = getLogger("docassert")
+        log_capture_string = MyStream()  # StringIO()
+        ch = logging.StreamHandler(log_capture_string)
+        ch.setLevel(logging.DEBUG)
+        logger1.logger.addHandler(ch)
+        logger2.logger.addHandler(ch)
+        logger2.warning("try")
+
+        this = os.path.abspath(os.path.dirname(__file__))
+        data = os.path.join(this, "datadoc")
+        sys.path.append(data)
+        obj, name = import_object("exsig.clex.onemethod", "method")
+        newstring = ".. automethod:: exsig.clex.onemethod"
+        html = rst2html(newstring)
+        self.assertTrue(html is not None)
+        sys.path.pop()
+        fLOG(len(log_capture_string))
+
+        lines = log_capture_string.getvalue().split("\n")
+        if len(lines) == 0:
+            raise Exception("no warning")
+        nb = 0
+        for line in lines:
+            if "'onemethod' has no parameter 'c'" in line:
+                nb += 1
+        if nb == 0:
+            raise Exception("not the right warning")
+        for line in lines:
+            if "'onemethod' has undocumented parameters 'b, self'" in line:
+                raise Exception(line)
+
 
 if __name__ == "__main__":
     unittest.main()

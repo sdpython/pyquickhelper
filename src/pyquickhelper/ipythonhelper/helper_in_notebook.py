@@ -39,7 +39,7 @@ def add_notebook_menu(menu_id="my_id_menu_nb", raw=False, format="html", header=
 
 def load_extension(name):
     """
-    See  `load_extension <http://www.xavierdupre.fr/app/pyquickhelper/helpsphinx/jyquickhelper/helpers_in_notebook.html>`_.
+    See  `load_extension <http://www.xavierdupre.fr/app/jyquickhelper/helpsphinx/jyquickhelper/helper_in_notebook.html#jyquickhelper.helper_in_notebook.load_extension>`_.
     """
     warnings.warn("The function has been moved to jyquickhelper.")
     from jyquickhelper.helper_in_notebook import load_extension as _load_extension

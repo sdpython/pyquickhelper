@@ -68,7 +68,7 @@ def writes(nb, **kwargs):
 
 def upgrade_notebook(filename, encoding="utf8"):
     """
-    converts a notebook from version 2 to 3
+    Converts a notebook from version 2 to latest.
 
     @param      filename        filename
     @param      encoding        encoding
