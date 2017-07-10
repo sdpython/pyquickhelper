@@ -4,8 +4,5 @@
 Magic commands
 ==============
 
-.. contents::
-    :local:
-
 .. nbreflist::
     :contents:

@@ -8,6 +8,7 @@ from ..texthelper.texts_language import TITLES
 
 if sys.version_info[0] == 2:
     from codecs import open
+    FileNotFoundError = Exception
 
 
 def add_missing_files(root, conf, blog_list):
@@ -39,10 +40,18 @@ def add_missing_files(root, conf, blog_list):
     if not os.path.exists(loc):
         os.makedirs(loc)
 
+    api_index = os.path.join(root, "_doc", "sphinxdoc",
+                             "source", "api", "index.rst")
+    add_api_link = os.path.exists(api_index)
+    if add_api_link:
+        api_title = extract_first_title(api_index)
+
     tocs = []
 
     # link
-    link = """\n<li class="toctree-l1"><a class="reference internal" href="{0}">{1}</a></li>"""
+    link = '\n<li class="toctree-l1"><a class="reference internal" href="{0}">{1}</a></li>'
+    double_link = '\n<li class="toctree-l1"><a class="reference internal" href="{0}">{1}</a> - ' + \
+                  '<a class="reference internal" href="{2}">{3}</a></li>'
 
     # moduletoc.html
     mt = os.path.join(loc, "moduletoc.html")
@@ -52,15 +61,20 @@ def add_missing_files(root, conf, blog_list):
         f.write("\n<ul>")
         f.write(link.format("{{ pathto('',1) }}/blog/main_0000.html", "Blog"))
         f.write(link.format("{{ pathto('',1) }}/genindex.html", "Index"))
-        f.write(link.format("{{ pathto('',1) }}/py-modindex.html", "Module"))
+        if add_api_link:
+            f.write(double_link.format("{{ pathto('',1) }}/py-modindex.html", "Module",
+                                       "{{ pathto('',1) }}/api/index.html", api_title))
+        else:
+            f.write(link.format(
+                "{{ pathto('',1) }}/py-modindex.html", "Module"))
         # f.write("""{%- if prev or next %}<li class="toctree-l1">
         #        {%- if prev %}<a href="{{ prev.link|e }}">&lt;--</a>{%- endif %}
         #        {%- if next %}<a href="{{ next.link|e }}">--&gt;</a>{%- endif %}
         #        </li>{%- endif %}""")
         f.write("\n</ul>")
         f.write(
-            """\n<h3><a href="{{ pathto(master_doc) }}">%s</a></h3>\n""" % TITLES[language]["toc"])
-        f.write("""{{ toctree() }}""")
+            '\n<h3><a href="{{ pathto(master_doc) }}">%s</a></h3>\n' % TITLES[language]["toc"])
+        f.write('{{ toctree() }}')
         f.write("\n<h3>{0}</h3>".format(TITLES[language]["toc1"]))
         f.write("\n<ul>")
         f.write(
@@ -78,8 +92,7 @@ def add_missing_files(root, conf, blog_list):
     mt = os.path.join(loc, "blogtoc.html")
     tocs.append(mt)
     with open(mt, "w", encoding="utf8") as f:
-        f.write(
-            """<a href="{{ pathto('',1) }}/genindex.html">Index</a>\n""")
+        f.write("""<a href="{{ pathto('',1) }}/genindex.html">Index</a>\n""")
         f.write(
             """<a href="{{ pathto('',1) }}/py-modindex.html">Module</a>\n""")
         f.write(
@@ -128,3 +141,26 @@ def add_missing_files(root, conf, blog_list):
             f.write(text)
 
     return tocs
+
+
+def extract_first_title(filename, underline="="):
+    """
+    Extracts the first title (rst format) in a file.
+
+    @param      filename        filename
+    @param      underline       level of the title
+    @return                     title name (or raises an exception if not found)
+    """
+    if not os.path.exists(filename):
+        raise FileNotFoundError(filename)
+    with open(filename, "r", encoding="utf-8") as f:
+        lines = f.readlines()
+    look = {underline}
+    for i, line in enumerate(lines):
+        sline = line.strip("\t\r\n ")
+        car = set(sline)
+        if car == look and i > 0:
+            title = lines[i - 1]
+            return title.strip("\n\r\t ")
+    raise ValueError("Unable to find a title in '{0}'\nCONTENT\n{1}".format(
+        filename, "".join(lines)))

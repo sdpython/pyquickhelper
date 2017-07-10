@@ -6,7 +6,10 @@ Issues
 
 .. index:: issues, todo
 
+The list of issues reported here is not exhaustive.
+
 .. contents::
+    :local:
 
 Issues
 ++++++

@@ -235,6 +235,8 @@ Documentation
 
 It relies on `pyquickhelper <https://pypi.python.org/pypi/pyquickhelper/>`_.
 
+.. _l-dependencies-tools:
+
 Generation
 ++++++++++
 

@@ -62,8 +62,8 @@ kernels
 
 .. autosignature:: pyquickhelper.ipythonhelper.notebook_helper.upgrade_notebook
 
-magic commands
-++++++++++++++
+magic command helpers
++++++++++++++++++++++
 
 .. autosignature:: pyquickhelper.ipythonhelper.magic_class.MagicClassWithHelpers
     :members:
