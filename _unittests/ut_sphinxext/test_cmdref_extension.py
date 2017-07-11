@@ -24,26 +24,26 @@ except ImportError:
 from src.pyquickhelper.loghelper.flog import fLOG
 from src.pyquickhelper.pycode import get_temp_folder
 from src.pyquickhelper.helpgen import rst2html
-from src.pyquickhelper.sphinxext import NbRef, NbRefList
-from src.pyquickhelper.sphinxext.sphinx_nbref_extension import nbref_node, visit_nbref_node, depart_nbref_node
+from src.pyquickhelper.sphinxext import CmdRef, CmdRefList
+from src.pyquickhelper.sphinxext.sphinx_cmdref_extension import cmdref_node, visit_cmdref_node, depart_cmdref_node
 
 
 if sys.version_info[0] == 2:
     from codecs import open
 
 
-class TestNbRefExtension(unittest.TestCase):
+class TestCmdRefExtension(unittest.TestCase):
 
-    def test_post_parse_nbref(self):
+    def test_post_parse_cmdref(self):
         fLOG(
             __file__,
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
-        directives.register_directive("nbref", NbRef)
-        directives.register_directive("nbreflist", NbRefList)
+        directives.register_directive("cmdref", CmdRef)
+        directives.register_directive("cmdreflist", CmdRefList)
 
-    def test_nbref(self):
+    def test_cmdref(self):
         fLOG(
             __file__,
             self._testMethodName,
@@ -57,10 +57,11 @@ class TestNbRefExtension(unittest.TestCase):
 
                     before
 
-                    .. nbref::
-                        :title: first todo
-                        :tag: bug
-                        :lid: id3
+                    .. cmdref::
+                        :title: first cmd
+                        :tag: crypt
+                        :lid: idcmd3
+                        :cmd: src.pyquickhelper.cli.encryption_cli:encrypt
 
                         this code shoud appear___
 
@@ -69,18 +70,21 @@ class TestNbRefExtension(unittest.TestCase):
         if sys.version_info[0] >= 3:
             content = content.replace('u"', '"')
 
-        tives = [("nbref", NbRef, nbref_node,
-                  visit_nbref_node, depart_nbref_node)]
+        tives = [("cmdref", CmdRef, cmdref_node,
+                  visit_cmdref_node, depart_cmdref_node)]
 
         html = rst2html(content,  # fLOG=fLOG,
                         writer="custom", keep_warnings=True,
                         directives=tives, extlinks={'issue': ('http://%s', '_issue_')})
 
-        temp = get_temp_folder(__file__, "temp_nbref")
-        with open(os.path.join(temp, "out_nbref.html"), "w", encoding="utf8") as f:
+        temp = get_temp_folder(__file__, "temp_cmdref")
+        with open(os.path.join(temp, "out_cmdref.html"), "w", encoding="utf8") as f:
             f.write(html)
 
         t1 = "this code shoud appear"
+        if t1 not in html:
+            raise Exception(html)
+        t1 = "before"
         if t1 not in html:
             raise Exception(html)
 
@@ -88,11 +92,19 @@ class TestNbRefExtension(unittest.TestCase):
         if t1 not in html:
             raise Exception(html)
 
-        t1 = "first todo"
+        t1 = "before"
         if t1 not in html:
             raise Exception(html)
 
-    def test_nbreflist(self):
+        t1 = "--help"
+        if t1 not in html:
+            raise Exception(html)
+
+        t1 = '<span class="n">STATUS</span>'
+        if t1 not in html:
+            raise Exception(html)
+
+    def test_cmdreflist(self):
         fLOG(
             __file__,
             self._testMethodName,
@@ -101,21 +113,22 @@ class TestNbRefExtension(unittest.TestCase):
         from docutils import nodes as skip_
 
         content = """
-                    test a directive
+                    test a --helpe
                     ================
 
                     before
 
-                    .. nbref::
-                        :title: first todo
+                    .. cmdref::
+                        :title: first cmd
                         :tag: freg
                         :lid: id3
+                        :cmd: src.pyquickhelper.cli.encryption_cli:encrypt
 
                         this code shoud appear___
 
                     middle
 
-                    .. nbreflist::
+                    .. cmdreflist::
                         :tag: freg
                         :sort: title
 
@@ -124,28 +137,28 @@ class TestNbRefExtension(unittest.TestCase):
         if sys.version_info[0] >= 3:
             content = content.replace('u"', '"')
 
-        tives = [("nbref", NbRef, nbref_node,
-                  visit_nbref_node, depart_nbref_node)]
+        tives = [("cmdref", CmdRef, cmdref_node,
+                  visit_cmdref_node, depart_cmdref_node)]
 
         html = rst2html(content,  # fLOG=fLOG,
                         writer="custom", keep_warnings=True,
                         directives=tives, layout="sphinx")
-        if "admonition-nbref nbref_node admonition" not in html:
-            raise html
+        if "admonition-cmdref cmdref_node admonition" not in html:
+            raise Exception(html)
 
-        temp = get_temp_folder(__file__, "temp_nbreflist")
-        with open(os.path.join(temp, "out_nbref.html"), "w", encoding="utf8") as f:
+        temp = get_temp_folder(__file__, "temp_cmdreflist")
+        with open(os.path.join(temp, "out_cmdref.html"), "w", encoding="utf8") as f:
             f.write(html)
 
         t1 = "this code shoud appear"
         if t1 not in html:
             raise Exception(html)
 
-        t1 = "after"
+        t1 = "--help"
         if t1 not in html:
             raise Exception(html)
 
-        t1 = "first todo"
+        t1 = '<span class="n">STATUS</span>'
         if t1 not in html:
             raise Exception(html)
 

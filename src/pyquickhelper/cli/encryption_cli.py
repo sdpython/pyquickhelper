@@ -18,11 +18,11 @@ def get_parser(encrypt):
     @return                 parser
     """
     task = "encrypt" if encrypt else "decrypt"
-    parser = argparse.ArgumentParser(
-        description='encrypt or %s a folder' % task +
-                    '\nfor a second run, the program looks into file status' +
-                    '\nto avoid crypting same file gain, does only modified files' +
-                    '\ndoes not work well in Python 2.7 with pycryptodome')
+    parser = argparse.ArgumentParser(prog=task,
+                                     description='encrypt or %s a folder' % task +
+                                     '\nfor a second run, the program looks into file status' +
+                                     '\nto avoid crypting same file gain, does only modified files' +
+                                     '\ndoes not work well in Python 2.7 with pycryptodome')
     parser.add_argument(
         'source',
         help='folder to %s' % task)
@@ -86,7 +86,7 @@ def do_main(source, dest, password, encrypt,
 
     if encrypt:
         if fLOG:
-            print("looking for file in", root)
+            fLOG("looking for file in", root)
         ft = FileTreeNode(root, repository=False, fLOG=fLOG, log1=True)
         enc = EncryptedBackup(key=password, file_tree_node=ft,
                               transfer_api=api, root_local=local, file_status=crypt_file,
@@ -104,48 +104,70 @@ def do_main(source, dest, password, encrypt,
                               transfer_api=api, root_local=None, file_status=None,
                               file_map=None, fLOG=fLOG)
         if fLOG:
-            print("start restoration")
+            fLOG("start restoration")
         enc.retrieve_all(source, regex=regex)
 
 
-def encrypt(fLOG=print):
+def encrypt(fLOG=print, args=None):
     """
     encrypt using class @see cl EncryptedBackup
 
     @param      fLOG        logging function
+    @param      args        to overwrite ``sys.args``
+
+    .. cmdref::
+        :title: encrypt a string
+        :cmd: pyquickhelper.cli.encryption_cli:decrypt
+
+    .. versionchanged:: 1.5
+        Parameter *args* was added.
     """
     parser = get_parser(True)
-    try:
-        args = parser.parse_args()
-    except SystemExit:
-        if fLOG:
-            print(parser.format_usage())
-        args = None
+    if args is not None and args == ['--help']:
+        fLOG(parser.format_help())
+    else:
+        try:
+            args = parser.parse_args(args=args)
+        except SystemExit:
+            if fLOG:
+                fLOG(parser.format_usage())
+            args = None
 
-    if args is not None:
-        do_main(source=args.source, dest=args.dest, password=args.password,
-                encrypt=True, crypt_file=args.status, crypt_map=args.map, fLOG=fLOG)
+        if args is not None:
+            do_main(source=args.source, dest=args.dest, password=args.password,
+                    encrypt=True, crypt_file=args.status, crypt_map=args.map, fLOG=fLOG)
 
 
-def decrypt(fLOG=print):
+def decrypt(fLOG=print, args=None):
     """
     decrypt using class @see cl EncryptedBackup
 
     @param      fLOG        logging function
+    @param      args        to overwrite ``sys.args``
+
+    .. cmdref::
+        :title: decrypt a string
+        :cmd: pyquickhelper.cli.encryption_cli:decrypt
+
+    .. versionchanged:: 1.5
+        Parameter *args* was added.
     """
     parser = get_parser(False)
-    try:
-        args = parser.parse_args()
-    except SystemExit:
-        if fLOG:
-            print(parser.format_usage())
-        args = None
+    if args is not None and args == ['--help']:
+        fLOG(parser.format_help())
+    else:
+        try:
+            args = parser.parse_args(args=args)
+        except SystemExit:
+            if fLOG:
+                fLOG(parser.format_usage())
+            args = None
 
-    if args is not None:
-        do_main(source=args.dest, dest=args.source, password=args.password,
-                encrypt=False, crypt_file=None, crypt_map=None,
-                regex=args.regex if args.regex else None,
-                fLOG=fLOG)
+        if args is not None:
+            do_main(source=args.dest, dest=args.source, password=args.password,
+                    encrypt=False, crypt_file=None, crypt_map=None,
+                    regex=args.regex if args.regex else None,
+                    fLOG=fLOG)
 
 
 if __name__ == "__main__":

@@ -72,9 +72,9 @@ class NbRef(BlocRef):
 
 def process_nbrefs(app, doctree):
     """
-    collect all blocrefs in the environment
+    Collect all *nbref* in the environment
     this is not done in the directive itself because it some transformations
-    must have already been run, e.g. substitutions
+    must have already been run, e.g. substitutions.
     """
     process_blocrefs_generic(
         app, doctree, bloc_name="nbref", class_node=nbref_node)
@@ -82,7 +82,7 @@ def process_nbrefs(app, doctree):
 
 class NbRefList(BlocRefList):
     """
-    A list of all blocref entries, for a specific tag.
+    A list of all *nbref* entries, for a specific tag.
 
     * tag: a tag to have several categories of nbref
     * contents: add a bullet list with links to added blocs
@@ -106,7 +106,7 @@ class NbRefList(BlocRefList):
 
 def process_nbref_nodes(app, doctree, fromdocname):
     """
-    process_blocref_nodes
+    process_nbref_nodes
     """
     process_blocref_nodes_generic(app, doctree, fromdocname, class_name='nbref',
                                   entry_name="nbmes", class_node=nbref_node,
@@ -143,16 +143,16 @@ def visit_nbref_node(self, node):
 
 def depart_nbref_node(self, node):
     """
-    depart_nbref_node,
-    see https://github.com/sphinx-doc/sphinx/blob/master/sphinx/writers/html.py
+    *depart_nbref_node*,
+    see `sphinx/writers/html.py <https://github.com/sphinx-doc/sphinx/blob/master/sphinx/writers/html.py>`_.
     """
     self.depart_admonition(node)
 
 
 def visit_nbreflist_node(self, node):
     """
-    visit_nbreflist_node
-    see https://github.com/sphinx-doc/sphinx/blob/master/sphinx/writers/html.py
+    *visit_nbreflist_node*,
+    see `sphinx/writers/html.py <https://github.com/sphinx-doc/sphinx/blob/master/sphinx/writers/html.py>`_.
     """
     self.visit_admonition(node)
 

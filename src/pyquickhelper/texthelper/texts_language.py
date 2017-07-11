@@ -43,6 +43,7 @@ TITLES = {
            'nbmes': '(<<%s>> : %s, line %d)',
            'exmes': '(<<%s>> : %s, line %d)',
            'blog_entry': 'The original entry is located in <<%s>>, line %d and can be found ',
+           'cmdmes': '(<<%s>> : %s, line %d)',
            },
     'fr': {"blogpost": "article",
            "toc": "Contenu",
@@ -82,5 +83,6 @@ TITLES = {
            'nbmes': '(<<%s>> : %s, ligne %d)',
            'exmes': '(<<%s>> : %s, ligne %d)',
            'blog_entry': 'Source <<%s>>, line %d and can be found ',
+           'cmdmes': '(<<%s>> : %s, line %d)',
            }
 }

@@ -64,6 +64,7 @@ notebook conversion into slides, scripts to build setups, documentation, unit te
     api/index
     i_ex
     i_nb
+    i_cmd
     i_faq
     Examples Gallery <gyexamples/index>
     Notebooks Gallery <all_notebooks>

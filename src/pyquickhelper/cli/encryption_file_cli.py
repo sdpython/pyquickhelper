@@ -18,9 +18,9 @@ def get_parser(encrypt):
     @return                 parser
     """
     task = "encrypt" if encrypt else "decrypt"
-    parser = argparse.ArgumentParser(
-        description='%s a file' % task +
-                    '\ndoes not work well in Python 2.7 with pycryptodome')
+    parser = argparse.ArgumentParser(prog=task,
+                                     description='%s a file' % task +
+                                     '\ndoes not work well in Python 2.7 with pycryptodome')
     parser.add_argument(
         'source',
         help='file to %s' % task)
@@ -69,17 +69,26 @@ def do_main(source, dest, password, encrypt, fLOG=None):
                        chunksize=os.stat(source).st_size * 2 + 1)
 
 
-def encrypt_file(fLOG=print):
+def encrypt_file(fLOG=print, args=None):
     """
     encrypt using class @see fn encrypt_stream
 
     @param      fLOG        logging function
+    @param      args        to overwrite ``sys.args``
+
+    .. cmdref::
+        :title: encrypt a file
+        :cmd: pyquickhelper.cli.encryption_cli:encrypt_file
+
+    .. versionchanged:: 1.5
+        Parameter *args* was added.
     """
     parser = get_parser(True)
     try:
         args = parser.parse_args()
     except SystemExit:
-        print(parser.format_usage())
+        if fLOG:
+            fLOG(parser.format_usage())
         args = None
 
     if args is not None:
@@ -88,17 +97,26 @@ def encrypt_file(fLOG=print):
                 fLOG=fLOG)
 
 
-def decrypt_file(fLOG=print):
+def decrypt_file(fLOG=print, args=None):
     """
     decrypt using class @see fn decrypt_stream
 
     @param      fLOG        logging function
+    @param      args        to overwrite ``sys.args``
+
+    .. cmdref::
+        :title: decrypt a file
+        :cmd: pyquickhelper.cli.encryption_file_cli:decrypt_file
+
+    .. versionchanged:: 1.5
+        Parameter *args* was added.
     """
     parser = get_parser(False)
     try:
         args = parser.parse_args()
     except SystemExit:
-        print(parser.format_usage())
+        if fLOG:
+            fLOG(parser.format_usage())
         args = None
 
     if args is not None:

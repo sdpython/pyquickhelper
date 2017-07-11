@@ -43,6 +43,7 @@ from ..sphinxext.sphinx_runpython_extension import visit_runpython_node as ext_v
 from ..sphinxext.sphinx_sharenet_extension import visit_sharenet_node as ext_visit_sharenet_node, depart_sharenet_node as ext_depart_sharenet_node
 from ..sphinxext.sphinx_todoext_extension import visit_todoext_node as ext_visit_todoext_node, depart_todoext_node as ext_depart_todoext_node
 from ..sphinxext.sphinx_template_extension import visit_tpl_node as ext_visit_tpl_node, depart_tpl_node as ext_depart_tpl_node
+from ..sphinxext.sphinx_cmdref_extension import visit_cmdref_node as ext_visit_cmdref_node, depart_cmdref_node as ext_depart_cmdref_node
 
 with warnings.catch_warnings():
     warnings.simplefilter("ignore")
@@ -225,6 +226,18 @@ class HTMLTranslatorWithCustomDirectives(HTMLTranslator):
         @see fn depart_nbref_node
         """
         ext_depart_nbref_node(self, node)
+
+    def visit_cmdref_node(self, node):
+        """
+        @see fn visit_cmdref_node
+        """
+        ext_visit_cmdref_node(self, node)
+
+    def depart_cmdref_node(self, node):
+        """
+        @see fn depart_cmdref_node
+        """
+        ext_depart_cmdref_node(self, node)
 
     def visit_exref_node(self, node):
         """

@@ -137,6 +137,15 @@ class BlocRef(BaseAdmonition):
         """
         builds the blocref text
         """
+        return self.private_run()
+
+    def private_run(self, add_container=False):
+        """
+        builds the blocref text
+
+        @param      add_container       add a container node and return as a second result
+        @return                         list of nodes or list of nodes, container
+        """
         name_desc = self.__class__.name_sphinx
         lineno = self.lineno
 
@@ -191,6 +200,11 @@ class BlocRef(BaseAdmonition):
             blocref.insert(0, container)
         else:
             blocref.insert(0, title)
+
+        if add_container:
+            ret_container = nodes.container()
+            blocref += ret_container
+
         blocref['breftag'] = breftag
         blocref['brefmid'] = mid
         blocref['breftitle'] = ttitle
@@ -227,7 +241,11 @@ class BlocRef(BaseAdmonition):
             targetnode = None
             indexnode = None
 
-        return [a for a in [indexnode, targetnode, blocref] if a is not None]
+        res = [a for a in [indexnode, targetnode, blocref] if a is not None]
+        if add_container:
+            return res, ret_container
+        else:
+            return res
 
 
 def process_blocrefs(app, doctree):
