@@ -78,7 +78,7 @@ def encrypt_file(fLOG=print, args=None):
 
     .. cmdref::
         :title: encrypt a file
-        :cmd: pyquickhelper.cli.encryption_cli:encrypt_file
+        :cmd: pyquickhelper.cli.encryption_file_cli:encrypt_file
 
         Encrypt a file from the command line.
 
