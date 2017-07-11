@@ -144,7 +144,7 @@ You can check if the test is run on a specific environment:
 
     from pyquickhelper.pycode import is_travis_or_appveyor
 
-Function :ref:`is_travis_or_appveyor <pyquickhelper.pycode.is_travis_or_appveyor>` return a string
+Function :ref:`is_travis_or_appveyor <pyquickhelper.pycode.ci_helper.is_travis_or_appveyor>` return a string
 ``'travis'`` or ``'appveyor'`` is the code is executed on such environment or None if
 none of them is detected.
 You can create a temporary folder next to the test file by running:

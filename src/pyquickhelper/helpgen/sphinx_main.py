@@ -46,6 +46,7 @@ from ..sphinxext.sphinx_blog_extension import BlogPostDirective, BlogPostDirecti
 from ..sphinxext.sphinx_runpython_extension import RunPythonDirective
 from ..sphinxext.sphinx_sharenet_extension import ShareNetDirective, sharenet_role
 from ..sphinxext.sphinx_template_extension import tpl_role
+from ..sphinxext.sphinx_epkg_extension import epkg_role
 from ..sphinxext.sphinx_bigger_extension import bigger_role
 from ..sphinxext.sphinx_githublink_extension import githublink_role
 from ..sphinxext.sphinx_mathdef_extension import MathDef
@@ -53,6 +54,7 @@ from ..sphinxext.sphinx_blocref_extension import BlocRef
 from ..sphinxext.sphinx_exref_extension import ExRef
 from ..sphinxext.sphinx_faqref_extension import FaqRef
 from ..sphinxext.sphinx_nbref_extension import NbRef
+from ..sphinxext.sphinx_cmdref_extension import CmdRef
 from ..sphinxext.sphinx_todoext_extension import TodoExt
 from .post_process import post_process_latex_output
 from .process_notebooks import process_notebooks, build_notebooks_gallery
@@ -332,10 +334,12 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
     directives.register_directive("exref", ExRef)
     directives.register_directive("faqref", FaqRef)
     directives.register_directive("nbref", NbRef)
+    directives.register_directive("cmdref", CmdRef)
     roles.register_canonical_role("sharenet", sharenet_role)
     roles.register_canonical_role("bigger", bigger_role)
     roles.register_canonical_role("githublink", githublink_role)
     roles.register_canonical_role("tpl", tpl_role)
+    roles.register_canonical_role("epkg", epkg_role)
 
     if "conf" in sys.modules:
         raise ImportError("module conf was imported, this function expects not to:\n{0}".format(

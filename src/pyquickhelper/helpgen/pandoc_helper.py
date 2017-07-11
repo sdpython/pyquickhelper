@@ -16,7 +16,7 @@ if sys.version_info[0] == 2:
 
 def call_pandoc(params, fLOG=noLOG):
     """
-    calls `pandoc <http://pandoc.org/>`_
+    Call :epkg:`pandoc>`.
 
     @param      params  parameters
     @param      fLOG    logging function

@@ -249,7 +249,7 @@ def zip7_files(filename_7z, file_set, fLOG=noLOG, temp_folder="."):
     """
     If *7z* is installed, the function uses it
     to compress file into 7z format. The file *filename_7z* must not exist
-    (`7z <http://www.7-zip.org/>`_).
+    (:epkg:`7z`).
 
     @param      filename_7z     final destination
     @param      file_set        list of files to compress
@@ -259,9 +259,9 @@ def zip7_files(filename_7z, file_set, fLOG=noLOG, temp_folder="."):
     @return                     number of added files
 
     .. versionchanged:: 1.5
-        The module `pylzma <https://pypi.python.org/pypi/pylzma>`_
+        The module :epkg:`pylzma`
         failed to decompress the file produced by the latest version
-        of `7z <http://www.7-zip.org/>`_ (2016-09-23). The compression
+        of :epkg:`7z` (2016-09-23). The compression
         was changed by tweaking the command line. LZMA is used instead LZMA2.
         The current version does not include this
         `commit <https://github.com/fancycode/pylzma/commit/b5c3c2bd4ab7abfb65de772861ecc600fe37394b>`_.
@@ -306,7 +306,7 @@ def un7zip_files(zipf, where_to=None, fLOG=noLOG, fvalid=None, remove_space=True
     @param      remove_space    remove spaces in created local path (+ ``',()``)
     @return                     list of unzipped files
 
-    The function requires module `pylzma <https://pypi.python.org/pypi/pylzma>`_.
+    The function requires module :epkg:`pylzma`.
 
     .. versionadded:: 1.4
     """

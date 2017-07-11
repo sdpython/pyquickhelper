@@ -47,6 +47,11 @@ class CmdRef(BlocRef):
       ``name --help``.
 
     It works the same way as @see cl BlocRef.
+
+   .. todoext::
+        :title: cmdref does not display anything if the content is empty.
+        :tag: bug
+        :issue: 51
     """
 
     node_class = cmdref_node
@@ -78,9 +83,9 @@ class CmdRef(BlocRef):
 
         if name is not None and len(name) > 0:
             self.reporter = self.state.document.reporter
-            if 1:  # try:
+            try:
                 source, lineno = self.reporter.get_source_and_line(self.lineno)
-            else:  # except AttributeError:
+            except AttributeError:
                 source = lineno = None
 
             if ":" not in name:
@@ -104,9 +109,9 @@ class CmdRef(BlocRef):
             #
             fullname, name_cmd = spl
             fullname = "{0}.{1}".format(fullname, name_cmd)
-            if 1:  # try:
+            try:
                 obj, name = import_object(fullname, kind="function")
-            else:  # except ImportError as e:
+            except ImportError as e:
                 logger = logging.getLogger("CmdRef")
                 logger.warning(
                     "[CmdRef] unable to import '{0}'".format(fullname))

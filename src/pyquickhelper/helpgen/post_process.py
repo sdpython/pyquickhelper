@@ -578,7 +578,7 @@ def post_process_latex(st, doall, info=None, latex_book=False, exc=True,
     @param      fLOG                    logging function
     @return                             string
 
-    SVG included in a notebook (or in RST file) requires `Inkscape <https://inkscape.org/>`_
+    SVG included in a notebook (or in RST file) requires :epkg:`Inkscape`
     to be converted into Latex.
 
     .. versionchanged:: 1.4

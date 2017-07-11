@@ -11,9 +11,7 @@ def ipython_cython_extension():
     """
     The function raises an exception if cython has a good chance not
     to work because Python does not find any suitable compiler
-    (not `MinGW <http://www.mingw.org/>`_ or
-    `Visual Studio Express <https://www.visualstudio.com/en-us/products/visual-studio-express-vs.aspx>`_
-    or any expected version).
+    (not :epkg:`MinGW` or :epkg:`Visual Studio Community Edition` or any expected version).
     In that case, the function displays a message with some indications
     on how to fix it.
 

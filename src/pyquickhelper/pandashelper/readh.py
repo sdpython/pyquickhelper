@@ -44,11 +44,11 @@ def read_csv(filepath_or_buffer, compression=None, fvalid=None, **params):
     """
     read a file from a file, it adds the compression zip
     which was removed in the latest version,
-    see `read_csv <http://pandas.pydata.org/pandas-docs/stable/generated/pandas.read_csv.html>`_
+    see :epkg:`pandas:read_csv`.
 
     @param      filepath_or_buffer      filepath or buffer
-    @param      compression             see `read_csv <http://pandas.pydata.org/pandas-docs/stable/generated/pandas.read_csv.html>`_
-    @param      params                  see `read_csv <http://pandas.pydata.org/pandas-docs/stable/generated/pandas.read_csv.html>`_
+    @param      compression             see :epkg:`pandas:read_csv`
+    @param      params                  see :epkg:`pandas:read_csv`
     @param      fvalid                  if the zip file contains many files, this function
                                         validates which one must be returned based on its name,
                                         the function returns the content of the file in that case (bytes)

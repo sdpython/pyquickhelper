@@ -160,8 +160,7 @@ def encrypt_stream(key, filename, out_filename=None, chunksize=2 ** 18, algo="AE
 
     @return                     filename or bytes
 
-    The function relies on module `pycrypto <https://pypi.python.org/pypi/pycrypto>`_,
-    `cryptography <http://cryptography.readthedocs.org/>`_,
+    The function relies on module :epkg:`pycrypto`, :epkg:`cryptography`,
     algoritm `AES <https://fr.wikipedia.org/wiki/Advanced_Encryption_Standard>`_,
     `Fernet <http://cryptography.readthedocs.org/en/latest/fernet/>`_.
 
@@ -208,8 +207,7 @@ def decrypt_stream(key, filename, out_filename=None, chunksize=3 * 2 ** 13, algo
     @return                     filename or bytes
 
 
-    The function relies on module `pycrypto <https://pypi.python.org/pypi/pycrypto>`_,
-    `cryptography <http://cryptography.readthedocs.org/>`_,
+    The function relies on module :epkg:`pycrypto`, :epkg:`cryptography`,
     algoritm `AES <https://fr.wikipedia.org/wiki/Advanced_Encryption_Standard>`_,
     `Fernet <http://cryptography.readthedocs.org/en/latest/fernet/>`_.
 

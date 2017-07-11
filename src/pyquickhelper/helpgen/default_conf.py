@@ -334,9 +334,56 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
         'blog/**': ['searchbox.html', 'blogtoc.html', 'localtoc.html', 'sourcelink.html', ],
     }
 
-    # tpl_node
+    # tpl_role
     from ..sphinxext.documentation_link import python_link_doc
     tpl_template = {'py': python_link_doc}
+
+    # epkg_role
+    epkg_dictionary = {
+        '7z': "http://www.7-zip.org/",
+        'GIT': 'http://git-scm.com/',
+        'class Sphinx': 'https://github.com/sphinx-doc/sphinx/blob/master/sphinx/application.py#L107',
+        'codecov': 'https://codecov.io/',
+        'coverage': 'https://pypi.python.org/pypi/coverage',
+        'cryptography': 'http://cryptography.readthedocs.org/',
+        'Inkscape': 'https://inkscape.org/',
+        'Jenkins': 'https://jenkins-ci.org/',
+        'jinja2': 'http://jinja.pocoo.org/docs/',
+        'mako': 'http://www.makotemplates.org/',
+        'mistune': 'https://pypi.python.org/pypi/mistune',
+        'MiKTeX': 'http://miktex.org/',
+        'MinGW': 'http://www.mingw.org/',
+        'nbconvert': 'http://nbconvert.readthedocs.io/en/latest/',
+        'nbpresent': 'https://github.com/Anaconda-Platform/nbpresent',
+        'numpy': ('http://www.numpy.org/',
+                   ('http://docs.scipy.org/doc/numpy/reference/generated/numpy.{0}.html', 1)),
+        'pandas': ('http://pandas.pydata.org/pandas-docs/stable/generated/',
+                   ('http://pandas.pydata.org/pandas-docs/stable/generated/{0}.html', 1)),
+        'pandoc': 'http://johnmacfarlane.net/pandoc/',
+        'PEP8': 'https://www.python.org/dev/peps/pep-0008/',
+        'pycodestyle': 'http://pycodestyle.readthedocs.io/',
+        'pycrypto': 'https://pypi.python.org/pypi/pycrypto',
+        'pygments': 'http://pygments.org/',
+        'pylzma': 'https://pypi.python.org/pypi/pylzma',
+        'Python': 'http://www.python.org/',
+        'python-jenkins': 'http://python-jenkins.readthedocs.org/en/latest/',
+        'pywin32': 'https://sourceforge.net/projects/pywin32/',
+        'reveal.js': 'https://github.com/hakimel/reveal.js/releases',
+        'SVN': 'https://subversion.apache.org/',
+        'Visual Studio Community Edition': 'https://www.visualstudio.com/',
+        'Visual Studio Community Edition 2015': 'https://imagine.microsoft.com/en-us/Catalog/Product/101',
+        '*py': ('https://docs.python.org/3/',
+                ('https://docs.python.org/3/library/{0}.html', 1),
+                ('https://docs.python.org/3/library/{0}.html#{0}.{1}', 2)),
+        '*pyf': (('https://docs.python.org/3/library/functions.html#{0}', 1),),
+        # Custom.
+        'jyquickhelper': 'http://www.xavierdupre.fr/app/jyquickhelper/helpsphinx/index.html',
+        'pymyinstall': 'http://www.xavierdupre.fr/app/pymyinstall/helpsphinx/index.html',
+        'pyquickhelper': 'http://www.xavierdupre.fr/app/pyquickhelper/helpsphinx/index.html',
+        'pyrsslocal': 'http://www.xavierdupre.fr/app/pyrsslocal/helpsphinx/index.html',
+        # Specific.
+        'datetime.datetime.strptime': 'https://docs.python.org/3/library/datetime.html#strftime-strptime-behavior',
+    }
 
     # latex
     math_number_all = False
@@ -622,6 +669,7 @@ def custom_setup(app, author):
     from ..sphinxext.sphinx_autosignature import setup as setup_signature
     from ..sphinxext.sphinx_template_extension import setup as setup_tpl
     from ..sphinxext.sphinx_cmdref_extension import setup as setup_cmdref
+    from ..sphinxext.sphinx_epkg_extension import setup as setup_epkg
 
     app.connect("autodoc-skip-member", skip)
     app.add_config_value('author', author, True)
@@ -641,6 +689,7 @@ def custom_setup(app, author):
     setup_signature(app)
     setup_docassert(app)
     setup_tpl(app)
+    setup_epkg(app)
 
     # from sphinx.util.texescape import tex_replacements
     # tex_replacements += [('oe', '\\oe '), ]

@@ -18,8 +18,7 @@ class CustomTemplateException(Exception):
 def apply_template(text, context, engine="mako"):
     """
     Extend a string containing templating instructions.
-    See `mako <http://www.makotemplates.org/>`_ or
-    `jinja2 <http://jinja.pocoo.org/docs/dev/>`_.
+    See :epkg:`mako` or :epkg:`jinja2`.
 
     @param      text        text
     @param      context     local variable to use

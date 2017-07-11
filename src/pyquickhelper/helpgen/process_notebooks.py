@@ -54,7 +54,7 @@ def process_notebooks(notebooks, outfold, build, latex_path=None, pandoc_path=No
                       nblinks=None):
     """
     Converts notebooks into html, rst, latex, pdf, python, docx using
-    `nbconvert <http://ipython.org/ipython-doc/rel-1.0.0/interactive/nbconvert.html>`_.
+    :epkg:`nbconvert`.
 
     @param      notebooks   list of notebooks
     @param      outfold     folder which will contains the outputs
@@ -67,14 +67,14 @@ def process_notebooks(notebooks, outfold, build, latex_path=None, pandoc_path=No
     @param      nblinks     dictionary ``{ref: url}``
     @return                 list of tuple *[(file, created or skipped)]*
 
-    This function relies on `pandoc <http://johnmacfarlane.net/pandoc/index.html>`_.
-    It also needs modules `pywin32 <http://sourceforge.net/projects/pywin32/>`_,
-    `pygments <http://pygments.org/>`_.
+    This function relies on :epkg:`pandoc`.
+    It also needs modules :epkg:`pywin32`,
+    :epkg:`pygments`.
 
-    `pywin32 <http://sourceforge.net/projects/pywin32/>`_ might have some issues
+    :epkg:`pywin32` might have some issues
     to find its DLL, look @see fn import_pywin32.
 
-    The latex compilation uses `MiKTeX <http://miktex.org/>`_.
+    The latex compilation uses :epkg:`MiKTeX`.
     The conversion into Word document directly uses pandoc.
     It still has an issue with table.
 
@@ -99,10 +99,9 @@ def process_notebooks(notebooks, outfold, build, latex_path=None, pandoc_path=No
                             formats=("ipynb", "html", "python", "rst", "slides", "pdf", "docx", "present", "github")])
 
     .. versionchanged:: 1.4
-        Add another format for the slides (with `nbpresent <https://pypi.python.org/pypi/nbpresent>`_).
+        Add another format for the slides (with :epkg:`nbpresent`).
         Replace command line by direct call to
-        `nbconvert <https://nbconvert.readthedocs.io/en/latest/>`_,
-        `nbpresent <https://github.com/Anaconda-Platform/nbpresent>`_.
+        :epkg:`nbconvert`, :epkg:`nbpresent`.
 
     .. versionchanged:: 1.5
         For latex and pdf, a custom processor was added to handle raw data

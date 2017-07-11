@@ -1,6 +1,6 @@
 """
 @file
-@brief Helpers for markdown functionalities, it requires dependencies on `mistune <https://pypi.python.org/pypi/mistune>`_.
+@brief Helpers for markdown functionalities, it requires dependencies on :epkg:`mistune`.
 """
 import re
 

@@ -80,6 +80,8 @@ def encrypt_file(fLOG=print, args=None):
         :title: encrypt a file
         :cmd: pyquickhelper.cli.encryption_cli:encrypt_file
 
+        Encrypt a file from the command line.
+
     .. versionchanged:: 1.5
         Parameter *args* was added.
     """
@@ -107,6 +109,8 @@ def decrypt_file(fLOG=print, args=None):
     .. cmdref::
         :title: decrypt a file
         :cmd: pyquickhelper.cli.encryption_file_cli:decrypt_file
+
+        Decrypt a file from the command line.
 
     .. versionchanged:: 1.5
         Parameter *args* was added.

@@ -539,13 +539,13 @@ class BenchMark:
         Produces a report.
 
         @param      css             css (will take the default one if empty)
-        @param      template_html   template HTML (Mako or Jinja2)
-        @param      template_rst    template RST (Mako or Jinja2)
-        @param      engine          Mako or Jinja2
+        @param      template_html   template HTML (:epkg:`mako` or :epkg:`jinja2`)
+        @param      template_rst    template RST (:epkg:`mako` or :epkg:`jinja2`)
+        @param      engine          ``'mako``' or '``jinja2'``
         @param      filehtml        report will written in this file if not None
         @param      filecsv         metrics will be written as a flat table
         @param      filerst         metrics will be written as a RST table
-        @param      params_html     parameter to send to function `to_html <http://pandas.pydata.org/pandas-docs/stable/generated/pandas.DataFrame.to_html.html>`_
+        @param      params_html     parameter to send to function :epkg:`pandas:DataFrame.to_html`
         @param      title           title (Name if any)
         @param      description     add a description
         @return                     dictionary {format: content}

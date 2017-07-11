@@ -142,7 +142,7 @@ def create_virtual_env(where, symlinks=False, system_site_packages=False,
     @param      clear                   Delete the environment directory if it already exists.
                                         If not specified and the directory exists, an error is raised.
     @param      packages                list of packages to install (it will install module
-                                        `pymyinstall <http://www.xavierdupre.fr/app/pymyinstall/helpsphinx/index.html>`_).
+                                        :epkg:`pymyinstall`).
     @param      fLOG                    logging function
     @param      temp_folder             temporary folder (to download module if needed), by default ``<where>/download``
     @return                             stand output

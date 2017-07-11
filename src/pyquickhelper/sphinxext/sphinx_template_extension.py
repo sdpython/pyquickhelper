@@ -46,7 +46,8 @@ def evaluate_template(template, engine="jinja2", **kwargs):
     Evaluate a template given a list of parameters given
     a list of named parameters.
 
-    @param      template        template (`jinja2 <http://jinja.pocoo.org/docs/>`_)
+    @param      template        template (:epkg:`jinja2`)
+    @param      engine          :epkg:`jinja2` or :epkg:`mako`
     @param      kwargs          additional parameters
     @return                     outcome
 
@@ -64,14 +65,13 @@ def tpl_role(role, rawtext, text, lineno, inliner, options=None, content=None):
 
         :tpl:`template_name,p1=v2, p2=v2, ...`
 
-    The role evaluate this expression with function
-    `eval <https://docs.python.org/3/library/functions.html#eval>`_:
+    The role evaluate this expression with function :epkg:`*pyf:eval`:
 
     ::
 
         evaluate_template(template, p1=v1, p2=v2, ...)
 
-    You can switch engine by adding parameter *engine='mako'*.
+    You can switch engine by adding parameter ``engine='mako'``.
     In the configuration file, the following must be added:
 
     ::

@@ -166,7 +166,6 @@ class AutoSignatureDirective(Directive):
                 continue
             try:
                 signature = inspect.signature(value)
-                parameters = signature.parameters
             except TypeError as e:
                 logger = logging.getLogger("autosignature")
                 logger.warning(
@@ -174,6 +173,11 @@ class AutoSignatureDirective(Directive):
                 signature = None
             except ValueError:
                 signature = None
+
+            if signature is not None:
+                parameters = signature.parameters
+            else:
+                parameters = []
 
             if signature is None:
                 continue
@@ -263,6 +267,7 @@ class AutoSignatureDirective(Directive):
         to be equal to a specific value.
 
         @param      text        text to analyse
+        @param      indent      specify the expected indentation for the result
         @return                 number
         """
         mins = None

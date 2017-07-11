@@ -67,7 +67,7 @@ class MockSphinxApp:
 
     def add_directive(self, name, cl, *args, **options):
         """
-        See class `Sphinx <https://github.com/sphinx-doc/sphinx/blob/master/sphinx/application.py#L107>`_.
+        See :epkg:`class Sphinx`.
         """
         doc_directives.register_directive(name, cl)
         self.mapping[str(cl)] = name
@@ -76,7 +76,7 @@ class MockSphinxApp:
 
     def add_role(self, name, cl):
         """
-        See class `Sphinx <https://github.com/sphinx-doc/sphinx/blob/master/sphinx/application.py#L107>`_.
+        See :epkg:`class Sphinx`.
         """
         doc_roles.register_canonical_role(name, cl)
         self.mapping[str(cl)] = name
@@ -85,13 +85,13 @@ class MockSphinxApp:
 
     def add_mapping(self, name, cl):
         """
-        See class `Sphinx <https://github.com/sphinx-doc/sphinx/blob/master/sphinx/application.py#L107>`_.
+        See :epkg:`class Sphinx`.
         """
         self.mapping[str(cl)] = name
 
     def add_config_value(self, name, default, rebuild, types=()):
         """
-        See class `Sphinx <https://github.com/sphinx-doc/sphinx/blob/master/sphinx/application.py#L107>`_.
+        See :epkg:`class Sphinx`.
         """
         if name in self.config.values:
             # We do not add it a second time.
@@ -103,13 +103,13 @@ class MockSphinxApp:
 
     def get_default_values(self):
         """
-        See class `Sphinx <https://github.com/sphinx-doc/sphinx/blob/master/sphinx/application.py#L107>`_.
+        See :epkg:`class Sphinx`.
         """
         return {k: v[0] for k, v in self.new_options.items()}
 
     def add_node(self, node, **kwds):
         """
-        See class `Sphinx <https://github.com/sphinx-doc/sphinx/blob/master/sphinx/application.py#L107>`_.
+        See :epkg:`class Sphinx`.
         """
         # type: (nodes.Node, Any) -> None
         nodes._add_node_class_names([node.__name__])
@@ -156,32 +156,32 @@ class MockSphinxApp:
 
     def setup_extension(self, extname):
         """
-        See class `Sphinx <https://github.com/sphinx-doc/sphinx/blob/master/sphinx/application.py>`_.
+        See :epkg:`class Sphinx`.
         """
         self.app.setup_extension(extname)
 
     def emit(self, event, *args):
         """
-        See class `Sphinx <https://github.com/sphinx-doc/sphinx/blob/master/sphinx/application.py#L107>`_.
+        See :epkg:`class Sphinx`.
         """
         return self.app.emit(event, *args)
 
     def emit_firstresult(self, event, *args):
         """
-        See class `Sphinx <https://github.com/sphinx-doc/sphinx/blob/master/sphinx/application.py>`_.
+        See :epkg:`class Sphinx`.
         """
         return self.app.events.emit_firstresult(event, self, *args)
 
     def add_autodocumenter(self, cls):
         """
-        See class `Sphinx <https://github.com/sphinx-doc/sphinx/blob/master/sphinx/application.py>`_.
+        See :epkg:`class Sphinx`.
         """
         autodoc.add_documenter(cls)
         self.app.add_directive('auto' + cls.objtype, autodoc.AutoDirective)
 
     def connect(self, node, func):
         """
-        See class `Sphinx <https://github.com/sphinx-doc/sphinx/blob/master/sphinx/application.py#L107>`_.
+        See :epkg:`class Sphinx`.
         """
         self.mapping_connect[node] = func
         self.app.connect(node, func)
@@ -189,7 +189,7 @@ class MockSphinxApp:
 
     def add_domain(self, domain):
         """
-        See class `Sphinx <https://github.com/sphinx-doc/sphinx/blob/master/sphinx/application.py#L107>`_.
+        See :epkg:`class Sphinx`.
         """
         if domain.name in self.app.domains:
             # We do not register it a second time.
@@ -204,7 +204,7 @@ class MockSphinxApp:
 
     def add_event(self, name):
         """
-        See class `Sphinx <https://github.com/sphinx-doc/sphinx/blob/master/sphinx/application.py#L107>`_.
+        See :epkg:`class Sphinx`.
         """
         if name in self.app._events:
             # We do not raise an exception if already present.

@@ -42,7 +42,7 @@ Another list
 def setup_environment_for_help(fLOG=fLOG):
     """
     Modifies environment variables to be able to use external tools
-    such as `Inkscape <https://inkscape.org/>`_.
+    such as :epkg:`Inkscape`.
 
     .. versionadded:: 1.2
     """
@@ -94,7 +94,7 @@ def produce_code_graph_changes(df):
     @return             graph
 
     .. versionchanged:: 1.0
-        The call to `datetime.datetime.strptime <https://docs.python.org/3/library/datetime.html#strftime-strptime-behavior>`_
+        The call to :epkg:`datetime.datetime.strptime`
         introduced exceptions::
 
             File "<frozen importlib._bootstrap>", line 2212, in _find_and_load_unlocked

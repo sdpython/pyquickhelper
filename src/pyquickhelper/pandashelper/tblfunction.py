@@ -28,7 +28,7 @@ def isempty(s):
 
 def isnan(s):
     """
-    calls `numpy.isnan <http://docs.scipy.org/doc/numpy/reference/generated/numpy.isnan.html>`_ but checks it is a float first
+    calls :epkg:`numpy:isnan` but checks it is a float first
 
     @param      s       object
     @return             boolean

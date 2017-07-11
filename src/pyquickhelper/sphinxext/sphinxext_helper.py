@@ -5,7 +5,7 @@
 """
 
 
-def try_add_config_value(app, name, default, rebuild, types_=()):
+def try_add_config_value(app, name, default, rebuild, type_s=()):
     """
     Add a variables in the config file if it does not have it yet.
 
@@ -13,7 +13,7 @@ def try_add_config_value(app, name, default, rebuild, types_=()):
     @param      name        name of the variable
     @param      default     default value
     @param      rebuild     see below
-    @param      types_      expected types
+    @param      type_s      expected types
     @return                 True if added, False if already present.
 
     Rebuild can be (source: `Sphinx <http://www.sphinx-doc.org/en/stable/extdev/appapi.html#sphinx.application.Sphinx.add_config_value>`_):
@@ -26,5 +26,5 @@ def try_add_config_value(app, name, default, rebuild, types_=()):
     """
     if name in app.config:
         return False
-    app.add_config_value(name, default, rebuild, types_)
+    app.add_config_value(name, default, rebuild, type_s)
     return True

@@ -170,8 +170,7 @@ def process_standard_options_for_setup(argv, file_or_folder, project_var_name, m
         The coverage computation can be disable by specifying
         ``coverage_options["disable_coverage"] = True``.
 
-        Parameter *covtoken* as added to post the coverage report to
-        `codecov <https://codecov.io/>`_.
+        Parameter *covtoken* as added to post the coverage report to :epkg:`codecov`.
 
         Parameters *hook_print*, *stdout*, *stderr* were added.
 

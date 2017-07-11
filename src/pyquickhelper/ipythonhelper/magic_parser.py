@@ -12,15 +12,14 @@ from ..loghelper.flog import noLOG
 class MagicCommandParser (argparse.ArgumentParser):
 
     """
-    add method ``parse_cmd`` to
-    `argparse.ArgumentParser <https://docs.python.org/3/library/argparse.html#argumentparser-objects>`_
+    Add method ``parse_cmd`` to :epkg:`*py:argparse:ArgumentParser`.
 
     .. versionadded:: 0.9
     """
 
     def __init__(self, prog, *l, **p):
         """
-        custom constructor, see `ArgumentParser <https://docs.python.org/3/library/argparse.html>`_
+        custom constructor, see :epkg:`*py:argparse:ArgumentParser`.
 
         @param  prog        command name
         @param  l           positional arguments

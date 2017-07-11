@@ -1423,7 +1423,7 @@ def private_migrating_doxygen_doc(rows, index_first_line, filename,
         .. image:: test.png
             :width: 200pt
 
-        `Python <http://www.python.org/>`_
+        :epkg:`Python`
 
 
         .. raw:: html

@@ -172,20 +172,21 @@ def fLOG(*l, **p):
 
     @param      l       list of fields
     @param      p       dictionary of fields
-                            - if p contains OutputPrint, call Print (OutputPrint),
-                            - if p contains LogPath, it calls init (v)
-                            - if p contains LogFile, it changes the log file name (it creates a new one, the previous is closed).
-                            - if p contains LogPathAdd, it adds this path to the temporary file
-                            - if p contains Lock, it Locks option OutputPrint
-                            - if p contains UnLock, it unlock option OutputPrint
-
-                        example:
-
-                        ::
-
-                            fLOG (LogPath = "###", LogPathAdd = __file__, OutputPrint = True)
-
+                        - if p contains *OutputPrint*, call *Print(OutputPrint)*,
+                        - if p contains *LogPath*, it calls *init(v)*
+                        - if p contains *LogFile*, it changes the log file name
+                          (it creates a new one, the previous is closed).
+                        - if p contains *LogPathAdd*, it adds this path to the temporary file
+                        - if p contains *Lock*, it Locks option OutputPrint
+                        - if p contains *UnLock*, it unlock option OutputPrint
     @exception  OSError     When the log file cannot be created.
+
+    Example:
+
+    ::
+
+        fLOG (LogPath = "###", LogPathAdd = __file__, OutputPrint = True)
+
 
     .. faqref::
         :title: How to activate the logs?

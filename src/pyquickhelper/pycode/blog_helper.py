@@ -1,8 +1,7 @@
 """
 @file
 @brief Function which starts a server to grab and read blog post for a mobule
-based on pyqcuikhelper design. It relies on module
-`pyrsslocal <http://www.xavierdupre.fr/app/pyrsslocal/helpsphinx/index.html>`_.
+based on pyqcuikhelper design. It relies on module :epkg:`pyrsslocal`.
 """
 
 import os

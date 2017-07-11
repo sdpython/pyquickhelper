@@ -1,6 +1,6 @@
 """
 @file
-@brief Extends Jenkins Server from `python-jenkins <http://python-jenkins.readthedocs.org/en/latest/>`_
+@brief Extends Jenkins Server from :epkg:`python-jenkins`.
 
 .. todoext::
     :title: handle command unittests line with parameters with jenkins
@@ -78,8 +78,8 @@ def _modified_windows_jenkins_any(requirements_local, requirements_pypi, module=
 class JenkinsExt(jenkins.Jenkins):
 
     """
-    extensions for the `Jenkins <https://jenkins-ci.org/>`_ server
-    based on module `python-jenkins <http://pythonhosted.org/python-jenkins/>`_
+    extensions for the :epkg:`Jenkins` server
+    based on module :epkg:`python-jenkins`.
 
     .. index:: Jenkins, Jenkins extensions
 

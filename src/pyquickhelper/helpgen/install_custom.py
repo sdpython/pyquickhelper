@@ -1,6 +1,6 @@
 """
 @file
-@brief Various function to install some application such as `pandoc <http://johnmacfarlane.net/pandoc/>`_.
+@brief Various function to install some application such as :epkg:`pandoc`.
 """
 from __future__ import print_function
 import re
@@ -18,8 +18,7 @@ def download_revealjs(
         location="https://github.com/hakimel/reveal.js/releases",
         clean=True):
     """
-    Download `reveal.js <https://github.com/hakimel/reveal.js/releases>`_ release.
-    and unzip it.
+    Download :epkg:`reveal.js` release and unzip it.
 
     @param      temp_folder     where to download the setup
     @param      unzip_to        where to unzip the files

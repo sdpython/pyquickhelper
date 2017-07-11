@@ -108,8 +108,8 @@ def check_pep8(folder, ignore=('E501', 'E265'), skip=None,
                complexity=-1, stop_after=100, fLOG=noLOG,
                neg_filter=None, extended=None, max_line_length=162):
     """
-    Check if `PEP8 <https://www.python.org/dev/peps/pep-0008/>`_,
-    the function calls command `pycodestyle <http://pycodestyle.readthedocs.io/>`_
+    Check if :epkg:`PEP8`,
+    the function calls command :epkg:`pycodestyle`
     on a specific folder
 
     @param      folder              folder to look into

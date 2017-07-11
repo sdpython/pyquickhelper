@@ -119,6 +119,8 @@ def encrypt(fLOG=print, args=None):
         :title: encrypt a string
         :cmd: pyquickhelper.cli.encryption_cli:decrypt
 
+        Encrypt a string from the command line.
+
     .. versionchanged:: 1.5
         Parameter *args* was added.
     """
@@ -148,6 +150,8 @@ def decrypt(fLOG=print, args=None):
     .. cmdref::
         :title: decrypt a string
         :cmd: pyquickhelper.cli.encryption_cli:decrypt
+
+        Decrypt an encrypted string from the command line.
 
     .. versionchanged:: 1.5
         Parameter *args* was added.

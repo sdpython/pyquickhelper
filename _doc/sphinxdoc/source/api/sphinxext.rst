@@ -12,6 +12,8 @@ blocs
 
 .. autosignature:: pyquickhelper.sphinxext.sphinx_blocref_extension.BlocRefList
 
+.. autosignature:: pyquickhelper.sphinxext.sphinx_cmdref_extension.CmdRef
+
 .. autosignature:: pyquickhelper.sphinxext.sphinx_exref_extension.ExRef
 
 .. autosignature:: pyquickhelper.sphinxext.sphinx_exref_extension.ExRefList
@@ -56,6 +58,8 @@ style, content
 ++++++++++++++
 
 .. autosignature:: pyquickhelper.sphinxext.sphinx_bigger_extension.bigger_role
+
+.. autosignature:: pyquickhelper.sphinxext.sphinx_epkg_extension.epkg_role
 
 .. autosignature:: pyquickhelper.sphinxext.sphinx_githublink_extension.githublink_role
 

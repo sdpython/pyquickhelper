@@ -70,21 +70,22 @@ class MagicClassExample(MagicClassWithHelpers):
     @line_magic
     def htmlhelp(self, line):
         """
-        define ``%htmlhelp``, it displays the help for an object in HTML
+        Define ``%htmlhelp``, it displays the help for an object in HTML.
 
-        @NB(htmlhelp)
+        .. nbref::
+            :title: %htmlhelp
 
-        Magic command ``htmlhelp`` convert docstring (RST)
-        into HTML format for a better display in a notebook.
-        It is equivalent to the code::
+            Magic command ``htmlhelp`` convert docstring (RST)
+            into HTML format for a better display in a notebook.
+            It is equivalent to the code:
 
-            from pyquickhelper.helpgen import docstring2html
-            obj = <function or object>
-            docstring2html(obj, format="html")
+            ::
 
-        See function @see fn docstring2html.
+                from pyquickhelper.helpgen import docstring2html
+                obj = <function or object>
+                docstring2html(obj, format="html")
 
-        @endNB
+            See function @see fn docstring2html.
         """
         parser = self.get_parser(MagicClassExample.htmlhelp_parser, "htmlhelp")
         args = self.get_args(line, parser)
