@@ -10,14 +10,6 @@ import sphinx
 from docutils import nodes
 from sphinx.util.docutils import is_html5_writer_available
 
-if is_html5_writer_available():
-    from sphinx.writers.html5 import HTML5Translator as HTMLTranslator
-    from sphinx.writers.html import HTMLTranslator as HTMLTranslatorOld
-    inheritance = (HTMLTranslator, HTMLTranslatorOld)
-else:
-    from sphinx.writers.html import HTMLTranslator
-    inheritance = HTMLTranslator
-
 
 class epkg_node(nodes.TextElement):
 
