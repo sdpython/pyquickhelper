@@ -52,7 +52,7 @@ To generate a file *.whl:
 Unit tests
 ==========
 
-It relies on `pyquickhelper <https://pypi.python.org/pypi/pyquickhelper/>`_.
+It relies on :epkg:`pyquickhelper`.
 
 Run unit tests
 ++++++++++++++
@@ -78,9 +78,10 @@ You can get them with:
 
 The process first calls the function :func:`_setup_hook <pyquickhelper._setup_hook>`.
 It can be used to initialize the module even if it is most of the time unused.
-The process ends the code coverage (with module `coverage <https://coverage.readthedocs.io/en/>`_)
+The process ends the code coverage (with module :epkg:`coverage`)
 and publishes the report in folder `_doc/sphinxdoc/source/coverage`.
-If options ``-e`` and ``-g`` are left empty, files containing `test_LONG_`, `test_SKIP_`, `test_GUI_` in their
+If options ``-e`` and ``-g`` are left empty, files containing `test_LONG_`,
+`test_SKIP_`, `test_GUI_` in their
 name are included. You can run them with a specific command:
 
 ::
@@ -161,10 +162,9 @@ Specific unit tests
 +++++++++++++++++++
 
 The unit test `test_flake8.py` ensures all the code follows the
-`pep8 <https://www.python.org/dev/peps/pep-0008/>`_ style.
-It will break it is not the case and will indicate where it breaks.
-The code can be automatically modified to follow that convention
-by running:
+:epkg:`pep8` style. It will break it is not the case and will
+indicate where it breaks. The code can be automatically modified
+to follow that convention by running:
 
 ::
 
@@ -172,8 +172,7 @@ by running:
 
 The unit test `test_readme.py` checks the syntax of file `readme.rst`.
 `PyPi <https://pypi.python.org/pypi>`_ runs on an older version of
-`docutils <http://docutils.sourceforge.net/>`_.
-It checks this file follows this syntax.
+:epkg:`docutils`. It checks this file follows this syntax.
 
 The unit test `test_convert_notebooks.py` checks the syntax of every notebook
 looks ok. This tests also removes all execution number and reformat the JSON.
@@ -224,7 +223,7 @@ From folder `dist_module27`, the unit test can be run he same way:
 
     python setup.py unittests
 
-Or with `nose <https://pypi.python.org/pypi/nose>`_:
+Or with :epkg:`nose`:
 
 ::
 
@@ -233,7 +232,7 @@ Or with `nose <https://pypi.python.org/pypi/nose>`_:
 Documentation
 =============
 
-It relies on `pyquickhelper <https://pypi.python.org/pypi/pyquickhelper/>`_.
+It relies on epkg:`pyquickhelper`.
 
 .. _l-dependencies-tools:
 
@@ -272,20 +271,20 @@ As the documentation creates graphs to represent the dependencies,
 Graphviz needs to be installed. Here is the list of required tools:
 
 * `Python 64 bit <https://www.python.org/downloads/>`_
-* `7zip <http://www.7-zip.org/>`_
-* `Miktex <http://miktex.org/>`_
-* `Jenkins <https://jenkins-ci.org/>`_ (+ `GitHub <https://wiki.jenkins-ci.org/display/JENKINS/GitHub+Plugin>`_,
+* :epkg:`7z`
+* :epkg:`Miktex`
+* :epkg:`Jenkins` (+ `GitHub <https://wiki.jenkins-ci.org/display/JENKINS/GitHub+Plugin>`_,
   `git <https://wiki.jenkins-ci.org/display/JENKINS/Git+Plugin>`_,
   `python <https://wiki.jenkins-ci.org/display/JENKINS/Python+Plugin>`_,
   `pipeline <https://wiki.jenkins-ci.org/display/JENKINS/Build+Pipeline+Plugin>`_)
-* `pandoc <http://pandoc.org/>`_
-* `Git <http://git-scm.com/>`_ + `GitHub <https://github.com/>`_
-* `GraphViz <http://www.graphviz.org/>`_
-* `InkScape <https://inkscape.org/en/>`_
+* :epkg:`pandoc`
+* :epkg:`GIT` + :epkg:`GitHub`
+* :epkg:`GraphViz`
+* :epkg:`InkScape`
 
 If you need to use `Antlr <http://www.antlr.org/>`_:
 
-* `Java <http://www.java.com/fr/download/>`_
+* :epkg:`Java`
 
 Configuration
 +++++++++++++
@@ -357,7 +356,7 @@ Notebooks
 
 Notebooks in folder `_doc/notebooks` will be automatically
 converted into *html*, *rst*, *pdf*, *slides* formats.
-That requires latex and `pandoc <http://pandoc.org/>`_.
+That requires latex and :epkg:`pandoc`.
 
 .. _l-ci-jenkins:
 
@@ -366,10 +365,10 @@ Continuous Integration
 
 The module is tested with `Travis <https://travis-ci.org/sdpython/pyquickhelper>`_,
 `AppVeyor <https://www.appveyor.com/>`_ and local testing with
-`Jenkins <https://jenkins-ci.org/>`_ for a exhaustive list of unit tests,
-the documentation, the setup. Everything is fully tested on Windows with the standard distribution and
-`Anaconda <http://continuum.io/downloads>`_.
-There are three builds definition:
+:epkg:`Jenkins` for a exhaustive list of unit tests,
+the documentation, the setup. Everything is fully tested on Windows
+with the standard distribution and
+:epkg:`Anaconda`. There are three builds definition:
 
 * Travis: `.travis.yml <https://github.com/sdpython/pyquickhelper/blob/master/.travis.yml>`_
 * AppVeyor: `appveyor.yml <https://github.com/sdpython/pyquickhelper/blob/master/appveyor.yml>`_

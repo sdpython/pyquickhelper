@@ -153,7 +153,7 @@ class ModuleMemberDoc:
     """
     represents a member in a module
 
-    See :epkg:`*py:inspect `.
+    See :epkg:`*py:inspect`.
 
     Attributes:
       obj (object): object

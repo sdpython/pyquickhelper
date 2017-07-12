@@ -893,13 +893,15 @@ class RstTranslator(TextTranslator):
 
         To resolve this, if ``refuri`` is not included in the node (an
         internal, non-Sphinx-defined internal uri, the reference is
-        left unchanged (e.g. ```Some Text`_`` is written as such).
+        left unchanged.
 
         If ``internal`` is not in the node (as for an external,
         non-Sphinx URI, the reference is rewritten as an inline link,
-        e.g. ```Some Text <http://www.some_url.com>`_``.
+        e.g.::
 
-        If ``reftitle` is in the node (as in a Sphinx-generated
+            Some Text <http://www.some_url.com>`_
+
+        If ``reftitle`` is in the node (as in a Sphinx-generated
         reference), the node is converted to an inline link.
 
         Finally, all other links are also converted to an inline link

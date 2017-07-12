@@ -177,7 +177,7 @@ if is_local():
     r = process_standard_options_for_setup(
         sys.argv, __file__, project_var_name, port=8067,
         requirements=requirements, blog_list=pyquickhelper.__blog__,
-        layout=["html"], additional_notebook_path=["jyquickhelper"],
+        layout=["rst", "html"], additional_notebook_path=["jyquickhelper"],
         fLOG=logging_function, covtoken=("69193a28-dc79-4a24-98ed-aedf441a8249", "'_UT_36_std' in outfile"))
 
     if not r and not ({"bdist_msi", "sdist",

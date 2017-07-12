@@ -74,4 +74,4 @@ style, content
 
 .. autosignature:: pyquickhelper.sphinxext.sphinx_template_extension.tpl_role
 
-.. autosignature:: pyquickhelper.sphinxext.documentation_link.python_link_docz
+.. autosignature:: pyquickhelper.sphinxext.documentation_link.python_link_doc

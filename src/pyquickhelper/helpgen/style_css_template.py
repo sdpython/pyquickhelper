@@ -1,6 +1,6 @@
 """
 @file
-@brielf Custom style for the documentation.
+@brief Custom style for the documentation.
 
 .. versionadded:: 1.5
 """
