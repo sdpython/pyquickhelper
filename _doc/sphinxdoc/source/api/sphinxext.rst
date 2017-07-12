@@ -47,6 +47,11 @@ blog
 
 .. autosignature:: pyquickhelper.sphinxext.sphinx_blog_extension.BlogPostDirectiveAgg
 
+builder
++++++++
+
+.. autosignature:: pyquickhelper.sphinxext.sphinx_rst_builder.RstBuilder
+
 code
 ++++
 
@@ -69,4 +74,4 @@ style, content
 
 .. autosignature:: pyquickhelper.sphinxext.sphinx_template_extension.tpl_role
 
-.. autosignature:: pyquickhelper.sphinxext.documentation_link.python_link_doc
+.. autosignature:: pyquickhelper.sphinxext.documentation_link.python_link_docz
