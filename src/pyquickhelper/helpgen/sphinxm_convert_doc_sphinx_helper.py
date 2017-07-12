@@ -31,6 +31,7 @@ from sphinx.application import Config, CONFIG_FILENAME, ConfigError, VersionRequ
 from sphinx.registry import SphinxComponentRegistry
 from sphinx.events import EventManager
 from sphinx.extension import verify_required_extensions
+from ..sphinxext.sphinx_rst_builder import RstWriter, RstBuilder, RstTranslator
 from ..sphinxext.sphinx_bigger_extension import visit_bigger_node as ext_visit_bigger_node, depart_bigger_node as ext_depart_bigger_node
 from ..sphinxext.sphinx_blocref_extension import visit_blocref_node as ext_visit_blocref_node, depart_blocref_node as ext_depart_blocref_node
 from ..sphinxext.sphinx_blog_extension import visit_blogpost_node as ext_visit_blogpost_node, depart_blogpost_node as ext_depart_blogpost_node
@@ -82,19 +83,10 @@ def update_docutils_languages(values=None):
         lab['desc'] = values.get('desc', 'description')
 
 
-class HTMLTranslatorWithCustomDirectives(HTMLTranslator):
+class _AdditionalVisitDepart:
     """
-    @see cl HTMLWriterWithCustomDirectives
+    Additional visitor and departor.
     """
-
-    def __init__(self, builder, *args, **kwds):
-        """
-        constructor
-        """
-        HTMLTranslator.__init__(self, builder, *args, **kwds)
-        for name, f1, f2 in builder._function_node:
-            setattr(self.__class__, "visit_" + name, f1)
-            setattr(self.__class__, "depart_" + name, f2)
 
     def visit_blogpost_node(self, node):
         """
@@ -270,50 +262,67 @@ class HTMLTranslatorWithCustomDirectives(HTMLTranslator):
         it is a single document being processed
         """
         if node.get('secnumber'):
-            HTMLTranslator.add_secnumber(self, node)
+            self.base_class.add_secnumber(self, node)
         elif len(node.parent['ids']) > 0:
-            HTMLTranslator.add_secnumber(self, node)
+            self.base_class.add_secnumber(self, node)
         else:
             n = len(self.builder.secnumbers)
             node.parent['ids'].append("custom_label_%d" % n)
-            HTMLTranslator.add_secnumber(self, node)
+            self.base_class.add_secnumber(self, node)
 
     def visit_pending_xref(self, node):
         # type: (nodes.Node) -> None
         self.visit_Text(node)
         raise nodes.SkipNode
 
-    #~ def generic_visit(self, node):
-        #~ """Called if no explicit visitor function exists for a node."""
-        #~ if isinstance(node, Node):
-        #~ for child in node:  # type: ignore
-        #~ self.visit(child)
-
-    #~ def visit_only(self, node):
-        #~ self.generic_visit(self, node)
-
     def unknown_visit(self, node):
         raise NotImplementedError("[HTMLTranslatorWithCustomDirectives] Unknown node: '{0}' in '{1}'".format(node.__class__.__name__,
                                                                                                              self.__class__.__name__))
 
 
-class HTMLWriterWithCustomDirectives(HTMLWriter):
+class HTMLTranslatorWithCustomDirectives(_AdditionalVisitDepart, HTMLTranslator):
     """
-    This docutils writer extends the HTML writer with
-    custom directives implemented in this module,
-    @see cl RunPythonDirective, @see cl BlogPostDirective
-
-    See `Write your own ReStructuredText-Writer <http://www.arnebrodowski.de/blog/write-your-own-restructuredtext-writer.html>`_.
-
-    This class needs to tell *docutils* to calls the added function
-    when directives *RunPython* or *BlogPost* are met.
+    @see cl HTMLWriterWithCustomDirectives
     """
 
-    def __init__(self, app=None):
+    def __init__(self, builder, *args, **kwds):
+        """
+        constructor
+        """
+        HTMLTranslator.__init__(self, builder, *args, **kwds)
+        for name, f1, f2 in builder._function_node:
+            setattr(self.__class__, "visit_" + name, f1)
+            setattr(self.__class__, "depart_" + name, f2)
+        self.base_class = HTMLTranslator
+
+
+class RSTTranslatorWithCustomDirectives(_AdditionalVisitDepart, RstTranslator):
+    """
+    @see cl HTMLWriterWithCustomDirectives
+    """
+
+    def __init__(self, builder, *args, **kwds):
+        """
+        constructor
+        """
+        RstTranslator.__init__(self, builder, *args, **kwds)
+        for name, f1, f2 in builder._function_node:
+            setattr(self.__class__, "visit_" + name, f1)
+            setattr(self.__class__, "depart_" + name, f2)
+        self.base_class = RstTranslator
+
+
+class _WriterWithCustomDirectives:
+    """
+    Common class to @see cl HTMLWriterWithCustomDirectives and @see cl RSTWriterWithCustomDirectives.
+    """
+
+    def _init(self, base_class, translator_class, app=None):
         """
         constructor
 
-        @param      app     Sphinx application
+        @param      base_class  base class
+        @param      app         Sphinx application
 
         ..versionchanged:: 1.5
             Parameter *app* was added.
@@ -325,12 +334,12 @@ class HTMLWriterWithCustomDirectives(HTMLWriter):
             self.app = app
         builder = self.app.builder
         builder.fignumbers = {}
-        HTMLWriter.__init__(self, builder)
-        self.translator_class = HTMLTranslatorWithCustomDirectives
-        self.translator_class = self.translator_class
+        base_class.__init__(self, builder)
+        self.translator_class = translator_class
         self.builder.secnumbers = {}
         self.builder._function_node = []
         self.builder.current_docname = None
+        self.base_class = base_class
 
     def connect_directive_node(self, name, f_visit, f_depart):
         """
@@ -364,12 +373,34 @@ class HTMLWriterWithCustomDirectives(HTMLWriter):
         # trans = self.builder.create_translator(self.builder, document)
         # if not isinstance(trans, HTMLTranslatorWithCustomDirectives):
         #     raise TypeError("The translator is not of a known type but '{0}'".format(type(trans)))
-        HTMLWriter.write(self, document, destination)
+        self.base_class.write(self, document, destination)
+
+
+class HTMLWriterWithCustomDirectives(_WriterWithCustomDirectives, HTMLWriter):
+    """
+    This docutils writer extends the HTML writer with
+    custom directives implemented in this module,
+    @see cl RunPythonDirective, @see cl BlogPostDirective
+
+    See `Write your own ReStructuredText-Writer <http://www.arnebrodowski.de/blog/write-your-own-restructuredtext-writer.html>`_.
+
+    This class needs to tell *docutils* to calls the added function
+    when directives *RunPython* or *BlogPost* are met.
+    """
+
+    def __init__(self, app=None):
+        """
+        Constructor
+
+        @param      app     Sphinx application
+        """
+        _WriterWithCustomDirectives._init(
+            self, HTMLWriter, HTMLTranslatorWithCustomDirectives, app)
 
     def translate(self):
         # type: () -> None
         # sadly, this is mostly copied from parent class
-        self.visitor = visitor = HTMLTranslatorWithCustomDirectives(
+        self.visitor = visitor = self.translator_class(
             self.builder, self.document)
         self.document.walkabout(visitor)
         self.output = visitor.astext()
@@ -382,33 +413,46 @@ class HTMLWriterWithCustomDirectives(HTMLWriter):
         self.clean_meta = ''.join(visitor.meta[2:])
 
 
-class MemoryHTMLBuilder(SingleFileHTMLBuilder):
+class RSTWriterWithCustomDirectives(_WriterWithCustomDirectives, RstWriter):
+    """
+    This docutils writer extends the RST writer with
+    custom directives implemented in this module.
+    """
+
+    def __init__(self, app=None):
+        """
+        Constructor
+
+        @param      app     Sphinx application
+        """
+        _WriterWithCustomDirectives._init(
+            self, RstWriter, RSTTranslatorWithCustomDirectives, app)
+
+    def translate(self):
+        visitor = self.translator_class(self.builder, self.document)
+        self.document.walkabout(visitor)
+        self.output = visitor.body
+
+
+class _MemoryBuilder:
     """
     Builds HTML output in memory.
     The API is defined by the page
     `builderapi <http://www.sphinx-doc.org/en/stable/extdev/builderapi.html?highlight=builder>`_.
     """
-    name = 'memoryhtml'
-    format = 'html'
-    out_suffix = None  # ".memory.html"
-    supported_image_types = ['application/pdf', 'image/png', 'image/jpeg']
-    default_translator_class = HTMLTranslatorWithCustomDirectives
-    translator_class = HTMLTranslatorWithCustomDirectives
-    _writer_class = HTMLWriterWithCustomDirectives
-    supported_remote_images = True
-    supported_data_uri_images = True
-    html_scaled_image_link = True
 
-    def __init__(self, app):
+    def _init(self, base_class, app):
         """
         Construct the builder.
         Most of the parameter are static members of the class and cannot
         be overwritten (yet).
 
+        :param base_class: base builder class
         :param app: `Sphinx application <http://www.sphinx-doc.org/en/stable/_modules/sphinx/application.html>`_
         """
-        SingleFileHTMLBuilder.__init__(self, app)
+        base_class.__init__(self, app=app)
         self.built_pages = {}
+        self.base_class = base_class
 
     def iter_pages(self):
         """
@@ -425,7 +469,7 @@ class MemoryHTMLBuilder(SingleFileHTMLBuilder):
         This method returns an instance of ``default_translator_class`` by default.
         Users can replace the translator class with ``app.set_translator()`` API.
         """
-        translator_class = MemoryHTMLBuilder.translator_class
+        translator_class = self.translator_class
         return translator_class(*args)
 
     def _write_serial(self, docnames):
@@ -565,6 +609,75 @@ class MemoryHTMLBuilder(SingleFileHTMLBuilder):
         if outfilename not in self.built_pages:
             self.built_pages[outfilename] = StringIO()
         self.built_pages[outfilename].write(output)
+
+
+class MemoryHTMLBuilder(_MemoryBuilder, SingleFileHTMLBuilder):
+    """
+    Builds HTML output in memory.
+    The API is defined by the page
+    `builderapi <http://www.sphinx-doc.org/en/stable/extdev/builderapi.html?highlight=builder>`_.
+    """
+    name = 'memoryhtml'
+    format = 'html'
+    out_suffix = None  # ".memory.html"
+    supported_image_types = ['application/pdf', 'image/png', 'image/jpeg']
+    default_translator_class = HTMLTranslatorWithCustomDirectives
+    translator_class = HTMLTranslatorWithCustomDirectives
+    _writer_class = HTMLWriterWithCustomDirectives
+    supported_remote_images = True
+    supported_data_uri_images = True
+    html_scaled_image_link = True
+
+    def __init__(self, app):
+        """
+        Construct the builder.
+        Most of the parameter are static members of the class and cannot
+        be overwritten (yet).
+
+        :param app: `Sphinx application <http://www.sphinx-doc.org/en/stable/_modules/sphinx/application.html>`_
+        """
+        _MemoryBuilder._init(self, SingleFileHTMLBuilder, app)
+
+
+class MemoryRSTBuilder(_MemoryBuilder, RstBuilder):
+    """
+    Builds RST output in memory.
+    The API is defined by the page
+    `builderapi <http://www.sphinx-doc.org/en/stable/extdev/builderapi.html?highlight=builder>`_.
+    """
+    name = 'memoryrst'
+    format = 'rst'
+    out_suffix = None  # ".memory.rst"
+    supported_image_types = ['application/pdf', 'image/png', 'image/jpeg']
+    default_translator_class = RSTTranslatorWithCustomDirectives
+    translator_class = RSTTranslatorWithCustomDirectives
+    _writer_class = RSTWriterWithCustomDirectives
+    supported_remote_images = True
+    supported_data_uri_images = True
+    html_scaled_image_link = True
+
+    def __init__(self, app):
+        """
+        Construct the builder.
+        Most of the parameter are static members of the class and cannot
+        be overwritten (yet).
+
+        :param app: `Sphinx application <http://www.sphinx-doc.org/en/stable/_modules/sphinx/application.html>`_
+        """
+        _MemoryBuilder._init(self, RstBuilder, app)
+
+    def handle_page(self, pagename, addctx, templatename=None,
+                    outfilename=None, event_arg=None):
+        """
+        Override *handle_page* to write into stream instead of files.
+        """
+        if templatename is not None:
+            raise NotImplementedError("templatename must be None.")
+        if not outfilename:
+            outfilename = self.get_outfilename(pagename)
+        if outfilename not in self.built_pages:
+            self.built_pages[outfilename] = StringIO()
+        self.built_pages[outfilename].write(self.writer.output)
 
 
 class _CustomBuildEnvironment(BuildEnvironment):
@@ -762,6 +875,7 @@ class _CustomSphinx(Sphinx):
 
         # add default HTML builders
         self.add_builder(MemoryHTMLBuilder)
+        self.add_builder(MemoryRSTBuilder)
 
         # preload builder module (before init config values)
         self.preload_builder(buildername)

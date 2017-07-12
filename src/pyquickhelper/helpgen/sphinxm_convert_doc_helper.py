@@ -106,7 +106,7 @@ def default_sphinx_options(fLOG=noLOG, **options):
     return res
 
 
-def rst2html(s, fLOG=noLOG, writer="sphinx", keep_warnings=False,
+def rst2html(s, fLOG=noLOG, writer="html", keep_warnings=False,
              directives=None, language="en",
              layout='docutils', document_name="<<string>>", **options):
     """
@@ -114,12 +114,11 @@ def rst2html(s, fLOG=noLOG, writer="sphinx", keep_warnings=False,
 
     @param      s               string to converts
     @param      fLOG            logging function (warnings will be logged)
-    @param      writer          *None* or an instance such as ``HTMLWriterWithCustomDirectives()`` or
-                                ``custom`` or ``sphinx``
+    @param      writer          ``'html'`` for HTML format or ``'rst'`` for RST format
     @param      keep_warnings   keep_warnings in the final HTML
     @param      directives      new directives to add (see below)
     @param      language        language
-    @param      layout          ``docutils``, ``sphinx``, ``sphinx_body``, see below.
+    @param      layout          ``'docutils'``, ``'sphinx'``, ``'sphinx_body'``, see below.
     @param      document_name   document name, not really important since the input is a string
     @param      options         Sphinx options see `Render math as images <http://www.sphinx-doc.org/en/stable/ext/math.html#module-sphinx.ext.imgmath>`_,
                                 a subset of options is used, see @see fn default_sphinx_options.
@@ -243,6 +242,7 @@ def rst2html(s, fLOG=noLOG, writer="sphinx", keep_warnings=False,
     .. versionchanged:: 1.5
         More logging is done, the function is more consistent.
         Parameter *layout*, *document_name* were added.
+        Format ``rst`` was added.
     """
     if 'html_theme' not in options:
         options['html_theme'] = 'basic'
@@ -250,16 +250,21 @@ def rst2html(s, fLOG=noLOG, writer="sphinx", keep_warnings=False,
     if "master_doc" not in defopt:
         defopt["master_doc"] = document_name
 
-    if writer in ["custom", "sphinx", "HTMLWriterWithCustomDirectives"]:
+    if writer in ["custom", "sphinx", "HTMLWriterWithCustomDirectives", "html"]:
         mockapp, writer, title_names = MockSphinxApp.create(
             "sphinx", directives, confoverrides=defopt, fLOG=fLOG)
         writer_name = "HTMLWriterWithCustomDirectives"
+    elif writer == "rst":
+        mockapp, writer, title_names = MockSphinxApp.create(
+            "rst", directives, confoverrides=defopt, fLOG=fLOG)
+        writer_name = "rst"
     else:
-        raise NotImplementedError()
+        raise ValueError(
+            "Unexpected writer '{0}', should be 'rst' or 'html'.".format(writer))
 
     if writer is None and directives is not None and len(directives) > 0:
         raise NotImplementedError(
-            "the writer must not be null if custom directives will be added, check the documentation of the fucntion")
+            "The writer must not be null if custom directives will be added, check the documentation of the fucntion.")
 
     settings_overrides = default_settings.copy()
     settings_overrides["warning_stream"] = StringIO()
@@ -391,21 +396,20 @@ def correct_indentation(text):
         return text
 
 
-def docstring2html(function_or_string, format="html", fLOG=noLOG, writer="sphinx",
+def docstring2html(function_or_string, format="html", fLOG=noLOG, writer="html",
                    keep_warnings=False, directives=None, language="en",
                    layout='docutils', document_name="<string>", **options):
     """
-    converts a docstring into a HTML format
+    Converts a docstring into a HTML format.
 
     @param      function_or_string      function, class, method or doctring
     @param      format                  output format (``'html'`` or '``rawhtml``')
     @param      fLOG                    logging function
-    @param      writer                  *None* or an instance such as ``HTMLWriterWithCustomDirectives()`` or
-                                        ``custom`` or ``sphinx``
+    @param      writer                  ``'html'`` for HTML format or ``'rst'`` for RST format
     @param      keep_warnings           keep_warnings in the final HTML
     @param      directives              new directives to add (see below)
     @param      language                language
-    @param      layout                  ``docutils``, ``sphinx``, ``sphinx_body``, see below.
+    @param      layout                  ``'docutils'``, ``'sphinx'``, ``'sphinx_body'``, see below.
     @param      document_name           document_name for this string
     @param      options                 Sphinx options see `Render math as images <http://www.sphinx-doc.org/en/stable/ext/math.html#module-sphinx.ext.imgmath>`_,
                                         a subset of options is used, see @see fn default_sphinx_options.
@@ -441,6 +445,7 @@ def docstring2html(function_or_string, format="html", fLOG=noLOG, writer="sphinx
 
     .. versionchanged:: 1.5
         Changed the signature to be like @see fn rst2html.
+        Format ``rst`` was added.
     """
     if not isinstance(function_or_string, str):
         doc = function_or_string.__doc__

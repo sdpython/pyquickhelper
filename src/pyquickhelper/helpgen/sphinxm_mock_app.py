@@ -5,10 +5,11 @@
 .. versionadded:: 1.0
 """
 
-from .sphinxm_convert_doc_sphinx_helper import HTMLWriterWithCustomDirectives, _CustomSphinx
+from .sphinxm_convert_doc_sphinx_helper import HTMLWriterWithCustomDirectives, _CustomSphinx, RSTWriterWithCustomDirectives
 from docutils import nodes
 from docutils.parsers.rst.directives import directive as rst_directive
 from docutils.parsers.rst import directives as doc_directives, roles as doc_roles
+# , builder as doc_builder
 from sphinx.config import Config
 # from sphinx.ext.autosummary import setup as setup_autosummary
 from sphinx.ext import autodoc
@@ -82,6 +83,14 @@ class MockSphinxApp:
         self.mapping[str(cl)] = name
         self.app.add_role(name, cl)
         self.writer.app.add_role(name, cl)
+
+    def add_builder(self, name, cl):
+        """
+        See :epkg:`class Sphinx`.
+        """
+        self.mapping[str(cl)] = name
+        self.app.add_builder(name, cl)
+        self.writer.app.add_builder(name, cl)
 
     def add_mapping(self, name, cl):
         """
@@ -212,9 +221,9 @@ class MockSphinxApp:
         self.app._events[name] = ''
 
     @staticmethod
-    def create(writer="sphinx", directives=None, confoverrides=None, fLOG=None):
+    def create(writer="html", directives=None, confoverrides=None, fLOG=None):
         """
-        Create a MockApp
+        Create a MockApp for Sphinx.
 
         @param      writer          ``'sphinx'`` is the only allowed value
         @param      directives      new directives to add (see below)
@@ -235,19 +244,26 @@ class MockSphinxApp:
             Parameters *fLOG*, *confoverrides* were added.
             The class supports more extensions.
         """
-        if writer not in ("sphinx", "custom", "HTMLWriterWithCustomDirectives"):
-            raise NotImplementedError("writer must be 'sphinx' or 'custom'")
-
         if confoverrides is None:
             confoverrides = {}
         if "extensions" not in confoverrides:
             confoverrides["extensions"] = get_default_extensions()
 
-        app = _CustomSphinx(srcdir=None, confdir=None, outdir=None, doctreedir=None,
-                            buildername='memoryhtml', confoverrides=confoverrides)
-        writer = HTMLWriterWithCustomDirectives(app=app)
-        mockapp = MockSphinxApp(
-            writer, writer.app, confoverrides=confoverrides)
+        if writer in ("sphinx", "custom", "HTMLWriterWithCustomDirectives", "html"):
+            app = _CustomSphinx(srcdir=None, confdir=None, outdir=None, doctreedir=None,
+                                buildername='memoryhtml', confoverrides=confoverrides)
+            writer = HTMLWriterWithCustomDirectives(app=app)
+            mockapp = MockSphinxApp(
+                writer, writer.app, confoverrides=confoverrides)
+        elif writer == "rst":
+            app = _CustomSphinx(srcdir=None, confdir=None, outdir=None, doctreedir=None,
+                                buildername='memoryrst', confoverrides=confoverrides)
+            writer = RSTWriterWithCustomDirectives(app=app)
+            mockapp = MockSphinxApp(
+                writer, writer.app, confoverrides=confoverrides)
+        else:
+            raise ValueError(
+                "writer must be 'html' or 'rst' not '{0}'.".format(writer))
 
         # titles
         title_names = []

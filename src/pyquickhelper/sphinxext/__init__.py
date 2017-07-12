@@ -52,6 +52,7 @@ from ..sphinxext.sphinx_autosignature import setup as setup_signature
 from ..sphinxext.sphinx_template_extension import setup as setup_tpl
 from ..sphinxext.sphinx_cmdref_extension import setup as setup_cmdref
 from ..sphinxext.sphinx_epkg_extension import setup as setup_epkg
+from ..sphinxext.sphinx_rst_builder import setup as setup_rst
 
 
 def get_default_extensions():
@@ -75,7 +76,7 @@ def get_default_extensions():
                       setup_runpython, setup_mathdef, setup_blocref,
                       setup_faqref, setup_exref, setup_nbref,
                       setup_docassert, setup_signature, setup_tpl,
-                      setup_cmdref, setup_epkg,
+                      setup_cmdref, setup_epkg, setup_rst,
                       # directives from sphinx
                       setup_graphviz, setup_math, setup_todo,
                       # the rest of it

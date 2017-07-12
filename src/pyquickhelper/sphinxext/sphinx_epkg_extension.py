@@ -8,7 +8,6 @@
 
 import sphinx
 from docutils import nodes
-from sphinx.util.docutils import is_html5_writer_available
 
 
 class epkg_node(nodes.TextElement):
