@@ -511,14 +511,12 @@ def setup(app):
                  html=(visit_todoextlist_node, depart_todoextlist_node),
                  latex=(visit_todoextlist_node, depart_todoextlist_node),
                  text=(visit_todoextlist_node, depart_todoextlist_node),
-                 man=(visit_todoextlist_node, depart_todoextlist_node),
-                 texinfo=(visit_todoextlist_node, depart_todoextlist_node))
+                 rst=(visit_todoextlist_node, depart_todoextlist_node))
     app.add_node(todoext_node,
                  html=(visit_todoext_node, depart_todoext_node),
                  latex=(visit_todoext_node, depart_todoext_node),
                  text=(visit_todoext_node, depart_todoext_node),
-                 man=(visit_todoext_node, depart_todoext_node),
-                 texinfo=(visit_todoext_node, depart_todoext_node))
+                 rst=(visit_todoext_node, depart_todoext_node))
 
     app.add_directive('todoext', TodoExt)
     app.add_directive('todoextlist', TodoExtList)

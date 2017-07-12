@@ -100,7 +100,7 @@ class TestSphinxDocFull (unittest.TestCase):
             fLOG("[test_full_documentation] **********************************")
 
             generate_help_sphinx(var, module_name=var, root=root,
-                                 layout=["pdf", "html"],
+                                 layout=["pdf", "html", "rst"],
                                  extra_ext=["tohelp"],
                                  from_repo=False, direct_call=i % 2 == 0)
 
@@ -118,9 +118,13 @@ class TestSphinxDocFull (unittest.TestCase):
             # checkings
             files = [os.path.join(root, "_doc", "sphinxdoc", "build", "html", "index.html"),
                      os.path.join(root, "_doc", "sphinxdoc",
+                                  "build", "rst", "index.rst"),
+                     os.path.join(root, "_doc", "sphinxdoc",
                                   "build", "html", "all_indexes.html"),
                      os.path.join(root, "_doc", "sphinxdoc",
                                   "build", "html", "all_notebooks.html"),
+                     os.path.join(root, "_doc", "sphinxdoc",
+                                  "build", "rst", "all_notebooks.rst"),
                      ]
             for f in files:
                 if not os.path.exists(f):

@@ -200,14 +200,12 @@ def setup(app):
                  html=(visit_faqreflist_node, depart_faqreflist_node),
                  latex=(visit_faqreflist_node, depart_faqreflist_node),
                  text=(visit_faqreflist_node, depart_faqreflist_node),
-                 man=(visit_faqreflist_node, depart_faqreflist_node),
-                 texinfo=(visit_faqreflist_node, depart_faqreflist_node))
+                 rst=(visit_faqreflist_node, depart_faqreflist_node))
     app.add_node(faqref_node,
                  html=(visit_faqref_node, depart_faqref_node),
                  latex=(visit_faqref_node, depart_faqref_node),
                  text=(visit_faqref_node, depart_faqref_node),
-                 man=(visit_faqref_node, depart_faqref_node),
-                 texinfo=(visit_faqref_node, depart_faqref_node))
+                 rst=(visit_faqref_node, depart_faqref_node))
 
     app.add_directive('faqref', FaqRef)
     app.add_directive('faqreflist', FaqRefList)

@@ -81,7 +81,7 @@ def visit_bigger_node(self, node):
     pass
 
 
-def depart_bigger_node(self, node):
+def depart_bigger_node_html(self, node):
     """
     what to do when leaving a node *bigger*
     the function should have different behaviour,
@@ -90,16 +90,17 @@ def depart_bigger_node(self, node):
 
     It does only html for the time being.
     """
-    if not isinstance(self, inheritance):
-        logger = getLogger("bigger")
-        logger.warning("[depart_bigger_node] output only available for HTML not for '{0}' != '{1}'".format(
-            type(self), HTMLTranslator))
-        self.body.append("%bigger: output only available for HTML not for '{0}' != '{1}'\n".format(
-            type(self), HTMLTranslator))
-        return
-
     self.body.append(
         '<font size="{1}">{0}</font>'.format(cgiesc.escape(node["text"]), node["size"]))
+
+
+def depart_bigger_node(self, node):
+    logger = getLogger("bigger")
+    logger.warning("[depart_bigger_node] output only available for HTML not for '{0}' != '{1}'".format(
+        type(self), HTMLTranslator))
+    self.body.append("%bigger: output only available for HTML not for '{0}' != '{1}'\n".format(
+        type(self), HTMLTranslator))
+    return
 
 
 def setup(app):
@@ -110,9 +111,10 @@ def setup(app):
         app.add_mapping('bigger', bigger_node)
 
     app.add_node(bigger_node,
-                 html=(visit_bigger_node, depart_bigger_node),
+                 html=(visit_bigger_node, depart_bigger_node_html),
                  latex=(visit_bigger_node, depart_bigger_node),
-                 text=(visit_bigger_node, depart_bigger_node))
+                 text=(visit_bigger_node, depart_bigger_node),
+                 rst=(visit_bigger_node, depart_bigger_node))
 
     app.add_role('bigger', bigger_role)
     return {'version': sphinx.__display_version__, 'parallel_read_safe': True}

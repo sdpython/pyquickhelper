@@ -249,14 +249,12 @@ def setup(app):
                  html=(visit_cmdreflist_node, depart_cmdreflist_node),
                  latex=(visit_cmdreflist_node, depart_cmdreflist_node),
                  text=(visit_cmdreflist_node, depart_cmdreflist_node),
-                 man=(visit_cmdreflist_node, depart_cmdreflist_node),
-                 texinfo=(visit_cmdreflist_node, depart_cmdreflist_node))
+                 rst=(visit_cmdreflist_node, depart_cmdreflist_node))
     app.add_node(cmdref_node,
                  html=(visit_cmdref_node, depart_cmdref_node),
                  latex=(visit_cmdref_node, depart_cmdref_node),
                  text=(visit_cmdref_node, depart_cmdref_node),
-                 man=(visit_cmdref_node, depart_cmdref_node),
-                 texinfo=(visit_cmdref_node, depart_cmdref_node))
+                 rst=(visit_cmdref_node, depart_cmdref_node))
 
     app.add_directive('cmdref', CmdRef)
     app.add_directive('cmdreflist', CmdRefList)

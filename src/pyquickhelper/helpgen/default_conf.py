@@ -677,7 +677,7 @@ def custom_setup(app, author):
     from ..sphinxext.sphinx_template_extension import setup as setup_tpl
     from ..sphinxext.sphinx_cmdref_extension import setup as setup_cmdref
     from ..sphinxext.sphinx_epkg_extension import setup as setup_epkg
-    from ..sphinxext.sphinx_rst_builder import setup as setup_rst
+    # from ..sphinxext.sphinx_rst_builder import setup as setup_rst
 
     app.connect("autodoc-skip-member", skip)
     app.add_config_value('author', author, True)
@@ -698,7 +698,8 @@ def custom_setup(app, author):
     setup_docassert(app)
     setup_tpl(app)
     setup_epkg(app)
-    setup_rst(app)
+    # Already part of the added extensions.
+    # setup_rst(app)
 
     # from sphinx.util.texescape import tex_replacements
     # tex_replacements += [('oe', '\\oe '), ]

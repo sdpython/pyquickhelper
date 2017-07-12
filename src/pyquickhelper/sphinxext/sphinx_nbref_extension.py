@@ -179,14 +179,12 @@ def setup(app):
                  html=(visit_nbreflist_node, depart_nbreflist_node),
                  latex=(visit_nbreflist_node, depart_nbreflist_node),
                  text=(visit_nbreflist_node, depart_nbreflist_node),
-                 man=(visit_nbreflist_node, depart_nbreflist_node),
-                 texinfo=(visit_nbreflist_node, depart_nbreflist_node))
+                 rst=(visit_nbreflist_node, depart_nbreflist_node))
     app.add_node(nbref_node,
                  html=(visit_nbref_node, depart_nbref_node),
                  latex=(visit_nbref_node, depart_nbref_node),
                  text=(visit_nbref_node, depart_nbref_node),
-                 man=(visit_nbref_node, depart_nbref_node),
-                 texinfo=(visit_nbref_node, depart_nbref_node))
+                 rst=(visit_nbref_node, depart_nbref_node))
 
     app.add_directive('nbref', NbRef)
     app.add_directive('nbreflist', NbRefList)

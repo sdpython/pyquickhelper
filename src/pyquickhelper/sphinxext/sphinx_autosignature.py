@@ -327,7 +327,8 @@ def setup(app):
     app.add_node(autosignature_node,
                  html=(visit_autosignature_node, depart_autosignature_node),
                  latex=(visit_autosignature_node, depart_autosignature_node),
-                 text=(visit_autosignature_node, depart_autosignature_node))
+                 text=(visit_autosignature_node, depart_autosignature_node),
+                 rst=(visit_autosignature_node, depart_autosignature_node))
 
     app.add_directive('autosignature', AutoSignatureDirective)
     return {'version': sphinx.__display_version__, 'parallel_read_safe': True}

@@ -592,14 +592,12 @@ def setup(app):
                  html=(visit_blocreflist_node, depart_blocreflist_node),
                  latex=(visit_blocreflist_node, depart_blocreflist_node),
                  text=(visit_blocreflist_node, depart_blocreflist_node),
-                 man=(visit_blocreflist_node, depart_blocreflist_node),
-                 texinfo=(visit_blocreflist_node, depart_blocreflist_node))
+                 rst=(visit_blocreflist_node, depart_blocreflist_node))
     app.add_node(blocref_node,
                  html=(visit_blocref_node, depart_blocref_node),
                  latex=(visit_blocref_node, depart_blocref_node),
                  text=(visit_blocref_node, depart_blocref_node),
-                 man=(visit_blocref_node, depart_blocref_node),
-                 texinfo=(visit_blocref_node, depart_blocref_node))
+                 rst=(visit_blocref_node, depart_blocref_node))
 
     app.add_directive('blocref', BlocRef)
     app.add_directive('blocreflist', BlocRefList)

@@ -164,6 +164,7 @@ def setup(app):
     app.add_node(epkg_node,
                  html=(visit_epkg_node, depart_epkg_node),
                  latex=(visit_epkg_node, depart_epkg_node),
+                 rst=(visit_epkg_node, depart_epkg_node),
                  text=(visit_epkg_node, depart_epkg_node))
 
     app.add_role('epkg', epkg_role)

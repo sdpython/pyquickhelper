@@ -129,7 +129,7 @@ class RstBuilder(Builder):
         """
         Overwrite *get_target_uri* to control file names.
         """
-        return "{0}/{1}.m.rst".format(self.outdir, pagename).replace("\\", "/")
+        return "{0}/{1}.rst".format(self.outdir, pagename).replace("\\", "/")
 
     def write_doc(self, docname, doctree):
         # type: (unicode, nodes.Node) -> None
@@ -908,10 +908,22 @@ class RstTranslator(TextTranslator):
         format.
         """
         if 'refuri' not in node:
-            self.add_text('`%s`_' % node['name'])
-            raise nodes.SkipNode
-        elif 'internal' not in node:
+            if 'name' in node.attributes:
+                self.add_text('`%s`_' % node['name'])
+                raise nodes.SkipNode
+            elif 'refid' in node and node['refid']:
+                self.add_text(':ref:`%s`' % node['refid'])
+                raise nodes.SkipNode
+            else:
+                self.log_unknown(type(node), node)
+                raise nodes.SkipNode
+        elif 'internal' not in node and 'name' in node.attributes:
             self.add_text('`%s <%s>`_' % (node['name'], node['refuri']))
+            raise nodes.SkipNode
+        elif 'internal' not in node and 'names' in node.attributes:
+            anchor = node['names'][0] if len(
+                node['names']) > 0 else node['refuri']
+            self.add_text('`%s <%s>`_' % (anchor, node['refuri']))
             raise nodes.SkipNode
         elif 'reftitle' in node:
             # Include node as text, rather than with markup.
@@ -1041,6 +1053,12 @@ class RstTranslator(TextTranslator):
         if 'text' in node.get('format', '').split():
             self.body.append(node.astext())
         raise nodes.SkipNode
+
+    def visit_bigger_node(self, node):
+        self.add_text(':bigger:`')
+
+    def depart_bigger_node(self, node):
+        self.add_text('`')
 
     def unknown_visit(self, node):
         raise NotImplementedError('Unknown node: ' + node.__class__.__name__)

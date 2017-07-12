@@ -460,14 +460,12 @@ def setup(app):
                  html=(visit_mathdeflist_node, depart_mathdeflist_node),
                  latex=(visit_mathdeflist_node, depart_mathdeflist_node),
                  text=(visit_mathdeflist_node, depart_mathdeflist_node),
-                 man=(visit_mathdeflist_node, depart_mathdeflist_node),
-                 texinfo=(visit_mathdeflist_node, depart_mathdeflist_node))
+                 rst=(visit_mathdeflist_node, depart_mathdeflist_node))
     app.add_node(mathdef_node,
                  html=(visit_mathdef_node, depart_mathdef_node),
                  latex=(visit_mathdef_node, depart_mathdef_node),
                  text=(visit_mathdef_node, depart_mathdef_node),
-                 man=(visit_mathdef_node, depart_mathdef_node),
-                 texinfo=(visit_mathdef_node, depart_mathdef_node))
+                 rst=(visit_mathdef_node, depart_mathdef_node))
 
     app.add_directive('mathdef', MathDef)
     app.add_directive('mathdeflist', MathDefList)

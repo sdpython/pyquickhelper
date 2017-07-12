@@ -167,7 +167,7 @@ def visit_sharenet_node(self, node):
     pass
 
 
-def depart_sharenet_node(self, node):
+def depart_sharenet_node_html(self, node):
     """
     what to do when leaving a node sharenet
     the function should have different behaviour,
@@ -176,14 +176,6 @@ def depart_sharenet_node(self, node):
 
     It does only html for the time being.
     """
-    if not isinstance(self, inheritance):
-        logger = getLogger("sharenet")
-        logger.warning(
-            "[depart_sharenet_node] output only available for HTML not for '{0}'".format(type(self)))
-        self.body.append(
-            "%sharenet: output only available for HTML not for '{0}'\n".format(type(self)))
-        return
-
     if node.hasattr("networks"):
         networks = node["networks"]
         size = node["size"]
@@ -237,6 +229,20 @@ def depart_sharenet_node(self, node):
                 self.body.extend(rows)
 
 
+def depart_sharenet_node(self, node):
+    """
+    what to do when leaving a node sharenet
+    the function should have different behaviour,
+    depending on the format, or the setup should
+    specify a different function for each.
+
+    It does only html for the time being.
+    """
+    logger = getLogger("sharenet")
+    logger.warning(
+        "[depart_sharenet_node] output only available for HTML not for '{0}'".format(type(self)))
+
+
 def setup(app):
     """
     setup for ``sharenet`` (sphinx)
@@ -245,8 +251,9 @@ def setup(app):
         app.add_mapping('sharenet', sharenet_node)
 
     app.add_node(sharenet_node,
-                 html=(visit_sharenet_node, depart_sharenet_node),
+                 html=(visit_sharenet_node, depart_sharenet_node_html),
                  latex=(visit_sharenet_node, depart_sharenet_node),
+                 rst=(visit_sharenet_node, depart_sharenet_node),
                  text=(visit_sharenet_node, depart_sharenet_node))
 
     app.add_directive('sharenet', ShareNetDirective)

@@ -277,7 +277,7 @@ def visit_blogpostagg_node(self, node):
         self.visit_admonition(node)
 
 
-def depart_blogpostagg_node(self, node):
+def depart_blogpostagg_node_html(self, node):
     """
     what to do when leaving a node blogpost,
     the function should have different behaviour,
@@ -301,6 +301,18 @@ def depart_blogpostagg_node(self, node):
         else:
             self.body.append(
                 "%blogpostagg: link to source only available for HTML\n")
+    if node["blog_background"]:
+        # the node will be in a box
+        self.depart_admonition(node)
+
+
+def depart_blogpostagg_node(self, node):
+    """
+    what to do when leaving a node blogpost,
+    the function should have different behaviour,
+    depending on the format, or the setup should
+    specify a different function for each.
+    """
     if node["blog_background"]:
         # the node will be in a box
         self.depart_admonition(node)
@@ -408,11 +420,13 @@ def setup(app):
     app.add_node(blogpost_node,
                  html=(visit_blogpost_node, depart_blogpost_node),
                  latex=(visit_blogpost_node, depart_blogpost_node),
+                 rst=(visit_blogpost_node, depart_blogpost_node),
                  text=(visit_blogpost_node, depart_blogpost_node))
 
     app.add_node(blogpostagg_node,
-                 html=(visit_blogpostagg_node, depart_blogpostagg_node),
+                 html=(visit_blogpostagg_node, depart_blogpostagg_node_html),
                  latex=(visit_blogpostagg_node, depart_blogpostagg_node),
+                 rst=(visit_blogpostagg_node, depart_blogpostagg_node),
                  text=(visit_blogpostagg_node, depart_blogpostagg_node))
 
     app.add_directive('blogpost', BlogPostDirective)

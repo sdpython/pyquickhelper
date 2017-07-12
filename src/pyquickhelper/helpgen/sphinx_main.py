@@ -296,6 +296,7 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
     fLOG("---- JENKINS BEGIN DOCUMENTATION ----")
     if layout is None:
         layout = [("html", "build", {})]
+    fLOG("---- layout", layout)
     setup_environment_for_help(fLOG=fLOG)
     # we keep a clean list of modules
     # sphinx configuration is a module and the function loads and unloads it
