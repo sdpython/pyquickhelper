@@ -743,6 +743,9 @@ class JenkinsExt(jenkins.Jenkins):
         if git_repo is None:
             git_repo_xml = ""
         else:
+            if not isinstance(git_repo, str):
+                raise TypeError(
+                    "git_repo must be str not '{0}'".format(git_repo))
             git_repo_xml = JenkinsExt._git_repo \
                 .replace("__GITREPO__", git_repo) \
                 .replace("__CRED__", "<credentialsId>%s</credentialsId>" % credentials)
