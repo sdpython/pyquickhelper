@@ -23,6 +23,7 @@ jupyter
 jupyter_client
 jupyter_console
 jupyter_core
+jupyter_sphinx
 jyquickhelper
 keyring
 lxml

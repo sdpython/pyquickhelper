@@ -36,6 +36,9 @@ class TestStyleDoc(unittest.TestCase):
             OutputPrint=__name__ == "__main__")
 
         extensions = get_default_standard_extensions() + get_default_extensions()
+        extensions = [_ for _ in extensions if "matplotlib" not in _ and
+                      "images" not in _ and "IPython" not in _ and
+                      "nbsphinx" not in _]
         external_docnames = [
             "_modules/src/pyquickhelper/helpgen/_fake_function_to_documentation"]
         funcs = [None, f1, f2, f3, f4, f5, f6]
