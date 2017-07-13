@@ -28,4 +28,5 @@ including PDF. The list is detailed at
 
 .. toctree::
 
+    sphinx
     mainf
