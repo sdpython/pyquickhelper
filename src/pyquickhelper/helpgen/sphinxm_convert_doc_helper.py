@@ -108,22 +108,25 @@ def default_sphinx_options(fLOG=noLOG, **options):
 
 def rst2html(s, fLOG=noLOG, writer="html", keep_warnings=False,
              directives=None, language="en",
-             layout='docutils', document_name="<<string>>", **options):
+             layout='docutils', document_name="<<string>>",
+             external_docnames=None, **options):
     """
     Converts a string into HTML format.
 
-    @param      s               string to converts
-    @param      fLOG            logging function (warnings will be logged)
-    @param      writer          ``'html'`` for HTML format or ``'rst'`` for RST format
-    @param      keep_warnings   keep_warnings in the final HTML
-    @param      directives      new directives to add (see below)
-    @param      language        language
-    @param      layout          ``'docutils'``, ``'sphinx'``, ``'sphinx_body'``, see below.
-    @param      document_name   document name, not really important since the input is a string
-    @param      options         Sphinx options see `Render math as images <http://www.sphinx-doc.org/en/stable/ext/math.html#module-sphinx.ext.imgmath>`_,
-                                a subset of options is used, see @see fn default_sphinx_options.
-                                By default, the theme (option *html_theme*) will ``'basic'``.
-    @return                     HTML format
+    @param      s                   string to converts
+    @param      fLOG                logging function (warnings will be logged)
+    @param      writer              ``'html'`` for HTML format or ``'rst'`` for RST format
+    @param      keep_warnings       keep_warnings in the final HTML
+    @param      directives          new directives to add (see below)
+    @param      language            language
+    @param      layout              ``'docutils'``, ``'sphinx'``, ``'sphinx_body'``, see below.
+    @param      document_name       document name, not really important since the input is a string
+    @param      options             Sphinx options see `Render math as images <http://www.sphinx-doc.org/en/stable/ext/math.html#module-sphinx.ext.imgmath>`_,
+                                    a subset of options is used, see @see fn default_sphinx_options.
+                                    By default, the theme (option *html_theme*) will ``'basic'``.
+    @param      external_docnames   if the string to parse makes references to other documents,
+                                    if one is missing, an exception is raised.
+    @return                         HTML format
 
     *directives* is None or a list of 5-uple:
 
@@ -186,7 +189,7 @@ def rst2html(s, fLOG=noLOG, writer="html", keep_warnings=False,
         The function produces files if the document contains latex
         converted into image.
 
-   .. faqref::
+    .. faqref::
        :title: How to get more about latex errors?
        :index: latex
 
@@ -234,14 +237,14 @@ def rst2html(s, fLOG=noLOG, writer="html", keep_warnings=False,
         Parameter *directives* was added to add a directive before parsing the RST.
 
     .. versionchanged:: 1.4
-        Add directives *todoext*, *todo*, *mathdef*, *blocref*, *faqref*,*nbref*, *exref*,
-        parameter *language* was added.
+        Add directives *todoext*, *todo*, *mathdef*, *blocref*, *faqref*, *nbref*, *exref*.
+        Parameter *language* was added.
         Add directives *graphviz*, *math*.
         Parse more extensive Sphinx syntax.
 
     .. versionchanged:: 1.5
         More logging is done, the function is more consistent.
-        Parameter *layout*, *document_name* were added.
+        Parameters *layout*, *document_name*, *external_docnames* were added.
         Format ``rst`` was added.
     """
     if 'html_theme' not in options:
@@ -311,7 +314,7 @@ def rst2html(s, fLOG=noLOG, writer="html", keep_warnings=False,
                                                 settings_spec=None, config_section=None, enable_exit_status=False)
 
     doctree = pub.document
-    mockapp.finalize(doctree)
+    mockapp.finalize(doctree, external_docnames=external_docnames)
     parts = pub.writer.parts
 
     if not keep_warnings:

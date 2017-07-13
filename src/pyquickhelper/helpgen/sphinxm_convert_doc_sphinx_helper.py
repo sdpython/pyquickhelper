@@ -46,6 +46,9 @@ from ..sphinxext.sphinx_todoext_extension import visit_todoext_node as ext_visit
 from ..sphinxext.sphinx_template_extension import visit_tpl_node as ext_visit_tpl_node, depart_tpl_node as ext_depart_tpl_node
 from ..sphinxext.sphinx_cmdref_extension import visit_cmdref_node as ext_visit_cmdref_node, depart_cmdref_node as ext_depart_cmdref_node
 from ..sphinxext.sphinx_epkg_extension import visit_epkg_node as ext_visit_epkg_node, depart_epkg_node as ext_depart_epkg_node
+from ..sphinxext.sphinx_bigger_extension import depart_bigger_node_html as ext_depart_bigger_node_html
+from ..sphinxext.sphinx_blog_extension import depart_blogpostagg_node_html as ext_depart_blogpostagg_node_html
+from ..sphinxext.sphinx_sharenet_extension import depart_sharenet_node_html as ext_depart_sharenet_node_html
 
 with warnings.catch_warnings():
     warnings.simplefilter("ignore")
@@ -88,6 +91,12 @@ class _AdditionalVisitDepart:
     Additional visitor and departor.
     """
 
+    def is_html(self):
+        """
+        Tells if the translator is html format.
+        """
+        return self.base_class is HTMLTranslator
+
     def visit_blogpost_node(self, node):
         """
         @see fn visit_blogpost_node
@@ -110,7 +119,10 @@ class _AdditionalVisitDepart:
         """
         @see fn depart_blogpostagg_node
         """
-        ext_depart_blogpostagg_node(self, node)
+        if self.is_html():
+            ext_depart_blogpostagg_node_html(self, node)
+        else:
+            ext_depart_blogpostagg_node(self, node)
 
     def visit_runpython_node(self, node):
         """
@@ -134,7 +146,10 @@ class _AdditionalVisitDepart:
         """
         @see fn depart_sharenet_node
         """
-        ext_depart_sharenet_node(self, node)
+        if self.is_html():
+            ext_depart_sharenet_node_html(self, node)
+        else:
+            ext_depart_sharenet_node(self, node)
 
     def visit_tpl_node(self, node):
         """
@@ -170,7 +185,10 @@ class _AdditionalVisitDepart:
         """
         @see fn depart_bigger_node
         """
-        ext_depart_bigger_node(self, node)
+        if self.is_html():
+            ext_depart_bigger_node_html(self, node)
+        else:
+            ext_depart_bigger_node(self, node)
 
     def visit_todoext_node(self, node):
         """
@@ -534,9 +552,9 @@ class _MemoryBuilder:
         elif docname in ("genindex", "search"):
             return self.config.master_doc + '-#' + docname
         else:
-            raise KeyError(
-                "docname='{0}' should be in 'self.env.all_docs' which contains: {1}".format(docname,
-                                                                                            ", ".join(sorted("'{0}'".format(_) for _ in self.env.all_docs))))
+            raise ValueError(
+                "docname='{0}' should be in 'self.env.all_docs' which contains:\n{1}".format(docname,
+                                                                                             ", ".join(sorted("'{0}'".format(_) for _ in self.env.all_docs))))
 
     def get_outfilename(self, pagename):
         """
@@ -945,11 +963,12 @@ class _CustomSphinx(Sphinx):
         if not hasattr(self, "_events"):
             self._events = {}
 
-    def finalize(self, doctree):
+    def finalize(self, doctree, external_docnames=None):
         """
         Finalize the documentation after it was parsed.
 
-        @param      doctree     doctree (or pub.document), available after publication
+        @param      doctree             doctree (or pub.document), available after publication
+        @param      external_docnames   other docnames the doctree references
         """
         if not isinstance(self.env, _CustomBuildEnvironment):
             raise TypeError(
@@ -961,6 +980,9 @@ class _CustomSphinx(Sphinx):
         self.builder.doctree_ = doctree
         self.env.doctree_[self.config.master_doc] = doctree
         self.env.all_docs = {self.config.master_doc: self.config.master_doc}
+        if external_docnames:
+            for doc in external_docnames:
+                self.env.all_docs[doc] = doc
         self.emit('doctree-read', doctree)
         self.emit('doctree-resolved', doctree, self.config.master_doc)
         self.builder.write(None, None, 'all')

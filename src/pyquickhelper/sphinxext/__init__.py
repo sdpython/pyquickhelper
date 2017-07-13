@@ -83,3 +83,28 @@ def get_default_extensions():
                       setup_autodoc, setup_imgmath, setup_imagesvg,
                       setup_plot, setup_only]
     return [_.__module__ for _ in default_setups]
+
+
+def get_default_standard_extensions(use_mathjax=False):
+    """
+    Return a list of standard extensions.
+
+    @param      use_mathjax     use mathjax or imgmath
+    @return                     list of standard extension.
+    """
+    return [
+        'sphinx.ext.autodoc', 'sphinx.ext.autosummary', 'sphinx.ext.coverage',
+        'sphinx.ext.extlinks', 'sphinx.ext.graphviz', 'sphinx.ext.ifconfig',
+        'sphinx.ext.inheritance_diagram',
+        'sphinx.ext.mathjax' if use_mathjax else 'sphinx.ext.imgmath',
+        'sphinx.ext.napoleon', 'sphinx.ext.todo', 'sphinx.ext.viewcode',
+        'sphinxcontrib.images', 'sphinxcontrib.imagesvg', 'sphinxcontrib.jsdemo',
+        'IPython.sphinxext.ipython_console_highlighting',
+        # 'matplotlib.sphinxext.only_directives',
+        # 'matplotlib.sphinxext.mathmpl',
+        # 'matplotlib.sphinxext.only_directives',
+        'matplotlib.sphinxext.plot_directive',
+        # 'matplotlib.sphinxext.ipython_directive',
+        'jupyter_sphinx.embed_widgets',
+        "nbsphinx"
+    ]

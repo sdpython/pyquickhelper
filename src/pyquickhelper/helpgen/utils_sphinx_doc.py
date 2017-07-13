@@ -1443,11 +1443,23 @@ def private_migrating_doxygen_doc(rows, index_first_line, filename,
     nb_ = re.compile("([@]NB[(](.*?___)?(.*?)[)])")
 
     # min indent
-    space_rows = [(r.lstrip(), r) for r in rows if len(r.strip()) > 0]
+    if len(rows) > 1:
+        space_rows = [(r.lstrip(), r) for r in rows[1:] if len(r.strip()) > 0]
+    else:
+        space_rows = []
     if len(space_rows) > 0:
         min_indent = min(len(r[1]) - len(r[0]) for r in space_rows)
     else:
         min_indent = 0
+
+    # We fix the first rows which might be different from the others.
+    if len(rows) > 1:
+        r = rows[0]
+        r = (r.lstrip(), r)
+        delta = len(r[1]) - len(r[0])
+        if delta != min_indent:
+            rows = rows.copy()
+            rows[0] = " " * min_indent + rows[0].lstrip()
 
     # processing doxygen documentation
     indent = False

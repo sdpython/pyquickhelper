@@ -95,12 +95,12 @@ def depart_bigger_node_html(self, node):
 
 
 def depart_bigger_node(self, node):
+    """
+    depart bigger_node for format other than html
+    """
     logger = getLogger("bigger")
     logger.warning("[depart_bigger_node] output only available for HTML not for '{0}' != '{1}'".format(
         type(self), HTMLTranslator))
-    self.body.append("%bigger: output only available for HTML not for '{0}' != '{1}'\n".format(
-        type(self), HTMLTranslator))
-    return
 
 
 def setup(app):

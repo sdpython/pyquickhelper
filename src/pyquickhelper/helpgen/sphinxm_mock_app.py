@@ -155,13 +155,14 @@ class MockSphinxApp:
                     setattr(translator, 'depart_' +
                             node.__name__, depart)
 
-    def finalize(self, doctree):
+    def finalize(self, doctree, external_docnames=None):
         """
         Finalize the documentation after it was parsed.
 
-        @param      doctree     doctree (or pub.document), available after publication
+        @param      doctree             doctree (or pub.document), available after publication
+        @param      external_docnames   other docnames the doctree references
         """
-        self.app.finalize(doctree)
+        self.app.finalize(doctree, external_docnames=external_docnames)
 
     def setup_extension(self, extname):
         """
