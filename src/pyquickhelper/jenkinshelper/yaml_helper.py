@@ -579,6 +579,7 @@ def enumerate_processed_yml(file_or_buffer, context=None, engine="jinja2", platf
 
     .. versionchanged:: 1.5
         A subfolder was added to the project location.
+        A scheduler can be defined as well by adding ``SCHEDULER:'* * * * *'``.
     """
     typstr = str  # unicode#
     fLOG = kwargs.get('fLOG', None)
@@ -610,7 +611,6 @@ def enumerate_processed_yml(file_or_buffer, context=None, engine="jinja2", platf
                 else:
                     conv = "export NAME_JENKINS=" + name + "\n" + conv
 
-            timeout = var.get("TIMEOUT", None)
             import jenkins
             try:
                 j = server.get_job_config(name) if not server._mock else None
@@ -641,9 +641,14 @@ def enumerate_processed_yml(file_or_buffer, context=None, engine="jinja2", platf
                                  name, platform=platform)
 
             if overwrite or j is None:
+                timeout = var.get("TIMEOUT", None)
+                scheduler = var.get("SCHEDULER", None)
                 if timeout is not None:
                     kwargs["timeout"] = timeout
+                if scheduler is not None:
+                    kwargs["scheduler"] = scheduler
                 yield server.create_job_template(name, script=conv, git_repo=git_repo,
-                                                 update=update_job, location=loc, **kwargs), name, var
+                                                 update=update_job, location=loc,
+                                                 **kwargs), name, var
         else:
             yield conv, None, var
