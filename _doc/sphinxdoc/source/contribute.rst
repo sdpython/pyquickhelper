@@ -272,7 +272,7 @@ Graphviz needs to be installed. Here is the list of required tools:
 
 * `Python 64 bit <https://www.python.org/downloads/>`_
 * :epkg:`7z`
-* :epkg:`Miktex`
+* :epkg:`MiKTex`
 * :epkg:`Jenkins` (+ `GitHub <https://wiki.jenkins-ci.org/display/JENKINS/GitHub+Plugin>`_,
   `git <https://wiki.jenkins-ci.org/display/JENKINS/Git+Plugin>`_,
   `python <https://wiki.jenkins-ci.org/display/JENKINS/Python+Plugin>`_,
@@ -280,7 +280,7 @@ Graphviz needs to be installed. Here is the list of required tools:
 * :epkg:`pandoc`
 * :epkg:`GIT` + :epkg:`GitHub`
 * :epkg:`GraphViz`
-* :epkg:`InkScape`
+* :epkg:`Inkscape`
 
 If you need to use `Antlr <http://www.antlr.org/>`_:
 
@@ -312,9 +312,10 @@ You will find some examples of custom sphinx commands
 in :ref:`l-example-documentation`.
 
 .. faqref::
-    :title: List of Sphinx commands added by pyquickhelper?
+    :title: List of Sphinx commands added by pyquickhelper
+    :lid: f-sphinxext-pyq
 
-    * :class:`bigger <pyquickhelper.sphinxext.sphinx_bigger_extension.bigger_role>`:
+    * :func:`bigger <pyquickhelper.sphinxext.sphinx_bigger_extension.bigger_role>`:
       to write with a custom size
     * :class:`blocref <pyquickhelper.sphinxext.sphinx_blocref_extension.BlocRef>`:
       to add a definition (or any kind of definition)
@@ -326,6 +327,8 @@ in :ref:`l-example-documentation`.
     * :class:`blogpostagg <pyquickhelper.sphinxext.sphinx_blog_extension.BlogPostDirectiveAgg>`:
       to aggregate blog post, this should be manually added, the module
       *pyquickhelper* is preprocessing the documentation to produce pages containing such commands
+    * :func:`epkg <pyquickhelper.sphinxext.sphinx_epkg_extension.epkg_role>`:
+      avoid repeating the same references in many places
     * :class:`exref <pyquickhelper.sphinxext.sphinx_exref_extension.ExRef>`:
       to add an example
     * :class:`exreflist <pyquickhelper.sphinxext.sphinx_exref_extension.ExRef>`:
@@ -350,6 +353,8 @@ in :ref:`l-example-documentation`.
       to add an issue or a work item
     * :class:`todoextlist <pyquickhelper.sphinxext.sphinx_todoext_extension.TodoExtList>`:
       to list all issues or work item
+
+    These commands are documented in :ref:`l-sphinxextc`.
 
 Notebooks
 +++++++++

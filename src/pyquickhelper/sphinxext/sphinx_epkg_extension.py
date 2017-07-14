@@ -58,6 +58,7 @@ def epkg_role(role, rawtext, text, lineno, inliner, options=None, content=None):
                            }
 
     If the module name starts with a '*', the anchor does not contain it.
+    See also :ref:`l-sphinx-epkg`.
 
     :param role: The role name used in the document.
     :param rawtext: The entire markup snippet, with role.
