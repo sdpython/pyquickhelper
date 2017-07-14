@@ -247,7 +247,7 @@ class RunPythonDirective(Directive):
     * ``:setsysvar:`` adds a member to *sys* module, the module can act differently based on that information,
       if the value is left empty, *sys.enable_disabled_documented_pieces_of_code* will be be set up to *True*.
     * ``:process:`` run the script in an another process
-    * ``:exception:`` the code throws an exception but it expected. The error is displayed.
+    * ``:exception:`` the code throws an exception but it is expected. The error is displayed.
 
     Option *rst* can be used the following way::
 

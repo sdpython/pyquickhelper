@@ -26,7 +26,7 @@ from src.pyquickhelper.sphinxext.import_object_helper import import_object
 from src.pyquickhelper.helpgen import rst2html
 
 
-class TestDocAssert(unittest.TestCase):
+class TestAutoSignature(unittest.TestCase):
 
     def test_import_object(self):
         fLOG(

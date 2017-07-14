@@ -327,6 +327,10 @@ in :ref:`l-example-documentation`.
     * :class:`blogpostagg <pyquickhelper.sphinxext.sphinx_blog_extension.BlogPostDirectiveAgg>`:
       to aggregate blog post, this should be manually added, the module
       *pyquickhelper* is preprocessing the documentation to produce pages containing such commands
+    * :class:`cmdref <pyquickhelper.sphinxext.sphinx_cmdref_extension.CmdRef>`:
+      to documentation a script the module makes available on the command line
+    * :class:`cmdreflist <pyquickhelper.sphinxext.sphinx_cmdref_extension.CmdRefList>`:
+      to list all commands
     * :func:`epkg <pyquickhelper.sphinxext.sphinx_epkg_extension.epkg_role>`:
       avoid repeating the same references in many places
     * :class:`exref <pyquickhelper.sphinxext.sphinx_exref_extension.ExRef>`:

@@ -36,6 +36,7 @@ class AutoSignatureDirective(Directive):
     * *nolink*: add a link to a full documentation (produced by
       `sphinx.ext.autodoc <http://www.sphinx-doc.org/en/stable/ext/autodoc.html#module-sphinx.ext.autodoc>`_)
     * *members*: shows members of a class
+    * *fullpath*: to produce a full path instead including submodules
     """
     required_arguments = 0
     optional_arguments = 0
@@ -64,6 +65,7 @@ class AutoSignatureDirective(Directive):
         opt_members = self.options.get('members', None)
         if opt_members in (None, '') and 'members' in self.options:
             opt_members = "all"
+        opt_fullpath = 'fullpath' in self.options
 
         try:
             source, lineno = self.reporter.get_source_and_line(self.lineno)
@@ -95,11 +97,16 @@ class AutoSignatureDirective(Directive):
                                                   source=source, lineno=lineno,
                                                   objectname=object_name)
 
+        if opt_fullpath:
+            anchor = object_name
+        else:
+            anchor = object_name.split(".")[-1]
+
         if obj is None:
             if opt_link:
-                text = "\n:py:func:`{0} <{0}>`\n\n".format(object_name)
+                text = "\n:py:func:`{0} <{1}>`\n\n".format(anchor, object_name)
             else:
-                text = "\n``{0}``\n\n".format(object_name)
+                text = "\n``{0}``\n\n".format(anchor, object_name)
         else:
             obj_sig = obj.__init__ if kind == "class" else obj
             try:
@@ -114,14 +121,15 @@ class AutoSignatureDirective(Directive):
 
             if signature is None:
                 if opt_link:
-                    text = "\n:py:func:`{0} <{0}>`\n\n".format(object_name)
+                    text = "\n:py:func:`{0} <{1}>`\n\n".format(
+                        anchor, object_name)
                 else:
                     text = "\n``{0}``\n\n".format(object_name)
             else:
                 signature = self.build_parameters_list(
                     parameters, opt_annotation)
-                text = "\n:py:func:`{0} <{0}>` ({1})\n\n".format(
-                    object_name, signature)
+                text = "\n:py:func:`{0} <{1}>` ({2})\n\n".format(
+                    anchor, object_name, signature)
 
         if obj is not None and opt_summary:
             # Documentation.

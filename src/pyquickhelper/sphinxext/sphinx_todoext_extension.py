@@ -56,11 +56,11 @@ class TodoExt(BaseAdmonition):
     Example::
 
         .. todoext::
-                :title: title for the todo
-                :tag: issue
-                :issue: issue number
+            :title: title for the todo
+            :tag: issue
+            :issue: issue number
 
-                Description of the todo
+            Description of the todo
 
     .. todoext::
         :title: add option hidden to hide the item

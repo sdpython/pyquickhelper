@@ -211,6 +211,53 @@ class TestGitHubLinkExtension(unittest.TestCase):
         with open(os.path.join(temp, "out_githublink.html"), "w", encoding="utf8") as f:
             f.write(html)
 
+    def test_githublink_doc(self):
+        fLOG(
+            __file__,
+            self._testMethodName,
+            OutputPrint=__name__ == "__main__")
+
+        if sys.version_info[0] == 2:
+            warnings.warn(
+                "test_biffer not run on Python 2.7")
+            return
+
+        from docutils import nodes as skip_
+
+        content = """
+                    test a directive
+                    ================
+
+                    before
+
+                    :githublink:`j|rst-doc|84`
+
+                    this code shoud appear
+                    """.replace("                    ", "")
+        if sys.version_info[0] >= 3:
+            content = content.replace('u"', '"')
+
+        html = rst2html(content,  # fLOG=fLOG,
+                        writer="custom", keep_warnings=True,
+                        directives=None, document_name="string",
+                        githublink_options=dict(user="sdpython", project="pyquickhelper", anchor="ANCHOR"))
+
+        t1 = "this code shoud not appear"
+        if t1 in html:
+            raise Exception(html)
+
+        t1 = "this code shoud appear"
+        if t1 not in html:
+            raise Exception(html)
+
+        t1 = "https://github.com/sdpython/pyquickhelper/blob/master/_doc/sphinx/source/string.rst#L84"
+        if t1 not in html:
+            raise Exception(html)
+
+        temp = get_temp_folder(__file__, "temp_githublink_doc")
+        with open(os.path.join(temp, "out_githublink.html"), "w", encoding="utf8") as f:
+            f.write(html)
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -132,7 +132,11 @@ def githublink_role(role, rawtext, text, lineno, inliner,
     * ``anchor``: anchor = filename, line number is guess form the position in the file
     * ``anchor|py|*``: extension *.py* is added to the anchor, no line number
     * ``anchor|py|45``: extension *.py* is added to the anchor, line number is 45
-    * ``%|py|45``: the anchor name comes from the variable ``githublink_options['anchor']`` in the configuration file
+    * ``%|py|45``: the anchor name comes from the variable ``githublink_options['anchor']`` in the configuration file.
+
+    A suffix can be added to the extension ``rst-doc`` to tell the extension
+    the source comes from the subfolder ``_doc/sphinx/source`` and not from
+    the subfolder ``src``.
     """
     if options is None:
         options = {}
@@ -140,35 +144,66 @@ def githublink_role(role, rawtext, text, lineno, inliner,
         content = []
     if not rawtext or len(rawtext) == 0:
         rawtext = "source"
+
     app = inliner.document.settings.env.app
     docname = inliner.document.settings.env.docname
     folder = docname
-    git = os.path.join(folder, ".git")
-    while len(folder) > 0 and not os.path.exists(git):
-        folder = os.path.split(folder)[0]
-        git = os.path.join(folder, ".git")
-    if len(folder) > 0:
-        path = docname[len(folder):]
-    else:
-        path = os.path.join('src', docname)
-    path = path.replace("\\", "/").strip("/")
 
+    # Retrieve extension and path.
+    text0 = text
+    path = None
     if "|" in text:
         # no extension to the url, we add one
         spl = text.split("|")
         if len(spl) == 3:
             text, ext, no = spl
-            if len(ext) > 5 or "." in ext:
+            if len(ext) > 7 or "." in ext:
                 path = ext
+                ext = None
             else:
-                path += "." + ext
+                ext = "." + ext
             lineno = int(no) if no != "*" else None
         elif len(spl) != 2:
             raise ValueError("unable to interpret '{0}'".format(text))
         else:
             text, ext = spl
-            path += "." + ext
+            ext = "." + ext
+    else:
+        ext = None
 
+    # -
+    if ext is not None and "-" in ext:
+        spl = ext.split("-")
+        if len(spl) != 2:
+            raise ValueError(
+                "unable to interpret extension in '{0}'".format(text0))
+        ext, doc = spl
+    else:
+        doc = "src"
+
+    # Get path to source.
+    if path is None:
+        git = os.path.join(folder, ".git")
+        while len(folder) > 0 and not os.path.exists(git):
+            folder = os.path.split(folder)[0]
+            git = os.path.join(folder, ".git")
+
+        if len(folder) > 0:
+            path = docname[len(folder):]
+        elif doc == "src":
+            path = os.path.join('src', docname)
+        elif doc == "doc":
+            path = os.path.join('_doc', 'sphinxdoc', 'source', docname)
+        else:
+            raise ValueError(
+                "unable to interpret subfolder in '{0}'".format(text0))
+
+    # Path with extension.
+    if ext is not None:
+        path += ext
+    path = path.replace("\\", "/")
+
+    # Add node.
     try:
         node = make_link_node(rawtext=rawtext, app=app, path=path, lineno=lineno,
                               options=options, anchor=text, settings=inliner.document.settings)
