@@ -250,7 +250,7 @@ class TestGitHubLinkExtension(unittest.TestCase):
         if t1 not in html:
             raise Exception(html)
 
-        t1 = "https://github.com/sdpython/pyquickhelper/blob/master/_doc/sphinx/source/string.rst#L84"
+        t1 = "https://github.com/sdpython/pyquickhelper/blob/master/_doc/sphinxdoc/source/string.rst#L84"
         if t1 not in html:
             raise Exception(html)
 
