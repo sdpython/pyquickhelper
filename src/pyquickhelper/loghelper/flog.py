@@ -171,22 +171,24 @@ def fLOG(*l, **p):
     Builds a message on a single line with the date, it deals with encoding issues.
 
     @param      l       list of fields
-    @param      p       dictionary of fields
-                        - if p contains *OutputPrint*, call *Print(OutputPrint)*,
-                        - if p contains *LogPath*, it calls *init(v)*
-                        - if p contains *LogFile*, it changes the log file name
-                          (it creates a new one, the previous is closed).
-                        - if p contains *LogPathAdd*, it adds this path to the temporary file
-                        - if p contains *Lock*, it Locks option OutputPrint
-                        - if p contains *UnLock*, it unlock option OutputPrint
+    @param      p       dictionary of fields (see below)
     @exception  OSError     When the log file cannot be created.
+
+    About parameter *p*:
+
+    - if *p* contains *OutputPrint*, call ``Print(OutputPrint)``
+    - if *p* contains *LogPath*, it calls ``init(v)``
+    - if *p* contains *LogFile*, it changes the log file name
+      (it creates a new one, the previous is closed).
+    - if *p* contains *LogPathAdd*, it adds this path to the temporary file
+    - if *p* contains *Lock*, it locks option OutputPrint
+    - if *p* contains *UnLock*, it unlock option OutputPrint
 
     Example:
 
     ::
 
         fLOG (LogPath = "###", LogPathAdd = __file__, OutputPrint = True)
-
 
     .. faqref::
         :title: How to activate the logs?

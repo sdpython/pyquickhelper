@@ -108,8 +108,9 @@ def tpl_role(role, rawtext, text, lineno, inliner, options=None, content=None):
             "unable to find 'tpl_template' in configuration. Available:\n{0}".format(ma)) from e
 
     if template_name not in tpl_template:
+        keys = "\n".join(sorted(tpl_template))
         raise ValueError(
-            "Unable to find template '{0}' in tpl_template.".format(template_name))
+            "Unable to find template '{0}' in tpl_template. Found:\n{1}".format(template_name, keys))
     tpl_content = tpl_template[template_name]
 
     code = "dict(" + context + ")"

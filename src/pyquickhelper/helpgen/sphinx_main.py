@@ -102,11 +102,12 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
                          module_name=None, from_repo=True, add_htmlhelp=False,
                          copy_add_ext=None, direct_call=False, fLOG=fLOG):
     """
-    runs the help generation
-        - copies every file in another folder
-        - replaces comments in doxygen format into rst format
-        - replaces local import by global import (tweaking sys.path too)
-        - calls sphinx to generate the documentation.
+    Runs the help generation:
+
+    - copies every file in another folder
+    - replaces comments in doxygen format into rst format
+    - replaces local import by global import (tweaking sys.path too)
+    - calls sphinx to generate the documentation.
 
     @param      project_var_name    project name
     @param      clean               if True, cleans the previous documentation first (html files)
@@ -158,46 +159,28 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
     add other files sharing the same extensions by adding this one
     in the ``extra_ext`` list.
 
-    .. exref::
-        :title: Other page of examples___run help generation
-
-        This example is exactly the same as the previous one but will be generated on another page of examples.
-
-        ::
-
-            # from the main folder which contains folder src
-            generate_help_sphinx("pyquickhelper")
-
-    .. exref::
-        :title: Page with an accent -é- in the title___run help generation
-
-        Same page with an accent.
-
-        ::
-
-            # from the main folder which contains folder src
-            generate_help_sphinx("pyquickhelper")
-
     The function requires:
 
-    - pandoc
+    - :epkg:`pandoc`
     - latex
 
     @warning Some themes such as `Bootstrap Sphinx Theme <http://ryan-roemer.github.io/sphinx-bootstrap-theme/>`_
-             do not work on Internet Explorer. In that case, the
-             file ``<python_path>/Lib/site-packages/sphinx/themes/basic/layout.html``
-             must be modified to add the following line (just below ``Content-Type``).
+        do not work on Internet Explorer. In that case, the
+        file ``<python_path>/Lib/site-packages/sphinx/themes/basic/layout.html``
+        must be modified to add the following line (just below ``Content-Type``).
 
-             ::
+        ::
 
-                <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+            <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 
     .. index:: PEP8, autopep8
 
     The code should follow as much as possible the sytle convention
     `PEP8 <https://www.python.org/dev/peps/pep-0008/>`_.
     The module `autopep8 <https://pypi.python.org/pypi/autopep8>`_ can modify a file or all files contained in one folder
-    by running the following command line::
+    by running the following command line:
+
+    ::
 
         autopep8 <folder> --recursive --in-place --pep8-passes 2000 --verbose
 

@@ -33,7 +33,8 @@ def main_wrapper_tests(codefile, skip_list=None, processes=False, add_coverage=F
                        covtoken=None, hook_print=True, stdout=None, stderr=None, filter_warning=None,
                        fLOG=noLOG):
     """
-    calls function :func:`main <pyquickhelper.unittests.utils_tests.main>` and throw an exception if it fails
+    Calls function :func:`main <pyquickhelper.unittests.utils_tests.main>`
+    and throw an exception if it fails.
 
     @param      codefile                ``__file__`` or ``run_unittests.py``
     @param      skip_list               to skip a list of unit tests (by index, starting by 1)

@@ -181,7 +181,7 @@ def rst2html(s, fLOG=noLOG, writer="html", keep_warnings=False,
                     visit_node, depart_node) ]
 
             html = rst2html(content, fLOG=fLOG,
-                            writer="custom", keep_warnings=True,
+                            writer="html", keep_warnings=True,
                             directives=tives)
 
         Unfortunately, this functionality is only tested on Python 3.
@@ -207,7 +207,7 @@ def rst2html(s, fLOG=noLOG, writer="html", keep_warnings=False,
                 print("################")
                 print(latex)
                 print("..........")
-                print(stdout.decode("ascii").replace("\r", ""))
+                print(stdout.decode("ascii").replace("\\r", ""))
                 print("-----")
                 print(stderr)
 

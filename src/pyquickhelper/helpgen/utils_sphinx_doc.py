@@ -539,7 +539,8 @@ def apply_modification_template(rootm, store_obj, template, fullname, rootrep,
     for a, b in rep.items():
         res = res.replace(a, b)
 
-    has_class = "class " in content
+    has_class = any(
+        filter(lambda _: _.startswith("class "), content.split("\n")))
     if not has_class:
         spl = res.split("\n")
         spl = [_ for _ in spl if not _.startswith(".. inheritance-diagram::")]
@@ -813,7 +814,7 @@ def produces_indexes(
 
 def filecontent_to_rst(filename, content):
     """
-    produces a .rst file which contains the file. It adds a title and a label based on the
+    Produces a *.rst* file which contains the file. It adds a title and a label based on the
     filename (no folder included).
 
     @param      filename        filename

@@ -426,7 +426,7 @@ def has_been_updated(source, dest):
 
 def walk(top, onerror=None, followlinks=False, neg_filter=None):
     """
-    Does the same as :epkg:`py:os:walk`
+    Does the same as :epkg:`*py:os:walk`
     plus do not go through a sub-folder if this one is big. Folders such build or Debug or Release
     may not need to be dug into.
 

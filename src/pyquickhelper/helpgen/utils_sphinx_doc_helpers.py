@@ -89,7 +89,7 @@ add_file_rst_template_title = {"class": "Classes",
 def compute_truncated_documentation(doc, length=_length_truncated_doc,
                                     raise_exception=False):
     """
-    produces a truncated version of a docstring
+    Produces a truncated version of a docstring.
     @param      doc                 doc string
     @param      length              approximated length of the truncated docstring
     @param      raise_exception     raises an exception when the result is empty and the input is not
@@ -110,7 +110,11 @@ def compute_truncated_documentation(doc, length=_length_truncated_doc,
         lines = [li.rstrip() for li in doc.split("\n")]
         pos = None
         for i, li in enumerate(lines):
-            if li.lstrip().startswith(".. ") and li.endswith("::"):
+            lll = li.lstrip()
+            if lll.startswith(".. ") and li.endswith("::"):
+                pos = i
+                break
+            if lll.startswith("* ") or lll.startswith("- "):
                 pos = i
                 break
         if pos is not None:
@@ -127,17 +131,18 @@ def compute_truncated_documentation(doc, length=_length_truncated_doc,
         doc = "\n".join(filter_line(line) for line in lines)
         doc = doc.replace("\n", " ").replace("\r", "").strip("\n\r\t ")
 
-        for subs in ["@" + "param", "@" + "return", ":param", ":return", ":ref:", "`", ".. "]:
+        for subs in ["@" + "param", "@" + "return", ":param", ":return", ".. ", "::"]:
             if subs in doc:
                 doc = doc[:doc.find(subs)].strip("\r\t ")
 
         if len(doc) >= _length_truncated_doc:
             spl = doc.split(" ")
             doc = ""
-            cq = 0
+            cq, cq2 = 0, 0
             i = 0
-            while len(doc) < _length_truncated_doc or cq % 2 != 0:
+            while len(doc) < _length_truncated_doc or cq % 2 != 0 or cq2 % 2 != 0:
                 cq += spl[i].count("`")
+                cq2 += spl[i].count("``")
                 doc += spl[i] + " "
                 i += 1
             doc += "..."

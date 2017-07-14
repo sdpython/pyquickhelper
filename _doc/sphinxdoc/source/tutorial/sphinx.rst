@@ -166,15 +166,18 @@ throught the standard output.
 
     ::
 
-        import os
-        for i, name in enumerate(os.lisdir(".")):
-            print(i, name)
+        .. runpython::
+            :showcode:
+
+            import os
+            for i, name in enumerate(os.listdir(".")):
+                print(i, name)
 
 .. runpython::
     :showcode:
 
     import os
-    for i, name in enumerate(os.lisdir(".")):
+    for i, name in enumerate(os.listdir(".")):
         print(i, name)
 
 The output can also be compiled as RST format and the code can be hidden:
@@ -183,32 +186,40 @@ The output can also be compiled as RST format and the code can be hidden:
 
     ::
 
-        import os
-        for i, name in enumerate(os.lisdir(".")):
-            print("* file **{0}**: *{1}*".format(i, name))
+        .. runpython::
+            :rst:
+
+            import os
+            for i, name in enumerate(os.listdir(".")):
+                print("* file **{0}**: *{1}*".format(i, name))
 
 .. runpython::
     :rst:
 
     import os
-    for i, name in enumerate(os.lisdir(".")):
+    for i, name in enumerate(os.listdir(".")):
         print("* file **{0}**: *{1}*".format(i, name))
 
-What if the code throws an exception:
+What if the code throws an exception (except a syntax error):
 
-.. sitebar:: runpython and exception
+.. sidebar:: runpython and exception
 
     ::
 
-        import os
-        for i, name in enumerate(os.lisdir("not existing)):
-            pass
+        .. runpython::
+            :showcode:
+            :exception:
+
+            import os
+            for i, name in enumerate(os.listdir("not existing")):
+                pass
 
 .. runpython::
     :showcode:
+    :exception:
 
     import os
-    for i, name in enumerate(os.lisdir("not existing)):
+    for i, name in enumerate(os.listdir("not existing")):
         pass
 
 *sharenet*: add link to share
@@ -332,7 +343,7 @@ does and a little bit more:
   The RST format is included in the documentation and links to the other
   format are added.
 * It automatically creates a
-  :ref:`notebook gallery <l-notebooks>`_ and an
+  :ref:`notebook gallery <l-notebooks>` and an
   :ref:`example gallery <examples-gallery>`.
 * It creates a RST pages for each source file in subfoldeer ``src``.
 * It converts `javadoc <https://fr.wikipedia.org/wiki/Javadoc>`_
@@ -519,18 +530,17 @@ The HTML conversion is quite difficult to read:
 
 .. runpython::
     :showcode:
-    :process:
 
+    from textwrap import dedent
     from pyquickhelper.helpgen import rst2html
 
     text = """
 
-    A title
-    =======
-
     .. faqref::
         :title: How to add a FAQ?
         :tag: faqexample2
+
+        Some description.
 
     .. faqreflist::
         :tag: faqexample2
@@ -538,6 +548,7 @@ The HTML conversion is quite difficult to read:
 
     """
 
+    text = dedent(text)
     conv = rst2html(text)
     print(conv)
 
@@ -545,18 +556,17 @@ That's why I prefer RST:
 
 .. runpython::
     :showcode:
-    :process:
 
+    from textwrap import dedent
     from pyquickhelper.helpgen import rst2html
 
     text = """
 
-    A title
-    =======
-
     .. faqref::
         :title: How to add a FAQ?
         :tag: faqexample2
+
+        Some description.
 
     .. faqreflist::
         :tag: faqexample2
@@ -564,27 +574,27 @@ That's why I prefer RST:
 
     """
 
+    text = dedent(text)
     conv = rst2html(text, writer="rst")
     print(conv)
 
 The function does not seem to show anything for the instruction ``.. faqreflist::``
-because it is only calling :epkg:`docutils` without using everything Sphinx
-adds to it. Let's change that.
+because it is only calling :epkg:`docutils` without using everything
+:epkg:`Sphinx` adds to it. Let's change that.
 
 .. runpython::
     :showcode:
-    :process:
 
+    from textwrap import dedent
     from pyquickhelper.helpgen import rst2html
 
     text = """
 
-    A title
-    =======
-
     .. faqref::
         :title: How to add a FAQ?
         :tag: faqexample2
+
+        Some description.
 
     .. faqreflist::
         :tag: faqexample2
@@ -592,6 +602,7 @@ adds to it. Let's change that.
 
     """
 
+    text = dedent(text)
     conv = rst2html(text, writer="rst", layout="sphinx")
     print(conv)
 
