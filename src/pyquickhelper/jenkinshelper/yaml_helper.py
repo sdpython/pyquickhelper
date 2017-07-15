@@ -646,7 +646,16 @@ def enumerate_processed_yml(file_or_buffer, context=None, engine="jinja2", platf
                 if timeout is not None:
                     kwargs["timeout"] = timeout
                 if scheduler is not None:
+                    if "FIXED" in scheduler:
+                        scheduler = scheduler.replace("FIXED", "").strip()
+                        adjuster_scheduler = False
+                    elif 'fixed' in scheduler.lower():
+                        raise ValueError(
+                            "Scheduler should contain 'FIXED' in upper case.")
+                    else:
+                        adjuster_scheduler = True
                     kwargs["scheduler"] = scheduler
+                    kwargs["adjuster_scheduler"] = adjuster_scheduler
                 yield server.create_job_template(name, script=conv, git_repo=git_repo,
                                                  update=update_job, location=loc,
                                                  **kwargs), name, var
