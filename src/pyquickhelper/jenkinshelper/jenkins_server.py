@@ -32,7 +32,8 @@ from ..pycode.windows_scripts import windows_jenkins, windows_jenkins_any
 from ..pycode.windows_scripts import windows_jenkins_27_conda, windows_jenkins_27_def
 from ..pycode.build_helper import private_script_replacements
 from .jenkins_exceptions import JenkinsExtException, JenkinsJobException
-from .jenkins_server_template import _config_job, _trigger_up, _trigger_time, _git_repo, _task_batch, _publishers, _file_creation
+from .jenkins_server_template import _config_job, _trigger_up, _trigger_time, _git_repo, _task_batch
+from .jenkins_server_template import _trigger_startup, _publishers, _file_creation
 from .yaml_helper import enumerate_processed_yml
 from .jenkins_helper import jenkins_final_postprocessing
 
@@ -103,6 +104,7 @@ class JenkinsExt(jenkins.Jenkins):
     _config_job = _config_job
     _trigger_up = _trigger_up
     _trigger_time = _trigger_time
+    _trigger_startup = _trigger_startup
     _git_repo = _git_repo
     _task_batch = _task_batch
     _publishers = _publishers
@@ -715,12 +717,16 @@ class JenkinsExt(jenkins.Jenkins):
                 .replace("__ORDINAL__", "0" if success_only else "2") \
                 .replace("__COLOR__", "BLUE" if success_only else "RED")
         elif scheduler is not None:
-            new_scheduler = self.adjust_scheduler(scheduler, adjust_scheduler)
-            trigger = JenkinsExt._trigger_time.replace(
-                "__SCHEDULER__", new_scheduler)
-            if description is not None:
-                description = description.replace(scheduler, new_scheduler)
-            scheduler = new_scheduler
+            if scheduler.lower() == "startup":
+                trigger = JenkinsExt._trigger_startup
+            else:
+                new_scheduler = self.adjust_scheduler(
+                    scheduler, adjust_scheduler)
+                trigger = JenkinsExt._trigger_time.replace(
+                    "__SCHEDULER__", new_scheduler)
+                if description is not None:
+                    description = description.replace(scheduler, new_scheduler)
+                scheduler = new_scheduler
         else:
             trigger = ""
 

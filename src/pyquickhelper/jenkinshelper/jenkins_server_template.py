@@ -71,6 +71,16 @@ _trigger_time = """
 </triggers>
 """
 
+#: trigger startup
+_trigger_startup = """
+<triggers>
+    <org.jvnet.hudson.plugins.triggers.startup.HudsonStartupTrigger plugin="startup-trigger-plugin">
+        <quietPeriod>0</quietPeriod>
+        <runOnChoice>ON_CONNECT</runOnChoice>
+    </org.jvnet.hudson.plugins.triggers.startup.HudsonStartupTrigger>
+</triggers>
+"""
+
 #: git repository
 _git_repo = """
 <scm class="hudson.plugins.git.GitSCM" plugin="git@2.3.4">
