@@ -157,9 +157,14 @@ def call_cli_function(f, args=None, parser=None, fLOG=print, skip_parameters=('f
             signature = inspect.signature(f)
             parameters = signature.parameters
             kwargs = {}
+            has_flog = False
             for k in parameters:
                 if k == "fLOG":
-                    kwargs["fLOG"] = fLOG
+                    has_flog = True
+                    continue
                 if hasattr(args, k):
                     kwargs[k] = getattr(args, k)
-            f(fLOG=fLOG, **kwargs)
+            if has_flog:
+                f(fLOG=fLOG, **kwargs)
+            else:
+                f(**kwargs)
