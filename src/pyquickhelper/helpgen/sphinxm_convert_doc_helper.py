@@ -109,13 +109,14 @@ def default_sphinx_options(fLOG=noLOG, **options):
 def rst2html(s, fLOG=noLOG, writer="html", keep_warnings=False,
              directives=None, language="en",
              layout='docutils', document_name="<<string>>",
-             external_docnames=None, **options):
+             external_docnames=None, filter_nodes=None, **options):
     """
     Converts a string into HTML format.
 
     @param      s                   string to converts
     @param      fLOG                logging function (warnings will be logged)
-    @param      writer              ``'html'`` for HTML format or ``'rst'`` for RST format
+    @param      writer              ``'html'`` for HTML format, ``'rst'`` for RST format,
+                                    ``'doctree'`` to get the doctree
     @param      keep_warnings       keep_warnings in the final HTML
     @param      directives          new directives to add (see below)
     @param      language            language
@@ -126,6 +127,8 @@ def rst2html(s, fLOG=noLOG, writer="html", keep_warnings=False,
                                     By default, the theme (option *html_theme*) will ``'basic'``.
     @param      external_docnames   if the string to parse makes references to other documents,
                                     if one is missing, an exception is raised.
+    @param      filter_nodes        transforms the doctree before writing the results (layout must be 'sphinx'),
+                                    the function takes a doctree as a single parameter
     @return                         HTML format
 
     *directives* is None or a list of 5-uple:
@@ -244,7 +247,7 @@ def rst2html(s, fLOG=noLOG, writer="html", keep_warnings=False,
 
     .. versionchanged:: 1.5
         More logging is done, the function is more consistent.
-        Parameters *layout*, *document_name*, *external_docnames* were added.
+        Parameters *layout*, *document_name*, *external_docnames*, *filter_nodes* were added.
         Format ``rst`` was added.
     """
     if 'html_theme' not in options:
@@ -252,6 +255,10 @@ def rst2html(s, fLOG=noLOG, writer="html", keep_warnings=False,
     defopt = default_sphinx_options(**options)
     if "master_doc" not in defopt:
         defopt["master_doc"] = document_name
+
+    ret_doctree = writer == "doctree"
+    if ret_doctree:
+        writer = "rst"
 
     if writer in ["custom", "sphinx", "HTMLWriterWithCustomDirectives", "html"]:
         mockapp, writer, title_names = MockSphinxApp.create(
@@ -314,6 +321,13 @@ def rst2html(s, fLOG=noLOG, writer="html", keep_warnings=False,
                                                 settings_spec=None, config_section=None, enable_exit_status=False)
 
     doctree = pub.document
+
+    if filter_nodes is not None:
+        if layout == "docutils" and writer != "doctree":
+            raise ValueError(
+                "filter_nodes is not None, layout must not be 'docutils'")
+        filter_nodes(doctree)
+
     mockapp.finalize(doctree, external_docnames=external_docnames)
     parts = pub.writer.parts
 
@@ -322,6 +336,9 @@ def rst2html(s, fLOG=noLOG, writer="html", keep_warnings=False,
             '(<div class="system-message">(.|\\n)*?</div>)', "", parts["whole"])
     else:
         exp = parts["whole"]
+
+    if ret_doctree:
+        return doctree
 
     if layout == "docutils":
         return exp
@@ -401,7 +418,8 @@ def correct_indentation(text):
 
 def docstring2html(function_or_string, format="html", fLOG=noLOG, writer="html",
                    keep_warnings=False, directives=None, language="en",
-                   layout='docutils', document_name="<string>", **options):
+                   layout='docutils', document_name="<string>",
+                   filter_nodes=None, **options):
     """
     Converts a docstring into a HTML format.
 
@@ -414,6 +432,7 @@ def docstring2html(function_or_string, format="html", fLOG=noLOG, writer="html",
     @param      language                language
     @param      layout                  ``'docutils'``, ``'sphinx'``, ``'sphinx_body'``, see below.
     @param      document_name           document_name for this string
+    @param      filter_nodes            transform the doctree before writing the results (layout must be 'sphinx')
     @param      options                 Sphinx options see `Render math as images <http://www.sphinx-doc.org/en/stable/ext/math.html#module-sphinx.ext.imgmath>`_,
                                         a subset of options is used, see @see fn default_sphinx_options.
                                         By default, the theme (option *html_theme*) will ``'basic'``.
@@ -468,25 +487,28 @@ def docstring2html(function_or_string, format="html", fLOG=noLOG, writer="html",
     rst = "\n".join(rst)
     ded = textwrap.dedent(rst)
 
-    if format == "rst":
-        return ded
-
     try:
         html = rst2html(ded, fLOG=fLOG, writer=writer,
                         keep_warnings=keep_warnings, directives=directives,
-                        language=language,
+                        language=language, filter_nodes=filter_nodes,
                         layout=layout, **options)
     except Exception:
         # we check the indentation
         ded = correct_indentation(ded)
         try:
-            html = rst2html(ded, fLOG=fLOG, writer=writer)
+            html = rst2html(ded, fLOG=fLOG, writer=writer,
+                            keep_warnings=keep_warnings, directives=directives,
+                            language=language, filter_nodes=filter_nodes,
+                            layout=layout, **options)
         except Exception as e:
             lines = ded.split("\n")
             lines = ["%04d  %s" % (i + 1, _.strip("\n\r"))
                      for i, _ in enumerate(lines)]
             raise HelpGenConvertError(
                 "unable to process:\n{0}".format("\n".join(lines))) from e
+
+    if writer in ('doctree', 'rst'):
+        return html
 
     if format == "html":
         from IPython.core.display import HTML
