@@ -240,7 +240,7 @@ def enumerate_convert_yaml_into_instructions(obj, variables=None, add_environ=Tr
     for k in obj:
         if k not in steps:
             raise ValueError(
-                "Unexpected key '{0}' found in yaml file".format(k))
+                "Unexpected key '{0}' found in yaml file. Expect:\n{1}".format(k, "\n".join(steps)))
 
     # multiplications
     i_python = 0

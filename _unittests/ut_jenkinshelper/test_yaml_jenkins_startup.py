@@ -37,16 +37,26 @@ class TestYamlJenkinsStartup(unittest.TestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
-        self._jenkins_ext_setup_server_yaml2()
+        this = os.path.abspath(os.path.dirname(__file__))
+        local_file = os.path.join(this, "data", "local_startup.yml")
+        self._jenkins_ext_setup_server_yaml2(local_file, False)
 
-    def _jenkins_ext_setup_server_yaml2(self):
+    def test_jenkins_ext_setup_server_yaml2_url_bf(self):
+        fLOG(
+            __file__,
+            self._testMethodName,
+            OutputPrint=__name__ == "__main__")
+
+        this = os.path.abspath(os.path.dirname(__file__))
+        local_file = os.path.join(this, "data", ".local.jenkins.win.bf.yml")
+        self._jenkins_ext_setup_server_yaml2(local_file, False)
+
+    def _jenkins_ext_setup_server_yaml2(self, local_file, disp):
         srv = JenkinsExt(
             "http://localhost:8080/", "user", "password", mock=True,
             engines=default_engines(), fLOG=fLOG, platform="win")
 
         fLOG("---------------------")
-        this = os.path.abspath(os.path.dirname(__file__))
-        local_file = os.path.join(this, "data", "local_startup.yml")
         modules = [('yml', local_file, None)]
 
         fLOG("[modules]", modules)
@@ -57,6 +67,8 @@ class TestYamlJenkinsStartup(unittest.TestCase):
         sch = 0
         for i, r in enumerate(res):
             conf = r[-1]
+            if disp:
+                fLOG(conf)
 
             if not conf.startswith("<?xml version='1.0' encoding='UTF-8'?>"):
                 raise Exception(conf)
@@ -79,6 +91,8 @@ class TestYamlJenkinsStartup(unittest.TestCase):
                 raise Exception(conf)
             if "<runOnChoice>ON_CONNECT</runOnChoice>" in conf:
                 sch += 1
+            if 'if [ "PYPI"' in conf:
+                raise Exception(conf)
 
         self.assertEqual(sch, 1)
 
