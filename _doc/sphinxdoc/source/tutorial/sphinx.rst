@@ -180,7 +180,12 @@ throught the standard output.
     for i, name in enumerate(os.listdir(".")):
         print(i, name)
 
-The output can also be compiled as RST format and the code can be hidden:
+The output can also be compiled as RST format and the code can be hidden.
+It is useful if the documentation is a copy/paste of some external process
+or function. This function can be directly called from the documentation.
+The output must be converted into RST format. It is then added to the
+documentation. It is quite useful to display the version of some installed
+modules.
 
 .. sidebar:: runpython and rst
 
@@ -189,9 +194,11 @@ The output can also be compiled as RST format and the code can be hidden:
         .. runpython::
             :rst:
 
-            import os
-            for i, name in enumerate(os.listdir(".")):
-                print("* file **{0}**: *{1}*".format(i, name))
+            import pandas, numpy, sphinx
+
+            for i, mod in [sphinx, pandas, numpy]:
+                print("* version of *{0}*: *{1}*".format(
+                    getattr(mod, "__name__"), getattr(mod, "__version__"))
 
 .. runpython::
     :rst:
@@ -200,19 +207,9 @@ The output can also be compiled as RST format and the code can be hidden:
     for i, name in enumerate(os.listdir(".")):
         print("* file **{0}**: *{1}*".format(i, name))
 
-What if the code throws an exception (except a syntax error):
-
-.. sidebar:: runpython and exception
-
-    ::
-
-        .. runpython::
-            :showcode:
-            :exception:
-
-            import os
-            for i, name in enumerate(os.listdir("not existing")):
-                pass
+If the code throws an exception (except a syntax error),
+it can be caught by adding the option ``:exception:``.
+The directive displays the traceback.
 
 .. runpython::
     :showcode:
@@ -281,7 +278,7 @@ In *conf.py*:
 
 This extension adds a *todo*:
 
-.. sidebar:: todoext
+.. sidebar:: faqref
 
     ::
 
@@ -300,8 +297,10 @@ This extension adds a *todo*:
 
 The tag is important when recalling all of these. You can also an internal
 reference to :ref:`it <this-faq-example>` with option ``:lid:``.
+Option `:contents:` add a list of all nodes @see cl faqref_node
+included in the list.
 
-.. sidebar:: todoext
+.. sidebar:: faqreflist
 
     ::
 

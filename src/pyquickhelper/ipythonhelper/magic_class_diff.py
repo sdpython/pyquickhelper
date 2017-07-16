@@ -66,9 +66,10 @@ class MagicDiff(MagicClassWithHelpers):
 
                 from IPython.core.display import display_html, display_javascript
                 from pyquickhelper import docstring2html, create_visual_diff_through_html_files
-                html, js = create_visual_diff_through_html_files(<f1>, <f2>, encoding=<encoding>, notebook=True,
-                                                                 context_size=None if <context> in [None, ""] else int(<context>),
-                                                                 inline_view=<inline>)
+                html, js = create_visual_diff_through_html_files(<f1>, <f2>,
+                                encoding=<encoding>, notebook=True,
+                                context_size=None if <context> in [None, ""] else int(<context>),
+                                inline_view=<inline>)
                 display_html(html)
                 display_javascript(js)
 

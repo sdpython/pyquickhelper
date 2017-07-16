@@ -8,6 +8,7 @@ import os
 import re
 import sys
 import fnmatch
+from typing import Callable
 from ..loghelper.flog import fLOG
 from .file_tree_node import FileTreeNode
 from .files_status import FilesStatus, checksum_md5
@@ -119,10 +120,13 @@ def explore_folder_iterfile_repo(folder, log=fLOG):
         yield file
 
 
-def synchronize_folder(p1, p2, hash_size=1024 ** 2, repo1=False, repo2=False,
-                       size_different=True, no_deletion=False, filter=None,
-                       filter_copy=None, avoid_copy=False, operations=None,
-                       file_date=None, log1=False, copy_1to2=False, fLOG=fLOG):
+def synchronize_folder(p1: str, p2: str, hash_size=1024 ** 2, repo1=False, repo2=False,
+                       size_different=True, no_deletion=False,
+                       filter: [str, Callable[[str], str], None]=None,
+                       filter_copy: [str, Callable[[str], str], None]=None,
+                       avoid_copy=False,
+                       operations=None, file_date: str=None, log1=False,
+                       copy_1to2=False, fLOG=fLOG):
     """
     synchronize two folders (or copy if the second is empty), it only copies more recent files.
 
@@ -139,7 +143,7 @@ def synchronize_folder(p1, p2, hash_size=1024 ** 2, repo1=False, repo2=False,
                                     if will be removed unless no_deletion is True
     @param      filter              (str) None to accept every file, a string if it is a regular expression,
                                     a function for something more complex: function (fullname) --> True (every file is considered in lower case),
-                                    (use Regex.search and not Regex.match)
+                                    (use :epkg:`*py:re:search`)
     @param      filter_copy         (str) None to accept every file, a string if it is a regular expression,
                                     a function for something more complex: function (fullname) --> True
     @param      avoid_copy          if True, just return the list of files which should be copied but does not do the copy
@@ -166,16 +170,17 @@ def synchronize_folder(p1, p2, hash_size=1024 ** 2, repo1=False, repo2=False,
         to synchronize and only propagates the modifications which happened
         since the last modification.
         The function ``filter_copy`` defines what file to synchronize or not.
-        @code
-        def filter_copy(file):
-            return "_don_t_synchronize_" not in file
 
-        synchronize_folder( "c:/mydata",
-                            "g:/mybackup",
-                            hash_size = 0,
-                            filter_copy = filter_copy,
-                            file_date = "c:/status_copy.txt")
-        @endcode
+        ::
+
+            def filter_copy(file):
+                return "_don_t_synchronize_" not in file
+
+            synchronize_folder( "c:/mydata",
+                                "g:/mybackup",
+                                hash_size = 0,
+                                filter_copy = filter_copy,
+                                file_date = "c:/status_copy.txt")
 
         The function is able to go through 90.000 files and 90 Gb
         in 12 minutes (for an update).

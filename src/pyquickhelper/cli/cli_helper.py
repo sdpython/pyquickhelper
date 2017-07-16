@@ -4,23 +4,27 @@
 
 .. versionadded:: 1.5
 """
+from __future__ import print_function
 import argparse
 import inspect
 from docutils import nodes
 from ..helpgen import docstring2html
 
 
-def create_cli_parser(f, prog=None, layout="sphinx"):
+def create_cli_parser(f, prog=None, layout="sphinx", skip_parameters=('fLOG',)):
     """
     Automatically creates a parser based on a function,
     its signature with annotation and its documentation (assuming
     this documentation is written using Sphinx syntax).
 
-    @param      f           function
-    @param      prog        to give the parser a different name than the function name
-    @param      use_sphinx  simple documentation only requires :epkg:`docutils`,
-                            richer requires :epkg:`sphinx`
-    @return                 :epkg:`*py:argparse:ArgumentParser`
+    @param      f               function
+    @param      prog            to give the parser a different name than the function name
+    @param      use_sphinx      simple documentation only requires :epkg:`docutils`,
+                                richer requires :epkg:`sphinx`
+    @param      skip_parameters do not expose these parameters
+    @return                     :epkg:`*py:argparse:ArgumentParser`
+
+    If an annotation offers mutiple types, the first one will be used for the command line.
     """
     docf = f.__doc__
     doctree = docstring2html(f, writer="doctree", layout=layout)
@@ -57,8 +61,12 @@ def create_cli_parser(f, prog=None, layout="sphinx"):
     parser = argparse.ArgumentParser(prog=prog or f.__name__, description=fulldoc,
                                      formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
+    if skip_parameters is None:
+        skip_parameters = []
     names = {"h": "already taken"}
     for k, p in parameters.items():
+        if k in skip_parameters:
+            continue
         if k not in docparams:
             raise ValueError(
                 "Parameter '{0}' is not documented in\n{1}.".format(k, docf))
@@ -76,6 +84,8 @@ def create_cli_argument(parser, param, doc, names):
     @param      param       parameter (from the signature)
     @param      doc         documentation for this parameter
     @param      names       for shortnames
+
+    If an annotation offers mutiple types, the first one will be used for the command line.
     """
     p = param
     if p.annotation and p.annotation != inspect._empty:
@@ -101,16 +111,55 @@ def create_cli_argument(parser, param, doc, names):
         raise ValueError(
             "You should change the name of parameter '{0}'".format(p.name))
 
-    names = ["--" + p.name]
+    pnames = ["--" + p.name]
     if shortname:
-        names.insert(0, "-" + shortname)
+        pnames.insert(0, "-" + shortname)
+        names[shortname] = p.name
+
+    if isinstance(typ, list):
+        # Multiple options for the same parameter
+        typ = typ[0]
 
     if typ in (int, str, float, bool):
         default = None if p.default == inspect._empty else p.default
         if default is not None:
-            parser.add_argument(*names, type=typ, help=doc, default=default)
+            parser.add_argument(*pnames, type=typ, help=doc, default=default)
         else:
-            parser.add_argument(*names, type=typ, help=doc)
+            parser.add_argument(*pnames, type=typ, help=doc)
     else:
         raise NotImplementedError(
             "typ='{0}' not supported (parameter '{1}')".format(typ, p))
+
+
+def call_cli_function(f, args=None, parser=None, fLOG=print, skip_parameters=('fLOG',)):
+    """
+    Call a function *f* given parsed arguments.
+
+    @param      f               function to call
+    @param      args            arguments to parse (if None, it considers sys.argv)
+    @param      parser          parser (can be None, in that case, @see fn create_cli_parser is called)
+    @param      fLOG            logging function
+    @param      skip_parameters see @see fn create_cli_parser
+    """
+    if parser is None:
+        parser = create_cli_parser(f, skip_parameters=skip_parameters)
+    if args is not None and (args == ['--help'] or args == ['-h']):
+        fLOG(parser.format_help())
+    else:
+        try:
+            args = parser.parse_args(args=args)
+        except SystemExit:
+            if fLOG:
+                fLOG(parser.format_usage())
+            args = None
+
+        if args is not None:
+            signature = inspect.signature(f)
+            parameters = signature.parameters
+            kwargs = {}
+            for k in parameters:
+                if k == "fLOG":
+                    kwargs["fLOG"] = fLOG
+                if hasattr(args, k):
+                    kwargs[k] = getattr(args, k)
+            f(fLOG=fLOG, **kwargs)
