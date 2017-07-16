@@ -10,7 +10,7 @@ from docutils import nodes
 from ..helpgen import docstring2html
 
 
-def create_cli_parser(f, prog=None, layout="docutils"):
+def create_cli_parser(f, prog=None, layout="sphinx"):
     """
     Automatically creates a parser based on a function,
     its signature with annotation and its documentation (assuming
