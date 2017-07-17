@@ -476,8 +476,8 @@ def docstring2html(function_or_string, format="html", fLOG=noLOG, writer="html",
 
     stats, javadoc = migrating_doxygen_doc(doc, "None", log=False)
     rows = javadoc.split("\n")
-    from .utils_sphinx_doc import private_migrating_doxygen_doc
-    rst = private_migrating_doxygen_doc(
+    from .utils_sphinx_doc import _private_migrating_doxygen_doc
+    rst = _private_migrating_doxygen_doc(
         rows, index_first_line=0, filename="None")
     rst = "\n".join(rst)
     ded = textwrap.dedent(rst)

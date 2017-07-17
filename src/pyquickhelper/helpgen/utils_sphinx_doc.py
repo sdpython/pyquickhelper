@@ -1428,6 +1428,14 @@ def private_migrating_doxygen_doc(rows, index_first_line, filename,
             html indente
 
     """
+    return _private_migrating_doxygen_doc(rows, index_first_line, filename,
+                                          debug=False, silent=False)
+
+# -- HELP END EXCLUDE --
+
+
+def _private_migrating_doxygen_doc(rows, index_first_line, filename,
+                                   debug=False, silent=False):
     if debug:
         fLOG("------------------ P0")
         fLOG("\n".join(rows))
@@ -1746,8 +1754,6 @@ def private_migrating_doxygen_doc(rows, index_first_line, filename,
         rows.append("{1}:githublink:`%|py|{0}`".format(
             index_first_line, " " * min_indent))
     return rows
-
-# -- HELP END EXCLUDE --
 
 
 def doc_checking():
