@@ -41,6 +41,16 @@ class TestYamlJenkinsStartup(unittest.TestCase):
         local_file = os.path.join(this, "data", "local_startup.yml")
         self._jenkins_ext_setup_server_yaml2(local_file, False)
 
+    def test_jenkins_ext_setup_server_yaml2_url_noclean(self):
+        fLOG(
+            __file__,
+            self._testMethodName,
+            OutputPrint=__name__ == "__main__")
+
+        this = os.path.abspath(os.path.dirname(__file__))
+        local_file = os.path.join(this, "data", "local_publish.yml")
+        self._jenkins_ext_setup_server_yaml2(local_file, False)
+
     def test_jenkins_ext_setup_server_yaml2_url_bf(self):
         fLOG(
             __file__,
@@ -65,6 +75,9 @@ class TestYamlJenkinsStartup(unittest.TestCase):
                                        location="anything")
         reg = re.compile("<description>(.*)</description>")
         sch = 0
+        wipe = 0
+        pub = 0
+        confs = []
         for i, r in enumerate(res):
             conf = r[-1]
             if disp:
@@ -91,10 +104,23 @@ class TestYamlJenkinsStartup(unittest.TestCase):
                 raise Exception(conf)
             if "<runOnChoice>ON_CONNECT</runOnChoice>" in conf:
                 sch += 1
+            if "PUBLISHER" in conf:
+                pub += 1
             if 'if [ "PYPI"' in conf:
                 raise Exception(conf)
+            if "<hudson.plugins.git.extensions.impl.WipeWorkspace />" in conf:
+                wipe += 1
+            confs.append(conf)
 
-        self.assertEqual(sch, 1)
+        if sch + pub != 1:
+            raise Exception("{0} != {1}\n{2}".format(
+                sch + pub, 1, "\n\n\n----------------------------\n\n\n".join(confs)))
+        if pub == 0 and wipe != len(confs):
+            raise Exception("{0} != {1}\n{2}".format(
+                wipe, len(confs), "\n\n\n----------------------------\n\n\n".join(confs)))
+        if pub != 0 and wipe != 0:
+            raise Exception("{0} != {1}\n{2}".format(
+                wipe, len(confs), "\n\n\n----------------------------\n\n\n".join(confs)))
 
 
 if __name__ == "__main__":

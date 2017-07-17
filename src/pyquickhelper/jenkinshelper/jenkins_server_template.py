@@ -98,10 +98,14 @@ _git_repo = """
     </branches>
     <doGenerateSubmoduleConfigurations>false</doGenerateSubmoduleConfigurations>
     <submoduleCfg class="list" />
+    __WIPE__
+</scm>
+"""
+
+_wipe_repo = """
     <extensions>
         <hudson.plugins.git.extensions.impl.WipeWorkspace />
     </extensions>
-</scm>
 """
 
 #: for the script

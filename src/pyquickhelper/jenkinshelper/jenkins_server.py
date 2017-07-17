@@ -33,7 +33,7 @@ from ..pycode.windows_scripts import windows_jenkins_27_conda, windows_jenkins_2
 from ..pycode.build_helper import private_script_replacements
 from .jenkins_exceptions import JenkinsExtException, JenkinsJobException
 from .jenkins_server_template import _config_job, _trigger_up, _trigger_time, _git_repo, _task_batch
-from .jenkins_server_template import _trigger_startup, _publishers, _file_creation
+from .jenkins_server_template import _trigger_startup, _publishers, _file_creation, _wipe_repo
 from .yaml_helper import enumerate_processed_yml
 from .jenkins_helper import jenkins_final_postprocessing
 
@@ -108,6 +108,7 @@ class JenkinsExt(jenkins.Jenkins):
     _git_repo = _git_repo
     _task_batch = _task_batch
     _publishers = _publishers
+    _wipe_repo = _wipe_repo
 
     def __init__(self, url, username=None, password=None, timeout=socket._GLOBAL_DEFAULT_TIMEOUT,
                  mock=False, engines=None, platform=sys.platform, pypi_port=8067, fLOG=noLOG,
@@ -625,7 +626,7 @@ class JenkinsExt(jenkins.Jenkins):
                             location=None, keep=30, scheduler=None, py27=False, description=None,
                             default_engine_paths=None, success_only=False, update=False,
                             timeout=_timeout_default, additional_requirements=None,
-                            return_job=False, adjust_scheduler=True, **kwargs):
+                            return_job=False, adjust_scheduler=True, clean_repo=True, **kwargs):
         """
         add a job to the jenkins server
 
@@ -651,6 +652,7 @@ class JenkinsExt(jenkins.Jenkins):
         @param      adjust_scheduler            adjust the scheduler of a job so that it is delayed if this spot
                                                 is already taken
         @param      return_job                  return job instead of submitting the job
+        @param      clean_repo                  clean the repository before building (default is yes)
 
         The job can be modified on Jenkins. To add a time trigger::
 
@@ -670,6 +672,7 @@ class JenkinsExt(jenkins.Jenkins):
 
         .. versionchanged:: 1.5
             *kwargs* can contain option *job_options*.
+            Parameter *clean_repo* was added.
         """
         if 'platform' in kwargs:
             raise NameError(
@@ -746,6 +749,10 @@ class JenkinsExt(jenkins.Jenkins):
             script_mod.append(scr)
 
         # repo
+        if clean_repo:
+            wipe = JenkinsExt._wipe_repo
+        else:
+            wipe = ""
         if git_repo is None:
             git_repo_xml = ""
         else:
@@ -754,6 +761,7 @@ class JenkinsExt(jenkins.Jenkins):
                     "git_repo must be str not '{0}'".format(git_repo))
             git_repo_xml = JenkinsExt._git_repo \
                 .replace("__GITREPO__", git_repo) \
+                .replace("__WIPE__", wipe) \
                 .replace("__CRED__", "<credentialsId>%s</credentialsId>" % credentials)
 
         # additional scripts

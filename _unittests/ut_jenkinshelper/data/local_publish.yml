@@ -1,0 +1,10 @@
+
+language: python
+python:
+  - { PATH: "{{replace(Python36, '\\', '\\\\')}}", VERSION: 3.6, DIST: std }
+virtualenv:
+  - path: {{ospathjoin(root_path, pickname("%NAME_JENKINS%", project_name + "_%VERSION%_%DIST%_%NAME%"), "_venv")}}
+install:
+  - pip freeze
+script:
+  - { CMD: "python -u setup.py unittests", NAME: "PUBLISHER", SCHEDULER: "H 4 * * *", CLEAN: 0 }

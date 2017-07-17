@@ -643,6 +643,7 @@ def enumerate_processed_yml(file_or_buffer, context=None, engine="jinja2", platf
             if overwrite or j is None:
                 timeout = var.get("TIMEOUT", None)
                 scheduler = var.get("SCHEDULER", None)
+                clean_repo = var.get("CLEAN", True)
                 if timeout is not None:
                     kwargs["timeout"] = timeout
                 if scheduler is not None:
@@ -663,6 +664,6 @@ def enumerate_processed_yml(file_or_buffer, context=None, engine="jinja2", platf
                     kwargs["adjuster_scheduler"] = adjuster_scheduler
                 yield server.create_job_template(name, script=conv, git_repo=git_repo,
                                                  update=update_job, location=loc,
-                                                 **kwargs), name, var
+                                                 clean_repo=clean_repo, **kwargs), name, var
         else:
             yield conv, None, var
