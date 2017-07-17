@@ -4,12 +4,6 @@
 
 .. versionadded:: 1.0
 """
-# -- HELP BEGIN EXCLUDE --
-
-from .utils_sphinx_doc import private_migrating_doxygen_doc
-
-# -- HELP END EXCLUDE --
-
 from .utils_sphinx_doc import migrating_doxygen_doc
 from ..texthelper.texts_language import TITLES
 from ..loghelper.flog import noLOG
@@ -482,6 +476,7 @@ def docstring2html(function_or_string, format="html", fLOG=noLOG, writer="html",
 
     stats, javadoc = migrating_doxygen_doc(doc, "None", log=False)
     rows = javadoc.split("\n")
+    from .utils_sphinx_doc import private_migrating_doxygen_doc
     rst = private_migrating_doxygen_doc(
         rows, index_first_line=0, filename="None")
     rst = "\n".join(rst)
