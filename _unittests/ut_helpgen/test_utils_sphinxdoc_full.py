@@ -133,8 +133,6 @@ class TestSphinxDocFull (unittest.TestCase):
             content = f.read()
         assert "### # -- HELP END EXCLUDE --" not in content
         assert "### class useless_class_UnicodeStringIOThreadSafe(str):" not in content
-        if '###             elif strow.startswith("@ingroup"):' not in content:
-            raise Exception(content)
 
 
 if __name__ == "__main__":
