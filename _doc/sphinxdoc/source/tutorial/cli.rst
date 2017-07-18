@@ -23,7 +23,7 @@ list does not correspond to the signature.
 .. runpython::
     :showcode:
 
-    from src.pyquickhelper.cli import create_cli_parser
+    from pyquickhelper.cli import create_cli_parser
 
     def fpars(anint: int, bstring="r", creal: float=None):
         """

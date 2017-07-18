@@ -1330,8 +1330,8 @@ def migrating_doxygen_doc(content, filename, silent=False, log=False, debug=Fals
 
     def local_private_migrating_doxygen_doc(r, index_first_line, filename):
         counts["docrows"] += len(r)
-        return private_migrating_doxygen_doc(r, index_first_line,
-                                             filename, debug=debug, silent=silent)
+        return _private_migrating_doxygen_doc(r, index_first_line,
+                                              filename, debug=debug, silent=silent)
 
     process_string(content, print_in_rows, local_private_migrating_doxygen_doc,
                    filename, 0, debug=debug)
@@ -1429,7 +1429,7 @@ def private_migrating_doxygen_doc(rows, index_first_line, filename,
 
     """
     return _private_migrating_doxygen_doc(rows, index_first_line, filename,
-                                          debug=False, silent=False)
+                                          debug=debug, silent=silent)
 
 # -- HELP END EXCLUDE --
 
@@ -1729,7 +1729,7 @@ def _private_migrating_doxygen_doc(rows, index_first_line, filename,
                     or "@example" in row or "@NB" in row or "@endNB" in row or "@endexample" in row:
                 if not silent:
                     fLOG("#########################")
-                    private_migrating_doxygen_doc(
+                    _private_migrating_doxygen_doc(
                         debugrows, index_first_line, filename, debug=True)
                     fLOG("#########################")
                     mes = "  File \"%s\", line %d, in ???\n    unable to process: %s \nwhole blocks:\n%s" % (
