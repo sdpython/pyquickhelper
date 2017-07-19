@@ -68,6 +68,8 @@ style, content
 
 .. autosignature:: pyquickhelper.sphinxext.sphinx_githublink_extension.githublink_role
 
+.. autosignature:: pyquickhelper.sphinxext.sphinx_postcontents_extension.PostContentsDirective
+
 .. autosignature:: pyquickhelper.sphinxext.sphinx_runpython_extension.RunPythonDirective
 
 .. autosignature:: pyquickhelper.sphinxext.sphinx_sharenet_extension.ShareNetDirective

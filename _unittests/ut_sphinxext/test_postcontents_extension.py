@@ -8,7 +8,6 @@ import os
 import unittest
 import warnings
 from docutils.parsers.rst import directives
-from docutils import nodes
 
 try:
     import src

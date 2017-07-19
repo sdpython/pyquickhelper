@@ -7,8 +7,6 @@ which takes into account titles dynamically added.
 .. versionadded:: 1.5
 """
 import sys
-import os
-import datetime
 from docutils import nodes
 from docutils.parsers.rst import directives
 from sphinx.util import logging
@@ -116,7 +114,19 @@ def process_postcontents(app, doctree):
 
 def transform_postcontents(app, doctree, fromdocname):
     """
-    process_postcontents_nodes
+    The function is called by event ``'doctree_resolved'``. It looks for
+    every section in page and builds a short table of contents.
+    The instruction ``.. contents::`` is resolved before every directive in
+    the page is executed, the instruction ``.. postcontents::`` is resolved after.
+
+    @param      app             Sphinx application
+    @param      doctree         doctree
+    @param      fromdocname     docname
+
+    Thiis directive should be used if you need to capture a section
+    which was dynamically added by another one. For example @see cl RunPythonDirective
+    calls function ``nested_parse_with_titles``. ``.. postcontents::`` will capture the
+    new section this function might eventually add to the page.
     """
     logger = logging.getLogger("postcontents")
 
@@ -142,7 +152,6 @@ def transform_postcontents(app, doctree, fromdocname):
         main_par = nodes.paragraph()
         node += main_par
         roots = [main_par]
-        levels = [-10]
         depth = int(node["depth"]) if node["depth"] != '*' else 20
         memo = {}
 
@@ -174,7 +183,7 @@ def transform_postcontents(app, doctree, fromdocname):
                     ids = None if len(parent["ids"]) == 0 else parent["ids"][0]
                     if ids in memo:
                         sections.pop()
-                        b = roots.pop()
+                        roots.pop()
 
 
 def visit_postcontents_node(self, node):

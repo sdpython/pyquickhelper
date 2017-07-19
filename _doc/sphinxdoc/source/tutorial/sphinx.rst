@@ -145,6 +145,8 @@ used like this. The last one allows one parameter separated by ``:``.
 The last link is broken before the current file is not python
 file but a *rst*. The file extension must be specified.
 
+.. _l-runpython-tutorial:
+
 *runpython*: execute a script
 +++++++++++++++++++++++++++++
 
@@ -254,6 +256,39 @@ The integer indicates the order in which they need to be displayed.
 It is optional. The option ``:head: False`` specifies the javascript
 part is added to the html body and not the header.
 The header can be overwritten by other custom commands.
+
+*postcontents*: dynamic contents
+++++++++++++++++++++++++++++++++
+
+Location: :class:`PostContentsDirective <pyquickhelper.sphinxext.sphinxext_postcontents_extension.PostContentsDirective>`.
+
+In *conf.py*:
+
+::
+
+    extensions = [ ...
+        'pyquickhelper.sphinxext.sphinx_postcontents_extension']
+
+The directive ``.. contents::`` display a short table of contents with what Sphinx
+knows when entering the page. It will not include any title an instruction could dynamically
+add to the page. Typically:
+
+::
+
+    .. runpython::
+        :rst:
+
+        print("Dynamic title")
+        print("+++++++++++++")
+
+This title added by the instruction :ref:`l-runpython-tutorial` is not
+considered by ``.. contents::``. The main reason is the direction resolves
+titles when entering the page and not after the *doctree* was modified.
+The directive ``.. postcontents::`` inserts a placeholder in the *doctree*.
+It is filled by function
+:func:`transform_postcontents <pyquickhelper.sphinxext.sphinxext_postcontents_extension.transform_postcontents>`
+before the final page is created (event ``'doctree-resolved'``).
+It looks into the page and adds a link to each local sections.
 
 Bloc extensions
 ---------------

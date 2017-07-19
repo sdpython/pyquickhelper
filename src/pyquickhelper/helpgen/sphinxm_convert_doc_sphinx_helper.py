@@ -49,7 +49,8 @@ from ..sphinxext.sphinx_epkg_extension import visit_epkg_node as ext_visit_epkg_
 from ..sphinxext.sphinx_bigger_extension import depart_bigger_node_html as ext_depart_bigger_node_html
 from ..sphinxext.sphinx_blog_extension import depart_blogpostagg_node_html as ext_depart_blogpostagg_node_html
 from ..sphinxext.sphinx_sharenet_extension import depart_sharenet_node_html as ext_depart_sharenet_node_html
-from ..sphinxext.sphinx_postcontents_extension import depart_postcontents_node as ext_depart_postcontents_node, visit_postcontents_node as ext_visit_postcontents_node
+from ..sphinxext.sphinx_postcontents_extension import depart_postcontents_node as ext_depart_postcontents_node
+from ..sphinxext.sphinx_postcontents_extension import visit_postcontents_node as ext_visit_postcontents_node
 
 with warnings.catch_warnings():
     warnings.simplefilter("ignore")
