@@ -44,6 +44,7 @@ from .utils_sphinx_config import ie_layout_html
 from ..sphinxext.blog_post_list import BlogPostList
 from ..sphinxext.sphinx_blog_extension import BlogPostDirective, BlogPostDirectiveAgg
 from ..sphinxext.sphinx_runpython_extension import RunPythonDirective
+from ..sphinxext.sphinx_postcontents_extension import PostContentsDirective
 from ..sphinxext.sphinx_sharenet_extension import ShareNetDirective, sharenet_role
 from ..sphinxext.sphinx_template_extension import tpl_role
 from ..sphinxext.sphinx_epkg_extension import epkg_role
@@ -319,6 +320,7 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
     directives.register_directive("faqref", FaqRef)
     directives.register_directive("nbref", NbRef)
     directives.register_directive("cmdref", CmdRef)
+    directives.register_directive("postcontents", PostContentsDirective)
     roles.register_canonical_role("sharenet", sharenet_role)
     roles.register_canonical_role("bigger", bigger_role)
     roles.register_canonical_role("githublink", githublink_role)

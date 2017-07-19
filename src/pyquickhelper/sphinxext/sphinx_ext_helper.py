@@ -47,3 +47,63 @@ def info_blocref(app, doctree, fromdocname, class_name,
     message = " ".join(rows)
     app.info(message)
     return True
+
+
+class TinyNode:
+    """
+    Returned by @see fn traverse.
+    """
+
+    def __init__(self, parent):
+        """
+        Create a note
+
+        @param      parent      parent node
+        """
+        self.parent = parent
+
+
+class NodeEnter(TinyNode):
+    """
+    Returned by function @see fn traverse.
+    """
+    pass
+
+
+class NodeLeave(TinyNode):
+    """
+    Returned by function @see fn traverse.
+    """
+    pass
+
+
+class WrappedNode:
+    """
+    Wraps a docutils node.
+    """
+
+    def __init__(self, node):
+        self.node = node
+
+
+def traverse(node, depth=0):
+    """
+    Enumerate through all children but insert a node whenever
+    digging or leaving the childrens nodes.
+
+    @param      node        node (from doctree)
+    @param      depth       current depth
+    @return                 enumerate (depth, node)
+
+    @see cl NodeEnter and @see cl NodeLeave are returned whenever entering or leaving nodes.
+    """
+    if isinstance(node, WrappedNode):
+        node = node.node
+    ne = NodeEnter(node)
+    nl = NodeLeave(node)
+    yield (depth, ne)
+    yield (depth, node)
+    for n in node.children:
+        for r in traverse(n, depth + 1):
+            yield r
+    yield (depth, nl)

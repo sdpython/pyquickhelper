@@ -105,7 +105,6 @@ class RstBuilder(Builder):
             sourcename = path.join(self.env.srcdir, docname +
                                    self.file_suffix)
             targetname = path.join(self.outdir, self.file_transform(docname))
-            print(sourcename, targetname)
 
             try:
                 targetmtime = path.getmtime(targetname)

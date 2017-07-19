@@ -49,6 +49,7 @@ from ..sphinxext.sphinx_epkg_extension import visit_epkg_node as ext_visit_epkg_
 from ..sphinxext.sphinx_bigger_extension import depart_bigger_node_html as ext_depart_bigger_node_html
 from ..sphinxext.sphinx_blog_extension import depart_blogpostagg_node_html as ext_depart_blogpostagg_node_html
 from ..sphinxext.sphinx_sharenet_extension import depart_sharenet_node_html as ext_depart_sharenet_node_html
+from ..sphinxext.sphinx_postcontents_extension import depart_postcontents_node as ext_depart_postcontents_node, visit_postcontents_node as ext_visit_postcontents_node
 
 with warnings.catch_warnings():
     warnings.simplefilter("ignore")
@@ -292,6 +293,18 @@ class _AdditionalVisitDepart:
         # type: (nodes.Node) -> None
         self.visit_Text(node)
         raise nodes.SkipNode
+
+    def depart_postcontents_node(self, node):
+        """
+        @see fn depart_postcontents_node
+        """
+        ext_depart_postcontents_node(self, node)
+
+    def visit_postcontents_node(self, node):
+        """
+        @see fn visit_postcontents_node
+        """
+        ext_visit_postcontents_node(self, node)
 
     def unknown_visit(self, node):
         raise NotImplementedError("[HTMLTranslatorWithCustomDirectives] Unknown node: '{0}' in '{1}'".format(node.__class__.__name__,
