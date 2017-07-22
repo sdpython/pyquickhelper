@@ -508,8 +508,8 @@ def docstring2html(function_or_string, format="html", fLOG=noLOG, writer="html",
     if format == "html":
         from IPython.core.display import HTML
         return HTML(html)
-    elif format == "rawhtml":
+    elif format in ("rawhtml", 'rst'):
         return html
     else:
         raise ValueError(
-            "unexected format: " + format + ", should be html, rawhtml, text, rst")
+            "unexected format: '" + format + "', should be html, rawhtml, text, rst")
