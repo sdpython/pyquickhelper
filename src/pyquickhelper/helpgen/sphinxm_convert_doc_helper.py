@@ -512,4 +512,4 @@ def docstring2html(function_or_string, format="html", fLOG=noLOG, writer="html",
         return html
     else:
         raise ValueError(
-            "unexected format: '" + format + "', should be html, rawhtml, text, rst")
+            "Unexpected format: '" + format + "', should be html, rawhtml, text, rst.")
