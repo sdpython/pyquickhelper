@@ -130,8 +130,9 @@ def remove_extra_spaces_and_pep8(filename, apply_pep8=True, aggressive=False):
             lines_ = [_ for _ in lines if _ and _ != "\n"]
             if len(lines2_) < len(lines_) // 2:
                 begin = 5 if len(lines_) > 5 else len(lines_)
-                raise ValueError("Resulting file is almost empty for '{4}',\ninitial number of lines {0} encoding='{1}' len(rem)={2} diff={3}\nBeginning:\n{5}".format(
-                    len(lines_), encoding, len(rem), diff, filename, "".join(lines_[:begin])))
+                mes = "Resulting file is almost empty for '{4}',\ninitial number of lines {0} encoding='{1}' len(rem)={2} diff={3}\nBeginning:\n{5}"
+                raise ValueError(mes.format(len(lines_), encoding, len(
+                    rem), diff, filename, "".join(lines_[:begin])))
         rl = "".join(lines)
         r2 = "\n".join(lines2)
         if r2 != rl:
