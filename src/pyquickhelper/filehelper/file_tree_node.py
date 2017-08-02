@@ -487,7 +487,7 @@ class FileTreeNode:
         except Exception as e:
             self.fLOG(
                 "unable to remove ", full, " --- ", str(e).replace("\n", " "))
-            self.fLOG("error :", e)
+            self.fLOG("[pyqerror] ", e)
 
     def copyTo(self, path):
         """
@@ -533,4 +533,4 @@ class FileTreeNode:
         except Exception as e:
             # else :
             self.fLOG("unable to copy file ", full, " to ", path)
-            self.fLOG("error:", e)
+            self.fLOG("[pyqerror]", e)

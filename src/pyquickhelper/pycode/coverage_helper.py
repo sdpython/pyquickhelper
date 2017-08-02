@@ -59,7 +59,7 @@ def publish_coverage_on_codecov(path, token, commandline=True, fLOG=noLOG):
         err = new_err.getvalue()
         if err:
             raise Exception(
-                "unable to run:\nCMD:\n{0}\nOUT:\n{1}\nERR:\n{2}".format(cmd, out, err))
+                "unable to run:\nCMD:\n{0}\nOUT:\n{1}\n[pyqerror]\n{2}".format(cmd, out, err))
         return out, err
     else:
         return cmd

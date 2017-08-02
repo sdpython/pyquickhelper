@@ -178,7 +178,7 @@ def create_virtual_env(where, symlinks=False, system_site_packages=False,
     out, err = run_cmd(cmd, wait=True, fLOG=fLOG)
     if len(err) > 0:
         raise VirtualEnvError(
-            "unable to create virtual environement at {2}\nCMD:\n{3}\nOUT:\n{0}\nERR:\n{1}".format(out, err, where, cmd))
+            "unable to create virtual environement at {2}\nCMD:\n{3}\nOUT:\n{0}\n[pyqerror]\n{1}".format(out, err, where, cmd))
 
     if sys.platform.startswith("win"):
         scripts = os.path.join(where, "Scripts")
@@ -259,7 +259,7 @@ def venv_install(venv, packages, fLOG=noLOG, temp_folder=None):
             out, err = run_cmd(cmd, wait=True, fLOG=fLOG)
             if len(err) > 0:
                 raise VirtualEnvError(
-                    "unable to install pymyinstall at {2}\nCMD:\n{3}\nOUT:\n{0}\nERR:\n{1}".format(out, err, venv, cmd))
+                    "unable to install pymyinstall at {2}\nCMD:\n{3}\nOUT:\n{0}\n[pyqerror]\n{1}".format(out, err, venv, cmd))
             return out
     else:
         p = os.path.normpath(os.path.join(
@@ -302,7 +302,7 @@ def run_venv_script(venv, script, fLOG=noLOG, file=False, is_cmd=False,
         out, err = run_cmd(cmd, wait=True, fLOG=fLOG, **kwargs)
         if len(err) > 0 and (skip_err_if is None or skip_err_if not in out):
             raise VirtualEnvError(
-                "unable to run cmd at {2}\nCMD:\n{3}\nOUT:\n{0}\nERR:\n{1}".format(out, err, venv, cmd))
+                "unable to run cmd at {2}\nCMD:\n{3}\nOUT:\n{0}\n[pyqerror]\n{1}".format(out, err, venv, cmd))
         return out
     else:
         script = ";".join(script.split("\n"))
@@ -315,7 +315,7 @@ def run_venv_script(venv, script, fLOG=noLOG, file=False, is_cmd=False,
         out, err = run_cmd(cmd, wait=True, fLOG=fLOG, **kwargs)
         if len(err) > 0:
             raise VirtualEnvError(
-                "unable to run script at {2}\nCMD:\n{3}\nOUT:\n{0}\nERR:\n{1}".format(out, err, venv, cmd))
+                "unable to run script at {2}\nCMD:\n{3}\nOUT:\n{0}\n[pyqerror]\n{1}".format(out, err, venv, cmd))
         return out
 
 
@@ -369,7 +369,7 @@ def run_base_script(script, fLOG=noLOG, file=False, is_cmd=False,
         if len(err) > 0 and (skip_err_if is None or skip_err_if not in out) and true_err(err):
             p = sys.base_prefix if hasattr(sys, "base_prefix") else sys.prefix
             raise VirtualEnvError(
-                "unable to run cmd at {2}\nCMD:\n{3}\nOUT:\n{0}\nERR:\n{1}".format(out, err, p, cmd))
+                "unable to run cmd at {2}\nCMD:\n{3}\nOUT:\n{0}\n[pyqerror]\n{1}".format(out, err, p, cmd))
         return out
     else:
         script = ";".join(script.split("\n"))
@@ -385,7 +385,7 @@ def run_base_script(script, fLOG=noLOG, file=False, is_cmd=False,
         if len(err) > 0 and true_err(err):
             p = sys.base_prefix if hasattr(sys, "base_prefix") else sys.prefix
             raise VirtualEnvError(
-                "unable to run script with {2}\nCMD:\n{3}\nOUT:\n{0}\nERR:\n{1}".format(out, err, p, cmd))
+                "unable to run script with {2}\nCMD:\n{3}\nOUT:\n{0}\n[pyqerror]\n{1}".format(out, err, p, cmd))
         return out
 
 

@@ -489,7 +489,7 @@ def apply_modification_template(rootm, store_obj, template, fullname, rootrep,
             del mo
 
     else:
-        doc = "Error: unable to import."
+        doc = "[sphinxerror] unable to import."
 
     label = IndexInformation.get_label(indexes, "f-" + filenoext)
     indexes[label] = IndexInformation(
@@ -1734,7 +1734,7 @@ def _private_migrating_doxygen_doc(rows, index_first_line, filename,
                     fLOG("#########################")
                     mes = "  File \"%s\", line %d, in ???\n    unable to process: %s \nwhole blocks:\n%s" % (
                         filename, index_first_line + i + 1, row, "\n".join(rows))
-                    fLOG("error: ", mes)
+                    fLOG("[sphinxerror] ", mes)
                 else:
                     mes = "  File \"%s\", line %d, in ???\n    unable to process: %s \nwhole blocks:\n%s" % (
                         filename, index_first_line + i + 1, row, "\n".join(rows))
@@ -1744,7 +1744,7 @@ def _private_migrating_doxygen_doc(rows, index_first_line, filename,
         if v != 0:
             mes = "  File \"%s\", line %d, in ???\n    unbalanced tag %s: %s \nwhole blocks:\n%s" % (
                 filename, index_first_line + i + 1, k, row, "\n".join(rows))
-            fLOG("error: ", mes)
+            fLOG("[sphinxerror] ", mes)
             raise SyntaxError(mes)
 
     # add githublink

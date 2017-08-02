@@ -409,7 +409,7 @@ class NotebookRunner(object):
                 tr = ["No traceback, available keys in reply['content']"] + \
                     [_ for _ in reply['content']]
             traceback_text = '\n'.join(tr)
-            self.fLOG("ERR:\n", traceback_text)
+            self.fLOG("[nberror]\n", traceback_text)
             if self.detailed_log:
                 self.detailed_log('[run_cell] ERROR=\n    {0}'.format(
                     "\n    ".join(traceback_text.split("\n"))))

@@ -302,7 +302,7 @@ def process_standard_options_for_setup(argv, file_or_folder, project_var_name, m
                                    **setup_params)
         if len(err) > 0 and err != "no _setup_hook":
             raise Exception(
-                "unable to run _setup_hook\nOUT:\n{0}\nERR:\n{1}".format(out, err))
+                "unable to run _setup_hook\nOUT:\n{0}\n[setuperror]\n{1}".format(out, err))
 
         if func_sphinx_begin is not None:
             func_sphinx_begin(argv=argv, file_or_folder=file_or_folder, project_var_name=project_var_name,

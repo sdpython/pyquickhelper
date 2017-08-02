@@ -378,7 +378,7 @@ class RunPythonDirective(Directive):
             err = err.rstrip(" \n\r\t")
         content = out
         if len(err) > 0:
-            content += "\n\nERROR:\n\n" + err
+            content += "\n\n[runpythonerror]\n\n" + err
 
         # add member
         self.exe_class = p.copy()

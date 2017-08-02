@@ -273,7 +273,7 @@ def get_repo_log(path=None, file_detail=False, commandline=True):
         if len(err) > 0:
             fLOG("problem with file ", path, err)
             raise GitException(
-                err + "\nCMD:\n" + cmd + "\nOUT:\n" + out + "\nERR:\n" + err + "\nCMD:\n" + cmd)
+                err + "\nCMD:\n" + cmd + "\nOUT:\n" + out + "\n[giterror]\n" + err + "\nCMD:\n" + cmd)
 
         master = get_master_location(path, commandline)
         if master.endswith(".git"):
@@ -370,7 +370,7 @@ def get_repo_version(path=None, commandline=True, usedate=False, log=False):
                 if log:
                     fLOG("problem with file ", path, err)
                 if log:
-                    return "OUT\n{0}\nERR:{1}\nCMD:\n{2}".format(out, err, cmd)
+                    return "OUT\n{0}\n[giterror]{1}\nCMD:\n{2}".format(out, err, cmd)
                 else:
                     raise GitException(err)
 
@@ -472,7 +472,7 @@ def get_nb_commits(path=None, commandline=True):
 
         if len(err) > 0:
             raise GitException(
-                "unable to get commit number from path {0}\nERR:\n{1}\nCMD:\n{2}".format(path, err, cmd))
+                "unable to get commit number from path {0}\n[giterror]\n{1}\nCMD:\n{2}".format(path, err, cmd))
 
         lines = out.strip()
         try:
@@ -517,7 +517,7 @@ def clone(location, srv, group, project, username=None, password=None):
     out, err = run_cmd(cmd, wait=True)
     if len(err) > 0 and "Cloning into" not in err:
         raise GitException(
-            "unable to clone {0}\nERR:\n{1}\nCMD:\n{2}".format(address, err, cmd))
+            "unable to clone {0}\n[giterror]\n{1}\nCMD:\n{2}".format(address, err, cmd))
     return out, err
 
 
@@ -555,5 +555,5 @@ def rebase(location,
     os.chdir(cwd)
     if len(err) > 0 and "-> FETCH_HEAD" not in err:
         raise GitException(
-            "unable to rebase {0}\nERR:\n{1}\nCMD:\n{2}".format(address, err, cmd))
+            "unable to rebase {0}\n[giterror]\n{1}\nCMD:\n{2}".format(address, err, cmd))
     return out, err

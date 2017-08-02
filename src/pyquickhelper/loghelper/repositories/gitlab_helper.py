@@ -25,7 +25,7 @@ class GitLabException(Exception):
         """
         usual
         """
-        return "{0}\nCODE: {1}\nERR:\n{2}".format(
+        return "{0}\nCODE: {1}\n[giterror]\n{2}".format(
             Exception.__str__(self), self.request.status_code, self.request.content)
 
 

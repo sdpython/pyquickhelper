@@ -43,7 +43,7 @@ def run_build_ext(setup_file):
     out, err = run_cmd(cmd, wait=True, change_path=chd)
     err0 = _filter_out_warning(err)
     if len(err0) > 0:
-        raise Exception("Unable to run\n{0}\nERR:\n{1}".format(cmd,
+        raise Exception("Unable to run\n{0}\n[pyqerror]\n{1}".format(cmd,
                                                                "\n".join("### " + _ for _ in err.split("\n"))))
     return out
 

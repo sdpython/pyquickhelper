@@ -142,7 +142,7 @@ def read_url(url, encoding=None):
             fu.close()
         except Exception as e:
             raise Exception(
-                "unable to read url '{0}'\nERROR:\n{1}".format(url, e))
+                "unable to read url '{0}'\n[pyqerror]\n{1}".format(url, e))
     else:
         try:
             with urllib_request.urlopen(request) as fu:

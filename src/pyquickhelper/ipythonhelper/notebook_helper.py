@@ -234,7 +234,7 @@ def install_notebook_extension(path=None, overwrite=False, symlink=False,
     sys.stderr = cerr
     if len(err) != 0:
         raise NotebookException(
-            "unable to install exception from: {0}\nOUT:\n{1}\nERR:\n{2}".format(path, out, err))
+            "unable to install exception from: {0}\nOUT:\n{1}\n[nberror]\n{2}".format(path, out, err))
     return out
 
 

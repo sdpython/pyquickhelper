@@ -24,7 +24,7 @@ class PQPipError (Exception):
             Exception.__init__(self, l[0])
         else:
             cmd, out, err = l
-            mes = "CMD:\n{0}\nOUT:\n{1}\nERR:\n{2}".format(cmd, out, err)
+            mes = "CMD:\n{0}\nOUT:\n{1}\n[piperror]\n{2}".format(cmd, out, err)
             Exception.__init__(self, mes)
 
 

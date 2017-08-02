@@ -855,13 +855,13 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
         if len(err) > 0:
             if "Exception occurred:" in err:
                 raise HelpGenException(
-                    "Sphinx raised an exception:\nOUT:\n{0}\nERR:\n{1}".format(out, err))
+                    "Sphinx raised an exception:\nOUT:\n{0}\n[sphinxerror]\n{1}".format(out, err))
             else:
                 fLOG("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
                 fLOG("~~~~", kind, "~~~~", cmd)
                 fLOG("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
                 warnings.warn(
-                    "Sphinx went through errors. Check if any of them is important.\nOUT:\n{0}\nERR:\n{1}".format(out, err))
+                    "Sphinx went through errors. Check if any of them is important.\nOUT:\n{0}\n[sphinxerror]\n{1}".format(out, err))
                 fLOG("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
                 fLOG("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
 
@@ -905,7 +905,7 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
             fLOG(out)
             if len(err) > 0:
                 warnings.warn(
-                    "Sphinx went through errors. Check if any of them is important.\nOUT:\n{0}\nERR:\n{1}".format(out, err))
+                    "Sphinx went through errors. Check if any of them is important.\nOUT:\n{0}\n[sphinxerror]\n{1}".format(out, err))
         fLOG("### end run HTMLHELP #######################")
 
     #####################################
@@ -935,7 +935,7 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
                         fLOG("copy ", f, " to ", covbuild)
                         shutil.copy(f, covbuild)
         else:
-            fLOG("## ERROR: coverage files with rst in", covfold)
+            fLOG("[sphinxerror] coverage files with rst in", covfold)
     else:
         fLOG("## no coverage files", covfold)
     fLOG("---- JENKINS END DOCUMENTATION COVERAGE ----")

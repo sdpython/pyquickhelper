@@ -411,7 +411,7 @@ def _process_notebooks_in(notebooks, outfold, build, latex_path=None, pandoc_pat
                         err = err.lower()
                         if "critical" in err or "bad config" in err:
                             raise HelpGenException(
-                                "CMD:\n{0}\nERR:\n{1}".format(list_args, err))
+                                "CMD:\n{0}\n[nberror]\n{1}".format(list_args, err))
             else:
                 # format ipynb
                 # we do nothing
@@ -457,11 +457,11 @@ def _process_notebooks_in(notebooks, outfold, build, latex_path=None, pandoc_pat
                         err = ""
                     if len(err) > 0:
                         raise HelpGenException(
-                            "CMD:\n{0}\nERR:\n{1}\nOUT:\n{2}".format(c, err, out))
+                            "CMD:\n{0}\n[nberror]\n{1}\nOUT:\n{2}".format(c, err, out))
                     f = os.path.join(build, nbout + ".pdf")
                     if not os.path.exists(f):
                         raise HelpGenException(
-                            "missing file: {0}\nOUT:\n{2}\nERR:\n{1}".format(f, err, out))
+                            "missing file: {0}\nOUT:\n{2}\n[nberror]\n{1}".format(f, err, out))
                     thisfiles.append(f)
                 else:
                     fLOG("unable to find latex in", latex_path)
@@ -496,7 +496,7 @@ def _process_notebooks_in(notebooks, outfold, build, latex_path=None, pandoc_pat
                         _ for _ in lines if _ and "Could not find image `http" not in _]
                     if len(left) > 0:
                         raise HelpGenException(
-                            "issue with cmd: %s\nERR:\n%s" % (c, err))
+                            "issue with cmd: %s\n[nberror]\n%s" % (c, err))
                     else:
                         for _ in lines:
                             fLOG("w, pandoc issue: {0}".format(
@@ -508,7 +508,7 @@ def _process_notebooks_in(notebooks, outfold, build, latex_path=None, pandoc_pat
                 # we add a link to the notebook
                 if not os.path.exists(outputfile):
                     raise FileNotFoundError(outputfile + "\nCONTENT in " + os.path.dirname(outputfile) + ":\n" + "\n".join(
-                        os.listdir(os.path.dirname(outputfile))) + "\nERR:\n" + err + "\nOUT:\n" + out + "\nCMD:\n" + c)
+                        os.listdir(os.path.dirname(outputfile))) + "\n[nberror]\n" + err + "\nOUT:\n" + out + "\nCMD:\n" + c)
                 thisfiles += add_link_to_notebook(outputfile, notebook,
                                                   "pdf" in formats, False, "python" in formats,
                                                   "slides" in formats, "present" in formats, exc=exc,
@@ -518,7 +518,7 @@ def _process_notebooks_in(notebooks, outfold, build, latex_path=None, pandoc_pat
                 # we add a link to the notebook
                 if not os.path.exists(outputfile):
                     raise FileNotFoundError(outputfile + "\nCONTENT in " + os.path.dirname(outputfile) + ":\n" + "\n".join(
-                        os.listdir(os.path.dirname(outputfile))) + "\nERR:\n" + err + "\nOUT:\n" + out + "\nCMD:\n" + str(list_args))
+                        os.listdir(os.path.dirname(outputfile))) + "\n[nberror]\n" + err + "\nOUT:\n" + out + "\nCMD:\n" + str(list_args))
                 thisfiles += add_link_to_notebook(outputfile, notebook,
                                                   "pdf" in formats, False, "python" in formats,
                                                   "slides" in formats, "present" in formats, exc=exc,
@@ -528,7 +528,7 @@ def _process_notebooks_in(notebooks, outfold, build, latex_path=None, pandoc_pat
                 # we add a link to the notebook
                 if not os.path.exists(outputfile):
                     raise FileNotFoundError(outputfile + "\nCONTENT in " + os.path.dirname(outputfile) + ":\n" + "\n".join(
-                        os.listdir(os.path.dirname(outputfile))) + "\nERR:\n" + err + "\nOUT:\n" + out + "\nCMD:\n" + c)
+                        os.listdir(os.path.dirname(outputfile))) + "\n[nberror]\n" + err + "\nOUT:\n" + out + "\nCMD:\n" + c)
                 thisfiles += add_link_to_notebook(outputfile, notebook,
                                                   "pdf" in formats, False, "python" in formats,
                                                   "slides" in formats, "present" in formats, exc=exc,

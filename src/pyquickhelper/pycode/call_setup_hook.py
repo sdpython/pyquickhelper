@@ -121,10 +121,10 @@ def call_setup_hook(folder, module_name, fLOG=noLOG, must_be=False,
     if use_print:
         print("OUT:\n", out)
         if err:
-            print("ERR:\n", err)
+            print("[pyqerror]\n", err)
 
     def error():
-        mes = "**CMD:\n{3}\n**CODE:\n{0}\n**OUT:\n{1}\n**ERR:\n{2}\nexit={4}".format(code.replace(";", "\n"),
+        mes = "**CMD:\n{3}\n**CODE:\n{0}\n**OUT:\n{1}\n**[pyqerror]\n{2}\nexit={4}".format(code.replace(";", "\n"),
                                                                                      out, err, cmd, exit)
         return mes
 
