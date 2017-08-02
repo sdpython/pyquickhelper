@@ -121,10 +121,17 @@ def remove_extra_spaces_and_pep8(filename, apply_pep8=True, aggressive=False):
         lines2 = [_ for i, _ in enumerate(lines2) if i not in rem]
         if len(lines) > 0 and len(lines2[-1]) > 0:
             lines2.append("")
-        if len(lines) > 0 and (len(lines2) == 0 or len(lines2) < len(lines) // 2):
+        if len(lines) > 0 and len(lines2) == 0:
             begin = 5 if len(lines) > 5 else len(lines)
             raise ValueError("Resulting file is empty for '{4}',\ninitial number of lines {0} encoding='{1}' len(rem)={2} diff={3}\nBeginning:\n{5}".format(
                 len(lines), encoding, len(rem), diff, filename, "".join(lines[:begin])))
+        if len(lines2) < len(lines) // 2:
+            lines2_ = [_ for _ in lines2 if _ and _ != "\n"]
+            lines_ = [_ for _ in lines if _ and _ != "\n"]
+            if len(lines2_) < len(lines_) // 2:
+                begin = 5 if len(lines_) > 5 else len(lines_)
+                raise ValueError("Resulting file is almost empty for '{4}',\ninitial number of lines {0} encoding='{1}' len(rem)={2} diff={3}\nBeginning:\n{5}".format(
+                    len(lines_), encoding, len(rem), diff, filename, "".join(lines_[:begin])))
         rl = "".join(lines)
         r2 = "\n".join(lines2)
         if r2 != rl:
