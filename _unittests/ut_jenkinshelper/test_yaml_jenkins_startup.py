@@ -102,7 +102,7 @@ class TestYamlJenkinsStartup(unittest.TestCase):
                 raise Exception(conf)
             if "SET DIST=" not in conf:
                 raise Exception(conf)
-            if "<runOnChoice>ON_CONNECT</runOnChoice>" in conf:
+            if "<runOnChoice>ON_ONLINE</runOnChoice>" in conf:
                 sch += 1
             if "PUBLISHER" in conf:
                 pub += 1
