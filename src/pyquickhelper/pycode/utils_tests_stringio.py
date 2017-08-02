@@ -16,7 +16,7 @@ else:
 
 class StringIOAndFile(StringIO):
     """
-    overload a StringIO to also write in a file
+    Overloads a StringIO to also writes in a file.
     """
 
     def __init__(self, filename):
@@ -35,6 +35,8 @@ class StringIOAndFile(StringIO):
 
     def write(self, s):
         """
+        Appends a string.
+
         @param   s      add a string to the stream
         @return         self
         """
@@ -51,7 +53,7 @@ class StringIOAndFile(StringIO):
 
     def flush(self):
         """
-        calls two flush
+        Calls two flush.
         """
         StringIO.flush(self)
         if self.handle:
@@ -59,7 +61,7 @@ class StringIOAndFile(StringIO):
 
     def close(self):
         """
-        calls two close
+        Calls two close.
         """
         StringIO.close(self)
         if self.handle:
@@ -67,7 +69,7 @@ class StringIOAndFile(StringIO):
 
     def begin_test(self, name):
         """
-        redirect output to a StringIO
+        Redirects output to a :epkg:`*py:io:StringIO`.
 
         @param      name        name
         """
@@ -80,7 +82,7 @@ class StringIOAndFile(StringIO):
 
     def end_test(self, name):
         """
-        end the redirection
+        Ends the redirection.
 
         @param      name        name
         """
@@ -91,7 +93,7 @@ class StringIOAndFile(StringIO):
 
     def getvalue(self):
         """
-        return the content of the buffer
+        Returns the content of the buffer.
         """
         if self.to is not None:
             return self.redirect[self.to].getvalue()

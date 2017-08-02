@@ -386,8 +386,9 @@ def main_run_test(runner, path_test=None, limit_max=1e9, log=False, skip=-1, ski
     fullstderr = StringIO()
 
     # displays
-    memout.write("---- JENKINS BEGIN UNIT TESTS ----")
-    memout.write("---- BEGIN UNIT TEST for {0}\n".format(path_test))
+    memout.write("[main_run_test] ---- JENKINS BEGIN UNIT TESTS ----")
+    memout.write(
+        "[main_run_test] ---- BEGIN UNIT TEST for {0}\n".format(path_test))
 
     # display all tests
     for i, s in enumerate(suite):
@@ -413,7 +414,7 @@ def main_run_test(runner, path_test=None, limit_max=1e9, log=False, skip=-1, ski
     memout.write("\n")
 
     # displays
-    memout.write("---- RUN UT\n")
+    memout.write("[main_run_test] ---- RUN UT\n")
     original_stream = runner.stream.stream if isinstance(
         runner.stream.stream, StringIOAndFile) else None
 
@@ -503,7 +504,7 @@ def main_run_test(runner, path_test=None, limit_max=1e9, log=False, skip=-1, ski
             fullstderr.write(out)
 
             if err:
-                fullstderr.write("ERRo:\n")
+                fullstderr.write("[pyqerror]o:\n")
                 try:
                     fullstderr.write(err)
                 except UnicodeDecodeError:
@@ -515,7 +516,7 @@ def main_run_test(runner, path_test=None, limit_max=1e9, log=False, skip=-1, ski
 
             list_warn = [(w, s) for w, s in list_warn if filter_warning(w)]
             if len(list_warn) > 0:
-                fullstderr.write("*WARN:\n")
+                fullstderr.write("*[pyqwarning]:\n")
                 warndone = set()
                 for w, s in list_warn:
                     sw = str(w)
@@ -545,8 +546,8 @@ def main_run_test(runner, path_test=None, limit_max=1e9, log=False, skip=-1, ski
         keep.append((s[1], r))
 
     # displays
-    memout.write("---- END UT\n")
-    memout.write("---- JENKINS END UNIT TESTS ----")
+    memout.write("[main_run_test] ---- END UT\n")
+    memout.write("[main_run_test] ---- JENKINS END UNIT TESTS ----")
 
     fLOG("[main_run_test] restore stdout, stderr")
 
@@ -556,14 +557,15 @@ def main_run_test(runner, path_test=None, limit_max=1e9, log=False, skip=-1, ski
     val = fullstderr.getvalue()
 
     if len(val) > 0:
-        fLOG("-- STDERR (from unittests) on STDOUT")
+        fLOG("[main_run_test] -- STDERR (from unittests) on STDOUT")
         fLOG(val)
-        fLOG("-- end STDERR on STDOUT")
+        fLOG("[main_run_test] -- end STDERR on STDOUT")
 
         if on_stderr:
-            memerr.write("##### STDERR (from unittests) #####\n")
+            memerr.write(
+                "[main_run_test] ##### STDERR (from unittests) #####\n")
             memerr.write(val)
-            memerr.write("##### end STDERR #####\n")
+            memerr.write("[main_run_test] ##### end STDERR #####\n")
 
     if fail == 0:
         clean(fLOG=fLOG)

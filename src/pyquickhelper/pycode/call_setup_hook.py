@@ -125,7 +125,7 @@ def call_setup_hook(folder, module_name, fLOG=noLOG, must_be=False,
 
     def error():
         mes = "**CMD:\n{3}\n**CODE:\n{0}\n**OUT:\n{1}\n**[pyqerror]\n{2}\nexit={4}".format(code.replace(";", "\n"),
-                                                                                     out, err, cmd, exit)
+                                                                                           out, err, cmd, exit)
         return mes
 
     if not must_be and ("ImportError: cannot import name '{0}'".format(function_name) in err or
