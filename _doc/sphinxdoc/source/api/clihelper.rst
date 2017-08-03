@@ -6,6 +6,11 @@ cli: automation command lines
     :local:
     :depth: 2
 
+command line
+++++++++++++
+
+.. autosignature:: pyquickhelper.cli.cli_helper.call_cli_function
+
 parsers
 +++++++
 

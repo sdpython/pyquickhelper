@@ -140,6 +140,31 @@ def call_cli_function(f, args=None, parser=None, fLOG=print, skip_parameters=('f
     @param      parser          parser (can be None, in that case, @see fn create_cli_parser is called)
     @param      fLOG            logging function
     @param      skip_parameters see @see fn create_cli_parser
+
+    This function is used in command line @see fn pyq_sync.
+    Its code can can be used as an example. The command line can be tested
+    as:
+
+    ::
+
+        class TextMyCommandLine(unittest.TestCase):
+
+            def test_mycommand_line_help(self):
+                fLOG(
+                    __file__,
+                    self._testMethodName,
+                    OutputPrint=__name__ == "__main__")
+
+                rows = []
+
+                def flog(*l):
+                    rows.append(l)
+
+                mycommand_line(args=['-h'], fLOG=flog)
+
+                r = rows[0][0]
+                if not r.startswith("usage: mycommand_line ..."):
+                    raise Exception(r)
     """
     if parser is None:
         parser = create_cli_parser(f, skip_parameters=skip_parameters)
