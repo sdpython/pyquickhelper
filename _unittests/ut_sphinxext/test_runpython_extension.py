@@ -91,7 +91,7 @@ class TestRunPythonExtension(unittest.TestCase):
         tives = [("runpythonthis", RunPythonThisDirective, runpythonthis_node,
                   visit_rp_node, depart_rp_node)]
 
-        html = rst2html(content, fLOG=fLOG,
+        html = rst2html(content,  # fLOG=fLOG,
                         writer="custom", keep_warnings=True,
                         directives=tives)
 
@@ -101,7 +101,7 @@ class TestRunPythonExtension(unittest.TestCase):
         t2 = "setsysvar: True"
         if t2 not in html:
             raise Exception(html)
-        t2 = "<p>In</p>"
+        t2 = "<p>&gt;&gt;&gt;</p>"
         if t2 not in html:
             raise Exception(html)
         t2 = "<p>Out</p>"
@@ -161,7 +161,7 @@ class TestRunPythonExtension(unittest.TestCase):
         tives = [("runpythonthis", RunPythonThisDirective, runpythonthis_node,
                   visit_rp_node, depart_rp_node)]
 
-        html = rst2html(content, fLOG=fLOG,
+        html = rst2html(content,  # fLOG=fLOG,
                         writer="custom", keep_warnings=True,
                         directives=tives)
 
@@ -173,7 +173,7 @@ class TestRunPythonExtension(unittest.TestCase):
         for t in t2.split():
             if t.strip(":") not in html:
                 raise Exception(html)
-        t2 = "<p>In</p>"
+        t2 = "<p>&gt;&gt;&gt;</p>"
         if t2 in html:
             raise Exception(html)
         t2 = "<p>Out</p>"
@@ -233,7 +233,7 @@ class TestRunPythonExtension(unittest.TestCase):
         tives = [("runpythonthis", RunPythonThisDirective, runpythonthis_node,
                   visit_rp_node, depart_rp_node)]
 
-        html = rst2html(content, fLOG=fLOG,
+        html = rst2html(content,  # fLOG=fLOG,
                         writer="custom", keep_warnings=True,
                         directives=tives)
 
@@ -245,7 +245,7 @@ class TestRunPythonExtension(unittest.TestCase):
         for t in t2:
             if t.strip(";") not in html:
                 raise Exception(html)
-        t2 = "<p>In</p>"
+        t2 = "<p>&gt;&gt;&gt;</p>"
         if t2 not in html:
             raise Exception(html)
         t2 = "<p>Out</p>"
@@ -300,11 +300,11 @@ class TestRunPythonExtension(unittest.TestCase):
         tives = [("runpythonthis", RunPythonThisDirective, runpythonthis_node,
                   visit_rp_node, depart_rp_node)]
 
-        html = rst2html(content, fLOG=fLOG,
+        html = rst2html(content,  # fLOG=fLOG,
                         writer="custom", keep_warnings=True,
                         directives=tives)
 
-        t2 = "<p>In</p>"
+        t2 = "<p>&gt;&gt;&gt;</p>"
         if t2 not in html:
             raise Exception(html)
         t2 = "<p>Out</p>"
@@ -363,11 +363,11 @@ class TestRunPythonExtension(unittest.TestCase):
         tives = [("runpythonthis", RunPythonThisDirective, runpythonthis_node,
                   visit_rp_node, depart_rp_node)]
 
-        html = rst2html(content, fLOG=fLOG,
+        html = rst2html(content,  # fLOG=fLOG,
                         writer="custom", keep_warnings=True,
                         directives=tives)
 
-        t2 = "<p>In</p>"
+        t2 = "<p>&gt;&gt;&gt;</p>"
         if t2 not in html:
             raise Exception(html)
         t2 = "<p>Out</p>"
