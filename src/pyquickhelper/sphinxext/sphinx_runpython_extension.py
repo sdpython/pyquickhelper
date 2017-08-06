@@ -16,6 +16,7 @@ from sphinx.util.nodes import nested_parse_with_titles
 import traceback
 from ..loghelper.flog import run_cmd
 from ..texthelper.texts_language import TITLES
+from ..pycode.code_helper import remove_extra_spaces_and_pep8
 
 if sys.version_info[0] == 2:
     from StringIO import StringIO
@@ -248,6 +249,8 @@ class RunPythonDirective(Directive):
       if the value is left empty, *sys.enable_disabled_documented_pieces_of_code* will be be set up to *True*.
     * ``:process:`` run the script in an another process
     * ``:exception:`` the code throws an exception but it is expected. The error is displayed.
+    * ``:nopep8:`` if present, leaves the code as it is and does not apply pep8 by default,
+      see @see fn remove_extra_spaces_and_pep8.
 
     Option *rst* can be used the following way::
 
@@ -280,6 +283,7 @@ class RunPythonDirective(Directive):
 
     .. versionchanged:: 1.5
         Exception is now caught. It fails if no error is thrown.
+        Options *nopep8* was added.
     """
     required_arguments = 0
     optional_arguments = 0
@@ -296,6 +300,7 @@ class RunPythonDirective(Directive):
         'setsysvar': directives.unchanged,
         'process': directives.unchanged,
         'exception': directives.unchanged,
+        'nopep8': directives.unchanged,
     }
     has_content = True
     runpython_class = runpython_node
@@ -341,6 +346,7 @@ class RunPythonDirective(Directive):
             'setsysvar': self.options.get('setsysvar', None),
             'process': 'process' in self.options and self.options['process'] in bool_set_,
             'exception': 'exception' in self.options and self.options['exception'] in bool_set_,
+            'nopep8': 'nopep8' in self.options and self.options['nopep8'] in bool_set_,
         }
 
         if p['setsysvar'] is not None and len(p['setsysvar']) == 0:
@@ -360,6 +366,8 @@ class RunPythonDirective(Directive):
             content.append("{0}()".format(name))
         script = "\n".join(content)
         script_disp = "\n".join(self.content)
+        if not p["nopep8"]:
+            script_disp = remove_extra_spaces_and_pep8(script_disp)
 
         # if an exception is raised, the documentation should report
         # a warning

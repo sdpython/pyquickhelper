@@ -10,7 +10,7 @@ from ..filehelper.synchelper import explore_folder
 
 def remove_extra_spaces_and_pep8(filename, apply_pep8=True, aggressive=False):
     """
-    Removes extra spaces in a filename, replace the file in place
+    Removes extra spaces in a filename, replace the file in place.
 
     @param      filename        file name or string (but it assumes it is python).
     @param      apply_pep8      if True, calls ``autopep8`` on the file

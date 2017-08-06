@@ -49,6 +49,10 @@ def verification_html_format(folder, fLOG=noLOG, raise_above=0.1):
     errors = []
     for item in explore_folder_iterfile(folder, ".[.]html", fullname=True):
         fLOG("[verification_html_format]", item)
+        if not os.path.exists(item):
+            fLOG(
+                "[verification_html_format] unable to find and check '{0}'".format(item))
+            continue
         err = verification_html_file(item, fLOG=fLOG)
         if len(err) > 0:
             fitem = os.path.abspath(item)
@@ -73,7 +77,7 @@ def verification_html_format(folder, fLOG=noLOG, raise_above=0.1):
 
 def verification_html_file(item, fLOG=noLOG):
     """
-    verifies a file produced by Sphinx and checks basic mistakes
+    Verifies a file produced by :epkg:`sphinx` and checks basic mistakes.
 
     @param      item        filename
     @param      fLOG        logging function
