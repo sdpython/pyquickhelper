@@ -367,7 +367,8 @@ class RunPythonDirective(Directive):
         script = "\n".join(content)
         script_disp = "\n".join(self.content)
         if not p["nopep8"]:
-            script_disp = remove_extra_spaces_and_pep8(script_disp)
+            script_disp = remove_extra_spaces_and_pep8(
+                script_disp, is_string=True)
 
         # if an exception is raised, the documentation should report
         # a warning

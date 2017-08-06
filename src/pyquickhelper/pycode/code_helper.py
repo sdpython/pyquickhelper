@@ -8,13 +8,14 @@ import autopep8
 from ..filehelper.synchelper import explore_folder
 
 
-def remove_extra_spaces_and_pep8(filename, apply_pep8=True, aggressive=False):
+def remove_extra_spaces_and_pep8(filename, apply_pep8=True, aggressive=False, is_string=None):
     """
     Removes extra spaces in a filename, replace the file in place.
 
     @param      filename        file name or string (but it assumes it is python).
     @param      apply_pep8      if True, calls ``autopep8`` on the file
     @param      aggressive      more aggressive
+    @param      is_string       force *filename* to be a string
     @return                     number of removed extra spaces
 
     .. versionchanged:: 1.0
@@ -23,8 +24,9 @@ def remove_extra_spaces_and_pep8(filename, apply_pep8=True, aggressive=False):
     .. versionchanged:: 1.5
         Allow string and not only files, add parameter *aggressive*,
         use ``fix_code`` instead of ``fix_line``.
+        Parameter *is_string* was added.
     """
-    if "\n" in filename:
+    if "\n" in filename or (is_string is not None and is_string):
         ext = ".py"
         lines = filename.replace("\r", "").split("\n")
         filename = None
