@@ -25,17 +25,15 @@ import re
 import warnings
 from ..loghelper.pyrepo_helper import SourceRepository
 from ..loghelper.flog import noLOG
-from ..helpgen.sphinx_main import generate_help_sphinx
+from ..filehelper import get_url_content_timeout, explore_folder_iterfile
 from .code_helper import remove_extra_spaces_folder
 from .py3to2 import py3to2_convert_tree
-from ..pycode.utils_tests import main_wrapper_tests, default_skip_function
-from ..helpgen import get_help_usage
 from .build_helper import get_build_script, get_script_command, get_extra_script_command, get_script_module, get_pyproj_project
-from ..filehelper import get_url_content_timeout, explore_folder_iterfile
 from .call_setup_hook import call_setup_hook
 from .tkinter_helper import fix_tkinter_issues_virtualenv
 from .default_regular_expression import _setup_pattern_copy
 from ..ipythonhelper import upgrade_notebook, remove_execution_number
+from ..pycode.utils_tests import main_wrapper_tests, default_skip_function
 
 
 if sys.version_info[0] == 2:
@@ -603,8 +601,11 @@ def standard_help_for_setup(argv, file_or_folder, project_var_name, module_name=
         Parameter *use_run_cmd* was added.
     """
     if "--help" in argv:
+        from ..helpgen.help_usage import get_help_usage
         print(get_help_usage())
     else:
+        from ..helpgen.sphinx_main import generate_help_sphinx
+
         if layout is None:
             layout = ["html", "pdf"]
         if module_name is None:

@@ -22,7 +22,6 @@ from .sphinx_githublink_extension import githublink_node, githublink_role
 from .sphinx_mathdef_extension import MathDef, MathDefList
 from .sphinx_nbref_extension import NbRef, NbRefList
 from .sphinx_postcontents_extension import PostContentsDirective, postcontents_node
-from .sphinx_runpython_extension import RunPythonDirective, runpython_node
 from .sphinx_sharenet_extension import ShareNetDirective, sharenet_node
 from .sphinx_template_extension import tpl_node
 from .sphinx_todoext_extension import TodoExt, TodoExtList
@@ -51,10 +50,12 @@ from ..sphinxext.sphinx_mathdef_extension import setup as setup_mathdef
 from ..sphinxext.sphinx_nbref_extension import setup as setup_nbref
 from ..sphinxext.sphinx_postcontents_extension import setup as setup_postcontents
 from ..sphinxext.sphinx_rst_builder import setup as setup_rst
-from ..sphinxext.sphinx_runpython_extension import setup as setup_runpython
 from ..sphinxext.sphinx_sharenet_extension import setup as setup_sharenet
 from ..sphinxext.sphinx_template_extension import setup as setup_tpl
 from ..sphinxext.sphinx_todoext_extension import setup as setup_todoext
+
+from ..sphinxext.sphinx_runpython_extension import setup as setup_runpython
+from .sphinx_runpython_extension import RunPythonDirective, runpython_node
 
 
 def get_default_extensions():

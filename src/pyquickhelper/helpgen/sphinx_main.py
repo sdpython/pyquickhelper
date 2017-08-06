@@ -41,6 +41,16 @@ from .utils_sphinx_doc_helpers import HelpGenException, ImportErrorHelpGen
 from .conf_path_tools import find_latex_path, find_pandoc_path
 from ..filehelper.synchelper import explore_folder
 from .utils_sphinx_config import ie_layout_html
+from ..filehelper import synchronize_folder
+from .post_process import post_process_latex_output
+from .process_notebooks import process_notebooks, build_notebooks_gallery
+from .sphinx_helper import post_process_html_nb_output_static_file
+from .install_js_dep import install_javascript_tools
+from .sphinx_main_helper import setup_environment_for_help, get_executables_path, generate_changes_repo
+from .sphinx_main_helper import compile_latex_output_final, replace_placeholder_by_recent_blogpost, enumerate_copy_images_for_slides
+from .sphinx_main_verification import verification_html_format
+from .sphinx_main_missing_html_files import add_missing_files
+from .style_css_template import style_figure_notebook
 from ..sphinxext.blog_post_list import BlogPostList
 from ..sphinxext.sphinx_blog_extension import BlogPostDirective, BlogPostDirectiveAgg
 from ..sphinxext.sphinx_runpython_extension import RunPythonDirective
@@ -57,16 +67,6 @@ from ..sphinxext.sphinx_faqref_extension import FaqRef
 from ..sphinxext.sphinx_nbref_extension import NbRef
 from ..sphinxext.sphinx_cmdref_extension import CmdRef
 from ..sphinxext.sphinx_todoext_extension import TodoExt
-from .post_process import post_process_latex_output
-from .process_notebooks import process_notebooks, build_notebooks_gallery
-from .sphinx_helper import post_process_html_nb_output_static_file
-from .install_js_dep import install_javascript_tools
-from ..filehelper import synchronize_folder
-from .sphinx_main_helper import setup_environment_for_help, get_executables_path, generate_changes_repo
-from .sphinx_main_helper import compile_latex_output_final, replace_placeholder_by_recent_blogpost, enumerate_copy_images_for_slides
-from .sphinx_main_verification import verification_html_format
-from .sphinx_main_missing_html_files import add_missing_files
-from .style_css_template import style_figure_notebook
 
 
 if sys.version_info[0] == 2:

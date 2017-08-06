@@ -3,7 +3,6 @@
 @brief Subpart related to the documentation generation.
 """
 from .conf_path_tools import find_graphviz_dot
-from .sphinxm_convert_doc_helper import rst2html, docstring2html
 from .default_conf import set_sphinx_variables, custom_setup
 from .helpgen_exceptions import HelpGenException, ImportErrorHelpGen, HelpGenConvertError
 from .pandoc_helper import latex2rst
@@ -13,19 +12,5 @@ from .sphinx_helper import sphinx_add_scripts
 from .sphinx_main import generate_help_sphinx, process_notebooks
 from .utils_sphinx_config import NbImage
 from .utils_pywin32 import import_pywin32
-
-
-def get_help_usage():
-    """
-    returns the usage ``python setup.py build_sphinx``
-    """
-    return """
-        This command will build the documentation form the source.
-        It will not work from the installed package.
-        This is a custom build, the regular options with build_sphinx will not work.
-        The output will be copied in folder dist.
-
-        Usage:
-
-            python setup.py build_sphinx
-        """.replace("        ", "")
+from .sphinxm_convert_doc_helper import rst2html, docstring2html
+from .help_usage import get_help_usage
