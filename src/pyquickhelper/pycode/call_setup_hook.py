@@ -16,7 +16,7 @@ from .open_script_file import open_script
 def call_setup_hook_cmd(folder, module_name, function_name="_setup_hook",
                         additional_paths=None, interpreter_path=None, **args):
     """
-    prepares the command line to call function @see fn _setup_hook for a specific module
+    Prepares the command line to call function @see fn _setup_hook for a specific module.
 
     @param      folder              folder which contains the setup
     @param      module_name         module name
@@ -67,7 +67,7 @@ def call_setup_hook(folder, module_name, fLOG=noLOG, must_be=False,
                     force_call=False, additional_paths=None,
                     **args):
     """
-    calls function @see fn _setup_hook for a specific module,
+    Calls function @see fn _setup_hook for a specific module,
     it is called in a separate process
 
     @param      folder              folder which contains the setup
@@ -91,7 +91,7 @@ def call_setup_hook(folder, module_name, fLOG=noLOG, must_be=False,
         print("CODE:\n", code)
         print("CMD:\n", cmd)
 
-    fLOG("~~~~~~~~~ calls _setup_hook from", module_name)
+    fLOG("[call_setup_hook] calls _setup_hook from", module_name)
     if not force_call and sys.platform.startswith("win"):
         out, err = run_cmd(cmd, wait=True, fLOG=fLOG, log_error=False)
         exit = 0
@@ -116,12 +116,15 @@ def call_setup_hook(folder, module_name, fLOG=noLOG, must_be=False,
                 exit = 0
                 err = "ImportError: cannot import name '{0}'".format(
                     function_name)
-    fLOG("~~~~~~~~~ end of call _setup_hook")
+    fLOG("[call_setup_hook] end of call _setup_hook")
 
     if use_print:
         print("OUT:\n", out)
         if err:
-            print("[pyqerror]\n", err)
+            if "cannot import name '_setup_hook'":
+                fLOG("[call_setup_hook] _setup_hook was not found.")
+            else:
+                print("[pyqerror]\n", err)
 
     def error():
         mes = "**CMD:\n{3}\n**CODE:\n{0}\n**OUT:\n{1}\n**[pyqerror]\n{2}\nexit={4}".format(code.replace(";", "\n"),

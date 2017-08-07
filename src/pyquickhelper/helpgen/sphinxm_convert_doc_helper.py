@@ -103,14 +103,16 @@ def default_sphinx_options(fLOG=noLOG, **options):
 def rst2html(s, fLOG=noLOG, writer="html", keep_warnings=False,
              directives=None, language="en",
              layout='docutils', document_name="<<string>>",
-             external_docnames=None, filter_nodes=None, **options):
+             external_docnames=None, filter_nodes=None,
+             new_extensions=None, update_builder=None, **options):
     """
     Converts a string into HTML format.
 
     @param      s                   string to converts
     @param      fLOG                logging function (warnings will be logged)
     @param      writer              ``'html'`` for HTML format, ``'rst'`` for RST format,
-                                    ``'doctree'`` to get the doctree
+                                    ``'doctree'`` to get the doctree, *writer* can also be a tuple
+                                    for custom formats and must be like ``('buider_name', builder_class)``.
     @param      keep_warnings       keep_warnings in the final HTML
     @param      directives          new directives to add (see below)
     @param      language            language
@@ -123,6 +125,8 @@ def rst2html(s, fLOG=noLOG, writer="html", keep_warnings=False,
                                     if one is missing, an exception is raised.
     @param      filter_nodes        transforms the doctree before writing the results (layout must be 'sphinx'),
                                     the function takes a doctree as a single parameter
+    @param      new_extensions      additional extension to setup
+    @param      update_builder      update the builder after it is instantiated
     @return                         HTML format
 
     *directives* is None or a list of 5-uple:
@@ -140,6 +144,13 @@ def rst2html(s, fLOG=noLOG, writer="html", keep_warnings=False,
     * ``'sphinx'``: in memory sphinx, the produced HTML includes the header, it is also recursive
       as directives can modify the doctree.
     * ``'sphinx_body'``: same as ``'sphinx'`` but only the body is returned.
+
+    if the writer is a tuple, it must be a 2-uple ``(builder_name, builder_class)``.
+    However, the builder class must contain an attribute ``_writer_class`` with
+    the associated writer. The builcer class must also implement a method
+    ``iter_pages`` which enumerates all written pages:
+    ``def iter_pages(self) -> Dict[str,str]`` where the key is the document name
+    and the value is its content.
 
     .. exref::
         :title: How to test a Sphinx directive?
@@ -241,8 +252,8 @@ def rst2html(s, fLOG=noLOG, writer="html", keep_warnings=False,
 
     .. versionchanged:: 1.5
         More logging is done, the function is more consistent.
-        Parameters *layout*, *document_name*, *external_docnames*, *filter_nodes* were added.
-        Format ``rst`` was added.
+        Parameters *layout*, *document_name*, *external_docnames*, *filter_nodes*, *update_builder*,
+        *new_extensions* were added. Format ``rst`` was added. Custom builders is supported.
     """
     if 'html_theme' not in options:
         options['html_theme'] = 'basic'
@@ -255,13 +266,18 @@ def rst2html(s, fLOG=noLOG, writer="html", keep_warnings=False,
         writer = "rst"
 
     if writer in ["custom", "sphinx", "HTMLWriterWithCustomDirectives", "html"]:
-        mockapp, writer, title_names = MockSphinxApp.create(
-            "sphinx", directives, confoverrides=defopt, fLOG=fLOG)
+        mockapp, writer, title_names = MockSphinxApp.create("sphinx", directives,
+                                                            confoverrides=defopt, new_extensions=new_extensions, fLOG=fLOG)
         writer_name = "HTMLWriterWithCustomDirectives"
     elif writer == "rst":
-        mockapp, writer, title_names = MockSphinxApp.create(
-            "rst", directives, confoverrides=defopt, fLOG=fLOG)
-        writer_name = "rst"
+        writer_name = writer
+        mockapp, writer, title_names = MockSphinxApp.create(writer, directives,
+                                                            confoverrides=defopt, new_extensions=new_extensions, fLOG=fLOG)
+    elif isinstance(writer, tuple):
+        # We extect something like ("builder_name", builder_class)
+        writer_name = writer
+        mockapp, writer, title_names = MockSphinxApp.create(writer, directives,
+                                                            confoverrides=defopt, new_extensions=new_extensions, fLOG=fLOG)
     else:
         raise ValueError(
             "Unexpected writer '{0}', should be 'rst' or 'html'.".format(writer))
@@ -283,9 +299,12 @@ def rst2html(s, fLOG=noLOG, writer="html", keep_warnings=False,
     config.blog_background = False
     config.sharepost = None
 
-    writer.add_configuration_options(mockapp.new_options)
+    if hasattr(writer, "add_configuration_options"):
+        writer.add_configuration_options(mockapp.new_options)
     for k in {'outdir', 'imagedir', 'confdir', 'doctreedir'}:
         setattr(writer.builder, k, settings_overrides.get(k, ''))
+    if update_builder:
+        update_builder(writer.builder)
 
     env = mockapp.env
     if env is None:
@@ -339,12 +358,20 @@ def rst2html(s, fLOG=noLOG, writer="html", keep_warnings=False,
     else:
         page = None
         pages = []
-        main = "/{0}.m.html".format(document_name)
+        main = ("/{0}.m.html".format(document_name),
+                "/{0}.m.{1}".format(document_name, writer_name)),
+        if not hasattr(writer.builder, "iter_pages"):
+            raise AttributeError(
+                "Class '{0}' must have a method 'iter_pages' which returns a dictionary.".format(writer.builder))
+        contents = []
         for k, v in writer.builder.iter_pages():
             pages.append(k)
+            contents.append(v)
             if k == main:
                 page = v
                 break
+        if page is None and len(contents) == 1:
+            page = contents[0]
         if page is None:
             raise ValueError(
                 "No page contents was produced only '{0}'.".format(", ".join(pages)))

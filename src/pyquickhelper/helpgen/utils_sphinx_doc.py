@@ -897,9 +897,9 @@ def prepare_file_for_sphinx_help_generation(store_obj, input, output,
                                             fexclude_index=lambda f: False, issues=None,
                                             additional_sys_path=None, replace_relative_import=False,
                                             module_name=None, copy_add_ext=None, use_sys=None,
-                                            fLOG=fLOG):
+                                            auto_rst_generation=True, fLOG=fLOG):
     """
-    prepare all files for Sphinx generation
+    Prepares all files for Sphinx generation.
 
     @param      store_obj       to keep track of all objects, it should be a dictionary
     @param      input           input folder
@@ -940,28 +940,29 @@ def prepare_file_for_sphinx_help_generation(store_obj, input, output,
 
     @param      additional_sys_path     additional paths to includes to sys.path when import a module (will be removed afterwards)
     @param      replace_relative_import replace relative import
-    @param      module_name     module name (cannot be None)
-    @param      copy_add_ext    additional file extension to copy
-    @param      use_sys         @see fn remove_undesired_part_for_documentation
-    @param      fLOG            logging function
+    @param      module_name             module name (cannot be None)
+    @param      copy_add_ext            additional file extension to copy
+    @param      use_sys                 @see fn remove_undesired_part_for_documentation
+    @param      auto_rst_generation     add a file *.rst* for each source file
+    @param      fLOG                    logging function
 
     @return                     list of written files stored in RstFileHelp
 
     Example:
 
-    @code
-    prepare_file_for_sphinx_help_generation (
-                {},
-                ".",
-                "_doc/sphinxdoc/source/",
-                subfolders      = [
-                                    ("src/" + project_var_name, project_var_name),
-                                     ],
-                silent          = True,
-                rootrep         = ("_doc.sphinxdoc.source.%s." % (project_var_name,), ""),
-                optional_dirs   = optional_dirs,
-                mapped_function = [ (".*[.]tohelp$", None) ] )
-    @endcode
+    ::
+
+        prepare_file_for_sphinx_help_generation (
+                    {},
+                    ".",
+                    "_doc/sphinxdoc/source/",
+                    subfolders      = [
+                                        ("src/" + project_var_name, project_var_name),
+                                         ],
+                    silent          = True,
+                    rootrep         = ("_doc.sphinxdoc.source.%s." % (project_var_name,), ""),
+                    optional_dirs   = optional_dirs,
+                    mapped_function = [ (".*[.]tohelp$", None) ] )
 
     .. versionchanged:: 0.9
         produce a file with the number of lines and files per extension
@@ -971,6 +972,9 @@ def prepare_file_for_sphinx_help_generation(store_obj, input, output,
 
     .. versionchanged:: 1.3
         Parameters *copy_add_ext*, *fLOG* were added.
+
+    .. versionchanged:: 1.5
+        Parameters *auto_rst_generation* was added.
     """
     if optional_dirs is None:
         optional_dirs = []
@@ -1008,14 +1012,15 @@ def prepare_file_for_sphinx_help_generation(store_obj, input, output,
 
             temp = os.path.split(dst)
             actions_t = [(">", temp[1], temp[0], 0, 0)]
-            rstadd = add_file_rst(rootm, store_obj, actions_t,
-                                  template, rootrep, fmod_res,
-                                  softfile=softfile,
-                                  mapped_function=mapped_function,
-                                  indexes=indexes,
-                                  additional_sys_path=additional_sys_path,
-                                  fLOG=fLOG)
-            rsts += rstadd
+            if auto_rst_generation:
+                rstadd = add_file_rst(rootm, store_obj, actions_t,
+                                      template, rootrep, fmod_res,
+                                      softfile=softfile,
+                                      mapped_function=mapped_function,
+                                      indexes=indexes,
+                                      additional_sys_path=additional_sys_path,
+                                      fLOG=fLOG)
+                rsts += rstadd
         else:
             fLOG("[prepare_file_for_sphinx_help_generation] processing ", src)
 
@@ -1032,12 +1037,13 @@ def prepare_file_for_sphinx_help_generation(store_obj, input, output,
                 importlib.invalidate_caches()
                 importlib.util.find_spec(module_name)
 
-            rsts += add_file_rst(rootm, store_obj, actions_t, template,
-                                 rootrep, fmod_res, softfile=softfile,
-                                 mapped_function=mapped_function,
-                                 indexes=indexes,
-                                 additional_sys_path=additional_sys_path,
-                                 fLOG=fLOG)
+            if auto_rst_generation:
+                rsts += add_file_rst(rootm, store_obj, actions_t, template,
+                                     rootrep, fmod_res, softfile=softfile,
+                                     mapped_function=mapped_function,
+                                     indexes=indexes,
+                                     additional_sys_path=additional_sys_path,
+                                     fLOG=fLOG)
 
         actions += actions_t
 

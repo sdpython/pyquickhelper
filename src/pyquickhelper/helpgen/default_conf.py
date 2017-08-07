@@ -67,24 +67,24 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
         structure as `pyquickhelper <https://github.com/sdpython/pyquickhelper/>`_.
         The file ``conf.py`` could just contain:
 
-        @code
-        # -*- coding: utf-8 -*-
-        import sys, os, datetime, re
-        import solar_theme
-        from pyquickhelper.helpgen.default_conf import set_sphinx_variables
+        ::
 
-        sys.path.insert(0, os.path.abspath(os.path.join(os.path.split(__file__)[0])))
-        set_sphinx_variables(   __file__,
-                                "pyquickhelper",
-                                "Xavier Dupré",
-                                2014,
-                                "solar_theme",
-                                solar_theme.theme_path,
-                                locals())
+            # -*- coding: utf-8 -*-
+            import sys, os, datetime, re
+            import solar_theme
+            from pyquickhelper.helpgen.default_conf import set_sphinx_variables
 
-        # custom settings
-        ...
-        @endcode
+            sys.path.insert(0, os.path.abspath(os.path.join(os.path.split(__file__)[0])))
+            set_sphinx_variables(   __file__,
+                                    "pyquickhelper",
+                                    "Xavier Dupré",
+                                    2014,
+                                    "solar_theme",
+                                    solar_theme.theme_path,
+                                    locals())
+
+            # custom settings
+            ...
 
         *setup.py* must contain a string such as ``__version__ = 3.4``.
         Close to the setup, there must be a file ``version.txt``.
@@ -189,6 +189,9 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
     latex_elements = {'papersize': 'a4', 'pointsize': '10pt',
                       'preamble': preamble,
                       }
+
+    # pyquickhelper automation
+    auto_rst_generation = True
 
     # latex_additional_files = ["mfgan-bw.sty", "_static/cover.png"]
 

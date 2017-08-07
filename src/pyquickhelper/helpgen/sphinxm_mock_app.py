@@ -28,16 +28,17 @@ class MockSphinxApp:
     In memory Sphinx application.
     """
 
-    def __init__(self, writer, app, confoverrides):
+    def __init__(self, writer, app, confoverrides, new_extensions=None):
         """
         Constructor
 
         @param      writer          see static method create
         @param      app             see static method create
         @param      confoverrides   default options
+        @param      new_extensions  additional extensions
 
         .. versionchanged:: 1.5
-            Parameter *confoverrides* was added.
+            Parameters *confoverrides*, *new_extensions* were added.
         """
         if confoverrides is None:
             confoverrides = {}
@@ -59,6 +60,7 @@ class MockSphinxApp:
         self.doctreedir = "."
         self.srcdir = "."
         self.builder = writer.builder
+        self._new_extensions = new_extensions
         # self.domains = {}
         # self._events = {}
         # self.events = EventManager()
@@ -222,13 +224,14 @@ class MockSphinxApp:
         self.app._events[name] = ''
 
     @staticmethod
-    def create(writer="html", directives=None, confoverrides=None, fLOG=None):
+    def create(writer="html", directives=None, confoverrides=None, new_extensions=None, fLOG=None):
         """
         Create a MockApp for Sphinx.
 
         @param      writer          ``'sphinx'`` is the only allowed value
         @param      directives      new directives to add (see below)
         @param      confoverrides   initial options
+        @param      new_extensions  additional extensions to setup
         @param      fLOG            logging function
         @return                     mockapp, writer, list of added nodes
 
@@ -242,7 +245,7 @@ class MockSphinxApp:
           @see fn depart_runpython_node as an example
 
         .. versionchanged:: 1.5
-            Parameters *fLOG*, *confoverrides* were added.
+            Parameters *fLOG*, *confoverrides*, *new_extensions* were added.
             The class supports more extensions.
         """
         if confoverrides is None:
@@ -252,16 +255,31 @@ class MockSphinxApp:
 
         if writer in ("sphinx", "custom", "HTMLWriterWithCustomDirectives", "html"):
             app = _CustomSphinx(srcdir=None, confdir=None, outdir=None, doctreedir=None,
-                                buildername='memoryhtml', confoverrides=confoverrides)
-            writer = HTMLWriterWithCustomDirectives(app=app)
-            mockapp = MockSphinxApp(
-                writer, writer.app, confoverrides=confoverrides)
+                                buildername='memoryhtml', confoverrides=confoverrides,
+                                new_extensions=new_extensions)
+            writer = HTMLWriterWithCustomDirectives(
+                builder=app.builder, app=app)
+            mockapp = MockSphinxApp(writer, writer.app, confoverrides=confoverrides,
+                                    new_extensions=new_extensions)
         elif writer == "rst":
             app = _CustomSphinx(srcdir=None, confdir=None, outdir=None, doctreedir=None,
-                                buildername='memoryrst', confoverrides=confoverrides)
-            writer = RSTWriterWithCustomDirectives(app=app)
-            mockapp = MockSphinxApp(
-                writer, writer.app, confoverrides=confoverrides)
+                                buildername='memoryrst', confoverrides=confoverrides,
+                                new_extensions=new_extensions)
+            writer = RSTWriterWithCustomDirectives(
+                builder=app.builder, app=app)
+            mockapp = MockSphinxApp(writer, writer.app, confoverrides=confoverrides,
+                                    new_extensions=new_extensions)
+        elif isinstance(writer, tuple):
+            # We expect ("builder_name", builder_class)
+            app = _CustomSphinx(srcdir=None, confdir=None, outdir=None, doctreedir=None,
+                                buildername=writer, confoverrides=confoverrides,
+                                new_extensions=new_extensions)
+            if not hasattr(writer[1], "_writer_class"):
+                raise AttributeError(
+                    "Class '{0}' does not have any attribute '_writer_class'.".format(writer[1]))
+            writer = writer[1]._writer_class(builder=app.builder, app=app)
+            mockapp = MockSphinxApp(writer, app, confoverrides=confoverrides,
+                                    new_extensions=new_extensions)
         else:
             raise ValueError(
                 "writer must be 'html' or 'rst' not '{0}'.".format(writer))
@@ -290,7 +308,10 @@ class MockSphinxApp:
                 writer.connect_directive_node(node.__name__, f1, f2)
 
         if fLOG:
-            for app in [mockapp, writer.app]:
+            apps = [mockapp]
+            if hasattr(writer, "app"):
+                apps.append(writer.app)
+            for app in apps:
                 if hasattr(app, "_added_objects"):
                     fLOG("[MockSphinxApp] list of added objects")
                     for el in app._added_objects:

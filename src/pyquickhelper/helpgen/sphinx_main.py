@@ -475,6 +475,11 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
     nbexamples_conf = theconf.__dict__.get('example_gallery_config', None)
     # examples_conf = theconf.__dict__.get('sphinx_gallery_conf', None)
 
+    ##########
+    # auto_rst_generation
+    ##########
+    auto_rst_generation = theconf.__dict__.get("auto_rst_generation", True)
+
     ospath = os.environ["PATH"]
     latex_path = theconf.__dict__.get("latex_path", find_latex_path())
     # graphviz_dot = theconf.__dict__.get("graphviz_dot", find_graphviz_dot())
@@ -568,7 +573,7 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
                                                 optional_dirs=optional_dirs, mapped_function=mapped_function,
                                                 replace_relative_import=False, module_name=module_name,
                                                 copy_add_ext=copy_add_ext, use_sys=use_sys,
-                                                fLOG=fLOG)
+                                                auto_rst_generation=auto_rst_generation, fLOG=fLOG)
 
     except ImportErrorHelpGen as e:
 

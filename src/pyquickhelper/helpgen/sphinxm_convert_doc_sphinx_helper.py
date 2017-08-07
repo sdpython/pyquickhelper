@@ -4,6 +4,7 @@
 
 .. versionadded:: 1.3
 """
+import os
 import sys
 from collections import deque
 import warnings
@@ -420,10 +421,11 @@ class HTMLWriterWithCustomDirectives(_WriterWithCustomDirectives, HTMLWriter):
     when directives *RunPython* or *BlogPost* are met.
     """
 
-    def __init__(self, app=None):
+    def __init__(self, builder=None, app=None):
         """
         Constructor
 
+        @param      builder builder
         @param      app     Sphinx application
         """
         _WriterWithCustomDirectives._init(
@@ -451,10 +453,11 @@ class RSTWriterWithCustomDirectives(_WriterWithCustomDirectives, RstWriter):
     custom directives implemented in this module.
     """
 
-    def __init__(self, app=None):
+    def __init__(self, builder=None, app=None):
         """
         Constructor
 
+        @param      builder builder
         @param      app     Sphinx application
         """
         _WriterWithCustomDirectives._init(
@@ -756,11 +759,14 @@ class _CustomSphinx(Sphinx):
     """
 
     def __init__(self, srcdir, confdir, outdir, doctreedir, buildername="memoryhtml",
-                 confoverrides=None, status=None,
-                 freshenv=False, warningiserror=False, tags=None, verbosity=0,
-                 parallel=0):
+                 confoverrides=None, status=None, freshenv=False, warningiserror=False,
+                 tags=None, verbosity=0, parallel=0, new_extensions=None):
         '''
-        constructor
+        Constructor. Same constructor as
+        `sphinx application <http://www.sphinx-doc.org/en/stable/extdev/appapi.html>`_,
+        Additional parameters:
+
+        @param      new_extensions      extensions to add to the application
 
         Some insights about domains:
 
@@ -905,9 +911,28 @@ class _CustomSphinx(Sphinx):
         for extension in self.config.extensions:
             self.setup_extension(extension)
 
+        # additional extensions
+        if new_extensions:
+            for extension in new_extensions:
+                if isinstance(extension, str):
+                    self.setup_extension(extension)
+                else:
+                    # We assume it is a module.
+                    dirname = os.path.dirname(extension.__file__)
+                    sys.path.insert(0, dirname)
+                    self.setup_extension(extension.__name__)
+                    del sys.path[0]
+
         # add default HTML builders
         self.add_builder(MemoryHTMLBuilder)
         self.add_builder(MemoryRSTBuilder)
+
+        if isinstance(buildername, tuple):
+            if len(buildername) != 2:
+                raise ValueError(
+                    "The builder can be custom but it must be specifed as a 2-uple=(builder_name, builder_class).")
+            self.add_builder(buildername[1])
+            buildername = buildername[0]
 
         # preload builder module (before init config values)
         self.preload_builder(buildername)
