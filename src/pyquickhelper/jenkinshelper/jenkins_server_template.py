@@ -76,7 +76,7 @@ _trigger_startup = """
 <triggers>
     <org.jvnet.hudson.plugins.triggers.startup.HudsonStartupTrigger plugin="startup-trigger-plugin">
         <quietPeriod>0</quietPeriod>
-        <runOnChoice>ON_ONLINE</runOnChoice>
+        <runOnChoice>ON_BOTH</runOnChoice>
     </org.jvnet.hudson.plugins.triggers.startup.HudsonStartupTrigger>
 </triggers>
 """
