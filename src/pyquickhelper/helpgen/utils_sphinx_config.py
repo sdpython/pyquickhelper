@@ -125,7 +125,7 @@ def fix_ie_layout_html():
 
 def locate_image_documentation(image_name):
     """
-    tries to local an image in the module for help generation in a folder ``_doc``
+    Tries to local an image in the module for help generation in a folder ``_doc``.
 
     @param      image_name      path
     @return                     local file
@@ -141,9 +141,12 @@ def locate_image_documentation(image_name):
         When a notebook is taken out from the sources, the image using NbImage
         cannot be displayed because the function cannot guess from which project
         it was taken. The function was entering an infinite loop.
+
+    .. versionchanged:: 1.5
+        The function can deal with subfolder and not only the folder which contains the notebook.
     """
     folder, filename = os.path.split(image_name)
-    while len(folder) > 0 and "_doc" not in os.listdir(folder):
+    while len(folder) > 0 and (not os.path.exists(folder) or "_doc" not in os.listdir(folder)):
         fold = os.path.split(folder)[0]
         if fold == folder:
             break
@@ -163,7 +166,8 @@ def locate_image_documentation(image_name):
 
 def NbImage(name, repository=None, force_github=False, width=None):
     """
-    retrieve a name or a url of the image if it is not found in the local folder
+    Retrieves a name or a url of the image if it is not found in the local folder
+    or a subfolder.
 
     @param      name            image name (name.png)
     @param      force_github    force the system to retrieve the image from GitHub
@@ -179,6 +183,10 @@ def NbImage(name, repository=None, force_github=False, width=None):
     guess the location of the image.
 
     .. versionadded:: 0.9
+
+    .. versionchanged:: 1.5
+        The function is able to retrieve an image in a subfolder.
+        Displays a better message if ``__github__`` was not found.
     """
     from IPython.core.display import Image
     local = os.path.abspath(name)
@@ -196,7 +204,7 @@ def NbImage(name, repository=None, force_github=False, width=None):
         pos = paths.index("notebooks") - 1
     except IndexError as e:
         # we are looking for the right path
-        mes = "the image is not retrieve from a notebook from a folder ``_docs/notebooks``" + \
+        mes = "The image is not retrieved from a notebook from a folder `_docs/notebooks`" + \
               " or you changed the current folder:\n{0}"
         raise IndexError(mes.format(local)) from e
     except ValueError as ee:
@@ -209,13 +217,17 @@ def NbImage(name, repository=None, force_github=False, width=None):
         module = paths[pos - 1]
         if module not in sys.modules:
             if "ensae_teaching_cs" in local:
-                # for some specific modules, we add the location
+                # For some specific modules, we add the location.
                 repository = "https://github.com/sdpython/ensae_teaching_cs/"
             else:
                 raise ImportError(
-                    "the module {0} was not imported, cannot guess the location of the repository".format(module))
+                    "The module {0} was not imported, cannot guess the location of the repository".format(module))
         else:
-            repository = sys.modules[module].__github__
+            modobj = sys.modules[module]
+            if not hasattr(modobj, "__github__"):
+                raise AttributeError(
+                    "The module has no attribute '__github__'. The repository cannot be guessed.")
+            repository = modobj.__github__
         repository = repository.strip("/")
 
     loc = "/".join(["master", "_doc", "notebooks"] + paths[pos + 2:])
