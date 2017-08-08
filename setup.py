@@ -239,6 +239,7 @@ if not r:
             "pycodestyle>=2.0.0",
             "pyflakes",
             "python-dateutil",
+            "releases",
             "requests",
             "simplegeneric",
             "sphinx>=1.6",
