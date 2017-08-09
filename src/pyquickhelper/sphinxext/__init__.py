@@ -9,6 +9,7 @@
 
     Based on `slickgrid <https://github.com/mleibman/SlickGrid/tree/master/examples>`_.
 """
+import warnings
 from .blog_post import BlogPost
 from .blog_post_list import BlogPostList
 from .sphinx_bigger_extension import bigger_node, bigger_role
@@ -74,14 +75,20 @@ def get_default_extensions():
     """
     # We delay these imports.
     # They change matplotlib backend if executed.
-    from matplotlib.pyplot import get_backend
+    from matplotlib.pyplot import get_backend, switch_backend
     backend = get_backend()
     from matplotlib.sphinxext.plot_directive import setup as setup_plot
     from matplotlib.sphinxext.only_directives import setup as setup_only
     backend_ = get_backend()
     if backend_ != backend:
         import matplotlib
-        matplotlib.use(backend)
+        try:
+            with warnings.catch_warnings(record=True):
+                warnings.simplefilter("error", UserWarning)
+                matplotlib.use('Agg')
+        except UserWarning:
+            import matplotlib.pyplot as plt
+            switch_backend("Agg")
 
     default_setups = [setup_blog, setup_runpython, setup_sharenet,
                       setup_todoext, setup_bigger, setup_githublink,
