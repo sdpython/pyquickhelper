@@ -34,8 +34,6 @@ from sphinx.ext.graphviz import setup as setup_graphviz
 from sphinx.ext.imgmath import setup as setup_math
 from sphinx.ext.todo import setup as setup_todo
 
-from matplotlib.sphinxext.plot_directive import setup as setup_plot
-from matplotlib.sphinxext.only_directives import setup as setup_only
 from ..sphinxext.sphinx_autosignature import setup as setup_signature
 from ..sphinxext.sphinx_bigger_extension import setup as setup_bigger
 from ..sphinxext.sphinx_blocref_extension import setup as setup_blocref
@@ -74,6 +72,17 @@ def get_default_extensions():
 
     .. versionadded:: 1.5
     """
+    # We delay these imports.
+    # They change matplotlib backend if executed.
+    from matplotlib.pyplot import get_backend
+    backend = get_backend()
+    from matplotlib.sphinxext.plot_directive import setup as setup_plot
+    from matplotlib.sphinxext.only_directives import setup as setup_only
+    backend_ = get_backend()
+    if backend_ != backend:
+        import matplotlib
+        matplotlib.use(backend)
+
     default_setups = [setup_blog, setup_runpython, setup_sharenet,
                       setup_todoext, setup_bigger, setup_githublink,
                       setup_runpython, setup_mathdef, setup_blocref,
