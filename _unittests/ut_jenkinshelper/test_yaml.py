@@ -176,7 +176,7 @@ class TestYaml(unittest.TestCase):
             SET TIMEOUT=900
 
             @echo AUTOMATEDSETUP
-            set %current%=ROOT\\pyquickhelper\\%NAME_JENKINS%
+            set current=ROOT\\pyquickhelper\\%NAME_JENKINS%
 
             @echo interpreter=C:\\Python36_x64\\python
 
@@ -243,7 +243,7 @@ class TestYaml(unittest.TestCase):
             SET NAME=DOC
 
             @echo AUTOMATEDSETUP
-            set %current%=ROOT\\pyquickhelper\\%NAME_JENKINS%
+            set current=ROOT\\pyquickhelper\\%NAME_JENKINS%
 
             @echo interpreter=C:\\Python36_x64\\python
 
@@ -336,7 +336,7 @@ class TestYaml(unittest.TestCase):
             SET TIMEOUT=900
 
             @echo AUTOMATEDSETUP
-            set %current%=ROOT\\pyquickhelper\\%NAME_JENKINS%
+            set current=ROOT\\pyquickhelper\\%NAME_JENKINS%
 
             @echo interpreter=C:\\Python27_x64\\python
 
