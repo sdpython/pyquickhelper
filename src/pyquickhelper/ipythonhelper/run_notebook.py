@@ -1,6 +1,6 @@
 """
 @file
-@brief Function to run notebooks
+@brief Functions to run notebooks.
 
 .. versionadded:: 1.4
     Split from *notebook_helper.py*.
@@ -78,7 +78,8 @@ def run_notebook(filename, profile_dir=None, working_dir=None, skip_exceptions=F
                  extended_args=None, cache_urls=None, replacements=None,
                  detailed_log=None):
     """
-    run a notebook end to end, it uses module `runipy <https://github.com/paulgb/runipy/>`_
+    Run a notebook end to end,
+    it is inspired from module `runipy <https://github.com/paulgb/runipy/>`_.
 
     @param      filename            notebook filename
     @param      profile_dir         profile directory
@@ -185,7 +186,7 @@ def execute_notebook_list(folder, notebooks, clean_function=None, valid=None, fL
                           log_level="30", extended_args=None, cache_urls=None,
                           replacements=None, detailed_log=None):
     """
-    execute a list of notebooks
+    Executes a list of notebooks.
 
     @param      folder              folder (where to execute the notebook, current folder for the notebook)
     @param      notebooks           list of notebooks to execute (or a list of tuple(notebook, code which initializes the notebook))
@@ -206,7 +207,7 @@ def execute_notebook_list(folder, notebooks, clean_function=None, valid=None, fL
     @param      detailed_log        detailed log
     @return                         dictionary ``{ notebook_file: (isSuccess, statistics, outout) }``
 
-    If *isSucess* is False, *statistics* contains the execution time, *output* is the exception
+    If *isSuccess* is False, *statistics* contains the execution time, *output* is the exception
     raised during the execution.
 
     The signature of function ``valid_cell`` is::
