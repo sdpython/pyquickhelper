@@ -436,7 +436,7 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
             "unable to import conf.py which defines the help generation")
     tocs = add_missing_files(root, theconf, "__INSERT__")
     all_tocs.extend(tocs)
-    
+
     ##############################
     # some checkings on the configuration
     ##############################
@@ -1039,18 +1039,20 @@ def _process_sphinx_in_private_cmd(list_args, fLOG):
 def _check_sphinx_configuration(conf, fLOG):
     """
     Operates some verification on the configuration.
-    
+
     @param  conf        :epkg:`sphinx` configuration
     @param  fLOG        logging function
-    
+
     .. versionadded:: 1.5
     """
     if hasattr(conf, "sphinx_gallery_conf"):
         sphinx_gallery_conf = conf.sphinx_gallery_conf
         if len(sphinx_gallery_conf["examples_dirs"]) != len(sphinx_gallery_conf["gallery_dirs"]):
-            raise ValueError('sphinx_gallery_conf["examples_dirs"] and sphinx_gallery_conf["gallery_dirs"] do not have the same size.')
+            raise ValueError(
+                'sphinx_gallery_conf["examples_dirs"] and sphinx_gallery_conf["gallery_dirs"] do not have the same size.')
         if len(sphinx_gallery_conf["examples_dirs"]) > 0:
-            fLOG("[sphinx-gallery] {0} discovered".format(len(sphinx_gallery_conf["examples_dirs"])))
+            fLOG(
+                "[sphinx-gallery] {0} discovered".format(len(sphinx_gallery_conf["examples_dirs"])))
             for a, b in zip(sphinx_gallery_conf["examples_dirs"],
                             sphinx_gallery_conf["gallery_dirs"]):
                 fLOG("[sphinx-gallery]    src  '{0}'".format(a))

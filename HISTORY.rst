@@ -12,5 +12,4 @@ History
 
 **Features**
 
-* `36`: add support for sphinx-gallery 
-
+* `36`: add support for sphinx-gallery
