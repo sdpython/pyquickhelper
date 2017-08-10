@@ -728,7 +728,7 @@ def get_default_stylesheet():
     .. versionadded:: 1.5
     """
     rel = "_static/" + style_figure_notebook[0]
-    return [Stylesheet(rel, "style_figure_notebook", rel)]
+    return [Stylesheet("stylesheet", "style_figure_notebook", rel)]
 
 
 def get_default_javascript():
