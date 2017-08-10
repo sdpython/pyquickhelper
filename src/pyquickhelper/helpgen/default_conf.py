@@ -728,7 +728,9 @@ def get_default_stylesheet():
     .. versionadded:: 1.5
     """
     rel = "_static/" + style_figure_notebook[0]
-    return [Stylesheet("stylesheet", "style_figure_notebook", rel)]
+    # rel2 = "_static/gallery.css"  # This should not be needed for sphinx-gallery.
+    return [Stylesheet(rel="stylesheet", title="style_figure_notebook", filename=rel)]
+            # Stylesheet(rel="stylesheet", title="sphinx_gallery_missing", filename=rel2)
 
 
 def get_default_javascript():
