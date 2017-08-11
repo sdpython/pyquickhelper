@@ -74,11 +74,11 @@ class TestPaths(unittest.TestCase):
                 History
                 =======
 
-                * :releases:`1.5.???? <2017-??-??>`
+                * :release:`1.5.???? <2017-??-??>`
                 * :bug:`46`: update to Sphinx 1.6
                 * :bug:`54`: fix searchbox for `sphinx_rtd_theme <https://github.com/rtfd/sphinx_rtd_theme>`_
-                * :features:`36`: add support for sphinx-gallery
-                * :releases:`1.4.2 <2016-09-18>`
+                * :feature:`36`: add support for sphinx-gallery
+                * :release:`1.4.2 <2016-09-18>`
                 """.replace("                ", "")
 
         self.assertEqual(content.strip(" \r\n\t"), expect.strip(" \r\n\t"))
