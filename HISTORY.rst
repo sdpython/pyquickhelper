@@ -14,3 +14,7 @@ History
 **Features**
 
 * `36`: add support for sphinx-gallery
+* `53`: handle history, converts the file into something usable by module releases
+
+1.4.2 (2016-09-18)
+==================

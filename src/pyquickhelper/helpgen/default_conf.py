@@ -412,6 +412,7 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
 
     releases_release_uri = "https://pypi.python.org/pypi/{0}/%s".format(
         module_name)
+    releases_document_name = "HISTORY.rst"
 
     # github or git link
     if github_user:

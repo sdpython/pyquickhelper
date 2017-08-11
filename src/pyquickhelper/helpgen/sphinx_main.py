@@ -48,6 +48,7 @@ from .sphinx_helper import post_process_html_nb_output_static_file
 from .install_js_dep import install_javascript_tools
 from .sphinx_main_helper import setup_environment_for_help, get_executables_path, generate_changes_repo
 from .sphinx_main_helper import compile_latex_output_final, replace_placeholder_by_recent_blogpost, enumerate_copy_images_for_slides
+from .sphinx_main_helper import format_history
 from .sphinx_main_verification import verification_html_format
 from .sphinx_main_missing_html_files import add_missing_files
 from .style_css_template import style_figure_notebook
@@ -468,8 +469,18 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
     ####################################
     # modifies the version number in conf.py
     ####################################
-    shutil.copy(os.path.join(root, "README.rst"), root_source)
-    shutil.copy(os.path.join(root, "LICENSE.txt"), root_source)
+    readme = os.path.join(root, "README.rst")
+    if not os.path.exist(readme):
+        raise FileNotFoundError(readme)
+    shutil.copy(readme, root_source)
+    license = os.path.join(root, "LICENSE.txt")
+    if not os.path.exist(license):
+        raise FileNotFoundError(license)
+    shutil.copy(license, root_source)
+    history = os.path.join(root, "HISTORY.rst")
+    if os.path.exist(history):
+        dest = os.path.join(root_source, "HISTORY.rst")
+        format_history(history, dest)
 
     ##########
     # language

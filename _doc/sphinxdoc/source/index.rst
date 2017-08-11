@@ -97,6 +97,7 @@ Index and License
     glossary
     issues_todoextlist
     indexmenu
+    HISTORY
 
 +------------------------+---------------------+---------------------+--------------------+------------------------+------------------------------------------------+
 | :ref:`l-modules`       |  :ref:`l-functions` | :ref:`l-classes`    | :ref:`l-methods`   | :ref:`l-staticmethods` | :ref:`l-properties`                            |
