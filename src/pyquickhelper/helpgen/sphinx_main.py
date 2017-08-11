@@ -470,15 +470,15 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
     # modifies the version number in conf.py
     ####################################
     readme = os.path.join(root, "README.rst")
-    if not os.path.exist(readme):
+    if not os.path.exists(readme):
         raise FileNotFoundError(readme)
     shutil.copy(readme, root_source)
     license = os.path.join(root, "LICENSE.txt")
-    if not os.path.exist(license):
+    if not os.path.exists(license):
         raise FileNotFoundError(license)
     shutil.copy(license, root_source)
     history = os.path.join(root, "HISTORY.rst")
-    if os.path.exist(history):
+    if os.path.exists(history):
         dest = os.path.join(root_source, "HISTORY.rst")
         format_history(history, dest)
 
