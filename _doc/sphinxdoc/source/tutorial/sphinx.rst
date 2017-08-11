@@ -144,6 +144,21 @@ used like this. The last one allows one parameter separated by ``:``.
 
 The last link is broken before the current file is not python
 file but a *rst*. The file extension must be specified.
+For some websites, url and functions do not follow the same rule.
+A function must be used in this case to handle the mapping.
+
+::
+
+    def weird_mapping(input):
+        # The function receives whatever is between `...`.
+        ...
+        return anchor, url
+
+This function must be placed at the end or be the only available option.
+
+::
+
+    epkg_dictionary = { 'weird_site': weird_mapping }
 
 .. _l-runpython-tutorial:
 

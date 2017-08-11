@@ -59,6 +59,17 @@ def epkg_role(role, rawtext, text, lineno, inliner, options=None, content=None):
 
     If the module name starts with a '*', the anchor does not contain it.
     See also :ref:`l-sphinx-epkg`.
+    If no template is found, the role will look into the list of options
+    to see if there is one function. It must be the last one.
+
+    ::
+
+        def my_custom_links(input):
+            return "string to display", "url"
+
+        epkg_dictionary = {'weird_package': ('http://pandas.pydata.org/pandas-docs/stable/generated/',
+                                      ('http://pandas.pydata.org/pandas-docs/stable/generated/{0}.html', 1),
+                                      my_custom_links)
 
     :param role: The role name used in the document.
     :param rawtext: The entire markup snippet, with role.
@@ -111,16 +122,22 @@ def epkg_role(role, rawtext, text, lineno, inliner, options=None, content=None):
         for tu in value:
             if isinstance(tu, tuple) and len(tu) == 2 and tu[1] == expected:
                 found = tu[0]
+        if found is None and callable(value[-1]):
+            found = value[-1]
         if found is None:
             msg = inliner.reporter.error(
                 "Unable to find a tuple with '{0}' parameters in epkg_dictionary['{1}']".format(expected, modname))
             prb = inliner.problematic(rawtext, rawtext, msg)
             return [prb], [msg]
-        url = found.format(*tuple(spl[1:]))
-        if spl[0].startswith("*"):
-            anchor = ".".join(spl[1:])
+
+        if callable(found):
+            anchor, url = found(text)
         else:
-            anchor = ".".join(spl)
+            url = found.format(*tuple(spl[1:]))
+            if spl[0].startswith("*"):
+                anchor = ".".join(spl[1:])
+            else:
+                anchor = ".".join(spl)
 
     extref = "`{0} <{1}>`_".format(anchor, url)
     node = epkg_node(rawtext=rawtext)
