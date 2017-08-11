@@ -260,6 +260,7 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
                   'sphinx.ext.napoleon', 'sphinx.ext.todo', 'sphinx.ext.viewcode',
                   'sphinxcontrib.images', 'sphinxcontrib.imagesvg', 'sphinxcontrib.jsdemo',
                   'IPython.sphinxext.ipython_console_highlighting',
+                  # 'releases',  # commented out due to NotImplementedError: Unknown node: Issue or Release
                   # 'matplotlib.sphinxext.only_directives',
                   # 'matplotlib.sphinxext.mathmpl',
                   # 'matplotlib.sphinxext.only_directives',
@@ -268,7 +269,6 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
                   'jupyter_sphinx.embed_widgets',
                   "nbsphinx",
                   'pyquickhelper.sphinxext.sphinx_rst_builder',
-                  # 'releases',  # This extension must be added at the end.
                   ]
 
     if use_lunrsearch:

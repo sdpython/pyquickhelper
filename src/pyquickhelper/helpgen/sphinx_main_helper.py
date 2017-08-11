@@ -449,7 +449,7 @@ def format_history(src, dest):
             rel = lines[i - 1].rstrip("\r\t\n ")
             if "." in rel:
                 del new_lines[-1]
-                res = "* :releases:`{0}`".format(rel)
+                res = "* :release:`{0}`".format(rel)
                 res = res.replace("(", "<").replace(")", ">")
                 if new_lines[-1].startswith("==="):
                     new_lines.append("")
@@ -462,8 +462,8 @@ def format_history(src, dest):
                 ll = line.lower().strip("*")
                 if ll in ('bug', 'bugfix', 'bugfixes'):
                     tag = "bug"
-                elif ll in ('features', 'features'):
-                    tag = "features"
+                elif ll in ('features', 'feature'):
+                    tag = "feature"
                 elif ll in ('support', 'support'):
                     tag = "support"
                 else:

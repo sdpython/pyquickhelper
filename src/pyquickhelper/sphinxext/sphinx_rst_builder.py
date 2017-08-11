@@ -1071,6 +1071,12 @@ class RstTranslator(TextTranslator):
     def depart_Issue(self, node):
         self.add_text('`')
 
+    def visit_Release(self, node):
+        self.add_text(':Issue:`')
+
+    def depart_Release(self, node):
+        self.add_text('`')
+
     def unknown_visit(self, node):
         raise NotImplementedError(
             "Unknown node: '{0}'".format(node.__class__.__name__))
