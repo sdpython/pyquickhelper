@@ -160,6 +160,13 @@ This function must be placed at the end or be the only available option.
 
     epkg_dictionary = { 'weird_site': weird_mapping }
 
+However, because it is impossible to use a function as a value
+in the configuration because :epkg:`*py:pickle` does not handle
+this scenario (see `PicklingError on environment when config option value is a callable <https://github.com/sphinx-doc/sphinx/issues/1424>`_),
+``my_custom_links`` needs to be replaced by:
+``("module_where_it_is_defined.my_custom_links", None)``.
+The role *epkg* will import it based on its name.
+
 .. _l-runpython-tutorial:
 
 *runpython*: execute a script

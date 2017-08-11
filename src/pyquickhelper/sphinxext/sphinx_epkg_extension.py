@@ -8,6 +8,7 @@
 
 import sphinx
 from docutils import nodes
+from .import_object_helper import import_any_object
 
 
 class epkg_node(nodes.TextElement):
@@ -71,6 +72,13 @@ def epkg_role(role, rawtext, text, lineno, inliner, options=None, content=None):
                                       ('http://pandas.pydata.org/pandas-docs/stable/generated/{0}.html', 1),
                                       my_custom_links)
 
+    However, it is impossible to use a function as a value
+    in the configuration because :epkg:`*py:pickle` does not handle
+    this scenario (see `PicklingError on environment when config option value is a callable <https://github.com/sphinx-doc/sphinx/issues/1424>`_),
+    ``my_custom_links`` needs to be replaced by:
+    ``("module_where_it_is_defined.function_name", None)``.
+    The role *epkg* will import it based on its name.
+
     :param role: The role name used in the document.
     :param rawtext: The entire markup snippet, with role.
     :param text: The text marked with the role.
@@ -122,8 +130,19 @@ def epkg_role(role, rawtext, text, lineno, inliner, options=None, content=None):
         for tu in value:
             if isinstance(tu, tuple) and len(tu) == 2 and tu[1] == expected:
                 found = tu[0]
-        if found is None and callable(value[-1]):
-            found = value[-1]
+        if found is None:
+            if callable(value[-1]):
+                found = value[-1]
+            elif isinstance(value[-1], tuple) and len(value[-1]) == 2 and value[-1][-1] is None:
+                # We assume the first parameter is a name of a function.
+                namef = value[-1][0]
+                if not hasattr(config, namef):
+                    # We assume its name is defined in a package.
+                    found = import_any_object(namef)[0]
+                else:
+                    # Defined in the configuration.
+                    found = getattr(config, namef)
+
         if found is None:
             msg = inliner.reporter.error(
                 "Unable to find a tuple with '{0}' parameters in epkg_dictionary['{1}']".format(expected, modname))
@@ -131,7 +150,14 @@ def epkg_role(role, rawtext, text, lineno, inliner, options=None, content=None):
             return [prb], [msg]
 
         if callable(found):
-            anchor, url = found(text)
+            try:
+                anchor, url = found(text)
+            except TypeError:
+                try:
+                    anchor, url = found()(text)
+                except Exception as e:
+                    raise ValueError(
+                        "eplg accepts function or classes with __call__ overloaded. Found '{0}'".format(found)) from e
         else:
             url = found.format(*tuple(spl[1:]))
             if spl[0].startswith("*"):
