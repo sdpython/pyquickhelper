@@ -274,3 +274,4 @@ src/.vscode/settings.json
 _unittests/ut_sphinxext/contents.memory.html
 _unittests/ut_helpgen/math/*.png
 _unittests/ut_helpgen/math/*.svg
+_doc/sphinxdoc/source/HISTORY.rst

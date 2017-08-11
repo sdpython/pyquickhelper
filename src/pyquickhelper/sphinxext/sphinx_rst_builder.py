@@ -1059,10 +1059,16 @@ class RstTranslator(TextTranslator):
     def depart_bigger_node(self, node):
         self.add_text('`')
 
-    def visit_issue_node(self, node):
+    def visit_issue(self, node):
         self.add_text(':issue:`')
 
-    def depart_issue_node(self, node):
+    def depart_issue(self, node):
+        self.add_text('`')
+
+    def visit_Issue(self, node):
+        self.add_text(':Issue:`')
+
+    def depart_Issue(self, node):
         self.add_text('`')
 
     def unknown_visit(self, node):

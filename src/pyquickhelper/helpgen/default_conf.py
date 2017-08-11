@@ -259,7 +259,7 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
                   'sphinx.ext.mathjax' if use_mathjax else 'sphinx.ext.imgmath',
                   'sphinx.ext.napoleon', 'sphinx.ext.todo', 'sphinx.ext.viewcode',
                   'sphinxcontrib.images', 'sphinxcontrib.imagesvg', 'sphinxcontrib.jsdemo',
-                  'IPython.sphinxext.ipython_console_highlighting', 'releases',
+                  'IPython.sphinxext.ipython_console_highlighting',
                   # 'matplotlib.sphinxext.only_directives',
                   # 'matplotlib.sphinxext.mathmpl',
                   # 'matplotlib.sphinxext.only_directives',
@@ -268,6 +268,7 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
                   'jupyter_sphinx.embed_widgets',
                   "nbsphinx",
                   'pyquickhelper.sphinxext.sphinx_rst_builder',
+                  # 'releases',  # This extension must be added at the end.
                   ]
 
     if use_lunrsearch:
@@ -555,17 +556,20 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
         examples_dirs = []
         gallery_dirs = []
         for res in readmes:
-            nn = res.parent
-            examples_dirs.append(str(nn))
             last = res.parts[-2]
-            if last in ("notebooks", "examples"):
-                last = "gy" + last
             if last.startswith("temp_"):
                 continue
+            parts = last.replace("\\", "/").split("/")
+            if any(filter(lambda x: x.startswith("temp_"), parts)):
+                continue
+            nn = res.parent
+            examples_dirs.append(str(nn))
+            if last in ("notebooks", "examples"):
+                last = "gy" + last
             dest = os.path.join(dirname, last)
             if dest in gallery_dirs:
                 raise ValueError(
-                    "Gallery '{0}' already exists (source: '{1}'.".format(dest, nn))
+                    "Gallery '{0}' already exists (source='{1}', last={2}).".format(dest, nn, last))
             gallery_dirs.append(dest)
         extensions.append('sphinx_gallery.gen_gallery')
         if len(examples_dirs) == 0:

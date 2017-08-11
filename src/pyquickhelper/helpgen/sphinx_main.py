@@ -1059,8 +1059,10 @@ def _check_sphinx_configuration(conf, fLOG):
     if hasattr(conf, "sphinx_gallery_conf"):
         sphinx_gallery_conf = conf.sphinx_gallery_conf
         if len(sphinx_gallery_conf["examples_dirs"]) != len(sphinx_gallery_conf["gallery_dirs"]):
+            add = "\nexamples_dirs={0}\ngallery_dirs={1}".format(
+                sphinx_gallery_conf["examples_dirs"], sphinx_gallery_conf["gallery_dirs"])
             raise ValueError(
-                'sphinx_gallery_conf["examples_dirs"] and sphinx_gallery_conf["gallery_dirs"] do not have the same size.')
+                'sphinx_gallery_conf["examples_dirs"] and sphinx_gallery_conf["gallery_dirs"] do not have the same size.' + add)
         if len(sphinx_gallery_conf["examples_dirs"]) > 0:
             fLOG(
                 "[sphinx-gallery] {0} discovered".format(len(sphinx_gallery_conf["examples_dirs"])))
