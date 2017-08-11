@@ -13,13 +13,19 @@ if sys.version_info[0] == 2:
 
 def add_missing_files(root, conf, blog_list):
     """
-    add missing files for the documentation,
-    ``moduletoc.html``, ``blogtoc.html``, ``searchbox.html``
+    Add missing files for the documentation,
+    ``moduletoc.html``, ``blogtoc.html``, ``searchbox.html``.
 
     @param      root        root
     @param      conf        configuration module (to guess the template folder)
     @param      blog_list   list of recent blog posts to add to the navigational bar (list) or a name for a placeholder (such as ``__INSERT__``)
+    @param      theme       theme, missing files depend on it
     @return                 list of modified files
+
+    .. versionchanged:: 1.5
+        The function considers the theme for the searchbox.
+        `sphinx_rtd_theme <https://github.com/rtfd/sphinx_rtd_theme>`_ has
+        a different style for the searchbox.
     """
     # settings
     fold = conf.templates_path
@@ -106,23 +112,37 @@ def add_missing_files(root, conf, blog_list):
             raise TypeError(type(blog_list))
 
     # searchbox.html
+    theme = conf.theme
     mt = os.path.join(loc, "searchbox.html")
     tocs.append(mt)
     with open(mt, "w", encoding="utf8") as f:
-        text = """
-                {%- if pagename != "search" and builder != "singlehtml" %}
-                <div id="searchbox" style="display: none" role="search">
-                <form class="search" action="{{ pathto('search') }}" method="get">
-                <input type="text" name="q" />
-                <input type="submit" value="{{ _('Go') }}" />
-                <input type="hidden" name="check_keywords" value="yes" />
-                <input type="hidden" name="area" value="default" />
-                </form>
-                <p class="searchtip" style="font-size: 10%"> </p>
-                </div>
-                <script type="text/javascript">$('#searchbox').show(0);</script>
-                {%- endif %}
-                """.replace("                ", "")
+        if theme == "sphinx_rtd_theme":
+            text = """
+                    {%- if builder != 'singlehtml' %}
+                    <div role="search">
+                      <form id="rtd-search-form" class="wy-form" action="{{ pathto('search') }}" method="get">
+                        <input type="text" name="q" placeholder="{{ _('Search docs') }}" />
+                        <input type="hidden" name="check_keywords" value="yes" />
+                        <input type="hidden" name="area" value="default" />
+                      </form>
+                    </div>
+                    {%- endif %}
+                    """.replace("                    ", "")
+        else:
+            text = """
+                    {%- if pagename != "search" and builder != "singlehtml" %}
+                    <div id="searchbox" style="display: none" role="search">
+                    <form class="search" action="{{ pathto('search') }}" method="get">
+                    <input type="text" name="q" />
+                    <input type="submit" value="{{ _('Go') }}" />
+                    <input type="hidden" name="check_keywords" value="yes" />
+                    <input type="hidden" name="area" value="default" />
+                    </form>
+                    <p class="searchtip" style="font-size: 10%"> </p>
+                    </div>
+                    <script type="text/javascript">$('#searchbox').show(0);</script>
+                    {%- endif %}
+                    """.replace("                    ", "")
         f.write(text)
 
         if lunr:
