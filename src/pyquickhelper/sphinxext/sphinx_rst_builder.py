@@ -1059,8 +1059,15 @@ class RstTranslator(TextTranslator):
     def depart_bigger_node(self, node):
         self.add_text('`')
 
+    def visit_issue_node(self, node):
+        self.add_text(':issue:`')
+
+    def depart_issue_node(self, node):
+        self.add_text('`')
+
     def unknown_visit(self, node):
-        raise NotImplementedError('Unknown node: ' + node.__class__.__name__)
+        raise NotImplementedError(
+            "Unknown node: '{0}'".format(node.__class__.__name__))
 
 
 def setup(app):
