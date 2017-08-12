@@ -43,6 +43,7 @@ package_data = {project_var_name + ".sphinxext": ["*.png"],
                 project_var_name + ".ipythonhelper": ["*.png"],
                 project_var_name + ".filehelper": ["*.js", "*.css"],
                 project_var_name + ".helpgen": ["*.js"],
+                project_var_name + ".sphinxext.releases": ["*.txt"],
                 }
 
 ############

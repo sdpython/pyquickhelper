@@ -692,6 +692,7 @@ def custom_setup(app, author):
     from ..sphinxext.sphinx_template_extension import setup as setup_tpl
     from ..sphinxext.sphinx_cmdref_extension import setup as setup_cmdref
     from ..sphinxext.sphinx_epkg_extension import setup as setup_epkg
+    from ..sphinxext.releases import setup as setup_releases
     # from ..sphinxext.sphinx_rst_builder import setup as setup_rst
 
     app.connect("autodoc-skip-member", skip)
@@ -713,6 +714,7 @@ def custom_setup(app, author):
     setup_docassert(app)
     setup_tpl(app)
     setup_epkg(app)
+    setup_releases(app)
     # Already part of the added extensions.
     # setup_rst(app)
 

@@ -308,6 +308,30 @@ class _AdditionalVisitDepart:
         """
         ext_visit_postcontents_node(self, node)
 
+    def visit_Release(self, node):
+        """
+        @see fn visit_Release
+        """
+        pass
+
+    def depart_Release(self, node):
+        """
+        @see fn depart_Release
+        """
+        pass
+
+    def visit_Issue(self, node):
+        """
+        @see fn visit_Issue
+        """
+        pass
+
+    def depart_Issue(self, node):
+        """
+        @see fn depart_Issue
+        """
+        pass
+
     def unknown_visit(self, node):
         raise NotImplementedError("[HTMLTranslatorWithCustomDirectives] Unknown node: '{0}' in '{1}'".format(node.__class__.__name__,
                                                                                                              self.__class__.__name__))
