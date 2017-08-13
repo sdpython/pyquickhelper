@@ -100,7 +100,7 @@ def verification_html_file(item, fLOG=noLOG):
             # no need to go further
             # the source takes place after this substring
             break
-        if ":ref:`" in line:
+        if ":ref:`" in line and ":ref:`{ref_name}`" not in line:
             errors.append((i, "wrong :ref:` in " + line.strip("\n\r ")))
         if ":func:`" in line:
             errors.append((i, "wrong :func:` in " + line.strip("\n\r ")))

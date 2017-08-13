@@ -602,7 +602,9 @@ class BulletListVisitor(nodes.NodeVisitor):
 def generate_changelog(app, doctree):
     # Don't scan/mutate documents that don't match the configured document name
     # (which by default is changelog.rst).
-    if app.env.docname != app.config.releases_document_name:
+    expected = (app.env.docname,
+                app.env.docname + ".rst")
+    if app.config.releases_document_name not in expected:
         return
 
     # Find the first bullet-list node & replace it with our organized/parsed

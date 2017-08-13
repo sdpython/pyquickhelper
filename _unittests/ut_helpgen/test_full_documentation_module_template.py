@@ -185,6 +185,16 @@ class TestSphinxDocFull (unittest.TestCase):
                 if not os.path.exists(r):
                     raise FileNotFoundError(r)
 
+            history = os.path.join(
+                root, "_doc", "sphinxdoc", "build", "html", "HISTORY.html")
+            if not os.path.exists(history):
+                raise FileNotFoundError(history)
+            with open(history, "r", encoding="utf-8") as f:
+                content = f.read()
+
+            if '[<span style="color: #40A056;">Feature</span>]' not in content:
+                raise Exception(content)
+
 
 if __name__ == "__main__":
     unittest.main()
