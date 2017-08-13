@@ -8,6 +8,7 @@
 import sys
 import time
 import os
+from datetime import datetime
 
 from ..loghelper.flog import noLOG
 from .notebook_runner import NotebookRunner
@@ -205,7 +206,7 @@ def execute_notebook_list(folder, notebooks, clean_function=None, valid=None, fL
     @param      cache_urls          list of urls to cache
     @param      replacements        additional replacements
     @param      detailed_log        detailed log
-    @return                         dictionary ``{ notebook_file: (isSuccess, statistics, outout) }``
+    @return                         dictionary of dictionaries ``{ notebook_name: {  } }``
 
     If *isSuccess* is False, *statistics* contains the execution time, *output* is the exception
     raised during the execution.
@@ -234,6 +235,7 @@ def execute_notebook_list(folder, notebooks, clean_function=None, valid=None, fL
 
     .. versionchanged:: 1.5
         Parameter *detailed_log* was added.
+        Changes the results into a list of dictionaries
     """
     if additional_path is None:
         additional_path = []
@@ -261,8 +263,71 @@ def execute_notebook_list(folder, notebooks, clean_function=None, valid=None, fL
                                          detailed_log=detailed_log)
                 if not os.path.exists(outfile):
                     raise FileNotFoundError(outfile)
-                results[note] = (True, stat, out)
+                etime = time.clock() - cl
+                results[note] = dict(success=True, output=out, name=note, etime=time.clock() - cl,
+                                     date=datetime.now())
+                results[note].update(stat)
             except Exception as e:
                 etime = time.clock() - cl
-                results[note] = (False, dict(time=etime), e)
+                results[note] = dict(success=False, time=etime, error=e, name=note,
+                                     date=datetime.now())
     return results
+
+
+def execute_notebook_list_finalize_ut(res, dump=None, fLOG=noLOG):
+    """
+    Checks the list of results and raises an exception if one failed.
+    This is meant to be used in unit tests.
+
+    @param      res     output of @see fn execute_notebook_list
+    @param      dump    if not None, dump the results of the execution in a flat file
+    @param      fLOG    logging function
+
+    The dump relies on :epkg:`pandas` and append the results a previous dump.
+    If *dump* is a module, the function stores the output of the execution in a default
+    location only if the process does not run on :epkg:`travis` or :epkg:`appveyor`.
+
+    .. versionadded:: 1.5
+    """
+    if len(res) > 0:
+        raise Exception("No notebook was run.")
+
+    def fail_note(v):
+        return "error" in v
+    fails = [(os.path.split(k)[-1], v)
+             for k, v in sorted(res.items()) if fail_note(v)]
+    for f in fails:
+        fLOG(f)
+    for k, v in sorted(res.items()):
+        name = os.path.split(k)[-1]
+        fLOG(name, v["success"], v["etime"])
+    if len(fails) > 0:
+        raise fails[0][1]["error"]
+
+    if hasattr(dump, '__file__') and hasattr(dump, '__name__'):
+        # Default value. We check it is none travis or appveyor.
+        from ..pycode import is_travis_or_appveyor
+        if is_travis_or_appveyor():
+            dump = None
+        # We guess the package name.
+        name = dump.__name__.split('.')[-1]
+        loc = os.path.dirname(dump.__file__)
+        fold = os.path.join(loc, "..", "..", "_notebook_dumps")
+        if not os.path.exists(fold):
+            os.mkdir(fold)
+        dump = os.path.join(fold, "notebook.{0}.txt".format(name))
+
+    if dump is not None:
+        import pandas
+        if os.path.exists(dump):
+            df = pandas.read_csv(dump, sep="\t", encoding="utf-8")
+        else:
+            df = None
+
+        new_df = pandas.DataFrame(res.values())
+        if df is None:
+            df = new_df
+        else:
+            df = pandas.concat([df, new_df])
+
+        df.to_csv(dump, sep="\t", encoding="utf-8")
