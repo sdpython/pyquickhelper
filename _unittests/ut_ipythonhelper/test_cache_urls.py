@@ -25,7 +25,7 @@ from src.pyquickhelper.loghelper import fLOG
 from src.pyquickhelper.pycode import get_temp_folder
 from src.pyquickhelper.pycode import is_travis_or_appveyor
 from src.pyquickhelper.ipythonhelper import install_python_kernel_for_unittest
-from src.pyquickhelper.ipythonhelper import execute_notebook_list
+from src.pyquickhelper.ipythonhelper import execute_notebook_list, execute_notebook_list_finalize_ut
 
 
 class TestCacheUrls(unittest.TestCase):
@@ -55,17 +55,8 @@ class TestCacheUrls(unittest.TestCase):
         res = execute_notebook_list(
             temp, keepnote, fLOG=fLOG, valid=None, additional_path=addpaths, kernel_name=kernel_name,
             cache_urls=["https://docs.python.org/3.4/library/urllib.request.html"])
-
-        assert len(res) > 0
-        fails = [(os.path.split(k)[-1], v)
-                 for k, v in sorted(res.items()) if not v[0]]
-        for f in fails:
-            fLOG(f)
-        for k, v in sorted(res.items()):
-            name = os.path.split(k)[-1]
-            fLOG(name, v[0], v[1])
-        if len(fails) > 0:
-            raise fails[0][1][-1]
+        execute_notebook_list_finalize_ut(
+            res, fLOG=fLOG, dump=src.pyquickhelper)
 
 
 if __name__ == "__main__":

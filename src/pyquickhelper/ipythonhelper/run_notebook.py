@@ -289,7 +289,7 @@ def execute_notebook_list_finalize_ut(res, dump=None, fLOG=noLOG):
 
     .. versionadded:: 1.5
     """
-    if len(res) > 0:
+    if len(res) == 0:
         raise Exception("No notebook was run.")
 
     def fail_note(v):
@@ -324,7 +324,7 @@ def execute_notebook_list_finalize_ut(res, dump=None, fLOG=noLOG):
         else:
             df = None
 
-        new_df = pandas.DataFrame(res.values())
+        new_df = pandas.DataFrame(data=list(res.values()))
         if df is None:
             df = new_df
         else:
