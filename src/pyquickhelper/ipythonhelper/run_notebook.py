@@ -309,13 +309,14 @@ def execute_notebook_list_finalize_ut(res, dump=None, fLOG=noLOG):
         from ..pycode import is_travis_or_appveyor
         if is_travis_or_appveyor():
             dump = None
-        # We guess the package name.
-        name = dump.__name__.split('.')[-1]
-        loc = os.path.dirname(dump.__file__)
-        fold = os.path.join(loc, "..", "..", "_notebook_dumps")
-        if not os.path.exists(fold):
-            os.mkdir(fold)
-        dump = os.path.join(fold, "notebook.{0}.txt".format(name))
+        if dump is not None:
+            # We guess the package name.
+            name = dump.__name__.split('.')[-1]
+            loc = os.path.dirname(dump.__file__)
+            fold = os.path.join(loc, "..", "..", "_notebook_dumps")
+            if not os.path.exists(fold):
+                os.mkdir(fold)
+            dump = os.path.join(fold, "notebook.{0}.txt".format(name))
 
     if dump is not None:
         import pandas
