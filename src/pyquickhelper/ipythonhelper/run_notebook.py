@@ -313,7 +313,8 @@ def execute_notebook_list_finalize_ut(res, dump=None, fLOG=noLOG):
             # We guess the package name.
             name = dump.__name__.split('.')[-1]
             loc = os.path.dirname(dump.__file__)
-            fold = os.path.join(loc, "..", "..", "_notebook_dumps")
+            # We choose a path for the dumps in a way
+            fold = os.path.join(loc, "..", "..", "..", "_notebook_dumps")
             if not os.path.exists(fold):
                 os.mkdir(fold)
             dump = os.path.join(fold, "notebook.{0}.txt".format(name))
@@ -326,9 +327,19 @@ def execute_notebook_list_finalize_ut(res, dump=None, fLOG=noLOG):
             df = None
 
         new_df = pandas.DataFrame(data=list(res.values()))
+
+        # We replace every EOL.
+        def eol_replace(t):
+            return t.replace("\r", "").replace("\n", "\\n")
+
+        subdf = new_df.select_dtypes(
+            include=['string', 'object']).apply(eol_replace)
+        for c in subdf.colums:
+            new_df[c] = subdf[c]
+
         if df is None:
             df = new_df
         else:
-            df = pandas.concat([df, new_df])
+            df = pandas.concat([df, new_df]).copy()
 
         df.to_csv(dump, sep="\t", encoding="utf-8")
