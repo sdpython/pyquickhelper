@@ -11,6 +11,7 @@ import os
 from datetime import datetime
 
 from ..loghelper.flog import noLOG
+from ..filehelper import explore_folder
 from .notebook_runner import NotebookRunner
 from .notebook_exception import NotebookException
 from .notebook_helper import writes
@@ -264,7 +265,7 @@ def execute_notebook_list(folder, notebooks, clean_function=None, valid=None, fL
                 if not os.path.exists(outfile):
                     raise FileNotFoundError(outfile)
                 etime = time.clock() - cl
-                results[note] = dict(success=True, output=out, name=note, etime=time.clock() - cl,
+                results[note] = dict(success=True, output=out, name=note, etime=etime,
                                      date=datetime.now())
                 results[note].update(stat)
             except Exception as e:
@@ -272,6 +273,33 @@ def execute_notebook_list(folder, notebooks, clean_function=None, valid=None, fL
                 results[note] = dict(success=False, time=etime, error=e, name=note,
                                      date=datetime.now())
     return results
+
+
+def _get_dump_default_path(dump):
+    """
+    Proposes a default location to dump results about notebooks execution.
+
+    @param      dump        location of the dump or module.
+    @return                 location of the dump
+
+    The result might be equal to the input if *dump* is already path.
+    """
+    if hasattr(dump, '__file__') and hasattr(dump, '__name__'):
+        # Default value. We check it is none travis or appveyor.
+        from ..pycode import is_travis_or_appveyor
+        if is_travis_or_appveyor():
+            dump = None
+        if dump is not None:
+            # We guess the package name.
+            name = dump.__name__.split('.')[-1]
+            loc = os.path.dirname(dump.__file__)
+            # We choose a path for the dumps in a way
+            fold = os.path.join(loc, "..", "..", "..", "_notebook_dumps")
+            if not os.path.exists(fold):
+                os.mkdir(fold)
+            dump = os.path.join(fold, "notebook.{0}.txt".format(name))
+            return dump
+    return dump
 
 
 def execute_notebook_list_finalize_ut(res, dump=None, fLOG=noLOG):
@@ -286,6 +314,13 @@ def execute_notebook_list_finalize_ut(res, dump=None, fLOG=noLOG):
     The dump relies on :epkg:`pandas` and append the results a previous dump.
     If *dump* is a module, the function stores the output of the execution in a default
     location only if the process does not run on :epkg:`travis` or :epkg:`appveyor`.
+    The default location is something like:
+
+    .. runpython::
+
+        from pyquickhelper.ipythonhelper.run_notebook import _get_dump_default_path
+        print(_get_dump_default_path(pyquickhelper))
+
 
     .. versionadded:: 1.5
     """
@@ -304,21 +339,7 @@ def execute_notebook_list_finalize_ut(res, dump=None, fLOG=noLOG):
     if len(fails) > 0:
         raise fails[0][1]["error"]
 
-    if hasattr(dump, '__file__') and hasattr(dump, '__name__'):
-        # Default value. We check it is none travis or appveyor.
-        from ..pycode import is_travis_or_appveyor
-        if is_travis_or_appveyor():
-            dump = None
-        if dump is not None:
-            # We guess the package name.
-            name = dump.__name__.split('.')[-1]
-            loc = os.path.dirname(dump.__file__)
-            # We choose a path for the dumps in a way
-            fold = os.path.join(loc, "..", "..", "..", "_notebook_dumps")
-            if not os.path.exists(fold):
-                os.mkdir(fold)
-            dump = os.path.join(fold, "notebook.{0}.txt".format(name))
-
+    dump = _get_dump_default_path(dump)
     if dump is not None:
         import pandas
         if os.path.exists(dump):
@@ -330,11 +351,11 @@ def execute_notebook_list_finalize_ut(res, dump=None, fLOG=noLOG):
 
         # We replace every EOL.
         def eol_replace(t):
+            print(type(t), t)
             return t.replace("\r", "").replace("\n", "\\n")
 
-        subdf = new_df.select_dtypes(
-            include=['string', 'object']).apply(eol_replace)
-        for c in subdf.colums:
+        subdf = new_df.select_dtypes(include=['object']).applymap(eol_replace)
+        for c in subdf.columns:
             new_df[c] = subdf[c]
 
         if df is None:
@@ -342,4 +363,53 @@ def execute_notebook_list_finalize_ut(res, dump=None, fLOG=noLOG):
         else:
             df = pandas.concat([df, new_df]).copy()
 
-        df.to_csv(dump, sep="\t", encoding="utf-8")
+        df.to_csv(dump, sep="\t", encoding="utf-8", index=False)
+
+
+def notebook_coverage(module_or_path, dump=None):
+    """
+    Extracts a list of notebooks and merges with a list of runs dumped by
+    function @see fn execute_notebook_list_finalize_ut.
+
+    @param      module_or_path      a module or a path
+    @param      dump                dump (or None to get the location by default)
+    @return                         dataframe
+
+    If *module_or_path* is a module, the function will get a list notebooks
+    assuming it follows the same design as :epkg:`pyquickhelper`.
+    """
+    if dump is None:
+        dump = _get_dump_default_path(module_or_path)
+    else:
+        dump = _get_dump_default_path(dump)
+
+    # Create the list of existing notebooks.
+    if hasattr(module_or_path, '__file__') and hasattr(module_or_path, '__name__'):
+        fold = os.path.dirname(module_or_path.__file__)
+        _doc = os.path.join(fold, "..", "..", "_doc")
+        if not os.path.exists(_doc):
+            raise FileNotFoundError(
+                "Unable to find path '{0}' for module '{1}'".format(_doc, module_or_path))
+        nbpath = os.path.join(_doc, "notebooks")
+        if not os.path.exists(nbpath):
+            raise FileNotFoundError(
+                "Unable to find path '{0}' for module '{1}'".format(nbpath, module_or_path))
+    else:
+        nbpath = module_or_path
+
+    nbs = explore_folder(nbpath, ".*[.]ipynb$")[1]
+
+    import pandas
+    dfnb = pandas.DataFrame(data=dict(notebooks=nbs))
+    dfnb["notebooks"] = dfnb["notebooks"].apply(lambda x: os.path.normpath(x))
+    dfnb["last_name"] = dfnb["notebooks"].apply(lambda x: os.path.split(x)[-1])
+
+    # Loads the dump.
+    dfall = pandas.read_csv(dump, sep="\t", encoding="utf-8")
+    dfall["name"] = dfall["name"].apply(lambda x: os.path.normpath(x))
+
+    # We keep the last execution.
+    gr = dfall.sort_values("date", ascending=False).groupby(
+        "name").first().reset_index().copy()
+    merged = dfnb.merge(gr, left_on="notebooks", right_on="name", how="outer")
+    return merged
