@@ -34,7 +34,9 @@ class TestNotebookRunnerReport (unittest.TestCase):
             OutputPrint=__name__ == "__main__")
 
         if is_travis_or_appveyor():
-            pass
+            exp = 0
+        else:
+            exp = 1
 
         this = os.path.abspath(os.path.dirname(__file__))
         dump = os.path.join(this, "data", "dump.notebook.pyquickhelper.txt")
@@ -49,7 +51,7 @@ class TestNotebookRunnerReport (unittest.TestCase):
                 'nbcell', 'nbrun', 'nbvalid', 'success', 'time']
         subcov = cov[cols].copy()
         dropna = subcov.dropna()
-        self.assertEqual(dropna.shape, (1, 9))
+        self.assertEqual(dropna.shape, (exp, 9))
 
 
 if __name__ == "__main__":

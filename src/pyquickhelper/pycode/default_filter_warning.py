@@ -114,6 +114,9 @@ def default_filter_warning(w):
             if "cgi.escape is deprecated, use html.escape instead" in str(w.message):
                 return False
     elif isinstance(w.message, ImportWarning):
-        if w.filename.endswith("_bootstrap_external.py"):
+        if "_bootstrap.py" in w.filename:
+            if "can't resolve package from __spec__" in str(w.message):
+                return False
+        elif w.filename.endswith("_bootstrap_external.py"):
             return False
     return True

@@ -19,7 +19,8 @@ from .post_process import post_process_html_output, post_process_slides_output, 
 from .helpgen_exceptions import NotebookConvertError
 from .install_js_dep import install_javascript_tools
 from .style_css_template import THUMBNAIL_TEMPLATE
-from ..ipythonhelper import read_nb
+from ..ipythonhelper import read_nb, notebook_coverage
+from ..pandashelper import df2rst
 
 
 if sys.version_info[0] == 2:
@@ -796,6 +797,7 @@ def build_notebooks_gallery(nbs, fileout, fLOG=noLOG):
         Add a thumbnail, organize the list of notebook as a gallery.
         The function was renamed into *build_notebooks_gallery*
         (previous name *add_notebook_page*).
+        Add a link on notebook coverage.
     """
     if not isinstance(nbs, list):
         fold = nbs
@@ -805,7 +807,7 @@ def build_notebooks_gallery(nbs, fileout, fLOG=noLOG):
                 "Unable to find notebooks in folder '{0}'.".format(nbs))
         nbs = [(os.path.relpath(n, fold), n) for n in nbs]
 
-    # go through the list of notebooks
+    # Go through the list of notebooks.
     fLOG("[build_notebooks_gallery]", len(nbs), "notebooks")
     hier = set()
     rst = []
@@ -871,13 +873,15 @@ def build_notebooks_gallery(nbs, fileout, fLOG=noLOG):
         rows = ["", ".. _l-notebooks:", "", "", "Notebooks Gallery",
                 "=================", ""]
 
+    rows.extend(["", "", ".. contents::", "    :depth: 1",
+                 "    :local:", "", "", "Gallery", "+++++++", ""])
+
     # produces the final files
     if len(hier) == 0:
         # case where there is no hierarchy
         fLOG("[build_notebooks_gallery] no hierarchy")
         rows.append(".. toctree::")
         rows.append("    :maxdepth: 1")
-        rows.append("")
         for hi, file in rst:
             rs = os.path.splitext(os.path.split(file)[-1])[0]
             fLOG("[build_notebooks_gallery] adding",
@@ -970,6 +974,54 @@ def build_notebooks_gallery(nbs, fileout, fLOG=noLOG):
 
     # done
     rows.append("")
+
+    # links to coverage
+    rows.extend(["", "Coverage", "++++++++", "", ".. toctree::",
+                 "    all_notebooks_coverage", ""])
+
     with open(fileout, "w", encoding="utf8") as f:
         f.write("\n".join(rows))
     return fileout
+
+
+def build_all_notebooks_coverage(nbs, fileout, module_name, fLOG=noLOG):
+    """
+    Creates a rst page (gallery) with links to all notebooks and
+    information about coverage.
+    It relies on function @see fn notebook_coverage.
+
+    @param      nbs             list of notebooks to consider or tuple(full path, rst),
+    @param      fileout         file to create
+    @param      module_name     module name
+    @param      fLOG            logging function
+    @return                     created file name
+    """
+    dump = os.path.normpath(os.path.join(os.path.dirname(fileout), "..", "..", "..", "..",
+                                         "_notebook_dumps", "notebook.{0}.txt".format(module_name)))
+    if not os.path.exists(dump):
+        fLOG(
+            "[notebooks-coverage] No execution report about notebook at '{0}'".format(dump))
+        return
+    report = notebook_coverage(nbs, dump)
+    fLOG("[notebooks-coverage] report shape", report.shape)
+    cols = ['notebooks', 'last_name', 'date', 'etime',
+            'nbcell', 'nbrun', 'nbvalid', 'success', 'time']
+    report = report[cols].copy()
+    report["notebooks"] = report["notebooks"].apply(
+        lambda x: "/".join(os.path.normpath(x).replace("\\", "/").split("/")[-2:]))
+
+    def clean_link(link):
+        return link.replace("_", "").replace(".ipynb", ".rst").replace(".", "")
+
+    report["notebooks"] = report.apply(lambda row: ':ref:`{0} <{1}>`'.format(
+        row["notebooks"], clean_link(row["last_name"])), axis=1)
+    report["link"] = report["last_name"].apply(
+        lambda x: ':ref:`{0}`'.format(clean_link(x)))
+    rows = ["", ".. _l-notebooks-coverage:", "", "", "Notebooks Coverage",
+            "==================", "", "Report on last executions.", ""]
+    text = df2rst(report.sort_values("notebooks"))
+    rows.append(text)
+
+    fLOG("[notebooks-coverage] writing", fileout)
+    with open(fileout, "w", encoding="utf-8") as f:
+        f.write("\n".join(rows))

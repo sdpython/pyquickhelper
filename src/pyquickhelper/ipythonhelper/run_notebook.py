@@ -351,7 +351,6 @@ def execute_notebook_list_finalize_ut(res, dump=None, fLOG=noLOG):
 
         # We replace every EOL.
         def eol_replace(t):
-            print(type(t), t)
             return t.replace("\r", "").replace("\n", "\\n")
 
         subdf = new_df.select_dtypes(include=['object']).applymap(eol_replace)
@@ -384,7 +383,9 @@ def notebook_coverage(module_or_path, dump=None):
         dump = _get_dump_default_path(dump)
 
     # Create the list of existing notebooks.
-    if hasattr(module_or_path, '__file__') and hasattr(module_or_path, '__name__'):
+    if isinstance(module_or_path, list):
+        nbs = [_[1] if isinstance(_, tuple) else _ for _ in module_or_path]
+    elif hasattr(module_or_path, '__file__') and hasattr(module_or_path, '__name__'):
         fold = os.path.dirname(module_or_path.__file__)
         _doc = os.path.join(fold, "..", "..", "_doc")
         if not os.path.exists(_doc):
@@ -394,10 +395,10 @@ def notebook_coverage(module_or_path, dump=None):
         if not os.path.exists(nbpath):
             raise FileNotFoundError(
                 "Unable to find path '{0}' for module '{1}'".format(nbpath, module_or_path))
+        nbs = explore_folder(nbpath, ".*[.]ipynb$")[1]
     else:
         nbpath = module_or_path
-
-    nbs = explore_folder(nbpath, ".*[.]ipynb$")[1]
+        nbs = explore_folder(nbpath, ".*[.]ipynb$")[1]
 
     import pandas
     dfnb = pandas.DataFrame(data=dict(notebooks=nbs))

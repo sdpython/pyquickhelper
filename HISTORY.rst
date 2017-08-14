@@ -16,3 +16,4 @@ History
 * `56`: support function for role epkg
 * `36`: add support for sphinx-gallery
 * `53`: handle history, converts the file into something usable by module releases
+* `52`: add coverage for notebooks

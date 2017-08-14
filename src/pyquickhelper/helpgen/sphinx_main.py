@@ -43,7 +43,7 @@ from ..filehelper.synchelper import explore_folder
 from .utils_sphinx_config import ie_layout_html
 from ..filehelper import synchronize_folder
 from .post_process import post_process_latex_output
-from .process_notebooks import process_notebooks, build_notebooks_gallery
+from .process_notebooks import process_notebooks, build_notebooks_gallery, build_all_notebooks_coverage
 from .sphinx_helper import post_process_html_nb_output_static_file
 from .install_js_dep import install_javascript_tools
 from .sphinx_main_helper import setup_environment_for_help, get_executables_path, generate_changes_repo
@@ -254,6 +254,7 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
         However, you should read blog post
         :ref:`Bug in Sphinx 1.6.2 for custom css <sphinx-162-bug-custom-css>`
         if you have any trouble with custom css.
+        Add a report in ``all_notebooks.rst`` about notebook coverage.
 
     .. todoext::
         :title: add subfolder when building indexes of notebooks
@@ -674,6 +675,8 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
             nbs.sort()
             build_notebooks_gallery(nbs, os.path.join(
                 notebook_doc, "..", "all_notebooks.rst"), fLOG=fLOG)
+            build_all_notebooks_coverage(nbs, os.path.join(
+                notebook_doc, "..", "all_notebooks_coverage.rst"), module_name, fLOG=fLOG)
 
         imgs = [os.path.join(notebook_dir, _)
                 for _ in os.listdir(notebook_dir) if ".png" in _]
