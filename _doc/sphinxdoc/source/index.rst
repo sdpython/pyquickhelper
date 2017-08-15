@@ -40,6 +40,8 @@ pyquickhelper documentation
     :target: https://www.codacy.com/app/sdpython/pyquickhelper?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=sdpython/pyquickhelper&amp;utm_campaign=Badge_Grade
     :alt: Codacy Badge
 
+.. image:: nbcov.png
+
 **Links:** `pypi <https://pypi.python.org/pypi/pyquickhelper/>`_,
 `github <https://github.com/sdpython/pyquickhelper>`_,
 `documentation <http://www.xavierdupre.fr/app/pyquickhelper/helpsphinx/index.html>`_,

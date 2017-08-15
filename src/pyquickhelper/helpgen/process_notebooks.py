@@ -19,7 +19,7 @@ from .post_process import post_process_html_output, post_process_slides_output, 
 from .helpgen_exceptions import NotebookConvertError
 from .install_js_dep import install_javascript_tools
 from .style_css_template import THUMBNAIL_TEMPLATE
-from ..ipythonhelper import read_nb, notebook_coverage
+from ..ipythonhelper import read_nb, notebook_coverage, badge_notebook_coverage
 from ..pandashelper import df2rst
 
 
@@ -167,7 +167,6 @@ def _process_notebooks_in_private(fnbcexe, list_args, options_args):
             if not dest.endswith(".py"):
                 dest += ".py"
             src = list_args[-1]
-            from .. ipythonhelper import read_nb
             nb = read_nb(src)
             code = nb.to_python()
             with open(dest, "w", encoding="utf-8") as f:
@@ -984,7 +983,7 @@ def build_notebooks_gallery(nbs, fileout, fLOG=noLOG):
     return fileout
 
 
-def build_all_notebooks_coverage(nbs, fileout, module_name, fLOG=noLOG):
+def build_all_notebooks_coverage(nbs, fileout, module_name, dump=None, badge=True, fLOG=noLOG):
     """
     Creates a rst page (gallery) with links to all notebooks and
     information about coverage.
@@ -993,24 +992,41 @@ def build_all_notebooks_coverage(nbs, fileout, module_name, fLOG=noLOG):
     @param      nbs             list of notebooks to consider or tuple(full path, rst),
     @param      fileout         file to create
     @param      module_name     module name
+    @param      dump            dump containing information about notebook execution (or None for the default one)
+    @param      badge           builds an image with the notebook coverage
     @param      fLOG            logging function
     @return                     created file name
     """
-    dump = os.path.normpath(os.path.join(os.path.dirname(fileout), "..", "..", "..", "..",
-                                         "_notebook_dumps", "notebook.{0}.txt".format(module_name)))
+    if dump is None:
+        dump = os.path.normpath(os.path.join(os.path.dirname(fileout), "..", "..", "..", "..",
+                                             "_notebook_dumps", "notebook.{0}.txt".format(module_name)))
     if not os.path.exists(dump):
         fLOG(
             "[notebooks-coverage] No execution report about notebook at '{0}'".format(dump))
         return
-    report = notebook_coverage(nbs, dump)
-    fLOG("[notebooks-coverage] report shape", report.shape)
+    report0 = notebook_coverage(nbs, dump)
+    fLOG("[notebooks-coverage] report shape", report0.shape)
+
+    from numpy import isnan
+
+    # Fill nan values.
+    for i in report0.index:
+        nbcell = report0.loc[i, "nbcell"]
+        if isnan(nbcell):
+            # We load the notebook.
+            nbfile = report0.loc[i, "notebooks"]
+            nb = read_nb(nbfile)
+            report0.loc[i, "nbcell"] = len(nb)
+            report0.loc[i, "nbrun"] = 0
+
+    # Add links.
     cols = ['notebooks', 'date', 'etime',
             'nbcell', 'nbrun', 'nbvalid', 'success', 'time']
-    report = report[cols].copy()
+    report = report0[cols].copy()
     report["notebooks"] = report["notebooks"].apply(
         lambda x: "/".join(os.path.normpath(x).replace("\\", "/").split("/")[-2:]))
     report["last_name"] = report["notebooks"].apply(
-        lambda x: os.path.split()[-1])
+        lambda x: os.path.split(x)[-1])
 
     def clean_link(link):
         return link.replace("_", "").replace(".ipynb", ".rst").replace(".", "")
@@ -1021,20 +1037,41 @@ def build_all_notebooks_coverage(nbs, fileout, module_name, fLOG=noLOG):
         lambda x: ':ref:`{0}`'.format(clean_link(x)))
     rows = ["", ".. _l-notebooks-coverage:", "", "", "Notebooks Coverage",
             "==================", "", "Report on last executions.", ""]
-    text = df2rst(report.sort_values("notebooks"), index=True)
-    rows.append(text)
+
+    # Badge
+    if badge:
+        img = os.path.join(os.path.dirname(fileout), "nbcov.png")
+        badge_notebook_coverage(report0, img)
+        badge = ["", ".. image:: nbcov.png", ""]
+    else:
+        badge = []
+    rows.extend(badge)
 
     # Formatting
     report["date"] = report["date"].apply(
-        lambda x: x.strftime("%Y-%m-%d") if isinstance(x, str) else x)
+        lambda x: x.split()[0] if isinstance(x, str) else x)
     report["etime"] = report["etime"].apply(
-        lambda x: "%1.3s" % x if isinstance(x, float) else x)
+        lambda x: "%1.3f" % x if isinstance(x, float) else x)
     report["time"] = report["time"].apply(
-        lambda x: "%1.3s" % x if isinstance(x, float) else x)
+        lambda x: "%1.3f" % x if isinstance(x, float) else x)
+
+    def int2str(x):
+        if isnan(x):
+            return ""
+        else:
+            return int(x)
+
+    report["nbcell"] = report["nbcell"].apply(int2str)
+    report["nbrun"] = report["nbrun"].apply(int2str)
+    report["nbvalid"] = report["nbvalid"].apply(int2str)
     report = report[['notebooks', 'title', 'date', 'success', 'etime',
                      'nbcell', 'nbrun', 'nbvalid', 'time']].copy()
     report.columns = ['name', 'title', 'last execution', 'success', 'time',
                       'nb cells', 'nb runs', 'nb valid', 'exe time']
+
+    # Add results
+    text = df2rst(report.sort_values("name"), index=True)
+    rows.append(text)
 
     fLOG("[notebooks-coverage] writing", fileout)
     with open(fileout, "w", encoding="utf-8") as f:

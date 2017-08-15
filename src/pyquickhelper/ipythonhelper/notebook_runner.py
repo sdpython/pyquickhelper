@@ -621,8 +621,8 @@ class NotebookRunner(object):
 
     def __len__(self):
         """
-        return the number of cells, it iterates on cells
-        to get this information and does cache the information
+        Return the number of cells, it iterates on cells
+        to get this information and does cache the information.
 
         @return         int
 

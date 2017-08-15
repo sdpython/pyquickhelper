@@ -214,11 +214,13 @@ def execute_notebook_list(folder, notebooks, clean_function=None, valid=None, fL
 
     The signature of function ``valid_cell`` is::
 
-        def valid_cell(cell) : return True or False or None to stop execution of the notebook before this cell
+        def valid_cell(cell):
+            return True or False or None to stop execution of the notebook before this cell
 
     The signature of function ``clean_function`` is::
 
-        def clean_function(cell) : return new_cell_content
+        def clean_function(cell):
+            return new_cell_content
 
     The execution of a notebook might fail because it relies on remote data
     specified by url. The function downloads the data first and stores it in
@@ -414,4 +416,31 @@ def notebook_coverage(module_or_path, dump=None):
     gr = dfall.sort_values("date", ascending=False).groupby(
         "name").first().reset_index().copy()
     merged = dfnb.merge(gr, left_on="notebooks", right_on="name", how="outer")
+
+    # We fill missing values if any about the number of cells in a notebook.
+
     return merged
+
+
+def badge_notebook_coverage(df, image_name):
+    """
+    Builds a badge reporting on the notebook coverage.
+    It gives the proportion of run cells.
+
+    @param      df          output of @see fn notebook_coverage
+    @param      image_name  image to produce
+
+    The function relies on module :epkg:`Pillow`.
+    """
+    cell = df["nbcell"].sum()
+    run = df["nbrun"].sum()
+    valid = df["nbvalid"].sum()
+    cov = run * 100.0 / cell if cell > 0 else 1.0
+    val = valid * 100.0 / cell if cell > 0 else 1.0
+    from PIL import Image, ImageFont, ImageDraw
+    img = Image.new(mode='P', size=(70, 20), color=100)
+    im = ImageDraw.Draw(img)
+    font = ImageFont.load_default()
+    im.text((3, 4), "NB:{0}%-{1}%".format(int(cov), int(val)),
+                    (255, 255, 255), font=font)
+    img.save(image_name)
