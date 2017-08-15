@@ -40,17 +40,19 @@ except ImportError:
 from src.pyquickhelper.loghelper import fLOG
 from src.pyquickhelper.pycode import get_temp_folder
 from src.pyquickhelper.ipythonhelper import execute_notebook_list, execute_notebook_list_finalize_ut
-from src.pyquickhelper.pycode import compare_module_version, is_travis_or_appveyor
 from src.pyquickhelper.ipythonhelper import install_python_kernel_for_unittest
 
 
-class TestRunNotebooks(unittest.TestCase):
+class TestSKIPRunNotebooks(unittest.TestCase):
 
-    def test_run_notebook(self):
+    def test_skip_run_notebook(self):
         fLOG(
             __file__,
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
+
+        if is_travis_or_appveyor() == "travis":
+            return
 
         if sys.version_info[0] == 2:
             # notebooks are not converted into python 2.7, so not tested
@@ -59,25 +61,14 @@ class TestRunNotebooks(unittest.TestCase):
         kernel_name = None if is_travis_or_appveyor() is not None else install_python_kernel_for_unittest(
             "pyquickhelper")
 
-        temp = get_temp_folder(__file__, "temp_run_notebooks_pyq")
+        temp = get_temp_folder(__file__, "temp_run_notebooks_pyq_long")
 
         fnb = os.path.normpath(os.path.join(
             os.path.abspath(os.path.dirname(__file__)), "..", "..", "_doc", "notebooks"))
         keepnote = []
         for f in os.listdir(fnb):
             if os.path.splitext(f)[-1] == ".ipynb":
-                if "example_pyquickhelper" in f:
-                    code_init = "form1={'version': 'modified', 'module': 'anything'}"
-                    keepnote.append((os.path.join(fnb, f), code_init))
-                elif "having_a_form" in f:
-                    code_init = "myvar='my value'\nform1={'version': 'modified', 'module': 'anything'}"
-                    code_init += "\ncredential={'password': 'hiddenpassword', 'login': 'admin'}"
-                    code_init += "\nmy_address={'last_name': 'dupre', 'combined': 'xavier dupre', 'first_name': 'xavier'}"
-                    keepnote.append((os.path.join(fnb, f), code_init))
-                elif "javascript" in f:
-                    # We skip due to connectivity issues.
-                    pass
-                else:
+                if "javascript" in f:
                     keepnote.append(os.path.join(fnb, f))
         self.assertTrue(len(keepnote) > 0)
 
