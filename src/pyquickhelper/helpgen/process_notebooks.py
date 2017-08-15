@@ -1068,7 +1068,7 @@ def build_all_notebooks_coverage(nbs, fileout, module_name, dump=None, badge=Tru
     report["coverage"] = report["coverage"].apply(
         lambda x: "{0}%".format(int(x * 100)) if isinstance(x, float) else "")
     report = report[['notebooks', 'title', 'date', 'success', 'etime',
-                     'nbcell', 'nbrun', 'nbvalid', 'time']].copy()
+                     'nbcell', 'nbrun', 'nbvalid', 'time', 'coverage']].copy()
     report.columns = ['name', 'title', 'last execution', 'success', 'time',
                       'nb cells', 'nb runs', 'nb valid', 'exe time', 'coverage']
 
