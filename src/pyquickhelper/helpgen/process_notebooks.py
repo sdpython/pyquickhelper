@@ -1009,6 +1009,8 @@ def build_all_notebooks_coverage(nbs, fileout, module_name, fLOG=noLOG):
     report = report[cols].copy()
     report["notebooks"] = report["notebooks"].apply(
         lambda x: "/".join(os.path.normpath(x).replace("\\", "/").split("/")[-2:]))
+    report["last_name"] = report["notebooks"].apply(
+        lambda x: os.path.split()[-1])
 
     def clean_link(link):
         return link.replace("_", "").replace(".ipynb", ".rst").replace(".", "")
