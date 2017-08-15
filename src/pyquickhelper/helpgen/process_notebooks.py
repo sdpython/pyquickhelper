@@ -1024,12 +1024,12 @@ def build_all_notebooks_coverage(nbs, fileout, module_name, dump=None, badge=Tru
             'nbcell', 'nbrun', 'nbvalid', 'success', 'time']
     report = report0[cols].copy()
     report["notebooks"] = report["notebooks"].apply(
-        lambda x: "/".join(os.path.normpath(x).replace("\\", "/").split("/")[-2:]))
+        lambda x: "/".join(os.path.normpath(x).replace("\\", "/").split("/")[-2:]) if isinstance(x, str) else x)
     report["last_name"] = report["notebooks"].apply(
-        lambda x: os.path.split(x)[-1])
+        lambda x: os.path.split(x)[-1] if isinstance(x, str) else x)
 
     def clean_link(link):
-        return link.replace("_", "").replace(".ipynb", ".rst").replace(".", "")
+        return link.replace("_", "").replace(".ipynb", ".rst").replace(".", "") if isinstance(link, str) else link
 
     report["notebooks"] = report.apply(lambda row: ':ref:`{0} <{1}>`'.format(
         row["notebooks"], clean_link(row["last_name"])), axis=1)
