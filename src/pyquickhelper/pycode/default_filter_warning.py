@@ -119,4 +119,7 @@ def default_filter_warning(w):
                 return False
         elif w.filename.endswith("_bootstrap_external.py"):
             return False
+    elif "MatplotlibDeprecationWarning" in str(type(w.message)):
+        if "basemap" in w.filename:
+            return False
     return True
