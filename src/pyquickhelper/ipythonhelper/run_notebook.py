@@ -270,7 +270,7 @@ def execute_notebook_list(folder, notebooks, clean_function=None, valid=None, fL
                 results[note].update(stat)
             except Exception as e:
                 etime = time.clock() - cl
-                results[note] = dict(success=False, time=etime, error=e, name=note,
+                results[note] = dict(success=False, etime=etime, error=e, name=note,
                                      date=datetime.now())
     return results
 
@@ -335,7 +335,7 @@ def execute_notebook_list_finalize_ut(res, dump=None, fLOG=noLOG):
         fLOG(f)
     for k, v in sorted(res.items()):
         name = os.path.split(k)[-1]
-        fLOG(name, v["success"], v["etime"])
+        fLOG(name, v.get("success", None), v.get("etime", None))
     if len(fails) > 0:
         raise fails[0][1]["error"]
 
