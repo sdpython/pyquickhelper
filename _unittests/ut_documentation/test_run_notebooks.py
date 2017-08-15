@@ -40,7 +40,7 @@ except ImportError:
 from src.pyquickhelper.loghelper import fLOG
 from src.pyquickhelper.pycode import get_temp_folder
 from src.pyquickhelper.ipythonhelper import execute_notebook_list, execute_notebook_list_finalize_ut
-from src.pyquickhelper.pycode import compare_module_version, is_travis_or_appveyor
+from src.pyquickhelper.pycode import is_travis_or_appveyor
 from src.pyquickhelper.ipythonhelper import install_python_kernel_for_unittest
 
 
