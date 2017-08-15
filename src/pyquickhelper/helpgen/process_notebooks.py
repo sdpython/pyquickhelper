@@ -1004,7 +1004,7 @@ def build_all_notebooks_coverage(nbs, fileout, module_name, fLOG=noLOG):
         return
     report = notebook_coverage(nbs, dump)
     fLOG("[notebooks-coverage] report shape", report.shape)
-    cols = ['notebooks', 'last_name', 'date', 'etime',
+    cols = ['notebooks', 'date', 'etime',
             'nbcell', 'nbrun', 'nbvalid', 'success', 'time']
     report = report[cols].copy()
     report["notebooks"] = report["notebooks"].apply(
@@ -1015,12 +1015,24 @@ def build_all_notebooks_coverage(nbs, fileout, module_name, fLOG=noLOG):
 
     report["notebooks"] = report.apply(lambda row: ':ref:`{0} <{1}>`'.format(
         row["notebooks"], clean_link(row["last_name"])), axis=1)
-    report["link"] = report["last_name"].apply(
+    report["title"] = report["last_name"].apply(
         lambda x: ':ref:`{0}`'.format(clean_link(x)))
     rows = ["", ".. _l-notebooks-coverage:", "", "", "Notebooks Coverage",
             "==================", "", "Report on last executions.", ""]
     text = df2rst(report.sort_values("notebooks"), index=True)
     rows.append(text)
+
+    # Formatting
+    report["date"] = report["date"].apply(
+        lambda x: x.strftime("%Y-%m-%d") if isinstance(x, str) else x)
+    report["etime"] = report["etime"].apply(
+        lambda x: "%1.3s" % x if isinstance(x, float) else x)
+    report["time"] = report["time"].apply(
+        lambda x: "%1.3s" % x if isinstance(x, float) else x)
+    report = report[['notebooks', 'title', 'date', 'success', 'etime',
+                     'nbcell', 'nbrun', 'nbvalid', 'time']].copy()
+    report.columns = ['name', 'title', 'last execution', 'success', 'time',
+                      'nb cells', 'nb runs', 'nb valid', 'exe time']
 
     fLOG("[notebooks-coverage] writing", fileout)
     with open(fileout, "w", encoding="utf-8") as f:
