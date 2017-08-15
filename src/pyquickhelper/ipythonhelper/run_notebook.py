@@ -319,6 +319,7 @@ def execute_notebook_list_finalize_ut(res, dump=None, fLOG=noLOG):
     .. runpython::
 
         from pyquickhelper.ipythonhelper.run_notebook import _get_dump_default_path
+        import pyquickhelper
         print(_get_dump_default_path(pyquickhelper))
 
 
