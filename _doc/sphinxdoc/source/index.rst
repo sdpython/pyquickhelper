@@ -41,6 +41,8 @@ pyquickhelper documentation
     :alt: Codacy Badge
 
 .. image:: nbcov.png
+    :target: :ref:`l-notebooks-coverage`
+    :alt: Notebook Coverage
 
 **Links:** `pypi <https://pypi.python.org/pypi/pyquickhelper/>`_,
 `github <https://github.com/sdpython/pyquickhelper>`_,

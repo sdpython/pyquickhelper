@@ -42,6 +42,10 @@ README
     :target: https://www.codacy.com/app/sdpython/pyquickhelper?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=sdpython/pyquickhelper&amp;utm_campaign=Badge_Grade
     :alt: Codacy Badge
 
+.. image:: http://www.xavierdupre.fr/app/pyquickhelper/helpsphinx/nbcov.png
+    :target: http://www.xavierdupre.fr/app/pyquickhelper/helpsphinx/all_notebooks_coverage.html
+    :alt: Notebook Coverage
+
 **Links:**
 
 * `GitHub/pyquickhelper <https://github.com/sdpython/pyquickhelper>`_

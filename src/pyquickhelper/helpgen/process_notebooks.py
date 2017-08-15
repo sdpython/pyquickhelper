@@ -1061,13 +1061,16 @@ def build_all_notebooks_coverage(nbs, fileout, module_name, dump=None, badge=Tru
         else:
             return int(x)
 
+    report["coverage"] = report["nbrun"] / report["nbcell"]
     report["nbcell"] = report["nbcell"].apply(int2str)
     report["nbrun"] = report["nbrun"].apply(int2str)
     report["nbvalid"] = report["nbvalid"].apply(int2str)
+    report["coverage"] = report["coverage"].apply(
+        lambda x: "{0}%".format(int(x * 100)) if isinstance(x, float) else "")
     report = report[['notebooks', 'title', 'date', 'success', 'etime',
                      'nbcell', 'nbrun', 'nbvalid', 'time']].copy()
     report.columns = ['name', 'title', 'last execution', 'success', 'time',
-                      'nb cells', 'nb runs', 'nb valid', 'exe time']
+                      'nb cells', 'nb runs', 'nb valid', 'exe time', 'coverage']
 
     # Add results
     text = df2rst(report.sort_values("name"), index=True)
