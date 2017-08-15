@@ -1019,7 +1019,7 @@ def build_all_notebooks_coverage(nbs, fileout, module_name, fLOG=noLOG):
         lambda x: ':ref:`{0}`'.format(clean_link(x)))
     rows = ["", ".. _l-notebooks-coverage:", "", "", "Notebooks Coverage",
             "==================", "", "Report on last executions.", ""]
-    text = df2rst(report.sort_values("notebooks"))
+    text = df2rst(report.sort_values("notebooks"), index=True)
     rows.append(text)
 
     fLOG("[notebooks-coverage] writing", fileout)
