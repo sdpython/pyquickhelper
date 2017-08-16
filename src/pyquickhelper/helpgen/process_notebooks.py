@@ -975,7 +975,8 @@ def build_notebooks_gallery(nbs, fileout, fLOG=noLOG):
     rows.append("")
 
     # links to coverage
-    rows.extend(["", "Coverage", "++++++++", "", ".. toctree::",
+    rows.extend(["", ".. raw:: html", "", "    <hr/>", "",
+                 "Coverage", "++++++++", "", ".. toctree::",
                  "    all_notebooks_coverage", ""])
 
     with open(fileout, "w", encoding="utf8") as f:

@@ -272,7 +272,7 @@ Graphviz needs to be installed. Here is the list of required tools:
 
 * `Python 64 bit <https://www.python.org/downloads/>`_
 * :epkg:`7z`
-* :epkg:`MiKTex`
+* :epkg:`MiKTeX`
 * :epkg:`Jenkins` (+ `GitHub <https://wiki.jenkins-ci.org/display/JENKINS/GitHub+Plugin>`_,
   `git <https://wiki.jenkins-ci.org/display/JENKINS/Git+Plugin>`_,
   `python <https://wiki.jenkins-ci.org/display/JENKINS/Python+Plugin>`_,

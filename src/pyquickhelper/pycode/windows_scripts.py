@@ -409,7 +409,8 @@ set path=%path%;%pythonexe%;%pythonexe%\\Scripts
 @echo ~CALL jupyter-notebook --notebook-dir=_doc\\notebooks
 set PYTHONPATH=%PYTHONPATH%;%current%\\src__ADDITIONAL_LOCAL_PATH__
 @echo ~SET PYTHONPATH=%PYTHONPATH%;%current%\\src__ADDITIONAL_LOCAL_PATH__
-jupyter-notebook --notebook-dir=_doc\\notebooks
+@echo on
+jupyter-notebook --notebook-dir=_doc\\notebooks --NotebookApp.token= --NotebookApp.password=
 """.replace("PY??", _sversion())
 
 #################
