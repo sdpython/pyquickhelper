@@ -1074,7 +1074,8 @@ def build_all_notebooks_coverage(nbs, fileout, module_name, dump=None, badge=Tru
                       'nb cells', 'nb runs', 'nb valid', 'exe time', 'coverage']
 
     # Add results
-    text = df2rst(report.sort_values("name"), index=True)
+    text = df2rst(report.sort_values("name"), index=True,
+                  column_size=[2, 5, 5, 3, 2, 2, 2, 2, 2, 2, 2])
     rows.append(text)
 
     fLOG("[notebooks-coverage] writing", fileout)

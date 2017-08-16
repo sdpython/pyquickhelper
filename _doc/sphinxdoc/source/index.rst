@@ -42,7 +42,7 @@ pyquickhelper documentation
 
 .. image:: nbcov.png
     :target: http://www.xavierdupre.fr/app/pyquickhelper/helpsphinx/all_notebooks_coverage.html
-    :alt: Notebook Coverage    
+    :alt: Notebook Coverage
 
 **Links:** `pypi <https://pypi.python.org/pypi/pyquickhelper/>`_,
 `github <https://github.com/sdpython/pyquickhelper>`_,
