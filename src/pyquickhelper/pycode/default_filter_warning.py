@@ -110,7 +110,7 @@ def default_filter_warning(w):
         elif "sphinx" in w.filename:
             if "sphinx.util.compat.Directive is deprecated and will be removed" in str(w.message):
                 return False
-        elif "\markdown_mistune.py" in w.filename:
+        elif "markdown_mistune.py" in w.filename:
             if "cgi.escape is deprecated, use html.escape instead" in str(w.message):
                 return False
     elif isinstance(w.message, ImportWarning):
