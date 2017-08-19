@@ -38,7 +38,7 @@ class TestDownload (unittest.TestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
         fold = get_temp_folder(__file__, "temp_download")
-        url = "https://docs.python.org/3.5/library/ftplib.html"
+        url = "https://docs.python.org/3/library/ftplib.html"
         f = download(url, fold)
         fLOG(f)
         self.assertTrue(os.path.exists(f))
@@ -55,7 +55,7 @@ class TestDownload (unittest.TestCase):
         fLOG(r)
         self.assertTrue(os.path.exists(out))
 
-        if is_travis_or_appveyor() is None:
+        if is_travis_or_appveyor() in ("circleci", None):
             out7 = os.path.join(fold, "try.7z")
             r = zip7_files(out7, [f, out], fLOG=fLOG, temp_folder=fold)
             fLOG(r)

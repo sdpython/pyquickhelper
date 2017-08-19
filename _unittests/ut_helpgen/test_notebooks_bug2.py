@@ -47,7 +47,9 @@ class TestNoteBooksBug2(unittest.TestCase):
         nbs = [os.path.join(fold, _)
                for _ in os.listdir(fold) if ".ipynb" in _]
         formats = ["present", "ipynb", "html",
-                   "python", "rst", "pdf", "docx"]
+                   "python", "rst", "pdf"]
+        if sys.platform.startswith("win"):
+            formats.append("docx")
 
         temp = get_temp_folder(__file__, "temp_nb_bug2")
 

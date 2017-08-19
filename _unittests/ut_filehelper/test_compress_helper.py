@@ -187,7 +187,7 @@ class TestCompressHelper(unittest.TestCase):
 
         fold = get_temp_folder(__file__, "temp_compress_rar")
         rz = os.path.join(fold, "..", "data", "rar5-blake.rar")
-        res = unrar_files(rz, where_to=fold)
+        res = unrar_files(rz, where_to=fold, fLOG=fLOG)
         self.assertTrue(isinstance(res, list))
         self.assertEqual(len(res), 2)
         if not isinstance(res[0], (typbytes, str)):

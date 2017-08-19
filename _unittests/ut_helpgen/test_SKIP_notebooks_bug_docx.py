@@ -23,7 +23,6 @@ except ImportError:
 
 from src.pyquickhelper.loghelper import fLOG
 from src.pyquickhelper.helpgen import process_notebooks
-from src.pyquickhelper.pycode import is_travis_or_appveyor
 
 
 class TestNoteBooksBugDocx(unittest.TestCase):
@@ -37,7 +36,9 @@ class TestNoteBooksBugDocx(unittest.TestCase):
         fold = os.path.normpath(os.path.join(path, "notebooks_docx"))
         nbs = [os.path.join(fold, _)
                for _ in os.listdir(fold) if ".ipynb" in _]
-        formats = ["ipynb", "html", "python", "rst", "pdf", "docx"]
+        formats = ["ipynb", "html", "python", "rst", "pdf"]
+        if sys.platform.startswith("win"):
+            formats.append("docx")
 
         temp = os.path.join(path, "temp_nb_bug_docx")
         if not os.path.exists(temp):
@@ -45,9 +46,9 @@ class TestNoteBooksBugDocx(unittest.TestCase):
         for file in os.listdir(temp):
             os.remove(os.path.join(temp, file))
 
-        if is_travis_or_appveyor() is not None:
+        if sys.platform.startswith("win"):
             warnings.warn(
-                "travis, appveyor, unable to test TestNoteBooksBugDocx.test_notebook_docx")
+                "linux, unable to test TestNoteBooksBugDocx.test_notebook_docx")
             return
         if sys.version_info[0] == 2:
             warnings.warn(

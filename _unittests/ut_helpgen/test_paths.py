@@ -37,12 +37,15 @@ class TestPaths(unittest.TestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
-        if is_travis_or_appveyor():
+        if is_travis_or_appveyor() not in ("circleci", None):
             return
         exe = find_in_PATH("Microsoft")
-        assert exe is not None
+        if sys.platform.startswith("win"):
+            self.assertTrue(exe is not None)
+        else:
+            self.assertTrue(exe is None)
         dot = find_graphviz_dot()
-        assert "dot" in dot
+        self.assertTrue("dot" in dot)
         pandoc = find_pandoc_path()
         if "pandoc" not in pandoc.lower():
             raise Exception(pandoc)

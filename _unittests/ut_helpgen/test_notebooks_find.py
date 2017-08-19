@@ -97,7 +97,9 @@ class TestNoteBooksFind(unittest.TestCase):
         nbs = [os.path.join(fold, _)
                for _ in os.listdir(fold) if ".ipynb" in _]
         formats = ["slides", "rst", "present", "ipynb", "html",
-                   "python", "pdf", "docx"]
+                   "python", "pdf"]
+        if sys.platform.startswith("win"):
+            formats.append("docx")
 
         temp = get_temp_folder(__file__, "temp_nb_find")
 

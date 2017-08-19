@@ -47,7 +47,9 @@ class TestNoteBooksBugRaw(unittest.TestCase):
                for _ in os.listdir(fold) if "TD_2A" in _]
         assert len(nbs) > 0
         formats = ["latex", "present", "ipynb", "html",
-                   "python", "rst", "pdf", "docx"][:1]
+                   "python", "rst", "pdf"]
+        if sys.platform.startswith("win"):
+            formats.append("docx")
 
         temp = get_temp_folder(__file__, "temp_nb_bug_raw")
 
