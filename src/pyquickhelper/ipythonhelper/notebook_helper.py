@@ -82,8 +82,12 @@ def upgrade_notebook(filename, encoding="utf8"):
     try:
         nb = reads(content)
     except NotJSONError as e:
+        if len(content) > 10:
+            lc = list(content[:10])
+        else:
+            lc = list(content)
         raise ValueError(
-            "Unable to read content type '{0}'----\n{1}".format(type(content), content)) from e
+            "Unable to read content type '{0}' ---- {1}".format(type(content), lc)) from e
 
     if not hasattr(nb, "nbformat") or nb.nbformat >= 4:
         return False
