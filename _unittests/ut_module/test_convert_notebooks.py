@@ -48,6 +48,8 @@ class TestConvertNotebooks(unittest.TestCase):
 
         fold2 = os.path.normpath(os.path.join(fold, "..", "..", "_unittests"))
         for nbf in explore_folder_iterfile(fold2, pattern=".*[.]ipynb"):
+            if "temp_" in nbf:
+                continue
             fLOG(nbf)
             with open(nbf, "r", encoding="utf-8") as f:
                 content = f.read()
