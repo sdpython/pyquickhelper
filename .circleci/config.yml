@@ -30,7 +30,7 @@ jobs:
           name: run tests
           command: |
             . venv/bin/activate
-            python setup.py unittest
+            python setup.py unittests
 
       - store_artifacts:
           path: test-reports
