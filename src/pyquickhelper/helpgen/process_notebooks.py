@@ -460,8 +460,15 @@ def _process_notebooks_in(notebooks, outfold, build, latex_path=None, pandoc_pat
                             "CMD:\n{0}\n[nberror]\n{1}\nOUT:\n{2}".format(c, err, out))
                     f = os.path.join(build, nbout + ".pdf")
                     if not os.path.exists(f):
-                        raise HelpGenException(
-                            "missing file: {0}\nOUT:\n{2}\n[nberror]\n{1}".format(f, err, out))
+                        # On Linux the parameter --output-directory is sometimes ignored.
+                        # We check again.
+                        loc = os.path.split(f)[-1]
+                        if os.path.exists(loc):
+                            # We move the file.
+                            shutil.move(loc, f)
+                        if not os.path.exists(f):
+                            raise HelpGenException(
+                                "missing file: '{0}'\nOUT:\n{2}\n[nberror]\n{1}\n-----".format(f, err, out))
                     thisfiles.append(f)
                 else:
                     fLOG("unable to find latex in", latex_path)

@@ -22,6 +22,7 @@ jobs:
           name: Install tex
           command: |
                     sudo apt-get install -y texlive
+                    sudo apt-get install -y texlive-latex-extra
           
       - run:
           name: Install 7z

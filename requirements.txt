@@ -1,4 +1,5 @@
 autopep8
+bokeh
 coverage
 docformatter
 ipython
@@ -8,6 +9,7 @@ jyquickhelper
 keyring
 mako
 matplotlib
+mistune
 nbconvert
 nbformat
 nbpresent
