@@ -38,7 +38,6 @@ class TestCompressHelper(unittest.TestCase):
             __file__,
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
-        # fold = get_temp_folder(__file__, "temp_compress_helper")
 
         if sys.version_info[0] == 2:
             typbytes = bytearray
@@ -111,7 +110,7 @@ class TestCompressHelper(unittest.TestCase):
 
         if is_travis_or_appveyor() == "appveyor":
             warnings.warn(
-                "unzipping files with 7z on a is not tested on appveyor")
+                "unzipping files with 7z is not tested on appveyor")
             return
 
         fold = get_temp_folder(__file__, "temp_uncompress_7zip")
@@ -125,10 +124,10 @@ class TestCompressHelper(unittest.TestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
         fold = get_temp_folder(__file__, "temp_compress_7zip")
-        url = "https://docs.python.org/3.5/library/ftplib.html"
+        url = "https://docs.python.org/3/library/ftplib.html"
         f = download(url, fold)
 
-        if is_travis_or_appveyor() != "travis":
+        if is_travis_or_appveyor() == "appveyor":
             out7 = os.path.join(fold, "try.7z")
             r = zip7_files(out7, [f], fLOG=fLOG, temp_folder=fold)
             fLOG(r)
@@ -136,7 +135,7 @@ class TestCompressHelper(unittest.TestCase):
                 raise FileNotFoundError(out7)
         else:
             warnings.warn(
-                "unzipping files with 7z on a is not tested on appveyor")
+                "unzipping files with 7z on a is not tested on linux")
             return
 
         if sys.version_info[0] == 2:
@@ -175,7 +174,6 @@ class TestCompressHelper(unittest.TestCase):
             __file__,
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
-        # fold = get_temp_folder(__file__, "temp_compress_helper")
 
         if is_travis_or_appveyor():
             warnings.warn(
