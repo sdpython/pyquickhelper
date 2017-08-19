@@ -45,13 +45,14 @@ class TestPaths(unittest.TestCase):
         else:
             self.assertTrue(exe is None)
         dot = find_graphviz_dot()
-        self.assertTrue("dot" in dot)
+        if "dot" not in dot:
+            raise Exception('{0}'.format(dot))
         pandoc = find_pandoc_path()
         if "pandoc" not in pandoc.lower():
-            raise Exception(pandoc)
+            raise Exception('{0}'.format(pandoc))
         latex = find_latex_path()
         if "latex" not in latex and "miktex" not in latex:
-            raise Exception(latex)
+            raise Exception('{0}'.format(latex))
 
 
 if __name__ == "__main__":
