@@ -27,7 +27,11 @@ def default_filter_warning(w):
         Parameter *filter_warning* was added to give users
         a way to define their own filtering.
     """
-    if isinstance(w.message, DeprecationWarning):
+    if isinstance(w.message, RuntimeWarning):
+        if "_bootstrap.py" in w.filename:
+            if "numpy.dtype size changed" in str(w.message):
+                return False
+    elif isinstance(w.message, DeprecationWarning):
         if w.filename.endswith("kernelspec.py"):
             return False
         if "jupyter_client" in w.filename:

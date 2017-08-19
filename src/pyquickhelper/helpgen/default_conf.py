@@ -281,9 +281,12 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
 
     if not use_mathjax:
         imgmath_latex = find_latex_path()
-        imgmath_dvipng = os.path.join(imgmath_latex, "dvipng.exe")
-        if not os.path.exists(imgmath_dvipng):
-            raise FileNotFoundError(imgmath_dvipng)
+        if sys.platform.startswith("win"):
+            imgmath_dvipng = os.path.join(imgmath_latex, "dvipng.exe")
+            if not os.path.exists(imgmath_dvipng):
+                raise FileNotFoundError(imgmath_dvipng)
+        else:
+            imgmath_dvipng = os.path.join(imgmath_latex, "dvipng")
         env_path = os.environ.get("PATH", "")
         if imgmath_latex not in env_path:
             if len(env_path) > 0:
