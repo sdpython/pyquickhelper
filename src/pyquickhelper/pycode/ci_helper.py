@@ -16,6 +16,9 @@ def is_travis_or_appveyor():
     ``CI``, ``TRAVIS``, ``APPVEYOR``.
 
     .. versionadded:: 1.3
+
+    .. versionchanged:: 1.5
+        Takes into account *circleci*.
     """
     import sys
     if "travis" in sys.executable:
@@ -24,4 +27,6 @@ def is_travis_or_appveyor():
     if os.environ.get("USERNAME", os.environ.get("USER", None)) == "appveyor" or \
        os.environ.get("APPVEYOR", "").lower() in ("true", "1"):
         return "appveyor"
+    if os.environ.get('CIRCLECI', "undefined") != "undefined":
+        return "circleci"
     return None
