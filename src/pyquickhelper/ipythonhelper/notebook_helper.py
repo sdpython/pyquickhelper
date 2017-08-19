@@ -11,7 +11,7 @@ import sys
 import json
 import warnings
 from nbformat import versions
-from nbformat.reader import reads
+from nbformat.reader import reads, NotJSONError
 from nbformat.v4 import upgrade
 from ..filehelper import read_content_ufs
 from ..loghelper import noLOG
@@ -79,7 +79,11 @@ def upgrade_notebook(filename, encoding="utf8"):
     with open(filename, "r", encoding=encoding) as payload:
         content = payload.read()
 
-    nb = reads(content)
+    try:
+        nb = reads(content)
+    except NotJSONError as e:
+        raise ValueError(
+            "Unable to read content type '{0}'----\n{1}".format(type(content), content)) from e
 
     if not hasattr(nb, "nbformat") or nb.nbformat >= 4:
         return False

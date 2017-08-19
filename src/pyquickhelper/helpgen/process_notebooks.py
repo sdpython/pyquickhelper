@@ -427,7 +427,7 @@ def _process_notebooks_in(notebooks, outfold, build, latex_path=None, pandoc_pat
 
             if compilation:
                 # compilation latex
-                if os.path.exists(latex_path):
+                if not sys.platform.startswith("win") or os.path.exists(latex_path):
                     if sys.platform.startswith("win"):
                         lat = os.path.join(latex_path, "pdflatex.exe")
                     else:
