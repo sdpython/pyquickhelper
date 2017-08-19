@@ -66,7 +66,7 @@ def writes(nb, **kwargs):
             "probably wrong error: {0}".format(nb.nbformat)) from e
 
 
-def upgrade_notebook(filename, encoding="utf8"):
+def upgrade_notebook(filename, encoding="utf-8"):
     """
     Converts a notebook from version 2 to latest.
 
