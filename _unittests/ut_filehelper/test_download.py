@@ -41,19 +41,19 @@ class TestDownload (unittest.TestCase):
         url = "https://docs.python.org/3.5/library/ftplib.html"
         f = download(url, fold)
         fLOG(f)
-        assert os.path.exists(f)
+        self.assertTrue(os.path.exists(f))
         if not f.endswith("ftplib.html"):
             raise Exception(f)
 
         out = os.path.join(fold, "try.html.gz")
         r = gzip_files(out, [f], fLOG=fLOG)
         fLOG(r)
-        assert os.path.exists(out)
+        self.assertTrue(os.path.exists(out))
 
         out = os.path.join(fold, "try.zip")
         r = zip_files(out, [f], fLOG=fLOG)
         fLOG(r)
-        assert os.path.exists(out)
+        self.assertTrue(os.path.exists(out))
 
         if is_travis_or_appveyor() is None:
             out7 = os.path.join(fold, "try.7z")
@@ -79,9 +79,9 @@ class TestDownload (unittest.TestCase):
 
         url = "https://raw.githubusercontent.com/sdpython/pyquickhelper/master/src/pyquickhelper/ipythonhelper/magic_parser.py"
         content = read_url(url, encoding="utf8")
-        assert "MagicCommandParser" in content
-        assert isinstance(content, str  # unicode#
-                          )
+        self.assertTrue("MagicCommandParser" in content)
+        self.assertTrue(isinstance(content, str  # unicode#
+                                   ))
 
 
 if __name__ == "__main__":

@@ -783,9 +783,12 @@ def removedirs(folder, silent=False, use_command_line=False):
     the command line
     """
     if use_command_line:
-        out, err = run_cmd("rmdir /s /q " + folder, wait=True)
+        if sys.platform.startswith("win"):
+            out, err = run_cmd("rmdir /s /q " + folder, wait=True)
+        else:
+            out, err = run_cmd("rm -Rf " + folder, wait=True)
         if len(err) > 0:
-            raise Exception("unable to remove " + folder + "\n" + err)
+            raise Exception("Unable to remove '{0}'\n{1}".format(folder, err))
         return out
     else:
         file, rep = [], []
@@ -803,8 +806,8 @@ def removedirs(folder, silent=False, use_command_line=False):
                     os.remove(f)
             except Exception as e:
                 typstr = str  # unicode#
-                fLOG("unable to remove file", f,
-                     " --- ", typstr(e).replace("\n", " "))
+                fLOG(
+                    "Unable to remove file '{0}' --- {1}".format(f, typstr(e).replace("\n", " ")))
                 if silent:
                     impos.append(f)
                 else:
@@ -815,8 +818,8 @@ def removedirs(folder, silent=False, use_command_line=False):
                     os.removedirs(f)
             except Exception as e:
                 typstr = str  # unicode#
-                fLOG("unable to remove folder", f,
-                     " --- ", typstr(e).replace("\n", " "))
+                fLOG(
+                    "Unable to remove folder '{0}' --- {1}".format(f, typstr(e).replace("\n", " ")))
                 if silent:
                     impos.append(f)
                 else:

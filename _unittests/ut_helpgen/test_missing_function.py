@@ -24,7 +24,6 @@ except ImportError:
 
 from src.pyquickhelper.loghelper.flog import fLOG
 from src.pyquickhelper.helpgen.utils_sphinx_config import ie_layout_html, NbImage, fix_ie_layout_html
-from src.pyquickhelper.pycode import is_travis_or_appveyor
 from src.pyquickhelper.helpgen.post_process import remove_character_under32
 
 
@@ -36,18 +35,10 @@ class TestMissingFunction(unittest.TestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
-        if is_travis_or_appveyor() == "travis" or "anaconda" in sys.executable.lower() or sys.version_info[0] == 2 \
-           or "yquickhelper_condavir" in sys.executable:
-            if sys.version_info[0] == 2:
-                warnings.warn(
-                    "skipping on travis and with anaconda or python 2.7: " + sys.executable)
-            else:
-                warnings.warn(
-                    "skipping on travis and with anaconda: " + sys.executable)
+        if not sys.platform.startswith("win"):
             return
 
         if not ie_layout_html():
-            fLOG("updating layout.html")
             r = fix_ie_layout_html()
             self.assertTrue(r)
 

@@ -55,20 +55,20 @@ class TestGit(unittest.TestCase):
         out, err = clone(to, "github.com", "sdpython", "pyquickhelper")
         fLOG("OUT:", out)
         fLOG("ERR:", err)
-        assert "Cloning into" in err
-        assert os.path.exists(
+        self.assertTrue("Cloning into" in err)
+        self.assertTrue(os.path.exists(
             os.path.join(
                 to,
                 "src",
                 "pyquickhelper",
-                "__init__.py"))
+                "__init__.py")))
 
         out, err = rebase(to, "github.com", "sdpython", "pyquickhelper")
         fLOG("OUT:", out)
         fLOG("ERR:", err)
 
         r = change_file_status(temp)
-        assert len(r) > 0
+        self.assertTrue(len(r) > 0)
 
 
 if __name__ == "__main__":

@@ -24,6 +24,7 @@ except ImportError:
 from src.pyquickhelper.loghelper import fLOG
 from src.pyquickhelper.filehelper import TransferFTP
 from src.pyquickhelper.pycode import is_travis_or_appveyor
+from src.pyquickhelper.loghelper.os_helper import get_machine
 
 
 class TestTransferFTPTrue(unittest.TestCase):
@@ -39,8 +40,7 @@ class TestTransferFTPTrue(unittest.TestCase):
                 "No testing transfer FTP on Pyghon 2.7 (issue with str and bytes)")
             return
         import keyring
-        machine = os.environ.get(
-            "COMPUTERNAME", os.environ.get("HOSTNAME", "CI"))
+        machine = get_machine()
         try:
             user = keyring.get_password("web", machine + "user")
             pwd = keyring.get_password("web", machine + "pwd")
@@ -57,7 +57,7 @@ class TestTransferFTPTrue(unittest.TestCase):
         web = TransferFTP("ftp.xavierdupre.fr", user, pwd, fLOG=fLOG)
         r = web.ls(".")
         fLOG(r)
-        assert isinstance(r, list)
+        self.assertTrue(isinstance(r, list))
 
 
 if __name__ == "__main__":
