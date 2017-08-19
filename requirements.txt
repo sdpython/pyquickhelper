@@ -71,7 +71,6 @@ sphinx-bootstrap-theme
 sphinx-gallery
 sphinx-readable-theme
 sphinx-rtd-theme
-sphinxcontrib-fancybox
 sphinxcontrib-images
 sphinxcontrib-imagesvg
 sphinxcontrib.youtube
