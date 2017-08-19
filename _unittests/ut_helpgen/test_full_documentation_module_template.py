@@ -46,7 +46,7 @@ class TestSphinxDocFull (unittest.TestCase):
             # 'getsitepackages'
             # it also fails for python 2.7 (encoding issue)
             warnings.warn(
-                "travis, appveyor, unable to test TestSphinxDocFull.test_full_documentation")
+                "travis, appveyor, circleci, unable to test TestSphinxDocFull.test_full_documentation")
             return
 
         temp = get_temp_folder(

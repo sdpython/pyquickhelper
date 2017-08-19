@@ -37,10 +37,10 @@ class TestNotebookKernels(unittest.TestCase):
 
         kern = "python" + str(sys.version_info[0])
         res = find_notebook_kernel()
-        assert isinstance(res, dict)
+        self.assertTrue(isinstance(res, dict))
         for k, v in sorted(res.items()):
             fLOG(k, type(v), v)
-        assert kern in res
+        self.assertTrue(kern in res)
 
     def test_notebook_kernel_install(self):
         fLOG(
@@ -48,10 +48,10 @@ class TestNotebookKernels(unittest.TestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
-        if is_travis_or_appveyor() == "travis":
-            # permission issue on travis
+        if is_travis_or_appveyor() != "appveyor":
+            # permission issue on linux
             warnings.warn(
-                "travis, unable to test TestNotebookKernels.test_notebook_kernel_install")
+                "linux, unable to test TestNotebookKernels.test_notebook_kernel_install")
             return
 
         kern = "ut_" + sys.executable.replace("\\", "/").replace("/", "_").replace(
@@ -62,13 +62,13 @@ class TestNotebookKernels(unittest.TestCase):
         if kern not in loc:
             raise Exception(
                 "do not match '{0}' not in '{1}'".format(kern, loc))
-        assert os.path.exists(loc)
+        self.assertTrue(os.path.exists(loc))
         res = get_notebook_kernel(kern)
         fLOG("i", res)
 
         remove_kernel(kern)
         kernels = find_notebook_kernel()
-        assert kern not in kernels
+        self.assertTrue(kern not in kernels)
 
 
 if __name__ == "__main__":

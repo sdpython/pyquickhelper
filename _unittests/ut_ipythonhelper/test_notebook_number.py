@@ -5,6 +5,7 @@
 import sys
 import os
 import unittest
+import warnings
 
 
 try:
@@ -35,15 +36,18 @@ class TestNotebookNumber(unittest.TestCase):
             OutputPrint=__name__ == "__main__")
         temp = get_temp_folder(__file__, "temp_notebook_number")
         nbfile = os.path.join(temp, "..", "data", "simple_example.ipynb")
-        assert os.path.exists(nbfile)
+        self.assertTrue(os.path.exists(nbfile))
         outfile = os.path.join(temp, "out_nb.ipynb")
         res = remove_execution_number(nbfile, outfile)
-        assert res
-        assert os.path.exists(outfile)
-        assert '"execution_count": null' in res
-        if is_travis_or_appveyor() != "travis":
+        self.assertTrue(res is not None)
+        self.assertTrue(os.path.exists(outfile))
+        self.assertTrue('"execution_count": null' in res)
+        if is_travis_or_appveyor() == "appveyor":
             change_file_status(outfile)
             change_file_status(temp, strict=True)
+        else:
+            warnings.warn(
+                "linux, unable to test change_file_status: TestNotebookNumber.test_notebook_number")
 
 
 if __name__ == "__main__":

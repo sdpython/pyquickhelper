@@ -42,10 +42,10 @@ class TestNotebookExtensions(unittest.TestCase):
         try:
             ext = get_installed_notebook_extension()
         except FileNotFoundError:
-            if is_travis_or_appveyor() == "travis":
+            if is_travis_or_appveyor() != "appveyor":
                 # does not work on travis due to permission error
                 warnings.warn(
-                    "travis, unable to test TestNotebookExtensions.test_notebook_extension")
+                    "linux, unable to test TestNotebookExtensions.test_notebook_extension")
                 return
             ext = []
 
@@ -56,7 +56,7 @@ class TestNotebookExtensions(unittest.TestCase):
 
         fLOG("extension")
         ext = get_installed_notebook_extension()
-        assert len(ext) > 0
+        self.assertTrue(len(ext) > 0)
         for e in ext:
             fLOG(e)
         if "IPython-notebook-extensions-master/usability/search-replace/main" not in ext and \

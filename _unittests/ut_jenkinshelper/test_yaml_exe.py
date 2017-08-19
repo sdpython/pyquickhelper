@@ -54,7 +54,7 @@ class TestYamlExe(unittest.TestCase):
                        WinPython35=None, project_name="pyquickhelper",
                        root_path="ROOT", PLATFORM="win")
         obj, name = load_yaml(yml, context=context)
-        assert name is not None
+        self.assertTrue(name is not None)
         try:
             res = list(enumerate_convert_yaml_into_instructions(
                 obj, variables=context))
@@ -98,8 +98,8 @@ class TestYamlExe(unittest.TestCase):
             name = os.path.join(temp, "yml.%s" % ext)
             with open(name, "w") as f:
                 f.write(conv)
-            if is_travis_or_appveyor() == "travis":
-                warnings.warn("Test disabled on travis")
+            if is_travis_or_appveyor() != "appveyor":
+                warnings.warn("linux, unable to test TestYamlExe.test_exe")
             else:
                 out, err = run_cmd(name, wait=True)
                 fLOG("###")

@@ -41,12 +41,12 @@ class TestPing(unittest.TestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
-        if is_travis_or_appveyor() == "travis":
+        if is_travis_or_appveyor() != "appveyor":
             return
         machine = self.get_machine()
         out = ping_machine(machine, fLOG=fLOG)
         fLOG(out)
-        assert len(out) > 0
+        self.assertTrue(len(out) > 0)
 
     def test_regular_ping(self):
         fLOG(
@@ -54,12 +54,12 @@ class TestPing(unittest.TestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
-        if "travis" in sys.executable:
+        if is_travis_or_appveyor() != "appveyor":
             return
         machine = self.get_machine()
         out = regular_ping_machine(machine, delay=0.1, nb_max=3, fLOG=fLOG)
         fLOG(out)
-        assert len(out) > 0
+        self.assertTrue(len(out) > 0)
 
 
 if __name__ == "__main__":
