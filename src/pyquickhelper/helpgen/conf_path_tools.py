@@ -139,4 +139,4 @@ def find_pandoc_path(exc=True):
             return pandoc
     else:
         # linux
-        return "pandoc"
+        return ""

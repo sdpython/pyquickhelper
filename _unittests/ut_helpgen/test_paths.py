@@ -48,10 +48,10 @@ class TestPaths(unittest.TestCase):
         if "dot" not in dot:
             raise Exception('{0}'.format(dot))
         pandoc = find_pandoc_path()
-        if "pandoc" not in pandoc.lower():
+        if sys.platform.startswith("win") and "pandoc" not in pandoc.lower():
             raise Exception('{0}'.format(pandoc))
         latex = find_latex_path()
-        if "latex" not in latex and "miktex" not in latex:
+        if sys.platform.startswith("win") and "latex" not in latex and "miktex" not in latex:
             raise Exception('{0}'.format(latex))
 
 
