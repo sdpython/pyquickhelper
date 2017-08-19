@@ -24,6 +24,11 @@ jobs:
                     sudo apt-get install -y texlive
           
       - run:
+          name: Install 7z
+          command: |
+                    sudo apt-get install -y p7zip-full
+          
+      - run:
           name: install dependencies
           command: |
             python3 -m venv venv
