@@ -42,6 +42,7 @@ notebook
 numpy
 openpyxl
 pandas
+pandocfilters
 path.py
 pep8
 pickleshare
