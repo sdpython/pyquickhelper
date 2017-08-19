@@ -299,10 +299,14 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
             imgmath_latex = os.path.join(imgmath_latex, "latex")
 
         # verification
-        if not os.path.exists(imgmath_latex):
-            raise FileNotFoundError(imgmath_latex)
-        if not os.path.exists(imgmath_dvipng):
-            raise FileNotFoundError(imgmath_dvipng)
+        if sys.platform.startswith("win"):
+            if not os.path.exists(imgmath_latex):
+                raise FileNotFoundError(imgmath_latex)
+            if not os.path.exists(imgmath_dvipng):
+                raise FileNotFoundError(imgmath_dvipng)
+        else:
+            # TODO: check on linux
+            pass
 
     # bokeh
     try:

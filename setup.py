@@ -220,6 +220,7 @@ if not r:
             "autopep8",     # part of the minimal list
             "babel!=2.0",   # babel 2.0 has issue
             "coverage",
+            "docformatter",
             "docutils",
             "entrypoints",
             "numpy>=1.11.1",
@@ -244,6 +245,7 @@ if not r:
             "pickleshare",
             "pandas>=0.18.1",
             "pycodestyle>=2.0.0",
+            "pydocstyle",
             "pyflakes",
             "python-dateutil",
             "releases",

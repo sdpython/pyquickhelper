@@ -7,6 +7,7 @@ codecov
 coverage
 cryptography
 Cython
+docformatter
 docutils
 entrypoints
 Flask
@@ -49,6 +50,7 @@ pkgtools
 pycodestyle
 pycparser
 pycryptodomex
+pydocstyle
 pyflakes
 Pygments
 pyparsing
@@ -79,6 +81,7 @@ sphinxjp.themes.revealjs
 sphinxjp.themes.sphinxjp
 tqdm
 traitlets
+unify
 virtualenv
 wheel
 wild-sphinx-theme
