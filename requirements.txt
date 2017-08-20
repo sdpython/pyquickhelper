@@ -27,9 +27,11 @@ pyflakes
 pylzma
 python-jenkins
 PyYAML
+semantic_version
 Sphinx
 sphinx-gallery
 sphinx-rtd-theme
+sphinxcontrib-images
 sphinxcontrib-imagesvg
 sphinxjp.themes.revealjs
 sphinxjp.themes.sphinxjp

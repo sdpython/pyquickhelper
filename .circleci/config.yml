@@ -49,6 +49,7 @@ jobs:
             . venv/bin/activate
             pip install -r requirements.txt
             pip install git+https://github.com/fancycode/pylzma.git
+            pip install git+https://github.com/sdpython/sphinxcontrib-images.git --upgrade
 
       - save_cache:
           paths:
