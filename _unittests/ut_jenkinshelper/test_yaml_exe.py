@@ -101,8 +101,12 @@ class TestYamlExe(unittest.TestCase):
                 # linux, unable to test TestYamlExe.test_exe.
                 pass
             else:
+                if sys.platform.startswith("win"):
+                    cmd = name
+                else:
+                    cmd = "bash " + name
                 try:
-                    out, err = run_cmd(name, wait=True)
+                    out, err = run_cmd(cmd, wait=True)
                 except PermissionError as e:
                     raise Exception(
                         "Unable to execute '{0}' which contains\n{1}".format(name, conv)) from e

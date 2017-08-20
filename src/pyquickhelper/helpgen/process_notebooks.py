@@ -465,10 +465,16 @@ def _process_notebooks_in(notebooks, outfold, build, latex_path=None, pandoc_pat
                         loc = os.path.split(f)[-1]
                         if os.path.exists(loc):
                             # We move the file.
+                            moved = True
                             shutil.move(loc, f)
+                        else:
+                            moved = False
                         if not os.path.exists(f):
+                            files = "\n".join(os.listdir(build))
+                            msg = "Content of '{0}':\n{1}\n----\n'{2}' moved? {3}".format(
+                                build, files, loc, moved)
                             raise HelpGenException(
-                                "missing file: '{0}'\nOUT:\n{2}\n[nberror]\n{1}\n-----".format(f, err, out))
+                                "Missing file: '{0}'\nOUT:\n{2}\n[nberror]\n{1}\n-----\n{3}".format(f, err, out, msg))
                     thisfiles.append(f)
                 else:
                     fLOG("unable to find latex in", latex_path)

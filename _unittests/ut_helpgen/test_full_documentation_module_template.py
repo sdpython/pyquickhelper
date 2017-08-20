@@ -47,7 +47,7 @@ class TestSphinxDocFull (unittest.TestCase):
             return
 
         temp = get_temp_folder(
-            __file__, "temp_full_doc_template", clean=True or __name__ != "__main__")
+            __file__, "temp_full_doc_template", clean=__name__ != "__main__")
         url = "https://github.com/sdpython/python3_module_template/archive/master.zip"
         fLOG("download", url)
         download(url, temp, fLOG=fLOG, flatten=False)

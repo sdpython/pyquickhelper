@@ -541,7 +541,8 @@ def _check_zip_file(filename, path_unzip, outfile, flatten=True, fLOG=noLOG):
                 fLOG("[loghelper.flog] using ", _zip7_path)
             wait = []
             for info in file.infolist():
-                if info.is_dir():
+                # equivalent to is_dir (Python 3.6+)
+                if info.filename[-1] == '/':
                     continue
                 fileinside = info.filename
                 dest = os.path.join(folder, fileinside)

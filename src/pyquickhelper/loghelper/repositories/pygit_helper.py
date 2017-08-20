@@ -515,7 +515,7 @@ def clone(location, srv, group, project, username=None, password=None):
     cmd = get_cmd_git()
     cmd += " clone " + address + " " + location
     out, err = run_cmd(cmd, wait=True)
-    if len(err) > 0 and "Cloning into" not in err:
+    if len(err) > 0 and "Cloning into" not in err and "Clonage dans" not in err:
         raise GitException(
             "unable to clone {0}\n[giterror]\n{1}\nCMD:\n{2}".format(address, err, cmd))
     return out, err
