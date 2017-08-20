@@ -471,8 +471,8 @@ def _process_notebooks_in(notebooks, outfold, build, latex_path=None, pandoc_pat
                             moved = False
                         if not os.path.exists(f):
                             files = "\n".join(os.listdir(build))
-                            msg = "Content of '{0}':\n{1}\n----\n'{2}' moved? {3}".format(
-                                build, files, loc, moved)
+                            msg = "Content of '{0}':\n{1}\n----\n'{2}' moved? {3}\nCMD:\n{4}".format(
+                                build, files, loc, moved, c)
                             raise HelpGenException(
                                 "Missing file: '{0}'\nOUT:\n{2}\n[nberror]\n{1}\n-----\n{3}".format(f, err, out, msg))
                     thisfiles.append(f)

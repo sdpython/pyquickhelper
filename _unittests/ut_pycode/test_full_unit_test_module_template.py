@@ -124,7 +124,7 @@ class TestUnitTestFull(unittest.TestCase):
             if command == "build_sphinx" and is_travis_or_appveyor() in ('travis', 'appveyor'):
                 # InkScape not installed for AppVeyor or travis.
                 continue
-            if sys.platform.startswith("win") and command == "build_script":
+            if not sys.platform.startswith("win") and command == "build_script":
                 # No scripts yet on linux.
                 continue
 
