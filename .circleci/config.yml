@@ -50,7 +50,7 @@ jobs:
             pip install -r requirements.txt
             pip install git+https://github.com/fancycode/pylzma.git --upgrade --no-deps
             pip install git+https://github.com/sdpython/sphinxcontrib-images.git --upgrade --no-deps
-            pip install scikit-learn
+            pip install scipy scikit-learn
 
       - save_cache:
           paths:

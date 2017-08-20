@@ -12,14 +12,14 @@ keyring
 Mako
 matplotlib
 mistune
-nbconvert>=4.2.0
+nbconvert>=5.0.0
 nbformat
 nbpresent
 nbsphinx
-notebook>=4.2.0
+notebook>=5.0.0
 numpy>=1.11.1
 openpyxl
-pandas>=0.18.1
+pandas>=0.20.0
 pandocfilters
 pillow
 pycodestyle>=2.0.0
