@@ -31,7 +31,6 @@ jobs:
           name: Install 7z, unrar
           command: |
                     sudo apt-get install -y p7zip-full
-                    sudo apt-get install -y unrar
           
       - run:
           name: Install InkScape

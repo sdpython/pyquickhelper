@@ -170,7 +170,8 @@ class TestCompressHelper(unittest.TestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
-        if is_travis_or_appveyor() in ('travis', 'appveyor'):
+        if is_travis_or_appveyor() in ('travis', 'appveyor', 'circleci'):
+            # unrar is not available on circleci.
             return
 
         if sys.version_info[0] == 2:

@@ -17,3 +17,5 @@ History
 * `36`: add support for sphinx-gallery
 * `53`: handle history, converts the file into something usable by module releases
 * `52`: add coverage for notebooks
+* `61`: add a build on `circleci <https://circleci.com/gh/sdpython/pyquickhelper>`_,
+  builds the documentation, populates the artifacts section
