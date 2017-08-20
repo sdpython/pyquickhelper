@@ -14,6 +14,7 @@ mistune
 nbconvert
 nbformat
 nbpresent
+nbsphinx
 notebook
 numpy
 openpyxl
@@ -28,6 +29,7 @@ pylzma
 python-jenkins
 PyYAML
 semantic_version
+setuptools
 Sphinx
 sphinx-gallery
 sphinx-rtd-theme
