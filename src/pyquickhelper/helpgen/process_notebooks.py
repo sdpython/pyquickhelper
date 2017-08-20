@@ -450,14 +450,14 @@ def _process_notebooks_in(notebooks, outfold, build, latex_path=None, pandoc_pat
                     out, err = run_cmd(
                         c, wait=True, log_error=False, shell=sys.platform.startswith("win"),
                         catch_exit=True, prefix_log="[latex] ")
-                    if err is not None and len(err) == 0 and out is not None and "Output written" in out:
+                    if out is not None and "Output written" in out:
                         # The output was produced. We ignore the return code.
                         fLOG("WARNINGS: Latex compilation had warnings:", c)
                         out += "\nERR\n" + err
                         err = ""
                     if len(err) > 0:
                         raise HelpGenException(
-                            "CMD:\n{0}\n[nberror]\n{1}\nOUT:\n{2}".format(c, err, out))
+                            "CMD:\n{0}\n[nberror]\n{1}\nOUT:\n{2}------".format(c, err, out))
                     f = os.path.join(build, nbout + ".pdf")
                     if not os.path.exists(f):
                         # On Linux the parameter --output-directory is sometimes ignored.

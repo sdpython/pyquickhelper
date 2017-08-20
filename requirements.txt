@@ -4,11 +4,11 @@ coverage
 docformatter
 ipython
 jupyter
-jupyter_client
+jupyter-client
 jupyter_sphinx
 jyquickhelper
 keyring
-mako
+Mako
 matplotlib
 mistune
 nbconvert
@@ -24,11 +24,13 @@ pycodestyle
 pycryptodomex
 pydocstyle
 pyflakes
+pylzma
 python-jenkins
 PyYAML
 Sphinx
 sphinx-gallery
 sphinx-rtd-theme
+sphinxcontrib-imagesvg
 sphinxjp.themes.revealjs
 sphinxjp.themes.sphinxjp
 tqdm

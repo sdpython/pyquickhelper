@@ -396,8 +396,12 @@ def run_cmd(cmd, sin="", shell=sys.platform.startswith("win"), wait=False, log_e
 
         pproc.__exit__(None, None, None)
         if sys.platform.startswith("win"):
+            if err is not None:
+                err = err.strip("\n\r\t ")
             return out.replace("\r\n", "\n"), err.replace("\r\n", "\n")
         else:
+            if err is not None:
+                err = err.strip("\n\r\t ")
             return out, err
     else:
 
