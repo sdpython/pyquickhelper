@@ -72,8 +72,7 @@ class TestTodoExtExtension(unittest.TestCase):
         tives = [("todoext", TodoExt, todoext_node,
                   visit_todoext_node, depart_todoext_node)]
 
-        html = rst2html(content, fLOG=fLOG,
-                        writer="custom", keep_warnings=True,
+        html = rst2html(content, writer="custom", keep_warnings=True,
                         directives=tives, extlinks={'issue': ('http://%s', '_issue_')})
 
         temp = get_temp_folder(__file__, "temp_todoext")
@@ -131,9 +130,9 @@ class TestTodoExtExtension(unittest.TestCase):
         tives = [("todoext", TodoExt, todoext_node,
                   visit_todoext_node, depart_todoext_node)]
 
-        html = rst2html(content, fLOG=fLOG,
-                        writer="custom", keep_warnings=True,
-                        directives=tives)
+        html = rst2html(content, writer="rst", keep_warnings=True,
+                        directives=tives, layout="sphinx",
+                        todoext_include_todosext=True)
 
         temp = get_temp_folder(__file__, "temp_todoextlist")
         with open(os.path.join(temp, "out_todoext.html"), "w", encoding="utf8") as f:
@@ -148,6 +147,10 @@ class TestTodoExtExtension(unittest.TestCase):
             raise Exception(html)
 
         t1 = "first todo"
+        if t1 not in html:
+            raise Exception(html)
+
+        t1 = "(The `original entry"
         if t1 not in html:
             raise Exception(html)
 
@@ -181,8 +184,7 @@ class TestTodoExtExtension(unittest.TestCase):
         tives = [("todoext", TodoExt, todoext_node,
                   visit_todoext_node, depart_todoext_node)]
 
-        html = rst2html(content, fLOG=fLOG,
-                        writer="custom", keep_warnings=True,
+        html = rst2html(content, writer="custom", keep_warnings=True,
                         directives=tives, extlinks={'issue': ('http://%s', '_issue_')})
 
         temp = get_temp_folder(__file__, "temp_todoext")

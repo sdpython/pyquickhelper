@@ -447,9 +447,15 @@ def _process_notebooks_in(notebooks, outfold, build, latex_path=None, pandoc_pat
                     fLOG("   ** LATEX compilation (b)", c)
                     if not sys.platform.startswith("win"):
                         c = c.replace('"', '')
+                    if sys.platform.startswith("win"):
+                        change_path = None
+                    else:
+                        # On Linux the parameter --output-directory is sometimes ignored.
+                        # And it only works from the current directory.
+                        change_path = os.path.split(tex)[0]
                     out, err = run_cmd(
                         c, wait=True, log_error=False, shell=sys.platform.startswith("win"),
-                        catch_exit=True, prefix_log="[latex] ")
+                        catch_exit=True, prefix_log="[latex] ", change_path=change_path)
                     if out is not None and "Output written" in out:
                         # The output was produced. We ignore the return code.
                         fLOG("WARNINGS: Latex compilation had warnings:", c)
@@ -461,6 +467,7 @@ def _process_notebooks_in(notebooks, outfold, build, latex_path=None, pandoc_pat
                     f = os.path.join(build, nbout + ".pdf")
                     if not os.path.exists(f):
                         # On Linux the parameter --output-directory is sometimes ignored.
+                        # And it only works from the current directory.
                         # We check again.
                         loc = os.path.split(f)[-1]
                         if os.path.exists(loc):
