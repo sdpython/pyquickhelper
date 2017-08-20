@@ -1008,10 +1008,11 @@ def guess_machine_parameter():
            "PATH", "USERDOMAIN", "USERNAME", "USERPROFILE",
            "windir", "TEMP", "USER"]
     res = {}
+    sep = ";" if sys.platform.startswith("win") else ":"
     for v in val:
         if v == "PATH":
             x = os.getenv(v)
-            x = x.split(";")
+            x = x.split(sep)
             res[v] = x
         else:
             res[v] = os.getenv(v)

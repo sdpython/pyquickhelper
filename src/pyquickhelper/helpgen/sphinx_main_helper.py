@@ -341,12 +341,18 @@ def compile_latex_output_final(root, latex_path, doall, afile=None, latex_book=F
             else:
                 c = '"{0}" "{1}" -max-print-line=900 -interaction=nonstopmode -output-directory="{2}"'.format(
                     lat, file, build)
-            fLOG("~~~~ LATEX compilation (c)", c)
+            fLOG("[compile_latex_output_final] LATEX compilation (c)", c)
             post_process_latex_output(file, doall, latex_book=latex_book,
                                       custom_latex_processing=custom_latex_processing)
+            if sys.platform.startswith("win"):
+                change_path = None
+            else:
+                # On Linux the parameter --output-directory is sometimes ignored.
+                # And it only works from the current directory.
+                change_path = os.path.split(file)[0]
             try:
                 out, err = run_cmd(c, wait=True, log_error=False, catch_exit=True, communicate=False,
-                                   tell_if_no_output=120, fLOG=fLOG, prefix_log="[latex] ")
+                                   tell_if_no_output=120, fLOG=fLOG, prefix_log="[latex] ", change_path=change_path)
             except Exception as e:
                 # An exception is raised when the return code is an error. We
                 # check that PDF file was written.
@@ -366,7 +372,7 @@ def compile_latex_output_final(root, latex_path, doall, afile=None, latex_book=F
             try:
                 out, err = run_cmd(
                     c, wait=True, log_error=False, communicate=False, fLOG=fLOG,
-                    tell_if_no_output=600, prefix_log="[latex] ")
+                    tell_if_no_output=600, prefix_log="[latex] ", change_path=change_path)
             except (subprocess.CalledProcessError, RunCmdException):
                 fLOG("[sphinxerror] LATEX ERROR: check the logs")
                 err = ""

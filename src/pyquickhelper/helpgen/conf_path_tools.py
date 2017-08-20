@@ -16,8 +16,9 @@ def find_in_PATH(prog):
 
     .. versionadded:: 0.9
     """
+    sep = ";" if sys.platform.startswith("win") else ":"
     path = os.environ["PATH"]
-    for p in path.split(";"):
+    for p in path.split(sep):
         f = os.path.join(p, prog)
         if os.path.exists(f):
             return p

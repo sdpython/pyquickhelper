@@ -188,7 +188,8 @@ def private_script_replacements(script, module, requirements, port, raise_except
                     if p not in unique_paths:
                         unique_paths.append(p)
                 rows = [choice(_) for _ in unique_paths]
-                rep = ";" + ";".join(rows)
+                sep = ";" if sys.platform.startswith("win") else ":"
+                rep = sep + sep.join(rows)
                 script = script.replace("__ADDITIONAL_LOCAL_PATH__", rep)
             else:
                 script = script.replace("__ADDITIONAL_LOCAL_PATH__", "")
@@ -392,7 +393,8 @@ def get_extra_script_command(command, module, requirements, port=8067, blog_list
                 if p not in unique_paths:
                     unique_paths.append(p)
             rows = [choice(_) for _ in unique_paths]
-            rep = ";" + ";".join(rows)
+            sep = ";" if sys.platform.startswith("win") else ":"
+            rep = sep + sep.join(rows)
             script = script.replace("__ADDITIONAL_LOCAL_PATH__", rep)
         else:
             script = script.replace("__ADDITIONAL_LOCAL_PATH__", "")

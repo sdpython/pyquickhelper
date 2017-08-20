@@ -80,9 +80,10 @@ def default_sphinx_options(fLOG=noLOG, **options):
                            str(res['imgmath_dvipng']))
             # we pass as latex is not necessarily installed or needed
         env_path = os.environ.get("PATH", "")
+        sep = ";" if sys.platform.startswith("win") else ":"
         if res['imgmath_latex'] is not None and res['imgmath_latex'] not in env_path:
             if len(env_path) > 0:
-                env_path += ";"
+                env_path += sep
             env_path += res['imgmath_latex']
 
         if res['imgmath_latex'] is not None:

@@ -515,10 +515,11 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
         fLOG("~~~~ NBLINKS - END")
 
     # add to PATH
+    sep = ";" if sys.platform.startswith("win") else ":"
     if latex_path not in ospath:
-        os.environ["PATH"] += ";" + latex_path
+        os.environ["PATH"] += sep + latex_path
     if pandoc_path not in ospath:
-        os.environ["PATH"] += ";" + pandoc_path
+        os.environ["PATH"] += sep + pandoc_path
 
     #########
     # changes
