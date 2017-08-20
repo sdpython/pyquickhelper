@@ -1,0 +1,14 @@
+
+.. blogpost::
+    :title: Build on CircleCI
+    :keywords: CircleCI
+    :date: 2017-08-20
+    :categories: continuous integration
+
+    *pyquickhelper* now builds on
+    `CircleCI <https://circleci.com/gh/sdpython/pyquickhelper>`_.
+    The list of unit tests enabled on that platform is bigger than on
+    *travis* or *appveyor*. It also builds the wheel and the documentation.
+    It pushed them into the artifacts section where they can be downloaded.
+    You can see the installation step in file
+    `.circleci/config.yml <https://github.com/sdpython/pyquickhelper/blob/master/.circleci/config.yml>`_.

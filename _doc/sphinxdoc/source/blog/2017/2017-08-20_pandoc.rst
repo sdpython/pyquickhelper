@@ -1,0 +1,21 @@
+
+.. blogpost::
+    :title: Pandoc on ubuntu and WSL
+    :keywords: documentation, sphinx, pandoc
+    :date: 2017-08-20
+    :categories: documentation
+
+    I was using the `Windows Subsystem for Linux <https://msdn.microsoft.com/en-us/commandline/wsl/about>`_
+    to test a module with Linux. I could not make it work
+    due to an old version of :epkg:`pandoc`.
+    Surprisingly, the default ``apt-get install pandoc`` installed
+    a very old version (1.12). I could not convert any notebook
+    with `nbconvert <https://github.com/jupyter/nbconvert>`_ into latex.
+    I finally installed the latest version (1.19) and it worked perfectly.
+    You can see the installation step in file
+    `.circleci/config.yml <https://github.com/sdpython/pyquickhelper/blob/master/.circleci/config.yml>`_.
+    That was not the last issue because
+    *pandoc* seems to be very slow on WSL.
+    About that, you can read:
+    `massive delay to call pandoc using the Windows Subsystem for Linux (WSL) or Bash for Windows <https://github.com/jgm/pandoc/issues/3448>`_,
+    `stack ghc painfully slow <https://github.com/Microsoft/BashOnWindows/issues/1671>`_.

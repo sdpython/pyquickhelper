@@ -97,11 +97,15 @@ class TestYamlExe(unittest.TestCase):
             name = os.path.join(temp, "yml.%s" % ext)
             with open(name, "w") as f:
                 f.write(conv)
-            if is_travis_or_appveyor() == "___travis":
+            if is_travis_or_appveyor() == "__travis":
                 # linux, unable to test TestYamlExe.test_exe.
                 pass
             else:
-                out, err = run_cmd(name, wait=True)
+                try:
+                    out, err = run_cmd(name, wait=True)
+                except PermissionError as e:
+                    raise Exception(
+                        "Unable to execute '{0}' which contains\n{1}".format(name, conv)) from e
                 fLOG("###")
                 fLOG(out)
                 if "BEFORE_SCRIPT" not in out:

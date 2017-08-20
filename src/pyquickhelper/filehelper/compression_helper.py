@@ -394,8 +394,7 @@ def un7zip_files(zipf, where_to=None, fLOG=noLOG, fvalid=None, remove_space=True
 
 def unrar_files(zipf, where_to=None, fLOG=noLOG, fvalid=None, remove_space=True):
     """
-    Unrar files from a rar archive compress with 7z.
-    Very basic. Use 7z.
+    Unrar files from a rar archive compress with 7z on Window or unrar on linux.
 
     @param      zipf            archive (or bytes or BytesIO)
     @param      where_to        destination folder (can be None, the result is a list of tuple)
@@ -411,15 +410,25 @@ def unrar_files(zipf, where_to=None, fLOG=noLOG, fvalid=None, remove_space=True)
         exe = r"C:\Program Files\7-Zip\7z.exe"
         if not os.path.exists(exe):
             raise FileNotFoundError("unable to find: {0}".format(exe))
+
+        if where_to is None:
+            where_to = os.path.abspath(".")
+        cmd = '"{0}" x "{1}" -o{2}'.format(exe, zipf, where_to)
+        out, err = run_cmd(cmd, wait=True, fLOG=fLOG)
+        if len(err) > 0 or "Error:" in out:
+            raise FileException(
+                "Unable to unrar file '{0}'\nOUT\n{1}\nERR\n{2}".format(zipf, out, err))
+
+        return explore_folder(where_to)[1]
     else:
-        exe = "7z"
+        exe = "unrar"
 
-    if where_to is None:
-        where_to = os.path.abspath(".")
-    cmd = '"{0}" x "{1}" -o{2}'.format(exe, zipf, where_to)
-    out, err = run_cmd(cmd, wait=True, fLOG=fLOG)
-    if len(err) > 0:
-        raise FileException(
-            "Unable to unrar file '{0}'\nOUT\n{1}\nERR\n{2}".format(zipf, out, err))
+        if where_to is None:
+            where_to = os.path.abspath(".")
+        cmd = '"{0}" x "{1}"'.format(exe, zipf)
+        out, err = run_cmd(cmd, wait=True, fLOG=fLOG, change_path=where_to)
+        if len(err) > 0:
+            raise FileException(
+                "Unable to unrar file '{0}'\nOUT\n{1}\nERR\n{2}".format(zipf, out, err))
 
-    return explore_folder(where_to)[1]
+        return explore_folder(where_to)[1]

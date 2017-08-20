@@ -28,9 +28,10 @@ jobs:
                     sudo apt-get install -y texlive-latex-extra
           
       - run:
-          name: Install 7z
+          name: Install 7z, unrar
           command: |
                     sudo apt-get install -y p7zip-full
+                    sudo apt-get install -y unrar
           
       - run:
           name: Install InkScape

@@ -47,10 +47,10 @@ class TestSphinxDocFull (unittest.TestCase):
             return
 
         temp = get_temp_folder(
-            __file__, "temp_full_doc_template", clean=__name__ != "__main__")
+            __file__, "temp_full_doc_template", clean=True or __name__ != "__main__")
         url = "https://github.com/sdpython/python3_module_template/archive/master.zip"
         fLOG("download", url)
-        download(url, temp)
+        download(url, temp, fLOG=fLOG, flatten=False)
         self.assertTrue(not os.path.exists(os.path.join(temp, "src")))
         root = os.path.join(temp, "python3_module_template-master")
 
@@ -60,6 +60,9 @@ class TestSphinxDocFull (unittest.TestCase):
         # we modify conf.py to let it find pyquickhelper
         pyq = os.path.abspath(os.path.dirname(src.__file__))
         confpy = os.path.join(root, "_doc", "sphinxdoc", "source", "conf.py")
+        if not os.path.exists(confpy):
+            raise FileNotFoundError(
+                "Unable to find '{0}' and\n{1}".format(confpy, os.listdir(temp)))
         with open(confpy, "r", encoding="utf8") as f:
             lines = f.read().split("\n")
         for i, line in enumerate(lines):

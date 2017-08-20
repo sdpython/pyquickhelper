@@ -47,7 +47,7 @@ class TestNotebookKernels(unittest.TestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
-        if is_travis_or_appveyor() == "travis":
+        if is_travis_or_appveyor() in ("travis", "circleci"):
             # permission issue on linux.
             return
 

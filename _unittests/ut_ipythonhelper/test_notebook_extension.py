@@ -41,7 +41,7 @@ class TestNotebookExtensions(unittest.TestCase):
         try:
             ext = get_installed_notebook_extension()
         except FileNotFoundError:
-            if is_travis_or_appveyor() == "travis":
+            if is_travis_or_appveyor() in ("travis", "circleci"):
                 # It does not work on travis due to permission error.
                 return
             ext = []

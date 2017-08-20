@@ -76,6 +76,8 @@ def default_filter_warning(w):
                 return False
             if "metadata should be set using the .tag()" in str(w.message).lower():
                 return False
+            if 'cgi.escape is deprecated, use html.escape instead' in str(w.message):
+                return False
         elif "jupyter_core" in w.filename:
             if "JupyterApp." in str(w.message):
                 return False

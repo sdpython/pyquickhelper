@@ -352,7 +352,7 @@ def get_relative_path(folder, file, exists=True, absolute=True):
     return os.path.join(*res)
 
 
-def download(httpfile, path_unzip=None, outfile=None):
+def download(httpfile, path_unzip=None, outfile=None, flatten=True, fLOG=None):
     """
     Download a file to the folder path_unzip if not present, if the downloading is interrupted,
     the next time, it will start from where it stopped. Before downloading, the function creates a temporary file,
@@ -363,15 +363,25 @@ def download(httpfile, path_unzip=None, outfile=None):
     @param      httpfile        (str) url
     @param      path_unzip      (str) path where to unzip the file, if None, choose GetPath ()
     @param      outfile         (str) if None, the function will assign a filename unless this parameter is specified
+    @param      flatten         (bool) put all files in the same folder (forget subfolders)
+    @param      fLOG            (str) logging function
     @return                     local file name
+
+    .. versionchanged:: 1.5
+        Parameters *fLOG*, *flatten* were added.
     """
+    if fLOG is None:
+        fLOG = noLOG
+    if fLOG == "fLOG":
+        fLOG = fLOG
     if path_unzip is None:
         path_unzip = GetPath()
-    file = _check_source(httpfile, path_unzip=path_unzip, outfile=outfile)
+    file = _check_source(httpfile, path_unzip=path_unzip,
+                         outfile=outfile, flatten=flatten, fLOG=fLOG)
     return file
 
 
-def unzip(file, path_unzip=None, outfile=None):
+def unzip(file, path_unzip=None, outfile=None, flatten=True, fLOG=noLOG):
     """
     unzip a file into the temporary folder,
     the function expects to have only one zipped file
@@ -379,12 +389,17 @@ def unzip(file, path_unzip=None, outfile=None):
     @param      file            (str) zip files
     @param      path_unzip      (str) where to unzip the file, if None, choose GetPath ()
     @param      outfile         (str) if None, the function will assign a filename unless this parameter is specified
+    @param      flatten         (bool) put all files in the same folder (forget subfolders)
     @return                     expanded file name
+
+    .. versionadded:: 1.5
+        Parameters *fLOG*, *flatten* were added.
     """
     if path_unzip is None:
         path_unzip = GetPath()
-    fLOG("unzip file", file)
-    file = _check_source(file, path_unzip=path_unzip, outfile=outfile)
+    fLOG("[loghelper.flog] unzip file", file)
+    file = _check_source(file, path_unzip=path_unzip,
+                         outfile=outfile, flatten=flatten, fLOG=fLOG)
 
     nb = 0
     while not os.path.exists(file) and nb < 10:
@@ -436,18 +451,24 @@ def _get_file_txt(zipname):
     return file
 
 
-def _check_zip_file(filename, path_unzip, outfile):
+def _check_zip_file(filename, path_unzip, outfile, flatten=True, fLOG=noLOG):
     """
-    this function tests if a file is a zip file (extension zip),
+    This function tests if a file is a zip file (extension zip),
     if it is the case, it unzips it into another file and return the new name,
-    if the unzipped file already exists, the file is not unzipped a second time
+    if the unzipped file already exists, the file is not unzipped a second time.
 
     @param      filename        any filename (.zip or not), if txt, it has no effect
     @param      path_unzip      if None, unzip it where it stands, otherwise, place it into path
     @param      outfile         if None, the function will assign a filename unless this parameter is specified
+    @param      flatten         unzip all files into the same directory
+    @param      fLOG            logging function
     @return                     the unzipped file or filename if the format was not zip
+
+    .. versionchanged:: 1.5
+        Parameters *fLOG*, *flatten* were added.
     """
-    assert path_unzip is not None
+    if path_unzip is None:
+        raise ValueError("path_unzip cannot be None")
     file, ext = os.path.splitext(filename)
     ext = ext.lower()
     if ext == ".gz":
@@ -477,16 +498,16 @@ def _check_zip_file(filename, path_unzip, outfile):
                 st2 = datetime.datetime.utcfromtimestamp(
                     os.stat(dest).st_mtime)
                 if st2 > st1:
-                    fLOG("ungzipping file (already done)", dest)
+                    fLOG("[loghelper.flog] ungzipping file (already done)", dest)
                     return dest
 
-            fLOG("ungzipping file", dest)
+            fLOG("[loghelper.flog] ungzipping file", dest)
             f = open(dest, "w")
             data = file.read(2 ** 27)
             size = 0
             while len(data) > 0:
                 size += len(data)
-                fLOG("ungzipping ", size, "bytes")
+                fLOG("[loghelper.flog] ungzipping ", size, "bytes")
                 if isinstance(data, bytes):
                     f.write(bytes.decode(data))
                 else:
@@ -502,22 +523,26 @@ def _check_zip_file(filename, path_unzip, outfile):
         try:
             file = zipfile.ZipFile(filename, "r")
         except Exception as e:
-            fLOG("problem with ", filename)
+            fLOG("[loghelper.flog] problem with ", filename)
             raise e
 
         if len(file.infolist()) != 1:
             if outfile is not None:
                 raise PQHException(
                     "the archive contains %d files and not one as you expected by filling outfile" % len(file.infolist()))
-            fLOG("unzip file (multiple) ", filename)
+            fLOG("[loghelper.flog] unzip file (multiple) ", filename)
             #message = "\n".join ([ fi.filename for fi in file.infolist() ] )
             #raise Exception.YstException("ColumnInfoSet.load_from_file: file %s contains no file or more than one file\n" + message)
             folder = os.path.split(filename)[0]
             todo = 0
             _zip7_path = r"c:\Program Files\7-Zip"
-            zip7 = os.path.exists(_zip7_path)
+            zip7 = not flatten and os.path.exists(_zip7_path)
+            if zip7:
+                fLOG("[loghelper.flog] using ", _zip7_path)
             wait = []
             for info in file.infolist():
+                if info.is_dir():
+                    continue
                 fileinside = info.filename
                 dest = os.path.join(folder, fileinside)
                 if not os.path.exists(dest):
@@ -533,17 +558,17 @@ def _check_zip_file(filename, path_unzip, outfile):
                             continue
 
                     if not sys.platform.startswith("win") or not zip7:
-                        typstr = str  # unicode#
                         data = file.read(fileinside)
-                        dest = os.path.split(dest)[1]
-                        dest = os.path.join(path_unzip, dest)
-                        fLOG("unzipping file", dest)
-                        wait.append(dest)
-                        f = open(dest, "w")
-                        if isinstance(data, bytes):
-                            f.write(typstr(data))
+                        if flatten:
+                            dest2 = os.path.split(dest)[1]
+                            dest2 = os.path.join(path_unzip, dest2)
                         else:
-                            f.write(data)
+                            dest2 = dest
+                        fLOG("[loghelper.flog] unzipping file", dest2)
+                        wait.append(dest2)
+                        f = open(dest2, "wb" if isinstance(
+                            data, bytes) else "w")
+                        f.write(data)
                         f.close()
                     else:
                         todo += 1
@@ -586,8 +611,11 @@ def _check_zip_file(filename, path_unzip, outfile):
             if not os.path.exists(dest):
                 data = file.read(fileinside)
                 if outfile is None:
-                    dest = os.path.split(dest)[1]
-                    dest = os.path.join(path_unzip, dest)
+                    if flatten:
+                        dest = os.path.split(dest)[1]
+                        dest = os.path.join(path_unzip, dest)
+                    else:
+                        dest = os.path.join(path_unzip, dest)
 
                 if os.path.exists(dest):
                     st1 = datetime.datetime.utcfromtimestamp(
@@ -595,10 +623,11 @@ def _check_zip_file(filename, path_unzip, outfile):
                     st2 = datetime.datetime.utcfromtimestamp(
                         os.stat(dest).st_mtime)
                     if st2 > st1:
-                        fLOG("unzipping one file (already done)", dest)
+                        fLOG(
+                            "[loghelper.flog] unzipping one file (already done)", dest)
                         return dest
 
-                fLOG("unzipping one file", dest)
+                fLOG("[loghelper.flog] unzipping one file", dest)
                 if isinstance(data, bytes):
                     f = open(dest, "wb")
                     f.write(data)
@@ -650,13 +679,17 @@ def _first_more_recent(f1, path):
     return dau > file
 
 
-def _check_url_file(url, path_download, outfile):
-    """if url is an url, download the file and return the downloaded
-    if it has already been downloaded, it is not downloaded again
+def _check_url_file(url, path_download, outfile, fLOG=noLOG):
+    """If *url* is an url, download the file and return the downloaded
+    if it has already been downloaded, it is not downloaded again.
     @param      url                 url
     @param      path_download       download the file here
     @param      outfile             if None, the function will assign a filename unless this parameter is specified
+    @param      fLOG                logging function
     @return                         the filename
+
+    .. versionchanged:: 1.5
+        Parameter *fLOG* was added.
     """
     urll = url.lower()
     if "http://" in urll or "https://" in urll:
@@ -667,7 +700,7 @@ def _check_url_file(url, path_download, outfile):
 
         if os.path.exists(dest) and not os.path.exists(nyet):
             try:
-                fLOG("trying to connect", url)
+                fLOG("[loghelper.flog] trying to connect", url)
                 f1 = urllib_request.urlopen(url)
                 down = _first_more_recent(f1, dest)
                 newdate = down
@@ -682,27 +715,28 @@ def _check_url_file(url, path_download, outfile):
 
         if down:
             if newdate:
-                fLOG(" downloading (updated) ", url)
+                fLOG("[loghelper.flog] downloading (updated) ", url)
             else:
-                fLOG(" downloading ", url)
+                fLOG("[loghelper.flog] downloading ", url)
 
             if len(
                     url) > 4 and url[-4].lower() in [".txt", ".csv", ".tsv", ".log"]:
-                fLOG("creating text file ", dest)
+                fLOG("[loghelper.flog] creating text file ", dest)
                 format = "w"
             else:
-                fLOG("creating binary file ", dest)
+                fLOG("[loghelper.flog] creating binary file ", dest)
                 format = "wb"
 
             if os.path.exists(nyet):
                 size = os.stat(dest).st_size
-                fLOG("resume downloading (stop at", size, ") from ", url)
+                fLOG("[loghelper.flog] resume downloading (stop at",
+                     size, ") from ", url)
                 request = urllib_request.Request(url)
                 request.add_header("Range", "bytes=%d-" % size)
                 fu = urllib_request.urlopen(request)
                 f = open(dest, format.replace("w", "a"))
             else:
-                fLOG("downloading ", url)
+                fLOG("[loghelper.flog] downloading ", url)
                 request = urllib_request.Request(url)
                 fu = urllib_request.urlopen(url)
                 f = open(dest, format)
@@ -712,11 +746,11 @@ def _check_url_file(url, path_download, outfile):
             size = 0
             while len(c) > 0:
                 size += len(c)
-                fLOG("    size", size)
+                fLOG("[loghelper.flog]     size", size)
                 f.write(c)
                 f.flush()
                 c = fu.read(2 ** 21)
-            fLOG("end downloading")
+            fLOG("[loghelper.flog] end downloading")
             f.close()
             fu.close()
             os.remove(nyet)
@@ -725,11 +759,15 @@ def _check_url_file(url, path_download, outfile):
     return url
 
 
-def _check_source(fileurl, path_unzip, outfile):
+def _check_source(fileurl, path_unzip, outfile, flatten=True, fLOG=noLOG):
     """
+    Check the existence of a file, downloads it if not existing.
+
     @param      fileurl     can be an url, a zip file, a text file
     @param      path_unzip  if None, unzip the file where it stands, otherwise, put it in path
     @param      outfile     if None, the function will assign a filename unless this parameter is specified
+    @param      flatten     extract all files into the same directory
+    @param      fLOG        logging function
     @return                 a text file name
 
     if it is:
@@ -738,20 +776,23 @@ def _check_source(fileurl, path_unzip, outfile):
         - a text file:  do nothing
 
     If the file has already been downloaded and unzipped, it is not done twice.
+
+    .. versionadded::
+        Parameter *fLOG*, *flatten* were added.
     """
     if outfile is not None and os.path.splitext(
             outfile)[1].lower() == os.path.splitext(fileurl)[1].lower():
         file = _check_url_file(
-            fileurl, path_download=path_unzip, outfile=outfile)
+            fileurl, path_download=path_unzip, outfile=outfile, fLOG=fLOG)
         return file
     else:
         file = _check_url_file(
-            fileurl, path_download=path_unzip, outfile=None)
+            fileurl, path_download=path_unzip, outfile=None, fLOG=fLOG)
         txt = _check_zip_file(
-            file, path_unzip=path_unzip, outfile=outfile)
+            file, path_unzip=path_unzip, outfile=outfile, fLOG=fLOG, flatten=flatten)
         if not os.path.exists(txt):
-            message = "_check_source: unable to find file " + \
-                txt + " source (" + fileurl + ")"
+            message = "_check_source: unable to find file '" + \
+                txt + "' source '" + fileurl + "'"
             raise PQHException(message)
         return txt
 

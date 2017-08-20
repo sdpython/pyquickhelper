@@ -121,8 +121,11 @@ class TestUnitTestFull(unittest.TestCase):
                         "unittests -g .*ext.*",
                         "unittests", "unittests_LONG", "unittests_SKIP",
                         "build_sphinx"]:
-            if command == "build_sphinx" and is_travis_or_appveyor():
-                # InkScape not installed for AppVeyor
+            if command == "build_sphinx" and is_travis_or_appveyor() in ('travis', 'appveyor'):
+                # InkScape not installed for AppVeyor or travis.
+                continue
+            if sys.platform.startswith("win") and command == "build_script":
+                # No scripts yet on linux.
                 continue
 
             fLOG("#######################################################")
