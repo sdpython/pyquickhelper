@@ -892,7 +892,7 @@ def build_notebooks_gallery(nbs, fileout, fLOG=noLOG):
         rows = ["", ".. _l-notebooks:", "", "", "Notebooks Gallery",
                 "=================", ""]
 
-    rows.extend(["", "", ".. contents::", "    :depth: 1",
+    rows.extend(["", "", ".. contents::", "    :depth: 2",
                  "    :local:", "", "", "Gallery", "+++++++", ""])
 
     # produces the final files
