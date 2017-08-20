@@ -75,7 +75,11 @@ jobs:
           command: |
             . venv/bin/activate
             python setup.py build_sphinx
-            cp -r  _doc/sphinxdoc/build/html test-reports
+            
+      - run:
+          name: copy documentation
+          command: |
+            cp -r  _doc/sphinxdoc/build/html test-reports/build
 
       - store_artifacts:
           path: test-reports
