@@ -68,7 +68,7 @@ jobs:
           command: |
             . venv/bin/activate
             python setup.py bdist_wheel
-            cp dist/*.whl test-reports
+            cp dist/*.whl test-reports/dist
 
       - run:
           name: documentation
