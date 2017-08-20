@@ -37,7 +37,7 @@ class TestRst2HtmlLatex(unittest.TestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
-        if is_travis_or_appveyor in ('travis', 'appveyor'):
+        if is_travis_or_appveyor() in ('travis', 'appveyor'):
             # It requires latex.
             return
 
