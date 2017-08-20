@@ -54,12 +54,12 @@ class TestUnitTestFull(unittest.TestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
-        if is_travis_or_appveyor() != "appveyor":
-            # disabled on travis
+        if is_travis_or_appveyor() == "travis":
+            # Disabled on travis.
             return
 
         if sys.version_info[0] == 2:
-            # the downloaded code is python 3
+            # The downloaded code is python 3.
             return
 
         if __name__ != "__main__" or not os.path.exists("temp_full_unit_test"):

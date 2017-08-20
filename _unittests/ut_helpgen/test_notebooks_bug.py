@@ -7,7 +7,6 @@ import sys
 import os
 import unittest
 import re
-import warnings
 
 try:
     import src
@@ -76,9 +75,7 @@ class TestNoteBooksBug(unittest.TestCase):
 
         temp = get_temp_folder(__file__, "temp_nb_bug")
 
-        if is_travis_or_appveyor() is not None:
-            warnings.warn(
-                "travis, appveyor, unable to test TestNoteBooksBug.test_notebook")
+        if is_travis_or_appveyor() in ('travis', 'appveyor'):
             return
 
         res = process_notebooks(nbs, temp, temp, formats=formats)
@@ -118,9 +115,7 @@ class TestNoteBooksBug(unittest.TestCase):
         for file in os.listdir(temp):
             os.remove(os.path.join(temp, file))
 
-        if is_travis_or_appveyor() is not None:
-            warnings.warn(
-                "travis, appveyor, unable to test TestNoteBooksBug.test_notebook_pdf")
+        if is_travis_or_appveyor() in ('travis', 'appveyor'):
             return
 
         res = process_notebooks(nbs, temp, temp, formats=formats)

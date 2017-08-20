@@ -48,7 +48,7 @@ class TestGit(unittest.TestCase):
         if not os.path.exists(temp):
             os.mkdir(temp)
 
-        if is_travis_or_appveyor() is not None:
+        if is_travis_or_appveyor() in ("travis", "appveyor"):
             return
 
         to = os.path.join(temp, "pq")

@@ -86,8 +86,8 @@ class TestNotebookConversion(unittest.TestCase):
             exp.append("example_pyquickhelper.tex")
             exp.append("example_pyquickhelper.pdf")
 
-        if is_travis_or_appveyor() is not None:
-            # it requires pandoc
+        if is_travis_or_appveyor() in ('travis', 'appveyor'):
+            # It requires pandoc.
             return
 
         res = process_notebooks(

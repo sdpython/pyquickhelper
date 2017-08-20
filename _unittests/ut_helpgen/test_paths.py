@@ -37,7 +37,7 @@ class TestPaths(unittest.TestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
-        if is_travis_or_appveyor() not in ("circleci", None):
+        if is_travis_or_appveyor() in ('travis', 'appveyor'):
             return
         exe = find_in_PATH("Microsoft")
         if sys.platform.startswith("win"):

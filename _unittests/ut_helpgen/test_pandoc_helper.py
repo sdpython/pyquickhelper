@@ -6,7 +6,6 @@
 import sys
 import os
 import unittest
-import warnings
 
 
 try:
@@ -34,8 +33,8 @@ class TestPandocHelper(unittest.TestCase):
             __file__,
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
-        if is_travis_or_appveyor():
-            warnings.warn("unable to test it due to pandoc")
+        if is_travis_or_appveyor() in ('travis', 'appveyor'):
+            # It requires pandoc.
             return
         temp = get_temp_folder(__file__, "temp_latex2rst")
         data = os.path.join(temp, "..", "data", "chap9_thread.tex")

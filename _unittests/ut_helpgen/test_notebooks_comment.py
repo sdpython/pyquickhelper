@@ -6,7 +6,6 @@
 import sys
 import os
 import unittest
-import warnings
 
 try:
     import src
@@ -52,9 +51,7 @@ class TestNoteBooksComment(unittest.TestCase):
         for file in os.listdir(temp):
             os.remove(os.path.join(temp, file))
 
-        if is_travis_or_appveyor() is not None:
-            warnings.warn(
-                "travis, appveyor, unable to test TestNoteBooksBugRst.test_notebook_rst")
+        if is_travis_or_appveyor() in ('travis', 'appveyor'):
             return
 
         res = process_notebooks(nbs, temp, temp, formats=formats)

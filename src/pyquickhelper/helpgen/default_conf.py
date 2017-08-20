@@ -259,8 +259,6 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
                   'sphinx.ext.mathjax' if use_mathjax else 'sphinx.ext.imgmath',
                   'sphinx.ext.napoleon', 'sphinx.ext.todo', 'sphinx.ext.viewcode',
                   'sphinxcontrib.images', 'sphinxcontrib.imagesvg', 'sphinxcontrib.jsdemo',
-                  'IPython.sphinxext.ipython_console_highlighting',
-                  # 'releases',  # commented out due to NotImplementedError: Unknown node: Issue or Release
                   # 'matplotlib.sphinxext.only_directives',
                   # 'matplotlib.sphinxext.mathmpl',
                   # 'matplotlib.sphinxext.only_directives',

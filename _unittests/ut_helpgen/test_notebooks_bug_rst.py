@@ -6,7 +6,6 @@
 import sys
 import os
 import unittest
-import warnings
 
 try:
     import src
@@ -50,9 +49,7 @@ class TestNoteBooksBugRst(unittest.TestCase):
         clog = CustomLog(temp)
         clog("test_notebook_rst")
 
-        if is_travis_or_appveyor() is not None:
-            warnings.warn(
-                "travis, appveyor, unable to test TestNoteBooksBugRst.test_notebook_rst")
+        if is_travis_or_appveyor() in ('travis', 'appveyor'):
             return
 
         clog("process_notebooks: begin")

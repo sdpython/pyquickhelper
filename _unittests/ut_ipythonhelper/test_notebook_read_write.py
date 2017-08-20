@@ -5,7 +5,6 @@
 import sys
 import os
 import unittest
-import warnings
 
 
 try:
@@ -47,8 +46,7 @@ class TestNotebookReadWrite (unittest.TestCase):
         # the travis build completes but never ends.
         # This is removed from the whole list on tavis.
         if is_travis_or_appveyor() == "travis":
-            warnings.warn(
-                "This test prevents travis from ending. The process never stops.")
+            # This test prevents travis from ending. The process never stops.
             return
         nb = read_nb(nbfile, kernel=False)
         outfile = os.path.join(temp, "out_notebook.ipynb")
@@ -85,8 +83,7 @@ class TestNotebookReadWrite (unittest.TestCase):
         # the travis build completes but never ends.
         # This is removed from the whole list on tavis.
         if is_travis_or_appveyor() == "travis":
-            warnings.warn(
-                "This test prevents travis from ending. The process never stops.")
+            # "This test prevents travis from ending. The process never stops.
             return
         nb = read_nb(nbfile, kernel=False)
         outfile = os.path.join(temp, "out_notebook.py")

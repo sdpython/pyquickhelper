@@ -38,8 +38,8 @@ class TestCheckCython(unittest.TestCase):
             return
 
         if is_travis_or_appveyor() == "appveyor":
-            # we skip that as it would imply
-            # we modify the pyhon distribution
+            # We skip that as it would imply
+            # we modify the pyhon distribution.
             return
 
         if sys.version_info[:2] <= (3, 4):

@@ -120,7 +120,6 @@ def get_default_standard_extensions(use_mathjax=False):
         'sphinx.ext.mathjax' if use_mathjax else 'sphinx.ext.imgmath',
         'sphinx.ext.napoleon', 'sphinx.ext.todo', 'sphinx.ext.viewcode',
         'sphinxcontrib.images', 'sphinxcontrib.imagesvg', 'sphinxcontrib.jsdemo',
-        'IPython.sphinxext.ipython_console_highlighting',
         # 'matplotlib.sphinxext.only_directives',
         # 'matplotlib.sphinxext.mathmpl',
         # 'matplotlib.sphinxext.only_directives',

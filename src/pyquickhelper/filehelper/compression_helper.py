@@ -289,7 +289,8 @@ def zip7_files(filename_7z, file_set, fLOG=noLOG, temp_folder="."):
         exe, filename_7z, flist)
     out, err = run_cmd(cmd, wait=True)
     if "Error:" in out or not os.path.exists(filename_7z):
-        raise Exception("An error occurred with cmd: '{0}'\nOUT:\n{1}\nERR\n{2}\n----".format(cmd, out, err))
+        raise Exception(
+            "An error occurred with cmd: '{0}'\nOUT:\n{1}\nERR\n{2}\n----".format(cmd, out, err))
     return len(file_set)
 
 

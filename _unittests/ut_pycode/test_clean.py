@@ -36,7 +36,7 @@ class TestClean(unittest.TestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
-        if is_travis_or_appveyor():
+        if is_travis_or_appveyor() in ("travis", "appveyor"):
             return
 
         this = os.path.abspath(__file__.replace(".pyc", ".py"))

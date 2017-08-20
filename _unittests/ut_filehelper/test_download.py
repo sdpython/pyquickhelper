@@ -50,7 +50,7 @@ class TestDownload (unittest.TestCase):
         self.assertTrue(os.path.exists(out1))
 
         out2 = os.path.join(fold, "try.zip")
-        r = zip_files(out2, [f], fLOG=fLOG)
+        zip_files(out2, [f], fLOG=fLOG)
         self.assertTrue(os.path.exists(out2))
 
         if is_travis_or_appveyor() in ("circleci", None):

@@ -109,8 +109,6 @@ class TestCompressHelper(unittest.TestCase):
         self.assertTrue(pylzma)
 
         if is_travis_or_appveyor() == "appveyor":
-            warnings.warn(
-                "unzipping files with 7z is not tested on appveyor")
             return
 
         fold = get_temp_folder(__file__, "temp_uncompress_7zip")
@@ -129,8 +127,7 @@ class TestCompressHelper(unittest.TestCase):
 
         if is_travis_or_appveyor() == "appveyor":
             out7 = os.path.join(fold, "try.7z")
-            r = zip7_files(out7, [f], fLOG=fLOG, temp_folder=fold)
-            fLOG(r)
+            zip7_files(out7, [f], fLOG=fLOG, temp_folder=fold)
             if not os.path.exists(out7):
                 raise FileNotFoundError(out7)
         else:
@@ -144,8 +141,6 @@ class TestCompressHelper(unittest.TestCase):
             typbytes = bytes
 
         if is_travis_or_appveyor() == "appveyor":
-            warnings.warn(
-                "py7zlib.py requires to be updated with the github version")
             return
 
         from py7zlib import COMPRESSION_METHOD_COPY
@@ -175,9 +170,7 @@ class TestCompressHelper(unittest.TestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
-        if is_travis_or_appveyor():
-            warnings.warn(
-                "7z not available")
+        if is_travis_or_appveyor() in ('travis', 'appveyor'):
             return
 
         if sys.version_info[0] == 2:

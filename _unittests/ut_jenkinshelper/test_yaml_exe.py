@@ -5,7 +5,6 @@
 import sys
 import os
 import unittest
-import warnings
 
 
 try:
@@ -98,8 +97,9 @@ class TestYamlExe(unittest.TestCase):
             name = os.path.join(temp, "yml.%s" % ext)
             with open(name, "w") as f:
                 f.write(conv)
-            if is_travis_or_appveyor() != "appveyor":
-                warnings.warn("linux, unable to test TestYamlExe.test_exe")
+            if is_travis_or_appveyor() == "___travis":
+                # linux, unable to test TestYamlExe.test_exe.
+                pass
             else:
                 out, err = run_cmd(name, wait=True)
                 fLOG("###")

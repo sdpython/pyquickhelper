@@ -6,7 +6,6 @@
 import sys
 import os
 import unittest
-import warnings
 
 
 try:
@@ -54,9 +53,7 @@ class TestNoteBooksBugPython(unittest.TestCase):
         for file in os.listdir(temp):
             os.remove(os.path.join(temp, file))
 
-        if is_travis_or_appveyor() is not None:
-            warnings.warn(
-                "travis, appveyor, unable to test TestNoteBooksBugPython.test_notebook_python")
+        if is_travis_or_appveyor() in ('travis', 'appveyor'):
             return
 
         setup_environment_for_help()

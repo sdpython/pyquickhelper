@@ -5,7 +5,6 @@
 import os
 import sys
 import unittest
-import warnings
 from docutils.parsers.rst import roles
 
 try:
@@ -39,14 +38,12 @@ class TestSphinxDocFull (unittest.TestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
-        if is_travis_or_appveyor() is not None or sys.version_info[0] == 2:
-            # travis due to the following:
+        if is_travis_or_appveyor() in ('travis', 'appveyor') or sys.version_info[0] == 2:
+            # travis fails due to the following:
             #       sitep = [_ for _ in site.getsitepackages() if "packages" in _]
             # AttributeError: 'module' object has no attribute
             # 'getsitepackages'
-            # it also fails for python 2.7 (encoding issue)
-            warnings.warn(
-                "travis, appveyor, circleci, unable to test TestSphinxDocFull.test_full_documentation")
+            # It fails for python 2.7 (encoding issue).
             return
 
         temp = get_temp_folder(

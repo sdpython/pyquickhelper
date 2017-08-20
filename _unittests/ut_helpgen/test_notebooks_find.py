@@ -6,7 +6,6 @@
 import sys
 import os
 import unittest
-import warnings
 import shutil
 
 try:
@@ -103,9 +102,7 @@ class TestNoteBooksFind(unittest.TestCase):
 
         temp = get_temp_folder(__file__, "temp_nb_find")
 
-        if is_travis_or_appveyor() is not None:
-            warnings.warn(
-                "travis, appveyor, unable to test TestNoteBooksBug.test_notebook")
+        if is_travis_or_appveyor() in ('travis', 'appveyor'):
             return
 
         nbs2 = []

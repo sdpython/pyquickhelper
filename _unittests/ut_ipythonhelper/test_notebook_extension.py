@@ -7,7 +7,6 @@ notebook test
 import sys
 import os
 import unittest
-import warnings
 
 try:
     import src
@@ -42,10 +41,8 @@ class TestNotebookExtensions(unittest.TestCase):
         try:
             ext = get_installed_notebook_extension()
         except FileNotFoundError:
-            if is_travis_or_appveyor() != "appveyor":
-                # does not work on travis due to permission error
-                warnings.warn(
-                    "linux, unable to test TestNotebookExtensions.test_notebook_extension")
+            if is_travis_or_appveyor() == "travis":
+                # It does not work on travis due to permission error.
                 return
             ext = []
 

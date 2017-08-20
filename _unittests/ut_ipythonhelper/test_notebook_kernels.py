@@ -7,7 +7,6 @@ notebook test
 import sys
 import os
 import unittest
-import warnings
 
 try:
     import src
@@ -48,10 +47,8 @@ class TestNotebookKernels(unittest.TestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
-        if is_travis_or_appveyor() != "appveyor":
-            # permission issue on linux
-            warnings.warn(
-                "linux, unable to test TestNotebookKernels.test_notebook_kernel_install")
+        if is_travis_or_appveyor() == "travis":
+            # permission issue on linux.
             return
 
         kern = "ut_" + sys.executable.replace("\\", "/").replace("/", "_").replace(
