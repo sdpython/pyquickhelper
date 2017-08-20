@@ -68,6 +68,7 @@ jobs:
           command: |
             . venv/bin/activate
             python setup.py bdist_wheel
+            mkdir -p test-reports/dist
             cp dist/*.whl test-reports/dist
 
       - run:
@@ -79,8 +80,9 @@ jobs:
       - run:
           name: copy documentation
           command: |
-            cp -r  _doc/sphinxdoc/build/html test-reports/build
-
+            mkdir -p test-reports/doc
+            cp -r  _doc/sphinxdoc/build/html test-reports/doc
+            
       - store_artifacts:
           path: test-reports
           destination: test-reports
