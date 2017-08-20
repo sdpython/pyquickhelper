@@ -274,7 +274,7 @@ def zip7_files(filename_7z, file_set, fLOG=noLOG, temp_folder="."):
         exe = "7z"
 
     if os.path.exists(filename_7z):
-        raise FileException("{0} already exists".format(filename_7z))
+        raise FileException("'{0}' already exists".format(filename_7z))
 
     notxist = [fn for fn in file_set if not os.path.exists(fn)]
     if len(notxist) > 0:
@@ -289,8 +289,7 @@ def zip7_files(filename_7z, file_set, fLOG=noLOG, temp_folder="."):
         exe, filename_7z, flist)
     out, err = run_cmd(cmd, wait=True)
     if "Error:" in out:
-        raise Exception(
-            "An error occurred with cmd: '{0}'\nOUT:\n{1}\nERR\n{2}\n----".format(cmd, out, err))
+        raise Exception("An error occurred with cmd: '{0}'\nOUT:\n{1}\nERR\n{2}\n----".format(cmd, out, err))
     return len(file_set)
 
 
