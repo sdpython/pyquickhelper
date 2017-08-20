@@ -5,7 +5,7 @@ python:
     - "3.6"
 install: 
     - pip install -r requirements.txt
-    - pip install git+https://github.com/fancycode/pylzma.git
-    - pip install git+https://github.com/sdpython/sphinxcontrib-images.git --upgrade
+    - pip install git+https://github.com/fancycode/pylzma.git --upgrade --no-deps
+    - pip install git+https://github.com/sdpython/sphinxcontrib-images.git --upgrade --no-deps
 script:
     - python setup.py unittests
