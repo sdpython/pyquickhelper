@@ -134,8 +134,9 @@ class TestUnitTestFull(unittest.TestCase):
             fLOG("#######################################################")
             rem = False
             PYTHONPATH = os.environ.get("PYTHONPATH", "")
-            new_val = PYTHONPATH + ";" + thispath + ";" + jyqpath
-            os.environ["PYTHONPATH"] = new_val.strip(";")
+            sep = ";" if sys.platform.startswith("win") else ":"
+            new_val = PYTHONPATH + sep + thispath + sep + jyqpath
+            os.environ["PYTHONPATH"] = new_val.strip(sep)
             if command == "build_sphinx":
                 if thispath not in sys.path:
                     sys.path.append(thispath)
