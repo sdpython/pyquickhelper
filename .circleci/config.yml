@@ -57,12 +57,6 @@ jobs:
           key: v1-dependencies-{{ checksum "requirements.txt" }}
         
       - run:
-          name: documentation
-          command: |
-            . venv/bin/activate
-            python setup.py build_sphinx
-
-      - run:
           name: run tests
           command: |
             . venv/bin/activate
@@ -74,6 +68,14 @@ jobs:
             . venv/bin/activate
             python setup.py bdist_wheel
             cp dist/*.whl test-reports
+
+      - run:
+          name: documentation
+          command: |
+            . venv/bin/activate
+            python setup.py build_sphinx
+            mkdir  test-reports/html
+            cp -r  _doc/sphinxdoc/build/html test-reports/html
 
       - store_artifacts:
           path: test-reports

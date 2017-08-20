@@ -45,20 +45,17 @@ class TestDownload (unittest.TestCase):
         if not f.endswith("ftplib.html"):
             raise Exception(f)
 
-        out = os.path.join(fold, "try.html.gz")
-        r = gzip_files(out, [f], fLOG=fLOG)
-        fLOG(r)
-        self.assertTrue(os.path.exists(out))
+        out1 = os.path.join(fold, "try.html.gz")
+        gzip_files(out1, [f], fLOG=fLOG)
+        self.assertTrue(os.path.exists(out1))
 
-        out = os.path.join(fold, "try.zip")
-        r = zip_files(out, [f], fLOG=fLOG)
-        fLOG(r)
-        self.assertTrue(os.path.exists(out))
+        out2 = os.path.join(fold, "try.zip")
+        r = zip_files(out2, [f], fLOG=fLOG)
+        self.assertTrue(os.path.exists(out2))
 
         if is_travis_or_appveyor() in ("circleci", None):
             out7 = os.path.join(fold, "try.7z")
-            r = zip7_files(out7, [f, out], fLOG=fLOG, temp_folder=fold)
-            fLOG(r)
+            zip7_files(out7, [out1, out2], fLOG=fLOG, temp_folder=fold)
             if not os.path.exists(out7):
                 raise FileNotFoundError(out7)
         else:
