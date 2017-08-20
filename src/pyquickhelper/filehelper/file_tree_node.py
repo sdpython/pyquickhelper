@@ -64,7 +64,7 @@ class FileTreeNode:
     """
 
     _default_not_ext = "bbl out pyc log lib ind pdb opt".split()
-    _default_out = re.compile("([.]svn)|(hal.*[.]((exe)|(dll)|(sln)|(vcproj)))" +
+    _default_out = re.compile("([.]svn)|(hal.*[.]((exe)|(dll)|(so)|(sln)|(vcproj)))" +
                               "|".join(["(.*[.]%s$)" % e for e in _default_not_ext]))
 
     def build_expression(ext):
