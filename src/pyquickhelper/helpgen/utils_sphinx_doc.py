@@ -195,8 +195,9 @@ def _private_process_one_file(
 def remove_undesired_part_for_documentation(content, filename, use_sys):
     """
     Some files contains blocs inserted between the two lines:
-        * ``# -- HELP BEGIN EXCLUDE --``
-        * ``# -- HELP END EXCLUDE --``
+
+    * ``# -- HELP BEGIN EXCLUDE --``
+    * ``# -- HELP END EXCLUDE --``
 
     Those lines will be commented out.
 
