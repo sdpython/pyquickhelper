@@ -154,6 +154,8 @@ def post_process_latex_output(root, doall, latex_book=False, exc=True,
         file = root
         with open(file, "r", encoding="utf8") as f:
             content = f.read()
+        with open(file + "~", "r", encoding="utf8") as f:
+            content = f.read()
         content = post_process_latex(
             content, doall, latex_book=latex_book, exc=exc,
             custom_latex_processing=custom_latex_processing, nblinks=nblinks, file=file, fLOG=fLOG)
@@ -168,6 +170,8 @@ def post_process_latex_output(root, doall, latex_book=False, exc=True,
                 file = os.path.join(build, tex)
                 fLOG("modify file", file)
                 with open(file, "r", encoding="utf8") as f:
+                    content = f.read()
+                with open(file + "~", "r", encoding="utf8") as f:
                     content = f.read()
                 content = post_process_latex(
                     content, doall, info=file, latex_book=latex_book, exc=exc,
@@ -564,7 +568,7 @@ def post_process_slides_output(file, pdf, python, slides, present, exc=True, nbl
 def post_process_latex(st, doall, info=None, latex_book=False, exc=True,
                        custom_latex_processing=None, nblinks=None, file=None, fLOG=None):
     """
-    modifies a latex file after its generation by sphinx
+    Modifies a latex file after its generation by :epkg:`sphinx`.
 
     @param      st                      string
     @param      doall                   do all transformations
@@ -578,8 +582,8 @@ def post_process_latex(st, doall, info=None, latex_book=False, exc=True,
     @param      fLOG                    logging function
     @return                             string
 
-    SVG included in a notebook (or in RST file) requires :epkg:`Inkscape`
-    to be converted into Latex.
+    *SVG* included in a notebook (or in *RST* file) usually do not word.
+    :epkg:`Inkscape` should be used to convert them into Latex.
 
     .. versionchanged:: 1.4
         Parameter *latex_book* was added.
@@ -591,17 +595,18 @@ def post_process_latex(st, doall, info=None, latex_book=False, exc=True,
 
     .. index:: chinese characters, latex, unicode
 
-    @warning Unicode, chinese characters are an issue because the latex compiler
-             prompts on those if the necessary packages are not installed.
-             `pdflatex <https://en.wikipedia.org/w/index.php?title=PdfTeX&redirect=no>`_
-             does not accepts inline chinese
-             characters, `xetex <https://en.wikipedia.org/wiki/XeTeX>`_
-             should be used instead:
-             see `How to input Traditional Chinese in pdfLaTeX <http://tex.stackexchange.com/questions/200449/how-to-input-traditional-chinese-in-pdflatex>`_.
-             Until this is being implemetend, the unicode will unfortunately be removed
-             in this function.
+    .. faqref::
+        :title: Why a ¿ is showing the final PDF?
 
-    @todo Check latex is properly converted in HTML files
+        Unicode, chinese characters are an issue because the latex compiler
+        prompts on those if the necessary packages are not installed.
+        `pdflatex <https://en.wikipedia.org/w/index.php?title=PdfTeX&redirect=no>`_
+        does not accepts inline chinese
+        characters, `xetex <https://en.wikipedia.org/wiki/XeTeX>`_
+        should be used instead:
+        see `How to input Traditional Chinese in pdfLaTeX <http://tex.stackexchange.com/questions/200449/how-to-input-traditional-chinese-in-pdflatex>`_.
+        Until this is being implemeted, the unicode will unfortunately be removed
+        in this function.
     """
     if fLOG:
         fLOG("   ** enter post_process_latex",
@@ -609,6 +614,10 @@ def post_process_latex(st, doall, info=None, latex_book=False, exc=True,
     weird_character = set(chr(i) for i in range(1, 9))
 
     def clean_unicode(c):
+        if c == "’":
+            return "'"
+        if c == "…":
+            return "..."
         if ord(c) >= 255 or c in weird_character:
             return "\\textquestiondown "
         else:
