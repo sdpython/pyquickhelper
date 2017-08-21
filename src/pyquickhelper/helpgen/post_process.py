@@ -154,8 +154,8 @@ def post_process_latex_output(root, doall, latex_book=False, exc=True,
         file = root
         with open(file, "r", encoding="utf8") as f:
             content = f.read()
-        with open(file + "~", "r", encoding="utf8") as f:
-            content = f.read()
+        with open(file + "~", "w", encoding="utf8") as f:
+            f.write(content)
         content = post_process_latex(
             content, doall, latex_book=latex_book, exc=exc,
             custom_latex_processing=custom_latex_processing, nblinks=nblinks, file=file, fLOG=fLOG)
@@ -171,8 +171,8 @@ def post_process_latex_output(root, doall, latex_book=False, exc=True,
                 fLOG("modify file", file)
                 with open(file, "r", encoding="utf8") as f:
                     content = f.read()
-                with open(file + "~", "r", encoding="utf8") as f:
-                    content = f.read()
+                with open(file + "~", "w", encoding="utf8") as f:
+                    f.write(content)
                 content = post_process_latex(
                     content, doall, info=file, latex_book=latex_book, exc=exc,
                     custom_latex_processing=custom_latex_processing, nblinks=nblinks, file=file, fLOG=fLOG)
