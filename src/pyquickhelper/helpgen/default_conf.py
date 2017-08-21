@@ -163,6 +163,7 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
     latex_show_pagerefs = True
 
     preamble = '''
+            \\usepackage{etex}
             \\usepackage{fixltx2e} % LaTeX patches, \\textsubscript
             \\usepackage{cmap} % fix search and cut-and-paste in Acrobat
             \\usepackage[raccourcis]{fast-diagram}
