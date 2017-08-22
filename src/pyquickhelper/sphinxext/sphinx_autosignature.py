@@ -79,7 +79,7 @@ class AutoSignatureDirective(Directive):
         except ImportError as e:
             logger = logging.getLogger("AutoSignature")
             logger.warning(
-                "[AutoSignature] unable to import '{0}'".format(object_name))
+                "[AutoSignature] unable to import '{0}' due to '{1}'".format(object_name, e))
             if lineno is not None:
                 logger.warning(
                     '   File "{0}", line {1}'.format(source, lineno))
@@ -89,7 +89,7 @@ class AutoSignatureDirective(Directive):
         if opt_members is not None and kind != "class":
             logger = logging.getLogger("autosignature")
             logger.warning(
-                "[autosignature] option members is specific but '{0}' is not a class.".format(object_name))
+                "[autosignature] option members is specified but '{0}' is not a class (kind='{1}').".format(object_name, kind))
             obj = None
 
         # build node
