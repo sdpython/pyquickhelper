@@ -1016,7 +1016,7 @@ def build_all_notebooks_coverage(nbs, fileout, module_name, dump=None, badge=Tru
     @param      dump            dump containing information about notebook execution (or None for the default one)
     @param      badge           builds an image with the notebook coverage
     @param      fLOG            logging function
-    @return                     created file name
+    @return                     dataframe which contains the data
     """
     if dump is None:
         dump = os.path.normpath(os.path.join(os.path.dirname(fileout), "..", "..", "..", "..",
@@ -1048,6 +1048,8 @@ def build_all_notebooks_coverage(nbs, fileout, module_name, dump=None, badge=Tru
         lambda x: "/".join(os.path.normpath(x).replace("\\", "/").split("/")[-2:]) if isinstance(x, str) else x)
     report["last_name"] = report["notebooks"].apply(
         lambda x: os.path.split(x)[-1] if isinstance(x, str) else x)
+
+    report1 = report.copy()
 
     def clean_link(link):
         return link.replace("_", "").replace(".ipynb", ".rst").replace(".", "") if isinstance(link, str) else link
@@ -1093,7 +1095,7 @@ def build_all_notebooks_coverage(nbs, fileout, module_name, dump=None, badge=Tru
     report.columns = ['name', 'title', 'last execution', 'success', 'time',
                       'nb cells', 'nb runs', 'nb valid', 'exe time', 'coverage']
 
-    # Add results
+    # Add results.
     text = df2rst(report.sort_values("name"), index=True,
                   column_size=[2, 5, 5, 3, 2, 2, 2, 2, 2, 2, 2])
     rows.append(text)
@@ -1101,3 +1103,4 @@ def build_all_notebooks_coverage(nbs, fileout, module_name, dump=None, badge=Tru
     fLOG("[notebooks-coverage] writing", fileout)
     with open(fileout, "w", encoding="utf-8") as f:
         f.write("\n".join(rows))
+    return report1

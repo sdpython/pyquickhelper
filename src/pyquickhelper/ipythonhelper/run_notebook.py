@@ -406,18 +406,23 @@ def notebook_coverage(module_or_path, dump=None):
     import pandas
     dfnb = pandas.DataFrame(data=dict(notebooks=nbs))
     dfnb["notebooks"] = dfnb["notebooks"].apply(lambda x: os.path.normpath(x))
-    dfnb["last_name"] = dfnb["notebooks"].apply(lambda x: os.path.split(x)[-1])
+    dfnb["key"] = dfnb["notebooks"].apply(lambda x: "/".join(os.path.normpath(
+        x).replace("\\", "/").split("/")[-3:]) if isinstance(x, str) else x)
 
     # Loads the dump.
     dfall = pandas.read_csv(dump, sep="\t", encoding="utf-8")
     dfall["name"] = dfall["name"].apply(lambda x: os.path.normpath(x))
+    dfall["key"] = dfall["name"].apply(lambda x: "/".join(os.path.normpath(
+        x).replace("\\", "/").split("/")[-3:]) if isinstance(x, str) else x)
 
     # We keep the last execution.
     gr = dfall.sort_values("date", ascending=False).groupby(
         "name").first().reset_index().copy()
-    merged = dfnb.merge(gr, left_on="notebooks", right_on="name", how="outer")
 
-    # We fill missing values if any about the number of cells in a notebook.
+    # Folders might be different so we merge on the last part of the path.
+    merged = dfnb.merge(gr, left_on="key", right_on="key", how="outer")
+    merged = merged[merged.notebooks.notnull()]
+    merged = merged.sort_values("key").reset_index(drop=True).copy()
 
     return merged
 
