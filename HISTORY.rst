@@ -19,3 +19,4 @@ History
 * `52`: add coverage for notebooks
 * `61`: add a build on `circleci <https://circleci.com/gh/sdpython/pyquickhelper>`_,
   builds the documentation, populates the artifacts section
+* `63`: add file_detail in *get_repo_log*

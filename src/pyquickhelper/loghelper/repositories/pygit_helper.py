@@ -8,6 +8,7 @@ import os
 import sys
 import datetime
 import xml.etree.ElementTree as ET
+import re
 from xml.sax.saxutils import escape
 
 from ..flog import fLOG, run_cmd
@@ -137,7 +138,7 @@ def get_cmd_git():
 
 def repo_ls(full, commandline=True):
     """
-    run ``ls`` on a path
+    Run ``ls`` on a path.
     @param      full            full path
     @param      commandline use command line instead of pysvn
     @return                     output of client.ls
@@ -193,39 +194,237 @@ def __get_version_from_version_txt(path):
         "unable to find version.txt in\n" + "\n".join(paths))
 
 
-def get_repo_log(path=None, file_detail=False, commandline=True):
+_reg_insertion = re.compile("([1-9][0-9]*) insertion")
+_reg_deletion = re.compile("([1-9][0-9]*) deletion")
+_reg_bytes = re.compile("([1-9][0-9]*) bytes")
+
+
+def get_file_details(name, path=None, commandline=True):
     """
-    get the latest changes operated on a file in a folder or a subfolder
+    Returns information about a file.
+
+    @param      name            name of the file
+    @param      path            path to repo
+    @param      commandline     if True, use the command line to get the version number, otherwise it uses pysvn
+    @return                     list of tuples
+
+    The result is a list of tuple:
+
+    * commit
+    * name
+    * added
+    * inserted
+    * bytes
+    """
+    if not commandline:
+        try:
+            raise NotImplementedError()
+        except Exception:
+            return get_file_details(name, path, True)
+    else:
+        cmd = get_cmd_git()
+        if sys.platform.startswith("win"):
+            cmd += ' log --stat "' + os.path.join(path, name) + '"'
+        else:
+            cmd = [cmd, 'log', "--stat", os.path.join(path, name)]
+
+        enc = sys.stdout.encoding if sys.version_info[
+            0] != 2 and sys.stdout is not None else "utf8"
+        out, err = run_cmd(cmd,
+                           wait=True,
+                           encerror="strict",
+                           encoding=enc,
+                           change_path=os.path.split(
+                               path)[0] if os.path.isfile(path) else path,
+                           shell=sys.platform.startswith("win32"),
+                           preprocess=False)
+
+        if len(err) > 0:
+            mes = "Problem with file '{0}'".format(os.path.join(path, name))
+            raise GitException(mes + "\n" +
+                               err + "\nCMD:\n" + cmd + "\nOUT:\n" + out + "\n[giterror]\n" + err + "\nCMD:\n" + cmd)
+
+        master = get_master_location(path, commandline)
+        if master.endswith(".git"):
+            master = master[:-4]
+
+        if enc != "utf8" and enc is not None:
+            by = out.encode(enc)
+            out = by.decode("utf8")
+
+        # We split into commits.
+        commits = []
+        current = []
+        for line in out.split("\n"):
+            if line.startswith("commit"):
+                if len(current) > 0:
+                    commits.append("\n".join(current))
+                current = [line]
+            else:
+                current.append(line)
+        if len(current) > 0:
+            commits.append("\n".join(current))
+
+        # We analyze each commit.
+        rows = []
+        for commit in commits:
+            se = _reg_insertion.findall(commit)
+            if len(se) > 1:
+                raise Exception("A commit is wrong \n{0}".format(commit))
+            inser = int(se[0]) if len(se) == 1 else 0
+            de = _reg_deletion.findall(commit)
+            if len(de) > 1:
+                raise Exception("A commit is wrong \n{0}".format(commit))
+            delet = int(de[0]) if len(de) == 1 else 0
+            bi = _reg_bytes.findall(commit)
+            if len(bi) > 1:
+                raise Exception("A commit is wrong \n{0}".format(commit))
+            bite = int(bi[0]) if len(bi) == 1 else 0
+            com = commit.split("\n")[0].split()[1]
+            rows.append((com, name, inser, delet, bite))
+        return rows
+
+
+_reg_stat_net = re.compile("(.+) *[|] +([1-9][0-9]*)")
+_reg_stat_bytes = re.compile(
+    "(.+) *[|] Bin ([1-9][0-9]*) [-][>] ([1-9][0-9]*) bytes")
+
+
+def get_file_details_all(path=None, commandline=True):
+    """
+    Returns information about all files
+
+    @param      path            path to repo
+    @param      commandline     if True, use the command line to get the version number, otherwise it uses pysvn
+    @return                     list of tuples
+
+    The result is a list of tuple:
+
+    * commit
+    * name
+    * net
+    * bytes
+    """
+    if not commandline:
+        try:
+            raise NotImplementedError()
+        except Exception:
+            return get_file_details_all(path, True)
+    else:
+        cmd = get_cmd_git()
+        if sys.platform.startswith("win"):
+            cmd += ' --no-pager log --stat'
+        else:
+            cmd = [cmd, '--no-pager', 'log', "--stat"]
+
+        enc = sys.stdout.encoding if sys.version_info[
+            0] != 2 and sys.stdout is not None else "utf8"
+        out, err = run_cmd(cmd,
+                           wait=True,
+                           encerror="strict",
+                           encoding=enc,
+                           change_path=os.path.split(
+                               path)[0] if os.path.isfile(path) else path,
+                           shell=sys.platform.startswith("win32"),
+                           preprocess=False)
+
+        if len(err) > 0:
+            mes = "Problem with '{0}'".format(path)
+            raise GitException(mes + "\n" +
+                               err + "\nCMD:\n" + cmd + "\nOUT:\n" + out + "\n[giterror]\n" + err + "\nCMD:\n" + cmd)
+
+        master = get_master_location(path, commandline)
+        if master.endswith(".git"):
+            master = master[:-4]
+
+        if enc != "utf8" and enc is not None:
+            by = out.encode(enc)
+            out = by.decode("utf8")
+
+        # We split into commits.
+        commits = []
+        current = []
+        for line in out.split("\n"):
+            if line.startswith("commit"):
+                if len(current) > 0:
+                    commits.append("\n".join(current))
+                current = [line]
+            else:
+                current.append(line)
+        if len(current) > 0:
+            commits.append("\n".join(current))
+
+        # We analyze each commit.
+        rows = []
+        for commit in commits:
+            com = commit.split("\n")[0].split()[1]
+            lines = commit.split("\n")
+            for line in lines:
+                r1 = _reg_stat_net.search(line)
+                if r1:
+                    name = r1.groups()[0]
+                    net = int(r1.groups()[1])
+                    delta = 0
+                else:
+                    net = 0
+                    r2 = _reg_stat_bytes.search(line)
+                    if r2:
+                        name = r2.groups()[0]
+                        fr = int(r2.groups()[1])
+                        to = int(r2.groups()[2])
+                        delta = to - fr
+                    else:
+                        continue
+                rows.append((com, name, net, delta))
+        return rows
+
+
+def get_repo_log(path=None, file_detail=False, commandline=True, subset=None):
+    """
+    Get the latest changes operated on a file in a folder or a subfolder.
     @param      path            path to look
     @param      file_detail     if True, add impacted files
     @param      commandline     if True, use the command line to get the version number, otherwise it uses pysvn
-    @return                     list of changes, each change is a list of 4-uple:
-                                    - author
-                                    - commit hash [:6]
-                                    - date (datetime)
-                                    - comment$
-                                    - full commit hash
-                                    - link to commit (if the repository is http://...)
+    @param      subset          only provide file details for a subset of files
+    @return                     list of changes, each change is a list of tuple (see below)
 
-    The function use a command line if an error occurred. It uses the xml format:
-    @code
-    <logentry revision="161">
-        <author>xavier dupre</author>
-        <date>2013-03-23T15:02:50.311828Z</date>
-        <msg>pyquickhelper: first version</msg>
-        <hash>full commit hash</hash>
-    </logentry>
-    @endcode
+    The return results is a list of tuple with the following fields:
+
+    - author
+    - commit hash [:6]
+    - date (datetime)
+    - comment$
+    - full commit hash
+    - link to commit (if the repository is http://...)
+
+    The function use a command line if an error occurred.
+    It uses the xml format:
+
+    ::
+
+        <logentry revision="161">
+            <author>xavier dupre</author>
+            <date>2013-03-23T15:02:50.311828Z</date>
+            <msg>pyquickhelper: first version</msg>
+            <hash>full commit hash</hash>
+        </logentry>
 
     Add link:
-    @code
-    https://github.com/sdpython/pyquickhelper/commit/8d5351d1edd4a8997f358be39da80c72b06c2272
-    @endcode
+
+    ::
+
+        https://github.com/sdpython/pyquickhelper/commit/8d5351d1edd4a8997f358be39da80c72b06c2272
 
     More: `git pretty format <http://opensource.apple.com/source/Git/Git-19/src/git-htmldocs/pretty-formats.txt>`_
+    See also `pretty format <https://www.kernel.org/pub/software/scm/git/docs/git-log.html#_pretty_formats>`_ (html).
+    To get details about one file and all the commit.
+
+    ::
+
+        git log  --stat -- _unittests/ut_loghelper/data/sample_zip.zip
 
     .. versionchanged:: 1.0
-        For some searon, the call to @see fn str2datetime seemed to cause exception such as::
+        For some reason, the call to @see fn str2datetime seemed to cause exception such as::
 
             File "<frozen importlib._bootstrap>", line 2212, in _find_and_load_unlocked
             File "<frozen importlib._bootstrap>", line 321, in _call_with_frames_removed
@@ -233,12 +432,43 @@ def get_repo_log(path=None, file_detail=False, commandline=True):
             File "<frozen importlib._bootstrap>", line 2237, in _find_and_load
             File "<frozen importlib._bootstrap>", line 2224, in _find_and_load_unlocked
 
-        when it was used to generate documentation for others modules than pyquickhelper.
+        when it was used to generate documentation for others modules than *pyquickhelper*.
         Not using this function helps. The cause still remains obscure.
 
+    .. versionchanged:: 1.5
+        Enable *file_details*.
     """
     if file_detail:
-        raise NotImplementedError()
+        if subset is None:
+            res = get_file_details_all(path, commandline=commandline)
+            details = {}
+            for commit in res:
+                com = commit[0]
+                if com not in details:
+                    details[com] = []
+                details[com].append(commit[1:])
+        else:
+            files = subset
+            details = {}
+            for i, name in enumerate(files):
+                res = get_file_details(name.name if isinstance(name, RepoFile) else name,
+                                       path, commandline=commandline)
+                for commit in res:
+                    com = commit[0]
+                    if com not in details:
+                        details[com] = []
+                    details[com].append(commit[1:])
+        logs = get_repo_log(path=path, file_detail=False,
+                            commandline=commandline)
+        final = []
+        for log in logs:
+            com = log[4]
+            if com not in details:
+                continue
+            det = details[com]
+            for d in det:
+                final.append(tuple(log) + d)
+        return final
 
     if path is None:
         path = os.path.normpath(
@@ -271,9 +501,9 @@ def get_repo_log(path=None, file_detail=False, commandline=True):
                            preprocess=False)
 
         if len(err) > 0:
-            fLOG("problem with file ", path, err)
-            raise GitException(
-                err + "\nCMD:\n" + cmd + "\nOUT:\n" + out + "\n[giterror]\n" + err + "\nCMD:\n" + cmd)
+            mes = "Problem with file '{0}'".format(os.path.join(path, name))
+            raise GitException(mes + "\n" +
+                               err + "\nCMD:\n" + cmd + "\nOUT:\n" + out + "\n[giterror]\n" + err + "\nCMD:\n" + cmd)
 
         master = get_master_location(path, commandline)
         if master.endswith(".git"):
