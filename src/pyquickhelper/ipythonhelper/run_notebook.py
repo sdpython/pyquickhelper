@@ -424,6 +424,10 @@ def notebook_coverage(module_or_path, dump=None):
     merged = merged[merged.notebooks.notnull()]
     merged = merged.sort_values("key").reset_index(drop=True).copy()
 
+    if "last_name" not in merged.columns:
+        merged["last_name"] = merged["key"].apply(
+            lambda x: os.path.split(x)[-1])
+
     return merged
 
 

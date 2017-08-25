@@ -1132,7 +1132,7 @@ def prepare_file_for_sphinx_help_generation(store_obj, input, output,
         falli.write("Statistics on code\n")
         falli.write("==================\n")
         falli.write("\n\n")
-        sph = df2rst(df)
+        sph = df2rst(df, list_table=True)
         falli.write(sph)
         falli.write("\n")
     rsts.append(RstFileHelp(None, all_report, None))

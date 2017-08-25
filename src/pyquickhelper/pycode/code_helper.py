@@ -26,6 +26,7 @@ def remove_extra_spaces_and_pep8(filename, apply_pep8=True, aggressive=False, is
         use ``fix_code`` instead of ``fix_line``.
         Parameter *is_string* was added.
     """
+    initial_content = None
     if "\n" in filename or (is_string is not None and is_string):
         ext = ".py"
         lines = filename.replace("\r", "").split("\n")
@@ -47,6 +48,7 @@ def remove_extra_spaces_and_pep8(filename, apply_pep8=True, aggressive=False, is
                 except Exception:
                     raise Exception(
                         "unable to load file {} due to unicode errors".format(filename)) from e
+            initial_content = "\n".join(lines)
         else:
             try:
                 with open(filename, "r", encoding="utf-8-sig") as f:
@@ -62,6 +64,7 @@ def remove_extra_spaces_and_pep8(filename, apply_pep8=True, aggressive=False, is
                 except Exception:
                     raise Exception(
                         "unable to load file {} due to unicode errors".format(filename)) from e
+            initial_content = "\n".join(lines)
 
     if filename is not None and len(lines) == 0 and not filename.endswith("__init__.py"):
         raise ValueError(
@@ -103,7 +106,7 @@ def remove_extra_spaces_and_pep8(filename, apply_pep8=True, aggressive=False, is
                 len(lines), encoding, diff, filename))
         if filename is None:
             return r
-        else:
+        elif r != initial_content:
             if encoding is None:
                 with open(filename, "w") as f:
                     f.write(r)
@@ -171,7 +174,7 @@ def remove_extra_spaces_folder(
         folder, extensions=(".py", ".rst", ".md"), apply_pep8=True,
         file_filter=None):
     """
-    removes extra files in a folder for specific file extensions
+    Removes extra files in a folder for specific file extensions.
 
     @param      folder          folder to explore
     @param      extensions      list of file extensions to process

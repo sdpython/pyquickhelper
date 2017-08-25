@@ -53,8 +53,8 @@ class TestPandasHelper(unittest.TestCase):
                 if repeat >= 2:
                     raise e
                 repeat += 1
-        assert len(df) > 0
-        assert len(df.columns) == 4
+        self.assertTrue(len(df) > 0)
+        self.assertEqual(len(df.columns), 4)
         fLOG(df.head())
 
     def test_isnull(self):
@@ -63,13 +63,13 @@ class TestPandasHelper(unittest.TestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
-        assert isempty("")
-        assert not isempty("e")
-        assert isempty(None)
-        assert isempty(numpy.nan)
+        self.assertTrue(isempty(""))
+        self.assertTrue(not isempty("e"))
+        self.assertTrue(isempty(None))
+        self.assertTrue(isempty(numpy.nan))
 
-        assert isnan(numpy.nan)
-        assert not isnan(0.0)
+        self.assertTrue(isnan(numpy.nan))
+        self.assertTrue(not isnan(0.0))
 
 
 if __name__ == "__main__":

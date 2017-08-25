@@ -95,6 +95,107 @@ class TestPandasRst(unittest.TestCase):
                  """.replace("                 ", "")
         self.assertEqual(rst, exp)
 
+    def test_pandas_rst_size_table(self):
+        fLOG(
+            __file__,
+            self._testMethodName,
+            OutputPrint=__name__ == "__main__")
+
+        df = pandas.DataFrame([{"A": "x", "AA": "xx", "AAA": "xxx"},
+                               {"AA": "xxxxxxx", "AAA": "xxx"}])
+        rst = df2rst(df, column_size=[1, 1, 2], list_table=True)
+        exp = """
+                    .. list-table::
+                        :widths: 1 1 2
+                        :header-rows: 1
+
+                        * - A
+                          - AA
+                          - AAA
+                        * - x
+                          - xx
+                          - xxx
+                        * -
+                          - xxxxxxx
+                          - xxx
+                    """.replace("                    ", "")
+        self.assertEqual(rst.strip("\n "), exp.strip("\n "))
+
+    def test_pandas_rst_size_table_title(self):
+        fLOG(
+            __file__,
+            self._testMethodName,
+            OutputPrint=__name__ == "__main__")
+
+        df = pandas.DataFrame([{"A": "x", "AA": "xx", "AAA": "xxx"},
+                               {"AA": "xxxxxxx", "AAA": "xxx"}])
+        rst = df2rst(df, column_size=[1, 1, 2],
+                     list_table=True, title="title__")
+        exp = """
+                    .. list-table:: title__
+                        :widths: 1 1 2
+                        :header-rows: 1
+
+                        * - A
+                          - AA
+                          - AAA
+                        * - x
+                          - xx
+                          - xxx
+                        * -
+                          - xxxxxxx
+                          - xxx
+                    """.replace("                    ", "")
+        self.assertEqual(rst.strip("\n "), exp.strip("\n "))
+
+    def test_pandas_rst_size_table_auto(self):
+        fLOG(
+            __file__,
+            self._testMethodName,
+            OutputPrint=__name__ == "__main__")
+
+        df = pandas.DataFrame([{"A": "x", "AA": "xx", "AAA": "xxx"},
+                               {"AA": "xxxxxxx", "AAA": "xxx"}])
+        rst = df2rst(df, list_table=True)
+        exp = """
+                    .. list-table::
+                        :widths: auto
+                        :header-rows: 1
+
+                        * - A
+                          - AA
+                          - AAA
+                        * - x
+                          - xx
+                          - xxx
+                        * -
+                          - xxxxxxx
+                          - xxx
+                    """.replace("                    ", "")
+        self.assertEqual(rst.strip("\n "), exp.strip("\n "))
+
+    def test_pandas_rst_size_table_noheader(self):
+        fLOG(
+            __file__,
+            self._testMethodName,
+            OutputPrint=__name__ == "__main__")
+
+        df = pandas.DataFrame([{"A": "x", "AA": "xx", "AAA": "xxx"},
+                               {"AA": "xxxxxxx", "AAA": "xxx"}])
+        rst = df2rst(df, list_table=True, header=False)
+        exp = """
+                    .. list-table::
+                        :widths: auto
+
+                        * - x
+                          - xx
+                          - xxx
+                        * -
+                          - xxxxxxx
+                          - xxx
+                    """.replace("                    ", "")
+        self.assertEqual(rst.strip("\n "), exp.strip("\n "))
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -281,13 +281,13 @@ def get_file_details(name, path=None, commandline=True):
                 raise Exception("A commit is wrong \n{0}".format(commit))
             bite = int(bi[0]) if len(bi) == 1 else 0
             com = commit.split("\n")[0].split()[1]
-            rows.append((com, name, inser, delet, bite))
+            rows.append((com, name.strip(), inser, delet, bite))
         return rows
 
 
 _reg_stat_net = re.compile("(.+) *[|] +([1-9][0-9]*)")
 _reg_stat_bytes = re.compile(
-    "(.+) *[|] Bin ([1-9][0-9]*) [-][>] ([1-9][0-9]*) bytes")
+    "(.+) *[|] Bin ([0-9]+) [-][>] ([0-9]+) bytes")
 
 
 def get_file_details_all(path=None, commandline=True):
@@ -362,14 +362,14 @@ def get_file_details_all(path=None, commandline=True):
             for line in lines:
                 r1 = _reg_stat_net.search(line)
                 if r1:
-                    name = r1.groups()[0]
+                    name = r1.groups()[0].strip()
                     net = int(r1.groups()[1])
                     delta = 0
                 else:
                     net = 0
                     r2 = _reg_stat_bytes.search(line)
                     if r2:
-                        name = r2.groups()[0]
+                        name = r2.groups()[0].strip()
                         fr = int(r2.groups()[1])
                         to = int(r2.groups()[2])
                         delta = to - fr

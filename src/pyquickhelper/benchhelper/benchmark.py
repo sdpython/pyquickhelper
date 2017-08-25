@@ -742,12 +742,12 @@ class BenchMark:
                 Metadata
                 --------
 
-                ${df2rst(bench.meta_to_df(convert=True, add_link=True, format="rst"), index=True)}
+                ${df2rst(bench.meta_to_df(convert=True, add_link=True, format="rst"), index=True, list_table=True)}
 
                 Metrics
                 --------
 
-                ${df2rst(bench.to_df(convert=True, add_link=True, format="rst"), index=True)}
+                ${df2rst(bench.to_df(convert=True, add_link=True, format="rst"), index=True, list_table=True)}
 
                 % if len(bench.Graphs) > 0:
 

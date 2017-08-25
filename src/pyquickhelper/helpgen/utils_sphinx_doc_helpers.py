@@ -776,7 +776,7 @@ def process_var_tag(
                     val.append(list(a))
                 if len(val) > 0:
                     tbl = DataFrame(columns=header, data=val)
-                    rst = df2rst(tbl)
+                    rst = df2rst(tbl, list_table=True)
                     if indent > 0:
                         rst = "\n".join((" " * indent) +
                                         _ for _ in rst.split("\n"))

@@ -113,6 +113,13 @@ class TestGitLog(unittest.TestCase):
         self.assertTrue(len(res) > 0)
         self.assertTrue(isinstance(res, list))
         self.assertEqual(len(res[0]), 9)
+        count = {}
+        for row in res:
+            name = row[-3]
+            ext = os.path.splitext(name)[-1]
+            count[ext] = count.get(ext, 0) + 1
+        if ".zip" not in count:
+            raise Exception("zip missing\n" + str(count))
 
 
 if __name__ == "__main__":
