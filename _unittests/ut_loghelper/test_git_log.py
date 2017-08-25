@@ -112,7 +112,7 @@ class TestGitLog(unittest.TestCase):
         res = get_repo_log(root, file_detail=True)
         self.assertTrue(len(res) > 0)
         self.assertTrue(isinstance(res, list))
-        self.assertEqual(len(res[0]), 9)
+        self.assertIn(len(res[0]), (8, 9))
         count = {}
         for row in res:
             name = row[-3]
