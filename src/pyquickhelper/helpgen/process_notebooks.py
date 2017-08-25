@@ -1094,8 +1094,8 @@ def build_all_notebooks_coverage(nbs, fileout, module_name, dump=None, badge=Tru
                      'nbcell', 'nbrun', 'nbvalid', 'time', 'coverage']].copy()
     report.columns = ['name', 'title', 'last execution', 'success', 'time',
                       'nb cells', 'nb runs', 'nb valid', 'exe time', 'coverage']
-    report = report['coverage', 'exe time', 'last execution', 'name', 'title',
-                    'success', 'time', 'nb cells', 'nb runs', 'nb valid']
+    report = report[['coverage', 'exe time', 'last execution', 'name', 'title',
+                     'success', 'time', 'nb cells', 'nb runs', 'nb valid']]
 
     # Add results.
     text = df2rst(report.sort_values("name"), index=True, list_table=True)

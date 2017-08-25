@@ -55,8 +55,8 @@ class TestNoteBooksBug(unittest.TestCase):
             fLOG("2", _.groups())
             nb += 1
 
-        assert nb1 == 0
-        assert nb > 0
+        self.assertEqual(nb1, 0)
+        self.assertTrue(nb > 0)
 
     def test_notebook(self):
         fLOG(
