@@ -70,6 +70,8 @@ class TestSKIPRunNotebooks(unittest.TestCase):
             if os.path.splitext(f)[-1] == ".ipynb":
                 if "javascript" in f:
                     keepnote.append(os.path.join(fnb, f))
+                if "git_data" in f:
+                    keepnote.append(os.path.join(fnb, f))
         self.assertTrue(len(keepnote) > 0)
 
         def valid(cell):

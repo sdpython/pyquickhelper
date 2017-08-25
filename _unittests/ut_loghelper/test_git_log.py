@@ -5,6 +5,7 @@
 import sys
 import os
 import unittest
+import warnings
 
 if "temp_" in os.path.abspath(__file__):
     raise ImportError(
@@ -97,6 +98,9 @@ class TestGitLog(unittest.TestCase):
         self.assertTrue(len(res) > 0)
         self.assertTrue(isinstance(res, list))
         self.assertIn(len(res[0]), (9, 10))
+        if len(res[0]) == 9:
+            warnings.warn(
+                "[test_log_file_details_all] Not really expected: {0}".format(res[0]))
 
     def test_log_file_details_all(self):
         fLOG(
@@ -113,6 +117,9 @@ class TestGitLog(unittest.TestCase):
         self.assertTrue(len(res) > 0)
         self.assertTrue(isinstance(res, list))
         self.assertIn(len(res[0]), (8, 9))
+        if len(res[0]) == 8:
+            warnings.warn(
+                "[test_log_file_details_all] Not really expected: {0}".format(res[0]))
         count = {}
         for row in res:
             name = row[-3]

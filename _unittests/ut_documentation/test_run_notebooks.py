@@ -77,6 +77,9 @@ class TestRunNotebooks(unittest.TestCase):
                 elif "javascript" in f:
                     # We skip due to connectivity issues.
                     pass
+                elif "git_data" in f:
+                    # Too long.
+                    pass
                 else:
                     keepnote.append(os.path.join(fnb, f))
         self.assertTrue(len(keepnote) > 0)
