@@ -20,3 +20,5 @@ History
 * `61`: add a build on `circleci <https://circleci.com/gh/sdpython/pyquickhelper>`_,
   builds the documentation, populates the artifacts section
 * `63`: add file_detail in *get_repo_log*
+* `60`: add notebook coverage as a separate page
+* `34`: applies pep8 on the code being rendered on the documentation
