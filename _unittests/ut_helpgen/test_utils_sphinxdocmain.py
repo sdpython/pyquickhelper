@@ -34,19 +34,19 @@ class TestSphinxDocMain (unittest.TestCase):
             OutputPrint=__name__ == "__main__")
         path = os.path.abspath(os.path.split(__file__)[0])
         file = os.path.normpath(os.path.join(path, "..", ".."))
-        assert os.path.exists(file)
-        fLOG(file)
+        self.assertTrue(os.path.exists(file))
 
         if sys.version_info[0] == 2:
             return
 
         rst = generate_changes_repo(None, file)
-        fLOG(rst)
-        assert len(rst) > 0
-        if "+-----------------------" not in rst:
-            raise Exception(
-                "+----------------------- not in rst:\n" +
-                str(rst))
+        # fLOG(rst[:5000])
+        self.assertTrue(len(rst) > 0)
+        self.assertIn(".. list-table::", rst)
+        self.assertIn("* - #", rst)
+        self.assertIn("* - 2138", rst)
+        self.assertIn("- 2017-08-25", rst)
+        self.assertIn("- catch zip extension", rst)
 
 
 if __name__ == "__main__":

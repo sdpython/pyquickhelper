@@ -56,13 +56,11 @@ class TestChanges (unittest.TestCase):
             generate_changes_repo(file, fold)
             with open(file, "r", encoding="utf8") as f:
                 content = f.read()
-            assert ".. plot::" in content
+            self.assertIn(".. plot::", content)
             content = content[
-                content.find("List of recent changes:"):].split("\n")
-            ls = [len(_) for _ in content]
-            ml = max(ls)
-            total = [l for l in ls if ml - 100 <= l < ml]
-            assert len(ls) > 0 and len(total) == 0
+                content.find("List of recent changes:"):]
+            self.assertTrue(len(content) > 0)
+            self.assertIn(":widths: auto", content)
         else:
             fLOG(
                 "sorry, fixing a specific case on another project for accent problem")

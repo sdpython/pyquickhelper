@@ -81,11 +81,14 @@ class TestDoxygen2rst (unittest.TestCase):
         exp = """
         This is the documentation for this class.
 
-        +-----------+-----------------------------+
-        | attribute | meaning                     |
-        +===========+=============================+
-        | pa        | an example of an attribute. |
-        +-----------+-----------------------------+
+        .. list-table::
+            :widths: auto
+            :header-rows: 1
+
+            * - attribute
+              - meaning
+            * - pa
+              - an example of an attribute.
 
         Inline :math:`x^2 + y + z`. Another equation to test:
 

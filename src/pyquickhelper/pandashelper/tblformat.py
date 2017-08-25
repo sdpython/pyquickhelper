@@ -92,7 +92,7 @@ def df2rst(df, add_line=True, align="l", column_size=None, index=False,
                 s = ""
             else:
                 s = typstr(s)
-            return s
+            return (" " + s) if s else s
         else:
             i, s = cool
             if s is None:
@@ -108,10 +108,11 @@ def df2rst(df, add_line=True, align="l", column_size=None, index=False,
     if list_table:
 
         def format_on_row(row):
-            one = "\n      - ".join(map(complete, enumerate(row)))
-            return "    * - " + one
+            one = "\n      -".join(map(complete, enumerate(row)))
+            res = "    * -" + one
+            return res
 
-        rows = [".. list-table:: {0}".format(title if title else "")]
+        rows = [".. list-table:: {0}".format(title if title else "").strip()]
         if column_size is None:
             rows.append("    :widths: auto")
         else:
