@@ -88,6 +88,8 @@ class TestRunNotebooks(unittest.TestCase):
                 return False
             if '<div style="position:absolute' in cell:
                 return False
+            if "build_script.bat" in cell:
+                return False
             return True
 
         import jyquickhelper
