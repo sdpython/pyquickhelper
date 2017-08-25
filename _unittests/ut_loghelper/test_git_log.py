@@ -46,6 +46,10 @@ class TestGitLog(unittest.TestCase):
         res = get_repo_log(root)
         self.assertTrue(len(res) > 0)
         self.assertTrue(isinstance(res, list))
+        self.assertEqual(len(res[0]), 6)
+        if "http" not in res[0][-1]:
+            warnings.warn(
+                "[test_log_file_details_all] Not really expected: {0}".format(res[0]))
 
     def test_file_detail_src(self):
         fLOG(
@@ -97,10 +101,7 @@ class TestGitLog(unittest.TestCase):
         res = get_repo_log(root, file_detail=True, subset={'setup.py'})
         self.assertTrue(len(res) > 0)
         self.assertTrue(isinstance(res, list))
-        self.assertIn(len(res[0]), (9, 10))
-        if len(res[0]) == 9:
-            warnings.warn(
-                "[test_log_file_details_all] Not really expected: {0}".format(res[0]))
+        self.assertEqual(len(res[0]), 10)
 
     def test_log_file_details_all(self):
         fLOG(
@@ -116,10 +117,7 @@ class TestGitLog(unittest.TestCase):
         res = get_repo_log(root, file_detail=True)
         self.assertTrue(len(res) > 0)
         self.assertTrue(isinstance(res, list))
-        self.assertIn(len(res[0]), (8, 9))
-        if len(res[0]) == 8:
-            warnings.warn(
-                "[test_log_file_details_all] Not really expected: {0}".format(res[0]))
+        self.assertEqual(len(res[0]), 9)
         count = {}
         for row in res:
             name = row[-3]

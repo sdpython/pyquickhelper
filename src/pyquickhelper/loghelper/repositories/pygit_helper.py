@@ -161,8 +161,8 @@ def repo_ls(full, commandline=True):
                                full)[0] if os.path.isfile(full) else full,
                            shell=sys.platform.startswith("win32"))
         if len(err) > 0:
-            fLOG("problem with file ", full, err)
-            raise GitException(err)
+            raise GitException(
+                "Issue with path '{0}'\n[OUT]\n{1}\n[ERR]\n{2}".format(full, out, err))
 
         res = [RepoFile(name=os.path.join(full, _.strip().split("\t")[-1]))
                for _ in out.split("\n") if len(_) > 0]
@@ -491,14 +491,10 @@ def get_repo_log(path=None, file_detail=False, commandline=True, subset=None):
 
         enc = sys.stdout.encoding if sys.version_info[
             0] != 2 and sys.stdout is not None else "utf8"
-        out, err = run_cmd(cmd,
-                           wait=True,
-                           encerror="strict",
-                           encoding=enc,
+        out, err = run_cmd(cmd, wait=True, encerror="strict", encoding=enc,
                            change_path=os.path.split(
                                path)[0] if os.path.isfile(path) else path,
-                           shell=sys.platform.startswith("win32"),
-                           preprocess=False)
+                           shell=sys.platform.startswith("win32"), preprocess=False)
 
         if len(err) > 0:
             mes = "Problem with file '{0}'".format(os.path.join(path, name))
@@ -537,7 +533,8 @@ def get_repo_log(path=None, file_detail=False, commandline=True, subset=None):
             try:
                 root = ET.fromstring(out)
             except ET.ParseError as eee:
-                raise GitException("unable to parse:\n" + out) from eee
+                raise GitException(
+                    "Unable to parse:\n{0}".format(out)) from eee
 
         res = []
         for i in root.iter('logentry'):
@@ -551,6 +548,8 @@ def get_repo_log(path=None, file_detail=False, commandline=True, subset=None):
             row = [author, revision, dt, msg, hash]
             if master.startswith("http"):
                 row.append(master + "/commit/" + hash)
+            else:
+                row.append("{0}//{1}".format(master, hash))
             res.append(row)
         return res
 
@@ -586,15 +585,12 @@ def get_repo_version(path=None, commandline=True, usedate=False, log=False):
             if path is not None:
                 cmd += " \"%s\"" % path
 
-            out, err = run_cmd(cmd,
-                               wait=True,
-                               encerror="strict",
+            out, err = run_cmd(cmd, wait=True, encerror="strict",
                                encoding=sys.stdout.encoding if sys.version_info[
                                    0] != 2 and sys.stdout is not None else "utf8",
                                change_path=os.path.split(
                                    path)[0] if os.path.isfile(path) else path,
-                               log_error=False,
-                               shell=sys.platform.startswith("win32"))
+                               log_error=False, shell=sys.platform.startswith("win32"))
 
             if len(err) > 0:
                 if log:
@@ -616,14 +612,14 @@ def get_repo_version(path=None, commandline=True, usedate=False, log=False):
 
             if len(res) == 0:
                 raise GitException(
-                    "the command 'git help' should return something")
+                    "The command 'git help' should return something.")
 
             return res
 
 
 def get_master_location(path=None, commandline=True):
     """
-    get the master location
+    Get the remote master location.
 
     @param      path            path to look
     @param      commandline     if True, use the command line to get the version number, otherwise it uses pysvn
@@ -642,26 +638,23 @@ def get_master_location(path=None, commandline=True):
         cmd = get_cmd_git()
         cmd += " config --get remote.origin.url"
 
-        out, err = run_cmd(cmd,
-                           wait=True,
-                           encerror="strict",
+        out, err = run_cmd(cmd, wait=True, encerror="strict",
                            encoding=sys.stdout.encoding if sys.version_info[
                                0] != 2 and sys.stdout is not None else "utf8",
                            change_path=os.path.split(
                                path)[0] if os.path.isfile(path) else path,
-                           log_error=False,
-                           shell=sys.platform.startswith("win32"))
+                           log_error=False, shell=sys.platform.startswith("win32"))
 
         if len(err) > 0:
-            fLOG("problem with file ", path, err)
-            raise GitException(err)
+            raise GitException(
+                "Problem with path '{0}'\n[OUT]\n{1}\n[ERR]\n{2}".format(path, out, err))
         lines = out.split("\n")
         lines = [_ for _ in lines if len(_) > 0]
         res = lines[0]
 
         if len(res) == 0:
             raise GitException(
-                "the command 'git help' should return something")
+                "The command 'git help' should return something.")
 
         return res
 
@@ -702,7 +695,7 @@ def get_nb_commits(path=None, commandline=True):
 
         if len(err) > 0:
             raise GitException(
-                "unable to get commit number from path {0}\n[giterror]\n{1}\nCMD:\n{2}".format(path, err, cmd))
+                "Unable to get commit number from path {0}\n[giterror]\n{1}\nCMD:\n{2}".format(path, err, cmd))
 
         lines = out.strip()
         try:
@@ -725,7 +718,7 @@ def clone(location, srv, group, project, username=None, password=None):
     @param      password    password
     @return                 output, error
 
-    see `How to provide username and password when run "git clone git@remote.git"? <http://stackoverflow.com/questions/10054318/how-to-provide-username-and-password-when-run-git-clone-gitremote-git>`_
+    See `How to provide username and password when run "git clone git@remote.git"? <http://stackoverflow.com/questions/10054318/how-to-provide-username-and-password-when-run-git-clone-gitremote-git>`_
 
     .. exref::
         :title: Clone a git repository
@@ -747,16 +740,11 @@ def clone(location, srv, group, project, username=None, password=None):
     out, err = run_cmd(cmd, wait=True)
     if len(err) > 0 and "Cloning into" not in err and "Clonage dans" not in err:
         raise GitException(
-            "unable to clone {0}\n[giterror]\n{1}\nCMD:\n{2}".format(address, err, cmd))
+            "Unable to clone {0}\n[giterror]\n{1}\nCMD:\n{2}".format(address, err, cmd))
     return out, err
 
 
-def rebase(location,
-           srv,
-           group,
-           project,
-           username=None,
-           password=None):
+def rebase(location, srv, group, project, username=None, password=None):
     """
     run ``git pull -rebase``  on a repository
 
@@ -785,5 +773,5 @@ def rebase(location,
     os.chdir(cwd)
     if len(err) > 0 and "-> FETCH_HEAD" not in err:
         raise GitException(
-            "unable to rebase {0}\n[giterror]\n{1}\nCMD:\n{2}".format(address, err, cmd))
+            "Unable to rebase {0}\n[giterror]\n{1}\nCMD:\n{2}".format(address, err, cmd))
     return out, err
