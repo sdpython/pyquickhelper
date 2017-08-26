@@ -31,6 +31,10 @@ def default_filter_warning(w):
         if "_bootstrap.py" in w.filename:
             if "numpy.dtype size changed" in str(w.message):
                 return False
+    elif isinstance(w.message, UserWarning):
+        if "matplotlib" in w.filename:
+            if "findfont: Font family" in str(w.message):
+                return False
     elif isinstance(w.message, DeprecationWarning):
         if w.filename.endswith("kernelspec.py"):
             return False
