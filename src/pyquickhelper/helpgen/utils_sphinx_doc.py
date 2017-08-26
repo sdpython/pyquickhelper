@@ -349,10 +349,10 @@ def copy_source_files(input, output, fmod=lambda v, filename: v,
         to = os.path.join(dest, file.name)
         dd = os.path.split(to)[0]
         if not os.path.exists(dd):
-            fLOG("copy_source_files: create ", dd,
+            fLOG("[copy_source_files] create ", dd,
                  "softfile={0} fexclude={1}".format(softfile, fexclude))
             os.makedirs(dd)
-        fLOG("copy_source_files: copy ", file.fullname, " to ", to)
+        fLOG("[copy_source_files] copy ", file.fullname, " to ", to)
 
         rext, rline, rdocline = _private_process_one_file(
             file.fullname, to, silent, fmod, replace_relative_import, use_sys)
@@ -495,7 +495,7 @@ def apply_modification_template(rootm, store_obj, template, fullname, rootrep,
     label = IndexInformation.get_label(indexes, "f-" + filenoext)
     indexes[label] = IndexInformation(
         "module", label, filenoext, doc, None, keepf)
-    fLOG("adding into index ", indexes[label])
+    fLOG("[apply_modification_template] adding into index ", indexes[label])
 
     try:
         with open(keepf, "r") as ft:

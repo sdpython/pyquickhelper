@@ -25,7 +25,8 @@ class BlogPostList:
 
     def __init__(self, folder, encoding="utf8", language="en", extensions=None, fLOG=noLOG):
         """
-        create a list of BlogPost, we assume each blog post belongs to a sub-folder *YYYY*
+        Creates a list of @see cl BlogPost, we assume each blog
+        post belongs to a subfolder ``YYYY``.
 
         @param      folder          folder when to find files
         @param      encoding        encoding
@@ -43,7 +44,7 @@ class BlogPostList:
         for s in sub:
             full = os.path.join(folder, s)
             if os.path.isdir(full):
-                fLOG("    reading folder", full)
+                fLOG("[BlogPostList]    reading folder", full)
                 posts = os.listdir(full)
                 for post in posts:
                     if os.path.splitext(post)[-1] in [".rst"]:
@@ -52,7 +53,7 @@ class BlogPostList:
                         obj = BlogPost(fpost, encoding=encoding,
                                        extensions=extensions)
                         self._blogposts.append((obj.date, obj))
-        fLOG("    end reading post")
+        fLOG("[BlogPostList]    end reading post")
         self._blogposts.sort(reverse=True)
         self._blogposts = [_[1] for _ in self._blogposts]
         self._encoding = encoding
@@ -67,7 +68,7 @@ class BlogPostList:
     @staticmethod
     def category2url(cat):
         """
-        remove accent and spaces to get a clean url
+        Removes accent and spaces to get a clean url.
 
         @param      cat     category name
         @return             cleaned category
@@ -79,26 +80,26 @@ class BlogPostList:
     @property
     def Lang(self):
         """
-        returns the language
+        Returns the language.
         """
         return self._language
 
     def __iter__(self):
         """
-        iterator on BlogPost
+        Iterates on @see cl BlogPost.
         """
         for obj in self._blogposts:
             yield obj
 
     def __len__(self):
         """
-        returns the number of blog posts
+        Returns the number of blog posts.
         """
         return len(self._blogposts)
 
     def get_categories(self):
         """
-        extract the categories
+        Extracts the categories.
 
         @return     list of sorted categories
         """
@@ -109,7 +110,7 @@ class BlogPostList:
 
     def get_categories_group(self):
         """
-        extract the categories with the posts associated to it
+        Extracts the categories with the posts associated to it.
 
         @return     dictionary (category, list of posts)
         """
@@ -123,7 +124,7 @@ class BlogPostList:
 
     def get_keywords(self):
         """
-        extract the categories
+        Extract the categories.
 
         @return     list of sorted keywords
         """
@@ -134,7 +135,7 @@ class BlogPostList:
 
     def get_months(self):
         """
-        extract the months
+        Extracts the months.
 
         @return     list of sorted months (more recent first)
         """
@@ -146,7 +147,7 @@ class BlogPostList:
 
     def get_months_group(self):
         """
-        extract the months with the posts associated to it
+        Extracts the months with the posts associated to it.
 
         @return     dictionary (months, list of posts)
         """
@@ -160,7 +161,7 @@ class BlogPostList:
 
     def get_files(self):
         """
-        extract the files
+        Extracts the files.
 
         @return     list of sorted months (more recent first)
         """
@@ -171,8 +172,8 @@ class BlogPostList:
 
     def get_rst_links_up(self):
         """
-        builds the rst links to months or categories to displays
-        at the beginning of the aggregated pages
+        Builds the rst links to months or categories to displays
+        at the beginning of the aggregated pages.
 
         @return         list of rst_links
         """
@@ -188,7 +189,8 @@ class BlogPostList:
 
     def get_rst_links_down(self):
         """
-        builds the rst links to months or categories to displays the bottom of the aggregated pages
+        Builds the rst links to months or categories to displays
+        the bottom of the aggregated pages.
 
         @return         list of rst_links
         """
@@ -201,16 +203,22 @@ class BlogPostList:
     def write_aggregated(self, folder, division=10,
                          blog_title="__BLOG_TITLE__",
                          blog_description="__BLOG_DESCRIPTION__",
-                         blog_root="__BLOG_ROOT__"):
+                         blog_root="__BLOG_ROOT__",
+                         only_html=True):
         """
-        writes posts in a aggregated manner (post, categories, months)
+        Writes posts in a aggregated manner (post, categories, months).
 
         @param      folder              where to write them
         @param      division            add a new page every *division* items
         @param      blog_title          blog title
         @param      blog_description    blog description
         @param      blog_root           blog root (publish url)
+        @param      only_html           add item ``.. only:: html`` and indent everything
+                                        after the main index
         @return                         list of produced files
+
+        .. versionchanged:: 1.5
+            Parameter *only_html* was added.
         """
         link_up = self.get_rst_links_up()
         link_down = self.get_rst_links_down()
@@ -230,13 +238,14 @@ class BlogPostList:
 
         # aggregated pages
         res = []
-        res.extend(self.write_aggregated_posts(
-            folder, division, rst_links_up=link_up, rst_links_down=link_down))
-        res.extend(self.write_aggregated_categories(
-            folder, division, rst_links_up=link_up, rst_links_down=link_down))
-        res.extend(self.write_aggregated_months(
-            folder, division, rst_links_up=link_up, rst_links_down=link_down))
-        res.append(self.write_aggregated_index(folder, hidden_files=res))
+        res.extend(self.write_aggregated_posts(folder, division, rst_links_up=link_up,
+                                               rst_links_down=link_down, only_html=only_html))
+        res.extend(self.write_aggregated_categories(folder, division, rst_links_up=link_up,
+                                                    rst_links_down=link_down, only_html=only_html))
+        res.extend(self.write_aggregated_months(folder, division, rst_links_up=link_up,
+                                                rst_links_down=link_down, only_html=only_html))
+        res.append(self.write_aggregated_index(
+            folder, hidden_files=res, only_html=only_html))
 
         # final aggregator
         res.extend(self.write_aggregated_chapters(folder))
@@ -245,7 +254,7 @@ class BlogPostList:
 
     def get_image(self, img):
         """
-        return the local path to an image in this folder
+        Returns the local path to an image in this folder.
 
         @param      img     image name (see below)
         @return             local file
@@ -263,14 +272,20 @@ class BlogPostList:
         else:
             raise FileNotFoundError("unable to get image name: " + img)
 
-    def write_aggregated_index(self, folder, hidden_files=None):
+    def write_aggregated_index(self, folder, hidden_files=None, only_html=True):
         """
-        writes an index
+        Writes an index.
 
         @param      folder          where to write the file
         @param      hidden_files    creates an hidden toctree
+        @param      only_html       add item ``.. only:: html`` and indent everything
+                                    after the main index
         @return                     filename
+
+        .. versionchanged:: 1.5
+            Parameter *only_html* was added.
         """
+        indent = "    " if only_html else ""
         name = os.path.join(folder, "blogindex.rst")
         with open(name, "w", encoding=self._encoding) as f:
             f.write("\n")
@@ -287,25 +302,27 @@ class BlogPostList:
                     "    {0} - {1} <{2}/{3}>\n".format(item.Date, item.Title, item.Date[:4],
                                                        os.path.splitext(os.path.split(item.FileName)[-1])[0]))
             f.write("\n\n")
+            if only_html:
+                f.write(".. only:: html\n\n")
             if hidden_files is not None:
-                f.write(".. toctree::\n")
-                f.write("    :hidden:\n")
+                f.write(indent + ".. toctree::\n")
+                f.write(indent + "    :hidden:\n")
                 f.write("\n")
                 for h in hidden_files:
-                    f.write(
-                        "    " + os.path.splitext(os.path.split(h)[-1])[0] + "\n")
+                    f.write(indent + "    " +
+                            os.path.splitext(os.path.split(h)[-1])[0] + "\n")
                 f.write("\n")
 
             f.write("\n")
-            f.write(".. image:: feed-icon-16x16.png\n\n")
-            f.write(":download:`{0} rss <rss.xml>`\n".format(
-                TITLES[self.Lang]["download"]))
+            f.write(indent + ".. image:: feed-icon-16x16.png\n\n")
+            f.write(
+                indent + ":download:`{0} rss <rss.xml>`\n".format(TITLES[self.Lang]["download"]))
             f.write("\n\n\n")
 
             f.write(
-                ":ref:`{0} <hblog-blog>`, ".format(TITLES[self.Lang]["main"]))
+                indent + ":ref:`{0} <hblog-blog>`, ".format(TITLES[self.Lang]["main"]))
             f.write(
-                ":ref:`{0} <ap-main-0>`".format(TITLES[self.Lang]["main"]))
+                indent + ":ref:`{0} <ap-main-0>`".format(TITLES[self.Lang]["main2"]))
             f.write("\n\n\n")
 
             img = self.get_image("rss")
@@ -313,16 +330,20 @@ class BlogPostList:
 
         return name
 
-    def write_aggregated_posts(self, folder, division=10,
-                               rst_links_up=None, rst_links_down=None):
+    def write_aggregated_posts(self, folder, division=10, rst_links_up=None,
+                               rst_links_down=None, only_html=True):
         """
-        writes posts in a aggregated manner
+        Writes posts in a aggregated manner.
 
         @param      folder          where to write them
         @param      division        add a new page every *division* items
         @param      rst_links_up    list of rst_links to add at the beginning of a page
         @param      rst_links_down  list of rst_links to add at the bottom of a page
+        @param      only_html       add item ``.. only:: html`` and indent everything
         @return                     list of produced files
+
+        .. versionchanged:: 1.5
+            Parameter *only_html* was added.
         """
         return BlogPostList.write_aggregated_post_list(folder=folder,
                                                        lp=list(
@@ -334,18 +355,23 @@ class BlogPostList:
                                                        rst_links_down=rst_links_down,
                                                        index_terms=["blog"],
                                                        language=self.Lang,
-                                                       bold_title=TITLES[self.Lang]["main_title"])
+                                                       bold_title=TITLES[self.Lang]["main_title"],
+                                                       only_html=only_html)
 
-    def write_aggregated_categories(self, folder, division=10,
-                                    rst_links_up=None, rst_links_down=None):
+    def write_aggregated_categories(self, folder, division=10, rst_links_up=None,
+                                    rst_links_down=None, only_html=True):
         """
-        writes posts in a aggregated manner per categories
+        Writes posts in a aggregated manner per categories.
 
         @param      folder          where to write them
         @param      division        add a new page every *division* items
         @param      rst_links_up    list of rst_links to add at the beginning of a page
         @param      rst_links_down  list of rst_links to add at the bottom of a page
+        @param      only_html       add item ``.. only:: html`` and indent everything
         @return                     list of produced files
+
+        .. versionchanged:: 1.5
+            Parameter *only_html* was added.
         """
         cats = self.get_categories()
         res = []
@@ -361,20 +387,25 @@ class BlogPostList:
                                                           rst_links_up=rst_links_up,
                                                           rst_links_down=rst_links_down,
                                                           index_terms=[cat],
-                                                          bold_title=cat)
+                                                          bold_title=cat,
+                                                          only_html=only_html)
             res.extend(add)
         return res
 
-    def write_aggregated_months(self, folder, division=10,
-                                rst_links_up=None, rst_links_down=None):
+    def write_aggregated_months(self, folder, division=10, rst_links_up=None,
+                                rst_links_down=None, only_html=True):
         """
-        writes posts in a aggregated manner per months
+        Writes posts in a aggregated manner per months.
 
         @param      folder          where to write them
         @param      division        add a new page every *division* items
         @param      rst_links_up    list of rst_links to add at the beginning of a page
         @param      rst_links_down  list of rst_links to add at the bottom of a page
+        @param      only_html       add item ``.. only:: html`` and indent everything
         @return                     list of produced files
+
+        .. versionchanged:: 1.5
+            Parameter *only_html* was added.
         """
         mo = self.get_months()
         res = []
@@ -387,13 +418,14 @@ class BlogPostList:
                                                           encoding=self._encoding,
                                                           rst_links_up=rst_links_up, rst_links_down=rst_links_down,
                                                           index_terms=[m],
-                                                          bold_title=m)
+                                                          bold_title=m,
+                                                          only_html=only_html)
             res.extend(add)
         return res
 
     def write_aggregated_chapters(self, folder):
         """
-        writes links to post per categories and per months
+        Writes links to post per categories and per months.
 
         @param      folder          where to write them
         @return                     list of produced files
@@ -432,7 +464,7 @@ class BlogPostList:
     @staticmethod
     def divide_list(l, division):
         """
-        divides a list into buckets of *division* items
+        Divides a list into buckets of *division* items.
 
         @param      l           list of to divide
         @param      division    bucket size
@@ -453,9 +485,9 @@ class BlogPostList:
     @staticmethod
     def write_aggregated_post_list(folder, lp, division, prefix, encoding,
                                    rst_links_up=None, rst_links_down=None, index_terms=None,
-                                   bold_title=None, language="en"):
+                                   bold_title=None, language="en", only_html=True):
         """
-        write list of posts in an aggregated manners
+        Writes list of posts in an aggregated manners.
 
         @param      folder          when to write the aggregated posts
         @param      lp              list of posts
@@ -467,7 +499,11 @@ class BlogPostList:
         @param      index_terms     terms to index on the first bucket
         @param      bold_title      title to display at the beginning of the page
         @param      language        language
+        @param      only_html       add item ``.. only:: html`` and indent everything
         @return                     list of produced files
+
+        .. versionadded:: 1.5
+            Parameter *only_html* was added
         """
         res = []
         buckets = BlogPostList.divide_list(lp, division)
@@ -487,6 +523,10 @@ class BlogPostList:
                 rst_links_down=rst_links_down,
                 index_terms=index_terms if i == 0 else None,
                 bold_title=title, language=language)
+            if only_html:
+                lines = content.split("\n")
+                head = "\n.. only:: html\n\n"
+                content = head + "\n".join("    " + _ for _ in lines)
             with open(name, "w", encoding=encoding) as f:
                 f.write(content)
             res.append(name)
@@ -495,10 +535,9 @@ class BlogPostList:
     @staticmethod
     def produce_aggregated_post_page(name, l, this, prev, next, main_page="Blog",
                                      rst_links_up=None, rst_links_down=None,
-                                     index_terms=None,
-                                     bold_title=None, language="en"):
+                                     index_terms=None, bold_title=None, language="en"):
         """
-        write the content of an aggregate page of blog posts
+        Writes the content of an aggregate page of blog posts.
 
         @param      name            filename to write
         @param      l               list of posts

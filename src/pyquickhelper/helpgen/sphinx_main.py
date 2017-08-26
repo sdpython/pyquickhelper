@@ -843,7 +843,8 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
             else:
                 doesrem = False
             if doesrem:
-                fLOG("remove '{0}' from sys.modules".format(ex))
+                fLOG(
+                    "[generate_help_sphinx] remove '{0}' from sys.modules".format(ex))
                 del sys.modules[ex]
 
         fLOG(

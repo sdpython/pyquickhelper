@@ -152,7 +152,7 @@ class BlogPost:
     def __cmp__(self, other):
         """
         This method avoids to get the following error
-        ``TypeError: unorderable types: BlogPost() < BlogPost()``
+        ``TypeError: unorderable types: BlogPost() < BlogPost()``.
 
         @param      other       other @see cl BlogPost
         @return                 -1, 0, or 1
@@ -187,7 +187,7 @@ class BlogPost:
     @property
     def Fields(self):
         """
-        return the fields as a dictionary
+        Returns the fields as a dictionary.
         """
         res = dict(title=self.title,
                    date=self.date,
@@ -202,14 +202,14 @@ class BlogPost:
     @property
     def Tag(self):
         """
-        produces a tag for the blog post
+        Produces a tag for the blog post.
         """
         return BlogPost.build_tag(self.Date, self.Title)
 
     @staticmethod
     def build_tag(date, title):
         """
-        builds the tag for a post
+        Builds the tag for a post.
 
         @param      date        date
         @param      title       title
@@ -221,70 +221,70 @@ class BlogPost:
     @property
     def FileName(self):
         """
-        return the filename
+        Returns the filename.
         """
         return self._filename
 
     @property
     def Title(self):
         """
-        return the title
+        Returns the title.
         """
         return self.title
 
     @property
     def BlogBackground(self):
         """
-        return the blog background or None if not defined
+        Return the blog background or None if not defined.
         """
         return self.blog_ground if hasattr(self, "blog_ground") else None
 
     @property
     def Author(self):
         """
-        return the author or None if not defined
+        Return the author or None if not defined.
         """
         return self.author if hasattr(self, "author") else None
 
     @property
     def Date(self):
         """
-        return the date
+        Returns the date.
         """
         return self.date
 
     @property
     def Year(self):
         """
-        return the year, we assume self.date is a string YYYY-MM-DD
+        Return the year, we assume self.date is a string ``YYYY-MM-DD``.
         """
         return self.date[:4]
 
     @property
     def Keywords(self):
         """
-        return the keywords
+        Returns the keywords.
         """
         return [_.strip() for _ in self.keywords.split(",")]
 
     @property
     def Categories(self):
         """
-        return the categories
+        Returns the categories.
         """
         return [_.strip() for _ in self.categories.split(",")]
 
     @property
     def Content(self):
         """
-        return the content of the blogpost
+        Returns the content of the blogpost.
         """
         return self._content
 
     def post_as_rst(self, language, directive="blogpostagg"):
         """
-        reproduces the text of the blog post,
-        updates the image links
+        Reproduces the text of the blog post,
+        updates the image links.
 
         @param      language    language
         @param      directive   to specify a different behavior based on

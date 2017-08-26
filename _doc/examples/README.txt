@@ -1,7 +1,7 @@
 .. _examples-gallery:
 
-Gallery
-=======
+Examples Gallery
+================
 
 Generic
 -------

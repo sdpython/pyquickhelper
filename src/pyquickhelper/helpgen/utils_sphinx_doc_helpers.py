@@ -605,7 +605,8 @@ def import_module(
                                   .format(filename, mo.__file__, "\n   - ".join(sys.path)))
 
         sys.path = memo
-        log_function("importing ", filename, " successfully", mo.__file__)
+        log_function("[import_module] import '{0}' successfully".format(
+            filename), mo.__file__)
         for n, m in addback:
             if n not in sys.modules:
                 sys.modules[n] = m

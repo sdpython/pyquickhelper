@@ -8,7 +8,7 @@
     Taking another dependency always means a potential
     conflicts between version. Is it fact enough updated
     when it breaks? I realized I was not the only to face an
-    issue with `sphinx-gallery <>`_.
+    issue with `sphinx-gallery <https://github.com/sphinx-gallery/sphinx-gallery>`_.
     There is a discussion about it on
     `scikit-learn/9189 <https://github.com/scikit-learn/scikit-learn/issues/9189>`_
     and the package is now included in the
