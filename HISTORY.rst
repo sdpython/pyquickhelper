@@ -22,3 +22,4 @@ History
 * `63`: add file_detail in *get_repo_log*
 * `60`: add notebook coverage as a separate page
 * `34`: applies pep8 on the code being rendered on the documentation
+* `65`: add function to clean readme.rst before sending it to pypi
