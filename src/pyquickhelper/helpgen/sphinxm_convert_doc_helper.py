@@ -298,6 +298,7 @@ def rst2html(s, fLOG=noLOG, writer="html", keep_warnings=False,
 
     config = mockapp.config
     config.blog_background = False
+    config.blog_background_page = False
     config.sharepost = None
 
     if hasattr(writer, "add_configuration_options"):

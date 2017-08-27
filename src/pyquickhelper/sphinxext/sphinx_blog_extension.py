@@ -15,6 +15,7 @@ from docutils.parsers.rst import directives
 from docutils.statemachine import StringList
 from sphinx import addnodes
 from sphinx.util.nodes import set_source_info, process_index_entry
+from sphinx.util.nodes import nested_parse_with_titles
 from .blog_post import BlogPost
 from ..texthelper.texts_language import TITLES
 
@@ -22,7 +23,7 @@ from ..texthelper.texts_language import TITLES
 class blogpost_node(nodes.Element):
 
     """
-    defines *blogpost* node
+    Defines *blogpost* node.
     """
     pass
 
@@ -30,7 +31,7 @@ class blogpost_node(nodes.Element):
 class blogpostagg_node(nodes.Element):
 
     """
-    defines *blogpostagg* node
+    Defines *blogpostagg* node.
     """
     pass
 
@@ -47,7 +48,8 @@ class BlogPostDirective(Directive):
     * *keywords*: keywords, comma separated (mandatory)
     * *categories*: categories, comma separated (mandatory)
     * *author*: author (optional)
-    * *blog_background*: can change the blog background (boolean)
+    * *blog_background*: can change the blog background for the aggregated pages (boolean, default is True)
+    * *blog_background_page*: can change the blog background (boolean, default is False)
     * *lid* or *label*: an id to refer to (optional)
     """
     required_arguments = 0
@@ -59,6 +61,7 @@ class BlogPostDirective(Directive):
                    'categories': directives.unchanged,
                    'author': directives.unchanged,
                    'blog_background': directives.unchanged,
+                   'blog_background_page': directives.unchanged,
                    'lid': directives.unchanged,
                    'label': directives.unchanged,
                    }
@@ -99,6 +102,7 @@ class BlogPostDirective(Directive):
             docname = "___unknown_docname___"
             config = None
             blog_background = False
+            blog_background_page = False
             sharepost = None
         else:
             # otherwise, it means sphinx is running
@@ -107,6 +111,7 @@ class BlogPostDirective(Directive):
             config = env.config
             try:
                 blog_background = config.blog_background
+                blog_background_page = config.blog_background_page
             except AttributeError as e:
                 raise AttributeError("Unable to find 'blog_background' in \n{0}".format(
                     "\n".join(sorted(config.values)))) from e
@@ -121,6 +126,7 @@ class BlogPostDirective(Directive):
             'keywords': [a.strip() for a in self.options["keywords"].split(",")],
             'categories': [a.strip() for a in self.options["categories"].split(",")],
             'blog_background': self.options.get("blog_background", str(blog_background)).strip() in ("True", "true", "1"),
+            'blog_background_page': self.options.get("blog_background_page", str(blog_background_page)).strip() in ("True", "true", "1"),
             'lid': self.options.get("lid", self.options.get("label", None)),
         }
 
@@ -139,10 +145,85 @@ class BlogPostDirective(Directive):
         node = self.__class__.blogpost_class(ids=[idbp], year=p["date"][:4],
                                              rawfile=self.options.get(
                                                  "rawfile", None),
-                                             linktitle=p[
-                                                 "title"], lg=language_code,
-                                             blog_background=p["blog_background"])
+                                             linktitle=p["title"], lg=language_code,
+                                             blog_background=p["blog_background"],
+                                             blog_background_page=p["blog_background_page"])
 
+        return self.fill_node(node, env, tag, p, language_code, targetnode, sharepost)
+
+    def fill_node(self, node, env, tag, p, language_code, targetnode, sharepost):
+        """
+        Fill the content of the node.
+        """
+        # add a label
+        suffix_label = self.suffix_label() if not p['lid'] else ""
+        tnl = [".. _{0}{1}:".format(tag, suffix_label), ""]
+        title = "{0} {1}".format(p["date"], p["title"])
+        tnl.append(title)
+        tnl.append("=" * len(title))
+        tnl.append("")
+        tnl.append("")
+        tnl.append(":sharenet:`{0}`".format(sharepost))
+        tnl.append('')
+        tnl.append('')
+        content = StringList(tnl)
+        content = content + self.content
+        try:
+            nested_parse_with_titles(self.state, content, node)
+        except Exception as e:
+            from sphinx.util import logging
+            logger = logging.getLogger("blogpost")
+            logger.warning(
+                "[blogpost] unable to parse '{0}' - {1}".format(title, e))
+            raise e
+
+        # final
+        p['blogpost'] = node
+        self.exe_class = p.copy()
+        p["content"] = content
+        node['classes'] += "-blogpost"
+
+        ns = [node]
+        return ns
+
+
+class BlogPostDirectiveAgg(BlogPostDirective):
+
+    """
+    same but for the same post in a aggregated pages
+    """
+    add_index = False
+    add_share = False
+    blogpost_class = blogpostagg_node
+    option_spec = {'date': directives.unchanged,
+                   'title': directives.unchanged,
+                   'keywords': directives.unchanged,
+                   'categories': directives.unchanged,
+                   'author': directives.unchanged,
+                   'rawfile': directives.unchanged,
+                   'blog_background': directives.unchanged,
+                   }
+
+    def suffix_label(self):
+        """
+        returns a suffix to add to a label,
+        it should not be empty for aggregated pages
+
+        @return     str
+        """
+        if hasattr(self.state.document.settings, "env"):
+            env = self.state.document.settings.env
+            docname = os.path.split(env.docname)[-1]
+            docname = os.path.splitext(docname)[0]
+        else:
+            env = None
+            docname = ""
+        return "-agg" + docname
+
+    def fill_node(self, node, env, tag, p, language_code, targetnode, sharepost):
+        """
+        Fill the node of an aggregated page.
+        """
         # add a label
         suffix_label = self.suffix_label()
         container = nodes.container()
@@ -207,40 +288,6 @@ class BlogPostDirective(Directive):
         return ns
 
 
-class BlogPostDirectiveAgg(BlogPostDirective):
-
-    """
-    same but for the same post in a aggregated pages
-    """
-    add_index = False
-    add_share = False
-    blogpost_class = blogpostagg_node
-    option_spec = {'date': directives.unchanged,
-                   'title': directives.unchanged,
-                   'keywords': directives.unchanged,
-                   'categories': directives.unchanged,
-                   'author': directives.unchanged,
-                   'rawfile': directives.unchanged,
-                   'blog_background': directives.unchanged,
-                   }
-
-    def suffix_label(self):
-        """
-        returns a suffix to add to a label,
-        it should not be empty for aggregated pages
-
-        @return     str
-        """
-        if hasattr(self.state.document.settings, "env"):
-            env = self.state.document.settings.env
-            docname = os.path.split(env.docname)[-1]
-            docname = os.path.splitext(docname)[0]
-        else:
-            env = None
-            docname = ""
-        return "-agg" + docname
-
-
 def visit_blogpost_node(self, node):
     """
     what to do when visiting a node blogpost
@@ -248,7 +295,7 @@ def visit_blogpost_node(self, node):
     depending on the format, or the setup should
     specify a different function for each.
     """
-    if node["blog_background"]:
+    if node["blog_background_page"]:
         # the node will be in a box
         self.visit_admonition(node)
 
@@ -260,7 +307,7 @@ def depart_blogpost_node(self, node):
     depending on the format, or the setup should
     specify a different function for each.
     """
-    if node["blog_background"]:
+    if node["blog_background_page"]:
         # the node will be in a box
         self.depart_admonition(node)
 
@@ -411,6 +458,7 @@ def setup(app):
     # configuration
     app.add_config_value('sharepost', None, 'env')
     app.add_config_value('blog_background', True, 'env')
+    app.add_config_value('blog_background_page', False, 'env')
     app.add_config_value('out_blogpostlist', [], 'env')
     if hasattr(app, "add_mapping"):
         app.add_mapping('blogpost', blogpost_node)

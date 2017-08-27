@@ -222,6 +222,7 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
 
     # blogs (custom parameter)
     blog_background = True
+    blog_background_page = False
     sharepost = sharepost
 
     # settings
