@@ -5,6 +5,7 @@
 import os
 import sys
 import unittest
+import warnings
 from docutils.parsers.rst import roles
 
 try:
@@ -75,6 +76,8 @@ class TestSphinxDocFull (unittest.TestCase):
 
         # test
         for i in range(0, 3):
+            if is_travis_or_appveyor() == "circleci":
+                print("   [test_full_documentation] begin", i)
             fLOG("\n")
             fLOG("\n")
             fLOG("\n")
@@ -99,10 +102,17 @@ class TestSphinxDocFull (unittest.TestCase):
             fLOG("[test_full_documentation] begin", list(roles._roles.keys()))
             fLOG("[test_full_documentation] **********************************")
 
-            generate_help_sphinx(var, module_name=var, root=root,
-                                 layout=["pdf", "html", "rst"],
-                                 extra_ext=["tohelp"],
-                                 from_repo=False, direct_call=i % 2 == 0)
+            with warnings.catch_warnings(record=True) as ww:
+                warnings.simplefilter("always")
+                generate_help_sphinx(var, module_name=var, root=root,
+                                     layout=["pdf", "html", "rst"],
+                                     extra_ext=["tohelp"],
+                                     from_repo=False, direct_call=i % 2 == 0)
+                for w in ww:
+                    sw = str(w)
+                    if "WARNING:" in sw and "ERROR/" in sw:
+                        raise Exception(
+                            "A warning is not expected:\n{0}".format(w))
 
             fLOG("[test_full_documentation] **********************************")
             fLOG("[test_full_documentation] END")

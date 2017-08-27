@@ -901,6 +901,7 @@ def build_notebooks_gallery(nbs, fileout, fLOG=noLOG):
         fLOG("[build_notebooks_gallery] no hierarchy")
         rows.append(".. toctree::")
         rows.append("    :maxdepth: 1")
+        rows.append("")
         for hi, file in rst:
             rs = os.path.splitext(os.path.split(file)[-1])[0]
             fLOG("[build_notebooks_gallery] adding",
