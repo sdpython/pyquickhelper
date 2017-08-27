@@ -48,8 +48,7 @@ class BlogPostDirective(Directive):
     * *keywords*: keywords, comma separated (mandatory)
     * *categories*: categories, comma separated (mandatory)
     * *author*: author (optional)
-    * *blog_background*: can change the blog background for the aggregated pages (boolean, default is True)
-    * *blog_background_page*: can change the blog background (boolean, default is False)
+    * *blog_background*: can change the blog background (boolean, default is True)
     * *lid* or *label*: an id to refer to (optional)
     """
     required_arguments = 0
@@ -61,7 +60,6 @@ class BlogPostDirective(Directive):
                    'categories': directives.unchanged,
                    'author': directives.unchanged,
                    'blog_background': directives.unchanged,
-                   'blog_background_page': directives.unchanged,
                    'lid': directives.unchanged,
                    'label': directives.unchanged,
                    }
@@ -69,6 +67,7 @@ class BlogPostDirective(Directive):
     add_index = True
     add_share = True
     blogpost_class = blogpost_node
+    default_config_bg = "blog_background_page"
 
     def suffix_label(self):
         """
@@ -102,7 +101,6 @@ class BlogPostDirective(Directive):
             docname = "___unknown_docname___"
             config = None
             blog_background = False
-            blog_background_page = False
             sharepost = None
         else:
             # otherwise, it means sphinx is running
@@ -110,11 +108,11 @@ class BlogPostDirective(Directive):
             # settings and configuration
             config = env.config
             try:
-                blog_background = config.blog_background
-                blog_background_page = config.blog_background_page
+                blog_background = getattr(
+                    config, self.__class__.default_config_bg)
             except AttributeError as e:
-                raise AttributeError("Unable to find 'blog_background' in \n{0}".format(
-                    "\n".join(sorted(config.values)))) from e
+                raise AttributeError("Unable to find '{1}' in \n{0}".format(
+                    "\n".join(sorted(config.values)), self.__class__.default_config_bg)) from e
             sharepost = config.sharepost if self.__class__.add_share else None
 
         # post
@@ -126,7 +124,6 @@ class BlogPostDirective(Directive):
             'keywords': [a.strip() for a in self.options["keywords"].split(",")],
             'categories': [a.strip() for a in self.options["categories"].split(",")],
             'blog_background': self.options.get("blog_background", str(blog_background)).strip() in ("True", "true", "1"),
-            'blog_background_page': self.options.get("blog_background_page", str(blog_background_page)).strip() in ("True", "true", "1"),
             'lid': self.options.get("lid", self.options.get("label", None)),
         }
 
@@ -146,8 +143,7 @@ class BlogPostDirective(Directive):
                                              rawfile=self.options.get(
                                                  "rawfile", None),
                                              linktitle=p["title"], lg=language_code,
-                                             blog_background=p["blog_background"],
-                                             blog_background_page=p["blog_background_page"])
+                                             blog_background=p["blog_background"])
 
         return self.fill_node(node, env, tag, p, language_code, targetnode, sharepost)
 
@@ -157,7 +153,8 @@ class BlogPostDirective(Directive):
         """
         # add a label
         suffix_label = self.suffix_label() if not p['lid'] else ""
-        tnl = [".. _{0}{1}:".format(tag, suffix_label), ""]
+        tag = "{0}{1}".format(tag, suffix_label)
+        tnl = [".. _{0}:".format(tag), ""]
         title = "{0} {1}".format(p["date"], p["title"])
         tnl.append(title)
         tnl.append("=" * len(title))
@@ -183,6 +180,12 @@ class BlogPostDirective(Directive):
         p["content"] = content
         node['classes'] += "-blogpost"
 
+        # for the instruction tocdelay.
+        node['toctitle'] = title
+        node['tocid'] = tag
+        node['tocdoc'] = env.docname
+
+        # end.
         ns = [node]
         return ns
 
@@ -195,6 +198,7 @@ class BlogPostDirectiveAgg(BlogPostDirective):
     add_index = False
     add_share = False
     blogpost_class = blogpostagg_node
+    default_config_bg = "blog_background"
     option_spec = {'date': directives.unchanged,
                    'title': directives.unchanged,
                    'keywords': directives.unchanged,
@@ -295,7 +299,7 @@ def visit_blogpost_node(self, node):
     depending on the format, or the setup should
     specify a different function for each.
     """
-    if node["blog_background_page"]:
+    if node["blog_background"]:
         # the node will be in a box
         self.visit_admonition(node)
 
@@ -307,7 +311,7 @@ def depart_blogpost_node(self, node):
     depending on the format, or the setup should
     specify a different function for each.
     """
-    if node["blog_background_page"]:
+    if node["blog_background"]:
         # the node will be in a box
         self.depart_admonition(node)
 

@@ -75,6 +75,7 @@ notebook conversion into slides, scripts to build setups, documentation, unit te
     i_faq
     Examples Gallery <gyexamples/index>
     Notebooks Gallery <all_notebooks>
+    blog/blogindex
 
 Installation
 ------------

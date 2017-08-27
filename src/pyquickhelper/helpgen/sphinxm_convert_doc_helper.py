@@ -297,7 +297,7 @@ def rst2html(s, fLOG=noLOG, writer="html", keep_warnings=False,
     settings_overrides.update(defopt)
 
     config = mockapp.config
-    config.blog_background = False
+    config.blog_background = True
     config.blog_background_page = False
     config.sharepost = None
 
@@ -542,3 +542,29 @@ def docstring2html(function_or_string, format="html", fLOG=noLOG, writer="html",
     else:
         raise ValueError(
             "Unexpected format: '" + format + "', should be html, rawhtml, text, rst.")
+
+
+def rst2rst_folder(rststring, folder, document_name="index", **options):
+    """
+    Converts a RST string into RST.
+
+    @param      rststring       rst string
+    @param      folder          the builder needs to write the resuts in a
+                                folder defined by this parameter
+    @param      document_name   main document
+    @param      options         additional options (same as *conf.py*)
+    @return                     converted string
+    """
+    if not os.path.exists(folder):
+        raise FileNotFoundError(folder)
+
+    new_options = {}
+    new_options.update(options)
+
+    def update_builder(builder):
+        builder.outdir = folder
+
+    rst = rst2html(rststring, writer="rst", document_name="example",
+                   update_builder=update_builder, layout="sphinx",
+                   **new_options)
+    return rst

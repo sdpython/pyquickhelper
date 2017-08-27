@@ -277,7 +277,7 @@ class BlogPostList:
         Writes an index.
 
         @param      folder          where to write the file
-        @param      hidden_files    creates an hidden toctree
+        @param      hidden_files    creates an hidden *toctree* and a @see cl tocdelay_node.
         @param      only_html       add item ``.. only:: html`` and indent everything
                                     after the main index
         @return                     filename
@@ -292,10 +292,10 @@ class BlogPostList:
             f.write(".. _l-mainblog:\n")
             f.write("\n")
             f.write("\n")
-            f.write("Blog\n")
-            f.write("====\n")
+            f.write("Blog Gallery\n")
+            f.write("============\n")
             f.write("\n")
-            f.write(".. toctree::\n")
+            f.write(".. tocdelay::\n")
             f.write("\n")
             for item in self:
                 f.write(

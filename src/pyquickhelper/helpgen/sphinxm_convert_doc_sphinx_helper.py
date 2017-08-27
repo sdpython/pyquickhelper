@@ -52,6 +52,8 @@ from ..sphinxext.sphinx_blog_extension import depart_blogpostagg_node_html as ex
 from ..sphinxext.sphinx_sharenet_extension import depart_sharenet_node_html as ext_depart_sharenet_node_html
 from ..sphinxext.sphinx_postcontents_extension import depart_postcontents_node as ext_depart_postcontents_node
 from ..sphinxext.sphinx_postcontents_extension import visit_postcontents_node as ext_visit_postcontents_node
+from ..sphinxext.sphinx_tocdelay_extension import depart_tocdelay_node as ext_depart_tocdelay_node
+from ..sphinxext.sphinx_tocdelay_extension import visit_tocdelay_node as ext_visit_tocdelay_node
 
 with warnings.catch_warnings():
     warnings.simplefilter("ignore")
@@ -307,6 +309,18 @@ class _AdditionalVisitDepart:
         @see fn visit_postcontents_node
         """
         ext_visit_postcontents_node(self, node)
+
+    def depart_tocdelay_node(self, node):
+        """
+        @see fn depart_tocdelay_node
+        """
+        ext_depart_tocdelay_node(self, node)
+
+    def visit_tocdelay_node(self, node):
+        """
+        @see fn visit_tocdelay_node
+        """
+        ext_visit_tocdelay_node(self, node)
 
     def visit_Release(self, node):
         """

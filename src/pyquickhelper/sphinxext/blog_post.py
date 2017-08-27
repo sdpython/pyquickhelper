@@ -78,7 +78,8 @@ class BlogPost:
 
         overrides = {}
         overrides["out_blogpostlist"] = []
-        overrides["blog_background"] = False
+        overrides["blog_background"] = True
+        overrides["blog_background_page"] = False
         overrides["sharepost"] = None
 
         overrides.update({  # 'warning_stream': StringIO(),
@@ -101,6 +102,9 @@ class BlogPost:
 
         if 'blog_background' not in config:
             raise AttributeError("Unable to find 'blog_background' in config:\n{0}".format(
+                "\n".join(sorted(config.values))))
+        if 'blog_background_page' not in config:
+            raise AttributeError("Unable to find 'blog_background_page' in config:\n{0}".format(
                 "\n".join(sorted(config.values))))
 
         env.temp_data["docname"] = "stringblog"

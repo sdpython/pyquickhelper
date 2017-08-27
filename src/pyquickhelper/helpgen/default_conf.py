@@ -709,6 +709,8 @@ def custom_setup(app, author):
     from ..sphinxext.sphinx_autosignature import setup as setup_signature
     from ..sphinxext.sphinx_template_extension import setup as setup_tpl
     from ..sphinxext.sphinx_cmdref_extension import setup as setup_cmdref
+    from ..sphinxext.sphinx_postcontents_extension import setup as setup_postcontents
+    from ..sphinxext.sphinx_tocdelay_extension import setup as setup_tocdelay
     from ..sphinxext.sphinx_epkg_extension import setup as setup_epkg
     from ..sphinxext.releases import setup as setup_releases
     # from ..sphinxext.sphinx_rst_builder import setup as setup_rst
@@ -730,6 +732,8 @@ def custom_setup(app, author):
     setup_cmdref(app)
     setup_signature(app)
     setup_docassert(app)
+    setup_postcontents(app)
+    setup_tocdelay(app)
     setup_tpl(app)
     setup_epkg(app)
     setup_releases(app)

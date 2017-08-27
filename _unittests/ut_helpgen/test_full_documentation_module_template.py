@@ -6,7 +6,9 @@ import os
 import sys
 import unittest
 import warnings
+import logging
 from docutils.parsers.rst import roles
+from sphinx.util.logging import getLogger
 
 try:
     import src
@@ -25,6 +27,7 @@ from src.pyquickhelper.loghelper.flog import fLOG, download
 from src.pyquickhelper.helpgen import generate_help_sphinx
 from src.pyquickhelper.pycode import get_temp_folder
 from src.pyquickhelper.pycode import is_travis_or_appveyor
+from src.pyquickhelper.filehelper.synchelper import remove_folder
 
 
 if sys.version_info[0] == 2:
@@ -47,8 +50,27 @@ class TestSphinxDocFull (unittest.TestCase):
             # It fails for python 2.7 (encoding issue).
             return
 
+        class MyStream:
+            def __init__(self):
+                self.rows = []
+
+            def write(self, text):
+                fLOG(
+                    "[warning*] {0} - '{1}'".format(len(self), text.strip("\n\r ")))
+                self.rows.append(text)
+
+            def getvalue(self):
+                return "\n".join(self.rows)
+
+            def __len__(self):
+                return len(self.rows)
+
         temp = get_temp_folder(
             __file__, "temp_full_doc_template", clean=__name__ != "__main__")
+        rem = os.path.join(
+            temp, "python3_module_template-master", "_doc", "sphinxdoc", "build")
+        if os.path.exists(rem):
+            remove_folder(rem)
         url = "https://github.com/sdpython/python3_module_template/archive/master.zip"
         fLOG("download", url)
         download(url, temp, fLOG=fLOG, flatten=False)
@@ -76,8 +98,6 @@ class TestSphinxDocFull (unittest.TestCase):
 
         # test
         for i in range(0, 3):
-            if is_travis_or_appveyor() == "circleci":
-                print("   [test_full_documentation] begin", i)
             fLOG("\n")
             fLOG("\n")
             fLOG("\n")
@@ -102,29 +122,44 @@ class TestSphinxDocFull (unittest.TestCase):
             fLOG("[test_full_documentation] begin", list(roles._roles.keys()))
             fLOG("[test_full_documentation] **********************************")
 
-            direct_call = i % 2 == 1
-            if is_travis_or_appveyor() == "circleci":
-                print(
-                    "   [test_full_documentation] generate_help_sphinx begins", i, "direct_call=", direct_call)
+            direct_call = i % 2 == 0
+            layout = ["pdf", "html", "rst"]
+
+            logger1 = getLogger("docassert")
+            logger2 = getLogger("tocdelay")
+            log_capture_string = MyStream()  # StringIO()
+            ch = logging.StreamHandler(log_capture_string)
+            ch.setLevel(logging.DEBUG)
+            logger1.logger.addHandler(ch)
+            logger2.logger.addHandler(ch)
 
             with warnings.catch_warnings(record=True) as ww:
                 warnings.simplefilter("always")
                 generate_help_sphinx(var, module_name=var, root=root,
-                                     layout=["pdf", "html", "rst"],
+                                     layout=layout,
                                      extra_ext=["tohelp"],
-                                     from_repo=False, direct_call=direct_call)
+                                     from_repo=False, direct_call=direct_call,
+                                     parallel=1, fLOG=fLOG)
                 for w in ww:
                     sw = str(w)
                     if "WARNING:" in sw and "ERROR/" in sw:
                         raise Exception(
                             "A warning is not expected:\n{0}".format(w))
 
-            if is_travis_or_appveyor() == "circleci":
-                print("   [test_full_documentation] generate_help_sphinx ends", i)
-
             fLOG("[test_full_documentation] **********************************")
             fLOG("[test_full_documentation] END")
             fLOG("[test_full_documentation] **********************************")
+
+            lines = log_capture_string.getvalue().split("\n")
+            for line in lines:
+                if not line.strip():
+                    continue
+                if "[docassert]" in line:
+                    raise Exception(line)
+                if "[tocdelay]" in line:
+                    fLOG("   ", line)
+                if '[tocdelay] ERROR' in line and "LaTeXBuilder" not in line:
+                    raise Exception(line)
 
             # we clean
             if "pyquickhelper" in sys.modules:
@@ -132,6 +167,18 @@ class TestSphinxDocFull (unittest.TestCase):
             os.environ["PYTHONPATH"] = ""
             if pos >= 0:
                 del sys.path[pos]
+
+            # blog index
+            blog = os.path.join(root, "_doc", "sphinxdoc",
+                                "build", "html", "blog", "blogindex.html")
+            with open(blog, "r", encoding="utf-8") as f:
+                content = f.read()
+            self.assertIn("2015", content)
+            self.assertIn(
+                '"2016/2016-06-11_blogpost_with_label.html"', content)
+            spl = content.split("2016-06")
+            if len(spl) <= 2:
+                raise Exception("Two expected:\n" + content)
 
             # checkings
             files = [os.path.join(root, "_doc", "sphinxdoc", "build", "html", "index.html"),

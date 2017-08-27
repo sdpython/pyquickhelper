@@ -115,7 +115,7 @@ def process_postcontents(app, doctree):
 def transform_postcontents(app, doctree, fromdocname):
     """
     The function is called by event ``'doctree_resolved'``. It looks for
-    every section in page stored in *postcontents_all_postcontents* 
+    every section in page stored in *postcontents_all_postcontents*
     in the configuration and builds a short table of contents.
     The instruction ``.. contents::`` is resolved before every directive in
     the page is executed, the instruction ``.. postcontents::`` is resolved after.
@@ -145,7 +145,7 @@ def transform_postcontents(app, doctree, fromdocname):
     for node in post_list:
         if node["pcprocessed"] != 1:
             logger.warning("[postcontents] no first loop was ever processed: 'pcprocessed'={0} , File '{1}', line {2}".format(
-                node["pcprocessed"], node["docname"], node["lineno"]))
+                node["pcprocessed"], node["pcdocname"], node["pclineno"]))
             continue
 
         parent = node["node_section"]

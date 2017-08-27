@@ -56,6 +56,7 @@ from ..sphinxext.blog_post_list import BlogPostList
 from ..sphinxext.sphinx_blog_extension import BlogPostDirective, BlogPostDirectiveAgg
 from ..sphinxext.sphinx_runpython_extension import RunPythonDirective
 from ..sphinxext.sphinx_postcontents_extension import PostContentsDirective
+from ..sphinxext.sphinx_tocdelay_extension import TocDelayDirective
 from ..sphinxext.sphinx_sharenet_extension import ShareNetDirective, sharenet_role
 from ..sphinxext.sphinx_template_extension import tpl_role
 from ..sphinxext.sphinx_epkg_extension import epkg_role
@@ -102,7 +103,8 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
                          # ("epub", "build", {})],
                          layout=None,
                          module_name=None, from_repo=True, add_htmlhelp=False,
-                         copy_add_ext=None, direct_call=False, fLOG=fLOG):
+                         copy_add_ext=None, direct_call=False, fLOG=fLOG,
+                         parallel=1):
     """
     Runs the help generation:
 
@@ -129,6 +131,7 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
     @param      direct_call         direct call to sphinx with *sphinx_build* if *True*
                                     or run a command line in an another process to get
                                     a clear environment
+    @param      parallel            degree of parallelization
     @param      fLOG                logging function
 
     The result is stored in path: ``root/_doc/sphinxdoc/source``.
@@ -205,6 +208,12 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
              It also changes the encoding of the HTMLoutput into cp1552 (encoding for Windows)
              instead of utf-8.
 
+    @warning An issue was raised on Linux due to the use of ``.. only:: html``
+             (``AttributeError: Can't pickle local object 'setup.<locals>.<lambda>'``).
+             It disappeared when using only one thread and not 2 as
+             it was previously. Parameter *parallel* was introduced to
+             make that change and the default value is not 1.
+
     .. index:: SVG, Inkscape
 
     **Others necessary tools:**
@@ -255,6 +264,7 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
         :ref:`Bug in Sphinx 1.6.2 for custom css <sphinx-162-bug-custom-css>`
         if you have any trouble with custom css.
         Add a report in ``all_notebooks.rst`` about notebook coverage.
+        Parameter *parallel* was added.
 
     .. todoext::
         :title: add subfolder when building indexes of notebooks
@@ -327,6 +337,7 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
     directives.register_directive("nbref", NbRef)
     directives.register_directive("cmdref", CmdRef)
     directives.register_directive("postcontents", PostContentsDirective)
+    directives.register_directive("tocdelay", TocDelayDirective)
     roles.register_canonical_role("sharenet", sharenet_role)
     roles.register_canonical_role("bigger", bigger_role)
     roles.register_canonical_role("githublink", githublink_role)
@@ -782,7 +793,7 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
 
         sconf = [] if newconf is None else ["-c", newconf]
 
-        cmd = ["sphinx-build", "-j", "2", "-v", "-T", "-b", "{0}".format(lay),
+        cmd = ["sphinx-build", "-j", str(parallel), "-v", "-T", "-b", "{0}".format(lay),
                "-d", "{0}/doctrees".format(build)] + over + sconf + ["source", "{0}/{1}".format(build, lay)]
         cmds.append((cmd, build, lay))
         fLOG("~~~~ run:", cmd)
@@ -791,7 +802,7 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
         if add_htmlhelp and lay == "html":
             # we cannot execute htmlhelp in the same folder
             # as it changes the encoding
-            cmd = ["sphinx-build", "-j", "2", "-v", "-T", "-b", "{0}help".format(lay),
+            cmd = ["sphinx-build", "-j", str(parallel), "-v", "-T", "-b", "{0}help".format(lay),
                    "-d", "{0}/doctrees".format(build)] + over + sconf + ["source", "{0}/{1}html".format(build, lay)]
             cmds.append((cmd, build, "add_htmlhelp"))
             fLOG("~~~~ run:", cmd)
@@ -873,7 +884,8 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
         else:
             out, err = _process_sphinx_in_private_cmd(cmd, fLOG=fLOG)
 
-        fLOG("[generate_help_sphinx] end cmd len(out)={0} len(err)={1}".format(len(out), len(err)))
+        fLOG("[generate_help_sphinx] end cmd len(out)={0} len(err)={1}".format(
+            len(out), len(err)))
 
         if len(err) > 0:
             if "Exception occurred:" in err:

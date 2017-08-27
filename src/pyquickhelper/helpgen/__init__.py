@@ -12,5 +12,5 @@ from .sphinx_helper import sphinx_add_scripts
 from .sphinx_main import generate_help_sphinx, process_notebooks
 from .utils_sphinx_config import NbImage
 from .utils_pywin32 import import_pywin32
-from .sphinxm_convert_doc_helper import rst2html, docstring2html
+from .sphinxm_convert_doc_helper import rst2html, docstring2html, rst2rst_folder
 from .help_usage import get_help_usage
