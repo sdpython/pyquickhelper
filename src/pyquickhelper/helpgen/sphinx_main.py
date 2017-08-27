@@ -853,6 +853,8 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
 
         fLOG(
             "##################################################################################################")
+        fLOG("[generate_help_sphinx] direct_call={0}".format(direct_call))
+        fLOG("[generate_help_sphinx] cmd='''{0}'''".format(cmd))
 
         # direct call
         if direct_call:
@@ -870,6 +872,8 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
             err = err.getvalue()
         else:
             out, err = _process_sphinx_in_private_cmd(cmd, fLOG=fLOG)
+
+        fLOG("[generate_help_sphinx] end cmd len(out)={0} len(err)={1}".format(len(out), len(err)))
 
         if len(err) > 0:
             if "Exception occurred:" in err:

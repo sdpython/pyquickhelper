@@ -67,9 +67,8 @@ class PostContentsDirective(Directive):
 
     def run(self):
         """
-        Just add a post cont
+        Just add a @see cl postcontents_node.
 
-        @param      add_container       add a container node and return as a second result
         @return                         list of nodes or list of nodes, container
         """
         lineno = self.lineno
@@ -95,6 +94,7 @@ def process_postcontents(app, doctree):
     """
     Collect all *postcontents* in the environment.
     Look for the section or document which contain them.
+    Put them into the variable *postcontents_all_postcontents* in the config.
     """
     env = app.builder.env
     attr = 'postcontents_all_postcontents'
@@ -115,7 +115,8 @@ def process_postcontents(app, doctree):
 def transform_postcontents(app, doctree, fromdocname):
     """
     The function is called by event ``'doctree_resolved'``. It looks for
-    every section in page and builds a short table of contents.
+    every section in page stored in *postcontents_all_postcontents* 
+    in the configuration and builds a short table of contents.
     The instruction ``.. contents::`` is resolved before every directive in
     the page is executed, the instruction ``.. postcontents::`` is resolved after.
 

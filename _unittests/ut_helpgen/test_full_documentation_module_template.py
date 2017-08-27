@@ -102,16 +102,17 @@ class TestSphinxDocFull (unittest.TestCase):
             fLOG("[test_full_documentation] begin", list(roles._roles.keys()))
             fLOG("[test_full_documentation] **********************************")
 
+            direct_call = i % 2 == 1
             if is_travis_or_appveyor() == "circleci":
                 print(
-                    "   [test_full_documentation] generate_help_sphinx begins", i)
+                    "   [test_full_documentation] generate_help_sphinx begins", i, "direct_call=", direct_call)
 
             with warnings.catch_warnings(record=True) as ww:
                 warnings.simplefilter("always")
                 generate_help_sphinx(var, module_name=var, root=root,
                                      layout=["pdf", "html", "rst"],
                                      extra_ext=["tohelp"],
-                                     from_repo=False, direct_call=i % 2 == 0)
+                                     from_repo=False, direct_call=direct_call)
                 for w in ww:
                     sw = str(w)
                     if "WARNING:" in sw and "ERROR/" in sw:
