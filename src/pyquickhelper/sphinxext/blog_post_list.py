@@ -302,16 +302,21 @@ class BlogPostList:
                     "    {0} - {1} <{2}/{3}>\n".format(item.Date, item.Title, item.Date[:4],
                                                        os.path.splitext(os.path.split(item.FileName)[-1])[0]))
             f.write("\n\n")
+            if hidden_files is not None:
+                f.write(".. toctree::\n")
+                f.write("    :hidden:\n")
+                f.write("\n")
+                for item in self:
+                    name = os.path.split(item.FileName)[-1]
+                    name = os.path.splitext(name)[0]
+                    f.write("    {0}/{1}\n".format(item.Date[:4], name))
+                for h in hidden_files:
+                    f.write("    " +
+                            os.path.splitext(os.path.split(h)[-1])[0] + "\n")
+                f.write("\n\n")
+
             if only_html:
                 f.write(".. only:: html\n\n")
-            if hidden_files is not None:
-                f.write(indent + ".. toctree::\n")
-                f.write(indent + "    :hidden:\n")
-                f.write("\n")
-                for h in hidden_files:
-                    f.write(indent + "    " +
-                            os.path.splitext(os.path.split(h)[-1])[0] + "\n")
-                f.write("\n")
 
             f.write("\n")
             f.write(indent + ".. image:: feed-icon-16x16.png\n\n")

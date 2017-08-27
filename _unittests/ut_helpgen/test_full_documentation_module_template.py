@@ -158,7 +158,7 @@ class TestSphinxDocFull (unittest.TestCase):
                     raise Exception(line)
                 if "[tocdelay]" in line:
                     fLOG("   ", line)
-                if '[tocdelay] ERROR' in line and "LaTeXBuilder" not in line:
+                if '[tocdelay] ERROR' in line:
                     raise Exception(line)
 
             # we clean
