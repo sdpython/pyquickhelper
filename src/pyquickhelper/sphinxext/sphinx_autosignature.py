@@ -20,7 +20,7 @@ from .import_object_helper import import_any_object
 class autosignature_node(nodes.Structural, nodes.Element):
 
     """
-    defines *autosignature* node
+    Defines *autosignature* node.
     """
     pass
 

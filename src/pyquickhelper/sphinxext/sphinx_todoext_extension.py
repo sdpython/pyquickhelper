@@ -25,14 +25,14 @@ from .sphinxext_helper import try_add_config_value
 
 class todoext_node(nodes.admonition):
     """
-    defines ``todoext`` ndoe
+    Defines ``todoext`` node.
     """
     pass
 
 
 class todoextlist(nodes.General, nodes.Element):
     """
-    defines ``todoextlist`` node
+    Defines ``todoextlist`` node.
     """
     pass
 

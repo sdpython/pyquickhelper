@@ -102,6 +102,10 @@ class TestSphinxDocFull (unittest.TestCase):
             fLOG("[test_full_documentation] begin", list(roles._roles.keys()))
             fLOG("[test_full_documentation] **********************************")
 
+            if is_travis_or_appveyor() == "circleci":
+                print(
+                    "   [test_full_documentation] generate_help_sphinx begins", i)
+
             with warnings.catch_warnings(record=True) as ww:
                 warnings.simplefilter("always")
                 generate_help_sphinx(var, module_name=var, root=root,
@@ -113,6 +117,9 @@ class TestSphinxDocFull (unittest.TestCase):
                     if "WARNING:" in sw and "ERROR/" in sw:
                         raise Exception(
                             "A warning is not expected:\n{0}".format(w))
+
+            if is_travis_or_appveyor() == "circleci":
+                print("   [test_full_documentation] generate_help_sphinx ends", i)
 
             fLOG("[test_full_documentation] **********************************")
             fLOG("[test_full_documentation] END")
