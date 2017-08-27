@@ -279,6 +279,10 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
         It does not require to get script location.
         Not enough stable from virtual environment.
     """
+    from ..pycode import is_travis_or_appveyor
+    if is_travis_or_appveyor() == "circleci":
+        fLOG = print
+
     fLOG("---- JENKINS BEGIN DOCUMENTATION ----")
     if layout is None:
         layout = [("html", "build", {})]
