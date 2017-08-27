@@ -307,9 +307,9 @@ class BlogPostList:
                 f.write("    :hidden:\n")
                 f.write("\n")
                 for item in self:
-                    name = os.path.split(item.FileName)[-1]
-                    name = os.path.splitext(name)[0]
-                    f.write("    {0}/{1}\n".format(item.Date[:4], name))
+                    fl = os.path.split(item.FileName)[-1]
+                    fl = os.path.splitext(fl)[0]
+                    f.write("    {0}/{1}\n".format(item.Date[:4], fl))
                 for h in hidden_files:
                     f.write("    " +
                             os.path.splitext(os.path.split(h)[-1])[0] + "\n")

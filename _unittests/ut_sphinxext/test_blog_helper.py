@@ -80,8 +80,10 @@ class TestBlogHelper(unittest.TestCase):
 
         res = p.write_aggregated(out)
         self.assertTrue(len(res) >= 4)
+        print(res)
         for r in res:
-            self.assertTrue(os.path.exists(r))
+            if not os.path.exists(r):
+                raise FileNotFoundError(r)
 
     def test_directive_with_rst2html(self):
         fLOG(
