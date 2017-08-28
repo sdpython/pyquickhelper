@@ -142,6 +142,8 @@ def run_notebook(filename, profile_dir=None, working_dir=None, skip_exceptions=F
         replacements = cached_rep
     elif cached_rep is not None:
         cached_rep.update(replacements)
+    else:
+        cached_rep = replacements
 
     with open(filename, "r", encoding=encoding) as payload:
         try:
@@ -164,7 +166,7 @@ def run_notebook(filename, profile_dir=None, working_dir=None, skip_exceptions=F
                                    theNotebook=os.path.abspath(filename),
                                    code_init=code_init, log_level=log_level,
                                    extended_args=extended_args, kernel_name=kernel_name,
-                                   replacements=replacements, kernel=True, detailed_log=detailed_log)
+                                   replacements=cached_rep, kernel=True, detailed_log=detailed_log)
         stat = nb_runner.run_notebook(skip_exceptions=skip_exceptions, additional_path=additional_path,
                                       valid=valid, clean_function=clean_function)
 
