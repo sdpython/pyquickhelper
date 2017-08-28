@@ -34,30 +34,30 @@ def open_html_form(params, title='', key_save="",
 
         @image images/form.png
 
-        Cell 1:
-        @code
-        from pyquickhelper.ipythonhelper import open_html_form
-        params = { "module":, "version":"v..." }
-        open_html_form (params, title="try the password *", key_save="form1")
-        @endcode
+        Cell 1::
 
-        Cell 2:
-        @code
-        print(form1)
-        @endcode
+            from pyquickhelper.ipythonhelper import open_html_form
+            params = { "module":, "version":"v..." }
+            open_html_form (params, title="try the password *", key_save="form1")
+
+        Cell 2::
+
+            print(form1)
 
         We can execute a simple action after the button *Ok* is pressed. This second trick
         comes from `this notebook <https://raw.githubusercontent.com/fluxtream/fluxtream-ipy/master/Communication%20between%20kernel%20and%20javascript%20in%20iPython%202.0.ipynb>`_.
         The code displays whatever comes from function ``custom_action`` in this case.
         You should return ``""`` to display nothing.
 
-        @code
-        def custom_action(x):
-            x["combined"] = x["first_name"] + " " + x["last_name"]
-            return x
-        params = { "first_name":"", "last_name":"" }
-        open_html_form (params, title="enter your name", key_save="my_address", hook="custom_action(my_address)")
-        @endcode
+        ::
+
+            def custom_action(x):
+                x["combined"] = x["first_name"] + " " + x["last_name"]
+                return x
+
+            params = { "first_name":"", "last_name":"" }
+            open_html_form(params, title="enter your name", key_save="my_address",
+                           hook="custom_action(my_address)")
 
     The function generates javascript based on the keys the dictionary ``params`` contains.
     The keys must follows the same as a javascript identifier (no space).
