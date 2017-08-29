@@ -892,8 +892,9 @@ def build_notebooks_gallery(nbs, fileout, fLOG=noLOG):
         rows = ["", ".. _l-notebooks:", "", "", "Notebooks Gallery",
                 "=================", ""]
 
-    rows.extend(["", "", ".. contents::", "    :depth: 2",
-                 "    :local:", "", "", "Gallery", "+++++++", ""])
+    rows.extend(["", ":ref:`l-notebooks-coverage`", "",
+                 "", ".. contents::", "    :depth: 1",
+                 "    :local:", ""])
 
     # produces the final files
     if len(hier) == 0:
@@ -996,8 +997,7 @@ def build_notebooks_gallery(nbs, fileout, fLOG=noLOG):
     rows.append("")
 
     # links to coverage
-    rows.extend(["", ".. raw:: html", "", "    <hr/>", "",
-                 "Coverage", "++++++++", "", ".. toctree::", "",
+    rows.extend(["", "", ".. toctree::", "    :hidden: ", "",
                  "    all_notebooks_coverage", ""])
 
     with open(fileout, "w", encoding="utf8") as f:
