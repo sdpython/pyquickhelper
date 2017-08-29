@@ -1128,8 +1128,8 @@ class NotebookRunner(object):
         first_cell = self.first_cell()
 
         if not first_cell['cell_type'] == 'markdown':
-            raise ValueError("The first cell is not in markdown but '{0}'.".format(
-                first_cell['cell_type']))
+            raise ValueError("The first cell is not in markdown but '{0}' filename='{1}'.".format(
+                first_cell['cell_type'], self._filename))
 
         header, desc = split_header(first_cell['source'])
         if not desc and len(self.nb['cells']) > 1:
