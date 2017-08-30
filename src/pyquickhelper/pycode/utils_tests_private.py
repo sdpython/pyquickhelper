@@ -537,9 +537,10 @@ def main_run_test(runner, path_test=None, limit_max=1e9, log=False, skip=-1, ski
                 if len(list_warn) > 0:
                     fullstderr.write("+WARN:\n")
                     for w, s in list_warn:
-                        fullstderr.write("w{0}: {1}\n".format(i, str(w)))
+                        fullstderr.write(
+                            "[in:{2}] w{0}: {1}\n".format(i, str(w), cut[-1]))
                 if val.strip(" \n\r\t"):
-                    fullstderr.write("ERRv:\n")
+                    fullstderr.write("[in:{0}] ERRv:\n".format(cut[-1]))
                     fullstderr.write(val)
 
         memout.write("\n")
