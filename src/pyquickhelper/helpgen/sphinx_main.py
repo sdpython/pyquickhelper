@@ -1091,7 +1091,7 @@ def _check_sphinx_configuration(conf, fLOG):
                 clean_folders.append(a)
     for cl in clean_folders:
         fLOG("[sphinx-gallery] clean '{0}'".format(cl))
-        for temp in os.path.listdir(cl):
+        for temp in os.listdir(cl):
             if temp.startswith("temp_"):
                 aaa = os.path.join(cl, temp)
                 fLOG("[sphinx-gallery] remove '{0}'".format(cl))
