@@ -30,10 +30,10 @@ def read_url(url, **args):
     .. exref::
         :title: Create a pandas DataFrame from a file on internet
 
-        @code
-        url = "http://www.xavierdupre.fr/enseignement/complements/marathon.txt"
-        df = read_url(url, sep="\t", names=["ville", "annee", "temps","secondes"])
-        @endcode
+        ::
+
+            url = "http://www.xavierdupre.fr/enseignement/complements/marathon.txt"
+            df = read_url(url, sep="\t", names=["ville", "annee", "temps","secondes"])
     """
     import pandas
     text = get_url_content(url)

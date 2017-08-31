@@ -153,13 +153,13 @@ def create_virtual_env(where, symlinks=False, system_site_packages=False,
         The following example creates a virtual environment.
         Packages can be added by specifying the parameter *package*.
 
-        @code
-        from pyquickhelper.pycode import create_virtual_env
-        fold = "my_env"
-        if not os.path.exists(fold):
-            os.mkdir(fold)
-        create_virtual_env(fold)
-        @endcode
+        ::
+
+            from pyquickhelper.pycode import create_virtual_env
+            fold = "my_env"
+            if not os.path.exists(fold):
+                os.mkdir(fold)
+            create_virtual_env(fold)
 
     The function does not work from a virtual environment.
     """

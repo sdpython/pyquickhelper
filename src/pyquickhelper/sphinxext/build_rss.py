@@ -46,11 +46,7 @@ def build_rss(posts,
     @param  model_row           see model_row
     @param  model_channel       the part related to a post in the rss stream is composed
                                 by the concatenation of the three stream:
-                                @code
-                                model_feed
-                                model_row
-                                model_channel
-                                @endcode
+                                *model_feed*, *model_row*, *model_channel*.
                                 You should see the default value to see how you can replace them.
     @return                     2-uple: content of the file
     """

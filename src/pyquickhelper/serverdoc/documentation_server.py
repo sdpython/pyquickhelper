@@ -306,14 +306,15 @@ class DocumentationHandler(BaseHTTPRequestHandler):
         @param      params              extra parameters when a script must be executed (should be a dictionary)
 
         A script section looks like:
-        @code
-        <script type="text/python">
-        from pandas import DataFrame
-        pars = [ { "key":k, "value":v } for k,v in params ]
-        tbl = DataFrame (pars)
-        print ( tbl.to_html(class_table="myclasstable") )
-        </script>
-        @endcode
+
+        ::
+
+            <script type="text/python">
+            from pandas import DataFrame
+            pars = [ { "key":k, "value":v } for k,v in params ]
+            tbl = DataFrame (pars)
+            print ( tbl.to_html(class_table="myclasstable") )
+            </script>
 
         The server does not interpret Python, to do that, you need to use
         `pyrsslocal <http://www.xavierdupre.fr/app/pyrsslocal/helpsphinx/index.html>`_.
@@ -527,9 +528,10 @@ class DocumentationThreadServer (Thread):
         """
         shuts down the server, if it does not work, you can still kill
         the thread:
-        @code
-        self.kill()
-        @endcode
+
+        ::
+
+            self.kill()
         """
         self.server.shutdown()
         self.server.server_close()
@@ -553,11 +555,13 @@ def run_doc_server(server,
         :title: How to run a local server which serves the documentation?
 
         The following code will create a local server: `http://localhost:8079/pyquickhelper/ <http://localhost:8079/pyquickhelper/>`_.
-        @code
-        this_fold = os.path.dirname(pyquickhelper.serverdoc.documentation_server.__file__)
-        this_path = os.path.abspath( os.path.join( this_fold, "..", "..", "..", "dist", "html") )
-        run_doc_server(None, mappings = { "pyquickhelper": this_path } )
-        @endcode
+
+        ::
+
+            this_fold = os.path.dirname(pyquickhelper.serverdoc.documentation_server.__file__)
+            this_path = os.path.abspath( os.path.join( this_fold,
+                        "..", "..", "..", "dist", "html") )
+            run_doc_server(None, mappings = { "pyquickhelper": this_path } )
 
         The same server can serves more than one project.
         More than one mappings can be sent.

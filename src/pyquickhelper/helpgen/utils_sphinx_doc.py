@@ -572,9 +572,7 @@ def add_file_rst(rootm, store_obj, actions, template=add_file_rst_template,
     @param      mapped_function list of 2-tuple (pattern, function). Every file matching the pattern
                                 will be copied to the documentation folder, its content will be sent
                                 to the function and will produce a file <filename>.rst. Example:
-                                @code
-                                [ (".*[.]sql$", filecontent_to_rst) ]
-                                @endcode
+                                ``[ (".*[.]sql$", filecontent_to_rst) ]``
                                 The function takes two parameters: full_filename, content_filename. It returns
                                 a string (the rst file) or a tuple (rst file, short description).
                                 By default (if function is None), the function ``filecontent_to_rst`` will be called
@@ -910,18 +908,14 @@ def prepare_file_for_sphinx_help_generation(store_obj, input, output,
                                     * a tuple input/<sub[0]> --> output/<sub[1]>
     @param      fmod_copy       modifies the content of each file,
                                 this function takes a string and the filename and returns a string
-                                @code
-                                f(content, filename) --> string
-                                @endcode
+                                ``f(content, filename) --> string``
     @param      template        rst template to produce
     @param      rootrep         file name in the documentation contains some folders which are not desired in the documentation
     @param      fmod_res        applies modification to the instanciated template
     @param      silent          if True, do not stop when facing an issue with doxygen migration
     @param      optional_dirs   list of tuple with a list of folders (source, copy, filter) to
                                 copy for the documentation, example:
-                                @code
-                                    ( <folder_help>, "coverage", ".*" )
-                                @endcode
+                                ``( <folder_help>, "coverage", ".*" )``
     @param      softfile        softfile is a function (f : filename --> True or False), when it is True,
                                 the documentation is lighter (no special members)
     @param      fexclude        function to exclude some files from the help
@@ -930,9 +924,7 @@ def prepare_file_for_sphinx_help_generation(store_obj, input, output,
     @param      mapped_function list of 2-tuple (pattern, function). Every file matching the pattern
                                 will be copied to the documentation folder, its content will be sent
                                 to the function and will produce a file <filename>.rst. Example:
-                                @code
-                                [ (".*[.]sql$", filecontent_to_rst) ]
-                                @endcode
+                                ``[ (".*[.]sql$", filecontent_to_rst) ]``
                                 The function takes two parameters: full_filename, content_filename. It returns
                                 a string (the rst file) or a tuple (rst file, short description).
                                 By default (if function is None), the function ``filecontent_to_rst`` will be called.
@@ -1367,9 +1359,9 @@ def private_migrating_doxygen_doc(rows, index_first_line, filename,
 
     The following line displays error message you can click on using SciTe
 
-    @code
-    raise SyntaxError("  File \"%s\", line %d, in ???\n    unable to process: %s " %(filename, index_first_line+i+1, row))
-    @endcode
+    ::
+
+        raise SyntaxError("  File \"%s\", line %d, in ???\n    unable to process: %s " %(filename, index_first_line+i+1, row))
 
     __sphinx__skip__
 

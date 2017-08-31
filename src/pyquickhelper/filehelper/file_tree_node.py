@@ -22,45 +22,46 @@ from ..loghelper.pyrepo_helper import SourceRepository
 class FileTreeNode:
 
     """
-    defines a node for a folder or a tree
+    Defines a node for a folder or a tree.
+    Example:
 
-    example:
+    ::
 
-    @code
-    def example (p1, p2, hash_size = 1024**2*2, svn1 = True, svn2 = False) :
-        extout = re.compile (FileTreeNode.build_expression ("dvi bbl blg ilg ind old out pyc pyd " \\
-                                      "bak idx obj log aux pdb sbr ncb res idb suo dep " \\
-                                      "ogm manifest dsp dsz user ilk bsc exp eps".split ()))
-        extfou = re.compile ("(exeinterpreter[/\\\\].*[.]dll)|([/\\\\]upgradereport)|" \\
-                             "(thumbs[.]db)|([.]svn)|(temp[_/\\\\].*)")
+        def example (p1, p2, hash_size = 1024**2*2, svn1 = True, svn2 = False) :
+            extout = re.compile (FileTreeNode.build_expression ("dvi bbl blg ilg ind old out pyc pyd " \\
+                                        "bak idx obj log aux pdb sbr ncb res idb suo dep " \\
+                                        "ogm manifest dsp dsz user ilk bsc exp eps".split ()))
+            extfou = re.compile ("(exeinterpreter[/\\\\].*[.]dll)|([/\\\\]upgradereport)|" \\
+                                "(thumbs[.]db)|([.]svn)|(temp[_/\\\\].*)")
 
-        def filter (root, path, f, d) :
-            root = root.lower ()
-            path = path.lower ()
-            f    = f.lower ()
-            if extout.search (f) :
-                if not d and not f.endswith(".pyc"): fLOG("rejected (o1)", path, f)
-                return False
-            fu = os.path.join (path, f)
-            if extfou.search (fu) :
-                if not d and not f.endswith(".pyc"): fLOG("rejected (o2)", path, f)
-                return False
-            return True
+            def filter (root, path, f, d) :
+                root = root.lower ()
+                path = path.lower ()
+                f    = f.lower ()
+                if extout.search (f) :
+                    if not d and not f.endswith(".pyc"):
+                        print("rejected (o1)", path, f)
+                    return False
+                fu = os.path.join (path, f)
+                if extfou.search (fu) :
+                    if not d and not f.endswith(".pyc"):
+                        print("rejected (o2)", path, f)
+                    return False
+                return True
 
-        f1  = p1
-        f2  = p2
+            f1  = p1
+            f2  = p2
 
-        node1 = FileTreeNode(f1, filter = filter, repository = svn1)
-        node2 = FileTreeNode(f2, filter = filter, repository = svn2)
-        fLOG(len(node1), node1.max_date())
-        fLOG(len(node2), node2.max_date())
+            node1 = FileTreeNode(f1, filter = filter, repository = svn1)
+            node2 = FileTreeNode(f2, filter = filter, repository = svn2)
+            print(len(node1), node1.max_date())
+            print(len(node2), node2.max_date())
 
-        res = node1.difference(node2, hash_size=hash_size)
-        return res
+            res = node1.difference(node2, hash_size=hash_size)
+            return res
 
-    fLOG(__file__, "synchro", OutputPrint = __name__ == "__main__")
-    res = example (p1, p2)
-    @endcode
+        print(__file__, "synchro", OutputPrint = __name__ == "__main__")
+        res = example (p1, p2)
     """
 
     _default_not_ext = "bbl out pyc log lib ind pdb opt".split()

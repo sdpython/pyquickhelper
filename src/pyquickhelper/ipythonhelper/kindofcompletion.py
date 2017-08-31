@@ -96,10 +96,10 @@ class AutoCompletionFile(AutoCompletion):
 
         The following code:
 
-        @code
-        from pyquickhelper.ipythonhelper import AutoCompletionFile
-        d = AutoCompletionFile(".")
-        @endcode
+        ::
+
+            from pyquickhelper.ipythonhelper import AutoCompletionFile
+            d = AutoCompletionFile(".")
 
         Will produce the following auto completion picture:
 

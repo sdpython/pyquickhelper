@@ -723,9 +723,9 @@ def clone(location, srv, group, project, username=None, password=None):
     .. exref::
         :title: Clone a git repository
 
-        @code
-        clone("local_folder", "github.com", "sdpython", "pyquickhelper")
-        @endcode
+        ::
+
+            clone("local_folder", "github.com", "sdpython", "pyquickhelper")
 
     .. versionadded:: 0.9
     """

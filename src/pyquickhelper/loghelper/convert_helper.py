@@ -13,10 +13,8 @@ def str2datetime(dt, format=None):
         - 2013-05-24 18:49:46.568
 
     @param      dt      string
-    @param      format  format for the conversion, the most complete one is:
-                            @code
-                            %Y-%m-%d %H:%M:%S.%f
-                            @endcode
+    @param      format  format for the conversion, the most complete one is
+                        ``%Y-%m-%d %H:%M:%S.%f``
                         which you get by default
     @rtype              datetime
     @return             datetime

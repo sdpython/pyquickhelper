@@ -69,13 +69,14 @@ class SourceRepository:
                                         - link
 
         The function use a command line if an error occurred. It uses the xml format:
-        @code
-        <logentry revision="161">
-            <author>xavier dupre</author>
-            <date>2013-03-23T15:02:50.311828Z</date>
-            <msg>pyquickhelper: first version</msg>
-        </logentry>
-        @endcode
+
+        ::
+
+            <logentry revision="161">
+                <author>xavier dupre</author>
+                <date>2013-03-23T15:02:50.311828Z</date>
+                <msg>pyquickhelper: first version</msg>
+            </logentry>
         """
         if self.module is None:
             self.SetGuessedType(path)

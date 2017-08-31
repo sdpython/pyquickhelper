@@ -146,10 +146,10 @@ def run_cmd(cmd, sin="", shell=sys.platform.startswith("win"), wait=False, log_e
     .. exref::
         :title: Run a program using the command line)
 
-        @code
-        from pyquickhelper.loghelper import run_cmd
-        out,err = run_cmd( "python setup.py install", wait=True)
-        @endcode
+        ::
+
+            from pyquickhelper.loghelper import run_cmd
+            out,err = run_cmd( "python setup.py install", wait=True)
 
     If you are using this function to run git function, parameter ``shell`` must be True.
 

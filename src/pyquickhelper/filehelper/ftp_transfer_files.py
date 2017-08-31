@@ -63,67 +63,63 @@ class FolderTransferFTP:
         The following code shows how to transfer the content of a folder to
         website through FTP protocol.
 
-        @code
-        ftn  = FileTreeNode("c:/somefolder")
-        ftp  = TransferFTP("ftp.website.fr", "login", "password", fLOG=print)
-        fftp = FolderTransferFTP (ftn, ftp, "status_file.txt",
-                root_web = "/www/htdocs/app/pyquickhelper/helpsphinx")
+        ::
 
-        fftp.start_transfering()
+            ftn  = FileTreeNode("c:/somefolder")
+            ftp  = TransferFTP("ftp.website.fr", "login", "password", fLOG=print)
+            fftp = FolderTransferFTP (ftn, ftp, "status_file.txt",
+                    root_web = "/www/htdocs/app/pyquickhelper/helpsphinx")
 
-        ftp.close()
-        @endcode
+            fftp.start_transfering()
+            ftp.close()
 
     The following example is more complete:
 
-    @code
-    import sys, os
-    from pyquickhelper import TransferFTP, FileTreeNode, FolderTransferFTP
-    from pyquickhelper import open_window_params
+    ::
 
-    login = "login"
-    params = { "password":"" }
-    newparams = open_window_params (params, title="password",
-                        help_string = "password", key_save="my_password")
-    password = newparams["password"]
+        import sys, os
+        from pyquickhelper import TransferFTP, FileTreeNode, FolderTransferFTP
+        from pyquickhelper import open_window_params
 
-    ftp = TransferFTP("ftp.website.fr",
-                    login,
-                    password,
-                    fLOG=print)
+        login = "login"
+        params = { "password":"" }
+        newparams = open_window_params (params, title="password",
+                            help_string = "password", key_save="my_password")
+        password = newparams["password"]
 
-    location = r"local_location\\GitHub\\%s\\dist\\html"
-    this = os.path.abspath(os.path.dirname(__file__))
-    rootw = "/www/htdocs/app/%s/helpsphinx"
+        ftp = TransferFTP("ftp.website.fr",
+                        login,
+                        password,
+                        fLOG=print)
 
-    for module in [
-            "pyquickhelper",
-            "pyensae",
-            ] :
-        root = location % module
+        location = r"local_location\\GitHub\\%s\\dist\\html"
+        this = os.path.abspath(os.path.dirname(__file__))
+        rootw = "/www/htdocs/app/%s/helpsphinx"
 
-        # documentation
+        for module in [
+                "pyquickhelper",
+                "pyensae",
+                ] :
+            root = location % module
 
-        sfile = os.path.join(this, "status_%s.txt" % module)
-        ftn  = FileTreeNode(root)
-        fftp = FolderTransferFTP (ftn, ftp, sfile,
-                            root_web = rootw % module,
-                            fLOG=print)
+            # documentation
+            sfile = os.path.join(this, "status_%s.txt" % module)
+            ftn  = FileTreeNode(root)
+            fftp = FolderTransferFTP (ftn, ftp, sfile,
+                                root_web = rootw % module,
+                                fLOG=print)
 
-        fftp.start_transfering()
+            fftp.start_transfering()
 
-        # setup, wheels
+            # setup, wheels
+            ftn  = FileTreeNode(os.path.join(root,".."), filter = lambda root, path, f, dir: not dir)
+            fftp = FolderTransferFTP (ftn, ftp, sfile,
+                                root_web = (rootw % module).replace("helpsphinx",""),
+                                fLOG=print)
 
-        ftn  = FileTreeNode(os.path.join(root,".."), filter = lambda root, path, f, dir: not dir)
-        fftp = FolderTransferFTP (ftn, ftp, sfile,
-                            root_web = (rootw % module).replace("helpsphinx",""),
-                            fLOG=print)
+            fftp.start_transfering()
 
-        fftp.start_transfering()
-
-
-    ftp.close()
-    @endcode
+        ftp.close()
 
     .. versionadded:: 1.0
     """

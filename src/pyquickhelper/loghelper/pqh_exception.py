@@ -5,18 +5,20 @@
 
 By default, all exceptions are logged through the function fLOG (@see fn fLOG).
 
-@code
-raise HalException ("message")
-@endcode
+::
+
+    raise PQHException ("message")
 """
 
 
 class PQHException (Exception):
 
     """
-    define an exception
-      - exception used in Python module to make exception raised by this module easier to catch
-      - every time exception is logged
+    Define an exception.
+
+    - exception used in Python module to make exception
+      raised by this module easier to catch
+    - every time exception is logged
     """
 
     def __init__(self, m, log=True):
