@@ -80,7 +80,6 @@ class TestBlogHelper(unittest.TestCase):
 
         res = p.write_aggregated(out)
         self.assertTrue(len(res) >= 4)
-        print(res)
         for r in res:
             if not os.path.exists(r):
                 raise FileNotFoundError(r)
