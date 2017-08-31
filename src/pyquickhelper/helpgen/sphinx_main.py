@@ -306,7 +306,7 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
         if not sys.platform.startswith("win"):
             raise ValueError("add_htmlhelp is True and the OS is not Windows")
         else:
-            fLOG("~~~~~~~~~~~~~~~~~~~~~~ add add_htmlhelp")
+            fLOG("[generate_help_sphinx] add add_htmlhelp")
 
     if extra_ext is None:
         extra_ext = []
@@ -368,7 +368,7 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
             import conf_base
             del sys.path[-1]
 
-        fLOG("~~~~ conf_base", conf_base.__file__)
+        fLOG("[generate_help_sphinx] conf_base", conf_base.__file__)
 
     copypath = list(sys.path)
 
@@ -386,7 +386,7 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
     #################################################
     for t3 in layout:
         lay, build, override, newconf = lay_build_override_newconf(t3)
-        fLOG("~~~~ newconf:", newconf, t3)
+        fLOG("[generate_help_sphinx] newconf:", newconf, t3)
         if newconf is None:
             continue
         # we need to import this file to guess the template directory and
@@ -394,10 +394,10 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
         folds = os.path.join(root_sphinxdoc, newconf)
         # trick, we place the good folder in the first position
         sys.path.insert(0, folds)
-        fLOG("~~~~ import from", folds)
+        fLOG("[generate_help_sphinx] import from", folds)
         try:
             thenewconf = importlib.import_module("conf")
-            fLOG("~~~~ import:", thenewconf)
+            fLOG("[generate_help_sphinx] import:", thenewconf)
         except Exception as ee:
             raise HelpGenException(
                 "unable to import a config file (t3={0}, root_source={1})".format(
@@ -524,10 +524,10 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
     ##########
     nblinks = theconf.__dict__.get("nblinks", None)
     if nblinks is not None and len(nblinks) > 0:
-        fLOG("~~~~ NBLINKS - BEGIN")
+        fLOG("[generate_help_sphinx] NBLINKS - BEGIN")
         for i, (k, v) in enumerate(sorted(nblinks.items())):
             fLOG("     {0}/{1} - '{2}': '{3}'".format(i + 1, len(nblinks), k, v))
-        fLOG("~~~~ NBLINKS - END")
+        fLOG("[generate_help_sphinx] NBLINKS - END")
 
     # add to PATH
     sep = ";" if sys.platform.startswith("win") else ":"
@@ -551,15 +551,16 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
     ######################################
     # we copy javascript dependencies, reveal.js
     ######################################
-    fLOG("~~~~ JAVASCRIPT:", html_static_paths)
-    fLOG("~~~~ ROOT:", root_sphinxdoc)
-    fLOG("~~~~ BUILD:", build_paths)
+    fLOG("[generate_help_sphinx] JAVASCRIPT:", html_static_paths)
+    fLOG("[generate_help_sphinx] ROOT:", root_sphinxdoc)
+    fLOG("[generate_help_sphinx] BUILD:", build_paths)
     for html_static_path in html_static_paths:
         install_javascript_tools(
             root_sphinxdoc, dest=html_static_path, fLOG=fLOG)
 
     ############################
     # we copy the extended styles (notebook, snippets)
+    ############################
     for html_static_path in html_static_paths:
         dest = os.path.join(html_static_path, style_figure_notebook[0])
         fLOG("    CREATE-CSS", dest)
@@ -611,22 +612,22 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
     except ImportErrorHelpGen as e:
 
         fLOG(
-            "~~~~ major failure, no solution found yet, please run again the script")
-        fLOG("~~~~ list of added modules:")
+            "[generate_help_sphinx] major failure, no solution found yet, please run again the script")
+        fLOG("[generate_help_sphinx] list of added modules:")
         remove = [k for k in sys.modules if k not in sys_modules]
         for k in sorted(remove):
-            fLOG("~~~~    ", k)
+            fLOG("[generate_help_sphinx]    ", k)
 
         raise e
 
-    fLOG("~~~~ end of prepare_file_for_sphinx_help_generation")
+    fLOG("[generate_help_sphinx] end of prepare_file_for_sphinx_help_generation")
     fLOG("---- JENKINS END DOCUMENTATION COPY FILES ----")
 
     ######
     # blog
     ######
     fLOG("---- JENKINS BEGIN DOCUMENTATION BLOGS ----")
-    fLOG("~~~~ begin blogs")
+    fLOG("[generate_help_sphinx] begin blogs")
     blog_fold = os.path.join(
         os.path.join(root, "_doc/sphinxdoc/source", "blog"))
 
@@ -643,14 +644,14 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
     else:
         plist = None
 
-    fLOG("~~~~ end blogs")
+    fLOG("[generate_help_sphinx] end blogs")
     fLOG("---- JENKINS END DOCUMENTATION BLOGS ----")
 
     ###########
     # notebooks
     ###########
     fLOG("---- JENKINS BEGIN DOCUMENTATION NOTEBOOKS ----")
-    fLOG("~~~~ begin notebooks")
+    fLOG("[generate_help_sphinx] begin notebooks")
     indextxtnote = None
     indexlistnote = []
     notebook_dir = os.path.abspath(os.path.join(root, "_doc", "notebooks"))
@@ -707,13 +708,13 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
                             os.makedirs(d)
                         shutil.copy(img, d)
 
-    fLOG("~~~~ end notebooks")
+    fLOG("[generate_help_sphinx] end notebooks")
     fLOG("---- JENKINS END DOCUMENTATION NOTEBOOKS ----")
 
     #############################################
     # replace placeholder as blog posts list into tocs files
     #############################################
-    fLOG("~~~~ blog placeholder")
+    fLOG("[generate_help_sphinx] blog placeholder")
     if plist is not None:
         replace_placeholder_by_recent_blogpost(
             all_tocs, plist, "__INSERT__", fLOG=fLOG)
@@ -721,15 +722,15 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
     #################################
     #  run the documentation generation
     #################################
-    fLOG("~~~~ prepare for SPHINX")
+    fLOG("[generate_help_sphinx] prepare for SPHINX")
     temp = os.environ["PATH"]
     pyts = get_executables_path()
     sepj = ";" if sys.platform.startswith("win") else ":"
     script = sepj.join(pyts)
-    fLOG("adding " + script)
+    fLOG("[generate_help_sphinx] adding " + script)
     temp = script + sepj + temp
     os.environ["PATH"] = temp
-    fLOG("~~~~ changing PATH", temp)
+    fLOG("[generate_help_sphinx] changing PATH", temp)
     pa = os.getcwd()
 
     # bokeh trick
@@ -745,7 +746,7 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
     # checks encoding
     ################
     fLOG("---- JENKINS BEGIN DOCUMENTATION ENCODING ----")
-    fLOG("~~~~ checking encoding utf8...")
+    fLOG("[generate_help_sphinx] checking encoding utf8...")
     for root, dirs, files in os.walk(docpath):
         for name in files:
             thn = os.path.join(root, name)
@@ -759,7 +760,7 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
                 except Exception as e:
                     raise HelpGenException("issue with file ", thn) from e
 
-    fLOG("~~~~ running sphinx... from", docpath)
+    fLOG("[generate_help_sphinx] running sphinx... from", docpath)
     if not os.path.exists(docpath):
         raise FileNotFoundError(docpath)
     fLOG("---- JENKINS END DOCUMENTATION ENCODING ----")
@@ -769,7 +770,7 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
     #####################
     # builds command lines
     #####################
-    fLOG("~~~~ sphinx command lines")
+    fLOG("[generate_help_sphinx] sphinx command lines")
     cmds = []
     lays = []
     cmds_post = []
@@ -796,7 +797,7 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
         cmd = ["sphinx-build", "-j", str(parallel), "-v", "-T", "-b", "{0}".format(lay),
                "-d", "{0}/doctrees".format(build)] + over + sconf + ["source", "{0}/{1}".format(build, lay)]
         cmds.append((cmd, build, lay))
-        fLOG("~~~~ run:", cmd)
+        fLOG("[generate_help_sphinx] run:", cmd)
         lays.append(lay)
 
         if add_htmlhelp and lay == "html":
@@ -805,7 +806,7 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
             cmd = ["sphinx-build", "-j", str(parallel), "-v", "-T", "-b", "{0}help".format(lay),
                    "-d", "{0}/doctrees".format(build)] + over + sconf + ["source", "{0}/{1}html".format(build, lay)]
             cmds.append((cmd, build, "add_htmlhelp"))
-            fLOG("~~~~ run:", cmd)
+            fLOG("[generate_help_sphinx] run:", cmd)
             lays.append(lay)
             hhp = os.path.join(build, lay + "help", module_name + "_doc.hhp")
             cmdp = '"C:\\Program Files (x86)\\HTML Help Workshop\\hhc.exe" ' + \
@@ -817,7 +818,7 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
     ###############################################################
     # run cmds (prefer to use os.system instead of run_cmd if it gets stuck)
     ###############################################################
-    fLOG("~~~~ RUN SPHINX")
+    fLOG("[generate_help_sphinx] RUN SPHINX")
     for cmd, build, kind in cmds:
         fLOG("---- JENKINS BEGIN DOCUMENTATION SPHINX ----")
         fLOG(
@@ -826,9 +827,9 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
             "##################### run sphinx #################################################################")
         fLOG(
             "##################################################################################################")
-        fLOG("~~~~", cmd)
-        fLOG("~~~~ from ", os.getcwd())
-        fLOG("~~~~ PATH ", os.environ["PATH"])
+        fLOG("[generate_help_sphinx]", cmd)
+        fLOG("[generate_help_sphinx] from ", os.getcwd())
+        fLOG("[generate_help_sphinx] PATH ", os.environ["PATH"])
 
         existing = list(sorted(sys.modules.keys()))
         for ex in existing:
@@ -893,17 +894,16 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
                     "Sphinx raised an exception:\nOUT:\n{0}\n[sphinxerror]\n{1}".format(out, err))
             else:
                 fLOG("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
-                fLOG("~~~~", kind, "~~~~", cmd)
+                fLOG("[generate_help_sphinx]", kind, "~~~~", cmd)
                 fLOG("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
                 warnings.warn(
                     "Sphinx went through errors. Check if any of them is important.\nOUT:\n{0}\n[sphinxerror]\n{1}".format(out, err))
-                fLOG("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
                 fLOG("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
 
         if kind == "html":
             fLOG(
                 "##############################################################")
-            fLOG("check that index.html exists")
+            fLOG("[generate_help_sphinx] check that index.html exists")
             findex = os.path.join(build, kind, "index.html")
             if not os.path.exists(findex):
                 raise FileNotFoundError("something went wrong, unable to find {0}\nCMD\n{1}\nOUT\n{2}\nERR\n{3}\nLAY\n{4}\nINDEX\n{5}"
@@ -926,13 +926,13 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
     for build_path in build_paths:
         dest = os.path.join(build_path, "_static", style_figure_notebook[0])
         if not os.path.exists(dest):
-            fLOG("    CREATE-CSS2", dest)
+            fLOG("[generate_help_sphinx]    CREATE-CSS2", dest)
             with open(dest, "w", encoding="utf-8") as f:
                 f.write(style_figure_notebook[1])
 
     if add_htmlhelp:
         # we call HtmlHelp
-        fLOG("### run HTMLHELP ###########################")
+        fLOG("[generate_help_sphinx] run HTMLHELP")
         for cmd in cmds_post:
             fLOG("running", cmd)
             out, err = run_cmd(cmd, wait=True, fLOG=fLOG,
@@ -941,16 +941,16 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
             if len(err) > 0:
                 warnings.warn(
                     "Sphinx went through errors. Check if any of them is important.\nOUT:\n{0}\n[sphinxerror]\n{1}".format(out, err))
-        fLOG("### end run HTMLHELP #######################")
+        fLOG("[generate_help_sphinx] end run HTMLHELP")
 
     #####################################
     # we copy the coverage files if it is missing
     #####################################
     fLOG("---- JENKINS BEGIN DOCUMENTATION COVERAGE ----")
-    fLOG("[coverage] copy")
+    fLOG("[generate_help_sphinx] copy coverage")
     covfold = os.path.join(docpath, "source", "coverage")
     if os.path.exists(covfold):
-        fLOG("[coverage] folder:", covfold)
+        fLOG("[generate_help_sphinx] coverage folder:", covfold)
         allfiles = os.listdir(covfold)
         allf = [_ for _ in allfiles if _.endswith(".rst")]
         if len(allf) == 0:
@@ -959,7 +959,7 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
             allfiles = [_ for _ in allfiles if os.path.isfile(_)]
             for lay in lays:
                 layfolder = os.path.join(docpath, build, lay)
-                fLOG("[coverage] docpath:", docpath, " -- ",
+                fLOG("[generate_help_sphinx] coverage docpath:", docpath, " -- ",
                      build, " -- ", lay, " ---- ", layfolder)
                 if os.path.exists(layfolder):
                     covbuild = os.path.join(layfolder, "coverage")
@@ -967,20 +967,20 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
                     if not os.path.exists(covbuild):
                         os.mkdir(covbuild)
                     for f in allfiles:
-                        fLOG("[coverage] copy ", f, " to ", covbuild)
+                        fLOG("[generate_help_sphinx] coverage copy ", f, " to ", covbuild)
                         shutil.copy(f, covbuild)
         else:
             fLOG("[sphinxerror] coverage files with rst in", covfold)
     else:
-        fLOG("[coverage] no coverage files", covfold)
+        fLOG("[generate_help_sphinx] no coverage files", covfold)
     fLOG("---- JENKINS END DOCUMENTATION COVERAGE ----")
 
     #########################################################
     # we copy javascript dependencies to build _download/javascript
     #########################################################
     # for every layout
-    fLOG("[revealjs] JAVASCRIPT: COPY", html_static_paths)
-    fLOG("[revealjs] BUILD:", build_paths)
+    fLOG("[generate_help_sphinx] [revealjs] JAVASCRIPT: COPY", html_static_paths)
+    fLOG("[generate_help_sphinx] [revealjs] BUILD:", build_paths)
     for subf in ["html", "epub"]:
         for html_static_path, build_path in zip(html_static_paths, build_paths):
             builddoc = os.path.join(build_path, subf, "_downloads")
@@ -991,25 +991,25 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
             if os.path.exists(builddoc):
                 # no download, there is probably no notebooks
                 # so it is not needed
-                fLOG("copy javascript static files from",
+                fLOG("[generate_help_sphinx] copy javascript static files from",
                      html_static_path, "to", builddoc)
                 copy = synchronize_folder(
                     html_static_path, builddoc, copy_1to2=True, fLOG=fLOG)
-                fLOG("javascript", len(copy), "files copied")
+                fLOG("[generate_help_sphinx] javascript", len(copy), "files copied")
             else:
-                fLOG("[revealjs] no need, no folder", builddoc)
+                fLOG("[generate_help_sphinx] [revealjs] no need, no folder", builddoc)
 
     ######
     # next
     ######
-    fLOG("~~~~ LATEX")
+    fLOG("[generate_help_sphinx] LATEX")
     if "latex" in layout:
-        fLOG("~~~~ post_process_latex_output", froot)
+        fLOG("[generate_help_sphinx] post_process_latex_output", froot)
         post_process_latex_output(
             froot, False, custom_latex_processing=custom_latex_processing)
 
     if "pdf" in layout:
-        fLOG("~~~~ compile_latex_output_final", froot, "**", latex_path)
+        fLOG("[generate_help_sphinx] compile_latex_output_final", froot, "**", latex_path)
         compile_latex_output_final(
             froot, latex_path, False, latex_book=latex_book, fLOG=fLOG,
             custom_latex_processing=custom_latex_processing)
@@ -1025,9 +1025,9 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
         src = os.path.join(build_path, "_images")
         dest = os.path.join(build_path, "_downloads")
         if os.path.exists(src) and os.path.exists(dest):
-            fLOG("[imgs] look for images in ", src)
+            fLOG("[generate_help_sphinx] [imgs] look for images in ", src)
             for img in enumerate_copy_images_for_slides(src, dest):
-                fLOG("[imgs]    copy image for slides:", img)
+                fLOG("[generate_help_sphinx] [imgs]    copy image for slides:", img)
 
     #####
     # end
@@ -1054,10 +1054,10 @@ def _process_sphinx_in_private_cmd(list_args, fLOG):
     cmd = '"{0}" "{1}" {2}'.format(
         sys.executable.replace("w.exe", ".exe"), this, sargs)
     fLOG("    ", cmd)
-    fLOG("~~~~~~~~~~~~~~~~~~~~~~~~~~~ _process_sphinx_in_private_cmd BEGIN")
+    fLOG("[generate_help_sphinx] _process_sphinx_in_private_cmd BEGIN")
     ok = run_cmd(cmd, wait=True, fLOG=fLOG,
                  communicate=False, tell_if_no_output=120)
-    fLOG("~~~~~~~~~~~~~~~~~~~~~~~~~~~ _process_sphinx_in_private_cmd END")
+    fLOG("[generate_help_sphinx] _process_sphinx_in_private_cmd END")
     return ok
 
 
@@ -1070,6 +1070,7 @@ def _check_sphinx_configuration(conf, fLOG):
 
     .. versionadded:: 1.5
     """
+    clean_folders = []
     if hasattr(conf, "sphinx_gallery_conf"):
         sphinx_gallery_conf = conf.sphinx_gallery_conf
         if len(sphinx_gallery_conf["examples_dirs"]) != len(sphinx_gallery_conf["gallery_dirs"]):
@@ -1084,3 +1085,12 @@ def _check_sphinx_configuration(conf, fLOG):
                             sphinx_gallery_conf["gallery_dirs"]):
                 fLOG("[sphinx-gallery]    src  '{0}'".format(a))
                 fLOG("[sphinx-gallery]    dest '{0}'".format(b))
+                clean_folders.append(a)
+    for cl in clean_folders:            
+        fLOG("[sphinx-gallery] clean '{0}'".format(cl))
+        for temp in os.path.listdir(cl):
+            if temp.startswith("temp_"):
+                aaa = os.path.join(cl, temp)
+                fLOG("[sphinx-gallery] remove '{0}'".format(cl))
+                remove_folder(aaa)
+                
