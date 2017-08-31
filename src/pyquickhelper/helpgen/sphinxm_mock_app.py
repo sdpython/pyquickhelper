@@ -223,6 +223,21 @@ class MockSphinxApp:
             return
         self.app._events[name] = ''
 
+    def add_env_collector(self, collector):
+        """
+        See :epkg:`class Sphinx`.
+        """
+        self.app.add_env_collector(collector)
+
+    def disconnect_env_collector(self, clname):
+        """
+        Disconnect a collector given its class name.
+
+        @param      cl      name
+        @return             found collector
+        """
+        self.app.disconnect_env_collector(clname)
+
     @staticmethod
     def create(writer="html", directives=None, confoverrides=None, new_extensions=None, fLOG=None):
         """

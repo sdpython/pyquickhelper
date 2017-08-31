@@ -10,6 +10,7 @@ History
 
 * `46`: update to Sphinx 1.6
 * `54`: fix searchbox for `sphinx_rtd_theme <https://github.com/rtfd/sphinx_rtd_theme>`_
+* `69`: overwrites toctree to catch exception and process rst inline
 
 **Features**
 

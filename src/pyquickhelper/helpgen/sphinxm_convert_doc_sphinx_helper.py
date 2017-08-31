@@ -848,6 +848,7 @@ class _CustomSphinx(Sphinx):
         # own purpose (to monitor)
         self._logger = getLogger("_CustomSphinx")
         self._added_objects = []
+        self._added_collectors = []
 
         # from sphinx.domains.cpp import CPPDomain
         # from sphinx.domains.javascript import JavaScriptDomain
@@ -1232,3 +1233,34 @@ class _CustomSphinx(Sphinx):
         Sphinx.add_object_type(self, directivename, rolename, indextemplate=indextemplate,
                                parse_node=parse_node, ref_nodeclass=ref_nodeclass,
                                objname=objname, doc_field_types=doc_field_types)
+
+    def add_env_collector(self, collector):
+        """
+        See :epkg:`class Sphinx`.
+        """
+        self.debug('[app] adding environment collector: %r', collector)
+        coll = collector()
+        coll.enable(self)
+        self._added_collectors.append(coll)
+
+    def disconnect_env_collector(self, clname):
+        """
+        Disable a collector given its class name.
+
+        @param      cl      name
+        @return             found collector
+        """
+        found = None
+        foundi = None
+        for i, co in enumerate(self._added_collectors):
+            if clname == co.__class__.__name__:
+                found = co
+                foundi = i
+                break
+        if found is None:
+            raise ValueError("Unable to find a collector '{0}' in \n{1}".format(clname,
+                                                                                "\n".join(map(lambda x: x.__class__.__name__, self._added_collectors))))
+        for k, v in co.listener_ids.items():
+            self.disconnect(v)
+        del self._added_collectors[foundi]
+        return co

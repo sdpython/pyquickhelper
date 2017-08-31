@@ -55,6 +55,7 @@ from ..sphinxext.sphinx_sharenet_extension import setup as setup_sharenet
 from ..sphinxext.sphinx_template_extension import setup as setup_tpl
 from ..sphinxext.sphinx_todoext_extension import setup as setup_todoext
 from ..sphinxext.releases import setup as setup_releases
+from ..sphinxext.sphinx_toctree_extension import setup as setup_toctree
 
 from ..sphinxext.sphinx_runpython_extension import setup as setup_runpython
 from .sphinx_runpython_extension import RunPythonDirective, runpython_node
@@ -93,7 +94,8 @@ def get_default_extensions():
             import matplotlib.pyplot as plt
             switch_backend("Agg")
 
-    default_setups = [setup_blog, setup_runpython, setup_sharenet,
+    default_setups = [setup_toctree,
+                      setup_blog, setup_runpython, setup_sharenet,
                       setup_todoext, setup_bigger, setup_githublink,
                       setup_runpython, setup_mathdef, setup_blocref,
                       setup_faqref, setup_exref, setup_nbref,

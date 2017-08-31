@@ -713,11 +713,13 @@ def custom_setup(app, author):
     from ..sphinxext.sphinx_tocdelay_extension import setup as setup_tocdelay
     from ..sphinxext.sphinx_epkg_extension import setup as setup_epkg
     from ..sphinxext.releases import setup as setup_releases
+    from ..sphinxext.sphinx_toctree_extension import setup as setup_toctree
     # from ..sphinxext.sphinx_rst_builder import setup as setup_rst
 
     app.connect("autodoc-skip-member", skip)
     app.add_config_value('author', author, True)
 
+    setup_toctree(app)
     setup_runpython(app)
     setup_bigger(app)
     setup_githublink(app)
