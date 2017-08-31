@@ -243,13 +243,15 @@ def setup(app):
     """
     Setup for ``toctree`` and ``toctree2`` (sphinx).
     """
-    app.add_directive('toctree', CustomTocTree)
     app.add_directive('toctree2', CustomTocTree)
-    directives.register_directive('toctree', CustomTocTree)
     directives.register_directive('toctree2', CustomTocTree)
 
-    # We connect a new collector to the app.
-    # It disables the previous TocTreeCollector.
-    app.add_env_collector(CustomTocTreeCollector)
+    if hasattr(app, 'disconnect_env_collector'):
+        # If we can disable the previous TocTreeCollector,
+        # we connect a new collector to the app,
+        # it disables the previous one.
+        directives.register_directive('toctree', CustomTocTree)
+        app.add_directive('toctree', CustomTocTree)
+        app.add_env_collector(CustomTocTreeCollector)
 
     return {'version': sphinx.__display_version__, 'parallel_read_safe': True}
