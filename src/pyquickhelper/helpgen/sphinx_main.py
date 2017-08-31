@@ -967,7 +967,8 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
                     if not os.path.exists(covbuild):
                         os.mkdir(covbuild)
                     for f in allfiles:
-                        fLOG("[generate_help_sphinx] coverage copy ", f, " to ", covbuild)
+                        fLOG("[generate_help_sphinx] coverage copy ",
+                             f, " to ", covbuild)
                         shutil.copy(f, covbuild)
         else:
             fLOG("[sphinxerror] coverage files with rst in", covfold)
@@ -995,7 +996,8 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
                      html_static_path, "to", builddoc)
                 copy = synchronize_folder(
                     html_static_path, builddoc, copy_1to2=True, fLOG=fLOG)
-                fLOG("[generate_help_sphinx] javascript", len(copy), "files copied")
+                fLOG("[generate_help_sphinx] javascript",
+                     len(copy), "files copied")
             else:
                 fLOG("[generate_help_sphinx] [revealjs] no need, no folder", builddoc)
 
@@ -1009,7 +1011,8 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
             froot, False, custom_latex_processing=custom_latex_processing)
 
     if "pdf" in layout:
-        fLOG("[generate_help_sphinx] compile_latex_output_final", froot, "**", latex_path)
+        fLOG("[generate_help_sphinx] compile_latex_output_final",
+             froot, "**", latex_path)
         compile_latex_output_final(
             froot, latex_path, False, latex_book=latex_book, fLOG=fLOG,
             custom_latex_processing=custom_latex_processing)
@@ -1086,11 +1089,10 @@ def _check_sphinx_configuration(conf, fLOG):
                 fLOG("[sphinx-gallery]    src  '{0}'".format(a))
                 fLOG("[sphinx-gallery]    dest '{0}'".format(b))
                 clean_folders.append(a)
-    for cl in clean_folders:            
+    for cl in clean_folders:
         fLOG("[sphinx-gallery] clean '{0}'".format(cl))
         for temp in os.path.listdir(cl):
             if temp.startswith("temp_"):
                 aaa = os.path.join(cl, temp)
                 fLOG("[sphinx-gallery] remove '{0}'".format(cl))
                 remove_folder(aaa)
-                
