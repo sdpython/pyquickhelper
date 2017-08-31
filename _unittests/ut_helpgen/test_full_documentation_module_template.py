@@ -1,5 +1,5 @@
 """
-@brief      test log(time=80s)
+@brief      test log(time=90s)
 @author     Xavier Dupre
 """
 import os
@@ -23,7 +23,7 @@ except ImportError:
         sys.path.append(path)
     import src
 
-from src.pyquickhelper.loghelper.flog import fLOG, download
+from src.pyquickhelper.loghelper.flog import fLOG, download, noLOG
 from src.pyquickhelper.helpgen import generate_help_sphinx
 from src.pyquickhelper.pycode import get_temp_folder
 from src.pyquickhelper.pycode import is_travis_or_appveyor
@@ -139,7 +139,7 @@ class TestSphinxDocFull (unittest.TestCase):
                                      layout=layout,
                                      extra_ext=["tohelp"],
                                      from_repo=False, direct_call=direct_call,
-                                     parallel=1, fLOG=fLOG)
+                                     parallel=1, fLOG=noLOG)
                 for w in ww:
                     sw = str(w)
                     if "WARNING:" in sw and "ERROR/" in sw:
