@@ -128,15 +128,18 @@ def synchronize_folder(p1: str, p2: str, hash_size=1024 ** 2, repo1=False, repo2
                        operations=None, file_date: str=None, log1=False,
                        copy_1to2=False, fLOG=fLOG):
     """
-    synchronize two folders (or copy if the second is empty), it only copies more recent files.
+    Synchronizes two folders (or copy if the second is empty),
+    it only copies more recent files.
 
     @param      p1                  (str) first path
     @param      p2                  (str) second path
     @param      hash_size           to check whether or not two files are different
-    @param      repo1               assuming the first folder is under SVN or GIT, it uses pysvn to get the list
-                                        of files (avoiding any extra files)
-    @param      repo2               assuming the second folder is under SVN or GIT, it uses pysvn to get the list
-                                        of files (avoiding any extra files)
+    @param      repo1               assuming the first folder is under SVN or GIT,
+                                    it uses pysvn to get the list
+                                    of files (avoiding any extra files)
+    @param      repo2               assuming the second folder is under SVN or GIT,
+                                    it uses pysvn to get the list
+                                    of files (avoiding any extra files)
     @param      size_different      if True, a file will be copied only if size are different,
                                     otherwise, it will be copied if the first file is more recent
     @param      no_deletion         if a file is found in the second folder and not in the first one,

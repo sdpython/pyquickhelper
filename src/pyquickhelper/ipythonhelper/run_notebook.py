@@ -147,42 +147,47 @@ def run_notebook(filename, profile_dir=None, working_dir=None, skip_exceptions=F
 
     with open(filename, "r", encoding=encoding) as payload:
         try:
-            nb = reads(payload.read())
-        except NotJSONError as e:
+            nbc = payload.read()
+        except UnicodeDecodeError as e:
             raise NotebookException(
-                "Unable to read file '{0}' encodig={1}.".format(filename, encoding)) from e
+                "(2) Unable to read file '{0}' encoding='{1}'.".format(filename, encoding)) from e
+    try:
+        nb = reads(nbc)
+    except NotJSONError as e:
+        raise NotebookException(
+            "(1) Unable to read file '{0}' encoding='{1}'.".format(filename, encoding)) from e
 
-        out = StringIO()
+    out = StringIO()
 
-        def flogging(*l, **p):
-            if len(l) > 0:
-                out.write(" ".join(l))
-            if len(p) > 0:
-                out.write(str(p))
-            out.write("\n")
-            fLOG(*l, **p)
+    def flogging(*l, **p):
+        if len(l) > 0:
+            out.write(" ".join(l))
+        if len(p) > 0:
+            out.write(str(p))
+        out.write("\n")
+        fLOG(*l, **p)
 
-        nb_runner = NotebookRunner(nb, profile_dir, working_dir, fLOG=flogging, filename=filename,
-                                   theNotebook=os.path.abspath(filename),
-                                   code_init=code_init, log_level=log_level,
-                                   extended_args=extended_args, kernel_name=kernel_name,
-                                   replacements=cached_rep, kernel=True, detailed_log=detailed_log)
-        stat = nb_runner.run_notebook(skip_exceptions=skip_exceptions, additional_path=additional_path,
-                                      valid=valid, clean_function=clean_function)
+    nb_runner = NotebookRunner(nb, profile_dir, working_dir, fLOG=flogging, filename=filename,
+                               theNotebook=os.path.abspath(filename),
+                               code_init=code_init, log_level=log_level,
+                               extended_args=extended_args, kernel_name=kernel_name,
+                               replacements=cached_rep, kernel=True, detailed_log=detailed_log)
+    stat = nb_runner.run_notebook(skip_exceptions=skip_exceptions, additional_path=additional_path,
+                                  valid=valid, clean_function=clean_function)
 
-        if outfilename is not None:
-            with open(outfilename, 'w', encoding=encoding) as f:
-                try:
-                    s = writes(nb_runner.nb)
-                except NotebookException as e:
-                    raise NotebookException(
-                        "issue with notebook: " + filename) from e
-                if isinstance(s, bytes):
-                    s = s.decode('utf8')
-                f.write(s)
+    if outfilename is not None:
+        with open(outfilename, 'w', encoding=encoding) as f:
+            try:
+                s = writes(nb_runner.nb)
+            except NotebookException as e:
+                raise NotebookException(
+                    "issue with notebook: " + filename) from e
+            if isinstance(s, bytes):
+                s = s.decode('utf8')
+            f.write(s)
 
-        nb_runner.shutdown_kernel()
-        return stat, out.getvalue()
+    nb_runner.shutdown_kernel()
+    return stat, out.getvalue()
 
 
 def execute_notebook_list(folder, notebooks, clean_function=None, valid=None, fLOG=noLOG,
@@ -455,3 +460,15 @@ def badge_notebook_coverage(df, image_name):
     im.text((3, 4), "NB:{0}%-{1}%".format(int(cov), int(val)),
                     (255, 255, 255), font=font)
     img.save(image_name)
+
+
+def get_additional_paths(modules):
+    """
+    Returns a list of paths to add before running the notebooks
+    for a given a list of modules.
+
+    @return             list of paths
+    """
+    addpath = [os.path.dirname(mod.__file__) for mod in modules]
+    addpath = [os.path.normpath(os.path.join(_, "..")) for _ in addpath]
+    return addpath

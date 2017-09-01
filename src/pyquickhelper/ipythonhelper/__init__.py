@@ -33,4 +33,5 @@ from .notebook_helper import install_notebook_extension, get_installed_notebook_
 from .notebook_helper import remove_execution_number
 from .notebook_runner import NotebookError, NotebookRunner
 from .run_notebook import execute_notebook_list, run_notebook, execute_notebook_list_finalize_ut, notebook_coverage, badge_notebook_coverage
+from .run_notebook import get_additional_paths
 from .widgets import RangeWidget, DropDownWidget, RadioWidget
