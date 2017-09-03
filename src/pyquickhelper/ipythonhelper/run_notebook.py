@@ -8,7 +8,7 @@
 import sys
 import time
 import os
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from ..loghelper.flog import noLOG
 from ..filehelper import explore_folder
@@ -375,17 +375,20 @@ def execute_notebook_list_finalize_ut(res, dump=None, fLOG=noLOG):
         df.to_csv(dump, sep="\t", encoding="utf-8", index=False)
 
 
-def notebook_coverage(module_or_path, dump=None):
+def notebook_coverage(module_or_path, dump=None, too_old=30):
     """
     Extracts a list of notebooks and merges with a list of runs dumped by
     function @see fn execute_notebook_list_finalize_ut.
 
     @param      module_or_path      a module or a path
     @param      dump                dump (or None to get the location by default)
+    @param      too_old             drop executions older than *too_old* days from now
     @return                         dataframe
 
     If *module_or_path* is a module, the function will get a list notebooks
     assuming it follows the same design as :epkg:`pyquickhelper`.
+
+    .. versionadded:: 1.5
     """
     if dump is None:
         dump = _get_dump_default_path(module_or_path)
@@ -418,13 +421,20 @@ def notebook_coverage(module_or_path, dump=None):
 
     # Loads the dump.
     dfall = pandas.read_csv(dump, sep="\t", encoding="utf-8")
+
+    # We drop too old execution.
+    old = datetime.now() - timedelta(30)
+    old = "%04d-%02d-%02d" % (old.year, old.month, old.day)
+    dfall = dfall[dfall.date > old].copy()
+
+    # We add a key to merge.
     dfall["name"] = dfall["name"].apply(lambda x: os.path.normpath(x))
     dfall["key"] = dfall["name"].apply(lambda x: "/".join(os.path.normpath(
         x).replace("\\", "/").split("/")[-3:]) if isinstance(x, str) else x)
 
     # We keep the last execution.
     gr = dfall.sort_values("date", ascending=False).groupby(
-        "name").first().reset_index().copy()
+        "name").first().reset_index(drop=True).copy()
 
     # Folders might be different so we merge on the last part of the path.
     merged = dfnb.merge(gr, left_on="key", right_on="key", how="outer")

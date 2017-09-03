@@ -43,7 +43,7 @@ class TestNotebookReportCoverage(unittest.TestCase):
         nbs = [os.path.normpath(os.path.join(fold, _)) for _ in nbs]
         out = os.path.join(temp, "coverage.rst")
         build_all_notebooks_coverage(
-            nbs, out, "pyquickhelper", dump=data, fLOG=fLOG)
+            nbs, out, "pyquickhelper", dump=data, fLOG=fLOG, too_old=3000)
 
 
 if __name__ == "__main__":

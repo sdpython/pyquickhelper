@@ -1005,7 +1005,7 @@ def build_notebooks_gallery(nbs, fileout, fLOG=noLOG):
     return fileout
 
 
-def build_all_notebooks_coverage(nbs, fileout, module_name, dump=None, badge=True, fLOG=noLOG):
+def build_all_notebooks_coverage(nbs, fileout, module_name, dump=None, badge=True, too_old=30, fLOG=noLOG):
     """
     Creates a rst page (gallery) with links to all notebooks and
     information about coverage.
@@ -1016,8 +1016,11 @@ def build_all_notebooks_coverage(nbs, fileout, module_name, dump=None, badge=Tru
     @param      module_name     module name
     @param      dump            dump containing information about notebook execution (or None for the default one)
     @param      badge           builds an image with the notebook coverage
+    @param      too_old         drop executions older than *too_old* days from now
     @param      fLOG            logging function
     @return                     dataframe which contains the data
+
+    .. versionadded:: 1.5
     """
     if dump is None:
         dump = os.path.normpath(os.path.join(os.path.dirname(fileout), "..", "..", "..", "..",
@@ -1026,7 +1029,7 @@ def build_all_notebooks_coverage(nbs, fileout, module_name, dump=None, badge=Tru
         fLOG(
             "[notebooks-coverage] No execution report about notebook at '{0}'".format(dump))
         return
-    report0 = notebook_coverage(nbs, dump)
+    report0 = notebook_coverage(nbs, dump, too_old=too_old)
     fLOG("[notebooks-coverage] report shape", report0.shape)
 
     from numpy import isnan
@@ -1099,7 +1102,8 @@ def build_all_notebooks_coverage(nbs, fileout, module_name, dump=None, badge=Tru
                      'success', 'time', 'nb cells', 'nb runs', 'nb valid']]
 
     # Add results.
-    text = df2rst(report.sort_values("name"), index=True, list_table=True)
+    text = df2rst(report.sort_values("name").reset_index(
+        drop=True), index=True, list_table=True)
     rows.append(text)
 
     fLOG("[notebooks-coverage] writing", fileout)
