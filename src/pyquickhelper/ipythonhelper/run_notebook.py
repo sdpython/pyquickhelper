@@ -416,6 +416,7 @@ def notebook_coverage(module_or_path, dump=None, too_old=30):
     import pandas
     dfnb = pandas.DataFrame(data=dict(notebooks=nbs))
     dfnb["notebooks"] = dfnb["notebooks"].apply(lambda x: os.path.normpath(x))
+    dfnb = dfnb[~dfnb.notebooks.str.contains(".ipynb_checkpoints")].copy()
     dfnb["key"] = dfnb["notebooks"].apply(lambda x: "/".join(os.path.normpath(
         x).replace("\\", "/").split("/")[-3:]) if isinstance(x, str) else x)
 
