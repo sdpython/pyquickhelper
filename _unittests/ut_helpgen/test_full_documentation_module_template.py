@@ -202,7 +202,8 @@ class TestSphinxDocFull (unittest.TestCase):
                      ]
             for f in files:
                 if not os.path.exists(f):
-                    raise FileNotFoundError(f)
+                    raise FileNotFoundError(
+                        "Not found '{0}'\n---\n{1}".format(f, "\n".join(lines)))
 
             self.assertTrue(not os.path.exists(os.path.join(temp, "_doc")))
 
