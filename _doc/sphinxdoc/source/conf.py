@@ -23,3 +23,6 @@ set_sphinx_variables(__file__, "pyquickhelper", "Xavier Dupré", 2017,
 # there is an issue with this attribute on Anaconda math_number_all
 assert math_number_all or not math_number_all
 blog_root = "http://www.xavierdupre.fr/app/pyquickhelper/helpsphinx/"
+
+# remove notebooks following this pattern
+nbneg_pattern = ".*[\\\\/]temp_.*"

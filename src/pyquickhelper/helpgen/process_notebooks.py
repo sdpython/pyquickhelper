@@ -784,7 +784,7 @@ def add_tag_for_slideshow(ipy, folder, encoding="utf8"):
     return output
 
 
-def build_notebooks_gallery(nbs, fileout, layout="classic", keep_temp=False, fLOG=noLOG):
+def build_notebooks_gallery(nbs, fileout, layout="classic", neg_pattern=None, fLOG=noLOG):
     """
     Creates a rst page (gallery) with links to all notebooks.
     For each notebook, it creates a snippet.
@@ -792,7 +792,7 @@ def build_notebooks_gallery(nbs, fileout, layout="classic", keep_temp=False, fLO
     @param      nbs             list of notebooks to consider or tuple(full path, rst),
     @param      fileout         file to create
     @param      layout          ``'classic'`` or ``'table'``
-    @param      keep_temp       keep every notebook including notebook in folder ``temp_*``
+    @param      neg_pattern     do not consider notebooks matching this regular expression
     @param      fLOG            logging function
     @return                     created file name
 
@@ -829,9 +829,8 @@ def build_notebooks_gallery(nbs, fileout, layout="classic", keep_temp=False, fLO
         The function was renamed into *build_notebooks_gallery*
         (previous name *add_notebook_page*).
         Add a link on notebook coverage.
-        Parameters *layout*, *keep_temp* were added.
+        Parameters *layout*, *neg_pattern* were added.
     """
-    neg_pattern = None if keep_temp else ".*[\\/]temp_.*"
     if not isinstance(nbs, list):
         fold = nbs
         nbs = explore_folder(
@@ -848,8 +847,6 @@ def build_notebooks_gallery(nbs, fileout, layout="classic", keep_temp=False, fLO
     containers = {}
     for tu in nbs:
         if isinstance(tu, (tuple, list)):
-            if not keep_temp and ("/temp_" in tu[0] or "\\temp_" in tu[0]):
-                continue
             if tu[0] is None or ("/" not in tu[0] and "\\" not in tu[0]):
                 rst.append((tuple(), tu[1]))
             else:
@@ -857,8 +854,6 @@ def build_notebooks_gallery(nbs, fileout, layout="classic", keep_temp=False, fLO
                 hier.add(way)
                 rst.append((way, tu[1]))
         else:
-            if not keep_temp and ("/temp_" in tu or "\\temp_" in tu):
-                continue
             rst.append((tuple(), tu))
         name = rst[-1][1]
         ext = os.path.splitext(name)[-1]

@@ -267,6 +267,8 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
         Parameter *parallel* was added.
         The parameter *nblayout* in the configuration file specifies
         the layout for the notebook gallery. ``'classic'`` or ``'table'``.
+        The parameter *nbneg_pattern* can be used to remove notebooks from
+        the gallery if they match this regular expression.
 
     .. todoext::
         :title: add subfolder when building indexes of notebooks
@@ -526,6 +528,7 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
     ##########
     nblayout = theconf.__dict__.get("nblayout", "classic")
     nblinks = theconf.__dict__.get("nblinks", None)
+    nbneg_pattern = theconf.__dict__.get("nbneg_pattern", None)
     if nblinks is not None and len(nblinks) > 0:
         fLOG("[generate_help_sphinx] NBLINKS - BEGIN")
         for i, (k, v) in enumerate(sorted(nblinks.items())):
@@ -662,7 +665,7 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
         os.path.join(root, "_doc", "sphinxdoc", "source", "notebooks"))
     if os.path.exists(notebook_dir):
         notebooks = explore_folder(
-            notebook_dir, pattern=".*[.]ipynb", neg_pattern=".*[\\/]temp_.*", fullname=True)[1]
+            notebook_dir, pattern=".*[.]ipynb", neg_pattern=nbneg_pattern, fullname=True)[1]
         notebooks = [_ for _ in notebooks if "checkpoint" not in _]
         if len(notebooks) > 0:
             fLOG("*******************************************")
