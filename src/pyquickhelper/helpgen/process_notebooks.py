@@ -18,7 +18,7 @@ from .post_process import post_process_latex_output, post_process_latex_output_a
 from .post_process import post_process_html_output, post_process_slides_output, post_process_python_output
 from .helpgen_exceptions import NotebookConvertError
 from .install_js_dep import install_javascript_tools
-from .style_css_template import THUMBNAIL_TEMPLATE
+from .style_css_template import THUMBNAIL_TEMPLATE, THUMBNAIL_TEMPLATE_TABLE
 from ..ipythonhelper import read_nb, notebook_coverage, badge_notebook_coverage
 from ..pandashelper import df2rst
 
@@ -716,7 +716,7 @@ def add_link_to_notebook(file, nb, pdf, html, python, slides, present, exc=True,
             "unable to add a link to this extension: " + ext)
 
 
-def build_thumbail_in_gallery(nbfile, folder_snippet, relative, rst_link):
+def build_thumbail_in_gallery(nbfile, folder_snippet, relative, rst_link, layout):
     """
     Returns RST code for a notebook.
 
@@ -724,7 +724,11 @@ def build_thumbail_in_gallery(nbfile, folder_snippet, relative, rst_link):
     @param      folder_snippet  where to store the snippet
     @param      relative        the path to the snippet will be relative to this folder
     @param      rst_link        rst link
+    @param      layout          ``'classic'`` or ``'table'``
     @return                     RST
+
+    .. versionadded:: 1.5
+        Parameter *layout* was added.
     """
     nb = read_nb(nbfile)
     title, desc = nb.get_description()
@@ -751,8 +755,14 @@ def build_thumbail_in_gallery(nbfile, folder_snippet, relative, rst_link):
         image.save(full)
 
     rel = os.path.relpath(full, start=relative).replace("\\", "/")
-    rst = THUMBNAIL_TEMPLATE.format(
-        snippet=desc, thumbnail=rel, ref_name=rst_link)
+    if layout == "classic":
+        rst = THUMBNAIL_TEMPLATE.format(
+            snippet=desc, thumbnail=rel, ref_name=rst_link)
+    elif layout == "table":
+        rst = THUMBNAIL_TEMPLATE_TABLE.format(
+            snippet=desc, thumbnail=rel, ref_name=rst_link)
+    else:
+        raise ValueError("layout must be 'classic' or 'table'")
     return rst
 
 
@@ -774,13 +784,15 @@ def add_tag_for_slideshow(ipy, folder, encoding="utf8"):
     return output
 
 
-def build_notebooks_gallery(nbs, fileout, fLOG=noLOG):
+def build_notebooks_gallery(nbs, fileout, layout="classic", keep_temp=False, fLOG=noLOG):
     """
     Creates a rst page (gallery) with links to all notebooks.
     For each notebook, it creates a snippet.
 
     @param      nbs             list of notebooks to consider or tuple(full path, rst),
     @param      fileout         file to create
+    @param      layout          ``'classic'`` or ``'table'``
+    @param      keep_temp       keep every notebook including notebook in folder ``temp_*``
     @param      fLOG            logging function
     @return                     created file name
 
@@ -817,11 +829,13 @@ def build_notebooks_gallery(nbs, fileout, fLOG=noLOG):
         The function was renamed into *build_notebooks_gallery*
         (previous name *add_notebook_page*).
         Add a link on notebook coverage.
+        Parameters *layout*, *keep_temp* were added.
     """
+    neg_pattern = None if keep_temp else ".*[\\/]temp_.*"
     if not isinstance(nbs, list):
         fold = nbs
         nbs = explore_folder(
-            fold, ".*[.]ipynb", neg_pattern=".*[\\/]temp_.*", fullname=True)[1]
+            fold, ".*[.]ipynb", neg_pattern=neg_pattern, fullname=True)[1]
         if len(nbs) == 0:
             raise FileNotFoundError(
                 "Unable to find notebooks in folder '{0}'.".format(nbs))
@@ -834,7 +848,7 @@ def build_notebooks_gallery(nbs, fileout, fLOG=noLOG):
     containers = {}
     for tu in nbs:
         if isinstance(tu, (tuple, list)):
-            if "/temp_" in tu[0] or "\\temp_" in tu[0]:
+            if not keep_temp and ("/temp_" in tu[0] or "\\temp_" in tu[0]):
                 continue
             if tu[0] is None or ("/" not in tu[0] and "\\" not in tu[0]):
                 rst.append((tuple(), tu[1]))
@@ -843,7 +857,7 @@ def build_notebooks_gallery(nbs, fileout, fLOG=noLOG):
                 hier.add(way)
                 rst.append((way, tu[1]))
         else:
-            if "/temp_" in tu or "\\temp_" in tu:
+            if not keep_temp and ("/temp_" in tu or "\\temp_" in tu):
                 continue
             rst.append((tuple(), tu))
         name = rst[-1][1]
@@ -907,12 +921,17 @@ def build_notebooks_gallery(nbs, fileout, fLOG=noLOG):
         fLOG("[build_notebooks_gallery] no hierarchy")
         rows.append(".. toctree::")
         rows.append("    :maxdepth: 1")
+        if layout == "table":
+            rows.append("    :hidden:")
         rows.append("")
         for hi, file in rst:
             rs = os.path.splitext(os.path.split(file)[-1])[0]
             fLOG("[build_notebooks_gallery] adding",
                  rs, " title ", titles.get(file, None))
             rows.append("    notebooks/{0}".format(rs))
+        if layout == "table" and len(rst) > 0:
+            rows.extend(["", "", ".. list-table::",
+                         "    :header-rows: 0", "    :widths: 3 5 15", ""])
 
         for no, file in rst:
             link = os.path.splitext(os.path.split(file)[-1])[0]
@@ -920,7 +939,8 @@ def build_notebooks_gallery(nbs, fileout, fLOG=noLOG):
             if not os.path.exists(file):
                 raise FileNotFoundError("Unable to find: '{0}'\nRST=\n{1}".format(
                     file, "\n".join(str(_) for _ in rst)))
-            r = build_thumbail_in_gallery(file, folder, folder_index, link)
+            r = build_thumbail_in_gallery(
+                file, folder, folder_index, link, layout)
             rows.append(r)
     else:
         # case where there are subfolders
@@ -941,22 +961,27 @@ def build_notebooks_gallery(nbs, fileout, fLOG=noLOG):
             if hi != last:
                 fLOG("[build_notebooks_gallery] new level", hi)
                 # we add the thumbnail
+                if layout == "table" and len(stack_file) > 0:
+                    rows.extend(
+                        ["", "", ".. list-table::", "    :header-rows: 0", "    :widths: 3 5 15", ""])
+
                 for nbf in stack_file:
                     fLOG("[build_notebooks_gallery]     ", nbf)
                     rs = os.path.splitext(os.path.split(nbf)[-1])[0]
                     link = rs.replace("_", "") + "rst"
                     r = build_thumbail_in_gallery(
-                        nbf, folder, folder_index, link)
+                        nbf, folder, folder_index, link, layout)
                     rows.append(r)
                 fLOG("[build_notebooks_gallery] saw {0} files".format(
                     len(stack_file)))
                 stack_file = []
 
                 # we swith to the next gallery
-                rows.append(".. raw:: html")
-                rows.append("")
-                rows.append("   <div style='clear:both'></div>")
-                rows.append("")
+                if layout == "classic":
+                    rows.append(".. raw:: html")
+                    rows.append("")
+                    rows.append("   <div style='clear:both'></div>")
+                    rows.append("")
 
                 # we add menus and subfolders
                 for k in range(0, len(hi)):
@@ -982,6 +1007,8 @@ def build_notebooks_gallery(nbs, fileout, fLOG=noLOG):
                 last = hi
                 rows.append(".. toctree::")
                 rows.append("    :maxdepth: 1")
+                if layout == "table":
+                    rows.append("    :hidden:")
                 rows.append("")
 
             # append a link to a notebook
@@ -992,10 +1019,15 @@ def build_notebooks_gallery(nbs, fileout, fLOG=noLOG):
 
         if len(stack_file) > 0:
             # we add the thumbnails
+            if layout == "table" and len(stack_file) > 0:
+                rows.extend(["", "", ".. list-table::",
+                             "    :header-rows: 0", "    :widths: 3 5 15", ""])
+
             for nbf in stack_file:
                 rs = os.path.splitext(os.path.split(nbf)[-1])[0]
                 link = rs.replace("_", "") + "rst"
-                r = build_thumbail_in_gallery(nbf, folder, folder_index, link)
+                r = build_thumbail_in_gallery(
+                    nbf, folder, folder_index, link, layout)
                 rows.append(r)
 
     # done

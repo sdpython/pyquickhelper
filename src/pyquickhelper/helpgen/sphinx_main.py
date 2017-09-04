@@ -265,6 +265,8 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
         if you have any trouble with custom css.
         Add a report in ``all_notebooks.rst`` about notebook coverage.
         Parameter *parallel* was added.
+        The parameter *nblayout* in the configuration file specifies
+        the layout for the notebook gallery. ``'classic'`` or ``'table'``.
 
     .. todoext::
         :title: add subfolder when building indexes of notebooks
@@ -522,6 +524,7 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
     ##########
     # nblinks: references for the notebooks, dictionary {(ref, format): link}
     ##########
+    nblayout = theconf.__dict__.get("nblayout", "classic")
     nblinks = theconf.__dict__.get("nblinks", None)
     if nblinks is not None and len(nblinks) > 0:
         fLOG("[generate_help_sphinx] NBLINKS - BEGIN")
@@ -691,7 +694,7 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
             fLOG("*******NB, add:", len(nbs))
             nbs.sort()
             build_notebooks_gallery(nbs, os.path.join(
-                notebook_doc, "..", "all_notebooks.rst"), fLOG=fLOG)
+                notebook_doc, "..", "all_notebooks.rst"), layout=nblayout, fLOG=fLOG)
             build_all_notebooks_coverage(nbs, os.path.join(
                 notebook_doc, "..", "all_notebooks_coverage.rst"), module_name, fLOG=fLOG)
 

@@ -111,12 +111,13 @@ class TestNotebookConversion(unittest.TestCase):
 
         file = os.path.join(temp, "all_notebooks.rst")
         build_notebooks_gallery(
-            [_[0] for _ in res if _[0].endswith(".ipynb")], file)
-        assert os.path.exists(file)
+            [_[0] for _ in res if _[0].endswith(".ipynb")], file, keep_temp=True)
+        self.assertTrue(os.path.exists(file))
 
         with open(os.path.join(temp, "example_pyquickhelper.rst"), "r", encoding="utf8") as f:
             text = f.read()
-        assert "from pyquickhelper.loghelper import fLOG\n    fLOG(OutputPrint=False)  # by default" in text
+        if "from pyquickhelper.loghelper import fLOG\n    fLOG(OutputPrint=False)  # by default" not in text:
+            raise Exception(text)
         if ".. raw:: html" not in text:
             raise Exception(text)
 

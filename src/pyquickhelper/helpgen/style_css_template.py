@@ -90,7 +90,7 @@ div.sphx-pyq-thumb[tooltip]:hover:before {
 """
 
 
-#: base string for creating the thumbnail
+#: base string for creating the thumbnail, layout=classic
 THUMBNAIL_TEMPLATE = """
 .. raw:: html
 
@@ -106,3 +106,9 @@ THUMBNAIL_TEMPLATE = """
 
     </div>
 """
+
+#: base string for creating the thumbnail, layout=table
+THUMBNAIL_TEMPLATE_TABLE = """    * - .. image:: /{thumbnail}
+            :target: {ref_name}
+      - :ref:`{ref_name}`
+      - {snippet}"""

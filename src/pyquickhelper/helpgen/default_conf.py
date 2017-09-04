@@ -25,7 +25,7 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
                          enable_disabled_parts="enable_disabled_documented_pieces_of_code",
                          sharepost="facebook-linkedin-twitter-20-body", custom_style=None,
                          extlinks=None, github_user=None, github_repo=None, title=None,
-                         book=True, link_resolve=None):
+                         book=True, link_resolve=None, nblayout='classic'):
     """
     Define variables for :epkg:`Sphinx`.
 
@@ -56,6 +56,8 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
     @param      book                    the output is a book
     @param      link_resolve            url where the documentation is published,
                                         used for parameter *linkcode_resolve*
+    @param      nblayout                ``'classic'`` or ``'table'``, specifies the layout for
+                                        the notebook gallery
 
     If the parameter *custom_style* is not None, it will call ``app.add_stylesheet(custom_style)``
     in the setup.
@@ -108,6 +110,9 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
         Add parameters *extlinks*, *github_user*, *github_repo*,
         *title*. Add extension
         `extlinks <http://www.sphinx-doc.org/en/stable/ext/extlinks.html#module-sphinx.ext.extlinks>`_.
+
+    .. versionchanged:: 1.5
+        Parameter *nblayout* was added.
     """
     # version .txt
     dirconf = os.path.abspath(os.path.dirname(fileconf))
@@ -131,6 +136,7 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
     # personnalization
     project_var_name = module_name
     author = author
+    nblayout = nblayout
     year = str(year)
     modindex_common_prefix = [project_var_name + ".", ]
     project = (project_var_name + ' documentation') if title is None else title

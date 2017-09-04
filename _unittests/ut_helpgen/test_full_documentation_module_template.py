@@ -141,10 +141,19 @@ class TestSphinxDocFull (unittest.TestCase):
                                      from_repo=False, direct_call=direct_call,
                                      parallel=1, fLOG=noLOG)
                 for w in ww:
-                    sw = str(w)
+                    if isinstance(w, dict):
+                        rows = [
+                            "----"] + ["{0}={1}".format(k, v) for k, v in sorted(w.items())]
+                        sw = "\n".join(rows)
+                    elif isinstance(w, warnings.WarningMessage):
+                        rows = [
+                            "-----", str(type(w)), w.filename, str(w.lineno), str(w.message)]
+                        sw = "\n".join(rows)
+                    else:
+                        sw = str(w)
                     if "WARNING:" in sw and "ERROR/" in sw:
                         raise Exception(
-                            "A warning is not expected:\n{0}".format(w))
+                            "A warning is not expected:\n{0}".format(sw))
 
             fLOG("[test_full_documentation] **********************************")
             fLOG("[test_full_documentation] END")
@@ -244,8 +253,7 @@ class TestSphinxDocFull (unittest.TestCase):
                    os.path.join(root, "_doc", "sphinxdoc", "build",
                                 "html", "_downloads", "reveal.js"),
                    os.path.join(root, "_doc", "sphinxdoc", "build", "html",
-                                "_downloads", "Python_logo_and_wordmark.png"),
-                   ]
+                                "_downloads", "Python_logo_and_wordmark.png")]
             for r in rev:
                 if not os.path.exists(r):
                     raise FileNotFoundError(r)
