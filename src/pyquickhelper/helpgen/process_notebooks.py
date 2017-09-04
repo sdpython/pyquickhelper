@@ -820,7 +820,8 @@ def build_notebooks_gallery(nbs, fileout, fLOG=noLOG):
     """
     if not isinstance(nbs, list):
         fold = nbs
-        nbs = explore_folder(fold, ".*[.]ipynb")[1]
+        nbs = explore_folder(
+            fold, ".*[.]ipynb", neg_pattern=".*[\\/]temp_.*", fullname=True)[1]
         if len(nbs) == 0:
             raise FileNotFoundError(
                 "Unable to find notebooks in folder '{0}'.".format(nbs))
@@ -833,6 +834,8 @@ def build_notebooks_gallery(nbs, fileout, fLOG=noLOG):
     containers = {}
     for tu in nbs:
         if isinstance(tu, (tuple, list)):
+            if "/temp_" in tu[0] or "\\temp_" in tu[0]:
+                continue
             if tu[0] is None or ("/" not in tu[0] and "\\" not in tu[0]):
                 rst.append((tuple(), tu[1]))
             else:
@@ -840,6 +843,8 @@ def build_notebooks_gallery(nbs, fileout, fLOG=noLOG):
                 hier.add(way)
                 rst.append((way, tu[1]))
         else:
+            if "/temp_" in tu or "\\temp_" in tu:
+                continue
             rst.append((tuple(), tu))
         name = rst[-1][1]
         ext = os.path.splitext(name)[-1]

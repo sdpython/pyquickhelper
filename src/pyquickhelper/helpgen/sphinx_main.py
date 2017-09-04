@@ -659,7 +659,7 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
         os.path.join(root, "_doc", "sphinxdoc", "source", "notebooks"))
     if os.path.exists(notebook_dir):
         notebooks = explore_folder(
-            notebook_dir, pattern=".*[.]ipynb", fullname=True)[1]
+            notebook_dir, pattern=".*[.]ipynb", neg_pattern=".*[\\/]temp_.*", fullname=True)[1]
         notebooks = [_ for _ in notebooks if "checkpoint" not in _]
         if len(notebooks) > 0:
             fLOG("*******************************************")
