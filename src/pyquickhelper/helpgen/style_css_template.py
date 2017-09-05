@@ -109,6 +109,6 @@ THUMBNAIL_TEMPLATE = """
 
 #: base string for creating the thumbnail, layout=table
 THUMBNAIL_TEMPLATE_TABLE = """    * - .. image:: /{thumbnail}
-            :target: {ref_name}
+            :target: {nb_name}
       - :ref:`{ref_name}`
       - {snippet}"""

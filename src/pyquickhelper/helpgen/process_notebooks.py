@@ -755,12 +755,13 @@ def build_thumbail_in_gallery(nbfile, folder_snippet, relative, rst_link, layout
         image.save(full)
 
     rel = os.path.relpath(full, start=relative).replace("\\", "/")
+    nb_name = rel.replace(".thumb.png", ".html")
     if layout == "classic":
         rst = THUMBNAIL_TEMPLATE.format(
             snippet=desc, thumbnail=rel, ref_name=rst_link)
     elif layout == "table":
         rst = THUMBNAIL_TEMPLATE_TABLE.format(
-            snippet=desc, thumbnail=rel, ref_name=rst_link)
+            snippet=desc, thumbnail=rel, ref_name=rst_link, nb_name=nb_name)
     else:
         raise ValueError("layout must be 'classic' or 'table'")
     return rst
