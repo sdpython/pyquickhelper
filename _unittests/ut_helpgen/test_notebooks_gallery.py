@@ -51,9 +51,6 @@ class TestNotebookGallery(unittest.TestCase):
 
         if "GitHub/pyquickhelper" in text.replace("\\", "/"):
             raise Exception(text)
-        spl = text.split("notebooks/td2a_eco_competition_modeles_logistiques")
-        if len(spl) != 3:
-            raise Exception(text)
         if "Compter les occurences de nombres dans une liste" not in text:
             raise Exception(text)
         return text
@@ -69,6 +66,9 @@ class TestNotebookGallery(unittest.TestCase):
         spl = text.split(":hidden:")
         if len(spl) > 2:
             raise Exception(text)
+        spl = text.split("notebooks/td2a_eco_competition_modeles_logistiques")
+        if len(spl) != 3:
+            raise Exception(text)
 
     def test_notebook_gallery_table(self):
         fLOG(
@@ -80,6 +80,9 @@ class TestNotebookGallery(unittest.TestCase):
         if ":hidden:" not in text:
             raise Exception(text)
         if ".. raw:: html" in text:
+            raise Exception(text)
+        spl = text.split("notebooks/td2a_eco_competition_modeles_logistiques")
+        if len(spl) != 4:
             raise Exception(text)
 
 

@@ -51,9 +51,6 @@ class TestNotebookGalleryBug(unittest.TestCase):
 
         if "GitHub/pyquickhelper" in text.replace("\\", "/"):
             raise Exception(text)
-        spl = text.split("using_qgrid_with_jsdf")
-        if len(spl) != 3:
-            raise Exception(text)
         return text
 
     def test_notebook_gallery_classic(self):
@@ -67,6 +64,9 @@ class TestNotebookGalleryBug(unittest.TestCase):
         spl = text.split(":hidden:")
         if len(spl) > 2:
             raise Exception(text)
+        spl = text.split("using_qgrid_with_jsdf")
+        if len(spl) != 3:
+            raise Exception(text)
 
     def test_notebook_gallery_table(self):
         fLOG(
@@ -78,6 +78,9 @@ class TestNotebookGalleryBug(unittest.TestCase):
         if ":hidden:" not in text:
             raise Exception(text)
         if ".. raw:: html" in text:
+            raise Exception(text)
+        spl = text.split("using_qgrid_with_jsdf")
+        if len(spl) != 4:
             raise Exception(text)
 
 
