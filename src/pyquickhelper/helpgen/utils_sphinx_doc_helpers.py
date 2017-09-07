@@ -140,7 +140,7 @@ def compute_truncated_documentation(doc, length=_length_truncated_doc,
             doc = ""
             cq, cq2 = 0, 0
             i = 0
-            while len(doc) < _length_truncated_doc or cq % 2 != 0 or cq2 % 2 != 0:
+            while i < len(spl) and (len(doc) < _length_truncated_doc or cq % 2 != 0 or cq2 % 2 != 0):
                 cq += spl[i].count("`")
                 cq2 += spl[i].count("``")
                 doc += spl[i] + " "
