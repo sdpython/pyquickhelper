@@ -278,16 +278,17 @@ def process_standard_options_for_setup(argv, file_or_folder, project_var_name, m
     # dump unit test coverage?
 
     def dump_coverage():
-        return _get_dump_default_path(folder, module_name, argv)
+        mn = project_var_name if module_name is None else module_name
+        return _get_dump_default_path(folder, mn, argv)
 
     # starts interpreting the commands
 
     if "clean_space" in argv:
         rem = clean_space_for_setup(
             file_or_folder, file_filter=file_filter_pep8)
-        print("number of impacted files (pep8 + rst):", len(rem))
+        print("[clean_space] number of impacted files (pep8 + rst):", len(rem))
         rem = clean_notebooks_for_numbers(file_or_folder)
-        print("number of impacted notebooks:", len(rem))
+        print("[clean_space] number of impacted notebooks:", len(rem))
         return True
 
     elif "write_version" in argv:
@@ -907,6 +908,8 @@ def _get_dump_default_path(location, module_name, argv):
     if not os.path.exists(fold):
         os.mkdir(fold)
     dt = datetime.datetime.now().strftime("%Y%m%dT%H%M")
+    if module_name is None:
+        raise ValueError("module_name cannot be None")
     dump = os.path.join(fold, module_name, hash, dt)
     if not os.path.exists(dump):
         os.makedirs(dump)
