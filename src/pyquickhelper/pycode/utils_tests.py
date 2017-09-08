@@ -31,7 +31,7 @@ def main_wrapper_tests(codefile, skip_list=None, processes=False, add_coverage=F
                        skip_function=default_skip_function, setup_params=None, only_setup_hook=False,
                        coverage_options=None, coverage_exclude_lines=None, additional_ut_path=None,
                        covtoken=None, hook_print=True, stdout=None, stderr=None, filter_warning=None,
-                       fLOG=noLOG):
+                       dump_coverage=None, fLOG=noLOG):
     """
     Calls function :func:`main <pyquickhelper.unittests.utils_tests.main>`
     and throw an exception if it fails.
@@ -59,7 +59,8 @@ def main_wrapper_tests(codefile, skip_list=None, processes=False, add_coverage=F
                                         if None, the function filters out some recurrent warnings
                                         in jupyter (signature: ``def filter_warning(w: warning) -> bool``),
                                         @see fn default_filter_warning
-    @param      fLOG                    function(*l, **p), logging function
+    @param      dump_coverage           dump or copy the coverage at this location
+    @param      fLOG                    ``function(*l, **p)``, logging function
 
     *covtoken* can be a string ``<token>`` or a
     tuple ``(<token>, <condition>)``. The condition is evaluated
@@ -133,6 +134,9 @@ def main_wrapper_tests(codefile, skip_list=None, processes=False, add_coverage=F
 
     .. versionchanged:: 1.4
         Parameter *filter_warning* was added.
+
+    .. versionchanged:: 1.5
+        Parameter *dump_coverage* was added.
     """
     whole_ouput = StringIOAndFile(codefile + ".out")
     runner = unittest.TextTestRunner(verbosity=0, stream=whole_ouput)
@@ -322,6 +326,10 @@ def main_wrapper_tests(codefile, skip_list=None, processes=False, add_coverage=F
 
             with open(outcov, "w", encoding="utf8") as f:
                 f.write(content)
+
+            if dump_coverage is not None:
+                raise NotImplementedError(
+                    "Option to dump the coverage is not implemented yet.")
 
             if covtoken:
                 if isinstance(covtoken, tuple):

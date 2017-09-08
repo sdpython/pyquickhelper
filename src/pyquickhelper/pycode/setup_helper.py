@@ -23,6 +23,8 @@ import os
 import sys
 import re
 import warnings
+import hashlib
+import datetime
 from ..loghelper.pyrepo_helper import SourceRepository
 from ..loghelper.flog import noLOG
 from ..filehelper import get_url_content_timeout, explore_folder_iterfile
@@ -33,7 +35,7 @@ from .call_setup_hook import call_setup_hook
 from .tkinter_helper import fix_tkinter_issues_virtualenv
 from .default_regular_expression import _setup_pattern_copy
 from ..ipythonhelper import upgrade_notebook, remove_execution_number
-from ..pycode.utils_tests import main_wrapper_tests, default_skip_function
+from .utils_tests import main_wrapper_tests, default_skip_function
 
 
 if sys.version_info[0] == 2:
@@ -78,7 +80,7 @@ def process_standard_options_for_setup(argv, file_or_folder, project_var_name, m
                                        stdout=None, stderr=None, use_run_cmd=False, filter_warning=None,
                                        file_filter_pep8=None, fLOG=noLOG):
     """
-    process the standard options the module pyquickhelper is
+    Processes the standard options the module pyquickhelper is
     able to process assuming the module which calls this function
     follows the same design as *pyquickhelper*, it will process the following
     options:
@@ -273,6 +275,13 @@ def process_standard_options_for_setup(argv, file_or_folder, project_var_name, m
                 unittest_modules_py3to2.append(mod)
                 unittest_modules_script.append(mod)
 
+    # dump unit test coverage?
+
+    def dump_coverage():
+        return _get_dump_default_path(folder, module_name, argv)
+
+    # starts interpreting the commands
+
     if "clean_space" in argv:
         rem = clean_space_for_setup(
             file_or_folder, file_filter=file_filter_pep8)
@@ -334,7 +343,8 @@ def process_standard_options_for_setup(argv, file_or_folder, project_var_name, m
                                 additional_ut_path=additional_ut_path,
                                 skip_function=skip_f, covtoken=covtoken,
                                 hook_print=hook_print, stdout=stdout, stderr=stderr,
-                                filter_warning=filter_warning, fLOG=fLOG)
+                                filter_warning=filter_warning, dump_coverage=dump_coverage(),
+                                fLOG=fLOG)
         return True
 
     elif "setup_hook" in argv:
@@ -343,7 +353,8 @@ def process_standard_options_for_setup(argv, file_or_folder, project_var_name, m
             file_or_folder, setup_params=setup_params, only_setup_hook=True,
             coverage_options=coverage_options, coverage_exclude_lines=coverage_exclude_lines,
             additional_ut_path=additional_ut_path, skip_function=skip_function,
-            hook_print=hook_print, stdout=stdout, stderr=stderr, fLOG=fLOG)
+            hook_print=hook_print, stdout=stdout, stderr=stderr, dump_coverage=dump_coverage(),
+            fLOG=fLOG)
         fLOG("---- JENKINS END SETUPHOOK ----")
         return True
 
@@ -354,7 +365,8 @@ def process_standard_options_for_setup(argv, file_or_folder, project_var_name, m
             file_or_folder, skip_function=skip_long, setup_params=setup_params,
             coverage_options=coverage_options, coverage_exclude_lines=coverage_exclude_lines,
             additional_ut_path=additional_ut_path, hook_print=hook_print,
-            stdout=stdout, stderr=stderr, fLOG=fLOG)
+            stdout=stdout, stderr=stderr, dump_coverage=dump_coverage(),
+            fLOG=fLOG)
         return True
 
     elif "unittests_SKIP" in argv:
@@ -364,7 +376,8 @@ def process_standard_options_for_setup(argv, file_or_folder, project_var_name, m
             file_or_folder, skip_function=skip_skip, setup_params=setup_params,
             coverage_options=coverage_options, coverage_exclude_lines=coverage_exclude_lines,
             additional_ut_path=additional_ut_path, hook_print=hook_print,
-            stdout=stdout, stderr=stderr, fLOG=fLOG)
+            stdout=stdout, stderr=stderr, dump_coverage=dump_coverage(),
+            fLOG=fLOG)
         return True
 
     elif "unittests_GUI" in argv:
@@ -374,7 +387,8 @@ def process_standard_options_for_setup(argv, file_or_folder, project_var_name, m
             file_or_folder, skip_function=skip_skip, setup_params=setup_params,
             coverage_options=coverage_options, coverage_exclude_lines=coverage_exclude_lines,
             additional_ut_path=additional_ut_path, hook_print=hook_print,
-            stdout=stdout, stderr=stderr, fLOG=fLOG)
+            stdout=stdout, stderr=stderr, dump_coverage=dump_coverage(),
+            fLOG=fLOG)
         return True
 
     elif "build_script" in argv:
@@ -635,11 +649,11 @@ def standard_help_for_setup(argv, file_or_folder, project_var_name, module_name=
 def run_unittests_for_setup(file_or_folder, skip_function=default_skip_function, setup_params=None,
                             only_setup_hook=False, coverage_options=None, coverage_exclude_lines=None,
                             additional_ut_path=None, covtoken=None, hook_print=True, stdout=None,
-                            stderr=None, filter_warning=None, fLOG=noLOG):
+                            stderr=None, filter_warning=None, dump_coverage=None, fLOG=noLOG):
     """
-    run the unit tests and compute the coverage, stores
+    Runs the unit tests and computes the coverage, stores
     the results in ``_doc/sphinxdoc/source/coverage``
-    assuming the module follows the same design as *pyquickhelper*
+    assuming the module follows the same design as *pyquickhelper*.
 
     @param      file_or_folder          file ``setup.py`` or folder which contains it
     @param      skip_function           see @see fn main_wrapper_tests
@@ -653,6 +667,7 @@ def run_unittests_for_setup(file_or_folder, skip_function=default_skip_function,
     @param      stdout                  see @see fn main_wrapper_tests
     @param      stderr                  see @see fn main_wrapper_tests
     @param      filter_warning          see @see fn main_wrapper_tests
+    @param      dump_coverage           location where to dump the coverage
     @param      fLOG                    logging function
 
     .. versionchanged:: 1.3
@@ -667,12 +682,16 @@ def run_unittests_for_setup(file_or_folder, skip_function=default_skip_function,
 
     .. versionchanged:: 1.4
         Parameter *filter_warning* was added.
+
+    .. versionchanged:: 1.5
+        Parameter *dump_coverage* was added.
+        Dumps the unit test coverage in another location.
     """
     ffolder = get_folder(file_or_folder)
     funit = os.path.join(ffolder, "_unittests")
     if not os.path.exists(funit):
         raise FileNotFoundError(
-            "you must get the source from GitHub to run the unittests,\nfolder {0} should exist".format(funit))
+            "You must get the whole source to run the unittests,\nfolder {0} should exist".format(funit))
 
     run_unit = os.path.join(funit, "run_unittests.py")
     if not os.path.exists(run_unit):
@@ -687,12 +706,15 @@ def run_unittests_for_setup(file_or_folder, skip_function=default_skip_function,
         if "disable_coverage" in coverage_options and coverage_options["disable_coverage"]:
             cov = False
 
+    if dump_coverage is not None and not cov:
+        dump_coverage = None
+
     main_wrapper_tests(
         run_unit, add_coverage=cov, skip_function=skip_function, setup_params=setup_params,
         only_setup_hook=only_setup_hook, coverage_options=coverage_options,
         coverage_exclude_lines=coverage_exclude_lines, additional_ut_path=additional_ut_path,
         covtoken=covtoken, hook_print=hook_print, stdout=stdout, stderr=stderr,
-        filter_warning=filter_warning, fLOG=fLOG)
+        filter_warning=filter_warning, dump_coverage=dump_coverage, fLOG=fLOG)
 
 
 def copy27_for_setup(file_or_folder):
@@ -859,3 +881,51 @@ def write_module_scripts(folder, platform=sys.platform, blog_list=None,
                     f.write(item)
                 res.append(name)
     return res
+
+
+def _get_dump_default_path(location, module_name, argv):
+    """
+    Proposes a default location to dump results about unit tests execution.
+
+    @param      location    location of the module
+    @param      module_name module name
+    @param      argv        argument on the command line
+    @return                 location of the dump
+
+    The result is None for remote continuous integration.
+
+    .. versionadded:: 1.5
+    """
+    from . import is_travis_or_appveyor
+    if is_travis_or_appveyor():
+        return None
+    hash = hash_list(argv)
+    setup = os.path.join(location, "setup.py")
+    if not os.path.exists(setup):
+        raise FileNotFoundError(setup)
+    fold = os.path.join(location, "..", "_coverage_dumps")
+    if not os.path.exists(fold):
+        os.mkdir(fold)
+    dt = datetime.datetime.now().strftime("%Y%m%dT%H%M")
+    dump = os.path.join(fold, module_name, hash, dt)
+    if not os.path.exists(dump):
+        os.makedirs(dump)
+    return dump
+
+
+def hash_list(argv, size=8):
+    """
+    Proposes a hash for the list of arguments.
+
+    @param      argv        list of arguments on the command line.
+    @param      size        size of the hash
+    @return     string
+    """
+    st = "--".join(map(str, argv))
+    hash = hashlib.md5()
+    hash.update(st.encode("utf-8"))
+    res = hash.hexdigest()
+    if len(res) > 8:
+        return res[:8]
+    else:
+        return res
