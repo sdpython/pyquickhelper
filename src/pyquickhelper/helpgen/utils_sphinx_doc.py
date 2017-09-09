@@ -1303,7 +1303,7 @@ def fix_incomplete_references(folder_source, store_obj, issues=None, fLOG=fLOG):
 
 def migrating_doxygen_doc(content, filename, silent=False, log=False, debug=False):
     """
-    migrates the doxygen documentation to rst format
+    Migrates the doxygen documentation to rst format.
 
     @param      content     file content
     @param      filename    filename (to display useful error messages)
@@ -1342,7 +1342,7 @@ def migrating_doxygen_doc(content, filename, silent=False, log=False, debug=Fals
 def private_migrating_doxygen_doc(rows, index_first_line, filename,
                                   debug=False, silent=False):
     """
-    process a block help (from doxygen to rst):
+    Processes a block help (from doxygen to rst).
 
     @param      rows                list of text lines
     @param      index_first_line    index of the first line (to display useful message error)

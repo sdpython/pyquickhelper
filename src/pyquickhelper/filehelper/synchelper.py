@@ -20,7 +20,7 @@ if sys.version_info[0] == 2:
 
 def explore_folder(folder, pattern=None, neg_pattern=None, fullname=False):
     """
-    returns the list of files included in a folder and in the subfolder
+    Returns the list of files included in a folder and in the subfolder.
 
     @param          folder      (str) folder
     @param          pattern     (str) if None, get all files, otherwise, it is a regular expression,
@@ -65,7 +65,7 @@ def explore_folder(folder, pattern=None, neg_pattern=None, fullname=False):
 
 def explore_folder_iterfile(folder, pattern=None, neg_pattern=None, fullname=False):
     """
-    iterator on the list of files...
+    Same as @see fn explore_folder but iterates on files.
 
     included in a folder and in the subfolder
     @param          folder          folder
@@ -108,8 +108,9 @@ def explore_folder_iterfile(folder, pattern=None, neg_pattern=None, fullname=Fal
 
 def explore_folder_iterfile_repo(folder, log=fLOG):
     """
-    returns all files present in folder and added to
+    Returns all files present in folder and added to
     a :epkg:`SVN` or :epkg:`GIT` reposotory.
+
     @param      folder      folder
     @param      log         log function
     @return                 iterator
