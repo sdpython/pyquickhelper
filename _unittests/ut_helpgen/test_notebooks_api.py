@@ -22,7 +22,7 @@ except ImportError:
     import src
 
 from src.pyquickhelper.loghelper import fLOG
-from src.pyquickhelper.pycode import get_temp_folder
+from src.pyquickhelper.pycode import get_temp_folder, is_travis_or_appveyor
 from src.pyquickhelper.helpgen import nb2slides, nb2html, nb2rst
 from src.pyquickhelper.ipythonhelper import read_nb
 
@@ -70,6 +70,10 @@ class TestNotebookAPI (unittest.TestCase):
             OutputPrint=__name__ == "__main__")
 
         if sys.version_info[0] == 2:
+            return
+
+        if is_travis_or_appveyor() in ('travis', 'appveyor'):
+            # no latex, no pandoc
             return
 
         path = os.path.abspath(os.path.split(__file__)[0])
