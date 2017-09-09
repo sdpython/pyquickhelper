@@ -130,12 +130,10 @@ class FSM(object):
 
 class Doxypy(object):
 
-    def __init__(self,
-                 print_output,
-                 process_comment,
-                 information):
+    def __init__(self, print_output, process_comment, information):
         """
-        constructor for Doxypy
+        Constructor for Doxypy.
+
         @param      print_output        function which will receive the output
         @param      process_comment     function applied to the help to modifies it
         @param      information         a dictionary with additional information such
@@ -156,7 +154,7 @@ class Doxypy(object):
         self.double_comment_re = re.compile(
             "^\\s*%s(\"\"\").*(\"\"\")\\s*$" % string_prefixes)
 
-        self.defclass_re = re.compile("^(\\s*)(def .+:|class .+:)")
+        self.defclass_re = re.compile("^(\\s*)(def .+:|class .+:)\\s*$")
         self.empty_re = re.compile("^\\s*$")
         self.hashline_re = re.compile("^\\s*#.*$")
         self.importline_re = re.compile("^\\s*(import |from .+ import)")
@@ -561,14 +559,10 @@ class Opt:
 options = Opt()
 
 
-def process_string(content,
-                   print_output,
-                   process_comment,
-                   filename,
-                   first_row,
-                   debug=False):
+def process_string(content, print_output, process_comment, filename, first_row, debug=False):
     """
-    applies the doxypy like process to a string
+    Applies the doxypy like process to a string.
+
     @param      content             string
     @param      print_output        every string is sent to that funtion
     @param      process_comment     function applied to the help to modifies it
@@ -577,8 +571,7 @@ def process_string(content,
     @param      debug               if True, display more information
     """
     options.debug = debug
-    fsm = Doxypy(print_output,
-                 process_comment,
+    fsm = Doxypy(print_output, process_comment,
                  {"filename": filename, "first_row": first_row})
     fsm.parseFile(content)
 
