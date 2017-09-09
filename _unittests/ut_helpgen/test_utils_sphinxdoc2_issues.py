@@ -23,6 +23,8 @@ except ImportError:
 
 from src.pyquickhelper.loghelper.flog import fLOG
 from src.pyquickhelper.helpgen.utils_sphinx_doc_helpers import process_var_tag
+from src.pyquickhelper.helpgen.utils_sphinx_doc import migrating_doxygen_doc
+from src.pyquickhelper.filehelper import synchronize_folder
 
 
 class TestSphinxDoc2Issue (unittest.TestCase):
@@ -43,7 +45,7 @@ class TestSphinxDoc2Issue (unittest.TestCase):
 
         obj = TestSphinxDoc2Issue.__dict__["get_help"]
         d2 = obj.__func__.__doc__
-        assert d1 == d2
+        self.assertEqual(d1, d2)
 
     def test_var(self):
         fLOG(
@@ -62,6 +64,7 @@ class TestSphinxDoc2Issue (unittest.TestCase):
             @var    _filter         function filter, None or return True or False whether a line should considered or not
 
             Example:
+
             @code
             f = TextFile (filename)
             f.open ()
@@ -71,11 +74,53 @@ class TestSphinxDoc2Issue (unittest.TestCase):
             @endcode
             """
         values = process_var_tag(docstring)
-        assert len(values) == 6
+        self.assertEqual(len(values), 6)
 
         rst = process_var_tag(docstring, True)
-        fLOG(rst)
-        assert len(rst) > 0
+        # fLOG(rst)
+        self.assertTrue(len(rst) > 0)
+
+        self.assertIn(".. list-table", rst)
+
+    def test_multiline(self):
+        fLOG(
+            __file__,
+            self._testMethodName,
+            OutputPrint=__name__ == "__main__")
+
+        sig = """
+                def synchronize_folder(p1,
+                                       p2):""".replace("                ", "")
+
+        f = synchronize_folder
+        com = "{1}\n    '''\n{0}\n    '''\n    pass\n".format(f.__doc__, sig)
+        res = migrating_doxygen_doc(com, "docstring")
+        doc = res[1]
+        if "@param" in doc:
+            raise Exception(doc)
+
+        sig = """
+                def synchronize_folder(p1,
+                                       p3:str,
+                                       p2):""".replace("                ", "")
+
+        f = synchronize_folder
+        com = "{1}\n    '''\n{0}\n    '''\n    pass\n".format(f.__doc__, sig)
+        res = migrating_doxygen_doc(com, "docstring")
+        doc = res[1]
+        if "@param" in doc:
+            raise Exception(doc)
+
+        sig = """
+                def synchronize_folder(p1: str,
+                                       p2):""".replace("                ", "")
+
+        f = synchronize_folder
+        com = "{1}\n    '''\n{0}\n    '''\n    pass\n".format(f.__doc__, sig)
+        res = migrating_doxygen_doc(com, "docstring")
+        doc = res[1]
+        if "@param" in doc:
+            raise Exception(doc)
 
 
 if __name__ == "__main__":
