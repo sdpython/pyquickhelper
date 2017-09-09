@@ -244,7 +244,7 @@ def post_process_latex_output_any(file, custom_latex_processing, nblinks=None, f
 def post_process_rst_output(file, html, pdf, python, slides, present, is_notebook=False,
                             exc=True, github=False, notebook=None, nblinks=None, fLOG=None):
     """
-    process a RST file generated from the conversion of a notebook
+    Processes a RST file generated from the conversion of a notebook.
 
     @param      file            filename
     @param      pdf             if True, add a link to the PDF, assuming it will exists at the same location
@@ -469,7 +469,7 @@ def post_process_rst_output(file, html, pdf, python, slides, present, is_noteboo
 
 def post_process_html_output(file, pdf, python, slides, present, exc=True, nblinks=None, fLOG=None):
     """
-    process a HTML file generated from the conversion of a notebook
+    Processes a HTML file generated from the conversion of a notebook.
 
     @param      file        filename
     @param      pdf         if True, add a link to the PDF, assuming it will exists at the same location
@@ -506,7 +506,7 @@ def post_process_html_output(file, pdf, python, slides, present, exc=True, nblin
 
 def post_process_slides_output(file, pdf, python, slides, present, exc=True, nblinks=None, fLOG=None):
     """
-    process a HTML file generated from the conversion of a notebook
+    Processes a HTML file generated from the conversion of a notebook.
 
     @param      file        filename
     @param      pdf         if True, add a link to the PDF, assuming it will exists at the same location
@@ -740,7 +740,7 @@ def post_process_latex(st, doall, info=None, latex_book=False, exc=True,
 
 def post_process_python(st, doall, info=None, nblinks=None, file=None, fLOG=None):
     """
-    modifies a python file after its generation by sphinx
+    Modifies a python file after its generation by :epkg:`sphinx`.
 
     @param      st      string
     @param      doall   do all transformations
@@ -765,7 +765,7 @@ def post_process_python(st, doall, info=None, nblinks=None, file=None, fLOG=None
 
 def remove_character_under32(s):
     """
-    remove ascii characters in *[0..31]*
+    Remove ASCII characters in *[0..31]*.
 
     @param      s       string to process
     @return             filtered string

@@ -20,19 +20,14 @@ controls
 .. autosignature:: pyquickhelper.ipythonhelper.html_forms.open_html_form
 
 .. autosignature:: pyquickhelper.ipythonhelper.widgets.DropDownWidget
-    :members:
 
 .. autosignature:: pyquickhelper.ipythonhelper.widgets.RangeWidget
-    :members:
 
 .. autosignature:: pyquickhelper.ipythonhelper.widgets.RadioWidget
-    :members:
 
 .. autosignature:: pyquickhelper.ipythonhelper.widgets.RangeWidget
-    :members:
 
 .. autosignature:: pyquickhelper.ipythonhelper.interact.StaticInteract
-    :members:
 
 extensions
 ++++++++++
@@ -74,13 +69,17 @@ magic command helpers
 notebook
 ++++++++
 
+.. autosignature:: pyquickhelper.ipythonhelper.run_notebook.execute_notebook_list
+
+.. autosignature:: pyquickhelper.ipythonhelper.run_notebook.execute_notebook_list_finalize_ut
+
 .. autosignature:: pyquickhelper.helpgen.process_notebook_api.nb2html
 
 .. autosignature:: pyquickhelper.helpgen.process_notebook_api.nb2present
 
 .. autosignature:: pyquickhelper.helpgen.process_notebook_api.nb2slides
 
-.. autosignature:: pyquickhelper.ipythonhelper.run_notebook.execute_notebook_list
+.. autosignature:: pyquickhelper.helpgen.process_notebook_api.nb2rst
 
 .. autosignature:: pyquickhelper.helpgen.utils_sphinx_config.NbImage
 

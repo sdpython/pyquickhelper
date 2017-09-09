@@ -6,7 +6,7 @@ from .conf_path_tools import find_graphviz_dot
 from .default_conf import set_sphinx_variables, custom_setup
 from .helpgen_exceptions import HelpGenException, ImportErrorHelpGen, HelpGenConvertError
 from .pandoc_helper import latex2rst
-from .process_notebook_api import nb2slides, nb2html, nb2present
+from .process_notebook_api import nb2slides, nb2html, nb2present, nb2rst
 from .sphinxm_custom_app import CustomSphinxApp
 from .sphinx_helper import sphinx_add_scripts
 from .sphinx_main import generate_help_sphinx, process_notebooks

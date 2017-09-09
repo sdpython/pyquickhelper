@@ -23,13 +23,13 @@ except ImportError:
 
 from src.pyquickhelper.loghelper import fLOG
 from src.pyquickhelper.pycode import get_temp_folder
-from src.pyquickhelper.helpgen import nb2slides, nb2html
+from src.pyquickhelper.helpgen import nb2slides, nb2html, nb2rst
 from src.pyquickhelper.ipythonhelper import read_nb
 
 
 class TestNotebookAPI (unittest.TestCase):
 
-    def test_convert_slides_api(self):
+    def test_convert_slides_api_html(self):
         fLOG(
             __file__,
             self._testMethodName,
@@ -47,21 +47,49 @@ class TestNotebookAPI (unittest.TestCase):
                 "_doc",
                 "notebooks"))
         nb = os.path.join(fold, "example_pyquickhelper.ipynb")
-        assert os.path.exists(nb)
+        self.assertTrue(os.path.exists(nb))
         nbr = read_nb(nb, kernel=False)
 
-        temp = get_temp_folder(__file__, "temp_nb_api")
+        temp = get_temp_folder(__file__, "temp_nb_api_html")
         outfile = os.path.join(temp, "out_nb_slides.slides.html")
         res = nb2slides(nbr, outfile)
-        assert len(res) > 1
+        self.assertTrue(len(res) > 1)
         for r in res:
-            assert os.path.exists(r)
+            self.assertTrue(os.path.exists(r))
 
         outfile = os.path.join(temp, "out_nb_slides.html")
         res = nb2html(nbr, outfile)
-        assert len(res) == 1
+        self.assertEqual(len(res), 1)
         for r in res:
-            assert os.path.exists(r)
+            self.assertTrue(os.path.exists(r))
+
+    def test_convert_slides_api_rst(self):
+        fLOG(
+            __file__,
+            self._testMethodName,
+            OutputPrint=__name__ == "__main__")
+
+        if sys.version_info[0] == 2:
+            return
+
+        path = os.path.abspath(os.path.split(__file__)[0])
+        fold = os.path.normpath(
+            os.path.join(
+                path,
+                "..",
+                "..",
+                "_doc",
+                "notebooks"))
+        nb = os.path.join(fold, "example_pyquickhelper.ipynb")
+        self.assertTrue(os.path.exists(nb))
+        nbr = read_nb(nb, kernel=False)
+
+        temp = get_temp_folder(__file__, "temp_nb_api_rst")
+        outfile = os.path.join(temp, "out_nb_slides.rst")
+        res = nb2rst(nbr, outfile)
+        self.assertEqual(len(res), 1)
+        for r in res:
+            self.assertTrue(os.path.exists(r))
 
 
 if __name__ == "__main__":

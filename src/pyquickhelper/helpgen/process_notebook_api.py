@@ -8,7 +8,7 @@
 import os
 import sys
 from .install_js_dep import install_javascript_tools
-from .post_process import post_process_slides_output, post_process_html_output
+from .post_process import post_process_slides_output, post_process_html_output, post_process_rst_output
 
 if sys.version_info[0] == 2:
     from codecs import open
@@ -203,7 +203,7 @@ def nb2present(nb_file, outfile, add_tag=True):
 
 def nb2html(nb_file, outfile, exc=True):
     """
-    convert a notebooks into html
+    Convert a notebooks into HTML.
 
     @param      nb_file         notebook file or a stream or a @see fn read_nb
     @param      outfile         output file (a string)
@@ -229,5 +229,38 @@ def nb2html(nb_file, outfile, exc=True):
 
     # post_processing
     post_process_html_output(outfile, False, False, False, False, exc=exc)
+    res = [outfile]
+    return res
+
+
+def nb2rst(nb_file, outfile, exc=True):
+    """
+    Convert a notebooks into RST.
+
+    @param      nb_file         notebook file or a stream or a @see fn read_nb
+    @param      outfile         output file (a string)
+    @param      exc             raises an exception (True) or a warning (False)
+    @return                     impacted files
+
+    .. versionadded:: 1.5
+        Parameter *exc* was added.
+    """
+    from ..ipythonhelper import NotebookRunner, read_nb
+
+    if isinstance(nb_file, NotebookRunner):
+        nb = nb_file.nb
+    else:
+        nbr = read_nb(nb_file, kernel=False)
+        nb = nbr.nb
+
+    exporter = get_exporter("rst")()
+    source, meta = exporter.from_notebook_node(nb)
+
+    with open(outfile, 'w+', encoding="utf8") as fh:
+        fh.writelines(source)
+
+    # post_processing
+    post_process_rst_output(outfile, False, False,
+                            False, False, False, exc=exc)
     res = [outfile]
     return res

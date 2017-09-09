@@ -646,8 +646,8 @@ def _process_notebooks_in(notebooks, outfold, build, latex_path=None, pandoc_pat
 def add_link_to_notebook(file, nb, pdf, html, python, slides, present, exc=True,
                          github=False, notebook=None, nblinks=None, fLOG=None):
     """
-    add a link to the notebook in HTML format and does a little bit of cleaning
-    for various format
+    Add a link to the notebook in HTML format and does a little bit of cleaning
+    for various format.
 
     @param      file        notebook.html
     @param      nb          notebook (.ipynb)

@@ -329,7 +329,7 @@ def main_wrapper_tests(codefile, skip_list=None, processes=False, add_coverage=F
 
             if dump_coverage is not None:
                 raise NotImplementedError(
-                    "Option to dump the coverage is not implemented yet.")
+                    "Option to dump the coverage is not implemented yet\ndump_coverage='{0}'\noutfile='{1}'".format(dump_coverage, outfile))
 
             if covtoken:
                 if isinstance(covtoken, tuple):
@@ -338,7 +338,7 @@ def main_wrapper_tests(codefile, skip_list=None, processes=False, add_coverage=F
                         if stdout is not None:
                             stdout.write("PUBLISH COVERAGE to codecov '{0}' EVAL '{1}'\n".format(
                                 covtoken[0], covtoken[1]))
-                        fLOG("publishing coverage to codecov",
+                        fLOG("[main_wrapper_tests] publishing coverage to codecov",
                              covtoken[0], "EVAL", covtoken[1])
                         publish_coverage_on_codecov(
                             token=covtoken[0], path=outfile, fLOG=fLOG)
