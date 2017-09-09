@@ -15,6 +15,7 @@ import sys
 import unittest
 
 from ..loghelper.flog import noLOG
+from ..filehelper import synchronize_folder
 from .call_setup_hook import call_setup_hook
 from .code_exceptions import CoverageException, SetupHookException
 from .coverage_helper import publish_coverage_on_codecov
@@ -328,8 +329,10 @@ def main_wrapper_tests(codefile, skip_list=None, processes=False, add_coverage=F
                 f.write(content)
 
             if dump_coverage is not None:
-                raise NotImplementedError(
-                    "Option to dump the coverage is not implemented yet\ndump_coverage='{0}'\noutfile='{1}'".format(dump_coverage, outfile))
+                src = os.path.dirname(outfile)
+                fLOG("[main_wrapper_tests] dump coverage from '{1}' to '{0}'".format(
+                    dump_coverage, outfile))
+                synchronize_folder(src, dump_coverage)
 
             if covtoken:
                 if isinstance(covtoken, tuple):
