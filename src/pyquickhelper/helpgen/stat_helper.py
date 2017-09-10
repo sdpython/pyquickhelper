@@ -1,0 +1,62 @@
+"""
+@file
+@brief  Functions about checking, statistics on files used in the documentation.
+"""
+import os
+import re
+from ..filehelper import explore_folder, explore_folder_iterfile
+
+
+def enumerate_notebooks_link(nb_folder, nb_rst):
+    """
+    Look for all links to a notebook in the documentation.
+
+    @param      nb_folder   notebook folder
+    @param      nb_rst      documentation folder
+    @return                 iterator on *(rst_file, nb_file, link type, pos_start, pos_end, string)*
+
+    The function also outputs unreferenced notebooks.
+    *rst_file* is None in that case.
+
+    Example of outputs:
+
+    ::
+
+        ('...index_class.rst', '...having_a_form_in_a_notebook.ipynb', 'ref', 79880, 79912, ':ref:`havingaforminanotebookrst`')
+        ('...index_module.rst', '...having_a_form_in_a_notebook.ipynb', 'ref', 277928, 277960, ':ref:`havingaforminanotebookrst`')
+
+    """
+    folders, rsts = explore_folder(nb_rst, ".*[.]rst$")
+    crsts = {}
+    for rst in rsts:
+        with open(rst, "r", encoding="utf-8") as f:
+            crsts[rst] = f.read()
+
+    nbcount = {}
+
+    for name in explore_folder_iterfile(nb_folder, ".*[.]ipynb$", ".*checkpoints.*", fullname=True):
+        sh = os.path.splitext(os.path.split(name)[-1])[0]
+        reg1 = re.compile("[/ ](" + sh + ")\\n")
+        reg2 = re.compile("(:ref:`.*? <{0}rst>`)".format(sh.replace("_", "")))
+        reg3 = re.compile("(:ref:`{0}rst`)".format(sh.replace("_", "")))
+        reg4 = re.compile("(<.*?" + sh + ">)\\n")
+        nbcount[name] = 0
+        for rst, content in crsts.items():
+            iter = reg1.finditer(content)
+            for it in iter:
+                nbcount[name] += 1
+                yield (rst, name, "toctree", it.start(0), it.end(0), it.groups(0)[0])
+            iter = reg4.finditer(content)
+            for it in iter:
+                nbcount[name] += 1
+                yield (rst, name, "toctreen", it.start(0), it.end(0), it.groups(0)[0])
+            iter = reg2.finditer(content)
+            for it in iter:
+                nbcount[name] += 1
+                yield (rst, name, "refn", it.start(0), it.end(0), it.groups(0)[0])
+            iter = reg3.finditer(content)
+            for it in iter:
+                nbcount[name] += 1
+                yield (rst, name, "ref", it.start(0), it.end(0), it.groups(0)[0])
+        if nbcount[name]:
+            yield (None, name, None, -1, -1, "")
