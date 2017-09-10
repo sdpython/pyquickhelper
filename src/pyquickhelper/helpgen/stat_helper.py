@@ -13,7 +13,7 @@ def enumerate_notebooks_link(nb_folder, nb_rst):
 
     @param      nb_folder   notebook folder
     @param      nb_rst      documentation folder
-    @return                 iterator on *(rst_file, nb_file, link type, pos_start, pos_end, string)*
+    @return                 iterator on *(rst_file, nb_file, link type, pos_start, pos_end, string, title)*
 
     The function also outputs unreferenced notebooks.
     *rst_file* is None in that case.
@@ -35,6 +35,14 @@ def enumerate_notebooks_link(nb_folder, nb_rst):
     nbcount = {}
 
     for name in explore_folder_iterfile(nb_folder, ".*[.]ipynb$", ".*checkpoints.*", fullname=True):
+        with open(name, "r", encoding="utf-8") as f:
+            nbcontent = f.read()
+        reg_title = re.compile("\\\"([#] [^#]+?)\\n")
+        ftitle = reg_title.findall(nbcontent)
+        if len(ftitle) > 0:
+            title = ftitle[0].strip(" \n\r\t")
+        else:
+            title = None
         sh = os.path.splitext(os.path.split(name)[-1])[0]
         reg1 = re.compile("[/ ](" + sh + ")\\n")
         reg2 = re.compile("(:ref:`.*? <{0}rst>`)".format(sh.replace("_", "")))
@@ -45,18 +53,18 @@ def enumerate_notebooks_link(nb_folder, nb_rst):
             iter = reg1.finditer(content)
             for it in iter:
                 nbcount[name] += 1
-                yield (rst, name, "toctree", it.start(0), it.end(0), it.groups(0)[0])
+                yield (rst, name, "toctree", it.start(0), it.end(0), it.groups(0)[0], title)
             iter = reg4.finditer(content)
             for it in iter:
                 nbcount[name] += 1
-                yield (rst, name, "toctreen", it.start(0), it.end(0), it.groups(0)[0])
+                yield (rst, name, "toctreen", it.start(0), it.end(0), it.groups(0)[0], title)
             iter = reg2.finditer(content)
             for it in iter:
                 nbcount[name] += 1
-                yield (rst, name, "refn", it.start(0), it.end(0), it.groups(0)[0])
+                yield (rst, name, "refn", it.start(0), it.end(0), it.groups(0)[0], title)
             iter = reg3.finditer(content)
             for it in iter:
                 nbcount[name] += 1
-                yield (rst, name, "ref", it.start(0), it.end(0), it.groups(0)[0])
-        if nbcount[name]:
-            yield (None, name, None, -1, -1, "")
+                yield (rst, name, "ref", it.start(0), it.end(0), it.groups(0)[0], title)
+        if nbcount[name] == 0:
+            yield (None, name, None, -1, -1, "", title)

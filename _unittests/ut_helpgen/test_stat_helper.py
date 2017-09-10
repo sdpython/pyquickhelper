@@ -26,7 +26,7 @@ from src.pyquickhelper.helpgen.stat_helper import enumerate_notebooks_link
 
 class TestHelpGenStatHelper(unittest.TestCase):
 
-    def test_format_history(self):
+    def test_enumerate_notebooks_link(self):
         fLOG(
             __file__,
             self._testMethodName,
@@ -38,7 +38,8 @@ class TestHelpGenStatHelper(unittest.TestCase):
         nb_doc = os.path.join(this, "..", "..", "_doc", "sphinxdoc", "source")
         self.assertTrue(os.path.exists(nb_doc))
         nb = 0
-        counts = {}
+        counts = {'title': 0}
+        nbfound = set()
         for r in enumerate_notebooks_link(nb_folder, nb_doc):
             rl = list(r)
             rl[0] = None if r[0] is None else os.path.split(r[0])[-1]
@@ -46,9 +47,15 @@ class TestHelpGenStatHelper(unittest.TestCase):
             nb += 1
             m = rl[2]
             counts[m] = counts.get(m, 0) + 1
-            self.assertTrue(isinstance(r[-1], (str, None)))
+            self.assertTrue(r[-2] is None or isinstance(r[-2], str))
+            self.assertTrue(r[-1] is None or isinstance(r[-1], str))
+            if r[-1] is not None:
+                counts["title"] += 1
+            nbfound.add(rl[1])
         self.assertTrue(counts.get("ref", 0) > 0)
         self.assertTrue(counts.get(None, 0) > 0)
+        self.assertTrue(counts["title"] > 0)
+        self.assertTrue(len(nbfound) > 8)
         # self.assertTrue(counts.get("refn", 0) > 0)
         # self.assertTrue(counts.get("toctree", 0) > 0)
 
