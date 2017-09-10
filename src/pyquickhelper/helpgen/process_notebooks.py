@@ -901,7 +901,10 @@ def build_notebooks_gallery(nbs, fileout, layout="classic", neg_pattern=None, fL
     if os.path.exists(exp):
         fLOG("[build_notebooks_gallery] found", exp)
         with open(exp, "r", encoding="utf-8") as f:
-            rows = ["", ".. _l-notebooks:", "", f.read(), ""]
+            try:
+                rows = ["", ".. _l-notebooks:", "", f.read(), ""]
+            except UnicodeDecodeError as e:
+                raise ValueError("Issue with file '{0}'".format(exp)) from e
     else:
         fLOG("[build_notebooks_gallery] not found", exp)
         rows = ["", ".. _l-notebooks:", "", "", "Notebooks Gallery",
@@ -990,7 +993,11 @@ def build_notebooks_gallery(nbs, fileout, layout="classic", neg_pattern=None, fL
                     if os.path.exists(readme):
                         fLOG("[build_notebooks_gallery] found", readme)
                         with open(readme, "r", encoding="utf-8") as f:
-                            rows.extend(["", f.read(), ""])
+                            try:
+                                rows.extend(["", f.read(), ""])
+                            except UnicodeDecodeError as e:
+                                raise ValueError(
+                                    "Issue with file '{0}'".format(readme)) from e
                     else:
                         fLOG("[build_notebooks_gallery] not found", readme)
                         rows.append("")

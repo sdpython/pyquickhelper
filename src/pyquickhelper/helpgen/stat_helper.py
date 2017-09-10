@@ -26,6 +26,16 @@ def enumerate_notebooks_link(nb_folder, nb_rst):
         ('...index_module.rst', '...having_a_form_in_a_notebook.ipynb', 'ref', 277928, 277960, ':ref:`havingaforminanotebookrst`')
 
     """
+    # We check that all readme.txt follow utf-8.
+    for name in explore_folder_iterfile(nb_folder, "((readme)|(README))[.]txt$", ".*checkpoints.*", fullname=True):
+        with open(name, "r", encoding="utf-8") as f:
+            try:
+                nbcontent = f.read()
+            except UnicodeDecodeError as e:
+                raise ValueError(
+                    "Issue with file '{0}'".format(name)) from e
+        reg_title = re.compile("\\\"([#] [^#]+?)\\n")
+
     folders, rsts = explore_folder(nb_rst, ".*[.]rst$")
     crsts = {}
     for rst in rsts:
@@ -36,7 +46,11 @@ def enumerate_notebooks_link(nb_folder, nb_rst):
 
     for name in explore_folder_iterfile(nb_folder, ".*[.]ipynb$", ".*checkpoints.*", fullname=True):
         with open(name, "r", encoding="utf-8") as f:
-            nbcontent = f.read()
+            try:
+                nbcontent = f.read()
+            except UnicodeDecodeError as e:
+                raise ValueError(
+                    "Issue with file '{0}'".format(name)) from e
         reg_title = re.compile("\\\"([#] [^#]+?)\\n")
         ftitle = reg_title.findall(nbcontent)
         if len(ftitle) > 0:
