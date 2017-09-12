@@ -159,9 +159,10 @@ class BlogPostDirective(Directive):
         tnl.append(title)
         tnl.append("=" * len(title))
         tnl.append("")
-        tnl.append("")
-        tnl.append(":sharenet:`{0}`".format(sharepost))
-        tnl.append('')
+        if sharepost is not None:
+            tnl.append("")
+            tnl.append(":sharenet:`{0}`".format(sharepost))
+            tnl.append('')
         tnl.append('')
         content = StringList(tnl)
         content = content + self.content
