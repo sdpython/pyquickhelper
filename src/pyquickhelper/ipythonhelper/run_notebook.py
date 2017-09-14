@@ -468,8 +468,19 @@ def badge_notebook_coverage(df, image_name):
     img = Image.new(mode='P', size=(70, 20), color=100)
     im = ImageDraw.Draw(img)
     font = ImageFont.load_default()
-    im.text((3, 4), "NB:{0}%-{1}%".format(int(cov), int(val)),
-                    (255, 255, 255), font=font)
+    try:
+        cov = int(cov)
+    except ValueError:
+        cov = "?"
+    try:
+        val = int(val)
+    except ValueError:
+        val = "?"
+    if cov != val:
+        im.text((3, 4), "NB:{0}%-{1}%".format(cov, val),
+                (255, 255, 255), font=font)
+    else:
+        im.text((3, 4), "NB: {0}%".format(cov), (255, 255, 255), font=font)
     img.save(image_name)
 
 

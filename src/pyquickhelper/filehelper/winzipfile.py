@@ -62,7 +62,7 @@ class WinZipFile(ZipFile):
         if mode == 'w':
             return self._open_to_write(zinfo, force_zip64=force_zip64)
 
-        if self._writing:
+        if hasattr(self, "_writing") and self._writing:
             raise ValueError("Can't read from the ZIP file while there "
                              "is an open writing handle on it. "
                              "Close the writing handle before trying to read.")
@@ -70,7 +70,7 @@ class WinZipFile(ZipFile):
         # Open for reading:
         self._fileRefCnt += 1
         zef_file = _SharedFile(self.fp, zinfo.header_offset,
-                               self._fpclose, self._lock, lambda: self._writing)
+                               self._fpclose, self._lock, lambda: hasattr(self, "_writing") and self._writing)
         try:
             # Skip the file header:
             fheader = zef_file.read(sizeFileHeader)
