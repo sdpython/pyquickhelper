@@ -69,8 +69,12 @@ class WinZipFile(ZipFile):
 
         # Open for reading:
         self._fileRefCnt += 1
-        zef_file = _SharedFile(self.fp, zinfo.header_offset,
-                               self._fpclose, self._lock, lambda: hasattr(self, "_writing") and self._writing)
+        if sys.version_info[:2] <= (3, 5):
+            zef_file = _SharedFile(
+                self.fp, zinfo.header_offset, self._fpclose, self._lock)
+        else:
+            zef_file = _SharedFile(self.fp, zinfo.header_offset,
+                                   self._fpclose, self._lock, lambda: hasattr(self, "_writing") and self._writing)
         try:
             # Skip the file header:
             fheader = zef_file.read(sizeFileHeader)
