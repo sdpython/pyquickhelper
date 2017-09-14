@@ -1,0 +1,18 @@
+
+.. blogpost::
+    :title: Issue in ZipFile on Windows
+    :keywords: python, zipfile
+    :date: 2017-09-14
+    :categories: issue
+
+    Issue `6839 <https://bugs.python.org/issue6839>`_ happens when
+    a zip file is created on Windows. The created zip may contain
+    full path with ``\\`` when the file list only contains ``/``.
+    This raises exception ``BadZipFile`` with the following message:
+    *File name in directory ... and header ... differ* due to a mismatch
+    between backslashes. Another consequence found on GitHub:
+    `zipfile raises: File name in directory X and header Y differ. <https://github.com/log2timeline/plaso/issues/943>`_.
+    The class :class:`WinZipFile <pyquickhelper.filehelper.winzipfile.WinZipFile>`
+    owerwrites method :epkg:`*py:zipfile:ZipFile:open`
+    to fix the line which checks that names are consistent in the file list
+    and in the compressed content.
