@@ -22,8 +22,18 @@ else:
 
 ###############################
 try:
-    copy = os.path.join(os.path.dirname(__file__), "..", "_doc", "notebooks")
+    copy = os.path.dirname(__file__)
 except NameError:
     # __file__ does not exist when run with sphinx-gallery
-    copy = os.path.join("..", "_doc", "notebooks")
-synchronize_folder(copy, dest, fLOG=print)
+    copy = "."
+
+paths_to_try = [os.path.join("..", "notebooks"),
+                os.path.join("_doc", "notebooks")]
+
+for path in paths_to_try:
+    src = os.path.abspath(path)
+    if os.path.exists(src):
+        break
+
+src = os.path.abspath(src)
+synchronize_folder(src, dest, fLOG=print)
