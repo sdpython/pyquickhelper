@@ -419,12 +419,14 @@ def notebook_coverage(module_or_path, dump=None, too_old=30):
     dfnb = dfnb[~dfnb.notebooks.str.contains(".ipynb_checkpoints")].copy()
     dfnb["key"] = dfnb["notebooks"].apply(lambda x: "/".join(os.path.normpath(
         x).replace("\\", "/").split("/")[-3:]) if isinstance(x, str) else x)
+    dfnb["key"] = dfnb["key"].apply(
+        lambda x: x.lower() if isinstance(x, str) else x)
 
     # Loads the dump.
     dfall = pandas.read_csv(dump, sep="\t", encoding="utf-8")
 
     # We drop too old execution.
-    old = datetime.now() - timedelta(30)
+    old = datetime.now() - timedelta(too_old)
     old = "%04d-%02d-%02d" % (old.year, old.month, old.day)
     dfall = dfall[dfall.date > old].copy()
 
@@ -432,10 +434,13 @@ def notebook_coverage(module_or_path, dump=None, too_old=30):
     dfall["name"] = dfall["name"].apply(lambda x: os.path.normpath(x))
     dfall["key"] = dfall["name"].apply(lambda x: "/".join(os.path.normpath(
         x).replace("\\", "/").split("/")[-3:]) if isinstance(x, str) else x)
+    dfall["key"] = dfall["key"].apply(
+        lambda x: x.lower() if isinstance(x, str) else x)
 
     # We keep the last execution.
     gr = dfall.sort_values("date", ascending=False).groupby(
-        "name").first().reset_index(drop=True).copy()
+        "key", as_index=False).first().reset_index(drop=True).copy()
+    gr = gr.drop("name", axis=1)
 
     # Folders might be different so we merge on the last part of the path.
     merged = dfnb.merge(gr, left_on="key", right_on="key", how="outer")
@@ -445,6 +450,13 @@ def notebook_coverage(module_or_path, dump=None, too_old=30):
     if "last_name" not in merged.columns:
         merged["last_name"] = merged["key"].apply(
             lambda x: os.path.split(x)[-1])
+
+    # We check there is no duplicates in merged.
+    for c in ["key", "last_name"]:
+        names = [_ for _ in merged[c] if isinstance(_, str)]
+        if len(names) > len(set(names)):
+            raise ValueError("Unexpected duplicated names in column '{1}'\n{0}".format(
+                "\n".join(sorted(names)), c))
 
     return merged
 

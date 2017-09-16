@@ -32,6 +32,7 @@ import sys
 import shutil
 import importlib
 import warnings
+from datetime import datetime
 from docutils.parsers.rst import directives, roles
 from sphinx import build_main
 from ..filehelper import remove_folder
@@ -297,6 +298,8 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
     if is_travis_or_appveyor() == "circleci":
         fLOG = print
 
+    datetime_rows = [("begin", datetime.now())]
+
     fLOG("---- JENKINS BEGIN DOCUMENTATION ----")
     if layout is None:
         layout = [("html", "build", {})]
@@ -545,6 +548,7 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
     #########
     # changes
     #########
+    datetime_rows = [("changes", datetime.now())]
     chan = os.path.join(root, "_doc", "sphinxdoc", "source", "filechanges.rst")
     if "modify_commit" in theconf.__dict__:
         modify_commit = theconf.modify_commit
@@ -557,6 +561,7 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
     ######################################
     # we copy javascript dependencies, reveal.js
     ######################################
+    datetime_rows = [("javascript", datetime.now())]
     fLOG("[generate_help_sphinx] JAVASCRIPT:", html_static_paths)
     fLOG("[generate_help_sphinx] ROOT:", root_sphinxdoc)
     fLOG("[generate_help_sphinx] BUILD:", build_paths)
@@ -567,6 +572,7 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
     ############################
     # we copy the extended styles (notebook, snippets)
     ############################
+    datetime_rows = [("copy", datetime.now())]
     for html_static_path in html_static_paths:
         dest = os.path.join(html_static_path, style_figure_notebook[0])
         fLOG("    CREATE-CSS", dest)
@@ -600,6 +606,7 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
     ####################
     # generates extra files
     ####################
+    datetime_rows = [("prepare", datetime.now())]
     try:
 
         prepare_file_for_sphinx_help_generation({}, root,
@@ -632,6 +639,7 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
     ######
     # blog
     ######
+    datetime_rows = [("blog", datetime.now())]
     fLOG("---- JENKINS BEGIN DOCUMENTATION BLOGS ----")
     fLOG("[generate_help_sphinx] begin blogs")
     blog_fold = os.path.join(
@@ -656,6 +664,7 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
     ###########
     # notebooks
     ###########
+    datetime_rows = [("notebooks", datetime.now())]
     fLOG("---- JENKINS BEGIN DOCUMENTATION NOTEBOOKS ----")
     fLOG("[generate_help_sphinx] begin notebooks")
     indextxtnote = None
@@ -720,6 +729,7 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
     #############################################
     # replace placeholder as blog posts list into tocs files
     #############################################
+    datetime_rows = [("replace", datetime.now())]
     fLOG("[generate_help_sphinx] blog placeholder")
     if plist is not None:
         replace_placeholder_by_recent_blogpost(
@@ -728,6 +738,7 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
     #################################
     #  run the documentation generation
     #################################
+    datetime_rows = [("sphinx", datetime.now())]
     fLOG("[generate_help_sphinx] prepare for SPHINX")
     temp = os.environ["PATH"]
     pyts = get_executables_path()
@@ -751,6 +762,7 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
     ################
     # checks encoding
     ################
+    datetime_rows = [("encoding", datetime.now())]
     fLOG("---- JENKINS BEGIN DOCUMENTATION ENCODING ----")
     fLOG("[generate_help_sphinx] checking encoding utf8...")
     for root, dirs, files in os.walk(docpath):
@@ -776,6 +788,7 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
     #####################
     # builds command lines
     #####################
+    datetime_rows = [("build", datetime.now())]
     fLOG("[generate_help_sphinx] sphinx command lines")
     cmds = []
     lays = []
@@ -824,6 +837,7 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
     ###############################################################
     # run cmds (prefer to use os.system instead of run_cmd if it gets stuck)
     ###############################################################
+    datetime_rows = [("cmd", datetime.now())]
     fLOG("[generate_help_sphinx] RUN SPHINX")
     for cmd, build, kind in cmds:
         fLOG("---- JENKINS BEGIN DOCUMENTATION SPHINX ----")
@@ -952,6 +966,7 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
     #####################################
     # we copy the coverage files if it is missing
     #####################################
+    datetime_rows = [("converage", datetime.now())]
     fLOG("---- JENKINS BEGIN DOCUMENTATION COVERAGE ----")
     fLOG("[generate_help_sphinx] copy coverage")
     covfold = os.path.join(docpath, "source", "coverage")
@@ -985,6 +1000,7 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
     #########################################################
     # we copy javascript dependencies to build _download/javascript
     #########################################################
+    datetime_rows = [("javascript", datetime.now())]
     # for every layout
     fLOG("[generate_help_sphinx] [revealjs] JAVASCRIPT: COPY", html_static_paths)
     fLOG("[generate_help_sphinx] [revealjs] BUILD:", build_paths)
@@ -1010,6 +1026,7 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
     ######
     # next
     ######
+    datetime_rows = [("latex", datetime.now())]
     fLOG("[generate_help_sphinx] LATEX")
     if "latex" in layout:
         fLOG("[generate_help_sphinx] post_process_latex_output", froot)
@@ -1045,6 +1062,16 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
     fLOG("################################")
     fLOG("#### END - check log for success")
     fLOG("################################")
+    for i, row in enumerate(datetime_rows):
+        if i == 0:
+            a = row[1]
+        else:
+            a = datetime_rows[i - 1][1]
+        b = row[1]
+        d = b - a
+        mes = "[generate_help_sphinx] {0}{1}: {2} [{3} --> {4}]".format(
+            row[0], " " * (15 - len(row[0])), d, a, b)
+        fLOG(mes)
     fLOG("---- JENKINS END DOCUMENTATION ----")
 
 

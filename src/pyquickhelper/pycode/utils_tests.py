@@ -8,11 +8,10 @@
 .. versionchanged:: 1.4
     Split into 3 files.
 """
-from __future__ import print_function
-
 import os
 import sys
 import unittest
+from datetime import datetime
 
 from ..loghelper.flog import noLOG
 from ..filehelper import synchronize_folder
@@ -143,6 +142,7 @@ def main_wrapper_tests(codefile, skip_list=None, processes=False, add_coverage=F
     runner = unittest.TextTestRunner(verbosity=0, stream=whole_ouput)
     path = os.path.abspath(os.path.join(os.path.split(codefile)[0]))
     stdout_this = stdout if stdout else sys.stdout
+    datetime_begin = datetime.now()
 
     def run_main():
         res = main_run_test(runner, path_test=path, skip=-1, skip_list=skip_list,
@@ -375,5 +375,12 @@ def main_wrapper_tests(codefile, skip_list=None, processes=False, add_coverage=F
         if len(err) > 0:
             raise Exception(err)
 
-        fLOG("[main_wrapper_tests] END")
-        stdout_this.write("[main_wrapper_tests] END\n")
+        datetime_end = datetime.now()
+
+        rows = ["[main_wrapper_tests] END",
+                "[main_wrapper_tests] begin time {0}".format(datetime_begin),
+                "[main_wrapper_tests] end time {0}".format(datetime_end),
+                "[main_wrapper_tests] duration {0}".format(datetime_end - datetime_begin)]
+        for row in rows:
+            fLOG(row)
+            stdout_this.write(row + "\n")
