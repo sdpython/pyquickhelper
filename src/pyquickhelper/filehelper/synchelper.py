@@ -196,8 +196,8 @@ def synchronize_folder(p1: str, p2: str, hash_size=1024 ** 2, repo1=False, repo2
         Parameter *fLOG* was added.
     """
 
-    fLOG("from ", p1)
-    fLOG("to   ", p2)
+    fLOG("[synchronize_folder] from ", p1)
+    fLOG("[synchronize_folder] to   ", p2)
 
     if file_date is not None and not os.path.exists(file_date):
         with open(file_date, "w", encoding="utf8") as f:
@@ -239,7 +239,7 @@ def synchronize_folder(p1: str, p2: str, hash_size=1024 ** 2, repo1=False, repo2
     f1 = p1
     f2 = p2
 
-    fLOG("   exploring ", f1)
+    fLOG("[synchronize_folder]   exploring f1", f1)
     node1 = FileTreeNode(
         f1, filter=pr_filter, repository=repo1, log=True, log1=log1)
     fLOG("     number of found files (p1)", len(node1), node1.max_date())
@@ -248,10 +248,11 @@ def synchronize_folder(p1: str, p2: str, hash_size=1024 ** 2, repo1=False, repo2
         status = FilesStatus(file_date, fLOG=fLOG)
         res = list(status.difference(node1, u4=True, nlog=log1n))
     else:
-        fLOG("   exploring ", f2)
+        fLOG("[synchronize_folder]   exploring f2", f2)
         node2 = FileTreeNode(
             f2, filter=pr_filter, repository=repo2, log=True, log1=log1)
-        fLOG("     number of found files (p2)", len(node2), node2.max_date())
+        fLOG("[synchronize_folder]     number of found files (p2)",
+             len(node2), node2.max_date())
         res = node1.difference(node2, hash_size=hash_size)
         status = None
 
@@ -265,7 +266,7 @@ def synchronize_folder(p1: str, p2: str, hash_size=1024 ** 2, repo1=False, repo2
         nbcur += 1
         if nbprint <= 50 and op not in ("==", '<', '<=', '<+') and (n1 is None or not n1.isdir()):
             fLOG(
-                "... {0}/{1} (current: '{2}' :: {3})".format(nbcur, len(res), file, op))
+                "[synchronize_folder] ... {0}/{1} (current: '{2}' :: {3})".format(nbcur, len(res), file, op))
             nbprint += 1
         if filter_copy is not None and not filter_copy(file):
             continue
@@ -277,7 +278,7 @@ def synchronize_folder(p1: str, p2: str, hash_size=1024 ** 2, repo1=False, repo2
                 modif += 1
                 if modif % 50 == 0:
                     fLOG(
-                        "Processed {0}/{1} (current: '{2}')".format(nbcur, len(res), file))
+                        "[synchronize_folder] Processed {0}/{1} (current: '{2}')".format(nbcur, len(res), file))
                     status.save_dates()
         else:
 
@@ -292,7 +293,7 @@ def synchronize_folder(p1: str, p2: str, hash_size=1024 ** 2, repo1=False, repo2
                             modif += 1
                             if modif % 50 == 0:
                                 fLOG(
-                                    "Processed {0}/{1} (current: '{2}')".format(nbcur, len(res), file))
+                                    "[synchronize_folder] Processed {0}/{1} (current: '{2}')".format(nbcur, len(res), file))
                                 status.save_dates()
                     else:
                         pass
@@ -321,7 +322,7 @@ def synchronize_folder(p1: str, p2: str, hash_size=1024 ** 2, repo1=False, repo2
                                     modif += 1
                                     if modif % 50 == 0:
                                         fLOG(
-                                            "Processed {0}/{1} (current: '{2}')".format(nbcur, len(res), file))
+                                            "[synchronize_folder] Processed {0}/{1} (current: '{2}')".format(nbcur, len(res), file))
                                         status.save_dates()
                             else:
                                 fLOG(
@@ -337,10 +338,10 @@ def synchronize_folder(p1: str, p2: str, hash_size=1024 ** 2, repo1=False, repo2
                                 modif += 1
                                 if modif % 50 == 0:
                                     fLOG(
-                                        "Processed {0}/{1} (current: '{2}')".format(nbcur, len(res), file))
+                                        "[synchronize_folder] Processed {0}/{1} (current: '{2}')".format(nbcur, len(res), file))
                                     status.save_dates()
             elif n2 is not None and n1._size != n2._size and not n1.isdir():
-                fLOG("problem", "size are different for file %s (%d != %d) dates (%s,%s) (op %s)" % (
+                fLOG("[synchronize_folder] problem: size are different for file %s (%d != %d) dates (%s,%s) (op %s)" % (
                     file, n1._size, n2._size, n1._date, n2._date, op))
                 # n1.copyTo (f2)
                 # raise Exception ("size are different for file %s (%d != %d) (op %s)" % (file, n1._size, n2._size, op))

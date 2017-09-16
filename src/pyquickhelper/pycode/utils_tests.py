@@ -332,7 +332,7 @@ def main_wrapper_tests(codefile, skip_list=None, processes=False, add_coverage=F
                 src = os.path.dirname(outfile)
                 fLOG("[main_wrapper_tests] dump coverage from '{1}' to '{0}'".format(
                     dump_coverage, outfile))
-                synchronize_folder(src, dump_coverage)
+                synchronize_folder(src, dump_coverage, fLOG=fLOG)
 
             if covtoken:
                 if isinstance(covtoken, tuple):
