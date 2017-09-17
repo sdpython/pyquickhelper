@@ -77,6 +77,7 @@ class TestYamlJenkinsStartup(unittest.TestCase):
         sch = 0
         wipe = 0
         pub = 0
+        arti = 0
         confs = []
         for i, r in enumerate(res):
             conf = r[-1]
@@ -106,6 +107,8 @@ class TestYamlJenkinsStartup(unittest.TestCase):
                 sch += 1
             if "PUBLISHER" in conf:
                 pub += 1
+            if "artifacts" in conf:
+                arti += 1
             if 'if [ "PYPI"' in conf:
                 raise Exception(conf)
             if "<hudson.plugins.git.extensions.impl.WipeWorkspace />" in conf:
@@ -119,6 +122,9 @@ class TestYamlJenkinsStartup(unittest.TestCase):
             raise Exception("{0} != {1}\n{2}".format(
                 wipe, len(confs), "\n\n\n----------------------------\n\n\n".join(confs)))
         if pub != 0 and wipe != 0:
+            raise Exception("{0} != {1}\n{2}".format(
+                wipe, len(confs), "\n\n\n----------------------------\n\n\n".join(confs)))
+        if arti == 0:
             raise Exception("{0} != {1}\n{2}".format(
                 wipe, len(confs), "\n\n\n----------------------------\n\n\n".join(confs)))
 

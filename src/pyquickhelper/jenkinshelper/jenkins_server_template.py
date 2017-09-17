@@ -136,3 +136,15 @@ __CONTENT__
   <useWorkspace>true</useWorkspace>
 </com.etas.jenkins.plugins.CreateTextFile.CreateFileBuilder>
 """
+
+#: artifacts
+_artifacts = """
+    <hudson.tasks.ArtifactArchiver>
+      <artifacts>__PATTERN__</artifacts>
+      <allowEmptyArchive>false</allowEmptyArchive>
+      <onlyIfSuccessful>true</onlyIfSuccessful>
+      <fingerprint>false</fingerprint>
+      <defaultExcludes>true</defaultExcludes>
+      <caseSensitive>true</caseSensitive>
+    </hudson.tasks.ArtifactArchiver>
+"""

@@ -33,7 +33,7 @@ from ..pycode.windows_scripts import windows_jenkins_27_conda, windows_jenkins_2
 from ..pycode.build_helper import private_script_replacements
 from .jenkins_exceptions import JenkinsExtException, JenkinsJobException
 from .jenkins_server_template import _config_job, _trigger_up, _trigger_time, _git_repo, _task_batch
-from .jenkins_server_template import _trigger_startup, _publishers, _file_creation, _wipe_repo
+from .jenkins_server_template import _trigger_startup, _publishers, _file_creation, _wipe_repo, _artifacts
 from .yaml_helper import enumerate_processed_yml
 from .jenkins_helper import jenkins_final_postprocessing
 
@@ -109,6 +109,7 @@ class JenkinsExt(jenkins.Jenkins):
     _task_batch = _task_batch
     _publishers = _publishers
     _wipe_repo = _wipe_repo
+    _artifacts = _artifacts
 
     def __init__(self, url, username=None, password=None, timeout=socket._GLOBAL_DEFAULT_TIMEOUT,
                  mock=False, engines=None, platform=sys.platform, pypi_port=8067, fLOG=noLOG,
@@ -798,6 +799,8 @@ class JenkinsExt(jenkins.Jenkins):
         if mails is not None:
             publishers.append(
                 JenkinsExt._publishers.replace("__MAIL__", mails))
+        publishers.append(JenkinsExt._artifacts.replace(
+            "__PATTERN__", "dist/**"))
 
         # replacements
         conf = JenkinsExt._config_job
