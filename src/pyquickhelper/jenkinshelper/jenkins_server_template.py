@@ -141,7 +141,7 @@ __CONTENT__
 _artifacts = """
     <hudson.tasks.ArtifactArchiver>
       <artifacts>__PATTERN__</artifacts>
-      <allowEmptyArchive>false</allowEmptyArchive>
+      <allowEmptyArchive>true</allowEmptyArchive>
       <onlyIfSuccessful>true</onlyIfSuccessful>
       <fingerprint>false</fingerprint>
       <defaultExcludes>true</defaultExcludes>
