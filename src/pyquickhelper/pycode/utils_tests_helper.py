@@ -25,9 +25,9 @@ else:
     from io import StringIO
 
 
-def get_temp_folder(thisfile, name=None, clean=True, create=True):
+def get_temp_folder(thisfile, name=None, clean=True, create=True, max_path=False):
     """
-    return a local temporary folder to store files when unit testing
+    Creates and returns a local temporary folder to store files when unit testing.
 
     @param      thisfile        use ``__file__`` or the function which runs the test
     @param      name            name of the temporary folder
@@ -41,6 +41,8 @@ def get_temp_folder(thisfile, name=None, clean=True, create=True):
         Parameter *thisfile* can be a function or a method.
         The function will extract the file which runs this test and will name
         the temporary folder base on the name of the method. *name* must be None.
+        Parameter *max_path* was added to change the location to ``\\temp`` on Windows
+        if the ``MAX_PATH`` might be reached.
     """
     if name is None:
         name = thisfile.__name__
@@ -49,16 +51,22 @@ def get_temp_folder(thisfile, name=None, clean=True, create=True):
         elif not name.startswith("temp_"):
             name = "temp_" + name
         thisfile = os.path.abspath(thisfile.__func__.__code__.co_filename)
-
     final = os.path.split(name)[-1]
+
     if not final.startswith("temp_"):
         raise NameError("the folder '{0}' must begin with temp_".format(name))
 
     local = os.path.join(
         os.path.normpath(os.path.abspath(os.path.dirname(thisfile))), name)
+
+    if sys.platform.startswith("win") and max_path:
+        from ctypes.wintypes import MAX_PATH
+        if MAX_PATH <= 300:
+            local = os.path.join(os.path.abspath("\\temp"), name)
+
     if name == local:
         raise NameError(
-            "the folder '{0}' must be relative, not absolute".format(name))
+            "The folder '{0}' must be relative, not absolute".format(name))
 
     if not os.path.exists(local):
         if create:
