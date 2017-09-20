@@ -40,7 +40,11 @@ def enumerate_notebooks_link(nb_folder, nb_rst):
     crsts = {}
     for rst in rsts:
         with open(rst, "r", encoding="utf-8") as f:
-            crsts[rst] = f.read()
+            try:
+                crsts[rst] = f.read()
+            except UnicodeDecodeError as e:
+                raise ValueError(
+                    "Issue with file '{0}'".format(rst)) from e
 
     nbcount = {}
 
