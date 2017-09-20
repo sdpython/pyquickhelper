@@ -26,3 +26,5 @@ History
 * `34`: applies pep8 on the code being rendered on the documentation
 * `65`: add function to clean readme.rst before sending it to pypi
 * `67`: add toctree delayed which gets filled after the dynamic content is created, use it for blogs
+* `77`: add class ExtUnitCase with extensive test function
+* `78`: get_temp_folder change other default directory

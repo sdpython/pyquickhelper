@@ -12,6 +12,7 @@ from .setup_helper import process_standard_options_for_setup, write_version_for_
 from .setup_helper import available_commands_list
 from .tkinter_helper import fix_tkinter_issues_virtualenv
 from .trace_execution import get_call_stack
+from .unittestclass import ExtTestCase
 from .utils_tests import main_wrapper_tests
 from .utils_tests_helper import get_temp_folder, check_pep8, add_missing_development_version
 from .venv_helper import create_virtual_env, run_venv_script, compare_module_version, run_base_script
