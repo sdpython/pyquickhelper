@@ -25,7 +25,7 @@ else:
     from io import StringIO
 
 
-def get_temp_folder(thisfile, name=None, clean=True, create=True, max_path=False):
+def get_temp_folder(thisfile, name=None, clean=True, create=True, max_path=False, max_path_name="tpath"):
     """
     Creates and returns a local temporary folder to store files when unit testing.
 
@@ -33,6 +33,11 @@ def get_temp_folder(thisfile, name=None, clean=True, create=True, max_path=False
     @param      name            name of the temporary folder
     @param      clean           if True, clean the folder first
     @param      create          if True, creates it (empty if clean is True)
+    @param      max_path        create a folder at root level to reduce path length,
+                                the function checks the ``MAX_PATH`` variable and
+                                shorten the test folder is *max_path* is True on Windows
+                                or ``'force'`` on any OS.
+    @param      max_path_name   test path used when *max_path* is True
     @return                     temporary folder
 
     .. versionadded:: 0.9
@@ -41,8 +46,8 @@ def get_temp_folder(thisfile, name=None, clean=True, create=True, max_path=False
         Parameter *thisfile* can be a function or a method.
         The function will extract the file which runs this test and will name
         the temporary folder base on the name of the method. *name* must be None.
-        Parameter *max_path* was added to change the location to ``\\temp`` on Windows
-        if the ``MAX_PATH`` might be reached.
+        Parameters *max_path*, *max_path_name* were added to change the location to
+        ``\\max_path_name`` if the ``MAX_PATH`` might be reached (on Windows)
     """
     if name is None:
         name = thisfile.__name__
@@ -59,10 +64,10 @@ def get_temp_folder(thisfile, name=None, clean=True, create=True, max_path=False
     local = os.path.join(
         os.path.normpath(os.path.abspath(os.path.dirname(thisfile))), name)
 
-    if sys.platform.startswith("win") and max_path:
+    if max_path == "force" or sys.platform.startswith("win") and max_path:
         from ctypes.wintypes import MAX_PATH
         if MAX_PATH <= 300:
-            local = os.path.join(os.path.abspath("\\temp"), name)
+            local = os.path.join(os.path.abspath("\\" + max_path_name), name)
 
     if name == local:
         raise NameError(
