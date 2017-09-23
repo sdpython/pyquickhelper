@@ -6,6 +6,7 @@
 import sys
 import os
 import unittest
+import warnings
 
 try:
     import src
@@ -63,12 +64,17 @@ class TestExtTestCase(ExtTestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
-        from pandas import DataFrame
+        with warnings.catch_warnings():
+            warnings.filterwarnings("ignore", category=ImportWarning)
+            from pandas import DataFrame
         df = DataFrame(data=dict(a=["a"]))
         df1 = DataFrame(data=dict(a=["a"]))
         df2 = DataFrame(data=dict(a=["b"]))
         self.assertEqualDataFrame(df, df1)
         self.assertRaise(lambda: self.assertEqualDataFrame(
+            df, df2), AssertionError)
+        self.assertEqual(df, df1)
+        self.assertRaise(lambda: self.assertEqual(
             df, df2), AssertionError)
 
     def test_arr(self):

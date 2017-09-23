@@ -6,6 +6,7 @@
 """
 import os
 import unittest
+import warnings
 
 
 class ExtTestCase(unittest.TestCase):
@@ -103,3 +104,16 @@ class ExtTestCase(unittest.TestCase):
             if len(whole) > len(sub) * 2:
                 whole = whole[-len(sub) * 2:]
             raise AssertionError("'{0}' does not end '{1}'".format(sub, whole))
+
+    def assertEqual(self, a, b):
+        try:
+            unittest.TestCase.assertEqual(self, a,b)
+        except ValueError as e:
+            if "The truth value of a DataFrame is ambiguous" in str(e):
+                with warnings.catch_warnings():
+                    warnings.filterwarnings("ignore", category=ImportWarning)
+                    import pandas
+                if isinstance(a, pandas.DataFrame) and isinstance(b, pandas.DataFrame):
+                    self.assertEqualDataFrame(a, b)
+                    return
+            raise e
