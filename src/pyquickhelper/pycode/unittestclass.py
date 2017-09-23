@@ -107,7 +107,7 @@ class ExtTestCase(unittest.TestCase):
 
     def assertEqual(self, a, b):
         try:
-            unittest.TestCase.assertEqual(self, a,b)
+            unittest.TestCase.assertEqual(self, a, b)
         except ValueError as e:
             if "The truth value of a DataFrame is ambiguous" in str(e):
                 with warnings.catch_warnings():

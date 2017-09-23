@@ -4,7 +4,7 @@
     :keywords: python, warnings
     :date: 2017-09-23
     :categories: warnings
-    
+
     The following code turns warnings into errors.
     Useful to find the source of a warning.
 
@@ -13,13 +13,13 @@
         with warnings.catch_warnings():
             warnings.filterwarnings('error')
             from pandas import DataFrame
-    
+
     Another one to remove annoying warnings which happen
     sometimes when a module is imported not at the beginning
     of a file:
-    
+
     ::
-    
+
         with warnings.catch_warnings():
             warnings.filterwarnings("ignore", category=ImportWarning)
             import pandas
