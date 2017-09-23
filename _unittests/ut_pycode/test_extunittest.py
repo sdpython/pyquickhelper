@@ -85,6 +85,29 @@ class TestExtTestCase(ExtTestCase):
         self.assertRaise(lambda: self.assertEqualArray(
             df, df2), AssertionError)
 
+    def test_str(self):
+        fLOG(
+            __file__,
+            self._testMethodName,
+            OutputPrint=__name__ == "__main__")
+
+        self.assertStartsWith("a", "ab")
+        self.assertRaise(lambda: self.assertStartsWith(
+            "ab", "a"), AssertionError)
+        self.assertEndsWith("a", "ba")
+        self.assertRaise(lambda: self.assertEndsWith(
+            "ba", "a"), AssertionError)
+
+    def test_not_empty(self):
+        fLOG(
+            __file__,
+            self._testMethodName,
+            OutputPrint=__name__ == "__main__")
+
+        self.assertNotEmpty([0])
+        self.assertRaise(lambda: self.assertNotEmpty(None), AssertionError)
+        self.assertRaise(lambda: self.assertNotEmpty([]), AssertionError)
+
 
 if __name__ == "__main__":
     unittest.main()

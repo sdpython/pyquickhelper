@@ -22,6 +22,13 @@ class ExtTestCase(unittest.TestCase):
         else:
             return s
 
+    def assertNotEmpty(self, x):
+        """
+        Checks that *x* is not empty.
+        """
+        if x is None or (hasattr(x, "__len__") and len(x) == 0):
+            raise AssertionError("x est empty")
+
     def assertGreater(self, x, y):
         """
         Checks that ``x >= y``.
@@ -77,3 +84,22 @@ class ExtTestCase(unittest.TestCase):
                 "Function '{0}' does not raise exception '{1}' but '{2}'.".format(fct, exc, e))
         raise AssertionError(
             "Function '{0}' does not raise exception.".format(fct))
+
+    def assertStartsWith(self, sub, whole):
+        """
+        Checks that string *sub* starts with *whole*.
+        """
+        if not whole.startswith(sub):
+            if len(whole) > len(sub) * 2:
+                whole = whole[:len(sub) * 2]
+            raise AssertionError(
+                "'{0}' does not start '{1}'".format(sub, whole))
+
+    def assertEndsWith(self, sub, whole):
+        """
+        Checks that string *sub* starts with *whole*.
+        """
+        if not whole.endswith(sub):
+            if len(whole) > len(sub) * 2:
+                whole = whole[-len(sub) * 2:]
+            raise AssertionError("'{0}' does not end '{1}'".format(sub, whole))
