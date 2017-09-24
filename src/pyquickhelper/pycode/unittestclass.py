@@ -69,10 +69,14 @@ class ExtTestCase(unittest.TestCase):
         from numpy.testing import assert_array_equal
         assert_array_equal(d1, d2, **kwargs)
 
-    def assertRaise(self, fct, exc=None):
+    def assertRaise(self, fct, exc=None, msg=None):
         """
         Checks that function *fct* with no parameter
         raises an exception of a given type.
+
+        @param      fct     function to test (no parameter)
+        @param      exc     exception type to catch (None for all)
+        @param      msg     error message to check (None for no message to check)
         """
         try:
             fct()
@@ -80,6 +84,11 @@ class ExtTestCase(unittest.TestCase):
             if exc is None:
                 return
             elif isinstance(e, exc):
+                if msg is None:
+                    return
+                if msg not in str(e):
+                    raise AssertionError(
+                        "Function '{0}' raise exception with wrong message '{1}' (must contain '{2}').".format(fct, e, msg))
                 return
             raise AssertionError(
                 "Function '{0}' does not raise exception '{1}' but '{2}'.".format(fct, exc, e))

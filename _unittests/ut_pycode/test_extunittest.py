@@ -40,6 +40,16 @@ class TestExtTestCase(ExtTestCase):
         self.assertRaise(lambda: self.assertExists(
             __file__ + ".k"), FileNotFoundError)
 
+    def test_files_msg(self):
+        fLOG(
+            __file__,
+            self._testMethodName,
+            OutputPrint=__name__ == "__main__")
+
+        self.assertExists(__file__)
+        self.assertRaise(lambda: self.assertExists(
+            __file__ + ".k"), FileNotFoundError, "Unable to find")
+
     def test_greater(self):
         fLOG(
             __file__,
