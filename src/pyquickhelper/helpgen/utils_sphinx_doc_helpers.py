@@ -103,6 +103,9 @@ def compute_truncated_documentation(doc, length=_length_truncated_doc,
         if "@brief " in doc:
             doc = doc.split("@brief ")
             doc = doc[-1]
+        if ":githublink:" in doc:
+            doc = doc.split(":githublink:")
+            doc = doc[-1]
 
         doc = doc.strip("\n\r\t ").replace("\t", "    ")
 
@@ -146,6 +149,8 @@ def compute_truncated_documentation(doc, length=_length_truncated_doc,
                 doc += spl[i] + " "
                 i += 1
             doc += "..."
+
+        doc = re.sub(' +', ' ', doc)
 
         if raise_exception and len(doc) == 0:
             raise ValueError("bad format for docstring: " + doc_)
