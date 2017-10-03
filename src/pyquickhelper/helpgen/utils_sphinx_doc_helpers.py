@@ -105,7 +105,7 @@ def compute_truncated_documentation(doc, length=_length_truncated_doc,
             doc = doc[-1]
         if ":githublink:" in doc:
             doc = doc.split(":githublink:")
-            doc = doc[-1]
+            doc = doc[0]
 
         doc = doc.strip("\n\r\t ").replace("\t", "    ")
 
