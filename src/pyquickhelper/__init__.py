@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 """
-Main files, contains the version, the url to the documention.
+@file
+@brief Module *pyquickhelper*.
+Helpers to produce documentation, test notebooks, walk through files,
+sphinx extension, jenkins helpers...
 """
 
 __version__ = "1.5"
