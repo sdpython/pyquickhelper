@@ -38,6 +38,7 @@ sphinx-rtd-theme
 sphinxcontrib-images
 sphinxcontrib-imagesvg
 sphinxcontrib-jsdemo
+sphinxcontrib.youtube
 sphinxjp.themes.revealjs
 sphinxjp.themes.sphinxjp
 tqdm
