@@ -54,6 +54,8 @@ from ..sphinxext.sphinx_postcontents_extension import depart_postcontents_node a
 from ..sphinxext.sphinx_postcontents_extension import visit_postcontents_node as ext_visit_postcontents_node
 from ..sphinxext.sphinx_tocdelay_extension import depart_tocdelay_node as ext_depart_tocdelay_node
 from ..sphinxext.sphinx_tocdelay_extension import visit_tocdelay_node as ext_visit_tocdelay_node
+from ..sphinxext.sphinx_youtube_extension import depart_youtube_node as ext_depart_youtube_node
+from ..sphinxext.sphinx_youtube_extension import visit_youtube_node as ext_visit_youtube_node
 
 with warnings.catch_warnings():
     warnings.simplefilter("ignore")
@@ -321,6 +323,18 @@ class _AdditionalVisitDepart:
         @see fn visit_tocdelay_node
         """
         ext_visit_tocdelay_node(self, node)
+
+    def depart_youtube_node(self, node):
+        """
+        @see fn depart_youtube_node
+        """
+        ext_depart_youtube_node(self, node)
+
+    def visit_youtube_node(self, node):
+        """
+        @see fn visit_youtube_node
+        """
+        ext_visit_youtube_node(self, node)
 
     def visit_Release(self, node):
         """

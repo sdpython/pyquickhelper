@@ -28,3 +28,4 @@ History
 * `67`: add toctree delayed which gets filled after the dynamic content is created, use it for blogs
 * `77`: add class ExtUnitCase with extensive test function
 * `78`: get_temp_folder change other default directory
+* `81`: add youtube sphinx extension

@@ -271,7 +271,6 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
                   # 'matplotlib.sphinxext.mathmpl',
                   # 'matplotlib.sphinxext.only_directives',
                   'matplotlib.sphinxext.plot_directive',
-                  'sphinxcontrib.youtube',
                   # 'matplotlib.sphinxext.ipython_directive',
                   'jupyter_sphinx.embed_widgets',
                   "nbsphinx",
@@ -725,6 +724,7 @@ def custom_setup(app, author):
     from ..sphinxext.sphinx_cmdref_extension import setup as setup_cmdref
     from ..sphinxext.sphinx_postcontents_extension import setup as setup_postcontents
     from ..sphinxext.sphinx_tocdelay_extension import setup as setup_tocdelay
+    from ..sphinxext.sphinx_youtube_extension import setup as setup_youtube
     from ..sphinxext.sphinx_epkg_extension import setup as setup_epkg
     from ..sphinxext.releases import setup as setup_releases
     from ..sphinxext.sphinx_toctree_extension import setup as setup_toctree
@@ -750,6 +750,7 @@ def custom_setup(app, author):
     setup_docassert(app)
     setup_postcontents(app)
     setup_tocdelay(app)
+    setup_youtube(app)
     setup_tpl(app)
     setup_epkg(app)
     setup_releases(app)
