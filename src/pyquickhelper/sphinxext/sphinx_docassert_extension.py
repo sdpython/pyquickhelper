@@ -25,9 +25,9 @@ def check_typed_make_field(self,
                            kind=None   # str
                            ):
     """
-    Overwrite function
+    Overwrites function
     `make_field <https://github.com/sphinx-doc/sphinx/blob/master/sphinx/util/docfields.py#L197>`_.
-    Process one argument of a function.
+    Processes one argument of a function.
 
     @param      self            from original function
     @param      types           from original function

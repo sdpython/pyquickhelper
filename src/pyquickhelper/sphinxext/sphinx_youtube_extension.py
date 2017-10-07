@@ -11,6 +11,7 @@ import sphinx
 from docutils import nodes
 from docutils.parsers.rst import directives
 from sphinx.util.compat import Directive
+from sphinx.util import logging
 
 CONTROL_HEIGHT = 30
 
@@ -73,7 +74,7 @@ def visit_youtube_node(self, node):
             "border": "0",
         }
         attrs = {
-            "src": "http://www.youtube.com/embed/%s" % node["id"],
+            "src": "https://www.youtube.com/embed/%s" % node["id"],
             "style": css(style),
         }
         self.body.append(self.starttag(node, "iframe", **attrs))
@@ -92,7 +93,7 @@ def visit_youtube_node(self, node):
             "border": "0",
         }
         attrs = {
-            "src": "http://www.youtube.com/embed/%s" % node["id"],
+            "src": "https://www.youtube.com/embed/%s" % node["id"],
             "style": css(style),
         }
         self.body.append(self.starttag(node, "iframe", **attrs))
@@ -131,7 +132,22 @@ class YoutubeDirective(Directive):
             aspect = None
         width = get_size(self.options, "width")
         height = get_size(self.options, "height")
-        return [youtube_node(id=self.arguments[0], aspect=aspect, width=width, height=height)]
+        idurl = self.arguments[0]
+        if "https://" in idurl or "http://" in idurl:
+            if "watch?v=" in idurl:
+                uid = idurl.split("watch?v=")[-1]
+            else:
+                env = self.state.document.settings.env if hasattr(
+                    self.state.document.settings, "env") else None
+                logger = logging.getLogger("youtube")
+                lineno = self.lineno
+                docname = None if env is None else env.docname
+                logger.warning(
+                    "[youtube] unable to extract video id from '{0}' in docname '{1}' - line {2}.".format(idurl, docname, lineno))
+                uid = ""
+        else:
+            uid = self.arguments[0]
+        return [youtube_node(id=uid, aspect=aspect, width=width, height=height)]
 
 
 def setup(app):
