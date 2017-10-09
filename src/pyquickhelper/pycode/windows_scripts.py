@@ -249,7 +249,7 @@ if %errorlevel% neq 0 exit /b %errorlevel%
 %pythonexe% %current%setup.py write_version
 if %errorlevel% neq 0 exit /b %errorlevel%
 @echo ################# VERSION
-more version.txt
+more %~dp0..\\version.txt
 if %errorlevel% neq 0 exit /b %errorlevel%
 @echo ################# VERSION
 
@@ -298,8 +298,10 @@ windows_build_setup = windows_any_setup_command_base + windows_setup_hook + """
 @echo ~CALL %pythonexe% %current%setup.py sdist %2 --formats=gztar,zip --verbose
 %pythonexe% %current%setup.py sdist %2 --formats=gztar,zip --verbose
 if %errorlevel% neq 0 exit /b %errorlevel%
+pushd %current%
 @echo ~CALL %pythonexe% %current%setup.py bdist_wheel %2
 %pythonexe% %current%setup.py bdist_wheel %2
+popd
 if %errorlevel% neq 0 exit /b %errorlevel%
 """ + copy_to_pypiserver
 
@@ -316,17 +318,25 @@ if %errorlevel% neq 0 exit /b %errorlevel%
 
 @echo ~CALL %pythonexe% %current%setup.py clean_pyd
 %pythonexe% %current%setup.py clean_pyd
+pushd %current%
 @echo ~CALL %pythonexe% %current%setup.py sdist --formats=gztar,zip --verbose
 %pythonexe% %current%setup.py sdist --formats=gztar,zip --verbose
+popd
 if %errorlevel% neq 0 exit /b %errorlevel%
+pushd %current%
 @echo ~CALL %pythonexe% %current%setup.py bdist_wininst --plat-name=win-amd64
 %pythonexe% %current%setup.py bdist_wininst --plat-name=win-amd64
+popd
 if %errorlevel% neq 0 exit /b %errorlevel%
+pushd %current%
 @echo ~CALL %pythonexe% %current%setup.py bdist_msi
 %pythonexe% %current%setup.py bdist_msi
+popd
 if %errorlevel% neq 0 exit /b %errorlevel%
+pushd %current%
 @echo ~CALL %pythonexe% %current%setup.py bdist_wheel
 %pythonexe% %current%setup.py bdist_wheel
+popd
 if %errorlevel% neq 0 exit /b %errorlevel%
 @echo #######################################################7
 
@@ -422,8 +432,10 @@ windows_publish = """
 %pythonexe% %current%setup.py rotate --match=.tar.gz --keep=10
 %pythonexe% %current%setup.py rotate --match=.whl --keep=10
 rem %pythonexe% %current%setup.py sdist register
+pushd %current%
 %pythonexe% %current%setup.py sdist --formats=gztar upload
 %pythonexe% %current%setup.py bdist_wheel upload
+popd
 """
 
 #################
@@ -431,7 +443,9 @@ rem %pythonexe% %current%setup.py sdist register
 #################
 windows_publish_doc = """
 @echo SCRIPT: windows_publish_doc
+pushd %current%
 %pythonexe% -u %current%setup.py upload_docs --upload-dir=dist/html
+popd
 """
 
 #################
