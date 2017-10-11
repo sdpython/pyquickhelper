@@ -527,7 +527,7 @@ def apply_modification_template(rootm, store_obj, template, fullname, rootrep,
     rep = {"__FULLNAME_UNDERLINED__": ttitle + "\n" + ("=" * len(ttitle)) + "\n",
            "__FILENAMENOEXT__": filenoext,
            "__FULLNAMENOEXT__": pythonname,
-           "__DOCUMENTATION__": doc.split(".. todoext::")[0],
+           "__DOCUMENTATION__": doc.split("\n.. ")[0],
            "__DOCUMENTATIONLINE__": shortdoc.split(".. todoext::")[0],
            "__PLATFORM__": plat,
            "__ADDEDMEMBERS__": text_specials,
@@ -559,7 +559,7 @@ def add_file_rst(rootm, store_obj, actions, template=add_file_rst_template,
                  mapped_function=None, indexes=None,
                  additional_sys_path=None, fLOG=noLOG):
     """
-    creates a rst file for every source file
+    Creates a rst file for every source file.
 
     @param      rootm           root of the module (for relative import)
     @param      store_obj       to keep table of all objects
