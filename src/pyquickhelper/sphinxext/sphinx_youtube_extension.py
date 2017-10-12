@@ -57,47 +57,50 @@ def visit_youtube_node(self, node):
     if aspect is None:
         aspect = 16, 9
 
-    if (height is None) and (width is not None) and (width[1] == "%"):
-        style = {
-            "padding-top": "%dpx" % CONTROL_HEIGHT,
-            "padding-bottom": "%f%%" % (width[0] * aspect[1] / aspect[0]),
-            "width": "%d%s" % width,
-            "position": "relative",
-        }
-        self.body.append(self.starttag(node, "div", style=css(style)))
-        style = {
-            "position": "absolute",
-            "top": "0",
-            "left": "0",
-            "width": "100%",
-            "height": "100%",
-            "border": "0",
-        }
-        attrs = {
-            "src": "https://www.youtube.com/embed/%s" % node["id"],
-            "style": css(style),
-        }
-        self.body.append(self.starttag(node, "iframe", **attrs))
-        self.body.append("</iframe></div>")
-    else:
-        if width is None:
+    if hasattr(self, "starttag"):
+        if (height is None) and (width is not None) and (width[1] == "%"):
+            style = {
+                "padding-top": "%dpx" % CONTROL_HEIGHT,
+                "padding-bottom": "%f%%" % (width[0] * aspect[1] / aspect[0]),
+                "width": "%d%s" % width,
+                "position": "relative",
+            }
+            self.body.append(self.starttag(node, "div", style=css(style)))
+            style = {
+                "position": "absolute",
+                "top": "0",
+                "left": "0",
+                "width": "100%",
+                "height": "100%",
+                "border": "0",
+            }
+            attrs = {
+                "src": "https://www.youtube.com/embed/%s" % node["id"],
+                "style": css(style),
+            }
+            self.body.append(self.starttag(node, "iframe", **attrs))
+            self.body.append("</iframe></div>")
+        else:
+            if width is None:
+                if height is None:
+                    width = 560, "px"
+                else:
+                    width = height[0] * aspect[0] / aspect[1], "px"
             if height is None:
-                width = 560, "px"
-            else:
-                width = height[0] * aspect[0] / aspect[1], "px"
-        if height is None:
-            height = width[0] * aspect[1] / aspect[0], "px"
-        style = {
-            "width": "%d%s" % width,
-            "height": "%d%s" % (height[0] + CONTROL_HEIGHT, height[1]),
-            "border": "0",
-        }
-        attrs = {
-            "src": "https://www.youtube.com/embed/%s" % node["id"],
-            "style": css(style),
-        }
-        self.body.append(self.starttag(node, "iframe", **attrs))
-        self.body.append("</iframe>")
+                height = width[0] * aspect[1] / aspect[0], "px"
+            style = {
+                "width": "%d%s" % width,
+                "height": "%d%s" % (height[0] + CONTROL_HEIGHT, height[1]),
+                "border": "0",
+            }
+            attrs = {
+                "src": "https://www.youtube.com/embed/%s" % node["id"],
+                "style": css(style),
+            }
+            self.body.append(self.starttag(node, "iframe", **attrs))
+            self.body.append("</iframe>")
+    else:
+        self.body.append("https://www.youtube.com/embed/%s" % node["id"])
 
 
 def depart_youtube_node(self, node):
