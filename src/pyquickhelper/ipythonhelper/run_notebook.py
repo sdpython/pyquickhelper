@@ -36,7 +36,7 @@ else:
 
 def _cache_url_to_file(cache_urls, folder, fLOG=noLOG):
     """
-    download file corresponding to url stored in *cache_urls*
+    Downloads file corresponding to url stored in *cache_urls*.
 
     @param      cache_urls      list of urls
     @param      folder          where to store the cached files
@@ -80,7 +80,7 @@ def run_notebook(filename, profile_dir=None, working_dir=None, skip_exceptions=F
                  extended_args=None, cache_urls=None, replacements=None,
                  detailed_log=None):
     """
-    Run a notebook end to end,
+    Runs a notebook end to end,
     it is inspired from module `runipy <https://github.com/paulgb/runipy/>`_.
 
     @param      filename            notebook filename

@@ -287,7 +287,7 @@ class NotebookRunner(object):
 
     def __add__(self, nb):
         """
-        merges two notebooks together, returns a new none
+        Merges two notebooks together, returns a new none.
 
         @param      nb      notebook
         @return             new notebook
@@ -298,7 +298,7 @@ class NotebookRunner(object):
 
     def shutdown_kernel(self):
         """
-        shut down kernel
+        Shuts down kernel.
         """
         self.fLOG('-- shutdown kernel')
         if self.kc is None:
@@ -309,8 +309,8 @@ class NotebookRunner(object):
 
     def clean_code(self, code):
         """
-        clean the code before running it, the function comment out
-        instruction such as ``show()``
+        Cleans the code before running it, the function comment out
+        instruction such as ``show()``.
 
         @param      code        code (string)
         @return                 cleaned code
@@ -344,7 +344,7 @@ class NotebookRunner(object):
     @staticmethod
     def get_cell_code(cell):
         """
-        return the code of a cell
+        Returns the code of a cell.
 
         @param      cell        a cell or a string
         @return                 boolean (=iscell), string
@@ -362,7 +362,7 @@ class NotebookRunner(object):
 
     def run_cell(self, index_cell, cell, clean_function=None):
         '''
-        Run a notebook cell and update the output of that cell in-place.
+        Runs a notebook cell and update the output of that cell in-place.
 
         @param      index_cell          index of the cell
         @param      cell                cell to execute
@@ -578,7 +578,7 @@ class NotebookRunner(object):
 
     def iter_code_cells(self):
         '''
-        Iterate over the notebook cells containing code.
+        Iterates over the notebook cells containing code.
         '''
         for cell in self.iter_cells():
             if cell.cell_type == 'code':
@@ -586,7 +586,7 @@ class NotebookRunner(object):
 
     def iter_cells(self):
         '''
-        Iterate over the notebook cells.
+        Iterates over the notebook cells.
         '''
         if hasattr(self.nb, "worksheets"):
             for ws in self.nb.worksheets:
@@ -605,7 +605,7 @@ class NotebookRunner(object):
 
     def _cell_container(self):
         """
-        returns a cells container, it may change according to the format
+        Returns a cells container, it may change according to the format.
 
         @return     cell container
         """
@@ -621,7 +621,7 @@ class NotebookRunner(object):
 
     def __len__(self):
         """
-        Return the number of cells, it iterates on cells
+        Returns the number of cells, it iterates on cells
         to get this information and does cache the information.
 
         @return         int
@@ -632,7 +632,7 @@ class NotebookRunner(object):
 
     def cell_type(self, cell):
         """
-        returns the cell type
+        Returns the cell type.
 
         @param      cell        from @see me iter_cells
         @return                 type
@@ -641,7 +641,7 @@ class NotebookRunner(object):
 
     def cell_metadata(self, cell):
         """
-        returns the cell metadata
+        Returns the cell metadata.
 
         @param      cell        cell
         @return                 metadata
@@ -650,7 +650,7 @@ class NotebookRunner(object):
 
     def _check_thumbnail_tuple(self, b):
         """
-        checks types for a thumbnail
+        Checks types for a thumbnail.
 
         @param      b       tuple   image, format
         @return             b
@@ -747,7 +747,7 @@ class NotebookRunner(object):
 
     def cell_image(self, cell, image_from_text=False):
         """
-        returns the cell image or None if not found
+        Returns the cell image or None if not found.
 
         @param      cell            cell to examine
         @param      image_from_text produce an image even if it is not one
@@ -837,7 +837,7 @@ class NotebookRunner(object):
 
     def cell_height(self, cell):
         """
-        approximate the height of a cell by its number of lines it contains
+        Approximates the height of a cell by its number of lines it contains.
 
         @param      cell        cell
         @return                 number of cell
@@ -909,7 +909,7 @@ class NotebookRunner(object):
 
     def add_tag_slide(self, max_nb_cell=4, max_nb_line=25):
         """
-        tries to add tags for a slide show when they are too few
+        Tries to add tags for a slide show when they are too few.
 
         @param      max_nb_cell     maximum number of cells within a slide
         @param      max_nb_line     maximum number of lines within a slide
@@ -955,9 +955,10 @@ class NotebookRunner(object):
         return res
 
     def run_notebook(self, skip_exceptions=False, progress_callback=None,
-                     additional_path=None, valid=None, clean_function=None):
+                     additional_path=None, valid=None, clean_function=None,
+                     context=None):
         '''
-        Run all the cells of a notebook in order and update
+        Runs all the cells of a notebook in order and update
         the outputs in-place.
 
         If ``skip_exceptions`` is set, then if exceptions occur in a cell, the
@@ -980,6 +981,9 @@ class NotebookRunner(object):
         .. versionchanged:: 1.4
             Function *valid* can now return None to stop the execution of the notebook
             before this cell.
+            
+        .. versionchanged:: 1.5
+            Add parameter *context*.
         '''
         if self.detailed_log:
             self.detailed_log(
@@ -1045,7 +1049,7 @@ class NotebookRunner(object):
 
     def count_code_cells(self):
         '''
-        @return the number of code cells in the notebook
+        Returns the number of code cells in the notebook.
 
         .. versionadded:: 1.1
         '''
@@ -1053,7 +1057,7 @@ class NotebookRunner(object):
 
     def merge_notebook(self, nb):
         """
-        append notebook *nb* to this one
+        Appends notebook *nb* to this one.
 
         @param      nb      notebook or list of notebook (@see cl NotebookRunner)
         @return             number of added cells
@@ -1089,7 +1093,7 @@ class NotebookRunner(object):
 
     def get_description(self):
         """
-        Get summary and description of this notebook.
+        Gets summary and description of this notebook.
         We expect the first cell to contain a title and a description
         of its content.
 
@@ -1147,7 +1151,7 @@ class NotebookRunner(object):
 
     def get_thumbnail(self, max_width=200, max_height=200):
         """
-        Process the notebook and create one picture based on the outputs
+        Processes the notebook and create one picture based on the outputs
         to illustrate a notebook.
 
         @param      max_width       maximum size of the thumbnail
