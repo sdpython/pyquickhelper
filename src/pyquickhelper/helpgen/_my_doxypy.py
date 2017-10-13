@@ -13,6 +13,7 @@ from __future__ import print_function
 import sys
 import re
 from optparse import OptionParser
+from textwrap import dedent
 
 
 _allowed = re.compile("^([a-zA-Z]:)?[^:*?\"<>|]+$")
@@ -135,7 +136,7 @@ class Doxypy(object):
         Constructor for Doxypy.
 
         @param      print_output        function which will receive the output
-        @param      process_comment     function applied to the help to modifies it
+        @param      process_comment     function applied to the help to modify it
         @param      information         a dictionary with additional information such
                                         as filename, first_row
         """
@@ -445,6 +446,12 @@ class Doxypy(object):
                                                 "first_row", 0) + self._index_row + 1,
                                             self.information.get("filename", "filename is not present"))
 
+        # We remove the indentation.
+        joined = "\n".join(commentLines)
+        joined = dedent(joined)
+        commentLines = joined.split("\n")
+
+        # Back to doxypy.
         li = [self.indent + doxyStart]
         li.extend(commentLines)
         li.append(self.indent + doxyEnd)

@@ -69,13 +69,10 @@ notebook conversion into slides, scripts to build setups, documentation, unit te
 
     tutorial/index
     api/index
-    i_ex
     i_nb
     i_cmd
     i_faq
-    Examples Gallery <gyexamples/index>
-    Notebooks Gallery <all_notebooks>
-    blog/blogindex
+    i_galleries
 
 Installation
 ------------
@@ -102,9 +99,7 @@ Index and License
 
     license
     contribute
-    glossary
-    issues_todoextlist
-    indexmenu
+    i_indexes
     HISTORY
 
 +------------------------+---------------------+---------------------+--------------------+------------------------+------------------------------------------------+

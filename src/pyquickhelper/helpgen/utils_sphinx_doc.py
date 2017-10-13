@@ -145,10 +145,10 @@ def _private_process_one_file(
     """
     ext = os.path.splitext(fullname)[-1]
 
-    if ext in [".jpeg", ".jpg", ".pyd", ".png", ".dat", ".dll", ".o", ".so", ".exe", ".enc"]:
+    if ext in [".jpeg", ".jpg", ".pyd", ".png", ".dat", ".dll", ".o", ".so", ".exe", ".enc", ".txt"]:
         if ext in [".pyd", ".so"]:
-            # if the file is being executed, the copy might keep the properties of
-            # the original (only Windows)
+            # If the file is being executed, the copy might keep the properties of
+            # the original (only Windows).
             with open(fullname, "rb") as f:
                 bin = f.read()
             with open(to, "wb") as f:
@@ -395,7 +395,7 @@ def apply_modification_template(rootm, store_obj, template, fullname, rootrep,
     pythonname = None
 
     if os.environ.get("USERNAME", os.environ.get("USER", "````````````")) in fullnamenoext:
-        raise HelpGenException("the title is probably wrong: {0}\nnoext={1}\npython={2}\nrootm={3}\nrootrep={4}\nfullname={5}\nkeepf={6}".format(
+        raise HelpGenException("The title is probably wrong: {0}\nnoext={1}\npython={2}\nrootm={3}\nrootrep={4}\nfullname={5}\nkeepf={6}".format(
             fullnamenoext, filenoext, pythonname, rootm, rootrep, fullname, keepf))
 
     mo, prefix = import_module(
@@ -1752,7 +1752,15 @@ def _private_migrating_doxygen_doc(rows, index_first_line, filename,
         rows.append("")
         rows.append("{1}:githublink:`%|py|{0}`".format(
             index_first_line, " " * min_indent))
-    return rows
+
+    # clean rows
+    clean_rows = []
+    for row in rows:
+        if row.strip():
+            clean_rows.append(row)
+        else:
+            clean_rows.append('')
+    return clean_rows
 
 
 def doc_checking():
