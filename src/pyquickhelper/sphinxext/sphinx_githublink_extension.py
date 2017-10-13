@@ -223,5 +223,6 @@ def setup(app):
     setup for ``githublink`` (sphinx)
     """
     app.add_role('githublink', githublink_role)
+    app.add_role('gitlink', githublink_role)
     app.add_config_value('githublink_options', None, 'env')
     return {'version': sphinx.__display_version__, 'parallel_read_safe': True}
