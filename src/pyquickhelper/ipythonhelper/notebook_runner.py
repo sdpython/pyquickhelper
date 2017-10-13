@@ -981,7 +981,7 @@ class NotebookRunner(object):
         .. versionchanged:: 1.4
             Function *valid* can now return None to stop the execution of the notebook
             before this cell.
-            
+
         .. versionchanged:: 1.5
             Add parameter *context*.
         '''
