@@ -87,7 +87,7 @@ def upgrade_notebook(filename, encoding="utf-8"):
         else:
             lc = list(content)
         raise ValueError(
-            "Unable to read content type '{0}' ---- {1}".format(type(content), lc)) from e
+            "Unable to read content type '{0}' in '{2}' ---- {1}".format(type(content), lc, filename)) from e
 
     if not hasattr(nb, "nbformat") or nb.nbformat >= 4:
         return False
