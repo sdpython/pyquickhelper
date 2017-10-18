@@ -13,6 +13,7 @@ and it defines the jobs in this folder
 ################################################
 # imports
 import os
+import warnings
 try:
     import pyquickhelper
 except ImportError:
@@ -30,7 +31,9 @@ fLOG("start")
 
 #################################
 # password
-import keyring
+with warnings.catch_warnings():
+    warnings.simplefilter('ignore', DeprecationWarning)
+    import keyring
 user = keyring.get_password("jenkins", os.environ["COMPUTERNAME"] + "user")
 pwd = keyring.get_password("jenkins", os.environ["COMPUTERNAME"] + "pwd")
 

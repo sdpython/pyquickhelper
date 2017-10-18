@@ -39,7 +39,9 @@ class TestTransferFTPTrue(unittest.TestCase):
             warnings.warn(
                 "No testing transfer FTP on Pyghon 2.7 (issue with str and bytes)")
             return
-        import keyring
+        with warnings.catch_warnings():
+            warnings.simplefilter('ignore', DeprecationWarning)
+            import keyring
         machine = get_machine()
         try:
             user = keyring.get_password("web", machine + "user")
