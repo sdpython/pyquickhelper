@@ -445,7 +445,8 @@ def remove_execution_number(infile, outfile=None, encoding="utf-8", indent=2, ru
     @param      outfile     None ot save the file
     @param      encoding    encoding
     @param      indent      indentation
-    @param      rule
+    @param      rule        determines the rule which specifies execution numbers,
+                            'None' for None, 'int' for consectuive integers numbers.
     @return                 modified string or None if outfile is not None and the file was not modified
 
     .. todoext::

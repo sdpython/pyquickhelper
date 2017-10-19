@@ -170,7 +170,7 @@ class TestSphinxDoc (unittest.TestCase):
                 issue.append(
                     ("  File \"%s\", line 1," %
                      fi) +
-                    "    issue 1 (unable to migrate through doxygen)")
+                    "    issue 1 (unable to migrate through doxygen '{0}')". format(e))
 
             if "@param" in newc:
                 if "utils_sphinx_doc.py" in fi:
