@@ -437,14 +437,15 @@ def remove_kernel(kernel_name, kernel_spec_manager=None):
             kernel_name, ", ".join(kernels.keys())))
 
 
-def remove_execution_number(infile, outfile=None, encoding="utf-8", indent=2):
+def remove_execution_number(infile, outfile=None, encoding="utf-8", indent=2, rule=int):
     """
-    remove execution number from a notebook
+    Removes execution number from a notebook.
 
     @param      infile      filename of the notebook
     @param      outfile     None ot save the file
     @param      encoding    encoding
     @param      indent      indentation
+    @param      rule
     @return                 modified string or None if outfile is not None and the file was not modified
 
     .. todoext::
@@ -461,18 +462,29 @@ def remove_execution_number(infile, outfile=None, encoding="utf-8", indent=2):
 
     .. versionchanged:: 1.5
         The behavior was changed when outfile is not None.
+        Parameter *rule* was added.
+        `notebook 5.1.0 <http://jupyter-notebook.readthedocs.io/en/stable/changelog.html#release-5-1-0>`_
+        introduced changes which are incompatible with
+        leaving the cell executing number empty.
     """
-
-    def fixup(adict, k, v):
+    def fixup(adict, k, v, cellno=1):
         for key in adict.keys():
             if key == k:
-                adict[key] = v
+                if rule is None:
+                    adict[key] = v
+                elif rule is int:
+                    adict[key] = cellno
+                    cellno += 1
+                else:
+                    raise ValueError(
+                        "Rule '{0}' does not apply on {1}={2}".format(rule, key, adict[key]))
             elif isinstance(adict[key], dict):
-                fixup(adict[key], k, v)
+                cellno = fixup(adict[key], k, v, cellno=cellno)
             elif isinstance(adict[key], list):
                 for el in adict[key]:
                     if isinstance(el, dict):
-                        fixup(el, k, v)
+                        cellno = fixup(el, k, v, cellno=cellno)
+        return cellno
 
     content = read_content_ufs(infile)
     js = json.loads(content, encoding=encoding)

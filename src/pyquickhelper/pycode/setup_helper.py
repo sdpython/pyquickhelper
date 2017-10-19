@@ -557,8 +557,8 @@ def clean_space_for_setup(file_or_folder, file_filter=None):
 
 def clean_notebooks_for_numbers(file_or_folder):
     """
-    Upgrade notebooks to the latest format and
-    clean notebooks execution numbers and rearrange the JSON file
+    Upgrades notebooks to the latest format and
+    cleans notebooks execution numbers and rearranges the JSON file.
 
     @param      file_or_folder      file ``setup.py`` or folder which contains it
     @return                         impacted files
