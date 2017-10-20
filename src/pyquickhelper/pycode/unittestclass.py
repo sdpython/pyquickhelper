@@ -36,7 +36,7 @@ class ExtTestCase(unittest.TestCase):
         """
         if x < y:
             raise AssertionError("x < y with x={0} and y={1}".format(
-                ExtTestCase._format_str(x), ExtTestCase._format_str(x)))
+                ExtTestCase._format_str(x), ExtTestCase._format_str(y)))
 
     def assertLesser(self, x, y):
         """
@@ -44,7 +44,7 @@ class ExtTestCase(unittest.TestCase):
         """
         if x > y:
             raise AssertionError("x > y with x={0} and y={1}".format(
-                ExtTestCase._format_str(x), ExtTestCase._format_str(x)))
+                ExtTestCase._format_str(x), ExtTestCase._format_str(y)))
 
     def assertExists(self, name):
         """
