@@ -888,9 +888,13 @@ class NotebookRunner(object):
                             nbl += 10
                         elif k == "application/vnd.plotly.v1+json":
                             nbl += 10
+                        elif k in ("application/vnd.bokehjs_load.v0+json",
+                                   "application/vnd.bokehjs_exec.v0+json"):
+                            nbl += 10
                         else:
-                            raise NotImplementedError("cell type: '{0}'\nk='{1}'\nv='{2}'\nCELL:\n{3}".format(kind,
-                                                                                                              k, v, cell))
+                            fmt = "Unable to guess heigth for cell type: '{0}'\nk='{1}'\nv='{2}'\nCELL:\n{3}"
+                            raise NotImplementedError(
+                                fmt.format(kind, k, v, cell))
                 elif output["output_type"] == "stream":
                     v = output["text"]
                     nbl += len(v.split("\n"))
