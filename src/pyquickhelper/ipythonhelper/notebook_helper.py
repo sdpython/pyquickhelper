@@ -468,23 +468,32 @@ def remove_execution_number(infile, outfile=None, encoding="utf-8", indent=2, ru
         introduced changes which are incompatible with
         leaving the cell executing number empty.
     """
-    def fixup(adict, k, v, cellno=1):
+    def fixup(adict, k, v, cellno=0, outputs="outputs"):
         for key in adict.keys():
             if key == k:
                 if rule is None:
                     adict[key] = v
                 elif rule is int:
-                    adict[key] = cellno
                     cellno += 1
+                    adict[key] = cellno
                 else:
                     raise ValueError(
                         "Rule '{0}' does not apply on {1}={2}".format(rule, key, adict[key]))
+            elif key == "outputs":
+                if isinstance(adict[key], dict):
+                    fixup(adict[key], k, v, cellno=cellno, outputs=outputs)
+                elif isinstance(adict[key], list):
+                    for el in adict[key]:
+                        if isinstance(el, dict):
+                            fixup(el, k, v, cellno=cellno, outputs=outputs)
             elif isinstance(adict[key], dict):
-                cellno = fixup(adict[key], k, v, cellno=cellno)
+                cellno = fixup(adict[key], k, v,
+                               cellno=cellno, outputs=outputs)
             elif isinstance(adict[key], list):
                 for el in adict[key]:
                     if isinstance(el, dict):
-                        cellno = fixup(el, k, v, cellno=cellno)
+                        cellno = fixup(el, k, v, cellno=cellno,
+                                       outputs=outputs)
         return cellno
 
     content = read_content_ufs(infile)
