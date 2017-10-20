@@ -808,6 +808,8 @@ class NotebookRunner(object):
                         results.append((v, k.split("/")[-1]))
                     elif k == "application/vnd.plotly.v1+json":
                         results.append((v, k.split("/")[-1]))
+                    elif k == "application/vnd.bokehjs_exec.v0+json":
+                        results.append((v, k.split("/")[-1]))
                     else:
                         raise NotImplementedError("cell type: {0}\nk={1}\nv={2}\nCELL:\n{3}".format(kind,
                                                                                                     k, v, cell))
