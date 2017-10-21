@@ -805,7 +805,8 @@ class NotebookRunner(object):
                                 "This should be bytes not '{0}' (=IMG:{1}).".format(type(v), k))
                         results.append((v, k.split("/")[-1]))
                     elif k in ("text/vnd.plotly.v1+html", "application/vnd.plotly.v1+json",
-                               "application/vnd.bokehjs_exec.v0+json"):
+                               "application/vnd.bokehjs_exec.v0+json",
+                               "application/vnd.bokehjs_load.v0+json"):
                         results.append((v, k.split("/")[-1]))
                     else:
                         raise NotImplementedError("cell type: {0}\nk={1}\nv={2}\nCELL:\n{3}".format(kind,
