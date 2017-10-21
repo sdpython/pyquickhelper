@@ -1202,7 +1202,7 @@ class NotebookRunner(object):
             image = images[0]
 
         # zoom
-        if image[1] in ("vnd.plotly.v1+html", "vnd.bokehjs_exec.v0+json"):
+        if image[1] in ("vnd.plotly.v1+html", "vnd.bokehjs_exec.v0+json", "vnd.bokehjs_load.v0+json"):
             return None
         elif image[1] != "svg":
             img = self._scale_image(
