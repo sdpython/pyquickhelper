@@ -1233,7 +1233,8 @@ class NotebookRunner(object):
         if isinstance(in_bytes, tuple):
             in_bytes = in_bytes[0]
         if not isinstance(in_bytes, bytes):
-            raise TypeError("bytes expected, not {0}".format(type(in_bytes)))
+            raise TypeError(
+                "bytes expected, not {0} - format={1}".format(type(in_bytes), format))
         img = Image.open(BytesIO(in_bytes))
         width_in, height_in = img.size
         scale_w = max_width / float(width_in)
