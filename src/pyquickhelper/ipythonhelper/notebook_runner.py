@@ -666,13 +666,14 @@ class NotebookRunner(object):
             if not isinstance(b[0], str):
                 raise TypeError(
                     "str expected for svg, not {0}".format(type(b[0])))
-        elif b[1] in ("vnd.plotly.v1+html", "vnd.bokehjs_exec.v0+json"):
+        elif b[1] in ("vnd.plotly.v1+html", "vnd.bokehjs_exec.v0+json",
+                      "vnd.bokehjs_load.v0+json"):
             # Don't know how to extract a snippet out of this.
             pass
         else:
             if not isinstance(b[0], bytes):
                 raise TypeError(
-                    "bytes expected for images, not {0}\n{1}".format(type(b[0]), b))
+                    "bytes expected for images, not {0}-{1}\n{2}".format(type(b[0]), b[1], b))
         return b
 
     def create_picture_from(self, text, format, asbytes=True, context=None):
