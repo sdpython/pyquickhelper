@@ -127,7 +127,7 @@ class YoutubeDirective(Directive):
     def run(self):
         if "aspect" in self.options:
             aspect = self.options.get("aspect")
-            m = re.match("(\d+):(\d+)", aspect)
+            m = re.match("(\\d+):(\\d+)", aspect)
             if m is None:
                 raise ValueError("invalid aspect ratio %r" % aspect)
             aspect = tuple(int(x) for x in m.groups())

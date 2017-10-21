@@ -666,7 +666,7 @@ class NotebookRunner(object):
             if not isinstance(b[0], str):
                 raise TypeError(
                     "str expected for svg, not {0}".format(type(b[0])))
-        elif b[1] == "vnd.plotly.v1+html":
+        elif b[1] in ("vnd.plotly.v1+html", "vnd.bokehjs_exec.v0+json"):
             # Don't know how to extract a snippet out of this.
             pass
         else:
@@ -804,11 +804,8 @@ class NotebookRunner(object):
                             raise TypeError(
                                 "This should be bytes not '{0}' (=IMG:{1}).".format(type(v), k))
                         results.append((v, k.split("/")[-1]))
-                    elif k == "text/vnd.plotly.v1+html":
-                        results.append((v, k.split("/")[-1]))
-                    elif k == "application/vnd.plotly.v1+json":
-                        results.append((v, k.split("/")[-1]))
-                    elif k == "application/vnd.bokehjs_exec.v0+json":
+                    elif k in ("text/vnd.plotly.v1+html", "application/vnd.plotly.v1+json",
+                               "application/vnd.bokehjs_exec.v0+json"):
                         results.append((v, k.split("/")[-1]))
                     else:
                         raise NotImplementedError("cell type: {0}\nk={1}\nv={2}\nCELL:\n{3}".format(kind,
@@ -886,11 +883,9 @@ class NotebookRunner(object):
                             nbl += len(v) // 50
                         elif k == "application/vnd.jupyter.widget-view+json":
                             nbl += 5
-                        elif k == "text/vnd.plotly.v1+html":
-                            nbl += 10
-                        elif k == "application/vnd.plotly.v1+json":
-                            nbl += 10
-                        elif k in ("application/vnd.bokehjs_load.v0+json",
+                        elif k in ("text/vnd.plotly.v1+html",
+                                   "application/vnd.plotly.v1+json",
+                                   "application/vnd.bokehjs_load.v0+json",
                                    "application/vnd.bokehjs_exec.v0+json"):
                             nbl += 10
                         else:
@@ -1173,7 +1168,8 @@ class NotebookRunner(object):
         cells.reverse()
         for cell in cells:
             c = self.cell_image(cell, False)
-            if c is not None and len(c) > 0 and len(c[0]) > 0 and c[1] != "vnd.plotly.v1+html":
+            if c is not None and len(c) > 0 and len(c[0]) > 0 and c[1] not in (
+                    "vnd.plotly.v1+html", "vnd.bokehjs_exec.v0+json"):
                 self._check_thumbnail_tuple(c)
                 images.append(c)
         if len(images) == 0:
@@ -1204,7 +1200,7 @@ class NotebookRunner(object):
             image = images[0]
 
         # zoom
-        if image[1] == "vnd.plotly.v1+html":
+        if image[1] in ("vnd.plotly.v1+html", "vnd.bokehjs_exec.v0+json"):
             return None
         elif image[1] != "svg":
             img = self._scale_image(

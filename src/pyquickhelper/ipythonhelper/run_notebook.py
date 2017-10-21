@@ -482,10 +482,12 @@ def badge_notebook_coverage(df, image_name):
     font = ImageFont.load_default()
     try:
         cov = int(cov)
+        cov = min(cov, 100)
     except ValueError:
         cov = "?"
     try:
         val = int(val)
+        val = min(val, 100)
     except ValueError:
         val = "?"
     if cov != val:
