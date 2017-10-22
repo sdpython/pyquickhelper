@@ -1171,7 +1171,8 @@ class NotebookRunner(object):
         for cell in cells:
             c = self.cell_image(cell, False)
             if c is not None and len(c) > 0 and len(c[0]) > 0 and c[1] not in (
-                    "vnd.plotly.v1+html", "vnd.bokehjs_exec.v0+json"):
+                    "vnd.plotly.v1+html", "vnd.bokehjs_exec.v0+json",
+                    "vnd.bokehjs_load.v0+json"):
                 self._check_thumbnail_tuple(c)
                 images.append(c)
         if len(images) == 0:

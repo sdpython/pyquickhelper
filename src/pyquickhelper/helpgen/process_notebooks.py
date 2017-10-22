@@ -733,6 +733,9 @@ def build_thumbail_in_gallery(nbfile, folder_snippet, relative, rst_link, layout
     nb = read_nb(nbfile)
     title, desc = nb.get_description()
     image = nb.get_thumbnail()
+    if image is None:
+        raise ValueError(
+            "The snippet cannot be null, notebook='{0}'.".format(nbfile))
     name = os.path.splitext(os.path.split(nbfile)[-1])[0]
     name += ".thumb"
     full = os.path.join(folder_snippet, name)
