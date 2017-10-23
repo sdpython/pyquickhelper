@@ -162,7 +162,7 @@ def main_wrapper_tests(codefile, skip_list=None, processes=False, add_coverage=F
     from .tkinter_helper import fix_tkinter_issues_virtualenv, _first_execution
     fLOG("[main_wrapper_tests] MODULES (1): matplotlib already imported",
          "matplotlib" in sys.modules, "first execution", _first_execution)
-    r = fix_tkinter_issues_virtualenv()
+    r = fix_tkinter_issues_virtualenv(fLOG=fLOG)
     fLOG("[main_wrapper_tests] MODULES (2): matplotlib imported",
          "matplotlib" in sys.modules, "first execution", _first_execution)
     fLOG("[main_wrapper_tests] fix_tkinter_issues_virtualenv", r)

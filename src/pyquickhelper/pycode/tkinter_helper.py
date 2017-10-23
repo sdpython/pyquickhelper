@@ -83,25 +83,34 @@ def fix_tkinter_issues_virtualenv(exc=True, fLOG=None):
             loc = location()
             p = look_for(loc, "tcl")
             if fLOG:
-                fLOG("Change {0}: '{1}' --> '{2}'".format("TCL_LIBRARY",
-                                                          os.environ.get("TCL_LIBRARY", None), p))
+                fLOG("[fix_tkinter_issues_virtualenv] Change {0}: '{1}' --> '{2}'".format("TCL_LIBRARY",
+                                                                                          os.environ.get("TCL_LIBRARY", None), p))
             os.environ["TCL_LIBRARY"] = p
+        if fLOG:
+            fLOG("[fix_tkinter_issues_virtualenv] TCL_LIBRARY='{0}'".format(
+                os.environ["TCL_LIBRARY"]))
 
         if "TK_LIBRARY" not in os.environ:
             loc = location()
             p = look_for(loc, "tk")
             if fLOG:
-                fLOG("Change {0}: '{1}' --> '{2}'".format("TK_LIBRARY",
-                                                          os.environ.get("TK_LIBRARY", None), p))
+                fLOG("[fix_tkinter_issues_virtualenv] Change {0}: '{1}' --> '{2}'".format("TK_LIBRARY",
+                                                                                          os.environ.get("TK_LIBRARY", None), p))
             os.environ["TK_LIBRARY"] = p
+        if fLOG:
+            fLOG("[fix_tkinter_issues_virtualenv] TK_LIBRARY='{0}'".format(
+                os.environ["TK_LIBRARY"]))
 
         if "TIX_LIBRARY" not in os.environ:
             loc = location()
             p = look_for(loc, "tix")
             if fLOG:
-                fLOG("Change {0}: '{1}' --> '{2}'".format("TIX_LIBRARY",
-                                                          os.environ.get("TIX_LIBRARY", None), p))
+                fLOG("[fix_tkinter_issues_virtualenv] Change {0}: '{1}' --> '{2}'".format("TIX_LIBRARY",
+                                                                                          os.environ.get("TIX_LIBRARY", None), p))
             os.environ["TIX_LIBRARY"] = p
+        if fLOG:
+            fLOG("[fix_tkinter_issues_virtualenv] TIX_LIBRARY='{0}'".format(
+                os.environ["TIX_LIBRARY"]))
 
         if "DISPLAY" not in os.environ:
             p = ":0"

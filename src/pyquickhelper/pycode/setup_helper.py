@@ -700,7 +700,7 @@ def run_unittests_for_setup(file_or_folder, skip_function=default_skip_function,
         raise FileNotFoundError(
             "the folder {0} should contain run_unittests.py\nCONTENT:\n{1}".format(funit, "\n".join(content)))
 
-    fix_tkinter_issues_virtualenv()
+    fix_tkinter_issues_virtualenv(fLOG=fLOG)
 
     cov = True
     if coverage_options:
