@@ -223,6 +223,7 @@ if not r:
             "docformatter",
             "docutils",
             "entrypoints",
+            "filelock",
             "IPython>=5.0.0",
             "jupyter",
             "jupyter_client",

@@ -8,6 +8,7 @@
 import sys
 import time
 import os
+import warnings
 from datetime import datetime, timedelta
 
 from ..loghelper.flog import noLOG
@@ -372,7 +373,20 @@ def execute_notebook_list_finalize_ut(res, dump=None, fLOG=noLOG):
         else:
             df = pandas.concat([df, new_df]).copy()
 
-        df.to_csv(dump, sep="\t", encoding="utf-8", index=False)
+        # There could be a conflict while several
+        # processes in parallel could overwrite the same file.
+        if not os.path.exists(dump):
+            df.to_csv(dump, sep="\t", encoding="utf-8", index=False)
+        else:
+            import filelock
+            lock = filelock.FileLock(dump)
+            try:
+                with lock.acquire(timeout=10):
+                    df.to_csv(dump, sep="\t", encoding="utf-8", index=False)
+            except filelock.Timeout:
+                # Unable to write the notebook coverage.
+                warnings.warn(
+                    "Unable to dump coverage on '{0}' (file being used).".format(dump))
 
 
 def notebook_coverage(module_or_path, dump=None, too_old=30):

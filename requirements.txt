@@ -3,6 +3,7 @@ babel!=2.0
 bokeh
 coverage
 docformatter
+filelock
 git-pandas
 ipython>=5.0.0
 jupyter
