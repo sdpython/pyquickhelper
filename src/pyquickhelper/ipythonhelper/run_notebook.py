@@ -8,7 +8,6 @@
 import sys
 import time
 import os
-import warnings
 from datetime import datetime, timedelta
 
 from ..loghelper.flog import noLOG
