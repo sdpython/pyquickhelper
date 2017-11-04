@@ -9,7 +9,6 @@ import sys
 import time
 import os
 import warnings
-import filelock
 from datetime import datetime, timedelta
 
 from ..loghelper.flog import noLOG
@@ -355,7 +354,14 @@ def execute_notebook_list_finalize_ut(res, dump=None, fLOG=noLOG):
     if dump is not None:
         import pandas
         if os.path.exists(dump):
-            df = pandas.read_csv(dump, sep="\t", encoding="utf-8")
+            # There might be some risk here to see another process writing the
+            # file at the same time.
+            try:
+                df = pandas.read_csv(dump, sep="\t", encoding="utf-8")
+            except PermissionError:
+                # We try again once.
+                time.sleep(10)
+                df = pandas.read_csv(dump, sep="\t", encoding="utf-8")
         else:
             df = None
 
@@ -379,15 +385,15 @@ def execute_notebook_list_finalize_ut(res, dump=None, fLOG=noLOG):
         if not os.path.exists(dump):
             df.to_csv(dump, sep="\t", encoding="utf-8", index=False)
         else:
-            lock = filelock.FileLock(dump)
-            lock.timeout = 20
+            # There might be some risk here to see another process
+            # writing or reading the file at the same time.
+            # Module filelock does not work in this case.
+            # locket (https://github.com/mwilliamson/locket.py) was not tried.
             try:
-                with lock:
-                    df.to_csv(dump, sep="\t", encoding="utf-8", index=False)
-            except filelock.Timeout:
-                # Unable to write the notebook coverage.
-                warnings.warn(
-                    "Unable to dump coverage on '{0}' (file being used).".format(dump))
+                df.to_csv(dump, sep="\t", encoding="utf-8", index=False)
+            except PermissionError:
+                time.sleep(7)
+                df.to_csv(dump, sep="\t", encoding="utf-8", index=False)
 
 
 def notebook_coverage(module_or_path, dump=None, too_old=30):
@@ -437,10 +443,13 @@ def notebook_coverage(module_or_path, dump=None, too_old=30):
     dfnb["key"] = dfnb["key"].apply(
         lambda x: x.lower() if isinstance(x, str) else x)
 
-    # Loads the dump.
-    lock = filelock.FileLock(dump)
-    lock.timeout = 20
-    with lock:
+    # There might be some risk here to see another process writing the
+    # file at the same time.
+    try:
+        dfall = pandas.read_csv(dump, sep="\t", encoding="utf-8")
+    except PermissionError:
+        # We try again once.
+        time.sleep(10)
         dfall = pandas.read_csv(dump, sep="\t", encoding="utf-8")
 
     # We drop too old execution.
