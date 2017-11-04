@@ -9,6 +9,7 @@ import sys
 import time
 import os
 import warnings
+import filelock
 from datetime import datetime, timedelta
 
 from ..loghelper.flog import noLOG
@@ -378,10 +379,10 @@ def execute_notebook_list_finalize_ut(res, dump=None, fLOG=noLOG):
         if not os.path.exists(dump):
             df.to_csv(dump, sep="\t", encoding="utf-8", index=False)
         else:
-            import filelock
             lock = filelock.FileLock(dump)
+            lock.timeout = 20
             try:
-                with lock.acquire(timeout=10):
+                with lock:
                     df.to_csv(dump, sep="\t", encoding="utf-8", index=False)
             except filelock.Timeout:
                 # Unable to write the notebook coverage.
@@ -437,7 +438,10 @@ def notebook_coverage(module_or_path, dump=None, too_old=30):
         lambda x: x.lower() if isinstance(x, str) else x)
 
     # Loads the dump.
-    dfall = pandas.read_csv(dump, sep="\t", encoding="utf-8")
+    lock = filelock.FileLock(dump)
+    lock.timeout = 20
+    with lock:
+        dfall = pandas.read_csv(dump, sep="\t", encoding="utf-8")
 
     # We drop too old execution.
     old = datetime.now() - timedelta(too_old)
