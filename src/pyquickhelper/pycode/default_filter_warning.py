@@ -27,6 +27,14 @@ def default_filter_warning(w):
         Parameter *filter_warning* was added to give users
         a way to define their own filtering.
     """
+    class UnusedException(Exception):
+        pass
+
+    try:
+        from matplotlib.cbook import MatplotlibDeprecationWarning
+    except ImportError:
+        MatplotlibDeprecationWarning = UnusedException
+
     if isinstance(w.message, RuntimeWarning):
         if "_bootstrap.py" in w.filename:
             if "numpy.dtype size changed" in str(w.message):
@@ -34,6 +42,10 @@ def default_filter_warning(w):
     elif isinstance(w.message, UserWarning):
         if "matplotlib" in w.filename:
             if "findfont: Font family" in str(w.message):
+                return False
+    elif isinstance(w.message, MatplotlibDeprecationWarning):
+        if "basemap" in w.filename:
+            if "The ishold function was deprecated in version 2.0." in str(w.message):
                 return False
     elif isinstance(w.message, DeprecationWarning):
         if w.filename.endswith("kernelspec.py"):
