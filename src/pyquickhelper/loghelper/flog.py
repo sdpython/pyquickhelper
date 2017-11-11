@@ -21,14 +21,15 @@ The function fLOG (or fLOG) is used to logged everything into a log file.
 
 @warning This module inserts static variable in module sys. I did it because I did not know how to deal with several instance of the same module.
 """
-import datetime
-import sys
-import os
-import time
-import random
-import math
-import decimal
 import copy
+import datetime
+import decimal
+import math
+import os
+import pprint
+import random
+import sys
+import time
 import zipfile
 from .flog_fake_classes import FlogStatic, LogFakeFileStream, LogFileStream, PQHException
 from .run_cmd import run_cmd
@@ -181,8 +182,9 @@ def fLOG(*l, **p):
     - if *p* contains *LogFile*, it changes the log file name
       (it creates a new one, the previous is closed).
     - if *p* contains *LogPathAdd*, it adds this path to the temporary file
-    - if *p* contains *Lock*, it locks option OutputPrint
-    - if *p* contains *UnLock*, it unlock option OutputPrint
+    - if *p* contains *Lock*, it locks option *OutputPrint*
+    - if *p* contains *UnLock*, it unlocks option *OutputPrint*
+    - if *p* contains *_pp*, it uses :epkg:`*py:pprint`
 
     Example:
 
@@ -252,7 +254,10 @@ def fLOGFormat(sep, *l, **p):
     @param      l       list of anything
     @param      p       dictioanry of anything
     @return             string
+
+    if *_pp* is True, the function uses :epkg:`*py:pprint`.
     """
+    upp = p.get('_pp', False)
     dt = datetime.datetime(2009, 1, 1).now()
     typstr = str  # unicode#
     if len(l) > 0:
@@ -260,12 +265,18 @@ def fLOGFormat(sep, *l, **p):
             def _str_process(s):
                 if isinstance(s, str  # unicode#
                               ):
-                    return s
+                    if upp:
+                        return pprint.pformat(s)
+                    else:
+                        return s
                 elif isinstance(s, bytes):
                     return s.decode("utf8")
                 else:
                     try:
-                        return typstr(s)
+                        if upp:
+                            return pprint.pformat(s)
+                        else:
+                            return typstr(s)
                     except Exception as e:
                         raise Exception(
                             "unable to convert s into string: type(s)=" + typstr(type(s))) from e
@@ -277,12 +288,18 @@ def fLOGFormat(sep, *l, **p):
         else:
             def _str_process(s):
                 if isinstance(s, str):
-                    return s
+                    if upp:
+                        return pprint.pformat(s)
+                    else:
+                        return s
                 elif isinstance(s, bytes):
                     return s.decode("utf8")
                 else:
                     try:
-                        return str(s)
+                        if upp:
+                            return pprint.pformat(s)
+                        else:
+                            return typstr(s)
                     except Exception as e:
                         raise Exception(
                             "unable to convert s into string: type(s)=" + str(type(s))) from e

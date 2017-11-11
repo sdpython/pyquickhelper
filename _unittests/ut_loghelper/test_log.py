@@ -246,6 +246,13 @@ class TestLog (unittest.TestCase):
         rel = get_relative_path(fold, file)
         fLOG("-----", rel)
 
+    def test_pprint(self):
+        fLOG(
+            __file__,
+            self._testMethodName,
+            OutputPrint=__name__ == "__main__")
+        fLOG(dict(a=1, b=3), _pp=True)
+
     def test_log_options(self):
         fLOG(
             __file__,
