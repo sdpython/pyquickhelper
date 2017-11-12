@@ -517,10 +517,10 @@ def badge_notebook_coverage(df, image_name):
     except ValueError:
         val = "?"
     if cov != val:
-        im.text((3, 4), "NB:{0}%-{1}% ".format(cov, val),
+        im.text((3, 4), "NB:{0}%-{1}%-".format(cov, val),
                 (255, 255, 255), font=font)
     else:
-        im.text((3, 4), "NB: {0}% ".format(cov), (255, 255, 255), font=font)
+        im.text((3, 4), "NB: {0}%-".format(cov), (255, 255, 255), font=font)
     img.save(image_name)
 
 
