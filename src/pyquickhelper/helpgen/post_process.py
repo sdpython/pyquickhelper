@@ -746,7 +746,8 @@ def post_process_latex(st, doall, info=None, latex_book=False, exc=True,
         st = custom_latex_processing(st)
 
     if remove_unicode:
-        fLOG("[post_process_latex] remove unicode characters")
+        if fLOG:
+            fLOG("[post_process_latex] remove unicode characters")
         bst = st.encode('ascii', errors='replace')
         st = bst.decode('ascii', errors='replace')
 
