@@ -52,21 +52,22 @@ Another list
 def process_notebooks(notebooks, outfold, build, latex_path=None, pandoc_path=None,
                       formats=("ipynb", "html", "python", "rst",
                                "slides", "pdf", "present", "github"), fLOG=fLOG, exc=True,
-                      nblinks=None):
+                      remove_unicode_latex=True, nblinks=None):
     """
     Converts notebooks into html, rst, latex, pdf, python, docx using
     :epkg:`nbconvert`.
 
-    @param      notebooks   list of notebooks
-    @param      outfold     folder which will contains the outputs
-    @param      build       temporary folder which contains all produced files
-    @param      pandoc_path path to pandoc
-    @param      formats     list of formats to convert into (pdf format means latex then compilation)
-    @param      latex_path  path to the latex compiler
-    @param      fLOG        logging function
-    @param      exc         raises an exception (True) or a warning (False) if an error happens
-    @param      nblinks     dictionary ``{ref: url}``
-    @return                 list of tuple *[(file, created or skipped)]*
+    @param      notebooks               list of notebooks
+    @param      outfold                 folder which will contains the outputs
+    @param      build                   temporary folder which contains all produced files
+    @param      pandoc_path             path to pandoc
+    @param      formats                 list of formats to convert into (pdf format means latex then compilation)
+    @param      latex_path              path to the latex compiler
+    @param      fLOG                    logging function
+    @param      exc                     raises an exception (True) or a warning (False) if an error happens
+    @param      nblinks                 dictionary ``{ref: url}``
+    @param      remove_unicode_latex    remove unicode characters for latex (to avoid failing)
+    @return                             list of tuple *[(file, created or skipped)]*
 
     This function relies on :epkg:`pandoc`.
     It also needs modules :epkg:`pywin32`,
@@ -108,7 +109,8 @@ def process_notebooks(notebooks, outfold, build, latex_path=None, pandoc_path=No
         For latex and pdf, a custom processor was added to handle raw data
         and add ``\\begin{verbatim}`` and ``\\end{verbatim}``.
         Parameter *exc*, *nblinks* were added.
-        Format *github* was added, it adds a link to file on github.
+        Format *github*, *remove_unicode_latex* was added,
+        it adds a link to file on :epkg:`github`.
 
     .. todoext::
         :title: Allow hidden rst instructions in notebook (for references)
@@ -129,7 +131,8 @@ def process_notebooks(notebooks, outfold, build, latex_path=None, pandoc_path=No
     """
     res = _process_notebooks_in(notebooks=notebooks, outfold=outfold, build=build,
                                 latex_path=latex_path, pandoc_path=pandoc_path,
-                                formats=formats, fLOG=fLOG, exc=exc, nblinks=nblinks)
+                                formats=formats, fLOG=fLOG, exc=exc, nblinks=nblinks,
+                                remove_unicode_latex=remove_unicode_latex)
     if "slides" in formats:
         # we copy javascript dependencies, reveal.js
         reveal = os.path.join(outfold, "reveal.js")
@@ -206,7 +209,7 @@ def _process_notebooks_in_private_cmd(fnbcexe, list_args, options_args, fLOG):
 def _process_notebooks_in(notebooks, outfold, build, latex_path=None, pandoc_path=None,
                           formats=("ipynb", "html", "python", "rst",
                                    "slides", "pdf", "present", "github"),
-                          fLOG=fLOG, exc=True, nblinks=None):
+                          fLOG=fLOG, exc=True, nblinks=None, remove_unicode_latex=True):
     """
     The notebook conversion does not handle image from url
     for PDF and docx. They could be downloaded first
@@ -440,7 +443,8 @@ def _process_notebooks_in(notebooks, outfold, build, latex_path=None, pandoc_pat
                             "no latex file was generated or more than one (={0}), nb={1}\nthisfile=\n{2}".format(len(tex), notebook, "\n".join(thisfiles)))
                     tex = list(tex)[0]
                     post_process_latex_output_any(
-                        tex, custom_latex_processing=None, nblinks=nblinks, fLOG=fLOG)
+                        tex, custom_latex_processing=None, nblinks=nblinks,
+                        remove_unicode=remove_unicode_latex, fLOG=fLOG)
                     # -interaction=batchmode
                     c = '"{0}" "{1}" -max-print-line=900 -output-directory="{2}"'.format(
                         lat, tex, os.path.split(tex)[0])

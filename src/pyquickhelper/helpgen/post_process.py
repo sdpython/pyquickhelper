@@ -135,20 +135,23 @@ def update_notebook_link(text, format, nblinks, fLOG):
 
 
 def post_process_latex_output(root, doall, latex_book=False, exc=True,
-                              custom_latex_processing=None, nblinks=None, fLOG=None):
+                              custom_latex_processing=None, nblinks=None,
+                              remove_unicode=True, fLOG=None):
     """
-    post process the latex file produced by sphinx
+    Postprocesses the latex file produced by :epkg:`sphinx`.
 
     @param      root                        root path or latex file to process
     @param      doall                       do all transformations
     @param      latex_book                  customized for a book
-    @param      exc                         raise an exception or a warning
+    @param      exc                         raises an exception or a warning
     @param      custom_latex_processing     function which does some post processing of the full latex file
     @param      nblinks                     dictionary ``{ ref : url }`` where to look for references
+    @param      remove_unicode              remove unicode characters (fails with latex)
     @param      fLOG                        logging function
 
     .. versionchanged:: 1.5
-        Parameters *exc*, *custom_latex_processing*, *fLOG* were added.
+        Parameters *exc*, *custom_latex_processing*,
+        *fLOG*, *remove_unicode* were added.
     """
     if os.path.isfile(root):
         file = root
@@ -158,7 +161,8 @@ def post_process_latex_output(root, doall, latex_book=False, exc=True,
             f.write(content)
         content = post_process_latex(
             content, doall, latex_book=latex_book, exc=exc,
-            custom_latex_processing=custom_latex_processing, nblinks=nblinks, file=file, fLOG=fLOG)
+            custom_latex_processing=custom_latex_processing, nblinks=nblinks,
+            file=file, remove_unicode=remove_unicode, fLOG=fLOG)
         with open(file, "w", encoding="utf8") as f:
             f.write(content)
     else:
@@ -175,14 +179,15 @@ def post_process_latex_output(root, doall, latex_book=False, exc=True,
                     f.write(content)
                 content = post_process_latex(
                     content, doall, info=file, latex_book=latex_book, exc=exc,
-                    custom_latex_processing=custom_latex_processing, nblinks=nblinks, file=file, fLOG=fLOG)
+                    custom_latex_processing=custom_latex_processing, nblinks=nblinks,
+                    file=file, remove_unicode=remove_unicode, fLOG=fLOG)
                 with open(file, "w", encoding="utf8") as f:
                     f.write(content)
 
 
 def post_process_python_output(root, doall, exc=True, nblinks=None, fLOG=None):
     """
-    post process the python file produced by sphinx
+    Postprocesses the python file produced by :epkg:`sphinx`.
 
     @param      root        root path or python file to process
     @param      doall       unused
@@ -219,24 +224,27 @@ def post_process_python_output(root, doall, exc=True, nblinks=None, fLOG=None):
                     f.write(content)
 
 
-def post_process_latex_output_any(file, custom_latex_processing, nblinks=None, fLOG=None):
+def post_process_latex_output_any(file, custom_latex_processing, nblinks=None,
+                                  remove_unicode=True, fLOG=None):
     """
-    post process the latex file produced by sphinx
+    Postprocesses the latex file produced by :epkg:`sphinx`.
 
     @param      file                        latex filename
     @param      custom_latex_processing     function which does some post processing of the full latex file
     @param      nblinks                     dictionary ``{url: link}``
+    @param      remove_unicode              remove unicode characters
     @param      fLOG                        logging function
 
     .. versionchanged:: 1.5
-        Parameters *custom_latex_processing*, *nblinks*, *fLOG* were added.
+        Parameters *custom_latex_processing*, *nblinks*,
+        *remove_unicode*, *fLOG* were added.
     """
     if fLOG:
         fLOG("   ** post_process_latex_output_any ", file)
     with open(file, "r", encoding="utf8") as f:
         content = f.read()
-    content = post_process_latex(
-        content, True, info=file, nblinks=nblinks, file=file, fLOG=fLOG)
+    content = post_process_latex(content, True, info=file, nblinks=nblinks, file=file,
+                                 remove_unicode=remove_unicode, fLOG=fLOG)
     with open(file, "w", encoding="utf8") as f:
         f.write(content)
 
@@ -566,7 +574,8 @@ def post_process_slides_output(file, pdf, python, slides, present, exc=True, nbl
 
 
 def post_process_latex(st, doall, info=None, latex_book=False, exc=True,
-                       custom_latex_processing=None, nblinks=None, file=None, fLOG=None):
+                       custom_latex_processing=None, nblinks=None, file=None,
+                       remove_unicode=True, fLOG=None):
     """
     Modifies a latex file after its generation by :epkg:`sphinx`.
 
@@ -579,6 +588,7 @@ def post_process_latex(st, doall, info=None, latex_book=False, exc=True,
                                         final post processing
     @param      nblinks                 dictionary ``{ref: url}``
     @param      file                    only used when an exception is raised
+    @param      remove_unicode          remove unicode character (fails when converting into PDF)
     @param      fLOG                    logging function
     @return                             string
 
@@ -589,7 +599,7 @@ def post_process_latex(st, doall, info=None, latex_book=False, exc=True,
         Parameter *latex_book* was added.
 
     .. versionchanged:: 1.5
-        Parameters *exc*, *nblinks*, *fLOG* were added.
+        Parameters *exc*, *nblinks*, *remove_unicode*, *fLOG* were added.
         The function is less strict on the checking of `$`.
         The function replaces ``\\mathbb{1}`` by ``\\mathbf{1\\!\\!1}``.
 
@@ -734,6 +744,11 @@ def post_process_latex(st, doall, info=None, latex_book=False, exc=True,
     # end
     if custom_latex_processing is not None:
         st = custom_latex_processing(st)
+
+    if remove_unicode:
+        fLOG("[post_process_latex] remove unicode characters")
+        bst = st.encode('ascii', errors='replace')
+        st = bst.decode('ascii', errors='replace')
 
     return st
 
