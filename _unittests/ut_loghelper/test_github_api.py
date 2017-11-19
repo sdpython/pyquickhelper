@@ -46,7 +46,7 @@ class TestGitHub(unittest.TestCase):
             call_github_api("scikit-learn", "scikit-learn", "traffic/views")
             self.assertTrue(False)
         except GitHubApiException as e:
-            self.assertIn("Must have push", str(e))
+            self.assertIn("message", str(e))
 
 
 if __name__ == "__main__":
