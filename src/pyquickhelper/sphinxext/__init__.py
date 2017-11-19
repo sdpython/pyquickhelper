@@ -119,7 +119,7 @@ def get_default_standard_extensions(use_mathjax=False):
     @param      use_mathjax     use mathjax or imgmath
     @return                     list of standard extension.
     """
-    return [
+    extensions = [
         'sphinx.ext.autodoc', 'sphinx.ext.autosummary', 'sphinx.ext.coverage',
         'sphinx.ext.extlinks', 'sphinx.ext.graphviz', 'sphinx.ext.ifconfig',
         'sphinx.ext.inheritance_diagram',
@@ -137,7 +137,10 @@ def get_default_standard_extensions(use_mathjax=False):
 
     try:
         import sphinxcontrib.jsdemo
-        extension.append('sphinxcontrib.jsdemo')
+        assert sphinxcontrib.jsdemo is not None
+        extensions.append('sphinxcontrib.jsdemo')
     except ImportError:
         # No module sphinxcontrib.jsdemo.
         pass
+
+    return extensions

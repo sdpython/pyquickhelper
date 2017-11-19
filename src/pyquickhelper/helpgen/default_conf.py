@@ -279,7 +279,8 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
 
     try:
         import sphinxcontrib.jsdemo
-        extension.append('sphinxcontrib.jsdemo')
+        assert sphinxcontrib.jsdemo is not None
+        extensions.append('sphinxcontrib.jsdemo')
     except ImportError:
         # No module sphinxcontrib.jsdemo.
         pass
