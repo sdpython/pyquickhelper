@@ -44,6 +44,8 @@ unit tests
 
 .. autosignature:: pyquickhelper.pycode.ci_helper.is_travis_or_appveyor
 
+.. autosignature:: pyquickhelper.pycode.unittestclass.ExtTestCase
+
 virtual environments
 ++++++++++++++++++++
 

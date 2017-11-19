@@ -29,4 +29,5 @@ including PDF. The list is detailed at
 
     sphinx
     cli
+    unittest
     mainf

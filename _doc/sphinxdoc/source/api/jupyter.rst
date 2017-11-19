@@ -90,3 +90,8 @@ notebook
 .. autosignature:: pyquickhelper.ipythonhelper.notebook_helper.remove_execution_number
 
 .. autosignature:: pyquickhelper.ipythonhelper.run_notebook.run_notebook
+
+test
+++++
+
+.. autosignature:: pyquickhelper.ipythonhelper.unittest_notebook.test_notebook_execution_coverage
