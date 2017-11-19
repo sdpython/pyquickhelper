@@ -10,6 +10,11 @@ command line
 
 .. autosignature:: pyquickhelper.loghelper.run_cmd.run_cmd
 
+github
+++++++
+
+.. autosignature:: pyquickhelper.loghelper.github_api.call_github_api
+
 logging
 +++++++
 
