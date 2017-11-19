@@ -125,7 +125,7 @@ def get_default_standard_extensions(use_mathjax=False):
         'sphinx.ext.inheritance_diagram',
         'sphinx.ext.mathjax' if use_mathjax else 'sphinx.ext.imgmath',
         'sphinx.ext.napoleon', 'sphinx.ext.todo', 'sphinx.ext.viewcode',
-        'sphinxcontrib.images', 'sphinxcontrib.imagesvg', 'sphinxcontrib.jsdemo',
+        'sphinxcontrib.images', 'sphinxcontrib.imagesvg',
         # 'matplotlib.sphinxext.only_directives',
         # 'matplotlib.sphinxext.mathmpl',
         # 'matplotlib.sphinxext.only_directives',
@@ -134,3 +134,10 @@ def get_default_standard_extensions(use_mathjax=False):
         'jupyter_sphinx.embed_widgets',
         "nbsphinx"
     ]
+
+    try:
+        import sphinxcontrib.jsdemo
+        extension.append('sphinxcontrib.jsdemo')
+    except ImportError:
+        # No module sphinxcontrib.jsdemo.
+        pass

@@ -247,7 +247,6 @@ if not r:
             "sphinx>=1.6",
             "sphinx-gallery",
             "sphinxcontrib-imagesvg",
-            "sphinxcontrib-jsdemo",
             "sphinxjp.themes.revealjs",
             "tqdm",
             "unify",
