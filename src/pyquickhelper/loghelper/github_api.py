@@ -43,6 +43,9 @@ def call_github_api(owner, repo, ask, auth=None, headers=None):
     * ``traffic/popular/paths`` - Must have push access to repository
     * ``traffic/views`` - Must have push access to repository
     * ``traffic/clones`` - Must have push access to repository
+
+    GitHub limits the number of requets per hour:
+    `Rate Limiting <https://developer.github.com/v3/#rate-limiting>`_.
     """
     url = 'https://api.github.com/repos/{0}/{1}/{2}'.format(
         owner, repo, ask.strip('/'))

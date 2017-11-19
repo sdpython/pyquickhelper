@@ -21,6 +21,7 @@ except ImportError:
     import src
 
 from src.pyquickhelper.loghelper.flog import fLOG
+from src.pyquickhelper.pycode import is_travis_or_appveyor
 from src.pyquickhelper.loghelper.github_api import call_github_api, GitHubApiException
 
 
@@ -31,6 +32,10 @@ class TestGitHub(unittest.TestCase):
             __file__,
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
+
+        if is_travis_or_appveyor() == "travis":
+            # Too many calls from many projects.
+            return
 
         pulls = call_github_api("sdpython", "pyquickhelper", "issues")
         self.assertIsInstance(pulls, list)
