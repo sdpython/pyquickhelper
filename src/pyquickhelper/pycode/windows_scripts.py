@@ -433,7 +433,7 @@ windows_publish = """
 %pythonexe% %current%setup.py rotate --match=.whl --keep=10
 rem %pythonexe% %current%setup.py sdist register
 pushd %current%
-%pythonexe% %current%setup.py sdist --formats=gztar upload
+rem %pythonexe% %current%setup.py sdist --formats=gztar upload
 %pythonexe% %current%setup.py bdist_wheel upload
 popd
 """
