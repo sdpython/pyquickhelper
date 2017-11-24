@@ -30,9 +30,9 @@ The basic function is the following:
 
     with urllib.request.urlopen(url) as u:
         data = u.read()
-     
+
     with open([filename], "wb") as f :
-        f.write(data)
+        f.write(data)
 
 When the file is big, it is quite worrying not to see
 the screen showing any progress. We download the file
@@ -45,7 +45,7 @@ by pieces.
     url = "..."
     filename = "..."
     size = 0
-      
+
     with open(filename, "wb") as f :
         with urllib.request.urlopen(url) as ur:
             while True:
