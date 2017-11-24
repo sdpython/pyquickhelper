@@ -17,11 +17,11 @@ else:
 
 def download(url, path_download=".", outfile=None, fLOG=noLOG):
     """
-    Download a file
-
-    If url is an url, downloads the file and return the downloaded
+    Downloads a small file.
+    If *url* is an url, it downloads the file and returns the downloaded filename.
     If it has already been downloaded, it is not downloaded again
-    The function raises an exception if the url does not contain ``http://`` or ``https://`` or ``ftp://``.
+    The function raises an exception if the url does not contain
+    ``http://`` or ``https://`` or ``ftp://``.
 
     @param      url                 url
     @param      path_download       download the file here

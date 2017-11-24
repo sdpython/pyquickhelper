@@ -36,7 +36,8 @@ class InternetException(Exception):
 
 def get_url_content_timeout(url, timeout=10, output=None, encoding="utf8", raise_exception=True, chunk=None, fLOG=None):
     """
-    download a file from internet (we assume it is text information, otherwise, encoding should be None)
+    Downloads a file from internet (by default, it assumes
+    it is text information, otherwise, encoding should be None).
 
     @param      url                 (str) url
     @param      timeout             (int) in seconds, after this time, the function drops an returns None, -1 for forever

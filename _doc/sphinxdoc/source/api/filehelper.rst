@@ -33,6 +33,11 @@ encryption
 
 .. autosignature:: pyquickhelper.filehelper.encryption.encrypt_stream
 
+internet
+++++++++
+
+.. autosignature:: pyquickhelper.filehelper.download_helper.get_url_content_timeout
+
 sync
 ++++
 

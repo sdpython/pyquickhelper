@@ -21,7 +21,7 @@ if sys.version_info[0] == 2:
 
 def zip_files(filename, file_set, root=None, fLOG=noLOG):
     """
-    put all files from an iterator in a zip file
+    Zips all files from an iterator.
 
     @param      filename        final zip file (can be None)
     @param      file_set        iterator on file to add
@@ -65,7 +65,7 @@ def zip_files(filename, file_set, root=None, fLOG=noLOG):
 
 def unzip_files(zipf, where_to=None, fLOG=noLOG, fvalid=None, remove_space=True):
     """
-    unzip files from a zip archive
+    Unzip files from a zip archive.
 
     @param      zipf            archive (or bytes or BytesIO)
     @param      where_to        destination folder (can be None, the result is a list of tuple)
@@ -155,7 +155,8 @@ def unzip_files(zipf, where_to=None, fLOG=noLOG, fvalid=None, remove_space=True)
 
 def gzip_files(filename, file_set, encoding=None, fLOG=noLOG):
     """
-    put all files from an iterator in a zip file and then in a gzip file
+    Compresses all files from an iterator in a zip file
+    and then in a gzip file.
 
     @param      filename        final gzip file (double compression, extension should something like .zip.gz)
     @param      file_set        iterator on file to add
@@ -191,7 +192,7 @@ def gzip_files(filename, file_set, encoding=None, fLOG=noLOG):
 def ungzip_files(filename, where_to=None, fLOG=noLOG, fvalid=None, remove_space=True,
                  unzip=True, encoding=None):
     """
-    decompress files from a gzip file
+    Uncompresses files from a gzip file.
 
     @param      filename        final gzip file (double compression, extension should something like .zip.gz)
     @param      where_to        destination folder (can be None, the result is a list of tuple)
@@ -247,9 +248,8 @@ def ungzip_files(filename, where_to=None, fLOG=noLOG, fvalid=None, remove_space=
 
 def zip7_files(filename_7z, file_set, fLOG=noLOG, temp_folder="."):
     """
-    If *7z* is installed, the function uses it
-    to compress file into 7z format. The file *filename_7z* must not exist
-    (:epkg:`7z`).
+    If :epkg:`7z` is installed, the function uses it
+    to compress file into 7z format. The file *filename_7z* must not exist.
 
     @param      filename_7z     final destination
     @param      file_set        list of files to compress
@@ -296,7 +296,7 @@ def zip7_files(filename_7z, file_set, fLOG=noLOG, temp_folder="."):
 
 def un7zip_files(zipf, where_to=None, fLOG=noLOG, fvalid=None, remove_space=True):
     """
-    unzip files from a zip archive compress with 7z
+    Unzips files from a zip archive compress with :epkg:`7z`.
 
     @param      zipf            archive (or bytes or BytesIO)
     @param      where_to        destination folder (can be None, the result is a list of tuple)
@@ -394,7 +394,8 @@ def un7zip_files(zipf, where_to=None, fLOG=noLOG, fvalid=None, remove_space=True
 
 def unrar_files(zipf, where_to=None, fLOG=noLOG, fvalid=None, remove_space=True):
     """
-    Unrar files from a rar archive compress with 7z on Window or unrar on linux.
+    Uncompresses files from a rar archive compress with :epkg:`7z`
+    on Window or *unrar* on linux.
 
     @param      zipf            archive (or bytes or BytesIO)
     @param      where_to        destination folder (can be None, the result is a list of tuple)

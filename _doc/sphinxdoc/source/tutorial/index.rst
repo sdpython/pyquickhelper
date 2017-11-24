@@ -28,6 +28,7 @@ including PDF. The list is detailed at
 .. toctree::
 
     sphinx
+    fileh
     cli
     unittest
     mainf
