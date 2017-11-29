@@ -34,13 +34,13 @@ def choose_path(*paths):
                 root = os.path.dirname(path)
                 if not root:
                     root = '.'
-                founds = os.listdir(root)
+                founds = [os.path.join(root, _) for _ in os.listdir(root)]
                 founds.sort(reverse=True)
                 reg = re.compile(path.replace("\\", "\\\\"))
             found = [(_, reg.search(_)) for _ in founds]
             found = [_ for _ in found if _[1]]
             if len(found) > 0:
-                full = os.path.join(root, found[0][0])
+                full = found[0][0]
                 return full
         elif os.path.exists(path):
             return path
