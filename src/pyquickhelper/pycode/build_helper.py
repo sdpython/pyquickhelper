@@ -32,6 +32,8 @@ def choose_path(*paths):
         if "{" in path:
             if found is None:
                 root = os.path.dirname(path)
+                if not root:
+                    root = '.'
                 founds = os.listdir(root)
                 founds.sort(reverse=True)
                 reg = re.compile(path.replace("\\", "\\\\"))
