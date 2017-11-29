@@ -23,24 +23,19 @@ except ImportError:
     import src
 
 from src.pyquickhelper.loghelper import fLOG
-from src.pyquickhelper.pycode import get_temp_folder
-from src.pyquickhelper.texthelper.html_helper import html_in_frame
+from src.pyquickhelper.texthelper import change_style
 
 
-class TestHtmlHelper(unittest.TestCase):
+class TestTextCodeHelper(unittest.TestCase):
 
-    def test_html_in_frame(self):
+    def test_change_style(self):
         fLOG(
             __file__,
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
-        ht = html_in_frame("<h1>title</h1>")
-        body = "<html><body>" + ht + "</body></html>"
-        self.assertIn("data:text/html;base64,PGgxPnRpdGxlPC9oMT4=", ht)
-        temp = get_temp_folder(__file__, "temp_html_in_frame")
-        tempf = os.path.join(temp, "out.html")
-        with open(tempf, "w") as f:
-            f.write(body)
+        self.assertEqual(change_style("changeStyle"), "change_style")
+        self.assertEqual(change_style("change_Style"), "change__style")
+        self.assertEqual(change_style("change_style"), "change_style")
 
 
 if __name__ == "__main__":

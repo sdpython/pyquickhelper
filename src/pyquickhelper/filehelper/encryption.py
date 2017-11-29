@@ -1,6 +1,6 @@
 """
 @file
-@brief Encryption fucntionalities
+@brief Encryption functionalities.
 
 Inspired from `AES encryption of files in Python with PyCrypto <http://eli.thegreenplace.net/2010/06/25/aes-encryption-of-files-in-python-with-pycrypto>`_
 
@@ -29,7 +29,7 @@ class EncryptionError(Exception):
 
 def open_input_output(filename, out_filename=None):
     """
-    convert filename and out_filename as streams
+    Converts *filename* and *out_filename* as streams.
 
     @param      filename        bytes or filename or BytesIO
     @param      out_filename    BytesIO or filename or None
@@ -71,8 +71,8 @@ def open_input_output(filename, out_filename=None):
 
 def close_input_output(in_size, in_close, in_stream, out_close, out_return, out_stream):
     """
-    takes the output of @see fn open_input_output and closes streams
-    and return expected values
+    Takes the output of @see fn open_input_output and closes streams
+    and return expected values.
 
     @param      in_size         size of input
     @param      in_close        should we close the input stream
@@ -96,7 +96,7 @@ def close_input_output(in_size, in_close, in_stream, out_close, out_return, out_
 
 def get_encryptor(key, algo="AES", chunksize=2 ** 24, **params):
     """
-    return a encryptor with method encrypt and decrypt
+    Returns an encryptor with method encrypt and decrypt.
 
     @param      key         key
     @param      algo        AES or fernet

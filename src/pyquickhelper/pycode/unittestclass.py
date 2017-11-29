@@ -115,6 +115,9 @@ class ExtTestCase(unittest.TestCase):
             raise AssertionError("'{0}' does not end '{1}'".format(sub, whole))
 
     def assertEqual(self, a, b):
+        """
+        Checks that ``a == b``.
+        """
         try:
             unittest.TestCase.assertEqual(self, a, b)
         except ValueError as e:
@@ -126,3 +129,21 @@ class ExtTestCase(unittest.TestCase):
                     self.assertEqualDataFrame(a, b)
                     return
             raise e
+
+    def assertEqualFloat(self, a, b, precision=1e-5):
+        """
+        Checks that ``abs(a-b) < precision``.
+        """
+        if min(a, b) == 0:
+            d = abs(a - b)
+            self.assertLesser(d, precision)
+        else:
+            r = float(abs(a - b)) / min(a, b)
+            self.assertLesser(r, precision)
+
+    def assertCallable(self, fct):
+        """
+        Checks that *fct* is callable.
+        """
+        if not callable(fct):
+            raise AssertionError("fct is not callable: {0}".format(type(fct)))

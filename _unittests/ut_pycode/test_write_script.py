@@ -37,9 +37,10 @@ class TestWriteScript(unittest.TestCase):
         temp = get_temp_folder(__file__, "temp_write_script")
 
         res = write_module_scripts(temp, "win32", __blog__)
-        assert len(res) > 1
+        self.assertTrue(len(res) > 1)
         for c in res:
-            assert os.path.exists(c)
+            if not os.path.exists(c):
+                raise FileNotFoundError(c)
             with open(c, "r") as f:
                 content = f.read()
             if "__" in content:

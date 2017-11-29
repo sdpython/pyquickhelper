@@ -124,6 +124,25 @@ class TestExtTestCase(ExtTestCase):
         self.assertRaise(lambda: self.assertNotEmpty(None), AssertionError)
         self.assertRaise(lambda: self.assertNotEmpty([]), AssertionError)
 
+    def test_callable(self):
+        fLOG(
+            __file__,
+            self._testMethodName,
+            OutputPrint=__name__ == "__main__")
+        self.assertCallable(zip)
+        self.assertRaise(lambda: self.assertCallable('a'), AssertionError)
+
+    def test_assertEqualFloat(self):
+        fLOG(
+            __file__,
+            self._testMethodName,
+            OutputPrint=__name__ == "__main__")
+
+        self.assertEqualFloat(1., 1.)
+        self.assertEqualFloat(1., 1. + 1e-6)
+        self.assertRaise(lambda: self.assertEqualFloat(
+            1.1, 1.2), AssertionError)
+
 
 if __name__ == "__main__":
     unittest.main()

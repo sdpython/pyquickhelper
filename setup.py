@@ -238,7 +238,7 @@ if not r:
             "nbsphinx",
             "notebook>=4.2.0",
             "numpy>=1.11.1",
-            "pandas>=0.18.1",
+            "pandas>=0.20.0",
             "pycodestyle>=2.0.0",
             "pydocstyle",
             "pyflakes",
@@ -253,6 +253,7 @@ if not r:
         ],
         extras_require={
             'jenkinshelper': ['python-jenkins', 'pyyaml'],
+            'filehelper': ['cffi', 'cryptography'],  # cryptography
         },
         entry_points={
             'console_scripts': [

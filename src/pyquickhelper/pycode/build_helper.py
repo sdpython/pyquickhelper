@@ -8,6 +8,7 @@
 import sys
 import os
 import uuid
+import re
 from .windows_scripts import windows_error, windows_prefix, windows_setup, windows_notebook
 from .windows_scripts import windows_publish, windows_publish_doc, windows_pypi, setup_script_dependency_py
 from .windows_scripts import windows_prefix_27, windows_unittest27, copy_dist_to_local_pypi
@@ -21,16 +22,28 @@ _default_nofolder = "__NOFOLDERSHOULDNOTEXIST__"
 
 def choose_path(*paths):
     """
-    returns the first path which exists in the list
+    Returns the first path which exists in the list.
 
     @param      paths       list of paths
     @return                 a path
     """
+    found = None
     for path in paths:
-        if os.path.exists(path):
+        if "{" in path:
+            if found is None:
+                root = os.path.dirname(path)
+                founds = os.listdir(root)
+                founds.sort(reverse=True)
+                reg = re.compile(path.replace("\\", "\\\\"))
+            found = [(_, reg.search(_)) for _ in founds]
+            found = [_ for _ in found if _[1]]
+            if len(found) > 0:
+                full = os.path.join(root, found[0][0])
+                return full
+        elif os.path.exists(path):
             return path
     if paths[-1] != _default_nofolder:
-        raise FileNotFoundError("not path exist in: " + ", ".join(paths))
+        raise FileNotFoundError("No path exist in: " + ", ".join(paths))
     return _default_nofolder
 
 
@@ -40,11 +53,10 @@ def choose_path(*paths):
 default_values = {
     "windows": {
         "__PY35__": choose_path("c:\\Python35", _default_nofolder),
-        "__PY35_X64__": choose_path("c:\\Python35_x64", "c:\\Python35-x64", _default_nofolder),
-        "__PY36_X64__": choose_path("c:\\Python36_x64", "c:\\Python36-x64", _default_nofolder),
-        "__PY34__": choose_path("c:\\Python34", _default_nofolder),
-        "__PY34_X64__": choose_path("c:\\Python34_x64", "c:\\Python34-x64", "c:\\Anaconda3", _default_nofolder),
-        "__PY27_X64__": choose_path("c:\\Python27_x64", "c:\\Python27", "c:\\Python27-x64", "c:\\Anaconda2", "c:\\Anaconda", _default_nofolder),
+        "__PY35_X64__": choose_path("c:\\Python35_x64", _default_nofolder),
+        "__PY37_X64__": choose_path("c:\\Python37[0-9]{1}_x64", "c:\\Python37_x64", _default_nofolder),
+        "__PY36_X64__": choose_path("c:\\Python36[0-9]{1}_x64", "c:\\Python36_x64", _default_nofolder),
+        "__PY27_X64__": choose_path("c:\\Python27_x64", "c:\\Python27", "c:\\Anaconda2", "c:\\Anaconda", _default_nofolder),
     },
 }
 
@@ -52,7 +64,7 @@ default_values = {
 def private_script_replacements(script, module, requirements, port, raise_exception=True, platform=sys.platform,
                                 default_engine_paths=None, additional_local_path=None):
     """
-    run last replacements
+    Runs last replacements.
 
     @param      script                  script or list of scripts
     @param      module                  module name
@@ -113,7 +125,7 @@ def private_script_replacements(script, module, requirements, port, raise_except
         values = [v for v in def_values[
             plat].values() if v is not None and v != _default_nofolder]
         if raise_exception and len(values) != len(set(values)):
-            raise FileNotFoundError("one the paths is wrong among: " +
+            raise FileNotFoundError("One path is wrong among:\n" +
                                     "\n".join("{0}={1}".format(k, v) for k, v in def_values[plat].items()))
 
         if module is not None:
@@ -216,8 +228,8 @@ def private_script_replacements(script, module, requirements, port, raise_except
 def get_build_script(module, requirements=None, port=8067, default_engine_paths=None,
                      additional_local_path=None):
     """
-    builds the build script which builds the setup, run the unit tests
-    and the documentation
+    Builds the build script which builds the setup, run the unit tests
+    and the documentation.
 
     @param      module                  module name
     @param      requirements            list of dependencies (not in your python distribution)

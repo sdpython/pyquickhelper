@@ -44,12 +44,12 @@ class TestBuildScript(unittest.TestCase):
 
             scc = get_script_command(
                 "unittest", "pyquickhelper", requirements=[])
-            assert "setup.py" in scc
-            assert "__" not in scc
+            self.assertIn("setup.py", scc)
+            self.assertNotIn("__", scc)
 
             sccc = get_extra_script_command(
                 "local_pypi", "pyquickhelper", port=8067, requirements=[])
-            assert "python" in sccc
+            self.assertIn("python", sccc)
             if "__" in sccc:
                 raise Exception(sccc)
         else:
@@ -76,7 +76,7 @@ class TestBuildScript(unittest.TestCase):
                       "setup_hook", "unittests_GUI"):
                 sc = get_script_command(
                     c, project_var_name, requirements=requirements, port=port)
-                assert len(sc) > 0
+                self.assertTrue(len(sc) > 0)
                 if "__" in sc:
                     if sys.version_info[0] == 2:
                         continue
@@ -90,7 +90,7 @@ class TestBuildScript(unittest.TestCase):
                 sc = get_extra_script_command(
                     c, project_var_name, requirements=requirements, port=port,
                     unit_test_folder=unit_test_folder)
-                assert len(sc) > 0
+                self.assertTrue(len(sc) > 0)
                 if "__" in sc:
                     if sys.version_info[0] == 2:
                         continue
