@@ -21,7 +21,7 @@ except ImportError:
     import src
 
 from src.pyquickhelper.loghelper import fLOG
-from src.pyquickhelper.pycode import get_temp_folder
+from src.pyquickhelper.pycode import get_temp_folder, is_travis_or_appveyor
 from src.pyquickhelper import __blog__
 from src.pyquickhelper.pycode.setup_helper import write_module_scripts
 
@@ -33,6 +33,10 @@ class TestWriteScript(unittest.TestCase):
             __file__,
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
+
+        if is_travis_or_appveyor() == "appveyor":
+            # issue
+            return
 
         temp = get_temp_folder(__file__, "temp_write_script")
 
