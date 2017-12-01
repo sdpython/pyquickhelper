@@ -11,7 +11,7 @@ import sys
 
 def pyq_sync(fLOG=print, args=None):
     """
-    Synchronizer folder ecrypt using function @see fn synchronize_folder.
+    Synchronizes a folder using function @see fn synchronize_folder.
 
     @param      fLOG        logging function
     @param      args        to overwrite ``sys.args``
@@ -20,7 +20,7 @@ def pyq_sync(fLOG=print, args=None):
         :title: synchronize two folders
         :cmd: pyquickhelper.cli.pyq_sync_cli:pyq_sync
 
-        Synchronize two folders from the command line.
+        Synchronizes two folders from the command line.
     """
     try:
         from pyquickhelper.filehelper.synchelper import synchronize_folder

@@ -15,7 +15,7 @@ def create_cli_parser(f, prog=None, layout="sphinx", skip_parameters=('fLOG',)):
     """
     Automatically creates a parser based on a function,
     its signature with annotation and its documentation (assuming
-    this documentation is written using Sphinx syntax).
+    this documentation is written using :epkg:`Sphinx` syntax).
 
     @param      f               function
     @param      prog            to give the parser a different name than the function name
@@ -24,7 +24,8 @@ def create_cli_parser(f, prog=None, layout="sphinx", skip_parameters=('fLOG',)):
     @param      skip_parameters do not expose these parameters
     @return                     :epkg:`*py:argparse:ArgumentParser`
 
-    If an annotation offers mutiple types, the first one will be used for the command line.
+    If an annotation offers mutiple types,
+    the first one will be used for the command line.
     """
     docf = f.__doc__
     doctree = docstring2html(f, writer="doctree", layout=layout)
@@ -78,14 +79,15 @@ def create_cli_parser(f, prog=None, layout="sphinx", skip_parameters=('fLOG',)):
 
 def create_cli_argument(parser, param, doc, names):
     """
-    Add an argument for :epkg:`*py:argparse:ArgumentParser`.
+    Adds an argument for :epkg:`*py:argparse:ArgumentParser`.
 
     @param      parser      :epkg:`*py:argparse:ArgumentParser`
     @param      param       parameter (from the signature)
     @param      doc         documentation for this parameter
     @param      names       for shortnames
 
-    If an annotation offers mutiple types, the first one will be used for the command line.
+    If an annotation offers mutiple types,
+    the first one will be used for the command line.
     """
     p = param
     if p.annotation and p.annotation != inspect._empty:
@@ -133,7 +135,7 @@ def create_cli_argument(parser, param, doc, names):
 
 def call_cli_function(f, args=None, parser=None, fLOG=print, skip_parameters=('fLOG',)):
     """
-    Call a function *f* given parsed arguments.
+    Calls a function *f* given parsed arguments.
 
     @param      f               function to call
     @param      args            arguments to parse (if None, it considers sys.argv)
@@ -142,8 +144,8 @@ def call_cli_function(f, args=None, parser=None, fLOG=print, skip_parameters=('f
     @param      skip_parameters see @see fn create_cli_parser
 
     This function is used in command line @see fn pyq_sync.
-    Its code can can be used as an example. The command line can be tested
-    as:
+    Its code can can be used as an example.
+    The command line can be tested as:
 
     ::
 
