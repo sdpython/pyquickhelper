@@ -11,7 +11,8 @@ from docutils import nodes
 from ..helpgen import docstring2html
 
 
-def create_cli_parser(f, prog=None, layout="sphinx", skip_parameters=('fLOG',)):
+def create_cli_parser(f, prog=None, layout="sphinx", skip_parameters=('fLOG',),
+                      **options):
     """
     Automatically creates a parser based on a function,
     its signature with annotation and its documentation (assuming
@@ -22,13 +23,17 @@ def create_cli_parser(f, prog=None, layout="sphinx", skip_parameters=('fLOG',)):
     @param      use_sphinx      simple documentation only requires :epkg:`docutils`,
                                 richer requires :epkg:`sphinx`
     @param      skip_parameters do not expose these parameters
+    @param      options         additional :epkg:`Sphinx` options
     @return                     :epkg:`*py:argparse:ArgumentParser`
 
     If an annotation offers mutiple types,
     the first one will be used for the command line.
+
+    .. versionchanged:: 1.6
+        Parameter *options* was added.
     """
     docf = f.__doc__
-    doctree = docstring2html(f, writer="doctree", layout=layout)
+    doctree = docstring2html(f, writer="doctree", layout=layout, **options)
 
     # documentation
     docparams = {}
@@ -54,7 +59,7 @@ def create_cli_parser(f, prog=None, layout="sphinx", skip_parameters=('fLOG',)):
 
     # create the parser
     fulldoc = docstring2html(f, writer="rst", layout='sphinx',
-                             filter_nodes=clear_node_list)
+                             filter_nodes=clear_node_list, **options)
 
     # add arguments with the signature
     signature = inspect.signature(f)
@@ -133,7 +138,8 @@ def create_cli_argument(parser, param, doc, names):
             "typ='{0}' not supported (parameter '{1}')".format(typ, p))
 
 
-def call_cli_function(f, args=None, parser=None, fLOG=print, skip_parameters=('fLOG',)):
+def call_cli_function(f, args=None, parser=None, fLOG=print, skip_parameters=('fLOG',),
+                      **options):
     """
     Calls a function *f* given parsed arguments.
 
@@ -142,6 +148,7 @@ def call_cli_function(f, args=None, parser=None, fLOG=print, skip_parameters=('f
     @param      parser          parser (can be None, in that case, @see fn create_cli_parser is called)
     @param      fLOG            logging function
     @param      skip_parameters see @see fn create_cli_parser
+    @param      options         additional :epkg:`Sphinx` options
 
     This function is used in command line @see fn pyq_sync.
     Its code can can be used as an example.
@@ -167,9 +174,13 @@ def call_cli_function(f, args=None, parser=None, fLOG=print, skip_parameters=('f
                 r = rows[0][0]
                 if not r.startswith("usage: mycommand_line ..."):
                     raise Exception(r)
+
+    .. versionchanged:: 1.6
+        Parameter *options* was added.
     """
     if parser is None:
-        parser = create_cli_parser(f, skip_parameters=skip_parameters)
+        parser = create_cli_parser(
+            f, skip_parameters=skip_parameters, **options)
     if args is not None and (args == ['--help'] or args == ['-h']):
         fLOG(parser.format_help())
     else:
