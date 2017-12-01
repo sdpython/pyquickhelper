@@ -50,14 +50,15 @@ def choose_path(*paths):
 
 
 #: default values, to be replaced in the build script
-
+#: ``'c:\\python36-x64'`` --> appveyor
+#: ``'c:\\python36_x64'`` --> custom installation
 
 default_values = {
     "windows": {
         "__PY35__": choose_path("c:\\Python35", _default_nofolder),
-        "__PY35_X64__": choose_path("c:\\Python35_x64", _default_nofolder),
+        "__PY35_X64__": choose_path("c:\\Python35_x64", 'c:\\python35-x64', _default_nofolder),
         "__PY37_X64__": choose_path("c:\\Python37[0-9]{1}_x64", "c:\\Python37_x64", _default_nofolder),
-        "__PY36_X64__": choose_path("c:\\Python36[0-9]{1}_x64", "c:\\Python36_x64", _default_nofolder),
+        "__PY36_X64__": choose_path("c:\\Python36[0-9]{1}_x64", "c:\\Python36_x64", 'c:\\python36-x64', _default_nofolder),
         "__PY27_X64__": choose_path("c:\\Python27_x64", "c:\\Python27", "c:\\Anaconda2", "c:\\Anaconda", _default_nofolder),
     },
 }
