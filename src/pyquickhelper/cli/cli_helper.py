@@ -7,12 +7,42 @@
 from __future__ import print_function
 import argparse
 import inspect
+import re
 from docutils import nodes
 from ..helpgen import docstring2html
 
 
+def clean_documentation_for_cli(doc, cleandoc):
+    """
+    Cleans the documentation before integrating
+    into a command line documentation.
+
+    @param      doc         documentation
+    @param      cleandoc    a string which tells how to clean,
+                            or a function which takes a function and
+                            returns a string
+
+    .. versionadded:: 1.6.2290
+    """
+    if isinstance(cleandoc, str):
+        if cleandoc == 'epkg':
+            reg = re.compile('(:epkg:`([0-9a-zA-Z_:.*]+)`)')
+            fall = reg.findall(doc)
+            for c in fall:
+                doc = doc.replace(c[0], c[1].replace(':', '.'))
+            return doc
+        else:
+            raise ValueError(
+                "cleandoc='{0}' is not implemented, only 'epkg'.".format(cleandoc))
+    elif callable(cleandoc):
+        return cleandoc(doc)
+    else:
+        raise ValueError(
+            "cleandoc is not a string or a callable object but {0}".format(type(cleandoc)))
+
+
 def create_cli_parser(f, prog=None, layout="sphinx", skip_parameters=('fLOG',),
-                      **options):
+                      cleandoc="epkg", **options):
     """
     Automatically creates a parser based on a function,
     its signature with annotation and its documentation (assuming
@@ -23,16 +53,18 @@ def create_cli_parser(f, prog=None, layout="sphinx", skip_parameters=('fLOG',),
     @param      use_sphinx      simple documentation only requires :epkg:`docutils`,
                                 richer requires :epkg:`sphinx`
     @param      skip_parameters do not expose these parameters
+    @param      cleandoc        cleans the documentation before converting it into text,
+                                see @fn clean_documentation_for_cli
     @param      options         additional :epkg:`Sphinx` options
     @return                     :epkg:`*py:argparse:ArgumentParser`
 
     If an annotation offers mutiple types,
     the first one will be used for the command line.
 
-    .. versionchanged:: 1.6
-        Parameter *options* was added.
+    .. versionchanged:: 1.6.2290
+        Parameters *options*, *cleandoc* were added.
     """
-    docf = f.__doc__
+    docf = clean_documentation_for_cli(f.__doc__, cleandoc)
     doctree = docstring2html(f, writer="doctree", layout=layout, **options)
 
     # documentation
@@ -139,7 +171,7 @@ def create_cli_argument(parser, param, doc, names):
 
 
 def call_cli_function(f, args=None, parser=None, fLOG=print, skip_parameters=('fLOG',),
-                      **options):
+                      cleandoc="epkg", **options):
     """
     Calls a function *f* given parsed arguments.
 
@@ -148,6 +180,8 @@ def call_cli_function(f, args=None, parser=None, fLOG=print, skip_parameters=('f
     @param      parser          parser (can be None, in that case, @see fn create_cli_parser is called)
     @param      fLOG            logging function
     @param      skip_parameters see @see fn create_cli_parser
+    @param      cleandoc        cleans the documentation before converting it into text,
+                                see @fn clean_documentation_for_cli
     @param      options         additional :epkg:`Sphinx` options
 
     This function is used in command line @see fn pyq_sync.
@@ -175,8 +209,8 @@ def call_cli_function(f, args=None, parser=None, fLOG=print, skip_parameters=('f
                 if not r.startswith("usage: mycommand_line ..."):
                     raise Exception(r)
 
-    .. versionchanged:: 1.6
-        Parameter *options* was added.
+    .. versionchanged:: 1.6.2290
+        Parameters *options*, *cleandoc* were added.
     """
     if parser is None:
         parser = create_cli_parser(

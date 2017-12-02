@@ -22,6 +22,7 @@ except ImportError:
 
 from src.pyquickhelper.loghelper import fLOG
 from src.pyquickhelper.cli.pyq_sync_cli import pyq_sync
+from src.pyquickhelper.cli.cli_helper import clean_documentation_for_cli
 
 
 class TestPyqSyncCli(unittest.TestCase):
@@ -47,6 +48,21 @@ class TestPyqSyncCli(unittest.TestCase):
         r = rows[0][0]
         if not r.startswith("usage: synchronize_folder [-h] [--p1 P1] [--p2 P2] [-ha HASH_SIZE] [-r REPO1]"):
             raise Exception(r)
+
+    def test_clean_documentation_for_cli(self):
+        fLOG(
+            __file__,
+            self._testMethodName,
+            OutputPrint=__name__ == "__main__")
+
+        text = """
+        doc :epkg:`up:h.k` doc
+        """
+        cleaned = clean_documentation_for_cli(text, 'epkg')
+        self.assertIn('doc up.h.k doc', cleaned)
+        cleaned = clean_documentation_for_cli(
+            text, lambda t: t.replace('`', 'j'))
+        self.assertIn('doc :epkg:jup:h.kj doc', cleaned)
 
 
 if __name__ == "__main__":
