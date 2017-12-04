@@ -314,7 +314,7 @@ def fLOGFormat(sep, *l, **p):
     messages = [message]
 
     for k, v in p.items():
-        if k == "OutputPrint" and v:
+        if k in ("OutputPrint", '_pp') and v:
             continue
         message = st + "%s = %s%s" % (typstr(k), typstr(v), sep)
         messages.append(message)
