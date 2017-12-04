@@ -30,7 +30,7 @@ if sys.version_info[0] == 2:
 
 class TestYaml(unittest.TestCase):
 
-    def test_jenkins_job_verif(self):
+    def _test_jenkins_job_verif(self):
         fLOG(
             __file__,
             self._testMethodName,
@@ -62,20 +62,20 @@ class TestYaml(unittest.TestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
-        r = evaluate_condition('[ ${PYTHON} == "C:\\Python35_x64\\pythonw.exe" ]',
-                               dict(python="C:\\Python35_x64\\pythonw.exe"))
+        r = evaluate_condition('[ ${PYTHON} == "C:\\\\Python35_x64\\\\pythonw.exe" ]',
+                               dict(python="C:\\\\Python35_x64\\\\pythonw.exe"))
         self.assertTrue(r)
         self.assertTrue(isinstance(r, bool))
-        r = evaluate_condition('${PYTHON} == "C:\\Python35_x64\\pythonw.exe"',
-                               dict(python="C:\\Python35_x64\\pythonw.exe"))
+        r = evaluate_condition('${PYTHON} == "C:\\\\Python35_x64\\\\pythonw.exe"',
+                               dict(python="C:\\\\Python35_x64\\\\pythonw.exe"))
         self.assertTrue(r)
         self.assertTrue(isinstance(r, bool))
-        r = evaluate_condition('${PYTHON} != "C:\\Python35_x64\\pythonw.exe"',
-                               dict(python="C:\\Python35_x64\\pythonw.exe"))
+        r = evaluate_condition('${PYTHON} != "C:\\\\Python35_x64\\\\pythonw.exe"',
+                               dict(python="C:\\\\Python35_x64\\\\pythonw.exe"))
         self.assertTrue(not r)
         self.assertTrue(isinstance(r, bool))
-        r = evaluate_condition('[${PYTHON} != "C:\\Python35_x64\\pythonw.exe", ${PYTHON} == "C:\\Python35_x64\\pythonw.exe"]',
-                               dict(python="C:\\Python35_x64\\pythonw.exe"))
+        r = evaluate_condition('[${PYTHON} != "C:\\\\Python35_x64\\\\pythonw.exe", ${PYTHON} == "C:\\\\Python35_x64\\\\pythonw.exe"]',
+                               dict(python="C:\\\\Python35_x64\\\\pythonw.exe"))
         self.assertTrue(not r)
         self.assertTrue(isinstance(r, bool))
 

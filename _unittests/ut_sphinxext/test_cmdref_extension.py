@@ -252,8 +252,6 @@ class TestCmdRefExtension(unittest.TestCase):
         if t1 in html:
             raise Exception(html)
 
-        print(html)
-
 
 if __name__ == "__main__":
     unittest.main()
