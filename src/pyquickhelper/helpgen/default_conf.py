@@ -27,7 +27,7 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
                          extlinks=None, github_user=None, github_repo=None, title=None,
                          book=True, link_resolve=None, nblayout='classic'):
     """
-    Define variables for :epkg:`Sphinx`.
+    Defines variables for :epkg:`Sphinx`.
 
     @param      fileconf                location of the configuration file
     @param      module_name             name of the module

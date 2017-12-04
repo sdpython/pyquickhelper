@@ -106,9 +106,19 @@ class CmdRef(BlocRef):
                     logger.warning(
                         '   File "{0}", line {1}'.format(source, lineno))
 
+            # rename the command line
+            if "=" in spl[0]:
+                name_cmd, fullname = spl[0].split('=')
+                name_fct = spl[1]
+            else:
+                fullname, name_cmd = spl
+                name_fct = name_cmd
+            name_fct = name_fct.strip()
+            fullname = fullname.strip()
+            name_cmd = name_cmd.strip()
+
             #
-            fullname, name_cmd = spl
-            fullname = "{0}.{1}".format(fullname, name_cmd)
+            fullname = "{0}.{1}".format(fullname, name_fct)
             try:
                 obj, name = import_object(fullname, kind="function")
             except ImportError as e:
@@ -139,6 +149,11 @@ class CmdRef(BlocRef):
                     if lineno is not None:
                         logger.warning(
                             '   File "{0}", line {1}'.format(source, lineno))
+                else:
+                    start = 'usage: ' + name_fct
+                    if content.startswith(start):
+                        content = "usage: {0}{1}".format(
+                            name_cmd, content[len(start):])
                 pout = nodes.literal_block(content, content)
                 cont += pout
 

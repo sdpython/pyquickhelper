@@ -142,6 +142,9 @@ def get_encryptor(key, algo="AES", chunksize=2 ** 24, **params):
 def encrypt_stream(key, filename, out_filename=None, chunksize=2 ** 18, algo="AES"):
     """
     Encrypts a file using AES (CBC mode) with the given key.
+    The function relies on module :epkg:`pycrypto`, :epkg:`cryptography`,
+    algoritm `AES <https://fr.wikipedia.org/wiki/Advanced_Encryption_Standard>`_,
+    `Fernet <http://cryptography.readthedocs.org/en/latest/fernet/>`_.
 
     @param      key             The encryption key - a string that must be
                                 either 16, 24 or 32 bytes long. Longer keys
@@ -159,10 +162,6 @@ def encrypt_stream(key, filename, out_filename=None, chunksize=2 ** 18, algo="AE
     @param      algo            AES (PyCryptodomex) of or fernet (cryptography)
 
     @return                     filename or bytes
-
-    The function relies on module :epkg:`pycrypto`, :epkg:`cryptography`,
-    algoritm `AES <https://fr.wikipedia.org/wiki/Advanced_Encryption_Standard>`_,
-    `Fernet <http://cryptography.readthedocs.org/en/latest/fernet/>`_.
 
     .. versionadded:: 1.3
     """
@@ -188,6 +187,9 @@ def encrypt_stream(key, filename, out_filename=None, chunksize=2 ** 18, algo="AE
 def decrypt_stream(key, filename, out_filename=None, chunksize=3 * 2 ** 13, algo="AES"):
     """
     Decrypts a file using AES (CBC mode) with the given key.
+    The function relies on module :epkg:`pycrypto`, :epkg:`cryptography`,
+    algoritm `AES <https://fr.wikipedia.org/wiki/Advanced_Encryption_Standard>`_,
+    `Fernet <http://cryptography.readthedocs.org/en/latest/fernet/>`_.
 
     @param      key             The encryption key - a string that must be
                                 either 16, 24 or 32 bytes long. Longer keys
@@ -205,11 +207,6 @@ def decrypt_stream(key, filename, out_filename=None, chunksize=3 * 2 ** 13, algo
     @param      algo            AES (PyCryptodomex) of or fernet (cryptography)
 
     @return                     filename or bytes
-
-
-    The function relies on module :epkg:`pycrypto`, :epkg:`cryptography`,
-    algoritm `AES <https://fr.wikipedia.org/wiki/Advanced_Encryption_Standard>`_,
-    `Fernet <http://cryptography.readthedocs.org/en/latest/fernet/>`_.
 
     .. versionadded:: 1.3
     """

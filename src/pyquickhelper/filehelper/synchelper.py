@@ -131,6 +131,8 @@ def synchronize_folder(p1: str, p2: str, hash_size=1024 ** 2, repo1=False, repo2
     """
     Synchronizes two folders (or copy if the second is empty),
     it only copies more recent files.
+    It can walk through a :epkg:`git` repository or
+    `SVN <https://subversion.apache.org/>`_.
 
     @param      p1                  (str) first path
     @param      p2                  (str) second path
@@ -354,7 +356,8 @@ def synchronize_folder(p1: str, p2: str, hash_size=1024 ** 2, repo1=False, repo2
 
 def remove_folder(top, remove_also_top=True, raise_exception=True):
     """
-    remove everything in folder top
+    Removes everything in folder top.
+
     @param      top                 path to remove
     @param      remove_also_top     remove also root
     @param      raise_exception     raise an exception if a file cannot be remove
@@ -406,8 +409,9 @@ def remove_folder(top, remove_also_top=True, raise_exception=True):
 
 def has_been_updated(source, dest):
     """
-    we assume ``dest`` is a copy of ``source``, we want to know
-    if the copy is up to date or not
+    It assumes ``dest`` is a copy of ``source``, we want to know
+    if the copy is up to date or not.
+
     @param      source      filename
     @param      dest        copy
     @return                 True,reason or False,None

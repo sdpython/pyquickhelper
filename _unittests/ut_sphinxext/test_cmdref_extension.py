@@ -162,6 +162,98 @@ class TestCmdRefExtension(unittest.TestCase):
         if t1 not in html:
             raise Exception(html)
 
+    def test_cmdref_rename(self):
+        fLOG(
+            __file__,
+            self._testMethodName,
+            OutputPrint=__name__ == "__main__")
+
+        from docutils import nodes as skip_
+
+        content = """
+                    test a directive
+                    ================
+
+                    before
+
+                    .. cmdref::
+                        :title: first cmd
+                        :tag: crypt
+                        :lid: idcmd3
+                        :cmd: encrypt2=src.pyquickhelper.cli.encryption_cli:decrypt
+
+                        this code shoud appear___
+
+                    after
+                    """.replace("                    ", "")
+        if sys.version_info[0] >= 3:
+            content = content.replace('u"', '"')
+
+        tives = [("cmdref", CmdRef, cmdref_node,
+                  visit_cmdref_node, depart_cmdref_node)]
+
+        html = rst2html(content,  # fLOG=fLOG,
+                        writer="rst", keep_warnings=True,
+                        directives=tives, extlinks={'issue': ('http://%s', '_issue_')})
+
+        temp = get_temp_folder(__file__, "temp_cmdref_rename")
+        with open(os.path.join(temp, "out_cmdref.rst"), "w", encoding="utf8") as f:
+            f.write(html)
+
+        t1 = "usage: decrypt [-h] [-r REGEX] source dest password"
+        if t1 in html:
+            raise Exception(html)
+        t1 = "usage: encrypt2 [-h] [-r REGEX] source dest password"
+        if t1 not in html:
+            raise Exception(html)
+
+    def test_cmdref_quote(self):
+        fLOG(
+            __file__,
+            self._testMethodName,
+            OutputPrint=__name__ == "__main__")
+
+        from docutils import nodes as skip_
+
+        content = """
+                    test a directive
+                    ================
+
+                    before
+
+                    .. cmdref::
+                        :title: first cmd
+                        :tag: crypt
+                        :lid: idcmd3
+                        :cmd: src.pyquickhelper.cli.pyq_sync_cli:pyq_sync
+
+                        this code shoud appear___
+
+                    after
+                    """.replace("                    ", "")
+        if sys.version_info[0] >= 3:
+            content = content.replace('u"', '"')
+
+        tives = [("cmdref", CmdRef, cmdref_node,
+                  visit_cmdref_node, depart_cmdref_node)]
+
+        html = rst2html(content,  # fLOG=fLOG,
+                        writer="rst", keep_warnings=True,
+                        directives=tives, extlinks={'issue': ('http://%s', '_issue_')})
+
+        temp = get_temp_folder(__file__, "temp_cmdref_rst")
+        with open(os.path.join(temp, "out_cmdref_rst.html"), "w", encoding="utf8") as f:
+            f.write(html)
+
+        t1 = "epkg"
+        if t1 in html:
+            raise Exception(html)
+        t1 = "`>_"
+        if t1 in html:
+            raise Exception(html)
+
+        print(html)
+
 
 if __name__ == "__main__":
     unittest.main()

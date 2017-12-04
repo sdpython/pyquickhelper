@@ -24,25 +24,39 @@ def clean_documentation_for_cli(doc, cleandoc):
 
     .. versionadded:: 1.6.2290
     """
-    if isinstance(cleandoc, str):
-        if cleandoc == 'epkg':
-            reg = re.compile('(:epkg:`([0-9a-zA-Z_:.*]+)`)')
-            fall = reg.findall(doc)
-            for c in fall:
-                doc = doc.replace(c[0], c[1].replace(':', '.'))
-            return doc
+    for st in ('.. versionchanged::', '.. versionadded'):
+        if st in doc:
+            doc = doc.split(st)[0]
+    if isinstance(cleandoc, (list, tuple)):
+        for cl in cleandoc:
+            doc = clean_documentation_for_cli(doc, cl)
+        return doc
+    else:
+        if isinstance(cleandoc, str):
+            if cleandoc == 'epkg':
+                reg = re.compile('(:epkg:`([0-9a-zA-Z_:.*]+)`)')
+                fall = reg.findall(doc)
+                for c in fall:
+                    doc = doc.replace(c[0], c[1].replace(':', '.'))
+                return doc
+            elif cleandoc == 'link':
+                reg = re.compile('(`(.+?) <.+?>`_)')
+                fall = reg.findall(doc)
+                for c in fall:
+                    doc = doc.replace(c[0], c[1].replace(':', '.'))
+                return doc
+            else:
+                raise ValueError(
+                    "cleandoc='{0}' is not implemented, only 'epkg'.".format(cleandoc))
+        elif callable(cleandoc):
+            return cleandoc(doc)
         else:
             raise ValueError(
-                "cleandoc='{0}' is not implemented, only 'epkg'.".format(cleandoc))
-    elif callable(cleandoc):
-        return cleandoc(doc)
-    else:
-        raise ValueError(
-            "cleandoc is not a string or a callable object but {0}".format(type(cleandoc)))
+                "cleandoc is not a string or a callable object but {0}".format(type(cleandoc)))
 
 
 def create_cli_parser(f, prog=None, layout="sphinx", skip_parameters=('fLOG',),
-                      cleandoc="epkg", **options):
+                      cleandoc=("epkg", "link"), **options):
     """
     Automatically creates a parser based on a function,
     its signature with annotation and its documentation (assuming
@@ -65,7 +79,7 @@ def create_cli_parser(f, prog=None, layout="sphinx", skip_parameters=('fLOG',),
         Parameters *options*, *cleandoc* were added.
     """
     docf = clean_documentation_for_cli(f.__doc__, cleandoc)
-    doctree = docstring2html(f, writer="doctree", layout=layout, **options)
+    doctree = docstring2html(docf, writer="doctree", layout=layout, **options)
 
     # documentation
     docparams = {}
@@ -90,7 +104,7 @@ def create_cli_parser(f, prog=None, layout="sphinx", skip_parameters=('fLOG',),
             node_list.clear()
 
     # create the parser
-    fulldoc = docstring2html(f, writer="rst", layout='sphinx',
+    fulldoc = docstring2html(docf, writer="rst", layout='sphinx',
                              filter_nodes=clear_node_list, **options)
 
     # add arguments with the signature
@@ -171,7 +185,7 @@ def create_cli_argument(parser, param, doc, names):
 
 
 def call_cli_function(f, args=None, parser=None, fLOG=print, skip_parameters=('fLOG',),
-                      cleandoc="epkg", **options):
+                      cleandoc=("epkg", 'link'), **options):
     """
     Calls a function *f* given parsed arguments.
 
@@ -214,7 +228,7 @@ def call_cli_function(f, args=None, parser=None, fLOG=print, skip_parameters=('f
     """
     if parser is None:
         parser = create_cli_parser(
-            f, skip_parameters=skip_parameters, **options)
+            f, skip_parameters=skip_parameters, cleandoc=cleandoc, **options)
     if args is not None and (args == ['--help'] or args == ['-h']):
         fLOG(parser.format_help())
     else:

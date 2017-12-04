@@ -12,17 +12,17 @@ import sys
 
 def get_parser(encrypt):
     """
-    defines the way to parse the magic command ``%encrypt`` and ``%decrypt``
+    Defines the way to parse the magic command ``%encrypt`` and ``%decrypt``.
 
     @param      encrypt     encrypt or decrypt
     @return                 parser
     """
     task = "encrypt" if encrypt else "decrypt"
     parser = argparse.ArgumentParser(prog=task,
-                                     description='encrypt or %s a folder' % task +
-                                     '\nfor a second run, the program looks into file status' +
-                                     '\nto avoid crypting same file gain, does only modified files' +
-                                     '\ndoes not work well in Python 2.7 with pycryptodome')
+                                     description='%s a folder.' % task +
+                                     '\nFor a second run, the program looks into file status' +
+                                     '\nto avoid crypting same file gain, it does only modified files' +
+                                     '\nit does not work well in Python 2.7 with pycryptodome.')
     parser.add_argument(
         'source',
         help='folder to %s' % task)
@@ -56,7 +56,10 @@ def get_parser(encrypt):
 def do_main(source, dest, password, encrypt,
             crypt_file, crypt_map, regex=None, fLOG=None):
     """
-    Encrypt or decrypt of folder, see @see cl EncryptedBackup.
+    Encrypts or decrypts a folder, see @see cl EncryptedBackup.
+    The function relies on module :epkg:`pycrypto`, :epkg:`cryptography`,
+    algoritm `AES <https://fr.wikipedia.org/wiki/Advanced_Encryption_Standard>`_,
+    `Fernet <http://cryptography.readthedocs.org/en/latest/fernet/>`_.
 
     @param      source      source of files to encrypt or decrypt
     @param      dest        destination
@@ -110,16 +113,19 @@ def do_main(source, dest, password, encrypt,
 
 def encrypt(fLOG=print, args=None):
     """
-    encrypt using class @see cl EncryptedBackup
+    Encrypts using class @see cl EncryptedBackup.
+    The function relies on module :epkg:`pycrypto`, :epkg:`cryptography`,
+    algoritm `AES <https://fr.wikipedia.org/wiki/Advanced_Encryption_Standard>`_,
+    `Fernet <http://cryptography.readthedocs.org/en/latest/fernet/>`_.
 
     @param      fLOG        logging function
     @param      args        to overwrite ``sys.args``
 
     .. cmdref::
         :title: encrypt a string
-        :cmd: pyquickhelper.cli.encryption_cli:decrypt
+        :cmd: pyquickhelper.cli.encryption_cli:encrypt
 
-        Encrypt a string from the command line.
+        Encrypts a string from the command line.
 
     .. versionchanged:: 1.5
         Parameter *args* was added.
@@ -142,7 +148,10 @@ def encrypt(fLOG=print, args=None):
 
 def decrypt(fLOG=print, args=None):
     """
-    decrypt using class @see cl EncryptedBackup
+    Decrypts using class @see cl EncryptedBackup.
+    The function relies on module :epkg:`pycrypto`, :epkg:`cryptography`,
+    algoritm `AES <https://fr.wikipedia.org/wiki/Advanced_Encryption_Standard>`_,
+    `Fernet <http://cryptography.readthedocs.org/en/latest/fernet/>`_.
 
     @param      fLOG        logging function
     @param      args        to overwrite ``sys.args``
@@ -151,7 +160,7 @@ def decrypt(fLOG=print, args=None):
         :title: decrypt a string
         :cmd: pyquickhelper.cli.encryption_cli:decrypt
 
-        Decrypt an encrypted string from the command line.
+        Decrypts an encrypted string from the command line.
 
     .. versionchanged:: 1.5
         Parameter *args* was added.
