@@ -91,7 +91,7 @@ class ExtTestCase(unittest.TestCase):
                         "Function '{0}' raise exception with wrong message '{1}' (must contain '{2}').".format(fct, e, msg))
                 return
             raise AssertionError(
-                "Function '{0}' does not raise exception '{1}' but '{2}'.".format(fct, exc, e))
+                "Function '{0}' does not raise exception '{1}' but '{2}' of type '{3}'.".format(fct, exc, e, type(e)))
         raise AssertionError(
             "Function '{0}' does not raise exception.".format(fct))
 
