@@ -30,7 +30,7 @@ if sys.version_info[0] == 2:
 
 class TestYaml(unittest.TestCase):
 
-    def _test_jenkins_job_verif(self):
+    def test_jenkins_job_verif(self):
         fLOG(
             __file__,
             self._testMethodName,
