@@ -174,7 +174,6 @@ def run_python_script(script, params=None, comment=None, setsysvar=None, process
             sys.stdout = kout
             sys.stderr = kerr
 
-            import traceback
             excs = traceback.format_exc()
             lines = excs.split("\n")
             excs = "\n".join(
