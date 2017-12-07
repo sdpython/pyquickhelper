@@ -118,7 +118,8 @@ def run_cmd(cmd, sin="", shell=sys.platform.startswith("win"), wait=False, log_e
             change_path=None, communicate=True, preprocess=True, timeout=None,
             catch_exit=False, fLOG=None, tell_if_no_output=None, prefix_log=None):
     """
-    run a command line and wait for the result
+    Runs a command line and wait for the result.
+
     @param      cmd                 command line
     @param      sin                 sin: what must be written on the standard input
     @param      shell               if True, cmd is a shell command (and no command window is opened)
@@ -144,28 +145,14 @@ def run_cmd(cmd, sin="", shell=sys.platform.startswith("win"), wait=False, log_e
     @return                         content of stdout, stdres  (only if wait is True)
 
     .. exref::
-        :title: Run a program using the command line)
+        :title: Run a program using the command line
 
         ::
 
             from pyquickhelper.loghelper import run_cmd
-            out,err = run_cmd( "python setup.py install", wait=True)
+            out,err = run_cmd("python setup.py install", wait=True)
 
     If you are using this function to run git function, parameter ``shell`` must be True.
-
-    .. todoext::
-        :title: refactor run_cmd
-        :tag: bug
-        :cost: 2
-        :date: 2016-08-25
-        :issue: 33
-        :hidden:
-        :release: 1.4
-
-        Some options were not implemented, unused parameters were removed.
-        When communicate is False, the command is run within a thread which gives
-        more freedom to the main program to listen or stop the command line
-        execution.
 
     .. versionchanged:: 1.3
         Catches *SystemExit* exception. Add parameter *catch_exit*.

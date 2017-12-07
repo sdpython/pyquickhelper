@@ -24,6 +24,7 @@ openpyxl
 pandas>=0.20.0
 pandocfilters
 pillow
+psutil
 pycodestyle>=2.0.0
 pycryptodomex
 pydocstyle

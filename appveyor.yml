@@ -22,7 +22,7 @@ install:
   - "%PYTHON%\\python -m pip install --upgrade pip"
   - "%PYTHON%\\Scripts\\pip install pymyinstall"
   - "%PYTHON%\\Scripts\\pymy_install3 --set=pyquickhelper"
-  - "%PYTHON%\\Scripts\\pymy_install3 matplotlib autopy3 pylzma pillow"
+  - "%PYTHON%\\Scripts\\pymy_install3 matplotlib autopy3 pylzma pillow psutil"
   - "%PYTHON%\\Scripts\\pip install cryptography keyring"
   - "%PYTHON%\\Scripts\\pip install pycryptodomex"
   - "%PYTHON%\\Scripts\\pip install mako"

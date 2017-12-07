@@ -252,8 +252,9 @@ if not r:
             "unify",
         ],
         extras_require={
-            'jenkinshelper': ['python-jenkins', 'pyyaml'],
             'filehelper': ['cffi', 'cryptography'],  # cryptography
+            'jenkinshelper': ['python-jenkins', 'pyyaml'],
+            'loghelper': ['psutil'],
         },
         entry_points={
             'console_scripts': [
