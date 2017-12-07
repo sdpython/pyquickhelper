@@ -33,7 +33,10 @@ class TestProcessHelper(unittest.TestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
-        cmd = "pause"
+        if sys.platform.startswith("win"):
+            cmd = "pause"
+        else:
+            cmd = 'read -p "Press [Enter] key to start backup..."'
         proc, _ = run_cmd(cmd, wait=False, fLOG=fLOG)
         self.assertTrue(_ is None)
         ki = reap_children(fLOG=fLOG)
