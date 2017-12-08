@@ -22,7 +22,8 @@ except ImportError:
     import src
 
 from src.pyquickhelper.loghelper.flog import fLOG
-from src.pyquickhelper.loghelper import run_cmd, reap_children
+from src.pyquickhelper.loghelper import run_cmd, reap_children, CustomLog
+from src.pyquickhelper.pycode import get_temp_folder
 
 
 class TestProcessHelper(unittest.TestCase):
@@ -37,9 +38,13 @@ class TestProcessHelper(unittest.TestCase):
             cmd = "more"
         else:
             cmd = 'ls -la | less'
-        proc, _ = run_cmd(cmd, wait=False, fLOG=fLOG)
+        temp = get_temp_folder(__file__, "temp_nb_bug_rst")
+        clog = CustomLog(temp)
+        proc, _ = run_cmd(cmd, wait=False, fLOG=clog)
         self.assertTrue(_ is None)
-        ki = reap_children(fLOG=fLOG, subset={proc.pid})
+        ki = reap_children(fLOG=clog, subset={proc.pid})
+        clog('ki={0}'.format(ki))
+        self.assertTrue(ki is not None)
         self.assertEqual(len(ki), 1)
         # fLOG(ki)
         # To avoid a warning.
