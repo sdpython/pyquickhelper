@@ -6,6 +6,7 @@
 import sys
 import os
 import unittest
+import warnings
 
 
 try:
@@ -45,6 +46,9 @@ class TestProcessHelper(unittest.TestCase):
         clog('proc={} pid={}'.format(proc, proc.pid))
         ki = reap_children(fLOG=clog, subset={proc.pid})
         clog('ki={0}'.format(ki))
+        if ki is None and not is_travis_or_appveyor() and __name__ != '__main__':
+            warnings.warn(
+                "reap_children could not be fully tested ki is None.")
         self.assertTrue(ki is not None)
         self.assertEqual(len(ki), 1)
         # fLOG(ki)
