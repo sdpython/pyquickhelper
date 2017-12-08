@@ -24,7 +24,7 @@ except ImportError:
 
 from src.pyquickhelper.loghelper.flog import fLOG
 from src.pyquickhelper.loghelper import run_cmd, reap_children, CustomLog
-from src.pyquickhelper.pycode import get_temp_folder
+from src.pyquickhelper.pycode import get_temp_folder, is_travis_or_appveyor
 
 
 class TestProcessHelper(unittest.TestCase):
