@@ -34,12 +34,12 @@ class TestProcessHelper(unittest.TestCase):
             OutputPrint=__name__ == "__main__")
 
         if sys.platform.startswith("win"):
-            cmd = "pause"
+            cmd = "more"
         else:
             cmd = 'ls -la | less'
         proc, _ = run_cmd(cmd, wait=False, fLOG=fLOG)
         self.assertTrue(_ is None)
-        ki = reap_children(fLOG=fLOG)
+        ki = reap_children(fLOG=fLOG, subset={proc.pid})
         self.assertEqual(len(ki), 1)
         # fLOG(ki)
         # To avoid a warning.
