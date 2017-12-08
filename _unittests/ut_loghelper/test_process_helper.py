@@ -49,6 +49,7 @@ class TestProcessHelper(unittest.TestCase):
         if ki is None and not is_travis_or_appveyor() and __name__ != '__main__':
             warnings.warn(
                 "reap_children could not be fully tested ki is None.")
+            return
         self.assertTrue(ki is not None)
         self.assertEqual(len(ki), 1)
         # fLOG(ki)
