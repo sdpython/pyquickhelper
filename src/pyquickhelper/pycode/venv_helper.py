@@ -322,8 +322,8 @@ def run_venv_script(venv, script, fLOG=noLOG, file=False, is_cmd=False,
 def run_base_script(script, fLOG=noLOG, file=False, is_cmd=False,
                     skip_err_if=None, argv=None, **kwargs):
     """
-    run a script with the original intepreter even if this function
-    is run from a virtual environment
+    Runs a script with the original intepreter even if this function
+    is run from a virtual environment.
 
     @param      script      script as a string (not a file)
     @param      fLOG        logging function
