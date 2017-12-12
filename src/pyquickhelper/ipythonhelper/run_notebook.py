@@ -360,7 +360,14 @@ def execute_notebook_list_finalize_ut(res, dump=None, fLOG=noLOG):
             except PermissionError:
                 # We try again once.
                 time.sleep(10)
-                df = pandas.read_csv(dump, sep="\t", encoding="utf-8")
+                try:
+                    df = pandas.read_csv(dump, sep="\t", encoding="utf-8")
+                except Exception as e:
+                    raise Exception(
+                        "Unable to read '{0}' due to '{1}'".format(dump, e)) from e
+            except Exception as e:
+                raise Exception(
+                    "Unable to read '{0}' due to '{1}'".format(dump, e)) from e
         else:
             df = None
 
