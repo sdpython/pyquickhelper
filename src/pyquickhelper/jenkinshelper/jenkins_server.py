@@ -800,7 +800,7 @@ class JenkinsExt(jenkins.Jenkins):
             publishers.append(
                 JenkinsExt._publishers.replace("__MAIL__", mails))
         publishers.append(JenkinsExt._artifacts.replace(
-            "__PATTERN__", "dist"))
+            "__PATTERN__", "dist/*.whl,dist/*.zip"))
 
         # replacements
         conf = JenkinsExt._config_job
