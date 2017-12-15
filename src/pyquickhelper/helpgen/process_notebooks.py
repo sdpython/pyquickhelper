@@ -54,7 +54,8 @@ def process_notebooks(notebooks, outfold, build, latex_path=None, pandoc_path=No
                                "slides", "pdf", "present", "github"), fLOG=fLOG, exc=True,
                       remove_unicode_latex=True, nblinks=None):
     """
-    Converts notebooks into html, rst, latex, pdf, python, docx using
+    Converts notebooks into :epkg:`html`, :epkg:`rst`, :epkg:`latex`,
+    :epkg:`pdf`, :epkg:`python`, :epkg:`docx` using
     :epkg:`nbconvert`.
 
     @param      notebooks               list of notebooks
@@ -113,21 +114,12 @@ def process_notebooks(notebooks, outfold, build, latex_path=None, pandoc_path=No
         it adds a link to file on :epkg:`github`.
 
     .. todoext::
-        :title: Allow hidden rst instructions in notebook (for references)
-        :tag: enhancement
-        :issue: 10
-
-        We should be able to add references to the documentation in the documentation
-        without referencing the absolute path of the referenced page. One option
-        is to add hidden HTML or comments and to publish it when converting the
-        notebook to RST.
-
-    .. todoext::
         :title: check differences between _process_notebooks_in_private and _process_notebooks_in_private_cmd
         :tag: bug
 
-        For Latex and PDF, the custom preprocessor is not taken into account.
-        by function _process_notebooks_in_private.
+        For :epkg:`latex` and :epkg:`pdf`,
+        the custom preprocessor is not taken into account.
+        by function @see fn _process_notebooks_in_private.
     """
     res = _process_notebooks_in(notebooks=notebooks, outfold=outfold, build=build,
                                 latex_path=latex_path, pandoc_path=pandoc_path,
@@ -211,8 +203,8 @@ def _process_notebooks_in(notebooks, outfold, build, latex_path=None, pandoc_pat
                                    "slides", "pdf", "present", "github"),
                           fLOG=fLOG, exc=True, nblinks=None, remove_unicode_latex=True):
     """
-    The notebook conversion does not handle image from url
-    for PDF and docx. They could be downloaded first
+    The notebook conversion does not handle images from url
+    for :epkg:`pdf` and :epkg:`docx`. They could be downloaded first
     and replaced by local files.
     """
     from nbconvert.nbconvertapp import main as nbconvert_main
@@ -232,7 +224,7 @@ def _process_notebooks_in(notebooks, outfold, build, latex_path=None, pandoc_pat
             exe = exe[:len(exe) - len("Scripts") - 1]
         if not os.path.exists(exe):
             raise FileNotFoundError(exe)
-        fLOG("** using PANDOCPY", exe)
+        fLOG("[_process_notebooks_in] ** using PANDOCPY", exe)
     else:
         if sys.platform.startswith("win"):
             from .utils_pywin32 import import_pywin32
@@ -277,7 +269,7 @@ def _process_notebooks_in(notebooks, outfold, build, latex_path=None, pandoc_pat
                 if src not in copied_images:
                     dest = os.path.join(build, curfile)
                     shutil.copy(src, build)
-                    fLOG("copy ", src, " to ", build)
+                    fLOG("[_process_notebooks_in] copy ", src, " to ", build)
                     copied_images[src] = dest
 
         # next
@@ -303,12 +295,12 @@ def _process_notebooks_in(notebooks, outfold, build, latex_path=None, pandoc_pat
             trueoutputfile = outputfile
             pandoco = "docx" if format in ("word", "docx") else None
 
-            # we chech it was not done before
+            # The function checks it was not done before.
             if os.path.exists(trueoutputfile):
                 dto = os.stat(trueoutputfile).st_mtime
                 dtnb = os.stat(notebook).st_mtime
                 if dtnb < dto:
-                    fLOG("-- skipping notebook", format,
+                    fLOG("[_process_notebooks_in] -- skipping notebook", format,
                          notebook, "(", trueoutputfile, ")")
                     if trueoutputfile not in thisfiles:
                         thisfiles.append(trueoutputfile)
@@ -369,7 +361,7 @@ def _process_notebooks_in(notebooks, outfold, build, latex_path=None, pandoc_pat
 
             # output
             templ = {'html': 'full', 'latex': 'article'}.get(format, format)
-            fLOG("### convert into ", format_, " NB: ", notebook,
+            fLOG("[_process_notebooks_in] ### convert into ", format_, " NB: ", notebook,
                  " ### ", os.path.exists(outputfile), ":", outputfile)
 
             if format in ('present', ):
@@ -383,12 +375,12 @@ def _process_notebooks_in(notebooks, outfold, build, latex_path=None, pandoc_pat
             if format not in ("ipynb", ):
                 # arguments
                 if options_args:
-                    fLOG("NBp:", format, options_args)
+                    fLOG("[_process_notebooks_in] NBp:", format, options_args)
                 else:
                     list_args.extend(["--to", format,
                                       notebook if nb_slide is None else nb_slide])
-                    fLOG("NBc:", format, list_args)
-                    fLOG(os.getcwd())
+                    fLOG("[_process_notebooks_in] NBc:", format, list_args)
+                    fLOG("[_process_notebooks_in]", os.getcwd())
 
                 # nbconvert is messing up with static variables in sphinx or
                 # docutils if format is slides, not sure about the others
@@ -405,11 +397,11 @@ def _process_notebooks_in(notebooks, outfold, build, latex_path=None, pandoc_pat
                     raise ImportError(err)
                 if len(err) > 0:
                     if format == "latex":
-                        # there might be some errors because the latex script needs to be post-processed
+                        # There might be some errors because the latex script needs to be post-processed
                         # sometimes (wrong characters such as " or formulas not
-                        # captured as formulas)
-                        fLOG("LATEX ERR\n" + err)
-                        fLOG("LATEX OUT\n" + out)
+                        # captured as formulas).
+                        fLOG("[_process_notebooks_in] LATEX ERR\n" + err)
+                        fLOG("[_process_notebooks_in] LATEX OUT\n" + out)
                     else:
                         err = err.lower()
                         if "critical" in err or "bad config" in err:
@@ -426,7 +418,8 @@ def _process_notebooks_in(notebooks, outfold, build, latex_path=None, pandoc_pat
             if outputfile not in thisfiles:
                 thisfiles.append(outputfile)
 
-            fLOG("    -", format, compilation, outputfile)
+            fLOG("[_process_notebooks_in]    -",
+                 format, compilation, outputfile)
 
             if compilation:
                 # compilation latex
@@ -448,7 +441,7 @@ def _process_notebooks_in(notebooks, outfold, build, latex_path=None, pandoc_pat
                     # -interaction=batchmode
                     c = '"{0}" "{1}" -max-print-line=900 -output-directory="{2}"'.format(
                         lat, tex, os.path.split(tex)[0])
-                    fLOG("   ** LATEX compilation (b)", c)
+                    fLOG("[_process_notebooks_in]   ** LATEX compilation (b)", c)
                     if not sys.platform.startswith("win"):
                         c = c.replace('"', '')
                     if sys.platform.startswith("win"):
@@ -462,7 +455,8 @@ def _process_notebooks_in(notebooks, outfold, build, latex_path=None, pandoc_pat
                         catch_exit=True, prefix_log="[latex] ", change_path=change_path)
                     if out is not None and "Output written" in out:
                         # The output was produced. We ignore the return code.
-                        fLOG("WARNINGS: Latex compilation had warnings:", c)
+                        fLOG(
+                            "[_process_notebooks_in] WARNINGS: Latex compilation had warnings:", c)
                         out += "\nERR\n" + err
                         err = ""
                     if len(err) > 0:
@@ -488,11 +482,11 @@ def _process_notebooks_in(notebooks, outfold, build, latex_path=None, pandoc_pat
                                 "Missing file: '{0}'\nOUT:\n{2}\n[nberror]\n{1}\n-----\n{3}".format(f, err, out, msg))
                     thisfiles.append(f)
                 else:
-                    fLOG("unable to find latex in", latex_path)
+                    fLOG("[_process_notebooks_in] unable to find latex in", latex_path)
 
             elif pandoco is not None:
                 # compilation pandoc
-                fLOG("   ** pandoc compilation (b)", pandoco)
+                fLOG("[_process_notebooks_in]   ** pandoc compilation (b)", pandoco)
                 inputfile = os.path.splitext(outputfile)[0] + ".html"
                 outfilep = os.path.splitext(outputfile)[0] + "." + pandoco
 
@@ -523,7 +517,7 @@ def _process_notebooks_in(notebooks, outfold, build, latex_path=None, pandoc_pat
                             "issue with cmd: %s\n[nberror]\n%s" % (c, err))
                     else:
                         for _ in lines:
-                            fLOG("w, pandoc issue: {0}".format(
+                            fLOG("[_process_notebooks_in] w, pandoc issue: {0}".format(
                                 _.strip("\n\r")))
                 outputfile = outfilep
                 format = "docx"
@@ -566,7 +560,7 @@ def _process_notebooks_in(notebooks, outfold, build, latex_path=None, pandoc_pat
                                                   nblinks=nblinks, fLOG=fLOG)
 
             elif format == "rst":
-                # we add a link to the notebook
+                # It adds a link to the notebook.
                 thisfiles += add_link_to_notebook(
                     outputfile, notebook, "pdf" in formats, "html" in formats, "python" in formats,
                     "slides" in formats, "present" in formats, exc=exc, github="github" in formats,
@@ -597,16 +591,20 @@ def _process_notebooks_in(notebooks, outfold, build, latex_path=None, pandoc_pat
             if sys.version_info >= (3, 4):
                 try:
                     shutil.copy(f, outfold)
-                    fLOG("copy ", f, " to ", outfold, "[", dest, "]")
+                    fLOG("[_process_notebooks_in] copy ",
+                         f, " to ", outfold, "[", dest, "]")
                 except shutil.SameFileError:
-                    fLOG("w,file ", dest, "already exists")
+                    fLOG("[_process_notebooks_in] w,file ",
+                         dest, "already exists")
             else:
                 try:
                     shutil.copy(f, outfold)
-                    fLOG("copy ", f, " to ", outfold, "[", dest, "]")
+                    fLOG("[_process_notebooks_in] copy ",
+                         f, " to ", outfold, "[", dest, "]")
                 except shutil.Error as e:
                     if "are the same file" in str(e):
-                        fLOG("w,file ", dest, "already exists")
+                        fLOG("[_process_notebooks_in] w,file ",
+                             dest, "already exists")
                     else:
                         raise e
 
@@ -626,17 +624,21 @@ def _process_notebooks_in(notebooks, outfold, build, latex_path=None, pandoc_pat
             if sys.version_info >= (3, 4):
                 try:
                     shutil.copy(image, outfold)
-                    fLOG("copy ", image, " to ", outfold, "[", dest, "]")
+                    fLOG("[_process_notebooks_in] copy ",
+                         image, " to ", outfold, "[", dest, "]")
                 except shutil.SameFileError:
-                    fLOG("w,file ", dest, "already exists")
+                    fLOG("[_process_notebooks_in] w,file ",
+                         dest, "already exists")
                     pass
             else:
                 try:
                     shutil.copy(image, outfold)
-                    fLOG("copy ", image, " to ", outfold, "[", dest, "]")
+                    fLOG("[_process_notebooks_in] copy ",
+                         image, " to ", outfold, "[", dest, "]")
                 except shutil.Error as e:
                     if "are the same file" in str(e):
-                        fLOG("w,file ", dest, "already exists")
+                        fLOG("[_process_notebooks_in] w,file ",
+                             dest, "already exists")
                     else:
                         raise e
 
@@ -650,7 +652,7 @@ def _process_notebooks_in(notebooks, outfold, build, latex_path=None, pandoc_pat
 def add_link_to_notebook(file, nb, pdf, html, python, slides, present, exc=True,
                          github=False, notebook=None, nblinks=None, fLOG=None):
     """
-    Add a link to the notebook in HTML format and does a little bit of cleaning
+    Adds a link to the notebook in HTML format and does a little bit of cleaning
     for various format.
 
     @param      file        notebook.html
@@ -722,7 +724,7 @@ def add_link_to_notebook(file, nb, pdf, html, python, slides, present, exc=True,
 
 def build_thumbail_in_gallery(nbfile, folder_snippet, relative, rst_link, layout):
     """
-    Returns RST code for a notebook.
+    Returns :epkg:`rst` code for a notebook.
 
     @param      nbfile          notebook file
     @param      folder_snippet  where to store the snippet
@@ -776,7 +778,7 @@ def build_thumbail_in_gallery(nbfile, folder_snippet, relative, rst_link, layout
 
 def add_tag_for_slideshow(ipy, folder, encoding="utf8"):
     """
-    modifes a notebook to add tag for a slideshow
+    Modifies a notebook to add tag for a slideshow.
 
     @param      ipy         notebook file
     @param      folder      where to write the new notebook
@@ -794,7 +796,7 @@ def add_tag_for_slideshow(ipy, folder, encoding="utf8"):
 
 def build_notebooks_gallery(nbs, fileout, layout="classic", neg_pattern=None, fLOG=noLOG):
     """
-    Creates a rst page (gallery) with links to all notebooks.
+    Creates a :epkg:`rst` page (gallery) with links to all notebooks.
     For each notebook, it creates a snippet.
 
     @param      nbs             list of notebooks to consider or tuple(full path, rst),
@@ -966,7 +968,7 @@ def build_notebooks_gallery(nbs, fileout, layout="classic", neg_pattern=None, fL
             r0 = r
             if hi != last:
                 fLOG("[build_notebooks_gallery] new level", hi)
-                # we add the thumbnail
+                # It adds the thumbnail.
                 if layout == "table" and len(stack_file) > 0:
                     rows.extend(
                         ["", "", ".. list-table::", "    :header-rows: 0", "    :widths: 3 5 15", ""])
@@ -982,14 +984,14 @@ def build_notebooks_gallery(nbs, fileout, layout="classic", neg_pattern=None, fL
                     len(stack_file)))
                 stack_file = []
 
-                # we swith to the next gallery
+                # It switches to the next gallery.
                 if layout == "classic":
                     rows.append(".. raw:: html")
                     rows.append("")
                     rows.append("   <div style='clear:both'></div>")
                     rows.append("")
 
-                # we add menus and subfolders
+                # It adds menus and subfolders.
                 for k in range(0, len(hi)):
                     if last is None or k >= len(last) or hi[k] != last[k]:
                         break
@@ -1013,7 +1015,7 @@ def build_notebooks_gallery(nbs, fileout, layout="classic", neg_pattern=None, fL
                         rows.append("")
                     k += 1
 
-                # we start the next gallery
+                # It starts the next gallery.
                 last = hi
                 rows.append(".. toctree::")
                 rows.append("    :maxdepth: 1")
@@ -1028,7 +1030,7 @@ def build_notebooks_gallery(nbs, fileout, layout="classic", neg_pattern=None, fL
             stack_file.append(r0)
 
         if len(stack_file) > 0:
-            # we add the thumbnails
+            # It adds the thumbnails.
             if layout == "table" and len(stack_file) > 0:
                 rows.extend(["", "", ".. list-table::",
                              "    :header-rows: 0", "    :widths: 3 5 15", ""])
@@ -1085,7 +1087,7 @@ def build_all_notebooks_coverage(nbs, fileout, module_name, dump=None, badge=Tru
     for i in report0.index:
         nbcell = report0.loc[i, "nbcell"]
         if isnan(nbcell):
-            # We load the notebook.
+            # It loads the notebook.
             nbfile = report0.loc[i, "notebooks"]
             nb = read_nb(nbfile)
             report0.loc[i, "nbcell"] = len(nb)

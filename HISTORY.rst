@@ -6,6 +6,10 @@ History
 1.6.9999 (2018-12-31)
 =====================
 
+**BugFix**
+
+* `86`: avoids last line of notebooks in rst to disappear
+
 **Features**
 
 * `84`: remove *epkg* instruction in call_cli_function

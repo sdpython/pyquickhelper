@@ -172,7 +172,7 @@ def post_process_latex_output(root, doall, latex_book=False, exc=True,
         for tex in os.listdir(build):
             if tex.endswith(".tex"):
                 file = os.path.join(build, tex)
-                fLOG("modify file", file)
+                fLOG("[post_process_latex_output] modify file", file)
                 with open(file, "r", encoding="utf8") as f:
                     content = f.read()
                 with open(file + "~", "w", encoding="utf8") as f:
@@ -215,7 +215,7 @@ def post_process_python_output(root, doall, exc=True, nblinks=None, fLOG=None):
         for tex in os.listdir(build):
             if tex.endswith(".tex"):
                 file = os.path.join(build, tex)
-                fLOG("modify file", file)
+                fLOG("[post_process_python_output] modify file", file)
                 with open(file, "r", encoding="utf8") as f:
                     content = f.read()
                 content = post_process_python(
@@ -240,7 +240,7 @@ def post_process_latex_output_any(file, custom_latex_processing, nblinks=None,
         *remove_unicode*, *fLOG* were added.
     """
     if fLOG:
-        fLOG("   ** post_process_latex_output_any ", file)
+        fLOG("[post_process_latex_output_any]   ** post_process_latex_output_any ", file)
     with open(file, "r", encoding="utf8") as f:
         content = f.read()
     content = post_process_latex(content, True, info=file, nblinks=nblinks, file=file,
@@ -252,17 +252,19 @@ def post_process_latex_output_any(file, custom_latex_processing, nblinks=None,
 def post_process_rst_output(file, html, pdf, python, slides, present, is_notebook=False,
                             exc=True, github=False, notebook=None, nblinks=None, fLOG=None):
     """
-    Processes a RST file generated from the conversion of a notebook.
+    Processes a :epkg:`rst` file generated from the conversion of a notebook.
 
     @param      file            filename
-    @param      pdf             if True, add a link to the PDF, assuming it will exists at the same location
-    @param      html            if True, add a link to the HTML conversion
-    @param      python          if True, add a link to the Python conversion
+    @param      pdf             if True, add a link to the :epkg:`pdf`,
+                                assuming it will exists at the same location
+    @param      html            if True, add a link to the :epkg:`html` conversion
+    @param      python          if True, add a link to the :epkg:`Python` conversion
     @param      slides          if True, add a link to the slides conversion
-    @param      present         if True, add a link to the slides conversion (with *nbpresent*)
+    @param      present         if True, add a link to the slides conversion
+                                (with :epkg:`nbpresent`)
     @param      is_notebook     does something more if the file is a notebook
     @param      exc             raises an exception (True) or a warning (False)
-    @param      github          add a link to the notebook on github
+    @param      github          add a link to the notebook on :epkg:`github`
     @param      notebook        location of the notebook, file might be a copy
     @param      nblinks         links added to a notebook, dictionary ``{ref: url}``
     @param      fLOG            logging function
@@ -270,18 +272,18 @@ def post_process_rst_output(file, html, pdf, python, slides, present, is_noteboo
     .. versionchanged:: 1.4
         Parameter *present* was added.
 
-    .. versionchanged:: 1.5::
+    .. versionchanged:: 1.5
         Parameters *exc*, *github*, *notebook*, *fLOG* were added.
     """
     if fLOG:
-        fLOG("    post_process_rst_output", file)
+        fLOG("[post_process_rst_output]    post_process_rst_output", file)
 
     fold, name = os.path.split(file)
     noext = os.path.splitext(name)[0]
     with open(file, "r", encoding="utf8") as f:
         lines = f.readlines()
 
-    # remove empty lines in inserted code, also add line number
+    # Removes empty lines in inserted code, also adds line number.
     def startss(line):
         for b in ["::", ".. parsed-literal::", ".. code:: python",
                   ".. code-block:: python"]:
@@ -317,7 +319,7 @@ def post_process_rst_output(file, html, pdf, python, slides, present, is_noteboo
                     code = "".join(
                         (_[4:] if _.startswith("    ") else _) for _ in lines[memopos + 1:pos])
                     if len(code) == 0:
-                        fLOG("EMPTY-SECTION in ", file)
+                        fLOG("[post_process_rst_output] EMPTY-SECTION in ", file)
                     else:
                         try:
                             cmp = compile(code, "", "exec")
@@ -339,7 +341,7 @@ def post_process_rst_output(file, html, pdf, python, slides, present, is_noteboo
             img = imgreg.findall(lines[pos])
             if len(img) == 0:
                 raise HelpGenException(
-                    "unable to extract image name in " + lines[pos])
+                    "Unable to extract image name in '{0}'".format(lines[pos]))
             nameimg = img[0]
             short = nameimg.replace("%5C", "/")
             short = os.path.split(short)[-1]
@@ -364,7 +366,7 @@ def post_process_rst_output(file, html, pdf, python, slides, present, is_noteboo
 
     pos += 1
     if pos >= len(lines):
-        mes = "unable to find a title in notebook '{0}'".format(file)
+        mes = "Unable to find a title in notebook '{0}'".format(file)
         if exc:
             raise HelpGenException(mes)
         else:
@@ -417,7 +419,7 @@ def post_process_rst_output(file, html, pdf, python, slides, present, is_noteboo
     merged = "".join(lines)
     r = reg.findall(merged)
     if len(r) > 0:
-        fLOG("    *** remove div absolute in ", file)
+        fLOG("[post_process_rst_output]    *** remove div absolute in ", file)
         for spa in r:
             rep = spa[0]
             nbl = len(rep.split("\n"))
@@ -444,7 +446,7 @@ def post_process_rst_output(file, html, pdf, python, slides, present, is_noteboo
 
     # remove last ::
     i = len(lines)
-    for i in range(len(lines) - 1, 0, -1):
+    for i in range(len(lines), 1, -1):
         s = lines[i - 1].strip(" \n\r")
         if len(s) != 0 and s != "::":
             break
@@ -619,7 +621,7 @@ def post_process_latex(st, doall, info=None, latex_book=False, exc=True,
         in this function.
     """
     if fLOG:
-        fLOG("   ** enter post_process_latex",
+        fLOG("[post_process_latex]   ** enter post_process_latex",
              doall, "%post_process_latex" in st)
     weird_character = set(chr(i) for i in range(1, 9))
 
