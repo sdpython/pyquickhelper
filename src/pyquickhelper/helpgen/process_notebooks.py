@@ -1117,14 +1117,16 @@ def build_all_notebooks_coverage(nbs, fileout, module_name, dump=None, badge=Tru
     # Badge
     if badge:
         img = os.path.join(os.path.dirname(fileout), "nbcov.png")
+        badge_notebook_coverage(report0, img)
         now = datetime.datetime.now()
         cpy = os.path.join(os.path.dirname(
             fileout), "nbcov-%04d-%02d-%02d.png" % (now.year, now.month, now.day))
         shutil.copy(img, cpy)
-        badge_notebook_coverage(report0, cpy)
         badge = ["", ".. image:: {0}".format(os.path.split(cpy)[-1]), ""]
+        badge2 = ["", ".. image:: {0}".format(os.path.split(img)[-1]), ""]
     else:
         badge = []
+        badge2 = []
     rows.extend(badge)
 
     # Formatting
@@ -1158,6 +1160,7 @@ def build_all_notebooks_coverage(nbs, fileout, module_name, dump=None, badge=Tru
     text = df2rst(report.sort_values("name").reset_index(
         drop=True), index=True, list_table=True)
     rows.append(text)
+    rows.extend(badge2)
 
     fLOG("[notebooks-coverage] writing", fileout)
     with open(fileout, "w", encoding="utf-8") as f:
