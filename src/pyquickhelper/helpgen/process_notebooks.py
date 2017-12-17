@@ -5,7 +5,7 @@
 for a module designed the same way as this one, @see fn generate_help_sphinx.
 
 """
-
+import datetime
 import os
 import sys
 import shutil
@@ -1117,8 +1117,12 @@ def build_all_notebooks_coverage(nbs, fileout, module_name, dump=None, badge=Tru
     # Badge
     if badge:
         img = os.path.join(os.path.dirname(fileout), "nbcov.png")
-        badge_notebook_coverage(report0, img)
-        badge = ["", ".. image:: nbcov.png", ""]
+        now = datetime.datetime.now()
+        cpy = os.path.join(os.path.dirname(
+            fileout), "nbcov-%04d-%02d-%02d.png" % (now.year, now.month, now.day))
+        shutil.copy(img, cpy)
+        badge_notebook_coverage(report0, cpy)
+        badge = ["", ".. image:: {0}".format(os.path.split(cpy)[-1]), ""]
     else:
         badge = []
     rows.extend(badge)
