@@ -501,6 +501,7 @@ def badge_notebook_coverage(df, image_name):
 
     @param      df          output of @see fn notebook_coverage
     @param      image_name  image to produce
+    @return                 coverage estimation
 
     The function relies on module :epkg:`Pillow`.
     """
@@ -508,6 +509,7 @@ def badge_notebook_coverage(df, image_name):
     run = df["nbrun"].sum()
     valid = df["nbvalid"].sum()
     cov = run * 100.0 / cell if cell > 0 else 1.0
+    dcov = min(100., cov)
     val = valid * 100.0 / cell if cell > 0 else 1.0
     from PIL import Image, ImageFont, ImageDraw
     img = Image.new(mode='P', size=(70, 20), color=100)
@@ -530,6 +532,7 @@ def badge_notebook_coverage(df, image_name):
         im.text((3, 4), "NB: {0}%          ".format(
             cov), (255, 255, 255), font=font)
     img.save(image_name)
+    return dcov
 
 
 def get_additional_paths(modules):
