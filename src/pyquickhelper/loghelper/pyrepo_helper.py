@@ -10,16 +10,15 @@ from .repositories import pygit_helper as GIT
 class SourceRepository:
 
     """
-    proposes the same functionality independent from the source chosen repository (GIT or SVN)
+    Proposes the same functionality independent from the
+    source chosen repository (GIT or SVN).
 
-    On Windows, it might help to install either `TortoiseSVN <http://tortoisesvn.net/>`_
-    or the `GitHub application <http://windows.github.com/>`_.
+    On Windows, it might help to install either
+    :epkg:`TortoiseSVN` or the :epkg:`GitHub` application.
     """
 
     def __init__(self, commandline=True):
         """
-        constructor
-
         @param      commandline     use command line or a specific module (like pysvn for example)
         """
         self.commandline = commandline
@@ -27,26 +26,32 @@ class SourceRepository:
 
     def SetGuessedType(self, location):
         """
-        guess the repository type given a location and change a member of the class
+        Guesses the repository type given a location
+        and change a member of the class.
 
         @param      location    location
         @return                 module to use
         """
-        svn = SVN.IsRepo(location, commandline=self.commandline)
-        if not svn:
-            git = GIT.IsRepo(location, commandline=self.commandline)
-            if not git:
-                raise Exception(
-                    "unable to guess source repository type for location '{0}'".format(location))
+        git = GIT.IsRepo(location, commandline=self.commandline)
+        if not git:
+            svn = SVN.IsRepo(location, commandline=self.commandline)
+            if not svn:
+                try:
+                    GIT.get_repo_version(
+                        location, commandline=self.commandline, log=False)
+                    self.module = GIT
+                except Exception as e:
+                    raise Exception(
+                        "Unable to guess source repository type for location '{0}' - error '{1}'.".format(location, e))
             else:
-                self.module = GIT
+                self.module = SVN
         else:
-            self.module = SVN
+            self.module = GIT
         return self.module
 
     def ls(self, path):
         """
-        extract the content of a location
+        Extracts the content of a location.
 
         @param      path        path
         @return                 a list
@@ -57,7 +62,8 @@ class SourceRepository:
 
     def log(self, path=None, file_detail=False):
         """
-        get the latest changes operated on a file in a folder or a subfolder
+        Gets the latest changes operated on a file in a folder or a subfolder.
+
         @param      path            path to look
         @param      file_detail     if True, add impacted files
         @return                     list of changes, each change is a list of 4-uple:
@@ -68,7 +74,8 @@ class SourceRepository:
                                         - full hash
                                         - link
 
-        The function use a command line if an error occurred. It uses the xml format:
+        The function uses a command line if an error occurred.
+        It uses the xml format:
 
         ::
 
@@ -85,7 +92,8 @@ class SourceRepository:
 
     def version(self, path=None):
         """
-        get the latest check in number for a specific path
+        Gets the latest check in number for a specific path.
+
         @param      path            path to look
         @return                     string or int (check in number)
         """
@@ -95,7 +103,7 @@ class SourceRepository:
 
     def nb_commits(self, path=None):
         """
-        return the number of commits
+        Returns the number of commits.
 
         @param      path            path to look
         @return                     number of commit
@@ -106,7 +114,7 @@ class SourceRepository:
 
     def get_last_commit_hash(self, path=None):
         """
-        returns the last commit
+        Returns the last commit.
 
         @param      path        path
         @return                 last commit

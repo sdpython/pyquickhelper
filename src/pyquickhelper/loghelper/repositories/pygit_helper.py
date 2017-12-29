@@ -19,20 +19,19 @@ if sys.version_info[0] == 2:
 
 class GitException(Exception):
     """
-    exception raised by this module
+    Exception raised by this module.
     """
     pass
 
 
 def my_date_conversion(sdate):
     """
-    converts a date into a datetime
+    Converts a date into a datetime.
 
     @param      sdate       string
     @return                 date
 
     .. versionadded:: 1.0
-
     """
     first = sdate.split(" ")[0]
     trois = first.replace(".", "-").replace("/", "-").split("-")
@@ -41,7 +40,7 @@ def my_date_conversion(sdate):
 
 def IsRepo(location, commandline=True):
     """
-    says if it a repository GIT
+    Says if it a repository :epkg:`GIT`.
 
     @param      location        (str) location
     @param      commandline     (bool) use commandline or not
@@ -61,12 +60,11 @@ def IsRepo(location, commandline=True):
 class RepoFile:
 
     """
-    mimic a GIT file
+    Mimic a :epkg:`GIT` file.
     """
 
     def __init__(self, **args):
         """
-        constructor
         @param   args       list of members to add
         """
         for k, v in args.items():
@@ -118,7 +116,7 @@ class RepoFile:
 
 def get_cmd_git():
     """
-    get the command line used to run git
+    Gets the command line used to run :epkg:`git`.
 
     @return     string
 
@@ -138,7 +136,8 @@ def get_cmd_git():
 
 def repo_ls(full, commandline=True):
     """
-    Run ``ls`` on a path.
+    Runs ``ls`` on a path.
+
     @param      full            full path
     @param      commandline use command line instead of pysvn
     @return                     output of client.ls
@@ -171,8 +170,9 @@ def repo_ls(full, commandline=True):
 
 def __get_version_from_version_txt(path):
     """
-    private function, tries to find a file ``version.txt`` which should
-    contains the version number (if svn is not present)
+    Private function, tries to find a file ``version.txt`` which should
+    contains the version number (if :epkg:`svn` is not present).
+
     @param      path        folder to look, it will look to the the path of this file,
                             some parents directories and finally this path
     @return                 the version number
@@ -381,7 +381,8 @@ def get_file_details_all(path=None, commandline=True):
 
 def get_repo_log(path=None, file_detail=False, commandline=True, subset=None):
     """
-    Get the latest changes operated on a file in a folder or a subfolder.
+    Gets the latest changes operated on a file in a folder or a subfolder.
+
     @param      path            path to look
     @param      file_detail     if True, add impacted files
     @param      commandline     if True, use the command line to get the version number, otherwise it uses pysvn
@@ -556,8 +557,9 @@ def get_repo_log(path=None, file_detail=False, commandline=True, subset=None):
 
 def get_repo_version(path=None, commandline=True, usedate=False, log=False):
     """
-    Get the latest check for a specific path or version number based on the date (is usedate is True)
-    If usedate is False, it returns a mini hash (a string then)
+    Gets the latest check for a specific path or version number
+    based on the date (is usedate is True).
+    If usedate is False, it returns a mini hash (a string then).
 
     @param      path            path to look
     @param      commandline     if True, use the command line to get the version number, otherwise it uses pysvn
@@ -619,7 +621,7 @@ def get_repo_version(path=None, commandline=True, usedate=False, log=False):
 
 def get_master_location(path=None, commandline=True):
     """
-    Get the remote master location.
+    Gets the remote master location.
 
     @param      path            path to look
     @param      commandline     if True, use the command line to get the version number, otherwise it uses pysvn
@@ -661,7 +663,7 @@ def get_master_location(path=None, commandline=True):
 
 def get_nb_commits(path=None, commandline=True):
     """
-    returns the number of commit
+    Returns the number of commit.
 
     @param      path            path to look
     @param      commandline     if True, use the command line to get the version number, otherwise it uses pysvn
@@ -708,7 +710,7 @@ def get_nb_commits(path=None, commandline=True):
 
 def clone(location, srv, group, project, username=None, password=None):
     """
-    clone a git repository
+    Clones a :epkg:`git` repository.
 
     @param      location    location of the clone
     @param      srv         git server
@@ -746,7 +748,7 @@ def clone(location, srv, group, project, username=None, password=None):
 
 def rebase(location, srv, group, project, username=None, password=None):
     """
-    run ``git pull -rebase``  on a repository
+    Runs ``git pull -rebase``  on a repository.
 
     @param      location    location of the clone
     @param      srv         git server
