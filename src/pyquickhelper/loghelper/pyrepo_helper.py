@@ -27,7 +27,7 @@ class SourceRepository:
     def SetGuessedType(self, location):
         """
         Guesses the repository type given a location
-        and change a member of the class.
+        and changes a member of the class.
 
         @param      location    location
         @return                 module to use

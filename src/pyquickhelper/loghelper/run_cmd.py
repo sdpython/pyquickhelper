@@ -19,14 +19,14 @@ else:
 
 class RunCmdException(Exception):
     """
-    raised by function @see fn run_cmd
+    Raised by function @see fn run_cmd.
     """
     pass
 
 
 def get_interpreter_path():
     """
-    return the interpreter path
+    Returns the interpreter path.
     """
     if sys.platform.startswith("win"):
         return sys.executable.replace("pythonw.exe", "python.exe")
@@ -36,7 +36,8 @@ def get_interpreter_path():
 
 def split_cmp_command(cmd, remove_quotes=True):
     """
-    splits a command line
+    Splits a command line.
+
     @param      cmd             command line
     @param      remove_quotes   True by default
     @return                     list
@@ -68,7 +69,7 @@ def split_cmp_command(cmd, remove_quotes=True):
 
 def decode_outerr(outerr, encoding, encerror, msg):
     """
-    decode the output or the error after running a command line instructions
+    Decodes the output or the error after running a command line instructions.
 
     @param      outerr      output or error
     @param      encoding    encoding (if None, it is replaced by ascii)
@@ -106,7 +107,7 @@ def skip_run_cmd(cmd, sin="", shell=True, wait=False, log_error=True,
                  preprocess=True, timeout=None, catch_exit=False, fLOG=None,
                  timeout_listen=None, tell_if_no_output=None, prefix_log=None):
     """
-    has the same signature as @see fn run_cmd but does nothing
+    Has the same signature as @see fn run_cmd but does nothing.
 
     .. versionadded:: 1.0
     """
@@ -150,7 +151,7 @@ def run_cmd(cmd, sin="", shell=sys.platform.startswith("win"), wait=False, log_e
         ::
 
             from pyquickhelper.loghelper import run_cmd
-            out,err = run_cmd("python setup.py install", wait=True)
+            out, err = run_cmd("python setup.py install", wait=True)
 
     If you are using this function to run git function, parameter ``shell`` must be True.
 
@@ -400,7 +401,7 @@ def run_cmd(cmd, sin="", shell=sys.platform.startswith("win"), wait=False, log_e
 
 def parse_exception_message(exc):
     """
-    Parse the message embedded in an exception and returns the standard output and error
+    Parses the message embedded in an exception and returns the standard output and error
     if it can be found.
 
     @param      exc     exception coming from @see fn run_cmd
@@ -419,7 +420,8 @@ def parse_exception_message(exc):
 
 def run_script(script, *l):
     """
-    run a script
+    Runs a script.
+
     @param      script      script to execute
     @param      l           other parameters
     @return                 out,err: content of stdout stream and stderr stream

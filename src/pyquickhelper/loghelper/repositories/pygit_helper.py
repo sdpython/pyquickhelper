@@ -600,7 +600,8 @@ def get_repo_version(path=None, commandline=True, usedate=False, log=False):
                 if log:
                     return "OUT\n{0}\n[giterror]{1}\nCMD:\n{2}".format(out, err, cmd)
                 else:
-                    raise GitException(err)
+                    raise GitException(
+                        "OUT\n{0}\n[giterror]{1}\nCMD:\n{2}".format(out, err, cmd))
 
             lines = out.split("\n")
             lines = [_.split("---") for _ in lines if len(_) > 0]
