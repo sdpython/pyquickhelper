@@ -641,12 +641,16 @@ def get_master_location(path=None, commandline=True):
         cmd = get_cmd_git()
         cmd += " config --get remote.origin.url"
 
-        out, err = run_cmd(cmd, wait=True, encerror="strict",
-                           encoding=sys.stdout.encoding if sys.version_info[
-                               0] != 2 and sys.stdout is not None else "utf8",
-                           change_path=os.path.split(
-                               path)[0] if os.path.isfile(path) else path,
-                           log_error=False, shell=sys.platform.startswith("win32"))
+        try:
+            out, err = run_cmd(cmd, wait=True, encerror="strict",
+                               encoding=sys.stdout.encoding if sys.version_info[
+                                   0] != 2 and sys.stdout is not None else "utf8",
+                               change_path=os.path.split(
+                                   path)[0] if os.path.isfile(path) else path,
+                               log_error=False, shell=sys.platform.startswith("win32"))
+        except Exception as e:
+            raise GitException(
+                "Problem with subprocess. Path is '{0}'\n[OUT]\n{1}\n[ERR]\n{2}".format(path, out, err)) from e
 
         if len(err) > 0:
             raise GitException(
