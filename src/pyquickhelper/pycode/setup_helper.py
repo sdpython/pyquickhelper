@@ -268,7 +268,7 @@ def process_standard_options_for_setup(argv, file_or_folder, project_var_name, m
     def dump_coverage_fct(full=True):
         mn = project_var_name if module_name is None else module_name
         full_path = _get_dump_default_path(folder, mn, argv)
-        if full:
+        if full_path is None or full:
             return full_path
         else:
             sub = os.path.split(full_path)[0]
