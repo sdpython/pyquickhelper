@@ -558,8 +558,8 @@ def get_repo_log(path=None, file_detail=False, commandline=True, subset=None):
 def get_repo_version(path=None, commandline=True, usedate=False, log=False):
     """
     Gets the latest check for a specific path or version number
-    based on the date (is usedate is True).
-    If usedate is False, it returns a mini hash (a string then).
+    based on the date (if *usedate* is True).
+    If *usedate* is False, it returns a mini hash (a string then).
 
     @param      path            path to look
     @param      commandline     if True, use the command line to get the version number, otherwise it uses pysvn
@@ -600,7 +600,7 @@ def get_repo_version(path=None, commandline=True, usedate=False, log=False):
 
             if len(err) > 0:
                 if log:
-                    fLOG("problem with file ", path, err)
+                    fLOG("Problem with file ", path, err)
                 if log:
                     return "OUT\n{0}\n[giterror]{1}\nCMD:\n{2}".format(out, err, cmd)
                 else:

@@ -5,7 +5,10 @@
 .. versionadded:: 1.3
 """
 import os
+import re
 import sys
+from collections import Counter
+from contextlib import redirect_stderr, redirect_stdout
 from ..loghelper import SourceRepository, noLOG
 
 
@@ -18,7 +21,7 @@ else:
 
 def publish_coverage_on_codecov(path, token, commandline=True, fLOG=noLOG):
     """
-    Publish the coverage report on `codecov <https://codecov.io/>`_.
+    Publishes the coverage report on `codecov <https://codecov.io/>`_.
     See blog post :ref:`blogpost_coverage_codecov`.
 
     @param      path            path to source
@@ -46,15 +49,11 @@ def publish_coverage_on_codecov(path, token, commandline=True, fLOG=noLOG):
            "--commit={0}".format(last), "--root={0} -X gcov".format(proj)]
     if token is not None:
         import codecov
-        out = sys.stdout
-        err = sys.stderr
         new_out = StringIO()
         new_err = StringIO()
-        sys.stdout = new_out
-        sys.stderr = new_err
-        codecov.main(*cmd)
-        sys.stdout = out
-        sys.stderr = err
+        with redirect_stdout(new_out):
+            with redirect_stderr(new_err):
+                codecov.main(*cmd)
         out = new_out.getvalue()
         err = new_err.getvalue()
         if err:
@@ -63,3 +62,38 @@ def publish_coverage_on_codecov(path, token, commandline=True, fLOG=noLOG):
         return out, err
     else:
         return cmd
+
+
+def coverage_combine(data_files, output_path, source):
+    """
+    Merges multiples reports.
+
+    @param      data_files  report files (``.coverage``)
+    @param      output_path output path
+    @param      source      source directory
+    """
+    reg = re.compile(',\\"(.*?[.]py)\\"')
+
+    def copy_replace(source, dest, root_source):
+        with open(source, "r") as f:
+            content = f.read()
+        cf = reg.findall(content)
+        co = Counter([_.split('src')[0] for _ in cf])
+        mx = max((v, k) for k, v in co.items())
+        root = mx[1].rstrip('\\/')
+        if '\\\\' in root:
+            s2 = root_source.replace('\\', '\\\\').replace('/', '\\\\')
+        else:
+            s2 = root_source
+        content = content.replace(root, s2)
+        with open(dest, "w") as f:
+            f.write(content)
+
+    from coverage import Coverage
+    dests = [os.path.join(output_path, '.coverage{0}'.format(
+        i)) for i in range(len(data_files))]
+    for fi, de in zip(data_files, dests):
+        copy_replace(fi, de, source)
+    cov = Coverage(source=source)
+    cov.combine(dests)
+    cov.html_report(directory=output_path)
