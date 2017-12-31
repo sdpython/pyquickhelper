@@ -75,7 +75,8 @@ class TestCoverageHelper(ExtTestCase):
         found = (found[0], "data" +
                  found[1].replace("\\", "/").split("data")[-1])
         exp = ('ba594812', exp_)
-        self.assertEqual(found, exp)
+        if sys.version_info[:2] >= (3, 6):
+            self.assertEqual(found, exp)
 
 
 if __name__ == "__main__":
