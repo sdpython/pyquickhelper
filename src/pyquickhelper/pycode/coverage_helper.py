@@ -10,6 +10,7 @@ import sys
 from collections import Counter
 from contextlib import redirect_stderr, redirect_stdout
 from ..loghelper import SourceRepository, noLOG
+from ..filehelper import explore_folder_iterfile
 
 
 if sys.version_info[0] == 2:
@@ -108,3 +109,44 @@ def coverage_combine(data_files, output_path, source, process=None):
     cov = Coverage(source=source)
     cov.combine(dests)
     cov.html_report(directory=output_path)
+
+
+def find_coverage_report(folder, exclude=None):
+    """
+    Finds all coverage reports in one subfolder.
+
+    @param      folder      which folder to look at
+    @param      exclude     list of subfolder not to look at
+    @return                 list of files ``.coverage``
+
+    The structure is supposed to:
+
+    ::
+
+        folder
+          +- hash1
+          |    +- date1
+          |    |    +- .coverage - not selected
+          |    +- date2
+          |         +- .coverage - selected
+          +- hash2
+               +- date
+                    +- .coverage - selected
+    """
+    covs = {}
+    subfold = os.listdir(folder)
+    for sub in subfold:
+        if exclude is not None and sub in exclude:
+            continue
+        full = os.path.join(folder, sub)
+        keep = []
+        for it in explore_folder_iterfile(full):
+            name = os.path.split(it)[-1]
+            dt = os.stat(full).st_mtime
+            if name == '.coverage':
+                keep.append((dt, it))
+        if len(keep) == 0:
+            continue
+        mx = max(keep)
+        covs[sub] = mx[-1]
+    return covs

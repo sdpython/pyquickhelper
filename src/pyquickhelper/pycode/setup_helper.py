@@ -149,36 +149,24 @@ def process_standard_options_for_setup(argv, file_or_folder, project_var_name, m
             },
         }
 
-    .. versionchanged:: 1.3
-        Parameters *coverage_options*, *coverage_exclude_lines*, *copy_add_ext* were added.
-        See function @see fn main_wrapper_tests.
-
-        Parameter *unittest_modules* now accepts a list of string and 2-uple.
-        If it is a 2-uple, the first string is used to convert Python 3 code into Python 2
-        (in case the local folder is different from the module name),
-        the second string is used to add local path to the variable ``PYTHON_PATH``.
-        If it is a single string, it means both name strings are equal.
-        Parameters *func_sphinx_begin* and *func_sphinx_end* were added
-        to pre-process or post-process the documentation.
-        Parameter *additional_notebook_path* was added to specify some additional
-        paths when preparing the script *auto_cmd_notebook.bat*.
-
-        Parameters *layout*, *nbformats* were added.
-        See function @see fn generate_help_sphinx.
-
-        Parameters *fLOG*, *additional_ut_path*, *skip_function* were added.
-        The coverage computation can be disable by specifying
-        ``coverage_options["disable_coverage"] = True``.
-
-        Parameter *covtoken* as added to post the coverage report to :epkg:`codecov`.
-
-        Parameters *hook_print*, *stdout*, *stderr* were added.
-
-    .. versionchanged:: 1.4
-        Parameters *use_run_cmd*, *filter_warning* were added.
-        command *unittests -d 10* and *unittests -d 5* was added to run unit
-        tests below 10 or 5 seconds. Option ``-e`` and ``-g`` were added to
-        filter file by regular expressions (in with *e*, out with *g*).
+    Parameters *coverage_options*, *coverage_exclude_lines*, *copy_add_ext* were added
+    for function @see fn main_wrapper_tests.
+    Parameter *unittest_modules* accepts a list of string and 2-uple.
+    If it is a 2-uple, the first string is used to convert Python 3 code into Python 2
+    (in case the local folder is different from the module name),
+    the second string is used to add local path to the variable ``PYTHON_PATH``.
+    If it is a single string, it means both name strings are equal.
+    Parameters *func_sphinx_begin* and *func_sphinx_end* were added
+    to pre-process or post-process the documentation.
+    Parameter *additional_notebook_path* was added to specify some additional
+    paths when preparing the script *auto_cmd_notebook.bat*.
+    Parameters *layout*, *nbformats* were added for
+    function @see fn generate_help_sphinx.
+    The coverage computation can be disable by specifying
+    ``coverage_options["disable_coverage"] = True``.
+    Parameter *covtoken* was added to post the coverage report to :epkg:`codecov`.
+    Option ``-e`` and ``-g`` were added to
+    filter file by regular expressions (in with *e*, out with *g*).
 
     .. versionchanged:: 1.5
         Parameter *file_filter_pep8* was added.
@@ -277,9 +265,15 @@ def process_standard_options_for_setup(argv, file_or_folder, project_var_name, m
 
     # dump unit test coverage?
 
-    def dump_coverage():
+    def dump_coverage_fct(full=True):
         mn = project_var_name if module_name is None else module_name
-        return _get_dump_default_path(folder, mn, argv)
+        full_path = _get_dump_default_path(folder, mn, argv)
+        if full:
+            return full_path
+        else:
+            sub = os.path.split(full_path)[0]
+            sub = os.path.split(sub)[0]
+            return sub
 
     # starts interpreting the commands
 
@@ -344,8 +338,8 @@ def process_standard_options_for_setup(argv, file_or_folder, project_var_name, m
                                 additional_ut_path=additional_ut_path,
                                 skip_function=skip_f, covtoken=covtoken,
                                 hook_print=hook_print, stdout=stdout, stderr=stderr,
-                                filter_warning=filter_warning, dump_coverage=dump_coverage(),
-                                fLOG=fLOG)
+                                filter_warning=filter_warning, dump_coverage=dump_coverage_fct(),
+                                add_coverage_folder=dump_coverage_fct(False), fLOG=fLOG)
         return True
 
     elif "setup_hook" in argv:
@@ -354,7 +348,7 @@ def process_standard_options_for_setup(argv, file_or_folder, project_var_name, m
             file_or_folder, setup_params=setup_params, only_setup_hook=True,
             coverage_options=coverage_options, coverage_exclude_lines=coverage_exclude_lines,
             additional_ut_path=additional_ut_path, skip_function=skip_function,
-            hook_print=hook_print, stdout=stdout, stderr=stderr, dump_coverage=dump_coverage(),
+            hook_print=hook_print, stdout=stdout, stderr=stderr, dump_coverage=dump_coverage_fct(),
             fLOG=fLOG)
         fLOG("---- JENKINS END SETUPHOOK ----")
         return True
@@ -366,7 +360,7 @@ def process_standard_options_for_setup(argv, file_or_folder, project_var_name, m
             file_or_folder, skip_function=skip_long, setup_params=setup_params,
             coverage_options=coverage_options, coverage_exclude_lines=coverage_exclude_lines,
             additional_ut_path=additional_ut_path, hook_print=hook_print,
-            stdout=stdout, stderr=stderr, dump_coverage=dump_coverage(),
+            stdout=stdout, stderr=stderr, dump_coverage=dump_coverage_fct(),
             fLOG=fLOG)
         return True
 
@@ -377,7 +371,7 @@ def process_standard_options_for_setup(argv, file_or_folder, project_var_name, m
             file_or_folder, skip_function=skip_skip, setup_params=setup_params,
             coverage_options=coverage_options, coverage_exclude_lines=coverage_exclude_lines,
             additional_ut_path=additional_ut_path, hook_print=hook_print,
-            stdout=stdout, stderr=stderr, dump_coverage=dump_coverage(),
+            stdout=stdout, stderr=stderr, dump_coverage=dump_coverage_fct(),
             fLOG=fLOG)
         return True
 
@@ -388,7 +382,7 @@ def process_standard_options_for_setup(argv, file_or_folder, project_var_name, m
             file_or_folder, skip_function=skip_skip, setup_params=setup_params,
             coverage_options=coverage_options, coverage_exclude_lines=coverage_exclude_lines,
             additional_ut_path=additional_ut_path, hook_print=hook_print,
-            stdout=stdout, stderr=stderr, dump_coverage=dump_coverage(),
+            stdout=stdout, stderr=stderr, dump_coverage=dump_coverage_fct(),
             fLOG=fLOG)
         return True
 
@@ -650,7 +644,8 @@ def standard_help_for_setup(argv, file_or_folder, project_var_name, module_name=
 def run_unittests_for_setup(file_or_folder, skip_function=default_skip_function, setup_params=None,
                             only_setup_hook=False, coverage_options=None, coverage_exclude_lines=None,
                             additional_ut_path=None, covtoken=None, hook_print=True, stdout=None,
-                            stderr=None, filter_warning=None, dump_coverage=None, fLOG=noLOG):
+                            stderr=None, filter_warning=None, dump_coverage=None,
+                            add_coverage_folder=None, fLOG=noLOG):
     """
     Runs the unit tests and computes the coverage, stores
     the results in ``_doc/sphinxdoc/source/coverage``
@@ -669,6 +664,7 @@ def run_unittests_for_setup(file_or_folder, skip_function=default_skip_function,
     @param      stderr                  see @see fn main_wrapper_tests
     @param      filter_warning          see @see fn main_wrapper_tests
     @param      dump_coverage           location where to dump the coverage
+    @param      add_coverage_folder     additional folder where to look for other coverage reports
     @param      fLOG                    logging function
 
     .. versionchanged:: 1.3
@@ -687,6 +683,9 @@ def run_unittests_for_setup(file_or_folder, skip_function=default_skip_function,
     .. versionchanged:: 1.5
         Parameter *dump_coverage* was added.
         Dumps the unit test coverage in another location.
+
+    .. versionchanged:: 1.6
+        Parameter *add_coverage_folder* was added.
     """
     ffolder = get_folder(file_or_folder)
     funit = os.path.join(ffolder, "_unittests")
@@ -715,7 +714,8 @@ def run_unittests_for_setup(file_or_folder, skip_function=default_skip_function,
         only_setup_hook=only_setup_hook, coverage_options=coverage_options,
         coverage_exclude_lines=coverage_exclude_lines, additional_ut_path=additional_ut_path,
         covtoken=covtoken, hook_print=hook_print, stdout=stdout, stderr=stderr,
-        filter_warning=filter_warning, dump_coverage=dump_coverage, fLOG=fLOG)
+        filter_warning=filter_warning, dump_coverage=dump_coverage,
+        add_coverage_folder=add_coverage_folder, fLOG=fLOG)
 
 
 def copy27_for_setup(file_or_folder):

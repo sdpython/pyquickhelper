@@ -17,7 +17,7 @@ from ..loghelper.flog import noLOG
 from ..filehelper import synchronize_folder
 from .call_setup_hook import call_setup_hook
 from .code_exceptions import CoverageException, SetupHookException
-from .coverage_helper import publish_coverage_on_codecov
+from .coverage_helper import publish_coverage_on_codecov, find_coverage_report, coverage_combine
 from .utils_tests_private import default_skip_function, main_run_test
 from .utils_tests_stringio import StringIOAndFile
 
@@ -31,7 +31,7 @@ def main_wrapper_tests(codefile, skip_list=None, processes=False, add_coverage=F
                        skip_function=default_skip_function, setup_params=None, only_setup_hook=False,
                        coverage_options=None, coverage_exclude_lines=None, additional_ut_path=None,
                        covtoken=None, hook_print=True, stdout=None, stderr=None, filter_warning=None,
-                       dump_coverage=None, fLOG=noLOG):
+                       dump_coverage=None, add_coverage_folder=None, fLOG=noLOG):
     """
     Calls function :func:`main <pyquickhelper.unittests.utils_tests.main>`
     and throws an exception if it fails.
@@ -60,6 +60,7 @@ def main_wrapper_tests(codefile, skip_list=None, processes=False, add_coverage=F
                                         in jupyter (signature: ``def filter_warning(w: warning) -> bool``),
                                         @see fn default_filter_warning
     @param      dump_coverage           dump or copy the coverage at this location
+    @param      add_coverage_folder     additional coverage folder reports
     @param      fLOG                    ``function(*l, **p)``, logging function
 
     *covtoken* can be a string ``<token>`` or a
@@ -89,60 +90,64 @@ def main_wrapper_tests(codefile, skip_list=None, processes=False, add_coverage=F
 
         And you can also read `Schedule builds with Jenkins <http://www.xavierdupre.fr/blog/2014-12-06_nojs.html>`_.
 
-    .. versionchanged:: 0.9
-        Parameters *add_coverage* and *report_folder* were added to compute the coverage
-        using the module `coverage <http://nedbatchelder.com/code/coverage/>`_.
-
-    .. versionchanged:: 1.0
-        Does something to avoid getting the following error::
+    Parameters *add_coverage* and *report_folder* are used to compute the coverage
+    using the module `coverage <http://nedbatchelder.com/code/coverage/>`_.
+    The function does something about the following error:
 
             _tkinter.TclError: no display name and no $DISPLAY environment variable
 
-        It is due to matplotlib. See `Generating matplotlib graphs without a running X server <http://stackoverflow.com/questions/4931376/generating-matplotlib-graphs-without-a-running-x-server>`_.
+    It is due to matplotlib.
+    See `Generating matplotlib graphs without a running X server <http://stackoverflow.com/questions/4931376/generating-matplotlib-graphs-without-a-running-x-server>`_.
+    If the skip function is None, it will replace it by the function @see fn default_skip_function.
+    Calls function @see fn _setup_hook if it is available in the unit tested module.
+    Parameter *tested_module* was added, the function then checks the presence of
+    function @see fn _setup_hook, it is the case, it runs it.
 
-    .. versionchanged:: 1.1
-        If the skip function is None, it will replace it by the function @see fn default_skip_function.
-        Calls function @see fn _setup_hook if it is available in the unit tested module.
-        Parameter *tested_module* was added, the function then checks the presence of
-        function @see fn _setup_hook, it is the case, it runs it.
+    Parameter *setup_params*: a mechanism was put in place
+    to let the module to test a possibility to run some preprocessing steps
+    in a separate process. They are described in @see fn _setup_hook
+    which must be found in the main file ``__init__.py``.
+    Parameter *only_setup_hook*:
+    saves the report in XML format, binary format, replace full paths by relative path.
 
-        Parameter *setup_params* was added. A mechanism was put in place
-        to let the module to test a possibility to run some preprocessing steps
-        in a separate process. They are described in @see fn _setup_hook
-        which must be found in the main file ``__init__.py``.
+    Parameters *coverage_options*, *coverage_exclude_lines*, *additional_ut_path*:
+    see class `Coverage <http://coverage.readthedocs.org/en/coverage-4.0b1/api_coverage.html?highlight=coverage#coverage.Coverage.__init__>`_
+    and `Configuration files <http://coverage.readthedocs.org/en/coverage-4.0b1/config.html>`_
+    to specify those options. If both values are left to None, this function will
+    compute the code coverage for all files in this module. The function
+    now exports the coverage options which were used.
+    For example, to exclude files from the coverage report::
 
-    .. versionchanged:: 1.2
-        Parameter *only_setup_hook* was added.
-        Save the report in XML format, binary format, replace full paths by relative path.
+        coverage_options=dict(omit=["*exclude*.py"])
 
-    .. versionchanged:: 1.3
-        Parameters *coverage_options*, *coverage_exclude_lines*,
-        *additional_ut_path* were added.
-        See class `Coverage <http://coverage.readthedocs.org/en/coverage-4.0b1/api_coverage.html?highlight=coverage#coverage.Coverage.__init__>`_
-        and `Configuration files <http://coverage.readthedocs.org/en/coverage-4.0b1/config.html>`_
-        to specify those options. If both values are left to None, this function will
-        compute the code coverage for all files in this module. The function
-        now exports the coverage options which were used.
-        For example, to exclude files from the coverage report::
-
-            coverage_options=dict(omit=["*exclude*.py"])
-
-        Parameter *covtoken* as added to post the coverage report to
-        `codecov <https://codecov.io/>`_.
-
-        Parameters *hook_print*, *stdout*, *stderr* were added.
+    Parameter *covtoken*: used to post the coverage report to
+    `codecov <https://codecov.io/>`_.
 
     .. versionchanged:: 1.4
         Parameter *filter_warning* was added.
 
     .. versionchanged:: 1.5
         Parameter *dump_coverage* was added.
+
+    .. versionchanged:: 1.6
+        Parameter *add_coverage_folder* was added.
     """
     whole_ouput = StringIOAndFile(codefile + ".out")
     runner = unittest.TextTestRunner(verbosity=0, stream=whole_ouput)
     path = os.path.abspath(os.path.join(os.path.split(codefile)[0]))
     stdout_this = stdout if stdout else sys.stdout
     datetime_begin = datetime.now()
+
+    def _find_source(fold):
+        fold0 = fold
+        exists = os.path.exists(os.path.join(fold, ".gitignore"))
+        while not exists:
+            if len(fold) < 2:
+                raise FileNotFoundError(
+                    "Unable to guess source from '{0}'.".format(fold0))
+            fold = os.path.split(fold)[0]
+            exists = os.path.exists(os.path.join(fold, ".gitignore"))
+        return exists
 
     def run_main():
         res = main_run_test(runner, path_test=path, skip=-1, skip_list=skip_list,
@@ -156,6 +161,21 @@ def main_wrapper_tests(codefile, skip_list=None, processes=False, add_coverage=F
         # _tkinter.TclError: no display name and no $DISPLAY environment variable
         #os.environ["DISPLAY"] = "localhost:0"
         pass
+
+    # other coverage reports
+    if add_coverage_folder is not None and dump_coverage is not None:
+        sub = os.path.split(dump_coverage)[0]
+        sub = os.path.split(sub)[-1]
+        other_cov_folders = find_coverage_report(
+            add_coverage_folder, exclude=sub)
+        mes = "[main_wrapper_tests] other_cov_folders='{0}'".format(
+            other_cov_folders)
+        fLOG(mes)
+        stdout_this.write(mes + "\n")
+        if len(other_cov_folders) == 0:
+            other_cov_folders = None
+    else:
+        other_cov_folders = None
 
     # to deal with: _tkinter.TclError: no display name and no $DISPLAY
     # environment variable
@@ -256,14 +276,14 @@ def main_wrapper_tests(codefile, skip_list=None, processes=False, add_coverage=F
                     cov.exclude(line)
             else:
                 cov.exclude("raise NotImplementedError")
-            stdout_this.write("[main_wrapper_tests] ENABLE COVERAGE")
+            stdout_this.write("[main_wrapper_tests] ENABLE COVERAGE\n")
             cov.start()
 
             res = run_main()
 
             cov.stop()
             stdout_this.write(
-                "[main_wrapper_tests] STOP COVERAGE + REPORT into '{0}'".format(report_folder))
+                "[main_wrapper_tests] STOP COVERAGE + REPORT into '{0}\n'".format(report_folder))
 
             cov.html_report(directory=report_folder)
             outfile = os.path.join(report_folder, "coverage_report.xml")
@@ -331,19 +351,31 @@ def main_wrapper_tests(codefile, skip_list=None, processes=False, add_coverage=F
 
             if dump_coverage is not None:
                 src = os.path.dirname(outfile)
-                stdout_this.write("[main_wrapper_tests] dump coverage from '{1}' to '{0}'".format(
+                stdout_this.write("[main_wrapper_tests] dump coverage from '{1}' to '{0}'\n".format(
                     dump_coverage, outfile))
                 synchronize_folder(src, dump_coverage, fLOG=fLOG)
+
+                if other_cov_folders is not None:
+                    source = _find_source(dump_coverage)
+                    stdout_this.write(
+                        "[main_wrapper_tests] ADD COVERAGE for source='{0}'".format(source))
+                    covs = list(other_cov_folders.values())
+                    covs.append(os.path.join(dump_coverage, '.coverage'))
+                    stdout_this.write(
+                        "[main_wrapper_tests] ADD COVERAGE COMBINE='{0}'".format(covs))
+                    stdout_this.write(
+                        "[main_wrapper_tests] DUMP INTO='{0}'".format(dump_coverage))
+                    coverage_combine(covs, dump_coverage, source)
 
             if covtoken:
                 if isinstance(covtoken, tuple):
                     if eval(covtoken[1]):
                         # publishing token
-                        mes = "[main_wrapper_tests] PUBLISH COVERAGE to codecov '{0}' EVAL '{1}'\n".format(
+                        mes = "[main_wrapper_tests] PUBLISH COVERAGE to codecov '{0}' EVAL '{1}'".format(
                             covtoken[0], covtoken[1])
                         if stdout is not None:
                             stdout.write(mes)
-                        stdout_this.write(mes)
+                        stdout_this.write(mes + '\n')
                         fLOG(mes)
                         publish_coverage_on_codecov(
                             token=covtoken[0], path=outfile, fLOG=fLOG)

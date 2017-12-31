@@ -22,6 +22,7 @@ except ImportError:
 
 from src.pyquickhelper.loghelper import fLOG
 from src.pyquickhelper.pycode import coverage_combine, get_temp_folder, ExtTestCase
+from src.pyquickhelper.pycode.coverage_helper import find_coverage_report
 
 
 class TestCoverageHelper(ExtTestCase):
@@ -54,6 +55,21 @@ class TestCoverageHelper(ExtTestCase):
         coverage_combine(covs, temp, source=source, process=process)
         index = os.path.join(temp, "index.html")
         self.assertExists(index)
+
+    def test_find_coverage_report(self):
+        fLOG(
+            __file__,
+            self._testMethodName,
+            OutputPrint=__name__ == "__main__")
+
+        this = os.path.dirname(__file__)
+        data = os.path.join(this, "data", "_coverage_dumps",
+                            "tkinterquickhelper")
+        find = find_coverage_report(data)
+        self.assertIsInstance(find, dict)
+        self.assertEqual(len(find), 2)
+        exp = ('ba594812', 'data\\_coverage_dumps\\tkinterquickhelper\\ba594812\\20171226T1558\\.coverage')
+        self.assertEqual(list(find.items())[0], exp)
 
 
 if __name__ == "__main__":
