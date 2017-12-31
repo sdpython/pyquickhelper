@@ -68,8 +68,14 @@ class TestCoverageHelper(ExtTestCase):
         find = find_coverage_report(data)
         self.assertIsInstance(find, dict)
         self.assertEqual(len(find), 2)
-        exp = ('ba594812', 'data\\_coverage_dumps\\tkinterquickhelper\\ba594812\\20171226T1558\\.coverage')
-        self.assertEqual(list(find.items())[0], exp)
+        exp_ = 'data\\_coverage_dumps\\tkinterquickhelper\\ba594812\\20171226T1558\\.coverage'.replace(
+            "\\", "/")
+        '/home/circleci/repo/_unittests/ut_pycode/data/_coverage_dumps/tkinterquickhelper/ba594812/20171226T1558/.coverage'
+        found = list(find.items())[0]
+        found = (found[0], "data" +
+                 found[1].replace("\\", "/").split("data")[-1])
+        exp = ('ba594812', exp_)
+        self.assertEqual(found, exp)
 
 
 if __name__ == "__main__":

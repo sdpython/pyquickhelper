@@ -147,7 +147,7 @@ def main_wrapper_tests(codefile, skip_list=None, processes=False, add_coverage=F
                     "Unable to guess source from '{0}'.".format(fold0))
             fold = os.path.split(fold)[0]
             exists = os.path.exists(os.path.join(fold, ".gitignore"))
-        return exists
+        return fold
 
     def run_main():
         res = main_run_test(runner, path_test=path, skip=-1, skip_list=skip_list,
@@ -358,13 +358,13 @@ def main_wrapper_tests(codefile, skip_list=None, processes=False, add_coverage=F
                 if other_cov_folders is not None:
                     source = _find_source(dump_coverage)
                     stdout_this.write(
-                        "[main_wrapper_tests] ADD COVERAGE for source='{0}'".format(source))
+                        "[main_wrapper_tests] ADD COVERAGE for source='{0}'\n".format(source))
                     covs = list(other_cov_folders.values())
                     covs.append(os.path.join(dump_coverage, '.coverage'))
                     stdout_this.write(
-                        "[main_wrapper_tests] ADD COVERAGE COMBINE='{0}'".format(covs))
+                        "[main_wrapper_tests] ADD COVERAGE COMBINE='{0}'\n".format(covs))
                     stdout_this.write(
-                        "[main_wrapper_tests] DUMP INTO='{0}'".format(dump_coverage))
+                        "[main_wrapper_tests] DUMP INTO='{0}'\n".format(dump_coverage))
                     coverage_combine(covs, dump_coverage, source)
 
             if covtoken:
