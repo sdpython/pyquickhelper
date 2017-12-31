@@ -256,13 +256,13 @@ def main_wrapper_tests(codefile, skip_list=None, processes=False, add_coverage=F
                     cov.exclude(line)
             else:
                 cov.exclude("raise NotImplementedError")
-            stdout_this("[main_wrapper_tests] ENABLE COVERAGE")
+            stdout_this.write("[main_wrapper_tests] ENABLE COVERAGE")
             cov.start()
 
             res = run_main()
 
             cov.stop()
-            stdout_this(
+            stdout_this.write(
                 "[main_wrapper_tests] STOP COVERAGE + REPORT into '{0}'".format(report_folder))
 
             cov.html_report(directory=report_folder)
@@ -331,7 +331,7 @@ def main_wrapper_tests(codefile, skip_list=None, processes=False, add_coverage=F
 
             if dump_coverage is not None:
                 src = os.path.dirname(outfile)
-                stdout_this("[main_wrapper_tests] dump coverage from '{1}' to '{0}'".format(
+                stdout_this.write("[main_wrapper_tests] dump coverage from '{1}' to '{0}'".format(
                     dump_coverage, outfile))
                 synchronize_folder(src, dump_coverage, fLOG=fLOG)
 
@@ -343,7 +343,7 @@ def main_wrapper_tests(codefile, skip_list=None, processes=False, add_coverage=F
                             covtoken[0], covtoken[1])
                         if stdout is not None:
                             stdout.write(mes)
-                        stdout_this(mes)
+                        stdout_this.write(mes)
                         fLOG(mes)
                         publish_coverage_on_codecov(
                             token=covtoken[0], path=outfile, fLOG=fLOG)
