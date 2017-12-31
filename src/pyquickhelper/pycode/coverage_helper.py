@@ -64,13 +64,22 @@ def publish_coverage_on_codecov(path, token, commandline=True, fLOG=noLOG):
         return cmd
 
 
-def coverage_combine(data_files, output_path, source):
+def coverage_combine(data_files, output_path, source, process=None):
     """
     Merges multiples reports.
 
     @param      data_files  report files (``.coverage``)
     @param      output_path output path
     @param      source      source directory
+    @param      process     function which processes the coverage report
+
+    The function *process* should have the signature:
+
+    ::
+
+        def process(content):
+            # ...
+            return content
     """
     reg = re.compile(',\\"(.*?[.]py)\\"')
 

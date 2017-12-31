@@ -32,6 +32,12 @@ class TestCoverageHelper(ExtTestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
+        def process(content):
+            if sys.platform.startswith('win'):
+                return content
+            else:
+                return content.replace("\\", "/")
+
         temp = get_temp_folder(__file__, "temp_coverage_combine")
         source = os.path.normpath(os.path.abspath(
             os.path.join(temp, "..", "..", "..")))
@@ -45,7 +51,7 @@ class TestCoverageHelper(ExtTestCase):
                 raise FileNotFoundError(cov)
             if not os.path.isfile(cov):
                 raise Exception("'{0}' is not a file".format(cov))
-        coverage_combine(covs, temp, source=source)
+        coverage_combine(covs, temp, source=source, process=process)
         index = os.path.join(temp, "index.html")
         self.assertExists(index)
 
