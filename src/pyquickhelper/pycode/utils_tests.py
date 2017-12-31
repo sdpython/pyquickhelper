@@ -34,20 +34,20 @@ def main_wrapper_tests(codefile, skip_list=None, processes=False, add_coverage=F
                        dump_coverage=None, fLOG=noLOG):
     """
     Calls function :func:`main <pyquickhelper.unittests.utils_tests.main>`
-    and throw an exception if it fails.
+    and throws an exception if it fails.
 
     @param      codefile                ``__file__`` or ``run_unittests.py``
     @param      skip_list               to skip a list of unit tests (by index, starting by 1)
     @param      processes               to run the unit test in a separate process (with function @see fn run_cmd),
                                         however, to make that happen, you need to specify
                                         ``exit=False`` for each test file, see `unittest.main <https://docs.python.org/3/library/unittest.html#unittest.main>`_
-    @param      add_coverage            run the unit tests and measure the coverage at the same time
-    @param      report_folder           folder where the coverage report will be stored, if None, it will be placed in:
+    @param      add_coverage            (bool) run the unit tests and measure the coverage at the same time
+    @param      report_folder           (str) folder where the coverage report will be stored, if None, it will be placed in:
                                         ``os.path.join(os.path.dirname(codefile), "..", "_doc","sphinxdoc","source", "coverage")``
     @param      skip_function           *function(filename,content,duration) --> boolean* to skip a unit test
     @param      setup_params            parameters sent to @see fn call_setup_hook
     @param      only_setup_hook         calls only @see fn call_setup_hook, do not run the unit test
-    @param      coverage_options        (dictionary) options for module coverage as a dictionary, see below, default is None
+    @param      coverage_options        (dict) options for module coverage as a dictionary, see below, default is None
     @param      coverage_exclude_lines  (list) options for module coverage, lines to exclude from the coverage report, defaul is None
     @param      additional_ut_path      (list) additional paths to add when running the unit tests
     @param      covtoken                (str|tuple(str, str)) token used when publishing coverage report to `codecov <https://codecov.io/>`_
@@ -219,7 +219,7 @@ def main_wrapper_tests(codefile, skip_list=None, processes=False, add_coverage=F
     else:
         # coverage
         if add_coverage:
-            stdout_this.write("--- COVERAGE BEGIN ---\n")
+            stdout_this.write("[main_wrapper_tests] --- COVERAGE BEGIN ---\n")
             if report_folder is None:
                 report_folder = os.path.join(
                     os.path.abspath(os.path.dirname(codefile)), "..", "_doc", "sphinxdoc", "source", "coverage")
@@ -256,13 +256,14 @@ def main_wrapper_tests(codefile, skip_list=None, processes=False, add_coverage=F
                     cov.exclude(line)
             else:
                 cov.exclude("raise NotImplementedError")
-            fLOG("[main_wrapper_tests] ENABLE COVERAGE")
+            stdout_this("[main_wrapper_tests] ENABLE COVERAGE")
             cov.start()
 
             res = run_main()
 
             cov.stop()
-            fLOG("[main_wrapper_tests] STOP COVERAGE + REPORT")
+            stdout_this(
+                "[main_wrapper_tests] STOP COVERAGE + REPORT into '{0}'".format(report_folder))
 
             cov.html_report(directory=report_folder)
             outfile = os.path.join(report_folder, "coverage_report.xml")
@@ -330,7 +331,7 @@ def main_wrapper_tests(codefile, skip_list=None, processes=False, add_coverage=F
 
             if dump_coverage is not None:
                 src = os.path.dirname(outfile)
-                fLOG("[main_wrapper_tests] dump coverage from '{1}' to '{0}'".format(
+                stdout_this("[main_wrapper_tests] dump coverage from '{1}' to '{0}'".format(
                     dump_coverage, outfile))
                 synchronize_folder(src, dump_coverage, fLOG=fLOG)
 
@@ -338,11 +339,12 @@ def main_wrapper_tests(codefile, skip_list=None, processes=False, add_coverage=F
                 if isinstance(covtoken, tuple):
                     if eval(covtoken[1]):
                         # publishing token
+                        mes = "[main_wrapper_tests] PUBLISH COVERAGE to codecov '{0}' EVAL '{1}'\n".format(
+                            covtoken[0], covtoken[1])
                         if stdout is not None:
-                            stdout.write("PUBLISH COVERAGE to codecov '{0}' EVAL '{1}'\n".format(
-                                covtoken[0], covtoken[1]))
-                        fLOG("[main_wrapper_tests] publishing coverage to codecov",
-                             covtoken[0], "EVAL", covtoken[1])
+                            stdout.write(mes)
+                        stdout_this(mes)
+                        fLOG(mes)
                         publish_coverage_on_codecov(
                             token=covtoken[0], path=outfile, fLOG=fLOG)
                     else:
@@ -354,15 +356,16 @@ def main_wrapper_tests(codefile, skip_list=None, processes=False, add_coverage=F
                         "[main_wrapper_tests] publishing coverage to codecov", covtoken)
                     publish_coverage_on_codecov(
                         token=covtoken, path=outfile, fLOG=fLOG)
-            stdout_this.write("--- COVERAGE END ---\n")
+            stdout_this.write("[main_wrapper_tests] --- COVERAGE END ---\n")
         else:
-            stdout_this.write("--- NO COVERAGE BEGIN ---\n")
+            stdout_this.write(
+                "[main_wrapper_tests] --- NO COVERAGE BEGIN ---\n")
             if covtoken and (not isinstance(covtoken, tuple) or eval(covtoken[1])):
                 raise CoverageException(
                     "covtoken is not null but add_coverage is not True, coverage cannot be published")
             tested_module(src_abs, project_var_name, setup_params)
             res = run_main()
-            stdout_this.write("--- NO COVERAGE END ---\n")
+            stdout_this.write("[main_wrapper_tests] --- NO COVERAGE END ---\n")
 
         fLOG("[main_wrapper_tests] SUMMARY -------------------------")
         for r in res["tests"]:
