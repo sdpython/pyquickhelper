@@ -86,6 +86,8 @@ def coverage_combine(data_files, output_path, source, process=None):
     def copy_replace(source, dest, root_source):
         with open(source, "r") as f:
             content = f.read()
+        if process is not None:
+            content = process(content)
         cf = reg.findall(content)
         co = Counter([_.split('src')[0] for _ in cf])
         mx = max((v, k) for k, v in co.items())
