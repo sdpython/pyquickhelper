@@ -356,16 +356,19 @@ def main_wrapper_tests(codefile, skip_list=None, processes=False, add_coverage=F
                 synchronize_folder(src, dump_coverage, fLOG=fLOG)
 
                 if other_cov_folders is not None:
-                    source = _find_source(dump_coverage)
+                    source = _find_source(src)
+                    if not source:
+                        raise FileNotFoundError(
+                            "Unable to find source '{0}' from '{1}'".format(source, src))
                     stdout_this.write(
                         "[main_wrapper_tests] ADD COVERAGE for source='{0}'\n".format(source))
                     covs = list(other_cov_folders.values())
-                    covs.append(os.path.join(dump_coverage, '.coverage'))
+                    covs.append(os.path.join(src, '.coverage'))
                     stdout_this.write(
                         "[main_wrapper_tests] ADD COVERAGE COMBINE='{0}'\n".format(covs))
                     stdout_this.write(
                         "[main_wrapper_tests] DUMP INTO='{0}'\n".format(dump_coverage))
-                    coverage_combine(covs, dump_coverage, source)
+                    coverage_combine(covs, src, source)
 
             if covtoken:
                 if isinstance(covtoken, tuple):
