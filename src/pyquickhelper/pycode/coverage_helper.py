@@ -84,6 +84,7 @@ def coverage_combine(data_files, output_path, source, process=None):
             # ...
             return content
     """
+    inter = []
     reg = re.compile(',\\"(.*?[.]py)\\"')
 
     def copy_replace(source, dest, root_source):
@@ -99,6 +100,7 @@ def coverage_combine(data_files, output_path, source, process=None):
             s2 = root_source.replace('\\', '\\\\').replace('/', '\\\\')
         else:
             s2 = root_source
+        inter.append((root_source, s2))
         content = content.replace(root, s2)
         with open(dest, "w") as f:
             f.write(content)
@@ -142,7 +144,8 @@ def coverage_combine(data_files, output_path, source, process=None):
         rows = ["destcov='{0}'".format(destcov),
                 "outfile='{0}'".format(outfile),
                 "source='{0}'".format(source),
-                "dests='{0}'".format(';'.join(dests))]
+                "dests='{0}'".format(';'.join(dests)),
+                "inter={0}".format(inter)]
         raise RuntimeError(
             "Converage report is empty in '{0}'.\n{1}\n{2}\n---\n{3}\n---\n{4}".format(output_path, "\n".join(rows), content, ex, ex2))
     return cov
