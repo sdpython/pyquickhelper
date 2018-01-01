@@ -169,8 +169,7 @@ def main_wrapper_tests(codefile, skip_list=None, processes=False, add_coverage=F
         other_cov_folders = find_coverage_report(
             add_coverage_folder, exclude=sub)
         mes = "[main_wrapper_tests] other_cov_folders...sub='{0}'".format(sub)
-        fLOG(sub)
-        stdout_this.write(sub + "\n")
+        stdout_this.write(mes + "\n")
         for k, v in sorted(other_cov_folders.items()):
             mes = "[main_wrapper_tests]     k='{0}' v={1}".format(k, v)
             stdout_this.write(mes + "\n")
@@ -291,65 +290,78 @@ def main_wrapper_tests(codefile, skip_list=None, processes=False, add_coverage=F
             outfile = os.path.join(report_folder, "coverage_report.xml")
             cov.xml_report(outfile=outfile)
             cov.save()
+            srcp_s = []
 
             # we clean absolute path from the produced files
-            fLOG("[main_wrapper_tests] replace ",
-                 srcp, ' by ', project_var_name)
-            srcp_s = [os.path.abspath(os.path.normpath(srcp)),
-                      os.path.normpath(srcp)]
-            if sys.version_info[0] == 2:
-                bsrcp = [b.encode(encoding="utf-8") for b in srcp_s]
-                bproj = project_var_name.encode(encoding="utf-8")
-            else:
-                bsrcp = [bytes(b, encoding="utf-8") for b in srcp_s]
-                bproj = bytes(project_var_name, encoding="utf-8")
-            for afile in os.listdir(report_folder):
-                full = os.path.join(report_folder, afile)
-                with open(full, "rb") as f:
-                    content = f.read()
-                for b in bsrcp:
-                    content = content.replace(b, bproj)
-                with open(full, "wb") as f:
-                    f.write(content)
+            def clean_absolute_path():
+                fLOG("[main_wrapper_tests] replace ",
+                     srcp, ' by ', project_var_name)
+                srcp_s.clear()
+                srcp_s.extend([os.path.abspath(os.path.normpath(srcp)),
+                               os.path.normpath(srcp)])
+                if sys.version_info[0] == 2:
+                    bsrcp = [b.encode(encoding="utf-8") for b in srcp_s]
+                    bproj = project_var_name.encode(encoding="utf-8")
+                else:
+                    bsrcp = [bytes(b, encoding="utf-8") for b in srcp_s]
+                    bproj = bytes(project_var_name, encoding="utf-8")
+                for afile in os.listdir(report_folder):
+                    full = os.path.join(report_folder, afile)
+                    with open(full, "rb") as f:
+                        content = f.read()
+                    for b in bsrcp:
+                        content = content.replace(b, bproj)
+                    with open(full, "wb") as f:
+                        f.write(content)
+
+            clean_absolute_path()
 
             # we print debug information for the coverage
-            fLOG("[main_wrapper_tests] add debug information")
-            outcov = os.path.join(report_folder, "covlog.txt")
-            rows = []
-            rows.append("COVERAGE OPTIONS")
-            for k, v in sorted(coverage_options.items()):
-                rows.append("{0}={1}".format(k, v))
-            rows.append("")
-            rows.append("EXCLUDE LINES")
-            for k in cov.get_exclude_list():
-                rows.append(k)
-            rows.append("")
-            rows.append("OPTIONS")
-            for option_spec in sorted(cov.config.CONFIG_FILE_OPTIONS):
-                attr = option_spec[0]
-                if attr == "sort":
-                    # we skip, it raises an exception with coverage 4.2
-                    continue
-                v = getattr(cov.config, attr)
-                st = "{0}={1}".format(attr, v)
-                rows.append(st)
-            rows.append("")
-            content = "\n".join(rows)
+            def write_covlog(covs):
+                fLOG("[main_wrapper_tests] add debug information")
+                outcov = os.path.join(report_folder, "covlog.txt")
+                rows = []
+                rows.append("COVERAGE OPTIONS")
+                for k, v in sorted(coverage_options.items()):
+                    rows.append("{0}={1}".format(k, v))
+                rows.append("")
+                rows.append("EXCLUDE LINES")
+                for k in cov.get_exclude_list():
+                    rows.append(k)
+                rows.append("")
+                rows.append("OPTIONS")
+                for option_spec in sorted(cov.config.CONFIG_FILE_OPTIONS):
+                    attr = option_spec[0]
+                    if attr == "sort":
+                        # we skip, it raises an exception with coverage 4.2
+                        continue
+                    v = getattr(cov.config, attr)
+                    st = "{0}={1}".format(attr, v)
+                    rows.append(st)
+                rows.append("")
 
-            reps = []
-            for _ in srcp_s[:1]:
-                __ = os.path.normpath(os.path.join(_, "..", "..", ".."))
-                __ += "/"
-                reps.append(__)
-                reps.append(__.replace("/", "\\"))
-                reps.append(__.replace("/", "\\\\"))
-                reps.append(__.replace("\\", "\\\\"))
+                if covs is not None:
+                    for add in sorted(covs):
+                        rows.append("MERGE='{0}'".format(add))
 
-            for s in reps:
-                content = content.replace(s, "")
+                content = "\n".join(rows)
 
-            with open(outcov, "w", encoding="utf8") as f:
-                f.write(content)
+                reps = []
+                for _ in srcp_s[:1]:
+                    __ = os.path.normpath(os.path.join(_, "..", "..", ".."))
+                    __ += "/"
+                    reps.append(__)
+                    reps.append(__.replace("/", "\\"))
+                    reps.append(__.replace("/", "\\\\"))
+                    reps.append(__.replace("\\", "\\\\"))
+
+                for s in reps:
+                    content = content.replace(s, "")
+
+                with open(outcov, "w", encoding="utf8") as f:
+                    f.write(content)
+
+            write_covlog(None)
 
             if dump_coverage is not None:
                 src = os.path.dirname(outfile)
@@ -372,6 +384,7 @@ def main_wrapper_tests(codefile, skip_list=None, processes=False, add_coverage=F
                     stdout_this.write(
                         "[main_wrapper_tests] DUMP INTO='{0}'\n".format(src))
                     coverage_combine(covs, src, source)
+                    write_covlog(covs)
 
             if covtoken:
                 if isinstance(covtoken, tuple):

@@ -8,6 +8,7 @@ import os
 import re
 import sys
 from collections import Counter
+import shutil
 from contextlib import redirect_stderr, redirect_stdout
 from ..loghelper import SourceRepository, noLOG
 from ..filehelper import explore_folder_iterfile
@@ -73,6 +74,7 @@ def coverage_combine(data_files, output_path, source, process=None):
     @param      output_path output path
     @param      source      source directory
     @param      process     function which processes the coverage report
+    @return                 coverage report
 
     The function *process* should have the signature:
 
@@ -106,9 +108,28 @@ def coverage_combine(data_files, output_path, source, process=None):
         i)) for i in range(len(data_files))]
     for fi, de in zip(data_files, dests):
         copy_replace(fi, de, source)
-    cov = Coverage(source=source)
+    destcov = os.path.join(output_path, '.coverage')
+    if os.path.exists(destcov):
+        destcov2 = destcov + '_old'
+        if destcov in dests:
+            ind = dests.index(destcov)
+            dests[ind] = destcov2
+        shutil.copy(destcov, destcov2)
+    cov = Coverage(data_file=destcov, source=[source])
     cov.combine(dests)
     cov.html_report(directory=output_path)
+    outfile = os.path.join(output_path, "coverage_report.xml")
+    cov.xml_report(outfile=outfile)
+    cov.save()
+
+    # Verifications
+    with open(outfile, "r", encoding="utf-8") as f:
+        content = f.read()
+    if 'line hits="1"' not in content:
+        raise RuntimeError(
+            "Converage report is empty in '{0}'.\n{1}".format(output_path, content))
+
+    return cov
 
 
 def find_coverage_report(folder, exclude=None, filter_out='.*conda.*'):
