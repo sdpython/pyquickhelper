@@ -717,7 +717,7 @@ def get_nb_commits(path=None, commandline=True):
         return nb
 
 
-def clone(location, srv, group, project, username=None, password=None):
+def clone(location, srv, group, project, username=None, password=None, fLOG=None):
     """
     Clones a :epkg:`git` repository.
 
@@ -727,6 +727,7 @@ def clone(location, srv, group, project, username=None, password=None):
     @param      project     project name
     @param      username    username
     @param      password    password
+    @param      fLOG        logging function
     @return                 output, error
 
     See `How to provide username and password when run "git clone git@remote.git"? <http://stackoverflow.com/questions/10054318/how-to-provide-username-and-password-when-run-git-clone-gitremote-git>`_
@@ -748,14 +749,14 @@ def clone(location, srv, group, project, username=None, password=None):
 
     cmd = get_cmd_git()
     cmd += " clone " + address + " " + location
-    out, err = run_cmd(cmd, wait=True)
+    out, err = run_cmd(cmd, wait=True, fLOG=fLOG)
     if len(err) > 0 and "Cloning into" not in err and "Clonage dans" not in err:
         raise GitException(
             "Unable to clone {0}\n[giterror]\n{1}\nCMD:\n{2}".format(address, err, cmd))
     return out, err
 
 
-def rebase(location, srv, group, project, username=None, password=None):
+def rebase(location, srv, group, project, username=None, password=None, fLOG=None):
     """
     Runs ``git pull -rebase``  on a repository.
 
@@ -765,6 +766,7 @@ def rebase(location, srv, group, project, username=None, password=None):
     @param      project     project name
     @param      username    username
     @param      password    password
+    @param      fLOG        logging function
     @return                 output, error
 
     .. versionadded:: 0.9
@@ -780,7 +782,7 @@ def rebase(location, srv, group, project, username=None, password=None):
     os.chdir(location)
     cmd = get_cmd_git()
     cmd += " pull --rebase " + address
-    out, err = run_cmd(cmd, wait=True)
+    out, err = run_cmd(cmd, wait=True, fLOG=fLOG)
     os.chdir(cwd)
     if len(err) > 0 and "-> FETCH_HEAD" not in err:
         raise GitException(

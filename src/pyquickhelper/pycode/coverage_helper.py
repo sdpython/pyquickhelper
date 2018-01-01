@@ -111,12 +111,13 @@ def coverage_combine(data_files, output_path, source, process=None):
     cov.html_report(directory=output_path)
 
 
-def find_coverage_report(folder, exclude=None):
+def find_coverage_report(folder, exclude=None, filter_out='.*conda.*'):
     """
     Finds all coverage reports in one subfolder.
 
     @param      folder      which folder to look at
     @param      exclude     list of subfolder not to look at
+    @param      filter_out  filter out from the name
     @return                 list of files ``.coverage``
 
     The structure is supposed to:
@@ -136,6 +137,7 @@ def find_coverage_report(folder, exclude=None):
     regexp = re.compile('data_file=([0-9a-zA-Z_]+)')
     regcov = re.compile(
         '<h1>Coveragereport:<spanclass=.?pc_cov.?>([0-9]+)%</span>')
+    regout = re.compile(filter_out) if filter_out else None
     covs = {}
     subfold = os.listdir(folder)
     for sub in subfold:
@@ -165,5 +167,7 @@ def find_coverage_report(folder, exclude=None):
         if len(keep) == 0:
             continue
         mx = max(keep)
+        if regout is not None and regout.search(nn):
+            continue
         covs[sub] = (mx[-1], nn, cov)
     return covs
