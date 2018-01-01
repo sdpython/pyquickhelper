@@ -126,10 +126,14 @@ def coverage_combine(data_files, output_path, source, process=None):
     with open(outfile, "r", encoding="utf-8") as f:
         content = f.read()
     if 'line hits="1"' not in content:
-        if len(centent) > 2000:
+        if len(content) > 2000:
             content = content[:2000] + '\n...'
+        rows = ["destcov='{0}'".format(destcov),
+                "outfile='{0}'".format(outfile),
+                "source='{0}'".format(source),
+                "dests='{0}'".format(';'.join(dests))]
         raise RuntimeError(
-            "Converage report is empty in '{0}'.\n{1}".format(output_path, content))
+            "Converage report is empty in '{0}'.\n{1}\n{2}".format(output_path, "\n".join(rows), content))
     return cov
 
 
