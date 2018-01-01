@@ -131,7 +131,6 @@ def coverage_combine(data_files, output_path, source, process=None, absolute_pat
         copy_replace(fi, de, source)
 
     # Keeping information.
-    cov = Coverage(data_file=destcov, source=[source])
     ex = []
     for d in dests:
         with open(d, "r") as f:
@@ -151,6 +150,7 @@ def coverage_combine(data_files, output_path, source, process=None, absolute_pat
         os.remove(destcov)
 
     # Starts merging coverage.
+    cov = Coverage(data_file=destcov, source=[source])
 
     def raise_exc(exc, content, ex, ex2, outfile, destcov, source, dest, inter):
 
