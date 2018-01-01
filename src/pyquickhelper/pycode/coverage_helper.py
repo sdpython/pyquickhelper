@@ -130,17 +130,7 @@ def coverage_combine(data_files, output_path, source, process=None, absolute_pat
     for fi, de in zip(data_files, dests):
         copy_replace(fi, de, source)
 
-    destcov = os.path.join(output_path, '.coverage')
-    if os.path.exists(destcov):
-        destcov2 = destcov + '_old'
-        if destcov in dests:
-            ind = dests.index(destcov)
-            dests[ind] = destcov2
-        shutil.copy(destcov, destcov2)
-
-    # Starts merging coverage.
-    if os.path.exists(destcov):
-        os.remove(destcov)
+    # Keeping information.
     cov = Coverage(data_file=destcov, source=[source])
     ex = []
     for d in dests:
@@ -150,6 +140,17 @@ def coverage_combine(data_files, output_path, source, process=None, absolute_pat
     for d in data_files:
         with open(d, "r") as f:
             ex2.append(f.read())
+
+    destcov = os.path.join(output_path, '.coverage')
+    if os.path.exists(destcov):
+        destcov2 = destcov + '_old'
+        if destcov in dests:
+            ind = dests.index(destcov)
+            dests[ind] = destcov2
+        shutil.copy(destcov, destcov2)
+        os.remove(destcov)
+
+    # Starts merging coverage.
 
     def raise_exc(exc, content, ex, ex2, outfile, destcov, source, dest, inter):
 
