@@ -52,6 +52,8 @@ class TestCoverageHelper(ExtTestCase):
                 raise FileNotFoundError(cov)
             if not os.path.isfile(cov):
                 raise Exception("'{0}' is not a file".format(cov))
+        self.assertRaise(lambda: coverage_combine(covs, temp, source=source + "r", process=process),
+                         RuntimeError)
         coverage_combine(covs, temp, source=source, process=process)
         index = os.path.join(temp, "index.html")
         self.assertExists(index)

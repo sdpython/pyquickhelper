@@ -66,15 +66,16 @@ def publish_coverage_on_codecov(path, token, commandline=True, fLOG=noLOG):
         return cmd
 
 
-def coverage_combine(data_files, output_path, source, process=None):
+def coverage_combine(data_files, output_path, source, process=None, absolute_path=True):
     """
     Merges multiples reports.
 
-    @param      data_files  report files (``.coverage``)
-    @param      output_path output path
-    @param      source      source directory
-    @param      process     function which processes the coverage report
-    @return                 coverage report
+    @param      data_files      report files (``.coverage``)
+    @param      output_path     output path
+    @param      source          source directory
+    @param      process         function which processes the coverage report
+    @param      absolute_path   relocate sources with absolute paths
+    @return                     coverage report
 
     The function *process* should have the signature:
 
@@ -96,16 +97,34 @@ def coverage_combine(data_files, output_path, source, process=None):
         co = Counter([_.split('src')[0] for _ in cf])
         mx = max((v, k) for k, v in co.items())
         root = mx[1].rstrip('\\/')
-        if '\\\\' in root:
-            s2 = root_source.replace('\\', '\\\\').replace('/', '\\\\')
+        if absolute_path:
+            if '\\\\' in root:
+                s2 = root_source.replace('\\', '\\\\').replace('/', '\\\\')
+                s2 += "\\\\"
+                root += "\\\\"
+            elif '\\' in root:
+                s2 = root_source
+                s2 += "\\\\"
+                root += "\\"
+            else:
+                s2 = root_source
+                s2 += "/"
+                root += "/"
         else:
-            s2 = root_source
-        inter.append((root_source, s2))
+            s2 = ""
+            if '\\\\' in root:
+                root += "\\\\"
+            elif '\\' in root:
+                root += "\\"
+            else:
+                root += "/"
+        inter.append((root, root_source, s2))
         content = content.replace(root, s2)
         with open(dest, "w") as f:
             f.write(content)
 
     from coverage import Coverage
+    from coverage.misc import NoSource
     dests = [os.path.join(output_path, '.coverage{0}'.format(
         i)) for i in range(len(data_files))]
     for fi, de in zip(data_files, dests):
@@ -119,14 +138,44 @@ def coverage_combine(data_files, output_path, source, process=None):
             dests[ind] = destcov2
         shutil.copy(destcov, destcov2)
 
+    # Starts merging coverage.
+    if os.path.exists(destcov):
+        os.remove(destcov)
     cov = Coverage(data_file=destcov, source=[source])
-    with open(dests[0], "r") as f:
-        ex = f.read()
-    with open(data_files[0], "r") as f:
-        ex2 = f.read()
+    ex = []
+    for d in dests:
+        with open(d, "r") as f:
+            ex.append(f.read())
+    ex2 = []
+    for d in data_files:
+        with open(d, "r") as f:
+            ex2.append(f.read())
+
+    def raise_exc(exc, content, ex, ex2, outfile, destcov, source, dest, inter):
+
+        def shorten(t):
+            if len(t) > 2000:
+                return t[:2000] + "\n..."
+            else:
+                return t
+        if len(content) > 2000:
+            content = content[:2000] + '\n...'
+        ex = "\n-\n".join(shorten(_) for _ in ex)
+        ex2 = "\n-\n".join(shorten(_) for _ in ex2)
+        rows = ["destcov='{0}'".format(destcov),
+                "outfile='{0}'".format(outfile),
+                "source='{0}'".format(source),
+                "dests='{0}'".format(';'.join(dests)),
+                "inter={0}".format(inter)]
+        raise RuntimeError(
+            "{5}. In '{0}'.\n{1}\n{2}\n---AFTER---\n{3}\n---BEGIN---\n{4}".format(output_path, "\n".join(rows), content, ex, ex2, exc)) from exc
 
     cov.combine(dests)
-    cov.html_report(directory=output_path)
+    try:
+        cov.html_report(directory=output_path)
+    except NoSource as e:
+        raise_exc(e, "", ex, ex2, "", destcov, source, dests, inter)
+
     outfile = os.path.join(output_path, "coverage_report.xml")
     cov.xml_report(outfile=outfile)
     cov.save()
@@ -134,20 +183,11 @@ def coverage_combine(data_files, output_path, source, process=None):
     # Verifications
     with open(outfile, "r", encoding="utf-8") as f:
         content = f.read()
+
     if 'line hits="1"' not in content:
-        if len(content) > 2000:
-            content = content[:2000] + '\n...'
-        if len(ex) > 2000:
-            ex = ex[:2000] + "\n..."
-        if len(ex2) > 2000:
-            ex2 = ex2[:2000] + "\n..."
-        rows = ["destcov='{0}'".format(destcov),
-                "outfile='{0}'".format(outfile),
-                "source='{0}'".format(source),
-                "dests='{0}'".format(';'.join(dests)),
-                "inter={0}".format(inter)]
-        raise RuntimeError(
-            "Converage report is empty in '{0}'.\n{1}\n{2}\n---\n{3}\n---\n{4}".format(output_path, "\n".join(rows), content, ex, ex2))
+        raise_exc(Exception("Coverage is empty"), content, ex,
+                  ex2, outfile, destcov, source, dests, inter)
+
     return cov
 
 
