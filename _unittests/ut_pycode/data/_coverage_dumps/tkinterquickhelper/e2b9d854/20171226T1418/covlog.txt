@@ -1,5 +1,5 @@
 COVERAGE OPTIONS
-data_file=pyquickhelper_UT_36_conda\_unittests\..\_doc\sphinxdoc\source\coverage\.coverage
+data_file=pyquickhelper_UT_36\_unittests\..\_doc\sphinxdoc\source\coverage\.coverage
 source=['src\\pyquickhelper']
 
 EXCLUDE LINES

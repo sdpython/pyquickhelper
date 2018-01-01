@@ -73,7 +73,7 @@ class TestCoverageHelper(ExtTestCase):
         found = list(sorted(find.items()))[0]
         found_ = "data" + found[1][0].replace("\\", "/").split("data")[-1]
         found = (found[0], (found_, found[1][1], found[1][2]))
-        exp = ('ba594812', (exp_, 'pyquickhelper_UT_SKIP_36_conda', '17'))
+        exp = ('ba594812', (exp_, 'pyquickhelper_UT_SKIP_36', '17'))
         self.assertEqual(found, exp)
 
 
