@@ -37,7 +37,7 @@ class TestCoverageHelper(ExtTestCase):
             if sys.platform.startswith('win'):
                 return content
             else:
-                return content.replace("\\", "/")
+                return content.replace("\\", "/").replace('//', '/')
 
         temp = get_temp_folder(__file__, "temp_coverage_combine")
         source = os.path.normpath(os.path.abspath(
