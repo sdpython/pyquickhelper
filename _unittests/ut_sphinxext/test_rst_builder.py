@@ -162,6 +162,65 @@ class TestRstBuilder(unittest.TestCase):
         if t1 not in html:
             raise Exception(html)
 
+    def test_rst_builder_sphinx_table(self):
+        fLOG(
+            __file__,
+            self._testMethodName,
+            OutputPrint=__name__ == "__main__")
+
+        from docutils import nodes as skip_
+
+        content = """
+                    test a --helpe
+                    ================
+
+                    before
+
+                    +------+--------+
+                    | a    | b1     |
+                    +------+--------+
+                    | a    | b2     |
+                    +------+--------+
+
+                    .. list-table::
+                        :widths: 5 6
+                        :header-rows: 1
+
+                        * - h1
+                          - h2
+                        * - a1
+                          - b1
+                        * - d2
+                          - e2
+
+                    after
+                    """.replace("                    ", "")
+        if sys.version_info[0] >= 3:
+            content = content.replace('u"', '"')
+
+        tives = [("cmdref", CmdRef, cmdref_node,
+                  visit_cmdref_node, depart_cmdref_node)]
+
+        html = rst2html(content,  # fLOG=fLOG,
+                        writer="rst", keep_warnings=True,
+                        directives=tives, layout="sphinx")
+
+        temp = get_temp_folder(__file__, "temp_rst_builder_sphinx")
+        with open(os.path.join(temp, "out_cmdref.html"), "w", encoding="utf8") as f:
+            f.write(html)
+
+        t1 = "+--------+----------+"
+        if t1 not in html:
+            raise Exception(html)
+
+        t1 = "--help"
+        if t1 not in html:
+            raise Exception(html)
+
+        t1 = "+=======+========+"
+        if t1 not in html:
+            raise Exception(html)
+
 
 if __name__ == "__main__":
     unittest.main()

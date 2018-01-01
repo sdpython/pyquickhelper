@@ -82,32 +82,34 @@ def get_url_content_timeout(url, timeout=10, output=None, encoding="utf8", raise
                 fu.close()
         else:
             if chunk is not None:
-                app = False
-                size = 0
+                if output is None:
+                    raise ValueError(
+                        "output cannot be None if chunk is not None")
+                app = [False]
+                size = [0]
+
+                def _local_loop(ur):
+                    while True:
+                        res = ur.read(chunk)
+                        size[0] += len(res)
+                        if fLOG is not None:
+                            fLOG("downloaded", size, "bytes")
+                        if len(res) > 0:
+                            if encoding is not None:
+                                res = res.decode(encoding=encoding)
+                            save_content(res, app)
+                        else:
+                            break
+                        app[0] = True
+
                 if timeout != -1:
                     with urllib_request.urlopen(url, timeout=timeout) as ur:
-                        while True:
-                            res = ur.read(chunk)
-                            size += len(res)
-                            if fLOG is not None:
-                                fLOG("downloaded", size, "bytes")
-                            if len(res) > 0:
-                                save_content(res, app)
-                            else:
-                                break
-                            app = True
+                        _local_loop(ur)
                 else:
                     with urllib_request.urlopen(url) as ur:
-                        while True:
-                            res = ur.read(chunk)
-                            size += len(res)
-                            if fLOG is not None:
-                                fLOG("downloaded", size, "bytes")
-                            if len(res) > 0:
-                                save_content(res, app)
-                            else:
-                                break
-                            app = True
+                        _local_loop(ur)
+                app = app[0]
+                size = size[0]
             else:
                 if timeout != -1:
                     with urllib_request.urlopen(url, timeout=timeout) as ur:
@@ -150,6 +152,8 @@ def get_url_content_timeout(url, timeout=10, output=None, encoding="utf8", raise
         warnings.warn(
             "unable to retrieve content from {0} because of http.client.IncompleteRead: {1}".format(url, e))
         return None
+    except ValueError as e:
+        raise e
     except Exception as e:
         if raise_exception:
             raise InternetException(
@@ -158,36 +162,39 @@ def get_url_content_timeout(url, timeout=10, output=None, encoding="utf8", raise
             "unable to retrieve content from {0} because of unknown exception: {1}".format(url, e))
         raise e
 
-    if len(res) >= 2 and res[:2] == b"\x1f\x8B":
-        # gzip format
-        res = gzip.decompress(res)
+    if chunk is None:
+        if len(res) >= 2 and res[:2] == b"\x1f\x8B":
+            # gzip format
+            res = gzip.decompress(res)
 
-    if encoding is not None:
-        try:
-            content = res.decode(encoding)
-        except UnicodeDecodeError as e:
-            # we try different encoding
+        if encoding is not None:
+            try:
+                content = res.decode(encoding)
+            except UnicodeDecodeError as e:
+                # we try different encoding
 
-            laste = [e]
-            othenc = ["iso-8859-1", "latin-1"]
+                laste = [e]
+                othenc = ["iso-8859-1", "latin-1"]
 
-            for encode in othenc:
-                try:
-                    content = res.decode(encode)
-                    break
-                except UnicodeDecodeError as e:
-                    laste.append(e)
-                    content = None
+                for encode in othenc:
+                    try:
+                        content = res.decode(encode)
+                        break
+                    except UnicodeDecodeError as e:
+                        laste.append(e)
+                        content = None
 
-            if content is None:
-                mes = ["unable to parse blog post: " + url]
-                mes.append("tried:" + str([encoding] + othenc))
-                mes.append("beginning:\n" + str([res])[:50])
-                for e in laste:
-                    mes.append("Exception: " + str(e))
-                raise ValueError("\n".join(mes))
+                if content is None:
+                    mes = ["unable to parse blog post: " + url]
+                    mes.append("tried:" + str([encoding] + othenc))
+                    mes.append("beginning:\n" + str([res])[:50])
+                    for e in laste:
+                        mes.append("Exception: " + str(e))
+                    raise ValueError("\n".join(mes))
+        else:
+            content = res
     else:
-        content = res
+        content = None
 
     if output is not None and chunk is None:
         save_content(content)

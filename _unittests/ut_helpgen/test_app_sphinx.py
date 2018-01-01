@@ -25,11 +25,12 @@ except ImportError:
     import src
 
 from src.pyquickhelper.loghelper.flog import fLOG
-from src.pyquickhelper.pycode import get_temp_folder
+from src.pyquickhelper.pycode import get_temp_folder, ExtTestCase
 from src.pyquickhelper.helpgen import CustomSphinxApp
+from src.pyquickhelper.helpgen.default_conf import custom_setup
 
 
-class TestAppSphinx(unittest.TestCase):
+class TestAppSphinx(ExtTestCase):
 
     def test_app_sphinx(self):
         fLOG(
@@ -48,7 +49,23 @@ class TestAppSphinx(unittest.TestCase):
         # app.cleanup()
 
         index = os.path.join(temp, "index.html")
-        assert os.path.exists(index)
+        self.assertExists(index)
+
+    def test_app_sphinx_custom(self):
+        fLOG(
+            __file__,
+            self._testMethodName,
+            OutputPrint=__name__ == "__main__")
+
+        temp = get_temp_folder(__file__, "temp_app_sphinx_custom")
+        src_ = os.path.join(temp, "..", "data", "doc")
+
+        if sys.version_info[0] == 2:
+            return
+
+        app = CustomSphinxApp(src_, temp)
+        app.build()
+        custom_setup(app, None)
 
 
 if __name__ == "__main__":

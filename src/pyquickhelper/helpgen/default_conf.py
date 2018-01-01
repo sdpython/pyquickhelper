@@ -10,8 +10,9 @@ import os
 import datetime
 import re
 import warnings
-from .style_css_template import style_figure_notebook
 from sphinx.builders.html import Stylesheet
+from sphinx.errors import ExtensionError
+from .style_css_template import style_figure_notebook
 
 
 if sys.version_info[0] == 2:
@@ -748,7 +749,11 @@ def custom_setup(app, author):
     from ..sphinxext.sphinx_toctree_extension import setup as setup_toctree
     # from ..sphinxext.sphinx_rst_builder import setup as setup_rst
 
-    app.connect("autodoc-skip-member", skip)
+    try:
+        app.connect("autodoc-skip-member", skip)
+    except ExtensionError as e:
+        # No event autodoc-skip-member.
+        warnings.warn(str(e))
     app.add_config_value('author', author, True)
 
     setup_toctree(app)

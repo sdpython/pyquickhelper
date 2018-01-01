@@ -133,7 +133,7 @@ def find_coverage_report(folder, exclude=None):
                +- date
                     +- .coverage - selected
     """
-    regexp = re.compile('data_file=([a-zA-Z_]+)')
+    regexp = re.compile('data_file=([0-9a-zA-Z_]+)')
     regcov = re.compile(
         '<h1>Coveragereport:<spanclass=.?pc_cov.?>([0-9]+)%</span>')
     covs = {}
