@@ -135,6 +135,10 @@ def coverage_combine(data_files, output_path, source, process=None):
     if 'line hits="1"' not in content:
         if len(content) > 2000:
             content = content[:2000] + '\n...'
+        if len(ex) > 2000:
+            ex = ex[:2000] + "\n..."
+        if len(ex2) > 2000:
+            ex2 = ex2[:2000] + "\n..."
         rows = ["destcov='{0}'".format(destcov),
                 "outfile='{0}'".format(outfile),
                 "source='{0}'".format(source),
