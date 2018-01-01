@@ -11,7 +11,7 @@ import sphinx_rtd_theme
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.split(__file__)[0])))
 from pyquickhelper.helpgen.default_conf import set_sphinx_variables
-set_sphinx_variables(__file__, "pyquickhelper", "Xavier Dupré", 2017,
+set_sphinx_variables(__file__, "pyquickhelper", "Xavier Dupré", 2018,
                      "sphinx_rtd_theme", [
                          sphinx_rtd_theme.get_html_theme_path()], locals(),
                      github_repo="https://github.com/sdpython/pyquickhelper.git",

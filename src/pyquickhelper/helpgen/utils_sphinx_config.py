@@ -68,61 +68,6 @@ def ie_layout_html():
             ".\nThis happens on virtual environment for Anaconda on Windows")
 
 
-def fix_ie_layout_html():
-    """
-    add ``<meta http-equiv="X-UA-Compatible" content="IE=edge" />`` to
-    file ``layout.html``, be careful when using it, it will
-    impact every documentation generated with sphinx
-
-    @return     True if the file was modified
-    """
-    tofind = '<meta http-equiv="X-UA-Compatible" content="IE=edge" />'
-
-    sitep = [_ for _ in getsitepackages() if "packages" in _]
-    if len(sitep) == 1:
-        sitep = sitep[0]
-    else:
-        raise FileNotFoundError(
-            "unable to find site-packages\n{0}".format("\n".join(getsitepackages())))
-
-    if not os.path.exists(sitep):
-        raise FileNotFoundError("unable to find site-packages, tried: {0}\nALL:\n{1}".format(sitep,
-                                                                                             "\n".join(site.getsitepackages())))
-
-    if sys.version_info[0] == 2:
-        warnings.warn("function fix_ie_layout_html is disabled on Python 2.7")
-        return True
-
-    layout = os.path.join(sitep, "sphinx", "themes", "basic", "layout.html")
-    if os.path.exists(layout):
-        with open(layout, "r", encoding="utf-8") as f:
-            content = f.read()
-        if tofind not in content:
-            topos = '<meta http-equiv="Content-Type" content="text/html; charset={{ encoding }}" />'
-            lines = content.split("\n")
-            modified = False
-            for i, line in enumerate(lines):
-                if topos in line:
-                    modified = True
-                    lines[i] = line + "\n    " + tofind
-            if not modified:
-                raise ValueError(
-                    "the format of layout.html has changed,\nthe string '{0}' cannot be found in\n{1}".format(topos, layout))
-            content = "\n".join(lines)
-            try:
-                with open(layout, "w", encoding="utf-8") as f:
-                    f.write(content)
-            except PermissionError as e:
-                warnings.warn(
-                    "You need admin right to do that.\n{0}".format(e))
-            return True
-        else:
-            return False
-    else:
-        raise FileNotFoundError(
-            "Sphinx is not properly installed, unable to find: " + layout + "\nEXE: " + sys.executable)
-
-
 def locate_image_documentation(image_name):
     """
     Tries to local an image in the module for help generation in a folder ``_doc``.

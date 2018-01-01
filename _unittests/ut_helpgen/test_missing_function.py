@@ -23,7 +23,7 @@ except ImportError:
     import src
 
 from src.pyquickhelper.loghelper.flog import fLOG
-from src.pyquickhelper.helpgen.utils_sphinx_config import ie_layout_html, NbImage, fix_ie_layout_html
+from src.pyquickhelper.helpgen.utils_sphinx_config import ie_layout_html, NbImage
 from src.pyquickhelper.helpgen.post_process import remove_character_under32
 
 
@@ -37,10 +37,6 @@ class TestMissingFunction(unittest.TestCase):
 
         if not sys.platform.startswith("win"):
             return
-
-        if not ie_layout_html():
-            r = fix_ie_layout_html()
-            self.assertTrue(r)
 
         if not ie_layout_html():
             warnings.warn("The output is not optimized for IE.")
