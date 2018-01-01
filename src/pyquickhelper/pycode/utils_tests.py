@@ -147,7 +147,7 @@ def main_wrapper_tests(codefile, skip_list=None, processes=False, add_coverage=F
                     "Unable to guess source from '{0}'.".format(fold0))
             fold = os.path.split(fold)[0]
             exists = os.path.exists(os.path.join(fold, ".gitignore"))
-        return fold
+        return os.path.normpath(os.path.abspath(fold))
 
     def run_main():
         res = main_run_test(runner, path_test=path, skip=-1, skip_list=skip_list,
@@ -168,12 +168,11 @@ def main_wrapper_tests(codefile, skip_list=None, processes=False, add_coverage=F
         sub = os.path.split(sub)[-1]
         other_cov_folders = find_coverage_report(
             add_coverage_folder, exclude=sub)
-        fLOG('[main_wrapper_tests] other_cov_folders...')
-        stdout_this.write('[main_wrapper_tests] other_cov_folders...')
+        mes = "[main_wrapper_tests] other_cov_folders...sub='{0}'".format(sub)
+        fLOG(sub)
+        stdout_this.write(sub + "\n")
         for k, v in sorted(other_cov_folders.items()):
-            mes = "[main_wrapper_tests]     sub='{0}' k='{1}' v={2}".format(
-                sub, k, v)
-            fLOG(mes)
+            mes = "[main_wrapper_tests]     k='{0}' v={1}".format(k, v)
             stdout_this.write(mes + "\n")
         if len(other_cov_folders) == 0:
             other_cov_folders = None
@@ -366,9 +365,10 @@ def main_wrapper_tests(codefile, skip_list=None, processes=False, add_coverage=F
                     stdout_this.write(
                         "[main_wrapper_tests] ADD COVERAGE for source='{0}'\n".format(source))
                     covs = list(_[0] for _ in other_cov_folders.values())
-                    covs.append(os.path.join(src, '.coverage'))
+                    covs.append(os.path.abspath(
+                        os.path.normpath(os.path.join(src, '.coverage'))))
                     stdout_this.write(
-                        "[main_wrapper_tests] ADD COVERAGE COMBINE='{0}'\n".format(covs))
+                        "[main_wrapper_tests] ADD COVERAGE COMBINE={0}\n".format(covs))
                     stdout_this.write(
                         "[main_wrapper_tests] DUMP INTO='{0}'\n".format(src))
                     coverage_combine(covs, src, source)
