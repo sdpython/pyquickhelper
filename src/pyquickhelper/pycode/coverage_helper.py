@@ -116,6 +116,8 @@ def coverage_combine(data_files, output_path, source, process=None):
             dests[ind] = destcov2
         shutil.copy(destcov, destcov2)
     cov = Coverage(data_file=destcov, source=[source])
+    with open(dests[0], "r") as f:
+        ex = f.read()
     cov.combine(dests)
     cov.html_report(directory=output_path)
     outfile = os.path.join(output_path, "coverage_report.xml")
@@ -133,7 +135,7 @@ def coverage_combine(data_files, output_path, source, process=None):
                 "source='{0}'".format(source),
                 "dests='{0}'".format(';'.join(dests))]
         raise RuntimeError(
-            "Converage report is empty in '{0}'.\n{1}\n{2}".format(output_path, "\n".join(rows), content))
+            "Converage report is empty in '{0}'.\n{1}\n{2}\n---\n{3}".format(output_path, "\n".join(rows), content, ex))
     return cov
 
 
