@@ -168,10 +168,13 @@ def main_wrapper_tests(codefile, skip_list=None, processes=False, add_coverage=F
         sub = os.path.split(sub)[-1]
         other_cov_folders = find_coverage_report(
             add_coverage_folder, exclude=sub)
-        mes = "[main_wrapper_tests] other_cov_folders='{0}'".format(
-            other_cov_folders)
-        fLOG(mes)
-        stdout_this.write(mes + "\n")
+        fLOG('[main_wrapper_tests] other_cov_folders...')
+        stdout_this.write('[main_wrapper_tests] other_cov_folders...')
+        for k, v in sorted(other_cov_folders.items()):
+            mes = "[main_wrapper_tests]     sub='{0}' k='{1}' v={2}".format(
+                sub, k, v)
+            fLOG(mes)
+            stdout_this.write(mes + "\n")
         if len(other_cov_folders) == 0:
             other_cov_folders = None
     else:
@@ -362,19 +365,19 @@ def main_wrapper_tests(codefile, skip_list=None, processes=False, add_coverage=F
                             "Unable to find source '{0}' from '{1}'".format(source, src))
                     stdout_this.write(
                         "[main_wrapper_tests] ADD COVERAGE for source='{0}'\n".format(source))
-                    covs = list(other_cov_folders.values())
+                    covs = list(_[0] for _ in other_cov_folders.values())
                     covs.append(os.path.join(src, '.coverage'))
                     stdout_this.write(
                         "[main_wrapper_tests] ADD COVERAGE COMBINE='{0}'\n".format(covs))
                     stdout_this.write(
-                        "[main_wrapper_tests] DUMP INTO='{0}'\n".format(dump_coverage))
+                        "[main_wrapper_tests] DUMP INTO='{0}'\n".format(src))
                     coverage_combine(covs, src, source)
 
             if covtoken:
                 if isinstance(covtoken, tuple):
                     if eval(covtoken[1]):
                         # publishing token
-                        mes = "[main_wrapper_tests] PUBLISH COVERAGE to codecov '{0}' EVAL '{1}'".format(
+                        mes = "[main_wrapper_tests] PUBLISH COVERAGE to codecov '{0}' EVAL ({1})".format(
                             covtoken[0], covtoken[1])
                         if stdout is not None:
                             stdout.write(mes)

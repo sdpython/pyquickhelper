@@ -70,11 +70,10 @@ class TestCoverageHelper(ExtTestCase):
         self.assertEqual(len(find), 2)
         exp_ = 'data\\_coverage_dumps\\tkinterquickhelper\\ba594812\\20171226T1558\\.coverage'.replace(
             "\\", "/")
-        '/home/circleci/repo/_unittests/ut_pycode/data/_coverage_dumps/tkinterquickhelper/ba594812/20171226T1558/.coverage'
         found = list(sorted(find.items()))[0]
-        found = (found[0], "data" +
-                 found[1].replace("\\", "/").split("data")[-1])
-        exp = ('ba594812', exp_)
+        found_ = "data" + found[1][0].replace("\\", "/").split("data")[-1]
+        found = (found[0], (found_, found[1][1], found[1][2]))
+        exp = ('ba594812', (exp_, 'pyquickhelper_UT_SKIP_', '17'))
         self.assertEqual(found, exp)
 
 

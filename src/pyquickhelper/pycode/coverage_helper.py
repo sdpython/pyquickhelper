@@ -133,6 +133,9 @@ def find_coverage_report(folder, exclude=None):
                +- date
                     +- .coverage - selected
     """
+    regexp = re.compile('data_file=([a-zA-Z_]+)')
+    regcov = re.compile(
+        '<h1>Coveragereport:<spanclass=.?pc_cov.?>([0-9]+)%</span>')
     covs = {}
     subfold = os.listdir(folder)
     for sub in subfold:
@@ -140,13 +143,27 @@ def find_coverage_report(folder, exclude=None):
             continue
         full = os.path.join(folder, sub)
         keep = []
+        nn = None
+        cov = None
         for it in explore_folder_iterfile(full):
             name = os.path.split(it)[-1]
             dt = os.stat(full).st_mtime
+            if name == 'index.html':
+                with open(it, 'r') as f:
+                    htd = f.read().replace('\n', '').replace('\r', '').replace(' ', '')
+                cont = regcov.findall(htd)
+                if len(cont) > 0:
+                    cov = cont[0]
+            if name == 'covlog.txt':
+                with open(it, 'r') as f:
+                    logd = f.read()
+                cont = regexp.findall(logd)
+                if len(cont) > 0:
+                    nn = cont[0]
             if name == '.coverage':
                 keep.append((dt, it))
         if len(keep) == 0:
             continue
         mx = max(keep)
-        covs[sub] = mx[-1]
+        covs[sub] = (mx[-1], nn, cov)
     return covs
