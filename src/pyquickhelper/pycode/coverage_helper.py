@@ -125,10 +125,13 @@ def coverage_combine(data_files, output_path, source, process=None, absolute_pat
 
     from coverage import Coverage
     from coverage.misc import NoSource
+    from coverage.data import CoverageData
+
     dests = [os.path.join(output_path, '.coverage{0}'.format(
         i)) for i in range(len(data_files))]
     for fi, de in zip(data_files, dests):
         copy_replace(fi, de, source)
+        shutil.copy(de, de + "~")
 
     # Keeping information.
     ex = []
@@ -152,7 +155,7 @@ def coverage_combine(data_files, output_path, source, process=None, absolute_pat
     # Starts merging coverage.
     cov = Coverage(data_file=destcov, source=[source])
 
-    def raise_exc(exc, content, ex, ex2, outfile, destcov, source, dest, inter):
+    def raise_exc(exc, content, ex, ex2, outfile, destcov, source, dests, inter, cov):
 
         def shorten(t):
             if len(t) > 2000:
@@ -168,14 +171,30 @@ def coverage_combine(data_files, output_path, source, process=None, absolute_pat
                 "source='{0}'".format(source),
                 "dests='{0}'".format(';'.join(dests)),
                 "inter={0}".format(inter)]
+        if cov is not None:
+            rows.append("----- LINES")
+            for k, v in sorted(cov.data._lines.items()):
+                rows.append('   {0}:{1}'.format(k, v))
+            rows.append("----- RUNS")
+            for k in cov.data._runs:
+                rows.append('   {0}'.format(k))
+            rows.append("----- END")
+        for d in dests:
+            dd = CoverageData()
+            dd.read_file(d + "~")
+            rows.append("------- LINES - '{0}'".format(d))
+            for k, v in sorted(dd._lines.items()):
+                rows.append('   {0}:{1}'.format(k, v))
+            rows.append("------- END")
+
         raise RuntimeError(
-            "{5}. In '{0}'.\n{1}\n{2}\n---AFTER---\n{3}\n---BEGIN---\n{4}".format(output_path, "\n".join(rows), content, ex, ex2, exc)) from exc
+            "{5}. In '{0}'.\n{1}\n{2}\n---AFTER---\n{3}\n---BEGIN---\n{4}".format(output_path, "\n".join(rows), content, ex, ex2, exc, cov)) from exc
 
     cov.combine(dests)
     try:
         cov.html_report(directory=output_path)
     except NoSource as e:
-        raise_exc(e, "", ex, ex2, "", destcov, source, dests, inter)
+        raise_exc(e, "", ex, ex2, "", destcov, source, dests, inter, cov)
 
     outfile = os.path.join(output_path, "coverage_report.xml")
     cov.xml_report(outfile=outfile)
