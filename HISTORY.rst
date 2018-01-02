@@ -12,6 +12,7 @@ History
 
 **Features**
 
+* `73`: merges coverage reports from differents jobs about unit tests
 * `84`: remove *epkg* instruction in call_cli_function
 
 1.5.2275 (2017-11-28)

@@ -136,7 +136,6 @@ def coverage_combine(data_files, output_path, source, process=None, absolute_pat
     if os.path.exists(destcov):
         destcov2 = destcov + '_old'
         shutil.copy(destcov, destcov2)
-        os.remove(destcov)
 
     # Starts merging coverage.
     from coverage import Coverage
