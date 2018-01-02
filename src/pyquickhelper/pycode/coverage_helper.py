@@ -173,18 +173,25 @@ def coverage_combine(data_files, output_path, source, process=None, absolute_pat
                 "inter={0}".format(inter)]
         if cov is not None:
             rows.append("----- LINES")
-            for k, v in sorted(cov.data._lines.items()):
+            end = min(5, len(cov.data._lines))
+            for k, v in list(sorted(cov.data._lines.items()))[:end]:
                 rows.append('   {0}:{1}'.format(k, v))
             rows.append("----- RUNS")
-            for k in cov.data._runs:
+            end = min(5, len(cov.data._runs))
+            for k in cov.data._runs[:end]:
                 rows.append('   {0}'.format(k))
             rows.append("----- END")
         for d in dests:
             dd = CoverageData()
             dd.read_file(d + "~")
             rows.append("------- LINES - '{0}'".format(d))
-            for k, v in sorted(dd._lines.items()):
+            end = min(5, len(dd._lines))
+            for k, v in list(sorted(dd._lines.items()))[:end]:
                 rows.append('   {0}:{1}'.format(k, v))
+            rows.append("------- RUNS - '{0}'".format(d))
+            end = min(5, len(dd._runs))
+            for k in dd._runs[:end]:
+                rows.append('   {0}'.format(k))
             rows.append("------- END")
 
         raise RuntimeError(
