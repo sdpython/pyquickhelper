@@ -206,7 +206,7 @@ def coverage_combine(data_files, output_path, source, process=None, absolute_pat
 
     if 'line hits="1"' not in content:
         raise_exc(Exception("Coverage is empty"), content, ex,
-                  ex2, outfile, destcov, source, dests, inter)
+                  ex2, outfile, destcov, source, dests, inter, cov)
 
     return cov
 
