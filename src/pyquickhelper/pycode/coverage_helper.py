@@ -85,6 +85,74 @@ def coverage_combine(data_files, output_path, source, process=None, absolute_pat
             # ...
             return content
     """
+    def raise_exc(exc, content, ex, ex2, outfile, destcov, source, dests, inter, cov):
+
+        from coverage.data import CoverageData
+
+        def shorten(t):
+            if len(t) > 2000:
+                return t[:2000] + "\n..."
+            else:
+                return t
+        if len(content) > 2000:
+            content = content[:2000] + '\n...'
+        ex = "\n-\n".join(shorten(_) for _ in ex)
+        ex2 = "\n-\n".join(shorten(_) for _ in ex2)
+        rows = ["destcov='{0}'".format(destcov),
+                "outfile='{0}'".format(outfile),
+                "source='{0}'".format(source),
+                "cov.source={0}".format(cov.source),
+                "dests='{0}'".format(';'.join(dests)),
+                "inter={0}".format(inter)]
+        if cov is not None and cov.data is not None and cov.data._lines is not None:
+            rows.append("----- LINES")
+            end = min(5, len(cov.data._lines))
+            for k, v in list(sorted(cov.data._lines.items()))[:end]:
+                rows.append('   {0}:{1}'.format(k, v))
+            rows.append("----- RUNS")
+            end = min(5, len(cov.data._runs))
+            for k in cov.data._runs[:end]:
+                rows.append('   {0}'.format(k))
+            rows.append("----- END")
+        for d in dests:
+            dd = CoverageData()
+            dd.read_file(d + "~")
+            rows.append("------- LINES - '{0}'".format(d))
+            end = min(5, len(dd._lines))
+            for k, v in list(sorted(dd._lines.items()))[:end]:
+                rows.append('   {0}:{1}'.format(k, v))
+            rows.append("------- RUNS - '{0}'".format(d))
+            end = min(5, len(dd._runs))
+            for k in dd._runs[:end]:
+                rows.append('   {0}'.format(k))
+            rows.append("------- END")
+
+        raise RuntimeError(
+            "{5}. In '{0}'.\n{1}\n{2}\n---AFTER---\n{3}\n---BEGIN---\n{4}".format(output_path, "\n".join(rows), content, ex, ex2, exc, cov)) from exc
+
+    # We copy the origin coverage if the report is produced
+    # in a folder part of the merge.
+    destcov = os.path.join(output_path, '.coverage')
+    if os.path.exists(destcov):
+        destcov2 = destcov + '_old'
+        shutil.copy(destcov, destcov2)
+        os.remove(destcov)
+
+    # Starts merging coverage.
+    from coverage import Coverage
+    cov = Coverage(data_file=destcov, source=[source])
+    # Module coverage may modify the folder,
+    # we take the one it considers.
+    # On Windows, it has to have the right case.
+    # If not, coverage reports an empty coverage and
+    # raises an exception.
+    cov._init()
+    cov.get_data()
+    if cov.source is None or len(cov.source) == 0:
+        raise_exc(FileNotFoundError("Probably unable to find '{0}'".format(source)),
+                  "", [], [], "", destcov, source, [], [], cov)
+    source = cov.source[0]
+
     inter = []
     reg = re.compile(',\\"(.*?[.]py)\\"')
 
@@ -123,17 +191,14 @@ def coverage_combine(data_files, output_path, source, process=None, absolute_pat
         with open(dest, "w") as f:
             f.write(content)
 
-    from coverage import Coverage
-    from coverage.misc import NoSource
-    from coverage.data import CoverageData
-
+    # We modify the root in every coverage file.
     dests = [os.path.join(output_path, '.coverage{0}'.format(
         i)) for i in range(len(data_files))]
     for fi, de in zip(data_files, dests):
         copy_replace(fi, de, source)
         shutil.copy(de, de + "~")
 
-    # Keeping information.
+    # Keeping information (for exception).
     ex = []
     for d in dests:
         with open(d, "r") as f:
@@ -143,61 +208,15 @@ def coverage_combine(data_files, output_path, source, process=None, absolute_pat
         with open(d, "r") as f:
             ex2.append(f.read())
 
-    destcov = os.path.join(output_path, '.coverage')
-    if os.path.exists(destcov):
-        destcov2 = destcov + '_old'
-        if destcov in dests:
-            ind = dests.index(destcov)
-            dests[ind] = destcov2
-        shutil.copy(destcov, destcov2)
-        os.remove(destcov)
+    # We replace destcov by destcov2 if found in dests.
+    if destcov in dests:
+        ind = dests.index(destcov)
+        dests[ind] = destcov2
 
-    # Starts merging coverage.
-    cov = Coverage(data_file=destcov, source=[source])
-
-    def raise_exc(exc, content, ex, ex2, outfile, destcov, source, dests, inter, cov):
-
-        def shorten(t):
-            if len(t) > 2000:
-                return t[:2000] + "\n..."
-            else:
-                return t
-        if len(content) > 2000:
-            content = content[:2000] + '\n...'
-        ex = "\n-\n".join(shorten(_) for _ in ex)
-        ex2 = "\n-\n".join(shorten(_) for _ in ex2)
-        rows = ["destcov='{0}'".format(destcov),
-                "outfile='{0}'".format(outfile),
-                "source='{0}'".format(source),
-                "dests='{0}'".format(';'.join(dests)),
-                "inter={0}".format(inter)]
-        if cov is not None:
-            rows.append("----- LINES")
-            end = min(5, len(cov.data._lines))
-            for k, v in list(sorted(cov.data._lines.items()))[:end]:
-                rows.append('   {0}:{1}'.format(k, v))
-            rows.append("----- RUNS")
-            end = min(5, len(cov.data._runs))
-            for k in cov.data._runs[:end]:
-                rows.append('   {0}'.format(k))
-            rows.append("----- END")
-        for d in dests:
-            dd = CoverageData()
-            dd.read_file(d + "~")
-            rows.append("------- LINES - '{0}'".format(d))
-            end = min(5, len(dd._lines))
-            for k, v in list(sorted(dd._lines.items()))[:end]:
-                rows.append('   {0}:{1}'.format(k, v))
-            rows.append("------- RUNS - '{0}'".format(d))
-            end = min(5, len(dd._runs))
-            for k in dd._runs[:end]:
-                rows.append('   {0}'.format(k))
-            rows.append("------- END")
-
-        raise RuntimeError(
-            "{5}. In '{0}'.\n{1}\n{2}\n---AFTER---\n{3}\n---BEGIN---\n{4}".format(output_path, "\n".join(rows), content, ex, ex2, exc, cov)) from exc
-
+    # Let's combine.
     cov.combine(dests)
+
+    from coverage.misc import NoSource
     try:
         cov.html_report(directory=output_path)
     except NoSource as e:

@@ -1,5 +1,5 @@
 """
-@brief      test tree node (time=6s)
+@brief      test tree node (time=18s)
 """
 
 
@@ -77,6 +77,30 @@ class TestCoverageHelper(ExtTestCase):
         found = (found[0], (found_, found[1][1], found[1][2]))
         exp = ('ba594812', (exp_, 'pyquickhelper_UT_SKIP_36', '17'))
         self.assertEqual(found, exp)
+
+    def test_combine2(self):
+        fLOG(
+            __file__,
+            self._testMethodName,
+            OutputPrint=__name__ == "__main__")
+
+        def process(content):
+            if sys.platform.startswith('win'):
+                return content
+            else:
+                return content.replace("\\", "/").replace('//', '/')
+
+        temp = get_temp_folder(__file__, "temp_coverage_combine2")
+        source = os.path.normpath(os.path.abspath(
+            os.path.join(temp, "..", "..", "..")))
+        cov1 = os.path.join(temp, "..", "data", "pyq.coverage0")
+        cov2 = os.path.join(temp, "..", "data", "pyq.coverage1")
+        covs = [cov1, cov2]
+        source = source.lower()
+        fLOG("source='{0}'".format(source))
+        coverage_combine(covs, temp, source=source, process=process)
+        index = os.path.join(temp, "index.html")
+        self.assertExists(index)
 
 
 if __name__ == "__main__":
