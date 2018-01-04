@@ -134,13 +134,13 @@ class AutoSignatureDirective(Directive):
         if obj is not None and opt_summary:
             # Documentation.
             doc = obj.__doc__  # if kind != "class" else obj.__class__.__doc__
-            if "type(object_or_name, bases, dict)" in doc:
-                raise Exception("issue with {0}\n{1}".format(obj, doc))
             if doc is None:
                 logger = logging.getLogger("autosignature")
                 logger.warning(
                     "[autosignature] docstring empty for '{0}'.".format(object_name))
             else:
+                if "type(object_or_name, bases, dict)" in doc:
+                    raise Exception("issue with {0}\n{1}".format(obj, doc))
                 docstring = self.build_summary(doc)
                 text += docstring + "\n\n"
 
