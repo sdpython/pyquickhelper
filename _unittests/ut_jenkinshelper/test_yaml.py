@@ -107,7 +107,7 @@ class TestYaml(unittest.TestCase):
                 raise Exception(r)
             if r[1][0] != "python" and r[1][0] != "INFO":
                 raise Exception(r)
-        if len(res) != 5:
+        if len(res) != 7:
             rows = [str(_) for _ in res]
             raise Exception("len(res)={0}\n{1}".format(
                 len(res), "\n".join(rows)))
@@ -160,11 +160,12 @@ class TestYaml(unittest.TestCase):
             self.assertTrue(isinstance(conv, typstr))
         self.assertTrue(len(res) > 0)
 
-        conv = [_ for _ in convs if "SET NAME=UT" in _ and "VERSION=3.6" in _]
+        conv = [
+            _ for _ in convs if "SET NAME=UT" in _ and "VERSION=3.6" in _ and '-g' not in _]
         if len(conv) != 2:
             rows = [str(_) for _ in conv]
-            raise Exception("len(conv)={0}\n{1}".format(
-                len(conv), "\n".join(rows)))
+            raise Exception("len(conv)={0}\n----\n{1}\n-----\n{2}".format(
+                len(conv), "\n".join(conv), "\n".join(rows)))
         conv = conv[0]
         if platform.startswith("win"):
             expected = """

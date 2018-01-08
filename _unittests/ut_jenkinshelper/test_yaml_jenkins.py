@@ -177,8 +177,8 @@ class TestYamlJenkins(unittest.TestCase):
                 self.assertEqual(sch, 0)
                 self.assertEqual(desc, 0)
             else:
-                self.assertEqual(sch, 1)
-                self.assertEqual(desc, 1)
+                self.assertEqual(sch, 2)
+                self.assertEqual(desc, 2)
             fLOG(to)
             if credentials:
                 if "credentialsId" not in conf:
