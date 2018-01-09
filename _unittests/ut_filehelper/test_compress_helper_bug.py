@@ -27,7 +27,7 @@ except ImportError:
 from src.pyquickhelper.loghelper import fLOG
 from src.pyquickhelper.pycode import get_temp_folder, ExtTestCase
 from src.pyquickhelper.filehelper import un7zip_files
-# from src.pyquickhelper.pycode import is_travis_or_appveyor
+from src.pyquickhelper.pycode import is_travis_or_appveyor
 
 
 class TestCompressHelperBug(ExtTestCase):
@@ -38,6 +38,9 @@ class TestCompressHelperBug(ExtTestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
+        if is_travis_or_appveyor() in ('circleci', 'travis'):
+            # 7z not available
+            return
         import pylzma
         # use github version, not pypi version (2016-11-11)
         # this version does not include a fix to read file produced by the
@@ -57,6 +60,9 @@ class TestCompressHelperBug(ExtTestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
+        if is_travis_or_appveyor() in ('circleci', 'travis'):
+            # 7z not available
+            return
         import pylzma
         # use github version, not pypi version (2016-11-11)
         # this version does not include a fix to read file produced by the
