@@ -326,7 +326,7 @@ def un7zip_files(zipf, where_to=None, fLOG=noLOG, fvalid=None,
             warnings.warn(
                 '[un7zip_files] remove_space and cmd_line are incompatible options.')
         if fvalid:
-            raise NotImplementedError(
+            warnings.warn(
                 'fvalid and cmd_line are incompatible options.')
         if sys.platform.startswith("win"):
             exe = r"C:\Program Files\7-Zip\7z.exe"
