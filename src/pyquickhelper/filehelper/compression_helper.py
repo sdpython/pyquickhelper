@@ -65,7 +65,8 @@ def zip_files(filename, file_set, root=None, fLOG=noLOG):
     return filename.getvalue() if isinstance(filename, BytesIO) else nb
 
 
-def unzip_files(zipf, where_to=None, fLOG=noLOG, fvalid=None, remove_space=True):
+def unzip_files(zipf, where_to=None, fLOG=noLOG, fvalid=None, remove_space=True,
+                fail_if_error=True):
     """
     Unzip files from a zip archive.
 
@@ -75,11 +76,17 @@ def unzip_files(zipf, where_to=None, fLOG=noLOG, fvalid=None, remove_space=True)
     @param      fvalid          function which takes two paths (zip name, local name) and return True if the file
                                 must be unzipped, False otherwise, if None, the default answer is True
     @param      remove_space    remove spaces in created local path (+ ``',()``)
+    @param      fail_if_error   fails if an error is encountered
+                                (typically a weird character in a filename),
+                                otherwise a warning is thrown.
     @return                     list of unzipped files
 
     .. versionchanged:: 1.4
         Add parameter *fvalid*.
         Moved to *filehelper*.
+
+    .. versionadded:: 1.6
+        Parameter *fail_if_error* was added.
     """
     if sys.version_info[0] == 2:
         if isinstance(zipf, bytearray):
@@ -94,7 +101,17 @@ def unzip_files(zipf, where_to=None, fLOG=noLOG, fvalid=None, remove_space=True)
             if fLOG:
                 fLOG("[unzip_files] unzip '{0}'".format(info.filename))
             if where_to is None:
-                files.append((info.filename, file.read(info.filename)))
+                try:
+                    content = file.read(info.filename)
+                except zipfile.BadZipFile as e:
+                    if fail_if_error:
+                        raise zipfile.BadZipFile(
+                            "Unable to extract '{0}' due to {1}".format(info.filename, e)) from e
+                    else:
+                        warnings.warn(
+                            "Unable to extract '{0}' due to {1}".format(info.filename, e))
+                        continue
+                files.append((info.filename, content))
             else:
                 clean = remove_diacritics(info.filename)
                 if remove_space:
@@ -108,7 +125,16 @@ def unzip_files(zipf, where_to=None, fLOG=noLOG, fvalid=None, remove_space=True)
                     if fvalid and not fvalid(info.filename, tos):
                         fLOG("[unzip_files]    skipping", info.filename)
                         continue
-                    data = file.read(info.filename)
+                    try:
+                        data = file.read(info.filename)
+                    except zipfile.BadZipFile as e:
+                        if fail_if_error:
+                            raise zipfile.BadZipFile(
+                                "Unable to extract '{0}' due to {1}".format(info.filename, e)) from e
+                        else:
+                            warnings.warn(
+                                "Unable to extract '{0}' due to {1}".format(info.filename, e))
+                            continue
                     # check encoding to avoid characters not allowed in paths
                     if not os.path.exists(tos):
                         if sys.platform.startswith("win"):
