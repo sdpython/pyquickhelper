@@ -27,7 +27,6 @@ except ImportError:
 from src.pyquickhelper.loghelper import fLOG
 from src.pyquickhelper.pycode import get_temp_folder, ExtTestCase
 from src.pyquickhelper.filehelper import unzip_files
-from src.pyquickhelper.pycode import is_travis_or_appveyor
 
 
 class TestCompressHelperBug2(ExtTestCase):
