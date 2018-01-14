@@ -24,7 +24,7 @@ else:
 class sharenet_node(nodes.Structural, nodes.Element):
 
     """
-    defines *sharenet* node
+    Defines *sharenet* node.
     """
     pass
 
@@ -68,8 +68,7 @@ class ShareNetDirective(Directive):
 
     def run(self):
         """
-        extracts the information in a dictionary,
-        run the script
+        Runs the directve.
 
         @return      a list of nodes
         """

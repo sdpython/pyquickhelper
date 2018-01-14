@@ -60,6 +60,7 @@ from ..sphinxext.sphinx_postcontents_extension import PostContentsDirective
 from ..sphinxext.sphinx_tocdelay_extension import TocDelayDirective
 from ..sphinxext.sphinx_youtube_extension import YoutubeDirective
 from ..sphinxext.sphinx_sharenet_extension import ShareNetDirective, sharenet_role
+from ..sphinxext.sphinx_video_extension import VideoDirective
 from ..sphinxext.sphinx_template_extension import tpl_role
 from ..sphinxext.sphinx_epkg_extension import epkg_role
 from ..sphinxext.sphinx_bigger_extension import bigger_role
@@ -272,6 +273,9 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
         The parameter *nbneg_pattern* can be used to remove notebooks from
         the gallery if they match this regular expression.
 
+    .. versionchanged:: 1.6
+        Automatically adds video directive.
+
     .. todoext::
         :title: add subfolder when building indexes of notebooks
         :tag: enhancement
@@ -337,6 +341,7 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
     directives.register_directive("blogpostagg", BlogPostDirectiveAgg)
     directives.register_directive("runpython", RunPythonDirective)
     directives.register_directive("sharenet", ShareNetDirective)
+    directives.register_directive("video", VideoDirective)
     directives.register_directive("todoext", TodoExt)
     directives.register_directive("mathdef", MathDef)
     directives.register_directive("blocref", BlocRef)
