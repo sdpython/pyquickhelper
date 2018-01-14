@@ -78,13 +78,8 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
             from pyquickhelper.helpgen.default_conf import set_sphinx_variables
 
             sys.path.insert(0, os.path.abspath(os.path.join(os.path.split(__file__)[0])))
-            set_sphinx_variables(   __file__,
-                                    "pyquickhelper",
-                                    "Xavier Dupré",
-                                    2014,
-                                    "solar_theme",
-                                    solar_theme.theme_path,
-                                    locals())
+            set_sphinx_variables(__file__, "pyquickhelper", "Xavier Dupré", 2014,
+                                 "solar_theme", solar_theme.theme_path, locals())
 
             # custom settings
             ...
@@ -267,7 +262,7 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
                   'sphinx.ext.inheritance_diagram',
                   'sphinx.ext.mathjax' if use_mathjax else 'sphinx.ext.imgmath',
                   'sphinx.ext.napoleon', 'sphinx.ext.todo', 'sphinx.ext.viewcode',
-                  'sphinxcontrib.images', 'sphinxcontrib.imagesvg',
+                  'sphinxcontrib.imagesvg',
                   # 'matplotlib.sphinxext.only_directives',
                   # 'matplotlib.sphinxext.mathmpl',
                   # 'matplotlib.sphinxext.only_directives',
@@ -746,7 +741,7 @@ def custom_setup(app, author):
     from ..sphinxext.sphinx_tocdelay_extension import setup as setup_tocdelay
     from ..sphinxext.sphinx_youtube_extension import setup as setup_youtube
     from ..sphinxext.sphinx_epkg_extension import setup as setup_epkg
-    from ..sphinxext.releases import setup as setup_releases
+    from ..sphinxext import setup_releases, setup_images
     from ..sphinxext.sphinx_toctree_extension import setup as setup_toctree
     # from ..sphinxext.sphinx_rst_builder import setup as setup_rst
 
@@ -779,6 +774,7 @@ def custom_setup(app, author):
     setup_tpl(app)
     setup_epkg(app)
     setup_releases(app)
+    setup_images(app)
     # Already part of the added extensions.
     # setup_rst(app)
 

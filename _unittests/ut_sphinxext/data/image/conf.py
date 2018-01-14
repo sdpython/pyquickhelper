@@ -13,7 +13,7 @@ pygments_style = 'sphinx'
 html_theme = 'classic'
 html_static_path = ['_static']
 latex_documents = [
-    ('index', 'pyq-video.tex', 'pyq-video Documentation', 'any', 'manual')]
-man_pages = [('index', 'pyq-video', 'pyq-video Documentation', ['any'], 1)]
-texinfo_documents = [('index', 'pyq-video', 'pyq-video Documentation',
-                      'any', 'pyq-video', 'description', '...')]
+    ('index', 'pyq-image.tex', 'pyq-image Documentation', 'any', 'manual')]
+man_pages = [('index', 'pyq-image', 'pyq-image Documentation', ['any'], 1)]
+texinfo_documents = [('index', 'pyq-image', 'pyq-image Documentation',
+                      'any', 'pyq-image', 'description', '...')]

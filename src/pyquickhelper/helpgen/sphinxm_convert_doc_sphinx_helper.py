@@ -171,7 +171,10 @@ class _AdditionalVisitDepart:
 
     def depart_video_node(self, node):
         """
-        @see fn depart_video_node
+        @see fn depart_video_node_html,
+        @see fn depart_video_node_rst,
+        @see fn depart_video_node_text,
+        @see fn depart_video_node_latex
         """
         if self.is_html():
             ext_depart_video_node_html(self, node)

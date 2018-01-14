@@ -22,14 +22,15 @@ else:
 class CustomSphinxApp(Sphinx):
     """
     A subclass of class *Sphinx*,
-    the goal is to interpret RST with custom directives.
+    the goal is to interpret :epkg:`RST` with custom directives.
     """
 
     def __init__(self, srcdir, outdir, confdir=None, doctreedir=None,
                  buildername='html', confoverrides=None, status=None,
                  warning=None, freshenv=False, warningiserror=False, tags=None,
                  copy_srcdir_to_tmpdir=False, create_new_srcdir=False,
-                 cleanup_on_errors=True, verbosity=0, parallel=0):
+                 cleanup_on_errors=True, verbosity=0, parallel=0,
+                 extensions='all'):
         """
         @param      srcdir                  source folder
         @param      outdir                  output folder
@@ -47,6 +48,12 @@ class CustomSphinxApp(Sphinx):
         @param      cleanup_on_errors       force cleanup on errors
         @param      verbosity               integer
         @param      parallel                integer (number of threads)
+        @param      extensions              if ``'all'``, add extensions implemented
+                                            by this module, use ``None`` for an empty list,
+                                            'extensions' must not be in *confoverrides*
+
+        .. versionchanged:: 1.6
+            Parameter *extensions* was added.
         """
         self.cleanup_trees = []
         self.cleanup_on_errors = cleanup_on_errors
@@ -69,6 +76,19 @@ class CustomSphinxApp(Sphinx):
             status = StringIO()
         if warning is None:
             warning = StringIO()
+
+        if 'extensions' not in confoverrides:
+            if extensions == 'all':
+                from ..sphinxext import get_default_extensions, get_default_standard_extensions
+                exts = get_default_extensions() + get_default_standard_extensions()
+                skip = {'sphinx.ext.extlinks'}
+                exts = [_ for _ in exts if _ not in skip]
+            elif isinstance(extensions, list):
+                exts = extensions
+            else:
+                exts = None
+            if exts is not None:
+                confoverrides['extensions'] = exts
 
         Sphinx.__init__(self, srcdir, confdir, outdir, doctreedir,
                         buildername, confoverrides, status,
