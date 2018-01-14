@@ -37,7 +37,6 @@ setuptools
 Sphinx
 sphinx-gallery
 sphinx-rtd-theme
-sphinxcontrib-images
 sphinxcontrib-imagesvg
 sphinxcontrib-jsdemo
 sphinxjp.themes.revealjs

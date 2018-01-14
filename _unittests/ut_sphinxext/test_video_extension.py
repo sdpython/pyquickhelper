@@ -89,8 +89,8 @@ class TestVideoExtension(ExtTestCase):
                             writer="custom", keep_warnings=True,
                             directives=None)
 
-        warns = log_capture_string.getvalue()
-        if not warns:
+        warns = log_capture_string.getvalue().strip()
+        if len(warns) == 0:
             raise Exception(warns)
 
         t1 = "this code shoud not appear"

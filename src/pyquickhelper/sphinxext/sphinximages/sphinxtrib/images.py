@@ -158,8 +158,11 @@ class ImageDirective(Directive):
     def is_remote(self, uri):
         uri = uri.strip()
         env = self.state.document.settings.env
-        app_directory = os.path.dirname(
-            os.path.abspath(self.state.document.settings._source))
+        if self.state.document.settings._source is not None:
+            app_directory = os.path.dirname(
+                os.path.abspath(self.state.document.settings._source))
+        else:
+            app_directory = None
 
         if uri[0] == '/':
             return False
@@ -167,7 +170,7 @@ class ImageDirective(Directive):
             return False
         if os.path.isfile(os.path.join(env.srcdir, uri)):
             return False
-        if os.path.isfile(os.path.join(app_directory, uri)):
+        if app_directory and os.path.isfile(os.path.join(app_directory, uri)):
             return False
         if '://' in uri:
             return True
