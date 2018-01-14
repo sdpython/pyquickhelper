@@ -115,10 +115,8 @@ class ImageDirective(Directive):
         # TODO: something is broken here, not parsed as expected
         description = nodes.paragraph()
         content = nodes.paragraph()
-        content += [nodes.Text(u"%s" % x) for x in self.content]
-        self.state.nested_parse(content,
-                                0,
-                                description)
+        content += [nodes.Text("%s" % x) for x in self.content]
+        self.state.nested_parse(content, 0, description)
 
         img = image_node()
 
@@ -162,8 +160,6 @@ class ImageDirective(Directive):
         env = self.state.document.settings.env
         app_directory = os.path.dirname(
             os.path.abspath(self.state.document.settings._source))
-        if sphinx.__version__.startswith('1.1'):
-            app_directory = app_directory.decode('utf-8')
 
         if uri[0] == '/':
             return False
@@ -211,14 +207,19 @@ def install_backend_static_files(app, env):
 
 
 def download_images(app, env):
+    """
+    Downloads images before running the documentation.
+
+    @param      app     :epkg:`Sphinx` application
+    @param      env     environment
+    """
     conf = app.config.images_config
     for src in app.builder.status_iterator(env.remote_images,
                                            'Downloading remote images...',
                                            brown, len(env.remote_images)):
         dst = os.path.join(env.srcdir, env.remote_images[src])
         if not os.path.isfile(dst):
-            app.info('{} -> {} (downloading)'
-                     .format(src, dst))
+            app.info('{} -> {} (downloading)'.format(src, dst))
             with open(dst, 'wb') as f:
                 # TODO: apply reuqests_kwargs
                 try:
@@ -227,8 +228,7 @@ def download_images(app, env):
                 except requests.ConnectionError:
                     app.info("Cannot download `{}`".format(src))
         else:
-            app.info('{} -> {} (already in cache)'
-                     .format(src, dst))
+            app.info('{} -> {} (already in cache)'.format(src, dst))
 
 
 def configure_backend(app):
@@ -238,7 +238,7 @@ def configure_backend(app):
     config.update(app.config.images_config)
     app.config.images_config = config
 
-    ensuredir(os.path.join(app.env.srcdir, config['cache_path']))
+    # ensuredir(os.path.join(app.env.srcdir, config['cache_path']))
 
     # html builder
     # self.relfn2path(imguri, docname)
@@ -249,10 +249,8 @@ def configure_backend(app):
     elif backend_name_or_callable == "LightBox2":
         backend = LightBox2
     else:
-        raise TypeError("images backend is configured "
-                        "improperly. It is `{}` (type:`{}`)."
-                        .format(backend_name_or_callable,
-                                type(backend_name_or_callable)))
+        raise TypeError("images backend is configured improperly. It is `{}` (type:`{}`).".format(
+            backend_name_or_callable, type(backend_name_or_callable)))
 
     backend = backend(app)
 
@@ -261,8 +259,8 @@ def configure_backend(app):
     app.sphinxtrib_images_backend = backend
 
     app.info('Initiated images backend: ', nonl=True)
-    app.info('`{}`'.format(str(backend.__class__.__module__ +
-                               ':' + backend.__class__.__name__)))
+    app.info('`{}`'.format(
+        str(backend.__class__.__module__ + ':' + backend.__class__.__name__)))
 
     def backend_methods(node, output_type):
         def backend_method(f):
@@ -271,17 +269,13 @@ def configure_backend(app):
                 return f(writer, node)
             return inner_wrapper
         signature = '_{}_{}'.format(node.__name__, output_type)
-        return (backend_method(getattr(backend, 'visit' + signature,
-                                       getattr(backend, 'visit_' + node.__name__ + '_fallback'))),
-                backend_method(getattr(backend, 'depart' + signature,
-                                       getattr(backend, 'depart_' + node.__name__ + '_fallback'))))
+        return (backend_method(getattr(backend, 'visit' + signature, getattr(backend, 'visit_' + node.__name__ + '_fallback'))),
+                backend_method(getattr(backend, 'depart' + signature, getattr(backend, 'depart_' + node.__name__ + '_fallback'))))
 
     # add new node to the stack
     # connect backend processing methods to this node
-    app.add_node(image_node,
-                 **{output_type: backend_methods(image_node, output_type)
-                    for output_type in ('html', 'latex', 'man', 'texinfo',
-                                        'text', 'epub')})
+    app.add_node(image_node, **{output_type: backend_methods(image_node, output_type)
+                                for output_type in ('html', 'latex', 'man', 'texinfo', 'text', 'epub')})
 
     app.add_directive('thumbnail', ImageDirective)
     if config['override_image_directive']:

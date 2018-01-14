@@ -77,16 +77,25 @@ class CustomSphinxApp(Sphinx):
         if warning is None:
             warning = StringIO()
 
+        if buildername == "rst":
+            from ..sphinxext.sphinx_rst_builder import RstBuilder
+            module = RstBuilder.__module__
+
         if 'extensions' not in confoverrides:
             if extensions == 'all':
                 from ..sphinxext import get_default_extensions, get_default_standard_extensions
                 exts = get_default_extensions() + get_default_standard_extensions()
                 skip = {'sphinx.ext.extlinks'}
                 exts = [_ for _ in exts if _ not in skip]
+                if buildername == "rst":
+                    exts.insert(0, module)
             elif isinstance(extensions, list):
                 exts = extensions
-            else:
-                exts = None
+                if buildername == "rst":
+                    exts = exts.copy()
+                    exts.insert(0, module)
+            elif buildername == "rst":
+                exts = [module]
             if exts is not None:
                 confoverrides['extensions'] = exts
 

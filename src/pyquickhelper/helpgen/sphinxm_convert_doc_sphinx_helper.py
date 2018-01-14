@@ -169,23 +169,29 @@ class _AdditionalVisitDepart:
         """
         ext_visit_video_node(self, node)
 
-    def depart_video_node(self, node):
+    def depart_video_node_html(self, node):
         """
-        @see fn depart_video_node_html,
-        @see fn depart_video_node_rst,
-        @see fn depart_video_node_text,
+        @see fn depart_video_node_html
+        """
+        ext_depart_video_node_html(self, node)
+
+    def depart_video_node_latex(self, node):
+        """
         @see fn depart_video_node_latex
         """
-        if self.is_html():
-            ext_depart_video_node_html(self, node)
-        elif self.is_rst():
-            ext_depart_video_node_rst(self, node)
-        elif self.is_text():
-            ext_depart_video_node_text(self, node)
-        elif self.is_latex():
-            ext_depart_video_node_latex(self, node)
-        else:
-            raise ValueError("Unknown format.")
+        ext_depart_video_node_latex(self, node)
+
+    def depart_video_node_text(self, node):
+        """
+        @see fn depart_video_node_text
+        """
+        ext_depart_video_node_text(self, node)
+
+    def depart_video_node_rst(self, node):
+        """
+        @see fn depart_video_node_rst
+        """
+        ext_depart_video_node_rst(self, node)
 
     def visit_tpl_node(self, node):
         """
