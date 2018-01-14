@@ -61,6 +61,7 @@ from ..sphinxext.sphinx_tocdelay_extension import TocDelayDirective
 from ..sphinxext.sphinx_youtube_extension import YoutubeDirective
 from ..sphinxext.sphinx_sharenet_extension import ShareNetDirective, sharenet_role
 from ..sphinxext.sphinx_video_extension import VideoDirective
+from ..sphinxext.sphinximages.sphinxtrib.images import ImageDirective
 from ..sphinxext.sphinx_template_extension import tpl_role
 from ..sphinxext.sphinx_epkg_extension import epkg_role
 from ..sphinxext.sphinx_bigger_extension import bigger_role
@@ -352,6 +353,8 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
     directives.register_directive("postcontents", PostContentsDirective)
     directives.register_directive("tocdelay", TocDelayDirective)
     directives.register_directive("youtube", YoutubeDirective)
+    directives.register_directive("thumbnail", ImageDirective)
+    directives.register_directive("video", VideoDirective)
     roles.register_canonical_role("sharenet", sharenet_role)
     roles.register_canonical_role("bigger", bigger_role)
     roles.register_canonical_role("githublink", githublink_role)

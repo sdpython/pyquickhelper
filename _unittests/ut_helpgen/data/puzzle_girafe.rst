@@ -10,7 +10,7 @@ Mais je me suis qu'en scannant les pièces du puzzle (au nombre de neuf),
 je devrais être en mesure d'écrire un programme pour le résoudre à ma place.
 Ce document décrit comment je m'y suis pris. D'abord les pièces.
 
-.. image:: puzzle_girafe.png
+.. image:: http://www.xavierdupre.fr/app/ensae_teaching_cs/helpsphinx/_images/puzzle_girafe.png
 
 Il ne contient que neuf pièces, chacune d'elle est carrée et chaque côté est soit la tête,
 soit les jambes d'une girafe pour lesquelles il y a quatre couleurs possibles.
@@ -198,7 +198,7 @@ tournée de 90 degrés dans le sens trigonométrique.
 Deux pièces sont voisines si elles sont à gauche et droite l'une de l'autre (premier cas)
 ou en haut et bas l'une de l'autre (second cas).
 
-.. image:: s4possi.png
+.. image:: http://www.xavierdupre.fr/app/ensae_teaching_cs/helpsphinx/_images/s4possi.png
 
 Le dessin permet de trouver les paires d'indices
 *a'* qui correspondent aux bords en contact, et connaissant l'orientation
@@ -259,7 +259,7 @@ retourne la pièce à une certaine position donnée ou
 Cette méthode a pour objectif de retourner la liste des positions voisines à une
 position donnée.
 
-.. image:: s4vois.png
+.. image:: http://www.xavierdupre.fr/app/ensae_teaching_cs/helpsphinx/_images/s4vois.png
 
 ::
 
@@ -441,7 +441,7 @@ Si la solution finale utilise cette pièce, c'est terminé sinon, la fonction
 est appelée une seconde fois pour obtenir un second choix de pièce en tenant
 compte des pièces placées et essayées.
 
-.. image:: girafe_tout.png
+.. image:: http://www.xavierdupre.fr/app/ensae_teaching_cs/helpsphinx/_images/girafe_tout.png
 
 On peut représenter les appels dus à la récursion sous forme de graphe.
 Chaque noeud représente un nouvel appel à la méthode \codes{solution}.
@@ -453,7 +453,7 @@ par les derniers noeuds intermédiaires.
 Une branche de 9 noeuds signifie que la contradition est apparue sur la dernière
 pièce et une seule branche de 9 noeuds a mené à la solution trouvée.
 
-.. image:: girafe_graph.png
+.. image:: http://www.xavierdupre.fr/app/ensae_teaching_cs/helpsphinx/_images/girafe_graph.png
 
 La résolution du puzzle en vidéo :
 

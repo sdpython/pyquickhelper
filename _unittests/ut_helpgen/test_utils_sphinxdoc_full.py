@@ -21,34 +21,32 @@ except ImportError:
         sys.path.append(path)
     import src
 
-from src.pyquickhelper.loghelper.flog import fLOG, removedirs
+from src.pyquickhelper.pycode import get_temp_folder, ExtTestCase
+from src.pyquickhelper.loghelper.flog import fLOG
 from src.pyquickhelper.filehelper.synchelper import synchronize_folder
 import src.pyquickhelper.helpgen.utils_sphinx_doc as utils_sphinx_doc
 
 
-class TestSphinxDocFull (unittest.TestCase):
+class TestSphinxDocFull (ExtTestCase):
 
     def test_full_documentation(self):
         fLOG(
             __file__,
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
-        path = os.path.split(__file__)[0]
-        temp = os.path.join(path, "temp_doc")
-        if os.path.exists(temp):
-            removedirs(temp)
-        assert not os.path.exists(temp)
-        os.mkdir(temp)
+        temp = get_temp_folder(__file__, "temp_doc")
 
         if sys.version_info[0] == 2:
             return
 
-        file = os.path.join(path, "..", "..")
+        file = os.path.join(temp, "..", "..", "..")
         fLOG(os.path.normpath(os.path.abspath(file)))
-        assert os.path.exists(file)
+        self.assertExists(os.path.exists(file))
 
-        sysp = os.path.join(file, "_doc", "sphinxdoc", "source")
-        assert os.path.exists(sysp)
+        sysp = os.path.normpath(os.path.join(
+            file, "_doc", "sphinxdoc", "source"))
+        self.assertExists(os.path.exists(sysp))
+        fLOG('sysp=', sysp)
         sys.path.insert(0, sysp)
         del sys.path[0]
 
@@ -62,16 +60,11 @@ class TestSphinxDocFull (unittest.TestCase):
         store_obj = {}
 
         utils_sphinx_doc.prepare_file_for_sphinx_help_generation(
-            store_obj,
-            file,
-            temp,
+            store_obj, file, temp, silent=True,
             subfolders=[("src/" + project_var_name, project_var_name), ],
-            silent=True,
             rootrep=("ut_helpgen.temp_doc.%s." % (project_var_name,), ""),
-            optional_dirs=[],
-            mapped_function=[(".*[.]tohelp$", None)],
-            issues=issues,
-            module_name=project_var_name)
+            optional_dirs=[], mapped_function=[(".*[.]tohelp$", None)],
+            issues=issues, module_name=project_var_name)
 
         fLOG("end of prepare_file_for_sphinx_help_generation")
 
@@ -91,15 +84,15 @@ class TestSphinxDocFull (unittest.TestCase):
             if "report" in f:
                 with open(f, "r", encoding="utf8") as ff:
                     content = ff.read()
-                assert ".py" in content
+                self.assertIn(".py", content)
 
         if os.path.exists(os.path.join(temp, "all_FAQ.rst")):
             with open(os.path.join(temp, "all_FAQ.rst"), "r") as f:
                 contentf = f.read()
-            assert "How to activate the logs?" in contentf
-            assert "_le-" not in contentf
-            assert "_lf-" not in contentf
-            assert "__!LI!NE!__" not in contentf
+            self.assertIn("How to activate the logs?", contentf)
+            self.assertNotIn("_le-", contentf)
+            self.assertNotIn("_lf-", contentf)
+            self.assertNotIn("__!LI!NE!__", contentf)
 
         with open(files[0], "r", encoding="utf8") as f:
             f.read()
@@ -131,8 +124,9 @@ class TestSphinxDocFull (unittest.TestCase):
             "utils_sphinx_doc.py")
         with open(exclude, "r") as f:
             content = f.read()
-        assert "### # -- HELP END EXCLUDE --" not in content
-        assert "### class useless_class_UnicodeStringIOThreadSafe(str):" not in content
+        self.assertNotIn("### # -- HELP END EXCLUDE --", content)
+        self.assertNotIn(
+            "### class useless_class_UnicodeStringIOThreadSafe(str):", content)
 
 
 if __name__ == "__main__":

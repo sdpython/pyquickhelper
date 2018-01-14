@@ -313,7 +313,9 @@ def copy_source_files(input, output, fmod=lambda v, filename: v,
     if remove:
         remove_folder(output, False, raise_exception=False)
 
-    deffilter = "(.+[.]py$)|(.+[.]pyd$)|(.+[.]cpp$)|(.+[.]h$)|(.+[.]dll$)|(.+[.]so$)|(.+[.]yml$)|(.+[.]o$)|(.+[.]def$)|(.+[.]exe$)|(.+[.]data$)|(.+[.]config$)"
+    def_ext = ['py', 'pyd', 'cpp', 'h', 'dll', 'so', 'yml', 'o', 'def',
+               'exe', 'data', 'config', 'css', 'js', 'png', 'map', 'sass']
+    deffilter = "|".join("(.+[.]{0}$)".format(_) for _ in def_ext)
     if copy_add_ext is not None:
         res = ["(.+[.]%s$)" % e for e in copy_add_ext]
         deffilter += "|" + "|".join(res)
@@ -898,7 +900,7 @@ def prepare_file_for_sphinx_help_generation(store_obj, input, output,
                                             module_name=None, copy_add_ext=None, use_sys=None,
                                             auto_rst_generation=True, fLOG=fLOG):
     """
-    Prepares all files for Sphinx generation.
+    Prepares all files for :epkg:`Sphinx` generation.
 
     @param      store_obj       to keep track of all objects, it should be a dictionary
     @param      input           input folder
@@ -1064,7 +1066,8 @@ def prepare_file_for_sphinx_help_generation(store_obj, input, output,
     fLOG("extracted ", len(store_obj), " objects")
     res = produces_indexes(store_obj, indexes, fexclude_index, fLOG=fLOG)
 
-    fLOG("generating ", len(res), " indexes for ", ", ".join(list(res.keys())))
+    fLOG("[prepare_file_for_sphinx_help_generation] generating ",
+         len(res), " indexes for ", ", ".join(list(res.keys())))
     allfiles = []
     for k, v in res.items():
         out = os.path.join(output, "index_" + k + ".rst")

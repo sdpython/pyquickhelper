@@ -89,9 +89,9 @@ class TestVideoExtension(ExtTestCase):
                             writer="custom", keep_warnings=True,
                             directives=None)
 
-        warns = log_capture_string.getvalue().strip()
+        warns = log_capture_string.getvalue().strip("\n\r\t ")
         if len(warns) == 0:
-            raise Exception(warns)
+            raise Exception("warnings '{0}'".format(warns))
 
         t1 = "this code shoud not appear"
         if t1 in html:
