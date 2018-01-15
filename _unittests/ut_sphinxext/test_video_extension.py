@@ -117,6 +117,20 @@ class TestVideoExtension(ExtTestCase):
         with open(os.path.join(temp, "out_video.html"), "w", encoding="utf8") as f:
             f.write(html)
 
+    def setup_format(self, temp):
+        src_ = os.path.join(temp, "..", "data", "video")
+        v1 = os.path.join(temp, "..", "data", "video", "mur.mp4")
+        v2 = os.path.join(temp, "..", "data", "video", "jol", "mur2.mp4")
+        if not os.path.exists(v2):
+            shutil.copy(v1, v2)
+        fold = os.path.join(temp, "..", "data", "video", "jol", 'im')
+        if not os.path.exists(fold):
+            os.mkdir(fold)
+        v3 = os.path.join(temp, "..", "data", "video", "jol", 'im', "mur3.mp4")
+        if not os.path.exists(v3):
+            shutil.copy(v1, v3)
+        return src_
+
     def test_sphinx_ext_video_html(self):
         fLOG(
             __file__,
@@ -124,15 +138,11 @@ class TestVideoExtension(ExtTestCase):
             OutputPrint=__name__ == "__main__")
 
         temp = get_temp_folder(__file__, "temp_sphinx_ext_video_html")
-        src_ = os.path.join(temp, "..", "data", "video")
-        v1 = os.path.join(temp, "..", "data", "video", "mur.mp4")
-        v2 = os.path.join(temp, "..", "data", "video", "jol", "mur2.mp4")
-        if not os.path.exists(v2):
-            shutil.copy(v1, v2)
 
         if sys.version_info[0] == 2:
             return
 
+        src_ = self.setup_format(temp)
         app = CustomSphinxApp(src_, temp)
         app.build()
 
@@ -145,6 +155,8 @@ class TestVideoExtension(ExtTestCase):
         self.assertExists(index)
         index = os.path.join(temp, "jol", "mur2.mp4")
         self.assertExists(index)
+        index = os.path.join(temp, "jol", 'im', "mur3.mp4")
+        self.assertExists(index)
 
     def test_sphinx_ext_video_rst(self):
         fLOG(
@@ -153,15 +165,11 @@ class TestVideoExtension(ExtTestCase):
             OutputPrint=__name__ == "__main__")
 
         temp = get_temp_folder(__file__, "temp_sphinx_ext_video_rst")
-        src_ = os.path.join(temp, "..", "data", "video")
-        v1 = os.path.join(temp, "..", "data", "video", "mur.mp4")
-        v2 = os.path.join(temp, "..", "data", "video", "jol", "mur2.mp4")
-        if not os.path.exists(v2):
-            shutil.copy(v1, v2)
 
         if sys.version_info[0] == 2:
             return
 
+        src_ = self.setup_format(temp)
         app = CustomSphinxApp(src_, temp, buildername="rst")
         app.build()
 
@@ -175,6 +183,8 @@ class TestVideoExtension(ExtTestCase):
         self.assertExists(index)
         index = os.path.join(temp, "jol", "mur2.mp4")
         self.assertExists(index)
+        index = os.path.join(temp, "jol", 'im', "mur3.mp4")
+        self.assertExists(index)
 
     def test_sphinx_ext_video_latex(self):
         fLOG(
@@ -183,15 +193,11 @@ class TestVideoExtension(ExtTestCase):
             OutputPrint=__name__ == "__main__")
 
         temp = get_temp_folder(__file__, "temp_sphinx_ext_video_latex")
-        src_ = os.path.join(temp, "..", "data", "video")
-        v1 = os.path.join(temp, "..", "data", "video", "mur.mp4")
-        v2 = os.path.join(temp, "..", "data", "video", "jol", "mur2.mp4")
-        if not os.path.exists(v2):
-            shutil.copy(v1, v2)
 
         if sys.version_info[0] == 2:
             return
 
+        src_ = self.setup_format(temp)
         app = CustomSphinxApp(src_, temp, buildername="latex")
         app.build()
 
@@ -205,6 +211,8 @@ class TestVideoExtension(ExtTestCase):
         self.assertExists(index)
         index = os.path.join(temp, "jol", "mur2.mp4")
         self.assertExists(index)
+        index = os.path.join(temp, "jol", 'im', "mur3.mp4")
+        self.assertExists(index)
 
     def test_sphinx_ext_video_text(self):
         fLOG(
@@ -213,15 +221,10 @@ class TestVideoExtension(ExtTestCase):
             OutputPrint=__name__ == "__main__")
 
         temp = get_temp_folder(__file__, "temp_sphinx_ext_video_text")
-        src_ = os.path.join(temp, "..", "data", "video")
-        v1 = os.path.join(temp, "..", "data", "video", "mur.mp4")
-        v2 = os.path.join(temp, "..", "data", "video", "jol", "mur2.mp4")
-        if not os.path.exists(v2):
-            shutil.copy(v1, v2)
-
         if sys.version_info[0] == 2:
             return
 
+        src_ = self.setup_format(temp)
         app = CustomSphinxApp(src_, temp, buildername="text")
         app.build()
 
@@ -234,6 +237,8 @@ class TestVideoExtension(ExtTestCase):
         index = os.path.join(temp, "mur.mp4")
         self.assertExists(index)
         index = os.path.join(temp, "jol", "mur2.mp4")
+        self.assertExists(index)
+        index = os.path.join(temp, "jol", 'im', "mur3.mp4")
         self.assertExists(index)
 
 

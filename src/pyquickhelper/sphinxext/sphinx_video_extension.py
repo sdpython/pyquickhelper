@@ -88,6 +88,7 @@ class VideoDirective(Directive):
         vid = os.path.join(cache, filename)
         abspath = None
         relpath = None
+
         if os.path.exists(vid):
             abspath = vid
             relpath = cache
@@ -110,8 +111,8 @@ class VideoDirective(Directive):
         node = self.__class__.video_class(uri=filename, docname=docname, lineno=self.lineno,
                                           width=width, height=height, abspath=abspath,
                                           relpath=relpath)
-        node['classes'] += "-video"
-        node['video'] = node
+        node['classes'] += ["place-video"]
+        node['video'] = filename
         ns = [node]
         return ns
 
@@ -124,6 +125,9 @@ def visit_video_node(self, node):
     if node['abspath'] is not None:
         outdir = self.builder.outdir
         relpath = os.path.join(outdir, node['relpath'])
+        dname = os.path.split(node['uri'])[0]
+        if dname:
+            relpath = os.path.join(relpath, dname)
         if not os.path.exists(relpath):
             os.makedirs(relpath)
         shutil.copy(node['abspath'], relpath)
@@ -153,7 +157,6 @@ def depart_video_node_html(self, node):
             body = body.format(width, height, filename,
                                os.path.splitext(filename)[-1].strip('.'))
             self.body.append(body)
-            # copy the filename
 
 
 def depart_video_node_text(self, node):
