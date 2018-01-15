@@ -313,7 +313,7 @@ def copy_source_files(input, output, fmod=lambda v, filename: v,
     if remove:
         remove_folder(output, False, raise_exception=False)
 
-    def_ext = ['py', 'pyd', 'cpp', 'h', 'dll', 'so', 'yml', 'o', 'def',
+    def_ext = ['py', 'pyd', 'cpp', 'h', 'dll', 'so', 'yml', 'o', 'def', 'gif',
                'exe', 'data', 'config', 'css', 'js', 'png', 'map', 'sass']
     deffilter = "|".join("(.+[.]{0}$)".format(_) for _ in def_ext)
     if copy_add_ext is not None:
