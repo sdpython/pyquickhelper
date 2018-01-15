@@ -145,7 +145,7 @@ def _private_process_one_file(
     """
     ext = os.path.splitext(fullname)[-1]
 
-    if ext in [".jpeg", ".jpg", ".pyd", ".png", ".dat", ".dll", ".o", ".so", ".exe", ".enc", ".txt"]:
+    if ext in [".jpeg", ".jpg", ".pyd", ".png", ".dat", ".dll", ".o", ".so", ".exe", ".enc", ".txt", ".gif"]:
         if ext in [".pyd", ".so"]:
             # If the file is being executed, the copy might keep the properties of
             # the original (only Windows).
@@ -161,8 +161,12 @@ def _private_process_one_file(
             with open(fullname, "r", encoding="utf8") as g:
                 content = g.read()
         except UnicodeDecodeError:
-            with open(fullname, "r") as g:
-                content = g.read()
+            try:
+                with open(fullname, "r") as g:
+                    content = g.read()
+            except UnicodeDecodeError as e:
+                raise UnicodeDecodeError(e.encoding, e.object, e.start, e.end,
+                                         "Unable to read '{0}' due to '{1}'".format(fullname, e.reason)) from e
 
         lines = [_.strip(" \t\n\r") for _ in content.split("\n")]
         lines = [_ for _ in lines if len(_) > 0]
