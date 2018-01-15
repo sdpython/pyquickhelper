@@ -47,7 +47,7 @@ package_data = {project_var_name + ".sphinxext": ["*.png"],
                 project_var_name + ".sphinxext.releases": ["*.txt"],
                 project_var_name + ".sphinxext.sphinximages.sphinxcontrib_images_lightbox2.lightbox2_customize": ["*.js"],
                 project_var_name + ".sphinxext.sphinximages.sphinxcontrib_images_lightbox2.lightbox2.css": ["*.css"],
-                project_var_name + ".sphinxext.sphinximages.sphinxcontrib_images_lightbox2.lightbox2.img": ["*.png"],
+                project_var_name + ".sphinxext.sphinximages.sphinxcontrib_images_lightbox2.lightbox2.img": ["*.png", "*.gif"],
                 project_var_name + ".sphinxext.sphinximages.sphinxcontrib_images_lightbox2.lightbox2.js": ["*.js", "*.map"],
                 project_var_name + ".sphinxext.sphinximages.sphinxcontrib_images_lightbox2.lightbox2.sass": ["*.sass"],
                 }
