@@ -47,6 +47,9 @@ class VideoDirective(Directive):
         .. video:: filename.mp4
             :width: 400
             :height: 600
+
+    For latex, unit becomes *pt*.
+    See `latex units <https://tex.stackexchange.com/questions/8260/what-are-the-various-units-ex-em-in-pt-bp-dd-pc-expressed-in-mm>`_.
     """
     required_arguments = True
     optional_arguments = 0
@@ -201,10 +204,16 @@ def depart_video_node_latex(self, node):
             body = "\\textbf{{unable to find '{0}'}}".format(filename)
             self.body.append(body)
         else:
-            body = '\\includemovie[poster,autoplay,externalviewer,inline=false]{{{0}}}{{{1}}}{{{2}}}'
-            width = '{0}pt'.format(width) if width else "400"
-            height = '{0}pt'.format(height) if height else "300"
+            def format_dim(s):
+                if s == "auto" or s is None:
+                    return "{}"
+                else:
+                    return "{{{0}pt}}".format(s)
+            body = '\\includemovie[poster,autoplay,externalviewer,inline=false]{0}{1}{{{2}}}'
+            width = format_dim(width)
+            height = format_dim(height)
             body = body.format(width, height, filename)
+            print("---", body)
             self.body.append(body)
 
 
