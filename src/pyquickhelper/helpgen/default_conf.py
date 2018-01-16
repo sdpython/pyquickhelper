@@ -176,6 +176,7 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
             \\usepackage{graphics}
             \\usepackage{epic}
             \\usepackage{eepic}
+            \\usepackage{movie15}
             %\\usepackage{pict2e}
             %%% Redefined titleformat
             \\setlength{\\parindent}{0cm}

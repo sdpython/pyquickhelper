@@ -331,6 +331,8 @@ def compile_latex_output_final(root, latex_path, doall, afile=None, latex_book=F
         lat = "pdflatex"
 
     build = os.path.join(root, "_doc", "sphinxdoc", "build", "latex")
+    if not os.path.exists(build):
+        build = root
     for tex in os.listdir(build):
         if tex.endswith(".tex") and (afile is None or afile in tex):
             file = os.path.join(build, tex)

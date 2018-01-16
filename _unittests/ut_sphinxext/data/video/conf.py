@@ -17,3 +17,9 @@ latex_documents = [
 man_pages = [('index', 'pyq-video', 'pyq-video Documentation', ['any'], 1)]
 texinfo_documents = [('index', 'pyq-video', 'pyq-video Documentation',
                       'any', 'pyq-video', 'description', '...')]
+preamble = '''
+\\usepackage{movie15}
+'''
+latex_elements = {'papersize': 'a4', 'pointsize': '10pt',
+                  'preamble': preamble,
+                  }

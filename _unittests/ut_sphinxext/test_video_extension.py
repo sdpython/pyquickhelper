@@ -30,6 +30,9 @@ from src.pyquickhelper.pycode import get_temp_folder, ExtTestCase
 from src.pyquickhelper.helpgen import rst2html
 from src.pyquickhelper.sphinxext import VideoDirective
 from src.pyquickhelper.helpgen import CustomSphinxApp
+from src.pyquickhelper.helpgen.sphinx_main_helper import compile_latex_output_final
+from src.pyquickhelper.helpgen.conf_path_tools import find_latex_path
+
 
 if sys.version_info[0] == 2:
     from codecs import open
@@ -212,6 +215,11 @@ class TestVideoExtension(ExtTestCase):
         index = os.path.join(temp, "jol", "mur2.mp4")
         self.assertExists(index)
         index = os.path.join(temp, "jol", 'im', "mur3.mp4")
+        self.assertExists(index)
+
+        latex = find_latex_path()
+        compile_latex_output_final(temp, latex, doall=True)
+        index = os.path.join(temp, "pyq-video.pdf")
         self.assertExists(index)
 
     def test_sphinx_ext_video_text(self):

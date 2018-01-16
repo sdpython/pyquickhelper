@@ -59,7 +59,7 @@ class VideoDirective(Directive):
 
     def run(self):
         """
-        Runs the directve.
+        Runs the directive.
 
         @return      a list of nodes
         """
@@ -202,8 +202,8 @@ def depart_video_node_latex(self, node):
             self.body.append(body)
         else:
             body = '\\includemovie[poster,autoplay,externalviewer,inline=false]{{{0}}}{{{1}}}{{{2}}}'
-            width = '{0}'.format(width) if width else "400"
-            height = '{0}"'.format(height) if height else "300"
+            width = '{0}pt'.format(width) if width else "400"
+            height = '{0}pt'.format(height) if height else "300"
             body = body.format(width, height, filename)
             self.body.append(body)
 
