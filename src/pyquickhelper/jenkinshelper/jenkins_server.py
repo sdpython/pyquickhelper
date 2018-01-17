@@ -27,6 +27,7 @@ import jenkins
 import socket
 import hashlib
 import re
+from xml.sax.saxutils import escape
 from ..loghelper.flog import noLOG
 from ..pycode.windows_scripts import windows_jenkins, windows_jenkins_any
 from ..pycode.windows_scripts import windows_jenkins_27_conda, windows_jenkins_27_def
@@ -785,8 +786,9 @@ class JenkinsExt(jenkins.Jenkins):
                     "Unable to process options\n{0}\nYou can specify the following options:\n{1}".format(job_options, keys))
 
         # scripts
+        # tasks is XML, we need to encode s into XML format
         tasks = before + [JenkinsExt._task_batch.replace(
-            "__SCRIPT__", s) for s in script_mod]
+            "__SCRIPT__", escape(s)) for s in script_mod]
 
         # location
         if location is not None and "<--" in location:
