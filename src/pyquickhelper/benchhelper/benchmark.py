@@ -305,7 +305,7 @@ class BenchMark:
                             break
 
                     if can:
-                        # can, we check a file is present
+                        # can, it  checks a file is present
                         look = "{0}.{1}.clean_cache".format(
                             self._cache_file, cached["metrics"][i]["_btry"])
                         if not os.path.exists(look):

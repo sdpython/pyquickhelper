@@ -103,7 +103,7 @@ def process_postcontents(app, doctree):
     attr_list = getattr(env, attr)
     for node in doctree.traverse(postcontents_node):
 
-        # We look for a section or documenti which contains the directive.
+        # It looks for a section or documenti which contains the directive.
         parent = node
         while not isinstance(parent, (nodes.document, nodes.section)):
             parent = node.parent

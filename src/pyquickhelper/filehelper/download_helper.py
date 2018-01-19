@@ -171,7 +171,7 @@ def get_url_content_timeout(url, timeout=10, output=None, encoding="utf8", raise
             try:
                 content = res.decode(encoding)
             except UnicodeDecodeError as e:
-                # we try different encoding
+                # it tries different encoding
 
                 laste = [e]
                 othenc = ["iso-8859-1", "latin-1"]

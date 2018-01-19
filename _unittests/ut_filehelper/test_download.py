@@ -25,12 +25,12 @@ except ImportError:
     import src
 
 from src.pyquickhelper.loghelper import fLOG
-from src.pyquickhelper.pycode import get_temp_folder
+from src.pyquickhelper.pycode import get_temp_folder, ExtTestCase
 from src.pyquickhelper.filehelper import check, read_url, gzip_files, zip_files, zip7_files, download
 from src.pyquickhelper.pycode import is_travis_or_appveyor
 
 
-class TestDownload (unittest.TestCase):
+class TestDownload (ExtTestCase):
 
     def test_download_zip(self):
         fLOG(
@@ -79,6 +79,18 @@ class TestDownload (unittest.TestCase):
         self.assertTrue("MagicCommandParser" in content)
         self.assertTrue(isinstance(content, str  # unicode#
                                    ))
+
+    def test_download_file(self):
+        fLOG(
+            __file__,
+            self._testMethodName,
+            OutputPrint=__name__ == "__main__")
+        fold = get_temp_folder(__file__, "temp_download_file")
+        name = os.path.normpath(os.path.join(fold, "..", "data", "donnees.7z"))
+        url = "file://" + name.replace("\\", "/")
+        f = download(url, fold)
+        self.assertExists(f)
+        self.assertTrue(f.endswith("donnees.7z"))
 
 
 if __name__ == "__main__":

@@ -75,10 +75,10 @@ def close_input_output(in_size, in_close, in_stream, out_close, out_return, out_
     and return expected values.
 
     @param      in_size         size of input
-    @param      in_close        should we close the input stream
+    @param      in_close        should it close the input stream
     @param      in_stream       input stream
-    @param      out_close       should we close the output stream
-    @param      out_return      should we return something
+    @param      out_close       should it closes the output stream
+    @param      out_return      should it returns something
     @param      out_stream      output stream
     @return                     None or content of output stream
     """

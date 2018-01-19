@@ -93,7 +93,7 @@ def is_url_string(s):
 class FileInfo:
 
     """
-    intermediate class: it represents the data we collect about a file
+    intermediate class: it represents the data it collects about a file
     to determine whether or not it was modified
     """
 

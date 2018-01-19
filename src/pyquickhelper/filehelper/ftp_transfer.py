@@ -115,7 +115,7 @@ class TransferFTP:
                 return
             elif "An existing connection was forcibly closed by the remote host" in se or \
                  "An established connection was aborted by the software in your host machine" in se:
-                # we start a new connection
+                # it starts a new connection
                 self.LOG("reconnecting failed, starting a new connection",
                          self.Site, " - ", len(self._logins))
                 self._ftp = FTP(self.Site, self._atts[
@@ -357,7 +357,7 @@ class TransferFTP:
                 raise CannotCompleteWithoutNewLoginException(
                     "Cannot transfer '{0}' without new login".format(to))
 
-        # It may fail here, we hope not.
+        # It may fail here, it hopes not.
         nbtry = 0
         nbth = len(done) * 2 + 1
         while len(done) > 0:

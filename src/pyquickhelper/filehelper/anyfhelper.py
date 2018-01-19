@@ -25,7 +25,7 @@ else:
 def change_file_status(folder, status=stat.S_IWRITE, strict=False,
                        include_folder=True):
     """
-    change the status of all files inside a folder
+    Changes the status of all files inside a folder.
 
     @param      folder          folder or file
     @param      status          new status
@@ -84,7 +84,7 @@ def change_file_status(folder, status=stat.S_IWRITE, strict=False,
                     os.chmod(f, nmode)
                     res.append(f)
 
-            # we end up with the folder
+            # It ends up with the folder.
             if include_folder:
                 d = folder
                 if d not in dirname:
@@ -115,7 +115,7 @@ def change_file_status(folder, status=stat.S_IWRITE, strict=False,
                     os.chmod(f, nmode)
                     res.append(f)
 
-            # we end up with the folder
+            # It ends up with the folder.
             if include_folder:
                 d = folder
                 if d not in dirname:
@@ -129,9 +129,9 @@ def change_file_status(folder, status=stat.S_IWRITE, strict=False,
 
 def read_content_ufs(file_url_stream, encoding="utf8", asbytes=False, add_source=False):
     """
-    read the content of a source, whether it is a url, a file, a stream
+    Reads the content of a source, whether it is a url, a file, a stream
     or a string (in that case, it returns the string itself),
-    we assume the content type is text
+    it assumes the content type is text.
 
     @param      file_url_stream     file or url or stream or string
     @param      encoding            encoding

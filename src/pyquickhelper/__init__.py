@@ -52,7 +52,7 @@ def _setup_hook(add_print=False, unit_test=False):
     @param      add_print       print *Success: _setup_hook*
     @param      unit_test       used only for unit testing purpose
     """
-    # we can check many things, needed module
+    # it can check many things, needed module
     # any others things before unit tests are started
     if add_print:
         print("Success: _setup_hook")

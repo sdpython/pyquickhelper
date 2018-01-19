@@ -86,7 +86,7 @@ if False:
         Obtain a Sphinx doctree from the RST file at ``path``.
 
         Performs no Releases-specific processing; this code would, ideally, be in
-        Sphinx itself, but things there are pretty tightly coupled. So we wrote
+        Sphinx itself, but things there are pretty tightly coupled. So it wrote
         this.
 
         :param str path: A relative or absolute file path string.
@@ -177,7 +177,7 @@ if False:
         finally:
             for d in (srcdir, dstdir, doctreedir):
                 # Only remove empty dirs; non-empty dirs are implicitly something
-                # that existed before we ran, and should not be touched.
+                # that existed before it ran, and should not be touched.
                 try:
                     os.rmdir(d)
                 except OSError:

@@ -56,8 +56,8 @@ class TransferAPIFtp(TransferAPI):
 
     def transfer(self, path, data):
         """
-        we assume a data holds in memory,
-        tansfer data to path
+        It assumes a data holds in memory,
+        tansfer data to path.
 
         @param      data        bytes
         @param      path        path to remove location

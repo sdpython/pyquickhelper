@@ -125,7 +125,7 @@ class FileTreeNode:
         if self.isdir():
             if isinstance(filter, str  # unicode#
                           ):
-                # we assume it is a regular expression instead of a function
+                # it assumes it is a regular expression instead of a function
                 exp = re.compile(filter)
 
                 def fil(root, path, f, dir, e=exp):
@@ -324,7 +324,7 @@ class FileTreeNode:
                 except PQHException as e:
                     if "does not exist" in str(e):
                         self.fLOG(
-                            "a folder should exist, but is it is not, we continue [opt=%s]" % opt)
+                            "a folder should exist, but is it is not, it continues [opt=%s]" % opt)
                         self.fLOG(e)
                         continue
                 if n.isdir() and len(n._children) == 0:
@@ -432,10 +432,10 @@ class FileTreeNode:
 
     def difference(self, node, hash_size=1024 ** 2 * 2, lower=False):
         """
-        return the differences with another folder
+        Returns the differences with another folder.
 
         @param      node        other node
-        @param      hash_size   above this size, we do not compute the hash key
+        @param      hash_size   above this size, it does not compute the hash key
         @param      lower       if True, every filename is converted into lower case
         @return                 list of [ (``?``, self._file, node (in self), node (in node)) ], see below for the choice of ``?``
 

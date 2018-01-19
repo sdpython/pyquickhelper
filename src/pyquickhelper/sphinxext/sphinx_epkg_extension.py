@@ -35,7 +35,7 @@ class ClassStruct:
 def epkg_role(role, rawtext, text, lineno, inliner, options=None, content=None):
     """
     Defines custom role *epkg*. A list of supported urls must be defined in the
-    configuration file. We want to replace something like:
+    configuration file. It wants to replace something like:
 
     ::
 
@@ -47,7 +47,7 @@ def epkg_role(role, rawtext, text, lineno, inliner, options=None, content=None):
 
         :epkg:`pandas:DataFrame.to_html`
 
-    We insert in the configuration the variable:
+    It inserts in the configuration the variable:
 
     ::
 
@@ -87,7 +87,7 @@ def epkg_role(role, rawtext, text, lineno, inliner, options=None, content=None):
     :param options: Directive options for customization.
     :param content: The directive content for customization.
     """
-    # We extract the pieces of the text.
+    # It extracts the pieces of the text.
     spl = text.split(":")
     if len(spl) == 0:
         msg = inliner.reporter.error("empty value for role epkg", line=lineno)
@@ -134,10 +134,10 @@ def epkg_role(role, rawtext, text, lineno, inliner, options=None, content=None):
             if callable(value[-1]):
                 found = value[-1]
             elif isinstance(value[-1], tuple) and len(value[-1]) == 2 and value[-1][-1] is None:
-                # We assume the first parameter is a name of a function.
+                # It assumes the first parameter is a name of a function.
                 namef = value[-1][0]
                 if not hasattr(config, namef):
-                    # We assume its name is defined in a package.
+                    # It assumes its name is defined in a package.
                     found = import_any_object(namef)[0]
                 else:
                     # Defined in the configuration.

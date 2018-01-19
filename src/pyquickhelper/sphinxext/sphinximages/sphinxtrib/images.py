@@ -68,7 +68,7 @@ class ImageDirective(Directive):
     align_values = ('left', 'center', 'right')
 
     def align(argument):
-        # This is not callable as self.align.  We cannot make it a
+        # This is not callable as self.align.  It cannot make it a
         # staticmethod because we're saving an unbound method in
         # option_spec below.
         return directives.choice(argument, ImageDirective.align_values)

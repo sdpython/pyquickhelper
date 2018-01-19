@@ -19,15 +19,13 @@ if sys.version_info[0] == 2:
 
 
 class FilesStatus:
-
     """
-    this classes maintains a list of files
+    This class maintains a list of files
     and does some verifications in order to check if a file
     was modified or not (if yes, then it will be updated to the website)
 
     .. versionchanged:: 1.0
-        This class was renamed from FileTreeStatus into ``FilesStatus``
-
+        This class was renamed from FileTreeStatus into ``FilesStatus``.
     """
 
     def __init__(self, file, fLOG=noLOG):
@@ -72,21 +70,23 @@ class FilesStatus:
 
     def __iter__(self):
         """
-        iterates on all files stored in the current file, yield a couple ( filename, FileInfo )
+        Iterates on all files stored in the current file,
+        yield a couple *(filename, FileInfo)*.
         """
         for a, b in self.copyFiles.items():
             yield a, b
 
     def iter_modified(self):
         """
-        iterates on all modified files yield a couple ( filename, reason )
+        Iterates on all modified files yield a
+        couple *(filename, reason)*.
         """
         for a, b in self.modifiedFile:
             yield a, b
 
     def save_dates(self, checkfile=None):
         """
-        save the status of the copy
+        Saves the status of the copy.
 
         @param      checkfile       check the status for file checkfile
         """
@@ -124,9 +124,9 @@ class FilesStatus:
 
     def has_been_modified_and_reason(self, file):
         """
-        returns True, reason if a file was modified or False,None if not
+        Returns *(True, reason)* if a file was modified or *(False, None)* if not.
         @param      file            filename
-        @return                     True,reason or False,None
+        @return                     *(True, reason)* or *(False, None)*
         """
         res = True
         reason = None
@@ -157,7 +157,7 @@ class FilesStatus:
                         else:
                             res = False
                     else:
-                        # we cannot know, we do nothing
+                        # it cannot know, it does nothing
                         res = False
                 else:
                     # mda.... no expected modification (dates did not change)
@@ -167,7 +167,7 @@ class FilesStatus:
 
     def add_modified_file(self, file, reason):
         """
-        add a file the modified list of files
+        Adds a file the modified list of files.
 
         @param      file        file to add
         @param      reason      reason for modification
@@ -178,7 +178,7 @@ class FilesStatus:
 
     def add_if_modified(self, file):
         """
-        add a file to self.modifiedList if it was modified
+        Adds a file to self.modifiedList if it was modified.
         @param      file    filename
         @return             True or False
         """
@@ -189,7 +189,7 @@ class FilesStatus:
 
     def difference(self, files, u4=False, nlog=None):
         """
-        goes through the list of files and tells which one has changed
+        Goes through the list of files and tells which one has changed.
 
         @param      files           @see cl FileTreeNode
         @param      u4              @see cl FileTreeNode (changes the output)
@@ -236,7 +236,7 @@ class FilesStatus:
 
     def update_copied_file(self, file, delete=False):
         """
-        update the file in copyFiles (before saving), update all fields
+        Updates the file in copyFiles (before saving), update all fields.
         @param      file        filename
         @param      delete      to remove this file
         @return                 file object

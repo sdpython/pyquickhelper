@@ -927,7 +927,7 @@ class RstTranslator(TextTranslator):
         elif 'reftitle' in node:
             # Include node as text, rather than with markup.
             # reST seems unable to parse a construct like ` ``literal`` <url>`_
-            # Hence we revert to the more simple `literal <url>`_
+            # Hence it reverts to the more simple `literal <url>`_
             self.add_text('`%s <%s>`_' % (node.astext(), node['refuri']))
             # self.end_state(wrap=False)
             raise nodes.SkipNode

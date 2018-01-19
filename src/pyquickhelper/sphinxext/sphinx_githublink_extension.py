@@ -153,7 +153,7 @@ def githublink_role(role, rawtext, text, lineno, inliner,
     text0 = text
     path = None
     if "|" in text:
-        # no extension to the url, we add one
+        # No extension to the url, it adds one.
         spl = text.split("|")
         if len(spl) == 3:
             text, ext, no = spl

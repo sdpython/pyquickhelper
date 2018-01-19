@@ -59,7 +59,7 @@ class CustomTocTree(TocTree):
             all_docnames.remove(env.docname)
         except KeyError as e:
             if env.docname == "<<string>>":
-                # This comes from rst2html. We pass
+                # This comes from rst2html.
                 pass
             else:
                 raise ValueError("Unable to remove document '{0}' from\n{1}".format(
@@ -140,9 +140,9 @@ class CustomTocTreeCollector(TocTreeCollector):
     #    assert self.listener_ids is None
 
     def enable(self, app):
-        # We disable
+        # It disables
         # type: (Sphinx) -> None
-        # We need to disable TocTreeCollector.
+        # It needs to disable TocTreeCollector.
         app.disconnect_env_collector("TocTreeCollector")
         assert self.listener_ids is None
         self.listener_ids = {
@@ -247,8 +247,8 @@ def setup(app):
     directives.register_directive('toctree2', CustomTocTree)
 
     if hasattr(app, 'disconnect_env_collector'):
-        # If we can disable the previous TocTreeCollector,
-        # we connect a new collector to the app,
+        # If it can disable the previous TocTreeCollector,
+        # it connects a new collector to the app,
         # it disables the previous one.
         directives.register_directive('toctree', CustomTocTree)
         app.add_directive('toctree', CustomTocTree)

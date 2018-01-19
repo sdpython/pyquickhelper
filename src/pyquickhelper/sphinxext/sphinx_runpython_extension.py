@@ -111,9 +111,9 @@ def run_python_script(script, params=None, comment=None, setsysvar=None, process
                         path.replace("\\", "\\\\")))
                     add += 1
         if add == 0:
-            # we did not find any path linked to the copy of the current module
+            # It did not find any path linked to the copy of the current module
             # in the documentation
-            # we assume the first path of sys.path is part of the unit test
+            # it assumes the first path of sys.path is part of the unit test
             path = sys.path[0]
             path = os.path.join(path, "..", "..", "src")
             if os.path.exists(path):

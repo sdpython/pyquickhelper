@@ -80,7 +80,7 @@ class TocDelayDirective(Directive):
 
         ret = []
 
-        # We analyse rule.
+        # It analyses rule.
         rule = self.options.get("rule", "blogpost_node,toctitle,tocid,tocdoc")
         spl = rule.split(",")
         if len(spl) > 4:
@@ -93,14 +93,14 @@ class TocDelayDirective(Directive):
             defa = ("blogpost_node", "toctitle", "tocid", "tocdoc")
             rule = tuple(spl) + defa[4 - len(spl):]
 
-        # We look for the documents to add.
+        # It looks for the documents to add.
         documents = []
         for line in self.content:
             sline = line.strip()
             if len(sline) > 0:
                 documents.append(sline)
 
-        # We check their existence.
+        # It checks their existence.
         loc = self.options.get("path", None)
         if loc is None:
             loc = os.path.join(env.srcdir, os.path.dirname(env.docname))
@@ -137,7 +137,7 @@ class TocDelayDirective(Directive):
             raise ValueError("No found document in '{0}'\nLIST:\n{1}".format(
                 loc, "\n".join(documents)))
 
-        # We update internal references in env.
+        # It updates internal references in env.
         entries = []
         includefiles = []
         for name, docname, title in keep_list:
@@ -228,7 +228,7 @@ def transform_tocdelay(app, doctree, fromdocname):
                 raise FileNotFoundError(
                     "Unable to find document '{0}'".format(subname))
 
-            # The doctree we need is not necessarily accessible from the main node
+            # The doctree it needs is not necessarily accessible from the main node
             # as they are not necessarily attached to it.
             subname = "{0}/{1}".format(dirdocname, name)
             doc_doctree = env.get_doctree(subname)
@@ -236,7 +236,7 @@ def transform_tocdelay(app, doctree, fromdocname):
                 logger.info("[tocdelay] ERROR (4): No doctree found for '{0}' from '{1}'".format(
                     subname, nodedocname))
 
-            # We find a node sharing the same name.
+            # It finds a node sharing the same name.
             diginto = []
             for n in doc_doctree.traverse():
                 if n.__class__.__name__ == clname:
@@ -246,7 +246,7 @@ def transform_tocdelay(app, doctree, fromdocname):
                     "[tocdelay] ERROR (3): No node '{0}' found for '{1}'".format(clname, subname))
                 continue
 
-            # We take the first one available.
+            # It takes the first one available.
             subnode = None
             for d in diginto:
                 if 'tocdoc' in d.attributes and d['tocdoc'].endswith(subname):

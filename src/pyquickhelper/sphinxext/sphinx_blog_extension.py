@@ -261,7 +261,8 @@ class BlogPostDirectiveAgg(BlogPostDirective):
         content = StringList(tnl)
         content = content + self.content
 
-        # parse the content into sphinx directive, we add it to section
+        # parse the content into sphinx directive,
+        # it adds it to section
         container = nodes.container()
         # nested_parse_with_titles(self.state, content, paragraph)
         self.state.nested_parse(content, self.content_offset, container)
@@ -278,7 +279,7 @@ class BlogPostDirectiveAgg(BlogPostDirective):
 
         # index (see site-packages/sphinx/directives/code.py, class Index)
         if self.__class__.add_index:
-            # we add an index
+            # it adds an index
             # self.state.document.note_explicit_target(targetnode)
             indexnode = addnodes.index()
             indexnode['entries'] = ne = []

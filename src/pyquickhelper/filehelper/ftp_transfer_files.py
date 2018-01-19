@@ -1,6 +1,6 @@
 """
 @file
-@brief Class to transfer files to a website using FTP, we only transfer updated files
+@brief Class to transfer files to a website using FTP, it only transfers updated files
 
 .. versionadded:: 1.0
 """

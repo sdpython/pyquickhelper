@@ -304,8 +304,8 @@ def synchronize_folder(p1: str, p2: str, hash_size=1024 ** 2, repo1=False, repo2
                 if not copy_1to2:
                     if n2 is None:
                         if not no_deletion:
-                            # this case happens when we do not know sideB (sideA is stored in a file)
-                            # we need to remove file, file refers to this side
+                            # this case happens when it does not know sideB (sideA is stored in a file)
+                            # it needs to remove file, file refers to this side
                             filerel = os.path.relpath(file, start=p1)
                             filerem = os.path.join(p2, filerel)
                             try:
@@ -409,7 +409,7 @@ def remove_folder(top, remove_also_top=True, raise_exception=True):
 
 def has_been_updated(source, dest):
     """
-    It assumes ``dest`` is a copy of ``source``, we want to know
+    It assumes ``dest`` is a copy of ``source``, it wants to know
     if the copy is up to date or not.
 
     @param      source      filename
