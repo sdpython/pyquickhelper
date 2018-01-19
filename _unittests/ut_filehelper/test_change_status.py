@@ -6,14 +6,8 @@
 import sys
 import os
 import unittest
-import warnings
 import stat
 
-if sys.version_info[0] == 2:
-    from StringIO import StringIO
-    BytesIO = StringIO
-else:
-    from io import StringIO, BytesIO
 
 try:
     import src
