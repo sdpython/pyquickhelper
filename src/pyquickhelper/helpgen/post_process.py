@@ -558,7 +558,8 @@ def post_process_html_output(file, pdf, python, slides, present, exc=True, nblin
                         "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML")
 
     # notebook replacements
-    fLOG("[post_process_html_output] ", notebook_replacements)
+    if fLOG:
+        fLOG("[post_process_html_output] ", notebook_replacements)
     text = _notebook_replacements(text, notebook_replacements, fLOG)
 
     text = update_notebook_link(text, "html", nblinks=nblinks, fLOG=fLOG)

@@ -673,7 +673,7 @@ def add_link_to_notebook(file, nb, pdf, html, python, slides, present, exc=True,
     @param      github                  add a link to the notebook on github
     @param      notebook                location of the notebook (file might be a copy)
     @param      nblinks                 dictionary ``{ref: url}``
-    @parama     notebook_replacements   stirng replacement in notebooks
+    @param      notebook_replacements   stirng replacement in notebooks
     @param      fLOG                    logging function
     @return                             list of generated files
 

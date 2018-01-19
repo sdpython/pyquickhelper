@@ -213,7 +213,6 @@ def depart_video_node_latex(self, node):
             width = format_dim(width)
             height = format_dim(height)
             body = body.format(width, height, filename)
-            print("---", body)
             self.body.append(body)
 
 

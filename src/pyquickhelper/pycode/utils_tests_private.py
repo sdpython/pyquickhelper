@@ -548,7 +548,7 @@ def main_run_test(runner, path_test=None, limit_max=1e9, log=False, skip=-1, ski
 
     # displays
     memout.write("[main_run_test] ---- END UT\n")
-    memout.write("[main_run_test] ---- JENKINS END UNIT TESTS ----")
+    memout.write("[main_run_test] ---- JENKINS END UNIT TESTS ----\n")
 
     fLOG("[main_run_test] restore stdout, stderr")
 
@@ -576,7 +576,11 @@ def main_run_test(runner, path_test=None, limit_max=1e9, log=False, skip=-1, ski
     for fi, lw in allwarn:
         if len(lw) > 0:
             memout.write("-WARN: {0}\n".format(fi))
+            wdone = {}
             for i, (w, s) in enumerate(lw):
+                if w.message in wdone:
+                    continue
+                wdone[w.message] = w
                 try:
                     sw = "  w{0}: {1}\n".format(i, w)
                 except UnicodeEncodeError:
