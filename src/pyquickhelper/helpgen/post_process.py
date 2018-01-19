@@ -134,9 +134,30 @@ def update_notebook_link(text, format, nblinks, fLOG):
     return new_text
 
 
+def _notebook_replacements(nbtext, notebook_replacements, fLOG=None):
+    """
+    Makes some replacements in a notebook.
+
+    @param      nbtext                  text to process
+    @param      notebook_replacements   dictionary of replacements
+    @param      fLOG                    logging function
+    @return                             text
+
+    .. versionadded:: 1.6
+    """
+    if notebook_replacements is None:
+        return nbtext
+    for k, v in notebook_replacements:
+        if k in nbtext:
+            fLOG(
+                "[_notebook_replacements] replace '{0}' -> '{1}'".format(k, v))
+            nbtext = nbtext.replace(k, v)
+    return nbtext
+
+
 def post_process_latex_output(root, doall, latex_book=False, exc=True,
                               custom_latex_processing=None, nblinks=None,
-                              remove_unicode=True, fLOG=None):
+                              remove_unicode=True, fLOG=None, notebook_replacements=None):
     """
     Postprocesses the latex file produced by :epkg:`sphinx`.
 
@@ -147,11 +168,15 @@ def post_process_latex_output(root, doall, latex_book=False, exc=True,
     @param      custom_latex_processing     function which does some post processing of the full latex file
     @param      nblinks                     dictionary ``{ ref : url }`` where to look for references
     @param      remove_unicode              remove unicode characters (fails with latex)
+    @param      notebook_replacements       string replacement in notebooks
     @param      fLOG                        logging function
 
     .. versionchanged:: 1.5
         Parameters *exc*, *custom_latex_processing*,
         *fLOG*, *remove_unicode* were added.
+
+    .. versionchanged:: 1.6
+        Parameter *notebook_replacements* was added.
     """
     if os.path.isfile(root):
         file = root
@@ -162,7 +187,8 @@ def post_process_latex_output(root, doall, latex_book=False, exc=True,
         content = post_process_latex(
             content, doall, latex_book=latex_book, exc=exc,
             custom_latex_processing=custom_latex_processing, nblinks=nblinks,
-            file=file, remove_unicode=remove_unicode, fLOG=fLOG)
+            file=file, remove_unicode=remove_unicode, fLOG=fLOG,
+            notebook_replacements=notebook_replacements)
         with open(file, "w", encoding="utf8") as f:
             f.write(content)
     else:
@@ -180,32 +206,38 @@ def post_process_latex_output(root, doall, latex_book=False, exc=True,
                 content = post_process_latex(
                     content, doall, info=file, latex_book=latex_book, exc=exc,
                     custom_latex_processing=custom_latex_processing, nblinks=nblinks,
-                    file=file, remove_unicode=remove_unicode, fLOG=fLOG)
+                    file=file, remove_unicode=remove_unicode, fLOG=fLOG,
+                    notebook_replacements=notebook_replacements)
                 with open(file, "w", encoding="utf8") as f:
                     f.write(content)
 
 
-def post_process_python_output(root, doall, exc=True, nblinks=None, fLOG=None):
+def post_process_python_output(root, doall, exc=True, nblinks=None, fLOG=None, notebook_replacements=None):
     """
     Postprocesses the python file produced by :epkg:`sphinx`.
 
-    @param      root        root path or python file to process
-    @param      doall       unused
-    @param      exc         raise an exception if needed
-    @param      nblinks     dictionary ``{ref: url}``
-    @param      fLOG        logging function
+    @param      root                    root path or python file to process
+    @param      doall                   unused
+    @param      exc                     raise an exception if needed
+    @param      nblinks                 dictionary ``{ref: url}``
+    @param      notebook_replacements   string replacement in notebooks
+    @param      fLOG                    logging function
 
     .. versionadded:: 1.3
 
     .. versionchanged:: 1.5
         Add parameter *exc*, *nblinks*.
+
+    .. versionchanged:: 1.6
+        Parameter *notebook_replacements* was added.
     """
     if os.path.isfile(root):
         file = root
         with open(file, "r", encoding="utf8") as f:
             content = f.read()
         content = post_process_python(
-            content, doall, nblinks=nblinks, file=file, fLOG=fLOG)
+            content, doall, nblinks=nblinks, file=file, fLOG=fLOG,
+            notebook_replacements=notebook_replacements)
         with open(file, "w", encoding="utf8") as f:
             f.write(content)
     else:
@@ -225,7 +257,7 @@ def post_process_python_output(root, doall, exc=True, nblinks=None, fLOG=None):
 
 
 def post_process_latex_output_any(file, custom_latex_processing, nblinks=None,
-                                  remove_unicode=True, fLOG=None):
+                                  remove_unicode=True, fLOG=None, notebook_replacements=None):
     """
     Postprocesses the latex file produced by :epkg:`sphinx`.
 
@@ -233,47 +265,57 @@ def post_process_latex_output_any(file, custom_latex_processing, nblinks=None,
     @param      custom_latex_processing     function which does some post processing of the full latex file
     @param      nblinks                     dictionary ``{url: link}``
     @param      remove_unicode              remove unicode characters
+    @param      notebook_replacements       string replacement in notebooks
     @param      fLOG                        logging function
 
     .. versionchanged:: 1.5
         Parameters *custom_latex_processing*, *nblinks*,
         *remove_unicode*, *fLOG* were added.
+
+    .. versionchanged:: 1.6
+        Parameter *notebook_replacements* was added.
     """
     if fLOG:
         fLOG("[post_process_latex_output_any]   ** post_process_latex_output_any ", file)
     with open(file, "r", encoding="utf8") as f:
         content = f.read()
     content = post_process_latex(content, True, info=file, nblinks=nblinks, file=file,
-                                 remove_unicode=remove_unicode, fLOG=fLOG)
+                                 remove_unicode=remove_unicode, fLOG=fLOG,
+                                 notebook_replacements=notebook_replacements)
     with open(file, "w", encoding="utf8") as f:
         f.write(content)
 
 
 def post_process_rst_output(file, html, pdf, python, slides, present, is_notebook=False,
-                            exc=True, github=False, notebook=None, nblinks=None, fLOG=None):
+                            exc=True, github=False, notebook=None, nblinks=None, fLOG=None,
+                            notebook_replacements=None):
     """
     Processes a :epkg:`rst` file generated from the conversion of a notebook.
 
-    @param      file            filename
-    @param      pdf             if True, add a link to the :epkg:`pdf`,
-                                assuming it will exists at the same location
-    @param      html            if True, add a link to the :epkg:`html` conversion
-    @param      python          if True, add a link to the :epkg:`Python` conversion
-    @param      slides          if True, add a link to the slides conversion
-    @param      present         if True, add a link to the slides conversion
-                                (with :epkg:`nbpresent`)
-    @param      is_notebook     does something more if the file is a notebook
-    @param      exc             raises an exception (True) or a warning (False)
-    @param      github          add a link to the notebook on :epkg:`github`
-    @param      notebook        location of the notebook, file might be a copy
-    @param      nblinks         links added to a notebook, dictionary ``{ref: url}``
-    @param      fLOG            logging function
+    @param      file                    filename
+    @param      pdf                     if True, add a link to the :epkg:`pdf`,
+                                        assuming it will exists at the same location
+    @param      html                    if True, add a link to the :epkg:`html` conversion
+    @param      python                  if True, add a link to the :epkg:`Python` conversion
+    @param      slides                  if True, add a link to the slides conversion
+    @param      present                 if True, add a link to the slides conversion
+                                        (with :epkg:`nbpresent`)
+    @param      is_notebook             does something more if the file is a notebook
+    @param      exc                     raises an exception (True) or a warning (False)
+    @param      github                  add a link to the notebook on :epkg:`github`
+    @param      notebook                location of the notebook, file might be a copy
+    @param      nblinks                 links added to a notebook, dictionary ``{ref: url}``
+    @param      notebook_replacements   string replacement in notebooks
+    @param      fLOG                    logging function
 
     .. versionchanged:: 1.4
         Parameter *present* was added.
 
     .. versionchanged:: 1.5
         Parameters *exc*, *github*, *notebook*, *fLOG* were added.
+
+    .. versionchanged:: 1.6
+        Parameter *notebook_replacements* was added.
     """
     if fLOG:
         fLOG("[post_process_rst_output]    post_process_rst_output", file)
@@ -473,28 +515,37 @@ def post_process_rst_output(file, html, pdf, python, slides, present, is_noteboo
     if "find://" in content:
         raise Exception("find:// was found in '{0}'".format(file))
 
+    # notebooks replacements
+    content = _notebook_replacements(content, notebook_replacements, fLOG)
+
     with open(file, "w", encoding="utf8") as f:
         f.write(content)
 
 
-def post_process_html_output(file, pdf, python, slides, present, exc=True, nblinks=None, fLOG=None):
+def post_process_html_output(file, pdf, python, slides, present, exc=True, nblinks=None, fLOG=None,
+                             notebook_replacements=None):
     """
     Processes a HTML file generated from the conversion of a notebook.
 
-    @param      file        filename
-    @param      pdf         if True, add a link to the PDF, assuming it will exists at the same location
-    @param      python      if True, add a link to the Python conversion
-    @param      slides      if True, add a link to the slides conversion
-    @param      present     if True, add a link to the slides conversion (with *nbpresent*)
-    @param      exc         raises an exception (True) or a warning (False)
-    @param      nblinks     dictionary ``{ref: url}``
-    @param      fLOG                        logging function
+    @param      file                    filename
+    @param      pdf                     if True, add a link to the PDF, assuming it will exists
+                                        at the same location
+    @param      python                  if True, add a link to the Python conversion
+    @param      slides                  if True, add a link to the slides conversion
+    @param      present                 if True, add a link to the slides conversion (with *nbpresent*)
+    @param      exc                     raises an exception (True) or a warning (False)
+    @param      nblinks                 dictionary ``{ref: url}``
+    @param      notebook_replacements   string replacement in notebooks
+    @param      fLOG                    logging function
 
     .. versionchanged:: 1.4
         Parameter *present* was added.
 
     .. versionchanged:: 1.5
         Parameter *exc*, *nblinks*, *fLOG* were added.
+
+    .. versionchanged:: 1.6
+        Parameter *notebook_replacements* was added.
     """
     fold, name = os.path.split(file)
     if not os.path.exists(file):
@@ -506,6 +557,10 @@ def post_process_html_output(file, pdf, python, slides, present, exc=True, nblin
     text = text.replace("https://c328740.ssl.cf1.rackcdn.com/mathjax/latest/MathJax.js?config=TeX-AMS_HTML",
                         "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML")
 
+    # notebook replacements
+    fLOG("[post_process_html_output] ", notebook_replacements)
+    text = _notebook_replacements(text, notebook_replacements, fLOG)
+
     text = update_notebook_link(text, "html", nblinks=nblinks, fLOG=fLOG)
     if "find://" in text:
         raise Exception("find:// was found in '{0}'".format(file))
@@ -514,24 +569,30 @@ def post_process_html_output(file, pdf, python, slides, present, exc=True, nblin
         f.write(text)
 
 
-def post_process_slides_output(file, pdf, python, slides, present, exc=True, nblinks=None, fLOG=None):
+def post_process_slides_output(file, pdf, python, slides, present, exc=True, nblinks=None, fLOG=None,
+                               notebook_replacements=None):
     """
     Processes a HTML file generated from the conversion of a notebook.
 
-    @param      file        filename
-    @param      pdf         if True, add a link to the PDF, assuming it will exists at the same location
-    @param      python      if True, add a link to the Python conversion
-    @param      slides      if True, add a link to the slides conversion
-    @param      present     if True, add a link to the slides conversion (with *nbpresent*)
-    @param      exc         raises an exception (True) or a warning (False)
-    @param      nblinks     dictionary ``{ref: url}``
-    @param      fLOG        logging function
+    @param      file                    filename
+    @param      pdf                     if True, add a link to the PDF, assuming it will
+                                        exists at the same location
+    @param      python                  if True, add a link to the Python conversion
+    @param      slides                  if True, add a link to the slides conversion
+    @param      present                 if True, add a link to the slides conversion (with *nbpresent*)
+    @param      exc                     raises an exception (True) or a warning (False)
+    @param      nblinks                 dictionary ``{ref: url}``
+    @param      notebook_replacements   string replacement in notebooks
+    @param      fLOG                    logging function
 
     .. versionchanged:: 1.4
         Parameter *present* was added.
 
     .. versionchanged:: 1.5
         Parameter *exc*, *nblinks*, *fLOG* were added.
+
+    .. versionchanged:: 1.6
+        Parameter *notebook_replacements* was added.
     """
     if (len(file) > 5000 or not os.path.exists(file)) and "<html" in file:
         text = file
@@ -568,6 +629,9 @@ def post_process_slides_output(file, pdf, python, slides, present, exc=True, nbl
     if "find://" in text:
         raise Exception("find:// was found in '{0}'".format(file))
 
+    # notebook replacements
+    text = _notebook_replacements(text, notebook_replacements, fLOG)
+
     if save:
         with open(file, "w", encoding="utf8") as f:
             f.write(text)
@@ -577,7 +641,7 @@ def post_process_slides_output(file, pdf, python, slides, present, exc=True, nbl
 
 def post_process_latex(st, doall, info=None, latex_book=False, exc=True,
                        custom_latex_processing=None, nblinks=None, file=None,
-                       remove_unicode=True, fLOG=None):
+                       remove_unicode=True, fLOG=None, notebook_replacements=None):
     """
     Modifies a latex file after its generation by :epkg:`sphinx`.
 
@@ -591,6 +655,7 @@ def post_process_latex(st, doall, info=None, latex_book=False, exc=True,
     @param      nblinks                 dictionary ``{ref: url}``
     @param      file                    only used when an exception is raised
     @param      remove_unicode          remove unicode character (fails when converting into PDF)
+    @param      notebook_replacements   string replacement in notebooks
     @param      fLOG                    logging function
     @return                             string
 
@@ -604,6 +669,9 @@ def post_process_latex(st, doall, info=None, latex_book=False, exc=True,
         Parameters *exc*, *nblinks*, *remove_unicode*, *fLOG* were added.
         The function is less strict on the checking of `$`.
         The function replaces ``\\mathbb{1}`` by ``\\mathbf{1\\!\\!1}``.
+
+    .. versionchanged:: 1.6
+        Parameter *notebook_replacements* was added.
 
     .. index:: chinese characters, latex, unicode
 
@@ -743,6 +811,9 @@ def post_process_latex(st, doall, info=None, latex_book=False, exc=True,
             raise Exception(
                 "find:// was found in '{0}'\nYou should extend nblinks in conf.py.\n{1}".format(file, st))
 
+    # notebook replacements
+    st = _notebook_replacements(st, notebook_replacements, fLOG)
+
     # end
     if custom_latex_processing is not None:
         st = custom_latex_processing(st)
@@ -756,28 +827,36 @@ def post_process_latex(st, doall, info=None, latex_book=False, exc=True,
     return st
 
 
-def post_process_python(st, doall, info=None, nblinks=None, file=None, fLOG=None):
+def post_process_python(st, doall, info=None, nblinks=None, file=None, fLOG=None, notebook_replacements=None):
     """
     Modifies a python file after its generation by :epkg:`sphinx`.
 
-    @param      st      string
-    @param      doall   do all transformations
-    @param      info    for more understandable error messages
-    @param      nblinks dictionary ``{ref: url}``
-    @param      file    used only when an exception is raised
-    @param      fLOG    logging function
-    @return             string
+    @param      st                      string
+    @param      doall                   do all transformations
+    @param      info                    for more understandable error messages
+    @param      nblinks                 dictionary ``{ref: url}``
+    @param      file                    used only when an exception is raised
+    @param      fLOG                    logging function
+    @param      notebook_replacements   string replacement in notebooks
+    @return                             string
 
     .. versionadded:: 1.3
 
     .. versionchanged:: 1.5
         Parameters *nblinks*, *file* were added.
+
+    .. versionchanged:: 1.6
+        Parameter *notebook_replacements* was added.
     """
     st = st.strip("\n \r\t")
     st = st.replace("# coding: utf-8", "# -*- coding: utf-8 -*-")
     st = update_notebook_link(st, "python", nblinks=nblinks, fLOG=fLOG)
     if "find://" in st:
         raise Exception("find:// was found in '{0}'".format(file))
+
+    # notebook replacements
+    st = _notebook_replacements(st, notebook_replacements, fLOG)
+
     return st
 
 

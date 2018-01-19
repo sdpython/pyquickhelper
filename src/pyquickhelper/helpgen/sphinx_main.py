@@ -499,6 +499,11 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
         except ValueError as e:
             pass
 
+    notebook_replacements = theconf.__dict__.get("notebook_replacements", None)
+    if notebook_replacements is not None and not isinstance(notebook_replacements, dict):
+        raise TypeError("latex_notebook_replacements should be a dictionary not {0}".format(
+            type(notebook_replacements)))
+
     ####################################
     # modifies the version number in conf.py
     ####################################
@@ -703,7 +708,8 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
                 os.mkdir(notebook_doc)
             nbs_all = process_notebooks(notebooks, build=build, outfold=notebook_doc,
                                         formats=nbformats, latex_path=latex_path,
-                                        pandoc_path=pandoc_path, fLOG=fLOG, nblinks=nblinks)
+                                        pandoc_path=pandoc_path, fLOG=fLOG, nblinks=nblinks,
+                                        notebook_replacements=notebook_replacements)
             nbs_all = set(_[0]
                           for _ in nbs_all if os.path.splitext(_[0])[-1] == ".rst")
             if len(nbs_all) != len(indexlistnote):

@@ -15,6 +15,8 @@ History
 * `73`: merges coverage reports from differents jobs about unit tests
 * `84`: remove *epkg* instruction in call_cli_function
 * `92`: add directive *video* for sphinx documentation
+* `93`: add a variable in documentation configuration for custom replacements
+  in notebooks
 
 1.5.2275 (2017-11-28)
 =====================

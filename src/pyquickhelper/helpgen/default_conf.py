@@ -634,7 +634,13 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
             'expected_failing_examples': [],
         }
 
+    # notebooks replacements (post-process)
+    notebook_replacements = {'html': [('\mathbb{1}_', '\mathbf{1\!\!1}_')]}
+
+    ###########################
     # collect local variables
+    ###########################
+    # do not add anything after this
     loc = locals()
     for k, v in loc.items():
         if not k.startswith("_"):
