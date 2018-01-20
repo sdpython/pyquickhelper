@@ -36,12 +36,21 @@ install:
   - "dir %PYTHON%\\Scripts"
   - "%PYTHON%\\Scripts\\jupyter-nbextension enable --py --sys-prefix widgetsnbextension"
 
+  # Install miktex to get pdflatex, if we don't get it from the cache
+  - if not exist c:\miktex\texmfs\install\miktex\bin\pdflatex.exe appveyor DownloadFile http://mirrors.ctan.org/systems/win32/miktex/setup/miktex-portable.exe
+  - if not exist c:\miktex\texmfs\install\miktex\bin\pdflatex.exe 7z x miktex-portable.exe -oC:\miktex >NUL
+  - set "PATH=%PATH%;c:\miktex\texmfs\install\miktex\bin"
+  # autoinstall latex packages (0=no, 1=autoinstall, 2=ask)
+  # this adds this to the registry!
+  - initexmf --set-config-value "[MPM]AutoInstall=1"
+
 build: off
 
 before_test:
   - cinst pandoc
   - ps: $env:Path += ";C:\Program Files (x86)\Pandoc\"
   - pandoc -v
+  - cinst imagemagick
 
 test_script:
   - "%PYTHON%\\python -u setup.py build_script"
