@@ -23,7 +23,7 @@ except ImportError:
     import src
 
 from src.pyquickhelper.loghelper import fLOG
-from src.pyquickhelper.pycode import get_temp_folder
+from src.pyquickhelper.pycode import get_temp_folder, is_travis_or_appveyor
 from src.pyquickhelper.filehelper import change_file_status
 
 
@@ -40,10 +40,12 @@ class TestChangesStatus(unittest.TestCase):
         with open(file, "w") as f:
             f.write("ah")
         change_file_status(temp)
-        change_file_status(temp, strict=True)
+        if is_travis_or_appveyor() not in ('circleci', 'travis'):
+            change_file_status(temp, strict=True)
         change_file_status(file)
-        change_file_status(file, strict=True)
-        change_file_status(file, strict=True,
+        if is_travis_or_appveyor() not in ('circleci', 'travis'):
+            change_file_status(file, strict=True)
+        change_file_status(file, strict=False,
                            status=stat.S_IREAD, include_folder=True)
 
 
