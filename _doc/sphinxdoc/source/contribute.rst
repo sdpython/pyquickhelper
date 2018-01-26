@@ -275,8 +275,7 @@ Graphviz needs to be installed. Here is the list of required tools:
 * :epkg:`MiKTeX`
 * :epkg:`Jenkins` (+ `GitHub <https://wiki.jenkins-ci.org/display/JENKINS/GitHub+Plugin>`_,
   `git <https://wiki.jenkins-ci.org/display/JENKINS/Git+Plugin>`_,
-  `python <https://wiki.jenkins-ci.org/display/JENKINS/Python+Plugin>`_,
-  `pipeline <https://wiki.jenkins-ci.org/display/JENKINS/Build+Pipeline+Plugin>`_)
+  `python <https://wiki.jenkins-ci.org/display/JENKINS/Python+Plugin>`_)
 * :epkg:`pandoc`
 * :epkg:`GIT` + :epkg:`GitHub`
 * :epkg:`GraphViz`
@@ -285,6 +284,18 @@ Graphviz needs to be installed. Here is the list of required tools:
 If you need to use `Antlr <http://www.antlr.org/>`_:
 
 * :epkg:`Java`
+
+Jenkins extensions:
+
+* `Build timeout plugin <https://wiki.jenkins-ci.org/display/JENKINS/Build-timeout+Plugin>`_
+* `Collapsing Console Sections Plugin <https://wiki.jenkins-ci.org/display/JENKINS/Collapsing+Console+Sections+Plugin>`_
+* `Console column plugin <https://wiki.jenkins-ci.org/display/JENKINS/Console+Column+Plugin>`_
+* `Credentials Plugin <https://wiki.jenkins.io/display/JENKINS/Credentials+Plugin>`_
+* `Extra Columns Plugin <https://wiki.jenkins-ci.org/display/JENKINS/Extra+Columns+Plugin>`_
+* `Git <https://plugins.jenkins.io/git>`_
+* `Next Executions <https://wiki.jenkins-ci.org/display/JENKINS/Next+Executions>`_
+* `Text File <https://wiki.jenkins-ci.org/display/JENKINS/Text+File+Operations+Plugin>`_
+* `Startup Trigger <https://wiki.jenkins.io/display/JENKINS/Startup+Trigger>`_ : automatisation de build
 
 Configuration
 +++++++++++++
