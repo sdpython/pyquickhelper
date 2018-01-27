@@ -311,6 +311,46 @@ def _get_dump_default_path(dump):
     return dump
 
 
+def _existing_dump(dump):
+    """
+    Loads an existing dump.
+
+    @param      dump    filename
+    @return             :epkg:`pandas:DataFrame`
+    """
+    import pandas
+    from pandas.errors import ParserError
+
+    def read_file(dump):
+        try:
+            df = pandas.read_csv(dump, sep="\t", encoding="utf-8")
+        except ParserError as e:
+            df = pandas.read_csv(
+                dump, sep="\t", encoding="utf-8", error_bad_lines=False, warn_bad_lines=True)
+        return df
+
+    if os.path.exists(dump):
+        # There might be some risk here to see another process writing the
+        # file at the same time.
+        try:
+            df = read_file(dump)
+        except PermissionError:
+            # We try again once.
+            time.sleep(10)
+            try:
+                df = read_file(dump)
+            except Exception as e:
+                raise Exception(
+                    "Unable to read '{0}' due to '{1}'".format(dump, e)) from e
+        except Exception as e:
+            raise Exception(
+                "Unable to read '{0}' due to '{1}'".format(dump, e)) from e
+    else:
+        df = None
+
+    return df
+
+
 def execute_notebook_list_finalize_ut(res, dump=None, fLOG=noLOG):
     """
     Checks the list of results and raises an exception if one failed.
@@ -352,25 +392,7 @@ def execute_notebook_list_finalize_ut(res, dump=None, fLOG=noLOG):
     dump = _get_dump_default_path(dump)
     if dump is not None:
         import pandas
-        if os.path.exists(dump):
-            # There might be some risk here to see another process writing the
-            # file at the same time.
-            try:
-                df = pandas.read_csv(dump, sep="\t", encoding="utf-8")
-            except PermissionError:
-                # We try again once.
-                time.sleep(10)
-                try:
-                    df = pandas.read_csv(dump, sep="\t", encoding="utf-8")
-                except Exception as e:
-                    raise Exception(
-                        "Unable to read '{0}' due to '{1}'".format(dump, e)) from e
-            except Exception as e:
-                raise Exception(
-                    "Unable to read '{0}' due to '{1}'".format(dump, e)) from e
-        else:
-            df = None
-
+        df = _existing_dump(dump)
         new_df = pandas.DataFrame(data=list(res.values()))
 
         # We replace every EOL.
