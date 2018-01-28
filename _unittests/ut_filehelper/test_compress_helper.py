@@ -102,14 +102,11 @@ class TestCompressHelper(unittest.TestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
-        import pylzma
-        # use github version, not pypi version (2016-11-11)
-        # this version does not include a fix to read file produced by the
-        # latest version of 7z
-        self.assertTrue(pylzma)
-
-        if is_travis_or_appveyor() == "appveyor":
+        if is_travis_or_appveyor() == "appveyor" and sys.version_info[:2] <= (3, 5):
             return
+
+        import pylzma
+        self.assertTrue(pylzma)
 
         fold = get_temp_folder(__file__, "temp_uncompress_7zip")
         data = os.path.join(fold, "..", "data", "ftplib.7z")
