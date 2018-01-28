@@ -28,7 +28,7 @@ except ImportError:
 from src.pyquickhelper.loghelper import fLOG
 from src.pyquickhelper.pycode import get_temp_folder
 from src.pyquickhelper.filehelper import gzip_files, zip_files, zip7_files, download, unzip_files, ungzip_files, un7zip_files, unrar_files
-from src.pyquickhelper.pycode import is_travis_or_appveyor
+from src.pyquickhelper.pycode import is_travis_or_appveyor, skipif_travis, skipif_circleci, skipif_appveyor
 
 
 class TestCompressHelper(unittest.TestCase):
@@ -161,15 +161,14 @@ class TestCompressHelper(unittest.TestCase):
         if not s.endswith("_unittests/ut_filehelper/temp_compress_7zip2/ftplib.html"):
             raise Exception(res[0])
 
+    @skipif_travis('rar not installed')
+    @skipif_appveyor('rar not installed')
+    @skipif_circleci('rar not installed')
     def test_uncompress_rar(self):
         fLOG(
             __file__,
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
-
-        if is_travis_or_appveyor() in ('travis', 'appveyor', 'circleci'):
-            # unrar is not available on circleci.
-            return
 
         if sys.version_info[0] == 2:
             typbytes = bytearray

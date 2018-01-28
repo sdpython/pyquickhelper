@@ -17,6 +17,8 @@ History
 * `92`: add directive *video* for sphinx documentation
 * `93`: add a variable in documentation configuration for custom replacements
   in notebooks
+* `94`: implements test fixture ``@skipif_appveyor``, ``@skipif_travis``,
+  ``@skipif_circleci``
 
 1.5.2275 (2017-11-28)
 =====================

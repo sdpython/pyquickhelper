@@ -7,6 +7,7 @@
 import os
 import unittest
 import warnings
+from .ci_helper import is_travis_or_appveyor
 
 
 class ExtTestCase(unittest.TestCase):
@@ -147,3 +148,39 @@ class ExtTestCase(unittest.TestCase):
         """
         if not callable(fct):
             raise AssertionError("fct is not callable: {0}".format(type(fct)))
+
+
+def skipif_appveyor(msg):
+    """
+    Skips a unit test if it runs on :epkg:`appveyor`.
+
+    .. versionadded:: 1.6
+    """
+    if is_travis_or_appveyor() != 'appveyor':
+        return lambda x: x
+    msg = 'Test does not work on appveyor due to: ' + msg
+    return unittest.skip(msg)
+
+
+def skipif_travis(msg):
+    """
+    Skips a unit test if it runs on :epkg:`travis`.
+
+    .. versionadded:: 1.6
+    """
+    if is_travis_or_appveyor() != 'travis':
+        return lambda x: x
+    msg = 'Test does not work on travis due to: ' + msg
+    return unittest.skip(msg)
+
+
+def skipif_circleci(msg):
+    """
+    Skips a unit test if it runs on :epkg:`circleci`.
+
+    .. versionadded:: 1.6
+    """
+    if is_travis_or_appveyor() != 'circleci':
+        return lambda x: x
+    msg = 'Test does not work on circleci due to: ' + msg
+    return unittest.skip(msg)

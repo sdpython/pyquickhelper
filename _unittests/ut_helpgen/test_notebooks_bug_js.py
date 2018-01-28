@@ -22,7 +22,7 @@ except ImportError:
 
 from src.pyquickhelper.loghelper import fLOG
 from src.pyquickhelper.helpgen import process_notebooks
-from src.pyquickhelper.pycode import is_travis_or_appveyor, get_temp_folder
+from src.pyquickhelper.pycode import get_temp_folder, skipif_travis, skipif_appveyor
 
 
 if sys.version_info[0] == 2:
@@ -31,6 +31,8 @@ if sys.version_info[0] == 2:
 
 class TestNoteBooksBugJs(unittest.TestCase):
 
+    @skipif_travis('latex, pandoc not installed')
+    @skipif_appveyor('latex, pandoc not installed')
     def test_notebook_js(self):
         fLOG(
             __file__,
@@ -50,9 +52,6 @@ class TestNoteBooksBugJs(unittest.TestCase):
 
         temp = get_temp_folder(__file__, "temp_nb_bug_js")
 
-        if is_travis_or_appveyor() in ('travis', 'appveyor'):
-            return
-
         res = process_notebooks(nbs, temp, temp, formats=formats)
         fLOG("*****", len(res))
         for _ in res:
@@ -70,6 +69,8 @@ class TestNoteBooksBugJs(unittest.TestCase):
             if not os.path.exists(check):
                 raise Exception(check)
 
+    @skipif_travis('latex, pandoc not installed')
+    @skipif_appveyor('latex, pandoc not installed')
     def test_notebook_pdf(self):
         fLOG(
             __file__,
@@ -89,9 +90,6 @@ class TestNoteBooksBugJs(unittest.TestCase):
             os.mkdir(temp)
         for file in os.listdir(temp):
             os.remove(os.path.join(temp, file))
-
-        if is_travis_or_appveyor() in ('travis', 'appveyor'):
-            return
 
         res = process_notebooks(nbs, temp, temp, formats=formats)
         fLOG("*****", len(res))
