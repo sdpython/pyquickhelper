@@ -41,8 +41,9 @@ def fix_tkinter_issues_virtualenv(exc=True, fLOG=None):
 
     def location():
         import numpy
-        site = os.path.dirname(os.path.join(os.path.abspath(numpy.__file__)))
-        rev = os.path.join(site, "..", "..", "..")
+        site = os.path.normpath(os.path.dirname(
+            os.path.join(os.path.abspath(ctypes.__file__))))
+        rev = os.path.join(site, "..", "..")
         if sys.platform.startswith("win"):
             site = os.path.join(rev, "tcl")
             if not os.path.exists(site):
@@ -52,7 +53,7 @@ def fix_tkinter_issues_virtualenv(exc=True, fLOG=None):
                 else:
                     mes = ", ".join(os.listdir(rev))
                     raise FileNotFoundError(
-                        "unable to find: {0},\nsubfolders: {1}".format(site, mes))
+                        "Unable to find: {0},\nsubfolders: {1}".format(site, mes))
         else:
             site = os.path.join(rev, "..", "tcl")
             if not os.path.exists(site):
@@ -67,7 +68,7 @@ def fix_tkinter_issues_virtualenv(exc=True, fLOG=None):
         for _ in lst:
             if _.startswith(prefix) and "0" <= _[lp] <= "9" and ".lib" not in _:
                 return os.path.join(where, _)
-        raise FileNotFoundError("unable to find any folder starting with {0} in {1}\nLIST:\n{2}".format(
+        raise FileNotFoundError("Unable to find any folder starting with {0} in {1}\nLIST:\n{2}".format(
             prefix, where, ", ".join(lst)))
 
     if sys.platform.startswith("win"):
