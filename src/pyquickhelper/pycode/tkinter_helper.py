@@ -41,7 +41,8 @@ def fix_tkinter_issues_virtualenv(exc=True, fLOG=None):
     global _first_execution
 
     def location():
-        site = os.path.normpath(os.path.dirname(os.path.join(os.path.abspath(ctypes.__file__))))
+        site = os.path.normpath(os.path.dirname(
+            os.path.join(os.path.abspath(ctypes.__file__))))
         rev = os.path.join(site, "..", "..")
         if sys.platform.startswith("win"):
             site = os.path.join(rev, "tcl")
