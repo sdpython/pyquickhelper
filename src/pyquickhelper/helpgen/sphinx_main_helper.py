@@ -287,7 +287,7 @@ def generate_changes_repo(chan, source, exception_if_empty=True,
 
 
 def compile_latex_output_final(root, latex_path, doall, afile=None, latex_book=False, fLOG=fLOG,
-                               custom_latex_processing=None):
+                               custom_latex_processing=None, remove_unicode=False):
     """
     Compile the latex documents.
 
@@ -298,6 +298,7 @@ def compile_latex_output_final(root, latex_path, doall, afile=None, latex_book=F
     @param      latex_book                  do some customized transformation for a book
     @param      fLOG                        logging function
     @param      custom_latex_processing     function which does some post processing of the full latex file
+    @param      remove_unicode              remove unicode characters before compiling it
 
     .. faqreq:
         :title: The PDF is corrupted, SVG are not there
@@ -319,11 +320,11 @@ def compile_latex_output_final(root, latex_path, doall, afile=None, latex_book=F
         is corrupted, the log should be checked to see the errors.
 
 
-    .. versionchanged:: 1.4
-        Parameter *fLOG* was added.
-
     .. versionadded:: 1.5
         Parameter *custom_latex_processing* was added.
+
+    .. versionadded:: 1.6
+        Parameter *remove_unicode* was added.
     """
     if sys.platform.startswith("win"):
         lat = os.path.join(latex_path, "pdflatex.exe")
@@ -344,8 +345,9 @@ def compile_latex_output_final(root, latex_path, doall, afile=None, latex_book=F
                 c = '"{0}" "{1}" -max-print-line=900 -interaction=nonstopmode -output-directory="{2}"'.format(
                     lat, file, build)
             fLOG("[compile_latex_output_final] LATEX compilation (c)", c)
-            post_process_latex_output(file, doall, latex_book=latex_book,
-                                      custom_latex_processing=custom_latex_processing)
+            post_process_latex_output(file, doall, latex_book=latex_book, fLOG=fLOG,
+                                      custom_latex_processing=custom_latex_processing,
+                                      remove_unicode=remove_unicode)
             if sys.platform.startswith("win"):
                 change_path = None
             else:

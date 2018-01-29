@@ -257,7 +257,7 @@ def post_process_python_output(root, doall, exc=True, nblinks=None, fLOG=None, n
 
 
 def post_process_latex_output_any(file, custom_latex_processing, nblinks=None,
-                                  remove_unicode=True, fLOG=None, notebook_replacements=None):
+                                  remove_unicode=False, fLOG=None, notebook_replacements=None):
     """
     Postprocesses the latex file produced by :epkg:`sphinx`.
 
@@ -642,7 +642,7 @@ def post_process_slides_output(file, pdf, python, slides, present, exc=True, nbl
 
 def post_process_latex(st, doall, info=None, latex_book=False, exc=True,
                        custom_latex_processing=None, nblinks=None, file=None,
-                       remove_unicode=True, fLOG=None, notebook_replacements=None):
+                       remove_unicode=False, fLOG=None, notebook_replacements=None):
     """
     Modifies a latex file after its generation by :epkg:`sphinx`.
 
@@ -822,8 +822,11 @@ def post_process_latex(st, doall, info=None, latex_book=False, exc=True,
     if remove_unicode:
         if fLOG:
             fLOG("[post_process_latex] remove unicode characters")
+        st0 = st
         bst = st.encode('ascii', errors='replace')
         st = bst.decode('ascii', errors='replace')
+        if st0 != st and fLOG:
+            fLOG("[post_process_latex] unicode characters were removed")
 
     return st
 

@@ -53,6 +53,7 @@ from .sphinx_main_helper import format_history
 from .sphinx_main_verification import verification_html_format
 from .sphinx_main_missing_html_files import add_missing_files
 from .style_css_template import style_figure_notebook
+from .post_process_custom import find_custom_latex_processing
 from ..sphinxext.blog_post_list import BlogPostList
 from ..sphinxext.sphinx_blog_extension import BlogPostDirective, BlogPostDirectiveAgg
 from ..sphinxext.sphinx_runpython_extension import RunPythonDirective
@@ -276,6 +277,9 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
 
     .. versionchanged:: 1.6
         Automatically adds video directive.
+        *remove_unicode* can set to False or True in the documentation
+        configuration file to allow or remove unicode characters
+        before compiling the latex output.
 
     .. todoext::
         :title: add subfolder when building indexes of notebooks
@@ -492,12 +496,17 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
     custom_latex_processing = theconf.__dict__.get(
         "custom_latex_processing", None)
     if custom_latex_processing is not None:
-        try:
-            res = custom_latex_processing("dummy phrase")
-            if res is None:
-                raise ValueError("result should be None")
-        except ValueError as e:
-            pass
+        # The configuration file is pickled by sphinx
+        # and parameter should not be functions.
+        if isinstance(custom_latex_processing, str  # unicode #
+                      ):
+            custom_latex_processing = find_custom_latex_processing(
+                custom_latex_processing)
+        res = custom_latex_processing("dummy phrase")
+        if res is None:
+            raise ValueError(
+                "Result of function custom_latex_processing should not be None.")
+    remove_unicode = theconf.__dict__.get("remove_unicode", False)
 
     notebook_replacements = theconf.__dict__.get("notebook_replacements", None)
     if notebook_replacements is not None and not isinstance(notebook_replacements, dict):
@@ -1054,7 +1063,8 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
              froot, "**", latex_path)
         compile_latex_output_final(
             froot, latex_path, False, latex_book=latex_book, fLOG=fLOG,
-            custom_latex_processing=custom_latex_processing)
+            custom_latex_processing=custom_latex_processing,
+            remove_unicode=remove_unicode)
 
     if "html" in layout:
         nbf = os.path.join(build, "html", "notebooks")

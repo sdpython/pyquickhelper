@@ -9,6 +9,7 @@ History
 **BugFix**
 
 * `86`: avoids last line of notebooks in rst to disappear
+* `95`: fix replaced unicode characters in latex output
 
 **Features**
 

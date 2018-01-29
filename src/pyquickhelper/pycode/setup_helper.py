@@ -579,8 +579,7 @@ def standard_help_for_setup(argv, file_or_folder, project_var_name, module_name=
                             nbformats=("ipynb", "html", "python",
                                        "rst", "slides", "pdf", "present"),
                             layout=None,  # , "epub"],
-                            use_run_cmd=False,
-                            fLOG=noLOG):
+                            use_run_cmd=False, fLOG=noLOG):
     """
     standard function to generate help assuming they follow the same design
     as *pyquickhelper*
