@@ -38,9 +38,10 @@ class TestCompressHelperBug(ExtTestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
-        if is_travis_or_appveyor() in ('circleci', 'travis'):
-            # 7z not available
+        if is_travis_or_appveyor() == "appveyor" and sys.version_info[:2] <= (3, 5):
+            # Only available on 3.6.
             return
+
         import pylzma
         # use github version, not pypi version (2016-11-11)
         # this version does not include a fix to read file produced by the
@@ -60,9 +61,10 @@ class TestCompressHelperBug(ExtTestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
-        if is_travis_or_appveyor() in ('circleci', 'travis'):
-            # 7z not available
+        if is_travis_or_appveyor() == "appveyor" and sys.version_info[:2] <= (3, 5):
+            # Only available on 3.6.
             return
+
         import pylzma
         # use github version, not pypi version (2016-11-11)
         # this version does not include a fix to read file produced by the
