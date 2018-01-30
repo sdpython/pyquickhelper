@@ -83,6 +83,21 @@ def df2rst(df, add_line=True, align="l", column_size=None, index=False,
     import numpy
     typstr = str  # unicode#
 
+    def align_string(s, align, length):
+        if len(s) < length:
+            if align == "l":
+                return s + " " * (length - len(s))
+            elif align == "r":
+                return " " * (length - len(s)) + s
+            elif align == "c":
+                m = (length - len(s)) // 2
+                return " " * m + s + " " * (length - m - len(s))
+            else:
+                raise ValueError(
+                    "align should be 'l', 'r', 'c' not '{0}'".format(align))
+        else:
+            return s
+
     def complete(cool):
         if list_table:
             i, s = cool
@@ -127,7 +142,7 @@ def df2rst(df, add_line=True, align="l", column_size=None, index=False,
         table = "\n".join(rows)
         return table
     else:
-        length = [len(_) for _ in df.columns]
+        length = [(len(_) if isinstance(_, typstr) else 5) for _ in df.columns]
         for row in df.values:
             for i, v in enumerate(row):
                 length[i] = max(length[i], len(typstr(v).strip()))
@@ -148,21 +163,6 @@ def df2rst(df, add_line=True, align="l", column_size=None, index=False,
         sline = "+%s+" % ("+".join(line))
         slineb = "+%s+" % ("+".join(lineb))
         res = [sline]
-
-        def align_string(s, align, length):
-            if len(s) < length:
-                if align == "l":
-                    return s + " " * (length - len(s))
-                elif align == "r":
-                    return " " * (length - len(s)) + s
-                elif align == "c":
-                    m = (length - len(s)) // 2
-                    return " " * m + s + " " * (length - m - len(s))
-                else:
-                    raise ValueError(
-                        "align should be 'l', 'r', 'c' not '{0}'".format(align))
-            else:
-                return s
 
         res.append("| %s |" % " | ".join(
             map(complete, zip(length, df.columns))))

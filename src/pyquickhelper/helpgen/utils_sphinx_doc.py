@@ -125,7 +125,7 @@ def replace_relative_import(fullname, content=None):
 def _private_process_one_file(
         fullname, to, silent, fmod, replace_relative_import, use_sys):
     """
-    Copy one file from the source to the documentation folder.
+    Copies one file from the source to the documentation folder.
     It processes some comments in doxygen format (@ param, @ return).
     It replaces relatives imports by a regular import.
 
@@ -145,7 +145,8 @@ def _private_process_one_file(
     """
     ext = os.path.splitext(fullname)[-1]
 
-    if ext in [".jpeg", ".jpg", ".pyd", ".png", ".dat", ".dll", ".o", ".so", ".exe", ".enc", ".txt", ".gif", ".csv"]:
+    if ext in [".jpeg", ".jpg", ".pyd", ".png", ".dat", ".dll", ".o",
+               ".so", ".exe", ".enc", ".txt", ".gif", ".csv"]:
         if ext in [".pyd", ".so"]:
             # If the file is being executed, the copy might keep the properties of
             # the original (only Windows).
@@ -318,11 +319,13 @@ def copy_source_files(input, output, fmod=lambda v, filename: v,
         remove_folder(output, False, raise_exception=False)
 
     def_ext = ['py', 'pyd', 'cpp', 'h', 'dll', 'so', 'yml', 'o', 'def', 'gif',
-               'exe', 'data', 'config', 'css', 'js', 'png', 'map', 'sass']
+               'exe', 'data', 'config', 'css', 'js', 'png', 'map', 'sass', 'csv']
     deffilter = "|".join("(.+[.]{0}$)".format(_) for _ in def_ext)
     if copy_add_ext is not None:
         res = ["(.+[.]%s$)" % e for e in copy_add_ext]
         deffilter += "|" + "|".join(res)
+
+    fLOG("[copy_source_files] copy filter '{0}'".format(deffilter))
 
     if addfilter is not None and len(addfilter) > 0:
         if filter is None or len(filter) == 0:
