@@ -27,11 +27,13 @@ except ImportError:
 from src.pyquickhelper.loghelper import fLOG
 from src.pyquickhelper.pycode import get_temp_folder, ExtTestCase
 from src.pyquickhelper.filehelper import un7zip_files
-from src.pyquickhelper.pycode import is_travis_or_appveyor
+from src.pyquickhelper.pycode import is_travis_or_appveyor, skipif_travis, skipif_circleci
 
 
 class TestCompressHelperBug(ExtTestCase):
 
+    @skipif_travis('pylzma not available, must be installed from github')
+    @skipif_circleci('pylzma not available, must be installed from github')
     def test_uncompress_7zip_lzma2(self):
         fLOG(
             __file__,
@@ -55,6 +57,8 @@ class TestCompressHelperBug(ExtTestCase):
         self.assertEqual(len(files), 1)
         self.assertTrue(files[0].endswith('donnees.txt'))
 
+    @skipif_travis('pylzma not available, must be installed from github')
+    @skipif_circleci('pylzma not available, must be installed from github')
     def test_uncompress_7zip_lzma2_cmd(self):
         fLOG(
             __file__,
