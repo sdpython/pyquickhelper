@@ -88,8 +88,8 @@ def get_exporter(format):
 
 def nb2slides(nb_file, outfile, add_tag=True):
     """
-    convert a notebooks into slides, it copies
-    reveal.js if not present in the folder of the output
+    Converts a notebook into slides, it copies
+    :epkg:`reveal.js` if not present in the folder of the output.
 
     @param      nb_file         notebook file or a stream or a @see fn read_nb
     @param      outfile         output file (a string)
@@ -167,7 +167,7 @@ def _nbpresent_export(ipynb=None, outfile=None, out_format=None, verbose=None):
 
 def nb2present(nb_file, outfile, add_tag=True):
     """
-    convert a notebooks into slides with *format=present*.
+    Converts a notebooks into slides with *format=present*.
 
     @param      nb_file         notebook file or a stream or a @see fn read_nb
     @param      outfile         output file (a string)
@@ -203,7 +203,7 @@ def nb2present(nb_file, outfile, add_tag=True):
 
 def nb2html(nb_file, outfile, exc=True):
     """
-    Convert a notebooks into HTML.
+    Converts a notebook into HTML.
 
     @param      nb_file         notebook file or a stream or a @see fn read_nb
     @param      outfile         output file (a string)
@@ -235,7 +235,7 @@ def nb2html(nb_file, outfile, exc=True):
 
 def nb2rst(nb_file, outfile, exc=True):
     """
-    Convert a notebooks into RST.
+    Converts a notebook into RST.
 
     @param      nb_file         notebook file or a stream or a @see fn read_nb
     @param      outfile         output file (a string)

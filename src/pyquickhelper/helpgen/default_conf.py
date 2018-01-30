@@ -609,6 +609,13 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
             if any(filter(lambda x: x.startswith("temp_"), parts)):
                 continue
             nn = res.parent
+
+            # We check that a readme.txt is not present in the parent folder.
+            nn_parent_read = os.path.join(os.path.split(nn)[0], "README.txt")
+            if os.path.exists(nn_parent_read):
+                continue
+
+            # Main gallery.
             examples_dirs.append(str(nn))
             if last in ("notebooks", "examples"):
                 last = "gy" + last

@@ -10,17 +10,17 @@ import os
 import sys
 import shutil
 
-from ..loghelper.flog import run_cmd, fLOG, noLOG
 from .utils_sphinx_doc_helpers import HelpGenException
 from .conf_path_tools import find_latex_path, find_pandoc_path
-from ..filehelper.synchelper import has_been_updated, explore_folder
 from .post_process import post_process_latex_output, post_process_latex_output_any, post_process_rst_output
 from .post_process import post_process_html_output, post_process_slides_output, post_process_python_output
 from .helpgen_exceptions import NotebookConvertError
 from .install_js_dep import install_javascript_tools
 from .style_css_template import THUMBNAIL_TEMPLATE, THUMBNAIL_TEMPLATE_TABLE
+from ..loghelper.flog import run_cmd, fLOG, noLOG
 from ..ipythonhelper import read_nb, notebook_coverage, badge_notebook_coverage
 from ..pandashelper import df2rst
+from ..filehelper.synchelper import has_been_updated, explore_folder
 
 
 if sys.version_info[0] == 2:
@@ -436,7 +436,8 @@ def _process_notebooks_in(notebooks, outfold, build, latex_path=None, pandoc_pat
                         _)[-1] == ".tex")
                     if len(tex) != 1:
                         raise FileNotFoundError(
-                            "no latex file was generated or more than one (={0}), nb={1}\nthisfile=\n{2}".format(len(tex), notebook, "\n".join(thisfiles)))
+                            "No latex file was generated or more than one (={0}), nb={1}\nthisfile=\n{2}".format(
+                                len(tex), notebook, "\n".join(thisfiles)))
                     tex = list(tex)[0]
                     post_process_latex_output_any(
                         tex, custom_latex_processing=None, nblinks=nblinks,
@@ -833,20 +834,7 @@ def build_notebooks_gallery(nbs, fileout, layout="classic", neg_pattern=None, fL
 
     *nbs* can be a folder, in that case, the function will build
     the list of all notebooks in that folder.
-
-    .. todoext::
-        :title: merge functionalities from sphinx_nbexamples
-        :tag: done
-        :hidden: true
-        :date: 2016-12-25
-        :cost: 2
-        :issue: 40
-        :release: 1.5
-
-        See blog :ref:`Gallery of notebooks <blog-notebook-gallery>`.
-
-    .. versionchanged:: 1.4
-        *nbs* can be a list of tuple
+    *nbs* can be a list of tuple.
 
     .. versionchanged:: 1.5
         Add a thumbnail, organize the list of notebook as a gallery.
