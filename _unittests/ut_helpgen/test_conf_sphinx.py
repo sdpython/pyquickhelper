@@ -32,6 +32,7 @@ if sys.version_info[0] == 2:
 
 class TestConfSphinx(unittest.TestCase):
 
+    @unittest.skipIf(sys.version_info[:2] < (3, 6), "Not supported in Python < (3, 6)")
     def test_conf_sphinx(self):
         fLOG(
             __file__,

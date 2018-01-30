@@ -308,9 +308,6 @@ def post_process_rst_output(file, html, pdf, python, slides, present, is_noteboo
     @param      notebook_replacements   string replacement in notebooks
     @param      fLOG                    logging function
 
-    .. versionchanged:: 1.4
-        Parameter *present* was added.
-
     .. versionchanged:: 1.5
         Parameters *exc*, *github*, *notebook*, *fLOG* were added.
 
@@ -449,7 +446,8 @@ def post_process_rst_output(file, html, pdf, python, slides, present, is_noteboo
             path = docname[len(folder):]
         links.append(
             ":githublink:`GitHub|{0}|*`".format(path.replace("\\", "/").lstrip("/")))
-    lines[pos] = "{0}\n\n{1}\n\n".format(lines[pos], ", ".join(links))
+    lines[pos] = "{0}\n\n.. only:: html\n\n    {1}\n\n".format(
+        lines[pos], ", ".join(links))
 
     # we remove the
     # <div
