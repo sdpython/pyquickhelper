@@ -1,6 +1,6 @@
 """
 @file
-@brief Helprs about readme.
+@brief Helpers about readme.
 
 .. versionadded:: 1.5
 """
