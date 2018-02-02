@@ -26,3 +26,7 @@ blog_root = "http://www.xavierdupre.fr/app/pyquickhelper/helpsphinx/"
 
 # remove notebooks following this pattern
 nbneg_pattern = ".*[\\\\/]temp_.*"
+
+html_context = {
+    'css_files': get_default_stylesheet() + ['_static/my-styles.css'],
+}
