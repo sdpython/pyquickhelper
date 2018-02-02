@@ -167,7 +167,7 @@ def epkg_role(role, rawtext, text, lineno, inliner, options=None, content=None):
 
     extref = "`{0} <{1}>`_".format(anchor, url)
     node = epkg_node(rawtext=rawtext)
-    node['classes'] += "-epkg"
+    node['classes'] += ["epkg"]
 
     memo = ClassStruct(document=inliner.document, reporter=inliner.reporter,
                        language=inliner.language)

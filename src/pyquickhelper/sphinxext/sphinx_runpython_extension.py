@@ -484,7 +484,7 @@ class RunPythonDirective(Directive):
         p['runpython'] = node
 
         # classes
-        node['classes'] += "-runpython"
+        node['classes'] += ["runpython"]
         ns = [node]
         return ns
 

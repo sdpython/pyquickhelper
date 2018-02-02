@@ -91,7 +91,7 @@ class ShareNetDirective(Directive):
         node = self.__class__.sharenet_class(networks=p,
                                              size=self.options.get('size', 20),
                                              inhead=self.options.get('head', True) in bool_set)
-        node['classes'] += "-sharenet"
+        node['classes'] += ["sharenet"]
         node['sharenet'] = node
         ns = [node]
         return ns
@@ -151,7 +151,7 @@ def sharenet_role(role, rawtext, text, lineno, inliner,
     # ref = inliner.document.settings.rfc_base_url + inliner.rfc_url % rfcnum
     # set_classes(options)
     node = sharenet_node(networks=networks, size=size, inhead=inhead)
-    node['classes'] += "-sharenet"
+    node['classes'] += ["sharenet"]
     node['sharenet'] = node
     return [node], []
 

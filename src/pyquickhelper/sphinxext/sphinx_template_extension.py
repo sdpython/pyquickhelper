@@ -126,7 +126,7 @@ def tpl_role(role, rawtext, text, lineno, inliner, options=None, content=None):
         res = tpl_content(**val_context)
 
     node = tpl_node(rawtext=rawtext)
-    node['classes'] += "-tpl"
+    node['classes'] += ["tpl"]
 
     memo = ClassStruct(document=inliner.document, reporter=inliner.reporter,
                        language=inliner.language)

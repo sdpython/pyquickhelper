@@ -179,7 +179,7 @@ class BlogPostDirective(Directive):
         p['blogpost'] = node
         self.exe_class = p.copy()
         p["content"] = content
-        node['classes'] += "-blogpost"
+        node['classes'] += ["blogpost"]
 
         # for the instruction tocdelay.
         node['toctitle'] = title
@@ -272,7 +272,7 @@ class BlogPostDirectiveAgg(BlogPostDirective):
         p['blogpost'] = node
         self.exe_class = p.copy()
         p["content"] = content
-        node['classes'] += "-blogpost"
+        node['classes'] += ["blogpost"]
 
         # target
         # self.state.add_target(p['title'], '', targetnode, lineno)
