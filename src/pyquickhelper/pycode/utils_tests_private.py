@@ -578,12 +578,12 @@ def main_run_test(runner, path_test=None, limit_max=1e9, log=False, skip=-1, ski
             memout.write("[main_run_test] -WARN: {0}\n".format(fi))
             wdone = {}
             for i, (w, s) in enumerate(lw):
-                if w.message in wdone:
+                sw = str(w)
+                if sw in wdone:
                     continue
-                wdone[w.message] = w
+                wdone[sw] = w
                 try:
-                    sw = "  w{0}: {1} - '{2}' - {3} - {4}\n".format(
-                        i, w, w.message, len(wdone), list(wdone.keys()))
+                    sw = "  w{0}: {1}\n".format(i, w)
                 except UnicodeEncodeError:
                     sw = "  w{0}: Unable to convert a warnings of type {1} into a string (1)".format(
                         i, type(w))
