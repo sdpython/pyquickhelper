@@ -73,7 +73,7 @@ class MathDef(BaseAdmonition):
 
     def run(self):
         """
-        builds the mathdef text
+        Builds the mathdef text.
         """
         # sett = self.state.document.settings
         # language_code = sett.language_code
@@ -126,7 +126,7 @@ class MathDef(BaseAdmonition):
             mid = -1
 
         # id of the section
-        first_letter = docname[0] if docname else ""
+        first_letter = mathtag[0].upper()
         number = mid
         try:
             label_number = number_format.format(
