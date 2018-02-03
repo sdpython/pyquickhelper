@@ -8,24 +8,12 @@
 
 def default_filter_warning(w):
     """
-    filters out warning
+    Filters out warnings.
 
     @param      w       warning
     @return             boolean (True to keep it)
 
     Interesting fields: ``w.message``, ``w.category``, ``w.filename``, ``w.lineno``.
-
-    .. todoext::
-        :title: filter warnings after the unit tests
-        :tag: done
-        :date: 2016-07-05
-        :hidden:
-        :issue: 19
-        :release: 1.4
-        :cost: 0.2
-
-        Parameter *filter_warning* was added to give users
-        a way to define their own filtering.
     """
     class UnusedException(Exception):
         pass

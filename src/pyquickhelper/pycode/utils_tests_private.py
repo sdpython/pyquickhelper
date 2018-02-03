@@ -522,7 +522,7 @@ def main_run_test(runner, path_test=None, limit_max=1e9, log=False, skip=-1, ski
                     sw = str(w)
                     if sw not in warndone:
                         # we display only one time the same warning
-                        fullstderr.write("w{0}: {1}\n".format(i, str(w)))
+                        fullstderr.write("w{0}: {1}\n".format(i, sw))
                         warndone.add(sw)
             serr = newstdr.getvalue()
             if serr.strip(" \n\r\t"):
@@ -582,7 +582,7 @@ def main_run_test(runner, path_test=None, limit_max=1e9, log=False, skip=-1, ski
                     continue
                 wdone[w.message] = w
                 try:
-                    sw = "  w{0}: {1}\n".format(i, w)
+                    sw = "  w{0}: {1} - '{2}'\n".format(i, w, w.message)
                 except UnicodeEncodeError:
                     sw = "  w{0}: Unable to convert a warnings of type {1} into a string (1)".format(
                         i, type(w))
