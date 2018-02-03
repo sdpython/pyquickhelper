@@ -28,5 +28,5 @@ blog_root = "http://www.xavierdupre.fr/app/pyquickhelper/helpsphinx/"
 nbneg_pattern = ".*[\\\\/]temp_.*"
 
 html_context = {
-    'css_files': get_default_stylesheet() + ['_static/my-styles.css'],
+    'css_files': get_default_stylesheet() + ['_static/my-styles.css', '_static/gallery.css'],
 }
