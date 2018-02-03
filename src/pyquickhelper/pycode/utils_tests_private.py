@@ -535,7 +535,7 @@ def main_run_test(runner, path_test=None, limit_max=1e9, log=False, skip=-1, ski
             if len(val) > 0 and is_valid_error(val):
                 fullstderr.write("\n*-----" + lis[i] + "\n")
                 if len(list_warn) > 0:
-                    fullstderr.write("+WARN:\n")
+                    fullstderr.write("[main_run_test] +WARN:\n")
                     for w, s in list_warn:
                         fullstderr.write(
                             "[in:{2}] w{0}: {1}\n".format(i, str(w), cut))
@@ -575,14 +575,15 @@ def main_run_test(runner, path_test=None, limit_max=1e9, log=False, skip=-1, ski
 
     for fi, lw in allwarn:
         if len(lw) > 0:
-            memout.write("-WARN: {0}\n".format(fi))
+            memout.write("[main_run_test] -WARN: {0}\n".format(fi))
             wdone = {}
             for i, (w, s) in enumerate(lw):
                 if w.message in wdone:
                     continue
                 wdone[w.message] = w
                 try:
-                    sw = "  w{0}: {1} - '{2}'\n".format(i, w, w.message)
+                    sw = "  w{0}: {1} - '{2}' - {3} - {4}\n".format(
+                        i, w, w.message, len(wdone), list(wdone.keys()))
                 except UnicodeEncodeError:
                     sw = "  w{0}: Unable to convert a warnings of type {1} into a string (1)".format(
                         i, type(w))
