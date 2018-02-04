@@ -22,6 +22,7 @@ History
   in notebooks
 * `94`: implements test fixture ``@skipif_appveyor``, ``@skipif_travis``,
   ``@skipif_circleci``
+* `100`: fix indentation in documented source files
 
 1.5.2275 (2017-11-28)
 =====================
