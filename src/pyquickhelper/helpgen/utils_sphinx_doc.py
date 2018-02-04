@@ -1191,9 +1191,9 @@ def prepare_file_for_sphinx_help_generation(store_obj, input, output,
 
 def process_copy_images(folder_source, folder_images):
     """
-    look into every file .rst or .py for images (.. image:: imagename),
+    Looks into every file .rst or .py for images (.. image:: imagename),
     if this image was found in directory folder_images, then the image is copied
-    close to the file
+    closes to the file.
 
     @param      folder_source       folder where to look for sources
     @param      folder_images       folder where to look for images
@@ -1206,9 +1206,12 @@ def process_copy_images(folder_source, folder_images):
         try:
             with open(fn, "r", encoding="utf8") as f:
                 content = f.read()
-        except Exception:
-            with open(fn, "r") as f:
-                content = f.read()
+        except Exception as e:
+            try:
+                with open(fn, "r") as f:
+                    content = f.read()
+            except Exception:
+                raise Exception("Issue with file '{0}'".format(fn)) from e
 
         lines = content.split("\n")
         for line in lines:
@@ -1229,7 +1232,7 @@ def process_copy_images(folder_source, folder_images):
 
 def fix_incomplete_references(folder_source, store_obj, issues=None, fLOG=fLOG):
     """
-    look into every file .rst or .py for incomplete reference. Example::
+    Looks into every file .rst or .py for incomplete reference. Example::
 
         :class:`name`  --> :class:`name <...>`.
 
