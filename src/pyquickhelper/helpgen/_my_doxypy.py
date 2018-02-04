@@ -13,7 +13,6 @@ from __future__ import print_function
 import sys
 import re
 from optparse import OptionParser
-from textwrap import dedent
 
 
 _allowed = re.compile("^([a-zA-Z]:)?[^:*?\"<>|]+$")
@@ -21,7 +20,7 @@ _allowed = re.compile("^([a-zA-Z]:)?[^:*?\"<>|]+$")
 
 def is_file_string(s):
     """
-    says if the string s could be a filename
+    Says if the string s could be a filename.
 
     @param      s       string
     @return             boolean
@@ -82,7 +81,8 @@ along with this program.  If not, see `GNU <http://www.gnu.org/licenses/>`_.
 
 class FSM(object):
 
-    """Implements a finite state machine.
+    """
+    Implements a finite state machine.
 
     Transitions are given as 4-tuples, consisting of an origin state, a target
     state, a condition for the transition (given as a reference to a function
@@ -437,9 +437,11 @@ class Doxypy(object):
         doxyEnd = "%s\"\"\"" % indent4
 
         commentLines = self.comment
-
-        commentLines = ["%s%s%s" %
-                        (self.indent, indent4, x) for x in commentLines]
+        full_indent = self.indent + indent4
+        if full_indent:
+            if commentLines and commentLines[0].lstrip() == commentLines[0]:
+                commentLines[0] = full_indent + commentLines[0]
+        # commentLines = ["%s%s%s" % (self.indent, indent4, x) for x in commentLines]
 
         commentLines = self.process_comment(commentLines,
                                             self.information.get(
@@ -447,15 +449,15 @@ class Doxypy(object):
                                             self.information.get("filename", "filename is not present"))
 
         # We remove the indentation.
-        joined = "\n".join(commentLines)
-        joined = dedent(joined)
-        commentLines = joined.split("\n")
+        while commentLines and commentLines[0].strip() == '':
+            del commentLines[0]
+        while commentLines and commentLines[-1].strip() == '':
+            del commentLines[-1]
 
         # Back to doxypy.
         li = [self.indent + doxyStart]
         li.extend(commentLines)
         li.append(self.indent + doxyEnd)
-
         return li
 
     def parse(self, input):

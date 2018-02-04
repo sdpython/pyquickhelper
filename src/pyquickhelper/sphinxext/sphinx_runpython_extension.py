@@ -42,7 +42,7 @@ class RunPythonExecutionError(Exception):
 
 def run_python_script(script, params=None, comment=None, setsysvar=None, process=False, exception=False):
     """
-    Execute a script python as a string.
+    Executes a script python as a string.
 
     @param  script      python script
     @param  params      params to add before the execution
@@ -369,16 +369,26 @@ class RunPythonDirective(Directive):
             script_disp = remove_extra_spaces_and_pep8(
                 script_disp, is_string=True)
 
-        # if an exception is raised, the documentation should report
-        # a warning
+        # if an exception is raised, the documentation should report a warning
         # return [document.reporter.warning('messagr', line=self.lineno)]
+        current_source = self.state.document.current_source
+        docstring = ":docstring of " in current_source
+        if docstring:
+            current_source = current_source.split(":docstring of ")[0]
+        if os.path.exists(current_source):
+            comment = '  File "{0}", line {1}'.format(current_source, lineno)
+            if docstring:
+                new_name = os.path.split(current_source)[0] + ".py"
+                comment += '\n  File "{0}", line {1}'.format(new_name, lineno)
+        else:
+            if '.' in docname:
+                comment = '  File "{0}", line {1}'.format(docname, lineno)
+            else:
+                comment = '  File "{0}.rst", line {1}\n  File "{0}.py", line {1}\n'.format(
+                    docname, lineno)
 
-        out, err = run_python_script(script,
-                                     comment='  File "{0}", line {1}'.format(
-                                         docname, lineno),
-                                     setsysvar=p['setsysvar'], process=p[
-                                         "process"],
-                                     exception=p['exception'])
+        out, err = run_python_script(script, comment=comment, setsysvar=p['setsysvar'],
+                                     process=p["process"], exception=p['exception'])
 
         if out is not None:
             out = out.rstrip(" \n\r\t")

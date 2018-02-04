@@ -1768,7 +1768,7 @@ def _private_migrating_doxygen_doc(rows, index_first_line, filename,
     for row in rows:
         if row.strip():
             clean_rows.append(row)
-        else:
+        elif len(clean_rows) > 0:
             clean_rows.append('')
     return clean_rows
 
