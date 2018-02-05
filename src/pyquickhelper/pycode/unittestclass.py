@@ -104,7 +104,7 @@ class ExtTestCase(unittest.TestCase):
             if len(whole) > len(sub) * 2:
                 whole = whole[:len(sub) * 2]
             raise AssertionError(
-                "'{0}' does not start '{1}'".format(sub, whole))
+                "'{1}' does not start with '{0}'".format(sub, whole))
 
     def assertEndsWith(self, sub, whole):
         """
@@ -113,7 +113,7 @@ class ExtTestCase(unittest.TestCase):
         if not whole.endswith(sub):
             if len(whole) > len(sub) * 2:
                 whole = whole[-len(sub) * 2:]
-            raise AssertionError("'{0}' does not end '{1}'".format(sub, whole))
+            raise AssertionError("'{1}' does not end with '{0}'".format(sub, whole))
 
     def assertEqual(self, a, b):
         """
