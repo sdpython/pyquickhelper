@@ -95,6 +95,15 @@ def unzip_files(zipf, where_to=None, fLOG=noLOG, fvalid=None, remove_space=True,
         if isinstance(zipf, bytes):
             zipf = BytesIO(zipf)
 
+    try:
+        with zipfile.ZipFile(zipf, "r") as f:
+            pass
+    except zipfile.BadZipFile as e:
+        if isinstance(zipf, BytesIO):
+            raise e
+        else:
+            raise IOError("Unable to read file '{0}'".format(zipf)) from e
+
     files = []
     with zipfile.ZipFile(zipf, "r") as file:
         for info in file.infolist():
@@ -256,7 +265,11 @@ def ungzip_files(filename, where_to=None, fLOG=noLOG, fvalid=None, remove_space=
         content = f.read()
         f.close()
         if unzip:
-            return unzip_files(content, where_to=where_to, fLOG=fLOG)
+            try:
+                return unzip_files(content, where_to=where_to, fLOG=fLOG)
+            except Exception as e:
+                raise IOError(
+                    "Unable to unzip file '{0}'".format(filename)) from e
         else:
             filename = filename.replace(".gz", "")
             with open(filename, "wb") as f:
