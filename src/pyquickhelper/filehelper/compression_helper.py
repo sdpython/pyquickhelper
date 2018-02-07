@@ -96,7 +96,7 @@ def unzip_files(zipf, where_to=None, fLOG=noLOG, fvalid=None, remove_space=True,
             zipf = BytesIO(zipf)
 
     try:
-        with zipfile.ZipFile(zipf, "r") as f:
+        with zipfile.ZipFile(zipf, "r"):
             pass
     except zipfile.BadZipFile as e:
         if isinstance(zipf, BytesIO):
