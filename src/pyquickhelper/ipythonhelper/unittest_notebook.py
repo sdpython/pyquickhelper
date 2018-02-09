@@ -13,7 +13,8 @@ from .run_notebook import get_additional_paths as pyq_get_additional_paths
 
 
 def test_notebook_execution_coverage(filename, name, folder, this_module_name,
-                                     valid=None, copy_files=None, modules=None, fLOG=noLOG):
+                                     valid=None, copy_files=None, modules=None,
+                                     filter_name=None, fLOG=noLOG):
     """
     Runs and tests a specific list of notebooks.
     The function raises an exception if the execution fails.
@@ -25,6 +26,7 @@ def test_notebook_execution_coverage(filename, name, folder, this_module_name,
     @param      copy_files          files to copy before running the notebooks.
     @param      modules             list of extra dependencies
     @param      this_module_name    the module name being tested
+    @param      filter_name         None or function
     @param      fLOG                logging function
 
     The function calls @see fn execute_notebook_list_finalize_ut which
@@ -54,7 +56,11 @@ def test_notebook_execution_coverage(filename, name, folder, this_module_name,
                     OutputPrint=__name__ == "__main__")
 
                 folder = os.path.join(os.path.dirname(__file__), ".." , "..", "_doc", "notebooks")
-                test_notebook_execution_coverage(__file__, "compare_python_distribution", folder, 'mymodule', fLOG=fLOG)
+                test_notebook_execution_coverage(__file__, "compare_python_distribution",
+                                                 folder, 'mymodule', fLOG=fLOG)
+
+    .. versionchanged:: 1.6
+        Parameter *filter_name* was added.s
     """
     # delayed import (otherwise, it has circular references)
     from ..pycode import get_temp_folder
@@ -101,6 +107,8 @@ def test_notebook_execution_coverage(filename, name, folder, this_module_name,
     if modules:
         base.extend(modules)
     add_path = pyq_get_additional_paths(base)
-    res = execute_notebook_list(
-        temp, keepnote, additional_path=add_path, valid=valid, fLOG=fLOG)
+    if filter_name:
+        keepnote = [_ for _ in keepnote if filter_name(_)]
+    res = execute_notebook_list(temp, keepnote, additional_path=add_path,
+                                valid=valid, fLOG=fLOG)
     execute_notebook_list_finalize_ut(res, fLOG=fLOG, dump=thismodule)

@@ -234,18 +234,12 @@ def execute_notebook_list(folder, notebooks, clean_function=None, valid=None, fL
     folder *working_dir* (must not be None). The url string is replaced by
     the absolute path to the file.
 
-    .. versionadded:: 1.1
-
-    .. versionchanged:: 1.3
-        Parameters *log_level*, *extended_args*, *kernel_name* were added.
-
-    .. versionchanged:: 1.4
-        Parameter *cache_urls* was added.
-        Function *valid* can return None.
-
     .. versionchanged:: 1.5
         Parameter *detailed_log* was added.
         Changes the results into a list of dictionaries
+
+    .. versionchanged:: 1.6
+        Parameter *filter_name* was added.
     """
     if additional_path is None:
         additional_path = []
@@ -259,28 +253,28 @@ def execute_notebook_list(folder, notebooks, clean_function=None, valid=None, fL
             note, code_init = note
         else:
             code_init = None
-        if filter(i, note):
-            fLOG("******", i, os.path.split(note)[-1])
-            outfile = os.path.join(folder, "out_" + os.path.split(note)[-1])
-            cl = time.clock()
-            try:
-                stat, out = run_notebook(note, working_dir=folder, outfilename=outfile,
-                                         additional_path=additional_path, valid=valid,
-                                         clean_function=clean_function, fLOG=deepfLOG,
-                                         code_init=code_init, kernel_name=kernel_name,
-                                         log_level=log_level, extended_args=extended_args,
-                                         cache_urls=cache_urls, replacements=replacements,
-                                         detailed_log=detailed_log)
-                if not os.path.exists(outfile):
-                    raise FileNotFoundError(outfile)
-                etime = time.clock() - cl
-                results[note] = dict(success=True, output=out, name=note, etime=etime,
-                                     date=datetime.now())
-                results[note].update(stat)
-            except Exception as e:
-                etime = time.clock() - cl
-                results[note] = dict(success=False, etime=etime, error=e, name=note,
-                                     date=datetime.now())
+        fLOG("[execute_notebook_list] {0}/{1} - {2}".format(i +
+                                                            1, len(notebooks), os.path.split(note)[-1]))
+        outfile = os.path.join(folder, "out_" + os.path.split(note)[-1])
+        cl = time.clock()
+        try:
+            stat, out = run_notebook(note, working_dir=folder, outfilename=outfile,
+                                     additional_path=additional_path, valid=valid,
+                                     clean_function=clean_function, fLOG=deepfLOG,
+                                     code_init=code_init, kernel_name=kernel_name,
+                                     log_level=log_level, extended_args=extended_args,
+                                     cache_urls=cache_urls, replacements=replacements,
+                                     detailed_log=detailed_log)
+            if not os.path.exists(outfile):
+                raise FileNotFoundError(outfile)
+            etime = time.clock() - cl
+            results[note] = dict(success=True, output=out, name=note, etime=etime,
+                                 date=datetime.now())
+            results[note].update(stat)
+        except Exception as e:
+            etime = time.clock() - cl
+            results[note] = dict(success=False, etime=etime, error=e, name=note,
+                                 date=datetime.now())
     return results
 
 
