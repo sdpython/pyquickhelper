@@ -93,7 +93,8 @@ def get_url_content_timeout(url, timeout=10, output=None, encoding="utf8", raise
                         res = ur.read(chunk)
                         size[0] += len(res)
                         if fLOG is not None:
-                            fLOG("downloaded", size, "bytes")
+                            fLOG("[get_url_content_timeout] downloaded",
+                                 size, "bytes")
                         if len(res) > 0:
                             if encoding is not None:
                                 res = res.decode(encoding=encoding)
@@ -120,46 +121,46 @@ def get_url_content_timeout(url, timeout=10, output=None, encoding="utf8", raise
     except (urllib_error.HTTPError, urllib_error.URLError) as e:
         if raise_exception:
             raise InternetException(
-                "unable to retrieve content, url={0}".format(url)) from e
+                "Unable to retrieve content, url='{0}'".format(url)) from e
         warnings.warn(
-            "unable to retrieve content from {0} exc: {1}".format(url, e))
+            "Unable to retrieve content from '{0}' exc: {1}".format(url, e))
         return None
     except socket.timeout as e:
         if raise_exception:
             raise InternetException(
-                "unable to retrieve content, url={0}".format(url)) from e
+                "Unable to retrieve content, url='{0}'".format(url)) from e
         warnings.warn("unable to retrieve content from {0} because of timeout {1}: {2}".format(
             url, timeout, e))
         return None
     except ConnectionResetError as e:
         if raise_exception:
             raise InternetException(
-                "unable to retrieve content, url={0}".format(url)) from e
+                "Unable to retrieve content, url='{0}'".format(url)) from e
         warnings.warn(
             "unable to retrieve content from {0} because of ConnectionResetError: {1}".format(url, e))
         return None
     except http_client.BadStatusLine as e:
         if raise_exception:
             raise InternetException(
-                "unable to retrieve content, url={0}".format(url)) from e
+                "Unable to retrieve content, url='{0}'".format(url)) from e
         warnings.warn(
-            "unable to retrieve content from {0} because of http.client.BadStatusLine: {1}".format(url, e))
+            "Unable to retrieve content from '{0}' because of http.client.BadStatusLine: {1}".format(url, e))
         return None
     except http_client.IncompleteRead as e:
         if raise_exception:
             raise InternetException(
-                "unable to retrieve content url={0}".format(url)) from e
+                "Unable to retrieve content url='{0}'".format(url)) from e
         warnings.warn(
-            "unable to retrieve content from {0} because of http.client.IncompleteRead: {1}".format(url, e))
+            "Unable to retrieve content from '{0}' because of http.client.IncompleteRead: {1}".format(url, e))
         return None
     except ValueError as e:
         raise e
     except Exception as e:
         if raise_exception:
             raise InternetException(
-                "unable to retrieve content, url={0}, exc={1}".format(url, e)) from e
+                "Unable to retrieve content, url='{0}', exc={1}".format(url, e)) from e
         warnings.warn(
-            "unable to retrieve content from {0} because of unknown exception: {1}".format(url, e))
+            "Unable to retrieve content from '{0}' because of unknown exception: {1}".format(url, e))
         raise e
 
     if chunk is None:
@@ -185,7 +186,7 @@ def get_url_content_timeout(url, timeout=10, output=None, encoding="utf8", raise
                         content = None
 
                 if content is None:
-                    mes = ["unable to parse blog post: " + url]
+                    mes = ["Unable to parse text from '{0}'.".format(url)]
                     mes.append("tried:" + str([encoding] + othenc))
                     mes.append("beginning:\n" + str([res])[:50])
                     for e in laste:

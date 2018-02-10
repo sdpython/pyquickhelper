@@ -79,9 +79,9 @@ def download(url, path_download=".", outfile=None, fLOG=noLOG):
 
         if down:
             if newdate:
-                fLOG(" downloading (updated) ", url)
+                fLOG("[download] downloading (updated) ", url)
             else:
-                fLOG(" downloading ", url)
+                fLOG("[download] downloading ", url)
 
             if len(url) > 4 and \
                url[-4].lower() in [".txt", ".csv", ".tsv", ".log"]:
@@ -93,13 +93,13 @@ def download(url, path_download=".", outfile=None, fLOG=noLOG):
 
             if os.path.exists(nyet):
                 size = os.stat(dest).st_size
-                fLOG("resume downloading (stop at", size, ") from ", url)
+                fLOG("[download] resume downloading (stop at", size, ") from ", url)
                 request = urllib_request.Request(url)
                 request.add_header("Range", "bytes=%d-" % size)
                 fu = urllib_request.urlopen(request)
                 f = open(dest, format.replace("w", "a"))
             else:
-                fLOG("downloading ", url)
+                fLOG("[download] downloading ", url)
                 request = urllib_request.Request(url)
                 fu = urllib_request.urlopen(url)
                 f = open(dest, format)
@@ -109,7 +109,7 @@ def download(url, path_download=".", outfile=None, fLOG=noLOG):
             size = 0
             while len(c) > 0:
                 size += len(c)
-                fLOG("    size", size)
+                fLOG("[download]    size", size)
                 f.write(c)
                 f.flush()
                 c = fu.read(2 ** 21)

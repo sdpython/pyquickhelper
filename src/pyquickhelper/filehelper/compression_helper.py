@@ -124,11 +124,8 @@ def unzip_files(zipf, where_to=None, fLOG=noLOG, fvalid=None, remove_space=True,
             else:
                 clean = remove_diacritics(info.filename)
                 if remove_space:
-                    clean = clean.replace(" ", "") \
-                                 .replace("'", "") \
-                                 .replace(",", "_") \
-                                 .replace("(", "_") \
-                                 .replace(")", "_")
+                    clean = clean.replace(" ", "").replace("'", "").replace(",", "_") \
+                                 .replace("(", "_").replace(")", "_")
                 tos = os.path.join(where_to, clean)
                 if not os.path.exists(tos):
                     if fvalid and not fvalid(info.filename, tos):
