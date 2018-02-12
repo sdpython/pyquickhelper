@@ -7,6 +7,7 @@
 import os
 import unittest
 import warnings
+import decimal
 from .ci_helper import is_travis_or_appveyor
 
 
@@ -69,6 +70,32 @@ class ExtTestCase(unittest.TestCase):
         """
         from numpy.testing import assert_array_equal
         assert_array_equal(d1, d2, **kwargs)
+
+    def assertEqualNumber(self, d1, d2, **kwargs):
+        """
+        Checks that two numbers are equal.
+        """
+        from numpy import number
+        if not isinstance(d1, (int, float, decimal.Decimal, number)):
+            raise TypeError('d1 is not a number but {0}'.format(type(d1)))
+        if not isinstance(d2, (int, float, decimal.Decimal, number)):
+            raise TypeError('d2 is not a number but {0}'.format(type(d2)))
+        diff = abs(float(d1 - d2))
+        mi = float(min(abs(d1), abs(d2)))
+        tol = kwargs.get('precision', None)
+        if tol is None:
+            if diff != 0:
+                raise AssertionError("d1 != d2: {0} != {1}".format(d1, d2))
+        else:
+            if mi == 0:
+                if diff > tol:
+                    raise AssertionError(
+                        "d1 != d2: {0} != {1} +/- {2}".format(d1, d2, tol))
+            else:
+                rel = diff / mi
+                if rel > tol:
+                    raise AssertionError(
+                        "d1 != d2: {0} != {1} +/- {2}".format(d1, d2, tol))
 
     def assertRaise(self, fct, exc=None, msg=None):
         """

@@ -143,6 +143,21 @@ class TestExtTestCase(ExtTestCase):
         self.assertRaise(lambda: self.assertEqualFloat(
             1.1, 1.2), AssertionError)
 
+    def test_assertEqualNumber(self):
+        fLOG(
+            __file__,
+            self._testMethodName,
+            OutputPrint=__name__ == "__main__")
+
+        self.assertEqualNumber(1., 1.)
+        self.assertEqualNumber(1., 1. + 1e-6, precision=1e-5)
+        self.assertRaise(lambda: self.assertEqualNumber(
+            1.1, 1.2), AssertionError)
+        self.assertRaise(lambda: self.assertEqualNumber(
+            "1.1", 1.2), TypeError)
+        self.assertRaise(lambda: self.assertEqualNumber(
+            1.1, "1.2"), TypeError)
+
 
 if __name__ == "__main__":
     unittest.main()
