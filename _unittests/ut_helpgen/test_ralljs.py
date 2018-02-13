@@ -23,11 +23,11 @@ except ImportError:
 
 
 from src.pyquickhelper.loghelper import fLOG
-from src.pyquickhelper.pycode import get_temp_folder
+from src.pyquickhelper.pycode import get_temp_folder, ExtTestCase
 from src.pyquickhelper.helpgen.install_js_dep import install_javascript_tools
 
 
-class TestAlljs(unittest.TestCase):
+class TestAlljs(ExtTestCase):
 
     def test_install_alljs(self):
         fLOG(
@@ -39,11 +39,12 @@ class TestAlljs(unittest.TestCase):
         fs = install_javascript_tools(
             dest, dest, fLOG=fLOG, revealjs_github=False)
         fLOG(fs)
-        assert len(fs) > 0
+        self.assertGreater(len(fs), 0)
         for a in fs:
-            assert os.path.exists(a)
-        r = os.path.join(dest, "reveal.js", "js", "reveal.min.js")
-        assert os.path.exists(r)
+            print(a)
+            self.assertExists(a)
+        r = os.path.join(dest, "reveal.js", "js", "reveal.js")
+        self.assertExists(r)
 
 
 if __name__ == "__main__":
