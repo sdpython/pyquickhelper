@@ -11,12 +11,9 @@ from ..filehelper.compression_helper import unzip_files
 from ..filehelper.synchelper import explore_folder_iterfile
 
 
-def download_revealjs(
-        temp_folder=".",
-        unzip_to=".",
-        fLOG=print,
-        location="https://github.com/hakimel/reveal.js/releases",
-        clean=True):
+def download_revealjs(temp_folder=".", unzip_to=".", fLOG=print,
+                      location="https://github.com/hakimel/reveal.js/releases",
+                      clean=True):
     """
     Download :epkg:`reveal.js` release and unzip it.
 

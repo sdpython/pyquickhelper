@@ -323,7 +323,8 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
     # bokeh
     try:
         import bokeh
-        extensions.append('%s.sphinxext.bokeh_plot' % bokeh.__name__)
+        assert bokeh is not None
+        extensions.append('pyquickhelper.sphinxext.bokeh.bokeh_plot')
         # this ticks avoid being noticed by flake8 or pycodestyle
     except ImportError as e:
         # bokeh is not installed
@@ -791,6 +792,14 @@ def custom_setup(app, author):
     setup_images(app)
     # Already part of the added extensions.
     # setup_rst(app)
+    try:
+        import bokeh
+        assert bokeh is not None
+        from ..sphinxext.bokeh.bokeh_plot import setup as setup_bokeh
+        setup_bokeh(app)
+    except ImportError:
+        # bokeh is not installed.
+        pass
 
     # from sphinx.util.texescape import tex_replacements
     # tex_replacements += [('oe', '\\oe '), ]

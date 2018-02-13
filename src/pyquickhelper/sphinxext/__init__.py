@@ -112,6 +112,15 @@ def get_default_extensions():
                       # the rest of it
                       setup_autodoc, setup_imgmath, setup_imagesvg,
                       setup_plot, setup_only, setup_images]
+
+    try:
+        import bokeh
+        from ..sphinxext.bokeh.bokeh_plot import setup as setup_bokeh
+        default_setups.append(setup_bokeh)
+    except ImportError:
+        # bokeh is not installed.
+        pass
+
     return [_.__module__ for _ in default_setups]
 
 
