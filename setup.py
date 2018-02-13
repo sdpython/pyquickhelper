@@ -20,7 +20,8 @@ history = "HISTORY.rst"
 requirements = None
 
 KEYWORDS = project_var_name + \
-    ', synchronization, files, documentation, Xavier, Dupré'
+    ', synchronization, files, documentation, Xavier Dupré, sphinx, ' + \
+    'extension, notebooks, rst, builder, cli, setup, unit tests'
 DESCRIPTION = "Various functionalities: folder synchronization, simple logging function, " + \
               "helpers to generate documentation with sphinx, sphinx extension, " + \
               "to run a command line, to run a notebook..."

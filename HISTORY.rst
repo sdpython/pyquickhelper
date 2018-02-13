@@ -3,10 +3,10 @@
 History
 =======
 
-1.6.2413 (2018-02-13)
+1.6.2413 (2018-02-14)
 =====================
 
-**BugFix**
+**Bugfix**
 
 * `86`: avoids last line of notebooks in rst to disappear
 * `95`: fix replaced unicode characters in latex output
@@ -51,3 +51,6 @@ History
 * `77`: add class ExtUnitCase with extensive test function
 * `78`: get_temp_folder change other default directory
 * `81`: add youtube sphinx extension
+
+1.4.1000 (2016-01-01)
+=====================
