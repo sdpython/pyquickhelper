@@ -10,7 +10,7 @@ except ImportError:
 
 
 def run_sphinx_build(argv):
-    build_main(argv=argv)
+    build_main(argv=argv[1:])
 
 
 def main():

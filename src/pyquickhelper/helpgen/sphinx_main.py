@@ -249,21 +249,14 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
 
             "C:\\Program Files (x86)\\HTML Help Workshop\\hhc.exe" build\\htmlhelp\\<module>.hhp
 
-    .. versionadded:: 1.2
-        The documentation includes blog (with sphinx command ``.. blogpost::``
-        and python scripts ``.. runpython::``. The second command runs a python
-        script which outputs RST documntation adds it to the current documentation.
-
-    .. versionadded:: 1.3
-        Parameters *copy_add_ext*, *fLOG* were added.
-        Automatically add custom role and custom directive ``sharenet``.
-
-    .. versionchanged:: 1.4
-        Replace command line by direct call to
-        `sphinx <http://www.sphinx-doc.org/en/stable/>`_,
-        `nbconvert <https://nbconvert.readthedocs.io/en/latest/>`_,
-        `nbpresent <https://github.com/Anaconda-Platform/nbpresent>`_.
-        Remove parameter *use_run_cmd*.
+    The documentation includes blog (with sphinx command ``.. blogpost::``
+    and python scripts ``.. runpython::``. The second command runs a python
+    script which outputs RST documntation adds it to the current documentation.
+    The function automatically adds custom role and custom directive ``sharenet``.
+    The function directly calls
+    `sphinx <http://www.sphinx-doc.org/en/stable/>`_,
+    `nbconvert <https://nbconvert.readthedocs.io/en/latest/>`_,
+    `nbpresent <https://github.com/Anaconda-Platform/nbpresent>`_.
 
     .. versionchanged:: 1.5
         Set ``BOKEH_DOCS_MISSING_API_KEY_OK`` to 1.
@@ -284,6 +277,12 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
         *remove_unicode* can set to False or True in the documentation
         configuration file to allow or remove unicode characters
         before compiling the latex output.
+
+    .. versionchanged:: 1.7
+        Upgrade to Sphinx 1.7. It introduced a breaking
+        change with method ``app.status_iterator`` must be
+        replaced by ``status_iterator``.
+        See issue `bokeh:7520 <https://github.com/bokeh/bokeh/issues/7520>`_.
 
     .. todoext::
         :title: add subfolder when building indexes of notebooks
@@ -926,7 +925,11 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
             memo_err = sys.stderr
             sys.stdout = out
             sys.stderr = out
-            build_main(cmd)
+            try:
+                build_main(cmd[1:])
+            except SystemExit as e:
+                raise SystemExit("Unable to run Sphinx\n--CMD\n{0}\n--ERR--\n{1}\n--CWD--\n{2}\n--OUT--\n{3}\n--".format(
+                    cmd, err.getvalue(), os.getcwd(), out.getvalue())) from e
             sys.stdout = memo_out
             sys.stderr = memo_err
             out = out.getvalue()

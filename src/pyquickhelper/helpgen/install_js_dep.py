@@ -13,12 +13,12 @@ from ..sphinxext import revealjs
 def install_javascript_tools(root, dest, fLOG=noLOG,
                              revealjs_github=False):
     """
-    install extra dependencies such as reveal.js
+    Installs extra dependencies such as :epkg:`reveal.js`.
 
     @param      root                location of the documentation
     @param      dest                location of static path
     @param      fLOG                logging function
-    @param      revealjs_github     to get reveal.js from github
+    @param      revealjs_github     to get :epkg:`reveal.js` from github
 
     The function will create sub folders in folder *root*.
     """
