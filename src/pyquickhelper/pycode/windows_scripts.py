@@ -646,8 +646,7 @@ setup(
         "numpy>=1.11.1",
         "sphinx>=1.4.5",
         "pandas>=0.18.1",
-        "python-dateutil",
-        "sphinxjp.themes.revealjs", ] + jup,
+        "python-dateutil"] + jup,
 )
 """
 #########################

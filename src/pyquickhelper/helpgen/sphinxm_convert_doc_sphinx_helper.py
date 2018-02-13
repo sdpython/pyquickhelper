@@ -101,7 +101,16 @@ def update_docutils_languages(values=None):
 class _AdditionalVisitDepart:
     """
     Additional visitor and departor.
+
+    .. versionchanged:: 1.7
+        Update for Sphinx 1.7.
     """
+
+    def __init__(self, output_format):
+        """
+        .. versionadded:: 1.7
+        """
+        self.output_format = output_format
 
     def is_html(self):
         """
@@ -395,6 +404,34 @@ class _AdditionalVisitDepart:
         """
         pass
 
+    def eval_expr(self, expr):
+        rst = self.output_format == 'rst'
+        latex = self.output_format == 'latex'
+        html = self.output_format == 'html'
+        if not(rst or html or latex):
+            raise ValueError("One of them should be True")
+        try:
+            ev = eval(expr)
+        except Exception as e:
+            raise ValueError(
+                "Unable to interpret expression '{0}'".format(expr))
+        return ev
+
+    def visit_only(self, node):
+        ev = self.eval_expr(node.attributes['expr'])
+        if ev:
+            pass
+        else:
+            raise nodes.SkipNode
+
+    def depart_only(self, node):
+        ev = self.eval_expr(node.attributes['expr'])
+        if ev:
+            pass
+        else:
+            # The program should not necessarily be here.
+            pass
+
     def unknown_visit(self, node):
         raise NotImplementedError("[HTMLTranslatorWithCustomDirectives] Unknown node: '{0}' in '{1}'".format(node.__class__.__name__,
                                                                                                              self.__class__.__name__))
@@ -407,9 +444,11 @@ class HTMLTranslatorWithCustomDirectives(_AdditionalVisitDepart, HTMLTranslator)
 
     def __init__(self, builder, *args, **kwds):
         """
-        constructor
+        .. versionchanged:: 1.7
+            Does something specific for HTML. only is a node.
         """
         HTMLTranslator.__init__(self, builder, *args, **kwds)
+        _AdditionalVisitDepart.__init__(self, 'html')
         for name, f1, f2 in builder._function_node:
             setattr(self.__class__, "visit_" + name, f1)
             setattr(self.__class__, "depart_" + name, f2)
@@ -426,6 +465,7 @@ class RSTTranslatorWithCustomDirectives(_AdditionalVisitDepart, RstTranslator):
         constructor
         """
         RstTranslator.__init__(self, builder, *args, **kwds)
+        _AdditionalVisitDepart.__init__(self, 'rst')
         for name, f1, f2 in builder._function_node:
             setattr(self.__class__, "visit_" + name, f1)
             setattr(self.__class__, "depart_" + name, f2)

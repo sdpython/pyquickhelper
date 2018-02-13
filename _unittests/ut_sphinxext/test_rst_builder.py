@@ -221,6 +221,63 @@ class TestRstBuilder(unittest.TestCase):
         if t1 not in html:
             raise Exception(html)
 
+    def test_rst_only(self):
+        fLOG(
+            __file__,
+            self._testMethodName,
+            OutputPrint=__name__ == "__main__")
+
+        from docutils import nodes as skip_
+
+        content = """
+                    test a directive
+                    ================
+
+                    .. only:: html
+
+                        only for html
+
+                    .. only:: rst
+
+                        only for rst
+
+                    """.replace("                    ", "")
+        if sys.version_info[0] >= 3:
+            content = content.replace('u"', '"')
+
+        tives = [("cmdref", CmdRef, cmdref_node,
+                  visit_cmdref_node, depart_cmdref_node)]
+
+        text = rst2html(content,  # fLOG=fLOG,
+                        writer="rst", keep_warnings=True,
+                        directives=tives, extlinks={'issue': ('http://%s', '_issue_')})
+
+        temp = get_temp_folder(__file__, "temp_only")
+        with open(os.path.join(temp, "out_cmdref.rst"), "w", encoding="utf8") as f:
+            f.write(text)
+
+        t1 = "only for rst"
+        if t1 not in text:
+            raise Exception(text)
+        t1 = "only for html"
+        if t1 in text:
+            raise Exception(text)
+
+        text = rst2html(content,  # fLOG=fLOG,
+                        writer="html", keep_warnings=True,
+                        directives=tives, extlinks={'issue': ('http://%s', '_issue_')})
+
+        temp = get_temp_folder(__file__, "temp_only")
+        with open(os.path.join(temp, "out_cmdref.rst"), "w", encoding="utf8") as f:
+            f.write(text)
+
+        t1 = "only for rst"
+        if t1 in text:
+            raise Exception(text)
+        t1 = "only for html"
+        if t1 not in text:
+            raise Exception(text)
+
 
 if __name__ == "__main__":
     unittest.main()

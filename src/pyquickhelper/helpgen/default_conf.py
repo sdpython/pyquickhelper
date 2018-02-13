@@ -642,7 +642,7 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
         }
 
     # notebooks replacements (post-process)
-    notebook_replacements = {'html': [('\mathbb{1}_', '\mathbf{1\!\!1}_')]}
+    notebook_replacements = {'html': [('\\mathbb{1}_', '\\mathbf{1\\!\\!1}_')]}
 
     ###########################
     # collect local variables

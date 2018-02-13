@@ -380,7 +380,7 @@ def rst2html(s, fLOG=noLOG, writer="html", keep_warnings=False,
         if layout == "sphinx":
             return page
         elif layout == "sphinx_body":
-            lines = page.split("\n")
+            lines = page.replace('</head>', '</head>\n').split("\n")
             keep = []
             begin = False
             for line in lines:
@@ -391,7 +391,8 @@ def rst2html(s, fLOG=noLOG, writer="html", keep_warnings=False,
                     keep.append(line)
                 if s == "<body>":
                     begin = True
-            return "\n".join(keep)
+            res = "\n".join(keep)
+            return res
         else:
             raise ValueError(
                 "unexpected value for layout '{0}'".format(layout))

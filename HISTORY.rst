@@ -3,7 +3,7 @@
 History
 =======
 
-1.6.9999 (2018-12-31)
+1.7.9999 (2018-02-13)
 =====================
 
 **BugFix**
@@ -12,6 +12,7 @@ History
 * `95`: fix replaced unicode characters in latex output
 * `99`: fix issue with subfolders in example galleries
 * `96`: better handling of notebooks for latex
+* `101`: update to Sphinx 1.7
 
 **Features**
 

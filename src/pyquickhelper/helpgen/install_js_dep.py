@@ -7,6 +7,7 @@ import os
 from ..loghelper.flog import noLOG
 from .install_custom import download_revealjs, download_requirejs
 from ..filehelper import synchronize_folder, change_file_status
+from ..sphinxext import revealjs
 
 
 def install_javascript_tools(root, dest, fLOG=noLOG,
@@ -31,13 +32,8 @@ def install_javascript_tools(root, dest, fLOG=noLOG,
     else:
         rev = os.path.join(dest, "reveal.js")
         if not os.path.exists(rev):
-            try:
-                import sphinxjp.themes.revealjs
-            except ImportError:
-                raise ImportError(
-                    "module sphinxjp.themes.revealjs is needed to get reveal.js javascript files")
 
-            folder = os.path.dirname(sphinxjp.themes.revealjs.__file__)
+            folder = os.path.dirname(revealjs.__file__)
             js = os.path.join(folder, "templates", "revealjs", "static")
             os.mkdir(rev)
             sync = synchronize_folder(js, rev, copy_1to2=True, fLOG=fLOG)

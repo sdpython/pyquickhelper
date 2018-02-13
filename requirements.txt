@@ -17,7 +17,7 @@ mistune
 nbconvert>=5.0.0
 nbformat
 nbpresent
-nbsphinx
+nbsphinx>=0.3.1
 notebook>=5.0.0
 numpy>=1.11.1
 openpyxl
@@ -39,7 +39,6 @@ sphinx-gallery
 sphinx-rtd-theme
 sphinxcontrib-imagesvg
 sphinxcontrib-jsdemo
-sphinxjp.themes.revealjs
 sphinxjp.themes.sphinxjp
 tqdm
 unify

@@ -61,6 +61,7 @@ class TestAutoSignature(unittest.TestCase):
         newstring = "\n\n".join(newstring)
         htmls = rst2html(newstring, layout="sphinx_body")
         sys.path.pop()
+        self.assertIn("CCCCCCCCCCCCCCCC", htmls)
 
         from docutils.parsers.rst.directives import _directives
         self.assertTrue("autosignature" in _directives)
@@ -103,6 +104,7 @@ class TestAutoSignature(unittest.TestCase):
         newstring = "\n".join(newstring)
         htmls = rst2html(newstring, layout="sphinx_body")
         sys.path.pop()
+        self.assertIn("CCCCCCCCCCCCCCCC", htmls)
 
         html = htmls.split("CCCCCCCCCCCCCCCC")
         if "onemethod" not in html[0]:
@@ -137,6 +139,7 @@ class TestAutoSignature(unittest.TestCase):
         newstring = "\n".join(newstring)
         htmls = rst2html(newstring, layout="sphinx_body")
         sys.path.pop()
+        self.assertIn("CCCCCCCCCCCCCCCC", htmls)
 
         html = htmls.split("CCCCCCCCCCCCCCCC")
         if "onemethod" not in html[0]:
@@ -170,6 +173,7 @@ class TestAutoSignature(unittest.TestCase):
         newstring = "\n".join(newstring)
         htmls = rst2html(newstring, layout="sphinx_body")
         sys.path.pop()
+        self.assertIn("CCCCCCCCCCCCCCCC", htmls)
 
         html = htmls.split("CCCCCCCCCCCCCCCC")
         if "onefunction" not in html[0]:

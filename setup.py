@@ -12,7 +12,7 @@ from setuptools import find_packages
 #########
 
 project_var_name = "pyquickhelper"
-sversion = "1.6"
+sversion = "1.7"
 versionPython = "%s.%s" % (sys.version_info.major, sys.version_info.minor)
 path = "Lib/site-packages/" + project_var_name
 readme = 'README.rst'
@@ -45,12 +45,26 @@ package_data = {project_var_name + ".sphinxext": ["*.png"],
                 project_var_name + ".filehelper": ["*.js", "*.css"],
                 project_var_name + ".helpgen": ["*.js"],
                 project_var_name + ".sphinxext.releases": ["*.txt"],
-                project_var_name + ".sphinxext.sphinximages.sphinxcontrib_images_lightbox2.lightbox2_customize": ["*.js"],
-                project_var_name + ".sphinxext.sphinximages.sphinxcontrib_images_lightbox2.lightbox2.css": ["*.css"],
-                project_var_name + ".sphinxext.sphinximages.sphinxcontrib_images_lightbox2.lightbox2.img": ["*.png", "*.gif"],
-                project_var_name + ".sphinxext.sphinximages.sphinxcontrib_images_lightbox2.lightbox2.js": ["*.js", "*.map"],
-                project_var_name + ".sphinxext.sphinximages.sphinxcontrib_images_lightbox2.lightbox2.sass": ["*.sass"],
-                }
+                project_var_name + ".sphinxext.revealjs.templates.revealjs": ["*.conf", "*.html"],
+                project_var_name + ".sphinxext.revealjs.templates.revealjs.static": ["LICENSE", "*.json", "*.css_t"],
+                project_var_name + ".sphinxext.revealjs.templates.revealjs.static.css": ["*.css", "*.scss"],
+                project_var_name + ".sphinxext.revealjs.templates.revealjs.static.css.print": ["*.css"],
+                project_var_name + ".sphinxext.revealjs.templates.revealjs.static.css.theme": ["*.css", "*.md"],
+                project_var_name + ".sphinxext.revealjs.templates.revealjs.static.css.theme.source": ["*.scss"],
+                project_var_name + ".sphinxext.revealjs.templates.revealjs.static.css.theme.template": ["*.scss"],
+                project_var_name + ".sphinxext.revealjs.templates.revealjs.static.js": ["*.js"],
+                project_var_name + ".sphinxext.revealjs.templates.revealjs.static.lib.css": ["*.css"],
+                project_var_name + ".sphinxext.revealjs.templates.revealjs.static.lib.font": ["league-gothic/*.*", "source-sans-pro/*.*"],
+                project_var_name + ".sphinxext.revealjs.templates.revealjs.static.lib.js": ["*.js"],
+                project_var_name + ".sphinxext.revealjs.templates.revealjs.static.lib.plugin": [
+    "highlight/*.js", "markdown/*.*", "math/*.js", "multiplex/*.*",
+    "notes/*.*", "notes-server/*.*", "print-pdf/*.js", "search/*js", "zoom-js/*.js"],
+    project_var_name + ".sphinxext.sphinximages.sphinxcontrib_images_lightbox2.lightbox2_customize": ["*.js"],
+    project_var_name + ".sphinxext.sphinximages.sphinxcontrib_images_lightbox2.lightbox2.css": ["*.css"],
+    project_var_name + ".sphinxext.sphinximages.sphinxcontrib_images_lightbox2.lightbox2.img": ["*.png", "*.gif"],
+    project_var_name + ".sphinxext.sphinximages.sphinxcontrib_images_lightbox2.lightbox2.js": ["*.js", "*.map"],
+    project_var_name + ".sphinxext.sphinximages.sphinxcontrib_images_lightbox2.lightbox2.sass": ["*.sass"],
+}
 
 ############
 # functions
@@ -253,7 +267,6 @@ if not r:
             "sphinx>=1.6",
             "sphinx-gallery",
             "sphinxcontrib-imagesvg",
-            "sphinxjp.themes.revealjs",
             "tqdm",
             "unify",
         ],

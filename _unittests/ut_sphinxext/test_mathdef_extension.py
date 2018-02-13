@@ -110,7 +110,7 @@ class TestMathDefExtension(unittest.TestCase):
                         :title: first def2
                         :tag: Theoreme
 
-                        this code shoud appear___
+                        this code should appear___
 
                     middle
 
@@ -133,7 +133,7 @@ class TestMathDefExtension(unittest.TestCase):
         with open(os.path.join(temp, "test_mathdeflist.html"), "w", encoding="utf8") as f:
             f.write(html)
 
-        t1 = "this code shoud appear"
+        t1 = "this code should appear"
         if t1 not in html:
             raise Exception(html)
 
@@ -163,7 +163,7 @@ class TestMathDefExtension(unittest.TestCase):
                         :title: first def2
                         :tag: Theoreme
 
-                        this code shoud appear___
+                        this code should appear___
 
                     middle
 
@@ -187,7 +187,7 @@ class TestMathDefExtension(unittest.TestCase):
         with open(os.path.join(temp, "test_mathdeflist_contents.html"), "w", encoding="utf8") as f:
             f.write(html)
 
-        t1 = "this code shoud appear"
+        t1 = "this code should appear"
         if t1 not in html:
             raise Exception(html)
 
@@ -217,7 +217,7 @@ class TestMathDefExtension(unittest.TestCase):
                         :title: first def2
                         :tag: Theoreme
 
-                        this code shoud appear___
+                        this code should appear___
 
                     middle
 
@@ -246,7 +246,6 @@ class TestMathDefExtension(unittest.TestCase):
         body = rst2html(content,  # fLOG=fLOG,
                         writer="custom", keep_warnings=True,
                         directives=tives, layout="sphinx_body")
-
         if "<body>" in body:
             raise Exception(body)
         if "</body>" in body:
@@ -261,7 +260,7 @@ class TestMathDefExtension(unittest.TestCase):
         if "alabaster" in html:
             raise Exception(html)
 
-        t1 = "this code shoud appear"
+        t1 = "this code should appear"
         if t1 not in body:
             raise Exception(body)
 

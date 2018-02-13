@@ -1077,6 +1077,34 @@ class RstTranslator(TextTranslator):
     def depart_Release(self, node):
         self.add_text('`')
 
+    def eval_expr(self, expr):
+        rst = True
+        html = False
+        latex = False
+        if not(rst or html or latex):
+            raise ValueError("One of them should be True")
+        try:
+            ev = eval(expr)
+        except Exception as e:
+            raise ValueError(
+                "Unable to interpret expression '{0}'".format(expr))
+        return ev
+
+    def visit_only(self, node):
+        ev = self.eval_expr(node.attributes['expr'])
+        if not ev:
+            pass
+        else:
+            raise nodes.SkipNode
+
+    def depart_only(self, node):
+        ev = self.eval_expr(node.attributes['expr'])
+        if ev:
+            pass
+        else:
+            # The program should not necessarily be here.
+            pass
+
     def unknown_visit(self, node):
         raise NotImplementedError(
             "Unknown node: '{0}'".format(node.__class__.__name__))

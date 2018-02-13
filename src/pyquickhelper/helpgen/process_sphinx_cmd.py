@@ -3,7 +3,10 @@
 @brief Calls nbconvert in command line for latex and pdf
 """
 import sys
-from sphinx import build_main
+try:
+    from sphinx import build_main
+except ImportError:
+    from sphinx.cmd.build import main as build_main
 
 
 def run_sphinx_build(argv):
