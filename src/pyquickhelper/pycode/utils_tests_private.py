@@ -209,8 +209,13 @@ def import_files(li, additional_ut_path=None, fLOG=noLOG):
                     continue
                 # method d.c
                 loc = locals()
-                exec(
-                    compile("t = mo." + c + "(\"" + d + "\")", "", "exec"), globals(), loc)
+                code = "t = mo." + c + "(\"" + d + "\")"
+                cp = compile(code, "", "exec")
+                try:
+                    exec(cp, globals(), loc)
+                except Exception as e:
+                    raise Exception(
+                        "Unable to execute code '{0}'".format(code)) from e
                 t = loc["t"]
                 testsuite.addTest(t)
 

@@ -143,7 +143,7 @@ class TestRevealjsDirective(unittest.TestCase):
         self.assertEqual("title-heading", nodes[0]['title-heading'])
 
 
-class TestRvSmallDirective(object):
+class TestRvSmallDirective(unittest.TestCase):
 
     def _get_target_class(self):
         return RvSmallDirective
@@ -188,7 +188,7 @@ class TestRvSmallDirective(object):
         self.assertEqual('add-class', nodes[0]['classes'])
 
 
-class TestRvNoteDirective(object):
+class TestRvNoteDirective(unittest.TestCase):
 
     def _get_target_class(self):
         return RvNoteDirective
@@ -233,7 +233,7 @@ class TestRvNoteDirective(object):
         assert 'add-class' == nodes[0]['classes']
 
 
-class TestRvCodeDirective(object):
+class TestRvCodeDirective(unittest.TestCase):
 
     def _get_target_class(self):
         return RvCodeDirective
@@ -269,7 +269,7 @@ class TestRvCodeDirective(object):
         assert 1 == len(nodes)
 
 
-class TestVisitRevealjs(object):
+class TestVisitRevealjs(unittest.TestCase):
 
     def _get_target(self):
         return visit_revealjs
@@ -369,7 +369,7 @@ class TestVisitRevealjs(object):
         ], dummyself.body.content)
 
 
-class TestDepartRevealjs(object):
+class TestDepartRevealjs(unittest.TestCase):
 
     def _get_target(self):
         return depart_revealjs
@@ -395,7 +395,7 @@ class TestDepartRevealjs(object):
         assert '</section>\n' == dummyself.body.content[0]
 
 
-class TestVisitRvCode(object):
+class TestVisitRvCode(unittest.TestCase):
 
     def _get_target(self):
         return visit_rv_code
@@ -439,7 +439,7 @@ class TestVisitRvCode(object):
         assert 'rawsource' == dummyself.body.content[2]
 
 
-class TestDepartRvCode(object):
+class TestDepartRvCode(unittest.TestCase):
 
     def _get_target(self):
         return depart_rv_code
@@ -467,7 +467,7 @@ class TestDepartRvCode(object):
         assert '</pre>\n' == dummyself.body.content[1]
 
 
-class TestVisitRvSmall(object):
+class TestVisitRvSmall(unittest.TestCase):
 
     def _get_target(self):
         return visit_rv_small
@@ -510,7 +510,7 @@ class TestVisitRvSmall(object):
         assert True is dummyself.first_last
 
 
-class TestDepartRvSmall(object):
+class TestDepartRvSmall(unittest.TestCase):
 
     def _get_target(self):
         return depart_rv_small
@@ -537,7 +537,7 @@ class TestDepartRvSmall(object):
         assert '</small>\n' == dummyself.body.content[0]
 
 
-class TestVisitRvNote(object):
+class TestVisitRvNote(unittest.TestCase):
 
     def _get_target(self):
         return visit_rv_note
@@ -582,7 +582,7 @@ class TestVisitRvNote(object):
         assert True is dummyself.first_last
 
 
-class TestDepartRvNote(object):
+class TestDepartRvNote(unittest.TestCase):
 
     def _get_target(self):
         return depart_rv_note
@@ -609,7 +609,7 @@ class TestDepartRvNote(object):
         assert '</aside>\n' == dummyself.body.content[0]
 
 
-class TestSetup(object):
+class TestSetup(unittest.TestCase):
 
     def _get_target(self):
         return setup
