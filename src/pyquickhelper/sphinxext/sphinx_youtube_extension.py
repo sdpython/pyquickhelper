@@ -9,8 +9,7 @@
 import re
 import sphinx
 from docutils import nodes
-from docutils.parsers.rst import directives
-from sphinx.util.compat import Directive
+from docutils.parsers.rst import Directive, directives
 from sphinx.util import logging
 
 CONTROL_HEIGHT = 30

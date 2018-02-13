@@ -34,7 +34,7 @@ python-jenkins
 PyYAML
 semantic_version
 setuptools
-Sphinx
+Sphinx>=1.7
 sphinx-gallery
 sphinx-rtd-theme
 sphinxcontrib-imagesvg
