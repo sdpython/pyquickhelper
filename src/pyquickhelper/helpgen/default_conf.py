@@ -320,16 +320,6 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
             # TODO: check on linux
             pass
 
-    # bokeh
-    try:
-        import bokeh
-        assert bokeh is not None
-        extensions.append('pyquickhelper.sphinxext.bokeh.bokeh_plot')
-        # this ticks avoid being noticed by flake8 or pycodestyle
-    except ImportError as e:
-        # bokeh is not installed
-        pass
-
     if add_extensions is not None:
         extensions.extend(add_extensions)
 

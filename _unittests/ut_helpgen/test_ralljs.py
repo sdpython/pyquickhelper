@@ -41,7 +41,6 @@ class TestAlljs(ExtTestCase):
         fLOG(fs)
         self.assertGreater(len(fs), 0)
         for a in fs:
-            print(a)
             self.assertExists(a)
         r = os.path.join(dest, "reveal.js", "js", "reveal.js")
         self.assertExists(r)
