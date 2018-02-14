@@ -91,7 +91,7 @@ class TestPaths(unittest.TestCase):
             OutputPrint=__name__ == "__main__")
 
         temp = get_temp_folder(__file__, "temp_history_long")
-        history = os.path.join(temp, '..', '..', '..', 'history.rst')
+        history = os.path.join(temp, '..', '..', '..', 'HISTORY.rst')
         with open(history, 'r', encoding='utf-8') as f:
             history = f.read()
 
