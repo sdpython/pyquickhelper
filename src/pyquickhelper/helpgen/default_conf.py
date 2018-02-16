@@ -188,11 +188,28 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
             \\newcommand{\\R}{\\mathbb{R}}
             \\newcommand{\\HRule}{\\rule{\\linewidth}{0.5mm}}
             %\\titleformat{\\chapter}[hang]{\\Huge\\bfseries\\sffamily}{\\thechapter\\hsp}{0pt}{\\Huge\\bfseries\\sffamily}
+
+            \\renewcommand{\\Verbatim}[1][1]{%
+            \\bgroup\\parskip=0pt%
+            \\smallskip%
+            \\list{}{%
+                \\setlength\\parskip{0pt}%
+                \\setlength\\itemsep{0ex}%
+                \\setlength\\topsep{0ex}%
+                \\setlength\\partopsep{0pt}%
+                \\setlength\\leftmargin{10pt}%
+            }%
+            \\item\\MakeFramed{\\FrameRestore}%
+            \\tiny
+            \\OriginalVerbatim[#1]%
+            }
             '''.replace("            ", "")
 
-    latex_elements = {'papersize': 'a4', 'pointsize': '10pt',
-                      'preamble': preamble,
-                      }
+    latex_elements = {
+        'papersize': 'a4',
+        'pointsize': '10pt',
+        'preamble': preamble,
+    }
 
     # pyquickhelper automation
     auto_rst_generation = True
