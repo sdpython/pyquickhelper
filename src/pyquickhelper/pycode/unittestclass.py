@@ -177,6 +177,29 @@ class ExtTestCase(unittest.TestCase):
         if not callable(fct):
             raise AssertionError("fct is not callable: {0}".format(type(fct)))
 
+    def assertEqualDict(self, a, b):
+        """
+        Checks that ``a == b``.
+        """
+        if not isinstance(a, dict):
+            raise TypeError('a is not dict but {0}'.format(type(a)))
+        if not isinstance(b, dict):
+            raise TypeError('b is not dict but {0}'.format(type(b)))
+        rows = []
+        for key in sorted(b):
+            if key not in a:
+                rows.append("** Added key '{0}' in b".format(key))
+            else:
+                if a[key] != b[key]:
+                    rows.append(
+                        "** Value != for key '{0}': != {1}".format(key, [a[key], "***", b[key]]))
+        for key in sorted(a):
+            if key not in b:
+                rows.append("** Removed key '{0}' in a".format(key))
+        if len(rows) > 0:
+            raise AssertionError(
+                "Dictionaries are different\n{0}".format('\n'.join(rows)))
+
 
 def skipif_appveyor(msg):
     """
