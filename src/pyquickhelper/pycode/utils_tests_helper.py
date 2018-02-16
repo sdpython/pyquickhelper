@@ -31,7 +31,9 @@ def get_temp_folder(thisfile, name=None, clean=True, create=True, max_path=False
 
     @param      thisfile        use ``__file__`` or the function which runs the test
     @param      name            name of the temporary folder
-    @param      clean           if True, clean the folder first
+    @param      clean           if True, clean the folder first, it can also a function
+                                called to determine whether or not the folder should be
+                                cleaned
     @param      create          if True, creates it (empty if clean is True)
     @param      max_path        create a folder at root level to reduce path length,
                                 the function checks the ``MAX_PATH`` variable and
@@ -48,6 +50,10 @@ def get_temp_folder(thisfile, name=None, clean=True, create=True, max_path=False
         the temporary folder base on the name of the method. *name* must be None.
         Parameters *max_path*, *max_path_name* were added to change the location to
         ``\\max_path_name`` if the ``MAX_PATH`` might be reached (on Windows)
+
+    .. versionchanged:: 1.7
+        Parameter *clean* can be a function.
+        Signature is ``def clean(folder)``.
     """
     if name is None:
         name = thisfile.__name__
@@ -81,7 +87,7 @@ def get_temp_folder(thisfile, name=None, clean=True, create=True, max_path=False
             if nmode != mode:
                 os.chmod(local, nmode)
     else:
-        if clean:
+        if (callable(clean) and clean(local)) or (not callable(clean) and clean):
             remove_folder(local)
             time.sleep(0.1)
         if create and not os.path.exists(local):
