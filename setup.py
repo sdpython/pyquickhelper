@@ -12,7 +12,7 @@ from setuptools import find_packages
 #########
 
 project_var_name = "pyquickhelper"
-sversion = "1.6"
+sversion = "1.7"
 versionPython = "%s.%s" % (sys.version_info.major, sys.version_info.minor)
 path = "Lib/site-packages/" + project_var_name
 readme = 'README.rst'
