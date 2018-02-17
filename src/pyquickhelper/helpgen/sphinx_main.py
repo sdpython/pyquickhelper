@@ -1088,6 +1088,21 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
             for img in enumerate_copy_images_for_slides(src, dest):
                 fLOG("[generate_help_sphinx] [imgs]    copy image for slides:", img)
 
+    ######
+    # copy pdf to html
+    ######
+    latex = os.path.join(build_path, "latex")
+    html = os.path.join(build_path, "latex")
+    if os.path.exists(html) and os.path.exists(latex):
+        pdfs = os.listdir(latex)
+        for pdf in pdfs:
+            ext = os.path.splitext(pdf)[-1]
+            if ext != '.pdf':
+                continue
+            full = os.path.join(latex, pdf)
+            fLOG("[generate_help_sphinx] [pdf] copy:", pdf)
+            shutil.copy(full, html)
+
     #####
     # end
     #####
