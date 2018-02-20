@@ -16,10 +16,9 @@ environment:
       PYTHON_ARCH: "64"
 
 init:
-    ps:
-       choco install miktex.portable
-       refreshenv
-  - "ECHO %PYTHON% %PYTHON_VERSION% %PYTHON_ARCH%"
+  ps:
+       - choco install miktex.portable
+       - refreshenv
 
 install:
   - "%PYTHON%\\python -m pip install --upgrade pip"
