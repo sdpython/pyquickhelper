@@ -267,11 +267,13 @@ def ungzip_files(filename, where_to=None, fLOG=noLOG, fvalid=None, remove_space=
             except Exception as e:
                 raise IOError(
                     "Unable to unzip file '{0}'".format(filename)) from e
-        else:
-            filename = filename.replace(".gz", "")
+        elif where_to is not None:
+            filename = os.path.split(filename)[-1].replace(".gz", "")
+            filename = os.path.join(where_to, filename)
             with open(filename, "wb") as f:
                 f.write(content)
             return filename
+        return content
     else:
         f = gzip.open(filename, 'rt', encoding="utf-8")
         content = f.read()
