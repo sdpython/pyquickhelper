@@ -15,7 +15,7 @@ environment:
       PYTHON_VERSION: "3.6.x"
       PYTHON_ARCH: "64"
 
-init:
+install:
     # Install miktex to get pdflatex, if we don't get it from the cache
     # - if not exist c:\miktex\texmfs\install\miktex\bin\pdflatex.exe appveyor DownloadFile http://miktex.org/download/ctan/systems/win32/miktex/setup/windows-x86/miktex-portable.exe
     # - if not exist c:\miktex\texmfs\install\miktex\bin\pdflatex.exe 7z x miktex-portable.exe -oC:\miktex >NUL
@@ -27,24 +27,23 @@ init:
     - set "PATH=%PATH%;c:\miktex\texmfs\install\miktex\bin"
     # Enable installing miktex  packages on the fly
     - initexmf --set-config-value [MPM]AutoInstall=1
-
-install:
-  - "%PYTHON%\\python -m pip install --upgrade pip"
-  - "%PYTHON%\\Scripts\\pip install pymyinstall"
-  - "%PYTHON%\\Scripts\\pymy_install3 --set=pyquickhelper"
-  - "%PYTHON%\\Scripts\\pymy_install3 matplotlib autopy3 pylzma pillow psutil"
-  - "%PYTHON%\\Scripts\\pip install cryptography keyring"
-  - "%PYTHON%\\Scripts\\pip install pycryptodomex"
-  - "%PYTHON%\\Scripts\\pip install mako"
-  - "%PYTHON%\\Scripts\\pip install imagesize"
-  - "%PYTHON%\\Scripts\\pip install nbpresent tqdm"
-  - "%PYTHON%\\Scripts\\pip install backports.shutil-get-terminal-size"
-  - "%PYTHON%\\Scripts\\pip install pycodestyle jyquickhelper"
-  - "%PYTHON%\\Scripts\\pip install python-jenkins"
-  - "%PYTHON%\\Scripts\\pip install prompt_toolkit et_xmlfile semantic_version"
-  - "%PYTHON%\\Scripts\\pip install https://github.com/ipython-contrib/jupyter_contrib_nbextensions/tarball/master"
-  - "dir %PYTHON%\\Scripts"
-  - "%PYTHON%\\Scripts\\jupyter-nbextension enable --py --sys-prefix widgetsnbextension"
+    # Python
+    - "%PYTHON%\\python -m pip install --upgrade pip"
+    - "%PYTHON%\\Scripts\\pip install pymyinstall"
+    - "%PYTHON%\\Scripts\\pymy_install3 --set=pyquickhelper"
+    - "%PYTHON%\\Scripts\\pymy_install3 matplotlib autopy3 pylzma pillow psutil"
+    - "%PYTHON%\\Scripts\\pip install cryptography keyring"
+    - "%PYTHON%\\Scripts\\pip install pycryptodomex"
+    - "%PYTHON%\\Scripts\\pip install mako"
+    - "%PYTHON%\\Scripts\\pip install imagesize"
+    - "%PYTHON%\\Scripts\\pip install nbpresent tqdm"
+    - "%PYTHON%\\Scripts\\pip install backports.shutil-get-terminal-size"
+    - "%PYTHON%\\Scripts\\pip install pycodestyle jyquickhelper"
+    - "%PYTHON%\\Scripts\\pip install python-jenkins"
+    - "%PYTHON%\\Scripts\\pip install prompt_toolkit et_xmlfile semantic_version"
+    - "%PYTHON%\\Scripts\\pip install https://github.com/ipython-contrib/jupyter_contrib_nbextensions/tarball/master"
+    - "dir %PYTHON%\\Scripts"
+    - "%PYTHON%\\Scripts\\jupyter-nbextension enable --py --sys-prefix widgetsnbextension"
 
 build: off
 
