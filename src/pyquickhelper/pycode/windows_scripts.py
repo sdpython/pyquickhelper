@@ -428,8 +428,6 @@ jupyter-notebook --notebook-dir=_doc\\notebooks --NotebookApp.token= --NotebookA
 #################
 windows_publish = """
 @echo SCRIPT: windows_publish
-%pythonexe% %current%setup.py rotate --match=.zip --keep=1
-%pythonexe% %current%setup.py rotate --match=.tar.gz --keep=10
 %pythonexe% %current%setup.py rotate --match=.whl --keep=10
 rem %pythonexe% %current%setup.py sdist register
 pushd %current%
