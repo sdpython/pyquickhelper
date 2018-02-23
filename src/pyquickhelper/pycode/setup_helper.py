@@ -49,7 +49,7 @@ def available_commands_list(argv):
     @param      argv        sys.arg
     @return                 bool
     """
-    commands = {"bdist_msi", "build_script", "build_sphinx",
+    commands = {"bdist_msi", "build_script", "build_sphinx", "bdist_egg",
                 "bdist_wheel", "bdist_wininst", "build_ext",
                 "clean_pyd", "clean_space", "copy_dist",
                 "copy27", "run27", "build27",
