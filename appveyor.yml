@@ -26,7 +26,7 @@ init:
     - if not exist c:\miktex\texmfs\install\miktex\bin\pdflatex.exe @echo Unable to find c:\miktex\texmfs\install\miktex\bin\pdflatex.exe
     - set "PATH=%PATH%;c:\miktex\texmfs\install\miktex\bin"
     # Enable installing miktex  packages on the fly
-    - initexmf --admin --set-config-value [MPM]AutoInstall=1
+    - initexmf --set-config-value [MPM]AutoInstall=1
 
 install:
   - "%PYTHON%\\python -m pip install --upgrade pip"
