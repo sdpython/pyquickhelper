@@ -84,11 +84,11 @@ def is_local():
                   "run27", "sdist", "setupdep", "test_local_pypi", "upload_docs", "setup_hook",
                   "copy_sphinx", "write_version"}:
         if cname in sys.argv:
-	        try:
-	            import_pyquickhelper()
-	        except ImportError:
-	            return False
-	        return True
+            try:
+                import_pyquickhelper()
+            except ImportError:
+                return False
+            return True
     else:
         return False
 
@@ -202,6 +202,11 @@ if is_local():
         raise Exception("unable to interpret command line: " + str(sys.argv))
 else:
     r = False
+
+if ask_help():
+    pyquickhelper = import_pyquickhelper()
+    from pyquickhelper.pycode import process_standard_options_for_setup_help
+    process_standard_options_for_setup_help(sys.argv)
 
 if not r:
     if len(sys.argv) in (1, 2) and sys.argv[-1] in ("--help-commands",):

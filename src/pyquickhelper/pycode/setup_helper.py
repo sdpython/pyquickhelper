@@ -802,21 +802,36 @@ def process_standard_options_for_setup_help(argv):
             print("  {0}{1}{2}".format(
                 k, " " * (len("copy27            ") - len(k)), v))
         print()
-    elif "--help" in sys.argv:
+    elif "--help" in argv:
+        docu = 0
         for k, v in sorted(commands.items()):
             if k in argv:
-                print("\n  {0}\n\n  {1}".format(k, v))
-                if k == "unittests":
-                    print(
-                        "\n  {0} [-d seconds] [-f file] [-e regex] [-g regex]\n\n  {1}".format(k, v))
-                    print(
-                        "  -d seconds     run all unit tests for which predicted duration is below a given threshold.")
-                    print(
-                        "  -f file        run all unit tests in file (do not use the full path)")
-                    print(
-                        "  -e regex       run all unit tests files matching the regular expression")
-                    print(
-                        "  -g regex       run all unit tests files not matching the regular expression")
+                docu += 1
+
+        if docu == 0:
+            print("pyquickhelper commands:")
+            print()
+            for k in sorted(commands):
+                process_standard_options_for_setup_help(['--help', k])
+            print()
+        else:
+            for k, v in sorted(commands.items()):
+                if k in argv:
+                    docu += 1
+                    print("  setup.py {0}{1}{2}".format(
+                        k, " " * (20 - len(k)), v))
+                    if k == "unittests":
+                        print(
+                            "\n      {0} [-d seconds] [-f file] [-e regex] [-g regex]\n\n      {1}".format(k, v))
+                        print(
+                            "      -d seconds     run all unit tests for which predicted duration is below a given threshold.")
+                        print(
+                            "      -f file        run all unit tests in file (do not use the full path)")
+                        print(
+                            "      -e regex       run all unit tests files matching the regular expression")
+                        print(
+                            "      -g regex       run all unit tests files not matching the regular expression")
+                        print()
 
 
 def write_module_scripts(folder, platform=sys.platform, blog_list=None,
