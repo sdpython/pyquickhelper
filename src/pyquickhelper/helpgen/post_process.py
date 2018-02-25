@@ -315,6 +315,10 @@ def post_process_rst_output(file, html, pdf, python, slides, present, is_noteboo
 
     .. versionchanged:: 1.6
         Parameter *notebook_replacements* was added.
+
+    .. versionchanged:: 1.7
+        Add this replacement:
+        ``st = st.replace("\\\\mathbb{1}", "\\\\mathbf{1\\\\!\\\\!1}")``.
     """
     if fLOG:
         fLOG("[post_process_rst_output]    post_process_rst_output", file)
@@ -517,6 +521,9 @@ def post_process_rst_output(file, html, pdf, python, slides, present, is_noteboo
 
     # notebooks replacements
     content = _notebook_replacements(content, notebook_replacements, fLOG)
+
+    # replaces the function
+    content = content.replace("\\mathbb{1}", "\\mathbf{1\\!\\!1}")
 
     with open(file, "w", encoding="utf8") as f:
         f.write(content)
