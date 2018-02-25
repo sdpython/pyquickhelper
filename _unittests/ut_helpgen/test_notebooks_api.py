@@ -22,12 +22,12 @@ except ImportError:
     import src
 
 from src.pyquickhelper.loghelper import fLOG
-from src.pyquickhelper.pycode import get_temp_folder, is_travis_or_appveyor
+from src.pyquickhelper.pycode import get_temp_folder, is_travis_or_appveyor, ExtTestCase
 from src.pyquickhelper.helpgen import nb2slides, nb2html, nb2rst
 from src.pyquickhelper.ipythonhelper import read_nb
 
 
-class TestNotebookAPI (unittest.TestCase):
+class TestNotebookAPI(ExtTestCase):
 
     def test_convert_slides_api_html(self):
         fLOG(
@@ -47,21 +47,21 @@ class TestNotebookAPI (unittest.TestCase):
                 "_doc",
                 "notebooks"))
         nb = os.path.join(fold, "example_pyquickhelper.ipynb")
-        self.assertTrue(os.path.exists(nb))
+        self.assertExists(nb)
         nbr = read_nb(nb, kernel=False)
 
         temp = get_temp_folder(__file__, "temp_nb_api_html")
         outfile = os.path.join(temp, "out_nb_slides.slides.html")
         res = nb2slides(nbr, outfile)
-        self.assertTrue(len(res) > 1)
+        self.assertGreater(len(res), 1)
         for r in res:
-            self.assertTrue(os.path.exists(r))
+            self.assertExists(r)
 
         outfile = os.path.join(temp, "out_nb_slides.html")
         res = nb2html(nbr, outfile)
         self.assertEqual(len(res), 1)
         for r in res:
-            self.assertTrue(os.path.exists(r))
+            self.assertExists(r)
 
     def test_convert_slides_api_rst(self):
         fLOG(
@@ -85,7 +85,7 @@ class TestNotebookAPI (unittest.TestCase):
                 "_doc",
                 "notebooks"))
         nb = os.path.join(fold, "example_pyquickhelper.ipynb")
-        self.assertTrue(os.path.exists(nb))
+        self.assertExists(nb)
         nbr = read_nb(nb, kernel=False)
 
         temp = get_temp_folder(__file__, "temp_nb_api_rst")
@@ -93,7 +93,7 @@ class TestNotebookAPI (unittest.TestCase):
         res = nb2rst(nbr, outfile)
         self.assertEqual(len(res), 1)
         for r in res:
-            self.assertTrue(os.path.exists(r))
+            self.assertExists(r)
 
 
 if __name__ == "__main__":

@@ -24,14 +24,14 @@ except ImportError:
 from src.pyquickhelper.loghelper import fLOG
 from src.pyquickhelper.helpgen import process_notebooks
 from src.pyquickhelper.helpgen.sphinx_main import setup_environment_for_help
-from src.pyquickhelper.pycode import is_travis_or_appveyor
+from src.pyquickhelper.pycode import is_travis_or_appveyor, ExtTestCase
 
 
 if sys.version_info[0] == 2:
     from codecs import open
 
 
-class TestNoteBooksBugPython(unittest.TestCase):
+class TestNoteBooksBugPython(ExtTestCase):
 
     def test_notebook_python(self):
         fLOG(
@@ -62,7 +62,7 @@ class TestNoteBooksBugPython(unittest.TestCase):
         fLOG("*****", len(res))
         for _ in res:
             fLOG(_)
-            assert os.path.exists(_[0])
+            self.assertExists(_[0])
 
         with open(os.path.join(temp, "seance5_approche_fonctionnelle_correction.py"), "r", encoding="utf8") as f:
             content = f.read()

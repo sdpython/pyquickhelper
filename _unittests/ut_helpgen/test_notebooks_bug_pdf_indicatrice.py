@@ -22,12 +22,12 @@ except ImportError:
 
 from src.pyquickhelper.loghelper import fLOG
 from src.pyquickhelper.helpgen import process_notebooks
-from src.pyquickhelper.pycode import is_travis_or_appveyor, ExtTestCase
+from src.pyquickhelper.pycode import is_travis_or_appveyor, get_temp_folder, ExtTestCase
 
 
-class TestNoteBooksBugLatex(ExtTestCase):
+class TestNoteBooksBugPdfIndicatrice(ExtTestCase):
 
-    def test_notebook_latex(self):
+    def test_notebook_pdfa_indicatrice(self):
         fLOG(
             __file__,
             self._testMethodName,
@@ -35,28 +35,25 @@ class TestNoteBooksBugLatex(ExtTestCase):
         if sys.version_info[0] == 2:
             # does not work on Python 2
             return
-        path = os.path.abspath(os.path.split(__file__)[0])
-        fold = os.path.normpath(os.path.join(path, "notebooks_latex"))
-        nbs = [os.path.join(fold, _)
-               for _ in os.listdir(fold) if ".ipynb" in _]
-        formats = ["ipynb", "html", "python", "rst", "pdf"]
-        if sys.platform.startswith("win"):
-            formats.append("docx")
-
-        temp = os.path.join(path, "temp_nb_bug_latex")
-        if not os.path.exists(temp):
-            os.mkdir(temp)
-        for file in os.listdir(temp):
-            os.remove(os.path.join(temp, file))
-
         if is_travis_or_appveyor() in ('travis', 'appveyor'):
             return
+        path = os.path.abspath(os.path.split(__file__)[0])
+        fold = os.path.normpath(os.path.join(path, "data"))
+        nbs = [os.path.join(fold, "classification_multiple.ipynb")]
+        formats = ["pdf"]
+
+        temp = get_temp_folder(__file__, 'temp_nb_bug_pdfa_indicatrice')
 
         res = process_notebooks(nbs, temp, temp, formats=formats)
         fLOG("*****", len(res))
         for _ in res:
             fLOG(_)
             self.assertExists(_[0])
+        lat = os.path.join(temp, 'classification_multiple.tex')
+        with open(lat, 'r', encoding='utf-8') as f:
+            content = f.read()
+        self.assertNotIn('\\mathbf{1}', content)
+        self.assertNotIn('probl?me', content)
 
 
 if __name__ == "__main__":

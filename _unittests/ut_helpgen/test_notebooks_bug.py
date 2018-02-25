@@ -23,14 +23,14 @@ except ImportError:
 
 from src.pyquickhelper.loghelper import fLOG
 from src.pyquickhelper.helpgen import process_notebooks
-from src.pyquickhelper.pycode import is_travis_or_appveyor, get_temp_folder
+from src.pyquickhelper.pycode import is_travis_or_appveyor, get_temp_folder, ExtTestCase
 
 
 if sys.version_info[0] == 2:
     from codecs import open
 
 
-class TestNoteBooksBug(unittest.TestCase):
+class TestNoteBooksBug(ExtTestCase):
 
     def test_regex(self):
         fLOG(
@@ -124,7 +124,7 @@ class TestNoteBooksBug(unittest.TestCase):
         fLOG("*****", len(res))
         for _ in res:
             fLOG(_)
-            assert os.path.exists(_[0])
+            self.assertExists(_[0])
 
         check = os.path.join(temp, "td1a_correction_session4.tex")
         with open(check, "r", encoding="utf8") as f:

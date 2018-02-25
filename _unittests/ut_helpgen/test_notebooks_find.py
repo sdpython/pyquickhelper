@@ -23,7 +23,7 @@ except ImportError:
 
 from src.pyquickhelper.loghelper import fLOG
 from src.pyquickhelper.helpgen import process_notebooks
-from src.pyquickhelper.pycode import is_travis_or_appveyor, get_temp_folder
+from src.pyquickhelper.pycode import is_travis_or_appveyor, get_temp_folder, ExtTestCase
 from src.pyquickhelper.ipythonhelper import upgrade_notebook
 from src.pyquickhelper.helpgen.post_process import update_notebook_link
 
@@ -32,7 +32,7 @@ if sys.version_info[0] == 2:
     from codecs import open
 
 
-class TestNoteBooksFind(unittest.TestCase):
+class TestNoteBooksFind(ExtTestCase):
 
     def test_update_link_rst(self):
         fLOG(

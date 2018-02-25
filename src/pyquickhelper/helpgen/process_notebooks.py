@@ -52,7 +52,7 @@ Another list
 def process_notebooks(notebooks, outfold, build, latex_path=None, pandoc_path=None,
                       formats=("ipynb", "html", "python", "rst",
                                "slides", "pdf", "present", "github"), fLOG=fLOG, exc=True,
-                      remove_unicode_latex=True, nblinks=None,
+                      remove_unicode_latex=False, nblinks=None,
                       notebook_replacements=None):
     """
     Converts notebooks into :epkg:`html`, :epkg:`rst`, :epkg:`latex`,
@@ -113,6 +113,9 @@ def process_notebooks(notebooks, outfold, build, latex_path=None, pandoc_path=No
 
     .. versionchanged:: 1.6
         Parameter *notebook_replacements* was added.
+
+    .. versionchanged:: 1.7
+        Change default value for *remove_unicode_latex* to False.
 
     .. todoext::
         :title: check differences between _process_notebooks_in_private and _process_notebooks_in_private_cmd
@@ -203,12 +206,15 @@ def _process_notebooks_in_private_cmd(fnbcexe, list_args, options_args, fLOG):
 def _process_notebooks_in(notebooks, outfold, build, latex_path=None, pandoc_path=None,
                           formats=("ipynb", "html", "python", "rst",
                                    "slides", "pdf", "present", "github"),
-                          fLOG=fLOG, exc=True, nblinks=None, remove_unicode_latex=True,
+                          fLOG=fLOG, exc=True, nblinks=None, remove_unicode_latex=False,
                           notebook_replacements=None):
     """
     The notebook conversion does not handle images from url
     for :epkg:`pdf` and :epkg:`docx`. They could be downloaded first
     and replaced by local files.
+
+    .. versionchanged:: 1.7
+        Change default value of *remove_unicode_latex* to False.
     """
     from nbconvert.nbconvertapp import main as nbconvert_main
     if pandoc_path is None:

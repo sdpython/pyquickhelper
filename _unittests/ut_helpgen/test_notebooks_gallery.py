@@ -23,14 +23,14 @@ except ImportError:
 
 from src.pyquickhelper.loghelper import fLOG
 from src.pyquickhelper.helpgen.sphinx_main import build_notebooks_gallery
-from src.pyquickhelper.pycode import get_temp_folder
+from src.pyquickhelper.pycode import get_temp_folder, ExtTestCase
 
 
 if sys.version_info[0] == 2:
     from codecs import open
 
 
-class TestNotebookGallery(unittest.TestCase):
+class TestNotebookGallery(ExtTestCase):
 
     def a_test_notebook_gallery(self, layout):
         if sys.version_info[0] == 2:

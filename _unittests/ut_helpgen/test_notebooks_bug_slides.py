@@ -24,14 +24,14 @@ except ImportError:
 from src.pyquickhelper.loghelper import fLOG
 from src.pyquickhelper.helpgen import process_notebooks
 from src.pyquickhelper.helpgen.sphinx_main import setup_environment_for_help
-from src.pyquickhelper.pycode import is_travis_or_appveyor, get_temp_folder
+from src.pyquickhelper.pycode import is_travis_or_appveyor, get_temp_folder, ExtTestCase
 
 
 if sys.version_info[0] == 2:
     from codecs import open
 
 
-class TestNoteBooksBugSlides(unittest.TestCase):
+class TestNoteBooksBugSlides(ExtTestCase):
 
     def test_notebook_slides(self):
         fLOG(
@@ -57,7 +57,7 @@ class TestNoteBooksBugSlides(unittest.TestCase):
         fLOG("*****", len(res))
         for _ in res:
             fLOG(_)
-            assert os.path.exists(_[0])
+            self.assertExists(_[0])
 
         with open(os.path.join(temp, "js_bokeh.slides.html"), "r", encoding="utf8") as f:
             content = f.read()

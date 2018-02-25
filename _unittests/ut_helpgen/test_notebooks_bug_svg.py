@@ -25,14 +25,14 @@ from src.pyquickhelper.loghelper import fLOG
 from src.pyquickhelper.helpgen import process_notebooks
 from src.pyquickhelper.helpgen.sphinx_main import setup_environment_for_help
 from src.pyquickhelper.helpgen.post_process import post_process_latex
-from src.pyquickhelper.pycode import is_travis_or_appveyor
+from src.pyquickhelper.pycode import is_travis_or_appveyor, ExtTestCase
 
 
 if sys.version_info[0] == 2:
     from codecs import open
 
 
-class TestNoteBooksBugSvg(unittest.TestCase):
+class TestNoteBooksBugSvg(ExtTestCase):
 
     def test_notebook_svg(self):
         fLOG(
@@ -63,7 +63,7 @@ class TestNoteBooksBugSvg(unittest.TestCase):
         fLOG("*****", len(res))
         for _ in res:
             fLOG(_)
-            assert os.path.exists(_[0])
+            self.assertExists(_[0])
 
         with open(os.path.join(temp, "seance4_projection_population_correction.tex"), "r", encoding="utf8") as f:
             content = f.read()

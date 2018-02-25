@@ -24,14 +24,14 @@ except ImportError:
 from src.pyquickhelper.loghelper import fLOG
 from src.pyquickhelper.helpgen.sphinx_main import process_notebooks, build_notebooks_gallery
 from src.pyquickhelper.pycode import get_temp_folder
-from src.pyquickhelper.pycode import is_travis_or_appveyor
+from src.pyquickhelper.pycode import is_travis_or_appveyor, ExtTestCase
 
 
 if sys.version_info[0] == 2:
     from codecs import open
 
 
-class TestNotebookConversion(unittest.TestCase):
+class TestNotebookConversion(ExtTestCase):
 
     def test_notebook(self):
         fLOG(
@@ -59,7 +59,7 @@ class TestNotebookConversion(unittest.TestCase):
                 "_doc",
                 "notebooks"))
         nb = os.path.join(fold, "example_pyquickhelper.ipynb")
-        assert os.path.exists(nb)
+        self.assertExists(nb)
 
         temp = get_temp_folder(__file__, "temp_nb_%d" % iteration)
 
@@ -94,7 +94,7 @@ class TestNotebookConversion(unittest.TestCase):
             nb, temp, temp, latex_path=p1, pandoc_path=p2, formats=formats)
         for _ in res:
             fLOG(_)
-            assert os.path.exists(_[0])
+            self.assertExists(_[0])
 
         fou = [os.path.split(_[0])[-1] for _ in res]
         fou = [_ for _ in fou if "png" not in _]

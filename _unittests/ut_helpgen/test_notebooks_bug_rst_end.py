@@ -22,14 +22,14 @@ except ImportError:
 
 from src.pyquickhelper.loghelper import fLOG, CustomLog
 from src.pyquickhelper.helpgen import process_notebooks
-from src.pyquickhelper.pycode import is_travis_or_appveyor, get_temp_folder
+from src.pyquickhelper.pycode import is_travis_or_appveyor, get_temp_folder, ExtTestCase
 
 
 if sys.version_info[0] == 2:
     from codecs import open
 
 
-class TestNoteBooksBugRstEnd(unittest.TestCase):
+class TestNoteBooksBugRstEnd(ExtTestCase):
 
     def test_notebook_rst_end(self):
         fLOG(
@@ -58,7 +58,7 @@ class TestNoteBooksBugRstEnd(unittest.TestCase):
         fLOG("*****", len(res))
         for _ in res:
             fLOG(_)
-            assert os.path.exists(_[0])
+            self.assertExists(_[0])
 
         name = os.path.join(temp, "example_about_files.rst")
         clog("final checking", name)

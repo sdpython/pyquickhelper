@@ -182,7 +182,7 @@ def post_process_latex_output(root, doall, latex_book=False, exc=True,
         file = root
         with open(file, "r", encoding="utf8") as f:
             content = f.read()
-        with open(file + "~", "w", encoding="utf8") as f:
+        with open(file + ".tex1~", "w", encoding="utf8") as f:
             f.write(content)
         content = post_process_latex(
             content, doall, latex_book=latex_book, exc=exc,
@@ -201,7 +201,7 @@ def post_process_latex_output(root, doall, latex_book=False, exc=True,
                 fLOG("[post_process_latex_output] modify file", file)
                 with open(file, "r", encoding="utf8") as f:
                     content = f.read()
-                with open(file + "~", "w", encoding="utf8") as f:
+                with open(file + ".tex2~", "w", encoding="utf8") as f:
                     f.write(content)
                 content = post_process_latex(
                     content, doall, info=file, latex_book=latex_book, exc=exc,
@@ -279,6 +279,8 @@ def post_process_latex_output_any(file, custom_latex_processing, nblinks=None,
         fLOG("[post_process_latex_output_any]   ** post_process_latex_output_any ", file)
     with open(file, "r", encoding="utf8") as f:
         content = f.read()
+    with open(file + ".tex3.u{0}~".format(1 if remove_unicode else 0), "w", encoding="utf8") as f:
+        f.write(content)
     content = post_process_latex(content, True, info=file, nblinks=nblinks, file=file,
                                  remove_unicode=remove_unicode, fLOG=fLOG,
                                  notebook_replacements=notebook_replacements)

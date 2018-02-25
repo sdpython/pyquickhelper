@@ -22,14 +22,14 @@ except ImportError:
 
 from src.pyquickhelper.loghelper import fLOG
 from src.pyquickhelper.helpgen import process_notebooks
-from src.pyquickhelper.pycode import is_travis_or_appveyor
+from src.pyquickhelper.pycode import is_travis_or_appveyor, ExtTestCase
 
 
 if sys.version_info[0] == 2:
     from codecs import open
 
 
-class TestNoteBooksComment(unittest.TestCase):
+class TestNoteBooksComment(ExtTestCase):
 
     def test_notebook_comment(self):
         fLOG(
@@ -58,7 +58,7 @@ class TestNoteBooksComment(unittest.TestCase):
         fLOG("*****", len(res))
         for _ in res:
             fLOG(_)
-            assert os.path.exists(_[0])
+            self.assertExists(os.path.exists(_[0]))
 
         with open(os.path.join(temp, "example_with_comments.rst"), "r", encoding="utf8") as f:
             lines = f.readlines()

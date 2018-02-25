@@ -22,14 +22,14 @@ except ImportError:
 
 from src.pyquickhelper.loghelper import fLOG
 from src.pyquickhelper.helpgen import process_notebooks
-from src.pyquickhelper.pycode import get_temp_folder, skipif_travis, skipif_appveyor
+from src.pyquickhelper.pycode import get_temp_folder, skipif_travis, skipif_appveyor, ExtTestCase
 
 
 if sys.version_info[0] == 2:
     from codecs import open
 
 
-class TestNoteBooksBugJs(unittest.TestCase):
+class TestNoteBooksBugJs(ExtTestCase):
 
     @skipif_travis('latex, pandoc not installed')
     @skipif_appveyor('latex, pandoc not installed')
@@ -95,7 +95,7 @@ class TestNoteBooksBugJs(unittest.TestCase):
         fLOG("*****", len(res))
         for _ in res:
             fLOG(_)
-            self.assertTrue(os.path.exists(_[0]))
+            self.assertExists(_[0])
 
         check = os.path.join(temp, "td1a_correction_session4.tex")
         with open(check, "r", encoding="utf8") as f:
