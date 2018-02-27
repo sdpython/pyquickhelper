@@ -262,7 +262,7 @@ if not r:
             "pyflakes",
             "semantic_version",
             "simplegeneric",
-            "sphinx>=1.6",
+            "sphinx>=1.6",   # also != 1.7
             "sphinx-gallery",
             "sphinxcontrib-imagesvg",
             "tqdm",

@@ -9,6 +9,7 @@ History
 **Bugfix**
 
 * `102`: fix sphinx command line ``-j 1`` becomes ``-j1``
+* `103`: fix import issue for Sphinx 1.7.1 (released on 2/23/2017)
 
 1.6.2413 (2018-02-14)
 =====================

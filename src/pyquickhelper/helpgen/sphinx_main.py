@@ -34,11 +34,13 @@ import importlib
 import warnings
 from datetime import datetime
 from docutils.parsers.rst import directives, roles
+
 try:
-    from sphinx import build_main
+    from sphinx.cmd.build import main as build_main
 except ImportError:
     # Sphinx >= 1.7
-    from sphinx.cmd.build import main as build_main
+    from sphinx import build_main
+
 from ..filehelper import remove_folder
 from ..loghelper.flog import run_cmd, fLOG
 from .utils_sphinx_doc import prepare_file_for_sphinx_help_generation
