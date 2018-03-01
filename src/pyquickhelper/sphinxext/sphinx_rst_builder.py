@@ -232,6 +232,7 @@ class RstTranslator(TextTranslator):
             if end:
                 res += end
             result.append((indent, res))
+
         for itemindent, item in content:
             if itemindent == -1:
                 toformat.append(item)
@@ -864,10 +865,16 @@ class RstTranslator(TextTranslator):
         raise nodes.SkipNode
 
     def visit_pending_xref(self, node):
-        pass
+        if node.get('refexplicit'):
+            text = ':py:%s:`%s <%s>`' % (
+                node['reftype'], node.astext(), node['reftarget'])
+        else:
+            text = ':py:%s:`%s`' % (node['reftype'], node['reftarget'])
+        self.add_text(text)
+        raise nodes.SkipNode
 
     def depart_pending_xref(self, node):
-        pass
+        raise NotImplementedError("Error")
 
     def visit_reference(self, node):
         """

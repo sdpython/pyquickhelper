@@ -395,7 +395,7 @@ def rst2html(s, fLOG=noLOG, writer="html", keep_warnings=False,
             return res
         else:
             raise ValueError(
-                "unexpected value for layout '{0}'".format(layout))
+                "Unexpected value for layout '{0}'".format(layout))
 
 
 def correct_indentation(text):

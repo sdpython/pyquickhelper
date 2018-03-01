@@ -278,6 +278,61 @@ class TestRstBuilder(unittest.TestCase):
         if t1 not in text:
             raise Exception(text)
 
+    def test_rst_reference(self):
+        fLOG(
+            __file__,
+            self._testMethodName,
+            OutputPrint=__name__ == "__main__")
+
+        from docutils import nodes as skip_
+
+        content = """
+                    test a directive
+                    ================
+
+                    :py:class:`src.pyquickhelper.sphinxext.sphinx_rst_builder.RstBuilder`
+
+                    :py:class:`Renamed <src.pyquickhelper.sphinxext.sphinx_rst_builder.RstBuilder>`
+                    """.replace("                    ", "")
+        if sys.version_info[0] >= 3:
+            content = content.replace('u"', '"')
+
+        tives = [("cmdref", CmdRef, cmdref_node,
+                  visit_cmdref_node, depart_cmdref_node)]
+
+        text = rst2html(content,  # fLOG=fLOG,
+                        writer="rst", keep_warnings=True, layout='sphinx',
+                        directives=tives, extlinks={'issue': ('http://%s', '_issue_')})
+
+        temp = get_temp_folder(__file__, "temp_only")
+        with open(os.path.join(temp, "out_cmdref.rst"), "w", encoding="utf8") as f:
+            f.write(text)
+
+        t1 = "src.pyquickhelper.sphinxext.sphinx_rst_builder.RstBuilder"
+        if t1 not in text:
+            raise Exception(text)
+        t1 = "Renamed"
+        if t1 not in text:
+            raise Exception(text)
+        t1 = ":py:class:`Renamed"
+        if t1 not in text:
+            raise Exception(text)
+
+        text = rst2html(content,  # fLOG=fLOG,
+                        writer="html", keep_warnings=True, layout='sphinx',
+                        directives=tives, extlinks={'issue': ('http://%s', '_issue_')})
+
+        temp = get_temp_folder(__file__, "temp_only")
+        with open(os.path.join(temp, "out_cmdref.rst"), "w", encoding="utf8") as f:
+            f.write(text)
+
+        t1 = "src.pyquickhelper.sphinxext.sphinx_rst_builder.RstBuilder"
+        if t1 not in text:
+            raise Exception(text)
+        t1 = "<p>Renamed</p>"
+        if t1 not in text:
+            raise Exception(text)
+
 
 if __name__ == "__main__":
     unittest.main()

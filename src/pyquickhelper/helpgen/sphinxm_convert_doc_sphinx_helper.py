@@ -408,8 +408,10 @@ class _AdditionalVisitDepart:
         rst = self.output_format == 'rst'
         latex = self.output_format == 'latex'
         html = self.output_format == 'html'
-        if not(rst or html or latex):
-            raise ValueError("One of them should be True")
+        md = self.output_format == 'md'
+        if not(rst or html or latex or md):
+            raise ValueError(
+                "Unknown output format '{0}'.".format(self.output_format))
         try:
             ev = eval(expr)
         except Exception as e:
