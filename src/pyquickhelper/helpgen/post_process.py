@@ -741,6 +741,8 @@ def post_process_latex(st, doall, info=None, latex_book=False, exc=True,
     st = st.replace("<br />", "\\\\")
     st = st.replace("»", '"')
     st = st.replace("\\mathbb{1}", "\\mathbf{1\\!\\!1}")
+    st = st.replace(
+        "\\documentclass[11pt]{article}", "\\documentclass[10pt]{article}")
 
     if not doall and not latex_book:
         st = st.replace(

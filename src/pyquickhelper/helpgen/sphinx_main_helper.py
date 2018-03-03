@@ -17,6 +17,7 @@ from ..pandashelper.tblformat import df2rst
 from ..filehelper import explore_folder_iterfile
 from .utils_sphinx_doc_helpers import HelpGenException
 from .post_process import post_process_latex_output
+from .process_notebook import find_pdflatex
 
 if sys.version_info[0] == 2:
     from codecs import open
@@ -326,11 +327,7 @@ def compile_latex_output_final(root, latex_path, doall, afile=None, latex_book=F
     .. versionadded:: 1.6
         Parameter *remove_unicode* was added.
     """
-    if sys.platform.startswith("win"):
-        lat = os.path.join(latex_path, "pdflatex.exe")
-    else:
-        lat = "pdflatex"
-
+    lat = find_pdflatex(latex_path)
     build = os.path.join(root, "_doc", "sphinxdoc", "build", "latex")
     if not os.path.exists(build):
         build = root

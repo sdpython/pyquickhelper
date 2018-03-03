@@ -49,6 +49,36 @@ Another list
 """
 
 
+def find_pdflatex(latex_path):
+    """
+    Returns the executable for latex.
+
+    @param      latex_path  path to look (only on Windows)
+    @return                 executable
+
+    .. versionadded:: 1.7
+    """
+    if sys.platform.startswith("win"):
+        lat = os.path.join(latex_path, "xelatex.exe")
+        if os.path.exists(lat):
+            return lat
+        lat = os.path.join(latex_path, "pdflatex.exe")
+        if os.path.exists(lat):
+            return lat
+        raise FileNotFoundError(
+            "Unable to find pdflatex or xelatex in '{0}'".format(latex_path))
+    else:
+        try:
+            out, err = run_cmd("xelatex --help", wait=True)
+            if len(err) == 0:
+                return "xelatex"
+            else:
+                raise FileNotFoundError(
+                    "Unable to run xelatex\n{0}".format(err))
+        except Exception as e:
+            return "pdflatex"
+
+
 def process_notebooks(notebooks, outfold, build, latex_path=None, pandoc_path=None,
                       formats=("ipynb", "html", "python", "rst",
                                "slides", "pdf", "present", "github"), fLOG=fLOG, exc=True,
@@ -215,6 +245,7 @@ def _process_notebooks_in(notebooks, outfold, build, latex_path=None, pandoc_pat
 
     .. versionchanged:: 1.7
         Change default value of *remove_unicode_latex* to False.
+        Use `xelatex <https://doc.ubuntu-fr.org/xelatex>`_ if possible.
     """
     from nbconvert.nbconvertapp import main as nbconvert_main
     if pandoc_path is None:
@@ -433,10 +464,7 @@ def _process_notebooks_in(notebooks, outfold, build, latex_path=None, pandoc_pat
             if compilation:
                 # compilation latex
                 if not sys.platform.startswith("win") or os.path.exists(latex_path):
-                    if sys.platform.startswith("win"):
-                        lat = os.path.join(latex_path, "pdflatex.exe")
-                    else:
-                        lat = "pdflatex"
+                    lat = find_pdflatex(latex_path)
 
                     tex = set(_ for _ in thisfiles if os.path.splitext(
                         _)[-1] == ".tex")
@@ -449,7 +477,7 @@ def _process_notebooks_in(notebooks, outfold, build, latex_path=None, pandoc_pat
                         tex, custom_latex_processing=None, nblinks=nblinks,
                         remove_unicode=remove_unicode_latex, fLOG=fLOG)
                     # -interaction=batchmode
-                    c = '"{0}" "{1}" -max-print-line=900 -quiet -output-directory="{2}"'.format(
+                    c = '"{0}" "{1}" -max-print-line=900 -output-directory="{2}"'.format(
                         lat, tex, os.path.split(tex)[0])
                     fLOG("[_process_notebooks_in]   ** LATEX compilation (b)", c)
                     if not sys.platform.startswith("win"):
@@ -463,7 +491,7 @@ def _process_notebooks_in(notebooks, outfold, build, latex_path=None, pandoc_pat
                     out, err = run_cmd(
                         c, wait=True, log_error=False, shell=sys.platform.startswith("win"),
                         catch_exit=True, prefix_log="[latex] ", change_path=change_path)
-                    if out is not None and "Output written" in out:
+                    if out is not None and ("Output written" in out or 'bytes written' in out):
                         # The output was produced. We ignore the return code.
                         fLOG(
                             "[_process_notebooks_in] WARNINGS: Latex compilation had warnings:", c)
