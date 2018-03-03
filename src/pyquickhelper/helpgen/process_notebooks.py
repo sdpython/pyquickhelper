@@ -489,7 +489,7 @@ def _process_notebooks_in(notebooks, outfold, build, latex_path=None, pandoc_pat
                             msg = "Content of '{0}':\n{1}\n----\n'{2}' moved? {3}\nCMD:\n{4}".format(
                                 build, files, loc, moved, c)
                             raise HelpGenException(
-                                "Missing file: '{0}'\nOUT:\n{2}\n[nberror]\n{1}\n-----\n{3}".format(f, err, out, msg))
+                                "Missing file: '{0}'\nCMD\n{4}nOUT:\n{2}\n[nberror]\n{1}\n-----\n{3}".format(f, err, out, msg, c))
                     thisfiles.append(f)
                 else:
                     fLOG("[_process_notebooks_in] unable to find latex in", latex_path)
