@@ -1,0 +1,14 @@
+
+.. blogpost::
+    :title: Replace pdflatex by xelatex
+    :keywords: latex, pdflatex, xelatex
+    :date: 2018-03-03
+    :categories: latex
+
+    `pdflatex <https://docs.miktex.org/manual/pdftex.html>`_
+    does not natively support utf-8 (no fixed size characters) but
+    `xelatex <https://doc.ubuntu-fr.org/xelatex>`_ does (see
+    `Swapping from pdfLaTeX to XeLaTex <https://tex.stackexchange.com/questions/385256/swapping-from-pdflatex-to-xelatex>`_).
+    I tried a couple of past in the past with no success
+    and I finally remove all accents from pdf coming from
+    notebooks. It seems to work now.

@@ -11,6 +11,7 @@ History
 * `102`: fix sphinx command line ``-j 1`` becomes ``-j1``
 * `103`: fix import issue for Sphinx 1.7.1 (released on 2/23/2017)
 * `104`: implement visit, depart for pending_xref and rst translator
+* `106`: replace pdflatex by xelatex to handle utf-8 characters
 
 1.6.2413 (2018-02-14)
 =====================
