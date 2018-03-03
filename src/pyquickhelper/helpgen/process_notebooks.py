@@ -449,7 +449,7 @@ def _process_notebooks_in(notebooks, outfold, build, latex_path=None, pandoc_pat
                         tex, custom_latex_processing=None, nblinks=nblinks,
                         remove_unicode=remove_unicode_latex, fLOG=fLOG)
                     # -interaction=batchmode
-                    c = '"{0}" "{1}" -max-print-line=900 -output-directory="{2}"'.format(
+                    c = '"{0}" "{1}" -max-print-line=900 -quiet -output-directory="{2}"'.format(
                         lat, tex, os.path.split(tex)[0])
                     fLOG("[_process_notebooks_in]   ** LATEX compilation (b)", c)
                     if not sys.platform.startswith("win"):

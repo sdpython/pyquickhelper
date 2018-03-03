@@ -827,14 +827,14 @@ def post_process_latex(st, doall, info=None, latex_book=False, exc=True,
         st = custom_latex_processing(st)
 
     if remove_unicode:
-        if fLOG:
-            fLOG("[post_process_latex] remove unicode characters")
-        st0 = st
-        bst = st.encode('ascii', errors='replace')
-        st = bst.decode('ascii', errors='replace')
-        if st0 != st and fLOG:
-            fLOG("[post_process_latex] unicode characters were removed")
-
+        encoding = 'ascii'
+    else:
+        encoding = 'utf-8'
+    st0 = st
+    bst = st.encode(encoding, errors='replace')
+    st = bst.decode(encoding, errors='replace')
+    if st0 != st and fLOG:
+        fLOG("[post_process_latex] characters were removed for encoding", encoding)
     return st
 
 

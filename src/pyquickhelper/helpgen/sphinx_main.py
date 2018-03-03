@@ -675,9 +675,9 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
         os.path.join(root, "_doc/sphinxdoc/source", "blog"))
 
     if os.path.exists(blog_fold):
-        fLOG("    BlogPostList")
+        fLOG("[generate_help_sphinx]    BlogPostList")
         plist = BlogPostList(blog_fold, language=language, fLOG=fLOG)
-        fLOG("    BlogPostList.write_aggregated")
+        fLOG("[generate_help_sphinx]    BlogPostList.write_aggregated")
         plist.write_aggregated(blog_fold,
                                blog_title=theconf.__dict__.get(
                                    "blog_title", project_var_name),
@@ -706,9 +706,7 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
             notebook_dir, pattern=".*[.]ipynb", neg_pattern=nbneg_pattern, fullname=True)[1]
         notebooks = [_ for _ in notebooks if "checkpoint" not in _]
         if len(notebooks) > 0:
-            fLOG("*******************************************")
-            fLOG("**** notebooks", nbformats)
-            fLOG("*******************************************")
+            fLOG("[generate_help_sphinx] **** notebooks", nbformats)
             build = os.path.join(root, "build", "notebooks")
             if not os.path.exists(build):
                 os.makedirs(build)
@@ -733,7 +731,7 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
                 raise ValueError("Different lengths {0} != {1}\n{2}\n{3}".format(
                     len(nbs_all), len(indexlistnote), ext1, ext2))
             nbs = indexlistnote
-            fLOG("*******NB, add:", len(nbs))
+            fLOG("[generate_help_sphinx] *#* NB, add:", len(nbs))
             nbs.sort()
             build_notebooks_gallery(nbs, os.path.join(
                 notebook_doc, "..", "all_notebooks.rst"), layout=nblayout, fLOG=fLOG)
