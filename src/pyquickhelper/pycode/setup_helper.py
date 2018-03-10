@@ -55,7 +55,7 @@ def available_commands_list(argv):
                 "copy27", "run27", "build27",
                 "local_pypi", "test_local_pypi",
                 "notebook", "publish", "publish_doc",
-                "register", "unittests",
+                "register", "unittests", "lab",
                 "unittests_LONG", "unittests_SKIP", "unittests_GUI",
                 "sdist", "setupdep", "upload_docs",
                 "setup_hook", "copy_sphinx", "write_version"}
@@ -416,7 +416,7 @@ def process_standard_options_for_setup(argv, file_or_folder, project_var_name, m
         for c in {"notebook", "publish", "publish_doc", "local_pypi", "run27",
                   "build27", "setupdep", "copy_dist",
                   "any_setup_command", "build_dist",
-                  "copy_sphinx"}:
+                  "copy_sphinx", "lab"}:
             if "--private" in argv and "publish" in c:
                 # we skip this to avoid producing scripts for publish
                 # functionalities

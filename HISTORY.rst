@@ -12,6 +12,7 @@ History
 * `103`: fix import issue for Sphinx 1.7.1 (released on 2/23/2017)
 * `104`: implement visit, depart for pending_xref and rst translator
 * `106`: replace pdflatex by xelatex to handle utf-8 characters
+* `108`: add command lab, creates a script to start jupyter lab on notebook folder
 
 1.6.2413 (2018-02-14)
 =====================

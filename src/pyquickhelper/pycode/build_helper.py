@@ -320,11 +320,11 @@ def get_extra_script_command(command, module, requirements, port=8067, blog_list
                              default_engine_paths=None, unit_test_folder=None, unittest_modules=None,
                              additional_notebook_path=None, additional_local_path=None):
     """
-    produces a script which runs the notebook, a documentation server, which
+    Produces a script which runs the notebook, a documentation server, which
     publishes...
 
     @param      command                     command to run (*notebook*, *publish*, *publish_doc*, *local_pypi*, *setupdep*,
-                                            *run27*, *build27*, *copy_dist*, *any_setup_command*)
+                                            *run27*, *build27*, *copy_dist*, *any_setup_command*, *lab*)
     @param      module                      module name
     @param      requirements                list of dependencies (not in your python distribution)
     @param      port                        port for the local pypi_server which gives the dependencies
@@ -350,6 +350,8 @@ def get_extra_script_command(command, module, requirements, port=8067, blog_list
     script = None
     if command == "notebook":
         script = windows_notebook
+    elif command == "lab":
+        script = windows_notebook.replace("jupyter-notebook", "jupyter-lab")
     elif command == "publish":
         script = "\n".join([windows_prefix, windows_publish])
     elif command == "publish_doc":
@@ -396,7 +398,7 @@ def get_extra_script_command(command, module, requirements, port=8067, blog_list
                 return os.path.join("%current%", "..", s, "src")
 
         paths = []
-        if command == "notebook" and additional_notebook_path is not None and len(additional_notebook_path) > 0:
+        if command in ("notebook", "lab") and additional_notebook_path is not None and len(additional_notebook_path) > 0:
             paths.extend(additional_notebook_path)
         if unittest_modules is not None and len(unittest_modules) > 0:
             paths.extend(unittest_modules)
