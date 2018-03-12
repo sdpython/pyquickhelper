@@ -39,7 +39,7 @@ install:
     - "%PYTHON%\\Scripts\\pip install nbpresent tqdm"
     - "%PYTHON%\\Scripts\\pip install backports.shutil-get-terminal-size"
     - "%PYTHON%\\Scripts\\pip install pycodestyle jyquickhelper"
-    - "%PYTHON%\\Scripts\\pip install python-jenkins bokeh"
+    - "%PYTHON%\\Scripts\\pip install python-jenkins bokeh cairosvg"
     - "%PYTHON%\\Scripts\\pip install prompt_toolkit et_xmlfile semantic_version"
     - "%PYTHON%\\Scripts\\pip install https://github.com/ipython-contrib/jupyter_contrib_nbextensions/tarball/master"
     - "dir %PYTHON%\\Scripts"

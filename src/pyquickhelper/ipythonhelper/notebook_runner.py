@@ -13,7 +13,7 @@ import warnings
 from queue import Empty
 from time import sleep
 from collections import Counter
-
+from ..imghelper.svg_helper import svg2img
 
 try:
     from nbformat import NotebookNode
@@ -1205,12 +1205,13 @@ class NotebookRunner(object):
         # zoom
         if image[1] in ("vnd.plotly.v1+html", "vnd.bokehjs_exec.v0+json", "vnd.bokehjs_load.v0+json"):
             return None
-        elif image[1] != "svg":
+        elif image[1] == 'svg':
+            img = svg2img(image[0])
+            return self._scale_image(img, image[1], max_width=max_width, max_height=max_height)
+        else:
             img = self._scale_image(
                 image[0], image[1], max_width=max_width, max_height=max_height)
             return img
-        else:
-            return image[0]
 
     def _scale_image(self, in_bytes, format=None, max_width=200, max_height=200):
         """
@@ -1233,10 +1234,13 @@ class NotebookRunner(object):
 
         if isinstance(in_bytes, tuple):
             in_bytes = in_bytes[0]
-        if not isinstance(in_bytes, bytes):
+        if isinstance(in_bytes, bytes):
+            img = Image.open(BytesIO(in_bytes))
+        elif isinstance(in_bytes, Image.Image):
+            img = in_bytes
+        else:
             raise TypeError(
                 "bytes expected, not {0} - format={1}".format(type(in_bytes), format))
-        img = Image.open(BytesIO(in_bytes))
         width_in, height_in = img.size
         scale_w = max_width / float(width_in)
         scale_h = max_height / float(height_in)

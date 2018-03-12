@@ -1,6 +1,7 @@
 autopep8
 babel!=2.0
 bokeh
+cairosvg
 cffi
 coverage
 docformatter

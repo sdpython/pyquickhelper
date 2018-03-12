@@ -14,6 +14,10 @@ History
 * `106`: replace pdflatex by xelatex to handle utf-8 characters
 * `108`: add command lab, creates a script to start jupyter lab on notebook folder
 
+**Features**
+
+* `107`: convert svg into png for notebook snippets
+
 1.6.2413 (2018-02-14)
 =====================
 
