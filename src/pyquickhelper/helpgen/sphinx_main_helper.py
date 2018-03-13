@@ -363,9 +363,11 @@ def compile_latex_output_final(root, latex_path, doall, afile=None, latex_book=F
                     fLOG("WARNINGS: Latex compilation had warnings:", c)
                 else:
                     raise OSError("Unable to execute\n{0}".format(c)) from e
-            if len(err) > 0:
+
+            if len(err) > 0 and "Output written on " not in out:
                 raise HelpGenException(
-                    "CMD:\n{0}\n[sphinxerror]\n{1}\nOUT:\n{2}".format(c, err, out))
+                    "CMD:\n{0}\n[sphinxerror]\n{1}\n---OUT:---\n{2}".format(c, err, out))
+
             # second compilation
             fLOG("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
             fLOG("~~~~ LATEX compilation (d)", c)
@@ -377,9 +379,10 @@ def compile_latex_output_final(root, latex_path, doall, afile=None, latex_book=F
             except (subprocess.CalledProcessError, RunCmdException):
                 fLOG("[sphinxerror] LATEX ERROR: check the logs")
                 err = ""
+                out = ""
             fLOG("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
             fLOG("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
-            if len(err) > 0:
+            if len(err) > 0 and "Output written on " not in out:
                 raise HelpGenException(err)
 
 

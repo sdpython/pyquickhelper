@@ -22,11 +22,11 @@ except ImportError:
     import src
 
 from src.pyquickhelper.ipythonhelper import read_nb
-from src.pyquickhelper.pycode import get_temp_folder
+from src.pyquickhelper.pycode import get_temp_folder, ExtTestCase
 from src.pyquickhelper.loghelper import fLOG
 
 
-class TestNotebookDescription(unittest.TestCase):
+class TestNotebookDescription(ExtTestCase):
 
     def test_notebook_description(self):
         fLOG(
@@ -52,7 +52,7 @@ class TestNotebookDescription(unittest.TestCase):
             return
         temp = get_temp_folder(__file__, "temp_notebook_number")
         nbfile = os.path.join(temp, "..", "data", "pyensae_text2table.ipynb")
-        assert os.path.exists(nbfile)
+        self.assertExists(nbfile)
         fLOG("reading", nbfile)
         nb = read_nb(nbfile)
         fLOG("creating thumbnail")
@@ -63,22 +63,21 @@ class TestNotebookDescription(unittest.TestCase):
         name = os.path.join(temp, "pyensae_text2table.thumb.png")
         fLOG("saving")
         image.save(name)
-        assert os.path.exists(name)
+        self.assertExists(name)
 
         nbfile = os.path.join(temp, "..", "data", "notebook_with_svg.ipynb")
-        assert os.path.exists(nbfile)
+        self.assertExists(nbfile)
         fLOG("reading", nbfile)
         nb = read_nb(nbfile)
         fLOG("creating thumbnail")
         image = nb.get_thumbnail()
-        name = os.path.join(temp, "notebook_with_svg.thumb.svg")
+        name = os.path.join(temp, "notebook_with_svg.thumb.png")
         fLOG("saving")
-        with open(name, "w", encoding="utf-8") as f:
-            f.write(image)
-        assert os.path.exists(name)
+        image.save(name)
+        self.assertExists(name)
 
         nbfile = os.path.join(temp, "..", "data", "example_corrplot.ipynb")
-        assert os.path.exists(nbfile)
+        self.assertExists(nbfile)
         fLOG("reading", nbfile)
         nb = read_nb(nbfile)
         fLOG("creating thumbnail")
@@ -86,7 +85,7 @@ class TestNotebookDescription(unittest.TestCase):
         name = os.path.join(temp, "example_corrplot.thumb.png")
         fLOG("saving")
         image.save(name)
-        assert os.path.exists(name)
+        self.assertExists(name)
 
 
 if __name__ == "__main__":
