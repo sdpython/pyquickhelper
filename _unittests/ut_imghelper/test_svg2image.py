@@ -27,8 +27,9 @@ from src.pyquickhelper.pycode import get_temp_folder, ExtTestCase
 from src.pyquickhelper.imghelper.svg_helper import svg2img, guess_svg_size
 
 
-class TestImageHelper(ExtTestCase):
+class TestSvg2Image(ExtTestCase):
 
+    @unittest.skipIf(sys.version_info[:2] < (3, 6), "Python 3.5- returns false results.")
     def test_svg2img(self):
         fLOG(
             __file__,

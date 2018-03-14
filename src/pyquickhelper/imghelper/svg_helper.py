@@ -1,6 +1,6 @@
 """
 @file
-@brief Helpers around images.
+@brief Helpers around images and :epkg:`SVG`.
 
 .. versionadded:: 1.7
 """
