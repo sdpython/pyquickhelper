@@ -262,7 +262,7 @@ It will go through the following steps:
 The results are stored in folder `_doc/sphinxdoc/build`.
 The process requires dependencies:
 
-* `Sphinx <http://sphinx-doc.org/>`_
+* :epkg:`Sphinx`
 * `pyquickhelper <https://pypi.python.org/pypi/pyquickhelper/>`_
 * Required sphinx extensions can be found in the code of
   `set_sphinx_variables <pyquickhelper.helpgen.default_conf.set_sphinx_variables>`
@@ -296,6 +296,10 @@ Jenkins extensions:
 * `Next Executions <https://wiki.jenkins-ci.org/display/JENKINS/Next+Executions>`_
 * `Text File <https://wiki.jenkins-ci.org/display/JENKINS/Text+File+Operations+Plugin>`_
 * `Startup Trigger <https://wiki.jenkins.io/display/JENKINS/Startup+Trigger>`_ : automatisation de build
+
+The module will convert :epkg:`SVG` into images,
+ it can handle :epkg:`javascript` with module
+ :epkg:`js2py` and :epkg:`node.js`.
 
 Configuration
 +++++++++++++

@@ -1,5 +1,5 @@
 """
-@brief      test log(time=7s)
+@brief      test log(time=15s)
 
 skip this test for regular run
 """
@@ -23,8 +23,9 @@ except ImportError:
 
 
 from src.pyquickhelper.loghelper import fLOG
-from src.pyquickhelper.pycode import ExtTestCase
-from src.pyquickhelper.imghelper.js_helper import run_js_fct
+from src.pyquickhelper.pycode import ExtTestCase, get_temp_folder
+from src.pyquickhelper.imghelper.js_helper import run_js_fct, install_node_js_modules
+from src.pyquickhelper.imghelper.js_helper import nodejs_version, require, run_js_with_nodejs
 
 
 class TestJs2Image(ExtTestCase):
@@ -40,21 +41,33 @@ class TestJs2Image(ExtTestCase):
         c = fct(3, 4)
         self.assertEqual(c, 7)
 
-    @unittest.skip('not implemented yet')
+    def test_nodejs(self):
+        fLOG(
+            __file__,
+            self._testMethodName,
+            OutputPrint=__name__ == "__main__")
+
+        out = run_js_with_nodejs("console.log('jsnodejs');", fLOG=fLOG)
+        self.assertEqual([out], ["jsnodejs\n"])
+
     def test_js2fctdom(self):
         fLOG(
             __file__,
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
-        script = """
-              var svgGraph = Viz("digraph{ a-> b; a-> c -> d;}");
-              document.getElementById('mygraph').innerHTML = svgGraph;
-              """
-        fct = run_js_fct(
-            script, required="http://www.xavierdupre.fr/js/vizjs/viz")
-        c = fct("")
-        assert c
+        vers = nodejs_version()
+        self.assertGreater(len(vers), 2)
+        self.assertIn('.', vers)
+        fLOG(vers)
+
+        temp = get_temp_folder(__file__, 'temp_jsfctdom', clean=False)
+
+        install_node_js_modules(temp, fLOG=fLOG)
+        mod = require("underscore", cache_folder=temp, fLOG=fLOG)
+        self.assertTrue(mod is not None)
+        m = mod.max([0, 5, 4])
+        self.assertEqual(m, 5)
 
 
 if __name__ == "__main__":

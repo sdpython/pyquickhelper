@@ -10,10 +10,10 @@
     for my teachings. I do that on Windows.
     Here is the list of tools I need:
 
-    * `Miktex <https://miktex.org/>`_: there is one question during the installation about
+    * :epkg:`Miktex`: there is one question during the installation about
       silent installation of new packages, change the default value to yes.
-    * `GraphViz <http://www.graphviz.org/>`_
-    * `InkScape <https://inkscape.org/en/>`_
+    * :epkg:`GraphViz`
+    * :epkg:`InkScape`
 
     About Python:
 
@@ -30,8 +30,8 @@
     A couple of others might be needed.
     I usually use a couple of editors:
 
-    *  `SciTe <http://www.scintilla.org/SciTE.html>`_: the most simple one
-    * `TexnicCenter <http://www.texniccenter.org/>`_: for latex
+    * :epkg:`SciTe`: the most simple one
+    * :epkg:`TexnicCenter`: for latex
 
     And some useful tools:
 

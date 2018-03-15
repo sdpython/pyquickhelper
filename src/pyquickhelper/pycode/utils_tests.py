@@ -72,13 +72,12 @@ def main_wrapper_tests(codefile, skip_list=None, processes=False, add_coverage=F
         :title: How to build pyquickhelper with Jenkins?
         :index: Jenkins
 
-        `Jenkins <http://jenkins-ci.org/>`_ is a task scheduler for continuous integration.
+        :epkg:`Jenkins` is a task scheduler for continuous integration.
         You can easily schedule batch command to build and run unit tests for a specific project.
-        To build pyquickhelper, you need to install `python <https://www.python.org/>`_,
-        `pymyinstall <http://www.xavierdupre.fr/app/pymyinstall/helpsphinx/>`_,
-        `miktex <http://miktex.org/>`_,
-        `pandoc <http://johnmacfarlane.net/pandoc/>`_,
-        `sphinx <http://sphinx-doc.org/>`_.
+        To build pyquickhelper, you need to install :epkg:`python`,
+        :epkg:`pymyinstall`,
+        :epkg:`miktex`, :epkg:`pandoc`,
+        :epkg:`sphinx`.
 
         Once Jenkins is installed, the command to schedule is::
 
@@ -89,6 +88,8 @@ def main_wrapper_tests(codefile, skip_list=None, processes=False, add_coverage=F
         Otherwise the path to ``pandoc.exe`` needs to be changed.
 
         And you can also read `Schedule builds with Jenkins <http://www.xavierdupre.fr/blog/2014-12-06_nojs.html>`_.
+
+        :epkg:`node.js` might be required if a notebooks contain javascript.
 
     Parameters *add_coverage* and *report_folder* are used to compute the coverage
     using the module `coverage <http://nedbatchelder.com/code/coverage/>`_.

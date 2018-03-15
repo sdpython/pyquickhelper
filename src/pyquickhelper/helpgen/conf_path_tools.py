@@ -29,7 +29,8 @@ def find_graphviz_dot(exc=True):
     """
     determines the path to graphviz (on Windows),
     the function tests the existence of versions 34 to 45
-    assuming it was installed in a standard folder: ``C:\\Program Files\\MiKTeX 2.9\\miktex\\bin\\x64``
+    assuming it was installed in a standard folder:
+    ``C:\\Program Files\\MiKTeX 2.9\\miktex\\bin\\x64``.
 
     :param exc: raise exception of be silent
     :return: path to dot
@@ -67,7 +68,7 @@ def find_latex_path(exc=True):
     Find latex path.
 
     :param exc: raises an exception or be silent
-    :return: ``C:\\Program Files\\MiKTeX 2.9\\miktex\\bin\\x64``
+    :return: something like ``C:\\Program Files\\MiKTeX 2.9\\miktex\\bin\\x64``
     :raises FileNotFoundError: if latex not found
 
     .. versionadded:: 0.9
