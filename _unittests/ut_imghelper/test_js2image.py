@@ -23,7 +23,7 @@ except ImportError:
 
 
 from src.pyquickhelper.loghelper import fLOG
-from src.pyquickhelper.pycode import ExtTestCase, get_temp_folder, skipif_appveyor
+from src.pyquickhelper.pycode import ExtTestCase, get_temp_folder, skipif_appveyor, skipif_circleci
 from src.pyquickhelper.imghelper.js_helper import run_js_fct, install_node_js_modules
 from src.pyquickhelper.imghelper.js_helper import nodejs_version, require, run_js_with_nodejs
 
@@ -41,6 +41,8 @@ class TestJs2Image(ExtTestCase):
         c = fct(3, 4)
         self.assertEqual(c, 7)
 
+    @skipif_appveyor("No node.js.")
+    @skipif_circleci("No node.js.")
     def test_nodejs(self):
         fLOG(
             __file__,
@@ -51,6 +53,7 @@ class TestJs2Image(ExtTestCase):
         self.assertEqual([out], ["jsnodejs\n"])
 
     @skipif_appveyor("No node.js.")
+    @skipif_circleci("No node.js.")
     def test_js2fctdom(self):
         fLOG(
             __file__,
