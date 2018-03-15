@@ -27,19 +27,18 @@ def run_js_fct(script, required=None):
     the code.
 
     @param  script      :epkg:`javascript`
-    @param  required    required libraries (does not guaranteed to work).
+    @param  required    required libraries (does not guaranteed to work)
     @return             :epkg:`python` function
 
     The module relies on :epkg:`js2py` and :epkg:`node.js`.
-    Dependencies must be installed with :epkg:`npm`:
+    Dependencies must be installed with :epkg:`npm`:.
 
     ::
 
-        npm install babel-core babel-cli babel-preset-es2015 babel-polyfill babelify browserify
-        npm install babel-preset-env
+        npm install babel-core babel-cli babel-preset-es2015 babel-polyfill babelify browserify babel-preset-env
 
     Function @see fn install_node_js_modules can be run with admin right for that.
-    :epks:`js2py` tries to convert a dependency into :epkg:`Python`
+    :epkg:`js2py` tries to convert a dependency into :epkg:`Python`
     """
     from js2py import eval_js, require, node_import
     # To skip npm installation.
@@ -63,7 +62,6 @@ def install_node_js_modules(dest, module_list=['babel-core', 'babel-cli',
 
     @param      dest        installation folder
     @param      module_list list of modules to install
-    @param
     """
     dir_name = dest
     node_modules = os.path.join(dir_name, "node_modules")
