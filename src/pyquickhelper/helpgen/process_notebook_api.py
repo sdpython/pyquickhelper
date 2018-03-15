@@ -19,12 +19,13 @@ else:
 
 def get_exporter(format):
     """
-    return the IPython exporter associated to a format
+    Returns the :epkg:`IPython` exporter associated to a format.
 
     @param      format      string (see below)
     @return                 class
 
-    available formats: slides, pdf, latex, markdown, html, rst, python, notebook, template
+    Available formats: *slides*, *pdf*, *latex*, *markdown*, *html*,
+    *rst*, *python*, *notebook*, *template*.
     """
     if format == "python":
         try:

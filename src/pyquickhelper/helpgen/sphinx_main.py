@@ -239,17 +239,16 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
         on project `python3_module_template <https://github.com/sdpython/python3_module_template/>`_
         shows which changes needs to be done to add an extra layer of for the documentation.
 
-    .. versionchanged:: 1.0
-        Assumes IPython 3 is installed. It might no work for earlier versions (notebooks).
-        Parameters *from_repo*, *use_run_cmd* were added.
+    The function assumes :epkg:`IPython` 3 is installed.
+    It might no work for earlier versions (notebooks).
+    Parameters *from_repo*, *use_run_cmd* were added.
+    Notebook conversion to slides is implemented,
+    install :epkg:`reveal.js` if not installed.
+    Calls the function @see fn _setup_hook to initialize
+    the module before generating the documentation.
+    Parameter *add_htmlhelp* was added. It runs HtmlHelp on Windows ::
 
-    .. versionchanged:: 1.1
-        Add notebook conversion to slides, install reveal.js if not installed.
-        Calls the function @see fn _setup_hook to initialize the module before
-        generating the documentation.
-        Parameter *add_htmlhelp* was added. It runs HtmlHelp on Windows ::
-
-            "C:\\Program Files (x86)\\HTML Help Workshop\\hhc.exe" build\\htmlhelp\\<module>.hhp
+        "C:\\Program Files (x86)\\HTML Help Workshop\\hhc.exe" build\\htmlhelp\\<module>.hhp
 
     The documentation includes blog (with sphinx command ``.. blogpost::``
     and python scripts ``.. runpython::``. The second command runs a python
@@ -259,6 +258,9 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
     `sphinx <http://www.sphinx-doc.org/en/stable/>`_,
     `nbconvert <https://nbconvert.readthedocs.io/en/latest/>`_,
     `nbpresent <https://github.com/Anaconda-Platform/nbpresent>`_.
+    When there are too many notebooks, the notebook index is difficult to read.
+    It does not require to get script location.
+    Not enough stable from virtual environment.
 
     .. versionchanged:: 1.5
         Set ``BOKEH_DOCS_MISSING_API_KEY_OK`` to 1.
@@ -285,29 +287,6 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
         change with method ``app.status_iterator`` must be
         replaced by ``status_iterator``.
         See issue `bokeh:7520 <https://github.com/bokeh/bokeh/issues/7520>`_.
-
-    .. todoext::
-        :title: add subfolder when building indexes of notebooks
-        :tag: enhancement
-        :issue: 9
-        :cost: 1
-        :release: 1.4
-        :date: 2016-08-23
-        :hidden:
-
-        When there are too many notebooks, the notebook index is difficult to read.
-
-    .. todoext::
-        :title: replace command line by direct call to sphinx, nbconvert, nbpresent
-        :tag: enhancement
-        :issue: 30
-        :cost: 3
-        :release: 1.4
-        :date: 2016-08-25
-        :hidden:
-
-        It does not require to get script location.
-        Not enough stable from virtual environment.
     """
     from ..pycode import is_travis_or_appveyor
     if is_travis_or_appveyor() == "circleci":
@@ -486,8 +465,9 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
     _check_sphinx_configuration(theconf, fLOG)
 
     ##############################################################
-    # we store the html_static_path in html_static_paths for the base conf
-    # we extract other information from the configuration
+    # Extracts variables from the configuration.
+    # We store the html_static_path in html_static_paths for the base conf
+    # We extract other information from the configuration
     ##############################################################
     html_static_path = theconf.__dict__.get("html_static_path", "phdoc_static")
     if isinstance(html_static_path, list):
@@ -512,6 +492,11 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
             raise ValueError(
                 "Result of function custom_latex_processing should not be None.")
     remove_unicode = theconf.__dict__.get("remove_unicode", False)
+    snippet_folder = theconf.__dict__.get(
+        "notebook_custom_snippet_folder", None)
+    if snippet_folder:
+        snippet_folder = os.path.join(
+            os.path.dirname(theconf.__file__), snippet_folder)
 
     notebook_replacements = theconf.__dict__.get("notebook_replacements", None)
     if notebook_replacements is not None and not isinstance(notebook_replacements, dict):
@@ -734,7 +719,8 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
             fLOG("[generate_help_sphinx] *#* NB, add:", len(nbs))
             nbs.sort()
             build_notebooks_gallery(nbs, os.path.join(
-                notebook_doc, "..", "all_notebooks.rst"), layout=nblayout, fLOG=fLOG)
+                notebook_doc, "..", "all_notebooks.rst"), layout=nblayout,
+                snippet_folder=snippet_folder, fLOG=fLOG)
             build_all_notebooks_coverage(nbs, os.path.join(
                 notebook_doc, "..", "all_notebooks_coverage.rst"), module_name, fLOG=fLOG)
 

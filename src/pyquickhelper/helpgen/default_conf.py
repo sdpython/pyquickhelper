@@ -660,6 +660,9 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
     # notebooks replacements (post-process)
     notebook_replacements = {'html': [('\\mathbb{1}_', '\\mathbf{1\\!\\!1}_')]}
 
+    # notebooks snippets
+    notebook_custom_snippet_folder = 'notebooks_snippets'
+
     ###########################
     # collect local variables
     ###########################

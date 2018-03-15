@@ -17,6 +17,7 @@ History
 **Features**
 
 * `107`: convert svg into png for notebook snippets
+* `112`: allow to set custom snippets for notebooks
 
 1.6.2413 (2018-02-14)
 =====================

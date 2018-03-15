@@ -771,7 +771,7 @@ def add_link_to_notebook(file, nb, pdf, html, python, slides, present, exc=True,
             "unable to add a link to this extension: " + ext)
 
 
-def build_thumbail_in_gallery(nbfile, folder_snippet, relative, rst_link, layout):
+def build_thumbail_in_gallery(nbfile, folder_snippet, relative, rst_link, layout, snippet_folder=None, fLOG=None):
     """
     Returns :epkg:`rst` code for a notebook.
 
@@ -780,14 +780,44 @@ def build_thumbail_in_gallery(nbfile, folder_snippet, relative, rst_link, layout
     @param      relative        the path to the snippet will be relative to this folder
     @param      rst_link        rst link
     @param      layout          ``'classic'`` or ``'table'``
+    @param      snippet_folder  folder where to find custom snippet for notebooks,
+                                the snippet should have the same name as the notebook
+                                itself, snippet must have extension ``.png``
     @return                     RST
 
     .. versionadded:: 1.5
         Parameter *layout* was added.
+
+    .. versionchanged:: 1.7
+        Modifies the function to bypass the generation of a snippet
+        if a custom one was found. Parameter *snippet_folder* was added.
     """
     nb = read_nb(nbfile)
     title, desc = nb.get_description()
-    image = nb.get_thumbnail()
+
+    if snippet_folder is not None and os.path.exists(snippet_folder):
+        custom_snippet = os.path.join(snippet_folder, os.path.splitext(
+            os.path.split(nbfile)[-1])[0] + '.png')
+    else:
+        custom_snippet = None
+
+    if custom_snippet is not None and os.path.exists(custom_snippet):
+        # reading a custom snippet
+        if fLOG:
+            fLOG("[build_thumbail_in_gallery] custom snippet '{0}'".format(
+                custom_snippet))
+        try:
+            from PIL import Image
+        except ImportError:
+            import Image
+        image = Image.open(custom_snippet)
+    else:
+        # generating an image
+        if fLOG:
+            fLOG(
+                "[build_thumbail_in_gallery] build snippet from '{0}'".format(nbfile))
+        image = nb.get_thumbnail()
+
     if image is None:
         raise ValueError(
             "The snippet cannot be null, notebook='{0}'.".format(nbfile))
@@ -843,7 +873,8 @@ def add_tag_for_slideshow(ipy, folder, encoding="utf8"):
     return output
 
 
-def build_notebooks_gallery(nbs, fileout, layout="classic", neg_pattern=None, fLOG=noLOG):
+def build_notebooks_gallery(nbs, fileout, layout="classic", neg_pattern=None,
+                            snippet_folder=None, fLOG=noLOG):
     """
     Creates a :epkg:`rst` page (gallery) with links to all notebooks.
     For each notebook, it creates a snippet.
@@ -852,6 +883,9 @@ def build_notebooks_gallery(nbs, fileout, layout="classic", neg_pattern=None, fL
     @param      fileout         file to create
     @param      layout          ``'classic'`` or ``'table'``
     @param      neg_pattern     do not consider notebooks matching this regular expression
+    @param      snippet_folder  folder where to find custom snippet for notebooks,
+                                the snippet should have the same name as the notebook
+                                itself, snippet must have extension ``.png``
     @param      fLOG            logging function
     @return                     created file name
 
@@ -876,6 +910,10 @@ def build_notebooks_gallery(nbs, fileout, layout="classic", neg_pattern=None, fL
         (previous name *add_notebook_page*).
         Add a link on notebook coverage.
         Parameters *layout*, *neg_pattern* were added.
+
+    .. versionchanged:: 1.7
+        Modifies the function to bypass the generation of a snippet
+        if a custom one was found. Parameter *snippet_folder* was added.
     """
     if not isinstance(nbs, list):
         fold = nbs
@@ -984,7 +1022,8 @@ def build_notebooks_gallery(nbs, fileout, layout="classic", neg_pattern=None, fL
                 raise FileNotFoundError("Unable to find: '{0}'\nRST=\n{1}".format(
                     file, "\n".join(str(_) for _ in rst)))
             r = build_thumbail_in_gallery(
-                file, folder, folder_index, link, layout)
+                file, folder, folder_index, link, layout,
+                snippet_folder=snippet_folder, fLOG=fLOG)
             rows.append(r)
     else:
         # case where there are subfolders
