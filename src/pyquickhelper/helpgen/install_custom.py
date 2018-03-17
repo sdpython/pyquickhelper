@@ -5,8 +5,10 @@
 from __future__ import print_function
 import re
 import os
+import shutil
 
 from ..filehelper import download, read_url
+from ..filehelper.internet_helper import ReadUrlException
 from ..filehelper.compression_helper import unzip_files
 from ..filehelper.synchelper import explore_folder_iterfile
 
@@ -15,7 +17,7 @@ def download_revealjs(temp_folder=".", unzip_to=".", fLOG=print,
                       location="https://github.com/hakimel/reveal.js/releases",
                       clean=True):
     """
-    Download :epkg:`reveal.js` release and unzip it.
+    Downloads :epkg:`reveal.js` release and unzip it.
 
     @param      temp_folder     where to download the setup
     @param      unzip_to        where to unzip the files
@@ -80,24 +82,44 @@ def download_requirejs(to=".", fLOG=print,
                        location="http://requirejs.org/docs/download.html",
                        clean=True):
     """
-    Download `require.js <http://requirejs.org/docs/download.html>`_ release.
+    Downloads `require.js <http://requirejs.org/docs/download.html>`_ release.
 
     @param      to              where to unzip the files
     @param      fLOG            logging function
     @param      location        location of require.js release
     @param      clean           clean unnecessary files
     @return                     list of downloaded and unzipped files
-    """
-    link = location
-    page = read_url(link, encoding="utf8")
-    reg = re.compile("href=\\\"(.*?minified/require[.]js)\\\"")
-    alls = reg.findall(page)
-    if len(alls) == 0:
-        raise Exception(
-            "unable to find a link on require.js file on page: " +
-            page)
 
-    filename = alls[0]
-    local = download(filename, to, fLOG=fLOG)
-    fLOG("local file", local)
-    return [local]
+    .. versionchanged:: 1.7
+        *require.js* can be locally obtained if :epkg:`notebook` is installed.
+    """
+    if location is None:
+        from notebook import __file__ as local_location
+        dirname = os.path.dirname(local_location)
+        location = os.path.join(
+            dirname, "static", "components", "requirejs", "require.js")
+        if not os.path.exists(location):
+            raise FileNotFoundError(
+                "Unable to find requirejs in '{0}'".format(location))
+        shutil.copy(location, to)
+        return [os.path.join(to,  "require.js")]
+    else:
+        link = location
+        try:
+            page = read_url(link, encoding="utf8")
+        except ReadUrlException as e:
+            if fLOG:
+                fLOG(
+                    "[download_requirejs] unable to read '{0}'".format(location))
+            return download_requirejs(to=to, fLOG=fLOG, location=None, clean=clean)
+        reg = re.compile("href=\\\"(.*?minified/require[.]js)\\\"")
+        alls = reg.findall(page)
+        if len(alls) == 0:
+            raise Exception(
+                "unable to find a link on require.js file on page: " +
+                page)
+
+        filename = alls[0]
+        local = download(filename, to, fLOG=fLOG)
+        fLOG("[download_requirejs] local file", local)
+        return [local]

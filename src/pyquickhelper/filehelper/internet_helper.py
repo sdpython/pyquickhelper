@@ -15,6 +15,13 @@ else:
     import urllib.request as urllib_request
 
 
+class ReadUrlException(Exception):
+    """
+    Raised by @see fn read_url.
+    """
+    pass
+
+
 def download(url, path_download=".", outfile=None, fLOG=noLOG):
     """
     Downloads a small file.
@@ -126,11 +133,11 @@ def download(url, path_download=".", outfile=None, fLOG=noLOG):
 
 def read_url(url, encoding=None):
     """
-    read the content of a url
+    Reads the content of a url.
 
     @param      url         url
     @param      encoding    if None, the result type is bytes, str otherwise
-    @return                 str or bytes
+    @return                 str (encoding is not None) or bytes
 
     .. versionadded:: 1.1
     """
@@ -141,7 +148,7 @@ def read_url(url, encoding=None):
             content = fu.read()
             fu.close()
         except Exception as e:
-            raise Exception(
+            raise ReadUrlException(
                 "unable to read url '{0}'\n[pyqerror]\n{1}".format(url, e))
     else:
         try:
@@ -153,8 +160,8 @@ def read_url(url, encoding=None):
             else:
                 import urllib.parse as urlparse
             res = urlparse.urlparse(url)
-            raise Exception(
-                "unable to open url '{0}' scheme: {1}".format(url, res))
+            raise ReadUrlException(
+                "unable to open url '{0}' scheme: {1}\nexc: {2}".format(url, res, e))
 
     if encoding is None:
         return content
