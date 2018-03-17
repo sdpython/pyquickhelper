@@ -22,7 +22,8 @@ except ImportError:
     import src
 
 from src.pyquickhelper.loghelper import fLOG
-from src.pyquickhelper.pandashelper import isempty, isnan, read_url
+from src.pyquickhelper.pandashelper import isempty, isnan
+from pandas import read_csv
 
 
 if sys.version_info[0] == 2:
@@ -40,14 +41,8 @@ class TestPandasHelper(unittest.TestCase):
         repeat = 0
         while True:
             try:
-                df = read_url(
-                    url,
-                    sep="\t",
-                    names=[
-                        "ville",
-                        "annee",
-                        "temps",
-                        "secondes"])
+                df = read_csv(url, sep="\t", names=[
+                    "ville", "annee", "temps", "secondes"])
                 break
             except ConnectionResetError as e:
                 if repeat >= 2:
