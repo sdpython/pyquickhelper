@@ -17,6 +17,7 @@ import importlib
 
 from ..filehelper.synchelper import remove_folder, explore_folder_iterfile
 from ..loghelper.flog import noLOG
+from .pip_helper import fix_pip_902
 
 if sys.version_info[0] == 2:
     from StringIO import StringIO
@@ -102,7 +103,8 @@ def get_temp_folder(thisfile, name=None, clean=True, create=True, max_path=False
 
 def _extended_refactoring(filename, line):
     """
-    Private function to do extra checkings when refactoring pyquickhelper
+    Private function which does extra checkings
+    when refactoring pyquickhelper
 
     @param      filename        filename
     @param      line            line
@@ -127,7 +129,7 @@ def check_pep8(folder, ignore=('E501', 'E265'), skip=None,
                complexity=-1, stop_after=100, fLOG=noLOG,
                neg_filter=None, extended=None, max_line_length=162):
     """
-    Check if :epkg:`PEP8`,
+    Checks if :epkg:`PEP8`,
     the function calls command :epkg:`pycodestyle`
     on a specific folder
 
@@ -253,7 +255,7 @@ def check_pep8(folder, ignore=('E501', 'E265'), skip=None,
 
 def add_missing_development_version(names, root, hide=False):
     """
-    look for development version of a given module and add paths to
+    Looks for development version of a given module and add paths to
     ``sys.path`` after having checked they are working
 
     @param      names           name or names of the module to import
@@ -263,6 +265,9 @@ def add_missing_development_version(names, root, hide=False):
     @return                     added paths
 
     .. versionadded:: 1.4
+
+    .. versionchanged:: 1.7
+        Calls @see fn fix_pip_902.
     """
     if not isinstance(names, list):
         names = [names]
@@ -287,6 +292,7 @@ def add_missing_development_version(names, root, hide=False):
     newroot = os.path.normpath(os.path.abspath(newroot))
     found = os.listdir(newroot)
     dirs = [os.path.join(newroot, _) for _ in found]
+    fix_pip_902()
 
     paths = []
     for name in names:
