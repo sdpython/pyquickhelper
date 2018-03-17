@@ -102,7 +102,7 @@ def download_requirejs(to=".", fLOG=print,
             raise FileNotFoundError(
                 "Unable to find requirejs in '{0}'".format(location))
         shutil.copy(location, to)
-        return [os.path.join(to,  "require.js")]
+        return [os.path.join(to, "require.js")]
     else:
         link = location
         try:
