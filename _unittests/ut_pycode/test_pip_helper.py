@@ -22,10 +22,11 @@ except ImportError:
 
 from src.pyquickhelper.loghelper import fLOG
 from src.pyquickhelper.pycode.pip_helper import get_packages_list, get_package_info, package2dict
-from src.pyquickhelper.pycode import is_travis_or_appveyor
+from src.pyquickhelper.pycode import ExtTestCase
+from src.pyquickhelper.pycode.pip_helper import fix_pip_902
 
 
-class TestPipHelper(unittest.TestCase):
+class TestPipHelper(ExtTestCase):
 
     def test_pip_list(self):
         fLOG(
@@ -33,11 +34,17 @@ class TestPipHelper(unittest.TestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
+        keys = fix_pip_902()
         li = get_packages_list()
         dt = package2dict(li[0])
+        avoid = {'py_version'}
+        empty = []
         for k, v in dt.items():
-            fLOG(k, v)
-        assert len(li) > 0
+            if k not in keys and k not in avoid:
+                if k is None:
+                    empty.append(k)
+        self.assertEmpty(empty)
+        self.assertNotEmpty(li)
 
     def test_pip_show(self):
         fLOG(
@@ -45,16 +52,15 @@ class TestPipHelper(unittest.TestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
+        fix_pip_902()
         info = get_package_info("pandas")
         # if "license" not in info:
         #    raise Exception(str(info))
         if "version" not in info:
             raise Exception(str(info))
 
-        if is_travis_or_appveyor() != "travis" and sys.version_info[0] >= 3:
+        if sys.version_info[0] >= 3:
             info = get_package_info("sphinx")
-            # if "license" not in info:
-            #    raise Exception(str(info))
             if "version" not in info:
                 raise Exception(str(info))
 
@@ -66,8 +72,8 @@ class TestPipHelper(unittest.TestCase):
 
         info = get_package_info(start=0, end=2)
         df = pandas.DataFrame(info)
-        assert len(info) > 0
-        assert isinstance(info[0], dict)
+        self.assertNotEmpty(info)
+        self.assertIsInstance(info[0], dict)
 
         if __name__ == "__mahin__":
             info = get_package_info(fLOG=fLOG)

@@ -200,6 +200,21 @@ class ExtTestCase(unittest.TestCase):
             raise AssertionError(
                 "Dictionaries are different\n{0}".format('\n'.join(rows)))
 
+    def assertEmpty(self, a):
+        """
+        Checks that ``a`` is empty or *None*.
+        """
+        if a is None:
+            return
+        try:
+            nb = len(a)
+        except Exception:
+            return
+        if nb == 0:
+            return
+        raise AssertionError('object is a container and is not empty\n{0}'.format(
+            '\n'.join(str(_) for _ in a)))
+
 
 def skipif_appveyor(msg):
     """

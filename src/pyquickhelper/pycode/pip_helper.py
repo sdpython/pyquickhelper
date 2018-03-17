@@ -7,6 +7,7 @@ Some links to look:
 * `installing_python_packages_programatically.py <https://gist.github.com/rwilcox/755524>`_
 * `Calling pip programmatically <http://blog.ducky.io/python/2013/08/22/calling-pip-programmatically/>`_
 """
+import sys
 
 
 class PQPipError (Exception):
@@ -26,6 +27,28 @@ class PQPipError (Exception):
             cmd, out, err = l
             mes = "CMD:\n{0}\nOUT:\n{1}\n[piperror]\n{2}".format(cmd, out, err)
             Exception.__init__(self, mes)
+
+
+def fix_pip_902():
+    """
+    Version 9.0.2 of pip introduced some weird checkings in file
+    `pip/_vendor/requests/packages.py <https://github.com/pypa/pip/blob/master/src/pip/_vendor/requests/packages.py>`_.
+    Option 1 is to avoid that version,
+    option 2 is to try to fix it.
+
+    @return     added keys in ``sys.modules``
+    """
+    keys = ['pip._vendor.urllib3.contrib',
+            'pip._vendor.urllib3.contrib.pyopenssl',
+            'pip._vendor.urllib3.packages.backports',
+            'pip._vendor.urllib3.packages.backports.makefile',
+            'pip._vendor.urllib3.contrib.socks']
+    res = []
+    for key in keys:
+        if key not in sys.modules:
+            sys.modules[key] = None
+            res.append(key)
+    return set(res)
 
 
 def get_packages_list():
