@@ -204,7 +204,8 @@ class BlogPostList:
                          blog_title="__BLOG_TITLE__",
                          blog_description="__BLOG_DESCRIPTION__",
                          blog_root="__BLOG_ROOT__",
-                         only_html=True):
+                         only_html_index=True,
+                         only_html_agg=False):
         """
         Writes posts in a aggregated manner (post, categories, months).
 
@@ -213,12 +214,18 @@ class BlogPostList:
         @param      blog_title          blog title
         @param      blog_description    blog description
         @param      blog_root           blog root (publish url)
-        @param      only_html           add item ``.. only:: html`` and indent everything
+        @param      only_html_index     add item ``.. only:: html`` and indent everything
                                         after the main index
+        @param      only_html_agg       add item ``.. only:: html`` and indent everything
+                                        for aggregated pages
         @return                         list of produced files
 
         .. versionchanged:: 1.5
             Parameter *only_html* was added.
+
+        .. versionchanged:: 1.7
+            Splits *only_html* into *only_html_index*
+            and *only_html_agg*.
         """
         link_up = self.get_rst_links_up()
         link_down = self.get_rst_links_down()
@@ -239,13 +246,13 @@ class BlogPostList:
         # aggregated pages
         res = []
         res.extend(self.write_aggregated_posts(folder, division, rst_links_up=link_up,
-                                               rst_links_down=link_down, only_html=only_html))
+                                               rst_links_down=link_down, only_html=only_html_agg))
         res.extend(self.write_aggregated_categories(folder, division, rst_links_up=link_up,
-                                                    rst_links_down=link_down, only_html=only_html))
+                                                    rst_links_down=link_down, only_html=only_html_agg))
         res.extend(self.write_aggregated_months(folder, division, rst_links_up=link_up,
-                                                rst_links_down=link_down, only_html=only_html))
+                                                rst_links_down=link_down, only_html=only_html_agg))
         res.append(self.write_aggregated_index(
-            folder, hidden_files=res, only_html=only_html))
+            folder, hidden_files=None, hidden_files_html=res, only_html=only_html_index))
 
         # final aggregator
         res.extend(self.write_aggregated_chapters(folder))
@@ -272,18 +279,22 @@ class BlogPostList:
         else:
             raise FileNotFoundError("unable to get image name: " + img)
 
-    def write_aggregated_index(self, folder, hidden_files=None, only_html=True):
+    def write_aggregated_index(self, folder, hidden_files=None, hidden_files_html=None, only_html=True):
         """
         Writes an index.
 
-        @param      folder          where to write the file
-        @param      hidden_files    creates an hidden *toctree* and a @see cl tocdelay_node.
-        @param      only_html       add item ``.. only:: html`` and indent everything
-                                    after the main index
-        @return                     filename
+        @param      folder              where to write the file
+        @param      hidden_files        creates an hidden *toctree* and a @see cl tocdelay_node.
+        @param      only_html           add item ``.. only:: html`` and indent everything
+                                        after the main index
+        @param      hidden_files_html   add item ``.. only:: html`` for these pages
+        @return                         filename
 
         .. versionchanged:: 1.5
             Parameter *only_html* was added.
+
+        .. versionchanged:: 1.7
+            Parameter *hidden_files_html* was added.
         """
         indent = "    " if only_html else ""
         name = os.path.join(folder, "blogindex.rst")
@@ -302,21 +313,40 @@ class BlogPostList:
                     "    {0} - {1} <{2}/{3}>\n".format(item.Date, item.Title, item.Date[:4],
                                                        os.path.splitext(os.path.split(item.FileName)[-1])[0]))
             f.write("\n\n")
+            f.write(".. toctree::\n")
+            f.write("    :hidden:\n")
+            f.write("\n")
+            for item in self:
+                fl = os.path.split(item.FileName)[-1]
+                fl = os.path.splitext(fl)[0]
+                f.write("    {0}/{1}\n".format(item.Date[:4], fl))
+
             if hidden_files is not None:
+                f.write("\n\n")
                 f.write(".. toctree::\n")
                 f.write("    :hidden:\n")
                 f.write("\n")
-                for item in self:
-                    fl = os.path.split(item.FileName)[-1]
-                    fl = os.path.splitext(fl)[0]
-                    f.write("    {0}/{1}\n".format(item.Date[:4], fl))
                 for h in hidden_files:
                     f.write("    " +
                             os.path.splitext(os.path.split(h)[-1])[0] + "\n")
                 f.write("\n\n")
 
             if only_html:
+                f.write("\n\n")
                 f.write(".. only:: html\n\n")
+
+            if hidden_files_html is not None:
+                f.write(indent + ".. toctree::\n")
+                f.write(indent + "    :hidden:\n")
+                f.write("\n")
+                for item in self:
+                    fl = os.path.split(item.FileName)[-1]
+                    fl = os.path.splitext(fl)[0]
+                    f.write(indent + "    {0}/{1}\n".format(item.Date[:4], fl))
+                for h in hidden_files_html:
+                    f.write(indent + "    " +
+                            os.path.splitext(os.path.split(h)[-1])[0] + "\n")
+                f.write("\n\n")
 
             f.write("\n")
             f.write(indent + ".. image:: feed-icon-16x16.png\n\n")
@@ -586,9 +616,8 @@ class BlogPostList:
         rows.append("    :target: ../_downloads/rss.xml")
         rows.append("    :alt: RSS")
         rows.append("")
-        rows.append(".. raw:: html")
+        rows.append("----")
         rows.append("")
-        rows.append("    <hr />")
 
         if index_terms is not None:
             rows.append("")
@@ -610,10 +639,8 @@ class BlogPostList:
             rows.append("")
             rows.append("")
 
-        rows.append(".. raw:: html")
         rows.append("")
-        rows.append("    <hr />")
-        rows.append("")
+        rows.append("----")
         rows.append("")
         if rst_links_down is not None:
             if len(arrows) > 0:
