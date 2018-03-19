@@ -1,9 +1,10 @@
 
 .. blogpost::
-    :title: pip 9.0.2 and issue with 'pip._vendor.urllib3.contrib
+    :title: pip 9.0.2 and issue with pip._vendor.urllib3.contrib
     :keywords: pip, 9.0.2
     :date: 2018-03-19
     :categories: modules
+    :lid: blog-pip-vendor-urllib3-contrib
 
     :epkg:`pip` was recently updated and the new version
     produces a weird error:
