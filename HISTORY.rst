@@ -13,8 +13,7 @@ History
 * `104`: implement visit, depart for pending_xref and rst translator
 * `106`: replace pdflatex by xelatex to handle utf-8 characters
 * `108`: add command lab, creates a script to start jupyter lab on notebook folder
-* `113`: propose a fix for a bug introduced by pip 9.0.2,
-  see :ref:`pip 9.0.2 and issue with pip._vendor.urllib3.contrib <blog-pip-vendor-urllib3-contrib>`
+* `113`: propose a fix for a bug introduced by pip 9.0.2
 
 **Features**
 

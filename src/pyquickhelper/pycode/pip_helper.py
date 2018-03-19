@@ -37,6 +37,16 @@ def fix_pip_902():
     option 2 is to try to fix it.
 
     @return     added keys in ``sys.modules``
+
+    See blog post
+    :ref:`pip 9.0.2 and issue with pip._vendor.urllib3.contrib <blog-pip-vendor-urllib3-contrib>`,
+    the following code must be run before the error
+    ``KeyError: 'pip._vendor.urllib3.contrib'`` is raised.
+
+    ::
+
+        from pyquickhelper.pycode.pip_helper import fix_pip_902
+        fix_pip_902()
     """
     keys = ['pip._vendor.urllib3.contrib',
             'pip._vendor.urllib3.contrib.pyopenssl',

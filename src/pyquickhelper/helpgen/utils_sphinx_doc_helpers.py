@@ -90,6 +90,7 @@ def compute_truncated_documentation(doc, length=_length_truncated_doc,
                                     raise_exception=False):
     """
     Produces a truncated version of a docstring.
+
     @param      doc                 doc string
     @param      length              approximated length of the truncated docstring
     @param      raise_exception     raises an exception when the result is empty and the input is not
@@ -161,24 +162,24 @@ def compute_truncated_documentation(doc, length=_length_truncated_doc,
 class ModuleMemberDoc:
 
     """
-    represents a member in a module
+    Represents a member in a module.
 
     See :epkg:`*py:inspect`.
 
     Attributes:
-      obj (object): object
-      type (str): type
-      cl (object): class it belongs to
-      name (str): name
-      module (str): module name
-      doc (str): documentation
-      truncdoc (str): truncated documentation
-      owner (object): module
+
+    * *obj (object)*: object
+    * *type (str)*: type
+    * *cl (object)*: class it belongs to
+    * *name (str)*: name
+    * *module (str)*: module name
+    * *doc (str)*: documentation
+    * *truncdoc (str)*: truncated documentation
+    * *owner (object)*: module
     """
 
     def __init__(self, obj, ty=None, cl=None, name=None, module=None):
         """
-        constructor
         @param      obj     any kind of object
         @param      ty      type (if you want to overwrite what the class will choose),
                             this type is a string (class, method, function)
@@ -209,7 +210,7 @@ class ModuleMemberDoc:
 
     def add_prefix(self, prefix):
         """
-        adds a prefix (for the documentation)
+        Adds a prefix (for the documentation).
         @param      prefix      string
         """
         self.prefix = prefix
@@ -217,13 +218,13 @@ class ModuleMemberDoc:
     @property
     def key(self):
         """
-        returns a key to identify it
+        Returns a key to identify it.
         """
         return "%s;%s" % (self.type, self.name)
 
     def populate(self):
         """
-        extract some information about an object
+        Extracts some information about an object.
         """
         obj = self.obj
         ty = self.type if "type" in self.__dict__ else None
@@ -311,13 +312,18 @@ class ModuleMemberDoc:
 
     def rst_link(self, prefix=None, class_in_bracket=True):
         """
-        returns a sphinx link on the object
+        Returns a sphinx link on the object.
+
         @param      prefix              to correct the path with a prefix
         @param      class_in_bracket    if True, adds the class in bracket for methods and properties
-        @return                         a string style::
+        @return                         a string style, see below
 
-                                            :%s:`%s <%s>`               or
-                                            :%s:`%s <%s>` (class)
+        String style:
+
+        ::
+
+            :%s:`%s <%s>`               or
+            :%s:`%s <%s>` (class)
         """
         cor = {"function": "func",
                "method": "meth",
@@ -344,7 +350,8 @@ class ModuleMemberDoc:
     @property
     def classname(self):
         """
-        returns the class name if the object is a method
+        Returns the class name if the object is a method.
+
         @return     class object
         """
         if self.type in ["method", "staticmethod", "property"]:
@@ -354,7 +361,9 @@ class ModuleMemberDoc:
 
     def __cmp__(self, oth):
         """
-        comparison operators, compares first the first, second the name (lower case)
+        Comparison operators, compares first the first,
+        second the name (lower case).
+
         @param      oth         other object
         @return                 -1, 0 or 1
         """
@@ -374,19 +383,19 @@ class ModuleMemberDoc:
 
     def __lt__(self, oth):
         """
-        operator ``<``
+        Operator ``<``.
         """
         return self.__cmp__(oth) == -1
 
     def __eq__(self, oth):
         """
-        operator ``==``
+        Operator ``==``.
         """
         return self.__cmp__(oth) == 0
 
     def __gt__(self, oth):
         """
-        operator ``>``
+        Operator ``>``.
         """
         return self.__cmp__(oth) == 1
 
@@ -394,7 +403,7 @@ class ModuleMemberDoc:
 class IndexInformation:
 
     """
-    keeps some information to index
+    Keeps some information to index.
     """
 
     def __init__(self, type, label, name, text, rstfile, fullname):
@@ -421,7 +430,8 @@ class IndexInformation:
 
     def set_rst_file(self, rstfile):
         """
-        sets the rst file and checks the label is present in it
+        Sets the rst file and checks the label is present in it.
+
         @param      rstfile        rst file
         """
         self.rstfile = rstfile
@@ -431,7 +441,7 @@ class IndexInformation:
     @property
     def truncdoc(self):
         """
-        returns self.text
+        Returns ``self.text``.
         """
         return self.text.replace("\n", "  ").replace(
             "\t", "").replace("\r", "")
@@ -451,7 +461,8 @@ class IndexInformation:
 
     def get_label(existing, suggestion):
         """
-        returns a new label given the existing ones
+        Returns a new label given the existing ones.
+
         @param  existing    existing labels stored in a dictionary
         @param  suggestion  the suggestion will be chosen if it does not exists, ``suggestion + zzz`` otherwise
         @return             string
@@ -474,9 +485,8 @@ class IndexInformation:
 
 
 class RstFileHelp:
-
     """
-    defines what a rst file and what it describes
+    Defines what a rst file and what it describes.
     """
 
     def __init__(self, file, rst, doc):
@@ -490,14 +500,17 @@ class RstFileHelp:
         self.doc = doc
 
 
-def import_module(
-        rootm, filename, log_function, additional_sys_path=None, fLOG=noLOG):
+def import_module(rootm, filename, log_function, additional_sys_path=None,
+                  first_try=True, fLOG=noLOG):
     """
-    import a module using its filename
+    Imports a module using its filename.
+
     @param      rootm                   root of the module (for relative import)
     @param      filename                file name of the module
     @param      log_function            logging function
-    @param      additional_sys_path     additional path to include to sys.path before importing a module (will be removed afterwards)
+    @param      additional_sys_path     additional path to include to ``sys.path`` before
+                                        importing a module (will be removed afterwards)
+    @param      first_try               first call to the function (to avoid infinite loop)
     @param      fLOG                    logging function
     @return                             module object, prefix
 
@@ -505,6 +518,9 @@ def import_module(
 
     .. versionadded:: 1.0
         Parameter *fLOG* was added.
+
+    .. versionchanged:: 1.7
+        Add parameter *first_try*.
     """
     if additional_sys_path is None:
         additional_sys_path = []
@@ -623,10 +639,10 @@ def import_module(
         if find:
             module = find.groups()[0]
             log_function(
-                "unable to import module " + module + " --- " + str(e).replace("\n", " "))
+                "[warning] unable to import module " + module + " --- " + str(e).replace("\n", " "))
 
         log_function("  File \"%s\", line %d" % (__file__, 501))
-        log_function("-- unable to import module (1) ", filename,
+        log_function("[warning] -- unable to import module (1) ", filename,
                      ",", fi, " in path ", sdir, " Error: ", str(e))
         log_function("    cwd ", os.getcwd())
         log_function("    path", sdir)
@@ -657,10 +673,10 @@ def import_module(
             raise ImportErrorHelpGen(
                 "frozen importlib._bootstrap is an issue:\n" + "\n".join(message)) from e
 
-        return "unable to import %s\nError:\n%s" % (filename, str(e)), fmod
+        return "unable(1) to import %s\nError:\n%s" % (filename, str(e)), fmod
 
     except SystemError as e:
-        log_function("-- unable to import module (2) ", filename,
+        log_function("[warning] -- unable to import module (2) ", filename,
                      ",", fi, " in path ", sdir, " Error: ", str(e))
         import traceback
         stack = traceback.format_exc()
@@ -671,10 +687,32 @@ def import_module(
         for n, m in addback:
             if n not in sys.modules:
                 sys.modules[n] = m
-        return "unable to import %s\nError:\n%s" % (filename, str(e)), fmod
+        return "unable(2) to import %s\nError:\n%s" % (filename, str(e)), fmod
+
+    except KeyError as e:
+        if first_try and "KeyError: 'pip._vendor.urllib3.contrib'" in str(e):
+            # Issue with pip 9.0.2
+            from ..pycode.pip_helper import fix_pip_902
+            fix_pip_902()
+            return import_module(rootm=rootm, filename=filename, log_function=log_function,
+                                 additional_sys_path=additional_sys_path,
+                                 first_try=False, fLOG=fLOG)
+        else:
+            log_function("[warning] -- unable to import module (4) ", filename,
+                         ",", fi, " in path ", sdir, " Error: ", str(e))
+            import traceback
+            stack = traceback.format_exc()
+            log_function("      executable", sys.executable)
+            log_function("      version", sys.version_info)
+            log_function("      stack:\n", stack)
+            sys.path = memo
+            for n, m in addback:
+                if n not in sys.modules:
+                    sys.modules[n] = m
+            return "unable(4) to import %s\nError:\n%s" % (filename, str(e)), fmod
 
     except Exception as e:
-        log_function("-- unable to import module (3) ", filename,
+        log_function("[warning] -- unable to import module (3) ", filename,
                      ",", fi, " in path ", sdir, " Error: ", str(e))
         import traceback
         stack = traceback.format_exc()
@@ -685,12 +723,13 @@ def import_module(
         for n, m in addback:
             if n not in sys.modules:
                 sys.modules[n] = m
-        return "unable to import %s\nError:\n%s" % (filename, str(e)), fmod
+        return "unable(3) to import %s\nError:\n%s" % (filename, str(e)), fmod
 
 
 def get_module_objects(mod):
     """
-    gets all the classes from a module
+    Gets all the classes from a module.
+
     @param      mod     module objects
     @return             list of ModuleMemberDoc
     """
@@ -740,7 +779,7 @@ def get_module_objects(mod):
 def process_var_tag(
         docstring, rst_replace=False, header=["attribute", "meaning"]):
     """
-    Process a docstring using tag ``@ var``, and return a list of 2-tuple::
+    Processes a docstring using tag ``@ var``, and return a list of 2-tuple::
 
         @ var    filename        file name
         @ var    utf8            decode in utf8?
@@ -802,8 +841,8 @@ def process_var_tag(
 
 def make_label_index(title, comment):
     """
-    build a sphinx label from a string by
-    removing any odd characters
+    Builds a :epkg:`sphinx` label from a string by
+    removing any odd characters.
 
     @param      title       title
     @param      comment     add this string in the exception when it raises one
@@ -835,8 +874,8 @@ def make_label_index(title, comment):
 
 def process_look_for_tag(tag, title, files):
     """
-    looks for specific information in all files, collect them
-    into one single page
+    Looks for specific information in all files, collect them
+    into one single page.
 
     @param      tag     tag
     @param      title   title of the page
@@ -955,7 +994,8 @@ def process_look_for_tag(tag, title, files):
 
 def fix_image_page_for_root(content, file):
     """
-    look for images and fix their path as if the extract were copied to the root
+    Looks for images and fix their path as
+    if the extract were copied to the root.
 
     @param      content     extracted content
     @param      file        file where is comes from (unused)
@@ -979,7 +1019,7 @@ def fix_image_page_for_root(content, file):
 
 def remove_some_indent(s, backslash=False):
     """
-    bring text to the left
+    Brings text to the left.
 
     @param      s               text
     @param      backslash       if True, replace double backslash by simple backslash
@@ -1011,7 +1051,8 @@ def remove_some_indent(s, backslash=False):
 
 def example_function_latex():
     """
-    This function only contains an example with latex to check it is working fine.
+    This function only contains an example with
+    latex to check it is working fine.
 
     .. exref::
         :title: How to display a formula
