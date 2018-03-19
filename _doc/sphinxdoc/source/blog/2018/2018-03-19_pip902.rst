@@ -1,0 +1,26 @@
+
+.. blogpost::
+    :title: pip 9.0.2 and issue with 'pip._vendor.urllib3.contrib
+    :keywords: pip, 9.0.2
+    :date: 2018-03-19
+    :categories: modules
+
+    :epkg:`pip` was recently updated and the new version
+    produces a weird error:
+
+    ::
+
+        KeyError: 'pip._vendor.urllib3.contrib'
+
+    The error happens ``pip/_vendor/requests/packages.py``.
+    It seems related to issue
+    `5081 <https://github.com/pypa/pip/issues/5081>`_.
+    The best is to keep ``pip 9.0.1.``:
+
+    ::
+
+        python -m pip install pip!=9.0.2
+
+    Otherwise, you need to run the method
+    :func:`fix_pip_902 <pyquickhelper.pycode.pip_helper.fix_pip_902>`
+    before importing :epkg:`pip`.
