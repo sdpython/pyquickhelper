@@ -61,6 +61,26 @@ class TestNoteBooksExporter(ExtTestCase):
                 nb += 1
         self.assertGreater(nb, 0)
 
+    @skipif_travis('pandoc is not installed on travis')
+    def test_notebook_rst_contents(self):
+        fLOG(
+            __file__,
+            self._testMethodName,
+            OutputPrint=__name__ == "__main__")
+        if sys.version_info[0] == 2:
+            # does not work on Python 2
+            return
+        temp = get_temp_folder(__file__, "temp_nb_rst_contents")
+        nbs = [os.path.normpath(os.path.join(
+            temp, '..', "data", "rst_notebooks", "exemple_of_fix_menu.ipynb"))]
+        formats = ["rst"]
+
+        res = process_notebooks(nbs, temp, temp, formats=formats, fLOG=fLOG)
+        name = res[0][0]
+        with open(name, 'r', encoding='utf-8') as f:
+            content = f.read()
+        self.assertIn('.. contents::', content)
+
 
 if __name__ == "__main__":
     unittest.main()

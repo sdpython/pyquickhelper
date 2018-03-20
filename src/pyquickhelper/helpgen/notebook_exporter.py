@@ -9,146 +9,96 @@ import os
 from traitlets import default
 from traitlets.config import Config
 from nbconvert.exporters import RSTExporter
+from jinja2 import DictLoader
+from nbconvert.filters.pandoc import convert_pandoc
 
 
-rst_template = """
-{%- extends 'display_priority.tpl' -%}
+def convert_pandoc_rst(source, from_format, to_format, extra_args=None):
+    """
+    Overwrites `convert_pandoc <https://github.com/jupyter/nbconvert/blob/master/nbconvert/filters/pandoc.py>`_.
+
+    @param      source          string to convert
+    @param      from_format     from format
+    @param      to_format       to format
+    @param      extra_args      extra arguments
+    @return                     results
+    """
+    return convert_pandoc(source, from_format, to_format, extra_args=None)
 
 
-{% block in_prompt %}
-{% endblock in_prompt %}
+def process_raw_html(source, extra_args=None):
+    """
+    Replaces the output of `add_menu_notebook <http://www.xavierdupre.fr/app/jyquickhelper/helpsphinx/jyquickhelper/helper_in_notebook.html#jyquickhelper.helper_in_notebook.add_notebook_menu>`_
+    by:
 
-{% block output_prompt %}
-{% endblock output_prompt %}
+    ::
 
-{% block input scoped%}
-{%- if cell.source.strip() -%}
-{{".. code:: "-}}
-{%- if 'magics_language' in cell.metadata  -%}
-    {{ cell.metadata.magics_language}}
-{%- elif 'pygments_lexer' in nb.metadata.get('language_info', {}) -%}
-    {{ nb.metadata.language_info.pygments_lexer }}
-{%- elif 'name' in nb.metadata.get('language_info', {}) -%}
-    {{ nb.metadata.language_info.name }}
-{%- endif %}
-
-{{ cell.source | indent}}
-{% endif -%}
-{% endblock input %}
-
-{% block error %}
-::
-
-{{ super() }}
-{% endblock error %}
-
-{% block traceback_line %}
-{{ line | indent | strip_ansi }}
-{% endblock traceback_line %}
-
-{% block execute_result %}
-{% block data_priority scoped %}
-{{ super() }}
-{% endblock %}
-{% endblock execute_result %}
-
-{% block stream %}
-.. parsed-literal::
-
-{{ output.text | indent }}
-{% endblock stream %}
-
-{% block data_svg %}
-.. image:: {{ output.metadata.filenames['image/svg+xml'] | urlencode }}
-{% endblock data_svg %}
-
-{% block data_png %}
-.. image:: {{ output.metadata.filenames['image/png'] | urlencode }}
-{%- set width=output | get_metadata('width', 'image/png') -%}
-{%- if width is not none %}
-   :width: {{ width }}px
-{%- endif %}
-{%- set height=output | get_metadata('height', 'image/png') -%}
-{%- if height is not none %}
-   :height: {{ height }}px
-{%- endif %}
-{% endblock data_png %}
-
-{% block data_jpg %}
-.. image:: {{ output.metadata.filenames['image/jpeg'] | urlencode }}
-{%- set width=output | get_metadata('width', 'image/jpeg') -%}
-{%- if width is not none %}
-   :width: {{ width }}px
-{%- endif %}
-{%- set height=output | get_metadata('height', 'image/jpeg') -%}
-{%- if height is not none %}
-   :height: {{ height }}px
-{%- endif %}
-{% endblock data_jpg %}
-
-{% block data_markdown %}
-{{ output.data['text/markdown'] | convert_pandoc("markdown", "rst") }}
-{% endblock data_markdown %}
-
-{% block data_latex %}
-.. math::
-
-{{ output.data['text/latex'] | strip_dollars | indent }}
-{% endblock data_latex %}
-
-{% block data_text scoped %}
-.. parsed-literal::
-
-{{ output.data['text/plain'] | indent }}
-{% endblock data_text %}
-
-{% block data_html scoped %}
-.. raw:: html
-
-{{ output.data['text/html'] | indent }}
-{% endblock data_html %}
-
-{% block markdowncell scoped %}
-{{ cell.source | convert_pandoc("markdown", "rst") }}
-{% endblock markdowncell %}
-
-{%- block rawcell scoped -%}
-{%- if cell.metadata.get('raw_mimetype', '').lower() in resources.get('raw_mimetypes', ['']) %}
-{{cell.source}}
-{% endif -%}
-{%- endblock rawcell -%}
-
-{% block headingcell scoped %}
-{{ ("#" * cell.level + cell.source) | replace('\n', ' ') | convert_pandoc("markdown", "rst") }}
-{% endblock headingcell %}
-
-{% block unknowncell scoped %}
-unknown type  {{cell.type}}
-{% endblock unknowncell %}
-"""
+        .. contents::
+            :local:
+    """
+    if source is None:
+        return source
+    if 'var update_menu = function() {' in source:
+        return "\n\n.. contents::\n    :local:\n\n"
+    else:
+        return source
 
 
 class UpgradedRSTExporter(RSTExporter):
     """
     Exports :epkg:`rst` documents.
     Overwrites `RSTExporter <https://github.com/jupyter/nbconvert/blob/master/nbconvert/exporters/rst.py>`_.
+
+    * It replaces `convert_pandoc <https://github.com/jupyter/nbconvert/blob/master/nbconvert/filters/pandoc.py>`_
+      by @see fn convert_pandoc_rst.
+    * It converts :epkg:`svg` into :epkg:`png` if possible,
+      see @see fn choose_svg_png.
+    * It replaces some known :epkg:`javascript`. The output of function
+      `add_menu_notebook <http://www.xavierdupre.fr/app/jyquickhelper/helpsphinx/jyquickhelper/helper_in_notebook.html#jyquickhelper.helper_in_notebook.add_notebook_menu>`_
+      is replaced by ``.. contents::``.
+
+    .. index:: notebook export, nbconvert
+
+    It extends the template
+    `rst.tpl <https://github.com/jupyter/nbconvert/blob/master/nbconvert/templates/rst.tpl>`_.
+    New template is `rst_modified.tpl <https://github.com/sdpython/pyquickhelper/blob/master/src/pyquickhelper/helpgen/rst_modified.tpl>`_.
+    It follows the hints given at
+    `Programatically creating templates <https://nbconvert.readthedocs.io/en/latest/nbconvert_library.html#Programatically-creating-templates>`_.
+
+    :epkg:`jyquickhelper` should add a string highly recognizable when adding a menu.
     """
+
+    def __init__(self, *args, **kwargs):
+        """
+        Overwrites the extra loaders to get the right template.
+        """
+        filename = os.path.join(os.path.dirname(__file__), 'rst_modified.tpl')
+        with open(filename, 'r', encoding='utf-8') as f:
+            content = f.read()
+
+        dl = DictLoader({'rst_modified.tpl': content})
+        kwargs['extra_loaders'] = [dl]
+        RSTExporter.__init__(self, *args, **kwargs)
+
+    def default_filters(self):
+        """
+        Overrides in subclasses to provide extra filters.
+
+        This should return an iterable of 2-tuples: (name, class-or-function).
+        You should call the method on the parent class and include the filters
+        it provides.
+
+        If a name is repeated, the last filter provided wins. Filters from
+        user-supplied config win over filters provided by classes.
+        """
+        for k, v in RSTExporter.default_filters(self):
+            yield (k, v)
+        yield ('convert_pandoc_rst', convert_pandoc_rst)
+        yield ('process_raw_html', process_raw_html)
 
     @default('template_file')
     def _template_file_default(self):
-        raise RuntimeError("This should not be called.")
-
-    def _load_template(self):
-        """
-        Overwrites the method in base class.
-        """
-        template_file = 'rst.tpl'
-        self.log.debug("Attempting to load template %s", template_file)
-        self.log.debug("    template_path: %s",
-                       os.pathsep.join(self.template_path))
-        content = self.environment.get_template(template_file)
-        # content is of type jinja2.environment.Template
-        return content
+        return "rst_modified.tpl"
 
     @property
     def default_config(self):

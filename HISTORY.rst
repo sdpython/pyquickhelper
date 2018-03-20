@@ -18,6 +18,8 @@ History
 **Features**
 
 * `107`: convert svg into png for notebook snippets
+* `111`: replace ``add_menu_notebook`` by ``..contents::``
+  when notebooks are converted into RST
 * `112`: allow to set custom snippets for notebooks
 
 1.6.2413 (2018-02-14)
