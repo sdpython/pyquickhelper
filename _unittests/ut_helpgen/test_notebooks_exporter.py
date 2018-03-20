@@ -22,7 +22,7 @@ except ImportError:
 
 from src.pyquickhelper.loghelper import fLOG
 from src.pyquickhelper.helpgen import process_notebooks
-from src.pyquickhelper.pycode import get_temp_folder, ExtTestCase
+from src.pyquickhelper.pycode import get_temp_folder, ExtTestCase, skipif_travis
 
 
 if sys.version_info[0] == 2:
@@ -31,6 +31,7 @@ if sys.version_info[0] == 2:
 
 class TestNoteBooksExporter(ExtTestCase):
 
+    @skipif_travis('pandoc is not installed on travis')
     def test_notebook_rst_svg(self):
         fLOG(
             __file__,
