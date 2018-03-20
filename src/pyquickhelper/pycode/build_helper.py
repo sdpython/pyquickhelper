@@ -64,6 +64,21 @@ default_values = {
 }
 
 
+def private_path_choice(path):
+    """
+    Custom logic to reference other currently developped modules.
+    """
+    s = path
+    if "/" in s or "\\" in s:
+        return s
+    elif 'ROOT' in s:
+        return os.path.join("%current%", "..", s.replace('ROOT', ''))
+    elif 'BLIB' in s:
+        return os.path.join("%current%", "..", s.replace('BLIB', ''), "build", "lib")
+    else:
+        return os.path.join("%current%", "..", s, "src")
+
+
 def private_script_replacements(script, module, requirements, port, raise_exception=True, platform=sys.platform,
                                 default_engine_paths=None, additional_local_path=None):
     """
@@ -83,11 +98,9 @@ def private_script_replacements(script, module, requirements, port, raise_except
 
         default_engine_paths = {
             "windows": {
-                "__PY34__": None,
                 "__PY35__": None,
-                "__PY34_X64__": "c:\\Python34_x64",
-                "__PY35_X64__": "c:\\Python35_x64",
-                "__PY36_X64__": "c:\\Python36_x64",
+                "__PY35_X64__": "c:\\Python352_x64",
+                "__PY36_X64__": "c:\\Python364_x64",
                 "__PY27_X64__": "c:\\Anaconda2",
             },
         }
@@ -188,12 +201,6 @@ def private_script_replacements(script, module, requirements, port, raise_except
                        .replace("__USERNAME__", os.environ.get("USERNAME", os.environ.get("USER", "UNKNOWN-USER")))
 
         if "__ADDITIONAL_LOCAL_PATH__" in script:
-            def choice(s):
-                if "/" in s or "\\" in s:
-                    return s
-                else:
-                    return os.path.join("%current%", "..", s, "src")
-
             paths = []
             if additional_local_path is not None and len(additional_local_path) > 0:
                 paths.extend(additional_local_path)
@@ -202,7 +209,7 @@ def private_script_replacements(script, module, requirements, port, raise_except
                 for p in paths:
                     if p not in unique_paths:
                         unique_paths.append(p)
-                rows = [choice(_) for _ in unique_paths]
+                rows = [private_path_choice(_) for _ in unique_paths]
                 sep = ";" if sys.platform.startswith("win") else ":"
                 rep = sep + sep.join(rows)
                 script = script.replace("__ADDITIONAL_LOCAL_PATH__", rep)
@@ -254,7 +261,7 @@ def get_build_script(module, requirements=None, port=8067, default_engine_paths=
 def get_script_command(command, module, requirements, port=8067, platform=sys.platform,
                        default_engine_paths=None, additional_local_path=None):
     """
-    produces a script which runs a command available through the setup
+    Produces a script which runs a command available through the setup.
 
     @param      command                 command to run
     @param      module                  module name
@@ -276,13 +283,8 @@ def get_script_command(command, module, requirements, port=8067, platform=sys.pl
     rows = [windows_prefix]
 
     if additional_local_path is not None and len(additional_local_path):
-        def choice(s):
-            if "/" not in s and "\\" not in s:
-                return os.path.join("%current%", "..", s, "src")
-            else:
-                return s
         addp = "set PYTHONPATH=%PYTHONPATH%;" + \
-            ";".join(choice(_) for _ in additional_local_path)
+            ";".join(private_path_choice(_) for _ in additional_local_path)
     else:
         addp = ""
     rows.append(windows_setup.replace(
@@ -391,12 +393,6 @@ def get_extra_script_command(command, module, requirements, port=8067, blog_list
 
     # additional paths
     if "__ADDITIONAL_LOCAL_PATH__" in script:
-        def choice(s):
-            if "/" in s or "\\" in s:
-                return s
-            else:
-                return os.path.join("%current%", "..", s, "src")
-
         paths = []
         if command in ("notebook", "lab") and additional_notebook_path is not None and len(additional_notebook_path) > 0:
             paths.extend(additional_notebook_path)
@@ -409,7 +405,7 @@ def get_extra_script_command(command, module, requirements, port=8067, blog_list
             for p in paths:
                 if p not in unique_paths:
                     unique_paths.append(p)
-            rows = [choice(_) for _ in unique_paths]
+            rows = [private_path_choice(_) for _ in unique_paths]
             sep = ";" if sys.platform.startswith("win") else ":"
             rep = sep + sep.join(rows)
             script = script.replace("__ADDITIONAL_LOCAL_PATH__", rep)
@@ -428,8 +424,8 @@ def get_extra_script_command(command, module, requirements, port=8067, blog_list
 def get_script_module(command, platform=sys.platform, blog_list=None,
                       default_engine_paths=None):
     """
-    produces a script which runs the notebook, a documentation server, which
-    publishes...
+    Produces a script which runs the notebook, a documentation server, which
+    publishes and other scripts.
 
     @param      command                 command to run (*blog*)
     @param      platform                platform (only Windows)
