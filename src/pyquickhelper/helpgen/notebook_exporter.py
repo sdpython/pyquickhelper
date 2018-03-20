@@ -28,7 +28,8 @@ def convert_pandoc_rst(source, from_format, to_format, extra_args=None):
 
 def process_raw_html(source, extra_args=None):
     """
-    Replaces the output of `add_menu_notebook <http://www.xavierdupre.fr/app/jyquickhelper/helpsphinx/jyquickhelper/helper_in_notebook.html#jyquickhelper.helper_in_notebook.add_notebook_menu>`_
+    Replaces the output of
+    `add_menu_notebook <http://www.xavierdupre.fr/app/jyquickhelper/helpsphinx/jyquickhelper/helper_in_notebook.html#jyquickhelper.helper_in_notebook.add_notebook_menu>`_
     by:
 
     ::
@@ -52,7 +53,7 @@ class UpgradedRSTExporter(RSTExporter):
     * It replaces `convert_pandoc <https://github.com/jupyter/nbconvert/blob/master/nbconvert/filters/pandoc.py>`_
       by @see fn convert_pandoc_rst.
     * It converts :epkg:`svg` into :epkg:`png` if possible,
-      see @see fn choose_svg_png.
+      see @see fn process_raw_html.
     * It replaces some known :epkg:`javascript`. The output of function
       `add_menu_notebook <http://www.xavierdupre.fr/app/jyquickhelper/helpsphinx/jyquickhelper/helper_in_notebook.html#jyquickhelper.helper_in_notebook.add_notebook_menu>`_
       is replaced by ``.. contents::``.

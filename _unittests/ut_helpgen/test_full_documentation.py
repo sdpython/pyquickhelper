@@ -112,16 +112,10 @@ class TestSphinxDocFull (ExtTestCase):
                         stk.append("stored  %s=%s " % (k, v.rst_link()))
                 mes += "\nstored:\n" + "\n".join(sorted(stk))
                 raise Exception(
-                    "issues detected for function " +
-                    f +
-                    "\n" +
-                    mes)
+                    "issues detected for function '{0}' - {1}".format(f, mes))
 
-        exclude = os.path.join(
-            temp,
-            "pyquickhelper",
-            "helpgen",
-            "utils_sphinx_doc.py")
+        exclude = os.path.join(temp, "pyquickhelper",
+                               "helpgen", "utils_sphinx_doc.py")
         with open(exclude, "r") as f:
             content = f.read()
         self.assertNotIn("### # -- HELP END EXCLUDE --", content)
