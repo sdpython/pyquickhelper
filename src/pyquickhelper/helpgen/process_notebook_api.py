@@ -17,74 +17,57 @@ else:
     from io import StringIO
 
 
-def get_exporter(format):
+def get_exporter(format, add_writer=False):
     """
     Returns the :epkg:`IPython` exporter associated to a format.
 
     @param      format      string (see below)
+    @param      add_writer  add writer as well
     @return                 class
 
     Available formats: *slides*, *pdf*, *latex*, *markdown*, *html*,
     *rst*, *python*, *notebook*, *template*.
+
+    ..versionchanged:: 1.7
+        Add parameter *add_writer*.
     """
     if format == "python":
-        try:
-            from nbconvert import PythonExporter
-        except ImportError:
-            from IPython.nbconvert import PythonExporter
-        return PythonExporter
+        from nbconvert import PythonExporter
+        exp = PythonExporter
     elif format == "slides":
-        try:
-            from nbconvert import SlidesExporter
-        except ImportError:
-            from IPython.nbconvert import SlidesExporter
-        return SlidesExporter
+        from nbconvert import SlidesExporter
+        exp = SlidesExporter
     elif format == "html":
-        try:
-            from nbconvert import HTMLExporter
-        except ImportError:
-            from IPython.nbconvert import HTMLExporter
-        return HTMLExporter
+        from nbconvert import HTMLExporter
+        exp = HTMLExporter
     elif format == "pdf":
-        try:
-            from nbconvert import PDFExporter
-        except ImportError:
-            from IPython.nbconvert import PDFExporter
-        return PDFExporter
+        from nbconvert import PDFExporter
+        exp = PDFExporter
     elif format == "template":
-        try:
-            from nbconvert import TemplateExporter
-        except ImportError:
-            from IPython.nbconvert import TemplateExporter
-        return TemplateExporter
+        from nbconvert import TemplateExporter
+        exp = TemplateExporter
     elif format == "markdown":
-        try:
-            from nbconvert import MarkdownExporter
-        except ImportError:
-            from IPython.nbconvert import MarkdownExporter
-        return MarkdownExporter
+        from nbconvert import MarkdownExporter
+        exp = MarkdownExporter
     elif format == "notebook":
-        try:
-            from nbconvert import NotebookExporter
-        except ImportError:
-            from IPython.nbconvert import NotebookExporter
-        return NotebookExporter
+        from nbconvert import NotebookExporter
+        exp = NotebookExporter
     elif format == "rst":
-        try:
-            from nbconvert import RSTExporter
-        except ImportError:
-            from IPython.nbconvert import RSTExporter
-        return RSTExporter
+        from .notebook_exporter import UpgradedRSTExporter
+        exp = UpgradedRSTExporter
     elif format == "lagex":
-        try:
-            from nbconvert import LatexExporter
-        except ImportError:
-            from IPython.nbconvert import LatexExporter
-        return LatexExporter
+        from nbconvert import LatexExporter
+        exp = LatexExporter
     else:
         form = "slides, pdf, latex, markdown, html, rst, python, notebook, template"
         raise ValueError(
             "unexpected format: {0}, it should be in:\n{1}".format(format, form))
+
+    if add_writer:
+        from nbconvert.writers import FilesWriter
+        return exp, FilesWriter
+    else:
+        return exp
 
 
 def nb2slides(nb_file, outfile, add_tag=True):
@@ -234,13 +217,14 @@ def nb2html(nb_file, outfile, exc=True):
     return res
 
 
-def nb2rst(nb_file, outfile, exc=True):
+def nb2rst(nb_file, outfile, exc=True, post_process=True):
     """
     Converts a notebook into RST.
 
     @param      nb_file         notebook file or a stream or a @see fn read_nb
     @param      outfile         output file (a string)
     @param      exc             raises an exception (True) or a warning (False)
+    @param      post_process    calls @see fn post_process_rst_output
     @return                     impacted files
 
     .. versionadded:: 1.5
@@ -254,14 +238,20 @@ def nb2rst(nb_file, outfile, exc=True):
         nbr = read_nb(nb_file, kernel=False)
         nb = nbr.nb
 
-    exporter = get_exporter("rst")()
+    exp_class, writer_class = get_exporter("rst", add_writer=True)
+    exporter = exp_class()
+    writer = writer_class()
     source, meta = exporter.from_notebook_node(nb)
 
-    with open(outfile, 'w+', encoding="utf8") as fh:
-        fh.writelines(source)
+    name, ext = os.path.splitext(outfile)
+    if ext != '.rst':
+        raise ValueError("'{0}' should have extension '.rst'".format(outfile))
+    writer.build_directory = os.path.dirname(outfile)
+    writer.write(source, meta, notebook_name=name)
 
     # post_processing
-    post_process_rst_output(outfile, False, False,
-                            False, False, False, exc=exc)
+    if post_process:
+        post_process_rst_output(outfile, False, False,
+                                False, False, False, exc=exc)
     res = [outfile]
     return res

@@ -17,6 +17,7 @@ from .post_process import post_process_html_output, post_process_slides_output, 
 from .helpgen_exceptions import NotebookConvertError
 from .install_js_dep import install_javascript_tools
 from .style_css_template import THUMBNAIL_TEMPLATE, THUMBNAIL_TEMPLATE_TABLE
+from .process_notebook_api import nb2rst
 from ..loghelper.flog import run_cmd, fLOG, noLOG
 from ..ipythonhelper import read_nb, notebook_coverage, badge_notebook_coverage
 from ..pandashelper import df2rst
@@ -424,7 +425,10 @@ def _process_notebooks_in(notebooks, outfold, build, latex_path=None, pandoc_pat
 
                 # nbconvert is messing up with static variables in sphinx or
                 # docutils if format is slides, not sure about the others
-                if nbconvert_main != fnbcexe or format not in {"slides", "latex", "pdf"}:
+                if format in {'rst'}:
+                    nb2rst(notebook, outputfile, post_process=False)
+                    err = ""
+                elif nbconvert_main != fnbcexe or format not in {"slides", "latex", "pdf"}:
                     out, err = _process_notebooks_in_private(
                         fnbcexe, list_args, options_args)
                 else:
