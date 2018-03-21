@@ -279,8 +279,8 @@ def copy_source_files(input, output, fmod=lambda v, filename: v,
                       addfilter=None, replace_relative_import=False,
                       copy_add_ext=None, use_sys=None, fLOG=fLOG):
     """
-    copy all sources files (input) into a folder (output),
-    apply on each of them a modification
+    Copies all sources files (input) into a folder (output),
+    apply on each of them a modification.
 
     :param      input:                      input folder
     :param      output:                     output folder (it will be cleaned each time)
@@ -319,7 +319,7 @@ def copy_source_files(input, output, fmod=lambda v, filename: v,
         remove_folder(output, False, raise_exception=False)
 
     def_ext = ['py', 'pyd', 'cpp', 'h', 'dll', 'so', 'yml', 'o', 'def', 'gif',
-               'exe', 'data', 'config', 'css', 'js', 'png', 'map', 'sass', 'csv']
+               'exe', 'data', 'config', 'css', 'js', 'png', 'map', 'sass', 'csv', 'tpl']
     deffilter = "|".join("(.+[.]{0}$)".format(_) for _ in def_ext)
     if copy_add_ext is not None:
         res = ["(.+[.]%s$)" % e for e in copy_add_ext]

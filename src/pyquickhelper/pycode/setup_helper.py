@@ -474,7 +474,7 @@ def process_standard_options_for_setup(argv, file_or_folder, project_var_name, m
 
 def get_script_extension():
     """
-    returns the scripts extension based on the system it is running on
+    Returns the scripts extension based on the system it is running on.
 
     @return     bat or sh
     """
@@ -486,7 +486,7 @@ def get_script_extension():
 
 def get_folder(file_or_folder):
     """
-    returns the folder which contains ``setup.py``
+    Returns the folder which contains ``setup.py``.
 
     @param      file_or_folder      file ``setup.py`` or folder which contains it
     @return                         folder
@@ -501,8 +501,8 @@ def get_folder(file_or_folder):
 
 def write_version_for_setup(file_or_folder):
     """
-    extract the version number,
-    the function writes the files ``version.txt`` in this folder
+    Extracts the version number,
+    the function writes the files ``version.txt`` in this folder.
 
     @param      file_or_folder      file ``setup.py`` or folder which contains it
     @return                         version number
@@ -527,7 +527,7 @@ def clean_space_for_setup(file_or_folder, file_filter=None):
     """
     .. index:: pep8
 
-    does some cleaning within the module, apply pep8 rules
+    Does some cleaning within the module, apply :epkg:`pep8` rules.
 
     @param      file_or_folder      file ``setup.py`` or folder which contains it
     @param      file_filter         file filter (see @see fn remove_extra_spaces_folder)
@@ -581,8 +581,8 @@ def standard_help_for_setup(argv, file_or_folder, project_var_name, module_name=
                             layout=None,  # , "epub"],
                             use_run_cmd=False, fLOG=noLOG):
     """
-    standard function to generate help assuming they follow the same design
-    as *pyquickhelper*
+    Standard function which generates help assuming they follow the same design
+    as *pyquickhelper*.
 
     @param      argv                it should be ``sys.argv``
     @param      file_or_folder      file ``setup.py`` or folder which contains it
@@ -601,12 +601,6 @@ def standard_help_for_setup(argv, file_or_folder, project_var_name, module_name=
 
     A page will be added for each extra file extension mentioned in *extra_ext* if
     some of these were found.
-
-    .. versionchanged:: 1.3
-        Parameter *copy_add_ext*, *nbformats*, *argv* were added.
-
-    .. versionchanged:: 1.4
-        Parameter *use_run_cmd* was added.
     """
     if "--help" in argv:
         from ..helpgen.help_usage import get_help_usage

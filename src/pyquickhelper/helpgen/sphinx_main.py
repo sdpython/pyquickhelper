@@ -119,9 +119,9 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
     """
     Runs the help generation:
 
-    - copies every file in another folder
-    - replaces comments in doxygen format into rst format
-    - replaces local import by global import (tweaking sys.path too)
+    - copies every file in another folder,
+    - replaces comments in doxygen format into rst format,
+    - replaces local import by global import (tweaking sys.path too),
     - calls sphinx to generate the documentation.
 
     @param      project_var_name    project name
