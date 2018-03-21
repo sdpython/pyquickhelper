@@ -11,7 +11,7 @@ js2py
 jupyter
 jupyter-client
 jupyter_sphinx
-jyquickhelper>=0.3
+jyquickhelper>=0.3.128
 keyring
 Mako
 matplotlib
