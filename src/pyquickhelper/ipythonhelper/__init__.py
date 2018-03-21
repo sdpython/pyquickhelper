@@ -20,7 +20,6 @@
 """
 
 from .cython_helper import ipython_cython_extension
-from .helper_in_notebook import store_notebook_path, set_notebook_name_theNotebook, add_notebook_menu, load_extension
 from .html_forms import open_html_form
 from .interact import StaticInteract
 from .kindofcompletion import AutoCompletion, AutoCompletionFile

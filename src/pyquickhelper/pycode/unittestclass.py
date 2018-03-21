@@ -163,11 +163,12 @@ class ExtTestCase(unittest.TestCase):
         """
         Checks that ``abs(a-b) < precision``.
         """
-        if min(a, b) == 0:
+        mi = min(abs(a), abs(b))
+        if mi == 0:
             d = abs(a - b)
             self.assertLesser(d, precision)
         else:
-            r = float(abs(a - b)) / min(a, b)
+            r = float(abs(a - b)) / mi
             self.assertLesser(r, precision)
 
     def assertCallable(self, fct):

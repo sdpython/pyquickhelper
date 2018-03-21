@@ -11,14 +11,14 @@ from ..loghelper import noLOG, run_cmd
 
 class VirtualEnvError(Exception):
     """
-    exception raised by the function implemented in this file
+    Exception raised by the function implemented in this file.
     """
     pass
 
 
 def is_virtual_environment():
     """
-    tells if the script is run from a virtual environment
+    Tells if the script is run from a virtual environment.
 
     @return     boolean
 
@@ -29,8 +29,8 @@ def is_virtual_environment():
 
 class NotImplementedErrorFromVirtualEnvironment(NotImplementedError):
     """
-    defines an exception when a function does not work
-    in a virtual environment
+    Defines an exception when a function does not work
+    in a virtual environment.
 
     .. versionadded:: 1.3
     """
@@ -39,7 +39,7 @@ class NotImplementedErrorFromVirtualEnvironment(NotImplementedError):
 
 def numeric_module_version(vers):
     """
-    convert a string into a tuple with numbers whever possible
+    Converts a string into a tuple with numbers whever possible.
 
     @param      vers    string
     @return             tuple
@@ -59,7 +59,7 @@ def numeric_module_version(vers):
 
 def compare_module_version(num, vers):
     """
-    compare two versions
+    Compares two versions.
 
     @param      num     first version
     @param      vers    second version
@@ -107,7 +107,7 @@ def compare_module_version(num, vers):
 
 def build_venv_cmd(params, posparams):
     """
-    builds the command line for virtual env
+    Builds the command line for virtual env.
 
     @param      params      dictionary of parameters
     @param      posparams   positional arguments
@@ -132,9 +132,7 @@ def create_virtual_env(where, symlinks=False, system_site_packages=False,
                        clear=True, packages=None, fLOG=noLOG,
                        temp_folder=None):
     """
-    .. index:: virtual environment
-
-    create a virtual environment
+    Creates a virtual environment.
 
     @param      where                   location of this virtual environment
     @param      symlinks                attempt to symlink rather than copy
@@ -146,6 +144,8 @@ def create_virtual_env(where, symlinks=False, system_site_packages=False,
     @param      fLOG                    logging function
     @param      temp_folder             temporary folder (to download module if needed), by default ``<where>/download``
     @return                             stand output
+
+    .. index:: virtual environment
 
     .. faqref::
         :title: How to create a virtual environment?
@@ -215,7 +215,7 @@ def create_virtual_env(where, symlinks=False, system_site_packages=False,
 
 def venv_install(venv, packages, fLOG=noLOG, temp_folder=None):
     """
-    install a package or a list of packages in a virtual environment
+    Installs a package or a list of packages in a virtual environment.
 
     @param      venv            location of the virtual environment
     @param      packages        a package (str) or a list of packages(list[str])
@@ -277,7 +277,7 @@ def venv_install(venv, packages, fLOG=noLOG, temp_folder=None):
 def run_venv_script(venv, script, fLOG=noLOG, file=False, is_cmd=False,
                     skip_err_if=None, **kwargs):
     """
-    run a script on a vritual environment (the script should be simple
+    Runs a script on a vritual environment (the script should be simple).
 
     @param      venv        virtual environment
     @param      script      script as a string (not a file)
@@ -342,8 +342,6 @@ def run_base_script(script, fLOG=noLOG, file=False, is_cmd=False,
         Ran 1 test in 0.281s
 
         OK
-
-
     """
     def true_err(err):
         if "Ran 1 test" in err and "OK" in err:
@@ -391,7 +389,8 @@ def run_base_script(script, fLOG=noLOG, file=False, is_cmd=False,
 
 def check_readme_syntax(readme, folder, version="0.8", fLOG=noLOG):
     """
-    check the syntax of the file readme.rst which describes a python project
+    Checks the syntax of the file ``readme.rst``
+    which describes a python project.
 
     @param      readme          file to check
     @param      folder          location for the virtual environment

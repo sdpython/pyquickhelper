@@ -118,7 +118,7 @@ class TestNotebookConversion(ExtTestCase):
             text = f.read()
         if "from pyquickhelper.loghelper import fLOG\n    fLOG(OutputPrint=False)  # by default" not in text:
             raise Exception(text)
-        if ".. raw:: html" not in text:
+        if ".. contents::" not in text:
             raise Exception(text)
 
 

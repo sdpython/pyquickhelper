@@ -23,10 +23,21 @@ except ImportError:
 from src.pyquickhelper.loghelper import fLOG
 from src.pyquickhelper.pycode.pip_helper import get_packages_list, get_package_info, package2dict
 from src.pyquickhelper.pycode import ExtTestCase
-from src.pyquickhelper.pycode.pip_helper import fix_pip_902
+from src.pyquickhelper.pycode.pip_helper import fix_pip_902, PQPipError
 
 
 class TestPipHelper(ExtTestCase):
+
+    def test_exc(self):
+        fLOG(
+            __file__,
+            self._testMethodName,
+            OutputPrint=__name__ == "__main__")
+
+        exc = PQPipError('cmd', 'out', 'err')
+        msg = str(exc)
+        self.assertEqual([msg.replace('\n', '')], [
+                         'CMD:cmdOUT:out[piperror]err'])
 
     def test_pip_list(self):
         fLOG(

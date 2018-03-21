@@ -69,14 +69,30 @@ def private_path_choice(path):
     Custom logic to reference other currently developped modules.
     """
     s = path
+    current = '%current%' if sys.platform.startswith('win') else '~'
     if "/" in s or "\\" in s:
         return s
     elif 'ROOT' in s:
-        return os.path.join("%current%", "..", s.replace('ROOT', ''))
+        return os.path.join(current, "..", s.replace('ROOT', ''))
     elif 'BLIB' in s:
-        return os.path.join("%current%", "..", s.replace('BLIB', ''), "build", "lib")
+        return os.path.join(current, "..", s.replace('BLIB', ''), "build", "lib")
     else:
-        return os.path.join("%current%", "..", s, "src")
+        return os.path.join(current, "..", s, "src")
+
+
+def private_replacement_(script, paths, key="__ADDITIONAL_LOCAL_PATH__"):
+    """
+    Less copy/paste.
+    """
+    unique_paths = []
+    for p in paths:
+        if p not in unique_paths:
+            unique_paths.append(p)
+    rows = [private_path_choice(_) for _ in unique_paths]
+    sep = ";" if sys.platform.startswith("win") else ":"
+    rep = sep + sep.join(rows)
+    script = script.replace(key, rep)
+    return script
 
 
 def private_script_replacements(script, module, requirements, port, raise_exception=True, platform=sys.platform,
@@ -205,14 +221,8 @@ def private_script_replacements(script, module, requirements, port, raise_except
             if additional_local_path is not None and len(additional_local_path) > 0:
                 paths.extend(additional_local_path)
             if len(paths) > 0:
-                unique_paths = []
-                for p in paths:
-                    if p not in unique_paths:
-                        unique_paths.append(p)
-                rows = [private_path_choice(_) for _ in unique_paths]
-                sep = ";" if sys.platform.startswith("win") else ":"
-                rep = sep + sep.join(rows)
-                script = script.replace("__ADDITIONAL_LOCAL_PATH__", rep)
+                script = private_replacement_(
+                    script, paths, key="__ADDITIONAL_LOCAL_PATH__")
             else:
                 script = script.replace("__ADDITIONAL_LOCAL_PATH__", "")
 
@@ -401,14 +411,8 @@ def get_extra_script_command(command, module, requirements, port=8067, blog_list
         if additional_local_path is not None and len(additional_local_path) > 0:
             paths.extend(additional_local_path)
         if len(paths) > 0:
-            unique_paths = []
-            for p in paths:
-                if p not in unique_paths:
-                    unique_paths.append(p)
-            rows = [private_path_choice(_) for _ in unique_paths]
-            sep = ";" if sys.platform.startswith("win") else ":"
-            rep = sep + sep.join(rows)
-            script = script.replace("__ADDITIONAL_LOCAL_PATH__", rep)
+            script = private_replacement_(
+                script, paths, key="__ADDITIONAL_LOCAL_PATH__")
         else:
             script = script.replace("__ADDITIONAL_LOCAL_PATH__", "")
 

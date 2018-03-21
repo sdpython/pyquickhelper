@@ -50,6 +50,18 @@ class TestExtTestCase(ExtTestCase):
         self.assertRaise(lambda: self.assertExists(
             __file__ + ".k"), FileNotFoundError, "Unable to find")
 
+    def test_assertRaise(self):
+        fLOG(
+            __file__,
+            self._testMethodName,
+            OutputPrint=__name__ == "__main__")
+
+        def fraise(e):
+            raise e
+        self.assertRaise(lambda: fraise(TypeError()), TypeError)
+        self.assertRaise(lambda: self.assertRaise(
+            lambda: fraise(TypeError()), ValueError), AssertionError)
+
     def test_greater(self):
         fLOG(
             __file__,
@@ -113,6 +125,8 @@ class TestExtTestCase(ExtTestCase):
         self.assertEndsWith("a", "ba")
         self.assertRaise(lambda: self.assertEndsWith(
             "ba", "a"), AssertionError)
+        self.assertRaise(lambda: self.assertEndsWith(
+            "ba", "a" * 100), AssertionError)
 
     def test_not_empty(self):
         fLOG(
@@ -131,6 +145,30 @@ class TestExtTestCase(ExtTestCase):
             OutputPrint=__name__ == "__main__")
         self.assertCallable(zip)
         self.assertRaise(lambda: self.assertCallable('a'), AssertionError)
+
+    def test_assertEmpty(self):
+        fLOG(
+            __file__,
+            self._testMethodName,
+            OutputPrint=__name__ == "__main__")
+
+        self.assertEmpty(None)
+        self.assertEmpty([])
+        self.assertEmpty({})
+        self.assertRaise(lambda: self.assertEmpty(['a']), AssertionError)
+
+    def test_assertNotEmpty(self):
+        fLOG(
+            __file__,
+            self._testMethodName,
+            OutputPrint=__name__ == "__main__")
+
+        self.assertRaise(lambda: self.assertNotEmpty(None), AssertionError)
+        self.assertRaise(lambda: self.assertNotEmpty([]), AssertionError)
+        self.assertRaise(lambda: self.assertNotEmpty({}), AssertionError)
+        self.assertNotEmpty(['a'])
+        self.assertNotEmpty('a')
+        self.assertNotEmpty(1)
 
     def test_assertEqualFloat(self):
         fLOG(
@@ -153,6 +191,14 @@ class TestExtTestCase(ExtTestCase):
         self.assertEqualDict(dict(a='a', b=1.), dict(a='a', b=1))
         self.assertRaise(lambda: self.assertEqualDict(
             dict(a='a', b=1.), dict(a='a', b=2)), AssertionError)
+        self.assertRaise(lambda: self.assertEqualDict(
+            dict(a='a', b=1.), dict(a='a')), AssertionError)
+        self.assertRaise(lambda: self.assertEqualDict(
+            dict(a='a'), dict(a='a', b=2.)), AssertionError)
+        self.assertRaise(lambda: self.assertEqualDict(
+            None, dict(a='a', b=2)), TypeError)
+        self.assertRaise(lambda: self.assertEqualDict(
+            dict(a='a', b=2), None), TypeError)
 
     def test_assertEqualNumber(self):
         fLOG(
