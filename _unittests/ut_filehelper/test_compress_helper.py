@@ -5,7 +5,6 @@
 import sys
 import os
 import unittest
-import warnings
 
 if "temp_" in os.path.abspath(__file__):
     raise ImportError(
@@ -28,7 +27,8 @@ except ImportError:
 from src.pyquickhelper.loghelper import fLOG
 from src.pyquickhelper.pycode import get_temp_folder
 from src.pyquickhelper.filehelper import gzip_files, zip_files, zip7_files, download, unzip_files, ungzip_files, un7zip_files, unrar_files
-from src.pyquickhelper.pycode import is_travis_or_appveyor, skipif_travis, skipif_circleci, skipif_appveyor
+from src.pyquickhelper.pycode import skipif_travis, skipif_circleci, skipif_appveyor, skipif_linux, skipif_vless
+from src.pyquickhelper.pycode import is_travis_or_appveyor
 
 
 class TestCompressHelper(unittest.TestCase):
@@ -96,15 +96,12 @@ class TestCompressHelper(unittest.TestCase):
         res = ungzip_files(rg, encoding="utf-8")
         self.assertTrue("test_compress_helper_text" in res)
 
+    @skipif_vless((3, 6), "only available for python 3.6+ (pylzma not compiled)")
     def test_uncompress_7zip(self):
         fLOG(
             __file__,
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
-
-        if is_travis_or_appveyor() == "appveyor" and sys.version_info[:2] <= (3, 5):
-            # Only available on 3.6.
-            return
 
         import pylzma
         self.assertTrue(pylzma)
@@ -114,6 +111,7 @@ class TestCompressHelper(unittest.TestCase):
         files = un7zip_files(data, where_to=fold, fLOG=fLOG)
         self.assertEqual(len(files), 1)
 
+    @skipif_linux('py7zlib not available')
     def test_compress_7zip(self):
         fLOG(
             __file__,
@@ -123,15 +121,10 @@ class TestCompressHelper(unittest.TestCase):
         url = "https://docs.python.org/3/library/ftplib.html"
         f = download(url, fold)
 
-        if is_travis_or_appveyor() == "appveyor":
-            out7 = os.path.join(fold, "try.7z")
-            zip7_files(out7, [f], fLOG=fLOG, temp_folder=fold)
-            if not os.path.exists(out7):
-                raise FileNotFoundError(out7)
-        else:
-            warnings.warn(
-                "unzipping files with 7z on a is not tested on linux")
-            return
+        out7 = os.path.join(fold, "try.7z")
+        zip7_files(out7, [f], fLOG=fLOG, temp_folder=fold)
+        if not os.path.exists(out7):
+            raise FileNotFoundError(out7)
 
         if sys.version_info[0] == 2:
             typbytes = bytearray

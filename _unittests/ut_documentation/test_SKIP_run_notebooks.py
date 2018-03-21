@@ -61,7 +61,7 @@ class TestSKIPRunNotebooks(unittest.TestCase):
         kernel_name = None if is_travis_or_appveyor() is not None else install_python_kernel_for_unittest(
             "pyquickhelper")
 
-        temp = get_temp_folder(__file__, "temp_run_notebooks_pyq_long")
+        temp = get_temp_folder(__file__, "temp_skip_run_notebooks_pyq_long")
 
         fnb = os.path.normpath(os.path.join(
             os.path.abspath(os.path.dirname(__file__)), "..", "..", "_doc", "notebooks"))

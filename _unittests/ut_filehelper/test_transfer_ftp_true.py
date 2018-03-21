@@ -37,7 +37,7 @@ class TestTransferFTPTrue(unittest.TestCase):
 
         if sys.version_info[0] < 3:
             warnings.warn(
-                "No testing transfer FTP on Pyghon 2.7 (issue with str and bytes)")
+                "No testing transfer FTP on Python 2.7 (issue with str and bytes)")
             return
         with warnings.catch_warnings():
             warnings.simplefilter('ignore', DeprecationWarning)
@@ -60,6 +60,7 @@ class TestTransferFTPTrue(unittest.TestCase):
         r = web.ls(".")
         fLOG(r)
         self.assertTrue(isinstance(r, list))
+        web.close()
 
 
 if __name__ == "__main__":

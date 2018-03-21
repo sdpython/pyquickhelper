@@ -5,6 +5,7 @@
 .. versionadded:: 1.5
 """
 import os
+import sys
 import unittest
 import warnings
 import decimal
@@ -250,4 +251,28 @@ def skipif_circleci(msg):
     if is_travis_or_appveyor() != 'circleci':
         return lambda x: x
     msg = 'Test does not work on circleci due to: ' + msg
+    return unittest.skip(msg)
+
+
+def skipif_linux(msg):
+    """
+    Skips a unit test if it runs on :epkg:`linux`.
+
+    .. versionadded:: 1.7
+    """
+    if sys.platform.startswith('win'):
+        return lambda x: x
+    msg = 'Test does not work on travis due to: ' + msg
+    return unittest.skip(msg)
+
+
+def skipif_vless(version, msg):
+    """
+    Skips a unit test if the version is stricly below *version* (tuple).
+
+    .. versionadded:: 1.7
+    """
+    if sys.version_info[:3] >= version:
+        return lambda x: x
+    msg = 'Python {} < {}: {}'.format(sys.version_info[:3], version, msg)
     return unittest.skip(msg)
