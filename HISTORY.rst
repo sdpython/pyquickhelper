@@ -22,6 +22,8 @@ History
   when notebooks are converted into RST
 * `112`: allow to set custom snippets for notebooks
 
+The package is not tested anymore for Python 2.7.
+
 1.6.2413 (2018-02-14)
 =====================
 

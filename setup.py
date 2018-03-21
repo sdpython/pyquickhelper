@@ -27,7 +27,6 @@ DESCRIPTION = "Various functionalities: folder synchronization, simple logging f
               "to run a command line, to run a notebook..."
 CLASSIFIERS = [
     'Programming Language :: Python :: 3',
-    'Programming Language :: Python :: 2.7',
     'Intended Audience :: Developers',
     'Topic :: Scientific/Engineering',
     'Topic :: Education',

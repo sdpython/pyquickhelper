@@ -50,7 +50,7 @@ class TestBuildHelper(unittest.TestCase):
         res = private_replacement_('__ADDITIONAL_LOCAL_PATH__',
                                    paths=['a'], key="__ADDITIONAL_LOCAL_PATH__")
         exp = ';%current%\\..\\a\\src' if sys.platform.startswith(
-            'win') else ';~/../a/src'
+            'win') else ':~/../a/src'
         self.assertEqual(res, exp)
 
 

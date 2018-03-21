@@ -53,11 +53,11 @@ class TestHelpGenStatHelper(unittest.TestCase):
                 counts["title"] += 1
             nbfound.add(rl[1])
         self.assertTrue(counts.get("ref", 0) > 0)
-        self.assertTrue(counts.get(None, 0) > 0)
+        self.assertEqual(counts.get(None, 0), 0)
         self.assertTrue(counts["title"] > 0)
         self.assertTrue(len(nbfound) > 8)
         # self.assertTrue(counts.get("refn", 0) > 0)
-        # self.assertTrue(counts.get("toctree", 0) > 0)
+        self.assertTrue(counts.get("toctree", 0) > 0)
 
 
 if __name__ == "__main__":
