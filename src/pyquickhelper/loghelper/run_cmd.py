@@ -373,11 +373,11 @@ def run_cmd(cmd, sin="", shell=sys.platform.startswith("win"), wait=False, log_e
 
         if len(err) > 0 and log_error and fLOG is not None:
             if "\n" in err:
-                fLOG(prefix_log + "error (log)")
+                fLOG(prefix_log + "[run_cmd] stderr (log)")
                 for eline in err.split("\n"):
                     fLOG(prefix_log + eline)
             else:
-                fLOG(prefix_log + "error (log)\n%s" % err)
+                fLOG(prefix_log + "[run_cmd] stderr (log)\n%s" % err)
 
         if change_path is not None:
             os.chdir(current)
