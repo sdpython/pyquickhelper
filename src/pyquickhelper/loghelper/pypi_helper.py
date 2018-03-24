@@ -20,9 +20,9 @@ def enumerate_pypi_versions_date(name, url='https://pypi.python.org/pypi'):
     @return                 list tuple (date, version, size)
     """
     pypi = xmlrpc_client.ServerProxy(url)
-    available = pypi.package_releases('pyquickhelper', True)
+    available = pypi.package_releases(name, True)
     for ver in available:
-        res = pypi.release_urls('pyquickhelper', ver)
+        res = pypi.release_urls(name, ver)
         for r in res:
             yield datetime(* tuple(r['upload_time'].timetuple())[:6]), ver, r['size']
             break

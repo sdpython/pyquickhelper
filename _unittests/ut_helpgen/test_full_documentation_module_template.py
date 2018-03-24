@@ -23,7 +23,7 @@ except ImportError:
         sys.path.append(path)
     import src
 
-from src.pyquickhelper.loghelper.flog import fLOG, download, noLOG
+from src.pyquickhelper.loghelper.flog import fLOG, download
 from src.pyquickhelper.helpgen import generate_help_sphinx
 from src.pyquickhelper.pycode import get_temp_folder
 from src.pyquickhelper.pycode import is_travis_or_appveyor

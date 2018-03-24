@@ -483,8 +483,7 @@ def format_history(src, dest):
                 nline = line.lstrip("* ")
                 if nline.startswith("`"):
                     if tag is None:
-                        raise ValueError(
-                            "Line {0}: '{1}', tag is None, no line '**' was found in this release.".format(i, line))
+                        tag = 'issue'
                     res = "* :{0}:{1}".format(tag, nline)
                     if new_lines[-1].startswith("==="):
                         new_lines.append("")
