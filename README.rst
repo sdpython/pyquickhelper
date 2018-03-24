@@ -16,7 +16,7 @@ README
     :target: https://circleci.com/gh/sdpython/pyquickhelper/tree/master
 
 .. image:: https://badge.fury.io/py/pyquickhelper.svg
-    :target: http://badge.fury.io/py/pyquickhelper
+    :target: https://pypi.org/project/pyquickhelper/
 
 .. image:: https://img.shields.io/badge/license-MIT-blue.svg
     :alt: MIT License
