@@ -46,6 +46,7 @@ from docutils import nodes, writers
 from sphinx import addnodes
 from sphinx.locale import admonitionlabels, versionlabels, _
 from sphinx.writers.text import TextTranslator, MAXWIDTH, STDINDENT
+from ..sphinxext.sphinx_bigger_extension import visit_bigger_node_rst, depart_bigger_node_rst
 
 
 class RstBuilder(Builder):
@@ -878,8 +879,7 @@ class RstTranslator(TextTranslator):
 
     def visit_reference(self, node):
         """
-        Run upon entering a reference
-
+        Runs upon entering a reference.
         Because this class inherits from the TextTranslator class,
         regularly defined links, such as::
 
@@ -1061,19 +1061,21 @@ class RstTranslator(TextTranslator):
         raise nodes.SkipNode
 
     def visit_bigger_node(self, node):
-        self.add_text(':bigger:`')
+        visit_bigger_node_rst(self, node)
 
     def depart_bigger_node(self, node):
-        self.add_text('`')
+        depart_bigger_node_rst(self, node)
 
     def visit_issue(self, node):
         self.add_text(':issue:`')
+        self.add_text(node['text'])
 
     def depart_issue(self, node):
         self.add_text('`')
 
     def visit_Issue(self, node):
         self.add_text(':Issue:`')
+        self.add_text(node['text'])
 
     def depart_Issue(self, node):
         self.add_text('`')
@@ -1099,7 +1101,7 @@ class RstTranslator(TextTranslator):
 
     def visit_only(self, node):
         ev = self.eval_expr(node.attributes['expr'])
-        if not ev:
+        if ev:
             pass
         else:
             raise nodes.SkipNode

@@ -20,7 +20,6 @@ except ImportError:
         sys.path.append(path)
     import src
 
-from src.pyquickhelper.loghelper.flog import fLOG
 from src.pyquickhelper.pycode import get_temp_folder
 from src.pyquickhelper.helpgen import rst2html
 from src.pyquickhelper.sphinxext import CmdRef
@@ -33,12 +32,7 @@ if sys.version_info[0] == 2:
 
 class TestRstBuilder(unittest.TestCase):
 
-    def test_rst_builder(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
+    def _test_rst_builder(self):
         from docutils import nodes as skip_
 
         content = """
@@ -98,12 +92,7 @@ class TestRstBuilder(unittest.TestCase):
         if t1 not in html:
             raise Exception(html)
 
-    def test_rst_builder_sphinx(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
+    def _test_rst_builder_sphinx(self):
         from docutils import nodes as skip_
 
         content = """
@@ -162,12 +151,7 @@ class TestRstBuilder(unittest.TestCase):
         if t1 not in html:
             raise Exception(html)
 
-    def test_rst_builder_sphinx_table(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
+    def _test_rst_builder_sphinx_table(self):
         from docutils import nodes as skip_
 
         content = """
@@ -221,12 +205,7 @@ class TestRstBuilder(unittest.TestCase):
         if t1 not in html:
             raise Exception(html)
 
-    def test_rst_only(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
+    def _test_rst_only(self):
         from docutils import nodes as skip_
 
         content = """
@@ -278,12 +257,7 @@ class TestRstBuilder(unittest.TestCase):
         if t1 not in text:
             raise Exception(text)
 
-    def test_rst_reference(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
+    def _test_rst_reference(self):
         from docutils import nodes as skip_
 
         content = """
@@ -332,6 +306,62 @@ class TestRstBuilder(unittest.TestCase):
         t1 = "<p>Renamed</p>"
         if t1 not in text:
             raise Exception(text)
+
+    def test_rst_reference2(self):
+        from docutils import nodes as skip_
+
+        content = """
+
+                    .. _l-test-ref:
+
+                    test a directive
+                    ================
+
+                    :ref:`reftext <l-test-ref>`
+
+                    *italic*
+
+                    :bigger:`ut`
+
+                    :issue:`1`
+
+                    * bul1
+                    * bul2
+
+                    ::
+
+                        rawt
+
+                    .. only:: rst
+
+                        gggg
+
+                    .. only:: latex
+
+                        hhhh
+
+                    .. only:: html
+
+                        jjjj
+
+                    """.replace("                    ", "")
+        if sys.version_info[0] >= 3:
+            content = content.replace('u"', '"')
+
+        text = rst2html(content,  # fLOG=fLOG,
+                        writer="rst", keep_warnings=False, layout='sphinx',
+                        extlinks={'issue': ('http://%s', '_issue_')})
+
+        self.assertIn("*italic*", text)
+        self.assertIn("* bul1", text)
+        self.assertIn("::", text)
+        self.assertIn(":bigger:`ut`", text)
+        self.assertIn("gggg", text)
+        self.assertNotIn("hhhh", text)
+        self.assertNotIn("jjjj", text)
+        temp = get_temp_folder(__file__, "temp_only")
+        with open(os.path.join(temp, "out_cmdref.rst"), "w", encoding="utf8") as f:
+            f.write(text)
 
 
 if __name__ == "__main__":

@@ -34,6 +34,7 @@ from sphinx.events import EventManager
 from sphinx.extension import verify_required_extensions
 from ..sphinxext.sphinx_rst_builder import RstWriter, RstBuilder, RstTranslator
 from ..sphinxext.sphinx_bigger_extension import visit_bigger_node as ext_visit_bigger_node, depart_bigger_node as ext_depart_bigger_node
+from ..sphinxext.sphinx_bigger_extension import visit_bigger_node_rst as ext_visit_bigger_node_rst, depart_bigger_node_rst as ext_depart_bigger_node_rst
 from ..sphinxext.sphinx_blocref_extension import visit_blocref_node as ext_visit_blocref_node, depart_blocref_node as ext_depart_blocref_node
 from ..sphinxext.sphinx_blog_extension import visit_blogpost_node as ext_visit_blogpost_node, depart_blogpost_node as ext_depart_blogpost_node
 from ..sphinxext.sphinx_blog_extension import visit_blogpostagg_node as ext_visit_blogpostagg_node, depart_blogpostagg_node as ext_depart_blogpostagg_node
@@ -117,6 +118,12 @@ class _AdditionalVisitDepart:
         Tells if the translator is html format.
         """
         return self.base_class is HTMLTranslator
+
+    def is_rst(self):
+        """
+        Tells if the translator is html format.
+        """
+        return self.base_class is RstTranslator
 
     def visit_blogpost_node(self, node):
         """
@@ -230,7 +237,10 @@ class _AdditionalVisitDepart:
         """
         @see fn visit_bigger_node
         """
-        ext_visit_bigger_node(self, node)
+        if self.is_rst():
+            ext_visit_bigger_node_rst(self, node)
+        else:
+            ext_visit_bigger_node(self, node)
 
     def depart_bigger_node(self, node):
         """
@@ -238,6 +248,8 @@ class _AdditionalVisitDepart:
         """
         if self.is_html():
             ext_depart_bigger_node_html(self, node)
+        elif self.is_rst():
+            ext_depart_bigger_node_rst(self, node)
         else:
             ext_depart_bigger_node(self, node)
 

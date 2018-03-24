@@ -81,6 +81,17 @@ def visit_bigger_node(self, node):
     pass
 
 
+def visit_bigger_node_rst(self, node):
+    """
+    what to do when visiting a node *bigger*
+    the function should have different behaviour,
+    depending on the format, or the setup should
+    specify a different function for each.
+    """
+    self.add_text(':bigger:`')
+    self.add_text(node["text"])
+
+
 def depart_bigger_node_html(self, node):
     """
     what to do when leaving a node *bigger*
@@ -92,6 +103,13 @@ def depart_bigger_node_html(self, node):
     """
     self.body.append(
         '<font size="{1}">{0}</font>'.format(cgiesc.escape(node["text"]), node["size"]))
+
+
+def depart_bigger_node_rst(self, node):
+    """
+    depart bigger_node for rst
+    """
+    self.add_text('`')
 
 
 def depart_bigger_node(self, node):
@@ -114,7 +132,7 @@ def setup(app):
                  html=(visit_bigger_node, depart_bigger_node_html),
                  latex=(visit_bigger_node, depart_bigger_node),
                  text=(visit_bigger_node, depart_bigger_node),
-                 rst=(visit_bigger_node, depart_bigger_node))
+                 rst=(visit_bigger_node_rst, depart_bigger_node_rst))
 
     app.add_role('bigger', bigger_role)
     return {'version': sphinx.__display_version__, 'parallel_read_safe': True}
