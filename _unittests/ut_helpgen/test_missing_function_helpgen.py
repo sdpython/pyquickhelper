@@ -21,7 +21,7 @@ except ImportError:
         sys.path.append(path)
     import src
 
-from src.pyquickhelper.pycode import ExtTestCase
+from src.pyquickhelper.pycode import ExtTestCase, skipif_vless
 from src.pyquickhelper.helpgen.utils_sphinx_config import ie_layout_html, NbImage
 from src.pyquickhelper.helpgen.post_process import remove_character_under32
 from src.pyquickhelper.helpgen.utils_sphinx_doc import useless_class_UnicodeStringIOThreadSafe, doc_checking
@@ -74,6 +74,7 @@ class TestMissingFunctionsHelpgen(ExtTestCase):
         f5(3, 4)
         f6(3, 4)
 
+    @skipif_vless((3, 6), "AttributeError: 'PosixPath' object has no attribute 'rfind'")
     def test_sphinx_main(self):
         all_tocs, build_paths, parameters, html_static_paths = [], [], [], []
         root = os.path.join(os.path.dirname(__file__), '..',
