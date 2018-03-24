@@ -133,7 +133,7 @@ History
 {{ release['release'] }} - {{ release['date'].strftime("%Y-%m-%d") }} - {{ '%1.2fMb' % (release['size'] * 2**(-20)) }}
 {{ '=' * (len(release['release']) + 22) }}
 {% for issue in release['issues'] %}
-* - `{{issue['number']}}`: {{issue['title']}} ({{issue['date'].strftime("%Y-%m-%d")}}) {% endfor %}
+* `{{issue['number']}}`: {{issue['title']}} ({{issue['date'].strftime("%Y-%m-%d")}}) {% endfor %}
 {% endfor %}
 """
 
