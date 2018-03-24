@@ -1,6 +1,6 @@
 """
 @file
-@brief Calls github API.
+@brief Calls :epkg:`github` API.
 """
 import requests
 
@@ -20,7 +20,7 @@ class GitHubApiException(Exception):
 
 def call_github_api(owner, repo, ask, auth=None, headers=None):
     """
-    Call `GitHub REST API <https://developer.github.com/v3/>`_.
+    Calls `GitHub REST API <https://developer.github.com/v3/>`_.
 
     @param      owner       owner of the project
     @param      auth        tuple *(user, password)*
