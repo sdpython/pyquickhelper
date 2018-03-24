@@ -10,6 +10,7 @@ import unittest
 import warnings
 import decimal
 from .ci_helper import is_travis_or_appveyor
+from ..loghelper import fLOG
 
 
 class ExtTestCase(unittest.TestCase):
@@ -55,6 +56,13 @@ class ExtTestCase(unittest.TestCase):
         """
         if not os.path.exists(name):
             raise FileNotFoundError("Unable to find '{0}'.".format(name))
+
+    def assertNotExists(self, name):
+        """
+        Checks that *name* does not exist.
+        """
+        if os.path.exists(name):
+            raise FileNotFoundError("Able to find '{0}'.".format(name))
 
     def assertEqualDataFrame(self, d1, d2, **kwargs):
         """
@@ -216,6 +224,13 @@ class ExtTestCase(unittest.TestCase):
             return
         raise AssertionError('object is a container and is not empty\n{0}'.format(
             '\n'.join(str(_) for _ in a)))
+
+    def fLOG(self, *args, **kwargs):
+        """
+        Prints out some information.
+        @see fn fLOG.
+        """
+        fLOG(*args, **kwargs)
 
 
 def skipif_appveyor(msg):

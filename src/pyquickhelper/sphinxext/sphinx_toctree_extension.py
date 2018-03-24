@@ -143,7 +143,7 @@ class CustomTocTreeCollector(TocTreeCollector):
         # It disables
         # type: (Sphinx) -> None
         # It needs to disable TocTreeCollector.
-        app.disconnect_env_collector("TocTreeCollector")
+        app.disconnect_env_collector("TocTreeCollector", exc=False)
         assert self.listener_ids is None
         self.listener_ids = {
             'doctree-read': app.connect('doctree-read', self.process_doc),

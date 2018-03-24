@@ -1334,11 +1334,12 @@ class _CustomSphinx(Sphinx):
         coll.enable(self)
         self._added_collectors.append(coll)
 
-    def disconnect_env_collector(self, clname):
+    def disconnect_env_collector(self, clname, exc=True):
         """
-        Disable a collector given its class name.
+        Disables a collector given its class name.
 
         @param      cl      name
+        @param      exc     raises an exception if not found
         @return             found collector
         """
         found = None
@@ -1348,10 +1349,12 @@ class _CustomSphinx(Sphinx):
                 found = co
                 foundi = i
                 break
+        if found is not None and not exc:
+            return None
         if found is None:
-            raise ValueError("Unable to find a collector '{0}' in \n{1}".format(clname,
-                                                                                "\n".join(map(lambda x: x.__class__.__name__, self._added_collectors))))
+            raise ValueError("Unable to find a collector '{0}' in \n{1}".format(
+                clname, "\n".join(map(lambda x: x.__class__.__name__, self._added_collectors))))
         for k, v in co.listener_ids.items():
             self.disconnect(v)
         del self._added_collectors[foundi]
-        return co
+        return found

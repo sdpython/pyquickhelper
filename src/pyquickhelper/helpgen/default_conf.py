@@ -829,6 +829,7 @@ def custom_setup(app, author):
 
     # style for notebooks
     app.add_stylesheet(style_figure_notebook[0])
+    return app
 
 
 def get_default_stylesheet():

@@ -397,45 +397,8 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
         # we need to import this file to guess the template directory and
         # add missing templates
         folds = os.path.join(root_sphinxdoc, newconf)
-        # trick, we place the good folder in the first position
-        sys.path.insert(0, folds)
-        fLOG("[generate_help_sphinx] import from", folds)
-        try:
-            thenewconf = importlib.import_module("conf")
-            fLOG("[generate_help_sphinx] import:", thenewconf)
-        except Exception as ee:
-            raise HelpGenException(
-                "unable to import a config file (t3={0}, root_source={1})".format(
-                    t3, root_source),
-                os.path.join(folds, "conf.py")) from ee
-
-        # we remove the insert path
-        del sys.path[0]
-        if thenewconf is None:
-            raise ImportError(
-                "unable to import {0} which defines the help generation".format(newconf))
-        tocs = add_missing_files(root, thenewconf, "__INSERT__")
-        all_tocs.extend(tocs)
-        del sys.modules["conf"]
-
-        # check if we need to run ie_layout_html
-        check_ie_layout_html = thenewconf.__dict__.get(
-            "check_ie_layout_html", True)
-        if check_ie_layout_html:
-            ie_layout_html()
-
-        # we store the html_static_path in html_static_paths
-        html_static_path = thenewconf.__dict__.get(
-            "html_static_path", "phdoc_static")
-        if isinstance(html_static_path, list):
-            html_static_path = html_static_path[0]
-        html_static_path = os.path.join(root_source, html_static_path)
-        if not os.path.exists(html_static_path):
-            raise FileNotFoundError("no static path:" + html_static_path)
-        html_static_paths.append(html_static_path)
-        build_paths.append(
-            os.path.normpath(os.path.join(html_static_path, "..", "..", build, "html")))
-        parameters.append(dict(latex_book=thenewconf.latex_book))
+        _import_conf_extract_parameter(root, root_source, folds, build, newconf,
+                                       all_tocs, build_paths, parameters, html_static_paths)
 
     ################################################################
     # we add the source path to the list of path to considered before importing
@@ -1163,3 +1126,67 @@ def _check_sphinx_configuration(conf, fLOG):
                 aaa = os.path.join(cl, temp)
                 fLOG("[sphinx-gallery] remove '{0}'".format(cl))
                 remove_folder(aaa)
+
+
+def _import_conf_extract_parameter(root, root_source, folds, build, newconf,
+                                   all_tocs, build_paths, parameters, html_static_paths):
+    """
+    Imports the configuration file and extract some
+    of the parameters it defines.
+    Fills the following lists.
+
+    @param      root                folder of the package
+    @param      root_source         folder of the sources
+    @param      folds               folder of the documentation
+    @param      build               build path
+    @param      newconf             unused except in an error message
+    @param      all_tocs            list to fill
+    @param      build_paths         list to fill
+    @param      parameters          list to fill
+    @param      html_static_paths   list to fill
+
+    * all_tocs
+    * build_paths
+    * parameters
+    * html_static_paths
+    """
+    # trick, we place the good folder in the first position
+    sys.path.insert(0, folds)
+    fLOG("[generate_help_sphinx] import from", folds)
+    try:
+        thenewconf = importlib.import_module("conf")
+        fLOG("[_import_conf_extract_parameter] import:", thenewconf)
+    except Exception as ee:
+        raise HelpGenException(
+            "Unable to import a config file (root_source='{0}').".format(
+                root_source),
+            os.path.join(folds, "conf.py")) from ee
+
+    # we remove the insert path
+    del sys.path[0]
+    if thenewconf is None:
+        raise ImportError(
+            "unable to import {0} which defines the help generation".format(newconf))
+    tocs = add_missing_files(root, thenewconf, "__INSERT__")
+    all_tocs.extend(tocs)
+    del sys.modules["conf"]
+
+    # check if we need to run ie_layout_html
+    check_ie_layout_html = thenewconf.__dict__.get(
+        "check_ie_layout_html", True)
+    if check_ie_layout_html:
+        ie_layout_html()
+
+    # we store the html_static_path in html_static_paths
+    html_static_path = thenewconf.__dict__.get(
+        "html_static_path", "phdoc_static")
+    if isinstance(html_static_path, list):
+        html_static_path = html_static_path[0]
+    html_static_path = os.path.normpath(
+        os.path.join(root_source, html_static_path))
+    if not os.path.exists(html_static_path):
+        raise FileNotFoundError("no static path:" + html_static_path)
+    html_static_paths.append(html_static_path)
+    build_paths.append(
+        os.path.normpath(os.path.join(html_static_path, "..", "..", build, "html")))
+    parameters.append(dict(latex_book=thenewconf.latex_book))

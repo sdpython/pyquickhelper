@@ -30,7 +30,7 @@ from src.pyquickhelper.loghelper.repositories.pygit_helper import clone, rebase
 from src.pyquickhelper.pycode import is_travis_or_appveyor
 
 
-class TestGit(unittest.TestCase):
+class TestGitHelper(unittest.TestCase):
 
     def test_clone_repo(self):
         fLOG(

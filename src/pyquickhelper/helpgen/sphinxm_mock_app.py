@@ -4,7 +4,7 @@
 
 .. versionadded:: 1.0
 """
-
+import logging
 from .sphinxm_convert_doc_sphinx_helper import HTMLWriterWithCustomDirectives, _CustomSphinx, RSTWriterWithCustomDirectives
 from docutils import nodes
 from docutils.parsers.rst.directives import directive as rst_directive
@@ -20,18 +20,17 @@ from sphinx import __display_version__ as sphinx__display_version__
 from sphinx.application import VersionRequirementError
 from ..sphinxext import get_default_extensions
 from sphinx.util.docutils import is_html5_writer_available
+from sphinx.errors import ExtensionError
 
 
 class MockSphinxApp:
     """
-    Mock Sphinx application.
-    In memory Sphinx application.
+    Mocks :epkg:`Sphinx` application.
+    In memory :epkg:`Sphinx` application.
     """
 
     def __init__(self, writer, app, confoverrides, new_extensions=None):
         """
-        Constructor
-
         @param      writer          see static method create
         @param      app             see static method create
         @param      confoverrides   default options
@@ -229,9 +228,44 @@ class MockSphinxApp:
         """
         self.app.add_env_collector(collector)
 
+    def add_javascript(self, jsfile):
+        """
+        See :epkg:`class Sphinx`.
+        """
+        self.app.add_javascript(jsfile)
+
+    def add_stylesheet(self, css):
+        """
+        See :epkg:`class Sphinx`.
+        """
+        self.app.add_stylesheet(css)
+
+    def add_source_parser(self, ext, parser, exc=False):
+        """
+        Registers a parser for a specific file extension.
+
+        @param      ext     file extension
+        @param      parser  parser
+        @param      exc     raises an exception if already done
+
+        Example:
+
+        ::
+
+            app.add_source_parser(self, ext, parser)
+        """
+        try:
+            self.app.add_source_parser(ext, parser)
+        except ExtensionError as e:
+            if exc:
+                raise
+            else:
+                logger = logging.getLogger("MockSphinxApp")
+                logger.warning('[MockSphinxApp] {0}'.format(e))
+
     def disconnect_env_collector(self, clname):
         """
-        Disconnect a collector given its class name.
+        Disconnects a collector given its class name.
 
         @param      cl      name
         @return             found collector

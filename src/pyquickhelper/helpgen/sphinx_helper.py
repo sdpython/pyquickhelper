@@ -16,7 +16,7 @@ if sys.version_info[0] == 2:
 
 def everything_but_python(fullname):
     """
-    return True
+    Returns True if ``__pycache__`` is not in filename.
     """
     if "__pycache__" in fullname:
         return False
