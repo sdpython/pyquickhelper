@@ -34,9 +34,9 @@ if sys.version_info[0] == 2:
     from codecs import open
 
 
-class TestSphinxDocFull (unittest.TestCase):
+class TestSphinxFullDocumentationModuleTemplate(unittest.TestCase):
 
-    def test_full_documentation(self):
+    def test_full_documentation_module_template(self):
         fLOG(
             __file__,
             self._testMethodName,
