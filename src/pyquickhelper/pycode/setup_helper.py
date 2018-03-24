@@ -36,6 +36,7 @@ from .tkinter_helper import fix_tkinter_issues_virtualenv
 from .default_regular_expression import _setup_pattern_copy
 from ..ipythonhelper import upgrade_notebook, remove_execution_number
 from .utils_tests import main_wrapper_tests, default_skip_function
+from ..loghelper.history_helper import build_history, compile_history
 
 
 if sys.version_info[0] == 2:
@@ -49,16 +50,13 @@ def available_commands_list(argv):
     @param      argv        sys.arg
     @return                 bool
     """
-    commands = {"bdist_msi", "build_script", "build_sphinx", "bdist_egg",
-                "bdist_wheel", "bdist_wininst", "build_ext",
-                "clean_pyd", "clean_space", "copy_dist",
-                "copy27", "run27", "build27",
-                "local_pypi", "test_local_pypi",
-                "notebook", "publish", "publish_doc",
-                "register", "unittests", "lab",
-                "unittests_LONG", "unittests_SKIP", "unittests_GUI",
-                "sdist", "setupdep", "upload_docs",
-                "setup_hook", "copy_sphinx", "write_version"}
+    commands = ['bdist_egg', 'bdist_msi', 'bdist_wheel', 'bdist_wininst', 'build27',
+                'build_ext', 'build_script', 'build_sphinx', 'clean_pyd', 'clean_space',
+                'copy27', 'copy_dist', 'copy_sphinx', 'history', 'lab', 'local_pypi',
+                'notebook', 'publish', 'publish_doc', 'register', 'run27',
+                'sdist', 'setup_hook', 'setupdep', 'test_local_pypi',
+                'unittests', 'unittests_GUI', 'unittests_LONG', 'unittests_SKIP',
+                'upload_docs', 'write_version']
     for c in commands:
         if c in argv:
             return True
@@ -78,7 +76,7 @@ def process_standard_options_for_setup(argv, file_or_folder, project_var_name, m
                                        additional_ut_path=None,
                                        skip_function=default_skip_function, covtoken=None, hook_print=True,
                                        stdout=None, stderr=None, use_run_cmd=False, filter_warning=None,
-                                       file_filter_pep8=None, fLOG=noLOG):
+                                       file_filter_pep8=None, github_owner=None, fLOG=noLOG):
     """
     Processes the standard options the module pyquickhelper is
     able to process assuming the module which calls this function
@@ -130,6 +128,7 @@ def process_standard_options_for_setup(argv, file_or_folder, project_var_name, m
     @param      filter_warning              see @see fn main_wrapper_tests
     @param      file_filter_pep8            function to filter out files for which checking pep8
                                             (see @see fn remove_extra_spaces_folder)
+    @param      github_owner                :epkg:`github` owner of the package
     @return                                 True (an option was processed) or False,
                                             the file ``setup.py`` should call function ``setup``
 
@@ -140,11 +139,9 @@ def process_standard_options_for_setup(argv, file_or_folder, project_var_name, m
 
         default_engine_paths = {
             "windows": {
-                "__PY34__": None,
                 "__PY35__": None,
                 "__PY36_X64__": "c:\\Python36_x64",
                 "__PY35_X64__": "c:\\Python35_x64",
-                "__PY34_X64__": "c:\\Python34_x64",
                 "__PY27_X64__": "c:\\Anaconda2",
             },
         }
@@ -168,8 +165,8 @@ def process_standard_options_for_setup(argv, file_or_folder, project_var_name, m
     Option ``-e`` and ``-g`` were added to
     filter file by regular expressions (in with *e*, out with *g*).
 
-    .. versionchanged:: 1.5
-        Parameter *file_filter_pep8* was added.
+    .. versionadded:: 1.7
+        Parameter *github_owner* was added.
     """
     if layout is None:
         layout = ["html", "pdf"]
@@ -283,6 +280,14 @@ def process_standard_options_for_setup(argv, file_or_folder, project_var_name, m
         print("[clean_space] number of impacted files (pep8 + rst):", len(rem))
         rem = clean_notebooks_for_numbers(file_or_folder)
         print("[clean_space] number of impacted notebooks:", len(rem))
+        return True
+
+    elif 'history' in argv:
+        dest = ' '.join(argv).split('history')[-1].strip()
+        if not dest:
+            dest = os.path.join(folder, 'HISTORY.rst')
+        print('[history] ', dest)
+        build_history_from_setup(dest, owner=github_owner, fLOG=fLOG)
         return True
 
     elif "write_version" in argv:
@@ -416,7 +421,7 @@ def process_standard_options_for_setup(argv, file_or_folder, project_var_name, m
         for c in {"notebook", "publish", "publish_doc", "local_pypi", "run27",
                   "build27", "setupdep", "copy_dist",
                   "any_setup_command", "build_dist",
-                  "copy_sphinx", "lab"}:
+                  "copy_sphinx", "lab", "history"}:
             if "--private" in argv and "publish" in c:
                 # we skip this to avoid producing scripts for publish
                 # functionalities
@@ -769,7 +774,7 @@ def write_pyproj(file_or_folder, location=None):
 
 def process_standard_options_for_setup_help(argv):
     """
-    print the added options available through this module
+    Prints the added options available through this module
     """
     commands = {
         "build_script": "produce various scripts to build the module",
@@ -781,6 +786,7 @@ def process_standard_options_for_setup_help(argv):
         "copy_dist": "copy documentation to folder dist",
         "copy_sphinx": "modify and copy sources to _doc/sphinxdoc/source/<module>",
         "copy27": "create a modified copy of the module to run on Python 2.7 (if available), it requires to run copy27 first",
+        "history": "builds the history of the package in RST",
         "run27": "run the unit tests for the Python 2.7",
         "setup_hook": "call function setup_hook which initializes the module before running unit tests",
         "unittests": "run the unit tests which do not contain test_LONG, test_SKIP or test_GUI in their file name",
@@ -940,3 +946,24 @@ def hash_list(argv, size=8):
         return res[:8]
     else:
         return res
+
+
+def build_history_from_setup(dest, owner, module, fLOG=noLOG):
+    """
+    Builds the history from :epkg:`github` and :epkg:`pypi`.
+
+    @param      dest        history will be written in this file
+    @param      owner       owner of the package on :epkg:`github`
+    @param      module      module name
+    @param      fLOG        logging function
+    @return                 history
+    """
+    if owner is None:
+        raise ValueError("owner must be specified")
+    repo = "https://github.com/{0}/{1}".format(owner, module)
+    hist = build_history(owner, repo, fLOG=fLOG)
+    output = compile_history(hist)
+    if dest is not None:
+        with open(dest, "w", encoding="utf-8") as f:
+            f.write(output)
+    return output

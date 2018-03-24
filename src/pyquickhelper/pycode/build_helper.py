@@ -57,6 +57,7 @@ default_values = {
     "windows": {
         "__PY35__": choose_path("c:\\Python35", _default_nofolder),
         "__PY35_X64__": choose_path("c:\\Python35_x64", 'c:\\python35-x64', _default_nofolder),
+        "__PY38_X64__": choose_path("c:\\Python38[0-9]{1}_x64", "c:\\Python38_x64", _default_nofolder),
         "__PY37_X64__": choose_path("c:\\Python37[0-9]{1}_x64", "c:\\Python37_x64", _default_nofolder),
         "__PY36_X64__": choose_path("c:\\Python36[0-9]{1}_x64", "c:\\Python36_x64", 'c:\\python36-x64', _default_nofolder),
         "__PY27_X64__": choose_path("c:\\Python27_x64", "c:\\Python27", "c:\\Anaconda2", "c:\\Anaconda", _default_nofolder),
@@ -398,6 +399,9 @@ def get_extra_script_command(command, module, requirements, port=8067, blog_list
         script = windows_any_setup_command
     elif command == "build_dist":
         script = windows_build_setup
+    elif command == "history":
+        script = "\n".join(
+            [windows_prefix, '\n%pythonexe% %current%setup.py history\n'])
     else:
         raise Exception("unable to interpret command: " + command)
 

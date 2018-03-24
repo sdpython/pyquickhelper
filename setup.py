@@ -12,6 +12,7 @@ from setuptools import find_packages
 #########
 
 project_var_name = "pyquickhelper"
+github_owner = "sdpython"
 sversion = "1.7"
 versionPython = "%s.%s" % (sys.version_info.major, sys.version_info.minor)
 path = "Lib/site-packages/" + project_var_name
@@ -193,7 +194,9 @@ if is_local():
         sys.argv, __file__, project_var_name, port=8067,
         requirements=requirements, blog_list=pyquickhelper.__blog__,
         layout=["rst", "html"], additional_notebook_path=["jyquickhelper"],
-        fLOG=logging_function, covtoken=("69193a28-dc79-4a24-98ed-aedf441a8249", "'_UT_36_std' in outfile"))
+        fLOG=logging_function, covtoken=(
+            "69193a28-dc79-4a24-98ed-aedf441a8249", "'_UT_36_std' in outfile"),
+        github_owner=github_owner)
 
     if not r and not ({"bdist_msi", "sdist",
                        "bdist_wheel", "publish", "publish_doc", "register",
