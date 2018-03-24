@@ -287,7 +287,8 @@ def process_standard_options_for_setup(argv, file_or_folder, project_var_name, m
         if not dest:
             dest = os.path.join(folder, 'HISTORY.rst')
         print('[history] ', dest)
-        build_history_from_setup(dest, owner=github_owner, fLOG=fLOG)
+        build_history_from_setup(
+            dest, owner=github_owner, module=project_var_name, fLOG=fLOG)
         return True
 
     elif "write_version" in argv:
@@ -960,8 +961,8 @@ def build_history_from_setup(dest, owner, module, fLOG=noLOG):
     """
     if owner is None:
         raise ValueError("owner must be specified")
-    repo = "https://github.com/{0}/{1}".format(owner, module)
-    hist = build_history(owner, repo, fLOG=fLOG)
+    repo = module
+    hist = build_history(owner, repo, unpublished=True, fLOG=fLOG)
     output = compile_history(hist)
     if dest is not None:
         with open(dest, "w", encoding="utf-8") as f:

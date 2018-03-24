@@ -3,75 +3,60 @@
 History
 =======
 
-1.7.9999 (2018-12-31)
-=====================
+current - 2018-03-24 - 0.00Mb
+=============================
 
-**Bugfix**
+* - `114`: automatically builds history with release and issues + add command history in setup (2018-03-24)
 
-* `102`: fix sphinx command line ``-j 1`` becomes ``-j1``
-* `103`: fix import issue for Sphinx 1.7.1 (released on 2/23/2017)
-* `104`: implement visit, depart for pending_xref and rst translator
-* `106`: replace pdflatex by xelatex to handle utf-8 characters
-* `108`: add command lab, creates a script to start jupyter lab on notebook folder
-* `113`: propose a fix for a bug introduced by pip 9.0.2
+1.7.2482 - 2018-03-22 - 1.99Mb
+==============================
 
-**Features**
+* - `111`: enable manual snippet for notebook, repace add_notebook_menu by toctree in sphinx (2018-03-20)
 
-* `107`: convert svg into png for notebook snippets
-* `111`: replace ``add_menu_notebook`` by ``..contents::``
-  when notebooks are converted into RST
-* `112`: allow to set custom snippets for notebooks
+1.7.2468 - 2018-03-19 - 1.99Mb
+==============================
 
-The package is not tested anymore for Python 2.7.
+* - `113`: propose a fix for a bug introduced by pip 9.0.2 (2018-03-19)
+* - `112`: allow to set custom snippets for notebooks (2018-03-15)
+* - `109`: run javascript producing svg and convert it into png (2018-03-15)
+* - `107`: convert svg into png for notebook snippets (2018-03-12)
+* - `108`: add command lab, creates a script to start jupyter lab on notebook folder (2018-03-10)
 
-1.6.2413 (2018-02-14)
-=====================
+1.7.2448 - 2018-03-03 - 1.98Mb
+==============================
 
-**Bugfix**
+* - `106`: replace pdflatex by xelatex to handle utf-8 (2018-03-03)
+* - `104`: implement visit, depart for pending_xref and rst translator (2018-03-01)
+* - `103`: fix import issue for Sphinx 1.7.1 (2018-03-01)
+* - `102`: fix sphinx command line (2018-02-24)
 
-* `86`: avoids last line of notebooks in rst to disappear
-* `95`: fix replaced unicode characters in latex output
-* `99`: fix issue with subfolders in example galleries
-* `96`: better handling of notebooks for latex
-* `101`: update to Sphinx 1.7
+1.7.2438 - 2018-02-23 - 1.98Mb
+==============================
 
-**Features**
+* - `101`: migrate to sphinx 1.7 (2018-02-13)
 
-* `73`: merges coverage reports from differents jobs about unit tests
-* `84`: remove *epkg* instruction in call_cli_function
-* `92`: add directive *video* for sphinx documentation
-* `93`: add a variable in documentation configuration for custom replacements
-  in notebooks
-* `94`: implements test fixture ``@skipif_appveyor``, ``@skipif_travis``,
-  ``@skipif_circleci``
-* `100`: fix indentation in documented source files
+1.6.2413 - 2018-02-13 - 1.98Mb
+==============================
 
-1.5.2275 (2017-11-28)
-=====================
+* - `100`: fix indentation when copying the sources in documentation repository (2018-02-04)
+* - `98`: deal .. only:: html for readme.rst when copying it to the source repository (2018-01-31)
+* - `96`: remove some automated part from the produced latex (2018-01-30)
+* - `99`: bug with galleries of examples with multiple subfolders (2018-01-30)
+* - `95`: fix ? replacing accents in latex output (2018-01-29)
+* - `94`: add text fixture for continuous integration (2018-01-28)
+* - `93`: add custom replacements before converting notebooks (2018-01-19)
+* - `92`: add directive video to sphinx (2018-01-15)
+* - `89`: add extension doc8 to check documentation style (2017-12-21)
+* - `86`: check why the last line of a notebook does not appear when converted to rst in the documentation (2017-12-15)
+* - `85`: rename cmdref function name (like in setup) (2017-12-04)
+* - `84`: remove :epkg: instruction in call_cli_function (2017-12-02)
+* - `75`: fix bug in notebook coverage: notebook are duplicated (2017-12-02)
 
-**Bugfix**
+1.5.2275 - 2017-11-28 - 0.50Mb
+==============================
 
-* `46`: update to Sphinx 1.6
-* `54`: fix searchbox for `sphinx_rtd_theme <https://github.com/rtfd/sphinx_rtd_theme>`_
-* `69`: overwrites toctree to catch exception and process rst inline
-* `71`: skip old notebook execution when computing the coverage
-
-**Features**
-
-* `56`: support function for role epkg
-* `36`: add support for sphinx-gallery
-* `53`: handle history, converts the file into something usable by module releases
-* `52`: add coverage for notebooks
-* `61`: add a build on `circleci <https://circleci.com/gh/sdpython/pyquickhelper>`_,
-  builds the documentation, populates the artifacts section
-* `63`: add file_detail in *get_repo_log*
-* `60`: add notebook coverage as a separate page
-* `34`: applies pep8 on the code being rendered on the documentation
-* `65`: add function to clean readme.rst before sending it to pypi
-* `67`: add toctree delayed which gets filled after the dynamic content is created, use it for blogs
-* `77`: add class ExtUnitCase with extensive test function
-* `78`: get_temp_folder change other default directory
-* `81`: add youtube sphinx extension
-
-1.4.1000 (2016-01-01)
-=====================
+* - `81`: add youtube extension (2017-10-06)
+* - `79`: fix image copy for blogs (2017-09-20)
+* - `78`: get_temp_folder change other default directory (2017-09-20)
+* - `77`: add class UnitTest with extensive test function (2017-09-20)
+* - `76`: report time for the whole generation (2017-09-16)

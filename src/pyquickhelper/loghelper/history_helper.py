@@ -31,7 +31,7 @@ def enumerate_closed_issues(owner, repo, since=None, issues=None,
     if issues is None and url is not None and max_issue is not None:
         issues = [dict(url=url.format(k)) for k in range(max_issue, 0, -1)]
     elif issues is None:
-        issues = call_github_api(owner, repo, 'issues')
+        issues = call_github_api(owner, repo, 'issues?state=closed')
     if len(issues) == 0:
         raise ValueError("No issue found.")
     for issue in issues:
@@ -56,7 +56,7 @@ def enumerate_closed_issues(owner, repo, since=None, issues=None,
 
 
 def build_history(owner, repo, name=None, since=None, issues=None, url=None,
-                  max_issue=None, releases=None, fLOG=None):
+                  max_issue=None, releases=None, unpublished=False, fLOG=None):
     """
     Returns an history of a module.
 
@@ -69,6 +69,7 @@ def build_history(owner, repo, name=None, since=None, issues=None, url=None,
     @param      url         see @see fn call_github_api (unit test)
     @param      max_issue   see @see fn call_github_api (unit test)
     @param      releases    bypass :epkg:`pypi` (unit test)
+    @param      unpublished keep unpublished released
     @param      fLOG        logging function
     @return                 iterator on issues ``(number, date, title)``
     """
@@ -106,6 +107,9 @@ def build_history(owner, repo, name=None, since=None, issues=None, url=None,
 
     merged = []
     current = None
+    if unpublished:
+        current = dict(release="current", size=0,
+                       date=datetime.now(), issues=[])
     for d, v, obj in dates:
         if v == 'v':
             if current is not None:
@@ -122,19 +126,14 @@ def build_history(owner, repo, name=None, since=None, issues=None, url=None,
 
 
 _template = """
-
 =======
 History
 =======
-
 {% for release in releases %}
-
 {{ release['release'] }} - {{ release['date'].strftime("%Y-%m-%d") }} - {{ '%1.2fMb' % (release['size'] * 2**(-20)) }}
 {{ '=' * (len(release['release']) + 22) }}
-
 {% for issue in release['issues'] %}
 * - `{{issue['number']}}`: {{issue['title']}} ({{issue['date'].strftime("%Y-%m-%d")}}) {% endfor %}
-
 {% endfor %}
 """
 
