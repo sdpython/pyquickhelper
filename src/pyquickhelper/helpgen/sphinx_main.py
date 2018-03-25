@@ -359,6 +359,7 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
     froot = root
     root_sphinxdoc = os.path.join(root, "_doc", "sphinxdoc")
     root_source = os.path.join(root_sphinxdoc, "source")
+    fLOG("[generate_help_sphinx] root_source='{0}'".format(root_source))
 
     ########################################
     # we import conf_base, specific to multi layers
@@ -368,11 +369,12 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
         try:
             import conf_base
         except ImportError as e:
-            sys.path.append(root_source)
+            sys.path.insert(0, root_source)
             import conf_base
-            del sys.path[-1]
+            del sys.path[0]
 
-        fLOG("[generate_help_sphinx] conf_base", conf_base.__file__)
+        fLOG("[generate_help_sphinx] conf_base.__file__='{0}'".format(
+            os.path.abspath(conf_base.__file__)))
 
     copypath = list(sys.path)
 
@@ -397,16 +399,15 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
         # add missing templates
         folds = os.path.join(root_sphinxdoc, newconf)
         _import_conf_extract_parameter(root, root_source, folds, build, newconf,
-                                       all_tocs, build_paths, parameters, html_static_paths)
+                                       all_tocs, build_paths, parameters,
+                                       html_static_paths, fLOG)
 
     ################################################################
     # we add the source path to the list of path to considered before importing
-    ################################################################
-    sys.path.append(root_source)
-
-    ###############
     # import conf.py
-    ###############
+    ################################################################
+    sys.path.insert(0, root_source)
+
     try:
         theconf = importlib.import_module('conf')
     except ImportError as e:
@@ -422,6 +423,7 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
         os.path.abspath(theconf.__file__)))
     tocs = add_missing_files(root, theconf, "__INSERT__")
     all_tocs.extend(tocs)
+    del sys.path[0]
 
     ##############################
     # some checkings on the configuration
@@ -1136,9 +1138,10 @@ def _check_sphinx_configuration(conf, fLOG):
 
 
 def _import_conf_extract_parameter(root, root_source, folds, build, newconf,
-                                   all_tocs, build_paths, parameters, html_static_paths):
+                                   all_tocs, build_paths, parameters,
+                                   html_static_paths, fLOG):
     """
-    Imports the configuration file and extract some
+    Imports the configuration file and extracts some
     of the parameters it defines.
     Fills the following lists.
 
@@ -1151,6 +1154,7 @@ def _import_conf_extract_parameter(root, root_source, folds, build, newconf,
     @param      build_paths         list to fill
     @param      parameters          list to fill
     @param      html_static_paths   list to fill
+    @param      fLOG                logging function
 
     * all_tocs
     * build_paths
