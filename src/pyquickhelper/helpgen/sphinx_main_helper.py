@@ -327,7 +327,7 @@ def compile_latex_output_final(root, latex_path, doall, afile=None, latex_book=F
     .. versionadded:: 1.6
         Parameter *remove_unicode* was added.
     """
-    lat = find_pdflatex(latex_path)
+    latex_exe = find_pdflatex(latex_path)
     build = os.path.join(root, "_doc", "sphinxdoc", "build", "latex")
     if not os.path.exists(build):
         build = root
@@ -336,11 +336,11 @@ def compile_latex_output_final(root, latex_path, doall, afile=None, latex_book=F
             file = os.path.join(build, tex)
             if doall:
                 # -interaction=batchmode
-                c = '"{0}" "{1}" -max-print-line=900 -output-directory="{2}"'.format(
-                    lat, file, build)
+                c = '"{0}" "{1}" -max-print-line=900 -buf-size=10000000 -output-directory="{2}"'.format(
+                    latex_exe, file, build)
             else:
-                c = '"{0}" "{1}" -max-print-line=900 -interaction=nonstopmode -output-directory="{2}"'.format(
-                    lat, file, build)
+                c = '"{0}" "{1}" -max-print-line=900 -buf-size=10000000 -interaction=nonstopmode -output-directory="{2}"'.format(
+                    latex_exe, file, build)
             fLOG("[compile_latex_output_final] LATEX compilation (c)", c)
             post_process_latex_output(file, doall, latex_book=latex_book, fLOG=fLOG,
                                       custom_latex_processing=custom_latex_processing,

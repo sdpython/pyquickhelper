@@ -35,7 +35,7 @@ install:
     - "%PYTHON%\\Scripts\\pip install cryptography pycryptodomex"
     - "%PYTHON%\\Scripts\\pip install backports.shutil-get-terminal-size"
     - "%PYTHON%\\Scripts\\pip install jyquickhelper"
-    - "%PYTHON%\\Scripts\\pip install bokeh"
+    - "%PYTHON%\\Scripts\\pip install bokeh mako"
     - "%PYTHON%\\Scripts\\pip install https://github.com/ipython-contrib/jupyter_contrib_nbextensions/tarball/master"
     - "%PYTHON%\\Scripts\\pip install js2py"
     - "dir %PYTHON%\\Scripts"

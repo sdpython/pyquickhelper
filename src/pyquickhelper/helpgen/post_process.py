@@ -319,14 +319,27 @@ def post_process_rst_output(file, html, pdf, python, slides, present, is_noteboo
     .. versionchanged:: 1.7
         Add this replacement:
         ``st = st.replace("\\\\mathbb{1}", "\\\\mathbf{1\\\\!\\\\!1}")``.
+        Checks that audio is only included in HTML.
     """
     if fLOG:
-        fLOG("[post_process_rst_output]    post_process_rst_output", file)
+        fLOG("[post_process_rst_output]", file)
 
     fold, name = os.path.split(file)
     noext = os.path.splitext(name)[0]
     with open(file, "r", encoding="utf8") as f:
         lines = f.readlines()
+
+    # add section .. only:: html in front of HTML
+    allowed_beginning = ['<div align=middle><audio controls>']
+    for i, line in enumerate(lines):
+        add = False
+        for al in allowed_beginning:
+            if line.startswith(al):
+                add = True
+        if add:
+            if fLOG:
+                fLOG('[post_process_rst_output] add .. raw:: html for audio')
+            lines[i] = '\n.. raw:: html\n\n    ' + lines[i] + "\n\n"
 
     # Removes empty lines in inserted code, also adds line number.
     def startss(line):
@@ -393,7 +406,6 @@ def post_process_rst_output(file, html, pdf, python, slides, present, is_noteboo
             lines[pos] = lines[pos].replace(nameimg, short)
 
     # title
-    pos = 0
     for pos, line in enumerate(lines):
         line = line.strip("\n\r")
         if len(line) > 0 and line == "=" * len(line):
@@ -438,6 +450,7 @@ def post_process_rst_output(file, html, pdf, python, slides, present, is_noteboo
     if present:
         links.append(
             '`presentation <../_downloads/{0}.slides2p.html>`_ :download:`. <{0}.slides2p.html>`'.format(noext))
+
     if github:
         if notebook is None:
             raise ValueError(

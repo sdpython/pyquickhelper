@@ -650,9 +650,12 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
     notebook_doc = os.path.abspath(
         os.path.join(root, "_doc", "sphinxdoc", "source", "notebooks"))
     if os.path.exists(notebook_dir):
+        fLOG("---- look into '{0}'".format(notebook_dir))
+        fLOG("     -pattern  '{0}'".format(nbneg_pattern))
         notebooks = explore_folder(
             notebook_dir, pattern=".*[.]ipynb", neg_pattern=nbneg_pattern, fullname=True)[1]
         notebooks = [_ for _ in notebooks if "checkpoint" not in _]
+        fLOG("     found {0} notebooks".format(len(notebooks)))
         if len(notebooks) > 0:
             fLOG("[generate_help_sphinx] **** notebooks", nbformats)
             build = os.path.join(root, "build", "notebooks")
@@ -699,6 +702,8 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
                         if not os.path.exists(d):
                             os.makedirs(d)
                         shutil.copy(img, d)
+    else:
+        fLOG("---- no folder '{0}'".format(notebook_dir))
 
     fLOG("[generate_help_sphinx] end notebooks")
     fLOG("---- JENKINS END DOCUMENTATION NOTEBOOKS ----")

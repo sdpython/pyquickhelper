@@ -51,8 +51,8 @@ class TestSphinxFullDocumentationModuleTemplate(unittest.TestCase):
             # It fails for python 2.7 (encoding issue).
             return
 
-        temp = get_temp_folder(
-            __file__, "temp_full_doc_template", clean=__name__ != "__main__")
+        temp = get_temp_folder(__file__, "temp_full_documentation_module_template",
+                               clean=__name__ != "__main__")
         clog = CustomLog(temp)
 
         class MyStream:
