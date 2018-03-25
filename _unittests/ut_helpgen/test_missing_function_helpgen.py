@@ -92,6 +92,7 @@ class TestMissingFunctionsHelpgen(ExtTestCase):
         self.assertNotEmpty(build_paths)
         self.assertNotEmpty(parameters)
         self.assertNotEmpty(html_static_paths)
+        self.assertNotIn('conf', sys.modules)
 
     def test_everything_but_python(self):
         self.assertFalse(everything_but_python('__pycache__/u.py'))
