@@ -281,3 +281,5 @@ _unittests/ut_sphinxext/data/video/jol/im/mur3.mp4
 _unittests/ut_sphinxext/bokeh_plot/*
 bokeh_plot/*.js
 _doc/notebooks/autosavetime2/*
+math/*.png
+math/*.svg

@@ -48,6 +48,11 @@ def find_graphviz_dot(exc=True):
                 v)
             if os.path.exists(graphviz_dot):
                 return graphviz_dot
+        extra = ['build/update_modules/Graphviz/bin']
+        for ext in extra:
+            graphviz_dot = os.path.join(ext, "dot.exe")
+            if os.path.exists(graphviz_dot):
+                return graphviz_dot
         p = find_in_PATH("dot.exe")
         if p is None:
             if exc:
