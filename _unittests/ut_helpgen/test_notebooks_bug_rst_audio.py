@@ -29,11 +29,11 @@ if sys.version_info[0] == 2:
     from codecs import open
 
 
-class TestNoteBooksBugRst(ExtTestCase):
+class TestNoteBooksBugRstAudio(ExtTestCase):
 
     @skipif_travis('latex')
     @skipif_appveyor('latex')
-    def test_notebook_rst(self):
+    def test_notebook_rst_ausdio(self):
         fLOG(
             __file__,
             self._testMethodName,
@@ -41,31 +41,23 @@ class TestNoteBooksBugRst(ExtTestCase):
         if sys.version_info[0] == 2:
             # does not work on Python 2
             return
-        path = os.path.abspath(os.path.split(__file__)[0])
-        fold = os.path.normpath(os.path.join(path, "notebooks_rst"))
-        nbs = [os.path.join(fold, _)
-               for _ in os.listdir(fold) if ".ipynb" in _]
         formats = ["rst", ]
-
-        temp = get_temp_folder(__file__, "temp_nb_bug_rst")
+        temp = get_temp_folder(__file__, "temp_nb_bug_rst_audio")
+        nbs = [os.path.join(temp, '..', 'data', 'exemple_div.ipynb')]
         clog = CustomLog(temp)
-        clog("test_notebook_rst")
+        clog("test_notebook_rst_audio")
 
         clog("process_notebooks: begin")
-        res = process_notebooks(nbs, temp, temp, formats=formats, fLOG=clog)
+        process_notebooks(nbs, temp, temp, formats=formats, fLOG=clog)
         clog("process_notebooks: end")
-        fLOG("*****", len(res))
-        for _ in res:
-            fLOG(_)
-            self.assertExists(_[0])
 
-        name = os.path.join(temp, "having_a_form_in_a_notebook.rst")
+        name = os.path.join(temp, "exemple_div.rst")
         clog("final checking", name)
         with open(name, "r", encoding="utf8") as f:
             content = f.read()
         clog("final read", name)
-        exp = "<#Animated-output>`"
-        if exp in content or exp.lower() not in content:
+        exp = ".. raw:: html"
+        if exp not in content:
             raise Exception(content)
         clog("done")
 

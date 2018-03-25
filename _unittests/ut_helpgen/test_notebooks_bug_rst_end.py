@@ -22,7 +22,7 @@ except ImportError:
 
 from src.pyquickhelper.loghelper import fLOG, CustomLog
 from src.pyquickhelper.helpgen import process_notebooks
-from src.pyquickhelper.pycode import is_travis_or_appveyor, get_temp_folder, ExtTestCase
+from src.pyquickhelper.pycode import skipif_travis, skipif_appveyor, get_temp_folder, ExtTestCase
 
 
 if sys.version_info[0] == 2:
@@ -31,6 +31,8 @@ if sys.version_info[0] == 2:
 
 class TestNoteBooksBugRstEnd(ExtTestCase):
 
+    @skipif_travis('latex')
+    @skipif_appveyor('latex')
     def test_notebook_rst_end(self):
         fLOG(
             __file__,
@@ -48,9 +50,6 @@ class TestNoteBooksBugRstEnd(ExtTestCase):
         temp = get_temp_folder(__file__, "temp_nb_bug_rst_end")
         clog = CustomLog(temp)
         clog("test_notebook_rst_end")
-
-        if is_travis_or_appveyor() in ('travis', 'appveyor'):
-            return
 
         clog("process_notebooks: begin")
         res = process_notebooks(nbs, temp, temp, formats=formats, fLOG=clog)

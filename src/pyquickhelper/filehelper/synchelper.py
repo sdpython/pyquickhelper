@@ -18,7 +18,7 @@ if sys.version_info[0] == 2:
     from codecs import open
 
 
-def explore_folder(folder, pattern=None, neg_pattern=None, fullname=False):
+def explore_folder(folder, pattern=None, neg_pattern=None, fullname=False, fLOG=None):
     """
     Returns the list of files included in a folder and in the subfolder.
 
@@ -27,38 +27,50 @@ def explore_folder(folder, pattern=None, neg_pattern=None, fullname=False):
                                 the filename must verify (with the folder if fullname is True)
     @param          neg_pattern (str) negative pattern
     @param          fullname    (bool) if True, include the subfolder while checking the regex (pattern)
+    @param          fLOG        (fct) logging function
     @return                     (list, list), a list of folders, a list of files (the folder is not included the path name)
 
-    .. versionchanged:: 1.4
-        Parameter *neg_pattern* was added.
+    .. versionchanged:: 1.7
+        Parameter *fLOG* was added.
     """
     if pattern is not None:
         pattern = re.compile(pattern)
     if neg_pattern is not None:
         neg_pattern = re.compile(neg_pattern)
 
+    found = 0
+    filter = 0
+    negfil = 0
     file, rep = [], {}
     for r, d, f in os.walk(folder):
         for a in f:
+            found += 1
             temp = os.path.join(r, a)
             if pattern is not None:
                 if fullname:
                     if not pattern.search(temp):
+                        filter += 1
                         continue
                 else:
                     if not pattern.search(a):
+                        filter += 1
                         continue
             if neg_pattern is not None:
                 if fullname:
                     if neg_pattern.search(temp):
+                        negfil += 1
                         continue
                 else:
                     if pattern.search(a):
+                        negfil += 1
                         continue
             file.append(temp)
             r = os.path.split(temp)[0]
             rep[r] = None
 
+    if fLOG:
+        fLOG("[explore_folder] found={0} not-in={1} not-out={2} in '{3}'".format(
+            found, filter, negfil, folder))
     keys = sorted(rep.keys())
     return keys, file
 
