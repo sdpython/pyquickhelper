@@ -40,6 +40,7 @@ install:
     - "%PYTHON%\\Scripts\\pip install js2py"
     - "dir %PYTHON%\\Scripts"
     - "%PYTHON%\\Scripts\\jupyter-nbextension enable --py --sys-prefix widgetsnbextension"
+    - "%PYTHON%\\Scripts\\pymy_install3 --task=tool --source=zip graphviz"
 
 build: off
 

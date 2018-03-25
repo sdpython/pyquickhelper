@@ -86,7 +86,8 @@ class TestMissingFunctionsHelpgen(ExtTestCase):
         root_source = os.path.join(folds, '..', 'source')
         build = os.path.join(folds, '..', 'build')
         _import_conf_extract_parameter(root, root_source, folds, build, "",
-                                       all_tocs, build_paths, parameters, html_static_paths)
+                                       all_tocs, build_paths, parameters,
+                                       html_static_paths, None)
         self.assertNotEmpty(all_tocs)
         self.assertNotEmpty(build_paths)
         self.assertNotEmpty(parameters)

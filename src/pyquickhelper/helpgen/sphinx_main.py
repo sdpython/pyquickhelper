@@ -1163,10 +1163,12 @@ def _import_conf_extract_parameter(root, root_source, folds, build, newconf,
     """
     # trick, we place the good folder in the first position
     sys.path.insert(0, folds)
-    fLOG("[generate_help_sphinx] import from", folds)
+    if fLOG:
+        fLOG("[generate_help_sphinx] import from", folds)
     try:
         thenewconf = importlib.import_module("conf")
-        fLOG("[_import_conf_extract_parameter] import:", thenewconf)
+        if fLOG:
+            fLOG("[_import_conf_extract_parameter] import:", thenewconf)
     except Exception as ee:
         raise HelpGenException(
             "Unable to import a config file (root_source='{0}').".format(
