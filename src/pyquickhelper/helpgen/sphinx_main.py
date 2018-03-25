@@ -262,19 +262,18 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
     It does not require to get script location.
     Not enough stable from virtual environment.
 
-    .. versionchanged:: 1.5
-        Set ``BOKEH_DOCS_MISSING_API_KEY_OK`` to 1.
-        bokeh sphinx extension requires that or a key for the google API (???).
-        The function was updated to use Sphinx 1.6.2.
-        However, you should read blog post
-        :ref:`Bug in Sphinx 1.6.2 for custom css <sphinx-162-bug-custom-css>`
-        if you have any trouble with custom css.
-        Add a report in ``all_notebooks.rst`` about notebook coverage.
-        Parameter *parallel* was added.
-        The parameter *nblayout* in the configuration file specifies
-        the layout for the notebook gallery. ``'classic'`` or ``'table'``.
-        The parameter *nbneg_pattern* can be used to remove notebooks from
-        the gallery if they match this regular expression.
+    Set ``BOKEH_DOCS_MISSING_API_KEY_OK`` to 1.
+    bokeh sphinx extension requires that or a key for the google API (???).
+    The function was updated to use Sphinx 1.6.2.
+    However, you should read blog post
+    :ref:`Bug in Sphinx 1.6.2 for custom css <sphinx-162-bug-custom-css>`
+    if you have any trouble with custom css.
+    Add a report in ``all_notebooks.rst`` about notebook coverage.
+    Parameter *parallel* was added.
+    The parameter *nblayout* in the configuration file specifies
+    the layout for the notebook gallery. ``'classic'`` or ``'table'``.
+    The parameter *nbneg_pattern* can be used to remove notebooks from
+    the gallery if they match this regular expression.
 
     .. versionchanged:: 1.6
         Automatically adds video directive.
@@ -418,7 +417,9 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
             root_source, "\n".join(sys.path), "\n".join(copypath))) from e
     if theconf is None:
         raise ImportError(
-            "unable to import conf.py which defines the help generation")
+            "unable to import 'conf.py' which defines the help generation")
+    fLOG("[generate_help_sphinx] conf.__file__='{0}'".format(
+        os.path.abspath(theconf.__file__)))
     tocs = add_missing_files(root, theconf, "__INSERT__")
     all_tocs.extend(tocs)
 
@@ -514,6 +515,7 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
         for i, (k, v) in enumerate(sorted(nblinks.items())):
             fLOG("     {0}/{1} - '{2}': '{3}'".format(i + 1, len(nblinks), k, v))
         fLOG("[generate_help_sphinx] NBLINKS - END")
+    fLOG("[generate_help_sphinx] nbneg_pattern='{0}'".format(nbneg_pattern))
 
     # add to PATH
     sep = ";" if sys.platform.startswith("win") else ":"
