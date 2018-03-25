@@ -50,12 +50,15 @@ class VideoDirective(Directive):
 
     For latex, unit becomes *pt*.
     See `latex units <https://tex.stackexchange.com/questions/8260/what-are-the-various-units-ex-em-in-pt-bp-dd-pc-expressed-in-mm>`_.
+    Videos are not enabled on latex by default,
+    option ``:latex:`` must be set up.
     """
     required_arguments = True
     optional_arguments = 0
     final_argument_whitespace = True
     option_spec = {'width': directives.unchanged,
                    'height': directives.unchanged,
+                   'latex': directives.unchanged,
                    }
     has_content = True
     video_class = video_node
@@ -109,6 +112,8 @@ class VideoDirective(Directive):
 
         width = self.options.get('width', conf['default_video_width'])
         height = self.options.get('height', conf['default_video_height'])
+        latex = self.options.get('latex', False) in (
+            'True', 'true', True, 1, "1")
 
         # build node
         node = self.__class__.video_class(uri=filename, docname=docname, lineno=self.lineno,
@@ -116,6 +121,7 @@ class VideoDirective(Directive):
                                           relpath=relpath)
         node['classes'] += ["place-video"]
         node['video'] = filename
+        node['latex'] = latex
         ns = [node]
         return ns
 
@@ -196,12 +202,12 @@ def depart_video_node_latex(self, node):
     specify a different function for each.
     """
     if node.hasattr("uri"):
-        filename = node["uri"]
         width = node["width"]
         height = node["height"]
-        found = node["abspath"] is not None
+        full = os.path.join(node["relpath"], node['uri'])
+        found = node['abspath'] is not None
         if not found:
-            body = "\\textbf{{unable to find '{0}'}}".format(filename)
+            body = "\\textbf{{unable to find '{0}'}}".format(full)
             self.body.append(body)
         else:
             def format_dim(s):
@@ -209,10 +215,12 @@ def depart_video_node_latex(self, node):
                     return "{}"
                 else:
                     return "{{{0}pt}}".format(s)
-            body = '\\includemovie[poster,autoplay,externalviewer,inline=false]{0}{1}{{{2}}}'
+            body = '{3}\\includemovie[poster,autoplay,externalviewer,inline=false]{0}{1}{{{2}}}\n'
             width = format_dim(width)
             height = format_dim(height)
-            body = body.format(width, height, filename)
+            full = full.replace('\\', '/').replace('_', '\\_')
+            comment = '' if node['latex'] else '%'
+            body = body.format(width, height, full, comment)
             self.body.append(body)
 
 

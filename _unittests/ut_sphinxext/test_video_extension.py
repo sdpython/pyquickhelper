@@ -200,16 +200,19 @@ class TestVideoExtension(ExtTestCase):
         if sys.version_info[0] == 2:
             return
 
+        fLOG('custom app init')
         src_ = self.setup_format(temp)
         app = CustomSphinxApp(src_, temp, buildername="latex")
+        fLOG('custom app build')
         app.build()
+        fLOG('custom app done')
 
         index = os.path.join(temp, "pyq-video.tex")
         self.assertExists(index)
         with open(index, "r", encoding="utf-8") as f:
             content = f.read()
         self.assertNotIn("unable to find", content)
-        self.assertIn('{mur.mp4}', content)
+        self.assertIn('mur.mp4}', content)
         index = os.path.join(temp, "mur.mp4")
         self.assertExists(index)
         index = os.path.join(temp, "jol", "mur2.mp4")
@@ -219,7 +222,9 @@ class TestVideoExtension(ExtTestCase):
 
         if is_travis_or_appveyor() not in ('travis', 'appveyor'):
             latex = find_latex_path()
+            fLOG("latex-compile", latex)
             compile_latex_output_final(temp, latex, doall=True)
+            fLOG("compilatione done")
             index = os.path.join(temp, "pyq-video.pdf")
             self.assertExists(index)
 
