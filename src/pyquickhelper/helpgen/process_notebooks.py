@@ -414,26 +414,36 @@ def _process_notebooks_in(notebooks, outfold, build, latex_path=None, pandoc_pat
 
             # execution
             if format not in ("ipynb", ):
-                # arguments
-                if options_args:
-                    fLOG("[_process_notebooks_in] NBp:", format, options_args)
-                else:
-                    list_args.extend(["--to", format,
-                                      notebook if nb_slide is None else nb_slide])
-                    fLOG("[_process_notebooks_in] NBc:", format, list_args)
-                    fLOG("[_process_notebooks_in]", os.getcwd())
-
                 # nbconvert is messing up with static variables in sphinx or
                 # docutils if format is slides, not sure about the others
                 if format in {'rst'}:
+                    fLOG("[_process_notebooks_in] NBcn:", format, options_args)
                     nb2rst(notebook, outputfile, post_process=False)
                     err = ""
                 elif nbconvert_main != fnbcexe or format not in {"slides", "latex", "pdf"}:
+                    if options_args:
+                        fLOG("[_process_notebooks_in] NBp*:",
+                             format, options_args)
+                    else:
+                        list_args.extend(["--to", format,
+                                          notebook if nb_slide is None else nb_slide])
+                        fLOG("[_process_notebooks_in] NBc*:", format, list_args)
+                        fLOG("[_process_notebooks_in]", os.getcwd())
+
                     out, err = _process_notebooks_in_private(
                         fnbcexe, list_args, options_args)
                 else:
                     # conversion into slides alter Jinja2 environment
                     # jinja2.exceptions.TemplateNotFound: rst
+                    if options_args:
+                        fLOG("[_process_notebooks_in] NBp+:",
+                             format, options_args)
+                    else:
+                        list_args.extend(["--to", format,
+                                          notebook if nb_slide is None else nb_slide])
+                        fLOG("[_process_notebooks_in] NBc+:", format, list_args)
+                        fLOG("[_process_notebooks_in]", os.getcwd())
+
                     out, err = _process_notebooks_in_private_cmd(
                         fnbcexe, list_args, options_args, fLOG)
 
