@@ -18,6 +18,12 @@ class CustomLog:
     """
     Implements a custom logging function.
     This class is not protected against multithreading.
+    Usage:
+
+    ::
+
+        clog = CustomLog("folder")
+        clog('[fct]', info)
     """
 
     def __init__(self, folder=None, filename=None, create=True, parent=None):

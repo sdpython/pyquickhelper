@@ -24,6 +24,7 @@ except ImportError:
     import src
 
 from src.pyquickhelper.loghelper.flog import fLOG, download
+from src.pyquickhelper.loghelper import CustomLog
 from src.pyquickhelper.helpgen import generate_help_sphinx
 from src.pyquickhelper.pycode import get_temp_folder
 from src.pyquickhelper.pycode import is_travis_or_appveyor
@@ -50,12 +51,16 @@ class TestSphinxFullDocumentationModuleTemplate(unittest.TestCase):
             # It fails for python 2.7 (encoding issue).
             return
 
+        temp = get_temp_folder(
+            __file__, "temp_full_doc_template", clean=__name__ != "__main__")
+        clog = CustomLog(temp)
+
         class MyStream:
             def __init__(self):
                 self.rows = []
 
             def write(self, text):
-                fLOG(
+                clog(
                     "[warning*] {0} - '{1}'".format(len(self), text.strip("\n\r ")))
                 self.rows.append(text)
 
@@ -65,8 +70,6 @@ class TestSphinxFullDocumentationModuleTemplate(unittest.TestCase):
             def __len__(self):
                 return len(self.rows)
 
-        temp = get_temp_folder(
-            __file__, "temp_full_doc_template", clean=__name__ != "__main__")
         rem = os.path.join(
             temp, "python3_module_template-master", "_doc", "sphinxdoc", "build")
         if os.path.exists(rem):
@@ -138,7 +141,7 @@ class TestSphinxFullDocumentationModuleTemplate(unittest.TestCase):
                 generate_help_sphinx(var, module_name=var, root=root,
                                      layout=layout, extra_ext=["tohelp"],
                                      from_repo=False, direct_call=direct_call,
-                                     parallel=1, fLOG=fLOG)
+                                     parallel=1, fLOG=clog)
                 for w in ww:
                     if isinstance(w, dict):
                         rows = [
