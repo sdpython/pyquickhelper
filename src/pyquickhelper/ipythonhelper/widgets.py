@@ -177,11 +177,8 @@ class DropDownWidget(StaticWidget):
 
     def __init__(self, values, name=None,
                  labels=None, default=None, divclass=None,
-                 delimiter="      "
-                 ):
+                 delimiter="      "):
         """
-        constructor
-
         @param      values      values for the list
         @param      name        name of the object
         @param      labels      ?

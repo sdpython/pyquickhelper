@@ -46,7 +46,10 @@ def _get_html(obj):
     # TODO: use displaypub to make this more general
     from IPython import get_ipython
     ip = get_ipython()
-    png_rep = ip.display_formatter.formatters['image/png'](obj)
+    if ip is not None:
+        png_rep = ip.display_formatter.formatters['image/png'](obj)
+    else:
+        png_rep = None
 
     if png_rep is not None:
         # do not move this import to the root or
@@ -178,9 +181,7 @@ class StaticInteract(object):
         return "".join(tmplt.format(name=divname,
                                     display="block" if disp else "none",
                                     content=_get_html(result))
-                       for divname, result, disp in zip(divnames,
-                                                        results,
-                                                        display))
+                       for divname, result, disp in zip(divnames, results, display))
 
     def _widget_html(self):
         """

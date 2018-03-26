@@ -29,7 +29,8 @@ else:
 
 def get_test_file(filter, dir=None, no_subfolder=False, fLOG=noLOG, root=None):
     """
-    return the list of test files
+    Returns the list of test files.
+
     @param      dir             path to look (or paths to look if it is a list)
     @param      filter          only select files matching the pattern (ex: test*)
     @param      no_subfolder    the function investigates the folder *dir* and does not try any subfolder in
@@ -38,12 +39,6 @@ def get_test_file(filter, dir=None, no_subfolder=False, fLOG=noLOG, root=None):
     @param      root            root or folder which contains the project,
                                 rules applyong on folder name will not apply on it
     @return                     a list of test files
-
-    .. versionchanged:: 1.1
-        Parameter *no_subfolder* was added.
-
-    .. versionchanged:: 1.3
-        Paramerer *fLOG*, *root* were added.
     """
     if no_subfolder:
         dirs = [dir]
@@ -121,7 +116,8 @@ def get_test_file(filter, dir=None, no_subfolder=False, fLOG=noLOG, root=None):
 
 def get_estimation_time(file):
     """
-    return an estimation of the processing time, it extracts the number in ``(time=5s)`` for example
+    Return an estimation of the processing time,
+    it extracts the number in ``(time=5s)`` for example.
 
     @param      file        filename
     @return                 int
@@ -148,15 +144,12 @@ def get_estimation_time(file):
 
 def import_files(li, additional_ut_path=None, fLOG=noLOG):
     """
-    run all tests in file list li
+    Runs all tests in file list ``li``.
 
     @param      li                      list of files (python scripts)
     @param      additional_ut_path      additional paths to add when running the unit tests
     @param      fLOG                    logging function
     @return                             list of tests [ ( testsuite, file) ]
-
-    .. versionchanged:: 1.3
-        Parameters *fLOG*, *additional_ut_path* were added.
     """
     allsuite = []
     for l in li:
@@ -226,7 +219,7 @@ def import_files(li, additional_ut_path=None, fLOG=noLOG):
 
 def clean(dir=None, fLOG=noLOG):
     """
-    do the cleaning
+    Does the cleaning.
 
     @param      dir     directory
     @param      fLOG    logging function
@@ -265,7 +258,7 @@ def main_run_test(runner, path_test=None, limit_max=1e9, log=False, skip=-1, ski
                   additional_ut_path=None, stdout=None, stderr=None, filter_warning=None,
                   fLOG=noLOG):
     """
-    run all unit test
+    Runs all unit tests,
     the function looks into the folder _unittest and extract from all files
     beginning by `test_` all methods starting by `test_`.
     Each files should mention an execution time.
@@ -291,19 +284,6 @@ def main_run_test(runner, path_test=None, limit_max=1e9, log=False, skip=-1, ski
                                     @see fn default_filter_warning
     @param      fLOG                logging function
     @return                         dictionnary: ``{ "err": err, "tests":list of couple (file, test results) }``
-
-    .. versionchanged:: 0.9
-        change the result type into a dictionary, catches warning when running unit tests,
-        add parameter *processes* to run the unit test in a different process through command line
-
-    .. versionchanged:: 1.0
-        parameter *skip_function* was added
-
-    .. versionchanged:: 1.3
-        Parameters *fLOG*, *stdout*, *stderr* were added.
-
-    .. versionchanged:: 1.4
-        Parameter *filter_warning* was added.
     """
     if skip_list is None:
         skip_list = set()
@@ -607,10 +587,10 @@ def main_run_test(runner, path_test=None, limit_max=1e9, log=False, skip=-1, ski
 
 def is_valid_error(error):
     """
-    checks if the text written on stderr is an error or not,
+    Checks if the text written on stderr is an error or not,
     a local server can push logs on this stream,
-
-    it looks for keywords such as Exception, Error, TraceBack...
+    it looks for keywords such as ``Exception``,
+    ``Error``, ``TraceBack``...
 
     @param      error       text
     @return                 boolean
@@ -625,7 +605,7 @@ def is_valid_error(error):
 
 def default_skip_function(name, code, duration):
     """
-    default skip function for function @see fn main_wrapper_tests.
+    Default skip function for function @see fn main_wrapper_tests.
 
     @param      name        name of the test file
     @param      code        code of the test file

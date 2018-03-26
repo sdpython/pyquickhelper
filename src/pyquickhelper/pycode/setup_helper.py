@@ -666,22 +666,13 @@ def run_unittests_for_setup(file_or_folder, skip_function=default_skip_function,
     @param      add_coverage_folder     additional folder where to look for other coverage reports
     @param      fLOG                    logging function
 
-    .. versionchanged:: 1.3
-        Parameters *coverage_options*, *coverage_exclude_lines*, *fLOG*,
-        *additional_ut_path*, *hook_print*, *stdout*, *stderr* were added.
-        See function @see fn main_wrapper_tests.
-        The coverage computation can be disable by specifying
-        ``coverage_options["disable_coverage"] = True``.
-
-        Parameter *covtoken* as added to post the coverage report to
-        `codecov <https://codecov.io/>`_.
-
-    .. versionchanged:: 1.4
-        Parameter *filter_warning* was added.
-
-    .. versionchanged:: 1.5
-        Parameter *dump_coverage* was added.
-        Dumps the unit test coverage in another location.
+    See function @see fn main_wrapper_tests.
+    The coverage computation can be disabled by specifying
+    ``coverage_options["disable_coverage"] = True``.
+    *covtoken* was added to post the coverage report to
+    `codecov <https://codecov.io/>`_.
+    Parameter *dump_coverage*
+    dumps the unit test coverage in another location.
 
     .. versionchanged:: 1.6
         Parameter *add_coverage_folder* was added.
