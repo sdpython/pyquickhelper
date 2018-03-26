@@ -329,18 +329,6 @@ def post_process_rst_output(file, html, pdf, python, slides, present, is_noteboo
     with open(file, "r", encoding="utf8") as f:
         lines = f.readlines()
 
-    # add section .. only:: html in front of HTML
-    allowed_beginning = ['<div align=middle><audio controls>']
-    for i, line in enumerate(lines):
-        add = False
-        for al in allowed_beginning:
-            if line.startswith(al):
-                add = True
-        if add:
-            if fLOG:
-                fLOG('[post_process_rst_output] add .. raw:: html for audio')
-            lines[i] = '\n.. raw:: html\n\n    ' + lines[i] + "\n\n"
-
     # Removes empty lines in inserted code, also adds line number.
     def startss(line):
         for b in ["::", ".. parsed-literal::", ".. code:: python",

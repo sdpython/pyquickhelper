@@ -11,6 +11,7 @@ from traitlets.config import Config
 from nbconvert.exporters import RSTExporter
 from jinja2 import DictLoader
 from nbconvert.filters.pandoc import convert_pandoc
+from textwrap import indent
 
 
 def convert_pandoc_rst(source, from_format, to_format, extra_args=None):
@@ -42,7 +43,7 @@ def process_raw_html(source, extra_args=None):
     if 'var update_menu = function() {' in source:
         return "\n\n.. contents::\n    :local:\n\n"
     else:
-        return source
+        return "\n\n.. raw:: html\n\n" + indent(source, prefix='    ')
 
 
 class UpgradedRSTExporter(RSTExporter):

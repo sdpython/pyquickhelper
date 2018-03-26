@@ -10,4 +10,4 @@
 
 {% block data_html scoped %}
 {{ output.data['text/html'] | process_raw_html }}
-{% endblock data_html %}    
+{% endblock data_html %}
