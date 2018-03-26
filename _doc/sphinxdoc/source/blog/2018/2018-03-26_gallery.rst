@@ -1,0 +1,39 @@
+
+.. blogpost::
+    :title: Long names on Windows
+    :keywords: sphinx, gallery
+    :date: 2018-03-26
+    :categories: sphinx
+
+    One of my unit test was failing due to a weird
+    error in :epkg:`sphinx-gallery`. The module could not
+    write a file on :epkg:`Windows` because its name was longer
+    than 260 which still seems to be a limit of the system.
+
+    .. runpython::
+        :showcode:
+
+        import sys
+        if sys.platform.startswith("win"):
+            from ctypes.wintypes import MAX_PATH
+            print(MAX_PATH)
+        else:
+            print('undefined')
+
+    The error was not always happening
+    depending on the fact the unit test was run from
+    a virtual python environment or not.
+    It is difficult to predict that a name will fail
+    for a specific installation on a specific platform.
+    I forked :epkg:`sphinx-gallery` and made the following
+    `modification <https://github.com/sdpython/sphinx-gallery/commit/3ae9f13250cf25c75e1b17b2fade98b7a9940b0d>`_.
+    I don't really like it as it should not be needed
+    in the first place. I read this blog post
+    `Path Tool Long <https://www.burgaud.com/path-too-long>`_
+    and discovered the following tool:
+    `winrmrf <https://github.com/andreburgaud/winrmrf>`_
+    only means to delete very long files. In my case,
+    the unit test fails because it tries to create
+    a very long name. Other options
+    than catching an exception would be to create a long filename
+    in Windows or to add it to the souces.

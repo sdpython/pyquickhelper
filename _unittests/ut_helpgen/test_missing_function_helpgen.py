@@ -31,6 +31,7 @@ from src.pyquickhelper.helpgen.utils_sphinx_doc_helpers import example_function_
 from src.pyquickhelper.helpgen._fake_function_to_documentation import f1, f2, f3, f4, f5, f6
 from src.pyquickhelper.helpgen.sphinx_main import _import_conf_extract_parameter
 from src.pyquickhelper.helpgen.sphinx_helper import everything_but_python
+from src.pyquickhelper.helpgen.sphinxm_convert_doc_helper import correct_indentation
 
 
 class TestMissingFunctionsHelpgen(ExtTestCase):
@@ -99,6 +100,17 @@ class TestMissingFunctionsHelpgen(ExtTestCase):
         self.assertFalse(everything_but_python('u.pyc'))
         self.assertFalse(everything_but_python('u.py'))
         self.assertTrue(everything_but_python('u.pfy'))
+
+    def test_correct_indentation(self):
+        text = """
+            Comment
+            =======
+
+                cool
+        """
+        new_text = correct_indentation(text)
+        ded = text.replace("            ", "")
+        self.assertEqual(ded.strip(" \n\r"), new_text.strip(" \n\r"))
 
 
 if __name__ == "__main__":

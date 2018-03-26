@@ -38,6 +38,11 @@ if sys.version_info[0] == 2:
 class TestSphinxFullDocumentationModuleTemplate(unittest.TestCase):
 
     def test_full_documentation_module_template(self):
+        """
+        This test might fail in sphinx-gallery due to a very long filename.
+        Please look into the following commit:
+        https://github.com/sdpython/sphinx-gallery/commit/3ae9f13250cf25c75e1b17b2fade98b7a9940b0d.
+        """
         fLOG(
             __file__,
             self._testMethodName,
@@ -53,6 +58,7 @@ class TestSphinxFullDocumentationModuleTemplate(unittest.TestCase):
 
         temp = get_temp_folder(__file__, "temp_full_documentation_module_template",
                                clean=__name__ != "__main__")
+
         clog = CustomLog(temp)
 
         class MyStream:
@@ -75,11 +81,30 @@ class TestSphinxFullDocumentationModuleTemplate(unittest.TestCase):
         if os.path.exists(rem):
             remove_folder(rem)
         url = "https://github.com/sdpython/python3_module_template/archive/master.zip"
-        fLOG("download", url)
+        fLOG("[ut] download", url)
         download(url, temp, fLOG=fLOG, flatten=False)
         self.assertTrue(not os.path.exists(os.path.join(temp, "src")))
         root = os.path.join(temp, "python3_module_template-master")
 
+        # Checks that the unit test might fails.
+        coucou = os.path.join(temp, "python3_module_template-master", "_doc", "sphinxdoc", "source", "gallery",
+                              "project_name.subproject2.exclude_from_code_coverage.NotImplementedClass.__init__.examples")
+        if not os.path.exists(coucou):
+            fLOG("[ut] creating file '{0}'".format(coucou))
+            clog("[ut] creating file '{0}'".format(coucou))
+            dirname = os.path.dirname(coucou)
+            os.makedirs(dirname)
+            try:
+                # replicating what sphinx_gallery does
+                open(coucou, "w").close()
+            except Exception as e:
+                warnings.warn(
+                    "Unable to create '{0}' due to '{1}'".format(coucou, e))
+        else:
+            fLOG("[ut] file exists '{0}'".format(coucou))
+            clog("[ut] file exists '{0}'".format(coucou))
+
+        # documentation
         fLOG("generate documentation", root)
         var = "project_name"
 
