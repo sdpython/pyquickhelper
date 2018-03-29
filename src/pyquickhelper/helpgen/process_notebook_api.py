@@ -241,7 +241,9 @@ def nb2rst(nb_file, outfile, exc=True, post_process=True):
     exp_class, writer_class = get_exporter("rst", add_writer=True)
     exporter = exp_class()
     writer = writer_class()
-    source, meta = exporter.from_notebook_node(nb)
+    unique_key = os.path.splitext(os.path.split(outfile)[-1])[0]
+    source, meta = exporter.from_notebook_node(
+        nb, resources=dict(unique_key=unique_key))
 
     name, ext = os.path.splitext(outfile)
     if ext != '.rst':

@@ -106,7 +106,8 @@ class UpgradedRSTExporter(RSTExporter):
     def default_config(self):
         c = Config({
             'ExtractOutputPreprocessor': {
-                'enabled': True
+                'enabled': True,
+                'output_filename_template': '{unique_key}_{cell_index}_{index}{extension}'
             },
             'HighlightMagicsPreprocessor': {
                 'enabled': True
