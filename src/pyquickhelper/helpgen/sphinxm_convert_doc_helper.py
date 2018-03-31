@@ -476,22 +476,10 @@ def docstring2html(function_or_string, format="html", fLOG=noLOG, writer="html",
 
     The output format is defined by:
 
-        * html: IPython HTML object
-        * rawhtml: HTML as text + style
-        * rst: rst
-        * text: raw text
-
-    .. versionadded:: 1.0
-
-    .. versionchanged:: 1.3
-        Parameter *writer* was added to specifiy a custom writer.
-
-    .. versionchanged:: 1.4
-        Does not crash anymore when the documentation is None.
-
-    .. versionchanged:: 1.5
-        Changed the signature to be like @see fn rst2html.
-        Format ``rst`` was added.
+    * html: IPython HTML object
+    * rawhtml: HTML as text + style
+    * rst: rst
+    * text: raw text
     """
     if not isinstance(function_or_string, str):
         doc = function_or_string.__doc__

@@ -468,6 +468,13 @@ class HTMLTranslatorWithCustomDirectives(_AdditionalVisitDepart, HTMLTranslator)
             setattr(self.__class__, "depart_" + name, f2)
         self.base_class = HTMLTranslator
 
+    def visit_field(self, node):
+        # type: (nodes.Node) -> None
+        if not hasattr(self, '_fieldlist_row_index'):
+            # needed when a docstring starts with :param:
+            self._fieldlist_row_index = 0
+        return HTMLTranslator.visit_field(self, node)
+
 
 class RSTTranslatorWithCustomDirectives(_AdditionalVisitDepart, RstTranslator):
     """
