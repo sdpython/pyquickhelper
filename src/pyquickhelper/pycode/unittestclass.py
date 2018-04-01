@@ -32,23 +32,32 @@ class ExtTestCase(unittest.TestCase):
         Checks that *x* is not empty.
         """
         if x is None or (hasattr(x, "__len__") and len(x) == 0):
-            raise AssertionError("x est empty")
+            raise AssertionError("x in empty")
 
-    def assertGreater(self, x, y):
+    def assertEmpty(self, x, none_allowed=True):
+        """
+        Checks that *x* is empty.
+        """
+        if not((none_allowed and x is None) or (hasattr(x, "__len__") and len(x) == 0)):
+            raise AssertionError("x is not empty")
+
+    def assertGreater(self, x, y, strict=False):
         """
         Checks that ``x >= y``.
         """
-        if x < y:
-            raise AssertionError("x < y with x={0} and y={1}".format(
-                ExtTestCase._format_str(x), ExtTestCase._format_str(y)))
+        if x < y or (strict and x == y):
+            raise AssertionError("x <{2} y with x={0} and y={1}".format(
+                ExtTestCase._format_str(x), ExtTestCase._format_str(y),
+                "" if strict else "="))
 
-    def assertLesser(self, x, y):
+    def assertLesser(self, x, y, strict=False):
         """
         Checks that ``x <= y``.
         """
-        if x > y:
-            raise AssertionError("x > y with x={0} and y={1}".format(
-                ExtTestCase._format_str(x), ExtTestCase._format_str(y)))
+        if x > y or (strict and x == y):
+            raise AssertionError("x >{2} y with x={0} and y={1}".format(
+                ExtTestCase._format_str(x), ExtTestCase._format_str(y),
+                "" if strict else "="))
 
     def assertExists(self, name):
         """
@@ -71,6 +80,18 @@ class ExtTestCase(unittest.TestCase):
         """
         from pandas.testing import assert_frame_equal
         assert_frame_equal(d1, d2, **kwargs)
+
+    def assertNotEqualDataFrame(self, d1, d2, **kwargs):
+        """
+        Checks that two dataframes are different.
+        Calls :epkg:`pandas:testing:assert_frame_equal`.
+        """
+        from pandas.testing import assert_frame_equal
+        try:
+            assert_frame_equal(d1, d2, **kwargs)
+        except AssertionError:
+            return
+        raise AssertionError("Two dataframes are identical")
 
     def assertEqualArray(self, d1, d2, **kwargs):
         """
@@ -142,15 +163,35 @@ class ExtTestCase(unittest.TestCase):
             raise AssertionError(
                 "'{1}' does not start with '{0}'".format(sub, whole))
 
+    def assertNotStartsWith(self, sub, whole):
+        """
+        Checks that string *sub* does not start with *whole*.
+        """
+        if whole.startswith(sub):
+            if len(whole) > len(sub) * 2:
+                whole = whole[:len(sub) * 2]
+            raise AssertionError(
+                "'{1}' starts with '{0}'".format(sub, whole))
+
     def assertEndsWith(self, sub, whole):
         """
-        Checks that string *sub* starts with *whole*.
+        Checks that string *sub* ends with *whole*.
         """
         if not whole.endswith(sub):
             if len(whole) > len(sub) * 2:
                 whole = whole[-len(sub) * 2:]
             raise AssertionError(
                 "'{1}' does not end with '{0}'".format(sub, whole))
+
+    def assertNotEndsWith(self, sub, whole):
+        """
+        Checks that string *sub* does not end with *whole*.
+        """
+        if whole.endswith(sub):
+            if len(whole) > len(sub) * 2:
+                whole = whole[-len(sub) * 2:]
+            raise AssertionError(
+                "'{1}' ends with '{0}'".format(sub, whole))
 
     def assertEqual(self, a, b):
         """
@@ -165,6 +206,23 @@ class ExtTestCase(unittest.TestCase):
                     import pandas
                 if isinstance(a, pandas.DataFrame) and isinstance(b, pandas.DataFrame):
                     self.assertEqualDataFrame(a, b)
+                    return
+            raise e
+
+    def assertNotEqual(self, a, b):
+        """
+        Checks that ``a != b``.
+        """
+        try:
+            unittest.TestCase.assertNotEqual(self, a, b)
+        except ValueError as e:
+            if "Can only compare identically-labeled DataFrame objects" in str(e) or \
+               "The truth value of a DataFrame is ambiguous." in str(e):
+                with warnings.catch_warnings():
+                    warnings.filterwarnings("ignore", category=ImportWarning)
+                    import pandas
+                if isinstance(a, pandas.DataFrame) and isinstance(b, pandas.DataFrame):
+                    self.assertNotEqualDataFrame(a, b)
                     return
             raise e
 

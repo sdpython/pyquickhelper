@@ -69,6 +69,9 @@ class TestExtTestCase(ExtTestCase):
             OutputPrint=__name__ == "__main__")
 
         self.assertGreater("c", "b")
+        self.assertGreater("c", "c")
+        self.assertRaise(lambda: self.assertGreater(
+            "c", "c", strict=True), AssertionError)
         self.assertRaise(lambda: self.assertGreater("a", "b"), AssertionError)
 
     def test_lesser(self):
@@ -78,6 +81,9 @@ class TestExtTestCase(ExtTestCase):
             OutputPrint=__name__ == "__main__")
 
         self.assertLesser("a", "b")
+        self.assertLesser("a", "a")
+        self.assertRaise(lambda: self.assertLesser(
+            "a", "a", strict=True), AssertionError)
         self.assertRaise(lambda: self.assertLesser("c", "b"), AssertionError)
 
     def test_df(self):
@@ -93,11 +99,15 @@ class TestExtTestCase(ExtTestCase):
         df1 = DataFrame(data=dict(a=["a"]))
         df2 = DataFrame(data=dict(a=["b"]))
         self.assertEqualDataFrame(df, df1)
-        self.assertRaise(lambda: self.assertEqualDataFrame(
-            df, df2), AssertionError)
+        self.assertRaise(lambda: self.assertEqualDataFrame(df, df2),
+                         AssertionError)
         self.assertEqual(df, df1)
-        self.assertRaise(lambda: self.assertEqual(
-            df, df2), AssertionError)
+        self.assertRaise(lambda: self.assertNotEqual(df, df1),
+                         AssertionError)
+        self.assertRaise(lambda: self.assertEqual(df, df2),
+                         AssertionError)
+        df["new"] = 1
+        self.assertNotEqual(df, df1)
 
     def test_arr(self):
         fLOG(
@@ -120,9 +130,15 @@ class TestExtTestCase(ExtTestCase):
             OutputPrint=__name__ == "__main__")
 
         self.assertStartsWith("a", "ab")
+        self.assertRaise(lambda: self.assertNotStartsWith(
+            "a", "ab"), AssertionError)
+        self.assertNotStartsWith("c", "ab")
         self.assertRaise(lambda: self.assertStartsWith(
             "ab", "a"), AssertionError)
         self.assertEndsWith("a", "ba")
+        self.assertRaise(lambda: self.assertNotEndsWith(
+            "a", "ba"), AssertionError)
+        self.assertNotEndsWith("a", "bc")
         self.assertRaise(lambda: self.assertEndsWith(
             "ba", "a"), AssertionError)
         self.assertRaise(lambda: self.assertEndsWith(
@@ -135,8 +151,11 @@ class TestExtTestCase(ExtTestCase):
             OutputPrint=__name__ == "__main__")
 
         self.assertNotEmpty([0])
+        self.assertEmpty(None)
+        self.assertEmpty([])
         self.assertRaise(lambda: self.assertNotEmpty(None), AssertionError)
         self.assertRaise(lambda: self.assertNotEmpty([]), AssertionError)
+        self.assertRaise(lambda: self.assertEmpty([0]), AssertionError)
 
     def test_callable(self):
         fLOG(
