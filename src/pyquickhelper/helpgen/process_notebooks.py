@@ -1211,7 +1211,7 @@ def build_all_notebooks_coverage(nbs, fileout, module_name, dump=None, badge=Tru
         sdate = "%04d-%02d-%02d" % (now.year, now.month, now.day)
         cpy = os.path.join(os.path.dirname(fileout), "nbcov-%s.png" % sdate)
         shutil.copy(img, cpy)
-        badge = ["{0:0.00}% {1}".format(
+        badge = ["{0:0.00f}% {1}".format(
             cov, sdate), "", ".. image:: {0}".format(os.path.split(cpy)[-1]), ""]
         badge2 = ["", ".. image:: {0}".format(os.path.split(img)[-1]), ""]
     else:

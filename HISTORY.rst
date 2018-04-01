@@ -3,9 +3,10 @@
 History
 =======
 
-current - 2018-03-30 - 0.00Mb
+current - 2018-04-01 - 0.00Mb
 =============================
 
+* `120`: add _fieldlist_row_index if missing in HTMLTranslatorWithCustomDirectives (2018-04-01)
 * `119`: collision with image names in notebooks converted into rst (2018-03-29)
 
 1.7.2508 - 2018-03-26 - 1.99Mb
@@ -63,4 +64,3 @@ current - 2018-03-30 - 0.00Mb
 
 * `81`: add youtube extension (2017-10-06)
 * `79`: fix image copy for blogs (2017-09-20)
-* `78`: get_temp_folder change other default directory (2017-09-20)
