@@ -334,8 +334,10 @@ def _process_notebooks_in(notebooks, outfold, build, latex_path=None, pandoc_pat
             outputfile_noext = os.path.join(build, nbout)
             if format == 'html':
                 outputfile = outputfile_noext + '2html' + extensions[format]
+                outputfile_noext_fixed = outputfile_noext + '2html'
             else:
                 outputfile = outputfile_noext + extensions[format]
+                outputfile_noext_fixed = outputfile_noext
             trueoutputfile = outputfile
             pandoco = "docx" if format in ("word", "docx") else None
 
@@ -411,7 +413,7 @@ def _process_notebooks_in(notebooks, outfold, build, latex_path=None, pandoc_pat
             if format in ('present', ):
                 options_args["outfile"] = outputfile
             else:
-                list_args.extend(["--output", outputfile_noext])
+                list_args.extend(["--output", outputfile_noext_fixed])
                 if templ is not None and format != "slides":
                     list_args.extend(["--template", templ])
 
@@ -419,10 +421,11 @@ def _process_notebooks_in(notebooks, outfold, build, latex_path=None, pandoc_pat
             if format not in ("ipynb", ):
                 # nbconvert is messing up with static variables in sphinx or
                 # docutils if format is slides, not sure about the others
-                if format in {'rst'}:
+                if format in ('rst', ):
                     fLOG("[_process_notebooks_in] NBcn:", format, options_args)
                     nb2rst(notebook, outputfile, post_process=False)
                     err = ""
+                    c = ""
                 elif nbconvert_main != fnbcexe or format not in {"slides", "latex", "pdf"}:
                     if options_args:
                         fLOG("[_process_notebooks_in] NBp*:",
@@ -433,6 +436,7 @@ def _process_notebooks_in(notebooks, outfold, build, latex_path=None, pandoc_pat
                         fLOG("[_process_notebooks_in] NBc*:", format, list_args)
                         fLOG("[_process_notebooks_in]", os.getcwd())
 
+                    c = " ".join(list_args)
                     out, err = _process_notebooks_in_private(
                         fnbcexe, list_args, options_args)
                 else:
@@ -447,6 +451,7 @@ def _process_notebooks_in(notebooks, outfold, build, latex_path=None, pandoc_pat
                         fLOG("[_process_notebooks_in] NBc+:", format, list_args)
                         fLOG("[_process_notebooks_in]", os.getcwd())
 
+                    c = " ".join(list_args)
                     out, err = _process_notebooks_in_private_cmd(
                         fnbcexe, list_args, options_args, fLOG)
 

@@ -1,5 +1,5 @@
 """
-@brief      test log(time=15s)
+@brief      test log(time=90s)
 @author     Xavier Dupre
 """
 
@@ -71,7 +71,7 @@ class TestNotebookConversion(ExtTestCase):
             p2 = "."
 
         formats = ["slides", "ipynb", "html", "python", "rst", "present"]
-        exp = ["example_pyquickhelper.html",
+        exp = ["example_pyquickhelper2html.html",
                "example_pyquickhelper.ipynb",
                "example_pyquickhelper.py",
                "example_pyquickhelper.rst",
