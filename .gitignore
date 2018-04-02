@@ -18,6 +18,7 @@ local.properties
 .classpath
 .settings/
 .loadpath
+**/.vs/*
 
 # External tool builders
 .externalToolBuilders/
@@ -283,3 +284,4 @@ bokeh_plot/*.js
 _doc/notebooks/autosavetime2/*
 math/*.png
 math/*.svg
+
