@@ -332,8 +332,8 @@ def _process_notebooks_in(notebooks, outfold, build, latex_path=None, pandoc_pat
             # output
             format_ = format
             outputfile_noext = os.path.join(build, nbout)
-            if format == 'rst':
-                outputfile = outputfile_noext + 'rst' + extensions[format]
+            if format == 'html':
+                outputfile = outputfile_noext + '2html' + extensions[format]
             else:
                 outputfile = outputfile_noext + extensions[format]
             trueoutputfile = outputfile
