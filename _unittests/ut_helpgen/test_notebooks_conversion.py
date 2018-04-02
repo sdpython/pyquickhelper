@@ -1,5 +1,5 @@
 """
-@brief      test log(time=8s)
+@brief      test log(time=12s)
 @author     Xavier Dupre
 """
 
@@ -44,7 +44,7 @@ class TestNotebookConversion2(ExtTestCase):
         notebook_replacements = {'html': [('1ere page HTML', '2nd page-WWW')]}
         process_notebooks(this, build=temp, outfold=temp, formats=['html', 'slides'],
                           notebook_replacements=notebook_replacements)
-        with open(os.path.join(temp, 'TD_2A_Eco_Web_Scraping.html'), 'r', encoding='utf-8') as f:
+        with open(os.path.join(temp, 'TD_2A_Eco_Web_Scraping2html.html'), 'r', encoding='utf-8') as f:
             text = f.read()
         self.assertNotIn(notebook_replacements['html'][0][0], text)
         self.assertIn(notebook_replacements['html'][0][1], text)
