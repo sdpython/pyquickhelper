@@ -3,8 +3,13 @@
 History
 =======
 
-current - 2018-04-01 - 0.00Mb
+current - 2018-04-04 - 0.00Mb
 =============================
+
+* `121`: extend list of functions in ExtTestCase (NotEqual, Greater(strict=True), NotEmpty (2018-04-01)
+
+1.7.2514 - 2018-04-01 - 1.99Mb
+==============================
 
 * `120`: add _fieldlist_row_index if missing in HTMLTranslatorWithCustomDirectives (2018-04-01)
 * `119`: collision with image names in notebooks converted into rst (2018-03-29)
@@ -63,4 +68,3 @@ current - 2018-04-01 - 0.00Mb
 ==============================
 
 * `81`: add youtube extension (2017-10-06)
-* `79`: fix image copy for blogs (2017-09-20)
