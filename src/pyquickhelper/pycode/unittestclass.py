@@ -96,7 +96,7 @@ class ExtTestCase(unittest.TestCase):
             assert_frame_equal(d1, d2, **kwargs)
         except AssertionError:
             return
-        raise AssertionError("Two dataframes are identical")
+        raise AssertionError("Two dataframes are identical.")
 
     def assertEqualArray(self, d1, d2, **kwargs):
         """
@@ -105,6 +105,18 @@ class ExtTestCase(unittest.TestCase):
         """
         from numpy.testing import assert_array_equal
         assert_array_equal(d1, d2, **kwargs)
+
+    def assertNotEqualArray(self, d1, d2, **kwargs):
+        """
+        Checks that two arrays are equal.
+        Calls :epkg:`numpy:`.
+        """
+        from numpy.testing import assert_array_equal
+        try:
+            assert_array_equal(d1, d2, **kwargs)
+        except AssertionError:
+            return
+        raise AssertionError("Two arrays are identical.")
 
     def assertEqualNumber(self, d1, d2, **kwargs):
         """
@@ -202,32 +214,53 @@ class ExtTestCase(unittest.TestCase):
         """
         Checks that ``a == b``.
         """
+        if a is None and b is not None:
+            raise AssertionError("a is None, b is not")
+        if a is not None and b is None:
+            raise AssertionError("a is not None, b is")
         try:
             unittest.TestCase.assertEqual(self, a, b)
         except ValueError as e:
-            if "The truth value of a DataFrame is ambiguous" in str(e):
+            if "The truth value of a DataFrame is ambiguous" in str(e) or \
+               "The truth value of an array with more than one element is ambiguous." in str(e):
                 with warnings.catch_warnings():
                     warnings.filterwarnings("ignore", category=ImportWarning)
                     import pandas
                 if isinstance(a, pandas.DataFrame) and isinstance(b, pandas.DataFrame):
                     self.assertEqualDataFrame(a, b)
                     return
-            raise e
+                import numpy
+                if isinstance(a, numpy.ndarray) and isinstance(b, numpy.ndarray):
+                    self.assertEqualArray(a, b)
+                    return
+            raise AssertionError("Unable to check equality for types {0} and {1}".format(
+                type(a), type(b))) from e
 
     def assertNotEqual(self, a, b):
         """
         Checks that ``a != b``.
         """
+        if a is None and b is None:
+            raise AssertionError("a is None, b is too")
+        if a is None and b is not None:
+            return
+        if a is not None and b is None:
+            return
         try:
             unittest.TestCase.assertNotEqual(self, a, b)
         except ValueError as e:
             if "Can only compare identically-labeled DataFrame objects" in str(e) or \
-               "The truth value of a DataFrame is ambiguous." in str(e):
+               "The truth value of a DataFrame is ambiguous." in str(e) or \
+               "The truth value of an array with more than one element is ambiguous." in str(e):
                 with warnings.catch_warnings():
                     warnings.filterwarnings("ignore", category=ImportWarning)
                     import pandas
                 if isinstance(a, pandas.DataFrame) and isinstance(b, pandas.DataFrame):
                     self.assertNotEqualDataFrame(a, b)
+                    return
+                import numpy
+                if isinstance(a, numpy.ndarray) and isinstance(b, numpy.ndarray):
+                    self.assertNotEqualArray(a, b)
                     return
             raise e
 
