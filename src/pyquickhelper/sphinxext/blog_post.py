@@ -285,14 +285,18 @@ class BlogPost:
         """
         return self._content
 
-    def post_as_rst(self, language, directive="blogpostagg"):
+    def post_as_rst(self, language, directive="blogpostagg", cut=True):
         """
         Reproduces the text of the blog post,
         updates the image links.
 
         @param      language    language
         @param      directive   to specify a different behavior based on
+        @param      cut         truncate the post after the first paragraph
         @return                 blog post as RST
+
+        .. versionadded:: 1.7
+            Parameter *cut* was added.
         """
         rows = []
         rows.append(".. %s::" % directive)
@@ -307,21 +311,41 @@ class BlogPost:
             rows.append("    :rawfile: %s" % name)
         rows.append("")
 
+        def can_cut(i, r, rows_stack):
+            rs = r.lstrip()
+            indent = len(r) - len(rs)
+            if len(rows_stack) == 0:
+                if len(rs) > 0:
+                    rows_stack.append(r)
+            else:
+                indent2 = len(rows_stack[0]) - len(rows_stack[0].lstrip())
+                last = rows_stack[-1]
+                if len(last) > 0:
+                    last = last[-1]
+                if indent == indent2 and len(rs) == 0 and \
+                        last in {'.', ';', ',', ':', '!', '?'}:
+                    return True
+                rows_stack.append(r)
+            return False
+
+        rows_stack = []
         if directive == "blogpostagg":
-            for r in self.Content:
+            for i, r in enumerate(self.Content):
                 rows.append("    " + self._update_link(r))
+                if cut and can_cut(i, r, rows_stack):
+                    rows.append("")
+                    rows.append("    ...")
+                    break
         else:
-            for r in self.Content:
+            for i, r in enumerate(self.Content):
                 rows.append("    " + r)
+                if cut and can_cut(i, r, rows_stack):
+                    rows.append("")
+                    rows.append("    ...")
+                    break
 
         rows.append("")
         rows.append("")
-
-        # this is done in depart_blogpostagg_node
-        # if directive=="blogpostagg":
-        #    rows.append("    :ref:`{1} <{0}>`".format(self.Tag, TITLES[language]["more"]))
-        #    rows.append("")
-        #    rows.append("")
 
         return "\n".join(rows)
 

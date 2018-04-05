@@ -103,7 +103,9 @@ class TestBlogExtension(unittest.TestCase):
                         :categories: cat1
                         :date: 2018-03-24
 
-                        this code shoud appear___
+                        this code shoud appear___.
+
+                        this one not sure.
 
                     after
                     """.replace("                    ", "")

@@ -83,6 +83,10 @@ class TestBlogHelper(unittest.TestCase):
         for r in res:
             if not os.path.exists(r):
                 raise FileNotFoundError(r)
+            if 'main_0000.rst' in r:
+                with open(r, 'r', encoding='utf-8') as f:
+                    content = f.read()
+                self.assertIn('...', content)
 
     def test_directive_with_rst2html(self):
         fLOG(

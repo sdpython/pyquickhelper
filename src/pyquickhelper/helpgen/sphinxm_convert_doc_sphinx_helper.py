@@ -44,6 +44,10 @@ from ..sphinxext.sphinx_mathdef_extension import visit_mathdef_node as ext_visit
 from ..sphinxext.sphinx_nbref_extension import visit_nbref_node as ext_visit_nbref_node, depart_nbref_node as ext_depart_nbref_node
 from ..sphinxext.sphinx_runpython_extension import visit_runpython_node as ext_visit_runpython_node, depart_runpython_node as ext_depart_runpython_node
 from ..sphinxext.sphinx_sharenet_extension import visit_sharenet_node as ext_visit_sharenet_node, depart_sharenet_node as ext_depart_sharenet_node
+from ..sphinxext.sphinx_sharenet_extension import depart_sharenet_node_html as ext_depart_sharenet_node_html
+from ..sphinxext.sphinx_sharenet_extension import depart_sharenet_node_rst as ext_depart_sharenet_node_rst
+from ..sphinxext.sphinx_sharenet_extension import visit_sharenet_node as ext_visit_sharenet_node_html
+from ..sphinxext.sphinx_sharenet_extension import visit_sharenet_node_rst as ext_visit_sharenet_node_rst
 from ..sphinxext.sphinx_video_extension import visit_video_node as ext_visit_video_node
 from ..sphinxext.sphinx_todoext_extension import visit_todoext_node as ext_visit_todoext_node, depart_todoext_node as ext_depart_todoext_node
 from ..sphinxext.sphinx_template_extension import visit_tpl_node as ext_visit_tpl_node, depart_tpl_node as ext_depart_tpl_node
@@ -51,7 +55,6 @@ from ..sphinxext.sphinx_cmdref_extension import visit_cmdref_node as ext_visit_c
 from ..sphinxext.sphinx_epkg_extension import visit_epkg_node as ext_visit_epkg_node, depart_epkg_node as ext_depart_epkg_node
 from ..sphinxext.sphinx_bigger_extension import depart_bigger_node_html as ext_depart_bigger_node_html
 from ..sphinxext.sphinx_blog_extension import depart_blogpostagg_node_html as ext_depart_blogpostagg_node_html
-from ..sphinxext.sphinx_sharenet_extension import depart_sharenet_node_html as ext_depart_sharenet_node_html
 from ..sphinxext.sphinx_video_extension import depart_video_node_html as ext_depart_video_node_html
 from ..sphinxext.sphinx_video_extension import depart_video_node_rst as ext_depart_video_node_rst
 from ..sphinxext.sphinx_video_extension import depart_video_node_latex as ext_depart_video_node_latex
@@ -168,7 +171,12 @@ class _AdditionalVisitDepart:
         """
         @see fn visit_sharenet_node
         """
-        ext_visit_sharenet_node(self, node)
+        if self.is_html():
+            ext_visit_sharenet_node_html(self, node)
+        elif self.is_rst():
+            ext_visit_sharenet_node_rst(self, node)
+        else:
+            ext_visit_sharenet_node(self, node)
 
     def depart_sharenet_node(self, node):
         """
@@ -176,6 +184,8 @@ class _AdditionalVisitDepart:
         """
         if self.is_html():
             ext_depart_sharenet_node_html(self, node)
+        elif self.is_rst():
+            ext_depart_sharenet_node_rst(self, node)
         else:
             ext_depart_sharenet_node(self, node)
 

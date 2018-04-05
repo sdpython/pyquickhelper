@@ -3,8 +3,16 @@
 History
 =======
 
-current - 2018-04-04 - 0.00Mb
+current - 2018-04-06 - 0.00Mb
 =============================
+
+* `122`: fix notebook name when converting into rst (collision with html) (2018-04-05)
+* `123`: fix style for blogpostagg, remove inserted admonition (2018-04-05)
+* `125`: fix sharenet for rst format (2018-04-05)
+* `124`: add CodeNode in rst builder (2018-04-05)
+
+1.7.2522 - 2018-04-04 - 1.99Mb
+==============================
 
 * `121`: extend list of functions in ExtTestCase (NotEqual, Greater(strict=True), NotEmpty (2018-04-01)
 
@@ -60,11 +68,6 @@ current - 2018-04-04 - 0.00Mb
 * `93`: add custom replacements before converting notebooks (2018-01-19)
 * `92`: add directive video to sphinx (2018-01-15)
 * `89`: add extension doc8 to check documentation style (2017-12-21)
-* `86`: check why the last line of a notebook does not appear when converted to rst in the documentation (2017-12-15)
-* `85`: rename cmdref function name (like in setup) (2017-12-04)
-* `84`: remove :epkg: instruction in call_cli_function (2017-12-02)
 
 1.5.2275 - 2017-11-28 - 0.50Mb
 ==============================
-
-* `81`: add youtube extension (2017-10-06)

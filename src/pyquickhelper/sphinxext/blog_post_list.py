@@ -220,9 +220,6 @@ class BlogPostList:
                                         for aggregated pages
         @return                         list of produced files
 
-        .. versionchanged:: 1.5
-            Parameter *only_html* was added.
-
         .. versionchanged:: 1.7
             Splits *only_html* into *only_html_index*
             and *only_html_agg*.
@@ -289,9 +286,6 @@ class BlogPostList:
                                         after the main index
         @param      hidden_files_html   add item ``.. only:: html`` for these pages
         @return                         filename
-
-        .. versionchanged:: 1.5
-            Parameter *only_html* was added.
 
         .. versionchanged:: 1.7
             Parameter *hidden_files_html* was added.
@@ -376,9 +370,6 @@ class BlogPostList:
         @param      rst_links_down  list of rst_links to add at the bottom of a page
         @param      only_html       add item ``.. only:: html`` and indent everything
         @return                     list of produced files
-
-        .. versionchanged:: 1.5
-            Parameter *only_html* was added.
         """
         return BlogPostList.write_aggregated_post_list(folder=folder,
                                                        lp=list(
@@ -438,9 +429,6 @@ class BlogPostList:
         @param      rst_links_down  list of rst_links to add at the bottom of a page
         @param      only_html       add item ``.. only:: html`` and indent everything
         @return                     list of produced files
-
-        .. versionchanged:: 1.5
-            Parameter *only_html* was added.
         """
         mo = self.get_months()
         res = []
