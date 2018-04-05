@@ -1114,9 +1114,15 @@ class RstTranslator(TextTranslator):
             # The program should not necessarily be here.
             pass
 
+    def visit_CodeNode(self, node):
+        self.add_text('.. CodeNode.' + self.nl)
+
+    def depart_CodeNode(self, node):
+        pass
+
     def unknown_visit(self, node):
         raise NotImplementedError(
-            "Unknown node: '{0}'".format(node.__class__.__name__))
+            "Unknown node: '{0}' - '{1}'".format(node.__class__.__name__, node))
 
 
 def setup(app):
