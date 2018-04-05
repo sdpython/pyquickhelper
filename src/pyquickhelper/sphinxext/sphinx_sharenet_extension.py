@@ -242,6 +242,30 @@ def depart_sharenet_node(self, node):
         "[depart_sharenet_node] output only available for HTML not for '{0}'".format(type(self)))
 
 
+def visit_sharenet_node_rst(self, node):
+    """
+    what to do when visiting a node sharenet
+    the function should have different behaviour,
+    depending on the format, or the setup should
+    specify a different function for each.
+    """
+    inside = "-".join(node['networks'])
+    inside = "{0}-{1}-{2}".format(inside,
+                                  node["size"], 'head' if node['inhead'] else 'body')
+    self.add_text(":sharenet:`{0}`".format(inside))
+    raise nodes.SkipNode
+
+
+def depart_sharenet_node_rst(self, node):
+    """
+    what to do when leaving a node sharenet
+    the function should have different behaviour,
+    depending on the format, or the setup should
+    specify a different function for each.
+    """
+    pass
+
+
 def setup(app):
     """
     setup for ``sharenet`` (sphinx)
@@ -252,7 +276,7 @@ def setup(app):
     app.add_node(sharenet_node,
                  html=(visit_sharenet_node, depart_sharenet_node_html),
                  latex=(visit_sharenet_node, depart_sharenet_node),
-                 rst=(visit_sharenet_node, depart_sharenet_node),
+                 rst=(visit_sharenet_node_rst, depart_sharenet_node_rst),
                  text=(visit_sharenet_node, depart_sharenet_node))
 
     app.add_directive('sharenet', ShareNetDirective)

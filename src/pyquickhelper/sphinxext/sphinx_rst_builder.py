@@ -47,6 +47,7 @@ from sphinx import addnodes
 from sphinx.locale import admonitionlabels, versionlabels, _
 from sphinx.writers.text import TextTranslator, MAXWIDTH, STDINDENT
 from ..sphinxext.sphinx_bigger_extension import visit_bigger_node_rst, depart_bigger_node_rst
+from ..sphinxext.sphinx_sharenet_extension import visit_sharenet_node_rst, depart_sharenet_node_rst
 
 
 class RstBuilder(Builder):
@@ -1119,6 +1120,12 @@ class RstTranslator(TextTranslator):
 
     def depart_CodeNode(self, node):
         pass
+
+    def visit_sharenet_node(self, node):
+        return visit_sharenet_node_rst(self, node)
+
+    def depart_sharenet_node(self, node):
+        return depart_sharenet_node_rst(self, node)
 
     def unknown_visit(self, node):
         raise NotImplementedError(

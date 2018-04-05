@@ -22,7 +22,6 @@ except ImportError:
         sys.path.append(path)
     import src
 
-from src.pyquickhelper.loghelper.flog import fLOG
 from src.pyquickhelper.pycode import get_temp_folder
 from src.pyquickhelper.helpgen import rst2html
 from src.pyquickhelper.sphinxext import ShareNetDirective
@@ -34,25 +33,13 @@ if sys.version_info[0] == 2:
 class TestShareNetExtension(unittest.TestCase):
 
     def test_post_parse_sn(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
         directives.register_directive("sharenet", ShareNetDirective)
 
     def test_sharenet(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
         if sys.version_info[0] == 2:
             warnings.warn(
                 "test_sharenet not run on Python 2.7")
             return
-
-        from docutils import nodes as skip_
 
         content = """
                     test a directive
@@ -114,17 +101,10 @@ class TestShareNetExtension(unittest.TestCase):
             f.write(html)
 
     def test_sharenet_inline(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
         if sys.version_info[0] == 2:
             warnings.warn(
                 "test_sharenet not run on Python 2.7")
             return
-
-        from docutils import nodes as skip_
 
         content = """
                     test a directive
@@ -166,6 +146,60 @@ class TestShareNetExtension(unittest.TestCase):
         temp = get_temp_folder(__file__, "temp_sharenet_inline")
         with open(os.path.join(temp, "out_sharenet.html"), "w", encoding="utf8") as f:
             f.write(html)
+
+    def test_sharenet_inline_rst(self):
+        if sys.version_info[0] == 2:
+            warnings.warn(
+                "test_sharenet not run on Python 2.7")
+            return
+
+        content = """
+                    test a directive
+                    ================
+
+                    abeforea :sharenet:`facebook-linkedin-twitter-30-body` aaftera
+                    """.replace("                    ", "")
+        if sys.version_info[0] >= 3:
+            content = content.replace('u"', '"')
+
+        html = rst2html(content,  # fLOG=fLOG,
+                        writer="rst", keep_warnings=True,
+                        directives=None)
+
+        t1 = ":sharenet:`facebook-linkedin-twitter-30-body`"
+        if t1 not in html:
+            raise Exception(html)
+
+    def test_sharenet_directive_rst(self):
+        if sys.version_info[0] == 2:
+            warnings.warn(
+                "test_sharenet not run on Python 2.7")
+            return
+
+        content = """
+                    test a directive
+                    ================
+
+                    abeforea
+
+                    .. sharenet::
+                        :facebook: 1
+                        :linkedin: 2
+                        :twitter: 3
+                        :head: False
+
+                    aaftera
+                    """.replace("                    ", "")
+        if sys.version_info[0] >= 3:
+            content = content.replace('u"', '"')
+
+        html = rst2html(content,  # fLOG=fLOG,
+                        writer="rst", keep_warnings=True,
+                        directives=None)
+
+        t1 = ":sharenet:`facebook-linkedin-twitter-20-body`"
+        if t1 not in html:
+            raise Exception(html)
 
 
 if __name__ == "__main__":
