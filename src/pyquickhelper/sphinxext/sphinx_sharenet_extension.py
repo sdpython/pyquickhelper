@@ -250,8 +250,9 @@ def visit_sharenet_node_rst(self, node):
     specify a different function for each.
     """
     inside = "-".join(node['networks'])
-    inside = "{0}-{1}-{2}".format(inside, node["size"], node['inhead'])
-    self.add_text(":sharenet:`{0}`")
+    inside = "{0}-{1}-{2}".format(inside,
+                                  node["size"], "head" if node['inhead'] else "body")
+    self.add_text(":sharenet:`{0}`".format(inside))
     raise nodes.SkipNode
 
 
