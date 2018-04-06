@@ -914,6 +914,11 @@ class RstTranslator(TextTranslator):
         Finally, all other links are also converted to an inline link
         format.
         """
+        def clean_refuri(uri):
+            ext = os.path.splitext(uri)[-1]
+            link = uri if ext != '.rst' else uri[:-4]
+            return link
+
         if 'refuri' not in node:
             if 'name' in node.attributes:
                 self.add_text('`%s`_' % node['name'])
@@ -925,18 +930,21 @@ class RstTranslator(TextTranslator):
                 self.log_unknown(type(node), node)
                 raise nodes.SkipNode
         elif 'internal' not in node and 'name' in node.attributes:
-            self.add_text('`%s <%s>`_' % (node['name'], node['refuri']))
+            self.add_text('`%s <%s>`_' %
+                          (node['name'], clean_refuri(node['refuri'])))
             raise nodes.SkipNode
         elif 'internal' not in node and 'names' in node.attributes:
             anchor = node['names'][0] if len(
                 node['names']) > 0 else node['refuri']
-            self.add_text('`%s <%s>`_' % (anchor, node['refuri']))
+            self.add_text('`%s <%s>`_' %
+                          (anchor, clean_refuri(node['refuri'])))
             raise nodes.SkipNode
         elif 'reftitle' in node:
             # Include node as text, rather than with markup.
             # reST seems unable to parse a construct like ` ``literal`` <url>`_
             # Hence it reverts to the more simple `literal <url>`_
-            self.add_text('`%s <%s>`_' % (node.astext(), node['refuri']))
+            self.add_text('`%s <%s>`_' %
+                          (node.astext(), clean_refuri(node['refuri'])))
             # self.end_state(wrap=False)
             raise nodes.SkipNode
         else:

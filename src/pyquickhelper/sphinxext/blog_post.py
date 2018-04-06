@@ -285,7 +285,7 @@ class BlogPost:
         """
         return self._content
 
-    def post_as_rst(self, language, directive="blogpostagg", cut=True):
+    def post_as_rst(self, language, directive="blogpostagg", cut=False):
         """
         Reproduces the text of the blog post,
         updates the image links.

@@ -873,6 +873,10 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
             "##################################################################################################")
         fLOG("[generate_help_sphinx] direct_call={0}".format(direct_call))
         fLOG("[generate_help_sphinx] cmd='''{0}'''".format(cmd))
+        if isinstance(cmd, list):
+            fLOG("[generate_help_sphinx] cmd='''{0}'''".format(" ".join(cmd)))
+        fLOG("[generate_help_sphinx] kind='{0}'".format(kind))
+        fLOG("[generate_help_sphinx] build='{0}'".format(build))
 
         # direct call
         if direct_call:
@@ -898,8 +902,9 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
         fLOG("[generate_help_sphinx] end cmd len(out)={0} len(err)={1}".format(
             len(out), len(err)))
 
-        if len(err) > 0:
-            if "Exception occurred:" in err:
+        if len(err) > 0 or len(out) > 0:
+            if (len(err) > 0 and "Exception occurred:" in err) or \
+               (len(out) > 0 and "Exception occurred:" in out):
                 raise HelpGenException(
                     "Sphinx raised an exception:\nOUT:\n{0}\n[sphinxerror]\n{1}".format(out, err))
             else:
@@ -934,6 +939,10 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
     # we copy the extended styles (notebook, snippets) (again in build folders)
     # we should not need that
     for build_path in build_paths:
+        if not os.path.exists(build_path):
+            fLOG("[generate_help_sphinx]    build_path not found '{0}'".format(
+                build_path))
+            continue
         dest = os.path.join(build_path, "_static", style_figure_notebook[0])
         if not os.path.exists(dest):
             fLOG("[generate_help_sphinx]    CREATE-CSS2", dest)

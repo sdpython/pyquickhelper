@@ -35,9 +35,9 @@ if sys.version_info[0] == 2:
     from codecs import open
 
 
-class TestSphinxFullDocumentationModuleTemplate(unittest.TestCase):
+class TestSphinxFullDocumentationModuleTemplateRst(unittest.TestCase):
 
-    def test_full_documentation_module_template(self):
+    def test_full_documentation_module_template_rst(self):
         """
         This test might fail in sphinx-gallery due to a very long filename.
         Please look into the following commit:
@@ -56,7 +56,7 @@ class TestSphinxFullDocumentationModuleTemplate(unittest.TestCase):
             # It fails for python 2.7 (encoding issue).
             return
 
-        temp = get_temp_folder(__file__, "temp_full_documentation_module_template",
+        temp = get_temp_folder(__file__, "temp_full_documentation_module_template_rst",
                                clean=__name__ != "__main__")
 
         clog = CustomLog(temp)
@@ -151,7 +151,7 @@ class TestSphinxFullDocumentationModuleTemplate(unittest.TestCase):
             fLOG("[test_full_documentation] **********************************")
 
             direct_call = i % 2 == 0
-            layout = ["pdf", "html"]
+            layout = ['rst']
 
             logger1 = getLogger("docassert")
             logger2 = getLogger("tocdelay")
@@ -206,22 +206,21 @@ class TestSphinxFullDocumentationModuleTemplate(unittest.TestCase):
 
             # blog index
             blog = os.path.join(root, "_doc", "sphinxdoc",
-                                "build", "html", "blog", "blogindex.html")
+                                "build", "rst", "blog", "blogindex.rst")
             with open(blog, "r", encoding="utf-8") as f:
                 content = f.read()
             self.assertIn("2015", content)
             self.assertIn(
-                '"2016/2016-06-11_blogpost_with_label.html"', content)
+                '<2016/2016-06-11_blogpost_with_label>', content)
             spl = content.split("2016-06")
             if len(spl) <= 2:
                 raise Exception("Two expected:\n" + content)
 
             # checkings
-            files = [os.path.join(root, "_doc", "sphinxdoc", "build", "html", "index.html"),
+            files = [os.path.join(root, "_doc", "sphinxdoc",
+                                  "build", "rst", "index.rst"),
                      os.path.join(root, "_doc", "sphinxdoc",
-                                  "build", "html", "all_indexes.html"),
-                     os.path.join(root, "_doc", "sphinxdoc",
-                                  "build", "html", "all_notebooks.html"),
+                                  "build", "rst", "all_notebooks.rst"),
                      ]
             for f in files:
                 if not os.path.exists(f):
@@ -243,20 +242,10 @@ class TestSphinxFullDocumentationModuleTemplate(unittest.TestCase):
 
             # checks some links were processed
             fhtml = os.path.join(temp, "python3_module_template-master",
-                                 "_doc", "sphinxdoc", "build", "html", "index.html")
+                                 "_doc", "sphinxdoc", "source", "all_notebooks.rst")
             with open(fhtml, "r", encoding="utf8") as f:
                 content = f.read()
-            if '<td><a class="reference internal" href="index_ext-tohelp.html#ext-tohelp"><span>ext-tohelp</span></a></td>' not in content and \
-               '<td><a class="reference internal" href="index_ext-tohelp.html#ext-tohelp"><span class="std std-ref">ext-tohelp</span></a></td>' not in content:
-                raise Exception(content)
-
-            # checks some links were processed
-            fhtml = os.path.join(temp, "python3_module_template-master",
-                                 "_doc", "sphinxdoc", "build", "html", "all_notebooks.html")
-            with open(fhtml, "r", encoding="utf8") as f:
-                content = f.read()
-            if '<img alt="_images/custom_notebooks.thumb.png" src="_images/custom_notebooks.thumb.png" />' not in content:
-                raise Exception(content)
+            self.assertTrue('notebooks/custom_notebooks' in content)
 
             # checks slideshow was added
             fhtml = os.path.join(temp, "python3_module_template-master",
@@ -266,24 +255,11 @@ class TestSphinxFullDocumentationModuleTemplate(unittest.TestCase):
             self.assertTrue('"slide"' in content)
 
             # reveal.js + images
-            rev = [os.path.join(root, "_doc", "sphinxdoc", "source", "phdoc_static", "reveal.js"),
-                   os.path.join(root, "_doc", "sphinxdoc", "build",
-                                "html", "_downloads", "reveal.js"),
-                   os.path.join(root, "_doc", "sphinxdoc", "build", "html",
-                                "_downloads", "Python_logo_and_wordmark.png")]
+            rev = [os.path.join(root, "_doc", "sphinxdoc",
+                                "source", "phdoc_static", "reveal.js")]
             for r in rev:
                 if not os.path.exists(r):
                     raise FileNotFoundError(r)
-
-            history = os.path.join(
-                root, "_doc", "sphinxdoc", "build", "html", "HISTORY.html")
-            if not os.path.exists(history):
-                raise FileNotFoundError(history)
-            with open(history, "r", encoding="utf-8") as f:
-                content = f.read()
-
-            if '[<span style="color: #40A056;">Feature</span>]' not in content:
-                raise Exception(content)
 
 
 if __name__ == "__main__":

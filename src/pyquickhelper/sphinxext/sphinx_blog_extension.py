@@ -313,10 +313,9 @@ def depart_blogpost_node(self, node):
     depending on the format, or the setup should
     specify a different function for each.
     """
-    # if node["blog_background"]:
-    #    # the node will be in a box
-    #    self.depart_admonition(node)
-    pass
+    if node["blog_background"]:
+        # the node will be in a box
+        self.depart_admonition(node)
 
 
 def visit_blogpostagg_node(self, node):
@@ -329,6 +328,19 @@ def visit_blogpostagg_node(self, node):
     # if node["blog_background"]:
     #     # the node will be in a box
     #    self.visit_admonition(node)
+    pass
+
+
+def depart_blogpostagg_node(self, node):
+    """
+    what to do when leaving a node blogpost,
+    the function should have different behaviour,
+    depending on the format, or the setup should
+    specify a different function for each.
+    """
+    # if node["blog_background"]:
+    #     # the node will be in a box
+    #     self.depart_admonition(node)
     pass
 
 
@@ -356,18 +368,6 @@ def depart_blogpostagg_node_html(self, node):
         else:
             self.body.append(
                 "%blogpostagg: link to source only available for HTML\n")
-    if node["blog_background"]:
-        # the node will be in a box
-        self.depart_admonition(node)
-
-
-def depart_blogpostagg_node(self, node):
-    """
-    what to do when leaving a node blogpost,
-    the function should have different behaviour,
-    depending on the format, or the setup should
-    specify a different function for each.
-    """
     if node["blog_background"]:
         # the node will be in a box
         self.depart_admonition(node)

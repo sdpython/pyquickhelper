@@ -622,7 +622,7 @@ class BlogPostList:
             rows.append("")
 
         for post in l:
-            text = post.post_as_rst(language=language)
+            text = post.post_as_rst(language=language, cut=True)
             rows.append(text)
             rows.append("")
             rows.append("")

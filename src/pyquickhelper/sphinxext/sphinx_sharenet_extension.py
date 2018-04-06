@@ -253,7 +253,6 @@ def visit_sharenet_node_rst(self, node):
     inside = "{0}-{1}-{2}".format(inside,
                                   node["size"], "head" if node['inhead'] else "body")
     self.add_text(":sharenet:`{0}`".format(inside))
-    raise nodes.SkipNode
 
 
 def depart_sharenet_node_rst(self, node):
