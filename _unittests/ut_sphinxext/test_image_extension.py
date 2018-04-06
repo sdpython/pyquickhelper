@@ -123,6 +123,9 @@ class TestImageExtension(ExtTestCase):
         if sys.version_info[0] == 2:
             return
 
+        # Following warning is due to nbconvert.
+        # DeprecationWarning: `nbconvert.exporters.exporter_locator` is deprecated
+        # in favor of `nbconvert.exporters.base` since nbconvert 5.0.
         app = CustomSphinxApp(src_, temp)
         app.build()
 
