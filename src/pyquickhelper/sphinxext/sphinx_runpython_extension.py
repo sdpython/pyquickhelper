@@ -366,8 +366,17 @@ class RunPythonDirective(Directive):
         script = "\n".join(content)
         script_disp = "\n".join(self.content)
         if not p["nopep8"]:
-            script_disp = remove_extra_spaces_and_pep8(
-                script_disp, is_string=True)
+            try:
+                script_disp = remove_extra_spaces_and_pep8(
+                    script_disp, is_string=True)
+            except Exception as e:
+                if '.' in docname:
+                    comment = '  File "{0}", line {1}'.format(docname, lineno)
+                else:
+                    comment = '  File "{0}.rst", line {1}\n  File "{0}.py", line {1}\n'.format(
+                        docname, lineno)
+                raise ValueError(
+                    "Pep8 issue with\n'{0}'\n---SCRIPT---".format(docname, script_disp)) from e
 
         # if an exception is raised, the documentation should report a warning
         # return [document.reporter.warning('messagr', line=self.lineno)]
@@ -413,12 +422,9 @@ class RunPythonDirective(Directive):
         content = add_indent(content, p['indent'])
 
         # build node
-        node = self.__class__.runpython_class(rawsource=content,
-                                              indent=p["indent"],
-                                              showcode=p["showcode"],
-                                              rst=p["rst"],
-                                              sin=p["sin"],
-                                              sout=p["sout"])
+        node = self.__class__.runpython_class(rawsource=content, indent=p["indent"],
+                                              showcode=p["showcode"], rst=p["rst"],
+                                              sin=p["sin"], sout=p["sout"])
 
         if p["showcode"]:
             pin = nodes.paragraph(text=p["sin"])
