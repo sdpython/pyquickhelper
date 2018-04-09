@@ -26,6 +26,7 @@ def remove_extra_spaces_and_pep8(filename, apply_pep8=True, aggressive=False, is
         use ``fix_code`` instead of ``fix_line``.
         Parameter *is_string* was added.
     """
+    encoding = None
     initial_content = None
     if "\n" in filename or (is_string is not None and is_string):
         ext = ".py"
