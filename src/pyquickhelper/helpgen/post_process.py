@@ -427,7 +427,7 @@ def post_process_rst_output(file, html, pdf, python, slides, present, is_noteboo
     links = ['**Links:** :download:`notebook <{0}.ipynb>`'.format(noext)]
     if html:
         links.append(
-            '`html <../_downloads/{0}.html>`_ :download:`. <{0}.html>`'.format(noext))
+            '`html <../_downloads/{0}2html.html>`_ :download:`. <{0}2html.html>`'.format(noext))
     if pdf:
         links.append(':download:`PDF <{0}.pdf>`'.format(noext))
     if python:
