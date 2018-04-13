@@ -14,6 +14,7 @@ import re
 import warnings
 import time
 import importlib
+import pycodestyle
 
 from ..filehelper.synchelper import remove_folder, explore_folder_iterfile
 from ..loghelper.flog import noLOG
@@ -104,34 +105,34 @@ def get_temp_folder(thisfile, name=None, clean=True, create=True, max_path=False
 def _extended_refactoring(filename, line):
     """
     Private function which does extra checkings
-    when refactoring pyquickhelper
+    when refactoring pyquickhelper.
 
     @param      filename        filename
     @param      line            line
     @return                     None or error message
     """
     if "from pyquickhelper import fLOG" in line:
-        if "test_flake8" not in filename:
+        if "test_code_style" not in filename:
             return "issue with fLOG"
     if "from pyquickhelper import noLOG" in line:
-        if "test_flake8" not in filename:
+        if "test_code_style" not in filename:
             return "issue with noLOG"
     if "from pyquickhelper import run_cmd" in line:
-        if "test_flake8" not in filename:
+        if "test_code_style" not in filename:
             return "issue with run_cmd"
     if "from pyquickhelper import get_temp_folder" in line:
-        if "test_flake8" not in filename:
+        if "test_code_style" not in filename:
             return "issue with get_temp_folder"
     return None
 
 
-def check_pep8(folder, ignore=('E501', 'E265'), skip=None,
+def check_pep8(folder, ignore=('E501', 'E265', 'W504'), skip=None,
                complexity=-1, stop_after=100, fLOG=noLOG,
                neg_filter=None, extended=None, max_line_length=162):
     """
     Checks if :epkg:`PEP8`,
     the function calls command :epkg:`pycodestyle`
-    on a specific folder
+    on a specific folder.
 
     @param      folder              folder to look into
     @param      ignore              list of warnings to skip when raising an exception if
@@ -149,14 +150,10 @@ def check_pep8(folder, ignore=('E501', 'E265'), skip=None,
     Functions mentioned in *extended* takes two parameters (file name and line)
     and they returned None or an error message or a tuple (position in the line, error message).
     When the return is not empty, a warning will be added to the ones
-    printed by flake8 or pycodestyle.
+    printed by :epkg:`pycodestyle`.
 
     .. versionadded:: 1.4
     """
-    import pycodestyle
-    from pyflakes.api import checkPath as check_code
-    from pyflakes.reporter import Reporter
-
     def extended_checkings(fname, content, buf, extended):
         for i, line in enumerate(content):
             for name, fu in extended:
@@ -223,16 +220,8 @@ def check_pep8(folder, ignore=('E501', 'E265'), skip=None,
             res = style.check_files([file])
         except TypeError as e:
             ext = "This is often due to an instruction from . import... The imported module has no name."
-            raise TypeError("Issue with flake8 or pycodesyle for module '{0}' ig={1} complexity={2}\n{3}".format(
+            raise TypeError("Issue with pycodesyle for module '{0}' ig={1} complexity={2}\n{3}".format(
                 file, ig, complexity, ext)) from e
-
-        if not file.endswith("__init__.py"):
-            flake_out = StringIO()
-            flake_err = StringIO()
-            reporter = Reporter(flake_out, flake_err)
-            check_code(file, reporter=reporter)
-            sys.stdout.write(flake_out.getvalue())
-            sys.stdout.write(flake_err.getvalue())
 
         if extended is not None:
             with open(file, "r", errors="ignore") as f:

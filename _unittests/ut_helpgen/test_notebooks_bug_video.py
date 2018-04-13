@@ -56,7 +56,7 @@ class TestNoteBooksBugVideo(ExtTestCase):
         with open(name, "r", encoding="utf8") as f:
             content = f.read()
         clog("final read", name)
-        exp = "<moviepy.video.io.html\_tools.HTML2 object>"
+        exp = "<moviepy.video.io.html\\_tools.HTML2 object>"
         if exp not in content:
             raise Exception(content)
 

@@ -1,4 +1,4 @@
-#-*- coding:utf-8 -*-
+# -*- coding:utf-8 -*-
 """
 @file
 @brief This file defines a simple local server delivering generating documentation.

@@ -68,7 +68,7 @@ class NotebookRunner(object):
         until all kernels are shutdown.
     """
 
-    #. available output types
+    # . available output types
     MIME_MAP = {
         'image/jpeg': 'jpeg',
         'image/png': 'png',

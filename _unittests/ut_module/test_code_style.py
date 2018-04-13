@@ -25,9 +25,9 @@ from src.pyquickhelper.loghelper import fLOG
 from src.pyquickhelper.pycode import check_pep8
 
 
-class TestFlake8(unittest.TestCase):
+class TestCodeStyle(unittest.TestCase):
 
-    def test_flake8_src(self):
+    def test_style_src(self):
         fLOG(
             __file__,
             self._testMethodName,
@@ -36,7 +36,7 @@ class TestFlake8(unittest.TestCase):
         if sys.version_info[0] == 2 or "Anaconda" in sys.executable \
                 or "condavir" in sys.executable:
             warnings.warn(
-                "skipping test_flake8 because of Python 2 or " + sys.executable)
+                "skipping test_code_style because of Python 2 or " + sys.executable)
             return
 
         thi = os.path.abspath(os.path.dirname(__file__))
@@ -46,7 +46,7 @@ class TestFlake8(unittest.TestCase):
                                           "convert_doc_sphinx_helper.py:31: [E402]",
                                           "magic_class.py:12: [E402]"])
 
-    def test_flake8_test(self):
+    def test_style_test(self):
         fLOG(
             __file__,
             self._testMethodName,
@@ -55,7 +55,7 @@ class TestFlake8(unittest.TestCase):
         if sys.version_info[0] == 2 or "Anaconda" in sys.executable \
                 or "condavir" in sys.executable:
             warnings.warn(
-                "skipping test_flake8 because of Python 2 or " + sys.executable)
+                "skipping test_code_style because of Python 2 or " + sys.executable)
             return
 
         thi = os.path.abspath(os.path.dirname(__file__))

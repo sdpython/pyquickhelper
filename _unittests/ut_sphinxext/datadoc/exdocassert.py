@@ -1,6 +1,6 @@
 
 
-def onefunction(a, b: int=4):
+def onefunction(a, b: int = 4):
     """
     Return the addition of ``a+b``.
 

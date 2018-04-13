@@ -449,7 +449,7 @@ class RunPythonDirective(Directive):
                 sett.warning_stream
             except KeyError:
                 settings_overrides["warning_stream"] = StringIO()
-            #'initial_header_level': 2,
+            # 'initial_header_level': 2,
 
             if len(p["sout"]) > 0:
                 node += nodes.paragraph(text=p["sout"])

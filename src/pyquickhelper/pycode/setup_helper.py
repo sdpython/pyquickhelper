@@ -773,7 +773,7 @@ def process_standard_options_for_setup_help(argv):
         "build_sphinx": "build the documentation",
         "build_wheel": "build the wheel",
         "build27": "build the wheel for Python 2.7 (if available), it requires to run copy27 first",
-        "clean_space": "clean unnecessary spaces in the code, applies flake8 on all files",
+        "clean_space": "clean unnecessary spaces in the code, applies :epkg:`pycodestyle` on all files",
         "clean_pyd": "clean file ``*.pyd``",
         "copy_dist": "copy documentation to folder dist",
         "copy_sphinx": "modify and copy sources to _doc/sphinxdoc/source/<module>",

@@ -36,7 +36,7 @@ class TestParserFromFunction(unittest.TestCase):
             # rst2html not tested
             return
 
-        def fpars(anint: int, bstring="r", creal: float=None):
+        def fpars(anint: int, bstring="r", creal: float = None):
             """
             Builds a unique string with the received information.
 
@@ -70,7 +70,7 @@ class TestParserFromFunction(unittest.TestCase):
             # rst2html not tested
             return
 
-        def fpars(anint: int, bstring="r", creal: float=None, fLOG=print):
+        def fpars(anint: int, bstring="r", creal: float = None, fLOG=print):
             """
             Builds a unique string with the received information.
 

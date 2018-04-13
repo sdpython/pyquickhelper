@@ -26,7 +26,7 @@ def clean_exts(folder=".", fLOG=print, exts=[".pyd", ".so", ".o", ".def"]):
             if ext in exts and "exe.win" not in root and "site-packages" not in root and \
                "_venv" not in root:
                 filename = os.path.join(root, f)
-                fLOG("removing ", filename)
+                fLOG("[clean_exts] removing ", filename)
                 os.remove(filename)
                 rem.append(filename)
     return rem
