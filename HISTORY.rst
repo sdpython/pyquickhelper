@@ -3,9 +3,10 @@
 History
 =======
 
-current - 2018-04-06 - 0.00Mb
+current - 2018-04-14 - 0.00Mb
 =============================
 
+* `126`: remove dependency on flake8, use pycodestyle (2018-04-13)
 * `122`: fix notebook name when converting into rst (collision with html) (2018-04-05)
 * `123`: fix style for blogpostagg, remove inserted admonition (2018-04-05)
 * `125`: fix sharenet for rst format (2018-04-05)
@@ -67,7 +68,9 @@ current - 2018-04-06 - 0.00Mb
 * `94`: add text fixture for continuous integration (2018-01-28)
 * `93`: add custom replacements before converting notebooks (2018-01-19)
 * `92`: add directive video to sphinx (2018-01-15)
-* `89`: add extension doc8 to check documentation style (2017-12-21)
 
 1.5.2275 - 2017-11-28 - 0.50Mb
+==============================
+
+1.4.1533 - 2016-09-10 - 0.36Mb
 ==============================

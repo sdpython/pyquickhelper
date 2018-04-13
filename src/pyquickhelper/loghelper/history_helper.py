@@ -74,7 +74,7 @@ def build_history(owner, repo, name=None, since=None, issues=None, url=None,
     @return                 iterator on issues ``(number, date, title)``
     """
     if since is None:
-        since = datetime.now() - timedelta(365)
+        since = datetime.now() - timedelta(730)
     if name is None:
         name = repo
 
