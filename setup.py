@@ -91,7 +91,6 @@ def is_local():
             return True
     else:
         return False
-
     return False
 
 
