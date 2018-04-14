@@ -24,5 +24,14 @@ def enumerate_pypi_versions_date(name, url='https://pypi.python.org/pypi'):
     for ver in available:
         res = pypi.release_urls(name, ver)
         for r in res:
-            yield datetime(* tuple(r['upload_time'].timetuple())[:6]), ver, r['size']
+            if isinstance(r['upload_time'], str):
+                dt = datetime.strptime(r['upload_time'].split('.')[
+                                       0], "%Y-%m-%dT%H:%M:%S")
+            else:
+                try:
+                    dt = datetime(* tuple(r['upload_time'].timetuple())[:6])
+                except AttributeError as e:
+                    raise AttributeError(
+                        "Unable to parse '{0}'".format(r['upload_time'])) from e
+            yield dt, ver, r['size']
             break
