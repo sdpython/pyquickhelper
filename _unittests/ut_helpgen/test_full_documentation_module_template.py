@@ -282,7 +282,7 @@ class TestSphinxFullDocumentationModuleTemplate(unittest.TestCase):
             with open(history, "r", encoding="utf-8") as f:
                 content = f.read()
 
-            if '[<span style="color: #40A056;">Feature</span>]' not in content:
+            if 'project_name 0.2.0' not in content:
                 raise Exception(content)
 
 
