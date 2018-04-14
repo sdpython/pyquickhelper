@@ -100,7 +100,12 @@ def get_package_info(name=None, start=0, end=-1):
     @param      end         end at package n, -1 for all
     @return                 dictionary or list of dictionaries
     """
-    from pip.commands.show import search_packages_info
+    try:
+        # pip >= 10.0
+        from pip._internal.commands.show import search_packages_info
+    except ImportError:
+        # pip < 10.0
+        from pip.commands.show import search_packages_info
     if name is None:
         res = []
         packs = get_packages_list()
