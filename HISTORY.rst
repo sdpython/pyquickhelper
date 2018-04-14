@@ -6,6 +6,11 @@ History
 current - 2018-04-14 - 0.00Mb
 =============================
 
+* `127`: update to pip 10 (many API changes) (2018-04-14)
+
+1.7.2536 - 2018-04-14 - 1.99Mb
+==============================
+
 * `126`: remove dependency on flake8, use pycodestyle (2018-04-13)
 * `122`: fix notebook name when converting into rst (collision with html) (2018-04-05)
 * `123`: fix style for blogpostagg, remove inserted admonition (2018-04-05)
@@ -67,7 +72,6 @@ current - 2018-04-14 - 0.00Mb
 * `95`: fix ? replacing accents in latex output (2018-01-29)
 * `94`: add text fixture for continuous integration (2018-01-28)
 * `93`: add custom replacements before converting notebooks (2018-01-19)
-* `92`: add directive video to sphinx (2018-01-15)
 
 1.5.2275 - 2017-11-28 - 0.50Mb
 ==============================
