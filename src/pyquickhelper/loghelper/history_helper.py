@@ -126,6 +126,9 @@ def build_history(owner, repo, name=None, since=None, issues=None, url=None,
 
 
 _template = """
+
+.. _l-HISTORY:
+
 =======
 History
 =======
