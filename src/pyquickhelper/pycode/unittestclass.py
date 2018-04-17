@@ -9,8 +9,16 @@ import sys
 import unittest
 import warnings
 import decimal
+import cProfile
+import pstats
+import site
 from .ci_helper import is_travis_or_appveyor
 from ..loghelper import fLOG
+
+try:
+    from io import StringIO
+except ImportError:
+    from StringIO import StringIO
 
 
 class ExtTestCase(unittest.TestCase):
@@ -312,6 +320,30 @@ class ExtTestCase(unittest.TestCase):
         @see fn fLOG.
         """
         fLOG(*args, **kwargs)
+
+    def profile(self, fct, sort='cumulative', rootrem=None):
+        """
+        Profiles the execution of a function.
+
+        @param      fct     function to profile
+        @param      sort    see `sort_stats <https://docs.python.org/3/library/profile.html#pstats.Stats.sort_stats>`_
+        @param      rootrem root to remove in filenames
+        @return             statistics text dump
+        """
+        pr = cProfile.Profile()
+        pr.enable()
+        fct()
+        pr.disable()
+        s = StringIO()
+        ps = pstats.Stats(pr, stream=s).sort_stats(sort)
+        ps.print_stats()
+        res = s.getvalue()
+        pack = site.getsitepackages()
+        res = res.replace(pack[-1], "site-packages")
+        if rootrem is not None:
+            res = res.replace(rootrem, '')
+
+        return ps, res
 
 
 def skipif_appveyor(msg):

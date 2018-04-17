@@ -1,12 +1,11 @@
 """
 @brief      test tree node (time=5s)
 """
-
-
 import sys
 import os
 import unittest
 import warnings
+import pandas
 
 try:
     import src
@@ -22,6 +21,8 @@ except ImportError:
     import src
 
 from src.pyquickhelper.pycode import ExtTestCase
+from src.pyquickhelper.pandashelper import df2rst
+from src.pyquickhelper import __file__ as rootfile
 
 if sys.version_info[0] == 2:
     FileNotFoundError = Exception
@@ -185,6 +186,20 @@ class TestExtTestCase(ExtTestCase):
                          TypeError)
         self.assertRaise(lambda: self.assertEqualNumber(1.1, "1.2"),
                          TypeError)
+
+    def test_profile(self):
+
+        def simple():
+            df = pandas.DataFrame([{"A": "x", "AA": "xx", "AAA": "xxx"},
+                                   {"AA": "xxxxxxx", "AAA": "xxx"}])
+            return df2rst(df)
+
+        rootrem = os.path.normpath(os.path.abspath(
+            os.path.join(os.path.dirname(rootfile), '..')))
+        ps, res = self.profile(simple, rootrem=rootrem)
+        res = res.replace('\\', '/')
+        self.assertIn('pyquickhelper/pandashelper/tblformat.py', res)
+        self.assertNotEmpty(ps)
 
 
 if __name__ == "__main__":
