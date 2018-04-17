@@ -338,7 +338,12 @@ class ExtTestCase(unittest.TestCase):
         ps = pstats.Stats(pr, stream=s).sort_stats(sort)
         ps.print_stats()
         res = s.getvalue()
-        pack = site.getsitepackages()
+        try:
+            pack = site.getsitepackages()
+        except AttributeError:
+            import numpy
+            pack = os.path.normpath(os.path.abspath(
+                os.path.join(os.path.dirname(numpy.__file__), "..")))
         res = res.replace(pack[-1], "site-packages")
         if rootrem is not None:
             res = res.replace(rootrem, '')
