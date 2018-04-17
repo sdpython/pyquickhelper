@@ -344,6 +344,7 @@ class ExtTestCase(unittest.TestCase):
             import numpy
             pack = os.path.normpath(os.path.abspath(
                 os.path.join(os.path.dirname(numpy.__file__), "..")))
+            pack = [pack]
         res = res.replace(pack[-1], "site-packages")
         if rootrem is not None:
             res = res.replace(rootrem, '')
