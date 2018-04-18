@@ -1,10 +1,17 @@
 
+.. _l-HISTORY:
+
 =======
 History
 =======
 
-current - 2018-04-14 - 0.00Mb
+current - 2018-04-18 - 0.00Mb
 =============================
+
+* `128`: fix issue in enumerate_pypi_versions_date (2018-04-14)
+
+1.7.2539 - 2018-04-14 - 1.99Mb
+==============================
 
 * `127`: update to pip 10 (many API changes) (2018-04-14)
 
@@ -71,7 +78,6 @@ current - 2018-04-14 - 0.00Mb
 * `99`: bug with galleries of examples with multiple subfolders (2018-01-30)
 * `95`: fix ? replacing accents in latex output (2018-01-29)
 * `94`: add text fixture for continuous integration (2018-01-28)
-* `93`: add custom replacements before converting notebooks (2018-01-19)
 
 1.5.2275 - 2017-11-28 - 0.50Mb
 ==============================
