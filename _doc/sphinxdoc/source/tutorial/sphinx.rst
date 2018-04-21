@@ -243,6 +243,42 @@ The directive displays the traceback.
     for i, name in enumerate(os.listdir("not existing")):
         pass
 
+.. _l-image-rst-runpython:
+
+The directive can also be used to display images
+with a tweak however. It consists in writing *rst*
+code. The variable ``__WD__`` indicates the local
+directory.
+
+.. sidebar:: runpython and rst
+
+    ::
+
+        .. runpython::
+            :rst:
+
+            import matplotlib.pyplot as plt
+            fig, ax = plt.subplots(1, 1, figsize=(4, 4))
+            ax.plot([0, 1], [0, 1], '--')
+            fig.savefig(os.path.join(__WD__, "oo.png")
+
+            text = ".. image:: oo.png\\n    :width: 200px"
+            print(text)
+
+The image needs to be save in the same folder than
+the *rst* file.
+
+.. runpython::
+    :rst:
+
+    import matplotlib.pyplot as plt
+    fig, ax = plt.subplots(1, 1, figsize=(4, 4))
+    ax.plot([0, 1], [0, 1], '--')
+    fig.savefig("oo.png")
+
+    text = ".. image:: oo.png\\n    :width: 200px"
+    print(text)
+
 *sharenet*: add link to share
 +++++++++++++++++++++++++++++
 

@@ -5,9 +5,10 @@
 History
 =======
 
-current - 2018-04-21 - 0.00Mb
+current - 2018-04-22 - 0.00Mb
 =============================
 
+* `130`: add plot output for runpython (2018-04-21)
 * `132`: catch warning in run_python_script output, use redirect_stdout (2018-04-21)
 * `131`: remove warning in runpython (2018-04-21)
 * `129`: implement an easy way to profile a function in unit test (2018-04-19)
@@ -80,7 +81,6 @@ current - 2018-04-21 - 0.00Mb
 ==============================
 
 * `100`: fix indentation when copying the sources in documentation repository (2018-02-04)
-* `98`: deal .. only:: html for readme.rst when copying it to the source repository (2018-01-31)
 * `99`: bug with galleries of examples with multiple subfolders (2018-01-30)
 
 1.5.2275 - 2017-11-28 - 0.50Mb

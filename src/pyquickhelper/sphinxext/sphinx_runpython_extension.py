@@ -45,7 +45,7 @@ class RunPythonExecutionError(Exception):
 def run_python_script(script, params=None, comment=None, setsysvar=None, process=False,
                       exception=False, warningout=None):
     """
-    Executes a script python as a string.
+    Executes a script :epkg:`python` as a string.
 
     @param  script      python script
     @param  params      params to add before the execution
@@ -87,6 +87,9 @@ def run_python_script(script, params=None, comment=None, setsysvar=None, process
                 return rho, theta
             coordonnees_polaires(1, 1)
         fake_function()
+
+    Section :ref:`l-image-rst-runpython` explains
+    how to display an image with this directive.
 
     .. versionchanged:: 1.7
         Parameter *warningout* was added.
@@ -221,8 +224,8 @@ class runpython_node(nodes.Structural, nodes.Element):
 class RunPythonDirective(Directive):
 
     """
-    extracts script to run described by ``.. runpython::``
-    and modifies the documentation
+    Extracts script to run described by ``.. runpython::``
+    and modifies the documentation.
 
     .. exref::
         :title: A python script which generates documentation
@@ -319,8 +322,8 @@ class RunPythonDirective(Directive):
 
     def run(self):
         """
-        extracts the information in a dictionary,
-        run the script
+        Extracts the information in a dictionary,
+        runs the script.
 
         @return      a list of nodes
         """
@@ -373,6 +376,7 @@ class RunPythonDirective(Directive):
             content = ["if True:"]
         else:
             content = ["def {0}():".format(name)]
+        content.append("    __WD__ = '{0}'".format(os.path.dirname(docname)))
         for line in self.content:
             content.append("    " + line)
         if not p['process']:
