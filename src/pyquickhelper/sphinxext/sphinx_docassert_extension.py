@@ -54,7 +54,10 @@ def check_typed_make_field(self,
         parameters = list(parameters)
         if kind == "method":
             parameters = parameters[1:]
-        check_params = {(p if isinstance(p, str) else p.name): 0 for p in parameters}
+
+        def kg(p):
+            return p if isinstance(p, str) else p.name
+        check_params = {kg(p): 0 for p in parameters}
     logger = logging.getLogger("docassert")
 
     def check_item(fieldarg, content, logger):
@@ -255,7 +258,7 @@ class OverrideDocFieldTransformer:
         return self.replaced(other_self, node)
 
 
-def setup(app):
+def setup_docassert(app):
     """
     Setup for ``docassert`` extension (sphinx).
     This changes ``DocFieldTransformer.transform`` and replaces
@@ -265,24 +268,6 @@ def setup(app):
     .. warning:: This class does not handle methods if the parameter name
         for the class is different from *self*. Classes included in other
         classes are not properly handled.
-
-    .. todoext::
-        :title: docassert: handle subclasses + parameter class different from self for method
-        :hidden: true
-        :date: 2017-07-09
-        :issue: 50
-        :release: 1.5
-
-        See warning.
-
-    .. todoext::
-        :title: check parameters list in documentation
-        :tag: done
-        :hidden: true
-        :date: 2017-07-02
-        :cost: 3
-        :issue: 49
-        :release: 1.5
     """
     inst = OverrideDocFieldTransformer(DocFieldTransformer.transform)
 
@@ -291,3 +276,8 @@ def setup(app):
 
     DocFieldTransformer.transform = local_transform
     return {'version': sphinx.__display_version__, 'parallel_read_safe': True}
+
+
+def setup(app):
+    "see @see fn setup_docassert"
+    return setup_docassert(app)

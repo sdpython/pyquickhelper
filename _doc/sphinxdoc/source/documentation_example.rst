@@ -23,3 +23,26 @@ example with bokeh
     p.circle(x, y, size=10, fill_color="white")
 
     show(p)
+
+exemple with a formula
+----------------------
+
+.. math::
+
+    \norm{\left(\begin{array}{rr}
+    1 & 0 \\ 0 & 1
+    \end{array}\right)}
+
+example with a running script
+-----------------------------
+
+.. runpython::
+    :showcode:
+
+    import numpy
+    print(numpy.array([[1, 0], [0, 1]]))
+
+a predefined link
+-----------------
+
+:epkg:`XD`

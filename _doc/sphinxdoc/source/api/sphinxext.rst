@@ -55,9 +55,14 @@ builder
 code
 ++++
 
-.. autosignature:: pyquickhelper.sphinxext.sphinx_docassert_extension.setup
+.. autosignature:: pyquickhelper.sphinxext.sphinx_docassert_extension.setup_docassert
 
 .. autosignature:: pyquickhelper.sphinxext.sphinx_autosignature.AutoSignatureDirective
+
+execution
++++++++++
+
+.. autosignature:: pyquickhelper.sphinxext.sphinx_runpython_extension.RunPythonDirective
 
 style, content
 ++++++++++++++
@@ -69,8 +74,6 @@ style, content
 .. autosignature:: pyquickhelper.sphinxext.sphinx_githublink_extension.githublink_role
 
 .. autosignature:: pyquickhelper.sphinxext.sphinx_postcontents_extension.PostContentsDirective
-
-.. autosignature:: pyquickhelper.sphinxext.sphinx_runpython_extension.RunPythonDirective
 
 .. autosignature:: pyquickhelper.sphinxext.sphinx_sharenet_extension.ShareNetDirective
 

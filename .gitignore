@@ -284,4 +284,4 @@ bokeh_plot/*.js
 _doc/notebooks/autosavetime2/*
 math/*.png
 math/*.svg
-
+_unittests/ut_module/bokeh_plot

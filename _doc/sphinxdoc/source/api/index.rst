@@ -8,9 +8,9 @@ API Summary
     clihelper
     filehelper
     helpgen
+    sphinxext
     jenkins
     jupyter
     loghelper
     pycode
-    sphinxext
     texthelper

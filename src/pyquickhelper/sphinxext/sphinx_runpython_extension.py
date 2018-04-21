@@ -8,6 +8,8 @@ See `Tutorial: Writing a simple extension <http://sphinx-doc.org/extdev/tutorial
 """
 import sys
 import os
+from contextlib import redirect_stdout, redirect_stderr
+import warnings
 import sphinx
 from docutils import nodes, core
 from docutils.parsers.rst import Directive, directives
@@ -40,7 +42,8 @@ class RunPythonExecutionError(Exception):
     pass
 
 
-def run_python_script(script, params=None, comment=None, setsysvar=None, process=False, exception=False):
+def run_python_script(script, params=None, comment=None, setsysvar=None, process=False,
+                      exception=False, warningout=None):
     """
     Executes a script python as a string.
 
@@ -53,6 +56,7 @@ def run_python_script(script, params=None, comment=None, setsysvar=None, process
     @param  exception   expects an exception to be raised,
                         fails if it is not, the function returns no output and the
                         error message
+    @param  warningout  warning to disable (name of warnings)
     @return             stdout, stderr
 
     If the execution throws an exception such as
@@ -84,12 +88,25 @@ def run_python_script(script, params=None, comment=None, setsysvar=None, process
             coordonnees_polaires(1, 1)
         fake_function()
 
-    .. versionchanged:: 1.3
-        Parameters *setsysvar*, *process* were added.
-
-    .. versionchanged:: 1.5
-        Parameter *exception* was added.
+    .. versionchanged:: 1.7
+        Parameter *warningout* was added.
     """
+    def warning_filter(warningout):
+        if warningout in (None, ''):
+            warnings.simplefilter("always")
+        elif isinstance(warningout, str):
+            li = [_.strip() for _ in warningout.split()]
+            warning_filter(li)
+        elif isinstance(warningout, list):
+            def interpret(s):
+                return eval(s) if isinstance(s, str) else s
+            warns = [interpret(w) for w in warningout]
+            for w in warns:
+                warnings.simplefilter("ignore", w)
+        else:
+            raise ValueError(
+                "Unexpected value for warningout: {0}".format(warningout))
+
     if params is None:
         params = {}
 
@@ -152,47 +169,44 @@ def run_python_script(script, params=None, comment=None, setsysvar=None, process
             loc[k] = v
         loc["__dict__"] = params
 
-        kout = sys.stdout
-        kerr = sys.stderr
-        sout = StringIO()
-        serr = StringIO()
-        sys.stdout = sout
-        sys.stderr = serr
-
         if setsysvar is not None:
             sys.__dict__[setsysvar] = True
 
-        try:
-            exec(obj, globals(), loc)
-        except Exception as ee:
-            if setsysvar is not None:
-                del sys.__dict__[setsysvar]
-            if comment is None:
-                comment = ""
-            gout = sout.getvalue()
-            gerr = serr.getvalue()
-            sys.stdout = kout
-            sys.stderr = kerr
+        sout = StringIO()
+        serr = StringIO()
+        with redirect_stdout(sout):
+            with redirect_stderr(sout):
 
-            excs = traceback.format_exc()
-            lines = excs.split("\n")
-            excs = "\n".join(
-                _ for _ in lines if "sphinx_runpython_extension.py" not in _)
+                with warnings.catch_warnings():
+                    warning_filter(warningout)
 
-            if not exception:
-                message = "SCRIPT:\n{0}\nPARAMS\n{1}\nCOMMENT\n{2}\nERR\n{3}\nOUT\n{4}\nEXC\n{5}\nTRACEBACK\n{6}".format(
-                    script, params, comment, gout, gerr, ee, excs)
-                raise RunPythonExecutionError(message) from ee
-            else:
-                return (gout + "\n" + gerr), (gerr + "\n" + excs)
+                    try:
+                        exec(obj, globals(), loc)
+                    except Exception as ee:
+                        if setsysvar is not None:
+                            del sys.__dict__[setsysvar]
+                        if comment is None:
+                            comment = ""
+                        gout = sout.getvalue()
+                        gerr = serr.getvalue()
+
+                        excs = traceback.format_exc()
+                        lines = excs.split("\n")
+                        excs = "\n".join(
+                            _ for _ in lines if "sphinx_runpython_extension.py" not in _)
+
+                        if not exception:
+                            message = "SCRIPT:\n{0}\nPARAMS\n{1}\nCOMMENT\n{2}\nERR\n{3}\nOUT\n{4}\nEXC\n{5}\nTRACEBACK\n{6}".format(
+                                script, params, comment, gout, gerr, ee, excs)
+                            raise RunPythonExecutionError(message) from ee
+                        else:
+                            return (gout + "\n" + gerr), (gerr + "\n" + excs)
 
         if setsysvar is not None:
             del sys.__dict__[setsysvar]
 
         gout = sout.getvalue()
         gerr = serr.getvalue()
-        sys.stdout = kout
-        sys.stderr = kerr
         return gout, gerr
 
 
@@ -250,6 +264,8 @@ class RunPythonDirective(Directive):
     * ``:exception:`` the code throws an exception but it is expected. The error is displayed.
     * ``:nopep8:`` if present, leaves the code as it is and does not apply pep8 by default,
       see @see fn remove_extra_spaces_and_pep8.
+    * ``:warningout:`` name of warnings to disable (ex: ``ImportWarning``),
+      separated by spaces
 
     Option *rst* can be used the following way::
 
@@ -277,12 +293,8 @@ class RunPythonDirective(Directive):
 
     Unless *process* option is enabled, global variables cannot be used.
 
-    .. versionchanged:: 1.3
-        Titles, references or label are now allowed.
-
-    .. versionchanged:: 1.5
-        Exception is now caught. It fails if no error is thrown.
-        Options *nopep8* was added.
+    .. versionchanged:: 1.7
+        Options *warningout* was added.
     """
     required_arguments = 0
     optional_arguments = 0
@@ -300,6 +312,7 @@ class RunPythonDirective(Directive):
         'process': directives.unchanged,
         'exception': directives.unchanged,
         'nopep8': directives.unchanged,
+        'warningout': directives.unchanged,
     }
     has_content = True
     runpython_class = runpython_node
@@ -346,6 +359,7 @@ class RunPythonDirective(Directive):
             'process': 'process' in self.options and self.options['process'] in bool_set_,
             'exception': 'exception' in self.options and self.options['exception'] in bool_set_,
             'nopep8': 'nopep8' in self.options and self.options['nopep8'] in bool_set_,
+            'warningout': self.options.get('warningout', '').strip(),
         }
 
         if p['setsysvar'] is not None and len(p['setsysvar']) == 0:
@@ -397,7 +411,8 @@ class RunPythonDirective(Directive):
                     docname, lineno)
 
         out, err = run_python_script(script, comment=comment, setsysvar=p['setsysvar'],
-                                     process=p["process"], exception=p['exception'])
+                                     process=p["process"], exception=p['exception'],
+                                     warningout=p['warningout'])
 
         if out is not None:
             out = out.rstrip(" \n\r\t")

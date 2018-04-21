@@ -351,6 +351,32 @@ class ExtTestCase(unittest.TestCase):
 
         return ps, res
 
+    def read_file(self, filename, mode='r', encoding="utf-8"):
+        """
+        Returns the content of a file.
+
+        @param      filename    filename
+        @param      encoding    encoding
+        @param      mode        reading mode
+        @return                 content
+        """
+        self.assertExists(filename)
+        with open(filename, mode, encoding=encoding) as f:
+            return f.read()
+
+    def write_file(self, filename, content, mode='w', encoding='utf-8'):
+        """
+        Writes the content of a file.
+
+        @param      filename    filename
+        @param      content     content to write
+        @param      encoding    encoding
+        @param      mode        reading mode
+        @return                 content
+        """
+        with open(filename, mode, encoding=encoding) as f:
+            return f.write(content)
+
 
 def skipif_appveyor(msg):
     """

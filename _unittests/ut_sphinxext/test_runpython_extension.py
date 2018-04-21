@@ -113,6 +113,121 @@ class TestRunPythonExtension(unittest.TestCase):
         if "enable_disabled_documented_pieces_of_code" in sys.__dict__:
             raise Exception("this case shoud not be")
 
+    def test_runpython_catch_warning(self):
+        """
+        this test also test the extension runpython
+        """
+        fLOG(
+            __file__,
+            self._testMethodName,
+            OutputPrint=__name__ == "__main__")
+
+        if sys.version_info[0] == 2:
+            warnings.warn(
+                "test_runpython not run on Python 2.7")
+            return
+
+        from docutils import nodes
+
+        class runpythonthis_node(nodes.Structural, nodes.Element):
+            pass
+
+        class RunPythonThisDirective (RunPythonDirective):
+            runpython_class = runpythonthis_node
+
+        def visit_rp_node(self, node):
+            self.body.append("<p><b>visit_rp_node</b></p>")
+
+        def depart_rp_node(self, node):
+            self.body.append("<p><b>depart_rp_node</b></p>")
+
+        if "enable_disabled_documented_pieces_of_code" in sys.__dict__:
+            raise Exception("this case shoud not be")
+
+        content = """
+                    test a directive
+                    ================
+
+                    .. runpythonthis::
+                        :setsysvar:
+                        :rst:
+                        :showcode:
+                        :warningout: DeprecationWarning
+
+                        import warnings
+                        warnings.warn("deprecated", DeprecationWarning)
+                    """.replace("                    ", "")
+        if sys.version_info[0] >= 3:
+            content = content.replace('u"', '"')
+
+        tives = [("runpythonthis", RunPythonThisDirective, runpythonthis_node,
+                  visit_rp_node, depart_rp_node)]
+
+        html = rst2html(content,  # fLOG=fLOG,
+                        writer="custom", keep_warnings=True,
+                        directives=tives)
+
+        t1 = ": DeprecationWarning: deprecated"
+        if t1 in html:
+            raise Exception(html)
+
+    def test_runpython_notcatch_warning(self):
+        """
+        this test also test the extension runpython
+        """
+        fLOG(
+            __file__,
+            self._testMethodName,
+            OutputPrint=__name__ == "__main__")
+
+        if sys.version_info[0] == 2:
+            warnings.warn(
+                "test_runpython not run on Python 2.7")
+            return
+
+        from docutils import nodes
+
+        class runpythonthis_node(nodes.Structural, nodes.Element):
+            pass
+
+        class RunPythonThisDirective (RunPythonDirective):
+            runpython_class = runpythonthis_node
+
+        def visit_rp_node(self, node):
+            self.body.append("<p><b>visit_rp_node</b></p>")
+
+        def depart_rp_node(self, node):
+            self.body.append("<p><b>depart_rp_node</b></p>")
+
+        if "enable_disabled_documented_pieces_of_code" in sys.__dict__:
+            raise Exception("this case shoud not be")
+
+        content = """
+                    test a directive
+                    ================
+
+                    .. runpythonthis::
+                        :setsysvar:
+                        :rst:
+                        :showcode:
+
+                        import warnings
+                        warnings.warn("deprecated", DeprecationWarning)
+                    """.replace("                    ", "")
+        if sys.version_info[0] >= 3:
+            content = content.replace('u"', '"')
+
+        tives = [("runpythonthis", RunPythonThisDirective, runpythonthis_node,
+                  visit_rp_node, depart_rp_node)]
+
+        html = rst2html(content,  # fLOG=fLOG,
+                        writer="custom", keep_warnings=True,
+                        directives=tives)
+
+        t1 = "DeprecationWarning"
+        if t1 not in html:
+            raise Exception(html)
+
     def test_runpython_raw(self):
         """
         this test also test the extension runpython
@@ -281,6 +396,8 @@ class TestRunPythonExtension(unittest.TestCase):
 
         if "enable_disabled_documented_pieces_of_code" in sys.__dict__:
             raise Exception("this case shoud not be")
+
+        warnings.warn('rrr', DeprecationWarning)
 
         content = """
                     test a directive
