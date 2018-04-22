@@ -8,6 +8,8 @@ History
 current - 2018-04-22 - 0.00Mb
 =============================
 
+* `133`: add a collapsible container, adapt it for runpython (2018-04-22)
+* `134`: allow url in video sphinx extension (2018-04-22)
 * `130`: add plot output for runpython (2018-04-21)
 * `132`: catch warning in run_python_script output, use redirect_stdout (2018-04-21)
 * `131`: remove warning in runpython (2018-04-21)
