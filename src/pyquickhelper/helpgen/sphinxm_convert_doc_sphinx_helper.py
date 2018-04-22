@@ -32,8 +32,12 @@ from sphinx.application import Config, CONFIG_FILENAME, ConfigError, VersionRequ
 from sphinx.registry import SphinxComponentRegistry
 from sphinx.events import EventManager
 from sphinx.extension import verify_required_extensions
-import sphinx.builders.latex.transforms
-from sphinx.writers.latex import LaTeXTranslator
+try:
+    from sphinx.writers.latex import LaTeXTranslator
+except ImportError:
+    # Since sphinx 1.7.3 (circular reference).
+    import sphinx.builders.latex.transforms
+    from sphinx.writers.latex import LaTeXTranslator
 from ..sphinxext.sphinx_bigger_extension import visit_bigger_node as ext_visit_bigger_node, depart_bigger_node as ext_depart_bigger_node
 from ..sphinxext.sphinx_bigger_extension import visit_bigger_node_rst as ext_visit_bigger_node_rst, depart_bigger_node_rst as ext_depart_bigger_node_rst
 from ..sphinxext.sphinx_bigger_extension import depart_bigger_node_html as ext_depart_bigger_node_html
