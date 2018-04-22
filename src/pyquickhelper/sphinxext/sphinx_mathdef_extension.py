@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 """
 @file
-@brief Defines a sphinx extension to give a title to a math,
-inspired from `math.py <https://github.com/sphinx-doc/sphinx/blob/master/sphinx/ext/math.py>`_.
+@brief Defines a sphinx extension to give a title to a mathematical
+definition, theorem...
+Inspired from `math.py <https://github.com/sphinx-doc/sphinx/blob/master/sphinx/ext/math.py>`_.
 
 .. versionadded:: 1.4
 """
@@ -25,14 +26,14 @@ from ..texthelper.texts_language import TITLES
 
 class mathdef_node(nodes.admonition):
     """
-    defines ``mathdef`` ndoe
+    Defines ``mathdef`` node.
     """
     pass
 
 
 class mathdeflist(nodes.General, nodes.Element):
     """
-    defines ``mathdeflist`` node
+    Defines ``mathdeflist`` node.
     """
     pass
 

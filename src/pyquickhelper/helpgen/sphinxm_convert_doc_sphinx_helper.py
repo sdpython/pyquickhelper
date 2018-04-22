@@ -32,6 +32,7 @@ from sphinx.application import Config, CONFIG_FILENAME, ConfigError, VersionRequ
 from sphinx.registry import SphinxComponentRegistry
 from sphinx.events import EventManager
 from sphinx.extension import verify_required_extensions
+from sphinx.writers.latex import LaTeXTranslator
 from ..sphinxext.sphinx_rst_builder import RstWriter, RstBuilder, RstTranslator
 from ..sphinxext.sphinx_bigger_extension import visit_bigger_node as ext_visit_bigger_node, depart_bigger_node as ext_depart_bigger_node
 from ..sphinxext.sphinx_bigger_extension import visit_bigger_node_rst as ext_visit_bigger_node_rst, depart_bigger_node_rst as ext_depart_bigger_node_rst
@@ -128,6 +129,12 @@ class _AdditionalVisitDepart:
         Tells if the translator is html format.
         """
         return self.base_class is RstTranslator
+
+    def is_latex(self):
+        """
+        Tells if the translator is html format.
+        """
+        return self.base_class is LaTeXTranslator
 
     def visit_blogpost_node(self, node):
         """

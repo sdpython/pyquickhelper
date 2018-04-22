@@ -45,6 +45,8 @@ TITLES = {
            'exmes': '(<<%s>> : %s, line %d)',
            'blog_entry': 'The original entry is located in <<%s>>, line %d and can be found ',
            'cmdmes': '(<<%s>> : %s, line %d)',
+           'hide': 'hide',
+           'unhide': 'unhide',
            },
     'fr': {"blogpost": "article",
            "toc": "Contenu",
@@ -86,5 +88,7 @@ TITLES = {
            'exmes': '(<<%s>> : %s, ligne %d)',
            'blog_entry': 'Source <<%s>>, line %d and can be found ',
            'cmdmes': '(<<%s>> : %s, line %d)',
+           'hide': 'cacher',
+           'unhide': 'montrer',
            }
 }

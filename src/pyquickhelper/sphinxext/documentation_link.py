@@ -8,7 +8,7 @@
 
 def python_link_doc(m, o=None, format="rst"):
     """
-    Return a url about Python documentation.
+    Returns a url about :epkg:`Python` documentation.
 
     .. runpython::
         :showcode:

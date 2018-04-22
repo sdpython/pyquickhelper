@@ -81,6 +81,9 @@ def tpl_role(role, rawtext, text, lineno, inliner, options=None, content=None):
 
         :tpl:`py,m='ftplib',o='FTP.storbinary'`
 
+    Which gives: :tpl:`py,m='ftplib',o='FTP.storbinary'` based on
+    function :func:`python_link_doc <pyquickhelper.sphinxext.documentation_link.python_link_doc>`.
+
     :param role: The role name used in the document.
     :param rawtext: The entire markup snippet, with role.
     :param text: The text marked with the role.
