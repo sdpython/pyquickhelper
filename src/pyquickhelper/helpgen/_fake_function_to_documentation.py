@@ -37,8 +37,10 @@ def f3(a, b):
 
 def f4(a, b):
     """Addition 4
+
     :param a: parameter a
     :param b: parameter a
+
     :returns: ``a+b``"""
     return a + b
 
