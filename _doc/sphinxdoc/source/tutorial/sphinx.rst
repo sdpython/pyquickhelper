@@ -260,7 +260,7 @@ directory.
             import matplotlib.pyplot as plt
             fig, ax = plt.subplots(1, 1, figsize=(4, 4))
             ax.plot([0, 1], [0, 1], '--')
-            fig.savefig(os.path.join(__WD__, "oo.png")
+            fig.savefig(os.path.join(__WD__, "oo.png"))
 
             text = ".. image:: oo.png\\n    :width: 200px"
             print(text)
@@ -274,7 +274,7 @@ the *rst* file.
     import matplotlib.pyplot as plt
     fig, ax = plt.subplots(1, 1, figsize=(4, 4))
     ax.plot([0, 1], [0, 1], '--')
-    fig.savefig(os.path.join(__WD__, "oo.png")
+    fig.savefig(os.path.join(__WD__, "oo.png"))
 
     text = ".. image:: oo.png\\n    :width: 200px"
     print(text)
