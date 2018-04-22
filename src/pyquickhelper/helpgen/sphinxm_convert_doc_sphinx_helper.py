@@ -35,6 +35,8 @@ from sphinx.extension import verify_required_extensions
 from ..sphinxext.sphinx_rst_builder import RstWriter, RstBuilder, RstTranslator
 from ..sphinxext.sphinx_bigger_extension import visit_bigger_node as ext_visit_bigger_node, depart_bigger_node as ext_depart_bigger_node
 from ..sphinxext.sphinx_bigger_extension import visit_bigger_node_rst as ext_visit_bigger_node_rst, depart_bigger_node_rst as ext_depart_bigger_node_rst
+from ..sphinxext.sphinx_bigger_extension import depart_bigger_node_html as ext_depart_bigger_node_html
+from ..sphinxext.sphinx_bigger_extension import depart_bigger_node_latex as ext_depart_bigger_node_latex, visit_bigger_node_latex as ext_visit_bigger_node_latex
 from ..sphinxext.sphinx_blocref_extension import visit_blocref_node as ext_visit_blocref_node, depart_blocref_node as ext_depart_blocref_node
 from ..sphinxext.sphinx_blog_extension import visit_blogpost_node as ext_visit_blogpost_node, depart_blogpost_node as ext_depart_blogpost_node
 from ..sphinxext.sphinx_blog_extension import visit_blogpostagg_node as ext_visit_blogpostagg_node, depart_blogpostagg_node as ext_depart_blogpostagg_node
@@ -53,7 +55,6 @@ from ..sphinxext.sphinx_todoext_extension import visit_todoext_node as ext_visit
 from ..sphinxext.sphinx_template_extension import visit_tpl_node as ext_visit_tpl_node, depart_tpl_node as ext_depart_tpl_node
 from ..sphinxext.sphinx_cmdref_extension import visit_cmdref_node as ext_visit_cmdref_node, depart_cmdref_node as ext_depart_cmdref_node
 from ..sphinxext.sphinx_epkg_extension import visit_epkg_node as ext_visit_epkg_node, depart_epkg_node as ext_depart_epkg_node
-from ..sphinxext.sphinx_bigger_extension import depart_bigger_node_html as ext_depart_bigger_node_html
 from ..sphinxext.sphinx_blog_extension import depart_blogpostagg_node_html as ext_depart_blogpostagg_node_html
 from ..sphinxext.sphinx_video_extension import depart_video_node_html as ext_depart_video_node_html
 from ..sphinxext.sphinx_video_extension import depart_video_node_rst as ext_depart_video_node_rst
@@ -249,6 +250,8 @@ class _AdditionalVisitDepart:
         """
         if self.is_rst():
             ext_visit_bigger_node_rst(self, node)
+        elif self.is_latex():
+            ext_visit_bigger_node_latex(self, node)
         else:
             ext_visit_bigger_node(self, node)
 
@@ -260,6 +263,8 @@ class _AdditionalVisitDepart:
             ext_depart_bigger_node_html(self, node)
         elif self.is_rst():
             ext_depart_bigger_node_rst(self, node)
+        elif self.is_latex():
+            ext_depart_bigger_node_latex(self, node)
         else:
             ext_depart_bigger_node(self, node)
 

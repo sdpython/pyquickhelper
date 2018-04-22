@@ -71,27 +71,6 @@ def bigger_role(role, rawtext, text, lineno, inliner, options=None, content=None
     return [node], []
 
 
-def visit_bigger_node(self, node):
-    """
-    what to do when visiting a node *bigger*
-    the function should have different behaviour,
-    depending on the format, or the setup should
-    specify a different function for each.
-    """
-    pass
-
-
-def visit_bigger_node_rst(self, node):
-    """
-    what to do when visiting a node *bigger*
-    the function should have different behaviour,
-    depending on the format, or the setup should
-    specify a different function for each.
-    """
-    self.add_text(':bigger:`')
-    self.add_text(node["text"])
-
-
 def depart_bigger_node_html(self, node):
     """
     what to do when leaving a node *bigger*
@@ -105,11 +84,50 @@ def depart_bigger_node_html(self, node):
         '<font size="{1}">{0}</font>'.format(cgiesc.escape(node["text"]), node["size"]))
 
 
+def visit_bigger_node_rst(self, node):
+    """
+    what to do when visiting a node *bigger*
+    the function should have different behaviour,
+    depending on the format, or the setup should
+    specify a different function for each.
+    """
+    self.add_text(':bigger:`')
+    self.add_text(node["text"])
+
+
 def depart_bigger_node_rst(self, node):
     """
     depart bigger_node for rst
     """
     self.add_text('`')
+
+
+def visit_bigger_node_latex(self, node):
+    """
+    what to do when visiting a node *bigger*
+    the function should have different behaviour,
+    depending on the format, or the setup should
+    specify a different function for each.
+    """
+    self.add_text('\\huge{')
+    self.add_text(node["text"])
+
+
+def depart_bigger_node_latex(self, node):
+    """
+    depart bigger_node for latex
+    """
+    self.add_text('}')
+
+
+def visit_bigger_node(self, node):
+    """
+    what to do when visiting a node *bigger*
+    the function should have different behaviour,
+    depending on the format, or the setup should
+    specify a different function for each.
+    """
+    pass
 
 
 def depart_bigger_node(self, node):
@@ -130,7 +148,7 @@ def setup(app):
 
     app.add_node(bigger_node,
                  html=(visit_bigger_node, depart_bigger_node_html),
-                 latex=(visit_bigger_node, depart_bigger_node),
+                 latex=(visit_bigger_node_latex, depart_bigger_node_latex),
                  text=(visit_bigger_node, depart_bigger_node),
                  rst=(visit_bigger_node_rst, depart_bigger_node_rst))
 
