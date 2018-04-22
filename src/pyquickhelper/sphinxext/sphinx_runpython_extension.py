@@ -376,7 +376,8 @@ class RunPythonDirective(Directive):
             content = ["if True:"]
         else:
             content = ["def {0}():".format(name)]
-        content.append("    __WD__ = '{0}'".format(os.path.dirname(docname)))
+        content.append("    __WD__ = '{0}'".format(
+            os.path.abspath(os.path.dirname(docname))).replace("\\", "/"))
         for line in self.content:
             content.append("    " + line)
         if not p['process']:
