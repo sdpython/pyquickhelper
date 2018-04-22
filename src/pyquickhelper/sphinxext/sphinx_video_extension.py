@@ -83,32 +83,39 @@ class VideoDirective(Directive):
         if '://' in filename:
             logger = getLogger("video")
             logger.warning(
-                "[video] Unable to process urls '{0}' in docname '{1}' - line {2}.".format(filename, docname, self.lineno))
-
-        env.videos.add_file('', filename)
-
-        srcdir = env.srcdir
-        rstrel = os.path.relpath(source, srcdir)
-        rstfold = os.path.split(rstrel)[0]
-        cache = os.path.join(srcdir, conf['cache_path'])
-        vid = os.path.join(cache, filename)
-        abspath = None
-        relpath = None
-
-        if os.path.exists(vid):
-            abspath = vid
-            relpath = cache
+                "[video] url detected '{0}' in docname '{1}' - line {2}.".format(filename, docname, self.lineno))
+            is_url = True
         else:
-            last = rstfold.replace('\\', '/')
-            vid = os.path.join(srcdir, last, filename)
-            if os.path.exists(vid):
-                relpath = last
-                abspath = vid
+            is_url = False
 
-        if abspath is None:
-            logger = getLogger("video")
-            logger.warning(
-                "[video] Unable to find '{0}' in docname '{1}' - line {2} - srcdir='{3}'.".format(filename, docname, self.lineno, srcdir))
+        if not is_url:
+            env.videos.add_file('', filename)
+
+            srcdir = env.srcdir
+            rstrel = os.path.relpath(source, srcdir)
+            rstfold = os.path.split(rstrel)[0]
+            cache = os.path.join(srcdir, conf['cache_path'])
+            vid = os.path.join(cache, filename)
+            abspath = None
+            relpath = None
+
+            if os.path.exists(vid):
+                abspath = vid
+                relpath = cache
+            else:
+                last = rstfold.replace('\\', '/')
+                vid = os.path.join(srcdir, last, filename)
+                if os.path.exists(vid):
+                    relpath = last
+                    abspath = vid
+
+            if abspath is None:
+                logger = getLogger("video")
+                logger.warning(
+                    "[video] Unable to find '{0}' in docname '{1}' - line {2} - srcdir='{3}'.".format(filename, docname, self.lineno, srcdir))
+        else:
+            abspath = None
+            relpath = None
 
         width = self.options.get('width', conf['default_video_width'])
         height = self.options.get('height', conf['default_video_height'])
@@ -118,7 +125,7 @@ class VideoDirective(Directive):
         # build node
         node = self.__class__.video_class(uri=filename, docname=docname, lineno=self.lineno,
                                           width=width, height=height, abspath=abspath,
-                                          relpath=relpath)
+                                          relpath=relpath, is_url=is_url)
         node['classes'] += ["place-video"]
         node['video'] = filename
         node['latex'] = latex
@@ -128,8 +135,8 @@ class VideoDirective(Directive):
 
 def visit_video_node(self, node):
     """
-    Visit a video node.
-    Copy the video.
+    Visits a video node.
+    Copies the video.
     """
     if node['abspath'] is not None:
         outdir = self.builder.outdir
@@ -155,7 +162,7 @@ def depart_video_node_html(self, node):
         filename = node["uri"]
         width = node["width"]
         height = node["height"]
-        found = node["abspath"] is not None
+        found = node["abspath"] is not None or node["is_url"]
         if not found:
             body = "<b>unable to find '{0}'</b>".format(filename)
             self.body.append(body)
@@ -181,7 +188,7 @@ def depart_video_node_text(self, node):
         filename = node["uri"]
         width = node["width"]
         height = node["height"]
-        found = node["abspath"] is not None
+        found = node["abspath"] is not None or node["is_url"]
         if not found:
             body = "unable to find '{0}'".format(filename)
             self.body.append(body)
@@ -205,7 +212,7 @@ def depart_video_node_latex(self, node):
         width = node["width"]
         height = node["height"]
         full = os.path.join(node["relpath"], node['uri'])
-        found = node['abspath'] is not None
+        found = node['abspath'] is not None or node["is_url"]
         if not found:
             body = "\\textbf{{unable to find '{0}'}}".format(full)
             self.body.append(body)
@@ -235,7 +242,7 @@ def depart_video_node_rst(self, node):
         filename = node["uri"]
         width = node["width"]
         height = node["height"]
-        found = node["abspath"] is not None
+        found = node["abspath"] is not None or node["is_url"]
         if not found:
             body = ".. video:: {0} [not found]".format(filename)
             self.add_text(body + self.nl)

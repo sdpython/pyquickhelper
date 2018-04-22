@@ -255,6 +255,70 @@ class TestVideoExtension(ExtTestCase):
         index = os.path.join(temp, "jol", 'im', "mur3.mp4")
         self.assertExists(index)
 
+    def test_video_url(self):
+        fLOG(
+            __file__,
+            self._testMethodName,
+            OutputPrint=__name__ == "__main__")
+
+        if sys.version_info[0] == 2:
+            warnings.warn(
+                "test_sharenet not run on Python 2.7")
+            return
+
+        from docutils import nodes as skip_
+
+        content = """
+                    test a directive
+                    ================
+
+                    before
+
+                    .. video:: http://www.xavierdupre.fr/ensae/video_hackathon_ensae_ey_label_emmaus_2017.mp4
+                        :width: 300
+
+                    after
+
+                    this code shoud appear
+                    """.replace("                    ", "")
+        if sys.version_info[0] >= 3:
+            content = content.replace('u"', '"')
+
+        logger2 = logging.getLogger("video")
+
+        log_capture_string = StringIO()
+        ch = logging.StreamHandler(log_capture_string)
+        ch.setLevel(logging.DEBUG)
+        logger2.addHandler(ch)
+        with warnings.catch_warnings(record=True):
+            html = rst2html(content,  # fLOG=fLOG,
+                            writer="custom", keep_warnings=True,
+                            directives=None)
+
+        warns = log_capture_string.getvalue().strip("\n\r\t ")
+        if len(warns) != 0 and 'Unable to find' not in warns:
+            raise Exception("warnings '{0}'".format(warns))
+
+        t1 = "this code shoud not appear"
+        if t1 in html:
+            raise Exception(html)
+
+        t1 = "this code shoud appear"
+        if t1 not in html:
+            raise Exception(html)
+
+        t1 = "video_hackathon_ensae_ey_label_emmaus_2017.mp4"
+        if t1 not in html:
+            raise Exception(html)
+
+        t1 = "unable to find"
+        if t1 in html:
+            raise Exception(html)
+
+        temp = get_temp_folder(__file__, "temp_video_url")
+        with open(os.path.join(temp, "out_video.html"), "w", encoding="utf8") as f:
+            f.write(html)
+
 
 if __name__ == "__main__":
     unittest.main()

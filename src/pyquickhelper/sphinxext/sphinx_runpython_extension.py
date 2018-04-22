@@ -376,8 +376,7 @@ class RunPythonDirective(Directive):
             content = ["if True:"]
         else:
             content = ["def {0}():".format(name)]
-        content.append("    __WD__ = '{0}'".format(
-            os.path.abspath(os.path.dirname(docname))).replace("\\", "/"))
+
         for line in self.content:
             content.append("    " + line)
         if not p['process']:
@@ -408,12 +407,18 @@ class RunPythonDirective(Directive):
             if docstring:
                 new_name = os.path.split(current_source)[0] + ".py"
                 comment += '\n  File "{0}", line {1}'.format(new_name, lineno)
+            cs_source = current_source
         else:
             if '.' in docname:
                 comment = '  File "{0}", line {1}'.format(docname, lineno)
             else:
                 comment = '  File "{0}.rst", line {1}\n  File "{0}.py", line {1}\n'.format(
                     docname, lineno)
+            cs_source = docname
+
+        # Add __WD__.
+        content.append("    __WD__ = '{0}'".format(
+            os.path.dirname(cs_source)).replace("\\", "/"))
 
         out, err = run_python_script(script, comment=comment, setsysvar=p['setsysvar'],
                                      process=p["process"], exception=p['exception'],
