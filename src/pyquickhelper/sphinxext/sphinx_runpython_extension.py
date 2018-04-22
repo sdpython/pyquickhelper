@@ -376,6 +376,7 @@ class RunPythonDirective(Directive):
             content = ["if True:"]
         else:
             content = ["def {0}():".format(name)]
+        content.append('    ## __WD__ ##')
 
         for line in self.content:
             content.append("    " + line)
@@ -417,7 +418,7 @@ class RunPythonDirective(Directive):
             cs_source = docname
 
         # Add __WD__.
-        content.append("    __WD__ = '{0}'".format(
+        script = script.replace('## __WD__ ##', "__WD__ = '{0}'".format(
             os.path.dirname(cs_source)).replace("\\", "/"))
 
         out, err = run_python_script(script, comment=comment, setsysvar=p['setsysvar'],
