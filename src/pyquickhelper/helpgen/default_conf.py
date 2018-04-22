@@ -789,6 +789,7 @@ def custom_setup(app, author):
     from ..sphinxext.sphinx_epkg_extension import setup as setup_epkg
     from ..sphinxext import setup_releases, setup_images
     from ..sphinxext.sphinx_toctree_extension import setup as setup_toctree
+    from ..sphinxext.sphinx_collapse_extension import setup as setup_collapse
     # from ..sphinxext.sphinx_rst_builder import setup as setup_rst
 
     try:
@@ -821,6 +822,7 @@ def custom_setup(app, author):
     setup_epkg(app)
     setup_releases(app)
     setup_images(app)
+    setup_collapse(app)
     # Already part of the added extensions.
     # setup_rst(app)
     try:

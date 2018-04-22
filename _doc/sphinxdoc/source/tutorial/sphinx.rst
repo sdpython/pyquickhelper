@@ -84,6 +84,33 @@ This extension just changes the size of a text if the output is HTML.
 * :bigger:`::5:size 5`
 * :bigger:`::10:size 10`
 
+*collapse*: hide or show a block
+++++++++++++++++++++++++++++++++
+
+Location: :func:`collapse setup <pyquickhelper.sphinxext.sphinx_collapse_extension.CollapseDirective>`.
+
+This extension adds a button to hide or show a limited part of the
+documentation.
+
+In *conf.py*:
+
+::
+
+    extensions = [ ...
+        'pyquickhelper.sphinxext.sphinx_collapse_extension']
+
+.. sidebar:: collapse
+
+    ::
+
+        .. collapse::
+
+            Show or hide a part of the documentation.
+
+.. collapse::
+
+    Show or hide a part of the documentation.
+
 *docassert*: check list of documented parameters
 ++++++++++++++++++++++++++++++++++++++++++++++++
 
@@ -166,6 +193,39 @@ this scenario (see `PicklingError on environment when config option value is a c
 ``my_custom_links`` needs to be replaced by:
 ``("module_where_it_is_defined.my_custom_links", None)``.
 The role *epkg* will import it based on its name.
+
+*postcontents*: dynamic contents
+++++++++++++++++++++++++++++++++
+
+Location: :class:`PostContentsDirective <pyquickhelper.sphinxext.sphinxext_postcontents_extension.PostContentsDirective>`.
+
+In *conf.py*:
+
+::
+
+    extensions = [ ...
+        'pyquickhelper.sphinxext.sphinx_postcontents_extension']
+
+The directive ``.. contents::`` display a short table of contents with what Sphinx
+knows when entering the page. It will not include any title an instruction could dynamically
+add to the page. Typically:
+
+::
+
+    .. runpython::
+        :rst:
+
+        print("Dynamic title")
+        print("+++++++++++++")
+
+This title added by the instruction :ref:`l-runpython-tutorial` is not
+considered by ``.. contents::``. The main reason is the direction resolves
+titles when entering the page and not after the *doctree* was modified.
+The directive ``.. postcontents::`` inserts a placeholder in the *doctree*.
+It is filled by function
+:func:`transform_postcontents <pyquickhelper.sphinxext.sphinxext_postcontents_extension.transform_postcontents>`
+before the final page is created (event ``'doctree-resolved'``).
+It looks into the page and adds a link to each local sections.
 
 .. _l-runpython-tutorial:
 
@@ -315,41 +375,8 @@ It is optional. The option ``:head: False`` specifies the javascript
 part is added to the html body and not the header.
 The header can be overwritten by other custom commands.
 
-*postcontents*: dynamic contents
-++++++++++++++++++++++++++++++++
-
-Location: :class:`PostContentsDirective <pyquickhelper.sphinxext.sphinxext_postcontents_extension.PostContentsDirective>`.
-
-In *conf.py*:
-
-::
-
-    extensions = [ ...
-        'pyquickhelper.sphinxext.sphinx_postcontents_extension']
-
-The directive ``.. contents::`` display a short table of contents with what Sphinx
-knows when entering the page. It will not include any title an instruction could dynamically
-add to the page. Typically:
-
-::
-
-    .. runpython::
-        :rst:
-
-        print("Dynamic title")
-        print("+++++++++++++")
-
-This title added by the instruction :ref:`l-runpython-tutorial` is not
-considered by ``.. contents::``. The main reason is the direction resolves
-titles when entering the page and not after the *doctree* was modified.
-The directive ``.. postcontents::`` inserts a placeholder in the *doctree*.
-It is filled by function
-:func:`transform_postcontents <pyquickhelper.sphinxext.sphinxext_postcontents_extension.transform_postcontents>`
-before the final page is created (event ``'doctree-resolved'``).
-It looks into the page and adds a link to each local sections.
-
-Template extension
-++++++++++++++++++
+*tpl_role*: template extension
+++++++++++++++++++++++++++++++
 
 Location: :class:`tpl_role <pyquickhelper.sphinxext.sphinxext_template_extension.tpl_role>`.
 

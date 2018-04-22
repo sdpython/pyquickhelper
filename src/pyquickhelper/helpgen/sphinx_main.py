@@ -80,6 +80,7 @@ from ..sphinxext.sphinx_faqref_extension import FaqRef
 from ..sphinxext.sphinx_nbref_extension import NbRef
 from ..sphinxext.sphinx_cmdref_extension import CmdRef
 from ..sphinxext.sphinx_todoext_extension import TodoExt
+from ..sphinxext.sphinx_collapse_extension import CollapseDirective
 
 
 if sys.version_info[0] == 2:

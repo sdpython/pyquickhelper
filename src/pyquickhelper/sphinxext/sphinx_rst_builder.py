@@ -47,6 +47,7 @@ from sphinx import addnodes
 from sphinx.locale import admonitionlabels, versionlabels, _
 from sphinx.writers.text import TextTranslator, MAXWIDTH, STDINDENT
 from ..sphinxext.sphinx_bigger_extension import visit_bigger_node_rst, depart_bigger_node_rst
+from ..sphinxext.sphinx_collapse_extension import visit_collapse_node_rst, depart_collapse_node_rst
 from ..sphinxext.sphinx_sharenet_extension import visit_sharenet_node_rst, depart_sharenet_node_rst
 
 
@@ -242,12 +243,15 @@ class RstTranslator(TextTranslator):
                 do_format()
                 result.append((indent + itemindent, item))
                 toformat = []
+
         do_format()
+
         if first is not None and result:
             itemindent, item = result[0]
             if item:
                 result.insert(0, (itemindent - indent, [first + item[0]]))
                 result[1] = (itemindent, item[1:])
+
         self.states[-1].extend(result)
 
     def visit_document(self, node):
@@ -1074,6 +1078,12 @@ class RstTranslator(TextTranslator):
 
     def depart_bigger_node(self, node):
         depart_bigger_node_rst(self, node)
+
+    def visit_collapse_node(self, node):
+        visit_collapse_node_rst(self, node)
+
+    def depart_collapse_node(self, node):
+        depart_collapse_node_rst(self, node)
 
     def visit_issue(self, node):
         self.add_text(':issue:`')

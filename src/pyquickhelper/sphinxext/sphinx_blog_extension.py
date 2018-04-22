@@ -149,7 +149,7 @@ class BlogPostDirective(Directive):
 
     def fill_node(self, node, env, tag, p, language_code, targetnode, sharepost):
         """
-        Fill the content of the node.
+        Fills the content of the node.
         """
         # add a label
         suffix_label = self.suffix_label() if not p['lid'] else ""

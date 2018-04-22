@@ -9,7 +9,7 @@
 def info_blocref(app, doctree, fromdocname, class_name,
                  entry_name, class_node, class_node_list):
     """
-    log information with Sphinx
+    Log information with :epkg:`Sphinx`.
 
     @param      app                 application (Sphinx)
     @param      doctree             document tree
@@ -47,6 +47,26 @@ def info_blocref(app, doctree, fromdocname, class_name,
     message = " ".join(rows)
     app.info(message)
     return True
+
+
+def sphinx_lang(env, default_value='en'):
+    """
+    Returns the language defined in the configuration file.
+
+    @param      env             environment
+    @param      default_value   default value
+    @return                     language
+    """
+    if hasattr(env, "settings"):
+        settings = env.settings
+        if hasattr(settings, "language_code"):
+            lang = env.settings.language_code
+        else:
+            lang = "en"
+    else:
+        settings = None
+        lang = "en"
+    return lang
 
 
 class TinyNode:
@@ -88,7 +108,7 @@ class WrappedNode:
 
 def traverse(node, depth=0):
     """
-    Enumerate through all children but insert a node whenever
+    Enumerates through all children but insert a node whenever
     digging or leaving the childrens nodes.
 
     @param      node        node (from doctree)

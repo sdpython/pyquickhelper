@@ -42,6 +42,7 @@ from ..sphinxext.sphinx_autosignature import setup as setup_signature
 from ..sphinxext.sphinx_bigger_extension import setup as setup_bigger
 from ..sphinxext.sphinx_blocref_extension import setup as setup_blocref
 from ..sphinxext.sphinx_blog_extension import setup as setup_blog
+from ..sphinxext.sphinx_collapse_extension import setup as setup_collapse
 from ..sphinxext.sphinx_cmdref_extension import setup as setup_cmdref
 from ..sphinxext.sphinx_docassert_extension import setup as setup_docassert
 from ..sphinxext.sphinx_epkg_extension import setup as setup_epkg
@@ -111,7 +112,7 @@ def get_default_extensions():
                       setup_graphviz, setup_math, setup_todo,
                       # the rest of it
                       setup_autodoc, setup_imgmath, setup_imagesvg,
-                      setup_plot, setup_only, setup_images]
+                      setup_plot, setup_only, setup_images, setup_collapse]
 
     try:
         import bokeh

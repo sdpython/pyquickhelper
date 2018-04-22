@@ -69,6 +69,8 @@ style, content
 
 .. autosignature:: pyquickhelper.sphinxext.sphinx_bigger_extension.bigger_role
 
+.. autosignature:: pyquickhelper.sphinxext.sphinx_collapse_extension.CollapseDirective
+
 .. autosignature:: pyquickhelper.sphinxext.sphinx_epkg_extension.epkg_role
 
 .. autosignature:: pyquickhelper.sphinxext.sphinx_githublink_extension.githublink_role

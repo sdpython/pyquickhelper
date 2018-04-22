@@ -33,7 +33,6 @@ from sphinx.registry import SphinxComponentRegistry
 from sphinx.events import EventManager
 from sphinx.extension import verify_required_extensions
 from sphinx.writers.latex import LaTeXTranslator
-from ..sphinxext.sphinx_rst_builder import RstWriter, RstBuilder, RstTranslator
 from ..sphinxext.sphinx_bigger_extension import visit_bigger_node as ext_visit_bigger_node, depart_bigger_node as ext_depart_bigger_node
 from ..sphinxext.sphinx_bigger_extension import visit_bigger_node_rst as ext_visit_bigger_node_rst, depart_bigger_node_rst as ext_depart_bigger_node_rst
 from ..sphinxext.sphinx_bigger_extension import depart_bigger_node_html as ext_depart_bigger_node_html
@@ -41,30 +40,36 @@ from ..sphinxext.sphinx_bigger_extension import depart_bigger_node_latex as ext_
 from ..sphinxext.sphinx_blocref_extension import visit_blocref_node as ext_visit_blocref_node, depart_blocref_node as ext_depart_blocref_node
 from ..sphinxext.sphinx_blog_extension import visit_blogpost_node as ext_visit_blogpost_node, depart_blogpost_node as ext_depart_blogpost_node
 from ..sphinxext.sphinx_blog_extension import visit_blogpostagg_node as ext_visit_blogpostagg_node, depart_blogpostagg_node as ext_depart_blogpostagg_node
+from ..sphinxext.sphinx_blog_extension import depart_blogpostagg_node_html as ext_depart_blogpostagg_node_html
+from ..sphinxext.sphinx_cmdref_extension import visit_cmdref_node as ext_visit_cmdref_node, depart_cmdref_node as ext_depart_cmdref_node
+from ..sphinxext.sphinx_collapse_extension import visit_collapse_node as ext_visit_collapse_node, depart_collapse_node as ext_depart_collapse_node
+from ..sphinxext.sphinx_collapse_extension import visit_collapse_node_rst as ext_visit_collapse_node_rst
+from ..sphinxext.sphinx_collapse_extension import depart_collapse_node_rst as ext_depart_collapse_node_rst
+from ..sphinxext.sphinx_collapse_extension import depart_collapse_node_html as ext_depart_collapse_node_html
+from ..sphinxext.sphinx_collapse_extension import visit_collapse_node_html as ext_visit_collapse_node_html
+from ..sphinxext.sphinx_epkg_extension import visit_epkg_node as ext_visit_epkg_node, depart_epkg_node as ext_depart_epkg_node
 from ..sphinxext.sphinx_exref_extension import visit_exref_node as ext_visit_exref_node, depart_exref_node as ext_depart_exref_node
 from ..sphinxext.sphinx_faqref_extension import visit_faqref_node as ext_visit_faqref_node, depart_faqref_node as ext_depart_faqref_node
 from ..sphinxext.sphinx_mathdef_extension import visit_mathdef_node as ext_visit_mathdef_node, depart_mathdef_node as ext_depart_mathdef_node
 from ..sphinxext.sphinx_nbref_extension import visit_nbref_node as ext_visit_nbref_node, depart_nbref_node as ext_depart_nbref_node
+from ..sphinxext.sphinx_postcontents_extension import depart_postcontents_node as ext_depart_postcontents_node
+from ..sphinxext.sphinx_postcontents_extension import visit_postcontents_node as ext_visit_postcontents_node
+from ..sphinxext.sphinx_rst_builder import RstWriter, RstBuilder, RstTranslator
 from ..sphinxext.sphinx_runpython_extension import visit_runpython_node as ext_visit_runpython_node, depart_runpython_node as ext_depart_runpython_node
 from ..sphinxext.sphinx_sharenet_extension import visit_sharenet_node as ext_visit_sharenet_node, depart_sharenet_node as ext_depart_sharenet_node
 from ..sphinxext.sphinx_sharenet_extension import depart_sharenet_node_html as ext_depart_sharenet_node_html
 from ..sphinxext.sphinx_sharenet_extension import depart_sharenet_node_rst as ext_depart_sharenet_node_rst
 from ..sphinxext.sphinx_sharenet_extension import visit_sharenet_node as ext_visit_sharenet_node_html
 from ..sphinxext.sphinx_sharenet_extension import visit_sharenet_node_rst as ext_visit_sharenet_node_rst
-from ..sphinxext.sphinx_video_extension import visit_video_node as ext_visit_video_node
 from ..sphinxext.sphinx_todoext_extension import visit_todoext_node as ext_visit_todoext_node, depart_todoext_node as ext_depart_todoext_node
 from ..sphinxext.sphinx_template_extension import visit_tpl_node as ext_visit_tpl_node, depart_tpl_node as ext_depart_tpl_node
-from ..sphinxext.sphinx_cmdref_extension import visit_cmdref_node as ext_visit_cmdref_node, depart_cmdref_node as ext_depart_cmdref_node
-from ..sphinxext.sphinx_epkg_extension import visit_epkg_node as ext_visit_epkg_node, depart_epkg_node as ext_depart_epkg_node
-from ..sphinxext.sphinx_blog_extension import depart_blogpostagg_node_html as ext_depart_blogpostagg_node_html
+from ..sphinxext.sphinx_tocdelay_extension import depart_tocdelay_node as ext_depart_tocdelay_node
+from ..sphinxext.sphinx_tocdelay_extension import visit_tocdelay_node as ext_visit_tocdelay_node
 from ..sphinxext.sphinx_video_extension import depart_video_node_html as ext_depart_video_node_html
 from ..sphinxext.sphinx_video_extension import depart_video_node_rst as ext_depart_video_node_rst
 from ..sphinxext.sphinx_video_extension import depart_video_node_latex as ext_depart_video_node_latex
 from ..sphinxext.sphinx_video_extension import depart_video_node_text as ext_depart_video_node_text
-from ..sphinxext.sphinx_postcontents_extension import depart_postcontents_node as ext_depart_postcontents_node
-from ..sphinxext.sphinx_postcontents_extension import visit_postcontents_node as ext_visit_postcontents_node
-from ..sphinxext.sphinx_tocdelay_extension import depart_tocdelay_node as ext_depart_tocdelay_node
-from ..sphinxext.sphinx_tocdelay_extension import visit_tocdelay_node as ext_visit_tocdelay_node
+from ..sphinxext.sphinx_video_extension import visit_video_node as ext_visit_video_node
 from ..sphinxext.sphinx_youtube_extension import depart_youtube_node as ext_depart_youtube_node
 from ..sphinxext.sphinx_youtube_extension import visit_youtube_node as ext_visit_youtube_node
 
@@ -274,6 +279,28 @@ class _AdditionalVisitDepart:
             ext_depart_bigger_node_latex(self, node)
         else:
             ext_depart_bigger_node(self, node)
+
+    def visit_collapse_node(self, node):
+        """
+        @see fn visit_collapse_node
+        """
+        if self.is_html():
+            ext_visit_collapse_node_html(self, node)
+        elif self.is_rst():
+            ext_visit_collapse_node_rst(self, node)
+        else:
+            ext_visit_collapse_node(self, node)
+
+    def depart_collapse_node(self, node):
+        """
+        @see fn depart_collapse_node
+        """
+        if self.is_html():
+            ext_depart_collapse_node_html(self, node)
+        elif self.is_rst():
+            ext_depart_collapse_node_rst(self, node)
+        else:
+            ext_depart_collapse_node(self, node)
 
     def visit_todoext_node(self, node):
         """
@@ -522,8 +549,6 @@ class _WriterWithCustomDirectives:
 
     def _init(self, base_class, translator_class, app=None):
         """
-        constructor
-
         @param      base_class  base class
         @param      app         Sphinx application
 
@@ -546,7 +571,7 @@ class _WriterWithCustomDirectives:
 
     def connect_directive_node(self, name, f_visit, f_depart):
         """
-        add custom node to the translator
+        Adds custom node to the translator.
 
         @param      name        name of the directive
         @param      f_visit     visit function
@@ -565,9 +590,8 @@ class _WriterWithCustomDirectives:
 
     def write(self, document, destination):
         """
-        Process a document into its final form.
-
-        Translate `document` (a Docutils document tree) into the Writer's
+        Processes a document into its final form.
+        Translates `document` (a Docutils document tree) into the Writer's
         native format, and write it out to its `destination` (a
         `docutils.io.Output` subclass object).
 
