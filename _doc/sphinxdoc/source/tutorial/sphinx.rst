@@ -339,6 +339,27 @@ the *rst* file.
     text = ".. image:: oo.png\\n    :width: 200px"
     print(text)
 
+Option ``:toggle:`` can hide the code or the output or both
+but let the user unhide it by clicking on a button.
+
+.. sidebar:: runpython and image
+
+    ::
+
+        .. runpython::
+            :showcode:
+            :toggle: out
+
+            for i in range(0, 10):
+                print("i=", i)
+
+.. runpython::
+    :showcode:
+    :toggle: out
+
+    for i in range(0, 10):
+        print("i=", i)
+
 *sharenet*: add link to share
 +++++++++++++++++++++++++++++
 

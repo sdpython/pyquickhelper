@@ -1140,10 +1140,18 @@ class RstTranslator(TextTranslator):
         pass
 
     def visit_sharenet_node(self, node):
-        return visit_sharenet_node_rst(self, node)
+        visit_sharenet_node_rst(self, node)
 
     def depart_sharenet_node(self, node):
-        return depart_sharenet_node_rst(self, node)
+        depart_sharenet_node_rst(self, node)
+
+    def visit_runpythonthis_node(self, node):
+        # for unit test.
+        pass
+
+    def depart_runpythonthis_node(self, node):
+        # for unit test.
+        pass
 
     def unknown_visit(self, node):
         raise NotImplementedError(

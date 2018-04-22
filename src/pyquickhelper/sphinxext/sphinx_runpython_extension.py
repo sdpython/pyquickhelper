@@ -19,6 +19,8 @@ import traceback
 from ..loghelper.flog import run_cmd
 from ..texthelper.texts_language import TITLES
 from ..pycode.code_helper import remove_extra_spaces_and_pep8
+from .sphinx_collapse_extension import collapse_node
+
 
 if sys.version_info[0] == 2:
     from StringIO import StringIO
@@ -269,6 +271,9 @@ class RunPythonDirective(Directive):
       see @see fn remove_extra_spaces_and_pep8.
     * ``:warningout:`` name of warnings to disable (ex: ``ImportWarning``),
       separated by spaces
+    * ``:toggle:`` add a button to hide or show the code, it takes the values
+      ``code`` or ``out`` or ``both``. The direction then hides the given section
+      but adds a button to show it.
 
     Option *rst* can be used the following way::
 
@@ -297,7 +302,7 @@ class RunPythonDirective(Directive):
     Unless *process* option is enabled, global variables cannot be used.
 
     .. versionchanged:: 1.7
-        Options *warningout* was added.
+        Options *warningout*, *toggle* were added.
     """
     required_arguments = 0
     optional_arguments = 0
@@ -316,6 +321,7 @@ class RunPythonDirective(Directive):
         'exception': directives.unchanged,
         'nopep8': directives.unchanged,
         'warningout': directives.unchanged,
+        'toggle': directives.unchanged,
     }
     has_content = True
     runpython_class = runpython_node
@@ -363,6 +369,7 @@ class RunPythonDirective(Directive):
             'exception': 'exception' in self.options and self.options['exception'] in bool_set_,
             'nopep8': 'nopep8' in self.options and self.options['nopep8'] in bool_set_,
             'warningout': self.options.get('warningout', '').strip(),
+            'toggle': self.options.get('toggle', '').strip(),
         }
 
         if p['setsysvar'] is not None and len(p['setsysvar']) == 0:
@@ -453,14 +460,25 @@ class RunPythonDirective(Directive):
                                               sin=p["sin"], sout=p["sout"])
 
         if p["showcode"]:
+            if 'code' in p['toggle'] or 'both' in p['toggle']:
+                hide = TITLES[language_code]['hide'] + \
+                    ' ' + TITLES[language_code]['code']
+                unhide = TITLES[language_code]['unhide'] + \
+                    ' ' + TITLES[language_code]['code']
+                secin = collapse_node(hide=hide, unhide=unhide, show=False)
+                node += secin
+            else:
+                secin = node
             pin = nodes.paragraph(text=p["sin"])
             pcode = nodes.literal_block(script_disp, script_disp)
-            node += pin
-            node += pcode
+            secin += pin
+            secin += pcode
+
         elif len(self.options.get('sout', '')) == 0:
             p["sout"] = ''
             p["sout2"] = ''
 
+        # RST output.
         if p["rst"]:
             settings_overrides = {}
             try:
@@ -477,13 +495,21 @@ class RunPythonDirective(Directive):
                 settings_overrides["warning_stream"] = StringIO()
             # 'initial_header_level': 2,
 
+            secout = node
+            if 'out' in p['toggle'] or 'both' in p['toggle']:
+                hide = TITLES[language_code]['hide'] + \
+                    ' ' + TITLES[language_code]['outl']
+                unhide = TITLES[language_code]['unhide'] + \
+                    ' ' + TITLES[language_code]['outl']
+                secout = collapse_node(hide=hide, unhide=unhide, show=False)
+                node += secout
             if len(p["sout"]) > 0:
-                node += nodes.paragraph(text=p["sout"])
+                secout += nodes.paragraph(text=p["sout"])
 
             try:
                 if p['sphinx']:
                     st = StringList(content.replace("\r", "").split("\n"))
-                    nested_parse_with_titles(self.state, st, node)
+                    nested_parse_with_titles(self.state, st, secout)
                     dt = None
                 else:
                     dt = core.publish_doctree(
@@ -508,20 +534,30 @@ class RunPythonDirective(Directive):
                 content.extend("    " + _ for _ in tab.split("\n"))
                 content = "\n".join(content)
                 pout = nodes.literal_block(content, content)
-                node += pout
+                secout += pout
                 dt = None
 
             if dt is not None:
                 for ch in dt.children:
                     node += ch
 
+        # Regular output.
         if not p["rst"] or p["showout"]:
+            secout = node
+            if 'out' in p['toggle'] or 'both' in p['toggle']:
+                hide = TITLES[language_code]['hide'] + \
+                    ' ' + TITLES[language_code]['outl']
+                unhide = TITLES[language_code]['unhide'] + \
+                    ' ' + TITLES[language_code]['outl']
+                secout = collapse_node(hide=hide, unhide=unhide, show=False)
+                node += secout
+
             text = p["sout2"] if p["rst"] else p["sout"]
             if len(text) > 0:
                 pout2 = nodes.paragraph(text=text)
                 node += pout2
             pout = nodes.literal_block(content, content)
-            node += pout
+            secout += pout
 
         p['runpython'] = node
 
