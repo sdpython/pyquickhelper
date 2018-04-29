@@ -102,6 +102,8 @@ class RepoFile:
                                      .replace(r"\303\266", "ö") \
                                      .replace(r"\303\273", "û") \
                                      .replace(r"\303\274", "ü") \
+                                     .replace(r"\303\203", "Ã") \
+                                     .replace(r"\302\251", "@") \
                                      .replace(r"\342\200\231", "’")
                 if not os.path.exists(self.name):
                     raise Exception(
