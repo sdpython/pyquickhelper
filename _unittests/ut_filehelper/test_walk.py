@@ -22,9 +22,10 @@ except ImportError:
 
 from src.pyquickhelper.loghelper import fLOG
 from src.pyquickhelper.filehelper import walk
+from src.pyquickhelper.pycode import ExtTestCase
 
 
-class TestWalk(unittest.TestCase):
+class TestWalk(ExtTestCase):
 
     def test_walk(self):
         fLOG(
