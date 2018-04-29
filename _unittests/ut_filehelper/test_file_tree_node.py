@@ -26,10 +26,11 @@ except ImportError:
 
 from src.pyquickhelper.loghelper import fLOG
 from src.pyquickhelper.filehelper import FileTreeNode
+from src.pyquickhelper.pycode import ExtTestCase
 from src.pyquickhelper.helpgen.utils_sphinx_doc import filecontent_to_rst, replace_relative_import
 
 
-class TestFileNodeTree(unittest.TestCase):
+class TestFileNodeTree(ExtTestCase):
 
     def test_file_tree_node(self):
         fLOG(
@@ -52,8 +53,8 @@ class TestFileNodeTree(unittest.TestCase):
             if f.isfile():
                 hash = f.hash_md5_readfile()
                 s = str(f)
-                assert len(s) > 0
-                assert len(hash) > 0
+                self.assertNotEmpty(s)
+                self.assertNotEmpty(hash)
                 nb += 1
                 if nb > 15:
                     break
@@ -63,8 +64,8 @@ class TestFileNodeTree(unittest.TestCase):
                     rst = filecontent_to_rst(f.fullname, content)
                     contr, doc = rst
                     nrst += 1
-                    assert "no documentation" not in doc
-                    assert ".. _f-" in contr
+                    self.assertNotIn("no documentation", doc)
+                    self.assertIn(".. _f-", contr)
 
                     cont2 = replace_relative_import(f.fullname)
                     lines = cont2.split("\n")
@@ -79,8 +80,8 @@ class TestFileNodeTree(unittest.TestCase):
                                     raise Exception(
                                         "{0}\nLINE:\n{1}\nCONT:\n{2}".format(f.fullname, line, cont2))
 
-        assert nb > 0
-        assert nrst > 0
+        self.assertGreater(nb, 0)
+        self.assertGreater(nrst, 0)
 
 
 if __name__ == "__main__":

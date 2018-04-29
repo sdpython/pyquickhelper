@@ -7,6 +7,6 @@
 class FileException(Exception):
 
     """
-    exception related to files
+    Exception related to files.
     """
     pass

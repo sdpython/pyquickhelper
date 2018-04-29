@@ -44,8 +44,8 @@ class TestWalk(unittest.TestCase):
             for root, dirs, files in walk(ut, neg_filter="*ut_loghelper*"):
                 nb2 += 1
 
-            assert nb2 > 0
-            assert nb2 < nb
+            self.assertGreater(nb2, 0)
+            self.assertLesser(nb2, nb)
         else:
             nb2 = 1e6
 
@@ -56,8 +56,8 @@ class TestWalk(unittest.TestCase):
         for root, dirs, files in walk(ut, neg_filter=filter):
             nb3 += 1
 
-        assert nb3 > 0
-        assert nb3 < nb2
+        self.assertGreater(nb3, 0)
+        self.assertLesser(nb3, nb2)
 
 
 if __name__ == "__main__":

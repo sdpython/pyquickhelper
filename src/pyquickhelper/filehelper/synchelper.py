@@ -137,9 +137,8 @@ def synchronize_folder(p1: str, p2: str, hash_size=1024 ** 2, repo1=False, repo2
                        size_different=True, no_deletion=False,
                        filter: [str, Callable[[str], str], None] = None,
                        filter_copy: [str, Callable[[str], str], None] = None,
-                       avoid_copy=False,
-                       operations=None, file_date: str = None, log1=False,
-                       copy_1to2=False, fLOG=fLOG):
+                       avoid_copy=False, operations=None, file_date: str = None,
+                       log1=False, copy_1to2=False, create_dest=False, fLOG=fLOG):
     """
     Synchronizes two folders (or copy if the second is empty),
     it only copies more recent files.
@@ -148,28 +147,29 @@ def synchronize_folder(p1: str, p2: str, hash_size=1024 ** 2, repo1=False, repo2
 
     @param      p1                  (str) first path
     @param      p2                  (str) second path
-    @param      hash_size           to check whether or not two files are different
-    @param      repo1               assuming the first folder is under SVN or GIT,
+    @param      hash_size           (bool) to check whether or not two files are different
+    @param      repo1               (bool) assuming the first folder is under SVN or GIT,
                                     it uses pysvn to get the list
                                     of files (avoiding any extra files)
-    @param      repo2               assuming the second folder is under SVN or GIT,
+    @param      repo2               (bool) assuming the second folder is under SVN or GIT,
                                     it uses pysvn to get the list
                                     of files (avoiding any extra files)
-    @param      size_different      if True, a file will be copied only if size are different,
+    @param      size_different      (bool) if True, a file will be copied only if size are different,
                                     otherwise, it will be copied if the first file is more recent
-    @param      no_deletion         if a file is found in the second folder and not in the first one,
+    @param      no_deletion         (bool) if a file is found in the second folder and not in the first one,
                                     if will be removed unless no_deletion is True
     @param      filter              (str) None to accept every file, a string if it is a regular expression,
                                     a function for something more complex: function (fullname) --> True (every file is considered in lower case),
                                     (use :epkg:`*py:re:search`)
     @param      filter_copy         (str) None to accept every file, a string if it is a regular expression,
                                     a function for something more complex: function (fullname) --> True
-    @param      avoid_copy          if True, just return the list of files which should be copied but does not do the copy
+    @param      avoid_copy          (bool) if True, just return the list of files which should be copied but does not do the copy
     @param      operations          if None, this function is called the following way ``operations(op,n1,n2)``
                                     if should return True if the file was updated
-    @param      file_date           filename which contains information about when the last sync was done
+    @param      file_date           (str) filename which contains information about when the last sync was done
     @param      log1                @see cl FileTreeNode
-    @param      copy_1to2           only copy files from *p1* to *p2*
+    @param      copy_1to2           (bool) only copy files from *p1* to *p2*
+    @param      create_dest         (bool) create destination directory if not exist
     @param      fLOG                logging function
     @return                         list of operations done by the function,
                                     list of 3-uple: action, source_file, dest_file
@@ -203,15 +203,16 @@ def synchronize_folder(p1: str, p2: str, hash_size=1024 ** 2, repo1=False, repo2
         The function is able to go through 90.000 files and 90 Gb
         in 12 minutes (for an update).
 
-    .. versionchanged:: 1.1
-        Parameter *copy_1to2* was added.
-
-    .. versionchanged:: 1.3
-        Parameter *fLOG* was added.
+    .. versionchanged:: 1.7
+        Parameter *create_dest* was added.
     """
 
-    fLOG("[synchronize_folder] from ", p1)
-    fLOG("[synchronize_folder] to   ", p2)
+    fLOG("[synchronize_folder] from '{0}'".format(p1))
+    fLOG("[synchronize_folder] to   '{0}'".format(p2))
+
+    if create_dest and not os.path.exists(p2):
+        fLOG("[synchronize_folder] md   '{0}'".format(p2))
+        os.makedirs(p2)
 
     if file_date is not None and not os.path.exists(file_date):
         with open(file_date, "w", encoding="utf8") as f:
@@ -253,16 +254,17 @@ def synchronize_folder(p1: str, p2: str, hash_size=1024 ** 2, repo1=False, repo2
     f1 = p1
     f2 = p2
 
-    fLOG("[synchronize_folder]   exploring f1", f1)
+    fLOG("[synchronize_folder]   exploring f1='{0}'".format(f1))
     node1 = FileTreeNode(
         f1, filter=pr_filter, repository=repo1, log=True, log1=log1)
-    fLOG("     number of found files (p1)", len(node1), node1.max_date())
+    fLOG("[synchronize_folder]   number of found files (p1)",
+         len(node1), node1.max_date())
     if file_date is not None:
         log1n = 1000 if log1 else None
         status = FilesStatus(file_date, fLOG=fLOG)
         res = list(status.difference(node1, u4=True, nlog=log1n))
     else:
-        fLOG("[synchronize_folder]   exploring f2", f2)
+        fLOG("[synchronize_folder]   exploring f2='{0}'".format(f2))
         node2 = FileTreeNode(
             f2, filter=pr_filter, repository=repo2, log=True, log1=log1)
         fLOG("[synchronize_folder]     number of found files (p2)",
@@ -370,16 +372,13 @@ def synchronize_folder(p1: str, p2: str, hash_size=1024 ** 2, repo1=False, repo2
 
 def remove_folder(top, remove_also_top=True, raise_exception=True):
     """
-    Removes everything in folder top.
+    Removes everything in folder *top*.
 
     @param      top                 path to remove
     @param      remove_also_top     remove also root
     @param      raise_exception     raise an exception if a file cannot be remove
     @return                         list of removed files and folders
                                      --> list of tuple ( (name, "file" or "dir") )
-
-    .. versionchanged:: 0.9
-        Parameter *raise_exception* was added.
     """
     if top in ["", "C:", "c:", "C:\\", "c:\\", "d:", "D:", "D:\\", "d:\\"]:
         raise Exception("top is a root (c: for example), this is not safe")
@@ -423,7 +422,7 @@ def remove_folder(top, remove_also_top=True, raise_exception=True):
 
 def has_been_updated(source, dest):
     """
-    It assumes ``dest`` is a copy of ``source``, it wants to know
+    It assumes *dest* is a copy of *source*, it wants to know
     if the copy is up to date or not.
 
     @param      source      filename
@@ -455,7 +454,8 @@ def has_been_updated(source, dest):
 def walk(top, onerror=None, followlinks=False, neg_filter=None):
     """
     Does the same as :epkg:`*py:os:walk`
-    plus do not go through a sub-folder if this one is big. Folders such build or Debug or Release
+    plus do not go through a sub-folder if this one is big.
+    Folders such *build* or *Debug* or *Release*
     may not need to be dug into.
 
     @param      top             folder
