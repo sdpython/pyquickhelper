@@ -138,7 +138,12 @@ class MockSphinxApp:
                     from sphinx.writers.html5 import HTML5Translator
                     translators.append(HTML5Translator)
             elif key == 'latex':
-                from sphinx.writers.latex import LaTeXTranslator
+                try:
+                    from sphinx.writers.latex import LaTeXTranslator
+                except ImportError:
+                    # Since sphinx 1.7.3 (circular reference).
+                    import sphinx.builders.latex.transforms
+                    from sphinx.writers.latex import LaTeXTranslator
                 translators.append(LaTeXTranslator)
             elif key == 'text':
                 from sphinx.writers.text import TextTranslator
