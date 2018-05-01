@@ -5,9 +5,11 @@
 History
 =======
 
-current - 2018-04-23 - 0.00Mb
+current - 2018-05-01 - 0.00Mb
 =============================
 
+* `137`: fix bug in bug HTML output (aggregated pages) (2018-04-29)
+* `136`: add parameter create_dest to synchronize_folder (2018-04-29)
 * `135`: fix for sphinx 1.7.3 (circular reference) (2018-04-22)
 
 1.7.2560 - 2018-04-22 - 1.99Mb
