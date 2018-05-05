@@ -129,13 +129,10 @@ class JenkinsExt(jenkins.Jenkins):
         @param      mails       (str) list of mails to contact in case of a mistaje
         @param      fLOG        logging function
 
-        .. versionchanged:: 1.3
-            Parameter *engines*, *fLOG* were added to rationalize Python engines.
-
         .. versionchanged:: 1.5
             Parameter *mails* was added.
         """
-        jenkins.Jenkins.__init__(self, url, username, password)
+        jenkins.Jenkins.__init__(self, url, username, password, timeout=timeout)
         self._mock = mock
         self.platform = platform
         self.pypi_port = pypi_port
@@ -168,39 +165,12 @@ class JenkinsExt(jenkins.Jenkins):
         if self._mock:
             raise JenkinsExtException("mocking server, cannot be open")
 
-        try:
-            if self.auth:
-                req.add_header('Authorization', self.auth)
-            if add_crumb:
-                self.maybe_add_crumb(req)
-            with jenkins.urlopen(req, timeout=self.timeout) as u:
-                response = u.read()
-            if response is None:
-                raise jenkins.EmptyResponseException(
-                    "Error communicating with server[%s]: "
-                    "empty response" % self.server)
-            response = str(response, encoding="utf-8")  # change for Python 3
-            return response
-        except jenkins.HTTPError as e:
-            # Jenkins's funky authentication means its nigh impossible to
-            # distinguish errors.
-            if e.code in [401, 403, 500]:
-                # six.moves.urllib.error.HTTPError provides a 'reason'
-                # attribute for all python version except for ver 2.6
-                # Falling back to HTTPError.msg since it contains the
-                # same info as reason
-                raise jenkins.JenkinsException(
-                    'Error in request. ' +
-                    'Possibly authentication failed [%s]: %s' % (
-                        e.code, e.msg)
-                )
-            elif e.code == 404:
-                raise jenkins.NotFoundException(
-                    'Requested item could not be found')
-            else:
-                raise
-        except jenkins.URLError as e:
-            raise jenkins.JenkinsException('Error in request: %s' % (e.reason))
+        response = self.jenkins_request(req=req, add_crumb=add_crumb)
+        if response is None:
+            raise jenkins.EmptyResponseException(
+                "Error communicating with server[%s]: "
+                "empty response" % self.server)
+        return response.content
 
     def delete_job(self, name):
         '''Delete Jenkins job permanently.
