@@ -5,8 +5,13 @@
 History
 =======
 
-current - 2018-05-01 - 0.00Mb
+current - 2018-05-05 - 0.00Mb
 =============================
+
+* `139`: update to python-jenkins 1.0.0 (2018-05-05)
+
+1.7.2569 - 2018-05-01 - 1.99Mb
+==============================
 
 * `137`: fix bug in bug HTML output (aggregated pages) (2018-04-29)
 * `136`: add parameter create_dest to synchronize_folder (2018-04-29)

@@ -270,7 +270,7 @@ if not r:
         ],
         extras_require={
             'filehelper': ['cffi', 'cryptography'],  # cryptography
-            'jenkinshelper': ['python-jenkins', 'pyyaml'],
+            'jenkinshelper': ['python-jenkins>=1.0.0', 'pyyaml'],
             'loghelper': ['psutil'],
         },
         entry_points={

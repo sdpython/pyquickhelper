@@ -31,7 +31,7 @@ pycodestyle>=2.0.0
 pycryptodomex
 pydocstyle
 pylzma
-python-jenkins
+python-jenkins>=1.0.0
 PyYAML
 semantic_version
 setuptools
