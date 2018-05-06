@@ -1165,11 +1165,14 @@ def setup(app):
     app.add_builder(RstBuilder)
     # This is the file name suffix for reST files.
     app.add_config_value('rst_file_suffix', ".rst", 'env')
-    # The is the suffix used in internal links. By default, takes the same value as rst_file_suffix.
+    # The is the suffix used in internal links.
+    # By default, takes the same value as rst_file_suffix.
     app.add_config_value('rst_link_suffix', None, 'env')
-    # Function to translate a docname to a filename. By default, returns docname + rst_file_suffix.
+    # Function to translate a docname to a filename.
+    # By default, returns docname + rst_file_suffix.
     app.add_config_value('rst_file_transform', None, 'env')
-    # Function to translate a docname to a (partial) URI. By default, returns docname + rst_link_suffix.
+    # Function to translate a docname to a (partial) URI.
+    # By default, returns docname + rst_link_suffix.
     app.add_config_value('rst_link_transform', None, 'env')
     # Fix the indentation.
     app.add_config_value('rst_indent', STDINDENT, 'env')

@@ -17,7 +17,7 @@ set_sphinx_variables(__file__, "pyquickhelper", "Xavier Dupré", 2018,
                      github_repo="https://github.com/sdpython/pyquickhelper.git",
                      extlinks=dict(issue=(
                          'https://github.com/sdpython/pyquickhelper/issues/%s',
-                         'issue {0} on GitHub')),
+                         'issue ')),
                      link_resolve="http://www.xavierdupre.fr/app/")
 
 # there is an issue with this attribute on Anaconda math_number_all

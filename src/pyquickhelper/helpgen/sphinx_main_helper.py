@@ -9,6 +9,7 @@ import sys
 import datetime
 import shutil
 import subprocess
+import re
 
 from ..loghelper import run_cmd, RunCmdException, fLOG
 from ..loghelper.run_cmd import parse_exception_message
@@ -438,7 +439,7 @@ def enumerate_copy_images_for_slides(src, dest, pattern=_pattern_images):
         yield d
 
 
-def format_history(src, dest):
+def format_history(src, dest, format="basic"):
     """
     Format history based on module
     `releases <https://github.com/bitprophet/releases>`_.
@@ -447,51 +448,69 @@ def format_history(src, dest):
     @param      dest    destination (file)
 
     .. versionadded:: 1.5
+
+    .. versionchanged:: 1.7
+        Parameter *format* was added. :epkg:`Sphinx` extension *release*
+        is no longer used but the formatting is still available.
     """
     with open(src, "r", encoding="utf-8") as f:
         lines = f.readlines()
 
     new_lines = []
-    tag = None
-    for i in range(0, len(lines)):
-        line = lines[i].rstrip("\r\t\n ")
-        if line.startswith("===") and i > 0:
-            rel = lines[i - 1].rstrip("\r\t\n ")
-            if "." in rel:
-                del new_lines[-1]
-                res = "* :release:`{0}`".format(rel)
-                res = res.replace("(", "<").replace(")", ">")
-                if new_lines[-1].startswith("==="):
-                    new_lines.append("")
-                new_lines.append(res)
-                tag = None
-            else:
-                new_lines.append(line)
-        elif len(line) > 0:
-            if line.startswith("**"):
-                ll = line.lower().strip("*")
-                if ll in ('bug', 'bugfix', 'bugfixes'):
-                    tag = "bug"
-                elif ll in ('features', 'feature'):
-                    tag = "feature"
-                elif ll in ('support', 'support'):
-                    tag = "support"
-                else:
-                    raise ValueError(
-                        "Line {0}, unable to infer tag from '{1}'".format(i, line))
-            else:
-                nline = line.lstrip("* ")
-                if nline.startswith("`"):
-                    if tag is None:
-                        tag = 'issue'
-                    res = "* :{0}:{1}".format(tag, nline)
+    if format == "release":
+
+        tag = None
+        for i in range(0, len(lines)):
+            line = lines[i].rstrip("\r\t\n ")
+            if line.startswith("===") and i > 0:
+                rel = lines[i - 1].rstrip("\r\t\n ")
+                if "." in rel:
+                    del new_lines[-1]
+                    res = "* :release:`{0}`".format(rel)
+                    res = res.replace("(", "<").replace(")", ">")
                     if new_lines[-1].startswith("==="):
                         new_lines.append("")
                     new_lines.append(res)
+                    tag = None
                 else:
                     new_lines.append(line)
-                    if line.startswith(".. _"):
-                        new_lines.append("")
+            elif len(line) > 0:
+                if line.startswith("**"):
+                    ll = line.lower().strip("*")
+                    if ll in ('bug', 'bugfix', 'bugfixes'):
+                        tag = "bug"
+                    elif ll in ('features', 'feature'):
+                        tag = "feature"
+                    elif ll in ('support', 'support'):
+                        tag = "support"
+                    else:
+                        raise ValueError(
+                            "Line {0}, unable to infer tag from '{1}'".format(i, line))
+                else:
+                    nline = line.lstrip("* ")
+                    if nline.startswith("`"):
+                        if tag is None:
+                            tag = 'issue'
+                        res = "* :{0}:{1}".format(tag, nline)
+                        if new_lines[-1].startswith("==="):
+                            new_lines.append("")
+                        new_lines.append(res)
+                    else:
+                        new_lines.append(line)
+                        if line.startswith(".. _"):
+                            new_lines.append("")
+    elif format == "basic":
+        reg = re.compile("(.*?)`([0-9]+)`:(.*?)[(]([-0-9]{10})[)]")
+        for line in lines:
+            match = reg.search(line)
+            if match:
+                gr = match.groups()
+                new_line = "{0}:issue:`{1}`:{2}({3})".format(*gr)
+                new_lines.append(new_line)
+            else:
+                new_lines.append(line.strip("\n\r"))
+    else:
+        raise ValueError("Unexpected value for format '{0}'".format(format))
 
     with open(dest, "w", encoding="utf-8") as f:
         f.write("\n".join(new_lines))

@@ -29,7 +29,7 @@ else:
 
 def default_sphinx_options(fLOG=noLOG, **options):
     """
-    Define or override default options for Sphinx, listed below.
+    Define or override default options for :epkg:`Sphinx`, listed below.
 
     .. runpython::
 
@@ -107,7 +107,8 @@ def rst2html(s, fLOG=noLOG, writer="html", keep_warnings=False,
              external_docnames=None, filter_nodes=None,
              new_extensions=None, update_builder=None, **options):
     """
-    Converts a string into HTML format.
+    Converts a string from :epkg:`RST`
+    into :epkg:`HTML` format or transformed :epkg:`RST`.
 
     @param      s                   string to converts
     @param      fLOG                logging function (warnings will be logged)
@@ -119,7 +120,8 @@ def rst2html(s, fLOG=noLOG, writer="html", keep_warnings=False,
     @param      language            language
     @param      layout              ``'docutils'``, ``'sphinx'``, ``'sphinx_body'``, see below.
     @param      document_name       document name, not really important since the input is a string
-    @param      options             Sphinx options see `Render math as images <http://www.sphinx-doc.org/en/stable/ext/math.html#module-sphinx.ext.imgmath>`_,
+    @param      options             :epkg:`Sphinx` options see
+                                    `Render math as images <http://www.sphinx-doc.org/en/stable/ext/math.html#module-sphinx.ext.imgmath>`_,
                                     a subset of options is used, see @see fn default_sphinx_options.
                                     By default, the theme (option *html_theme*) will ``'basic'``.
     @param      external_docnames   if the string to parse makes references to other documents,
@@ -139,14 +141,14 @@ def rst2html(s, fLOG=noLOG, writer="html", keep_warnings=False,
 
     The parameter *layout* specify the kind of HTML you need.
 
-    * ``'docutils'``: very simple HTML, style is not included, recursive
+    * ``'docutils'``: very simple :epkg:`HTML`, style is not included, recursive
       directives are not processed (recursive means they modify the doctree).
-      The produced HTML only includes the body (no HTML header).
-    * ``'sphinx'``: in memory sphinx, the produced HTML includes the header, it is also recursive
+      The produced :epkg:`HTML` only includes the body (no :epkg:`HTML` header).
+    * ``'sphinx'``: in memory :epkg:`sphinx`, the produced :epkg:`HTML` includes the header, it is also recursive
       as directives can modify the doctree.
     * ``'sphinx_body'``: same as ``'sphinx'`` but only the body is returned.
 
-    if the writer is a tuple, it must be a 2-uple ``(builder_name, builder_class)``.
+    If the writer is a tuple, it must be a 2-uple ``(builder_name, builder_class)``.
     However, the builder class must contain an attribute ``_writer_class`` with
     the associated writer. The builcer class must also implement a method
     ``iter_pages`` which enumerates all written pages:
@@ -156,8 +158,10 @@ def rst2html(s, fLOG=noLOG, writer="html", keep_warnings=False,
     .. exref::
         :title: How to test a Sphinx directive?
 
-        The following code defines a simple directive defined based on an existing one.
-        It also defined what to do if a new node is inserted in the documentation.
+        The following code defines a simple directive
+        definedbased on an existing one.
+        It also defined what to do if a new node
+        is inserted in the documentation.
 
         ::
 
@@ -193,8 +197,8 @@ def rst2html(s, fLOG=noLOG, writer="html", keep_warnings=False,
                             writer="html", keep_warnings=True,
                             directives=tives)
 
-        Unfortunately, this functionality is only tested on Python 3.
-        It might only work on Python 2.7.
+        Unfortunately, this functionality is only tested on :epkg:`Python` 3.
+        It might not work on :epkg:`Python` 2.7.
         The function produces files if the document contains latex
         converted into image.
 
@@ -202,7 +206,7 @@ def rst2html(s, fLOG=noLOG, writer="html", keep_warnings=False,
        :title: How to get more about latex errors?
        :index: latex
 
-        Sphinx is not easy to use when it comes to debug latex expressions.
+        :epkg:`Sphinx` is not easy to use when it comes to debug latex expressions.
         I did not find an easy way to read the error returned by latex about
         a missing bracket or an unknown command. I finally added a short piece
         of code in ``sphinx.ext.imgmath.py`` just after the call to
@@ -226,9 +230,10 @@ def rst2html(s, fLOG=noLOG, writer="html", keep_warnings=False,
         :title: How to hide command line window while compiling latex?
         :lid: command line window
 
-        Sphinx calls latex through command line. On Windows, a command line window
-        can annoyingly show up anytime a formula is compile. The following
-        line can be added to hide it:
+        :epkg:`Sphinx` calls :epkg:`latex` through command line.
+        On :epkg:`Windows`, a command line window
+        can annoyingly show up anytime a formula is compile.
+        The following can be added to hide it:
 
         ::
 
@@ -237,24 +242,13 @@ def rst2html(s, fLOG=noLOG, writer="html", keep_warnings=False,
 
         And ``, startupinfo=startupinfo`` must be added to lines ``p = Popen(...``.
 
-    .. versionadded:: 1.0
-
-    .. versionchanged:: 1.3
-        Parameters *writer*, *keep_warnings* were added to specifiy a custom writer
-        and to keep the warnings. By default, the function now interprets *Sphinx*
-        directives and not only *docutils* ones.
-        Parameter *directives* was added to add a directive before parsing the RST.
-
-    .. versionchanged:: 1.4
-        Add directives *todoext*, *todo*, *mathdef*, *blocref*, *faqref*, *nbref*, *exref*.
-        Parameter *language* was added.
-        Add directives *graphviz*, *math*.
-        Parse more extensive Sphinx syntax.
-
-    .. versionchanged:: 1.5
-        More logging is done, the function is more consistent.
-        Parameters *layout*, *document_name*, *external_docnames*, *filter_nodes*, *update_builder*,
-        *new_extensions* were added. Format ``rst`` was added. Custom builders is supported.
+    By default, the function now interprets :epkg:`Sphinx`
+    directives and not only *docutils* ones.
+    Parameter *directives* adds a directive
+    before parsing the :epkg:`RST`.
+    The function is more consistent.
+    Format ``rst`` is available as well as
+    custom builders.
     """
     if 'html_theme' not in options:
         options['html_theme'] = 'basic'
@@ -400,7 +394,7 @@ def rst2html(s, fLOG=noLOG, writer="html", keep_warnings=False,
 
 def correct_indentation(text):
     """
-    tries to improve the indentation before running docutil
+    Tries to improve the indentation before running :epkg:`docutil`.
 
     @param      text        text to correct
     @return                 corrected text
@@ -445,13 +439,13 @@ def docstring2html(function_or_string, format="html", fLOG=noLOG, writer="html",
                    layout='docutils', document_name="<string>",
                    filter_nodes=None, **options):
     """
-    Converts a docstring into a HTML format.
+    Converts a docstring into a :epkg:`HTML` format.
 
     @param      function_or_string      function, class, method or doctring
     @param      format                  output format (``'html'`` or '``rawhtml``')
     @param      fLOG                    logging function
-    @param      writer                  ``'html'`` for HTML format or ``'rst'`` for RST format
-    @param      keep_warnings           keep_warnings in the final HTML
+    @param      writer                  ``'html'`` for :epkg:`HTML` format or ``'rst'`` for RST format
+    @param      keep_warnings           keep_warnings in the final :epkg:`HTML`
     @param      directives              new directives to add (see below)
     @param      language                language
     @param      layout                  ``'docutils'``, ``'sphinx'``, ``'sphinx_body'``, see below.
@@ -460,13 +454,13 @@ def docstring2html(function_or_string, format="html", fLOG=noLOG, writer="html",
     @param      options                 Sphinx options see `Render math as images <http://www.sphinx-doc.org/en/stable/ext/math.html#module-sphinx.ext.imgmath>`_,
                                         a subset of options is used, see @see fn default_sphinx_options.
                                         By default, the theme (option *html_theme*) will ``'basic'``.
-    @return                             (str) HTML format or (IPython.core.display.HTML)
+    @return                             (str) :epkg:`HTML` format or (IPython.core.display.HTML)
 
     .. exref::
         :title: Produce HTML documentation for a function or class
 
-        The following code can display the dosstring in HTML format
-        to display it in a notebook.
+        The following code can display the dosstring in :epkg:`HTML` format
+        to display it in a :epkg:`notebook`.
 
         ::
 
@@ -476,10 +470,10 @@ def docstring2html(function_or_string, format="html", fLOG=noLOG, writer="html",
 
     The output format is defined by:
 
-    * html: IPython HTML object
-    * rawhtml: HTML as text + style
-    * rst: rst
-    * text: raw text
+    * ``'html'``: IPython :epkg:`HTML` object
+    * ``'rawhtml'``: :epkg:`HTML` as text + style
+    * ``'rst'``: :epkg:`rst`
+    * ``'text'``: raw text
     """
     if not isinstance(function_or_string, str):
         doc = function_or_string.__doc__
@@ -535,7 +529,7 @@ def docstring2html(function_or_string, format="html", fLOG=noLOG, writer="html",
 
 def rst2rst_folder(rststring, folder, document_name="index", **options):
     """
-    Converts a RST string into RST.
+    Converts a :epkg:`RST` string into :epkg:`RST`.
 
     @param      rststring       rst string
     @param      folder          the builder needs to write the resuts in a

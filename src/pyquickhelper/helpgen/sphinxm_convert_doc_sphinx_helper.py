@@ -17,6 +17,7 @@ from sphinx.errors import ExtensionError
 from sphinx.environment import BuildEnvironment
 from docutils import nodes
 from docutils.utils import Reporter
+from sphinx.ext.extlinks import setup_link_roles
 from sphinx.util.nodes import inline_all_toctrees
 from sphinx.util.console import bold, darkgreen
 from sphinx.util.docutils import WarningStream
@@ -96,11 +97,8 @@ else:
 
 def update_docutils_languages(values=None):
     """
-    update ``docutils/languages/en.py`` with missing labels
-
-    does that for languages:
-
-    * en
+    Updates ``docutils/languages/en.py`` with missing labels.
+    It Does it for languages *en*.
 
     @param      values      consider values in this dictionaries first
     """
@@ -648,7 +646,7 @@ class HTMLWriterWithCustomDirectives(_WriterWithCustomDirectives, HTMLWriter):
 
 class RSTWriterWithCustomDirectives(_WriterWithCustomDirectives, RstWriter):
     """
-    This docutils writer extends the RST writer with
+    This :epkg:`docutils` writer extends the :epkg:`RST` writer with
     custom directives implemented in this module.
     """
 
@@ -670,7 +668,7 @@ class RSTWriterWithCustomDirectives(_WriterWithCustomDirectives, RstWriter):
 
 class _MemoryBuilder:
     """
-    Builds HTML output in memory.
+    Builds :epkg:`HTML` output in memory.
     The API is defined by the page
     `builderapi <http://www.sphinx-doc.org/en/stable/extdev/builderapi.html?highlight=builder>`_.
     """
@@ -847,7 +845,7 @@ class _MemoryBuilder:
 
 class MemoryHTMLBuilder(_MemoryBuilder, SingleFileHTMLBuilder):
     """
-    Builds HTML output in memory.
+    Builds :epkg:`HTML` output in memory.
     The API is defined by the page
     `builderapi <http://www.sphinx-doc.org/en/stable/extdev/builderapi.html?highlight=builder>`_.
     """
@@ -875,7 +873,7 @@ class MemoryHTMLBuilder(_MemoryBuilder, SingleFileHTMLBuilder):
 
 class MemoryRSTBuilder(_MemoryBuilder, RstBuilder):
     """
-    Builds RST output in memory.
+    Builds :epkg:`RST` output in memory.
     The API is defined by the page
     `builderapi <http://www.sphinx-doc.org/en/stable/extdev/builderapi.html?highlight=builder>`_.
     """
@@ -954,7 +952,7 @@ class _CustomBuildEnvironment(BuildEnvironment):
 
 class _CustomSphinx(Sphinx):
     """
-    custom sphinx application to avoid using disk
+    Custom :epkg:`Sphinx` application to avoid using disk.
     """
 
     def __init__(self, srcdir, confdir, outdir, doctreedir, buildername="memoryhtml",
@@ -1105,7 +1103,7 @@ class _CustomSphinx(Sphinx):
             except Exception as e:
                 mes = "Unable to run setup_extension '{0}'\nWHOLE LIST\n{1}".format(
                     extension, "\n".join(builtin_extensions))
-                raise Exception(mes) from e
+                raise ExtensionError(mes) from e
 
         # load all user-given extension modules
         for extension in self.config.extensions:
@@ -1139,7 +1137,6 @@ class _CustomSphinx(Sphinx):
 
         # the config file itself can be an extension
         if self.config.setup:
-            # py31 doesn't have 'callable' function for below check
             if hasattr(self.config.setup, '__call__'):
                 self.config.setup(self)
             else:
@@ -1197,10 +1194,24 @@ class _CustomSphinx(Sphinx):
         self._init_enumerable_nodes()
 
         # addition
+        self._extended_init_()
+
+    def _extended_init_(self):
+        """
+        Additional initialization steps.
+        """
         if not hasattr(self, "domains"):
             self.domains = {}
         if not hasattr(self, "_events"):
             self._events = {}
+
+        # Otherwise, role issue is missing.
+        setup_link_roles(self)
+
+        if 'issue' not in roles._roles:
+            ext = [_ for _ in self._added_objects if 'extlinks' in _]
+            raise ExtensionError("Role 'issue' is missing.\nDetected extension: {0}\nKnown roles:\n{1}".format(
+                ext, "\n".join(sorted(roles._roles))))
 
     def finalize(self, doctree, external_docnames=None):
         """
@@ -1254,7 +1265,7 @@ class _CustomSphinx(Sphinx):
                     "ignore", category=DeprecationWarning)
                 self.registry.load_extension(self, extname)
         except Exception as e:
-            raise Exception(
+            raise ExtensionError(
                 "Unable to setup extension '{0}'".format(extname)) from e
 
     def add_directive(self, name, obj, content=None, arguments=None, **options):

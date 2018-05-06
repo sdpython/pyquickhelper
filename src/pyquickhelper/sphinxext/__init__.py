@@ -59,8 +59,6 @@ from ..sphinxext.sphinx_sharenet_extension import setup as setup_sharenet
 from ..sphinxext.sphinx_video_extension import setup as setup_video
 from ..sphinxext.sphinx_template_extension import setup as setup_tpl
 from ..sphinxext.sphinx_todoext_extension import setup as setup_todoext
-
-from ..sphinxext.releases import setup as setup_releases
 from ..sphinxext.sphinx_toctree_extension import setup as setup_toctree
 from ..sphinxext.sphinx_runpython_extension import setup as setup_runpython
 from .sphinx_runpython_extension import RunPythonDirective, runpython_node
@@ -107,7 +105,7 @@ def get_default_extensions():
                       setup_faqref, setup_exref, setup_nbref,
                       setup_docassert, setup_signature, setup_tpl,
                       setup_cmdref, setup_epkg, setup_rst, setup_postcontents,
-                      setup_tocdelay, setup_youtube, setup_releases,
+                      setup_tocdelay, setup_youtube,
                       # directives from sphinx
                       setup_graphviz, setup_math, setup_todo,
                       # the rest of it

@@ -50,7 +50,7 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
     @param      sharepost               add share button to share blog post on usual networks
     @param      custom_style            custom style sheet
     @param      extlinks                parameter `extlinks <http://www.sphinx-doc.org/en/stable/ext/extlinks.html#confval-extlinks>`_,
-                                        example: ``{'issue': ('https://github.com/sdpython/pyquickhelper/issues/%s', 'issue {0} on GitHub')}``
+                                        example: ``{'issue': ('https://github.com/sdpython/pyquickhelper/issues/%s', 'issue ')}``
     @param      github_user             git(hub) user
     @param      github_repo             git(hub) project
     @param      title                   if not None, use *title* instead of *module_name* as a title
@@ -486,10 +486,6 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
     # it should be a function, None by default
     custom_latex_processing = None
 
-    releases_release_uri = "https://pypi.org/project/{0}/%s".format(
-        module_name)
-    releases_document_name = "HISTORY.rst"
-
     # github or git link
     if github_user:
         releases_issue_uri = "https://github.com/{0}/{1}/issues/%s".format(
@@ -787,7 +783,7 @@ def custom_setup(app, author):
     from ..sphinxext.sphinx_tocdelay_extension import setup as setup_tocdelay
     from ..sphinxext.sphinx_youtube_extension import setup as setup_youtube
     from ..sphinxext.sphinx_epkg_extension import setup as setup_epkg
-    from ..sphinxext import setup_releases, setup_images
+    from ..sphinxext import setup_images
     from ..sphinxext.sphinx_toctree_extension import setup as setup_toctree
     from ..sphinxext.sphinx_collapse_extension import setup as setup_collapse
     # from ..sphinxext.sphinx_rst_builder import setup as setup_rst
@@ -820,7 +816,6 @@ def custom_setup(app, author):
     setup_youtube(app)
     setup_tpl(app)
     setup_epkg(app)
-    setup_releases(app)
     setup_images(app)
     setup_collapse(app)
     # Already part of the added extensions.

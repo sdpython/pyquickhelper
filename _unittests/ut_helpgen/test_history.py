@@ -28,7 +28,7 @@ from src.pyquickhelper.helpgen import rst2html
 
 class TestPaths(unittest.TestCase):
 
-    def test_format_history(self):
+    def test_format_history_release(self):
         fLOG(
             __file__,
             self._testMethodName,
@@ -57,13 +57,13 @@ class TestPaths(unittest.TestCase):
                 ==================
         """.replace("                ", "")
 
-        temp = get_temp_folder(__file__, "temp_history")
+        temp = get_temp_folder(__file__, "temp_history_release")
         fsrc = os.path.join(temp, "src.rst")
         fdst = os.path.join(temp, "dst.rst")
         with open(fsrc, "w", encoding="utf-8") as f:
             f.write(history)
 
-        format_history(fsrc, fdst)
+        format_history(fsrc, fdst, format="release")
 
         with open(fdst, "r", encoding="utf-8") as f:
             content = f.read()
@@ -80,6 +80,71 @@ class TestPaths(unittest.TestCase):
                 * :bug:`54`: fix searchbox for `sphinx_rtd_theme <https://github.com/rtfd/sphinx_rtd_theme>`_
                 * :feature:`36`: add support for sphinx-gallery
                 * :release:`1.4.2 <2016-09-18>`
+                """.replace("                ", "")
+
+        self.assertEqual(content.strip(" \r\n\t"), expect.strip(" \r\n\t"))
+
+    def test_format_history_basic(self):
+        fLOG(
+            __file__,
+            self._testMethodName,
+            OutputPrint=__name__ == "__main__")
+
+        history = """
+                .. _l-history-l:
+
+                =======
+                History
+                =======
+
+                1.5.1234 (2017-12-14)
+                =====================
+
+                **Bugfix**
+
+                * `46`: update to Sphinx 1.6 (2017-12-14)
+                * `54`: fix searchbox for `sphinx_rtd_theme <https://github.com/rtfd/sphinx_rtd_theme>`_ (2017-12-15)
+
+                **Features**
+
+                * `36`: add support for sphinx-gallery (2017-12-16)
+
+                1.4.2 (2016-09-18)
+                ==================
+        """.replace("                ", "")
+
+        temp = get_temp_folder(__file__, "temp_history_basic")
+        fsrc = os.path.join(temp, "src.rst")
+        fdst = os.path.join(temp, "dst.rst")
+        with open(fsrc, "w", encoding="utf-8") as f:
+            f.write(history)
+
+        format_history(fsrc, fdst, format="basic")
+
+        with open(fdst, "r", encoding="utf-8") as f:
+            content = f.read()
+
+        expect = """
+                .. _l-history-l:
+
+                =======
+                History
+                =======
+
+                1.5.1234 (2017-12-14)
+                =====================
+
+                **Bugfix**
+
+                * :issue:`46`: update to Sphinx 1.6 (2017-12-14)
+                * :issue:`54`: fix searchbox for `sphinx_rtd_theme <https://github.com/rtfd/sphinx_rtd_theme>`_ (2017-12-15)
+
+                **Features**
+
+                * :issue:`36`: add support for sphinx-gallery (2017-12-16)
+
+                1.4.2 (2016-09-18)
+                ==================
                 """.replace("                ", "")
 
         self.assertEqual(content.strip(" \r\n\t"), expect.strip(" \r\n\t"))
@@ -105,13 +170,20 @@ class TestPaths(unittest.TestCase):
         with open(fdst, "r", encoding="utf-8") as f:
             content = f.read()
 
+        rst = rst2html(content,  # fLOG=fLOG,
+                       writer="rst", keep_warnings=True,
+                       directives=None, layout="sphinx",
+                       extlinks=dict(issue=('https://github.com/sdpython/pyquickhelper/issues/%s', 'issue ')))
+        self.assertTrue(rst is not None)
+        self.assertNotIn('SYSTEM MESSAGE', rst)
+        self.assertIn('* `issue 136', rst)
+
         html = rst2html(content,  # fLOG=fLOG,
                         writer="html", keep_warnings=True,
                         directives=None, layout="sphinx",
-                        releases_release_uri="https://pypi.python.org/pypi/pyquickhelper/%s",
-                        releases_issue_uri="https://github.com/sdpython/pyquickhelper/issues/%s",
-                        releases_document_name="<<string>>")
+                        extlinks=dict(issue=('https://github.com/sdpython/pyquickhelper/issues/%s', 'issue ')))
         self.assertTrue(html is not None)
+        self.assertNotIn('`', html)
 
 
 if __name__ == "__main__":
