@@ -185,11 +185,11 @@ class open_stream_file:
     .. runpython::
         :showcode:
 
-        from pyquickhelper.loghelper.anyfhelper import open_stream_file
+        from pyquickhelper.loghelper.history_helper import open_stream_file
         from io import StringIO
         st = StringIO("a\\nb")
         with open_stream_file(st) as f:
-            for line in f.readline():
+            for line in f.readlines():
                 print(line)
     """
 
