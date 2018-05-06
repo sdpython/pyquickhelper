@@ -5,7 +5,7 @@
 History
 =======
 
-current - 2018-05-05 - 0.00Mb
+current - 2018-05-06 - 0.00Mb
 =============================
 
 * `139`: update to python-jenkins 1.0.0 (2018-05-05)
@@ -15,29 +15,29 @@ current - 2018-05-05 - 0.00Mb
 
 * `137`: fix bug in bug HTML output (aggregated pages) (2018-04-29)
 * `136`: add parameter create_dest to synchronize_folder (2018-04-29)
-* `135`: fix for sphinx 1.7.3 (circular reference) (2018-04-22)
 
 1.7.2560 - 2018-04-22 - 1.99Mb
 ==============================
 
-* `133`: add a collapsible container, adapt it for runpython (2018-04-22)
+* `135`: fix for sphinx 1.7.3 (circular reference) (2018-04-22)
 * `134`: allow url in video sphinx extension (2018-04-22)
-* `130`: add plot output for runpython (2018-04-21)
+* `133`: add a collapsible container, adapt it for runpython (2018-04-22)
 * `132`: catch warning in run_python_script output, use redirect_stdout (2018-04-21)
 * `131`: remove warning in runpython (2018-04-21)
+* `130`: add plot output for runpython (2018-04-21)
 * `129`: implement an easy way to profile a function in unit test (2018-04-19)
 * `128`: fix issue in enumerate_pypi_versions_date (2018-04-14)
 * `127`: update to pip 10 (many API changes) (2018-04-14)
 * `126`: remove dependency on flake8, use pycodestyle (2018-04-13)
-* `122`: fix notebook name when converting into rst (collision with html) (2018-04-05)
-* `123`: fix style for blogpostagg, remove inserted admonition (2018-04-05)
 * `125`: fix sharenet for rst format (2018-04-05)
 * `124`: add CodeNode in rst builder (2018-04-05)
+* `123`: fix style for blogpostagg, remove inserted admonition (2018-04-05)
+* `122`: fix notebook name when converting into rst (collision with html) (2018-04-05)
 * `121`: extend list of functions in ExtTestCase (NotEqual, Greater(strict=True), NotEmpty (2018-04-01)
 * `120`: add _fieldlist_row_index if missing in HTMLTranslatorWithCustomDirectives (2018-04-01)
 * `119`: collision with image names in notebooks converted into rst (2018-03-29)
-* `116`: add tag .. raw:: html in notebook converted into rst (2018-03-26)
 * `117`: bug with nbneg_pattern, check unit test failing due to that (2018-03-26)
+* `116`: add tag .. raw:: html in notebook converted into rst (2018-03-26)
 * `114`: automatically builds history with release and issues + add command history in setup (2018-03-24)
 * `111`: enable manual snippet for notebook, repace add_notebook_menu by toctree in sphinx (2018-03-20)
 * `113`: propose a fix for a bug introduced by pip 9.0.2 (2018-03-19)

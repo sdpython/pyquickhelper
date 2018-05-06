@@ -76,7 +76,8 @@ def process_standard_options_for_setup(argv, file_or_folder, project_var_name, m
                                        additional_ut_path=None,
                                        skip_function=default_skip_function, covtoken=None, hook_print=True,
                                        stdout=None, stderr=None, use_run_cmd=False, filter_warning=None,
-                                       file_filter_pep8=None, github_owner=None, fLOG=noLOG):
+                                       file_filter_pep8=None, github_owner=None,
+                                       existing_history=None, fLOG=noLOG):
     """
     Processes the standard options the module pyquickhelper is
     able to process assuming the module which calls this function
@@ -129,6 +130,8 @@ def process_standard_options_for_setup(argv, file_or_folder, project_var_name, m
     @param      file_filter_pep8            function to filter out files for which checking pep8
                                             (see @see fn remove_extra_spaces_folder)
     @param      github_owner                :epkg:`github` owner of the package
+    @param      existing_history            existing history, retrieves existing issues stored
+                                            in that file
     @return                                 True (an option was processed) or False,
                                             the file ``setup.py`` should call function ``setup``
 
@@ -166,7 +169,7 @@ def process_standard_options_for_setup(argv, file_or_folder, project_var_name, m
     filter file by regular expressions (in with *e*, out with *g*).
 
     .. versionadded:: 1.7
-        Parameter *github_owner* was added.
+        Parameters *github_owner*, *existing_history* were added.
     """
     if layout is None:
         layout = ["html", "pdf"]
@@ -286,9 +289,16 @@ def process_standard_options_for_setup(argv, file_or_folder, project_var_name, m
         dest = ' '.join(argv).split('history')[-1].strip()
         if not dest:
             dest = os.path.join(folder, 'HISTORY.rst')
+        if existing_history is None:
+            hfold = get_folder(file_or_folder)
+            histo = os.path.join(hfold, 'HISTORY.rst')
+            if os.path.exists(histo):
+                existing_history = histo
+        if existing_history is not None:
+            print('[history] existing ', existing_history)
         print('[history] ', dest)
-        build_history_from_setup(
-            dest, owner=github_owner, module=project_var_name, fLOG=fLOG)
+        build_history_from_setup(dest, owner=github_owner, module=project_var_name,
+                                 existing_history=existing_history, fLOG=fLOG)
         return True
 
     elif "write_version" in argv:
@@ -940,20 +950,23 @@ def hash_list(argv, size=8):
         return res
 
 
-def build_history_from_setup(dest, owner, module, fLOG=noLOG):
+def build_history_from_setup(dest, owner, module, existing_history=None, fLOG=noLOG):
     """
     Builds the history from :epkg:`github` and :epkg:`pypi`.
 
-    @param      dest        history will be written in this file
-    @param      owner       owner of the package on :epkg:`github`
-    @param      module      module name
-    @param      fLOG        logging function
-    @return                 history
+    @param      dest                history will be written in this file
+    @param      owner               owner of the package on :epkg:`github`
+    @param      module              module name
+    @param      existing_history    existing history, retrieves existing issues stored
+                                    in that file
+    @param      fLOG                logging function
+    @return                         history
     """
     if owner is None:
         raise ValueError("owner must be specified")
     repo = module
-    hist = build_history(owner, repo, unpublished=True, fLOG=fLOG)
+    hist = build_history(owner, repo, unpublished=True,
+                         existing_history=existing_history, fLOG=fLOG)
     output = compile_history(hist)
     if dest is not None:
         with open(dest, "w", encoding="utf-8") as f:

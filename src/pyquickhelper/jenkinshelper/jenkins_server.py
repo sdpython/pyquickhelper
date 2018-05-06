@@ -132,7 +132,8 @@ class JenkinsExt(jenkins.Jenkins):
         .. versionchanged:: 1.5
             Parameter *mails* was added.
         """
-        jenkins.Jenkins.__init__(self, url, username, password, timeout=timeout)
+        jenkins.Jenkins.__init__(
+            self, url, username, password, timeout=timeout)
         self._mock = mock
         self.platform = platform
         self.pypi_port = pypi_port

@@ -1,8 +1,11 @@
 """
 @file
 @helper Build history for a module.
+
+.. versionadded:: 1.7
 """
 from datetime import datetime, timedelta
+import re
 import requests
 import warnings
 from jinja2 import Template
@@ -56,22 +59,25 @@ def enumerate_closed_issues(owner, repo, since=None, issues=None,
 
 
 def build_history(owner, repo, name=None, since=None, issues=None, url=None,
-                  max_issue=None, releases=None, unpublished=False, fLOG=None):
+                  max_issue=None, releases=None, unpublished=False,
+                  existing_history=None, fLOG=None):
     """
     Returns an history of a module.
 
-    @param      owner       repo owner
-    @param      repo        repository
-    @param      name        None if ``name == repo``
-    @param      since       not older than that date, if None,
-                            do not go beyond a year
-    @param      issues      see @see fn call_github_api (unit test)
-    @param      url         see @see fn call_github_api (unit test)
-    @param      max_issue   see @see fn call_github_api (unit test)
-    @param      releases    bypass :epkg:`pypi` (unit test)
-    @param      unpublished keep unpublished released
-    @param      fLOG        logging function
-    @return                 iterator on issues ``(number, date, title)``
+    @param      owner               repo owner
+    @param      repo                repository
+    @param      name                None if ``name == repo``
+    @param      since               not older than that date, if None,
+                                    do not go beyond a year
+    @param      issues              see @see fn call_github_api (unit test)
+    @param      url                 see @see fn call_github_api (unit test)
+    @param      max_issue           see @see fn call_github_api (unit test)
+    @param      releases            bypass :epkg:`pypi` (unit test)
+    @param      unpublished         keep unpublished released
+    @param      existing_history    existing history, retrieves existing issues stored
+                                    in that file
+    @param      fLOG                logging function
+    @return                         iterator on issues ``(number, date, title)``
     """
     if since is None:
         since = datetime.now() - timedelta(730)
@@ -79,6 +85,11 @@ def build_history(owner, repo, name=None, since=None, issues=None, url=None,
         name = repo
 
     kept_issues = []
+    if existing_history is not None:
+        res = extract_issue_from_history(existing_history)
+        for k, v in sorted(res.items()):
+            kept_issues.append((k, v[0], v[1]))
+
     for issue in enumerate_closed_issues(owner, repo, since, issues=issues,
                                          url=url, max_issue=max_issue):
         kept_issues.append(issue)
@@ -86,6 +97,16 @@ def build_history(owner, repo, name=None, since=None, issues=None, url=None,
             fLOG("[build_history] ", name, issue[:2])
     if len(kept_issues) == 0:
         raise ValueError("No issue found.")
+
+    # remove duplicates
+    current = kept_issues
+    kept_issues = []
+    done = set()
+    for nb, dt, desc in current:
+        if nb not in done:
+            kept_issues.append((nb, dt, desc))
+            done.add(nb)
+    kept_issues.sort()
 
     if releases is None:
         versions = []
@@ -154,3 +175,124 @@ def compile_history(releases, template=None):
         template = _template
     tmpl = Template(template)
     return tmpl.render(releases=releases, len=len)
+
+
+class open_stream_file:
+    """
+    Opens a stream or a filename.
+    It works with keyword ``with``.
+
+    .. runpython::
+        :showcode:
+
+        from pyquickhelper.loghelper.anyfhelper import open_stream_file
+        from io import StringIO
+        st = StringIO("a\\nb")
+        with open_stream_file(st) as f:
+            for line in f.readline():
+                print(line)
+    """
+
+    def __init__(self, name, mode="r", encoding="utf-8"):
+        """
+        @param  name        stream or filename
+        @param  mode        open mode, works only if filename
+        @param  encoding    encoding, works only if filename
+        """
+        self.name = name
+        self.mode = mode
+        self.encoding = encoding
+
+    def __enter__(self):
+        """
+        Opens the stream or the file.
+        """
+        if hasattr(self, '_content'):
+            del self._content
+        if hasattr(self.name, "read"):
+            self.st = self.name
+        else:
+            self.st = open(self.name, self.mode, encoding=self.encoding)
+        return self
+
+    def __exit__(self, exception_type, exception_value, traceback):
+        """
+        Leaves the stream or the filename.
+        """
+        if hasattr(self.name, "read"):
+            pass
+        else:
+            self.st.close()
+        if hasattr(self, '_content'):
+            del self._content
+
+    def read(self, size=None):
+        """
+        Reads some bytes.
+
+        @param      size        number of bytes or characters to read
+        @return                 content
+        """
+        return self.st.read(size=size)
+
+    def readline(self):
+        """
+        Basic implementation.
+
+        @return     next line
+        """
+        if hasattr(self.st, "readline"):
+            return st.readline()
+        else:
+            if hasattr(self, '_content'):
+                self._content = self.read().split('\n')
+                self._pos = 0
+            if self._pos >= len(self._content):
+                return None
+            res = self._content[self._pos]
+            self._pos += 1
+            return res
+
+    def readlines(self):
+        """
+        Basic implementation.
+
+        @return     all text lines
+        """
+        if hasattr(self.st, "readlines"):
+            return self.st.readlines()
+        else:
+            line = self.readline()
+            lines = []
+            while line:
+                lines.append(line)
+                line = self.readline()
+            return lines
+
+
+def extract_issue_from_history(filename_or_stream):
+    """
+    Extracts issues from exsiting history stored
+    in ``HISTORY.rst``. The pattern must extract
+    from the following lines:
+
+    ::
+
+        * `133`: add a collapsible container, adapt it for runpython (2018-04-22)
+
+    @param      filename        stream or filename
+    @return                     ancient history, dictionary *{issue: (date, description)}*
+    """
+    with open_stream_file(filename_or_stream, mode='r', encoding='utf-8') as f:
+        lines = f.readlines()
+    reg = re.compile('`([0-9]+)`:(.*?)[(]([-0-9]{10})')
+    res = {}
+    for line in lines:
+        match = reg.search(line)
+        if match:
+            gr = match.groups()
+            issue = gr[0]
+            desc = gr[1].strip()
+            date = datetime.strptime(gr[2], '%Y-%m-%d')
+            res[int(issue)] = (date, desc)
+    return res

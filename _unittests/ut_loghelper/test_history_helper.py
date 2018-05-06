@@ -27,7 +27,12 @@ except ImportError:
 
 from src.pyquickhelper.loghelper import fLOG
 from src.pyquickhelper.pycode import ExtTestCase
-from src.pyquickhelper.loghelper.history_helper import build_history, compile_history
+from src.pyquickhelper.loghelper.history_helper import build_history, compile_history, extract_issue_from_history
+
+try:
+    from io import StringIO
+except ImportError:
+    from StringIO import StringIO
 
 
 class TestHistoryHelper(ExtTestCase):
@@ -100,6 +105,57 @@ class TestHistoryHelper(ExtTestCase):
         output = compile_history(history)
         self.assertIn('* `101`:', output)
         self.assertIn('1.7.2482 - 2018-03-22 - 1.99Mb', output)
+
+    def test_history_existing(self):
+        fLOG(
+            __file__,
+            self._testMethodName,
+            OutputPrint=__name__ == "__main__")
+
+        this = os.path.abspath(os.path.dirname(__file__))
+        data = os.path.join(this, "data", "HISTORY.rst")
+        history = build_history('sdpython', 'pyquickhelper',
+                                url="https://api.github.com/repos/sdpython/pyquickhelper/issues/{0}",
+                                issues=TestHistoryHelper.issues,
+                                max_issue=115, fLOG=fLOG, releases=TestHistoryHelper.releases,
+                                existing_history=data)
+        nb = 0
+        for release in history:
+            self.assertIn('issues', release)
+            self.assertIn('release', release)
+            nb += len(release['issues'])
+        self.assertNotEmpty(history)
+        self.assertGreater(nb, 1)
+
+        output = compile_history(history)
+        self.assertIn('* `101`:', output)
+        self.assertIn('1.7.2482 - 2018-03-22 - 1.99Mb', output)
+        nb = 0
+        for h in history:
+            rel = h['release']
+            if rel == '1.6.2398':
+                nb += 1
+                self.assertNotEmpty(h['issues'])
+
+    def test_extract_history(self):
+        fLOG(
+            __file__,
+            self._testMethodName,
+            OutputPrint=__name__ == "__main__")
+
+        this = os.path.abspath(os.path.dirname(__file__))
+        data = os.path.join(this, "data", "HISTORY.rst")
+        issues = extract_issue_from_history(data)
+        self.assertEqual(len(issues), 4)
+        self.assertIn(139, issues)
+
+        with open(data, "r", encoding='utf-8') as f:
+            content = f.read()
+        st = StringIO(content)
+        issues2 = extract_issue_from_history(st)
+        self.assertEqual(len(issues2), 4)
+        self.assertIn(139, issues2)
+        self.assertEqual(issues, issues2)
 
 
 if __name__ == "__main__":
