@@ -1092,19 +1092,6 @@ class RstTranslator(TextTranslator):
     def depart_issue(self, node):
         self.add_text('`')
 
-    def visit_Issue(self, node):
-        self.add_text(':Issue:`')
-        self.add_text(node['text'])
-
-    def depart_Issue(self, node):
-        self.add_text('`')
-
-    def visit_Release(self, node):
-        self.add_text(':Issue:`')
-
-    def depart_Release(self, node):
-        self.add_text('`')
-
     def eval_expr(self, expr):
         rst = True
         html = False

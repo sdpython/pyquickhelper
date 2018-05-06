@@ -444,30 +444,6 @@ class _AdditionalVisitDepart:
         """
         ext_visit_youtube_node(self, node)
 
-    def visit_Release(self, node):
-        """
-        @see fn visit_Release
-        """
-        pass
-
-    def depart_Release(self, node):
-        """
-        @see fn depart_Release
-        """
-        pass
-
-    def visit_Issue(self, node):
-        """
-        @see fn visit_Issue
-        """
-        pass
-
-    def depart_Issue(self, node):
-        """
-        @see fn depart_Issue
-        """
-        pass
-
     def eval_expr(self, expr):
         rst = self.output_format == 'rst'
         latex = self.output_format == 'latex'
@@ -1207,11 +1183,6 @@ class _CustomSphinx(Sphinx):
 
         # Otherwise, role issue is missing.
         setup_link_roles(self)
-
-        if 'issue' not in roles._roles:
-            ext = [_ for _ in self._added_objects if 'extlinks' in _]
-            raise ExtensionError("Role 'issue' is missing.\nDetected extension: {0}\nKnown roles:\n{1}".format(
-                ext, "\n".join(sorted(roles._roles))))
 
     def finalize(self, doctree, external_docnames=None):
         """
