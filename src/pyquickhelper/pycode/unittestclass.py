@@ -12,6 +12,7 @@ import decimal
 import cProfile
 import pstats
 import site
+import operator
 from .ci_helper import is_travis_or_appveyor
 from ..loghelper import fLOG
 
@@ -109,19 +110,19 @@ class ExtTestCase(unittest.TestCase):
     def assertEqualArray(self, d1, d2, **kwargs):
         """
         Checks that two arrays are equal.
-        Calls :epkg:`numpy:`.
+        Relies on :epkg:`numpy:testing:assert_almost_equal.html`.
         """
-        from numpy.testing import assert_array_equal
-        assert_array_equal(d1, d2, **kwargs)
+        from numpy.testing import assert_almost_equal
+        assert_almost_equal(d1, d2, **kwargs)
 
     def assertNotEqualArray(self, d1, d2, **kwargs):
         """
         Checks that two arrays are equal.
-        Calls :epkg:`numpy:`.
+        Relies on :epkg:`numpy:testing:assert_almost_equal.html`.
         """
-        from numpy.testing import assert_array_equal
+        from numpy.testing import assert_almost_equal
         try:
-            assert_array_equal(d1, d2, **kwargs)
+            assert_almost_equal(d1, d2, **kwargs)
         except AssertionError:
             return
         raise AssertionError("Two arrays are identical.")
