@@ -112,6 +112,12 @@ class ExtTestCase(unittest.TestCase):
         Checks that two arrays are equal.
         Relies on :epkg:`numpy:testing:assert_almost_equal.html`.
         """
+        if d1 is None and d2 is None:
+            return
+        if d1 is None:
+            raise AssertionError("d1 is None, d2 is not")
+        if d2 is None:
+            raise AssertionError("d1 is not None, d2 is")
         from numpy.testing import assert_almost_equal
         assert_almost_equal(d1, d2, **kwargs)
 
@@ -120,6 +126,10 @@ class ExtTestCase(unittest.TestCase):
         Checks that two arrays are equal.
         Relies on :epkg:`numpy:testing:assert_almost_equal.html`.
         """
+        if d1 is None and d2 is None:
+            raise AssertionError("d1 and d2 are equal to None")
+        if d1 is None or d2 is None:
+            return
         from numpy.testing import assert_almost_equal
         try:
             assert_almost_equal(d1, d2, **kwargs)

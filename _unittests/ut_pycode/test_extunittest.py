@@ -98,6 +98,18 @@ class TestExtTestCase(ExtTestCase):
         self.assertRaise(lambda: self.assertEqualArray(None, df),
                          AssertionError)
 
+    def test_arr_not_equal_noe(self):
+        from numpy import array
+        df = array([[0, 1], [1, 2]])
+        df1 = array([[0, 1], [1, 2]])
+        df2 = array([[0, 1], [3, 2]])
+        self.assertRaise(lambda: self.assertNotEqualArray(
+            df, df1), AssertionError)
+        self.assertRaise(lambda: self.assertNotEqualArray(
+            None, None), AssertionError)
+        self.assertNotEqualArray(df, None)
+        self.assertNotEqualArray(None, df)
+
     def test_arr_equal(self):
         from numpy import array
         df = array([[0, 1], [1, 2]])
