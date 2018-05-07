@@ -5,9 +5,11 @@
 History
 =======
 
-current - 2018-05-06 - 0.00Mb
+current - 2018-05-08 - 0.00Mb
 =============================
 
+* `140`: modify assertEqualArray to allow small different (assert_almost_equal) (2018-05-07)
+* `138`: retrieve past issues in history.rst (2018-05-06)
 * `139`: update to python-jenkins 1.0.0 (2018-05-05)
 
 1.7.2569 - 2018-05-01 - 1.99Mb
