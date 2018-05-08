@@ -24,8 +24,9 @@ def test_notebook_execution_coverage(filename, name, folder, this_module_name,
     @param      folder              where to look for notebooks
     @param      valid               skip cells if valid is False, None for all valid
     @param      copy_files          files to copy before running the notebooks.
-    @param      modules             list of extra dependencies
-    @param      this_module_name    the module name being tested
+    @param      modules             list of extra dependencies (not installed),
+                                    example: ``['pyensae']``
+    @param      this_module_name    the module name being tested (as a string)
     @param      filter_name         None or function
     @param      fLOG                logging function
 
