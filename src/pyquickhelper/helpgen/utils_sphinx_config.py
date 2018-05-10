@@ -66,6 +66,7 @@ def ie_layout_html():
         warnings.warn(
             "Sphinx does not seem to be properly installed, unable to find: " + layout +
             ".\nThis happens on virtual environment for Anaconda on Windows")
+        return False
 
 
 def locate_image_documentation(image_name):
@@ -100,7 +101,7 @@ def locate_image_documentation(image_name):
     if not os.path.exists(doc):
         raise FileNotFoundError(
             "unable to find a folder called _doc, the function cannot locate an image\n{0}".format(image_name))
-    for root, dirs, files in os.walk(doc):
+    for root, _, files in os.walk(doc):
         for name in files:
             t = os.path.join(root, name)
             fn = os.path.split(t)[-1]
@@ -118,7 +119,8 @@ def NbImage(name, repository=None, force_github=False, width=None):
     @param      force_github    force the system to retrieve the image from GitHub
     @param      repository      repository, see below
     @param      width           to modify the width
-    @return                     an `Image object <http://ipython.org/ipython-doc/2/api/generated/IPython.core.display.html#IPython.core.display.Image>`_
+    @return                     an `Image object <http://ipython.org/ipython-doc/2/api/generated/IPython.core.display.html
+                                #IPython.core.display.Image>`_
 
     We assume the image is retrieved from a notebook.
     This function will display an image even though the notebook is not run

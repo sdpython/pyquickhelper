@@ -9,13 +9,13 @@ See `Tutorial: Writing a simple extension <http://sphinx-doc.org/extdev/tutorial
 import sys
 import os
 from contextlib import redirect_stdout, redirect_stderr
+import traceback
 import warnings
 import sphinx
 from docutils import nodes, core
 from docutils.parsers.rst import Directive, directives
 from docutils.statemachine import StringList
 from sphinx.util.nodes import nested_parse_with_titles
-import traceback
 from ..loghelper.flog import run_cmd
 from ..texthelper.texts_language import TITLES
 from ..pycode.code_helper import remove_extra_spaces_and_pep8
@@ -147,7 +147,6 @@ def run_python_script(script, params=None, comment=None, setsysvar=None, process
                 "unable to find a path to add:\n{0}".format("\n".join(sys.path)))
         header.append('')
         script = "\n".join(header) + script
-        sin = script
         try:
             out, err = run_cmd(cmd, script, wait=True)
             return out, err
@@ -402,7 +401,7 @@ class RunPythonDirective(Directive):
                     comment = '  File "{0}.rst", line {1}\n  File "{0}.py", line {1}\n'.format(
                         docname, lineno)
                 raise ValueError(
-                    "Pep8 issue with\n'{0}'\n---SCRIPT---".format(docname, script_disp)) from e
+                    "Pep8 issue with\n'{0}'\n---SCRIPT---\n{1}".format(docname, script_disp)) from e
 
         # if an exception is raised, the documentation should report a warning
         # return [document.reporter.warning('messagr', line=self.lineno)]
@@ -446,6 +445,7 @@ class RunPythonDirective(Directive):
 
         # add indent
         def add_indent(content, nbind):
+            "local function"
             lines = content.split("\n")
             if nbind > 0:
                 lines = [(" " * nbind + _) for _ in lines]

@@ -72,12 +72,12 @@ def df2rst(df, add_line=True, align="l", column_size=None, index=False,
 
         try:
             values = df[ind].apply(boldify)
-        except Exception as e:
+        except Exception:
             warnings.warn("Unable to boldify the index (1).")
 
         try:
             df[ind] = values
-        except Exception as e:
+        except Exception:
             warnings.warn("Unable to boldify the index (2).")
 
     import numpy

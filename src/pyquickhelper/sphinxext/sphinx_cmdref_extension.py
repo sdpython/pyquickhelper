@@ -121,7 +121,7 @@ class CmdRef(BlocRef):
             fullname = "{0}.{1}".format(fullname, name_fct)
             try:
                 obj, name = import_object(fullname, kind="function")
-            except ImportError as e:
+            except ImportError:
                 logger = logging.getLogger("CmdRef")
                 logger.warning(
                     "[CmdRef] unable to import '{0}'".format(fullname))
@@ -134,6 +134,7 @@ class CmdRef(BlocRef):
                 stio = StringIO()
 
                 def local_print(*li):
+                    "local function"
                     stio.write(" ".join(str(_) for _ in li) + "\n")
                 obj(args=['--help'], fLOG=local_print)
 

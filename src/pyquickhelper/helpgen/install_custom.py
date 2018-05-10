@@ -107,7 +107,7 @@ def download_requirejs(to=".", fLOG=print,
         link = location
         try:
             page = read_url(link, encoding="utf8")
-        except ReadUrlException as e:
+        except ReadUrlException:
             if fLOG:
                 fLOG(
                     "[download_requirejs] unable to read '{0}'".format(location))

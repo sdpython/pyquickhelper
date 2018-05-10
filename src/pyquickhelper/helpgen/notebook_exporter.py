@@ -6,12 +6,12 @@
 .. versionadded:: 1.7
 """
 import os
+from textwrap import indent
 from traitlets import default
 from traitlets.config import Config
 from nbconvert.exporters import RSTExporter
 from jinja2 import DictLoader
 from nbconvert.filters.pandoc import convert_pandoc
-from textwrap import indent
 
 
 def convert_pandoc_rst(source, from_format, to_format, extra_args=None):
@@ -30,7 +30,8 @@ def convert_pandoc_rst(source, from_format, to_format, extra_args=None):
 def process_raw_html(source, extra_args=None):
     """
     Replaces the output of
-    `add_menu_notebook <http://www.xavierdupre.fr/app/jyquickhelper/helpsphinx/jyquickhelper/helper_in_notebook.html#jyquickhelper.helper_in_notebook.add_notebook_menu>`_
+    `add_menu_notebook <http://www.xavierdupre.fr/app/jyquickhelper/helpsphinx/jyquickhelper/
+    helper_in_notebook.html#jyquickhelper.helper_in_notebook.add_notebook_menu>`_
     by:
 
     ::
@@ -56,16 +57,19 @@ class UpgradedRSTExporter(RSTExporter):
     * It converts :epkg:`svg` into :epkg:`png` if possible,
       see @see fn process_raw_html.
     * It replaces some known :epkg:`javascript`. The output of function
-      `add_menu_notebook <http://www.xavierdupre.fr/app/jyquickhelper/helpsphinx/jyquickhelper/helper_in_notebook.html#jyquickhelper.helper_in_notebook.add_notebook_menu>`_
+      `add_menu_notebook <http://www.xavierdupre.fr/app/jyquickhelper/helpsphinx/jyquickhelper/
+      helper_in_notebook.html#jyquickhelper.helper_in_notebook.add_notebook_menu>`_
       is replaced by ``.. contents::``.
 
     .. index:: notebook export, nbconvert
 
     It extends the template
     `rst.tpl <https://github.com/jupyter/nbconvert/blob/master/nbconvert/templates/rst.tpl>`_.
-    New template is `rst_modified.tpl <https://github.com/sdpython/pyquickhelper/blob/master/src/pyquickhelper/helpgen/rst_modified.tpl>`_.
+    New template is `rst_modified.tpl <https://github.com/sdpython/pyquickhelper/blob/master/
+    src/pyquickhelper/helpgen/rst_modified.tpl>`_.
     It follows the hints given at
-    `Programatically creating templates <https://nbconvert.readthedocs.io/en/latest/nbconvert_library.html#Programatically-creating-templates>`_.
+    `Programatically creating templates
+    <https://nbconvert.readthedocs.io/en/latest/nbconvert_library.html#Programatically-creating-templates>`_.
 
     :epkg:`jyquickhelper` should add a string highly recognizable when adding a menu.
     """

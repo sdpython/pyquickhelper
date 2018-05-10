@@ -12,7 +12,6 @@ import decimal
 import cProfile
 import pstats
 import site
-import operator
 from .ci_helper import is_travis_or_appveyor
 from ..loghelper import fLOG
 

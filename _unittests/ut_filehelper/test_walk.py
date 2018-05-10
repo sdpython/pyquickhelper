@@ -37,7 +37,7 @@ class TestWalk(ExtTestCase):
         ut = os.path.join(this, "..")
         fLOG(this)
         nb = 0
-        for root, dirs, files in walk(ut):
+        for _ in walk(ut):
             nb += 1
 
         if sys.version_info[0] >= 3:

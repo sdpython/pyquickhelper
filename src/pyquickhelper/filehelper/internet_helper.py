@@ -2,13 +2,13 @@
 @file
 @brief Gather functions about downloading from internet, ...
 """
+import os
+import sys
+import shutil
 from ..loghelper.flog import noLOG, _get_file_url
 from .fexceptions import FileException
 from ..loghelper.flog import _first_more_recent
 
-import os
-import sys
-import shutil
 if sys.version_info[0] == 2:
     import urllib2 as urllib_request
 else:

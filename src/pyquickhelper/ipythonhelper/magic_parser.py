@@ -40,7 +40,7 @@ class MagicCommandParser (argparse.ArgumentParser):
         if args == ('-h', '--help'):
             return "help"
         typstr = str  # unicode#
-        for i, a in enumerate(args):
+        for a in args:
             if isinstance(a, typstr):
                 if a[0] != "-":
                     return a

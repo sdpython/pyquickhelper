@@ -38,14 +38,14 @@ def reap_children(timeout=3, subset=None, fLOG=fLOG):
     # send SIGTERM
     for p in procs:
         p.terminate()
-    gone, alive = psutil.wait_procs(
+    _, alive = psutil.wait_procs(
         procs, timeout=timeout, callback=on_terminate)
     if alive:
         # send SIGKILL
         for p in alive:
             fLOG("process {} survived SIGTERM; trying SIGKILL" % p)
             p.kill()
-        gone, alive = psutil.wait_procs(
+        _, alive = psutil.wait_procs(
             alive, timeout=timeout, callback=on_terminate)
         if alive:
             # give up

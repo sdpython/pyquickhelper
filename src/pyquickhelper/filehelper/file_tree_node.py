@@ -68,6 +68,7 @@ class FileTreeNode:
     _default_out = re.compile("([.]svn)|(hal.*[.]((exe)|(dll)|(so)|(sln)|(vcproj)))" +
                               "|".join(["(.*[.]%s$)" % e for e in _default_not_ext]))
 
+    @staticmethod
     def build_expression(ext):
         """
         build a regular expression validating a list of extension
@@ -76,7 +77,6 @@ class FileTreeNode:
         @return             pattern (string)
         """
         return ".*[.]" + "|".join(["(%s$)" % e for e in ext])
-    build_expression = staticmethod(build_expression)
 
     def __init__(self, root, file=None, filter=None, level=0, parent=None,
                  repository=False, log=False, log1=False, fLOG=noLOG):
@@ -129,6 +129,7 @@ class FileTreeNode:
                 exp = re.compile(filter)
 
                 def fil(root, path, f, dir, e=exp):
+                    "local function"
                     return dir or (e.search(f) is not None)
 
                 self._fill(fil, repository=repository)
@@ -485,7 +486,7 @@ class FileTreeNode:
         self.fLOG("removing ", full)
         try:
             os.remove(full)
-        except Exception as e:
+        except OSError as e:
             self.fLOG(
                 "unable to remove ", full, " --- ", str(e).replace("\n", " "))
             self.fLOG("[pyqerror] ", e)
@@ -531,7 +532,7 @@ class FileTreeNode:
             if t1 >= t2:
                 raise PQHException(
                     "do not understand why t1 >= t2 for file %s" % full)
-        except Exception as e:
+        except OSError as e:
             # else :
             self.fLOG("unable to copy file ", full, " to ", path)
             self.fLOG("[pyqerror]", e)

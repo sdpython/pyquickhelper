@@ -2,10 +2,6 @@
 @file
 @brief Some automation helpers about notebooks
 """
-from .notebook_runner import NotebookRunner
-from .notebook_exception import NotebookException
-from ..filehelper import explore_folder_iterfile, remove_folder
-
 import os
 import sys
 import json
@@ -15,6 +11,10 @@ from nbformat.reader import reads, NotJSONError
 from nbformat.v4 import upgrade
 from ..filehelper import read_content_ufs
 from ..loghelper import noLOG
+from ..filehelper import explore_folder_iterfile, remove_folder
+from .notebook_runner import NotebookRunner
+from .notebook_exception import NotebookException
+
 
 with warnings.catch_warnings():
     warnings.simplefilter("ignore", category=ImportWarning)
@@ -114,7 +114,7 @@ def read_nb(filename, profile_dir=None, encoding="utf8", working_dir=None,
             kernel_name="python", log_level="30", extended_args=None,
             kernel=False, replacements=None):
     """
-    reads a notebook and return a @see cl NotebookRunner object
+    Reads a notebook and return a @see cl NotebookRunner object.
 
     @param      filename        notebook filename (or stream)
     @param      profile_dir     profile directory
@@ -161,11 +161,48 @@ def read_nb(filename, profile_dir=None, encoding="utf8", working_dir=None,
         return nb_runner
 
 
+def read_nb_json(js, profile_dir=None, encoding="utf8",
+                 working_dir=None, comment="", fLOG=noLOG, code_init=None,
+                 kernel_name="python", log_level="30", extended_args=None,
+                 kernel=False, replacements=None):
+    """
+    Reads a notebook from a :epkg:`JSON` stream or string.
+
+    @param      js              string or stream
+    @param      profile_dir     profile directory
+    @param      encoding        encoding for the notebooks
+    @param      working_dir     working directory
+    @param      comment         additional information added to error message
+    @param      code_init       to initialize the notebook with a python code as if it was a cell
+    @param      fLOG            logging function
+    @param      log_level       Choices: (0, 10, 20, 30=default, 40, 50, 'DEBUG', 'INFO', 'WARN', 'ERROR', 'CRITICAL')
+    @param      kernel_name     kernel name, it can be None
+    @param      extended_args   others arguments to pass to the command line ('--KernelManager.autorestar=True' for example),
+                                see :ref:`l-ipython_notebook_args` for a full list
+    @param      kernel          *kernel* is True by default, the notebook can be run, if False,
+                                the notebook can be read but not run
+    @param      replacements    replacements to make in every cell before running it,
+                                dictionary ``{ string: string }``
+    @return                     instance of @see cl NotebookRunner
+    """
+    if isinstance(js, str  # unicode#
+                  ):
+        st = StringIO(js)
+    else:
+        st = js
+    return read_nb(st, encoding=encoding, kernel=kernel,
+                   profile_dir=profile_dir, working_dir=working_dir,
+                   comment=comment, fLOG=fLOG, code_init=code_init,
+                   kernel_name="python", log_level="30", extended_args=None,
+                   replacements=replacements)
+
+
 def find_notebook_kernel(kernel_spec_manager=None):
     """
     return a dict mapping kernel names to resource directories
 
-    @param      kernel_spec_manager     see `KernelSpecManager <http://jupyter-client.readthedocs.org/en/latest/api/kernelspec.html#jupyter_client.kernelspec.KernelSpecManager>`_
+    @param      kernel_spec_manager     see `KernelSpecManager <http://jupyter-client.readthedocs.org/en/
+                                        latest/api/kernelspec.html#jupyter_client.kernelspec.KernelSpecManager>`_
                                         A KernelSpecManager to use for installation.
                                         If none provided, a default instance will be created.
     @return                             dict
@@ -184,9 +221,10 @@ def find_notebook_kernel(kernel_spec_manager=None):
 
 def get_notebook_kernel(kernel_name, kernel_spec_manager=None):
     """
-    return a `KernelSpec <https://ipython.org/ipython-doc/dev/api/generated/IPython.kernel.kernelspec.html>`_
+    Returns a `KernelSpec <https://ipython.org/ipython-doc/dev/api/generated/IPython.kernel.kernelspec.html>`_.
 
-    @param      kernel_spec_manager     see `KernelSpecManager <http://jupyter-client.readthedocs.org/en/latest/api/kernelspec.html#jupyter_client.kernelspec.KernelSpecManager>`_
+    @param      kernel_spec_manager     see `KernelSpecManager <http://jupyter-client.readthedocs.org/en/
+                                        latest/api/kernelspec.html#jupyter_client.kernelspec.KernelSpecManager>`_
                                         A KernelSpecManager to use for installation.
                                         If none provided, a default instance will be created.
     @param      kernel_name             kernel name
@@ -206,9 +244,10 @@ def install_notebook_extension(path=None, overwrite=False, symlink=False,
                                user=False, prefix=None, nbextensions_dir=None,
                                destination=None):
     """
-    install notebook extensions,
-    see `install_nbextension <https://ipython.org/ipython-doc/dev/api/generated/IPython.html.nbextensions.html#IPython.html.nbextensions.install_nbextension>`_
-    for documentation
+    Install notebook extensions,
+    see `install_nbextension <https://ipython.org/ipython-doc/dev/api/generated/IPython.html.nbextensions.html
+    #IPython.html.nbextensions.install_nbextension>`_
+    for documentation.
 
     @param      path                if None, use default value
     @param      overwrite           overwrite the extension
@@ -220,7 +259,8 @@ def install_notebook_extension(path=None, overwrite=False, symlink=False,
     @return                         standard output
 
     Default value is
-    `https://github.com/ipython-contrib/IPython-notebook-extensions/archive/master.zip <https://github.com/ipython-contrib/IPython-notebook-extensions/archive/master.zip>`_.
+    `https://github.com/ipython-contrib/IPython-notebook-extensions/archive/master.zip
+    <https://github.com/ipython-contrib/IPython-notebook-extensions/archive/master.zip>`_.
 
     .. versionadded:: 1.3
     """
@@ -397,12 +437,10 @@ def install_jupyter_kernel(exe=sys.executable, kernel_spec_manager=None, user=Fa
 
 def install_python_kernel_for_unittest(suffix=None):
     """
-    install a kernel based on this python (sys.executable) for unit test purposes
+    Installs a kernel based on this python (sys.executable) for unit test purposes.
 
     @param      suffix      suffix to add to the kernel name
     @return                 kernel name
-
-    .. versionadded:: 1.3
     """
     exe = os.path.split(sys.executable)[0].replace("pythonw", "python")
     exe = exe.replace("\\", "/").replace("/",
@@ -417,14 +455,15 @@ def install_python_kernel_for_unittest(suffix=None):
 
 def remove_kernel(kernel_name, kernel_spec_manager=None):
     """
-    @param      kernel_spec_manager     see `KernelSpecManager <http://jupyter-client.readthedocs.org/en/latest/api/kernelspec.html#jupyter_client.kernelspec.KernelSpecManager>`_
+    Removes a kernel.
+
+    @param      kernel_spec_manager     see `KernelSpecManager <http://jupyter-client.readthedocs.org/
+                                        en/latest/api/kernelspec.html#jupyter_client.kernelspec.KernelSpecManager>`_
                                         A KernelSpecManager to use for installation.
                                         If none provided, a default instance will be created.
     @param      kernel_name             kernel name
 
-    The function only works with Jupyter>=4.0.
-
-    .. versionadded:: 1.3
+    The function only works with *Jupyter>=4.0*.
     """
     kernels = find_notebook_kernel(kernel_spec_manager=kernel_spec_manager)
     if kernel_name in kernels:
@@ -461,12 +500,9 @@ def remove_execution_number(infile, outfile=None, encoding="utf-8", indent=2, ru
         Remove execution number from the notebook
         to avoid commiting changes only about those numbers
 
-    .. versionchanged:: 1.5
-        The behavior was changed when outfile is not None.
-        Parameter *rule* was added.
-        `notebook 5.1.0 <http://jupyter-notebook.readthedocs.io/en/stable/changelog.html#release-5-1-0>`_
-        introduced changes which are incompatible with
-        leaving the cell executing number empty.
+    `notebook 5.1.0 <http://jupyter-notebook.readthedocs.io/en/stable/changelog.html#release-5-1-0>`_
+    introduced changes which are incompatible with
+    leaving the cell executing number empty.
     """
     def fixup(adict, k, v, cellno=0, outputs="outputs"):
         for key in adict.keys():

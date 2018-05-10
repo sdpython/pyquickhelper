@@ -34,7 +34,7 @@ class TestNotebookGalleryBug(unittest.TestCase):
 
     def a_test_notebook_gallery_bug(self, layout):
         if sys.version_info[0] == 2:
-            return
+            return None
 
         temp = get_temp_folder(__file__, "temp_gallery_bug_{0}".format(layout))
         fold = os.path.normpath(os.path.join(

@@ -100,6 +100,7 @@ def create_cli_parser(f, prog=None, layout="sphinx", skip_parameters=('fLOG',),
                 docparams[name] = doc
 
     def clear_node_list(doctree):
+        "local function"
         for node_list in doctree.traverse(nodes.field_list):
             node_list.clear()
 

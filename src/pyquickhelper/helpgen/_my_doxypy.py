@@ -12,7 +12,7 @@ The main tweaks are:
 from __future__ import print_function
 import sys
 import re
-from optparse import OptionParser
+from argparse import ArgumentParser as OptionParser
 
 
 _allowed = re.compile("^([a-zA-Z]:)?[^:*?\"<>|]+$")
@@ -370,8 +370,7 @@ class Doxypy(object):
         """
         if options.debug:
             sys.stderr.write("# CALLBACK: appendCommentLine")
-        (from_state, to_state, condition,
-         callback) = self.fsm.current_transition
+        from_state, to_state, condition, callback = self.fsm.current_transition
 
         # single line comment
         if (from_state == "DEFCLASS" and to_state == "DEFCLASS_BODY") \
@@ -493,8 +492,8 @@ class Doxypy(object):
         else:
             import os
             if is_file_string(filename) and os.path.exists(filename):
-                with open(filename, 'r') as f:
-                    for line in f:
+                with open(filename, 'r') as fh:
+                    for line in fh:
                         self.parseLine(line.rstrip('\r\n'))
                     self._index_row += 1
             else:
@@ -521,18 +520,19 @@ def optParse():
     """
     Parses commandline options.
     """
-    parser = OptionParser(
-        prog=__applicationName__, version="%prog " + __version__)
+    parser = OptionParser(prog=__applicationName__)
 
-    parser.set_usage("%prog [options] filename")
-    parser.add_option("--autobrief",
-                      action="store_true", dest="autobrief",
-                      help="use the docstring summary line as @brief description"
-                      )
-    parser.add_option("--debug",
-                      action="store_true", dest="debug",
-                      help="enable debug output on stderr"
-                      )
+    # parser.set_usage("%prog [options] filename")
+    parser.add_argument("--autobrief",
+                        action="store_true", dest="autobrief",
+                        help="use the docstring summary line as @brief description",
+                        version="%prog " + __version__
+                        )
+    parser.add_argument("--debug",
+                        action="store_true", dest="debug",
+                        help="enable debug output on stderr",
+                        version="%prog " + __version__
+                        )
 
     # parse options
     global options

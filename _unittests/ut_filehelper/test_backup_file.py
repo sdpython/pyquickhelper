@@ -22,7 +22,7 @@ except ImportError:
     import src
 
 from src.pyquickhelper.loghelper import fLOG
-from src.pyquickhelper.pycode import get_temp_folder
+from src.pyquickhelper.pycode import get_temp_folder, ExtTestCase
 from src.pyquickhelper.filehelper import EncryptedBackup, FileTreeNode, TransferAPIFile
 from src.pyquickhelper.filehelper.transfer_api import MockTransferAPI
 
@@ -30,7 +30,7 @@ if sys.version_info[0] == 2:
     from codecs import open
 
 
-class TestBackupFiles(unittest.TestCase):
+class TestBackupFiles(ExtTestCase):
 
     def test_backup(self):
         fLOG(
@@ -66,8 +66,8 @@ class TestBackupFiles(unittest.TestCase):
             algo=algo)
 
         done, issue = enc.start_transfering()
-        assert len(done) > 0
-        assert len(issue) == 0
+        self.assertNotEmpty(done)
+        self.assertEmpty(issue)
 
         for k, v in sorted(enc.Mapping.items()):
             fLOG(k, len(v.pieces), v)
@@ -119,8 +119,8 @@ class TestBackupFiles(unittest.TestCase):
             algo=algo)
 
         done, issue = enc.start_transfering()
-        assert len(done) > 0
-        assert len(issue) == 0
+        self.assertNotEmpty(done)
+        self.assertEmpty(issue)
 
         for k, v in sorted(enc.Mapping.items()):
             fLOG(k, len(v.pieces), v)
@@ -140,7 +140,7 @@ class TestBackupFiles(unittest.TestCase):
 
         detemp = os.path.join(temp, "retrieved")
         s = enc.retrieve_all(detemp, regex=".*[.]py")
-        assert len(s) > 0
+        self.assertNotEmpty(s)
 
 
 if __name__ == "__main__":

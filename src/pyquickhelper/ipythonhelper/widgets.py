@@ -70,6 +70,10 @@ class StaticWidget(object):
         """
         return self.html()
 
+    def html(self):
+        "abstract method"
+        raise NotImplementedError("This should overriden.")
+
     def copy(self):
         """
         calls deepcopy

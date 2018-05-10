@@ -97,7 +97,7 @@ def do_main(source, dest, password, encrypt,
 
         if fLOG:
             fLOG("start backup")
-        done, issue = enc.start_transfering()
+        issue = enc.start_transfering()[1]
 
         for file, exc in issue:
             if fLOG:

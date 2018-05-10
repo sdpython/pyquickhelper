@@ -324,7 +324,7 @@ def post_process_rst_output(file, html, pdf, python, slides, present, is_noteboo
     if fLOG:
         fLOG("[post_process_rst_output]", file)
 
-    fold, name = os.path.split(file)
+    name = os.path.split(file)[1]
     noext = os.path.splitext(name)[0]
     with open(file, "r", encoding="utf8") as f:
         lines = f.readlines()
@@ -530,7 +530,8 @@ def post_process_rst_output(file, html, pdf, python, slides, present, is_noteboo
         f.write(content)
 
 
-def post_process_html_output(file, pdf, python, slides, present, exc=True, nblinks=None, fLOG=None,
+def post_process_html_output(file, pdf, python, slides, present, exc=True,
+                             nblinks=None, fLOG=None,
                              notebook_replacements=None):
     """
     Processes a HTML file generated from the conversion of a notebook.
@@ -546,16 +547,9 @@ def post_process_html_output(file, pdf, python, slides, present, exc=True, nblin
     @param      notebook_replacements   string replacement in notebooks
     @param      fLOG                    logging function
 
-    .. versionchanged:: 1.4
-        Parameter *present* was added.
-
-    .. versionchanged:: 1.5
-        Parameter *exc*, *nblinks*, *fLOG* were added.
-
     .. versionchanged:: 1.6
         Parameter *notebook_replacements* was added.
     """
-    fold, name = os.path.split(file)
     if not os.path.exists(file):
         raise FileNotFoundError(file)
     with open(file, "r", encoding="utf8") as f:
@@ -578,10 +572,11 @@ def post_process_html_output(file, pdf, python, slides, present, exc=True, nblin
         f.write(text)
 
 
-def post_process_slides_output(file, pdf, python, slides, present, exc=True, nblinks=None, fLOG=None,
+def post_process_slides_output(file, pdf, python, slides, present, exc=True,
+                               nblinks=None, fLOG=None,
                                notebook_replacements=None):
     """
-    Processes a HTML file generated from the conversion of a notebook.
+    Processes a :epkg:`HTML` file generated from the conversion of a notebook.
 
     @param      file                    filename
     @param      pdf                     if True, add a link to the PDF, assuming it will
@@ -593,15 +588,6 @@ def post_process_slides_output(file, pdf, python, slides, present, exc=True, nbl
     @param      nblinks                 dictionary ``{ref: url}``
     @param      notebook_replacements   string replacement in notebooks
     @param      fLOG                    logging function
-
-    .. versionchanged:: 1.4
-        Parameter *present* was added.
-
-    .. versionchanged:: 1.5
-        Parameter *exc*, *nblinks*, *fLOG* were added.
-
-    .. versionchanged:: 1.6
-        Parameter *notebook_replacements* was added.
     """
     if (len(file) > 5000 or not os.path.exists(file)) and "<html" in file:
         text = file
@@ -609,7 +595,7 @@ def post_process_slides_output(file, pdf, python, slides, present, exc=True, nbl
     else:
         if not os.path.exists(file):
             raise FileNotFoundError(file)
-        fold, name = os.path.split(file)
+        # fold, name = os.path.split(file)
         with open(file, "r", encoding="utf8") as f:
             text = f.read()
         save = True
@@ -644,8 +630,7 @@ def post_process_slides_output(file, pdf, python, slides, present, exc=True, nbl
     if save:
         with open(file, "w", encoding="utf8") as f:
             f.write(text)
-    else:
-        return text
+    return text
 
 
 def post_process_latex(st, doall, info=None, latex_book=False, exc=True,
@@ -693,7 +678,8 @@ def post_process_latex(st, doall, info=None, latex_book=False, exc=True,
         does not accepts inline chinese
         characters, `xetex <https://en.wikipedia.org/wiki/XeTeX>`_
         should be used instead:
-        see `How to input Traditional Chinese in pdfLaTeX <http://tex.stackexchange.com/questions/200449/how-to-input-traditional-chinese-in-pdflatex>`_.
+        see `How to input Traditional Chinese in pdfLaTeX
+        <http://tex.stackexchange.com/questions/200449/how-to-input-traditional-chinese-in-pdflatex>`_.
         Until this is being implemeted, the unicode will unfortunately be removed
         in this function.
     """

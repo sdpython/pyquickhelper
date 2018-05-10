@@ -52,7 +52,8 @@ class TestGraphChanges (unittest.TestCase):
         code = produce_code_graph_changes(df)
         fLOG(code)
 
-        if True:
+        enabled = True
+        if enabled:
             # this is the code which is generate
             import matplotlib.pyplot as plt
             x = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26,

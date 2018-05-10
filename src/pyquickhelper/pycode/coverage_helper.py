@@ -127,8 +127,9 @@ def coverage_combine(data_files, output_path, source, process=None, absolute_pat
                 rows.append('   {0}'.format(k))
             rows.append("------- END")
 
-        raise RuntimeError(
-            "{5}. In '{0}'.\n{1}\n{2}\n---AFTER---\n{3}\n---BEGIN---\n{4}".format(output_path, "\n".join(rows), content, ex, ex2, exc, cov)) from exc
+        mes = "{5}. In '{0}'.\n{1}\n{2}\n---AFTER---\n{3}\n---BEGIN---\n{4}"
+        raise RuntimeError(mes.format(output_path, "\n".join(
+            rows), content, ex, ex2, exc, cov)) from exc
 
     # We copy the origin coverage if the report is produced
     # in a folder part of the merge.

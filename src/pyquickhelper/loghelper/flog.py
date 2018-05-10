@@ -15,11 +15,13 @@ The function fLOG (or fLOG) is used to logged everything into a log file.
     fLOG ("un", "deux", 4, ["gt"])            # log everything in a log file
 
     from pyquickhelper.loghelper.flog import GetPath ()
-    print GetPath ()                            # return the log path (file temp_log.txt)
+    print GetPath ()                          # return the log path (file temp_log.txt)
 
     fLOG (LogPath = "c:/temp/log_path")       # change the log path, creates it if it does not exist
 
-@warning This module inserts static variable in module sys. I did it because I did not know how to deal with several instance of the same module.
+@warning This module inserts static variable in module :epkg:`*py:sys`.
+         I was done to deal with several instances of the same module
+         in earlier versions of :epkg:`python`.
 """
 import copy
 import datetime
@@ -30,6 +32,7 @@ import pprint
 import random
 import sys
 import time
+import re
 import zipfile
 from .flog_fake_classes import FlogStatic, LogFakeFileStream, LogFileStream, PQHException
 from .run_cmd import run_cmd
@@ -49,8 +52,8 @@ flog_static = FlogStatic()
 def init(path=None, filename=None, create=True, path_add=None):
     """
     initialisation
-    @param      path            new path,
-                                    - if path == "###", then uses d:\\temp\\log_pyquickhelper is it exists or c:\\temp\\log_pyquickhelper if not
+    @param      path            new path, if path==*"###"*, then uses ``d:\\temp\\log_pyquickhelper``
+                                if it exists or ``c:\\temp\\log_pyquickhelper`` if not
     @param      filename        new filename
     @param      create          force the creation
     @param      path_add        subfolder to append to the current folder
@@ -666,9 +669,6 @@ def _first_more_recent(f1, path):
     @param      path    path name
     @return             boolean
     """
-    import datetime
-    import re
-    import time
     typstr = str  # unicode#
     s = typstr(f1.info())
     da = re.compile("Last[-]Modified: (.+) GMT").search(s)

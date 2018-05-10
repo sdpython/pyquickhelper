@@ -135,10 +135,13 @@ def run_cmd(cmd, sin="", shell=sys.platform.startswith("win"), wait=False, log_e
     @param      encerror            encoding errors (ignore by default) while converting the output into a string
     @param      encoding            encoding of the output
     @param      change_path         change the current path if  not None (put it back after the execution)
-    @param      communicate         use method `communicate <https://docs.python.org/3/library/subprocess.html#subprocess.Popen.communicate>`_ which is supposed to be safer,
-                                    parameter ``wait`` must be True
-    @param      preprocess          preprocess the command line if necessary (not available on Windows) (False to disable that option)
-    @param      timeout             when data is sent to stdin (``sin``), a timeout is needed to avoid waiting for ever (*timeout* is in seconds)
+    @param      communicate         use method `communicate
+                                    <https://docs.python.org/3/library/subprocess.html#subprocess.Popen.communicate>`_
+                                    which is supposed to be safer, parameter ``wait`` must be True
+    @param      preprocess          preprocess the command line if necessary (not available on Windows)
+                                    (False to disable that option)
+    @param      timeout             when data is sent to stdin (``sin``), a timeout is needed to avoid
+                                    waiting for ever (*timeout* is in seconds)
     @param      catch_exit          catch *SystemExit* exception
     @param      fLOG                logging function (if not None, bypass others parameters)
     @param      tell_if_no_output   tells if there is no output every *tell_if_no_output* seconds
@@ -162,7 +165,8 @@ def run_cmd(cmd, sin="", shell=sys.platform.startswith("win"), wait=False, log_e
         Changed *fLOG* default value to None. Remove parameter *do_not_log*, *secure*, *stop_waiting_if*.
         Implements parameter *stop_running_if*.
         Improve the behavior of the function.
-        See `Constantly print Subprocess output while process is running <http://stackoverflow.com/questions/4417546/constantly-print-subprocess-output-while-process-is-running/4417735>`_.
+        See `Constantly print Subprocess output while process is running
+        <http://stackoverflow.com/questions/4417546/constantly-print-subprocess-output-while-process-is-running/4417735>`_.
         Parameter *tell_if_no_output*, *stop_running_if* were added.
 
     .. versionchanged:: 1.5
@@ -335,7 +339,8 @@ def run_cmd(cmd, sin="", shell=sys.platform.startswith("win"), wait=False, log_e
                     except Exception as e:
                         warnings.warn("Unable to close stdout and sterr.")
                     if catch_exit:
-                        raise RunCmdException("SystemExit raised with error code {0}\nCMD:\n{1}\nCWD:\n{2}\n#---OUT---#\n{3}\n#---ERR---#\n{4}".format(
+                        mes = "SystemExit raised with error code {0}\nCMD:\n{1}\nCWD:\n{2}\n#---OUT---#\n{3}\n#---ERR---#\n{4}"
+                        raise RunCmdException(mes.format(
                             returnCode, cmd, os.getcwd(), "\n".join(out), "\n".join(err)))
                     else:
                         raise subprocess.CalledProcessError(returnCode, cmd)

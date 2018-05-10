@@ -260,6 +260,7 @@ if not r:
             "pandas>=0.20.0",
             "pycodestyle>=2.0.0",
             "pydocstyle",
+            "pylint",
             "semantic_version",
             "simplegeneric",
             "sphinx>=1.6",   # also != 1.7

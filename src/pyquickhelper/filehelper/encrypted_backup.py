@@ -152,7 +152,7 @@ class EncryptedBackup:
             if f.isfile():
                 if self._filter_out(f.fullname):
                     continue
-                n, r = self._ft.has_been_modified_and_reason(f.fullname)
+                n = self._ft.has_been_modified_and_reason(f.fullname)[0]
                 if n:
                     yield f
 
@@ -299,13 +299,13 @@ class EncryptedBackup:
 
             maps = TransferAPI_FileInfo(relp, [], datetime.datetime.now())
             r = True
-            for i, data in enumerate(self.enumerate_read_encrypt(file.fullname)):
+            for ii, data in enumerate(self.enumerate_read_encrypt(file.fullname)):
                 if data is None or isinstance(data, Exception):
                     # it means something went wrong
                     r = False
                     err = data
                     break
-                to = self._api.get_remote_path(data, relp, i)
+                to = self._api.get_remote_path(data, relp, ii)
                 to = path + "/" + to
                 to = to.lstrip("/")
                 r &= self.transfer(to, data)
@@ -405,6 +405,7 @@ class EncryptedBackup:
         rema = re.compile(regex) if regex else None
 
         def match(na):
+            "local function"
             if rema:
                 return rema.search(na)
             else:
@@ -414,7 +415,7 @@ class EncryptedBackup:
         self.load_mapping()
         self.fLOG("number of files", len(self.Mapping))
         done = []
-        for k, v in sorted(self.Mapping.items()):
+        for k in sorted(self.Mapping.keys()):
             name = self.retrieve(k, root=dest)
             if match(name):
                 size = os.stat(name).st_size

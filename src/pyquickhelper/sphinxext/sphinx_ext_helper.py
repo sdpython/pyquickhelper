@@ -21,7 +21,7 @@ def info_blocref(app, doctree, fromdocname, class_name,
     """
     incconf = '%s_include_%ss' % (class_name, class_name)
     rows2 = []
-    for ilist, node in enumerate(doctree.traverse(class_node_list)):
+    for node in doctree.traverse(class_node_list):
         breftag = node.get("breftag", None)
         rows2.append("tag={0} do={1}".format(breftag, app.config[incconf]))
     if len(rows2) == 0:

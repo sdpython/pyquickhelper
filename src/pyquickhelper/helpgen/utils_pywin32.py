@@ -13,6 +13,7 @@ def import_pywin32():
     """
     try:
         import win32com
+        return win32com
     except ImportError as e:
         if "DLL load failed:" in str(e):
             import os
@@ -28,7 +29,9 @@ def import_pywin32():
             ])
 
             epath = os.environ["PATH"]
+            last_path = None
             for path in paths:
+                last_path = path
                 # exe = os.path.abspath(os.path.dirname(sys.executable))
                 os.environ["PATH"] = epath + ";" + path
 
@@ -37,7 +40,7 @@ def import_pywin32():
                     return win32com
                 except ImportError:
                     # we try the next path
-                    pass
+                    continue
 
             try:
                 import win32com
@@ -50,8 +53,9 @@ def import_pywin32():
                     import win32com
                     return win32com
                 except ImportError:
-                    dll = os.listdir(path)
-                    dll = [os.path.join(path, _) for _ in dll if "dll" in _]
+                    dll = os.listdir(last_path)
+                    dll = [os.path.join(last_path, _)
+                           for _ in dll if "dll" in _]
                     if len(dll) == 0:
                         raise ImportError("Did you install pywin32?") from e
                     else:

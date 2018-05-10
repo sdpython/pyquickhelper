@@ -50,7 +50,7 @@ class RepoFile:
         for k, v in args.items():
             self.__dict__[k] = v
 
-        if "name" in self.__dict__ and '"' in self.name:
+        if hasattr(self, "name") and '"' in self.name:
             #defa = sys.stdout.encoding if sys.stdout != None else "utf8"
             self.name = self.name.replace('"', "")
             #self.name = self.name.encode(defa).decode("utf-8")

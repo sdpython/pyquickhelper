@@ -13,12 +13,13 @@ if sys.version_info[0] == 2:
 
 def add_missing_files(root, conf, blog_list):
     """
-    Add missing files for the documentation,
+    Adds missing files for the documentation,
     ``moduletoc.html``, ``blogtoc.html``, ``searchbox.html``.
 
     @param      root        root
     @param      conf        configuration module (to guess the template folder)
-    @param      blog_list   list of recent blog posts to add to the navigational bar (list) or a name for a placeholder (such as ``__INSERT__``)
+    @param      blog_list   list of recent blog posts to add to the navigational bar (list)
+                            or a name for a placeholder (such as ``__INSERT__``)
     @param      theme       theme, missing files depend on it
     @return                 list of modified files
 

@@ -453,6 +453,7 @@ class TestRunPythonExtension(unittest.TestCase):
             runpython_class = runpythonthis_node
 
         def visit_rp_node(self, node):
+            "local function"
             self.body.append("<p><b>visit_rp_node</b></p>")
 
         def depart_rp_node(self, node):

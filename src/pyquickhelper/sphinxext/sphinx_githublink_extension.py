@@ -67,13 +67,13 @@ def make_link_node(rawtext, app, path, anchor, lineno, options, settings):
         exc = []
         try:
             config = app.config
-        except Exception as e:
+        except AttributeError as e:
             exc.append(e)
             config = None
         if config is not None:
             try:
                 opt = config.githublink_options
-            except Exception as ee:
+            except AttributeError as ee:
                 exc.append(ee)
                 opt = None
         else:
@@ -81,14 +81,14 @@ def make_link_node(rawtext, app, path, anchor, lineno, options, settings):
         if not opt:
             try:
                 opt = settings.githublink_options
-            except Exception as eee:
+            except AttributeError as eee:
                 exc.append(eee)
                 opt = None
         if not opt:
             lines = "\n".join("## {0} ##".format(str(e)) for e in exc)
             raise AttributeError(
                 "settings does not have a key githublink_options, app does not have a member config.\n{0}".format(lines))
-    except AttributeError as err:
+    except AttributeError:
         # it just means the role will be ignored
         return None
     if "processor" not in opt:

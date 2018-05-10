@@ -59,9 +59,12 @@ class MagicDiff(MagicClassWithHelpers):
             :tag: nb
 
             It displays differences between two text files, two strings, two urls,
-            it is based on :func:`create_visual_diff_through_html_files <pyquickhelper.filehelper.visual_sync.create_visual_diff_through_html_files>`.
-            Check blog post :ref:`Visualize differences between two files in a notebook <b-diffview>` to see an example.
-            See also `A magic command to visualize differences between two files in a notebook <http://www.xavierdupre.fr/app/pyensae/helpsphinx/blog/2015/2015-04-23_textdiff.html>`_.
+            it is based on :func:`create_visual_diff_through_html_files
+            <pyquickhelper.filehelper.visual_sync.create_visual_diff_through_html_files>`.
+            Check blog post :ref:`Visualize differences between two files in a notebook <b-diffview>`
+            to see an example. See also
+            `A magic command to visualize differences between two files in a notebook
+            <http://www.xavierdupre.fr/app/pyensae/helpsphinx/blog/2015/2015-04-23_textdiff.html>`_.
             The magic command is equivalent to::
 
                 from IPython.core.display import display_html, display_javascript
@@ -84,6 +87,7 @@ class MagicDiff(MagicClassWithHelpers):
                                                              inline_view=args.inline)
             display_html(html)
             return js
+        return None
 
     @line_magic
     def difftext(self, line):

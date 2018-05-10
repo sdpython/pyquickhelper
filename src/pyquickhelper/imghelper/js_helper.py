@@ -71,7 +71,7 @@ def install_node_js_modules(dest, module_list=['babel-core', 'babel-cli',
         errs = []
         for cmd in cmds:
             fLOG("[install_node_js_modules] run ", cmd)
-            out, err = run_cmd(cmd, wait=True, change_path=dir_name, fLOG=fLOG)
+            err = run_cmd(cmd, wait=True, change_path=dir_name, fLOG=fLOG)[1]
             errs.append(err)
     if not os.path.exists(node_modules):
         raise Exception("Unable to run from '{0}' commands line:\n{1}\n--due to--\n{2}".format(

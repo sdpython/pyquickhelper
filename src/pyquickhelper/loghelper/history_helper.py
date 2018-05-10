@@ -6,8 +6,8 @@
 """
 from datetime import datetime, timedelta
 import re
-import requests
 import warnings
+import requests
 from jinja2 import Template
 from .github_api import call_github_api
 from .pypi_helper import enumerate_pypi_versions_date
@@ -119,7 +119,7 @@ def build_history(owner, repo, name=None, since=None, issues=None, url=None,
     else:
         versions = releases
     if len(versions) == 0:
-        raise ValueError('No release found.')
+        versions = [(datetime.now(), '0.0.0', 0)]
 
     # merge
     dates = [(v[0], "v", v) for v in versions]
@@ -131,7 +131,7 @@ def build_history(owner, repo, name=None, since=None, issues=None, url=None,
     if unpublished:
         current = dict(release="current", size=0,
                        date=datetime.now(), issues=[])
-    for d, v, obj in dates:
+    for _, v, obj in dates:
         if v == 'v':
             if current is not None:
                 merged.append(current)
@@ -242,7 +242,7 @@ class open_stream_file:
         @return     next line
         """
         if hasattr(self.st, "readline"):
-            return st.readline()
+            return self.st.readline()
         else:
             if hasattr(self, '_content'):
                 self._content = self.read().split('\n')

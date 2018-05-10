@@ -22,11 +22,11 @@ except ImportError:
     import src
 
 from src.pyquickhelper.loghelper.flog import fLOG
-from src.pyquickhelper.pycode import get_temp_folder, is_travis_or_appveyor
+from src.pyquickhelper.pycode import get_temp_folder, is_travis_or_appveyor, ExtTestCase
 from src.pyquickhelper.helpgen import latex2rst
 
 
-class TestPandocHelper(unittest.TestCase):
+class TestPandocHelper(ExtTestCase):
 
     def test_latex2rst(self):
         fLOG(
@@ -40,9 +40,9 @@ class TestPandocHelper(unittest.TestCase):
         data = os.path.join(temp, "..", "data", "chap9_thread.tex")
         output = os.path.join(temp, "chap9_thread.rst")
         temp_file = os.path.join(temp, "chap_utf8.tex")
-        out, err = latex2rst(data, output, encoding="latin-1",
-                             fLOG=fLOG, temp_file=temp_file)
-        assert os.path.exists(output)
+        latex2rst(data, output, encoding="latin-1",
+                  fLOG=fLOG, temp_file=temp_file)
+        self.assertExists(output)
 
 
 if __name__ == "__main__":

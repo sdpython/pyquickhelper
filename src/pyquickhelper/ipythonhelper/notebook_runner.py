@@ -13,15 +13,12 @@ import warnings
 from queue import Empty
 from time import sleep
 from collections import Counter
+from nbformat import NotebookNode
+from nbformat import writes
+from nbformat.reader import reads
 from ..imghelper.svg_helper import svg2img
-
-try:
-    from nbformat import NotebookNode
-    from nbformat import writes
-except ImportError:
-    from IPython.nbformat.v3 import NotebookNode
-    from IPython.nbformat import writes
 from ..loghelper.flog import noLOG
+
 
 if sys.version_info[0] == 2:
     from codecs import open
@@ -206,7 +203,7 @@ class NotebookRunner(object):
 
     def to_json(self, filename=None, encoding="utf8"):
         """
-        convert the notebook into json
+        Converts the notebook into :epkg:`JSON`.
 
         @param      filename        filename or stream
         @param      encoding        encoding
@@ -219,56 +216,18 @@ class NotebookRunner(object):
                       ):
             with open(filename, "w", encoding=encoding) as payload:
                 self.to_json(payload)
+                return None
         elif filename is None:
             st = StringIO()
             st.write(writes(self.nb))
             return st.getvalue()
         else:
             filename.write(writes(self.nb))
-
-    @staticmethod
-    def read_json(js, profile_dir=None, encoding="utf8",
-                  working_dir=None, comment="", fLOG=noLOG, code_init=None,
-                  kernel_name="python", log_level="30", extended_args=None,
-                  kernel=False, replacements=None):
-        """
-        read a notebook from a JSON stream or string
-
-        @param      js              string or stream
-        @param      profile_dir     profile directory
-        @param      encoding        encoding for the notebooks
-        @param      working_dir     working directory
-        @param      comment         additional information added to error message
-        @param      code_init       to initialize the notebook with a python code as if it was a cell
-        @param      fLOG            logging function
-        @param      log_level       Choices: (0, 10, 20, 30=default, 40, 50, 'DEBUG', 'INFO', 'WARN', 'ERROR', 'CRITICAL')
-        @param      kernel_name     kernel name, it can be None
-        @param      extended_args   others arguments to pass to the command line ('--KernelManager.autorestar=True' for example),
-                                    see :ref:`l-ipython_notebook_args` for a full list
-        @param      kernel          *kernel* is True by default, the notebook can be run, if False,
-                                    the notebook can be read but not run
-        @param      replacements    replacements to make in every cell before running it,
-                                    dictionary ``{ string: string }``
-        @return                     instance of @see cl NotebookRunner
-
-        .. versionchanged:: 1.5
-            Add constructor parameters.
-        """
-        if isinstance(js, str  # unicode#
-                      ):
-            st = StringIO(js)
-        else:
-            st = js
-        from .notebook_helper import read_nb
-        return read_nb(st, encoding=encoding, kernel=kernel,
-                       profile_dir=profile_dir, working_dir=working_dir,
-                       comment=comment, fLOG=fLOG, code_init=code_init,
-                       kernel_name="python", log_level="30", extended_args=None,
-                       replacements=replacements)
+            return None
 
     def copy(self):
         """
-        copy the notebook (just the content)
+        Copies the notebook (just the content).
 
         @return         instance of @see cl NotebookRunner
 
@@ -283,7 +242,9 @@ class NotebookRunner(object):
         for name in ["theNotebook", "filename"]:
             if name in args:
                 del args[name]
-        return NotebookRunner.read_json(st.getvalue(), **args)
+        buf = StringIO(st.getvalue())
+        nb = reads(buf)
+        return NotebookRunner(nb, **args)
 
     def __add__(self, nb):
         """
@@ -527,10 +488,10 @@ class NotebookRunner(object):
                     temp = []
                     for _, __ in sorted(v.items()):
                         temp.append("    [{0}]={1}".format(_, str(__)))
-                    v = "\n".join(temp)
-                    sreply.append("reply['{0}']=dict\n{1}".format(k, v))
+                    v_ = "\n".join(temp)
+                    sreply.append("reply['{0}']=dict\n{1}".format(k, v_))
                 else:
-                    sreply.append("reply['{0}']={1}".format(k, str(v)))
+                    sreply.append("reply['{0}']={1}".format(k, str(v_)))
             sreply = "\n".join(sreply)
             return sreply
 
@@ -559,7 +520,7 @@ class NotebookRunner(object):
         rows = []
         for cell in self.iter_cells():
             if cell.cell_type == "code":
-                iscell, codei = NotebookRunner.get_cell_code(cell)
+                codei = NotebookRunner.get_cell_code(cell)[1]
                 rows.append(codei)
             elif cell.cell_type in ("markdown", "raw"):
                 content = cell.source
@@ -1018,7 +979,7 @@ class NotebookRunner(object):
         cl = time.clock()
         for i, cell in enumerate(self.iter_code_cells()):
             nbcell += 1
-            iscell, codei = NotebookRunner.get_cell_code(cell)
+            codei = NotebookRunner.get_cell_code(cell)[1]
             if valid is not None:
                 r = valid(codei)
                 if r is None:
@@ -1303,7 +1264,7 @@ class NotebookRunner(object):
             dy = 0.
             over = 0.7
             imgs = []
-            for in_bytes, f in results:
+            for in_bytes, _ in results:
                 img = Image.open(BytesIO(in_bytes))
                 imgs.append(img)
                 dx = max(dx, img.size[0])

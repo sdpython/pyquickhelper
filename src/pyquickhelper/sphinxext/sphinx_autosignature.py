@@ -106,7 +106,7 @@ class AutoSignatureDirective(Directive):
             if opt_link:
                 text = "\n:py:func:`{0} <{1}>`\n\n".format(anchor, object_name)
             else:
-                text = "\n``{0}``\n\n".format(anchor, object_name)
+                text = "\n``{0}``\n\n".format(anchor)
         else:
             obj_sig = obj.__init__ if kind == "class" else obj
             try:

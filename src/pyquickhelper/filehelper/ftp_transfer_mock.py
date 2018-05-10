@@ -5,10 +5,9 @@
 .. versionadded:: 1.0
     moved from pyensae to pyquickhelper
 """
-
+from ftplib import FTP
 from ..loghelper.flog import noLOG
 from .ftp_transfer import TransferFTP
-from ftplib import FTP
 
 
 class MockTransferFTP (TransferFTP):

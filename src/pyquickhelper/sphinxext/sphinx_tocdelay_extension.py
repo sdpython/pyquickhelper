@@ -10,12 +10,10 @@ import os
 import sys
 import re
 from docutils import nodes
-from docutils.parsers.rst import directives
+from docutils.parsers.rst import Directive, directives
 from sphinx.util import logging
 from sphinx.environment import NoUri
-
 import sphinx
-from docutils.parsers.rst import Directive
 
 
 class tocdelay_node(nodes.paragraph):
@@ -284,7 +282,7 @@ def transform_tocdelay(app, doctree, fromdocname):
                 refuri = app.builder.get_relative_uri(nodedocname, refdoc)
                 logger.info(
                     "[tocdelay] add link for '{0}' - '{1}' from '{2}'".format(refid, refdoc, nodedocname))
-            except NoUri as e:
+            except NoUri:
                 docn = list(sorted(app.builder.docnames))
                 logger.info("[tocdelay] ERROR (9): unable to find a link for '{0}' - '{1}' from '{2}` -- {3} - {4}".format(
                     refid, refdoc, nodedocname, type(app.builder), docn))

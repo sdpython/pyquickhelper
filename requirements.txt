@@ -30,6 +30,7 @@ psutil
 pycodestyle>=2.0.0
 pycryptodomex
 pydocstyle
+pylint
 pylzma
 python-jenkins>=1.0.0
 PyYAML

@@ -75,8 +75,7 @@ def change_file_status(folder, status=stat.S_IWRITE, strict=False,
                 try:
                     mode = os.stat(f).st_mode
                 except FileNotFoundError:
-                    # it appends for some weird path
-                    # GitHub\pyensae\src\pyensae\file_helper\pigjar\pig-0.14.0\contrib\piggybank\java\build\classes\org\apache\pig\piggybank\storage\IndexedStorage$IndexedStorageInputFormat$IndexedStorageRecordReader$IndexedStorageRecordReaderComparator.class
+                    # It appends for some weird path.
                     warnings.warn("[change_file_status] unable to find " + f)
                     continue
                 nmode = status

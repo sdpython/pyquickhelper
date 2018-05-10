@@ -129,8 +129,8 @@ class TodoExt(BaseAdmonition):
                 available = "\n".join(sorted(sett.__dict__.keys()))
                 available2 = "\n".join(
                     sorted(env.config.__dict__.keys())) if env is not None else "-"
-                raise ValueError("extlinks (wih a key 'issue') is not defined in the documentation settings, available in sett\n{0}\nCONFIG\n{1}".format(
-                    available, available2))
+                mes = "extlinks (wih a key 'issue') is not defined in the documentation settings, available in sett\n{0}\nCONFIG\n{1}"
+                raise ValueError(mes.format(available, available2))
 
             if "issue" not in extlinks:
                 raise KeyError("key 'issue' is not present in extlinks")

@@ -401,7 +401,7 @@ class BlogPostList:
         """
         cats = self.get_categories()
         res = []
-        for im, cat in enumerate(cats):
+        for cat in cats:
             posts = [_ for _ in self if cat in _.Categories]
             add = BlogPostList.write_aggregated_post_list(folder=folder,
                                                           lp=posts,
@@ -432,7 +432,7 @@ class BlogPostList:
         """
         mo = self.get_months()
         res = []
-        for im, m in enumerate(mo):
+        for m in mo:
             posts = [_ for _ in self if _.Date.startswith(m)]
             add = BlogPostList.write_aggregated_post_list(folder=folder,
                                                           lp=posts,

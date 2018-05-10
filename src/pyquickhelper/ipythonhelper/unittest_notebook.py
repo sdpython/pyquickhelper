@@ -79,12 +79,12 @@ def test_notebook_execution_coverage(filename, name, folder, this_module_name,
             doc, "\n".join(os.listdir(doc))))
 
     if copy_files is not None:
-        for name in copy_files:
-            dest = os.path.join(temp, name)
+        for name_ in copy_files:
+            dest = os.path.join(temp, name_)
             dest_dir = os.path.dirname(dest)
             if not os.path.exists(dest_dir):
                 os.mkdir(dest_dir)
-            src_file = os.path.join(doc, name)
+            src_file = os.path.join(doc, name_)
             fLOG("[a_test_notebook_runner] copy '{0}' to '{1}'.".format(
                 src_file, dest_dir))
             shutil.copy(src_file, dest_dir)

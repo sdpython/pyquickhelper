@@ -274,7 +274,8 @@ def main_run_test(runner, path_test=None, limit_max=1e9, log=False, skip=-1, ski
     @param      on_stderr           if True, publish everything on stderr at the end
     @param      processes           to run the unit test in a separate process (with function @see fn run_cmd),
                                     however, to make that happen, you need to specify
-                                    ``exit=False`` for each test file, see `unittest.main <https://docs.python.org/3/library/unittest.html#unittest.main>`_
+                                    ``exit=False`` for each test file, see `unittest.main
+                                    <https://docs.python.org/3/library/unittest.html#unittest.main>`_
     @param      additional_ut_path  additional paths to add when running the unit tests
     @param      stdout              if not None, use this stream instead of *sys.stdout*
     @param      stderr              if not None, use this stream instead of *sys.stderr*
@@ -404,7 +405,9 @@ def main_run_test(runner, path_test=None, limit_max=1e9, log=False, skip=-1, ski
         runner.stream.stream, StringIOAndFile) else None
 
     # run all tests
+    last_s = None
     for i, s in enumerate(suite):
+        last_s = s
         if skip >= 0 and i < skip:
             continue
         if i + 1 in skip_list:
@@ -503,8 +506,8 @@ def main_run_test(runner, path_test=None, limit_max=1e9, log=False, skip=-1, ski
             if len(list_warn) > 0:
                 fullstderr.write("*[pyqwarning]:\n")
                 warndone = set()
-                for w, s in list_warn:
-                    sw = str(w)
+                for w, slw in list_warn:
+                    sw = str(slw)
                     if sw not in warndone:
                         # we display only one time the same warning
                         fullstderr.write("w{0}: {1}\n".format(i, sw))
@@ -521,7 +524,7 @@ def main_run_test(runner, path_test=None, limit_max=1e9, log=False, skip=-1, ski
                 fullstderr.write("\n*-----" + lis[i] + "\n")
                 if len(list_warn) > 0:
                     fullstderr.write("[main_run_test] +WARN:\n")
-                    for w, s in list_warn:
+                    for w, _ in list_warn:
                         fullstderr.write(
                             "[in:{2}] w{0}: {1}\n".format(i, str(w), cut))
                 if val.strip(" \n\r\t"):
@@ -529,7 +532,7 @@ def main_run_test(runner, path_test=None, limit_max=1e9, log=False, skip=-1, ski
                     fullstderr.write(val)
 
         memout.write("\n")
-        keep.append((s[1], r))
+        keep.append((last_s[1], r))
 
     # displays
     memout.write("[main_run_test] ---- END UT\n")

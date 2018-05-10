@@ -10,6 +10,12 @@
     Based on `slickgrid <https://github.com/mleibman/SlickGrid/tree/master/examples>`_.
 """
 import warnings
+from sphinx.ext.autodoc import setup as setup_autodoc
+from sphinx.ext.imgmath import setup as setup_imgmath
+from sphinxcontrib.imagesvg import setup as setup_imagesvg
+from sphinx.ext.graphviz import setup as setup_graphviz
+from sphinx.ext.todo import setup as setup_todo
+
 from .blog_post import BlogPost
 from .blog_post_list import BlogPostList
 from .sphinx_bigger_extension import bigger_node, bigger_role
@@ -30,13 +36,6 @@ from .sphinx_video_extension import VideoDirective, video_node
 from .sphinx_template_extension import tpl_node
 from .sphinx_todoext_extension import TodoExt, TodoExtList
 from .documentation_link import python_link_doc
-
-from sphinx.ext.autodoc import setup as setup_autodoc
-from sphinx.ext.imgmath import setup as setup_imgmath
-from sphinxcontrib.imagesvg import setup as setup_imagesvg
-from sphinx.ext.graphviz import setup as setup_graphviz
-from sphinx.ext.imgmath import setup as setup_math
-from sphinx.ext.todo import setup as setup_todo
 
 from ..sphinxext.sphinx_autosignature import setup as setup_signature
 from ..sphinxext.sphinx_bigger_extension import setup as setup_bigger
@@ -107,9 +106,9 @@ def get_default_extensions():
                       setup_cmdref, setup_epkg, setup_rst, setup_postcontents,
                       setup_tocdelay, setup_youtube,
                       # directives from sphinx
-                      setup_graphviz, setup_math, setup_todo,
+                      setup_graphviz, setup_imgmath, setup_todo,
                       # the rest of it
-                      setup_autodoc, setup_imgmath, setup_imagesvg,
+                      setup_autodoc, setup_imagesvg,
                       setup_plot, setup_only, setup_images, setup_collapse]
 
     try:

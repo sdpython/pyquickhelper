@@ -379,7 +379,8 @@ class TransferFTP:
                     "    issue with command .. len(done) == {0}".format(len(done)))
                 if nbtry > nbth:
                     raise CannotReturnToFolderException(
-                        "len(path)={0} nbtry={1} exc={2} nbl={3} act={4}".format(len(done), nbtry, exc, nb_logins, len(self._logins))) from e
+                        "len(path)={0} nbtry={1} exc={2} nbl={3} act={4}".format(
+                            len(done), nbtry, exc, nb_logins, len(self._logins))) from e
 
         if exc is not None:
             raise exc

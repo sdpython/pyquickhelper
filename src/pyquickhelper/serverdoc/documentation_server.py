@@ -19,15 +19,15 @@ except ImportError:
     from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
 
 if __name__ == "__main__":
-    path = os.path.normpath(os.path.abspath(
+    path_ = os.path.normpath(os.path.abspath(
         os.path.join(os.path.split(__file__)[0], "..", "..", "..", "src")))
-    if path not in sys.path:
-        sys.path.append(path)
-    path = os.path.normpath(os.path.abspath(os.path.join(os.path.split(__file__)[0],
-                                                         "..", "..", "..", "..", "pyquickhelper", "src")))
-    if path not in sys.path:
-        sys.path.append(path)
-    from pyquickhelper import fLOG, get_url_content
+    if path_ not in sys.path:
+        sys.path.append(path_)
+    path_ = os.path.normpath(os.path.abspath(os.path.join(os.path.split(__file__)[0],
+                                                          "..", "..", "..", "..", "pyquickhelper", "src")))
+    if path_ not in sys.path:
+        sys.path.append(path_)
+    from pyquickhelper.loghelper import fLOG, get_url_content
 else:
     from ..loghelper.flog import fLOG
     from ..loghelper.url_helper import get_url_content
@@ -490,7 +490,7 @@ class DocumentationHandler(BaseHTTPRequestHandler):
         rows = ["<html><body>"]
         rows.append("<h1>Documentation Server</h1>")
         rows.append("<ul>")
-        for k, v in sorted(DocumentationHandler.mappings.items()):
+        for k, _ in sorted(DocumentationHandler.mappings.items()):
             if not k.startswith("_"):
                 row = '<li><a href="{0}/">{0}</a></li>'.format(k)
                 rows.append(row)
@@ -587,7 +587,8 @@ def run_doc_server(server,
 
 if __name__ == '__main__':
 
-    if True:
+    run_server = True
+    if run_server:
         # http://localhost:8079/pyquickhelper/
         this_fold = os.path.abspath(os.path.dirname(__file__))
         this_fold2 = os.path.join(

@@ -5,7 +5,6 @@
 .. versionadded:: 1.0
 """
 import logging
-from .sphinxm_convert_doc_sphinx_helper import HTMLWriterWithCustomDirectives, _CustomSphinx, RSTWriterWithCustomDirectives
 from docutils import nodes
 from docutils.parsers.rst.directives import directive as rst_directive
 from docutils.parsers.rst import directives as doc_directives, roles as doc_roles
@@ -13,14 +12,15 @@ from docutils.parsers.rst import directives as doc_directives, roles as doc_role
 from sphinx.config import Config
 # from sphinx.ext.autosummary import setup as setup_autosummary
 from sphinx.ext import autodoc
+from sphinx import __display_version__ as sphinx__display_version__
+from sphinx.application import VersionRequirementError
+from sphinx.util.docutils import is_html5_writer_available
+from sphinx.errors import ExtensionError
 # from sphinx.events import EventManager
 # from sphinx.registry import SphinxComponentRegistry
 # from sphinx.domains.python import setup as setup_python
-from sphinx import __display_version__ as sphinx__display_version__
-from sphinx.application import VersionRequirementError
 from ..sphinxext import get_default_extensions
-from sphinx.util.docutils import is_html5_writer_available
-from sphinx.errors import ExtensionError
+from .sphinxm_convert_doc_sphinx_helper import HTMLWriterWithCustomDirectives, _CustomSphinx, RSTWriterWithCustomDirectives
 
 
 class MockSphinxApp:

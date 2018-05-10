@@ -20,7 +20,8 @@ def parse_markdown(text):
 
 def yield_sphinx_only_markup_for_pipy(lines):
     """
-    Code from `My rst README is not formatted on pypi.python.org <http://stackoverflow.com/questions/16367770/my-rst-readme-is-not-formatted-on-pypi-python-org>`_.
+    Code from `My rst README is not formatted on pypi.python.org
+    <http://stackoverflow.com/questions/16367770/my-rst-readme-is-not-formatted-on-pypi-python-org>`_.
 
     :param lines: lines to process
     """

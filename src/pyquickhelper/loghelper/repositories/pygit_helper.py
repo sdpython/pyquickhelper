@@ -70,7 +70,7 @@ class RepoFile:
         for k, v in args.items():
             self.__dict__[k] = v
 
-        if "name" in self.__dict__:
+        if hasattr(self, "name"):
             if '"' in self.name:
                 #defa = sys.stdout.encoding if sys.stdout != None else "utf8"
                 self.name = self.name.replace('"', "")
@@ -485,12 +485,13 @@ def get_repo_log(path=None, file_detail=False, commandline=True, subset=None):
     else:
         cmd = get_cmd_git()
         if sys.platform.startswith("win"):
-            cmd += ' log --pretty=format:"<logentry revision=\\"%h\\"><author>%an</author><date>%ci</date><hash>%H</hash><msg>%s</msg></logentry>" ' + \
-                path
+            cmd += ' log --pretty=format:"<logentry revision=\\"%h\\">' + \
+                   '<author>%an</author><date>%ci</date><hash>%H</hash><msg>%s</msg></logentry>" ' + \
+                   path
         else:
-            cmd = [cmd, 'log',
-                   '--pretty=format:<logentry revision="%h"><author>%an</author><date>%ci</date><hash>%H</hash><msg>%s</msg></logentry>',
-                   path]
+            cmd_tmp = '--pretty=format:<logentry revision="%h"><author>%an</author><date>%ci' + \
+                      '</date><hash>%H</hash><msg>%s</msg></logentry>'
+            cmd = [cmd, 'log', cmd_tmp, path]
 
         enc = sys.stdout.encoding if sys.version_info[
             0] != 2 and sys.stdout is not None else "utf8"
@@ -500,7 +501,7 @@ def get_repo_log(path=None, file_detail=False, commandline=True, subset=None):
                            shell=sys.platform.startswith("win32"), preprocess=False)
 
         if len(err) > 0:
-            mes = "Problem with file '{0}'".format(os.path.join(path, name))
+            mes = "Problem with file '{0}'".format(path)
             raise GitException(mes + "\n" +
                                err + "\nCMD:\n" + cmd + "\nOUT:\n" + out + "\n[giterror]\n" + err + "\nCMD:\n" + cmd)
 
@@ -732,7 +733,8 @@ def clone(location, srv, group, project, username=None, password=None, fLOG=None
     @param      fLOG        logging function
     @return                 output, error
 
-    See `How to provide username and password when run "git clone git@remote.git"? <http://stackoverflow.com/questions/10054318/how-to-provide-username-and-password-when-run-git-clone-gitremote-git>`_
+    See `How to provide username and password when run "git clone git@remote.git"?
+    <http://stackoverflow.com/questions/10054318/how-to-provide-username-and-password-when-run-git-clone-gitremote-git>`_
 
     .. exref::
         :title: Clone a git repository

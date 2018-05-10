@@ -23,11 +23,11 @@
 
 import os
 import sys
-import jenkins
 import socket
 import hashlib
 import re
 from xml.sax.saxutils import escape
+import jenkins
 from ..loghelper.flog import noLOG
 from ..pycode.windows_scripts import windows_jenkins, windows_jenkins_any
 from ..pycode.windows_scripts import windows_jenkins_27_conda, windows_jenkins_27_def
@@ -69,7 +69,8 @@ def _modified_windows_jenkins_27(requirements_local, requirements_pypi, module="
         default_engine_paths=_default_engine_paths, platform=platform)
 
 
-def _modified_windows_jenkins_any(requirements_local, requirements_pypi, module="__MODULE__", port="__PORT__", platform=sys.platform):
+def _modified_windows_jenkins_any(requirements_local, requirements_pypi, module="__MODULE__",
+                                  port="__PORT__", platform=sys.platform):
     res = private_script_replacements(
         windows_jenkins_any, module, (requirements_local,
                                       requirements_pypi), port, raise_exception=False,
@@ -181,7 +182,9 @@ class JenkinsExt(jenkins.Jenkins):
         if self._mock:
             return
 
-        folder_url, short_name = self._get_job_folder(name)
+        r = self._get_job_folder(name)
+        if r is None:
+            raise JenkinsExtException('delete[%s] failed (no job)' % (name))
         self.jenkins_open(jenkins.Request(
             self.server + jenkins.DELETE_JOB % self._get_encoded_params(locals()), b''))
         if self.job_exists(name):
@@ -292,10 +295,12 @@ class JenkinsExt(jenkins.Jenkins):
                 cmd += "..\\..\\local_pypi\\local_pypi_server > ..\\..\\local_pypi\\local_pypi_server\\start_local_pypi.bat"
                 cmd = cmd.replace("__PORT__", str(self.pypi_port))
             elif "[update]" in spl:
-                cmd = "__ENGINE__\\python -u -c \"from pymyinstall.packaged import update_all;update_all(temp_folder='build/update_modules', "
+                cmd = "__ENGINE__\\python -u -c \"from pymyinstall.packaged import update_all;"
+                cmd += "update_all(temp_folder='build/update_modules', "
                 cmd += "verbose=True, source='2')\""
             elif "[install]" in spl:
-                cmd = "__ENGINE__\\python -u -c \"from pymyinstall.packaged import install_all;install_all(temp_folder='build/update_modules', "
+                cmd = "__ENGINE__\\python -u -c \"from pymyinstall.packaged import install_all;install_all"
+                cmd += "(temp_folder='build/update_modules', "
                 cmd += "verbose=True, source='2')\""
             else:
                 raise JenkinsExtException("cannot interpret job: " + job)
@@ -523,8 +528,8 @@ class JenkinsExt(jenkins.Jenkins):
                     for pl in spl[1:]:
                         if pl.startswith("[custom_") and pl.endswith("]"):
                             cus = pl.strip("[]")
-                            cmd = _modified_windows_jenkins_any(requirements_local, requirements_pypi, platform=self.platform).replace(
-                                "__COMMAND__", cus)
+                            cmd = _modified_windows_jenkins_any(requirements_local, requirements_pypi,
+                                                                platform=self.platform).replace("__COMMAND__", cus)
 
                 # step 2: replacement (python __PYTHON__, virtual environnement
                 # __SUFFIX__)
@@ -614,7 +619,8 @@ class JenkinsExt(jenkins.Jenkins):
         @param      scheduler                   add a schedule time (upstreams must be None in that case)
         @param      py27                        python 2.7 (True) or Python 3 (False)
         @param      description                 add a description to the job
-        @param      default_engine_paths        define the default location for python engine, should be dictionary *{ engine: path }*, see below.
+        @param      default_engine_paths        define the default location for python engine,
+                                                should be dictionary ``{ engine: path }``, see below.
         @param      success_only                only triggers the job if the previous one was successful
         @param      update                      update the job instead of creating it
         @param      additional_requirements     requirements for this module built by this Jenkins server,
@@ -1039,13 +1045,15 @@ class JenkinsExt(jenkins.Jenkins):
                     raise ValueError("Empty jobs in the list.")
                 if jobs[0] == "yml" and len(jobs) != 3:
                     raise ValueError(
-                        "If it is a yml jobs, the tuple should contain 3 elements: ('yml', filename, schedule or None or dictionary).\nNot: {0}".format(jobs))
+                        "If it is a yml jobs, the tuple should contain 3 elements: ('yml', filename, schedule or None or dictionary).\n" +
+                        "Not: {0}".format(jobs))
 
             cre, ds, locs = self._setup_jenkins_server_modules_loop(jobs=jobs, counts=counts,
                                                                     get_jenkins_script=get_jenkins_script,
                                                                     location=location, adjust_scheduler=adjust_scheduler,
-                                                                    add_environ=add_environ, yml_engine=yml_engine, overwrite=overwrite,
-                                                                    prefix=prefix, credentials=credentials, github=github,
+                                                                    add_environ=add_environ, yml_engine=yml_engine,
+                                                                    overwrite=overwrite, prefix=prefix,
+                                                                    credentials=credentials, github=github,
                                                                     disable_schedule=disable_schedule, jenkins_server=self,
                                                                     update=update, indexes=indexes, deps=deps)
             created.extend(cre)
@@ -1067,10 +1075,13 @@ class JenkinsExt(jenkins.Jenkins):
             cre, dep, loc = self._setup_jenkins_server_job_iteration(job, counts=counts,
                                                                      get_jenkins_script=get_jenkins_script,
                                                                      location=location, adjust_scheduler=adjust_scheduler,
-                                                                     add_environ=add_environ, yml_engine=yml_engine, overwrite=overwrite,
-                                                                     prefix=prefix, credentials=credentials, github=github,
-                                                                     disable_schedule=disable_schedule, jenkins_server=jenkins_server,
-                                                                     update=update, indexes=indexes, deps=deps, i=i)
+                                                                     add_environ=add_environ, yml_engine=yml_engine,
+                                                                     overwrite=overwrite, prefix=prefix,
+                                                                     credentials=credentials, github=github,
+                                                                     disable_schedule=disable_schedule,
+                                                                     jenkins_server=jenkins_server,
+                                                                     update=update, indexes=indexes,
+                                                                     deps=deps, i=i)
             created.extend(cre)
             new_dep.extend(dep)
             locations.extend(loc)
@@ -1264,10 +1275,11 @@ class JenkinsExt(jenkins.Jenkins):
 
             done = {}
             for aj, name, var in enumerate_processed_yml(jobdef, context=options, engine=yml_engine,
-                                                         add_environ=add_environ, server=self, git_repo=gitrepo, scheduler=scheduler,
-                                                         description=description, credentials=cred, success_only=success_only,
-                                                         timeout=timeout, platform=self.platform, adjust_scheduler=adjust_scheduler,
-                                                         overwrite=overwrite, build_location=location, mails=self.mails,
+                                                         add_environ=add_environ, server=self, git_repo=gitrepo,
+                                                         scheduler=scheduler, description=description, credentials=cred,
+                                                         success_only=success_only, timeout=timeout, platform=self.platform,
+                                                         adjust_scheduler=adjust_scheduler, overwrite=overwrite,
+                                                         build_location=location, mails=self.mails,
                                                          job_options=scheduler_options):
                 if name in done:
                     s = "A name '{0}' was already used for a job, from:\n{1}\nPROCESS:\n{2}"

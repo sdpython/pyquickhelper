@@ -61,7 +61,7 @@ class TestShareNetExtension(unittest.TestCase):
             content = content.replace('u"', '"')
 
         html = rst2html(content,  # fLOG=fLOG,
-                        writer="custom", keep_warnings=True,
+                        writer="html", keep_warnings=True,
                         directives=None)
 
         t1 = "this code shoud not appear"
@@ -116,7 +116,7 @@ class TestShareNetExtension(unittest.TestCase):
             content = content.replace('u"', '"')
 
         html = rst2html(content,  # fLOG=fLOG,
-                        writer="custom", keep_warnings=True,
+                        writer="html", keep_warnings=True,
                         directives=None)
 
         t1 = "abeforea"

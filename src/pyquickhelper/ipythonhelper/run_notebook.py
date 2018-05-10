@@ -318,7 +318,7 @@ def _existing_dump(dump):
     def read_file(dump):
         try:
             df = pandas.read_csv(dump, sep="\t", encoding="utf-8")
-        except ParserError as e:
+        except ParserError:
             df = pandas.read_csv(
                 dump, sep="\t", encoding="utf-8", error_bad_lines=False, warn_bad_lines=True)
         return df

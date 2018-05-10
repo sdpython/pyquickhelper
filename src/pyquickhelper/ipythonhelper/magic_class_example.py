@@ -7,11 +7,10 @@
     Magic commands coming from pyensae
 """
 from __future__ import print_function
-
+from IPython.core.magic import magics_class, line_magic
 from .magic_class import MagicClassWithHelpers
 from .magic_parser import MagicCommandParser
 from ..helpgen import docstring2html
-from IPython.core.magic import magics_class, line_magic
 
 
 @magics_class
@@ -98,6 +97,7 @@ class MagicClassExample(MagicClassWithHelpers):
                 return docstring2html(obj, format=format)
             else:
                 print(docstring2html(obj, format=format))
+        return None
 
 
 def register_file_magics(ip=None):

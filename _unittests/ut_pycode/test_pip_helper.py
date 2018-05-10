@@ -87,7 +87,7 @@ class TestPipHelper(ExtTestCase):
         self.assertIsInstance(info[0], dict)
 
         if __name__ == "__mahin__":
-            info = get_package_info(fLOG=fLOG)
+            info = get_package_info()
             df = pandas.DataFrame(info)
             df.to_excel("out_packages.xlsx")
 

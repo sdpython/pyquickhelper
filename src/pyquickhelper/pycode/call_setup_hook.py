@@ -121,7 +121,7 @@ def call_setup_hook(folder, module_name, fLOG=noLOG, must_be=False,
     if use_print:
         print("OUT:\n", out)
         if err:
-            if "cannot import name '_setup_hook'":
+            if "cannot import name '_setup_hook'" in err:
                 fLOG("[call_setup_hook] _setup_hook was not found.")
             else:
                 print("[pyqerror]\n", err)

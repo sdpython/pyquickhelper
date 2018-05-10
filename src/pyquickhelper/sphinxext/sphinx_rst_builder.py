@@ -2,7 +2,8 @@
 """
 @file
 @brief Defines a sphinx extension to output the documentation in RST.
-It is inspired from `restbuilder <https://bitbucket.org/birkenfeld/sphinx-contrib/src/6f417e74a22dadb9e0370696f219e63f1b196344/restbuilder/?at=default>`_.
+It is inspired from `restbuilder
+<https://bitbucket.org/birkenfeld/sphinx-contrib/src/6f417e74a22dadb9e0370696f219e63f1b196344/restbuilder/?at=default>`_.
 I replicate its license here:
 
 ::
@@ -262,7 +263,6 @@ class RstTranslator(TextTranslator):
         self.body = self.nl.join(line and (' ' * indent + line)
                                  for indent, lines in self.states[0]
                                  for line in lines)
-        # TODO: add header/footer?
 
     def visit_highlightlang(self, node):
         raise nodes.SkipNode
@@ -476,8 +476,6 @@ class RstTranslator(TextTranslator):
 
     def visit_label(self, node):
         raise nodes.SkipNode
-
-    # TODO: option list could use some better styling
 
     def visit_option_list(self, node):
         # self.log_unknown("option_list", node)
@@ -966,7 +964,6 @@ class RstTranslator(TextTranslator):
 
     def visit_download_reference(self, node):
         self.log_unknown("download_reference", node)
-        pass
 
     def depart_download_reference(self, node):
         pass
@@ -1070,7 +1067,7 @@ class RstTranslator(TextTranslator):
 
     def visit_raw(self, node):
         if 'text' in node.get('format', '').split():
-            self.body.append(node.astext())
+            self.add_text(node.astext())
         raise nodes.SkipNode
 
     def visit_bigger_node(self, node):

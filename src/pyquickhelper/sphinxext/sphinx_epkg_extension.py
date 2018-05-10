@@ -74,7 +74,8 @@ def epkg_role(role, rawtext, text, lineno, inliner, options=None, content=None):
 
     However, it is impossible to use a function as a value
     in the configuration because :epkg:`*py:pickle` does not handle
-    this scenario (see `PicklingError on environment when config option value is a callable <https://github.com/sphinx-doc/sphinx/issues/1424>`_),
+    this scenario (see `PicklingError on environment when config option
+    value is a callable <https://github.com/sphinx-doc/sphinx/issues/1424>`_),
     ``my_custom_links`` needs to be replaced by:
     ``("module_where_it_is_defined.function_name", None)``.
     The role *epkg* will import it based on its name.

@@ -109,9 +109,6 @@ def produce_code_graph_changes(df):
         is still unclear. It was replaced by a custom function.
 
     """
-    def to_dt(x):
-        return datetime.datetime(x.year, x.month, x.day)
-
     def year_week(x):
         dt = datetime.datetime(x.year, x.month, x.day)
         return dt.isocalendar()[:2]
@@ -263,7 +260,8 @@ def generate_changes_repo(chan, source, exception_if_empty=True,
 
     if len(values) == 0 and exception_if_empty:
         raise HelpGenException(
-            "Logs were not empty but there was no comment starting with '*' from " + source + "\n" + "\n".join([typstr(_) for _ in logs]))
+            "Logs were not empty but there was no comment starting with '*' from '{0}'\n".format(source) +
+            "\n".join([typstr(_) for _ in logs]))
 
     if len(values) > 0:
         import pandas

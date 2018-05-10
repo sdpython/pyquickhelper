@@ -16,7 +16,7 @@ def ping_machine(machine, fLOG=noLOG):
     @return                     output
     """
     cmd = "ping " + machine
-    out, err = run_cmd(cmd, wait=True, fLOG=noLOG)
+    out = run_cmd(cmd, wait=True, fLOG=noLOG)[0]
     return out
 
 

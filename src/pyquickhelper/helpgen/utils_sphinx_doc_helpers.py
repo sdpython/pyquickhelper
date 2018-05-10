@@ -236,7 +236,7 @@ class ModuleMemberDoc:
                 self.type = "method"
             elif inspect.isfunction(obj):
                 self.type = "function"
-            elif inspect.isgenerated(obj):
+            elif inspect.isgenerator(obj):
                 self.type = "generator"
             else:
                 raise TypeError(
@@ -459,6 +459,7 @@ class IndexInformation:
                 with open(self.rstfile, "w", encoding="utf8") as f:
                     f.write(content)
 
+    @staticmethod
     def get_label(existing, suggestion):
         """
         Returns a new label given the existing ones.
@@ -471,7 +472,6 @@ class IndexInformation:
         while suggestion in existing:
             suggestion += "z"
         return suggestion
-    get_label = staticmethod(get_label)
 
     def rst_link(self):
         """
@@ -746,7 +746,7 @@ def get_module_objects(mod):
     #         }
 
     cl = []
-    for name, obj in inspect.getmembers(mod):
+    for _, obj in inspect.getmembers(mod):
         if inspect.isclass(obj) or \
            inspect.isfunction(obj) or \
            inspect.isgenerator(obj) or \
@@ -1059,7 +1059,8 @@ def example_function_latex():
 
         We want to check this formula to successfully converted.
 
-        :math:`\\left \\{ \\begin{array}{l} \\min_{x,y} \\left \\{ x^2 + y^2 - xy + y \\right \\}  \\\\ \\text{sous contrainte} \\; x + 2y = 1 \\end{array}\\right .`
+        :math:`\\left \\{ \\begin{array}{l} \\min_{x,y} \\left \\{ x^2 + y^2 - xy + y \\right \\}
+        \\\\ \\text{sous contrainte} \\; x + 2y = 1 \\end{array}\\right .`
 
         Brackets and baskslash might be an issue.
     """

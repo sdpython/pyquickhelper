@@ -33,22 +33,28 @@ from sphinx.application import Config, CONFIG_FILENAME, ConfigError, VersionRequ
 from sphinx.registry import SphinxComponentRegistry
 from sphinx.events import EventManager
 from sphinx.extension import verify_required_extensions
+
 try:
     from sphinx.writers.latex import LaTeXTranslator
 except ImportError:
     # Since sphinx 1.7.3 (circular reference).
     import sphinx.builders.latex.transforms
     from sphinx.writers.latex import LaTeXTranslator
+
 from ..sphinxext.sphinx_bigger_extension import visit_bigger_node as ext_visit_bigger_node, depart_bigger_node as ext_depart_bigger_node
-from ..sphinxext.sphinx_bigger_extension import visit_bigger_node_rst as ext_visit_bigger_node_rst, depart_bigger_node_rst as ext_depart_bigger_node_rst
+from ..sphinxext.sphinx_bigger_extension import visit_bigger_node_rst as ext_visit_bigger_node_rst
+from ..sphinxext.sphinx_bigger_extension import depart_bigger_node_rst as ext_depart_bigger_node_rst
 from ..sphinxext.sphinx_bigger_extension import depart_bigger_node_html as ext_depart_bigger_node_html
-from ..sphinxext.sphinx_bigger_extension import depart_bigger_node_latex as ext_depart_bigger_node_latex, visit_bigger_node_latex as ext_visit_bigger_node_latex
+from ..sphinxext.sphinx_bigger_extension import depart_bigger_node_latex as ext_depart_bigger_node_latex
+from ..sphinxext.sphinx_bigger_extension import visit_bigger_node_latex as ext_visit_bigger_node_latex
 from ..sphinxext.sphinx_blocref_extension import visit_blocref_node as ext_visit_blocref_node, depart_blocref_node as ext_depart_blocref_node
 from ..sphinxext.sphinx_blog_extension import visit_blogpost_node as ext_visit_blogpost_node, depart_blogpost_node as ext_depart_blogpost_node
-from ..sphinxext.sphinx_blog_extension import visit_blogpostagg_node as ext_visit_blogpostagg_node, depart_blogpostagg_node as ext_depart_blogpostagg_node
+from ..sphinxext.sphinx_blog_extension import visit_blogpostagg_node as ext_visit_blogpostagg_node
+from ..sphinxext.sphinx_blog_extension import depart_blogpostagg_node as ext_depart_blogpostagg_node
 from ..sphinxext.sphinx_blog_extension import depart_blogpostagg_node_html as ext_depart_blogpostagg_node_html
 from ..sphinxext.sphinx_cmdref_extension import visit_cmdref_node as ext_visit_cmdref_node, depart_cmdref_node as ext_depart_cmdref_node
-from ..sphinxext.sphinx_collapse_extension import visit_collapse_node as ext_visit_collapse_node, depart_collapse_node as ext_depart_collapse_node
+from ..sphinxext.sphinx_collapse_extension import visit_collapse_node as ext_visit_collapse_node
+from ..sphinxext.sphinx_collapse_extension import depart_collapse_node as ext_depart_collapse_node
 from ..sphinxext.sphinx_collapse_extension import visit_collapse_node_rst as ext_visit_collapse_node_rst
 from ..sphinxext.sphinx_collapse_extension import depart_collapse_node_rst as ext_depart_collapse_node_rst
 from ..sphinxext.sphinx_collapse_extension import depart_collapse_node_html as ext_depart_collapse_node_html
@@ -61,11 +67,12 @@ from ..sphinxext.sphinx_nbref_extension import visit_nbref_node as ext_visit_nbr
 from ..sphinxext.sphinx_postcontents_extension import depart_postcontents_node as ext_depart_postcontents_node
 from ..sphinxext.sphinx_postcontents_extension import visit_postcontents_node as ext_visit_postcontents_node
 from ..sphinxext.sphinx_rst_builder import RstWriter, RstBuilder, RstTranslator
-from ..sphinxext.sphinx_runpython_extension import visit_runpython_node as ext_visit_runpython_node, depart_runpython_node as ext_depart_runpython_node
-from ..sphinxext.sphinx_sharenet_extension import visit_sharenet_node as ext_visit_sharenet_node, depart_sharenet_node as ext_depart_sharenet_node
+from ..sphinxext.sphinx_runpython_extension import visit_runpython_node as ext_visit_runpython_node
+from ..sphinxext.sphinx_runpython_extension import depart_runpython_node as ext_depart_runpython_node
+from ..sphinxext.sphinx_sharenet_extension import depart_sharenet_node as ext_depart_sharenet_node
 from ..sphinxext.sphinx_sharenet_extension import depart_sharenet_node_html as ext_depart_sharenet_node_html
 from ..sphinxext.sphinx_sharenet_extension import depart_sharenet_node_rst as ext_depart_sharenet_node_rst
-from ..sphinxext.sphinx_sharenet_extension import visit_sharenet_node as ext_visit_sharenet_node_html
+from ..sphinxext.sphinx_sharenet_extension import visit_sharenet_node as ext_visit_sharenet_node
 from ..sphinxext.sphinx_sharenet_extension import visit_sharenet_node_rst as ext_visit_sharenet_node_rst
 from ..sphinxext.sphinx_todoext_extension import visit_todoext_node as ext_visit_todoext_node, depart_todoext_node as ext_depart_todoext_node
 from ..sphinxext.sphinx_template_extension import visit_tpl_node as ext_visit_tpl_node, depart_tpl_node as ext_depart_tpl_node
@@ -188,7 +195,7 @@ class _AdditionalVisitDepart:
         @see fn visit_sharenet_node
         """
         if self.is_html():
-            ext_visit_sharenet_node_html(self, node)
+            ext_visit_sharenet_node(self, node)
         elif self.is_rst():
             ext_visit_sharenet_node_rst(self, node)
         else:
@@ -454,7 +461,7 @@ class _AdditionalVisitDepart:
                 "Unknown output format '{0}'.".format(self.output_format))
         try:
             ev = eval(expr)
-        except Exception as e:
+        except Exception:
             raise ValueError(
                 "Unable to interpret expression '{0}'".format(expr))
         return ev
@@ -565,7 +572,7 @@ class _WriterWithCustomDirectives:
         @param      new_options     new options
         """
         for k, v in new_options.items():
-            self.builder.config.values[k] = new_options[k]
+            self.builder.config.values[k] = v
 
     def write(self, document, destination):
         """
@@ -596,8 +603,6 @@ class HTMLWriterWithCustomDirectives(_WriterWithCustomDirectives, HTMLWriter):
 
     def __init__(self, builder=None, app=None):
         """
-        Constructor
-
         @param      builder builder
         @param      app     Sphinx application
         """
@@ -651,7 +656,7 @@ class _MemoryBuilder:
 
     def _init(self, base_class, app):
         """
-        Construct the builder.
+        Constructs the builder.
         Most of the parameter are static members of the class and cannot
         be overwritten (yet).
 
@@ -673,7 +678,7 @@ class _MemoryBuilder:
 
     def create_translator(self, *args):
         """
-        Return an instance of translator.
+        Returns an instance of translator.
         This method returns an instance of ``default_translator_class`` by default.
         Users can replace the translator class with ``app.set_translator()`` API.
         """
@@ -682,7 +687,7 @@ class _MemoryBuilder:
 
     def _write_serial(self, docnames):
         """
-        Overwrite *_write_serial* to avoid writing on disk.
+        Overwrites *_write_serial* to avoid writing on disk.
         """
         with logging.pending_warnings():
             for docname in status_iterator(docnames, 'writing output... ', "darkgreen",
@@ -700,7 +705,7 @@ class _MemoryBuilder:
 
     def assemble_doctree(self):
         """
-        Overwrite *assemble_doctree* to control the doctree.
+        Overwrites *assemble_doctree* to control the doctree.
         """
         master = self.config.master_doc
         if hasattr(self, "doctree_"):
@@ -717,7 +722,7 @@ class _MemoryBuilder:
 
     def fix_refuris(self, tree):
         """
-        Overwrite *fix_refuris* to control the reference names.
+        Overwrites *fix_refuris* to control the reference names.
         """
         fname = "__" + self.config.master_doc + "__"
         for refnode in tree.traverse(nodes.reference):
@@ -733,7 +738,7 @@ class _MemoryBuilder:
 
     def get_target_uri(self, docname, typ=None):
         """
-        Overwrite *get_target_uri* to control the page name.
+        Overwrites *get_target_uri* to control the page name.
         """
         # type: (unicode, unicode) -> unicode
         if docname in self.env.all_docs:
@@ -742,20 +747,21 @@ class _MemoryBuilder:
         elif docname in ("genindex", "search"):
             return self.config.master_doc + '-#' + docname
         else:
+            docs = ", ".join(sorted("'{0}'".format(_)
+                                    for _ in self.env.all_docs))
             raise ValueError(
-                "docname='{0}' should be in 'self.env.all_docs' which contains:\n{1}".format(docname,
-                                                                                             ", ".join(sorted("'{0}'".format(_) for _ in self.env.all_docs))))
+                "docname='{0}' should be in 'self.env.all_docs' which contains:\n{1}".format(docname, docs))
 
     def get_outfilename(self, pagename):
         """
-        Overwrite *get_target_uri* to control file names.
+        Overwrites *get_target_uri* to control file names.
         """
         return "{0}/{1}.m.html".format(self.outdir, pagename).replace("\\", "/")
 
     def handle_page(self, pagename, addctx, templatename='page.html',
                     outfilename=None, event_arg=None):
         """
-        Override *handle_page* to write into stream instead of files.
+        Overrides *handle_page* to write into stream instead of files.
         """
         ctx = self.globalcontext.copy()
         ctx['warn'] = self.warning if hasattr(self, "warning") else self.warn
@@ -1028,8 +1034,8 @@ class _CustomSphinx(Sphinx):
         #    self._warning = StringIO()     # type: IO
         # else:
         #    self._warning = warning
-        #self._warncount = 0
-        #self.warningiserror = warningiserror
+        # self._warncount = 0
+        # self.warningiserror = warningiserror
         # logging.setup(self, self._status, self._warning)
 
         self.events = EventManager()
@@ -1376,7 +1382,9 @@ class _CustomSphinx(Sphinx):
 
     def add_object_type(self, directivename, rolename, indextemplate='',
                         parse_node=None, ref_nodeclass=None, objname='',
-                        doc_field_types=[]):
+                        doc_field_types=None):
+        if doc_field_types is None:
+            doc_field_types = []
         self._added_objects.append(('object', directivename, rolename))
         Sphinx.add_object_type(self, directivename, rolename, indextemplate=indextemplate,
                                parse_node=parse_node, ref_nodeclass=ref_nodeclass,
@@ -1411,7 +1419,7 @@ class _CustomSphinx(Sphinx):
         if found is None:
             raise ValueError("Unable to find a collector '{0}' in \n{1}".format(
                 clname, "\n".join(map(lambda x: x.__class__.__name__, self._added_collectors))))
-        for k, v in co.listener_ids.items():
+        for v in found.listener_ids.values():
             self.disconnect(v)
         del self._added_collectors[foundi]
         return found

@@ -167,8 +167,11 @@ def create_visual_diff_through_html(string1, string2, notebook=False, context_si
                                 things accordingly, see below
     @param      context_size    to display everything (None) or just the changes > 0
     @param      inline_view     only for notebook, True: one column, False: two columns
-    @return                     html page or (`HTML <https://ipython.org/ipython-doc/stable/api/generated/IPython.display.html?highlight=display#IPython.display.HTML>`_,
-                                `Javascript <https://ipython.org/ipython-doc/stable/api/generated/IPython.display.html?highlight=display#IPython.display.Javascript>`_) object if *notebook* is True
+    @return                     html page or (`HTML <https://ipython.org/ipython-doc/stable/api/generated/IPython.display.html
+                                ?highlight=display#IPython.display.HTML>`_,
+                                `Javascript <https://ipython.org/ipython-doc/stable/api/generated/IPython.display.html
+                                ?highlight=display#IPython.display.Javascript>`_)
+                                object if *notebook* is True
 
     .. exref::
         :title: Visualize the difference between two text files or strings
@@ -273,12 +276,16 @@ def create_visual_diff_through_html_files(file1,
     @param      encoding        encoding
     @param      page            if not None, saves the results in file
     @param      browser         open browser ?
-    @param      notebook        if True, the function assumes the outcome will be displayed from a notebook and does
+    @param      notebook        if True, the function assumes the outcome
+                                will be displayed from a notebook and does
                                 things accordingly
     @param      context_size    to display everything (None) or just the changes > 0
     @param      inline_view     only for notebook, True: one column, False: two columns
-    @return                     html page or (`HTML <https://ipython.org/ipython-doc/stable/api/generated/IPython.display.html?highlight=display#IPython.display.HTML>`_,
-                                `Javascript <https://ipython.org/ipython-doc/stable/api/generated/IPython.display.html?highlight=display#IPython.display.Javascript>`_) object if *notebook* is True
+    @return                     html page or (`HTML <https://ipython.org/ipython-doc/stable/api/generated/IPython.display.html?
+                                highlight=display#IPython.display.HTML>`_,
+                                `Javascript <https://ipython.org/ipython-doc/stable/api/generated/IPython.display.html?
+                                highlight=display#IPython.display.Javascript>`_)
+                                object if *notebook* is True
 
     An example of the results is shown in blog post :ref:`b-diffview`.
 

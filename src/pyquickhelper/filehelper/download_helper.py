@@ -60,6 +60,7 @@ def get_url_content_timeout(url, timeout=10, output=None, encoding="utf8", raise
         Parameters *chunk*, *fLOG* were added.
     """
     def save_content(content, append=False):
+        "local function"
         app = "a" if append else "w"
         if encoding is not None:
             with open(output, app, encoding=encoding) as f:

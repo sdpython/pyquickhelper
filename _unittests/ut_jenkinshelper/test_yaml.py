@@ -233,7 +233,8 @@ class TestYaml(unittest.TestCase):
 
         conv = [_ for _ in convs if "SET NAME=DOC" in _]
         if len(conv) != 1:
-            raise Exception("################################".format(conv))
+            raise Exception(
+                "################################\n{0}".format(conv))
         conv = conv[0]
         if platform.startswith("win"):
             expected = """

@@ -70,13 +70,13 @@ def find_pdflatex(latex_path):
             "Unable to find pdflatex or xelatex in '{0}'".format(latex_path))
     else:
         try:
-            out, err = run_cmd("xelatex --help", wait=True)
+            err = run_cmd("xelatex --help", wait=True)[1]
             if len(err) == 0:
                 return "xelatex"
             else:
                 raise FileNotFoundError(
                     "Unable to run xelatex\n{0}".format(err))
-        except Exception as e:
+        except Exception:
             return "pdflatex"
 
 
@@ -692,7 +692,6 @@ def _process_notebooks_in(notebooks, outfold, build, latex_path=None, pandoc_pat
                 except shutil.SameFileError:
                     fLOG("[_process_notebooks_in] w,file ",
                          dest, "already exists")
-                    pass
             else:
                 try:
                     shutil.copy(image, outfold)
@@ -747,9 +746,9 @@ def add_link_to_notebook(file, nb, pdf, html, python, slides, present, exc=True,
         ext = ".slides" + ext
     fLOG("    add_link_to_notebook", ext, " file ", file)
 
-    fold, name = os.path.split(file)
+    fold = os.path.split(file)[0]
     res = [os.path.join(fold, os.path.split(nb)[-1])]
-    newr, reason = has_been_updated(nb, res[-1])
+    newr = has_been_updated(nb, res[-1])[0]
     if newr:
         shutil.copy(nb, fold)
 
@@ -886,7 +885,6 @@ def add_tag_for_slideshow(ipy, folder, encoding="utf8"):
     @param      encoding    encoding
     @return                 written file
     """
-    from ..ipythonhelper import read_nb
     filename = os.path.split(ipy)[-1]
     output = os.path.join(folder, filename)
     nb = read_nb(ipy, encoding=encoding, kernel=False)
@@ -915,12 +913,18 @@ def build_notebooks_gallery(nbs, fileout, layout="classic", neg_pattern=None,
 
     ::
 
-        ('challenges\\city_tour\\city_tour_1.ipynb', 'ensae_projects\\_doc\\notebooks\\challenges\\city_tour\\city_tour_1.ipynb')
-        ('challenges\\city_tour\\city_tour_1_solution.ipynb', 'ensae_projects\\_doc\\notebooks\\challenges\\city_tour\\city_tour_1_solution.ipynb')
-        ('challenges\\city_tour\\city_tour_data_preparation.ipynb', 'ensae_projects\\_doc\\notebooks\\challenges\\city_tour\\city_tour_data_preparation.ipynb')
-        ('challenges\\city_tour\\city_tour_long.ipynb', 'ensae_projects\\_doc\\notebooks\\challenges\\city_tour\\city_tour_long.ipynb')
-        ('cheat_sheets\\chsh_files.ipynb', 'ensae_projects\\_doc\\notebooks\\cheat_sheets\\chsh_files.ipynb')
-        ('cheat_sheets\\chsh_geo.ipynb', 'ensae_projects\\_doc\\notebooks\\cheat_sheets\\chsh_geo.ipynb')
+        ('challenges\\city_tour\\city_tour_1.ipynb',
+            'ensae_projects\\_doc\\notebooks\\challenges\\city_tour\\city_tour_1.ipynb')
+        ('challenges\\city_tour\\city_tour_1_solution.ipynb',
+            'ensae_projects\\_doc\\notebooks\\challenges\\city_tour\\city_tour_1_solution.ipynb')
+        ('challenges\\city_tour\\city_tour_data_preparation.ipynb',
+            'ensae_projects\\_doc\\notebooks\\challenges\\city_tour\\city_tour_data_preparation.ipynb')
+        ('challenges\\city_tour\\city_tour_long.ipynb',
+            'ensae_projects\\_doc\\notebooks\\challenges\\city_tour\\city_tour_long.ipynb')
+        ('cheat_sheets\\chsh_files.ipynb',
+            'ensae_projects\\_doc\\notebooks\\cheat_sheets\\chsh_files.ipynb')
+        ('cheat_sheets\\chsh_geo.ipynb',
+            'ensae_projects\\_doc\\notebooks\\cheat_sheets\\chsh_geo.ipynb')
 
     *nbs* can be a folder, in that case, the function will build
     the list of all notebooks in that folder.
@@ -982,7 +986,7 @@ def build_notebooks_gallery(nbs, fileout, layout="classic", neg_pattern=None,
     reord = []
     for hi, nbf in rst:
         nb = read_nb(nbf)
-        title, desc = nb.get_description()
+        title = nb.get_description()[0]
         titles[nbf] = title
         reord.append((hi, title, nbf))
     reord.sort()
@@ -1037,7 +1041,7 @@ def build_notebooks_gallery(nbs, fileout, layout="classic", neg_pattern=None,
             rows.extend(["", "", ".. list-table::",
                          "    :header-rows: 0", "    :widths: 3 5 15", ""])
 
-        for no, file in rst:
+        for _, file in rst:
             link = os.path.splitext(os.path.split(file)[-1])[0]
             link = link.replace("_", "") + "rst"
             if not os.path.exists(file):
@@ -1089,12 +1093,14 @@ def build_notebooks_gallery(nbs, fileout, layout="classic", neg_pattern=None,
                     rows.append("")
 
                 # It adds menus and subfolders.
+                lastk = 0
                 for k in range(0, len(hi)):
+                    lastk = k
                     if last is None or k >= len(last) or hi[k] != last[k]:
                         break
 
-                while len(hi) > 0 and k < len(hi):
-                    fo = [root] + list(hi[:k + 1])
+                while len(hi) > 0 and lastk < len(hi):
+                    fo = [root] + list(hi[:lastk + 1])
                     readme = os.path.join(*(fo + ["README.txt"]))
                     if os.path.exists(readme):
                         fLOG("[build_notebooks_gallery] found", readme)
@@ -1107,10 +1113,11 @@ def build_notebooks_gallery(nbs, fileout, layout="classic", neg_pattern=None,
                     else:
                         fLOG("[build_notebooks_gallery] not found", readme)
                         rows.append("")
-                        rows.append(hi[k])
-                        rows.append(level[min(k, len(level) - 1)] * len(hi[k]))
+                        rows.append(hi[lastk])
+                        rows.append(
+                            level[min(lastk, len(level) - 1)] * len(hi[lastk]))
                         rows.append("")
-                    k += 1
+                    lastk += 1
 
                 # It starts the next gallery.
                 last = hi
@@ -1174,7 +1181,7 @@ def build_all_notebooks_coverage(nbs, fileout, module_name, dump=None, badge=Tru
     if not os.path.exists(dump):
         fLOG(
             "[notebooks-coverage] No execution report about notebook at '{0}'".format(dump))
-        return
+        return None
     report0 = notebook_coverage(nbs, dump, too_old=too_old)
     fLOG("[notebooks-coverage] report shape", report0.shape)
 

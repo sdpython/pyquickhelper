@@ -5,8 +5,8 @@
 
 .. versionadded:: 1.5
 """
-from docutils import nodes
 import inspect
+from docutils import nodes
 import sphinx
 from sphinx.util import logging
 from sphinx.util.docfields import DocFieldTransformer, _is_single_paragraph
@@ -56,11 +56,13 @@ def check_typed_make_field(self,
             parameters = parameters[1:]
 
         def kg(p):
+            "local function"
             return p if isinstance(p, str) else p.name
         check_params = {kg(p): 0 for p in parameters}
     logger = logging.getLogger("docassert")
 
     def check_item(fieldarg, content, logger):
+        "local function"
         if fieldarg not in check_params:
             if function_name is not None:
                 logger.warning("[docassert] '{0}' has no parameter '{1}' (in '{2}').".format(
@@ -72,7 +74,7 @@ def check_typed_make_field(self,
                     function_name, fieldarg, docname))
 
     if isinstance(items, list):
-        for i, (fieldarg, content) in enumerate(items):
+        for fieldarg, content in items:
             check_item(fieldarg, content, logger)
         mini = None if len(check_params) == 0 else min(check_params.values())
         if mini == 0:
@@ -156,8 +158,8 @@ class OverrideDocFieldTransformer:
             if is_typefield:
                 # filter out only inline nodes; others will result in invalid
                 # markup being written out
-                content = [n for n in content if isinstance(n, nodes.Inline) or
-                           isinstance(n, nodes.Text)]
+                content = [n for n in content if isinstance(
+                    n, (nodes.Inline, nodes.Text))]
                 if content:
                     types.setdefault(typename, {})[fieldarg] = content
                 continue
@@ -272,6 +274,7 @@ def setup_docassert(app):
     inst = OverrideDocFieldTransformer(DocFieldTransformer.transform)
 
     def local_transform(me, node):
+        "local function"
         return inst.override_transform(me, node)
 
     DocFieldTransformer.transform = local_transform

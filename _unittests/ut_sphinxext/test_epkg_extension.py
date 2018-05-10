@@ -310,6 +310,41 @@ class TestEpkgExtension(unittest.TestCase):
         with open(os.path.join(temp, "out_sharenet.html"), "w", encoding="utf8") as f:
             f.write(html)
 
+    def test_epkg_function_long_link(self):
+        fLOG(
+            __file__,
+            self._testMethodName,
+            OutputPrint=__name__ == "__main__")
+
+        if sys.version_info[0] == 2:
+            warnings.warn(
+                "test_epkg_function_string not run on Python 2.7")
+            return
+
+        from docutils import nodes as skip_
+
+        content = """
+                    test a directive
+                    ================
+
+                    `one link on two lines <http://first.part/
+                    second part>`_.
+                    """.replace("                    ", "")
+        if sys.version_info[0] >= 3:
+            content = content.replace('u"', '"')
+
+        html = rst2html(content,  # fLOG=fLOG,
+                        writer="custom", keep_warnings=True,
+                        directives=None, layout="sphinx")
+
+        t1 = 'href="http://first.part/secondpart">one link on two lines</a>'
+        if t1 not in html:
+            raise Exception(html)
+
+        temp = get_temp_folder(__file__, "temp_epkg_inline")
+        with open(os.path.join(temp, "out_sharenet.html"), "w", encoding="utf8") as f:
+            f.write(html)
+
 
 if __name__ == "__main__":
     unittest.main()

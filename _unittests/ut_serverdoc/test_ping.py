@@ -34,6 +34,7 @@ class TestPing(unittest.TestCase):
             r = os.environ.get("HOSTNAME", None)
             if r is None:
                 raise Exception(str(os.environ))
+            return r
 
     def test_ping(self):
         fLOG(

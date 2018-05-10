@@ -43,7 +43,7 @@ class TestSphinxDoc (unittest.TestCase):
         s = SourceRepository()
         ver = s.version()
         fLOG("version", ver)
-        assert isinstance(ver, int) or isinstance(ver, str)
+        assert isinstance(ver, (int, str))
 
         try:
             import pysvn as skip_
@@ -70,7 +70,7 @@ class TestSphinxDoc (unittest.TestCase):
         assert len(ver) > 0
         assert isinstance(ver, list)
         assert len(ver[0]) >= 4
-        assert isinstance(ver[0][1], int) or isinstance(ver[0][1], typstr)
+        assert isinstance(ver[0][1], (int, typstr))
         assert isinstance(ver[0][2], datetime.datetime)
         ver.sort(reverse=True)
         fLOG("logs", "\n" + "\n".join(map(str, ver[:10])))

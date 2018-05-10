@@ -80,7 +80,8 @@ def nb2slides(nb_file, outfile, add_tag=True):
     @param      add_tag         call @see me add_tag_slide
     @return                     impacted files
 
-    See `How do I convert a IPython Notebook into a Python file via commandline? <http://stackoverflow.com/questions/17077494/how-do-i-convert-a-ipython-notebook-into-a-python-file-via-commandline>`_
+    See `How do I convert a IPython Notebook into a Python file via commandline?
+    <http://stackoverflow.com/questions/17077494/how-do-i-convert-a-ipython-notebook-into-a-python-file-via-commandline>`_
 
     .. exref::
         :title: Convert a notebook into slides
@@ -107,7 +108,7 @@ def nb2slides(nb_file, outfile, add_tag=True):
         nb = run.nb
 
     exporter = get_exporter("slides")()
-    source, meta = exporter.from_notebook_node(nb)
+    source = exporter.from_notebook_node(nb)[0]
 
     with open(outfile, 'w+', encoding="utf8") as fh:
         fh.writelines(source)
@@ -140,7 +141,7 @@ def _nbpresent_export(ipynb=None, outfile=None, out_format=None, verbose=None):
         template_path=[os.path.join(APP_ROOT, "templates")]
     )
 
-    output, resources = exp.from_file(ipynb)
+    output = exp.from_file(ipynb)[0]
     if outfile is None:
         return output
     else:
@@ -206,7 +207,7 @@ def nb2html(nb_file, outfile, exc=True):
         nb = nbr.nb
 
     exporter = get_exporter("html")()
-    source, meta = exporter.from_notebook_node(nb)
+    source = exporter.from_notebook_node(nb)[0]
 
     with open(outfile, 'w+', encoding="utf8") as fh:
         fh.writelines(source)

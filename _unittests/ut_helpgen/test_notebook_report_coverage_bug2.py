@@ -36,7 +36,8 @@ class TestNotebookReportCoverageBug2(unittest.TestCase):
         data = os.path.join(temp, "..", "data",
                             "dump.notebook.pyquickhelper_bug.txt")
         # to shrink the report
-        if True:
+        do = True
+        if do:
             import pandas
             df = pandas.read_csv(data, encoding="utf-8",
                                  low_memory=True, sep="\t")

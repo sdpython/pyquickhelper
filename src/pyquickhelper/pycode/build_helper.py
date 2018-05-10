@@ -130,9 +130,12 @@ def private_script_replacements(script, module, requirements, port, raise_except
     With Python 3.5, I get the following error on Windows::
 
         Using base prefix 'c:\\\\python35_x64'
-        New python executable in c:\\jenkins\\pymy\\py35_pyquickhelper\\_virtualenv\\pyquickhelper_virpy35_22316CE015_22316CE015\\Scripts\\python.exe
-        ERROR: The executable c:\\jenkins\\pymy\\py35_pyquickhelper\\_virtualenv\\pyquickhelper_virpy35_22316CE015_22316CE015\\Scripts\\python.exe is not functioning
-        ERROR: It thinks sys.prefix is 'c:\\\\jenkins\\\\pymy\\\\py35_pyquickhelper' (should be 'c:\\\\jenkins\\\\pymy\\\\py35_pyquickhelper\\\\_virtualenv\\\\pyquickhelper_virpy35_22316ce015_22316ce015')
+        New python executable in c:\\jenkins\\pymy\\py35_pyquickhelper\\_virtualenv\\
+                pyquickhelper_virpy35_22316CE015_22316CE015\\Scripts\\python.exe
+        ERROR: The executable c:\\jenkins\\pymy\\py35_pyquickhelper\\_virtualenv\\
+                pyquickhelper_virpy35_22316CE015_22316CE015\\Scripts\\python.exe is not functioning
+        ERROR: It thinks sys.prefix is 'c:\\\\jenkins\\\\pymy\\\\py35_pyquickhelper' (should be
+                'c:\\\\jenkins\\\\pymy\\\\py36_pyquickhelper\\\\_virtualenv\\\\pyquickhelper_virpy35_22316ce015_22316ce015')
         ERROR: virtualenv is not compatible with this system or executable
         Note: some Windows users have reported this error when they installed Python for
               "Only this user" or have multiple versions of Python installed. Copying the appropriate PythonXX.dll
@@ -227,7 +230,7 @@ def private_script_replacements(script, module, requirements, port, raise_except
             else:
                 script = script.replace("__ADDITIONAL_LOCAL_PATH__", "")
 
-        if "rem _PATH_VIRTUAL_ENV_":
+        if "rem _PATH_VIRTUAL_ENV_" in script:
             if sys.version_info[:2] == (3, 5):
                 # see documention about Python 3.5
                 cmd = "copy /Y %pythonexe%\\..\\*.dll %virtual_env_py%_vir%virtual_env_suffix%\\Scripts"
@@ -341,7 +344,8 @@ def get_extra_script_command(command, module, requirements, port=8067, blog_list
     @param      module                      module name
     @param      requirements                list of dependencies (not in your python distribution)
     @param      port                        port for the local pypi_server which gives the dependencies
-    @param      blog_list                   list of blog to listen for this module (usually stored in ``module.__blog__``)
+    @param      blog_list                   list of blog to listen for this module (usually stored in
+                                            ``module.__blog__``)
     @param      platform                    platform (only Windows)
     @param      default_engine_paths        define the default location for python engine, should be dictionary *{ engine: path }*, see below.
     @param      unit_test_folder            unit test folders, used for command ``run27``

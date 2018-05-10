@@ -57,7 +57,8 @@ def default_jenkins_jobs():
 
 def setup_jenkins_server_yml(js, github="sdpython", modules=default_jenkins_jobs(),
                              overwrite=False, location=None, prefix="",
-                             delete_first=False, disable_schedule=False, fLOG=noLOG, **kwargs):
+                             delete_first=False, disable_schedule=False,
+                             fLOG=noLOG, **kwargs):
     """
     Set up many jobs on Jenkins.
 

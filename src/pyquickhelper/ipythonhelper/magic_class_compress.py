@@ -78,6 +78,7 @@ class MagicCompress(MagicClassWithHelpers):
             else:
                 raise ValueError(
                     "unexpected format: {0} from file {1}".format(format, dest))
+        return None
 
 
 def register_file_magics(ip=None):

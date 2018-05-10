@@ -120,7 +120,7 @@ class TestBlogHelper(unittest.TestCase):
         # from https://gist.github.com/mastbaum/2655700
         import docutils.core
         from docutils.nodes import TextElement, Inline
-        from docutils.parsers.rst import Directive, directives
+        from docutils.parsers.rst import Directive
         from docutils.writers.html4css1 import Writer, HTMLTranslator
 
         class foo(Inline, TextElement):

@@ -39,13 +39,16 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
     @param      ext_locals              context (see `locals <https://docs.python.org/2/library/functions.html#locals>`_)
     @param      add_extensions          additional extensions
     @param      bootswatch_theme        for example, ``spacelab``, look at `spacelab <http://bootswatch.com/spacelab/>`_
-    @param      bootswatch_navbar_links see `sphinx-bootstrap-theme <http://ryan-roemer.github.io/sphinx-bootstrap-theme/README.html>`_
+    @param      bootswatch_navbar_links see `sphinx-bootstrap-theme <http://ryan-roemer.github.io/
+                                        sphinx-bootstrap-theme/README.html>`_
     @param      description_latex       description latex
     @param      use_mathjax             set up the documentation to use mathjax,
-                                        see `sphinx.ext.mathjax <http://sphinx-doc.org/ext/math.html?highlight=math#module-sphinx.ext.mathjax>`_,
+                                        see `sphinx.ext.mathjax <http://sphinx-doc.org/ext/math.html
+                                        ?highlight=math#module-sphinx.ext.mathjax>`_,
                                         default option is True
     @param      use_lunrsearch          suggest autocompletion in sphinx,
-                                        see `sphinxcontrib-lunrsearch <https://github.com/rmcgibbo/sphinxcontrib-lunrsearch>`_
+                                        see `sphinxcontrib-lunrsearch <https://github.com/rmcgibbo/
+                                        sphinxcontrib-lunrsearch>`_
     @param      enable_disabled_parts   @see fn remove_undesired_part_for_documentation
     @param      sharepost               add share button to share blog post on usual networks
     @param      custom_style            custom style sheet
@@ -425,6 +428,7 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
         'Pandoc': 'http://johnmacfarlane.net/pandoc/',
         'pdf': 'https://en.wikipedia.org/wiki/Portable_Document_Format',
         'PEP8': 'https://www.python.org/dev/peps/pep-0008/',
+        "PEP8 codes": 'http://pep8.readthedocs.io/en/latest/intro.html#error-codes',
         'Pillow': 'http://pillow.readthedocs.io/',
         'pip': 'https://pip.pypa.io/en/stable/',
         'png': 'https://fr.wikipedia.org/wiki/Portable_Network_Graphics',
@@ -433,6 +437,7 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
         'pycrypto': 'https://pypi.org/project/pycrypto',
         'pygments': 'http://pygments.org/',
         'pylzma': 'https://pypi.org/project/pylzma',
+        'pylint': 'https://www.pylint.org/',
         'pypi': 'https://pypi.org/project/',
         'PyPI': 'https://pypi.org/project/',
         'python': 'http://www.python.org/',
@@ -652,7 +657,7 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
         extensions.append('sphinx_gallery.gen_gallery')
         if len(examples_dirs) == 0:
             raise ValueError(
-                "Unable to find any 'README.txt' in '{0}'.".foramt(exa))
+                "Unable to find any 'README.txt' in '{0}'.".format(exa))
         reference_url = {k: v[0] for k, v in intersphinx_mapping.items()}
         example_dir = os.path.join(dirname, "gallery")
         if not os.path.exists(example_dir):

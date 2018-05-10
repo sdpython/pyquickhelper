@@ -73,6 +73,7 @@ class ShareNetDirective(Directive):
         @return      a list of nodes
         """
         def options_to_int(s):
+            "local function"
             if s is None:
                 return -1
             elif len(s) == 0:

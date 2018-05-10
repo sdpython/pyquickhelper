@@ -10,7 +10,7 @@ import os
 def rss_update_run_server(dbfile=None, xml_blogs=None, port=8093, browser=None,
                           period="week", server=None, thread=False):
     """
-    create a database if it does not exists, add a table for blogs and posts,
+    Creates a database if it does not exists, add a table for blogs and posts,
     update the database, starts a server and open a browser,
     if *dbfile* is None, it is set to a default values (in your user directory),
     if *xml_blogs* is None, it is given a default value corresponding the the blogs

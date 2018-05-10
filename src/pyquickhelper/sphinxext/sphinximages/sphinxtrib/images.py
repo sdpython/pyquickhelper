@@ -1,4 +1,8 @@
 # -*- coding: utf-8 -*-
+"""
+@file
+@brief :epkg:`Sphinx` extension for images.
+"""
 __author__ = 'Tomasz Czyż <tomaszczyz@gmail.com>'
 __license__ = "Apache 2"
 
@@ -11,11 +15,11 @@ import functools
 import sphinx
 from sphinx.util.osutil import copyfile
 from sphinx.util import status_iterator
+from sphinx.util.console import brown
 try:
     from docutils.parsers.rst import Directive
 except ImportError:
     from sphinx.util.compat import Directive
-from sphinx.util.console import brown
 from sphinx.util.osutil import ensuredir
 from docutils import nodes
 from docutils.parsers.rst import directives
@@ -41,14 +45,17 @@ DEFAULT_CONFIG = dict(
 
 
 class image_node(nodes.image, nodes.General, nodes.Element):
+    ":epkg:`sphinx` node"
     pass
 
 
 class gallery_node(nodes.image, nodes.General, nodes.Element):
+    ":epkg:`sphinx` node"
     pass
 
 
 def directive_boolean(value):
+    "local function"
     if not value.strip():
         raise ValueError("No argument provided but required")
     if value.lower().strip() in ["yes", "1", 1, "true", "ok"]:
@@ -68,11 +75,11 @@ class ImageDirective(Directive):
 
     align_values = ('left', 'center', 'right')
 
-    def align(argument):
+    def align(self):
         # This is not callable as self.align.  It cannot make it a
         # staticmethod because we're saving an unbound method in
         # option_spec below.
-        return directives.choice(argument, ImageDirective.align_values)
+        return directives.choice(self, ImageDirective.align_values)
 
     has_content = True
     required_arguments = True
@@ -157,6 +164,7 @@ class ImageDirective(Directive):
         return [img]
 
     def is_remote(self, uri):
+        "local function"
         uri = uri.strip()
         env = self.state.document.settings.env
         if self.state.document.settings._source is not None:
@@ -181,6 +189,7 @@ class ImageDirective(Directive):
 
 
 def install_backend_static_files(app, env):
+    "local function"
     STATICS_DIR_PATH = os.path.join(app.builder.outdir, STATICS_DIR_NAME)
     dest_path = os.path.join(STATICS_DIR_PATH, 'sphinxtrib-images',
                              app.sphinxtrib_images_backend.__class__.__name__)
@@ -234,6 +243,7 @@ def download_images(app, env):
 
 
 def configure_backend(app):
+    "local function"
     global DEFAULT_CONFIG
 
     config = copy.deepcopy(DEFAULT_CONFIG)
@@ -265,9 +275,12 @@ def configure_backend(app):
         str(backend.__class__.__module__ + ':' + backend.__class__.__name__)))
 
     def backend_methods(node, output_type):
+        "local function"
         def backend_method(f):
+            "local function"
             @functools.wraps(f)
             def inner_wrapper(writer, node):
+                "local function"
                 return f(writer, node)
             return inner_wrapper
         signature = '_{}_{}'.format(node.__name__, output_type)
@@ -286,6 +299,7 @@ def configure_backend(app):
 
 
 def setup(app):
+    """setup for :epkg:`sphinx` extension"""
     global DEFAULT_CONFIG
     app.require_sphinx('1.0')
     app.add_config_value('images_config', DEFAULT_CONFIG, 'env')

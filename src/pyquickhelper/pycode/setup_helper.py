@@ -327,8 +327,9 @@ def process_standard_options_for_setup(argv, file_or_folder, project_var_name, m
                               module_name=module_name, unittest_modules=unittest_modules, pattern_copy=pattern_copy,
                               requirements=requirements, port=port, blog_list=blog_list, default_engine_paths=default_engine_paths,
                               extra_ext=extra_ext, add_htmlhelp=add_htmlhelp, setup_params=setup_params, coverage_options=coverage_options,
-                              coverage_exclude_lines=coverage_exclude_lines, func_sphinx_begin=func_sphinx_begin, func_sphinx_end=func_sphinx_end,
-                              additional_notebook_path=additional_notebook_path, nbformats=nbformats, layout=layout,
+                              coverage_exclude_lines=coverage_exclude_lines, func_sphinx_begin=func_sphinx_begin,
+                              func_sphinx_end=func_sphinx_end, additional_notebook_path=additional_notebook_path,
+                              nbformats=nbformats, layout=layout,
                               skip_function=skip_function, addition_ut_path=additional_ut_path, fLOG=fLOG)
         standard_help_for_setup(argv,
                                 file_or_folder, project_var_name, module_name=module_name, extra_ext=extra_ext,
@@ -340,8 +341,9 @@ def process_standard_options_for_setup(argv, file_or_folder, project_var_name, m
                             module_name=module_name, unittest_modules=unittest_modules, pattern_copy=pattern_copy,
                             requirements=requirements, port=port, blog_list=blog_list, default_engine_paths=default_engine_paths,
                             extra_ext=extra_ext, add_htmlhelp=add_htmlhelp, setup_params=setup_params, coverage_options=coverage_options,
-                            coverage_exclude_lines=coverage_exclude_lines, func_sphinx_begin=func_sphinx_begin, func_sphinx_end=func_sphinx_end,
-                            additional_notebook_path=additional_notebook_path, nbformats=nbformats, layout=layout,
+                            coverage_exclude_lines=coverage_exclude_lines, func_sphinx_begin=func_sphinx_begin,
+                            func_sphinx_end=func_sphinx_end, additional_notebook_path=additional_notebook_path,
+                            nbformats=nbformats, layout=layout,
                             skip_function=skip_function, addition_ut_path=additional_ut_path, fLOG=fLOG)
 
         return True

@@ -216,7 +216,8 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
         instead of the absolute url to the website. It must be replaced before uploaded
         or the parameter *blog_root* can be specified in the configuration file ``conf.py``.
 
-    @warning Parameter *add_htmlhelp* calls `Html Help WorkShop <https://msdn.microsoft.com/en-us/library/windows/desktop/ms669985%28v=vs.85%29.aspx>`_.
+    @warning Parameter *add_htmlhelp* calls `Html Help WorkShop
+             <https://msdn.microsoft.com/en-us/library/windows/desktop/ms669985%28v=vs.85%29.aspx>`_.
              It also changes the encoding of the HTMLoutput into cp1552 (encoding for Windows)
              instead of utf-8.
 
@@ -236,7 +237,8 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
     .. faqref::
         :title: How to dd an extra layer to the documentation?
 
-        The following `commit <https://github.com/sdpython/python3_module_template/commit/75d765a293f65a37b3208601d17d3b0daa891af6>`_
+        The following `commit <https://github.com/sdpython/python3_module_template/commit/
+        75d765a293f65a37b3208601d17d3b0daa891af6>`_
         on project `python3_module_template <https://github.com/sdpython/python3_module_template/>`_
         shows which changes needs to be done to add an extra layer of for the documentation.
 
@@ -343,6 +345,7 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
     directives.register_directive("youtube", YoutubeDirective)
     directives.register_directive("thumbnail", ImageDirective)
     directives.register_directive("video", VideoDirective)
+    directives.register_directive("collapse", CollapseDirective)
     roles.register_canonical_role("sharenet", sharenet_role)
     roles.register_canonical_role("bigger", bigger_role)
     roles.register_canonical_role("githublink", githublink_role)
@@ -752,7 +755,7 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
     datetime_rows = [("encoding", datetime.now())]
     fLOG("---- JENKINS BEGIN DOCUMENTATION ENCODING ----")
     fLOG("[generate_help_sphinx] checking encoding utf8...")
-    for root, dirs, files in os.walk(docpath):
+    for root, _, files in os.walk(docpath):
         for name in files:
             thn = os.path.join(root, name)
             if name.endswith(".rst"):
@@ -959,8 +962,8 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
                                communicate=True, timeout=600)
             fLOG(out)
             if len(err) > 0:
-                warnings.warn(
-                    "Sphinx went through errors. Check if any of them is important.\nOUT:\n{0}\n[sphinxerror]\n{1}".format(out, err))
+                mes = "Sphinx went through errors. Check if any of them is important.\nOUT:\n{0}\n[sphinxerror]\n{1}"
+                warnings.warn(mes.format(out, err))
         fLOG("[generate_help_sphinx] end run HTMLHELP")
 
     #####################################

@@ -33,8 +33,8 @@ def validate_file_for_help(filename, fexclude=lambda f: False):
         return True
 
     if "rpy2" in filename:
-        with open(filename, "r") as f:
-            content = f.read()
+        with open(filename, "r") as ff:
+            content = ff.read()
         if "from pandas.core." in content:
             return False
 
@@ -290,8 +290,8 @@ def copy_source_files(input, output, fmod=lambda v, filename: v,
     :param      silent:                     if True, do not stop when facing an issue with doxygen documentation
     :param      filter:                     if None, process only file related to python code, otherwise,
                                             use this filter to select file (regular expression). If this parameter
-                                            is None or is empty, the default value is:
-                                            ``"(.+[.]py$)|(.+[.]pyd$)|(.+[.]cpp$)|(.+[.]h$)|(.+[.]dll$)|(.+[.]o$)|(.+[.]def$)|(.+[.]exe$)|(.+[.]config$)"``.
+                                            is None or is empty, the default value is something like:
+                                            ``"(.+[.]py$)|(.+[.]pyd$)|(.+[.]cpp$)|(.+[.]h$)|(.+[.]dll$))"``.
 
     :param      remove:                     if True, remove every files in the output folder first
     :param      softfile:                   softfile is a function (f : filename --> True or False), when it is True,
@@ -375,17 +375,18 @@ def apply_modification_template(rootm, store_obj, template, fullname, rootrep,
     """
     @see fn add_file_rst
 
-    @param      rootm       root of the module
-    @param      store_obj   keep track of all objects extracted from the module
-    @param      template    rst template to produce
-    @param      fullname    full name of the file
-    @param      rootrep     file name in the documentation contains some folders which are not desired in the documentation
-    @param      softfile    softfile is a function (f : filename --> True or False), when it is True,
-                            the documentation is lighter (no special members)
-    @param      indexes     dictionary with the label and some information (IndexInformation)
-    @param      additional_sys_path     additional path to include to sys.path before importing a module (will be removed afterwards)
-    @param      fLOG        logging function
-    @return                 content of a .rst file
+    @param      rootm               root of the module
+    @param      store_obj           keep track of all objects extracted from the module
+    @param      template            rst template to produce
+    @param      fullname            full name of the file
+    @param      rootrep             file name in the documentation contains some folders which are not desired in the documentation
+    @param      softfile            a function (f : filename --> True or False), when it is True,
+                                    the documentation is lighter (no special members)
+    @param      indexes             dictionary with the label and some information (IndexInformation)
+    @param      additional_sys_path additional path to include to sys.path before importing a module
+                                    (will be removed afterwards)
+    @param      fLOG                logging function
+    @return                         content of a .rst file
 
     .. versionadded:: 1.0
         Paramater *fLOG* was added.
@@ -404,7 +405,8 @@ def apply_modification_template(rootm, store_obj, template, fullname, rootrep,
     pythonname = None
 
     if os.environ.get("USERNAME", os.environ.get("USER", "````````````")) in fullnamenoext:
-        raise HelpGenException("The title is probably wrong: {0}\nnoext={1}\npython={2}\nrootm={3}\nrootrep={4}\nfullname={5}\nkeepf={6}".format(
+        mes = "The title is probably wrong: {0}\nnoext={1}\npython={2}\nrootm={3}\nrootrep={4}\nfullname={5}\nkeepf={6}"
+        raise HelpGenException(mes.format(
             fullnamenoext, filenoext, pythonname, rootm, rootrep, fullname, keepf))
 
     mo, prefix = import_module(
@@ -529,7 +531,8 @@ def apply_modification_template(rootm, store_obj, template, fullname, rootrep,
         filenoext = filenoext[: -len(".__init__")]
 
     if os.environ.get("USERNAME", os.environ.get("USER", "````````````")) in fullnamenoext:
-        raise HelpGenException("the title is probably wrong: {0}\nnoext={1}\npython={2}\nrootm={3}\nrootrep={4}\nfullname={5}\nkeepf={6}".format(
+        mes = "the title is probably wrong: {0}\nnoext={1}\npython={2}\nrootm={3}\nrootrep={4}\nfullname={5}\nkeepf={6}"
+        raise HelpGenException(mes.format(
             fullnamenoext, filenoext, pythonname, rootm, rootrep, fullname, keepf))
 
     ttitle = "module ``{0}``".format(fullnamenoext)
@@ -568,32 +571,31 @@ def add_file_rst(rootm, store_obj, actions, template=add_file_rst_template,
                  mapped_function=None, indexes=None,
                  additional_sys_path=None, fLOG=noLOG):
     """
-    Creates a rst file for every source file.
+    Creates a :epkg:`rst` file for every source file.
 
-    @param      rootm           root of the module (for relative import)
-    @param      store_obj       to keep table of all objects
-    @param      actions         output from copy_source_files
-    @param      template        rst template to produce
-    @param      rootrep         file name in the documentation contains some folders which are not desired in the documentation
-    @param      fmod            applies modification to the instanciated template
-    @param      softfile        softfile is a function (f : filename --> True or False), when it is True,
-                                the documentation is lighter (no special members)
-    @param      mapped_function list of 2-tuple (pattern, function). Every file matching the pattern
-                                will be copied to the documentation folder, its content will be sent
-                                to the function and will produce a file <filename>.rst. Example:
-                                ``[ (".*[.]sql$", filecontent_to_rst) ]``
-                                The function takes two parameters: full_filename, content_filename. It returns
-                                a string (the rst file) or a tuple (rst file, short description).
-                                By default (if function is None), the function ``filecontent_to_rst`` will be called
-                                except for .rst file for which nothing is done.
-    @param      indexes         to index some information { dictionary label:IndexInformation (...) }, the function populates it
-    @param      additional_sys_path     additional path to include to sys.path before importing a module (will be removed afterwards)
-    @param      fLOG            logging function
-    @return                     list of written files stored in RstFileHelp
-
-    .. versionadded:: 1.0
-        Paramater *fLOG* was added.
-
+    @param      rootm                   root of the module (for relative import)
+    @param      store_obj               to keep table of all objects
+    @param      actions                 output from copy_source_files
+    @param      template                :epkg:`rst` template to produce
+    @param      rootrep                 file name in the documentation contains some folders
+                                        which are not desired in the documentation
+    @param      fmod                    applies modification to the instanciated template
+    @param      softfile                softfile is a function (f : filename --> True or False), when it is True,
+                                        the documentation is lighter (no special members)
+    @param      mapped_function         list of 2-tuple (pattern, function). Every file matching the pattern
+                                        will be copied to the documentation folder, its content will be sent
+                                        to the function and will produce a file <filename>.rst. Example:
+                                        ``[ (".*[.]sql$", filecontent_to_rst) ]``
+                                        The function takes two parameters: full_filename, content_filename. It returns
+                                        a string (the rst file) or a tuple (rst file, short description).
+                                        By default (if function is None), the function ``filecontent_to_rst`` will be called
+                                        except for .rst file for which nothing is done.
+    @param      indexes                 to index some information { dictionary label:IndexInformation (...) },
+                                        the function populates it
+    @param      additional_sys_path     additional path to include to sys.path before importing a module
+                                        (will be removed afterwards)
+    @param      fLOG                    logging function
+    @return                             list of written files stored in RstFileHelp
     """
     if mapped_function is None:
         mapped_function = []
@@ -604,7 +606,7 @@ def add_file_rst(rootm, store_obj, actions, template=add_file_rst_template,
     memo = {}
     app = []
     for action in actions:
-        a, file, dest = action[:3]
+        _, file, dest = action[:3]
         if not isinstance(file, str  # unicode#
                           ):
             file = file.name
@@ -636,9 +638,9 @@ def add_file_rst(rootm, store_obj, actions, template=add_file_rst_template,
                     g.write(content)
                 app.append(RstFileHelp(to, rst, ""))
 
-                for k, v in indexes.items():
-                    if v.fullname == to:
-                        v.set_rst_file(rst)
+                for vv in indexes.values():
+                    if vv.fullname == to:
+                        vv.set_rst_file(rst)
                         break
 
         else:
@@ -857,10 +859,10 @@ def filecontent_to_rst(filename, content):
         begin = None
         end = None
         for i, r in enumerate(spl):
-            if "@brief" in spl[i]:
+            if "@brief" in r:
                 begin = i
             if end is None and begin is not None and len(
-                    spl[i].strip(" \n\r\t")) == 0:
+                    r.strip(" \n\r\t")) == 0:
                 end = i
 
         if begin is not None and end is not None:
@@ -966,17 +968,7 @@ def prepare_file_for_sphinx_help_generation(store_obj, input, output,
                     optional_dirs   = optional_dirs,
                     mapped_function = [ (".*[.]tohelp$", None) ] )
 
-    .. versionchanged:: 0.9
-        produce a file with the number of lines and files per extension
-
-    .. versionchanged:: 1.0
-        add parameter *module_name*, more robust to import issues
-
-    .. versionchanged:: 1.3
-        Parameters *copy_add_ext*, *fLOG* were added.
-
-    .. versionchanged:: 1.5
-        Parameters *auto_rst_generation* was added.
+    It produces a file with the number of lines and files per extension.
     """
     if optional_dirs is None:
         optional_dirs = []
@@ -1092,8 +1084,8 @@ def prepare_file_for_sphinx_help_generation(store_obj, input, output,
                     na = "/".join(na)
                     toc.append("    " + na)
             v += "\n".join(toc)
-        with open(out, "w", encoding="utf8") as f:
-            f.write(v)
+        with open(out, "w", encoding="utf8") as fh:
+            fh.write(v)
         rsts.append(RstFileHelp(None, out, None))
 
     # generates a table with the number of lines per extension
@@ -1180,8 +1172,8 @@ def prepare_file_for_sphinx_help_generation(store_obj, input, output,
             saveas = os.path.join(output, "all_%s%s.rst" %
                                   (tag,
                                    page.replace(":", "").replace("/", "").replace(" ", "")))
-            with open(saveas, "w", encoding="utf8") as f:
-                f.write(onefile)
+            with open(saveas, "w", encoding="utf8") as fh:
+                fh.write(onefile)
             app.append(RstFileHelp(saveas, onefile, ""))
     rsts += app
 
@@ -1266,7 +1258,7 @@ def fix_incomplete_references(folder_source, store_obj, issues=None, fLOG=fLOG):
         modif = False
         lines = content.split("\n")
         rline = []
-        for i, line in enumerate(lines):
+        for line in lines:
             ref = reg.search(line)
             if ref:
                 all = ref.groups()[0]

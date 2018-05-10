@@ -7,8 +7,8 @@
 """
 import os
 import copy
-import sphinx
 import shutil
+import sphinx
 from docutils import nodes
 from docutils.parsers.rst import Directive, directives
 from sphinx.util.logging import getLogger
@@ -183,7 +183,7 @@ def depart_video_node_text(self, node):
     specify a different function for each.
     """
     if self.builder.name == "rst":
-        return depart_video_node_rst(self, node)
+        depart_video_node_rst(self, node)
     elif node.hasattr("uri"):
         filename = node["uri"]
         width = node["width"]
@@ -218,6 +218,7 @@ def depart_video_node_latex(self, node):
             self.body.append(body)
         else:
             def format_dim(s):
+                "local function"
                 if s == "auto" or s is None:
                     return "{}"
                 else:

@@ -70,6 +70,7 @@ class TestRunPythonExtensionToggle(unittest.TestCase):
                 self.add_text(".. beginrunpython." + self.nl)
 
         def depart_rp_node(self, node):
+            "local function"
             if hasattr(self, 'body'):
                 self.body.append("<p><b>depart_rp_node</b></p>")
             else:

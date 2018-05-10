@@ -57,7 +57,7 @@ class CustomTocTree(TocTree):
         # don't add the currently visited file in catch-all patterns
         try:
             all_docnames.remove(env.docname)
-        except KeyError as e:
+        except KeyError:
             if env.docname == "<<string>>":
                 # This comes from rst2html.
                 pass
@@ -171,6 +171,7 @@ class CustomTocTreeCollector(TocTreeCollector):
             return result
 
         def build_toc(node, depth=1):
+            """Builds toc."""
             entries = []
             for sectionnode in node:
                 # find all toctree nodes in this section and add them
@@ -236,6 +237,7 @@ class CustomTocTreeCollector(TocTreeCollector):
 
 
 class CustomAdaptersTocTree(AdaptersTocTree):
+    ":epkg:`Sphinx` directive"
     pass
 
 

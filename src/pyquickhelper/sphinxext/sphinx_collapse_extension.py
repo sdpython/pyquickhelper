@@ -6,8 +6,7 @@ HTML page.
 
 .. versionadded:: 1.7
 """
-import sys
-import os
+import logging
 from docutils import nodes
 from docutils.parsers.rst import directives
 import sphinx

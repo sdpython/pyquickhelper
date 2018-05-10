@@ -14,7 +14,9 @@ import re
 import warnings
 import time
 import importlib
+from contextlib import redirect_stdout, redirect_stderr
 import pycodestyle
+from pylint.lint import Run as PyLinterRun
 
 from ..filehelper.synchelper import remove_folder, explore_folder_iterfile
 from ..loghelper.flog import noLOG
@@ -126,9 +128,21 @@ def _extended_refactoring(filename, line):
     return None
 
 
-def check_pep8(folder, ignore=('E501', 'E265', 'W504'), skip=None,
+class PEP8Exception(Exception):
+    """
+    Code or style issues.
+    """
+    pass
+
+
+def check_pep8(folder, ignore=('E265', 'W504'), skip=None,
                complexity=-1, stop_after=100, fLOG=noLOG,
-               neg_filter=None, extended=None, max_line_length=162):
+               pylint_ignore=('C0103', 'C1801',
+                              'R0201', 'R1705',
+                              'W0108', 'W0613'),
+               recursive=True,
+               neg_filter=None, extended=None, max_line_length=143,
+               pattern=".*[.]py$"):
     """
     Checks if :epkg:`PEP8`,
     the function calls command :epkg:`pycodestyle`
@@ -136,23 +150,63 @@ def check_pep8(folder, ignore=('E501', 'E265', 'W504'), skip=None,
 
     @param      folder              folder to look into
     @param      ignore              list of warnings to skip when raising an exception if
-                                    PEP8 is not verified, see also
+                                    :epkg:`PEP8` is not verified, see also
                                     `Error Codes <http://pep8.readthedocs.org/en/latest/intro.html#error-codes>`_
-    @param      complexity          see `check_file <http://pycodestyle.readthedocs.io/en/latest/api.html?highlight=styleguide#pycodestyle.StyleGuide.check_files>`_
+    @param      pylint_ignore       ignore :epkg:`pylint` issues, see
+                                    `pylint error codes <http://pylint-messages.wikidot.com/all-codes>`_
+    @param      complexity          see `check_file <http://pycodestyle.readthedocs.io/en/latest/api.html
+                                    ?highlight=styleguide#pycodestyle.StyleGuide.check_files>`_
     @param      stop_after          stop after *stop_after* issues
     @param      skip                skip a warning if a substring in this list is found
     @param      neg_filter          skip files verifying this regular expressions
     @param      extended            list of tuple (name, function), see below
     @param      max_line_length     maximum allowed length of a line of code
+    @param      recursive           look into subfolder
+    @param      pattern             only file matching this pattern will be checked
     @param      fLOG                logging function
-    @return                         out
+    @return                         output
 
     Functions mentioned in *extended* takes two parameters (file name and line)
     and they returned None or an error message or a tuple (position in the line, error message).
     When the return is not empty, a warning will be added to the ones
     printed by :epkg:`pycodestyle`.
+    A few codes to ignore:
 
-    .. versionadded:: 1.4
+    * *E501*: line too long (?? characters)
+    * *E265*: block comments should have a space after #
+    * *W504*: line break after binary operator, this one is raised
+      after the code is modified by @see fn remove_extra_spaces_and_pep8.
+
+    The full list is available at :epkg:`PEP8 codes`. In addition,
+    the function adds its own codes:
+
+    * *ECL1*: line too long for a specific reason.
+
+    Some errors to disable with :epkg:`pylint`:
+
+    * *C0103*: variable name is not conform
+    * *C0111*: missing function docstring
+    * *C1801*: do not use `len(SEQUENCE)` to determine if a sequence is empty
+    * *R0201*: method could be a function
+    * *R0901*: too many ancestors
+    * *R0902*: too many instance attributes
+    * *R0911*: too many return statements
+    * *R0912*: too many branches
+    * *R0913*: too many arguments
+    * *R0914*: too many local variables
+    * *R0915*: too many statements
+    * *R1702*: too many nested blocks
+    * *R1705*: unnecessary "else" after "return"
+    * *W0108*: Lambda may not be necessary
+    * *W0613*: unused argument
+
+    The full list is available at
+    `pylint error codes <http://pylint-messages.wikidot.com/all-codes>`_.
+
+    .. versionchanged:: 1.7
+        :epkg:`pylint` was added used to check the code.
+        It produces the following list of errors
+        `pylint error codes <http://pylint-messages.wikidot.com/all-codes>`_.
     """
     def extended_checkings(fname, content, buf, extended):
         for i, line in enumerate(content):
@@ -183,14 +237,15 @@ def check_pep8(folder, ignore=('E501', 'E265', 'W504'), skip=None,
 
         def check_lenght_line(fname, line):
             if len(line) > max_line_length and not line.lstrip().startswith('#'):
-                if ">`_" in line or ":math:`" in line or "ERROR: " in line:
-                    # we skip line containing url or comments
-                    pass
-                else:
-                    return "line too long {0} > {1}".format(len(line), max_line_length)
+                if ">`_" in line:
+                    return "line too long (link) {0} > {1}".format(len(line), max_line_length)
+                if ":math:`" in line:
+                    return "line too long (:math:) {0} > {1}".format(len(line), max_line_length)
+                if "ERROR: " in line:
+                    return "line too long (ERROR:) {0} > {1}".format(len(line), max_line_length)
             return None
 
-        extended.append(("ECL1", check_lenght_line))
+        extended.append(("[ECL1]", check_lenght_line))
 
     if ignore is None:
         ignore = tuple()
@@ -199,46 +254,88 @@ def check_pep8(folder, ignore=('E501', 'E265', 'W504'), skip=None,
 
     regneg_filter = None if neg_filter is None else re.compile(neg_filter)
 
-    stdout = sys.stdout
+    # pycodestyle
+    files_to_check = []
     buf = StringIO()
-    sys.stdout = buf
-    for file in explore_folder_iterfile(folder, pattern=".*[.]py$"):
-        if regneg_filter is not None:
-            if regneg_filter.search(file):
-                continue
-        if file.endswith("__init__.py"):
-            ig = ignore + ('F401',)
-        else:
-            ig = ignore
-        if file is None:
-            raise TypeError("file cannot be None")
-        if len(file) == 0:
-            raise TypeError("file cannot be empty")
-        try:
-            style = pycodestyle.StyleGuide(
-                ignore=ig, complexity=complexity, format='pylint')
-            res = style.check_files([file])
-        except TypeError as e:
-            ext = "This is often due to an instruction from . import... The imported module has no name."
-            raise TypeError("Issue with pycodesyle for module '{0}' ig={1} complexity={2}\n{3}".format(
-                file, ig, complexity, ext)) from e
+    with redirect_stdout(buf):
+        for file in explore_folder_iterfile(folder, pattern=pattern,
+                                            recursive=recursive):
+            if regneg_filter is not None:
+                if regneg_filter.search(file):
+                    continue
+            if file.endswith("__init__.py"):
+                ig = ignore + ('F401',)
+            else:
+                ig = ignore
+            if file is None:
+                raise TypeError("file cannot be None")
+            if len(file) == 0:
+                raise TypeError("file cannot be empty")
 
-        if extended is not None:
-            with open(file, "r", errors="ignore") as f:
-                content = f.readlines()
-            extended_checkings(file, content, buf, extended)
-        if res.total_errors + res.file_errors > 0:
-            res.print_filename = True
-            lines = [_ for _ in buf.getvalue().split("\n") if fkeep(_)]
-            if len(lines) > stop_after:
-                raise Exception(
-                    "{0} lines\n{1}".format(len(lines), "\n".join(lines)))
-    sys.stdout = stdout
+            # code style
+            files_to_check.append(file)
+            try:
+                style = pycodestyle.StyleGuide(
+                    ignore=ig, complexity=complexity, format='pylint',
+                    max_line_length=max_line_length)
+                res = style.check_files([file])
+            except TypeError as e:
+                ext = "This is often due to an instruction from . import... The imported module has no name."
+                raise TypeError("Issue with pycodesyle for module '{0}' ig={1} complexity={2}\n{3}".format(
+                    file, ig, complexity, ext)) from e
+
+            if extended is not None:
+                with open(file, "r", errors="ignore") as f:
+                    content = f.readlines()
+                extended_checkings(file, content, buf, extended)
+
+            if res.total_errors + res.file_errors > 0:
+                res.print_filename = True
+                lines = [_ for _ in buf.getvalue().split("\n") if fkeep(_)]
+                if len(lines) > stop_after:
+                    raise PEP8Exception(
+                        "{0} lines\n{1}".format(len(lines), "\n".join(lines)))
 
     lines = [_ for _ in buf.getvalue().split("\n") if fkeep(_)]
     if len(lines) > 0:
-        raise Exception(
+        raise PEP8Exception(
             "{0} lines\n{1}".format(len(lines), "\n".join(lines)))
+
+    if len(files_to_check) == 0:
+        raise FileNotFoundError("No file found in '{0}'".format(folder))
+
+    # pylint
+    sout = StringIO()
+    serr = StringIO()
+    with redirect_stdout(sout):
+        with redirect_stderr(serr):
+            with warnings.catch_warnings():
+                warnings.simplefilter("ignore", DeprecationWarning)
+                opt = ["--ignore-patterns=.*temp_.*,doc_.*", "--persistent=n",
+                       '--jobs=1', '--suggestion-mode=n', "--score=n",
+                       '--max-args=30', '--max-locals=50', '--max-returns=30',
+                       '--max-branches=50', '--max-parents=25',
+                       '--max-attributes=50', '--min-public-methods=0',
+                       '--max-public-methods=100', '--max-bool-expr=10',
+                       '--max-statements=200',
+                       '--msg-template={abspath}:{line}: {msg_id}: {msg} (pylint)']
+                if pylint_ignore:
+                    opt.append('--disable=' + ','.join(pylint_ignore))
+                if max_line_length:
+                    opt.append("--max-line-length=%d" % max_line_length)
+                opt.extend(files_to_check)
+                PyLinterRun(opt, exit=False)
+
+    pylint_lines = sout.getvalue().split('\n')
+    pylint_lines = [_ for _ in pylint_lines if '(pylint)' in _ and fkeep(_) and _[
+        0] != ' ' and ':' in _]
+    pylint_lines = [_ for _ in pylint_lines if not _.startswith(
+        "except ") and not _.startswith("else:") and not _.startswith("try:")]
+    lines.extend(pylint_lines)
+    if len(lines) > 0:
+        raise PEP8Exception(
+            "{0} lines\n{1}".format(len(lines), "\n".join(lines)))
+
     return "\n".join(lines)
 
 

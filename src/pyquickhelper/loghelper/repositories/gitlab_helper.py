@@ -13,7 +13,7 @@ class GitLabException(Exception):
     specific exception, stores the request
     """
 
-    def __init__(self, mes, req):
+    def __init__(self, mes, req=None):
         """
         @param  mes     message
         @param  req     request which caused the failure
@@ -25,8 +25,11 @@ class GitLabException(Exception):
         """
         usual
         """
-        return "{0}\nCODE: {1}\n[giterror]\n{2}".format(
-            Exception.__str__(self), self.request.status_code, self.request.content)
+        if self.request is None:
+            return Exception.__str__(self)
+        else:
+            return "{0}\nCODE: {1}\n[giterror]\n{2}".format(
+                Exception.__str__(self), self.request.status_code, self.request.content)
 
 
 class GitLabAPI:
@@ -85,7 +88,7 @@ class GitLabAPI:
         data = {'page': page, 'per_page': per_page}
 
         request = requests.get(
-            self.projects_url, params=data, headers=self.headers, verify=self.verify_ssl)
+            self.api_url, params=data, headers=self.headers, verify=self.verify_ssl)
         if request.status_code == 200:
             return json.loads(request.content.decode("utf-8"))
         else:

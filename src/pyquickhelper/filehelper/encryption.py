@@ -2,9 +2,8 @@
 @file
 @brief Encryption functionalities.
 
-Inspired from `AES encryption of files in Python with PyCrypto <http://eli.thegreenplace.net/2010/06/25/aes-encryption-of-files-in-python-with-pycrypto>`_
-
-.. versionadded:: 1.3
+Inspired from `AES encryption of files in Python withPyCrypto
+<http://eli.thegreenplace.net/2010/06/25/aes-encryption-of-files-in-python-with-pycrypto>`_
 """
 import random
 import sys
@@ -92,6 +91,8 @@ def close_input_output(in_size, in_close, in_stream, out_close, out_return, out_
 
     if out_return:
         return out_stream.getvalue()
+    else:
+        return None
 
 
 def get_encryptor(key, algo="AES", chunksize=2 ** 24, **params):

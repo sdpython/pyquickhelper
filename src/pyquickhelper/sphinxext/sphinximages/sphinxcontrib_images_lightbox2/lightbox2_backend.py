@@ -22,6 +22,7 @@ class LightBox2(Backend):
     )
 
     def visit_image_node_html(self, writer, node):
+        "translator method"
         # make links local (for local images only)
         builder = self._app.builder
         if node['uri'] in builder.images:
@@ -60,10 +61,11 @@ class LightBox2(Backend):
                            cls='align-%s' % node['align'] if node['align'] else '',
                            width=node['size'][0],
                            height=node['size'][1],
-                           alt=node['alt'],
-                           title=node['title']))
+                           alt=node['alt']))
+        # , title=node['title']))
 
     def depart_image_node_html(self, writer, node):
+        "translator method"
         writer.body.append('</a>')
         if node['show_caption'] is True:
             writer.body.append('''<figcaption>{title}</figcaption>

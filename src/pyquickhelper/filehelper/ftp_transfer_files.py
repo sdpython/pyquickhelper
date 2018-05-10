@@ -203,7 +203,7 @@ class FolderTransferFTP:
             if f.isfile():
                 if self._filter_out(f.fullname):
                     continue
-                n, r = self._ft.has_been_modified_and_reason(f.fullname)
+                n = self._ft.has_been_modified_and_reason(f.fullname)[0]
                 if n:
                     yield f
 
@@ -361,6 +361,7 @@ class FolderTransferFTP:
                 transfered = 0
 
                 def callback_function_(*l, **p):
+                    "local function"
                     private_p = p.get('private_p', None)
                     if private_p is None:
                         raise ValueError("private_p cannot be None")

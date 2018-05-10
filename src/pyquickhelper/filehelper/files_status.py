@@ -230,7 +230,7 @@ class FilesStatus:
                 if self.has_been_modified_and_reason(full):
                     yield file
 
-        for key, file in self.copyFiles.items():
+        for file in self.copyFiles.values():
             if file.filename not in memo:
                 yield ("<+", file.filename, None, None)
 
@@ -246,6 +246,7 @@ class FilesStatus:
                 raise FileNotFoundError(
                     "unable to find a file in the list of monitored files: {0}".format(file))
             del self.copyFiles[file]
+            return None
         else:
             st = os.stat(file)
             size = st.st_size

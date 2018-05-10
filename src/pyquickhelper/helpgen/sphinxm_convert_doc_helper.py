@@ -4,13 +4,6 @@
 
 .. versionadded:: 1.0
 """
-from .utils_sphinx_doc import migrating_doxygen_doc
-from ..texthelper.texts_language import TITLES
-from ..loghelper.flog import noLOG
-from . helpgen_exceptions import HelpGenConvertError
-from .conf_path_tools import find_graphviz_dot, find_latex_path
-from .sphinxm_mock_app import MockSphinxApp
-
 import sys
 import re
 import textwrap
@@ -19,6 +12,12 @@ from docutils import core, languages
 from docutils.io import StringInput, StringOutput
 from sphinx.environment import default_settings
 from sphinx.util.logging import getLogger
+from .utils_sphinx_doc import migrating_doxygen_doc
+from ..texthelper.texts_language import TITLES
+from ..loghelper.flog import noLOG
+from . helpgen_exceptions import HelpGenConvertError
+from .conf_path_tools import find_graphviz_dot, find_latex_path
+from .sphinxm_mock_app import MockSphinxApp
 
 
 if sys.version_info[0] == 2:
@@ -135,7 +134,8 @@ def rst2html(s, fLOG=noLOG, writer="html", keep_warnings=False,
     *directives* is None or a list of 5-uple:
 
     * a directive name
-    * a directive class: see `Sphinx Directive <http://sphinx-doc.org/extdev/tutorial.html>`_, see also @see cl RunPythonDirective as an example
+    * a directive class: see `Sphinx Directive <http://sphinx-doc.org/extdev/tutorial.html>`_,
+      see also @see cl RunPythonDirective as an example
     * a docutils node: see @see cl runpython_node as an example
     * two functions: see @see fn visit_runpython_node, @see fn depart_runpython_node as an example
 
@@ -398,8 +398,6 @@ def correct_indentation(text):
 
     @param      text        text to correct
     @return                 corrected text
-
-    .. versionadded:: 1.0
     """
     title = {}
     rows = text.split("\n")
@@ -450,8 +448,10 @@ def docstring2html(function_or_string, format="html", fLOG=noLOG, writer="html",
     @param      language                language
     @param      layout                  ``'docutils'``, ``'sphinx'``, ``'sphinx_body'``, see below.
     @param      document_name           document_name for this string
-    @param      filter_nodes            transform the doctree before writing the results (layout must be 'sphinx')
-    @param      options                 Sphinx options see `Render math as images <http://www.sphinx-doc.org/en/stable/ext/math.html#module-sphinx.ext.imgmath>`_,
+    @param      filter_nodes            transform the doctree before writing the results
+                                        (layout must be 'sphinx')
+    @param      options                 Sphinx options see `Render math as images
+                                        <http://www.sphinx-doc.org/en/stable/ext/math.html#module-sphinx.ext.imgmath>`_,
                                         a subset of options is used, see @see fn default_sphinx_options.
                                         By default, the theme (option *html_theme*) will ``'basic'``.
     @return                             (str) :epkg:`HTML` format or (IPython.core.display.HTML)
@@ -486,7 +486,7 @@ def docstring2html(function_or_string, format="html", fLOG=noLOG, writer="html",
     if doc is None:
         return ""
 
-    stats, javadoc = migrating_doxygen_doc(doc, "None", log=False)
+    javadoc = migrating_doxygen_doc(doc, "None", log=False)[1]
     rows = javadoc.split("\n")
     from .utils_sphinx_doc import _private_migrating_doxygen_doc
     rst = _private_migrating_doxygen_doc(

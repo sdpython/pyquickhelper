@@ -36,7 +36,7 @@ def enumerate_notebooks_link(nb_folder, nb_rst):
                     "Issue with file '{0}'".format(name)) from e
         reg_title = re.compile("\\\"([#] [^#]+?)\\n")
 
-    folders, rsts = explore_folder(nb_rst, ".*[.]rst$")
+    rsts = explore_folder(nb_rst, ".*[.]rst$")[1]
     crsts = {}
     for rst in rsts:
         with open(rst, "r", encoding="utf-8") as f:

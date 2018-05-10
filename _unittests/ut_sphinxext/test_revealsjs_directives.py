@@ -463,8 +463,8 @@ class TestDepartRvCode(unittest.TestCase):
 
         dummyself = self._get_dummy_self()
         self._call_fut(dummyself, None)
-        assert '</code>' == dummyself.body.content[0]
-        assert '</pre>\n' == dummyself.body.content[1]
+        self.assertEqual('</code>', dummyself.body.content[0])
+        self.assertEqual('</pre>\n', dummyself.body.content[1])
 
 
 class TestVisitRvSmall(unittest.TestCase):
@@ -506,7 +506,7 @@ class TestVisitRvSmall(unittest.TestCase):
         dummynode = self._get_dummy_node()
         dummyself = self._get_dummy_self()
         self._call_fut(dummyself, dummynode)
-        assert '<small>' == dummyself.body.content[0]
+        self.assertEqual('<small>', dummyself.body.content[0])
         assert True is dummyself.first_last
 
 
@@ -577,8 +577,7 @@ class TestVisitRvNote(unittest.TestCase):
         dummynode = self._get_dummy_node()
         dummyself = self._get_dummy_self()
         self._call_fut(dummyself, dummynode)
-        assert '<aside class="notes">' ==\
-            dummyself.body.content[0]
+        self.assertEqual('<aside class="notes">', dummyself.body.content[0])
         assert True is dummyself.first_last
 
 
@@ -606,7 +605,7 @@ class TestDepartRvNote(unittest.TestCase):
 
         dummyself = self._get_dummy_self()
         self._call_fut(dummyself, None)
-        assert '</aside>\n' == dummyself.body.content[0]
+        self.assertEqual('</aside>\n', dummyself.body.content[0])
 
 
 class TestSetup(unittest.TestCase):

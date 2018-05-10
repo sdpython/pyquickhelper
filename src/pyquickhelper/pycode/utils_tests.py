@@ -40,7 +40,8 @@ def main_wrapper_tests(codefile, skip_list=None, processes=False, add_coverage=F
     @param      skip_list               to skip a list of unit tests (by index, starting by 1)
     @param      processes               to run the unit test in a separate process (with function @see fn run_cmd),
                                         however, to make that happen, you need to specify
-                                        ``exit=False`` for each test file, see `unittest.main <https://docs.python.org/3/library/unittest.html#unittest.main>`_
+                                        ``exit=False`` for each test file, see `unittest.main
+                                        <https://docs.python.org/3/library/unittest.html#unittest.main>`_
     @param      add_coverage            (bool) run the unit tests and measure the coverage at the same time
     @param      report_folder           (str) folder where the coverage report will be stored, if None, it will be placed in:
                                         ``os.path.join(os.path.dirname(codefile), "..", "_doc","sphinxdoc","source", "coverage")``
@@ -87,7 +88,8 @@ def main_wrapper_tests(codefile, skip_list=None, processes=False, add_coverage=F
         This works if you installed Jenkins with your credentials.
         Otherwise the path to ``pandoc.exe`` needs to be changed.
 
-        And you can also read `Schedule builds with Jenkins <http://www.xavierdupre.fr/blog/2014-12-06_nojs.html>`_.
+        And you can also read `Schedule builds with Jenkins
+        <http://www.xavierdupre.fr/blog/2014-12-06_nojs.html>`_.
 
         :epkg:`node.js` might be required if a notebooks contain javascript.
 
@@ -97,8 +99,9 @@ def main_wrapper_tests(codefile, skip_list=None, processes=False, add_coverage=F
 
             _tkinter.TclError: no display name and no $DISPLAY environment variable
 
-    It is due to matplotlib.
-    See `Generating matplotlib graphs without a running X server <http://stackoverflow.com/questions/4931376/generating-matplotlib-graphs-without-a-running-x-server>`_.
+    It is due to :epkg:`matplotlib`.
+    See `Generating matplotlib graphs without a running X server
+    <http://stackoverflow.com/questions/4931376/generating-matplotlib-graphs-without-a-running-x-server>`_.
     If the skip function is None, it will replace it by the function @see fn default_skip_function.
     Calls function @see fn _setup_hook if it is available in the unit tested module.
     Parameter *tested_module* was added, the function then checks the presence of

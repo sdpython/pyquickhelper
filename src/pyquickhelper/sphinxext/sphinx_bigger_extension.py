@@ -5,8 +5,7 @@
 
 .. versionadded:: 1.3
 """
-
-import sys
+import cgi as cgiesc
 import sphinx
 from docutils import nodes
 from sphinx.util.logging import getLogger
@@ -19,11 +18,6 @@ if is_html5_writer_available():
 else:
     from sphinx.writers.html import HTMLTranslator
     inheritance = HTMLTranslator
-
-if sys.version_info[0] == 2:
-    import cgi as cgiesc
-else:
-    import html as cgiesc
 
 
 class bigger_node(nodes.Element):

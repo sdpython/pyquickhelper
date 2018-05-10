@@ -41,7 +41,7 @@ class TestPySvnHelper (unittest.TestCase):
         alls = s.version(data)
         fLOG("data", data)
         fLOG("version", alls)
-        assert isinstance(alls, int) or isinstance(alls, str)
+        assert isinstance(alls, (int, str))
 
 
 if __name__ == "__main__":

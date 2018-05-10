@@ -617,7 +617,7 @@ def enumerate_processed_yml(file_or_buffer, context=None, engine="jinja2", platf
             except jenkins.NotFoundException:
                 j = None
             except jenkins.JenkinsException as e:
-                from .jenkins_helper import JenkinsExtException
+                from .jenkins_exceptions import JenkinsExtException
                 raise JenkinsExtException(
                     "unable to retrieve job config for name={1}".format(name)) from e
 

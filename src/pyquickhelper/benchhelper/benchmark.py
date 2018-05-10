@@ -265,6 +265,7 @@ class BenchMark:
 
         # cache
         def cache_():
+            "local function"
             if self._cache_file is not None and os.path.exists(self._cache_file):
                 self.fLOG("[BenchMark.run] retrieve cache '{0}'".format(
                     self._cache_file))
@@ -281,6 +282,7 @@ class BenchMark:
 
         # run
         def run_(pgar):
+            "local function"
             nonlocal nb_cached
             if sys.version_info[0] < 3:
                 nb_cached = 0
@@ -298,7 +300,7 @@ class BenchMark:
                 # check the cache
                 if i < len(cached["params_list"]) and cached["params_list"][i] == di:
                     can = True
-                    for k, v in cached.items():
+                    for v in cached.values():
                         if i >= len(v):
                             # cannot cache
                             can = False
@@ -379,6 +381,7 @@ class BenchMark:
                         "[BenchMark.run] {0}/{1} end {2}".format(i + 1, len(params_list), met))
 
         def graph_():
+            "local function"
             self.fLOG("[BenchMark.run] graph {0} do".format(self.Name))
             self._graphs = self.graphs(self._path_to_images)
             if self._graphs is None or not isinstance(self._graphs, list):
@@ -398,6 +401,7 @@ class BenchMark:
 
         # write information about run experiments
         def final_():
+            "local function"
             if self._cache_file is not None:
                 self.fLOG("[BenchMark.run] save cache '{0}'".format(
                     self._cache_file))

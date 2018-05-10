@@ -153,7 +153,7 @@ def transform_postcontents(app, doctree, fromdocname):
         main_par = nodes.paragraph()
         node += main_par
         roots = [main_par]
-        depth = int(node["depth"]) if node["depth"] != '*' else 20
+        # depth = int(node["depth"]) if node["depth"] != '*' else 20
         memo = {}
 
         for depth, subnode in traverse(parent):
@@ -168,7 +168,7 @@ def transform_postcontents(app, doctree, fromdocname):
                 roots[-1] += bullet
             elif isinstance(subnode, nodes.section):
                 if len(subnode["ids"]) == 0:
-                    subnode["ids"].append("postid-%d".format(id(subnode)))
+                    subnode["ids"].append("postid-{}".format(id(subnode)))
                 nid = subnode["ids"][0]
                 if nid in memo:
                     raise KeyError("node was already added '{0)'".format(nid))

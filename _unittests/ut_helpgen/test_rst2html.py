@@ -6,7 +6,6 @@
 import sys
 import os
 import unittest
-import warnings
 
 try:
     import src
@@ -99,9 +98,12 @@ class TestRst2Html(unittest.TestCase):
         with open(rst, "r", encoding="utf-8") as f:
             content = f.read()
 
-        warnings.warn("Not implemented for inline images.")
-        return
-        text = rst2html(content, document_name="out_string_plot")
+        try:
+            text = rst2html(content, document_name="out_string_plot")
+        except OSError as e:
+            # Invalid argument: '[...]<string>-1.py'
+            self.assertIn("<string>-1.py", str(e))
+            return
 
         ji = os.path.join(temp, "out.html")
         with open(ji, "w", encoding="utf-8") as f:

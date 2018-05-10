@@ -42,7 +42,7 @@ def explore_folder(folder, pattern=None, neg_pattern=None, fullname=False, fLOG=
     filter = 0
     negfil = 0
     file, rep = [], {}
-    for r, d, f in os.walk(folder):
+    for r, _, f in os.walk(folder):
         for a in f:
             found += 1
             temp = os.path.join(r, a)
@@ -75,7 +75,8 @@ def explore_folder(folder, pattern=None, neg_pattern=None, fullname=False, fLOG=
     return keys, file
 
 
-def explore_folder_iterfile(folder, pattern=None, neg_pattern=None, fullname=False):
+def explore_folder_iterfile(folder, pattern=None, neg_pattern=None,
+                            fullname=False, recursive=True):
     """
     Same as @see fn explore_folder but iterates on files.
 
@@ -85,18 +86,25 @@ def explore_folder_iterfile(folder, pattern=None, neg_pattern=None, fullname=Fal
                                     the filename must verify (with the folder is fullname is True)
     @param          neg_pattern     negative pattern to exclude files
     @param          fullname        if True, include the subfolder while checking the regex
+    @param          recursive       look into subfolders
     @return                         iterator on files
 
-    .. versionchanged:: 1.4
-        Parameter *neg_pattern* was added.
+    .. versionchanged:: 1.7
+        Parameter *recursive* was added.
     """
     if pattern is not None:
         pattern = re.compile(pattern)
     if neg_pattern is not None:
         neg_pattern = re.compile(neg_pattern)
 
+    def listdir_aswalk(folder):
+        "local function"
+        yield folder, None, os.listdir(folder)
+
+    iter = os.walk if recursive else listdir_aswalk
+
     rep = {}
-    for r, d, f in os.walk(folder):
+    for r, _, f in iter(folder):
         for a in f:
             temp = os.path.join(r, a)
             if pattern is not None:
@@ -159,7 +167,9 @@ def synchronize_folder(p1: str, p2: str, hash_size=1024 ** 2, repo1=False, repo2
     @param      no_deletion         (bool) if a file is found in the second folder and not in the first one,
                                     if will be removed unless no_deletion is True
     @param      filter              (str) None to accept every file, a string if it is a regular expression,
-                                    a function for something more complex: function (fullname) --> True (every file is considered in lower case),
+                                    a function for something more complex:
+                                    function ``(fullname) --> True``
+                                    (every file is considered in lower case),
                                     (use :epkg:`*py:re:search`)
     @param      filter_copy         (str) None to accept every file, a string if it is a regular expression,
                                     a function for something more complex: function (fullname) --> True
@@ -228,6 +238,7 @@ def synchronize_folder(p1: str, p2: str, hash_size=1024 ** 2, repo1=False, repo2
         exp = re.compile(filter)
 
         def regtrue(be):
+            "local function"
             return (True if exp.search(be) else False)
 
         tfilter = regtrue

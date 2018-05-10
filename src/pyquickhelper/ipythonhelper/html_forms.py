@@ -24,7 +24,8 @@ def open_html_form(params, title='', key_save="",
     @return                     HTML
 
     The code comes from
-    `IPython Notebook: Javascript/Python Bi-directional Communication <https://jakevdp.github.io/blog/2013/06/01/ipython-notebook-javascript-python-communication/>`_.
+    `IPython Notebook: Javascript/Python Bi-directional Communication
+    <https://jakevdp.github.io/blog/2013/06/01/ipython-notebook-javascript-python-communication/>`_.
     When the notebook is converted into a HTML document, the values in the form do not appear.
     This behaviour is expected in case one of the field contains a password. On a notebook, it
     gives the following result:
@@ -45,7 +46,8 @@ def open_html_form(params, title='', key_save="",
             print(form1)
 
         We can execute a simple action after the button *Ok* is pressed. This second trick
-        comes from `this notebook <https://raw.githubusercontent.com/fluxtream/fluxtream-ipy/master/Communication%20between%20kernel%20and%20javascript%20in%20iPython%202.0.ipynb>`_.
+        comes from `this notebook <https://raw.githubusercontent.com/fluxtream/fluxtream-ipy/master/
+        Communication%20between%20kernel%20and%20javascript%20in%20iPython%202.0.ipynb>`_.
         The code displays whatever comes from function ``custom_action`` in this case.
         You should return ``""`` to display nothing.
 

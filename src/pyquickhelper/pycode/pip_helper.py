@@ -115,7 +115,7 @@ def get_package_info(name=None, start=0, end=-1):
         if len(subp) == 0:
             raise PQPipError(
                 "no package, start={0}, end={1}, len(subp)={2}, len(packs)={3}".format(start, end, len(subp), len(packs)))
-        for i, cp in enumerate(subp):
+        for cp in subp:
             pack = cp.project_name
             info = get_package_info(pack)
             res.append(info)
