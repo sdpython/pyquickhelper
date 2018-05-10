@@ -122,7 +122,8 @@ class TestRst2Html(unittest.TestCase):
             content = f.read()
 
         try:
-            text2 = rst2html(content, document_name="out_string_plot", layout="sphinx")
+            text2 = rst2html(
+                content, document_name="out_string_plot", layout="sphinx")
         except OSError as e:
             # Invalid argument: '[...]<string>-1.py'
             self.assertIn("<string>-1.py", str(e))
