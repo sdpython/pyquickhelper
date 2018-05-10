@@ -200,7 +200,7 @@ class TestCodeStyle(unittest.TestCase):
 
         thi = os.path.abspath(os.path.dirname(__file__))
         test = os.path.normpath(os.path.join(thi, "..", ))
-        check_pep8(test, fLOG=fLOG, neg_filter="temp_.*",
+        check_pep8(test, fLOG=fLOG, neg_pattern="temp_.*",
                    max_line_length=200,
                    pylint_ignore=('C0111', 'C0103', 'R0914', 'W0212', 'C0413', 'W0621',
                                   'W0703', 'W0622', 'W0122', 'R0912', 'R0201',
