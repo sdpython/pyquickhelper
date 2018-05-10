@@ -68,7 +68,7 @@ def call_setup_hook(folder, module_name, fLOG=noLOG, must_be=False,
                     **args):
     """
     Calls function @see fn _setup_hook for a specific module,
-    it is called in a separate process
+    it is called in a separate process.
 
     @param      folder              folder which contains the setup
     @param      module_name         module name
@@ -141,4 +141,5 @@ def call_setup_hook(folder, module_name, fLOG=noLOG, must_be=False,
         raise Exception(error())
     if exit != 0:
         raise Exception(error())
+    out = "CMD: {0}\n---\n{1}".format(cmd, out)
     return out, err

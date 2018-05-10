@@ -88,7 +88,7 @@ class TestSphinxFullDocumentationModuleTemplateRst(unittest.TestCase):
 
         # Checks that the unit test might fails.
         coucou = os.path.join(temp, "python3_module_template-master", "_doc", "sphinxdoc", "source", "gallery",
-                              "project_name.subproject2.exclude_from_code_coverage.NotImplementedClass.__init__.examples")
+                              "python3_module_template.subproject2.exclude_from_code_coverage.NotImplementedClass.__init__.examples")
         if not os.path.exists(coucou):
             fLOG("[ut] creating file '{0}'".format(coucou))
             clog("[ut] creating file '{0}'".format(coucou))
@@ -106,7 +106,7 @@ class TestSphinxFullDocumentationModuleTemplateRst(unittest.TestCase):
 
         # documentation
         fLOG("generate documentation", root)
-        var = "project_name"
+        var = "python3_module_template"
 
         # we modify conf.py to let it find pyquickhelper
         pyq = os.path.abspath(os.path.dirname(src.__file__))

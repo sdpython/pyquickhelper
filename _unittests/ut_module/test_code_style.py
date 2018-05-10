@@ -170,6 +170,12 @@ class TestCodeStyle(unittest.TestCase):
                          "_my_doxypy.py:373: W0612",
                          "_my_doxypy.py:571: W0621",
                          "__init__.py:1: R0401",
+                         "texts_language.py:1: R0401",
+                         "blog_helper.py:35: E0401",
+                         "run_cmd.py:15: E0401",
+                         "jenkins_server.py:188: E1101",
+                         "jenkins_server.py:160: W0221",
+                         "utils_sphinx_config.py:51: E1101",
                          ])
 
     def test_style_test(self):

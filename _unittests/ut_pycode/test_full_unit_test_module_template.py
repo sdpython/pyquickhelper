@@ -151,7 +151,7 @@ class TestUnitTestFull(unittest.TestCase):
             stderr2 = StringIO()
 
             r = process_standard_options_for_setup(
-                lcmd, setup, "python3_module_template", module_name="project_name",
+                lcmd, setup, "python3_module_template",
                 port=8067, requirements=["pyquickhelper"], blog_list=blog_list,
                 fLOG=logging_custom, additional_ut_path=[pyq, (root, True)],
                 skip_function=skip_function, coverage_options={

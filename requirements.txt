@@ -3,6 +3,7 @@ babel!=2.0
 bokeh
 cairosvg
 cffi
+codecov
 coverage
 docformatter
 git-pandas

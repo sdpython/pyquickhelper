@@ -1,22 +1,6 @@
 """
 @file
 @brief  Helper for the setup
-
-.. todoext::
-    :title: run unit test if their estimated time is below a certain threshold
-    :hidden:
-    :issue: 23
-    :tag: enhancement
-    :cost: 0.2
-    :date: 2016-07-24
-
-    Example::
-
-        python setup.py unittests -d 1
-
-    Run all unit test for which the estimated duration is below 1s.
-
-.. versionadded:: 1.1
 """
 
 import os
