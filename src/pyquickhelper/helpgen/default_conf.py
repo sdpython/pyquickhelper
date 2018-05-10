@@ -278,7 +278,15 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
     mathdef_link_number = "{first_letter}{number}"
 
     # extensions
-    extensions = ['sphinx.ext.autodoc', 'sphinx.ext.autosummary', 'sphinx.ext.coverage',
+    extensions = []
+    try:
+        import sphinx_gallery
+        extensions.append('sphinx_gallery.gen_gallery')
+        has_sphinx_gallery = True
+    except ImportError:
+        has_sphinx_gallery = False
+
+    extensions.extend(['sphinx.ext.autodoc', 'sphinx.ext.autosummary', 'sphinx.ext.coverage',
                   'sphinx.ext.extlinks', 'sphinx.ext.graphviz', 'sphinx.ext.ifconfig',
                   'sphinx.ext.inheritance_diagram',
                   'sphinx.ext.mathjax' if use_mathjax else 'sphinx.ext.imgmath',
@@ -292,7 +300,7 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
                   'jupyter_sphinx.embed_widgets',
                   "nbsphinx",
                   'pyquickhelper.sphinxext.sphinx_rst_builder',
-                  ]
+                  ])
 
     try:
         import sphinxcontrib.jsdemo
@@ -629,6 +637,8 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
         import pathlib
         pp = pathlib.Path(exa)
         readmes = pp.glob("**/README.txt")
+        if len(readmes) > 0 and not has_sphinx_gallery:
+            raise ImportError("sphinx_gallery is not present for gallery '{0}'".format(exa))
         examples_dirs = []
         gallery_dirs = []
         for res in readmes:
@@ -654,7 +664,6 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
                 raise ValueError(
                     "Gallery '{0}' already exists (source='{1}', last={2}).".format(dest, nn, last))
             gallery_dirs.append(dest)
-        extensions.append('sphinx_gallery.gen_gallery')
         if len(examples_dirs) == 0:
             raise ValueError(
                 "Unable to find any 'README.txt' in '{0}'.".format(exa))

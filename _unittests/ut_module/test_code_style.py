@@ -176,6 +176,11 @@ class TestCodeStyle(unittest.TestCase):
                          "jenkins_server.py:188: E1101",
                          "jenkins_server.py:160: W0221",
                          "utils_sphinx_config.py:51: E1101",
+                         "winzipfile.py:77: E1101",
+                         "winzipfile.py:76: E1121",
+                         "winzipfile.py:65: E1101",
+                         "winzipfile.py:63: E1101",
+                         "winzipfile.py:26: W0221",
                          ])
 
     def test_style_test(self):
