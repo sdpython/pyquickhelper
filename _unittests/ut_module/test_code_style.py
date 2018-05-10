@@ -209,6 +209,8 @@ class TestCodeStyle(unittest.TestCase):
                          "Unused variable 'fig'",
                          "ut_sphinxext\\data",
                          "ut_helpgen\\data",
+                         "ut_sphinxext/data",
+                         "ut_helpgen/data",
                          "Unused argument 'node'",
                          "Redefining built-in 'FileNotFoundError'",
                          "test_check_pep8_sample.py:39",

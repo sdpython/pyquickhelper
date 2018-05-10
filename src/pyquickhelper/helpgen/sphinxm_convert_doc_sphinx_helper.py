@@ -454,6 +454,9 @@ class _AdditionalVisitDepart:
     def eval_expr(self, expr):
         rst = self.output_format == 'rst'
         latex = self.output_format == 'latex'
+        texinfo = [('index', 'A_AdditionalVisitDepart', 'B_AdditionalVisitDepart',
+                    'C_AdditionalVisitDepart', 'D_AdditionalVisitDepart',
+                    'E_AdditionalVisitDepart', 'Miscellaneous')]
         html = self.output_format == 'html'
         md = self.output_format == 'md'
         if not(rst or html or latex or md):

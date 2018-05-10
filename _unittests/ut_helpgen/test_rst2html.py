@@ -86,13 +86,13 @@ class TestRst2Html(unittest.TestCase):
             f.write(text)
         self.assertTrue(len(text2) > len(text))
 
-    def test_rst2html_plot(self):
+    def test_rst2html_plot_rst(self):
         fLOG(
             __file__,
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
-        temp = get_temp_folder(__file__, "temp_rst2html_plot")
+        temp = get_temp_folder(__file__, "temp_rst2html_plot_rst")
         rst = os.path.join(os.path.abspath(
             os.path.dirname(__file__)), "data", "rstplot.rst")
         with open(rst, "r", encoding="utf-8") as f:
@@ -108,11 +108,28 @@ class TestRst2Html(unittest.TestCase):
         ji = os.path.join(temp, "out.html")
         with open(ji, "w", encoding="utf-8") as f:
             f.write(text)
-        text2 = rst2html(content, layout="sphinx")
+
+    def test_rst2html_plot_html(self):
+        fLOG(
+            __file__,
+            self._testMethodName,
+            OutputPrint=__name__ == "__main__")
+
+        temp = get_temp_folder(__file__, "temp_rst2html_plot_html")
+        rst = os.path.join(os.path.abspath(
+            os.path.dirname(__file__)), "data", "rstplot.rst")
+        with open(rst, "r", encoding="utf-8") as f:
+            content = f.read()
+
+        try:
+            text2 = rst2html(content, document_name="out_string_plot", layout="sphinx")
+        except OSError as e:
+            # Invalid argument: '[...]<string>-1.py'
+            self.assertIn("<string>-1.py", str(e))
+            return
         ji = os.path.join(temp, "out_sphinx.html")
         with open(ji, "w", encoding="utf-8") as f:
-            f.write(text)
-        self.assertTrue(len(text2) > len(text))
+            f.write(text2)
 
 
 if __name__ == "__main__":

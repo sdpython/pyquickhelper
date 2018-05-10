@@ -242,8 +242,7 @@ class NotebookRunner(object):
         for name in ["theNotebook", "filename"]:
             if name in args:
                 del args[name]
-        buf = StringIO(st.getvalue())
-        nb = reads(buf)
+        nb = reads(st.getvalue())
         return NotebookRunner(nb, **args)
 
     def __add__(self, nb):
