@@ -140,9 +140,8 @@ def check_pep8(folder, ignore=('E265', 'W504'), skip=None,
                pylint_ignore=('C0103', 'C1801',
                               'R0201', 'R1705',
                               'W0108', 'W0613'),
-               recursive=True,
-               neg_filter=None, extended=None, max_line_length=143,
-               pattern=".*[.]py$"):
+               recursive=True, neg_pattern=None, extended=None,
+               max_line_length=143, pattern=".*[.]py$"):
     """
     Checks if :epkg:`PEP8`,
     the function calls command :epkg:`pycodestyle`
@@ -158,7 +157,7 @@ def check_pep8(folder, ignore=('E265', 'W504'), skip=None,
                                     ?highlight=styleguide#pycodestyle.StyleGuide.check_files>`_
     @param      stop_after          stop after *stop_after* issues
     @param      skip                skip a warning if a substring in this list is found
-    @param      neg_filter          skip files verifying this regular expressions
+    @param      neg_pattern         skip files verifying this regular expressions
     @param      extended            list of tuple (name, function), see below
     @param      max_line_length     maximum allowed length of a line of code
     @param      recursive           look into subfolder
@@ -252,7 +251,7 @@ def check_pep8(folder, ignore=('E265', 'W504'), skip=None,
     elif isinstance(ignore, list):
         ignore = tuple(ignore)
 
-    regneg_filter = None if neg_filter is None else re.compile(neg_filter)
+    regneg_filter = None if neg_pattern is None else re.compile(neg_pattern)
 
     # pycodestyle
     files_to_check = []

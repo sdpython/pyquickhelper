@@ -136,6 +136,8 @@ class TestCodeStyle(unittest.TestCase):
                          "sphinxm_mock_app.py:384: E0211",
                          "sphinx_main.py:431: E1111",
                          "sphinx_main.py:731: R1704",
+                         "sphinx_main.py:429: E1111",
+                         "sphinx_main.py:729: R1704",
                          "utils_sphinx_doc.py:1071: R1704",
                          "utils_sphinx_doc.py:1771: C0112",
                          "utils_sphinx_doc_helpers.py:779: W0102",
