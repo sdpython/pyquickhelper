@@ -491,7 +491,7 @@ class NotebookRunner(object):
                     v_ = "\n".join(temp)
                     sreply.append("reply['{0}']=dict\n{1}".format(k, v_))
                 else:
-                    sreply.append("reply['{0}']={1}".format(k, str(v_)))
+                    sreply.append("reply['{0}']={1}".format(k, str(v)))
             sreply = "\n".join(sreply)
             return sreply
 
