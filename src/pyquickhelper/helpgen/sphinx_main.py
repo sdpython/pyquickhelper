@@ -3,29 +3,6 @@
 @file
 @brief Contains the main function to generate the documentation
 for a module designed the same way as this one, @see fn generate_help_sphinx.
-
-.. todoext::
-    :title: Add support for sphinx-gallery
-    :tag: done
-    :date: 2016-12-18
-    :cost: 1
-    :release: 1
-    :issue: 36
-
-    The default configuration pyquickhelper is setting up
-    automatically considers folder ``_doc\\examples``
-    and add it to the documentation. To add a link to the gallery:
-    ``examples/index``.
-
-.. todoext::
-    :title: Upgrade to sphinx 1.6
-    :tag: done
-    :date: 2017-06-04
-    :cost: 2
-    :release: 1
-    :issue: 46
-
-    Sphinx 1.6 introduced many changes.
 """
 import os
 import sys
@@ -277,12 +254,10 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
     the layout for the notebook gallery. ``'classic'`` or ``'table'``.
     The parameter *nbneg_pattern* can be used to remove notebooks from
     the gallery if they match this regular expression.
-
-    .. versionchanged:: 1.6
-        Automatically adds video directive.
-        *remove_unicode* can set to False or True in the documentation
-        configuration file to allow or remove unicode characters
-        before compiling the latex output.
+    It automatically adds video directive.
+    *remove_unicode* can set to False or True in the documentation
+    configuration file to allow or remove unicode characters
+    before compiling the latex output.
 
     .. versionchanged:: 1.7
         Upgrade to Sphinx 1.7. It introduced a breaking
@@ -290,10 +265,6 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
         replaced by ``status_iterator``.
         See issue `bokeh:7520 <https://github.com/bokeh/bokeh/issues/7520>`_.
     """
-    from ..pycode import is_travis_or_appveyor
-    if is_travis_or_appveyor() == "circleci":
-        fLOG = print
-
     datetime_rows = [("begin", datetime.now())]
 
     fLOG("---- JENKINS BEGIN DOCUMENTATION ----")

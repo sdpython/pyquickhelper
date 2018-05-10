@@ -134,8 +134,8 @@ class TestCodeStyle(unittest.TestCase):
                          "sphinxm_mock_app.py:334: E1101",
                          "Instance of 'MockSphinxApp' has no '_added_objects' member",
                          "sphinxm_mock_app.py:384: E0211",
-                         "sphinx_main.py:458: E1111",
-                         "sphinx_main.py:758: R1704",
+                         "sphinx_main.py:431: E1111",
+                         "sphinx_main.py:731: R1704",
                          "utils_sphinx_doc.py:1071: R1704",
                          "utils_sphinx_doc.py:1771: C0112",
                          "utils_sphinx_doc_helpers.py:779: W0102",
@@ -181,6 +181,7 @@ class TestCodeStyle(unittest.TestCase):
                          "winzipfile.py:65: E1101",
                          "winzipfile.py:63: E1101",
                          "winzipfile.py:26: W0221",
+                         "pygit_helper.py:1: R0401",
                          ])
 
     def test_style_test(self):

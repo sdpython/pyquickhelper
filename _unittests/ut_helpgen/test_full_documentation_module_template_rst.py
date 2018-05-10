@@ -165,6 +165,7 @@ class TestSphinxFullDocumentationModuleTemplateRst(unittest.TestCase):
 
             with warnings.catch_warnings(record=True) as ww:
                 warnings.simplefilter("always")
+                # Change clog for print if it fails on circleli
                 generate_help_sphinx(var, module_name=var, root=root,
                                      layout=layout, extra_ext=["tohelp"],
                                      from_repo=False, direct_call=direct_call,

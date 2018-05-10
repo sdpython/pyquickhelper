@@ -302,20 +302,20 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
             raise ValueError("Issue with sphinx-gallery.\n{0}".format(e))
 
     extensions.extend(['sphinx.ext.autodoc', 'sphinx.ext.autosummary', 'sphinx.ext.coverage',
-                  'sphinx.ext.extlinks', 'sphinx.ext.graphviz', 'sphinx.ext.ifconfig',
-                  'sphinx.ext.inheritance_diagram',
-                  'sphinx.ext.mathjax' if use_mathjax else 'sphinx.ext.imgmath',
-                  'sphinx.ext.napoleon', 'sphinx.ext.todo', 'sphinx.ext.viewcode',
-                  'sphinxcontrib.imagesvg',
-                  # 'matplotlib.sphinxext.only_directives',
-                  # 'matplotlib.sphinxext.mathmpl',
-                  # 'matplotlib.sphinxext.only_directives',
-                  'matplotlib.sphinxext.plot_directive',
-                  # 'matplotlib.sphinxext.ipython_directive',
-                  'jupyter_sphinx.embed_widgets',
-                  "nbsphinx",
-                  'pyquickhelper.sphinxext.sphinx_rst_builder',
-                  ])
+                       'sphinx.ext.extlinks', 'sphinx.ext.graphviz', 'sphinx.ext.ifconfig',
+                       'sphinx.ext.inheritance_diagram',
+                       'sphinx.ext.mathjax' if use_mathjax else 'sphinx.ext.imgmath',
+                       'sphinx.ext.napoleon', 'sphinx.ext.todo', 'sphinx.ext.viewcode',
+                       'sphinxcontrib.imagesvg',
+                       # 'matplotlib.sphinxext.only_directives',
+                       # 'matplotlib.sphinxext.mathmpl',
+                       # 'matplotlib.sphinxext.only_directives',
+                       'matplotlib.sphinxext.plot_directive',
+                       # 'matplotlib.sphinxext.ipython_directive',
+                       'jupyter_sphinx.embed_widgets',
+                       "nbsphinx",
+                       'pyquickhelper.sphinxext.sphinx_rst_builder',
+                       ])
 
     try:
         import sphinxcontrib.jsdemo
@@ -656,7 +656,8 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
         gallery_dirs = []
         for res in readmes:
             if not has_sphinx_gallery:
-                raise ImportError("sphinx_gallery is not present for gallery '{0}'".format(exa))
+                raise ImportError(
+                    "sphinx_gallery is not present for gallery '{0}'".format(exa))
             last = res.parts[-2]
             if last.startswith("temp_"):
                 continue

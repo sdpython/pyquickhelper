@@ -126,17 +126,13 @@ def main_wrapper_tests(codefile, skip_list=None, processes=False, add_coverage=F
 
     Parameter *covtoken*: used to post the coverage report to
     `codecov <https://codecov.io/>`_.
-
-    .. versionchanged:: 1.4
-        Parameter *filter_warning* was added.
-
-    .. versionchanged:: 1.5
-        Parameter *dump_coverage* was added.
-
-    .. versionchanged:: 1.6
-        Parameter *add_coverage_folder* was added.
     """
-    whole_ouput = StringIOAndFile(codefile + ".out")
+    try:
+        whole_ouput = StringIOAndFile(codefile + ".out")
+    except PermissionError:
+        # The first attempt might fail due to a previous run
+        # so we try another file.
+        whole_ouput = StringIOAndFile(codefile + ".2.out")
     runner = unittest.TextTestRunner(verbosity=0, stream=whole_ouput)
     path = os.path.abspath(os.path.join(os.path.split(codefile)[0]))
     stdout_this = stdout if stdout else sys.stdout
