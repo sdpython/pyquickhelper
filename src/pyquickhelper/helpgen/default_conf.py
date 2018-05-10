@@ -637,11 +637,11 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
         import pathlib
         pp = pathlib.Path(exa)
         readmes = pp.glob("**/README.txt")
-        if len(readmes) > 0 and not has_sphinx_gallery:
-            raise ImportError("sphinx_gallery is not present for gallery '{0}'".format(exa))
         examples_dirs = []
         gallery_dirs = []
         for res in readmes:
+            if not has_sphinx_gallery:
+                raise ImportError("sphinx_gallery is not present for gallery '{0}'".format(exa))
             last = res.parts[-2]
             if last.startswith("temp_"):
                 continue
