@@ -371,7 +371,7 @@ def check_pep8(folder, ignore=('E265', 'W504'), skip=None,
                                 "[check_pep8] cmd-lint file {0}/{1} - '{2}'\n".format(i + 1, len(files_to_check), name))
                             cmd = "{0} -m pylint {1}".format(
                                 sys.executable, " ".join('"{0}"'.format(_) for _ in cop))
-                            out, err = run_cmd(cmd, wait=True)
+                            out = run_cmd(cmd, wait=True)[0]
                             lines.extend(_ for _ in out.split(
                                 '\n') if _.strip('\r '))
                 else:

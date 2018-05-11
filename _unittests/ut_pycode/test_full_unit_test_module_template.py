@@ -125,7 +125,7 @@ class TestUnitTestFull(unittest.TestCase):
                         "unittests -e .*code_style.*",
                         "unittests -g .*((ext)|(code_style)).*",
                         "unittests_LONG", "unittests_SKIP",
-                        "build_sphinx"]:
+                        "build_sphinx", "run_pylint .*myex.*[.]py$ -iC0103 -iR0201 -iC0123"]:
             if command == "build_sphinx" and is_travis_or_appveyor() in ('travis', 'appveyor'):
                 # InkScape not installed for AppVeyor or travis.
                 continue
