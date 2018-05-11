@@ -20,6 +20,7 @@ from pylint.lint import Run as PyLinterRun
 
 from ..filehelper.synchelper import remove_folder, explore_folder_iterfile
 from ..loghelper.flog import noLOG
+from ..loghelper import run_cmd
 from .pip_helper import fix_pip_902
 
 if sys.version_info[0] == 2:
@@ -142,7 +143,7 @@ def check_pep8(folder, ignore=('E265', 'W504'), skip=None,
                               'W0108', 'W0613'),
                recursive=True, neg_pattern=None, extended=None,
                max_line_length=143, pattern=".*[.]py$",
-               run_lint=True, verbose=False):
+               run_lint=True, verbose=False, run_cmd_filter=None):
     """
     Checks if :epkg:`PEP8`,
     the function calls command :epkg:`pycodestyle`
@@ -166,6 +167,10 @@ def check_pep8(folder, ignore=('E265', 'W504'), skip=None,
     @param      run_lint            run :epkg:`pylint`
     @param      verbose             :epkg:`pylint` is slow, tells which file is
                                     investigated (but it is even slower)
+    @param      run_cmd_filter      some files makes :epkg:`pylint` crashes (``import yaml``),
+                                    the test for this is run in a separate process
+                                    if the function *run_cmd_filter* returns True of the filename,
+                                    *verbose* is set to True in that case
     @param      fLOG                logging function
     @return                         output
 
@@ -327,13 +332,20 @@ def check_pep8(folder, ignore=('E265', 'W504'), skip=None,
         else:
             fLOG(s, OutputStream=memout)
 
+    neg_pat = ".*temp[0-9]?_.*,doc_.*"
+    if neg_pattern is not None:
+        neg_pat += ',' + neg_pattern
+
+    if run_cmd_filter is not None:
+        verbose = True
+
     sout = StringIO()
     serr = StringIO()
     with redirect_stdout(sout):
         with redirect_stderr(serr):
             with warnings.catch_warnings():
                 warnings.simplefilter("ignore", DeprecationWarning)
-                opt = ["--ignore-patterns=.*temp[0-9]?_.*,doc_.*", "--persistent=n",
+                opt = ["--ignore-patterns=" + neg_pat, "--persistent=n",
                        '--jobs=1', '--suggestion-mode=n', "--score=n",
                        '--max-args=30', '--max-locals=50', '--max-returns=30',
                        '--max-branches=50', '--max-parents=25',
@@ -349,9 +361,19 @@ def check_pep8(folder, ignore=('E265', 'W504'), skip=None,
                     for i, name in enumerate(files_to_check):
                         cop = list(opt)
                         cop.append(name)
-                        myprint(
-                            "[check_pep8] lint file {0}/{1} - '{2}'\n".format(i + 1, len(files_to_check), name))
-                        PyLinterRun(cop, exit=False)
+                        if run_cmd_filter is None or not run_cmd_filter(name):
+                            myprint(
+                                "[check_pep8] lint file {0}/{1} - '{2}'\n".format(i + 1, len(files_to_check), name))
+                            PyLinterRun(cop, exit=False)
+                        else:
+                            # runs from command line
+                            myprint(
+                                "[check_pep8] cmd-lint file {0}/{1} - '{2}'\n".format(i + 1, len(files_to_check), name))
+                            cmd = "{0} -m pylint {1}".format(
+                                sys.executable, " ".join('"{0}"'.format(_) for _ in cop))
+                            out, err = run_cmd(cmd, wait=True)
+                            lines.extend(_ for _ in out.split(
+                                '\n') if _.strip('\r '))
                 else:
                     opt.extend(files_to_check)
                     PyLinterRun(opt, exit=False)
@@ -363,10 +385,8 @@ def check_pep8(folder, ignore=('E265', 'W504'), skip=None,
         "except ") and not _.startswith("else:") and not _.startswith("try:")]
     lines.extend(pylint_lines)
     if len(lines) > 0:
-        pypath = os.environ.get('PYTHONPATH', '')
         raise PEP8Exception(
-            "{0} lines\n{1}\n---\nPYTHONPATH={2}\nsys.path=\n{3}".format(
-                len(lines), "\n".join(lines), pypath, "\n".join(sys.path)))
+            "{0} lines\n{1}".format(len(lines), "\n".join(lines)))
 
     return "\n".join(lines)
 

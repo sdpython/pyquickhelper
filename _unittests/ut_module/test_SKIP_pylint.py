@@ -22,7 +22,7 @@ except ImportError:
     import src
 
 from src.pyquickhelper.loghelper import fLOG
-from src.pyquickhelper.pycode._pylint_common import _test_style_src, _test_style_test
+from src.pyquickhelper.pycode._pylint_common import _private_test_style_src, _private_test_style_test
 
 
 class TestSKIPpylint(unittest.TestCase):
@@ -39,7 +39,7 @@ class TestSKIPpylint(unittest.TestCase):
             return
 
         run_lint = True
-        _test_style_src(fLOG, run_lint, verbose=True)
+        _private_test_style_src(fLOG, run_lint, verbose=True)
 
     def test_style_test(self):
         fLOG(
@@ -53,7 +53,7 @@ class TestSKIPpylint(unittest.TestCase):
             return
 
         run_lint = True
-        _test_style_test(fLOG, run_lint, verbose=True)
+        _private_test_style_test(fLOG, run_lint, verbose=True)
 
 
 if __name__ == "__main__":

@@ -1,27 +1,13 @@
 """
 @file
 @brief Parse a file *.yml* and convert it into a set of actions.
-
-.. todoext::
-    :title: define Jenkins job with .yml
-    :tag: enhancement
-    :cost: 4
-    :date: 2016-08-25
-    :issue: 29
-    :hidden:
-    :release: 1.4
-
-    The current build system is not easy to read.
-    This should make things more clear and easier to maintain.
-
-.. versionadded:: 1.4
 """
 import os
 import re
 import sys
-import yaml
 from ..texthelper.templating import apply_template
 from ..filehelper import read_content_ufs
+from .yaml_helper_yaml import yaml_load
 
 
 _jenkins_split = "JENKINS_SPLIT"
@@ -101,7 +87,7 @@ def load_yaml(file_or_buffer, context=None, engine="jinja2", platform=None):
 
     content = apply_template(content, context, engine)
     try:
-        return yaml.load(content), project_name
+        return yaml_load(content), project_name
     except Exception as e:
         raise SyntaxError(
             "Unable to parse content\n{0}".format(content)) from e

@@ -23,7 +23,7 @@ except ImportError:
 
 from src.pyquickhelper.loghelper import fLOG
 from src.pyquickhelper.pycode import is_travis_or_appveyor
-from src.pyquickhelper.pycode._pylint_common import _test_style_src, _test_style_test
+from src.pyquickhelper.pycode._pylint_common import _private_test_style_src, _private_test_style_test
 
 
 class TestCodeStyle(unittest.TestCase):
@@ -40,7 +40,7 @@ class TestCodeStyle(unittest.TestCase):
             return
 
         run_lint = is_travis_or_appveyor(env=['NAME_JENKINS']) is None
-        _test_style_src(fLOG, run_lint, verbose='-v' in sys.argv)
+        _private_test_style_src(fLOG, run_lint, verbose='-v' in sys.argv)
 
     def test_style_test(self):
         fLOG(
@@ -54,7 +54,7 @@ class TestCodeStyle(unittest.TestCase):
             return
 
         run_lint = is_travis_or_appveyor(env=['NAME_JENKINS']) is None
-        _test_style_test(fLOG, run_lint, verbose='-v' in sys.argv)
+        _private_test_style_test(fLOG, run_lint, verbose='-v' in sys.argv)
 
 
 if __name__ == "__main__":
