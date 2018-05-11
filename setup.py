@@ -82,7 +82,7 @@ def is_local():
                   "copy27", "copy_dist", "local_pypi", "notebook", "publish", "publish_doc",
                   "register", "unittests", "unittests_LONG", "unittests_SKIP", "unittests_GUI",
                   "run27", "sdist", "setupdep", "test_local_pypi", "upload_docs", "setup_hook",
-                  "copy_sphinx", "write_version", "lab", "history"}:
+                  "copy_sphinx", "write_version", "lab", "history", "run_pylint"}:
         if cname in sys.argv:
             try:
                 import_pyquickhelper()
@@ -111,10 +111,9 @@ def import_pyquickhelper():
         try:
             import pyquickhelper
         except ImportError as e:
-            message = "Module pyquickhelper is needed to build the documentation ({0}), not found in path {1} - current {2}".format(
-                sys.executable,
-                sys.path[-1],
-                os.getcwd())
+            message = "Module pyquickhelper is needed to build the documentation "
+            message += "({0}), not found in path {1} - current {2}".format(
+                sys.executable, sys.path[-1], os.getcwd())
             raise ImportError(message) from e
     return pyquickhelper
 

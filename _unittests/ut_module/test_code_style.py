@@ -40,7 +40,7 @@ class TestCodeStyle(unittest.TestCase):
             return
 
         run_lint = is_travis_or_appveyor(env=['NAME_JENKINS']) is None
-        _test_style_src(fLOG, run_lint)
+        _test_style_src(fLOG, run_lint, verbose='-v' in sys.argv)
 
     def test_style_test(self):
         fLOG(
@@ -54,7 +54,7 @@ class TestCodeStyle(unittest.TestCase):
             return
 
         run_lint = is_travis_or_appveyor(env=['NAME_JENKINS']) is None
-        _test_style_test(fLOG, run_lint)
+        _test_style_test(fLOG, run_lint, verbose='-v' in sys.argv)
 
 
 if __name__ == "__main__":

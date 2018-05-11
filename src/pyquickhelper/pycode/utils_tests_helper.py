@@ -141,7 +141,8 @@ def check_pep8(folder, ignore=('E265', 'W504'), skip=None,
                               'R0201', 'R1705',
                               'W0108', 'W0613'),
                recursive=True, neg_pattern=None, extended=None,
-               max_line_length=143, pattern=".*[.]py$", run_lint=True):
+               max_line_length=143, pattern=".*[.]py$",
+               run_lint=True, verbose=False):
     """
     Checks if :epkg:`PEP8`,
     the function calls command :epkg:`pycodestyle`
@@ -163,6 +164,8 @@ def check_pep8(folder, ignore=('E265', 'W504'), skip=None,
     @param      recursive           look into subfolder
     @param      pattern             only file matching this pattern will be checked
     @param      run_lint            run :epkg:`pylint`
+    @param      verbose             :epkg:`pylint` is slow, tells which file is
+                                    investigated (but it is even slower)
     @param      fLOG                logging function
     @return                         output
 
@@ -255,6 +258,7 @@ def check_pep8(folder, ignore=('E265', 'W504'), skip=None,
     regneg_filter = None if neg_pattern is None else re.compile(neg_pattern)
 
     # pycodestyle
+    fLOG("[check_pep8] code style on '{0}'".format(folder))
     files_to_check = []
     buf = StringIO()
     with redirect_stdout(buf):
@@ -297,7 +301,7 @@ def check_pep8(folder, ignore=('E265', 'W504'), skip=None,
                         "{0} lines\n{1}".format(len(lines), "\n".join(lines)))
 
     lines = [_ for _ in buf.getvalue().split("\n") if fkeep(_)]
-    if len(lines) > 0:
+    if len(lines) > 10:
         raise PEP8Exception(
             "{0} lines\n{1}".format(len(lines), "\n".join(lines)))
 
@@ -307,6 +311,22 @@ def check_pep8(folder, ignore=('E265', 'W504'), skip=None,
     # pylint
     if not run_lint:
         return "\n".join(lines)
+    fLOG("[check_pep8] pylint with {0} files".format(len(files_to_check)))
+    memout = sys.stdout
+
+    try:
+        fLOG('', OutputStream=memout)
+        regular_print = False
+    except TypeError:
+        regular_print = True
+
+    def myprint(s):
+        "local print, chooses the right function"
+        if regular_print:
+            memout.write(s + "\n")
+        else:
+            fLOG(s, OutputStream=memout)
+
     sout = StringIO()
     serr = StringIO()
     with redirect_stdout(sout):
@@ -325,8 +345,16 @@ def check_pep8(folder, ignore=('E265', 'W504'), skip=None,
                     opt.append('--disable=' + ','.join(pylint_ignore))
                 if max_line_length:
                     opt.append("--max-line-length=%d" % max_line_length)
-                opt.extend(files_to_check)
-                PyLinterRun(opt, exit=False)
+                if verbose:
+                    for i, name in enumerate(files_to_check):
+                        cop = list(opt)
+                        cop.append(name)
+                        myprint(
+                            "[check_pep8] lint file {0}/{1} - '{2}'\n".format(i + 1, len(files_to_check), name))
+                        PyLinterRun(cop, exit=False)
+                else:
+                    opt.extend(files_to_check)
+                    PyLinterRun(opt, exit=False)
 
     pylint_lines = sout.getvalue().split('\n')
     pylint_lines = [_ for _ in pylint_lines if '(pylint)' in _ and fkeep(_) and _[
@@ -353,8 +381,6 @@ def add_missing_development_version(names, root, hide=False):
                                 at the same place in a flat hierarchy)
     @param      hide            hide warnings when importing a module (might be a lot)
     @return                     added paths
-
-    .. versionadded:: 1.4
 
     .. versionchanged:: 1.7
         Calls @see fn fix_pip_902.

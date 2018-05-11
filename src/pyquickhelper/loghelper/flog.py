@@ -209,8 +209,15 @@ def fLOG(*l, **p):
         ::
 
         fLOG(OutputPrint=True, LogFile="log_file.txt")
+
+    .. versionchanged:: 1.8
+        Parameter *OutputStream* allows to print
+        the message on a different stream.
     """
     path_add = p.get("LogPathAdd", [])
+    outstream = p.get('OutputStream', None)
+    if outstream is not None:
+        del p['OutputStream']
 
     lock = p.get("Lock", None)
     if lock is not None:
@@ -224,7 +231,10 @@ def fLOG(*l, **p):
         init(path=p["LogPath"], path_add=path_add)
 
     def myprint(s):
-        print(s)
+        if outstream is not None:
+            outstream.write(s + '\n')
+        else:
+            print(s)
 
     if "OutputPrint" in p:
         Print(p["OutputPrint"])

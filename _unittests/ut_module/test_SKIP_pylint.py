@@ -39,7 +39,7 @@ class TestSKIPpylint(unittest.TestCase):
             return
 
         run_lint = True
-        _test_style_src(fLOG, run_lint)
+        _test_style_src(fLOG, run_lint, verbose=True)
 
     def test_style_test(self):
         fLOG(
@@ -53,7 +53,7 @@ class TestSKIPpylint(unittest.TestCase):
             return
 
         run_lint = True
-        _test_style_test(fLOG, run_lint)
+        _test_style_test(fLOG, run_lint, verbose=True)
 
 
 if __name__ == "__main__":

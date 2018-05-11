@@ -91,6 +91,7 @@ def get_test_file(filter, dir=None, no_subfolder=False, fLOG=noLOG, root=None):
                        ".py.warn" not in l and
                        "test_main" not in l and
                        "temp_" not in l and
+                       "temp2_" not in l and
                        "out.test_copyfile.py.2.txt" not in l and
                        ".pyc" not in l and
                        ".pyd" not in l and
@@ -318,7 +319,7 @@ def main_run_test(runner, path_test=None, limit_max=1e9, log=False, skip=-1, ski
     # we check we do not run twice the same file
     done = {}
     duplicate = []
-    for a, cut, l in co:
+    for _, cut, l in co:
         if cut in done:
             duplicate.append((cut, l))
         done[cut] = True
@@ -326,7 +327,7 @@ def main_run_test(runner, path_test=None, limit_max=1e9, log=False, skip=-1, ski
     if len(duplicate) > 0:
         s = list(set(duplicate))
         s.sort()
-        mes = "\n".join(s)
+        mes = "\n".join(str(_) for _ in s)
         raise Exception("duplicated test file were detected:\n" + mes)
 
     # check existing

@@ -94,7 +94,7 @@ def remove_extra_spaces_and_pep8(filename, apply_pep8=True, aggressive=False, is
 
     if filename is not None:
         ext = os.path.splitext(filename)[-1]
-    if ext == ".py":
+    if ext == ".py" and apply_pep8:
         options = ['', '-a'] if aggressive else ['']
         r = autopep8.fix_code(
             "\n".join(lines2), options=autopep8.parse_args(options))

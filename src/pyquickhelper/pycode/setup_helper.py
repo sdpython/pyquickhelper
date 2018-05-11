@@ -21,6 +21,7 @@ from .default_regular_expression import _setup_pattern_copy
 from ..ipythonhelper import upgrade_notebook, remove_execution_number
 from .utils_tests import main_wrapper_tests, default_skip_function
 from ..loghelper.history_helper import build_history, compile_history
+from .utils_tests_helper import check_pep8
 
 
 if sys.version_info[0] == 2:
@@ -37,7 +38,7 @@ def available_commands_list(argv):
     commands = ['bdist_egg', 'bdist_msi', 'bdist_wheel', 'bdist_wininst', 'build27',
                 'build_ext', 'build_script', 'build_sphinx', 'clean_pyd', 'clean_space',
                 'copy27', 'copy_dist', 'copy_sphinx', 'history', 'lab', 'local_pypi',
-                'notebook', 'publish', 'publish_doc', 'register', 'run27',
+                'notebook', 'publish', 'publish_doc', 'register', 'run27', 'run_pylint',
                 'sdist', 'setup_hook', 'setupdep', 'test_local_pypi',
                 'unittests', 'unittests_GUI', 'unittests_LONG', 'unittests_SKIP',
                 'upload_docs', 'write_version']
@@ -269,6 +270,25 @@ def process_standard_options_for_setup(argv, file_or_folder, project_var_name, m
         print("[clean_space] number of impacted notebooks:", len(rem))
         return True
 
+    if "run_pylint" in argv:
+        verbose = '-v' in argv
+        pos = argv.index('run_pylint')
+        ignores = [_[2:] for _ in argv if _[:2] == '-i']
+        ignores = None if len(ignores) == 0 else tuple(ignores)
+        argv = [_ for _ in argv if _ not in ('-v', '-')]
+        pattern = argv[pos + 1] if len(argv) > pos + 1 else ".*[.]py$"
+        neg_pattern = argv[pos + 2] if len(argv) > pos + 2 else None
+        print("[run_pylint] run_pylint for sources pattern='{0}' neg_pattern='{1}'".format(
+            pattern, neg_pattern))
+        run_pylint_for_setup(os.path.join(folder, "src"),
+                             fLOG=print, pattern=pattern, verbose=verbose,
+                             pylint_ignore=ignores)
+        print("[run_pylint] run_pylint for unittest")
+        run_pylint_for_setup(os.path.join(folder, "_unittests"),
+                             fLOG=print, pattern=pattern, verbose=verbose,
+                             pylint_ignore=ignores)
+        return True
+
     elif 'history' in argv:
         dest = ' '.join(argv).split('history')[-1].strip()
         if not dest:
@@ -405,7 +425,8 @@ def process_standard_options_for_setup(argv, file_or_folder, project_var_name, m
                   "write_version", "clean_pyd",
                   "build_sphinx", "unittests",
                   "unittests_LONG", "unittests_SKIP", "unittests_GUI",
-                  "unittests -d 5", "setup_hook", "copy27", "test_local_pypi"):
+                  "unittests -d 5", "setup_hook", "copy27",
+                  "test_local_pypi", 'run_pylint'):
             sc = get_script_command(
                 c, project_var_name, requirements=requirements, port=port, platform=sys.platform,
                 default_engine_paths=default_engine_paths, additional_local_path=additional_local_path)
@@ -540,13 +561,7 @@ def clean_space_for_setup(file_or_folder, file_filter=None):
     """
     ffolder = get_folder(file_or_folder)
     rem = remove_extra_spaces_folder(
-        ffolder,
-        extensions=[
-            ".py",
-            ".rst",
-            ".md",
-            ".bat",
-            ".sh"],
+        ffolder, extensions=[".py", ".rst", ".md", ".bat", ".sh"],
         file_filter=file_filter)
     return rem
 
@@ -770,6 +785,7 @@ def process_standard_options_for_setup_help(argv):
         "build_wheel": "build the wheel",
         "build27": "build the wheel for Python 2.7 (if available), it requires to run copy27 first",
         "clean_space": "clean unnecessary spaces in the code, applies :epkg:`pycodestyle` on all files",
+        "run_pylint": "run pylint on the sources, allowed parameters <pattern> <neg_pattern>",
         "clean_pyd": "clean file ``*.pyd``",
         "copy_dist": "copy documentation to folder dist",
         "copy_sphinx": "modify and copy sources to _doc/sphinxdoc/source/<module>",
@@ -958,3 +974,19 @@ def build_history_from_setup(dest, owner, module, existing_history=None, fLOG=no
         with open(dest, "w", encoding="utf-8") as f:
             f.write(output)
     return output
+
+
+def run_pylint_for_setup(folder, pattern=".*[.]py$", neg_pattern=None,
+                         verbose=False, pylint_ignore=None, fLOG=noLOG):
+    """
+    Applies :epkg:`pylint` on subfolder *folder*.
+
+    @param      folder          folder where to look
+    @param      pattern         file to checks
+    @param      neg_pattern     negative pattern
+    @parm       pylint_ignore   ignore these :epkg:`pylint` warnings or errors
+    @param      verbose         verbose
+    @param      fLOG            logging function
+    """
+    check_pep8(folder, pattern=pattern, neg_pattern=neg_pattern,
+               pylint_ignore=pylint_ignore, verbose=verbose, fLOG=fLOG)

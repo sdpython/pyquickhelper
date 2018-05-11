@@ -8,10 +8,10 @@ import os
 from .utils_tests_helper import check_pep8
 
 
-def _test_style_src(fLOG, run_lint):
+def _test_style_src(fLOG, run_lint, verbose=False):
     thi = os.path.abspath(os.path.dirname(__file__))
     src_ = os.path.normpath(os.path.join(thi, "..", ".."))
-    check_pep8(src_, fLOG=fLOG, run_lint=run_lint,
+    check_pep8(src_, fLOG=fLOG, run_lint=run_lint, verbose=verbose,
                pylint_ignore=('C0103', 'C1801', 'R0201', 'R1705', 'W0108', 'W0613',
                               'W0201', 'W0212', 'W0603', 'W0622',
                               'W0511', 'C0412', 'R1702', 'E0702',
@@ -159,11 +159,11 @@ def _test_style_src(fLOG, run_lint):
                      ])
 
 
-def _test_style_test(fLOG, run_lint):
+def _test_style_test(fLOG, run_lint, verbose=False):
     thi = os.path.abspath(os.path.dirname(__file__))
     test_ = os.path.normpath(os.path.join(thi, "..", "..", '..', '_unittests'))
     check_pep8(test_, fLOG=fLOG, neg_pattern="temp[0-9]?_.*",
-               max_line_length=200, run_lint=run_lint,
+               max_line_length=200, run_lint=run_lint, verbose=verbose,
                pylint_ignore=('C0111', 'C0103', 'R0914', 'W0212', 'C0413', 'W0621',
                               'W0703', 'W0622', 'W0122', 'R0912', 'R0201',
                               'W0613', 'C0123', 'W0640', 'E0202', 'C0412',
@@ -191,4 +191,6 @@ def _test_style_test(fLOG, run_lint):
                      "Unused argument 'node'",
                      "Redefining built-in 'FileNotFoundError'",
                      "test_check_pep8_sample.py:39",
+                     "Unable to import 'pyquickhelper",
+                     "Unable to import 'jyquickhelper",
                      ])

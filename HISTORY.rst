@@ -5,8 +5,13 @@
 History
 =======
 
-current - 2018-05-08 - 0.00Mb
+current - 2018-05-11 - 0.00Mb
 =============================
+
+* `141`: check_pep8 does not detect line too long and unused variables (use of pylint) (2018-05-11)
+
+1.7.2581 - 2018-05-07 - 2.00Mb
+==============================
 
 * `140`: modify assertEqualArray to allow small different (assert_almost_equal) (2018-05-07)
 * `138`: retrieve past issues in history.rst (2018-05-06)
