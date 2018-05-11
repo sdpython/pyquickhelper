@@ -265,12 +265,14 @@ def check_pep8(folder, ignore=('E265', 'W504'), skip=None,
     # pycodestyle
     fLOG("[check_pep8] code style on '{0}'".format(folder))
     files_to_check = []
+    skipped = []
     buf = StringIO()
     with redirect_stdout(buf):
         for file in explore_folder_iterfile(folder, pattern=pattern,
                                             recursive=recursive):
             if regneg_filter is not None:
                 if regneg_filter.search(file):
+                    skipped.append(file)
                     continue
             if file.endswith("__init__.py"):
                 ig = ignore + ('F401',)
@@ -311,7 +313,9 @@ def check_pep8(folder, ignore=('E265', 'W504'), skip=None,
             "{0} lines\n{1}".format(len(lines), "\n".join(lines)))
 
     if len(files_to_check) == 0:
-        raise FileNotFoundError("No file found in '{0}'".format(folder))
+        mes = skipped[0] if skipped else "-no skipped file-"
+        raise FileNotFoundError("No file found in '{0}'\n pattern='{1}'\nskipped='{2}'".format(
+                                folder, pattern, mes))
 
     # pylint
     if not run_lint:

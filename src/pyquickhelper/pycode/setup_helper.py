@@ -275,7 +275,8 @@ def process_standard_options_for_setup(argv, file_or_folder, project_var_name, m
         pos = argv.index('run_pylint')
         ignores = [_[2:] for _ in argv if _[:2] == '-i']
         ignores = None if len(ignores) == 0 else tuple(ignores)
-        argv = [_ for _ in argv if _ not in ('-v', '-')]
+        argv = [_ for _ in argv if _ not in (
+            '-v', '-') and not _.startswith('-i')]
         pattern = argv[pos + 1] if len(argv) > pos + 1 else ".*[.]py$"
         neg_pattern = argv[pos + 2] if len(argv) > pos + 2 else None
         print("[run_pylint] run_pylint for sources pattern='{0}' neg_pattern='{1}'".format(

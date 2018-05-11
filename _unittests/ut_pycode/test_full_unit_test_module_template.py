@@ -122,10 +122,12 @@ class TestUnitTestFull(unittest.TestCase):
         fLOG("unit tests", root)
         for command in ["version", "write_version", "clean_pyd",
                         "setup_hook", "build_script", "copy27",
+                        ("run_pylint .*((myex)|(example_ext)).*[.]py$ " +
+                         "-iC0103 -iR0201 -iC0123 -iC0111 -iW0611 -iE0401 -iE0611 -iE0401"),
                         "unittests -e .*code_style.*",
                         "unittests -g .*((ext)|(code_style)).*",
                         "unittests_LONG", "unittests_SKIP",
-                        "build_sphinx", "run_pylint .*myex.*[.]py$ -iC0103 -iR0201 -iC0123"]:
+                        "build_sphinx"]:
             if command == "build_sphinx" and is_travis_or_appveyor() in ('travis', 'appveyor'):
                 # InkScape not installed for AppVeyor or travis.
                 continue
