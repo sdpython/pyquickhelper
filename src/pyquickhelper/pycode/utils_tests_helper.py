@@ -68,7 +68,7 @@ def get_temp_folder(thisfile, name=None, clean=True, create=True, max_path=False
         thisfile = os.path.abspath(thisfile.__func__.__code__.co_filename)
     final = os.path.split(name)[-1]
 
-    if not final.startswith("temp_"):
+    if not final.startswith("temp_") and not final.startswith("temp2_"):
         raise NameError("the folder '{0}' must begin with temp_".format(name))
 
     local = os.path.join(
@@ -141,7 +141,7 @@ def check_pep8(folder, ignore=('E265', 'W504'), skip=None,
                               'R0201', 'R1705',
                               'W0108', 'W0613'),
                recursive=True, neg_pattern=None, extended=None,
-               max_line_length=143, pattern=".*[.]py$"):
+               max_line_length=143, pattern=".*[.]py$", run_lint=True):
     """
     Checks if :epkg:`PEP8`,
     the function calls command :epkg:`pycodestyle`
@@ -162,6 +162,7 @@ def check_pep8(folder, ignore=('E265', 'W504'), skip=None,
     @param      max_line_length     maximum allowed length of a line of code
     @param      recursive           look into subfolder
     @param      pattern             only file matching this pattern will be checked
+    @param      run_lint            run :epkg:`pylint`
     @param      fLOG                logging function
     @return                         output
 
@@ -304,13 +305,15 @@ def check_pep8(folder, ignore=('E265', 'W504'), skip=None,
         raise FileNotFoundError("No file found in '{0}'".format(folder))
 
     # pylint
+    if not run_lint:
+        return "\n".join(lines)
     sout = StringIO()
     serr = StringIO()
     with redirect_stdout(sout):
         with redirect_stderr(serr):
             with warnings.catch_warnings():
                 warnings.simplefilter("ignore", DeprecationWarning)
-                opt = ["--ignore-patterns=.*temp_.*,doc_.*", "--persistent=n",
+                opt = ["--ignore-patterns=.*temp[0-9]?_.*,doc_.*", "--persistent=n",
                        '--jobs=1', '--suggestion-mode=n', "--score=n",
                        '--max-args=30', '--max-locals=50', '--max-returns=30',
                        '--max-branches=50', '--max-parents=25',
@@ -332,8 +335,10 @@ def check_pep8(folder, ignore=('E265', 'W504'), skip=None,
         "except ") and not _.startswith("else:") and not _.startswith("try:")]
     lines.extend(pylint_lines)
     if len(lines) > 0:
+        pypath = os.environ.get('PYTHONPATH', '')
         raise PEP8Exception(
-            "{0} lines\n{1}".format(len(lines), "\n".join(lines)))
+            "{0} lines\n{1}\n---\nPYTHONPATH={2}\nsys.path=\n{3}".format(
+                len(lines), "\n".join(lines), pypath, "\n".join(sys.path)))
 
     return "\n".join(lines)
 

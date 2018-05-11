@@ -220,6 +220,7 @@ pip-log.txt
 
 # py* packages
 temp_*
+temp2_*
 out_*
 */sphinxdoc/source/index_*
 */sphinxdoc/source/readme.*

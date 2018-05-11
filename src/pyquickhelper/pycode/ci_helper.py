@@ -1,24 +1,24 @@
 """
 @file
-@brief Helpers for CI
-
-.. versionadded:: 1.3
+@brief Helpers for CI.
 """
 
 
-def is_travis_or_appveyor():
+def is_travis_or_appveyor(env=None):
     """
-    tells if is a travis environment or appveyor
+    Tells if is a travis environment or appveyor.
 
-    @return        ``'travis'``, ``'appveyor'`` or ``None``
+    @param      env         checks that a environment variable is set up.
+    @return                 ``'travis'``, ``'appveyor'`` or ``None``
 
     The function should rely more on environement variables
     ``CI``, ``TRAVIS``, ``APPVEYOR``.
 
-    .. versionadded:: 1.3
-
     .. versionchanged:: 1.5
         Takes into account *circleci*.
+
+    .. versionadded:: 1.8
+        Parameter *env* was added.
     """
     import sys
     if "travis" in sys.executable:
@@ -29,4 +29,8 @@ def is_travis_or_appveyor():
         return "appveyor"
     if os.environ.get('CIRCLECI', "undefined") != "undefined":
         return "circleci"
+    if env is not None:
+        for k in env:
+            if k in os.environ and os.environ[k]:
+                return k
     return None

@@ -39,6 +39,7 @@ except ImportError:
 from src.pyquickhelper.loghelper.flog import fLOG
 from src.pyquickhelper.pycode import get_temp_folder, process_standard_options_for_setup, is_travis_or_appveyor
 from src.pyquickhelper.loghelper import git_clone
+from src.pyquickhelper import __file__ as pyq_location
 
 if sys.version_info[0] == 2:
     from StringIO import StringIO
@@ -62,8 +63,8 @@ class TestUnitTestFull(unittest.TestCase):
             # The downloaded code is python 3.
             return
 
-        if __name__ != "__main__" or not os.path.exists("temp_full_unit_test"):
-            temp_ = get_temp_folder(__file__, "temp_full_unit_test")
+        if __name__ != "__main__" or not os.path.exists("temp2_full_unit_test"):
+            temp_ = get_temp_folder(__file__, "temp2_full_unit_test")
             temp = os.path.join(temp_, "python3_module_template")
             if not os.path.exists(temp):
                 os.mkdir(temp)
@@ -76,7 +77,7 @@ class TestUnitTestFull(unittest.TestCase):
                 wait += 1
         else:
             temp = os.path.abspath(os.path.join(
-                "temp_full_unit_test", "python3_module_template"))
+                "temp2_full_unit_test", "python3_module_template"))
         root = temp
         setup = os.path.join(root, "setup.py")
         pyq = os.path.join(os.path.dirname(src.pyquickhelper.__file__), "..")
@@ -89,6 +90,9 @@ class TestUnitTestFull(unittest.TestCase):
 
         def skip_function(name, code, duration):
             return "test_example" not in name
+
+        pyq_folder = os.path.normpath(os.path.abspath(
+            os.path.join(os.path.dirname(pyq_location), '..')))
 
         blog_list = """
             <?xml version="1.0" encoding="UTF-8"?>
@@ -118,8 +122,9 @@ class TestUnitTestFull(unittest.TestCase):
         fLOG("unit tests", root)
         for command in ["version", "write_version", "clean_pyd",
                         "setup_hook", "build_script", "copy27",
-                        "unittests -g .*ext.*",
-                        "unittests", "unittests_LONG", "unittests_SKIP",
+                        "unittests -e .*code_style.*",
+                        "unittests -g .*((ext)|(code_style)).*",
+                        "unittests_LONG", "unittests_SKIP",
                         "build_sphinx"]:
             if command == "build_sphinx" and is_travis_or_appveyor() in ('travis', 'appveyor'):
                 # InkScape not installed for AppVeyor or travis.
@@ -150,6 +155,14 @@ class TestUnitTestFull(unittest.TestCase):
             stdout2 = StringIO()
             stderr2 = StringIO()
 
+            if command == "unittests -e .*code_style.*":
+                if pyq_folder not in sys.path:
+                    pos_remove = len(sys.path)
+                    sys.path.append(pyq_folder)
+                    fLOG("ADD='{0}'".format(pyq_folder))
+                else:
+                    pos_remove = None
+
             r = process_standard_options_for_setup(
                 lcmd, setup, "python3_module_template",
                 port=8067, requirements=["pyquickhelper"], blog_list=blog_list,
@@ -157,6 +170,14 @@ class TestUnitTestFull(unittest.TestCase):
                 skip_function=skip_function, coverage_options={
                     "disable_coverage": True},
                 hook_print=False, stdout=stdout2, stderr=stderr2, use_run_cmd=True)
+
+            if command == "unittests -e .*code_style.*" and pos_remove:
+                if sys.path[pos_remove] != pyq_folder:
+                    raise Exception(
+                        "sys.path has changed at position {0}".format(pos_remove))
+                del sys.path[pos_remove]
+                fLOG("REMOVE='{0}'".format(pyq_folder))
+
             vout = stdout2.getvalue()
             stdout.write(vout)
             verr = stderr2.getvalue()
@@ -171,7 +192,7 @@ class TestUnitTestFull(unittest.TestCase):
                         "command={0}\nOUT:\n{1}\nERR:\n{2}".format(command, vout, verr))
                 if "-e" in command and "running test   1, ut_module/test_convert_notebooks.py" in vout:
                     raise Exception(vout)
-                if "-e" in command and "_ext" not in vout:
+                if "-e" in command and "_ext" not in vout and "code_style" not in command:
                     raise Exception(vout)
                 if "LONG" in command and "running test   1, ut_module/test_convert_notebooks.py" in vout:
                     raise Exception(vout)

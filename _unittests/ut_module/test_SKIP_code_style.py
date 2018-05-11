@@ -22,11 +22,10 @@ except ImportError:
     import src
 
 from src.pyquickhelper.loghelper import fLOG
-from src.pyquickhelper.pycode import is_travis_or_appveyor
 from src.pyquickhelper.pycode._pylint_common import _test_style_src, _test_style_test
 
 
-class TestCodeStyle(unittest.TestCase):
+class TestSKIPCodeStyle(unittest.TestCase):
 
     def test_style_src(self):
         fLOG(
@@ -39,7 +38,7 @@ class TestCodeStyle(unittest.TestCase):
                 "skipping test_code_style because of Python 2 or " + sys.executable)
             return
 
-        run_lint = is_travis_or_appveyor(env=['NAME_JENKINS']) is None
+        run_lint = True
         _test_style_src(fLOG, run_lint)
 
     def test_style_test(self):
@@ -53,7 +52,7 @@ class TestCodeStyle(unittest.TestCase):
                 "skipping test_code_style because of Python 2 or " + sys.executable)
             return
 
-        run_lint = is_travis_or_appveyor(env=['NAME_JENKINS']) is None
+        run_lint = True
         _test_style_test(fLOG, run_lint)
 
 
