@@ -8,6 +8,11 @@ History
 current - 2018-05-11 - 0.00Mb
 =============================
 
+1.8.2601 - 2018-05-11 - 1.98Mb
+==============================
+
+* `143`: add setup option to run pylint (2018-05-11)
+* `142`: look for the files which makes pylint crash on Windows (2018-05-11)
 * `141`: check_pep8 does not detect line too long and unused variables (use of pylint) (2018-05-11)
 
 1.7.2581 - 2018-05-07 - 2.00Mb
@@ -16,16 +21,8 @@ current - 2018-05-11 - 0.00Mb
 * `140`: modify assertEqualArray to allow small different (assert_almost_equal) (2018-05-07)
 * `138`: retrieve past issues in history.rst (2018-05-06)
 * `139`: update to python-jenkins 1.0.0 (2018-05-05)
-
-1.7.2569 - 2018-05-01 - 1.99Mb
-==============================
-
 * `137`: fix bug in bug HTML output (aggregated pages) (2018-04-29)
 * `136`: add parameter create_dest to synchronize_folder (2018-04-29)
-
-1.7.2560 - 2018-04-22 - 1.99Mb
-==============================
-
 * `135`: fix for sphinx 1.7.3 (circular reference) (2018-04-22)
 * `134`: allow url in video sphinx extension (2018-04-22)
 * `133`: add a collapsible container, adapt it for runpython (2018-04-22)

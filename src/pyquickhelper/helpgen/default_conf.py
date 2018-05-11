@@ -644,7 +644,7 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
     modify_commit = modify_commit_function
 
     # sphinx gallery
-    backreferences_dir = "backreferences_dir"
+    backreferences_dir = "modules/generated"
     dirname = os.path.dirname(fileconf)
     exa = os.path.join(dirname, "..", "..", "..", "_doc", "examples")
     if os.path.exists(exa):
@@ -695,6 +695,9 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
             'backreferences_dir': example_dir,
             'expected_failing_examples': [],
         }
+    else:
+        extensions = [_ for _ in extensions if _ !=
+                      "sphinx_gallery.gen_gallery"]
 
     # notebooks replacements (post-process)
     notebook_replacements = {'html': [('\\mathbb{1}_', '\\mathbf{1\\!\\!1}_')]}
