@@ -25,7 +25,7 @@ from src.pyquickhelper.loghelper import fLOG
 from src.pyquickhelper.pycode._pylint_common import _test_style_src, _test_style_test
 
 
-class TestSKIPCodeStyle(unittest.TestCase):
+class TestSKIPpylint(unittest.TestCase):
 
     def test_style_src(self):
         fLOG(
