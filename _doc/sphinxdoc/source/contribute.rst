@@ -61,8 +61,8 @@ code or testing notebooks.
 .. runpython::
     :showcode:
 
-    from pyquickhelper.pycode.setup_helper import available_commands_list
-    print("\n".join(sorted(available_commands_list())))
+    from pyquickhelper.pycode.setup_helper import get_available_setup_commands
+    print("\n".join(sorted(get_available_setup_commands())))
 
 The most used one is ``python setup.py clean_space``. The commands
 modifies the files to be closer to :epkg:`pep8` conventions, it also

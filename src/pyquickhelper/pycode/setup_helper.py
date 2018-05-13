@@ -28,12 +28,10 @@ if sys.version_info[0] == 2:
     from codecs import open
 
 
-def available_commands_list(argv):
+def get_available_setup_commands():
     """
-    checks that on command handled by pyquickhelper is part of the arguments
-
-    @param      argv        sys.arg
-    @return                 bool
+    Returns the list of commands :epkg:`pyquickhelper` implements
+    or allows.
     """
     commands = ['bdist_egg', 'bdist_msi', 'bdist_wheel', 'bdist_wininst', 'build27',
                 'build_ext', 'build_script', 'build_sphinx', 'clean_pyd', 'clean_space',
@@ -42,6 +40,17 @@ def available_commands_list(argv):
                 'sdist', 'setup_hook', 'setupdep', 'test_local_pypi',
                 'unittests', 'unittests_GUI', 'unittests_LONG', 'unittests_SKIP',
                 'upload_docs', 'write_version']
+    return commands
+
+
+def available_commands_list(argv):
+    """
+    Checks that on command handled by pyquickhelper is part of the arguments.
+
+    @param      argv        ``sys.args``
+    @return                 bool
+    """
+    commands = get_available_setup_commands()
     for c in commands:
         if c in argv:
             return True
