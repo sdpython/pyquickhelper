@@ -32,6 +32,10 @@ from src.pyquickhelper.pycode import is_travis_or_appveyor
 
 class TestDownload (ExtTestCase):
 
+    def test_src_import(self):
+        """for pylint"""
+        self.assertTrue(src is not None)
+
     def test_download_zip(self):
         fLOG(
             __file__,

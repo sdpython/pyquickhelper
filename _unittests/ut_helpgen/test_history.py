@@ -28,6 +28,10 @@ from src.pyquickhelper.helpgen import rst2html
 
 class TestPaths(unittest.TestCase):
 
+    def test_src_import(self):
+        """for pylint"""
+        self.assertTrue(src is not None)
+
     def test_format_history_release(self):
         fLOG(
             __file__,

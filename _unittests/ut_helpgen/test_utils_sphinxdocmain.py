@@ -28,6 +28,10 @@ from src.pyquickhelper.pycode import is_travis_or_appveyor
 
 class TestSphinxDocMain (unittest.TestCase):
 
+    def test_src_import(self):
+        """for pylint"""
+        self.assertTrue(src is not None)
+
     def test_sphinx_changes(self):
         fLOG(
             __file__,

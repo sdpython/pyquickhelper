@@ -28,6 +28,10 @@ from src.pyquickhelper.filehelper.synchelper import synchronize_folder, remove_f
 
 class TestFileCol (unittest.TestCase):
 
+    def test_src_import(self):
+        """for pylint"""
+        self.assertTrue(src is not None)
+
     def test_synchro(self):
         fLOG(
             __file__,

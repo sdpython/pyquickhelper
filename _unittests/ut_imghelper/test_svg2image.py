@@ -29,6 +29,10 @@ from src.pyquickhelper.imghelper.svg_helper import svg2img, guess_svg_size
 
 class TestSvg2Image(ExtTestCase):
 
+    def test_src_import(self):
+        """for pylint"""
+        self.assertTrue(src is not None)
+
     @unittest.skipIf(sys.version_info[:2] < (3, 6), "Python 3.5- returns false results.")
     def test_svg2img(self):
         fLOG(

@@ -31,6 +31,10 @@ if sys.version_info[0] == 2:
 
 class TestNoteBooksComment(ExtTestCase):
 
+    def test_src_import(self):
+        """for pylint"""
+        self.assertTrue(src is not None)
+
     def test_notebook_comment(self):
         fLOG(
             __file__,

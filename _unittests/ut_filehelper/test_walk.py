@@ -27,6 +27,10 @@ from src.pyquickhelper.pycode import ExtTestCase
 
 class TestWalk(ExtTestCase):
 
+    def test_src_import(self):
+        """for pylint"""
+        self.assertTrue(src is not None)
+
     def test_walk(self):
         fLOG(
             __file__,

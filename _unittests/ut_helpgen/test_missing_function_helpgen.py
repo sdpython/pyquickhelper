@@ -36,6 +36,10 @@ from src.pyquickhelper.helpgen.sphinxm_convert_doc_helper import correct_indenta
 
 class TestMissingFunctionsHelpgen(ExtTestCase):
 
+    def test_src_import(self):
+        """for pylint"""
+        self.assertTrue(src is not None)
+
     def test_ie(self):
         if not sys.platform.startswith("win"):
             return

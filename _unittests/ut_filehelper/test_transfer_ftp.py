@@ -27,6 +27,10 @@ from src.pyquickhelper.filehelper import TransferAPIFtp
 
 class TestTransferFTP(unittest.TestCase):
 
+    def test_src_import(self):
+        """for pylint"""
+        self.assertTrue(src is not None)
+
     def test_transfer_ftp(self):
         fLOG(
             __file__,

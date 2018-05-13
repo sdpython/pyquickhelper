@@ -29,6 +29,10 @@ from src.pyquickhelper.pycode import fix_tkinter_issues_virtualenv
 
 class TestGraphChanges (unittest.TestCase):
 
+    def test_src_import(self):
+        """for pylint"""
+        self.assertTrue(src is not None)
+
     def test_graph_changes(self):
         fLOG(
             __file__,

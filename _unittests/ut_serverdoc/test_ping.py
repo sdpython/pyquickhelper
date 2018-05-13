@@ -27,6 +27,10 @@ from src.pyquickhelper.pycode import is_travis_or_appveyor
 
 class TestPing(unittest.TestCase):
 
+    def test_src_import(self):
+        """for pylint"""
+        self.assertTrue(src is not None)
+
     def get_machine(self):
         if sys.platform.startswith("win"):
             return os.environ["COMPUTERNAME"]

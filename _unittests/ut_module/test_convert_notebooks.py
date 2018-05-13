@@ -27,6 +27,10 @@ from src.pyquickhelper.ipythonhelper import upgrade_notebook, remove_execution_n
 
 class TestConvertNotebooks(unittest.TestCase):
 
+    def test_src_import(self):
+        """for pylint"""
+        self.assertTrue(src is not None)
+
     def test_convert_notebooks(self):
         fLOG(
             __file__,

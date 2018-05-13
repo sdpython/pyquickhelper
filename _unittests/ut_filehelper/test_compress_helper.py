@@ -33,6 +33,10 @@ from src.pyquickhelper.pycode import is_travis_or_appveyor
 
 class TestCompressHelper(unittest.TestCase):
 
+    def test_src_import(self):
+        """for pylint"""
+        self.assertTrue(src is not None)
+
     def test_compress_helper(self):
         fLOG(
             __file__,

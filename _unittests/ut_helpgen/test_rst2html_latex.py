@@ -31,6 +31,10 @@ if sys.version_info[0] == 2:
 
 class TestRst2HtmlLatex(unittest.TestCase):
 
+    def test_src_import(self):
+        """for pylint"""
+        self.assertTrue(src is not None)
+
     def test_rst2html_png_bug(self):
         fLOG(
             __file__,

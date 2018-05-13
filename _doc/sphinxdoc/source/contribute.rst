@@ -37,6 +37,9 @@ Otherwise, a zip file of the sources is enough.
 Generate the setup
 ==================
 
+Build the wheel
++++++++++++++++
+
 To generate a zip or gz setup:
 
 ::
@@ -48,6 +51,55 @@ To generate a file *.whl:
 ::
 
     python setup.py bdist_wheel
+
+Other available commands
+++++++++++++++++++++++++
+
+The setup implements other commands to help writing
+code or testing notebooks.
+
+.. runpython::
+    :showcode:
+
+    from pyquickhelper.pycode.setup_helper import available_commands_list
+    print("\n".join(sorted(available_commands_list())))
+
+The most used one is ``python setup.py clean_space``. The commands
+modifies the files to be closer to :epkg:`pep8` conventions, it also
+runs some checkings to display warnings for remaining issues.
+The command ``python setup.py run_pylint`` runs :epkg:`pylint`
+on the code. Extended syntax is
+``python setup.py run_pylint <filter> <negative filte> -iXXXX``.
+``-iXXXX`` ignores warnings *XXXX*. One must be added for each
+warning to ignore. ``python setup.py buld_sphinx`` runs the
+documentation, ``python setup.py copy27``, ``python setup.py run27``,
+``python setup.py build27`` converts the module for Python 2.7
+(not bullet proof), ``python setup.py history`` retrieves the
+history and update file ``HISTORY.rst`` on root folder.
+
+.. index:: notebooks, Jupyter Lab
+
+``python setup.py notebook`` starts a local :epkg:`Jupyter`
+notebook server to easily modify the notebooks, ``python setup.py lab``
+does the same for :epkg:`Jupyter Lab`. Finally,
+a script to start :epkg:`SciTe` with the right path
+on :epkg:`Windows` (to be saved in ``something.bat``).
+
+.. index:: SciTe
+
+::
+
+    @echo off
+
+    set MYPYTHON=C:\Python36_x64
+    set PYADDPATH=C:\username\GitHub
+    set PATH=%MYPYTHON%;%PATH%
+    set PYTHONPATH=%PYADDPATH%\pyquickhelper\src;%PYADDPATH%\pyensae\src;%PYADDPATH%\pyrsslocal\src;%PYADDPATH%\jyquickhelper\src
+    set PYTHONPATH=%PYTHONPATH%;%PYADDPATH%\manydataapi\src;%PYADDPATH%\ensae_teaching_cs\src;%PYADDPATH%\mlinsights\src;%PYADDPATH%\mlstatpy\src
+    set PYTHONPATH=%PYTHONPATH%;%PYADDPATH%\actuariat_python\src;%PYADDPATH%\code_beatrix\src;%PYADDPATH%\cpyquickhelper\src;%PYADDPATH%\ensae_projects\src
+    set PYTHONPATH=%PYTHONPATH%;%PYADDPATH%\lightmlrestapi\src;%PYADDPATH%\lightmlboard\src;%PYADDPATH%\pandas_streaming\src;%PYADDPATH%\papierstat\src
+    set PYTHONPATH=%PYTHONPATH%;%PYADDPATH%\pymmails\src;%PYADDPATH%\pysqllike\src;%PYADDPATH%\pymyinstall\src;%PYADDPATH%\teachpyx\src
+    start /b pathtoscite\SciTE.exe
 
 Unit tests
 ==========

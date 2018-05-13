@@ -29,6 +29,10 @@ from src.pyquickhelper.filehelper import synchronize_folder
 
 class TestSphinxDoc2Issue (unittest.TestCase):
 
+    def test_src_import(self):
+        """for pylint"""
+        self.assertTrue(src is not None)
+
     @staticmethod
     def get_help():
         """ help to fetch"""

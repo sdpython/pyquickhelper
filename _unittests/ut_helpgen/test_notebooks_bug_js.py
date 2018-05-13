@@ -31,6 +31,10 @@ if sys.version_info[0] == 2:
 
 class TestNoteBooksBugJs(ExtTestCase):
 
+    def test_src_import(self):
+        """for pylint"""
+        self.assertTrue(src is not None)
+
     @skipif_travis('latex, pandoc not installed')
     @skipif_appveyor('latex, pandoc not installed')
     def test_notebook_js(self):

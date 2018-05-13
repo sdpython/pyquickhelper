@@ -31,6 +31,10 @@ if sys.version_info[0] == 2:
 
 class TestNoteBooksBugRstImage(ExtTestCase):
 
+    def test_src_import(self):
+        """for pylint"""
+        self.assertTrue(src is not None)
+
     @skipif_travis('latex')
     @skipif_appveyor('latex')
     def test_notebook_rst_image(self):

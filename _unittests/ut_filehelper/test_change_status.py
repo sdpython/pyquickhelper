@@ -29,6 +29,10 @@ from src.pyquickhelper.filehelper import change_file_status
 
 class TestChangesStatus(unittest.TestCase):
 
+    def test_src_import(self):
+        """for pylint"""
+        self.assertTrue(src is not None)
+
     def test_change_status(self):
         fLOG(
             __file__,

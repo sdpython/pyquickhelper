@@ -32,6 +32,10 @@ if sys.version_info[0] == 2:
 
 class TestConfSphinx(unittest.TestCase):
 
+    def test_src_import(self):
+        """for pylint"""
+        self.assertTrue(src is not None)
+
     @unittest.skipIf(sys.version_info[:2] < (3, 6), "Not supported in Python < (3, 6)")
     def test_conf_sphinx(self):
         fLOG(

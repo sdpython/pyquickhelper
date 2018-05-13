@@ -31,6 +31,10 @@ if sys.version_info[0] == 2:
 
 class TestRst2HtmlToc(unittest.TestCase):
 
+    def test_src_import(self):
+        """for pylint"""
+        self.assertTrue(src is not None)
+
     def test_rst2html_toc(self):
         fLOG(
             __file__,

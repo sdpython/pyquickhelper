@@ -56,6 +56,10 @@ class ATestBenchMarkB2_(BenchMark):
 
 class TestBenchMarkBar(unittest.TestCase):
 
+    def test_src_import(self):
+        """for pylint"""
+        self.assertTrue(src is not None)
+
     def test_benchmark_list_progressbar(self):
         fLOG(
             __file__,

@@ -27,6 +27,10 @@ from src.pyquickhelper.pandashelper import read_csv
 
 class TestPandasHelperZip(unittest.TestCase):
 
+    def test_src_import(self):
+        """for pylint"""
+        self.assertTrue(src is not None)
+
     def test_zip_to_df(self):
         fLOG(
             __file__,

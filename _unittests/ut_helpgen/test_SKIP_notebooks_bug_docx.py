@@ -27,6 +27,10 @@ from src.pyquickhelper.helpgen import process_notebooks
 
 class TestNoteBooksBugDocx(unittest.TestCase):
 
+    def test_src_import(self):
+        """for pylint"""
+        self.assertTrue(src is not None)
+
     def test_notebook_docx(self):
         fLOG(
             __file__,

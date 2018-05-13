@@ -28,6 +28,10 @@ from src.pyquickhelper.helpgen.utils_sphinx_doc_helpers import make_label_index
 
 class TestSmallFunction(unittest.TestCase):
 
+    def test_src_import(self):
+        """for pylint"""
+        self.assertTrue(src is not None)
+
     def test_make_label_index(self):
         fLOG(
             __file__,

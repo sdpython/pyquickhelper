@@ -27,6 +27,10 @@ from src.pyquickhelper.helpgen.process_notebooks import build_all_notebooks_cove
 
 class TestNotebookReportCoverage(unittest.TestCase):
 
+    def test_src_import(self):
+        """for pylint"""
+        self.assertTrue(src is not None)
+
     def test_notebook_report_coverage(self):
         fLOG(
             __file__,

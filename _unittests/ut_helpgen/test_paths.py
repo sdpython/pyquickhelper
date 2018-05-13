@@ -31,6 +31,10 @@ from src.pyquickhelper.pycode.ci_helper import is_travis_or_appveyor
 
 class TestPaths(unittest.TestCase):
 
+    def test_src_import(self):
+        """for pylint"""
+        self.assertTrue(src is not None)
+
     def test_paths(self):
         fLOG(
             __file__,

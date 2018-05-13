@@ -29,6 +29,10 @@ from src.pyquickhelper.helpgen.install_custom import download_revealjs
 
 class TestRevealjs(unittest.TestCase):
 
+    def test_src_import(self):
+        """for pylint"""
+        self.assertTrue(src is not None)
+
     def test_install_revealjs_github(self):
         fLOG(
             __file__,

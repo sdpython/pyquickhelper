@@ -26,6 +26,10 @@ import src.pyquickhelper.filehelper.synchelper as foldermod
 
 class TestFolder (unittest.TestCase):
 
+    def test_src_import(self):
+        """for pylint"""
+        self.assertTrue(src is not None)
+
     def test_synchronize(self):
         fLOG(
             __file__,

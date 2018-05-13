@@ -31,6 +31,10 @@ from src.pyquickhelper.helpgen import CustomSphinxApp
 
 class TestAppSphinx(ExtTestCase):
 
+    def test_src_import(self):
+        """for pylint"""
+        self.assertTrue(src is not None)
+
     def test_app_sphinx(self):
         fLOG(
             __file__,

@@ -26,6 +26,10 @@ from src.pyquickhelper.filehelper.winzipfile import WinZipFile
 
 class TestWinZipFile(unittest.TestCase):
 
+    def test_src_import(self):
+        """for pylint"""
+        self.assertTrue(src is not None)
+
     def test_winzipfile(self):
         fLOG(
             __file__,

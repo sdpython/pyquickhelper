@@ -29,6 +29,10 @@ if sys.version_info[0] == 2:
 
 class TestYamlSplit2(unittest.TestCase):
 
+    def test_src_import(self):
+        """for pylint"""
+        self.assertTrue(src is not None)
+
     def test_jconvert_sequence_into_batch_file_split2(self):
         fLOG(
             __file__,

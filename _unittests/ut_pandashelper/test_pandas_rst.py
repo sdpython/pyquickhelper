@@ -27,6 +27,10 @@ from src.pyquickhelper.pandashelper import df2rst
 
 class TestPandasRst(unittest.TestCase):
 
+    def test_src_import(self):
+        """for pylint"""
+        self.assertTrue(src is not None)
+
     def test_pandas_rst(self):
         fLOG(
             __file__,

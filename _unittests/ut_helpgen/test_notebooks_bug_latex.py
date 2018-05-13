@@ -27,6 +27,10 @@ from src.pyquickhelper.pycode import is_travis_or_appveyor, ExtTestCase
 
 class TestNoteBooksBugLatex(ExtTestCase):
 
+    def test_src_import(self):
+        """for pylint"""
+        self.assertTrue(src is not None)
+
     def test_notebook_latex(self):
         fLOG(
             __file__,

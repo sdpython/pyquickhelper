@@ -29,6 +29,10 @@ from src.pyquickhelper.loghelper.os_helper import get_machine
 
 class TestTransferFTPTrue(unittest.TestCase):
 
+    def test_src_import(self):
+        """for pylint"""
+        self.assertTrue(src is not None)
+
     def test_transfer_ftp_true(self):
         fLOG(
             __file__,

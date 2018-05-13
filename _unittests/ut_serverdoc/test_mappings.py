@@ -27,6 +27,10 @@ from src.pyquickhelper.serverdoc import get_jenkins_mappings
 
 class TestMappings(unittest.TestCase):
 
+    def test_src_import(self):
+        """for pylint"""
+        self.assertTrue(src is not None)
+
     def test_mappings(self):
         fLOG(
             __file__,

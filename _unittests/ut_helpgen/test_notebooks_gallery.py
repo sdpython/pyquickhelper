@@ -32,6 +32,10 @@ if sys.version_info[0] == 2:
 
 class TestNotebookGallery(ExtTestCase):
 
+    def test_src_import(self):
+        """for pylint"""
+        self.assertTrue(src is not None)
+
     def a_test_notebook_gallery(self, layout):
         if sys.version_info[0] == 2:
             return None

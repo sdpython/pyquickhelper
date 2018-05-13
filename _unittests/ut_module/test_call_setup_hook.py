@@ -27,6 +27,10 @@ from src.pyquickhelper.pycode.call_setup_hook import call_setup_hook, call_setup
 
 class TestCallSetupHook(unittest.TestCase):
 
+    def test_src_import(self):
+        """for pylint"""
+        self.assertTrue(src is not None)
+
     def test_call_setup_hook_cmd(self):
         fLOG(
             __file__,

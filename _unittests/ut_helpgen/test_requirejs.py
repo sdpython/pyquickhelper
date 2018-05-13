@@ -29,6 +29,10 @@ from src.pyquickhelper.helpgen.install_custom import download_requirejs
 
 class TestRequirejs(ExtTestCase):
 
+    def test_src_import(self):
+        """for pylint"""
+        self.assertTrue(src is not None)
+
     def test_download_requirejs(self):
         fLOG(
             __file__,

@@ -27,6 +27,10 @@ from src.pyquickhelper.cli.cli_helper import clean_documentation_for_cli
 
 class TestPyqSyncCli(unittest.TestCase):
 
+    def test_src_import(self):
+        """for pylint"""
+        self.assertTrue(src is not None)
+
     def test_pyq_sync_cli(self):
         fLOG(
             __file__,

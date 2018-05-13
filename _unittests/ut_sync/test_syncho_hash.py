@@ -27,6 +27,10 @@ from src.pyquickhelper.filehelper.synchelper import synchronize_folder, remove_f
 
 class TestSynchoHash (unittest.TestCase):
 
+    def test_src_import(self):
+        """for pylint"""
+        self.assertTrue(src is not None)
+
     def test_synchro_hash(self):
         fLOG(
             __file__,

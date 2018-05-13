@@ -27,6 +27,10 @@ from src.pyquickhelper.pycode._pylint_common import _private_test_style_src, _pr
 
 class TestSKIPpylint(unittest.TestCase):
 
+    def test_src_import(self):
+        """for pylint"""
+        self.assertTrue(src is not None)
+
     def test_style_src(self):
         fLOG(
             __file__,

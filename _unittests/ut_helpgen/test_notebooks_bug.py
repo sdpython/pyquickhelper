@@ -32,6 +32,10 @@ if sys.version_info[0] == 2:
 
 class TestNoteBooksBug(ExtTestCase):
 
+    def test_src_import(self):
+        """for pylint"""
+        self.assertTrue(src is not None)
+
     def test_regex(self):
         fLOG(
             __file__,

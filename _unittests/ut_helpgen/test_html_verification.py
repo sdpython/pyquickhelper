@@ -27,6 +27,10 @@ from src.pyquickhelper.helpgen.sphinx_main_verification import verification_html
 
 class TestHtmlVerification(unittest.TestCase):
 
+    def test_src_import(self):
+        """for pylint"""
+        self.assertTrue(src is not None)
+
     def test_main_verification(self):
         fLOG(
             __file__,

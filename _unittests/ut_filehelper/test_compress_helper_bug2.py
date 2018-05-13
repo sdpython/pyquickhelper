@@ -31,6 +31,10 @@ from src.pyquickhelper.filehelper import unzip_files
 
 class TestCompressHelperBug2(ExtTestCase):
 
+    def test_src_import(self):
+        """for pylint"""
+        self.assertTrue(src is not None)
+
     def test_unzip_bug(self):
         fLOG(
             __file__,

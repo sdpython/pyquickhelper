@@ -30,6 +30,10 @@ from src.pyquickhelper.imghelper.js_helper import nodejs_version, require, run_j
 
 class TestJs2Image(ExtTestCase):
 
+    def test_src_import(self):
+        """for pylint"""
+        self.assertTrue(src is not None)
+
     def test_js2fct(self):
         fLOG(
             __file__,

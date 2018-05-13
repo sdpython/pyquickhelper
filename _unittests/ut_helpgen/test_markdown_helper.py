@@ -31,6 +31,10 @@ if sys.version_info[0] == 2:
 
 class TestHelperMarkdown(unittest.TestCase):
 
+    def test_src_import(self):
+        """for pylint"""
+        self.assertTrue(src is not None)
+
     def test_parse_markdown(self):
         fLOG(
             __file__,

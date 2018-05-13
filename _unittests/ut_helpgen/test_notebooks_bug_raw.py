@@ -32,6 +32,10 @@ if sys.version_info[0] == 2:
 
 class TestNoteBooksBugRaw(ExtTestCase):
 
+    def test_src_import(self):
+        """for pylint"""
+        self.assertTrue(src is not None)
+
     def test_notebook_raw(self):
         fLOG(
             __file__,

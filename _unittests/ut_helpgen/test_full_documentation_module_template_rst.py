@@ -37,6 +37,10 @@ if sys.version_info[0] == 2:
 
 class TestSphinxFullDocumentationModuleTemplateRst(unittest.TestCase):
 
+    def test_src_import(self):
+        """for pylint"""
+        self.assertTrue(src is not None)
+
     def test_full_documentation_module_template_rst(self):
         """
         This test might fail in sphinx-gallery due to a very long filename.

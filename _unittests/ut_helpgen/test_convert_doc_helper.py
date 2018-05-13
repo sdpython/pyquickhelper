@@ -34,6 +34,10 @@ import pandas
 
 class TestConvertDocHelper(unittest.TestCase):
 
+    def test_src_import(self):
+        """for pylint"""
+        self.assertTrue(src is not None)
+
     def test_rst2html(self):
         fLOG(
             __file__,

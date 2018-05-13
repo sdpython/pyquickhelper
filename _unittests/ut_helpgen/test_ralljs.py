@@ -29,6 +29,10 @@ from src.pyquickhelper.helpgen.install_js_dep import install_javascript_tools
 
 class TestAlljs(ExtTestCase):
 
+    def test_src_import(self):
+        """for pylint"""
+        self.assertTrue(src is not None)
+
     def test_install_alljs(self):
         fLOG(
             __file__,

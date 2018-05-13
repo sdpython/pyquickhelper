@@ -28,6 +28,10 @@ from src.pyquickhelper import get_fLOG
 
 class TestGetfLOG(unittest.TestCase):
 
+    def test_src_import(self):
+        """for pylint"""
+        self.assertTrue(src is not None)
+
     def test_flog(self):
         fLOG(
             __file__,

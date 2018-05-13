@@ -25,6 +25,10 @@ from src.pyquickhelper.serverdoc.ping_helper import regular_ping_machine
 
 class TestPingHelper(unittest.TestCase):
 
+    def test_src_import(self):
+        """for pylint"""
+        self.assertTrue(src is not None)
+
     def test_ping_list(self):
         fLOG(
             __file__,

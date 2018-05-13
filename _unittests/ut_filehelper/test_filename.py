@@ -27,6 +27,10 @@ from src.pyquickhelper.filehelper import is_file_string
 
 class TestFilename(unittest.TestCase):
 
+    def test_src_import(self):
+        """for pylint"""
+        self.assertTrue(src is not None)
+
     def test_filename(self):
         fLOG(
             __file__,

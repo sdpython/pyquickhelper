@@ -28,6 +28,10 @@ from src.pyquickhelper.texthelper.templating import apply_template, CustomTempla
 
 class TestTemplating(unittest.TestCase):
 
+    def test_src_import(self):
+        """for pylint"""
+        self.assertTrue(src is not None)
+
     def test_mako(self):
         fLOG(
             __file__,

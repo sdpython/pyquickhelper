@@ -28,6 +28,10 @@ from src.pyquickhelper.texthelper import change_style
 
 class TestTextCodeHelper(unittest.TestCase):
 
+    def test_src_import(self):
+        """for pylint"""
+        self.assertTrue(src is not None)
+
     def test_change_style(self):
         fLOG(
             __file__,

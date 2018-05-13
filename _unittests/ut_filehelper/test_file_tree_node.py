@@ -32,6 +32,10 @@ from src.pyquickhelper.helpgen.utils_sphinx_doc import filecontent_to_rst, repla
 
 class TestFileNodeTree(ExtTestCase):
 
+    def test_src_import(self):
+        """for pylint"""
+        self.assertTrue(src is not None)
+
     def test_file_tree_node(self):
         fLOG(
             __file__,

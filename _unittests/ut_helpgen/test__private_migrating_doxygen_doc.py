@@ -29,6 +29,10 @@ class TestHelpGenPrivate(unittest.TestCase):
     Second line.
     """
 
+    def test_src_import(self):
+        """for pylint"""
+        self.assertTrue(src is not None)
+
     def test__private_migrating_doxygen_doc(self):
         """First line.
         Second line.

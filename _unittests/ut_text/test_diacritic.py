@@ -28,6 +28,10 @@ from src.pyquickhelper.texthelper import remove_diacritics
 
 class TestDiacritic (unittest.TestCase):
 
+    def test_src_import(self):
+        """for pylint"""
+        self.assertTrue(src is not None)
+
     def test_accent(self):
         fLOG(
             __file__,

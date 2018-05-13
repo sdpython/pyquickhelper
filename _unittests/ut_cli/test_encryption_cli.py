@@ -28,6 +28,10 @@ from src.pyquickhelper.cli.encryption_cli import encrypt, decrypt
 
 class TestEncryptionCli(unittest.TestCase):
 
+    def test_src_import(self):
+        """for pylint"""
+        self.assertTrue(src is not None)
+
     def test_encrypt_decrypt_file(self):
         fLOG(
             __file__,

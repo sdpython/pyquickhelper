@@ -6,6 +6,7 @@ import sys
 import os
 import unittest
 import numpy
+from pandas import read_csv
 
 
 try:
@@ -23,7 +24,6 @@ except ImportError:
 
 from src.pyquickhelper.loghelper import fLOG
 from src.pyquickhelper.pandashelper import isempty, isnan
-from pandas import read_csv
 
 
 if sys.version_info[0] == 2:
@@ -31,6 +31,10 @@ if sys.version_info[0] == 2:
 
 
 class TestPandasHelper(unittest.TestCase):
+
+    def test_src_import(self):
+        """for pylint"""
+        self.assertTrue(src is not None)
 
     def test_version(self):
         fLOG(

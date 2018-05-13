@@ -31,6 +31,10 @@ if sys.version_info[0] == 2:
 
 class TestNoteBooksExporter(ExtTestCase):
 
+    def test_src_import(self):
+        """for pylint"""
+        self.assertTrue(src is not None)
+
     @skipif_travis('pandoc is not installed on travis')
     def test_notebook_rst_svg(self):
         fLOG(

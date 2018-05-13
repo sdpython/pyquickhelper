@@ -32,6 +32,10 @@ from src.pyquickhelper.loghelper.pqh_exception import PQHException
 
 class TestSyncHelper(ExtTestCase):
 
+    def test_src_import(self):
+        """for pylint"""
+        self.assertTrue(src is not None)
+
     def test_synchronize(self):
         fLOG(
             __file__,

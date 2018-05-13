@@ -34,6 +34,10 @@ if sys.version_info[0] == 2:
 
 class TestNoteBooksFind(ExtTestCase):
 
+    def test_src_import(self):
+        """for pylint"""
+        self.assertTrue(src is not None)
+
     def test_update_link_rst(self):
         fLOG(
             __file__,

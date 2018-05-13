@@ -26,6 +26,10 @@ from src.pyquickhelper.cli import create_cli_parser, call_cli_function
 
 class TestParserFromFunction(unittest.TestCase):
 
+    def test_src_import(self):
+        """for pylint"""
+        self.assertTrue(src is not None)
+
     def test_parser_from_function(self):
         fLOG(
             __file__,

@@ -28,6 +28,10 @@ from src.pyquickhelper.pycode import add_missing_development_version
 
 class TestFunctionTestNotebook(unittest.TestCase):
 
+    def test_src_import(self):
+        """for pylint"""
+        self.assertTrue(src is not None)
+
     def setUp(self):
         add_missing_development_version(["jyquickhelper"], __file__, hide=True)
 

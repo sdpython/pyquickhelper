@@ -26,6 +26,10 @@ from src.pyquickhelper.helpgen.stat_helper import enumerate_notebooks_link
 
 class TestHelpGenStatHelper(unittest.TestCase):
 
+    def test_src_import(self):
+        """for pylint"""
+        self.assertTrue(src is not None)
+
     def test_enumerate_notebooks_link(self):
         fLOG(
             __file__,

@@ -26,6 +26,10 @@ from src.pyquickhelper.helpgen import rst2html
 
 class TestRst2HtmlBug(unittest.TestCase):
 
+    def test_src_import(self):
+        """for pylint"""
+        self.assertTrue(src is not None)
+
     def test_rst2html_bug_faq(self):
         fLOG(
             __file__,

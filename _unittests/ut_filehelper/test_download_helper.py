@@ -31,6 +31,10 @@ from src.pyquickhelper.filehelper import get_url_content_timeout, InternetExcept
 
 class TestDownloadHelper(ExtTestCase):
 
+    def test_src_import(self):
+        """for pylint"""
+        self.assertTrue(src is not None)
+
     def test_download_notimeout(self):
         fLOG(
             __file__,

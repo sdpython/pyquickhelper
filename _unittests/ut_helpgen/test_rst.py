@@ -28,6 +28,10 @@ from src.pyquickhelper.helpgen.post_process import post_process_rst_output
 
 class TestRst(unittest.TestCase):
 
+    def test_src_import(self):
+        """for pylint"""
+        self.assertTrue(src is not None)
+
     def test_rst(self):
         fLOG(
             __file__,

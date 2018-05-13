@@ -27,6 +27,10 @@ from src.pyquickhelper.pycode import is_travis_or_appveyor, get_temp_folder, Ext
 
 class TestNoteBooksBugPdfIndicatrice(ExtTestCase):
 
+    def test_src_import(self):
+        """for pylint"""
+        self.assertTrue(src is not None)
+
     def test_notebook_pdfa_indicatrice(self):
         fLOG(
             __file__,

@@ -33,6 +33,10 @@ from src.pyquickhelper.filehelper import read_content_ufs
 
 class TestAnyFHelper(unittest.TestCase):
 
+    def test_src_import(self):
+        """for pylint"""
+        self.assertTrue(src is not None)
+
     def test_read_content(self):
         fLOG(
             __file__,

@@ -30,6 +30,10 @@ if sys.version_info[0] == 2:
 
 class TestYaml(unittest.TestCase):
 
+    def test_src_import(self):
+        """for pylint"""
+        self.assertTrue(src is not None)
+
     def test_jenkins_job_verif(self):
         fLOG(
             __file__,

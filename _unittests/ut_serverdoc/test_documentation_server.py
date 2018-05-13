@@ -15,8 +15,6 @@ else:
 
     try:
         import src
-        import pyquickhelper as skip___
-        import pyensae as skip__
     except ImportError:
         path = os.path.normpath(
             os.path.abspath(
@@ -26,19 +24,7 @@ else:
                     "..")))
         if path not in sys.path:
             sys.path.append(path)
-        path = os.path.normpath(
-            os.path.abspath(
-                os.path.join(
-                    os.path.split(__file__)[0],
-                    "..",
-                    "..",
-                    "..",
-                    "pyquickhelper",
-                    "src")))
-        if path not in sys.path:
-            sys.path.append(path)
         import src
-        import pyquickhelper as skip___
 
     from pyquickhelper.loghelper import fLOG, get_url_content
     from pyquickhelper.serverdoc import run_doc_server
@@ -46,6 +32,10 @@ else:
 
 
 class TestDocumentationServer(unittest.TestCase):
+
+    def test_src_import(self):
+        """for pylint"""
+        self.assertTrue(src is not None)
 
     def test_server_start_run(self):
         if sys.version_info[0] == 2:

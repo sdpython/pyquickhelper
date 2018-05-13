@@ -21,21 +21,6 @@ except ImportError:
         sys.path.append(path)
     import src
 
-try:
-    import jyquickhelper as skip_
-except ImportError:
-    path = os.path.normpath(
-        os.path.abspath(
-            os.path.join(
-                os.path.split(__file__)[0],
-                "..",
-                "..",
-                "..",
-                "jyquickhelper",
-                "src")))
-    if path not in sys.path:
-        sys.path.append(path)
-    import jyquickhelper as skip_
 
 from src.pyquickhelper.loghelper import fLOG
 from src.pyquickhelper.pycode import get_temp_folder
@@ -45,6 +30,10 @@ from src.pyquickhelper.ipythonhelper import install_python_kernel_for_unittest
 
 
 class TestRunNotebooks(unittest.TestCase):
+
+    def test_src_import(self):
+        """for pylint"""
+        self.assertTrue(src is not None)
 
     def test_run_notebook(self):
         fLOG(

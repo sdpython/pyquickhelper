@@ -32,6 +32,10 @@ from src.pyquickhelper.filehelper.ftp_transfer_mock import MockTransferFTP
 
 class TestFolderTransfer(unittest.TestCase):
 
+    def test_src_import(self):
+        """for pylint"""
+        self.assertTrue(src is not None)
+
     def test_folder_transfer(self):
         fLOG(
             __file__,

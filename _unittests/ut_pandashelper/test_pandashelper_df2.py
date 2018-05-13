@@ -27,6 +27,10 @@ from src.pyquickhelper.pandashelper import df2html
 
 class TestPandasHelper_df2(unittest.TestCase):
 
+    def test_src_import(self):
+        """for pylint"""
+        self.assertTrue(src is not None)
+
     def test_df2(self):
         fLOG(
             __file__,

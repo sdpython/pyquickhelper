@@ -31,6 +31,10 @@ if sys.version_info[0] == 2:
 
 class TestYamlJenkins2(unittest.TestCase):
 
+    def test_src_import(self):
+        """for pylint"""
+        self.assertTrue(src is not None)
+
     def test_jenkins_ext_setup_server_yaml2_url(self):
         fLOG(
             __file__,

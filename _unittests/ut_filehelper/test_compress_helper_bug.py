@@ -32,6 +32,10 @@ from src.pyquickhelper.pycode import is_travis_or_appveyor, skipif_travis, skipi
 
 class TestCompressHelperBug(ExtTestCase):
 
+    def test_src_import(self):
+        """for pylint"""
+        self.assertTrue(src is not None)
+
     @skipif_travis('pylzma not available, must be installed from github')
     @skipif_circleci('pylzma not available, must be installed from github')
     def test_uncompress_7zip_lzma2(self):

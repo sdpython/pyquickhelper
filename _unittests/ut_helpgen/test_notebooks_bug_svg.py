@@ -34,6 +34,10 @@ if sys.version_info[0] == 2:
 
 class TestNoteBooksBugSvg(ExtTestCase):
 
+    def test_src_import(self):
+        """for pylint"""
+        self.assertTrue(src is not None)
+
     def test_notebook_svg(self):
         fLOG(
             __file__,

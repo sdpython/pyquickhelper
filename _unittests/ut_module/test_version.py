@@ -27,6 +27,10 @@ from src.pyquickhelper.loghelper import fLOG
 
 class TestVersion (unittest.TestCase):
 
+    def test_src_import(self):
+        """for pylint"""
+        self.assertTrue(src is not None)
+
     def test_version(self):
         fLOG(
             __file__,

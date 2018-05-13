@@ -28,6 +28,10 @@ import src.pyquickhelper.helpgen.utils_sphinx_doc as utils_sphinx_doc
 
 class TestSphinxDoc2 (unittest.TestCase):
 
+    def test_src_import(self):
+        """for pylint"""
+        self.assertTrue(src is not None)
+
     def test_apply_modification_template_obj(self):
         fLOG(
             __file__,

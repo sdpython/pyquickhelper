@@ -29,6 +29,10 @@ from src.pyquickhelper.texthelper.html_helper import html_in_frame
 
 class TestHtmlHelper(unittest.TestCase):
 
+    def test_src_import(self):
+        """for pylint"""
+        self.assertTrue(src is not None)
+
     def test_html_in_frame(self):
         fLOG(
             __file__,

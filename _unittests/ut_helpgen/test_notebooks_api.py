@@ -29,6 +29,10 @@ from src.pyquickhelper.ipythonhelper import read_nb
 
 class TestNotebookAPI(ExtTestCase):
 
+    def test_src_import(self):
+        """for pylint"""
+        self.assertTrue(src is not None)
+
     def test_convert_slides_api_html(self):
         fLOG(
             __file__,

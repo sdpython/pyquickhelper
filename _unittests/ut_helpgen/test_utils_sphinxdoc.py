@@ -33,6 +33,10 @@ if sys.version_info[0] == 2:
 
 class TestSphinxDoc (unittest.TestCase):
 
+    def test_src_import(self):
+        """for pylint"""
+        self.assertTrue(src is not None)
+
     def test_svn_version(self):
         fLOG(
             __file__,
