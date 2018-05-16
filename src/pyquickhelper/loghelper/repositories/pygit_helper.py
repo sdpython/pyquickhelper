@@ -83,8 +83,10 @@ class RepoFile:
                 self.name = self.name.replace(r"\302\240", chr(160)) \
                                      .replace(r"\302\246", "¦") \
                                      .replace(r"\302\256", "®") \
+                                     .replace(r"\302\251", "©") \
                                      .replace(r"\302\260", "°") \
                                      .replace(r"\302\267", "·") \
+                                     .replace(r"\303\203", "Ã") \
                                      .replace(r"\303\207", "Ç") \
                                      .replace(r"\303\232", "Ú") \
                                      .replace(r"\303\240", "à") \
@@ -102,8 +104,8 @@ class RepoFile:
                                      .replace(r"\303\266", "ö") \
                                      .replace(r"\303\273", "û") \
                                      .replace(r"\303\274", "ü") \
-                                     .replace(r"\303\203", "Ã") \
-                                     .replace(r"\302\251", "@") \
+                                     .replace(r"a\314\200", "à") \
+                                     .replace(r"e\314\201", "é") \
                                      .replace(r"\342\200\231", "’")
                 if not os.path.exists(self.name):
                     raise Exception(
@@ -779,8 +781,7 @@ def rebase(location, srv, group, project, username=None, password=None, fLOG=Non
         address = "https://{0}:{1}@{2}/{3}/{4}.git".format(username,
                                                            password, srv, group, project)
     else:
-        address = "https://{2}/{3}/{4}.git".format(username,
-                                                   password, srv, group, project)
+        address = "https://{0}/{1}/{2}.git".format(srv, group, project)
 
     cwd = os.getcwd()
     os.chdir(location)

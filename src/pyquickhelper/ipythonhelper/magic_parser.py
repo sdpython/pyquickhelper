@@ -9,7 +9,7 @@ import shlex
 from ..loghelper.flog import noLOG
 
 
-class MagicCommandParser (argparse.ArgumentParser):
+class MagicCommandParser(argparse.ArgumentParser):
 
     """
     Add method ``parse_cmd`` to :epkg:`*py:argparse:ArgumentParser`.

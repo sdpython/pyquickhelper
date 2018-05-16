@@ -41,7 +41,7 @@ class MagicClassExample(MagicClassWithHelpers):
     @staticmethod
     def htmlhelp_parser():
         """
-        defines the way to parse the magic command ``%htmlhelp``
+        Defines the way to parse the magic command ``%htmlhelp``.
 
         .. versionadded:: 1.3
         """
@@ -69,7 +69,7 @@ class MagicClassExample(MagicClassWithHelpers):
     @line_magic
     def htmlhelp(self, line):
         """
-        Define ``%htmlhelp``, it displays the help for an object in HTML.
+        Defines ``%htmlhelp``, it displays the help for an object in :epkg:`HTML`.
 
         .. nbref::
             :title: %htmlhelp
@@ -102,7 +102,7 @@ class MagicClassExample(MagicClassWithHelpers):
 
 def register_file_magics(ip=None):
     """
-    register magics function, can be called from a notebook
+    Registers magics functions, can be called from a notebook.
 
     @param      ip      from ``get_ipython()``
     """
