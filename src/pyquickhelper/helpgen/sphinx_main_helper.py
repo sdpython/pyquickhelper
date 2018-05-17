@@ -45,8 +45,6 @@ def setup_environment_for_help(fLOG=fLOG):
     """
     Modifies environment variables to be able to use external tools
     such as :epkg:`Inkscape`.
-
-    .. versionadded:: 1.2
     """
     if sys.platform.startswith("win"):
         prog = os.environ["ProgramFiles"]
@@ -64,7 +62,8 @@ def setup_environment_for_help(fLOG=fLOG):
 
 def get_executables_path():
     """
-    Return the paths to Python, Python Scripts.
+    Returns the paths to :epkg:`Python`,
+    :epkg:`Python` Scripts.
 
     @return     a list of paths
     """
@@ -75,7 +74,7 @@ def get_executables_path():
 
 def my_date_conversion(sdate):
     """
-    Convert a date into a datetime.
+    Converts a date into a datetime.
 
     @param      sdate       string
     @return                 date
@@ -90,7 +89,8 @@ def my_date_conversion(sdate):
 
 def produce_code_graph_changes(df):
     """
-    Return the code for a graph which counts the number of changes per week over the last year.
+    Returns the code for a graph which counts the number
+    of changes per week over the last year.
 
     @param      df      dataframe (has a column date with format ``YYYY-MM-DD``)
     @return             graph
@@ -107,7 +107,6 @@ def produce_code_graph_changes(df):
 
         when generating the documentation for another project. The reason
         is still unclear. It was replaced by a custom function.
-
     """
     def year_week(x):
         dt = datetime.datetime(x.year, x.month, x.day)
@@ -123,7 +122,7 @@ def produce_code_graph_changes(df):
     now = datetime.datetime.now()
     last = now - datetime.timedelta(365)
     df = df[df.dt >= last]
-    df["week"] = df.apply(lambda r: to_str(r["dt"]), axis=1)
+    df["week"] = df['dt'].apply(to_str)
     df["commits"] = 1
 
     val = []
@@ -134,7 +133,7 @@ def produce_code_graph_changes(df):
     # we move pandas here because it imports matplotlib
     # which is not always wise when you need to modify the backend
     import pandas
-    df = pandas.concat([df, pandas.DataFrame(val)])
+    df = pandas.concat([df, pandas.DataFrame(val)], sort=True)
 
     gr = df[["week", "commits"]].groupby("week", as_index=False).sum()
     xl = list(gr["week"])
@@ -173,7 +172,8 @@ def generate_changes_repo(chan, source, exception_if_empty=True,
                           filter_commit=lambda c: c.strip() != "documentation",
                           fLOG=fLOG, modify_commit=None):
     """
-    Generate a rst tables containing the changes stored by a svn or git repository,
+    Generates a :epkg:`RST` tables containing the changes stored
+    by a :epkg:`SVN` or :epkg:`GIT` repository,
     the outcome is stored in a file.
     The log comment must start with ``*`` to be taken into account.
 
@@ -204,10 +204,6 @@ def generate_changes_repo(chan, source, exception_if_empty=True,
     ::
 
         nbch, date, author, comment = modify_commit(nbch, date, author, comment)
-
-    .. versionchanged:: 1.5
-        Add the author the table of changes.
-        Add parameter *modify_commit*.
     """
     # builds the changes files
     try:
@@ -289,7 +285,7 @@ def generate_changes_repo(chan, source, exception_if_empty=True,
 def compile_latex_output_final(root, latex_path, doall, afile=None, latex_book=False, fLOG=fLOG,
                                custom_latex_processing=None, remove_unicode=False):
     """
-    Compile the latex documents.
+    Compiles the :epkg:`latex` documents.
 
     @param      root                        root
     @param      latex_path                  path to the compiler
@@ -318,13 +314,6 @@ def compile_latex_output_final(root, latex_path, doall, afile=None, latex_book=F
 
         This function does not stop if the latex compilation but if the PDF
         is corrupted, the log should be checked to see the errors.
-
-
-    .. versionadded:: 1.5
-        Parameter *custom_latex_processing* was added.
-
-    .. versionadded:: 1.6
-        Parameter *remove_unicode* was added.
     """
     latex_exe = find_pdflatex(latex_path)
     build = os.path.join(root, "_doc", "sphinxdoc", "build", "latex")
@@ -387,7 +376,7 @@ def compile_latex_output_final(root, latex_path, doall, afile=None, latex_book=F
 
 def replace_placeholder_by_recent_blogpost(all_tocs, plist, placeholder, nb_post=5, fLOG=fLOG):
     """
-    Replace a place holder by a list of blog post.
+    Replaces a place holder by a list of blog post.
 
     @param      all_tocs        list of files to look into
     @param      plist           list of blog post
@@ -418,7 +407,7 @@ _pattern_images = ".*(([.]png)|([.]gif])|([.]jpeg])|([.]jpg])|([.]svg]))$"
 
 def enumerate_copy_images_for_slides(src, dest, pattern=_pattern_images):
     """
-    Copy images, initial intent was for slides,
+    Copies images, initial intent was for slides,
     once converted into html, link to images are relative to
     the folder which contains them, we copy the images from
     ``_images`` to ``_downloads``.
@@ -439,7 +428,7 @@ def enumerate_copy_images_for_slides(src, dest, pattern=_pattern_images):
 
 def format_history(src, dest, format="basic"):
     """
-    Format history based on module
+    Formats history based on module
     `releases <https://github.com/bitprophet/releases>`_.
 
     @param      src     source history (file)
