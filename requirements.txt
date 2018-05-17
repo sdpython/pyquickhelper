@@ -24,7 +24,7 @@ nbsphinx>=0.3.1
 notebook>=5.0.0
 numpy>=1.11.1
 openpyxl
-pandas>=0.20.0
+pandas>=0.22.0
 pandocfilters
 pillow
 psutil
