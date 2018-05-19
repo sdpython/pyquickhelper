@@ -106,6 +106,7 @@ class AutoSignatureDirective(Directive):
                 logger = logging.getLogger("autosignature")
                 logger.warning(
                     "[autosignature] object '{0}' cannot be imported.".format(object_name))
+                anchor = object_name
             else:
                 anchor = '{0}.{1}'.format(import_path(
                     obj), object_name.split(".")[-1])
