@@ -6,6 +6,7 @@
 import sys
 import os
 import unittest
+import pandas
 
 
 try:
@@ -22,24 +23,59 @@ except ImportError:
     import src
 
 from src.pyquickhelper.loghelper.flog import fLOG
-from src.pyquickhelper.sphinxext.import_object_helper import import_object
+from src.pyquickhelper.pycode import ExtTestCase
+from src.pyquickhelper.sphinxext.import_object_helper import import_object, import_any_object, import_path
 from src.pyquickhelper.helpgen import rst2html
 
 
-class TestAutoSignature(unittest.TestCase):
+class TestAutoSignature(ExtTestCase):
 
     def test_import_object(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
         this = os.path.abspath(os.path.dirname(__file__))
         data = os.path.join(this, "datadoc")
         sys.path.append(data)
         obj, name = import_object("exdocassert.onefunction", "function")
         self.assertTrue(obj is not None)
         self.assertTrue(obj(4, 5), 9)
+        sys.path.pop()
+
+    def test_import_object_any(self):
+        this = os.path.abspath(os.path.dirname(__file__))
+        data = os.path.join(this, "datadoc")
+        sys.path.append(data)
+        obj, name, kind = import_any_object("exdocassert.onefunction")
+        self.assertTrue(obj is not None)
+        self.assertTrue(obj(4, 5), 9)
+        self.assertEqual(kind, 'function')
+        sys.path.pop()
+
+    def test_import_object_kind_check(self):
+        self.assertNotEmpty(import_object('pandas.DataFrame', 'class'))
+        self.assertRaise(lambda: import_object(
+            'pandas.DataFrame', 'function'), TypeError)
+        self.assertNotEmpty(import_object(
+            'pandas.core.frame.DataFrame', 'class'))
+        self.assertRaise(lambda: import_object(
+            'pandas.core.frame.DataFrame', 'function'), TypeError)
+        obj, name, kind = import_any_object("pandas.core.frame.DataFrame")
+        self.assertNotEmpty(obj)
+        self.assertEqual(name, 'DataFrame')
+        self.assertEqual(kind, 'class')
+
+    def test_import_path(self):
+        ipath = import_path(pandas.DataFrame)
+        self.assertEqual(ipath, 'pandas')
+        ipath = import_path(rst2html)
+        self.assertIn(ipath, ('pyquickhelper.helpgen',
+                              'src.pyquickhelper.helpgen'))
+
+    def test_import_path_loc(self):
+        this = os.path.abspath(os.path.dirname(__file__))
+        data = os.path.join(this, "datadoc")
+        sys.path.append(data)
+        from exsig import clex
+        ipath = import_path(clex)
+        self.assertEqual(ipath, 'exsig')
         sys.path.pop()
 
     def test_autosignature_html(self):
@@ -194,6 +230,37 @@ class TestAutoSignature(unittest.TestCase):
             raise Exception(html[0])
         if "should be aligned.</p>" not in html[0]:
             raise Exception(html[0])
+
+    def test_autosignature_path_option(self):
+        fLOG(
+            __file__,
+            self._testMethodName,
+            OutputPrint=__name__ == "__main__")
+
+        newstring = [".. autosignature:: pandas.core.frame.DataFrame",
+                     "    :path: name"]
+        newstring = "\n".join(newstring)
+        res = rst2html(newstring, writer="rst", layout="sphinx")
+        self.assertIn('`DataFrame <pandas.core', res)
+        self.assertNotIn('`pandas.DataFrame <pandas.core', res)
+        self.assertNotIn('`pandas.core.frame.DataFrame <pandas.core', res)
+
+        newstring = [".. autosignature:: pandas.core.frame.DataFrame",
+                     "    :path: full"]
+        newstring = "\n".join(newstring)
+        res = rst2html(newstring, writer="rst", layout="sphinx")
+        self.assertNotIn('`DataFrame <pandas.core', res)
+        self.assertNotIn('`pandas.DataFrame <pandas.core', res)
+        self.assertIn('`pandas.core.frame.DataFrame <pandas.core', res)
+
+        newstring = [".. autosignature:: pandas.core.frame.DataFrame"]
+        newstring = "\n".join(newstring)
+        res = rst2html(newstring, writer="rst", layout="sphinx")
+        self.assertNotIn('`DataFrame <pandas.core', res)
+        self.assertIn('`pandas.DataFrame <pandas.core', res)
+        self.assertNotIn('`pandas.core.frame.DataFrame <pandas.core', res)
+        self.assertIn(':py:class:', res)
+        self.assertNotIn(':py:func:', res)
 
 
 if __name__ == "__main__":

@@ -23,17 +23,19 @@ class _Types:
 
 def import_object(docname, kind, use_init=True) -> Tuple[object, str]:
     """
-    Extract an object defined by its name including the module name.
+    Extracts an object defined by its name including the module name.
 
     @param      docname     full name of the object
                             (example: ``pyquickhelper.sphinxext.sphinx_docassert_extension.import_object``)
     @param      kind        ``'function'`` or ``'class'`` or ``'kind'``
     @param      use_init    return the constructor instead of the class
     @return                 tuple(object, name)
+    @raises                 :epkg:`*py:RuntimeError` if cannot be imported,
+                            :epkg:`*py:TypeError` if it is a method or a property,
+                            :epkg:`*py:ValueError` if *kind* is unknown.
     """
     spl = docname.split(".")
     name = spl[-1]
-    context = {}
     if kind not in ("method", "property", "staticmethod"):
         modname = ".".join(spl[:-1])
         code = 'from {0} import {1}\nmyfunc = {1}'.format(modname, name)
@@ -44,12 +46,13 @@ def import_object(docname, kind, use_init=True) -> Tuple[object, str]:
         code = 'from {0} import {1}\nmyfunc = {1}'.format(modname, classname)
         codeobj = compile(code, 'conf{0}2.py'.format(kind), 'exec')
 
+    context = {}
     with warnings.catch_warnings():
         warnings.simplefilter("ignore")
         try:
             exec(codeobj, context, context)
         except Exception as e:
-            raise Exception(
+            raise RuntimeError(
                 "Unable to compile and execute '{0}' due to \n{1}\ngiven:\n{2}".format(code.replace('\n', '\\n'), e, docname)) from e
 
     myfunc = context["myfunc"]
@@ -113,13 +116,13 @@ def import_object(docname, kind, use_init=True) -> Tuple[object, str]:
 
 def import_any_object(docname, use_init=True) -> Tuple[object, str, str]:
     """
-    Extract an object defined by its name including the module name.
+    Extracts an object defined by its name including the module name.
 
     :param docname: full name of the object
         (example: ``pyquickhelper.sphinxext.sphinx_docassert_extension.import_object``)
     :param use_init: return the constructor instead of the class
     :returns: tuple(object, name, kind)
-    :raises: ImportError if unable to import
+    :raises: :epkg:`*py:ImportError` if unable to import
 
     Kind is among ``'function'`` or ``'class'`` or ``'kind'``.
     """
@@ -138,3 +141,46 @@ def import_any_object(docname, use_init=True) -> Tuple[object, str, str]:
                        for k, e in excs)
     raise ImportError(
         "Unable to import '{0}'. Exceptions met: {1}".format(docname, sec))
+
+
+def import_path(obj):
+    """
+    Determines the import path which is
+    the shortest way to import the function. In case the
+    following ``from module.submodule import function``
+    works, the import path will be ``module.submodule``.
+
+    :param obj: object
+    :returns: import path
+    :raises: :epkg:`*py:TypeError` if object is a property,
+        :epkg:`*py:RuntimeError` if cannot be imported
+
+    The function does not work for methods or properties.
+    It raises an exception or returns irrelevant results.
+    """
+    try:
+        _ = obj.__module__
+    except AttributeError:
+        # This is a method.
+        raise TypeError("obj is a method or a property ({0})".format(obj))
+    name = obj.__name__
+    elements = obj.__module__.split('.')
+    found = None
+    for i in range(1, len(elements) + 1):
+        path = '.'.join(elements[:i])
+        code = 'from {0} import {1}'.format(path, name)
+        codeobj = compile(code, 'import_path_{0}.py'.format(name), 'exec')
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            context = {}
+            try:
+                exec(codeobj, context, context)
+                found = path
+                break
+            except Exception:
+                continue
+
+    if found is None:
+        raise RuntimeError("Unable to import object '{0}' ({1}). Full path: '{2}'".format(
+            name, obj, '.'.join(elements)))
+    return found

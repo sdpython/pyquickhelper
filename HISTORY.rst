@@ -5,12 +5,18 @@
 History
 =======
 
-current - 2018-05-11 - 0.00Mb
+current - 2018-05-19 - 0.00Mb
 =============================
 
-1.8.2601 - 2018-05-11 - 1.98Mb
+* `149`: modifies autosignature to display the shortest import way (2018-05-19)
+* `148`: fix unit test test_changes_graph (pandas update) (2018-05-17)
+* `146`: remove raise ... (...) from e in setup.py (2018-05-17)
+* `145`: add a script to launch scite on windows with the right path (2018-05-13)
+
+1.8.2602 - 2018-05-11 - 1.98Mb
 ==============================
 
+* `144`: disable sphinx gallery extension if no example (2018-05-11)
 * `143`: add setup option to run pylint (2018-05-11)
 * `142`: look for the files which makes pylint crash on Windows (2018-05-11)
 * `141`: check_pep8 does not detect line too long and unused variables (use of pylint) (2018-05-11)

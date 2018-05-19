@@ -14,7 +14,7 @@ from docutils.parsers.rst import Directive, directives
 from docutils.statemachine import StringList
 from sphinx.util.nodes import nested_parse_with_titles
 from sphinx.util import logging
-from .import_object_helper import import_any_object
+from .import_object_helper import import_any_object, import_path
 
 
 class autosignature_node(nodes.Structural, nodes.Element):
@@ -36,7 +36,10 @@ class AutoSignatureDirective(Directive):
     * *nolink*: add a link to a full documentation (produced by
       `sphinx.ext.autodoc <http://www.sphinx-doc.org/en/stable/ext/autodoc.html#module-sphinx.ext.autodoc>`_)
     * *members*: shows members of a class
-    * *fullpath*: to produce a full path instead including submodules
+    * *path*: three options, *full* displays the full path including
+        submodules, *name* displays the last name,
+        *import* displays the shortest syntax to import it
+        (default).
     """
     required_arguments = 0
     optional_arguments = 0
@@ -47,6 +50,7 @@ class AutoSignatureDirective(Directive):
         'annotation': directives.unchanged,
         'nolink': directives.unchanged,
         'members': directives.unchanged,
+        'path': directives.unchanged,
     }
 
     has_content = True
@@ -65,7 +69,7 @@ class AutoSignatureDirective(Directive):
         opt_members = self.options.get('members', None)
         if opt_members in (None, '') and 'members' in self.options:
             opt_members = "all"
-        opt_fullpath = 'fullpath' in self.options
+        opt_path = self.options.get('path', 'import')
 
         try:
             source, lineno = self.reporter.get_source_and_line(self.lineno)
@@ -75,7 +79,7 @@ class AutoSignatureDirective(Directive):
         # object name
         object_name = " ".join(_.strip("\n\r\t ") for _ in self.content)
         try:
-            obj, name, kind = import_any_object(object_name, use_init=False)
+            obj, _, kind = import_any_object(object_name, use_init=False)
         except ImportError as e:
             logger = logging.getLogger("AutoSignature")
             logger.warning(
@@ -97,10 +101,23 @@ class AutoSignatureDirective(Directive):
                                                   source=source, lineno=lineno,
                                                   objectname=object_name)
 
-        if opt_fullpath:
+        if opt_path == 'import':
+            if obj is None:
+                logger = logging.getLogger("autosignature")
+                logger.warning(
+                    "[autosignature] object '{0}' cannot be imported.".format(object_name))
+            else:
+                anchor = '{0}.{1}'.format(import_path(
+                    obj), object_name.split(".")[-1])
+        elif opt_path == 'full':
             anchor = object_name
-        else:
+        elif opt_path == 'name':
             anchor = object_name.split(".")[-1]
+        else:
+            logger = logging.getLogger("autosignature")
+            logger.warning(
+                "[autosignature] options path is '{0}', it should be in (import, name, full) for object '{1}'.".format(opt_path, object_name))
+            anchor = object_name
 
         if obj is None:
             if opt_link:
@@ -119,17 +136,20 @@ class AutoSignatureDirective(Directive):
                 signature = None
                 parameters = None
 
+            domkind = {'meth': 'func', 'function': 'func',
+                       'class': 'class', 'staticmethod': 'meth',
+                       'property': 'meth'}[kind]
             if signature is None:
                 if opt_link:
-                    text = "\n:py:func:`{0} <{1}>`\n\n".format(
-                        anchor, object_name)
+                    text = "\n:py:{2}:`{0} <{1}>`\n\n".format(
+                        anchor, object_name, domkind)
                 else:
-                    text = "\n``{0}``\n\n".format(object_name)
+                    text = "\n``{0} {1}``\n\n".format(kind, object_name)
             else:
                 signature = self.build_parameters_list(
                     parameters, opt_annotation)
-                text = "\n:py:func:`{0} <{1}>` ({2})\n\n".format(
-                    anchor, object_name, signature)
+                text = "\n:py:{3}:`{0} <{1}>` ({2})\n\n".format(
+                    anchor, object_name, signature, domkind)
 
         if obj is not None and opt_summary:
             # Documentation.
@@ -157,7 +177,7 @@ class AutoSignatureDirective(Directive):
 
     def build_members(self, obj, members, object_name, annotation, summary):
         """
-        Extract methods of a class and document them.
+        Extracts methods of a class and document them.
         """
         if members != "all":
             members = {_.strip() for _ in members.split(",")}
@@ -212,7 +232,7 @@ class AutoSignatureDirective(Directive):
 
     def build_summary(self, docstring):
         """
-        Extract the part of the docstring before the parameters.
+        Extracts the part of the docstring before the parameters.
 
         @param      docstring       document string
         @return                     string
@@ -271,7 +291,7 @@ class AutoSignatureDirective(Directive):
     @staticmethod
     def reformat(text, indent=4):
         """
-        Format the number of spaces in front every line
+        Formats the number of spaces in front every line
         to be equal to a specific value.
 
         @param      text        text to analyse

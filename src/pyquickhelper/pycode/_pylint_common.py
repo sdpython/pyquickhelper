@@ -203,4 +203,5 @@ def _private_test_style_test(fLOG, run_lint, verbose=False, pattern=".*[.]py$"):
                      "test_check_pep8_sample.py:39",
                      "Unable to import 'pyquickhelper",
                      "Unable to import 'jyquickhelper",
+                     "Unable to import 'exsig'",
                      ])
