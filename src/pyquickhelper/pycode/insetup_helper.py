@@ -30,7 +30,7 @@ def must_build(argv=None):
 
 def run_build_ext(setup_file):
     """
-    Run ``setup.py build_ext --inplace``.
+    Runs ``setup.py build_ext --inplace``.
 
     @param      setup_file      setup_file
     @return                     output
@@ -43,15 +43,15 @@ def run_build_ext(setup_file):
     out, err = run_cmd(cmd, wait=True, change_path=chd)
     err0 = _filter_out_warning(err)
     if len(err0) > 0:
-        mes = "Unable to run\n{0}\n[pyqerror]\n{1}".format(cmd,
-                                                           "\n".join("### " + _ for _ in err.split("\n")))
+        mes0 = "\n".join("### " + _ for _ in err.split("\n"))
+        mes = "Unable to run\n{0}\n[pyqerror]\n{1}".format(cmd, mes0)
         raise Exception(mes)
     return out
 
 
 def _filter_out_warning(out):
     """
-    Filters out (import) warning from error
+    Filters out (import) warnings from error.
 
     @param      out     string
     @return             filtered string
