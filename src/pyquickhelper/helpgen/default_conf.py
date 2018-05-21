@@ -10,15 +10,6 @@ import os
 import datetime
 import re
 import warnings
-
-try:
-    import sphinx_gallery
-    import sphinx_gallery.gen_rst
-except ImportError:
-    warnings.warn("ImmprtError: sphinx-gallery.")
-except ValueError:
-    warnings.warn("ImmprtError: sphinx-gallery.get_rst fails.")
-
 from sphinx.builders.html import Stylesheet
 from sphinx.errors import ExtensionError
 from .style_css_template import style_figure_notebook
@@ -122,6 +113,16 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
     .. versionchanged:: 1.5
         Parameter *nblayout* was added.
     """
+    # sphinx_gallery only supports matplotlib.use('agg')
+    # and it must be done first.
+    try:
+        import sphinx_gallery
+        import sphinx_gallery.gen_rst
+    except ImportError:
+        warnings.warn("ImportError: sphinx-gallery.")
+    except ValueError:
+        warnings.warn("ImportError: sphinx-gallery.get_rst fails.")
+
     # version .txt
     dirconf = os.path.abspath(os.path.dirname(fileconf))
     version_file = os.path.join(dirconf, "..", "..", "..", "version.txt")
