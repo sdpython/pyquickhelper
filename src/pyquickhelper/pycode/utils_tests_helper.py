@@ -32,7 +32,8 @@ else:
 
 def get_temp_folder(thisfile, name=None, clean=True, create=True, max_path=False, max_path_name="tpath"):
     """
-    Creates and returns a local temporary folder to store files when unit testing.
+    Creates and returns a local temporary folder to store files
+    when unit testing.
 
     @param      thisfile        use ``__file__`` or the function which runs the test
     @param      name            name of the temporary folder
@@ -49,12 +50,10 @@ def get_temp_folder(thisfile, name=None, clean=True, create=True, max_path=False
 
     .. versionadded:: 0.9
 
-    .. versionchanged:: 1.5
-        Parameter *thisfile* can be a function or a method.
-        The function will extract the file which runs this test and will name
-        the temporary folder base on the name of the method. *name* must be None.
-        Parameters *max_path*, *max_path_name* were added to change the location to
-        ``\\max_path_name`` if the ``MAX_PATH`` might be reached (on Windows)
+    The function extracts the file which runs this test and will name
+    the temporary folder base on the name of the method. *name* must be None.
+    Parameters *max_path*, *max_path_name* were added to change the location to
+    ``\\max_path_name`` if the ``MAX_PATH`` might be reached (on :epkg:`Windows`).
 
     .. versionchanged:: 1.7
         Parameter *clean* can be a function.
@@ -108,7 +107,7 @@ def get_temp_folder(thisfile, name=None, clean=True, create=True, max_path=False
 def _extended_refactoring(filename, line):
     """
     Private function which does extra checkings
-    when refactoring pyquickhelper.
+    when refactoring :epkg:`pyquickhelper`.
 
     @param      filename        filename
     @param      line            line
@@ -398,7 +397,7 @@ def check_pep8(folder, ignore=('E265', 'W504'), skip=None,
 def add_missing_development_version(names, root, hide=False):
     """
     Looks for development version of a given module and add paths to
-    ``sys.path`` after having checked they are working
+    ``sys.path`` after having checked they are working.
 
     @param      names           name or names of the module to import
     @param      root            folder where to look (assuming all modules location
@@ -437,7 +436,11 @@ def add_missing_development_version(names, root, hide=False):
     paths = []
     for name in names:
         try:
-            importlib.import_module(name)
+            if hide:
+                with warnings.catch_warnings(record=True):
+                    importlib.import_module(name)
+            else:
+                importlib.import_module(name)
             continue
         except ImportError:
             # it requires a path

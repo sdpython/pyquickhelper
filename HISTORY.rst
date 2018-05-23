@@ -5,9 +5,10 @@
 History
 =======
 
-current - 2018-05-19 - 0.00Mb
+current - 2018-05-23 - 0.00Mb
 =============================
 
+* `150`: hide warnings produced by add_missing_development_version (2018-05-23)
 * `149`: modifies autosignature to display the shortest import way (2018-05-19)
 * `148`: fix unit test test_changes_graph (pandas update) (2018-05-17)
 * `146`: remove raise ... (...) from e in setup.py (2018-05-17)
