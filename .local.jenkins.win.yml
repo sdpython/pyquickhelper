@@ -41,9 +41,9 @@ before_script:
 # This means the job will be stop if it produces no output for 20 minutes.
 script:
   - { CMD: "python -u setup.py unittests", NAME: "UT", TIMEOUT: 900 }
-  - { CMD: "python -u setup.py unittests -e .*SKIP.* -g .*((api)|(pylint)).*", NAME: "UT_SKIP", TIMEOUT: 900 }
-  - { CMD: "python -u setup.py unittests -e .*api.*", NAME: "UT_SKIP_API" }
-  - { CMD: "python -u setup.py unittests -e .*pylint.*", NAME: "UT_SKIP_PYLINT" }
+  - { CMD: "python -u setup.py unittests -e \".*SKIP.*\" -g \".*((api)|(pylint)).*\"", NAME: "UT_SKIP", TIMEOUT: 900 }
+  - { CMD: "python -u setup.py unittests -e \".*api.*\"", NAME: "UT_SKIP_API" }
+  - { CMD: "python -u setup.py unittests -e \".*pylint.*\"", NAME: "UT_SKIP_PYLINT" }
   - if [ ${VERSION} == "3.6" and ${DIST} == "std" ]
       then 
         --CMD=python -u setup.py build_sphinx;
