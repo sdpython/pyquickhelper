@@ -22,7 +22,6 @@ except ImportError:
         sys.path.append(path)
     import src
 
-from src.pyquickhelper.loghelper.flog import fLOG
 from src.pyquickhelper.pycode import ExtTestCase
 from src.pyquickhelper.sphinxext.import_object_helper import import_object, import_any_object, import_path
 from src.pyquickhelper.helpgen import rst2html
@@ -79,11 +78,6 @@ class TestAutoSignature(ExtTestCase):
         sys.path.pop()
 
     def test_autosignature_html(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
         this = os.path.abspath(os.path.dirname(__file__))
         data = os.path.join(this, "datadoc")
         sys.path.append(data)
@@ -122,11 +116,6 @@ class TestAutoSignature(ExtTestCase):
             raise Exception(html[0])
 
     def test_autosignature_class(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
         this = os.path.abspath(os.path.dirname(__file__))
         data = os.path.join(this, "datadoc")
         sys.path.append(data)
@@ -157,11 +146,6 @@ class TestAutoSignature(ExtTestCase):
             raise Exception(html[0])
 
     def test_autosignature_class_onemethod(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
         this = os.path.abspath(os.path.dirname(__file__))
         data = os.path.join(this, "datadoc")
         sys.path.append(data)
@@ -192,11 +176,6 @@ class TestAutoSignature(ExtTestCase):
             raise Exception(html[0])
 
     def test_autosignature_class_onemethod2(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
         this = os.path.abspath(os.path.dirname(__file__))
         data = os.path.join(this, "datadoc")
         sys.path.append(data)
@@ -231,12 +210,41 @@ class TestAutoSignature(ExtTestCase):
         if "should be aligned.</p>" not in html[0]:
             raise Exception(html[0])
 
-    def test_autosignature_path_option(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
+    def test_autosignature_class_static_method(self):
+        this = os.path.abspath(os.path.dirname(__file__))
+        data = os.path.join(this, "datadoc")
+        sys.path.append(data)
 
+        obj = import_object("exsig.clex.static_method", "staticmethod")
+        self.assertTrue(obj is not None)
+
+        newstring = ["AAAAAAAAAAAAAAAA",
+                     "",
+                     ".. autosignature:: exsig.clex.static_method",
+                     "",
+                     "CCCCCCCCCCCCCCCC"]
+        newstring = "\n".join(newstring)
+        htmls = rst2html(newstring, layout="sphinx_body")
+        sys.path.pop()
+        self.assertIn("CCCCCCCCCCCCCCCC", htmls)
+
+        html = htmls.split("CCCCCCCCCCCCCCCC")
+        if "static_method" not in html[0]:
+            raise Exception(html[0])
+        if "<strong>a</strong>" in html[0]:
+            raise Exception(html[0])
+        if ":param a:" in html[0]:
+            raise Exception(html[0])
+        if "`" in html[0]:
+            raise Exception(html[0])
+        if "if a and b have different types" in html[0]:
+            raise Exception(html[0])
+        if "Return the static addition of" not in html[0]:
+            raise Exception(html[0])
+        if "<p>Return the static addition of" not in html[0]:
+            raise Exception(html[0])
+
+    def test_autosignature_path_option(self):
         newstring = [".. autosignature:: pandas.core.frame.DataFrame",
                      "    :path: name"]
         newstring = "\n".join(newstring)

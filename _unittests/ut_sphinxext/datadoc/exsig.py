@@ -23,3 +23,17 @@ class clex:
         if type(a) != type(b):
             raise TypeError("Different type {0} != {1}".format(a, b))
         return a + b
+
+    @staticmethod
+    def static_method(a, b):
+        """
+        Return the static addition of ``a+b``.
+
+        :param a: first element
+        :param c: second element
+        :return: ``a + b``
+        :raises TypeError: guess
+        """
+        if type(a) != type(b):
+            raise TypeError("Different type {0} != {1}".format(a, b))
+        return a + b

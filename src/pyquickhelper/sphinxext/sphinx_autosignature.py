@@ -107,9 +107,13 @@ class AutoSignatureDirective(Directive):
                 logger.warning(
                     "[autosignature] object '{0}' cannot be imported.".format(object_name))
                 anchor = object_name
+            elif kind == "staticmethod":
+                cl, fu = object_name.split(".")[-2:]
+                pimp = import_path(obj, class_name=cl)
+                anchor = '{0}.{1}.{2}'.format(pimp, cl, fu)
             else:
-                anchor = '{0}.{1}'.format(import_path(
-                    obj), object_name.split(".")[-1])
+                pimp = import_path(obj)
+                anchor = '{0}.{1}'.format(pimp, object_name.split(".")[-1])
         elif opt_path == 'full':
             anchor = object_name
         elif opt_path == 'name':

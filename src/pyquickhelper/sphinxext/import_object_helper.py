@@ -143,7 +143,7 @@ def import_any_object(docname, use_init=True) -> Tuple[object, str, str]:
         "Unable to import '{0}'. Exceptions met: {1}".format(docname, sec))
 
 
-def import_path(obj):
+def import_path(obj, class_name=None):
     """
     Determines the import path which is
     the shortest way to import the function. In case the
@@ -151,6 +151,10 @@ def import_path(obj):
     works, the import path will be ``module.submodule``.
 
     :param obj: object
+    :param class_name: :epkg:`Python` does not really distinguish between
+        static method and functions. If not None, this parameter
+        should contain the name of the class which holds the static
+        method given in *obj*
     :returns: import path
     :raises: :epkg:`*py:TypeError` if object is a property,
         :epkg:`*py:RuntimeError` if cannot be imported
@@ -163,7 +167,11 @@ def import_path(obj):
     except AttributeError:
         # This is a method.
         raise TypeError("obj is a method or a property ({0})".format(obj))
-    name = obj.__name__
+
+    if class_name is None:
+        name = obj.__name__
+    else:
+        name = class_name
     elements = obj.__module__.split('.')
     found = None
     for i in range(1, len(elements) + 1):
