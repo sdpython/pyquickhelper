@@ -7,6 +7,7 @@
 from __future__ import print_function
 import os
 import sys
+import warnings
 
 
 def pyq_sync(fLOG=print, args=None):
@@ -22,15 +23,17 @@ def pyq_sync(fLOG=print, args=None):
 
         Synchronizes two folders from the command line.
     """
-    try:
-        from pyquickhelper.filehelper.synchelper import synchronize_folder
-        from pyquickhelper.cli.cli_helper import call_cli_function
-    except ImportError:
-        folder = os.path.normpath(os.path.join(
-            os.path.abspath(os.path.dirname(__file__)), "..", ".."))
-        sys.path.append(folder)
-        from pyquickhelper.filehelper.synchelper import synchronize_folder
-        from pyquickhelper.cli.cli_helper import call_cli_function
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore", ImportWarning)
+        try:
+            from pyquickhelper.filehelper.synchelper import synchronize_folder
+            from pyquickhelper.cli.cli_helper import call_cli_function
+        except ImportError:
+            folder = os.path.normpath(os.path.join(
+                os.path.abspath(os.path.dirname(__file__)), "..", ".."))
+            sys.path.append(folder)
+            from pyquickhelper.filehelper.synchelper import synchronize_folder
+            from pyquickhelper.cli.cli_helper import call_cli_function
 
     call_cli_function(synchronize_folder, args=args, fLOG=fLOG,
                       skip_parameters=('fLOG', 'operations', 'log1'))

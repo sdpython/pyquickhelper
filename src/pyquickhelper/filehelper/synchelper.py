@@ -147,7 +147,7 @@ def synchronize_folder(p1: str, p2: str, hash_size=1024 ** 2, repo1=False, repo2
                        filter_copy: [str, Callable[[str], str], None] = None,
                        avoid_copy=False, operations=None, file_date: str = None,
                        log1=False, copy_1to2=False, create_dest=False,
-                       even_older=False, fLOG=fLOG):
+                       fLOG=fLOG):
     """
     Synchronizes two folders (or copy if the second is empty),
     it only copies more recent files.
