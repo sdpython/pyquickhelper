@@ -159,7 +159,7 @@ class NotebookRunner(object):
                     # I did not find a way to make it work
                     args = None
                     warnings.warn(
-                        "args is not None: {0}, unable to use it in Python 2.7".format(args))
+                        "Args is not None: '{0}', unable to use it in Python 2.7".format(args), UserWarning)
                     self.km.start_kernel()
                 else:
                     try:

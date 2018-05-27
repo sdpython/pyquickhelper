@@ -75,7 +75,7 @@ def fix_tkinter_issues_virtualenv(exc=True, fLOG=None):
         if "matplotlib" in sys.modules:
             if _first_execution:
                 warnings.warn(
-                    "Cannot fix matplotlib display because it was already imported.")
+                    "Cannot fix matplotlib display because it was already imported.", UserWarning)
                 if exc:
                     raise Exception(
                         "Cannot fix matplotlib display because it was already imported.")
@@ -127,7 +127,7 @@ def fix_tkinter_issues_virtualenv(exc=True, fLOG=None):
         if "matplotlib" in sys.modules:
             if _first_execution:
                 warnings.warn(
-                    "Cannot fix matplotlib display because it was already imported.")
+                    "Cannot fix matplotlib display because it was already imported.", UserWarning)
                 if exc:
                     raise Exception(
                         "Cannot fix matplotlib display because it was already imported.")

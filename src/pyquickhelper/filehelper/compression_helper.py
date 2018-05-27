@@ -118,7 +118,7 @@ def unzip_files(zipf, where_to=None, fLOG=noLOG, fvalid=None, remove_space=True,
                             "Unable to extract '{0}' due to {1}".format(info.filename, e)) from e
                     else:
                         warnings.warn(
-                            "Unable to extract '{0}' due to {1}".format(info.filename, e))
+                            "Unable to extract '{0}' due to {1}".format(info.filename, e), UserWarning)
                         continue
                 files.append((info.filename, content))
             else:
@@ -139,7 +139,7 @@ def unzip_files(zipf, where_to=None, fLOG=noLOG, fvalid=None, remove_space=True,
                                 "Unable to extract '{0}' due to {1}".format(info.filename, e)) from e
                         else:
                             warnings.warn(
-                                "Unable to extract '{0}' due to {1}".format(info.filename, e))
+                                "Unable to extract '{0}' due to {1}".format(info.filename, e), UserWarning)
                             continue
                     # check encoding to avoid characters not allowed in paths
                     if not os.path.exists(tos):
@@ -362,10 +362,10 @@ def un7zip_files(zipf, where_to=None, fLOG=noLOG, fvalid=None,
             raise TypeError("Cannot use command line unless zipf is a file.")
         if remove_space:
             warnings.warn(
-                '[un7zip_files] remove_space and cmd_line are incompatible options.')
+                '[un7zip_files] remove_space and cmd_line are incompatible options.', UserWarning)
         if fvalid:
             warnings.warn(
-                'fvalid and cmd_line are incompatible options.')
+                'fvalid and cmd_line are incompatible options.', UserWarning)
         if sys.platform.startswith("win"):
             exe = r"C:\Program Files\7-Zip\7z.exe"
             if not os.path.exists(exe):
@@ -427,7 +427,7 @@ def un7zip_files(zipf, where_to=None, fLOG=noLOG, fvalid=None,
                             raise TypeError(
                                 "Cannot switch to command line unless zipf is a file.")
                         warnings.warn(
-                            "[un7zip_files] '{0}' --> Unavailable format. Use command line.".format(zipf))
+                            "[un7zip_files] '{0}' --> Unavailable format. Use command line.".format(zipf), UserWarning)
                         return un7zip_files(file_zipf, where_to=where_to, fLOG=fLOG, fvalid=fvalid,
                                             remove_space=remove_space, cmd_line=True)
                     except Exception as e:

@@ -118,7 +118,8 @@ class EncryptedBackup:
         @param      fLOG                logging function
         """
         if sys.version_info[0] == 2:
-            warnings.warn("The code is not tested for this version of Python")
+            warnings.warn(
+                "The code is not tested for this version of Python", UserWarning)
         self._key = key
         self.fLOG = fLOG
         self._ftn = file_tree_node

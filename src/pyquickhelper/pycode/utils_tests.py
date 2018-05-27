@@ -367,7 +367,8 @@ def main_wrapper_tests(codefile, skip_list=None, processes=False, add_coverage=F
                 src = os.path.dirname(outfile)
                 stdout_this.write("[main_wrapper_tests] dump coverage from '{1}' to '{0}'\n".format(
                     dump_coverage, outfile))
-                synchronize_folder(src, dump_coverage, fLOG=fLOG)
+                synchronize_folder(src, dump_coverage,
+                                   copy_1to2=True, fLOG=fLOG)
 
                 if other_cov_folders is not None:
                     source = _find_source(src)

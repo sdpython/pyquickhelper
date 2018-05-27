@@ -50,5 +50,6 @@ def get_jenkins_mappings(root, loc="dist"):
                                 maps[name] = os.path.join(dist, h)
 
     if len(maps) == 0:
-        warnings.warn("unable to find any folder in: " + root)
+        warnings.warn(
+            "Unable to find any folder in '{0}'".format(root), UserWarning)
     return maps

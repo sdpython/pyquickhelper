@@ -887,7 +887,8 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
                 fLOG("[generate_help_sphinx]", kind, "~~~~", cmd)
                 fLOG("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
                 warnings.warn(
-                    "Sphinx went through errors. Check if any of them is important.\nOUT:\n{0}\n[sphinxerror]\n{1}".format(out, err))
+                    "Sphinx went through errors. Check if any of them is important.\nOUT:\n{0}\n[sphinxerror]\n{1}".format(
+                        out, err), UserWarning)
                 fLOG("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
 
         if kind == "html":
@@ -934,7 +935,7 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
             fLOG(out)
             if len(err) > 0:
                 mes = "Sphinx went through errors. Check if any of them is important.\nOUT:\n{0}\n[sphinxerror]\n{1}"
-                warnings.warn(mes.format(out, err))
+                warnings.warn(mes.format(out, err), UserWarning)
         fLOG("[generate_help_sphinx] end run HTMLHELP")
 
     #####################################

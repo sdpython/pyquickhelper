@@ -415,7 +415,7 @@ def post_process_rst_output(file, html, pdf, python, slides, present, is_noteboo
         if exc:
             raise HelpGenException(mes)
         else:
-            warnings.warn(mes)
+            warnings.warn(mes, UserWarning)
 
     # label
     labelname = name.replace(" ", "").replace("_", "").replace(
@@ -723,7 +723,7 @@ def post_process_latex(st, doall, info=None, latex_book=False, exc=True,
                                         "    substring: {3}\n    around: {4}\n    temp=[{5}]").format(*rec)
                         for i, rec in enumerate(records)]
             for mes in messages:
-                warnings.warn(mes)
+                warnings.warn(mes, UserWarning)
 
     st = st.replace("<br />", "\\\\")
     st = st.replace("»", '"')

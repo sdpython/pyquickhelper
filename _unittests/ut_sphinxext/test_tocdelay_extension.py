@@ -84,7 +84,7 @@ class TestTocDelayExtension(unittest.TestCase):
 
         if sys.version_info[0] == 2:
             warnings.warn(
-                "test_postcontent not run on Python 2.7")
+                "test_postcontent not run on Python 2.7", UserWarning)
             return
 
         path = os.path.abspath(os.path.dirname(__file__))
@@ -112,7 +112,7 @@ class TestTocDelayExtension(unittest.TestCase):
 
         if sys.version_info[0] == 2:
             warnings.warn(
-                "test_postcontent not run on Python 2.7")
+                "test_postcontent not run on Python 2.7", UserWarning)
             return
 
         temp = get_temp_folder(__file__, "temp_tocdelay3")

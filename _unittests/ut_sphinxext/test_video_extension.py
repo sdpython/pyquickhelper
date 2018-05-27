@@ -59,7 +59,7 @@ class TestVideoExtension(ExtTestCase):
 
         if sys.version_info[0] == 2:
             warnings.warn(
-                "test_sharenet not run on Python 2.7")
+                "test_sharenet not run on Python 2.7", UserWarning)
             return
 
         from docutils import nodes as skip_
@@ -263,7 +263,7 @@ class TestVideoExtension(ExtTestCase):
 
         if sys.version_info[0] == 2:
             warnings.warn(
-                "test_sharenet not run on Python 2.7")
+                "test_sharenet not run on Python 2.7", UserWarning)
             return
 
         from docutils import nodes as skip_

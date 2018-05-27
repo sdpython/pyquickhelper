@@ -12,6 +12,7 @@ import time
 import shutil
 import hashlib
 import sys
+import warnings
 
 
 from ..loghelper.pqh_exception import PQHException
@@ -378,15 +379,18 @@ class FileTreeNode:
         return max([node._date for node in self])
 
     def __len__(self):
-        """return the number of elements in this folder and in the subfolders
+        """
+        Returns the number of elements in this folder and
+        in the subfolders.
         """
         n = 0
-        for node in self:
+        for _ in self:
             n += 1
         return n
 
     def get_dict(self, lower=False):
-        """return a dictionary { self._file : node }
+        """
+        Returns a dictionary ``{ self._file : node }``.
         @param      lower       if True, every filename is converted into lower case
         """
         res = {}
@@ -402,9 +406,9 @@ class FileTreeNode:
 
     def sign(self, node, hash_size):
         """
-        return ==, < or > according the dates
-        if the size is not too big, if the sign is "<" or ">",
-        applies the hash method
+        Returns ``==``, ``<`` or ``>`` according the dates
+        if the size is not too big, if the sign is ``<`` or ``>``,
+        applies the hash method.
         """
         if self._date == node._date:
             return "=="
@@ -480,7 +484,7 @@ class FileTreeNode:
 
     def remove(self):
         """
-        remove the file
+        Removes the file.
         """
         full = self.get_fullname()
         self.fLOG("removing ", full)
@@ -491,20 +495,18 @@ class FileTreeNode:
                 "unable to remove ", full, " --- ", str(e).replace("\n", " "))
             self.fLOG("[pyqerror] ", e)
 
-    def copyTo(self, path):
+    def copy_to(self, path, exc=True):
         """
-        old syntax for @see me copy_to
-        """
-        return self.copy_to(path)
+        Copies the file to *path*.
 
-    def copy_to(self, path):
-        """
-        copy the file to path
         @param      path        path
+        @param      exc         catch exception when possible, warning otherwise
 
-        If the new path doe not exist, it will be created.
+        If the new path doe nots exist, it will be created.
 
-        @warning If a file already exists at the new location, it checks the dates, if
+        @warning If a file already exists at the new location,
+                 it checks the dates. The file is copied only if
+                 the new file is older.
         """
         if not os.path.exists(path):
             raise PQHException("this path does not exist: '{0}'".format(path))
@@ -524,14 +526,18 @@ class FileTreeNode:
             shutil.copy(full, dest)
             cop = os.path.join(dest, os.path.split(full)[1])
             if not os.path.exists(cop):
-                raise PQHException("unable to copy %s" % cop)
+                raise PQHException("Unable to copy '%s'." % cop)
             st1 = os.stat(full)
             st2 = os.stat(cop)
             t1 = datetime.datetime.utcfromtimestamp(st1.st_mtime)
             t2 = datetime.datetime.utcfromtimestamp(st2.st_mtime)
             if t1 >= t2:
-                raise PQHException(
-                    "do not understand why t1 >= t2 for file %s" % full)
+                mes = "t1={0} for file '{1}' >= t2={2} for file '{3}'".format(
+                    t1, full, t2, cop)
+                if exc:
+                    raise PQHException(mes)
+                else:
+                    warnings.warn(mes, RuntimeWarning)
         except OSError as e:
             # else :
             self.fLOG("unable to copy file ", full, " to ", path)

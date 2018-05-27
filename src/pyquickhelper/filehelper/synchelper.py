@@ -146,7 +146,8 @@ def synchronize_folder(p1: str, p2: str, hash_size=1024 ** 2, repo1=False, repo2
                        filter: [str, Callable[[str], str], None] = None,
                        filter_copy: [str, Callable[[str], str], None] = None,
                        avoid_copy=False, operations=None, file_date: str = None,
-                       log1=False, copy_1to2=False, create_dest=False, fLOG=fLOG):
+                       log1=False, copy_1to2=False, create_dest=False,
+                       even_older=False, fLOG=fLOG):
     """
     Synchronizes two folders (or copy if the second is empty),
     it only copies more recent files.
@@ -173,8 +174,9 @@ def synchronize_folder(p1: str, p2: str, hash_size=1024 ** 2, repo1=False, repo2
                                     (use :epkg:`*py:re:search`)
     @param      filter_copy         (str) None to accept every file, a string if it is a regular expression,
                                     a function for something more complex: function (fullname) --> True
-    @param      avoid_copy          (bool) if True, just return the list of files which should be copied but does not do the copy
-    @param      operations          if None, this function is called the following way ``operations(op,n1,n2)``
+    @param      avoid_copy          (bool) if True, just return the list of files
+                                    which should be copied but does not do the copy
+    @param      operations          if None, this function is called the following way ``operations(op, n1, n2)``
                                     if should return True if the file was updated
     @param      file_date           (str) filename which contains information about when the last sync was done
     @param      log1                @see cl FileTreeNode
@@ -315,7 +317,7 @@ def synchronize_folder(p1: str, p2: str, hash_size=1024 ** 2, repo1=False, repo2
                 if not n1.isdir():
                     if file_date is not None or not size_different or n2 is None or n1._size != n2._size:
                         if not avoid_copy:
-                            n1.copyTo(f2)
+                            n1.copy_to(f2, copy_1to2)
                         action.append((">+", n1, f2))
                         if status is not None:
                             status.update_copied_file(n1.fullname)
@@ -372,7 +374,7 @@ def synchronize_folder(p1: str, p2: str, hash_size=1024 ** 2, repo1=False, repo2
             elif n2 is not None and n1._size != n2._size and not n1.isdir():
                 fLOG("[synchronize_folder] problem: size are different for file %s (%d != %d) dates (%s,%s) (op %s)" % (
                     file, n1._size, n2._size, n1._date, n2._date, op))
-                # n1.copyTo (f2)
+                # n1.copy_to (f2)
                 # raise Exception ("size are different for file %s (%d != %d) (op %s)" % (file, n1._size, n2._size, op))
 
     if status is not None:
@@ -425,8 +427,8 @@ def remove_folder(top, remove_also_top=True, raise_exception=True):
             first_root = root
 
     if first_root is not None and remove_also_top:
-        res.append((root, "dir"))
-        os.rmdir(root)
+        res.append((first_root, "dir"))
+        os.rmdir(first_root)
 
     return res
 

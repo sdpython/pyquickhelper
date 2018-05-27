@@ -124,35 +124,35 @@ def get_url_content_timeout(url, timeout=10, output=None, encoding="utf8", raise
             raise InternetException(
                 "Unable to retrieve content, url='{0}'".format(url)) from e
         warnings.warn(
-            "Unable to retrieve content from '{0}' exc: {1}".format(url, e))
+            "Unable to retrieve content from '{0}' exc: {1}".format(url, e), ResourceWarning)
         return None
     except socket.timeout as e:
         if raise_exception:
             raise InternetException(
                 "Unable to retrieve content, url='{0}'".format(url)) from e
         warnings.warn("unable to retrieve content from {0} because of timeout {1}: {2}".format(
-            url, timeout, e))
+            url, timeout, e), ResourceWarning)
         return None
     except ConnectionResetError as e:
         if raise_exception:
             raise InternetException(
                 "Unable to retrieve content, url='{0}'".format(url)) from e
         warnings.warn(
-            "unable to retrieve content from {0} because of ConnectionResetError: {1}".format(url, e))
+            "unable to retrieve content from {0} because of ConnectionResetError: {1}".format(url, e), ResourceWarning)
         return None
     except http_client.BadStatusLine as e:
         if raise_exception:
             raise InternetException(
                 "Unable to retrieve content, url='{0}'".format(url)) from e
         warnings.warn(
-            "Unable to retrieve content from '{0}' because of http.client.BadStatusLine: {1}".format(url, e))
+            "Unable to retrieve content from '{0}' because of http.client.BadStatusLine: {1}".format(url, e), ResourceWarning)
         return None
     except http_client.IncompleteRead as e:
         if raise_exception:
             raise InternetException(
                 "Unable to retrieve content url='{0}'".format(url)) from e
         warnings.warn(
-            "Unable to retrieve content from '{0}' because of http.client.IncompleteRead: {1}".format(url, e))
+            "Unable to retrieve content from '{0}' because of http.client.IncompleteRead: {1}".format(url, e), ResourceWarning)
         return None
     except ValueError as e:
         raise e
@@ -161,7 +161,7 @@ def get_url_content_timeout(url, timeout=10, output=None, encoding="utf8", raise
             raise InternetException(
                 "Unable to retrieve content, url='{0}', exc={1}".format(url, e)) from e
         warnings.warn(
-            "Unable to retrieve content from '{0}' because of unknown exception: {1}".format(url, e))
+            "Unable to retrieve content from '{0}' because of unknown exception: {1}".format(url, e), ResourceWarning)
         raise e
 
     if chunk is None:

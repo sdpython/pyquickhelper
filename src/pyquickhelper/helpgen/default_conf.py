@@ -119,16 +119,17 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
         import sphinx_gallery
         import sphinx_gallery.gen_rst
     except ImportError:
-        warnings.warn("ImportError: sphinx-gallery.")
+        warnings.warn("ImportError: sphinx-gallery.", ImportWarning)
     except ValueError:
-        warnings.warn("ImportError: sphinx-gallery.get_rst fails.")
+        warnings.warn(
+            "ImportError: sphinx-gallery.get_rst fails.", ImportWarning)
 
     # version .txt
     dirconf = os.path.abspath(os.path.dirname(fileconf))
     version_file = os.path.join(dirconf, "..", "..", "..", "version.txt")
     if not os.path.exists(version_file):
         warnings.warn(
-            "File '{0}' must contain the commit number (or last part of the version).".format(version_file))
+            "File '{0}' must contain the commit number (or last part of the version).".format(version_file), UserWarning)
         first_line = "0"
     else:
         first_line = get_first_line(version_file)
@@ -830,7 +831,7 @@ def custom_setup(app, author):
         app.connect("autodoc-skip-member", skip)
     except ExtensionError as e:
         # No event autodoc-skip-member.
-        warnings.warn(str(e))
+        warnings.warn("Sphinx extension error {0}".format(e), RuntimeError)
     app.add_config_value('author', author, True)
 
     setup_toctree(app)

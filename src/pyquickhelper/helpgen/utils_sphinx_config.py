@@ -58,14 +58,14 @@ def ie_layout_html():
             alls = ["unable to find: " + tofind + " in ",
                     '  File "{0}", line 1'.format(layout),
                     'see http://www.xavierdupre.fr/blog/2014-10-30_nojs.html']
-            warnings.warn("\n".join(alls))
+            warnings.warn("\n".join(alls), UserWarning)
             return False
         else:
             return True
     else:
         warnings.warn(
             "Sphinx does not seem to be properly installed, unable to find: " + layout +
-            ".\nThis happens on virtual environment for Anaconda on Windows")
+            ".\nThis happens on virtual environment for Anaconda on Windows", ImportWarning)
         return False
 
 

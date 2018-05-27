@@ -71,7 +71,7 @@ def verification_html_format(folder, fLOG=noLOG, raise_above=0.1):
         elif len(errors) * 1.0 / nbfile >= raise_above:
             raise e
         else:
-            warnings.warn(str(e))
+            warnings.warn("Sphinx error {0}".format(e), UserWarning)
     return errors
 
 

@@ -43,7 +43,7 @@ def enumerate_closed_issues(owner, repo, since=None, issues=None,
             response = requests.get(url)
             content = response.json()
             if 'API rate limit exceeded' in content.get('message', ''):
-                warnings.warn('API rate limit exceeded')
+                warnings.warn('API rate limit exceeded', ResourceWarning)
                 break
         else:
             content = issue

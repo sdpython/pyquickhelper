@@ -66,7 +66,7 @@ class TestFileCol (unittest.TestCase):
         res = node1.difference(node2, hash_size=1024 ** 2)
         for r in res:
             if r[0] == ">+":
-                r[2].copyTo(p2)
+                r[2].copy_to(p2)
 
         node1 = FileTreeNode(f1, filter=filter, repository=True)
         node2 = FileTreeNode(f2, filter=filter, repository=False)

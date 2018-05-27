@@ -56,7 +56,8 @@ class TestJsDiffLib(unittest.TestCase):
                 import pymyinstall as skip_
             except ImportError:
                 # we skip
-                warnings.warn("unable to test TestJsDiffLib.test_jsdifflib")
+                warnings.warn(
+                    "unable to test TestJsDiffLib.test_jsdifflib", ImportWarning)
                 return
 
         tt = os.path.split(

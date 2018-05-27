@@ -252,7 +252,7 @@ class FolderTransferFTP:
                         if ext in {".js"} or path.endswith(".rst.txt"):
                             # just a warning
                             warnings.warn(
-                                "FTP transfer, encoding issue with: " + path)
+                                "FTP transfer, encoding issue with '{0}'".format(path), UserWarning)
                             return self.preprocess_before_transfering(path, True)
                         else:
                             stex = str(e).split("\n")
@@ -351,7 +351,7 @@ class FolderTransferFTP:
                     stex = str(ex).split("\n")
                     stex = "\n    ".join(stex)
                     warnings.warn(
-                        "Unable to transfer '{0}' due to [{1}].".format(file.fullname, stex))
+                        "Unable to transfer '{0}' due to [{1}].".format(file.fullname, stex), ResourceWarning)
                     issues.append(
                         (file.fullname, "FolderTransferFTPException", ex))
                     continue

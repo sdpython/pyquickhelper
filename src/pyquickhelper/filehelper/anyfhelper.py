@@ -76,7 +76,8 @@ def change_file_status(folder, status=stat.S_IWRITE, strict=False,
                     mode = os.stat(f).st_mode
                 except FileNotFoundError:
                     # It appends for some weird path.
-                    warnings.warn("[change_file_status] unable to find " + f)
+                    warnings.warn(
+                        "[change_file_status] unable to find '{0}'".format(f), UserWarning)
                     continue
                 nmode = status
                 if nmode != mode:
@@ -107,7 +108,8 @@ def change_file_status(folder, status=stat.S_IWRITE, strict=False,
                     mode = os.stat(f).st_mode
                 except FileNotFoundError:
                     # it appends for some weird path
-                    warnings.warn("[change_file_status] unable to find " + f)
+                    warnings.warn(
+                        "[change_file_status] unable to find '{0}'".format(f), UserWarning)
                     continue
                 nmode = mode | stat.S_IWRITE
                 if nmode != mode:
