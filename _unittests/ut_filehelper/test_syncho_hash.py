@@ -89,11 +89,12 @@ class TestSynchoHash(ExtTestCase):
         b = synchronize_folder(data, troi, hash_size=0, repo1=True,
                                filter_copy=filter_copy, file_date=file_date)
 
-        if len(a)not in [2, 3]:
+        if len(a) not in [6, 7, 8]:
             raise Exception(
                 "2 or 3 expected: " + "\n".join([str(_) for _ in a]))
-        assert a[0][0] == ">+" == a[1][0]
-        assert len(b) == 0
+        self.assertEqual(a[0][0], ">+")
+        self.assertEqual(a[0][0], a[1][0])
+        self.assertEqual(len(b), 0)
 
         troi2 = os.path.join(fold, "temp_troi3")
         if not os.path.exists(troi2):
