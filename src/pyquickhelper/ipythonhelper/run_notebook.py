@@ -8,6 +8,7 @@
 import sys
 import time
 import os
+import warnings
 from datetime import datetime, timedelta
 
 from ..loghelper.flog import noLOG
@@ -527,8 +528,26 @@ def badge_notebook_coverage(df, image_name):
     cov = run * 100.0 / cell if cell > 0 else 1.0
     dcov = min(100., cov)
     val = valid * 100.0 / cell if cell > 0 else 1.0
-    from PIL import Image, ImageFont, ImageDraw
-    img = Image.new(mode='P', size=(70, 20), color=100)
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore", ImportWarning)
+        from PIL import Image, ImageFont, ImageDraw
+    if cov <= 60:
+        color = (255, 87, 51)
+    elif cov <= 70:
+        color = (243, 156, 18)
+    elif cov <= 75:
+        color = (249, 231, 159)
+    elif cov <= 80:
+        color = (171, 235, 198)
+    elif cov <= 85:
+        color = (88, 214, 141)
+    elif cov <= 90:
+        color = (35, 155, 86)
+    elif cov <= 95:
+        color = (30, 190, 73)
+    else:
+        color = (20, 255, 50)
+    img = Image.new(mode='RGB', size=(70, 20), color=color)
     im = ImageDraw.Draw(img)
     font = ImageFont.load_default()
     try:

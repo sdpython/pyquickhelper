@@ -1160,7 +1160,7 @@ def build_notebooks_gallery(nbs, fileout, layout="classic", neg_pattern=None,
 
 def build_all_notebooks_coverage(nbs, fileout, module_name, dump=None, badge=True, too_old=30, fLOG=noLOG):
     """
-    Creates a rst page (gallery) with links to all notebooks and
+    Creates a :epkg:`rst` page (gallery) with links to all notebooks and
     information about coverage.
     It relies on function @see fn notebook_coverage.
 
