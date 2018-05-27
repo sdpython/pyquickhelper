@@ -22,10 +22,11 @@ except ImportError:
     import src
 
 from src.pyquickhelper.loghelper.flog import fLOG
+from src.pyquickhelper.pycode import ExtTestCase, get_temp_folder
 from src.pyquickhelper.filehelper.synchelper import synchronize_folder, remove_folder
 
 
-class TestSynchoHash (unittest.TestCase):
+class TestSynchoHash(ExtTestCase):
 
     def test_src_import(self):
         """for pylint"""
@@ -43,8 +44,8 @@ class TestSynchoHash (unittest.TestCase):
         fold = os.path.abspath(os.path.split(__file__)[0])
         data = os.path.join(fold, "data")
         seco = os.path.join(fold, "data", "temp_seco2")
-        troi = os.path.join(fold, "temp_troi2")
-        sec2 = os.path.join(troi, "temp_seco2")
+        troi = get_temp_folder(__file__, "temp_troi2")
+        sec2 = get_temp_folder(__file__, "temp_seco2")
 
         temp = os.path.join(fold, "temp_date")
         if not os.path.exists(temp):
@@ -80,10 +81,10 @@ class TestSynchoHash (unittest.TestCase):
         a = synchronize_folder(data, troi, hash_size=0, repo1=True, filter_copy=filter_copy,
                                file_date=file_date, log1=True)
 
-        assert os.path.exists(file_date)
-        assert os.path.exists(os.path.join(troi, "sub", "filetwo.txt"))
-        assert os.path.exists(stay)
-        assert not os.path.exists(stay.replace("notfile.txt", "file.txt"))
+        self.assertExists(file_date)
+        self.assertExists(os.path.join(troi, "sub", "filetwo.txt"))
+        self.assertExists(stay)
+        self.assertNotExists(stay.replace("notfile.txt", "file.txt"))
 
         b = synchronize_folder(data, troi, hash_size=0, repo1=True,
                                filter_copy=filter_copy, file_date=file_date)
