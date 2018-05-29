@@ -72,7 +72,7 @@ class FileTreeNode:
     @staticmethod
     def build_expression(ext):
         """
-        build a regular expression validating a list of extension
+        Builds a regular expression validating a list of extension.
 
         @param      ext     list of extension (with no points)
         @return             pattern (string)
@@ -82,7 +82,7 @@ class FileTreeNode:
     def __init__(self, root, file=None, filter=None, level=0, parent=None,
                  repository=False, log=False, log1=False, fLOG=noLOG):
         """
-        define a file, relative to a root
+        Defines a file, relative to a root.
         @param      root            root (it must exist)
         @param      file            file, if None, fill _children
         @param      filter          function (root, path, f, dir) --> True or False
@@ -140,48 +140,48 @@ class FileTreeNode:
     @property
     def name(self):
         """
-        return the file name from the root
+        Returns the file name from the root.
         """
         return self._file
 
     @property
     def root(self):
         """
-        return the root directory, the one used as a root for a synchronization
+        Returns the root directory, the one used as a root for a synchronization.
         """
         return self._root
 
     @property
     def size(self):
         """
-        return the size
+        Returns the size.
         """
         return self._size
 
     @property
     def date(self):
         """
-        returns the modification date
+        Returns the modification date.
         """
         return self._date
 
     @property
     def type(self):
         """
-        returns the file type  (``file`` or ``folder``)
+        Returns the file type  (``file`` or ``folder``).
         """
         return self._type
 
     @property
     def fullname(self):
         """
-        returns the full name
+        Returns the full name.
         """
         return self.get_fullname()
 
     def hash_md5_readfile(self):
         """
-        compute a hash of a file
+        Computes a hash of a file.
 
         @return     string
         """
@@ -200,7 +200,7 @@ class FileTreeNode:
 
     def get_content(self, encoding="utf8"):
         """
-        return the content of a text file
+        Returns the content of a text file.
 
         @param      encoding        encoding
         @return                     content as a string
@@ -534,7 +534,7 @@ class FileTreeNode:
             if t1 >= t2:
                 mes = "t1={0} for file '{1}' >= t2={2} for file '{3}'".format(
                     t1, full, t2, cop)
-                if exc:
+                if t1 > t2 and exc:
                     raise PQHException(mes)
                 else:
                     warnings.warn(mes, RuntimeWarning)
