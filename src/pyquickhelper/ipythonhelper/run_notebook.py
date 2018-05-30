@@ -532,21 +532,21 @@ def badge_notebook_coverage(df, image_name):
         warnings.simplefilter("ignore", ImportWarning)
         from PIL import Image, ImageFont, ImageDraw
     if cov <= 60:
-        color = (255, 87, 51)
+        color = (200, 87, 51)
     elif cov <= 70:
-        color = (243, 156, 18)
+        color = (200, 156, 18)
     elif cov <= 75:
-        color = (249, 231, 159)
+        color = (140, 140, 140)
     elif cov <= 80:
-        color = (171, 235, 198)
+        color = (88, 171, 171)
     elif cov <= 85:
-        color = (88, 214, 141)
+        color = (88, 140, 86)
     elif cov <= 90:
-        color = (35, 155, 86)
+        color = (80, 155, 86)
     elif cov <= 95:
-        color = (30, 190, 73)
+        color = (80, 190, 73)
     else:
-        color = (20, 255, 50)
+        color = (20, 190, 50)
     img = Image.new(mode='RGB', size=(70, 20), color=color)
     im = ImageDraw.Draw(img)
     font = ImageFont.load_default()
