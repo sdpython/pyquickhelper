@@ -284,6 +284,7 @@ def rst2html(s, fLOG=noLOG, writer="html", keep_warnings=False,
     settings_overrides = default_settings.copy()
     settings_overrides["warning_stream"] = StringIO()
     settings_overrides["master_doc"] = document_name
+    settings_overrides["source"] = document_name
     settings_overrides.update({k: v[0]
                                for k, v in mockapp.new_options.items()})
 
@@ -307,7 +308,9 @@ def rst2html(s, fLOG=noLOG, writer="html", keep_warnings=False,
         raise ValueError("No environment was built.")
 
     env.temp_data["docname"] = document_name
+    env.temp_data["source"] = document_name
     mockapp.builder.env.temp_data["docname"] = document_name
+    mockapp.builder.env.temp_data["source"] = document_name
     settings_overrides["env"] = env
 
     lang = languages.get_language(language)
@@ -322,12 +325,12 @@ def rst2html(s, fLOG=noLOG, writer="html", keep_warnings=False,
         if hasattr(writer.builder.config, k) and writer.builder.config[k] != v:
             writer.builder.config[k] = v
 
-    output, pub = core.publish_programmatically(source=s, source_path=None, destination_path=None, writer=writer,
-                                                writer_name=writer_name, settings_overrides=settings_overrides,
-                                                source_class=StringInput, destination_class=StringOutput,
-                                                destination=None, reader=None, reader_name='standalone',
-                                                parser=None, parser_name='restructuredtext', settings=None,
-                                                settings_spec=None, config_section=None, enable_exit_status=False)
+    _, pub = core.publish_programmatically(source=s, source_path=None, destination_path=None, writer=writer,
+                                           writer_name=writer_name, settings_overrides=settings_overrides,
+                                           source_class=StringInput, destination_class=StringOutput,
+                                           destination=None, reader=None, reader_name='standalone',
+                                           parser=None, parser_name='restructuredtext', settings=None,
+                                           settings_spec=None, config_section=None, enable_exit_status=False)
 
     doctree = pub.document
 
@@ -434,7 +437,7 @@ def correct_indentation(text):
 
 def docstring2html(function_or_string, format="html", fLOG=noLOG, writer="html",
                    keep_warnings=False, directives=None, language="en",
-                   layout='docutils', document_name="<string>",
+                   layout='docutils', document_name="<<string>>",
                    filter_nodes=None, **options):
     """
     Converts a docstring into a :epkg:`HTML` format.
@@ -498,6 +501,7 @@ def docstring2html(function_or_string, format="html", fLOG=noLOG, writer="html",
         html = rst2html(ded, fLOG=fLOG, writer=writer,
                         keep_warnings=keep_warnings, directives=directives,
                         language=language, filter_nodes=filter_nodes,
+                        docstring2html=docstring2html,
                         layout=layout, **options)
     except Exception:
         # we check the indentation
@@ -506,6 +510,7 @@ def docstring2html(function_or_string, format="html", fLOG=noLOG, writer="html",
             html = rst2html(ded, fLOG=fLOG, writer=writer,
                             keep_warnings=keep_warnings, directives=directives,
                             language=language, filter_nodes=filter_nodes,
+                            docstring2html=docstring2html,
                             layout=layout, **options)
         except Exception as e:
             lines = ded.split("\n")
