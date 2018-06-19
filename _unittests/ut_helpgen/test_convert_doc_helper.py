@@ -25,6 +25,7 @@ except ImportError:
     import src
 
 from src.pyquickhelper.loghelper.flog import fLOG
+from src.pyquickhelper.pycode import ExtTestCase
 from src.pyquickhelper.helpgen.sphinxm_convert_doc_helper import rst2html, docstring2html
 from src.pyquickhelper.pandashelper import df2rst
 
@@ -32,7 +33,10 @@ from IPython.core.display import HTML
 import pandas
 
 
-class TestConvertDocHelper(unittest.TestCase):
+class TestConvertDocHelper(ExtTestCase):
+    """
+    Tests function rst2html.
+    """
 
     def test_src_import(self):
         """for pylint"""
@@ -80,8 +84,8 @@ class TestConvertDocHelper(unittest.TestCase):
 
             .. endexample.
         """
-        html = rst2html(rst, fLOG=fLOG)
-        assert len(html) > 0
+        html = rst2html(rst)
+        self.assertNotEmpty(html)
         if ".. endexample." in html:
             raise Exception(html)
         if ".. example" in html:
@@ -94,11 +98,11 @@ class TestConvertDocHelper(unittest.TestCase):
             __file__,
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
-        html = docstring2html(df2rst, "rawhtml", fLOG=fLOG)
-        assert len(html) > 0
-        assert "<p>&#64;code" not in html
-        html = docstring2html(df2rst, "html", fLOG=fLOG)
-        assert isinstance(html, HTML)
+        html = docstring2html(df2rst, "rawhtml")
+        self.assertNotEmpty(html)
+        self.assertNotIn("<p>&#64;code", html)
+        html = docstring2html(df2rst, "html")
+        self.assertIsInstance(html, HTML)
 
     def test_object(self):
         fLOG(
@@ -124,21 +128,21 @@ class TestConvertDocHelper(unittest.TestCase):
                 return ""
 
         rst = docstring2html(pandas)
-        assert rst is not None
+        self.assertNotEmpty(rst)
         rst = docstring2html(AA)
-        assert rst is not None
+        self.assertNotEmpty(rst)
         rst = docstring2html(3)
-        assert rst is not None
+        self.assertNotEmpty(rst)
         rst = docstring2html(AA().__class__)
-        assert rst is not None
+        self.assertNotEmpty(rst)
         rst = docstring2html(AA.__init__)
-        assert rst is not None
+        self.assertNotEmpty(rst)
         rst = docstring2html(AA.g)
-        assert rst is not None
+        self.assertNotEmpty(rst)
         rst = docstring2html(AA.st)
-        assert rst is not None
+        self.assertNotEmpty(rst)
         rst = docstring2html(self)
-        assert rst is not None
+        self.assertNotEmpty(rst)
 
 
 if __name__ == "__main__":

@@ -280,7 +280,7 @@ class MockSphinxApp:
     @staticmethod
     def create(writer="html", directives=None, confoverrides=None, new_extensions=None, fLOG=None):
         """
-        Create a MockApp for Sphinx.
+        Create a MockApp for :epkg:`Sphinx`.
 
         @param      writer          ``'sphinx'`` is the only allowed value
         @param      directives      new directives to add (see below)

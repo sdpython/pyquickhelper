@@ -501,7 +501,7 @@ def docstring2html(function_or_string, format="html", fLOG=noLOG, writer="html",
         html = rst2html(ded, fLOG=fLOG, writer=writer,
                         keep_warnings=keep_warnings, directives=directives,
                         language=language, filter_nodes=filter_nodes,
-                        docstring2html=docstring2html,
+                        document_name=document_name,
                         layout=layout, **options)
     except Exception:
         # we check the indentation
@@ -510,7 +510,7 @@ def docstring2html(function_or_string, format="html", fLOG=noLOG, writer="html",
             html = rst2html(ded, fLOG=fLOG, writer=writer,
                             keep_warnings=keep_warnings, directives=directives,
                             language=language, filter_nodes=filter_nodes,
-                            docstring2html=docstring2html,
+                            document_name=document_name,
                             layout=layout, **options)
         except Exception as e:
             lines = ded.split("\n")

@@ -103,6 +103,7 @@ def _private_test_style_src(fLOG, run_lint, verbose=False, pattern=".*[.]py$"):
                      "process_notebooks.py:1099",
                      "sphinxm_convert_doc_helper.py:325: W0612",
                      "sphinxm_convert_doc_helper.py:395: R1710",
+                     "sphinxm_convert_doc_helper.py:398: R1710",
                      "No name 'bold' in module 'sphinx.util.console'",
                      "No name 'darkgreen' in module 'sphinx.util.console'",
                      "Redefining name 'HTMLTranslator' from outer scope",
