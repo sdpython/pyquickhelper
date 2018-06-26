@@ -82,7 +82,7 @@ class TestBokehExtension(unittest.TestCase):
         else:
             raise Exception(html)
 
-        if 'data-bokeh-model-id=' not in html:
+        if 'bokeh-plot-string-inline' not in html:
             raise Exception(html)
 
 
