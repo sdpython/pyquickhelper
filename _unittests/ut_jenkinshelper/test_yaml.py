@@ -53,6 +53,8 @@ class TestYaml(unittest.TestCase):
                        Python27=None, Anaconda3=None, Anaconda2=None,
                        WinPython36=None, project_name="pyquickhelper",
                        root_path="ROOT")
+        vers = "%d%d" % sys.version_info[:2]
+        context["Python%s" % vers] = os.path.dirname(sys.executable)
         obj, name = load_yaml(yml, context=context)
         for k, v in obj.items():
             fLOG(k, type(v), v)
@@ -153,6 +155,8 @@ class TestYaml(unittest.TestCase):
                        Python27=None, Anaconda3=None, Anaconda2=None,
                        WinPython36=None, project_name="pyquickhelper",
                        root_path="ROOT")
+        vers = "%d%d" % sys.version_info[:2]
+        context["Python%s" % vers] = "C:\\Python%s_x64" % vers
         obj, name = load_yaml(yml, context=context, platform=platform)
         self.assertTrue(name is not None)
         res = list(enumerate_convert_yaml_into_instructions(
@@ -166,8 +170,9 @@ class TestYaml(unittest.TestCase):
             self.assertTrue(isinstance(conv, typstr))
         self.assertTrue(len(res) > 0)
 
+        vers_ = "%d.%d" % sys.version_info[:2]
         conv = [
-            _ for _ in convs if "SET NAME=UT" in _ and "VERSION=3.6" in _ and '-g' not in _]
+            _ for _ in convs if "SET NAME=UT" in _ and "VERSION=%s" % vers_ in _ and '-g' not in _]
         if len(conv) != 3:
             rows = [str(_) for _ in conv]
             raise Exception("len(conv)={0}\n----\n{1}\n-----\n{2}".format(
@@ -178,20 +183,20 @@ class TestYaml(unittest.TestCase):
             @echo off
             set PATH0=%PATH%
             SET DIST=std
-            SET VERSION=3.6
+            SET VERSION=__VERSP__
             SET NAME=UT
-            SET TIMEOUT=900
+            SET TIMEOUT=899
 
             @echo AUTOMATEDSETUP
             set current=ROOT\\pyquickhelper\\%NAME_JENKINS%
 
-            @echo interpreter=C:\\Python36_x64\\python
+            @echo interpreter=C:\\Python__VERS___x64\\python
 
             @echo CREATE VIRTUAL ENVIRONMENT in ROOT\\pyquickhelper\\%NAME_JENKINS%\\_venv
             if not exist "ROOT\\pyquickhelper\\%NAME_JENKINS%\\_venv" mkdir "ROOT\\pyquickhelper\\%NAME_JENKINS%\\_venv"
             set KEEPPATH=%PATH%
-            set PATH=%PATH%;C:\\Python36_x64
-            "C:\\Python36_x64\\Scripts\\virtualenv" --system-site-packages "ROOT\\pyquickhelper\\%NAME_JENKINS%\\_venv"
+            set PATH=%PATH%;C:\\Python__VERS___x64
+            "C:\\Python__VERS___x64\\Scripts\\virtualenv" --system-site-packages "ROOT\\pyquickhelper\\%NAME_JENKINS%\\_venv"
             set PATH=%KEEPPATH%
             if %errorlevel% neq 0 exit /b %errorlevel%
 
@@ -228,6 +233,8 @@ class TestYaml(unittest.TestCase):
             xcopy /E /C /I /Y _doc\\sphinxdoc\\build\\html dist\\html
             if %errorlevel% neq 0 exit /b %errorlevel%
             """.replace("            ", "").strip("\n \t\r")
+            expected = expected.replace("__VERS__", vers)
+            expected = expected.replace("__VERSP__", vers_)
             val = conv.strip("\n \t\r")
             if expected != val:
                 mes = "EXP:\n{0}\n###########\nGOT:\n{1}".format(expected, val)
@@ -237,29 +244,30 @@ class TestYaml(unittest.TestCase):
                             "error on line:\nEXP:\n{0}\nGOT:\n{1}\n#######\n{2}".format(a, b, mes))
                 raise Exception(mes)
 
-        conv = [_ for _ in convs if "SET NAME=DOC" in _]
+        conv = [_ for _ in convs if "SET DIST=std" in _ and "TIMEOUT=899" in _]
         if len(conv) != 1:
             raise Exception(
-                "################################\n{0}".format(conv))
+                "################################\nlen(conv)={0}\n{1}".format(len(conv), conv))
         conv = conv[0]
         if platform.startswith("win"):
             expected = """
             @echo off
             set PATH0=%PATH%
             SET DIST=std
-            SET VERSION=3.6
-            SET NAME=DOC
+            SET VERSION=__VERSP__
+            SET NAME=UT
+            SET TIMEOUT=899
 
             @echo AUTOMATEDSETUP
             set current=ROOT\\pyquickhelper\\%NAME_JENKINS%
 
-            @echo interpreter=C:\\Python36_x64\\python
+            @echo interpreter=C:\\Python__VERS___x64\\python
 
             @echo CREATE VIRTUAL ENVIRONMENT in ROOT\\pyquickhelper\\%NAME_JENKINS%\\_venv
             if not exist "ROOT\\pyquickhelper\\%NAME_JENKINS%\\_venv" mkdir "ROOT\\pyquickhelper\\%NAME_JENKINS%\\_venv"
             set KEEPPATH=%PATH%
-            set PATH=%PATH%;C:\\Python36_x64
-            "C:\\Python36_x64\\Scripts\\virtualenv" --system-site-packages "ROOT\\pyquickhelper\\%NAME_JENKINS%\\_venv"
+            set PATH=%PATH%;C:\\Python__VERS___x64
+            "C:\\Python__VERS___x64\\Scripts\\virtualenv" --system-site-packages "ROOT\\pyquickhelper\\%NAME_JENKINS%\\_venv"
             set PATH=%KEEPPATH%
             if %errorlevel% neq 0 exit /b %errorlevel%
 
@@ -275,18 +283,29 @@ class TestYaml(unittest.TestCase):
             if %errorlevel% neq 0 exit /b %errorlevel%
             pip freeze > pip_freeze.txt
             if %errorlevel% neq 0 exit /b %errorlevel%
-            set JOB_NAME=DOC
+            set JOB_NAME=UT
 
             @echo SCRIPT
             set PATH=ROOT\\pyquickhelper\\%NAME_JENKINS%\\_venv\\Scripts;%PATH%
-            python -u setup.py build_sphinx
+            python -u setup.py unittests
             if %errorlevel% neq 0 exit /b %errorlevel%
 
             @echo AFTER_SCRIPT
             set PATH=ROOT\\pyquickhelper\\%NAME_JENKINS%\\_venv\\Scripts;%PATH%
             python -u setup.py bdist_wheel
             if %errorlevel% neq 0 exit /b %errorlevel%
+            copy dist\\*.whl ROOT\\pyquickhelper\\..\\..\\local_pypi\\local_pypi_server
+            if %errorlevel% neq 0 exit /b %errorlevel%
+
+            @echo DOCUMENTATION
+            set PATH=ROOT\\pyquickhelper\\%NAME_JENKINS%\\_venv\\Scripts;%PATH%
+            python -u setup.py build_sphinx
+            if %errorlevel% neq 0 exit /b %errorlevel%
+            xcopy /E /C /I /Y _doc\\sphinxdoc\\build\\html dist\\html
+            if %errorlevel% neq 0 exit /b %errorlevel%
             """.replace("            ", "").strip("\n \t\r")
+            expected = expected.replace("__VERS__", vers)
+            expected = expected.replace("__VERSP__", vers_)
             val = conv.strip("\n \t\r")
             if expected != val:
                 mes = "EXP:\n{0}\n###########\nGOT:\n{1}".format(expected, val)
@@ -316,6 +335,8 @@ class TestYaml(unittest.TestCase):
                        Python27="C:\\Python27_x64", Anaconda3=None, Anaconda2=None,
                        WinPython36=None, project_name="pyquickhelper",
                        root_path="ROOT")
+        vers = "%d%d" % sys.version_info[:2]
+        context["Python%s" % vers] = "C:\\Python%s_x64" % vers
         obj, name = load_yaml(yml, context=context, platform=platform)
         self.assertTrue(name is not None)
         res = list(enumerate_convert_yaml_into_instructions(
@@ -341,7 +362,7 @@ class TestYaml(unittest.TestCase):
             SET DIST=std
             SET VERSION=2.7
             SET NAME=UT
-            SET TIMEOUT=900
+            SET TIMEOUT=899
 
             @echo AUTOMATEDSETUP
             set current=ROOT\\pyquickhelper\\%NAME_JENKINS%
