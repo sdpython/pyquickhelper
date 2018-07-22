@@ -35,6 +35,8 @@ class TestPingHelper(unittest.TestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
+        if is_travis_or_appveyor():
+            return
         regular_ping_machine('localhost', 0.5, nb_max=2, fLOG=fLOG)
 
 
