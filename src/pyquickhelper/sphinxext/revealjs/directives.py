@@ -321,4 +321,4 @@ def setup(app):
     app.add_directive('rv_code', RvCodeDirective)
     app.add_directive('rv_note', RvNoteDirective)
     app.add_directive('rv_small', RvSmallDirective)
-    return
+    return app

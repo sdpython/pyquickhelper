@@ -17,6 +17,7 @@ import importlib
 from contextlib import redirect_stdout, redirect_stderr
 import pycodestyle
 from pylint.lint import Run as PyLinterRun
+from pylint import __version__ as pylint_version
 
 from ..filehelper.synchelper import remove_folder, explore_folder_iterfile
 from ..loghelper.flog import noLOG
@@ -28,6 +29,11 @@ if sys.version_info[0] == 2:
     FileNotFoundError = Exception
 else:
     from io import StringIO
+
+if pylint_version <= '2.0.0':
+    PyLinterRunV = PyLinterRun
+else:
+    PyLinterRunV = lambda *args, do_exit=False: PyLinterRun(*args, exit=do_exit)
 
 
 def get_temp_folder(thisfile, name=None, clean=True, create=True, max_path=False, max_path_name="tpath"):
@@ -195,6 +201,7 @@ def check_pep8(folder, ignore=('E265', 'W504'), skip=None,
     * *C0111*: missing function docstring
     * *C1801*: do not use `len(SEQUENCE)` to determine if a sequence is empty
     * *R0201*: method could be a function
+    * *R0205*: Class '?' inherits from object, can be safely removed from bases in python3 (pylint)
     * *R0901*: too many ancestors
     * *R0902*: too many instance attributes
     * *R0911*: too many return statements
@@ -367,7 +374,7 @@ def check_pep8(folder, ignore=('E265', 'W504'), skip=None,
                         if run_cmd_filter is None or not run_cmd_filter(name):
                             myprint(
                                 "[check_pep8] lint file {0}/{1} - '{2}'\n".format(i + 1, len(files_to_check), name))
-                            PyLinterRun(cop, exit=False)
+                            PyLinterRunV(cop, do_exit=False)
                         else:
                             # runs from command line
                             myprint(
@@ -379,7 +386,7 @@ def check_pep8(folder, ignore=('E265', 'W504'), skip=None,
                                 '\n') if _.strip('\r '))
                 else:
                     opt.extend(files_to_check)
-                    PyLinterRun(opt, exit=False)
+                    PyLinterRunV(opt, do_exit=False)
 
     pylint_lines = sout.getvalue().split('\n')
     pylint_lines = [_ for _ in pylint_lines if '(pylint)' in _ and fkeep(_) and _[

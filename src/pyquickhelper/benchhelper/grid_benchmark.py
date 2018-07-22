@@ -90,13 +90,13 @@ class GridBenchMark(BenchMark):
 
     def init(self):
         """
-        skip it
+        Skips it.
         """
         pass
 
     def run(self, params_list):
         """
-        run the benchmark
+        Runs the benchmark.
         """
         self.init_main()
         self.fLOG("[MlGridBenchmark.bench] start")
@@ -129,7 +129,7 @@ class GridBenchMark(BenchMark):
                 pc["di"] = i
                 full_list.append(pc)
 
-        # Run the bench
+        # Runs the bench
         res = BenchMark.run(self, full_list)
 
         self.fLOG("[MlGridBenchmark.bench] end")

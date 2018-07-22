@@ -19,8 +19,8 @@ from sphinx.errors import ExtensionError
 # from sphinx.events import EventManager
 # from sphinx.registry import SphinxComponentRegistry
 # from sphinx.domains.python import setup as setup_python
-from ..sphinxext import get_default_extensions
 from .sphinxm_convert_doc_sphinx_helper import HTMLWriterWithCustomDirectives, _CustomSphinx, RSTWriterWithCustomDirectives
+from ..sphinxext import get_default_extensions
 
 
 class MockSphinxApp:

@@ -385,14 +385,14 @@ class Doxypy(object):
                 self.__closeComment()
                 self.defclass = []
         # multiline start
-        elif from_state == "DEFCLASS" or from_state == "FILEHEAD":
+        elif from_state in ("DEFCLASS", "FILEHEAD"):
             # remove comment delimiter from begin of the line
             activeCommentDelim = match.group(1)
             line = self.fsm.current_input
             self.comment.append(
                 line[line.find(activeCommentDelim) + len(activeCommentDelim):])
         # multiline end
-        elif to_state == "DEFCLASS_BODY" or to_state == "FILEHEAD":
+        elif to_state in ("DEFCLASS_BODY", "FILEHEAD"):
             # remove comment delimiter from end of the line
             activeCommentDelim = match.group(1)
             line = self.fsm.current_input

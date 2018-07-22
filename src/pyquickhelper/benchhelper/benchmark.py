@@ -67,13 +67,13 @@ class BenchMark:
 
     def init(self):
         """
-        initialisation, overwrite this method
+        Initialisation. Overwrite this method.
         """
         raise NotImplementedError("It should be overwritten.")
 
     def bench(self, **params):
         """
-        run the benchmark, overwrite this method
+        Runs the benchmark. Overwrite this method.
 
         @param      params      parameters
         @return                 metrics as a dictionary, appendix as a dictionary
@@ -84,7 +84,7 @@ class BenchMark:
 
     def end(self):
         """
-        clean, overwrite this method
+        Cleans. Overwrite this method.
         """
         raise NotImplementedError("It should be overwritten.")
 
@@ -245,7 +245,7 @@ class BenchMark:
 
     def run(self, params_list):
         """
-        Run the benchmark.
+        Runs the benchmark.
 
         @param      params_list     list of dictionaries
         """
@@ -436,6 +436,7 @@ class BenchMark:
                 functions[i]()
 
         self._progressbars = None
+        return self._metrics, self._meta
 
     @property
     def Metrics(self):

@@ -25,13 +25,13 @@ from src.pyquickhelper.pycode import ExtTestCase, skipif_vless
 from src.pyquickhelper.helpgen.utils_sphinx_config import ie_layout_html, NbImage
 from src.pyquickhelper.helpgen.post_process import remove_character_under32
 from src.pyquickhelper.helpgen.utils_sphinx_doc import useless_class_UnicodeStringIOThreadSafe, doc_checking
-from src.pyquickhelper.helpgen.sphinxm_mock_app import MockSphinxApp
 from src.pyquickhelper.helpgen.default_conf import get_default_stylesheet, get_default_javascript, custom_setup
 from src.pyquickhelper.helpgen.utils_sphinx_doc_helpers import example_function_latex
 from src.pyquickhelper.helpgen._fake_function_to_documentation import f1, f2, f3, f4, f5, f6
 from src.pyquickhelper.helpgen.sphinx_main import _import_conf_extract_parameter
 from src.pyquickhelper.helpgen.sphinx_helper import everything_but_python
 from src.pyquickhelper.helpgen.sphinxm_convert_doc_helper import correct_indentation
+from src.pyquickhelper.helpgen.sphinxm_mock_app import MockSphinxApp
 
 
 class TestMissingFunctionsHelpgen(ExtTestCase):

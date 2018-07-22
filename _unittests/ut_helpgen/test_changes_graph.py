@@ -74,7 +74,7 @@ class TestGraphChanges (unittest.TestCase):
                   '2015-w16', '2015-w17', '2015-w18', '2015-w19', '2015-w20']
             plt.close('all')
             plt.style.use('ggplot')
-            fig, ax = plt.subplots(nrows=1, ncols=1, figsize=(10, 4))
+            _, ax = plt.subplots(nrows=1, ncols=1, figsize=(10, 4))
             ax.bar(x, y)
             tig = ax.get_xticks()
             labs = []

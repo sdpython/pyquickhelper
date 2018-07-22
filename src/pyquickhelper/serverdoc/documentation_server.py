@@ -196,7 +196,7 @@ class DocumentationHandler(BaseHTTPRequestHandler):
             self.LOG("serves cached", tlocalpath)
             return content
 
-        if ftype == "r" or ftype == "execute":
+        if ftype in ("r", "execute"):
             if not os.path.exists(
                     tlocalpath) and "_static/bootswatch" in tlocalpath:
                 access = tlocalpath.replace("bootswatch", "bootstrap")

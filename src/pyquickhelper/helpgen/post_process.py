@@ -85,7 +85,7 @@ def update_notebook_link(text, format, nblinks, fLOG):
             return new_url
         reg = re.compile("`([^`]+?) <find://([^`<>]+?)>`_")
         new_text = reg.sub(reprst, text)
-    elif format == "html" or format == "slides" or format == "slides2":
+    elif format in ("html", "slides", "slides2"):
         def rephtml(l):
             anc, url = l.groups()
             url = get_url_from_nblinks(nblinks, url, format)
@@ -96,7 +96,7 @@ def update_notebook_link(text, format, nblinks, fLOG):
             return new_url
         reg = re.compile("<a href=\\\"find://([^\\\"]+?)\\\">([^`<>]+?)</a>")
         new_text = reg.sub(rephtml, text)
-    elif format == "ipynb" or format == "python":
+    elif format in ("ipynb", "python"):
         def repipy(l):
             anc, url = l.groups()
             url = get_url_from_nblinks(nblinks, "find://" + url, format)

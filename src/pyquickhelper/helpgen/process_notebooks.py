@@ -426,7 +426,7 @@ def _process_notebooks_in(notebooks, outfold, build, latex_path=None, pandoc_pat
                     nb2rst(notebook, outputfile, post_process=False)
                     err = ""
                     c = ""
-                elif nbconvert_main != fnbcexe or format not in {"slides", "latex", "pdf"}:
+                elif nbconvert_main != fnbcexe or format not in ("slides", "latex", "pdf"):
                     if options_args:
                         fLOG("[_process_notebooks_in] NBp*:",
                              format, options_args)

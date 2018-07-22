@@ -442,7 +442,7 @@ class NotebookRunner(object):
                 outs = list()
                 continue
 
-            elif msg_type == 'comm_open' or msg_type == 'comm_msg':
+            elif msg_type in ('comm_open', 'comm_msg'):
                 # widgets in a notebook
                 out.data = content["data"]
                 out.comm_id = content["comm_id"]
