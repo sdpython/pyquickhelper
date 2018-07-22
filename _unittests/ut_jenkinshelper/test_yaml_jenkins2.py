@@ -44,7 +44,7 @@ class TestYamlJenkins2(unittest.TestCase):
 
         self._jenkins_ext_setup_server_yaml2(True)
 
-    @unittest.skipIf(sys.verion_info[:2] < (3, 7), reason="Python37 is a constant")
+    @unittest.skipIf(sys.version_info[:2] < (3, 7), reason="Python37 is a constant")
     def test_jenkins_ext_setup_server_yaml2_local(self):
         fLOG(
             __file__,
