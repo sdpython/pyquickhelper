@@ -182,14 +182,16 @@ class JenkinsExt(jenkins.Jenkins):
         '''
         if self._mock:
             return
-
         r = self._get_job_folder(name)
         if r is None:
             raise JenkinsExtException('delete[%s] failed (no job)' % (name))
+
+        folder_url, short_name = self._get_job_folder(name)
         self.jenkins_open(requests.Request(
-            self.server + jenkins.DELETE_JOB % self._get_encoded_params(locals()), b''))
+            'POST', self._build_url(jenkins.DELETE_JOB, locals())
+        ))
         if self.job_exists(name):
-            raise JenkinsExtException('delete[%s] failed' % (name))
+            raise JenkinsException('delete[%s] failed' % (name))
 
     def get_jobs(self):
         """
