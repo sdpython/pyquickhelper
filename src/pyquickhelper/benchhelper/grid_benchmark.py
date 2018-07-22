@@ -4,7 +4,7 @@
 @brief Grid benchmark.
 """
 
-from time import clock
+from time import perf_counter
 from ..loghelper import noLOG
 from .benchmark import BenchMark
 
@@ -152,17 +152,17 @@ class GridBenchMark(BenchMark):
             shortname_ds = self._datasets[di]["shortname"]
             name_ds = self._datasets[di]["name"]
 
-            cl = clock()
+            cl = perf_counter()
             ds, appe, pars = self.preprocess_dataset(di, **params)
-            split = clock() - cl
+            split = perf_counter() - cl
 
-            cl = clock()
+            cl = perf_counter()
             output = self.bench_experiment(ds, **pars)
-            train = clock() - cl
+            train = perf_counter() - cl
 
-            cl = clock()
+            cl = perf_counter()
             metrics, appe_ = self.predict_score_experiment(ds, output)
-            test = clock() - cl
+            test = perf_counter() - cl
 
             metrics["time_preproc"] = split
             metrics["time_train"] = train

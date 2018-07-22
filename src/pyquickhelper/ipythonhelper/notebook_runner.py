@@ -975,7 +975,7 @@ class NotebookRunner(object):
         nbcell = 0
         nbrun = 0
         nbnerr = 0
-        cl = time.clock()
+        cl = time.perf_counter()
         for i, cell in enumerate(self.iter_code_cells()):
             nbcell += 1
             codei = NotebookRunner.get_cell_code(cell)[1]
@@ -1000,7 +1000,7 @@ class NotebookRunner(object):
                         "issue when executing:\n{0}".format(codei)) from e
             if progress_callback:
                 progress_callback(i)
-        etime = time.clock() - cl
+        etime = time.perf_counter() - cl
         res = dict(nbcell=nbcell, nbrun=nbrun, nbvalid=nbnerr, time=etime)
         if self.detailed_log:
             self.detailed_log(

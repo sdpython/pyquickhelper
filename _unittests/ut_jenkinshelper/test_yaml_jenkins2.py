@@ -35,6 +35,7 @@ class TestYamlJenkins2(unittest.TestCase):
         """for pylint"""
         self.assertTrue(src is not None)
 
+    @unittest.skipIf(sys.version_info[:2] < (3, 7), "Python37 is a constant in this test")
     def test_jenkins_ext_setup_server_yaml2_url(self):
         fLOG(
             __file__,

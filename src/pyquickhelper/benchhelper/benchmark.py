@@ -7,7 +7,7 @@
 import os
 import sys
 from datetime import datetime
-from time import clock
+from time import perf_counter
 import pickle
 from ..loghelper import noLOG, CustomLog, fLOGFormat
 from ..texthelper import apply_template
@@ -330,9 +330,9 @@ class BenchMark:
                 self.fLOG(
                     "[BenchMark.run] {0}/{1}: {2}".format(i + 1, len(params_list), di))
                 dt = datetime.now()
-                cl = clock()
+                cl = perf_counter()
                 tu = self.bench(**di)
-                cl = clock() - cl
+                cl = perf_counter() - cl
 
                 if isinstance(tu, tuple):
                     tus = [tu]

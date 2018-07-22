@@ -8,6 +8,7 @@ History
 current - 2018-07-22 - 0.00Mb
 =============================
 
+* `158`: replaces clock by perf_counter (2018-07-22)
 * `156`: fix issue with update to python-jenkins 1.1.0 (2018-07-22)
 * `155`: fix issue with pylint 2.0 (2018-07-22)
 * `154`: notebook coverage add color (2018-05-27)

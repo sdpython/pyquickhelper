@@ -257,7 +257,7 @@ def execute_notebook_list(folder, notebooks, clean_function=None, valid=None, fL
         fLOG("[execute_notebook_list] {0}/{1} - {2}".format(i +
                                                             1, len(notebooks), os.path.split(note)[-1]))
         outfile = os.path.join(folder, "out_" + os.path.split(note)[-1])
-        cl = time.clock()
+        cl = time.perf_counter()
         try:
             stat, out = run_notebook(note, working_dir=folder, outfilename=outfile,
                                      additional_path=additional_path, valid=valid,
@@ -268,12 +268,12 @@ def execute_notebook_list(folder, notebooks, clean_function=None, valid=None, fL
                                      detailed_log=detailed_log)
             if not os.path.exists(outfile):
                 raise FileNotFoundError(outfile)
-            etime = time.clock() - cl
+            etime = time.perf_counter() - cl
             results[note] = dict(success=True, output=out, name=note, etime=etime,
                                  date=datetime.now())
             results[note].update(stat)
         except Exception as e:
-            etime = time.clock() - cl
+            etime = time.perf_counter() - cl
             results[note] = dict(success=False, etime=etime, error=e, name=note,
                                  date=datetime.now())
     return results

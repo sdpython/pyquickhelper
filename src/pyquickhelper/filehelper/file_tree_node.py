@@ -452,13 +452,13 @@ class FileTreeNode:
             - ``<+`` absent in self
 
         """
-        ti = time.clock()
+        ti = time.perf_counter()
         d1 = self.get_dict(lower=lower)
         d2 = node.get_dict(lower=lower)
         res = []
         nb = 0
         for k, v in d1.items():
-            ti2 = time.clock()
+            ti2 = time.perf_counter()
             if ti2 - ti > 10:
                 self.fLOG("FileTreeNode.difference: processed files", nb)
                 ti = ti2
@@ -469,7 +469,7 @@ class FileTreeNode:
             nb += 1
 
         for k, v in d2.items():
-            ti2 = time.clock()
+            ti2 = time.perf_counter()
             if ti2 - ti > 10:
                 self.fLOG("FileTreeNode.difference: processed files", nb)
                 ti = ti2
