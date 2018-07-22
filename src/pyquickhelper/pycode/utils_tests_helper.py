@@ -33,7 +33,8 @@ else:
 if pylint_version <= '2.0.0':
     PyLinterRunV = PyLinterRun
 else:
-    PyLinterRunV = lambda *args, do_exit=False: PyLinterRun(*args, exit=do_exit)
+    PyLinterRunV = lambda *args, do_exit=False: PyLinterRun(
+        *args, exit=do_exit)
 
 
 def get_temp_folder(thisfile, name=None, clean=True, create=True, max_path=False, max_path_name="tpath"):

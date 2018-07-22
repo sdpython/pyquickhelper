@@ -436,7 +436,7 @@ class BenchMark:
                 functions[i]()
 
         self._progressbars = None
-        return self._metrics, self._meta
+        return self._metrics, self._metadata
 
     @property
     def Metrics(self):

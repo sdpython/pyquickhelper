@@ -5,9 +5,11 @@
 History
 =======
 
-current - 2018-05-27 - 0.00Mb
+current - 2018-07-22 - 0.00Mb
 =============================
 
+* `156`: fix issue with update to python-jenkins 1.1.0 (2018-07-22)
+* `155`: fix issue with pylint 2.0 (2018-07-22)
 * `154`: notebook coverage add color (2018-05-27)
 * `153`: fix message "do not understand why t1 >= t2 for file %s" % full (2018-05-27)
 * `151`: bug in autosignature, shorten path does not work for static method (2018-05-24)

@@ -26,6 +26,7 @@ import sys
 import socket
 import hashlib
 import re
+import requests
 from xml.sax.saxutils import escape
 import jenkins
 from ..loghelper.flog import noLOG
@@ -185,7 +186,7 @@ class JenkinsExt(jenkins.Jenkins):
         r = self._get_job_folder(name)
         if r is None:
             raise JenkinsExtException('delete[%s] failed (no job)' % (name))
-        self.jenkins_open(jenkins.Request(
+        self.jenkins_open(requests.Request(
             self.server + jenkins.DELETE_JOB % self._get_encoded_params(locals()), b''))
         if self.job_exists(name):
             raise JenkinsExtException('delete[%s] failed' % (name))

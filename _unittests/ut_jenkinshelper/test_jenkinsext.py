@@ -6,6 +6,8 @@ import sys
 import os
 import unittest
 import re
+import requests
+import jenkins
 
 
 try:
@@ -23,9 +25,10 @@ except ImportError:
 
 from src.pyquickhelper.loghelper import fLOG
 from src.pyquickhelper.jenkinshelper.jenkins_server import JenkinsExt, JenkinsExtException
+from src.pyquickhelper.pycode import ExtTestCase
 
 
-class TestJenkinsExt(unittest.TestCase):
+class TestJenkinsExt(ExtTestCase):
 
     def test_src_import(self):
         """for pylint"""
@@ -54,12 +57,12 @@ class TestJenkinsExt(unittest.TestCase):
         if platform == "win":
             job = "standalone [conda_update] [anaconda3]"
             cmd = srv.get_cmd_standalone(job)
-            assert "Anaconda3" in cmd
+            self.assertIn("Anaconda3", cmd)
 
         if platform == "win":
             job = "pyrsslocal [py35] <-- pyquickhelper, pyensae"
             cmd = "\n".join(srv.get_jenkins_script(job))
-            assert "Python34" not in cmd
+            self.assertNotIn("Python34", cmd)
         else:
             try:
                 job = "pyrsslocal [py35] <-- pyquickhelper, pyensae"
@@ -83,7 +86,7 @@ class TestJenkinsExt(unittest.TestCase):
                                        upstreams=None,
                                        location=r"/home/username/jenkins/")
 
-        assert "auto_unittest_setup_help.bat" in conf
+        self.assertIn("auto_unittest_setup_help.bat", conf)
 
         conf = srv.create_job_template("pyquickhelper",
                                        git_repo=github +
@@ -91,7 +94,7 @@ class TestJenkinsExt(unittest.TestCase):
                                        upstreams=None,
                                        location=r"/home/username/jenkins/",
                                        scheduler="H H(13-14) * * *")
-        assert "H H(13-14) * * *" in conf
+        self.assertIn("H H(13-14) * * *", conf)
 
         try:
             conf = srv.create_job_template("pyquickhelper",
@@ -110,7 +113,7 @@ class TestJenkinsExt(unittest.TestCase):
                                        upstreams=["pyquickhelper"],
                                        location=r"/home/username/jenkins/",
                                        scheduler=None)
-        assert "pyquickhelper" in conf
+        self.assertIn("pyquickhelper", conf)
 
     def test_jenkins_ext_setup_server(self):
         fLOG(
@@ -329,7 +332,11 @@ class TestJenkinsExt(unittest.TestCase):
                 if "%jenkinspythonexe% -u %current%setup.py build_script" not in conf:
                     raise Exception(conf)
 
-        assert i > 0
+        self.assertGreater(i, 0)
+
+    def test_python_jenkins_request(self):
+        req = requests.Request
+        self.assertNotEmpty(req)
 
 
 if __name__ == "__main__":
