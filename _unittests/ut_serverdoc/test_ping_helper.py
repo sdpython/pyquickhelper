@@ -20,6 +20,7 @@ except ImportError:
     import src
 
 from src.pyquickhelper.loghelper import fLOG
+from src.pyquickhelper.pycode import is_travis_or_appveyor
 from src.pyquickhelper.serverdoc.ping_helper import regular_ping_machine
 
 

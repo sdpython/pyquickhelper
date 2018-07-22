@@ -764,6 +764,8 @@ def write_pyproj(file_or_folder, location=None):
             return False
         if "temp_" in name:
             return False
+        if "temp2_" in name:
+            return False
         for a in avoid:
             if name.startswith(a + "\\"):
                 return False
