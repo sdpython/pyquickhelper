@@ -26,8 +26,8 @@ import sys
 import socket
 import hashlib
 import re
-import requests
 from xml.sax.saxutils import escape
+import requests
 import jenkins
 from ..loghelper.flog import noLOG
 from ..pycode.windows_scripts import windows_jenkins, windows_jenkins_any
@@ -160,17 +160,18 @@ class JenkinsExt(jenkins.Jenkins):
         """
         return self.engines
 
-    def jenkins_open(self, req, add_crumb=True):
+    def jenkins_open(self, req, add_crumb=True, resolve_auth=True):
         '''
         Overloads the same method from module jenkins to replace string by bytes
 
         @param      req             see `jenkins API <https://python-jenkins.readthedocs.org/en/latest/api.html>`_
         @param      add_crumb       see `jenkins API <https://python-jenkins.readthedocs.org/en/latest/api.html>`_
+        @param      resolve_auth    see `jenkins API <https://python-jenkins.readthedocs.org/en/latest/api.html>`_
         '''
         if self._mock:
             raise JenkinsExtException("mocking server, cannot be open")
 
-        response = self.jenkins_request(req=req, add_crumb=add_crumb)
+        response = self.jenkins_request(req=req, add_crumb=add_crumb, resolve_auth=resolve_auth)
         if response is None:
             raise jenkins.EmptyResponseException(
                 "Error communicating with server[%s]: "
@@ -195,9 +196,9 @@ class JenkinsExt(jenkins.Jenkins):
             'POST', self._build_url(jenkins.DELETE_JOB, locals())
         ))
         if self.job_exists(name) or self.job_exists(short_name):
-            raise JenkinsException('delete[%s] failed' % (name))
+            raise jenkins.JenkinsException('delete[%s] failed' % (name))
 
-    def get_jobs(self):
+    def get_jobs(self, folder_depth=0, view_name=None):
         """
         Get list of all jobs recursively to the given folder depth,
         see `get_all_jobs <https://python-jenkins.readthedocs.org/en/latest/api.html#jenkins.Jenkins.get_all_jobs>`_.
@@ -206,7 +207,7 @@ class JenkinsExt(jenkins.Jenkins):
 
         .. versionadded:: 1.3
         """
-        return jenkins.Jenkins.get_jobs(self)
+        return jenkins.Jenkins.get_jobs(self, folder_depth=folder_depth, view_name=view_name)
 
     def delete_all_jobs(self):
         """

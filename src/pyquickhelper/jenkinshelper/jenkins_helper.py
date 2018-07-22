@@ -57,12 +57,12 @@ def default_jenkins_jobs():
     return yml
 
 
-def setup_jenkins_server_yml(js, github="sdpython", modules=default_jenkins_jobs(),
+def setup_jenkins_server_yml(js, github="sdpython", modules=None,
                              overwrite=False, location=None, prefix="",
                              delete_first=False, disable_schedule=False,
                              fLOG=noLOG, **kwargs):
     """
-    Set up many jobs on Jenkins.
+    Sets up many jobs on Jenkins.
 
     @param      js                      @see cl JenkinsExt, jenkins server
     @param      github                  github account if it does not start with *http://*,
@@ -92,10 +92,14 @@ def setup_jenkins_server_yml(js, github="sdpython", modules=default_jenkins_jobs
 
     See `.local.jenkins.win.yml <https://github.com/sdpython/pyquickhelper/blob/master/.local.jenkins.win.yml>`_
     about the syntax of a yaml job description.
+    If *modules* is None, it is replaced by the results of
+    @see fn default_jenkins_jobs.
 
     .. versionchanged:: 1.5
         Parameter *disable_schedule* was added.
     """
+    if modules is None:
+        modules = default_jenkins_jobs()
     if delete_first:
         js.delete_all_jobs()
     r = js.setup_jenkins_server(github=github, modules=modules, overwrite=overwrite,
