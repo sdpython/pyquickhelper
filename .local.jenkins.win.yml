@@ -7,6 +7,7 @@ language: python
 # A path cannot be a virtual environment.
 python:
   - { PATH: "{{replace(Python37, '\\', '\\\\')}}", VERSION: 3.7, DIST: std }
+  - { PATH: "{{replace(Python27, '\\', '\\\\')}}", VERSION: 2.7, DIST: std }
   - { PATH: "{{replace(Anaconda3, '\\', '\\\\')}}", VERSION: 3.6, DIST: conda }
   
 # The test happens in a virtual environment not with the original distribution.
@@ -43,7 +44,7 @@ script:
   - { CMD: "python -u setup.py unittests -e \".*SKIP.*\" -g \".*((api)|(pylint)).*\"", NAME: "UT_SKIP", TIMEOUT: 900 }
   - { CMD: "python -u setup.py unittests -e \".*api.*\"", NAME: "UT_SKIP_API" }
   - { CMD: "python -u setup.py unittests -e \".*pylint.*\"", NAME: "UT_SKIP_PYLINT" }
-  - if [ ${VERSION} == "3.6" and ${DIST} == "std" ]
+  - if [ ${VERSION} == "3.7" and ${DIST} == "std" ]
       then 
         --CMD=python -u setup.py build_sphinx;
         --NAME=DOC;
@@ -54,7 +55,7 @@ after_script:
   - python -u setup.py bdist_wheel
   - if [ ${VERSION} == "2.7" and ${DIST} != "conda" ] then copy dist\*.whl {{root_path}}\..\..\local_pypi\local_pypi_server fi
   - if [ ${VERSION} == "2.7" ] then cd .. fi
-  - if [ ${VERSION} != "2.7" and ${DIST} != "conda" and ${VERSION} == "3.6" and ${NAME} == "UT" ] then copy dist\*.whl {{root_path}}\..\..\local_pypi\local_pypi_server fi
+  - if [ ${VERSION} != "2.7" and ${DIST} != "conda" and ${NAME} == "UT" ] then copy dist\*.whl {{root_path}}\..\..\local_pypi\local_pypi_server fi
 
 # Same as after script.
 documentation:
