@@ -6,8 +6,7 @@ language: python
 # A different script is generated for each PATH.
 # A path cannot be a virtual environment.
 python:
-  - { PATH: "{{replace(Python36, '\\', '\\\\')}}", VERSION: 3.6, DIST: std }
-  - { PATH: "{{replace(Python27, '\\', '\\\\')}}", VERSION: 2.7, DIST: std }
+  - { PATH: "{{replace(Python37, '\\', '\\\\')}}", VERSION: 3.7, DIST: std }
   - { PATH: "{{replace(Anaconda3, '\\', '\\\\')}}", VERSION: 3.6, DIST: conda }
   
 # The test happens in a virtual environment not with the original distribution.
