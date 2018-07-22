@@ -93,7 +93,7 @@ class TestYamlJenkins2(unittest.TestCase):
                 raise Exception(conf)
             if "anything\\pyquickhelper\\%NAME_JENKINS%" not in conf:
                 raise Exception(conf)
-            if "pyquickhelper_UT_36_std" in conf:
+            if "pyquickhelper_UT_%d%d_std" % sys.version_info[:2] in conf:
                 nb += 1
             if "H H(5-6) * * 0" in conf:
                 sch += 1

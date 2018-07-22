@@ -21,13 +21,14 @@ except ImportError:
     import src
 
 from src.pyquickhelper.loghelper import fLOG
+from src.pyquickhelper.pycode import ExtTestCase
 from src.pyquickhelper.jenkinshelper.yaml_helper import load_yaml, enumerate_convert_yaml_into_instructions, convert_sequence_into_batch_file
 
 if sys.version_info[0] == 2:
     FileNotFoundError = Exception
 
 
-class TestYamlSplit2(unittest.TestCase):
+class TestYamlSplit2(ExtTestCase):
 
     def test_src_import(self):
         """for pylint"""
@@ -61,7 +62,7 @@ class TestYamlSplit2(unittest.TestCase):
             if not isinstance(conv, list):
                 raise TypeError(str(type(conv)) + "\n" + str(conv))
             convs.append(conv)
-        assert len(res) > 0
+        self.assertNotEmpty(res)
 
         self.assertEqual(len(convs), 17)
         for conv in convs:

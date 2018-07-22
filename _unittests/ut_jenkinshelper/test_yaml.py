@@ -99,6 +99,7 @@ class TestYaml(unittest.TestCase):
             raise FileNotFoundError(yml)
         context = dict(Python34="fake", Python35=os.path.dirname(sys.executable) + "35",
                        Python36=os.path.dirname(sys.executable) + "36",
+                       Python37=os.path.dirname(sys.executable) + "37",
                        Python27="fake2", Anaconda3=None, Anaconda2=None,
                        WinPython36=None, root_path="ROOT", project_name="pyquickhelper")
         obj, name = load_yaml(yml, context=context, platform="win")
@@ -148,6 +149,7 @@ class TestYaml(unittest.TestCase):
             raise FileNotFoundError(yml)
         context = dict(Python34="fake", Python35="C:\\Python35_x64",
                        Python36="C:\\Python36_x64",
+                       Python37="C:\\Python37_x64",
                        Python27=None, Anaconda3=None, Anaconda2=None,
                        WinPython36=None, project_name="pyquickhelper",
                        root_path="ROOT")
