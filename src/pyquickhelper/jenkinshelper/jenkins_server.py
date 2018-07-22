@@ -45,8 +45,10 @@ _default_engine_paths = {
     "windows": {
         "__PY35__": "__PY35__",
         "__PY36__": "__PY36__",
+        "__PY37__": "__PY37__",
         "__PY35_X64__": "__PY35_X64__",
         "__PY36_X64__": "__PY36_X64__",
+        "__PY37_X64__": "__PY37_X64__",
         "__PY34__": "__PY34__",
         "__PY34_X64__": "__PY34_X64__",
         "__PY27_X64__": "__PY27_X64__",
@@ -187,10 +189,12 @@ class JenkinsExt(jenkins.Jenkins):
             raise JenkinsExtException('delete[%s] failed (no job)' % (name))
 
         folder_url, short_name = self._get_job_folder(name)
+        if folder_url is None:
+            raise ValueError("folder_url is None for job '{0}'".format(name))
         self.jenkins_open(requests.Request(
             'POST', self._build_url(jenkins.DELETE_JOB, locals())
         ))
-        if self.job_exists(name):
+        if self.job_exists(name) or self.job_exists(short_name):
             raise JenkinsException('delete[%s] failed' % (name))
 
     def get_jobs(self):
@@ -542,7 +546,8 @@ class JenkinsExt(jenkins.Jenkins):
                 for cmd in cmds:
                     cmdn = replacements(cmd, engine, python,
                                         namee + "_" + job_hash, module_name)
-                    if "run27" in cmdn and ("Python34" in cmdn or "Python35" in cmdn or "Python36" in cmdn):
+                    if "run27" in cmdn and ("Python34" in cmdn or "Python35" in cmdn or \
+                                            "Python36" in cmdn "Python37" in cmdn):
                         raise ValueError(
                             "Python version mismatch\nENGINE\n{2}\n----BEFORE\n{0}\n-----\nAFTER\n-----\n{1}".format(cmd, cmdn, engine))
                     res.append(cmdn)

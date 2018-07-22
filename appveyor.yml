@@ -8,7 +8,7 @@ environment:
 
   matrix:
 
-    - PYTHON: "C:\\Python36-x64"
+    - PYTHON: "C:\\Python37-x64"
       PYTHON_VERSION: "3.7.x"
       PYTHON_ARCH: "64"
 
@@ -16,7 +16,7 @@ install:
     # Install miktex to get pdflatex, if we don't get it from the cache
     # - if not exist c:\miktex\texmfs\install\miktex\bin\pdflatex.exe appveyor DownloadFile http://miktex.org/download/ctan/systems/win32/miktex/setup/windows-x86/miktex-portable.exe
     # - if not exist c:\miktex\texmfs\install\miktex\bin\pdflatex.exe 7z x miktex-portable.exe -oC:\miktex >NUL
-    - set miktex_install=miktex-portable-2.9.6621.exe
+    - set miktex_install=miktex-portable-2.9.6753.exe
     - if not exist c:\miktex\texmfs\install\miktex\bin\pdflatex.exe appveyor DownloadFile https://miktex.org/download/ctan/systems/win32/miktex/setup/windows-x86/%miktex_install%
     - if not exist c:\miktex\texmfs\install\miktex\bin\pdflatex.exe 7z x %miktex_install% -oC:\miktex >NUL
     - if not exist c:\miktex @echo Unable to find c:\miktex

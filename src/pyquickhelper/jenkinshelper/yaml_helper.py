@@ -103,7 +103,7 @@ def evaluate_condition(cond, variables=None):
 
     Example of a condition::
 
-        [ ${PYTHON} == "C:\\Python36_x64" ]
+        [ ${PYTHON} == "C:\\Python370_x64" ]
     """
     if variables is not None:
         for k, v in variables.items():
@@ -133,7 +133,7 @@ def interpret_instruction(inst, variables=None):
 
     Example of a statement::
 
-        if [ ${PYTHON} == "C:\\\\Python36_x64" ] then python setup.py build_sphinx fi
+        if [ ${PYTHON} == "C:\\\\Python370_x64" ] then python setup.py build_sphinx fi
     """
     if isinstance(inst, list):
         res = [interpret_instruction(_, variables) for _ in inst]

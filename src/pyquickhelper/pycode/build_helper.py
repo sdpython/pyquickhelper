@@ -117,7 +117,8 @@ def private_script_replacements(script, module, requirements, port, raise_except
             "windows": {
                 "__PY35__": None,
                 "__PY35_X64__": "c:\\Python352_x64",
-                "__PY36_X64__": "c:\\Python364_x64",
+                "__PY36_X64__": "c:\\Python365_x64",
+                "__PY37_X64__": "c:\\Python370_x64",
                 "__PY27_X64__": "c:\\Anaconda2",
             },
         }

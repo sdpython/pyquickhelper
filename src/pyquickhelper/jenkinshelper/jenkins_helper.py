@@ -27,10 +27,12 @@ def default_engines():
     """
     res = dict(Anaconda2="d:\\Anaconda",
                Anaconda3="d:\\Anaconda3",
+               Python37="c:\\Python37_x64",
                Python36="c:\\Python36_x64",
                Python35="c:\\Python35_x64",
                Python34="c:\\Python34_x64",
                Python27="c:\\Python27",
+               WinPython37="c:\\APythonENSAE\\python37",
                WinPython36="c:\\APythonENSAE\\python36",
                WinPython35="c:\\APythonENSAE\\python35")
     return res
