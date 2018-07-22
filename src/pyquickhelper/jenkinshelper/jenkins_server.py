@@ -546,7 +546,7 @@ class JenkinsExt(jenkins.Jenkins):
                 for cmd in cmds:
                     cmdn = replacements(cmd, engine, python,
                                         namee + "_" + job_hash, module_name)
-                    if "run27" in cmdn and ("Python34" in cmdn or "Python35" in cmdn or \
+                    if "run27" in cmdn and ("Python34" in cmdn or "Python35" in cmdn or
                                             "Python36" in cmdn or "Python37" in cmdn):
                         raise ValueError(
                             "Python version mismatch\nENGINE\n{2}\n----BEFORE\n{0}\n-----\nAFTER\n-----\n{1}".format(cmd, cmdn, engine))

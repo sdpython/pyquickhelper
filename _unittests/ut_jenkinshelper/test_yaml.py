@@ -50,6 +50,7 @@ class TestYaml(unittest.TestCase):
             raise FileNotFoundError(yml)
         context = dict(Python34=None, Python35=os.path.dirname(sys.executable),
                        Python36=os.path.dirname(sys.executable),
+                       Python37=os.path.dirname(sys.executable),
                        Python27=None, Anaconda3=None, Anaconda2=None,
                        WinPython36=None, project_name="pyquickhelper",
                        root_path="ROOT")
@@ -173,6 +174,11 @@ class TestYaml(unittest.TestCase):
         vers_ = "%d.%d" % sys.version_info[:2]
         conv = [
             _ for _ in convs if "SET NAME=UT" in _ and "VERSION=%s" % vers_ in _ and '-g' not in _]
+        if len(conv) != 3:
+            vers_ = "3.7"
+            vers = "37"
+            conv = [
+                _ for _ in convs if "SET NAME=UT" in _ and "VERSION=%s" % vers_ in _ and '-g' not in _]
         if len(conv) != 3:
             rows = [str(_) for _ in conv]
             raise Exception("len(conv)={0}\n----\n{1}\n-----\n{2}".format(
@@ -332,6 +338,7 @@ class TestYaml(unittest.TestCase):
             raise FileNotFoundError(yml)
         context = dict(Python34=None, Python35="C:\\Python35_x64",
                        Python36="C:\\Python36_x64",
+                       Python37="C:\\Python37_x64",
                        Python27="C:\\Python27_x64", Anaconda3=None, Anaconda2=None,
                        WinPython36=None, project_name="pyquickhelper",
                        root_path="ROOT")
@@ -396,7 +403,7 @@ class TestYaml(unittest.TestCase):
             if %errorlevel% neq 0 exit /b %errorlevel%
             pip install bin\\jyquickhelper-0.2-py2-none-any.whl
             if %errorlevel% neq 0 exit /b %errorlevel%
-            C:\\Python36_x64\\python -u setup.py copy27
+            C:\\Python37_x64\\python -u setup.py copy27
             if %errorlevel% neq 0 exit /b %errorlevel%
             cd dist_module27
             if %errorlevel% neq 0 exit /b %errorlevel%
