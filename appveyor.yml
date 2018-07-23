@@ -28,7 +28,6 @@ install:
     - "%PYTHON%\\python -m pip install --upgrade pip"
     - "%PYTHON%\\Scripts\\pip install pymyinstall"
     - "%PYTHON%\\Scripts\\pymy_install3 --set=pyquickhelper"
-    - "%PYTHON%\\Scripts\\pywin32_postinstall.py -install"
     - "%PYTHON%\\Scripts\\pymy_install3 pylzma"
     - "%PYTHON%\\Scripts\\pip install cryptography pycryptodomex"
     - "%PYTHON%\\Scripts\\pip install backports.shutil-get-terminal-size"
