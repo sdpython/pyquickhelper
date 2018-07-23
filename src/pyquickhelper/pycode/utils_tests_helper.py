@@ -30,7 +30,7 @@ if sys.version_info[0] == 2:
 else:
     from io import StringIO
 
-if pylint_version <= '2.0.0':
+if pylint_version >= '2.0.0':
     PyLinterRunV = PyLinterRun
 else:
     PyLinterRunV = lambda *args, do_exit=False: PyLinterRun(
