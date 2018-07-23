@@ -135,6 +135,7 @@ class TestYamlJenkins(unittest.TestCase):
                                        location="anything", disable_schedule=disable_schedule,
                                        credentials=credentials)
         reg = re.compile("<description>(.*)</description>")
+        exp_ut = "python3_module_template_UT_%s_std" % vers
         nb = 0
         sch = 0
         desc = 0
@@ -164,7 +165,7 @@ class TestYamlJenkins(unittest.TestCase):
                 raise Exception(conf)
             if "anything\\python3_module_template\\%NAME_JENKINS%" not in conf:
                 nb_jen += 1
-            if "python3_module_template_UT_36_std" in conf:
+            if "python3_module_template_UT_36_std" in conf or exp_ut in conf:
                 nb += 1
             if "H H(20-21) * * 0" in conf:
                 sch += 1
