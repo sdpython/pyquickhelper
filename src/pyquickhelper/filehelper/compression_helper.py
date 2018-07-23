@@ -30,12 +30,8 @@ def zip_files(filename, file_set, root=None, fLOG=noLOG):
     @param      fLOG            logging function
     @return                     number of added files (or content if filename is None)
 
-    .. versionchanged:: 1.3
-        Parameter *root* was added.
-
-    .. versionchanged:: 1.4
-        *filename* can be None, the function compresses into bytes without saving the results.
-        Rename parameter *fileSet* into *file_set*.
+    *filename* can be None, the function compresses
+    into bytes without saving the results.
     """
     nb = 0
     a1980 = datetime.datetime(1980, 1, 1)
@@ -68,7 +64,7 @@ def zip_files(filename, file_set, root=None, fLOG=noLOG):
 def unzip_files(zipf, where_to=None, fLOG=noLOG, fvalid=None, remove_space=True,
                 fail_if_error=True):
     """
-    Unzip files from a zip archive.
+    Unzips files from a zip archive.
 
     @param      zipf            archive (or bytes or BytesIO)
     @param      where_to        destination folder (can be None, the result is a list of tuple)
@@ -80,13 +76,6 @@ def unzip_files(zipf, where_to=None, fLOG=noLOG, fvalid=None, remove_space=True,
                                 (typically a weird character in a filename),
                                 otherwise a warning is thrown.
     @return                     list of unzipped files
-
-    .. versionchanged:: 1.4
-        Add parameter *fvalid*.
-        Moved to *filehelper*.
-
-    .. versionadded:: 1.6
-        Parameter *fail_if_error* was added.
     """
     if sys.version_info[0] == 2:
         if isinstance(zipf, bytearray):
@@ -198,13 +187,6 @@ def gzip_files(filename, file_set, encoding=None, fLOG=noLOG):
     @param      encoding        encoding of input files (no double compression then)
     @param      fLOG            logging function
     @return                     bytes (if filename is None) or None
-
-    .. versionchanged:: 1.4
-        Remove parameter *filename_zip*, compress in memory.
-        Rename parameter *filename_gz* into *filename*, *fileSet* into *file_set*.
-
-    .. versionchanged:: 1.5
-        Add parameter *encoding*.
     """
     if filename is None:
         filename = BytesIO()
@@ -238,11 +220,6 @@ def ungzip_files(filename, where_to=None, fLOG=noLOG, fvalid=None, remove_space=
     @param      unzip           unzip file after gzip
     @param      encoding        encoding
     @return                     list of unzipped files
-
-    .. versionadded:: 1.4
-
-    .. versionadded:: 1.5
-        Parameter *encoding* was added.
     """
     if sys.version_info[0] == 2:
         if isinstance(filename, bytearray):
@@ -299,13 +276,19 @@ def zip7_files(filename_7z, file_set, fLOG=noLOG, temp_folder="."):
                                 folder *temp_folder*, it will be removed afterwords
     @return                     number of added files
 
-    .. versionchanged:: 1.5
+    .. faqref::
+        :title: Why module pylzma does not work?
+        :lid: faq-pylzma-ref
+
         The module :epkg:`pylzma`
         failed to decompress the file produced by the latest version
         of :epkg:`7z` (2016-09-23). The compression
         was changed by tweaking the command line. LZMA is used instead LZMA2.
         The current version does not include this
         `commit <https://github.com/fancycode/pylzma/commit/b5c3c2bd4ab7abfb65de772861ecc600fe37394b>`_.
+        Or you can clone the package
+        `sdpython.pylzma <https://github.com/sdpython/pylzma>`_
+        and build it yourself with ``python setup.py bdist_wheel``.
     """
     if sys.platform.startswith("win"):
         exe = r"C:\Program Files\7-Zip\7z.exe"
@@ -350,11 +333,7 @@ def un7zip_files(zipf, where_to=None, fLOG=noLOG, fvalid=None,
     @return                     list of unzipped files
 
     The function requires module :epkg:`pylzma`.
-
-    .. versionadded:: 1.4
-
-    .. versionchanged:: 1.6
-        Parameter *cmd_line* was added.
+    See :ref:`Why module pylzma does not work? <faq-pylzma-ref>`.
     """
     if cmd_line:
         if not isinstance(zipf, str  # unicode
@@ -492,8 +471,6 @@ def unrar_files(zipf, where_to=None, fLOG=noLOG, fvalid=None, remove_space=True)
                                 must be unzipped, False otherwise, if None, the default answer is True
     @param      remove_space    remove spaces in created local path (+ ``',()``)
     @return                     list of unzipped files
-
-    .. versionadded:: 1.5
     """
     if sys.platform.startswith("win"):
         exe = r"C:\Program Files\7-Zip\7z.exe"

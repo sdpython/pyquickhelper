@@ -20,6 +20,7 @@ except ImportError:
         sys.path.append(path_)
     import src
 
+from src.pyquickhelper.loghelper import fLOG
 from src.pyquickhelper.pycode import check_pep8, ExtTestCase
 from src.pyquickhelper.pycode.utils_tests_helper import PEP8Exception
 
@@ -39,14 +40,19 @@ class TestCheckPep8Sample(ExtTestCase):
         aa + 5
 
     def test_unused_variable(self):
+        fLOG(
+            __file__,
+            self._testMethodName,
+            OutputPrint=__name__ == "__main__")
+
         this = os.path.abspath(os.path.dirname(__file__))
 
         def check_pep8_one_file():
-            check_pep8(this, fLOG=print, max_line_length=150, recursive=False,
+            check_pep8(this, fLOG=fLOG, max_line_length=150, recursive=False,
                        pattern="test_check_pep8_sample.py")
 
         def check_pep8_error_file():
-            check_pep8(this, fLOG=print, recursive=False,
+            check_pep8(this, fLOG=fLOG, recursive=False,
                        pylint_ignore=('C0111', 'R0201', 'C0103'),
                        pattern="test_check_pep8_sample.py",
                        skip=["test_check_pep8_sample.py:30",
@@ -64,13 +70,17 @@ class TestCheckPep8Sample(ExtTestCase):
         self.assertRaise(check_pep8_error_file, PEP8Exception,
                          "W0104: Statement seems to have no effect")
 
-        check_pep8(this, fLOG=print, max_line_length=170, recursive=False,
+        check_pep8(this, fLOG=fLOG, max_line_length=170, recursive=False,
                    pylint_ignore=('C0111', 'R0201', 'C0103'),
                    pattern="test_check_pep8_sample.py",
                    skip=["test_check_pep8_sample.py:373: [E731]",
                          "test_check_pep8_sample.py:36",
                          "test_check_pep8_sample.py:39",
-                         "test_check_pep8_sample.py:11"])
+                         "test_check_pep8_sample.py:11",
+                         "test_check_pep8_sample.py:40: E0602",
+                         "test_check_pep8_sample.py:40: W0104",
+                         "test_check_pep8_sample.py:37: W0612",
+                         ])
 
 
 if __name__ == "__main__":
