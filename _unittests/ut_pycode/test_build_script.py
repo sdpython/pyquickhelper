@@ -43,7 +43,7 @@ class TestBuildScript(unittest.TestCase):
             lines = sc.split("\n")
             for line in lines:
                 if "__" in line and _default_nofolder not in line:
-                    raise Exception("issue with __ in:\n" +
+                    raise Exception("issue with '__' in:\n" +
                                     line + "\nFULL\n" + sc)
 
             scc = get_script_command(
@@ -55,7 +55,7 @@ class TestBuildScript(unittest.TestCase):
                 "local_pypi", "pyquickhelper", port=8067, requirements=[])
             self.assertIn("python", sccc)
             if "__" in sccc:
-                raise Exception(sccc)
+                raise Exception("'__' not in script\n" + sccc)
         else:
             # not yet implemented for this platform
             return
@@ -84,7 +84,8 @@ class TestBuildScript(unittest.TestCase):
                 if "__" in sc:
                     if sys.version_info[0] == 2:
                         continue
-                    raise Exception("{0}\n----------\n{1}".format(c, sc))
+                    raise Exception(
+                        "'__' in script\n{0}\n----------\n{1}".format(c, sc))
 
             unit_test_folder = os.path.abspath(
                 os.path.join(os.path.dirname(__file__), ".."))

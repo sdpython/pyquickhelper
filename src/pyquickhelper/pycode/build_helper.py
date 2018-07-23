@@ -16,8 +16,8 @@ from .windows_scripts import windows_any_setup_command, windows_blogpost, window
 from .windows_scripts import pyproj_template, copy_sphinx_to_dist
 from ..filehelper.file_info import is_file_string
 
-#: nick name for no folder
-_default_nofolder = "__NOFOLDERSHOULDNOTEXIST__"
+#: nickname for no folder
+_default_nofolder = "__NOFOLDERSHOULDNOTEXIST%d%d__" % sys.version_info[:2]
 
 
 def choose_path(*paths):
@@ -57,9 +57,9 @@ default_values = {
     "windows": {
         "__PY35__": choose_path("c:\\Python35", _default_nofolder),
         "__PY35_X64__": choose_path("c:\\Python35_x64", 'c:\\python35-x64', _default_nofolder),
-        "__PY38_X64__": choose_path("c:\\Python38[0-9]{1}_x64", "c:\\Python38_x64", _default_nofolder),
-        "__PY37_X64__": choose_path("c:\\Python37[0-9]{1}_x64", "c:\\Python37_x64", _default_nofolder),
         "__PY36_X64__": choose_path("c:\\Python36[0-9]{1}_x64", "c:\\Python36_x64", 'c:\\python36-x64', _default_nofolder),
+        "__PY37_X64__": choose_path("c:\\Python37[0-9]{1}_x64", "c:\\Python37_x64", _default_nofolder),
+        "__PY38_X64__": choose_path("c:\\Python38[0-9]{1}_x64", "c:\\Python38_x64", _default_nofolder),
         "__PY27_X64__": choose_path("c:\\Python27_x64", "c:\\Python27", "c:\\Anaconda2", "c:\\Anaconda", _default_nofolder),
     },
 }
@@ -96,8 +96,9 @@ def private_replacement_(script, paths, key="__ADDITIONAL_LOCAL_PATH__"):
     return script
 
 
-def private_script_replacements(script, module, requirements, port, raise_exception=True, platform=sys.platform,
-                                default_engine_paths=None, additional_local_path=None):
+def private_script_replacements(script, module, requirements, port, raise_exception=True,
+                                platform=sys.platform, default_engine_paths=None,
+                                additional_local_path=None):
     """
     Runs last replacements.
 
@@ -142,12 +143,9 @@ def private_script_replacements(script, module, requirements, port, raise_except
               "Only this user" or have multiple versions of Python installed. Copying the appropriate PythonXX.dll
               to the virtualenv Scripts/ directory may fix this problem.
 
-    The function replaces ``rem _PATH_VIRTUAL_ENV_`` with an instruction to copy these DLLs.
-
-    .. versionchanged:: 1.3
-        Parameter *requirements* can be a list or a tuple.
-        Parameter *additional_local_path* was added.
-        Update for Python 3.5.
+    The function replaces ``rem _PATH_VIRTUAL_ENV_``
+    with an instruction to copy these DLLs.
+    Parameter *requirements* can be a list or a tuple.
     """
     if isinstance(script, list):
         return [private_script_replacements(s, module, requirements,
