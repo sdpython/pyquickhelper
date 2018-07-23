@@ -171,7 +171,8 @@ class JenkinsExt(jenkins.Jenkins):
         if self._mock:
             raise JenkinsExtException("mocking server, cannot be open")
 
-        response = self.jenkins_request(req=req, add_crumb=add_crumb, resolve_auth=resolve_auth)
+        response = self.jenkins_request(
+            req=req, add_crumb=add_crumb, resolve_auth=resolve_auth)
         if response is None:
             raise jenkins.EmptyResponseException(
                 "Error communicating with server[%s]: "

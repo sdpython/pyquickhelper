@@ -5,8 +5,13 @@
 History
 =======
 
-current - 2018-07-22 - 0.00Mb
+current - 2018-07-23 - 0.00Mb
 =============================
+
+* `159`: fix a bug with pylint version (2018-07-23)
+
+1.8.2644 - 2018-07-22 - 1.99Mb
+==============================
 
 * `158`: replaces clock by perf_counter (2018-07-22)
 * `156`: fix issue with update to python-jenkins 1.1.0 (2018-07-22)
