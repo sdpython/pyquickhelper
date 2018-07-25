@@ -23,7 +23,7 @@ except ImportError:
 from src.pyquickhelper.ipythonhelper.notebook_helper import install_python_kernel_for_unittest
 from src.pyquickhelper.ipythonhelper import run_notebook, NotebookError
 from src.pyquickhelper.pycode import get_temp_folder
-from src.pyquickhelper.pycode import is_travis_or_appveyor, ExtTestCase, skipif_appveyor
+from src.pyquickhelper.pycode import is_travis_or_appveyor, ExtTestCase
 
 
 class TestNotebookRunner(ExtTestCase):
@@ -49,7 +49,6 @@ class TestNotebookRunner(ExtTestCase):
         self.assertIn("datetime.datetime(2015, 3, 2", out)
         self.assertIsInstance(stat, dict)
 
-    @skipif_appveyor("everything is not closed")
     @unittest.skipIf(sys.version_info[0] == 2, reason="notebook is written in python 3")
     def test_notebook_runner_exc(self):
         temp = get_temp_folder(__file__, "temp_notebook")

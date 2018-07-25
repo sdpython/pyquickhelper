@@ -5,14 +5,15 @@
 History
 =======
 
-current - 2018-07-23 - 0.00Mb
+current - 2018-07-25 - 0.00Mb
 =============================
 
-* `159`: fix a bug with pylint version (2018-07-23)
+* `160`: notebook server remains open if an exception happens during the execution (2018-07-25)
 
-1.8.2644 - 2018-07-22 - 1.99Mb
+1.8.2650 - 2018-07-23 - 1.99Mb
 ==============================
 
+* `159`: fix a bug with pylint version (2018-07-23)
 * `158`: replaces clock by perf_counter (2018-07-22)
 * `156`: fix issue with update to python-jenkins 1.1.0 (2018-07-22)
 * `155`: fix issue with pylint 2.0 (2018-07-22)

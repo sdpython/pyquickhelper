@@ -173,21 +173,25 @@ def run_notebook(filename, profile_dir=None, working_dir=None, skip_exceptions=F
                                code_init=code_init, log_level=log_level,
                                extended_args=extended_args, kernel_name=kernel_name,
                                replacements=cached_rep, kernel=True, detailed_log=detailed_log)
-    stat = nb_runner.run_notebook(skip_exceptions=skip_exceptions, additional_path=additional_path,
-                                  valid=valid, clean_function=clean_function)
 
-    if outfilename is not None:
-        with open(outfilename, 'w', encoding=encoding) as f:
-            try:
-                s = writes(nb_runner.nb)
-            except NotebookException as e:
-                raise NotebookException(
-                    "issue with notebook: " + filename) from e
-            if isinstance(s, bytes):
-                s = s.decode('utf8')
-            f.write(s)
+    try:
+        stat = nb_runner.run_notebook(skip_exceptions=skip_exceptions, additional_path=additional_path,
+                                      valid=valid, clean_function=clean_function)
 
-    nb_runner.shutdown_kernel()
+        if outfilename is not None:
+            with open(outfilename, 'w', encoding=encoding) as f:
+                try:
+                    s = writes(nb_runner.nb)
+                except NotebookException as e:
+                    raise NotebookException(
+                        "issue with notebook: " + filename) from e
+                if isinstance(s, bytes):
+                    s = s.decode('utf8')
+                f.write(s)
+
+    finally:
+        nb_runner.shutdown_kernel()
+
     return stat, out.getvalue()
 
 
