@@ -1,5 +1,5 @@
 """
-@brief      test log(time=6s)
+@brief      test log(time=7s)
 """
 
 import sys
@@ -35,15 +35,12 @@ class TestDownloadHelper(ExtTestCase):
         """for pylint"""
         self.assertTrue(src is not None)
 
+    @unittest.skipIf(sys.version_info[0] == 2, reason="timeout")
     def test_download_notimeout(self):
         fLOG(
             __file__,
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
-
-        if sys.version_info[0] == 2:
-            # issue with timeout for python 2.7
-            return
 
         url = "https://raw.githubusercontent.com/sdpython/pyquickhelper/master/src/pyquickhelper/ipythonhelper/magic_parser.py"
         content = get_url_content_timeout(url, encoding="utf8")
@@ -51,15 +48,12 @@ class TestDownloadHelper(ExtTestCase):
         self.assertIsInstance(content, str  # unicode#
                               )
 
+    @unittest.skipIf(sys.version_info[0] == 2, reason="timeout")
     def test_download_notimeout_chunk(self):
         fLOG(
             __file__,
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
-
-        if sys.version_info[0] == 2:
-            # issue with timeout for python 2.7
-            return
 
         temp = get_temp_folder(__file__, "temp_download_notimeout_chunk")
         url = "https://raw.githubusercontent.com/sdpython/pyquickhelper/master/src/pyquickhelper/ipythonhelper/magic_parser.py"
@@ -84,15 +78,12 @@ class TestDownloadHelper(ExtTestCase):
         self.assertIsInstance(content, str  # unicode#
                               )
 
+    @unittest.skipIf(sys.version_info[0] == 2, reason="timeout")
     def test_download_timeout(self):
         fLOG(
             __file__,
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
-
-        if sys.version_info[0] == 2:
-            # issue with timeout for python 2.7
-            return
 
         url = "https://localhost:878777/should_not_exists"
         try:

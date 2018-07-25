@@ -1,5 +1,5 @@
 """
-@brief      test tree node (time=6s)
+@brief      test tree node (time=7s)
 """
 
 
@@ -23,10 +23,11 @@ except ImportError:
     import src
 
 from src.pyquickhelper.loghelper.flog import fLOG
+from src.pyquickhelper.pycode import ExtTestCase
 from src.pyquickhelper.filehelper.visual_sync import create_visual_diff_through_html
 
 
-class TestJsDiffLib(unittest.TestCase):
+class TestJsDiffLib(ExtTestCase):
 
     def test_src_import(self):
         """for pylint"""
@@ -64,8 +65,8 @@ class TestJsDiffLib(unittest.TestCase):
             src.pyquickhelper.filehelper.visual_sync.__file__)[0]
         ma = tt
         p = create_visual_diff_through_html("a", "b")
-        assert len(p) > 0
-        assert os.path.exists(os.path.join(ma, "difflib.js"))
+        self.assertNotEmpty(p)
+        self.assertExists(os.path.join(ma, "difflib.js"))
 
 
 if __name__ == "__main__":
