@@ -55,12 +55,11 @@ def choose_path(*paths):
 
 default_values = {
     "windows": {
-        "__PY35__": choose_path("c:\\Python35", _default_nofolder),
-        "__PY35_X64__": choose_path("c:\\Python35_x64", 'c:\\python35-x64', _default_nofolder),
-        "__PY36_X64__": choose_path("c:\\Python36[0-9]{1}_x64", "c:\\Python36_x64", 'c:\\python36-x64', _default_nofolder),
-        "__PY37_X64__": choose_path("c:\\Python37[0-9]{1}_x64", "c:\\Python37_x64", _default_nofolder),
-        "__PY38_X64__": choose_path("c:\\Python38[0-9]{1}_x64", "c:\\Python38_x64", _default_nofolder),
         "__PY27_X64__": choose_path("c:\\Python27_x64", "c:\\Python27", "c:\\Anaconda2", "c:\\Anaconda", _default_nofolder),
+        "__PY35_X64__": choose_path("c:\\Python35[0-9]{1}_x64", "c:\\Python35_x64", 'c:\\python35-x64', _default_nofolder),
+        "__PY36_X64__": choose_path("c:\\Python36[0-9]{1}_x64", "c:\\Python36_x64", "c:\\Python36-x64", _default_nofolder),
+        "__PY37_X64__": choose_path("c:\\Python37[0-9]{1}_x64", "c:\\Python37_x64", "c:\\Python37-x64", _default_nofolder),
+        "__PY38_X64__": choose_path("c:\\Python38[0-9]{1}_x64", "c:\\Python38_x64", "c:\\Python38-x64", _default_nofolder),
     },
 }
 
@@ -147,6 +146,10 @@ def private_script_replacements(script, module, requirements, port, raise_except
     with an instruction to copy these DLLs.
     Parameter *requirements* can be a list or a tuple.
     """
+    global default_values
+    if default_engine_paths is None:
+        default_engine_paths = default_values
+
     if isinstance(script, list):
         return [private_script_replacements(s, module, requirements,
                                             port, raise_exception, platform,
@@ -154,8 +157,8 @@ def private_script_replacements(script, module, requirements, port, raise_except
 
     if platform.startswith("win"):
         plat = "windows"
-        global default_values, _default_nofolder
-        def_values = default_values if default_engine_paths is None else default_engine_paths
+        global _default_nofolder
+        def_values = default_engine_paths
 
         values = [v for v in def_values[
             plat].values() if v is not None and v != _default_nofolder]

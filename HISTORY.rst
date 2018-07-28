@@ -5,9 +5,10 @@
 History
 =======
 
-current - 2018-07-25 - 0.00Mb
+current - 2018-07-28 - 0.00Mb
 =============================
 
+* `161`: fix unit test test_build_script on appveyor (2018-07-28)
 * `160`: notebook server remains open if an exception happens during the execution (2018-07-25)
 
 1.8.2650 - 2018-07-23 - 1.99Mb
