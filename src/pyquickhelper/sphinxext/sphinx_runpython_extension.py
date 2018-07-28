@@ -283,7 +283,7 @@ class RunPythonDirective(Directive):
                 print("**line**", "*" +str(l)+"*")
                 print('')
 
-    Which displays interpreted RST:
+    Which displays interpreted :epkg:`RST`:
 
     .. runpython::
         :rst:
@@ -297,8 +297,10 @@ class RunPythonDirective(Directive):
     `docutils directives <http://docutils.sourceforge.net/docs/ref/rst/directives.html>`_
     and `Sphinx directives <http://sphinx-doc.org/rest.html>`_
     with function `nested_parse_with_titles <http://sphinx-doc.org/extdev/markupapi.html?highlight=nested_parse>`_
-
     Unless *process* option is enabled, global variables cannot be used.
+    `sphinx-autorun <https://pypi.org/project/sphinx-autorun/>`_ offers a similar
+    service except it cannot produce compile :epkg:`RST` content,
+    hide the source and a couple of other options.
 
     .. versionchanged:: 1.7
         Options *warningout*, *toggle* were added.

@@ -360,6 +360,12 @@ but let the user unhide it by clicking on a button.
     for i in range(0, 10):
         print("i=", i)
 
+.. index:: sphinx-autorun
+
+`sphinx-autorun <https://pypi.org/project/sphinx-autorun/>`_ offers a similar
+service except it cannot produce compile :epkg:`RST` content,
+hide the source and a couple of other options.
+
 *sharenet*: add link to share
 +++++++++++++++++++++++++++++
 
