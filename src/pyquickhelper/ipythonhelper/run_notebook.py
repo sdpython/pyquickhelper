@@ -13,7 +13,7 @@ from datetime import datetime, timedelta
 
 from ..loghelper.flog import noLOG
 from ..filehelper import explore_folder
-from .notebook_runner import NotebookRunner
+from .notebook_runner import NotebookRunner, NotebookKernelError
 from .notebook_exception import NotebookException
 from .notebook_helper import writes
 
@@ -79,7 +79,7 @@ def run_notebook(filename, profile_dir=None, working_dir=None, skip_exceptions=F
                  valid=None, clean_function=None, code_init=None,
                  fLOG=noLOG, kernel_name="python", log_level="30",
                  extended_args=None, cache_urls=None, replacements=None,
-                 detailed_log=None):
+                 detailed_log=None, startup_timeout=60):
     """
     Runs a notebook end to end,
     it is inspired from module `runipy <https://github.com/paulgb/runipy/>`_.
@@ -106,6 +106,8 @@ def run_notebook(filename, profile_dir=None, working_dir=None, skip_exceptions=F
     @param      replacements        list of additional replacements, list of tuple
     @param      detailed_log        a second function to log more information when executing the notebook,
                                     this should be a function with the same signature as ``print`` or None
+    @param      startup_timeout     wait for this long for the kernel to be ready,
+                                    see `wait_for_ready <https://github.com/jupyter/jupyter_client/blob/master/jupyter_client/blocking/client.py#L84>`_
     @return                         tuple (statistics, output)
 
     @warning The function calls `basicConfig <https://docs.python.org/3/library/logging.html#logging.basicConfig>`_.
@@ -128,15 +130,8 @@ def run_notebook(filename, profile_dir=None, working_dir=None, skip_exceptions=F
     folder *working_dir* (must not be None). The url string is replaced by
     the absolute path to the file.
 
-    .. versionchanged:: 1.3
-        Parameters *log_level*, *extended_args*, *kernel_name* were added.
-
-    .. versionchanged:: 1.4
-        Parameter *cache_urls* was added.
-        Function *valid* can return None and stops the execution of the notebook.
-
-    .. versionchanged:: 1.5
-        Parameter *detailed_log* was added.
+    .. versionchanged:: 1.8
+        Parameters *detailed_log*, *startup_timeout* were added.
     """
     cached_rep = _cache_url_to_file(cache_urls, working_dir, fLOG=fLOG)
     if replacements is None:
@@ -168,11 +163,21 @@ def run_notebook(filename, profile_dir=None, working_dir=None, skip_exceptions=F
         out.write("\n")
         fLOG(*l, **p)
 
-    nb_runner = NotebookRunner(nb, profile_dir, working_dir, fLOG=flogging, filename=filename,
-                               theNotebook=os.path.abspath(filename),
-                               code_init=code_init, log_level=log_level,
-                               extended_args=extended_args, kernel_name=kernel_name,
-                               replacements=cached_rep, kernel=True, detailed_log=detailed_log)
+    try:
+        nb_runner = NotebookRunner(nb, profile_dir, working_dir, fLOG=flogging, filename=filename,
+                                   theNotebook=os.path.abspath(filename),
+                                   code_init=code_init, log_level=log_level,
+                                   extended_args=extended_args, kernel_name=kernel_name,
+                                   replacements=cached_rep, kernel=True, detailed_log=detailed_log,
+                                   startup_timeout=startup_timeout)
+    except NotebookKernelError:
+        # It fails. We try again once.
+        nb_runner = NotebookRunner(nb, profile_dir, working_dir, fLOG=flogging, filename=filename,
+                                   theNotebook=os.path.abspath(filename),
+                                   code_init=code_init, log_level=log_level,
+                                   extended_args=extended_args, kernel_name=kernel_name,
+                                   replacements=cached_rep, kernel=True, detailed_log=detailed_log,
+                                   startup_timeout=startup_timeout)
 
     try:
         stat = nb_runner.run_notebook(skip_exceptions=skip_exceptions, additional_path=additional_path,
@@ -198,7 +203,7 @@ def run_notebook(filename, profile_dir=None, working_dir=None, skip_exceptions=F
 def execute_notebook_list(folder, notebooks, clean_function=None, valid=None, fLOG=noLOG,
                           additional_path=None, deepfLOG=noLOG, kernel_name="python",
                           log_level="30", extended_args=None, cache_urls=None,
-                          replacements=None, detailed_log=None):
+                          replacements=None, detailed_log=None, startup_timeout=60):
     """
     Executes a list of notebooks.
 
@@ -219,6 +224,8 @@ def execute_notebook_list(folder, notebooks, clean_function=None, valid=None, fL
     @param      cache_urls          list of urls to cache
     @param      replacements        additional replacements
     @param      detailed_log        detailed log
+    @param      startup_timeout     wait for this long for the kernel to be ready,
+                                    see `wait_for_ready <https://github.com/jupyter/jupyter_client/blob/master/jupyter_client/blocking/client.py#L84>`_
     @return                         dictionary of dictionaries ``{ notebook_name: {  } }``
 
     If *isSuccess* is False, *statistics* contains the execution time, *output* is the exception
@@ -239,12 +246,8 @@ def execute_notebook_list(folder, notebooks, clean_function=None, valid=None, fL
     folder *working_dir* (must not be None). The url string is replaced by
     the absolute path to the file.
 
-    .. versionchanged:: 1.5
-        Parameter *detailed_log* was added.
-        Changes the results into a list of dictionaries
-
-    .. versionchanged:: 1.6
-        Parameter *filter_name* was added.
+    .. versionchanged:: 1.8
+        Parameters *detailed_log*, *startup_timeout* were added.
     """
     if additional_path is None:
         additional_path = []
@@ -269,7 +272,7 @@ def execute_notebook_list(folder, notebooks, clean_function=None, valid=None, fL
                                      code_init=code_init, kernel_name=kernel_name,
                                      log_level=log_level, extended_args=extended_args,
                                      cache_urls=cache_urls, replacements=replacements,
-                                     detailed_log=detailed_log)
+                                     detailed_log=detailed_log, startup_timeout=startup_timeout)
             if not os.path.exists(outfile):
                 raise FileNotFoundError(outfile)
             etime = time.perf_counter() - cl

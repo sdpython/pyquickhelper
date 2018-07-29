@@ -29,9 +29,17 @@ else:
 
 
 class NotebookError(Exception):
-
     """
-    custom exception
+    Raised when the execution fails.
+    """
+    pass
+
+
+class NotebookKernelError(Exception):
+    """
+    Raised when
+    `wait_for_ready <https://github.com/jupyter/jupyter_client/blob/master/jupyter_client/blocking/client.py#L84>`_
+    fails.
     """
     pass
 
@@ -80,7 +88,8 @@ class NotebookRunner(object):
     def __init__(self, nb, profile_dir=None, working_dir=None,
                  comment="", fLOG=noLOG, theNotebook=None, code_init=None,
                  kernel_name="python", log_level="30", extended_args=None,
-                 kernel=False, filename=None, replacements=None, detailed_log=None):
+                 kernel=False, filename=None, replacements=None, detailed_log=None,
+                 startup_timeout=60):
         """
         constuctor
 
@@ -102,12 +111,11 @@ class NotebookRunner(object):
                                     dictionary ``{ string: string }``
         @param      detailed_log    to log detailed information when executing the notebook, this should be a function
                                     with the same signature as ``print`` or None
+        @param      startup_timeout wait for this long for the kernel to be ready,
+                                    see `wait_for_ready <https://github.com/jupyter/jupyter_client/blob/master/jupyter_client/blocking/client.py#L84>`_
 
-        .. versionchanged:: 1.4
-            Parameter *replacements* was added.
-
-        .. versionchanged:: 1.5
-            Parameter *detailed_log* was added.
+        .. versionchanged:: 1.8
+            Parameter *startup_timeout* was added.
         """
         if kernel:
             try:
@@ -184,8 +192,18 @@ class NotebookRunner(object):
 
             self.kc = self.km.client()
             self.kc.start_channels(stdin=False)
-            # if it does not work, it probably means IPython < 3
-            self.kc.wait_for_ready()
+            try:
+                self.kc.wait_for_ready(timeout=startup_timeout)
+            except RuntimeError as e:
+                # We wait for one second.
+                sleep(startup_timeout)
+                self.kc.stop_channels()
+                self.km.shutdown_kernel()
+                self.km = None
+                self.kc = None
+                self.nb = nb
+                self.comment = comment
+                raise NotebookKernelError("wait_for_ready fails.") from e
         else:
             self.km = None
             self.kc = None
