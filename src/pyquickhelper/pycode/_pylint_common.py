@@ -211,6 +211,7 @@ def _private_test_style_test(fLOG, run_lint, verbose=False, pattern=".*[.]py$"):
                      "Unused argument 'node'",
                      "Redefining built-in 'FileNotFoundError'",
                      "test_check_pep8_sample.py:39",
+                     "test_check_pep8_sample.py:40",
                      "Unable to import 'pyquickhelper",
                      "Unable to import 'jyquickhelper",
                      "Unable to import 'exsig'",
