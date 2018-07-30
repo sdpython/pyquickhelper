@@ -93,7 +93,7 @@ class NotebookRunner(object):
         """
         constuctor
 
-        @param      nb              notebook as JSON
+        @param      nb              notebook as :epkg:`JSON`
         @param      profile_dir     profile directory
         @param      working_dir     working directory
         @param      comment         additional information added to error message
@@ -112,7 +112,8 @@ class NotebookRunner(object):
         @param      detailed_log    to log detailed information when executing the notebook, this should be a function
                                     with the same signature as ``print`` or None
         @param      startup_timeout wait for this long for the kernel to be ready,
-                                    see `wait_for_ready <https://github.com/jupyter/jupyter_client/blob/master/jupyter_client/blocking/client.py#L84>`_
+                                    see `wait_for_ready
+                                    <https://github.com/jupyter/jupyter_client/blob/master/jupyter_client/blocking/client.py#L84>`_
 
         .. versionchanged:: 1.8
             Parameter *startup_timeout* was added.

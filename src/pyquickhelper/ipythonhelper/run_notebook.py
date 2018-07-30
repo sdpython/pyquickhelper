@@ -107,7 +107,8 @@ def run_notebook(filename, profile_dir=None, working_dir=None, skip_exceptions=F
     @param      detailed_log        a second function to log more information when executing the notebook,
                                     this should be a function with the same signature as ``print`` or None
     @param      startup_timeout     wait for this long for the kernel to be ready,
-                                    see `wait_for_ready <https://github.com/jupyter/jupyter_client/blob/master/jupyter_client/blocking/client.py#L84>`_
+                                    see `wait_for_ready
+                                    <https://github.com/jupyter/jupyter_client/blob/master/jupyter_client/blocking/client.py#L84>`_
     @return                         tuple (statistics, output)
 
     @warning The function calls `basicConfig <https://docs.python.org/3/library/logging.html#logging.basicConfig>`_.
@@ -225,7 +226,8 @@ def execute_notebook_list(folder, notebooks, clean_function=None, valid=None, fL
     @param      replacements        additional replacements
     @param      detailed_log        detailed log
     @param      startup_timeout     wait for this long for the kernel to be ready,
-                                    see `wait_for_ready <https://github.com/jupyter/jupyter_client/blob/master/jupyter_client/blocking/client.py#L84>`_
+                                    see `wait_for_ready
+                                    <https://github.com/jupyter/jupyter_client/blob/master/jupyter_client/blocking/client.py#L84>`_
     @return                         dictionary of dictionaries ``{ notebook_name: {  } }``
 
     If *isSuccess* is False, *statistics* contains the execution time, *output* is the exception
