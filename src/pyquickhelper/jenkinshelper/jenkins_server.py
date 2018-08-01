@@ -37,7 +37,7 @@ from .jenkins_exceptions import JenkinsExtException, JenkinsJobException
 from .jenkins_server_template import _config_job, _trigger_up, _trigger_time, _git_repo, _task_batch
 from .jenkins_server_template import _trigger_startup, _publishers, _file_creation, _wipe_repo, _artifacts
 from .yaml_helper import enumerate_processed_yml
-from .jenkins_helper import jenkins_final_postprocessing
+from .jenkins_helper import jenkins_final_postprocessing, get_platform
 
 _timeout_default = 1200
 
@@ -54,40 +54,46 @@ _default_engine_paths = {
 }
 
 
-def _modified_windows_jenkins(requirements_local, requirements_pypi, module="__MODULE__", port="__PORT__", platform=sys.platform):
+def _modified_windows_jenkins(requirements_local, requirements_pypi, module="__MODULE__",
+                              port="__PORT__", platform=None):
     return private_script_replacements(
-        windows_jenkins, module, (requirements_local,
-                                  requirements_pypi), port, raise_exception=False,
-        default_engine_paths=_default_engine_paths, platform=platform)
+        windows_jenkins, module,
+        (requirements_local, requirements_pypi),
+        port, raise_exception=False,
+        default_engine_paths=_default_engine_paths,
+        platform=get_platform(platform))
 
 
 def _modified_windows_jenkins_27(requirements_local, requirements_pypi, module="__MODULE__",
-                                 port="__PORT__", anaconda=True, platform=sys.platform):
+                                 port="__PORT__", anaconda=True, platform=None):
     return private_script_replacements(
         windows_jenkins_27_conda if anaconda else windows_jenkins_27_def,
-        module, (requirements_local,
-                 requirements_pypi), port, raise_exception=False,
-        default_engine_paths=_default_engine_paths, platform=platform)
+        module, (requirements_local, requirements_pypi),
+        port, raise_exception=False,
+        default_engine_paths=_default_engine_paths,
+        platform=get_platform(platform))
 
 
 def _modified_windows_jenkins_any(requirements_local, requirements_pypi, module="__MODULE__",
-                                  port="__PORT__", platform=sys.platform):
+                                  port="__PORT__", platform=None):
     res = private_script_replacements(
-        windows_jenkins_any, module, (requirements_local,
-                                      requirements_pypi), port, raise_exception=False,
-        default_engine_paths=_default_engine_paths, platform=platform)
+        windows_jenkins_any, module,
+        (requirements_local, requirements_pypi),
+        port, raise_exception=False,
+        default_engine_paths=_default_engine_paths,
+        platform=get_platform(platform))
     return res.replace("virtual_env_suffix=%2", "virtual_env_suffix=___SUFFIX__")
 
 
 class JenkinsExt(jenkins.Jenkins):
 
     """
-    extensions for the :epkg:`Jenkins` server
+    Extensions for the :epkg:`Jenkins` server
     based on module :epkg:`python-jenkins`.
 
     .. index:: Jenkins, Jenkins extensions
 
-    some useful Jenkins extensions:
+    Some useful :epkg:`Jenkins` extensions:
 
     * `Credentials Plugin <https://wiki.jenkins-ci.org/display/JENKINS/Credentials+Plugin>`_
     * `Extrea Column Plugin <https://wiki.jenkins-ci.org/display/JENKINS/Extra+Columns+Plugin>`_
@@ -97,11 +103,8 @@ class JenkinsExt(jenkins.Jenkins):
     * `Matrix Project Plugin <https://wiki.jenkins-ci.org/display/JENKINS/Matrix+Project+Plugin>`_
     * `Build Pipeline Plugin <https://wiki.jenkins-ci.org/display/JENKINS/Build+Pipeline+Plugin>`_
 
-    .. versionchanged:: 1.3
-        The whole class was changed to defined many different engines.
-
-    .. versionchanged:: 1.4
-        Add mail handling. A job can now send a mail at the end of the job execution.
+    The whole class can define many different engines.
+    A job can send a mail at the end of the job execution.
     """
 
     _config_job = _config_job
@@ -115,11 +118,9 @@ class JenkinsExt(jenkins.Jenkins):
     _artifacts = _artifacts
 
     def __init__(self, url, username=None, password=None, timeout=socket._GLOBAL_DEFAULT_TIMEOUT,
-                 mock=False, engines=None, platform=sys.platform, pypi_port=8067, fLOG=noLOG,
+                 mock=False, engines=None, platform=None, pypi_port=8067, fLOG=noLOG,
                  mails=None):
         """
-        constructor
-
         @param      url         url of the server
         @param      username    username
         @param      password    password
@@ -131,9 +132,11 @@ class JenkinsExt(jenkins.Jenkins):
         @param      mails       (str) list of mails to contact in case of a mistaje
         @param      fLOG        logging function
 
-        .. versionchanged:: 1.5
-            Parameter *mails* was added.
+        If *platform* is None, it is replace by the value returned
+        by @see fn get_platform.
         """
+        if platform is None:
+            platform = get_platform(platform)
         jenkins.Jenkins.__init__(
             self, url, username, password, timeout=timeout)
         self._mock = mock
@@ -160,7 +163,8 @@ class JenkinsExt(jenkins.Jenkins):
 
     def jenkins_open(self, req, add_crumb=True, resolve_auth=True):
         '''
-        Overloads the same method from module jenkins to replace string by bytes
+        Overloads the same method from module :epkg:`python-jenkins`
+        to replace string by bytes.
 
         @param      req             see `jenkins API <https://python-jenkins.readthedocs.org/en/latest/api.html>`_
         @param      add_crumb       see `jenkins API <https://python-jenkins.readthedocs.org/en/latest/api.html>`_
@@ -178,9 +182,10 @@ class JenkinsExt(jenkins.Jenkins):
         return response.content
 
     def delete_job(self, name):
-        '''Delete Jenkins job permanently.
+        '''
+        Deletes :epkg:`Jenkins` job permanently.
 
-        :param name: Name of Jenkins job, ``str``
+        :param name: name of :epkg:`Jenkins` job, ``str``
         '''
         if self._mock:
             return
@@ -199,22 +204,18 @@ class JenkinsExt(jenkins.Jenkins):
 
     def get_jobs(self, folder_depth=0, view_name=None):
         """
-        Get list of all jobs recursively to the given folder depth,
+        Gets the list of all jobs recursively to the given folder depth,
         see `get_all_jobs <https://python-jenkins.readthedocs.org/en/latest/api.html#jenkins.Jenkins.get_all_jobs>`_.
 
         @return                     list of jobs, ``[ { str: str} ]``
-
-        .. versionadded:: 1.3
         """
         return jenkins.Jenkins.get_jobs(self, folder_depth=folder_depth, view_name=view_name)
 
     def delete_all_jobs(self):
         """
-        delete all jobs permanently.
+        Deletes all jobs permanently.
 
         @return                 list of deleted jobs
-
-        .. versionadded:: 1.3
         """
         jobs = self.get_jobs()
         res = []
@@ -226,7 +227,7 @@ class JenkinsExt(jenkins.Jenkins):
 
     def get_jenkins_job_name(self, job):
         """
-        infer a name for the jenkins job
+        Infers a name for the jenkins job.
 
         @param      job     str
         @return             name
@@ -246,7 +247,7 @@ class JenkinsExt(jenkins.Jenkins):
 
     def get_engine_from_job(self, job, return_key=False):
         """
-        extract the engine from the job definition,
+        Extracts the engine from the job definition,
         it should be like ``[engine]``.
 
         @param      job         job string
@@ -281,7 +282,7 @@ class JenkinsExt(jenkins.Jenkins):
 
     def get_cmd_standalone(self, job):
         """
-        Custom command for jenkins (such as updating conda)
+        Custom command for :epkg:`Jenkins` (such as updating conda)
 
         @param      job             module and options
         @return                     script
@@ -321,7 +322,7 @@ class JenkinsExt(jenkins.Jenkins):
     @staticmethod
     def get_cmd_custom(job):
         """
-        Custom script for jenkins
+        Custom script for :epkg:`Jenkins`.
 
         @param      job             module and options
         @return                     script
@@ -338,7 +339,7 @@ class JenkinsExt(jenkins.Jenkins):
     @staticmethod
     def hash_string(s, le=4):
         """
-        hash a string
+        Hashes a string.
 
         @param      s       string
         @param      le      cut the string to the first *l* character
@@ -355,7 +356,7 @@ class JenkinsExt(jenkins.Jenkins):
 
     def extract_requirements(self, job):
         """
-        extract the requirements for a job
+        Extracts the requirements for a job.
 
         @param      job     job name
         @return             3-tuple job, local requirements, pipy requirements
@@ -383,7 +384,7 @@ class JenkinsExt(jenkins.Jenkins):
 
     def get_jenkins_script(self, job):
         """
-        build the jenkins script for a module and its options
+        Builds the :epkg:`Jenkins` script for a module and its options.
 
         @param      job             module and options
         @return                     script
@@ -561,7 +562,7 @@ class JenkinsExt(jenkins.Jenkins):
 
     def adjust_scheduler(self, scheduler, adjust_scheduler=True):
         """
-        adjust the scheduler to avoid having two jobs starting at the same time,
+        Adjusts the scheduler to avoid having two jobs starting at the same time,
         jobs are delayed by an hour, two hours, three hours...
 
         @param      scheduler           existing scheduler
@@ -614,7 +615,7 @@ class JenkinsExt(jenkins.Jenkins):
                             timeout=_timeout_default, additional_requirements=None,
                             return_job=False, adjust_scheduler=True, clean_repo=True, **kwargs):
         """
-        add a job to the jenkins server
+        Adds a job to the :epkg:`Jenkins` server.
 
         @param      name                        name
         @param      credentials                 credentials
@@ -815,7 +816,7 @@ class JenkinsExt(jenkins.Jenkins):
 
     def process_options(self, script, options):
         """
-        post process a script inserted in a job definition
+        Postprocesses a script inserted in a job definition.
 
         @param      script      script to execute (in a list)
         @param      options     dictionary with options
@@ -843,7 +844,7 @@ class JenkinsExt(jenkins.Jenkins):
                              location=None, prefix="", credentials="", update=True, yml_engine="jinja2",
                              add_environ=True, disable_schedule=False, adjust_scheduler=True):
         """
-        Set up many jobs on Jenkins
+        Sets up many jobs in :epkg:`Jenkins`.
 
         @param      github                  github account if it does not start with *http://*,
                                             the link to git repository of the project otherwise,
@@ -1010,14 +1011,6 @@ class JenkinsExt(jenkins.Jenkins):
         in the job name using ``<--`` and they exclusively rely
         on pipy (local or remote). Add options for module
         *Build Timeout Plugin*.
-
-        .. versionchanged:: 1.4
-            Parameters *yml_engine*, *add_environ*, *yml_platform* were added.
-            Modification to handle yaml files.
-
-        .. versionchanged:: 1.5
-            Parameter *disable_schedule* was added.
-            A subfolder was added to the location.
         """
         # we do a patch for pyquickhelper
         all_jobs = []

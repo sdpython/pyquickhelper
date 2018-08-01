@@ -29,13 +29,13 @@ if sys.version_info[0] == 2:
     FileNotFoundError = Exception
 
 
-class TestYamlJenkinsStartup(unittest.TestCase):
+class TestYamlJenkinsStartupLinux(unittest.TestCase):
 
     def test_src_import(self):
         """for pylint"""
         self.assertTrue(src is not None)
 
-    def test_jenkins_ext_setup_server_yaml2_url_scheduler(self):
+    def test_linux_jenkins_ext_setup_server_yaml2_url_scheduler(self):
         fLOG(
             __file__,
             self._testMethodName,
@@ -43,32 +43,12 @@ class TestYamlJenkinsStartup(unittest.TestCase):
 
         this = os.path.abspath(os.path.dirname(__file__))
         local_file = os.path.join(this, "data", "local_startup.yml")
-        self._jenkins_ext_setup_server_yaml2(local_file, False)
+        self._linux_jenkins_ext_setup_server_yaml2(local_file, False)
 
-    def test_jenkins_ext_setup_server_yaml2_url_noclean(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
-        this = os.path.abspath(os.path.dirname(__file__))
-        local_file = os.path.join(this, "data", "local_publish.yml")
-        self._jenkins_ext_setup_server_yaml2(local_file, False)
-
-    def test_jenkins_ext_setup_server_yaml2_url_bf(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
-        this = os.path.abspath(os.path.dirname(__file__))
-        local_file = os.path.join(this, "data", ".local.jenkins.win.bf.yml")
-        self._jenkins_ext_setup_server_yaml2(local_file, False)
-
-    def _jenkins_ext_setup_server_yaml2(self, local_file, disp):
+    def _linux_jenkins_ext_setup_server_yaml2(self, local_file, disp):
         srv = JenkinsExt(
             "http://localhost:8080/", "user", "password", mock=True,
-            engines=default_engines(platform="win32"), fLOG=fLOG, platform="win32")
+            engines=default_engines(platform="linux"), fLOG=fLOG, platform="linux")
 
         fLOG("---------------------")
         modules = [('yml', local_file, None)]
@@ -85,6 +65,12 @@ class TestYamlJenkinsStartup(unittest.TestCase):
         confs = []
         for i, r in enumerate(res):
             conf = r[-1]
+            if "set current=" in conf.lower():
+                raise Exception("The job is for linux\n{0}".format(conf))
+            if "SET " in conf:
+                raise Exception("The job is for linux\n{0}".format(conf))
+            if "c:" in conf:
+                raise Exception("The job is for linux\n{0}".format(conf))
             if disp:
                 fLOG(conf)
 
@@ -101,11 +87,11 @@ class TestYamlJenkinsStartup(unittest.TestCase):
             if "PYQUICKHELPER27" in conf:
                 raise Exception(conf)
 
-            if "SET VERSION=" not in conf:
+            if "export VERSION=" not in conf:
                 raise Exception(conf)
-            if "SET NAME=" not in conf:
+            if "export NAME=" not in conf:
                 raise Exception(conf)
-            if "SET DIST=" not in conf:
+            if "export DIST=" not in conf:
                 raise Exception(conf)
             if "<runOnChoice>ON_BOTH</runOnChoice>" in conf:
                 sch += 1

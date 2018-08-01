@@ -2,15 +2,41 @@
 @file
 @brief Helpers to prepare a local Jenkins server.
 """
+import sys
 from ..loghelper import noLOG
 
 
-def default_engines():
+def get_platform(platform=None):
     """
-    returns a dictionary with default values for Jenkins server,
+    Returns *platform* if not *None*, ``sys.platform`` otherwise.
+
+    @param      platform    default values for which OS or
+                            ``sys.platform``.
+    @return                 platform
+
+    This documentation was generated with a machine using the
+    following *OS* (among the
+    `possible values <https://docs.python.org/3/library/sys.html#sys.platform>`_).
+
+    .. runpython::
+        :showcode:
+
+        from pyquickhelper.jenkinshelper.jenkins_helper import get_platform
+        print(get_platform())
+
+    .. versionadded:: 1.8
+    """
+    return platform or sys.platform
+
+
+def default_engines(platform=None):
+    """
+    Returns a dictionary with default values for Jenkins server,
     you should update the path if the proposed path are not good.
 
-    @return     dictionary
+    @param      platform    default values for which OS or
+                            ``get_platform(platform)``.
+    @return                 dictionary
 
     .. warning::
 
@@ -25,24 +51,32 @@ def default_engines():
         from pyquickhelper.jenkinshelper import default_engines
         print(default_engines())
     """
-    res = dict(Anaconda2="d:\\Anaconda",
-               Anaconda3="d:\\Anaconda3",
-               Python37="c:\\Python37_x64",
-               Python36="c:\\Python36_x64",
-               Python35="c:\\Python35_x64",
-               Python34="c:\\Python34_x64",
-               Python27="c:\\Python27",
-               WinPython37="c:\\APythonENSAE\\python37",
-               WinPython36="c:\\APythonENSAE\\python36",
-               WinPython35="c:\\APythonENSAE\\python35")
+    platform = get_platform(platform)
+    if platform == "win32":
+        res = dict(Anaconda2="d:\\Anaconda",
+                   Anaconda3="d:\\Anaconda3",
+                   Python37="c:\\Python37_x64",
+                   Python36="c:\\Python36_x64",
+                   Python35="c:\\Python35_x64",
+                   Python34="c:\\Python34_x64",
+                   Python27="c:\\Python27",
+                   WinPython37="c:\\APythonENSAE\\python37",
+                   WinPython36="c:\\APythonENSAE\\python36",
+                   WinPython35="c:\\APythonENSAE\\python35")
+    elif platform == "linux":
+        res = dict(Anaconda3="/usr/local/miniconda3",
+                   Python37="/usr/local/python37",
+                   Python36="/usr/local/python36")
+    else:
+        raise ValueError("Unknown value for for_os '{0}'.".format(for_os))
+
     return res
 
 
 def default_jenkins_jobs():
     """
-    example of a list of jobs for parameter *module*
-    of function @see fn setup_jenkins_server_yml
-
+    Example of a list of jobs for parameter *module*
+    of function @see fn setup_jenkins_server_yml.
     It returns:
 
     .. runpython::
@@ -62,7 +96,7 @@ def setup_jenkins_server_yml(js, github="sdpython", modules=None,
                              delete_first=False, disable_schedule=False,
                              fLOG=noLOG, **kwargs):
     """
-    Sets up many jobs on Jenkins.
+    Sets up many jobs on :epkg:`Jenkins`.
 
     @param      js                      @see cl JenkinsExt, jenkins server
     @param      github                  github account if it does not start with *http://*,
@@ -91,31 +125,28 @@ def setup_jenkins_server_yml(js, github="sdpython", modules=None,
                             location = "d:\\\\jenkins\\\\pymy")
 
     See `.local.jenkins.win.yml <https://github.com/sdpython/pyquickhelper/blob/master/.local.jenkins.win.yml>`_
-    about the syntax of a yaml job description.
+    about the syntax of a :epkg:`yml` job description.
     If *modules* is None, it is replaced by the results of
     @see fn default_jenkins_jobs.
-
-    .. versionchanged:: 1.5
-        Parameter *disable_schedule* was added.
+    The platform is stored in *srv*.
     """
     if modules is None:
-        modules = default_jenkins_jobs()
+        modules = default_jenkins_jobs(srv.platform)
     if delete_first:
         js.delete_all_jobs()
     r = js.setup_jenkins_server(github=github, modules=modules, overwrite=overwrite,
-                                location=location, prefix=prefix, disable_schedule=disable_schedule, **kwargs)
+                                location=location, prefix=prefix, disable_schedule=disable_schedule,
+                                **kwargs)
     return r
 
 
 def jenkins_final_postprocessing(xml_job, py27):
     """
-    Post process a job produced by Jenkins.
+    Postprocesses a job produced by :epkg:`Jenkins`.
 
     @param      xml_job     xml definition
     @param      py27        is it for Python 27
     @return                 new xml job
-
-    .. versionadded:: 1.5
     """
     if py27:
         # options are not allowed

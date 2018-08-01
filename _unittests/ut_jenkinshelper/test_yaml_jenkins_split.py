@@ -45,7 +45,7 @@ class TestYamlJenkinsSplit(unittest.TestCase):
                    'Python35': 'c:\\Python35_x64'}
         srv = JenkinsExt(
             "http://localhost:8080/", "user", "password", mock=True,
-            engines=engines, fLOG=fLOG, platform="win")
+            engines=engines, fLOG=fLOG, platform="win32")
 
         this = os.path.abspath(os.path.dirname(__file__))
         localyml = os.path.abspath(os.path.join(
@@ -87,7 +87,7 @@ class TestYamlJenkinsSplit(unittest.TestCase):
                        project_name="pyquickhelper", root_path="ROOT")
         srv = JenkinsExt(
             "http://localhost:8080/", "user", "password", mock=True,
-            engines=engines, fLOG=fLOG, platform="win")
+            engines=engines, fLOG=fLOG, platform="win32")
 
         this = os.path.abspath(os.path.dirname(__file__))
         localyml = os.path.abspath(os.path.join(

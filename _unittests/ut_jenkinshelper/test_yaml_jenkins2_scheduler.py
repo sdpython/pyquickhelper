@@ -46,7 +46,7 @@ class TestYamlJenkins2Scheduler(unittest.TestCase):
     def _jenkins_ext_setup_server_yaml2(self):
         srv = JenkinsExt(
             "http://localhost:8080/", "user", "password", mock=True,
-            engines=default_engines(), fLOG=fLOG, platform="win")
+            engines=default_engines(platform="win32"), fLOG=fLOG, platform="win32")
 
         fLOG("---------------------")
         this = os.path.abspath(os.path.dirname(__file__))

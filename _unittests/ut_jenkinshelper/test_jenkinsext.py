@@ -77,7 +77,7 @@ class TestJenkinsExt(ExtTestCase):
 
         srv = JenkinsExt(
             "http://localhost:8080/", "user", "password",
-            mock=True, fLOG=fLOG, platform="win")
+            mock=True, fLOG=fLOG, platform="win32")
         github = "https://github.com/sdpython/"
 
         conf = srv.create_job_template("pyquickhelper",
@@ -199,7 +199,7 @@ class TestJenkinsExt(ExtTestCase):
 
         srv = JenkinsExt(
             "http://localhost:8080/", "user", "password", mock=True,
-            platform="win", engines=engines, fLOG=fLOG)
+            platform="win32", engines=engines, fLOG=fLOG)
 
         fLOG("---------------------")
         res = srv.setup_jenkins_server(github=github, modules=modules,

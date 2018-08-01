@@ -105,7 +105,7 @@ class TestYaml(unittest.TestCase):
                        Python37=os.path.dirname(sys.executable) + "37",
                        Python27="fake2", Anaconda3=None, Anaconda2=None,
                        WinPython36=None, root_path="ROOT", project_name="pyquickhelper")
-        obj, name = load_yaml(yml, context=context, platform="win")
+        obj, name = load_yaml(yml, context=context, platform="win32")
         self.assertTrue(name is not None)
         res = list(enumerate_convert_yaml_into_instructions(
             obj, add_environ=False))

@@ -55,7 +55,7 @@ class TestYamlExe(unittest.TestCase):
         context = dict(Python34="fake", Python35=os.path.dirname(sys.executable),
                        Python27=None, Anaconda3=None, Anaconda2=None,
                        WinPython35=None, project_name="pyquickhelper",
-                       root_path="ROOT", PLATFORM="win")
+                       root_path="ROOT", PLATFORM="win32")
         obj, name = load_yaml(yml, context=context)
         self.assertTrue(name is not None)
         try:
@@ -88,7 +88,7 @@ class TestYamlExe(unittest.TestCase):
         context = dict(Python34="fake", Python35=os.path.dirname(sys.executable),
                        Python27=None, Anaconda3=None, Anaconda2=None,
                        WinPython35=None, project_name="pyquickhelper",
-                       root_path="ROOT", PLATFORM="win")
+                       root_path="ROOT", 32")
         obj, name = load_yaml(yml, context=context)
         self.assertTrue(name is not None)
         res = list(enumerate_convert_yaml_into_instructions(

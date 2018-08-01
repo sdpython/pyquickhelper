@@ -63,7 +63,7 @@ class TestYamlJenkins(unittest.TestCase):
         srv = JenkinsExt("http://localhost:8080/", "user", "password",
                          mock=True, fLOG=fLOG, engines=context)
         for i, tuconv in enumerate(enumerate_processed_yml(yml, server=srv,
-                                                           context=context, git_repo=git_repo, yml_platform="win")):
+                                                           context=context, git_repo=git_repo, yml_platform="win32")):
             conv, name, var = tuconv
             c = "conda" if "c:\\Anaconda" in conv else 'win'
             with open(os.path.join(temp, "yml-%s-%d.xml" % (c, i)), "w") as f:
@@ -123,7 +123,7 @@ class TestYamlJenkins(unittest.TestCase):
 
         srv = JenkinsExt(
             "http://localhost:8080/", "user", "password", mock=True,
-            engines=engines, fLOG=fLOG, platform="win")
+            engines=engines, fLOG=fLOG, platform="win32")
 
         if not sys.platform.startswith("win"):
             # not yet implemented

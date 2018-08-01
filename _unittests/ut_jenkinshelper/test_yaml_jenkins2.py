@@ -56,7 +56,7 @@ class TestYamlJenkins2(unittest.TestCase):
     def _jenkins_ext_setup_server_yaml2(self, use_url):
         srv = JenkinsExt(
             "http://localhost:8080/", "user", "password", mock=True,
-            engines=default_engines(), fLOG=fLOG, platform="win")
+            engines=default_engines(platform="win32"), fLOG=fLOG, platform="win32")
 
         fLOG("---------------------")
         modules = default_jenkins_jobs()

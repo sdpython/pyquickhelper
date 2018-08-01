@@ -15,7 +15,7 @@ _jenkins_split = "JENKINS_SPLIT"
 
 def pickname(*l):
     """
-    pick the first string non null in the list
+    Picks the first string non null in the list.
 
     @param      l   list of string
     @return         string
@@ -29,7 +29,7 @@ def pickname(*l):
 
 def load_yaml(file_or_buffer, context=None, engine="jinja2", platform=None):
     """
-    loads a yaml file (.yml)
+    Loads a :epkg:`yml` file (*.yml*).
 
     @param      file_or_buffer      string or physical file or url
     @param      context             variables to replace in the configuration
@@ -76,7 +76,7 @@ def load_yaml(file_or_buffer, context=None, engine="jinja2", platform=None):
 
     if "root_path" in context:
         if platform is None:
-            platform = sys.platform
+            platform = get_platform(platform)
         if platform.startswith("win"):
             addition = "set current={0}\\%NAME_JENKINS%".format(
                 context["root_path"])
@@ -95,7 +95,7 @@ def load_yaml(file_or_buffer, context=None, engine="jinja2", platform=None):
 
 def evaluate_condition(cond, variables=None):
     """
-    evaluate a condition inserted in a yaml file
+    Evaluates a condition inserted in a :epkg:`yml` file.
 
     @param      cond        (str) condition
     @param      variables   (dict|None) dictionary
@@ -125,7 +125,7 @@ def evaluate_condition(cond, variables=None):
 
 def interpret_instruction(inst, variables=None):
     """
-    interpret an instruction with if statement
+    Interprets an instruction with if statement.
 
     @param      inst        (str) instruction
     @param      variables   (dict|None)
@@ -173,8 +173,8 @@ def interpret_instruction(inst, variables=None):
 
 def enumerate_convert_yaml_into_instructions(obj, variables=None, add_environ=True):
     """
-    convert a yaml file into sequences of instructions,
-    conditions are interpreted
+    Converts a :epkg:`yml` file into sequences of instructions,
+    conditions are interpreted.
 
     @param      obj         yaml objects (@see fn load_yaml)
     @param      variables   additional variables to be used
@@ -186,17 +186,17 @@ def enumerate_convert_yaml_into_instructions(obj, variables=None, add_environ=Tr
     The function expects the following list
     of steps in this order:
 
-    * automatedsetup: added by this module
-    * language: should be python
-    * python: list of interpreters (multiplies jobs)
-    * virtualenv: name of the virtual environment
-    * install: list of installation steps in the virtual environment
-    * before_script: list of steps to run
-    * script: list of script to run (multiplies jobs)
-    * after_script: list of steps to run
-    * documentation: documentation to run after the
+    * *automatedsetup*: added by this module
+    * *language*: should be python
+    * *python*: list of interpreters (multiplies jobs)
+    * *virtualenv*: name of the virtual environment
+    * *install*: list of installation steps in the virtual environment
+    * *before_script*: list of steps to run
+    * *script*: list of script to run (multiplies jobs)
+    * *after_script*: list of steps to run
+    * *documentation*: documentation to run after the
 
-    Each step *multiplies jobs* creates a sequence of jobs and a Jenkins job.
+    Each step *multiplies jobs* creates a sequence of jobs and a :epkg:`Jenkins` job.
     """
     if variables is None:
         def_variables = {}
@@ -275,7 +275,7 @@ def enumerate_convert_yaml_into_instructions(obj, variables=None, add_environ=Tr
 
 def ospathjoin(*l, **kwargs):
     """
-    simple ``o.path.join`` for a specific platform
+    Simple ``o.path.join`` for a specific platform.
 
     @param      l           list of paths
     @param      kwargs      additional parameters, among them,
@@ -293,7 +293,7 @@ def ospathjoin(*l, **kwargs):
 
 def ospathdirname(l, platform=None):
     """
-    simple ``o.path.dirname`` for a specific platform
+    Simple ``o.path.dirname`` for a specific platform.
 
     @param      l           path
     @param      platform    platform
@@ -309,18 +309,18 @@ def ospathdirname(l, platform=None):
 
 def convert_sequence_into_batch_file(seq, variables=None, platform=None):
     """
-    converts a sequence of instructions into a batch file
+    Converts a sequence of instructions into a batch file.
 
     @param      seq         sequence of instructions
     @param      variables   list of variables
-    @param      platform    ``sys.platform`` if None
+    @param      platform    ``get_platform(platform)`` if None
     @return                 (str) batch file or a list of batch file if the constant ``JENKINS_SPLIT``
                             was found in section install (this tweak is needed when the job has to be split
-                            for Jenkins.
+                            for :epkg:`Jenkins`.
     """
     global _jenkins_split
     if platform is None:
-        platform = sys.platform
+        platform = get_platform(platform)
 
     iswin = platform.startswith("win")
 
@@ -421,11 +421,19 @@ def convert_sequence_into_batch_file(seq, variables=None, platform=None):
                 pip = ospathjoin(p, "Scripts", "pip",
                                  platform=platform)
             else:
-                rows.append("set KEEPPATH=%PATH%")
-                rows.append("set PATH=%PATH%;{0}".format(venv_interpreter))
+                if iswin:
+                    rows.append("set KEEPPATH=%PATH%")
+                    rows.append("set PATH=%PATH%;{0}".format(venv_interpreter))
+                else:
+                    rows.append("export KEEPPATH=$PATH")
+                    rows.append(
+                        "export PATH=$PATH:{0}".format(venv_interpreter))
                 rows.append(
                     '"{0}" --system-site-packages "{1}"'.format(venv, p))
-                rows.append("set PATH=%KEEPPATH%")
+                if iswin:
+                    rows.append("set PATH=%KEEPPATH%")
+                else:
+                    rows.append("export PATH=$KEEPPATH")
                 interpreter = ospathjoin(
                     p, "Scripts", "python", platform=platform)
                 pip = ospathjoin(p, "Scripts", "pip",
@@ -439,7 +447,10 @@ def convert_sequence_into_batch_file(seq, variables=None, platform=None):
                         raise KeyError(
                             "A script defined by a dictionary must contain key '{0}' or '{1}' in \n{2}".format("CMD", 'CMDPY', value))
                     if "NAME" in value:
-                        rows.append("set JOB_NAME=%s" % value["NAME"])
+                        if iswin:
+                            rows.append("set JOB_NAME=%s" % value["NAME"])
+                        else:
+                            rows.append("export JOB_NAME=%s" % value["NAME"])
                     if "CMD" in value:
                         value = value["CMD"]
                     else:
@@ -486,7 +497,10 @@ def convert_sequence_into_batch_file(seq, variables=None, platform=None):
                             value.append(error_level)
                 rows.extend(value)
         elif key == 'INFO':
-            rowsset.append("SET {0}={1}".format(value[0], value[1]))
+            if iswin:
+                rowsset.append("SET {0}={1}".format(value[0], value[1]))
+            else:
+                rowsset.append("export {0}={1}".format(value[0], value[1]))
         else:
             raise ValueError("unexpected key '{0}'".format(key))
 
@@ -507,7 +521,7 @@ def convert_sequence_into_batch_file(seq, variables=None, platform=None):
 
 def infer_project_name(file_or_buffer, source):
     """
-    Infer a project name based on yaml file
+    Infers a project name based on :epkg:`yml` file.
 
     @param      file_or_buffer      file name
     @param      source              second output of @see fn read_content_ufs
@@ -547,7 +561,7 @@ def enumerate_processed_yml(file_or_buffer, context=None, engine="jinja2", platf
                             server=None, git_repo=None, add_environ=True, overwrite=False,
                             build_location=None, **kwargs):
     """
-    submit or enumerate jobs based on the content of a yml file
+    Submits or enumerates jobs based on the content of a :epkg:`yml` file.
 
     @param      file_or_buffer      filename or string
     @param      context             variables to replace in the configuration
@@ -561,11 +575,10 @@ def enumerate_processed_yml(file_or_buffer, context=None, engine="jinja2", platf
     @param      kwargs              see @see me create_job_template
     @return                         enumerator for *(job, name, variables)*
 
-    Example of a yml file `.local.jenkins.win.yml <https://github.com/sdpython/pyquickhelper/blob/master/.local.jenkins.win.yml>`_.
-
-    .. versionchanged:: 1.5
-        A subfolder was added to the project location.
-        A scheduler can be defined as well by adding ``SCHEDULER:'* * * * *'``.
+    Example of a :epkg:`yml` file
+    `.local.jenkins.win.yml <https://github.com/sdpython/pyquickhelper/blob/master/.local.jenkins.win.yml>`_.
+    A subfolder was added to the project location.
+    A scheduler can be defined as well by adding ``SCHEDULER:'* * * * *'``.
     """
     typstr = str  # unicode#
     fLOG = kwargs.get('fLOG', None)
@@ -573,7 +586,7 @@ def enumerate_processed_yml(file_or_buffer, context=None, engine="jinja2", platf
         "project_name", None)
     obj, project_name = load_yaml(
         file_or_buffer, context=context, platform=platform)
-    platform_set = sys.platform if platform is None else platform
+    platform_set = platform or get_platform(platform)
     for seq, var in enumerate_convert_yaml_into_instructions(obj, variables=context, add_environ=add_environ):
         conv = convert_sequence_into_batch_file(
             seq, variables=var, platform=platform)
@@ -605,7 +618,7 @@ def enumerate_processed_yml(file_or_buffer, context=None, engine="jinja2", platf
             except jenkins.JenkinsException as e:
                 from .jenkins_exceptions import JenkinsExtException
                 raise JenkinsExtException(
-                    "unable to retrieve job config for name={1}".format(name)) from e
+                    "Unable to retrieve job config for name='{1}'.".format(name)) from e
 
             update_job = False
             if j is not None:

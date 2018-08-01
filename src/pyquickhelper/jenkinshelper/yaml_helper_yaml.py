@@ -1,6 +1,6 @@
 """
 @file
-@brief Put everything related to yaml in a separate files.
+@brief Puts everything related to package :epkg:`yaml` in a separate files.
 """
 import yaml
 
