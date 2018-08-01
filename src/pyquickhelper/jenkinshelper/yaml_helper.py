@@ -8,6 +8,7 @@ import sys
 from ..texthelper.templating import apply_template
 from ..filehelper import read_content_ufs
 from .yaml_helper_yaml import yaml_load
+from .jenkins_helper import get_platform
 
 
 _jenkins_split = "JENKINS_SPLIT"

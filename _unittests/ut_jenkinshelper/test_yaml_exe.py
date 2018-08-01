@@ -88,14 +88,15 @@ class TestYamlExe(unittest.TestCase):
         context = dict(Python34="fake", Python35=os.path.dirname(sys.executable),
                        Python27=None, Anaconda3=None, Anaconda2=None,
                        WinPython35=None, project_name="pyquickhelper",
-                       root_path="ROOT", 32")
+                       root_path="ROOT", PLATFORM="win32")
         obj, name = load_yaml(yml, context=context)
         self.assertTrue(name is not None)
         res = list(enumerate_convert_yaml_into_instructions(
             obj, variables=context))
         for r, var in res:
             conv = convert_sequence_into_batch_file(r, variables=var)
-            self.assertTrue(("%s " % command) in conv)
+            if ("%s " % command) not in conv:
+                raise Exception("{0}\n--\n{1}".format(command, conv))
             fLOG("####", conv)
             ext = "bat" if command == "dir" else "sh"
             name = os.path.join(temp, "yml.%s" % ext)
