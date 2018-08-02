@@ -135,11 +135,8 @@ class TestYaml(unittest.TestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
-        try:
-            self.zz_st_jconvert_sequence_into_batch_file("linux")
-        except NotImplementedError as e:
-            pass
         self.zz_st_jconvert_sequence_into_batch_file("win")
+        self.zz_st_jconvert_sequence_into_batch_file("linux")
 
     def zz_st_jconvert_sequence_into_batch_file(self, platform):
         this = os.path.abspath(os.path.dirname(__file__))
@@ -171,18 +168,19 @@ class TestYaml(unittest.TestCase):
             self.assertTrue(isinstance(conv, typstr))
         self.assertTrue(len(res) > 0)
 
+        set_name = "SET" if platform.startswith("win") else "export"
         vers_ = "%d.%d" % sys.version_info[:2]
         conv = [
-            _ for _ in convs if "SET NAME=UT" in _ and "VERSION=%s" % vers_ in _ and '-g' not in _]
+            _ for _ in convs if set_name + " NAME=UT" in _ and "VERSION=%s" % vers_ in _ and '-g' not in _]
         if len(conv) != 3:
             vers_ = "3.7"
             vers = "37"
             conv = [
-                _ for _ in convs if "SET NAME=UT" in _ and "VERSION=%s" % vers_ in _ and '-g' not in _]
+                _ for _ in convs if set_name + " NAME=UT" in _ and "VERSION=%s" % vers_ in _ and '-g' not in _]
         if len(conv) != 3:
             rows = [str(_) for _ in conv]
-            raise Exception("len(conv)={0}\n----\n{1}\n-----\n{2}".format(
-                len(conv), "\n".join(conv), "\n".join(rows)))
+            raise Exception("len(convs)={3}-len(conv)={0}\n----\n{1}\n-----\n{2}\n***\n{4}".format(
+                len(conv), "\n".join(conv), "\n".join(rows), len(convs), "\n*****\n".join(convs)))
         conv = conv[0]
         if platform.startswith("win"):
             expected = """
@@ -250,7 +248,7 @@ class TestYaml(unittest.TestCase):
                             "error on line:\nEXP:\n{0}\nGOT:\n{1}\n#######\n{2}".format(a, b, mes))
                 raise Exception(mes)
 
-        conv = [_ for _ in convs if "SET DIST=std" in _ and "TIMEOUT=899" in _]
+        conv = [_ for _ in convs if set_name + " DIST=std" in _ and "TIMEOUT=899" in _]
         if len(conv) != 1:
             raise Exception(
                 "################################\nlen(conv)={0}\n{1}".format(len(conv), conv))
