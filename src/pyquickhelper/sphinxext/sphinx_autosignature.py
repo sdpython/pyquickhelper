@@ -137,7 +137,13 @@ class AutoSignatureDirective(Directive):
             except TypeError as e:
                 logger = logging.getLogger("autosignature")
                 logger.warning(
-                    "[autosignature](1) unable to get signature of '{0}' - {2}.".format(object_name, str(e).replace("\n", "\\n")))
+                    "[autosignature](1) unable to get signature of '{0}' - {1}.".format(object_name, str(e).replace("\n", "\\n")))
+                signature = None
+                parameters = None
+            except ValueError as e:
+                logger = logging.getLogger("autosignature")
+                logger.warning(
+                    "[autosignature](2) unable to get signature of '{0}' - {1}.".format(object_name, str(e).replace("\n", "\\n")))
                 signature = None
                 parameters = None
 
