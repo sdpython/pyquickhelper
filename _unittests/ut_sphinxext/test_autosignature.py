@@ -282,7 +282,7 @@ class TestAutoSignature(ExtTestCase):
         obj, _, kind = import_any_object(
             "numpy.ndarray.__init__", use_init=False)
         self.assertNotEmpty(obj)
-        self.assertEqual(kind, "method")
+        self.assertIn(kind, ("method", "property"))
         newstring = [
             ".. autosignature:: numpy.ndarray.__init__\n    :path: full"]
         newstring = "\n".join(newstring)
