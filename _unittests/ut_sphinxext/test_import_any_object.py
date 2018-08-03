@@ -21,18 +21,12 @@ except ImportError:
         sys.path.append(path)
     import src
 
-from src.pyquickhelper.loghelper.flog import fLOG
 from src.pyquickhelper.sphinxext.import_object_helper import import_any_object, import_object
 
 
 class TestImportAnyObject(unittest.TestCase):
 
     def test_import_any_object(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
         this = os.path.abspath(os.path.dirname(__file__))
         data = os.path.join(this, "datadoc")
         sys.path.append(data)
@@ -44,11 +38,6 @@ class TestImportAnyObject(unittest.TestCase):
         self.assertEqual(kind, "class")
 
     def test_import_any_object_benchmark(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
         this = os.path.abspath(os.path.dirname(__file__))
         data = os.path.join(this, "datadoc")
         sys.path.append(data)
@@ -62,11 +51,6 @@ class TestImportAnyObject(unittest.TestCase):
         self.assertEqual(kind, "method")
 
     def test_import_any_object_static(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
         this = os.path.abspath(os.path.dirname(__file__))
         data = os.path.join(this, "datadoc")
         sys.path.append(data)
@@ -85,11 +69,6 @@ class TestImportAnyObject(unittest.TestCase):
         self.assertEqual(kind, "staticmethod")
 
     def test_import_any_object_property(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
         this = os.path.abspath(os.path.dirname(__file__))
         data = os.path.join(this, "datadoc")
         sys.path.append(data)

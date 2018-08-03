@@ -274,10 +274,7 @@ class TestAutoSignature(ExtTestCase):
 
     def test_autosignature_open(self):
         self.assertIsInstance(numpy.ndarray.__init__.__text_signature__, str)
-        self.assertRaise(lambda: import_object(
-            "numpy.ndarray.__init__", "method"), TypeError)
-        res = import_object("numpy.ndarray.__init__",
-                            "method", tried_function_before=True)
+        res = import_object("numpy.ndarray.__init__", "method")
         self.assertNotEmpty(res)
         obj, _, kind = import_any_object(
             "numpy.ndarray.__init__", use_init=False)

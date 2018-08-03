@@ -21,7 +21,7 @@ class _Types:
         pass
 
 
-def import_object(docname, kind, use_init=True, tried_function_before=False) -> Tuple[object, str]:
+def import_object(docname, kind, use_init=True) -> Tuple[object, str]:
     """
     Extracts an object defined by its name including the module name.
 
@@ -29,15 +29,10 @@ def import_object(docname, kind, use_init=True, tried_function_before=False) -> 
                                         (example: ``pyquickhelper.sphinxext.sphinx_docassert_extension.import_object``)
     @param      kind                    ``'function'`` or ``'class'`` or ``'kind'``
     @param      use_init                return the constructor instead of the class
-    @param      tried_function_before   ``ismethod`` is False and ``isfunction`` is True
-                                        but it is definitively a method
     @return                             tuple(object, name)
     @raises                             :epkg:`*py:RuntimeError` if cannot be imported,
                                         :epkg:`*py:TypeError` if it is a method or a property,
                                         :epkg:`*py:ValueError` if *kind* is unknown.
-
-    .. versionchanged:: 1.8
-        Parameter *tried_function_before* was added.
     """
     spl = docname.split(".")
     name = spl[-1]
@@ -83,7 +78,7 @@ def import_object(docname, kind, use_init=True, tried_function_before=False) -> 
         if not inspect.isclass(myfunc):
             raise TypeError("'{0}' is not a class".format(docname))
         myfunc = getattr(myfunc, spl[-1])
-        if not inspect.isfunction(myfunc) and not tried_function_before and not inspect.ismethod(myfunc):
+        if not inspect.isfunction(myfunc) and not inspect.ismethod(myfunc) and not name.endswith('__'):
             raise TypeError(
                 "'{0}' is not a method - {1}".format(docname, myfunc))
         if isinstance(myfunc, staticmethod):
@@ -136,8 +131,7 @@ def import_any_object(docname, use_init=True) -> Tuple[object, str, str]:
     excs = []
     for kind in ("function", "method", "staticmethod", "property", "class"):
         try:
-            myfunc, name = import_object(docname, kind, use_init=use_init,
-                                         tried_function_before=kind == "method")
+            myfunc, name = import_object(docname, kind, use_init=use_init)
             return myfunc, name, kind
         except Exception as e:
             # not this kind
