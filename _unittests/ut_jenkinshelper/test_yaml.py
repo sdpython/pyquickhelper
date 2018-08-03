@@ -248,7 +248,8 @@ class TestYaml(unittest.TestCase):
                             "error on line:\nEXP:\n{0}\nGOT:\n{1}\n#######\n{2}".format(a, b, mes))
                 raise Exception(mes)
 
-        conv = [_ for _ in convs if set_name + " DIST=std" in _ and "TIMEOUT=899" in _]
+        conv = [_ for _ in convs if set_name +
+                " DIST=std" in _ and "TIMEOUT=899" in _]
         if len(conv) != 1:
             raise Exception(
                 "################################\nlen(conv)={0}\n{1}".format(len(conv), conv))

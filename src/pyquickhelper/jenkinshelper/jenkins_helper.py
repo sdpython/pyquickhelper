@@ -68,7 +68,7 @@ def default_engines(platform=None):
                    Python37="/usr/local/python37",
                    Python36="/usr/local/python36")
     else:
-        raise ValueError("Unknown value for for_os '{0}'.".format(for_os))
+        raise ValueError("Unknown value for platform '{0}'.".format(platform))
 
     return res
 
@@ -131,7 +131,7 @@ def setup_jenkins_server_yml(js, github="sdpython", modules=None,
     The platform is stored in *srv*.
     """
     if modules is None:
-        modules = default_jenkins_jobs(srv.platform)
+        modules = default_jenkins_jobs()
     if delete_first:
         js.delete_all_jobs()
     r = js.setup_jenkins_server(github=github, modules=modules, overwrite=overwrite,

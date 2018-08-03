@@ -7,6 +7,7 @@ import sys
 import os
 import unittest
 import pandas
+import numpy
 
 
 try:
@@ -24,6 +25,7 @@ except ImportError:
 
 from src.pyquickhelper.pycode import ExtTestCase
 from src.pyquickhelper.sphinxext.import_object_helper import import_object, import_any_object, import_path
+from src.pyquickhelper.sphinxext.sphinx_autosignature import enumerate_extract_signature, enumerate_cleaned_signature
 from src.pyquickhelper.helpgen import rst2html
 
 
@@ -269,6 +271,50 @@ class TestAutoSignature(ExtTestCase):
         self.assertNotIn('`pandas.core.frame.DataFrame <pandas.core', res)
         self.assertIn(':py:class:', res)
         self.assertNotIn(':py:func:', res)
+
+    def test_autosignature_open(self):
+        self.assertIsInstance(numpy.ndarray.__init__.__text_signature__, str)
+        self.assertRaise(lambda: import_object(
+            "numpy.ndarray.__init__", "method"), TypeError)
+        res = import_object("numpy.ndarray.__init__",
+                            "method", tried_function_before=True)
+        self.assertNotEmpty(res)
+        obj, _, kind = import_any_object(
+            "numpy.ndarray.__init__", use_init=False)
+        self.assertNotEmpty(obj)
+        newstring = [
+            ".. autosignature:: numpy.ndarray.__init__\n    :path: full"]
+        newstring = "\n".join(newstring)
+        res = rst2html(newstring, writer="rst", layout="sphinx")
+        self.assertIn(":py:meth:`numpy.ndarray.__init__", res)
+
+    def test_extract_signature(self):
+        sigs = ["__init__(self: src.cpyquickhelper.numbers.weighted_number.WeightedDouble, value: float, weight: float=1.0) -> None",
+                "__init__()",
+                "__init__(a)",
+                "__init__(a=1)",
+                "__init__(a, b)",
+                "__init__(a, b=1)",
+                "__init__(a, b=1, c:int=2)",
+                ]
+        exps = ["__init__(self, value, weight=1.0)",
+                "__init__()",
+                "__init__(a)",
+                "__init__(a=1)",
+                "__init__(a, b)",
+                "__init__(a, b=1)",
+                "__init__(a, b=1, c=2)",
+                ]
+
+        for sig, exp in zip(sigs, exps):
+            res = list(enumerate_extract_signature(sig))
+            for r in res:
+                g = r.groupdict()
+                self.assertNotEmpty(g)
+
+            res = list(enumerate_cleaned_signature(sig))
+            self.assertEqual(len(res), 1)
+            self.assertEqual(res[0], exp)
 
 
 if __name__ == "__main__":

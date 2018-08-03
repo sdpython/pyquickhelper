@@ -8,6 +8,7 @@ and `AutoDirective <https://github.com/sphinx-doc/sphinx/blob/master/sphinx/ext/
 .. versionadded:: 1.5
 """
 import inspect
+import re
 import sphinx
 from docutils import nodes
 from docutils.parsers.rst import Directive, directives
@@ -25,6 +26,56 @@ class autosignature_node(nodes.Structural, nodes.Element):
     pass
 
 
+def enumerate_extract_signature(doc, max_args=20):
+    """
+    Looks for substring like the following and clean the signature
+    to be able to use function *_signature_fromstr*.
+
+    @param      doc         text to parse
+    @param      max_args    maximum number of parameters
+    @return                 iterator of found signatures
+
+    ::
+
+        __init__(self: cpyquickhelper.numbers.weighted_number.WeightedDouble,
+                 value: float, weight: float=1.0) -> None
+
+    It is limited to 20 parameters.
+    """
+    el = "((?P<p%d>[a-zA-Z_]+) *(?P<a%d>: *[a-zA-Z_.]+)? *(?P<d%d>= *[^ ]+?)?)"
+    els = [el % (i, i, i) for i in range(0, max_args)]
+    par = els[0] + "?" + "".join(["( *, *" + e + ")?" for e in els[1:]])
+    exp = "(?P<name>[a-zA-Z_]+) *[(] *(?P<sig>{0}) *[)]".format(par)
+    reg = re.compile(exp)
+    for func in reg.finditer(doc.replace("\n", " ")):
+        yield func
+
+
+def enumerate_cleaned_signature(doc, max_args=20):
+    """
+    Removes annotation from a signature extracted with
+    @see fn enumerate_extract_signature.
+
+    @param      doc         text to parse
+    @param      max_args    maximum number of parameters
+    @return                 iterator of found signatures
+    """
+    for sig in enumerate_extract_signature(doc, max_args=max_args):
+        dic = sig.groupdict()
+        name = sig["name"]
+        args = []
+        for i in range(0, max_args):
+            p = dic.get('p%d' % i, None)
+            if p is None:
+                break
+            d = dic.get('d%d' % i, None)
+            if d is None:
+                args.append(p)
+            else:
+                args.append("%s%s" % (p, d))
+        yield "{0}({1})".format(name, ", ".join(args))
+
+
 class AutoSignatureDirective(Directive):
     """
     This directive displays a shorter signature than
@@ -40,6 +91,10 @@ class AutoSignatureDirective(Directive):
         submodules, *name* displays the last name,
         *import* displays the shortest syntax to import it
         (default).
+
+    The signature is not always available for builtin functions
+    or C++ functions depending on the way to bind them to :epkg:`Python`.
+    See `Set the __text_signature__ attribute of callables <https://github.com/pybind/pybind11/issues/945>`_.
     """
     required_arguments = 0
     optional_arguments = 0
@@ -141,13 +196,36 @@ class AutoSignatureDirective(Directive):
                 signature = None
                 parameters = None
             except ValueError as e:
-                logger = logging.getLogger("autosignature")
-                logger.warning(
-                    "[autosignature](2) unable to get signature of '{0}' - {1}.".format(object_name, str(e).replace("\n", "\\n")))
-                signature = None
-                parameters = None
+                # Backup plan, no __text_signature__, this happen
+                # when a function was created with pybind11.
+                doc = obj_sig.__doc__
+                sigs = set(enumerate_cleaned_signature(doc))
+                if len(sigs) == 0:
+                    logger = logging.getLogger("autosignature")
+                    logger.warning(
+                        "[autosignature](2) unable to get signature of '{0}' - {1}.".format(object_name, str(e).replace("\n", "\\n")))
+                    signature = None
+                    parameters = None
+                elif len(sigs) > 1:
+                    logger = logging.getLogger("autosignature")
+                    logger.warning(
+                        "[autosignature](2) too many signatures for '{0}' - {1} - {2}.".format(
+                            object_name, str(e).replace("\n", "\\n"), " *** ".join(sigs)))
+                    signature = None
+                    parameters = None
+                else:
+                    try:
+                        signature = inspect._signature_fromstr(
+                            inspect.Signature, obj_sig, list(sigs)[0])
+                        parameters = signature.parameters
+                    except TypeError as e:
+                        logger = logging.getLogger("autosignature")
+                        logger.warning(
+                            "[autosignature](3) unable to get signature of '{0}' - {1}.".format(object_name, str(e).replace("\n", "\\n")))
+                        signature = None
+                        parameters = None
 
-            domkind = {'meth': 'func', 'function': 'func',
+            domkind = {'meth': 'func', 'function': 'func', 'method': 'meth',
                        'class': 'class', 'staticmethod': 'meth',
                        'property': 'meth'}[kind]
             if signature is None:

@@ -5,15 +5,17 @@
 History
 =======
 
-current - 2018-07-28 - 0.00Mb
+current - 2018-08-03 - 0.00Mb
 =============================
+
+* `164`: improve autosignature for builtin function (2018-08-03)
+* `162`: reduce the impact of RuntimeError: Kernel died before replying to kernel_info (2018-07-29)
+
+1.8.2673 - 2018-07-28 - 1.99Mb
+==============================
 
 * `161`: fix unit test test_build_script on appveyor (2018-07-28)
 * `160`: notebook server remains open if an exception happens during the execution (2018-07-25)
-
-1.8.2650 - 2018-07-23 - 1.99Mb
-==============================
-
 * `159`: fix a bug with pylint version (2018-07-23)
 * `158`: replaces clock by perf_counter (2018-07-22)
 * `156`: fix issue with update to python-jenkins 1.1.0 (2018-07-22)

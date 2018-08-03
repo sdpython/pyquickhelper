@@ -21,18 +21,23 @@ class _Types:
         pass
 
 
-def import_object(docname, kind, use_init=True) -> Tuple[object, str]:
+def import_object(docname, kind, use_init=True, tried_function_before=False) -> Tuple[object, str]:
     """
     Extracts an object defined by its name including the module name.
 
-    @param      docname     full name of the object
-                            (example: ``pyquickhelper.sphinxext.sphinx_docassert_extension.import_object``)
-    @param      kind        ``'function'`` or ``'class'`` or ``'kind'``
-    @param      use_init    return the constructor instead of the class
-    @return                 tuple(object, name)
-    @raises                 :epkg:`*py:RuntimeError` if cannot be imported,
-                            :epkg:`*py:TypeError` if it is a method or a property,
-                            :epkg:`*py:ValueError` if *kind* is unknown.
+    @param      docname                 full name of the object
+                                        (example: ``pyquickhelper.sphinxext.sphinx_docassert_extension.import_object``)
+    @param      kind                    ``'function'`` or ``'class'`` or ``'kind'``
+    @param      use_init                return the constructor instead of the class
+    @param      tried_function_before   ``ismethod`` is False and ``isfunction`` is True
+                                        but it is definitively a method
+    @return                             tuple(object, name)
+    @raises                             :epkg:`*py:RuntimeError` if cannot be imported,
+                                        :epkg:`*py:TypeError` if it is a method or a property,
+                                        :epkg:`*py:ValueError` if *kind* is unknown.
+
+    .. versionchanged:: 1.8
+        Parameter *tried_function_before* was added.
     """
     spl = docname.split(".")
     name = spl[-1]
@@ -78,13 +83,13 @@ def import_object(docname, kind, use_init=True) -> Tuple[object, str]:
         if not inspect.isclass(myfunc):
             raise TypeError("'{0}' is not a class".format(docname))
         myfunc = getattr(myfunc, spl[-1])
-        if not inspect.isfunction(myfunc) and not inspect.ismethod(myfunc):
+        if not inspect.isfunction(myfunc) and not tried_function_before and not inspect.ismethod(myfunc):
             raise TypeError(
                 "'{0}' is not a method - {1}".format(docname, myfunc))
         if isinstance(myfunc, staticmethod):
             raise TypeError(
                 "'{0}' is not a method(*) - {1}".format(docname, myfunc))
-        if sys.version_info >= (3, 4):
+        if hasattr(myfunc, "__code__") and sys.version_info >= (3, 4):
             if len(myfunc.__code__.co_varnames) == 0:
                 raise TypeError(
                     "'{0}' is not a method(**) - {1}".format(docname, myfunc))
@@ -131,7 +136,8 @@ def import_any_object(docname, use_init=True) -> Tuple[object, str, str]:
     excs = []
     for kind in ("function", "method", "staticmethod", "property", "class"):
         try:
-            myfunc, name = import_object(docname, kind, use_init=use_init)
+            myfunc, name = import_object(docname, kind, use_init=use_init,
+                                         tried_function_before=kind == "method")
             return myfunc, name, kind
         except Exception as e:
             # not this kind
