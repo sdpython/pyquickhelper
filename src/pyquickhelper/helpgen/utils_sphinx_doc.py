@@ -41,9 +41,9 @@ def validate_file_for_help(filename, fexclude=lambda f: False):
     return True
 
 
-def replace_relative_import(fullname, content=None):
+def replace_relative_import_fct(fullname, content=None):
     """
-    Takes a python file and replaces all relative imports it was able to find
+    Takes a :epkg:`python` file and replaces all relative imports it was able to find
     by an import which can be processed by Python if the file were the main file.
 
     @param      fullname        name of the file
@@ -190,7 +190,7 @@ def _private_process_one_file(
         if not os.path.exists(fold):
             os.makedirs(fold)
         if replace_relative_import:
-            content = replace_relative_import(fullname, content)
+            content = replace_relative_import_fct(fullname, content)
         with open(to, "w", encoding="utf8") as g:
             g.write(content)
 
@@ -286,17 +286,14 @@ def copy_source_files(input, output, fmod=lambda v, filename: v,
     :param      output:                     output folder (it will be cleaned each time)
     :param      fmod:                       modifies the content of each file,
                                             this function takes a string and returns a string
-
-    :param      silent:                     if True, do not stop when facing an issue with doxygen documentation
+    :param      silent:                     if True, do not stop when facing an issue with :epkg:`doxygen` documentation
     :param      filter:                     if None, process only file related to python code, otherwise,
                                             use this filter to select file (regular expression). If this parameter
                                             is None or is empty, the default value is something like:
                                             ``"(.+[.]py$)|(.+[.]pyd$)|(.+[.]cpp$)|(.+[.]h$)|(.+[.]dll$))"``.
-
     :param      remove:                     if True, remove every files in the output folder first
     :param      softfile:                   softfile is a function (f : filename --> True or False), when it is True,
                                             the documentation is lighter (no special members)
-
     :param      fexclude:                   function to exclude some files from the help
     :param      addfilter:                  additional filter, it should look like: ``"(.+[.]pyx$)|(.+[.]pyh$)"``
     :param      replace_relative_import:    replace relative import
@@ -387,9 +384,6 @@ def apply_modification_template(rootm, store_obj, template, fullname, rootrep,
                                     (will be removed afterwards)
     @param      fLOG                logging function
     @return                         content of a .rst file
-
-    .. versionadded:: 1.0
-        Paramater *fLOG* was added.
     """
     from pandas import DataFrame
 
@@ -410,7 +404,7 @@ def apply_modification_template(rootm, store_obj, template, fullname, rootrep,
             fullnamenoext, filenoext, pythonname, rootm, rootrep, fullname, keepf))
 
     mo, prefix = import_module(
-        rootm, keepf, fLOG, additional_sys_path=additional_sys_path, fLOG=fLOG)
+        rootm, keepf, fLOG, additional_sys_path=additional_sys_path)
     doc = ""
     shortdoc = ""
 
@@ -503,6 +497,8 @@ def apply_modification_template(rootm, store_obj, template, fullname, rootrep,
     else:
         doc = "[sphinxerror] unable to import."
 
+    if indexes is None:
+        indexes = {}
     label = IndexInformation.get_label(indexes, "f-" + filenoext)
     indexes[label] = IndexInformation(
         "module", label, filenoext, doc, None, keepf)
@@ -575,7 +571,7 @@ def add_file_rst(rootm, store_obj, actions, template=add_file_rst_template,
 
     @param      rootm                   root of the module (for relative import)
     @param      store_obj               to keep table of all objects
-    @param      actions                 output from copy_source_files
+    @param      actions                 output from @see fn copy_source_files
     @param      template                :epkg:`rst` template to produce
     @param      rootrep                 file name in the documentation contains some folders
                                         which are not desired in the documentation
@@ -597,6 +593,8 @@ def add_file_rst(rootm, store_obj, actions, template=add_file_rst_template,
     @param      fLOG                    logging function
     @return                             list of written files stored in RstFileHelp
     """
+    if indexes is None:
+        indexes = {}
     if mapped_function is None:
         mapped_function = []
 
@@ -616,12 +614,18 @@ def add_file_rst(rootm, store_obj, actions, template=add_file_rst_template,
         rst += ".rst"
         ext = os.path.splitext(to)[-1]
 
-        if file.endswith(".py"):
+        if sys.platform == "win32":
+            cpxx = ".cp%d%d-" % sys.version_info[:2]
+        else:
+            cpxx = ".cython-%d%dm-" % sys.version_info[:2]
+
+        if file.endswith(".py") or (cpxx in file and
+                                    (file.endswith(".pyd") or file.endswith("linux-gnu.so"))):
             if os.stat(to).st_size > 0:
                 content = apply_modification_template(
                     rootm, store_obj, template, to, rootrep, softfile, indexes,
                     additional_sys_path=additional_sys_path, fLOG=fLOG)
-                content = fmod(content)
+                content = fmod(content, file)
 
                 # tweaks for example and studies
                 zzz = to.replace("\\", "/")
@@ -682,35 +686,55 @@ def add_file_rst(rootm, store_obj, actions, template=add_file_rst_template,
     return app
 
 
-def produces_indexes(
-        store_obj,
-        indexes,
-        fexclude_index,
-        titles={"method": "Methods",
-                "staticmethod": "Static Methods",
-                "property": "Properties",
-                "function": "Functions",
-                "class": "Classes",
-                "module": "Modules"},
-        correspondances={"method": "l-methods",
-                         "function": "l-functions",
-                         "staticmethod": "l-staticmethods",
-                                   "property": "l-properties",
-                                   "class": "l-classes",
-                                   "module": "l-modules"},
-        fLOG=fLOG):
+def produces_indexes(store_obj, indexes, fexclude_index, titles=None,
+                     correspondances=None, fLOG=fLOG):
     """
-    produces a file for each category of object found in the module
+    Produces a file for each category of object found in the module.
+
     @param      store_obj           list of collected object, it is a dictionary
                                     key : ModuleMemberDoc or key : [ list of ModuleMemberDoc ]
     @param      indexes             list of things to index, dictionary { label : IndexInformation }
     @param      fexclude_index      to exclude files from the indices
-    @param      titles              each type is mapped to a title to add to the rst file
-    @param      correspondances     each type is mapped to a label to add to the rst file
+    @param      titles              each type is mapped to a title to add to the :epkg:`rst` file
+    @param      correspondances     each type is mapped to a label to add to the :epkg:`rst` file
     @param      fLOG                logging function
     @return                         dictionary: { type : rst content of the index }
+
+    Default values if *titles* of *correspondances* is None:
+
+    ::
+
+        title = {"method": "Methods",
+                 "staticmethod": "Static Methods",
+                 "property": "Properties",
+                 "function": "Functions",
+                 "class": "Classes",
+                 "module": "Modules"}
+
+        correspondances = {"method": "l-methods",
+                           "function": "l-functions",
+                           "staticmethod": "l-staticmethods",
+                           "property": "l-properties",
+                           "class": "l-classes",
+                           "module": "l-modules"}
     """
     from pandas import DataFrame
+
+    if titles is None:
+        titles = {"method": "Methods",
+                  "staticmethod": "Static Methods",
+                  "property": "Properties",
+                  "function": "Functions",
+                  "class": "Classes",
+                  "module": "Modules"}
+
+    if correspondances is None:
+        correspondances = {"method": "l-methods",
+                           "function": "l-functions",
+                           "staticmethod": "l-staticmethods",
+                           "property": "l-properties",
+                           "class": "l-classes",
+                           "module": "l-modules"}
 
     # we process store_obj
     types = {}
@@ -901,7 +925,7 @@ def prepare_file_for_sphinx_help_generation(store_obj, input, output,
                                             template=add_file_rst_template,
                                             rootrep=(
                                                 "_doc.sphinxdoc.source.project_name.", ""),
-                                            fmod_res=lambda v: v, silent=False,
+                                            fmod_res=lambda v, filename: v, silent=False,
                                             optional_dirs=None, softfile=lambda f: False,
                                             fexclude=lambda f: False, mapped_function=None,
                                             fexclude_index=lambda f: False, issues=None,
@@ -1068,7 +1092,7 @@ def prepare_file_for_sphinx_help_generation(store_obj, input, output,
     fLOG("[prepare_file_for_sphinx_help_generation] generating ",
          len(res), " indexes for ", ", ".join(list(res.keys())))
     allfiles = []
-    for k, v in res.items():
+    for k, vv in res.items():
         out = os.path.join(output, "index_" + k + ".rst")
         allfiles.append("index_" + k)
         fLOG("  generates index", out)
@@ -1083,9 +1107,9 @@ def prepare_file_for_sphinx_help_generation(store_obj, input, output,
                         na = na[na.index("source") + 1:]
                     na = "/".join(na)
                     toc.append("    " + na)
-            v += "\n".join(toc)
+            vv += "\n".join(toc)
         with open(out, "w", encoding="utf8") as fh:
-            fh.write(v)
+            fh.write(vv)
         rsts.append(RstFileHelp(None, out, None))
 
     # generates a table with the number of lines per extension
@@ -1770,6 +1794,7 @@ def _private_migrating_doxygen_doc(rows, index_first_line, filename,
 
 def doc_checking():
     """
+    Example of a doc string.
     """
     pass
 

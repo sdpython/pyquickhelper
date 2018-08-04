@@ -9,7 +9,7 @@ from ..filehelper import explore_folder, explore_folder_iterfile
 
 def enumerate_notebooks_link(nb_folder, nb_rst):
     """
-    Look for all links to a notebook in the documentation.
+    Looks for all links to a notebook in the documentation.
 
     @param      nb_folder   notebook folder
     @param      nb_rst      documentation folder

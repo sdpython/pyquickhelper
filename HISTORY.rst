@@ -5,8 +5,14 @@
 History
 =======
 
-current - 2018-08-03 - 0.00Mb
+current - 2018-08-04 - 0.00Mb
 =============================
+
+* `167`: autosignature fails for function implemented in pure C++ (not with pybind11) (2018-08-04)
+* `165`: documentation does not automatically generate .rst for module written in C (2018-08-04)
+
+1.8.2685 - 2018-08-03 - 1.99Mb
+==============================
 
 * `164`: improve autosignature for builtin function (2018-08-03)
 * `162`: reduce the impact of RuntimeError: Kernel died before replying to kernel_info (2018-07-29)

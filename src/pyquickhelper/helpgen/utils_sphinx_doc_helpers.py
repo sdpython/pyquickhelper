@@ -11,7 +11,6 @@ import re
 import sys
 import importlib
 from ..pandashelper.tblformat import df2rst
-from ..loghelper.flog import noLOG
 from .helpgen_exceptions import HelpGenException, ImportErrorHelpGen
 
 if sys.version_info[0] == 2:
@@ -468,6 +467,8 @@ class IndexInformation:
         @param  suggestion  the suggestion will be chosen if it does not exists, ``suggestion + zzz`` otherwise
         @return             string
         """
+        if existing is None:
+            raise ValueError("existing must not be None")
         suggestion = suggestion.replace("_", "").replace(".", "")
         while suggestion in existing:
             suggestion += "z"
@@ -501,7 +502,7 @@ class RstFileHelp:
 
 
 def import_module(rootm, filename, log_function, additional_sys_path=None,
-                  first_try=True, fLOG=noLOG):
+                  first_try=True):
     """
     Imports a module using its filename.
 
@@ -511,16 +512,15 @@ def import_module(rootm, filename, log_function, additional_sys_path=None,
     @param      additional_sys_path     additional path to include to ``sys.path`` before
                                         importing a module (will be removed afterwards)
     @param      first_try               first call to the function (to avoid infinite loop)
-    @param      fLOG                    logging function
     @return                             module object, prefix
 
-    @warning It adds the file path at the first position in sys.path and then deletes it.
-
-    .. versionadded:: 1.0
-        Parameter *fLOG* was added.
+    @warning It adds the file path at the first position in ``sys.path`` and then deletes it.
 
     .. versionchanged:: 1.7
         Add parameter *first_try*.
+
+    .. versionchanged:: 1.8
+        Can import compiled modules.
     """
     if additional_sys_path is None:
         additional_sys_path = []
@@ -528,9 +528,12 @@ def import_module(rootm, filename, log_function, additional_sys_path=None,
     li = filename.replace("\\", "/")
     sdir = os.path.abspath(os.path.split(li)[0])
     relpath = os.path.relpath(li, rootm).replace("\\", "/")
-    spl = relpath.split("/")
-    fmod = spl[0]  # this is the prefix
-    relpath = "/".join(spl[1:])
+    if "/" in relpath:
+        spl = relpath.split("/")
+        fmod = spl[0]  # this is the prefix
+        relpath = "/".join(spl[1:])
+    else:
+        fmod = ""
 
     # has init
     init_ = os.path.join(sdir, "__init__.py")
@@ -554,13 +557,38 @@ def import_module(rootm, filename, log_function, additional_sys_path=None,
     for r in rem:
         del sys.path[r]
 
+    # Extracts extended extension of the module.
+    if li.endswith(".py"):
+        ext_rem = ".py"
+    elif li.endswith(".pyd"):
+        cpxx = ".cp%d%d-" % sys.version_info[:2]
+        search = li.rfind(cpxx)
+        ext_rem = li[search:]
+    else:
+        cpxx = ".cython-%d%dm-" % sys.version_info[:2]
+        search = li.rfind(cpxx)
+        ext_rem = li[search:]
+    if not ext_rem:
+        raise ValueError("Unable to guess file extension '{0}'".format(li))
+    if ext_rem != ".py":
+        log_function("[import_module] found extension='{0}'".format(ext_rem))
+
     # remove fmod from sys.modules
-    addback = []
-    rem = []
-    for n, m in sys.modules.items():
-        if n.startswith(fmod):
-            rem.append(n)
-            addback.append((n, m))
+    if fmod:
+        addback = []
+        rem = []
+        for n, m in sys.modules.items():
+            if n.startswith(fmod):
+                rem.append(n)
+                addback.append((n, m))
+    else:
+        addback = []
+        relpath.replace(ext_rem, "")
+        rem = []
+        for n, m in sys.modules.items():
+            if n.startswith(relpath):
+                rem.append(n)
+                addback.append((n, m))
 
     # we remove the modules
     # this line is important to remove all modules
@@ -573,15 +601,16 @@ def import_module(rootm, filename, log_function, additional_sys_path=None,
     if rootm is not None:
         root = rootm
         tl = relpath
-        fi = tl.replace(".py", "").replace("/", ".")
-        fi = fmod + "." + fi
+        fi = tl.replace(ext_rem, "").replace("/", ".")
+        if fmod:
+            fi = fmod + "." + fi
         context = None
         if fi.endswith(".__init__"):
             fi = fi[:-len(".__init__")]
     else:
         root = sdir
         tl = os.path.split(li)[1]
-        fi = tl.replace(".py", "")
+        fi = tl.replace(ext_rem, "")
         context = None
 
     if additional_sys_path is not None and len(additional_sys_path) > 0:
@@ -594,11 +623,12 @@ def import_module(rootm, filename, log_function, additional_sys_path=None,
         try:
             mo = importlib.import_module(fi, context)
         except ImportError:
-            fLOG("unable to import module ", fi, "fullname", filename)
+            log_function(
+                "[import_module] unable to import module '{0}' fullname '{1}'".format(fi, filename))
             mo_spec = importlib.util.find_spec(fi, context)
-            fLOG("imported spec", mo_spec)
+            log_function("[import_module] imported spec", mo_spec)
             mo = mo_spec.loader.load_module()
-            fLOG("successful try", mo_spec)
+            log_function("[import_module] successful try", mo_spec)
 
         if not mo.__file__.replace(
                 "\\", "/").endswith(filename.replace("\\", "/").strip("./")):
@@ -696,7 +726,7 @@ def import_module(rootm, filename, log_function, additional_sys_path=None,
             fix_pip_902()
             return import_module(rootm=rootm, filename=filename, log_function=log_function,
                                  additional_sys_path=additional_sys_path,
-                                 first_try=False, fLOG=fLOG)
+                                 first_try=False)
         else:
             log_function("[warning] -- unable to import module (4) ", filename,
                          ",", fi, " in path ", sdir, " Error: ", str(e))
@@ -777,7 +807,7 @@ def get_module_objects(mod):
 
 
 def process_var_tag(
-        docstring, rst_replace=False, header=["attribute", "meaning"]):
+        docstring, rst_replace=False, header=None):
     """
     Processes a docstring using tag ``@ var``, and return a list of 2-tuple::
 
@@ -787,11 +817,14 @@ def process_var_tag(
 
     @param      docstring       string
     @param      rst_replace     if True, replace the var bloc var a rst bloc
-    @param      header          header for the table
+    @param      header          header for the table, if None, ``["attribute", "meaning"]``
     @return                     a matrix with two columns or a string if rst_replace is True
 
     """
     from pandas import DataFrame
+
+    if header is None:
+        header = ["attribute", "meaning"]
 
     reg = re.compile("[@]var +([_a-zA-Z][a-zA-Z0-9_]*?) +((?:(?!@var).)+)")
 
@@ -906,8 +939,8 @@ def process_look_for_tag(tag, title, files):
     """
     def noneempty(a):
         if "___" in a:
-            page, a = a.split("___")
-            return "_" + page, a.lower(), a
+            page, b = a.split("___")
+            return "_" + page, b.lower(), b
         else:
             return "", a.lower(), a
     repl = "__!LI!NE!__"
@@ -921,13 +954,16 @@ def process_look_for_tag(tag, title, files):
             continue
         if "utils_sphinx_doc.py" in file.file:
             continue
-        try:
-            with open(file.file, "r", encoding="utf8") as f:
-                content = f.read()
-        except Exception:
-            with open(file.file, "r") as f:
-                content = f.read()
-        content = content.replace("\n", repl)
+        if file.file.endswith(".py"):
+            try:
+                with open(file.file, "r", encoding="utf8") as f:
+                    content = f.read()
+            except Exception:
+                with open(file.file, "r") as f:
+                    content = f.read()
+            content = content.replace("\n", repl)
+        else:
+            content = "Binary file."
 
         all = exp.findall(content)
         all2 = exp2.findall(content)

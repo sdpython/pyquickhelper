@@ -16,8 +16,8 @@ if sys.version_info[0] == 2:
 
 def getsitepackages():
     """
-    overwrites function `getsitepackages <https://docs.python.org/3/library/site.html#site.getsitepackages>`_
-    which does not work for a virtual environment
+    Overwrites function :epkg:`getsitepackages`
+    which does not work for a virtual environment.
 
     @return         site-package somewhere
     """
@@ -35,7 +35,7 @@ def ie_layout_html():
 
     @return         boolean
 
-    If False, raises an exception.
+    If False, raises a warning.
     """
     tofind = '<meta http-equiv="X-UA-Compatible" content="IE=edge" />'
 
@@ -76,20 +76,10 @@ def locate_image_documentation(image_name):
     @param      image_name      path
     @return                     local file
 
-    .. todoext::
-        :title: Fix infinite loop
-        :tag: done
-        :date: 2016-09-29
-        :cost: 1
-        :release: 1.5
-        :issue: 35
-
-        When a notebook is taken out from the sources, the image using NbImage
-        cannot be displayed because the function cannot guess from which project
-        it was taken. The function was entering an infinite loop.
-
-    .. versionchanged:: 1.5
-        The function can deal with subfolder and not only the folder which contains the notebook.
+    When a notebook is taken out from the sources, the image using NbImage
+    cannot be displayed because the function cannot guess from which project
+    it was taken. The function was entering an infinite loop.
+    The function can deal with subfolder and not only the folder which contains the notebook.
     """
     folder, filename = os.path.split(image_name)
     while len(folder) > 0 and (not os.path.exists(folder) or "_doc" not in os.listdir(folder)):
@@ -128,12 +118,8 @@ def NbImage(name, repository=None, force_github=False, width=None):
 
     if *repository* is None, then the function will use the variable ``module.__github__`` to
     guess the location of the image.
-
-    .. versionadded:: 0.9
-
-    .. versionchanged:: 1.5
-        The function is able to retrieve an image in a subfolder.
-        Displays a better message if ``__github__`` was not found.
+    The function is able to retrieve an image in a subfolder.
+    Displays a better message if ``__github__`` was not found.
     """
     from IPython.core.display import Image
     local = os.path.abspath(name)

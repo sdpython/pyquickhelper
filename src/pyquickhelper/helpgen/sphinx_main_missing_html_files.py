@@ -23,10 +23,9 @@ def add_missing_files(root, conf, blog_list):
     @param      theme       theme, missing files depend on it
     @return                 list of modified files
 
-    .. versionchanged:: 1.5
-        The function considers the theme for the searchbox.
-        `sphinx_rtd_theme <https://github.com/rtfd/sphinx_rtd_theme>`_ has
-        a different style for the searchbox.
+    The function considers the theme for the searchbox.
+    `sphinx_rtd_theme <https://github.com/rtfd/sphinx_rtd_theme>`_ has
+    a different style for the searchbox.
     """
     # settings
     fold = conf.templates_path
@@ -57,8 +56,8 @@ def add_missing_files(root, conf, blog_list):
 
     # link
     link = '\n<li class="toctree-l1"><a class="reference internal" href="{0}">{1}</a></li>'
-    double_link = '\n<li class="toctree-l1"><a class="reference internal" href="{0}">{1}</a> - ' + \
-                  '<a class="reference internal" href="{2}">{3}</a></li>'
+    double_link = '\n<li class="toctree-l1"><a class="reference internal" href="{0}">{1}</a></li>' + \
+                  '\n<li class="toctree-l1"><a class="reference internal" href="{2}">{3}</a></li>'
 
     # moduletoc.html
     mt = os.path.join(loc, "moduletoc.html")

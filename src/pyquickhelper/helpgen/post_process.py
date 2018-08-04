@@ -442,7 +442,7 @@ def post_process_rst_output(file, html, pdf, python, slides, present, is_noteboo
     if github:
         if notebook is None:
             raise ValueError(
-                "cannot add a link on github, notebook is None for file='{0}'".format(file))
+                "Cannot add a link on github, notebook is None for file='{0}'".format(file))
         docname = notebook
         folder = docname
         git = os.path.join(folder, ".git")
