@@ -27,7 +27,7 @@ except ImportError:
 from src.pyquickhelper.loghelper import fLOG
 from src.pyquickhelper.filehelper import FileTreeNode
 from src.pyquickhelper.pycode import ExtTestCase
-from src.pyquickhelper.helpgen.utils_sphinx_doc import filecontent_to_rst, replace_relative_import
+from src.pyquickhelper.helpgen.utils_sphinx_doc import filecontent_to_rst, replace_relative_import_fct
 
 
 class TestFileNodeTree(ExtTestCase):
@@ -71,7 +71,7 @@ class TestFileNodeTree(ExtTestCase):
                     self.assertNotIn("no documentation", doc)
                     self.assertIn(".. _f-", contr)
 
-                    cont2 = replace_relative_import(f.fullname)
+                    cont2 = replace_relative_import_fct(f.fullname)
                     lines = cont2.split("\n")
                     condition = "# replace # from ." in cont2
                     if not condition:
