@@ -57,7 +57,8 @@ def import_object(docname, kind, use_init=True) -> Tuple[object, str]:
 
     myfunc = context["myfunc"]
     if kind == "function":
-        if not inspect.isfunction(myfunc):
+        if not inspect.isfunction(myfunc) and 'built-in function' not in str(myfunc):
+            # inspect.isfunction fails for C functions.
             raise TypeError("'{0}' is not a function".format(docname))
         name = spl[-1]
     elif kind == "property":

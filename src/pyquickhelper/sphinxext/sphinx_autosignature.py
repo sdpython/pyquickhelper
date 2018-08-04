@@ -42,7 +42,7 @@ def enumerate_extract_signature(doc, max_args=20):
 
     It is limited to 20 parameters.
     """
-    el = "((?P<p%d>[a-zA-Z_]+) *(?P<a%d>: *[a-zA-Z_.]+)? *(?P<d%d>= *[^ ]+?)?)"
+    el = "((?P<p%d>[*a-zA-Z_]+) *(?P<a%d>: *[a-zA-Z_.]+)? *(?P<d%d>= *[^ ]+?)?)"
     els = [el % (i, i, i) for i in range(0, max_args)]
     par = els[0] + "?" + "".join(["( *, *" + e + ")?" for e in els[1:]])
     exp = "(?P<name>[a-zA-Z_]+) *[(] *(?P<sig>{0}) *[)]".format(par)
@@ -88,13 +88,19 @@ class AutoSignatureDirective(Directive):
       `sphinx.ext.autodoc <http://www.sphinx-doc.org/en/stable/ext/autodoc.html#module-sphinx.ext.autodoc>`_)
     * *members*: shows members of a class
     * *path*: three options, *full* displays the full path including
-        submodules, *name* displays the last name,
-        *import* displays the shortest syntax to import it
-        (default).
+      submodules, *name* displays the last name,
+      *import* displays the shortest syntax to import it
+      (default).
 
     The signature is not always available for builtin functions
-    or C++ functions depending on the way to bind them to :epkg:`Python`.
+    or :epkg:`C++` functions depending on the way to bind them to :epkg:`Python`.
     See `Set the __text_signature__ attribute of callables <https://github.com/pybind/pybind11/issues/945>`_.
+
+    The signature may not be infered by module ``inspect``
+    if the function is a compiled C function. In that case,
+    the signature must be added to the documentation. It will
+    parsed by *autosignature* with by function
+    @see fn enumerate_extract_signature with regular expressions.
     """
     required_arguments = 0
     optional_arguments = 0
