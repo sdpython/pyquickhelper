@@ -178,8 +178,10 @@ class TestModuleC(ExtTestCase):
         cmd = "{0} {1} build_ext --inplace".format(sys.executable, setup)
         out, err = run_cmd(cmd, wait=True, fLOG=fLOG, change_path=temp)
         if "error" in out or "error" in err:
-            raise Exception(
-                "Unable to compile\n--OUT--\n{0}\n--ERR--\n{1}".format(out, err))
+            out_ = out.replace("-Werror=format-security", "")
+            if "error" in out_:
+                raise Exception(
+                    "Unable to compile\n--OUT--\n{0}\n--ERR--\n{1}".format(out, err))
         if sys.platform == "win32":
             name = "stdchelper_demo.cp%d%d-win_amd64.pyd" % sys.version_info[:2]
         else:

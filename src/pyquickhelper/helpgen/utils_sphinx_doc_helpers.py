@@ -559,6 +559,7 @@ def import_module(rootm, filename, log_function, additional_sys_path=None,
 
     # Extracts extended extension of the module.
     if li.endswith(".py"):
+        cpxx = ".py"
         ext_rem = ".py"
     elif li.endswith(".pyd"):
         cpxx = ".cp%d%d-" % sys.version_info[:2]
@@ -685,10 +686,15 @@ def import_module(rootm, filename, log_function, additional_sys_path=None,
         message = ["-----", stack, "-----"]
         message.append("      executable: '{0}'".format(sys.executable))
         message.append("      version: '{0}'".format(sys.version_info))
+        message.append("      platform: '{0}'".format(sys.platform))
         message.append("      ext_rem='{0}'".format(ext_rem))
         message.append("      fi='{0}'".format(fi))
+        message.append("      li='{0}'".format(li))
+        message.append("      cpxx='{0}'".format(cpxx))
+        message.append("-----")
         for p in sys.path:
             message.append("      path: " + p)
+        message.append("-----")
         for p in sorted(sys.modules):
             try:
                 m = sys.modules[p].__path__
