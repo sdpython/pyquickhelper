@@ -206,7 +206,7 @@ class TestModuleC(ExtTestCase):
         indexes = {}
         add_file_rst(temp2, store_obj, actions, fLOG=fLOG,
                      rootrep=("stdchelper_demo.", ""), indexes=indexes)
-        if len(actions) != 3:
+        if len(actions) not in (3, 4):
             raise Exception("{0}\n{1}".format(len(actions), "\n".join(str(_) for _ in actions)))
         self.assertEqual(len(indexes), 1)
 
