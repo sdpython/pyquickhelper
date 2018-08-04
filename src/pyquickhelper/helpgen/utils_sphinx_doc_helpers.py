@@ -682,9 +682,11 @@ def import_module(rootm, filename, log_function, additional_sys_path=None,
         log_function("      version", sys.version_info)
         log_function("      stack:\n", stack)
 
-        message = [stack]
-        message.append("      executable: " + sys.executable)
-        message.append("      version: " + str(sys.version_info))
+        message = ["-----", stack, "-----"]
+        message.append("      executable: '{0}'".format(sys.executable))
+        message.append("      version: '{0}'".format(sys.version_info))
+        message.append("      ext_rem='{0}'".format(ext_rem))
+        message.append("      fi='{0}'".format(fi))
         for p in sys.path:
             message.append("      path: " + p)
         for p in sorted(sys.modules):
@@ -703,7 +705,7 @@ def import_module(rootm, filename, log_function, additional_sys_path=None,
             raise ImportErrorHelpGen(
                 "frozen importlib._bootstrap is an issue:\n" + "\n".join(message)) from e
 
-        return "unable(1) to import %s\nError:\n%s" % (filename, str(e)), fmod
+        return "Unable(1) to import %s\nError:\n%s" % (filename, str(e)), fmod
 
     except SystemError as e:
         log_function("[warning] -- unable to import module (2) ", filename,

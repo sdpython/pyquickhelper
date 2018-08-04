@@ -22,13 +22,13 @@ except ImportError:
     import src
 
 from src.pyquickhelper.loghelper import fLOG
-from src.pyquickhelper.pycode import get_temp_folder
+from src.pyquickhelper.pycode import get_temp_folder, ExtTestCase
 from src.pyquickhelper.pycode.code_helper import remove_extra_spaces_and_pep8, remove_extra_spaces_folder
 from src.pyquickhelper.pycode.clean_helper import clean_exts
 from src.pyquickhelper.pycode.ci_helper import is_travis_or_appveyor
 
 
-class TestClean(unittest.TestCase):
+class TestClean(ExtTestCase):
 
     def test_pep8(self):
         fLOG(
@@ -45,7 +45,7 @@ class TestClean(unittest.TestCase):
         except IndexError as e:
             warnings.warn("probably an issue with pep8: " + str(e))
             return
-        assert diff < 10
+        self.assertLesser(diff, 10)
 
     def test_extra_space(self):
         fLOG(
@@ -59,7 +59,7 @@ class TestClean(unittest.TestCase):
         except IndexError as e:
             warnings.warn("probably an issue with pep8: " + str(e))
             return
-        assert isinstance(diff, list)
+        self.assertIsInstance(diff, list)
 
     def test_clean_exts(self):
         fLOG(
@@ -67,16 +67,21 @@ class TestClean(unittest.TestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
+        def fclean(name):
+            if "stdchelper.cp37-win_amd64.pyd" in name:
+                return False
+            return True
+
         this = os.path.abspath(os.path.dirname(__file__))
         try:
-            diff = clean_exts(this)
+            diff = clean_exts(this, fclean=fclean)
         except PermissionError as e:
             if "anaconda" in sys.executable.lower():
                 # we disable it for Anaconda
                 return
             raise Exception("unable to clean " + this +
                             "\nexe: " + sys.executable) from e
-        assert isinstance(diff, list)
+        self.assertIsInstance(diff, list)
 
     def test_clean_pep8(self):
         fLOG(
@@ -95,7 +100,7 @@ class TestClean(unittest.TestCase):
                     return [2,3]
                 """.replace("                ", ""))
         r = remove_extra_spaces_and_pep8(name)
-        assert r > 0
+        self.assertGreater(r, 0)
         with open(name, "r") as f:
             content = f.read()
         self.assertEqual(content.strip(), """
