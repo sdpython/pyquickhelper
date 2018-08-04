@@ -617,7 +617,7 @@ def add_file_rst(rootm, store_obj, actions, template=add_file_rst_template,
         if sys.platform == "win32":
             cpxx = ".cp%d%d-" % sys.version_info[:2]
         else:
-            cpxx = ".cython-%d%dm-" % sys.version_info[:2]
+            cpxx = ".cpython-%d%dm-" % sys.version_info[:2]
 
         if file.endswith(".py") or (cpxx in file and
                                     (file.endswith(".pyd") or file.endswith("linux-gnu.so"))):
