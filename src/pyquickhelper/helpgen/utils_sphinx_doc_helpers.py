@@ -566,7 +566,7 @@ def import_module(rootm, filename, log_function, additional_sys_path=None,
         search = li.rfind(cpxx)
         ext_rem = li[search:]
     else:
-        cpxx = ".cython-%d%dm-" % sys.version_info[:2]
+        cpxx = ".cpython-%d%dm-" % sys.version_info[:2]
         search = li.rfind(cpxx)
         ext_rem = li[search:]
     if not ext_rem:
