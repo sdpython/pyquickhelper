@@ -125,7 +125,7 @@ class TestUnitTestFull(unittest.TestCase):
                         ("run_pylint .*((myex)|(example_ext)).*[.]py$ " +
                          "-iC0103 -iR0201 -iC0123 -iC0111 -iW0611 -iE0401 -iE0611 -iE0401"),
                         "unittests -e .*code_style.*",
-                        "unittests -g .*((ext)|(code_style)).*",
+                        "unittests -g .*((ext)|(code_style)|(run_notebooks)).*",
                         "unittests_LONG", "unittests_SKIP",
                         "build_sphinx"]:
             if command == "build_sphinx" and is_travis_or_appveyor() in ('travis', 'appveyor'):
