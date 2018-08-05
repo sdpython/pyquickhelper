@@ -169,6 +169,13 @@ def process_standard_options_for_setup(argv, file_or_folder, project_var_name, m
     if layout is None:
         layout = ["html", "pdf"]
 
+    try:
+        from nbconvert.nbconvertapp import main as nbconvert_main
+        if nbconvert_main is None:
+            raise AttributeError("nbconvert_main is None")
+    except AttributeError as e:
+        raise ImportError("Unable to import nbconvert, cannot generate the documentation") from e
+
     if "--help" in argv or "--help-commands" in argv:
         process_standard_options_for_setup_help(argv)
         return True
