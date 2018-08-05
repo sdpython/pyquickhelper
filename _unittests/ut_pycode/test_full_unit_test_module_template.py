@@ -37,7 +37,7 @@ except ImportError:
     import jyquickhelper as skip_
 
 from src.pyquickhelper.loghelper.flog import fLOG
-from src.pyquickhelper.pycode import get_temp_folder, process_standard_options_for_setup, is_travis_or_appveyor
+from src.pyquickhelper.pycode import get_temp_folder, process_standard_options_for_setup
 from src.pyquickhelper.loghelper import git_clone
 from src.pyquickhelper import __file__ as pyq_location
 
@@ -47,21 +47,14 @@ else:
     from io import StringIO
 
 
-class TestUnitTestFull(unittest.TestCase):
+class TestUnitTestFullModuleTemplate(unittest.TestCase):
 
+    @unittest.skipIf(sys.version_info[0] == 2, reason="does not work on Python 2")
     def test_full_unit_test(self):
         fLOG(
             __file__,
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
-
-        if is_travis_or_appveyor() == "travis":
-            # Disabled on travis.
-            return
-
-        if sys.version_info[0] == 2:
-            # The downloaded code is python 3.
-            return
 
         if __name__ != "__main__" or not os.path.exists("temp2_full_unit_test"):
             temp_ = get_temp_folder(__file__, "temp2_full_unit_test")
