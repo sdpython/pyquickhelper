@@ -8,6 +8,7 @@ History
 current - 2018-08-06 - 0.00Mb
 =============================
 
+* `170`: add option syspath for autosignature (2018-08-05)
 * `169`: add option debug to autosignature (2018-08-05)
 * `168`: documentation does not produce a page for a compiled module in pure C++ (not with pybind11) (2018-08-05)
 * `166`: fix github link when link points to a compile module (2018-08-05)

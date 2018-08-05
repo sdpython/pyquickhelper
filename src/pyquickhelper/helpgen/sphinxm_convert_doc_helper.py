@@ -190,8 +190,8 @@ def rst2html(s, fLOG=noLOG, writer="html", keep_warnings=False,
                         # to remove spaces at the beginning of the line
 
             tives = [ ("runpythonthis", RunPythonThisDirective,
-                    runpythonthis_node,
-                    visit_node, depart_node) ]
+                       runpythonthis_node,
+                       visit_node, depart_node) ]
 
             html = rst2html(content, fLOG=fLOG,
                             writer="html", keep_warnings=True,

@@ -323,6 +323,7 @@ class TestAutoSignature(ExtTestCase):
                      "",
                      ".. autosignature:: exdocassert2.onefunction",
                      "    :debug:",
+                     "    :syspath: aaa;bbbb",
                      "",
                      "CCCCCCCCCCCCCCCC"]
         newstring = "\n".join(newstring)

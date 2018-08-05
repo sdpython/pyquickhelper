@@ -10,6 +10,7 @@ and `AutoDirective <https://github.com/sphinx-doc/sphinx/blob/master/sphinx/ext/
 import inspect
 import re
 import sphinx
+import sys
 from docutils import nodes
 from docutils.parsers.rst import Directive, directives
 from docutils.statemachine import StringList
@@ -92,6 +93,8 @@ class AutoSignatureDirective(Directive):
       *import* displays the shortest syntax to import it
       (default).
     * *debug*: diplays debug information
+    * *syspath*: additional paths to add to ``sys.path`` before importing,
+      ';' separated list
 
     The signature is not always available for builtin functions
     or :epkg:`C++` functions depending on the way to bind them to :epkg:`Python`.
@@ -114,6 +117,7 @@ class AutoSignatureDirective(Directive):
         'members': directives.unchanged,
         'path': directives.unchanged,
         'debug': directives.unchanged,
+        'syspath': directives.unchanged,
     }
 
     has_content = True
@@ -134,6 +138,7 @@ class AutoSignatureDirective(Directive):
         if opt_members in (None, '') and 'members' in self.options:
             opt_members = "all"
         opt_path = self.options.get('path', 'import')
+        opt_syspath = self.options.get('syspath', None)
 
         if opt_debug:
             keep_logged = []
@@ -151,6 +156,9 @@ class AutoSignatureDirective(Directive):
 
         # object name
         object_name = " ".join(_.strip("\n\r\t ") for _ in self.content)
+        if opt_syspath:
+            syslength = len(sys.path)
+            sys.path.extend(opt_syspath.split(';'))
         try:
             obj, _, kind = import_any_object(
                 object_name, use_init=False, fLOG=logging_function)
@@ -166,6 +174,8 @@ class AutoSignatureDirective(Directive):
                     '   File "{0}", line {1}'.format(source, lineno))
             obj = None
             kind = None
+        if opt_syspath:
+            del sys.path[syslength:]
 
         if opt_members is not None and kind != "class":
             logger = logging.getLogger("autosignature")
