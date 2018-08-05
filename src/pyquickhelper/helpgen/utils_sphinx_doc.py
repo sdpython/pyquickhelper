@@ -302,12 +302,6 @@ def copy_source_files(input, output, fmod=lambda v, filename: v,
                                             <pyquickhelper.helpgen.utils_sphinx_doc.remove_undesired_part_for_documentation>`
     :param      fLOG:                       logging function
     :return:                                list of copied files
-
-    .. versionchanged:: 1.3
-        Parameters *copy_add_ext*, *use_sys* were added.
-
-    .. versionchanged:: 1.4
-        Parameter *fLOG* was added.
     """
     if not os.path.exists(output):
         os.makedirs(output)
@@ -384,6 +378,35 @@ def apply_modification_template(rootm, store_obj, template, fullname, rootrep,
                                     (will be removed afterwards)
     @param      fLOG                logging function
     @return                         content of a .rst file
+
+    .. faqref::
+        :title: Why doesn't the documentation show compiled submodules?
+
+        The instruction ``.. automodule:: <name>`` only shows objects *obj*
+        which verify ``obj.__module__ == name``. This is always the case
+        for modules written in Python but not necessarily for module
+        compiled from C language. When the module is declared,
+        the following structure contains the module name in second position.
+        This name must not be the submodule shortname but the name
+        the module has is the package. The C file
+        *pyquickhelper/helpgen/compiled.c*
+        implements submodule
+        ``pyquickhelper.helpgen.compiled``, this value must replace
+        ``<fullname>`` in the structure below, not simply *compiled*.
+
+        ::
+
+            static struct PyModuleDef moduledef = {
+                    PyModuleDef_HEAD_INIT,
+                    "<fullname>",
+                    "Helper for parallelization with threads with C++.",
+                    sizeof(struct module_state),
+                    fonctions,
+                    NULL,
+                    threader_module_traverse,
+                    threader_module_clear,
+                    NULL
+            };
     """
     from pandas import DataFrame
 

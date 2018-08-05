@@ -233,7 +233,7 @@ class ModuleMemberDoc:
                 self.type = "class"
             elif inspect.ismethod(obj):
                 self.type = "method"
-            elif inspect.isfunction(obj):
+            elif inspect.isfunction(obj) or "built-in function" in str(obj):
                 self.type = "function"
             elif inspect.isgenerator(obj):
                 self.type = "generator"
@@ -263,7 +263,8 @@ class ModuleMemberDoc:
             else:
                 self.module = None
             if self.name is None:
-                raise IndexError("unable to find a name for this object")
+                raise IndexError("Unable to find a name for this object type={0}, self.type={1}, owner='{2}'".format(
+                    type(obj), self.type, self.owner))
 
         # full path for the module
         if self.module is not None:
@@ -788,7 +789,8 @@ def get_module_objects(mod):
         if inspect.isclass(obj) or \
            inspect.isfunction(obj) or \
            inspect.isgenerator(obj) or \
-           inspect.ismethod(obj):
+           inspect.ismethod(obj) or \
+           ("built-in function" in str(obj) and not isinstance(obj, dict)):
             cl.append(ModuleMemberDoc(obj, module=mod))
             if inspect.isclass(obj):
                 for n, o in inspect.getmembers(obj):
