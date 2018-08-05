@@ -63,6 +63,8 @@ def import_object(docname, kind, use_init=True, fLOG=None) -> Tuple[object, str]
                 "Unable to compile and execute '{0}' due to \n{1}\ngiven:\n{2}".format(code.replace('\n', '\\n'), e, docname)) from e
 
     myfunc = context["myfunc"]
+    if fLOG:
+        fLOG("[import_object] imported '{0}' --> '{1}'".format(docname, str(myfunc)))
     if kind == "function":
         if not inspect.isfunction(myfunc) and 'built-in function' not in str(myfunc):
             # inspect.isfunction fails for C functions.
@@ -155,7 +157,7 @@ def import_any_object(docname, use_init=True, fLOG=None) -> Tuple[object, str, s
             excs.append((kind, e))
             if fLOG:
                 fLOG(
-                    "[import_any_object] not '{0}' for '{1}' - use_unit={2}".format(kind, docname, use_init))
+                    "[import_any_object] not '{0}' for '{1}' (use_unit={2})".format(kind, docname, use_init))
 
     sec = " ### ".join("{0}-{1}-{2}".format(k, type(e), e).replace("\n", " ")
                        for k, e in excs)
