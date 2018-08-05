@@ -63,7 +63,7 @@ def _filter_out_warning(out):
         if len(line) == 0:
             skip = True
         elif line[0] != " ":
-            skip = "ImportWarning" in line
+            skip = "ImportWarning" in line or "warning D9002: option '-std=c++11'" in line
         if not skip:
             new_lines.append(line)
     return "\n".join(new_lines)
