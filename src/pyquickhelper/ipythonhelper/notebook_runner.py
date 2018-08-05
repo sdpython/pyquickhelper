@@ -89,7 +89,7 @@ class NotebookRunner(object):
                  comment="", fLOG=noLOG, theNotebook=None, code_init=None,
                  kernel_name="python", log_level="30", extended_args=None,
                  kernel=False, filename=None, replacements=None, detailed_log=None,
-                 startup_timeout=60):
+                 startup_timeout=100):
         """
         constuctor
 
@@ -189,7 +189,8 @@ class NotebookRunner(object):
                     # for a second.
                     sleep(1)
 
-            os.chdir(cwd)
+            if working_dir:
+                os.chdir(cwd)
 
             self.kc = self.km.client()
             self.kc.start_channels(stdin=False)
@@ -204,7 +205,7 @@ class NotebookRunner(object):
                 self.kc = None
                 self.nb = nb
                 self.comment = comment
-                raise NotebookKernelError("wait_for_ready fails.") from e
+                raise NotebookKernelError("Wait_for_ready fails (timeout={0}).".format(startup_timeout)) from e
         else:
             self.km = None
             self.kc = None

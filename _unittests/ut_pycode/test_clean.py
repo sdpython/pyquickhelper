@@ -70,6 +70,8 @@ class TestClean(ExtTestCase):
         def fclean(name):
             if "stdchelper.cp37-win_amd64.pyd" in name:
                 return False
+            if "stdchelper_demo.cp%d%d-win_amd64.pyd" % sys.version_info[:2] in name:
+                return False
             return True
 
         this = os.path.abspath(os.path.dirname(__file__))
