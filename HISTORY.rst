@@ -5,22 +5,14 @@
 History
 =======
 
-current - 2018-08-05 - 0.00Mb
+current - 2018-08-06 - 0.00Mb
 =============================
 
 * `169`: add option debug to autosignature (2018-08-05)
-
-1.8.2702 - 2018-08-05 - 1.99Mb
-==============================
-
 * `168`: documentation does not produce a page for a compiled module in pure C++ (not with pybind11) (2018-08-05)
 * `166`: fix github link when link points to a compile module (2018-08-05)
 * `167`: autosignature fails for function implemented in pure C++ (not with pybind11) (2018-08-04)
 * `165`: documentation does not automatically generate .rst for module written in C (2018-08-04)
-
-1.8.2685 - 2018-08-03 - 1.99Mb
-==============================
-
 * `164`: improve autosignature for builtin function (2018-08-03)
 * `162`: reduce the impact of RuntimeError: Kernel died before replying to kernel_info (2018-07-29)
 

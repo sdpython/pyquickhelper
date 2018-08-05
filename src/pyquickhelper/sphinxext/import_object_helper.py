@@ -59,12 +59,16 @@ def import_object(docname, kind, use_init=True, fLOG=None) -> Tuple[object, str]
         try:
             exec(codeobj, context, context)
         except Exception as e:
-            raise RuntimeError(
-                "Unable to compile and execute '{0}' due to \n{1}\ngiven:\n{2}".format(code.replace('\n', '\\n'), e, docname)) from e
+            mes = "Unable to compile and execute '{0}' due to \n{1}\ngiven:\n{2}".format(
+                code.replace('\n', '\\n'), e, docname)
+            if fLOG:
+                fLOG("[import_object] failed due to {0}".format(e))
+            raise RuntimeError(mes) from e
 
     myfunc = context["myfunc"]
     if fLOG:
-        fLOG("[import_object] imported '{0}' --> '{1}'".format(docname, str(myfunc)))
+        fLOG(
+            "[import_object] imported '{0}' --> '{1}'".format(docname, str(myfunc)))
     if kind == "function":
         if not inspect.isfunction(myfunc) and 'built-in function' not in str(myfunc):
             # inspect.isfunction fails for C functions.
