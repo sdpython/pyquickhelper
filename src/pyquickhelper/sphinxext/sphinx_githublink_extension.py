@@ -149,7 +149,7 @@ def githublink_role(role, rawtext, text, lineno, inliner,
     docname = inliner.document.settings.env.docname
     folder = docname
 
-    # Retrieve extension and path.
+    # Retrieves extension and path.
     text0 = text
     path = None
     if "|" in text:
@@ -196,12 +196,16 @@ def githublink_role(role, rawtext, text, lineno, inliner,
             path = os.path.join('_doc', 'sphinxdoc', 'source', docname)
         else:
             raise ValueError(
-                "unable to interpret subfolder in '{0}'".format(text0))
+                "Unable to interpret subfolder in '{0}'".format(text0))
 
     # Path with extension.
     if ext is not None:
         path += ext
     path = path.replace("\\", "/")
+
+    # Get rid of binaries (.pyd, .so) --> add a link to the root.
+    if path.endswith(".pyd") or path.endswith(".so"):
+        path = "/".join(path.split("/")[:-1]).rstrip('/') + '/'
 
     # Add node.
     try:
@@ -220,7 +224,7 @@ def githublink_role(role, rawtext, text, lineno, inliner,
 
 def setup(app):
     """
-    setup for ``githublink`` (sphinx)
+    setup for ``githublink`` (:epkg:`sphinx`)
     """
     app.add_role('githublink', githublink_role)
     app.add_role('gitlink', githublink_role)

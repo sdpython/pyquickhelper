@@ -205,7 +205,8 @@ class NotebookRunner(object):
                 self.kc = None
                 self.nb = nb
                 self.comment = comment
-                raise NotebookKernelError("Wait_for_ready fails (timeout={0}).".format(startup_timeout)) from e
+                raise NotebookKernelError(
+                    "Wait_for_ready fails (timeout={0}).".format(startup_timeout)) from e
         else:
             self.km = None
             self.kc = None

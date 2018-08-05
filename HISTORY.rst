@@ -5,9 +5,10 @@
 History
 =======
 
-current - 2018-08-04 - 0.00Mb
+current - 2018-08-05 - 0.00Mb
 =============================
 
+* `166`: fix github link when link points to a compile module (2018-08-05)
 * `167`: autosignature fails for function implemented in pure C++ (not with pybind11) (2018-08-04)
 * `165`: documentation does not automatically generate .rst for module written in C (2018-08-04)
 

@@ -41,16 +41,12 @@ class TestGitHubLinkExtension(unittest.TestCase):
 
         register_canonical_role("githublink", githublink_role)
 
+    @unittest.skipIf(sys.version_info[0] < 3, "does not work on Python 2")
     def test_githublink(self):
         fLOG(
             __file__,
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
-
-        if sys.version_info[0] == 2:
-            warnings.warn(
-                "test_biffer not run on Python 2.7")
-            return
 
         from docutils import nodes as skip_
 
@@ -128,16 +124,12 @@ class TestGitHubLinkExtension(unittest.TestCase):
         with open(os.path.join(temp, "out_githublink.html"), "w", encoding="utf8") as f:
             f.write(html)
 
+    @unittest.skipIf(sys.version_info[0] < 3, "does not work on Python 2")
     def test_githublink_function(self):
         fLOG(
             __file__,
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
-
-        if sys.version_info[0] == 2:
-            warnings.warn(
-                "test_biffer not run on Python 2.7")
-            return
 
         from docutils import nodes as skip_
 
@@ -211,16 +203,12 @@ class TestGitHubLinkExtension(unittest.TestCase):
         with open(os.path.join(temp, "out_githublink.html"), "w", encoding="utf8") as f:
             f.write(html)
 
+    @unittest.skipIf(sys.version_info[0] < 3, "does not work on Python 2")
     def test_githublink_doc(self):
         fLOG(
             __file__,
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
-
-        if sys.version_info[0] == 2:
-            warnings.warn(
-                "test_biffer not run on Python 2.7")
-            return
 
         from docutils import nodes as skip_
 
@@ -255,6 +243,56 @@ class TestGitHubLinkExtension(unittest.TestCase):
             raise Exception(html)
 
         temp = get_temp_folder(__file__, "temp_githublink_doc")
+        with open(os.path.join(temp, "out_githublink.html"), "w", encoding="utf8") as f:
+            f.write(html)
+
+    @unittest.skipIf(sys.version_info[0] < 3, "does not work on Python 2")
+    def test_githublink_binaries(self):
+        fLOG(
+            __file__,
+            self._testMethodName,
+            OutputPrint=__name__ == "__main__")
+
+        from docutils import nodes as skip_
+
+        content = """
+                    test a directive
+                    ================
+
+                    before
+
+                    again
+
+                    :githublink:`%|myfile.pyd|*`
+
+                    again
+
+                    :githublink:`%|myfile2.so|*`
+
+                    this code shoud appear
+                    """.replace("                    ", "")
+        if sys.version_info[0] >= 3:
+            content = content.replace('u"', '"')
+
+        html = rst2html(content,  # fLOG=fLOG,
+                        writer="custom", keep_warnings=True,
+                        directives=None, document_name="string",
+                        githublink_options=dict(user="sdpython", project="pyquickhelper", anchor="ANCHOR"))
+        html = html.replace("http://docutils.sourceforge.net/", "")
+
+        t1 = ".pyd"
+        if t1 in html:
+            raise Exception(html)
+
+        t1 = ".so"
+        if t1 in html:
+            raise Exception(html)
+
+        t1 = "https://github.com/sdpython/pyquickhelper/blob/master/"
+        if t1 not in html:
+            raise Exception(html)
+
+        temp = get_temp_folder(__file__, "temp_githublink_binaries")
         with open(os.path.join(temp, "out_githublink.html"), "w", encoding="utf8") as f:
             f.write(html)
 
