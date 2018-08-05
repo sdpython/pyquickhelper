@@ -79,7 +79,7 @@ def run_notebook(filename, profile_dir=None, working_dir=None, skip_exceptions=F
                  valid=None, clean_function=None, code_init=None,
                  fLOG=noLOG, kernel_name="python", log_level="30",
                  extended_args=None, cache_urls=None, replacements=None,
-                 detailed_log=None, startup_timeout=100):
+                 detailed_log=None, startup_timeout=300):
     """
     Runs a notebook end to end,
     it is inspired from module `runipy <https://github.com/paulgb/runipy/>`_.
@@ -204,7 +204,7 @@ def run_notebook(filename, profile_dir=None, working_dir=None, skip_exceptions=F
 def execute_notebook_list(folder, notebooks, clean_function=None, valid=None, fLOG=noLOG,
                           additional_path=None, deepfLOG=noLOG, kernel_name="python",
                           log_level="30", extended_args=None, cache_urls=None,
-                          replacements=None, detailed_log=None, startup_timeout=100):
+                          replacements=None, detailed_log=None, startup_timeout=300):
     """
     Executes a list of notebooks.
 

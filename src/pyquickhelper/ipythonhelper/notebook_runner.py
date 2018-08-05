@@ -89,7 +89,7 @@ class NotebookRunner(object):
                  comment="", fLOG=noLOG, theNotebook=None, code_init=None,
                  kernel_name="python", log_level="30", extended_args=None,
                  kernel=False, filename=None, replacements=None, detailed_log=None,
-                 startup_timeout=100):
+                 startup_timeout=300):
         """
         constuctor
 
