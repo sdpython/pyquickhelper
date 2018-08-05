@@ -91,6 +91,7 @@ class AutoSignatureDirective(Directive):
       submodules, *name* displays the last name,
       *import* displays the shortest syntax to import it
       (default).
+    * *debug*: diplays debug information
 
     The signature is not always available for builtin functions
     or :epkg:`C++` functions depending on the way to bind them to :epkg:`Python`.
@@ -112,6 +113,7 @@ class AutoSignatureDirective(Directive):
         'nolink': directives.unchanged,
         'members': directives.unchanged,
         'path': directives.unchanged,
+        'debug': directives.unchanged,
     }
 
     has_content = True
@@ -128,9 +130,19 @@ class AutoSignatureDirective(Directive):
         opt_annotation = 'annotation' in self.options
         opt_link = 'nolink' not in self.options
         opt_members = self.options.get('members', None)
+        opt_debug = 'debug' in self.options
         if opt_members in (None, '') and 'members' in self.options:
             opt_members = "all"
         opt_path = self.options.get('path', 'import')
+
+        if opt_debug:
+            keep_logged = []
+
+            def keep_logging(*els):
+                keep_logged.append(" ".join(str(_) for _ in els))
+            logging_function = keep_logging
+        else:
+            logging_function = None
 
         try:
             source, lineno = self.reporter.get_source_and_line(self.lineno)
@@ -140,11 +152,15 @@ class AutoSignatureDirective(Directive):
         # object name
         object_name = " ".join(_.strip("\n\r\t ") for _ in self.content)
         try:
-            obj, _, kind = import_any_object(object_name, use_init=False)
+            obj, _, kind = import_any_object(
+                object_name, use_init=False, fLOG=logging_function)
         except ImportError as e:
+            mes = "[AutoSignature] unable to import '{0}' due to '{1}'".format(
+                object_name, e)
             logger = logging.getLogger("AutoSignature")
-            logger.warning(
-                "[AutoSignature] unable to import '{0}' due to '{1}'".format(object_name, e))
+            logger.warning(mes)
+            if logging_function:
+                logging_function(mes)
             if lineno is not None:
                 logger.warning(
                     '   File "{0}", line {1}'.format(source, lineno))
@@ -170,7 +186,7 @@ class AutoSignatureDirective(Directive):
                 anchor = object_name
             elif kind == "staticmethod":
                 cl, fu = object_name.split(".")[-2:]
-                pimp = import_path(obj, class_name=cl)
+                pimp = import_path(obj, class_name=cl, fLOG=logging_function)
                 anchor = '{0}.{1}.{2}'.format(pimp, cl, fu)
             else:
                 pimp = import_path(obj)
@@ -196,9 +212,12 @@ class AutoSignatureDirective(Directive):
                 signature = inspect.signature(obj_sig)
                 parameters = signature.parameters
             except TypeError as e:
+                mes = "[autosignature](1) unable to get signature of '{0}' - {1}.".format(
+                    object_name, str(e).replace("\n", "\\n"))
                 logger = logging.getLogger("autosignature")
-                logger.warning(
-                    "[autosignature](1) unable to get signature of '{0}' - {1}.".format(object_name, str(e).replace("\n", "\\n")))
+                logger.warning(mes)
+                if logging_function:
+                    logging_function(mes)
                 signature = None
                 parameters = None
             except ValueError as e:
@@ -207,16 +226,21 @@ class AutoSignatureDirective(Directive):
                 doc = obj_sig.__doc__
                 sigs = set(enumerate_cleaned_signature(doc))
                 if len(sigs) == 0:
+                    mes = "[autosignature](2) unable to get signature of '{0}' - {1}.".format(
+                        object_name, str(e).replace("\n", "\\n"))
                     logger = logging.getLogger("autosignature")
-                    logger.warning(
-                        "[autosignature](2) unable to get signature of '{0}' - {1}.".format(object_name, str(e).replace("\n", "\\n")))
+                    logger.warning(mes)
+                    if logging_function:
+                        logging_function(mes)
                     signature = None
                     parameters = None
                 elif len(sigs) > 1:
+                    mes = "[autosignature](2) too many signatures for '{0}' - {1} - {2}.".format(
+                        object_name, str(e).replace("\n", "\\n"), " *** ".join(sigs))
                     logger = logging.getLogger("autosignature")
-                    logger.warning(
-                        "[autosignature](2) too many signatures for '{0}' - {1} - {2}.".format(
-                            object_name, str(e).replace("\n", "\\n"), " *** ".join(sigs)))
+                    logger.warning(mes)
+                    if logging_function:
+                        logging_function(mes)
                     signature = None
                     parameters = None
                 else:
@@ -225,9 +249,12 @@ class AutoSignatureDirective(Directive):
                             inspect.Signature, obj_sig, list(sigs)[0])
                         parameters = signature.parameters
                     except TypeError as e:
+                        mes = "[autosignature](3) unable to get signature of '{0}' - {1}.".format(
+                            object_name, str(e).replace("\n", "\\n"))
                         logger = logging.getLogger("autosignature")
-                        logger.warning(
-                            "[autosignature](3) unable to get signature of '{0}' - {1}.".format(object_name, str(e).replace("\n", "\\n")))
+                        logger.warning(mes)
+                        if logging_function:
+                            logging_function(mes)
                         signature = None
                         parameters = None
 
@@ -250,9 +277,12 @@ class AutoSignatureDirective(Directive):
             # Documentation.
             doc = obj.__doc__  # if kind != "class" else obj.__class__.__doc__
             if doc is None:
+                mes = "[autosignature] docstring empty for '{0}'.".format(
+                    object_name)
                 logger = logging.getLogger("autosignature")
-                logger.warning(
-                    "[autosignature] docstring empty for '{0}'.".format(object_name))
+                logger.warning(mes)
+                if logging_function:
+                    logging_function(mes)
             else:
                 if "type(object_or_name, bases, dict)" in doc:
                     raise Exception("issue with {0}\n{1}".format(obj, doc))
@@ -266,7 +296,12 @@ class AutoSignatureDirective(Directive):
                 map(lambda s: "    " + s, docstring.split("\n")))
             text += docstring + "\n\n"
 
-        st = StringList(text.split("\n"))
+        text_lines = text.split("\n")
+        if logging_function:
+            text_lines.extend(['    ::', '', '        [debug]', ''])
+            text_lines.extend('        ' + li for li in keep_logged)
+            text_lines.append('')
+        st = StringList(text_lines)
         nested_parse_with_titles(self.state, st, node)
         return [node]
 

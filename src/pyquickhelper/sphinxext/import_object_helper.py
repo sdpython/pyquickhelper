@@ -21,18 +21,19 @@ class _Types:
         pass
 
 
-def import_object(docname, kind, use_init=True) -> Tuple[object, str]:
+def import_object(docname, kind, use_init=True, fLOG=None) -> Tuple[object, str]:
     """
     Extracts an object defined by its name including the module name.
 
-    @param      docname                 full name of the object
-                                        (example: ``pyquickhelper.sphinxext.sphinx_docassert_extension.import_object``)
-    @param      kind                    ``'function'`` or ``'class'`` or ``'kind'``
-    @param      use_init                return the constructor instead of the class
-    @return                             tuple(object, name)
-    @raises                             :epkg:`*py:RuntimeError` if cannot be imported,
-                                        :epkg:`*py:TypeError` if it is a method or a property,
-                                        :epkg:`*py:ValueError` if *kind* is unknown.
+    @param      docname     full name of the object
+                            (example: ``pyquickhelper.sphinxext.sphinx_docassert_extension.import_object``)
+    @param      kind        ``'function'`` or ``'class'`` or ``'kind'``
+    @param      use_init    return the constructor instead of the class
+    @param      fLOG        logging function
+    @return                 tuple(object, name)
+    @raises                 :epkg:`*py:RuntimeError` if cannot be imported,
+                            :epkg:`*py:TypeError` if it is a method or a property,
+                            :epkg:`*py:ValueError` if *kind* is unknown.
     """
     spl = docname.split(".")
     name = spl[-1]
@@ -40,11 +41,17 @@ def import_object(docname, kind, use_init=True) -> Tuple[object, str]:
         modname = ".".join(spl[:-1])
         code = 'from {0} import {1}\nmyfunc = {1}'.format(modname, name)
         codeobj = compile(code, 'conf{0}.py'.format(kind), 'exec')
+        if fLOG:
+            fLOG("[import_object] modname='{0}' code='{1}'".format(
+                modname, code))
     else:
         modname = ".".join(spl[:-2])
         classname = spl[-2]
         code = 'from {0} import {1}\nmyfunc = {1}'.format(modname, classname)
         codeobj = compile(code, 'conf{0}2.py'.format(kind), 'exec')
+        if fLOG:
+            fLOG("[import_object] modname='{0}' code='{1}' classname='{2}'".format(
+                modname, code, classname))
 
     context = {}
     with warnings.catch_warnings():
@@ -115,13 +122,14 @@ def import_object(docname, kind, use_init=True) -> Tuple[object, str]:
     return myfunc, name
 
 
-def import_any_object(docname, use_init=True) -> Tuple[object, str, str]:
+def import_any_object(docname, use_init=True, fLOG=None) -> Tuple[object, str, str]:
     """
     Extracts an object defined by its name including the module name.
 
     :param docname: full name of the object
         (example: ``pyquickhelper.sphinxext.sphinx_docassert_extension.import_object``)
     :param use_init: return the constructor instead of the class
+    :param fLOG: logging function
     :returns: tuple(object, name, kind)
     :raises: :epkg:`*py:ImportError` if unable to import
 
@@ -132,11 +140,22 @@ def import_any_object(docname, use_init=True) -> Tuple[object, str, str]:
     excs = []
     for kind in ("function", "method", "staticmethod", "property", "class"):
         try:
-            myfunc, name = import_object(docname, kind, use_init=use_init)
+            myfunc, name = import_object(
+                docname, kind, use_init=use_init, fLOG=fLOG)
+            if fLOG:
+                fLOG(
+                    "[import_any_object] ok '{0}' for '{1}' - use_unit={2}".format(kind, docname, use_init))
+                fLOG("[import_any_object] __doc__={0} __name__={1} __module__={2}".format(hasattr(myfunc, '__doc__'),
+                                                                                          hasattr(myfunc, '__name__'), hasattr(myfunc, '__module__')))
+                fLOG("[import_any_object] name='{0}' - module='{1}'".format(
+                    name, getattr(myfunc, '__module__', None)))
             return myfunc, name, kind
         except Exception as e:
             # not this kind
             excs.append((kind, e))
+            if fLOG:
+                fLOG(
+                    "[import_any_object] not '{0}' for '{1}' - use_unit={2}".format(kind, docname, use_init))
 
     sec = " ### ".join("{0}-{1}-{2}".format(k, type(e), e).replace("\n", " ")
                        for k, e in excs)
@@ -144,7 +163,7 @@ def import_any_object(docname, use_init=True) -> Tuple[object, str, str]:
         "Unable to import '{0}'. Exceptions met: {1}".format(docname, sec))
 
 
-def import_path(obj, class_name=None):
+def import_path(obj, class_name=None, fLOG=None):
     """
     Determines the import path which is
     the shortest way to import the function. In case the
@@ -156,6 +175,7 @@ def import_path(obj, class_name=None):
         static method and functions. If not None, this parameter
         should contain the name of the class which holds the static
         method given in *obj*
+    :param fLOG: logging function
     :returns: import path
     :raises: :epkg:`*py:TypeError` if object is a property,
         :epkg:`*py:RuntimeError` if cannot be imported
@@ -185,8 +205,12 @@ def import_path(obj, class_name=None):
             try:
                 exec(codeobj, context, context)
                 found = path
+                if fLOG:
+                    fLOG("[import_path] succeeds: '{0}'".format(code))
                 break
             except Exception:
+                if fLOG:
+                    fLOG("[import_path] fails: '{0}'".format(code))
                 continue
 
     if found is None:

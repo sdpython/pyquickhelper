@@ -633,7 +633,7 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
         fLOG("     -pattern  '{0}'".format(nbneg_pattern))
         notebooks = explore_folder(notebook_dir, pattern=".*[.]ipynb", neg_pattern=nbneg_pattern,
                                    fullname=True, fLOG=fLOG)[1]
-        notebooks = [_ for _ in notebooks if "checkpoint" not in _ and \
+        notebooks = [_ for _ in notebooks if "checkpoint" not in _ and
                                              "/build/" not in _.replace("\\", "/")]
         fLOG("     found {0} notebooks".format(len(notebooks)))
         if len(notebooks) > 0:

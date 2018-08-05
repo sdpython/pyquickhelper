@@ -314,6 +314,22 @@ class TestAutoSignature(ExtTestCase):
             self.assertEqual(len(res), 1)
             self.assertEqual(res[0], exp)
 
+    def test_autosignature_class_onemethod2_debug(self):
+        this = os.path.abspath(os.path.dirname(__file__))
+        data = os.path.join(this, "datadoc")
+        sys.path.append(data)
+
+        newstring = ["AAAAAAAAAAAAAAAA",
+                     "",
+                     ".. autosignature:: exdocassert2.onefunction",
+                     "    :debug:",
+                     "",
+                     "CCCCCCCCCCCCCCCC"]
+        newstring = "\n".join(newstring)
+        htmls = rst2html(newstring, writer="rst")
+        self.assertIn('[debug]', htmls)
+        self.assertIn('[import_any_object]', htmls)
+
 
 if __name__ == "__main__":
     unittest.main()
