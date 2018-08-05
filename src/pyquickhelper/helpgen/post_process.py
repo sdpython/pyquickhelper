@@ -310,16 +310,10 @@ def post_process_rst_output(file, html, pdf, python, slides, present, is_noteboo
     @param      notebook_replacements   string replacement in notebooks
     @param      fLOG                    logging function
 
-    .. versionchanged:: 1.5
-        Parameters *exc*, *github*, *notebook*, *fLOG* were added.
-
-    .. versionchanged:: 1.6
-        Parameter *notebook_replacements* was added.
-
     .. versionchanged:: 1.7
         Add this replacement:
         ``st = st.replace("\\\\mathbb{1}", "\\\\mathbf{1\\\\!\\\\!1}")``.
-        Checks that audio is only included in HTML.
+        Checks that audio is only included in :epkg:`HTML`.
     """
     if fLOG:
         fLOG("[post_process_rst_output]", file)
@@ -546,9 +540,6 @@ def post_process_html_output(file, pdf, python, slides, present, exc=True,
     @param      nblinks                 dictionary ``{ref: url}``
     @param      notebook_replacements   string replacement in notebooks
     @param      fLOG                    logging function
-
-    .. versionchanged:: 1.6
-        Parameter *notebook_replacements* was added.
     """
     if not os.path.exists(file):
         raise FileNotFoundError(file)
@@ -637,7 +628,7 @@ def post_process_latex(st, doall, info=None, latex_book=False, exc=True,
                        custom_latex_processing=None, nblinks=None, file=None,
                        remove_unicode=False, fLOG=None, notebook_replacements=None):
     """
-    Modifies a latex file after its generation by :epkg:`sphinx`.
+    Modifies a :epkg:`latex` file after its generation by :epkg:`sphinx`.
 
     @param      st                      string
     @param      doall                   do all transformations
@@ -655,17 +646,8 @@ def post_process_latex(st, doall, info=None, latex_book=False, exc=True,
 
     *SVG* included in a notebook (or in *RST* file) usually do not word.
     :epkg:`Inkscape` should be used to convert them into Latex.
-
-    .. versionchanged:: 1.4
-        Parameter *latex_book* was added.
-
-    .. versionchanged:: 1.5
-        Parameters *exc*, *nblinks*, *remove_unicode*, *fLOG* were added.
-        The function is less strict on the checking of `$`.
-        The function replaces ``\\mathbb{1}`` by ``\\mathbf{1\\!\\!1}``.
-
-    .. versionchanged:: 1.6
-        Parameter *notebook_replacements* was added.
+    The function is less strict on the checking of `$`.
+    The function replaces ``\\mathbb{1}`` by ``\\mathbf{1\\!\\!1}``.
 
     .. index:: chinese characters, latex, unicode
 
@@ -839,14 +821,6 @@ def post_process_python(st, doall, info=None, nblinks=None, file=None, fLOG=None
     @param      fLOG                    logging function
     @param      notebook_replacements   string replacement in notebooks
     @return                             string
-
-    .. versionadded:: 1.3
-
-    .. versionchanged:: 1.5
-        Parameters *nblinks*, *file* were added.
-
-    .. versionchanged:: 1.6
-        Parameter *notebook_replacements* was added.
     """
     st = st.strip("\n \r\t")
     st = st.replace("# coding: utf-8", "# -*- coding: utf-8 -*-")
@@ -862,12 +836,10 @@ def post_process_python(st, doall, info=None, nblinks=None, file=None, fLOG=None
 
 def remove_character_under32(s):
     """
-    Remove ASCII characters in *[0..31]*.
+    Removes :epkg:`ASCII` characters in *[0..31]*.
 
     @param      s       string to process
     @return             filtered string
-
-    .. versionadded:: 1.2
     """
     ls = ""
     for c in s:

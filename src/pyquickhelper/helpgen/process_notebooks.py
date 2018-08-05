@@ -206,6 +206,8 @@ def _process_notebooks_in_private(fnbcexe, list_args, options_args):
         else:
             # We do nothing in this case.
             exc = e
+    except AttributeError as e:
+        exc = e
     sys.stdout = memo_out
     sys.stderr = memo_err
     out = out.getvalue()
@@ -230,7 +232,7 @@ def _process_notebooks_in_private_cmd(fnbcexe, list_args, options_args, fLOG):
     sargs = " ".join(res)
     cmd = '"{0}" "{1}" {2}'.format(
         sys.executable.replace("w.exe", ".exe"), this, sargs)
-    fLOG("    ", cmd)
+    fLOG("[_process_notebooks_in_private_cmd]", cmd)
     return run_cmd(cmd, wait=True, fLOG=fLOG)
 
 
@@ -715,7 +717,7 @@ def add_link_to_notebook(file, nb, pdf, html, python, slides, present, exc=True,
                          github=False, notebook=None, nblinks=None, fLOG=None,
                          notebook_replacements=None):
     """
-    Adds a link to the notebook in HTML format and does a little bit of cleaning
+    Adds a link to the notebook in :epkg:`HTML` format and does a little bit of cleaning
     for various format.
 
     @param      file                    notebook.html
@@ -734,17 +736,11 @@ def add_link_to_notebook(file, nb, pdf, html, python, slides, present, exc=True,
     @return                             list of generated files
 
     The function does some cleaning too in the files.
-
-    .. versionchanged:: 1.5
-        Parameters *exc*, *github*, *notebook* were added.
-
-    .. versionchanged:: 1.6
-        Parameter *notebook_replacements* ws added.
     """
     core, ext = os.path.splitext(file)
     if core.endswith(".slides"):
         ext = ".slides" + ext
-    fLOG("    add_link_to_notebook", ext, " file ", file)
+    fLOG("[add_link_to_notebook] add_link_to_notebook", ext, " file ", file)
 
     fold = os.path.split(file)[0]
     res = [os.path.join(fold, os.path.split(nb)[-1])]
