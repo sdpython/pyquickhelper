@@ -17,7 +17,7 @@ def download_revealjs(temp_folder=".", unzip_to=".", fLOG=print,
                       location="https://github.com/hakimel/reveal.js/releases",
                       clean=True):
     """
-    Downloads :epkg:`reveal.js` release and unzip it.
+    Downloads :epkg:`reveal.js` release and unzips it.
 
     @param      temp_folder     where to download the setup
     @param      unzip_to        where to unzip the files
@@ -36,7 +36,7 @@ def download_revealjs(temp_folder=".", unzip_to=".", fLOG=print,
             page)
 
     filename = alls[0].split("/")[-1]
-    filel = location.replace("releases", "") + "/archive/{0}".format(filename)
+    filel = location.replace("releases", "").rstrip('/') + "/archive/{0}".format(filename)
     outfile = os.path.join(temp_folder, "reveal.js." + filename)
     fLOG("download ", filel, "to", outfile)
     local = download(filel, temp_folder, fLOG=fLOG)
