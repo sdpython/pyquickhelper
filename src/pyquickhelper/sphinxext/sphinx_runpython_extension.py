@@ -385,7 +385,7 @@ class RunPythonDirective(Directive):
         else:
             content = ["def {0}():".format(name)]
         content.append('    ## __WD__ ##')
-
+        
         for line in self.content:
             content.append("    " + line)
         if not p['process']:
@@ -426,6 +426,7 @@ class RunPythonDirective(Directive):
             cs_source = docname
 
         # Add __WD__.
+        script = self.modify_script_before_running(script)
         script = script.replace('## __WD__ ##', "__WD__ = '{0}'".format(
             os.path.dirname(cs_source)).replace("\\", "/"))
 
@@ -567,6 +568,16 @@ class RunPythonDirective(Directive):
         node['classes'] += ["runpython"]
         ns = [node]
         return ns
+
+    def modify_script_before_running(self, script):
+        """
+        Takes the script as a string
+        and returns another string before it is run.
+        It does not modify what is displayed.
+        The function can be overwritten by any class
+        based on this one.
+        """
+        return script
 
 
 def visit_runpython_node(self, node):
