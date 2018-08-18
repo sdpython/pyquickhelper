@@ -35,7 +35,7 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
     @param      author                  author
     @param      year                    year
     @param      theme                   theme to use
-    @param      theme_path              themepath
+    @param      theme_path              theme path (sets ``html_theme_path``)
     @param      ext_locals              context (see `locals <https://docs.python.org/2/library/functions.html#locals>`_)
     @param      add_extensions          additional extensions
     @param      bootswatch_theme        for example, ``spacelab``, look at `spacelab <http://bootswatch.com/spacelab/>`_
