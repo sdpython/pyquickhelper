@@ -145,13 +145,13 @@ def visit_collapse_node_html(self, node):
 
     self.body.append("<script>{0}{1}{0}</script>{0}".format("\n", script))
     if node['show']:
-        content = '<div id="collapse{0}">'.format(nid)
+        content = '<div id="collapse{0}"">'.format(nid)
         label = hide
     else:
         content = '<div id="collapse{0}" style="display:none;">'.format(nid)
         label = unhide
     self.body.append(
-        '<button id="colidb{0}" onclick="myFunction{0}()">{1}</button>{2}'.format(nid, label, "\n"))
+        '<p style="margin-bottom:10px;"><button id="colidb{0}" onclick="myFunction{0}()">{1}</button></p>{2}'.format(nid, label, "\n"))
     self.body.append(content)
 
 

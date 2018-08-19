@@ -45,7 +45,7 @@ class RunPythonExecutionError(Exception):
 
 
 def run_python_script(script, params=None, comment=None, setsysvar=None, process=False,
-                      exception=False, warningout=None):
+                      exception=False, warningout=None, chdir=None):
     """
     Executes a script :epkg:`python` as a string.
 
@@ -59,6 +59,7 @@ def run_python_script(script, params=None, comment=None, setsysvar=None, process
                         fails if it is not, the function returns no output and the
                         error message
     @param  warningout  warning to disable (name of warnings)
+    @param  chdir       change directory before running this script (if not None)
     @return             stdout, stderr
 
     If the execution throws an exception such as
@@ -95,6 +96,9 @@ def run_python_script(script, params=None, comment=None, setsysvar=None, process
 
     .. versionchanged:: 1.7
         Parameter *warningout* was added.
+
+    .. versionchanged:: 1.8
+        Parameter *chdir* was added.
     """
     def warning_filter(warningout):
         if warningout in (None, ''):
@@ -148,7 +152,7 @@ def run_python_script(script, params=None, comment=None, setsysvar=None, process
         header.append('')
         script = "\n".join(header) + script
         try:
-            out, err = run_cmd(cmd, script, wait=True)
+            out, err = run_cmd(cmd, script, wait=True, change_path=chdir)
             return out, err
         except Exception as ee:
             if not exception:
@@ -184,9 +188,15 @@ def run_python_script(script, params=None, comment=None, setsysvar=None, process
                 with warnings.catch_warnings():
                     warning_filter(warningout)
 
+                    if chdir is not None:
+                        current = os.getcwd()
+                        os.chdir(chdir)
+
                     try:
                         exec(obj, globals(), loc)
                     except Exception as ee:
+                        if chdir is not None:
+                            os.chdir(current)
                         if setsysvar is not None:
                             del sys.__dict__[setsysvar]
                         if comment is None:
@@ -205,6 +215,9 @@ def run_python_script(script, params=None, comment=None, setsysvar=None, process
                             raise RunPythonExecutionError(message) from ee
                         else:
                             return (gout + "\n" + gerr), (gerr + "\n" + excs)
+
+                    if chdir is not None:
+                        os.chdir(current)
 
         if setsysvar is not None:
             del sys.__dict__[setsysvar]
@@ -253,26 +266,27 @@ class RunPythonDirective(Directive):
 
     The directive has a couple of options:
 
+    * ``:current:`` runs the script in the source file directory
+    * ``:exception:`` the code throws an exception but it is expected. The error is displayed.
     * ``:indent:<int>`` to indent the output
-    * ``:showcode:`` to show the code before its output
+    * ``:nopep8:`` if present, leaves the code as it is and does not apply pep8 by default,
+      see @see fn remove_extra_spaces_and_pep8.
+    * ``:process:`` run the script in an another process
     * ``:rst:`` to interpret the output, otherwise, it is considered as raw text
+    * ``:setsysvar:`` adds a member to *sys* module, the module can act differently based on that information,
+      if the value is left empty, *sys.enable_disabled_documented_pieces_of_code* will be be set up to *True*.
+    * ``:showcode:`` to show the code before its output
+    * ``:showout`` if *:rst:* is set up, this flag adds the raw rst output to check what is happening
     * ``:sin:<text_for_in>`` which text to display before the code (by default *In*)
     * ``:sout:<text_for_in>`` which text to display before the output (by default *Out*)
-    * ``:showout`` if *:rst:* is set up, this flag adds the raw rst output to check what is happening
     * ``:sphinx:`` by default, function `nested_parse_with_titles <http://sphinx-doc.org/extdev/markupapi.html?highlight=nested_parse>`_ is
       used to parse the output of the script, if this option is set to false,
       `public_doctree <http://code.nabla.net/doc/docutils/api/docutils/core/docutils.core.publish_doctree.html>`_.
-    * ``:setsysvar:`` adds a member to *sys* module, the module can act differently based on that information,
-      if the value is left empty, *sys.enable_disabled_documented_pieces_of_code* will be be set up to *True*.
-    * ``:process:`` run the script in an another process
-    * ``:exception:`` the code throws an exception but it is expected. The error is displayed.
-    * ``:nopep8:`` if present, leaves the code as it is and does not apply pep8 by default,
-      see @see fn remove_extra_spaces_and_pep8.
-    * ``:warningout:`` name of warnings to disable (ex: ``ImportWarning``),
-      separated by spaces
     * ``:toggle:`` add a button to hide or show the code, it takes the values
       ``code`` or ``out`` or ``both``. The direction then hides the given section
       but adds a button to show it.
+    * ``:warningout:`` name of warnings to disable (ex: ``ImportWarning``),
+      separated by spaces
 
     Option *rst* can be used the following way::
 
@@ -301,9 +315,20 @@ class RunPythonDirective(Directive):
     `sphinx-autorun <https://pypi.org/project/sphinx-autorun/>`_ offers a similar
     service except it cannot produce compile :epkg:`RST` content,
     hide the source and a couple of other options.
+    Option *toggle* can hide or unhide the piece of code
+    or/and its output.
+
+    .. runpython::
+        :toggle: out
+        :showcode:
+
+        print("Hide or unhide this output.")
 
     .. versionchanged:: 1.7
         Options *warningout*, *toggle* were added.
+
+    .. versionchanged:: 1.8
+        Option *current* was added.
     """
     required_arguments = 0
     optional_arguments = 0
@@ -323,6 +348,7 @@ class RunPythonDirective(Directive):
         'nopep8': directives.unchanged,
         'warningout': directives.unchanged,
         'toggle': directives.unchanged,
+        'current': directives.unchanged,
     }
     has_content = True
     runpython_class = runpython_node
@@ -371,6 +397,7 @@ class RunPythonDirective(Directive):
             'nopep8': 'nopep8' in self.options and self.options['nopep8'] in bool_set_,
             'warningout': self.options.get('warningout', '').strip(),
             'toggle': self.options.get('toggle', '').strip(),
+            'current': 'current' in self.options and self.options['current'] in bool_set_,
         }
 
         if p['setsysvar'] is not None and len(p['setsysvar']) == 0:
@@ -429,12 +456,14 @@ class RunPythonDirective(Directive):
             cs_source = docname
 
         # Add __WD__.
-        script = script.replace('## __WD__ ##', "__WD__ = '{0}'".format(
-            os.path.dirname(cs_source)).replace("\\", "/"))
+        cs_source_dir = os.path.dirname(cs_source).replace("\\", "/")
+        script = script.replace(
+            '## __WD__ ##', "__WD__ = '{0}'".format(cs_source_dir))
 
         out, err = run_python_script(script, comment=comment, setsysvar=p['setsysvar'],
                                      process=p["process"], exception=p['exception'],
-                                     warningout=p['warningout'])
+                                     warningout=p['warningout'],
+                                     chdir=cs_source_dir if p['current'] else None)
 
         if out is not None:
             out = out.rstrip(" \n\r\t")
@@ -508,7 +537,7 @@ class RunPythonDirective(Directive):
                     ' ' + TITLES[language_code]['outl']
                 secout = collapse_node(hide=hide, unhide=unhide, show=False)
                 node += secout
-            if len(p["sout"]) > 0:
+            elif len(p["sout"]) > 0:
                 secout += nodes.paragraph(text=p["sout"])
 
             try:
@@ -548,6 +577,7 @@ class RunPythonDirective(Directive):
 
         # Regular output.
         if not p["rst"] or p["showout"]:
+            text = p["sout2"] if p["rst"] else p["sout"]
             secout = node
             if 'out' in p['toggle'] or 'both' in p['toggle']:
                 hide = TITLES[language_code]['hide'] + \
@@ -556,9 +586,7 @@ class RunPythonDirective(Directive):
                     ' ' + TITLES[language_code]['outl']
                 secout = collapse_node(hide=hide, unhide=unhide, show=False)
                 node += secout
-
-            text = p["sout2"] if p["rst"] else p["sout"]
-            if len(text) > 0:
+            elif len(text) > 0:
                 pout2 = nodes.paragraph(text=text)
                 node += pout2
             pout = nodes.literal_block(content, content)

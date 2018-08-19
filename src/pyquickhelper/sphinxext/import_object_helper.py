@@ -152,8 +152,8 @@ def import_any_object(docname, use_init=True, fLOG=None) -> Tuple[object, str, s
                 fLOG(
                     "[import_any_object] ok '{0}' for '{1}' - use_unit={2}".format(kind, docname, use_init))
                 fLOG("[import_any_object] __doc__={0} __name__={1} __module__={2}".format(
-                            hasattr(myfunc, '__doc__'), hasattr(myfunc, '__name__'),
-                            hasattr(myfunc, '__module__')))
+                    hasattr(myfunc, '__doc__'), hasattr(myfunc, '__name__'),
+                    hasattr(myfunc, '__module__')))
                 fLOG("[import_any_object] name='{0}' - module='{1}'".format(
                     name, getattr(myfunc, '__module__', None)))
             return myfunc, name, kind
