@@ -263,7 +263,7 @@ if not r:
             "unify",
         ],
         extras_require={
-            'filehelper': ['cffi', 'cryptography'],  # cryptography
+            'filehelper': ['cffi', 'cryptography', 'pylzma'],  # cryptography
             'jenkinshelper': ['python-jenkins>=1.0.0', 'pyyaml'],
             'loghelper': ['psutil'],
         },

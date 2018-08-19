@@ -20,7 +20,6 @@ if sys.version_info[0] == 2:
     from StringIO import StringIO as StreamIO
 else:
     from io import BytesIO as StreamIO
-    import lzma
 
 
 class EncryptedBackupError(Exception):
@@ -240,6 +239,11 @@ class EncryptedBackup:
         if self._compress == "zip":
             return zlib.compress(data)
         elif self._compress == "lzma":
+            # delay import
+            try:
+                import lzma
+            except ImportError:
+                import pylzma as lzma
             return lzma.compress(data)
         elif self._compress is None:
             return data
@@ -257,6 +261,11 @@ class EncryptedBackup:
         if self._compress == "zip":
             return zlib.decompress(data)
         elif self._compress == "lzma":
+            # delay import
+            try:
+                import lzma
+            except ImportError:
+                import pylzma as lzma
             return lzma.decompress(data)
         elif self._compress is None:
             return data
