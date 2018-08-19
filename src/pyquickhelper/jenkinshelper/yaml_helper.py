@@ -81,7 +81,7 @@ def load_yaml(file_or_buffer, context=None, engine="jinja2", platform=None):
             addition = "set current={0}\\%NAME_JENKINS%".format(
                 context["root_path"])
         else:
-            addition = "export current={0}/%NAME_JENKINS%".format(
+            addition = "export current={0}/$NAME_JENKINS".format(
                 context["root_path"])
         content = "automatedsetup:\n  - {0}\n{1}".format(addition, content)
 

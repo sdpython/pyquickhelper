@@ -34,7 +34,7 @@ from ..pycode.windows_scripts import windows_jenkins, windows_jenkins_any
 from ..pycode.windows_scripts import windows_jenkins_27_conda, windows_jenkins_27_def
 from ..pycode.build_helper import private_script_replacements
 from .jenkins_exceptions import JenkinsExtException, JenkinsJobException
-from .jenkins_server_template import _config_job, _trigger_up, _trigger_time, _git_repo, _task_batch
+from .jenkins_server_template import _config_job, _trigger_up, _trigger_time, _git_repo, _task_batch_win, _task_batch_lin
 from .jenkins_server_template import _trigger_startup, _publishers, _file_creation, _wipe_repo, _artifacts
 from .yaml_helper import enumerate_processed_yml
 from .jenkins_helper import jenkins_final_postprocessing, get_platform
@@ -96,7 +96,7 @@ class JenkinsExt(jenkins.Jenkins):
     Some useful :epkg:`Jenkins` extensions:
 
     * `Credentials Plugin <https://wiki.jenkins-ci.org/display/JENKINS/Credentials+Plugin>`_
-    * `Extrea Column Plugin <https://wiki.jenkins-ci.org/display/JENKINS/Extra+Columns+Plugin>`_
+    * `Extra Column Plugin <https://wiki.jenkins-ci.org/display/JENKINS/Extra+Columns+Plugin>`_
     * `Git Client Plugin <https://wiki.jenkins-ci.org/display/JENKINS/Git+Client+Plugin>`_
     * `GitHub Client Plugin <https://wiki.jenkins-ci.org/display/JENKINS/Github+Plugin>`_
     * `GitLab Client Plugin <https://wiki.jenkins-ci.org/display/JENKINS/GitLab+Plugin>`_
@@ -112,7 +112,8 @@ class JenkinsExt(jenkins.Jenkins):
     _trigger_time = _trigger_time
     _trigger_startup = _trigger_startup
     _git_repo = _git_repo
-    _task_batch = _task_batch
+    _task_batch_win = _task_batch_win
+    _task_batch_lin = _task_batch_lin
     _publishers = _publishers
     _wipe_repo = _wipe_repo
     _artifacts = _artifacts
@@ -773,8 +774,12 @@ class JenkinsExt(jenkins.Jenkins):
 
         # scripts
         # tasks is XML, we need to encode s into XML format
-        tasks = before + [JenkinsExt._task_batch.replace(
-            "__SCRIPT__", escape(s)) for s in script_mod]
+        if self.platform.startswith("win"):
+            scr = JenkinsExt._task_batch_win
+        else:
+            scr = JenkinsExt._task_batch_lin
+        tasks = before + [scr.replace("__SCRIPT__", escape(s))
+                          for s in script_mod]
 
         # location
         if location is not None and "<--" in location:

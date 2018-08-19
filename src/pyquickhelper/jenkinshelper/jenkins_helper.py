@@ -124,12 +124,14 @@ def setup_jenkins_server_yml(js, github="sdpython", modules=None,
 
         from pyquickhelper.jenkinshelper import JenkinsExt, setup_jenkins_server_yml, default_jenkins_jobs, default_engines
 
-        js = JenkinsExt('http://localhost:8080/', None, None)
+        user = "<user>"
+        password = "<password>"
         modules = default_jenkins_jobs()
         engines = default_engines()
+        js = JenkinsExt('http://localhost:8080/', user, password, engines=engines)
         setup_jenkins_server_yml(js, github="sdpython", modules=modules, fLOG=print,
-                            overwrite = True, delete_first=True, engines=engines,
-                            location = "d:\\\\jenkins\\\\pymy")
+                                 overwrite=True, delete_first=False,
+                                 location="d:\\\\jenkins\\\\pymy")
 
     See `.local.jenkins.win.yml <https://github.com/sdpython/pyquickhelper/blob/master/.local.jenkins.win.yml>`_
     (Windows) or

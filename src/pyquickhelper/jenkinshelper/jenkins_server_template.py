@@ -109,11 +109,18 @@ _wipe_repo = """
 """
 
 #: for the script
-_task_batch = """
+_task_batch_win = """
 <hudson.tasks.BatchFile>
     <command>__SCRIPT__
     </command>
 </hudson.tasks.BatchFile>
+"""
+
+_task_batch_lin = """
+<hudson.tasks.Shell>
+    <command>__SCRIPT__
+    </command>
+</hudson.tasks.Shell>
 """
 
 #: mails
