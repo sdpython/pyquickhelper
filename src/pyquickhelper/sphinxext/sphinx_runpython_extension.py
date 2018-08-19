@@ -385,8 +385,11 @@ class RunPythonDirective(Directive):
         else:
             content = ["def {0}():".format(name)]
         content.append('    ## __WD__ ##')
-        
-        for line in self.content:
+
+        modified_content = self.modify_script_before_running(
+            "\n".join(self.content))
+
+        for line in modified_content.split("\n"):
             content.append("    " + line)
         if not p['process']:
             content.append("{0}()".format(name))
@@ -426,7 +429,6 @@ class RunPythonDirective(Directive):
             cs_source = docname
 
         # Add __WD__.
-        script = self.modify_script_before_running(script)
         script = script.replace('## __WD__ ##', "__WD__ = '{0}'".format(
             os.path.dirname(cs_source)).replace("\\", "/"))
 

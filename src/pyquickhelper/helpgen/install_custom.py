@@ -36,7 +36,8 @@ def download_revealjs(temp_folder=".", unzip_to=".", fLOG=print,
             page)
 
     filename = alls[0].split("/")[-1]
-    filel = location.replace("releases", "").rstrip('/') + "/archive/{0}".format(filename)
+    filel = location.replace("releases", "").rstrip(
+        '/') + "/archive/{0}".format(filename)
     outfile = os.path.join(temp_folder, "reveal.js." + filename)
     fLOG("download ", filel, "to", outfile)
     local = download(filel, temp_folder, fLOG=fLOG)

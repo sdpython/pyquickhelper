@@ -727,9 +727,9 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
     datetime_rows = [("encoding", datetime.now())]
     fLOG("---- JENKINS BEGIN DOCUMENTATION ENCODING ----")
     fLOG("[generate_help_sphinx] checking encoding utf8...")
-    for root, _, files in os.walk(docpath):
+    for rt, _, files in os.walk(docpath):
         for name in files:
-            thn = os.path.join(root, name)
+            thn = os.path.join(rt, name)
             if name.endswith(".rst"):
                 try:
                     with open(thn, "r", encoding="utf8") as f:

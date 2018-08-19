@@ -131,11 +131,11 @@ def rst2html(s, fLOG=noLOG, writer="html", keep_warnings=False,
     @param      update_builder      update the builder after it is instantiated
     @return                         HTML format
 
-    *directives* is None or a list of 5-uple:
+    *directives* is None or a list of 2 or 5-uple:
 
-    * a directive name
+    * a directive name (mandatory)
     * a directive class: see `Sphinx Directive <http://sphinx-doc.org/extdev/tutorial.html>`_,
-      see also @see cl RunPythonDirective as an example
+      see also @see cl RunPythonDirective as an example (mandatory)
     * a docutils node: see @see cl runpython_node as an example
     * two functions: see @see fn visit_runpython_node, @see fn depart_runpython_node as an example
 
@@ -249,6 +249,9 @@ def rst2html(s, fLOG=noLOG, writer="html", keep_warnings=False,
     The function is more consistent.
     Format ``rst`` is available as well as
     custom builders.
+
+    .. versionchanged:: 1.8
+        New nodes are now optional in *directives*.
     """
     if 'html_theme' not in options:
         options['html_theme'] = 'basic'

@@ -810,7 +810,7 @@ def build_thumbail_in_gallery(nbfile, folder_snippet, relative, rst_link, layout
         if a custom one was found. Parameter *snippet_folder* was added.
     """
     nb = read_nb(nbfile)
-    title, desc = nb.get_description()
+    _, desc = nb.get_description()
 
     if snippet_folder is not None and os.path.exists(snippet_folder):
         custom_snippet = os.path.join(snippet_folder, os.path.splitext(

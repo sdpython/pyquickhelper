@@ -9,8 +9,8 @@ and `AutoDirective <https://github.com/sphinx-doc/sphinx/blob/master/sphinx/ext/
 """
 import inspect
 import re
-import sphinx
 import sys
+import sphinx
 from docutils import nodes
 from docutils.parsers.rst import Directive, directives
 from docutils.statemachine import StringList

@@ -289,11 +289,11 @@ class MockSphinxApp:
         @param      fLOG            logging function
         @return                     mockapp, writer, list of added nodes
 
-        *directives* is None or a list of 5-uple:
+        *directives* is None or a list of 2 or 5-uple:
 
-        * a directive name
+        * a directive name (mandatory)
         * a directive class: see `Sphinx Directive <http://sphinx-doc.org/extdev/tutorial.html>`_,
-          see also @see cl RunPythonDirective as an example
+          see also @see cl RunPythonDirective as an example (mandatory)
         * a docutils node: see @see cl runpython_node as an example
         * two functions: see @see fn visit_runpython_node,
           @see fn depart_runpython_node as an example
@@ -301,6 +301,9 @@ class MockSphinxApp:
         .. versionchanged:: 1.5
             Parameters *fLOG*, *confoverrides*, *new_extensions* were added.
             The class supports more extensions.
+
+        .. versionchanged:: 1.8
+            New nodes are now optional in *directives*.
         """
         if confoverrides is None:
             confoverrides = {}
@@ -350,16 +353,21 @@ class MockSphinxApp:
 
         if directives is not None:
             for tu in directives:
-                if len(tu) != 5:
+                if len(tu) < 2:
                     raise ValueError(
-                        "directives is a list of tuple with 5 elements, check the documentation")
-                name, cl, node, f1, f2 = tu
+                        "directives is a list of tuple with at least two elements, check the documentation")
+                name, cl = tu[:2]
                 doc_directives.register_directive(name, cl)
                 mockapp.add_directive(name, cl)
-                mockapp.add_node(node, html=(f1, f2))
-                # not necessary
-                # nodes._add_node_class_names([node.__name__])
-                writer.connect_directive_node(node.__name__, f1, f2)
+                if len(tu) == 5:
+                    name, cl, node, f1, f2 = tu
+                    mockapp.add_node(node, html=(f1, f2))
+                    # not necessary
+                    # nodes._add_node_class_names([node.__name__])
+                    writer.connect_directive_node(node.__name__, f1, f2)
+                elif len(tu) != 2:
+                    raise ValueError(
+                        "directives is a list of tuple with 2 or 5 elements, check the documentation")
 
         if fLOG:
             apps = [mockapp]
@@ -381,8 +389,8 @@ class MockSphinxApp:
                 fLOG("[MockSphinxApp] RST DIREC", res)
 
             class bb:
-                def info(*l, line=0):
-                    fLOG("[MockSphinxApp]   -- ", *l)
+                def info(*args, line=0):
+                    fLOG("[MockSphinxApp]   -- ", *args)
 
             class aa:
                 def __init__(self):
