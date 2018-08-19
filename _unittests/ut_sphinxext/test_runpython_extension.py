@@ -101,10 +101,10 @@ class TestRunPythonExtension(unittest.TestCase):
         t2 = "setsysvar: True"
         if t2 not in html:
             raise Exception(html)
-        t2 = "<p>&gt;&gt;&gt;</p>"
+        t2 = "<p>&lt;&lt;&lt;</p>"
         if t2 not in html:
             raise Exception(html)
-        t2 = "<p>Out</p>"
+        t2 = "<p>&gt;&gt;&gt;</p>"
         if t2 not in html:
             temp = get_temp_folder(__file__, "temp_runpython")
             with open(os.path.join(temp, "out.html"), "w", encoding="utf8") as f:
@@ -360,10 +360,10 @@ class TestRunPythonExtension(unittest.TestCase):
         for t in t2:
             if t.strip(";") not in html:
                 raise Exception(html)
-        t2 = "<p>&gt;&gt;&gt;</p>"
+        t2 = "<p>&lt;&lt;&lt;</p>"
         if t2 not in html:
             raise Exception(html)
-        t2 = "<p>Out</p>"
+        t2 = "<p>&gt;&gt;&gt;</p>"
         if t2 not in html:
             raise Exception(html)
         if "enable_disabled_documented_pieces_of_code" in sys.__dict__:
@@ -421,10 +421,10 @@ class TestRunPythonExtension(unittest.TestCase):
                         writer="custom", keep_warnings=True,
                         directives=tives)
 
-        t2 = "<p>&gt;&gt;&gt;</p>"
+        t2 = "<p>&lt;&lt;&lt;</p>"
         if t2 not in html:
             raise Exception(html)
-        t2 = "<p>Out</p>"
+        t2 = "<p>&gt;&gt;&gt;</p>"
         if t2 not in html:
             raise Exception(html)
         if "ZeroDivisionError" not in html:
@@ -485,10 +485,10 @@ class TestRunPythonExtension(unittest.TestCase):
                         writer="custom", keep_warnings=True,
                         directives=tives)
 
-        t2 = "<p>&gt;&gt;&gt;</p>"
+        t2 = "<p>&lt;&lt;&lt;</p>"
         if t2 not in html:
             raise Exception(html)
-        t2 = "<p>Out</p>"
+        t2 = "<p>&gt;&gt;&gt;</p>"
         if t2 not in html:
             raise Exception(html)
         if "ZeroDivisionError" not in html:

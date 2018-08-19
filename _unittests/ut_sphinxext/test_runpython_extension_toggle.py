@@ -116,7 +116,7 @@ class TestRunPythonExtensionToggle(unittest.TestCase):
                         writer="rst", keep_warnings=True,
                         directives=tives)
 
-        t1 = ">>>::"
+        t1 = "<<<::"
         if t1 not in html:
             raise Exception(html)
         t1 = ".. collapse::"
