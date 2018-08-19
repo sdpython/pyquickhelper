@@ -1,0 +1,48 @@
+
+# No other language is allowed.
+language: python
+
+# This defines the path to the interpreter the module is tested against.
+# A different script is generated for each PATH.
+# A path cannot be a virtual environment.
+python:
+  - { PATH: "{{Python37}}", VERSION: 3.7, DIST: std }
+  
+# The test happens in a virtual environment not with the original distribution.
+virtualenv:
+  - path: {{ospathjoin(root_path, pickname("%NAME_JENKINS%", project_name + "_%VERSION%_%DIST%_%NAME%"), "_venv")}}
+  
+# Dependencies to install.
+install:
+  - pip install --no-cache-dir --no-deps --index http://localhost:8067/simple/ jyquickhelper --extra-index-url=https://pypi.python.org/simple/
+  - pip install -r requirements.txt
+  - python --version
+  - pip freeze
+  - pip freeze > pip_freeze.txt
+
+# The script to run.
+# Each row becomes a Jenkins job. pyquickhelper will generate nb(python) * nb(script) jobs to run on Jenkins.
+# Steps before_script and after_script are run for every script.
+# Variable NAME is added to the Job name on Jenkins in order to distinguish them.
+# By default, the timeout for the job (only used in Jenkins) is set to 1200 (20 minutes).
+# This means the job will be stop if it produces no output for 20 minutes.
+script:
+  - { CMD: "python -u setup.py unittests", NAME: "UT", TIMEOUT: 899 }
+  - { CMD: "python -u setup.py unittests -e \".*SKIP.*\" -g \".*((api)|(pylint)).*\"", NAME: "UT_SKIP", TIMEOUT: 900 }
+  - { CMD: "python -u setup.py unittests -e \".*api.*\"", NAME: "UT_SKIP_API" }
+  - { CMD: "python -u setup.py unittests -e \".*pylint.*\"", NAME: "UT_SKIP_PYLINT" }
+  - if [ ${VERSION} == "3.7" and ${DIST} == "std" ]
+      then 
+        --CMD=python -u setup.py build_sphinx;
+        --NAME=DOC;
+      fi
+
+# To run after the script.
+after_script:
+  - python -u setup.py bdist_wheel
+  - if [ ${VERSION} == "3.7" and ${DIST} != "conda" and ${NAME} == "UT" ] then copy dist/*.whl {{root_path}}/../../local_pypi/local_pypi_server fi
+
+# Same as after script.
+documentation:
+  - if [ ${NAME} == "UT" ] then python -u setup.py build_sphinx fi
+  - if [ ${NAME} == "UT" ] then cp -R -f _doc/sphinxdoc/build/html dist/html fi

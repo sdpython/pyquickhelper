@@ -73,10 +73,14 @@ def default_engines(platform=None):
     return res
 
 
-def default_jenkins_jobs():
+def default_jenkins_jobs(platform=None):
     """
     Example of a list of jobs for parameter *module*
     of function @see fn setup_jenkins_server_yml.
+
+    @param      platform        platform
+    @return                     tuple
+
     It returns:
 
     .. runpython::
@@ -84,7 +88,10 @@ def default_jenkins_jobs():
         from pyquickhelper.jenkinshelper import default_jenkins_jobs
         print(default_jenkins_jobs())
     """
-    pattern = "https://raw.githubusercontent.com/sdpython/%s/master/.local.jenkins.win.yml"
+    platform = get_platform(platform)
+    plat = "win" if platform.startswith("win") else "lin"
+    pattern = "https://raw.githubusercontent.com/sdpython/%s/master/.local.jenkins.{0}.yml".format(
+        plat)
     yml = []
     for i, c in enumerate(["pyquickhelper"]):
         yml.append(('yml', pattern % c, 'H H(5-6) * * %d' % (i % 7)))
@@ -125,13 +132,16 @@ def setup_jenkins_server_yml(js, github="sdpython", modules=None,
                             location = "d:\\\\jenkins\\\\pymy")
 
     See `.local.jenkins.win.yml <https://github.com/sdpython/pyquickhelper/blob/master/.local.jenkins.win.yml>`_
+    (Windows) or
+    `.local.jenkins.lin.yml <https://github.com/sdpython/pyquickhelper/blob/master/.local.jenkins.lin.yml>`_
+    (Linux)
     about the syntax of a :epkg:`yml` job description.
     If *modules* is None, it is replaced by the results of
     @see fn default_jenkins_jobs.
     The platform is stored in *srv*.
     """
     if modules is None:
-        modules = default_jenkins_jobs()
+        modules = default_jenkins_jobs(js.platform)
     if delete_first:
         js.delete_all_jobs()
     r = js.setup_jenkins_server(github=github, modules=modules, overwrite=overwrite,
@@ -144,8 +154,8 @@ def jenkins_final_postprocessing(xml_job, py27):
     """
     Postprocesses a job produced by :epkg:`Jenkins`.
 
-    @param      xml_job     xml definition
-    @param      py27        is it for Python 27
+    @param      xml_job     :epkg:`xml` definition
+    @param      py27        is it for :epkg:`Python` 27
     @return                 new xml job
     """
     if py27:
