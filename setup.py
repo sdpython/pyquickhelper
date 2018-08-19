@@ -192,7 +192,7 @@ if is_local():
 
     if "jenkins" in sys.argv:
         # python setup.py jenkins <user> <password> /var/lib/jenkins/workspace
-        pos = sys.argv["jenkins"]
+        pos = sys.argv.index("jenkins")
         user = sys.argv[pos+1]
         password = sys.argv[pos+2]
         if len(sys.argv) > pos+3:
@@ -202,11 +202,11 @@ if is_local():
         from pyquickhelper.jenkinshelper import JenkinsExt, setup_jenkins_server_yml, default_jenkins_jobs
         modules = default_jenkins_jobs()
         key = "Python%d%d" % sys.version_info[:2]
-        engines = {key: os.path.absname(os.path.dirname(sys.executable))}
+        engines = {key: os.path.abspath(os.path.dirname(sys.executable))}
         js = JenkinsExt('http://localhost:8080/', user,
                         password, engines=engines)
         setup_jenkins_server_yml(js, github="sdpython", modules=modules, fLOG=print, overwrite=True,
-                                 delete_first=False, location="")
+                                 delete_first=False, location=location)
         r = True
 
     if not r and not ({"bdist_msi", "sdist",
