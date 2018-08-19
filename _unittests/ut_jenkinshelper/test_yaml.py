@@ -135,26 +135,30 @@ class TestYaml(unittest.TestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
-        self.zz_st_jconvert_sequence_into_batch_file("win")
+        # self.zz_st_jconvert_sequence_into_batch_file("win")
         self.zz_st_jconvert_sequence_into_batch_file("linux")
 
     def zz_st_jconvert_sequence_into_batch_file(self, platform):
         this = os.path.abspath(os.path.dirname(__file__))
+        plat = "win" if platform.startswith("win") else "lin"
         yml = os.path.abspath(os.path.join(
-            this, "..", "..", ".local.jenkins.win.yml"))
+            this, "..", "..", ".local.jenkins.%s.yml" % plat))
         if not os.path.exists(yml):
             yml = os.path.abspath(os.path.join(
-                this, "..", "..", "..", ".local.jenkins.win.yml"))
+                this, "..", "..", "..", ".local.jenkins.%s.yml" % plat))
         if not os.path.exists(yml):
             raise FileNotFoundError(yml)
-        context = dict(Python34="fake", Python35="C:\\Python35_x64",
-                       Python36="C:\\Python36_x64",
-                       Python37="C:\\Python37_x64",
+        context = dict(Python34="fake", Python35="C:/Python35_x64",
+                       Python36="C:/Python36_x64",
+                       Python37="C:/Python37_x64",
                        Python27=None, Anaconda3=None, Anaconda2=None,
                        WinPython36=None, project_name="pyquickhelper",
                        root_path="ROOT")
         vers = "%d%d" % sys.version_info[:2]
-        context["Python%s" % vers] = "C:\\Python%s_x64" % vers
+        context["Python%s" % vers] = "C:/Python%s_x64" % vers
+        if platform.startswith("win"):
+            for k in context:
+                context[k] = context[k].replace("/", "\\")
         obj, name = load_yaml(yml, context=context, platform=platform)
         self.assertTrue(name is not None)
         res = list(enumerate_convert_yaml_into_instructions(
@@ -199,8 +203,8 @@ class TestYaml(unittest.TestCase):
             @echo CREATE VIRTUAL ENVIRONMENT in ROOT\\pyquickhelper\\%NAME_JENKINS%\\_venv
             if not exist "ROOT\\pyquickhelper\\%NAME_JENKINS%\\_venv" mkdir "ROOT\\pyquickhelper\\%NAME_JENKINS%\\_venv"
             set KEEPPATH=%PATH%
-            set PATH=%PATH%;C:\\Python__VERS___x64
-            "C:\\Python__VERS___x64\\Scripts\\virtualenv" --system-site-packages "ROOT\\pyquickhelper\\%NAME_JENKINS%\\_venv"
+            set PATH=C:\\Python__VERS___x64;%PATH%
+            "C:\\Python__VERS___x64\\python" -c "from virtualenv import main;main(\\"--system-site-packages ROOT\\\\pyquickhelper\\\\%NAME_JENKINS%\\\\_venv\\".split())"
             set PATH=%KEEPPATH%
             if %errorlevel% neq 0 exit /b %errorlevel%
 
@@ -271,8 +275,8 @@ class TestYaml(unittest.TestCase):
             @echo CREATE VIRTUAL ENVIRONMENT in ROOT\\pyquickhelper\\%NAME_JENKINS%\\_venv
             if not exist "ROOT\\pyquickhelper\\%NAME_JENKINS%\\_venv" mkdir "ROOT\\pyquickhelper\\%NAME_JENKINS%\\_venv"
             set KEEPPATH=%PATH%
-            set PATH=%PATH%;C:\\Python__VERS___x64
-            "C:\\Python__VERS___x64\\Scripts\\virtualenv" --system-site-packages "ROOT\\pyquickhelper\\%NAME_JENKINS%\\_venv"
+            set PATH=C:\\Python__VERS___x64;%PATH%
+            "C:\\Python__VERS___x64\\python" -c "from virtualenv import main;main(\\"--system-site-packages ROOT\\\\pyquickhelper\\\\%NAME_JENKINS%\\\\_venv\\".split())"
             set PATH=%KEEPPATH%
             if %errorlevel% neq 0 exit /b %errorlevel%
 
@@ -308,6 +312,67 @@ class TestYaml(unittest.TestCase):
             if %errorlevel% neq 0 exit /b %errorlevel%
             xcopy /E /C /I /Y _doc\\sphinxdoc\\build\\html dist\\html
             if %errorlevel% neq 0 exit /b %errorlevel%
+            """.replace("            ", "").strip("\n \t\r")
+            expected = expected.replace("__VERS__", vers)
+            expected = expected.replace("__VERSP__", vers_)
+            val = conv.strip("\n \t\r")
+            if expected != val:
+                mes = "EXP:\n{0}\n###########\nGOT:\n{1}".format(expected, val)
+                for a, b in zip(expected.split("\n"), val.split("\n")):
+                    if a != b:
+                        raise Exception(
+                            "error on line:\nEXP:\n{0}\nGOT:\n{1}\n#######\n{2}".format(a, b, mes))
+                raise Exception(mes)
+        else:
+            expected = """
+            export DIST=std
+            export VERSION=__VERSP__
+            export NAME=UT
+            export TIMEOUT=899
+
+            echo AUTOMATEDSETUP
+            export current=ROOT/pyquickhelper/$NAME_JENKINS
+
+            echo interpreter=C:/Python__VERS___x64/python
+
+            echo CREATE VIRTUAL ENVIRONMENT in ROOT/pyquickhelper/$NAME_JENKINS/_venv
+            if [-f ROOT/pyquickhelper/$NAME_JENKINS/_venv]; then mkdir "ROOT/pyquickhelper/$NAME_JENKINS/_venv"; fi
+            export KEEPPATH=$PATH
+            export PATH=C:/Python__VERS___x64:$PATH
+            "C:/Python__VERS___x64/python" -c "from virtualenv import main;main(\\"--system-site-packages ROOT/pyquickhelper/$NAME_JENKINS/_venv\\".split())"
+            export PATH=$KEEPPATH
+            if [ $? -ne 0 ]; then exit $?; fi
+
+            echo INSTALL
+            export PATH=ROOT/pyquickhelper/$NAME_JENKINS/_venv/Scripts:$PATH
+            python -c "from virtualenv import main;main(\\"install --no-cache-dir --no-deps --index http://localhost:8067/simple/ jyquickhelper --extra-index-url=https://pypi.python.org/simple/\\".split())"
+            if [ $? -ne 0 ]; then exit $?; fi
+            python -c "from pip._internal import main;main(\\"install -r requirements.txt\\".split())"
+            if [ $? -ne 0 ]; then exit $?; fi
+            python --version
+            if [ $? -ne 0 ]; then exit $?; fi
+            python -c "from pip._internal import main;main([\\"freeze\\"])"
+            if [ $? -ne 0 ]; then exit $?; fi
+            export JOB_NAME=UT
+
+            echo SCRIPT
+            export PATH=ROOT/pyquickhelper/$NAME_JENKINS/_venv/Scripts:$PATH
+            python -u setup.py unittests
+            if [ $? -ne 0 ]; then exit $?; fi
+
+            echo AFTER_SCRIPT
+            export PATH=ROOT/pyquickhelper/$NAME_JENKINS/_venv/Scripts:$PATH
+            python -u setup.py bdist_wheel
+            if [ $? -ne 0 ]; then exit $?; fi
+            copy dist/*.whl ROOT/pyquickhelper/../local_pypi/local_pypi_server
+            if [ $? -ne 0 ]; then exit $?; fi
+
+            echo DOCUMENTATION
+            export PATH=ROOT/pyquickhelper/$NAME_JENKINS/_venv/Scripts:$PATH
+            python -u setup.py build_sphinx
+            if [ $? -ne 0 ]; then exit $?; fi
+            cp -R -f _doc/sphinxdoc/build/html dist/html
+            if [ $? -ne 0 ]; then exit $?; fi
             """.replace("            ", "").strip("\n \t\r")
             expected = expected.replace("__VERS__", vers)
             expected = expected.replace("__VERSP__", vers_)
@@ -378,8 +443,8 @@ class TestYaml(unittest.TestCase):
             @echo CREATE VIRTUAL ENVIRONMENT in ROOT\\pyquickhelper\\%NAME_JENKINS%\\_venv
             if not exist "ROOT\\pyquickhelper\\%NAME_JENKINS%\\_venv" mkdir "ROOT\\pyquickhelper\\%NAME_JENKINS%\\_venv"
             set KEEPPATH=%PATH%
-            set PATH=%PATH%;C:\\Python27_x64
-            "C:\\Python27_x64\\Scripts\\virtualenv" --system-site-packages "ROOT\\pyquickhelper\\%NAME_JENKINS%\\_venv"
+            set PATH=C:\\Python27_x64;%PATH%
+            "C:\\Python27_x64\\python" -c "from virtualenv import main;main(\\"--system-site-packages ROOT\\\\pyquickhelper\\\\%NAME_JENKINS%\\\\_venv\\".split())"
             set PATH=%KEEPPATH%
             if %errorlevel% neq 0 exit /b %errorlevel%
 

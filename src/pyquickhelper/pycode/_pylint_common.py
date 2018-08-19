@@ -225,4 +225,5 @@ def _private_test_style_test(fLOG, run_lint, verbose=False, pattern=".*[.]py$"):
                      "Unable to import 'src.pyquickhelper.jenkinshelper",
                      "Unable to import 'src.pyquickhelper",
                      "No name 'sphinxm_mock_app' in module 'src.pyquickhelper.helpgen'",
+                     "test_yaml.py:348: [E501]",
                      ])

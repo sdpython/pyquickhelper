@@ -14,11 +14,10 @@ virtualenv:
   
 # Dependencies to install.
 install:
-  - pip install --no-cache-dir --no-deps --index http://localhost:8067/simple/ jyquickhelper --extra-index-url=https://pypi.python.org/simple/
-  - pip install -r requirements.txt
+  - python -c "from virtualenv import main;main(\"install --no-cache-dir --no-deps --index http://localhost:8067/simple/ jyquickhelper --extra-index-url=https://pypi.python.org/simple/\".split())"
+  - python -c "from pip._internal import main;main(\"install -r requirements.txt\".split())"
   - python --version
-  - pip freeze
-  - pip freeze > pip_freeze.txt
+  - python -c "from pip._internal import main;main([\"freeze\"])"
 
 # The script to run.
 # Each row becomes a Jenkins job. pyquickhelper will generate nb(python) * nb(script) jobs to run on Jenkins.
@@ -40,7 +39,7 @@ script:
 # To run after the script.
 after_script:
   - python -u setup.py bdist_wheel
-  - if [ ${VERSION} == "3.7" and ${DIST} != "conda" and ${NAME} == "UT" ] then copy dist/*.whl {{root_path}}/../../local_pypi/local_pypi_server fi
+  - if [ ${VERSION} == "3.7" and ${DIST} != "conda" and ${NAME} == "UT" ] then copy dist/*.whl {{root_path}}/../local_pypi/local_pypi_server fi
 
 # Same as after script.
 documentation:

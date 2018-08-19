@@ -51,9 +51,9 @@ def load_yaml(file_or_buffer, context=None, engine="jinja2", platform=None):
         raise ValueError(
             "project_name is wrong, it cannot end by '__': '{0}'".format(project_name))
 
-    def ospathjoinp(*l, **kwargs):
+    def ospathjoinp(*args, **kwargs):
         p = kwargs.get('platform', platform)
-        return ospathjoin(*l, platform=p)
+        return ospathjoin(*args, platform=p)
 
     if context is None:
         context = dict(replace=replace, ospathjoin=ospathjoinp,
@@ -273,38 +273,38 @@ def enumerate_convert_yaml_into_instructions(obj, variables=None, add_environ=Tr
                 yield r, variables
 
 
-def ospathjoin(*l, **kwargs):
+def ospathjoin(*args, **kwargs):
     """
     Simple ``o.path.join`` for a specific platform.
 
-    @param      l           list of paths
+    @param      args        list of paths
     @param      kwargs      additional parameters, among them,
                             *platform* (win32 or ...)
     @return                 path
     """
     platform = kwargs.get('platform', None)
     if platform is None:
-        return os.path.join(*l)
+        return os.path.join(*args)
     elif platform.startswith("win"):
-        return "\\".join(l)
+        return "\\".join(args)
     else:
-        return "/".join(l)
+        return "/".join(args)
 
 
-def ospathdirname(l, platform=None):
+def ospathdirname(lp, platform=None):
     """
     Simple ``o.path.dirname`` for a specific platform.
 
-    @param      l           path
+    @param      lp          path
     @param      platform    platform
     @return                 path
     """
     if platform is None:
-        return os.path.dirname(l)
+        return os.path.dirname(lp)
     elif platform.startswith("win"):
-        return "\\".join(l.replace("/", "\\").split("\\")[:-1])
+        return "\\".join(lp.replace("/", "\\").split("\\")[:-1])
     else:
-        return "/".join(l.replace("\\", "/").split("/")[:-1])
+        return "/".join(lp.replace("\\", "/").split("/")[:-1])
 
 
 def convert_sequence_into_batch_file(seq, variables=None, platform=None):
@@ -330,8 +330,6 @@ def convert_sequence_into_batch_file(seq, variables=None, platform=None):
         error_level = "if [ $? -ne 0 ]; then exit $?; fi"
 
     interpreter = None
-    pip = None
-    venv = None
     venv_interpreter = None
     root_project = None
     anaconda = False
@@ -343,7 +341,7 @@ def convert_sequence_into_batch_file(seq, variables=None, platform=None):
         rowsset.append("@echo off")
         rowsset.append("set PATH0=%PATH%")
 
-    def add_path_win(rows, interpreter, pip, platform, root_project):
+    def add_path_win(rows, interpreter, platform, root_project):
         path_inter = ospathdirname(interpreter, platform)
         if len(path_inter) == 0:
             raise ValueError(
@@ -352,12 +350,6 @@ def convert_sequence_into_batch_file(seq, variables=None, platform=None):
             rows.append("set PATH={0};%PATH%".format(path_inter))
         else:
             rows.append("export PATH={0}:$PATH".format(path_inter))
-        path_pip = ospathdirname(pip, platform)
-        if path_pip != path_inter:
-            if iswin:
-                rows.append("set PATH={0};%PATH%".format(path_pip))
-            else:
-                rows.append("export PATH={0}:$PATH".format(path_pip))
         if root_project is not None:
             if iswin:
                 rows.append("set ROOTPROJECT={0}".format(root_project))
@@ -381,21 +373,13 @@ def convert_sequence_into_batch_file(seq, variables=None, platform=None):
                 anaconda = True
                 interpreter = ospathjoin(
                     value, "python", platform=platform)
-                pip = ospathjoin(value, "Scripts",
-                                 "pip", platform=platform)
                 venv_interpreter = value
-                venv = ospathjoin(
-                    value, "Scripts", "virtualenv", platform=platform)
                 conda = ospathjoin(
                     value, "Scripts", "conda", platform=platform)
             else:
                 interpreter = ospathjoin(
                     value, "python", platform=platform)
-                pip = ospathjoin(value, "Scripts",
-                                 "pip", platform=platform)
                 venv_interpreter = value
-                venv = ospathjoin(value, "Scripts",
-                                  "virtualenv", platform=platform)
             rows.append(echo + " interpreter=" + interpreter)
 
         elif key == "virtualenv":
@@ -418,26 +402,22 @@ def convert_sequence_into_batch_file(seq, variables=None, platform=None):
                     '"{0}" create -y -v -p "{1}" --clone "{2}" --offline --no-update-deps'.format(conda, p, pinter))
                 interpreter = ospathjoin(
                     p, "python", platform=platform)
-                pip = ospathjoin(p, "Scripts", "pip",
-                                 platform=platform)
             else:
                 if iswin:
                     rows.append("set KEEPPATH=%PATH%")
-                    rows.append("set PATH=%PATH%;{0}".format(venv_interpreter))
+                    rows.append("set PATH={0};%PATH%".format(venv_interpreter))
                 else:
                     rows.append("export KEEPPATH=$PATH")
                     rows.append(
-                        "export PATH=$PATH:{0}".format(venv_interpreter))
-                rows.append(
-                    '"{0}" --system-site-packages "{1}"'.format(venv, p))
+                        "export PATH={0}:$PATH".format(venv_interpreter))
+                pat = '"{0}" -c "from virtualenv import main;main(\\\"--system-site-packages {1}\\\".split())"'
+                rows.append(pat.format(interpreter, p.replace("\\", "\\\\")))
                 if iswin:
                     rows.append("set PATH=%KEEPPATH%")
                 else:
                     rows.append("export PATH=$KEEPPATH")
                 interpreter = ospathjoin(
                     p, "Scripts", "python", platform=platform)
-                pip = ospathjoin(p, "Scripts", "pip",
-                                 platform=platform)
             rows.append(error_level)
 
         elif key in {"install", "before_script", "script", "after_script", "documentation"}:
@@ -466,7 +446,7 @@ def convert_sequence_into_batch_file(seq, variables=None, platform=None):
 
                 rows.append("")
                 rows.append(echo + " " + key.upper())
-                add_path_win(rows, interpreter, pip, platform, root_project)
+                add_path_win(rows, interpreter, platform, root_project)
                 if not isinstance(value, list):
                     value = [value, error_level]
                 else:
@@ -490,7 +470,7 @@ def convert_sequence_into_batch_file(seq, variables=None, platform=None):
                                 st = st[:-nbrem]
                             splits.append(st)
                             rows = splits[-1]
-                            add_path_win(rows, interpreter, pip,
+                            add_path_win(rows, interpreter,
                                          platform, root_project)
                         else:
                             value.append(v)
