@@ -5,8 +5,21 @@
 History
 =======
 
-current - 2018-08-06 - 0.00Mb
+current - 2018-08-21 - 0.00Mb
 =============================
+
+* `32`: add command local_jenkins for setup.py (2018-08-20)
+* `163`: fix automation for Jenkins on linux (2018-08-20)
+* `177`: remove ping helper (2018-08-20)
+* `176`: add margin around toggle button (sphinx) (2018-08-19)
+* `175`: removes output title if toggle option is used (2018-08-19)
+* `174`: changes runpython titles into <<< and >>> (2018-08-19)
+* `173`: add option current to runpython to run a script in the folder of the source file which contains it (2018-08-19)
+* `172`: rst2html: parameters directives allows single directive with no new nodes (2018-08-19)
+* `171`: allow a class to modify the script to run in runpython sphinx directive (2018-08-18)
+
+1.8.2707 - 2018-08-05 - 1.99Mb
+==============================
 
 * `170`: add option syspath for autosignature (2018-08-05)
 * `169`: add option debug to autosignature (2018-08-05)
