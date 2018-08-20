@@ -53,6 +53,7 @@ class TestPing(unittest.TestCase):
         fLOG(out)
         self.assertTrue(len(out) > 0)
 
+    @unittest.skipIf(not sys.platform.startswith("win"), "machine name not available")
     def test_regular_ping(self):
         fLOG(
             __file__,

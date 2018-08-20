@@ -46,17 +46,17 @@ class TestTransferFTPTrue(unittest.TestCase):
         with warnings.catch_warnings():
             warnings.simplefilter('ignore', DeprecationWarning)
             import keyring
-        machine = get_machine()
+        prefix = "pyquickhelper,"
         try:
-            user = keyring.get_password("web", machine + "user")
-            pwd = keyring.get_password("web", machine + "pwd")
+            user = keyring.get_password("web", prefix + "user")
+            pwd = keyring.get_password("web", prefix + "pwd")
         except RuntimeError:
             user = None
             pwd = None
         if user is None:
             if not is_travis_or_appveyor():
-                raise Exception("user password is empty, machine='{0}', username='{1}'".format(
-                    machine, get_user()))
+                raise Exception("user password is empty, prefix='{0}', username='{1}'".format(
+                    prefix, get_user()))
             else:
                 return
 

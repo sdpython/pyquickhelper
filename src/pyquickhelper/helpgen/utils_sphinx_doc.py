@@ -423,7 +423,7 @@ def apply_modification_template(rootm, store_obj, template, fullname, rootrep,
 
     not_expected = os.environ.get(
         "USERNAME", os.environ.get("USER", "````````````"))
-    if not_expected in fullnamenoext:
+    if not_expected != "jenkins" and not_expected in fullnamenoext:
         mes = "The title is probably wrong (5): {0}\nnoext='{1}'\npython='{2}'\nrootm='{3}'\nrootrep='{4}'" + \
               "\nfullname='{5}'\nkeepf='{6}'\nnot_expected='{7}'"
         raise HelpGenException(mes.format(
@@ -554,7 +554,7 @@ def apply_modification_template(rootm, store_obj, template, fullname, rootrep,
 
     not_expected = os.environ.get(
         "USERNAME", os.environ.get("USER", "````````````"))
-    if not_expected in fullnamenoext:
+    if not_expected != "jenkins" and not_expected in fullnamenoext:
         mes = "The title is probably wrong (3): {0}\nnoext={1}\npython={2}\nrootm={3}\nrootrep={4}" + \
               "\nfullname={5}\nkeepf={6}\nnot_expected='{7}'"
         raise HelpGenException(mes.format(
@@ -867,7 +867,7 @@ def produces_indexes(store_obj, indexes, fexclude_index, titles=None,
 
         not_expected = os.environ.get(
             "USERNAME", os.environ.get("USER", "````````````"))
-        if not_expected in title:
+        if not_expected != "jenkins" and not_expected in title:
             raise HelpGenException(
                 "The title is probably wrong (2), found '{0}' in '{1}'".format(not_expected, title))
 
@@ -891,7 +891,7 @@ def filecontent_to_rst(filename, content):
 
     not_expected = os.environ.get(
         "USERNAME", os.environ.get("USER", "````````````"))
-    if not_expected in file:
+    if not_expected != "jenkins" and not_expected in file:
         raise HelpGenException(
             "The title is probably wrong (1): '{0}' found in '{1}'".format(not_expected, file))
 

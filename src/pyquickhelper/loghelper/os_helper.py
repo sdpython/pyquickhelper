@@ -12,6 +12,10 @@ def get_machine():
     Returns the machine name.
 
     @return     machine name
+
+    The method assumes environment variable ``COMPUTERNAME``,
+    ``HOSTNAME`` or ``NAME`` is available.
+    Otherwise, you should use module ``platform``.
     """
     name = os.environ.get("COMPUTERNAME",
                           os.environ.get("HOSTNAME",
@@ -28,6 +32,9 @@ def get_user():
     Returns the user name.
 
     @return     user name
+
+    The method assumes environment variable ``USERNAME`` or ``USER``
+    is available.
     """
     name = os.environ.get("USERNAME", os.environ.get("USER", None))
     if name is None:

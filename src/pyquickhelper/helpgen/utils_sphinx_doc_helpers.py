@@ -1014,7 +1014,7 @@ def process_look_for_tag(tag, title, files):
 
         not_expected = os.environ.get(
             "USERNAME", os.environ.get("USER", "````````````"))
-        if not_expected in rows[0]:
+        if not_expected != "jenkins" and not_expected in rows[0]:
             raise HelpGenException(
                 "The title is probably wrong (4): {0}\ntag={1}\ntit={2}\nnot_expected='{3}'".format(rows[0], tag, tit, not_expected))
 
