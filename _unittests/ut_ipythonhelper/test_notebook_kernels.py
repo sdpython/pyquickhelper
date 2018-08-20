@@ -7,6 +7,7 @@ notebook test
 import sys
 import os
 import unittest
+import warnings
 
 try:
     import src
@@ -54,7 +55,12 @@ class TestNotebookKernels(unittest.TestCase):
         kern = "ut_" + sys.executable.replace("\\", "/").replace("/", "_").replace(
             ".", "_").replace(":", "") + "_" + str(sys.version_info[0])
         kern = kern.lower()
-        loc = install_jupyter_kernel(kernel_name=kern)
+        try:
+            loc = install_jupyter_kernel(kernel_name=kern)
+        except PermissionError as e:
+            warnings.warn(
+                "Unable to install a new kernel with this user: {0}".format(e))
+            return
         fLOG("i", loc)
         if kern not in loc:
             raise Exception(

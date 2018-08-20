@@ -36,7 +36,8 @@ def get_user():
     The method assumes environment variable ``USERNAME`` or ``USER``
     is available.
     """
-    name = os.environ.get("USERNAME", os.environ.get("USER", None))
+    name = os.environ.get("USERNAME", os.environ.get(
+        "USER", os.environ.get("CIRCLE_USERNAME", None)))
     if name is None:
         raise ValueError("Unable to find user name in {0}".format(
             ",".join(sorted(os.environ.keys()))))

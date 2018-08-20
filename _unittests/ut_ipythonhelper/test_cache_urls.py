@@ -24,7 +24,6 @@ except ImportError:
 from src.pyquickhelper.loghelper import fLOG
 from src.pyquickhelper.pycode import get_temp_folder
 from src.pyquickhelper.pycode import is_travis_or_appveyor
-from src.pyquickhelper.ipythonhelper import install_python_kernel_for_unittest
 from src.pyquickhelper.ipythonhelper import execute_notebook_list, execute_notebook_list_finalize_ut
 
 
@@ -40,9 +39,6 @@ class TestCacheUrls(unittest.TestCase):
             # notebooks are not converted into python 2.7, so not tested
             return
 
-        kernel_name = None if is_travis_or_appveyor() is not None else install_python_kernel_for_unittest(
-            "pyquickhelper")
-
         temp = get_temp_folder(__file__, "temp_cache_urls")
 
         fnb = os.path.normpath(os.path.join(
@@ -53,7 +49,7 @@ class TestCacheUrls(unittest.TestCase):
             os.path.abspath(os.path.dirname(__file__)), "..", "..", "src"))]
 
         res = execute_notebook_list(
-            temp, keepnote, fLOG=fLOG, valid=None, additional_path=addpaths, kernel_name=kernel_name,
+            temp, keepnote, fLOG=fLOG, valid=None, additional_path=addpaths,
             cache_urls=["https://docs.python.org/3.4/library/urllib.request.html"])
         execute_notebook_list_finalize_ut(
             res, fLOG=fLOG, dump=src.pyquickhelper)

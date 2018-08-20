@@ -20,7 +20,6 @@ except ImportError:
         sys.path.append(path)
     import src
 
-from src.pyquickhelper.ipythonhelper.notebook_helper import install_python_kernel_for_unittest
 from src.pyquickhelper.ipythonhelper import run_notebook, NotebookError
 from src.pyquickhelper.pycode import get_temp_folder
 from src.pyquickhelper.pycode import is_travis_or_appveyor, ExtTestCase
@@ -39,11 +38,8 @@ class TestNotebookRunner(ExtTestCase):
         outfile = os.path.join(temp, "out_notebook.ipynb")
         self.assertNotExists(outfile)
 
-        kernel_name = None if is_travis_or_appveyor() is not None else install_python_kernel_for_unittest(
-            "pyquickhelper")
         stat, out = run_notebook(nbfile, working_dir=temp, outfilename=outfile,
-                                 additional_path=[addpath],
-                                 kernel_name=kernel_name)
+                                 additional_path=[addpath])
         self.assertExists(outfile)
         self.assertNotIn("No module named 'pyquickhelper'", out)
         self.assertIn("datetime.datetime(2015, 3, 2", out)
@@ -60,12 +56,9 @@ class TestNotebookRunner(ExtTestCase):
         outfile = os.path.join(temp, "out_notebook.ipynb")
         self.assertNotExists(outfile)
 
-        kernel_name = None if is_travis_or_appveyor() is not None else install_python_kernel_for_unittest(
-            "pyquickhelper")
         try:
             run_notebook(nbfile, working_dir=temp, outfilename=outfile,
-                         additional_path=[addpath],
-                         kernel_name=kernel_name)
+                         additional_path=[addpath])
         except NotebookError as e:
             self.assertIn("name 'str2datetimes' is not defined", str(e))
 

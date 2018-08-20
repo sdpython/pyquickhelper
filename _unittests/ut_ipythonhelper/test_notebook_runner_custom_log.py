@@ -20,7 +20,6 @@ except ImportError:
         sys.path.append(path)
     import src
 
-from src.pyquickhelper.ipythonhelper.notebook_helper import install_python_kernel_for_unittest
 from src.pyquickhelper.ipythonhelper import run_notebook
 from src.pyquickhelper.pycode import get_temp_folder
 from src.pyquickhelper.loghelper import fLOG, CustomLog
@@ -49,12 +48,9 @@ class TestNotebookRunnerCustomLog (unittest.TestCase):
         if sys.version_info[0] == 2:
             return
 
-        kernel_name = None if is_travis_or_appveyor() is not None else install_python_kernel_for_unittest(
-            "pyquickhelper")
         custom = CustomLog(temp)
         stat, out = run_notebook(nbfile, working_dir=temp, outfilename=outfile,
                                  additional_path=[addpath],
-                                 kernel_name=kernel_name,
                                  detailed_log=custom)
         fLOG(stat)
         fLOG(out)
