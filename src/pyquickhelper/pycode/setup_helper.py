@@ -518,9 +518,9 @@ def process_standard_options_for_setup(argv, file_or_folder, project_var_name, m
             location = argv[pos + 3]
         else:
             if sys.platform.startswith("win"):
-                location = "/var/lib/jenkins/workspace"
-            else:
                 location = "\\Jenkins"
+            else:
+                location = "/var/lib/jenkins/workspace"
         from ..jenkinshelper import JenkinsExt, setup_jenkins_server_yml, default_jenkins_jobs
         modules = default_jenkins_jobs(
             github_owner=github_owner, module_name=project_var_name if module_name is None else module_name)
