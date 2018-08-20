@@ -377,7 +377,9 @@ def run_base_script(script, fLOG=noLOG, file=False, is_cmd=False,
     if platform.startswith("win"):
         exe = os.path.join(exe, "python")
     else:
-        exe = os.path.join(exe, "bin", "python")
+        exe = os.path.join(exe, "bin", "python%d.%d" % sys.version_info[:2])
+        if not os.path.exists(exe):
+            exe = os.path.join(exe, "bin", "python")
 
     if is_cmd:
         cmd = " ".join([exe] + script)

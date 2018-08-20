@@ -177,6 +177,7 @@ class TestCompressHelper(unittest.TestCase):
         rz = os.path.join(fold, "..", "data", "rar5-blake.rar")
         res = unrar_files(rz, where_to=fold, fLOG=fLOG)
         self.assertTrue(isinstance(res, list))
+        res.sort()
         self.assertEqual(len(res), 2)
         if not isinstance(res[0], (typbytes, str)):
             raise TypeError(type(res[0]))
