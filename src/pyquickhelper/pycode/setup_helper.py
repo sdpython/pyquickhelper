@@ -523,7 +523,7 @@ def process_standard_options_for_setup(argv, file_or_folder, project_var_name, m
                 location = "\\Jenkins"
         from ..jenkinshelper import JenkinsExt, setup_jenkins_server_yml, default_jenkins_jobs
         modules = default_jenkins_jobs(
-            github_owner=github_owner, module_name=module_name)
+            github_owner=github_owner, module_name=project_var_name if module_name is None else module_name)
         key = "Python%d%d" % sys.version_info[:2]
         engines = {key: os.path.abspath(os.path.dirname(sys.executable))}
         js = JenkinsExt('http://localhost:8080/', user,
