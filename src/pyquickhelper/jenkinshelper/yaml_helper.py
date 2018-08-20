@@ -381,8 +381,12 @@ def convert_sequence_into_batch_file(seq, variables=None, platform=None):
                     conda = ospathjoin(
                         value, "bin", "conda", platform=platform)
             else:
-                interpreter = ospathjoin(
-                    value, "python", platform=platform)
+                if iswin:
+                    interpreter = ospathjoin(
+                        value, "python", platform=platform)
+                else:
+                    interpreter = ospathjoin(
+                        value, "$PYINT", platform=platform)
                 venv_interpreter = value
             rows.append(echo + " interpreter=" + interpreter)
 

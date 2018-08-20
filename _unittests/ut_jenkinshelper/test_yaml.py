@@ -335,13 +335,13 @@ class TestYaml(unittest.TestCase):
             echo AUTOMATEDSETUP
             export current=ROOT/pyquickhelper/$NAME_JENKINS
 
-            echo interpreter=C:/Python__VERS___x64/python
+            echo interpreter=C:/Python__VERS___x64/$PYINT
 
             echo CREATE VIRTUAL ENVIRONMENT in ROOT/pyquickhelper/$NAME_JENKINS/_venv
             if [-f ROOT/pyquickhelper/$NAME_JENKINS/_venv]; then mkdir "ROOT/pyquickhelper/$NAME_JENKINS/_venv"; fi
             export KEEPPATH=$PATH
             export PATH=C:/Python__VERS___x64:$PATH
-            "C:/Python__VERS___x64/python" -c "from virtualenv import create_environment;create_environment(\\"ROOT/pyquickhelper/$NAME_JENKINS/_venv\\", site_packages=True)"
+            "C:/Python__VERS___x64/$PYINT" -c "from virtualenv import create_environment;create_environment(\\"ROOT/pyquickhelper/$NAME_JENKINS/_venv\\", site_packages=True)"
             export PATH=$KEEPPATH
             if [ $? -ne 0 ]; then exit $?; fi
 
