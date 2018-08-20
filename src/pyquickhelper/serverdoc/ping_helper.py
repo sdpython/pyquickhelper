@@ -33,9 +33,9 @@ def regular_ping_machine(machine, delay=1.0, nb_max=-1, fLOG=fLOG):
     if not isinstance(machine, list):
         machine = [machine]
 
-    while nb_max == -1 or nb_max > 0:
+    while nb_max != 0:
         for m in machine:
-            out = ping_machine(m)
+            out = ping_machine(m, fLOG=fLOG)
             fLOG(out)
         time.sleep(delay)
         if nb_max > 0:

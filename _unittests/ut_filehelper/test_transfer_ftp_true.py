@@ -24,7 +24,7 @@ except ImportError:
 from src.pyquickhelper.loghelper import fLOG
 from src.pyquickhelper.filehelper import TransferFTP
 from src.pyquickhelper.pycode import is_travis_or_appveyor
-from src.pyquickhelper.loghelper.os_helper import get_machine
+from src.pyquickhelper.loghelper.os_helper import get_machine, get_user
 
 
 class TestTransferFTPTrue(unittest.TestCase):
@@ -56,7 +56,7 @@ class TestTransferFTPTrue(unittest.TestCase):
         if user is None:
             if not is_travis_or_appveyor():
                 raise Exception("user password is empty, machine='{0}', username='{1}'".format(
-                    machine, os.environ.get("USERNAME", None)))
+                    machine, get_user()))
             else:
                 return
 

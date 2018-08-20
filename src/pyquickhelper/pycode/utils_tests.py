@@ -14,6 +14,7 @@ import unittest
 from datetime import datetime
 
 from ..loghelper.flog import noLOG
+from ..loghelper.os_helper import get_user
 from ..filehelper import synchronize_folder
 from .call_setup_hook import call_setup_hook
 from .code_exceptions import CoverageException, SetupHookException
@@ -230,9 +231,9 @@ def main_wrapper_tests(codefile, skip_list=None, processes=False, add_coverage=F
     srcp = os.path.relpath(
         os.path.join(src_abs, "src", project_var_name), os.getcwd())
 
-    if "USERNAME" in os.environ and os.environ["USERNAME"] in srcp:
+    if get_user() in srcp:
         raise Exception(
-            "The location of the source should not contain USERNAME: " + srcp)
+            "The location of the source should not contain '{0}': {1}".format(get_user(), srcp))
 
     if only_setup_hook:
         tested_module(src_abs, project_var_name, setup_params)

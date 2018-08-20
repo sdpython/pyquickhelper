@@ -68,7 +68,8 @@ def get_executables_path():
     @return     a list of paths
     """
     res = [os.path.split(sys.executable)[0]]
-    res += [os.path.join(res[-1], "Scripts")]
+    res.extend([os.path.join(res[-1], "Scripts"),
+                os.path.join(res[-1], "bin")])
     return res
 
 

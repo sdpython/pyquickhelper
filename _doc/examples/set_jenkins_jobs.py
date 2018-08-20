@@ -3,8 +3,8 @@
 Set Jenkins Jobs
 ================
 
-This jobs is used to add jobs to a Jenkins server in order
-to build packages on Windows. The YAML definition is located
+This jobs is used to add jobs to a :epkg:`Jenkins` server in order
+to build packages on Windows. The :epkg:`YAML` definition is located
 at `pymyinstall/whl <https://github.com/sdpython/pymyinstall/tree/master/whl>`_
 and it defines the jobs in this folder
 `pymyinstall/whl/windows <https://github.com/sdpython/pymyinstall/tree/master/whl/windows>`_.
@@ -14,15 +14,9 @@ and it defines the jobs in this folder
 # imports
 import os
 import warnings
-try:
-    import pyquickhelper
-except ImportError:
-    import sys
-    sys.path.append("../../src")
-    import pyquickhelper
 
 from pyquickhelper.jenkinshelper import setup_jenkins_server_yml, JenkinsExt
-from pyquickhelper.loghelper import fLOG
+from pyquickhelper.loghelper import fLOG, get_machine, get_user
 
 #################################
 # Starts logging.
@@ -34,15 +28,21 @@ fLOG("start")
 with warnings.catch_warnings():
     warnings.simplefilter('ignore', DeprecationWarning)
     import keyring
-user = keyring.get_password("jenkins", os.environ["COMPUTERNAME"] + "user")
-pwd = keyring.get_password("jenkins", os.environ["COMPUTERNAME"] + "pwd")
+user = keyring.get_password("jenkins", get_machine() + "user")
+pwd = keyring.get_password("jenkins", get_machine() + "pwd")
 
 #################################
 # local path
-engines = dict(Python35="c:\\Python35_x64",
-               Python36="c:\\Python36_x64")
-folder = "C:\\%s\github\\pymyinstall\\whl" % os.environ["USERNAME"]
-location = "d:\\jenkins\\pymy"
+key = "Python%d%d" % sys.version_info[:2]
+engines = {key: os.path.abspath(os.path.dirname(sys.executable))}
+if sys.platform.startswith("win"):
+    folder = "C:\\%s\github\\_whl" % get_user()
+    location = "c:\\jenkins\\pymy"
+    suf = "win"
+else:
+    folder = "/home/%s/github/_whl" % get_user()
+    location = "/usr/local/Python%d.%d" % sys.version_info[:2]
+    suf = "lin"
 
 #################################
 if not os.path.exists("build"):
@@ -50,7 +50,7 @@ if not os.path.exists("build"):
 
 #################################
 # Loads the yml template.
-yml = os.path.join(folder, ".local.jenkins.win.yml")
+yml = os.path.join(folder, ".local.jenkins.%s.yml" % suf)
 with open(yml, "r", encoding="utf-8") as f:
     content = f.read()
 
@@ -64,7 +64,7 @@ js = JenkinsExt('http://localhost:8080/', user,
 ymls = []
 for mod in ["polylearn", "dynd-python"]:
     new_content = content.replace("__MODULE__", mod)
-    yml = os.path.join("build", ".local.jenkins.win.{0}.yml".format(mod))
+    yml = os.path.join("build", ".local.jenkins.{1}.{0}.yml".format(mod, lin))
     with open(yml, "w", encoding="utf-8") as f:
         f.write(new_content)
     batch = os.path.join(folder, "windows", "build_{0}.bat".format(mod))

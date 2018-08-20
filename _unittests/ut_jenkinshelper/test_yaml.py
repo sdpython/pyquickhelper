@@ -135,7 +135,7 @@ class TestYaml(unittest.TestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
-        # self.zz_st_jconvert_sequence_into_batch_file("win")
+        self.zz_st_jconvert_sequence_into_batch_file("win")
         self.zz_st_jconvert_sequence_into_batch_file("linux")
 
     def zz_st_jconvert_sequence_into_batch_file(self, platform):
@@ -158,7 +158,8 @@ class TestYaml(unittest.TestCase):
         context["Python%s" % vers] = "C:/Python%s_x64" % vers
         if platform.startswith("win"):
             for k in context:
-                context[k] = context[k].replace("/", "\\")
+                if context[k] is not None:
+                    context[k] = context[k].replace("/", "\\")
         obj, name = load_yaml(yml, context=context, platform=platform)
         self.assertTrue(name is not None)
         res = list(enumerate_convert_yaml_into_instructions(
@@ -204,7 +205,7 @@ class TestYaml(unittest.TestCase):
             if not exist "ROOT\\pyquickhelper\\%NAME_JENKINS%\\_venv" mkdir "ROOT\\pyquickhelper\\%NAME_JENKINS%\\_venv"
             set KEEPPATH=%PATH%
             set PATH=C:\\Python__VERS___x64;%PATH%
-            "C:\\Python__VERS___x64\\python" -c "from virtualenv import main;main(\\"--system-site-packages ROOT\\\\pyquickhelper\\\\%NAME_JENKINS%\\\\_venv\\".split())"
+            "C:\\Python__VERS___x64\\python" -c "from virtualenv import create_environment;create_environment(\\"ROOT\\\\pyquickhelper\\\\%NAME_JENKINS%\\\\_venv\\", site_packages=True)"
             set PATH=%KEEPPATH%
             if %errorlevel% neq 0 exit /b %errorlevel%
 
@@ -276,7 +277,7 @@ class TestYaml(unittest.TestCase):
             if not exist "ROOT\\pyquickhelper\\%NAME_JENKINS%\\_venv" mkdir "ROOT\\pyquickhelper\\%NAME_JENKINS%\\_venv"
             set KEEPPATH=%PATH%
             set PATH=C:\\Python__VERS___x64;%PATH%
-            "C:\\Python__VERS___x64\\python" -c "from virtualenv import main;main(\\"--system-site-packages ROOT\\\\pyquickhelper\\\\%NAME_JENKINS%\\\\_venv\\".split())"
+            "C:\\Python__VERS___x64\\python" -c "from virtualenv import create_environment;create_environment(\\"ROOT\\\\pyquickhelper\\\\%NAME_JENKINS%\\\\_venv\\", site_packages=True)"
             set PATH=%KEEPPATH%
             if %errorlevel% neq 0 exit /b %errorlevel%
 
@@ -326,6 +327,7 @@ class TestYaml(unittest.TestCase):
         else:
             expected = """
             export DIST=std
+            export PYINT=python__VERSP__
             export VERSION=__VERSP__
             export NAME=UT
             export TIMEOUT=899
@@ -344,32 +346,32 @@ class TestYaml(unittest.TestCase):
             if [ $? -ne 0 ]; then exit $?; fi
 
             echo INSTALL
-            export PATH=ROOT/pyquickhelper/$NAME_JENKINS/_venv/Scripts:$PATH
-            python -c "from virtualenv import main;main(\\"install --no-cache-dir --no-deps --index http://localhost:8067/simple/ jyquickhelper --extra-index-url=https://pypi.python.org/simple/\\".split())"
+            export PATH=ROOT/pyquickhelper/$NAME_JENKINS/_venv/bin:$PATH
+            $PYINT -c "from pip._internal import main;main(\\"install --no-cache-dir --no-deps --index http://localhost:8067/simple/ jyquickhelper --extra-index-url=https://pypi.python.org/simple/\\".split())"
             if [ $? -ne 0 ]; then exit $?; fi
-            python -c "from pip._internal import main;main(\\"install -r requirements.txt\\".split())"
+            $PYINT -c "from pip._internal import main;main(\\"install -r requirements.txt\\".split())"
             if [ $? -ne 0 ]; then exit $?; fi
-            python --version
+            $PYINT --version
             if [ $? -ne 0 ]; then exit $?; fi
-            python -c "from pip._internal import main;main([\\"freeze\\"])"
+            $PYINT -c "from pip._internal import main;main([\\"freeze\\"])"
             if [ $? -ne 0 ]; then exit $?; fi
             export JOB_NAME=UT
 
             echo SCRIPT
-            export PATH=ROOT/pyquickhelper/$NAME_JENKINS/_venv/Scripts:$PATH
-            python -u setup.py unittests
+            export PATH=ROOT/pyquickhelper/$NAME_JENKINS/_venv/bin:$PATH
+            $PYINT -u setup.py unittests
             if [ $? -ne 0 ]; then exit $?; fi
 
             echo AFTER_SCRIPT
-            export PATH=ROOT/pyquickhelper/$NAME_JENKINS/_venv/Scripts:$PATH
-            python -u setup.py bdist_wheel
+            export PATH=ROOT/pyquickhelper/$NAME_JENKINS/_venv/bin:$PATH
+            $PYINT -u setup.py bdist_wheel
             if [ $? -ne 0 ]; then exit $?; fi
             copy dist/*.whl ROOT/pyquickhelper/../local_pypi/local_pypi_server
             if [ $? -ne 0 ]; then exit $?; fi
 
             echo DOCUMENTATION
-            export PATH=ROOT/pyquickhelper/$NAME_JENKINS/_venv/Scripts:$PATH
-            python -u setup.py build_sphinx
+            export PATH=ROOT/pyquickhelper/$NAME_JENKINS/_venv/bin:$PATH
+            $PYINT -u setup.py build_sphinx
             if [ $? -ne 0 ]; then exit $?; fi
             cp -R -f _doc/sphinxdoc/build/html dist/html
             if [ $? -ne 0 ]; then exit $?; fi

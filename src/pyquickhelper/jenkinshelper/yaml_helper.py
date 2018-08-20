@@ -374,8 +374,12 @@ def convert_sequence_into_batch_file(seq, variables=None, platform=None):
                 interpreter = ospathjoin(
                     value, "python", platform=platform)
                 venv_interpreter = value
-                conda = ospathjoin(
-                    value, "Scripts", "conda", platform=platform)
+                if platform.startswith("win"):
+                    conda = ospathjoin(
+                        value, "Scripts", "conda", platform=platform)
+                else:
+                    conda = ospathjoin(
+                        value, "bin", "conda", platform=platform)
             else:
                 interpreter = ospathjoin(
                     value, "python", platform=platform)
@@ -414,10 +418,12 @@ def convert_sequence_into_batch_file(seq, variables=None, platform=None):
                 rows.append(pat.format(interpreter, p.replace("\\", "\\\\")))
                 if iswin:
                     rows.append("set PATH=%KEEPPATH%")
+                    interpreter = ospathjoin(
+                        p, "Scripts", "python", platform=platform)
                 else:
                     rows.append("export PATH=$KEEPPATH")
-                interpreter = ospathjoin(
-                    p, "Scripts", "python", platform=platform)
+                    interpreter = ospathjoin(
+                        p, "bin", "python", platform=platform)
             rows.append(error_level)
 
         elif key in {"install", "before_script", "script", "after_script", "documentation"}:
@@ -598,7 +604,7 @@ def enumerate_processed_yml(file_or_buffer, context=None, engine="jinja2", platf
             except jenkins.JenkinsException as e:
                 from .jenkins_exceptions import JenkinsExtException
                 raise JenkinsExtException(
-                    "Unable to retrieve job config for name='{1}'.".format(name)) from e
+                    "Unable to retrieve job config for name='{0}'.".format(name)) from e
 
             update_job = False
             if j is not None:

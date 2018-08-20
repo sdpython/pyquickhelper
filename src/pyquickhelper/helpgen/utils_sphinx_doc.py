@@ -421,10 +421,13 @@ def apply_modification_template(rootm, store_obj, template, fullname, rootrep,
     fullnamenoext = fullname[:-3] if fullname.endswith(".py") else fullname
     pythonname = None
 
-    if os.environ.get("USERNAME", os.environ.get("USER", "````````````")) in fullnamenoext:
-        mes = "The title is probably wrong: {0}\nnoext={1}\npython={2}\nrootm={3}\nrootrep={4}\nfullname={5}\nkeepf={6}"
+    not_expected = os.environ.get(
+        "USERNAME", os.environ.get("USER", "````````````"))
+    if not_expected in fullnamenoext:
+        mes = "The title is probably wrong (5): {0}\nnoext='{1}'\npython='{2}'\nrootm='{3}'\nrootrep='{4}'" +
+              "\nfullname='{5}'\nkeepf='{6}'\nnot_expected='{7}'"
         raise HelpGenException(mes.format(
-            fullnamenoext, filenoext, pythonname, rootm, rootrep, fullname, keepf))
+            fullnamenoext, filenoext, pythonname, rootm, rootrep, fullname, keepf, not_expected))
 
     mo, prefix = import_module(
         rootm, keepf, fLOG, additional_sys_path=additional_sys_path)
@@ -549,10 +552,13 @@ def apply_modification_template(rootm, store_obj, template, fullname, rootrep,
     if filenoext.endswith(".__init__"):
         filenoext = filenoext[: -len(".__init__")]
 
-    if os.environ.get("USERNAME", os.environ.get("USER", "````````````")) in fullnamenoext:
-        mes = "the title is probably wrong: {0}\nnoext={1}\npython={2}\nrootm={3}\nrootrep={4}\nfullname={5}\nkeepf={6}"
+    not_expected = os.environ.get(
+        "USERNAME", os.environ.get("USER", "````````````"))
+    if not_expected in fullnamenoext:
+        mes = "The title is probably wrong (3): {0}\nnoext={1}\npython={2}\nrootm={3}\nrootrep={4}" +
+              "\nfullname={5}\nkeepf={6}\nnot_expected='{7}'"
         raise HelpGenException(mes.format(
-            fullnamenoext, filenoext, pythonname, rootm, rootrep, fullname, keepf))
+            fullnamenoext, filenoext, pythonname, rootm, rootrep, fullname, keepf, not_expected))
 
     ttitle = "module ``{0}``".format(fullnamenoext)
     rep = {"__FULLNAME_UNDERLINED__": ttitle + "\n" + ("=" * len(ttitle)) + "\n",
@@ -859,9 +865,11 @@ def produces_indexes(store_obj, indexes, fexclude_index, titles=None,
         content = "\n".join([".. contents::", "    :local:",
                              "    :depth: 1", "", "", "Summary", "+++++++"])
 
-        if os.environ.get("USERNAME", os.environ.get("USER", "````````````")) in title:
+        not_expected = os.environ.get(
+            "USERNAME", os.environ.get("USER", "````````````"))
+        if not_expected in title:
             raise HelpGenException(
-                "the title is probably wrong: {0}".format(title))
+                "The title is probably wrong (2), found '{0}' in '{1}'".format(not_expected, title))
 
         res[k] = "\n.. _%s:\n\n%s\n%s\n\n%s\n\n%s" % (
             label, title, under, content, res[k])
@@ -881,8 +889,11 @@ def filecontent_to_rst(filename, content):
     file = os.path.split(filename)[-1]
     full = file + "\n" + ("=" * len(file)) + "\n"
 
-    if os.environ.get("USERNAME", os.environ.get("USER", "````````````")) in file:
-        raise HelpGenException("the title is probably wrong: {0}".format(file))
+    not_expected = os.environ.get(
+        "USERNAME", os.environ.get("USER", "````````````"))
+    if not_expected in file:
+        raise HelpGenException(
+            "The title is probably wrong (1): '{0}' found in '{1}'".format(not_expected, file))
 
     rows = ["", ".. _f-%s:" % file, "", "", full, "",
             # "fullpath: ``%s``" % filename,

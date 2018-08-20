@@ -130,7 +130,7 @@ def build_venv_cmd(params, posparams):
 
 def create_virtual_env(where, symlinks=False, system_site_packages=False,
                        clear=True, packages=None, fLOG=noLOG,
-                       temp_folder=None):
+                       temp_folder=None, platform=None):
     """
     Creates a virtual environment.
 
@@ -143,6 +143,7 @@ def create_virtual_env(where, symlinks=False, system_site_packages=False,
                                         :epkg:`pymyinstall`).
     @param      fLOG                    logging function
     @param      temp_folder             temporary folder (to download module if needed), by default ``<where>/download``
+    @param      platform                platform to use
     @return                             stand output
 
     .. index:: virtual environment
@@ -180,7 +181,9 @@ def create_virtual_env(where, symlinks=False, system_site_packages=False,
         raise VirtualEnvError(
             "unable to create virtual environement at {2}\nCMD:\n{3}\nOUT:\n{0}\n[pyqerror]\n{1}".format(out, err, where, cmd))
 
-    if sys.platform.startswith("win"):
+    if platform is None:
+        platform = sys.platform
+    if platform.startswith("win"):
         scripts = os.path.join(where, "Scripts")
     else:
         scripts = os.path.join(where, "bin")
@@ -194,7 +197,8 @@ def create_virtual_env(where, symlinks=False, system_site_packages=False,
     pips = [_ for _ in in_scripts if _.startswith("pip")]
     if len(pips) == 0:
         out += venv_install(where, "pip", fLOG=fLOG,
-                            temp_folder=temp_folder)
+                            temp_folder=temp_folder,
+                            platform=platform)
     in_scripts = os.listdir(scripts)
     pips = [_ for _ in in_scripts if _.startswith("pip")]
     if len(pips) == 0:
@@ -202,18 +206,19 @@ def create_virtual_env(where, symlinks=False, system_site_packages=False,
             "unable to find pip in {0}, content:\n  {1}".format(scripts, in_scripts))
 
     out += venv_install(where, "pymyinstall", fLOG=fLOG,
-                        temp_folder=temp_folder)
+                        temp_folder=temp_folder, platform=platform)
 
     if packages is not None and len(packages) > 0:
         fLOG("install packages in:", where)
-        packages = [_ for _ in packages if _ != "pymyinstall" and _ != "pip"]
+        packages = [_ for _ in packages if _ not in ("pymyinstall", "pip")]
         if len(packages) > 0:
             out += venv_install(where, packages, fLOG=fLOG,
-                                temp_folder=temp_folder)
+                                temp_folder=temp_folder,
+                                platform=platform)
     return out
 
 
-def venv_install(venv, packages, fLOG=noLOG, temp_folder=None):
+def venv_install(venv, packages, fLOG=noLOG, temp_folder=None, platform=None):
     """
     Installs a package or a list of packages in a virtual environment.
 
@@ -221,6 +226,7 @@ def venv_install(venv, packages, fLOG=noLOG, temp_folder=None):
     @param      packages        a package (str) or a list of packages(list[str])
     @param      fLOG            logging function
     @param      temp_folder     temporary folder (to download module if needed), by default ``<where>/download``
+    @param      platform        platform (``sys.platform`` by default)
     @return                     standard output
 
     The function does not work from a virtual environment.
@@ -234,13 +240,16 @@ def venv_install(venv, packages, fLOG=noLOG, temp_folder=None):
     if isinstance(packages, str):
         packages = [packages]
 
+    if platform is None:
+        platform = sys.platform
+
     if packages == "pip" or packages == ["pip"]:
         from .get_pip import __file__ as pip_loc
         ppath = os.path.abspath(pip_loc.replace(".pyc", ".py"))
         script = ["-u", ppath]
-        return run_venv_script(venv, script, fLOG=fLOG, is_cmd=True)
+        return run_venv_script(venv, script, fLOG=fLOG, is_cmd=True, platform=platform)
     elif packages == "pymyinstall" or packages == ["pymyinstall"]:
-        if sys.platform.startswith("win"):
+        if platform.startswith("win"):
             pip = os.path.join(venv, "Scripts", "pip")
         else:
             pip = os.path.join(venv, "bin", "pip")
@@ -251,7 +260,8 @@ def venv_install(venv, packages, fLOG=noLOG, temp_folder=None):
             os.chdir(os.path.dirname(local_setup))
             script = ["-u", local_setup, "install"]
             out = run_venv_script(venv, script, fLOG=fLOG, is_cmd=True,
-                                  skip_err_if="Finished processing dependencies for pymyinstall==")
+                                  skip_err_if="Finished processing dependencies for pymyinstall==",
+                                  platform=platform)
             os.chdir(cwd)
             return out
         else:
@@ -271,11 +281,11 @@ def venv_install(venv, packages, fLOG=noLOG, temp_folder=None):
                   "ps=[{0}]".format(ls),
                   "t='{0}'".format(temp_folder.replace("\\", "\\\\")),
                   "pymyinstall.packaged.install_all(temp_folder=t,list_module=ps,up_pip=False)"]
-        return run_venv_script(venv, "\n".join(script), fLOG=fLOG)
+        return run_venv_script(venv, "\n".join(script), fLOG=fLOG, platform=platform)
 
 
 def run_venv_script(venv, script, fLOG=noLOG, file=False, is_cmd=False,
-                    skip_err_if=None, **kwargs):
+                    skip_err_if=None, platform=None, **kwargs):
     """
     Runs a script on a vritual environment (the script should be simple).
 
@@ -285,6 +295,7 @@ def run_venv_script(venv, script, fLOG=noLOG, file=False, is_cmd=False,
     @param      file        is script a file or a string to execute
     @param      is_cmd      if True, script is a command line to run (as a list) for python executable
     @param      skip_err_if do not pay attention to standard error if this string was found in standard output
+    @param      platform    platform (``sys.platform`` by default)
     @param      kwargs      others arguments for function @see fn run_cmd.
     @return                 output
 
@@ -293,7 +304,10 @@ def run_venv_script(venv, script, fLOG=noLOG, file=False, is_cmd=False,
     if is_virtual_environment():
         raise NotImplementedErrorFromVirtualEnvironment()
 
-    if sys.platform.startswith("win"):
+    if platform is None:
+        platform = sys.platform
+
+    if platform.startswith("win"):
         exe = os.path.join(venv, "Scripts", "python")
     else:
         exe = os.path.join(venv, "bin", "python")
@@ -320,7 +334,7 @@ def run_venv_script(venv, script, fLOG=noLOG, file=False, is_cmd=False,
 
 
 def run_base_script(script, fLOG=noLOG, file=False, is_cmd=False,
-                    skip_err_if=None, argv=None, **kwargs):
+                    skip_err_if=None, argv=None, platform=None, **kwargs):
     """
     Runs a script with the original intepreter even if this function
     is run from a virtual environment.
@@ -331,6 +345,7 @@ def run_base_script(script, fLOG=noLOG, file=False, is_cmd=False,
     @param      is_cmd      if True, script is a command line to run (as a list) for python executable
     @param      skip_err_if do not pay attention to standard error if this string was found in standard output
     @param      argv        list of arguments to add on the command line
+    @param      platform    platform (``sys.platform`` by default)
     @param      kwargs      others arguments for function @see fn run_cmd.
     @return                 output
 
@@ -349,16 +364,21 @@ def run_base_script(script, fLOG=noLOG, file=False, is_cmd=False,
         else:
             return True
 
+    if platform is None:
+        platform = sys.platform
+
     if hasattr(sys, 'real_prefix'):
         exe = sys.real_prefix
     elif hasattr(sys, "base_exec_prefix"):
         exe = sys.base_exec_prefix
     else:
         exe = sys.exec_prefix
-    if sys.platform.startswith("win"):
+
+    if platform.startswith("win"):
         exe = os.path.join(exe, "python")
     else:
         exe = os.path.join(exe, "bin", "python")
+
     if is_cmd:
         cmd = " ".join([exe] + script)
         if argv is not None:

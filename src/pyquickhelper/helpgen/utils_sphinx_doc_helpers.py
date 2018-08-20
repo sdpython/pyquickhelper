@@ -1012,9 +1012,11 @@ def process_look_for_tag(tag, title, files):
 
             """.replace("            ", "").format(tag, tit, "=" * len(tit), suf)]
 
-        if os.environ.get("USERNAME", os.environ.get("USER", "````````````")) in rows[0]:
+        not_expected = os.environ.get(
+            "USERNAME", os.environ.get("USER", "````````````"))
+        if not_expected in rows[0]:
             raise HelpGenException(
-                "the title is probably wrong: {0}\ntag={1}\ntit={2}".format(rows[0], tag, tit))
+                "The title is probably wrong (4): {0}\ntag={1}\ntit={2}\nnot_expected='{3}'".format(rows[0], tag, tit, not_expected))
 
         for pa, a, b, c in coll:
             pan = re.sub(r'([^a-zA-Z0-9_])', "", pa)

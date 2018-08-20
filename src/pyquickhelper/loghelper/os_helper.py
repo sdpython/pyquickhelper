@@ -21,3 +21,16 @@ def get_machine():
         raise ValueError("Unable to find machine name in {0}".format(
             ",".join(sorted(os.environ.keys()))))
     return name
+
+
+def get_user():
+    """
+    Returns the user name.
+
+    @return     user name
+    """
+    name = os.environ.get("USERNAME", os.environ.get("USER", None))
+    if name is None:
+        raise ValueError("Unable to find user name in {0}".format(
+            ",".join(sorted(os.environ.keys()))))
+    return name
