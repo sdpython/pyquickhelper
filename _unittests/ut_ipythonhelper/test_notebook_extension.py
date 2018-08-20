@@ -52,7 +52,8 @@ class TestNotebookExtensions(unittest.TestCase):
             try:
                 out = install_notebook_extension()
             except PermissionError as e:
-                warnings.warn("Unable to install jupyter extensions due to permissions errors: {0}".format(e))
+                warnings.warn(
+                    "Unable to install jupyter extensions due to permissions errors: {0}".format(e))
                 return
             fLOG(out)
 

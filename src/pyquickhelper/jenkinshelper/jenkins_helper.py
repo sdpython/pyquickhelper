@@ -73,12 +73,15 @@ def default_engines(platform=None):
     return res
 
 
-def default_jenkins_jobs(platform=None):
+def default_jenkins_jobs(platform=None, github_owner="sdpython",
+                         module_name="pyquickhelper"):
     """
     Example of a list of jobs for parameter *module*
     of function @see fn setup_jenkins_server_yml.
 
     @param      platform        platform
+    @param      github_owner     GitHub user
+    @param      module_name     module name or list of modules names
     @return                     tuple
 
     It returns:
@@ -90,10 +93,12 @@ def default_jenkins_jobs(platform=None):
     """
     platform = get_platform(platform)
     plat = "win" if platform.startswith("win") else "lin"
-    pattern = "https://raw.githubusercontent.com/sdpython/%s/master/.local.jenkins.{0}.yml".format(
-        plat)
+    pattern = "https://raw.githubusercontent.com/{1}/%s/master/.local.jenkins.{0}.yml".format(
+        plat, github_owner)
     yml = []
-    for i, c in enumerate(["pyquickhelper"]):
+    if not isinstance(module_name, list):
+        module_name = [module_name]
+    for i, c in enumerate(module_name):
         yml.append(('yml', pattern % c, 'H H(5-6) * * %d' % (i % 7)))
     return yml
 

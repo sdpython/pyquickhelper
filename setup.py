@@ -81,7 +81,7 @@ def is_local():
                   "copy27", "copy_dist", "local_pypi", "notebook", "publish", "publish_doc",
                   "register", "unittests", "unittests_LONG", "unittests_SKIP", "unittests_GUI",
                   "run27", "sdist", "setupdep", "test_local_pypi", "upload_docs", "setup_hook",
-                  "copy_sphinx", "write_version", "lab", "history", "run_pylint", "jenkins"}:
+                  "copy_sphinx", "write_version", "lab", "history", "run_pylint", "local_jenkins"}:
         if cname in sys.argv:
             try:
                 import_pyquickhelper()
@@ -189,25 +189,6 @@ if is_local():
         fLOG=logging_function, covtoken=(
             "69193a28-dc79-4a24-98ed-aedf441a8249", "'_UT_37_std' in outfile"),
         github_owner=github_owner)
-
-    if "jenkins" in sys.argv:
-        # python setup.py jenkins <user> <password> /var/lib/jenkins/workspace
-        pos = sys.argv.index("jenkins")
-        user = sys.argv[pos+1]
-        password = sys.argv[pos+2]
-        if len(sys.argv) > pos+3:
-            location = sys.argv[pos+3]
-        else:
-            location = "/var/lib/jenkins/workspace"
-        from pyquickhelper.jenkinshelper import JenkinsExt, setup_jenkins_server_yml, default_jenkins_jobs
-        modules = default_jenkins_jobs()
-        key = "Python%d%d" % sys.version_info[:2]
-        engines = {key: os.path.abspath(os.path.dirname(sys.executable))}
-        js = JenkinsExt('http://localhost:8080/', user,
-                        password, engines=engines)
-        setup_jenkins_server_yml(js, github="sdpython", modules=modules, fLOG=print, overwrite=True,
-                                 delete_first=False, location=location)
-        r = True
 
     if not r and not ({"bdist_msi", "sdist",
                        "bdist_wheel", "publish", "publish_doc", "register",

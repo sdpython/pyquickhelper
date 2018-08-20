@@ -39,7 +39,7 @@ def get_available_setup_commands():
                 'notebook', 'publish', 'publish_doc', 'register', 'run27', 'run_pylint',
                 'sdist', 'setup_hook', 'setupdep', 'test_local_pypi',
                 'unittests', 'unittests_GUI', 'unittests_LONG', 'unittests_SKIP',
-                'upload_docs', 'write_version']
+                'upload_docs', 'write_version', 'local_jenkins']
     return commands
 
 
@@ -510,6 +510,27 @@ def process_standard_options_for_setup(argv, file_or_folder, project_var_name, m
         print(content)
         return True
 
+    elif 'local_jenkins' in argv:
+        pos = argv.index("local_jenkins")
+        user = argv[pos + 1]
+        password = argv[pos + 2]
+        if len(argv) > pos + 3:
+            location = argv[pos + 3]
+        else:
+            if sys.platform.startswith("win"):
+                location = "/var/lib/jenkins/workspace"
+            else:
+                location = "\\Jenkins"
+        from ..jenkinshelper import JenkinsExt, setup_jenkins_server_yml, default_jenkins_jobs
+        modules = default_jenkins_jobs(
+            github_owner=github_owner, module_name=module_name)
+        key = "Python%d%d" % sys.version_info[:2]
+        engines = {key: os.path.abspath(os.path.dirname(sys.executable))}
+        js = JenkinsExt('http://localhost:8080/', user,
+                        password, engines=engines)
+        setup_jenkins_server_yml(js, github=github_owner, modules=modules, fLOG=fLOG, overwrite=True,
+                                 delete_first=False, location=location)
+        return True
     else:
         return False
 
@@ -740,8 +761,8 @@ def run_unittests_for_setup(file_or_folder, skip_function=default_skip_function,
 
 def copy27_for_setup(file_or_folder):
     """
-    prepare a copy of the source for Python 2.7,
-    assuming the module follows the same design as *pyquickhelper*
+    Prepares a copy of the source for :epkg:`Python` 2.7,
+    assuming the module follows the same design as *pyquickhelper*.
 
     @param      file_or_folder      file ``setup.py`` or folder which contains it
     """
@@ -756,13 +777,15 @@ def copy27_for_setup(file_or_folder):
 
 def write_pyproj(file_or_folder, location=None):
     """
-    create a pyproj project to work with `PTVS <https://pytools.codeplex.com/>`_
+    Creates a project
+    `pyproj <https://docs.microsoft.com/fr-fr/visualstudio/python/managing-python-projects-in-visual-studio>`_
+    to work with `PTVS <https://pytools.codeplex.com/>`_
     (Python Tools for Visual Studio)
 
     @param      file_or_folder      file ``setup.py`` or folder which contains it
     @param      location            if not None, stores the project into this folder
 
-    This functionality fails with Python 2.7 (encoding).
+    This functionality fails with :epkg:`Python` 2.7 (encoding).
     """
     avoid = ["dist", "build", "dist_module27",
              "_doc", "_virtualenv", "_virtualenv27", "_venv"]
@@ -798,21 +821,22 @@ def write_pyproj(file_or_folder, location=None):
 
 def process_standard_options_for_setup_help(argv):
     """
-    Prints the added options available through this module
+    Prints the added options available through this module.
     """
     commands = {
+        "build27": "build the wheel for Python 2.7 (if available), it requires to run copy27 first",
         "build_script": "produce various scripts to build the module",
         "build_sphinx": "build the documentation",
         "build_wheel": "build the wheel",
-        "build27": "build the wheel for Python 2.7 (if available), it requires to run copy27 first",
         "clean_space": "clean unnecessary spaces in the code, applies :epkg:`pycodestyle` on all files",
-        "run_pylint": "run pylint on the sources, allowed parameters <pattern> <neg_pattern>",
         "clean_pyd": "clean file ``*.pyd``",
+        "copy27": "create a modified copy of the module to run on Python 2.7 (if available), it requires to run copy27 first",
         "copy_dist": "copy documentation to folder dist",
         "copy_sphinx": "modify and copy sources to _doc/sphinxdoc/source/<module>",
-        "copy27": "create a modified copy of the module to run on Python 2.7 (if available), it requires to run copy27 first",
         "history": "builds the history of the package in RST",
+        "local_jenkins": "sets up a local jenkins server",
         "run27": "run the unit tests for the Python 2.7",
+        "run_pylint": "run pylint on the sources, allowed parameters <pattern> <neg_pattern>",
         "setup_hook": "call function setup_hook which initializes the module before running unit tests",
         "unittests": "run the unit tests which do not contain test_LONG, test_SKIP or test_GUI in their file name",
         "unittests_LONG": "run the unit tests which contain test_LONG their file name",
@@ -857,12 +881,17 @@ def process_standard_options_for_setup_help(argv):
                         print(
                             "      -g regex       run all unit tests files not matching the regular expression")
                         print()
+                    elif k == "local_jenkins":
+                        print()
+                        print("      {0} user password [location]".format(k))
+                        print("      server is http://localhost:8080/")
+                        print()
 
 
 def write_module_scripts(folder, platform=sys.platform, blog_list=None,
                          default_engine_paths=None, command=None):
     """
-    Writes a couple of script which allow a user to be faster on some tasks
+    Writes a couple of scripts which allow a user to be faster on some tasks
     or to easily get information about the module.
 
     @param      folder                  where to write the script
