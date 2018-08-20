@@ -50,6 +50,9 @@ class TestCallSetupHook(unittest.TestCase):
         exp = exp.replace("/home/circleci/repo/", "")
         cmd = cmd.replace("/root/github/pyquickhelper/", "")
         exp = exp.replace("/root/github/pyquickhelper/", "")
+        rem = "/var/lib/jenkins/workspace/pyquickhelper/pyquickhelper_UT_%d%d_std/" % sys.version_info[:2]
+        cmd = cmd.replace(rem, "")
+        exp = exp.replace(rem, "")
         if exp != cmd:
             raise Exception("\nCMD: {0}\nEXP: {1}".format(cmd, exp))
 

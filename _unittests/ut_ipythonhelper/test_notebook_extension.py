@@ -7,6 +7,7 @@ notebook test
 import sys
 import os
 import unittest
+import warnings
 
 try:
     import src
@@ -48,7 +49,11 @@ class TestNotebookExtensions(unittest.TestCase):
 
         if len(ext) == 0:
             fLOG("installation")
-            out = install_notebook_extension()
+            try:
+                out = install_notebook_extension()
+            except PermissionError as e:
+                warnings.warn("Unable to install jupyter extensions due to permissions errors: {0}".format(e))
+                return
             fLOG(out)
 
         fLOG("extension")

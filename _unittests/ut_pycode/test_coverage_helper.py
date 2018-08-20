@@ -96,7 +96,6 @@ class TestCoverageHelper(ExtTestCase):
         cov1 = os.path.join(temp, "..", "data", "pyq.coverage0")
         cov2 = os.path.join(temp, "..", "data", "pyq.coverage1")
         covs = [cov1, cov2]
-        source = source.lower()
         fLOG("source='{0}'".format(source))
         coverage_combine(covs, temp, source=source, process=process)
         index = os.path.join(temp, "index.html")
