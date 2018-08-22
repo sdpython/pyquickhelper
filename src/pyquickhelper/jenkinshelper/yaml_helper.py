@@ -487,10 +487,11 @@ def convert_sequence_into_batch_file(seq, variables=None, platform=None):
                             value.append(error_level)
                 rows.extend(value)
         elif key == 'INFO':
+            vs = '"{0}"'.format(value[1]) if isinstance(value[1], str) and " " in value[1] else value[1]
             if iswin:
-                rowsset.append("SET {0}={1}".format(value[0], value[1]))
+                rowsset.append("SET {0}={1}".format(value[0], vs))
             else:
-                rowsset.append("export {0}={1}".format(value[0], value[1]))
+                rowsset.append("export {0}={1}".format(value[0], vs))
         else:
             raise ValueError("unexpected key '{0}'".format(key))
 
