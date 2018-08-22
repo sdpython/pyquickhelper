@@ -32,6 +32,7 @@ import jenkins
 from ..loghelper.flog import noLOG
 from ..pycode.windows_scripts import windows_jenkins, windows_jenkins_any
 from ..pycode.windows_scripts import windows_jenkins_27_conda, windows_jenkins_27_def
+from ..pycode.linux_scripts import linux_jenkins, linux_jenkins_any
 from ..pycode.build_helper import private_script_replacements
 from .jenkins_exceptions import JenkinsExtException, JenkinsJobException
 from .jenkins_server_template import _config_job, _trigger_up, _trigger_time, _git_repo, _task_batch_win, _task_batch_lin
@@ -57,6 +58,16 @@ _default_engine_paths = {
 def _modified_windows_jenkins(requirements_local, requirements_pypi, module="__MODULE__",
                               port="__PORT__", platform=None):
     return private_script_replacements(
+        linux_jenkins, module,
+        (requirements_local, requirements_pypi),
+        port, raise_exception=False,
+        default_engine_paths=_default_engine_paths,
+        platform=get_platform(platform))
+
+
+def _modified_linux_jenkins(requirements_local, requirements_pypi, module="__MODULE__",
+                            port="__PORT__", platform=None):
+    return private_script_replacements(
         windows_jenkins, module,
         (requirements_local, requirements_pypi),
         port, raise_exception=False,
@@ -78,6 +89,17 @@ def _modified_windows_jenkins_any(requirements_local, requirements_pypi, module=
                                   port="__PORT__", platform=None):
     res = private_script_replacements(
         windows_jenkins_any, module,
+        (requirements_local, requirements_pypi),
+        port, raise_exception=False,
+        default_engine_paths=_default_engine_paths,
+        platform=get_platform(platform))
+    return res.replace("virtual_env_suffix=%2", "virtual_env_suffix=___SUFFIX__")
+
+
+def _modified_linux_jenkins_any(requirements_local, requirements_pypi, module="__MODULE__",
+                                port="__PORT__", platform=None):
+    res = private_script_replacements(
+        linux_jenkins_any, module,
         (requirements_local, requirements_pypi),
         port, raise_exception=False,
         default_engine_paths=_default_engine_paths,
@@ -580,6 +602,62 @@ class JenkinsExt(jenkins.Jenkins):
                 raise ValueError("unable to interpret: " + job)
         else:
             # linux
+            engine, namee = self.get_engine_from_job(job, True)
+            python = os.path.join(engine, "python.exe")
+
+            if len(spl) == 1:
+                script = _modified_linux_jenkins(
+                    requirements_local, requirements_pypi, platform=self.platform)
+                if not isinstance(script, list):
+                    script = [script]
+                return [replacements(s, engine, python, namee + "_" + job_hash, module_name) for s in script]
+
+            elif len(spl) == 0:
+                raise ValueError("job is empty")
+
+            elif spl[0] == "standalone":
+                # conda update
+                return self.get_cmd_standalone(job)
+
+            elif spl[0] == "empty":
+                return ""
+
+            elif len(spl) in [2, 3, 4, 5]:
+                # step 1: define the script
+
+                if "[test_local_pypi]" in spl:
+                    cmd = """__PYTHON__ -u setup.py test_local_pypi"""
+                    cmd = "auto_setup_test_local_pypi.bat __PYTHON__"
+                elif "[update_modules]" in spl:
+                    cmd = """__PYTHON__ -u -c "import sys;sys.path.append('src');from pymyinstall.packaged import update_all;""" + \
+                          """update_all(temp_folder='build/update_modules', verbose=True, source='2')" """
+
+                else:
+                    cmd = _modified_linux_jenkins(
+                        requirements_local, requirements_pypi, platform=self.platform)
+                    for pl in spl[1:]:
+                        if pl.startswith("[custom_") and pl.endswith("]"):
+                            cus = pl.strip("[]")
+                            cmd = _modified_linux_jenkins_any(requirements_local, requirements_pypi,
+                                                              platform=self.platform).replace("__COMMAND__", cus)
+
+                # step 2: replacement (python __PYTHON__, virtual environnement
+                # __SUFFIX__)
+
+                cmds = cmd if isinstance(cmd, list) else [cmd]
+                res = []
+                for cmd in cmds:
+                    cmdn = replacements(cmd, engine, python,
+                                        namee + "_" + job_hash, module_name)
+                    if "run27" in cmdn and ("Python34" in cmdn or "Python35" in cmdn or
+                                            "Python36" in cmdn or "Python37" in cmdn):
+                        raise ValueError(
+                            "Python version mismatch\nENGINE\n{2}\n----BEFORE\n{0}\n-----\nAFTER\n-----\n{1}".format(cmd, cmdn, engine))
+                    res.append(cmdn)
+
+                return res
+
+            # other possibilities
             raise NotImplementedError("On Linux, unable to interpret: " + job)
 
     def adjust_scheduler(self, scheduler, adjust_scheduler=True):
