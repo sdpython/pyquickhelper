@@ -222,6 +222,11 @@ def check_pep8(folder, ignore=('E265', 'W504'), skip=None,
         :epkg:`pylint` was added used to check the code.
         It produces the following list of errors
         `pylint error codes <http://pylint-messages.wikidot.com/all-codes>`_.
+
+    .. versionchanged:: 1.8
+        If *neg_pattern* is empty, it populates with a default value
+        which skips unnecessary folders:
+        ``".*[/\\\\]((_venv)|(build)|(dist)|(bin)|(obj)|(_todo)|([.]git)|(__pycache__))[/\\\\].*"``.
     """
     def extended_checkings(fname, content, buf, extended):
         for i, line in enumerate(content):
@@ -266,6 +271,9 @@ def check_pep8(folder, ignore=('E265', 'W504'), skip=None,
         ignore = tuple()
     elif isinstance(ignore, list):
         ignore = tuple(ignore)
+
+    if neg_pattern is not None:
+        neg_pattern = ".*[/\\]((_venv)|(build)|(dist)|(bin)|(obj)|(_todo)|([.]git)|(__pycache__))[/\\].*"
 
     regneg_filter = None if neg_pattern is None else re.compile(neg_pattern)
 
