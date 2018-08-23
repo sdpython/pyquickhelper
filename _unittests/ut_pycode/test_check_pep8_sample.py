@@ -49,12 +49,14 @@ class TestCheckPep8Sample(ExtTestCase):
 
         def check_pep8_one_file():
             check_pep8(this, fLOG=fLOG, max_line_length=150, recursive=False,
+                       neg_pattern="##",
                        pattern="test_check_pep8_sample.py")
 
         def check_pep8_error_file():
             check_pep8(this, fLOG=fLOG, recursive=False,
                        pylint_ignore=('C0111', 'R0201', 'C0103'),
                        pattern="test_check_pep8_sample.py",
+                       neg_pattern="##",
                        skip=["test_check_pep8_sample.py:30",
                              "test_check_pep8_sample.py:33",
                              "Unused import src"])
