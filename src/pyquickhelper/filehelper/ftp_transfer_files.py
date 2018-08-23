@@ -10,6 +10,8 @@ import os
 import warnings
 import sys
 import ftplib
+from time import sleep
+from random import random
 from .files_status import FilesStatus
 from ..loghelper.flog import noLOG
 
@@ -78,28 +80,19 @@ class FolderTransferFTP:
     ::
 
         import sys, os
-        from pyquickhelper import TransferFTP, FileTreeNode, FolderTransferFTP
-        from pyquickhelper import open_window_params
+        from pyquickhelper.filehelper import TransferFTP, FileTreeNode, FolderTransferFTP
+        import keyring
 
-        login = "login"
-        params = { "password":"" }
-        newparams = open_window_params (params, title="password",
-                            help_string = "password", key_save="my_password")
-        password = newparams["password"]
+        user = keyring.get_password("webtransfer", "user")
+        pwd = keyring.get_password("webtransfer", "pwd")
 
-        ftp = TransferFTP("ftp.website.fr",
-                        login,
-                        password,
-                        fLOG=print)
+        ftp = TransferFTP("ftp.website.fr", user, pwd, fLOG=print)
 
-        location = r"local_location\\GitHub\\%s\\dist\\html"
+        location = r"local_location/GitHub/%s/dist/html"
         this = os.path.abspath(os.path.dirname(__file__))
-        rootw = "/www/htdocs/app/%s/helpsphinx"
+        rootw = "/root/subfolder/%s/helpsphinx"
 
-        for module in [
-                "pyquickhelper",
-                "pyensae",
-                ] :
+        for module in ["pyquickhelper", "pyensae"] :
             root = location % module
 
             # documentation
@@ -129,8 +122,6 @@ class FolderTransferFTP:
                  is_binary=content_as_binary, text_transform=None, filter_out=None,
                  exc=False, force_allow=None, fLOG=noLOG):
         """
-        constructor
-
         @param      file_tree_node      @see cl FileTreeNode
         @param      ftp_transfer        @see cl TransferFTP
         @param      file_status         file keeping the status for each file (date, hash of the content for the last upload)
@@ -195,7 +186,8 @@ class FolderTransferFTP:
 
     def iter_eligible_files(self):
         """
-        iterates on eligible file for transfering (if they have been modified)
+        Iterates on eligible file for transfering
+        (if they have been modified).
 
         @return         iterator on file name
         """
@@ -209,7 +201,7 @@ class FolderTransferFTP:
 
     def update_status(self, file):
         """
-        update the status of a file
+        Updates the status of a file.
 
         @param      file        filename
         @return                 @see cl FileInfo
@@ -222,7 +214,8 @@ class FolderTransferFTP:
         """
         Applies some preprocessing to the file to transfer.
         It adds the footer for example.
-        It returns a stream which should be closed by using method @see me close_stream.
+        It returns a stream which should be closed by
+        using method @see me close_stream.
 
         @param      path            file name
         @param      force_binary    impose a binary transfer
@@ -299,7 +292,7 @@ class FolderTransferFTP:
 
     def close_stream(self, stream):
         """
-        close a stream opened by @see me preprocess_before_transfering
+        Closes a stream opened by @see me preprocess_before_transfering.
 
         @param      stream      stream to close
         """
@@ -308,18 +301,19 @@ class FolderTransferFTP:
         else:
             stream.close()
 
-    def start_transfering(self, max_errors=20):
+    def start_transfering(self, max_errors=20, delay=None):
         """
-        starts transfering files to the remote website
+        Starts transfering files to a remote :epkg:`FTP` website.
 
         :param max_errors: stops after this number of errors
+        :param delay: delay between two files
         :return: list of transferred @see cl FileInfo
         :raises FolderTransferFTPException: the class raises
             an exception (@see cl FolderTransferFTPException)
             more than *max_errors* issues happened
 
-        .. versionchanged:: 1.5
-            Raises an exception after *max_errors* failures.
+        .. versionchanged:: 1.8
+            Parameter *delay* was added.
         """
         issues = []
         done = []
@@ -422,5 +416,11 @@ class FolderTransferFTP:
             if len(issues) >= max_errors:
                 raise FolderTransferFTPException("Too many issues:\n{0}".format(
                     "\n".join("{0} -- {1} --- {2}".format(a, b, type(c)) for a, b, c in issues)))
+
+            if delay is not None and delay > 0:
+                h = random()
+                delta = (h - 0.5) * delay * 0.1
+                delay_rnd = delay + delta
+                sleep(delay_rnd)
 
         return done
