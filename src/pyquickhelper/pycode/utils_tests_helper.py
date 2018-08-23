@@ -226,7 +226,7 @@ def check_pep8(folder, ignore=('E265', 'W504'), skip=None,
     .. versionchanged:: 1.8
         If *neg_pattern* is empty, it populates with a default value
         which skips unnecessary folders:
-        ``".*[/\\\\]((_venv)|(build)|(dist)|(bin)|(obj)|(_todo)|([.]git)|(__pycache__))[/\\\\].*"``.
+        ``".*[/\\\\\\\\]((_venv)|(build)|(dist)|(bin)|(obj)|(_todo)|([.]git)|(__pycache__)|(sphinxdoc)|(temp_)).*"``.
     """
     def extended_checkings(fname, content, buf, extended):
         for i, line in enumerate(content):
@@ -272,10 +272,13 @@ def check_pep8(folder, ignore=('E265', 'W504'), skip=None,
     elif isinstance(ignore, list):
         ignore = tuple(ignore)
 
-    if neg_pattern is not None:
-        neg_pattern = ".*[/\\]((_venv)|(build)|(dist)|(bin)|(obj)|(_todo)|([.]git)|(__pycache__))[/\\].*"
+    if neg_pattern is None:
+        neg_pattern = ".*[/\\\\]((_venv)|(build)|(dist)|(bin)|(obj)|(_todo)|([.]git)|(__pycache__)|(sphinxdoc)|(temp_)).*"
 
-    regneg_filter = None if neg_pattern is None else re.compile(neg_pattern)
+    try:
+        regneg_filter = None if neg_pattern is None else re.compile(neg_pattern)
+    except re.error as e:
+        raise ValueError("Unable to compile '{0}'".format(neg_pattern)) from e
 
     # pycodestyle
     fLOG("[check_pep8] code style on '{0}'".format(folder))

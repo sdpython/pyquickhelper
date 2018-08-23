@@ -30,7 +30,7 @@ def _private_test_style_src(fLOG, run_lint, verbose=False, pattern=".*[.]py$"):
                               'R0911', 'R0916', 'C0200', 'W0223',
                               'W0122', 'E1003', 'R0205', 'E0001',
                               'W0143'),
-               skip=["ftp_transfer_files.py:374: [E731]",
+               skip=["ftp_transfer_files.py:368: [E731]",
                      "_nbconvert_config.py:",
                      "convert_doc_sphinx_helper.py:31: [E402]",
                      "magic_class.py:12: [E402]",
@@ -181,8 +181,8 @@ def _private_test_style_src(fLOG, run_lint, verbose=False, pattern=".*[.]py$"):
 def _private_test_style_test(fLOG, run_lint, verbose=False, pattern=".*[.]py$"):
     thi = os.path.abspath(os.path.dirname(__file__))
     test_ = os.path.normpath(os.path.join(thi, "..", "..", '..', '_unittests'))
-    check_pep8(test_, fLOG=fLOG, neg_pattern="temp[0-9]?_.*", pattern=pattern,
-               max_line_length=200, run_lint=run_lint, verbose=verbose,
+    check_pep8(test_, fLOG=fLOG, neg_pattern="((temp[0-9]?_.*)|(.*((_venv)|(sphinxdoc)|([.]git)|(__pycache__)).*))",
+               pattern=pattern, max_line_length=200, run_lint=run_lint, verbose=verbose,
                run_cmd_filter=_run_cmd_filter,
                pylint_ignore=('C0111', 'C0103', 'R0914', 'W0212', 'C0413', 'W0621',
                               'W0703', 'W0622', 'W0122', 'R0912', 'R0201',
