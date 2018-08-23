@@ -5,12 +5,18 @@
 History
 =======
 
-current - 2018-08-21 - 0.00Mb
+current - 2018-08-23 - 0.00Mb
 =============================
 
-* `32`: add command local_jenkins for setup.py (2018-08-20)
-* `163`: fix automation for Jenkins on linux (2018-08-20)
+* `179`: put a default value for neg_pattern if it is none to avoid known folders (function check_pep8) (2018-08-23)
+* `178`: add parameter delay to wait between two files being transferred through FTP (2018-08-23)
+
+1.8.2732 - 2018-08-20 - 1.99Mb
+==============================
+
 * `177`: remove ping helper (2018-08-20)
+* `163`: fix automation for Jenkins on linux (2018-08-20)
+* `32`: add command local_jenkins for setup.py (2018-08-20)
 * `176`: add margin around toggle button (sphinx) (2018-08-19)
 * `175`: removes output title if toggle option is used (2018-08-19)
 * `174`: changes runpython titles into <<< and >>> (2018-08-19)

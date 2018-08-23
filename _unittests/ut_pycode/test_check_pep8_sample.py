@@ -75,6 +75,7 @@ class TestCheckPep8Sample(ExtTestCase):
         check_pep8(this, fLOG=fLOG, max_line_length=170, recursive=False,
                    pylint_ignore=('C0111', 'R0201', 'C0103'),
                    pattern="test_check_pep8_sample.py",
+                   neg_pattern="##",
                    skip=["test_check_pep8_sample.py:373: [E731]",
                          "test_check_pep8_sample.py:36",
                          "test_check_pep8_sample.py:39",

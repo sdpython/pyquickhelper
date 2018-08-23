@@ -276,7 +276,8 @@ def check_pep8(folder, ignore=('E265', 'W504'), skip=None,
         neg_pattern = ".*[/\\\\]((_venv)|(build)|(dist)|(bin)|(obj)|(_todo)|([.]git)|(__pycache__)|(sphinxdoc)|(temp_)).*"
 
     try:
-        regneg_filter = None if neg_pattern is None else re.compile(neg_pattern)
+        regneg_filter = None if neg_pattern is None else re.compile(
+            neg_pattern)
     except re.error as e:
         raise ValueError("Unable to compile '{0}'".format(neg_pattern)) from e
 
