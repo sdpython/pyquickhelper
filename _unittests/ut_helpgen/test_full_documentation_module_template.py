@@ -26,7 +26,7 @@ except ImportError:
 from src.pyquickhelper.loghelper.flog import fLOG, download
 from src.pyquickhelper.loghelper import CustomLog
 from src.pyquickhelper.helpgen import generate_help_sphinx
-from src.pyquickhelper.pycode import get_temp_folder, is_travis_or_appveyor, skipif_travis
+from src.pyquickhelper.pycode import get_temp_folder, is_travis_or_appveyor
 from src.pyquickhelper.filehelper.synchelper import remove_folder
 
 
@@ -40,7 +40,6 @@ class TestSphinxFullDocumentationModuleTemplate(unittest.TestCase):
         """for pylint"""
         self.assertTrue(src is not None)
 
-    @skipif_travis("travis puts the source in a build folder which is by default not checked by test_code_style.py")
     def test_full_documentation_module_template(self):
         """
         This test might fail in sphinx-gallery due to a very long filename.
