@@ -37,7 +37,8 @@ else:
         *args, exit=do_exit)
 
 
-def get_temp_folder(thisfile, name=None, clean=True, create=True, max_path=False, max_path_name="tpath"):
+def get_temp_folder(thisfile, name=None, clean=True, create=True,
+                    persistent=False, path_name="tpath"):
     """
     Creates and returns a local temporary folder to store files
     when unit testing.
@@ -48,23 +49,22 @@ def get_temp_folder(thisfile, name=None, clean=True, create=True, max_path=False
                                 called to determine whether or not the folder should be
                                 cleaned
     @param      create          if True, creates it (empty if clean is True)
-    @param      max_path        create a folder at root level to reduce path length,
+    @param      persistent      if True, create a folder at root level to reduce path length,
                                 the function checks the ``MAX_PATH`` variable and
-                                shorten the test folder is *max_path* is True on Windows
-                                or ``'force'`` on any OS.
-    @param      max_path_name   test path used when *max_path* is True
+                                shorten the test folder is *max_path* is True on :epkg:`Windows`,
+                                on :epkg:`Linux`, it creates a folder three level ahead
+    @param      path_name       test path used when *max_path* is True
     @return                     temporary folder
-
-    .. versionadded:: 0.9
 
     The function extracts the file which runs this test and will name
     the temporary folder base on the name of the method. *name* must be None.
-    Parameters *max_path*, *max_path_name* were added to change the location to
-    ``\\max_path_name`` if the ``MAX_PATH`` might be reached (on :epkg:`Windows`).
 
     .. versionchanged:: 1.7
         Parameter *clean* can be a function.
         Signature is ``def clean(folder)``.
+
+    .. versionchanged:: 1.8
+        Renames parameters *max_path* and *max_path_name*.
     """
     if name is None:
         name = thisfile.__name__
@@ -81,10 +81,16 @@ def get_temp_folder(thisfile, name=None, clean=True, create=True, max_path=False
     local = os.path.join(
         os.path.normpath(os.path.abspath(os.path.dirname(thisfile))), name)
 
-    if max_path == "force" or sys.platform.startswith("win") and max_path:
-        from ctypes.wintypes import MAX_PATH
-        if MAX_PATH <= 300:
-            local = os.path.join(os.path.abspath("\\" + max_path_name), name)
+    if persistent:
+        if sys.platform.startswith("win"):
+            from ctypes.wintypes import MAX_PATH
+            if MAX_PATH <= 300:
+                local = os.path.join(os.path.abspath("\\" + path_name), name)
+            else:
+                local = os.path.join(local, "..", "..", "..", path_name, name)
+        else:
+            local = os.path.join(local, "..", "..", "..", path_name, name)
+        local = os.path.normpath(local)
 
     if name == local:
         raise NameError(
