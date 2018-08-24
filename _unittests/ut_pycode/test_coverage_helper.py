@@ -1,5 +1,5 @@
 """
-@brief      test tree node (time=18s)
+@brief      test tree node (time=25s)
 """
 
 
@@ -20,7 +20,6 @@ except ImportError:
         sys.path.append(path)
     import src
 
-from src.pyquickhelper.loghelper import fLOG
 from src.pyquickhelper.pycode import coverage_combine, get_temp_folder, ExtTestCase
 from src.pyquickhelper.pycode.coverage_helper import find_coverage_report
 
@@ -28,10 +27,6 @@ from src.pyquickhelper.pycode.coverage_helper import find_coverage_report
 class TestCoverageHelper(ExtTestCase):
 
     def test_combine(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
 
         def process(content):
             if sys.platform.startswith('win'):
@@ -59,11 +54,6 @@ class TestCoverageHelper(ExtTestCase):
         self.assertExists(index)
 
     def test_find_coverage_report(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
         this = os.path.dirname(__file__)
         data = os.path.join(this, "data", "_coverage_dumps",
                             "tkinterquickhelper")
@@ -79,10 +69,6 @@ class TestCoverageHelper(ExtTestCase):
         self.assertEqual(found, exp)
 
     def test_combine2(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
 
         def process(content):
             if sys.platform.startswith('win'):
@@ -96,7 +82,7 @@ class TestCoverageHelper(ExtTestCase):
         cov1 = os.path.join(temp, "..", "data", "pyq.coverage0")
         cov2 = os.path.join(temp, "..", "data", "pyq.coverage1")
         covs = [cov1, cov2]
-        fLOG("source='{0}'".format(source))
+
         coverage_combine(covs, temp, source=source, process=process)
         index = os.path.join(temp, "index.html")
         self.assertExists(index)

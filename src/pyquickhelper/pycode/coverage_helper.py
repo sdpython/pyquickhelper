@@ -84,6 +84,9 @@ def coverage_combine(data_files, output_path, source, process=None, absolute_pat
         def process(content):
             # ...
             return content
+
+    On :epkg:`Windows`, file name have to have the right case.
+    If not, coverage reports an empty coverage and raises an exception.
     """
     def raise_exc(exc, content, ex, ex2, outfile, destcov, source, dests, inter, cov):
 

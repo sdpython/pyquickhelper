@@ -10,6 +10,7 @@
 """
 import os
 import sys
+import re
 import unittest
 from datetime import datetime
 
@@ -385,7 +386,46 @@ def main_wrapper_tests(codefile, skip_list=None, processes=False, add_coverage=F
                         "[main_wrapper_tests] ADD COVERAGE COMBINE={0}\n".format(covs))
                     stdout_this.write(
                         "[main_wrapper_tests] DUMP INTO='{0}'\n".format(src))
-                    coverage_combine(covs, src, source)
+                    try:
+                        coverage_combine(covs, src, source)
+                    except RuntimeError as e:
+                        se = str(e)
+                        if "No source for code" in se:
+                            stdout_this.write(
+                                "[main_wrapper_tests] coverage failed due to'{0}'\n".format(e))
+                            # We start again with a subfolder.
+                            reg = re.compile("'(.*)'")
+                            match = reg.findall(se)
+                            if match:
+                                name = match[0]
+                                current = os.path.join(source, name)
+                                if not os.path.exists(current):
+                                    stdout_this.write(
+                                        "[main_wrapper_tests] cannot find '{0}'\n".format(current))
+                                    subs = os.listdir(source)
+                                    found = None
+                                    for su in subs:
+                                        found = os.path.join(source, su, name)
+                                        if os.path.exists(found):
+                                            break
+                                    if found is not None:
+                                        stdout_this.write(
+                                            "[main_wrapper_tests] ADD COVERAGE (2) for source='{0}'\n".format(source))
+                                        coverage_combine(covs, src, source)
+                                    else:
+                                        raise e
+                                else:
+                                    stdout_this.write(
+                                        "[main_wrapper_tests] COVERAGE failed even if '{0}' was found\n".format(source))
+                                    raise e
+                            else:
+                                stdout_this.write(
+                                    "[main_wrapper_tests] COVERAGE failed because no file was found in '{0}'\n".format(e))
+                                raise e
+                        else:
+                            stdout_this.write(
+                                "[main_wrapper_tests] COVERAGE failed, cannot recover from '{0}'\n".format(e))
+                            raise e
                     write_covlog(covs)
 
             if covtoken:
