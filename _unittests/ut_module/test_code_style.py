@@ -22,7 +22,7 @@ except ImportError:
     import src
 
 from src.pyquickhelper.loghelper import fLOG
-from src.pyquickhelper.pycode import is_travis_or_appveyor, skipif_travis
+from src.pyquickhelper.pycode import is_travis_or_appveyor
 from src.pyquickhelper.pycode._pylint_common import _private_test_style_src, _private_test_style_test
 
 
@@ -32,7 +32,6 @@ class TestCodeStyle(unittest.TestCase):
         """for pylint"""
         self.assertTrue(src is not None)
 
-    @skipif_travis("source are cloned in a folder with /build/ inside")
     def test_style_src(self):
         fLOG(
             __file__,
@@ -47,7 +46,6 @@ class TestCodeStyle(unittest.TestCase):
         run_lint = is_travis_or_appveyor(env=['NAME_JENKINS']) is None
         _private_test_style_src(fLOG, run_lint, verbose='-v' in sys.argv)
 
-    @skipif_travis("source are cloned in a folder with /build/ inside")
     def test_style_test(self):
         fLOG(
             __file__,

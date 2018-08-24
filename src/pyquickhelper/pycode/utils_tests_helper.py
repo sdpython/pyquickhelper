@@ -226,7 +226,7 @@ def check_pep8(folder, ignore=('E265', 'W504'), skip=None,
     .. versionchanged:: 1.8
         If *neg_pattern* is empty, it populates with a default value
         which skips unnecessary folders:
-        ``".*[/\\\\\\\\]((_venv)|(build)|(dist)|(bin)|(obj)|(_todo)|([.]git)|(__pycache__)|(sphinxdoc)|(temp_)).*"``.
+        ``".*[/\\\\\\\\]((_venv)|([.]git)|(__pycache__)|(temp_)).*"``.
     """
     def extended_checkings(fname, content, buf, extended):
         for i, line in enumerate(content):
@@ -273,7 +273,7 @@ def check_pep8(folder, ignore=('E265', 'W504'), skip=None,
         ignore = tuple(ignore)
 
     if neg_pattern is None:
-        neg_pattern = ".*[/\\\\]((_venv)|(build)|(dist)|(bin)|(obj)|(_todo)|([.]git)|(__pycache__)|(sphinxdoc)|(temp_)).*"
+        neg_pattern = ".*[/\\\\]((_venv)|([.]git)|(__pycache__)|(temp_)).*"
 
     try:
         regneg_filter = None if neg_pattern is None else re.compile(
