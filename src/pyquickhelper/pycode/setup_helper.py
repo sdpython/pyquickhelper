@@ -71,7 +71,7 @@ def process_standard_options_for_setup(argv, file_or_folder, project_var_name, m
                                        skip_function=default_skip_function, covtoken=None, hook_print=True,
                                        stdout=None, stderr=None, use_run_cmd=False, filter_warning=None,
                                        file_filter_pep8=None, github_owner=None,
-                                       existing_history=None, fLOG=noLOG):
+                                       existing_history=None, coverage_root='src', fLOG=noLOG):
     """
     Processes the standard options the module pyquickhelper is
     able to process assuming the module which calls this function
@@ -126,6 +126,7 @@ def process_standard_options_for_setup(argv, file_or_folder, project_var_name, m
     @param      github_owner                :epkg:`github` owner of the package
     @param      existing_history            existing history, retrieves existing issues stored
                                             in that file
+    @param      coverage_root               see @see fn main_wrapper_tests
     @return                                 True (an option was processed) or False,
                                             the file ``setup.py`` should call function ``setup``
 
@@ -165,6 +166,9 @@ def process_standard_options_for_setup(argv, file_or_folder, project_var_name, m
 
     .. versionadded:: 1.7
         Parameters *github_owner*, *existing_history* were added.
+
+    .. versionchanged:: 1.8
+        Parameter *coverage_root* was added.
     """
     if layout is None:
         layout = ["html", "pdf"]
@@ -380,7 +384,8 @@ def process_standard_options_for_setup(argv, file_or_folder, project_var_name, m
                                 skip_function=skip_f, covtoken=covtoken,
                                 hook_print=hook_print, stdout=stdout, stderr=stderr,
                                 filter_warning=filter_warning, dump_coverage=dump_coverage_fct(),
-                                add_coverage_folder=dump_coverage_fct(False), fLOG=fLOG)
+                                add_coverage_folder=dump_coverage_fct(False),
+                                coverage_root=coverage_root, fLOG=fLOG)
         return True
 
     elif "setup_hook" in argv:
@@ -695,7 +700,7 @@ def run_unittests_for_setup(file_or_folder, skip_function=default_skip_function,
                             only_setup_hook=False, coverage_options=None, coverage_exclude_lines=None,
                             additional_ut_path=None, covtoken=None, hook_print=True, stdout=None,
                             stderr=None, filter_warning=None, dump_coverage=None,
-                            add_coverage_folder=None, fLOG=noLOG):
+                            add_coverage_folder=None, coverage_root='src', fLOG=noLOG):
     """
     Runs the unit tests and computes the coverage, stores
     the results in ``_doc/sphinxdoc/source/coverage``
@@ -713,6 +718,7 @@ def run_unittests_for_setup(file_or_folder, skip_function=default_skip_function,
     @param      stdout                  see @see fn main_wrapper_tests
     @param      stderr                  see @see fn main_wrapper_tests
     @param      filter_warning          see @see fn main_wrapper_tests
+    @param      coverage_root           see @see fn main_wrapper_tests
     @param      dump_coverage           location where to dump the coverage
     @param      add_coverage_folder     additional folder where to look for other coverage reports
     @param      fLOG                    logging function
@@ -725,8 +731,8 @@ def run_unittests_for_setup(file_or_folder, skip_function=default_skip_function,
     Parameter *dump_coverage*
     dumps the unit test coverage in another location.
 
-    .. versionchanged:: 1.6
-        Parameter *add_coverage_folder* was added.
+    .. versionchanged:: 1.8
+        Parameter *coverage_root* was added.
     """
     ffolder = get_folder(file_or_folder)
     funit = os.path.join(ffolder, "_unittests")
@@ -756,7 +762,7 @@ def run_unittests_for_setup(file_or_folder, skip_function=default_skip_function,
         coverage_exclude_lines=coverage_exclude_lines, additional_ut_path=additional_ut_path,
         covtoken=covtoken, hook_print=hook_print, stdout=stdout, stderr=stderr,
         filter_warning=filter_warning, dump_coverage=dump_coverage,
-        add_coverage_folder=add_coverage_folder, fLOG=fLOG)
+        add_coverage_folder=add_coverage_folder, coverage_root=coverage_root, fLOG=fLOG)
 
 
 def copy27_for_setup(file_or_folder):

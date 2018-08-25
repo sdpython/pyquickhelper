@@ -10,7 +10,6 @@
 """
 import os
 import sys
-import re
 import unittest
 from datetime import datetime
 
@@ -33,7 +32,7 @@ def main_wrapper_tests(codefile, skip_list=None, processes=False, add_coverage=F
                        skip_function=default_skip_function, setup_params=None, only_setup_hook=False,
                        coverage_options=None, coverage_exclude_lines=None, additional_ut_path=None,
                        covtoken=None, hook_print=True, stdout=None, stderr=None, filter_warning=None,
-                       dump_coverage=None, add_coverage_folder=None, fLOG=noLOG):
+                       dump_coverage=None, add_coverage_folder=None, coverage_root="src", fLOG=noLOG):
     """
     Calls function :func:`main <pyquickhelper.unittests.utils_tests.main>`
     and throws an exception if it fails.
@@ -64,6 +63,7 @@ def main_wrapper_tests(codefile, skip_list=None, processes=False, add_coverage=F
                                         @see fn default_filter_warning
     @param      dump_coverage           dump or copy the coverage at this location
     @param      add_coverage_folder     additional coverage folder reports
+    @param      coverage_root           subfolder for the coverage
     @param      fLOG                    ``function(*l, **p)``, logging function
 
     *covtoken* can be a string ``<token>`` or a
@@ -128,6 +128,9 @@ def main_wrapper_tests(codefile, skip_list=None, processes=False, add_coverage=F
 
     Parameter *covtoken*: used to post the coverage report to
     `codecov <https://codecov.io/>`_.
+
+    .. versionchanged:: 1.8
+        Parameter *coverage_root* was added.
     """
     try:
         whole_ouput = StringIOAndFile(codefile + ".out")
@@ -377,6 +380,10 @@ def main_wrapper_tests(codefile, skip_list=None, processes=False, add_coverage=F
                     if not source:
                         raise FileNotFoundError(
                             "Unable to find source '{0}' from '{1}'".format(source, src))
+                    if coverage_root:
+                        source_src = os.path.join(source, coverage_root)
+                        if os.path.exists(source_src):
+                            source = source_src
                     stdout_this.write(
                         "[main_wrapper_tests] ADD COVERAGE for source='{0}'\n".format(source))
                     covs = list(_[0] for _ in other_cov_folders.values())
@@ -386,46 +393,7 @@ def main_wrapper_tests(codefile, skip_list=None, processes=False, add_coverage=F
                         "[main_wrapper_tests] ADD COVERAGE COMBINE={0}\n".format(covs))
                     stdout_this.write(
                         "[main_wrapper_tests] DUMP INTO='{0}'\n".format(src))
-                    try:
-                        coverage_combine(covs, src, source)
-                    except RuntimeError as e:
-                        se = str(e)
-                        if "No source for code" in se:
-                            stdout_this.write(
-                                "[main_wrapper_tests] coverage failed due to'{0}'\n".format(e))
-                            # We start again with a subfolder.
-                            reg = re.compile("'(.*)'")
-                            match = reg.findall(se)
-                            if match:
-                                name = match[0]
-                                current = os.path.join(source, name)
-                                if not os.path.exists(current):
-                                    stdout_this.write(
-                                        "[main_wrapper_tests] cannot find '{0}'\n".format(current))
-                                    subs = os.listdir(source)
-                                    found = None
-                                    for su in subs:
-                                        found = os.path.join(source, su, name)
-                                        if os.path.exists(found):
-                                            break
-                                    if found is not None:
-                                        stdout_this.write(
-                                            "[main_wrapper_tests] ADD COVERAGE (2) for source='{0}'\n".format(source))
-                                        coverage_combine(covs, src, source)
-                                    else:
-                                        raise e
-                                else:
-                                    stdout_this.write(
-                                        "[main_wrapper_tests] COVERAGE failed even if '{0}' was found\n".format(source))
-                                    raise e
-                            else:
-                                stdout_this.write(
-                                    "[main_wrapper_tests] COVERAGE failed because no file was found in '{0}'\n".format(e))
-                                raise e
-                        else:
-                            stdout_this.write(
-                                "[main_wrapper_tests] COVERAGE failed, cannot recover from '{0}'\n".format(e))
-                            raise e
+                    coverage_combine(covs, src, source)
                     write_covlog(covs)
 
             if covtoken:
