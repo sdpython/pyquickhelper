@@ -36,7 +36,8 @@ class TestCoverageHelper(ExtTestCase):
 
         temp = get_temp_folder(__file__, "temp_coverage_combine")
         source = os.path.normpath(os.path.abspath(
-            os.path.join(temp, "..", "..", "..")))
+            os.path.join(temp, "..", "..", "..", "src")))
+        self.assertExists(source)
         cov1 = os.path.join(temp, "..", "data", "_coverage_dumps",
                             "tkinterquickhelper", "ba594812", "20171226T1558", '.coverage')
         cov2 = os.path.join(temp, "..", "data", "_coverage_dumps",
@@ -47,9 +48,11 @@ class TestCoverageHelper(ExtTestCase):
                 raise FileNotFoundError(cov)
             if not os.path.isfile(cov):
                 raise Exception("'{0}' is not a file".format(cov))
-        self.assertRaise(lambda: coverage_combine(covs, temp, source=source + "r", process=process),
+        self.assertRaise(lambda: coverage_combine(covs, temp, source=source + "r", process=process,
+                                                  remove_unexpected_root=True),
                          RuntimeError)
-        coverage_combine(covs, temp, source=source, process=process)
+        coverage_combine(covs, temp, source=source, process=process,
+                         remove_unexpected_root=True)
         index = os.path.join(temp, "index.html")
         self.assertExists(index)
 
@@ -78,12 +81,14 @@ class TestCoverageHelper(ExtTestCase):
 
         temp = get_temp_folder(__file__, "temp_coverage_combine2")
         source = os.path.normpath(os.path.abspath(
-            os.path.join(temp, "..", "..", "..")))
+            os.path.join(temp, "..", "..", "..", "src")))
+        self.assertExists(source)
         cov1 = os.path.join(temp, "..", "data", "pyq.coverage0")
         cov2 = os.path.join(temp, "..", "data", "pyq.coverage1")
         covs = [cov1, cov2]
 
-        coverage_combine(covs, temp, source=source, process=process)
+        coverage_combine(covs, temp, source=source, process=process,
+                         remove_unexpected_root=True)
         index = os.path.join(temp, "index.html")
         self.assertExists(index)
 

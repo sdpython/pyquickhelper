@@ -66,16 +66,21 @@ def publish_coverage_on_codecov(path, token, commandline=True, fLOG=noLOG):
         return cmd
 
 
-def coverage_combine(data_files, output_path, source, process=None, absolute_path=True):
+def coverage_combine(data_files, output_path, source, process=None, absolute_path=True,
+                     remove_unexpected_root=True):
     """
     Merges multiples reports.
 
-    @param      data_files      report files (``.coverage``)
-    @param      output_path     output path
-    @param      source          source directory
-    @param      process         function which processes the coverage report
-    @param      absolute_path   relocate sources with absolute paths
-    @return                     coverage report
+    @param      data_files                  report files (``.coverage``)
+    @param      output_path                 output path
+    @param      source                      source directory
+    @param      process                     function which processes the coverage report
+    @param      absolute_path               relocate sources with absolute paths
+    @param      remove_unexpected_root      tries to deal with the case where coverage reports store
+                                            absolute paths of the same source from different folders,
+                                            the function assumes the last subfolder of *source*
+                                            is part of the filename in merged reports.
+    @return                                 coverage report
 
     The function *process* should have the signature:
 
@@ -87,6 +92,10 @@ def coverage_combine(data_files, output_path, source, process=None, absolute_pat
 
     On :epkg:`Windows`, file name have to have the right case.
     If not, coverage reports an empty coverage and raises an exception.
+
+    .. versionchanged:: 1.8
+        Parameter *remove_unexpected_root* was added.
+        The function was refactored to handle better relative files.
     """
     def raise_exc(exc, content, ex, ex2, outfile, destcov, source, dests, inter, cov):
 
@@ -157,40 +166,54 @@ def coverage_combine(data_files, output_path, source, process=None, absolute_pat
     source = cov.source[0]
 
     inter = []
-    reg = re.compile(',\\"(.*?[.]py)\\"')
+    reg = re.compile('\\"(([a-zA-Z]:)?[^:]*?[.]py)\\"')
 
     def copy_replace(source, dest, root_source):
         with open(source, "r") as f:
             content = f.read()
         if process is not None:
             content = process(content)
-        cf = reg.findall(content)
-        co = Counter([_.split('src')[0] for _ in cf])
-        mx = max((v, k) for k, v in co.items())
-        root = mx[1].rstrip('\\/')
-        if absolute_path:
-            if '\\\\' in root:
-                s2 = root_source.replace('\\', '\\\\').replace('/', '\\\\')
-                s2 += "\\\\"
-                root += "\\\\"
-            elif '\\' in root:
-                s2 = root_source
-                s2 += "\\\\"
-                root += "\\"
-            else:
-                s2 = root_source
-                s2 += "/"
-                root += "/"
+
+        co = Counter(root_source)
+        slash = co.get('/', 0) >= co.get('\\', 0)
+        if slash:
+            content = content.replace("\\", "/")
+            begin = "/"
+            root_source_dup = root_source.replace("\\", "/")
         else:
-            s2 = ""
-            if '\\\\' in root:
-                root += "\\\\"
-            elif '\\' in root:
-                root += "\\"
-            else:
-                root += "/"
-        inter.append((root, root_source, s2))
-        content = content.replace(root, s2)
+            content = content.replace("/", "\\")
+            begin = "\\\\"
+            root_source_dup = root_source.replace("\\", "\\\\")
+
+        if absolute_path:
+
+            def handle_filename(name):
+                name = name.groups()[0]
+                if not name.startswith(begin) and ':' not in name:
+                    if not slash:
+                        co = Counter(name)
+                        if co.get('\\', 0) > 0 and co.get('\\\\', 0) == 0:
+                            name = name.replace("\\", "\\\\")
+                    name = "{0}{1}{2}".format(root_source_dup, begin, name)
+                if not name.startswith(root_source_dup):
+                    end = root_source_dup.split(begin)[-1]
+                    spl = name.split(end)
+                    found = None
+                    for i in range(len(spl) - 1, 0, -1):
+                        last = begin.join(spl[i:]).lstrip(begin)
+                        found = "{0}{1}{2}".format(
+                            root_source_dup, begin, last)
+                        if os.path.exists(found.replace("\\\\", "\\")):
+                            break
+                    if found is None:
+                        mes = "Unable to handle one file.\nroot_source='{0}'\nroot_source_dup='{1}'\nname='{2}'\nbegin='{3}'"
+                        raise ValueError(mes.format(root_source, root_source_dup, name, begin))
+                    name = found
+
+                return '"{0}"'.format(name)
+
+            content = reg.sub(handle_filename, content)
+
         with open(dest, "w") as f:
             f.write(content)
 

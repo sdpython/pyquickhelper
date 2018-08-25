@@ -6,6 +6,7 @@
 import sys
 import os
 import unittest
+import warnings
 
 try:
     import src
@@ -20,30 +21,22 @@ except ImportError:
         sys.path.append(path)
     import src
 
-from src.pyquickhelper.loghelper import fLOG
-from src.pyquickhelper.pycode import publish_coverage_on_codecov
+from src.pyquickhelper.pycode import publish_coverage_on_codecov, ExtTestCase
 from src.pyquickhelper.loghelper.repositories.pygit_helper import GitException
 
 
-class TestCoverage(unittest.TestCase):
+class TestCoverage(ExtTestCase):
 
+    @unittest.skipIf(sys.version_info[0] == 2, reason="strings are not very well handled")
     def test_write_script(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
-        if sys.version_info[0] == 2:
-            return
-
         temp = os.path.abspath(os.path.dirname(__file__))
         cov = os.path.join(temp, "data", "coverage", "coverage_report.xml")
 
         try:
             cmd = publish_coverage_on_codecov(cov, None)
-            assert cmd is not None
-        except GitException:
-            pass
+            self.assertNotEmpty(cmd)
+        except GitException as e:
+            warnings.warn("Not tested due to '{0}'".format(e))
 
 
 if __name__ == "__main__":
