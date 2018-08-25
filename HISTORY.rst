@@ -5,15 +5,13 @@
 History
 =======
 
-current - 2018-08-23 - 0.00Mb
+current - 2018-08-25 - 0.00Mb
 =============================
 
+* `181`: fix an issue when combining coverage_report after the unit tests passed (2018-08-24)
+* `180`: add parameter persistent to get_temp_folder (2018-08-24)
 * `179`: put a default value for neg_pattern if it is none to avoid known folders (function check_pep8) (2018-08-23)
 * `178`: add parameter delay to wait between two files being transferred through FTP (2018-08-23)
-
-1.8.2732 - 2018-08-20 - 1.99Mb
-==============================
-
 * `177`: remove ping helper (2018-08-20)
 * `163`: fix automation for Jenkins on linux (2018-08-20)
 * `32`: add command local_jenkins for setup.py (2018-08-20)
@@ -23,10 +21,6 @@ current - 2018-08-23 - 0.00Mb
 * `173`: add option current to runpython to run a script in the folder of the source file which contains it (2018-08-19)
 * `172`: rst2html: parameters directives allows single directive with no new nodes (2018-08-19)
 * `171`: allow a class to modify the script to run in runpython sphinx directive (2018-08-18)
-
-1.8.2707 - 2018-08-05 - 1.99Mb
-==============================
-
 * `170`: add option syspath for autosignature (2018-08-05)
 * `169`: add option debug to autosignature (2018-08-05)
 * `168`: documentation does not produce a page for a compiled module in pure C++ (not with pybind11) (2018-08-05)

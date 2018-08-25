@@ -207,7 +207,8 @@ def coverage_combine(data_files, output_path, source, process=None, absolute_pat
                             break
                     if found is None:
                         mes = "Unable to handle one file.\nroot_source='{0}'\nroot_source_dup='{1}'\nname='{2}'\nbegin='{3}'"
-                        raise ValueError(mes.format(root_source, root_source_dup, name, begin))
+                        raise ValueError(mes.format(
+                            root_source, root_source_dup, name, begin))
                     name = found
 
                 return '"{0}"'.format(name)
