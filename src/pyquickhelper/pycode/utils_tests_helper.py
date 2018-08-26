@@ -87,9 +87,9 @@ def get_temp_folder(thisfile, name=None, clean=True, create=True,
             if MAX_PATH <= 300:
                 local = os.path.join(os.path.abspath("\\" + path_name), name)
             else:
-                local = os.path.join(local, "..", "..", "..", path_name, name)
+                local = os.path.join(local, "..", "..", "..", "..", path_name, name)
         else:
-            local = os.path.join(local, "..", "..", "..", path_name, name)
+            local = os.path.join(local, "..", "..", "..", "..", path_name, name)
         local = os.path.normpath(local)
 
     if name == local:
@@ -98,7 +98,7 @@ def get_temp_folder(thisfile, name=None, clean=True, create=True,
 
     if not os.path.exists(local):
         if create:
-            os.mkdir(local)
+            os.makedirs(local)
             mode = os.stat(local).st_mode
             nmode = mode | stat.S_IWRITE
             if nmode != mode:
@@ -108,7 +108,7 @@ def get_temp_folder(thisfile, name=None, clean=True, create=True,
             remove_folder(local)
             time.sleep(0.1)
         if create and not os.path.exists(local):
-            os.mkdir(local)
+            os.makedirs(local)
             mode = os.stat(local).st_mode
             nmode = mode | stat.S_IWRITE
             if nmode != mode:
