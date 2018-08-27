@@ -777,6 +777,8 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
 
         cmd = ["sphinx-build", "-j%d" % parallel, "-v", "-T", "-b", "{0}".format(lay),
                "-d", "{0}/doctrees".format(build)] + over + sconf + ["source", "{0}/{1}".format(build, lay)]
+        if lay in ('latex', 'pdf'):
+            cmd.extend(["-D", "imgmath_image_format=png"])
         cmds.append((cmd, build, lay))
         fLOG("[generate_help_sphinx] run:", cmd)
         lays.append(lay)
@@ -786,6 +788,7 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
             # as it changes the encoding
             cmd = ["sphinx-build", "-j%d" % parallel, "-v", "-T", "-b", "{0}help".format(lay),
                    "-d", "{0}/doctrees".format(build)] + over + sconf + ["source", "{0}/{1}html".format(build, lay)]
+            cmd.extend(["-D", "imgmath_image_format=png"])
             cmds.append((cmd, build, "add_htmlhelp"))
             fLOG("[generate_help_sphinx] run:", cmd)
             lays.append(lay)

@@ -342,18 +342,18 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
             imgmath_dvipng = os.path.join(imgmath_latex, "dvipng.exe")
             if not os.path.exists(imgmath_dvipng):
                 raise FileNotFoundError(imgmath_dvipng)
-        else:
-            imgmath_dvipng = os.path.join(imgmath_latex, "dvipng")
+            imgmath_dvisvgm = os.path.join(imgmath_latex, "dvisvgm.exe")
+            if not os.path.exists(imgmath_dvisvgm):
+                raise FileNotFoundError(imgmath_dvisvgm)
+
         env_path = os.environ.get("PATH", "")
-        if imgmath_latex not in env_path:
+        if imgmath_latex and imgmath_latex not in env_path:
             if len(env_path) > 0:
                 env_path += sep
             env_path += imgmath_latex
 
         if sys.platform.startswith("win"):
             imgmath_latex = os.path.join(imgmath_latex, "latex.exe")
-        else:
-            imgmath_latex = os.path.join(imgmath_latex, "latex")
 
         # verification
         if sys.platform.startswith("win"):
@@ -362,8 +362,9 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
             if not os.path.exists(imgmath_dvipng):
                 raise FileNotFoundError(imgmath_dvipng)
         else:
-            # TODO: check on linux
             pass
+
+        imgmath_image_format = 'svg'
 
     if add_extensions is not None:
         extensions.extend(add_extensions)

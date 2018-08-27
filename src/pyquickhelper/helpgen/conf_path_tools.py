@@ -13,8 +13,6 @@ def find_in_PATH(prog):
 
     @param      prog        program to look for
     @return                 path
-
-    .. versionadded:: 0.9
     """
     sep = ";" if sys.platform.startswith("win") else ":"
     path = os.environ["PATH"]
@@ -27,7 +25,7 @@ def find_in_PATH(prog):
 
 def find_graphviz_dot(exc=True):
     """
-    determines the path to graphviz (on Windows),
+    Determines the path to graphviz (on Windows),
     the function tests the existence of versions 34 to 45
     assuming it was installed in a standard folder:
     ``C:\\Program Files\\MiKTeX 2.9\\miktex\\bin\\x64``.
@@ -35,8 +33,6 @@ def find_graphviz_dot(exc=True):
     :param exc: raise exception of be silent
     :return: path to dot
     :raises FileNotFoundError: if graphviz not found
-
-    .. versionadded:: 0.9
 
     .. versionchanged:: 1.4
         Add parameter *exc*
@@ -70,13 +66,12 @@ def find_graphviz_dot(exc=True):
 
 def find_latex_path(exc=True):
     """
-    Find latex path.
+    Finds latex path.
+    Returns an empty string on :epkg:`linux`.
 
     :param exc: raises an exception or be silent
     :return: something like ``C:\\Program Files\\MiKTeX 2.9\\miktex\\bin\\x64``
     :raises FileNotFoundError: if latex not found
-
-    .. versionadded:: 0.9
 
     .. versionchanged:: 1.4
         Add parameter *exc*
@@ -94,17 +89,16 @@ def find_latex_path(exc=True):
                     return None
         return latex
     else:
-        # linux
+        # linux, should be in PATH.
         return ""
 
 
 def find_pandoc_path(exc=True):
     """
-    determines pandoc location
+    Determines :epkg:`pandoc` location.
+    Returns an empty string on :epkg:`linux`.
 
-    @return         path to pandoc
-
-    .. versionadded:: 0.9
+    @return         path to :epkg:`pandoc`
 
     .. versionchanged:: 1.4
         Add parameter *exc*
@@ -145,5 +139,5 @@ def find_pandoc_path(exc=True):
         else:
             return pandoc
     else:
-        # linux
+        # linux, should be in PATH.
         return ""
