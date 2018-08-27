@@ -87,9 +87,11 @@ def get_temp_folder(thisfile, name=None, clean=True, create=True,
             if MAX_PATH <= 300:
                 local = os.path.join(os.path.abspath("\\" + path_name), name)
             else:
-                local = os.path.join(local, "..", "..", "..", "..", path_name, name)
+                local = os.path.join(
+                    local, "..", "..", "..", "..", path_name, name)
         else:
-            local = os.path.join(local, "..", "..", "..", "..", path_name, name)
+            local = os.path.join(local, "..", "..", "..",
+                                 "..", path_name, name)
         local = os.path.normpath(local)
 
     if name == local:

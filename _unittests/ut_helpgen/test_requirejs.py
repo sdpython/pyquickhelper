@@ -39,7 +39,7 @@ class TestRequirejs(ExtTestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
-        dest = get_temp_folder(__file__, "temp_install_revealjs_sphinx")
+        dest = get_temp_folder(__file__, "temp_install_requirejs_sphinx")
         fs = download_requirejs(dest, fLOG=fLOG)
         self.assertGreater(len(fs), 0)
         for a in fs:
@@ -53,7 +53,7 @@ class TestRequirejs(ExtTestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
-        dest = get_temp_folder(__file__, "temp_install_revealjs_sphinx_local")
+        dest = get_temp_folder(__file__, "temp_install_requirejs_sphinx_local")
         fs = download_requirejs(dest, fLOG=fLOG, location=None)
         self.assertGreater(len(fs), 0)
         for a in fs:

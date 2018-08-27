@@ -13,6 +13,7 @@ if sys.version_info[0] == 2:
     import urllib2 as urllib_request
 else:
     import urllib.request as urllib_request
+    import urllib.error as urllib_error
 
 
 class ReadUrlException(Exception):
@@ -78,8 +79,12 @@ def download(url, path_download=".", outfile=None, fLOG=noLOG):
                 down = _first_more_recent(f1, dest)
                 newdate = down
                 f1.close()
+            except urllib_error.HTTPError as e:
+                raise ReadUrlException(
+                    "Unable to fetch '{0}'".format(url)) from e
             except IOError as e:
-                raise FileException("unable to access url: " + url) from e
+                raise ReadUrlException(
+                    "Unable to download '{0}'".format(url)) from e
         else:
             down = True
             newdate = False
@@ -101,14 +106,22 @@ def download(url, path_download=".", outfile=None, fLOG=noLOG):
             if os.path.exists(nyet):
                 size = os.stat(dest).st_size
                 fLOG("[download] resume downloading (stop at", size, ") from ", url)
-                request = urllib_request.Request(url)
-                request.add_header("Range", "bytes=%d-" % size)
-                fu = urllib_request.urlopen(request)
+                try:
+                    request = urllib_request.Request(url)
+                    request.add_header("Range", "bytes=%d-" % size)
+                    fu = urllib_request.urlopen(request)
+                except urllib_error.HTTPError as e:
+                    raise ReadUrlException(
+                        "Unable to fetch '{0}'".format(url)) from e
                 f = open(dest, format.replace("w", "a"))
             else:
                 fLOG("[download] downloading ", url)
-                request = urllib_request.Request(url)
-                fu = urllib_request.urlopen(url)
+                try:
+                    request = urllib_request.Request(url)
+                    fu = urllib_request.urlopen(url)
+                except urllib_error.HTTPError as e:
+                    raise ReadUrlException(
+                        "Unable to fetch '{0}'".format(url)) from e
                 f = open(dest, format)
 
             open(nyet, "w").close()

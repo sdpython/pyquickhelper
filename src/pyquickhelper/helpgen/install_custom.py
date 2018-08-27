@@ -113,6 +113,7 @@ def download_requirejs(to=".", fLOG=print,
                 fLOG(
                     "[download_requirejs] unable to read '{0}'".format(location))
             return download_requirejs(to=to, fLOG=fLOG, location=None, clean=clean)
+
         reg = re.compile("href=\\\"(.*?minified/require[.]js)\\\"")
         alls = reg.findall(page)
         if len(alls) == 0:
@@ -121,6 +122,17 @@ def download_requirejs(to=".", fLOG=print,
                 page)
 
         filename = alls[0]
-        local = download(filename, to, fLOG=fLOG)
+
+        try:
+            local = download(filename, to, fLOG=fLOG)
+        except ReadUrlException as e:
+            # We implement a backup plan.
+            new_filename = "http://www.xavierdupre.fr/enseignement/setup/require.js/2.3.6/require.js"
+            try:
+                local = download(new_filename, to, fLOG=fLOG)
+            except ReadUrlException:
+                raise ReadUrlException("Unable to download '{0}' or '{1}'".format(
+                    filename, new_filename)) from e
+
         fLOG("[download_requirejs] local file", local)
         return [local]
