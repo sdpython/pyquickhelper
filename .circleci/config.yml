@@ -32,8 +32,8 @@ jobs:
       - run:
           name: check latex
           command: |
-          dvipng --help
-          dvisvgm --help
+                    dvipng --help
+                    dvisvgm --help
           
       - run:
           name: Install 7z, unrar
