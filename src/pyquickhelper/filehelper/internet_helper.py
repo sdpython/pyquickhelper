@@ -113,7 +113,7 @@ def download(url, path_download=".", outfile=None, fLOG=noLOG):
                 except urllib_error.HTTPError as e:
                     raise ReadUrlException(
                         "Unable to fetch '{0}'".format(url)) from e
-                f = open(dest, format.replace("w", "a"))
+                f = open(dest, format.replace("w", "a"))  # pylint: disable=W1501
             else:
                 fLOG("[download] downloading ", url)
                 try:
