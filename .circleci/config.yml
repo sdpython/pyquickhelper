@@ -30,6 +30,12 @@ jobs:
                     sudo apt-get install -y dvipng
           
       - run:
+          name: check latex
+          command: |
+          dvipng --help
+          dvisvgm --help
+          
+      - run:
           name: Install 7z, unrar
           command: |
                     sudo apt-get install -y p7zip-full
