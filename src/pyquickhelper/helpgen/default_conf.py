@@ -362,12 +362,9 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
                 raise FileNotFoundError(imgmath_dvipng)
         else:
             # On linux, we expect latex, dvipng, dvisvgm to be available.
-            if len(imgmath_latex.strip()) == 0:
-                raise ValueError("imgmath_latex cannot be empty.")
-            if len(imgmath_dvipng.strip()) == 0:
-                raise ValueError("imgmath_dvipng cannot be empty.")
-            if len(imgmath_dvisvgm.strip()) == 0:
-                raise ValueError("imgmath_dvisvgm cannot be empty.")
+            imgmath_latex = "latex"
+            imgmath_dvipng = "dvipng"
+            imgmath_dvisvgm = "dvisvgm"
 
         imgmath_image_format = 'svg'
 
