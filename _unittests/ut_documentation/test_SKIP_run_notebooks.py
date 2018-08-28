@@ -22,7 +22,7 @@ except ImportError:
     import src
 
 from src.pyquickhelper.loghelper import fLOG
-from src.pyquickhelper.pycode import get_temp_folder, is_travis_or_appveyor
+from src.pyquickhelper.pycode import get_temp_folder, skipif_travis
 from src.pyquickhelper.ipythonhelper import execute_notebook_list, execute_notebook_list_finalize_ut
 
 
@@ -32,18 +32,14 @@ class TestSKIPRunNotebooks(unittest.TestCase):
         """for pylint"""
         self.assertTrue(src is not None)
 
+    @unittest.skipIf(sys.version_info[0] == 2, reason="notebooks are not converted into python 2.7, so not tested")
+    @skipif_travis("does not complete")
+    @unittest.skipIf(os.environ.get("PYINT", "") == "python3.7", reason="does not complete")
     def test_skip_run_notebook(self):
         fLOG(
             __file__,
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
-
-        if is_travis_or_appveyor() == "travis":
-            return
-
-        if sys.version_info[0] == 2:
-            # notebooks are not converted into python 2.7, so not tested
-            return
 
         temp = get_temp_folder(__file__, "temp_skip_run_notebooks_pyq_long")
 
@@ -54,17 +50,12 @@ class TestSKIPRunNotebooks(unittest.TestCase):
             if os.path.splitext(f)[-1] == ".ipynb":
                 if "javascript" in f:
                     keepnote.append(os.path.join(fnb, f))
-                if "git_data" in f:
+                if "git_data" in f and os.environ.get("PYINT", "") == "python3.7":
+                    # the notebook on git takes for ever
                     keepnote.append(os.path.join(fnb, f))
         self.assertTrue(len(keepnote) > 0)
 
         def valid(cell):
-            if "open_html_form" in cell:
-                return False
-            if "open_window_params" in cell:
-                return False
-            if '<div style="position:absolute' in cell:
-                return False
             return True
 
         import jyquickhelper
