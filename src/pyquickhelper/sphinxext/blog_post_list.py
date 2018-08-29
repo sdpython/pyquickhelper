@@ -527,7 +527,7 @@ class BlogPostList:
         .. versionadded:: 1.5
             Parameter *only_html* was added
         """
-        res = ["", ":orphan:", ""]
+        res = []
         buckets = BlogPostList.divide_list(lp, division)
         for i, b in enumerate(buckets):
             if bold_title is not None:
@@ -547,7 +547,7 @@ class BlogPostList:
                 bold_title=title, language=language)
             if only_html:
                 lines = content.split("\n")
-                head = "\n.. only:: html\n\n"
+                head = "\n:orphan:\n\n.. only:: html\n\n"
                 content = head + "\n".join("    " + _ for _ in lines)
             with open(name, "w", encoding=encoding) as f:
                 f.write(content)

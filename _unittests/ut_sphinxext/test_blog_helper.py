@@ -81,8 +81,10 @@ class TestBlogHelper(unittest.TestCase):
         res = p.write_aggregated(out)
         self.assertTrue(len(res) >= 4)
         for r in res:
+            if r in (None, ''):
+                raise ValueError("An empty value in {0}".format(res))
             if not os.path.exists(r):
-                raise FileNotFoundError(r)
+                raise FileNotFoundError("Unable to find '{0}'".format(r))
             if 'main_0000.rst' in r:
                 with open(r, 'r', encoding='utf-8') as f:
                     content = f.read()
