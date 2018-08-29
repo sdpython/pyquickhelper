@@ -45,7 +45,7 @@ def run_build_ext(setup_file):
     if len(err0) > 0:
         mes0 = "\n".join("### " + _ for _ in err.split("\n"))
         mes = "Unable to run\n{0}\n[pyqerror]\n{1}".format(cmd, mes0)
-        raise Exception(mes)
+        raise RuntimeError(mes)
     return out
 
 
@@ -64,6 +64,9 @@ def _filter_out_warning(out):
             skip = True
         elif line[0] != " ":
             skip = "ImportWarning" in line or "warning D9002: option '-std=c++11'" in line
+            skip = skip or "RuntimeWarning: Config variable 'Py_DEBUG'" in line
+            skip = skip or "RuntimeWarning: Config variable 'WITH_PYMALLOC'" in line
+            skip = skip or "UserWarning: Module pyquickhelper was already imported" in line
         if not skip:
             new_lines.append(line)
     return "\n".join(new_lines)
