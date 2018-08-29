@@ -1178,7 +1178,7 @@ def prepare_file_for_sphinx_help_generation(store_obj, input, output,
     fLOG("[prepare_file_for_sphinx_help_generation] writing ", "all_report.rst")
     all_report = os.path.join(output, "all_report.rst")
     with open(all_report, "w") as falli:
-        falli.write("\n")
+        falli.write("\n:orphan:\n\n")
         falli.write(".. _l-statcode:\n")
         falli.write("\n")
         falli.write("Statistics on code\n")
@@ -1193,6 +1193,7 @@ def prepare_file_for_sphinx_help_generation(store_obj, input, output,
     fLOG("[prepare_file_for_sphinx_help_generation] writing ", "all_indexes.rst")
     all_index = os.path.join(output, "all_indexes.rst")
     with open(all_index, "w") as falli:
+        falli.write("\n:orphan:\n\n")
         falli.write("\n")
         falli.write("All indexes\n")
         falli.write("===========\n")

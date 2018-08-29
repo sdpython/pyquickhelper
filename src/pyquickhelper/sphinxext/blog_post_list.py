@@ -20,7 +20,7 @@ if sys.version_info[0] == 2:
 class BlogPostList:
 
     """
-    defines a list of @see cl BlogPost
+    Defines a list of @see cl BlogPost.
     """
 
     def __init__(self, folder, encoding="utf8", language="en", extensions=None, fLOG=noLOG):
@@ -35,9 +35,6 @@ class BlogPostList:
                                     if None, it will consider a default list
                                     (@see cl BlogPost and @see fn get_default_extensions)
         @param      fLOG            logging function
-
-        .. versionchanged:: 1.5
-            Parameter *extension* was added.
         """
         self._blogposts = []
         sub = os.listdir(folder)
@@ -68,7 +65,7 @@ class BlogPostList:
     @staticmethod
     def category2url(cat):
         """
-        Removes accent and spaces to get a clean url.
+        Removes accents and spaces to get a clean url.
 
         @param      cat     category name
         @return             cleaned category
@@ -294,6 +291,8 @@ class BlogPostList:
         name = os.path.join(folder, "blogindex.rst")
         with open(name, "w", encoding=self._encoding) as f:
             f.write("\n")
+            f.write(":orphan:\n")
+            f.write("\n")
             f.write(".. _l-mainblog:\n")
             f.write("\n")
             f.write("\n")
@@ -457,7 +456,7 @@ class BlogPostList:
                        for k, v in self.get_categories_group().items()])
         months = sorted(
             [(k, len(v)) for k, v in self.get_months_group().items()], reverse=True)
-        res = ["", ".. _hblog-blog:", "", "", "Blog", "====", "", ""]
+        res = ["", ":orphan:", "", ".. _hblog-blog:", "", "", "Blog", "====", "", ""]
         res.extend(
             ["* :ref:`{0} <ap-main-0>`".format(TITLES[self.Lang]["page1"]), "", ""])
         res.extend([TITLES[self.Lang]["by category:"], "", ""])
@@ -528,7 +527,7 @@ class BlogPostList:
         .. versionadded:: 1.5
             Parameter *only_html* was added
         """
-        res = []
+        res = ["", ":orphan:", ""]
         buckets = BlogPostList.divide_list(lp, division)
         for i, b in enumerate(buckets):
             if bold_title is not None:
@@ -597,6 +596,8 @@ class BlogPostList:
             direction += " ".join(rst_links_up)
 
         rows = []
+        rows.append("")
+        rows.append(":orphan:")
         rows.append("")
         rows.append(direction)
         rows.append("")

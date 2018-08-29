@@ -25,7 +25,7 @@ class tocdelay_node(nodes.paragraph):
 
 class TocDelayDirective(Directive):
     """
-    Defines a sphinx extension which proposes a new version of ``.. toctree::``
+    Defines a :epkg:`sphinx` extension which proposes a new version of ``.. toctree::``
     which takes into account titles dynamically added. It only considers
     one level.
 
@@ -64,7 +64,7 @@ class TocDelayDirective(Directive):
         """
         Just add a @see cl tocdelay_node and list the documents to add.
 
-        @return                         list of nodes or list of nodes, container
+        @return          of nodes or list of nodes, container
         """
         lineno = self.lineno
 

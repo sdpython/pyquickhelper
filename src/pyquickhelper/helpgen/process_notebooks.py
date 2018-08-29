@@ -925,13 +925,9 @@ def build_notebooks_gallery(nbs, fileout, layout="classic", neg_pattern=None,
     *nbs* can be a folder, in that case, the function will build
     the list of all notebooks in that folder.
     *nbs* can be a list of tuple.
-
-    .. versionchanged:: 1.5
-        Add a thumbnail, organize the list of notebook as a gallery.
-        The function was renamed into *build_notebooks_gallery*
-        (previous name *add_notebook_page*).
-        Add a link on notebook coverage.
-        Parameters *layout*, *neg_pattern* were added.
+    the function adds a thumbnail, organizes the list of notebook
+    as a galley, it adds a link on notebook coverage.
+    Parameters *layout*, *neg_pattern* were added.
 
     .. versionchanged:: 1.7
         Modifies the function to bypass the generation of a snippet
@@ -1002,18 +998,19 @@ def build_notebooks_gallery(nbs, fileout, layout="classic", neg_pattern=None,
 
     # look for README.txt
     fLOG("[build_notebooks_gallery] root", root)
+    rows = ["", ":orphan:", ""]
     exp = os.path.join(root, "README.txt")
     if os.path.exists(exp):
         fLOG("[build_notebooks_gallery] found", exp)
         with open(exp, "r", encoding="utf-8") as f:
             try:
-                rows = ["", ".. _l-notebooks:", "", f.read(), ""]
+                rows.extend(["", ".. _l-notebooks:", "", f.read(), ""])
             except UnicodeDecodeError as e:
                 raise ValueError("Issue with file '{0}'".format(exp)) from e
     else:
         fLOG("[build_notebooks_gallery] not found", exp)
-        rows = ["", ".. _l-notebooks:", "", "", "Notebooks Gallery",
-                "=================", ""]
+        rows.extend(["", ".. _l-notebooks:", "", "", "Notebooks Gallery",
+                     "=================", ""])
 
     rows.extend(["", ":ref:`l-notebooks-coverage`", "",
                  "", ".. contents::", "    :depth: 1",
