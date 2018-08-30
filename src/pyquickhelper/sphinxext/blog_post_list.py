@@ -175,9 +175,16 @@ class BlogPostList:
         @return         list of rst_links
         """
         links = []
-        for m, v in sorted(self.get_categories_group().items()):
-            if len(v) <= 1:
-                # we skip categories with less than 1 blog post
+        ens = self.get_categories_group()
+        if len(ens) > 5:
+            sorted_end = list(sorted((v, m) for m, v in ens))
+            end = {}
+            for v, m in sorted_end[-5:]:
+                ens[m] = v
+
+        for m, v in sorted(ens.items()):
+            if len(v) <= 2:
+                # we skip categories with less than 2 blog post
                 continue
             link = ":ref:`{0} ({1}) <ap-cat-{0}-0>`".format(
                 BlogPostList.category2url(m), len(v))
@@ -192,7 +199,14 @@ class BlogPostList:
         @return         list of rst_links
         """
         links = []
-        for m, v in sorted(self.get_months_group().items()):
+        ens = self.get_months_group()
+        if len(ens) > 5:
+            sorted_end = list(sorted((m, v) for m, v in ens))
+            end = {}
+            for m, v in sorted_end[-5:]:
+                ens[m] = v
+
+        for m, v in sorted(ens.items()):
             link = ":ref:`{0} ({1}) <ap-month-{0}-0>`".format(m, len(v))
             links.append(link)
         return links
@@ -456,7 +470,8 @@ class BlogPostList:
                        for k, v in self.get_categories_group().items()])
         months = sorted(
             [(k, len(v)) for k, v in self.get_months_group().items()], reverse=True)
-        res = ["", ":orphan:", "", ".. _hblog-blog:", "", "", "Blog", "====", "", ""]
+        res = ["", ":orphan:", "", ".. _hblog-blog:",
+               "", "", "Blog", "====", "", ""]
         res.extend(
             ["* :ref:`{0} <ap-main-0>`".format(TITLES[self.Lang]["page1"]), "", ""])
         res.extend([TITLES[self.Lang]["by category:"], "", ""])
