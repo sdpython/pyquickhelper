@@ -177,7 +177,7 @@ class BlogPostList:
         links = []
         ens = self.get_categories_group()
         if len(ens) > 5:
-            sorted_end = list(sorted((v, m) for m, v in ens))
+            sorted_end = list(sorted((v, m) for m, v in ens.items()))
             end = {}
             for v, m in sorted_end[-5:]:
                 ens[m] = v
@@ -201,7 +201,7 @@ class BlogPostList:
         links = []
         ens = self.get_months_group()
         if len(ens) > 5:
-            sorted_end = list(sorted((m, v) for m, v in ens))
+            sorted_end = list(sorted((m, v) for m, v in ens.items()))
             end = {}
             for m, v in sorted_end[-5:]:
                 ens[m] = v
