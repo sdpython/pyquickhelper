@@ -243,12 +243,12 @@ def venv_install(venv, packages, fLOG=noLOG, temp_folder=None, platform=None):
     if platform is None:
         platform = sys.platform
 
-    if packages == "pip" or packages == ["pip"]:
+    if packages == "pip" or packages == ["pip"]:  # pylint: disable=R1714
         from .get_pip import __file__ as pip_loc
         ppath = os.path.abspath(pip_loc.replace(".pyc", ".py"))
         script = ["-u", ppath]
         return run_venv_script(venv, script, fLOG=fLOG, is_cmd=True, platform=platform)
-    elif packages == "pymyinstall" or packages == ["pymyinstall"]:
+    elif packages == "pymyinstall" or packages == ["pymyinstall"]:  # pylint: disable=R1714
         if platform.startswith("win"):
             pip = os.path.join(venv, "Scripts", "pip")
         else:

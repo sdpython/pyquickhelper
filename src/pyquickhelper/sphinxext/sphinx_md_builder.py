@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 """
 @file
-@brief Defines a sphinx extension to output the documentation in :epkg:`RST`.
-It is inspired from `restbuilder
+@brief Defines a sphinx extension to output the documentation in :epkg:`Markdown`
+or *MD*. It is inspired from `restbuilder
 <https://bitbucket.org/birkenfeld/sphinx-contrib/src/6f417e74a22dadb9e0370696f219e63f1b196344/restbuilder/?at=default>`_.
 I replicate its license here:
 
@@ -34,7 +34,7 @@ I replicate its license here:
     (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
     OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-.. versionadded:: 1.5
+.. versionadded:: 1.8
 """
 import os
 import textwrap
@@ -52,13 +52,13 @@ from ..sphinxext.sphinx_collapse_extension import visit_collapse_node_rst, depar
 from ..sphinxext.sphinx_sharenet_extension import visit_sharenet_node_rst, depart_sharenet_node_rst
 
 
-class RstBuilder(Builder):
+class MdBuilder(Builder):
     """
-    Defines a :epkg:`RST` builder.
+    Defines a :epkg:`MD` builder.
     """
-    name = 'rst'
-    format = 'rst'
-    file_suffix = '.rst'
+    name = 'md'
+    format = 'md'
+    file_suffix = '.md'
     link_suffix = None  # defaults to file_suffix
 
     def __init__(self, *args, **kwargs):
@@ -66,7 +66,7 @@ class RstBuilder(Builder):
         Constructor, add a logger.
         """
         Builder.__init__(self, *args, **kwargs)
-        self.logger = logging.getLogger("RstBuilder")
+        self.logger = logging.getLogger("MdBuilder")
 
     def init(self):
         """
@@ -79,7 +79,7 @@ class RstBuilder(Builder):
         elif self.link_suffix is None:
             self.link_suffix = self.file_suffix
 
-        # Function to convert the docname to a reST file name.
+        # Function to convert the docname to a markdown file name.
         def file_transform(docname):
             return docname + self.file_suffix
 
@@ -88,11 +88,11 @@ class RstBuilder(Builder):
             return docname + self.link_suffix
 
         if self.config.rst_file_transform is not None:
-            self.file_transform = self.config.rst_file_transform
+            self.file_transform = self.config.md_file_transform
         else:
             self.file_transform = file_transform
         if self.config.rst_link_transform is not None:
-            self.link_transform = self.config.rst_link_transform
+            self.link_transform = self.config.md_link_transform
         else:
             self.link_transform = link_transform
 
@@ -126,13 +126,13 @@ class RstBuilder(Builder):
         return self.link_transform(docname)
 
     def prepare_writing(self, docnames):
-        self.writer = RstWriter(self)
+        self.writer = MdWriter(self)
 
     def get_outfilename(self, pagename):
         """
         Overwrite *get_target_uri* to control file names.
         """
-        return "{0}/{1}.rst".format(self.outdir, pagename).replace("\\", "/")
+        return "{0}/{1}.md".format(self.outdir, pagename).replace("\\", "/")
 
     def write_doc(self, docname, doctree):
         # type: (unicode, nodes.Node) -> None
@@ -155,9 +155,9 @@ class RstBuilder(Builder):
         pass
 
 
-class RstWriter(writers.Writer):
+class MdWriter(writers.Writer):
     """
-    Defines a :epkg:`RST` writer.
+    Defines a :epkg:`MD` writer.
     """
     supported = ('text',)
     settings_spec = ('No options here.', '', ())
@@ -170,16 +170,15 @@ class RstWriter(writers.Writer):
         self.builder = builder
 
     def translate(self):
-        visitor = RstTranslator(self.builder, self.document)
+        visitor = MdTranslator(self.builder, self.document)
         self.document.walkabout(visitor)
         self.output = visitor.body
 
 
-class RstTranslator(TextTranslator):
+class MdTranslator(TextTranslator):
     """
-    Defines a :epkg:`RST` translator.
+    Defines a :epkg:`MD` translator.
     """
-    sectionchars = '*=-~"+`'
 
     def __init__(self, builder, document):
         TextTranslator.__init__(self, document, builder)
@@ -205,7 +204,7 @@ class RstTranslator(TextTranslator):
             width=STDINDENT, break_long_words=False, break_on_hyphens=False)
 
     def log_unknown(self, type, node):
-        logger = logging.getLogger("RstBuilder")
+        logger = logging.getLogger("MdBuilder")
         logger.warning("%s(%s) unsupported formatting" % (type, node))
 
     def wrap(self, text, width=STDINDENT):
@@ -313,12 +312,13 @@ class RstTranslator(TextTranslator):
 
     def depart_title(self, node):
         if isinstance(node.parent, nodes.section):
-            char = self._title_char
+            prefix = "#" * self.sectionlevel
         else:
-            char = '^'
-        text = ''.join(x[1] for x in self.states.pop() if x[0] == -1)
+            prefix = "#" * 6
+        text = prefix + ' ' + ''.join(x[1]
+                                      for x in self.states.pop() if x[0] == -1)
         self.stateindent.pop()
-        self.states[-1].append((0, ['', text, '%s' % (char * len(text)), '']))
+        self.states[-1].append((0, ['', text, '']))
 
     def visit_subtitle(self, node):
         # self.log_unknown("subtitle", node)
@@ -598,31 +598,26 @@ class RstTranslator(TextTranslator):
                 fmted_rows.append(cells)
 
         def writesep(char='-'):
-            out = ['+']
+            out = []
             for width in realwidths:
-                out.append(char * (width + 2))
-                out.append('+')
-            self.add_text(''.join(out) + self.nl)
+                out.append('---')
+            self.add_text(' | '.join(out) + self.nl)
 
         def writerow(row):
             lines = zip(*row)
             for line in lines:
-                out = ['|']
+                out = []
                 for i, cell in enumerate(line):
                     if cell:
-                        out.append(' ' + cell.ljust(realwidths[i] + 1))
+                        out.append(cell)
                     else:
-                        out.append(' ' * (realwidths[i] + 2))
-                    out.append('|')
-                self.add_text(''.join(out) + self.nl)
+                        out.append('')
+                self.add_text(' | '.join(out) + self.nl)
 
         for i, row in enumerate(fmted_rows):
             if separator and i == separator:
-                writesep('=')
-            else:
                 writesep('-')
             writerow(row)
-        writesep('-')
         self.table = None
         self.end_state(wrap=False)
 
@@ -635,7 +630,7 @@ class RstTranslator(TextTranslator):
 
     def visit_image(self, node):
         if 'alt' in node.attributes:
-            self.add_text(_('[image: %s]') % node['alt'])
+            self.add_text(_('[!%s]') % node['alt'])
         self.add_text(_('[image]'))
         raise nodes.SkipNode
 
@@ -794,21 +789,12 @@ class RstTranslator(TextTranslator):
     visit_warning = _visit_admonition
     depart_warning = _make_depart_admonition('warning')
 
-    def visit_versionmodified(self, node):
-        self.new_state(0)
-        if node.children:
-            self.add_text(versionlabels[node['type']] % node['version'] + ': ')
-        else:
-            self.add_text(versionlabels[node['type']] % node['version'] + '.')
-
-    def depart_versionmodified(self, node):
-        self.end_state()
-
     def visit_literal_block(self, node):
-        self.add_text("::")
-        self.new_state(self.indent)
+        self.add_text("```")
+        self.new_state(0)
 
     def depart_literal_block(self, node):
+        self.add_text('```')
         self.end_state(wrap=False)
 
     def visit_doctest_block(self, node):
@@ -830,13 +816,6 @@ class RstTranslator(TextTranslator):
     def depart_line(self, node):
         pass
 
-    def visit_block_quote(self, node):
-        self.add_text('..')
-        self.new_state(self.indent)
-
-    def depart_block_quote(self, node):
-        self.end_state()
-
     def visit_compact_paragraph(self, node):
         pass
 
@@ -854,13 +833,7 @@ class RstTranslator(TextTranslator):
             self.end_state()
 
     def visit_target(self, node):
-        if 'refid' in node:
-            self.new_state(0)
-            self.add_text('.. _' + node['refid'] + ':' + self.nl)
-
-    def depart_target(self, node):
-        if 'refid' in node:
-            self.end_state(wrap=False)
+        raise nodes.SkipNode
 
     def visit_index(self, node):
         raise nodes.SkipNode
@@ -870,10 +843,11 @@ class RstTranslator(TextTranslator):
 
     def visit_pending_xref(self, node):
         if node.get('refexplicit'):
-            text = ':py:%s:`%s <%s>`' % (
-                node['reftype'], node.astext(), node['reftarget'])
+            text = '[%s](%s.md#%s)' % (
+                node.astext(), node['refdoc'], node['reftarget'])
         else:
-            text = ':py:%s:`%s`' % (node['reftype'], node['reftarget'])
+            text = '[%s](%s.md#%s)' % (
+                node['reftarget'], node['refdoc'], node['reftarget'])
         self.add_text(text)
         raise nodes.SkipNode
 
@@ -881,41 +855,6 @@ class RstTranslator(TextTranslator):
         raise NotImplementedError("Error")
 
     def visit_reference(self, node):
-        """
-        Runs upon entering a reference.
-        Because this class inherits from the TextTranslator class,
-        regularly defined links, such as::
-
-            `Some Text`_
-
-            .. _Some Text: http://www.some_url.com
-
-        were being written as plaintext. This included internal
-        references defined in the standard rst way, such as::
-
-            `Some Reference`
-
-            .. _Some Reference:
-
-            Some Title
-            ----------
-
-        To resolve this, if ``refuri`` is not included in the node (an
-        internal, non-Sphinx-defined internal uri, the reference is
-        left unchanged.
-
-        If ``internal`` is not in the node (as for an external,
-        non-Sphinx URI, the reference is rewritten as an inline link,
-        e.g.::
-
-            Some Text <http://www.some_url.com>`_
-
-        If ``reftitle`` is in the node (as in a Sphinx-generated
-        reference), the node is converted to an inline link.
-
-        Finally, all other links are also converted to an inline link
-        format.
-        """
         def clean_refuri(uri):
             ext = os.path.splitext(uri)[-1]
             link = uri if ext != '.rst' else uri[:-4]
@@ -923,34 +862,34 @@ class RstTranslator(TextTranslator):
 
         if 'refuri' not in node:
             if 'name' in node.attributes:
-                self.add_text('`%s`_' % node['name'])
+                self.add_text('[!%s]' % node['name'])
                 raise nodes.SkipNode
             elif 'refid' in node and node['refid']:
-                self.add_text(':ref:`%s`' % node['refid'])
+                self.add_text('[!%s]' % node['refid'])
                 raise nodes.SkipNode
             else:
                 self.log_unknown(type(node), node)
                 raise nodes.SkipNode
         elif 'internal' not in node and 'name' in node.attributes:
-            self.add_text('`%s <%s>`_' %
+            self.add_text('[%s](%s)' %
                           (node['name'], clean_refuri(node['refuri'])))
             raise nodes.SkipNode
         elif 'internal' not in node and 'names' in node.attributes:
             anchor = node['names'][0] if len(
                 node['names']) > 0 else node['refuri']
-            self.add_text('`%s <%s>`_' %
+            self.add_text('[%s](%s)' %
                           (anchor, clean_refuri(node['refuri'])))
             raise nodes.SkipNode
         elif 'reftitle' in node:
             # Include node as text, rather than with markup.
             # reST seems unable to parse a construct like ` ``literal`` <url>`_
             # Hence it reverts to the more simple `literal <url>`_
-            self.add_text('`%s <%s>`_' %
+            self.add_text('[%s](%s)' %
                           (node.astext(), clean_refuri(node['refuri'])))
             # self.end_state(wrap=False)
             raise nodes.SkipNode
         else:
-            self.add_text('`%s <%s>`_' % (node.astext(), node['refuri']))
+            self.add_text('[%s](%s)' % (node.astext(), node['refuri']))
             raise nodes.SkipNode
 
     def depart_reference(self, node):
@@ -1071,10 +1010,11 @@ class RstTranslator(TextTranslator):
         raise nodes.SkipNode
 
     def visit_bigger_node(self, node):
-        visit_bigger_node_rst(self, node)
+        self.add_text('**')
+        self.add_text(node['text'])
 
     def depart_bigger_node(self, node):
-        depart_bigger_node_rst(self, node)
+        self.add_text('**')
 
     def visit_collapse_node(self, node):
         visit_collapse_node_rst(self, node)
@@ -1090,8 +1030,8 @@ class RstTranslator(TextTranslator):
         self.add_text('`')
 
     def eval_expr(self, expr):
-        md = False
-        rst = True
+        md = True
+        rst = False
         html = False
         latex = False
         if not(rst or html or latex or md):
@@ -1145,19 +1085,11 @@ class RstTranslator(TextTranslator):
 
 def setup(app):
     """
-    Initializes the :epkg:`RST` builder.
+    Initializes the :epkg:`MD` builder.
     """
-    app.add_builder(RstBuilder)
-    # This is the file name suffix for reST files.
-    app.add_config_value('rst_file_suffix', ".rst", 'env')
-    # The is the suffix used in internal links.
-    # By default, takes the same value as rst_file_suffix.
-    app.add_config_value('rst_link_suffix', None, 'env')
-    # Function to translate a docname to a filename.
-    # By default, returns docname + rst_file_suffix.
-    app.add_config_value('rst_file_transform', None, 'env')
-    # Function to translate a docname to a (partial) URI.
-    # By default, returns docname + rst_link_suffix.
-    app.add_config_value('rst_link_transform', None, 'env')
-    # Fix the indentation.
-    app.add_config_value('rst_indent', STDINDENT, 'env')
+    app.add_builder(MdBuilder)
+    app.add_config_value('md_file_suffix', ".md", 'env')
+    app.add_config_value('md_link_suffix', None, 'env')
+    app.add_config_value('md_file_transform', None, 'env')
+    app.add_config_value('md_link_transform', None, 'env')
+    app.add_config_value('md_indent', STDINDENT, 'env')

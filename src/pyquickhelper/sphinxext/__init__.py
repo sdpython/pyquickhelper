@@ -49,6 +49,7 @@ from ..sphinxext.sphinx_exref_extension import setup as setup_exref
 from ..sphinxext.sphinx_faqref_extension import setup as setup_faqref
 from ..sphinxext.sphinx_githublink_extension import setup as setup_githublink
 from ..sphinxext.sphinx_mathdef_extension import setup as setup_mathdef
+from ..sphinxext.sphinx_md_builder import setup as setup_md
 from ..sphinxext.sphinx_nbref_extension import setup as setup_nbref
 from ..sphinxext.sphinx_postcontents_extension import setup as setup_postcontents
 from ..sphinxext.sphinx_tocdelay_extension import setup as setup_tocdelay
@@ -103,8 +104,8 @@ def get_default_extensions():
                       setup_runpython, setup_mathdef, setup_blocref,
                       setup_faqref, setup_exref, setup_nbref,
                       setup_docassert, setup_signature, setup_tpl,
-                      setup_cmdref, setup_epkg, setup_rst, setup_postcontents,
-                      setup_tocdelay, setup_youtube,
+                      setup_cmdref, setup_epkg, setup_rst, setup_md,
+                      setup_postcontents, setup_tocdelay, setup_youtube,
                       # directives from sphinx
                       setup_graphviz, setup_imgmath, setup_todo,
                       # the rest of it

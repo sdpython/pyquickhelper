@@ -20,9 +20,10 @@ except ImportError:
         sys.path.append(path)
     import src
 
-from src.pyquickhelper.loghelper import fLOG
-from src.pyquickhelper.jenkinshelper.yaml_helper import load_yaml, enumerate_convert_yaml_into_instructions, evaluate_condition, convert_sequence_into_batch_file
-from src.pyquickhelper.jenkinshelper.jenkins_helper import jenkins_final_postprocessing
+from src.pyquickhelper.loghelper import fLOG  # pylint: disable=E0401
+from src.pyquickhelper.jenkinshelper.yaml_helper import load_yaml, enumerate_convert_yaml_into_instructions  # pylint: disable=E0401
+from src.pyquickhelper.jenkinshelper.yaml_helper import evaluate_condition, convert_sequence_into_batch_file  # pylint: disable=E0401
+from src.pyquickhelper.jenkinshelper.jenkins_helper import jenkins_final_postprocessing  # pylint: disable=E0401
 
 if sys.version_info[0] == 2:
     FileNotFoundError = Exception

@@ -288,6 +288,9 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
     nbref_include_nbrefs = True
     mathdef_link_number = "{first_letter}{number}"
 
+    # viewcode
+    viewcode_follow_imported_members = True
+
     # extensions
     extensions = []
     try:
@@ -317,6 +320,7 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
                        'jupyter_sphinx.embed_widgets',
                        "nbsphinx",
                        'pyquickhelper.sphinxext.sphinx_rst_builder',
+                       'pyquickhelper.sphinxext.sphinx_md_builder',
                        ])
 
     try:
@@ -443,6 +447,9 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
         'Linux': 'https://en.wikipedia.org/wiki/Linux',
         'mako': 'http://www.makotemplates.org/',
         "matplotlib": "https://matplotlib.org/index.html",
+        'Markdown': 'https://en.wikipedia.org/wiki/Markdown',
+        'MD': 'https://en.wikipedia.org/wiki/Markdown',
+        'md': 'https://en.wikipedia.org/wiki/Markdown',
         'mistune': 'https://pypi.org/project/mistune',
         'MiKTeX': 'http://miktex.org/',
         'MinGW': 'http://www.mingw.org/',
@@ -835,7 +842,6 @@ def custom_setup(app, author):
     from ..sphinxext import setup_images
     from ..sphinxext.sphinx_toctree_extension import setup as setup_toctree
     from ..sphinxext.sphinx_collapse_extension import setup as setup_collapse
-    # from ..sphinxext.sphinx_rst_builder import setup as setup_rst
 
     try:
         app.connect("autodoc-skip-member", skip)
@@ -867,8 +873,7 @@ def custom_setup(app, author):
     setup_epkg(app)
     setup_images(app)
     setup_collapse(app)
-    # Already part of the added extensions.
-    # setup_rst(app)
+
     try:
         import bokeh
         assert bokeh is not None

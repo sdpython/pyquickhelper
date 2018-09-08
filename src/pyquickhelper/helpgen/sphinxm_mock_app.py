@@ -8,18 +8,14 @@ import logging
 from docutils import nodes
 from docutils.parsers.rst.directives import directive as rst_directive
 from docutils.parsers.rst import directives as doc_directives, roles as doc_roles
-# , builder as doc_builder
 from sphinx.config import Config
-# from sphinx.ext.autosummary import setup as setup_autosummary
 from sphinx.ext import autodoc
 from sphinx import __display_version__ as sphinx__display_version__
 from sphinx.application import VersionRequirementError
 from sphinx.util.docutils import is_html5_writer_available
 from sphinx.errors import ExtensionError
-# from sphinx.events import EventManager
-# from sphinx.registry import SphinxComponentRegistry
-# from sphinx.domains.python import setup as setup_python
-from .sphinxm_convert_doc_sphinx_helper import HTMLWriterWithCustomDirectives, _CustomSphinx, RSTWriterWithCustomDirectives
+from .sphinxm_convert_doc_sphinx_helper import HTMLWriterWithCustomDirectives, _CustomSphinx
+from .sphinxm_convert_doc_sphinx_helper import MDWriterWithCustomDirectives, RSTWriterWithCustomDirectives
 from ..sphinxext import get_default_extensions
 
 
@@ -66,6 +62,8 @@ class MockSphinxApp:
         # self.registry = SphinxComponentRegistry()
         # self.extensions = {}
         # self._setting_up_extension = ['?']
+        # setup_rst(self)
+        # setup_rst(app)
 
     def add_directive(self, name, cl, *args, **options):
         """
@@ -107,7 +105,7 @@ class MockSphinxApp:
             # We do not add it a second time.
             return
         if rebuild in (False, True):
-            rebuild = rebuild and 'env' or ''
+            rebuild = 'env' if rebuild else ''
         self.new_options[name] = (default, rebuild, types)
         self.config.values[name] = (default, rebuild, types)
 
@@ -280,7 +278,7 @@ class MockSphinxApp:
     @staticmethod
     def create(writer="html", directives=None, confoverrides=None, new_extensions=None, fLOG=None):
         """
-        Create a MockApp for :epkg:`Sphinx`.
+        Creates a MockApp for :epkg:`Sphinx`.
 
         @param      writer          ``'sphinx'`` is the only allowed value
         @param      directives      new directives to add (see below)
@@ -326,6 +324,14 @@ class MockSphinxApp:
                 builder=app.builder, app=app)
             mockapp = MockSphinxApp(writer, writer.app, confoverrides=confoverrides,
                                     new_extensions=new_extensions)
+        elif writer == "md":
+            app = _CustomSphinx(srcdir=None, confdir=None, outdir=None, doctreedir=None,
+                                buildername='memorymd', confoverrides=confoverrides,
+                                new_extensions=new_extensions)
+            writer = MDWriterWithCustomDirectives(
+                builder=app.builder, app=app)
+            mockapp = MockSphinxApp(writer, writer.app, confoverrides=confoverrides,
+                                    new_extensions=new_extensions)
         elif isinstance(writer, tuple):
             # We expect ("builder_name", builder_class)
             app = _CustomSphinx(srcdir=None, confdir=None, outdir=None, doctreedir=None,
@@ -334,12 +340,12 @@ class MockSphinxApp:
             if not hasattr(writer[1], "_writer_class"):
                 raise AttributeError(
                     "Class '{0}' does not have any attribute '_writer_class'.".format(writer[1]))
-            writer = writer[1]._writer_class(builder=app.builder, app=app)
+            writer = writer[1]._writer_class(builder=app.builder, app=app)  # pylint: disable=E1101
             mockapp = MockSphinxApp(writer, app, confoverrides=confoverrides,
                                     new_extensions=new_extensions)
         else:
             raise ValueError(
-                "writer must be 'html' or 'rst' not '{0}'.".format(writer))
+                "Writer must be 'html', 'rst' pr 'md', not '{0}'.".format(writer))
 
         # titles
         title_names = []
@@ -389,7 +395,7 @@ class MockSphinxApp:
                 fLOG("[MockSphinxApp] RST DIREC", res)
 
             class bb:
-                def info(*args, line=0):
+                def info(*args, line=0):  # pylint: disable=E0211
                     fLOG("[MockSphinxApp]   -- ", *args)
 
             class aa:

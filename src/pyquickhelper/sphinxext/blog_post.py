@@ -111,12 +111,12 @@ class BlogPost:
         keeperr = StringIO()
         sys.stderr = keeperr
 
-        output, pub = publish_programmatically(source_class=docio.StringInput, source=content,
-                                               source_path=None, destination_class=docio.StringOutput, destination=None,
-                                               destination_path=None, reader=None, reader_name='standalone', parser=None,
-                                               parser_name='restructuredtext', writer=None, writer_name='null', settings=None,
-                                               settings_spec=None, settings_overrides=overrides, config_section=None,
-                                               enable_exit_status=None)
+        _, pub = publish_programmatically(source_class=docio.StringInput, source=content,
+                                          source_path=None, destination_class=docio.StringOutput, destination=None,
+                                          destination_path=None, reader=None, reader_name='standalone', parser=None,
+                                          parser_name='restructuredtext', writer=None, writer_name='null', settings=None,
+                                          settings_spec=None, settings_overrides=overrides, config_section=None,
+                                          enable_exit_status=None)
 
         sys.stderr = errst
 

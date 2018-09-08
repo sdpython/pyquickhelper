@@ -63,6 +63,7 @@ from ..sphinxext.sphinx_epkg_extension import visit_epkg_node as ext_visit_epkg_
 from ..sphinxext.sphinx_exref_extension import visit_exref_node as ext_visit_exref_node, depart_exref_node as ext_depart_exref_node
 from ..sphinxext.sphinx_faqref_extension import visit_faqref_node as ext_visit_faqref_node, depart_faqref_node as ext_depart_faqref_node
 from ..sphinxext.sphinx_mathdef_extension import visit_mathdef_node as ext_visit_mathdef_node, depart_mathdef_node as ext_depart_mathdef_node
+from ..sphinxext.sphinx_md_builder import MdWriter, MdBuilder, MdTranslator
 from ..sphinxext.sphinx_nbref_extension import visit_nbref_node as ext_visit_nbref_node, depart_nbref_node as ext_depart_nbref_node
 from ..sphinxext.sphinx_postcontents_extension import depart_postcontents_node as ext_depart_postcontents_node
 from ..sphinxext.sphinx_postcontents_extension import visit_postcontents_node as ext_visit_postcontents_node
@@ -454,7 +455,7 @@ class _AdditionalVisitDepart:
     def eval_expr(self, expr):
         rst = self.output_format == 'rst'
         latex = self.output_format == 'latex'
-        texinfo = [('index', 'A_AdditionalVisitDepart', 'B_AdditionalVisitDepart',
+        texinfo = [('index', 'A_AdditionalVisitDepart', 'B_AdditionalVisitDepart',   # pylint: disable=W0612
                     'C_AdditionalVisitDepart', 'D_AdditionalVisitDepart',
                     'E_AdditionalVisitDepart', 'Miscellaneous')]
         html = self.output_format == 'html'
@@ -525,6 +526,23 @@ class RSTTranslatorWithCustomDirectives(_AdditionalVisitDepart, RstTranslator):
         """
         RstTranslator.__init__(self, builder, *args, **kwds)
         _AdditionalVisitDepart.__init__(self, 'rst')
+        for name, f1, f2 in builder._function_node:
+            setattr(self.__class__, "visit_" + name, f1)
+            setattr(self.__class__, "depart_" + name, f2)
+        self.base_class = RstTranslator
+
+
+class MDTranslatorWithCustomDirectives(_AdditionalVisitDepart, MdTranslator):
+    """
+    @see cl HTMLWriterWithCustomDirectives
+    """
+
+    def __init__(self, builder, *args, **kwds):
+        """
+        constructor
+        """
+        MdTranslator.__init__(self, builder, *args, **kwds)
+        _AdditionalVisitDepart.__init__(self, 'md')
         for name, f1, f2 in builder._function_node:
             setattr(self.__class__, "visit_" + name, f1)
             setattr(self.__class__, "depart_" + name, f2)
@@ -604,7 +622,7 @@ class HTMLWriterWithCustomDirectives(_WriterWithCustomDirectives, HTMLWriter):
     when directives *RunPython* or *BlogPost* are met.
     """
 
-    def __init__(self, builder=None, app=None):
+    def __init__(self, builder=None, app=None):  # pylint: disable=W0231
         """
         @param      builder builder
         @param      app     Sphinx application
@@ -634,7 +652,7 @@ class RSTWriterWithCustomDirectives(_WriterWithCustomDirectives, RstWriter):
     custom directives implemented in this module.
     """
 
-    def __init__(self, builder=None, app=None):
+    def __init__(self, builder=None, app=None):  # pylint: disable=W0231
         """
         Constructor
 
@@ -643,6 +661,28 @@ class RSTWriterWithCustomDirectives(_WriterWithCustomDirectives, RstWriter):
         """
         _WriterWithCustomDirectives._init(
             self, RstWriter, RSTTranslatorWithCustomDirectives, app)
+
+    def translate(self):
+        visitor = self.translator_class(self.builder, self.document)
+        self.document.walkabout(visitor)
+        self.output = visitor.body
+
+
+class MDWriterWithCustomDirectives(_WriterWithCustomDirectives, MdWriter):
+    """
+    This :epkg:`docutils` writer extends the :epkg:`MD` writer with
+    custom directives implemented in this module.
+    """
+
+    def __init__(self, builder=None, app=None):  # pylint: disable=W0231
+        """
+        Constructor
+
+        @param      builder builder
+        @param      app     Sphinx application
+        """
+        _WriterWithCustomDirectives._init(
+            self, MdWriter, MDTranslatorWithCustomDirectives, app)
 
     def translate(self):
         visitor = self.translator_class(self.builder, self.document)
@@ -845,7 +885,7 @@ class MemoryHTMLBuilder(_MemoryBuilder, SingleFileHTMLBuilder):
     supported_data_uri_images = True
     html_scaled_image_link = True
 
-    def __init__(self, app):
+    def __init__(self, app):  # pylint: disable=W0231
         """
         Construct the builder.
         Most of the parameter are static members of the class and cannot
@@ -873,7 +913,7 @@ class MemoryRSTBuilder(_MemoryBuilder, RstBuilder):
     supported_data_uri_images = True
     html_scaled_image_link = True
 
-    def __init__(self, app):
+    def __init__(self, app):  # pylint: disable=W0231
         """
         Construct the builder.
         Most of the parameter are static members of the class and cannot
@@ -882,6 +922,47 @@ class MemoryRSTBuilder(_MemoryBuilder, RstBuilder):
         :param app: `Sphinx application <http://www.sphinx-doc.org/en/stable/_modules/sphinx/application.html>`_
         """
         _MemoryBuilder._init(self, RstBuilder, app)
+
+    def handle_page(self, pagename, addctx, templatename=None,
+                    outfilename=None, event_arg=None):
+        """
+        Override *handle_page* to write into stream instead of files.
+        """
+        if templatename is not None:
+            raise NotImplementedError("templatename must be None.")
+        if not outfilename:
+            outfilename = self.get_outfilename(pagename)
+        if outfilename not in self.built_pages:
+            self.built_pages[outfilename] = StringIO()
+        self.built_pages[outfilename].write(self.writer.output)
+
+
+class MemoryMDBuilder(_MemoryBuilder, MdBuilder):
+    """
+    Builds :epkg:`MD` output in memory.
+    The API is defined by the page
+    `builderapi <http://www.sphinx-doc.org/en/stable/extdev/builderapi.html?highlight=builder>`_.
+    """
+    name = 'memorymd'
+    format = 'md'
+    out_suffix = None  # ".memory.rst"
+    supported_image_types = ['application/pdf', 'image/png', 'image/jpeg']
+    default_translator_class = MDTranslatorWithCustomDirectives
+    translator_class = MDTranslatorWithCustomDirectives
+    _writer_class = MDWriterWithCustomDirectives
+    supported_remote_images = True
+    supported_data_uri_images = True
+    html_scaled_image_link = True
+
+    def __init__(self, app):  # pylint: disable=W0231
+        """
+        Construct the builder.
+        Most of the parameter are static members of the class and cannot
+        be overwritten (yet).
+
+        :param app: `Sphinx application <http://www.sphinx-doc.org/en/stable/_modules/sphinx/application.html>`_
+        """
+        _MemoryBuilder._init(self, MdBuilder, app)
 
     def handle_page(self, pagename, addctx, templatename=None,
                     outfilename=None, event_arg=None):
@@ -940,7 +1021,7 @@ class _CustomSphinx(Sphinx):
     Custom :epkg:`Sphinx` application to avoid using disk.
     """
 
-    def __init__(self, srcdir, confdir, outdir, doctreedir, buildername="memoryhtml",
+    def __init__(self, srcdir, confdir, outdir, doctreedir, buildername="memoryhtml",  # pylint: disable=W0231
                  confoverrides=None, status=None, freshenv=False, warningiserror=False,
                  tags=None, verbosity=0, parallel=0, new_extensions=None):
         '''
@@ -1109,6 +1190,7 @@ class _CustomSphinx(Sphinx):
         # add default HTML builders
         self.add_builder(MemoryHTMLBuilder)
         self.add_builder(MemoryRSTBuilder)
+        self.add_builder(MemoryMDBuilder)
 
         if isinstance(buildername, tuple):
             if len(buildername) != 2:
@@ -1267,8 +1349,14 @@ class _CustomSphinx(Sphinx):
         # in docutils.
         for k, v in domain.directives.items():
             self.add_directive("{0}:{1}".format(domain.name, k), v)
+            if domain.name in ('py', 'std', 'rst'):
+                # We add the directive without the domain name as a prefix.
+                self.add_directive(k, v)
         for k, v in domain.roles.items():
             self.add_role("{0}:{1}".format(domain.name, k), v)
+            if domain.name in ('py', 'std', 'rst'):
+                # We add the role without the domain name as a prefix.
+                self.add_role(k, v)
 
     def override_domain(self, domain):
         self._added_objects.append(('domain-over', domain))
@@ -1326,7 +1414,7 @@ class _CustomSphinx(Sphinx):
                     from sphinx.writers.latex import LaTeXTranslator
                 except ImportError:
                     # Since sphinx 1.7.3 (circular reference).
-                    import sphinx.builders.latex.transforms
+                    import sphinx.builders.latex.transforms  # pylint: disable=W0621
                     from sphinx.writers.latex import LaTeXTranslator
                 translators.append(LaTeXTranslator)
             elif key == 'text':
@@ -1348,7 +1436,7 @@ class _CustomSphinx(Sphinx):
         self._added_objects.append(('event', name))
         Sphinx.add_event(self, name)
 
-    def add_config_value(self, name, default, rebuild, types_=()):
+    def add_config_value(self, name, default, rebuild, types_=()):  # pylint: disable=W0221
         self._added_objects.append(('config_value', name))
         Sphinx.add_config_value(self, name, default, rebuild, types_)
 

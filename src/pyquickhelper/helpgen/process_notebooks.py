@@ -1089,7 +1089,7 @@ def build_notebooks_gallery(nbs, fileout, layout="classic", neg_pattern=None,
                 lastk = 0
                 for k in range(0, len(hi)):
                     lastk = k
-                    if last is None or k >= len(last) or hi[k] != last[k]:
+                    if last is None or k >= len(last) or hi[k] != last[k]:  # pylint: disable=E1136
                         break
 
                 while len(hi) > 0 and lastk < len(hi):

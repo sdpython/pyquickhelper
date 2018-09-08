@@ -111,7 +111,9 @@ def rst2html(s, fLOG=noLOG, writer="html", keep_warnings=False,
 
     @param      s                   string to converts
     @param      fLOG                logging function (warnings will be logged)
-    @param      writer              ``'html'`` for HTML format, ``'rst'`` for RST format,
+    @param      writer              ``'html'`` for :epkg:`HTML` format,
+                                    ``'rst'`` for :epkg:`RST` format,
+                                    ``'md'`` for :epkg:`MD` format,
                                     ``'doctree'`` to get the doctree, *writer* can also be a tuple
                                     for custom formats and must be like ``('buider_name', builder_class)``.
     @param      keep_warnings       keep_warnings in the final HTML
@@ -252,6 +254,7 @@ def rst2html(s, fLOG=noLOG, writer="html", keep_warnings=False,
 
     .. versionchanged:: 1.8
         New nodes are now optional in *directives*.
+        Markdown format was added.
     """
     if 'html_theme' not in options:
         options['html_theme'] = 'basic'
@@ -271,6 +274,10 @@ def rst2html(s, fLOG=noLOG, writer="html", keep_warnings=False,
         writer_name = writer
         mockapp, writer, title_names = MockSphinxApp.create(writer, directives,
                                                             confoverrides=defopt, new_extensions=new_extensions, fLOG=fLOG)
+    elif writer == "md":
+        writer_name = writer
+        mockapp, writer, title_names = MockSphinxApp.create(writer, directives,
+                                                            confoverrides=defopt, new_extensions=new_extensions, fLOG=fLOG)
     elif isinstance(writer, tuple):
         # We extect something like ("builder_name", builder_class)
         writer_name = writer
@@ -278,7 +285,7 @@ def rst2html(s, fLOG=noLOG, writer="html", keep_warnings=False,
                                                             confoverrides=defopt, new_extensions=new_extensions, fLOG=fLOG)
     else:
         raise ValueError(
-            "Unexpected writer '{0}', should be 'rst' or 'html'.".format(writer))
+            "Unexpected writer '{0}', should be 'rst' or 'html' or 'md'.".format(writer))
 
     if writer is None and directives is not None and len(directives) > 0:
         raise NotImplementedError(
@@ -448,7 +455,9 @@ def docstring2html(function_or_string, format="html", fLOG=noLOG, writer="html",
     @param      function_or_string      function, class, method or doctring
     @param      format                  output format (``'html'`` or '``rawhtml``')
     @param      fLOG                    logging function
-    @param      writer                  ``'html'`` for :epkg:`HTML` format or ``'rst'`` for RST format
+    @param      writer                  ``'html'`` for :epkg:`HTML` format,
+                                        ``'rst'`` for :epkg:`RST` format,
+                                        ``'md'`` for :epkg:`MD` format
     @param      keep_warnings           keep_warnings in the final :epkg:`HTML`
     @param      directives              new directives to add (see below)
     @param      language                language
@@ -480,6 +489,9 @@ def docstring2html(function_or_string, format="html", fLOG=noLOG, writer="html",
     * ``'rawhtml'``: :epkg:`HTML` as text + style
     * ``'rst'``: :epkg:`rst`
     * ``'text'``: raw text
+
+    .. versionchanged:: 1.8
+        Markdown format was added.
     """
     if not isinstance(function_or_string, str):
         doc = function_or_string.__doc__
@@ -537,9 +549,9 @@ def docstring2html(function_or_string, format="html", fLOG=noLOG, writer="html",
 
 def rst2rst_folder(rststring, folder, document_name="index", **options):
     """
-    Converts a :epkg:`RST` string into :epkg:`RST`.
+    Converts a :epkg:`RST` string into simplified :epkg:`RST`.
 
-    @param      rststring       rst string
+    @param      rststring       :epkg:`rst` string
     @param      folder          the builder needs to write the resuts in a
                                 folder defined by this parameter
     @param      document_name   main document

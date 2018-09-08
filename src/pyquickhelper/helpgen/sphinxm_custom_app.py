@@ -80,6 +80,9 @@ class CustomSphinxApp(Sphinx):
         if buildername == "rst":
             from ..sphinxext.sphinx_rst_builder import RstBuilder
             module = RstBuilder.__module__
+        elif buildername == "md":
+            from ..sphinxext.sphinx_md_builder import MdBuilder
+            module = MdBuilder.__module__
 
         if 'extensions' not in confoverrides:
             if extensions == 'all':
@@ -94,7 +97,7 @@ class CustomSphinxApp(Sphinx):
                 if buildername == "rst":
                     exts = exts.copy()
                     exts.insert(0, module)
-            elif buildername == "rst":
+            elif buildername in ("rst", "md"):
                 exts = [module]
             if exts is not None:
                 confoverrides['extensions'] = exts
