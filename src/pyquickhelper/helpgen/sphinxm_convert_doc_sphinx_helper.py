@@ -492,7 +492,7 @@ class _AdditionalVisitDepart:
 
 class HTMLTranslatorWithCustomDirectives(_AdditionalVisitDepart, HTMLTranslator):
     """
-    @see cl HTMLWriterWithCustomDirectives
+    See @see cl HTMLWriterWithCustomDirectives.
     """
 
     def __init__(self, builder, *args, **kwds):
@@ -517,7 +517,7 @@ class HTMLTranslatorWithCustomDirectives(_AdditionalVisitDepart, HTMLTranslator)
 
 class RSTTranslatorWithCustomDirectives(_AdditionalVisitDepart, RstTranslator):
     """
-    @see cl HTMLWriterWithCustomDirectives
+    See @see cl HTMLWriterWithCustomDirectives.
     """
 
     def __init__(self, builder, *args, **kwds):
@@ -534,7 +534,7 @@ class RSTTranslatorWithCustomDirectives(_AdditionalVisitDepart, RstTranslator):
 
 class MDTranslatorWithCustomDirectives(_AdditionalVisitDepart, MdTranslator):
     """
-    @see cl HTMLWriterWithCustomDirectives
+    See @see cl HTMLWriterWithCustomDirectives.
     """
 
     def __init__(self, builder, *args, **kwds):
@@ -612,14 +612,14 @@ class _WriterWithCustomDirectives:
 
 class HTMLWriterWithCustomDirectives(_WriterWithCustomDirectives, HTMLWriter):
     """
-    This docutils writer extends the HTML writer with
+    This :epkg:`docutils` writer extends the HTML writer with
     custom directives implemented in this module,
-    @see cl RunPythonDirective, @see cl BlogPostDirective
+    @see cl RunPythonDirective, @see cl BlogPostDirective.
 
     See `Write your own ReStructuredText-Writer <http://www.arnebrodowski.de/blog/write-your-own-restructuredtext-writer.html>`_.
 
-    This class needs to tell *docutils* to calls the added function
-    when directives *RunPython* or *BlogPost* are met.
+    This class needs to tell :epkg:`docutils` to call the added function
+    when directives *runpython* or *blogpost* are met.
     """
 
     def __init__(self, builder=None, app=None):  # pylint: disable=W0231
@@ -897,11 +897,15 @@ class MemoryHTMLBuilder(_MemoryBuilder, SingleFileHTMLBuilder):
 
 
 class MemoryRSTBuilder(_MemoryBuilder, RstBuilder):
+
     """
     Builds :epkg:`RST` output in memory.
     The API is defined by the page
     `builderapi <http://www.sphinx-doc.org/en/stable/extdev/builderapi.html?highlight=builder>`_.
+    The writer simplifies the :epkg:`RST` syntax by replacing
+    custom roles into true :epkg:`RST` syntax.
     """
+
     name = 'memoryrst'
     format = 'rst'
     out_suffix = None  # ".memory.rst"

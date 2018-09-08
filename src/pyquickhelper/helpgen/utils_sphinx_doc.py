@@ -364,7 +364,7 @@ def copy_source_files(input, output, fmod=lambda v, filename: v,
 def apply_modification_template(rootm, store_obj, template, fullname, rootrep,
                                 softfile, indexes, additional_sys_path, fLOG=noLOG):
     """
-    @see fn add_file_rst
+    See @see fn add_file_rst.
 
     @param      rootm               root of the module
     @param      store_obj           keep track of all objects extracted from the module

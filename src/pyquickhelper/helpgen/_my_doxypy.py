@@ -110,7 +110,8 @@ class FSM(object):
         self.transitions.append([from_state, to_state, condition, callback])
 
     def makeTransition(self, input):
-        """Makes a transition based on the given input.
+        """
+        Makes a transition based on the given input.
 
         @param  input   input to parse by the FSM
         """
@@ -155,14 +156,15 @@ class Doxypy(object):
         self.double_comment_re = re.compile(
             "^\\s*%s(\"\"\").*(\"\"\")\\s*$" % string_prefixes)
 
-        self.defclass_re = re.compile("^(\\s*)(def .+:|class .+:)\\s*$")
+        self.defclass_re = re.compile(
+            "^(\\s*)(def .+:|class .+:)\\s*([#].*?)?$")
         self.empty_re = re.compile("^\\s*$")
         self.hashline_re = re.compile("^\\s*#.*$")
         self.importline_re = re.compile("^\\s*(import |from .+ import)")
 
         self.multiline_defclass_start_re = re.compile(
             "^(\\s*)(def|class)(\\s.*)?$")
-        self.multiline_defclass_end_re = re.compile(":\\s*$")
+        self.multiline_defclass_end_re = re.compile(":\\s*([#].*?)?$")
         self.print_output = print_output
         self.process_comment = process_comment
         self.information = information
@@ -370,7 +372,7 @@ class Doxypy(object):
         """
         if options.debug:
             sys.stderr.write("# CALLBACK: appendCommentLine")
-        from_state, to_state, condition, callback = self.fsm.current_transition
+        from_state, to_state, condition, callback = self.fsm.current_transition  # pylint: disable=W0612
 
         # single line comment
         if (from_state == "DEFCLASS" and to_state == "DEFCLASS_BODY") \
@@ -457,6 +459,7 @@ class Doxypy(object):
         li = [self.indent + doxyStart]
         li.extend(commentLines)
         li.append(self.indent + doxyEnd)
+
         return li
 
     def parse(self, input):
@@ -479,10 +482,10 @@ class Doxypy(object):
 
     def parseFile(self, filename):
         """
-        Parses a python file given as input string and returns the doxygen-
-        compatible representation.
+        Parses a :epkg:`python` file given as input string and returns`
+        the :epkg:`doxygen` compatible representation.
 
-        @param  filename        the python code to parse (filename)
+        @param  filename        the :epkg:`python` code to parse (filename)
         """
         self._index_row = 0
         if isinstance(filename, list):
@@ -507,7 +510,7 @@ class Doxypy(object):
 
     def parseLine(self, line):
         """
-        Parse one line of python and flush the resulting output to the
+        Parses one line of python and flush the resulting output to the
         outstream.
 
         @param  line    the python code line to parse
@@ -587,10 +590,10 @@ def process_string(content, print_output, process_comment, filename, first_row, 
 
 if __name__ == "__main__":
     with open(__file__, "r") as f:
-        content = f.read()
+        local_content = f.read()
     # main(__file__, print_output = print)
 
     def pprint(*l, **kw):
         print(*l, **kw)
 
-    process_string(content, pprint, lambda a, b, c: a, "", 0)
+    process_string(local_content, pprint, lambda a, b, c: a, "", 0)

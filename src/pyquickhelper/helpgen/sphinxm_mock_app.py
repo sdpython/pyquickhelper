@@ -340,7 +340,8 @@ class MockSphinxApp:
             if not hasattr(writer[1], "_writer_class"):
                 raise AttributeError(
                     "Class '{0}' does not have any attribute '_writer_class'.".format(writer[1]))
-            writer = writer[1]._writer_class(builder=app.builder, app=app)  # pylint: disable=E1101
+            writer = writer[1]._writer_class(  # pylint: disable=E1101
+                builder=app.builder, app=app)  # pylint: disable=E1101
             mockapp = MockSphinxApp(writer, app, confoverrides=confoverrides,
                                     new_extensions=new_extensions)
         else:
