@@ -32,7 +32,7 @@ if sys.version_info[0] == 2:
 
 class TestMdBuilder(unittest.TestCase):
 
-    def _test_md_builder(self):
+    def test_md_builder(self):
         from docutils import nodes as skip_
 
         content = """
@@ -96,7 +96,7 @@ class TestMdBuilder(unittest.TestCase):
         if t1 in html:
             raise Exception(html)
 
-    def _test_md_builder_sphinx(self):
+    def test_md_builder_sphinx(self):
         from docutils import nodes as skip_
 
         content = """
@@ -155,7 +155,7 @@ class TestMdBuilder(unittest.TestCase):
         if t1 not in html:
             raise Exception(html)
 
-    def _test_md_builder_sphinx_table(self):
+    def test_md_builder_sphinx_table(self):
         from docutils import nodes as skip_
 
         content = """
@@ -213,7 +213,7 @@ class TestMdBuilder(unittest.TestCase):
         if len(spl) > 2:
             raise Exception(html)
 
-    def _test_md_only(self):
+    def test_md_only(self):
         from docutils import nodes as skip_
 
         content = """
@@ -265,7 +265,7 @@ class TestMdBuilder(unittest.TestCase):
         if t1 not in text:
             raise Exception(text)
 
-    def _test_md_reference(self):
+    def test_md_reference(self):
         from docutils import nodes as skip_
 
         content = """
