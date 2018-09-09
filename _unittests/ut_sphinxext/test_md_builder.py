@@ -361,6 +361,39 @@ class TestMdBuilder(unittest.TestCase):
         with open(os.path.join(temp, "out_cmdref.md"), "w", encoding="utf8") as f:
             f.write(text)
 
+    def test_md_title(self):
+        from docutils import nodes as skip_
+
+        content = """
+
+                    title1
+                    ======
+
+                    title2
+                    ======
+
+                    title3
+                    ++++++
+
+                    title4
+                    ******
+
+                    """.replace("                    ", "")
+        if sys.version_info[0] >= 3:
+            content = content.replace('u"', '"')
+
+        text = rst2html(content,  # fLOG=fLOG,
+                        writer="md", keep_warnings=False, layout='sphinx',
+                        extlinks={'issue': ('http://%s', '_issue_')})
+
+        self.assertIn("# title1", text)
+        self.assertIn("# title2", text)
+        self.assertIn("## title3", text)
+        self.assertIn("### title4", text)
+        temp = get_temp_folder(__file__, "temp_md_title")
+        with open(os.path.join(temp, "out_cmdref.md"), "w", encoding="utf8") as f:
+            f.write(text)
+
 
 if __name__ == "__main__":
     unittest.main()
