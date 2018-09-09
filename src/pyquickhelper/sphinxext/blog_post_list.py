@@ -323,19 +323,20 @@ class BlogPostList:
             f.write(".. toctree::\n")
             f.write("    :hidden:\n")
             f.write("\n")
-            for item in self:
+            for item_id, item in enumerate(self):
                 fl = os.path.split(item.FileName)[-1]
                 fl = os.path.splitext(fl)[0]
-                f.write("    {0}/{1}\n".format(item.Date[:4], fl))
+                f.write(
+                    "    blog {2} <{0}/{1}>\n".format(item.Date[:4], fl, item_id))
 
             if hidden_files is not None:
                 f.write("\n\n")
                 f.write(".. toctree::\n")
                 f.write("    :hidden:\n")
                 f.write("\n")
-                for h in hidden_files:
-                    f.write("    " +
-                            os.path.splitext(os.path.split(h)[-1])[0] + "\n")
+                for hid, h in enumerate(hidden_files):
+                    f.write("    blog {1} <{0}>\n".format(
+                        os.path.splitext(os.path.split(h)[-1])[0], hid))
                 f.write("\n\n")
 
             if only_html:
@@ -346,13 +347,14 @@ class BlogPostList:
                 f.write(indent + ".. toctree::\n")
                 f.write(indent + "    :hidden:\n")
                 f.write("\n")
-                for item in self:
+                for item_id, item in enumerate(self):
                     fl = os.path.split(item.FileName)[-1]
                     fl = os.path.splitext(fl)[0]
-                    f.write(indent + "    {0}/{1}\n".format(item.Date[:4], fl))
-                for h in hidden_files_html:
-                    f.write(indent + "    " +
-                            os.path.splitext(os.path.split(h)[-1])[0] + "\n")
+                    f.write(
+                        indent + "    {2} <{0}/{1}>\n".format(item.Date[:4], fl, item_id))
+                for hid, h in enumerate(hidden_files_html):
+                    f.write(
+                        indent + "    blog {1} <{0}>\n".format(os.path.splitext(os.path.split(h)[-1])[0], hid))
                 f.write("\n\n")
 
             f.write("\n")
