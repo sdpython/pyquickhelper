@@ -72,10 +72,10 @@ class MdBuilder(Builder):
         """
         Load necessary templates and perform initialization.
         """
-        if self.config.rst_file_suffix is not None:
-            self.file_suffix = self.config.rst_file_suffix
-        if self.config.rst_link_suffix is not None:
-            self.link_suffix = self.config.rst_link_suffix
+        if self.config.md_file_suffix is not None:
+            self.file_suffix = self.config.md_file_suffix
+        if self.config.md_link_suffix is not None:
+            self.link_suffix = self.config.md_link_suffix
         elif self.link_suffix is None:
             self.link_suffix = self.file_suffix
 
@@ -87,11 +87,11 @@ class MdBuilder(Builder):
         def link_transform(docname):
             return docname + self.link_suffix
 
-        if self.config.rst_file_transform is not None:
+        if self.config.md_file_transform is not None:
             self.file_transform = self.config.md_file_transform
         else:
             self.file_transform = file_transform
-        if self.config.rst_link_transform is not None:
+        if self.config.md_link_transform is not None:
             self.link_transform = self.config.md_link_transform
         else:
             self.link_transform = link_transform
@@ -100,7 +100,7 @@ class MdBuilder(Builder):
         """
         Return an iterable of input files that are outdated.
         This method is taken from ``TextBuilder.get_outdated_docs()``
-        with minor changes to support ``(confval, rst_file_transform))``.
+        with minor changes to support ``(confval, md_file_transform))``.
         """
         for docname in self.env.found_docs:
             if docname not in self.env.all_docs:
@@ -196,8 +196,8 @@ class MdTranslator(TextTranslator):
         self.list_counter = []
         self.sectionlevel = 0
         self.table = None
-        if self.builder.config.rst_indent:
-            self.indent = self.builder.config.rst_indent
+        if self.builder.config.md_indent:
+            self.indent = self.builder.config.md_indent
         else:
             self.indent = STDINDENT
         self.wrapper = textwrap.TextWrapper(
