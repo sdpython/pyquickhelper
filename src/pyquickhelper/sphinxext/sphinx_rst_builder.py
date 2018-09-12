@@ -50,6 +50,7 @@ from sphinx.writers.text import TextTranslator, MAXWIDTH, STDINDENT
 from ..sphinxext.sphinx_bigger_extension import visit_bigger_node_rst, depart_bigger_node_rst
 from ..sphinxext.sphinx_collapse_extension import visit_collapse_node_rst, depart_collapse_node_rst
 from ..sphinxext.sphinx_sharenet_extension import visit_sharenet_node_rst, depart_sharenet_node_rst
+from ._sphinx_common_builder import CommonSphinxWriterHelpers
 
 
 class RstBuilder(Builder):
@@ -95,6 +96,7 @@ class RstBuilder(Builder):
             self.link_transform = self.config.rst_link_transform
         else:
             self.link_transform = link_transform
+        self.rst_image_dest = self.config.rst_image_dest
 
     def get_outdated_docs(self):
         """
@@ -130,7 +132,7 @@ class RstBuilder(Builder):
 
     def get_outfilename(self, pagename):
         """
-        Overwrite *get_target_uri* to control file names.
+        Overwrites *get_target_uri* to control file names.
         """
         return "{0}/{1}.rst".format(self.outdir, pagename).replace("\\", "/")
 
@@ -175,7 +177,7 @@ class RstWriter(writers.Writer):
         self.output = visitor.body
 
 
-class RstTranslator(TextTranslator):
+class RstTranslator(TextTranslator, CommonSphinxWriterHelpers):
     """
     Defines a :epkg:`RST` translator.
     """
@@ -212,8 +214,8 @@ class RstTranslator(TextTranslator):
         self.wrapper.width = width
         return self.wrapper.wrap(text)
 
-    def add_text(self, text):
-        self.states[-1].append((-1, text))
+    def add_text(self, text, indent=-1):
+        self.states[-1].append((indent, text))
 
     def new_state(self, indent=STDINDENT):
         self.states.append([])
@@ -634,10 +636,17 @@ class RstTranslator(TextTranslator):
         raise nodes.SkipNode
 
     def visit_image(self, node):
-        if 'alt' in node.attributes:
-            self.add_text(_('[image: %s]') % node['alt'])
-        self.add_text(_('[image]'))
-        raise nodes.SkipNode
+        self.new_state(0)
+        atts = self.base_visit_image(node, self.builder.rst_image_dest)
+        self.add_text('.. image:: {0}'.format(atts['src']))
+        for att_name in 'width', 'height', 'alt':
+            if att_name in node.attributes:
+                self.new_state(4)
+                self.add_text(":{0}: {1}".format(att_name, node[att_name]))
+                self.end_state(wrap=False, end=None)
+
+    def depart_image(self, node):
+        self.end_state(wrap=False, end=None)
 
     def visit_transition(self, node):
         indent = sum(self.stateindent)
@@ -1148,16 +1157,9 @@ def setup(app):
     Initializes the :epkg:`RST` builder.
     """
     app.add_builder(RstBuilder)
-    # This is the file name suffix for reST files.
     app.add_config_value('rst_file_suffix', ".rst", 'env')
-    # The is the suffix used in internal links.
-    # By default, takes the same value as rst_file_suffix.
     app.add_config_value('rst_link_suffix', None, 'env')
-    # Function to translate a docname to a filename.
-    # By default, returns docname + rst_file_suffix.
     app.add_config_value('rst_file_transform', None, 'env')
-    # Function to translate a docname to a (partial) URI.
-    # By default, returns docname + rst_link_suffix.
     app.add_config_value('rst_link_transform', None, 'env')
-    # Fix the indentation.
     app.add_config_value('rst_indent', STDINDENT, 'env')
+    app.add_config_value('rst_image_dest', None, 'env')

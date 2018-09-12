@@ -714,6 +714,13 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
             'backreferences_dir': example_dir,
             'expected_failing_examples': [],
         }
+
+        try:
+            import memory_profiler
+            sphinx_gallery_conf['show_memory'] = True
+        except ImportError as e:
+            warnings.warn(
+                "memory_profiler is not install, sphinx_gallery will not show memory consumption.")
     else:
         extensions = [_ for _ in extensions if _ !=
                       "sphinx_gallery.gen_gallery"]

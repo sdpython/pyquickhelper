@@ -122,7 +122,7 @@ def update_docutils_languages(values=None):
 
 class _AdditionalVisitDepart:
     """
-    Additional visitor and departor.
+    Additional visitors and departors.
 
     .. versionchanged:: 1.7
         Update for Sphinx 1.7.

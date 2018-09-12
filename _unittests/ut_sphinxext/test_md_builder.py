@@ -20,7 +20,7 @@ except ImportError:
         sys.path.append(path)
     import src
 
-from src.pyquickhelper.pycode import get_temp_folder
+from src.pyquickhelper.pycode import get_temp_folder, ExtTestCase
 from src.pyquickhelper.helpgen import rst2html
 from src.pyquickhelper.sphinxext import CmdRef
 from src.pyquickhelper.sphinxext.sphinx_cmdref_extension import cmdref_node, visit_cmdref_node, depart_cmdref_node
@@ -30,7 +30,7 @@ if sys.version_info[0] == 2:
     from codecs import open
 
 
-class TestMdBuilder(unittest.TestCase):
+class TestMdBuilder(ExtTestCase):
 
     def test_md_builder(self):
         from docutils import nodes as skip_
@@ -391,7 +391,40 @@ class TestMdBuilder(unittest.TestCase):
         self.assertIn("## title3", text)
         self.assertIn("### title4", text)
         temp = get_temp_folder(__file__, "temp_md_title")
-        with open(os.path.join(temp, "out_cmdref.md"), "w", encoding="utf8") as f:
+        with open(os.path.join(temp, "out_md_title.md"), "w", encoding="utf8") as f:
+            f.write(text)
+
+    def test_md_image(self):
+
+        temp = get_temp_folder(__file__, "temp_md_image")
+        root = os.path.abspath(os.path.dirname(__file__))
+        img1 = os.path.join(root, "data", "image", "im.png")
+        img2 = os.path.join(root, "data", "thumbnail", "im.png")
+        content = """
+                    .. image:: {0}
+                        :width: 200
+                        :alt: alternative1
+
+                    * .. image:: {1}
+                        :width: 200
+                        :alt: alternative2
+                    """.replace("                    ", "").format(img1, img2).replace("\\", "/")
+        if sys.version_info[0] >= 3:
+            content = content.replace('u"', '"')
+
+        text = rst2html(content,  # fLOG=fLOG,
+                        writer="md", keep_warnings=False, layout='sphinx',
+                        extlinks={'issue': ('http://%s', '_issue_')},
+                        md_image_dest=temp)
+
+        text = text.replace("\r", "")
+        self.assertIn('![alternative1]', text)
+        self.assertIn('![alternative2]', text)
+        self.assertIn('=200x', text)
+        self.assertNotIn('\n\n', text)
+        self.assertIn("![alternative1](5cf2985161e8ba56d893.png =200x)", text)
+        self.assertExists(os.path.join(temp, '5cf2985161e8ba56d893.png'))
+        with open(os.path.join(temp, "md_image.md"), "w", encoding="utf8") as f:
             f.write(text)
 
 

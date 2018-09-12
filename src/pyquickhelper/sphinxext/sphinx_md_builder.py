@@ -50,6 +50,7 @@ from sphinx.writers.text import TextTranslator, MAXWIDTH, STDINDENT
 from ..sphinxext.sphinx_bigger_extension import visit_bigger_node_rst, depart_bigger_node_rst
 from ..sphinxext.sphinx_collapse_extension import visit_collapse_node_rst, depart_collapse_node_rst
 from ..sphinxext.sphinx_sharenet_extension import visit_sharenet_node_rst, depart_sharenet_node_rst
+from ._sphinx_common_builder import CommonSphinxWriterHelpers
 
 
 class MdBuilder(Builder):
@@ -95,6 +96,7 @@ class MdBuilder(Builder):
             self.link_transform = self.config.md_link_transform
         else:
             self.link_transform = link_transform
+        self.md_image_dest = self.config.md_image_dest
 
     def get_outdated_docs(self):
         """
@@ -175,7 +177,7 @@ class MdWriter(writers.Writer):
         self.output = visitor.body
 
 
-class MdTranslator(TextTranslator):
+class MdTranslator(TextTranslator, CommonSphinxWriterHelpers):
     """
     Defines a :epkg:`MD` translator.
     """
@@ -629,10 +631,20 @@ class MdTranslator(TextTranslator):
         raise nodes.SkipNode
 
     def visit_image(self, node):
-        if 'alt' in node.attributes:
-            self.add_text(_('[!%s]') % node['alt'])
-        self.add_text(_('[image]'))
-        raise nodes.SkipNode
+        self.new_state(0)
+        atts = self.base_visit_image(node, self.builder.md_image_dest)
+        alt = atts.get("alt", "")
+        uri = atts.get('uri', atts['src'])
+        width = atts.get('width', '').replace('px', '')
+        height = atts.get('height', '').replace('px', '')
+        style = " ={0}x{1}".format(width, height)
+        if style == " =x":
+            style = ""
+        text = "![{0}]({1}{2})".format(alt, uri, style)
+        self.add_text(text)
+
+    def depart_image(self, node):
+        self.end_state(wrap=False, end=None)
 
     def visit_transition(self, node):
         indent = sum(self.stateindent)
@@ -794,6 +806,7 @@ class MdTranslator(TextTranslator):
         self.new_state(0)
 
     def depart_literal_block(self, node):
+        self.add_text(self.nl)
         self.add_text('```')
         self.end_state(wrap=False)
 
@@ -1093,3 +1106,4 @@ def setup(app):
     app.add_config_value('md_file_transform', None, 'env')
     app.add_config_value('md_link_transform', None, 'env')
     app.add_config_value('md_indent', STDINDENT, 'env')
+    app.add_config_value('md_image_dest', None, 'env')

@@ -109,7 +109,7 @@ def rst2html(s, fLOG=noLOG, writer="html", keep_warnings=False,
     Converts a string from :epkg:`RST`
     into :epkg:`HTML` format or transformed :epkg:`RST`.
 
-    @param      s                   string to converts
+    @param      s                   string to convert
     @param      fLOG                logging function (warnings will be logged)
     @param      writer              ``'html'`` for :epkg:`HTML` format,
                                     ``'rst'`` for :epkg:`RST` format,
@@ -131,6 +131,7 @@ def rst2html(s, fLOG=noLOG, writer="html", keep_warnings=False,
                                     the function takes a doctree as a single parameter
     @param      new_extensions      additional extension to setup
     @param      update_builder      update the builder after it is instantiated
+    @param      options             used to overwrite configuration variables
     @return                         HTML format
 
     *directives* is None or a list of 2 or 5-uple:
