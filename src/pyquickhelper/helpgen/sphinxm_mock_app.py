@@ -50,7 +50,7 @@ class MockSphinxApp:
                         "<class 'matplotlib.sphinxext.only_directives.latex_only'>": "only",
                         }
         self.mapping_connect = {}
-        self.config = Config(None, None, overrides=confoverrides, tags=None)
+        self.config = Config(None, None, confoverrides, None)
         self.confdir = "."
         self.doctreedir = "."
         self.srcdir = "."

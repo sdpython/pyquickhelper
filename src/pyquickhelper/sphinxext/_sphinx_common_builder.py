@@ -64,9 +64,9 @@ class CommonSphinxWriterHelpers:
 
         # Makes a local copy of the image
         if 'src' in atts:
+            builder = self.builder  # pylint: disable=E1101
+            srcdir = builder.srcdir
             if image_dest is None:
-                builder = self.builder  # pylint: disable=E1101
-                srcdir = builder.srcdir
                 outdir = builder.outdir
                 current = os.path.dirname(os.path.join(
                     srcdir, builder.current_docname))

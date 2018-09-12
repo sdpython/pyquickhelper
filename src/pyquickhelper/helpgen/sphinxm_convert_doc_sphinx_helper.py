@@ -8,11 +8,12 @@ import os
 import sys
 from collections import deque
 import warnings
+import pickle
 from sphinx.locale import _
 from docutils.parsers.rst import directives, roles
 from docutils.languages import en as docutils_en
 from sphinx.writers.html import HTMLWriter
-from sphinx.application import Sphinx
+from sphinx.application import Sphinx, ENV_PICKLE_FILENAME
 from sphinx.errors import ExtensionError
 from sphinx.environment import BuildEnvironment
 from docutils import nodes
@@ -32,7 +33,14 @@ from sphinx.application import Tags, builtin_extensions
 from sphinx.application import Config, CONFIG_FILENAME, ConfigError, VersionRequirementError
 from sphinx.registry import SphinxComponentRegistry
 from sphinx.events import EventManager
-from sphinx.extension import verify_required_extensions
+from sphinx.locale import __
+try:
+    # Sphinx 1.8.0
+    from sphinx.extension import verify_needs_extensions as verify_extensions
+    from sphinx.util.pycompat import htmlescape
+except ImportError:
+    # Sphinx 1.7.6
+    from sphinx.extension import verify_required_extensions as verify_extensions
 
 try:
     from sphinx.writers.latex import LaTeXTranslator
@@ -829,6 +837,18 @@ class _MemoryBuilder:
             return uri
         ctx['pathto'] = pathto
 
+        def css_tag(css):
+            # type: (Stylesheet) -> unicode
+            attrs = []
+            for key in sorted(css.attributes):
+                value = css.attributes[key]
+                if value is not None:
+                    attrs.append('%s="%s"' % (key, htmlescape(    # pylint: disable=W1505
+                        value, True)))  # pylint: disable=W1505
+            attrs.append('href="%s"' % pathto(css.filename, resource=True))
+            return '<link %s />' % ' '.join(attrs)
+        ctx['css_tag'] = css_tag
+
         def hasdoc(name):
             # type: (unicode) -> bool
             if name in self.env.all_docs:
@@ -1004,7 +1024,15 @@ class _CustomBuildEnvironment(BuildEnvironment):
                 docname), 2, 5, stream=WarningStream())
             return doctree
         else:
-            raise KeyError("Unable to find doctree for '{0}'.".format(docname))
+            if hasattr(self, "self.doctree_"):
+                available = list(sorted(self.doctree_))
+                if len(available) > 10:
+                    available = available[10:]
+            else:
+                available = []
+
+            raise KeyError("Unable to find doctree for '{0}'\nFirst documents:\n{1}.".format(
+                docname, "\n".join(available)))
             # return BuildEnvironment.get_doctree(self, docname)
 
     def apply_post_transforms(self, doctree, docname):
@@ -1087,9 +1115,9 @@ class _CustomSphinx(Sphinx):
         # from sphinx.domains.c import CDomain
 
         if doctreedir is None:
-            doctreedir = "."
+            doctreedir = "IMPOSSIBLETOFIND"
         if srcdir is None:
-            srcdir = "."
+            srcdir = "IMPOSSIBLETOFIND"
         update_docutils_languages()
         self.verbosity = verbosity
 
@@ -1099,7 +1127,6 @@ class _CustomSphinx(Sphinx):
         self.builder = None                     # type: Builder
         self.env = None                         # type: BuildEnvironment
         self.registry = SphinxComponentRegistry()
-        self.enumerable_nodes = {}              # type: Dict[nodes.Node, Tuple[unicode, Callable]]  # NOQA
         self.post_transforms = []               # type: List[Transform]
         self.html_themes = {}                   # type: Dict[unicode, unicode]
 
@@ -1230,9 +1257,11 @@ class _CustomSphinx(Sphinx):
                 "\n".join(sorted(noallowed)),
                 "\n".join(sorted(self.config.values))))
         self.config.init_values()
+        self.emit('config-inited', self.config)
 
         # check extension versions if requested
-        verify_required_extensions(self, self.config.needs_extensions)
+        # self.config.needs_extensions = self.config.extensions
+        verify_extensions(self, self.config)
 
         # check primary_domain if requested
         primary_domain = self.config.primary_domain
@@ -1244,9 +1273,11 @@ class _CustomSphinx(Sphinx):
         self.builder = self.create_builder(buildername)
         # check all configuration values for permissible types
         self.config.check_types()
+        # set up the build environment
+        self._init_env(freshenv)
+        # set up the builder
+        self._init_builder()
 
-        # set up source_parsers
-        self._init_source_parsers()
         # set up the build environment
         if freshenv:
             self._init_env(freshenv)
@@ -1256,16 +1287,38 @@ class _CustomSphinx(Sphinx):
 
         if not isinstance(self.env, _CustomBuildEnvironment):
             raise TypeError(
-                "self.env is not _CustomBuildEnvironment: '{0}'".format(type(self.env)))
-
-        # set up the builder
-        self._init_builder()
-
-        # set up the enumerable nodes
-        self._init_enumerable_nodes()
+                "self.env is not _CustomBuildEnvironment: '{0}' buildername='{1}'".format(type(self.env), buildername))
 
         # addition
         self._extended_init_()
+
+    def _init_env(self, freshenv):
+        # type: (bool) -> None
+        if freshenv:
+            self.env = _CustomBuildEnvironment(self)
+            self.env.setup(self)
+            if self.srcdir is not None and self.srcdir != "IMPOSSIBLETOFIND":
+                self.env.find_files(self.config, self.builder)
+        else:
+            filename = os.path.join(self.doctreedir, ENV_PICKLE_FILENAME)
+            try:
+                self.info(bold(__('loading pickled environment... ')), nonl=True)
+                with open(filename, 'rb') as f:
+                    self.env = pickle.load(f)
+                    self.env.setup(self)
+                self.info(__('done'))
+            except Exception as err:
+                self.info('failed: %s' % err)
+                self._init_env(freshenv=True)
+
+    def create_builder(self, name):
+        """
+        Creates a builder, raises an exception if name is None.
+        """
+        if name is None:
+            raise ValueError("Builder name cannot be None")
+
+        return self.registry.create_builder(self, name)
 
     def _extended_init_(self):
         """
@@ -1314,11 +1367,11 @@ class _CustomSphinx(Sphinx):
             self._logger.warning(
                 "{0} -- {1}".format(message, name), nonl=nonl, type=type, subtype=subtype)
 
-    def add_builder(self, builder):
+    def add_builder(self, builder, override=False):
         self._added_objects.append(('builder', builder))
         if builder.name not in self.registry.builders:
             self.debug('[app] adding builder: %r', builder)
-            self.registry.add_builder(builder)
+            self.registry.add_builder(builder, override=override)
         else:
             self.debug('[app] already added builder: %r', builder)
 
@@ -1334,11 +1387,11 @@ class _CustomSphinx(Sphinx):
             raise ExtensionError(
                 "Unable to setup extension '{0}'".format(extname)) from e
 
-    def add_directive(self, name, obj, content=None, arguments=None, **options):
+    def add_directive(self, name, obj, content=None, arguments=None, override=False, **options):
         self._added_objects.append(('directive', name))
         self.debug('[app] adding directive: %r',
                    (name, obj, content, arguments, options))
-        if name in directives._directives:
+        if name in directives._directives and not override:
             self.warning(_('while setting up extension %s: directive %r is '
                            'already registered, it will be overridden'),
                          self._setting_up_extension[-1], name,
@@ -1346,9 +1399,9 @@ class _CustomSphinx(Sphinx):
         directive = directive_helper(obj, content, arguments, **options)
         directives.register_directive(name, directive)
 
-    def add_domain(self, domain):
+    def add_domain(self, domain, override=False):
         self._added_objects.append(('domain', domain))
-        Sphinx.add_domain(self, domain)
+        Sphinx.add_domain(self, domain, override=override)
         # For some reason, the directives are missing from the main catalog
         # in docutils.
         for k, v in domain.directives.items():
@@ -1366,20 +1419,20 @@ class _CustomSphinx(Sphinx):
         self._added_objects.append(('domain-over', domain))
         Sphinx.override_domain(self, domain)
 
-    def add_role(self, name, role):
+    def add_role(self, name, role, override=False):
         self._added_objects.append(('role', name))
         self.debug('[app] adding role: %r', (name, role))
-        if name in roles._roles:
+        if name in roles._roles and not override:
             self.warning(_('while setting up extension %s: role %r is '
                            'already registered, it will be overridden'),
                          self._setting_up_extension[-1], name,
                          type='app', subtype='add_role')
         roles.register_local_role(name, role)
 
-    def add_generic_role(self, name, nodeclass):
+    def add_generic_role(self, name, nodeclass, override=False):
         self._added_objects.append(('generic_role', name))
         self.debug('[app] adding generic role: %r', (name, nodeclass))
-        if name in roles._roles:
+        if name in roles._roles and not override:
             self.warning(_('while setting up extension %s: role %r is '
                            'already registered, it will be overridden'),
                          self._setting_up_extension[-1], name,
@@ -1387,11 +1440,10 @@ class _CustomSphinx(Sphinx):
         role = roles.GenericRole(name, nodeclass)
         roles.register_local_role(name, role)
 
-    def add_node(self, node, **kwds):
+    def add_node(self, node, override=False, **kwds):
         self._added_objects.append(('node', node))
         self.debug('[app] adding node: %r', (node, kwds))
-        if not kwds.pop('override', False) and \
-                hasattr(nodes.GenericNodeVisitor, 'visit_' + node.__name__):
+        if not override and hasattr(nodes.GenericNodeVisitor, 'visit_' + node.__name__):
             self.warning(_('while setting up extension %s: node class %r is '
                            'already registered, its visitors will be overridden'),
                          self._setting_up_extension, node.__name__,
@@ -1444,16 +1496,16 @@ class _CustomSphinx(Sphinx):
         self._added_objects.append(('config_value', name))
         Sphinx.add_config_value(self, name, default, rebuild, types_)
 
-    def add_directive_to_domain(self, domain, name, obj,
-                                has_content=None, argument_spec=None, **option_spec):
+    def add_directive_to_domain(self, domain, name, obj, has_content=None,
+                                argument_spec=None, override=False, **option_spec):
         self._added_objects.append(('directive_to_domain', domain, name))
         Sphinx.add_directive_to_domain(self, domain, name, obj,
                                        has_content=has_content, argument_spec=argument_spec,
-                                       **option_spec)
+                                       override=override, **option_spec)
 
-    def add_role_to_domain(self, domain, name, role):
+    def add_role_to_domain(self, domain, name, role, override=False):
         self._added_objects.append(('roles_to_domain', domain, name))
-        Sphinx.add_role_to_domain(self, domain, name, role)
+        Sphinx.add_role_to_domain(self, domain, name, role, override=override)
 
     def add_transform(self, transform):
         self._added_objects.append(('transform', transform))
@@ -1463,9 +1515,9 @@ class _CustomSphinx(Sphinx):
         self._added_objects.append(('post_transform', transform))
         Sphinx.add_post_transform(self, transform)
 
-    def add_javascript(self, filename):
+    def add_javascript(self, filename, **kwargs):
         self._added_objects.append(('js', filename))
-        Sphinx.add_javascript(self, filename)
+        Sphinx.add_javascript(self, filename, **kwargs)
 
     def add_stylesheet(self, filename, alternate=False, title=None):
         self._added_objects.append(('css', filename))
@@ -1477,13 +1529,14 @@ class _CustomSphinx(Sphinx):
 
     def add_object_type(self, directivename, rolename, indextemplate='',
                         parse_node=None, ref_nodeclass=None, objname='',
-                        doc_field_types=None):
+                        doc_field_types=None, override=False):
         if doc_field_types is None:
             doc_field_types = []
         self._added_objects.append(('object', directivename, rolename))
         Sphinx.add_object_type(self, directivename, rolename, indextemplate=indextemplate,
                                parse_node=parse_node, ref_nodeclass=ref_nodeclass,
-                               objname=objname, doc_field_types=doc_field_types)
+                               objname=objname, doc_field_types=doc_field_types,
+                               override=override)
 
     def add_env_collector(self, collector):
         """
