@@ -256,7 +256,7 @@ if not r:
             "pylint",
             "semantic_version",
             "simplegeneric",
-            "sphinx>=1.6",   # also != 1.7
+            "sphinx>=1.8",
             "sphinx-gallery",
             "sphinxcontrib-imagesvg",
             "tqdm",

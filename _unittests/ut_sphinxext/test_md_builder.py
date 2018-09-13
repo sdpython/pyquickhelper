@@ -429,5 +429,5 @@ class TestMdBuilder(ExtTestCase):
 
 
 if __name__ == "__main__":
-    TestMdBuilder().test_md_image()
+    # TestMdBuilder().test_md_image()
     unittest.main()

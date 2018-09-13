@@ -66,6 +66,8 @@ class CommonSphinxWriterHelpers:
         if 'src' in atts:
             builder = self.builder  # pylint: disable=E1101
             srcdir = builder.srcdir
+            if srcdir == "IMPOSSIBLETOFIND":
+                srcdir = ""
             if image_dest is None:
                 outdir = builder.outdir
                 current = os.path.dirname(os.path.join(
