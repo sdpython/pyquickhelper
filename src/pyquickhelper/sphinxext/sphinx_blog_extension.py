@@ -475,14 +475,18 @@ def setup(app):
     # app.add_node(blogpostlist)
     app.add_node(blogpost_node,
                  html=(visit_blogpost_node, depart_blogpost_node),
+                 elatex=(visit_blogpost_node, depart_blogpost_node),
                  latex=(visit_blogpost_node, depart_blogpost_node),
                  rst=(visit_blogpost_node, depart_blogpost_node),
+                 md=(visit_blogpost_node, depart_blogpost_node),
                  text=(visit_blogpost_node, depart_blogpost_node))
 
     app.add_node(blogpostagg_node,
                  html=(visit_blogpostagg_node, depart_blogpostagg_node_html),
+                 elatex=(visit_blogpostagg_node, depart_blogpostagg_node),
                  latex=(visit_blogpostagg_node, depart_blogpostagg_node),
                  rst=(visit_blogpostagg_node, depart_blogpostagg_node),
+                 md=(visit_blogpostagg_node, depart_blogpostagg_node),
                  text=(visit_blogpostagg_node, depart_blogpostagg_node))
 
     app.add_directive('blogpost', BlogPostDirective)

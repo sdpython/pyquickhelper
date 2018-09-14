@@ -34,6 +34,8 @@ from sphinx.application import Config, CONFIG_FILENAME, ConfigError, VersionRequ
 from sphinx.registry import SphinxComponentRegistry
 from sphinx.events import EventManager
 from sphinx.locale import __
+from sphinx import highlighting
+
 try:
     # Sphinx 1.8.0
     from sphinx.extension import verify_needs_extensions as verify_extensions
@@ -70,6 +72,7 @@ from ..sphinxext.sphinx_collapse_extension import visit_collapse_node_html as ex
 from ..sphinxext.sphinx_epkg_extension import visit_epkg_node as ext_visit_epkg_node, depart_epkg_node as ext_depart_epkg_node
 from ..sphinxext.sphinx_exref_extension import visit_exref_node as ext_visit_exref_node, depart_exref_node as ext_depart_exref_node
 from ..sphinxext.sphinx_faqref_extension import visit_faqref_node as ext_visit_faqref_node, depart_faqref_node as ext_depart_faqref_node
+from ..sphinxext.sphinx_latex_builder import EnhancedLaTeXWriter, EnhancedLaTeXBuilder, EnhancedLaTeXTranslator
 from ..sphinxext.sphinx_mathdef_extension import visit_mathdef_node as ext_visit_mathdef_node, depart_mathdef_node as ext_depart_mathdef_node
 from ..sphinxext.sphinx_md_builder import MdWriter, MdBuilder, MdTranslator
 from ..sphinxext.sphinx_nbref_extension import visit_nbref_node as ext_visit_nbref_node, depart_nbref_node as ext_depart_nbref_node
@@ -554,7 +557,30 @@ class MDTranslatorWithCustomDirectives(_AdditionalVisitDepart, MdTranslator):
         for name, f1, f2 in builder._function_node:
             setattr(self.__class__, "visit_" + name, f1)
             setattr(self.__class__, "depart_" + name, f2)
-        self.base_class = RstTranslator
+        self.base_class = MdTranslator
+
+
+class LatexTranslatorWithCustomDirectives(_AdditionalVisitDepart, EnhancedLaTeXTranslator):
+    """
+    See @see cl LatexWriterWithCustomDirectives.
+    """
+
+    def __init__(self, builder, document, *args, **kwds):
+        """
+        constructor
+        """
+        if not hasattr(builder, "config"):
+            builder, document = document, builder
+        if not hasattr(builder, "config"):
+            raise TypeError(
+                "Builder has no config: {} - {}".format(type(builder), type(document)))
+        EnhancedLaTeXTranslator.__init__(
+            self, builder, document, *args, **kwds)
+        _AdditionalVisitDepart.__init__(self, 'md')
+        for name, f1, f2 in builder._function_node:
+            setattr(self.__class__, "visit_" + name, f1)
+            setattr(self.__class__, "depart_" + name, f2)
+        self.base_class = EnhancedLaTeXTranslator
 
 
 class _WriterWithCustomDirectives:
@@ -698,6 +724,34 @@ class MDWriterWithCustomDirectives(_WriterWithCustomDirectives, MdWriter):
         self.output = visitor.body
 
 
+class LatexWriterWithCustomDirectives(_WriterWithCustomDirectives, EnhancedLaTeXWriter):
+    """
+    This :epkg:`docutils` writer extends the :epkg:`Latex` writer with
+    custom directives implemented in this module.
+    """
+
+    def __init__(self, builder=None, app=None):  # pylint: disable=W0231
+        """
+        Constructor
+
+        @param      builder builder
+        @param      app     Sphinx application
+        """
+        _WriterWithCustomDirectives._init(
+            self, EnhancedLaTeXWriter, LatexTranslatorWithCustomDirectives, app)
+        if not hasattr(self.builder, "config"):
+            raise TypeError(
+                "Builder has no config: {}".format(type(self.builder)))
+
+    def translate(self):
+        if not hasattr(self.builder, "config"):
+            raise TypeError(
+                "Builder has no config: {}".format(type(self.builder)))
+        visitor = self.translator_class(self.builder, self.document)
+        self.document.walkabout(visitor)
+        self.output = visitor.body
+
+
 class _MemoryBuilder:
     """
     Builds :epkg:`HTML` output in memory.
@@ -754,7 +808,7 @@ class _MemoryBuilder:
         raise NotImplementedError(
             "Use parallel=0 when creating the sphinx application.")
 
-    def assemble_doctree(self):
+    def assemble_doctree(self, *args, **kwargs):
         """
         Overwrites *assemble_doctree* to control the doctree.
         """
@@ -1002,6 +1056,63 @@ class MemoryMDBuilder(_MemoryBuilder, MdBuilder):
         self.built_pages[outfilename].write(self.writer.output)
 
 
+class MemoryLatexBuilder(_MemoryBuilder, EnhancedLaTeXBuilder):
+    """
+    Builds :epkg:`Latex` output in memory.
+    The API is defined by the page
+    `builderapi <http://www.sphinx-doc.org/en/stable/extdev/builderapi.html?highlight=builder>`_.
+    """
+    name = 'memorylatex'
+    format = 'tex'
+    out_suffix = None  # ".memory.tex"
+    supported_image_types = ['image/png', 'image/jpeg', 'image/gif']
+    default_translator_class = LatexTranslatorWithCustomDirectives
+    translator_class = LatexTranslatorWithCustomDirectives
+    _writer_class = LatexWriterWithCustomDirectives
+    supported_remote_images = True
+    supported_data_uri_images = True
+    html_scaled_image_link = True
+
+    def __init__(self, app):  # pylint: disable=W0231
+        """
+        Construct the builder.
+        Most of the parameter are static members of the class and cannot
+        be overwritten (yet).
+
+        :param app: `Sphinx application <http://www.sphinx-doc.org/en/stable/_modules/sphinx/application.html>`_
+        """
+        _MemoryBuilder._init(self, EnhancedLaTeXBuilder, app)
+
+    def write_stylesheet(self):
+        # type: () -> None
+        highlighter = highlighting.PygmentsBridge(
+            'latex', self.config.pygments_style)
+        rows = []
+        rows.append('\\NeedsTeXFormat{LaTeX2e}[1995/12/01]\n')
+        rows.append('\\ProvidesPackage{sphinxhighlight}')
+        rows.append(
+            '[2016/05/29 stylesheet for highlighting with pygments]\n\n')
+        rows.append(highlighter.get_stylesheet())
+        self.built_pages['sphinxhighlight.sty'] = StringIO()
+        self.built_pages['sphinxhighlight.sty'].write("".join(rows))
+
+    class EnhancedStringIO(StringIO):
+        def write(self, content):
+            if isinstance(content, str):
+                StringIO.write(self, content)
+            else:
+                for line in content:
+                    StringIO.write(self, line)
+
+    def _get_filename(self, targetname, encoding='utf-8', overwrite_if_changed=True):
+        if not isinstance(targetname, str):
+            raise TypeError(
+                "targetname must be a string: {0}".format(targetname))
+        destination = MemoryLatexBuilder.EnhancedStringIO()
+        self.built_pages[targetname] = destination
+        return destination
+
+
 class _CustomBuildEnvironment(BuildEnvironment):
     """
     Overrides some functionalities of
@@ -1096,11 +1207,14 @@ class _CustomSphinx(Sphinx):
             'linkcheck': ('linkcheck', 'CheckExternalLinksBuilder'),
             'dirhtml': ('html', 'DirectoryHTMLBuilder'),
             'latex': ('latex', 'LaTeXBuilder'),
+            'elatex': ('latex', 'EnchancedLaTeXBuilder'),
             'text': ('text', 'TextBuilder'),
             'changes': ('changes', 'ChangesBuilder'),
             'websupport': ('websupport', 'WebSupportBuilder'),
             'gettext': ('gettext', 'MessageCatalogBuilder'),
             'pseudoxml': ('xml', 'PseudoXMLBuilder')}
+            'rst': ('rst', 'RstBuilder')}
+            'md': ('md', 'MdBuilder')}
         '''
         # own purpose (to monitor)
         self._logger = getLogger("_CustomSphinx")
@@ -1222,6 +1336,7 @@ class _CustomSphinx(Sphinx):
         self.add_builder(MemoryHTMLBuilder)
         self.add_builder(MemoryRSTBuilder)
         self.add_builder(MemoryMDBuilder)
+        self.add_builder(MemoryLatexBuilder)
 
         if isinstance(buildername, tuple):
             if len(buildername) != 2:
@@ -1334,7 +1449,7 @@ class _CustomSphinx(Sphinx):
 
     def finalize(self, doctree, external_docnames=None):
         """
-        Finalize the documentation after it was parsed.
+        Finalizes the documentation after it was parsed.
 
         @param      doctree             doctree (or pub.document), available after publication
         @param      external_docnames   other docnames the doctree references
@@ -1473,6 +1588,8 @@ class _CustomSphinx(Sphinx):
                     import sphinx.builders.latex.transforms  # pylint: disable=W0621
                     from sphinx.writers.latex import LaTeXTranslator
                 translators.append(LaTeXTranslator)
+            elif key == 'elatex':
+                translators.append(EnhancedLaTeXBuilder)
             elif key == 'text':
                 from sphinx.writers.text import TextTranslator
                 translators.append(TextTranslator)

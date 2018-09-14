@@ -157,8 +157,10 @@ def setup(app):
     Setup for youtube extension.
     """
     app.add_node(youtube_node, html=(visit_youtube_node, depart_youtube_node),
+                 elatex=(visit_youtube_node, depart_youtube_node),
                  latex=(visit_youtube_node, depart_youtube_node),
                  rst=(visit_youtube_node, depart_youtube_node),
+                 md=(visit_youtube_node, depart_youtube_node),
                  text=(visit_youtube_node, depart_youtube_node))
     app.add_directive("youtube", YoutubeDirective)
     return {'version': sphinx.__display_version__, 'parallel_read_safe': True}

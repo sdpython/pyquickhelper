@@ -759,7 +759,7 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
         lay, build, override, newconf = lay_build_override_newconf(t3)
 
         if lay == "pdf":
-            lay = "latex"
+            lay = "elatex"
 
         if clean and sys.platform.startswith("win"):
             if os.path.exists(build):
@@ -777,7 +777,7 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
 
         cmd = ["sphinx-build", "-j%d" % parallel, "-v", "-T", "-b", "{0}".format(lay),
                "-d", "{0}/doctrees".format(build)] + over + sconf + ["source", "{0}/{1}".format(build, lay)]
-        if lay in ('latex', 'pdf'):
+        if lay in ('latex', 'pdf', 'elatex'):
             cmd.extend(["-D", "imgmath_image_format=png"])
         cmds.append((cmd, build, lay))
         fLOG("[generate_help_sphinx] run:", cmd)
@@ -1007,7 +1007,7 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
     ######
     datetime_rows = [("latex", datetime.now())]
     fLOG("[generate_help_sphinx] LATEX")
-    if "latex" in layout:
+    if "latex" in layout or "elatex" in layout:
         fLOG("[generate_help_sphinx] post_process_latex_output", froot)
         post_process_latex_output(
             froot, False, custom_latex_processing=custom_latex_processing)

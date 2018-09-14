@@ -15,7 +15,7 @@ from sphinx.application import VersionRequirementError
 from sphinx.util.docutils import is_html5_writer_available
 from sphinx.errors import ExtensionError
 from .sphinxm_convert_doc_sphinx_helper import HTMLWriterWithCustomDirectives, _CustomSphinx
-from .sphinxm_convert_doc_sphinx_helper import MDWriterWithCustomDirectives, RSTWriterWithCustomDirectives
+from .sphinxm_convert_doc_sphinx_helper import MDWriterWithCustomDirectives, RSTWriterWithCustomDirectives, LatexWriterWithCustomDirectives
 from ..sphinxext import get_default_extensions
 
 
@@ -329,6 +329,14 @@ class MockSphinxApp:
                                 buildername='memorymd', confoverrides=confoverrides,
                                 new_extensions=new_extensions)
             writer = MDWriterWithCustomDirectives(
+                builder=app.builder, app=app)
+            mockapp = MockSphinxApp(writer, writer.app, confoverrides=confoverrides,
+                                    new_extensions=new_extensions)
+        elif writer == "elatex":
+            app = _CustomSphinx(srcdir=None, confdir=None, outdir=None, doctreedir=None,
+                                buildername='memorylatex', confoverrides=confoverrides,
+                                new_extensions=new_extensions)
+            writer = LatexWriterWithCustomDirectives(
                 builder=app.builder, app=app)
             mockapp = MockSphinxApp(writer, writer.app, confoverrides=confoverrides,
                                     new_extensions=new_extensions)

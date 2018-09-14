@@ -321,6 +321,7 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
                        "nbsphinx",
                        'pyquickhelper.sphinxext.sphinx_rst_builder',
                        'pyquickhelper.sphinxext.sphinx_md_builder',
+                       'pyquickhelper.sphinxext.sphinx_latex_builder',
                        ])
 
     try:
@@ -419,6 +420,7 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
         'coverage': 'https://pypi.org/project/coverage',
         'cryptography': 'http://cryptography.readthedocs.org/',
         'cssselect2': 'http://cssselect2.readthedocs.io/en/latest/',
+        'C++': 'https://en.wikipedia.org/wiki/C%2B%2B',
         'Cython': 'http://cython.org/',
         'datetime': 'https://docs.python.org/3/library/datetime.html#datetime-objects',
         'docx': 'https://en.wikipedia.org/wiki/Office_Open_XML',
@@ -855,7 +857,8 @@ def custom_setup(app, author):
     except ExtensionError as e:
         # No event autodoc-skip-member.
         warnings.warn("Sphinx extension error {0}".format(e), RuntimeError)
-    app.add_config_value('author', author, True)
+    if 'author' not in app.config.values:
+        app.add_config_value('author', author, True)
 
     setup_toctree(app)
     setup_runpython(app)

@@ -274,9 +274,9 @@ def _process_notebooks_in(notebooks, outfold, build, latex_path=None, pandoc_pat
             import_pywin32()
         exe = os.path.split(sys.executable)[0]
 
-    extensions = {"ipynb": ".ipynb", "latex": ".tex", "pdf": ".pdf", "html": ".html", "rst": ".rst",
-                  "python": ".py", "docx": ".docx", "word": ".docx", "slides": ".slides.html",
-                  "present": ".slides2p.html"}
+    extensions = {"ipynb": ".ipynb", "latex": ".tex", "elatex": ".tex", "pdf": ".pdf",
+                  "html": ".html", "rst": ".rst", "python": ".py", "docx": ".docx",
+                  "word": ".docx", "slides": ".slides.html", "present": ".slides2p.html"}
 
     files = []
     skipped = []
@@ -387,14 +387,15 @@ def _process_notebooks_in(notebooks, outfold, build, latex_path=None, pandoc_pat
                 list_args.extend(['--config', '"%s"' % custom_config,
                                   '--SphinxTransformer.author=""',
                                   '--SphinxTransformer.overridetitle="{0}"'.format(title)])
-                format = "latex"
+                format = "elatex"
                 compilation = True
                 thisfiles.append(os.path.splitext(outputfile)[0] + ".tex")
-            elif format == "latex":
+            elif format in ("latex", "elatex"):
                 if not os.path.exists(custom_config):
                     raise FileNotFoundError(custom_config)
                 list_args.extend(['--config', '"%s"' % custom_config])
                 compilation = False
+                format = "elatex"
             elif format in ("word", "docx"):
                 format = "html"
                 compilation = False
@@ -428,7 +429,7 @@ def _process_notebooks_in(notebooks, outfold, build, latex_path=None, pandoc_pat
                     nb2rst(notebook, outputfile, post_process=False)
                     err = ""
                     c = ""
-                elif nbconvert_main != fnbcexe or format not in ("slides", "latex", "pdf"):
+                elif nbconvert_main != fnbcexe or format not in ("slides", "elatex", "latex", "pdf"):
                     if options_args:
                         fLOG("[_process_notebooks_in] NBp*:",
                              format, options_args)
@@ -460,7 +461,7 @@ def _process_notebooks_in(notebooks, outfold, build, latex_path=None, pandoc_pat
                 if "raise ImportError" in err:
                     raise ImportError(err)
                 if len(err) > 0:
-                    if format == "latex":
+                    if format in ("elatex", "latex"):
                         # There might be some errors because the latex script needs to be post-processed
                         # sometimes (wrong characters such as " or formulas not
                         # captured as formulas).
@@ -631,7 +632,7 @@ def _process_notebooks_in(notebooks, outfold, build, latex_path=None, pandoc_pat
                     "slides" in formats, "present" in formats, exc=exc, github="github" in formats,
                     notebook=notebook, nblinks=nblinks, fLOG=fLOG)
 
-            elif format in ("tex", "latex", "pdf"):
+            elif format in ("tex", "elatex", "latex", "pdf"):
                 thisfiles += add_link_to_notebook(outputfile, notebook, False, False,
                                                   False, False, False, exc=exc, nblinks=nblinks,
                                                   fLOG=fLOG, notebook_replacements=nb_replacements)

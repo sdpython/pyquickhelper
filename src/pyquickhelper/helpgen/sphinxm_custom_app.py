@@ -83,6 +83,9 @@ class CustomSphinxApp(Sphinx):
         elif buildername == "md":
             from ..sphinxext.sphinx_md_builder import MdBuilder
             module = MdBuilder.__module__
+        elif buildername in ("latex", "elatex", "pdf"):
+            from ..sphinxext.sphinx_latex_builder import EnhancedLaTeXBuilder
+            module = EnhancedLaTeXBuilder.__module__
 
         if 'extensions' not in confoverrides:
             if extensions == 'all':

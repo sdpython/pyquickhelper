@@ -168,8 +168,10 @@ def setup(app):
     """
     app.add_node(collapse_node,
                  html=(visit_collapse_node_html, depart_collapse_node_html),
+                 elatex=(visit_collapse_node, depart_collapse_node),
                  latex=(visit_collapse_node, depart_collapse_node),
                  text=(visit_collapse_node, depart_collapse_node),
+                 md=(visit_collapse_node, depart_collapse_node),
                  rst=(visit_collapse_node_rst, depart_collapse_node_rst))
 
     app.add_directive('collapse', CollapseDirective)

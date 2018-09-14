@@ -208,7 +208,7 @@ class RstTranslator(TextTranslator, CommonSphinxWriterHelpers):
 
     def log_unknown(self, type, node):
         logger = logging.getLogger("RstBuilder")
-        logger.warning("%s(%s) unsupported formatting" % (type, node))
+        logger.warning("[rst] %s(%s) unsupported formatting" % (type, node))
 
     def wrap(self, text, width=STDINDENT):
         self.wrapper.width = width

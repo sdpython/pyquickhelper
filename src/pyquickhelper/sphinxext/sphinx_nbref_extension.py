@@ -177,13 +177,17 @@ def setup(app):
 
     app.add_node(nbreflist,
                  html=(visit_nbreflist_node, depart_nbreflist_node),
+                 elatex=(visit_nbreflist_node, depart_nbreflist_node),
                  latex=(visit_nbreflist_node, depart_nbreflist_node),
                  text=(visit_nbreflist_node, depart_nbreflist_node),
+                 md=(visit_nbreflist_node, depart_nbreflist_node),
                  rst=(visit_nbreflist_node, depart_nbreflist_node))
     app.add_node(nbref_node,
                  html=(visit_nbref_node, depart_nbref_node),
+                 elatex=(visit_nbref_node, depart_nbref_node),
                  latex=(visit_nbref_node, depart_nbref_node),
                  text=(visit_nbref_node, depart_nbref_node),
+                 md=(visit_nbref_node, depart_nbref_node),
                  rst=(visit_nbref_node, depart_nbref_node))
 
     app.add_directive('nbref', NbRef)

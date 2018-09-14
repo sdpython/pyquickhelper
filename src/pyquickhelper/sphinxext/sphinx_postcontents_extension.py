@@ -210,8 +210,10 @@ def setup(app):
 
     app.add_node(postcontents_node,
                  html=(visit_postcontents_node, depart_postcontents_node),
+                 elatex=(visit_postcontents_node, depart_postcontents_node),
                  latex=(visit_postcontents_node, depart_postcontents_node),
                  text=(visit_postcontents_node, depart_postcontents_node),
+                 md=(visit_postcontents_node, depart_postcontents_node),
                  rst=(visit_postcontents_node, depart_postcontents_node))
 
     app.add_directive('postcontents', PostContentsDirective)

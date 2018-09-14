@@ -64,6 +64,8 @@ from ..sphinxext.sphinx_runpython_extension import setup as setup_runpython
 from .sphinx_runpython_extension import RunPythonDirective, runpython_node
 from ..sphinxext.sphinximages.sphinxtrib.images import setup as setup_images
 
+from ..sphinxext.sphinx_latex_builder import setup as setup_latex
+
 
 def get_default_extensions():
     """
@@ -104,7 +106,7 @@ def get_default_extensions():
                       setup_runpython, setup_mathdef, setup_blocref,
                       setup_faqref, setup_exref, setup_nbref,
                       setup_docassert, setup_signature, setup_tpl,
-                      setup_cmdref, setup_epkg, setup_rst, setup_md,
+                      setup_cmdref, setup_epkg, setup_rst, setup_md, setup_latex,
                       setup_postcontents, setup_tocdelay, setup_youtube,
                       # directives from sphinx
                       setup_graphviz, setup_imgmath, setup_todo,

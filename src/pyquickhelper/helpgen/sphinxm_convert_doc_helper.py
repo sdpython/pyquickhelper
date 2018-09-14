@@ -114,6 +114,7 @@ def rst2html(s, fLOG=noLOG, writer="html", keep_warnings=False,
     @param      writer              ``'html'`` for :epkg:`HTML` format,
                                     ``'rst'`` for :epkg:`RST` format,
                                     ``'md'`` for :epkg:`MD` format,
+                                    ``'elatex'`` for :epkg:`latex` format,
                                     ``'doctree'`` to get the doctree, *writer* can also be a tuple
                                     for custom formats and must be like ``('buider_name', builder_class)``.
     @param      keep_warnings       keep_warnings in the final HTML
@@ -262,6 +263,9 @@ def rst2html(s, fLOG=noLOG, writer="html", keep_warnings=False,
     defopt = default_sphinx_options(**options)
     if "master_doc" not in defopt:
         defopt["master_doc"] = document_name
+    if writer in ('latex', 'elatex') and 'latex_documents' not in defopt:
+        latex_documents = [(document_name, ) * 5]
+        defopt['latex_documents'] = latex_documents
 
     ret_doctree = writer == "doctree"
     if ret_doctree:
@@ -271,11 +275,7 @@ def rst2html(s, fLOG=noLOG, writer="html", keep_warnings=False,
         mockapp, writer, title_names = MockSphinxApp.create("sphinx", directives,
                                                             confoverrides=defopt, new_extensions=new_extensions, fLOG=fLOG)
         writer_name = "HTMLWriterWithCustomDirectives"
-    elif writer == "rst":
-        writer_name = writer
-        mockapp, writer, title_names = MockSphinxApp.create(writer, directives,
-                                                            confoverrides=defopt, new_extensions=new_extensions, fLOG=fLOG)
-    elif writer == "md":
+    elif writer in ("rst", "md", "elatex"):
         writer_name = writer
         mockapp, writer, title_names = MockSphinxApp.create(writer, directives,
                                                             confoverrides=defopt, new_extensions=new_extensions, fLOG=fLOG)
@@ -301,7 +301,6 @@ def rst2html(s, fLOG=noLOG, writer="html", keep_warnings=False,
 
     # next
     settings_overrides.update(defopt)
-
     config = mockapp.config
     config.blog_background = True
     config.blog_background_page = False
@@ -355,10 +354,17 @@ def rst2html(s, fLOG=noLOG, writer="html", keep_warnings=False,
     parts = pub.writer.parts
 
     if not keep_warnings:
-        exp = re.sub(
-            '(<div class="system-message">(.|\\n)*?</div>)', "", parts["whole"])
+        if isinstance(parts["whole"], list):
+            # Not html.
+            exp = "".join(parts["whole"])
+        else:
+            exp = re.sub(
+                '(<div class="system-message">(.|\\n)*?</div>)', "", parts["whole"])
     else:
-        exp = parts["whole"]
+        if isinstance(parts["whole"], list):
+            exp = "".join(parts["whole"])
+        else:
+            exp = parts["whole"]
 
     if ret_doctree:
         return doctree
@@ -369,7 +375,8 @@ def rst2html(s, fLOG=noLOG, writer="html", keep_warnings=False,
         page = None
         pages = []
         main = ("/{0}.m.html".format(document_name),
-                "/{0}.m.{1}".format(document_name, writer_name)),
+                "/{0}.m.{1}".format(document_name, writer_name),
+                document_name)
         if not hasattr(writer.builder, "iter_pages"):
             raise AttributeError(
                 "Class '{0}' must have a method 'iter_pages' which returns a dictionary.".format(writer.builder))
@@ -377,16 +384,19 @@ def rst2html(s, fLOG=noLOG, writer="html", keep_warnings=False,
         for k, v in writer.builder.iter_pages():
             pages.append(k)
             contents.append(v)
-            if k == main:
+            if k in main:
                 page = v
                 break
         if page is None and len(contents) == 1:
             page = contents[0]
         if page is None:
             raise ValueError(
-                "No page contents was produced only '{0}'.".format(", ".join(pages)))
+                "No page contents was produced, only '{0}'.".format(pages))
         if layout == "sphinx":
-            return page
+            if isinstance(page, str):
+                return page
+            else:
+                return "\n".join(page)
         elif layout == "sphinx_body":
             lines = page.replace('</head>', '</head>\n').split("\n")
             keep = []

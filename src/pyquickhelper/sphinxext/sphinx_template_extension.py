@@ -169,8 +169,10 @@ def setup(app):
     app.add_config_value('tpl_template', {}, 'env')
     app.add_node(tpl_node,
                  html=(visit_tpl_node, depart_tpl_node),
+                 elatex=(visit_tpl_node, depart_tpl_node),
                  latex=(visit_tpl_node, depart_tpl_node),
                  rst=(visit_tpl_node, depart_tpl_node),
+                 md=(visit_tpl_node, depart_tpl_node),
                  text=(visit_tpl_node, depart_tpl_node))
 
     app.add_role('tpl', tpl_role)

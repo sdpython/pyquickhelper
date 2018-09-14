@@ -114,7 +114,7 @@ def update_notebook_link(text, format, nblinks, fLOG):
             return new_url
         reg = re.compile("[[]([^[]+?)[]][(]find://([^ ]+)[)]")
         new_text = reg.sub(repipy, text)
-    elif format == "latex":
+    elif format in ("latex", "elatex"):
         def replat(l):
             url, anc = l.groups()
             url = get_url_from_nblinks(nblinks, url, format)

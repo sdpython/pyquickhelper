@@ -334,8 +334,10 @@ def setup(app):
 
     app.add_node(tocdelay_node,
                  html=(visit_tocdelay_node, depart_tocdelay_node),
+                 elatex=(visit_tocdelay_node, depart_tocdelay_node),
                  latex=(visit_tocdelay_node, depart_tocdelay_node),
                  text=(visit_tocdelay_node, depart_tocdelay_node),
+                 md=(visit_tocdelay_node, depart_tocdelay_node),
                  rst=(visit_tocdelay_node, depart_tocdelay_node))
 
     app.add_directive('tocdelay', TocDelayDirective)

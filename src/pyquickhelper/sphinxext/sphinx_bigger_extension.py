@@ -143,7 +143,9 @@ def setup(app):
     app.add_node(bigger_node,
                  html=(visit_bigger_node, depart_bigger_node_html),
                  latex=(visit_bigger_node_latex, depart_bigger_node_latex),
+                 elatex=(visit_bigger_node_latex, depart_bigger_node_latex),
                  text=(visit_bigger_node, depart_bigger_node),
+                 md=(visit_bigger_node, depart_bigger_node),
                  rst=(visit_bigger_node_rst, depart_bigger_node_rst))
 
     app.add_role('bigger', bigger_role)

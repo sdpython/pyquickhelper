@@ -67,11 +67,14 @@ class CommonSphinxWriterHelpers:
             builder = self.builder  # pylint: disable=E1101
             srcdir = builder.srcdir
             if srcdir == "IMPOSSIBLETOFIND":
-                srcdir = ""
+                srcdir = None
             if image_dest is None:
                 outdir = builder.outdir
-                current = os.path.dirname(os.path.join(
-                    srcdir, builder.current_docname))
+                if srcdir is None:
+                    current = os.path.dirname(builder.current_docname)
+                else:
+                    current = os.path.dirname(os.path.join(
+                        srcdir, builder.current_docname))
                 if current is None or not os.path.exists(current):
                     raise FileNotFoundError(
                         "Unable to find document '{0}'".format(current))
@@ -81,7 +84,10 @@ class CommonSphinxWriterHelpers:
             else:
                 fold = image_dest
 
-            full = os.path.join(srcdir, atts['src'])
+            full = os.path.join(srcdir, atts['src']) if srcdir else atts['src']
+            if not os.path.exists(full):
+                raise FileNotFoundError(
+                    "Unable to find source file '{0}' for docname '{1}'".format(full, atts['src']))
             ext = os.path.splitext(atts['src'])[-1]
             name = self.hash_md5_readfile(full) + ext
 

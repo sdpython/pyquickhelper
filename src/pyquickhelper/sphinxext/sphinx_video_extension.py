@@ -283,8 +283,10 @@ def setup(app):
     app.connect('builder-inited', initialize_videos_directive)
     app.add_node(video_node,
                  html=(visit_video_node, depart_video_node_html),
+                 elatex=(visit_video_node, depart_video_node_latex),
                  latex=(visit_video_node, depart_video_node_latex),
                  rst=(visit_video_node, depart_video_node_rst),
+                 md=(visit_video_node, depart_video_node_rst),
                  text=(visit_video_node, depart_video_node_text))
 
     app.add_directive('video', VideoDirective)
