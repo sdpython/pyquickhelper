@@ -1504,6 +1504,8 @@ class _CustomSphinx(Sphinx):
             with warnings.catch_warnings():
                 warnings.filterwarnings(
                     "ignore", category=DeprecationWarning)
+                warnings.filterwarnings(
+                    "ignore", category=RemovedInSphinx30Warning)
                 self.registry.load_extension(self, extname)
         except Exception as e:
             raise ExtensionError(

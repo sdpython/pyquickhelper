@@ -391,8 +391,7 @@ def process_todoext_nodes(app, doctree, fromdocname):
 
             # Create a reference
             newnode = nodes.reference('', '', internal=True)
-            innernode = nodes.emphasis(
-                locale_(orig_entry), locale_(orig_entry))
+            innernode = nodes.emphasis('', locale_(orig_entry))
             try:
                 newnode['refuri'] = app.builder.get_relative_uri(
                     fromdocname, todoext_info['docname'])

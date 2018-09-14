@@ -381,10 +381,14 @@ class TestRstBuilder(ExtTestCase):
         if sys.version_info[0] >= 3:
             content = content.replace('u"', '"')
 
-        text = rst2html(content,  # fLOG=fLOG,
-                        writer="rst", keep_warnings=False, layout='sphinx',
-                        extlinks={'issue': ('http://%s', '_issue_')},
-                        rst_image_dest=temp)
+        try:
+            text = rst2html(content,  # fLOG=fLOG,
+                            writer="rst", keep_warnings=False, layout='sphinx',
+                            extlinks={'issue': ('http://%s', '_issue_')},
+                            rst_image_dest=temp)
+        except Exception as e:
+            raise Exception(
+                "Issue with '{0}' and '{1}'".format(img1, img2)) from e
 
         text = text.replace("\r", "")
         self.assertIn(':: 5cf2985161e8ba56d893.png', text)
@@ -396,7 +400,34 @@ class TestRstBuilder(ExtTestCase):
         with open(os.path.join(temp, "out_image.rst"), "w", encoding="utf8") as f:
             f.write(text)
 
+    def test_rst_image_target(self):
+
+        temp = get_temp_folder(__file__, "temp_rst_image_target")
+        root = os.path.abspath(os.path.dirname(__file__))
+        img1 = os.path.join(root, "data", "image", "im.png")
+        content = """
+                    .. image:: {0}
+                        :target: https://github.com/sdpython
+                        :width: 200
+                        :alt: alternative1
+                    """.replace("                    ", "").format(img1).replace("\\", "/")
+        if sys.version_info[0] >= 3:
+            content = content.replace('u"', '"')
+
+        text = rst2html(content,  # fLOG=fLOG,
+                        writer="rst", keep_warnings=False, layout='sphinx',
+                        extlinks={'issue': ('http://%s', '_issue_')},
+                        rst_image_dest=temp)
+
+        text = text.replace("\r", "")
+        self.assertIn(':: 5cf2985161e8ba56d893.png', text)
+        self.assertIn('   :alt: alternative1', text)
+        self.assertIn('   :width: 200', text)
+        self.assertExists(os.path.join(temp, '5cf2985161e8ba56d893.png'))
+        with open(os.path.join(temp, "out_image.rst"), "w", encoding="utf8") as f:
+            f.write(text)
+
 
 if __name__ == "__main__":
-    # TestRstBuilder().test_rst_image()
+    TestRstBuilder().test_rst_builder_sphinx()
     unittest.main()

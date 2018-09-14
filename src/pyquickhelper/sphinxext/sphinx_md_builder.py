@@ -752,31 +752,25 @@ class MdTranslator(TextTranslator, CommonSphinxWriterHelpers):
         if 'refuri' not in node:
             if 'name' in node.attributes:
                 self.add_text('[!%s]' % node['name'])
-                raise nodes.SkipNode
             elif 'refid' in node and node['refid']:
                 self.add_text('[!%s]' % node['refid'])
-                raise nodes.SkipNode
             else:
                 self.log_unknown(type(node), node)
-                raise nodes.SkipNode
         elif 'internal' not in node and 'name' in node.attributes:
             self.add_text('[%s](%s)' %
                           (node['name'], clean_refuri(node['refuri'])))
-            raise nodes.SkipNode
         elif 'internal' not in node and 'names' in node.attributes:
             anchor = node['names'][0] if len(
                 node['names']) > 0 else node['refuri']
             self.add_text('[%s](%s)' %
                           (anchor, clean_refuri(node['refuri'])))
-            raise nodes.SkipNode
         elif 'reftitle' in node:
+            name = node['name'] if 'name' in node else node.astext()
             self.add_text('[%s](%s)' %
-                          (node.astext(), clean_refuri(node['refuri'])))
-            # self.end_state(wrap=False)
-            raise nodes.SkipNode
+                          (name, clean_refuri(node['refuri'])))
         else:
-            self.add_text('[%s](%s)' % (node.astext(), node['refuri']))
-            raise nodes.SkipNode
+            name = node['name'] if 'name' in node else node.astext()
+            self.add_text('[%s](%s)' % (name, node['refuri']))
 
     def depart_reference(self, node):
         if 'refuri' not in node:

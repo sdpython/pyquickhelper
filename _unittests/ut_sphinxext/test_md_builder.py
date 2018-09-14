@@ -427,6 +427,33 @@ class TestMdBuilder(ExtTestCase):
         with open(os.path.join(temp, "md_image.md"), "w", encoding="utf8") as f:
             f.write(text)
 
+    def test_md_image_target(self):
+
+        temp = get_temp_folder(__file__, "temp_md_image_target")
+        root = os.path.abspath(os.path.dirname(__file__))
+        img1 = os.path.join(root, "data", "image", "im.png")
+        content = """
+                    .. image:: {0}
+                        :target: https://github.com/sdpython
+                        :width: 200
+                        :alt: alternative1
+                    """.replace("                    ", "").format(img1).replace("\\", "/")
+        if sys.version_info[0] >= 3:
+            content = content.replace('u"', '"')
+
+        text = rst2html(content,  # fLOG=fLOG,
+                        writer="md", keep_warnings=False, layout='sphinx',
+                        extlinks={'issue': ('http://%s', '_issue_')},
+                        md_image_dest=temp)
+
+        text = text.replace("\r", "")
+        self.assertIn('![alternative1]', text)
+        self.assertIn('=200x', text)
+        self.assertIn("![alternative1](5cf2985161e8ba56d893.png =200x)", text)
+        self.assertExists(os.path.join(temp, '5cf2985161e8ba56d893.png'))
+        with open(os.path.join(temp, "md_image.md"), "w", encoding="utf8") as f:
+            f.write(text)
+
 
 if __name__ == "__main__":
     # TestMdBuilder().test_md_image()

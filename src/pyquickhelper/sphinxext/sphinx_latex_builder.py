@@ -214,6 +214,6 @@ class EnhancedLaTeXBuilder(LaTeXBuilder):
 
 def setup(app):
     """
-    Initializes builder @see cl EnhancedLateXBuilder.
+    Initializes builder @see cl EnhancedLaTeXBuilder.
     """
     app.add_builder(EnhancedLaTeXBuilder)

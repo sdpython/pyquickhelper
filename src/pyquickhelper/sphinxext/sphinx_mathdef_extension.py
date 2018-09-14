@@ -337,8 +337,7 @@ def process_mathdef_nodes(app, doctree, fromdocname):
 
             # Create a reference
             newnode = nodes.reference('', '', internal=True)
-            innernode = nodes.emphasis(
-                _(orig_entry), _(orig_entry))
+            innernode = nodes.emphasis('', _(orig_entry))
             try:
                 newnode['refuri'] = app.builder.get_relative_uri(
                     fromdocname, mathdef_info['docname'])

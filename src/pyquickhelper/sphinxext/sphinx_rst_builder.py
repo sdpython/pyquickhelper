@@ -809,34 +809,29 @@ class RstTranslator(TextTranslator, CommonSphinxWriterHelpers):
         if 'refuri' not in node:
             if 'name' in node.attributes:
                 self.add_text('`%s`_' % node['name'])
-                raise nodes.SkipNode
             elif 'refid' in node and node['refid']:
                 self.add_text(':ref:`%s`' % node['refid'])
-                raise nodes.SkipNode
             else:
                 self.log_unknown(type(node), node)
-                raise nodes.SkipNode
         elif 'internal' not in node and 'name' in node.attributes:
             self.add_text('`%s <%s>`_' %
                           (node['name'], clean_refuri(node['refuri'])))
-            raise nodes.SkipNode
         elif 'internal' not in node and 'names' in node.attributes:
             anchor = node['names'][0] if len(
                 node['names']) > 0 else node['refuri']
             self.add_text('`%s <%s>`_' %
                           (anchor, clean_refuri(node['refuri'])))
-            raise nodes.SkipNode
         elif 'reftitle' in node:
             # Include node as text, rather than with markup.
             # reST seems unable to parse a construct like ` ``literal`` <url>`_
             # Hence it reverts to the more simple `literal <url>`_
+            name = node['name'] if 'name' in node else node.astext()
             self.add_text('`%s <%s>`_' %
-                          (node.astext(), clean_refuri(node['refuri'])))
+                          (name, clean_refuri(node['refuri'])))
             # self.end_state(wrap=False)
-            raise nodes.SkipNode
         else:
-            self.add_text('`%s <%s>`_' % (node.astext(), node['refuri']))
-            raise nodes.SkipNode
+            name = node['name'] if 'name' in node else node.astext()
+            self.add_text('`%s <%s>`_' % (name, node['refuri']))
 
     def depart_reference(self, node):
         if 'refuri' not in node:

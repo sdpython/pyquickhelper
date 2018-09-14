@@ -449,8 +449,7 @@ def process_blocref_nodes_generic(app, doctree, fromdocname, class_name,
 
             # Create a reference
             newnode = nodes.reference('', '', internal=True)
-            innernode = nodes.emphasis(
-                _(orig_entry), _(orig_entry))
+            newnode['name'] = _(orig_entry)
             try:
                 newnode['refuri'] = app.builder.get_relative_uri(
                     fromdocname, blocref_info['docname'])
@@ -464,7 +463,6 @@ def process_blocref_nodes_generic(app, doctree, fromdocname, class_name,
             except NoUri:
                 # ignore if no URI can be determined, e.g. for LaTeX output
                 pass
-            newnode.append(innernode)
 
             para += newnode
             para += nodes.Text(desc2, desc2)
