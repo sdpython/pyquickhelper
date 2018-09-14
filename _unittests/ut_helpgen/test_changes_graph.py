@@ -6,6 +6,7 @@
 import sys
 import os
 import unittest
+import warnings
 import pandas
 
 
@@ -74,18 +75,20 @@ class TestGraphChanges (unittest.TestCase):
                   '2015-w16', '2015-w17', '2015-w18', '2015-w19', '2015-w20']
             plt.close('all')
             plt.style.use('ggplot')
-            _, ax = plt.subplots(nrows=1, ncols=1, figsize=(10, 4))
-            ax.bar(x, y)
-            tig = ax.get_xticks()
-            labs = []
-            for t in tig:
-                if t in x:
-                    labs.append(xl[x.index(t)])
-                else:
-                    labs.append("")
-            ax.set_xticklabels(labs)
-            ax.grid(True)
-            ax.set_title("commits")
+            with warnings.catch_warnings():
+                warnings.simplefilter('ignore', DeprecationWarning)
+                _, ax = plt.subplots(nrows=1, ncols=1, figsize=(10, 4))
+                ax.bar(x, y)
+                tig = ax.get_xticks()
+                labs = []
+                for t in tig:
+                    if t in x:
+                        labs.append(xl[x.index(t)])
+                    else:
+                        labs.append("")
+                ax.set_xticklabels(labs)
+                ax.grid(True)
+                ax.set_title("commits")
 
         if __name__ != "__main__":
             code = code.replace("plt.show", "#plt.show")
