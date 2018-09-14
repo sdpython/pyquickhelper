@@ -6,14 +6,11 @@
 """
 import logging
 import warnings
-from docutils import nodes
 from docutils.parsers.rst.directives import directive as rst_directive
-from docutils.parsers.rst import directives as doc_directives, roles as doc_roles
 from sphinx.config import Config
 from sphinx.ext import autodoc
 from sphinx import __display_version__ as sphinx__display_version__
 from sphinx.application import VersionRequirementError
-from sphinx.util.docutils import is_html5_writer_available
 from sphinx.errors import ExtensionError
 from sphinx.deprecation import RemovedInSphinx30Warning
 from .sphinxm_convert_doc_sphinx_helper import HTMLWriterWithCustomDirectives, _CustomSphinx
@@ -53,39 +50,32 @@ class MockSphinxApp:
                         }
         self.mapping_connect = {}
         with warnings.catch_warnings():
-            warnings.simplefilter("ignore", RemovedInSphinx30Warning) 
+            warnings.simplefilter("ignore", RemovedInSphinx30Warning)
             self.config = Config(None, None, confoverrides, None)
         self.confdir = "."
         self.doctreedir = "."
         self.srcdir = "."
         self.builder = writer.builder
         self._new_extensions = new_extensions
-        # self.domains = {}
-        # self._events = {}
-        # self.events = EventManager()
-        # self.registry = SphinxComponentRegistry()
-        # self.extensions = {}
-        # self._setting_up_extension = ['?']
-        # setup_rst(self)
-        # setup_rst(app)
+        if id(self.app) != id(self.writer.app):
+            raise RuntimeError(
+                "Different application in the writer is not allowed.")
 
     def add_directive(self, name, cl, *args, **options):
         """
         See :epkg:`class Sphinx`.
         """
-        doc_directives.register_directive(name, cl)
+        # doc_directives.register_directive(name, cl)
         self.mapping[str(cl)] = name
         self.app.add_directive(name, cl, *args, **options)
-        self.writer.app.add_directive(name, cl, *args, **options)
 
     def add_role(self, name, cl):
         """
         See :epkg:`class Sphinx`.
         """
-        doc_roles.register_canonical_role(name, cl)
+        # doc_roles.register_canonical_role(name, cl)
         self.mapping[str(cl)] = name
         self.app.add_role(name, cl)
-        self.writer.app.add_role(name, cl)
 
     def add_builder(self, name, cl):
         """
@@ -93,7 +83,6 @@ class MockSphinxApp:
         """
         self.mapping[str(cl)] = name
         self.app.add_builder(name, cl)
-        self.writer.app.add_builder(name, cl)
 
     def add_mapping(self, name, cl):
         """
@@ -123,45 +112,7 @@ class MockSphinxApp:
         """
         See :epkg:`class Sphinx`.
         """
-        # type: (nodes.Node, Any) -> None
-        nodes._add_node_class_names([node.__name__])
-        for key, val in kwds.items():
-            if not isinstance(val, tuple):
-                continue
-            visit, depart = val
-            translator = self.writer.app.registry.translators.get(key)
-            translators = []
-            if translator is not None:
-                translators.append(translator)
-            elif key == 'html':
-                from sphinx.writers.html import HTMLTranslator
-                translators.append(HTMLTranslator)
-                if is_html5_writer_available():
-                    from sphinx.writers.html5 import HTML5Translator
-                    translators.append(HTML5Translator)
-            elif key == 'latex':
-                try:
-                    from sphinx.writers.latex import LaTeXTranslator
-                except ImportError:
-                    # Since sphinx 1.7.3 (circular reference).
-                    import sphinx.builders.latex.transforms
-                    from sphinx.writers.latex import LaTeXTranslator
-                translators.append(LaTeXTranslator)
-            elif key == 'text':
-                from sphinx.writers.text import TextTranslator
-                translators.append(TextTranslator)
-            elif key == 'man':
-                from sphinx.writers.manpage import ManualPageTranslator
-                translators.append(ManualPageTranslator)
-            elif key == 'texinfo':
-                from sphinx.writers.texinfo import TexinfoTranslator
-                translators.append(TexinfoTranslator)
-
-            for translator in translators:
-                setattr(translator, 'visit_' + node.__name__, visit)
-                if depart:
-                    setattr(translator, 'depart_' +
-                            node.__name__, depart)
+        self.app.add_node(node, **kwds)
 
     def finalize(self, doctree, external_docnames=None):
         """
@@ -203,7 +154,6 @@ class MockSphinxApp:
         """
         self.mapping_connect[node] = func
         self.app.connect(node, func)
-        self.writer.app.connect(node, func)
 
     def add_domain(self, domain):
         """
@@ -285,7 +235,7 @@ class MockSphinxApp:
     @staticmethod
     def create(writer="html", directives=None, confoverrides=None, new_extensions=None, fLOG=None):
         """
-        Creates a MockApp for :epkg:`Sphinx`.
+        Creates a @see cl MockSphinxApp for :epkg:`Sphinx`.
 
         @param      writer          ``'sphinx'`` is the only allowed value
         @param      directives      new directives to add (see below)
@@ -335,8 +285,7 @@ class MockSphinxApp:
             app = _CustomSphinx(srcdir=None, confdir=None, outdir=None, doctreedir=None,
                                 buildername='memorymd', confoverrides=confoverrides,
                                 new_extensions=new_extensions)
-            writer = MDWriterWithCustomDirectives(
-                builder=app.builder, app=app)
+            writer = MDWriterWithCustomDirectives(builder=app.builder, app=app)
             mockapp = MockSphinxApp(writer, writer.app, confoverrides=confoverrides,
                                     new_extensions=new_extensions)
         elif writer == "elatex":
@@ -361,7 +310,7 @@ class MockSphinxApp:
                                     new_extensions=new_extensions)
         else:
             raise ValueError(
-                "Writer must be 'html', 'rst' pr 'md', not '{0}'.".format(writer))
+                "Writer must be 'html', 'rst', 'md', 'elatex', not '{0}'.".format(writer))
 
         # titles
         title_names = []
@@ -378,9 +327,6 @@ class MockSphinxApp:
                 if len(tu) < 2:
                     raise ValueError(
                         "directives is a list of tuple with at least two elements, check the documentation")
-                name, cl = tu[:2]
-                doc_directives.register_directive(name, cl)
-                mockapp.add_directive(name, cl)
                 if len(tu) == 5:
                     name, cl, node, f1, f2 = tu
                     mockapp.add_node(node, html=(f1, f2))
@@ -390,6 +336,8 @@ class MockSphinxApp:
                 elif len(tu) != 2:
                     raise ValueError(
                         "directives is a list of tuple with 2 or 5 elements, check the documentation")
+                name, cl = tu[:2]
+                mockapp.add_directive(name, cl)
 
         if fLOG:
             apps = [mockapp]

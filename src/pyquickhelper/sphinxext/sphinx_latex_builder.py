@@ -4,7 +4,7 @@
 @brief Overwrites latex writer as Sphinx's version is bugged in version 1.8.0.
 """
 import os
-from docutils import nodes, writers
+from docutils import nodes
 from docutils.frontend import OptionParser
 from sphinx.locale import __
 from sphinx.builders.latex import LaTeXBuilder
@@ -13,22 +13,6 @@ from sphinx.writers.latex import ENUMERATE_LIST_STYLE, toRoman
 from sphinx.util import logging
 from sphinx.util.docutils import SphinxFileOutput
 from sphinx import addnodes
-
-
-class EnhancedLaTeXWriter(LaTeXWriter):
-    """
-    Overwrites `LatexWriter <https://github.com/sphinx-doc/sphinx/blob/master/sphinx/writers/latex.py#L189>`_.
-    """
-
-    def __init__(self, builder):
-        LaTeXWriter.__init__(self, builder)
-        if not hasattr(builder, "config"):
-            raise TypeError("Builder has no config: {}".format(type(builder)))
-
-    def translate(self):
-        visitor = EnhancedLaTeXTranslator(self.builder, self.document)
-        self.document.walkabout(visitor)
-        self.output = visitor.body
 
 
 class EnhancedLaTeXTranslator(LaTeXTranslator):
@@ -128,6 +112,23 @@ class EnhancedLaTeXTranslator(LaTeXTranslator):
         else:
             # The program should not necessarily be here.
             pass
+
+
+class EnhancedLaTeXWriter(LaTeXWriter):
+    """
+    Overwrites `LatexWriter <https://github.com/sphinx-doc/sphinx/blob/master/sphinx/writers/latex.py#L189>`_.
+    """
+    translator_class = EnhancedLaTeXTranslator
+
+    def __init__(self, builder):
+        LaTeXWriter.__init__(self, builder)
+        if not hasattr(builder, "config"):
+            raise TypeError("Builder has no config: {}".format(type(builder)))
+
+    def translate(self):
+        visitor = EnhancedLaTeXTranslator(self.builder, self.document)
+        self.document.walkabout(visitor)
+        self.output = visitor.body
 
 
 class EnhancedLaTeXBuilder(LaTeXBuilder):

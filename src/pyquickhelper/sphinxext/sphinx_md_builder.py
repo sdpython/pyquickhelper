@@ -53,130 +53,6 @@ from ..sphinxext.sphinx_sharenet_extension import visit_sharenet_node_rst, depar
 from ._sphinx_common_builder import CommonSphinxWriterHelpers
 
 
-class MdBuilder(Builder):
-    """
-    Defines a :epkg:`MD` builder.
-    """
-    name = 'md'
-    format = 'md'
-    file_suffix = '.md'
-    link_suffix = None  # defaults to file_suffix
-
-    def __init__(self, *args, **kwargs):
-        """
-        Constructor, add a logger.
-        """
-        Builder.__init__(self, *args, **kwargs)
-        self.logger = logging.getLogger("MdBuilder")
-
-    def init(self):
-        """
-        Load necessary templates and perform initialization.
-        """
-        if self.config.md_file_suffix is not None:
-            self.file_suffix = self.config.md_file_suffix
-        if self.config.md_link_suffix is not None:
-            self.link_suffix = self.config.md_link_suffix
-        elif self.link_suffix is None:
-            self.link_suffix = self.file_suffix
-
-        # Function to convert the docname to a markdown file name.
-        def file_transform(docname):
-            return docname + self.file_suffix
-
-        # Function to convert the docname to a relative URI.
-        def link_transform(docname):
-            return docname + self.link_suffix
-
-        if self.config.md_file_transform is not None:
-            self.file_transform = self.config.md_file_transform
-        else:
-            self.file_transform = file_transform
-        if self.config.md_link_transform is not None:
-            self.link_transform = self.config.md_link_transform
-        else:
-            self.link_transform = link_transform
-        self.md_image_dest = self.config.md_image_dest
-
-    def get_outdated_docs(self):
-        """
-        Return an iterable of input files that are outdated.
-        This method is taken from ``TextBuilder.get_outdated_docs()``
-        with minor changes to support ``(confval, md_file_transform))``.
-        """
-        for docname in self.env.found_docs:
-            if docname not in self.env.all_docs:
-                yield docname
-                continue
-            sourcename = path.join(self.env.srcdir, docname +
-                                   self.file_suffix)
-            targetname = path.join(self.outdir, self.file_transform(docname))
-
-            try:
-                targetmtime = path.getmtime(targetname)
-            except Exception:
-                targetmtime = 0
-            try:
-                srcmtime = path.getmtime(sourcename)
-                if srcmtime > targetmtime:
-                    yield docname
-            except EnvironmentError:
-                # source doesn't exist anymore
-                pass
-
-    def get_target_uri(self, docname, typ=None):
-        return self.link_transform(docname)
-
-    def prepare_writing(self, docnames):
-        self.writer = MdWriter(self)
-
-    def get_outfilename(self, pagename):
-        """
-        Overwrite *get_target_uri* to control file names.
-        """
-        return "{0}/{1}.md".format(self.outdir, pagename).replace("\\", "/")
-
-    def write_doc(self, docname, doctree):
-        # type: (unicode, nodes.Node) -> None
-        destination = StringOutput(encoding='utf-8')
-        self.current_docname = docname
-        self.writer.write(doctree, destination)
-        ctx = None
-        self.handle_page(docname, ctx, event_arg=doctree)
-
-    def handle_page(self, pagename, addctx, templatename=None,
-                    outfilename=None, event_arg=None):
-        if templatename is not None:
-            raise NotImplementedError("templatename must be None.")
-        outfilename = self.get_outfilename(pagename)
-        ensuredir(path.dirname(outfilename))
-        with open(outfilename, 'w', encoding='utf-8') as f:
-            f.write(self.writer.output)
-
-    def finish(self):
-        pass
-
-
-class MdWriter(writers.Writer):
-    """
-    Defines a :epkg:`MD` writer.
-    """
-    supported = ('text',)
-    settings_spec = ('No options here.', '', ())
-    settings_defaults = {}
-
-    output = None
-
-    def __init__(self, builder):
-        writers.Writer.__init__(self)
-        self.builder = builder
-
-    def translate(self):
-        visitor = MdTranslator(self.builder, self.document)
-        self.document.walkabout(visitor)
-        self.output = visitor.body
-
-
 class MdTranslator(TextTranslator, CommonSphinxWriterHelpers):
     """
     Defines a :epkg:`MD` translator.
@@ -1088,9 +964,140 @@ class MdTranslator(TextTranslator, CommonSphinxWriterHelpers):
         # for unit test.
         pass
 
+    def visit_inheritance_diagram(self, node):
+        pass
+
+    def depart_inheritance_diagram(self, node):
+        pass
+
     def unknown_visit(self, node):
         raise NotImplementedError(
             "Unknown node: '{0}' - '{1}'".format(node.__class__.__name__, node))
+
+
+class MdBuilder(Builder):
+    """
+    Defines a :epkg:`MD` builder.
+    """
+    name = 'md'
+    format = 'md'
+    file_suffix = '.md'
+    link_suffix = None  # defaults to file_suffix
+
+    def __init__(self, *args, **kwargs):
+        """
+        Constructor, add a logger.
+        """
+        Builder.__init__(self, *args, **kwargs)
+        self.logger = logging.getLogger("MdBuilder")
+
+    def init(self):
+        """
+        Load necessary templates and perform initialization.
+        """
+        if self.config.md_file_suffix is not None:
+            self.file_suffix = self.config.md_file_suffix
+        if self.config.md_link_suffix is not None:
+            self.link_suffix = self.config.md_link_suffix
+        elif self.link_suffix is None:
+            self.link_suffix = self.file_suffix
+
+        # Function to convert the docname to a markdown file name.
+        def file_transform(docname):
+            return docname + self.file_suffix
+
+        # Function to convert the docname to a relative URI.
+        def link_transform(docname):
+            return docname + self.link_suffix
+
+        if self.config.md_file_transform is not None:
+            self.file_transform = self.config.md_file_transform
+        else:
+            self.file_transform = file_transform
+        if self.config.md_link_transform is not None:
+            self.link_transform = self.config.md_link_transform
+        else:
+            self.link_transform = link_transform
+        self.md_image_dest = self.config.md_image_dest
+
+    def get_outdated_docs(self):
+        """
+        Return an iterable of input files that are outdated.
+        This method is taken from ``TextBuilder.get_outdated_docs()``
+        with minor changes to support ``(confval, md_file_transform))``.
+        """
+        for docname in self.env.found_docs:
+            if docname not in self.env.all_docs:
+                yield docname
+                continue
+            sourcename = path.join(self.env.srcdir, docname +
+                                   self.file_suffix)
+            targetname = path.join(self.outdir, self.file_transform(docname))
+
+            try:
+                targetmtime = path.getmtime(targetname)
+            except Exception:
+                targetmtime = 0
+            try:
+                srcmtime = path.getmtime(sourcename)
+                if srcmtime > targetmtime:
+                    yield docname
+            except EnvironmentError:
+                # source doesn't exist anymore
+                pass
+
+    def get_target_uri(self, docname, typ=None):
+        return self.link_transform(docname)
+
+    def prepare_writing(self, docnames):
+        self.writer = MdWriter(self)
+
+    def get_outfilename(self, pagename):
+        """
+        Overwrite *get_target_uri* to control file names.
+        """
+        return "{0}/{1}.md".format(self.outdir, pagename).replace("\\", "/")
+
+    def write_doc(self, docname, doctree):
+        # type: (unicode, nodes.Node) -> None
+        destination = StringOutput(encoding='utf-8')
+        self.current_docname = docname
+        self.writer.write(doctree, destination)
+        ctx = None
+        self.handle_page(docname, ctx, event_arg=doctree)
+
+    def handle_page(self, pagename, addctx, templatename=None,
+                    outfilename=None, event_arg=None):
+        if templatename is not None:
+            raise NotImplementedError("templatename must be None.")
+        outfilename = self.get_outfilename(pagename)
+        ensuredir(path.dirname(outfilename))
+        with open(outfilename, 'w', encoding='utf-8') as f:
+            f.write(self.writer.output)
+
+    def finish(self):
+        pass
+
+
+class MdWriter(writers.Writer):
+    """
+    Defines a :epkg:`MD` writer.
+    """
+    supported = ('text',)
+    settings_spec = ('No options here.', '', ())
+    settings_defaults = {}
+    translator_class = MdTranslator
+
+    output = None
+
+    def __init__(self, builder):
+        writers.Writer.__init__(self)
+        self.builder = builder
+
+    def translate(self):
+        visitor = MdTranslator(self.builder, self.document)
+        self.document.walkabout(visitor)
+        self.output = visitor.body
 
 
 def setup(app):

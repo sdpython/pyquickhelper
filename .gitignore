@@ -19,6 +19,7 @@ local.properties
 .settings/
 .loadpath
 **/.vs/*
+.vscode
 
 # External tool builders
 .externalToolBuilders/
@@ -287,3 +288,4 @@ math/*.png
 math/*.svg
 _unittests/ut_module/bokeh_plot
 _doc/sphinxdoc/source/tutorial/oo.png
+IMPOSSIBLETOFIND

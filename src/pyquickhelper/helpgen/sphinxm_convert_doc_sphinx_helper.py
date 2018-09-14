@@ -11,7 +11,7 @@ import warnings
 import pickle
 from sphinx.deprecation import RemovedInSphinx30Warning
 from sphinx.locale import _
-from docutils.parsers.rst import directives, roles, convert_directive_function
+from docutils.parsers.rst import roles
 from docutils.languages import en as docutils_en
 from sphinx.writers.html import HTMLWriter
 from sphinx.application import Sphinx, ENV_PICKLE_FILENAME
@@ -28,7 +28,6 @@ from sphinx.transforms import SphinxTransformer
 from sphinx.util.osutil import relative_uri
 from sphinx.util.logging import getLogger
 from sphinx.util.docutils import is_html5_writer_available
-from sphinx.util.docutils import directive_helper
 from sphinx import __display_version__
 from sphinx.application import Tags, builtin_extensions
 from sphinx.application import Config, CONFIG_FILENAME, ConfigError, VersionRequirementError
@@ -929,7 +928,7 @@ class _MemoryBuilder:
             output = self.templates.render(templatename, ctx)
         except UnicodeError:
             logger = getLogger("MockSphinxApp")
-            logger.warning("[MockSphinxApp] A unicode error occurred when rendering the page %s. "
+            logger.warning("[_CustomSphinx] A unicode error occurred when rendering the page %s. "
                            "Please make sure all config values that contain "
                            "non-ASCII content are Unicode strings.", pagename)
             return
@@ -1283,7 +1282,7 @@ class _CustomSphinx(Sphinx):
         # read config
         self.tags = Tags(tags)
         with warnings.catch_warnings():
-            warnings.simplefilter("ignore", RemovedInSphinx30Warning) 
+            warnings.simplefilter("ignore", RemovedInSphinx30Warning)
             self.config = Config(confdir, CONFIG_FILENAME,
                                  confoverrides or {}, self.tags)
         self.sphinx__display_version__ = __display_version__
@@ -1291,8 +1290,8 @@ class _CustomSphinx(Sphinx):
         # create the environment
         self.env = _CustomBuildEnvironment(self)
         with warnings.catch_warnings():
-            warnings.simplefilter("ignore", RemovedInSphinx30Warning) 
-            warnings.simplefilter("ignore", ImportWarning) 
+            warnings.simplefilter("ignore", RemovedInSphinx30Warning)
+            warnings.simplefilter("ignore", ImportWarning)
             self.config.check_unicode()
         self.config.pre_init_values()
 
@@ -1488,19 +1487,19 @@ class _CustomSphinx(Sphinx):
     def warning(self, message='', nonl=False, name=None, type=None, subtype=None):
         if "is already registered" not in message:
             self._logger.warning(
-                "{0} -- {1}".format(message, name), nonl=nonl, type=type, subtype=subtype)
+                "[_CustomSphinx] {0} -- {1}".format(message, name), nonl=nonl, type=type, subtype=subtype)
 
     def add_builder(self, builder, override=False):
         self._added_objects.append(('builder', builder))
         if builder.name not in self.registry.builders:
-            self.debug('[app] adding builder: %r', builder)
+            self.debug('[_CustomSphinx]  adding builder: %r', builder)
             self.registry.add_builder(builder, override=override)
         else:
-            self.debug('[app] already added builder: %r', builder)
+            self.debug('[_CustomSphinx]  already added builder: %r', builder)
 
     def setup_extension(self, extname):
         self._added_objects.append(('extension', extname))
-        self.debug('[app] setting up extension: %r', extname)
+        self.debug('[_CustomSphinx]  setting up extension: %r', extname)
         try:
             with warnings.catch_warnings():
                 warnings.filterwarnings(
@@ -1510,23 +1509,12 @@ class _CustomSphinx(Sphinx):
             raise ExtensionError(
                 "Unable to setup extension '{0}'".format(extname)) from e
 
-    def add_directive(self, name, obj, content=None, arguments=None, override=False, **options):
+    def add_directive(self, name, obj, content=None, arguments=None, override=True, **options):
         self._added_objects.append(('directive', name))
-        self.debug('[app] adding directive: %r',
-                   (name, obj, content, arguments, options))
-        if name in directives._directives and not override:
-            self.warning(_('while setting up extension %s: directive %r is '
-                           'already registered, it will be overridden'),
-                         self._setting_up_extension[-1], name,
-                         type='app', subtype='add_directive')
-                         
-        obj.content = content                       # type: ignore
-        obj.arguments = arguments or (0, 0, False)  # type: ignore
-        obj.options = options                       # type: ignore
-        directive = convert_directive_function(obj)                         
-        directives.register_directive(name, directive)
+        Sphinx.add_directive(self, name, obj, content=content, arguments=arguments,
+                             override=override, **options)
 
-    def add_domain(self, domain, override=False):
+    def add_domain(self, domain, override=True):
         self._added_objects.append(('domain', domain))
         Sphinx.add_domain(self, domain, override=override)
         # For some reason, the directives are missing from the main catalog
@@ -1546,32 +1534,33 @@ class _CustomSphinx(Sphinx):
         self._added_objects.append(('domain-over', domain))
         Sphinx.override_domain(self, domain)
 
-    def add_role(self, name, role, override=False):
+    def add_role(self, name, role, override=True):
         self._added_objects.append(('role', name))
-        self.debug('[app] adding role: %r', (name, role))
+        self.debug('[_CustomSphinx]  adding role: %r', (name, role))
         if name in roles._roles and not override:
-            self.warning(_('while setting up extension %s: role %r is '
+            self.warning(_('[_CustomSphinx] while setting up extension %s: role %r is '
                            'already registered, it will be overridden'),
                          self._setting_up_extension[-1], name,
                          type='app', subtype='add_role')
         roles.register_local_role(name, role)
 
-    def add_generic_role(self, name, nodeclass, override=False):
+    def add_generic_role(self, name, nodeclass, override=True):
         self._added_objects.append(('generic_role', name))
-        self.debug('[app] adding generic role: %r', (name, nodeclass))
+        self.debug('[_CustomSphinx] adding generic role: %r',
+                   (name, nodeclass))
         if name in roles._roles and not override:
-            self.warning(_('while setting up extension %s: role %r is '
+            self.warning(_('[_CustomSphinx] while setting up extension %s: role %r is '
                            'already registered, it will be overridden'),
                          self._setting_up_extension[-1], name,
                          type='app', subtype='add_generic_role')
         role = roles.GenericRole(name, nodeclass)
         roles.register_local_role(name, role)
 
-    def add_node(self, node, override=False, **kwds):
+    def add_node(self, node, override=True, **kwds):
         self._added_objects.append(('node', node))
-        self.debug('[app] adding node: %r', (node, kwds))
+        self.debug('[_CustomSphinx]  adding node: %r', (node, kwds))
         if not override and hasattr(nodes.GenericNodeVisitor, 'visit_' + node.__name__):
-            self.warning(_('while setting up extension %s: node class %r is '
+            self.warning(_('[_CustomSphinx] while setting up extension %s: node class %r is '
                            'already registered, its visitors will be overridden'),
                          self._setting_up_extension, node.__name__,
                          type='app', subtype='add_node')
@@ -1671,7 +1660,8 @@ class _CustomSphinx(Sphinx):
         """
         See :epkg:`class Sphinx`.
         """
-        self.debug('[app] adding environment collector: %r', collector)
+        self.debug(
+            '[_CustomSphinx] adding environment collector: %r', collector)
         coll = collector()
         coll.enable(self)
         self._added_collectors.append(coll)

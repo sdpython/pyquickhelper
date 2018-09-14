@@ -20,7 +20,7 @@ def default_filter_warning(w):
         pass
 
     with warnings.catch_warnings():
-        warnings.simplefilter("ignore", DeprecationWarning) 
+        warnings.simplefilter("ignore", DeprecationWarning)
         try:
             from matplotlib.cbook import MatplotlibDeprecationWarning
         except ImportError:

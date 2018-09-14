@@ -43,7 +43,7 @@ class TestBlocRefExtension(unittest.TestCase):
         directives.register_directive("blocref", BlocRef)
         directives.register_directive("blocreflist", BlocRefList)
 
-    def test_blocref(self):
+    def test_blocref_rst(self):
         fLOG(
             __file__,
             self._testMethodName,
@@ -62,7 +62,7 @@ class TestBlocRefExtension(unittest.TestCase):
                         :tag: bug
                         :lid: id3
 
-                        this code shoud appear___
+                        this code should appear___
 
                     after
                     """.replace("                    ", "")
@@ -72,15 +72,14 @@ class TestBlocRefExtension(unittest.TestCase):
         tives = [("blocref", BlocRef, blocref_node,
                   visit_blocref_node, depart_blocref_node)]
 
-        html = rst2html(content, fLOG=fLOG,
-                        writer="custom", keep_warnings=True,
+        html = rst2html(content, writer="rst", keep_warnings=True,
                         directives=tives, extlinks={'issue': ('http://%s', '_issue_')})
 
-        temp = get_temp_folder(__file__, "temp_blocref")
+        temp = get_temp_folder(__file__, "temp_blocref_rst")
         with open(os.path.join(temp, "out_blocref.html"), "w", encoding="utf8") as f:
             f.write(html)
 
-        t1 = "this code shoud appear"
+        t1 = "this code should appear"
         if t1 not in html:
             raise Exception(html)
 
@@ -90,6 +89,60 @@ class TestBlocRefExtension(unittest.TestCase):
 
         t1 = "first todo"
         if t1 not in html:
+            raise Exception(html)
+
+        if "<SYSTEM MESSAGE" in html:
+            raise Exception(html)
+
+    def test_blocref_html(self):
+        fLOG(
+            __file__,
+            self._testMethodName,
+            OutputPrint=__name__ == "__main__")
+
+        from docutils import nodes as skip_
+
+        content = """
+                    test a directive
+                    ================
+
+                    before
+
+                    .. blocref::
+                        :title: first todo
+                        :tag: bug
+                        :lid: id3
+
+                        this code should appear___
+
+                    after
+                    """.replace("                    ", "")
+        if sys.version_info[0] >= 3:
+            content = content.replace('u"', '"')
+
+        tives = [("blocref", BlocRef, blocref_node,
+                  visit_blocref_node, depart_blocref_node)]
+
+        html = rst2html(content, writer="rst", keep_warnings=True,
+                        directives=tives, extlinks={'issue': ('http://%s', '_issue_')})
+
+        temp = get_temp_folder(__file__, "temp_blocref_html")
+        with open(os.path.join(temp, "out_blocref.html"), "w", encoding="utf8") as f:
+            f.write(html)
+
+        t1 = "this code should appear"
+        if t1 not in html:
+            raise Exception(html)
+
+        t1 = "after"
+        if t1 not in html:
+            raise Exception(html)
+
+        t1 = "first todo"
+        if t1 not in html:
+            raise Exception(html)
+
+        if "<SYSTEM MESSAGE" in html:
             raise Exception(html)
 
     def test_blocref2(self):
@@ -160,7 +213,7 @@ class TestBlocRefExtension(unittest.TestCase):
                         :tag: freg
                         :lid: id3
 
-                        this code shoud appear___
+                        this code should appear___
 
                     middle
 
@@ -178,14 +231,14 @@ class TestBlocRefExtension(unittest.TestCase):
                   visit_blocref_node, depart_blocref_node)]
 
         html = rst2html(content, fLOG=fLOG,
-                        writer="custom", keep_warnings=True,
+                        writer="html", keep_warnings=True,
                         directives=tives)
 
         temp = get_temp_folder(__file__, "temp_blocreflist")
         with open(os.path.join(temp, "out_blocref.html"), "w", encoding="utf8") as f:
             f.write(html)
 
-        t1 = "this code shoud appear"
+        t1 = "this code should appear"
         if t1 not in html:
             raise Exception(html)
 
@@ -199,4 +252,6 @@ class TestBlocRefExtension(unittest.TestCase):
 
 
 if __name__ == "__main__":
-    unittest.main()
+    TestBlocRefExtension().test_post_parse_blocref()
+    TestBlocRefExtension().test_blocref_rst()
+    # unittest.main()

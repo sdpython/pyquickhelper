@@ -884,6 +884,8 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
         if len(err) > 0 or len(out) > 0:
             if (len(err) > 0 and "Exception occurred:" in err) or \
                (len(out) > 0 and "Exception occurred:" in out):
+                out = "\n".join(
+                    filter(lambda _: "while setting up extension" not in _, out.split("\n")))
                 raise HelpGenException(
                     "Sphinx raised an exception:\nOUT:\n{0}\n[sphinxerror]\n{1}".format(out, err))
             else:

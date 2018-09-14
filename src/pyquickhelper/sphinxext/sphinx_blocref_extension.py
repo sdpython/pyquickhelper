@@ -3,31 +3,6 @@
 @file
 @brief Defines a sphinx extension to keep track of blocs such as examples, FAQ, ...
 
-.. todoext::
-    :title: add sphinx extensions blocref, faqref, nbref, exref
-    :tag: done
-    :date: 2016-07-15
-    :hidden:
-    :issue: 21
-    :release: 1.4
-    :cost: 1
-
-    Multiplies sphinx extension to highlight a bloc about
-    anything (blocref), a question (faqref), a magic command (nbref),
-    an example (exref).
-
-.. todoext::
-    :title: add index option in sphinx extensions
-    :tag: done
-    :date: 2016-07-15
-    :hidden:
-    :issue: 20
-    :release: 1.4
-    :cost: 0.5
-
-    Add option *index* to most of the sphinx extension
-    so that the documentation can refer to it.
-
 .. versionadded:: 1.4
 """
 import sys
@@ -51,7 +26,7 @@ from .sphinx_ext_helper import info_blocref
 
 class blocref_node(nodes.admonition):
     """
-    defines ``blocref`` ndoe
+    Defines ``blocref`` node.
     """
     pass
 
@@ -84,7 +59,6 @@ class BlocRef(BaseAdmonition):
 
                 print("mignon")
 
-
     Which renders as:
 
     .. blocref::
@@ -110,6 +84,12 @@ class BlocRef(BaseAdmonition):
     .. blocreflist::
         :tag: dummy_example
         :sort: title
+
+    This directives is used to highlight a bloc about
+    anything @see cl BlocRef, a question @see cl FaqRef,
+    a magic command @see cl NbRef, an example @see cl ExRef.
+    It supports option *index* in most of the extensions
+    so that the documentation can refer to it.
     """
 
     node_class = blocref_node
@@ -129,19 +109,19 @@ class BlocRef(BaseAdmonition):
 
     def _update_title(self, title, tag, lid):
         """
-        update the title for the bloc itself
+        Updates the title for the bloc itself.
         """
         return title
 
     def run(self):
         """
-        builds the blocref text
+        Builds a node @see cl blocref_node.
         """
         return self.private_run()
 
     def private_run(self, add_container=False):
         """
-        builds the blocref text
+        Builds a node @see cl blocref_node.
 
         @param      add_container       add a container node and return as a second result
         @return                         list of nodes or list of nodes, container

@@ -21,7 +21,6 @@ except ImportError:
         sys.path.append(path)
     import src
 
-from src.pyquickhelper.loghelper.flog import fLOG
 from src.pyquickhelper.pycode import get_temp_folder
 from src.pyquickhelper.helpgen import rst2html
 
@@ -32,16 +31,6 @@ if sys.version_info[0] == 2:
 class TestEpkgExtension(unittest.TestCase):
 
     def test_epkg_module(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
-        if sys.version_info[0] == 2:
-            warnings.warn(
-                "test_epkg_module not run on Python 2.7")
-            return
-
         from docutils import nodes as skip_
 
         content = """
@@ -53,8 +42,7 @@ class TestEpkgExtension(unittest.TestCase):
         if sys.version_info[0] >= 3:
             content = content.replace('u"', '"')
 
-        html = rst2html(content,  # fLOG=fLOG,
-                        writer="custom", keep_warnings=True,
+        html = rst2html(content, writer="custom", keep_warnings=True,
                         directives=None, layout="sphinx",
                         epkg_dictionary={'pandas': ('http://pandas.pydata.org/pandas-docs/stable/generated/',
                                                     ('http://pandas.pydata.org/pandas-docs/stable/generated/{0}.html', 1))
@@ -73,16 +61,6 @@ class TestEpkgExtension(unittest.TestCase):
             raise Exception(html)
 
     def test_epkg_sub(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
-        if sys.version_info[0] == 2:
-            warnings.warn(
-                "test_epkg_sub not run on Python 2.7")
-            return
-
         from docutils import nodes as skip_
 
         content = """
@@ -96,8 +74,7 @@ class TestEpkgExtension(unittest.TestCase):
         if sys.version_info[0] >= 3:
             content = content.replace('u"', '"')
 
-        html = rst2html(content,  # fLOG=fLOG,
-                        writer="custom", keep_warnings=True,
+        html = rst2html(content, writer="custom", keep_warnings=True,
                         directives=None, layout="sphinx",
                         epkg_dictionary={'pandas': ('http://pandas.pydata.org/pandas-docs/stable/generated/',
                                                     ('http://pandas.pydata.org/pandas-docs/stable/generated/{0}.html', 1)),
@@ -130,16 +107,6 @@ class TestEpkgExtension(unittest.TestCase):
             f.write(html)
 
     def test_epkg_function(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
-        if sys.version_info[0] == 2:
-            warnings.warn(
-                "test_epkg_function not run on Python 2.7")
-            return
-
         from docutils import nodes as skip_
 
         content = """
@@ -156,8 +123,7 @@ class TestEpkgExtension(unittest.TestCase):
         def pandas_link(input):
             return "MYA", "|".join(input.split(":"))
 
-        html = rst2html(content,  # fLOG=fLOG,
-                        writer="custom", keep_warnings=True,
+        html = rst2html(content, writer="custom", keep_warnings=True,
                         directives=None, layout="sphinx",
                         epkg_dictionary={'pandas': ('http://pandas.pydata.org/pandas-docs/stable/generated/',
                                                     ('http://pandas.pydata.org/pandas-docs/stable/generated/{0}.html', 1),
@@ -191,16 +157,6 @@ class TestEpkgExtension(unittest.TestCase):
             f.write(html)
 
     def test_epkg_class(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
-        if sys.version_info[0] == 2:
-            warnings.warn(
-                "test_epkg_class not run on Python 2.7")
-            return
-
         from docutils import nodes as skip_
 
         content = """
@@ -218,8 +174,7 @@ class TestEpkgExtension(unittest.TestCase):
             def __call__(self, input):
                 return "MYA", "|".join(input.split(":"))
 
-        html = rst2html(content,  # fLOG=fLOG,
-                        writer="custom", keep_warnings=True,
+        html = rst2html(content, writer="custom", keep_warnings=True,
                         directives=None, layout="sphinx",
                         epkg_dictionary={'pandas': ('http://pandas.pydata.org/pandas-docs/stable/generated/',
                                                     ('http://pandas.pydata.org/pandas-docs/stable/generated/{0}.html', 1),
@@ -253,16 +208,6 @@ class TestEpkgExtension(unittest.TestCase):
             f.write(html)
 
     def test_epkg_function_string(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
-        if sys.version_info[0] == 2:
-            warnings.warn(
-                "test_epkg_function_string not run on Python 2.7")
-            return
-
         from docutils import nodes as skip_
 
         content = """
@@ -276,8 +221,7 @@ class TestEpkgExtension(unittest.TestCase):
         if sys.version_info[0] >= 3:
             content = content.replace('u"', '"')
 
-        html = rst2html(content,  # fLOG=fLOG,
-                        writer="custom", keep_warnings=True,
+        html = rst2html(content, writer="custom", keep_warnings=True,
                         directives=None, layout="sphinx",
                         epkg_dictionary={'pandas': ('http://pandas.pydata.org/pandas-docs/stable/generated/',
                                                     ('http://pandas.pydata.org/pandas-docs/stable/generated/{0}.html', 1),
@@ -311,16 +255,6 @@ class TestEpkgExtension(unittest.TestCase):
             f.write(html)
 
     def test_epkg_function_long_link(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
-        if sys.version_info[0] == 2:
-            warnings.warn(
-                "test_epkg_function_string not run on Python 2.7")
-            return
-
         from docutils import nodes as skip_
 
         content = """
@@ -333,7 +267,7 @@ class TestEpkgExtension(unittest.TestCase):
         if sys.version_info[0] >= 3:
             content = content.replace('u"', '"')
 
-        html = rst2html(content,  # fLOG=fLOG,
+        html = rst2html(content,
                         writer="custom", keep_warnings=True,
                         directives=None, layout="sphinx")
 

@@ -75,7 +75,7 @@ def default_sphinx_options(fLOG=noLOG, **options):
             'imgmath_dvipng', os.path.join(res['imgmath_latex'], "dvipng.exe") if res['imgmath_latex'] is not None else None)
         if res['imgmath_dvipng'] is not None and not os.path.exists(res['imgmath_dvipng']):
             logger = getLogger("default_sphinx_options")
-            logger.warning("[warning], unable to find: " +
+            logger.warning("[default_sphinx_options], unable to find: " +
                            str(res['imgmath_dvipng']))
             # we pass as latex is not necessarily installed or needed
         env_path = os.environ.get("PATH", "")
@@ -194,11 +194,9 @@ def rst2html(s, fLOG=noLOG, writer="html", keep_warnings=False,
                         # to remove spaces at the beginning of the line
 
             tives = [ ("runpythonthis", RunPythonThisDirective,
-                       runpythonthis_node,
-                       visit_node, depart_node) ]
+                       runpythonthis_node, visit_node, depart_node) ]
 
-            html = rst2html(content, fLOG=fLOG,
-                            writer="html", keep_warnings=True,
+            html = rst2html(content, writer="html", keep_warnings=True,
                             directives=tives)
 
         Unfortunately, this functionality is only tested on :epkg:`Python` 3.
@@ -275,7 +273,7 @@ def rst2html(s, fLOG=noLOG, writer="html", keep_warnings=False,
         mockapp, writer, title_names = MockSphinxApp.create("sphinx", directives,
                                                             confoverrides=defopt, new_extensions=new_extensions, fLOG=fLOG)
         writer_name = "HTMLWriterWithCustomDirectives"
-    elif writer in ("rst", "md", "elatex"):
+    elif writer in ("rst", "md", "latex", "elatex"):
         writer_name = writer
         mockapp, writer, title_names = MockSphinxApp.create(writer, directives,
                                                             confoverrides=defopt, new_extensions=new_extensions, fLOG=fLOG)
