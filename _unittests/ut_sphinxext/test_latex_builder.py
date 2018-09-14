@@ -383,11 +383,11 @@ class TestLatexBuilder(ExtTestCase):
         img2 = os.path.join(root, "data", "thumbnail", "im.png")
         content = """
                     .. image:: {0}
-                        :width: 200
+                        :width: 59
                         :alt: alternative1
 
                     * .. image:: {1}
-                        :width: 200
+                        :width: 59
                         :alt: alternative2
                     """.replace("                    ", "").format(img1, img2).replace("\\", "/")
         if sys.version_info[0] >= 3:
@@ -400,7 +400,7 @@ class TestLatexBuilder(ExtTestCase):
 
         text = text.replace("\r", "")
         self.assertIn('sphinxincludegraphics', text)
-        self.assertIn('=200', text)
+        self.assertIn('=59', text)
         self.assertIn("png", text)
         with open(os.path.join(temp, "elatex_image.tex"), "w", encoding="utf8") as f:
             f.write(text)

@@ -387,7 +387,7 @@ def _process_notebooks_in(notebooks, outfold, build, latex_path=None, pandoc_pat
                 list_args.extend(['--config', '"%s"' % custom_config,
                                   '--SphinxTransformer.author=""',
                                   '--SphinxTransformer.overridetitle="{0}"'.format(title)])
-                format = "elatex"
+                format = "latex"
                 compilation = True
                 thisfiles.append(os.path.splitext(outputfile)[0] + ".tex")
             elif format in ("latex", "elatex"):
@@ -395,7 +395,7 @@ def _process_notebooks_in(notebooks, outfold, build, latex_path=None, pandoc_pat
                     raise FileNotFoundError(custom_config)
                 list_args.extend(['--config', '"%s"' % custom_config])
                 compilation = False
-                format = "elatex"
+                format = "latex"
             elif format in ("word", "docx"):
                 format = "html"
                 compilation = False
@@ -409,7 +409,7 @@ def _process_notebooks_in(notebooks, outfold, build, latex_path=None, pandoc_pat
                 compilation = False
 
             # output
-            templ = {'html': 'full', 'latex': 'article'}.get(format, format)
+            templ = {'html': 'full', 'latex': 'article', 'elatex': 'article'}.get(format, format)
             fLOG("[_process_notebooks_in] ### convert into ", format_, " NB: ", notebook,
                  " ### ", os.path.exists(outputfile), ":", outputfile)
 
@@ -458,8 +458,8 @@ def _process_notebooks_in(notebooks, outfold, build, latex_path=None, pandoc_pat
                     out, err = _process_notebooks_in_private_cmd(
                         fnbcexe, list_args, options_args, fLOG)
 
-                if "raise ImportError" in err:
-                    raise ImportError(err)
+                if "raise ImportError" in err or "Unknown exporter" in err:
+                    raise ImportError("cmd: {0} {1}\n--ERR--\n{2}".format(fnbcexe, list_args, err))
                 if len(err) > 0:
                     if format in ("elatex", "latex"):
                         # There might be some errors because the latex script needs to be post-processed

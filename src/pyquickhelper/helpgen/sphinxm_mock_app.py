@@ -5,6 +5,7 @@
 .. versionadded:: 1.0
 """
 import logging
+import warnings
 from docutils import nodes
 from docutils.parsers.rst.directives import directive as rst_directive
 from docutils.parsers.rst import directives as doc_directives, roles as doc_roles
@@ -14,6 +15,7 @@ from sphinx import __display_version__ as sphinx__display_version__
 from sphinx.application import VersionRequirementError
 from sphinx.util.docutils import is_html5_writer_available
 from sphinx.errors import ExtensionError
+from sphinx.deprecation import RemovedInSphinx30Warning
 from .sphinxm_convert_doc_sphinx_helper import HTMLWriterWithCustomDirectives, _CustomSphinx
 from .sphinxm_convert_doc_sphinx_helper import MDWriterWithCustomDirectives, RSTWriterWithCustomDirectives, LatexWriterWithCustomDirectives
 from ..sphinxext import get_default_extensions
@@ -50,7 +52,9 @@ class MockSphinxApp:
                         "<class 'matplotlib.sphinxext.only_directives.latex_only'>": "only",
                         }
         self.mapping_connect = {}
-        self.config = Config(None, None, confoverrides, None)
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore", RemovedInSphinx30Warning) 
+            self.config = Config(None, None, confoverrides, None)
         self.confdir = "."
         self.doctreedir = "."
         self.srcdir = "."
@@ -257,14 +261,17 @@ class MockSphinxApp:
 
             app.add_source_parser(self, ext, parser)
         """
-        try:
-            self.app.add_source_parser(ext, parser)
-        except ExtensionError as e:
-            if exc:
-                raise
-            else:
-                logger = logging.getLogger("MockSphinxApp")
-                logger.warning('[MockSphinxApp] {0}'.format(e))
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore", ImportWarning)
+
+            try:
+                self.app.add_source_parser(ext, parser)
+            except ExtensionError as e:
+                if exc:
+                    raise
+                else:
+                    logger = logging.getLogger("MockSphinxApp")
+                    logger.warning('[MockSphinxApp] {0}'.format(e))
 
     def disconnect_env_collector(self, clname):
         """

@@ -87,7 +87,8 @@ class CommonSphinxWriterHelpers:
             full = os.path.join(srcdir, atts['src']) if srcdir else atts['src']
             if not os.path.exists(full):
                 raise FileNotFoundError(
-                    "Unable to find source file '{0}' for docname '{1}'".format(full, atts['src']))
+                    "Unable to find source file '{0}' for docname '{1}', srcdir='{2}' src='{3}'".format(
+                            full, atts['src'], srcdir, atts['src']))
             ext = os.path.splitext(atts['src'])[-1]
             name = self.hash_md5_readfile(full) + ext
 

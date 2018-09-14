@@ -18,10 +18,12 @@ def default_filter_warning(w):
     class UnusedException(Exception):
         pass
 
-    try:
-        from matplotlib.cbook import MatplotlibDeprecationWarning
-    except ImportError:
-        MatplotlibDeprecationWarning = UnusedException
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore", DeprecationWarning) 
+        try:
+            from matplotlib.cbook import MatplotlibDeprecationWarning
+        except ImportError:
+            MatplotlibDeprecationWarning = UnusedException
 
     if isinstance(w.message, RuntimeWarning):
         if "_bootstrap.py" in w.filename:

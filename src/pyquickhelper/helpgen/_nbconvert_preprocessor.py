@@ -8,7 +8,7 @@ from nbconvert.preprocessors import Preprocessor
 
 class LatexRawOutputPreprocessor(Preprocessor):
     """
-    Custom processor to apply a different syle on raw output.
+    Custom processor to apply a different style on raw output.
     """
 
     def preprocess_cell(self, cell, resources, cell_index):

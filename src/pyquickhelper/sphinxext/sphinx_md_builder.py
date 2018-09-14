@@ -894,9 +894,6 @@ class MdTranslator(TextTranslator, CommonSphinxWriterHelpers):
                           (anchor, clean_refuri(node['refuri'])))
             raise nodes.SkipNode
         elif 'reftitle' in node:
-            # Include node as text, rather than with markup.
-            # reST seems unable to parse a construct like ` ``literal`` <url>`_
-            # Hence it reverts to the more simple `literal <url>`_
             self.add_text('[%s](%s)' %
                           (node.astext(), clean_refuri(node['refuri'])))
             # self.end_state(wrap=False)
@@ -1036,11 +1033,11 @@ class MdTranslator(TextTranslator, CommonSphinxWriterHelpers):
         depart_collapse_node_rst(self, node)
 
     def visit_issue(self, node):
-        self.add_text(':issue:`')
+        self.add_text('(issue *')
         self.add_text(node['text'])
 
     def depart_issue(self, node):
-        self.add_text('`')
+        self.add_text('*)')
 
     def eval_expr(self, expr):
         md = True

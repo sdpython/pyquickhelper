@@ -9,8 +9,9 @@ import sys
 from collections import deque
 import warnings
 import pickle
+from sphinx.deprecation import RemovedInSphinx30Warning
 from sphinx.locale import _
-from docutils.parsers.rst import directives, roles
+from docutils.parsers.rst import directives, roles, convert_directive_function
 from docutils.languages import en as docutils_en
 from sphinx.writers.html import HTMLWriter
 from sphinx.application import Sphinx, ENV_PICKLE_FILENAME
@@ -1281,13 +1282,18 @@ class _CustomSphinx(Sphinx):
 
         # read config
         self.tags = Tags(tags)
-        self.config = Config(confdir, CONFIG_FILENAME,
-                             confoverrides or {}, self.tags)
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore", RemovedInSphinx30Warning) 
+            self.config = Config(confdir, CONFIG_FILENAME,
+                                 confoverrides or {}, self.tags)
         self.sphinx__display_version__ = __display_version__
 
         # create the environment
         self.env = _CustomBuildEnvironment(self)
-        self.config.check_unicode()
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore", RemovedInSphinx30Warning) 
+            warnings.simplefilter("ignore", ImportWarning) 
+            self.config.check_unicode()
         self.config.pre_init_values()
 
         # set up translation infrastructure
@@ -1387,7 +1393,9 @@ class _CustomSphinx(Sphinx):
         # create the builder
         self.builder = self.create_builder(buildername)
         # check all configuration values for permissible types
-        self.config.check_types()
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore", RemovedInSphinx30Warning)
+            self.config.check_types()
         # set up the build environment
         self._init_env(freshenv)
         # set up the builder
@@ -1511,7 +1519,11 @@ class _CustomSphinx(Sphinx):
                            'already registered, it will be overridden'),
                          self._setting_up_extension[-1], name,
                          type='app', subtype='add_directive')
-        directive = directive_helper(obj, content, arguments, **options)
+                         
+        obj.content = content                       # type: ignore
+        obj.arguments = arguments or (0, 0, False)  # type: ignore
+        obj.options = options                       # type: ignore
+        directive = convert_directive_function(obj)                         
         directives.register_directive(name, directive)
 
     def add_domain(self, domain, override=False):

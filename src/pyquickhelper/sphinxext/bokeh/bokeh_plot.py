@@ -69,6 +69,7 @@ The inline example code above produces the following output:
 """
 from __future__ import absolute_import
 
+import warnings
 import ast
 from os.path import basename, dirname, join
 import re
@@ -80,6 +81,7 @@ from docutils.parsers.rst.directives import choice, flag
 from sphinx.errors import SphinxError
 from sphinx.util import console, copyfile, ensuredir, status_iterator
 from sphinx.util.nodes import set_source_info
+from sphinx.deprecation import RemovedInSphinx30Warning
 
 from bokeh.settings import settings
 from bokeh.resources import Resources
@@ -336,7 +338,9 @@ def setup(app):
     """ sphinx config variable to scan .py files in provided directories only """
     app.add_config_value('bokeh_plot_pyfile_include_dirs', [], 'html')
 
-    app.add_source_parser('.py', PlotScriptParser)
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore", RemovedInSphinx30Warning)
+        app.add_source_parser('.py', PlotScriptParser)
 
     app.add_directive('bokeh-plot', BokehPlotDirective)
 
