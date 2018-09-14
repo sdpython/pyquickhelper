@@ -4,6 +4,7 @@
 
 .. versionadded:: 1.5
 """
+import warnings
 
 
 def default_filter_warning(w):
