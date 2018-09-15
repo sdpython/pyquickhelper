@@ -50,11 +50,6 @@ class TestRunPythonExtension(unittest.TestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
-        if sys.version_info[0] == 2:
-            warnings.warn(
-                "test_runpython not run on Python 2.7")
-            return
-
         from docutils import nodes
 
         class runpythonthis_node(nodes.Structural, nodes.Element):
@@ -122,11 +117,6 @@ class TestRunPythonExtension(unittest.TestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
-        if sys.version_info[0] == 2:
-            warnings.warn(
-                "test_runpython not run on Python 2.7")
-            return
-
         from docutils import nodes
 
         class runpythonthis_node(nodes.Structural, nodes.Element):
@@ -180,11 +170,6 @@ class TestRunPythonExtension(unittest.TestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
-        if sys.version_info[0] == 2:
-            warnings.warn(
-                "test_runpython not run on Python 2.7")
-            return
-
         from docutils import nodes
 
         class runpythonthis_node(nodes.Structural, nodes.Element):
@@ -236,11 +221,6 @@ class TestRunPythonExtension(unittest.TestCase):
             __file__,
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
-
-        if sys.version_info[0] == 2:
-            warnings.warn(
-                "test_runpython not run on Python 2.7")
-            return
 
         from docutils import nodes
 
@@ -306,11 +286,6 @@ class TestRunPythonExtension(unittest.TestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
-        if sys.version_info[0] == 2:
-            warnings.warn(
-                "test_runpython not run on Python 2.7")
-            return
-
         from docutils import nodes
 
         class runpythonthis_node(nodes.Structural, nodes.Element):
@@ -375,11 +350,6 @@ class TestRunPythonExtension(unittest.TestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
-        if sys.version_info[0] == 2:
-            warnings.warn(
-                "test_runpython not run on Python 2.7")
-            return
-
         from docutils import nodes
 
         class runpythonthis_node(nodes.Structural, nodes.Element):
@@ -396,8 +366,6 @@ class TestRunPythonExtension(unittest.TestCase):
 
         if "enable_disabled_documented_pieces_of_code" in sys.__dict__:
             raise Exception("this case shoud not be")
-
-        warnings.warn('rrr', DeprecationWarning)
 
         content = """
                     test a directive
@@ -433,16 +401,84 @@ class TestRunPythonExtension(unittest.TestCase):
                 f.write(html)
             raise Exception(html)
 
-    def test_runpython_process_exception(self):
+    def test_runpython_exception_assert(self):
         fLOG(
             __file__,
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
-        if sys.version_info[0] == 2:
-            warnings.warn(
-                "test_runpython not run on Python 2.7")
-            return
+        from docutils import nodes
+
+        class runpythonthis_node(nodes.Structural, nodes.Element):
+            pass
+
+        class RunPythonThisDirective (RunPythonDirective):
+            runpython_class = runpythonthis_node
+
+        def visit_rp_node(self, node):
+            self.body.append("<p><b>visit_rp_node</b></p>")
+
+        def depart_rp_node(self, node):
+            self.body.append("<p><b>depart_rp_node</b></p>")
+
+        if "enable_disabled_documented_pieces_of_code" in sys.__dict__:
+            raise Exception("this case shoud not be")
+
+        content = """
+                    test a directive
+                    ================
+
+                    .. runpythonthis::
+                        :showcode:
+                        :assert: z == 1.1
+
+                        print(u"this code shoud" + u" appear")
+                        z = 0.5 + 0.6
+                        print(u"this one should" + u" not")
+                    """.replace("                    ", "")
+        if sys.version_info[0] >= 3:
+            content = content.replace('u"', '"')
+
+        tives = [("runpythonthis", RunPythonThisDirective, runpythonthis_node,
+                  visit_rp_node, depart_rp_node)]
+
+        html = rst2html(content,  # fLOG=fLOG,
+                        writer="custom", keep_warnings=True,
+                        directives=tives)
+
+        t2 = "<p>&lt;&lt;&lt;</p>"
+        if t2 not in html:
+            raise Exception(html)
+        t2 = "<p>&gt;&gt;&gt;</p>"
+        if t2 not in html:
+            raise Exception(html)
+
+        content = """
+                    test a directive
+                    ================
+
+                    .. runpythonthis::
+                        :showcode:
+                        :assert: z == 1.2
+
+                        z = 0.5 + 0.6
+                    """.replace("                    ", "")
+        if sys.version_info[0] >= 3:
+            content = content.replace('u"', '"')
+
+        try:
+            html = rst2html(content,  # fLOG=fLOG,
+                            writer="custom", keep_warnings=True,
+                            directives=tives)
+        except Exception as e:
+            if "Condition 'z == 1.2' failed" not in str(e):
+                raise e
+
+    def test_runpython_process_exception(self):
+        fLOG(
+            __file__,
+            self._testMethodName,
+            OutputPrint=__name__ == "__main__")
 
         from docutils import nodes
 

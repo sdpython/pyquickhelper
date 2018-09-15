@@ -85,7 +85,9 @@ def get_default_extensions():
     """
     # We delay these imports.
     # They change matplotlib backend if executed.
-    from matplotlib.pyplot import get_backend, switch_backend
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore", DeprecationWarning)
+        from matplotlib.pyplot import get_backend, switch_backend
     backend = get_backend()
     from matplotlib.sphinxext.plot_directive import setup as setup_plot
     from matplotlib.sphinxext.only_directives import setup as setup_only

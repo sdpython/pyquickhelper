@@ -38,8 +38,8 @@ class RunPythonCompileError(Exception):
 
 class RunPythonExecutionError(Exception):
     """
-    exception raised when a piece of code
-    included in the documentation raises en exception
+    Exception raised when a piece of code
+    included in the documentation raises an exception.
     """
     pass
 
@@ -49,18 +49,18 @@ def run_python_script(script, params=None, comment=None, setsysvar=None, process
     """
     Executes a script :epkg:`python` as a string.
 
-    @param  script      python script
-    @param  params      params to add before the execution
-    @param  comment     message to add in a exception when the script fails
-    @param  setsysvar   if not None, add a member to module *sys*, set up this variable to True,
-                        if is remove after the execution
-    @param  process     run the script in a separate process
-    @param  exception   expects an exception to be raised,
-                        fails if it is not, the function returns no output and the
-                        error message
-    @param  warningout  warning to disable (name of warnings)
-    @param  chdir       change directory before running this script (if not None)
-    @return             stdout, stderr
+    @param  script              python script
+    @param  params              params to add before the execution
+    @param  comment             message to add in a exception when the script fails
+    @param  setsysvar           if not None, add a member to module *sys*, set up this variable to True,
+                                if is remove after the execution
+    @param  process             run the script in a separate process
+    @param  exception           expects an exception to be raised,
+                                fails if it is not, the function returns no output and the
+                                error message
+    @param  warningout          warning to disable (name of warnings)
+    @param  chdir               change directory before running this script (if not None)
+    @return                     stdout, stderr
 
     If the execution throws an exception such as
     ``NameError: name 'math' is not defined`` after importing
@@ -151,6 +151,7 @@ def run_python_script(script, params=None, comment=None, setsysvar=None, process
                 "unable to find a path to add:\n{0}".format("\n".join(sys.path)))
         header.append('')
         script = "\n".join(header) + script
+
         try:
             out, err = run_cmd(cmd, script, wait=True, change_path=chdir)
             return out, err
@@ -182,6 +183,7 @@ def run_python_script(script, params=None, comment=None, setsysvar=None, process
 
         sout = StringIO()
         serr = StringIO()
+        globs = globals().copy()
         with redirect_stdout(sout):
             with redirect_stderr(sout):
 
@@ -193,7 +195,7 @@ def run_python_script(script, params=None, comment=None, setsysvar=None, process
                         os.chdir(chdir)
 
                     try:
-                        exec(obj, globals(), loc)
+                        exec(obj, globs, loc)
                     except Exception as ee:
                         if chdir is not None:
                             os.chdir(current)
@@ -266,6 +268,8 @@ class RunPythonDirective(Directive):
 
     The directive has a couple of options:
 
+    * ``:assert:`` condition to validate at the end of the execution
+      to check it went right
     * ``:current:`` runs the script in the source file directory
     * ``:exception:`` the code throws an exception but it is expected. The error is displayed.
     * ``:indent:<int>`` to indent the output
@@ -328,7 +332,7 @@ class RunPythonDirective(Directive):
         Options *warningout*, *toggle* were added.
 
     .. versionchanged:: 1.8
-        Option *current* was added.
+        Options *current*, *assert* were added.
     """
     required_arguments = 0
     optional_arguments = 0
@@ -349,6 +353,7 @@ class RunPythonDirective(Directive):
         'warningout': directives.unchanged,
         'toggle': directives.unchanged,
         'current': directives.unchanged,
+        'assert': directives.unchanged,
     }
     has_content = True
     runpython_class = runpython_node
@@ -398,6 +403,7 @@ class RunPythonDirective(Directive):
             'warningout': self.options.get('warningout', '').strip(),
             'toggle': self.options.get('toggle', '').strip(),
             'current': 'current' in self.options and self.options['current'] in bool_set_,
+            'assert': self.options.get('assert', '').strip(),
         }
 
         if p['setsysvar'] is not None and len(p['setsysvar']) == 0:
@@ -416,10 +422,20 @@ class RunPythonDirective(Directive):
         modified_content = self.modify_script_before_running(
             "\n".join(self.content))
 
+        if p['assert']:
+            footer = []
+            assert_condition = p['assert'].split('\n')
+            for cond in assert_condition:
+                footer.append("if not({0}):".format(cond))
+                footer.append(
+                    "    raise AssertionError('''Condition '{0}' failed.''')".format(cond))
+            modified_content += "\n\n" + "\n".join(footer)
+
         for line in modified_content.split("\n"):
             content.append("    " + line)
         if not p['process']:
             content.append("{0}()".format(name))
+
         script = "\n".join(content)
         script_disp = "\n".join(self.content)
         if not p["nopep8"]:
