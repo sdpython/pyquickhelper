@@ -8,6 +8,7 @@ import os
 import unittest
 import warnings
 import logging
+import shutil
 from docutils.parsers.rst import directives
 
 try:
@@ -23,11 +24,15 @@ except ImportError:
         sys.path.append(path)
     import src
 
+
 from src.pyquickhelper.loghelper.flog import fLOG
-from src.pyquickhelper.pycode import get_temp_folder, ExtTestCase
+from src.pyquickhelper.pycode import get_temp_folder, ExtTestCase, is_travis_or_appveyor
 from src.pyquickhelper.helpgen import rst2html
+from src.pyquickhelper.sphinxext import SimpleImageDirective
 from src.pyquickhelper.helpgen import CustomSphinxApp
-from src.pyquickhelper.sphinxext.sphinximages.sphinxtrib.images import ImageDirective
+from src.pyquickhelper.helpgen.sphinx_main_helper import compile_latex_output_final
+from src.pyquickhelper.helpgen.conf_path_tools import find_latex_path
+
 
 if sys.version_info[0] == 2:
     from codecs import open
@@ -36,7 +41,7 @@ else:
     from io import StringIO
 
 
-class TestImageExtension(ExtTestCase):
+class TestSimpleImageExtension(ExtTestCase):
 
     def test_post_parse_sn(self):
         fLOG(
@@ -44,9 +49,9 @@ class TestImageExtension(ExtTestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
-        directives.register_directive("image", ImageDirective)
+        directives.register_directive("video", SimpleImageDirective)
 
-    def test_image(self):
+    def test_simpleimage(self):
         fLOG(
             __file__,
             self._testMethodName,
@@ -54,21 +59,26 @@ class TestImageExtension(ExtTestCase):
 
         from docutils import nodes as skip_
 
+        this = os.path.abspath(os.path.dirname(__file__))
+        img = os.path.join(this, "data", "image", "im.png")
+        self.assertExists(img)
+
         content = """
                     test a directive
                     ================
 
                     before
 
-                    .. image:: http://www.xavierdupre.fr/app/pyquickhelper/helpsphinx/_static/project_ico.png
+                    .. simpleimage:: {0}
                         :width: 10
                         :height: 20
-                        :target: https://somewebsite
+                        :target: https://website
+                        :alt: zoo
 
                     after
 
-                    this code shoud appear
-                    """.replace("                    ", "")
+                    this code should appear
+                    """.replace("                    ", "").format(img)
         if sys.version_info[0] >= 3:
             content = content.replace('u"', '"')
 
@@ -83,19 +93,19 @@ class TestImageExtension(ExtTestCase):
                             writer="custom", keep_warnings=True,
                             directives=None)
 
-        warns = log_capture_string.getvalue()
-        if warns:
-            raise Exception(warns)
+        warns = log_capture_string.getvalue().strip("\n\r\t ")
+        if len(warns) != 0 and 'Unable to find' not in warns:
+            raise Exception("warnings '{0}'".format(warns))
 
-        t1 = "this code shoud not appear"
+        t1 = "this code should not appear"
         if t1 in html:
             raise Exception(html)
 
-        t1 = "this code shoud appear"
+        t1 = "this code should appear"
         if t1 not in html:
             raise Exception(html)
 
-        t1 = "project_ico.png"
+        t1 = "im.png"
         if t1 not in html:
             raise Exception(html)
 
@@ -103,29 +113,31 @@ class TestImageExtension(ExtTestCase):
         if t1 in html:
             raise Exception(html)
 
-        temp = get_temp_folder(__file__, "temp_sphinx_image")
+        temp = get_temp_folder(__file__, "temp_simpleimage")
         with open(os.path.join(temp, "out_image.html"), "w", encoding="utf8") as f:
             f.write(html)
 
-    def test_sphinx_ext_image_html(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
+        self.assertNotIn("pngpng", html)
 
-        temp = get_temp_folder(__file__, "temp_sphinx_ext_image_html")
-        src_ = os.path.join(temp, "..", "data", "image")
+        md = rst2html(content, writer="md",
+                      keep_warnings=True, directives=None)
+        self.assertIn("im.png", md)
+        self.assertNotIn("pngpng", md)
 
-        # Following warning is due to nbconvert.
-        # DeprecationWarning: `nbconvert.exporters.exporter_locator` is deprecated
-        # in favor of `nbconvert.exporters.base` since nbconvert 5.0.
-        app = CustomSphinxApp(src_, temp)
-        app.build()
+        lat = rst2html(content, writer="elatex",
+                       keep_warnings=True, directives=None)
+        self.assertIn("im.png", lat)
+        self.assertNotIn("pngpng", lat)
+        self.assertIn("includegraphics", lat)
 
-        index = os.path.join(temp, "index.html")
-        self.assertExists(index)
-        img = os.path.join(temp, '_images', 'im.png')
-        self.assertExists(img)
+        rst = rst2html(content, writer="rst",
+                       keep_warnings=True, directives=None)
+        self.assertIn("im.png", rst)
+        self.assertNotIn("pngpng", rst)
+        self.assertIn("simpleimage::", rst)
+
+        self.assertRaise(lambda: rst2html(content, writer="text", keep_warnings=True, directives=None),
+                         ValueError)
 
 
 if __name__ == "__main__":

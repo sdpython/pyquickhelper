@@ -182,8 +182,10 @@ def depart_video_node_text(self, node):
     depending on the format, or the setup should
     specify a different function for each.
     """
-    if self.builder.name == "rst":
+    if 'rst' in (self.builder.name, self.builder.format):
         depart_video_node_rst(self, node)
+    elif 'latex' in (self.builder.name, self.builder.format):
+        depart_video_node_latex(self, node)
     elif node.hasattr("uri"):
         filename = node["uri"]
         width = node["width"]

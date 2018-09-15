@@ -57,11 +57,6 @@ class TestVideoExtension(ExtTestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
-        if sys.version_info[0] == 2:
-            warnings.warn(
-                "test_sharenet not run on Python 2.7", UserWarning)
-            return
-
         from docutils import nodes as skip_
 
         content = """
@@ -142,9 +137,6 @@ class TestVideoExtension(ExtTestCase):
 
         temp = get_temp_folder(__file__, "temp_sphinx_ext_video_html")
 
-        if sys.version_info[0] == 2:
-            return
-
         src_ = self.setup_format(temp)
         app = CustomSphinxApp(src_, temp)
         app.build()
@@ -168,9 +160,6 @@ class TestVideoExtension(ExtTestCase):
             OutputPrint=__name__ == "__main__")
 
         temp = get_temp_folder(__file__, "temp_sphinx_ext_video_rst")
-
-        if sys.version_info[0] == 2:
-            return
 
         src_ = self.setup_format(temp)
         app = CustomSphinxApp(src_, temp, buildername="rst")
@@ -196,9 +185,6 @@ class TestVideoExtension(ExtTestCase):
             OutputPrint=__name__ == "__main__")
 
         temp = get_temp_folder(__file__, "temp_sphinx_ext_video_latex")
-
-        if sys.version_info[0] == 2:
-            return
 
         fLOG('custom app init')
         src_ = self.setup_format(temp)
@@ -235,9 +221,6 @@ class TestVideoExtension(ExtTestCase):
             OutputPrint=__name__ == "__main__")
 
         temp = get_temp_folder(__file__, "temp_sphinx_ext_video_text")
-        if sys.version_info[0] == 2:
-            return
-
         src_ = self.setup_format(temp)
         app = CustomSphinxApp(src_, temp, buildername="text")
         app.build()
@@ -260,11 +243,6 @@ class TestVideoExtension(ExtTestCase):
             __file__,
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
-
-        if sys.version_info[0] == 2:
-            warnings.warn(
-                "test_sharenet not run on Python 2.7", UserWarning)
-            return
 
         from docutils import nodes as skip_
 

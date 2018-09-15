@@ -273,7 +273,7 @@ def rst2html(s, fLOG=noLOG, writer="html", keep_warnings=False,
         mockapp, writer, title_names = MockSphinxApp.create("sphinx", directives,
                                                             confoverrides=defopt, new_extensions=new_extensions, fLOG=fLOG)
         writer_name = "HTMLWriterWithCustomDirectives"
-    elif writer in ("rst", "md", "latex", "elatex"):
+    elif writer in ("rst", "md", "latex", "elatex", 'text'):
         writer_name = writer
         mockapp, writer, title_names = MockSphinxApp.create(writer, directives,
                                                             confoverrides=defopt, new_extensions=new_extensions, fLOG=fLOG)
@@ -284,7 +284,7 @@ def rst2html(s, fLOG=noLOG, writer="html", keep_warnings=False,
                                                             confoverrides=defopt, new_extensions=new_extensions, fLOG=fLOG)
     else:
         raise ValueError(
-            "Unexpected writer '{0}', should be 'rst' or 'html' or 'md'.".format(writer))
+            "Unexpected writer '{0}', should be 'rst' or 'html' or 'md' or 'elatex' or 'text'.".format(writer))
 
     if writer is None and directives is not None and len(directives) > 0:
         raise NotImplementedError(

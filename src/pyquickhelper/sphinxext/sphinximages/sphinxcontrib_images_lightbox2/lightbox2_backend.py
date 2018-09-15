@@ -41,6 +41,8 @@ class LightBox2(Backend):
         else:
             writer.body.append('''<a class="{cls}"'''.format(
                 cls=' '.join(node['classes']),))
+        if node['target']:
+            writer.body.append(' href="{0}" '.format(node['target']))
         writer.body.append(
             '''
                data-lightbox="{group}"

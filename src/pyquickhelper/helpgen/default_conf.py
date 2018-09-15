@@ -839,6 +839,7 @@ def custom_setup(app, author):
     from ..sphinxext.sphinx_runpython_extension import setup as setup_runpython
     from ..sphinxext.sphinx_sharenet_extension import setup as setup_sharenet
     from ..sphinxext.sphinx_video_extension import setup as setup_video
+    from ..sphinxext.sphinx_image_extension import setup as setup_image
     from ..sphinxext.sphinx_todoext_extension import setup as setup_todoext
     from ..sphinxext.sphinx_docassert_extension import setup as setup_docassert
     from ..sphinxext.sphinx_autosignature import setup as setup_signature
@@ -866,6 +867,7 @@ def custom_setup(app, author):
     setup_githublink(app)
     setup_sharenet(app)
     setup_video(app)
+    setup_image(app)
     setup_todoext(app)
     setup_blogpost(app)
     setup_mathdef(app)

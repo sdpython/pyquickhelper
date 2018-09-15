@@ -10,7 +10,8 @@
 import shutil
 import os
 import sys
-from sphinx.application import Sphinx
+import warnings
+from sphinx.application import Sphinx, RemovedInSphinx40Warning, RemovedInSphinx20Warning, RemovedInSphinx30Warning
 
 
 if sys.version_info[0] == 2:
@@ -105,10 +106,14 @@ class CustomSphinxApp(Sphinx):
             if exts is not None:
                 confoverrides['extensions'] = exts
 
-        Sphinx.__init__(self, srcdir, confdir, outdir, doctreedir,
-                        buildername, confoverrides, status,
-                        warning, freshenv, warningiserror, tags,
-                        verbosity, parallel)
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore", RemovedInSphinx20Warning)
+            warnings.simplefilter("ignore", RemovedInSphinx30Warning)
+            warnings.simplefilter("ignore", RemovedInSphinx40Warning)
+            Sphinx.__init__(self, srcdir, confdir, outdir, doctreedir,
+                            buildername, confoverrides, status,
+                            warning, freshenv, warningiserror, tags,
+                            verbosity, parallel)
 
     def __str__(self):
         """

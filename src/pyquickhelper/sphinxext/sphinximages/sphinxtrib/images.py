@@ -92,6 +92,7 @@ class ImageDirective(Directive):
         'group': directives.unchanged,
         'class': directives.class_option,  # or str?
         'alt': directives.unchanged,
+        'target': directives.unchanged,
         'download': directive_boolean,
         'title': directives.unchanged,
         'align': align,
@@ -110,6 +111,7 @@ class ImageDirective(Directive):
         width = self.options.get('width', conf['default_image_width'])
         height = self.options.get('height', conf['default_image_height'])
         alt = self.options.get('alt', '')
+        target = self.options.get('target', '')
         title = self.options.get(
             'title', '' if conf['default_show_title'] else None)
         align = self.options.get('align', '')
@@ -145,6 +147,7 @@ class ImageDirective(Directive):
             env.images.add_file('', img['uri'])
 
         img['content'] = description.astext()
+        img['target'] = target
 
         if title is None:
             img['title'] = ''

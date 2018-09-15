@@ -81,7 +81,7 @@ from docutils.parsers.rst.directives import choice, flag
 from sphinx.errors import SphinxError
 from sphinx.util import console, copyfile, ensuredir, status_iterator
 from sphinx.util.nodes import set_source_info
-from sphinx.deprecation import RemovedInSphinx30Warning
+from sphinx.deprecation import RemovedInSphinx30Warning, RemovedInSphinx40Warning
 
 from bokeh.settings import settings
 from bokeh.resources import Resources
@@ -340,6 +340,7 @@ def setup(app):
 
     with warnings.catch_warnings():
         warnings.simplefilter("ignore", RemovedInSphinx30Warning)
+        warnings.simplefilter("ignore", RemovedInSphinx40Warning)
         app.add_source_parser('.py', PlotScriptParser)
 
     app.add_directive('bokeh-plot', BokehPlotDirective)

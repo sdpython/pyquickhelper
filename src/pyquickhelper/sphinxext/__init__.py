@@ -33,6 +33,7 @@ from .sphinx_tocdelay_extension import TocDelayDirective, tocdelay_node
 from .sphinx_youtube_extension import YoutubeDirective, youtube_node
 from .sphinx_sharenet_extension import ShareNetDirective, sharenet_node
 from .sphinx_video_extension import VideoDirective, video_node
+from .sphinx_image_extension import SimpleImageDirective, simpleimage_node
 from .sphinx_template_extension import tpl_node
 from .sphinx_todoext_extension import TodoExt, TodoExtList
 from .documentation_link import python_link_doc
@@ -57,6 +58,7 @@ from ..sphinxext.sphinx_youtube_extension import setup as setup_youtube
 from ..sphinxext.sphinx_rst_builder import setup as setup_rst
 from ..sphinxext.sphinx_sharenet_extension import setup as setup_sharenet
 from ..sphinxext.sphinx_video_extension import setup as setup_video
+from ..sphinxext.sphinx_image_extension import setup as setup_image
 from ..sphinxext.sphinx_template_extension import setup as setup_tpl
 from ..sphinxext.sphinx_todoext_extension import setup as setup_todoext
 from ..sphinxext.sphinx_toctree_extension import setup as setup_toctree
@@ -103,7 +105,7 @@ def get_default_extensions():
             switch_backend("Agg")
 
     default_setups = [setup_toctree,
-                      setup_blog, setup_runpython, setup_sharenet, setup_video,
+                      setup_blog, setup_runpython, setup_sharenet,
                       setup_todoext, setup_bigger, setup_githublink,
                       setup_runpython, setup_mathdef, setup_blocref,
                       setup_faqref, setup_exref, setup_nbref,
@@ -114,7 +116,8 @@ def get_default_extensions():
                       setup_graphviz, setup_imgmath, setup_todo,
                       # the rest of it
                       setup_autodoc, setup_imagesvg,
-                      setup_plot, setup_only, setup_images, setup_collapse]
+                      setup_plot, setup_only, setup_images, setup_collapse,
+                      setup_video, setup_image]
 
     try:
         import bokeh

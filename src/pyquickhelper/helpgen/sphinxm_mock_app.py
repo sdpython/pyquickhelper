@@ -12,7 +12,7 @@ from sphinx.ext import autodoc
 from sphinx import __display_version__ as sphinx__display_version__
 from sphinx.application import VersionRequirementError
 from sphinx.errors import ExtensionError
-from sphinx.deprecation import RemovedInSphinx30Warning
+from sphinx.deprecation import RemovedInSphinx30Warning, RemovedInSphinx40Warning
 from .sphinxm_convert_doc_sphinx_helper import HTMLWriterWithCustomDirectives, _CustomSphinx
 from .sphinxm_convert_doc_sphinx_helper import MDWriterWithCustomDirectives, RSTWriterWithCustomDirectives, LatexWriterWithCustomDirectives
 from ..sphinxext import get_default_extensions
@@ -51,6 +51,7 @@ class MockSphinxApp:
         self.mapping_connect = {}
         with warnings.catch_warnings():
             warnings.simplefilter("ignore", RemovedInSphinx30Warning)
+            warnings.simplefilter("ignore", RemovedInSphinx40Warning)
             self.config = Config(None, None, confoverrides, None)
         self.confdir = "."
         self.doctreedir = "."

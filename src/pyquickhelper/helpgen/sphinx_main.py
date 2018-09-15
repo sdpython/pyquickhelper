@@ -45,6 +45,7 @@ from ..sphinxext.sphinx_tocdelay_extension import TocDelayDirective
 from ..sphinxext.sphinx_youtube_extension import YoutubeDirective
 from ..sphinxext.sphinx_sharenet_extension import ShareNetDirective, sharenet_role
 from ..sphinxext.sphinx_video_extension import VideoDirective
+from ..sphinxext.sphinx_image_extension import SimpleImageDirective
 from ..sphinxext.sphinximages.sphinxtrib.images import ImageDirective
 from ..sphinxext.sphinx_template_extension import tpl_role
 from ..sphinxext.sphinx_epkg_extension import epkg_role
@@ -254,7 +255,7 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
     the layout for the notebook gallery. ``'classic'`` or ``'table'``.
     The parameter *nbneg_pattern* can be used to remove notebooks from
     the gallery if they match this regular expression.
-    It automatically adds video directive.
+    It automatically adds video and image directives.
     *remove_unicode* can set to False or True in the documentation
     configuration file to allow or remove unicode characters
     before compiling the latex output.
@@ -264,6 +265,9 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
         change with method ``app.status_iterator`` must be
         replaced by ``status_iterator``.
         See issue `bokeh:7520 <https://github.com/bokeh/bokeh/issues/7520>`_.
+
+    .. versionchanged:: 1.8
+        Uses own image directive.
     """
     datetime_rows = [("begin", datetime.now())]
 
@@ -304,6 +308,8 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
     directives.register_directive("runpython", RunPythonDirective)
     directives.register_directive("sharenet", ShareNetDirective)
     directives.register_directive("video", VideoDirective)
+    directives.register_directive("simpleimage", SimpleImageDirective)
+    directives.register_directive("image", ImageDirective)
     directives.register_directive("todoext", TodoExt)
     directives.register_directive("mathdef", MathDef)
     directives.register_directive("blocref", BlocRef)
@@ -315,7 +321,6 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
     directives.register_directive("tocdelay", TocDelayDirective)
     directives.register_directive("youtube", YoutubeDirective)
     directives.register_directive("thumbnail", ImageDirective)
-    directives.register_directive("video", VideoDirective)
     directives.register_directive("collapse", CollapseDirective)
     roles.register_canonical_role("sharenet", sharenet_role)
     roles.register_canonical_role("bigger", bigger_role)
@@ -426,7 +431,7 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
         # and parameter should not be functions.
         if isinstance(custom_latex_processing, str  # unicode #
                       ):
-            custom_latex_processing = find_custom_latex_processing(
+            custom_latex_processing = find_custom_latex_processing(  # pylint: disable=E1111
                 custom_latex_processing)
         res = custom_latex_processing("dummy phrase")
         if res is None:

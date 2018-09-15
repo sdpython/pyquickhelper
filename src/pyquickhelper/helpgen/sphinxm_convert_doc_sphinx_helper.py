@@ -9,7 +9,7 @@ import sys
 from collections import deque
 import warnings
 import pickle
-from sphinx.deprecation import RemovedInSphinx30Warning
+from sphinx.deprecation import RemovedInSphinx30Warning, RemovedInSphinx40Warning
 from sphinx.locale import _
 from docutils.parsers.rst import roles
 from docutils.languages import en as docutils_en
@@ -90,6 +90,7 @@ from ..sphinxext.sphinx_todoext_extension import visit_todoext_node as ext_visit
 from ..sphinxext.sphinx_template_extension import visit_tpl_node as ext_visit_tpl_node, depart_tpl_node as ext_depart_tpl_node
 from ..sphinxext.sphinx_tocdelay_extension import depart_tocdelay_node as ext_depart_tocdelay_node
 from ..sphinxext.sphinx_tocdelay_extension import visit_tocdelay_node as ext_visit_tocdelay_node
+
 from ..sphinxext.sphinx_video_extension import depart_video_node_html as ext_depart_video_node_html
 from ..sphinxext.sphinx_video_extension import depart_video_node_rst as ext_depart_video_node_rst
 from ..sphinxext.sphinx_video_extension import depart_video_node_latex as ext_depart_video_node_latex
@@ -97,6 +98,13 @@ from ..sphinxext.sphinx_video_extension import depart_video_node_text as ext_dep
 from ..sphinxext.sphinx_video_extension import visit_video_node as ext_visit_video_node
 from ..sphinxext.sphinx_youtube_extension import depart_youtube_node as ext_depart_youtube_node
 from ..sphinxext.sphinx_youtube_extension import visit_youtube_node as ext_visit_youtube_node
+
+from ..sphinxext.sphinx_image_extension import depart_simpleimage_node_html as ext_depart_simpleimage_node_html
+from ..sphinxext.sphinx_image_extension import depart_simpleimage_node_rst as ext_depart_simpleimage_node_rst
+from ..sphinxext.sphinx_image_extension import depart_simpleimage_node_md as ext_depart_simpleimage_node_md
+from ..sphinxext.sphinx_image_extension import depart_simpleimage_node_latex as ext_depart_simpleimage_node_latex
+from ..sphinxext.sphinx_image_extension import depart_simpleimage_node_text as ext_depart_simpleimage_node_text
+from ..sphinxext.sphinx_image_extension import visit_simpleimage_node as ext_visit_simpleimage_node
 
 with warnings.catch_warnings():
     warnings.simplefilter("ignore")
@@ -253,6 +261,42 @@ class _AdditionalVisitDepart:
         @see fn depart_video_node_rst
         """
         ext_depart_video_node_rst(self, node)
+
+    def visit_simpleimage_node(self, node):
+        """
+        @see fn visit_simpleimage_node
+        """
+        ext_visit_simpleimage_node(self, node)
+
+    def depart_simpleimage_node_html(self, node):
+        """
+        @see fn depart_simpleimage_node_html
+        """
+        ext_depart_simpleimage_node_html(self, node)
+
+    def depart_simpleimage_node_latex(self, node):
+        """
+        @see fn depart_simpleimage_node_latex
+        """
+        ext_depart_simpleimage_node_latex(self, node)
+
+    def depart_simpleimage_node_text(self, node):
+        """
+        @see fn depart_simpleimage_node_text
+        """
+        ext_depart_simpleimage_node_text(self, node)
+
+    def depart_simpleimage_node_md(self, node):
+        """
+        @see fn depart_simpleimage_node_md
+        """
+        ext_depart_simpleimage_node_md(self, node)
+
+    def depart_simpleimage_node_rst(self, node):
+        """
+        @see fn depart_simpleimage_node_rst
+        """
+        ext_depart_simpleimage_node_rst(self, node)
 
     def visit_tpl_node(self, node):
         """
@@ -1283,6 +1327,7 @@ class _CustomSphinx(Sphinx):
         self.tags = Tags(tags)
         with warnings.catch_warnings():
             warnings.simplefilter("ignore", RemovedInSphinx30Warning)
+            warnings.simplefilter("ignore", RemovedInSphinx40Warning)
             self.config = Config(confdir, CONFIG_FILENAME,
                                  confoverrides or {}, self.tags)
         self.sphinx__display_version__ = __display_version__
@@ -1291,6 +1336,7 @@ class _CustomSphinx(Sphinx):
         self.env = _CustomBuildEnvironment(self)
         with warnings.catch_warnings():
             warnings.simplefilter("ignore", RemovedInSphinx30Warning)
+            warnings.simplefilter("ignore", RemovedInSphinx40Warning)
             warnings.simplefilter("ignore", ImportWarning)
             self.config.check_unicode()
         self.config.pre_init_values()
@@ -1394,6 +1440,7 @@ class _CustomSphinx(Sphinx):
         # check all configuration values for permissible types
         with warnings.catch_warnings():
             warnings.simplefilter("ignore", RemovedInSphinx30Warning)
+            warnings.simplefilter("ignore", RemovedInSphinx40Warning)
             self.config.check_types()
         # set up the build environment
         self._init_env(freshenv)

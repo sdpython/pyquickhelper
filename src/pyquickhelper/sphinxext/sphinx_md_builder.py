@@ -506,6 +506,12 @@ class MdTranslator(TextTranslator, CommonSphinxWriterHelpers):
         self.end_state()
         raise nodes.SkipNode
 
+    def visit_simpleimage(self, node):
+        self.visit_image(self, node)
+
+    def depart_simpleimage(self, node):
+        self.depart_image(self, node)
+
     def visit_image(self, node):
         self.new_state(0)
         atts = self.base_visit_image(node, self.builder.md_image_dest)
