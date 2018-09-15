@@ -507,10 +507,10 @@ class MdTranslator(TextTranslator, CommonSphinxWriterHelpers):
         raise nodes.SkipNode
 
     def visit_simpleimage(self, node):
-        self.visit_image(self, node)
+        self.visit_image(node)
 
     def depart_simpleimage(self, node):
-        self.depart_image(self, node)
+        self.depart_image(node)
 
     def visit_image(self, node):
         self.new_state(0)

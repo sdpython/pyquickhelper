@@ -404,6 +404,7 @@ class TestLatexBuilder(ExtTestCase):
         self.assertIn("png", text)
         with open(os.path.join(temp, "elatex_image.tex"), "w", encoding="utf8") as f:
             f.write(text)
+        print(text)
 
 
 if __name__ == "__main__":

@@ -63,9 +63,9 @@ class TransferAPIFtp(TransferAPI):
         @param      path        path to remove location
         @return                 boolean
         """
-        spl = path.split("/")
+        spl = path.rsplit("/")
         to = self._root + "/" + "/".join(spl[:-1])
-        to = to.strip("/")
+        to = to.rstrip("/")
         byt = BytesIO(data)
         r = self._ftp.transfer(byt, to, spl[-1])
         return r
@@ -78,9 +78,9 @@ class TransferAPIFtp(TransferAPI):
         @param      exc         keep exception
         @return                 data
         """
-        spl = path.split("/")
+        spl = path.rsplit("/")
         src = self._root + "/" + "/".join(spl[:-1])
-        src = src.strip("/")
+        src = src.rstrip("/")
         if exc:
             r = self._ftp.retrieve(src, spl[-1], None)
         else:

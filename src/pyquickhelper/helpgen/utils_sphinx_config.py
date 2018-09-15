@@ -161,7 +161,7 @@ def NbImage(name, repository=None, force_github=False, width=None):
                 raise AttributeError(
                     "The module has no attribute '__github__'. The repository cannot be guessed.")
             repository = modobj.__github__
-        repository = repository.strip("/")
+        repository = repository.rstrip("/")
 
     loc = "/".join(["master", "_doc", "notebooks"] + paths[pos + 2:])
     url = repository + "/" + loc

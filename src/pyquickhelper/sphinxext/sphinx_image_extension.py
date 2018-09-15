@@ -78,7 +78,7 @@ class SimpleImageDirective(Directive):
         @return      a list of nodes
         """
         env = self.state.document.settings.env
-        conf = env.app.config.images_config
+        conf = env.app.config.simpleimages_config
         docname = None if env is None else env.docname
         if docname is not None:
             docname = docname.replace("\\", "/").split("/")[-1]
@@ -335,8 +335,8 @@ def initialize_simpleimages_directive(app):
     global DEFAULT_CONFIG
 
     config = copy.deepcopy(DEFAULT_CONFIG)
-    config.update(app.config.images_config)
-    app.config.images_config = config
+    config.update(app.config.simpleimages_config)
+    app.config.simpleimages_config = config
     # ensuredir(os.path.join(app.env.srcdir, config['cache_path']))
     # app.info("Initiated image directive: cache='{}'".format(config['cache_path']))
     app.env.images_mapping = FilenameUniqDict()

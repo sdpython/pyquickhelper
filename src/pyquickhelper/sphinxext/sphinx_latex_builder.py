@@ -113,6 +113,10 @@ class EnhancedLaTeXTranslator(LaTeXTranslator):
             # The program should not necessarily be here.
             pass
 
+    def visit_image(self, node):
+        print("**** IMAGE", node.attributes)
+        LaTeXTranslator.visit_image(self, node)
+
 
 class EnhancedLaTeXWriter(LaTeXWriter):
     """

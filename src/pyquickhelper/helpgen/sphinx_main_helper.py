@@ -300,7 +300,7 @@ def compile_latex_output_final(root, latex_path, doall, afile=None, latex_book=F
     .. faqreq:
         :title: The PDF is corrupted, SVG are not there
 
-        SVG graphs are not well processed by the latex compilation.
+        :epkg:`SVG` graphs are not well processed by the latex compilation.
         It usually goes through the following instruction:
 
         ::

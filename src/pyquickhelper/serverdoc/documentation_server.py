@@ -358,7 +358,7 @@ class DocumentationHandler(BaseHTTPRequestHandler):
             # fullurl = cpath.geturl()
             fullfile = cpath.path
             params["__url__"] = cpath
-            spl = fullfile.strip("/").split("/")
+            spl = fullfile.rstrip("/").split("/")
 
             project = spl[0]
             link = "/".join(spl[1:])
