@@ -5,8 +5,23 @@
 History
 =======
 
-current - 2018-08-25 - 0.00Mb
+current - 2018-09-16 - 0.00Mb
 =============================
+
+* `192`: resolve issues with image and sphinx (2018-09-16)
+* `191`: implement latex custom builder for rst2html (2018-09-16)
+* `189`: fix import issue with update to Sphinx 1.8.0 (2018-09-13)
+* `190`: Take dependency on Sphinx >= 1.8 (2018-09-13)
+* `188`: add supports for images in rst and md writers (2018-09-12)
+* `187`: fix bug in doxypy when class definition is followed by a commentary (2018-09-12)
+* `185`: add markdown rst converter (2018-09-08)
+* `186`: remove <SYSTEM MESSAGE> for role ref when converting a string rst into html or rst (2018-09-08)
+* `184`: add tag :orphan: to additional files (2018-09-08)
+* `183`: use svg image for formula in HTML and png in latex (2018-08-27)
+* `182`: implementation of a backup plan if downloading require.js fails (2018-08-27)
+
+1.8.2747 - 2018-08-25 - 1.99Mb
+==============================
 
 * `181`: fix an issue when combining coverage_report after the unit tests passed (2018-08-24)
 * `180`: add parameter persistent to get_temp_folder (2018-08-24)
@@ -102,7 +117,4 @@ current - 2018-08-25 - 0.00Mb
 * `99`: bug with galleries of examples with multiple subfolders (2018-01-30)
 
 1.5.2275 - 2017-11-28 - 0.50Mb
-==============================
-
-1.4.1533 - 2016-09-10 - 0.36Mb
 ==============================

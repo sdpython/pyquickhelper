@@ -28,11 +28,11 @@ else:
 
 def default_sphinx_options(fLOG=noLOG, **options):
     """
-    Define or override default options for :epkg:`Sphinx`, listed below.
+    Defines or overrides default options for :epkg:`Sphinx`, listed below.
 
     .. runpython::
 
-        from pyquickhelper.helpgen.sphinxm_convert_doc_helper import default_sphinx_options
+        from pyquickhelper.helpgen.rst_converters import default_sphinx_options
         options = default_sphinx_options()
         for k, v in sorted(options.items()):
             print("{0} = {1}".format(k, v))
