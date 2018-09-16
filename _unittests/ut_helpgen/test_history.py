@@ -179,7 +179,9 @@ class TestPaths(unittest.TestCase):
                        directives=None, layout="sphinx",
                        extlinks=dict(issue=('https://github.com/sdpython/pyquickhelper/issues/%s', 'issue ')))
         self.assertTrue(rst is not None)
-        self.assertNotIn('SYSTEM MESSAGE', rst)
+        for line in rst.split('\n'):
+            if "remove <SYSTEM MESSAGE> for role ref when" not in line:
+                self.assertNotIn('SYSTEM MESSAGE', line)
         self.assertIn('* `issue 136', rst)
 
         html = rst2html(content,  # fLOG=fLOG,
