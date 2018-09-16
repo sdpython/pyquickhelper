@@ -66,7 +66,7 @@ class CommonSphinxWriterHelpers:
         if 'src' in atts:
             builder = self.builder  # pylint: disable=E1101
             srcdir = builder.srcdir
-            if srcdir == "IMPOSSIBLETOFIND":
+            if srcdir == "IMPOSSIBLE:TOFIND":
                 srcdir = None
             if image_dest is None:
                 outdir = builder.outdir

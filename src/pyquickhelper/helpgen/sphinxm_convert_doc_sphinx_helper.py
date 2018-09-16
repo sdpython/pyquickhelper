@@ -1,6 +1,6 @@
 """
 @file
-@brief Helpers to convert docstring to various format
+@brief Helpers to convert docstring to various format.
 
 .. versionadded:: 1.3
 """
@@ -35,6 +35,9 @@ from sphinx.registry import SphinxComponentRegistry
 from sphinx.events import EventManager
 from sphinx.locale import __
 from sphinx import highlighting
+from sphinx.environment.collectors.asset import logger as logger_asset
+import sphinx.util.osutil
+from .conf_path_tools import custom_ensuredir
 
 try:
     # Sphinx 1.8.0
@@ -79,6 +82,7 @@ from ..sphinxext.sphinx_nbref_extension import visit_nbref_node as ext_visit_nbr
 from ..sphinxext.sphinx_postcontents_extension import depart_postcontents_node as ext_depart_postcontents_node
 from ..sphinxext.sphinx_postcontents_extension import visit_postcontents_node as ext_visit_postcontents_node
 from ..sphinxext.sphinx_rst_builder import RstWriter, RstBuilder, RstTranslator
+
 from ..sphinxext.sphinx_runpython_extension import visit_runpython_node as ext_visit_runpython_node
 from ..sphinxext.sphinx_runpython_extension import depart_runpython_node as ext_depart_runpython_node
 from ..sphinxext.sphinx_sharenet_extension import depart_sharenet_node as ext_depart_sharenet_node
@@ -812,6 +816,10 @@ class _MemoryBuilder:
         :param base_class: base builder class
         :param app: `Sphinx application <http://www.sphinx-doc.org/en/stable/_modules/sphinx/application.html>`_
         """
+        if "IMPOSSIBLE:TOFIND" in app.srcdir:
+            sphinx.util.osutil.ensuredir = custom_ensuredir
+            sphinx.builders.ensuredir = custom_ensuredir
+
         base_class.__init__(self, app=app)
         self.built_pages = {}
         self.base_class = base_class
@@ -1273,9 +1281,9 @@ class _CustomSphinx(Sphinx):
         # from sphinx.domains.c import CDomain
 
         if doctreedir is None:
-            doctreedir = "IMPOSSIBLETOFIND"
+            doctreedir = "IMPOSSIBLE:TOFIND"
         if srcdir is None:
-            srcdir = "IMPOSSIBLETOFIND"
+            srcdir = "IMPOSSIBLE:TOFIND"
         update_docutils_languages()
         self.verbosity = verbosity
 
@@ -1412,12 +1420,19 @@ class _CustomSphinx(Sphinx):
 
         # now that we know all config values, collect them from conf.py
         noallowed = []
+        rem = []
         for k in confoverrides:
             if k in {'initial_header_level', 'doctitle_xform', 'input_encoding',
                      'outdir', 'warnings_log'}:
                 continue
+            if k == 'override_image_directive':
+                self.config.images_config["override_image_directive"] = True
+                rem.append(k)
+                continue
             if k not in self.config.values:
                 noallowed.append(k)
+        for k in rem:
+            del confoverrides[k]
         if len(noallowed) > 0:
             raise ValueError("The following configuration values are declared in any extension.\n{0}\n--DECLARED--\n{1}".format(
                 "\n".join(sorted(noallowed)),
@@ -1466,7 +1481,7 @@ class _CustomSphinx(Sphinx):
         if freshenv:
             self.env = _CustomBuildEnvironment(self)
             self.env.setup(self)
-            if self.srcdir is not None and self.srcdir != "IMPOSSIBLETOFIND":
+            if self.srcdir is not None and self.srcdir != "IMPOSSIBLE:TOFIND":
                 self.env.find_files(self.config, self.builder)
         else:
             filename = os.path.join(self.doctreedir, ENV_PICKLE_FILENAME)
@@ -1501,6 +1516,10 @@ class _CustomSphinx(Sphinx):
         # Otherwise, role issue is missing.
         setup_link_roles(self)
 
+    def _lookup_doctree(self, doctree, node_type):
+        for node in doctree.traverse(node_type):
+            yield node
+
     def finalize(self, doctree, external_docnames=None):
         """
         Finalizes the documentation after it was parsed.
@@ -1508,6 +1527,10 @@ class _CustomSphinx(Sphinx):
         @param      doctree             doctree (or pub.document), available after publication
         @param      external_docnames   other docnames the doctree references
         """
+        imgs = list(self._lookup_doctree(doctree, nodes.image))
+        for img in imgs:
+            img['save_uri'] = img['uri']
+
         if not isinstance(self.env, _CustomBuildEnvironment):
             raise TypeError(
                 "self.env is not _CustomBuildEnvironment: '{0}'".format(type(self.env)))
@@ -1518,10 +1541,22 @@ class _CustomSphinx(Sphinx):
         self.builder.doctree_ = doctree
         self.env.doctree_[self.config.master_doc] = doctree
         self.env.all_docs = {self.config.master_doc: self.config.master_doc}
+
         if external_docnames:
             for doc in external_docnames:
                 self.env.all_docs[doc] = doc
+
+        # This steps goes through many function including one
+        # modifying paths in image node.
+        # Look for node['candidates'] = candidates in Sphinx code.
+        # If a path startswith('/'), it is removed.
+        logger_asset.setLevel(40)  # only errors
         self.emit('doctree-read', doctree)
+        logger_asset.setLevel(30)  # back to warnings
+
+        for img in imgs:
+            img['uri'] = img['save_uri']
+
         self.emit('doctree-resolved', doctree, self.config.master_doc)
         self.builder.write(None, None, 'all')
 

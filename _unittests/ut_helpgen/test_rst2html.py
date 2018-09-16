@@ -103,8 +103,9 @@ class TestRst2Html(unittest.TestCase):
             content = f.read()
 
         try:
-            text = rst2html(content, document_name="out_string_plot")
-        except OSError as e:
+            text = rst2html(content, document_name="out_string_plot",
+                            override_image_directive=True)
+        except (OSError, ValueError) as e:
             # Invalid argument: '[...]<string>-1.py'
             self.assertIn("<string>-1.py", str(e))
             return
@@ -138,4 +139,5 @@ class TestRst2Html(unittest.TestCase):
 
 
 if __name__ == "__main__":
+    # TestRst2Html().test_rst2html_plot_rst()
     unittest.main()

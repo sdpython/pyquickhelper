@@ -151,6 +151,13 @@ def visit_video_node(self, node):
         logger.info("[video] copy '{0}' to '{1}'".format(node['uri'], relpath))
 
 
+def _clean_value(val):
+    if isinstance(val, tuple):
+        return val[0]
+    else:
+        return val
+
+
 def depart_video_node_html(self, node):
     """
     What to do when leaving a node *video*
@@ -160,8 +167,8 @@ def depart_video_node_html(self, node):
     """
     if node.hasattr("uri"):
         filename = node["uri"]
-        width = node["width"]
-        height = node["height"]
+        width = _clean_value(node["width"])
+        height = _clean_value(node["height"])
         found = node["abspath"] is not None or node["is_url"]
         if not found:
             body = "<b>unable to find '{0}'</b>".format(filename)
@@ -188,8 +195,8 @@ def depart_video_node_text(self, node):
         depart_video_node_latex(self, node)
     elif node.hasattr("uri"):
         filename = node["uri"]
-        width = node["width"]
-        height = node["height"]
+        width = _clean_value(node["width"])
+        height = _clean_value(node["height"])
         found = node["abspath"] is not None or node["is_url"]
         if not found:
             body = "unable to find '{0}'".format(filename)
@@ -211,8 +218,8 @@ def depart_video_node_latex(self, node):
     specify a different function for each.
     """
     if node.hasattr("uri"):
-        width = node["width"]
-        height = node["height"]
+        width = _clean_value(node["width"])
+        height = _clean_value(node["height"])
         full = os.path.join(node["relpath"], node['uri'])
         found = node['abspath'] is not None or node["is_url"]
         if not found:
@@ -243,8 +250,8 @@ def depart_video_node_rst(self, node):
     """
     if node.hasattr("uri"):
         filename = node["uri"]
-        width = node["width"]
-        height = node["height"]
+        width = _clean_value(node["width"])
+        height = _clean_value(node["height"])
         found = node["abspath"] is not None or node["is_url"]
         if not found:
             body = ".. video:: {0} [not found]".format(filename)

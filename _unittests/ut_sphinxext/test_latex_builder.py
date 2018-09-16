@@ -381,6 +381,8 @@ class TestLatexBuilder(ExtTestCase):
         root = os.path.abspath(os.path.dirname(__file__))
         img1 = os.path.join(root, "data", "image", "im.png")
         img2 = os.path.join(root, "data", "thumbnail", "im.png")
+        img1 = img1[2:]
+        img2 = img2[2:]
         content = """
                     .. image:: {0}
                         :width: 59
@@ -404,9 +406,40 @@ class TestLatexBuilder(ExtTestCase):
         self.assertIn("png", text)
         with open(os.path.join(temp, "elatex_image.tex"), "w", encoding="utf8") as f:
             f.write(text)
-        print(text)
+
+    def test_latex_image_overwrite(self):
+
+        temp = get_temp_folder(__file__, "temp_latex_image_overwrite")
+        root = os.path.abspath(os.path.dirname(__file__))
+        img1 = os.path.join(root, "data", "image", "im.png")
+        img2 = os.path.join(root, "data", "thumbnail", "im.png")
+        img1 = img1[2:]
+        img2 = img2[2:]
+        content = """
+                    .. image:: {0}
+                        :width: 59
+                        :alt: alternative1
+
+                    * .. image:: {1}
+                        :width: 59
+                        :alt: alternative2
+                    """.replace("                    ", "").format(img1, img2).replace("\\", "/")
+        if sys.version_info[0] >= 3:
+            content = content.replace('u"', '"')
+
+        text = rst2html(content,  # fLOG=fLOG,
+                        writer="elatex", keep_warnings=False, layout='sphinx',
+                        extlinks={'issue': ('http://%s', '_issue_')},
+                        md_image_dest=temp, override_image_directive=True)
+
+        text = text.replace("\r", "")
+        self.assertIn('sphinxincludegraphics', text)
+        self.assertIn('=59', text)
+        self.assertIn("png", text)
+        with open(os.path.join(temp, "elatex_image.tex"), "w", encoding="utf8") as f:
+            f.write(text)
 
 
 if __name__ == "__main__":
-    TestLatexBuilder().test_latex_image()
+    TestLatexBuilder().test_latex_image_overwrite()
     unittest.main()

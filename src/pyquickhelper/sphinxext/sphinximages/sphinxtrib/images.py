@@ -12,6 +12,7 @@ import copy
 import uuid
 import hashlib
 import functools
+import logging
 import sphinx
 from sphinx.util.osutil import copyfile
 from sphinx.util import status_iterator
@@ -130,7 +131,17 @@ class ImageDirective(Directive):
 
         img = image_node()
 
-        if self.is_remote(self.arguments[0]):
+        try:
+            is_remote = self.is_remote(self.arguments[0])
+        except ValueError as e:
+            this = os.path.abspath(os.path.dirname(__file__))
+            repl = os.path.join(this, "missing.png")
+            self.arguments[0] = repl
+            is_remote = self.is_remote(self.arguments[0])
+            logger = logging.getLogger('image')
+            logger.warning("[image] {0}, replaced by '{1}'".format(e, repl))
+
+        if is_remote:
             img['remote'] = True
             if download:
                 img['uri'] = os.path.join('_images', hashlib.sha1(
@@ -161,6 +172,8 @@ class ImageDirective(Directive):
         img['legacy_classes'] = legacy_classes
         img['group'] = group
         img['size'] = (width, height)
+        img['width'] = width
+        img['height'] = height
         img['classes'] += classes
         img['alt'] = alt
         img['align'] = align
@@ -232,7 +245,10 @@ def download_images(app, env):
                                'Downloading remote images...', brown,
                                len(env.remote_images)):
         dst = os.path.join(env.srcdir, env.remote_images[src])
+        dirn = os.path.dirname(dst)
+        ensuredir(dirn)
         if not os.path.isfile(dst):
+            print('{} -> {} (downloading)'.format(src, dst))
             app.info('{} -> {} (downloading)'.format(src, dst))
             with open(dst, 'wb') as f:
                 # TODO: apply reuqests_kwargs
@@ -304,7 +320,6 @@ def configure_backend(app):
 def setup(app):
     """setup for :epkg:`sphinx` extension"""
     global DEFAULT_CONFIG
-    app.require_sphinx('1.0')
     app.add_config_value('images_config', DEFAULT_CONFIG, 'env')
     app.connect('builder-inited', configure_backend)
     app.connect('env-updated', download_images)

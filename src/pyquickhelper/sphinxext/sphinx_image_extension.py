@@ -176,6 +176,13 @@ def visit_simpleimage_node(self, node):
                 node['uri'], relpath))
 
 
+def _clean_value(val):
+    if isinstance(val, tuple):
+        return val[0]
+    else:
+        return val
+
+
 def depart_simpleimage_node_html(self, node):
     """
     What to do when leaving a node *image*
@@ -185,8 +192,8 @@ def depart_simpleimage_node_html(self, node):
     """
     if node.hasattr("uri"):
         filename = node["uri"]
-        width = node["width"]
-        height = node["height"]
+        width = _clean_value(node["width"])
+        height = _clean_value(node["height"])
         scale = node["scale"]
         alt = node["alt"]
         target = node["target"]
@@ -224,8 +231,8 @@ def depart_simpleimage_node_text(self, node):
         depart_simpleimage_node_latex(self, node)
     elif node.hasattr("uri"):
         filename = node["uri"]
-        width = node["width"]
-        height = node["height"]
+        width = _clean_value(node["width"])
+        height = _clean_value(node["height"])
         scale = node["scale"]
         alt = node["alt"]
         target = node["target"]
@@ -253,8 +260,8 @@ def depart_simpleimage_node_latex(self, node):
     specify a different function for each.
     """
     if node.hasattr("uri"):
-        width = node["width"]
-        height = node["height"]
+        width = _clean_value(node["width"])
+        height = _clean_value(node["height"])
         scale = node["scale"]
         alt = node["alt"]
         full = os.path.join(node["relpath"], node['uri'])

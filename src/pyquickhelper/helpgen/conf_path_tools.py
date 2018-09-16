@@ -4,6 +4,7 @@
 """
 import sys
 import os
+import errno
 
 
 def find_in_PATH(prog):
@@ -141,3 +142,17 @@ def find_pandoc_path(exc=True):
     else:
         # linux, should be in PATH.
         return ""
+
+
+def custom_ensuredir(path):
+    # type: (unicode) -> None
+    """Ensure that a path exists."""
+    if "IMPOSSIBLE:TOFIND" in path:
+        return
+    try:
+        os.makedirs(path)
+    except OSError as err:
+        # 0 for Jython/Win32
+        EEXIST = getattr(errno, 'EEXIST', 0)
+        if err.errno not in [0, EEXIST]:
+            raise

@@ -199,6 +199,7 @@ def setup(app):
                  html=(visit_exreflist_node, depart_exreflist_node),
                  elatex=(visit_exreflist_node, depart_exreflist_node),
                  latex=(visit_exreflist_node, depart_exreflist_node),
+                 tex=(visit_exreflist_node, depart_exreflist_node),
                  text=(visit_exreflist_node, depart_exreflist_node),
                  md=(visit_exreflist_node, depart_exreflist_node),
                  rst=(visit_exreflist_node, depart_exreflist_node))
@@ -206,6 +207,7 @@ def setup(app):
                  html=(visit_exref_node, depart_exref_node),
                  elatex=(visit_exref_node, depart_exref_node),
                  latex=(visit_exref_node, depart_exref_node),
+                 tex=(visit_exref_node, depart_exref_node),
                  text=(visit_exref_node, depart_exref_node),
                  md=(visit_exref_node, depart_exref_node),
                  rst=(visit_exref_node, depart_exref_node))

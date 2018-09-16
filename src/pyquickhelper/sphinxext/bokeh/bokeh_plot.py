@@ -289,15 +289,16 @@ def env_before_read_docs(app, env, docnames):
 
 def builder_inited(app):
     app.env.bokeh_plot_auxdir = join(app.env.doctreedir, 'bokeh_plot')
-    ensuredir(app.env.bokeh_plot_auxdir)  # sphinx/_build/doctrees/bokeh_plot
-
+    if app.env.srcdir is not None and app.env.srcdir != 'IMPOSSIBLE:TOFIND':
+        # sphinx/_build/doctrees/bokeh_plot
+        ensuredir(app.env.bokeh_plot_auxdir)
     if not hasattr(app.env, 'bokeh_plot_files'):
         app.env.bokeh_plot_files = {}
 
 
 def html_page_context(app, pagename, templatename, context, doctree):
-    """ Add BokehJS to pages that contain plots.
-
+    """
+    Add BokehJS to pages that contain plots.
     """
     if doctree and doctree.get('bokeh_plot_include_bokehjs'):
         context['bokeh_css_files'] = resources.css_files

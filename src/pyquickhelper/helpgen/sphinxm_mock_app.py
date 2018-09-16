@@ -117,7 +117,7 @@ class MockSphinxApp:
 
     def finalize(self, doctree, external_docnames=None):
         """
-        Finalize the documentation after it was parsed.
+        Finalizes the documentation after it was parsed.
 
         @param      doctree             doctree (or pub.document), available after publication
         @param      external_docnames   other docnames the doctree references

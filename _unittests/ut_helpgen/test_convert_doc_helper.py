@@ -26,7 +26,7 @@ except ImportError:
 
 from src.pyquickhelper.loghelper.flog import fLOG
 from src.pyquickhelper.pycode import ExtTestCase
-from src.pyquickhelper.helpgen.sphinxm_convert_doc_helper import rst2html, docstring2html
+from src.pyquickhelper.helpgen.rst_converters import rst2html, docstring2html
 from src.pyquickhelper.pandashelper import df2rst
 
 from IPython.core.display import HTML

@@ -9,10 +9,32 @@ from docutils.frontend import OptionParser
 from sphinx.locale import __
 from sphinx.builders.latex import LaTeXBuilder
 from sphinx.writers.latex import LaTeXWriter, LaTeXTranslator
-from sphinx.writers.latex import ENUMERATE_LIST_STYLE, toRoman
+from sphinx.writers.latex import ENUMERATE_LIST_STYLE, toRoman, rstdim_to_latexdim
 from sphinx.util import logging
 from sphinx.util.docutils import SphinxFileOutput
 from sphinx import addnodes
+
+from .sphinx_autosignature import depart_autosignature_node, visit_autosignature_node
+from .sphinx_bigger_extension import depart_bigger_node_latex, visit_bigger_node_latex
+from .sphinx_blocref_extension import visit_blocref_node, depart_blocref_node
+from .sphinx_blog_extension import visit_blogpost_node, depart_blogpost_node
+from .sphinx_blog_extension import visit_blogpostagg_node, depart_blogpostagg_node
+from .sphinx_cmdref_extension import visit_cmdref_node, depart_cmdref_node
+from .sphinx_collapse_extension import visit_collapse_node, depart_collapse_node
+from .sphinx_epkg_extension import visit_epkg_node, depart_epkg_node
+from .sphinx_exref_extension import visit_exref_node, depart_exref_node
+from .sphinx_faqref_extension import visit_faqref_node, depart_faqref_node
+from .sphinx_mathdef_extension import visit_mathdef_node, depart_mathdef_node
+from .sphinx_nbref_extension import visit_nbref_node, depart_nbref_node
+from .sphinx_postcontents_extension import depart_postcontents_node, visit_postcontents_node
+from .sphinx_runpython_extension import visit_runpython_node, depart_runpython_node
+from .sphinx_sharenet_extension import depart_sharenet_node, visit_sharenet_node
+from .sphinx_todoext_extension import visit_todoext_node, depart_todoext_node
+from .sphinx_template_extension import visit_tpl_node, depart_tpl_node
+from .sphinx_tocdelay_extension import depart_tocdelay_node, visit_tocdelay_node
+from .sphinx_video_extension import depart_video_node_latex, visit_video_node
+from .sphinx_youtube_extension import depart_youtube_node, visit_youtube_node
+from .sphinx_image_extension import depart_simpleimage_node_latex, visit_simpleimage_node
 
 
 class EnhancedLaTeXTranslator(LaTeXTranslator):
@@ -64,18 +86,12 @@ class EnhancedLaTeXTranslator(LaTeXTranslator):
         enumnext = "enum%s" % toRoman(get_nested_level(node) + 1).lower()
         style = ENUMERATE_LIST_STYLE.get(get_enumtype(node))
 
-        try:
-            node['prefix']
-        except KeyError:
-            raise RuntimeError(
-                "Unable to get prefix for node\n{0}".format(node))
-
         self.body.append('\\begin{enumerate}\n')
         self.body.append('\\def\\the%s{%s{%s}}\n' % (enum, style, enum))
-        prefix = node['prefix'] if 'prefix' not in node else ''
-        suffix = node['suffix'] if 'suffix' not in node else ''
+        prefix = node['prefix'] if 'prefix' in node else ''
+        suffix = node['suffix'] if 'suffix' in node else ''
         self.body.append('\\def\\label%s{%s\\the%s %s}\n' %
-                         (enum, node['prefix'], enum, node['suffix']))
+                         (enum, prefix, enum, suffix))
         self.body.append('\\makeatletter\\def\\p@%s{\\p@%s %s\\the%s %s}\\makeatother\n' %
                          (enumnext, enum, prefix, enum, suffix))
         if 'start' in node:
@@ -113,9 +129,154 @@ class EnhancedLaTeXTranslator(LaTeXTranslator):
             # The program should not necessarily be here.
             pass
 
-    def visit_image(self, node):
-        print("**** IMAGE", node.attributes)
-        LaTeXTranslator.visit_image(self, node)
+    def latex_image_length(self, width_str):
+        # type: (nodes.Node) -> unicode
+        try:
+            return rstdim_to_latexdim(width_str)
+        except ValueError:
+            if width_str == 'auto':
+                pass
+            else:
+                self.builder.logger.warning(
+                    __('[EnhancedLaTeXTranslator] dimension unit %s is invalid. Ignored.'), width_str)
+            return None
+
+    def visit_inheritance_diagram(self, node):
+        pass
+
+    def depart_inheritance_diagram(self, node):
+        pass
+
+    def unknown_visit(self, node):
+        # type: (nodes.Node) -> None
+        raise NotImplementedError("Unknown node '{0}' detected in '{1}'".format(
+            node.__class__.__name__, self.__class__.__name__))
+
+    def depart_autosignature_node(self, node):
+        depart_autosignature_node(self, node)
+
+    def visit_autosignature_node(self, node):
+        visit_autosignature_node(self, node)
+
+    def depart_bigger_node(self, node):
+        return depart_bigger_node_latex(self, node)
+
+    def visit_bigger_node(self, node):
+        visit_bigger_node_latex(self, node)
+
+    def visit_blocref_node(self, node):
+        visit_blocref_node(self, node)
+
+    def depart_blocref_node(self, node):
+        depart_blocref_node(self, node)
+
+    def visit_blogpost_node(self, node):
+        visit_blogpost_node(self, node)
+
+    def depart_blogpost_node(self, node):
+        depart_blogpost_node(self, node)
+
+    def visit_blogpostagg_node(self, node):
+        visit_blogpostagg_node(self, node)
+
+    def depart_blogpostagg_node(self, node):
+        depart_blogpostagg_node(self, node)
+
+    def visit_cmdref_node(self, node):
+        visit_cmdref_node(self, node)
+
+    def depart_cmdref_node(self, node):
+        depart_cmdref_node(self, node)
+
+    def visit_collapse_node(self, node):
+        visit_collapse_node(self, node)
+
+    def depart_collapse_node(self, node):
+        depart_collapse_node(self, node)
+
+    def visit_epkg_node(self, node):
+        visit_epkg_node(self, node)
+
+    def depart_epkg_node(self, node):
+        depart_epkg_node(self, node)
+
+    def visit_exref_node(self, node):
+        visit_exref_node(self, node)
+
+    def depart_exref_node(self, node):
+        depart_exref_node(self, node)
+
+    def visit_faqref_node(self, node):
+        visit_faqref_node(self, node)
+
+    def depart_faqref_node(self, node):
+        depart_faqref_node(self, node)
+
+    def visit_mathdef_node(self, node):
+        visit_mathdef_node(self, node)
+
+    def depart_mathdef_node(self, node):
+        depart_mathdef_node(self, node)
+
+    def visit_nbref_node(self, node):
+        visit_nbref_node(self, node)
+
+    def depart_nbref_node(self, node):
+        depart_nbref_node(self, node)
+
+    def depart_postcontents_node(self, node):
+        depart_postcontents_node(self, node)
+
+    def visit_postcontents_node(self, node):
+        visit_postcontents_node(self, node)
+
+    def visit_runpython_node(self, node):
+        visit_runpython_node(self, node)
+
+    def depart_runpython_node(self, node):
+        depart_runpython_node(self, node)
+
+    def visit_sharenet_node(self, node):
+        visit_sharenet_node(self, node)
+
+    def depart_sharenet_node(self, node):
+        depart_sharenet_node(self, node)
+
+    def visit_todoext_node(self, node):
+        visit_todoext_node(self, node)
+
+    def depart_todoext_node(self, node):
+        depart_todoext_node(self, node)
+
+    def visit_tpl_node(self, node):
+        visit_tpl_node(self, node)
+
+    def depart_tpl_node(self, node):
+        depart_tpl_node(self, node)
+
+    def depart_tocdelay_node(self, node):
+        depart_tocdelay_node(self, node)
+
+    def visit_tocdelay_node(self, node):
+        visit_tocdelay_node(self, node)
+
+    def depart_video_node(self, node):
+        depart_video_node_latex(self, node)
+
+    def visit_video_node(self, node):
+        visit_video_node(self, node)
+
+    def depart_youtube_node(self, node):
+        depart_youtube_node(self, node)
+
+    def visit_youtube_node(self, node):
+        visit_youtube_node(self, node)
+
+    def depart_simpleimage_node(self, node):
+        depart_simpleimage_node_latex(self, node)
+
+    def visit_simpleimage_node(self, node):
+        visit_simpleimage_node(self, node)
 
 
 class EnhancedLaTeXWriter(LaTeXWriter):
@@ -140,7 +301,7 @@ class EnhancedLaTeXBuilder(LaTeXBuilder):
     Overwrites `LaTeXBuilder <https://github.com/sphinx-doc/sphinx/blob/master/sphinx/builders/latex/__init__.py>`_.
     """
     name = 'elatex'
-    format = 'tex'
+    format = 'latex'
     file_suffix = '.tex'
     epilog = __('The EnhancedTexinfo files are in %(outdir)s.')
     if os.name == 'posix':
