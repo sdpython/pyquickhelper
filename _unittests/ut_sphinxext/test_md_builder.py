@@ -352,7 +352,6 @@ class TestMdBuilder(ExtTestCase):
         self.assertIn("*italic*", text)
         self.assertIn("* bul1", text)
         self.assertIn("```", text)
-        self.assertIn("**ut**", text)
         self.assertIn("gggg", text)
         self.assertNotIn("hhhh", text)
         self.assertNotIn("jjjj", text)

@@ -11,8 +11,14 @@ import shutil
 import os
 import sys
 import warnings
-from sphinx.application import Sphinx, RemovedInSphinx40Warning, RemovedInSphinx20Warning, RemovedInSphinx30Warning
+from sphinx.application import Sphinx
 
+try:
+    from sphinx.deprecation import RemovedInSphinx30Warning, RemovedInSphinx40Warning, RemovedInSphinx20Warning
+except ImportError:
+    RemovedInSphinx20Warning = DeprecationWarning
+    RemovedInSphinx30Warning = DeprecationWarning
+    RemovedInSphinx40Warning = DeprecationWarning
 
 if sys.version_info[0] == 2:
     from StringIO import StringIO

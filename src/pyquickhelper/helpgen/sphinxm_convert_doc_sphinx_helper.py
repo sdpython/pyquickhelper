@@ -9,7 +9,13 @@ import sys
 from collections import deque
 import warnings
 import pickle
-from sphinx.deprecation import RemovedInSphinx30Warning, RemovedInSphinx40Warning
+
+try:
+    from sphinx.deprecation import RemovedInSphinx30Warning, RemovedInSphinx40Warning
+except ImportError:
+    RemovedInSphinx30Warning = DeprecationWarning
+    RemovedInSphinx40Warning = DeprecationWarning
+
 from sphinx.locale import _
 from docutils.parsers.rst import roles
 from docutils.languages import en as docutils_en
@@ -37,6 +43,7 @@ from sphinx.locale import __
 from sphinx import highlighting
 from sphinx.environment.collectors.asset import logger as logger_asset
 import sphinx.util.osutil
+import sphinx.errors
 from .conf_path_tools import custom_ensuredir
 
 try:
@@ -1295,6 +1302,8 @@ class _CustomSphinx(Sphinx):
         self.registry = SphinxComponentRegistry()
         self.post_transforms = []               # type: List[Transform]
         self.html_themes = {}                   # type: Dict[unicode, unicode]
+        if sphinx.__version__ < '1.8':
+            self.enumerable_nodes = {}          # type: Dict[nodes.Node, Tuple[unicode, Callable]]  # NOQA
 
         self.srcdir = srcdir
         self.confdir = confdir
@@ -1442,6 +1451,13 @@ class _CustomSphinx(Sphinx):
 
         # check extension versions if requested
         # self.config.needs_extensions = self.config.extensions
+        if not hasattr(self.config, 'items'):
+
+            def _citems():
+                for k, v in self.config.values.items():
+                    yield k, v
+
+            self.config.items = _citems
         verify_extensions(self, self.config)
 
         # check primary_domain if requested
@@ -1483,7 +1499,7 @@ class _CustomSphinx(Sphinx):
             self.env.setup(self)
             if self.srcdir is not None and self.srcdir != "IMPOSSIBLE:TOFIND":
                 self.env.find_files(self.config, self.builder)
-        else:
+        elif "IMPOSSIBLE:TOFIND" not in self.doctreedir:
             filename = os.path.join(self.doctreedir, ENV_PICKLE_FILENAME)
             try:
                 self.info(bold(__('loading pickled environment... ')), nonl=True)
@@ -1575,7 +1591,12 @@ class _CustomSphinx(Sphinx):
         self._added_objects.append(('builder', builder))
         if builder.name not in self.registry.builders:
             self.debug('[_CustomSphinx]  adding builder: %r', builder)
-            self.registry.add_builder(builder, override=override)
+            try:
+                # Sphinx >= 1.8
+                self.registry.add_builder(builder, override=override)
+            except TypeError:
+                # Sphinx < 1.8
+                self.registry.add_builder(builder)
         else:
             self.debug('[_CustomSphinx]  already added builder: %r', builder)
 
@@ -1595,12 +1616,23 @@ class _CustomSphinx(Sphinx):
 
     def add_directive(self, name, obj, content=None, arguments=None, override=True, **options):
         self._added_objects.append(('directive', name))
-        Sphinx.add_directive(self, name, obj, content=content, arguments=arguments,
-                             override=override, **options)
+        try:
+            # Sphinx >= 1.8
+            Sphinx.add_directive(self, name, obj, content=content, arguments=arguments,
+                                 override=override, **options)
+        except sphinx.errors.ExtensionError:
+            # Sphinx < 1.8
+            Sphinx.add_directive(self, name, obj, content=content, arguments=arguments,
+                                 **options)
 
     def add_domain(self, domain, override=True):
         self._added_objects.append(('domain', domain))
-        Sphinx.add_domain(self, domain, override=override)
+        try:
+            # Sphinx >= 1.8
+            Sphinx.add_domain(self, domain, override=override)
+        except TypeError:
+            # Sphinx < 1.8
+            Sphinx.add_domain(self, domain)
         # For some reason, the directives are missing from the main catalog
         # in docutils.
         for k, v in domain.directives.items():

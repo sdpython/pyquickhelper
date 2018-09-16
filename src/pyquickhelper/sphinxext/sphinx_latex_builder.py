@@ -9,9 +9,50 @@ from docutils.frontend import OptionParser
 from sphinx.locale import __
 from sphinx.builders.latex import LaTeXBuilder
 from sphinx.writers.latex import LaTeXWriter, LaTeXTranslator
-from sphinx.writers.latex import ENUMERATE_LIST_STYLE, toRoman, rstdim_to_latexdim
+from sphinx.writers.latex import toRoman, rstdim_to_latexdim
+
+try:
+    # Sphinx >= 1.8
+    from sphinx.writers.latex import ENUMERATE_LIST_STYLE
+except ImportError:
+    # Sphinx < 1.8
+    from collections import defaultdict
+    ENUMERATE_LIST_STYLE = defaultdict(lambda: r'\arabic',
+                                       {
+                                           'arabic': r'\arabic',
+                                           'loweralpha': r'\alph',
+                                           'upperalpha': r'\Alph',
+                                           'lowerroman': r'\roman',
+                                           'upperroman': r'\Roman',
+                                       })
 from sphinx.util import logging
-from sphinx.util.docutils import SphinxFileOutput
+
+try:
+    # Sphinx >= 1.8
+    from sphinx.util.docutils import SphinxFileOutput
+except ImportError:
+    # Sphinx < 1.8
+    from docutils.io import FileOutput
+
+    class SphinxFileOutput(FileOutput):
+        """Better FileOutput class for Sphinx."""
+
+        def __init__(self, **kwargs):
+            # type: (Any) -> None
+            self.overwrite_if_changed = kwargs.pop(
+                'overwrite_if_changed', False)
+            FileOutput.__init__(self, **kwargs)
+
+        def write(self, data):
+            # type: (unicode) -> unicode
+            if (self.destination_path and self.autoclose and 'b' not in self.mode and
+                    self.overwrite_if_changed and os.path.exists(self.destination_path)):
+                with open(self.destination_path, encoding=self.encoding) as f:
+                    # skip writing: content not changed
+                    if f.read() == data:
+                        return data
+            return FileOutput.write(self, data)
+
 from sphinx import addnodes
 
 from .sphinx_autosignature import depart_autosignature_node, visit_autosignature_node

@@ -12,7 +12,11 @@ from sphinx.ext import autodoc
 from sphinx import __display_version__ as sphinx__display_version__
 from sphinx.application import VersionRequirementError
 from sphinx.errors import ExtensionError
-from sphinx.deprecation import RemovedInSphinx30Warning, RemovedInSphinx40Warning
+try:
+    from sphinx.deprecation import RemovedInSphinx30Warning, RemovedInSphinx40Warning
+except ImportError:
+    RemovedInSphinx30Warning = DeprecationWarning
+    RemovedInSphinx40Warning = DeprecationWarning
 from .sphinxm_convert_doc_sphinx_helper import HTMLWriterWithCustomDirectives, _CustomSphinx
 from .sphinxm_convert_doc_sphinx_helper import MDWriterWithCustomDirectives, RSTWriterWithCustomDirectives, LatexWriterWithCustomDirectives
 from ..sphinxext import get_default_extensions

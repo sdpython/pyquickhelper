@@ -68,6 +68,7 @@ class TestImageExtension(ExtTestCase):
                     .. thumbnail:: http://www.xavierdupre.fr/app/pyquickhelper/helpsphinx/_static/project_ico.png
                         :width: 10
                         :height: 20
+                        :download: 1
 
                     after
 

@@ -47,9 +47,6 @@ from docutils import nodes, writers
 from sphinx import addnodes
 from sphinx.locale import admonitionlabels, versionlabels, _
 from sphinx.writers.text import TextTranslator, MAXWIDTH, STDINDENT
-from ..sphinxext.sphinx_bigger_extension import visit_bigger_node_rst, depart_bigger_node_rst
-from ..sphinxext.sphinx_collapse_extension import visit_collapse_node_rst, depart_collapse_node_rst
-from ..sphinxext.sphinx_sharenet_extension import visit_sharenet_node_rst, depart_sharenet_node_rst
 from ._sphinx_common_builder import CommonSphinxWriterHelpers
 
 from .sphinx_autosignature import depart_autosignature_node, visit_autosignature_node
@@ -917,19 +914,6 @@ class MdTranslator(TextTranslator, CommonSphinxWriterHelpers):
             self.add_text(node.astext())
         raise nodes.SkipNode
 
-    def visit_bigger_node(self, node):
-        self.add_text('**')
-        self.add_text(node['text'])
-
-    def depart_bigger_node(self, node):
-        self.add_text('**')
-
-    def visit_collapse_node(self, node):
-        visit_collapse_node_rst(self, node)
-
-    def depart_collapse_node(self, node):
-        depart_collapse_node_rst(self, node)
-
     def visit_issue(self, node):
         self.add_text('(issue *')
         self.add_text(node['text'])
@@ -973,10 +957,10 @@ class MdTranslator(TextTranslator, CommonSphinxWriterHelpers):
         pass
 
     def visit_sharenet_node(self, node):
-        visit_sharenet_node_rst(self, node)
+        visit_sharenet_node_md(self, node)
 
     def depart_sharenet_node(self, node):
-        depart_sharenet_node_rst(self, node)
+        depart_sharenet_node_md(self, node)
 
     def visit_runpythonthis_node(self, node):
         # for unit test.
@@ -1003,10 +987,10 @@ class MdTranslator(TextTranslator, CommonSphinxWriterHelpers):
         visit_autosignature_node(self, node)
 
     def depart_bigger_node(self, node):
-        return depart_bigger_node_md(self, node)
+        depart_bigger_node(self, node)
 
     def visit_bigger_node(self, node):
-        visit_bigger_node_md(self, node)
+        visit_bigger_node(self, node)
 
     def visit_blocref_node(self, node):
         visit_blocref_node(self, node)
