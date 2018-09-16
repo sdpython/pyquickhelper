@@ -90,7 +90,7 @@ class DocumentationHandler(BaseHTTPRequestHandler):
     @staticmethod
     def get_mappings():
         """
-        returns a copy of the mappings
+        Returns a copy of the mappings.
 
         @return         dictionary of mappings
         """
@@ -105,21 +105,22 @@ class DocumentationHandler(BaseHTTPRequestHandler):
 
     def do_GET(self):
         """
-        what to do is case of GET request
+        What to do is case of GET request.
         """
         parsed_path = urlparse(self.path)
         self.serve_content(parsed_path, "GET")
 
     def do_POST(self):
         """
-        what to do is case of POST request
+        What to do is case of POST request.
         """
         parsed_path = urlparse.urlparse(self.path)
         self.serve_content(parsed_path)
 
     def do_redirect(self, path="/index.html"):
         """
-        redirection when url is just the website
+        Redirection when url is just the website.
+
         @param      path        path to redirect to (a string)
         """
         self.send_response(301)
@@ -232,8 +233,8 @@ class DocumentationHandler(BaseHTTPRequestHandler):
     @staticmethod
     def get_from_cache(key):
         """
-        retrieve a file from the cache if it was cached,
-        it the file was added later than a day, it returns None
+        Retrieves a file from the cache if it was cached,
+        it the file was added later than a day, it returns None.
 
         @param      key     key
         @return             content or None if None found or too old
@@ -255,7 +256,7 @@ class DocumentationHandler(BaseHTTPRequestHandler):
     @staticmethod
     def update_cache(key, content):
         """
-        update the cache
+        Updates the cache.
 
         @param      key         key
         @param      content     content to place
@@ -275,7 +276,7 @@ class DocumentationHandler(BaseHTTPRequestHandler):
     @staticmethod
     def _print_cache(n=20):
         """
-        display the most requested files
+        Displays the most requested files.
         """
         al = [(v["nb"], k)
               for k, v in DocumentationHandler.cache_attributes.items() if v["nb"] > 1]
@@ -287,7 +288,8 @@ class DocumentationHandler(BaseHTTPRequestHandler):
     @staticmethod
     def execute(localpath):
         """
-        locally execute a python script
+        Locally executes a python script.
+
         @param      localpath       local python script
         @return                     output, error
         """
@@ -299,7 +301,7 @@ class DocumentationHandler(BaseHTTPRequestHandler):
 
     def feed(self, anys, script_python=False, params=None):
         """
-        displays something
+        Displays something.
 
         @param      anys                string
         @param      script_python       if True, the function processes script sections
@@ -358,7 +360,7 @@ class DocumentationHandler(BaseHTTPRequestHandler):
             # fullurl = cpath.geturl()
             fullfile = cpath.path
             params["__url__"] = cpath
-            spl = fullfile.rstrip("/").split("/")
+            spl = fullfile.strip("/").split("/")
 
             project = spl[0]
             link = "/".join(spl[1:])
@@ -367,10 +369,10 @@ class DocumentationHandler(BaseHTTPRequestHandler):
             if value is None:
                 self.LOG("can't serve", cpath)
                 self.LOG("with params", params)
-                return
+                self.send_response(404)
                 #raise KeyError("unable to find a mapping associated to: " + project + "\nURL:\n" + url + "\nPARAMS:\n" + str(params))
 
-            if value == "shut://":
+            elif value == "shut://":
                 self.LOG("call shutdown")
                 self.shutdown()
 
@@ -443,8 +445,8 @@ class DocumentationHandler(BaseHTTPRequestHandler):
     @staticmethod
     def process_html_path(project, content):
         """
-        process a HTML content, replace path which are relative
-        to the root and not the project
+        Processes a :epkg:`HTML` content, replaces path which are relative
+        to the root and not the project.
 
         @param      project     project, ex: ``pyquickhelper``
         @param      content     page content
@@ -457,7 +459,7 @@ class DocumentationHandler(BaseHTTPRequestHandler):
     @staticmethod
     def html_code_renderer(localpath, content):
         """
-        produces a html code for code
+        Produces a html code for code.
 
         @param      localpath   local path to file (local or not)
         @param      content     content of the file
@@ -471,7 +473,7 @@ class DocumentationHandler(BaseHTTPRequestHandler):
 
     def serve_content_web(self, path, method, params):
         """
-        functions to overload (executed after serve_content)
+        Functions to overload (executed after serve_content).
 
         @param      path        ParseResult
         @param      method      GET or POST
@@ -485,7 +487,7 @@ class DocumentationHandler(BaseHTTPRequestHandler):
 
     def serve_main_page(self):
         """
-        displays all the mapping for the default path
+        Displays all the mapping for the default path.
         """
         rows = ["<html><body>"]
         rows.append("<h1>Documentation Server</h1>")
@@ -512,7 +514,6 @@ class DocumentationThreadServer (Thread):
 
     def __init__(self, server):
         """
-        constructor
         @param      server to run
         """
         Thread.__init__(self)
@@ -520,13 +521,13 @@ class DocumentationThreadServer (Thread):
 
     def run(self):
         """
-        run the server
+        Runs the server.
         """
         self.server.serve_forever()
 
     def shutdown(self):
         """
-        shuts down the server, if it does not work, you can still kill
+        Shuts down the server, if it does not work, you can still kill
         the thread:
 
         ::
@@ -537,12 +538,10 @@ class DocumentationThreadServer (Thread):
         self.server.server_close()
 
 
-def run_doc_server(server,
-                   mappings,
-                   thread=False,
-                   port=8079):
+def run_doc_server(server, mappings, thread=False, port=8079):
     """
-    run the server
+    Runs the server.
+
     @param      server      if None, it becomes ``HTTPServer(('localhost', 8080), DocumentationHandler)``
     @param      mappings    prefixes with local folders (dictionary)
     @param      thread      if True, the server is run in a thread

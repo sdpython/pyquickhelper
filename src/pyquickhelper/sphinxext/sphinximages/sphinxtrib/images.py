@@ -37,7 +37,7 @@ DEFAULT_CONFIG = dict(
     default_image_height='auto',
     default_group=None,
     default_show_title=False,
-    download=True,
+    download=False,
     requests_kwargs={},
     cache_path='_images',
     override_image_directive=False,
@@ -66,6 +66,27 @@ def directive_boolean(value):
     else:
         raise ValueError(u"Please use on of: yes, true, no, false. "
                          u"Do not use `{}` as boolean.".format(value))
+
+
+def get_image_extension(uri):
+    """
+    Guesses an extension for an image.
+    """
+    exts = {'.jpg', '.png', '.svg', '.bmp'}
+    for ext in exts:
+        if uri.endswith(ext):
+            return ext
+    for ext in exts:
+        if ext in uri:
+            return ext
+    for ext in exts:
+        if (ext[1:] + "=true") in uri:
+            return ext
+        if ('?' + ext[1:]) in uri:
+            return ext
+    logger = logging.getLogger('image')
+    logger.warning("[image] unable to guess extension for '{0}'".format(uri))
+    return ''
 
 
 class ImageDirective(Directive):
@@ -146,6 +167,7 @@ class ImageDirective(Directive):
             if download:
                 img['uri'] = os.path.join('_images', hashlib.sha1(
                     self.arguments[0].encode()).hexdigest())
+                img['uri'] += get_image_extension(self.arguments[0])
                 img['remote_uri'] = self.arguments[0]
                 env.remote_images[img['remote_uri']] = img['uri']
                 env.images.add_file('', img['uri'])
@@ -177,6 +199,7 @@ class ImageDirective(Directive):
         img['classes'] += classes
         img['alt'] = alt
         img['align'] = align
+        img['download'] = download
         return [img]
 
     def is_remote(self, uri):
@@ -248,7 +271,6 @@ def download_images(app, env):
         dirn = os.path.dirname(dst)
         ensuredir(dirn)
         if not os.path.isfile(dst):
-            print('{} -> {} (downloading)'.format(src, dst))
             app.info('{} -> {} (downloading)'.format(src, dst))
             with open(dst, 'wb') as f:
                 # TODO: apply reuqests_kwargs

@@ -1,15 +1,13 @@
 """
-Modified version of `bokeh_plot.py <https://github.com/bokeh/bokeh/blob/master/bokeh/sphinxext/bokeh_plot.py>`_,
+@file
+@brief Modified version of `bokeh_plot.py <https://github.com/bokeh/bokeh/blob/master/bokeh/sphinxext/bokeh_plot.py>`_,
 `LICENSE <https://github.com/bokeh/bokeh/blob/master/LICENSE.txt>`_.
 
-Include Bokeh plots in Sphinx HTML documentation.
-
+Include :epkg:`bokeh` plots in Sphinx HTML documentation.
 For other output types, the placeholder text ``[graph]`` will
 be generated.
-
-The ``bokeh-plot`` directive can be used by either supplying:
-
-**A path to a source file** as the argument to the directive::
+The ``bokeh-plot`` directive can be used by either supplying,
+**a path to a source file** as the argument to the directive::
 
     .. bokeh-plot:: path/to/plot.py
 
@@ -37,7 +35,6 @@ The ``bokeh-plot`` directive can be used by either supplying:
 
 This directive also works in conjunction with Sphinx autodoc, when
 used in docstrings.
-
 The ``bokeh-plot`` directive accepts the following options:
 
 source-position : enum('above', 'below', 'none')
@@ -73,6 +70,7 @@ import warnings
 import ast
 from os.path import basename, dirname, join
 import re
+import logging
 from uuid import uuid4
 
 from docutils import nodes
@@ -140,8 +138,12 @@ def _process_script(source, filename, auxdir, js_name):
     js_path = join(auxdir, js_name).replace('<<string>>', 'string')
     js, script = autoload_static(d.roots[0], resources, script_path)
 
-    with open(js_path, "w") as f:
-        f.write(js)
+    if "IMPOSSIBLE:TOFIND" not in js_path:
+        with open(js_path, "w") as f:
+            f.write(js)
+    else:
+        logger = logging.getLogger(
+            "[bokeh] unable to write '{0}'".format(js_path))
 
     return (script, js, js_path, source)
 

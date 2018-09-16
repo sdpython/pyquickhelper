@@ -429,5 +429,4 @@ class TestRstBuilder(ExtTestCase):
 
 
 if __name__ == "__main__":
-    TestRstBuilder().test_rst_builder_sphinx()
     unittest.main()

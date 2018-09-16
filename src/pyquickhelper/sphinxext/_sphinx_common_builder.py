@@ -9,6 +9,9 @@ import re
 import urllib.request
 import shutil
 import sys
+import logging
+from .sphinximages.sphinxtrib.images import get_image_extension
+from ..filehelper import get_url_content_timeout, InternetException
 
 
 class CommonSphinxWriterHelpers:
@@ -58,9 +61,13 @@ class CommonSphinxWriterHelpers:
         if ext in ('.svg', '.swf'):
             atts['data'] = uri
             atts['type'] = types[ext]
-        else:
-            atts['src'] = uri
-            atts['alt'] = node.get('alt', uri)
+
+        atts['src'] = uri
+        atts['alt'] = node.get('alt', uri)
+
+        env = self.builder.env  # pylint: disable=E1101
+        if hasattr(env, 'remote_images') and atts['src'] in env.remote_images:
+            atts['src'] = env.remote_images[atts['src']]
 
         # Makes a local copy of the image
         if 'src' in atts:
@@ -84,27 +91,60 @@ class CommonSphinxWriterHelpers:
             else:
                 fold = image_dest
 
-            full = os.path.join(srcdir, atts['src']) if srcdir else atts['src']
-            if not os.path.exists(full):
-                raise FileNotFoundError(
-                    "Unable to find source file '{0}' for docname '{1}', srcdir='{2}' src='{3}'".format(
-                        full, builder.current_docname, srcdir, atts['src']))
-            ext = os.path.splitext(atts['src'])[-1]
-            name = self.hash_md5_readfile(full) + ext
+            if atts['src'].startswith('http:') or atts['src'].startswith('https:'):
+                name = hashlib.sha1(atts['src'].encode()).hexdigest()
+                ext = get_image_extension(atts['src'])
+                remote = True
+            else:
+                full = os.path.join(
+                    srcdir, atts['src']) if srcdir else atts['src']
+
+                if not os.path.exists(full):
+                    this = os.path.abspath(os.path.dirname(__file__))
+                    repl = os.path.join(
+                        this, "sphinximages", "sphinxtrib", "missing.png")
+                    logger = logging.getLogger("image")
+                    logger.warning(
+                        "[image] unable to find image '{0}', replaced by '{1}'".format(full, repl))
+                    full = repl
+
+                ext = os.path.splitext(atts['src'])[-1]
+                name = self.hash_md5_readfile(full) + ext
+                remote = False
 
             if not os.path.exists(fold):
                 os.makedirs(fold)
 
             dest = os.path.join(fold, name)
             if not os.path.exists(dest):
-                shutil.copy(full, dest)
+                if remote:
+                    if atts.get('download', False):
+                        # Downloads the image
+                        try:
+                            get_url_content_timeout(
+                                atts['src'], output=dest, encoding=None, timeout=20)
+                            full = atts['src']
+                        except InternetException as e:
+                            logger = logging.getLogger("image")
+                            logger.warning(
+                                "[image] unable to get content for url '{0}' due to '{1}'".format(atts['src'], e))
+                            this = os.path.abspath(os.path.dirname(__file__))
+                            full = os.path.join(
+                                this, "sphinximages", "sphinxtrib", "missing.png")
+                            shutil.copy(full, dest)
+                    else:
+                        name = atts['src']
+                        full = name
+                        dest = name
+                else:
+                    shutil.copy(full, dest)
+
             atts['src'] = name
             atts['full'] = full
             atts['dest'] = dest
-        elif 'data' in atts:
-            raise NotImplementedError()
         else:
-            raise ValueError("No image was found.")
+            raise ValueError("No image was found in node (class='{1}')\n{0}".format(
+                node, self.__class__.__name__))
 
         # image size
         if 'width' in node:
