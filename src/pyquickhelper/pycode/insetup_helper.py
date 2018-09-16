@@ -67,6 +67,7 @@ def _filter_out_warning(out):
             skip = skip or "RuntimeWarning: Config variable 'Py_DEBUG'" in line
             skip = skip or "RuntimeWarning: Config variable 'WITH_PYMALLOC'" in line
             skip = skip or "UserWarning: Module pyquickhelper was already imported" in line
+            skip = skip or "UserWarning: Module nbconvert was already imported" in line
         if not skip:
             new_lines.append(line)
     return "\n".join(new_lines)
