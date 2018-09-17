@@ -786,11 +786,17 @@ def get_module_objects(mod):
 
     cl = []
     for _, obj in inspect.getmembers(mod):
+        try:
+            stobj = str(obj)
+        except RuntimeError:
+            # One issue met in werkzeug
+            # Working outside of request context.
+            stobj = ""
         if inspect.isclass(obj) or \
            inspect.isfunction(obj) or \
            inspect.isgenerator(obj) or \
            inspect.ismethod(obj) or \
-           ("built-in function" in str(obj) and not isinstance(obj, dict)):
+           ("built-in function" in stobj and not isinstance(obj, dict)):
             cl.append(ModuleMemberDoc(obj, module=mod))
             if inspect.isclass(obj):
                 for n, o in inspect.getmembers(obj):
