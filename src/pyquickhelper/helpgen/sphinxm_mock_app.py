@@ -50,8 +50,6 @@ class MockSphinxApp:
                         "<class 'sphinx.ext.mathbase.math'>": "math",
                         "<class 'sphinx.ext.mathbase.displaymath'>": "displaymath",
                         "<class 'sphinx.ext.mathbase.eqref'>": "eqref",
-                        "<class 'matplotlib.sphinxext.only_directives.html_only'>": "only",
-                        "<class 'matplotlib.sphinxext.only_directives.latex_only'>": "only",
                         }
         self.mapping_connect = {}
         with warnings.catch_warnings():

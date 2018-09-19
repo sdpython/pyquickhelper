@@ -93,7 +93,6 @@ def get_default_extensions():
         from matplotlib.pyplot import get_backend, switch_backend
     backend = get_backend()
     from matplotlib.sphinxext.plot_directive import setup as setup_plot
-    from matplotlib.sphinxext.only_directives import setup as setup_only
     backend_ = get_backend()
     if backend_ != backend:
         import matplotlib
@@ -118,7 +117,7 @@ def get_default_extensions():
                       setup_graphviz, setup_imgmath, setup_todo,
                       # the rest of it
                       setup_autodoc, setup_imagesvg,
-                      setup_plot, setup_only, setup_image, setup_collapse,
+                      setup_plot, setup_image, setup_collapse,
                       setup_video, setup_simpleimage]
 
     try:
@@ -146,11 +145,7 @@ def get_default_standard_extensions(use_mathjax=False):
         'sphinx.ext.mathjax' if use_mathjax else 'sphinx.ext.imgmath',
         'sphinx.ext.napoleon', 'sphinx.ext.todo', 'sphinx.ext.viewcode',
         'sphinxcontrib.imagesvg',
-        # 'matplotlib.sphinxext.only_directives',
-        # 'matplotlib.sphinxext.mathmpl',
-        # 'matplotlib.sphinxext.only_directives',
         'matplotlib.sphinxext.plot_directive',
-        # 'matplotlib.sphinxext.ipython_directive',
         'jupyter_sphinx.embed_widgets',
         "nbsphinx"
     ]
