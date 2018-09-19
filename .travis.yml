@@ -1,13 +1,18 @@
 dist: xenial
 sudo: true
 language: python
-python:
-    - "3.6"
-    - "3.7"
+matrix:
+  include:
+  - name: "3.6"
+    python: "3.6"
+    env: sphinxconstraint=<1.8
+  - name: "3.7"
+    python: "3.7"
+    env: sphinxconstraint=
 install: 
     - pip install -r requirements.txt
     - pip install git+https://github.com/fancycode/pylzma.git --upgrade --no-deps
     - npm install
-    - export
+    - pip install sphinx$sphinxconstraint
 script:
     - python setup.py unittests

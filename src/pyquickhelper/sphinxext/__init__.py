@@ -49,24 +49,25 @@ from ..sphinxext.sphinx_epkg_extension import setup as setup_epkg
 from ..sphinxext.sphinx_exref_extension import setup as setup_exref
 from ..sphinxext.sphinx_faqref_extension import setup as setup_faqref
 from ..sphinxext.sphinx_githublink_extension import setup as setup_githublink
+from ..sphinxext.sphinx_image_extension import setup as setup_simpleimage
 from ..sphinxext.sphinx_mathdef_extension import setup as setup_mathdef
-from ..sphinxext.sphinx_md_builder import setup as setup_md
 from ..sphinxext.sphinx_nbref_extension import setup as setup_nbref
 from ..sphinxext.sphinx_postcontents_extension import setup as setup_postcontents
-from ..sphinxext.sphinx_tocdelay_extension import setup as setup_tocdelay
-from ..sphinxext.sphinx_youtube_extension import setup as setup_youtube
-from ..sphinxext.sphinx_rst_builder import setup as setup_rst
-from ..sphinxext.sphinx_sharenet_extension import setup as setup_sharenet
-from ..sphinxext.sphinx_video_extension import setup as setup_video
-from ..sphinxext.sphinx_image_extension import setup as setup_simpleimage
-from ..sphinxext.sphinx_template_extension import setup as setup_tpl
-from ..sphinxext.sphinx_todoext_extension import setup as setup_todoext
-from ..sphinxext.sphinx_toctree_extension import setup as setup_toctree
 from ..sphinxext.sphinx_runpython_extension import setup as setup_runpython
-from .sphinx_runpython_extension import RunPythonDirective, runpython_node
+from ..sphinxext.sphinx_runpython_extension import RunPythonDirective, runpython_node
+from ..sphinxext.sphinx_sharenet_extension import setup as setup_sharenet
+from ..sphinxext.sphinx_template_extension import setup as setup_tpl
+from ..sphinxext.sphinx_tocdelay_extension import setup as setup_tocdelay
+from ..sphinxext.sphinx_toctree_extension import setup as setup_toctree
+from ..sphinxext.sphinx_todoext_extension import setup as setup_todoext
+from ..sphinxext.sphinx_video_extension import setup as setup_video
+from ..sphinxext.sphinx_youtube_extension import setup as setup_youtube
 from ..sphinxext.sphinximages.sphinxtrib.images import setup as setup_image
 
+from ..sphinxext.sphinx_doctree_builder import setup as setup_doctree
 from ..sphinxext.sphinx_latex_builder import setup as setup_latex
+from ..sphinxext.sphinx_md_builder import setup as setup_md
+from ..sphinxext.sphinx_rst_builder import setup as setup_rst
 
 
 def get_default_extensions():
@@ -110,7 +111,8 @@ def get_default_extensions():
                       setup_runpython, setup_mathdef, setup_blocref,
                       setup_faqref, setup_exref, setup_nbref,
                       setup_docassert, setup_signature, setup_tpl,
-                      setup_cmdref, setup_epkg, setup_rst, setup_md, setup_latex,
+                      setup_cmdref, setup_epkg, setup_rst, setup_md,
+                      setup_latex, setup_doctree,
                       setup_postcontents, setup_tocdelay, setup_youtube,
                       # directives from sphinx
                       setup_graphviz, setup_imgmath, setup_todo,

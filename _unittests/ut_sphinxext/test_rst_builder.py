@@ -285,7 +285,7 @@ class TestRstBuilder(ExtTestCase):
         t1 = "src.pyquickhelper.sphinxext.sphinx_rst_builder.RstBuilder"
         if t1 not in text:
             raise Exception(text)
-        t1 = "Renamed"
+        t1 = ":py:class:`Renamed"
         if t1 not in text:
             raise Exception(text)
 
@@ -302,7 +302,7 @@ class TestRstBuilder(ExtTestCase):
             raise Exception(text)
         t1 = "<p>Renamed</p>"
         if t1 not in text:
-            raise Exception(text)
+            raise Exception(text)        
 
     def test_rst_reference2(self):
         from docutils import nodes as skip_
@@ -356,7 +356,7 @@ class TestRstBuilder(ExtTestCase):
         self.assertIn("gggg", text)
         self.assertNotIn("hhhh", text)
         self.assertNotIn("jjjj", text)
-        temp = get_temp_folder(__file__, "temp_reference2")
+        temp = get_temp_folder(__file__, "temp_rst_reference2")
         with open(os.path.join(temp, "out_cmdref.rst"), "w", encoding="utf8") as f:
             f.write(text)
 

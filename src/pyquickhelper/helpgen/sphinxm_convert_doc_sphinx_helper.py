@@ -46,6 +46,11 @@ import sphinx.util.osutil
 import sphinx.errors
 from .conf_path_tools import custom_ensuredir
 
+from ..sphinxext.sphinx_doctree_builder import DocTreeBuilder, DocTreeWriter, DocTreeTranslator
+from ..sphinxext.sphinx_md_builder import MdBuilder, MdWriter, MdTranslator
+from ..sphinxext.sphinx_latex_builder import EnhancedLaTeXBuilder, EnhancedLaTeXWriter, EnhancedLaTeXTranslator
+from ..sphinxext.sphinx_rst_builder import RstBuilder, RstWriter, RstTranslator
+
 try:
     # Sphinx 1.8.0
     from sphinx.extension import verify_needs_extensions as verify_extensions
@@ -60,62 +65,6 @@ except ImportError:
     # Since sphinx 1.7.3 (circular reference).
     import sphinx.builders.latex.transforms
     from sphinx.writers.latex import LaTeXTranslator
-
-from ..sphinxext.sphinx_bigger_extension import visit_bigger_node as ext_visit_bigger_node, depart_bigger_node as ext_depart_bigger_node
-from ..sphinxext.sphinx_bigger_extension import visit_bigger_node_rst as ext_visit_bigger_node_rst
-from ..sphinxext.sphinx_bigger_extension import depart_bigger_node_rst as ext_depart_bigger_node_rst
-from ..sphinxext.sphinx_bigger_extension import depart_bigger_node_html as ext_depart_bigger_node_html
-from ..sphinxext.sphinx_bigger_extension import depart_bigger_node_latex as ext_depart_bigger_node_latex
-from ..sphinxext.sphinx_bigger_extension import visit_bigger_node_latex as ext_visit_bigger_node_latex
-from ..sphinxext.sphinx_blocref_extension import visit_blocref_node as ext_visit_blocref_node, depart_blocref_node as ext_depart_blocref_node
-from ..sphinxext.sphinx_blog_extension import visit_blogpost_node as ext_visit_blogpost_node, depart_blogpost_node as ext_depart_blogpost_node
-from ..sphinxext.sphinx_blog_extension import visit_blogpostagg_node as ext_visit_blogpostagg_node
-from ..sphinxext.sphinx_blog_extension import depart_blogpostagg_node as ext_depart_blogpostagg_node
-from ..sphinxext.sphinx_blog_extension import depart_blogpostagg_node_html as ext_depart_blogpostagg_node_html
-from ..sphinxext.sphinx_cmdref_extension import visit_cmdref_node as ext_visit_cmdref_node, depart_cmdref_node as ext_depart_cmdref_node
-from ..sphinxext.sphinx_collapse_extension import visit_collapse_node as ext_visit_collapse_node
-from ..sphinxext.sphinx_collapse_extension import depart_collapse_node as ext_depart_collapse_node
-from ..sphinxext.sphinx_collapse_extension import visit_collapse_node_rst as ext_visit_collapse_node_rst
-from ..sphinxext.sphinx_collapse_extension import depart_collapse_node_rst as ext_depart_collapse_node_rst
-from ..sphinxext.sphinx_collapse_extension import depart_collapse_node_html as ext_depart_collapse_node_html
-from ..sphinxext.sphinx_collapse_extension import visit_collapse_node_html as ext_visit_collapse_node_html
-from ..sphinxext.sphinx_epkg_extension import visit_epkg_node as ext_visit_epkg_node, depart_epkg_node as ext_depart_epkg_node
-from ..sphinxext.sphinx_exref_extension import visit_exref_node as ext_visit_exref_node, depart_exref_node as ext_depart_exref_node
-from ..sphinxext.sphinx_faqref_extension import visit_faqref_node as ext_visit_faqref_node, depart_faqref_node as ext_depart_faqref_node
-from ..sphinxext.sphinx_latex_builder import EnhancedLaTeXWriter, EnhancedLaTeXBuilder, EnhancedLaTeXTranslator
-from ..sphinxext.sphinx_mathdef_extension import visit_mathdef_node as ext_visit_mathdef_node, depart_mathdef_node as ext_depart_mathdef_node
-from ..sphinxext.sphinx_md_builder import MdWriter, MdBuilder, MdTranslator
-from ..sphinxext.sphinx_nbref_extension import visit_nbref_node as ext_visit_nbref_node, depart_nbref_node as ext_depart_nbref_node
-from ..sphinxext.sphinx_postcontents_extension import depart_postcontents_node as ext_depart_postcontents_node
-from ..sphinxext.sphinx_postcontents_extension import visit_postcontents_node as ext_visit_postcontents_node
-from ..sphinxext.sphinx_rst_builder import RstWriter, RstBuilder, RstTranslator
-
-from ..sphinxext.sphinx_runpython_extension import visit_runpython_node as ext_visit_runpython_node
-from ..sphinxext.sphinx_runpython_extension import depart_runpython_node as ext_depart_runpython_node
-from ..sphinxext.sphinx_sharenet_extension import depart_sharenet_node as ext_depart_sharenet_node
-from ..sphinxext.sphinx_sharenet_extension import depart_sharenet_node_html as ext_depart_sharenet_node_html
-from ..sphinxext.sphinx_sharenet_extension import depart_sharenet_node_rst as ext_depart_sharenet_node_rst
-from ..sphinxext.sphinx_sharenet_extension import visit_sharenet_node as ext_visit_sharenet_node
-from ..sphinxext.sphinx_sharenet_extension import visit_sharenet_node_rst as ext_visit_sharenet_node_rst
-from ..sphinxext.sphinx_todoext_extension import visit_todoext_node as ext_visit_todoext_node, depart_todoext_node as ext_depart_todoext_node
-from ..sphinxext.sphinx_template_extension import visit_tpl_node as ext_visit_tpl_node, depart_tpl_node as ext_depart_tpl_node
-from ..sphinxext.sphinx_tocdelay_extension import depart_tocdelay_node as ext_depart_tocdelay_node
-from ..sphinxext.sphinx_tocdelay_extension import visit_tocdelay_node as ext_visit_tocdelay_node
-
-from ..sphinxext.sphinx_video_extension import depart_video_node_html as ext_depart_video_node_html
-from ..sphinxext.sphinx_video_extension import depart_video_node_rst as ext_depart_video_node_rst
-from ..sphinxext.sphinx_video_extension import depart_video_node_latex as ext_depart_video_node_latex
-from ..sphinxext.sphinx_video_extension import depart_video_node_text as ext_depart_video_node_text
-from ..sphinxext.sphinx_video_extension import visit_video_node as ext_visit_video_node
-from ..sphinxext.sphinx_youtube_extension import depart_youtube_node as ext_depart_youtube_node
-from ..sphinxext.sphinx_youtube_extension import visit_youtube_node as ext_visit_youtube_node
-
-from ..sphinxext.sphinx_image_extension import depart_simpleimage_node_html as ext_depart_simpleimage_node_html
-from ..sphinxext.sphinx_image_extension import depart_simpleimage_node_rst as ext_depart_simpleimage_node_rst
-from ..sphinxext.sphinx_image_extension import depart_simpleimage_node_md as ext_depart_simpleimage_node_md
-from ..sphinxext.sphinx_image_extension import depart_simpleimage_node_latex as ext_depart_simpleimage_node_latex
-from ..sphinxext.sphinx_image_extension import depart_simpleimage_node_text as ext_depart_simpleimage_node_text
-from ..sphinxext.sphinx_image_extension import visit_simpleimage_node as ext_visit_simpleimage_node
 
 with warnings.catch_warnings():
     warnings.simplefilter("ignore")
@@ -166,307 +115,38 @@ class _AdditionalVisitDepart:
 
     def is_html(self):
         """
-        Tells if the translator is html format.
+        Tells if the translator is :epkg:`html` format.
         """
         return self.base_class is HTMLTranslator
 
     def is_rst(self):
         """
-        Tells if the translator is html format.
+        Tells if the translator is :epkg:`rst` format.
         """
         return self.base_class is RstTranslator
 
     def is_latex(self):
         """
-        Tells if the translator is html format.
+        Tells if the translator is :epkg:`latex` format.
         """
         return self.base_class is LaTeXTranslator
 
-    def visit_blogpost_node(self, node):
+    def is_md(self):
         """
-        @see fn visit_blogpost_node
+        Tells if the translator is :epkg:`markdown` format.
         """
-        ext_visit_blogpost_node(self, node)
+        return self.base_class is LaTeXTranslator
 
-    def depart_blogpost_node(self, node):
+    def is_doctree(self):
         """
-        @see fn depart_blogpost_node
+        Tells if the translator is doctree format.
         """
-        ext_depart_blogpost_node(self, node)
-
-    def visit_blogpostagg_node(self, node):
-        """
-        @see fn visit_blogpostagg_node
-        """
-        ext_visit_blogpostagg_node(self, node)
-
-    def depart_blogpostagg_node(self, node):
-        """
-        @see fn depart_blogpostagg_node
-        """
-        if self.is_html():
-            ext_depart_blogpostagg_node_html(self, node)
-        else:
-            ext_depart_blogpostagg_node(self, node)
-
-    def visit_runpython_node(self, node):
-        """
-        @see fn visit_runpython_node
-        """
-        ext_visit_runpython_node(self, node)
-
-    def depart_runpython_node(self, node):
-        """
-        @see fn depart_runpython_node
-        """
-        ext_depart_runpython_node(self, node)
-
-    def visit_sharenet_node(self, node):
-        """
-        @see fn visit_sharenet_node
-        """
-        if self.is_html():
-            ext_visit_sharenet_node(self, node)
-        elif self.is_rst():
-            ext_visit_sharenet_node_rst(self, node)
-        else:
-            ext_visit_sharenet_node(self, node)
-
-    def depart_sharenet_node(self, node):
-        """
-        @see fn depart_sharenet_node
-        """
-        if self.is_html():
-            ext_depart_sharenet_node_html(self, node)
-        elif self.is_rst():
-            ext_depart_sharenet_node_rst(self, node)
-        else:
-            ext_depart_sharenet_node(self, node)
-
-    def visit_video_node(self, node):
-        """
-        @see fn visit_video_node
-        """
-        ext_visit_video_node(self, node)
-
-    def depart_video_node_html(self, node):
-        """
-        @see fn depart_video_node_html
-        """
-        ext_depart_video_node_html(self, node)
-
-    def depart_video_node_latex(self, node):
-        """
-        @see fn depart_video_node_latex
-        """
-        ext_depart_video_node_latex(self, node)
-
-    def depart_video_node_text(self, node):
-        """
-        @see fn depart_video_node_text
-        """
-        ext_depart_video_node_text(self, node)
-
-    def depart_video_node_rst(self, node):
-        """
-        @see fn depart_video_node_rst
-        """
-        ext_depart_video_node_rst(self, node)
-
-    def visit_simpleimage_node(self, node):
-        """
-        @see fn visit_simpleimage_node
-        """
-        ext_visit_simpleimage_node(self, node)
-
-    def depart_simpleimage_node_html(self, node):
-        """
-        @see fn depart_simpleimage_node_html
-        """
-        ext_depart_simpleimage_node_html(self, node)
-
-    def depart_simpleimage_node_latex(self, node):
-        """
-        @see fn depart_simpleimage_node_latex
-        """
-        ext_depart_simpleimage_node_latex(self, node)
-
-    def depart_simpleimage_node_text(self, node):
-        """
-        @see fn depart_simpleimage_node_text
-        """
-        ext_depart_simpleimage_node_text(self, node)
-
-    def depart_simpleimage_node_md(self, node):
-        """
-        @see fn depart_simpleimage_node_md
-        """
-        ext_depart_simpleimage_node_md(self, node)
-
-    def depart_simpleimage_node_rst(self, node):
-        """
-        @see fn depart_simpleimage_node_rst
-        """
-        ext_depart_simpleimage_node_rst(self, node)
-
-    def visit_tpl_node(self, node):
-        """
-        @see fn visit_tpl_node
-        """
-        ext_visit_tpl_node(self, node)
-
-    def depart_tpl_node(self, node):
-        """
-        @see fn depart_tpl_node
-        """
-        ext_depart_tpl_node(self, node)
-
-    def visit_epkg_node(self, node):
-        """
-        @see fn visit_epkg_node
-        """
-        ext_visit_epkg_node(self, node)
-
-    def depart_epkg_node(self, node):
-        """
-        @see fn depart_epkg_node
-        """
-        ext_depart_epkg_node(self, node)
-
-    def visit_bigger_node(self, node):
-        """
-        @see fn visit_bigger_node
-        """
-        if self.is_rst():
-            ext_visit_bigger_node_rst(self, node)
-        elif self.is_latex():
-            ext_visit_bigger_node_latex(self, node)
-        else:
-            ext_visit_bigger_node(self, node)
-
-    def depart_bigger_node(self, node):
-        """
-        @see fn depart_bigger_node
-        """
-        if self.is_html():
-            ext_depart_bigger_node_html(self, node)
-        elif self.is_rst():
-            ext_depart_bigger_node_rst(self, node)
-        elif self.is_latex():
-            ext_depart_bigger_node_latex(self, node)
-        else:
-            ext_depart_bigger_node(self, node)
-
-    def visit_collapse_node(self, node):
-        """
-        @see fn visit_collapse_node
-        """
-        if self.is_html():
-            ext_visit_collapse_node_html(self, node)
-        elif self.is_rst():
-            ext_visit_collapse_node_rst(self, node)
-        else:
-            ext_visit_collapse_node(self, node)
-
-    def depart_collapse_node(self, node):
-        """
-        @see fn depart_collapse_node
-        """
-        if self.is_html():
-            ext_depart_collapse_node_html(self, node)
-        elif self.is_rst():
-            ext_depart_collapse_node_rst(self, node)
-        else:
-            ext_depart_collapse_node(self, node)
-
-    def visit_todoext_node(self, node):
-        """
-        @see fn visit_todoext_node
-        """
-        ext_visit_todoext_node(self, node)
-
-    def depart_todoext_node(self, node):
-        """
-        @see fn depart_todoext_node
-        """
-        ext_depart_todoext_node(self, node)
-
-    def visit_mathdef_node(self, node):
-        """
-        @see fn visit_mathdef_node
-        """
-        ext_visit_mathdef_node(self, node)
-
-    def depart_mathdef_node(self, node):
-        """
-        @see fn depart_mathdef_node
-        """
-        ext_depart_mathdef_node(self, node)
-
-    def visit_blocref_node(self, node):
-        """
-        @see fn visit_blocref_node
-        """
-        ext_visit_blocref_node(self, node)
-
-    def depart_blocref_node(self, node):
-        """
-        @see fn depart_blocref_node
-        """
-        ext_depart_blocref_node(self, node)
-
-    def visit_faqref_node(self, node):
-        """
-        @see fn visit_faqref_node
-        """
-        ext_visit_faqref_node(self, node)
-
-    def depart_faqref_node(self, node):
-        """
-        @see fn depart_faqref_node
-        """
-        ext_depart_faqref_node(self, node)
-
-    def visit_nbref_node(self, node):
-        """
-        @see fn visit_nbref_node
-        """
-        ext_visit_nbref_node(self, node)
-
-    def depart_nbref_node(self, node):
-        """
-        @see fn depart_nbref_node
-        """
-        ext_depart_nbref_node(self, node)
-
-    def visit_cmdref_node(self, node):
-        """
-        @see fn visit_cmdref_node
-        """
-        ext_visit_cmdref_node(self, node)
-
-    def depart_cmdref_node(self, node):
-        """
-        @see fn depart_cmdref_node
-        """
-        ext_depart_cmdref_node(self, node)
-
-    def visit_exref_node(self, node):
-        """
-        @see fn visit_exref_node
-        """
-        ext_visit_exref_node(self, node)
-
-    def depart_exref_node(self, node):
-        """
-        @see fn depart_exref_node
-        """
-        ext_depart_exref_node(self, node)
+        return self.base_class is LaTeXTranslator
 
     def add_secnumber(self, node):
         """
-        overwrites this method to catch errors due when
-        it is a single document being processed
+        Overwrites this method to catch errors due when
+        it is a single document being processed.
         """
         if node.get('secnumber'):
             self.base_class.add_secnumber(self, node)
@@ -477,56 +157,16 @@ class _AdditionalVisitDepart:
             node.parent['ids'].append("custom_label_%d" % n)
             self.base_class.add_secnumber(self, node)
 
-    def visit_pending_xref(self, node):
-        # type: (nodes.Node) -> None
-        self.visit_Text(node)
-        raise nodes.SkipNode
-
-    def depart_postcontents_node(self, node):
-        """
-        @see fn depart_postcontents_node
-        """
-        ext_depart_postcontents_node(self, node)
-
-    def visit_postcontents_node(self, node):
-        """
-        @see fn visit_postcontents_node
-        """
-        ext_visit_postcontents_node(self, node)
-
-    def depart_tocdelay_node(self, node):
-        """
-        @see fn depart_tocdelay_node
-        """
-        ext_depart_tocdelay_node(self, node)
-
-    def visit_tocdelay_node(self, node):
-        """
-        @see fn visit_tocdelay_node
-        """
-        ext_visit_tocdelay_node(self, node)
-
-    def depart_youtube_node(self, node):
-        """
-        @see fn depart_youtube_node
-        """
-        ext_depart_youtube_node(self, node)
-
-    def visit_youtube_node(self, node):
-        """
-        @see fn visit_youtube_node
-        """
-        ext_visit_youtube_node(self, node)
-
     def eval_expr(self, expr):
         rst = self.output_format == 'rst'
-        latex = self.output_format == 'latex'
+        latex = self.output_format in ('latex', 'elatex')
         texinfo = [('index', 'A_AdditionalVisitDepart', 'B_AdditionalVisitDepart',   # pylint: disable=W0612
                     'C_AdditionalVisitDepart', 'D_AdditionalVisitDepart',
                     'E_AdditionalVisitDepart', 'Miscellaneous')]
         html = self.output_format == 'html'
         md = self.output_format == 'md'
-        if not(rst or html or latex or md):
+        doctree = self.output_format in ('doctree', 'doctree.txt')
+        if not(rst or html or latex or md or doctree):
             raise ValueError(
                 "Unknown output format '{0}'.".format(self.output_format))
         try:
@@ -552,8 +192,8 @@ class _AdditionalVisitDepart:
             pass
 
     def unknown_visit(self, node):
-        raise NotImplementedError("[HTMLTranslatorWithCustomDirectives] Unknown node: '{0}' in '{1}'".format(node.__class__.__name__,
-                                                                                                             self.__class__.__name__))
+        raise NotImplementedError("[_AdditionalVisitDepart] Unknown node: '{0}' in '{1}'".format(
+                    node.__class__.__name__, self.__class__.__name__))
 
 
 class HTMLTranslatorWithCustomDirectives(_AdditionalVisitDepart, HTMLTranslator):
@@ -579,6 +219,15 @@ class HTMLTranslatorWithCustomDirectives(_AdditionalVisitDepart, HTMLTranslator)
             # needed when a docstring starts with :param:
             self._fieldlist_row_index = 0
         return HTMLTranslator.visit_field(self, node)
+
+    def visit_pending_xref(self, node):
+        # type: (nodes.Node) -> None
+        self.visit_Text(node)
+        raise nodes.SkipNode
+
+    def unknown_visit(self, node):
+        raise NotImplementedError("[HTMLTranslatorWithCustomDirectives] Unknown node: '{0}' in '{1}'".format(
+                    node.__class__.__name__, self.__class__.__name__))
 
 
 class RSTTranslatorWithCustomDirectives(_AdditionalVisitDepart, RstTranslator):
@@ -613,6 +262,19 @@ class MDTranslatorWithCustomDirectives(_AdditionalVisitDepart, MdTranslator):
             setattr(self.__class__, "visit_" + name, f1)
             setattr(self.__class__, "depart_" + name, f2)
         self.base_class = MdTranslator
+
+
+class DocTreeTranslatorWithCustomDirectives(DocTreeTranslator):
+    """
+    See @see cl HTMLWriterWithCustomDirectives.
+    """
+
+    def __init__(self, builder, *args, **kwds):
+        """
+        constructor
+        """
+        DocTreeTranslator.__init__(self, builder, *args, **kwds)
+        self.base_class = DocTreeTranslator
 
 
 class LatexTranslatorWithCustomDirectives(_AdditionalVisitDepart, EnhancedLaTeXTranslator):
@@ -673,7 +335,8 @@ class _WriterWithCustomDirectives:
         @param      f_visit     visit function
         @param      f_depart    depart function
         """
-        self.builder._function_node.append((name, f_visit, f_depart))
+        if self.builder.format != "doctree":
+            self.builder._function_node.append((name, f_visit, f_depart))
 
     def add_configuration_options(self, new_options):
         """
@@ -768,6 +431,26 @@ class MDWriterWithCustomDirectives(_WriterWithCustomDirectives, MdWriter):
         """
         _WriterWithCustomDirectives._init(
             self, MdWriter, MDTranslatorWithCustomDirectives, app)
+
+    def translate(self):
+        visitor = self.translator_class(self.builder, self.document)
+        self.document.walkabout(visitor)
+        self.output = visitor.body
+
+
+class DocTreeWriterWithCustomDirectives(_WriterWithCustomDirectives, DocTreeWriter):
+    """
+    This :epkg:`docutils` writer creates a doctree writer with
+    custom directives implemented in this module.
+    """
+
+    def __init__(self, builder=None, app=None):  # pylint: disable=W0231
+        """
+        @param      builder builder
+        @param      app     Sphinx application
+        """
+        _WriterWithCustomDirectives._init(
+            self, DocTreeWriter, DocTreeTranslatorWithCustomDirectives, app)
 
     def translate(self):
         visitor = self.translator_class(self.builder, self.document)
@@ -1113,6 +796,46 @@ class MemoryMDBuilder(_MemoryBuilder, MdBuilder):
         self.built_pages[outfilename].write(self.writer.output)
 
 
+class MemoryDocTreeBuilder(_MemoryBuilder, DocTreeBuilder):
+    """
+    Builds doctree output in memory.
+    The API is defined by the page
+    `builderapi <http://www.sphinx-doc.org/en/stable/extdev/builderapi.html?highlight=builder>`_.
+    """
+    name = 'memorydoctree'
+    format = 'doctree'
+    out_suffix = None  # ".memory.rst"
+    default_translator_class = DocTreeTranslatorWithCustomDirectives
+    translator_class = DocTreeTranslatorWithCustomDirectives
+    _writer_class = DocTreeWriterWithCustomDirectives
+    supported_remote_images = True
+    supported_data_uri_images = True
+    html_scaled_image_link = True
+
+    def __init__(self, app):  # pylint: disable=W0231
+        """
+        Constructs the builder.
+        Most of the parameter are static members of the class and cannot
+        be overwritten (yet).
+
+        :param app: `Sphinx application <http://www.sphinx-doc.org/en/stable/_modules/sphinx/application.html>`_
+        """
+        _MemoryBuilder._init(self, DocTreeBuilder, app)
+
+    def handle_page(self, pagename, addctx, templatename=None,
+                    outfilename=None, event_arg=None):
+        """
+        Override *handle_page* to write into stream instead of files.
+        """
+        if templatename is not None:
+            raise NotImplementedError("templatename must be None.")
+        if not outfilename:
+            outfilename = self.get_outfilename(pagename)
+        if outfilename not in self.built_pages:
+            self.built_pages[outfilename] = StringIO()
+        self.built_pages[outfilename].write(self.writer.output)
+
+
 class MemoryLatexBuilder(_MemoryBuilder, EnhancedLaTeXBuilder):
     """
     Builds :epkg:`Latex` output in memory.
@@ -1132,7 +855,7 @@ class MemoryLatexBuilder(_MemoryBuilder, EnhancedLaTeXBuilder):
 
     def __init__(self, app):  # pylint: disable=W0231
         """
-        Construct the builder.
+        Constructs the builder.
         Most of the parameter are static members of the class and cannot
         be overwritten (yet).
 
@@ -1225,7 +948,7 @@ class _CustomSphinx(Sphinx):
                  confoverrides=None, status=None, freshenv=False, warningiserror=False,
                  tags=None, verbosity=0, parallel=0, new_extensions=None):
         '''
-        Constructor. Same constructor as
+        Same constructor as
         `sphinx application <http://www.sphinx-doc.org/en/stable/extdev/appapi.html>`_,
         Additional parameters:
 
@@ -1271,7 +994,8 @@ class _CustomSphinx(Sphinx):
             'gettext': ('gettext', 'MessageCatalogBuilder'),
             'pseudoxml': ('xml', 'PseudoXMLBuilder')}
             'rst': ('rst', 'RstBuilder')}
-            'md': ('md', 'MdBuilder')}
+            'md': ('md', 'MdBuilder'),
+            'doctree': ('doctree', 'DocTreeBuilder')}
         '''
         # own purpose (to monitor)
         self._logger = getLogger("_CustomSphinx")
@@ -1403,6 +1127,7 @@ class _CustomSphinx(Sphinx):
         self.add_builder(MemoryRSTBuilder)
         self.add_builder(MemoryMDBuilder)
         self.add_builder(MemoryLatexBuilder)
+        self.add_builder(MemoryDocTreeBuilder)
 
         if isinstance(buildername, tuple):
             if len(buildername) != 2:

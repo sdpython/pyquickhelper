@@ -104,7 +104,8 @@ def rst2html(s, fLOG=noLOG, writer="html", keep_warnings=False,
              directives=None, language="en",
              layout='docutils', document_name="<<string>>",
              external_docnames=None, filter_nodes=None,
-             new_extensions=None, update_builder=None, **options):
+             new_extensions=None, update_builder=None,
+             ret_doctree=False, **options):
     """
     Converts a string from :epkg:`RST`
     into :epkg:`HTML` format or transformed :epkg:`RST`.
@@ -132,6 +133,7 @@ def rst2html(s, fLOG=noLOG, writer="html", keep_warnings=False,
                                     the function takes a doctree as a single parameter
     @param      new_extensions      additional extension to setup
     @param      update_builder      update the builder after it is instantiated
+    @param      ret_doctree         returns the doctree
     @param      options             used to overwrite configuration variables
     @return                         HTML format
 
@@ -255,6 +257,7 @@ def rst2html(s, fLOG=noLOG, writer="html", keep_warnings=False,
     .. versionchanged:: 1.8
         New nodes are now optional in *directives*.
         Markdown format was added.
+        Parameter *ret_doctree* was added.
     """
     if 'html_theme' not in options:
         options['html_theme'] = 'basic'
@@ -265,15 +268,11 @@ def rst2html(s, fLOG=noLOG, writer="html", keep_warnings=False,
         latex_documents = [(document_name, ) * 5]
         defopt['latex_documents'] = latex_documents
 
-    ret_doctree = writer == "doctree"
-    if ret_doctree:
-        writer = "rst"
-
     if writer in ["custom", "sphinx", "HTMLWriterWithCustomDirectives", "html"]:
         mockapp, writer, title_names = MockSphinxApp.create("sphinx", directives,
                                                             confoverrides=defopt, new_extensions=new_extensions, fLOG=fLOG)
         writer_name = "HTMLWriterWithCustomDirectives"
-    elif writer in ("rst", "md", "latex", "elatex", 'text'):
+    elif writer in ("rst", "md", "latex", "elatex", 'text', 'doctree'):
         writer_name = writer
         mockapp, writer, title_names = MockSphinxApp.create(writer, directives,
                                                             confoverrides=defopt, new_extensions=new_extensions, fLOG=fLOG)
@@ -543,17 +542,21 @@ def docstring2html(function_or_string, format="html", fLOG=noLOG, writer="html",
             raise HelpGenConvertError(
                 "unable to process:\n{0}".format("\n".join(lines))) from e
 
-    if writer in ('doctree', 'rst'):
+    ret_doctree = writer == "doctree"
+    if ret_doctree:
+        writer = "doctree"
+
+    if writer in ('doctree', 'rst', 'md'):
         return html
 
     if format == "html":
         from IPython.core.display import HTML
         return HTML(html)
-    elif format in ("rawhtml", 'rst'):
+    elif format in ("rawhtml", 'rst', 'md', 'doctree'):
         return html
     else:
         raise ValueError(
-            "Unexpected format: '" + format + "', should be html, rawhtml, text, rst.")
+            "Unexpected format: '" + format + "', should be html, rawhtml, text, rst, md, doctree.")
 
 
 def rst2rst_folder(rststring, folder, document_name="index", **options):

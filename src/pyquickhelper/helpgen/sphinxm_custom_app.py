@@ -93,6 +93,9 @@ class CustomSphinxApp(Sphinx):
         elif buildername in ("latex", "elatex", "pdf"):
             from ..sphinxext.sphinx_latex_builder import EnhancedLaTeXBuilder
             module = EnhancedLaTeXBuilder.__module__
+        elif buildername == "doctree":
+            from ..sphinxext.sphinx_doctree_builder import DocTreeBuilder
+            module = DocTreeBuilder.__module__
 
         if 'extensions' not in confoverrides:
             if extensions == 'all':

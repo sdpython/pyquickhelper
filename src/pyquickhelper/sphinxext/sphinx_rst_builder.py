@@ -1061,7 +1061,7 @@ class RstBuilder(Builder):
             self.file_suffix = self.config.rst_file_suffix
         if self.config.rst_link_suffix is not None:
             self.link_suffix = self.config.rst_link_suffix
-        elif self.link_suffix is None:
+        if self.link_suffix is None:
             self.link_suffix = self.file_suffix
 
         # Function to convert the docname to a reST file name.

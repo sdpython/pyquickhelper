@@ -30,9 +30,9 @@ if sys.version_info[0] == 2:
     from codecs import open
 
 
-class TestMdBuilder(ExtTestCase):
+class TestDocTreeBuilder(ExtTestCase):
 
-    def test_md_builder(self):
+    def test_doctree_builder(self):
         from docutils import nodes as skip_
 
         content = """
@@ -58,14 +58,20 @@ class TestMdBuilder(ExtTestCase):
                   visit_cmdref_node, depart_cmdref_node)]
 
         html = rst2html(content,  # fLOG=fLOG,
-                        writer="md", keep_warnings=True,
+                        writer="doctree", keep_warnings=True,
                         directives=tives, extlinks={'issue': ('http://%s', '_issue_')})
 
-        temp = get_temp_folder(__file__, "temp_md_builder")
+        if not isinstance(html, str):
+            raise TypeError(type(html))
+
+        temp = get_temp_folder(__file__, "temp_doctree_builder")
         with open(os.path.join(temp, "out_cmdref.html"), "w", encoding="utf8") as f:
             f.write(html)
 
         t1 = "this code shoud appear"
+        if t1 not in html:
+            raise Exception(html)
+        t1 = "<section ids=['test-a-directive'] names=['test a directive']>"
         if t1 not in html:
             raise Exception(html)
         t1 = "before"
@@ -84,19 +90,15 @@ class TestMdBuilder(ExtTestCase):
         if t1 not in html:
             raise Exception(html)
 
-        t1 = "```"
-        if t1 not in html:
-            raise Exception(html)
-
         t1 = '-s STATUS, --status STATUS'
         if t1 not in html:
             raise Exception(html)
 
-        t1 = '.. _idcmd3:'
-        if t1 in html:
+        t1 = "refid='idcmd3'"
+        if t1 not in html:
             raise Exception(html)
 
-    def test_md_builder_sphinx(self):
+    def test_doctree_builder_sphinx(self):
         from docutils import nodes as skip_
 
         content = """
@@ -128,10 +130,10 @@ class TestMdBuilder(ExtTestCase):
                   visit_cmdref_node, depart_cmdref_node)]
 
         html = rst2html(content,  # fLOG=fLOG,
-                        writer="md", keep_warnings=True,
+                        writer="doctree", keep_warnings=True,
                         directives=tives, layout="sphinx")
 
-        temp = get_temp_folder(__file__, "temp_md_builder_sphinx")
+        temp = get_temp_folder(__file__, "temp_doctree_builder_sphinx")
         with open(os.path.join(temp, "out_cmdref.html"), "w", encoding="utf8") as f:
             f.write(html)
 
@@ -147,15 +149,15 @@ class TestMdBuilder(ExtTestCase):
         if t1 not in html:
             raise Exception(html)
 
-        t1 = '.. _indexcmdreflistlist-0:'
-        if t1 in html:
-            raise Exception(html)
-
-        t1 = '([original entry](#indexcmdref-freg0) : <string>, line 7)'
+        t1 = "refid='indexcmdref-freg0'"
         if t1 not in html:
             raise Exception(html)
 
-    def test_md_builder_sphinx_table(self):
+        t1 = ': <string>, line 7)'
+        if t1 not in html:
+            raise Exception(html)
+
+    def test_doctree_builder_sphinx_table(self):
         from docutils import nodes as skip_
 
         content = """
@@ -190,30 +192,26 @@ class TestMdBuilder(ExtTestCase):
                   visit_cmdref_node, depart_cmdref_node)]
 
         html = rst2html(content,  # fLOG=fLOG,
-                        writer="md", keep_warnings=True,
+                        writer="doctree", keep_warnings=True,
                         directives=tives, layout="sphinx")
 
-        temp = get_temp_folder(__file__, "temp_md_builder_sphinx")
+        temp = get_temp_folder(__file__, "temp_doctree_builder_sphinx")
         with open(os.path.join(temp, "out_cmdref.html"), "w", encoding="utf8") as f:
             f.write(html)
 
-        t1 = "+--------+----------+"
-        if t1 in html:
+        t1 = "<tgroup cols=2>"
+        if t1 not in html:
             raise Exception(html)
 
         t1 = "--help"
         if t1 not in html:
             raise Exception(html)
 
-        t1 = "a | b1"
+        t1 = "<tbody>"
         if t1 not in html:
             raise Exception(html)
 
-        spl = html.split("--- | ---")
-        if len(spl) > 2:
-            raise Exception(html)
-
-    def test_md_only(self):
+    def test_doctree_only(self):
         from docutils import nodes as skip_
 
         content = """
@@ -224,9 +222,9 @@ class TestMdBuilder(ExtTestCase):
 
                         only for html
 
-                    .. only:: md
+                    .. only:: doctree
 
-                        only for md
+                        not only for doctree
 
                     """.replace("                    ", "")
         if sys.version_info[0] >= 3:
@@ -236,45 +234,30 @@ class TestMdBuilder(ExtTestCase):
                   visit_cmdref_node, depart_cmdref_node)]
 
         text = rst2html(content,  # fLOG=fLOG,
-                        writer="md", keep_warnings=True,
+                        writer="doctree", keep_warnings=True,
                         directives=tives, extlinks={'issue': ('http://%s', '_issue_')})
 
         temp = get_temp_folder(__file__, "temp_only")
-        with open(os.path.join(temp, "out_cmdref.md"), "w", encoding="utf8") as f:
+        with open(os.path.join(temp, "out_cmdref.doctree.txt"), "w", encoding="utf8") as f:
             f.write(text)
 
-        t1 = "only for md"
+        t1 = "not only for doctree"
         if t1 not in text:
-            raise Exception(text)
-        t1 = "only for html"
-        if t1 in text:
-            raise Exception(text)
-
-        text = rst2html(content,  # fLOG=fLOG,
-                        writer="html", keep_warnings=True,
-                        directives=tives, extlinks={'issue': ('http://%s', '_issue_')})
-
-        temp = get_temp_folder(__file__, "temp_only")
-        with open(os.path.join(temp, "out_cmdref.html"), "w", encoding="utf8") as f:
-            f.write(text)
-
-        t1 = "only for md"
-        if t1 in text:
             raise Exception(text)
         t1 = "only for html"
         if t1 not in text:
             raise Exception(text)
 
-    def test_md_reference(self):
+    def test_doctree_reference(self):
         from docutils import nodes as skip_
 
         content = """
                     test a directive
                     ================
 
-                    :py:class:`src.pyquickhelper.sphinxext.sphinx_md_builder.MdBuilder`
+                    :py:class:`src.pyquickhelper.sphinxext.sphinx_doctree_builder.DocTreeBuilder`
 
-                    :py:class:`Renamed <src.pyquickhelper.sphinxext.sphinx_md_builder.MdBuilder>`
+                    :py:class:`Renamed <src.pyquickhelper.sphinxext.sphinx_doctree_builder.DocTreeBuilder>`
                     """.replace("                    ", "")
         if sys.version_info[0] >= 3:
             content = content.replace('u"', '"')
@@ -283,21 +266,21 @@ class TestMdBuilder(ExtTestCase):
                   visit_cmdref_node, depart_cmdref_node)]
 
         text = rst2html(content,  # fLOG=fLOG,
-                        writer="md", keep_warnings=True, layout='sphinx',
+                        writer="doctree", keep_warnings=True, layout='sphinx',
                         directives=tives, extlinks={'issue': ('http://%s', '_issue_')})
 
         temp = get_temp_folder(__file__, "temp_only")
-        with open(os.path.join(temp, "out_cmdref.md"), "w", encoding="utf8") as f:
+        with open(os.path.join(temp, "out_cmdref.doctree.txt"), "w", encoding="utf8") as f:
             f.write(text)
 
-        t1 = "src.pyquickhelper.sphinxext.sphinx_md_builder.MdBuilder"
+        t1 = "src.pyquickhelper.sphinxext.sphinx_doctree_builder.DocTreeBuilder"
         if t1 not in text:
             raise Exception(text)
-        t1 = "[Renamed]("
+        t1 = "Renamed"
         if t1 not in text:
             raise Exception(text)
 
-    def test_md_reference2(self):
+    def test_doctree_reference2(self):
         from docutils import nodes as skip_
 
         content = """
@@ -308,10 +291,6 @@ class TestMdBuilder(ExtTestCase):
                     ================
 
                     :ref:`reftext <l-test-ref>`
-
-                    :keyword:`ggg`
-
-                    :py:exc:`ggg`
 
                     *italic*
 
@@ -326,7 +305,7 @@ class TestMdBuilder(ExtTestCase):
 
                         rawt
 
-                    .. only:: md
+                    .. only:: doctree
 
                         gggg
 
@@ -343,56 +322,23 @@ class TestMdBuilder(ExtTestCase):
             content = content.replace('u"', '"')
 
         text = rst2html(content,  # fLOG=fLOG,
-                        writer="md", keep_warnings=False, layout='sphinx',
+                        writer="doctree", keep_warnings=False, layout='sphinx',
                         extlinks={'issue': ('http://%s', '_issue_')})
 
-        self.assertIn("*italic*", text)
-        self.assertIn("* bul1", text)
-        self.assertIn("```", text)
+        self.assertIn("<emphasis>", text)
+        self.assertIn("<list_item>", text)
+        self.assertIn("<literal_block", text)
+        self.assertIn("<bigger_node", text)
         self.assertIn("gggg", text)
-        self.assertNotIn("hhhh", text)
-        self.assertNotIn("jjjj", text)
-        self.assertNotIn("SYSTEM", text)
-        temp = get_temp_folder(__file__, "temp_only")
-        with open(os.path.join(temp, "out_cmdref.md"), "w", encoding="utf8") as f:
+        self.assertIn("hhhh", text)
+        self.assertIn("jjjj", text)
+        temp = get_temp_folder(__file__, "temp_doctree_reference2")
+        with open(os.path.join(temp, "out_cmdref.doctree.txt"), "w", encoding="utf8") as f:
             f.write(text)
 
-    def test_md_title(self):
-        from docutils import nodes as skip_
+    def test_doctree_image(self):
 
-        content = """
-
-                    title1
-                    ======
-
-                    title2
-                    ======
-
-                    title3
-                    ++++++
-
-                    title4
-                    ******
-
-                    """.replace("                    ", "")
-        if sys.version_info[0] >= 3:
-            content = content.replace('u"', '"')
-
-        text = rst2html(content,  # fLOG=fLOG,
-                        writer="md", keep_warnings=False, layout='sphinx',
-                        extlinks={'issue': ('http://%s', '_issue_')})
-
-        self.assertIn("# title1", text)
-        self.assertIn("# title2", text)
-        self.assertIn("## title3", text)
-        self.assertIn("### title4", text)
-        temp = get_temp_folder(__file__, "temp_md_title")
-        with open(os.path.join(temp, "out_md_title.md"), "w", encoding="utf8") as f:
-            f.write(text)
-
-    def test_md_image(self):
-
-        temp = get_temp_folder(__file__, "temp_md_image")
+        temp = get_temp_folder(__file__, "temp_doctree_image")
         root = os.path.abspath(os.path.dirname(__file__))
         img1 = os.path.join(root, "data", "image", "im.png")
         img2 = os.path.join(root, "data", "thumbnail", "im.png")
@@ -408,24 +354,26 @@ class TestMdBuilder(ExtTestCase):
         if sys.version_info[0] >= 3:
             content = content.replace('u"', '"')
 
-        text = rst2html(content,  # fLOG=fLOG,
-                        writer="md", keep_warnings=False, layout='sphinx',
-                        extlinks={'issue': ('http://%s', '_issue_')},
-                        md_image_dest=temp)
+        try:
+            text = rst2html(content,  # fLOG=fLOG,
+                            writer="doctree", keep_warnings=False, layout='sphinx',
+                            extlinks={'issue': ('http://%s', '_issue_')})
+        except Exception as e:
+            raise Exception(
+                "Issue with '{0}' and '{1}'".format(img1, img2)) from e
 
         text = text.replace("\r", "")
-        self.assertIn('![alternative1]', text)
-        self.assertIn('![alternative2]', text)
-        self.assertIn('=200x', text)
+        self.assertIn('data/image/im.png', text)
+        self.assertIn('alternative1', text)
+        self.assertIn("alt='alternative2'", text)
+        self.assertIn("width='200'", text)
         self.assertNotIn('\n\n', text)
-        self.assertIn("![alternative1](5cf2985161e8ba56d893.png =200x)", text)
-        self.assertExists(os.path.join(temp, '5cf2985161e8ba56d893.png'))
-        with open(os.path.join(temp, "md_image.md"), "w", encoding="utf8") as f:
+        with open(os.path.join(temp, "out_image.doctree.txt"), "w", encoding="utf8") as f:
             f.write(text)
 
-    def test_md_image_target(self):
+    def test_doctree_image_target(self):
 
-        temp = get_temp_folder(__file__, "temp_md_image_target")
+        temp = get_temp_folder(__file__, "temp_doctree_image_target")
         root = os.path.abspath(os.path.dirname(__file__))
         img1 = os.path.join(root, "data", "image", "im.png")
         content = """
@@ -438,16 +386,14 @@ class TestMdBuilder(ExtTestCase):
             content = content.replace('u"', '"')
 
         text = rst2html(content,  # fLOG=fLOG,
-                        writer="md", keep_warnings=False, layout='sphinx',
-                        extlinks={'issue': ('http://%s', '_issue_')},
-                        md_image_dest=temp)
+                        writer="doctree", keep_warnings=False, layout='sphinx',
+                        extlinks={'issue': ('http://%s', '_issue_')})
 
         text = text.replace("\r", "")
-        self.assertIn('![alternative1]', text)
-        self.assertIn('=200x', text)
-        self.assertIn("![alternative1](5cf2985161e8ba56d893.png =200x)", text)
-        self.assertExists(os.path.join(temp, '5cf2985161e8ba56d893.png'))
-        with open(os.path.join(temp, "md_image.md"), "w", encoding="utf8") as f:
+        self.assertIn('data/image/im.png', text)
+        self.assertIn("alt='alternative1'", text)
+        self.assertIn("width='200'", text)
+        with open(os.path.join(temp, "out_image.doctree.txt"), "w", encoding="utf8") as f:
             f.write(text)
 
 
