@@ -3,10 +3,10 @@ sudo: true
 language: python
 matrix:
   include:
-  - python: 3.6 
+  - python: 3.6.6
     name: "python3.6 sphinx1.7"
     env: sphinxconstraint="<1.8"
-  - python: 3.7
+  - python: 3.7.0
     name: "python3.7 sphinx1.8"
     env: sphinxconstraint=
 install: 
