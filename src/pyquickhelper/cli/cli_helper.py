@@ -79,7 +79,8 @@ def create_cli_parser(f, prog=None, layout="sphinx", skip_parameters=('fLOG',),
         Parameters *options*, *cleandoc* were added.
     """
     docf = clean_documentation_for_cli(f.__doc__, cleandoc)
-    doctree = docstring2html(docf, writer="doctree", layout=layout, **options)
+    doctree = docstring2html(docf, writer="doctree",
+                             layout=layout, ret_doctree=True, **options)
 
     # documentation
     docparams = {}
@@ -230,7 +231,7 @@ def call_cli_function(f, args=None, parser=None, fLOG=print, skip_parameters=('f
     if parser is None:
         parser = create_cli_parser(
             f, skip_parameters=skip_parameters, cleandoc=cleandoc, **options)
-    if args is not None and (args == ['--help'] or args == ['-h']):
+    if args is not None and (args == ['--help'] or args == ['-h']):  # pylint: disable=R1714
         fLOG(parser.format_help())
     else:
         try:

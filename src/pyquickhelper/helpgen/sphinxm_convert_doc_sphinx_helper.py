@@ -193,7 +193,7 @@ class _AdditionalVisitDepart:
 
     def unknown_visit(self, node):
         raise NotImplementedError("[_AdditionalVisitDepart] Unknown node: '{0}' in '{1}'".format(
-                    node.__class__.__name__, self.__class__.__name__))
+            node.__class__.__name__, self.__class__.__name__))
 
 
 class HTMLTranslatorWithCustomDirectives(_AdditionalVisitDepart, HTMLTranslator):
@@ -227,7 +227,7 @@ class HTMLTranslatorWithCustomDirectives(_AdditionalVisitDepart, HTMLTranslator)
 
     def unknown_visit(self, node):
         raise NotImplementedError("[HTMLTranslatorWithCustomDirectives] Unknown node: '{0}' in '{1}'".format(
-                    node.__class__.__name__, self.__class__.__name__))
+            node.__class__.__name__, self.__class__.__name__))
 
 
 class RSTTranslatorWithCustomDirectives(_AdditionalVisitDepart, RstTranslator):

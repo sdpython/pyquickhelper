@@ -302,7 +302,7 @@ class TestRstBuilder(ExtTestCase):
             raise Exception(text)
         t1 = "<p>Renamed</p>"
         if t1 not in text:
-            raise Exception(text)        
+            raise Exception(text)
 
     def test_rst_reference2(self):
         from docutils import nodes as skip_
