@@ -508,6 +508,7 @@ def setup(app):
 
     app.add_node(todoextlist,
                  html=(visit_todoextlist_node, depart_todoextlist_node),
+                 epub=(visit_todoextlist_node, depart_todoextlist_node),
                  elatex=(visit_todoextlist_node, depart_todoextlist_node),
                  latex=(visit_todoextlist_node, depart_todoextlist_node),
                  text=(visit_todoextlist_node, depart_todoextlist_node),
@@ -515,6 +516,7 @@ def setup(app):
                  rst=(visit_todoextlist_node, depart_todoextlist_node))
     app.add_node(todoext_node,
                  html=(visit_todoext_node, depart_todoext_node),
+                 epub=(visit_todoext_node, depart_todoext_node),
                  elatex=(visit_todoext_node, depart_todoext_node),
                  latex=(visit_todoext_node, depart_todoext_node),
                  text=(visit_todoext_node, depart_todoext_node),

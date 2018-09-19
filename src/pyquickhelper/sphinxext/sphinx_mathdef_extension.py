@@ -458,6 +458,7 @@ def setup(app):
 
     app.add_node(mathdeflist,
                  html=(visit_mathdeflist_node, depart_mathdeflist_node),
+                 epub=(visit_mathdeflist_node, depart_mathdeflist_node),
                  elatex=(visit_mathdeflist_node, depart_mathdeflist_node),
                  latex=(visit_mathdeflist_node, depart_mathdeflist_node),
                  text=(visit_mathdeflist_node, depart_mathdeflist_node),
@@ -465,6 +466,7 @@ def setup(app):
                  rst=(visit_mathdeflist_node, depart_mathdeflist_node))
     app.add_node(mathdef_node,
                  html=(visit_mathdef_node, depart_mathdef_node),
+                 epub=(visit_mathdef_node, depart_mathdef_node),
                  elatex=(visit_mathdef_node, depart_mathdef_node),
                  latex=(visit_mathdef_node, depart_mathdef_node),
                  text=(visit_mathdef_node, depart_mathdef_node),

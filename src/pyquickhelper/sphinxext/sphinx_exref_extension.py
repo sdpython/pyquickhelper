@@ -197,6 +197,7 @@ def setup(app):
 
     app.add_node(exreflist,
                  html=(visit_exreflist_node, depart_exreflist_node),
+                 epub=(visit_exreflist_node, depart_exreflist_node),
                  elatex=(visit_exreflist_node, depart_exreflist_node),
                  latex=(visit_exreflist_node, depart_exreflist_node),
                  tex=(visit_exreflist_node, depart_exreflist_node),
@@ -205,6 +206,7 @@ def setup(app):
                  rst=(visit_exreflist_node, depart_exreflist_node))
     app.add_node(exref_node,
                  html=(visit_exref_node, depart_exref_node),
+                 epub=(visit_exref_node, depart_exref_node),
                  elatex=(visit_exref_node, depart_exref_node),
                  latex=(visit_exref_node, depart_exref_node),
                  tex=(visit_exref_node, depart_exref_node),

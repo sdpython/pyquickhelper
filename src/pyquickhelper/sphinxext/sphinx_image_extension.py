@@ -360,6 +360,7 @@ def setup(app):
     app.connect('builder-inited', initialize_simpleimages_directive)
     app.add_node(simpleimage_node,
                  html=(visit_simpleimage_node, depart_simpleimage_node_html),
+                 epub=(visit_simpleimage_node, depart_simpleimage_node_html),
                  elatex=(visit_simpleimage_node,
                          depart_simpleimage_node_latex),
                  latex=(visit_simpleimage_node, depart_simpleimage_node_latex),

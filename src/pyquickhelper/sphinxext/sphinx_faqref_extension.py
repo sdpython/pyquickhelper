@@ -198,6 +198,7 @@ def setup(app):
 
     app.add_node(faqreflist,
                  html=(visit_faqreflist_node, depart_faqreflist_node),
+                 epub=(visit_faqreflist_node, depart_faqreflist_node),
                  elatex=(visit_faqreflist_node, depart_faqreflist_node),
                  latex=(visit_faqreflist_node, depart_faqreflist_node),
                  text=(visit_faqreflist_node, depart_faqreflist_node),
@@ -205,6 +206,7 @@ def setup(app):
                  rst=(visit_faqreflist_node, depart_faqreflist_node))
     app.add_node(faqref_node,
                  html=(visit_faqref_node, depart_faqref_node),
+                 epub=(visit_faqref_node, depart_faqref_node),
                  elatex=(visit_faqref_node, depart_faqref_node),
                  latex=(visit_faqref_node, depart_faqref_node),
                  text=(visit_faqref_node, depart_faqref_node),

@@ -275,6 +275,7 @@ def setup(app):
 
     app.add_node(sharenet_node,
                  html=(visit_sharenet_node, depart_sharenet_node_html),
+                 epub=(visit_sharenet_node, depart_sharenet_node_html),
                  elatex=(visit_sharenet_node, depart_sharenet_node),
                  latex=(visit_sharenet_node, depart_sharenet_node),
                  rst=(visit_sharenet_node_rst, depart_sharenet_node_rst),

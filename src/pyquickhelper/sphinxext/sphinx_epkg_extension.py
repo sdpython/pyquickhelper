@@ -208,6 +208,7 @@ def setup(app):
     app.add_config_value('epkg_dictionary', {}, 'env')
     app.add_node(epkg_node,
                  html=(visit_epkg_node, depart_epkg_node),
+                 epub=(visit_epkg_node, depart_epkg_node),
                  elatex=(visit_epkg_node, depart_epkg_node),
                  latex=(visit_epkg_node, depart_epkg_node),
                  rst=(visit_epkg_node, depart_epkg_node),

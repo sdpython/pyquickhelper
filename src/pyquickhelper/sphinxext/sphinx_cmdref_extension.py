@@ -263,6 +263,7 @@ def setup(app):
 
     app.add_node(cmdreflist,
                  html=(visit_cmdreflist_node, depart_cmdreflist_node),
+                 epub=(visit_cmdreflist_node, depart_cmdreflist_node),
                  elatex=(visit_cmdreflist_node, depart_cmdreflist_node),
                  latex=(visit_cmdreflist_node, depart_cmdreflist_node),
                  text=(visit_cmdreflist_node, depart_cmdreflist_node),
@@ -270,6 +271,7 @@ def setup(app):
                  rst=(visit_cmdreflist_node, depart_cmdreflist_node))
     app.add_node(cmdref_node,
                  html=(visit_cmdref_node, depart_cmdref_node),
+                 epub=(visit_cmdref_node, depart_cmdref_node),
                  elatex=(visit_cmdref_node, depart_cmdref_node),
                  latex=(visit_cmdref_node, depart_cmdref_node),
                  text=(visit_cmdref_node, depart_cmdref_node),

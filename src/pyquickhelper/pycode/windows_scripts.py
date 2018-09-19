@@ -352,9 +352,6 @@ if %errorlevel% neq 0 exit /b %errorlevel%
 if not exist dist\\html mkdir dist\\html
 @echo ~CALL xcopy /E /C /I /Y _doc\\sphinxdoc\\build\\html dist\\html
 xcopy /E /C /I /Y _doc\\sphinxdoc\\build\\html dist\\html
-if not exist dist\\epub mkdir dist\\epub
-@echo ~CALL xcopy /E /C /I /Y _doc\\sphinxdoc\\build\\epub dist\\epub
-xcopy /E /C /I /Y _doc\\sphinxdoc\\build\\epub dist\\epub
 @echo ~COPY chm
 if exist _doc\\sphinxdoc\\build\\htmlhelp copy _doc\\sphinxdoc\\build\\htmlhelp\\*.chm dist\\html
 @echo ~COPY pdf
@@ -373,9 +370,6 @@ copy_sphinx_to_dist = """
 if not exist dist\\html mkdir dist\\html
 @echo ~CALL xcopy /E /C /I /Y _doc\\sphinxdoc\\build\\html dist\\html
 xcopy /E /C /I /Y _doc\\sphinxdoc\\build\\html dist\\html
-if not exist dist\\epub mkdir dist\\epub
-@echo ~CALL xcopy /E /C /I /Y _doc\\sphinxdoc\\build\\epub dist\\epub
-xcopy /E /C /I /Y _doc\\sphinxdoc\\build\\epub dist\\epub
 @echo ~COPY chm
 if exist _doc\\sphinxdoc\\build\\htmlhelp copy _doc\\sphinxdoc\\build\\htmlhelp\\*.chm dist\\html
 @echo ~COPY pdf

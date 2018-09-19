@@ -177,6 +177,7 @@ def setup(app):
 
     app.add_node(nbreflist,
                  html=(visit_nbreflist_node, depart_nbreflist_node),
+                 epub=(visit_nbreflist_node, depart_nbreflist_node),
                  elatex=(visit_nbreflist_node, depart_nbreflist_node),
                  latex=(visit_nbreflist_node, depart_nbreflist_node),
                  text=(visit_nbreflist_node, depart_nbreflist_node),
@@ -184,6 +185,7 @@ def setup(app):
                  rst=(visit_nbreflist_node, depart_nbreflist_node))
     app.add_node(nbref_node,
                  html=(visit_nbref_node, depart_nbref_node),
+                 epub=(visit_nbref_node, depart_nbref_node),
                  elatex=(visit_nbref_node, depart_nbref_node),
                  latex=(visit_nbref_node, depart_nbref_node),
                  text=(visit_nbref_node, depart_nbref_node),

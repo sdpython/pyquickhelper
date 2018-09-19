@@ -313,17 +313,20 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
                        'sphinx.ext.mathjax' if use_mathjax else 'sphinx.ext.imgmath',
                        'sphinx.ext.napoleon', 'sphinx.ext.todo', 'sphinx.ext.viewcode',
                        'sphinxcontrib.imagesvg',
-                       # 'matplotlib.sphinxext.only_directives',
-                       # 'matplotlib.sphinxext.mathmpl',
-                       # 'matplotlib.sphinxext.only_directives',
-                       'matplotlib.sphinxext.plot_directive',
-                       # 'matplotlib.sphinxext.ipython_directive',
                        'jupyter_sphinx.embed_widgets',
                        "nbsphinx",
                        'pyquickhelper.sphinxext.sphinx_rst_builder',
                        'pyquickhelper.sphinxext.sphinx_md_builder',
                        'pyquickhelper.sphinxext.sphinx_latex_builder',
                        ])
+
+    try:
+        import matplotlib.sphinxext
+        assert matplotlib.sphinxext is not None
+        extensions.append('matplotlib.sphinxext.plot_directive')
+    except ImportError:
+        # matplotlib is not installed.
+        pass
 
     try:
         import sphinxcontrib.jsdemo

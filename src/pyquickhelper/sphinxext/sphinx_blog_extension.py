@@ -475,6 +475,7 @@ def setup(app):
     # app.add_node(blogpostlist)
     app.add_node(blogpost_node,
                  html=(visit_blogpost_node, depart_blogpost_node),
+                 epub=(visit_blogpost_node, depart_blogpost_node),
                  elatex=(visit_blogpost_node, depart_blogpost_node),
                  latex=(visit_blogpost_node, depart_blogpost_node),
                  rst=(visit_blogpost_node, depart_blogpost_node),
@@ -483,6 +484,7 @@ def setup(app):
 
     app.add_node(blogpostagg_node,
                  html=(visit_blogpostagg_node, depart_blogpostagg_node_html),
+                 epub=(visit_blogpostagg_node, depart_blogpostagg_node_html),
                  elatex=(visit_blogpostagg_node, depart_blogpostagg_node),
                  latex=(visit_blogpostagg_node, depart_blogpostagg_node),
                  rst=(visit_blogpostagg_node, depart_blogpostagg_node),

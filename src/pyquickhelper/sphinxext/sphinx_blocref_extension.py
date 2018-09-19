@@ -569,6 +569,7 @@ def setup(app):
 
     app.add_node(blocreflist,
                  html=(visit_blocreflist_node, depart_blocreflist_node),
+                 epub=(visit_blocreflist_node, depart_blocreflist_node),
                  latex=(visit_blocreflist_node, depart_blocreflist_node),
                  elatex=(visit_blocreflist_node, depart_blocreflist_node),
                  text=(visit_blocreflist_node, depart_blocreflist_node),
@@ -576,6 +577,7 @@ def setup(app):
                  rst=(visit_blocreflist_node, depart_blocreflist_node))
     app.add_node(blocref_node,
                  html=(visit_blocref_node, depart_blocref_node),
+                 epub=(visit_blocref_node, depart_blocref_node),
                  elatex=(visit_blocref_node, depart_blocref_node),
                  latex=(visit_blocref_node, depart_blocref_node),
                  text=(visit_blocref_node, depart_blocref_node),

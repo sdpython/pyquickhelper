@@ -656,6 +656,7 @@ def setup(app):
 
     app.add_node(runpython_node,
                  html=(visit_runpython_node, depart_runpython_node),
+                 epub=(visit_runpython_node, depart_runpython_node),
                  elatex=(visit_runpython_node, depart_runpython_node),
                  latex=(visit_runpython_node, depart_runpython_node),
                  rst=(visit_runpython_node, depart_runpython_node),

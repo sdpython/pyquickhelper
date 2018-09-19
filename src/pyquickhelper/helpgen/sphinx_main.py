@@ -90,7 +90,6 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
                          extra_ext=None,
                          nbformats=("ipynb", "slides", "html", "python",
                                     "rst", "pdf", "present", "github"),
-                         # ("epub", "build", {})],
                          layout=None,
                          module_name=None, from_repo=True, add_htmlhelp=False,
                          copy_add_ext=None, direct_call=False, fLOG=fLOG,
@@ -997,7 +996,7 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
     # for every layout
     fLOG("[generate_help_sphinx] [revealjs] JAVASCRIPT: COPY", html_static_paths)
     fLOG("[generate_help_sphinx] [revealjs] BUILD:", build_paths)
-    for subf in ["html", "epub"]:
+    for subf in ["html"]:
         for html_static_path, build_path in zip(html_static_paths, build_paths):
             builddoc = os.path.join(build_path, subf, "_downloads")
             if not os.path.exists(builddoc):
