@@ -1,14 +1,13 @@
 dist: xenial
 sudo: true
 language: python
-python:
-  - 3.6
-  - 3.7
 matrix:
   include:
-  - python: 3.6    
+  - python: 3.6 
+    name: "python3.6 sphinx1.7"
     env: sphinxconstraint="<1.8"
   - python: 3.7
+    name: "python3.7 sphinx1.8"
     env: sphinxconstraint=
 install: 
     - pip install -r requirements.txt

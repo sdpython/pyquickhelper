@@ -251,10 +251,12 @@ class TestAutoSignature(ExtTestCase):
                      "    :path: name"]
         newstring = "\n".join(newstring)
         res = rst2html(newstring, writer="rst", layout="sphinx")
-        self.assertIn('DataFrame (*self*, *data* = *None*', res)
-        self.assertNotIn('pandas.DataFrame (*self*, *data* = *None*', res)
+        self.assertIn(
+            ':py:class:`DataFrame <pandas.core.frame.DataFrame>', res)
         self.assertNotIn(
-            'pandas.core.frame.DataFrame (*self*, *data* = *None*', res)
+            ':py:class:`pandas.DataFrame <pandas.core.frame.DataFrame>', res)
+        self.assertNotIn(
+            ':py:class:`pandas.core.frame.DataFrame', res)
 
         newstring = [".. autosignature:: pandas.core.frame.DataFrame",
                      "    :path: full"]
@@ -266,7 +268,8 @@ class TestAutoSignature(ExtTestCase):
         newstring = [".. autosignature:: pandas.core.frame.DataFrame"]
         newstring = "\n".join(newstring)
         res = rst2html(newstring, writer="rst", layout="sphinx")
-        self.assertIn('pandas.DataFrame (*self*', res)
+        self.assertIn(
+            ':py:class:`pandas.DataFrame <pandas.core.frame.DataFrame>` (*self*', res)
 
     def test_autosignature_open(self):
         self.assertIsInstance(numpy.ndarray.__init__.__text_signature__, str)
