@@ -1026,7 +1026,7 @@ class RstTranslator(TextTranslator, CommonSphinxWriterHelpers):
 
     def visit_inheritance_diagram(self, node):
         self.new_state(0)
-        self.add_text(".. inheritance_diagram:: {0}".format(node['content']))
+        self.add_text('.. inheritance_diagram:: {0}'.format(node['content']))
 
     def depart_inheritance_diagram(self, node):
         self.end_state(wrap=False, end=['\n'])

@@ -288,9 +288,6 @@ class TestRstBuilder(ExtTestCase):
         t1 = "Renamed"
         if t1 not in text:
             raise Exception(text)
-        t1 = ":py:class:`Renamed"
-        if t1 not in text:
-            raise Exception(text)
 
         text = rst2html(content,  # fLOG=fLOG,
                         writer="html", keep_warnings=True, layout='sphinx',

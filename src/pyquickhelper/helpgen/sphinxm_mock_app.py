@@ -66,6 +66,10 @@ class MockSphinxApp:
             raise RuntimeError(
                 "Different application in the writer is not allowed.")
 
+    @property
+    def extensions(self):
+        return self.app.extensions
+
     def add_directive(self, name, cl, *args, **options):
         """
         See :epkg:`class Sphinx`.
@@ -190,17 +194,17 @@ class MockSphinxApp:
         """
         self.app.add_env_collector(collector)
 
-    def add_javascript(self, jsfile):
+    def add_js_file(self, jsfile):
         """
         See :epkg:`class Sphinx`.
         """
-        self.app.add_javascript(jsfile)
+        self.app.add_js_file(jsfile)
 
-    def add_stylesheet(self, css):
+    def add_css_file(self, css):
         """
         See :epkg:`class Sphinx`.
         """
-        self.app.add_stylesheet(css)
+        self.app.add_css_file(css)
 
     def add_source_parser(self, ext, parser, exc=False):
         """

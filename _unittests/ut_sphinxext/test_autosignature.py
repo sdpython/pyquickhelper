@@ -251,9 +251,10 @@ class TestAutoSignature(ExtTestCase):
                      "    :path: name"]
         newstring = "\n".join(newstring)
         res = rst2html(newstring, writer="rst", layout="sphinx")
-        self.assertIn('`DataFrame <pandas.core', res)
-        self.assertNotIn('`pandas.DataFrame <pandas.core', res)
-        self.assertNotIn('`pandas.core.frame.DataFrame <pandas.core', res)
+        self.assertIn('DataFrame (*self*, *data* = *None*', res)
+        self.assertNotIn('pandas.DataFrame (*self*, *data* = *None*', res)
+        self.assertNotIn(
+            'pandas.core.frame.DataFrame (*self*, *data* = *None*', res)
 
         newstring = [".. autosignature:: pandas.core.frame.DataFrame",
                      "    :path: full"]
@@ -261,16 +262,11 @@ class TestAutoSignature(ExtTestCase):
         res = rst2html(newstring, writer="rst", layout="sphinx")
         self.assertNotIn('`DataFrame <pandas.core', res)
         self.assertNotIn('`pandas.DataFrame <pandas.core', res)
-        self.assertIn('`pandas.core.frame.DataFrame <pandas.core', res)
 
         newstring = [".. autosignature:: pandas.core.frame.DataFrame"]
         newstring = "\n".join(newstring)
         res = rst2html(newstring, writer="rst", layout="sphinx")
-        self.assertNotIn('`DataFrame <pandas.core', res)
-        self.assertIn('`pandas.DataFrame <pandas.core', res)
-        self.assertNotIn('`pandas.core.frame.DataFrame <pandas.core', res)
-        self.assertIn(':py:class:', res)
-        self.assertNotIn(':py:func:', res)
+        self.assertIn('pandas.DataFrame (*self*', res)
 
     def test_autosignature_open(self):
         self.assertIsInstance(numpy.ndarray.__init__.__text_signature__, str)
@@ -284,7 +280,7 @@ class TestAutoSignature(ExtTestCase):
             ".. autosignature:: numpy.ndarray.__init__\n    :path: full"]
         newstring = "\n".join(newstring)
         res = rst2html(newstring, writer="rst", layout="sphinx")
-        self.assertIn(":py:meth:`numpy.ndarray.__init__", res)
+        self.assertIn("numpy.ndarray.__init__", res)
 
     def test_extract_signature(self):
         sigs = ["__init__(self: src.cpyquickhelper.numbers.weighted_number.WeightedDouble, value: float, weight: float=1.0) -> None",

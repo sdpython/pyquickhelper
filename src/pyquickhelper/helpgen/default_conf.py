@@ -64,7 +64,7 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
     @param      nblayout                ``'classic'`` or ``'table'``, specifies the layout for
                                         the notebook gallery
 
-    If the parameter *custom_style* is not None, it will call ``app.add_stylesheet(custom_style)``
+    If the parameter *custom_style* is not None, it will call ``app.add_css_file(custom_style)``
     in the setup.
 
     .. exref::
@@ -759,7 +759,7 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
 
     def this_setup(app):
         if custom_style is not None:
-            app.add_stylesheet(custom_style)
+            app.add_css_file(custom_style)
         return custom_setup(app, author)
 
     ext_locals["setup"] = this_setup
@@ -873,7 +873,7 @@ def custom_setup(app, author):
             setup_signature, setup_docassert, setup_postcontents,
             setup_tocdelay, setup_youtube, setup_tpl,
             setup_epkg, setup_image, setup_collapse]
-    
+
     for ext in exts:
         meta = ext(app)
         name = ext.__name__.split('.')[-1].replace("setup_", "")
@@ -896,10 +896,10 @@ def custom_setup(app, author):
 
     # from sphinx.util.texescape import tex_replacements
     # tex_replacements += [('oe', '\\oe '), ]
-    app.add_javascript("require.js")
+    app.add_js_file("require.js")
 
     # style for notebooks
-    app.add_stylesheet(style_figure_notebook[0])
+    app.add_css_file(style_figure_notebook[0])
     return app
 
 

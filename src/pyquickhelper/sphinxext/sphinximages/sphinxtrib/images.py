@@ -249,10 +249,10 @@ def install_backend_static_files(app, env):
         copyfile(source_file_path, dest_file_path)
 
         if dest_file_path.endswith('.js'):
-            app.add_javascript(os.path.relpath(
+            app.add_js_file(os.path.relpath(
                 dest_file_path, STATICS_DIR_PATH))
         elif dest_file_path.endswith('.css'):
-            app.add_stylesheet(os.path.relpath(
+            app.add_css_file(os.path.relpath(
                 dest_file_path, STATICS_DIR_PATH))
 
 

@@ -1747,13 +1747,13 @@ class _CustomSphinx(Sphinx):
         self._added_objects.append(('post_transform', transform))
         Sphinx.add_post_transform(self, transform)
 
-    def add_javascript(self, filename, **kwargs):
+    def add_js_file(self, filename, **kwargs):
         self._added_objects.append(('js', filename))
-        Sphinx.add_javascript(self, filename, **kwargs)
+        Sphinx.add_js_file(self, filename, **kwargs)
 
-    def add_stylesheet(self, filename, alternate=False, title=None):
+    def add_css_file(self, filename, **kwargs):
         self._added_objects.append(('css', filename))
-        Sphinx.add_stylesheet(self, filename)
+        Sphinx.add_css_file(self, filename, **kwargs)
 
     def add_latex_package(self, packagename, options=None):
         self._added_objects.append(('latex', packagename))
