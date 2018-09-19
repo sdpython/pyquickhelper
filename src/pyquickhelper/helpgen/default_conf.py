@@ -12,6 +12,7 @@ import re
 import warnings
 from sphinx.builders.html import Stylesheet
 from sphinx.errors import ExtensionError
+from sphinx.extension import Extension
 from .style_css_template import style_figure_notebook
 
 
@@ -861,36 +862,31 @@ def custom_setup(app, author):
     if 'author' not in app.config.values:
         app.add_config_value('author', author, True)
 
-    setup_toctree(app)
-    setup_runpython(app)
-    setup_bigger(app)
-    setup_githublink(app)
-    setup_sharenet(app)
-    setup_video(app)
-    setup_simpleimage(app)
-    setup_todoext(app)
-    setup_blogpost(app)
-    setup_mathdef(app)
-    setup_blocref(app)
-    setup_exref(app)
-    setup_faqref(app)
-    setup_nbref(app)
-    setup_cmdref(app)
-    setup_signature(app)
-    setup_docassert(app)
-    setup_postcontents(app)
-    setup_tocdelay(app)
-    setup_youtube(app)
-    setup_tpl(app)
-    setup_epkg(app)
-    setup_image(app)
-    setup_collapse(app)
+    exts = [setup_toctree, setup_runpython, setup_bigger,
+            setup_githublink, setup_sharenet, setup_video,
+            setup_simpleimage, setup_todoext, setup_blogpost,
+            setup_mathdef, setup_blocref, setup_exref,
+            setup_faqref, setup_nbref, setup_cmdref,
+            setup_signature, setup_docassert, setup_postcontents,
+            setup_tocdelay, setup_youtube, setup_tpl,
+            setup_epkg, setup_image, setup_collapse]
+    
+    for ext in exts:
+        meta = ext(app)
+        name = ext.__name__.split('.')[-1].replace("setup_", "")
+        if name == "image":
+            name = "pyquickhelper.sphinxext.sphinximages.sphinxtrib.images"
+        else:
+            name = 'pyquickhelper.sphinxext.sphinx_%s_extension' % name
+        app.extensions[name] = Extension(name, ext.__module__, **meta)
 
     try:
         import bokeh
         assert bokeh is not None
         from ..sphinxext.bokeh.bokeh_plot import setup as setup_bokeh
-        setup_bokeh(app)
+        meta = setup_bokeh(app)
+        name = "pyquickhelper.sphinxext.bokeh.bokeh_plot"
+        app.extensions[name] = Extension(name, setup_bokeh.__module__)
     except ImportError:
         # bokeh is not installed.
         pass

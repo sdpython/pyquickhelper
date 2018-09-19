@@ -296,9 +296,6 @@ class TestMdBuilder(ExtTestCase):
         t1 = "Renamed"
         if t1 not in text:
             raise Exception(text)
-        t1 = "[Renamed]"
-        if t1 not in text:
-            raise Exception(text)
 
     def test_md_reference2(self):
         from docutils import nodes as skip_
