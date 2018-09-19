@@ -826,7 +826,7 @@ def skip(app, what, name, obj, skip, options):
 
 def custom_setup(app, author):
     """
-    see `Sphinx core events <http://sphinx-doc.org/extdev/appapi.html?highlight=setup#sphinx-core-events>`_
+    See `Sphinx core events <http://sphinx-doc.org/extdev/appapi.html?highlight=setup#sphinx-core-events>`_.
     """
     from ..sphinxext.sphinx_bigger_extension import setup as setup_bigger
     from ..sphinxext.sphinx_githublink_extension import setup as setup_githublink
@@ -839,7 +839,7 @@ def custom_setup(app, author):
     from ..sphinxext.sphinx_runpython_extension import setup as setup_runpython
     from ..sphinxext.sphinx_sharenet_extension import setup as setup_sharenet
     from ..sphinxext.sphinx_video_extension import setup as setup_video
-    from ..sphinxext.sphinx_image_extension import setup as setup_image
+    from ..sphinxext.sphinx_image_extension import setup as setup_simpleimage
     from ..sphinxext.sphinx_todoext_extension import setup as setup_todoext
     from ..sphinxext.sphinx_docassert_extension import setup as setup_docassert
     from ..sphinxext.sphinx_autosignature import setup as setup_signature
@@ -849,7 +849,7 @@ def custom_setup(app, author):
     from ..sphinxext.sphinx_tocdelay_extension import setup as setup_tocdelay
     from ..sphinxext.sphinx_youtube_extension import setup as setup_youtube
     from ..sphinxext.sphinx_epkg_extension import setup as setup_epkg
-    from ..sphinxext import setup_images
+    from ..sphinxext import setup_image
     from ..sphinxext.sphinx_toctree_extension import setup as setup_toctree
     from ..sphinxext.sphinx_collapse_extension import setup as setup_collapse
 
@@ -867,7 +867,7 @@ def custom_setup(app, author):
     setup_githublink(app)
     setup_sharenet(app)
     setup_video(app)
-    setup_image(app)
+    setup_simpleimage(app)
     setup_todoext(app)
     setup_blogpost(app)
     setup_mathdef(app)
@@ -883,7 +883,7 @@ def custom_setup(app, author):
     setup_youtube(app)
     setup_tpl(app)
     setup_epkg(app)
-    setup_images(app)
+    setup_image(app)
     setup_collapse(app)
 
     try:

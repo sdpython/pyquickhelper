@@ -58,13 +58,13 @@ from ..sphinxext.sphinx_youtube_extension import setup as setup_youtube
 from ..sphinxext.sphinx_rst_builder import setup as setup_rst
 from ..sphinxext.sphinx_sharenet_extension import setup as setup_sharenet
 from ..sphinxext.sphinx_video_extension import setup as setup_video
-from ..sphinxext.sphinx_image_extension import setup as setup_image
+from ..sphinxext.sphinx_image_extension import setup as setup_simpleimage
 from ..sphinxext.sphinx_template_extension import setup as setup_tpl
 from ..sphinxext.sphinx_todoext_extension import setup as setup_todoext
 from ..sphinxext.sphinx_toctree_extension import setup as setup_toctree
 from ..sphinxext.sphinx_runpython_extension import setup as setup_runpython
 from .sphinx_runpython_extension import RunPythonDirective, runpython_node
-from ..sphinxext.sphinximages.sphinxtrib.images import setup as setup_images
+from ..sphinxext.sphinximages.sphinxtrib.images import setup as setup_image
 
 from ..sphinxext.sphinx_latex_builder import setup as setup_latex
 
@@ -116,8 +116,8 @@ def get_default_extensions():
                       setup_graphviz, setup_imgmath, setup_todo,
                       # the rest of it
                       setup_autodoc, setup_imagesvg,
-                      setup_plot, setup_only, setup_images, setup_collapse,
-                      setup_video, setup_image]
+                      setup_plot, setup_only, setup_image, setup_collapse,
+                      setup_video, setup_simpleimage]
 
     try:
         import bokeh

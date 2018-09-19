@@ -889,10 +889,17 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
         if len(err) > 0 or len(out) > 0:
             if (len(err) > 0 and "Exception occurred:" in err) or \
                (len(out) > 0 and "Exception occurred:" in out):
+                def keep_line(_):
+                    if "RemovedInSphinx" in _:
+                        return False
+                    if "while setting up extension" in _:
+                        return False
+                    return True
                 out = "\n".join(
-                    filter(lambda _: "while setting up extension" not in _, out.split("\n")))
+                    filter(lambda _: keep_line(_), out.split("\n")))
                 raise HelpGenException(
-                    "Sphinx raised an exception:\nOUT:\n{0}\n[sphinxerror]\n{1}".format(out, err))
+                    "Sphinx raised an exception (direct_call={3})\n--CMD--\n{0}\n--OUT--\n{1}\n[sphinxerror]\n{2}".format(
+                        cmd, out, err, direct_call))
             else:
                 fLOG("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
                 fLOG("[generate_help_sphinx]", kind, "~~~~", cmd)

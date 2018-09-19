@@ -677,7 +677,7 @@ class _WriterWithCustomDirectives:
 
     def add_configuration_options(self, new_options):
         """
-        add new options
+        Add new options.
 
         @param      new_options     new options
         """
@@ -743,8 +743,6 @@ class RSTWriterWithCustomDirectives(_WriterWithCustomDirectives, RstWriter):
 
     def __init__(self, builder=None, app=None):  # pylint: disable=W0231
         """
-        Constructor
-
         @param      builder builder
         @param      app     Sphinx application
         """
@@ -765,8 +763,6 @@ class MDWriterWithCustomDirectives(_WriterWithCustomDirectives, MdWriter):
 
     def __init__(self, builder=None, app=None):  # pylint: disable=W0231
         """
-        Constructor
-
         @param      builder builder
         @param      app     Sphinx application
         """
@@ -787,8 +783,6 @@ class LatexWriterWithCustomDirectives(_WriterWithCustomDirectives, EnhancedLaTeX
 
     def __init__(self, builder=None, app=None):  # pylint: disable=W0231
         """
-        Constructor
-
         @param      builder builder
         @param      app     Sphinx application
         """
@@ -802,6 +796,10 @@ class LatexWriterWithCustomDirectives(_WriterWithCustomDirectives, EnhancedLaTeX
         if not hasattr(self.builder, "config"):
             raise TypeError(
                 "Builder has no config: {}".format(type(self.builder)))
+        # The instruction
+        # visitor = self.builder.create_translator(self.builder, self.document)
+        # automatically adds methods visit_ and depart_ for translator
+        # based on the list of registered extensions. Might be worth using it.
         visitor = self.translator_class(self.builder, self.document)
         self.document.walkabout(visitor)
         self.output = visitor.body
