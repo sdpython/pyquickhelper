@@ -529,6 +529,12 @@ def main_run_test(runner, path_test=None, limit_max=1e9, log=False, skip=-1, ski
                     for w, _ in list_warn:
                         fullstderr.write(
                             "[in:{2}] w{0}: {1}\n".format(i, str(w), cut))
+                if val.strip(" \n\r\t") > 0:
+                    # Remove most of the Sphinx warnings (sphinx < 1.8)
+                    lines = val.strip(" \n\r\t").split("\n")
+                    lines = [
+                        _ for _ in lines if _ and "is already registered, it will be overridden" not in _]
+                    val = "\n".join(lines)
                 if val.strip(" \n\r\t"):
                     fullstderr.write("[in:{0}] ERRv:\n".format(cut))
                     fullstderr.write(val)
