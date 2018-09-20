@@ -440,7 +440,7 @@ def main_wrapper_tests(codefile, skip_list=None, processes=False, add_coverage=F
             # Remove most of the Sphinx warnings (sphinx < 1.8)
             lines = err.split("\n")
             lines = [
-                _ for _ in lines if "is already registered, it will be overridden" not in _]
+                _ for _ in lines if _ and "is already registered, it will be overridden" not in _]
             err = "\n".join(lines)
         if len(err) > 0:
             raise Exception(err)
