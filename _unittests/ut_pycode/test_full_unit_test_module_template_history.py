@@ -20,22 +20,6 @@ except ImportError:
         sys.path.append(path)
     import src
 
-try:
-    import jyquickhelper as skip_
-except ImportError:
-    path = os.path.normpath(
-        os.path.abspath(
-            os.path.join(
-                os.path.split(__file__)[0],
-                "..",
-                "..",
-                "..",
-                "jyquickhelper",
-                "src")))
-    if path not in sys.path:
-        sys.path.append(path)
-    import jyquickhelper as skip_
-
 from src.pyquickhelper.loghelper.flog import fLOG
 from src.pyquickhelper.pycode import get_temp_folder, process_standard_options_for_setup, is_travis_or_appveyor
 from src.pyquickhelper.loghelper import git_clone

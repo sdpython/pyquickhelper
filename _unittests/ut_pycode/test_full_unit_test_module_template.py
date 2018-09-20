@@ -20,22 +20,6 @@ except ImportError:
         sys.path.append(path)
     import src
 
-try:
-    import jyquickhelper as skip_
-except ImportError:
-    path = os.path.normpath(
-        os.path.abspath(
-            os.path.join(
-                os.path.split(__file__)[0],
-                "..",
-                "..",
-                "..",
-                "jyquickhelper",
-                "src")))
-    if path not in sys.path:
-        sys.path.append(path)
-    import jyquickhelper as skip_
-
 from src.pyquickhelper.loghelper.flog import fLOG
 from src.pyquickhelper.pycode import get_temp_folder, process_standard_options_for_setup, is_travis_or_appveyor
 from src.pyquickhelper.loghelper import git_clone
@@ -155,25 +139,32 @@ class TestUnitTestFullModuleTemplate(unittest.TestCase):
                 else:
                     pos_remove = None
 
-            r = process_standard_options_for_setup(
-                lcmd, setup, "python3_module_template",
-                port=8067, requirements=["pyquickhelper"], blog_list=blog_list,
-                fLOG=logging_custom, additional_ut_path=[pyq, (root, True)],
-                skip_function=skip_function, coverage_options={
-                    "disable_coverage": True},
-                hook_print=False, stdout=stdout2, stderr=stderr2, use_run_cmd=True)
+            try:
+                r = process_standard_options_for_setup(
+                    lcmd, setup, "python3_module_template",
+                    port=8067, requirements=["pyquickhelper"], blog_list=blog_list,
+                    fLOG=logging_custom, additional_ut_path=[pyq, (root, True)],
+                    skip_function=skip_function, coverage_options={
+                        "disable_coverage": True},
+                    hook_print=False, stdout=stdout2, stderr=stderr2, use_run_cmd=True)
+                goon = True
+            except NotImplementedError:
+                # Maybe not implemented on linux or windows.
+                goon = False
 
-            if command == "unittests -e .*code_style.*" and pos_remove:
-                if sys.path[pos_remove] != pyq_folder:
-                    raise Exception(
-                        "sys.path has changed at position {0}".format(pos_remove))
-                del sys.path[pos_remove]
-                fLOG("REMOVE='{0}'".format(pyq_folder))
+            if goon:
+                if command == "unittests -e .*code_style.*" and pos_remove:
+                    if sys.path[pos_remove] != pyq_folder:
+                        raise Exception(
+                            "sys.path has changed at position {0}".format(pos_remove))
+                    del sys.path[pos_remove]
+                    fLOG("REMOVE='{0}'".format(pyq_folder))
 
             vout = stdout2.getvalue()
             stdout.write(vout)
             verr = stderr2.getvalue()
             stderr.write(verr)
+
             if "unittests" in command:
                 if not r:
                     raise Exception("{0}-{1}".format(r, command))
