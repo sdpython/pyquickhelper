@@ -16,5 +16,5 @@ from .unittestclass import ExtTestCase
 from .unittestclass import skipif_appveyor, skipif_travis, skipif_circleci, skipif_linux, skipif_vless
 from .utils_tests import main_wrapper_tests
 from .utils_tests_helper import get_temp_folder, check_pep8, add_missing_development_version
-from .venv_helper import create_virtual_env, run_venv_script, compare_module_version, run_base_script
+from .venv_helper import create_virtual_env, run_venv_script, run_base_script
 from .venv_helper import NotImplementedErrorFromVirtualEnvironment, is_virtual_environment, check_readme_syntax

@@ -759,7 +759,12 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
 
     def this_setup(app):
         if custom_style is not None:
-            app.add_css_file(custom_style)
+            try:
+                # Sphinx >= 1.8
+                app.add_css_file(custom_style)
+            except AttributeError:
+                # Sphinx < 1.8
+                app.add_stylesheet(custom_style)
         return custom_setup(app, author)
 
     ext_locals["setup"] = this_setup
@@ -896,10 +901,20 @@ def custom_setup(app, author):
 
     # from sphinx.util.texescape import tex_replacements
     # tex_replacements += [('oe', '\\oe '), ]
-    app.add_js_file("require.js")
+    try:
+        # Sphinx >= 1.8
+        app.add_js_file("require.js")
+    except AttributeError:
+        # Sphinx < 1.8
+        app.add_javascript("require.js")
 
     # style for notebooks
-    app.add_css_file(style_figure_notebook[0])
+    try:
+        # Sphinx >= 1.8
+        app.add_css_file(style_figure_notebook[0])
+    except AttributeError:
+        # Sphinx < 1.8
+        app.add_stylesheet(style_figure_notebook[0])
     return app
 
 

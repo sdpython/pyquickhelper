@@ -21,7 +21,8 @@ except ImportError:
     import src
 
 from src.pyquickhelper.loghelper import fLOG
-from src.pyquickhelper.pycode.venv_helper import numeric_module_version, compare_module_version
+from src.pyquickhelper.texthelper import compare_module_version
+from src.pyquickhelper.texthelper.version_helper import numeric_module_version
 
 
 class TestVersionning(unittest.TestCase):

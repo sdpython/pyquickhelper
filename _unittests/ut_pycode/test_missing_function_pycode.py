@@ -29,7 +29,8 @@ except ImportError:
 
 from src.pyquickhelper.pycode import ExtTestCase
 from src.pyquickhelper.pycode import process_standard_options_for_setup_help, get_temp_folder
-from src.pyquickhelper.pycode.venv_helper import numeric_module_version, compare_module_version
+from src.pyquickhelper.texthelper import compare_module_version
+from src.pyquickhelper.texthelper.version_helper import numeric_module_version
 from src.pyquickhelper.pycode.setup_helper import clean_notebooks_for_numbers
 
 

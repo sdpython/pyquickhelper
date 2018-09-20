@@ -22,6 +22,7 @@ except ImportError:
     import src
 
 from src.pyquickhelper.loghelper.flog import fLOG
+from src.pyquickhelper.pycode import get_temp_folder
 from src.pyquickhelper.helpgen import rst2html
 
 
@@ -39,6 +40,8 @@ class TestBokehExtension(unittest.TestCase):
             return
 
         from docutils import nodes as skip_
+        from src.pyquickhelper.sphinxext.bokeh.bokeh_plot import BokehPlotDirective
+        self.assertTrue(BokehPlotDirective is not None)
 
         content = """
                     =======
@@ -73,6 +76,10 @@ class TestBokehExtension(unittest.TestCase):
         t1 = "this code should appear"
         if t1 not in html:
             raise Exception(html)
+
+        temp = get_temp_folder(__file__, "temp_bokeh_extension")
+        with open(os.path.join(temp, "page_bokeh.html"), "w", encoding="utf-8") as f:
+            f.write(html)
 
         if 'Unknown directive type' in html:
             raise Exception(html)

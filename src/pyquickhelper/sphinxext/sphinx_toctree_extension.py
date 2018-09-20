@@ -18,6 +18,7 @@ from sphinx.util import logging
 from sphinx.transforms import SphinxContentsFilter
 from sphinx.environment.adapters.toctree import TocTree as AdaptersTocTree
 from sphinx.util.matching import patfilter
+from ..texthelper import compare_module_version
 
 
 class CustomTocTree(TocTree):
@@ -253,7 +254,10 @@ def setup(app):
         # it connects a new collector to the app,
         # it disables the previous one.
         directives.register_directive('toctree', CustomTocTree)
-        app.add_directive('toctree', CustomTocTree)
+        if compare_module_version(sphinx.__version__, '1.8') < 0:
+            app.add_directive('toctree', CustomTocTree)
+        else:
+            app.add_directive('toctree', CustomTocTree, overrides=True)
         app.add_env_collector(CustomTocTreeCollector)
 
     return {'version': sphinx.__display_version__, 'parallel_read_safe': True}

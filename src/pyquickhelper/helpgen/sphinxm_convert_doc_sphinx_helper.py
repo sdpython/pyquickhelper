@@ -50,6 +50,7 @@ from ..sphinxext.sphinx_doctree_builder import DocTreeBuilder, DocTreeWriter, Do
 from ..sphinxext.sphinx_md_builder import MdBuilder, MdWriter, MdTranslator
 from ..sphinxext.sphinx_latex_builder import EnhancedLaTeXBuilder, EnhancedLaTeXWriter, EnhancedLaTeXTranslator
 from ..sphinxext.sphinx_rst_builder import RstBuilder, RstWriter, RstTranslator
+from ..texthelper import compare_module_version
 
 try:
     # Sphinx 1.8.0
@@ -1024,7 +1025,7 @@ class _CustomSphinx(Sphinx):
         self.registry = SphinxComponentRegistry()
         self.post_transforms = []               # type: List[Transform]
         self.html_themes = {}                   # type: Dict[unicode, unicode]
-        if sphinx.__version__ < '1.8':
+        if compare_module_version(sphinx.__version__, '1.8') < 0:
             self.enumerable_nodes = {}          # type: Dict[nodes.Node, Tuple[unicode, Callable]]  # NOQA
 
         self.srcdir = srcdir
@@ -1181,7 +1182,9 @@ class _CustomSphinx(Sphinx):
                     yield k, v
 
             self.config.items = _citems
-        verify_extensions(self, self.config)
+
+        if compare_module_version(sphinx.__version__, '1.8') >= 0:
+            verify_extensions(self, self.config)
 
         # check primary_domain if requested
         primary_domain = self.config.primary_domain
@@ -1474,11 +1477,21 @@ class _CustomSphinx(Sphinx):
 
     def add_js_file(self, filename, **kwargs):
         self._added_objects.append(('js', filename))
-        Sphinx.add_js_file(self, filename, **kwargs)
+        try:
+            # Sphinx >= 1.8
+            Sphinx.add_js_file(self, filename, **kwargs)
+        except AttributeError:
+            # Sphinx < 1.8
+            Sphinx.add_javascript(self, filename, **kwargs)
 
     def add_css_file(self, filename, **kwargs):
         self._added_objects.append(('css', filename))
-        Sphinx.add_css_file(self, filename, **kwargs)
+        try:
+            # Sphinx >= 1.8
+            Sphinx.add_css_file(self, filename, **kwargs)
+        except AttributeError:
+            # Sphinx < 1.8
+            Sphinx.add_stylesheet(self, filename, **kwargs)
 
     def add_latex_package(self, packagename, options=None):
         self._added_objects.append(('latex', packagename))

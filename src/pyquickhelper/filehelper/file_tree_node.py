@@ -99,6 +99,8 @@ class FileTreeNode:
         .. versionchanged:: 1.1
             Parameter *fLOG* was added.
         """
+        if root is None:
+            raise ValueError("root cannot be None")
         self._root = root
         self._file = None if file is None else file
         self._children = []

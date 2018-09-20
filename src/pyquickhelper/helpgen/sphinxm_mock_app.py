@@ -197,13 +197,23 @@ class MockSphinxApp:
         """
         See :epkg:`class Sphinx`.
         """
-        self.app.add_js_file(jsfile)
+        try:
+            # Sphinx >= 1.8
+            self.app.add_js_file(jsfile)
+        except AttributeError:
+            # Sphinx < 1.8
+            self.app.add_javascript(jsfile)
 
     def add_css_file(self, css):
         """
         See :epkg:`class Sphinx`.
         """
-        self.app.add_css_file(css)
+        try:
+            # Sphinx >= 1.8
+            self.app.add_css_file(css)
+        except AttributeError:
+            # Sphinx < 1.8
+            self.app.add_stylesheet(css)
 
     def add_source_parser(self, ext, parser, exc=False):
         """

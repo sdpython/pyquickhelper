@@ -249,11 +249,21 @@ def install_backend_static_files(app, env):
         copyfile(source_file_path, dest_file_path)
 
         if dest_file_path.endswith('.js'):
-            app.add_js_file(os.path.relpath(
-                dest_file_path, STATICS_DIR_PATH))
+            name = os.path.relpath(dest_file_path, STATICS_DIR_PATH)
+            try:
+                # Sphinx >= 1.8
+                app.add_js_file(name)
+            except AttributeError:
+                # Sphinx < 1.8
+                app.add_javascript(name)
         elif dest_file_path.endswith('.css'):
-            app.add_css_file(os.path.relpath(
-                dest_file_path, STATICS_DIR_PATH))
+            name = os.path.relpath(dest_file_path, STATICS_DIR_PATH)
+            try:
+                # Sphinx >= 1.8
+                app.add_css_file(name)
+            except AttributeError:
+                # Sphinx < 1.8
+                app.add_stylesheet(name)
 
 
 def download_images(app, env):
@@ -263,6 +273,7 @@ def download_images(app, env):
     @param      app     :epkg:`Sphinx` application
     @param      env     environment
     """
+    logger = logging.getLogger("image")
     conf = app.config.images_config
     for src in status_iterator(env.remote_images,
                                'Downloading remote images...', brown,
@@ -271,16 +282,17 @@ def download_images(app, env):
         dirn = os.path.dirname(dst)
         ensuredir(dirn)
         if not os.path.isfile(dst):
-            app.info('{} -> {} (downloading)'.format(src, dst))
+
+            logger.info('{} -> {} (downloading)'.format(src, dst))
             with open(dst, 'wb') as f:
                 # TODO: apply reuqests_kwargs
                 try:
                     f.write(requests.get(src,
                                          **conf['requests_kwargs']).content)
                 except requests.ConnectionError:
-                    app.info("Cannot download `{}`".format(src))
+                    logger.info("Cannot download `{}`".format(src))
         else:
-            app.info('{} -> {} (already in cache)'.format(src, dst))
+            logger.info('{} -> {} (already in cache)'.format(src, dst))
 
 
 def configure_backend(app):
@@ -311,8 +323,9 @@ def configure_backend(app):
     # because sphinx try to make a pickle from it.
     app.sphinxtrib_images_backend = backend
 
-    app.info('Initiated images backend: ', nonl=True)
-    app.info('`{}`'.format(
+    logger = logging.getLogger("image")
+    logger.info('Initiated images backend: ', nonl=True)
+    logger.info('`{}`'.format(
         str(backend.__class__.__module__ + ':' + backend.__class__.__name__)))
 
     def backend_methods(node, output_type):

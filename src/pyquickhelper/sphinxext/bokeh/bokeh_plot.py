@@ -79,7 +79,11 @@ from docutils.parsers.rst.directives import choice, flag
 from sphinx.errors import SphinxError
 from sphinx.util import console, copyfile, ensuredir, status_iterator
 from sphinx.util.nodes import set_source_info
-from sphinx.deprecation import RemovedInSphinx30Warning, RemovedInSphinx40Warning
+try:
+    from sphinx.deprecation import RemovedInSphinx30Warning, RemovedInSphinx40Warning
+except ImportError:
+    RemovedInSphinx30Warning = DeprecationWarning
+    RemovedInSphinx40Warning = DeprecationWarning
 
 from bokeh.settings import settings
 from bokeh.resources import Resources
