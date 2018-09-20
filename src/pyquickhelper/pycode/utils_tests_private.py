@@ -529,7 +529,7 @@ def main_run_test(runner, path_test=None, limit_max=1e9, log=False, skip=-1, ski
                     for w, _ in list_warn:
                         fullstderr.write(
                             "[in:{2}] w{0}: {1}\n".format(i, str(w), cut))
-                if val.strip(" \n\r\t") > 0:
+                if val.strip(" \n\r\t"):
                     # Remove most of the Sphinx warnings (sphinx < 1.8)
                     lines = val.strip(" \n\r\t").split("\n")
                     lines = [
