@@ -1,4 +1,3 @@
-#!C:\Python32\python.exe
 """
 @file
 @brief  Modification to doxypy.py

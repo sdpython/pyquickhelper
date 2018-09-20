@@ -273,7 +273,7 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
     autosummary_generate = True
 
     # import helpers to find tools to build the documentation
-    from .conf_path_tools import find_latex_path, find_graphviz_dot
+    from .conf_path_tools import find_latex_path, find_graphviz_dot, find_divpng_path
 
     # graphviz
     graphviz_output_format = "svg"
@@ -345,36 +345,7 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
         pass
 
     if not use_mathjax:
-        if sys.platform.startswith("win"):
-            sep = ";"
-            imgmath_latex = find_latex_path()
-            imgmath_dvipng = os.path.join(imgmath_latex, "dvipng.exe")
-            if not os.path.exists(imgmath_dvipng):
-                raise FileNotFoundError(imgmath_dvipng)
-            imgmath_dvisvgm = os.path.join(imgmath_latex, "dvisvgm.exe")
-            if not os.path.exists(imgmath_dvisvgm):
-                raise FileNotFoundError(imgmath_dvisvgm)
-
-            env_path = os.environ.get("PATH", "")
-            if imgmath_latex and imgmath_latex not in env_path:
-                if len(env_path) > 0:
-                    env_path += sep
-                env_path += imgmath_latex
-
-            if sys.platform.startswith("win"):
-                imgmath_latex = os.path.join(imgmath_latex, "latex.exe")
-
-            # verification
-            if not os.path.exists(imgmath_latex):
-                raise FileNotFoundError(imgmath_latex)
-            if not os.path.exists(imgmath_dvipng):
-                raise FileNotFoundError(imgmath_dvipng)
-        else:
-            # On linux, we expect latex, dvipng, dvisvgm to be available.
-            imgmath_latex = "latex"
-            imgmath_dvipng = "dvipng"
-            imgmath_dvisvgm = "dvisvgm"
-
+        imgmath_latex, imgmath_dvipng, imgmath_dvisvgm = find_divpng_path()
         imgmath_image_format = 'svg'
 
     if add_extensions is not None:

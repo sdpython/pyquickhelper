@@ -11,12 +11,11 @@ import os
 from docutils import core, languages
 from docutils.io import StringInput, StringOutput
 from sphinx.environment import default_settings
-from sphinx.util.logging import getLogger
 from .utils_sphinx_doc import migrating_doxygen_doc
 from ..texthelper.texts_language import TITLES
 from ..loghelper.flog import noLOG
 from . helpgen_exceptions import HelpGenConvertError
-from .conf_path_tools import find_graphviz_dot, find_latex_path
+from .conf_path_tools import find_graphviz_dot, find_divpng_path
 from .sphinxm_mock_app import MockSphinxApp
 
 
@@ -69,29 +68,11 @@ def default_sphinx_options(fLOG=noLOG, **options):
     }
 
     if res['imgmath_image_format'] == 'png':
-        res['imgmath_latex'] = options.get(
-            'imgmath_latex', find_latex_path(exc=False))
-        res['imgmath_dvipng'] = options.get(
-            'imgmath_dvipng', os.path.join(res['imgmath_latex'], "dvipng.exe") if res['imgmath_latex'] is not None else None)
-        if res['imgmath_dvipng'] is not None and not os.path.exists(res['imgmath_dvipng']):
-            logger = getLogger("default_sphinx_options")
-            logger.warning("[default_sphinx_options], unable to find: " +
-                           str(res['imgmath_dvipng']))
-            # we pass as latex is not necessarily installed or needed
-        env_path = os.environ.get("PATH", "")
-        sep = ";" if sys.platform.startswith("win") else ":"
-        if res['imgmath_latex'] is not None and res['imgmath_latex'] not in env_path:
-            if len(env_path) > 0:
-                env_path += sep
-            env_path += res['imgmath_latex']
-
-        if res['imgmath_latex'] is not None:
-            if sys.platform.startswith("win"):
-                res['imgmath_latex'] = os.path.join(
-                    res['imgmath_latex'], "latex.exe")
-            else:
-                res['imgmath_latex'] = os.path.join(
-                    res['imgmath_latex'], "latex")
+        imgmath_latex, imgmath_dvipng, imgmath_dvisvgm = find_divpng_path(
+            exc=False)
+        res['imgmath_latex'] = imgmath_latex
+        res['imgmath_dvipng'] = imgmath_dvipng
+        res['imgmath_dvisvgm'] = imgmath_dvisvgm
 
     for k, v in options.items():
         if k not in res:

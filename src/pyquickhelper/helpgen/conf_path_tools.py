@@ -156,3 +156,57 @@ def custom_ensuredir(path):
         EEXIST = getattr(errno, 'EEXIST', 0)
         if err.errno not in [0, EEXIST]:
             raise
+
+
+def find_divpng_path(exc=True):
+    """
+    Determines :epkg:`dvipng` location.
+
+    @return         *imgmath_latex*, *imgmath_dvipng*, *imgmath_dvisvgm*
+
+    .. versionadded:: 1.8
+    """
+
+    if sys.platform.startswith("win"):
+        sep = ";"
+        imgmath_latex = find_latex_path()
+        imgmath_dvipng = os.path.join(imgmath_latex, "dvipng.exe")
+        if not os.path.exists(imgmath_dvipng):
+            if exc:
+                raise FileNotFoundError(imgmath_dvipng)
+            else:
+                imgmath_dvipng = "dvipng"
+        imgmath_dvisvgm = os.path.join(imgmath_latex, "dvisvgm.exe")
+        if not os.path.exists(imgmath_dvisvgm):
+            if exc:
+                raise FileNotFoundError(imgmath_dvisvgm)
+            else:
+                imgmath_dvisvgm = "dvisvgm"
+
+        env_path = os.environ.get("PATH", "")
+        if imgmath_latex and imgmath_latex not in env_path:
+            if len(env_path) > 0:
+                env_path += sep
+            env_path += imgmath_latex
+
+        if sys.platform.startswith("win"):
+            imgmath_latex = os.path.join(imgmath_latex, "latex.exe")
+
+        # verification
+        if not os.path.exists(imgmath_latex):
+            if exc:
+                raise FileNotFoundError(imgmath_latex)
+            else:
+                imgmath_latex = "latex"
+        if not os.path.exists(imgmath_dvipng):
+            if exc:
+                raise FileNotFoundError(imgmath_dvipng)
+            else:
+                imgmath_dvipng = "dvipng"
+    else:
+        # On linux, we expect latex, dvipng, dvisvgm to be available.
+        imgmath_latex = "latex"
+        imgmath_dvipng = "dvipng"
+        imgmath_dvisvgm = "dvisvgm"
+
+    return imgmath_latex, imgmath_dvipng, imgmath_dvisvgm
