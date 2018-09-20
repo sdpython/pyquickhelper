@@ -934,12 +934,6 @@ class MdTranslator(TextTranslator, CommonSphinxWriterHelpers):
     def depart_CodeNode(self, node):
         pass
 
-    def visit_sharenet_node(self, node):
-        visit_sharenet_node_md(self, node)
-
-    def depart_sharenet_node(self, node):
-        depart_sharenet_node_md(self, node)
-
     def visit_runpythonthis_node(self, node):
         # for unit test.
         pass

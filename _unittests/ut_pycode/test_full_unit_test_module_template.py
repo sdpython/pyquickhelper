@@ -143,7 +143,8 @@ class TestUnitTestFullModuleTemplate(unittest.TestCase):
                 r = process_standard_options_for_setup(
                     lcmd, setup, "python3_module_template",
                     port=8067, requirements=["pyquickhelper"], blog_list=blog_list,
-                    fLOG=logging_custom, additional_ut_path=[pyq, (root, True)],
+                    fLOG=logging_custom, additional_ut_path=[
+                        pyq, (root, True)],
                     skip_function=skip_function, coverage_options={
                         "disable_coverage": True},
                     hook_print=False, stdout=stdout2, stderr=stderr2, use_run_cmd=True)
