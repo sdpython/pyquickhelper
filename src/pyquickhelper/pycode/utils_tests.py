@@ -437,6 +437,11 @@ def main_wrapper_tests(codefile, skip_list=None, processes=False, add_coverage=F
         fLOG("[main_wrapper_tests] CHECK EXCEPTION -----------------")
         err = res.get("err", "")
         if len(err) > 0:
+            # Remove most of the Sphinx warnings (sphinx < 1.8)
+            lines = err.split("\n")
+            lines = [_ for _ in err if "is already registered, it will be overridden" not in _]
+            err = "\n".join(lines)
+        if len(err) > 0:
             raise Exception(err)
 
         datetime_end = datetime.now()
