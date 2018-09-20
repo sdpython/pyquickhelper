@@ -522,6 +522,12 @@ def main_run_test(runner, path_test=None, limit_max=1e9, log=False, skip=-1, ski
             list_warn = [(w, s) for w, s in list_warn if filter_warning(w)]
             allwarn.append((lis[i], list_warn))
             val = newstdr.getvalue()
+            if val.strip(" \n\r\t"):
+                # Remove most of the Sphinx warnings (sphinx < 1.8)
+                lines = val.strip(" \n\r\t").split("\n")
+                lines = [
+                    _ for _ in lines if _ and "is already registered, it will be overridden" not in _]
+                val = "\n".join(lines)
             if len(val) > 0 and is_valid_error(val):
                 fullstderr.write("\n*-----" + lis[i] + "\n")
                 if len(list_warn) > 0:
@@ -529,12 +535,6 @@ def main_run_test(runner, path_test=None, limit_max=1e9, log=False, skip=-1, ski
                     for w, _ in list_warn:
                         fullstderr.write(
                             "[in:{2}] w{0}: {1}\n".format(i, str(w), cut))
-                if val.strip(" \n\r\t"):
-                    # Remove most of the Sphinx warnings (sphinx < 1.8)
-                    lines = val.strip(" \n\r\t").split("\n")
-                    lines = [
-                        _ for _ in lines if _ and "is already registered, it will be overridden" not in _]
-                    val = "\n".join(lines)
                 if val.strip(" \n\r\t"):
                     fullstderr.write("[in:{0}] ERRv:\n".format(cut))
                     fullstderr.write(val)
