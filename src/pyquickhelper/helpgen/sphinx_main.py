@@ -897,14 +897,14 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
                 out = "\n".join(
                     filter(lambda _: keep_line(_), out.split("\n")))
                 raise HelpGenException(
-                    "Sphinx raised an exception (direct_call={3})\n--CMD--\n{0}\n--OUT--\n{1}\n[sphinxerror]\n{2}".format(
+                    "Sphinx raised an exception (direct_call={3})\n--CMD--\n{0}\n--OUT--\n{1}\n[sphinxerror]-3\n{2}".format(
                         cmd, out, err, direct_call))
             else:
                 fLOG("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
                 fLOG("[generate_help_sphinx]", kind, "~~~~", cmd)
                 fLOG("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
                 warnings.warn(
-                    "Sphinx went through errors. Check if any of them is important.\nOUT:\n{0}\n[sphinxerror]\n{1}".format(
+                    "Sphinx went through errors. Check if any of them is important.\n---OUT---\n{0}\n[sphinxerror]-2\n{1}\n----".format(
                         out, err), UserWarning)
                 fLOG("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
 
@@ -951,7 +951,7 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
                                communicate=True, timeout=600)
             fLOG(out)
             if len(err) > 0:
-                mes = "Sphinx went through errors. Check if any of them is important.\nOUT:\n{0}\n[sphinxerror]\n{1}"
+                mes = "Sphinx went through errors. Check if any of them is important.\nOUT:\n{0}\n[sphinxerror]-1\n{1}"
                 warnings.warn(mes.format(out, err), UserWarning)
         fLOG("[generate_help_sphinx] end run HTMLHELP")
 
@@ -984,7 +984,7 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
                              f, " to ", covbuild)
                         shutil.copy(f, covbuild)
         else:
-            fLOG("[sphinxerror] coverage files with rst in", covfold)
+            fLOG("[sphinxerror]-B coverage files with rst in", covfold)
     else:
         fLOG("[generate_help_sphinx] no coverage files", covfold)
     fLOG("---- JENKINS END DOCUMENTATION COVERAGE ----")

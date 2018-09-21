@@ -12,6 +12,8 @@ from sphinx.locale import __
 from sphinx.builders.latex import LaTeXBuilder
 from sphinx.writers.latex import LaTeXWriter, LaTeXTranslator
 from sphinx.writers.latex import toRoman, rstdim_to_latexdim
+from sphinx.util import logging
+from sphinx import addnodes
 
 try:
     # Sphinx >= 1.8
@@ -27,7 +29,6 @@ except ImportError:
                                            'lowerroman': r'\roman',
                                            'upperroman': r'\Roman',
                                        })
-from sphinx.util import logging
 
 try:
     # Sphinx >= 1.8
@@ -55,7 +56,16 @@ except ImportError:
                         return data
             return FileOutput.write(self, data)
 
-from sphinx import addnodes
+
+class CustomizedSphinxFileOutput(SphinxFileOutput):
+    """Customized FileOutput class for :epkg:`Sphinx`."""
+
+    def __init__(self, **kwargs):
+        SphinxFileOutput.__init__(self, **kwargs)
+
+    def write(self, data):
+        res = SphinxFileOutput.write(self, data)
+        return res
 
 
 class EnhancedLaTeXTranslator(LaTeXTranslator):
@@ -65,8 +75,9 @@ class EnhancedLaTeXTranslator(LaTeXTranslator):
     """
 
     def __init__(self, builder, document):
-        if not hasattr(builder, "config"):
-            raise TypeError("Builder has no config: {}".format(type(builder)))
+        if not hasattr(builder, 'config'):
+            raise TypeError(
+                "Unexpected type for builder {0}".format(type(builder)))
         LaTeXTranslator.__init__(self, document, builder)
 
         newlines = builder.config.text_newlines
@@ -181,14 +192,14 @@ class EnhancedLaTeXWriter(LaTeXWriter):
     translator_class = EnhancedLaTeXTranslator
 
     def __init__(self, builder):
-        LaTeXWriter.__init__(self, builder)
         if not hasattr(builder, "config"):
             raise TypeError("Builder has no config: {}".format(type(builder)))
+        LaTeXWriter.__init__(self, builder)
 
     def translate(self):
-        visitor = self.builder.create_translator(self.builder, self.document)
+        visitor = self.builder.create_translator( self.builder, self.document)
         self.document.walkabout(visitor)
-        self.output = visitor.body
+        self.output = visitor.astext()
 
 
 class EnhancedLaTeXBuilder(LaTeXBuilder):
@@ -214,6 +225,13 @@ class EnhancedLaTeXBuilder(LaTeXBuilder):
         LaTeXBuilder.__init__(self, *args, **kwargs)
         self.logger = logging.getLogger("EnhancedLatexBuilder")
         self._memo_pages = {}
+        self._skip_finish = self.app.config.elatex_bypass_finish
+
+    def finish(self):
+        if self._skip_finish:
+            return None
+        else:
+            return LaTeXBuilder.finish(self)
 
     def get_outfilename(self, pagename):
         """
@@ -221,12 +239,9 @@ class EnhancedLaTeXBuilder(LaTeXBuilder):
         """
         return "{0}/{1}.tex".format(self.outdir, pagename).replace("\\", "/")
 
-    def finish(self):
-        pass
-
     def _get_filename(self, targetname, encoding='utf-8', overwrite_if_changed=True):
-        return SphinxFileOutput(destination_path=os.path.join(self.outdir, targetname),
-                                encoding=encoding, overwrite_if_changed=overwrite_if_changed)
+        return CustomizedSphinxFileOutput(destination_path=os.path.join(self.outdir, targetname),
+                                          encoding=encoding, overwrite_if_changed=overwrite_if_changed)
 
     def write(self, *ignored):
         # type: (Any) -> None
@@ -269,11 +284,13 @@ class EnhancedLaTeXBuilder(LaTeXBuilder):
             doctree.settings.docname = docname
             doctree.settings.docclass = docclass
             docwriter.write(doctree, destination)
-            self.logger.info("done")
+            self.logger.info(
+                "[EnhancedLaTeXBuilder] done in '{}'".format(targetname))
 
 
 def setup(app):
     """
     Initializes builder @see cl EnhancedLaTeXBuilder.
     """
+    app.add_config_value('elatex_bypass_finish', False, 'elatex')
     app.add_builder(EnhancedLaTeXBuilder)

@@ -212,15 +212,15 @@ def generate_changes_repo(chan, source, exception_if_empty=True,
         logs = src.log(path=source)
     except Exception as eee:
         if exception_if_empty:
-            fLOG("[sphinxerror] unable to retrieve log from " + source)
+            fLOG("[sphinxerror]-9 unable to retrieve log from " + source)
             raise HelpGenException(
                 "unable to retrieve log in " + source + "\n" + str(eee)) from eee
         else:
             logs = [("none", 0, datetime.datetime.now(), "-")]
-            fLOG("[sphinxerror]", eee)
+            fLOG("[sphinxerror]-8", eee)
 
     if len(logs) == 0:
-        fLOG("[sphinxerror] unable to retrieve log from " + source)
+        fLOG("[sphinxerror]-7 unable to retrieve log from " + source)
         if exception_if_empty:
             raise HelpGenException("retrieved logs are empty in " + source)
     else:
@@ -355,7 +355,7 @@ def compile_latex_output_final(root, latex_path, doall, afile=None, latex_book=F
 
             if len(err) > 0 and "Output written on " not in out:
                 raise HelpGenException(
-                    "CMD:\n{0}\n[sphinxerror]\n{1}\n---OUT:---\n{2}".format(c, err, out))
+                    "CMD:\n{0}\n[sphinxerror]-6\n{1}\n---OUT:---\n{2}".format(c, err, out))
 
             # second compilation
             fLOG("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
@@ -366,7 +366,7 @@ def compile_latex_output_final(root, latex_path, doall, afile=None, latex_book=F
                     c, wait=True, log_error=False, communicate=False, fLOG=fLOG,
                     tell_if_no_output=600, prefix_log="[latex] ", change_path=change_path)
             except (subprocess.CalledProcessError, RunCmdException):
-                fLOG("[sphinxerror] LATEX ERROR: check the logs")
+                fLOG("[sphinxerror]-5 LATEX ERROR: check the logs")
                 err = ""
                 out = ""
             fLOG("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")

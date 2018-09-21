@@ -8,7 +8,6 @@
 import sphinx
 from docutils import nodes
 from docutils.parsers.rst import Directive, directives
-from sphinx.util.logging import getLogger
 from sphinx.util.docutils import is_html5_writer_available
 
 
@@ -238,9 +237,7 @@ def depart_sharenet_node(self, node):
 
     It does only html for the time being.
     """
-    logger = getLogger("sharenet")
-    logger.warning(
-        "[depart_sharenet_node] output only available for HTML not for '{0}'".format(type(self)))
+    pass
 
 
 def visit_sharenet_node_rst(self, node):

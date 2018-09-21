@@ -62,7 +62,7 @@ class TestLatexBuilder(ExtTestCase):
                         directives=tives, extlinks={'issue': ('http://%s', '_issue_')})
 
         temp = get_temp_folder(__file__, "temp_latex_builder")
-        with open(os.path.join(temp, "out_cmdref.html"), "w", encoding="utf8") as f:
+        with open(os.path.join(temp, "out_cmdref.tex"), "w", encoding="utf8") as f:
             f.write(html)
 
         t1 = "this code shoud appear"
@@ -124,7 +124,7 @@ class TestLatexBuilder(ExtTestCase):
                         directives=tives, layout="sphinx")
 
         temp = get_temp_folder(__file__, "temp_latex_builder_sphinx")
-        with open(os.path.join(temp, "out_cmdref.html"), "w", encoding="utf8") as f:
+        with open(os.path.join(temp, "out_cmdref.tex"), "w", encoding="utf8") as f:
             f.write(html)
 
         t1 = "this code shoud appear"
@@ -182,7 +182,7 @@ class TestLatexBuilder(ExtTestCase):
                         directives=tives, layout="sphinx")
 
         temp = get_temp_folder(__file__, "temp_latex_builder_sphinx")
-        with open(os.path.join(temp, "out_cmdref.html"), "w", encoding="utf8") as f:
+        with open(os.path.join(temp, "out_cmdref.tex"), "w", encoding="utf8") as f:
             f.write(html)
 
         t1 = "+--------+----------+"
@@ -239,7 +239,7 @@ class TestLatexBuilder(ExtTestCase):
                         directives=tives, extlinks={'issue': ('http://%s', '_issue_')})
 
         temp = get_temp_folder(__file__, "temp_only")
-        with open(os.path.join(temp, "out_cmdref.html"), "w", encoding="utf8") as f:
+        with open(os.path.join(temp, "out_cmdref.tex"), "w", encoding="utf8") as f:
             f.write(text)
 
         t1 = "only for md"

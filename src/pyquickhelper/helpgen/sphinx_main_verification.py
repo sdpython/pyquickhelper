@@ -27,7 +27,7 @@ class SphinxVerificationException(Exception):
         """
         stack = []
         for name, line, m in errors:
-            message = '[sphinxerror] {2}\n  File "{0}", line {1}'.format(
+            message = '[sphinxerror]-4 {2}\n  File "{0}", line {1}'.format(
                 name, line + 1, m)
             stack.append(message)
         Exception.__init__(self, "\n" + "\n".join(stack))

@@ -60,6 +60,8 @@ class RstTranslator(TextTranslator, CommonSphinxWriterHelpers):
     sectionchars = '*=-~"+`'
 
     def __init__(self, builder, document):
+        if not hasattr(builder, "config"):
+            raise TypeError("Builder has no config: {}".format(type(builder)))
         TextTranslator.__init__(self, document, builder)
 
         newlines = builder.config.text_newlines
