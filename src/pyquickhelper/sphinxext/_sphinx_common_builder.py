@@ -88,6 +88,7 @@ class CommonSphinxWriterHelpers:
                             "Unable to find document '{0}' current_docname='{1}'".format(current, builder.current_docname))
                     dest = os.path.dirname(os.path.join(
                         outdir, builder.current_docname))
+                    fold = outdir
                 else:
                     # current_docname is None which means
                     # no file should be created

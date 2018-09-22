@@ -317,62 +317,71 @@ def compile_latex_output_final(root, latex_path, doall, afile=None, latex_book=F
         is corrupted, the log should be checked to see the errors.
     """
     latex_exe = find_pdflatex(latex_path)
-    build = os.path.join(root, "_doc", "sphinxdoc", "build", "latex")
-    if not os.path.exists(build):
-        build = root
-    for tex in os.listdir(build):
-        if tex.endswith(".tex") and (afile is None or afile in tex):
-            file = os.path.join(build, tex)
-            if doall:
-                # -interaction=batchmode
-                c = '"{0}" "{1}" -max-print-line=900 -buf-size=10000000 -output-directory="{2}"'.format(
-                    latex_exe, file, build)
-            else:
-                c = '"{0}" "{1}" -max-print-line=900 -buf-size=10000000 -interaction=nonstopmode -output-directory="{2}"'.format(
-                    latex_exe, file, build)
-            fLOG("[compile_latex_output_final] LATEX compilation (c)", c)
-            post_process_latex_output(file, doall, latex_book=latex_book, fLOG=fLOG,
-                                      custom_latex_processing=custom_latex_processing,
-                                      remove_unicode=remove_unicode)
-            if sys.platform.startswith("win"):
-                change_path = None
-            else:
-                # On Linux the parameter --output-directory is sometimes ignored.
-                # And it only works from the current directory.
-                change_path = os.path.split(file)[0]
-            try:
-                out, err = run_cmd(c, wait=True, log_error=False, catch_exit=True, communicate=False,
-                                   tell_if_no_output=120, fLOG=fLOG, prefix_log="[latex] ", change_path=change_path)
-            except Exception as e:
-                # An exception is raised when the return code is an error. We
-                # check that PDF file was written.
-                out, err = parse_exception_message(e)
-                if err is not None and len(err) == 0 and out is not None and "Output written" in out:
-                    # The output was produced. We ignore the return code.
-                    fLOG("WARNINGS: Latex compilation had warnings:", c)
+    processed = 0
+    tried = []
+    for subfolder in ['latex', 'elatex']:
+        build = os.path.join(root, "_doc", "sphinxdoc", "build", subfolder)
+        if not os.path.exists(build):
+            build = root
+        tried.append(build)
+        for tex in os.listdir(build):
+            if tex.endswith(".tex") and (afile is None or afile in tex):
+                processed += 1
+                file = os.path.join(build, tex)
+                if doall:
+                    # -interaction=batchmode
+                    c = '"{0}" "{1}" -max-print-line=900 -buf-size=10000000 -output-directory="{2}"'.format(
+                        latex_exe, file, build)
                 else:
-                    raise OSError("Unable to execute\n{0}".format(c)) from e
+                    c = '"{0}" "{1}" -max-print-line=900 -buf-size=10000000 -interaction=nonstopmode -output-directory="{2}"'.format(
+                        latex_exe, file, build)
+                fLOG("[compile_latex_output_final] LATEX compilation (c)", c)
+                post_process_latex_output(file, doall, latex_book=latex_book, fLOG=fLOG,
+                                          custom_latex_processing=custom_latex_processing,
+                                          remove_unicode=remove_unicode)
+                if sys.platform.startswith("win"):
+                    change_path = None
+                else:
+                    # On Linux the parameter --output-directory is sometimes ignored.
+                    # And it only works from the current directory.
+                    change_path = os.path.split(file)[0]
+                try:
+                    out, err = run_cmd(c, wait=True, log_error=False, catch_exit=True, communicate=False,
+                                       tell_if_no_output=120, fLOG=fLOG, prefix_log="[latex] ", change_path=change_path)
+                except Exception as e:
+                    # An exception is raised when the return code is an error. We
+                    # check that PDF file was written.
+                    out, err = parse_exception_message(e)
+                    if err is not None and len(err) == 0 and out is not None and "Output written" in out:
+                        # The output was produced. We ignore the return code.
+                        fLOG("WARNINGS: Latex compilation had warnings:", c)
+                    else:
+                        raise OSError(
+                            "Unable to execute\n{0}".format(c)) from e
 
-            if len(err) > 0 and "Output written on " not in out:
-                raise HelpGenException(
-                    "CMD:\n{0}\n[sphinxerror]-6\n{1}\n---OUT:---\n{2}".format(c, err, out))
+                if len(err) > 0 and "Output written on " not in out:
+                    raise HelpGenException(
+                        "CMD:\n{0}\n[sphinxerror]-6\n{1}\n---OUT:---\n{2}".format(c, err, out))
 
-            # second compilation
-            fLOG("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
-            fLOG("~~~~ LATEX compilation (d)", c)
-            fLOG("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
-            try:
-                out, err = run_cmd(
-                    c, wait=True, log_error=False, communicate=False, fLOG=fLOG,
-                    tell_if_no_output=600, prefix_log="[latex] ", change_path=change_path)
-            except (subprocess.CalledProcessError, RunCmdException):
-                fLOG("[sphinxerror]-5 LATEX ERROR: check the logs")
-                err = ""
-                out = ""
-            fLOG("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
-            fLOG("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
-            if len(err) > 0 and "Output written on " not in out:
-                raise HelpGenException(err)
+                # second compilation
+                fLOG("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+                fLOG("~~~~ LATEX compilation (d)", c)
+                fLOG("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+                try:
+                    out, err = run_cmd(
+                        c, wait=True, log_error=False, communicate=False, fLOG=fLOG,
+                        tell_if_no_output=600, prefix_log="[latex] ", change_path=change_path)
+                except (subprocess.CalledProcessError, RunCmdException):
+                    fLOG("[sphinxerror]-5 LATEX ERROR: check the logs")
+                    err = ""
+                    out = ""
+                fLOG("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+                fLOG("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+                if len(err) > 0 and "Output written on " not in out:
+                    raise HelpGenException(err)
+    if processed == 0:
+        raise FileNotFoundError("Unable to find any latex file in folders\n{0}".format(
+                                "\n".join(tried)))
 
 
 def replace_placeholder_by_recent_blogpost(all_tocs, plist, placeholder, nb_post=5, fLOG=fLOG):

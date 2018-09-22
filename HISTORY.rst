@@ -5,15 +5,11 @@
 History
 =======
 
-current - 2018-09-20 - 0.00Mb
+current - 2018-09-22 - 0.00Mb
 =============================
 
 * `195`: implement a doctree outputter (2018-09-19)
 * `194`: check why call an extension from the setup is different from adding it to the list of extensions (2018-09-19)
-
-1.8.2790 - 2018-09-17 - 2.02Mb
-==============================
-
 * `193`: fix an issue when converting a werzeug object into string (2018-09-17)
 * `192`: resolve issues with image and sphinx (2018-09-16)
 * `191`: implement latex custom builder for rst2html (2018-09-16)
