@@ -77,17 +77,21 @@ class CommonSphinxWriterHelpers:
                 srcdir = None
             if image_dest is None:
                 outdir = builder.outdir
-                if srcdir is None:
-                    current = os.path.dirname(builder.current_docname)
+                if builder.current_docname and builder.current_docname != "<<string>>":
+                    if srcdir is None:
+                        current = os.path.dirname(builder.current_docname)
+                    else:
+                        current = os.path.dirname(os.path.join(
+                            srcdir, builder.current_docname))
+                    if current is None or not os.path.exists(current):
+                        raise FileNotFoundError(
+                            "Unable to find document '{0}' current_docname='{1}'".format(current, builder.current_docname))
+                    dest = os.path.dirname(os.path.join(
+                        outdir, builder.current_docname))
                 else:
-                    current = os.path.dirname(os.path.join(
-                        srcdir, builder.current_docname))
-                if current is None or not os.path.exists(current):
-                    raise FileNotFoundError(
-                        "Unable to find document '{0}'".format(current))
-                current_dest = os.path.dirname(
-                    os.path.join(outdir, builder.current_docname))
-                fold = current_dest
+                    # current_docname is None which means
+                    # no file should be created
+                    fold = None
             else:
                 fold = image_dest
 
@@ -112,32 +116,42 @@ class CommonSphinxWriterHelpers:
                 name = self.hash_md5_readfile(full) + ext
                 remote = False
 
-            if not os.path.exists(fold):
+            if fold is not None and not os.path.exists(fold):
                 os.makedirs(fold)
 
-            dest = os.path.join(fold, name)
-            if not os.path.exists(dest):
-                if remote:
-                    if atts.get('download', False):
-                        # Downloads the image
-                        try:
-                            get_url_content_timeout(
-                                atts['src'], output=dest, encoding=None, timeout=20)
-                            full = atts['src']
-                        except InternetException as e:
-                            logger = logging.getLogger("image")
-                            logger.warning(
-                                "[image] unable to get content for url '{0}' due to '{1}'".format(atts['src'], e))
-                            this = os.path.abspath(os.path.dirname(__file__))
-                            full = os.path.join(
-                                this, "sphinximages", "sphinxtrib", "missing.png")
-                            shutil.copy(full, dest)
+            dest = os.path.join(fold, name) if fold else None
+
+            if dest is not None:
+                if not os.path.exists(dest):
+                    if remote:
+                        if atts.get('download', False):
+                            # Downloads the image
+                            try:
+                                get_url_content_timeout(
+                                    atts['src'], output=dest, encoding=None, timeout=20)
+                                full = atts['src']
+                            except InternetException as e:
+                                logger = logging.getLogger("image")
+                                logger.warning(
+                                    "[image] unable to get content for url '{0}' due to '{1}'".format(atts['src'], e))
+                                this = os.path.abspath(
+                                    os.path.dirname(__file__))
+                                full = os.path.join(
+                                    this, "sphinximages", "sphinxtrib", "missing.png")
+                                shutil.copy(full, dest)
+                        else:
+                            name = atts['src']
+                            full = name
+                            dest = name
                     else:
-                        name = atts['src']
-                        full = name
-                        dest = name
+                        shutil.copy(full, dest)
+                        full = dest
                 else:
-                    shutil.copy(full, dest)
+                    full = dest
+            else:
+                name = atts['src']
+                full = name
+                dest = name
 
             atts['src'] = name
             atts['full'] = full
@@ -151,6 +165,8 @@ class CommonSphinxWriterHelpers:
             atts['width'] = node['width']
         if 'height' in node:
             atts['height'] = node['height']
+        if 'download' in node:
+            atts['download'] = node['download']
         if 'scale' in node:
             import PIL
             if 'width' not in node or 'height' not in node:

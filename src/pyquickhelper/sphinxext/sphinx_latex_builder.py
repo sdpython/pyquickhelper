@@ -197,7 +197,7 @@ class EnhancedLaTeXWriter(LaTeXWriter):
         LaTeXWriter.__init__(self, builder)
 
     def translate(self):
-        visitor = self.builder.create_translator( self.builder, self.document)
+        visitor = self.builder.create_translator(self.builder, self.document)
         self.document.walkabout(visitor)
         self.output = visitor.astext()
 

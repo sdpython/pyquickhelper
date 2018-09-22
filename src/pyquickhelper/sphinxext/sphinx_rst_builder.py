@@ -523,7 +523,7 @@ class RstTranslator(TextTranslator, CommonSphinxWriterHelpers):
         self.new_state(0)
         atts = self.base_visit_image(node, self.builder.rst_image_dest)
         self.add_text('.. image:: {0}'.format(atts['src']))
-        for att_name in 'width', 'height', 'alt':
+        for att_name in 'width', 'height', 'alt', 'download':
             if att_name in node.attributes and node.get(att_name) != 'auto':
                 self.new_state(4)
                 self.add_text(":{0}: {1}".format(att_name, node[att_name]))
