@@ -174,7 +174,6 @@ class BlogPostList:
 
         @return         list of rst_links
         """
-        links = []
         ens = self.get_categories_group()
         if len(ens) > 5:
             sorted_end = list(sorted((v, m) for m, v in ens.items()))
@@ -182,6 +181,7 @@ class BlogPostList:
             for v, m in sorted_end[-5:]:
                 ens[m] = v
 
+        links = []
         for m, v in sorted(ens.items()):
             if len(v) <= 2:
                 # we skip categories with less than 2 blog post
@@ -198,7 +198,6 @@ class BlogPostList:
 
         @return         list of rst_links
         """
-        links = []
         ens = self.get_months_group()
         if len(ens) > 5:
             sorted_end = list(sorted((m, v) for m, v in ens.items()))
@@ -206,6 +205,7 @@ class BlogPostList:
             for m, v in sorted_end[-5:]:
                 ens[m] = v
 
+        links = []
         for m, v in sorted(ens.items()):
             link = ":ref:`{0} ({1}) <ap-month-{0}-0>`".format(m, len(v))
             links.append(link)
