@@ -15,7 +15,7 @@ from .utils_sphinx_doc import migrating_doxygen_doc
 from ..texthelper.texts_language import TITLES
 from ..loghelper.flog import noLOG
 from . helpgen_exceptions import HelpGenConvertError
-from .conf_path_tools import find_graphviz_dot, find_divpng_path
+from .conf_path_tools import find_graphviz_dot, find_dvipng_path
 from .sphinxm_mock_app import MockSphinxApp
 
 
@@ -68,7 +68,7 @@ def default_sphinx_options(fLOG=noLOG, **options):
     }
 
     if res['imgmath_image_format'] == 'png':
-        imgmath_latex, imgmath_dvipng, imgmath_dvisvgm = find_divpng_path(
+        imgmath_latex, imgmath_dvipng, imgmath_dvisvgm = find_dvipng_path(
             exc=False)
         res['imgmath_latex'] = imgmath_latex
         res['imgmath_dvipng'] = imgmath_dvipng

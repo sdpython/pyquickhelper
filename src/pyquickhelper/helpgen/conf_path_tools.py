@@ -158,7 +158,7 @@ def custom_ensuredir(path):
             raise
 
 
-def find_divpng_path(exc=True):
+def find_dvipng_path(exc=True):
     """
     Determines :epkg:`dvipng` location.
 
@@ -169,7 +169,7 @@ def find_divpng_path(exc=True):
 
     if sys.platform.startswith("win"):
         sep = ";"
-        imgmath_latex = find_latex_path()
+        imgmath_latex = find_latex_path(exc=exc)
         imgmath_dvipng = os.path.join(imgmath_latex, "dvipng.exe")
         if not os.path.exists(imgmath_dvipng):
             if exc:

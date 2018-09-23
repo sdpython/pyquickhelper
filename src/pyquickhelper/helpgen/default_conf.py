@@ -273,7 +273,7 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
     autosummary_generate = True
 
     # import helpers to find tools to build the documentation
-    from .conf_path_tools import find_latex_path, find_graphviz_dot, find_divpng_path
+    from .conf_path_tools import find_latex_path, find_graphviz_dot, find_dvipng_path
 
     # graphviz
     graphviz_output_format = "svg"
@@ -345,7 +345,7 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
         pass
 
     if not use_mathjax:
-        imgmath_latex, imgmath_dvipng, imgmath_dvisvgm = find_divpng_path()
+        imgmath_latex, imgmath_dvipng, imgmath_dvisvgm = find_dvipng_path()
         imgmath_image_format = 'svg'
 
     if add_extensions is not None:
