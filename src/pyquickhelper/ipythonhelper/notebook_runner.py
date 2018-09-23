@@ -463,7 +463,7 @@ class NotebookRunner(object):
                 outs = list()
                 continue
 
-            elif msg_type in ('comm_open', 'comm_msg'):
+            elif msg_type in ('comm_open', 'comm_msg', 'comm_close'):
                 # widgets in a notebook
                 out.data = content["data"]
                 out.comm_id = content["comm_id"]
@@ -472,7 +472,7 @@ class NotebookRunner(object):
                 dcontent = "\n".join("{0}={1}".format(k, v)
                                      for k, v in sorted(content.items()))
                 raise NotImplementedError(
-                    'unhandled iopub message: %s' % msg_type + "\nCONTENT:\n" + dcontent)
+                    "Unhandled iopub message: '{0}'\n--CONTENT--\n{1}".format(msg_type, dcontent))
 
             outs.append(out)
             if self.detailed_log:
