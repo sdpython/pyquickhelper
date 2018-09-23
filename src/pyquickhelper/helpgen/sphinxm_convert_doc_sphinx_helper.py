@@ -56,9 +56,12 @@ try:
     # Sphinx 1.8.0
     from sphinx.extension import verify_needs_extensions as verify_extensions
     from sphinx.util.pycompat import htmlescape
-except ImportError:
+except ImportError as e:
     # Sphinx 1.7.6
-    from sphinx.extension import verify_required_extensions as verify_extensions
+    try:
+        from sphinx.extension import verify_required_extensions as verify_extensions
+    except ImportError as ee:
+        raise ImportError("Unable to import sphinx due to:\n{0}\n{1}".format(e, ee))
 
 try:
     from sphinx.writers.latex import LaTeXTranslator
