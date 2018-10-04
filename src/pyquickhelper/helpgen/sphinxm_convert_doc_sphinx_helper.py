@@ -61,7 +61,8 @@ except ImportError as e:
     try:
         from sphinx.extension import verify_required_extensions as verify_extensions
     except ImportError as ee:
-        raise ImportError("Unable to import sphinx due to:\n{0}\n{1}".format(e, ee))
+        raise ImportError(
+            "Unable to import sphinx due to:\n{0}\n{1}".format(e, ee))
 
 try:
     from sphinx.writers.latex import LaTeXTranslator
