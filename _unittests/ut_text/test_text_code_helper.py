@@ -37,11 +37,13 @@ class TestTextCodeHelper(unittest.TestCase):
         self.assertEqual(change_style("change_style"), "change_style")
 
     def test_add_rst_links(self):
-        text = "Maybe... Python is winning the competition\nfor machine learning language."
+        text = "Maybe... Python is winning the competition\nfor machine learning language$."
         values = {'Python': 'https://www.python.org/',
                   'machine learning': 'https://en.wikipedia.org/wiki/Machine_learning'}
         res = add_rst_links(text, values)
-        exp = "Maybe... :epkg:`Python` is winning the competition\nfor :epkg:`machine learning` language."
+        exp = "Maybe... :epkg:`Python` is winning the competition\nfor :epkg:`machine learning` language$."
+        self.assertEqual(exp, res)
+        res = add_rst_links(res, values)
         self.assertEqual(exp, res)
 
 

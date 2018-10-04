@@ -55,7 +55,7 @@ def add_rst_links(text, values, tag="epkg", n=4):
                 return last, ":{0}:`{1}`".format(tag, w)
         return i + 1, words[i]
 
-    reg = re.compile("(([\\w']+)|([.,!?;]+)|([ \\n]+))")
+    reg = re.compile("(([\\\"_*`\\w']+)|([\\W]+)|([ \\n]+))")
     words = reg.findall(text)
     words = [_[0] for _ in words]
     res = []
