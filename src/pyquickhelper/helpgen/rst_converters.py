@@ -36,7 +36,8 @@ def default_sphinx_options(fLOG=noLOG, **options):
         for k, v in sorted(options.items()):
             print("{0} = {1}".format(k, v))
 
-    .. versionadded:: 1.4
+    .. versionchanged:: 1.8
+        Disables :epkg:`latex` if not available on :epkg:`Windows`.
     """
     res = {  # 'output_encoding': options.get('output_encoding', 'unicode'),
         # 'doctitle_xform': options.get('doctitle_xform', True),
@@ -68,11 +69,18 @@ def default_sphinx_options(fLOG=noLOG, **options):
     }
 
     if res['imgmath_image_format'] == 'png':
-        imgmath_latex, imgmath_dvipng, imgmath_dvisvgm = find_dvipng_path(
-            exc=False)
-        res['imgmath_latex'] = imgmath_latex
-        res['imgmath_dvipng'] = imgmath_dvipng
-        res['imgmath_dvisvgm'] = imgmath_dvisvgm
+        try:
+            imgmath_latex, imgmath_dvipng, imgmath_dvisvgm = find_dvipng_path(
+                exc=False)
+            has_latex = True
+        except FileNotFoundError:
+            # miktex is not available,
+            has_latex = False
+
+        if has_latex:
+            res['imgmath_latex'] = imgmath_latex
+            res['imgmath_dvipng'] = imgmath_dvipng
+            res['imgmath_dvisvgm'] = imgmath_dvisvgm
 
     for k, v in options.items():
         if k not in res:
