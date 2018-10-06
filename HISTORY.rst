@@ -1,12 +1,19 @@
 
+
 .. _l-HISTORY:
 
 =======
 History
 =======
 
-current - 2018-09-22 - 0.00Mb
+current - 2018-10-06 - 0.00Mb
 =============================
+
+* `197`: do not raise exception if latex is not found when using rst2html (2018-10-06)
+* `196`: add function add_rst_links to automatically add links into one string (2018-10-04)
+
+1.8.2814 - 2018-09-22 - 2.02Mb
+==============================
 
 * `195`: implement a doctree outputter (2018-09-19)
 * `194`: check why call an extension from the setup is different from adding it to the list of extensions (2018-09-19)
@@ -121,3 +128,4 @@ current - 2018-09-22 - 0.00Mb
 
 1.5.2275 - 2017-11-28 - 0.50Mb
 ==============================
+
