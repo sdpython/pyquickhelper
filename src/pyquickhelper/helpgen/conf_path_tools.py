@@ -170,14 +170,20 @@ def find_dvipng_path(exc=True):
     if sys.platform.startswith("win"):
         sep = ";"
         imgmath_latex = find_latex_path(exc=exc)
-        imgmath_dvipng = os.path.join(imgmath_latex, "dvipng.exe")
-        if not os.path.exists(imgmath_dvipng):
+        if imgmath_latex is None:
+            imgmath_dvipng = None
+        else:
+            imgmath_dvipng = os.path.join(imgmath_latex, "dvipng.exe")
+        if imgmath_dvipng is None or not os.path.exists(imgmath_dvipng):
             if exc:
                 raise FileNotFoundError(imgmath_dvipng)
             else:
                 imgmath_dvipng = "dvipng"
-        imgmath_dvisvgm = os.path.join(imgmath_latex, "dvisvgm.exe")
-        if not os.path.exists(imgmath_dvisvgm):
+        if imgmath_latex is None:
+            imgmath_dvisvgm = None
+        else:
+            imgmath_dvisvgm = os.path.join(imgmath_latex, "dvisvgm.exe")
+        if imgmath_dvisvgm is None or not os.path.exists(imgmath_dvisvgm):
             if exc:
                 raise FileNotFoundError(imgmath_dvisvgm)
             else:
@@ -189,16 +195,16 @@ def find_dvipng_path(exc=True):
                 env_path += sep
             env_path += imgmath_latex
 
-        if sys.platform.startswith("win"):
+        if imgmath_latex is not None and sys.platform.startswith("win"):
             imgmath_latex = os.path.join(imgmath_latex, "latex.exe")
 
         # verification
-        if not os.path.exists(imgmath_latex):
+        if imgmath_latex is None or not os.path.exists(imgmath_latex):
             if exc:
                 raise FileNotFoundError(imgmath_latex)
             else:
                 imgmath_latex = "latex"
-        if not os.path.exists(imgmath_dvipng):
+        if imgmath_dvipng is None or not os.path.exists(imgmath_dvipng):
             if exc:
                 raise FileNotFoundError(imgmath_dvipng)
             else:
