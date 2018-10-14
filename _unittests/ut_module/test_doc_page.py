@@ -75,7 +75,7 @@ class TestDocPage(ExtTestCase):
         writer = 'html'
         ht = rst2html(content, writer=writer, layout="sphinx", keep_warnings=True,
                       imgmath_latex_preamble=preamble, outdir=temp,
-                      epkg_dictionary={'XD': 'http://www.xavierdupre.fr'})
+                      epkg_dictionary={'pep8': 'https://www.python.org/dev/peps/pep-0008/'})
         ht = ht.replace('src="_images/', 'src="')
         ht = ht.replace('/scripts\\bokeh', '../bokeh_plot\\bokeh')
         ht = ht.replace('/scripts/bokeh', '../bokeh_plot/bokeh')
@@ -84,7 +84,7 @@ class TestDocPage(ExtTestCase):
 
         # Tests the content.
         self.assertNotIn('runpythonerror', ht)
-        self.assertIn("http://www.xavierdupre.fr", ht)
+        self.assertIn("https://www.python.org/dev/peps/pep-0008/", ht)
 
 
 if __name__ == "__main__":
