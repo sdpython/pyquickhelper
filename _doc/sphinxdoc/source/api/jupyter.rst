@@ -29,13 +29,6 @@ controls
 
 .. autosignature:: pyquickhelper.ipythonhelper.interact.StaticInteract
 
-extensions
-++++++++++
-
-.. autosignature:: pyquickhelper.ipythonhelper.cython_helper.ipython_cython_extension
-
-.. autosignature:: pyquickhelper.ipythonhelper.helper_in_notebook.load_extension
-
 kernels
 +++++++
 

@@ -12,9 +12,7 @@ from ..loghelper.flog import noLOG
 class MagicCommandParser(argparse.ArgumentParser):
 
     """
-    Add method ``parse_cmd`` to :epkg:`*py:argparse:ArgumentParser`.
-
-    .. versionadded:: 0.9
+    Adds method ``parse_cmd`` to :epkg:`*py:argparse:ArgumentParser`.
     """
 
     def __init__(self, prog, *l, **p):
@@ -24,9 +22,6 @@ class MagicCommandParser(argparse.ArgumentParser):
         @param  prog        command name
         @param  l           positional arguments
         @param  p           named arguments
-
-        .. versionchanged:: 1.2
-            Parameter *prog* was made explicit in to force having a proper message for *usage()*
         """
         argparse.ArgumentParser.__init__(self, prog=prog, *l, **p)
         self._keep_args = {}
@@ -59,9 +54,8 @@ class MagicCommandParser(argparse.ArgumentParser):
         * *eval_type*: *type* can be used for parsing and *eval_type*
           is the expected return type.
 
-        .. versionchanged:: 1.3
-            The method adds parameter *no_eval* to avoid considering the parameter
-            value as a potential variable stored in the notebook workspace.
+        The method adds parameter *no_eval* to avoid considering the parameter
+        value as a potential variable stored in the notebook workspace.
         """
         name = MagicCommandParser._private_get_name(*args)
         if name in ["help", "-h", "--h"]:
@@ -95,13 +89,11 @@ class MagicCommandParser(argparse.ArgumentParser):
 
     def has_eval(self, name):
         """
-        tells if a parameter value should be consider as a variable or some python code
-        to evaluate
+        Tells if a parameter value should be consider as a variable or some python code
+        to evaluate.
 
         @param      name        parameter name
         @return                 boolean
-
-        .. versionadded:: 1.3
         """
         if name not in self._keep_args:
             raise KeyError("unable to find parameter name: {0} in {1}".format(
@@ -110,12 +102,10 @@ class MagicCommandParser(argparse.ArgumentParser):
 
     def expected_type(self, name):
         """
-        return the expected type for the parameter
+        Returns the expected type for the parameter.
 
         @param      name        parameter name
         @return                 type or None of unknown
-
-        .. versionadded:: 1.3
         """
         if name in self._keep_args:
             return self._keep_args[name][1].get("type", None)
@@ -129,8 +119,6 @@ class MagicCommandParser(argparse.ArgumentParser):
 
         @param      name        parameter name
         @return                 type or None of unknown
-
-        .. versionadded:: 1.3
         """
         if name in self._keep_args:
             return self._keep_args[name][1].get("eval_type", None)
@@ -163,9 +151,9 @@ class MagicCommandParser(argparse.ArgumentParser):
                     ev = self.eval(v, context=context, fLOG=fLOG)
                     v_exp = self.expected_eval_type(k)
                     if ev is not None and (v_exp is None or v_exp == type(ev)) and \
-                            (type(v) != type(ev) or v != ev):
+                            (type(v) != type(ev) or v != ev):  # pylint: disable=C0123
                         up[k] = ev
-                    elif v_exp is not None and type(v) != v_exp:
+                    elif v_exp is not None and type(v) != v_exp:  # pylint: disable=C0123
                         up[k] = v_exp(v)
 
             if len(up) > 0:
@@ -187,8 +175,7 @@ class MagicCommandParser(argparse.ArgumentParser):
         @param      fLOG        logging function
         @return                 *value* or its evaluation
 
-        .. versionchanged:: 1.3
-            The method now interprets variable inside list, tuple or dictionaries (for *value*).
+        The method interprets variable inside list, tuple or dictionaries (for *value*).
         """
         typstr = str  # unicode#
         if isinstance(value, typstr):

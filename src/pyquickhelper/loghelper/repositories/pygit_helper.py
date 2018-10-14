@@ -30,8 +30,6 @@ def my_date_conversion(sdate):
 
     @param      sdate       string
     @return                 date
-
-    .. versionadded:: 1.0
     """
     first = sdate.split(" ")[0]
     trois = first.replace(".", "-").replace("/", "-").split("-")
@@ -71,7 +69,7 @@ class RepoFile:
             self.__dict__[k] = v
 
         if hasattr(self, "name"):
-            if '"' in self.name:
+            if '"' in self.name:  # pylint: disable=E0203
                 #defa = sys.stdout.encoding if sys.stdout != None else "utf8"
                 self.name = self.name.replace('"', "")
                 #self.name = self.name.encode(defa).decode("utf-8")
@@ -123,8 +121,6 @@ def get_cmd_git():
     Gets the command line used to run :epkg:`git`.
 
     @return     string
-
-    .. versionadded:: 1.3
     """
     if sys.platform.startswith("win32"):
         cmd = r'"C:\Program Files\Git\bin\git.exe"'
@@ -428,20 +424,16 @@ def get_repo_log(path=None, file_detail=False, commandline=True, subset=None):
 
         git log  --stat -- _unittests/ut_loghelper/data/sample_zip.zip
 
-    .. versionchanged:: 1.0
-        For some reason, the call to @see fn str2datetime seemed to cause exception such as::
+    For some reason, the call to @see fn str2datetime seemed to cause exception such as::
 
-            File "<frozen importlib._bootstrap>", line 2212, in _find_and_load_unlocked
-            File "<frozen importlib._bootstrap>", line 321, in _call_with_frames_removed
-            File "<frozen importlib._bootstrap>", line 2254, in _gcd_import
-            File "<frozen importlib._bootstrap>", line 2237, in _find_and_load
-            File "<frozen importlib._bootstrap>", line 2224, in _find_and_load_unlocked
+        File "<frozen importlib._bootstrap>", line 2212, in _find_and_load_unlocked
+        File "<frozen importlib._bootstrap>", line 321, in _call_with_frames_removed
+        File "<frozen importlib._bootstrap>", line 2254, in _gcd_import
+        File "<frozen importlib._bootstrap>", line 2237, in _find_and_load
+        File "<frozen importlib._bootstrap>", line 2224, in _find_and_load_unlocked
 
-        when it was used to generate documentation for others modules than *pyquickhelper*.
-        Not using this function helps. The cause still remains obscure.
-
-    .. versionchanged:: 1.5
-        Enable *file_details*.
+    when it was used to generate documentation for others modules than *pyquickhelper*.
+    Not using this function helps. The cause still remains obscure.
     """
     if file_detail:
         if subset is None:
@@ -744,8 +736,6 @@ def clone(location, srv, group, project, username=None, password=None, fLOG=None
         ::
 
             clone("local_folder", "github.com", "sdpython", "pyquickhelper")
-
-    .. versionadded:: 0.9
     """
     if username is not None:
         address = "https://{0}:{1}@{2}/{3}/{4}.git".format(username,
@@ -774,8 +764,6 @@ def rebase(location, srv, group, project, username=None, password=None, fLOG=Non
     @param      password    password
     @param      fLOG        logging function
     @return                 output, error
-
-    .. versionadded:: 0.9
     """
     if username is not None:
         address = "https://{0}:{1}@{2}/{3}/{4}.git".format(username,

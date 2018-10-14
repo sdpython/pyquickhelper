@@ -230,8 +230,7 @@ class TestBlocRefExtension(unittest.TestCase):
         tives = [("blocref", BlocRef, blocref_node,
                   visit_blocref_node, depart_blocref_node)]
 
-        html = rst2html(content, fLOG=fLOG,
-                        writer="html", keep_warnings=True,
+        html = rst2html(content, writer="html", keep_warnings=True,
                         directives=tives)
 
         temp = get_temp_folder(__file__, "temp_blocreflist")
@@ -252,6 +251,4 @@ class TestBlocRefExtension(unittest.TestCase):
 
 
 if __name__ == "__main__":
-    TestBlocRefExtension().test_post_parse_blocref()
-    TestBlocRefExtension().test_blocref_rst()
-    # unittest.main()
+    unittest.main()

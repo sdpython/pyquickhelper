@@ -1,16 +1,12 @@
 """
 @file
 @brief Templating functions
-
-.. versionadded:: 1.4
 """
 
 
 class CustomTemplateException(Exception):
     """
-    raised when a templatre could not compile
-
-    .. versionadded:: 1.4
+    Raised when a templatre could not compile.
     """
     pass
 
@@ -24,8 +20,6 @@ def apply_template(text, context, engine="mako"):
     @param      context     local variable to use
     @param      engine      'mako' or 'jinja2'
     @return                 resulting text
-
-    .. versionadded:: 1.4
     """
     if engine == "mako":
         from mako.template import Template

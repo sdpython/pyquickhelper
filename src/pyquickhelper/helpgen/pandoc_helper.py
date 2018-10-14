@@ -1,8 +1,6 @@
 """
 @file
 @brief Helpers to call pandoc and convert documents
-
-.. versionadded:: 1.5
 """
 import os
 import sys
@@ -21,8 +19,6 @@ def call_pandoc(params, fLOG=noLOG):
     @param      params  parameters
     @param      fLOG    logging function
     @return             out, err
-
-    .. versionadded:: 1.5
     """
     pandoc = os.path.join(find_pandoc_path(), "pandoc")
     cmd = '"{0}" {1}'.format(pandoc, params)

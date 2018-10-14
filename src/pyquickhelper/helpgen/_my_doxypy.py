@@ -23,8 +23,6 @@ def is_file_string(s):
 
     @param      s       string
     @return             boolean
-
-    .. versionadded:: 1.3
     """
     if len(s) >= 3000:
         return False

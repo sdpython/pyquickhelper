@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 @file
-@brief Defines a sphinx extension to keep track of blocs such as examples, FAQ, ...
-
-.. versionadded:: 1.4
+@brief Defines a :epkg:`sphinx` extension to keep track of blocs such as examples, FAQ, ...
 """
 import sys
 import os
@@ -194,8 +192,8 @@ class BlocRef(BaseAdmonition):
         set_source_info(self, blocref)
 
         if env is not None:
-            targetid = 'index%s-%s%s' % (name_desc,
-                                         breftag, env.new_serialno('index%s%s' % (name_desc, breftag)))
+            targetid = 'index%s-%s%s' % (name_desc, breftag,
+                                         env.new_serialno('index%s%s' % (name_desc, breftag)))
             blocref["breftargetid"] = targetid
             ids = [targetid]
             targetnode = nodes.target(legend, '', ids=ids)
@@ -441,8 +439,7 @@ def process_blocref_nodes_generic(app, doctree, fromdocname, class_name,
                 description = (
                     _(brefmes) %
                     (orig_entry, os.path.split(blocref_info['source'])[-1],
-                     blocref_info['lineno'])
-                )
+                     blocref_info['lineno']))
             desc1 = description[:description.find('<<')]
             desc2 = description[description.find('>>') + 2:]
             para += nodes.Text(desc1, desc1)
@@ -463,6 +460,8 @@ def process_blocref_nodes_generic(app, doctree, fromdocname, class_name,
             except NoUri:
                 # ignore if no URI can be determined, e.g. for LaTeX output
                 pass
+
+            newnode.append(nodes.Text(newnode['name']))
 
             para += newnode
             para += nodes.Text(desc2, desc2)

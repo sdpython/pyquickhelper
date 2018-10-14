@@ -134,10 +134,6 @@ def GetLogFile(physical=False, filename=None):
     :return: a pointer to a log file
     :rtype: str
     :raises OSError:     if this file cannot be created
-
-    .. versionchanged:: 1.1
-        Use module `logging <https://docs.python.org/3/library/logging.html>`_.
-        Parameter *filename* was added.
     """
     if flog_static.store_log_values["__log_file"] is None:
         if physical:
@@ -352,9 +348,6 @@ def get_relative_path(folder, file, exists=True, absolute=True):
     @param      absolute    if True return a path which starts from the root
     @return                 relative path
     @rtype                  str
-
-    .. versionchanged:: 1.5
-        Parameter *exists* was added.
     """
     if exists:
         if not os.path.exists(folder):
@@ -396,9 +389,6 @@ def download(httpfile, path_unzip=None, outfile=None, flatten=True, fLOG=None):
     @param      flatten         (bool) put all files in the same folder (forget subfolders)
     @param      fLOG            (str) logging function
     @return                     local file name
-
-    .. versionchanged:: 1.5
-        Parameters *fLOG*, *flatten* were added.
     """
     if fLOG is None:
         fLOG = noLOG
@@ -413,17 +403,14 @@ def download(httpfile, path_unzip=None, outfile=None, flatten=True, fLOG=None):
 
 def unzip(file, path_unzip=None, outfile=None, flatten=True, fLOG=noLOG):
     """
-    unzip a file into the temporary folder,
-    the function expects to have only one zipped file
+    Unzips a file into the temporary folder,
+    the function expects to have only one zipped file.
 
     @param      file            (str) zip files
     @param      path_unzip      (str) where to unzip the file, if None, choose GetPath ()
     @param      outfile         (str) if None, the function will assign a filename unless this parameter is specified
     @param      flatten         (bool) put all files in the same folder (forget subfolders)
     @return                     expanded file name
-
-    .. versionadded:: 1.5
-        Parameters *fLOG*, *flatten* were added.
     """
     if path_unzip is None:
         path_unzip = GetPath()
@@ -493,9 +480,6 @@ def _check_zip_file(filename, path_unzip, outfile, flatten=True, fLOG=noLOG):
     @param      flatten         unzip all files into the same directory
     @param      fLOG            logging function
     @return                     the unzipped file or filename if the format was not zip
-
-    .. versionchanged:: 1.5
-        Parameters *fLOG*, *flatten* were added.
     """
     if path_unzip is None:
         raise ValueError("path_unzip cannot be None")
@@ -715,9 +699,6 @@ def _check_url_file(url, path_download, outfile, fLOG=noLOG):
     @param      outfile             if None, the function will assign a filename unless this parameter is specified
     @param      fLOG                logging function
     @return                         the filename
-
-    .. versionchanged:: 1.5
-        Parameter *fLOG* was added.
     """
     urll = url.lower()
     if "http://" in urll or "https://" in urll:
@@ -804,9 +785,6 @@ def _check_source(fileurl, path_unzip, outfile, flatten=True, fLOG=noLOG):
         - a text file:  do nothing
 
     If the file has already been downloaded and unzipped, it is not done twice.
-
-    .. versionadded::
-        Parameter *fLOG*, *flatten* were added.
     """
     if outfile is not None and os.path.splitext(
             outfile)[1].lower() == os.path.splitext(fileurl)[1].lower():

@@ -11,8 +11,7 @@ def isempty(s):
     @param      s       ``str`` or ``numpy.NaN``
     @return             boolean
 
-    .. versionchanged:: 1.3
-        We import numpy in the function (delayed import).
+    The function imports :epkg:`numpy` (delayed import).
     """
     if s is None:
         return True
@@ -35,8 +34,7 @@ def isnan(s):
 
     @raise      TypeError   if ``s`` is not a ``float``
 
-    .. versionchanged:: 1.3
-        We import numpy in the function (delayed import).
+    The function imports :epkg:`numpy` (delayed import).
     """
     if isinstance(s, float):
         import numpy

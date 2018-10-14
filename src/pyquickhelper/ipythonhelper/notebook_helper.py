@@ -73,8 +73,6 @@ def upgrade_notebook(filename, encoding="utf-8"):
     @param      filename        filename
     @param      encoding        encoding
     @return                     modification?
-
-    .. versionadded:: 1.0
     """
     with open(filename, "r", encoding=encoding) as payload:
         content = payload.read()
@@ -132,12 +130,6 @@ def read_nb(filename, profile_dir=None, encoding="utf8", working_dir=None,
     @param      replacements    replacements to make in every cell before running it,
                                 dictionary ``{ string: string }``
     @return                     @see cl NotebookRunner
-
-    .. versionchanged:: 1.3
-        Parameter *kernel* was added.
-
-    .. versionchanged:: 1.5
-        Parameters from NotebookRunner were added.
     """
     if isinstance(filename, str  # unicode#
                   ):
@@ -209,9 +201,7 @@ def find_notebook_kernel(kernel_spec_manager=None):
 
     The list of installed kernels is described at
     `Making kernel for Jupyter <http://jupyter-client.readthedocs.org/en/latest/kernels.html#kernelspecs>`_.
-    The function only works with Jupyter>=4.0.
-
-    .. versionadded:: 1.3
+    The function only works with *Jupyter>=4.0*.
     """
     if kernel_spec_manager is None:
         from jupyter_client.kernelspec import KernelSpecManager
@@ -230,9 +220,7 @@ def get_notebook_kernel(kernel_name, kernel_spec_manager=None):
     @param      kernel_name             kernel name
     @return                             KernelSpec
 
-    The function only works with Jupyter>=4.0.
-
-    .. versionadded:: 1.3
+    The function only works with *Jupyter>=4.0*.
     """
     if kernel_spec_manager is None:
         from jupyter_client.kernelspec import KernelSpecManager
@@ -261,8 +249,6 @@ def install_notebook_extension(path=None, overwrite=False, symlink=False,
     Default value is
     `https://github.com/ipython-contrib/IPython-notebook-extensions/archive/master.zip
     <https://github.com/ipython-contrib/IPython-notebook-extensions/archive/master.zip>`_.
-
-    .. versionadded:: 1.3
     """
     if path is None:
         path = "https://github.com/ipython-contrib/IPython-notebook-extensions/archive/master.zip"
@@ -288,11 +274,9 @@ def install_notebook_extension(path=None, overwrite=False, symlink=False,
 
 def get_jupyter_datadir():
     """
-    return the data directory for the notebook
+    Returns the data directory for the notebook.
 
     @return     path
-
-    .. versionadded:: 1.3
     """
     from jupyter_client.kernelspec import KernelSpecManager
     return KernelSpecManager().data_dir
@@ -317,9 +301,6 @@ def get_jupyter_extension_dir(user=False, prefix=None,
     ++++++
 
     path: path to installed extensions (by the user)
-
-
-    .. versionadded:: 1.3
     """
     from notebook.nbextensions import _get_nbextension_dir
     return _get_nbextension_dir(nbextensions_dir=nbextensions_dir, user=user, prefix=prefix)
@@ -346,8 +327,6 @@ def get_installed_notebook_extension(user=False, prefix=None,
     list: list of installed notebook extension (by the user)
 
     You can install extensions with function @see fn install_notebook_extension.
-
-    .. versionadded:: 1.3
     """
     path = get_jupyter_extension_dir(
         user=user, prefix=prefix, nbextensions_dir=nbextensions_dir)
@@ -417,8 +396,6 @@ def install_jupyter_kernel(exe=sys.executable, kernel_spec_manager=None, user=Fa
                       "{connection_file}"
                     ]
         }
-
-    .. versionadded:: 1.3
     """
     exe = exe.replace("pythonw.exe", "python.exe")
     dest = install_k(kernel_spec_manager=kernel_spec_manager,

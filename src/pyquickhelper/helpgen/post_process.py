@@ -43,8 +43,6 @@ def update_notebook_link(text, format, nblinks, fLOG):
     @param      nblinks     list of mappings *(reference: url)*
     @param      fLOG        logging function
     @return                 modified text
-
-    .. versionadded:: 1.5
     """
     def get_url_from_nblinks(nblinks, url, format):
         if isinstance(nblinks, dict):
@@ -142,8 +140,6 @@ def _notebook_replacements(nbtext, notebook_replacements, fLOG=None):
     @param      notebook_replacements   dictionary of replacements
     @param      fLOG                    logging function
     @return                             text
-
-    .. versionadded:: 1.6
     """
     if notebook_replacements is None:
         return nbtext
@@ -170,13 +166,6 @@ def post_process_latex_output(root, doall, latex_book=False, exc=True,
     @param      remove_unicode              remove unicode characters (fails with latex)
     @param      notebook_replacements       string replacement in notebooks
     @param      fLOG                        logging function
-
-    .. versionchanged:: 1.5
-        Parameters *exc*, *custom_latex_processing*,
-        *fLOG*, *remove_unicode* were added.
-
-    .. versionchanged:: 1.6
-        Parameter *notebook_replacements* was added.
     """
     if os.path.isfile(root):
         file = root
@@ -222,14 +211,6 @@ def post_process_python_output(root, doall, exc=True, nblinks=None, fLOG=None, n
     @param      nblinks                 dictionary ``{ref: url}``
     @param      notebook_replacements   string replacement in notebooks
     @param      fLOG                    logging function
-
-    .. versionadded:: 1.3
-
-    .. versionchanged:: 1.5
-        Add parameter *exc*, *nblinks*.
-
-    .. versionchanged:: 1.6
-        Parameter *notebook_replacements* was added.
     """
     if os.path.isfile(root):
         file = root
@@ -267,13 +248,6 @@ def post_process_latex_output_any(file, custom_latex_processing, nblinks=None,
     @param      remove_unicode              remove unicode characters
     @param      notebook_replacements       string replacement in notebooks
     @param      fLOG                        logging function
-
-    .. versionchanged:: 1.5
-        Parameters *custom_latex_processing*, *nblinks*,
-        *remove_unicode*, *fLOG* were added.
-
-    .. versionchanged:: 1.6
-        Parameter *notebook_replacements* was added.
     """
     if fLOG:
         fLOG("[post_process_latex_output_any]   ** post_process_latex_output_any ", file)

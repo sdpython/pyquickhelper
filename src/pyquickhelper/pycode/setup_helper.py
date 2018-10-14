@@ -575,8 +575,6 @@ def write_version_for_setup(file_or_folder):
 
     @param      file_or_folder      file ``setup.py`` or folder which contains it
     @return                         version number
-
-    .. versionadded:: 1.1
     """
     src = SourceRepository(commandline=True)
     ffolder = get_folder(file_or_folder)
@@ -601,9 +599,6 @@ def clean_space_for_setup(file_or_folder, file_filter=None):
     @param      file_or_folder      file ``setup.py`` or folder which contains it
     @param      file_filter         file filter (see @see fn remove_extra_spaces_folder)
     @return                         impacted files
-
-    .. versionchanged:: 1.5
-        Parameter *file_filter* was added.
     """
     ffolder = get_folder(file_or_folder)
     rem = remove_extra_spaces_folder(
@@ -971,8 +966,6 @@ def _get_dump_default_path(location, module_name, argv):
     @return                 location of the dump
 
     The result is None for remote continuous integration.
-
-    .. versionadded:: 1.5
     """
     from . import is_travis_or_appveyor
     if is_travis_or_appveyor():

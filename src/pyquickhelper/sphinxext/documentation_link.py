@@ -1,8 +1,6 @@
 """
 @file
 @brief Automated link to documentation.
-
-.. versionadded:: 1.5
 """
 
 

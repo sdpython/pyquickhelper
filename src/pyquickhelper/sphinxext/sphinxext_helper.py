@@ -1,7 +1,6 @@
 """
 @file
 @brief Helpers for sphinx extensions.
-.. versionadded:: 1.5
 """
 
 
@@ -16,7 +15,8 @@ def try_add_config_value(app, name, default, rebuild, type_s=()):
     @param      type_s      expected types
     @return                 True if added, False if already present.
 
-    Rebuild can be (source: `Sphinx <http://www.sphinx-doc.org/en/stable/extdev/appapi.html#sphinx.application.Sphinx.add_config_value>`_):
+    Rebuilds can be (source: `Sphinx.add_config_value
+    <http://www.sphinx-doc.org/en/stable/extdev/appapi.html#sphinx.application.Sphinx.add_config_value>`_):
 
     * 'env' if a change in the setting only takes effect when a document
       is parsed - this means that the whole environment must be rebuilt.

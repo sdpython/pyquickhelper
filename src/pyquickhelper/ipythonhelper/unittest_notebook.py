@@ -1,8 +1,6 @@
 """
 @file
-@brief Functions to test a notebooks.
-
-.. versionadded:: 1.5
+@brief Functions to test a notebook.
 """
 import os
 import shutil
@@ -59,9 +57,6 @@ def test_notebook_execution_coverage(filename, name, folder, this_module_name,
                 folder = os.path.join(os.path.dirname(__file__), ".." , "..", "_doc", "notebooks")
                 test_notebook_execution_coverage(__file__, "compare_python_distribution",
                                                  folder, 'mymodule', fLOG=fLOG)
-
-    .. versionchanged:: 1.6
-        Parameter *filter_name* was added.s
     """
     # delayed import (otherwise, it has circular references)
     from ..pycode import get_temp_folder

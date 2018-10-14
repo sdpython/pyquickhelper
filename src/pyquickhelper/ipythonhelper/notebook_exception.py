@@ -16,8 +16,6 @@ class InNotebookException(Exception):
 
     """
     Exception raises when something wrong happened in a notebook.
-
-    .. versionadded:: 1.3
     """
     pass
 
@@ -25,8 +23,6 @@ class InNotebookException(Exception):
 class JupyterException(Exception):
 
     """
-    Exception raises by Jupyter
-
-    .. versionadded:: 1.3
+    Exception raises by :epkg:`Jupyter`.
     """
     pass

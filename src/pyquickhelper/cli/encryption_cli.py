@@ -1,8 +1,6 @@
 """
 @file
 @brief encrypt and decrypt command lines
-
-.. versionadded:: 1.3
 """
 from __future__ import print_function
 import os
@@ -10,7 +8,7 @@ import argparse
 import sys
 
 
-def get_parser(encrypt):
+def get_parser(encrypt):  # pylint: disable=W0621
     """
     Defines the way to parse the magic command ``%encrypt`` and ``%decrypt``.
 
@@ -53,7 +51,7 @@ def get_parser(encrypt):
     return parser
 
 
-def do_main(source, dest, password, encrypt,
+def do_main(source, dest, password, encrypt,  # pylint: disable=W0621
             crypt_file, crypt_map, regex=None, fLOG=None):
     """
     Encrypts or decrypts a folder, see @see cl EncryptedBackup.
@@ -126,9 +124,6 @@ def encrypt(fLOG=print, args=None):
         :cmd: pyquickhelper.cli.encryption_cli:encrypt
 
         Encrypts a string from the command line.
-
-    .. versionchanged:: 1.5
-        Parameter *args* was added.
     """
     parser = get_parser(True)
     if args is not None and args == ['--help']:
@@ -161,9 +156,6 @@ def decrypt(fLOG=print, args=None):
         :cmd: pyquickhelper.cli.encryption_cli:decrypt
 
         Decrypts an encrypted string from the command line.
-
-    .. versionchanged:: 1.5
-        Parameter *args* was added.
     """
     parser = get_parser(False)
     if args is not None and args == ['--help']:

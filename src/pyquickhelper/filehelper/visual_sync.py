@@ -188,9 +188,7 @@ def create_visual_diff_through_html(string1, string2, notebook=False, context_si
             import webbrowser
             webbrowser.open("page.html")
 
-    .. versionchanged:: 1.1
-        Parameter *notebook*, *context_size*, *inline_view* were added.
-        The function now uses @see fn read_content_ufs to retrieve the content.
+    The function uses @see fn read_content_ufs to retrieve the content.
     """
     string1 = read_content_ufs(string1)
     string2 = read_content_ufs(string2)
@@ -288,10 +286,7 @@ def create_visual_diff_through_html_files(file1,
                                 object if *notebook* is True
 
     An example of the results is shown in blog post :ref:`b-diffview`.
-
-    .. versionchanged:: 1.1
-        Parameter *notebook*, *context_size*, *inline_view* were added.
-        The function now uses @see fn read_content_ufs to retrieve the content.
+    The function now uses @see fn read_content_ufs to retrieve the content.
     """
     diff = create_visual_diff_through_html(file1, file2, notebook=notebook,
                                            context_size=context_size, inline_view=inline_view)

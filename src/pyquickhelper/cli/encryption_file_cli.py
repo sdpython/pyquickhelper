@@ -1,8 +1,6 @@
 """
 @file
 @brief encrypt and decrypt command lines for just a file
-
-.. versionadded:: 1.3
 """
 from __future__ import print_function
 import os
@@ -81,9 +79,6 @@ def encrypt_file(fLOG=print, args=None):
         :cmd: pyquickhelper.cli.encryption_file_cli:encrypt_file
 
         Encrypt a file from the command line.
-
-    .. versionchanged:: 1.5
-        Parameter *args* was added.
     """
     parser = get_parser(True)
     try:
@@ -111,9 +106,6 @@ def decrypt_file(fLOG=print, args=None):
         :cmd: pyquickhelper.cli.encryption_file_cli:decrypt_file
 
         Decrypt a file from the command line.
-
-    .. versionchanged:: 1.5
-        Parameter *args* was added.
     """
     parser = get_parser(False)
     try:

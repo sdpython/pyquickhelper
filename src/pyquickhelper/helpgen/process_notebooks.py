@@ -135,18 +135,9 @@ def process_notebooks(notebooks, outfold, build, latex_path=None, pandoc_path=No
                             formats=("ipynb", "html", "python", "rst", "slides", "pdf",
                                      "docx", "present", "github")])
 
-    .. versionchanged:: 1.5
-        For latex and pdf, a custom processor was added to handle raw data
-        and add ``\\begin{verbatim}`` and ``\\end{verbatim}``.
-        Parameter *exc*, *nblinks* were added.
-        Format *github*, *remove_unicode_latex* was added,
-        it adds a link to file on :epkg:`github`.
-
-    .. versionchanged:: 1.6
-        Parameter *notebook_replacements* was added.
-
-    .. versionchanged:: 1.7
-        Change default value for *remove_unicode_latex* to False.
+    For latex and pdf, a custom processor was added to handle raw data
+    and add ``\\begin{verbatim}`` and ``\\end{verbatim}``.
+    Format *github* adds a link to file on :epkg:`github`.
 
     .. todoext::
         :title: check differences between _process_notebooks_in_private and _process_notebooks_in_private_cmd
@@ -805,9 +796,6 @@ def build_thumbail_in_gallery(nbfile, folder_snippet, relative, rst_link, layout
                                 itself, snippet must have extension ``.png``
     @return                     RST
 
-    .. versionadded:: 1.5
-        Parameter *layout* was added.
-
     .. versionchanged:: 1.7
         Modifies the function to bypass the generation of a snippet
         if a custom one was found. Parameter *snippet_folder* was added.
@@ -1168,8 +1156,6 @@ def build_all_notebooks_coverage(nbs, fileout, module_name, dump=None, badge=Tru
     @param      too_old         drop executions older than *too_old* days from now
     @param      fLOG            logging function
     @return                     dataframe which contains the data
-
-    .. versionadded:: 1.5
     """
     if dump is None:
         dump = os.path.normpath(os.path.join(os.path.dirname(fileout), "..", "..", "..", "..",

@@ -1,9 +1,6 @@
 """
 @file
 @brief provides some functionalities to upload file to a website
-
-.. versionadded:: 1.0
-    moved from pyensae to pyquickhelper
 """
 from ftplib import FTP, error_perm
 import os
@@ -67,9 +64,6 @@ class TransferFTP:
                 ftp.close()
             except Exception as e :
                 print ("unable to close FTP connection using ftp.close")
-
-    .. versionadded:: 1.0
-        Moved prom pyensee to pyquickhelper.
     """
 
     errorNoDirectory = "Can't change directory"
@@ -221,14 +215,12 @@ class TransferFTP:
 
     def dir(self, path='.'):
         """
-        list the content of a path
+        Lists the content of a path.
 
         @param      path        path
         @return                 list of path
 
-        see :meth:`enumerate_ls <pyquickhelper.filehelper.ftp_transfer.TransferFTP.enumerate_ls>`
-
-        .. versionchanged:: 1.0
+        See :meth:`enumerate_ls <pyquickhelper.filehelper.ftp_transfer.TransferFTP.enumerate_ls>`
         """
         return list(self.enumerate_ls(path))
 
@@ -252,8 +244,6 @@ class TransferFTP:
                 for v in res:
                     print(v["name"])
                 ftp.close()
-
-        .. versionchanged:: 1.0
         """
         return list(self.enumerate_ls(path))
 
@@ -274,8 +264,6 @@ class TransferFTP:
              'sizd': '5',
              'unix.gid': '000',
              'modify': '111111'}
-
-        .. versionadded:: 1.0
         """
         if sys.version_info[0] == 2:
             for a in self.run_command(self._ftp.nlst, path):
@@ -299,13 +287,7 @@ class TransferFTP:
         @param      callback    see :tpl:`py,m='ftplib',o='FTP.storbinary'`
         @return                 status
 
-        .. versionchanged:: 1.0
-            file can be a file name or a stream,
-            parameter *name* was added
-
-        .. versionchanged:: 1.4
-            When an error happens, the original current directory is restored.
-            Parameters *blocksize*, *callback* were added.
+        When an error happens, the original current directory is restored.
         """
         path = to.split("/")
         path = [_ for _ in path if len(_) > 0]
@@ -396,8 +378,6 @@ class TransferFTP:
         @param      name        name of the stream on the website
         @param      debug       if True, displays more information
         @return                 status
-
-        .. versionadded:: 1.3
         """
         path = fold.split("/")
         path = [_ for _ in path if len(_) > 0]

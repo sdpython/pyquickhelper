@@ -2,8 +2,6 @@
 """
 @file
 @brief Defines a way to reference a package or a page in this package.
-
-.. versionadded:: 1.5
 """
 
 import sphinx

@@ -2,8 +2,6 @@
 """
 @file
 @brief Direct calls to IPython API without running a command line
-
-.. versionadded:: 1.1
 """
 import os
 import sys
@@ -158,8 +156,6 @@ def nb2present(nb_file, outfile, add_tag=True):
     @param      outfile         output file (a string)
     @param      add_tag         call @see me add_tag_slide
     @return                     impacted files
-
-    .. versionadded:: 1.4
     """
     from ..ipythonhelper import NotebookRunner, read_nb
 
@@ -194,9 +190,6 @@ def nb2html(nb_file, outfile, exc=True):
     @param      outfile         output file (a string)
     @param      exc             raises an exception (True) or a warning (False)
     @return                     impacted files
-
-    .. versionchanged:: 1.5
-        Parameter *exc* was added.
     """
     from ..ipythonhelper import NotebookRunner, read_nb
 
@@ -227,9 +220,6 @@ def nb2rst(nb_file, outfile, exc=True, post_process=True):
     @param      exc             raises an exception (True) or a warning (False)
     @param      post_process    calls @see fn post_process_rst_output
     @return                     impacted files
-
-    .. versionadded:: 1.5
-        Parameter *exc* was added.
     """
     from ..ipythonhelper import NotebookRunner, read_nb
 

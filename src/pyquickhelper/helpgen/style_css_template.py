@@ -1,8 +1,6 @@
 """
 @file
 @brief Custom style for the documentation.
-
-.. versionadded:: 1.5
 """
 
 #: style for thumbnails

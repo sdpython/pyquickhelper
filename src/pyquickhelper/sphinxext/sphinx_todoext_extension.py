@@ -3,8 +3,6 @@
 @file
 @brief Defines a sphinx extension to give a title to a todo,
 inspired from `todo.py <https://github.com/sphinx-doc/sphinx/blob/master/sphinx/ext/todo.py>`_.
-
-.. versionadded:: 1.4
 """
 import sys
 import os

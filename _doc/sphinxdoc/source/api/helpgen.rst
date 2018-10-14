@@ -13,11 +13,11 @@ configuration
 conversion
 ++++++++++
 
-.. autosignature:: pyquickhelper.helpgen.sphinxm_convert_doc_helper.docstring2html
+.. autosignature:: pyquickhelper.helpgen.rst_converters.docstring2html
 
 .. autosignature:: pyquickhelper.helpgen.pandoc_helper.latex2rst
 
-.. autosignature:: pyquickhelper.helpgen.sphinxm_convert_doc_helper.rst2html
+.. autosignature:: pyquickhelper.helpgen.rst_converters.rst2html
 
 specific
 ++++++++

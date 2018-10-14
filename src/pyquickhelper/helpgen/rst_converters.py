@@ -1,8 +1,6 @@
 """
 @file
-@brief Helpers to convert docstring to various format
-
-.. versionadded:: 1.0
+@brief Helpers to convert docstring to various format.
 """
 import sys
 import re
@@ -404,7 +402,7 @@ def rst2html(s, fLOG=noLOG, writer="html", keep_warnings=False,
 
 def correct_indentation(text):
     """
-    Tries to improve the indentation before running :epkg:`docutil`.
+    Tries to improve the indentation before running :epkg:`docutils`.
 
     @param      text        text to correct
     @return                 corrected text

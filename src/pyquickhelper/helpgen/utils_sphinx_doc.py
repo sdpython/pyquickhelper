@@ -136,12 +136,6 @@ def _private_process_one_file(
     @param      replace_relative_import     replace relative import
     @param      use_sys                     @see fn remove_undesired_part_for_documentation
     @return                                 extension, number of lines, number of lines in documentation
-
-    .. versionchanged:: 0.9
-        return extension, number of lines
-
-    .. versionchanged:: 1.3
-        Parameter *use_sys* was added.
     """
     ext = os.path.splitext(fullname)[-1]
 
@@ -220,11 +214,8 @@ def remove_undesired_part_for_documentation(content, filename, use_sys):
 
             # section to enable or disables
 
-   The string ``<use_sys>`` will be replaced by the value of
-   parameter *use_sys*.
-
-    .. versionchanged:: 1.3
-        Parameter *use_sys* was added.
+    The string ``<use_sys>`` will be replaced by the value of
+    parameter *use_sys*.
     """
     marker_in = "# -- HELP BEGIN EXCLUDE --"
     marker_out = "# -- HELP END EXCLUDE --"
@@ -1378,9 +1369,6 @@ def migrating_doxygen_doc(content, filename, silent=False, log=False, debug=Fals
 
     Function ``private_migrating_doxygen_doc`` enumerates the list of conversion
     which will be done.
-
-    .. versionchanged:: 1.0
-        Returns basic statistics on each files.
     """
     if log:
         fLOG("migrating_doxygen_doc: ", filename)

@@ -1,10 +1,8 @@
 # -*- coding: utf-8 -*-
 """
 @file
-@brief Defines a sphinx extension which proposes a new version of ``.. contents::``
+@brief Defines a :epkg:`sphinx` extension which proposes a new version of ``.. contents::``
 which takes into account titles dynamically added.
-
-.. versionadded:: 1.5
 """
 import sys
 from docutils import nodes
@@ -156,7 +154,7 @@ def transform_postcontents(app, doctree, fromdocname):
         # depth = int(node["depth"]) if node["depth"] != '*' else 20
         memo = {}
 
-        for depth, subnode in traverse(parent):
+        for _, subnode in traverse(parent):
             if isinstance(subnode, nodes.title):
                 par = nodes.paragraph()
                 ref = nodes.reference(refid=sections[-1]["ids"][0],
@@ -171,7 +169,7 @@ def transform_postcontents(app, doctree, fromdocname):
                     subnode["ids"].append("postid-{}".format(id(subnode)))
                 nid = subnode["ids"][0]
                 if nid in memo:
-                    raise KeyError("node was already added '{0)'".format(nid))
+                    raise KeyError("node was already added '{0}'".format(nid))
                 else:
                     memo[nid] = subnode
                     bli = nodes.bullet_list()

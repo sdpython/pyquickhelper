@@ -3,8 +3,6 @@
 @file
 @brief Defines a sphinx extension which proposes a new version of ``.. toctree::``
 which takes into account titles dynamically added.
-
-.. versionadded:: 1.5
 """
 import os
 import sys

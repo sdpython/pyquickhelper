@@ -3,8 +3,6 @@
 @file
 @brief Defines runpython directives.
 See `Tutorial: Writing a simple extension <http://sphinx-doc.org/extdev/tutorial.html>`_
-
-.. versionadded:: 1.2
 """
 import sys
 import os

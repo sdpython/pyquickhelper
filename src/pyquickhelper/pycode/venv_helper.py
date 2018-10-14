@@ -1,8 +1,6 @@
 """
 @file
 @brief Helpers for virtualenv
-
-.. versionadded:: 1.2
 """
 import os
 import sys
@@ -21,8 +19,6 @@ def is_virtual_environment():
     Tells if the script is run from a virtual environment.
 
     @return     boolean
-
-    .. versionadded:: 1.3
     """
     return (getattr(sys, "base_exec_prefix", sys.exec_prefix) != sys.exec_prefix) or hasattr(sys, 'real_prefix')
 
@@ -31,8 +27,6 @@ class NotImplementedErrorFromVirtualEnvironment(NotImplementedError):
     """
     Defines an exception when a function does not work
     in a virtual environment.
-
-    .. versionadded:: 1.3
     """
     pass
 
@@ -360,8 +354,6 @@ def check_readme_syntax(readme, folder, version="0.8", fLOG=noLOG):
 
     Unfortunately, this functionality does not work yet
     from a virtual environment.
-
-    .. versionadded:: 1.3
     """
     if is_virtual_environment():
         raise NotImplementedErrorFromVirtualEnvironment()

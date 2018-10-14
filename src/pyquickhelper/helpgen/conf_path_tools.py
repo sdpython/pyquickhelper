@@ -34,9 +34,6 @@ def find_graphviz_dot(exc=True):
     :param exc: raise exception of be silent
     :return: path to dot
     :raises FileNotFoundError: if graphviz not found
-
-    .. versionchanged:: 1.4
-        Add parameter *exc*
     """
     if sys.platform.startswith("win"):
         version = range(34, 45)
@@ -73,9 +70,6 @@ def find_latex_path(exc=True):
     :param exc: raises an exception or be silent
     :return: something like ``C:\\Program Files\\MiKTeX 2.9\\miktex\\bin\\x64``
     :raises FileNotFoundError: if latex not found
-
-    .. versionchanged:: 1.4
-        Add parameter *exc*
     """
     if sys.platform.startswith("win"):
         latex = latex0 = r"C:\Program Files\MiKTeX 2.9\miktex\bin\x64"
@@ -100,9 +94,6 @@ def find_pandoc_path(exc=True):
     Returns an empty string on :epkg:`linux`.
 
     @return         path to :epkg:`pandoc`
-
-    .. versionchanged:: 1.4
-        Add parameter *exc*
     """
     if sys.platform.startswith("win"):
         path = os.environ["USERPROFILE"]

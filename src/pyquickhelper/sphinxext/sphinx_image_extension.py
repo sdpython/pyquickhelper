@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 @file
-@brief Defines a sphinx extension to add button to share a page
-
-.. versionadded:: 1.3
+@brief Defines a :epkg:`sphinx` extension to add button to share a page
 """
 import os
 import copy

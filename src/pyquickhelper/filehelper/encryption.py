@@ -2,7 +2,7 @@
 @file
 @brief Encryption functionalities.
 
-Inspired from `AES encryption of files in Python withPyCrypto
+Inspired from `AES encryption of files in Python with PyCrypto
 <http://eli.thegreenplace.net/2010/06/25/aes-encryption-of-files-in-python-with-pycrypto>`_
 """
 import random
@@ -163,8 +163,6 @@ def encrypt_stream(key, filename, out_filename=None, chunksize=2 ** 18, algo="AE
     @param      algo            AES (PyCryptodomex) of or fernet (cryptography)
 
     @return                     filename or bytes
-
-    .. versionadded:: 1.3
     """
 
     in_size, in_close, in_stream, out_close, out_return, out_stream = open_input_output(
@@ -205,11 +203,9 @@ def decrypt_stream(key, filename, out_filename=None, chunksize=3 * 2 ** 13, algo
                                 sizes can be faster for some files and machines.
                                 chunksize must be divisible by 16.
 
-    @param      algo            AES (PyCryptodomex) of or fernet (cryptography)
+    @param      algo            AES (:epkg:`pycryptodomex`) of or fernet (cryptography)
 
     @return                     filename or bytes
-
-    .. versionadded:: 1.3
     """
     in_size, in_close, in_stream, out_close, out_return, out_stream = open_input_output(
         filename, out_filename)

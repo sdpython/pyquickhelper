@@ -2,9 +2,6 @@
 """
 @file
 @brief Magic command to handle files
-
-.. versionadded:: 1.3
-    Magic commands coming from pyensae
 """
 import os
 from IPython.core.magic import magics_class, line_magic
@@ -19,9 +16,6 @@ class MagicCompress(MagicClassWithHelpers):
 
     """
     Defines magic commands to compress files.
-
-    .. versionadded:: 1.3
-        Magic commands coming from pyensae
     """
 
     @staticmethod

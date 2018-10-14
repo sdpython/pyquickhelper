@@ -2,8 +2,6 @@
 """
 @file
 @brief Defines a sphinx extension to add button to share a page
-
-.. versionadded:: 1.3
 """
 import sphinx
 from docutils import nodes

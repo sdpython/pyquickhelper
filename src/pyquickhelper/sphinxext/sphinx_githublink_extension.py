@@ -1,20 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 @file
-@brief Defines a sphinx extension to display a link on github.
-
-.. versionadded:: 1.5
-
-
-.. todoext::
-    :title: add link to github code for each function, class...
-    :cost: 2
-    :hidden:
-    :date: 2016-11-20
-    :tag: done
-
-    Add a link to the source on GitHub in the documentation for every function,
-    class, notebook.
+@brief Defines a :epkg:`sphinx` extension to display a link on github.
 """
 import os
 import sphinx

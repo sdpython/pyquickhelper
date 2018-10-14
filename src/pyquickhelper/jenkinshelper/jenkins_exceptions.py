@@ -1,8 +1,6 @@
 """
 @file
 @brief Jenkins exceptions
-
-.. versionadded:: 1.1
 """
 
 

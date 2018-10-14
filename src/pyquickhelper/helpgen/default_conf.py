@@ -105,14 +105,6 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
             if hasattr(sys, <enable_disabled_parts>) and sys.<enable_disabled_parts>:
                 import module
             # -- HELP END EXCLUDE --
-
-    .. versionchanged:: 1.4
-        Add parameters *extlinks*, *github_user*, *github_repo*,
-        *title*. Add extension
-        `extlinks <http://www.sphinx-doc.org/en/stable/ext/extlinks.html#module-sphinx.ext.extlinks>`_.
-
-    .. versionchanged:: 1.5
-        Parameter *nblayout* was added.
     """
     # sphinx_gallery only supports matplotlib.use('agg')
     # and it must be done first.
@@ -384,8 +376,11 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
     # epkg_role
     epkg_dictionary = {
         '7z': "http://www.7-zip.org/",
+        'ASCII': "https://en.wikipedia.org/wiki/ASCII",
         'Anaconda': 'http://continuum.io/downloads',
         'appveyor': 'https://www.appveyor.com/',
+        'bokeh': 'https://bokeh.pydata.org/en/latest/',
+        'builderapi': 'http://www.sphinx-doc.org/en/stable/extdev/builderapi.html',
         'bz2': 'https://en.wikipedia.org/wiki/Bzip2',
         'cairosvg': 'https://github.com/Kozea/CairoSVG',
         'class Sphinx': 'https://github.com/sphinx-doc/sphinx/blob/master/sphinx/application.py#L107',
@@ -399,8 +394,10 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
         'Cython': 'http://cython.org/',
         'datetime': 'https://docs.python.org/3/library/datetime.html#datetime-objects',
         'docx': 'https://en.wikipedia.org/wiki/Office_Open_XML',
+        'doxygen': 'http://www.doxygen.org/',
         'django': 'https://www.djangoproject.com/',
         'docutils': 'http://docutils.sourceforge.net/',
+        'FTP': 'https://en.wikipedia.org/wiki/File_Transfer_Protocol',
         'getsitepackages': 'https://docs.python.org/3/library/site.html#site.getsitepackages',
         'GIT': 'http://git-scm.com/',
         'git': 'http://git-scm.com/',
@@ -413,22 +410,31 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
         'HTML': 'https://en.wikipedia.org/wiki/HTML',
         'Inkscape': 'https://inkscape.org/',
         'InkScape': 'https://inkscape.org/',
+        'IPython': 'https://en.wikipedia.org/wiki/IPython',
         'Java': 'http://www.java.com/fr/download/',
+        'javascript': 'https://en.wikipedia.org/wiki/JavaScript',
         'Jenkins': 'https://jenkins-ci.org/',
         'jinja2': 'http://jinja.pocoo.org/docs/',
         'js2py': 'https://github.com/PiotrDabkowski/Js2Py',
+        'JSON': 'https://en.wikipedia.org/wiki/JSON',
         'Jupyter': 'http://jupyter.org/',
         'jupyter': 'http://jupyter.org/',
+        'JupyterLab': 'https://jupyterlab.readthedocs.io/en/stable/',
+        'Jupyter Lab': 'https://jupyterlab.readthedocs.io/en/stable/',
         'latex': 'https://en.wikipedia.org/wiki/LaTeX',
         'LaTeX': 'https://en.wikipedia.org/wiki/LaTeX',
         'Linux': 'https://en.wikipedia.org/wiki/Linux',
+        'linux': 'https://en.wikipedia.org/wiki/Linux',
         'mako': 'http://www.makotemplates.org/',
         "matplotlib": "https://matplotlib.org/index.html",
         'Markdown': 'https://en.wikipedia.org/wiki/Markdown',
+        'markdown': 'https://en.wikipedia.org/wiki/Markdown',
         'MD': 'https://en.wikipedia.org/wiki/Markdown',
         'md': 'https://en.wikipedia.org/wiki/Markdown',
         'mistune': 'https://pypi.org/project/mistune',
         'MiKTeX': 'http://miktex.org/',
+        'Miktex': 'http://miktex.org/',
+        'miktex': 'http://miktex.org/',
         'MinGW': 'http://www.mingw.org/',
         'nbconvert': 'http://nbconvert.readthedocs.io/en/latest/',
         'nbpresent': 'https://github.com/Anaconda-Platform/nbpresent',
@@ -443,6 +449,7 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
         'pandoc': 'http://johnmacfarlane.net/pandoc/',
         'Pandoc': 'http://johnmacfarlane.net/pandoc/',
         'pdf': 'https://en.wikipedia.org/wiki/Portable_Document_Format',
+        'pep8': 'https://www.python.org/dev/peps/pep-0008/',
         'PEP8': 'https://www.python.org/dev/peps/pep-0008/',
         "PEP8 codes": 'http://pep8.readthedocs.io/en/latest/intro.html#error-codes',
         'Pillow': 'http://pillow.readthedocs.io/',
@@ -451,9 +458,12 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
         'PNG': 'https://fr.wikipedia.org/wiki/Portable_Network_Graphics',
         'pycodestyle': 'http://pycodestyle.readthedocs.io/',
         'pycrypto': 'https://pypi.org/project/pycrypto',
+        'pycryptodome': 'https://pypi.org/project/pycryptodome/',
+        'pycryptodomex': 'https://pypi.org/project/pycryptodomex/',
         'pygments': 'http://pygments.org/',
         'pylzma': 'https://pypi.org/project/pylzma',
         'pylint': 'https://www.pylint.org/',
+        'pylint error codes': 'http://pylint-messages.wikidot.com/all-codes',
         'pypi': 'https://pypi.org/project/',
         'PyPI': 'https://pypi.org/project/',
         'python': 'http://www.python.org/',
@@ -464,16 +474,22 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
         'rst': 'https://en.wikipedia.org/wiki/ReStructuredText',
         'RST': 'https://en.wikipedia.org/wiki/ReStructuredText',
         'scikit-learn': 'http://scikit-learn.org/',
+        'SciTe': 'https://www.scintilla.org/SciTE.html',
         'sklearn': ('http://scikit-learn.org/stable/',
                     ('http://scikit-learn.org/stable/modules/generated/{0}.html', 1),
                     ('http://scikit-learn.org/stable/modules/generated/{0}.{1}.html', 2)),
         'scipy': 'https://www.scipy.org/',
         'sphinx': 'http://www.sphinx-doc.org/en/stable/',
         'Sphinx': 'http://www.sphinx-doc.org/en/stable/',
+        'sphinx.ext.autodoc': 'http://www.sphinx-doc.org/en/stable/ext/autodoc.html#module-sphinx.ext.autodoc',
+        'sphinx-gallery': 'https://sphinx-gallery.readthedocs.io/en/latest/',
+        'Sphinx application': 'http://www.sphinx-doc.org/en/stable/_modules/sphinx/application.html',
         'svg': 'https://fr.wikipedia.org/wiki/Scalable_Vector_Graphics',
         'SVG': 'https://fr.wikipedia.org/wiki/Scalable_Vector_Graphics',
         'SVN': 'https://subversion.apache.org/',
+        'svn': 'https://subversion.apache.org/',
         'tar.gz': 'https://en.wikipedia.org/wiki/Tar_(computing)',
+        'toctree': 'http://www.sphinx-doc.org/en/stable/markup/toctree.html',
         'travis': 'https://travis-ci.org/',
         'TexnicCenter': 'http://www.texniccenter.org/',
         'tinycss2': 'http://pythonhosted.org/tinycss2/',
@@ -483,10 +499,14 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
         'Visual Studio Community Edition': 'https://www.visualstudio.com/',
         'Visual Studio Community Edition 2015': 'https://imagine.microsoft.com/en-us/Catalog/Product/101',
         'Windows': 'https://en.wikipedia.org/wiki/Microsoft_Windows',
+        'yaml': 'https://en.wikipedia.org/wiki/YAML',
+        'YAML': 'https://en.wikipedia.org/wiki/YAML',
+        'yml': 'https://en.wikipedia.org/wiki/YAML',
         'zip': 'https://en.wikipedia.org/wiki/Zip_(file_format)',
         '*py': ('https://docs.python.org/3/',
                 ('https://docs.python.org/3/library/{0}.html', 1),
-                ('https://docs.python.org/3/library/{0}.html#{0}.{1}', 2)),
+                ('https://docs.python.org/3/library/{0}.html#{0}.{1}', 2),
+                ('https://docs.python.org/3/library/{0}.html#{0}.{1}.{2}', 3)),
         '*pyf': (('https://docs.python.org/3/library/functions.html#{0}', 1),),
         # Custom.
         'jyquickhelper': 'http://www.xavierdupre.fr/app/jyquickhelper/helpsphinx/index.html',
@@ -894,8 +914,6 @@ def get_default_stylesheet():
     Returns the style of additional style sheets
 
     @return         list of files
-
-    .. versionadded:: 1.5
     """
     rel = "_static/" + style_figure_notebook[0]
     # rel2 = "_static/gallery.css"  # This should not be needed for sphinx-gallery.
@@ -908,7 +926,5 @@ def get_default_javascript():
     Returns the style of additional style sheets
 
     @return         list of files
-
-    .. versionadded:: 1.5
     """
     return ["_static/require.js"]

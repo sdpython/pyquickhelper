@@ -95,9 +95,6 @@ class FileTreeNode:
         @param      log             log every explored folder
         @param      log1            intermediate logs (first level)
         @param      fLOG            logging function to use
-
-        .. versionchanged:: 1.1
-            Parameter *fLOG* was added.
         """
         if root is None:
             raise ValueError("root cannot be None")
@@ -206,8 +203,6 @@ class FileTreeNode:
 
         @param      encoding        encoding
         @return                     content as a string
-
-        .. versionadded:: 1.1
         """
         if sys.version_info[0] == 2:
             import codecs

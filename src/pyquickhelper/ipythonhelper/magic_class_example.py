@@ -2,9 +2,6 @@
 """
 @file
 @brief Example of a class which defines magic commands.
-
-.. versionadded:: 1.3
-    Magic commands coming from pyensae
 """
 from __future__ import print_function
 from IPython.core.magic import magics_class, line_magic
@@ -33,17 +30,12 @@ class MagicClassExample(MagicClassWithHelpers):
             cmd = "MagicClassExample -f text"
             res = mg.htmlhelp(cmd)
             assert "NB(example of a magic command)"
-
-    .. versionadded:: 1.3
-        Magic commands coming from pyensae
     """
 
     @staticmethod
     def htmlhelp_parser():
         """
         Defines the way to parse the magic command ``%htmlhelp``.
-
-        .. versionadded:: 1.3
         """
         parser = MagicCommandParser(prog="htmlhelp",
                                     description='display help for an object in HTML format')

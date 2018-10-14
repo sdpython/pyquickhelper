@@ -2,9 +2,6 @@
 """
 @file
 @brief Magic command to handle files
-
-.. versionadded:: 1.3
-    Magic commands coming from pyensae
 """
 from IPython.core.magic import magics_class, line_magic
 from IPython.core.display import display_html
@@ -19,9 +16,6 @@ class MagicDiff(MagicClassWithHelpers):
 
     """
     Defines magic commands to visualize differences between files.
-
-    .. versionadded:: 1.3
-        Magic commands coming from pyensae
     """
 
     @staticmethod

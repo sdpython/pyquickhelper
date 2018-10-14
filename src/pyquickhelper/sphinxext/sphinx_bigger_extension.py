@@ -1,11 +1,9 @@
 # -*- coding: utf-8 -*-
 """
 @file
-@brief Defines a sphinx extension to display bigger text
-
-.. versionadded:: 1.3
+@brief Defines a :epkg:`sphinx` extension to display bigger text
 """
-import cgi as cgiesc
+import html as cgiesc
 import sphinx
 from docutils import nodes
 from sphinx.util.logging import getLogger

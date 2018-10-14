@@ -28,10 +28,8 @@ class HelpGenException(Exception):
 class ImportErrorHelpGen(ImportError):
 
     """
-    a custom exception to detect a specific location when
-    *ImportError* happens in the process
-
-    .. versionadded:: 1.0
+    A custom exception to detect a specific location when
+    *ImportError* happens in the process.
     """
     pass
 
@@ -39,9 +37,7 @@ class ImportErrorHelpGen(ImportError):
 class HelpGenConvertError(Exception):
 
     """
-    exception raised when a conversion failed
-
-    .. versionadded:: 1.2
+    Exception raised when a conversion failed.
     """
     pass
 
@@ -49,8 +45,6 @@ class HelpGenConvertError(Exception):
 class NotebookConvertError(Exception):
 
     """
-    exception raised when a conversion failed
-
-    .. versionadded:: 1.3
+    Exception raised when a conversion failed.
     """
     pass

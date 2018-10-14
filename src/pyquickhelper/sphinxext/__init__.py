@@ -83,8 +83,6 @@ def get_default_extensions():
 
         from pyquickhelper.sphinxext import get_default_extensions
         print("\\n".join(get_default_extensions()))
-
-    .. versionadded:: 1.5
     """
     # We delay these imports.
     # They change matplotlib backend if executed.

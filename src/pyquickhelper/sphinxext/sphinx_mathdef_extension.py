@@ -1,11 +1,9 @@
 # -*- coding: utf-8 -*-
 """
 @file
-@brief Defines a sphinx extension to give a title to a mathematical
+@brief Defines a :epkg:`sphinx` extension to give a title to a mathematical
 definition, theorem...
 Inspired from `math.py <https://github.com/sphinx-doc/sphinx/blob/master/sphinx/ext/math.py>`_.
-
-.. versionadded:: 1.4
 """
 import sys
 import os

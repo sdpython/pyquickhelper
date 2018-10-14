@@ -14,9 +14,6 @@ def is_travis_or_appveyor(env=None):
     The function should rely more on environement variables
     ``CI``, ``TRAVIS``, ``APPVEYOR``.
 
-    .. versionchanged:: 1.5
-        Takes into account *circleci*.
-
     .. versionadded:: 1.8
         Parameter *env* was added.
     """

@@ -2,9 +2,6 @@
 """
 @file
 @brief      keep the status of a folder, assuming this folder is not moved
-
-.. versionchanged:: 1.0
-    This file was renamed into *files_status.py*.
 """
 
 import os
@@ -22,10 +19,7 @@ class FilesStatus:
     """
     This class maintains a list of files
     and does some verifications in order to check if a file
-    was modified or not (if yes, then it will be updated to the website)
-
-    .. versionchanged:: 1.0
-        This class was renamed from FileTreeStatus into ``FilesStatus``.
+    was modified or not (if yes, then it will be updated to the website).
     """
 
     def __init__(self, file, fLOG=noLOG):

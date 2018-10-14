@@ -322,7 +322,7 @@ directory.
             ax.plot([0, 1], [0, 1], '--')
             fig.savefig(os.path.join(__WD__, "oo.png"))
 
-            text = ".. image:: oo.png\\n    :width: 200px"
+            text = ".. image:: oo.png\\n    :width: 202px"
             print(text)
 
 The image needs to be save in the same folder than
@@ -336,7 +336,7 @@ the *rst* file.
     ax.plot([0, 1], [0, 1], '--')
     fig.savefig(os.path.join(__WD__, "oo.png"))
 
-    text = ".. image:: oo.png\\n    :width: 200px"
+    text = ".. image:: oo.png\\n    :width: 201px"
     print(text)
 
 Option ``:toggle:`` can hide the code or the output or both
@@ -714,7 +714,7 @@ to use files. I finally decided to spend some time on Sphinx
 to be able to run it to convert a RST into HTML and RST.
 That's the purpose of the next function:
 
-.. autosignature:: pyquickhelper.helpgen.sphinxm_convert_doc_helper.rst2html
+.. autosignature:: pyquickhelper.helpgen.rst_converters.rst2html
 
 The HTML conversion is quite difficult to read:
 

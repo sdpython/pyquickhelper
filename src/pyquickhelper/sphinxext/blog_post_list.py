@@ -69,8 +69,6 @@ class BlogPostList:
 
         @param      cat     category name
         @return             cleaned category
-
-        .. versionadded:: 1.2
         """
         return remove_diacritics(cat).replace(" ", "_")
 
@@ -410,9 +408,6 @@ class BlogPostList:
         @param      rst_links_down  list of rst_links to add at the bottom of a page
         @param      only_html       add item ``.. only:: html`` and indent everything
         @return                     list of produced files
-
-        .. versionchanged:: 1.5
-            Parameter *only_html* was added.
         """
         cats = self.get_categories()
         res = []
@@ -540,9 +535,6 @@ class BlogPostList:
         @param      language        language
         @param      only_html       add item ``.. only:: html`` and indent everything
         @return                     list of produced files
-
-        .. versionadded:: 1.5
-            Parameter *only_html* was added
         """
         res = []
         buckets = BlogPostList.divide_list(lp, division)

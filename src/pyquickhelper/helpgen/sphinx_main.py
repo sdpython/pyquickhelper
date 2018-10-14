@@ -1111,8 +1111,6 @@ def _check_sphinx_configuration(conf, fLOG):
 
     @param  conf        :epkg:`sphinx` configuration
     @param  fLOG        logging function
-
-    .. versionadded:: 1.5
     """
     clean_folders = []
     if hasattr(conf, "sphinx_gallery_conf"):

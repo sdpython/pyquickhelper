@@ -1,8 +1,6 @@
 """
 @file
 @brief API to move files using FTP
-
-.. versionadded:: 1.3
 """
 import os
 import sys

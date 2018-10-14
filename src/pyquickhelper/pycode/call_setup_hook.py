@@ -1,8 +1,6 @@
 """
 @file
-@brief  Helper for the setup
-
-.. versionadded:: 1.1
+@brief  Helper for the setup.
 """
 import os
 import sys
@@ -28,9 +26,6 @@ def call_setup_hook_cmd(folder, module_name, function_name="_setup_hook",
 
     The function expects to find file ``__init__.py`` in
     ``<folder>/src/<module_name>``.
-
-    .. versionadded:: 1.2
-        Split function @see fn call_setup_hook in 2 functions.
     """
     this = os.path.abspath(os.path.dirname(__file__))
     this = os.path.normpath(os.path.join(this, "..", ".."))

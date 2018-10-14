@@ -2,9 +2,6 @@
 """
 @file
 @brief Magic command to handle files
-
-.. versionadded:: 0.9
-
 """
 from __future__ import print_function
 import warnings
@@ -26,9 +23,6 @@ class MagicClassWithHelpers(Magics):
             from IPython import get_ipython
             ip = get_ipython()
             ip.register_magics(MagicFile)
-
-    .. versionadded:: 0.9
-
     """
 
     _parser_store = {}

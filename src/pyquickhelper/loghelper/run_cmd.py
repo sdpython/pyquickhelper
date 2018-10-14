@@ -76,9 +76,6 @@ def decode_outerr(outerr, encoding, encerror, msg):
     @param      encerror    how to handle errors
     @param      msg         to add to the exception message
     @return                 converted string
-
-    .. versionchanged:: 1.4
-        If *encoding* is None, it is replaced by ``'ascii'``.
     """
     if encoding is None:
         encoding = "ascii"
@@ -108,8 +105,6 @@ def skip_run_cmd(cmd, sin="", shell=True, wait=False, log_error=True,
                  timeout_listen=None, tell_if_no_output=None, prefix_log=None):
     """
     Has the same signature as @see fn run_cmd but does nothing.
-
-    .. versionadded:: 1.0
     """
     return "", ""
 
@@ -156,23 +151,13 @@ def run_cmd(cmd, sin="", shell=sys.platform.startswith("win"), wait=False, log_e
             from pyquickhelper.loghelper import run_cmd
             out, err = run_cmd("python setup.py install", wait=True)
 
-    If you are using this function to run git function, parameter ``shell`` must be True.
-
-    .. versionchanged:: 1.3
-        Catches *SystemExit* exception. Add parameter *catch_exit*.
-
-    .. versionchanged:: 1.4
-        Changed *fLOG* default value to None. Remove parameter *do_not_log*, *secure*, *stop_waiting_if*.
-        Implements parameter *stop_running_if*.
-        Improve the behavior of the function.
-        See `Constantly print Subprocess output while process is running
-        <http://stackoverflow.com/questions/4417546/constantly-print-subprocess-output-while-process-is-running/4417735>`_.
-        Parameter *tell_if_no_output*, *stop_running_if* were added.
-
-    .. versionchanged:: 1.5
-        If *wait* is False, the function returns the started process.
-        ``__exit__`` should be called if wait if False.
-        Parameter *prefix_log* was added.
+    If you are using this function to run :ekpg:`git` function, parameter ``shell`` must be True.
+    The function catches *SystemExit* exception.
+    See `Constantly print Subprocess output while process is running
+    <http://stackoverflow.com/questions/4417546/constantly-print-subprocess-output-while-process-is-running/4417735>`_.
+    If *wait* is False, the function returns the started process.
+    ``__exit__`` should be called if wait if False.
+    Parameter *prefix_log* was added.
     """
     if prefix_log is None:
         prefix_log = ""

@@ -162,6 +162,9 @@ class TestCmdRefExtension(unittest.TestCase):
         if t1 not in html:
             raise Exception(html)
 
+        if 'freg0"></a>' in html:
+            raise Exception(html)
+
     def test_cmdref_rename(self):
         fLOG(
             __file__,

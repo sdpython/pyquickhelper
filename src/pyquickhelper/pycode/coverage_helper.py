@@ -1,8 +1,6 @@
 """
 @file
 @brief Publishing coverage
-
-.. versionadded:: 1.3
 """
 import os
 import re

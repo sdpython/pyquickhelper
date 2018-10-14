@@ -1,8 +1,6 @@
 """
 @brief
 @file Batch file use to automate some of the tasks (setup, unit tests, help, pypi).
-
-.. versionadded:: 1.1
 """
 import sys
 

@@ -1,8 +1,6 @@
 """
 @file
-@brief Few helpers for Sphinx
-
-.. versionadded:: 1.4
+@brief Few helpers for :epkg:`Sphinx`.
 """
 
 

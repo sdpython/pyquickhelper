@@ -1,8 +1,6 @@
 """
 @file
 @brief API to move files
-
-.. versionadded:: 1.3
 """
 import sys
 import json

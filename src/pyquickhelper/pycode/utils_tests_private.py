@@ -1,9 +1,6 @@
 """
 @file
 @brief This extension contains various functionalities to help unittesting.
-
-.. versionadded:: 1.4
-    Split from from utils_tests.py.
 """
 from __future__ import print_function
 

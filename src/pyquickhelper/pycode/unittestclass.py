@@ -1,8 +1,6 @@
 """
 @file
 @brief Overwrites unit test class with additional testing functions.
-
-.. versionadded:: 1.5
 """
 import os
 import sys
@@ -391,8 +389,6 @@ class ExtTestCase(unittest.TestCase):
 def skipif_appveyor(msg):
     """
     Skips a unit test if it runs on :epkg:`appveyor`.
-
-    .. versionadded:: 1.6
     """
     if is_travis_or_appveyor() != 'appveyor':
         return lambda x: x
@@ -403,8 +399,6 @@ def skipif_appveyor(msg):
 def skipif_travis(msg):
     """
     Skips a unit test if it runs on :epkg:`travis`.
-
-    .. versionadded:: 1.6
     """
     if is_travis_or_appveyor() != 'travis':
         return lambda x: x
@@ -415,8 +409,6 @@ def skipif_travis(msg):
 def skipif_circleci(msg):
     """
     Skips a unit test if it runs on :epkg:`circleci`.
-
-    .. versionadded:: 1.6
     """
     if is_travis_or_appveyor() != 'circleci':
         return lambda x: x

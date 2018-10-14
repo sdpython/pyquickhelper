@@ -3,8 +3,6 @@
 @file
 @brief Inspired from module
 `sphinx-testing <https://github.com/sphinx-doc/sphinx-testing/>`_
-
-.. versionadded:: 1.3
 """
 
 import shutil
@@ -58,9 +56,6 @@ class CustomSphinxApp(Sphinx):
         @param      extensions              if ``'all'``, add extensions implemented
                                             by this module, use ``None`` for an empty list,
                                             'extensions' must not be in *confoverrides*
-
-        .. versionchanged:: 1.6
-            Parameter *extensions* was added.
         """
         self.cleanup_trees = []
         self.cleanup_on_errors = cleanup_on_errors

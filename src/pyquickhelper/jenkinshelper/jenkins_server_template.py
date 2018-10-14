@@ -1,8 +1,6 @@
 """
 @file
-@brief Job templates
-
-.. versionadded:: 1.1
+@brief Job templates.
 """
 
 #: main template: the full job

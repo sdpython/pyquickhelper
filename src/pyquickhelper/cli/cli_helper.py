@@ -1,8 +1,6 @@
 """
 @file
 @brief Automate the creation of a parser based on a function.
-
-.. versionadded:: 1.5
 """
 from __future__ import print_function
 import argparse
@@ -21,8 +19,6 @@ def clean_documentation_for_cli(doc, cleandoc):
     @param      cleandoc    a string which tells how to clean,
                             or a function which takes a function and
                             returns a string
-
-    .. versionadded:: 1.6.2290
     """
     for st in ('.. versionchanged::', '.. versionadded'):
         if st in doc:
@@ -74,9 +70,6 @@ def create_cli_parser(f, prog=None, layout="sphinx", skip_parameters=('fLOG',),
 
     If an annotation offers mutiple types,
     the first one will be used for the command line.
-
-    .. versionchanged:: 1.6.2290
-        Parameters *options*, *cleandoc* were added.
     """
     docf = clean_documentation_for_cli(f.__doc__, cleandoc)
     doctree = docstring2html(docf, writer="doctree",
@@ -224,9 +217,6 @@ def call_cli_function(f, args=None, parser=None, fLOG=print, skip_parameters=('f
                 r = rows[0][0]
                 if not r.startswith("usage: mycommand_line ..."):
                     raise Exception(r)
-
-    .. versionchanged:: 1.6.2290
-        Parameters *options*, *cleandoc* were added.
     """
     if parser is None:
         parser = create_cli_parser(

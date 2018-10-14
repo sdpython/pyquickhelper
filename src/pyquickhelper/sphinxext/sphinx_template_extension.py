@@ -2,8 +2,6 @@
 """
 @file
 @brief Defines a sphinx extension ``tpl``, a role which use templating.
-
-.. versionadded:: 1.5
 """
 
 import sphinx

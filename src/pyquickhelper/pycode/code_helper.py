@@ -17,11 +17,6 @@ def remove_extra_spaces_and_pep8(filename, apply_pep8=True, aggressive=False, is
     @param      aggressive      more aggressive
     @param      is_string       force *filename* to be a string
     @return                     number of removed extra spaces
-
-    .. versionchanged:: 1.5
-        Allow string and not only files, add parameter *aggressive*,
-        use ``fix_code`` instead of ``fix_line``.
-        Parameter *is_string* was added.
     """
     encoding = None
     initial_content = None
@@ -193,12 +188,6 @@ def remove_extra_spaces_folder(
 
         def file_filter(filename):
             return True or False
-
-    .. versionchanged:: 1.0
-        Parameter *apply_pep8* was added.
-
-    .. versionchanged:: 1.5
-        Parameter *file_filter* was added.
     """
     neg_pattern = "|".join("[/\\\\]{0}[/\\\\]".format(_) for _ in ["build", "build2", "build3",
                                                                    "dist", "_venv", "_todo", "dist_module27", "_virtualenv"])

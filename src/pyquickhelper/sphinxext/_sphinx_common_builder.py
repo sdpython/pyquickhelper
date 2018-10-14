@@ -145,7 +145,16 @@ class CommonSphinxWriterHelpers:
                             full = name
                             dest = name
                     else:
-                        shutil.copy(full, dest)
+                        if ':' in dest and len(dest) > 2:
+                            dest = dest[:2] + dest[2:].replace(':', '_')
+                            ext = os.path.splitext(dest)[-1]
+                            if ext not in ('.png', '.jpg'):
+                                dest += '.png'
+                        try:
+                            shutil.copy(full, dest)
+                        except FileNotFoundError as e:
+                            raise FileNotFoundError(
+                                "Unable to copy from '{0}' to '{1}'.".format(full, dest)) from e
                         full = dest
                 else:
                     full = dest

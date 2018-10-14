@@ -1,8 +1,6 @@
 """
 @file
-@brief Helpers for OS
-
-.. versionadded:: 1.5
+@brief Helpers for module :epkg:`*py:os`.
 """
 import os
 

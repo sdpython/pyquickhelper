@@ -1,8 +1,6 @@
 """
 @file
 @brief Regular expressions.
-
-.. versionadded:: 1.5
 """
 
 _setup_pattern_copy_exts = ['ico', '7z', 'dll', 'so', 'yml', 'rst', 'ipynb', 'gif', 'jpg', 'jpeg', 'png', 'txt',

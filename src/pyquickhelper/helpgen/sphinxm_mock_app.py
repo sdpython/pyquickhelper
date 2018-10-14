@@ -1,8 +1,6 @@
 """
 @file
-@brief Helpers to convert docstring to various format
-
-.. versionadded:: 1.0
+@brief Helpers to convert docstring to various format.
 """
 import logging
 import warnings
@@ -35,9 +33,6 @@ class MockSphinxApp:
         @param      app             see static method create
         @param      confoverrides   default options
         @param      new_extensions  additional extensions
-
-        .. versionchanged:: 1.5
-            Parameters *confoverrides*, *new_extensions* were added.
         """
         if confoverrides is None:
             confoverrides = {}
@@ -270,13 +265,6 @@ class MockSphinxApp:
         * a docutils node: see @see cl runpython_node as an example
         * two functions: see @see fn visit_runpython_node,
           @see fn depart_runpython_node as an example
-
-        .. versionchanged:: 1.5
-            Parameters *fLOG*, *confoverrides*, *new_extensions* were added.
-            The class supports more extensions.
-
-        .. versionchanged:: 1.8
-            New nodes are now optional in *directives*.
         """
         if confoverrides is None:
             confoverrides = {}

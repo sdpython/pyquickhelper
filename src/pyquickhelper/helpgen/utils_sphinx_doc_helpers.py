@@ -949,9 +949,9 @@ def process_look_for_tag(tag, title, files):
     The function parses the files instead of loading the files as a module.
     The function needs to replace ``\\\\`` by ``\\``, it does not takes into
     acount doc string starting with ``r'''``.
-
-    .. versionchanged:: 0.9
-        Calls function @see fn remove_some_indent with ``backslash=True`` to replace double backslash by simple backslash.
+    The function calls @see fn remove_some_indent
+    with ``backslash=True`` to replace double backslashes
+    by simple backslashes.
     """
     def noneempty(a):
         if "___" in a:
@@ -1078,9 +1078,6 @@ def remove_some_indent(s, backslash=False):
     @param      s               text
     @param      backslash       if True, replace double backslash by simple backslash
     @return                     text
-
-    .. versionchanged:: 0.9
-        Add parameter *backslash* to remove replace double backslash by simple backslah.
     """
     rows = s.split("\n")
     mi = len(s)
@@ -1116,6 +1113,6 @@ def example_function_latex():
         :math:`\\left \\{ \\begin{array}{l} \\min_{x,y} \\left \\{ x^2 + y^2 - xy + y \\right \\}
         \\\\ \\text{sous contrainte} \\; x + 2y = 1 \\end{array}\\right .`
 
-        Brackets and baskslash might be an issue.
+        Brackets and backslashes might be an issue.
     """
     pass

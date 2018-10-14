@@ -1,9 +1,6 @@
 """
 @file
 @brief  Mock class @see cl TransferFTP
-
-.. versionadded:: 1.0
-    moved from pyensae to pyquickhelper
 """
 from ftplib import FTP
 from ..loghelper.flog import noLOG
@@ -16,7 +13,7 @@ class MockTransferFTP (TransferFTP):
     mock @see cl TransferFTP
     """
 
-    def __init__(self, site, login, password, fLOG=noLOG):
+    def __init__(self, site, login, password, fLOG=noLOG):  # pylint: disable=W0231
         """
         same signature as @see cl TransferFTP
         """

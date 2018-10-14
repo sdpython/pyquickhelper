@@ -2,9 +2,6 @@
 """
 @file
 @brief Magic command to handle files
-
-.. versionadded:: 1.3
-    Magic commands coming from pyensae
 """
 import os
 import sys
@@ -20,9 +17,6 @@ class MagicCrypt(MagicClassWithHelpers):
 
     """
     Defines magic commands to encrypt and decrypt file.
-
-    .. versionadded:: 1.3
-        Magic commands coming from pyensae
     """
 
     @staticmethod

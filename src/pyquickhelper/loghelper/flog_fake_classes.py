@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 @file
-@brief Exception specific to this module
-
-.. versionadded:: 1.1
+@brief Exception specific to this module.
 """
 import logging
 import logging.handlers

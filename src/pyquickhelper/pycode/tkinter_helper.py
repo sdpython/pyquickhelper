@@ -1,8 +1,6 @@
 """
 @file
 @brief  Helpers for tkinter
-
-.. versionadded:: 1.1
 """
 import os
 import sys
@@ -33,10 +31,6 @@ def fix_tkinter_issues_virtualenv(exc=True, fLOG=None):
     But it does not work if matplotlib was already imported.
     It is recommended to delay its import
     whenever it is possible.
-
-    .. versionchanged:: 1.5
-        Raises an exception by default when used before matplotlib is imported.
-        Parameters *exc* and *fLOG* were added.
     """
     global _first_execution
 

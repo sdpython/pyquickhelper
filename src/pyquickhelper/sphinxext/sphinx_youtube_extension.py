@@ -3,8 +3,6 @@
 @file
 @brief Inspired from `sphinxcontrib.youtube <https://github.com/thewtex/sphinx-contrib/blob/master/youtube/sphinxcontrib/youtube.py>`_
 (not maintained anymore).
-
-.. versionadded:: 1.5
 """
 import re
 import sphinx

@@ -92,8 +92,6 @@ def get_insetup_functions():
     Returns function used when a module includes C++ parts.
 
     @return     tuple of functions
-
-    .. versionadded:: 1.5
     """
     from .pycode.insetup_helper import must_build, run_build_ext
     return must_build, run_build_ext

@@ -63,8 +63,6 @@ def open_html_form(params, title='', key_save="",
 
     The function generates javascript based on the keys the dictionary ``params`` contains.
     The keys must follows the same as a javascript identifier (no space).
-
-    .. versionadded:: 0.9
     """
     global _reg_var
     for k in params:

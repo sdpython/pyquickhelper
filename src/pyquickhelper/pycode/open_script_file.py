@@ -1,8 +1,6 @@
 """
 @file
 @brief A function to read a script and reading the encoding on the first line.
-
-.. versionadded:: 1.1
 """
 
 import sys

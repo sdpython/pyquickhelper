@@ -69,13 +69,12 @@ def repo_ls(full, commandline=True):
     @param      commandline use command line instead of pysvn
     @return                     output of client.ls
 
-    .. versionchanged:: 1.5
-        When a path includes a symbol ``@``, another one must added to the path
-        to avoid the following error to happen:
+    When a path includes a symbol ``@``, another one must added to the path
+    to avoid the following error to happen:
 
-        ::
+    ::
 
-            svn: E205000: Syntax error parsing peg revision 'something@somewhere.fr-'
+        svn: E205000: Syntax error parsing peg revision 'something@somewhere.fr-'
     """
     if not commandline:
         try:
@@ -187,13 +186,12 @@ def get_repo_log(path=None, file_detail=False, commandline=True):
             <msg>pyquickhelper: first version</msg>
         </logentry>
 
-    .. versionchanged:: 1.5
-        When a path includes a symbol ``@``, another one must added to the path
-        to avoid the following error to happen:
+    When a path includes a symbol ``@``, another one must added to the path
+    to avoid the following error to happen:
 
-        ::
+    ::
 
-            svn: E205000: Syntax error parsing peg revision 'something@somewhere.fr-'
+        svn: E205000: Syntax error parsing peg revision 'something@somewhere.fr-'
     """
     if path is None:
         path = os.path.normpath(
@@ -283,13 +281,12 @@ def get_repo_version(path=None, commandline=True, log=False):
     @param      log             if True, returns the output instead of a boolean
     @return                     integer (check in number)
 
-    .. versionchanged:: 1.5
-        When a path includes a symbol ``@``, another one must added to the path
-        to avoid the following error to happen:
+    When a path includes a symbol ``@``, another one must added to the path
+    to avoid the following error to happen:
 
-        ::
+    ::
 
-            svn: E205000: Syntax error parsing peg revision 'something@somewhere.fr-'
+        svn: E205000: Syntax error parsing peg revision 'something@somewhere.fr-'
     """
     if path is None:
         path = os.path.normpath(

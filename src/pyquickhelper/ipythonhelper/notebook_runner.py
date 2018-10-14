@@ -229,9 +229,6 @@ class NotebookRunner(object):
         @param      filename        filename or stream
         @param      encoding        encoding
         @return                     Json string if filename is None, None otherwise
-
-        .. versionchanged:: 1.4
-            The function now returns the json string if filename is None.
         """
         if isinstance(filename, str  # unicode#
                       ):
@@ -251,11 +248,6 @@ class NotebookRunner(object):
         Copies the notebook (just the content).
 
         @return         instance of @see cl NotebookRunner
-
-        .. versionadded:: 1.1
-
-        .. versionchanged:: 1.5
-            Add constructor parameters.
         """
         st = StringIO()
         self.to_json(st)
@@ -295,9 +287,6 @@ class NotebookRunner(object):
 
         @param      code        code (string)
         @return                 cleaned code
-
-        .. versionchanged:: 1.4
-            Do replacements.
         """
         has_bokeh = "bokeh." in code or "from bokeh" in code or "import bokeh" in code
         if code is None:
@@ -606,8 +595,6 @@ class NotebookRunner(object):
         to get this information and does cache the information.
 
         @return         int
-
-        .. versionadded:: 1.1
         """
         return sum(1 for _ in self.iter_cells())
 
@@ -958,16 +945,10 @@ class NotebookRunner(object):
         @param      clean_function      function which cleans a cell's code before executing it (None for None)
         @return                         dictionary with statistics
 
-        .. versionchanged:: 1.1
-            The function adds the local variable ``theNotebook`` with
-            the absolute file name of the notebook.
-
-        .. versionchanged:: 1.4
-            Function *valid* can now return None to stop the execution of the notebook
-            before this cell.
-
-        .. versionchanged:: 1.5
-            Add parameter *context*.
+        The function adds the local variable ``theNotebook`` with
+        the absolute file name of the notebook.
+        Function *valid* can return *None* to stop the execution of the notebook
+        before this cell.
         '''
         if self.detailed_log:
             self.detailed_log(
@@ -1034,8 +1015,6 @@ class NotebookRunner(object):
     def count_code_cells(self):
         '''
         Returns the number of code cells in the notebook.
-
-        .. versionadded:: 1.1
         '''
         return sum(1 for _ in self.iter_code_cells())
 
@@ -1059,8 +1038,6 @@ class NotebookRunner(object):
                 nb2 = read_nb("<file2>", kernel=False)
                 nb1.merge_notebook(nb2)
                 nb1.to_json(outfile)
-
-        .. versionadded:: 1.1
         """
         if isinstance(nb, list):
             s = 0
@@ -1082,8 +1059,6 @@ class NotebookRunner(object):
         of its content.
 
         @return             header, description
-
-        .. versionadded:: 1.5
         """
         def split_header(s, get_header=True):
             s = s.lstrip().rstrip()
@@ -1143,8 +1118,6 @@ class NotebookRunner(object):
         @return                     string (SVG) or Image (PIL)
 
         This functionality might not works with Python 2.7.
-
-        .. versionadded:: 1.5
         """
         images = []
         cells = list(self.iter_cells())
@@ -1204,8 +1177,6 @@ class NotebookRunner(object):
         @param      max_width       maximum size of the thumbnail
         @param      max_height      maximum size of the thumbnail
         @return                     Image (PIL)
-
-        .. versionadded:: 1.5
         """
         # local import to avoid testing dependency on PIL:
         try:
@@ -1250,9 +1221,7 @@ class NotebookRunner(object):
         Merges images defined by (buffer, format).
         The method uses PIL to merge images when possible.
 
-        @return                     [ (image, format) ]
-
-        .. versionadded:: 1.5
+        @return                     ``[ (image, format) ]``
         """
         if len(results) == 1:
             results = results[0]

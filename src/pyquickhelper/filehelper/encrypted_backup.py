@@ -1,8 +1,6 @@
 """
 @file
 @brief Keeps an encrypted of personal data
-
-.. versionadded:: 1.3
 """
 import re
 import os
@@ -90,8 +88,6 @@ class EncryptedBackup:
 
                 dest=os.path.join(this, "_temp")
                 enc.retrieve_all(dest)
-
-    .. versionadded:: 1.3
     """
 
     def __init__(self, key, file_tree_node, transfer_api,

@@ -1,8 +1,6 @@
 """
 @file
 @brief      Various helpers about files
-
-.. versionadded:: 1.1
 """
 
 import os
@@ -152,12 +150,7 @@ def read_content_ufs(file_url_stream, encoding="utf8", asbytes=False, add_source
     * *SB*: BytesIO
     * *SBb*: BytesIO, return bytes
 
-    .. versionchanged:: 1.3
-        Parameter *asbytes* was added. The function can return bytes.
-
-    .. versionchanged:: 1.4
-        Parameter *add_source* was added.
-        The returned *source* is not reliable on Python 2.7.
+    The function can return bytes.
     """
     if isinstance(file_url_stream, str  # unicode#
                   ):

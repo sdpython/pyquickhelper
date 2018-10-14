@@ -2,8 +2,6 @@
 """
 @file
 @brief Helpers about processes.
-
-.. versionadded:: 1.6.2291
 """
 from .flog import fLOG
 
@@ -19,8 +17,6 @@ def reap_children(timeout=3, subset=None, fLOG=fLOG):
     @param      subset      subset of processes to be removed
     @param      fLOG        logging function
     @return                 killed processes
-
-    .. versionadded:: 1.6.2291
     """
     import psutil
     killed = set()

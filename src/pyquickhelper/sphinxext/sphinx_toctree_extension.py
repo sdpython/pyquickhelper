@@ -3,8 +3,6 @@
 @file
 @brief Overwrites `toctree <http://www.sphinx-doc.org/en/stable/markup/toctree.html#directive-toctree>`_
 directive to get catch exceptions when a document is processed inline.
-
-.. versionadded:: 1.5
 """
 from docutils.parsers.rst import directives
 from docutils import nodes

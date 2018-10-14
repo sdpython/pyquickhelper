@@ -51,13 +51,6 @@ def df2rst(df, add_line=True, align="l", column_size=None, index=False,
               - 2.99
               - anythings
             ...
-
-
-    .. versionchanged:: 1.3
-        Parameter *align* was changed, parameter *column_size* was added.
-
-    .. versionchanged:: 1.5
-        Parameter *index*, *list_table*, *title*, *header* were added.
     """
     if index:
         df = df.reset_index(drop=False).copy()

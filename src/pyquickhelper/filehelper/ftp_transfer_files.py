@@ -1,8 +1,6 @@
 """
 @file
 @brief Class to transfer files to a website using FTP, it only transfers updated files
-
-.. versionadded:: 1.0
 """
 from __future__ import print_function
 import re
@@ -113,8 +111,6 @@ class FolderTransferFTP:
             fftp.start_transfering()
 
         ftp.close()
-
-    .. versionadded:: 1.0
     """
 
     def __init__(self, file_tree_node, ftp_transfer, file_status, root_local=None,
@@ -148,9 +144,8 @@ class FolderTransferFTP:
                 # ...
                 return True # if the file is filtered out, False otherwise
 
-        .. versionchanged:: 1.3
-            Function *filter_out* receives another parameter (filename)
-            to give more information when raising an exception.
+        Function *filter_out* receives another parameter (filename)
+        to give more information when raising an exception.
         """
         self._ftn = file_tree_node
         self._ftp = ftp_transfer
@@ -222,11 +217,7 @@ class FolderTransferFTP:
         @param      force_allow     allow these strings even if they seem to be credentials
         @return                     binary stream, size
 
-        .. versionchanged:: 1.4
-            Returns also *size*.
-
-        .. versionchanged:: 1.5
-            Bypass utf-8 encoding checking when the extension is ``.rst.txt``.
+        Bypass utf-8 encoding checking when the extension is ``.rst.txt``.
         """
         if force_binary or self._is_binary(path):
             size = os.stat(path).st_size

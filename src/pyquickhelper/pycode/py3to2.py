@@ -1,8 +1,6 @@
 """
 @file
 @brief  Helper to convert a script written in Python 3 to Python 2
-
-.. versionadded:: 1.0
 """
 
 import os
@@ -85,8 +83,6 @@ def py3to2_convert_tree(folder, dest, encoding="utf8", pattern=".*[.]py$",
     `Cheat Sheet: Writing Python 2-3 compatible code <http://python-future.org/compatible_idioms.html>`_
     gives the difference between the two versions of Python and how to write
     compatible code.
-
-    .. versionadded:: 1.0
     """
     exclude = ("temp_", "dist", "_doc", "build", "extensions",
                "nbextensions", "dist_module27", "_virtualenv", "_venv")
@@ -159,8 +155,6 @@ def py3to2_convert(script, unittest_modules):
     @return                         string
 
     See see @fn py3to2_convert_tree for more information.
-
-    .. versionadded:: 1.0
     """
     if os.path.exists(script):
         try:

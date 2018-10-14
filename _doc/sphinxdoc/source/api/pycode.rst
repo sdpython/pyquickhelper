@@ -51,7 +51,7 @@ virtual environments
 
 .. autosignature:: pyquickhelper.pycode.venv_helper.check_readme_syntax
 
-.. autosignature:: pyquickhelper.pycode.venv_helper.compare_module_version
+.. autosignature:: pyquickhelper.texthelper.version_helper.compare_module_version
 
 .. autosignature:: pyquickhelper.pycode.venv_helper.create_virtual_env
 

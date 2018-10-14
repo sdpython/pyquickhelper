@@ -1,8 +1,6 @@
 """
 @file
 @brief Helpers to benchmark something
-
-.. versionadded:: 1.5
 """
 import os
 import sys
@@ -238,10 +236,10 @@ class BenchMark:
         if self._fLOG:
             self._fLOG(*l, **p)
         if hasattr(self, "_progressbars") and self._progressbars and len(self._progressbars) > 0:
-            bar = self._progressbars[-1]
-            bar.set_description(fLOGFormat(
+            br = self._progressbars[-1]
+            br.set_description(fLOGFormat(
                 "\n", *l, **p).strip("\n").split("\n")[0])
-            bar.refresh()
+            br.refresh()
 
     def run(self, params_list):
         """

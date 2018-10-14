@@ -1,8 +1,6 @@
 """
 @file
 @brief Wrapper function @see fn synchronize_folder into a command line.
-
-.. versionadded:: 1.5
 """
 from __future__ import print_function
 import os

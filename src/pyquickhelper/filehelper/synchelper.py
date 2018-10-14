@@ -287,8 +287,9 @@ def synchronize_folder(p1: str, p2: str, hash_size=1024 ** 2, repo1=False, repo2
 
     action = []
     modif = 0
+    report = {">": 0, ">+": 0, "<": 0, "<+": 0, "<=": 0, ">-": 0, "issue": 0}
 
-    fLOG("Starting synchronisation.")
+    fLOG("[synchronize_folder] Starting synchronisation.")
     nbcur = 0
     nbprint = 0
     for op, file, n1, n2 in res:
@@ -307,6 +308,7 @@ def synchronize_folder(p1: str, p2: str, hash_size=1024 ** 2, repo1=False, repo2
             if r and status is not None:
                 status.update_copied_file(n1.fullname)
                 modif += 1
+                report[op] += 1
                 if modif % 50 == 0:
                     fLOG(
                         "[synchronize_folder] Processed {0}/{1} (current: '{2}')".format(nbcur, len(res), file))
@@ -322,6 +324,7 @@ def synchronize_folder(p1: str, p2: str, hash_size=1024 ** 2, repo1=False, repo2
                         if status is not None:
                             status.update_copied_file(n1.fullname)
                             modif += 1
+                            report[op] += 1
                             if modif % 50 == 0:
                                 fLOG(
                                     "[synchronize_folder] Processed {0}/{1} (current: '{2}')".format(nbcur, len(res), file))
@@ -345,19 +348,21 @@ def synchronize_folder(p1: str, p2: str, hash_size=1024 ** 2, repo1=False, repo2
                             if ft is not None:
                                 action.append((">-", None, ft))
                                 if not avoid_copy:
-                                    fLOG("- remove ", filerem)
+                                    fLOG(
+                                        "[synchronize_folder] - remove ", filerem)
                                     os.remove(filerem)
                                 if status is not None:
                                     status.update_copied_file(
                                         file, delete=True)
                                     modif += 1
+                                    report[op] += 1
                                     if modif % 50 == 0:
                                         fLOG(
                                             "[synchronize_folder] Processed {0}/{1} (current: '{2}')".format(nbcur, len(res), file))
                                         status.save_dates()
                             else:
                                 fLOG(
-                                    "- skip (probably already removed) ", filerem)
+                                    "[synchronize_folder] - skip (probably already removed) ", filerem)
                     else:
                         if not n2.isdir() and not no_deletion:
                             if not avoid_copy:
@@ -367,6 +372,7 @@ def synchronize_folder(p1: str, p2: str, hash_size=1024 ** 2, repo1=False, repo2
                                 status.update_copied_file(
                                     n1.fullname, delete=True)
                                 modif += 1
+                                report[">-"] += 1
                                 if modif % 50 == 0:
                                     fLOG(
                                         "[synchronize_folder] Processed {0}/{1} (current: '{2}')".format(nbcur, len(res), file))
@@ -374,11 +380,19 @@ def synchronize_folder(p1: str, p2: str, hash_size=1024 ** 2, repo1=False, repo2
             elif n2 is not None and n1._size != n2._size and not n1.isdir():
                 fLOG("[synchronize_folder] problem: size are different for file %s (%d != %d) dates (%s,%s) (op %s)" % (
                     file, n1._size, n2._size, n1._date, n2._date, op))
+                report["issue"] += 1
                 # n1.copy_to(f2)
                 # raise Exception ("size are different for file %s (%d != %d) (op %s)" % (file, n1._size, n2._size, op))
 
     if status is not None:
         status.save_dates(file_date)
+
+    report = [(k, v) for k, v in sorted(report.items()) if v > 0]
+    if len(report):
+        msg = ["{}={}".format(k, v) for k, v in report]
+        fLOG("[synchronize_folder] END: {}".format(msg))
+    else:
+        fLOG("[synchronize_folder] END: no copy")
 
     return action
 

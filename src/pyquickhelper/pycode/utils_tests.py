@@ -1,12 +1,6 @@
 """
 @file
 @brief This extension contains various functionalities to help unittesting.
-
-.. versionchanged:: 1.1
-    Moved to folder ``pycode``.
-
-.. versionchanged:: 1.4
-    Split into 3 files.
 """
 import os
 import sys
@@ -89,10 +83,8 @@ def main_wrapper_tests(codefile, skip_list=None, processes=False, add_coverage=F
 
         This works if you installed Jenkins with your credentials.
         Otherwise the path to ``pandoc.exe`` needs to be changed.
-
         And you can also read `Schedule builds with Jenkins
         <http://www.xavierdupre.fr/blog/2014-12-06_nojs.html>`_.
-
         :epkg:`node.js` might be required if a notebooks contain javascript.
 
     Parameters *add_coverage* and *report_folder* are used to compute the coverage

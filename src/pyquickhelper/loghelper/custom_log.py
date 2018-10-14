@@ -2,8 +2,6 @@
 """
 @file
 @brief Creates a custom log (open a text file and flushes everything in it).
-
-.. versionadded:: 1.5
 """
 import datetime
 import sys

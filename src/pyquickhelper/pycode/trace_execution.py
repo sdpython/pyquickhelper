@@ -1,8 +1,6 @@
 """
 @brief
 @file Various function to help investigate an error.
-
-.. versionadded:: 1.3
 """
 import sys
 import traceback

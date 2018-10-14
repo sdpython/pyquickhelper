@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 @file
-@brief Defines a sphinx extension to keep track of FAQ.
-
-.. versionadded:: 1.4
+@brief Defines a :epkg:`sphinx` extension to keep track of FAQ.
 """
 import sys
 from docutils import nodes

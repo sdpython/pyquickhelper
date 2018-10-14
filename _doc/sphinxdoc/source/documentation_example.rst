@@ -45,4 +45,4 @@ example with a running script
 a predefined link
 -----------------
 
-:epkg:`XD`
+:epkg:`pep8`

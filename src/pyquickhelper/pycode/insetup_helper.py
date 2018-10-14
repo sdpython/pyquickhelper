@@ -1,8 +1,6 @@
 """
 @file
 @brief Function to use inside setup.py
-
-.. versionadded:: 1.5
 """
 import os
 import sys

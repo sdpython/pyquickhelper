@@ -1,8 +1,6 @@
 """
 @file
 @brief Function which filters ou warnings after running the unit test
-
-.. versionadded:: 1.5
 """
 import warnings
 

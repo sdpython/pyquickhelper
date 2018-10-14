@@ -1,8 +1,6 @@
 """
 @file
-@brief A StringIO which also outputs its content for a file.
-
-.. versionadded:: 1.4
+@brief A :epkg:`*py:io:StringIO` which also outputs its content for a file.
 """
 import os
 import sys

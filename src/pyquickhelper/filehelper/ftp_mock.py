@@ -1,8 +1,6 @@
 """
 @file
-@brief Mock classes
-
-.. versionadded:: 1.4
+@brief Mock FTP classes.
 """
 import sys
 from ..loghelper.flog import noLOG

@@ -1,9 +1,6 @@
 """
 @file
 @brief Functions to run notebooks.
-
-.. versionadded:: 1.4
-    Split from *notebook_helper.py*.
 """
 import sys
 import time
@@ -46,8 +43,6 @@ def _cache_url_to_file(cache_urls, folder, fLOG=noLOG):
 
     The function detects if the file was already downloaded.
     In that case, it does not do it a second time.
-
-    .. versionadded:: 1.4
     """
     if cache_urls is None:
         return None
@@ -374,9 +369,6 @@ def execute_notebook_list_finalize_ut(res, dump=None, fLOG=noLOG):
         from pyquickhelper.ipythonhelper.run_notebook import _get_dump_default_path
         import pyquickhelper
         print(_get_dump_default_path(pyquickhelper))
-
-
-    .. versionadded:: 1.5
     """
     if len(res) == 0:
         raise Exception("No notebook was run.")
@@ -440,8 +432,6 @@ def notebook_coverage(module_or_path, dump=None, too_old=30):
 
     If *module_or_path* is a module, the function will get a list notebooks
     assuming it follows the same design as :epkg:`pyquickhelper`.
-
-    .. versionadded:: 1.5
     """
     if dump is None:
         dump = _get_dump_default_path(module_or_path)

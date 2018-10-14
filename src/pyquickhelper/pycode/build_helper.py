@@ -1,8 +1,6 @@
 """
 @file
-@brief  Produce a build file for a module following *pyquickhelper* design.
-
-.. versionadded:: 1.1
+@brief  Produces a build file for a module following *pyquickhelper* design.
 """
 
 import sys
@@ -240,9 +238,6 @@ def get_build_script(module, requirements=None, port=8067, default_engine_paths=
     @param      default_engine_paths    define the default location for python engine, should be dictionary *{ engine: path }*, see below.
     @param      additional_local_path   additional paths to add to PYTHONPATH
     @return                             scripts
-
-    .. versionchanged:: 1.3
-        Parameter *additional_local_path* was added.
     """
     if requirements is None:
         requirements = []
@@ -266,9 +261,6 @@ def get_script_command(command, module, requirements, port=8067, platform=sys.pl
     @return                             scripts
 
     The available list of commands is given by function @see fn process_standard_options_for_setup.
-
-    .. versionchanged:: 1.3
-        Parameter *additional_local_path* was added
     """
     if not platform.startswith("win"):
         raise NotImplementedError("not yet available on linux")
@@ -334,11 +326,6 @@ def get_extra_script_command(command, module, requirements, port=8067, blog_list
     @return                                 scripts
 
     The available list of commands is given by function @see fn process_standard_options_for_setup.
-
-    .. versionchanged:: 1.3
-        Parameter *unittest_modules*, was added.
-        Parameters *additional_notebook_path*, *additional_local_path* were added to add local dependencies when
-        running a notebook. Mostly for development purposes.
     """
     if not platform.startswith("win"):
         raise NotImplementedError("linux not yet available")

@@ -42,9 +42,6 @@ def download(url, path_download=".", outfile=None, fLOG=noLOG):
     If *outfile* is "", the function will remove every weird character.
     If *outfile* is not null, the function will use it. It will be relative to
     the current folder and not *path_download*.
-
-    .. versionadded:: 0.9
-
     """
     lurl = url.lower()
     if lurl.startswith("file://"):
@@ -152,8 +149,6 @@ def read_url(url, encoding=None):
     @param      url         url
     @param      encoding    if None, the result type is bytes, str otherwise
     @return                 str (encoding is not None) or bytes
-
-    .. versionadded:: 1.1
     """
     request = urllib_request.Request(url)
     if sys.version_info[0] == 2:

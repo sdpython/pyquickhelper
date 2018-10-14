@@ -79,9 +79,6 @@ def my_date_conversion(sdate):
 
     @param      sdate       string
     @return                 date
-
-    .. versionadded:: 1.0
-
     """
     first = sdate.split(" ")[0]
     trois = first.replace(".", "-").replace("/", "-").split("-")
@@ -96,18 +93,17 @@ def produce_code_graph_changes(df):
     @param      df      dataframe (has a column date with format ``YYYY-MM-DD``)
     @return             graph
 
-    .. versionchanged:: 1.0
-        The call to :epkg:`datetime.datetime.strptime`
-        introduced exceptions::
+    The call to :epkg:`datetime.datetime.strptime`
+    introduced exceptions::
 
-            File "<frozen importlib._bootstrap>", line 2212, in _find_and_load_unlocked
-            File "<frozen importlib._bootstrap>", line 321, in _call_with_frames_removed
-            File "<frozen importlib._bootstrap>", line 2254, in _gcd_import
-            File "<frozen importlib._bootstrap>", line 2237, in _find_and_load
-            File "<frozen importlib._bootstrap>", line 2224, in _find_and_load_unlocked
+        File "<frozen importlib._bootstrap>", line 2212, in _find_and_load_unlocked
+        File "<frozen importlib._bootstrap>", line 321, in _call_with_frames_removed
+        File "<frozen importlib._bootstrap>", line 2254, in _gcd_import
+        File "<frozen importlib._bootstrap>", line 2237, in _find_and_load
+        File "<frozen importlib._bootstrap>", line 2224, in _find_and_load_unlocked
 
-        when generating the documentation for another project. The reason
-        is still unclear. It was replaced by a custom function.
+    when generating the documentation for another project. The reason
+    is still unclear. It was replaced by a custom function.
     """
     def year_week(x):
         dt = datetime.datetime(x.year, x.month, x.day)
@@ -186,19 +182,16 @@ def generate_changes_repo(chan, source, exception_if_empty=True,
     @param          modify_commit       function which rewrite the commit text (see below)
     @return                             string (rst tables with the changes)
 
-    .. versionchanged:: 1.0
+    :epkg:`pandas` is not imported in the function itself but at the beginning of the module. It
+    seemed to cause soe weird exceptions when generating the documentation for another module::
 
-        pandas is not imported in the function itself but at the beginning of the module. It
-        seemed to cause soe weird exceptions when generating the documentation for another module::
+        File "<frozen importlib._bootstrap>", line 2212, in _find_and_load_unlocked
+        File "<frozen importlib._bootstrap>", line 321, in _call_with_frames_removed
+        File "<frozen importlib._bootstrap>", line 2254, in _gcd_import
+        File "<frozen importlib._bootstrap>", line 2237, in _find_and_load
+        File "<frozen importlib._bootstrap>", line 2224, in _find_and_load_unlocked
 
-            File "<frozen importlib._bootstrap>", line 2212, in _find_and_load_unlocked
-            File "<frozen importlib._bootstrap>", line 321, in _call_with_frames_removed
-            File "<frozen importlib._bootstrap>", line 2254, in _gcd_import
-            File "<frozen importlib._bootstrap>", line 2237, in _find_and_load
-            File "<frozen importlib._bootstrap>", line 2224, in _find_and_load_unlocked
-
-        Doing that helps. The cause still remains obscure.
-
+    Doing that helps. The cause still remains obscure.
     If not None, function *modify_commit* is called the following way (see below).
     *nbch* is the commit number. *date* can be returned as a datetime or a string.
 
@@ -443,8 +436,6 @@ def format_history(src, dest, format="basic"):
 
     @param      src     source history (file)
     @param      dest    destination (file)
-
-    .. versionadded:: 1.5
 
     .. versionchanged:: 1.7
         Parameter *format* was added. :epkg:`Sphinx` extension *release*

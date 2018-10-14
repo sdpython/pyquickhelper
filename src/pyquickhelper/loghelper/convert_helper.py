@@ -18,9 +18,6 @@ def str2datetime(dt, format=None):
                         which you get by default
     @rtype              datetime
     @return             datetime
-
-    .. versionchanged:: 1.0
-        accept more formats (no time, T instead of space)
     """
     if "+" in dt:
         dt = dt.split("+")[0].strip()
@@ -45,12 +42,10 @@ def str2datetime(dt, format=None):
 
 def datetime2str(dt):
     """
-    convert a datetime into a string
+    Converts a datetime into a string.
 
     @param      dt      datetime
     @return             string
-
-    .. versionadded:: 1.3
     """
     return dt.strftime("%Y-%m-%d %H:%M:%S")
 

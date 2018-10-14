@@ -1,8 +1,6 @@
 """
 @file
 @brief A function to download the content of a url.
-
-.. versionadded:: 1.1
 """
 import sys
 import socket
@@ -52,12 +50,6 @@ def get_url_content_timeout(url, timeout=10, output=None, encoding="utf8", raise
     format, it will decompress it.
 
     The function raises the exception @see cl InternetException.
-
-    .. versionadded:: 1.1
-        It comes from `pyrsslocal <http://www.xavierdupre.fr/app/pyrsslocal/helpsphinx/index.html>`_.
-
-    .. versionadded:: 1.4
-        Parameters *chunk*, *fLOG* were added.
     """
     def save_content(content, append=False):
         "local function"
@@ -92,7 +84,7 @@ def get_url_content_timeout(url, timeout=10, output=None, encoding="utf8", raise
                 def _local_loop(ur):
                     while True:
                         res = ur.read(chunk)
-                        size[0] += len(res)
+                        size[0] += len(res)  # pylint: disable=E1137
                         if fLOG is not None:
                             fLOG("[get_url_content_timeout] downloaded",
                                  size, "bytes")
@@ -102,7 +94,7 @@ def get_url_content_timeout(url, timeout=10, output=None, encoding="utf8", raise
                             save_content(res, app)
                         else:
                             break
-                        app[0] = True
+                        app[0] = True  # pylint: disable=E1137
 
                 if timeout != -1:
                     with urllib_request.urlopen(url, timeout=timeout) as ur:

@@ -18,9 +18,6 @@ def get_jenkins_mappings(root, loc="dist"):
     @param      loc         *dist* by default (dist in the folder mentioned above),
                             it could also be ``_doc/sphinxdoc/build``
     @return                 dictionary { "name":folder }
-
-    .. versionchanged:: 1.3
-        Parameter *root* accepts a list of foldes or tuples.
     """
     if not isinstance(root, list):
         roots = [root]
@@ -28,15 +25,15 @@ def get_jenkins_mappings(root, loc="dist"):
         roots = root
 
     maps = {}
-    for root in roots:
-        if isinstance(root, tuple):
-            prefix, root = root
+    for ro in roots:
+        if isinstance(ro, tuple):
+            prefix, ro = ro
         else:
-            prefix, root = "", root
-        root = os.path.abspath(root)
-        sub = os.listdir(root)
+            prefix, ro = "", ro
+        ro = os.path.abspath(ro)
+        sub = os.listdir(ro)
         for s in sub:
-            fold = os.path.join(root, s)
+            fold = os.path.join(ro, s)
             if os.path.isdir(fold):
                 dist = os.path.join(fold, loc)
                 if os.path.exists(dist):

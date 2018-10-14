@@ -1,9 +1,6 @@
 """
 @file
 @brief This extension contains various functionalities to help unittesting.
-
-.. versionadded:: 1.4
-    Split from from utils_tests.py.
 """
 from __future__ import print_function
 
@@ -223,13 +220,12 @@ def check_pep8(folder, ignore=('E265', 'W504'), skip=None,
     * *W0108*: Lambda may not be necessary
     * *W0613*: unused argument
 
-    The full list is available at
-    `pylint error codes <http://pylint-messages.wikidot.com/all-codes>`_.
+    The full list is available at :epkg:`pylint error codes`.
 
     .. versionchanged:: 1.7
         :epkg:`pylint` was added used to check the code.
         It produces the following list of errors
-        `pylint error codes <http://pylint-messages.wikidot.com/all-codes>`_.
+        :epkg:`pylint error codes`.
 
     .. versionchanged:: 1.8
         If *neg_pattern* is empty, it populates with a default value

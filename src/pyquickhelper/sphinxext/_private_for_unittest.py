@@ -1,8 +1,6 @@
 """
 @file
 @brief Used only for unit test purpose.
-
-.. versionadded:: 1.5
 """
 
 

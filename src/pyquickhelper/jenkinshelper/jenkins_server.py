@@ -17,8 +17,6 @@
 
     This adds a job which runs all unit tests with an estimated duration
     below 10 seconds.
-
-.. versionadded:: 1.1
 """
 
 import os
@@ -370,8 +368,6 @@ class JenkinsExt(jenkins.Jenkins):
 
         @param      job             module and options
         @return                     script
-
-        .. versionadded:: 1.2
         """
         spl = job.split()
         if spl[0] != "custom":
@@ -750,17 +746,9 @@ class JenkinsExt(jenkins.Jenkins):
 
             H H(13-14) * * 0
 
-        .. versionchanged:: 1.2
-            Parameter *success_only* was added to prevent a job from running if the previous one failed.
-            Options *success_only* must be specified.
-            Parameter *update* was added to update a job instead of creating it.
-
-        .. versionchanged:: 1.4
-            Parameter *adjust_scheduler* was added to delayed some jobs if a spot is already taken.
-
-        .. versionchanged:: 1.5
-            *kwargs* can contain option *job_options*.
-            Parameter *clean_repo* was added.
+        Parameter *success_only* prevents a job from running if the previous one failed.
+        Options *success_only* must be specified.
+        Parameter *update* updates a job instead of creating it.
         """
         if 'platform' in kwargs:
             raise NameError(
@@ -989,7 +977,7 @@ class JenkinsExt(jenkins.Jenkins):
         * `Git Plugin <https://wiki.jenkins-ci.org/display/JENKINS/Git+Plugin>`_
         * `GitHub Plugin <https://wiki.jenkins-ci.org/display/JENKINS/Github+Plugin>`_
         * `GitLab Plugin <https://wiki.jenkins-ci.org/display/JENKINS/GitLab+Plugin>`_
-        * `Python <https://wiki.jenkins-ci.org/display/JENKINS/Python+Plugin>`_
+        * :epkg:`Python`
         * `Python Wrapper Plugin <https://wiki.jenkins-ci.org/display/JENKINS/Python+Wrapper+Plugin>`_
         * `Build timeout plugin <https://wiki.jenkins-ci.org/display/JENKINS/Build-timeout+Plugin>`_
 

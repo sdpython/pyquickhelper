@@ -11,7 +11,7 @@ as :epkg:`pyquickhelper`:
   all names are prefixed by ``ut_``.
 * Tests files starts with ``test_``.
 * Unit test must inherits from :*py:`unittest:TestCase` or
-  :class:`ExtTestCase <pyquickhelper.pycode.unittestclass.ExtTestCase>`
+  :py:class:`ExtTestCase <pyquickhelper.pycode.unittestclass.ExtTestCase>`
   which adds a couple of *assert* methods.
 
 One function is used to prints information but is disabled

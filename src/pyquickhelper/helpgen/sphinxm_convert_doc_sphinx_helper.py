@@ -1,8 +1,6 @@
 """
 @file
 @brief Helpers to convert docstring to various format.
-
-.. versionadded:: 1.3
 """
 import os
 import sys
@@ -497,7 +495,7 @@ class _MemoryBuilder:
     """
     Builds :epkg:`HTML` output in memory.
     The API is defined by the page
-    `builderapi <http://www.sphinx-doc.org/en/stable/extdev/builderapi.html?highlight=builder>`_.
+    :epkg:`builderapi`.
     """
 
     def _init(self, base_class, app):
@@ -507,7 +505,7 @@ class _MemoryBuilder:
         be overwritten (yet).
 
         :param base_class: base builder class
-        :param app: `Sphinx application <http://www.sphinx-doc.org/en/stable/_modules/sphinx/application.html>`_
+        :param app: :epkg:`Sphinx application`
         """
         if "IMPOSSIBLE:TOFIND" in app.srcdir:
             sphinx.util.osutil.ensuredir = custom_ensuredir
@@ -691,7 +689,7 @@ class MemoryHTMLBuilder(_MemoryBuilder, SingleFileHTMLBuilder):
     """
     Builds :epkg:`HTML` output in memory.
     The API is defined by the page
-    `builderapi <http://www.sphinx-doc.org/en/stable/extdev/builderapi.html?highlight=builder>`_.
+    :epkg:`builderapi`.
     """
     name = 'memoryhtml'
     format = 'html'
@@ -710,7 +708,7 @@ class MemoryHTMLBuilder(_MemoryBuilder, SingleFileHTMLBuilder):
         Most of the parameter are static members of the class and cannot
         be overwritten (yet).
 
-        :param app: `Sphinx application <http://www.sphinx-doc.org/en/stable/_modules/sphinx/application.html>`_
+        :param app: :epkg:`Sphinx application`
         """
         _MemoryBuilder._init(self, SingleFileHTMLBuilder, app)
 
@@ -720,7 +718,7 @@ class MemoryRSTBuilder(_MemoryBuilder, RstBuilder):
     """
     Builds :epkg:`RST` output in memory.
     The API is defined by the page
-    `builderapi <http://www.sphinx-doc.org/en/stable/extdev/builderapi.html?highlight=builder>`_.
+    :epkg:`builderapi`.
     The writer simplifies the :epkg:`RST` syntax by replacing
     custom roles into true :epkg:`RST` syntax.
     """
@@ -742,7 +740,7 @@ class MemoryRSTBuilder(_MemoryBuilder, RstBuilder):
         Most of the parameter are static members of the class and cannot
         be overwritten (yet).
 
-        :param app: `Sphinx application <http://www.sphinx-doc.org/en/stable/_modules/sphinx/application.html>`_
+        :param app: :epkg:`Sphinx application`
         """
         _MemoryBuilder._init(self, RstBuilder, app)
 
@@ -764,7 +762,7 @@ class MemoryMDBuilder(_MemoryBuilder, MdBuilder):
     """
     Builds :epkg:`MD` output in memory.
     The API is defined by the page
-    `builderapi <http://www.sphinx-doc.org/en/stable/extdev/builderapi.html?highlight=builder>`_.
+    :epkg:`builderapi`.
     """
     name = 'memorymd'
     format = 'md'
@@ -783,7 +781,7 @@ class MemoryMDBuilder(_MemoryBuilder, MdBuilder):
         Most of the parameter are static members of the class and cannot
         be overwritten (yet).
 
-        :param app: `Sphinx application <http://www.sphinx-doc.org/en/stable/_modules/sphinx/application.html>`_
+        :param app: :epkg:`Sphinx application`
         """
         _MemoryBuilder._init(self, MdBuilder, app)
 
@@ -805,7 +803,7 @@ class MemoryDocTreeBuilder(_MemoryBuilder, DocTreeBuilder):
     """
     Builds doctree output in memory.
     The API is defined by the page
-    `builderapi <http://www.sphinx-doc.org/en/stable/extdev/builderapi.html?highlight=builder>`_.
+    :epkg:`builderapi`.
     """
     name = 'memorydoctree'
     format = 'doctree'
@@ -823,7 +821,7 @@ class MemoryDocTreeBuilder(_MemoryBuilder, DocTreeBuilder):
         Most of the parameter are static members of the class and cannot
         be overwritten (yet).
 
-        :param app: `Sphinx application <http://www.sphinx-doc.org/en/stable/_modules/sphinx/application.html>`_
+        :param app: :epkg:`Sphinx application`
         """
         _MemoryBuilder._init(self, DocTreeBuilder, app)
 
@@ -845,7 +843,7 @@ class MemoryLatexBuilder(_MemoryBuilder, EnhancedLaTeXBuilder):
     """
     Builds :epkg:`Latex` output in memory.
     The API is defined by the page
-    `builderapi <http://www.sphinx-doc.org/en/stable/extdev/builderapi.html?highlight=builder>`_.
+    :epkg:`builderapi`.
     """
     name = 'memorylatex'
     format = 'tex'
@@ -864,7 +862,7 @@ class MemoryLatexBuilder(_MemoryBuilder, EnhancedLaTeXBuilder):
         Most of the parameter are static members of the class and cannot
         be overwritten (yet).
 
-        :param app: `Sphinx application <http://www.sphinx-doc.org/en/stable/_modules/sphinx/application.html>`_
+        :param app: :epkg:`Sphinx application`
         """
         _MemoryBuilder._init(self, EnhancedLaTeXBuilder, app)
 
@@ -953,8 +951,7 @@ class _CustomSphinx(Sphinx):
                  confoverrides=None, status=None, freshenv=False, warningiserror=False,
                  tags=None, verbosity=0, parallel=0, new_extensions=None):
         '''
-        Same constructor as
-        `sphinx application <http://www.sphinx-doc.org/en/stable/extdev/appapi.html>`_,
+        Same constructor as :epkg:`Sphinx application`.
         Additional parameters:
 
         @param      new_extensions      extensions to add to the application

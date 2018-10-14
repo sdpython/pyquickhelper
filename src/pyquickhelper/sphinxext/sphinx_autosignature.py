@@ -1,11 +1,9 @@
 # -*- coding: utf-8 -*-
 """
 @file
-@brief Defines a sphinx extension to describe a function,
+@brief Defines a :epkg:`sphinx` extension to describe a function,
 inspired from `autofunction <https://github.com/sphinx-doc/sphinx/blob/master/sphinx/ext/autodoc/__init__.py#L1082>`_
 and `AutoDirective <https://github.com/sphinx-doc/sphinx/blob/master/sphinx/ext/autodoc/__init__.py#L1480>`_.
-
-.. versionadded:: 1.5
 """
 import inspect
 import re
@@ -80,13 +78,12 @@ def enumerate_cleaned_signature(doc, max_args=20):
 class AutoSignatureDirective(Directive):
     """
     This directive displays a shorter signature than
-    `sphinx.ext.autodoc <http://www.sphinx-doc.org/en/stable/ext/autodoc.html#module-sphinx.ext.autodoc>`_.
-    Available options:
+    :epkg:`sphinx.ext.autodoc`. Available options:
 
     * *nosummary*: do not display a summary (shorten)
     * *annotation*: shows annotation
     * *nolink*: add a link to a full documentation (produced by
-      `sphinx.ext.autodoc <http://www.sphinx-doc.org/en/stable/ext/autodoc.html#module-sphinx.ext.autodoc>`_)
+      :epkg:`sphinx.ext.autodoc`)
     * *members*: shows members of a class
     * *path*: three options, *full* displays the full path including
       submodules, *name* displays the last name,

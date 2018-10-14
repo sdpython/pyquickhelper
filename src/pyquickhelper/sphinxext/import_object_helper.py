@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 @file
-@brief Defines a sphinx extension which if all parameters are documented.
-
-.. versionadded:: 1.5
+@brief Defines a :epkg:`sphinx` extension which if all parameters are documented.
 """
 import inspect
 from typing import Tuple
@@ -17,7 +15,7 @@ class _Types:
         pass
 
     @staticmethod
-    def stat(self):
+    def stat():
         pass
 
 
