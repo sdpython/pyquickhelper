@@ -776,6 +776,8 @@ class MdTranslator(TextTranslator, CommonSphinxWriterHelpers):
         else:
             name = node['name'] if 'name' in node else node.astext()
             self.add_text('[%s](%s)' % (name, node['refuri']))
+        if 'internal' in node:
+            raise nodes.SkipNode
 
     def depart_reference(self, node):
         if 'refuri' not in node:
