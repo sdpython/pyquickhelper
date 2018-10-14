@@ -5,8 +5,14 @@
 History
 =======
 
-current - 2018-10-06 - 0.00Mb
+current - 2018-10-14 - 0.00Mb
 =============================
+
+* `198`: broken links in the documentation (magic command ,example) (2018-10-14)
+* `199`: better logging in synchronisation_folder (2018-10-14)
+
+1.8.2820 - 2018-10-06 - 2.02Mb
+==============================
 
 * `197`: do not raise exception if latex is not found when using rst2html (2018-10-06)
 * `196`: add function add_rst_links to automatically add links into one string (2018-10-04)
