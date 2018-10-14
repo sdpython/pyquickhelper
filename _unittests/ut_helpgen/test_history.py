@@ -180,7 +180,7 @@ class TestPaths(unittest.TestCase):
                        extlinks=dict(issue=('https://github.com/sdpython/pyquickhelper/issues/%s', 'issue ')))
         self.assertTrue(rst is not None)
         for line in rst.split('\n'):
-            if "remove <SYSTEM MESSAGE> for role ref when" not in line:
+            if "<SYSTEM MESSAGE> for role ref when" not in line:
                 self.assertNotIn('SYSTEM MESSAGE', line)
         self.assertIn('* `issue 136', rst)
 
