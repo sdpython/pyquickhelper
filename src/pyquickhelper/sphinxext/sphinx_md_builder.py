@@ -764,18 +764,22 @@ class MdTranslator(TextTranslator, CommonSphinxWriterHelpers):
         elif 'internal' not in node and 'name' in node.attributes:
             self.add_text('[%s](%s)' %
                           (node['name'], clean_refuri(node['refuri'])))
+            raise nodes.SkipNode
         elif 'internal' not in node and 'names' in node.attributes:
             anchor = node['names'][0] if len(
                 node['names']) > 0 else node['refuri']
             self.add_text('[%s](%s)' %
                           (anchor, clean_refuri(node['refuri'])))
+            raise nodes.SkipNode
         elif 'reftitle' in node:
             name = node['name'] if 'name' in node else node.astext()
             self.add_text('[%s](%s)' %
                           (name, clean_refuri(node['refuri'])))
+            raise nodes.SkipNode
         else:
             name = node['name'] if 'name' in node else node.astext()
             self.add_text('[%s](%s)' % (name, node['refuri']))
+            raise nodes.SkipNode
         if 'internal' in node:
             raise nodes.SkipNode
 
