@@ -31,19 +31,13 @@ except ImportError:
         sys.path.append(path)
     import src
 
-from src.pyquickhelper.loghelper import fLOG
-from src.pyquickhelper.pycode import get_temp_folder
+from src.pyquickhelper.pycode import get_temp_folder, ExtTestCase
 from src.pyquickhelper.loghelper.flog import _first_more_recent
 
 
-class TestfLOGPrivate(unittest.TestCase):
+class TestfLOGPrivate(ExtTestCase):
 
     def test_url_more_recent(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
         this = os.path.abspath(os.path.dirname(__file__))
         name = "test_syncho.py"
 
@@ -55,14 +49,13 @@ class TestfLOGPrivate(unittest.TestCase):
         f1 = URL.urlopen(url)
         r = _first_more_recent(f1, dest)
         f1.close()
-        assert isinstance(r, bool)
+        self.assertIsInstance(r, bool)
 
-        url = "http://www.lemonde.fr/"
+        url = "https://www.lemonde.fr/"
         f1 = URL.urlopen(url)
         r = _first_more_recent(f1, dest)
         f1.close()
-        assert isinstance(r, bool)
-        fLOG(r)
+        self.assertIsInstance(r, bool)
 
 
 if __name__ == "__main__":
