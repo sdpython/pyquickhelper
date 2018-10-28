@@ -34,7 +34,7 @@ def _private_test_style_src(fLOG, run_lint, verbose=False, pattern=".*[.]py$"):
                      "_nbconvert_config.py:",
                      "convert_doc_sphinx_helper.py:31: [E402]",
                      "magic_class.py:12: [E402]",
-                     "windows_scripts.py:716",
+                     "windows_scripts.py",
                      "Redefining built-in 'open'",
                      "Redefining built-in 'StringIO'",
                      "Redefining built-in 'FileNotFoundError'",

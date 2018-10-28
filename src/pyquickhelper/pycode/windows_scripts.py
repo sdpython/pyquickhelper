@@ -561,25 +561,27 @@ set jenkinspythonpip=%virtual_env_py%_vir%virtual_env_suffix%\\Scripts\\pip
 """ + _second_part).replace("PY??", _sversion())
 
 windows_jenkins_27_conda = [
-    "set jenkinspythonexe=__DEFAULTPYTHON__\n@echo ~SET jenkinspythonexe=__DEFAULTPYTHON__\n" +
-    "\n__PACTHPQb__\n" +
-    jenkins_windows_setup + " build_script\n" +
-    windows_error +
-    "\n@echo ~CALL %jenkinspythonexe% %current%setup.py setup_hook\n%jenkinspythonexe% %current%setup.py setup_hook\n" +
-    windows_error +
-    "\nauto_setup_copy27.bat %jenkinspythonexe%\n" +
-    windows_error,  # next script #
+    "set jenkinspythonexe=__DEFAULTPYTHON__\n@echo ~SET jenkinspythonexe=__DEFAULTPYTHON__\n"
+    + "\n__PACTHPQb__\n"
+    + jenkins_windows_setup + " build_script\n"
+    + windows_error
+    + "\n@echo ~CALL %jenkinspythonexe% %current%setup.py setup_hook\n%jenkinspythonexe% %current%setup.py setup_hook\n"
+    + windows_error
+    + "\nauto_setup_co + y27.bat %jenkinspythonexe%\n" + windows_error,
+    # next script #
     "\n__PACTHPQe__\n" +
     "set jenkinspythonexe=__PYTHON27__\n@echo ~SET jenkinspythonexe=__PYTHON27__\n" +
     windows_jenkins_unittest27_conda +
     "\n\n__REQUIREMENTS__\n\n%jenkinspythonpip% freeze\n" +
-    "\nauto_cmd_run27.bat %jenkinspythonexe%\n" + windows_error,  # next script #
+    "\nauto_cmd_run27.bat %jenkinspythonexe%\n" + windows_error,
+    # next script #
     "set jenkinspythonexe=__PYTHON27__\n@echo ~SET jenkinspythonexe=__PYTHON27__\n" +
     "set CURRENT_PATH=%WORKSPACE%\n@echo ~SET CURRENT_PATH=%WORKSPACE%\n" +
     "set ROOT_VIRTUAL_ENV=%CURRENT_PATH%\\_virtualenv27\n" +
     "set virtual_env_py=%ROOT_VIRTUAL_ENV%\\__MODULE__\n@echo ~SET virtual_env_py=%ROOT_VIRTUAL_ENV%\\__MODULE__\n" +
-    "set jenkinspythonexe=%virtual_env_py%_conda27vir\\python\n@echo ~SET jenkinspythonexe=%virtual_env_py%_conda27vir\\python\n" +
-    "\nauto_cmd_build27.bat %jenkinspythonexe%\n" + windows_error,  # next script #
+    "set jenkinspythonexe=%virtual_env_py%_conda27vir\\python\n@echo + ~SET jenkinspythonexe=%virtual_env_py%_conda27vir\\python\n"
+    "\nauto_cmd_build27.bat %jenkinspythonexe%\n" + windows_error,
+    # next script #
     "copy dist_module27\\dist\\*.whl ..\\..\\local_pypi\\local_pypi_server"]
 
 windows_jenkins_27_def = [
@@ -591,6 +593,7 @@ windows_jenkins_27_def = [
     windows_error +
     "\nauto_setup_copy27.bat %jenkinspythonexe%\n" +
     windows_error,
+    # next script #
     "\n__PACTHPQe__\n" +
     "set localpythonexe=__PYTHON27__\n@echo ~SET jenkinspythonexe=__PYTHON27__\n" +
     "set jenkinspythonexe=__PYTHON27__\n@echo ~SET jenkinspythonexe=__PYTHON27__\n" +
@@ -598,12 +601,14 @@ windows_jenkins_27_def = [
     "\n\n__REQUIREMENTS__\n\n" +
     "\n@echo if NOT EXIST %jenkinspythonexe%\\..\\nosetests.exe %jenkinspythonpip% install nose --upgrade --force\n" +
     "\nif NOT EXIST %jenkinspythonexe%\\..\\nosetests.exe %jenkinspythonpip% install nose --upgrade --force\n" +
-    "\n@echo auto_cmd_run27.bat %jenkinspythonexe%\n\n@echo END RUN 27: %jenkinspythnexe%\n\n" +
-    "\nauto_cmd_run27.bat %jenkinspythonexe%\n" + windows_error,  # next script #
+    "\n@echo auto_cmd_run27.bat %jenkinspythonexe%\n\n@echo END RU +  27: %jenkinspythnexe%\n\n" +
+    "\nauto_cmd_run27.bat %jenkinspythonexe%\n" + windows_error,
+    # next script #
     windows_jenkins_unittest27_def_header +
     "set jenkinspythonexe=%virtual_env_py%_vir%virtual_env_suffix%\\Scripts\\python\n" +
-    "@echo ~SET jenkinspythonexe=%virtual_env_py%_vir%virtual_env_suffix%\\Scripts\\python\n" +
-    "\nauto_cmd_build27.bat %jenkinspythonexe%\n" + windows_error,  # next script #
+    "@echo ~SET jenkinspythonexe=%virtual_env_py%_vir%virtual_env_su + fix%\\Scripts\\python\n" +
+    "\nauto_cmd_build27.bat %jenkinspythonexe%\n" + windows_error,
+    # next script #
     "copy dist_module27\\dist\\*.whl ..\\..\\local_pypi\\local_pypi_server"]
 
 ##################

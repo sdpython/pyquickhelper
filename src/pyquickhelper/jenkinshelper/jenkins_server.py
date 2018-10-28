@@ -1,22 +1,6 @@
 """
 @file
 @brief Extends Jenkins Server from :epkg:`python-jenkins`.
-
-.. todoext::
-    :title: handle command unittests line with parameters with jenkins
-    :hidden:
-    :tag: enhancement
-    :cost: 0.1
-    :date: 2016-07-25
-    :issue: 24
-    :release: 1.4
-
-    Example::
-
-        pyquickhelper [UT] {-d_10}
-
-    This adds a job which runs all unit tests with an estimated duration
-    below 10 seconds.
 """
 
 import os
@@ -223,14 +207,16 @@ class JenkinsExt(jenkins.Jenkins):
         if self.job_exists(name) or self.job_exists(short_name):
             raise jenkins.JenkinsException('delete[%s] failed' % (name))
 
-    def get_jobs(self, folder_depth=0, view_name=None):
+    def get_jobs(self, folder_depth=0, folder_depth_per_request=10, view_name=None):
         """
         Gets the list of all jobs recursively to the given folder depth,
         see `get_all_jobs <https://python-jenkins.readthedocs.org/en/latest/api.html#jenkins.Jenkins.get_all_jobs>`_.
 
         @return                     list of jobs, ``[ { str: str} ]``
         """
-        return jenkins.Jenkins.get_jobs(self, folder_depth=folder_depth, view_name=view_name)
+        return jenkins.Jenkins.get_jobs(self, folder_depth=folder_depth,
+                                        folder_depth_per_request=folder_depth_per_request,
+                                        view_name=view_name)
 
     def delete_all_jobs(self):
         """
