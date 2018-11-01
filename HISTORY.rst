@@ -5,11 +5,17 @@
 History
 =======
 
-current - 2018-10-14 - 0.00Mb
+current - 2018-11-01 - 0.00Mb
 =============================
 
-* `198`: broken links in the documentation (magic command ,example) (2018-10-14)
+* `201`: handle language options in runpython and rst builder (2018-11-01)
+* `200`: ignore issue E402 when applying autopep8 (move import at the top of the file) (2018-10-28)
+
+1.8.2827 - 2018-10-14 - 2.02Mb
+==============================
+
 * `199`: better logging in synchronisation_folder (2018-10-14)
+* `198`: broken links in the documentation (magic command ,example) (2018-10-14)
 
 1.8.2820 - 2018-10-06 - 2.02Mb
 ==============================

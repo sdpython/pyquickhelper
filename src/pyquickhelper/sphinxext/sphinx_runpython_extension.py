@@ -274,6 +274,7 @@ class RunPythonDirective(Directive):
     * ``:current:`` runs the script in the source file directory
     * ``:exception:`` the code throws an exception but it is expected. The error is displayed.
     * ``:indent:<int>`` to indent the output
+    * ``:language:``: changes ``::`` into ``.. code-block:: language``
     * ``:nopep8:`` if present, leaves the code as it is and does not apply pep8 by default,
       see @see fn remove_extra_spaces_and_pep8.
     * ``:process:`` run the script in an another process
