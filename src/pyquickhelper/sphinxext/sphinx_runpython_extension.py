@@ -167,9 +167,12 @@ def run_python_script(script, params=None, comment=None, setsysvar=None, process
         except Exception as ec:
             if comment is None:
                 comment = ""
-            message = "SCRIPT:\n{0}\nPARAMS\n{1}\nCOMMENT\n{2}".format(
-                script, params, comment)
-            raise RunPythonCompileError(message) from ec
+            if not exception:
+                message = "SCRIPT:\n{0}\nPARAMS\n{1}\nCOMMENT\n{2}".format(
+                    script, params, comment)
+                raise RunPythonCompileError(message) from ec
+            else:
+                return "", "Cannot compile the do to {0}".format(ec)
 
         loc = locals()
         for k, v in params.items():
@@ -352,6 +355,7 @@ class RunPythonDirective(Directive):
         'toggle': directives.unchanged,
         'current': directives.unchanged,
         'assert': directives.unchanged,
+        'language': directives.unchanged,
     }
     has_content = True
     runpython_class = runpython_node
@@ -402,6 +406,7 @@ class RunPythonDirective(Directive):
             'toggle': self.options.get('toggle', '').strip(),
             'current': 'current' in self.options and self.options['current'] in bool_set_,
             'assert': self.options.get('assert', '').strip(),
+            'language': self.options.get('language', '').strip(),
         }
 
         if p['setsysvar'] is not None and len(p['setsysvar']) == 0:
@@ -518,7 +523,11 @@ class RunPythonDirective(Directive):
             else:
                 secin = node
             pin = nodes.paragraph(text=p["sin"])
-            pcode = nodes.literal_block(script_disp, script_disp)
+            if p['language']:
+                pcode = nodes.literal_block(
+                    script_disp, script_disp, language=p['language'])
+            else:
+                pcode = nodes.literal_block(script_disp, script_disp)
             secin += pin
             secin += pcode
 
