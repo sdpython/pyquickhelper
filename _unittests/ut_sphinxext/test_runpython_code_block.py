@@ -27,7 +27,7 @@ from src.pyquickhelper.pycode import ExtTestCase
 from src.pyquickhelper.sphinxext.sphinx_runpython_extension import RunPythonDirective
 
 
-class TestCodeBlock(ExtTestCase):
+class TestRunPythonCodeBlock(ExtTestCase):
 
     def test_code_block(self):
         content = """

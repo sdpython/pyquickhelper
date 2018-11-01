@@ -5,9 +5,10 @@
 History
 =======
 
-current - 2018-11-01 - 0.00Mb
+current - 2018-11-02 - 0.00Mb
 =============================
 
+* `202`: make runpython keep context from one execution to the next one (2018-11-01)
 * `201`: handle language options in runpython and rst builder (2018-11-01)
 * `200`: ignore issue E402 when applying autopep8 (move import at the top of the file) (2018-10-28)
 

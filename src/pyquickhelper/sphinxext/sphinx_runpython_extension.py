@@ -43,7 +43,7 @@ class RunPythonExecutionError(Exception):
 
 
 def run_python_script(script, params=None, comment=None, setsysvar=None, process=False,
-                      exception=False, warningout=None, chdir=None):
+                      exception=False, warningout=None, chdir=None, context=None):
     """
     Executes a script :epkg:`python` as a string.
 
@@ -58,7 +58,8 @@ def run_python_script(script, params=None, comment=None, setsysvar=None, process
                                 error message
     @param  warningout          warning to disable (name of warnings)
     @param  chdir               change directory before running this script (if not None)
-    @return                     stdout, stderr
+    @param  context             if not None, added to the local context
+    @return                     stdout, stderr, context
 
     If the execution throws an exception such as
     ``NameError: name 'math' is not defined`` after importing
@@ -96,7 +97,8 @@ def run_python_script(script, params=None, comment=None, setsysvar=None, process
         Parameter *warningout* was added.
 
     .. versionchanged:: 1.8
-        Parameter *chdir* was added.
+        Parameter *chdir*, *context* were added,
+        returns the context too.
     """
     def warning_filter(warningout):
         if warningout in (None, ''):
@@ -118,6 +120,10 @@ def run_python_script(script, params=None, comment=None, setsysvar=None, process
         params = {}
 
     if process:
+        if context is not None and len(context) != 0:
+            raise RunPythonExecutionError(
+                "context cannot be used if the script runs in a separate process.")
+
         cmd = sys.executable
         header = ["import sys"]
         if setsysvar:
@@ -152,14 +158,14 @@ def run_python_script(script, params=None, comment=None, setsysvar=None, process
 
         try:
             out, err = run_cmd(cmd, script, wait=True, change_path=chdir)
-            return out, err
+            return out, err, None
         except Exception as ee:
             if not exception:
                 message = "SCRIPT:\n{0}\nPARAMS\n{1}\nCOMMENT\n{2}\nERR\n{3}\nOUT\n{4}\nEXC\n{5}".format(
                     script, params, comment, "", str(ee), ee)
                 raise RunPythonExecutionError(message) from ee
             else:
-                return str(ee), str(ee)
+                return str(ee), str(ee), None
     else:
 
         try:
@@ -172,19 +178,22 @@ def run_python_script(script, params=None, comment=None, setsysvar=None, process
                     script, params, comment)
                 raise RunPythonCompileError(message) from ec
             else:
-                return "", "Cannot compile the do to {0}".format(ec)
+                return "", "Cannot compile the do to {0}".format(ec), None
 
+        globs = globals().copy()
         loc = locals()
         for k, v in params.items():
             loc[k] = v
         loc["__dict__"] = params
+        if context is not None:
+            for k, v in context.items():
+                globs["__runpython__" + k] = v
 
         if setsysvar is not None:
             sys.__dict__[setsysvar] = True
 
         sout = StringIO()
         serr = StringIO()
-        globs = globals().copy()
         with redirect_stdout(sout):
             with redirect_stderr(sout):
 
@@ -217,7 +226,7 @@ def run_python_script(script, params=None, comment=None, setsysvar=None, process
                                 script, params, comment, gout, gerr, ee, excs)
                             raise RunPythonExecutionError(message) from ee
                         else:
-                            return (gout + "\n" + gerr), (gerr + "\n" + excs)
+                            return (gout + "\n" + gerr), (gerr + "\n" + excs), None
 
                     if chdir is not None:
                         os.chdir(current)
@@ -227,7 +236,11 @@ def run_python_script(script, params=None, comment=None, setsysvar=None, process
 
         gout = sout.getvalue()
         gerr = serr.getvalue()
-        return gout, gerr
+        avoid = {"__runpython____WD__",
+                 "__runpython____k__", "__runpython____w__"}
+        context = {k[13:]: v for k, v in globs.items() if k.startswith(
+            "__runpython__") and k not in avoid}
+        return gout, gerr, context
 
 
 class runpython_node(nodes.Structural, nodes.Element):
@@ -278,6 +291,8 @@ class RunPythonDirective(Directive):
     * ``:nopep8:`` if present, leaves the code as it is and does not apply pep8 by default,
       see @see fn remove_extra_spaces_and_pep8.
     * ``:process:`` run the script in an another process
+    * ``:restore:`` restore the local context stored in :epkg:`sphinx` application
+      by the previous call to *runpython*
     * ``:rst:`` to interpret the output, otherwise, it is considered as raw text
     * ``:setsysvar:`` adds a member to *sys* module, the module can act differently based on that information,
       if the value is left empty, *sys.enable_disabled_documented_pieces_of_code* will be be set up to *True*.
@@ -288,6 +303,8 @@ class RunPythonDirective(Directive):
     * ``:sphinx:`` by default, function `nested_parse_with_titles <http://sphinx-doc.org/extdev/markupapi.html?highlight=nested_parse>`_ is
       used to parse the output of the script, if this option is set to false,
       `public_doctree <http://code.nabla.net/doc/docutils/api/docutils/core/docutils.core.publish_doctree.html>`_.
+    * ``:store:`` stores the local context in :epkg:`sphinx` application to restore it later
+      by another call to *runpython*
     * ``:toggle:`` add a button to hide or show the code, it takes the values
       ``code`` or ``out`` or ``both``. The direction then hides the given section
       but adds a button to show it.
@@ -334,7 +351,7 @@ class RunPythonDirective(Directive):
         Options *warningout*, *toggle* were added.
 
     .. versionchanged:: 1.8
-        Options *current*, *assert* were added.
+        Options *current*, *assert*, *store*, *restore* were added.
     """
     required_arguments = 0
     optional_arguments = 0
@@ -357,6 +374,8 @@ class RunPythonDirective(Directive):
         'current': directives.unchanged,
         'assert': directives.unchanged,
         'language': directives.unchanged,
+        'store': directives.unchanged,
+        'restore': directives.unchanged,
     }
     has_content = True
     runpython_class = runpython_node
@@ -408,6 +427,8 @@ class RunPythonDirective(Directive):
             'current': 'current' in self.options and self.options['current'] in bool_set_,
             'assert': self.options.get('assert', '').strip(),
             'language': self.options.get('language', '').strip(),
+            'store': 'store' in self.options and self.options['store'] in bool_set_,
+            'restore': 'restore' in self.options and self.options['restore'] in bool_set_,
         }
 
         if p['setsysvar'] is not None and len(p['setsysvar']) == 0:
@@ -421,7 +442,16 @@ class RunPythonDirective(Directive):
             content = ["if True:"]
         else:
             content = ["def {0}():".format(name)]
+
         content.append('    ## __WD__ ##')
+
+        if p["restore"]:
+            context = getattr(env, "runpython_context", None)
+            for k in sorted(context):
+                content.append(
+                    "    {0} = globals()['__runpython__{0}']".format(k))
+        else:
+            context = None
 
         modified_content = self.modify_script_before_running(
             "\n".join(self.content))
@@ -437,6 +467,12 @@ class RunPythonDirective(Directive):
 
         for line in modified_content.split("\n"):
             content.append("    " + line)
+
+        if p["store"]:
+            content.append('    for __k__, __v__ in locals().copy().items():')
+            content.append(
+                "        globals()['__runpython__' + __k__] = __v__")
+
         if not p['process']:
             content.append("{0}()".format(name))
 
@@ -480,10 +516,18 @@ class RunPythonDirective(Directive):
         script = script.replace(
             '## __WD__ ##', "__WD__ = '{0}'".format(cs_source_dir))
 
-        out, err = run_python_script(script, comment=comment, setsysvar=p['setsysvar'],
-                                     process=p["process"], exception=p['exception'],
-                                     warningout=p['warningout'],
-                                     chdir=cs_source_dir if p['current'] else None)
+        out, err, context = run_python_script(script, comment=comment, setsysvar=p['setsysvar'],
+                                              process=p["process"], exception=p['exception'],
+                                              warningout=p['warningout'],
+                                              chdir=cs_source_dir if p['current'] else None,
+                                              context=context)
+
+        if p['store']:
+            # Stores modified local context.
+            setattr(env, "runpython_context", context)
+        else:
+            context = {}
+            setattr(env, "runpython_context", context)
 
         if out is not None:
             out = out.rstrip(" \n\r\t")

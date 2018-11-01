@@ -360,6 +360,41 @@ but let the user unhide it by clicking on a button.
     for i in range(0, 10):
         print("i=", i)
 
+The last option of *runpython* allows the user to keep
+some context from one execution to the next one.
+
+.. sidebar:: runpython and context
+
+    ::
+
+        .. runpython::
+            :showcode:
+            :store:
+
+            a_to_keep = 5
+            print("a_to_keep", "=", a_to_keep)
+
+        .. runpython::
+            :showcode:
+            :restore:
+
+            a_to_keep += 5
+            print("a_to_keep", "=", a_to_keep)
+
+.. runpython::
+    :showcode:
+    :store:
+
+    a_to_keep = 5
+    print("a_to_keep", "=", a_to_keep)
+
+.. runpython::
+    :showcode:
+    :restore:
+
+    a_to_keep += 5
+    print("a_to_keep", "=", a_to_keep)
+
 .. index:: sphinx-autorun
 
 `sphinx-autorun <https://pypi.org/project/sphinx-autorun/>`_ offers a similar
