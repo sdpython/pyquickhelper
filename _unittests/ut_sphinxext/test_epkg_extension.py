@@ -60,6 +60,26 @@ class TestEpkgExtension(unittest.TestCase):
         if t1 not in html:
             raise Exception(html)
 
+    def test_epkg_module_twice(self):
+        from docutils import nodes as skip_
+
+        content = """
+                    abeforea :epkg:`pandas` aaftera
+
+                    test a directive
+                    ================
+
+                    abeforea :epkg:`pandas` aaftera
+                    """.replace("                    ", "")
+        if sys.version_info[0] >= 3:
+            content = content.replace('u"', '"')
+
+        html = rst2html(content, writer="custom", keep_warnings=True,
+                        directives=None, layout="sphinx",
+                        epkg_dictionary={'pandas': 'http://pandas.pydata.org/pandas-docs/stable/generated/', })
+        self.assertIn(
+            "http://pandas.pydata.org/pandas-docs/stable/generated/", html)
+
     def test_epkg_sub(self):
         from docutils import nodes as skip_
 

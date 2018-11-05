@@ -156,7 +156,7 @@ def epkg_role(role, rawtext, text, lineno, inliner, options=None, content=None):
                     anchor, url = found()(text)
                 except Exception as e:
                     raise ValueError(
-                        "eplg accepts function or classes with __call__ overloaded. Found '{0}'".format(found)) from e
+                        "epkg accepts function or classes with __call__ overloaded. Found '{0}'".format(found)) from e
         else:
             url = found.format(*tuple(spl[1:]))
             if spl[0].startswith("*"):
@@ -164,7 +164,7 @@ def epkg_role(role, rawtext, text, lineno, inliner, options=None, content=None):
             else:
                 anchor = ".".join(spl)
 
-    extref = "`{0} <{1}>`_".format(anchor, url)
+    extref = "`{0} <{1}>`__".format(anchor, url)
     node = epkg_node(rawtext=rawtext)
     node['classes'] += ["epkg"]
 
