@@ -827,6 +827,9 @@ def build_thumbail_in_gallery(nbfile, folder_snippet, relative, rst_link, layout
         image = nb.get_thumbnail()
 
     if image is None:
+        image = nb.get_thumbnail(use_default=True)
+
+    if image is None:
         raise ValueError(
             "The snippet cannot be null, notebook='{0}'.".format(nbfile))
     name = os.path.splitext(os.path.split(nbfile)[-1])[0]

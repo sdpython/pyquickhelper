@@ -16,7 +16,7 @@ from collections import Counter
 from nbformat import NotebookNode
 from nbformat import writes
 from nbformat.reader import reads
-from ..imghelper.svg_helper import svg2img
+from ..imghelper.svg_helper import svg2img, PYQImageException
 from ..loghelper.flog import noLOG
 
 
@@ -1108,16 +1108,15 @@ class NotebookRunner(object):
                 "Wrong regular expression in '{2}':\n{0}\nMODIFIED:\n{1}".format(desc, new_desc, self._filename))
         return header, new_desc.replace('"', "")
 
-    def get_thumbnail(self, max_width=200, max_height=200):
+    def get_thumbnail(self, max_width=200, max_height=200, use_default=False):
         """
-        Processes the notebook and create one picture based on the outputs
+        Processes the notebook and creates one picture based on the outputs
         to illustrate a notebook.
 
         @param      max_width       maximum size of the thumbnail
         @param      max_height      maximum size of the thumbnail
-        @return                     string (SVG) or Image (PIL)
-
-        This functionality might not works with Python 2.7.
+        @param      use_default     force using a default image even if an even is present
+        @return                     string (:epkg:`SVG`) or Image (:epkg:`PIL`)
         """
         images = []
         cells = list(self.iter_cells())
@@ -1129,7 +1128,7 @@ class NotebookRunner(object):
                     "vnd.bokehjs_load.v0+json"):
                 self._check_thumbnail_tuple(c)
                 images.append(c)
-        if len(images) == 0:
+        if not use_default and len(images) == 0:
             for cell in cells:
                 c = self.cell_image(cell, True)
                 if c is not None and len(c) > 0 and len(c[0]) > 0:
@@ -1137,6 +1136,8 @@ class NotebookRunner(object):
                     images.append(c)
                     if len(c[0]) >= 1000:
                         break
+        if use_default:
+            images = []
         if len(images) == 0:
             # no image, we need to consider the default one
             no_image = os.path.join(
@@ -1160,7 +1161,11 @@ class NotebookRunner(object):
         if image[1] in ("vnd.plotly.v1+html", "vnd.bokehjs_exec.v0+json", "vnd.bokehjs_load.v0+json"):
             return None
         elif image[1] == 'svg':
-            img = svg2img(image[0])
+            try:
+                img = svg2img(image[0])
+            except PYQImageException:
+                # Enable to convert SVG.
+                return None            
             return self._scale_image(img, image[1], max_width=max_width, max_height=max_height)
         else:
             img = self._scale_image(
