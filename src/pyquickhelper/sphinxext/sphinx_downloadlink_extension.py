@@ -58,11 +58,15 @@ def process_downloadlink_role(role, rawtext, text, lineno, inliner, options=None
                 "Unable to interpret '{0}' for downloadlink".format(text))
             prb = inliner.problematic(rawtext, rawtext, msg)
             return [prb], [msg]
-        name = sep[0]
+        name = sep[0].strip()
         link = sep[1].strip('<>')
+        anchor = name
     else:
         name = text
         link = text
+        anchor = os.path.split(text)[-1]
+        if '::' in anchor:
+            anchor = anchor.split('::')[-1].strip()
 
     if '::' in link:
         spl = link.split('::')
@@ -85,7 +89,7 @@ def process_downloadlink_role(role, rawtext, text, lineno, inliner, options=None
     node['format'] = out
     node['filename'] = src
     node['reftarget'] = src
-    node['anchor'] = src
+    node['anchor'] = anchor
     return [node], []
 
 
@@ -209,7 +213,7 @@ class DownloadLinkFileCollector(EnvironmentCollector):
         self.check_attr(app.env)
         for node in doctree.traverse(downloadlink_node):
             format = node["format"]
-            if format != app.builder.format:
+            if format and format != app.builder.format:
                 continue
             dest = os.path.split(app.env.docname)[0]
             name = node["filename"]

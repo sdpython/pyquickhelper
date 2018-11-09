@@ -46,6 +46,7 @@ class TestDownloadlinkExtension(ExtTestCase):
         content = """
                     :downloadlink:`rst::http://f.html`
                     :downloadlink:`rst::{0}`
+                    :downloadlink:`{0} <rst::{0}>`
                     """.replace("                    ", "").format(name)
 
         out = rst2html(content,
@@ -55,7 +56,7 @@ class TestDownloadlinkExtension(ExtTestCase):
         out = out.replace("\n", " ")
         self.assertNotIn('Unknown interpreted text role', out)
         self.assertIn(
-            ':downloadlink:`test_rst_builder.py <rst::test_rst_builder.py>`', out)
+            ':downloadlink:`test_rst_builder.py', out)
         self.assertNotIn("test_rst_builder.py>`test_rst_builder.py", out)
         temp = get_temp_folder(__file__, "temp_downloadlink_rst")
         with open(os.path.join(temp, "out.rst"), "w", encoding="utf8") as f:
