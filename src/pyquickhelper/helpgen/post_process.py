@@ -394,18 +394,16 @@ def post_process_rst_output(file, html, pdf, python, slides, present, is_noteboo
     # links
     links = ['**Links:** :download:`notebook <{0}.ipynb>`'.format(noext)]
     if html:
-        links.append(
-            '`html <../_downloads/{0}2html.html>`_ :download:`. <{0}2html.html>`'.format(noext))
+        links.append(':downloadlink:`html <{0}2html.html>`'.format(noext))
     if pdf:
         links.append(':download:`PDF <{0}.pdf>`'.format(noext))
     if python:
         links.append(':download:`python <{0}.py>`'.format(noext))
     if slides:
-        links.append(
-            '`slides <../_downloads/{0}.slides.html>`_ :download:`. <{0}.slides.html>`'.format(noext))
+        links.append(':downloadlink:`slides <{0}.slides.html>`'.format(noext))
     if present:
         links.append(
-            '`presentation <../_downloads/{0}.slides2p.html>`_ :download:`. <{0}.slides2p.html>`'.format(noext))
+            ':downloadlink:`slides(2) <{0}.slides2p.html>`'.format(noext))
 
     if github:
         if notebook is None:
@@ -675,8 +673,9 @@ def post_process_latex(st, doall, info=None, latex_book=False, exc=True,
             sub2 = sub[-10:]
             records.append((info, p1, p2, sub, sub2, ""))
         if len(records) > 0:
-            messages = [str(i) + ":" + ("unexpected \\$ in a latex file:\n    {0}\n    at position: {1},{2}\n" +
-                                        "    substring: {3}\n    around: {4}\n    temp=[{5}]").format(*rec)
+            messages = [str(i) + ":" + ("unexpected \\$ in a latex file:\n    {0}\n" +
+                                        "at position: {1},{2}\n    substring: {3}\n    " +
+                                        "around: {4}\n    temp=[{5}]").format(*rec)
                         for i, rec in enumerate(records)]
             for mes in messages:
                 warnings.warn(mes, UserWarning)

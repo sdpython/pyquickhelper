@@ -1165,7 +1165,7 @@ class NotebookRunner(object):
                 img = svg2img(image[0])
             except PYQImageException:
                 # Enable to convert SVG.
-                return None            
+                return None
             return self._scale_image(img, image[1], max_width=max_width, max_height=max_height)
         else:
             img = self._scale_image(

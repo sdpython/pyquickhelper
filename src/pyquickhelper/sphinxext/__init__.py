@@ -32,6 +32,7 @@ from .sphinx_postcontents_extension import PostContentsDirective, postcontents_n
 from .sphinx_tocdelay_extension import TocDelayDirective, tocdelay_node
 from .sphinx_youtube_extension import YoutubeDirective, youtube_node
 from .sphinx_sharenet_extension import ShareNetDirective, sharenet_node
+from .sphinx_downloadlink_extension import downloadlink_reference
 from .sphinx_video_extension import VideoDirective, video_node
 from .sphinx_image_extension import SimpleImageDirective, simpleimage_node
 from .sphinx_template_extension import tpl_node
@@ -56,6 +57,7 @@ from ..sphinxext.sphinx_postcontents_extension import setup as setup_postcontent
 from ..sphinxext.sphinx_runpython_extension import setup as setup_runpython
 from ..sphinxext.sphinx_runpython_extension import RunPythonDirective, runpython_node
 from ..sphinxext.sphinx_sharenet_extension import setup as setup_sharenet
+from ..sphinxext.sphinx_downloadlink_extension import setup as setup_downloadlink
 from ..sphinxext.sphinx_template_extension import setup as setup_tpl
 from ..sphinxext.sphinx_tocdelay_extension import setup as setup_tocdelay
 from ..sphinxext.sphinx_toctree_extension import setup as setup_toctree
@@ -116,7 +118,7 @@ def get_default_extensions():
                       # the rest of it
                       setup_autodoc, setup_imagesvg,
                       setup_plot, setup_image, setup_collapse,
-                      setup_video, setup_simpleimage]
+                      setup_video, setup_simpleimage, setup_downloadlink]
 
     try:
         import bokeh

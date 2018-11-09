@@ -44,6 +44,7 @@ from ..sphinxext.sphinx_postcontents_extension import PostContentsDirective
 from ..sphinxext.sphinx_tocdelay_extension import TocDelayDirective
 from ..sphinxext.sphinx_youtube_extension import YoutubeDirective
 from ..sphinxext.sphinx_sharenet_extension import ShareNetDirective, sharenet_role
+from ..sphinxext.sphinx_downloadlink_extension import downloadlink_reference
 from ..sphinxext.sphinx_video_extension import VideoDirective
 from ..sphinxext.sphinx_image_extension import SimpleImageDirective
 from ..sphinxext.sphinximages.sphinxtrib.images import ImageDirective
@@ -326,6 +327,7 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
     roles.register_canonical_role("githublink", githublink_role)
     roles.register_canonical_role("tpl", tpl_role)
     roles.register_canonical_role("epkg", epkg_role)
+    roles.register_canonical_role("downloadlink", downloadlink_reference)
 
     if "conf" in sys.modules:
         raise ImportError("module conf was imported, this function expects not to:\n{0}".format(
@@ -526,8 +528,9 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
     fLOG("[generate_help_sphinx] ROOT:", root_sphinxdoc)
     fLOG("[generate_help_sphinx] BUILD:", build_paths)
     for html_static_path in html_static_paths:
-        install_javascript_tools(
+        found = install_javascript_tools(
             root_sphinxdoc, dest=html_static_path, fLOG=fLOG)
+        fLOG("[generate_help_sphinx] [javascript]: '{0}'".format(found))
 
     ############################
     # we copy the extended styles (notebook, snippets)
@@ -994,26 +997,28 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
     #########################################################
     datetime_rows = [("javascript", datetime.now())]
     # for every layout
-    fLOG("[generate_help_sphinx] [revealjs] JAVASCRIPT: COPY", html_static_paths)
-    fLOG("[generate_help_sphinx] [revealjs] BUILD:", build_paths)
+    fLOG("[generate_help_sphinx] [reveal.js] JAVASCRIPT: COPY", html_static_paths)
+    fLOG("[generate_help_sphinx] [reveal.js] BUILD:", build_paths)
     for subf in ["html"]:
         for html_static_path, build_path in zip(html_static_paths, build_paths):
-            builddoc = os.path.join(build_path, subf, "_downloads")
-            if not os.path.exists(builddoc):
-                builddoc = os.path.join(build_path, "..", subf, "_downloads")
-            if not os.path.exists(builddoc):
-                builddoc = os.path.join(build_path, "_downloads")
-            if os.path.exists(builddoc):
-                # no download, there is probably no notebooks
-                # so it is not needed
-                fLOG("[generate_help_sphinx] copy javascript static files from",
-                     html_static_path, "to", builddoc)
-                copy = synchronize_folder(
-                    html_static_path, builddoc, copy_1to2=True, fLOG=fLOG)
-                fLOG("[generate_help_sphinx] javascript",
-                     len(copy), "files copied")
-            else:
-                fLOG("[generate_help_sphinx] [revealjs] no need, no folder", builddoc)
+            for sname in ["_downloads", "notebooks"]:
+                builddoc = os.path.join(build_path, subf, sname)
+                if not os.path.exists(builddoc):
+                    builddoc = os.path.join(build_path, "..", subf, sname)
+                if not os.path.exists(builddoc):
+                    builddoc = os.path.join(build_path, sname)
+                if os.path.exists(builddoc):
+                    # no download, there is probably no notebooks
+                    # so it is not needed
+                    fLOG("[generate_help_sphinx] copy javascript static files from",
+                         html_static_path, "to", builddoc)
+                    copy = synchronize_folder(
+                        html_static_path, builddoc, copy_1to2=True, fLOG=fLOG)
+                    fLOG("[generate_help_sphinx] javascript",
+                         len(copy), "files copied")
+                else:
+                    fLOG(
+                        "[generate_help_sphinx] [reveal.js] no need, no folder", builddoc)
 
     ######
     # next

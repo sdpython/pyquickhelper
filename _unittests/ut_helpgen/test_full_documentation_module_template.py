@@ -274,8 +274,14 @@ class TestSphinxFullDocumentationModuleTemplate(unittest.TestCase):
             rev = [os.path.join(root, "_doc", "sphinxdoc", "source", "phdoc_static", "reveal.js"),
                    os.path.join(root, "_doc", "sphinxdoc", "build",
                                 "html", "_downloads", "reveal.js"),
+                   os.path.join(root, "_doc", "sphinxdoc", "build",
+                                "html", "notebooks", "reveal.js"),
                    os.path.join(root, "_doc", "sphinxdoc", "build", "html",
-                                "_downloads", "Python_logo_and_wordmark.png")]
+                                "_downloads", "Python_logo_and_wordmark.png"),
+                   os.path.join(root, "_doc", "sphinxdoc", "build", "html",
+                                "notebooks", "custom_notebooks.slides.html"),
+                   os.path.join(root, "_doc", "sphinxdoc", "build", "html",
+                                "notebooks", "custom_notebooks.html")]
             for r in rev:
                 if not os.path.exists(r):
                     raise FileNotFoundError(r)

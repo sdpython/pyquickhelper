@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 @file
-@brief Defines a :epkg:`sphinx` extension to display bigger text
+@brief Defines a :epkg:`sphinx` extension to display bigger text.
 """
 import html as cgiesc
 import sphinx
@@ -21,7 +21,7 @@ else:
 class bigger_node(nodes.Element):
 
     """
-    defines *bigger* node
+    Defines *bigger* node.
     """
     pass
 

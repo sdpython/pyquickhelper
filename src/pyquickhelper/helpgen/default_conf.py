@@ -837,7 +837,7 @@ def custom_setup(app, author):
     from ..sphinxext.sphinx_mathdef_extension import setup as setup_mathdef
     from ..sphinxext.sphinx_nbref_extension import setup as setup_nbref
     from ..sphinxext.sphinx_runpython_extension import setup as setup_runpython
-    from ..sphinxext.sphinx_sharenet_extension import setup as setup_sharenet
+    from ..sphinxext.sphinx_downloadlink_extension import setup as setup_downloadlink
     from ..sphinxext.sphinx_video_extension import setup as setup_video
     from ..sphinxext.sphinx_image_extension import setup as setup_simpleimage
     from ..sphinxext.sphinx_todoext_extension import setup as setup_todoext
@@ -847,11 +847,13 @@ def custom_setup(app, author):
     from ..sphinxext.sphinx_cmdref_extension import setup as setup_cmdref
     from ..sphinxext.sphinx_postcontents_extension import setup as setup_postcontents
     from ..sphinxext.sphinx_tocdelay_extension import setup as setup_tocdelay
+    from ..sphinxext.sphinx_sharenet_extension import setup as setup_sharenet
     from ..sphinxext.sphinx_youtube_extension import setup as setup_youtube
     from ..sphinxext.sphinx_epkg_extension import setup as setup_epkg
     from ..sphinxext import setup_image
     from ..sphinxext.sphinx_toctree_extension import setup as setup_toctree
     from ..sphinxext.sphinx_collapse_extension import setup as setup_collapse
+    from ..sphinxext.sphinx_downloadlink_extension import setup as setup_downloadlink
 
     try:
         app.connect("autodoc-skip-member", skip)
@@ -868,7 +870,8 @@ def custom_setup(app, author):
             setup_faqref, setup_nbref, setup_cmdref,
             setup_signature, setup_docassert, setup_postcontents,
             setup_tocdelay, setup_youtube, setup_tpl,
-            setup_epkg, setup_image, setup_collapse]
+            setup_epkg, setup_image, setup_collapse,
+            setup_downloadlink]
 
     for ext in exts:
         meta = ext(app)

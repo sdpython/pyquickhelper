@@ -5,9 +5,12 @@
 History
 =======
 
-current - 2018-11-02 - 0.00Mb
+current - 2018-11-09 - 0.00Mb
 =============================
 
+* `205`: Slides conversion are missing from the documentation (2018-11-09)
+* `204`: Fix missing snippet for notebook when it fails finding one (2018-11-06)
+* `203`: make epkg links anonymous to avoid warning about duplicated target (2018-11-05)
 * `202`: make runpython keep context from one execution to the next one (2018-11-01)
 * `201`: handle language options in runpython and rst builder (2018-11-01)
 * `200`: ignore issue E402 when applying autopep8 (move import at the top of the file) (2018-10-28)
