@@ -20,7 +20,16 @@ try:
     from sphinx.util import DownloadFiles
 except ImportError:
     # Sphinx < 1.8
-    pass
+    class DownloadFiles(dict):
+        def purge_doc(self, *args, **kwargs):
+            pass
+
+        def merge_other(self, *args, **kwargs):
+            pass
+
+        def add_file(self, docname, ref_filename):
+            self[docname] = (docname, ref_filename)
+
 
 if is_html5_writer_available():
     from sphinx.writers.html5 import HTML5Translator as HTMLTranslator
@@ -262,7 +271,7 @@ def copy_download_files(app, exc):
                 name = os.path.join(builder.srcdir, src)
                 try:
                     copyfile(name, dest)
-                except FileNotFoundError as e:
+                except FileNotFoundError:
                     logger = logging.getLogger("DownloadLink")
                     mes = "Builder format '{0}'-'{3}', unable to copy file '{1}' into {2}'".format(
                         builder.format, name, dest, builder.__class__.__name__)
