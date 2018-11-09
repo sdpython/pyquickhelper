@@ -32,7 +32,7 @@ from .sphinx_postcontents_extension import PostContentsDirective, postcontents_n
 from .sphinx_tocdelay_extension import TocDelayDirective, tocdelay_node
 from .sphinx_youtube_extension import YoutubeDirective, youtube_node
 from .sphinx_sharenet_extension import ShareNetDirective, sharenet_node
-from .sphinx_downloadlink_extension import downloadlink_reference
+from .sphinx_downloadlink_extension import process_downloadlink_role
 from .sphinx_video_extension import VideoDirective, video_node
 from .sphinx_image_extension import SimpleImageDirective, simpleimage_node
 from .sphinx_template_extension import tpl_node

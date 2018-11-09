@@ -31,7 +31,7 @@ from .process_notebooks import process_notebooks, build_notebooks_gallery, build
 from .sphinx_helper import post_process_html_nb_output_static_file
 from .install_js_dep import install_javascript_tools
 from .sphinx_main_helper import setup_environment_for_help, get_executables_path, generate_changes_repo
-from .sphinx_main_helper import compile_latex_output_final, replace_placeholder_by_recent_blogpost, enumerate_copy_images_for_slides
+from .sphinx_main_helper import compile_latex_output_final, replace_placeholder_by_recent_blogpost
 from .sphinx_main_helper import format_history
 from .sphinx_main_verification import verification_html_format
 from .sphinx_main_missing_html_files import add_missing_files
@@ -44,7 +44,7 @@ from ..sphinxext.sphinx_postcontents_extension import PostContentsDirective
 from ..sphinxext.sphinx_tocdelay_extension import TocDelayDirective
 from ..sphinxext.sphinx_youtube_extension import YoutubeDirective
 from ..sphinxext.sphinx_sharenet_extension import ShareNetDirective, sharenet_role
-from ..sphinxext.sphinx_downloadlink_extension import downloadlink_reference
+from ..sphinxext.sphinx_downloadlink_extension import process_downloadlink_role
 from ..sphinxext.sphinx_video_extension import VideoDirective
 from ..sphinxext.sphinx_image_extension import SimpleImageDirective
 from ..sphinxext.sphinximages.sphinxtrib.images import ImageDirective
@@ -327,7 +327,7 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
     roles.register_canonical_role("githublink", githublink_role)
     roles.register_canonical_role("tpl", tpl_role)
     roles.register_canonical_role("epkg", epkg_role)
-    roles.register_canonical_role("downloadlink", downloadlink_reference)
+    roles.register_canonical_role("downloadlink", process_downloadlink_role)
 
     if "conf" in sys.modules:
         raise ImportError("module conf was imported, this function expects not to:\n{0}".format(
@@ -1045,13 +1045,13 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
             post_process_html_nb_output_static_file(
                 os.path.join(build, "html", "_downloads"), fLOG=fLOG)
 
-    for build_path in build_paths:
-        src = os.path.join(build_path, "_images")
-        dest = os.path.join(build_path, "_downloads")
-        if os.path.exists(src) and os.path.exists(dest):
-            fLOG("[generate_help_sphinx] [imgs] look for images in ", src)
-            for img in enumerate_copy_images_for_slides(src, dest):
-                fLOG("[generate_help_sphinx] [imgs]    copy image for slides:", img)
+    # for build_path in build_paths:
+    #     src = os.path.join(build_path, "_images")
+    #     dest = os.path.join(build_path, "notebooks")
+    #     if os.path.exists(src) and os.path.exists(dest):
+    #         fLOG("[generate_help_sphinx] [imgs] look for images in ", src)
+    #         for img in enumerate_copy_images_for_slides(src, dest):
+    #             fLOG("[generate_help_sphinx] [imgs]    copy image for slides:", img)
 
     ######
     # copy pdf to html

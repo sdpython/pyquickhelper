@@ -312,9 +312,6 @@ class _WriterWithCustomDirectives:
         """
         @param      base_class  base class
         @param      app         Sphinx application
-
-        ..versionchanged:: 1.5
-            Parameter *app* was added.
         """
         if app is None:
             self.app = _CustomSphinx(srcdir=None, confdir=None, outdir=None, doctreedir=None,

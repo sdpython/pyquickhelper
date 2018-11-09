@@ -45,10 +45,10 @@ from docutils import nodes, writers
 from sphinx import addnodes
 from sphinx.locale import admonitionlabels, versionlabels, _
 from sphinx.writers.text import TextTranslator, MAXWIDTH, STDINDENT
-from ..sphinxext.sphinx_bigger_extension import visit_bigger_node_rst, depart_bigger_node_rst
-from ..sphinxext.sphinx_collapse_extension import visit_collapse_node_rst, depart_collapse_node_rst
-from ..sphinxext.sphinx_sharenet_extension import visit_sharenet_node_rst, depart_sharenet_node_rst
-from ..sphinxext.sphinx_downloadlink_extension import visit_downloadlink_reference_rst, depart_downloadlink_reference_rst
+from .sphinx_bigger_extension import visit_bigger_node_rst, depart_bigger_node_rst
+from .sphinx_collapse_extension import visit_collapse_node_rst, depart_collapse_node_rst
+from .sphinx_sharenet_extension import visit_sharenet_node_rst, depart_sharenet_node_rst
+from .sphinx_downloadlink_extension import visit_downloadlink_node_rst, depart_downloadlink_node_rst
 from ._sphinx_common_builder import CommonSphinxWriterHelpers
 
 

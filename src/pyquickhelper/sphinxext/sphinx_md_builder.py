@@ -48,6 +48,7 @@ from sphinx import addnodes
 from sphinx.locale import admonitionlabels, versionlabels, _
 from sphinx.writers.text import TextTranslator, MAXWIDTH, STDINDENT
 from ._sphinx_common_builder import CommonSphinxWriterHelpers
+from .sphinx_downloadlink_extension import visit_downloadlink_node_md, depart_downloadlink_node_md
 
 
 class MdTranslator(TextTranslator, CommonSphinxWriterHelpers):
@@ -941,6 +942,12 @@ class MdTranslator(TextTranslator, CommonSphinxWriterHelpers):
 
     def depart_CodeNode(self, node):
         pass
+
+    def visit_downloadlink_node(self, node):
+        visit_downloadlink_node_md(self, node)
+
+    def depart_downloadlink_node(self, node):
+        depart_downloadlink_node_md(self, node)
 
     def visit_runpythonthis_node(self, node):
         # for unit test.

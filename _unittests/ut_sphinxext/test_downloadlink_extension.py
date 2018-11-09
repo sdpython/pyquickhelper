@@ -23,7 +23,7 @@ except ImportError:
 
 from src.pyquickhelper.pycode import get_temp_folder, ExtTestCase
 from src.pyquickhelper.helpgen import rst2html
-from src.pyquickhelper.sphinxext import downloadlink_reference
+from src.pyquickhelper.sphinxext import process_downloadlink_role
 from docutils.parsers.rst.roles import register_canonical_role
 
 if sys.version_info[0] == 2:
@@ -33,7 +33,7 @@ if sys.version_info[0] == 2:
 class TestDownloadlinkExtension(ExtTestCase):
 
     def test_post_parse_sn(self):
-        register_canonical_role("downloadlink", downloadlink_reference)
+        register_canonical_role("downloadlink", process_downloadlink_role)
 
     def get_name(self):
         this = os.path.dirname(__file__)
@@ -52,7 +52,11 @@ class TestDownloadlinkExtension(ExtTestCase):
                        writer="rst", keep_warnings=True,
                        directives=None)
 
+        out = out.replace("\n", " ")
         self.assertNotIn('Unknown interpreted text role', out)
+        self.assertIn(
+            ':downloadlink:`test_rst_builder.py <rst::test_rst_builder.py>`', out)
+        self.assertNotIn("test_rst_builder.py>`test_rst_builder.py", out)
         temp = get_temp_folder(__file__, "temp_downloadlink_rst")
         with open(os.path.join(temp, "out.rst"), "w", encoding="utf8") as f:
             f.write(out)

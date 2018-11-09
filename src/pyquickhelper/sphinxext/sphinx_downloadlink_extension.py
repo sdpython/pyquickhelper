@@ -21,7 +21,7 @@ else:
     inheritance = HTMLTranslator
 
 
-class downloadlink_reference(*addnodes.download_reference.__bases__):
+class downloadlink_node(*addnodes.download_reference.__bases__):
 
     """
     Defines *download_reference* node.
@@ -76,16 +76,20 @@ def process_downloadlink_role(role, rawtext, text, lineno, inliner, options=None
         ext = os.path.splitext(link)[-1]
         out, src = ext.strip('.'), link
 
+    if "::" in src:
+        raise RuntimeError("Value '{0}' is unexpected.".format(src))
+
     name = name.strip()
-    node = downloadlink_reference(text=name, raw=text)
+    node = downloadlink_node(text=src, raw=text)
     node['class'] = 'internal'
     node['format'] = out
     node['filename'] = src
     node['reftarget'] = src
+    node['anchor'] = src
     return [node], []
 
 
-def visit_downloadlink_reference_html(self, node):
+def visit_downloadlink_node_html(self, node):
     """
     Converts node *downloadlink* into :epkg:`html`.
     """
@@ -110,64 +114,74 @@ def visit_downloadlink_reference_html(self, node):
         self.context.append('')
 
 
-def depart_downloadlink_reference_html(self, node):
+def depart_downloadlink_node_html(self, node):
     """
     Converts node *downloadlink* into :epkg:`html`.
     """
     self.body.append(self.context.pop())
 
 
-def visit_downloadlink_reference_latex(self, node):
+def visit_downloadlink_node_latex(self, node):
     """
     Does notthing.
     """
     pass
 
 
-def depart_downloadlink_reference_latex(self, node):
+def depart_downloadlink_node_latex(self, node):
     """
     Does notthing.
     """
     pass
 
 
-def visit_downloadlink_reference_text(self, node):
+def visit_downloadlink_node_text(self, node):
     """
     Does notthing.
     """
-    pass
+    if self.output_format in ('rst', 'md', "latex", "elatex"):
+        raise RuntimeError("format should not be '{0}' for base_class {1}".format(
+            self.output_format, self.base_class))
 
 
-def depart_downloadlink_reference_text(self, node):
+def depart_downloadlink_node_text(self, node):
     """
     Does notthing.
     """
-    pass
+    if self.output_format in ('rst', 'md', "latex", "elatex"):
+        raise RuntimeError(
+            "format should not be '{0}'".format(self.output_format))
 
 
-def visit_downloadlink_reference_rst(self, node):
+def visit_downloadlink_node_rst(self, node):
     """
     Converts node *downloadlink* into :epkg:`rst`.
     """
-    self.add_text(":downloadlink:`{0} <{1}>`".format(
-        node["anchor"], node["filename"]))
+    if node['format']:
+        self.add_text(":downloadlink:`{0} <{1}::{2}>`".format(
+            node["anchor"], node["format"], node["filename"]))
+    else:
+        self.add_text(":downloadlink:`{0} <{0}::{1}>`".format(
+            node["anchor"], node["filename"]))
+    raise nodes.SkipNode
 
 
-def depart_downloadlink_reference_rst(self, node):
+def depart_downloadlink_node_rst(self, node):
     """
     Converts node *downloadlink* into :epkg:`rst`.
     """
     pass
 
 
-def visit_downloadlink_reference_md(self, node):
+def visit_downloadlink_node_md(self, node):
     """
     Converts node *downloadlink* into :epkg:`md`.
     """
     self.add_text("[{0}]({1})".format(node["anchor"], node["filename"]))
+    raise nodes.SkipNode
 
 
-def depart_downloadlink_reference_md(self, node):
+def depart_downloadlink_node_md(self, node):
     """
     Converts node *downloadlink* into :epkg:`md`.
     """
@@ -193,7 +207,7 @@ class DownloadLinkFileCollector(EnvironmentCollector):
         # type: (Sphinx, nodes.Node) -> None
         """Process downloadable file paths. """
         self.check_attr(app.env)
-        for node in doctree.traverse(downloadlink_reference):
+        for node in doctree.traverse(downloadlink_node):
             format = node["format"]
             if format != app.builder.format:
                 continue
@@ -240,23 +254,23 @@ def setup(app):
     app.add_env_collector(DownloadLinkFileCollector)
 
     if hasattr(app, "add_mapping"):
-        app.add_mapping('downloadlink', downloadlink_reference)
+        app.add_mapping('downloadlink', downloadlink_node)
 
     app.connect('build-finished', copy_download_files)
-    app.add_node(downloadlink_reference,
-                 html=(visit_downloadlink_reference_html,
-                       depart_downloadlink_reference_html),
-                 epub=(visit_downloadlink_reference_html,
-                       depart_downloadlink_reference_html),
-                 latex=(visit_downloadlink_reference_latex,
-                        depart_downloadlink_reference_latex),
-                 elatex=(visit_downloadlink_reference_latex,
-                         depart_downloadlink_reference_latex),
-                 text=(visit_downloadlink_reference_text,
-                       depart_downloadlink_reference_text),
-                 md=(visit_downloadlink_reference_md,
-                     depart_downloadlink_reference_md),
-                 rst=(visit_downloadlink_reference_rst, depart_downloadlink_reference_rst))
+    app.add_node(downloadlink_node,
+                 html=(visit_downloadlink_node_html,
+                       depart_downloadlink_node_html),
+                 epub=(visit_downloadlink_node_html,
+                       depart_downloadlink_node_html),
+                 latex=(visit_downloadlink_node_latex,
+                        depart_downloadlink_node_latex),
+                 elatex=(visit_downloadlink_node_latex,
+                         depart_downloadlink_node_latex),
+                 text=(visit_downloadlink_node_text,
+                       depart_downloadlink_node_text),
+                 md=(visit_downloadlink_node_md,
+                     depart_downloadlink_node_md),
+                 rst=(visit_downloadlink_node_rst, depart_downloadlink_node_rst))
 
     app.add_role('downloadlink', process_downloadlink_role)
     return {'version': sphinx.__display_version__, 'parallel_read_safe': True}
