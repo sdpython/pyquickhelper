@@ -2,6 +2,9 @@
 """
 @file
 @brief Defines a :epkg:`sphinx` extension to show a link instead of downloading it.
+This extension does not work for :epkg:`Sphinx` < 1.8.
+
+.. versionadded:: 1.8
 """
 import os
 import sphinx
@@ -45,6 +48,8 @@ def process_downloadlink_role(role, rawtext, text, lineno, inliner, options=None
     :param inliner: The inliner instance that called us.
     :param options: Directive options for customization.
     :param content: The directive content for customization.
+
+    The role only works for :epkg:`Sphinx` 1.8+.
     """
     if options is None:
         options = {}

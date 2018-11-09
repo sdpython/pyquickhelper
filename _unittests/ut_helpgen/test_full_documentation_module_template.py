@@ -277,7 +277,7 @@ class TestSphinxFullDocumentationModuleTemplate(unittest.TestCase):
                    os.path.join(root, "_doc", "sphinxdoc", "build",
                                 "html", "notebooks", "reveal.js"),
                    os.path.join(root, "_doc", "sphinxdoc", "build", "html",
-                                "_downloads", "Python_logo_and_wordmark.png"),
+                                "notebooks", "Python_logo_and_wordmark.png"),
                    os.path.join(root, "_doc", "sphinxdoc", "build", "html",
                                 "notebooks", "custom_notebooks.slides.html"),
                    os.path.join(root, "_doc", "sphinxdoc", "build", "html",

@@ -7,6 +7,8 @@ import sys
 import os
 import unittest
 import warnings
+from distutils.version import StrictVersion
+import sphinx
 
 try:
     import src
@@ -41,6 +43,7 @@ class TestDownloadlinkExtension(ExtTestCase):
         dest = os.path.join(this, name)
         return dest.replace("\\", "/")
 
+    @unittest.skipIf(StrictVersion(sphinx.__version__) < StrictVersion(1.8))
     def test_downloadlink_rst(self):
         name = self.get_name()
         content = """
@@ -62,6 +65,7 @@ class TestDownloadlinkExtension(ExtTestCase):
         with open(os.path.join(temp, "out.rst"), "w", encoding="utf8") as f:
             f.write(out)
 
+    @unittest.skipIf(StrictVersion(sphinx.__version__) < StrictVersion(1.8))
     def test_downloadlink_md(self):
         name = self.get_name()
         content = """
@@ -78,6 +82,7 @@ class TestDownloadlinkExtension(ExtTestCase):
         with open(os.path.join(temp, "out.rst"), "w", encoding="utf8") as f:
             f.write(out)
 
+    @unittest.skipIf(StrictVersion(sphinx.__version__) < StrictVersion(1.8))
     def test_downloadlink_html(self):
         name = self.get_name()
         content = """

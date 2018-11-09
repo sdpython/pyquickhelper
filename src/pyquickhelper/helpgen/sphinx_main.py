@@ -32,7 +32,7 @@ from .sphinx_helper import post_process_html_nb_output_static_file
 from .install_js_dep import install_javascript_tools
 from .sphinx_main_helper import setup_environment_for_help, get_executables_path, generate_changes_repo
 from .sphinx_main_helper import compile_latex_output_final, replace_placeholder_by_recent_blogpost
-from .sphinx_main_helper import format_history
+from .sphinx_main_helper import format_history, enumerate_copy_images_for_slides
 from .sphinx_main_verification import verification_html_format
 from .sphinx_main_missing_html_files import add_missing_files
 from .style_css_template import style_figure_notebook
@@ -1045,13 +1045,13 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
             post_process_html_nb_output_static_file(
                 os.path.join(build, "html", "_downloads"), fLOG=fLOG)
 
-    # for build_path in build_paths:
-    #     src = os.path.join(build_path, "_images")
-    #     dest = os.path.join(build_path, "notebooks")
-    #     if os.path.exists(src) and os.path.exists(dest):
-    #         fLOG("[generate_help_sphinx] [imgs] look for images in ", src)
-    #         for img in enumerate_copy_images_for_slides(src, dest):
-    #             fLOG("[generate_help_sphinx] [imgs]    copy image for slides:", img)
+    for build_path in build_paths:
+        src = os.path.join(build_path, "_images")
+        dest = os.path.join(build_path, "notebooks")
+        if os.path.exists(src) and os.path.exists(dest):
+            fLOG("[generate_help_sphinx] [imgs] look for images in ", src)
+            for img in enumerate_copy_images_for_slides(src, dest):
+                fLOG("[generate_help_sphinx] [imgs]    copy image for slides:", img)
 
     ######
     # copy pdf to html
