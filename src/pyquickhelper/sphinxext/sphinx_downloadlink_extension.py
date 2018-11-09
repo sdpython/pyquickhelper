@@ -13,6 +13,7 @@ from sphinx import addnodes
 from sphinx.util.docutils import is_html5_writer_available
 from sphinx.environment.collectors import EnvironmentCollector
 from sphinx.util import status_iterator, relative_path, ensuredir, copyfile
+from sphinx.util import logging
 from sphinx.locale import __
 
 try:
@@ -259,7 +260,13 @@ def copy_download_files(app, exc):
                 shortname = os.path.split(src)[-1]
                 dest = os.path.join(dest, shortname)
                 name = os.path.join(builder.srcdir, src)
-                copyfile(name, dest)
+                try:
+                    copyfile(name, dest)
+                except FileNotFoundError as e:
+                    logger = logging.getLogger("DownloadLink")
+                    mes = "Builder format '{0}'-'{3}', unable to copy file '{1}' into {2}'".format(
+                        builder.format, name, dest, builder.__class__.__name__)
+                    logger.warning(mes)
 
 
 def setup(app):
