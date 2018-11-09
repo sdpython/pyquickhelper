@@ -232,7 +232,7 @@ It looks into the page and adds a link to each local sections.
 *runpython*: execute a script
 +++++++++++++++++++++++++++++
 
-Location: :class:`RunPythonDirective <pyquickhelper.sphinxext.sphinxext_runpython_extension.RunPythonDirective>`.
+Location: :py:class:`RunPythonDirective <pyquickhelper.sphinxext.sphinxext_runpython_extension.RunPythonDirective>`.
 
 In *conf.py*:
 
