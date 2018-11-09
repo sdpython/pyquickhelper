@@ -285,8 +285,10 @@ class TestSphinxFullDocumentationModuleTemplate(unittest.TestCase):
             for r in rev:
                 if not os.path.exists(r):
                     found = os.listdir(os.path.dirname(r))
+                    found2 = os.listdir(os.path.dirname(r.replace("build", "source")))
                     raise FileNotFoundError(
-                        "Unable to find '{0}' in\n{1}".format(r, "\n".join(found)))
+                        "Unable to find '{0}' in\n{1}----\n{2}".format(
+                            r, "\n".join(sorted(found)), "\n".join(sorted(found2))))
 
             history = os.path.join(
                 root, "_doc", "sphinxdoc", "build", "html", "HISTORY.html")
