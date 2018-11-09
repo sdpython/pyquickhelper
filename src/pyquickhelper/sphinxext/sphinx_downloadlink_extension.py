@@ -12,8 +12,14 @@ from docutils import nodes
 from sphinx import addnodes
 from sphinx.util.docutils import is_html5_writer_available
 from sphinx.environment.collectors import EnvironmentCollector
-from sphinx.util import DownloadFiles, status_iterator, relative_path, ensuredir, copyfile
+from sphinx.util import status_iterator, relative_path, ensuredir, copyfile
 from sphinx.locale import __
+
+try:
+    from sphinx.util import DownloadFiles
+except ImportError:
+    # Sphinx < 1.8
+    pass
 
 if is_html5_writer_available():
     from sphinx.writers.html5 import HTML5Translator as HTMLTranslator
