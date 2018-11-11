@@ -14,3 +14,8 @@ templating
 ++++++++++
 
 .. autosignature:: pyquickhelper.texthelper.templating.apply_template
+
+versioning
+++++++++++
+
+.. autosignature:: pyquickhelper.texthelper.version_helper.compare_module_version

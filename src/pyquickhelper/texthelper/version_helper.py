@@ -34,6 +34,10 @@ def compare_module_version(num, vers):
     @param      num     first version
     @param      vers    second version
     @return             -1, 0, 1
+
+    This function implements something similar to
+    *StrictVersion* (from *distutils*) but
+    probably more simple.
     """
     if num is None:
         if vers is None:
