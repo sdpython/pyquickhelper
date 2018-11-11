@@ -842,3 +842,31 @@ To use it, just add it to the list of extensions in ``conf.py``:
 
     extensions = [ ...
         'pyquickhelper.sphinxext.sphinx_rst_builder']
+
+*downloadlink*: link to see
++++++++++++++++++++++++++++
+
+Location: :func:`downloadlink <pyquickhelper.sphinxext.sphinx_downloadlink_extension.process_downloadlink_role>`.
+
+In *conf.py*:
+
+::
+
+    extensions = [ ...
+        'pyquickhelper.sphinxext.sphinx_downloadlink_extension']
+
+The creates a link to file not in :epkg:`rst` format.
+The following links copies the linked file but the user
+is not pushed to download it if clicked.
+The file is copied close to the source file which references it.
+
+:downloadlink:`html::example.txt`
+
+.. sidebar:: downloadlink
+
+    ::
+
+        :downloadlink:`html::example.txt`
+
+The first before ``::`` indicates which output format
+should see it.

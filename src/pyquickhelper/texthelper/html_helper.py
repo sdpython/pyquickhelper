@@ -8,7 +8,7 @@ import base64
 
 def html_in_frame(htext, style="width:100%;height:100%;"):
     """
-    insert HTML text into a frame in binary format
+    Inserts :epkg:`HTML` text into a frame in binary format.
 
     @param      htext           string to clean
     @param      style           HTML style

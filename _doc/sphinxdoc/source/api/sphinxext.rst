@@ -67,6 +67,8 @@ execution
 style, content
 ++++++++++++++
 
+.. autosignature:: pyquickhelper.sphinxext.sphinx_downloadlink_extension.process_downloadlink_role
+
 .. autosignature:: pyquickhelper.sphinxext.sphinx_bigger_extension.bigger_role
 
 .. autosignature:: pyquickhelper.sphinxext.sphinx_collapse_extension.CollapseDirective

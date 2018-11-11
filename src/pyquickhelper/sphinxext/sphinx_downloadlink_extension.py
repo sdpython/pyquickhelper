@@ -51,11 +51,15 @@ class downloadlink_node(*addnodes.download_reference.__bases__):
 def process_downloadlink_role(role, rawtext, text, lineno, inliner, options=None, content=None):
     """
     Defines custom role *downloadlink*. The following instructions defines
-    a link which can be displayed.
+    a link which can be displayed or hidden based on the output format.
+    The following directive creates a link to ``page.html`` only
+    for the HTML output, it also copies the files next to the source
+    and not in the folder ``_downloads``. The link does not push the user
+    to download the file but to see it.
 
     ::
 
-        :downloadlink:`html:page.html`
+        :downloadlink:`html::page.html`
 
     :param role: The role name used in the document.
     :param rawtext: The entire markup snippet, with role.
