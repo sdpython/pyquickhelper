@@ -9,7 +9,7 @@ import unicodedata
 
 def remove_diacritics(input_str):
     """
-    remove diacritics
+    Removes diacritics.
 
     @param      input_str       string to clean
     @return                     cleaned string

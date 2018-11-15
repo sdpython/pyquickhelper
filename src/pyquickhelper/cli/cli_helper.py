@@ -176,7 +176,9 @@ def create_cli_argument(parser, param, doc, names):
             parser.add_argument(*pnames, type=typ, help=doc)
     else:
         raise NotImplementedError(
-            "typ='{0}' not supported (parameter '{1}')".format(typ, p))
+            "typ='{0}' not supported (parameter '{1}'). \n"
+            "None should be replaced by an empty string \n"
+            "as empty value are received that way.".format(typ, p))
 
 
 def call_cli_function(f, args=None, parser=None, fLOG=print, skip_parameters=('fLOG',),
