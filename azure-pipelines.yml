@@ -17,7 +17,7 @@ jobs:
     displayName: 'Install tools'
   - script: pip install -r requirements.txt
     displayName: 'Install requirements'
-  - script: python setup.py unittest
+  - script: python setup.py unittests
     displayName: 'Runs unit tests'
   - script: python setup.py bdist_wheel
     displayName: 'Build package'
