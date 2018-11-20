@@ -24,9 +24,10 @@ except ImportError:
 
 from src.pyquickhelper.loghelper.flog import fLOG
 import src.pyquickhelper.helpgen.utils_sphinx_doc as utils_sphinx_doc
+from src.pyquickhelper.pycode import ExtTestCase
 
 
-class TestSphinxDoc2 (unittest.TestCase):
+class TestSphinxDoc2(ExtTestCase):
 
     def test_src_import(self):
         """for pylint"""
@@ -69,12 +70,12 @@ class TestSphinxDoc2 (unittest.TestCase):
                                                            additional_sys_path=[],
                                                            fLOG=fLOG)
 
-        assert len(rst) > 0
+        self.assertNotEmpty(rst)
 
         if sys.version_info[0] == 2:
             return
 
-        assert len(store_obj) > 0
+        self.assertNotEmpty(store_obj)
         for k, v in store_obj.items():
             fLOG("test1", k, v)
 
@@ -113,21 +114,21 @@ class TestSphinxDoc2 (unittest.TestCase):
                 if _.type == "method":
                     continue
                 if "private" in _.name:
-                    assert "doc pr" in _.doc
+                    self.assertIn("doc pr", _.doc)
                 fLOG(_.type, _.name, _.doc.replace("\n", "\\n"))
             for _ in objs:
                 if _.type != "method":
                     continue
                 fLOG(_.type, _.module, _.name, _.doc.replace("\n", "\\n"))
 
-        assert ty.get("property", 0) == 1
+        self.assertEqual(ty.get("property", 0), 1)
 
         if sys.version_info[0] == 2:
             return
 
         if ty.get("staticmethod", 0) != 1:
             raise Exception("{0}".format(str(ty)))
-        assert ty["method"] > 0
+        self.assertGreater(ty["method"], 1)
 
 
 if __name__ == "__main__":

@@ -17,9 +17,15 @@ jobs:
     displayName: 'Install tools'
   - script: pip install -r requirements.txt
     displayName: 'Install requirements'
-  - script: python setup.py unittests
+  - script: python -u setup.py unittests
     displayName: 'Runs unit tests'
-  - script: python setup.py bdist_wheel
+  - script: python -u setup.py bdist_wheel
     displayName: 'Build package'
-  - script: python setup.py build_sphinx
+  - script: python -u setup.py build_sphinx
     displayName: 'Builds documentation'
+
+  steps:
+  - task: PublishPipelineArtifact@0
+    inputs:
+      artifactName: 'wheel-$(vmImage)-$(python.version)'
+      targetPath: 'dist'

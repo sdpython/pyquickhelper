@@ -53,8 +53,11 @@ class TestTransferFTPTrue(ExtTestCase):
             pwd = None
         if user is None:
             if not is_travis_or_appveyor():
-                raise Exception("user password is empty, prefix='{0}', username='{1}'".format(
-                    prefix, get_user()))
+                zoo = []
+                for k, v in sorted(os.environ.items()):
+                    zoo.append("{0}={1}".format(k, v))
+                raise Exception("user password is empty, prefix='{0}', username='{1}'\n{2}".format(
+                    prefix, get_user(), "\n".join(zoo)))
             else:
                 return
 
