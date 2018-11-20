@@ -1,12 +1,25 @@
-pool:
-  vmImage: 'Ubuntu 16.04'
+jobs:
+- job: 'Test'
+  pool:
+    vmImage: 'ubuntu-16.04' # other options: 'macOS-10.13', 'vs2017-win2016'
+  strategy:
+    matrix:
+      Python37:
+        python.version: '3.7'
+    maxParallel: 3
 
-steps:
-- script: pip install -r requirements.txt
-  displayName: 'Install dependencies'
-- script: python setup.py unittest
-  displayName: 'Runs unit tests'
-- script: python setup.py bdist_wheel
-  displayName: 'Build package'
-- script: python setup.py build_sphinx
-  displayName: 'Builds documentation'
+  steps:
+  - task: UsePythonVersion@0
+    inputs:
+      versionSpec: '$(python.version)'
+      architecture: 'x64'
+      - script: python -m pip install --upgrade pip setuptools wheel
+        displayName: 'Install tools'
+      - script: pip install -r requirements.txt
+        displayName: 'Install requirements'
+      - script: python setup.py unittest
+        displayName: 'Runs unit tests'
+      - script: python setup.py bdist_wheel
+        displayName: 'Build package'
+      - script: python setup.py build_sphinx
+        displayName: 'Builds documentation'
