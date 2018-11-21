@@ -23,8 +23,6 @@ jobs:
     displayName: 'Build package'
   - script: python -u setup.py build_sphinx
     displayName: 'Builds documentation'
-
-  steps:
   - task: PublishPipelineArtifact@0
     inputs:
       artifactName: 'wheel-$(vmImage)-$(python.version)'
