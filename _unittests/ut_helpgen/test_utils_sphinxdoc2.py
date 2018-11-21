@@ -60,14 +60,10 @@ class TestSphinxDoc2(ExtTestCase):
         def softfile(f):
             return False
 
-        rst = utils_sphinx_doc.apply_modification_template(rootm,
-                                                           store_obj,
+        rst = utils_sphinx_doc.apply_modification_template(rootm, store_obj,
                                                            utils_sphinx_doc.add_file_rst_template,
-                                                           file,
-                                                           rootrep,
-                                                           softfile,
-                                                           {},
-                                                           additional_sys_path=[],
+                                                           file, rootrep, softfile,
+                                                           {}, additional_sys_path=[],
                                                            fLOG=fLOG)
 
         self.assertNotEmpty(rst)

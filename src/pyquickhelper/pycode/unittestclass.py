@@ -426,13 +426,23 @@ def skipif_azure(msg):
     return unittest.skip(msg)
 
 
+def skipif_azure_linux(msg):
+    """
+    Skips a unit test if it runs on :epkg:`azure pipeline` on :epkg:`linux`.
+    """
+    if not sys.platform.startswith('lin') and is_travis_or_appveyor() != 'azurepipe':
+        return lambda x: x
+    msg = 'Test does not work on azure pipeline due to: ' + msg
+    return unittest.skip(msg)
+
+
 def skipif_linux(msg):
     """
     Skips a unit test if it runs on :epkg:`linux`.
 
     .. versionadded:: 1.7
     """
-    if sys.platform.startswith('win'):
+    if not sys.platform.startswith('lin'):
         return lambda x: x
     msg = 'Test does not work on travis due to: ' + msg
     return unittest.skip(msg)

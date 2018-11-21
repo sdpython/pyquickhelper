@@ -109,7 +109,7 @@ def process_downloadlink_role(role, rawtext, text, lineno, inliner, options=None
         raise RuntimeError("Value '{0}' is unexpected.".format(src))
 
     name = name.strip()
-    node = downloadlink_node(text=src, raw=text)
+    node = downloadlink_node(text=anchor, raw=text)
     node['class'] = 'internal'
     node['format'] = out
     node['filename'] = src
@@ -236,8 +236,10 @@ class DownloadLinkFileCollector(EnvironmentCollector):
         # type: (Sphinx, nodes.Node) -> None
         """Process downloadable file paths. """
         self.check_attr(app.env)
+        print("[DEBUG] process doc")
         for node in doctree.traverse(downloadlink_node):
             format = node["format"]
+            print("[DEBUG] process doc loop", app.builder.format, format, app.env.docname)
             if format and format != app.builder.format:
                 continue
             dest = os.path.split(app.env.docname)[0]
@@ -253,6 +255,11 @@ def copy_download_files(app, exc):
     Copies all files mentioned with role *downloadlink*.
     """
     if exc:
+        builder = app.builder
+        logger = logging.getLogger("DownloadLink")
+        mes = "Builder format '{0}'-'{1}', unable to copy file due to {2}".format(
+            builder.format, builder.__class__.__name__, exc)
+        logger.warning(mes)
         return
 
     def to_relpath(f):
@@ -261,6 +268,7 @@ def copy_download_files(app, exc):
     # copy downloadable files
     builder = app.builder
     if builder.env.dllinkfiles:
+        print("[DEBUG] downloadlink copy_download_files")
         for src in status_iterator(builder.env.dllinkfiles, __('copying downloadable(link) files... '),
                                    "brown", len(
                                        builder.env.dllinkfiles), builder.app.verbosity,
@@ -280,6 +288,8 @@ def copy_download_files(app, exc):
                     mes = "Builder format '{0}'-'{3}', unable to copy file '{1}' into {2}'".format(
                         builder.format, name, dest, builder.__class__.__name__)
                     logger.warning(mes)
+    else:
+        print("[DEBUG] no downloadlink copy_download_files")
 
 
 def setup(app):

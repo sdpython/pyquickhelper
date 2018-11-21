@@ -13,16 +13,26 @@ jobs:
     inputs:
       versionSpec: '$(python.version)'
       architecture: 'x64'
+  - script: sudo apt-get update && wget https://github.com/jgm/pandoc/releases/download/2.2.3.2/pandoc-2.2.3.2-1-amd64.deb && sudo dpkg -i pandoc-2.2.3.2-1-amd64.deb
+    displayname: 'Install Pandoc'
+  - script: sudo apt-get install -y texlive texlive-latex-extra texlive-xetex dvipng
+    displayname: 'Install Latex'
+  - script: sudo apt-get install -y p7zip-full
+    displayname: 'Install 7z, rar'
+  - script: sudo apt-get install -y inkscape
+    displayname: 'Install Inkscape'
+  - script: sudo apt-get install -y graphviz
+    displayname: 'Install Graphviz'
   - script: python -m pip install --upgrade pip setuptools wheel
     displayName: 'Install tools'
   - script: pip install -r requirements.txt
-    displayName: 'Install requirements'
+    displayName: 'Install Requirements'
   - script: python -u setup.py unittests
-    displayName: 'Runs unit tests'
+    displayName: 'Runs Unit Tests'
   - script: python -u setup.py bdist_wheel
-    displayName: 'Build package'
+    displayName: 'Build Package'
   - script: python -u setup.py build_sphinx
-    displayName: 'Builds documentation'
+    displayName: 'Builds Documentation'
   - task: PublishPipelineArtifact@0
     inputs:
       artifactName: 'wheel-$(vmImage)-$(python.version)'

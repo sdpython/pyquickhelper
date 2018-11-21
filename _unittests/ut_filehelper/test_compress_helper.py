@@ -27,7 +27,7 @@ except ImportError:
 from src.pyquickhelper.loghelper import fLOG
 from src.pyquickhelper.pycode import get_temp_folder
 from src.pyquickhelper.filehelper import gzip_files, zip_files, zip7_files, download, unzip_files, ungzip_files, un7zip_files, unrar_files
-from src.pyquickhelper.pycode import skipif_travis, skipif_circleci, skipif_appveyor, skipif_linux, skipif_vless
+from src.pyquickhelper.pycode import skipif_travis, skipif_circleci, skipif_appveyor, skipif_linux, skipif_vless, skipif_azure
 from src.pyquickhelper.pycode import is_travis_or_appveyor
 
 
@@ -162,6 +162,7 @@ class TestCompressHelper(unittest.TestCase):
     @skipif_travis('rar not installed')
     @skipif_appveyor('rar not installed')
     @skipif_circleci('rar not installed')
+    @skipif_azure('rar not installed')
     def test_uncompress_rar(self):
         fLOG(
             __file__,
