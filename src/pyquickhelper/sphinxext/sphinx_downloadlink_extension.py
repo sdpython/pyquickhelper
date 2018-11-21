@@ -236,10 +236,11 @@ class DownloadLinkFileCollector(EnvironmentCollector):
         # type: (Sphinx, nodes.Node) -> None
         """Process downloadable file paths. """
         self.check_attr(app.env)
-        print("[DEBUG] process doc")
+        logger = logging.getLogger("DEBUG")
+        logger.warning("[DEBUG] process doc")
         for node in doctree.traverse(downloadlink_node):
             format = node["format"]
-            print("[DEBUG] process doc loop", app.builder.format, format, app.env.docname)
+            logger.warning("[DEBUG] process doc loop", app.builder.format, format, app.env.docname)
             if format and format != app.builder.format:
                 continue
             dest = os.path.split(app.env.docname)[0]
@@ -268,7 +269,8 @@ def copy_download_files(app, exc):
     # copy downloadable files
     builder = app.builder
     if builder.env.dllinkfiles:
-        print("[DEBUG] downloadlink copy_download_files")
+        logger = logging.getLogger("DEBUG")        
+        logger.warning("[DEBUG] downloadlink copy_download_files")
         for src in status_iterator(builder.env.dllinkfiles, __('copying downloadable(link) files... '),
                                    "brown", len(
                                        builder.env.dllinkfiles), builder.app.verbosity,
@@ -289,7 +291,8 @@ def copy_download_files(app, exc):
                         builder.format, name, dest, builder.__class__.__name__)
                     logger.warning(mes)
     else:
-        print("[DEBUG] no downloadlink copy_download_files")
+        logger = logging.getLogger("DEBUG")
+        logger.warning("[DEBUG] no downloadlink copy_download_files")
 
 
 def setup(app):
