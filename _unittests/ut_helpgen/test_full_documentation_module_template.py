@@ -288,12 +288,15 @@ class TestSphinxFullDocumentationModuleTemplate(unittest.TestCase):
                                 "notebooks", "custom_notebooks.html")]
             for r in rev:
                 if not os.path.exists(r):
+                    logs = os.path.join(temp, "log_custom_000.txt")
+                    with open(logs, "r", encoding='utf-8') as f:
+                        content = f.read()
                     found = os.listdir(os.path.dirname(r))
                     found2 = os.listdir(os.path.dirname(
                         r.replace("build", "source").replace("/html", "")))
                     raise FileNotFoundError(
-                        "Unable to find '{0}' in\n{1}\n----\n{2}".format(
-                            r, "\n".join(sorted(found)), "\n".join(sorted(found2))))
+                        "Unable to find '{0}' in\n{1}\n----\n{2}\n---LOGS--\n{3}".format(
+                            r, "\n".join(sorted(found)), "\n".join(sorted(found2)), content))
 
             history = os.path.join(
                 root, "_doc", "sphinxdoc", "build", "html", "HISTORY.html")
