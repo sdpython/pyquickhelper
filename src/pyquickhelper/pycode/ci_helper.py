@@ -26,6 +26,8 @@ def is_travis_or_appveyor(env=None):
         return "appveyor"
     if os.environ.get('CIRCLECI', "undefined") != "undefined":
         return "circleci"
+    if os.environ.get('AZURE_HTTP_USER_AGENT', 'undefined') != 'undefined':
+        return "azurepipe"
     if env is not None:
         for k in env:
             if k in os.environ and os.environ[k]:

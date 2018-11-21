@@ -416,6 +416,16 @@ def skipif_circleci(msg):
     return unittest.skip(msg)
 
 
+def skipif_azure(msg):
+    """
+    Skips a unit test if it runs on :epkg:`azure pipeline`.
+    """
+    if is_travis_or_appveyor() != 'azurepipe':
+        return lambda x: x
+    msg = 'Test does not work on azure pipeline due to: ' + msg
+    return unittest.skip(msg)
+
+
 def skipif_linux(msg):
     """
     Skips a unit test if it runs on :epkg:`linux`.
