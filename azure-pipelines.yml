@@ -33,6 +33,8 @@ jobs:
     displayName: 'Runs Unit Tests'
   - script: python -u setup.py bdist_wheel
     displayName: 'Build Package'
+  - script: python -m pip install scikit-learn
+    displayName: 'Install scipy scikit-learn'
   - script: python -u setup.py build_sphinx
     displayName: 'Builds Documentation'
   - task: PublishPipelineArtifact@0

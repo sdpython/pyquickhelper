@@ -52,6 +52,7 @@ jobs:
             pip install -r requirements.txt
             pip install git+https://github.com/fancycode/pylzma.git --upgrade --no-deps
             pip install scipy scikit-learn
+            pip install sphinx --upgrade
 
       - save_cache:
           paths:
