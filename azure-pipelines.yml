@@ -1,5 +1,5 @@
 jobs:
-- job: 'Test'
+- job: 'TestLinux'
   pool:
     vmImage: 'ubuntu-16.04' # other options: 'macOS-10.13', 'vs2017-win2016'
   strategy:
@@ -14,7 +14,7 @@ jobs:
       versionSpec: '$(python.version)'
       architecture: 'x64'
   - script: sudo apt-get update
-    displayName: 'Install Pandoc'
+    displayName: 'AptGet Update'
   - script: sudo apt-get install -y pandoc
     displayName: 'Install Pandoc'
   - script: sudo apt-get install -y texlive texlive-latex-extra texlive-xetex dvipng
@@ -29,15 +29,44 @@ jobs:
     displayName: 'Install tools'
   - script: pip install -r requirements.txt
     displayName: 'Install Requirements'
+  - script: python -m pip install scikit-learn
+    displayName: 'Install scipy scikit-learn'
   - script: python -u setup.py unittests
     displayName: 'Runs Unit Tests'
   - script: python -u setup.py bdist_wheel
     displayName: 'Build Package'
-  - script: python -m pip install scikit-learn
-    displayName: 'Install scipy scikit-learn'
   - script: python -u setup.py build_sphinx
     displayName: 'Builds Documentation'
   - task: PublishPipelineArtifact@0
     inputs:
-      artifactName: 'wheel-$(vmImage)-$(python.version)'
+      artifactName: 'wheel-linux-$(python.version)'
+      targetPath: 'dist'
+
+- job: 'TestMac'
+  pool:
+    vmImage: 'macOS-10.13' # other options: 'ubuntu-16.04', 'vs2017-win2016'
+  strategy:
+    matrix:
+      Python37:
+        python.version: '3.7'
+    maxParallel: 3
+
+  steps:
+  - task: UsePythonVersion@0
+    inputs:
+      versionSpec: '$(python.version)'
+      architecture: 'x64'
+  - script: python -m pip install --upgrade pip setuptools wheel
+    displayName: 'Install tools'
+  - script: pip install -r requirements.txt
+    displayName: 'Install Requirements'
+  - script: python -m pip install scikit-learn
+    displayName: 'Install scipy scikit-learn'
+  - script: python -u setup.py unittests
+    displayName: 'Runs Unit Tests'
+  - script: python -u setup.py bdist_wheel
+    displayName: 'Build Package'
+  - task: PublishPipelineArtifact@0
+    inputs:
+      artifactName: 'wheel-mac-$(python.version)'
       targetPath: 'dist'
