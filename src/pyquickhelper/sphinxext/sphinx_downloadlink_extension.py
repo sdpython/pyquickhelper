@@ -115,6 +115,10 @@ def process_downloadlink_role(role, rawtext, text, lineno, inliner, options=None
     node['filename'] = src
     node['reftarget'] = src
     node['anchor'] = anchor
+
+    logger = logging.getLogger("downloadlink")
+    logger.info("[downloadlink] node '{0}'".format(str(node)))
+
     return [node], []
 
 
@@ -124,6 +128,9 @@ def visit_downloadlink_node_html(self, node):
     """
     if node['format'] != 'html':
         raise nodes.SkipNode
+
+    logger = logging.getLogger("downloadlink")
+    logger.info("[downloadlink] HTML '{0}'".format(str(node)))
 
     atts = {'class': 'reference'}
 
@@ -186,6 +193,9 @@ def visit_downloadlink_node_rst(self, node):
     """
     Converts node *downloadlink* into :epkg:`rst`.
     """
+    logger = logging.getLogger("downloadlink")
+    logger.info("[downloadlink] RST '{0}'".format(str(node)))
+
     if node['format']:
         self.add_text(":downloadlink:`{0} <{1}::{2}>`".format(
             node["anchor"], node["format"], node["filename"]))
@@ -226,9 +236,14 @@ class DownloadLinkFileCollector(EnvironmentCollector):
 
     def clear_doc(self, app, env, docname):
         self.check_attr(env)
-        env.dllinkfiles.purge_doc(docname)
+        if env.dllinkfiles and len(env.dllinkfiles) > 0:
+            logger = logging.getLogger("downloadlink")
+            logger.info("[downloadlink] clear '{0}'".format(docname))
+            env.dllinkfiles.purge_doc(docname)
 
     def merge_other(self, app, env, docnames, other):
+        logger = logging.getLogger("downloadlink")
+        logger.info("[downloadlink] merge")
         self.check_attr(env)
         env.dllinkfiles.merge_other(docnames, other.dllinkfiles)
 
@@ -236,19 +251,21 @@ class DownloadLinkFileCollector(EnvironmentCollector):
         # type: (Sphinx, nodes.Node) -> None
         """Process downloadable file paths. """
         self.check_attr(app.env)
-        logger = logging.getLogger("DEBUG")
-        logger.warning("[DEBUG] process doc")
+        nb = 0
         for node in doctree.traverse(downloadlink_node):
             format = node["format"]
-            logger.warning("[DEBUG] process doc loop", app.builder.format, format, app.env.docname)
             if format and format != app.builder.format:
                 continue
+            nb += 1
             dest = os.path.split(app.env.docname)[0]
             name = node["filename"]
             rel_filename = os.path.join(dest, name)
             app.env.dependencies[app.env.docname].add(rel_filename)
             node['dest'] = app.env.dllinkfiles.add_file(
                 app.env.docname, rel_filename)
+        if nb > 0:
+            logger = logging.getLogger("downloadlink")
+            logger.info("[downloadlink] processed {0}".format(nb))
 
 
 def copy_download_files(app, exc):
@@ -257,7 +274,7 @@ def copy_download_files(app, exc):
     """
     if exc:
         builder = app.builder
-        logger = logging.getLogger("DownloadLink")
+        logger = logging.getLogger("downloadlink")
         mes = "Builder format '{0}'-'{1}', unable to copy file due to {2}".format(
             builder.format, builder.__class__.__name__, exc)
         logger.warning(mes)
@@ -269,8 +286,8 @@ def copy_download_files(app, exc):
     # copy downloadable files
     builder = app.builder
     if builder.env.dllinkfiles:
-        logger = logging.getLogger("DEBUG")        
-        logger.warning("[DEBUG] downloadlink copy_download_files")
+        logger = logging.getLogger("downloadlink")
+        logger.info("[downloadlink] copy_download_files")
         for src in status_iterator(builder.env.dllinkfiles, __('copying downloadable(link) files... '),
                                    "brown", len(
                                        builder.env.dllinkfiles), builder.app.verbosity,
@@ -285,14 +302,13 @@ def copy_download_files(app, exc):
                 name = os.path.join(builder.srcdir, src)
                 try:
                     copyfile(name, dest)
+                    logger.info(
+                        "[downloadlink] copy '{0}' to '{1}'".format(name, dest))
                 except FileNotFoundError:
-                    logger = logging.getLogger("DownloadLink")
                     mes = "Builder format '{0}'-'{3}', unable to copy file '{1}' into {2}'".format(
                         builder.format, name, dest, builder.__class__.__name__)
-                    logger.warning(mes)
-    else:
-        logger = logging.getLogger("DEBUG")
-        logger.warning("[DEBUG] no downloadlink copy_download_files")
+                    logger.warning(
+                        "[downloadlink] cannot copy '{0}' to '{1}'".format(name, dest))
 
 
 def setup(app):

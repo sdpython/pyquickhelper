@@ -14,7 +14,7 @@ README
 
 .. image:: https://circleci.com/gh/sdpython/pyquickhelper/tree/master.svg?style=svg
     :target: https://circleci.com/gh/sdpython/pyquickhelper/tree/master
-    
+
 .. image:: https://dev.azure.com/xavierdupre3/pyquickhelper/_apis/build/status/sdpython.pyquickhelper
     :target: https://dev.azure.com/xavierdupre3/pyquickhelper/
 

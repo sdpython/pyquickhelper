@@ -14,15 +14,15 @@ jobs:
       versionSpec: '$(python.version)'
       architecture: 'x64'
   - script: sudo apt-get install -y pandoc
-    displayname: 'Install Pandoc'
+    displayName: 'Install Pandoc'
   - script: sudo apt-get install -y texlive texlive-latex-extra texlive-xetex dvipng
-    displayname: 'Install Latex'
+    displayName: 'Install Latex'
   - script: sudo apt-get install -y p7zip-full
-    displayname: 'Install 7z, rar'
+    displayName: 'Install 7z, rar'
   - script: sudo apt-get install -y inkscape
-    displayname: 'Install Inkscape'
+    displayName: 'Install Inkscape'
   - script: sudo apt-get install -y graphviz
-    displayname: 'Install Graphviz'
+    displayName: 'Install Graphviz'
   - script: python -m pip install --upgrade pip setuptools wheel
     displayName: 'Install tools'
   - script: pip install -r requirements.txt

@@ -160,11 +160,13 @@ class TestSphinxFullDocumentationModuleTemplate(unittest.TestCase):
 
             logger1 = getLogger("docassert")
             logger2 = getLogger("tocdelay")
+            logger3 = getLogger("downloadlink")
             log_capture_string = MyStream()  # StringIO()
             ch = logging.StreamHandler(log_capture_string)
             ch.setLevel(logging.DEBUG)
             logger1.logger.addHandler(ch)
             logger2.logger.addHandler(ch)
+            logger3.logger.addHandler(ch)
 
             with warnings.catch_warnings(record=True) as ww:
                 warnings.simplefilter("always")
@@ -201,6 +203,8 @@ class TestSphinxFullDocumentationModuleTemplate(unittest.TestCase):
                     fLOG("   ", line)
                 if '[tocdelay] ERROR' in line:
                     raise Exception(line)
+                if '[downloadlink]' in line:
+                    fLOG(line)
 
             # we clean
             if "pyquickhelper" in sys.modules:
@@ -300,6 +304,17 @@ class TestSphinxFullDocumentationModuleTemplate(unittest.TestCase):
 
             if 'python3_module_template 0.2.0' not in content:
                 raise Exception(content)
+
+        # final check
+        logs = os.path.join(temp, "log_custom_000.txt")
+        with open(logs, "r", encoding='utf-8') as f:
+            content = f.read()
+        if "[downloadlink] node" not in content:
+            raise Exception(content)
+        if "[downloadlink] HTML" not in content:
+            raise Exception(content)
+        if "[downloadlink] copy" not in content:
+            raise Exception(content)
 
 
 if __name__ == "__main__":
