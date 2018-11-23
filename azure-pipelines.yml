@@ -56,15 +56,15 @@ jobs:
     inputs:
       versionSpec: '$(python.version)'
       architecture: 'x64'
-  - script: sudo port install -y p7zip
+  - script: brew install p7zip
     displayName: 'Install p7zip'
-  - script: sudo port install -y pandoc
+  - script: brew install pandoc
     displayName: 'Install Pandoc'
-  - script: sudo port install -y inkscape
+  - script: brew install inkscape
     displayName: 'Install Inkscape'
-  - script: sudo port install -y graphviz
+  - script: brew install graphviz
     displayName: 'Install Graphviz'
-  - script: sudo port install -y texlive texlive-latex-extra
+  - script: brew install texlive texlive-latex-extra
     displayName: 'Install latex'
   - script: python -m pip install --upgrade pip setuptools wheel
     displayName: 'Install tools'
