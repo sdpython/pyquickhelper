@@ -60,8 +60,6 @@ jobs:
     displayName: 'Install p7zip'
   - script: brew install pandoc
     displayName: 'Install Pandoc'
-  - script: brew install inkscape
-    displayName: 'Install Inkscape'
   - script: brew install graphviz
     displayName: 'Install Graphviz'
   - script: brew install texlive texlive-latex-extra
