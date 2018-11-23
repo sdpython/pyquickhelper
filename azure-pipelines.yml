@@ -15,14 +15,14 @@ jobs:
       architecture: 'x64'
   - script: sudo apt-get update
     displayName: 'AptGet Update'
+  - script: sudo apt-get install -y inkscape
+    displayName: 'Install Inkscape'
   - script: sudo apt-get install -y pandoc
     displayName: 'Install Pandoc'
   - script: sudo apt-get install -y texlive texlive-latex-extra texlive-xetex dvipng
     displayName: 'Install Latex'
   - script: sudo apt-get install -y p7zip-full
     displayName: 'Install 7z, rar'
-  - script: sudo apt-get install -y inkscape
-    displayName: 'Install Inkscape'
   - script: sudo apt-get install -y graphviz
     displayName: 'Install Graphviz'
   - script: python -m pip install --upgrade pip setuptools wheel
@@ -64,6 +64,9 @@ jobs:
     displayName: 'Install Graphviz'
   - script: brew cask install mactex
     displayName: 'Install latex'
+  - script: |
+          which pdflatex
+    displayName: 'check'
   - script: python -m pip install --upgrade pip setuptools wheel
     displayName: 'Install tools'
   - script: pip install -r requirements.txt
