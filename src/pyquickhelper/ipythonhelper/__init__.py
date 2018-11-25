@@ -14,7 +14,7 @@ from .notebook_helper import install_jupyter_kernel, install_python_kernel_for_u
 from .notebook_helper import install_notebook_extension, get_installed_notebook_extension, get_jupyter_datadir
 from .notebook_helper import remove_execution_number
 from .notebook_runner import NotebookError, NotebookRunner
-from .run_notebook import execute_notebook_list, run_notebook, execute_notebook_list_finalize_ut
+from .run_notebook import execute_notebook_list, run_notebook, execute_notebook_list_finalize_ut, retrieve_notebooks_in_folder
 from .run_notebook import notebook_coverage, badge_notebook_coverage
 from .run_notebook import get_additional_paths
 from .unittest_notebook import test_notebook_execution_coverage

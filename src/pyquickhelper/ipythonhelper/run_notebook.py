@@ -6,6 +6,7 @@ import sys
 import time
 import os
 import warnings
+import re
 from datetime import datetime, timedelta
 
 from ..loghelper.flog import noLOG
@@ -258,8 +259,8 @@ def execute_notebook_list(folder, notebooks, clean_function=None, valid=None, fL
             note, code_init = note
         else:
             code_init = None
-        fLOG("[execute_notebook_list] {0}/{1} - {2}".format(i +
-                                                            1, len(notebooks), os.path.split(note)[-1]))
+        fLOG("[execute_notebook_list] {0}/{1} - {2}".format(i + 1,
+                                                            len(notebooks), os.path.split(note)[-1]))
         outfile = os.path.join(folder, "out_" + os.path.split(note)[-1])
         cl = time.perf_counter()
         try:
@@ -579,3 +580,23 @@ def get_additional_paths(modules):
     addpath = [os.path.dirname(mod.__file__) for mod in modules]
     addpath = [os.path.normpath(os.path.join(_, "..")) for _ in addpath]
     return addpath
+
+
+def retrieve_notebooks_in_folder(folder, posreg=".*[.]ipynb$", negreg=None):
+    """
+    Retrieves notebooks in a test folder.
+
+    @param      folder      folder
+    @param      regex       regular expression
+    @return                 list of found notebooks
+    """
+    pos = re.compile(posreg)
+    neg = re.compile(negreg) if negreg is not None else None
+    res = []
+    for name in os.listdir(folder):
+        if pos.search(name):
+            if neg is None or not neg.search(name):
+                res.append(os.path.join(folder, name))
+    if len(res) == 0:
+        raise FileNotFoundError("No notebook found in '{0}'.".format(folder))
+    return res
