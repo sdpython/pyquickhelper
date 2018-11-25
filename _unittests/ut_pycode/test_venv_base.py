@@ -20,13 +20,14 @@ except ImportError:
     import src
 
 from src.pyquickhelper.loghelper import fLOG
-from src.pyquickhelper.pycode import skipif_travis
+from src.pyquickhelper.pycode import skipif_travis, skipif_azure
 from src.pyquickhelper.pycode.venv_helper import run_base_script, is_virtual_environment
 
 
 class TestVenvBase(unittest.TestCase):
 
     @skipif_travis("no end on travis")
+    @skipif_azure("does not work on azure")
     def test_run_base_script(self):
         fLOG(
             __file__,

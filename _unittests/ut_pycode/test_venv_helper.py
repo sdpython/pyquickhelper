@@ -20,11 +20,11 @@ except ImportError:
     import src
 
 from src.pyquickhelper.loghelper import fLOG
-from src.pyquickhelper.pycode import get_temp_folder
+from src.pyquickhelper.pycode import get_temp_folder, ExtTestCase
 from src.pyquickhelper.pycode.venv_helper import create_virtual_env
 
 
-class TestVenvHelper(unittest.TestCase):
+class TestVenvHelper(ExtTestCase):
 
     def test_venv_empty(self):
         fLOG(
@@ -42,9 +42,9 @@ class TestVenvHelper(unittest.TestCase):
         fLOG(out)
         fLOG("-----")
         pyt = os.path.join(temp, "Scripts")
-        assert os.path.exists(pyt)
+        self.assertExists(pyt)
         lo = os.listdir(pyt)
-        assert len(lo) > 0
+        self.assertNotEmpty(lo)
 
 
 if __name__ == "__main__":

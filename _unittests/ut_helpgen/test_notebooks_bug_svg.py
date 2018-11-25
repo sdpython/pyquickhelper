@@ -58,7 +58,7 @@ class TestNoteBooksBugSvg(ExtTestCase):
         for file in os.listdir(temp):
             os.remove(os.path.join(temp, file))
 
-        if is_travis_or_appveyor() in ('travis', 'appveyor'):
+        if is_travis_or_appveyor() in ('travis', 'appveyor', 'azurepipe'):
             return
 
         setup_environment_for_help()
