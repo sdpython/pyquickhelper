@@ -44,8 +44,11 @@ class CmdRef(BlocRef):
     * *index*: to add an additional entry to the index (comma separated)
     * *name*: command line name, if populated, the directive displays the output of
       ``name --help``.
+    * *path*: used if the command line startswith ``-m``
 
-    It works the same way as @see cl BlocRef.
+    It works the same way as @see cl BlocRef. The command line can be
+    something like ``-m <module> <command> ...``. The extension
+    will call :epkg:`python` in a separate process.
 
    .. todoext::
         :title: cmdref does not display anything if the content is empty.
@@ -56,7 +59,9 @@ class CmdRef(BlocRef):
     node_class = cmdref_node
     name_sphinx = "cmdref"
 
-    option_spec = dict(cmd=directives.unchanged, **BlocRef.option_spec)
+    option_spec = dict(cmd=directives.unchanged,
+                       path=directives.unchanged,
+                       **BlocRef.option_spec)
 
     def run(self):
         """
@@ -76,6 +81,7 @@ class CmdRef(BlocRef):
             self.options["index"] = title
         else:
             self.options["index"] += "," + title
+        path = self.options.get('path', None)
 
         res, cont = BlocRef.private_run(self, add_container=True)
         name = self.options.get("cmd", None)
@@ -90,7 +96,7 @@ class CmdRef(BlocRef):
             # object name
             if name.startswith("-m"):
                 # example: -m pyquickhelper clean_files --help
-                out, err = run_script(name, fLOG=noLOG, wait=True)
+                out, err = run_script(name, fLOG=noLOG, wait=True, change_path=path)
                 if err:
                     out = "--OUT--\n{0}\n--ERR--\n{1}".format(out, err)
                 content = "python " + name

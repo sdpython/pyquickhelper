@@ -22,7 +22,7 @@ except ImportError:
     import src
 
 from src.pyquickhelper.loghelper.flog import fLOG
-from src.pyquickhelper.pycode import get_temp_folder
+from src.pyquickhelper.pycode import get_temp_folder, ExtTestCase
 from src.pyquickhelper.helpgen import rst2html
 from src.pyquickhelper.sphinxext import CmdRef, CmdRefList
 from src.pyquickhelper.sphinxext.sphinx_cmdref_extension import cmdref_node, visit_cmdref_node, depart_cmdref_node
@@ -32,7 +32,7 @@ if sys.version_info[0] == 2:
     from codecs import open
 
 
-class TestCmdRefExtension(unittest.TestCase):
+class TestCmdRefExtension(ExtTestCase):
 
     def test_post_parse_cmdref(self):
         fLOG(
@@ -261,6 +261,11 @@ class TestCmdRefExtension(unittest.TestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
+        path = src.__path__
+        if isinstance(path, list):
+            path = path[0]
+        path = os.path.abspath(path)
+        self.assertExists(path)
         from docutils import nodes as skip_
 
         content = """
@@ -272,11 +277,12 @@ class TestCmdRefExtension(unittest.TestCase):
                     .. cmdref::
                         :title: first cmd
                         :cmd: -m pyquickhelper clean_files --help
+                        :path: {0}
 
                         this code shoud appear___
 
                     after
-                    """.replace("                    ", "")
+                    """.replace("                    ", "").format(path)
         if sys.version_info[0] >= 3:
             content = content.replace('u"', '"')
 

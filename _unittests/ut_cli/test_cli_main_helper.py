@@ -95,7 +95,6 @@ class TestCliMainHelper(ExtTestCase):
         st = TempBuffer()
         main(args=["clean_files", "--help"], fLOG=st.fprint)
         res = str(st)
-        print(res)
         self.assertNotIn("<<", res)
         self.assertNotIn("``", res)
         self.assertIn("`'\\n'`", res)
