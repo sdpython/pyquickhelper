@@ -34,7 +34,7 @@ class TestCleanFile(ExtTestCase):
             OutputPrint=__name__ == "__main__")
 
         folder = os.path.abspath(os.path.dirname(__file__))
-        res = clean_files(folder, fLOG=fLOG)
+        res = clean_files(folder, fLOG=fLOG, posreg="test_clean.*[.]py$")
         self.assertEmpty(res)
 
 

@@ -58,7 +58,7 @@ def clean_files(folder=".", posreg='.*', negreg=None, fLOG=print):
         new_content = content.replace(b"\r\n", b"\n")
         if new_content != content:
             with open(name, "wb") as f:
-                f.write(content)
+                f.write(new_content)
             return True
         else:
             return False
