@@ -30,7 +30,7 @@ def clean_documentation_for_cli(doc, cleandoc):
     else:
         if isinstance(cleandoc, str):
             if cleandoc == 'epkg':
-                reg = re.compile('(:epkg:`([0-9a-zA-Z_:.*]+)`)')
+                reg = re.compile('(:epkg:(`[0-9a-zA-Z_:.*]+`))')
                 fall = reg.findall(doc)
                 for c in fall:
                     doc = doc.replace(c[0], c[1].replace(':', '.'))
@@ -101,6 +101,7 @@ def create_cli_parser(f, prog=None, layout="sphinx", skip_parameters=('fLOG',),
     # create the parser
     fulldoc = docstring2html(docf, writer="rst", layout='sphinx',
                              filter_nodes=clear_node_list, **options)
+    fulldoc = fulldoc.replace("``", "`")
 
     # add arguments with the signature
     signature = inspect.signature(f)
@@ -283,6 +284,52 @@ def cli_main_helper(dfct, args, fLOG=print):
     @param      dfct        dictionary ``{ key: fct }``
     @param      args        arguments
     @param      fLOG        logging function
+
+    The function makes it quite simple to write a file
+    ``__main__.py`` which implements the syntax
+    ``python -m <module> <command> <arguments>``.
+    Here is an example of implementation based on this
+    function:
+
+    ::
+
+        import sys
+
+
+        def main(args, fLOG=print):
+            '''
+            Implements ``python -m pyquickhelper <command> <args>``.
+
+            @param      args        command line arguments
+            @param      fLOG        logging function
+            '''
+            try:
+                from .pandashelper import df2rst
+                from .pycode import clean_files
+                from .cli import cli_main_helper
+            except ImportError:
+                from pyquickhelper.pandashelper import df2rst
+                from pyquickhelper.pycode import clean_files
+                from pyquickhelper.cli import cli_main_helper
+
+            fcts = dict(df2rst=df2rst, clean_files=clean_files)
+            cli_main_helper(fcts, args=args, fLOG=fLOG)
+
+
+        if __name__ == "__main__":
+            main(sys.argv[1:])
+
+    The function takes care of the parsing of the command line by
+    leveraging the signature and the documentation of the function
+    if its docstring is written in :epkg:`rst` format.
+    For example, function @see fn clean_files is automatically wrapped
+    with function @see fn call_cli_function. The command
+    ``python -m pyquickhelper clean_files --help`` produces
+    the following output:
+
+    .. cmdref::
+        :title: Clean files
+        :cmd: -m pyquickhelper clean_files --help
     """
     if fLOG is None:
         raise ValueError("fLOG must be defined.")

@@ -11,6 +11,8 @@ command line
 
 .. autosignature:: pyquickhelper.cli.cli_helper.call_cli_function
 
+.. autosignature:: pyquickhelper.cli.cli_helper.cli_main_helper
+
 parsers
 +++++++
 

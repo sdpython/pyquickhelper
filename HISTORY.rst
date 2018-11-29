@@ -5,11 +5,16 @@
 History
 =======
 
-current - 2018-11-25 - 0.00Mb
+current - 2018-11-29 - 0.00Mb
 =============================
 
-* `208`: update to azure CI (2018-11-25)
+* `210`: add __main__ command line (2018-11-29)
+
+1.8.2876 - 2018-11-25 - 2.02Mb
+==============================
+
 * `209`: implements function retrieve_notebooks_in_folder (2018-11-25)
+* `208`: update to azure CI (2018-11-25)
 * `205`: Slides conversion are missing from the documentation (2018-11-09)
 * `204`: Fix missing snippet for notebook when it fails finding one (2018-11-06)
 * `203`: make epkg links anonymous to avoid warning about duplicated target (2018-11-05)

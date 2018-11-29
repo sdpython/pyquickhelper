@@ -255,6 +255,47 @@ class TestCmdRefExtension(unittest.TestCase):
         if t1 in html:
             raise Exception(html)
 
+    def test_cmdref_module(self):
+        fLOG(
+            __file__,
+            self._testMethodName,
+            OutputPrint=__name__ == "__main__")
+
+        from docutils import nodes as skip_
+
+        content = """
+                    test a directive
+                    ================
+
+                    before
+
+                    .. cmdref::
+                        :title: first cmd
+                        :cmd: -m pyquickhelper clean_files --help
+
+                        this code shoud appear___
+
+                    after
+                    """.replace("                    ", "")
+        if sys.version_info[0] >= 3:
+            content = content.replace('u"', '"')
+
+        tives = [("cmdref", CmdRef, cmdref_node,
+                  visit_cmdref_node, depart_cmdref_node)]
+
+        html = rst2html(content,  # fLOG=fLOG,
+                        writer="rst", keep_warnings=True,
+                        directives=tives, extlinks={'issue': ('http://%s', '_issue_')})
+
+        temp = get_temp_folder(__file__, "temp_cmdref_rst_module")
+        with open(os.path.join(temp, "out_cmdref_rst.html"), "w", encoding="utf8") as f:
+            f.write(html)
+
+        self.assertIn("<<<", html)
+        self.assertIn("python -m pyquickhelper clean_files --help", html)
+        self.assertIn(
+            "usage: clean_files [-h] [-f FOLDER] [-p POSREG] [-n NEGREG] [--op OP]", html)
+
 
 if __name__ == "__main__":
     unittest.main()

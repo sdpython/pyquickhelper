@@ -8,8 +8,8 @@ import unittest
 
 if "temp_" in os.path.abspath(__file__):
     raise ImportError(
-        "this file should not be imported in that location: " +
-        os.path.abspath(__file__))
+        "This file should not be imported in that location: '{0}'.".format(
+            os.path.abspath(__file__)))
 
 try:
     import src
@@ -63,7 +63,8 @@ class TestFileNodeTree(ExtTestCase):
                 if nb > 15:
                     break
 
-                if "__init__" not in f.name and ".py" in f.name and ".pyc" not in f.name:
+                if "__init__" not in f.name and ".py" in f.name and ".pyc" not in f.name \
+                        and "__main__" not in f.name:
                     content = f.get_content()
                     rst = filecontent_to_rst(f.fullname, content)
                     contr, doc = rst

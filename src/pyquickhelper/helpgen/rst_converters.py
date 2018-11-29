@@ -527,7 +527,7 @@ def docstring2html(function_or_string, format="html", fLOG=noLOG, writer="html",
             lines = ["%04d  %s" % (i + 1, _.strip("\n\r"))
                      for i, _ in enumerate(lines)]
             raise HelpGenConvertError(
-                "unable to process:\n{0}".format("\n".join(lines))) from e
+                "Unable to process:\n{0}".format("\n".join(lines))) from e
 
     ret_doctree = writer == "doctree"
     if ret_doctree:

@@ -23,6 +23,7 @@ except ImportError:
 
 from src.pyquickhelper.pycode import get_temp_folder
 from src.pyquickhelper.helpgen import rst2html
+from src.pyquickhelper.cli.cli_helper import clean_documentation_for_cli
 
 if sys.version_info[0] == 2:
     from codecs import open
@@ -298,6 +299,19 @@ class TestEpkgExtension(unittest.TestCase):
         temp = get_temp_folder(__file__, "temp_epkg_inline")
         with open(os.path.join(temp, "out_sharenet.html"), "w", encoding="utf8") as f:
             f.write(html)
+
+    def test_epkg_module_clean(self):
+        from docutils import nodes as skip_
+
+        content = """
+                    test a directive
+                    ================
+
+                    abeforea :epkg:`pandas` aaftera
+                    """.replace("                    ", "")
+
+        res = clean_documentation_for_cli(content, cleandoc=("epkg", "link"))
+        self.assertIn('abeforea `pandas` aaftera', res)
 
 
 if __name__ == "__main__":

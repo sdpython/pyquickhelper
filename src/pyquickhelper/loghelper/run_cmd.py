@@ -409,22 +409,26 @@ def parse_exception_message(exc):
         return None, None
 
 
-def run_script(script, *l):
+def run_script(script, *args, **kwargs):
     """
     Runs a script.
 
-    @param      script      script to execute
-    @param      l           other parameters
+    @param      script      script to execute or command line starting with ``-m``
+    @param      args        other parameters
+    @param      kwargs      sent to @see fn run_cmd
     @return                 out,err: content of stdout stream and stderr stream
+
+    .. versionchanged:: 1.8
+        Add *kwargs*, allows command line starting with ``-m``.
     """
-    if not os.path.exists(script):
+    if not script.startswith('-m') and not os.path.exists(script):
         raise PQHException("file %s not found" % script)
     py = get_interpreter_path()
     cmd = "%s %s" % (py, script)
-    if len(l) > 0:
+    if len(args) > 0:
         typstr = str  # unicode#
-        cmd += " " + " ".join([typstr(x) for x in l])
-    out, err = run_cmd(cmd)
+        cmd += " " + " ".join([typstr(x) for x in args])
+    out, err = run_cmd(cmd, **kwargs)
     return out, err
 
 

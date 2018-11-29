@@ -40,19 +40,25 @@ def clean_exts(folder=".", fLOG=print, exts=None, fclean=None):
     return rem
 
 
-def clean_files(folder=".", posreg='.*', negreg=None, fLOG=print):
+def clean_files(folder=".", posreg='.*', negreg=None, op="CR", fLOG=print):
     """
     Cleans ``\\r`` in files a folder and subfolders with a given extensions.
 
     @param      folder      folder to clean
     @param      posreg      regular expression to select files to process
     @param      negreg      regular expression to skip files to process
+    @param      op          kind of cleaning to do, see below for the available option
     @param      fLOG        logging function
     @return                 list of processed files
 
+    The following cleaning are available:
+
+    * ``'CR'``: replaces ``'\\r\\n'`` by ``'\\n'``
+    * ``'pep8'``: applies :epkg:`pep8` convention
+
     .. versionadded:: 1.8
     """
-    def clean_file(name):
+    def clean_file_cr(name):
         with open(name, "rb") as f:
             content = f.read()
         new_content = content.replace(b"\r\n", b"\n")
@@ -62,6 +68,14 @@ def clean_files(folder=".", posreg='.*', negreg=None, fLOG=print):
             return True
         else:
             return False
+
+    if op == 'CR':
+        clean_file = clean_file_cr
+    elif op == 'pep8':
+        from .code_helper import remove_extra_spaces_and_pep8
+        clean_file = remove_extra_spaces_and_pep8
+    else:
+        raise ValueError("Unknown cleaning '{0}'.".format(op))
 
     if posreg and isinstance(posreg, str):
         posreg = re.compile(posreg)

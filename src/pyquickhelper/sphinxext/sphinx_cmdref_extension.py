@@ -8,6 +8,7 @@ from docutils import nodes
 import sphinx
 from sphinx.util import logging
 from docutils.parsers.rst import directives
+from ..loghelper import run_script, noLOG
 from .sphinx_blocref_extension import BlocRef, process_blocrefs_generic, BlocRefList, process_blocref_nodes_generic
 from .import_object_helper import import_object
 
@@ -86,75 +87,90 @@ class CmdRef(BlocRef):
             except AttributeError:
                 source = lineno = None
 
-            if ":" not in name:
-                logger = logging.getLogger("CmdRef")
-                logger.warning(
-                    "[CmdRef] cmd '{0}' should contain ':': <full_function_name>:<cmd_name> as specified in the setup.".format(name))
-                if lineno is not None:
-                    logger.warning(
-                        '   File "{0}", line {1}'.format(source, lineno))
-
             # object name
-            spl = name.strip("\r\n\t ").split(":")
-            if len(spl) != 2:
-                logger = logging.getLogger("CmdRef")
-                logger.warning(
-                    "[CmdRef] cmd(*= '{0}' should contain ':': <full_function_name>:<cmd_name> as specified in the setup.".format(name))
-                if lineno is not None:
-                    logger.warning(
-                        '   File "{0}", line {1}'.format(source, lineno))
-
-            # rename the command line
-            if "=" in spl[0]:
-                name_cmd, fullname = spl[0].split('=')
-                name_fct = spl[1]
-            else:
-                fullname, name_cmd = spl
-                name_fct = name_cmd
-            name_fct = name_fct.strip()
-            fullname = fullname.strip()
-            name_cmd = name_cmd.strip()
-
-            #
-            fullname = "{0}.{1}".format(fullname, name_fct)
-            try:
-                obj, name = import_object(fullname, kind="function")
-            except ImportError:
-                logger = logging.getLogger("CmdRef")
-                logger.warning(
-                    "[CmdRef] unable to import '{0}'".format(fullname))
-                if lineno is not None:
-                    logger.warning(
-                        '   File "{0}", line {1}'.format(source, lineno))
-                obj = None
-
-            if obj is not None:
-                stio = StringIO()
-
-                def local_print(*li):
-                    "local function"
-                    stio.write(" ".join(str(_) for _ in li) + "\n")
-                obj(args=['--help'], fLOG=local_print)
-
-                content = "{0} --help".format(name_cmd)
-                pout = nodes.paragraph(content, content)
+            if name.startswith("-m"):
+                # example: -m pyquickhelper clean_files --help
+                out, err = run_script(name, fLOG=noLOG, wait=True)
+                if err:
+                    out = "--OUT--\n{0}\n--ERR--\n{1}".format(out, err)
+                content = "python " + name
+                cont += nodes.paragraph('<<<', '<<<')
+                pout = nodes.literal_block(content, content)
                 cont += pout
-
-                content = stio.getvalue()
-                if len(content) == 0:
+                cont += nodes.paragraph('>>>', '>>>')
+                pout = nodes.literal_block(out, out)
+                cont += pout
+            else:
+                if ":" not in name:
                     logger = logging.getLogger("CmdRef")
                     logger.warning(
-                        "[CmdRef] empty output for '{0}'".format(fullname))
+                        "[CmdRef] cmd '{0}' should contain ':': <full_function_name>:<cmd_name> as specified in the setup.".format(name))
                     if lineno is not None:
                         logger.warning(
                             '   File "{0}", line {1}'.format(source, lineno))
+
+                # example: pyquickhelper.cli.pyq_sync_cli:pyq_sync
+                spl = name.strip("\r\n\t ").split(":")
+                if len(spl) != 2:
+                    logger = logging.getLogger("CmdRef")
+                    logger.warning(
+                        "[CmdRef] cmd(*= '{0}' should contain ':': <full_function_name>:<cmd_name> as specified in the setup.".format(name))
+                    if lineno is not None:
+                        logger.warning(
+                            '   File "{0}", line {1}'.format(source, lineno))
+
+                # rename the command line
+                if "=" in spl[0]:
+                    name_cmd, fullname = spl[0].split('=')
+                    name_fct = spl[1]
                 else:
-                    start = 'usage: ' + name_fct
-                    if content.startswith(start):
-                        content = "usage: {0}{1}".format(
-                            name_cmd, content[len(start):])
-                pout = nodes.literal_block(content, content)
-                cont += pout
+                    fullname, name_cmd = spl
+                    name_fct = name_cmd
+
+                name_fct = name_fct.strip()
+                fullname = fullname.strip()
+                name_cmd = name_cmd.strip()
+
+                #
+                fullname = "{0}.{1}".format(fullname, name_fct)
+                try:
+                    obj, name = import_object(fullname, kind="function")
+                except ImportError:
+                    logger = logging.getLogger("CmdRef")
+                    logger.warning(
+                        "[CmdRef] unable to import '{0}'".format(fullname))
+                    if lineno is not None:
+                        logger.warning(
+                            '   File "{0}", line {1}'.format(source, lineno))
+                    obj = None
+
+                if obj is not None:
+                    stio = StringIO()
+
+                    def local_print(*li):
+                        "local function"
+                        stio.write(" ".join(str(_) for _ in li) + "\n")
+                    obj(args=['--help'], fLOG=local_print)
+
+                    content = "{0} --help".format(name_cmd)
+                    pout = nodes.paragraph(content, content)
+                    cont += pout
+
+                    content = stio.getvalue()
+                    if len(content) == 0:
+                        logger = logging.getLogger("CmdRef")
+                        logger.warning(
+                            "[CmdRef] empty output for '{0}'".format(fullname))
+                        if lineno is not None:
+                            logger.warning(
+                                '   File "{0}", line {1}'.format(source, lineno))
+                    else:
+                        start = 'usage: ' + name_fct
+                        if content.startswith(start):
+                            content = "usage: {0}{1}".format(
+                                name_cmd, content[len(start):])
+                    pout = nodes.literal_block(content, content)
+                    cont += pout
 
         return res
 

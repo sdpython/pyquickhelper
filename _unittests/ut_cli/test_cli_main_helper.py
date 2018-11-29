@@ -91,6 +91,15 @@ class TestCliMainHelper(ExtTestCase):
         self.assertIn(
             "synchronize_folder [-h] [--p1 P1] [--p2 P2] [-ha HASH_SIZE]", res)
 
+    def test_main_epkg(self):
+        st = TempBuffer()
+        main(args=["clean_files", "--help"], fLOG=st.fprint)
+        res = str(st)
+        print(res)
+        self.assertNotIn("<<", res)
+        self.assertNotIn("``", res)
+        self.assertIn("`'\\n'`", res)
+
 
 if __name__ == "__main__":
     unittest.main()
