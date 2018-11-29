@@ -151,7 +151,8 @@ def check_pep8(folder, ignore=('E265', 'W504'), skip=None,
                complexity=-1, stop_after=100, fLOG=noLOG,
                pylint_ignore=('C0103', 'C1801',
                               'R0201', 'R1705',
-                              'W0108', 'W0613'),
+                              'W0108', 'W0613',
+                              'W0107'),
                recursive=True, neg_pattern=None, extended=None,
                max_line_length=143, pattern=".*[.]py$",
                run_lint=True, verbose=False, run_cmd_filter=None):
@@ -217,6 +218,7 @@ def check_pep8(folder, ignore=('E265', 'W504'), skip=None,
     * *R0915*: too many statements
     * *R1702*: too many nested blocks
     * *R1705*: unnecessary "else" after "return"
+    * *W0107*: unnecessary pass statements
     * *W0108*: Lambda may not be necessary
     * *W0613*: unused argument
 
