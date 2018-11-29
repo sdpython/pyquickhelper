@@ -63,7 +63,7 @@ class TestPyqSyncCli(unittest.TestCase):
         doc :epkg:`up:h.k` doc
         """
         cleaned = clean_documentation_for_cli(text, 'epkg')
-        self.assertIn('doc up.h.k doc', cleaned)
+        self.assertIn('doc `up.h.k` doc', cleaned)
         cleaned = clean_documentation_for_cli(
             text, lambda t: t.replace('`', 'j'))
         self.assertIn('doc :epkg:jup:h.kj doc', cleaned)
