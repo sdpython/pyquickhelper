@@ -174,6 +174,11 @@ def create_cli_argument(parser, param, doc, names):
             parser.add_argument(*pnames, type=typ, help=doc, default=default)
         else:
             parser.add_argument(*pnames, type=typ, help=doc)
+    elif typ is None or str(typ) == "<class 'NoneType'>":
+        parser.add_argument(*pnames, type=typ, help=doc, default="")
+    elif str(typ) == "<class 'type'>":
+        # Positional argument
+        parser.add_argument(*pnames, help=doc)
     else:
         raise NotImplementedError(
             "typ='{0}' not supported (parameter '{1}'). \n"
@@ -248,6 +253,78 @@ def call_cli_function(f, args=None, parser=None, fLOG=print, skip_parameters=('f
                 if hasattr(args, k):
                     kwargs[k] = getattr(args, k)
             if has_flog:
-                f(fLOG=fLOG, **kwargs)
+                res = f(fLOG=fLOG, **kwargs)
             else:
-                f(**kwargs)
+                res = f(**kwargs)
+            if res is not None and isinstance(res, str):
+                fLOG(res)
+
+
+def guess_module_name(fct):
+    """
+    Guesses the module name based on a function.
+
+    @param      fct     function
+    @return             module name
+    """
+    mod = fct.__module__
+    spl = mod.split('.')
+    name = spl[0]
+    if name == 'src':
+        return spl[1]
+    else:
+        return spl[0]
+
+
+def cli_main_helper(dfct, args, fLOG=print):
+    """
+    Implements the main commmand line for a module.
+
+    @param      dfct        dictionary ``{ key: fct }``
+    @param      args        arguments
+    @param      fLOG        logging function
+    """
+    if fLOG is None:
+        raise ValueError("fLOG must be defined.")
+    first = None
+    for _, v in dfct.items():
+        first = v
+        break
+    if not first:
+        raise ValueError("dictionary must not be empty.")
+
+    def print_available():
+        maxlen = max(map(len, dfct)) + 3
+        fLOG("Available commands:")
+        fLOG("")
+        for a, fct in sorted(dfct.items()):
+            doc = fct.__doc__.strip("\r\n ").split("\n")[0]
+            fLOG("    " + a + " " * (maxlen - len(a)) + doc)
+
+    modname = guess_module_name(first)
+    if len(args) < 1:
+        fLOG("Usage:")
+        fLOG("")
+        fLOG("    python -m {0} <command>".format(modname))
+        fLOG("")
+        fLOG("To get help:")
+        fLOG("")
+        fLOG("    python -m {0} <command> --help".format(modname))
+        fLOG("")
+        print_available()
+    else:
+        cmd = args[0]
+        cp = args.copy()
+        del cp[0]
+        if cmd in dfct:
+            fct = dfct[cmd]
+            sig = inspect.signature(fct)
+            if 'args' not in sig.parameters or 'fLOG' not in sig.parameters:
+                call_cli_function(fct, args=cp, fLOG=fLOG,
+                                  skip_parameters=('fLOG', ))
+            else:
+                fct(args=cp, fLOG=fLOG)
+        else:
+            fLOG("Command not found: '{0}'.".format(cmd))
+            fLOG("")
+            print_available()

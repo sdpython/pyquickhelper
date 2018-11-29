@@ -7,9 +7,9 @@ import warnings
 
 
 def df2rst(df, add_line=True, align="l", column_size=None, index=False,
-           list_table=False, title=None, header=True):
+           list_table=False, title=None, header=True, sep=','):
     """
-    Builds a string in RST format from a dataframe
+    Builds a string in :epkg:`RST` format from a :epkg:`dataframe`.
 
     @param      df              dataframe
     @param      add_line        (bool) add a line separator between each row
@@ -18,11 +18,13 @@ def df2rst(df, add_line=True, align="l", column_size=None, index=False,
     @param      index           add the index
     @param      list_table      use the `list_table <http://docutils.sourceforge.net/docs/ref/rst/directives.html#list-table>`_
     @param      title           used only if *list_table* is True
+    @param      header          add one header
+    @param      sep             separator if *df* is a string and is a filename to load
     @return                     string
 
     If *list_table* is False, the format is the following.
 
-    None values are replaced by empty string (4 spaces).
+    *None* values are replaced by empty string (4 spaces).
     It produces the following results:
 
     ::
@@ -52,6 +54,9 @@ def df2rst(df, add_line=True, align="l", column_size=None, index=False,
               - anythings
             ...
     """
+    if isinstance(df, str):
+        import pandas
+        df = pandas.read_csv(df, encoding="utf-8", sep=sep)
     if index:
         df = df.reset_index(drop=False).copy()
         ind = df.columns[0]
@@ -168,14 +173,13 @@ def df2rst(df, add_line=True, align="l", column_size=None, index=False,
                 res.insert(i, sline)
         res.append(sline)
         table = "\n".join(res) + "\n"
-
         return table
 
 
 def df2html(self, class_table=None, class_td=None, class_tr=None,
             class_th=None):
     """
-    convert the table into a html string
+    Converts the table into a :epkg:`html` string.
 
     @param  self            dataframe (to be added as a class method)
     @param  class_table     adds a class to the tag ``table`` (None for none)

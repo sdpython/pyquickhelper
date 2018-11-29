@@ -15,7 +15,7 @@ def get_parser(encrypt):
     @param      encrypt     encrypt or decrypt
     @return                 parser
     """
-    task = "encrypt" if encrypt else "decrypt"
+    task = "encrypt_file" if encrypt else "decrypt_file"
     parser = argparse.ArgumentParser(prog=task,
                                      description='%s a file' % task +
                                      '\ndoes not work well in Python 2.7 with pycryptodome')
@@ -69,7 +69,7 @@ def do_main(source, dest, password, encrypt, fLOG=None):
 
 def encrypt_file(fLOG=print, args=None):
     """
-    encrypt using class @see fn encrypt_stream
+    Encrypts using class @see fn encrypt_stream.
 
     @param      fLOG        logging function
     @param      args        to overwrite ``sys.args``
@@ -81,22 +81,25 @@ def encrypt_file(fLOG=print, args=None):
         Encrypt a file from the command line.
     """
     parser = get_parser(True)
-    try:
-        args = parser.parse_args()
-    except SystemExit:
-        if fLOG:
-            fLOG(parser.format_usage())
-        args = None
+    if args is not None and args == ['--help']:
+        fLOG(parser.format_help())
+    else:
+        try:
+            args = parser.parse_args()
+        except SystemExit:
+            if fLOG:
+                fLOG(parser.format_usage())
+            args = None
 
-    if args is not None:
-        do_main(source=args.source, dest=args.dest,
-                password=args.password, encrypt=True,
-                fLOG=fLOG)
+        if args is not None:
+            do_main(source=args.source, dest=args.dest,
+                    password=args.password, encrypt=True,
+                    fLOG=fLOG)
 
 
 def decrypt_file(fLOG=print, args=None):
     """
-    decrypt using class @see fn decrypt_stream
+    Decrypts using class @see fn decrypt_stream.
 
     @param      fLOG        logging function
     @param      args        to overwrite ``sys.args``
@@ -108,17 +111,20 @@ def decrypt_file(fLOG=print, args=None):
         Decrypt a file from the command line.
     """
     parser = get_parser(False)
-    try:
-        args = parser.parse_args()
-    except SystemExit:
-        if fLOG:
-            fLOG(parser.format_usage())
-        args = None
+    if args is not None and args == ['--help']:
+        fLOG(parser.format_help())
+    else:
+        try:
+            args = parser.parse_args()
+        except SystemExit:
+            if fLOG:
+                fLOG(parser.format_usage())
+            args = None
 
-    if args is not None:
-        do_main(source=args.source, dest=args.dest,
-                password=args.password, encrypt=False,
-                fLOG=fLOG)
+        if args is not None:
+            do_main(source=args.source, dest=args.dest,
+                    password=args.password, encrypt=False,
+                    fLOG=fLOG)
 
 
 if __name__ == "__main__":
