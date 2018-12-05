@@ -425,6 +425,9 @@ rem %pythonexe% %current%setup.py sdist register
 pushd %current%
 rem %pythonexe% %current%setup.py sdist --formats=gztar upload
 %pythonexe% %current%setup.py bdist_wheel upload
+set /P NVERSION=< version.txt
+git tag v%NVERSION%
+git push origin v%NVERSION%
 popd
 """
 
