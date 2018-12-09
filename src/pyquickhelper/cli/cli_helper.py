@@ -176,7 +176,7 @@ def create_cli_argument(parser, param, doc, names):
         else:
             parser.add_argument(*pnames, type=typ, help=doc)
     elif typ is None or str(typ) == "<class 'NoneType'>":
-        parser.add_argument(*pnames, type=typ, help=doc, default="")
+        parser.add_argument(*pnames, type=str, help=doc, default="")
     elif str(typ) == "<class 'type'>":
         # Positional argument
         parser.add_argument(*pnames, help=doc)
@@ -252,7 +252,10 @@ def call_cli_function(f, args=None, parser=None, fLOG=print, skip_parameters=('f
                     has_flog = True
                     continue
                 if hasattr(args, k):
-                    kwargs[k] = getattr(args, k)
+                    val = getattr(args, k)
+                    if val == '':
+                        val = None
+                    kwargs[k] = val
             if has_flog:
                 res = f(fLOG=fLOG, **kwargs)
             else:
