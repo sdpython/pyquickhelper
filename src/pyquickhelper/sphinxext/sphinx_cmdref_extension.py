@@ -96,7 +96,8 @@ class CmdRef(BlocRef):
             # object name
             if name.startswith("-m"):
                 # example: -m pyquickhelper clean_files --help
-                out, err = run_script(name, fLOG=noLOG, wait=True, change_path=path)
+                out, err = run_script(
+                    name, fLOG=noLOG, wait=True, change_path=path)
                 if err:
                     out = "--OUT--\n{0}\n--ERR--\n{1}".format(out, err)
                 content = "python " + name

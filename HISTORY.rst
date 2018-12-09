@@ -5,9 +5,10 @@
 History
 =======
 
-current - 2018-11-29 - 0.00Mb
+current - 2018-12-09 - 0.00Mb
 =============================
 
+* `211`: automatically git tag when publishing (2018-12-05)
 * `210`: add __main__ command line (2018-11-29)
 
 1.8.2876 - 2018-11-25 - 2.02Mb
