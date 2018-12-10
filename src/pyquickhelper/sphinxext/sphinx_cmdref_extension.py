@@ -138,7 +138,6 @@ class CmdRef(BlocRef):
                 fullname = fullname.strip()
                 name_cmd = name_cmd.strip()
 
-                #
                 fullname = "{0}.{1}".format(fullname, name_fct)
                 try:
                     obj, name = import_object(fullname, kind="function")

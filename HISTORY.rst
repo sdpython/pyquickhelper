@@ -5,8 +5,14 @@
 History
 =======
 
-current - 2018-12-09 - 0.00Mb
+current - 2018-12-10 - 0.00Mb
 =============================
+
+* `213`: removes cmdref from documentation when creating a parser for a function (2018-12-10)
+* `212`: issue when the default value is None when building the parser for a specific function (2018-12-09)
+
+1.8.2884 - 2018-12-09 - 2.03Mb
+==============================
 
 * `211`: automatically git tag when publishing (2018-12-05)
 * `210`: add __main__ command line (2018-11-29)

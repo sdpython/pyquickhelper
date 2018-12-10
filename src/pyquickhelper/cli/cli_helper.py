@@ -19,8 +19,12 @@ def clean_documentation_for_cli(doc, cleandoc):
     @param      cleandoc    a string which tells how to clean,
                             or a function which takes a function and
                             returns a string
+
+    The function removes everything after ``.. cmdref::`` and ``.. cmdreflist``
+    as it creates an infinite loop of processus if this command
+    is part of the documentation of the command line itself.
     """
-    for st in ('.. versionchanged::', '.. versionadded'):
+    for st in ('.. versionchanged::', '.. versionadded::', '.. cmdref::', '.. cmdreflist::'):
         if st in doc:
             doc = doc.split(st)[0]
     if isinstance(cleandoc, (list, tuple)):
@@ -64,7 +68,7 @@ def create_cli_parser(f, prog=None, layout="sphinx", skip_parameters=('fLOG',),
                                 richer requires :epkg:`sphinx`
     @param      skip_parameters do not expose these parameters
     @param      cleandoc        cleans the documentation before converting it into text,
-                                see @fn clean_documentation_for_cli
+                                @see fn clean_documentation_for_cli
     @param      options         additional :epkg:`Sphinx` options
     @return                     :epkg:`*py:argparse:ArgumentParser`
 
@@ -198,7 +202,7 @@ def call_cli_function(f, args=None, parser=None, fLOG=print, skip_parameters=('f
     @param      fLOG            logging function
     @param      skip_parameters see @see fn create_cli_parser
     @param      cleandoc        cleans the documentation before converting it into text,
-                                see @fn clean_documentation_for_cli
+                                @see fn clean_documentation_for_cli
     @param      options         additional :epkg:`Sphinx` options
 
     This function is used in command line @see fn pyq_sync.
@@ -333,6 +337,8 @@ def cli_main_helper(dfct, args, fLOG=print):
     .. cmdref::
         :title: Clean files
         :cmd: -m pyquickhelper clean_files --help
+
+        The command line cleans files in a folder.
     """
     if fLOG is None:
         raise ValueError("fLOG must be defined.")
