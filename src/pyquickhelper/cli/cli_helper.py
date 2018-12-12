@@ -6,6 +6,7 @@ from __future__ import print_function
 import argparse
 import inspect
 import re
+import sys
 from docutils import nodes
 from ..helpgen import docstring2html
 
@@ -370,8 +371,9 @@ def cli_main_helper(dfct, args, fLOG=print):
         print_available()
     else:
         cmd = args[0]
-        cp = args.copy()
-        del cp[0]
+        if sys.platform.startswith("win"):
+            cp = args.copy()
+            del cp[0]
         if cmd in dfct:
             fct = dfct[cmd]
             sig = inspect.signature(fct)
