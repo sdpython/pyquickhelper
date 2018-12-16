@@ -27,6 +27,7 @@ from .sphinx_exref_extension import ExRef, ExRefList
 from .sphinx_faqref_extension import FaqRef, FaqRefList
 from .sphinx_githublink_extension import githublink_node, githublink_role
 from .sphinx_mathdef_extension import MathDef, MathDefList
+from .sphinx_quote_extension import QuoteNode
 from .sphinx_nbref_extension import NbRef, NbRefList
 from .sphinx_postcontents_extension import PostContentsDirective, postcontents_node
 from .sphinx_tocdelay_extension import TocDelayDirective, tocdelay_node
@@ -52,6 +53,7 @@ from ..sphinxext.sphinx_faqref_extension import setup as setup_faqref
 from ..sphinxext.sphinx_githublink_extension import setup as setup_githublink
 from ..sphinxext.sphinx_image_extension import setup as setup_simpleimage
 from ..sphinxext.sphinx_mathdef_extension import setup as setup_mathdef
+from ..sphinxext.sphinx_quote_extension import setup as setup_quote
 from ..sphinxext.sphinx_nbref_extension import setup as setup_nbref
 from ..sphinxext.sphinx_postcontents_extension import setup as setup_postcontents
 from ..sphinxext.sphinx_runpython_extension import setup as setup_runpython
@@ -118,7 +120,8 @@ def get_default_extensions():
                       # the rest of it
                       setup_autodoc, setup_imagesvg,
                       setup_plot, setup_image, setup_collapse,
-                      setup_video, setup_simpleimage, setup_downloadlink]
+                      setup_video, setup_simpleimage, setup_downloadlink,
+                      setup_quote]
 
     try:
         import bokeh

@@ -53,6 +53,7 @@ from ..sphinxext.sphinx_epkg_extension import epkg_role
 from ..sphinxext.sphinx_bigger_extension import bigger_role
 from ..sphinxext.sphinx_githublink_extension import githublink_role
 from ..sphinxext.sphinx_mathdef_extension import MathDef
+from ..sphinxext.sphinx_quote_extension import QuoteNode
 from ..sphinxext.sphinx_blocref_extension import BlocRef
 from ..sphinxext.sphinx_exref_extension import ExRef
 from ..sphinxext.sphinx_faqref_extension import FaqRef
@@ -312,6 +313,7 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
     directives.register_directive("image", ImageDirective)
     directives.register_directive("todoext", TodoExt)
     directives.register_directive("mathdef", MathDef)
+    directives.register_directive("quote", QuoteNode)
     directives.register_directive("blocref", BlocRef)
     directives.register_directive("exref", ExRef)
     directives.register_directive("faqref", FaqRef)
@@ -640,8 +642,8 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
         fLOG("     -pattern  '{0}'".format(nbneg_pattern))
         notebooks = explore_folder(notebook_dir, pattern=".*[.]ipynb", neg_pattern=nbneg_pattern,
                                    fullname=True, fLOG=fLOG)[1]
-        notebooks = [_ for _ in notebooks if "checkpoint" not in _ and
-                                             "/build/" not in _.replace("\\", "/")]
+        notebooks = [_ for _ in notebooks if "checkpoint" not in _
+                                             and "/build/" not in _.replace("\\", "/")]
         fLOG("     found {0} notebooks".format(len(notebooks)))
         if len(notebooks) > 0:
             fLOG("[generate_help_sphinx] **** notebooks", nbformats)
@@ -882,6 +884,10 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
             sys.stderr = memo_err
             out = out.getvalue()
             err = err.getvalue()
+            lines = out.split('\n')
+            lines = [
+                _ for _ in lines if "toctree contains reference to document 'blog/" not in _]
+            out = "\n".join(lines)
         else:
             out, err = _process_sphinx_in_private_cmd(cmd, fLOG=fLOG)
 
@@ -1104,10 +1110,14 @@ def _process_sphinx_in_private_cmd(list_args, fLOG):
         sys.executable.replace("w.exe", ".exe"), this, sargs)
     fLOG("    ", cmd)
     fLOG("[generate_help_sphinx] _process_sphinx_in_private_cmd BEGIN")
-    ok = run_cmd(cmd, wait=True, fLOG=fLOG,
-                 communicate=False, tell_if_no_output=120)
+    out, err = run_cmd(cmd, wait=True, fLOG=fLOG,
+                       communicate=False, tell_if_no_output=120)
     fLOG("[generate_help_sphinx] _process_sphinx_in_private_cmd END")
-    return ok
+    lines = out.split('\n')
+    lines = [
+        _ for _ in lines if "toctree contains reference to document 'blog/" not in _]
+    out = "\n".join(lines)
+    return out, err
 
 
 def _check_sphinx_configuration(conf, fLOG):

@@ -835,6 +835,7 @@ def custom_setup(app, author):
     from ..sphinxext.sphinx_exref_extension import setup as setup_exref
     from ..sphinxext.sphinx_faqref_extension import setup as setup_faqref
     from ..sphinxext.sphinx_mathdef_extension import setup as setup_mathdef
+    from ..sphinxext.sphinx_quote_extension import setup as setup_quote
     from ..sphinxext.sphinx_nbref_extension import setup as setup_nbref
     from ..sphinxext.sphinx_runpython_extension import setup as setup_runpython
     from ..sphinxext.sphinx_downloadlink_extension import setup as setup_downloadlink
@@ -871,7 +872,7 @@ def custom_setup(app, author):
             setup_signature, setup_docassert, setup_postcontents,
             setup_tocdelay, setup_youtube, setup_tpl,
             setup_epkg, setup_image, setup_collapse,
-            setup_downloadlink]
+            setup_downloadlink, setup_quote]
 
     for ext in exts:
         meta = ext(app)
