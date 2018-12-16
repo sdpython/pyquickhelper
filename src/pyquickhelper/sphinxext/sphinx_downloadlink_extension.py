@@ -237,8 +237,6 @@ class DownloadLinkFileCollector(EnvironmentCollector):
     def clear_doc(self, app, env, docname):
         self.check_attr(env)
         if env.dllinkfiles and len(env.dllinkfiles) > 0:
-            logger = logging.getLogger("downloadlink")
-            logger.info("[downloadlink] clear '{0}'".format(docname))
             env.dllinkfiles.purge_doc(docname)
 
     def merge_other(self, app, env, docnames, other):
