@@ -21,6 +21,53 @@ if sys.version_info[0] == 2:
     FileNotFoundError = Exception
 
 
+def latex_preamble():
+    """
+    Default latex preamble.
+    """
+    preamble = '''
+            \\usepackage{etex}
+            \\usepackage{fixltx2e} % LaTeX patches, \\textsubscript
+            \\usepackage{cmap} % fix search and cut-and-paste in Acrobat
+            \\usepackage[raccourcis]{fast-diagram}
+            \\usepackage{titlesec}
+            \\usepackage{amsmath}
+            \\usepackage{amssymb}
+            \\usepackage{amsfonts}
+            \\usepackage{graphics}
+            \\usepackage{epic}
+            \\usepackage{eepic}
+            \\usepackage{media9}
+            %\\usepackage{pict2e}
+            %%% Redefined titleformat
+            \\setlength{\\parindent}{0cm}
+            \\setlength{\\parskip}{1ex plus 0.5ex minus 0.2ex}
+            \\newcommand{\\hsp}{\\hspace{20pt}}
+            \\newcommand{\\acc}[1]{\\left\\{#1\\right\\}}
+            \\newcommand{\\cro}[1]{\\left[#1\\right]}
+            \\newcommand{\\pa}[1]{\\left(#1\\right)}
+            \\newcommand{\\R}{\\mathbb{R}}
+            \\newcommand{\\HRule}{\\rule{\\linewidth}{0.5mm}}
+            %\\titleformat{\\chapter}[hang]{\\Huge\\bfseries\\sffamily}{\\thechapter\\hsp}{0pt}{\\Huge\\bfseries\\sffamily}
+
+            \\renewcommand{\\Verbatim}[1][1]{%
+            \\bgroup\\parskip=0pt%
+            \\smallskip%
+            \\list{}{%
+                \\setlength\\parskip{0pt}%
+                \\setlength\\itemsep{0ex}%
+                \\setlength\\topsep{0ex}%
+                \\setlength\\partopsep{0pt}%
+                \\setlength\\leftmargin{10pt}%
+            }%
+            \\item\\MakeFramed{\\FrameRestore}%
+            \\tiny
+            \\OriginalVerbatim[#1]%
+            }
+            '''.replace("            ", "")
+    return preamble
+
+
 def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path, ext_locals,
                          add_extensions=None, bootswatch_theme="spacelab", bootswatch_navbar_links=None,
                          description_latex="", use_mathjax=False, use_lunrsearch=False,
@@ -171,47 +218,7 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
                          ]
     latex_show_pagerefs = True
 
-    preamble = '''
-            \\usepackage{etex}
-            \\usepackage{fixltx2e} % LaTeX patches, \\textsubscript
-            \\usepackage{cmap} % fix search and cut-and-paste in Acrobat
-            \\usepackage[raccourcis]{fast-diagram}
-            \\usepackage{titlesec}
-            \\usepackage{amsmath}
-            \\usepackage{amssymb}
-            \\usepackage{amsfonts}
-            \\usepackage{graphics}
-            \\usepackage{epic}
-            \\usepackage{eepic}
-            \\usepackage{media9}
-            %\\usepackage{pict2e}
-            %%% Redefined titleformat
-            \\setlength{\\parindent}{0cm}
-            \\setlength{\\parskip}{1ex plus 0.5ex minus 0.2ex}
-            \\newcommand{\\hsp}{\\hspace{20pt}}
-            \\newcommand{\\acc}[1]{\\left\\{#1\\right\\}}
-            \\newcommand{\\cro}[1]{\\left[#1\\right]}
-            \\newcommand{\\pa}[1]{\\left(#1\\right)}
-            \\newcommand{\\R}{\\mathbb{R}}
-            \\newcommand{\\HRule}{\\rule{\\linewidth}{0.5mm}}
-            %\\titleformat{\\chapter}[hang]{\\Huge\\bfseries\\sffamily}{\\thechapter\\hsp}{0pt}{\\Huge\\bfseries\\sffamily}
-
-            \\renewcommand{\\Verbatim}[1][1]{%
-            \\bgroup\\parskip=0pt%
-            \\smallskip%
-            \\list{}{%
-                \\setlength\\parskip{0pt}%
-                \\setlength\\itemsep{0ex}%
-                \\setlength\\topsep{0ex}%
-                \\setlength\\partopsep{0pt}%
-                \\setlength\\leftmargin{10pt}%
-            }%
-            \\item\\MakeFramed{\\FrameRestore}%
-            \\tiny
-            \\OriginalVerbatim[#1]%
-            }
-            '''.replace("            ", "")
-
+    preamble = latex_preamble()
     latex_elements = {
         'papersize': 'a4',
         'pointsize': '10pt',

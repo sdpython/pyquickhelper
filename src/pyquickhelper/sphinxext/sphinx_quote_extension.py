@@ -66,8 +66,6 @@ class QuoteNode(BaseAdmonition):
         """
         Builds the mathdef text.
         """
-        lineno = self.lineno
-
         env = self.state.document.settings.env if hasattr(
             self.state.document.settings, "env") else None
         docname = None if env is None else env.docname
@@ -86,10 +84,6 @@ class QuoteNode(BaseAdmonition):
         tag = self.options.get('tag', 'quotetag').strip()
         if len(tag) == 0:
             raise ValueError("tag is empty")
-        if env is not None:
-            mid = int(env.new_serialno('indexquote-u-%s' % tag)) + 1
-        else:
-            mid = -1
 
         # book
         author = _(self.options.get('author', "").strip())

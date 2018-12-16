@@ -10,6 +10,7 @@ import os
 import sys
 import warnings
 from sphinx.application import Sphinx
+from .default_conf import latex_preamble
 
 try:
     from sphinx.deprecation import RemovedInSphinx30Warning, RemovedInSphinx40Warning, RemovedInSphinx20Warning
@@ -118,6 +119,19 @@ class CustomSphinxApp(Sphinx):
                             buildername, confoverrides, status,
                             warning, freshenv, warningiserror, tags,
                             verbosity, parallel)
+
+        self._add_missing_element_in_config()
+
+    def _add_missing_element_in_config(self):
+        """
+        Adds extra elements in config such as ``latex_elements``.
+        """
+        if not hasattr(self.config, "latex_elements"):
+            self.config.latex_elements = {
+                'papersize': 'a4',
+                'pointsize': '10pt',
+                'preamble': latex_preamble(),
+            }
 
     def __str__(self):
         """

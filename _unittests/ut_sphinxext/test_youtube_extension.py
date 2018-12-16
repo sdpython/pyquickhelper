@@ -149,7 +149,7 @@ class TestYoutubeExtension(unittest.TestCase):
         if t1 not in html:
             raise Exception(html)
 
-    def test_youtube_size_warning(self):
+    def test_youtube_size_nowarning(self):
         fLOG(
             __file__,
             self._testMethodName,
@@ -182,9 +182,45 @@ class TestYoutubeExtension(unittest.TestCase):
         ch.setLevel(logging.DEBUG)
         logger.logger.addHandler(ch)
 
-        rst2html(content, writer="custom",
-                 keep_warnings=True, directives=tives)
+        cst = rst2html(content, writer="custom",
+                       keep_warnings=True, directives=tives)
+        self.assertIn('<iframe src="https://www.youtube', cst)
 
+    def test_youtube_size_warning(self):
+        fLOG(
+            __file__,
+            self._testMethodName,
+            OutputPrint=__name__ == "__main__")
+
+        from docutils import nodes as skip_
+
+        content = """
+                    test a directive
+                    ================
+
+                    before
+
+                    .. youtube:: https://www.youhtube.comgSchPGmtikI
+                        :width: 300
+
+                    this code shoud appear___
+
+                    after
+                    """.replace("                    ", "")
+        if sys.version_info[0] >= 3:
+            content = content.replace('u"', '"')
+
+        tives = [("youtube", YoutubeDirective, youtube_node,
+                  visit_youtube_node, depart_youtube_node)]
+
+        logger = getLogger("youtube")
+        log_capture_string = StringIO()
+        ch = logging.StreamHandler(log_capture_string)
+        ch.setLevel(logging.DEBUG)
+        logger.logger.addHandler(ch)
+
+        cst = rst2html(content, writer="custom",
+                       keep_warnings=True, directives=tives)
         lines = log_capture_string.getvalue()
         t1 = "[youtube] unable to extract video id from"
         if t1 not in lines:

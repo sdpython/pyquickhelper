@@ -138,7 +138,7 @@ class YoutubeDirective(Directive):
                 uid = idurl.split("watch?v=")[-1]
             else:
                 uid = idurl.split('/')[-1]
-                if len(uid) <= 4:
+                if len(uid) <= 4 or '.' in uid:
                     env = self.state.document.settings.env if hasattr(
                         self.state.document.settings, "env") else None
                     logger = logging.getLogger("youtube")
