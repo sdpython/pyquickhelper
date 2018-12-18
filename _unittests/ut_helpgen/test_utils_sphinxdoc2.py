@@ -23,6 +23,7 @@ except ImportError:
     import src
 
 import src.pyquickhelper.helpgen.utils_sphinx_doc as utils_sphinx_doc
+from src.pyquickhelper.loghelper import fLOG
 from src.pyquickhelper.pycode import ExtTestCase
 
 
@@ -87,13 +88,10 @@ class TestSphinxDoc2(ExtTestCase):
     def test_inspect_object(self):
         """ test 2"""
         mod = sys.modules[__name__]
-        fLOG(type(mod), mod.__file__, mod.__name__)
         objs = utils_sphinx_doc.get_module_objects(mod)
-        fLOG("objs=", objs)
         ty = {}
         for _ in objs:
             ty[_.type] = ty.get(_.type, 0) + 1
-        fLOG(ty)
         if ty.get("method", 0) > 5 or ty.get("staticmethod", 0) == 0:
             for _ in objs:
                 if _.type == "method":

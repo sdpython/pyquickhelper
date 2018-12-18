@@ -66,13 +66,9 @@ class SourceRepository:
 
         @param      path            path to look
         @param      file_detail     if True, add impacted files
-        @return                     list of changes, each change is a list of 4-uple:
-                                        - author
-                                        - change number (int)
-                                        - date (datetime)
-                                        - comment
-                                        - full hash
-                                        - link
+        @return                     list of changes, each change is a list of tuples:
+                                    (author, change number (int), date (datetime),
+                                    comment, full hash, link)
 
         The function uses a command line if an error occurred.
         It uses the xml format:
