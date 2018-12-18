@@ -17,7 +17,7 @@ keyring
 Mako
 matplotlib
 mistune
-nbconvert>=5.0.0
+nbconvert!=5.4.0
 nbformat
 nbpresent
 nbsphinx>=0.3.1

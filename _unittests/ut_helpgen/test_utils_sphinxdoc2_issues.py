@@ -21,7 +21,6 @@ except ImportError:
         sys.path.append(path)
     import src
 
-from src.pyquickhelper.loghelper.flog import fLOG
 from src.pyquickhelper.helpgen.utils_sphinx_doc_helpers import process_var_tag
 from src.pyquickhelper.helpgen.utils_sphinx_doc import migrating_doxygen_doc
 from src.pyquickhelper.filehelper import synchronize_folder
@@ -39,11 +38,6 @@ class TestSphinxDoc2Issue (unittest.TestCase):
         return 1
 
     def test_issues1(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
         obj = TestSphinxDoc2Issue.get_help
         d1 = obj.__doc__
 
@@ -52,11 +46,6 @@ class TestSphinxDoc2Issue (unittest.TestCase):
         self.assertEqual(d1, d2)
 
     def test_var(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
         docstring = """
             This class opens a text file as if it were a binary file. It can deal with null characters which are missed by open function.
 
@@ -87,11 +76,6 @@ class TestSphinxDoc2Issue (unittest.TestCase):
         self.assertIn(".. list-table", rst)
 
     def test_multiline(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
         sig = """
                 def synchronize_folder(p1,
                                        p2):""".replace("                ", "")

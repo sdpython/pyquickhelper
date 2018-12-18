@@ -11,6 +11,12 @@ class LatexRawOutputPreprocessor(Preprocessor):
     Custom processor to apply a different style on raw output.
     """
 
+    def __init__(self, *args, **kwargs):
+        """
+        Overloads the constructor.
+        """
+        Preprocessor.__init__(self, *args, **kwargs)
+
     def preprocess_cell(self, cell, resources, cell_index):
         """
         Apply a transformation on each cell. See base.py for details,

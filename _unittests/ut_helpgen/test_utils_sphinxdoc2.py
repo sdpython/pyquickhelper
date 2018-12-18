@@ -22,7 +22,6 @@ except ImportError:
         sys.path.append(path)
     import src
 
-from src.pyquickhelper.loghelper.flog import fLOG
 import src.pyquickhelper.helpgen.utils_sphinx_doc as utils_sphinx_doc
 from src.pyquickhelper.pycode import ExtTestCase
 
@@ -34,11 +33,6 @@ class TestSphinxDoc2(ExtTestCase):
         self.assertTrue(src is not None)
 
     def test_apply_modification_template_obj(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
         path = os.path.split(__file__)[0]
         file = os.path.normpath(
             os.path.join(
@@ -92,11 +86,6 @@ class TestSphinxDoc2(ExtTestCase):
 
     def test_inspect_object(self):
         """ test 2"""
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
         mod = sys.modules[__name__]
         fLOG(type(mod), mod.__file__, mod.__name__)
         objs = utils_sphinx_doc.get_module_objects(mod)

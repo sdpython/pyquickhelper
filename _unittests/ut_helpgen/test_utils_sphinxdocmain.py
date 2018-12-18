@@ -21,7 +21,6 @@ except ImportError:
         sys.path.append(path)
     import src
 
-from src.pyquickhelper.loghelper.flog import fLOG
 from src.pyquickhelper.helpgen.sphinx_main import generate_changes_repo
 from src.pyquickhelper.pycode import is_travis_or_appveyor
 
@@ -33,20 +32,9 @@ class TestSphinxDocMain (unittest.TestCase):
         self.assertTrue(src is not None)
 
     def test_sphinx_changes(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
         path = os.path.abspath(os.path.split(__file__)[0])
         file = os.path.normpath(os.path.join(path, "..", ".."))
         self.assertTrue(os.path.exists(file))
-
-        if sys.version_info[0] == 2:
-            return
-
-        if is_travis_or_appveyor() == "travis":
-            # Does not work on travis, probably an issue with git version. Did not check.
-            return
 
         rst = generate_changes_repo(None, file)
         # fLOG(rst[:5000])

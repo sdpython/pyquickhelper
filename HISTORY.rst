@@ -5,21 +5,24 @@
 History
 =======
 
-current - 2018-12-10 - 0.00Mb
+current - 2018-12-18 - 0.00Mb
 =============================
 
+* `215`: add quote_node for quotations (sphinx) (2018-12-18)
+* `216`: conversion of notebook including svg fails (2018-12-18)
+* `214`: fix issue with neg_pattern in explore_folder_iterfile (2018-12-11)
+
+1.8.2885 - 2018-12-10 - 2.03Mb
+==============================
+
 * `213`: removes cmdref from documentation when creating a parser for a function (2018-12-10)
-* `212`: issue when the default value is None when building the parser for a specific function (2018-12-09)
 
 1.8.2884 - 2018-12-09 - 2.03Mb
 ==============================
 
+* `212`: issue when the default value is None when building the parser for a specific function (2018-12-09)
 * `211`: automatically git tag when publishing (2018-12-05)
 * `210`: add __main__ command line (2018-11-29)
-
-1.8.2876 - 2018-11-25 - 2.02Mb
-==============================
-
 * `209`: implements function retrieve_notebooks_in_folder (2018-11-25)
 * `208`: update to azure CI (2018-11-25)
 * `205`: Slides conversion are missing from the documentation (2018-11-09)
@@ -28,22 +31,10 @@ current - 2018-12-10 - 0.00Mb
 * `202`: make runpython keep context from one execution to the next one (2018-11-01)
 * `201`: handle language options in runpython and rst builder (2018-11-01)
 * `200`: ignore issue E402 when applying autopep8 (move import at the top of the file) (2018-10-28)
-
-1.8.2827 - 2018-10-14 - 2.02Mb
-==============================
-
 * `199`: better logging in synchronisation_folder (2018-10-14)
 * `198`: broken links in the documentation (magic command ,example) (2018-10-14)
-
-1.8.2820 - 2018-10-06 - 2.02Mb
-==============================
-
 * `197`: do not raise exception if latex is not found when using rst2html (2018-10-06)
 * `196`: add function add_rst_links to automatically add links into one string (2018-10-04)
-
-1.8.2814 - 2018-09-22 - 2.02Mb
-==============================
-
 * `195`: implement a doctree outputter (2018-09-19)
 * `194`: check why call an extension from the setup is different from adding it to the list of extensions (2018-09-19)
 * `193`: fix an issue when converting a werzeug object into string (2018-09-17)
@@ -58,10 +49,6 @@ current - 2018-12-10 - 0.00Mb
 * `184`: add tag :orphan: to additional files (2018-09-08)
 * `183`: use svg image for formula in HTML and png in latex (2018-08-27)
 * `182`: implementation of a backup plan if downloading require.js fails (2018-08-27)
-
-1.8.2747 - 2018-08-25 - 1.99Mb
-==============================
-
 * `181`: fix an issue when combining coverage_report after the unit tests passed (2018-08-24)
 * `180`: add parameter persistent to get_temp_folder (2018-08-24)
 * `179`: put a default value for neg_pattern if it is none to avoid known folders (function check_pep8) (2018-08-23)
@@ -83,10 +70,6 @@ current - 2018-12-10 - 0.00Mb
 * `165`: documentation does not automatically generate .rst for module written in C (2018-08-04)
 * `164`: improve autosignature for builtin function (2018-08-03)
 * `162`: reduce the impact of RuntimeError: Kernel died before replying to kernel_info (2018-07-29)
-
-1.8.2673 - 2018-07-28 - 1.99Mb
-==============================
-
 * `161`: fix unit test test_build_script on appveyor (2018-07-28)
 * `160`: notebook server remains open if an exception happens during the execution (2018-07-25)
 * `159`: fix a bug with pylint version (2018-07-23)
@@ -101,10 +84,6 @@ current - 2018-12-10 - 0.00Mb
 * `148`: fix unit test test_changes_graph (pandas update) (2018-05-17)
 * `146`: remove raise ... (...) from e in setup.py (2018-05-17)
 * `145`: add a script to launch scite on windows with the right path (2018-05-13)
-
-1.8.2602 - 2018-05-11 - 1.98Mb
-==============================
-
 * `144`: disable sphinx gallery extension if no example (2018-05-11)
 * `143`: add setup option to run pylint (2018-05-11)
 * `142`: look for the files which makes pylint crash on Windows (2018-05-11)
