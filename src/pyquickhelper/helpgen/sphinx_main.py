@@ -884,12 +884,23 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
             sys.stderr = memo_err
             out = out.getvalue()
             err = err.getvalue()
-            lines = out.split('\n')
+            lines = ['***OUT/***'] + out.split('\n') + ['***OUT\\***']
             lines = [
                 _ for _ in lines if "toctree contains reference to document 'blog/" not in _]
             out = "\n".join(lines)
         else:
-            out, err = _process_sphinx_in_private_cmd(cmd, fLOG=fLOG)
+            def customfLOG(*args, **kwargs):
+                "filter out some lines"
+                args = [
+                    _ for _ in args if "toctree contains reference to document 'blog/" not in _]
+                if args:
+                    fLOG(*args, **kwargs)
+
+            out, err = _process_sphinx_in_private_cmd(cmd, fLOG=customfLOG)
+            lines = ['***OUT//***'] + out.split('\n') + ['***OUT\\\\***']
+            lines = [
+                _ for _ in lines if "toctree contains reference to document 'blog/" not in _]
+            out = "\n".join(lines)
 
         fLOG("[generate_help_sphinx] end cmd len(out)={0} len(err)={1}".format(
             len(out), len(err)))
@@ -901,6 +912,8 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
                     if "RemovedInSphinx" in _:
                         return False
                     if "while setting up extension" in _:
+                        return False
+                    if "toctree contains reference to document 'blog/" in _:
                         return False
                     return True
                 out = "\n".join(

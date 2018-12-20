@@ -30,8 +30,8 @@ class QuoteNode(BaseAdmonition):
     * *year*
     * *pages*
     * *tag*
-    * *lid*
-    * *label*
+    * *source*
+    * *lid* or *label*
 
     Example::
 
@@ -42,6 +42,7 @@ class QuoteNode(BaseAdmonition):
             :pages: pages (optional)
             :tag: something
             :lid: id (used for further reference)
+            :source: optional
 
             A monkey could...
     """
@@ -59,6 +60,7 @@ class QuoteNode(BaseAdmonition):
         'tag': directives.unchanged,
         'lid': directives.unchanged,
         'label': directives.unchanged,
+        'source': directives.unchanged,
         'class': directives.class_option,
     }
 
@@ -85,29 +87,46 @@ class QuoteNode(BaseAdmonition):
         if len(tag) == 0:
             raise ValueError("tag is empty")
 
+        def __(text):
+            if text:
+                return _(text)
+            else:
+                return ""
+
         # book
-        author = _(self.options.get('author', "").strip())
-        book = _(self.options.get('book', "").strip())
-        pages = _(self.options.get('pages', "").strip())
-        year = _(self.options.get('year', "").strip())
+        author = __(self.options.get('author', "").strip())
+        book = __(self.options.get('book', "").strip())
+        pages = __(self.options.get('pages', "").strip())
+        year = __(self.options.get('year', "").strip())
+        source = __(self.options.get('source', "").strip())
+
+        indexes = []
 
         # add a label
         lid = self.options.get('lid', self.options.get('label', None))
         if lid:
-            tnl = [".. _{0}:".format(lid), ""]
+            tnl = ['', ".. _{0}:".format(lid), ""]
         else:
             tnl = []
 
         if author:
             tnl.append("**{0}**, ".format(author))
+            indexes.append(author)
         if book:
-            tnl.append("*{0}*, ".format(book))
+            tnl.append("*{0}*".format(book))
+            indexes.append(book)
         if pages:
-            tnl.append("{0} ".format(pages))
+            tnl.append(", {0}".format(pages))
+        if source:
+            if source.startswith("http"):
+                tnl.append(", `source <{0}>`_".format(source))
+            else:
+                tnl.append(", {0}".format(source))
         if year:
-            tnl.append("({0}), ".format(year))
-        else:
-            tnl.append(", ")
+            tnl.append(", {0}".format(year))
+        tnl.append('')
+        tnl.append(".. index:: " + ", ".join(indexes))
+        tnl.append('')
 
         content = StringList(tnl)
         content = content + self.content
@@ -126,6 +145,8 @@ class QuoteNode(BaseAdmonition):
         quote['author'] = author
         quote['pages'] = pages
         quote['year'] = year
+        quote['label'] = lid
+        quote['source'] = source
         node['classes'] += ["quote"]
 
         return [node]
