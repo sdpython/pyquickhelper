@@ -133,8 +133,6 @@ class QuoteNode(BaseAdmonition):
                 tnl.append(", `source <{0}>`_".format(source))
             else:
                 tnl.append(", {0}".format(source))
-        if year:
-            tnl.append(", {0}".format(year))
         tnl.append('')
         tnl.append(".. index:: " + ", ".join(indexes))
         tnl.append('')
