@@ -32,6 +32,8 @@ class QuoteNode(BaseAdmonition):
     * *tag*
     * *source*
     * *lid* or *label*
+    * *index*, additional index words beside the title and the author
+    * *date*, if the text was written or declared at specific date
 
     Example::
 
@@ -43,6 +45,7 @@ class QuoteNode(BaseAdmonition):
             :tag: something
             :lid: id (used for further reference)
             :source: optional
+            :index: word
 
             A monkey could...
     """
@@ -62,6 +65,8 @@ class QuoteNode(BaseAdmonition):
         'label': directives.unchanged,
         'source': directives.unchanged,
         'class': directives.class_option,
+        'index': directives.unchanged,
+        'date': directives.unchanged,
     }
 
     def run(self):
@@ -99,8 +104,12 @@ class QuoteNode(BaseAdmonition):
         pages = __(self.options.get('pages', "").strip())
         year = __(self.options.get('year', "").strip())
         source = __(self.options.get('source', "").strip())
+        index = __(self.options.get('index', "").strip())
+        date = __(self.options.get('date', "").strip())
 
         indexes = []
+        if index:
+            indexes.append(index)
 
         # add a label
         lid = self.options.get('lid', self.options.get('label', None))
@@ -117,6 +126,8 @@ class QuoteNode(BaseAdmonition):
             indexes.append(book)
         if pages:
             tnl.append(", {0}".format(pages))
+        if date:
+            tnl.append(" ({0})".format(date))
         if source:
             if source.startswith("http"):
                 tnl.append(", `source <{0}>`_".format(source))
