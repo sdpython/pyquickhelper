@@ -37,7 +37,7 @@ class QuoteNode(BaseAdmonition):
 
     Example::
 
-        .. quotedef::
+        .. quote::
             :author: author
             :book: book
             :year: year
@@ -150,12 +150,15 @@ class QuoteNode(BaseAdmonition):
                 "[blogpost] unable to parse '{0}' - '{1}' - {2}".format(author, book, e))
             raise e
 
-        quote['tag'] = tag
-        quote['author'] = author
-        quote['pages'] = pages
-        quote['year'] = year
-        quote['label'] = lid
-        quote['source'] = source
+        node['tag'] = tag
+        node['author'] = author
+        node['pages'] = pages
+        node['year'] = year
+        node['label'] = lid
+        node['source'] = source
+        node['book'] = book
+        node['index'] = index
+        node['content'] = '\n'.join(self.content)
         node['classes'] += ["quote"]
 
         return [node]
@@ -176,6 +179,35 @@ def depart_quote_node(self, node):
     self.depart_admonition(node)
 
 
+def visit_quote_node_rst(self, node):
+    """
+    visit_quote_node
+    """
+    self.new_state(0)
+    self.add_text(".. quote::")
+    for k, v in sorted(node.attributes.items()):
+        if k in ("content", 'classes'):
+            continue
+        if v:
+            self.new_state(4)
+            self.add_text(":{0}: {1}".format(k, v))
+            self.end_state(wrap=False, end=None)
+    self.add_text(self.nl)
+    self.new_state(4)
+    self.add_text(node['content'])
+    self.end_state()
+    self.end_state()
+    raise nodes.SkipNode
+
+
+def depart_quote_node_rst(self, node):
+    """
+    depart_quote_node,
+    see https://github.com/sphinx-doc/sphinx/blob/master/sphinx/writers/html.py
+    """
+    pass
+
+
 def setup(app):
     """
     setup for ``mathdef`` (sphinx)
@@ -190,7 +222,7 @@ def setup(app):
                  latex=(visit_quote_node, depart_quote_node),
                  text=(visit_quote_node, depart_quote_node),
                  md=(visit_quote_node, depart_quote_node),
-                 rst=(visit_quote_node, depart_quote_node))
+                 rst=(visit_quote_node_rst, depart_quote_node_rst))
 
     app.add_directive('quote', QuoteNode)
     return {'version': sphinx.__display_version__, 'parallel_read_safe': True}

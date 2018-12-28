@@ -25,6 +25,7 @@ from src.pyquickhelper.pycode import get_temp_folder
 from src.pyquickhelper.helpgen import rst2html
 from src.pyquickhelper.sphinxext import QuoteNode
 from src.pyquickhelper.sphinxext.sphinx_quote_extension import quote_node, visit_quote_node, depart_quote_node
+from src.pyquickhelper.sphinxext.sphinx_quote_extension import visit_quote_node_rst, depart_quote_node_rst
 
 
 if sys.version_info[0] == 2:
@@ -48,6 +49,8 @@ class TestMathDefExtension(unittest.TestCase):
                         :year: 2018
 
                         this code should appear___
+
+                    next
                     """.replace("                    ", "")
         if sys.version_info[0] >= 3:
             content = content.replace('u"', '"')
@@ -72,8 +75,9 @@ class TestMathDefExtension(unittest.TestCase):
             raise Exception(html)
         if "234" not in html:
             raise Exception(html)
-        if "2018" not in html:
-            raise Exception(html)
+
+        tives = [("quote", QuoteNode, quote_node,
+                  visit_quote_node_rst, depart_quote_node_rst)]
 
         rst = rst2html(content,  # fLOG=fLOG,
                        writer="rst", keep_warnings=True,
@@ -91,7 +95,9 @@ class TestMathDefExtension(unittest.TestCase):
             raise Exception(rst)
         if "234" not in rst:
             raise Exception(rst)
-        if "2018" not in rst:
+        if ".. quote::" not in rst:
+            raise Exception(rst)
+        if ":author: auteur" not in rst:
             raise Exception(rst)
 
 

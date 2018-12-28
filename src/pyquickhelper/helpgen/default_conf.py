@@ -799,7 +799,8 @@ def extract_version_from_setup(filename):
 
 def get_first_line(filename):
     """
-    expects to find a text file with a line, the function extracts and returns this line
+    Expects to find a text file with a line,
+    the function extracts and returns this line.
     """
     try:
         with open(filename, "r") as ff:
