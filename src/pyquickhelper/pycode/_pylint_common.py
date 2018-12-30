@@ -29,7 +29,7 @@ def _private_test_style_src(fLOG, run_lint, verbose=False, pattern=".*[.]py$"):
                               'R0912', 'W0123', 'R0913', 'R0912',
                               'R0911', 'R0916', 'C0200', 'W0223',
                               'W0122', 'E1003', 'R0205', 'E0001',
-                              'W0143'),
+                              'W0143', 'W0107'),
                skip=["ftp_transfer_files.py:359: [E731]",
                      "_nbconvert_config.py:",
                      "convert_doc_sphinx_helper.py:31: [E402]",
@@ -148,6 +148,8 @@ def _private_test_style_src(fLOG, run_lint, verbose=False, pattern=".*[.]py$"):
                      "utils_tests_helper.py:33",
                      "No name 'sphinxm_mock_app' in module 'src.pyquickhelper.helpgen'",
                      "cli_helper.py:233: R1714",
+                     "__init__.py:127: W0611: Unused import bokeh",
+                     "__init__.py:106: W0611: Unused matplotlib.pyplot",
                      ])
 
 
@@ -162,7 +164,8 @@ def _private_test_style_test(fLOG, run_lint, verbose=False, pattern=".*[.]py$"):
                               'W0613', 'C0123', 'W0640', 'E0202', 'C0412',
                               'R1702', 'W0612', 'C0411', 'E1101', 'C0122',
                               'W0201', 'E0702', 'W1503', 'C0102', 'W0223',
-                              'W0611', 'R1705', 'W0631', 'W0102', 'R0205'),
+                              'W0611', 'R1705', 'W0631', 'W0102', 'R0205',
+                              'W0107'),
                skip=["src' imported but unused",
                      "skip_' imported but unused",
                      "skip__' imported but unused",
@@ -199,4 +202,6 @@ def _private_test_style_test(fLOG, run_lint, verbose=False, pattern=".*[.]py$"):
                      "Unable to import 'src.pyquickhelper",
                      "No name 'sphinxm_mock_app' in module 'src.pyquickhelper.helpgen'",
                      "test_yaml.py:351",
+                     "test_downloadlink_extension.py:10: E0401: Unable to import 'distutils.version'",
+                     "test_downloadlink_extension.py:10: E0611: No name 'version' in module 'distutils'",
                      ])
