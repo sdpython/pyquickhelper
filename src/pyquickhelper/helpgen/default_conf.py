@@ -26,6 +26,7 @@ def latex_preamble():
     Default latex preamble.
     """
     preamble = '''
+            \\let\\nbsphinxfancyoutput\\relax
             \\usepackage{etex}
             \\usepackage{fixltx2e} % LaTeX patches, \\textsubscript
             \\usepackage{cmap} % fix search and cut-and-paste in Acrobat
