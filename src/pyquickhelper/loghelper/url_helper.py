@@ -6,8 +6,18 @@ import sys
 
 try:
     import urllib.request as urllib_request
+    from urllib.error import HTTPError
 except ImportError:
     import urllib2 as urllib_request
+    from urllib2 import HTTPError
+
+
+class CannotDownloadException(Exception):
+    """
+    Raised by function @see fn get_url_content
+    if something cannot be downloaded.
+    """
+    pass
 
 
 def get_url_content(url, use_mozilla=False):
@@ -18,15 +28,23 @@ def get_url_content(url, use_mozilla=False):
     @return                     page
     """
     if use_mozilla:
-        req = urllib_request.Request(
-            url, headers={'User-agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64)' if sys.platform.startswith("win") else 'Mozilla/5.0'})
-        u = urllib_request.urlopen(req)
+        try:
+            req = urllib_request.Request(
+                url, headers={'User-agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64)' if sys.platform.startswith("win") else 'Mozilla/5.0'})
+            u = urllib_request.urlopen(req)
+        except HTTPError as e:
+            raise CannotDownloadException(
+                "Unable to download from url '{0}'".format(url)) from e
         text = u.read()
         u.close()
         text = text.decode("utf8")
         return text
     else:
-        u = urllib_request.urlopen(url)
+        try:
+            u = urllib_request.urlopen(url)
+        except HTTPError as e:
+            raise CannotDownloadException(
+                "Unable to download from url '{0}'".format(url)) from e
         text = u.read()
         u.close()
         text = text.decode("utf8")
