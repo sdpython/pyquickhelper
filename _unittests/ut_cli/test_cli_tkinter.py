@@ -22,7 +22,7 @@ except ImportError:
     import src
 
 from src.pyquickhelper.loghelper import fLOG
-from src.pyquickhelper.pycode import ExtTestCase
+from src.pyquickhelper.pycode import ExtTestCase, skipif_travis, skipif_circleci
 from src.pyquickhelper.__main__ import main
 
 
@@ -50,6 +50,8 @@ class TestCliMainTkinterHelper(ExtTestCase):
         """for pylint"""
         self.assertTrue(src is not None)
 
+    @skipif_travis('_tkinter.TclError: invalid command name "frame"')
+    @skipif_circleci('_tkinter.TclError: invalid command name "frame"')
     def test_main(self):
 
         st = TempBuffer()

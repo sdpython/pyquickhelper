@@ -150,9 +150,19 @@ def run_python_script(script, params=None, comment=None, setsysvar=None, process
                 header.append("sys.path.append('{0}')".format(
                     path.replace("\\", "\\\\")))
                 add += 1
+            else:
+                path = sys.path[0]
+                path = os.path.join(path, "src")
+                if os.path.exists(path):
+                    header.append("sys.path.append('{0}')".format(
+                        path.replace("\\", "\\\\")))
+                    add += 1
+
         if add == 0:
-            raise RunPythonExecutionError(
-                "unable to find a path to add:\n{0}".format("\n".join(sys.path)))
+            # We do nothing unless the execution failed.
+            exc_path = RunPythonExecutionError("Unable to find a path to add:\n{0}".format("\n".join(sys.path)))
+        else:
+            exc_path = None
         header.append('')
         script = "\n".join(header) + script
 
@@ -163,6 +173,8 @@ def run_python_script(script, params=None, comment=None, setsysvar=None, process
             if not exception:
                 message = "SCRIPT:\n{0}\nPARAMS\n{1}\nCOMMENT\n{2}\nERR\n{3}\nOUT\n{4}\nEXC\n{5}".format(
                     script, params, comment, "", str(ee), ee)
+                if exc_path:
+                    message += "\n---EXC--\n{0}".format(exc_path)
                 raise RunPythonExecutionError(message) from ee
             else:
                 return str(ee), str(ee), None
