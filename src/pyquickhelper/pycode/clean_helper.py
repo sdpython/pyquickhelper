@@ -18,13 +18,13 @@ def clean_exts(folder=".", fLOG=print, exts=None, fclean=None):
     @return                 list of removed files
 
     If *exts* is None, it will be replaced by
-    ``[".pyd", ".so", ".o", ".def"]``.
+    ``{".pyd", ".so", ".o", ".def", ".obj"}``.
 
     .. versionchanged:: 1.8
         Parameter *fclean* was added.
     """
     if exts is None:
-        exts = [".pyd", ".so", ".o", ".def"]
+        exts = {".pyd", ".so", ".o", ".def", ".obj"}
     rem = []
     for root, _, files in os.walk(folder):
         for f in files:
@@ -40,9 +40,11 @@ def clean_exts(folder=".", fLOG=print, exts=None, fclean=None):
     return rem
 
 
-def clean_files(folder=".", posreg='.*', negreg=None, op="CR", fLOG=print):
+def clean_files(folder=".", posreg='.*', negreg=".*[.]git/.*", op="CR", fLOG=print):
     """
     Cleans ``\\r`` in files a folder and subfolders with a given extensions.
+    Backslashes are replaces by ``/``. The regular expressions
+    applies on the relative path starting from *folder*.
 
     @param      folder      folder to clean
     @param      posreg      regular expression to select files to process
@@ -83,13 +85,15 @@ def clean_files(folder=".", posreg='.*', negreg=None, op="CR", fLOG=print):
         negreg = re.compile(negreg)
 
     res = []
-    for root, _, files in os.walk(folder):
+    for root, fold, files in os.walk(folder):
         for f in files:
-            if posreg is None or posreg.search(f):
-                if negreg is None or not negreg.search(f):
-                    full = os.path.join(root, f)
+            full = os.path.join(root, f)
+            rel = os.path.relpath(full, folder)
+            fn = rel.replace("\\", "/")
+            if posreg is None or posreg.search(fn):
+                if negreg is None or not negreg.search(fn):
                     r = clean_file(full)
                     if r and fLOG:
-                        fLOG("[clean_files] processed '{0}'".format(full))
-                        res.append(full)
+                        fLOG("[clean_files] processed '{0}'".format(fn))
+                        res.append(rel)
     return res
