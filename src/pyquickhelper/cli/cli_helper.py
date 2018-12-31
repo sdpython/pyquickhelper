@@ -339,6 +339,14 @@ def cli_main_helper(dfct, args, fLOG=print):
         :cmd: -m pyquickhelper clean_files --help
 
         The command line cleans files in a folder.
+
+    The command line can be replaced by a GUI triggered
+    with the following command line. It relies on module
+    :epkg`tkinterquickhelper`. See @see fn call_gui_function.
+
+    ::
+
+        python -u -m <module> --GUI
     """
     if fLOG is None:
         raise ValueError("fLOG must be defined.")
@@ -368,6 +376,7 @@ def cli_main_helper(dfct, args, fLOG=print):
         fLOG("    python -m {0} <command> --help".format(modname))
         fLOG("")
         print_available()
+        return None
     else:
         cmd = args[0]
         cp = args.copy()
@@ -376,11 +385,64 @@ def cli_main_helper(dfct, args, fLOG=print):
             fct = dfct[cmd]
             sig = inspect.signature(fct)
             if 'args' not in sig.parameters or 'fLOG' not in sig.parameters:
-                call_cli_function(fct, args=cp, fLOG=fLOG,
-                                  skip_parameters=('fLOG', ))
+                return call_cli_function(fct, args=cp, fLOG=fLOG,
+                                         skip_parameters=('fLOG', ))
             else:
-                fct(args=cp, fLOG=fLOG)
+                return fct(args=cp, fLOG=fLOG)
+        elif cmd in ('--GUI', '-G', "--GUITEST"):
+            return call_gui_function(dfct, fLOG=fLOG, utest=cmd == "--GUITEST")
         else:
             fLOG("Command not found: '{0}'.".format(cmd))
             fLOG("")
             print_available()
+            return None
+
+
+def call_gui_function(dfct, fLOG=print, utest=False):
+    """
+    Opens a GUI based on :epkg:`tkinter` which allows the
+    user to run a command line through a windows.
+    The function requires :epkg:`tkinterquickhelper`.
+
+    @param      dfct        dictionary ``{ key: fct }``
+    @param      args        arguments
+    @param      utest       for unit test purposes,
+                            does not start the main loop if True
+
+    This GUI can be triggered with the following command line:
+
+    ::
+
+        python -m <module> --GUI
+
+    If one of your function prints out some information or
+    raises an exception, option ``-u`` should be added:
+
+    ::
+
+        python -u -m <module> --GUI
+    """
+    try:
+        import tkinterquickhelper
+    except ImportError:
+        print("Option --GUI requires module tkinterquickhelper to be installed.")
+        tkinterquickhelper = None
+    if tkinterquickhelper:
+        memo = dfct
+        dfct = {}
+        for k, v in memo.items():
+            sig = inspect.signature(v)
+            pars = list(sorted(sig.parameters))
+            if pars == ["args", "fLOG"]:
+                continue
+            dfct[k] = v
+        from tkinterquickhelper.funcwin import main_loop_functions
+        first = None
+        for _, v in dfct.items():
+            first = v
+            break
+        modname = guess_module_name(first)
+        win = main_loop_functions(dfct, title="{0} command line".format(modname),
+                                  mainloop=not utest)
+        return win
+    return None

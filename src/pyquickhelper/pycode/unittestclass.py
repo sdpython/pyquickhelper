@@ -38,7 +38,7 @@ class ExtTestCase(unittest.TestCase):
         Checks that *x* is not empty.
         """
         if x is None or (hasattr(x, "__len__") and len(x) == 0):
-            raise AssertionError("x in empty")
+            raise AssertionError("x is empty")
 
     def assertEmpty(self, x, none_allowed=True):
         """

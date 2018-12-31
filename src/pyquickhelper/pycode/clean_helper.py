@@ -85,7 +85,7 @@ def clean_files(folder=".", posreg='.*', negreg=".*[.]git/.*", op="CR", fLOG=pri
         negreg = re.compile(negreg)
 
     res = []
-    for root, fold, files in os.walk(folder):
+    for root, _, files in os.walk(folder):
         for f in files:
             full = os.path.join(root, f)
             rel = os.path.relpath(full, folder)

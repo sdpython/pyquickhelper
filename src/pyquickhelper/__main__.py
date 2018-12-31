@@ -33,7 +33,7 @@ def main(args, fLOG=print):
     fcts = dict(synchronize_folder=pyq_sync, encrypt_file=encrypt_file,
                 decrypt_file=decrypt_file, encrypt=encrypt,
                 decrypt=decrypt, df2rst=df2rst, clean_files=clean_files)
-    cli_main_helper(fcts, args=args, fLOG=fLOG)
+    return cli_main_helper(fcts, args=args, fLOG=fLOG)
 
 
 if __name__ == "__main__":
