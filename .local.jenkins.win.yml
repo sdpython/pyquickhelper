@@ -16,7 +16,7 @@ virtualenv:
   
 # Dependencies to install.
 install:
-  - pip install --no-cache-dir --no-deps --index http://localhost:8067/simple/ jyquickhelper --extra-index-url=https://pypi.python.org/simple/
+  - pip install --no-cache-dir --no-deps --index http://localhost:8067/simple/ jyquickhelper tkinterquickhelper --extra-index-url=https://pypi.python.org/simple/
   - pip install -r requirements.txt
   - python --version
   - pip freeze
