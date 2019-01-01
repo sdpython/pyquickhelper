@@ -212,7 +212,7 @@ class TestYaml(unittest.TestCase):
 
             @echo INSTALL
             set PATH=ROOT\\pyquickhelper\\%NAME_JENKINS%\\_venv\\Scripts;%PATH%
-            pip install --no-cache-dir --no-deps --index http://localhost:8067/simple/ jyquickhelper --extra-index-url=https://pypi.python.org/simple/
+            pip install --no-cache-dir --no-deps --index http://localhost:8067/simple/ jyquickhelper tkinterquickhelper --extra-index-url=https://pypi.python.org/simple/
             if %errorlevel% neq 0 exit /b %errorlevel%
             pip install -r requirements.txt
             if %errorlevel% neq 0 exit /b %errorlevel%
@@ -284,7 +284,7 @@ class TestYaml(unittest.TestCase):
 
             @echo INSTALL
             set PATH=ROOT\\pyquickhelper\\%NAME_JENKINS%\\_venv\\Scripts;%PATH%
-            pip install --no-cache-dir --no-deps --index http://localhost:8067/simple/ jyquickhelper --extra-index-url=https://pypi.python.org/simple/
+            pip install --no-cache-dir --no-deps --index http://localhost:8067/simple/ jyquickhelper tkinterquickhelper --extra-index-url=https://pypi.python.org/simple/
             if %errorlevel% neq 0 exit /b %errorlevel%
             pip install -r requirements.txt
             if %errorlevel% neq 0 exit /b %errorlevel%
@@ -348,7 +348,7 @@ class TestYaml(unittest.TestCase):
 
             echo INSTALL
             export PATH=ROOT/pyquickhelper/$NAME_JENKINS/_venv/bin:$PATH
-            $PYINT -c "from pip._internal import main;main(\\"install --no-cache-dir --no-deps --index http://localhost:8067/simple/ jyquickhelper --extra-index-url=https://pypi.python.org/simple/\\".split())"
+            $PYINT -c "from pip._internal import main;main(\\"install --no-cache-dir --no-deps --index http://localhost:8067/simple/ jyquickhelper tkinterquickhelper --extra-index-url=https://pypi.python.org/simple/\\".split())"
             if [ $? -ne 0 ]; then exit $?; fi
             $PYINT -c "from pip._internal import main;main(\\"install -r requirements.txt\\".split())"
             if [ $? -ne 0 ]; then exit $?; fi
@@ -453,7 +453,7 @@ class TestYaml(unittest.TestCase):
 
             @echo INSTALL
             set PATH=ROOT\\pyquickhelper\\%NAME_JENKINS%\\_venv\\Scripts;%PATH%
-            pip install --no-cache-dir --no-deps --index http://localhost:8067/simple/ jyquickhelper --extra-index-url=https://pypi.python.org/simple/
+            pip install --no-cache-dir --no-deps --index http://localhost:8067/simple/ jyquickhelper tkinterquickhelper --extra-index-url=https://pypi.python.org/simple/
             if %errorlevel% neq 0 exit /b %errorlevel%
             pip install -r requirements.txt
             if %errorlevel% neq 0 exit /b %errorlevel%
