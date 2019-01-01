@@ -5,21 +5,19 @@
 History
 =======
 
-current - 2018-12-18 - 0.00Mb
+current - 2019-01-01 - 0.00Mb
 =============================
 
-* `215`: add quote_node for quotations (sphinx) (2018-12-18)
+1.8.2912 - 2019-01-01 - 2.03Mb
+==============================
+
+* `220`: creates a GUI for the command line window (2018-12-31)
+* `219`: Add default negative pattern when cleaning files in a folder (2018-12-31)
+* `217`: remove unnecessary logging when generating sphinx documentation (2018-12-20)
 * `216`: conversion of notebook including svg fails (2018-12-18)
+* `215`: add quote_node for quotations (sphinx) (2018-12-18)
 * `214`: fix issue with neg_pattern in explore_folder_iterfile (2018-12-11)
-
-1.8.2885 - 2018-12-10 - 2.03Mb
-==============================
-
 * `213`: removes cmdref from documentation when creating a parser for a function (2018-12-10)
-
-1.8.2884 - 2018-12-09 - 2.03Mb
-==============================
-
 * `212`: issue when the default value is None when building the parser for a specific function (2018-12-09)
 * `211`: automatically git tag when publishing (2018-12-05)
 * `210`: add __main__ command line (2018-11-29)
