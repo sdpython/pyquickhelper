@@ -248,7 +248,6 @@ if not r:
             "nbconvert!=5.4.0",
             "nbformat",
             "nbpresent",
-            "nbsphinx",
             "notebook>=4.2.0",
             "numpy>=1.11.1",
             "pandas>=0.20.0",

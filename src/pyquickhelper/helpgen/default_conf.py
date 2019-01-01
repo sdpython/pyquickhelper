@@ -27,7 +27,6 @@ def latex_preamble():
     """
     preamble = '''
             %% addition by pyquickhelper(1) %%
-            \\let\\nbsphinxfancyoutput\\relax
             \\usepackage{etex}
             \\usepackage{fixltx2e} % LaTeX patches, \\textsubscript
             \\usepackage{cmap} % fix search and cut-and-paste in Acrobat
@@ -316,7 +315,6 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
                        'sphinx.ext.napoleon', 'sphinx.ext.todo', 'sphinx.ext.viewcode',
                        'sphinxcontrib.imagesvg',
                        'jupyter_sphinx.embed_widgets',
-                       "nbsphinx",
                        'pyquickhelper.sphinxext.sphinx_rst_builder',
                        'pyquickhelper.sphinxext.sphinx_md_builder',
                        'pyquickhelper.sphinxext.sphinx_latex_builder',

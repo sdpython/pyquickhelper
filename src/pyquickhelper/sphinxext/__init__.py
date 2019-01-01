@@ -150,7 +150,6 @@ def get_default_standard_extensions(use_mathjax=False):
         'sphinxcontrib.imagesvg',
         'matplotlib.sphinxext.plot_directive',
         'jupyter_sphinx.embed_widgets',
-        "nbsphinx"
     ]
 
     try:
