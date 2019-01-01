@@ -26,6 +26,7 @@ def latex_preamble():
     Default latex preamble.
     """
     preamble = '''
+            %% addition by pyquickhelper(1) %%
             \\let\\nbsphinxfancyoutput\\relax
             \\usepackage{etex}
             \\usepackage{fixltx2e} % LaTeX patches, \\textsubscript
@@ -64,6 +65,7 @@ def latex_preamble():
             \\item\\MakeFramed{\\FrameRestore}%
             \\tiny
             \\OriginalVerbatim[#1]%
+            %% addition by pyquickhelper(1) %%
             }
             '''.replace("            ", "")
     return preamble
@@ -349,7 +351,9 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
         imgmath_image_format = 'svg'
 
     if add_extensions is not None:
-        extensions.extend(add_extensions)
+        for a in add_extensions:
+            if a not in extensions:
+                extensions.append(a)
 
     # add_function_parentheses = True
     # add_module_names = True
@@ -416,6 +420,7 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
         'Graphviz': 'http://www.graphviz.org/',
         'html': 'https://en.wikipedia.org/wiki/HTML',
         'HTML': 'https://en.wikipedia.org/wiki/HTML',
+        'imgmath': 'http://www.sphinx-doc.org/en/master/usage/extensions/math.html#module-sphinx.ext.imgmath',
         'Inkscape': 'https://inkscape.org/',
         'InkScape': 'https://inkscape.org/',
         'IPython': 'https://en.wikipedia.org/wiki/IPython',
@@ -437,6 +442,7 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
         "matplotlib": "https://matplotlib.org/index.html",
         'Markdown': 'https://en.wikipedia.org/wiki/Markdown',
         'markdown': 'https://en.wikipedia.org/wiki/Markdown',
+        'mathjax': 'https://www.mathjax.org/',
         'MD': 'https://en.wikipedia.org/wiki/Markdown',
         'md': 'https://en.wikipedia.org/wiki/Markdown',
         'mistune': 'https://pypi.org/project/mistune',
@@ -530,11 +536,13 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
     # latex
     math_number_all = False
     imgmath_latex_preamble = """
+                    %% addition by pyquickhelper(2) %%
                     \\usepackage{epic}
                     \\newcommand{\\acc}[1]{\\left\\{#1\\right\\}}
                     \\newcommand{\\cro}[1]{\\left[#1\\right]}
                     \\newcommand{\\pa}[1]{\\left(#1\\right)}
                     \\newcommand{\\R}{\\mathbb{R}}
+                    %% addition by pyquickhelper(2) %%
                     """
     # post processing of the full latex file
     # it should be a function, None by default

@@ -76,7 +76,7 @@ from ..sphinxext.sphinx_rst_builder import setup as setup_rst
 
 def get_default_extensions():
     """
-    Return a list of default extensions.
+    Returns a list of default extensions.
 
     @return     list of Sphinx extensions
 
@@ -136,9 +136,9 @@ def get_default_extensions():
 
 def get_default_standard_extensions(use_mathjax=False):
     """
-    Return a list of standard extensions.
+    Returns a list of standard extensions.
 
-    @param      use_mathjax     use mathjax or imgmath
+    @param      use_mathjax     use :epkg:`mathjax` or :epkg:`imgmath`
     @return                     list of standard extension.
     """
     extensions = [
