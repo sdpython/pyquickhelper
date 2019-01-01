@@ -160,7 +160,8 @@ def run_python_script(script, params=None, comment=None, setsysvar=None, process
 
         if add == 0:
             # We do nothing unless the execution failed.
-            exc_path = RunPythonExecutionError("Unable to find a path to add:\n{0}".format("\n".join(sys.path)))
+            exc_path = RunPythonExecutionError(
+                "Unable to find a path to add:\n{0}".format("\n".join(sys.path)))
         else:
             exc_path = None
         header.append('')
