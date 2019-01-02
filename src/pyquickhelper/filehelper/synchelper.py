@@ -241,7 +241,7 @@ def synchronize_folder(p1: str, p2: str, hash_size=1024 ** 2, repo1=False, repo2
 
         def regtrue(be):
             "local function"
-            return (True if exp.search(be) else False)
+            return (True if exp.search(be) else False)  # pylint: disable=R1719
 
         tfilter = regtrue
     else:

@@ -108,7 +108,7 @@ def run_js_with_nodejs(script, path_dependencies=None, fLOG=noLOG):
         filtered = err
     if len(filtered) > 0:
         raise NodeJsException(
-            "Execution of node.js failed.\n--CMD--\n{0}\n--ERR--\n{1}\n--OUT--\n{2}\n--SCRIPT--\n{3}".format(cmd, err, out, cmd))
+            "Execution of node.js failed.\n--CMD--\n{0}\n--ERR--\n{1}\n--OUT--\n{2}\n--SCRIPT--\n{3}".format(cmd, err, out, script))
     return out
 
 
