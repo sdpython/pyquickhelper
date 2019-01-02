@@ -245,7 +245,7 @@ if not r:
             "matplotlib",
             "metakernel",
             "multi_key_dict",
-            "nbconvert!=5.4.0",
+            "nbconvert",
             "nbformat",
             "nbpresent",
             "notebook>=4.2.0",

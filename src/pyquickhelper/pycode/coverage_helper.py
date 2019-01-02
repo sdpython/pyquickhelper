@@ -243,7 +243,7 @@ def coverage_combine(data_files, output_path, source, process=None, absolute_pat
 
     from coverage.misc import NoSource
     try:
-        cov.html_report(directory=output_path)
+        cov.html_report(directory=output_path, omit="*.html", ignore_errors=True)
     except NoSource as e:
         raise_exc(e, "", ex, ex2, "", destcov, source, dests, inter, cov)
 
