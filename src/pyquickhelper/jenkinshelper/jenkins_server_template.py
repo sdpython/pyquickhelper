@@ -31,7 +31,7 @@ _config_job = """<?xml version='1.0' encoding='UTF-8'?>
     __PUBLISHERS__
     </publishers>
     <buildWrappers>
-        <hudson.plugins.build__timeout.BuildTimeoutWrapper plugin="build-timeout@1.16">
+        <hudson.plugins.build__timeout.BuildTimeoutWrapper plugin="build-timeout@1.19">
             <strategy class="hudson.plugins.build_timeout.impl.NoActivityTimeOutStrategy">
                 <timeoutSecondsString>__TIMEOUT__</timeoutSecondsString>
             </strategy>
@@ -40,6 +40,7 @@ _config_job = """<?xml version='1.0' encoding='UTF-8'?>
                 <hudson.plugins.build__timeout.operations.FailOperation/>
             </operationList>
         </hudson.plugins.build__timeout.BuildTimeoutWrapper>
+        __BUILDWRAPPERS__
     </buildWrappers>
 </project>
 """
@@ -152,4 +153,14 @@ _artifacts = """
       <defaultExcludes>true</defaultExcludes>
       <caseSensitive>true</caseSensitive>
     </hudson.tasks.ArtifactArchiver>
+"""
+
+#: cleanup
+_cleanup_repo = """
+<hudson.plugins.ws__cleanup.PreBuildCleanup plugin="ws-cleanup@0.37">
+  <deleteDirs>true</deleteDirs>
+  <cleanupParameter></cleanupParameter>
+  <externalDelete></externalDelete>
+  <disableDeferredWipeout>true</disableDeferredWipeout>
+</hudson.plugins.ws__cleanup.PreBuildCleanup>
 """

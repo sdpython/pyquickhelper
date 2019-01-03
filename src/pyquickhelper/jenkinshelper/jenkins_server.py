@@ -18,7 +18,7 @@ from ..pycode.linux_scripts import linux_jenkins, linux_jenkins_any
 from ..pycode.build_helper import private_script_replacements
 from .jenkins_exceptions import JenkinsExtException, JenkinsJobException
 from .jenkins_server_template import _config_job, _trigger_up, _trigger_time, _git_repo, _task_batch_win, _task_batch_lin
-from .jenkins_server_template import _trigger_startup, _publishers, _file_creation, _wipe_repo, _artifacts
+from .jenkins_server_template import _trigger_startup, _publishers, _file_creation, _wipe_repo, _artifacts, _cleanup_repo
 from .yaml_helper import enumerate_processed_yml
 from .jenkins_helper import jenkins_final_postprocessing, get_platform
 
@@ -121,6 +121,7 @@ class JenkinsExt(jenkins.Jenkins):
     _publishers = _publishers
     _wipe_repo = _wipe_repo
     _artifacts = _artifacts
+    _cleanup_repo = _cleanup_repo
 
     def __init__(self, url, username=None, password=None, timeout=socket._GLOBAL_DEFAULT_TIMEOUT,
                  mock=False, engines=None, platform=None, pypi_port=8067, fLOG=noLOG,
@@ -810,9 +811,13 @@ class JenkinsExt(jenkins.Jenkins):
                 raise ValueError(mes)
             script_mod.append(scr)
 
+        # wrappers
+        bwrappers = []
+
         # repo
         if clean_repo:
             wipe = JenkinsExt._wipe_repo
+            bwrappers.append(JenkinsExt._cleanup_repo)
         else:
             wipe = ""
         if git_repo is None:
@@ -877,7 +882,8 @@ class JenkinsExt(jenkins.Jenkins):
                    __DESCRIPTION__="" if description is None else description,
                    __GITREPOXML__=git_repo_xml,
                    __TIMEOUT__=str(timeout),
-                   __PUBLISHERS__="\n".join(publishers))
+                   __PUBLISHERS__="\n".join(publishers),
+                   __BUILDWRAPPERS__="\n".join(bwrappers))
 
         for k, v in rep.items():
             conf = conf.replace(k, v)
