@@ -134,6 +134,10 @@ def interpret_instruction(inst, variables=None):
     Example of a statement::
 
         if [ ${PYTHON} == "C:\\\\Python370_x64" ] then python setup.py build_sphinx fi
+
+    If an instruction cannot be interpreted, it is left
+    left unchanged as the function assumes it can only be solved
+    in a bash script.
     """
     if isinstance(inst, list):
         res = [interpret_instruction(_, variables) for _ in inst]
@@ -153,7 +157,11 @@ def interpret_instruction(inst, variables=None):
         find = exp.search(inst)
         if find:
             gr = find.groups()
-            e = evaluate_condition(gr[0], variables)
+            try:
+                e = evaluate_condition(gr[0], variables)
+            except SyntaxError:
+                # We assume the condition is a linux condition.
+                return inst
             g = gr[1] if e else gr[3]
             return None if g is None else interpret_instruction(g, variables)
         elif inst.startswith('--'):

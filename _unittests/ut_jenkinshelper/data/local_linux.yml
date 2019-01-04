@@ -1,0 +1,21 @@
+language: python
+
+python:
+  - { PATH: "{{replace(Python37, '\\', '\\\\')}}", VERSION: 3.7, DIST: std }
+  
+virtualenv:
+  - path: {{ospathjoin(root_path, pickname("%NAME_JENKINS%", project_name + "_%VERSION%_%DIST%_%NAME%"), "_venv")}}
+  
+install:
+  - pip freeze
+  - JENKINS_SPLIT-1
+  - if [ -f distinst ]; then mkdir distinst; fi
+
+script:
+  - if [ -f distscript ]; then mkdir distscript; fi
+
+after_script:
+  - python -u setup.py bdist_wheel
+
+documentation:
+  - if [ -f dist ]; then mkdir dist; fi

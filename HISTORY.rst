@@ -5,8 +5,12 @@
 History
 =======
 
-current - 2019-01-01 - 0.00Mb
+current - 2019-01-04 - 0.00Mb
 =============================
+
+* `223`: jenkins script: distringuish between script and linux instruction if (2019-01-04)
+* `222`: update jenkins job cleanup options (2019-01-03)
+* `221`: ignore errors when combining reports (2019-01-02)
 
 1.8.2912 - 2019-01-01 - 2.03Mb
 ==============================
