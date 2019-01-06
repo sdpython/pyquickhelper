@@ -81,9 +81,8 @@ def find_pdflatex(latex_path):
 
 
 def process_notebooks(notebooks, outfold, build, latex_path=None, pandoc_path=None,
-                      formats=("ipynb", "html", "python", "rst",
-                               "slides", "pdf", "present", "github"), fLOG=fLOG, exc=True,
-                      remove_unicode_latex=False, nblinks=None,
+                      formats="ipynb,html,python,rst,slides,pdf,present,github",
+                      fLOG=fLOG, exc=True, remove_unicode_latex=False, nblinks=None,
                       notebook_replacements=None):
     """
     Converts notebooks into :epkg:`html`, :epkg:`rst`, :epkg:`latex`,
@@ -133,8 +132,7 @@ def process_notebooks(notebooks, outfold, build, latex_path=None, pandoc_path=No
 
             from pyquickhelper.ipythonhelper import process_notebooks
             process_notebooks("td1a_correction_session7.ipynb",
-                            "dest_folder",
-                            "dest_folder",
+                            "dest_folder", "dest_folder",
                             formats=("ipynb", "html", "python", "rst", "slides", "pdf",
                                      "docx", "present", "github")])
 

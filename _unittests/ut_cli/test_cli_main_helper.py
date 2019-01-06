@@ -91,6 +91,12 @@ class TestCliMainHelper(ExtTestCase):
         self.assertIn(
             "synchronize_folder [-h] [--p1 P1] [--p2 P2] [-ha HASH_SIZE]", res)
 
+        st = TempBuffer()
+        main(args=["process_notebooks", "--help"], fLOG=st.fprint)
+        res = str(st)
+        self.assertIn(
+            "process_notebooks [-h] [-n NOTEBOOKS] [-o OUTFOLD] [-b BUILD]", res)
+
     def test_main_epkg(self):
         st = TempBuffer()
         main(args=["clean_files", "--help"], fLOG=st.fprint)
