@@ -90,18 +90,21 @@ def process_notebooks(notebooks, outfold, build, latex_path=None, pandoc_path=No
     :epkg:`pdf`, :epkg:`python`, :epkg:`docx` using
     :epkg:`nbconvert`.
 
-    @param      notebooks                   list of notebooks
-    @param      outfold                     folder which will contains the outputs
-    @param      build                       temporary folder which contains all produced files
-    @param      pandoc_path                 path to pandoc
-    @param      formats                     list of formats to convert into (pdf format means latex then compilation)
-    @param      latex_path                  path to the latex compiler
-    @param      fLOG                        logging function
-    @param      exc                         raises an exception (True) or a warning (False) if an error happens
-    @param      nblinks                     dictionary ``{ref: url}``
-    @param      remove_unicode_latex        remove unicode characters for latex (to avoid failing)
-    @param      notebook_replacements       string replacement in a notebook before conversion
-    @return                                 list of tuple *[(file, created or skipped)]*
+    @param      notebooks               list of notebooks or comma separated values
+    @param      outfold                 folder which will contains the outputs
+    @param      build                   temporary folder which contains all produced files
+    @param      pandoc_path             path to pandoc
+    @param      formats                 list of formats to convert into (pdf format means latex
+                                        then compilation), or comma separated values
+    @param      latex_path              path to the latex compiler
+    @param      fLOG                    logging function
+    @param      exc                     raises an exception (True) or a warning (False) if an error happens
+    @param      nblinks                 dictionary ``{ref: url}`` or a string in :epkg:`json`
+                                        format
+    @param      remove_unicode_latex    remove unicode characters for latex (to avoid failing)
+    @param      notebook_replacements   string replacement in a notebook before conversion
+                                        or a string in :epkg:`json` format
+    @return                             list of tuple *[(file, created or skipped)]*
 
     This function relies on :epkg:`pandoc`.
     It also needs modules :epkg:`pywin32`,
@@ -147,6 +150,15 @@ def process_notebooks(notebooks, outfold, build, latex_path=None, pandoc_path=No
         the custom preprocessor is not taken into account.
         by function @see fn _process_notebooks_in_private.
     """
+    if isinstance(notebooks, str):
+        notebooks = notebooks.split(',')
+    if isinstance(formats, str):
+        formats = formats.split(',')
+    if isinstance(notebook_replacements, str):
+        notebook_replacements = json.loads(notebook_replacements)
+    if isinstance(nblinks, str):
+        nblinks = json.loads(nblinks)
+
     res = _process_notebooks_in(notebooks=notebooks, outfold=outfold, build=build,
                                 latex_path=latex_path, pandoc_path=pandoc_path,
                                 formats=formats, fLOG=fLOG, exc=exc, nblinks=nblinks,
