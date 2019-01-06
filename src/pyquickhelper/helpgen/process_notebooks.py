@@ -6,6 +6,7 @@ for a module designed the same way as this one, @see fn generate_help_sphinx.
 
 """
 import datetime
+import json
 import os
 import sys
 import shutil
@@ -156,6 +157,8 @@ def process_notebooks(notebooks, outfold, build, latex_path=None, pandoc_path=No
         notebook_replacements = json.loads(notebook_replacements)
     if isinstance(nblinks, str):
         nblinks = json.loads(nblinks)
+    if build is None:
+        raise ValueError("build cannot be None")
 
     res = _process_notebooks_in(notebooks=notebooks, outfold=outfold, build=build,
                                 latex_path=latex_path, pandoc_path=pandoc_path,
