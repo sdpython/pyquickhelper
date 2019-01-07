@@ -39,6 +39,11 @@ class TestNoteBooksBugSvg(ExtTestCase):
         self.assertTrue(src is not None)
 
     def test_notebook_svg(self):
+        """
+        If the test fails, look into issue
+        `216 <https://github.com/sdpython/pyquickhelper/issues/216>`_.
+        Avoid nbconvert==5.4.0.
+        """
         fLOG(
             __file__,
             self._testMethodName,

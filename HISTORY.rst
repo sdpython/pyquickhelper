@@ -5,9 +5,11 @@
 History
 =======
 
-current - 2019-01-04 - 0.00Mb
+current - 2019-01-07 - 0.00Mb
 =============================
 
+* `225`: add class BufferedPrint to retrieve logging through fLOG (2019-01-07)
+* `224`: add process_notebooks in the list of function available through the command line (2019-01-06)
 * `223`: jenkins script: distringuish between script and linux instruction if (2019-01-04)
 * `222`: update jenkins job cleanup options (2019-01-03)
 * `221`: ignore errors when combining reports (2019-01-02)
