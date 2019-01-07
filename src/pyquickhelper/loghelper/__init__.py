@@ -2,6 +2,7 @@
 @file
 @brief Shortcuts to loghelper functions
 """
+from .buffered_flog import BufferedPrint
 from .convert_helper import str2datetime, timestamp_to_datetime
 from .custom_log import CustomLog
 from .flog import fLOG, noLOG, fLOGFormat, PQHException, download, unzip, removedirs

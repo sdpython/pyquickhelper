@@ -23,27 +23,9 @@ except ImportError:
     import src
 
 
-from src.pyquickhelper.loghelper import fLOG
+from src.pyquickhelper.loghelper import fLOG, BufferedPrint
 from src.pyquickhelper.pycode import get_temp_folder, skipif_travis, skipif_appveyor
 from src.pyquickhelper.__main__ import main
-
-
-class TempBuffer:
-    "simple buffer"
-
-    def __init__(self):
-        "constructor"
-        self.buffer = StringIO()
-
-    def fprint(self, *args, **kwargs):
-        "print function"
-        mes = " ".join(str(_) for _ in args)
-        self.buffer.write(mes)
-        self.buffer.write("\n")
-
-    def __str__(self):
-        "usual"
-        return self.buffer.getvalue()
 
 
 class TestProcessNotebook(unittest.TestCase):
@@ -63,7 +45,7 @@ class TestProcessNotebook(unittest.TestCase):
         temp = get_temp_folder(__file__, "temp_process_notebook")
         source = os.path.join(temp, "..", "data", "td1a_unit_test_ci.ipynb")
 
-        st = TempBuffer()
+        st = BufferedPrint()
         main(args=["process_notebooks", "-n", source, "-o",
                    temp, "-b", temp, '-f', 'rst'], fLOG=st.fprint)
         res = str(st)

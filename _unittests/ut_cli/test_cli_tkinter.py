@@ -22,27 +22,9 @@ except ImportError:
         sys.path.append(path)
     import src
 
-from src.pyquickhelper.loghelper import fLOG
+from src.pyquickhelper.loghelper import fLOG, BufferedPrint
 from src.pyquickhelper.pycode import ExtTestCase, skipif_travis, skipif_circleci
 from src.pyquickhelper.__main__ import main
-
-
-class TempBuffer:
-    "simple buffer"
-
-    def __init__(self):
-        "constructor"
-        self.buffer = StringIO()
-
-    def fprint(self, *args, **kwargs):
-        "print function"
-        mes = " ".join(str(_) for _ in args)
-        self.buffer.write(mes)
-        self.buffer.write("\n")
-
-    def __str__(self):
-        "usual"
-        return self.buffer.getvalue()
 
 
 class TestCliMainTkinterHelper(ExtTestCase):
@@ -55,7 +37,7 @@ class TestCliMainTkinterHelper(ExtTestCase):
     @skipif_circleci('_tkinter.TclError: invalid command name "frame"')
     def test_main(self):
         from tkinter import TclError
-        st = TempBuffer()
+        st = BufferedPrint()
         try:
             win = main(args=['--GUITEST'], fLOG=st.fprint)
         except TclError as e:
