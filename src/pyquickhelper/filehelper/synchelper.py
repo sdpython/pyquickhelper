@@ -113,7 +113,7 @@ def explore_folder(folder, pattern=None, neg_pattern=None, fullname=False,
             rep[r] = None
 
     if fLOG:
-        fLOG("[explore_folder] found={0} not-in={1} not-out={2} in '{3}'".format(
+        fLOG("[explore_folder] found={0} not-in={1} out={2} in '{3}'".format(
             found, filter, negfil, folder))
     keys = sorted(rep.keys())
     if return_only is None:
