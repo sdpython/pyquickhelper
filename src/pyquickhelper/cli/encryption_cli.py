@@ -120,7 +120,7 @@ def encrypt(fLOG=print, args=None):
     @param      args        to overwrite ``sys.args``
 
     .. cmdref::
-        :title: encrypt a string
+        :title: Encrypt a string
         :cmd: pyquickhelper.cli.encryption_cli:encrypt
 
         Encrypts a string from the command line.
@@ -152,7 +152,7 @@ def decrypt(fLOG=print, args=None):
     @param      args        to overwrite ``sys.args``
 
     .. cmdref::
-        :title: decrypt a string
+        :title: Decrypt a string
         :cmd: pyquickhelper.cli.encryption_cli:decrypt
 
         Decrypts an encrypted string from the command line.

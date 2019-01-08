@@ -18,31 +18,71 @@ if sys.version_info[0] == 2:
     from codecs import open
 
 
-def explore_folder(folder, pattern=None, neg_pattern=None, fullname=False, fLOG=None):
+def explore_folder(folder, pattern=None, neg_pattern=None, fullname=False,
+                   return_only=None, recursive=True, sub_pattern=None,
+                   sub_replace=None, fLOG=None):
     """
     Returns the list of files included in a folder and its subfolders.
+    Returned names can be modified if *sub_pattern* is specified.
 
-    @param          folder      (str) folder
-    @param          pattern     (str) if None, get all files, otherwise, it is a regular expression,
-                                the filename must verify (with the folder if fullname is True)
-    @param          neg_pattern (str) negative pattern
-    @param          fullname    (bool) if True, include the subfolder while checking the regex (pattern)
-    @param          fLOG        (fct) logging function
-    @return                     (list, list), a list of folders, a list of files (the folder is not included the path name)
+    @param          folder          (str) folder
+    @param          pattern         (str) if None, get all files, otherwise, it is a regular expression,
+                                    the filename must verify (with the folder if fullname is True)
+    @param          neg_pattern     (str) negative pattern
+    @param          fullname        (bool) if True, include the subfolder while checking the regex (pattern)
+    @param          return_only     (str) to return folders and files (*=None*),
+                                    only the files (*='f'*) or only the folders (*='d')
+    @param          recursive       (bool) look into subfolders
+    @param          sub_pattern     (str) replacements pattern, the output is
+                                    then modified accordingly to this
+                                    regular expression
+    @param          sub_replace     (str) if sub_pattern is specified, this second pattern
+                                    specifies how to replace
+    @param          fLOG            (fct) logging function
+    @return                         (list, list), a list of folders, a list of files (the folder is not included the path name)
+
+    .. cmdref::
+        :title: Explore the content of a directory
+        :cmd: -m pyquickhelper ls --help
+
+        The command calls function @see fn explore_folder
+        and makes the list of all files in a directory or
+        all folders. Example::
+
+            python -m pyquickhelper ls -f _mynotebooks -r f -p .*[.]ipynb -n checkpoints -fu 1
+
+        It works better with :epkg:`chrome`. An example to change file names::
+
+            python -m pyquickhelper ls -f myfolder -p .*[.]py -r f -n pycache -fu 1 -s test_(.*) -su unit_\\1
+
+        Or another to automatically create git commands to rename files::
+
+            python -m pyquickhelper ls -f _mynotebooks -r f -p .*[.]ipynb -s "(.*)[.]ipynb" -su "git mv \\1.ipynb \\1~.ipynb"
 
     .. versionchanged:: 1.7
         Parameter *fLOG* was added.
+
+    .. versionchanged:: 1.8
+        Parameters *return_only*, *recursive* were added.
     """
     if pattern is not None:
         pattern = re.compile(pattern)
     if neg_pattern is not None:
         neg_pattern = re.compile(neg_pattern)
+    if sub_pattern is not None:
+        sub_pattern = re.compile(sub_pattern)
+
+    def listdir_aswalk(folder):
+        "local function"
+        return folder, None, os.listdir(folder)
+
+    fct = os.walk if recursive else listdir_aswalk
 
     found = 0
     filter = 0
     negfil = 0
-    file, rep = [], {}
-    for r, _, f in os.walk(folder):
+    files, rep = [], {}
+    for r, _, f in fct(folder):
         for a in f:
             found += 1
             temp = os.path.join(r, a)
@@ -61,10 +101,14 @@ def explore_folder(folder, pattern=None, neg_pattern=None, fullname=False, fLOG=
                         negfil += 1
                         continue
                 else:
-                    if pattern.search(a):
+                    if neg_pattern.search(a):
                         negfil += 1
                         continue
-            file.append(temp)
+            if sub_pattern:
+                modified = sub_pattern.sub(sub_replace, temp)
+                files.append(modified)
+            else:
+                files.append(temp)
             r = os.path.split(temp)[0]
             rep[r] = None
 
@@ -72,7 +116,18 @@ def explore_folder(folder, pattern=None, neg_pattern=None, fullname=False, fLOG=
         fLOG("[explore_folder] found={0} not-in={1} not-out={2} in '{3}'".format(
             found, filter, negfil, folder))
     keys = sorted(rep.keys())
-    return keys, file
+    if return_only is None:
+        if sub_pattern:
+            keys = [sub_pattern.sub(sub_replace, _) for _ in keys]
+        return keys, files
+    elif return_only == 'f':
+        return files
+    elif return_only == 'd':
+        if sub_pattern:
+            keys = [sub_pattern.sub(sub_replace, _) for _ in keys]
+        return keys
+    else:
+        raise ValueError("return_only must be either None, 'f' or 'd'.")
 
 
 def explore_folder_iterfile(folder, pattern=None, neg_pattern=None,
@@ -481,7 +536,7 @@ def has_been_updated(source, dest):
 def walk(top, onerror=None, followlinks=False, neg_filter=None):
     """
     Does the same as :epkg:`*py:os:walk`
-    plus do not go through a sub-folder if this one is big.
+    plus does not go through a sub-folder if this one is big.
     Folders such *build* or *Debug* or *Release*
     may not need to be dug into.
 

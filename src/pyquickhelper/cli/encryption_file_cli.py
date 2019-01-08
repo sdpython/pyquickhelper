@@ -75,7 +75,7 @@ def encrypt_file(fLOG=print, args=None):
     @param      args        to overwrite ``sys.args``
 
     .. cmdref::
-        :title: encrypt a file
+        :title: Encrypt a file
         :cmd: pyquickhelper.cli.encryption_file_cli:encrypt_file
 
         Encrypt a file from the command line.
@@ -105,7 +105,7 @@ def decrypt_file(fLOG=print, args=None):
     @param      args        to overwrite ``sys.args``
 
     .. cmdref::
-        :title: decrypt a file
+        :title: Decrypt a file
         :cmd: pyquickhelper.cli.encryption_file_cli:decrypt_file
 
         Decrypt a file from the command line.

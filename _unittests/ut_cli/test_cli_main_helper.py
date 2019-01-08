@@ -79,6 +79,18 @@ class TestCliMainHelper(ExtTestCase):
         self.assertIn(
             "process_notebooks [-h] [-n NOTEBOOKS] [-o OUTFOLD] [-b BUILD]", res)
 
+        st = BufferedPrint()
+        main(args=["visual_diff", "--help"], fLOG=st.fprint)
+        res = str(st)
+        self.assertIn(
+            "visual_diff [-h] [-f FILE1] [-fi FILE2]", res)
+
+        st = BufferedPrint()
+        main(args=["ls", "--help"], fLOG=st.fprint)
+        res = str(st)
+        self.assertIn(
+            "ls [-h] [-f FOLDER] [-p PATTERN] [-n NEG_PATTERN]", res)
+
     def test_main_epkg(self):
         st = BufferedPrint()
         main(args=["clean_files", "--help"], fLOG=st.fprint)

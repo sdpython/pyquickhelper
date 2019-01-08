@@ -257,17 +257,12 @@ def create_visual_diff_through_html(string1, string2, notebook=False, context_si
         return page
 
 
-def create_visual_diff_through_html_files(file1,
-                                          file2,
-                                          encoding="utf8",
-                                          page=None,
-                                          browser=False,
-                                          notebook=False,
-                                          context_size=None,
+def create_visual_diff_through_html_files(file1, file2, encoding="utf8", page=None,
+                                          browser=False, notebook=False, context_size=None,
                                           inline_view=False):
     """
-    calls function @see fn create_visual_diff_through_html
-    with the content of two files
+    Calls function @see fn create_visual_diff_through_html
+    with the content of two files.
 
     @param      file1           first file (anything such as an url, a file, a string, a stream)
     @param      file2           second file (anything such as an url, a file, a string, a stream)
@@ -287,6 +282,18 @@ def create_visual_diff_through_html_files(file1,
 
     An example of the results is shown in blog post :ref:`b-diffview`.
     The function now uses @see fn read_content_ufs to retrieve the content.
+
+    .. cmdref::
+        :title: Compares two files
+        :cmd: -m pyquickhelper visual_diff --help
+
+        The command calls function @see fn create_visual_diff_through_html_files
+        and produces a :epkg:`HTML` page with shows the differences between two
+        files. Example::
+
+            python -m pyquickhelper visual_diff -f <file1> -fi <file2> --browser=1 --page=diff.html
+
+        It works better with :epkg:`chrome`.
     """
     diff = create_visual_diff_through_html(file1, file2, notebook=notebook,
                                            context_size=context_size, inline_view=inline_view)
@@ -298,4 +305,5 @@ def create_visual_diff_through_html_files(file1,
             raise AttributeError("browser is True, page must be True")
         import webbrowser
         webbrowser.open(page)
+        return None
     return diff

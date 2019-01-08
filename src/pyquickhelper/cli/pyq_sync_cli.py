@@ -16,7 +16,7 @@ def pyq_sync(fLOG=print, args=None):
     @param      args        to overwrite ``sys.args``
 
     .. cmdref::
-        :title: synchronize two folders
+        :title: Synchronize two folders
         :cmd: pyquickhelper.cli.pyq_sync_cli:pyq_sync
 
         Synchronizes two folders from the command line.

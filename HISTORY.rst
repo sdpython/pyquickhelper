@@ -5,18 +5,20 @@
 History
 =======
 
-current - 2019-01-07 - 0.00Mb
+current - 2019-01-08 - 0.00Mb
 =============================
+
+* `227`: makes more functions available from command line (2019-01-08)
+* `226`: fix command line name when created from a function (2019-01-08)
+
+1.8.2924 - 2019-01-08 - 2.03Mb
+==============================
 
 * `225`: add class BufferedPrint to retrieve logging through fLOG (2019-01-07)
 * `224`: add process_notebooks in the list of function available through the command line (2019-01-06)
 * `223`: jenkins script: distringuish between script and linux instruction if (2019-01-04)
 * `222`: update jenkins job cleanup options (2019-01-03)
 * `221`: ignore errors when combining reports (2019-01-02)
-
-1.8.2912 - 2019-01-01 - 2.03Mb
-==============================
-
 * `220`: creates a GUI for the command line window (2018-12-31)
 * `219`: Add default negative pattern when cleaning files in a folder (2018-12-31)
 * `217`: remove unnecessary logging when generating sphinx documentation (2018-12-20)

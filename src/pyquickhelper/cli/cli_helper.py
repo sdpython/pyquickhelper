@@ -206,6 +206,7 @@ def call_cli_function(f, args=None, parser=None, fLOG=print, skip_parameters=('f
                                 @see fn clean_documentation_for_cli
     @param      prog            to give the parser a different name than the function name
     @param      options         additional :epkg:`Sphinx` options
+    @return                     the output of the wrapped function
 
     This function is used in command line @see fn pyq_sync.
     Its code can can be used as an example.
@@ -266,8 +267,17 @@ def call_cli_function(f, args=None, parser=None, fLOG=print, skip_parameters=('f
                 res = f(fLOG=fLOG, **kwargs)
             else:
                 res = f(**kwargs)
-            if res is not None and isinstance(res, str):
-                fLOG(res)
+            if res is not None:
+                if isinstance(res, str):
+                    fLOG(res)
+                elif isinstance(res, list):
+                    for el in res:
+                        fLOG(el)
+                elif isinstance(res, dict):
+                    for k, v in sorted(res.items()):
+                        fLOG("{0}: {1}".format(k, v))
+            return res
+    return None
 
 
 def guess_module_name(fct):
@@ -293,6 +303,7 @@ def cli_main_helper(dfct, args, fLOG=print):
     @param      dfct        dictionary ``{ key: fct }``
     @param      args        arguments
     @param      fLOG        logging function
+    @return                 the output of the wrapped function
 
     The function makes it quite simple to write a file
     ``__main__.py`` which implements the syntax
