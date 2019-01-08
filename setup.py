@@ -245,7 +245,7 @@ if not r:
             "matplotlib",
             "metakernel",
             "multi_key_dict",
-            "nbconvert",
+            "nbconvert!=5.4.0",  # see https://github.com/sdpython/pyquickhelper/issues/216
             "nbformat",
             "nbpresent",
             "notebook>=4.2.0",
