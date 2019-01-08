@@ -192,17 +192,19 @@ def create_cli_argument(parser, param, doc, names):
 
 
 def call_cli_function(f, args=None, parser=None, fLOG=print, skip_parameters=('fLOG',),
-                      cleandoc=("epkg", 'link'), **options):
+                      cleandoc=("epkg", 'link'), prog=None, **options):
     """
     Calls a function *f* given parsed arguments.
 
     @param      f               function to call
     @param      args            arguments to parse (if None, it considers sys.argv)
-    @param      parser          parser (can be None, in that case, @see fn create_cli_parser is called)
+    @param      parser          parser (can be None, in that case, @see fn create_cli_parser
+                                is called)
     @param      fLOG            logging function
     @param      skip_parameters see @see fn create_cli_parser
     @param      cleandoc        cleans the documentation before converting it into text,
                                 @see fn clean_documentation_for_cli
+    @param      prog            to give the parser a different name than the function name
     @param      options         additional :epkg:`Sphinx` options
 
     This function is used in command line @see fn pyq_sync.
@@ -231,8 +233,8 @@ def call_cli_function(f, args=None, parser=None, fLOG=print, skip_parameters=('f
                     raise Exception(r)
     """
     if parser is None:
-        parser = create_cli_parser(
-            f, skip_parameters=skip_parameters, cleandoc=cleandoc, **options)
+        parser = create_cli_parser(f, prog=prog, skip_parameters=skip_parameters,
+                                   cleandoc=cleandoc, **options)
     if args is not None and (args == ['--help'] or args == ['-h']):  # pylint: disable=R1714
         fLOG(parser.format_help())
     else:
@@ -385,7 +387,7 @@ def cli_main_helper(dfct, args, fLOG=print):
             fct = dfct[cmd]
             sig = inspect.signature(fct)
             if 'args' not in sig.parameters or 'fLOG' not in sig.parameters:
-                return call_cli_function(fct, args=cp, fLOG=fLOG,
+                return call_cli_function(fct, prog=cmd, args=cp, fLOG=fLOG,
                                          skip_parameters=('fLOG', ))
             else:
                 return fct(args=cp, fLOG=fLOG)
