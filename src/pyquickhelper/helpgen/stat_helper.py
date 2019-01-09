@@ -27,7 +27,8 @@ def enumerate_notebooks_link(nb_folder, nb_rst):
 
     """
     # We check that all readme.txt follow utf-8.
-    for name in explore_folder_iterfile(nb_folder, "((readme)|(README))[.]txt$", ".*checkpoints.*", fullname=True):
+    for name in explore_folder_iterfile(nb_folder, "((readme)|(README))[.]txt$",
+                                        ".*((checkpoints)|(MACOSX)).*", fullname=True):
         with open(name, "r", encoding="utf-8") as f:
             try:
                 nbcontent = f.read()
