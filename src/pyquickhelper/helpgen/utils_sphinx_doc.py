@@ -139,9 +139,9 @@ def _private_process_one_file(
     """
     ext = os.path.splitext(fullname)[-1]
 
-    if ext in [".jpeg", ".jpg", ".pyd", ".png", ".dat", ".dll", ".o",
-               ".so", ".exe", ".enc", ".txt", ".gif", ".csv"]:
-        if ext in [".pyd", ".so"]:
+    if ext in {".jpeg", ".jpg", ".pyd", ".png", ".dat", ".dll", ".o",
+               ".so", ".exe", ".enc", ".txt", ".gif", ".csv"}:
+        if ext in (".pyd", ".so"):
             # If the file is being executed, the copy might keep the properties of
             # the original (only Windows).
             with open(fullname, "rb") as f:
@@ -301,7 +301,8 @@ def copy_source_files(input, output, fmod=lambda v, filename: v,
         remove_folder(output, False, raise_exception=False)
 
     def_ext = ['py', 'pyd', 'cpp', 'h', 'dll', 'so', 'yml', 'o', 'def', 'gif',
-               'exe', 'data', 'config', 'css', 'js', 'png', 'map', 'sass', 'csv', 'tpl']
+               'exe', 'data', 'config', 'css', 'js', 'png', 'map', 'sass',
+               'csv', 'tpl', 'jpg', 'jpeg']
     deffilter = "|".join("(.+[.]{0}$)".format(_) for _ in def_ext)
     if copy_add_ext is not None:
         res = ["(.+[.]%s$)" % e for e in copy_add_ext]
