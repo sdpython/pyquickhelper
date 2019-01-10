@@ -68,7 +68,7 @@ def test_notebook_execution_coverage(filename, name, folder, this_module_name,
     if not os.path.exists(doc):
         raise FileNotFoundError(doc)
     keepnote = [os.path.join(doc, _) for _ in os.listdir(
-        doc) if name in _ and ".ipynb" in _]
+        doc) if name in _ and ".ipynb" in _ and ".ipynb_checkpoints" not in _]
     if len(keepnote) == 0:
         raise AssertionError("No found notebook in '{0}'\n{1}".format(
             doc, "\n".join(os.listdir(doc))))
