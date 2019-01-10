@@ -34,7 +34,6 @@ class TestSKIPRunNotebooks(unittest.TestCase):
 
     @unittest.skipIf(sys.version_info[0] == 2, reason="notebooks are not converted into python 2.7, so not tested")
     @skipif_travis("does not complete")
-    @unittest.skipIf(os.environ.get("PYINT", "") == "python3.7", reason="does not complete")
     def test_skip_run_notebook(self):
         fLOG(
             __file__,
