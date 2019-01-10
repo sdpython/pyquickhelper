@@ -23,7 +23,7 @@ except ImportError:
 
 
 from src.pyquickhelper.loghelper import fLOG
-from src.pyquickhelper.pycode import ExtTestCase, get_temp_folder, skipif_appveyor, skipif_circleci
+from src.pyquickhelper.pycode import ExtTestCase, get_temp_folder, skipif_appveyor, skipif_circleci, skipif_azure
 from src.pyquickhelper.imghelper.js_helper import run_js_fct, install_node_js_modules
 from src.pyquickhelper.imghelper.js_helper import nodejs_version, require, run_js_with_nodejs
 
@@ -58,6 +58,7 @@ class TestJs2Image(ExtTestCase):
 
     @skipif_appveyor("No node.js.")
     @skipif_circleci("No node.js.")
+    @skipif_azure("No node.js.")
     def test_js2fctdom(self):
         fLOG(
             __file__,
