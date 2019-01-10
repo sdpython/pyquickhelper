@@ -21,7 +21,7 @@ jobs:
     displayName: 'Install Pandoc'
   - script: sudo apt-get install -y texlive texlive-latex-extra texlive-xetex dvipng
     displayName: 'Install Latex'
-  - script: sudo apt-get install -y p7zip-full
+  - script: sudo apt-get install -y p7zip
     displayName: 'Install 7z, rar'
   - script: sudo apt-get install -y graphviz
     displayName: 'Install Graphviz'
