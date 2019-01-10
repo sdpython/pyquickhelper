@@ -21,7 +21,7 @@ jobs:
     displayName: 'Install Pandoc'
   - script: sudo apt-get install -y texlive texlive-latex-extra texlive-xetex dvipng
     displayName: 'Install Latex'
-  - script: sudo apt-get install -y p7zip
+  - script: sudo apt-get install -y p7zip-full
     displayName: 'Install 7z, rar'
   - script: sudo apt-get install -y graphviz
     displayName: 'Install Graphviz'
@@ -56,8 +56,11 @@ jobs:
     inputs:
       versionSpec: '$(python.version)'
       architecture: 'x64'
-  - script: brew install p7zip
-    displayName: 'Install p7zip'
+  - script: |
+          brew update
+    displayName: 'brew update'
+  #- script: brew install p7zip
+  #  displayName: 'Install p7zip'
   - script: brew install pandoc
     displayName: 'Install Pandoc'
   - script: brew install graphviz
