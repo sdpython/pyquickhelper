@@ -183,7 +183,7 @@ class TestYaml(unittest.TestCase):
             vers = "37"
             conv = [
                 _ for _ in convs if set_name + " NAME=UT" in _ and "VERSION=%s" % vers_ in _ and '-g' not in _]
-        if len(conv) != 3:
+        if len(conv) not in (3, 5, 4, 6):
             rows = [str(_) for _ in conv]
             raise Exception("len(convs)={3}-len(conv)={0}\n----\n{1}\n-----\n{2}\n***\n{4}".format(
                 len(conv), "\n".join(conv), "\n".join(rows), len(convs), "\n*****\n".join(convs)))
