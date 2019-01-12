@@ -712,7 +712,7 @@ def _check_url_file(url, path_download, outfile, fLOG=noLOG):
                 request = urllib_request.Request(url)
                 request.add_header("Range", "bytes=%d-" % size)
                 fu = urllib_request.urlopen(request)
-                f = open(dest, formatopen.replace(
+                f = open(dest, formatopen.replace(  # pylint: disable=W1501
                     "w", "a"))  # pylint: disable=W1501
             else:
                 fLOG("[loghelper.flog] downloading ", url)
