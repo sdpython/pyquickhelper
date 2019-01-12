@@ -62,7 +62,8 @@ class TestSKIPRunNotebooks(unittest.TestCase):
                 temp, keepnote, fLOG=fLOG, valid=valid, additional_path=addpaths)
             execute_notebook_list_finalize_ut(
                 res, fLOG=fLOG, dump=src.pyquickhelper)
-        except PermissionError as e:
+        except Exception as e:
+            # Issue with permission.
             warnings.warn("Unable to test this notebook due to " + str(e))
 
     def test_skip_run_notebook_git(self):
