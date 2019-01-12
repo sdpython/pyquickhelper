@@ -34,7 +34,7 @@ class MagicCommandParser(argparse.ArgumentParser):
         """
         if args == ('-h', '--help'):
             return "help"
-        typstr = str  # unicode#
+        typstr = str
         for a in args:
             if isinstance(a, typstr):
                 if a[0] != "-":
@@ -177,7 +177,7 @@ class MagicCommandParser(argparse.ArgumentParser):
 
         The method interprets variable inside list, tuple or dictionaries (for *value*).
         """
-        typstr = str  # unicode#
+        typstr = str
         if isinstance(value, typstr):
             if value in context:
                 return context[value]

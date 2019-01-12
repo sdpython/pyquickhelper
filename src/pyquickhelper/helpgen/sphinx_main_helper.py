@@ -135,7 +135,7 @@ def produce_code_graph_changes(df):
     x = list(range(len(xl)))
     y = list(gr["commits"])
 
-    typstr = str  # unicode#
+    typstr = str
 
     code = """
             import matplotlib.pyplot as plt
@@ -221,7 +221,7 @@ def generate_changes_repo(chan, source, exception_if_empty=True,
     rows.append(
         """\n.. _l-changes:\n\n\nChanges\n=======\n\n__CODEGRAPH__\n\nList of recent changes:\n""")
 
-    typstr = str  # unicode#
+    typstr = str
 
     values = []
     for i, row in enumerate(logs):

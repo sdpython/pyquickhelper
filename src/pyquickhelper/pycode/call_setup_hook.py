@@ -38,7 +38,7 @@ def call_setup_hook_cmd(folder, module_name, function_name="_setup_hook",
     if args is None or len(args) == 0:
         str_args = ""
     else:
-        typstr = str  # unicode#
+        typstr = str
         str_args = "**" + typstr(args)
 
     code = ["import sys", ]

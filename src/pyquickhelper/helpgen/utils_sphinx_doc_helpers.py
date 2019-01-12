@@ -194,7 +194,7 @@ class ModuleMemberDoc:
         self.name = name
         self.populate()
 
-        typstr = str  # unicode#
+        typstr = str
 
         if self.cl is None and self.type in [
                 "method", "staticmethod", "property"]:
@@ -224,7 +224,7 @@ class ModuleMemberDoc:
         """
         obj = self.obj
         ty = self.type if "type" in self.__dict__ else None
-        typstr = str  # unicode#
+        typstr = str
         if ty is None:
             if inspect.isclass(obj):
                 self.type = "class"
@@ -908,12 +908,12 @@ def make_label_index(title, comment):
     try:
         r = "".join(map(accept, title))
         if len(r) == 0:
-            typstr = str  # unicode#
+            typstr = str
             raise HelpGenException("unable to interpret this title (empty?): {0} (type: {2})\nCOMMENT:\n{1}".format(
                 typstr(title), comment, typstr(type(title))))
         return r
     except TypeError as e:
-        typstr = str  # unicode#
+        typstr = str
         raise HelpGenException("unable to interpret this title: {0} (type: {2})\nCOMMENT:\n{1}".format(
             typstr(title), comment, typstr(type(title)))) from e
 

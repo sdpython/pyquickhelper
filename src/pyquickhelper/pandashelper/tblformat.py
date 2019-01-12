@@ -79,7 +79,7 @@ def df2rst(df, add_line=True, align="l", column_size=None, index=False,
             warnings.warn("Unable to boldify the index (2).", SyntaxWarning)
 
     import numpy
-    typstr = str  # unicode#
+    typstr = str
 
     def align_string(s, align, length):
         if len(s) < length:
@@ -198,7 +198,7 @@ def df2html(self, class_table=None, class_td=None, class_tr=None,
     septd = "</td><td%s>" % cltd
     strtd = "<tr%s><td%s>" % (cltr, cltd)
 
-    typstr = str  # unicode#
+    typstr = str
 
     def conv(s):
         if s is None:

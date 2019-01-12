@@ -397,6 +397,10 @@ def apply_modification_template(rootm, store_obj, template, fullname, rootrep,
                     threader_module_clear,
                     NULL
             };
+
+    .. warning::
+        This function still needs some improvments
+        for C++ modules on MacOSX.
     """
     from pandas import DataFrame
 
@@ -428,8 +432,7 @@ def apply_modification_template(rootm, store_obj, template, fullname, rootrep,
     tspecials = {}
 
     if mo is not None:
-        if isinstance(mo, str  # unicode#
-                      ):
+        if isinstance(mo, str):
             # it is an error
             spl = mo.split("\n")
             mo = "\n".join(["    " + _ for _ in spl])
@@ -464,7 +467,7 @@ def apply_modification_template(rootm, store_obj, template, fullname, rootrep,
                 doc = ""
                 shortdoc = "empty"
 
-            # we produce the table for the function, classes, and
+            # it produces the table for the function, classes, and
             objs = get_module_objects(mo)
 
             prefix = ".".join(fullnamenoext.split(".")[:-1])
@@ -624,8 +627,7 @@ def add_file_rst(rootm, store_obj, actions, template=add_file_rst_template,
     app = []
     for action in actions:
         _, file, dest = action[:3]
-        if not isinstance(file, str  # unicode#
-                          ):
+        if not isinstance(file, str):
             file = file.name
 
         to = os.path.join(dest, file)
@@ -1039,8 +1041,7 @@ def prepare_file_for_sphinx_help_generation(store_obj, input, output,
     indexes = {}
 
     for sub in subfolders:
-        if isinstance(sub, str  # unicode#
-                      ):
+        if isinstance(sub, str):
             src = (input + "/" + sub).replace("//", "/")
             dst = (output + "/" + sub).replace("//", "/")
         else:
@@ -1524,7 +1525,7 @@ def _private_migrating_doxygen_doc(rows, index_first_line, filename,
     openi = False
     beginends = {}
 
-    typstr = str  # unicode#
+    typstr = str
 
     whole = "\n".join(rows)
     if "@var" in whole:

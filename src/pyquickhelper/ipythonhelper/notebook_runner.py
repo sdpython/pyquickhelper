@@ -215,8 +215,7 @@ class NotebookRunner(object):
         @param      encoding        encoding
         @return                     Json string if filename is None, None otherwise
         """
-        if isinstance(filename, str  # unicode#
-                      ):
+        if isinstance(filename, str):
             with open(filename, "w", encoding=encoding) as payload:
                 self.to_json(payload)
                 return None
@@ -304,8 +303,7 @@ class NotebookRunner(object):
         @param      cell        a cell or a string
         @return                 boolean (=iscell), string
         """
-        if isinstance(cell, str  # unicode#
-                      ):
+        if isinstance(cell, str):
             iscell = False
             return iscell, cell
         else:

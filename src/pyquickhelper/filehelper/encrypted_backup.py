@@ -116,8 +116,7 @@ class EncryptedBackup:
         self._root_local = root_local if root_local is not None else (
             file_tree_node.root if file_tree_node else None)
         self._root_remote = root_remote if root_remote is not None else ""
-        if filter_out is not None and not isinstance(filter_out, str  # unicode#
-                                                     ):
+        if filter_out is not None and not isinstance(filter_out, str):
             self._filter_out = filter_out
         else:
             self._filter_out_reg = None if filter_out is None else re.compile(

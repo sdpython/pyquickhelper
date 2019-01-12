@@ -283,7 +283,7 @@ def synchronize_folder(p1: str, p2: str, hash_size=1024 ** 2, repo1=False, repo2
     def mytrue(v):
         return True
 
-    typstr = str  # unicode#
+    typstr = str
     if filter is None:
         tfilter = mytrue
     elif isinstance(filter, typstr):
@@ -305,8 +305,7 @@ def synchronize_folder(p1: str, p2: str, hash_size=1024 ** 2, repo1=False, repo2
         be = os.path.join(path, f)
         return tfilter(be)
 
-    if isinstance(filter_copy, str  # unicode#
-                  ):
+    if isinstance(filter_copy, str):
         rg = re.compile(filter_copy)
 
         def regtrue2(f):

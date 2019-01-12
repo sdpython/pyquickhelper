@@ -10,8 +10,8 @@ import time
 
 if "temp_" in os.path.abspath(__file__):
     raise ImportError(
-        "this file should not be imported in that location: " +
-        os.path.abspath(__file__))
+        "This file should not be imported in that location: {0}".format(
+            os.path.abspath(__file__)))
 
 try:
     import src
@@ -67,9 +67,13 @@ class TestLog(ExtTestCase):
             __file__,
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
-        out, err = run_cmd("dir", shell=True, wait=True)
+        if sys.platform.startswith("win"):
+            cmd = "dir"
+        else:
+            cmd = "ls"
+        out, err = run_cmd(cmd, shell=True, wait=True)
         assert len(out) > 0
-        out, err = run_cmd("dir *.pyc", shell=True, wait=True)
+        out, err = run_cmd(cmd + " *.pyc", shell=True, wait=True)
         assert len(out) > 0
 
     def test_cmd_noshell(self):
@@ -77,7 +81,11 @@ class TestLog(ExtTestCase):
             __file__,
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
-        out, err = run_cmd("dir", wait=True)
+        if sys.platform.startswith("win"):
+            cmd = "dir"
+        else:
+            cmd = "ls"
+        out, err = run_cmd(cmd, wait=True)
         assert len(out) > 0
 
     def test_cmd_communicate(self):
@@ -85,7 +93,11 @@ class TestLog(ExtTestCase):
             __file__,
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
-        out, err = run_cmd("dir", wait=True, communicate=True)
+        if sys.platform.startswith("win"):
+            cmd = "dir"
+        else:
+            cmd = "ls"
+        out, err = run_cmd(cmd, wait=True, communicate=True)
         assert len(out) > 0
 
     def test_cmd_communicate2(self):
@@ -94,9 +106,11 @@ class TestLog(ExtTestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
         if sys.platform.startswith("win"):
-            out, err = run_cmd("dir *.py", shell=True, wait=True, communicate=True)
+            out, err = run_cmd("dir *.py", shell=True,
+                               wait=True, communicate=True)
         else:
-            out, err = run_cmd("ls *.py", shell=True, wait=True, communicate=True)
+            out, err = run_cmd("ls *.py", shell=True,
+                               wait=True, communicate=True)
         self.assertNotEmpty(out)
 
     def test_python(self):

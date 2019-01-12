@@ -98,8 +98,7 @@ def add_missing_files(root, conf, blog_list):
             """<a href="{{ pathto('',1) }}/py-modindex.html">Module</a>\n""")
         f.write(
             """<h3><a href="{{ pathto('',1) }}/blog/main_0000.html">Blog</a></h3>\n""")
-        if isinstance(blog_list, str  # unicode#
-                      ):
+        if isinstance(blog_list, str):
             f.write(blog_list)
         elif isinstance(blog_list, list):
             f.write("\n<br />".join(blog_list))

@@ -152,8 +152,7 @@ class FolderTransferFTP:
         self._is_binary = is_binary
         self._exc = exc
         self._force_allow = force_allow
-        if filter_out is not None and not isinstance(filter_out, str  # unicode#
-                                                     ):
+        if filter_out is not None and not isinstance(filter_out, str):
             self._filter_out = filter_out
         else:
             self._filter_out_reg = None if filter_out is None else re.compile(

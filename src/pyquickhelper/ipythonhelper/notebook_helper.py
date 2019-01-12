@@ -123,8 +123,7 @@ def read_nb(filename, profile_dir=None, encoding="utf8", working_dir=None,
                                 dictionary ``{ string: string }``
     @return                     @see cl NotebookRunner
     """
-    if isinstance(filename, str  # unicode#
-                  ):
+    if isinstance(filename, str):
         with open(filename, "r", encoding=encoding) as payload:
             nb = reads(payload.read())
 
@@ -169,8 +168,7 @@ def read_nb_json(js, profile_dir=None, encoding="utf8",
                                 dictionary ``{ string: string }``
     @return                     instance of @see cl NotebookRunner
     """
-    if isinstance(js, str  # unicode#
-                  ):
+    if isinstance(js, str):
         st = StringIO(js)
     else:
         st = js

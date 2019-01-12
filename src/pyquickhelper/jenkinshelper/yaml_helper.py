@@ -366,7 +366,7 @@ def convert_sequence_into_batch_file(seq, variables=None, platform=None):
 
     rows = []
     splits = [rows]
-    typstr = str  # unicode#
+    typstr = str
 
     for key, value in seq:
         if key == "automatedsetup":
@@ -580,7 +580,7 @@ def enumerate_processed_yml(file_or_buffer, context=None, engine="jinja2", platf
     A subfolder was added to the project location.
     A scheduler can be defined as well by adding ``SCHEDULER:'* * * * *'``.
     """
-    typstr = str  # unicode#
+    typstr = str
     fLOG = kwargs.get('fLOG', None)
     project_name = None if context is None else context.get(
         "project_name", None)

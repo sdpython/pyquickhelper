@@ -118,8 +118,7 @@ class FileTreeNode:
 
         self._fillstat()
         if self.isdir():
-            if isinstance(filter, str  # unicode#
-                          ):
+            if isinstance(filter, str):
                 # it assumes it is a regular expression instead of a function
                 exp = re.compile(filter)
 

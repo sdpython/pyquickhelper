@@ -281,8 +281,7 @@ class TransferFTP:
         bs = blocksize if blocksize else TransferFTP.blockSize
         if exc is None:
             try:
-                if isinstance(file, str  # unicode#
-                              ):
+                if isinstance(file, str):
                     if not os.path.exists(file):
                         raise FileNotFoundError(file)
                     with open(file, "rb") as f:
@@ -357,8 +356,7 @@ class TransferFTP:
 
         raise_exc = None
 
-        if isinstance(file, str  # unicode#
-                      ):
+        if isinstance(file, str):
             with open(file, "wb") as f:
                 def callback(block):
                     f.write(block)

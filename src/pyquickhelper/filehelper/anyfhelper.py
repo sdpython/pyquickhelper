@@ -143,8 +143,7 @@ def read_content_ufs(file_url_stream, encoding="utf8", asbytes=False, add_source
 
     The function can return bytes.
     """
-    if isinstance(file_url_stream, str  # unicode#
-                  ):
+    if isinstance(file_url_stream, str):
         if is_file_string(file_url_stream) and os.path.exists(file_url_stream):
             if asbytes:
                 with open(file_url_stream, "rb") as f:
@@ -169,8 +168,7 @@ def read_content_ufs(file_url_stream, encoding="utf8", asbytes=False, add_source
                 return (content, "u") if add_source else content
         else:
             # the string should the content itself
-            if isinstance(file_url_stream, str  # unicode#
-                          ):
+            if isinstance(file_url_stream, str):
                 if asbytes:
                     raise TypeError(
                         "file_url_stream is str when expected bytes")

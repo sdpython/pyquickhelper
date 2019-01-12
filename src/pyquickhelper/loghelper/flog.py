@@ -139,8 +139,7 @@ def GetLogFile(physical=False, filename=None):
                     raise PQHException(
                         "unable to create a log file in folder " + path)
 
-            if not isinstance(flog_static.store_log_values["__log_file_name"], str  # unicode#
-                              ):
+            if not isinstance(flog_static.store_log_values["__log_file_name"], str):
                 flog_static.store_log_values["__log_file"] = flog_static.store_log_values[
                     "__log_file_name"]
             else:
@@ -261,7 +260,7 @@ def fLOGFormat(sep, *l, **p):
     """
     upp = p.get('_pp', False)
     dt = datetime.datetime(2009, 1, 1).now()
-    typstr = str  # unicode#
+    typstr = str
     if len(l) > 0:
         def _str_process(s):
             if isinstance(s, str):
@@ -626,12 +625,13 @@ def _check_zip_file(filename, path_unzip, outfile, flatten=True, fLOG=noLOG):
 
 def _first_more_recent(f1, path):
     """
-    checks if the first file (opened url) is more recent of the second file (path)
+    Checks if the first file (opened url)
+    is more recent of the second file (path).
     @param      f1      opened url
     @param      path    path name
     @return             boolean
     """
-    typstr = str  # unicode#
+    typstr = str
     s = typstr(f1.info())
     da = re.compile("Last[-]Modified: (.+) GMT").search(s)
     if da is None:
@@ -775,9 +775,9 @@ def _check_source(fileurl, path_unzip, outfile, flatten=True, fLOG=noLOG):
 
 def get_prefix():
     """
-    return a prefix for a file based on time
+    Returns a prefix for a file based on time.
     """
-    typstr = str  # unicode#
+    typstr = str
     t = datetime.datetime(2010, 1, 1).now()
     t = typstr(t).replace(":", "_").replace("/", "_").replace(" ", "_")
     t += "_" + typstr(random.randint(0, 1000000)) + "_"
@@ -822,7 +822,7 @@ def removedirs(folder, silent=False, use_command_line=False):
                 if os.path.exists(f):
                     os.remove(f)
             except Exception as e:
-                typstr = str  # unicode#
+                typstr = str
                 fLOG(
                     "Unable to remove file '{0}' --- {1}".format(f, typstr(e).replace("\n", " ")))
                 if silent:
@@ -834,7 +834,7 @@ def removedirs(folder, silent=False, use_command_line=False):
                 if os.path.exists(f):
                     os.removedirs(f)
             except Exception as e:
-                typstr = str  # unicode#
+                typstr = str
                 fLOG(
                     "Unable to remove folder '{0}' --- {1}".format(f, typstr(e).replace("\n", " ")))
                 if silent:
@@ -862,9 +862,9 @@ def guess_type_value(x, none=None):
     try:
         int(x)
         if x[0] == '0' and len(x) > 1:
-            return str  # unicode#
+            return str
         else:
-            return int if len(x) < 9 else str  # unicode#
+            return int if len(x) < 9 else str
     except ValueError:
         try:
             x = float(x)
@@ -875,13 +875,13 @@ def guess_type_value(x, none=None):
                     return None
                 try:
                     if len(x) > 0:
-                        return str  # unicode#
+                        return str
                     else:
                         return None
                 except Exception:
                     return None
             else:
-                return str  # unicode#
+                return str
 
 
 def guess_type_value_type(none=True):
@@ -889,7 +889,7 @@ def guess_type_value_type(none=True):
     @param      none        if True and all values are empty, return None
     @return                 the list of types recognized by guess_type_value
     """
-    typstr = str  # unicode#
+    typstr = str
     return [None, typstr, int, float] if none else [typstr, int, float]
 
 
@@ -901,7 +901,7 @@ def get_default_value_type(ty, none=True):
     """
     if ty is None and none:
         return None
-    elif (ty == str  # unicode#
+    elif (ty == str
           ):
         return ""
     elif ty == int:
@@ -911,7 +911,7 @@ def get_default_value_type(ty, none=True):
     elif ty == float:
         return 0.0
     else:
-        raise PQHException("type expected in " + str  # unicode#
+        raise PQHException("type expected in " + str
                            (guess_type_value_type()))
 
 
@@ -925,9 +925,9 @@ def guess_type_list(l, tolerance=0.01, none=True):
     @return                 type, length (order of preference (int, float, str))
                             the parameter length has a meaning only for str result
     """
-    defa = None if none else str  # unicode#
+    defa = None if none else str
     length = 0
-    typstr = str  # unicode#
+    typstr = str
     if l in [typstr, float, int, None, decimal.Decimal]:
         raise PQHException("this case is unexpected %s" % typstr(l))
 
@@ -953,7 +953,7 @@ def guess_type_list(l, tolerance=0.01, none=True):
         if len(val) == 1:
             res = val[0][1]
         elif val[0][0] * tolerance < val[1][0]:
-            res = str  # unicode#
+            res = str
         else:
             res = val[0][1]
 
@@ -1010,8 +1010,7 @@ def IsEmptyString(s):
     """
     if s is None:
         return True
-    elif isinstance(s, str  # unicode#
-                    ):
+    elif isinstance(s, str):
         return len(s) == 0
     else:
         raise PQHException("the type is unexpected {0}".format(type(s)))

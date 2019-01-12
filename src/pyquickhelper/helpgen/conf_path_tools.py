@@ -50,7 +50,7 @@ def find_graphviz_dot(exc=True):
         p = find_in_PATH("dot.exe")
         if p is None:
             if exc:
-                typstr = str  # unicode#
+                typstr = str
                 raise FileNotFoundError(
                     "unable to find graphviz, look into paths such as: " + typstr(graphviz_dot))
             else:
@@ -77,7 +77,7 @@ def find_latex_path(exc=True):
             latex = find_in_PATH("latex.exe")
             if latex is None or not os.path.exists(latex):
                 if exc:
-                    typstr = str  # unicode#
+                    typstr = str
                     raise FileNotFoundError(
                         "unable to find latex (miktex), look into paths such as: " + typstr(latex0))
                 else:

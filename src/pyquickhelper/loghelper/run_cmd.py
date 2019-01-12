@@ -39,8 +39,7 @@ def split_cmp_command(cmd, remove_quotes=True):
     @param      remove_quotes   True by default
     @return                     list
     """
-    if isinstance(cmd, str  # unicode#
-                  ):
+    if isinstance(cmd, str):
         spl = cmd.split()
         res = []
         for s in spl:
@@ -76,7 +75,7 @@ def decode_outerr(outerr, encoding, encerror, msg):
     """
     if encoding is None:
         encoding = "ascii"
-    typstr = str  # unicode#
+    typstr = str
     if not isinstance(outerr, bytes):
         raise TypeError(
             "only able to decode bytes, not " + typstr(type(outerr)))
@@ -411,7 +410,7 @@ def run_script(script, *args, **kwargs):
     py = get_interpreter_path()
     cmd = "%s %s" % (py, script)
     if len(args) > 0:
-        typstr = str  # unicode#
+        typstr = str
         cmd += " " + " ".join([typstr(x) for x in args])
     out, err = run_cmd(cmd, **kwargs)
     return out, err

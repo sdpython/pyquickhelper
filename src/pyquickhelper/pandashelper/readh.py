@@ -25,8 +25,9 @@ def read_csv(filepath_or_buffer, compression=None, fvalid=None, **params):
     See blog post :ref:`blogpost_read_csv`.
     """
     import pandas
-    if isinstance(filepath_or_buffer, str  # unicode#
-                  ) and (compression == "zip" or (compression is None and filepath_or_buffer.endswith(".zip"))):
+    if isinstance(filepath_or_buffer, str) and \
+       (compression == "zip" or (compression is None and
+                                 filepath_or_buffer.endswith(".zip"))):
         content = read_content_ufs(filepath_or_buffer, asbytes=True)
         with zipfile.ZipFile(BytesIO(content)) as myzip:
             infos = myzip.infolist()

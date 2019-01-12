@@ -80,7 +80,7 @@ def repo_ls(full, commandline=True):
             entry = client.ls(full)
             return entry
         except Exception as e:
-            typstr = str  # unicode#
+            typstr = str
             if "This client is too old to work with the working copy at" in typstr(e) or \
                     "No module named 'pysvn'" in typstr(e):
                 if "@" in full:
@@ -213,7 +213,7 @@ def get_repo_log(path=None, file_detail=False, commandline=True):
                 include_merged_revisions=False,
             )
         except Exception as e:
-            typstr = str  # unicode#
+            typstr = str
             if "is not a working copy" in typstr(e):
                 return [
                     ("",
@@ -302,7 +302,7 @@ def get_repo_version(path=None, commandline=True, log=False):
             revision = max(revv)
             return revision
         except Exception as e:
-            typstr = str  # unicode#
+            typstr = str
             if "This client is too old to work with the working copy at" in typstr(e) or \
                     "No module named 'pysvn'" in typstr(e):
                 return get_repo_version(path, commandline=True)

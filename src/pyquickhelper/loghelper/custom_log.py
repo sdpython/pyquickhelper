@@ -33,7 +33,7 @@ class CustomLog:
         self._parent = parent
         if not os.path.exists(folder):
             os.makedirs(folder)
-        typstr = str  # unicode#
+        typstr = str
         if filename is None:
             i = 0
             filename = "log_custom_%03d.txt" % i
@@ -94,7 +94,7 @@ class CustomLog:
         @param      p       dictionary of fields
         """
         dt = datetime.datetime(2009, 1, 1).now()
-        typstr = str  # unicode#
+        typstr = str
         if len(l) > 0:
             def _str_process(s):
                 if isinstance(s, str):

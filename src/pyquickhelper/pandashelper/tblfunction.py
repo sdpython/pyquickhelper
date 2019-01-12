@@ -15,8 +15,7 @@ def isempty(s):
     """
     if s is None:
         return True
-    if isinstance(s, str  # unicode#
-                  ):
+    if isinstance(s, str):
         return len(s) == 0
 
     import numpy

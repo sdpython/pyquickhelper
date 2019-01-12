@@ -120,8 +120,7 @@ def tpl_role(role, rawtext, text, lineno, inliner, options=None, content=None):
     except Exception as e:
         raise Exception("Unable to compile '''{0}'''".format(code)) from e
 
-    if isinstance(tpl_content, str  # unicode#
-                  ):
+    if isinstance(tpl_content, str):
         res = evaluate_template(tpl_content, **val_context)
     else:
         res = tpl_content(**val_context)

@@ -37,8 +37,7 @@ def get_test_file(filter, dir=None, no_subfolder=False, fLOG=noLOG, root=None):
         if dir is None:
             path = os.path.split(__file__)[0]
             dirs = [os.path.join(path, "..", "..", d) for d in expected]
-        elif isinstance(dir, str  # unicode#
-                        ):
+        elif isinstance(dir, str):
             if not os.path.exists(dir):
                 raise FileNotFoundError(dir)
             last = os.path.split(dir)[-1]

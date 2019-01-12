@@ -285,8 +285,7 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
         extra_ext = []
 
     def lay_build_override_newconf(t3):
-        if isinstance(t3, str  # unicode#
-                      ):
+        if isinstance(t3, str):
             lay, build, override, newconf = t3, "build", {}, None
         elif len(t3) == 1:
             lay, build, override, newconf = t3[0], "build", {}, None

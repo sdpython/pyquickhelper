@@ -22,7 +22,7 @@ except ImportError:
     import src
 
 from src.pyquickhelper.loghelper.flog import fLOG
-from src.pyquickhelper.pycode import get_temp_folder, ExtTestCase, is_travis_or_appveyor
+from src.pyquickhelper.pycode import get_temp_folder, ExtTestCase, is_travis_or_appveyor, skipif_azure_macosx
 from src.pyquickhelper.helpgen import rst2html
 from src.pyquickhelper.sphinxext import CmdRef, CmdRefList
 from src.pyquickhelper.sphinxext.sphinx_cmdref_extension import cmdref_node, visit_cmdref_node, depart_cmdref_node
@@ -251,7 +251,14 @@ class TestCmdRefExtension(ExtTestCase):
         if t1 in html:
             raise Exception(html)
 
+    @skipif_azure_macosx("The Mac OS X backend will not be able to function correctly if Python is not installed as a framework.")
     def test_cmdref_module(self):
+        """
+        The test fails on MACOSX if it runs from a virtual envrionment.
+        See https://github.com/pypa/virtualenv/issues/609,
+        https://github.com/pypa/virtualenv/issues/54.
+        Or use https://docs.python.org/3/library/venv.html.
+        """
         fLOG(
             __file__,
             self._testMethodName,
@@ -264,7 +271,7 @@ class TestCmdRefExtension(ExtTestCase):
         self.assertExists(path)
         from docutils import nodes as skip_
 
-        if is_travis_or_appveyor() == "azurepipe":
+        if is_travis_or_appveyor() == "azurepipe" and sys.platform == "darwin":
             import matplotlib as mpl
             mpl.use('TkAgg')
 

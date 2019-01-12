@@ -78,7 +78,7 @@ class FilesStatus:
 
         @param      checkfile       check the status for file checkfile
         """
-        typstr = str  # unicode#
+        typstr = str
         if checkfile is None:
             checkfile = []
         rows = []
@@ -118,7 +118,7 @@ class FilesStatus:
         """
         res = True
         reason = None
-        typstr = str  # unicode#
+        typstr = str
 
         if file not in self.copyFiles:
             reason = "new"

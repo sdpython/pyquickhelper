@@ -30,7 +30,7 @@ def _private_test_style_src(fLOG, run_lint, verbose=False, pattern=".*[.]py$"):
                               'R0911', 'R0916', 'C0200', 'W0223',
                               'W0122', 'E1003', 'R0205', 'E0001',
                               'W0143', 'W0107'),
-               skip=["ftp_transfer_files.py:353: [E731]",
+               skip=["ftp_transfer_files.py:352: [E731]",
                      "utils_tests_helper.py:29: [E731]",
                      "_nbconvert_config.py:",
                      "convert_doc_sphinx_helper.py:31: [E402]",
