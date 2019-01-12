@@ -280,6 +280,8 @@ def zip7_files(filename_7z, file_set, fLOG=noLOG, temp_folder="."):
         exe = r"C:\Program Files\7-Zip\7z.exe"
         if not os.path.exists(exe):
             raise FileNotFoundError("unable to find: {0}".format(exe))
+    elif sys.platform.startswith("darwin"):
+        exe = "7za"
     else:
         exe = "7z"
 
@@ -338,6 +340,8 @@ def un7zip_files(zipf, where_to=None, fLOG=noLOG, fvalid=None,
 
             if where_to is None:
                 where_to = os.path.abspath(".")
+        elif sys.platform.startswith("darwin"):
+            exe = "7za"
         else:
             exe = "7z"
 

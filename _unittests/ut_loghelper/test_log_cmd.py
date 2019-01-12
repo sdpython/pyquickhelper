@@ -47,7 +47,10 @@ class TestLogFunc (unittest.TestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
-        cmd = "dir ."
+        if sys.platform.startswith("win"):
+            cmd = "dir ."
+        else:
+            cmd = "ls ."
         out1, err = run_cmd(cmd, wait=True, fLOG=fLOG)
         out2, err = run_cmd(cmd, wait=True, communicate=False, fLOG=fLOG)
 

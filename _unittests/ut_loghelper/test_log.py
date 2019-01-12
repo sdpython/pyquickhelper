@@ -92,8 +92,11 @@ class TestLog (unittest.TestCase):
             __file__,
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
-        out, err = run_cmd("dir *.py", shell=True, wait=True, communicate=True)
-        assert len(out) > 0
+        if sys.platform.startswith("win"):
+            out, err = run_cmd("dir *.py", shell=True, wait=True, communicate=True)
+        else:
+            out, err = run_cmd("ls *.py", shell=True, wait=True, communicate=True)
+        self.assertNotEmpty(out)
 
     def test_python(self):
         fLOG(

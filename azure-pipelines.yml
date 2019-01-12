@@ -69,8 +69,8 @@ jobs:
     displayName: 'Install Graphviz'
   - script: brew cask install mactex
     displayName: 'Install latex'
-  - script: brew install cairo
-    displayName: 'Install cairo'
+  - script: brew install cairo pango gdk-pixbuf libffi
+    displayName: 'Install cairo pango gdk-pixbuf libffi'
   - script: python -m pip install --upgrade pip setuptools wheel
     displayName: 'Install tools'
   - script: pip install -r requirements.txt
@@ -79,6 +79,8 @@ jobs:
     displayName: 'Install scipy scikit-learn'
   - script: python -u setup.py unittests
     displayName: 'Runs Unit Tests'
+  - script: pip freeze
+    displayName: 'pip freeze'
   - script: python -u setup.py bdist_wheel
     displayName: 'Build Package'
   - task: PublishPipelineArtifact@0

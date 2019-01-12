@@ -23,7 +23,7 @@ except ImportError:
     import src
 
 from src.pyquickhelper.loghelper.flog import fLOG
-from src.pyquickhelper.pycode import get_temp_folder, ExtTestCase
+from src.pyquickhelper.pycode import get_temp_folder, ExtTestCase, skipif_azure_macosx
 from src.pyquickhelper.helpgen import rst2html
 from src.pyquickhelper.sphinxext import RunPythonDirective
 
@@ -38,6 +38,7 @@ class TestRunPythonExtensionImage(ExtTestCase):
 
         directives.register_directive("runpython", RunPythonDirective)
 
+    @skipif_azure_macosx("Terminating app due to uncaught exception 'NSInvalidArgumentException'")
     def test_runpython_image(self):
         """
         this test also test the extension runpython

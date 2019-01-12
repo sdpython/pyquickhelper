@@ -299,8 +299,8 @@ class TestCmdRefExtension(ExtTestCase):
 
         self.assertIn("<<<", html)
         self.assertIn("python -m pyquickhelper clean_files --help", html)
-        self.assertIn(
-            "usage: clean_files [-h] [-f FOLDER] [-p POSREG] [-n NEGREG] [--op OP]", html)
+        if "usage: clean_files [-h] [-f FOLDER] [-p POSREG] [-n NEGREG] [--op OP]" not in html:
+            raise Exception("Unable to find a substring in\n{0}".format(html))
 
 
 if __name__ == "__main__":
