@@ -40,11 +40,12 @@ def ie_layout_html():
         sitep = sitep[0]
     else:
         raise FileNotFoundError(
-            "unable to find site-packages\n{0}".format("\n".join(getsitepackages())))
+            "unable to find site-packages\n{0}".format(
+                "\n".join(getsitepackages())))  # pylint: disable=E1101
 
     if not os.path.exists(sitep):
-        raise FileNotFoundError("unable to find site-packages, tried: {0}\nALL:\n{1}".format(sitep,
-                                                                                             "\n".join(site.getsitepackages())))
+        raise FileNotFoundError("unable to find site-packages, tried: {0}\nALL:\n{1}".format(
+            sitep, "\n".join(site.getsitepackages())))  # pylint: disable=E1101
 
     layout = os.path.join(sitep, "sphinx", "themes", "basic", "layout.html")
     if os.path.exists(layout):
