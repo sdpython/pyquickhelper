@@ -24,9 +24,6 @@ from src.pyquickhelper.pycode import ExtTestCase
 from src.pyquickhelper.pandashelper import df2rst
 from src.pyquickhelper import __file__ as rootfile
 
-if sys.version_info[0] == 2:
-    FileNotFoundError = Exception
-
 
 class TestExtTestCase(ExtTestCase):
 

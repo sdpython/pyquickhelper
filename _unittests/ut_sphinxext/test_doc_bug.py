@@ -35,11 +35,6 @@ class TestDocBug(unittest.TestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
-        if sys.version_info[0] == 2:
-            warnings.warn(
-                "test_epkg_module not run on Python 2.7")
-            return
-
         from docutils import nodes as skip_
 
         content = """

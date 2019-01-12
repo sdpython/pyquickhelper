@@ -32,9 +32,6 @@ class TestNotebookSlides(unittest.TestCase):
             __file__,
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
-        if sys.version_info[0] == 2:
-            # written in Python 3
-            return
         temp = get_temp_folder(__file__, "temp_notebook_add_slides_metadata")
         nbfile = os.path.join(
             temp, "..", "data", "having_a_form_in_a_notebook.ipynb")

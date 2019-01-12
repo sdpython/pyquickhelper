@@ -6,11 +6,7 @@ import sys
 import os
 import unittest
 import shutil
-
-if sys.version_info[0] == 2:
-    import urllib as URL
-else:
-    import urllib.request as URL
+import urllib.request as URL
 
 
 if "temp_" in os.path.abspath(__file__):

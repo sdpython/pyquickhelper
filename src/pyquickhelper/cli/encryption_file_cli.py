@@ -52,7 +52,7 @@ def do_main(source, dest, password, encrypt, fLOG=None):
         sys.path.append(folder)
         from pyquickhelper.filehelper import encrypt_stream, decrypt_stream
 
-    if sys.version_info[0] >= 3 and isinstance(password, str):
+    if isinstance(password, str):
         password = bytes(password, encoding="ascii")
 
     if encrypt:

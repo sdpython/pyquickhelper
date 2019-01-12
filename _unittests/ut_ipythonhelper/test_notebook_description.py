@@ -47,9 +47,6 @@ class TestNotebookDescription(ExtTestCase):
             __file__,
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
-        if sys.version_info[0] == 2:
-            warnings.warn("Not working with python 2.7")
-            return
         temp = get_temp_folder(__file__, "temp_notebook_number")
         nbfile = os.path.join(temp, "..", "data", "pyensae_text2table.ipynb")
         self.assertExists(nbfile)

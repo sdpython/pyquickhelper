@@ -38,12 +38,7 @@ class TestEncryptionCli(unittest.TestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
-        if sys.version_info[0] == 2:
-            # the module returns the following error
-            # ENCODING ERROR WITH Python 2.7, will not fix it
-            return
-        else:
-            password = "unittest" * 2
+        password = "unittest" * 2
 
         temp = get_temp_folder(__file__, "temp_encrypt_file")
         dest = os.path.join(temp, "__file__.enc")
@@ -68,12 +63,7 @@ class TestEncryptionCli(unittest.TestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
-        if sys.version_info[0] == 2:
-            # the module returns the following error
-            # ENCODING ERROR WITH Python 2.7, will not fix it
-            return
-        else:
-            password = "unittest" * 2
+        password = "unittest" * 2
 
         temp = get_temp_folder(__file__, "temp_encrypt")
         temp2 = get_temp_folder(__file__, "temp_encrypt2")

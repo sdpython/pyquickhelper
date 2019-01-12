@@ -2,26 +2,12 @@
 @file
 @brief A function to download the content of a url.
 """
-import sys
 import socket
 import gzip
 import warnings
-
-if sys.version_info[0] == 2:
-    import urllib2 as urllib_error
-    import urllib2 as urllib_request
-    import httplib as http_client
-
-    class ConnectionResetError(Exception):
-
-        """
-        missing from Python 2.7
-        """
-        pass
-else:
-    import urllib.error as urllib_error
-    import urllib.request as urllib_request
-    import http.client as http_client
+import urllib.error as urllib_error
+import urllib.request as urllib_request
+import http.client as http_client
 
 
 class InternetException(Exception):
@@ -62,55 +48,43 @@ def get_url_content_timeout(url, timeout=10, output=None, encoding="utf8", raise
                 f.write(content)
 
     try:
-        if sys.version_info[0] == 2:
-            if chunk is not None:
-                raise NotImplementedError(
-                    "for python 2.7, chunk must be None")
+        if chunk is not None:
+            if output is None:
+                raise ValueError(
+                    "output cannot be None if chunk is not None")
+            app = [False]
+            size = [0]
+
+            def _local_loop(ur):
+                while True:
+                    res = ur.read(chunk)
+                    size[0] += len(res)  # pylint: disable=E1137
+                    if fLOG is not None:
+                        fLOG("[get_url_content_timeout] downloaded",
+                             size, "bytes")
+                    if len(res) > 0:
+                        if encoding is not None:
+                            res = res.decode(encoding=encoding)
+                        save_content(res, app)
+                    else:
+                        break
+                    app[0] = True  # pylint: disable=E1137
+
             if timeout != -1:
-                raise NotImplementedError(
-                    "for python 2.7, timeout cannot be -1")
+                with urllib_request.urlopen(url, timeout=timeout) as ur:
+                    _local_loop(ur)
             else:
-                fu = urllib_request.urlopen(url)
-                res = fu.read()
-                fu.close()
+                with urllib_request.urlopen(url) as ur:
+                    _local_loop(ur)
+            app = app[0]
+            size = size[0]
         else:
-            if chunk is not None:
-                if output is None:
-                    raise ValueError(
-                        "output cannot be None if chunk is not None")
-                app = [False]
-                size = [0]
-
-                def _local_loop(ur):
-                    while True:
-                        res = ur.read(chunk)
-                        size[0] += len(res)  # pylint: disable=E1137
-                        if fLOG is not None:
-                            fLOG("[get_url_content_timeout] downloaded",
-                                 size, "bytes")
-                        if len(res) > 0:
-                            if encoding is not None:
-                                res = res.decode(encoding=encoding)
-                            save_content(res, app)
-                        else:
-                            break
-                        app[0] = True  # pylint: disable=E1137
-
-                if timeout != -1:
-                    with urllib_request.urlopen(url, timeout=timeout) as ur:
-                        _local_loop(ur)
-                else:
-                    with urllib_request.urlopen(url) as ur:
-                        _local_loop(ur)
-                app = app[0]
-                size = size[0]
+            if timeout != -1:
+                with urllib_request.urlopen(url, timeout=timeout) as ur:
+                    res = ur.read()
             else:
-                if timeout != -1:
-                    with urllib_request.urlopen(url, timeout=timeout) as ur:
-                        res = ur.read()
-                else:
-                    with urllib_request.urlopen(url) as ur:
-                        res = ur.read()
+                with urllib_request.urlopen(url) as ur:
+                    res = ur.read()
     except (urllib_error.HTTPError, urllib_error.URLError) as e:
         if raise_exception:
             raise InternetException(

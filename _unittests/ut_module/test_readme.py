@@ -24,10 +24,6 @@ from src.pyquickhelper.pycode import get_temp_folder
 from src.pyquickhelper.pycode.venv_helper import check_readme_syntax
 
 
-if sys.version_info[0] == 2:
-    from codecs import open
-
-
 class TestReadme(unittest.TestCase):
 
     def test_src_import(self):

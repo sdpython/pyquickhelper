@@ -4,15 +4,10 @@
 @brief Use `jsdifflib <https://github.com/cemerick/jsdifflib>`_
 to visualize the differences between two files.
 """
-
 import os
-import sys
 import datetime
 from ..filehelper.anyfhelper import read_content_ufs
 
-if sys.version_info[0] == 2:
-    from codecs import open
-    FileNotFoundError = OSError
 
 css_page = """
 body {

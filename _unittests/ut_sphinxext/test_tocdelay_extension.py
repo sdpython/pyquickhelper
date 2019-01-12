@@ -58,11 +58,6 @@ class TestTocDelayExtension(unittest.TestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
-        if sys.version_info[0] == 2:
-            warnings.warn(
-                "test_postcontent not run on Python 2.7")
-            return
-
         content = """
                     .. tocdelay::
 
@@ -81,11 +76,6 @@ class TestTocDelayExtension(unittest.TestCase):
             __file__,
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
-
-        if sys.version_info[0] == 2:
-            warnings.warn(
-                "test_postcontent not run on Python 2.7", UserWarning)
-            return
 
         path = os.path.abspath(os.path.dirname(__file__))
         path = os.path.join(path, "data", "blog")
@@ -109,11 +99,6 @@ class TestTocDelayExtension(unittest.TestCase):
             __file__,
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
-
-        if sys.version_info[0] == 2:
-            warnings.warn(
-                "test_postcontent not run on Python 2.7", UserWarning)
-            return
 
         temp = get_temp_folder(__file__, "temp_tocdelay3")
         path = os.path.abspath(os.path.dirname(__file__))

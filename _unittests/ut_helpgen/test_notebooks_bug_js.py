@@ -25,10 +25,6 @@ from src.pyquickhelper.helpgen import process_notebooks
 from src.pyquickhelper.pycode import get_temp_folder, skipif_travis, skipif_appveyor, ExtTestCase
 
 
-if sys.version_info[0] == 2:
-    from codecs import open
-
-
 class TestNoteBooksBugJs(ExtTestCase):
 
     def test_src_import(self):
@@ -42,9 +38,6 @@ class TestNoteBooksBugJs(ExtTestCase):
             __file__,
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
-        if sys.version_info[0] == 2:
-            # does not work on Python 2
-            return
         path = os.path.abspath(os.path.split(__file__)[0])
         fold = os.path.normpath(os.path.join(path, "notebooks_js"))
         nbs = [os.path.join(fold, _)
@@ -80,9 +73,6 @@ class TestNoteBooksBugJs(ExtTestCase):
             __file__,
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
-        if sys.version_info[0] == 2:
-            # does not work on Python 2
-            return
         path = os.path.abspath(os.path.split(__file__)[0])
         fold = os.path.normpath(os.path.join(path, "notebooks"))
         nbs = [os.path.join(fold, _)

@@ -26,10 +26,6 @@ from src.pyquickhelper.pycode import get_temp_folder, ExtTestCase
 from src.pyquickhelper.helpgen.sphinx_main import process_notebooks
 
 
-if sys.version_info[0] == 2:
-    from codecs import open
-
-
 class TestNotebookConversion2(ExtTestCase):
 
     def test_src_import(self):

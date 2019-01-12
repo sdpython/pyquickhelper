@@ -5,7 +5,6 @@
 definition, theorem...
 Inspired from `math.py <https://github.com/sphinx-doc/sphinx/blob/master/sphinx/ext/math.py>`_.
 """
-import sys
 import os
 from docutils import nodes
 from docutils.parsers.rst import directives
@@ -473,15 +472,8 @@ def setup(app):
 
     app.add_directive('mathdef', MathDef)
     app.add_directive('mathdeflist', MathDefList)
-    if sys.version_info[0] == 2:
-        # Sphinx does not accept unicode here
-        app.connect('doctree-read'.encode("ascii"), process_mathdefs)
-        app.connect('doctree-resolved'.encode("ascii"), process_mathdef_nodes)
-        app.connect('env-purge-doc'.encode("ascii"), purge_mathsext)
-        app.connect('env-merge-info'.encode("ascii"), merge_mathdef)
-    else:
-        app.connect('doctree-read', process_mathdefs)
-        app.connect('doctree-resolved', process_mathdef_nodes)
-        app.connect('env-purge-doc', purge_mathsext)
-        app.connect('env-merge-info', merge_mathdef)
+    app.connect('doctree-read', process_mathdefs)
+    app.connect('doctree-resolved', process_mathdef_nodes)
+    app.connect('env-purge-doc', purge_mathsext)
+    app.connect('env-merge-info', merge_mathdef)
     return {'version': sphinx.__display_version__, 'parallel_read_safe': True}

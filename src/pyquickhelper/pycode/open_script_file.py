@@ -3,11 +3,6 @@
 @brief A function to read a script and reading the encoding on the first line.
 """
 
-import sys
-
-if sys.version_info[0] == 2:
-    from codecs import open
-
 
 def detect_encoding(filename):
     """

@@ -3,7 +3,7 @@
 @file
 @brief Defines a :epkg:`sphinx` extension to keep track of *cmd*.
 """
-import sys
+from io import StringIO
 from docutils import nodes
 import sphinx
 from sphinx.util import logging
@@ -11,11 +11,6 @@ from docutils.parsers.rst import directives
 from ..loghelper import run_script, noLOG
 from .sphinx_blocref_extension import BlocRef, process_blocrefs_generic, BlocRefList, process_blocref_nodes_generic
 from .import_object_helper import import_object
-
-if sys.version_info[0] == 2:
-    from StringIO import StringIO
-else:
-    from io import StringIO
 
 
 class cmdref_node(nodes.admonition):
@@ -300,15 +295,8 @@ def setup(app):
 
     app.add_directive('cmdref', CmdRef)
     app.add_directive('cmdreflist', CmdRefList)
-    if sys.version_info[0] == 2:
-        # Sphinx does not accept unicode here
-        app.connect('doctree-read'.encode("ascii"), process_cmdrefs)
-        app.connect('doctree-resolved'.encode("ascii"), process_cmdref_nodes)
-        app.connect('env-purge-doc'.encode("ascii"), purge_cmdrefs)
-        app.connect('env-merge-info'.encode("ascii"), merge_cmdref)
-    else:
-        app.connect('doctree-read', process_cmdrefs)
-        app.connect('doctree-resolved', process_cmdref_nodes)
-        app.connect('env-purge-doc', purge_cmdrefs)
-        app.connect('env-merge-info', merge_cmdref)
+    app.connect('doctree-read', process_cmdrefs)
+    app.connect('doctree-resolved', process_cmdref_nodes)
+    app.connect('env-purge-doc', purge_cmdrefs)
+    app.connect('env-merge-info', merge_cmdref)
     return {'version': sphinx.__display_version__, 'parallel_read_safe': True}

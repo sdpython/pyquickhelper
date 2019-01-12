@@ -13,9 +13,6 @@ from xml.sax.saxutils import escape
 
 from ..flog import fLOG, run_cmd
 
-if sys.version_info[0] == 2:
-    from codecs import open
-
 
 class GitException(Exception):
     """
@@ -154,8 +151,7 @@ def repo_ls(full, commandline=True):
         out, err = run_cmd(cmd,
                            wait=True,
                            encerror="strict",
-                           encoding=sys.stdout.encoding if sys.version_info[
-                               0] != 2 and sys.stdout is not None else "utf8",
+                           encoding=sys.stdout.encoding if sys.stdout is not None else "utf8",
                            change_path=os.path.split(
                                full)[0] if os.path.isfile(full) else full,
                            shell=sys.platform.startswith("win32"))
@@ -228,8 +224,7 @@ def get_file_details(name, path=None, commandline=True):
         else:
             cmd = [cmd, 'log', "--stat", os.path.join(path, name)]
 
-        enc = sys.stdout.encoding if sys.version_info[
-            0] != 2 and sys.stdout is not None else "utf8"
+        enc = sys.stdout.encoding if sys.stdout is not None else "utf8"
         out, err = run_cmd(cmd,
                            wait=True,
                            encerror="strict",
@@ -317,8 +312,7 @@ def get_file_details_all(path=None, commandline=True):
         else:
             cmd = [cmd, '--no-pager', 'log', "--stat"]
 
-        enc = sys.stdout.encoding if sys.version_info[
-            0] != 2 and sys.stdout is not None else "utf8"
+        enc = sys.stdout.encoding if sys.stdout is not None else "utf8"
         out, err = run_cmd(cmd,
                            wait=True,
                            encerror="strict",
@@ -487,8 +481,7 @@ def get_repo_log(path=None, file_detail=False, commandline=True, subset=None):
                       '</date><hash>%H</hash><msg>%s</msg></logentry>'
             cmd = [cmd, 'log', cmd_tmp, path]
 
-        enc = sys.stdout.encoding if sys.version_info[
-            0] != 2 and sys.stdout is not None else "utf8"
+        enc = sys.stdout.encoding if sys.stdout is not None else "utf8"
         out, err = run_cmd(cmd, wait=True, encerror="strict", encoding=enc,
                            change_path=os.path.split(
                                path)[0] if os.path.isfile(path) else path,
@@ -586,8 +579,7 @@ def get_repo_version(path=None, commandline=True, usedate=False, log=False):
 
             try:
                 out, err = run_cmd(cmd, wait=True, encerror="strict",
-                                   encoding=sys.stdout.encoding if sys.version_info[
-                                       0] != 2 and sys.stdout is not None else "utf8",
+                                   encoding=sys.stdout.encoding if sys.stdout is not None else "utf8",
                                    change_path=os.path.split(
                                        path)[0] if os.path.isfile(path) else path,
                                    log_error=False, shell=sys.platform.startswith("win32"))
@@ -644,8 +636,7 @@ def get_master_location(path=None, commandline=True):
 
         try:
             out, err = run_cmd(cmd, wait=True, encerror="strict",
-                               encoding=sys.stdout.encoding if sys.version_info[
-                                   0] != 2 and sys.stdout is not None else "utf8",
+                               encoding=sys.stdout.encoding if sys.stdout is not None else "utf8",
                                change_path=os.path.split(
                                    path)[0] if os.path.isfile(path) else path,
                                log_error=False, shell=sys.platform.startswith("win32"))
@@ -694,8 +685,7 @@ def get_nb_commits(path=None, commandline=True):
         out, err = run_cmd(cmd,
                            wait=True,
                            encerror="strict",
-                           encoding=sys.stdout.encoding if sys.version_info[
-                               0] != 2 and sys.stdout is not None else "utf8",
+                           encoding=sys.stdout.encoding if sys.stdout is not None else "utf8",
                            change_path=os.path.split(
                                path)[0] if os.path.isfile(path) else path,
                            log_error=False,

@@ -38,8 +38,6 @@ class TestHelperHelpGen(unittest.TestCase):
             __file__,
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
-        if sys.version_info[0] == 2:
-            return
         ie_layout_html()
 
     def test_ie_layout_html2(self):
@@ -47,9 +45,6 @@ class TestHelperHelpGen(unittest.TestCase):
             __file__,
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
-
-        if sys.version_info[0] == 2:
-            return
 
         try:
             r = locate_image_documentation("completion.png")

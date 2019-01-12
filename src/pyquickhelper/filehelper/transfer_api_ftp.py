@@ -2,19 +2,12 @@
 @file
 @brief API to move files using FTP
 """
-import sys
 import ftplib
+from io import BytesIO
 from ..loghelper import noLOG
 from .transfer_api import TransferAPI
 from .ftp_transfer import TransferFTP
 from .ftp_mock import MockTransferFTP
-
-
-if sys.version_info[0] == 2:
-    from StringIO import StringIO
-    BytesIO = StringIO
-else:
-    from io import BytesIO
 
 
 class TransferAPIFtp(TransferAPI):

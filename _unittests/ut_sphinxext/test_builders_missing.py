@@ -27,10 +27,6 @@ from src.pyquickhelper.sphinxext.sphinx_md_builder import MdTranslator
 from src.pyquickhelper.sphinxext.sphinx_rst_builder import RstTranslator
 
 
-if sys.version_info[0] == 2:
-    from codecs import open
-
-
 class TestBuildersMissing(ExtTestCase):
 
     def test_builders_missing(self):

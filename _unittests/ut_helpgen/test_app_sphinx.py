@@ -44,9 +44,6 @@ class TestAppSphinx(ExtTestCase):
         temp = get_temp_folder(__file__, "temp_app_sphinx")
         src_ = os.path.join(temp, "..", "data", "doc")
 
-        if sys.version_info[0] == 2:
-            return
-
         app = CustomSphinxApp(src_, temp)
         app.build()
         # app.cleanup()
@@ -62,9 +59,6 @@ class TestAppSphinx(ExtTestCase):
 
         temp = get_temp_folder(__file__, "temp_app_sphinx_custom")
         src_ = os.path.join(temp, "..", "data", "doc")
-
-        if sys.version_info[0] == 2:
-            return
 
         app = CustomSphinxApp(src_, temp)
         app.build()

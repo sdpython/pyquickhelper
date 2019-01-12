@@ -9,6 +9,7 @@ import os
 from contextlib import redirect_stdout, redirect_stderr
 import traceback
 import warnings
+from io import StringIO
 import sphinx
 from docutils import nodes, core
 from docutils.parsers.rst import Directive, directives
@@ -18,12 +19,6 @@ from ..loghelper.flog import run_cmd
 from ..texthelper.texts_language import TITLES
 from ..pycode.code_helper import remove_extra_spaces_and_pep8
 from .sphinx_collapse_extension import collapse_node
-
-
-if sys.version_info[0] == 2:
-    from StringIO import StringIO
-else:
-    from io import StringIO
 
 
 class RunPythonCompileError(Exception):

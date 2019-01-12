@@ -1,20 +1,15 @@
 # -*- coding: utf-8 -*-
 """
 @file
-
 @brief      a node which contains a file or a folder
 """
-
 import os
 import re
 import datetime
 import time
 import shutil
 import hashlib
-import sys
 import warnings
-
-
 from ..loghelper.pqh_exception import PQHException
 from ..loghelper.flog import noLOG
 from ..loghelper.pyrepo_helper import SourceRepository
@@ -204,13 +199,8 @@ class FileTreeNode:
         @param      encoding        encoding
         @return                     content as a string
         """
-        if sys.version_info[0] == 2:
-            import codecs
-            with codecs.open(self.fullname, "r", encoding=encoding) as f:
-                return f.read()
-        else:
-            with open(self.fullname, "r", encoding=encoding) as f:
-                return f.read()
+        with open(self.fullname, "r", encoding=encoding) as f:
+            return f.read()
 
     def get_fullname(self):
         """

@@ -24,9 +24,6 @@ from src.pyquickhelper.loghelper import fLOG, run_cmd
 from src.pyquickhelper.pycode import get_temp_folder, is_travis_or_appveyor
 from src.pyquickhelper.jenkinshelper.yaml_helper import load_yaml, enumerate_convert_yaml_into_instructions, convert_sequence_into_batch_file
 
-if sys.version_info[0] == 2:
-    FileNotFoundError = Exception
-
 
 class TestYamlExe(unittest.TestCase):
 

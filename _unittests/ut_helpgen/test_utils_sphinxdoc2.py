@@ -45,11 +45,7 @@ class TestSphinxDoc2(ExtTestCase):
                 "loghelper",
                 "pqh_exception.py"))
         rootm = os.path.normpath(os.path.join(path, "..", "..", "src"))
-
         rootrep = ("pyquickhelper.src.pyquickhelper.", "")
-        if sys.version_info[0] == 2:
-            rootrep = ("pyquickhelper.dist_module27.src.pyquickhelper.", "")
-
         store_obj = {}
 
         def softfile(f):
@@ -62,10 +58,6 @@ class TestSphinxDoc2(ExtTestCase):
                                                            fLOG=fLOG)
 
         self.assertNotEmpty(rst)
-
-        if sys.version_info[0] == 2:
-            return
-
         self.assertNotEmpty(store_obj)
         for k, v in store_obj.items():
             fLOG("test1", k, v)
@@ -105,10 +97,6 @@ class TestSphinxDoc2(ExtTestCase):
                 fLOG(_.type, _.module, _.name, _.doc.replace("\n", "\\n"))
 
         self.assertEqual(ty.get("property", 0), 1)
-
-        if sys.version_info[0] == 2:
-            return
-
         if ty.get("staticmethod", 0) != 1:
             raise Exception("{0}".format(str(ty)))
         self.assertGreater(ty["method"], 1)

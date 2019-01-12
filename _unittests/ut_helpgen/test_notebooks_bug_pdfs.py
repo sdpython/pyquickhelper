@@ -36,9 +36,6 @@ class TestNoteBooksBugPdfs(ExtTestCase):
             __file__,
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
-        if sys.version_info[0] == 2:
-            # does not work on Python 2
-            return
         path = os.path.abspath(os.path.split(__file__)[0])
         fold = os.path.normpath(os.path.join(path, "notebooks_pdf"))
         nbs = [os.path.join(fold, _)

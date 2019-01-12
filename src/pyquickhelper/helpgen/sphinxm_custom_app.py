@@ -4,11 +4,10 @@
 @brief Inspired from module
 `sphinx-testing <https://github.com/sphinx-doc/sphinx-testing/>`_
 """
-
 import shutil
 import os
-import sys
 import warnings
+from io import StringIO
 from sphinx.application import Sphinx
 from .default_conf import latex_preamble
 
@@ -18,11 +17,6 @@ except ImportError:
     RemovedInSphinx20Warning = DeprecationWarning
     RemovedInSphinx30Warning = DeprecationWarning
     RemovedInSphinx40Warning = DeprecationWarning
-
-if sys.version_info[0] == 2:
-    from StringIO import StringIO
-else:
-    from io import StringIO
 
 
 class CustomSphinxApp(Sphinx):

@@ -27,9 +27,6 @@ from src.pyquickhelper.pycode import get_temp_folder
 from src.pyquickhelper.jenkinshelper.jenkins_server import JenkinsExt
 from src.pyquickhelper.jenkinshelper.yaml_helper import enumerate_processed_yml
 
-if sys.version_info[0] == 2:
-    FileNotFoundError = Exception
-
 
 class TestYamlJenkins(unittest.TestCase):
 
@@ -105,11 +102,6 @@ class TestYamlJenkins(unittest.TestCase):
 
         modules = [("yml", yml, "H H(10-11) * * 0"),
                    ("yml", yml_url, "H H(10-11) * * 0")]
-
-        if sys.version_info[0] == 2:
-            modules = modules[:1]
-            warnings.warn(
-                "We don't test the url way on Python 2.7, too annoying.")
 
         engines = dict(Python34="c:\\Python34_x64",
                        Python35=os.path.dirname(sys.executable),

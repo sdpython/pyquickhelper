@@ -24,10 +24,6 @@ from ..loghelper.history_helper import build_history, compile_history
 from .utils_tests_helper import check_pep8
 
 
-if sys.version_info[0] == 2:
-    from codecs import open
-
-
 def get_available_setup_commands():
     """
     Returns the list of commands :epkg:`pyquickhelper` implements
@@ -499,8 +495,6 @@ def process_standard_options_for_setup(argv, file_or_folder, project_var_name, m
         return True
 
     elif "copy27" in argv:
-        if sys.version_info[0] < 3:
-            raise Exception("Python needs to be Python3")
         root = os.path.abspath(os.path.dirname(file_or_folder))
         root = os.path.normpath(root)
         dest = os.path.join(root, "dist_module27")
@@ -770,9 +764,6 @@ def copy27_for_setup(file_or_folder):
 
     @param      file_or_folder      file ``setup.py`` or folder which contains it
     """
-    if sys.version_info[0] < 3:
-        raise Exception("Python needs to be Python3")
-
     root = get_folder(file_or_folder)
     root = os.path.normpath(root)
     dest = os.path.join(root, "dist_module27")

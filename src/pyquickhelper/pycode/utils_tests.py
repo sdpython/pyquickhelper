@@ -17,11 +17,6 @@ from .utils_tests_private import default_skip_function, main_run_test
 from .utils_tests_stringio import StringIOAndFile
 
 
-if sys.version_info[0] == 2:
-    FileNotFoundError = Exception
-    from codecs import open
-
-
 def main_wrapper_tests(codefile, skip_list=None, processes=False, add_coverage=False, report_folder=None,
                        skip_function=default_skip_function, setup_params=None, only_setup_hook=False,
                        coverage_options=None, coverage_exclude_lines=None, additional_ut_path=None,
@@ -296,12 +291,8 @@ def main_wrapper_tests(codefile, skip_list=None, processes=False, add_coverage=F
                 srcp_s.clear()
                 srcp_s.extend([os.path.abspath(os.path.normpath(srcp)),
                                os.path.normpath(srcp)])
-                if sys.version_info[0] == 2:
-                    bsrcp = [b.encode(encoding="utf-8") for b in srcp_s]
-                    bproj = project_var_name.encode(encoding="utf-8")
-                else:
-                    bsrcp = [bytes(b, encoding="utf-8") for b in srcp_s]
-                    bproj = bytes(project_var_name, encoding="utf-8")
+                bsrcp = [bytes(b, encoding="utf-8") for b in srcp_s]
+                bproj = bytes(project_var_name, encoding="utf-8")
                 for afile in os.listdir(report_folder):
                     full = os.path.join(report_folder, afile)
                     with open(full, "rb") as f:

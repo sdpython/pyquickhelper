@@ -25,9 +25,6 @@ from src.pyquickhelper.pycode import get_temp_folder
 from src.pyquickhelper.helpgen import rst2html
 from src.pyquickhelper.cli.cli_helper import clean_documentation_for_cli
 
-if sys.version_info[0] == 2:
-    from codecs import open
-
 
 class TestEpkgExtension(unittest.TestCase):
 

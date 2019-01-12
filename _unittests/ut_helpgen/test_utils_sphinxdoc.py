@@ -27,9 +27,6 @@ from src.pyquickhelper.filehelper.synchelper import explore_folder
 from src.pyquickhelper.loghelper.pyrepo_helper import SourceRepository
 import src.pyquickhelper.helpgen.utils_sphinx_doc as utils_sphinx_doc
 
-if sys.version_info[0] == 2:
-    from codecs import open
-
 
 class TestSphinxDoc (unittest.TestCase):
 
@@ -42,8 +39,6 @@ class TestSphinxDoc (unittest.TestCase):
             __file__,
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
-        if sys.version_info[0] == 2:
-            return
         s = SourceRepository()
         ver = s.version()
         fLOG("version", ver)
@@ -114,9 +109,6 @@ class TestSphinxDoc (unittest.TestCase):
         file = os.path.join(path, "..", "..", "src", "pyquickhelper")
         files = explore_folder(file, pattern=".*[.]py$")[1]
         assert len(files) > 10
-
-        if sys.version_info[0] == 2:
-            return
 
         nb = []
         issue = []

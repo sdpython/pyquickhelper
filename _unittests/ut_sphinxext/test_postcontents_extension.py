@@ -28,9 +28,6 @@ from src.pyquickhelper.helpgen import rst2html
 from src.pyquickhelper.sphinxext import RunPythonDirective
 from src.pyquickhelper.sphinxext import PostContentsDirective
 
-if sys.version_info[0] == 2:
-    from codecs import open
-
 
 class TestPostContentsExtension(unittest.TestCase):
 
@@ -75,11 +72,6 @@ class TestPostContentsExtension(unittest.TestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
-        if sys.version_info[0] == 2:
-            warnings.warn(
-                "test_postcontent not run on Python 2.7")
-            return
-
         content = TestPostContentsExtension.content
 
         rst = rst2html(content,  # fLOG=fLOG,
@@ -99,11 +91,6 @@ class TestPostContentsExtension(unittest.TestCase):
             __file__,
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
-
-        if sys.version_info[0] == 2:
-            warnings.warn(
-                "test_postcontent not run on Python 2.7")
-            return
 
         content = TestPostContentsExtension.content.replace(
             "contents", "postcontents")

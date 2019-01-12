@@ -38,10 +38,6 @@ class TestMagicCompress (unittest.TestCase):
         temp = get_temp_folder(__file__, "temp_compress")
         dest = os.path.join(temp, "temp_this.zip")
 
-        if sys.version_info[0] == 2:
-            warnings.warn("disable on python 2.7")
-            return
-
         mg = MagicCompress()
         cmd = "dest [this]"
         fLOG("**", cmd)

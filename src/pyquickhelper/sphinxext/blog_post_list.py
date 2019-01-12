@@ -1,20 +1,15 @@
 # -*- coding: utf-8 -*-
 """
 @file
-@brief Helpers to build RST extra files inserted in the documentation
+@brief Helpers to build :epkg:`RST` extra files inserted in the documentation.
 """
-
 import os
-import sys
 import shutil
 from .blog_post import BlogPost
 from .build_rss import build_rss
 from ..texthelper.texts_language import TITLES
 from ..texthelper.diacritic_helper import remove_diacritics
 from ..loghelper import noLOG
-
-if sys.version_info[0] == 2:
-    from codecs import open
 
 
 class BlogPostList:

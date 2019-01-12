@@ -36,9 +36,6 @@ class TestRst2HtmlBug(unittest.TestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
-        if sys.version_info[0] == 2:
-            return
-
         content = """
                         .. faqref::
                             :title: How to add a FAQ?

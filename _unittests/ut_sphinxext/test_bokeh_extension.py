@@ -34,11 +34,6 @@ class TestBokehExtension(unittest.TestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
-        if sys.version_info[0] == 2:
-            warnings.warn(
-                "test_sharenet not run on Python 2.7")
-            return
-
         from docutils import nodes as skip_
         from src.pyquickhelper.sphinxext.bokeh.bokeh_plot import BokehPlotDirective
         self.assertTrue(BokehPlotDirective is not None)

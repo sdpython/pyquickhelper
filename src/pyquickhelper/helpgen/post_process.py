@@ -3,17 +3,12 @@
 @file
 @brief Contains the main function to generate the documentation
 for a module designed the same way as this one, @see fn generate_help_sphinx.
-
 """
 import os
 import re
 import warnings
-import sys
-
 from .utils_sphinx_doc_helpers import HelpGenException
 
-if sys.version_info[0] == 2:
-    from codecs import open
 
 template_examples = """
 

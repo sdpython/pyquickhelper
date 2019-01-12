@@ -16,9 +16,6 @@ from .fexceptions import FileException
 from ..texthelper.diacritic_helper import remove_diacritics
 from .synchelper import explore_folder
 
-if sys.version_info[0] == 2:
-    from codecs import open
-
 
 def zip_files(filename, file_set, root=None, fLOG=noLOG):
     """
@@ -77,12 +74,8 @@ def unzip_files(zipf, where_to=None, fLOG=noLOG, fvalid=None, remove_space=True,
                                 otherwise a warning is thrown.
     @return                     list of unzipped files
     """
-    if sys.version_info[0] == 2:
-        if isinstance(zipf, bytearray):
-            zipf = BytesIO(zipf)
-    else:
-        if isinstance(zipf, bytes):
-            zipf = BytesIO(zipf)
+    if isinstance(zipf, bytes):
+        zipf = BytesIO(zipf)
 
     try:
         with zipfile.ZipFile(zipf, "r"):
@@ -221,18 +214,11 @@ def ungzip_files(filename, where_to=None, fLOG=noLOG, fvalid=None, remove_space=
     @param      encoding        encoding
     @return                     list of unzipped files
     """
-    if sys.version_info[0] == 2:
-        if isinstance(filename, bytearray):
-            is_file = False
-            filename = BytesIO(filename)
-        else:
-            is_file = True
+    if isinstance(filename, bytes):
+        is_file = False
+        filename = BytesIO(filename)
     else:
-        if isinstance(filename, bytes):
-            is_file = False
-            filename = BytesIO(filename)
-        else:
-            is_file = True
+        is_file = True
 
     if encoding is None:
         f = gzip.open(filename, 'rb')
@@ -367,16 +353,10 @@ def un7zip_files(zipf, where_to=None, fLOG=noLOG, fvalid=None,
         file_zipf = None
         if not isinstance(zipf, BytesIO):
             file_zipf = zipf
-            if sys.version_info[0] == 2:
-                if isinstance(zipf, bytearray):
-                    zipf = BytesIO(zipf)
-                else:
-                    zipf = open(zipf, "rb")
+            if isinstance(zipf, bytes):
+                zipf = BytesIO(zipf)
             else:
-                if isinstance(zipf, bytes):
-                    zipf = BytesIO(zipf)
-                else:
-                    zipf = open(zipf, "rb")
+                zipf = open(zipf, "rb")
 
         files = []
         try:

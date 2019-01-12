@@ -6,6 +6,7 @@ import os
 import sys
 import unittest
 import time
+from io import StringIO
 
 try:
     import src
@@ -24,11 +25,6 @@ from src.pyquickhelper.loghelper.flog import fLOG
 from src.pyquickhelper.pycode import get_temp_folder, process_standard_options_for_setup, is_travis_or_appveyor
 from src.pyquickhelper.loghelper import git_clone
 from src.pyquickhelper import __file__ as pyq_location
-
-if sys.version_info[0] == 2:
-    from StringIO import StringIO
-else:
-    from io import StringIO
 
 
 class TestUnitTestFullModuleTemplate(unittest.TestCase):

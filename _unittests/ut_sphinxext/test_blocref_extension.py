@@ -28,10 +28,6 @@ from src.pyquickhelper.sphinxext import BlocRef, BlocRefList
 from src.pyquickhelper.sphinxext.sphinx_blocref_extension import blocref_node, visit_blocref_node, depart_blocref_node
 
 
-if sys.version_info[0] == 2:
-    from codecs import open
-
-
 class TestBlocRefExtension(unittest.TestCase):
 
     def test_post_parse_blocref(self):

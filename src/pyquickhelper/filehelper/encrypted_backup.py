@@ -4,20 +4,13 @@
 """
 import re
 import os
-import sys
 import datetime
 import zlib
-import warnings
+from io import BytesIO as StreamIO
 from .files_status import FilesStatus
 from ..loghelper.flog import noLOG
 from .transfer_api import TransferAPI_FileInfo
 from .encryption import encrypt_stream, decrypt_stream
-
-
-if sys.version_info[0] == 2:
-    from StringIO import StringIO as StreamIO
-else:
-    from io import BytesIO as StreamIO
 
 
 class EncryptedBackupError(Exception):
@@ -94,8 +87,7 @@ class EncryptedBackup:
                  file_status, file_map, root_local=None,
                  root_remote=None, filter_out=None,
                  threshold_size=2 ** 24, algo="AES",
-                 compression="lzma" if sys.version_info[0] >= 3 else "zip",
-                 fLOG=noLOG):
+                 compression="lzma", fLOG=noLOG):
         """
         constructor
 
@@ -112,9 +104,6 @@ class EncryptedBackup:
         @param      compression         kind of compression ``'lzma'`` or ``'zip'``
         @param      fLOG                logging function
         """
-        if sys.version_info[0] == 2:
-            warnings.warn(
-                "The code is not tested for this version of Python", UserWarning)
         self._key = key
         self.fLOG = fLOG
         self._ftn = file_tree_node

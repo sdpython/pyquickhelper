@@ -32,9 +32,6 @@ class TestPySvnHelper (unittest.TestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
-        if sys.version_info[0] == 2:
-            return
-
         path = os.path.split(__file__)[0]
         data = os.path.abspath(os.path.join(path, "..", ".."))
         s = SourceRepository()

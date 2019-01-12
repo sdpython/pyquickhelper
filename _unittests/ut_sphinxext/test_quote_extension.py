@@ -28,10 +28,6 @@ from src.pyquickhelper.sphinxext.sphinx_quote_extension import quote_node, visit
 from src.pyquickhelper.sphinxext.sphinx_quote_extension import visit_quote_node_rst, depart_quote_node_rst
 
 
-if sys.version_info[0] == 2:
-    from codecs import open
-
-
 class TestMathDefExtension(unittest.TestCase):
 
     def test_post_parse_sn_todoext(self):

@@ -3,7 +3,6 @@
 @file
 @brief Defines a :epkg:`sphinx` extension to keep track of ex.
 """
-import sys
 from docutils import nodes
 
 import sphinx
@@ -214,15 +213,8 @@ def setup(app):
 
     app.add_directive('exref', ExRef)
     app.add_directive('exreflist', ExRefList)
-    if sys.version_info[0] == 2:
-        # Sphinx does not accept unicode here
-        app.connect('doctree-read'.encode("ascii"), process_exrefs)
-        app.connect('doctree-resolved'.encode("ascii"), process_exref_nodes)
-        app.connect('env-purge-doc'.encode("ascii"), purge_exrefs)
-        app.connect('env-merge-info'.encode("ascii"), merge_exref)
-    else:
-        app.connect('doctree-read', process_exrefs)
-        app.connect('doctree-resolved', process_exref_nodes)
-        app.connect('env-purge-doc', purge_exrefs)
-        app.connect('env-merge-info', merge_exref)
+    app.connect('doctree-read', process_exrefs)
+    app.connect('doctree-resolved', process_exref_nodes)
+    app.connect('env-purge-doc', purge_exrefs)
+    app.connect('env-merge-info', merge_exref)
     return {'version': sphinx.__display_version__, 'parallel_read_safe': True}

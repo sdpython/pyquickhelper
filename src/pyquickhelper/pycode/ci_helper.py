@@ -9,10 +9,11 @@ def is_travis_or_appveyor(env=None):
     Tells if is a travis environment or appveyor.
 
     @param      env         checks that a environment variable is set up.
-    @return                 ``'travis'``, ``'appveyor'`` or ``None``
+    @return                 ``'travis'``, ``'appveyor'``, ``'circleci'``
+                            or ``'azurepipe'`` or ``None``
 
     The function should rely more on environement variables
-    ``CI``, ``TRAVIS``, ``APPVEYOR``.
+    ``CI``, ``TRAVIS``, ``APPVEYOR``, ``AZURE_HTTP_USER_AGENT``.
 
     .. versionadded:: 1.8
         Parameter *env* was added.

@@ -3,11 +3,7 @@
 @brief Helpers to information for pypi version.
 """
 from datetime import datetime
-import sys
-if sys.version_info[0] == 2:
-    import xmlrpclib as xmlrpc_client
-else:
-    import xmlrpc.client as xmlrpc_client
+import xmlrpc.client as xmlrpc_client
 
 
 def enumerate_pypi_versions_date(name, url='https://pypi.python.org/pypi'):

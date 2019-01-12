@@ -24,9 +24,6 @@ from src.pyquickhelper.loghelper import fLOG
 from src.pyquickhelper.pycode import ExtTestCase
 from src.pyquickhelper.jenkinshelper.yaml_helper import enumerate_processed_yml
 
-if sys.version_info[0] == 2:
-    FileNotFoundError = Exception
-
 
 class TestYamlCondition(ExtTestCase):
 

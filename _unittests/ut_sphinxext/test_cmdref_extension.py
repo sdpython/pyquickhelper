@@ -22,14 +22,10 @@ except ImportError:
     import src
 
 from src.pyquickhelper.loghelper.flog import fLOG
-from src.pyquickhelper.pycode import get_temp_folder, ExtTestCase
+from src.pyquickhelper.pycode import get_temp_folder, ExtTestCase, is_travis_or_appveyor
 from src.pyquickhelper.helpgen import rst2html
 from src.pyquickhelper.sphinxext import CmdRef, CmdRefList
 from src.pyquickhelper.sphinxext.sphinx_cmdref_extension import cmdref_node, visit_cmdref_node, depart_cmdref_node
-
-
-if sys.version_info[0] == 2:
-    from codecs import open
 
 
 class TestCmdRefExtension(ExtTestCase):
@@ -267,6 +263,10 @@ class TestCmdRefExtension(ExtTestCase):
         path = os.path.abspath(path)
         self.assertExists(path)
         from docutils import nodes as skip_
+
+        if is_travis_or_appveyor() == "azurepipe":
+            import matplotlib as mpl
+            mpl.use('TkAgg')
 
         content = """
                     test a directive

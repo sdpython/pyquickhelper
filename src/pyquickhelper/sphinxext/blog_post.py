@@ -6,15 +6,9 @@
 
 import os
 import sys
+from io import StringIO
 from docutils import io as docio
 from docutils.core import publish_programmatically
-
-
-if sys.version_info[0] == 2:
-    from codecs import open
-    from StringIO import StringIO
-else:
-    from io import StringIO
 
 
 class BlogPostParseError(Exception):

@@ -26,9 +26,6 @@ from src.pyquickhelper.pycode import get_temp_folder, ExtTestCase
 from src.pyquickhelper.filehelper import EncryptedBackup, FileTreeNode, TransferAPIFile
 from src.pyquickhelper.filehelper.transfer_api import MockTransferAPI
 
-if sys.version_info[0] == 2:
-    from codecs import open
-
 
 class TestBackupFiles(ExtTestCase):
 
@@ -41,9 +38,6 @@ class TestBackupFiles(ExtTestCase):
             __file__,
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
-
-        if sys.version_info[0] == 2:
-            return
 
         try:
             import Crypto as skip_
@@ -94,9 +88,6 @@ class TestBackupFiles(ExtTestCase):
             __file__,
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
-
-        if sys.version_info[0] == 2:
-            return
 
         try:
             import Crypto as skip__

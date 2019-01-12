@@ -7,6 +7,7 @@ import sys
 from collections import deque
 import warnings
 import pickle
+from io import StringIO
 
 try:
     from sphinx.deprecation import RemovedInSphinx30Warning, RemovedInSphinx40Warning
@@ -73,11 +74,6 @@ with warnings.catch_warnings():
     warnings.simplefilter("ignore")
     from sphinx.builders.html import SingleFileHTMLBuilder
 
-
-if sys.version_info[0] == 2:
-    from StringIO import StringIO
-else:
-    from io import StringIO
 
 if is_html5_writer_available():
     from sphinx.writers.html5 import HTML5Translator as HTMLTranslator

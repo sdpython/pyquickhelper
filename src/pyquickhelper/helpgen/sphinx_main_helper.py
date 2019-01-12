@@ -20,8 +20,6 @@ from .utils_sphinx_doc_helpers import HelpGenException
 from .post_process import post_process_latex_output
 from .process_notebooks import find_pdflatex
 
-if sys.version_info[0] == 2:
-    from codecs import open
 
 template_examples = """
 

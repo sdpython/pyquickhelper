@@ -12,6 +12,7 @@ import warnings
 import time
 import importlib
 from contextlib import redirect_stdout, redirect_stderr
+from io import StringIO
 import pycodestyle
 from pylint.lint import Run as PyLinterRun
 from pylint import __version__ as pylint_version
@@ -21,17 +22,12 @@ from ..loghelper.flog import noLOG
 from ..loghelper import run_cmd
 from .pip_helper import fix_pip_902
 
-if sys.version_info[0] == 2:
-    from StringIO import StringIO
-    FileNotFoundError = Exception
-else:
-    from io import StringIO
 
 if pylint_version >= '2.0.0':
     PyLinterRunV = PyLinterRun
 else:
-    PyLinterRunV = lambda *args, do_exit=False: PyLinterRun(
-        *args, exit=do_exit)
+    PyLinterRunV = lambda *args, do_exit=False: PyLinterRun(  # pylint: disable=E1120, E1123
+        *args, exit=do_exit)  # pylint: disable=E1120, E1123
 
 
 def get_temp_folder(thisfile, name=None, clean=True, create=True,

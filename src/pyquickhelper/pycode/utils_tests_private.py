@@ -10,18 +10,11 @@ import glob
 import re
 import unittest
 import warnings
+from io import StringIO
 from .utils_tests_stringio import StringIOAndFile
 from .default_filter_warning import default_filter_warning
 from ..filehelper.synchelper import remove_folder
 from ..loghelper.flog import run_cmd, noLOG
-
-
-if sys.version_info[0] == 2:
-    from StringIO import StringIO
-    FileNotFoundError = Exception
-    from codecs import open
-else:
-    from io import StringIO
 
 
 def get_test_file(filter, dir=None, no_subfolder=False, fLOG=noLOG, root=None):

@@ -24,9 +24,6 @@ except ImportError:
 from src.pyquickhelper.loghelper.flog import fLOG
 from src.pyquickhelper.helpgen.sphinx_main import generate_changes_repo
 
-if sys.version_info[0] == 2:
-    from codecs import open
-
 
 class TestChanges (unittest.TestCase):
 
@@ -41,18 +38,12 @@ class TestChanges (unittest.TestCase):
             OutputPrint=__name__ == "__main__")
         path = os.path.abspath(os.path.split(__file__)[0])
         fold = os.path.join(path, "..", "..")
-        if sys.version_info[0] == 2:
-            fold = os.path.join(fold, "..")
         fold = os.path.normpath(fold)
         if os.path.exists(fold):
             fLOG("exists", fold)
             file = os.path.join(path, "out_table.rst")
             if os.path.exists(file):
                 os.remove(file)
-
-            if sys.version_info[0] == 2:
-                # encoding, encoding...
-                return
 
             def modifiy_commit(nbch, date, author, comment):
                 return nbch, date, author, comment

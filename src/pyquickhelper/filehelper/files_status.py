@@ -3,16 +3,10 @@
 @file
 @brief      keep the status of a folder, assuming this folder is not moved
 """
-
 import os
 import datetime
-import sys
-
 from ..loghelper.flog import noLOG
 from .file_info import convert_st_date_to_datetime, checksum_md5, FileInfo
-
-if sys.version_info[0] == 2:
-    from codecs import open
 
 
 class FilesStatus:

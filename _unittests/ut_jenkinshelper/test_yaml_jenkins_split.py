@@ -25,9 +25,6 @@ from src.pyquickhelper.loghelper import fLOG
 from src.pyquickhelper.jenkinshelper.jenkins_server import JenkinsExt
 from src.pyquickhelper.jenkinshelper.jenkins_helper import setup_jenkins_server_yml
 
-if sys.version_info[0] == 2:
-    FileNotFoundError = Exception
-
 
 class TestYamlJenkinsSplit(unittest.TestCase):
 

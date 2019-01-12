@@ -5,6 +5,7 @@ cairosvg
 cffi
 codecov
 coverage
+cryptography
 docformatter
 git-pandas
 ipython>=5.0.0

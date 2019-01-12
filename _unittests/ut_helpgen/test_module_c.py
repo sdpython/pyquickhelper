@@ -189,10 +189,15 @@ class TestModuleC(ExtTestCase):
                     "Unable to compile\n--OUT--\n{0}\n--ERR--\n{1}".format(out, err))
         if sys.platform == "win32":
             name = "stdchelper_demo.cp%d%d-win_amd64.pyd" % sys.version_info[:2]
+        elif sys.platform == "darwin":
+            name = "stdchelper_demo.cpython-%d%dm-x86_64-darwin.so" % sys.version_info[:2]
         else:
             name = "stdchelper_demo.cpython-%d%dm-x86_64-linux-gnu.so" % sys.version_info[:2]
         fullname = os.path.join(temp, name)
-        self.assertExists(fullname)
+        if not os.path.exists(fullname):
+            files = os.listdir(os.path.dirname(fullname))
+            raise FileNotFoundError(
+                "Unable to find '{0}'\nFound:\n{1}".format(fullname, "\n".join(files)))
         mo = import_module(None, fullname, fLOG,
                            additional_sys_path=None, first_try=True)
         self.assertIsInstance(mo, tuple)

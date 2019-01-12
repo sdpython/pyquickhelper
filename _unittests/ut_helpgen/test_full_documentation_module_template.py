@@ -30,10 +30,6 @@ from src.pyquickhelper.pycode import get_temp_folder, is_travis_or_appveyor
 from src.pyquickhelper.filehelper.synchelper import remove_folder
 
 
-if sys.version_info[0] == 2:
-    from codecs import open
-
-
 class TestSphinxFullDocumentationModuleTemplate(unittest.TestCase):
 
     def test_src_import(self):

@@ -25,9 +25,6 @@ from src.pyquickhelper.jenkinshelper.yaml_helper import load_yaml, enumerate_con
 from src.pyquickhelper.jenkinshelper.yaml_helper import evaluate_condition, convert_sequence_into_batch_file  # pylint: disable=E0401
 from src.pyquickhelper.jenkinshelper.jenkins_helper import jenkins_final_postprocessing  # pylint: disable=E0401
 
-if sys.version_info[0] == 2:
-    FileNotFoundError = Exception
-
 
 class TestYaml(unittest.TestCase):
 

@@ -28,10 +28,6 @@ from src.pyquickhelper.sphinxext import FaqRef, FaqRefList
 from src.pyquickhelper.sphinxext.sphinx_faqref_extension import faqref_node, visit_faqref_node, depart_faqref_node
 
 
-if sys.version_info[0] == 2:
-    from codecs import open
-
-
 class TestFaqRefExtension(unittest.TestCase):
 
     def test_post_parse_faqref(self):

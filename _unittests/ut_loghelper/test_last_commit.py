@@ -37,9 +37,6 @@ class TestLastCommit (unittest.TestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
-        if sys.version_info[0] == 2:
-            return
-
         path = os.path.abspath(os.path.dirname(__file__))
         fold = os.path.normpath(os.path.join(path, "..", ".."))
 

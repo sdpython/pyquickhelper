@@ -39,9 +39,6 @@ class TestRevealjs(unittest.TestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
-        if sys.version_info[0] == 2:
-            return
-
         temp = get_temp_folder(__file__, "temp_install_revealjs_github")
         dest = get_temp_folder(__file__, "temp_install_revealjs_github_dest")
         fs = download_revealjs(temp, dest, fLOG=fLOG)

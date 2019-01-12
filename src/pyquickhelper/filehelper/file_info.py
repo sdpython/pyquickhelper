@@ -3,16 +3,10 @@
 @file
 @brief      Defines class @see cl FileInfo
 """
-
 import datetime
 import hashlib
-import sys
 import re
-
-if sys.version_info[0] == 2:
-    import urlparse
-else:
-    import urllib.parse as urlparse
+import urllib.parse as urlparse
 
 
 def convert_st_date_to_datetime(t):
@@ -117,14 +111,8 @@ class FileInfo:
             raise ValueError(
                 "mismatch for mdate (%s) and file %s" % (str(type(mdate)), filename))
         if not isinstance(size, int):
-            if sys.version_info[0] != 2:
-                raise ValueError(
-                    "mismatch for size (%s) and file %s" % (str(type(size)), filename))
-            else:
-                if not isinstance(size, int  # long#
-                                  ):
-                    raise ValueError(
-                        "mismatch for size (%s) and file %s" % (str(type(size)), filename))
+            raise ValueError(
+                "mismatch for size (%s) and file %s" % (str(type(size)), filename))
         if checksum is not None and not isinstance(checksum, str):
             raise ValueError(
                 "mismatch for checksum (%s) and file %s" % (str(type(checksum)), filename))

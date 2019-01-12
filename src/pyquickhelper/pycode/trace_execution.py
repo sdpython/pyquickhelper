@@ -2,13 +2,8 @@
 @brief
 @file Various function to help investigate an error.
 """
-import sys
 import traceback
-
-if sys.version_info[0] == 2:
-    from StringIO import StringIO
-else:
-    from io import StringIO
+from io import StringIO
 
 
 class ErrorOnPurpose(Exception):

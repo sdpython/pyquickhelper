@@ -34,13 +34,7 @@ class TestMagicCrypt(unittest.TestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
-        if sys.version_info[0] == 2:
-            # the module returns the following error
-            # ENCODING ERROR WITH Python 2.7, will not fix it
-            return
-        else:
-            password = "unittest" * 2
-
+        password = "unittest" * 2
         this = os.path.abspath(__file__)
         temp = get_temp_folder(__file__, "temp_crypt")
         dest = os.path.join(temp, "out_crypt.enc")

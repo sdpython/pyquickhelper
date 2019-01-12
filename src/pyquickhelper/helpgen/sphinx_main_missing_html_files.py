@@ -3,12 +3,7 @@
 @brief function around missing file for the documentation
 """
 import os
-import sys
 from ..texthelper.texts_language import TITLES
-
-if sys.version_info[0] == 2:
-    from codecs import open
-    FileNotFoundError = Exception
 
 
 def add_missing_files(root, conf, blog_list):

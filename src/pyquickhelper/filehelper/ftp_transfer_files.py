@@ -8,17 +8,11 @@ import os
 import warnings
 import sys
 import ftplib
+from io import BytesIO
 from time import sleep
 from random import random
 from .files_status import FilesStatus
 from ..loghelper.flog import noLOG
-
-if sys.version_info[0] == 2:
-    from codecs import open
-    from StringIO import StringIO
-    BytesIO = StringIO
-else:
-    from io import BytesIO
 
 
 class FolderTransferFTPException(Exception):

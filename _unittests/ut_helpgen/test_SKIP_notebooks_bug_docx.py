@@ -54,10 +54,6 @@ class TestNoteBooksBugDocx(unittest.TestCase):
             warnings.warn(
                 "linux, unable to test TestNoteBooksBugDocx.test_notebook_docx")
             return
-        if sys.version_info[0] == 2:
-            warnings.warn(
-                "unable to test TestNoteBooksBugDocx.test_notebook_docx on Python 2.7")
-            return
 
         res = process_notebooks(nbs, temp, temp, formats=formats)
         fLOG("*****", len(res))

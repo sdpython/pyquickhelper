@@ -3,15 +3,9 @@
 @file
 @brief Various helpers for Sphinx.
 """
-
 import os
-import sys
-
 from ..filehelper import synchronize_folder, explore_folder_iterfile
 from ..loghelper.flog import noLOG, fLOG
-
-if sys.version_info[0] == 2:
-    from codecs import open
 
 
 def everything_but_python(fullname):

@@ -3,7 +3,6 @@
 @brief API to move files using FTP
 """
 import os
-import sys
 from ..loghelper import noLOG
 from .transfer_api import TransferAPI
 
@@ -53,8 +52,6 @@ class TransferAPIFile(TransferAPI):
             with open(src, "rb") as f:
                 return f.read()
         elif exc:
-            if sys.version_info[0] == 2:
-                FileNotFoundError = Exception
             raise FileNotFoundError(path)
         else:
             return None

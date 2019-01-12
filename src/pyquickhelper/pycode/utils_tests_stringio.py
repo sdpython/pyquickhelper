@@ -3,13 +3,7 @@
 @brief A :epkg:`*py:io:StringIO` which also outputs its content for a file.
 """
 import os
-import sys
-
-if sys.version_info[0] == 2:
-    from StringIO import StringIO
-    from codecs import open
-else:
-    from io import StringIO
+from io import StringIO
 
 
 class StringIOAndFile(StringIO):

@@ -28,10 +28,6 @@ from src.pyquickhelper.ipythonhelper import upgrade_notebook
 from src.pyquickhelper.helpgen.post_process import update_notebook_link
 
 
-if sys.version_info[0] == 2:
-    from codecs import open
-
-
 class TestNoteBooksFind(ExtTestCase):
 
     def test_src_import(self):
@@ -92,9 +88,6 @@ class TestNoteBooksFind(ExtTestCase):
             __file__,
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
-        if sys.version_info[0] == 2:
-            # does not work on Python 2
-            return
         path = os.path.abspath(os.path.split(__file__)[0])
         fold = os.path.normpath(os.path.join(path, "notebooks_find"))
         nbs = [os.path.join(fold, _)

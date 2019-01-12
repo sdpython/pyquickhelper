@@ -4,15 +4,9 @@
 @brief Direct calls to IPython API without running a command line
 """
 import os
-import sys
+from io import StringIO
 from .install_js_dep import install_javascript_tools
 from .post_process import post_process_slides_output, post_process_html_output, post_process_rst_output
-
-if sys.version_info[0] == 2:
-    from codecs import open
-    from StringIO import StringIO
-else:
-    from io import StringIO
 
 
 def get_exporter(format, add_writer=False):

@@ -78,7 +78,7 @@ def do_main(source, dest, password, encrypt,  # pylint: disable=W0621
         sys.path.append(folder)
         from pyquickhelper.filehelper import EncryptedBackup, TransferAPIFile, FileTreeNode
 
-    if sys.version_info[0] >= 3 and isinstance(password, str):
+    if isinstance(password, str):
         password = bytes(password, encoding="ascii")
 
     root = source

@@ -3,7 +3,6 @@
 @file
 @brief Defines a :epkg:`sphinx` extension to keep track of blocs such as examples, FAQ, ...
 """
-import sys
 import os
 import datetime
 from docutils import nodes
@@ -585,15 +584,8 @@ def setup(app):
 
     app.add_directive('blocref', BlocRef)
     app.add_directive('blocreflist', BlocRefList)
-    if sys.version_info[0] == 2:
-        # Sphinx does not accept unicode here
-        app.connect('doctree-read'.encode("ascii"), process_blocrefs)
-        app.connect('doctree-resolved'.encode("ascii"), process_blocref_nodes)
-        app.connect('env-purge-doc'.encode("ascii"), purge_blocrefs)
-        app.connect('env-merge-info'.encode("ascii"), merge_blocref)
-    else:
-        app.connect('doctree-read', process_blocrefs)
-        app.connect('doctree-resolved', process_blocref_nodes)
-        app.connect('env-purge-doc', purge_blocrefs)
-        app.connect('env-merge-info', merge_blocref)
+    app.connect('doctree-read', process_blocrefs)
+    app.connect('doctree-resolved', process_blocref_nodes)
+    app.connect('env-purge-doc', purge_blocrefs)
+    app.connect('env-merge-info', merge_blocref)
     return {'version': sphinx.__display_version__, 'parallel_read_safe': True}

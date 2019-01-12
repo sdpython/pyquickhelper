@@ -27,10 +27,6 @@ from src.pyquickhelper.pycode import is_travis_or_appveyor, get_temp_folder, Ext
 from src.pyquickhelper.ipythonhelper import upgrade_notebook
 
 
-if sys.version_info[0] == 2:
-    from codecs import open
-
-
 class TestNoteBooksBug2(ExtTestCase):
 
     def test_src_import(self):
@@ -42,9 +38,6 @@ class TestNoteBooksBug2(ExtTestCase):
             __file__,
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
-        if sys.version_info[0] == 2:
-            # does not work on Python 2
-            return
         path = os.path.abspath(os.path.split(__file__)[0])
         fold = os.path.normpath(os.path.join(path, "notebooks2"))
         nbs = [os.path.join(fold, _)

@@ -34,16 +34,9 @@ import sys
 import time
 import re
 import zipfile
+import urllib.request as urllib_request
 from .flog_fake_classes import FlogStatic, LogFakeFileStream, LogFileStream, PQHException
 from .run_cmd import run_cmd
-
-
-if sys.version_info[0] == 2:
-    from codecs import open
-    import urllib2 as urllib_request
-    FileNotFoundError = Exception
-else:
-    import urllib.request as urllib_request
 
 
 flog_static = FlogStatic()
@@ -270,51 +263,26 @@ def fLOGFormat(sep, *l, **p):
     dt = datetime.datetime(2009, 1, 1).now()
     typstr = str  # unicode#
     if len(l) > 0:
-        if sys.version_info[0] == 2:
-            def _str_process(s):
-                if isinstance(s, str  # unicode#
-                              ):
+        def _str_process(s):
+            if isinstance(s, str):
+                if upp:
+                    return pprint.pformat(s)
+                else:
+                    return s
+            elif isinstance(s, bytes):
+                return s.decode("utf8")
+            else:
+                try:
                     if upp:
                         return pprint.pformat(s)
                     else:
-                        return s
-                elif isinstance(s, bytes):
-                    return s.decode("utf8")
-                else:
-                    try:
-                        if upp:
-                            return pprint.pformat(s)
-                        else:
-                            return typstr(s)
-                    except Exception as e:
-                        raise Exception(
-                            "unable to convert s into string: type(s)=" + typstr(type(s))) from e
-            try:
-                message = typstr(dt).split(
-                    ".")[0] + " " + " ".join([_str_process(s) for s in l]) + sep
-            except UnicodeDecodeError:
-                message = "ENCODING ERROR WITH Python 2.7, will not fix it"
-        else:
-            def _str_process(s):
-                if isinstance(s, str):
-                    if upp:
-                        return pprint.pformat(s)
-                    else:
-                        return s
-                elif isinstance(s, bytes):
-                    return s.decode("utf8")
-                else:
-                    try:
-                        if upp:
-                            return pprint.pformat(s)
-                        else:
-                            return typstr(s)
-                    except Exception as e:
-                        raise Exception(
-                            "unable to convert s into string: type(s)=" + str(type(s))) from e
+                        return typstr(s)
+                except Exception as e:
+                    raise Exception(
+                        "unable to convert s into string: type(s)=" + str(type(s))) from e
 
-            message = str(dt).split(
-                ".")[0] + " " + " ".join([_str_process(s) for s in l]) + sep
+        message = str(dt).split(
+            ".")[0] + " " + " ".join([_str_process(s) for s in l]) + sep
         st = "                    "
     else:
         message = typstr(dt).split(".")[0] + " "
@@ -730,25 +698,27 @@ def _check_url_file(url, path_download, outfile, fLOG=noLOG):
 
             if len(
                     url) > 4 and url[-4].lower() in [".txt", ".csv", ".tsv", ".log"]:
-                fLOG("[loghelper.flog] creating text file ", dest)
-                format = "w"
+                fLOG("[loghelper.flog] creating text file '{0}'".format(dest))
+                formatopen = "w"
             else:
-                fLOG("[loghelper.flog] creating binary file ", dest)
-                format = "wb"
+                fLOG(
+                    "[loghelper.flog] creating binary file '{0}'".format(dest))
+                formatopen = "wb"
 
             if os.path.exists(nyet):
                 size = os.stat(dest).st_size
                 fLOG("[loghelper.flog] resume downloading (stop at",
-                     size, ") from ", url)
+                     size, ") from '{0}'".format(url))
                 request = urllib_request.Request(url)
                 request.add_header("Range", "bytes=%d-" % size)
                 fu = urllib_request.urlopen(request)
-                f = open(dest, format.replace("w", "a"))
+                f = open(dest, formatopen.replace(
+                    "w", "a"))  # pylint: disable=W1501
             else:
                 fLOG("[loghelper.flog] downloading ", url)
                 request = urllib_request.Request(url)
                 fu = urllib_request.urlopen(url)
-                f = open(dest, format)
+                f = open(dest, formatopen)
 
             open(nyet, "w").close()
             c = fu.read(2 ** 21)

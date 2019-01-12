@@ -9,6 +9,7 @@ import unittest
 import warnings
 import logging
 import shutil
+from io import StringIO
 from docutils.parsers.rst import directives
 
 try:
@@ -32,13 +33,6 @@ from src.pyquickhelper.sphinxext import SimpleImageDirective
 from src.pyquickhelper.helpgen import CustomSphinxApp
 from src.pyquickhelper.helpgen.sphinx_main_helper import compile_latex_output_final
 from src.pyquickhelper.helpgen.conf_path_tools import find_latex_path
-
-
-if sys.version_info[0] == 2:
-    from codecs import open
-    from StringIO import StringIO
-else:
-    from io import StringIO
 
 
 class TestSimpleImageExtension(ExtTestCase):

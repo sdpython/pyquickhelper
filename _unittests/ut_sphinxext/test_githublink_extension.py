@@ -27,9 +27,6 @@ from src.pyquickhelper.helpgen import rst2html
 from src.pyquickhelper.sphinxext import githublink_role
 from docutils.parsers.rst.roles import register_canonical_role
 
-if sys.version_info[0] == 2:
-    from codecs import open
-
 
 class TestGitHubLinkExtension(unittest.TestCase):
 

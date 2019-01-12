@@ -38,9 +38,6 @@ class TestSynchoHash(ExtTestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
-        if sys.version_info[0] == 2:
-            return
-
         fold = os.path.abspath(os.path.split(__file__)[0])
         data = os.path.join(fold, "data")
         seco = os.path.join(fold, "data", "temp_seco2")

@@ -25,9 +25,6 @@ from src.pyquickhelper.loghelper.flog import fLOG
 from src.pyquickhelper.pycode import get_temp_folder, is_travis_or_appveyor
 from src.pyquickhelper.helpgen import rst2html
 
-if sys.version_info[0] == 2:
-    from codecs import open
-
 
 class TestRst2HtmlToc(unittest.TestCase):
 

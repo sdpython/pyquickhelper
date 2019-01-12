@@ -37,11 +37,6 @@ class TestSKIPpylint(unittest.TestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
-        if sys.version_info[0] == 2:
-            warnings.warn(
-                "skipping test_code_style because of Python 2 or " + sys.executable)
-            return
-
         run_lint = True
         _private_test_style_src(fLOG, run_lint, verbose=True)
 
@@ -50,11 +45,6 @@ class TestSKIPpylint(unittest.TestCase):
             __file__,
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
-
-        if sys.version_info[0] == 2:
-            warnings.warn(
-                "skipping test_code_style because of Python 2 or " + sys.executable)
-            return
 
         run_lint = True
         _private_test_style_test(fLOG, run_lint, verbose=True)

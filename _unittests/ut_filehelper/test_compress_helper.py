@@ -43,20 +43,13 @@ class TestCompressHelper(unittest.TestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
-        if sys.version_info[0] == 2:
-            typbytes = bytearray
-        else:
-            typbytes = bytes
-
+        typbytes = bytes
         f = os.path.abspath(__file__).replace(".pyc", ".py")
 
         rz = zip_files(None, [f], fLOG=fLOG)
         fLOG(len(rz), type(rz))
         if not isinstance(rz, (typbytes, str)):
             raise TypeError(type(rz))
-
-        if sys.version_info[0] == 2:
-            return
 
         res = unzip_files(rz)
         self.assertTrue(isinstance(res, list))
@@ -85,12 +78,7 @@ class TestCompressHelper(unittest.TestCase):
             __file__,
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
-        # text
-        if sys.version_info[0] == 2:
-            typbytes = bytearray
-        else:
-            typbytes = bytes
-
+        typbytes = bytes
         f = os.path.abspath(__file__).replace(".pyc", ".py")
         rg = gzip_files(None, [f], fLOG=fLOG, encoding="utf-8")
         fLOG(len(rg), type(rg))
@@ -130,10 +118,7 @@ class TestCompressHelper(unittest.TestCase):
         if not os.path.exists(out7):
             raise FileNotFoundError(out7)
 
-        if sys.version_info[0] == 2:
-            typbytes = bytearray
-        else:
-            typbytes = bytes
+        typbytes = bytes
 
         if is_travis_or_appveyor() == "appveyor":
             return
@@ -151,9 +136,6 @@ class TestCompressHelper(unittest.TestCase):
         fold = get_temp_folder(__file__, "temp_compress_7zip2")
         res = un7zip_files(out7, where_to=fold, fLOG=fLOG)
 
-        if sys.version_info[0] == 2:
-            return
-
         self.assertEqual(len(res), 1)
         s = res[0].replace("\\", "/")
         if not s.endswith("_unittests/ut_filehelper/temp_compress_7zip2/ftplib.html"):
@@ -169,11 +151,7 @@ class TestCompressHelper(unittest.TestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
-        if sys.version_info[0] == 2:
-            typbytes = bytearray
-        else:
-            typbytes = bytes
-
+        typbytes = bytes
         fold = get_temp_folder(__file__, "temp_compress_rar")
         rz = os.path.join(fold, "..", "data", "rar5-blake.rar")
         res = unrar_files(rz, where_to=fold, fLOG=fLOG)

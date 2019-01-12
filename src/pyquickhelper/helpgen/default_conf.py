@@ -16,11 +16,6 @@ from sphinx.extension import Extension
 from .style_css_template import style_figure_notebook
 
 
-if sys.version_info[0] == 2:
-    from codecs import open
-    FileNotFoundError = Exception
-
-
 def latex_preamble():
     """
     Default latex preamble.

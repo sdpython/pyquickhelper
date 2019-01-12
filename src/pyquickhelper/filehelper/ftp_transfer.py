@@ -7,14 +7,8 @@ import os
 import sys
 import time
 import datetime
-
+from io import BytesIO
 from ..loghelper.flog import noLOG
-
-if sys.version_info[0] == 2:
-    from StringIO import StringIO
-    BytesIO = StringIO
-else:
-    from io import BytesIO
 
 
 class CannotReturnToFolderException(Exception):
@@ -126,45 +120,26 @@ class TransferFTP:
         @param      args        list of argument
         @return                 output of the command or True for success, False for failure
         """
-        if sys.version_info[0] == 2:
-            try:
-                t = command(*args)
-                if command == self._ftp.pwd or command == self._ftp.dir or \
-                        command == self._ftp.nlst:
-                    return t
-                elif command != self._ftp.cwd:
-                    pass
-                return True
-            except Exception as e:
-                if TransferFTP.errorNoDirectory in str(e):
-                    raise e
-                self.LOG(e)
-                self.LOG("    ** run exc ", str(command), str(args))
-                self._private_login()
-                t = command(self, *[str(_) for _ in args])
-                self.LOG("    ** run ", str(command), str(args))
+        try:
+            t = command(*args)
+            if command == self._ftp.pwd or command == self._ftp.dir or \
+                    command == self._ftp.mlsd or command == self._ftp.nlst:
                 return t
-        else:
-            try:
-                t = command(*args)
-                if command == self._ftp.pwd or command == self._ftp.dir or \
-                        command == self._ftp.mlsd or command == self._ftp.nlst:
-                    return t
-                elif command != self._ftp.cwd:
-                    pass
-                return True
-            except Exception as e:
-                if TransferFTP.errorNoDirectory in str(e):
-                    raise e
-                self.LOG(e)
-                self.LOG("    ** run exc ", str(command), str(args))
-                self._private_login()
-                if command == self._ftp.pwd or command is self._ftp.pwd:
-                    t = command(self)
-                else:
-                    t = command(self, *args)
-                self.LOG("    ** run ", str(command), str(args))
-                return t
+            elif command != self._ftp.cwd:
+                pass
+            return True
+        except Exception as e:
+            if TransferFTP.errorNoDirectory in str(e):
+                raise e
+            self.LOG(e)
+            self.LOG("    ** run exc ", str(command), str(args))
+            self._private_login()
+            if command == self._ftp.pwd or command is self._ftp.pwd:
+                t = command(self)
+            else:
+                t = command(self, *args)
+            self.LOG("    ** run ", str(command), str(args))
+            return t
 
     def print_list(self):
         """
@@ -265,15 +240,10 @@ class TransferFTP:
              'unix.gid': '000',
              'modify': '111111'}
         """
-        if sys.version_info[0] == 2:
-            for a in self.run_command(self._ftp.nlst, path):
-                r = dict(name=a)
-                yield r
-        else:
-            for a in self.run_command(self._ftp.mlsd, path):
-                r = dict(name=a[0])
-                r.update(a[1])
-                yield r
+        for a in self.run_command(self._ftp.mlsd, path):
+            r = dict(name=a[0])
+            r.update(a[1])
+            yield r
 
     def transfer(self, file, to, name, debug=False, blocksize=None, callback=None):
         """

@@ -6,6 +6,7 @@ import os
 import sys
 import json
 import warnings
+from io import StringIO
 from nbformat import versions
 from nbformat.reader import reads, NotJSONError
 from nbformat.v4 import upgrade
@@ -26,15 +27,6 @@ with warnings.catch_warnings():
 if raisewarn:
     warnings.warn("ipykernel is not installed. pyquickhelper cannot execute a notebook.",
                   category=ImportWarning)
-
-if sys.version_info[0] == 2:
-    from StringIO import StringIO
-else:
-    from io import StringIO
-
-
-if sys.version_info[0] == 2:
-    from codecs import open
 
 
 def writes(nb, **kwargs):

@@ -14,9 +14,6 @@ import xml.etree.ElementTree as ET
 from ..flog import fLOG, run_cmd
 from ..convert_helper import str2datetime
 
-if sys.version_info[0] == 2:
-    from codecs import open
-
 
 def IsRepo(location, commandline=True):
     """
@@ -50,7 +47,7 @@ class RepoFile:
         for k, v in args.items():
             self.__dict__[k] = v
 
-        if hasattr(self, "name") and '"' in self.name:
+        if hasattr(self, "name") and '"' in self.name:  # pylint: disable=E0203
             #defa = sys.stdout.encoding if sys.stdout != None else "utf8"
             self.name = self.name.replace('"', "")
             #self.name = self.name.encode(defa).decode("utf-8")
@@ -95,7 +92,7 @@ def repo_ls(full, commandline=True):
                 out, err = run_cmd(cmd,
                                    wait=True,
                                    encerror="strict",
-                                   encoding=sys.stdout.encoding if sys.version_info[0] != 2 and sys.stdout is not None else "utf8")
+                                   encoding=sys.stdout.encoding if sys.stdout is not None else "utf8")
                 if len(err) > 0:
                     fLOG("problem with file ", full, err)
                     raise Exception(err)
@@ -121,7 +118,7 @@ def repo_ls(full, commandline=True):
             out, err = run_cmd(cmd,
                                wait=True,
                                encerror="strict",
-                               encoding=sys.stdout.encoding if sys.version_info[0] != 2 and sys.stdout is not None else "utf8")
+                               encoding=sys.stdout.encoding if sys.stdout is not None else "utf8")
         except Exception as e:
             raise Exception("issue with file or folder " + full) from e
 
@@ -236,7 +233,7 @@ def get_repo_log(path=None, file_detail=False, commandline=True):
         out, err = run_cmd(cmd,
                            wait=True,
                            encerror="strict",
-                           encoding=sys.stdout.encoding if sys.version_info[0] != 2 and sys.stdout is not None else "utf8")
+                           encoding=sys.stdout.encoding if sys.stdout is not None else "utf8")
         if len(err) > 0:
             fLOG("problem with file ", path, err)
             raise Exception(err)
@@ -322,8 +319,7 @@ def get_repo_version(path=None, commandline=True, log=False):
         out, err = run_cmd(cmd,
                            wait=True,
                            encerror="ignore",
-                           encoding=sys.stdout.encoding if sys.version_info[
-                               0] != 2 and sys.stdout is not None else "utf8",
+                           encoding=sys.stdout.encoding if sys.stdout is not None else "utf8",
                            log_error=False)
         if len(err) > 0:
             if log:

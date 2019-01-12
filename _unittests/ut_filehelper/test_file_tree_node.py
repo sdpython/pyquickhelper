@@ -78,12 +78,8 @@ class TestFileNodeTree(ExtTestCase):
                     if not condition:
                         for line in lines:
                             if "from ." in line and "import" in line:
-                                if sys.version_info[0] == 2:
-                                    if "from __future__ " not in cont2:
-                                        raise Exception(cont2)
-                                else:
-                                    raise Exception(
-                                        "{0}\nLINE:\n{1}\nCONT:\n{2}".format(f.fullname, line, cont2))
+                                raise Exception(
+                                    "{0}\nLINE:\n{1}\nCONT:\n{2}".format(f.fullname, line, cont2))
 
         self.assertGreater(nb, 0)
         self.assertGreater(nrst, 0)

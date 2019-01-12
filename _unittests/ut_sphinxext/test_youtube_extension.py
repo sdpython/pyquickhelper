@@ -7,13 +7,9 @@ import sys
 import os
 import unittest
 import logging
+from io import StringIO
 from docutils.parsers.rst import directives
 from sphinx.util.logging import getLogger
-
-if sys.version_info[0] == 2:
-    from StringIO import StringIO
-else:
-    from io import StringIO
 
 
 try:
@@ -34,10 +30,6 @@ from src.pyquickhelper.pycode import get_temp_folder
 from src.pyquickhelper.helpgen import rst2html
 from src.pyquickhelper.sphinxext import YoutubeDirective
 from src.pyquickhelper.sphinxext.sphinx_youtube_extension import youtube_node, visit_youtube_node, depart_youtube_node
-
-
-if sys.version_info[0] == 2:
-    from codecs import open
 
 
 class TestYoutubeExtension(unittest.TestCase):

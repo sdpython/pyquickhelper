@@ -40,9 +40,6 @@ class TestSphinxDocFull (ExtTestCase):
             OutputPrint=__name__ == "__main__")
         temp = get_temp_folder(__file__, "temp_doc")
 
-        if sys.version_info[0] == 2:
-            return
-
         file = os.path.join(temp, "..", "..", "..")
         fLOG(os.path.normpath(os.path.abspath(file)))
         self.assertExists(os.path.exists(file))

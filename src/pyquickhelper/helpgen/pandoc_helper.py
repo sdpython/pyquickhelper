@@ -3,13 +3,8 @@
 @brief Helpers to call pandoc and convert documents
 """
 import os
-import sys
 from .conf_path_tools import find_pandoc_path
 from ..loghelper import noLOG, run_cmd
-
-
-if sys.version_info[0] == 2:
-    from codecs import open
 
 
 def call_pandoc(params, fLOG=noLOG):

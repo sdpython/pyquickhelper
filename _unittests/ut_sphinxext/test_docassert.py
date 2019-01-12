@@ -8,11 +8,7 @@ import os
 import unittest
 import warnings
 import logging
-
-if sys.version_info[0] == 2:
-    from StringIO import StringIO
-else:
-    from io import StringIO
+from io import StringIO
 
 
 try:

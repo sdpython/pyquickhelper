@@ -27,9 +27,6 @@ from src.pyquickhelper.helpgen import rst2html
 from src.pyquickhelper.sphinxext import bigger_role
 from docutils.parsers.rst.roles import register_canonical_role
 
-if sys.version_info[0] == 2:
-    from codecs import open
-
 
 class TestBiggerExtension(unittest.TestCase):
 
@@ -46,11 +43,6 @@ class TestBiggerExtension(unittest.TestCase):
             __file__,
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
-
-        if sys.version_info[0] == 2:
-            warnings.warn(
-                "test_biffer not run on Python 2.7")
-            return
 
         from docutils import nodes as skip_
 
@@ -106,11 +98,6 @@ class TestBiggerExtension(unittest.TestCase):
             __file__,
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
-
-        if sys.version_info[0] == 2:
-            warnings.warn(
-                "test_sharenet not run on Python 2.7")
-            return
 
         from docutils import nodes as skip_
 

@@ -26,9 +26,6 @@ from src.pyquickhelper.pycode import get_temp_folder
 from src.pyquickhelper.helpgen import rst2html
 from src.pyquickhelper.sphinxext import python_link_doc
 
-if sys.version_info[0] == 2:
-    from codecs import open
-
 
 class TestTemplateExtension(unittest.TestCase):
 
@@ -37,11 +34,6 @@ class TestTemplateExtension(unittest.TestCase):
             __file__,
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
-
-        if sys.version_info[0] == 2:
-            warnings.warn(
-                "test_tpl_inline not run on Python 2.7")
-            return
 
         from docutils import nodes as skip_
 
@@ -80,11 +72,6 @@ class TestTemplateExtension(unittest.TestCase):
             __file__,
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
-
-        if sys.version_info[0] == 2:
-            warnings.warn(
-                "test_tpl_inline_url not run on Python 2.7")
-            return
 
         from docutils import nodes as skip_
 
@@ -129,11 +116,6 @@ class TestTemplateExtension(unittest.TestCase):
             __file__,
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
-
-        if sys.version_info[0] == 2:
-            warnings.warn(
-                "test_tpl_inline_url not run on Python 2.7")
-            return
 
         from docutils import nodes as skip_
 

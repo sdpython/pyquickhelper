@@ -4,7 +4,6 @@
 @brief Magic command to handle files
 """
 import os
-import sys
 from IPython.core.magic import magics_class, line_magic
 
 from .magic_class import MagicClassWithHelpers
@@ -88,7 +87,7 @@ class MagicCrypt(MagicClassWithHelpers):
             source = args.source
             dest = args.dest
 
-            if sys.version_info[0] >= 3 and isinstance(password, str):
+            if isinstance(password, str):
                 password = bytes(password, encoding="ascii")
 
             return encrypt_stream(key=password, filename=source, out_filename=dest,
@@ -124,7 +123,7 @@ class MagicCrypt(MagicClassWithHelpers):
             source = args.source
             dest = args.dest
 
-            if sys.version_info[0] >= 3 and isinstance(password, str):
+            if isinstance(password, str):
                 password = bytes(password, encoding="ascii")
 
             return decrypt_stream(key=password, filename=source, out_filename=dest,

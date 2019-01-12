@@ -3,17 +3,9 @@
 @file
 @brief Various ways to import data into a dataframe
 """
-import sys
 import zipfile
+from io import StringIO, BytesIO
 from ..filehelper import read_content_ufs
-
-
-if sys.version_info[0] == 2:
-    from StringIO import StringIO
-    BytesIO = StringIO
-    FileNotFoundError = Exception
-else:
-    from io import StringIO, BytesIO
 
 
 def read_csv(filepath_or_buffer, compression=None, fvalid=None, **params):

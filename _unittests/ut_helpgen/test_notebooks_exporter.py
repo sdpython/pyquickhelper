@@ -25,10 +25,6 @@ from src.pyquickhelper.helpgen import process_notebooks
 from src.pyquickhelper.pycode import get_temp_folder, ExtTestCase, skipif_travis
 
 
-if sys.version_info[0] == 2:
-    from codecs import open
-
-
 class TestNoteBooksExporter(ExtTestCase):
 
     def test_src_import(self):
@@ -41,9 +37,6 @@ class TestNoteBooksExporter(ExtTestCase):
             __file__,
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
-        if sys.version_info[0] == 2:
-            # does not work on Python 2
-            return
         temp = get_temp_folder(__file__, "temp_nb_rst_svg")
         nbs = [os.path.normpath(os.path.join(
             temp, '..', "data", "rst_notebooks", "notebook_with_svg.ipynb"))]
@@ -71,9 +64,6 @@ class TestNoteBooksExporter(ExtTestCase):
             __file__,
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
-        if sys.version_info[0] == 2:
-            # does not work on Python 2
-            return
         temp = get_temp_folder(__file__, "temp_nb_rst_contents")
         nbs = [os.path.normpath(os.path.join(
             temp, '..', "data", "rst_notebooks", "exemple_of_fix_menu.ipynb"))]

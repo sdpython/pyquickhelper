@@ -26,9 +26,6 @@ from src.pyquickhelper.pycode import get_temp_folder
 from src.pyquickhelper.helpgen import rst2html
 from src.pyquickhelper.sphinxext import ShareNetDirective
 
-if sys.version_info[0] == 2:
-    from codecs import open
-
 
 class TestShareNetExtension(unittest.TestCase):
 
@@ -36,11 +33,6 @@ class TestShareNetExtension(unittest.TestCase):
         directives.register_directive("sharenet", ShareNetDirective)
 
     def test_sharenet(self):
-        if sys.version_info[0] == 2:
-            warnings.warn(
-                "test_sharenet not run on Python 2.7")
-            return
-
         content = """
                     test a directive
                     ================
@@ -101,11 +93,6 @@ class TestShareNetExtension(unittest.TestCase):
             f.write(html)
 
     def test_sharenet_inline(self):
-        if sys.version_info[0] == 2:
-            warnings.warn(
-                "test_sharenet not run on Python 2.7")
-            return
-
         content = """
                     test a directive
                     ================
@@ -148,11 +135,6 @@ class TestShareNetExtension(unittest.TestCase):
             f.write(html)
 
     def test_sharenet_inline_rst(self):
-        if sys.version_info[0] == 2:
-            warnings.warn(
-                "test_sharenet not run on Python 2.7")
-            return
-
         content = """
                     test a directive
                     ================
@@ -171,11 +153,6 @@ class TestShareNetExtension(unittest.TestCase):
             raise Exception(html)
 
     def test_sharenet_directive_rst(self):
-        if sys.version_info[0] == 2:
-            warnings.warn(
-                "test_sharenet not run on Python 2.7")
-            return
-
         content = """
                     test a directive
                     ================

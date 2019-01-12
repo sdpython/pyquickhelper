@@ -5,7 +5,6 @@
 which takes into account titles dynamically added.
 """
 import os
-import sys
 import re
 from docutils import nodes
 from docutils.parsers.rst import Directive, directives
@@ -340,11 +339,6 @@ def setup(app):
                  rst=(visit_tocdelay_node, depart_tocdelay_node))
 
     app.add_directive('tocdelay', TocDelayDirective)
-    if sys.version_info[0] == 2:
-        # Sphinx does not accept unicode here
-        app.connect('doctree-read'.encode("ascii"), process_tocdelay)
-        app.connect('doctree-resolved'.encode("ascii"), transform_tocdelay)
-    else:
-        app.connect('doctree-read', process_tocdelay)
-        app.connect('doctree-resolved', transform_tocdelay)
+    app.connect('doctree-read', process_tocdelay)
+    app.connect('doctree-resolved', transform_tocdelay)
     return {'version': sphinx.__display_version__, 'parallel_read_safe': True}

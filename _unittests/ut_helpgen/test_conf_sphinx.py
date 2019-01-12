@@ -26,10 +26,6 @@ from src.pyquickhelper.helpgen.default_conf import set_sphinx_variables
 from src.pyquickhelper.pycode import is_travis_or_appveyor
 
 
-if sys.version_info[0] == 2:
-    FileNotFoundError = Exception
-
-
 class TestConfSphinx(unittest.TestCase):
 
     def test_src_import(self):
@@ -51,8 +47,6 @@ class TestConfSphinx(unittest.TestCase):
             "sphinxdoc",
             "source",
             "conf.py")
-        if sys.version_info[0] == 2:
-            return
         assert os.path.exists(ff)
         import sphinx_rtd_theme as skip_
         d = {}

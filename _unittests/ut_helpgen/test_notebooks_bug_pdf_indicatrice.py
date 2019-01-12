@@ -36,9 +36,6 @@ class TestNoteBooksBugPdfIndicatrice(ExtTestCase):
             __file__,
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
-        if sys.version_info[0] == 2:
-            # does not work on Python 2
-            return
         if is_travis_or_appveyor() in ('travis', 'appveyor'):
             return
         path = os.path.abspath(os.path.split(__file__)[0])

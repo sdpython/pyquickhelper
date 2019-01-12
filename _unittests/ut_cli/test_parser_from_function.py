@@ -36,10 +36,6 @@ class TestParserFromFunction(unittest.TestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
-        if sys.version_info[0] == 2:
-            # rst2html not tested
-            return
-
         def fpars(anint: int, bstring="r", creal: float = None):
             """
             Builds a unique string with the received information.
@@ -69,10 +65,6 @@ class TestParserFromFunction(unittest.TestCase):
             __file__,
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
-
-        if sys.version_info[0] == 2:
-            # rst2html not tested
-            return
 
         def fpars(anint: int, bstring="r", creal: float = None, fLOG=print):
             """

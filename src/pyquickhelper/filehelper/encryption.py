@@ -6,17 +6,10 @@ Inspired from `AES encryption of files in Python with PyCrypto
 <http://eli.thegreenplace.net/2010/06/25/aes-encryption-of-files-in-python-with-pycrypto>`_
 """
 import random
-import sys
 import os
 import struct
 import base64
-
-
-if sys.version_info[0] == 2:
-    from StringIO import StringIO as StreamIO
-    FileNotFoundError = Exception
-else:
-    from io import BytesIO as StreamIO
+from io import BytesIO as StreamIO
 
 
 class EncryptionError(Exception):

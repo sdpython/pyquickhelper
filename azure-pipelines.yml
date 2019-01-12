@@ -61,14 +61,16 @@ jobs:
   - script: |
           brew update
     displayName: 'brew update'
-  #- script: brew install p7zip
-  #  displayName: 'Install p7zip'
+  - script: brew install p7zip
+    displayName: 'Install p7zip'
   - script: brew install pandoc
     displayName: 'Install Pandoc'
   - script: brew install graphviz
     displayName: 'Install Graphviz'
   - script: brew cask install mactex
     displayName: 'Install latex'
+  - script: brew install cairo
+    displayName: 'Install cairo'
   - script: python -m pip install --upgrade pip setuptools wheel
     displayName: 'Install tools'
   - script: pip install -r requirements.txt

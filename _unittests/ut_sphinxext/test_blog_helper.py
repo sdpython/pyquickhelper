@@ -29,10 +29,6 @@ from src.pyquickhelper.helpgen import rst2html
 from src.pyquickhelper.sphinxext import RunPythonDirective
 
 
-if sys.version_info[0] == 2:
-    from codecs import open
-
-
 class TestBlogHelper(unittest.TestCase):
 
     def test_post_parse(self):
@@ -178,11 +174,6 @@ class TestBlogHelper(unittest.TestCase):
             __file__,
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
-
-        if sys.version_info[0] == 2:
-            warnings.warn(
-                "test_newdirective_with_rst2html not run on Python 2.7")
-            return
 
         from docutils import nodes
 

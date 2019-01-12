@@ -2,11 +2,12 @@
 @file
 @brief Functions to run notebooks.
 """
-import sys
 import time
 import os
 import warnings
 import re
+from io import StringIO
+import urllib.request as urllib_request
 from datetime import datetime, timedelta
 
 from ..loghelper.flog import noLOG
@@ -22,15 +23,6 @@ try:
 except ImportError:
     from IPython.nbformat.reader import reads
     from IPython.nbformat.reader import NotJSONError
-
-if sys.version_info[0] == 2:
-    from codecs import open
-    from StringIO import StringIO
-    FileNotFoundError = Exception
-    import urllib2 as urllib_request
-else:
-    from io import StringIO
-    import urllib.request as urllib_request
 
 
 def _cache_url_to_file(cache_urls, folder, fLOG=noLOG):

@@ -10,11 +10,8 @@ import subprocess
 import threading
 import warnings
 import re
+import queue
 from .flog_fake_classes import PQHException
-if sys.version_info[0] == 2:
-    import Queue as queue
-else:
-    import queue
 
 
 class RunCmdException(Exception):
@@ -223,27 +220,15 @@ def run_cmd(cmd, sin="", shell=sys.platform.startswith("win"), wait=False, log_e
 
             if catch_exit:
                 try:
-                    if sys.version_info[0] == 2:
-                        if timeout is not None:
-                            raise NotImplementedError(
-                                "timeout is only available with Python 3")
-                        stdoutdata, stderrdata = pproc.communicate(input=input)
-                    else:
-                        stdoutdata, stderrdata = pproc.communicate(
-                            input=input, timeout=timeout)
+                    stdoutdata, stderrdata = pproc.communicate(
+                        input=input, timeout=timeout)
                 except SystemExit as e:
                     if change_path is not None:
                         os.chdir(current)
                     raise RunCmdException("SystemExit raised (2)") from e
             else:
-                if sys.version_info[0] == 2:
-                    if timeout is not None:
-                        raise NotImplementedError(
-                            "timeout is only available with Python 3")
-                    stdoutdata, stderrdata = pproc.communicate(input=input)
-                else:
-                    stdoutdata, stderrdata = pproc.communicate(
-                        input=input, timeout=timeout)
+                stdoutdata, stderrdata = pproc.communicate(
+                    input=input, timeout=timeout)
 
             out = decode_outerr(stdoutdata, encoding, encerror, cmd)
             err = decode_outerr(stderrdata, encoding, encerror, cmd)

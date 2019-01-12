@@ -24,12 +24,7 @@ except ImportError:
 from src.pyquickhelper.loghelper import fLOG
 from src.pyquickhelper.pycode import get_temp_folder
 from src.pyquickhelper.filehelper import encrypt_stream, decrypt_stream
-
-if sys.version_info[0] == 2:
-    from codecs import open
-    from StringIO import StringIO as StreamIO
-else:
-    from io import BytesIO as StreamIO
+from io import BytesIO as StreamIO
 
 
 class TestEncryption(unittest.TestCase):
@@ -43,9 +38,6 @@ class TestEncryption(unittest.TestCase):
             __file__,
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
-
-        if sys.version_info[0] == 2:
-            return
 
         try:
             import Cryptodome as skip_
@@ -83,9 +75,6 @@ class TestEncryption(unittest.TestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
-        if sys.version_info[0] == 2:
-            return
-
         try:
             import Cryptodome as skip__
         except ImportError:
@@ -122,9 +111,6 @@ class TestEncryption(unittest.TestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
-        if sys.version_info[0] == 2:
-            return
-
         try:
             import Cryptodome as skip__
         except ImportError:
@@ -149,9 +135,6 @@ class TestEncryption(unittest.TestCase):
             __file__,
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
-
-        if sys.version_info[0] == 2:
-            return
 
         try:
             import Cryptodome as skip___
@@ -184,9 +167,6 @@ class TestEncryption(unittest.TestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
-        if sys.version_info[0] == 2:
-            return
-
         infile = StreamIO(bytes([0, 1, 2, 3, 4]))
         outst = StreamIO()
 
@@ -214,9 +194,6 @@ class TestEncryption(unittest.TestCase):
             __file__,
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
-
-        if sys.version_info[0] == 2:
-            return
 
         infile = StreamIO(bytes(list(i % 255 for i in range(0, 10000))))
         outst = StreamIO()

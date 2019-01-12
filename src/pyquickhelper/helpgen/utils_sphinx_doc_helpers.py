@@ -13,9 +13,6 @@ import importlib
 from ..pandashelper.tblformat import df2rst
 from .helpgen_exceptions import HelpGenException, ImportErrorHelpGen
 
-if sys.version_info[0] == 2:
-    from codecs import open
-
 
 #: max length for short summaries
 _length_truncated_doc = 120

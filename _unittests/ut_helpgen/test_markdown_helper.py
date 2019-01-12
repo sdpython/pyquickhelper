@@ -25,9 +25,6 @@ from src.pyquickhelper.loghelper.flog import fLOG
 from src.pyquickhelper.helpgen.markdown_helper import parse_markdown, yield_sphinx_only_markup_for_pipy
 from src.pyquickhelper.helpgen import rst2html
 
-if sys.version_info[0] == 2:
-    from codecs import open
-
 
 class TestHelperMarkdown(unittest.TestCase):
 
@@ -57,8 +54,6 @@ class TestHelperMarkdown(unittest.TestCase):
         with open(readme, "r", encoding="utf8") as f:
             content = f.read()
         r = parse_markdown(content)
-        if sys.version_info[0] == 2:
-            return
         if "<p>.. _l-README:</p>" not in str(r):
             m = [ord(c) for c in content]
             m = ",".join(str(_) for _ in m[:20])
@@ -84,8 +79,6 @@ class TestHelperMarkdown(unittest.TestCase):
         with open(readme, "r", encoding="utf8") as f:
             content = f.read()
         r = parse_markdown(content)
-        if sys.version_info[0] == 2:
-            return
         if "<p>.. _l-README:</p>" not in str(r):
             m = [ord(c) for c in content]
             m = ",".join(str(_) for _ in m[:20])

@@ -25,9 +25,6 @@ from src.pyquickhelper.loghelper.flog import fLOG
 from src.pyquickhelper.helpgen.utils_sphinx_doc import migrating_doxygen_doc
 from src.pyquickhelper.helpgen.utils_sphinx_doc_helpers import process_var_tag
 
-if sys.version_info[0] == 2:
-    from codecs import open
-
 
 class TestDoxygen2rst (unittest.TestCase):
 
@@ -40,10 +37,6 @@ class TestDoxygen2rst (unittest.TestCase):
             __file__,
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
-
-        if sys.version_info[0] == 2:
-            # ~ # not test on python 2
-            return
 
         file = os.path.join(os.path.abspath(
             os.path.dirname(__file__)), "data", "myexample2.py")
@@ -112,10 +105,6 @@ class TestDoxygen2rst (unittest.TestCase):
             __file__,
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
-
-        if sys.version_info[0] == 2:
-            # ~ # not test on python 2
-            return
 
         file = os.path.join(os.path.abspath(
             os.path.dirname(__file__)), "data", "completion.py")

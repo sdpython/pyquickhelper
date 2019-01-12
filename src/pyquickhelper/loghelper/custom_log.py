@@ -4,12 +4,7 @@
 @brief Creates a custom log (open a text file and flushes everything in it).
 """
 import datetime
-import sys
 import os
-
-
-if sys.version_info[0] == 2:
-    from codecs import open
 
 
 class CustomLog:
@@ -101,39 +96,20 @@ class CustomLog:
         dt = datetime.datetime(2009, 1, 1).now()
         typstr = str  # unicode#
         if len(l) > 0:
-            if sys.version_info[0] == 2:
-                def _str_process(s):
-                    if isinstance(s, str  # unicode#
-                                  ):
-                        return s
-                    elif isinstance(s, bytes):
-                        return s.decode("utf8")
-                    else:
-                        try:
-                            return typstr(s)
-                        except Exception as e:
-                            raise Exception(
-                                "unable to convert s into string: type(s)=" + typstr(type(s))) from e
-                try:
-                    message = typstr(dt).split(
-                        ".")[0] + " " + " ".join([_str_process(s) for s in l]) + "\n"
-                except UnicodeDecodeError:
-                    message = "ENCODING ERROR WITH Python 2.7, will not fix it"
-            else:
-                def _str_process(s):
-                    if isinstance(s, str):
-                        return s
-                    elif isinstance(s, bytes):
-                        return s.decode("utf8")
-                    else:
-                        try:
-                            return str(s)
-                        except Exception as e:
-                            raise Exception(
-                                "unable to convert s into string: type(s)=" + str(type(s))) from e
+            def _str_process(s):
+                if isinstance(s, str):
+                    return s
+                elif isinstance(s, bytes):
+                    return s.decode("utf8")
+                else:
+                    try:
+                        return str(s)
+                    except Exception as e:
+                        raise Exception(
+                            "unable to convert s into string: type(s)=" + str(type(s))) from e
 
-                message = str(dt).split(
-                    ".")[0] + " " + " ".join([_str_process(s) for s in l]) + "\n"
+            message = str(dt).split(
+                ".")[0] + " " + " ".join([_str_process(s) for s in l]) + "\n"
 
             self._handle.write(message)
             st = "                    "

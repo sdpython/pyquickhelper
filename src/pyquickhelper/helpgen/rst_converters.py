@@ -2,10 +2,10 @@
 @file
 @brief Helpers to convert docstring to various format.
 """
-import sys
 import re
 import textwrap
 import os
+from io import StringIO
 from docutils import core, languages
 from docutils.io import StringInput, StringOutput
 from sphinx.environment import default_settings
@@ -15,12 +15,6 @@ from ..loghelper.flog import noLOG
 from . helpgen_exceptions import HelpGenConvertError
 from .conf_path_tools import find_graphviz_dot, find_dvipng_path
 from .sphinxm_mock_app import MockSphinxApp
-
-
-if sys.version_info[0] == 2:
-    from StringIO import StringIO
-else:
-    from io import StringIO
 
 
 def default_sphinx_options(fLOG=noLOG, **options):

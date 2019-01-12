@@ -25,10 +25,6 @@ from src.pyquickhelper.loghelper import fLOG
 from src.pyquickhelper import check, _setup_hook, get_insetup_functions
 
 
-if sys.version_info[0] == 2:
-    FileNotFoundError = Exception
-
-
 class TestInitFunction(unittest.TestCase):
 
     def test_src_import(self):

@@ -25,9 +25,6 @@ from src.pyquickhelper.pycode import get_temp_folder
 from src.pyquickhelper.loghelper import fLOG, CustomLog
 from src.pyquickhelper.pycode import is_travis_or_appveyor
 
-if sys.version_info[0] == 2:
-    FileNotFoundError = Exception
-
 
 class TestNotebookRunnerCustomLog (unittest.TestCase):
 
@@ -44,9 +41,6 @@ class TestNotebookRunnerCustomLog (unittest.TestCase):
 
         outfile = os.path.join(temp, "out_notebook.ipynb")
         assert not os.path.exists(outfile)
-
-        if sys.version_info[0] == 2:
-            return
 
         custom = CustomLog(temp)
         stat, out = run_notebook(nbfile, working_dir=temp, outfilename=outfile,

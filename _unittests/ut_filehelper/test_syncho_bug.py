@@ -52,9 +52,6 @@ class TestSyncFolder (unittest.TestCase):
                            filter_copy=None, avoid_copy=False, operations=None,
                            file_date=None, log1=False)
 
-        if sys.version_info[0] == 2:
-            return
-
         assert os.path.exists(
             os.path.join(
                 to,

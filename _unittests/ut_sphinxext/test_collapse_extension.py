@@ -26,10 +26,6 @@ from src.pyquickhelper.pycode import get_temp_folder, ExtTestCase
 from src.pyquickhelper.helpgen import rst2html
 
 
-if sys.version_info[0] == 2:
-    from codecs import open
-
-
 class TestCollapseExtension(ExtTestCase):
 
     def test_collapse(self):

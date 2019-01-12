@@ -28,10 +28,6 @@ from src.pyquickhelper.sphinxext import ExRef, ExRefList
 from src.pyquickhelper.sphinxext.sphinx_exref_extension import exref_node, visit_exref_node, depart_exref_node
 
 
-if sys.version_info[0] == 2:
-    from codecs import open
-
-
 class TestExRefExtension(unittest.TestCase):
 
     def test_post_parse_exref(self):

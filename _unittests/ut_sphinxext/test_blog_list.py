@@ -24,9 +24,6 @@ except ImportError:
 from src.pyquickhelper.loghelper.flog import fLOG
 from src.pyquickhelper.sphinxext import BlogPostList, BlogPostDirective
 
-if sys.version_info[0] == 2:
-    FileNotFoundError = Exception
-
 
 class TestBlogList(unittest.TestCase):
 
@@ -35,10 +32,6 @@ class TestBlogList(unittest.TestCase):
             __file__,
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
-
-        if sys.version_info[0] == 2:
-            # not the same relative path for blogs, we skip
-            return
 
         directives.register_directive("blogpost", BlogPostDirective)
 

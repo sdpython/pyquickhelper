@@ -7,28 +7,24 @@
 import sys
 import os
 import unittest
+from http.server import HTTPServer as skip_
 
-if sys.version_info[0] == 2:
-    pass
-else:
-    from http.server import HTTPServer as skip_
+try:
+    import src
+except ImportError:
+    path = os.path.normpath(
+        os.path.abspath(
+            os.path.join(
+                os.path.split(__file__)[0],
+                "..",
+                "..")))
+    if path not in sys.path:
+        sys.path.append(path)
+    import src
 
-    try:
-        import src
-    except ImportError:
-        path = os.path.normpath(
-            os.path.abspath(
-                os.path.join(
-                    os.path.split(__file__)[0],
-                    "..",
-                    "..")))
-        if path not in sys.path:
-            sys.path.append(path)
-        import src
-
-    from pyquickhelper.loghelper import fLOG, get_url_content
-    from pyquickhelper.serverdoc import run_doc_server
-    from pyquickhelper.pycode import skipif_appveyor, ExtTestCase
+from src.pyquickhelper.loghelper import fLOG, get_url_content
+from src.pyquickhelper.serverdoc import run_doc_server
+from src.pyquickhelper.pycode import skipif_appveyor, ExtTestCase
 
 
 class TestDocumentationServer(ExtTestCase):

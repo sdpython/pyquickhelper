@@ -37,11 +37,6 @@ class TestPyqSyncCli(unittest.TestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
-        if sys.version_info[0] == 2:
-            # the module returns the following error
-            # ENCODING ERROR WITH Python 2.7, will not fix it
-            return
-
         rows = []
 
         def flog(*l):

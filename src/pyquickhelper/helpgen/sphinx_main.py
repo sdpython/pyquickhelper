@@ -10,6 +10,7 @@ import shutil
 import importlib
 import warnings
 from datetime import datetime
+from io import StringIO
 from docutils.parsers.rst import directives, roles
 
 try:
@@ -61,13 +62,6 @@ from ..sphinxext.sphinx_nbref_extension import NbRef
 from ..sphinxext.sphinx_cmdref_extension import CmdRef
 from ..sphinxext.sphinx_todoext_extension import TodoExt
 from ..sphinxext.sphinx_collapse_extension import CollapseDirective
-
-
-if sys.version_info[0] == 2:
-    from codecs import open
-    from StringIO import StringIO
-else:
-    from io import StringIO
 
 template_examples = """
 
@@ -394,9 +388,6 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
     try:
         theconf = importlib.import_module('conf')
     except ImportError as e:
-        if sys.version_info[0] == 2:
-            # we start again because we lose track of the exception
-            theconf = importlib.import_module('conf')
         raise ImportError("unable to import conf.py from {0}, sys.path=\n{1}\nBEFORE:\n{2}".format(
             root_source, "\n".join(sys.path), "\n".join(copypath))) from e
     if theconf is None:

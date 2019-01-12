@@ -9,10 +9,6 @@ import os
 import site
 import warnings
 
-if sys.version_info[0] == 2:
-    from codecs import open
-    FileNotFoundError = Exception
-
 
 def getsitepackages():
     """

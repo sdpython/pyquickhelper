@@ -26,10 +26,6 @@ from src.pyquickhelper.helpgen.sphinx_main import build_notebooks_gallery
 from src.pyquickhelper.pycode import get_temp_folder
 
 
-if sys.version_info[0] == 2:
-    from codecs import open
-
-
 class TestNotebookGalleryBug(unittest.TestCase):
 
     def test_src_import(self):
@@ -37,9 +33,6 @@ class TestNotebookGalleryBug(unittest.TestCase):
         self.assertTrue(src is not None)
 
     def a_test_notebook_gallery_bug(self, layout):
-        if sys.version_info[0] == 2:
-            return None
-
         temp = get_temp_folder(__file__, "temp_gallery_bug_{0}".format(layout))
         fold = os.path.normpath(os.path.join(
             temp, "..", "notebooks_js"))

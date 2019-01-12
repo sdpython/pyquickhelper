@@ -8,6 +8,7 @@ import os
 import unittest
 import warnings
 import logging
+from io import StringIO
 from docutils.parsers.rst import directives
 
 try:
@@ -29,12 +30,6 @@ from src.pyquickhelper.helpgen import rst2html
 from src.pyquickhelper.helpgen import CustomSphinxApp
 from src.pyquickhelper.sphinxext.sphinximages.sphinxtrib.images import ImageDirective
 
-if sys.version_info[0] == 2:
-    from codecs import open
-    from StringIO import StringIO
-else:
-    from io import StringIO
-
 
 class TestImageExtension(ExtTestCase):
 
@@ -51,11 +46,6 @@ class TestImageExtension(ExtTestCase):
             __file__,
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
-
-        if sys.version_info[0] == 2:
-            warnings.warn(
-                "test_sharenet not run on Python 2.7")
-            return
 
         from docutils import nodes as skip_
 
@@ -120,9 +110,6 @@ class TestImageExtension(ExtTestCase):
 
         temp = get_temp_folder(__file__, "temp_sphinx_ext_thumbnail_html")
         src_ = os.path.join(temp, "..", "data", "image")
-
-        if sys.version_info[0] == 2:
-            return
 
         app = CustomSphinxApp(src_, temp)
         app.build()

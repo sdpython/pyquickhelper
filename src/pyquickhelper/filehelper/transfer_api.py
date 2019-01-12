@@ -2,16 +2,11 @@
 @file
 @brief API to move files
 """
-import sys
 import json
 import hashlib
+from io import StringIO
 from ..loghelper.flog import noLOG
 from ..loghelper.convert_helper import str2datetime, datetime2str
-
-if sys.version_info[0] == 2:
-    from StringIO import StringIO
-else:
-    from io import StringIO
 
 
 class TransferAPI_FileInfo:

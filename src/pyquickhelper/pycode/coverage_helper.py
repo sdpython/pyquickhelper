@@ -4,19 +4,12 @@
 """
 import os
 import re
-import sys
 from collections import Counter
 import shutil
 from contextlib import redirect_stderr, redirect_stdout
+from io import StringIO
 from ..loghelper import SourceRepository, noLOG
 from ..filehelper import explore_folder_iterfile
-
-
-if sys.version_info[0] == 2:
-    FileNotFoundError = Exception
-    from StringIO import StringIO
-else:
-    from io import StringIO
 
 
 def publish_coverage_on_codecov(path, token, commandline=True, fLOG=noLOG):

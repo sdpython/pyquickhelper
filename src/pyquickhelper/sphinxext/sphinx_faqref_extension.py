@@ -3,7 +3,6 @@
 @file
 @brief Defines a :epkg:`sphinx` extension to keep track of FAQ.
 """
-import sys
 from docutils import nodes
 
 import sphinx
@@ -213,15 +212,8 @@ def setup(app):
 
     app.add_directive('faqref', FaqRef)
     app.add_directive('faqreflist', FaqRefList)
-    if sys.version_info[0] == 2:
-        # Sphinx does not accept unicode here
-        app.connect('doctree-read'.encode("ascii"), process_faqrefs)
-        app.connect('doctree-resolved'.encode("ascii"), process_faqref_nodes)
-        app.connect('env-purge-doc'.encode("ascii"), purge_faqrefs)
-        app.connect('env-merge-info'.encode("ascii"), merge_faqref)
-    else:
-        app.connect('doctree-read', process_faqrefs)
-        app.connect('doctree-resolved', process_faqref_nodes)
-        app.connect('env-purge-doc', purge_faqrefs)
-        app.connect('env-merge-info', merge_faqref)
+    app.connect('doctree-read', process_faqrefs)
+    app.connect('doctree-resolved', process_faqref_nodes)
+    app.connect('env-purge-doc', purge_faqrefs)
+    app.connect('env-merge-info', merge_faqref)
     return {'version': sphinx.__display_version__, 'parallel_read_safe': True}

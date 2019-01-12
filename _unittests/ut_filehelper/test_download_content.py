@@ -5,12 +5,7 @@
 import sys
 import os
 import unittest
-
-if sys.version_info[0] == 2:
-    from StringIO import StringIO
-    from io import BytesIO
-else:
-    from io import StringIO, BytesIO
+from io import StringIO, BytesIO
 
 if "temp_" in os.path.abspath(__file__):
     raise ImportError(

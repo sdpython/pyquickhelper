@@ -3,7 +3,6 @@
 @brief Helpers to benchmark something
 """
 import os
-import sys
 from datetime import datetime
 from time import perf_counter
 import pickle
@@ -11,10 +10,6 @@ from ..loghelper import noLOG, CustomLog, fLOGFormat
 from ..texthelper import apply_template
 from ..pandashelper import df2rst
 from ..loghelper.flog import get_relative_path
-
-
-if sys.version_info[0] == 2:
-    from codecs import open
 
 
 class BenchMark:
@@ -282,8 +277,6 @@ class BenchMark:
         def run_(pgar):
             "local function"
             nonlocal nb_cached
-            if sys.version_info[0] < 3:
-                nb_cached = 0
             self._metrics = []
             self._appendix = []
 

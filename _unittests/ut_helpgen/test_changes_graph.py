@@ -40,12 +40,6 @@ class TestGraphChanges (unittest.TestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
-        if sys.version_info[0] == 2:
-            # don't have time to investigate why I get the following error on Anaconda 2
-            # ImportError: DLL load failed: The specified module could not be
-            # found.
-            return
-
         abc = fix_tkinter_issues_virtualenv()
         for a in abc:
             fLOG(a)

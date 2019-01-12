@@ -26,10 +26,6 @@ from src.pyquickhelper.sphinxext import CmdRef
 from src.pyquickhelper.sphinxext.sphinx_cmdref_extension import cmdref_node, visit_cmdref_node, depart_cmdref_node
 
 
-if sys.version_info[0] == 2:
-    from codecs import open
-
-
 class TestLatexBuilder(ExtTestCase):
 
     def test_latex_builder(self):

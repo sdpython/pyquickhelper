@@ -3,7 +3,6 @@
 @file
 @brief Defines a :epkg:`sphinx` extension to keep track of nb.
 """
-import sys
 from docutils import nodes
 
 import sphinx
@@ -192,15 +191,8 @@ def setup(app):
 
     app.add_directive('nbref', NbRef)
     app.add_directive('nbreflist', NbRefList)
-    if sys.version_info[0] == 2:
-        # Sphinx does not accept unicode here
-        app.connect('doctree-read'.encode("ascii"), process_nbrefs)
-        app.connect('doctree-resolved'.encode("ascii"), process_nbref_nodes)
-        app.connect('env-purge-doc'.encode("ascii"), purge_nbrefs)
-        app.connect('env-merge-info'.encode("ascii"), merge_nbref)
-    else:
-        app.connect('doctree-read', process_nbrefs)
-        app.connect('doctree-resolved', process_nbref_nodes)
-        app.connect('env-purge-doc', purge_nbrefs)
-        app.connect('env-merge-info', merge_nbref)
+    app.connect('doctree-read', process_nbrefs)
+    app.connect('doctree-resolved', process_nbref_nodes)
+    app.connect('env-purge-doc', purge_nbrefs)
+    app.connect('env-merge-info', merge_nbref)
     return {'version': sphinx.__display_version__, 'parallel_read_safe': True}

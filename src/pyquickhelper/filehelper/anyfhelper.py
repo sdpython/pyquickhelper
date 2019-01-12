@@ -2,22 +2,13 @@
 @file
 @brief      Various helpers about files
 """
-
 import os
 import stat
-import sys
 import warnings
+from io import BytesIO, StringIO
 from .synchelper import explore_folder_iterfile
 from .internet_helper import read_url
 from .file_info import is_file_string, is_url_string
-
-
-if sys.version_info[0] == 2:
-    from codecs import open
-    from StringIO import StringIO
-    BytesIO = StringIO
-else:
-    from io import BytesIO, StringIO
 
 
 def change_file_status(folder, status=stat.S_IWRITE, strict=False,
@@ -176,9 +167,6 @@ def read_content_ufs(file_url_stream, encoding="utf8", asbytes=False, add_source
                         "cannot return bytes if encoding is None for url: " + file_url_stream)
                 content = read_url(file_url_stream, encoding=encoding)
                 return (content, "u") if add_source else content
-        elif sys.version_info[0] == 2:
-            # the string should the content itself
-            return (file_url_stream, "s") if add_source else file_url_stream
         else:
             # the string should the content itself
             if isinstance(file_url_stream, str  # unicode#
@@ -215,12 +203,5 @@ def read_content_ufs(file_url_stream, encoding="utf8", asbytes=False, add_source
             content = v.decode(encoding=encoding)
             return (content, "SB") if add_source else content
     else:
-        if sys.version_info[0] == 2 and isinstance(file_url_stream, BytesIO):
-            v = file_url_stream.getvalue()
-            if asbytes or not v:
-                return (v, "SBb") if add_source else v
-            else:
-                content = v.decode(encoding=encoding)
-                return (content, "SB") if add_source else content
         raise TypeError(
             "unexpected type for file_url_stream: {0}".format(type(file_url_stream)))

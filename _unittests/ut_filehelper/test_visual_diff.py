@@ -25,9 +25,6 @@ from src.pyquickhelper.loghelper import fLOG
 from src.pyquickhelper.pycode import get_temp_folder
 from src.pyquickhelper.filehelper import create_visual_diff_through_html_files
 
-if sys.version_info[0] == 2:
-    from codecs import open
-
 
 class TestVisualDiff(unittest.TestCase):
 
@@ -45,24 +42,14 @@ class TestVisualDiff(unittest.TestCase):
         page = os.path.join(temp, "page_diff.html")
 
         f = __file__.replace(".pyc", ".py")
-        if sys.version_info[0] == 2:
+        try:
+            diff = create_visual_diff_through_html_files(f, f, page=page)
+        except FileNotFoundError as e:
             try:
-                diff = create_visual_diff_through_html_files(f, f, page=page)
-            except OSError as e:
-                try:
-                    import pymyinstall as skip_
-                    raise e
-                except ImportError:
-                    return
-        else:
-            try:
-                diff = create_visual_diff_through_html_files(f, f, page=page)
-            except FileNotFoundError as e:
-                try:
-                    import pymyinstall as skip_
-                    raise e
-                except ImportError:
-                    return
+                import pymyinstall as skip_
+                raise e
+            except ImportError:
+                return
 
         fLOG(page)
         assert os.path.exists(page)
@@ -89,26 +76,15 @@ class TestVisualDiff(unittest.TestCase):
             return
 
         f = __file__.replace(".pyc", ".py")
-        if sys.version_info[0] == 2:
+        try:
+            html, js = create_visual_diff_through_html_files(
+                f, f, notebook=True)
+        except FileNotFoundError as e:
             try:
-                html, js = create_visual_diff_through_html_files(
-                    f, f, notebook=True)
-            except OSError as e:
-                try:
-                    import pymyinstall as skip__
-                    raise e
-                except ImportError:
-                    return
-        else:
-            try:
-                html, js = create_visual_diff_through_html_files(
-                    f, f, notebook=True)
-            except FileNotFoundError as e:
-                try:
-                    import pymyinstall as skip___
-                    raise e
-                except ImportError:
-                    return
+                import pymyinstall as skip___
+                raise e
+            except ImportError:
+                return
 
         from IPython.core.display import HTML, Javascript
         assert isinstance(html, HTML)

@@ -38,9 +38,6 @@ class TestGitLog(unittest.TestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
-        if sys.version_info[0] == 2:
-            return
-
         fold = os.path.abspath(os.path.split(__file__)[0])
         root = os.path.join(fold, "..", "..")
         res = get_repo_log(root)
@@ -93,9 +90,6 @@ class TestGitLog(unittest.TestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
-        if sys.version_info[0] == 2:
-            return
-
         fold = os.path.abspath(os.path.split(__file__)[0])
         root = os.path.join(fold, "..", "..")
         res = get_repo_log(root, file_detail=True, subset={'setup.py'})
@@ -108,9 +102,6 @@ class TestGitLog(unittest.TestCase):
             __file__,
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
-
-        if sys.version_info[0] == 2:
-            return
 
         if is_travis_or_appveyor() == "travis":
             # Does not work on travis, probably an issue with git version. Did not check.

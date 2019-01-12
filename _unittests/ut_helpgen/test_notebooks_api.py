@@ -39,9 +39,6 @@ class TestNotebookAPI(ExtTestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
-        if sys.version_info[0] == 2:
-            return
-
         path = os.path.abspath(os.path.split(__file__)[0])
         fold = os.path.normpath(
             os.path.join(
@@ -72,9 +69,6 @@ class TestNotebookAPI(ExtTestCase):
             __file__,
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
-
-        if sys.version_info[0] == 2:
-            return
 
         if is_travis_or_appveyor() in ('travis', 'appveyor'):
             # no latex, no pandoc

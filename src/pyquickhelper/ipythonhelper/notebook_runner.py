@@ -7,25 +7,17 @@ import base64
 import os
 import re
 import time
-import sys
 import platform
 import warnings
 from queue import Empty
 from time import sleep
 from collections import Counter
+from io import StringIO, BytesIO
 from nbformat import NotebookNode
 from nbformat import writes
 from nbformat.reader import reads
 from ..imghelper.svg_helper import svg2img, PYQImageException
 from ..loghelper.flog import noLOG
-
-
-if sys.version_info[0] == 2:
-    from codecs import open
-    from StringIO import StringIO
-    BytesIO = StringIO
-else:
-    from io import StringIO, BytesIO
 
 
 class NotebookError(Exception):
@@ -164,21 +156,14 @@ class NotebookRunner(object):
                 os.chdir(working_dir)
 
             if self.km is not None:
-                if sys.version_info[0] == 2 and args is not None:
-                    # I did not find a way to make it work
-                    args = None
-                    warnings.warn(
-                        "Args is not None: '{0}', unable to use it in Python 2.7".format(args), UserWarning)
-                    self.km.start_kernel()
-                else:
-                    try:
-                        with warnings.catch_warnings():
-                            warnings.filterwarnings(
-                                "ignore", category=ResourceWarning)
-                            self.km.start_kernel(extra_arguments=args)
-                    except Exception as e:
-                        raise Exception(
-                            "Failure with args: {0}\nand error:\n{1}".format(args, str(e))) from e
+                try:
+                    with warnings.catch_warnings():
+                        warnings.filterwarnings(
+                            "ignore", category=ResourceWarning)
+                        self.km.start_kernel(extra_arguments=args)
+                except Exception as e:
+                    raise Exception(
+                        "Failure with args: {0}\nand error:\n{1}".format(args, str(e))) from e
 
                 if platform.system() == 'Darwin':
                     # see http://www.pypedia.com/index.php/notebook_runner

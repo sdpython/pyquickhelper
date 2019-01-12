@@ -28,10 +28,6 @@ from src.pyquickhelper.sphinxext import MathDef, MathDefList
 from src.pyquickhelper.sphinxext.sphinx_mathdef_extension import mathdef_node, visit_mathdef_node, depart_mathdef_node
 
 
-if sys.version_info[0] == 2:
-    from codecs import open
-
-
 class TestMathDefExtension(unittest.TestCase):
 
     def test_post_parse_sn_todoext(self):

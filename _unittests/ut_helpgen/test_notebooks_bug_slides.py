@@ -27,10 +27,6 @@ from src.pyquickhelper.helpgen.sphinx_main import setup_environment_for_help
 from src.pyquickhelper.pycode import is_travis_or_appveyor, get_temp_folder, ExtTestCase
 
 
-if sys.version_info[0] == 2:
-    from codecs import open
-
-
 class TestNoteBooksBugSlides(ExtTestCase):
 
     def test_src_import(self):
@@ -42,9 +38,6 @@ class TestNoteBooksBugSlides(ExtTestCase):
             __file__,
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
-        if sys.version_info[0] == 2:
-            # does not work on Python 2
-            return
         path = os.path.abspath(os.path.split(__file__)[0])
         fold = os.path.normpath(os.path.join(path, "notebooks_slides"))
         nbs = [os.path.join(fold, _)

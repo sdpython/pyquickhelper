@@ -25,10 +25,6 @@ from src.pyquickhelper.helpgen import process_notebooks
 from src.pyquickhelper.pycode import skipif_travis, skipif_appveyor, get_temp_folder, ExtTestCase
 
 
-if sys.version_info[0] == 2:
-    from codecs import open
-
-
 class TestNoteBooksBugRstAudio(ExtTestCase):
 
     def test_src_import(self):
@@ -42,9 +38,6 @@ class TestNoteBooksBugRstAudio(ExtTestCase):
             __file__,
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
-        if sys.version_info[0] == 2:
-            # does not work on Python 2
-            return
         formats = ["rst", ]
         temp = get_temp_folder(__file__, "temp_nb_bug_rst_audio")
         nbs = [os.path.join(temp, '..', 'data', 'exemple_div.ipynb')]

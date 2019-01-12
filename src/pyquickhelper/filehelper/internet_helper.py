@@ -5,15 +5,11 @@
 import os
 import sys
 import shutil
+import urllib.request as urllib_request
+import urllib.error as urllib_error
 from ..loghelper.flog import noLOG, _get_file_url
 from .fexceptions import FileException
 from ..loghelper.flog import _first_more_recent
-
-if sys.version_info[0] == 2:
-    import urllib2 as urllib_request
-else:
-    import urllib.request as urllib_request
-    import urllib.error as urllib_error
 
 
 class ReadUrlException(Exception):
@@ -151,26 +147,14 @@ def read_url(url, encoding=None):
     @return                 str (encoding is not None) or bytes
     """
     request = urllib_request.Request(url)
-    if sys.version_info[0] == 2:
-        try:
-            fu = urllib_request.urlopen(request)
+    try:
+        with urllib_request.urlopen(request) as fu:
             content = fu.read()
-            fu.close()
-        except Exception as e:
-            raise ReadUrlException(
-                "unable to read url '{0}'\n[pyqerror]\n{1}".format(url, e))
-    else:
-        try:
-            with urllib_request.urlopen(request) as fu:
-                content = fu.read()
-        except Exception as e:
-            if sys.version_info[0] == 2:
-                import urlparse
-            else:
-                import urllib.parse as urlparse
-            res = urlparse.urlparse(url)
-            raise ReadUrlException(
-                "unable to open url '{0}' scheme: {1}\nexc: {2}".format(url, res, e))
+    except Exception as e:
+        import urllib.parse as urlparse
+        res = urlparse.urlparse(url)
+        raise ReadUrlException(
+            "unable to open url '{0}' scheme: {1}\nexc: {2}".format(url, res, e))
 
     if encoding is None:
         return content

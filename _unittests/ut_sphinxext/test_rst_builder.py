@@ -27,10 +27,6 @@ from src.pyquickhelper.sphinxext.sphinx_cmdref_extension import cmdref_node, vis
 from src.pyquickhelper.sphinxext.sphinximages.sphinxtrib.images import ImageDirective
 
 
-if sys.version_info[0] == 2:
-    from codecs import open
-
-
 class TestRstBuilder(ExtTestCase):
 
     def test_rst_builder(self):

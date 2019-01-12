@@ -28,10 +28,6 @@ from src.pyquickhelper.sphinxext import NbRef, NbRefList
 from src.pyquickhelper.sphinxext.sphinx_nbref_extension import nbref_node, visit_nbref_node, depart_nbref_node
 
 
-if sys.version_info[0] == 2:
-    from codecs import open
-
-
 class TestNbRefExtension(unittest.TestCase):
 
     def test_post_parse_nbref(self):

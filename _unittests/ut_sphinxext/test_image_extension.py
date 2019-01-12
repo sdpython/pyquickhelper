@@ -8,6 +8,7 @@ import os
 import unittest
 import warnings
 import logging
+from io import StringIO
 from docutils.parsers.rst import directives
 
 try:
@@ -28,12 +29,6 @@ from src.pyquickhelper.pycode import get_temp_folder, ExtTestCase
 from src.pyquickhelper.helpgen import rst2html
 from src.pyquickhelper.helpgen import CustomSphinxApp
 from src.pyquickhelper.sphinxext.sphinximages.sphinxtrib.images import ImageDirective
-
-if sys.version_info[0] == 2:
-    from codecs import open
-    from StringIO import StringIO
-else:
-    from io import StringIO
 
 
 class TestImageExtension(ExtTestCase):

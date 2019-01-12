@@ -10,6 +10,7 @@ import json
 import os
 import sys
 import shutil
+from io import StringIO
 
 from .utils_sphinx_doc_helpers import HelpGenException
 from .conf_path_tools import find_latex_path, find_pandoc_path
@@ -23,14 +24,6 @@ from ..loghelper.flog import run_cmd, fLOG, noLOG
 from ..ipythonhelper import read_nb, notebook_coverage, badge_notebook_coverage
 from ..pandashelper import df2rst
 from ..filehelper.synchelper import has_been_updated, explore_folder
-
-
-if sys.version_info[0] == 2:
-    from codecs import open
-    FileNotFoundError = Exception
-    from StringIO import StringIO
-else:
-    from io import StringIO
 
 
 template_examples = """
@@ -69,6 +62,16 @@ def find_pdflatex(latex_path):
             return lat
         raise FileNotFoundError(
             "Unable to find pdflatex or xelatex in '{0}'".format(latex_path))
+    elif sys.platform.startswith("darwin"):
+        try:
+            err = run_cmd("/Library/TeX/texbin/xelatex --help", wait=True)[1]
+            if len(err) == 0:
+                return "/Library/TeX/texbin/xelatex"
+            else:
+                raise FileNotFoundError(
+                    "Unable to run xelatex\n{0}".format(err))
+        except Exception:
+            return "/Library/TeX/texbin/pdflatex"
     else:
         try:
             err = run_cmd("xelatex --help", wait=True)[1]

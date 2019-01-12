@@ -28,10 +28,6 @@ from src.pyquickhelper.sphinxext import TodoExt, TodoExtList
 from src.pyquickhelper.sphinxext.sphinx_todoext_extension import todoext_node, visit_todoext_node, depart_todoext_node
 
 
-if sys.version_info[0] == 2:
-    from codecs import open
-
-
 class TestTodoExtExtension(unittest.TestCase):
 
     def test_post_parse_sn_todoext(self):

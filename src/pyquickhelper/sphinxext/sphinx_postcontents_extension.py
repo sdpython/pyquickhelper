@@ -4,7 +4,6 @@
 @brief Defines a :epkg:`sphinx` extension which proposes a new version of ``.. contents::``
 which takes into account titles dynamically added.
 """
-import sys
 from docutils import nodes
 from docutils.parsers.rst import directives
 from sphinx.util import logging
@@ -216,11 +215,6 @@ def setup(app):
                  rst=(visit_postcontents_node, depart_postcontents_node))
 
     app.add_directive('postcontents', PostContentsDirective)
-    if sys.version_info[0] == 2:
-        # Sphinx does not accept unicode here
-        app.connect('doctree-read'.encode("ascii"), process_postcontents)
-        app.connect('doctree-resolved'.encode("ascii"), transform_postcontents)
-    else:
-        app.connect('doctree-read', process_postcontents)
-        app.connect('doctree-resolved', transform_postcontents)
+    app.connect('doctree-read', process_postcontents)
+    app.connect('doctree-resolved', transform_postcontents)
     return {'version': sphinx.__display_version__, 'parallel_read_safe': True}

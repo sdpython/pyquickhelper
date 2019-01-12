@@ -35,10 +35,6 @@ class TestCacheUrls(unittest.TestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
-        if sys.version_info[0] == 2:
-            # notebooks are not converted into python 2.7, so not tested
-            return
-
         temp = get_temp_folder(__file__, "temp_cache_urls")
 
         fnb = os.path.normpath(os.path.join(

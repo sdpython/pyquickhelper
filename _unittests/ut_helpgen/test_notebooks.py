@@ -27,10 +27,6 @@ from src.pyquickhelper.pycode import get_temp_folder
 from src.pyquickhelper.pycode import is_travis_or_appveyor, ExtTestCase
 
 
-if sys.version_info[0] == 2:
-    from codecs import open
-
-
 class TestNotebookConversion(ExtTestCase):
 
     def test_src_import(self):
@@ -50,10 +46,6 @@ class TestNotebookConversion(ExtTestCase):
         self.a_te_st_notebook(2)
 
     def a_te_st_notebook(self, iteration):
-
-        if sys.version_info[0] == 2:
-            return
-
         path = os.path.abspath(os.path.split(__file__)[0])
         fold = os.path.normpath(
             os.path.join(
