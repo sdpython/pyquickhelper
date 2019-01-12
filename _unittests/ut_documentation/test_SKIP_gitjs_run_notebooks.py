@@ -55,6 +55,8 @@ class TestSKIPRunNotebooks(unittest.TestCase):
         self.assertTrue(len(keepnote) > 0)
 
         def valid(cell):
+            if "git log --log-size --abbrev --follow" in cell:
+                return False
             return True
 
         import jyquickhelper
