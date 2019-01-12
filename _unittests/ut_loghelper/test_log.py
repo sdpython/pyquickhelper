@@ -29,9 +29,10 @@ except ImportError:
 from src.pyquickhelper.loghelper.flog import fLOG, load_content_file_with_encoding, get_prefix
 from src.pyquickhelper.loghelper.run_cmd import run_cmd, run_script
 from src.pyquickhelper.loghelper.flog import removedirs, unzip, guess_type_list, GetLogFile, get_relative_path
+from src.pyquickhelper.pycode import ExtTestCase
 
 
-class TestLog (unittest.TestCase):
+class TestLog(ExtTestCase):
 
     def test_random_curve(self):
         fold = os.path.abspath(os.path.split(__file__)[0])
