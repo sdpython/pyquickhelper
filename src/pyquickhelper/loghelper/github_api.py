@@ -14,8 +14,8 @@ class GitHubApiException(Exception):
         """
         Merges everything into a string.
         """
-        Exception.__init__(self, "response={0}\nurl={1}\ntext={2}".format(
-            response, url, response.text))
+        Exception.__init__(self, "response={0}\nurl={1}\ntext={2}\nstatus={3}".format(
+            response, url, response.text, response.status_code))
 
 
 def call_github_api(owner, repo, ask, auth=None, headers=None):
