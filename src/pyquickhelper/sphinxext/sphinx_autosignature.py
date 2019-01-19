@@ -41,10 +41,11 @@ def enumerate_extract_signature(doc, max_args=20):
 
     It is limited to 20 parameters.
     """
-    el = "((?P<p%d>[*a-zA-Z_]+) *(?P<a%d>: *[a-zA-Z_.]+)? *(?P<d%d>= *[^ ]+?)?)"
+    el = "((?P<p%d>[*a-zA-Z_][*a-zA-Z_0-9]*) *(?P<a%d>: *[a-zA-Z_][\\[\\]0-9a-zA-Z_.]+)? *(?P<d%d>= *[^ ]+?)?)"
     els = [el % (i, i, i) for i in range(0, max_args)]
     par = els[0] + "?" + "".join(["( *, *" + e + ")?" for e in els[1:]])
-    exp = "(?P<name>[a-zA-Z_]+) *[(] *(?P<sig>{0}) *[)]".format(par)
+    exp = "(?P<name>[a-zA-Z_][0-9a-zA-Z_]*) *[(] *(?P<sig>{0}) *[)]".format(
+        par)
     reg = re.compile(exp)
     for func in reg.finditer(doc.replace("\n", " ")):
         yield func

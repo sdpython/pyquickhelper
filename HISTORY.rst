@@ -5,15 +5,18 @@
 History
 =======
 
-current - 2019-01-08 - 0.00Mb
+current - 2019-01-19 - 0.00Mb
 =============================
 
-* `227`: makes more functions available from command line (2019-01-08)
-* `226`: fix command line name when created from a function (2019-01-08)
+* `230`: autosignature does not work for C++ function in cpyquickhelper (2019-01-19)
+* `229`: remove specific code for python2 (2019-01-12)
+* `228`: fix missing jpg images in documentation (2019-01-09)
 
 1.8.2924 - 2019-01-08 - 2.03Mb
 ==============================
 
+* `227`: makes more functions available from command line (2019-01-08)
+* `226`: fix command line name when created from a function (2019-01-08)
 * `225`: add class BufferedPrint to retrieve logging through fLOG (2019-01-07)
 * `224`: add process_notebooks in the list of function available through the command line (2019-01-06)
 * `223`: jenkins script: distringuish between script and linux instruction if (2019-01-04)

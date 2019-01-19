@@ -68,7 +68,8 @@ def import_object(docname, kind, use_init=True, fLOG=None) -> Tuple[object, str]
         fLOG(
             "[import_object] imported '{0}' --> '{1}'".format(docname, str(myfunc)))
     if kind == "function":
-        if not inspect.isfunction(myfunc) and 'built-in function' not in str(myfunc):
+        if not inspect.isfunction(myfunc) and 'built-in function' not in str(myfunc) and \
+                'built-in method' not in str(myfunc):
             # inspect.isfunction fails for C functions.
             raise TypeError("'{0}' is not a function".format(docname))
         name = spl[-1]
