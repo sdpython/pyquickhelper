@@ -8,6 +8,7 @@ Some links to look:
 * `Calling pip programmatically <http://blog.ducky.io/python/2013/08/22/calling-pip-programmatically/>`_
 """
 import sys
+import pip.__main__ as pip_main
 
 
 class PQPipError (Exception):
