@@ -209,7 +209,7 @@ class OverrideDocFieldTransformer:
                 try:
                     signature = inspect.signature(myfunc)
                     parameters = signature.parameters
-                except TypeError:
+                except (TypeError, ValueError):
                     logger = logging.getLogger("docassert")
                     logger.warning(
                         "[docassert] unable to get signature of '{0}'.".format(docs))
