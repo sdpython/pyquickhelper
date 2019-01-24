@@ -53,7 +53,7 @@ class TestAutoSignatureBug(ExtTestCase):
         this = os.path.abspath(os.path.dirname(__file__))
         data = os.path.join(this, "datadoc")
         sys.path.append(data)
-        from cpyquickhelper.numbers.cbenchmark import vector_dot_product16  # pylint: disable=E0611
+        from cpyquickhelper.numbers.cbenchmark import vector_dot_product16  # pylint: disable=E0611,E0401
         self.assertIn("Computes a dot product in C++",
                       vector_dot_product16.__doc__)
 
