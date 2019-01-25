@@ -457,6 +457,7 @@ def add_missing_development_version(names, root, hide=False):
 
     paths = []
     for name in names:
+        exc = None
         try:
             if hide:
                 with warnings.catch_warnings(record=True):
@@ -466,11 +467,11 @@ def add_missing_development_version(names, root, hide=False):
             continue
         except ImportError as e:
             # it requires a path
-            pass
+            exc = e
 
         if name not in found:
             raise FileNotFoundError("Unable to find a subfolder '{0}' in '{1}' (py27={3})\nFOUND:\n{2}\nexc={4}".format(
-                name, newroot, "\n".join(dirs), py27, e))
+                name, newroot, "\n".join(dirs), py27, exc))
 
         if py27:
             this = os.path.join(newroot, name, "dist_module27", "src")
