@@ -227,14 +227,14 @@ class BlogPost:
     @property
     def BlogBackground(self):
         """
-        Return the blog background or None if not defined.
+        Returns the blog background or None if not defined.
         """
         return self.blog_ground if hasattr(self, "blog_ground") else None
 
     @property
     def Author(self):
         """
-        Return the author or None if not defined.
+        Returns the author or None if not defined.
         """
         return self.author if hasattr(self, "author") else None
 
@@ -248,7 +248,7 @@ class BlogPost:
     @property
     def Year(self):
         """
-        Return the year, we assume self.date is a string ``YYYY-MM-DD``.
+        Returns the year, we assume ``self.date`` is a string like ``YYYY-MM-DD``.
         """
         return self.date[:4]
 
@@ -341,8 +341,8 @@ class BlogPost:
 
     def _update_link(self, row):
         """
-        changes a link to an image if the page contains one into
-        *year/img.png*
+        Changes a link to an image if the page contains one into
+        *year/img.png*.
 
         @param      row     row
         @return             new row

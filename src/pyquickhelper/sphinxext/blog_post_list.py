@@ -114,7 +114,7 @@ class BlogPostList:
 
     def get_keywords(self):
         """
-        Extract the categories.
+        Extracts the categories.
 
         @return     list of sorted keywords
         """
@@ -162,7 +162,7 @@ class BlogPostList:
 
     def get_rst_links_up(self):
         """
-        Builds the rst links to months or categories to displays
+        Builds the :epkg:`rst` links to months or categories to displays
         at the beginning of the aggregated pages.
 
         @return         list of rst_links
@@ -186,7 +186,7 @@ class BlogPostList:
 
     def get_rst_links_down(self):
         """
-        Builds the rst links to months or categories to displays
+        Builds the :epkg:`rst` links to months or categories to displays
         the bottom of the aggregated pages.
 
         @return         list of rst_links
@@ -311,7 +311,7 @@ class BlogPostList:
             for item in self:
                 f.write(
                     "    {0} - {1} <{2}/{3}>\n".format(item.Date, item.Title, item.Date[:4],
-                                                       os.path.splitext(os.path.split(item.FileName)[-1])[0]))
+                                                      os.path.splitext(os.path.split(item.FileName)[-1])[0]))
             f.write("\n\n")
             f.write(".. toctree::\n")
             f.write("    :hidden:\n")
@@ -491,22 +491,22 @@ class BlogPostList:
     #################
 
     @staticmethod
-    def divide_list(l, division):
+    def divide_list(ld, division):
         """
         Divides a list into buckets of *division* items.
 
-        @param      l           list of to divide
+        @param      ld          list of to divide
         @param      division    bucket size
         @return                 list fo buckets
         """
         buckets = []
         current = []
-        for obj in l:
+        for obj in ld:
             if len(current) < division:
                 current.append(obj)
             else:
                 buckets.append(current)
-                current = []
+                current = [obj]
         if len(current) > 0:
             buckets.append(current)
         return buckets
