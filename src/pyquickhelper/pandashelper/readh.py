@@ -51,7 +51,7 @@ def read_csv(filepath_or_buffer, compression=None, fvalid=None, **params):
                     try:
                         df = pandas.read_csv(
                             st, compression=compression, **params)
-                    except pandas.parser.CParserError as e:
+                    except pandas.errors.ParserError as e:
                         lines = text.split("\n")
                         end = min(len(lines), 5)
                         mes = "Parsing errors in {0}, first lines:\n{1}".format(
