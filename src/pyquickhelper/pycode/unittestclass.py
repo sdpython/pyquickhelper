@@ -314,7 +314,8 @@ class ExtTestCase(unittest.TestCase):
             else:
                 if a[key] != b[key]:
                     rows.append(
-                        "** Value != for key '{0}': != {1}".format(key, [a[key], "***", b[key]]))
+                        "** Value != for key '{0}': != id({1}) != id({2})\n==1 {3}\n==2 {4}".format(
+                            key, id(a[key]), id(b[key]), a[key], b[key]))
         for key in sorted(a):
             if key not in b:
                 rows.append("** Removed key '{0}' in a".format(key))
