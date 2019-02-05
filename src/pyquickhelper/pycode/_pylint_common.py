@@ -143,6 +143,7 @@ def _private_test_style_src(fLOG, run_lint, verbose=False, pattern=".*[.]py$"):
                      "cli_helper.py:233: R1714",
                      "__init__.py:127: W0611: Unused import bokeh",
                      "__init__.py:106: W0611: Unused matplotlib.pyplot",
+                     "R1720",
                      ])
 
 
@@ -198,4 +199,5 @@ def _private_test_style_test(fLOG, run_lint, verbose=False, pattern=".*[.]py$"):
                      "test_yaml.py:351",
                      "test_downloadlink_extension.py:10: E0401: Unable to import 'distutils.version'",
                      "test_downloadlink_extension.py:10: E0611: No name 'version' in module 'distutils'",
+                     "R1720",
                      ])
