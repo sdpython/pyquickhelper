@@ -124,8 +124,7 @@ class TestYaml(unittest.TestCase):
         if len(doc) != 1:
             raise Exception("len(doc)={0}\n{1}".format(
                 len(doc), "\n".join(str(_) for _ in doc)))
-        else:
-            fLOG("**", doc)
+        fLOG("**", doc)
 
     def test_jconvert_sequence_into_batch_file(self):
         fLOG(
