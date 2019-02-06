@@ -309,7 +309,7 @@ class BlogPostList:
             f.write(".. tocdelay::\n")
             f.write("\n")
             for item in self:
-                name_file = os.path.splitext(os.path.split(item.FileName)[-1])[0])
+                name_file = os.path.splitext(os.path.split(item.FileName)[-1])[0]
                 f.write("    {0} - {1} <{2}/{3}>\n".format(
                     item.Date, item.Title, item.Date[:4], name_file))
             f.write("\n\n")
