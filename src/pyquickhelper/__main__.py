@@ -20,7 +20,7 @@ def main(args, fLOG=print):
         from .cli.encryption_file_cli import encrypt_file, decrypt_file
         from .cli.encryption_cli import encrypt, decrypt
         from .pandashelper import df2rst
-        from .pycode import clean_files
+        from .pycode import clean_files, run_test_function
         from .cli import cli_main_helper
         from .helpgen import process_notebooks
         from .filehelper import create_visual_diff_through_html_files
@@ -30,7 +30,7 @@ def main(args, fLOG=print):
         from pyquickhelper.cli.encryption_file_cli import encrypt_file, decrypt_file
         from pyquickhelper.cli.encryption_cli import encrypt, decrypt
         from pyquickhelper.pandashelper import df2rst
-        from pyquickhelper.pycode import clean_files
+        from pyquickhelper.pycode import clean_files, run_test_function
         from pyquickhelper.cli import cli_main_helper
         from pyquickhelper.helpgen import process_notebooks
         from pyquickhelper.filehelper import create_visual_diff_through_html_files
@@ -41,7 +41,7 @@ def main(args, fLOG=print):
                 decrypt=decrypt, df2rst=df2rst, clean_files=clean_files,
                 process_notebooks=process_notebooks,
                 visual_diff=create_visual_diff_through_html_files,
-                ls=explore_folder)
+                ls=explore_folder, run_test_function=run_test_function)
     return cli_main_helper(fcts, args=args, fLOG=fLOG)
 
 

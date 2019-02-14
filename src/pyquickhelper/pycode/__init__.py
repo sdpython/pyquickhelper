@@ -16,6 +16,7 @@ from .trace_execution import get_call_stack
 from .unittestclass import ExtTestCase
 from .unittestclass import skipif_appveyor, skipif_travis, skipif_circleci, skipif_linux, skipif_vless, skipif_azure_macosx
 from .unittestclass import skipif_azure, skipif_azure_linux
+from .pytest_helper import run_test_function, TestExecutionError
 from .utils_tests import main_wrapper_tests
 from .utils_tests_helper import get_temp_folder, check_pep8, add_missing_development_version
 from .venv_helper import create_virtual_env, run_venv_script, run_base_script

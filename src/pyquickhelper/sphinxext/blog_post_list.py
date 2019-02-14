@@ -309,7 +309,8 @@ class BlogPostList:
             f.write(".. tocdelay::\n")
             f.write("\n")
             for item in self:
-                name_file = os.path.splitext(os.path.split(item.FileName)[-1])[0]
+                name_file = os.path.splitext(
+                    os.path.split(item.FileName)[-1])[0]
                 f.write("    {0} - {1} <{2}/{3}>\n".format(
                     item.Date, item.Title, item.Date[:4], name_file))
             f.write("\n\n")
@@ -408,12 +409,11 @@ class BlogPostList:
         res = []
         for cat in cats:
             posts = [_ for _ in self if cat in _.Categories]
+            url_cat = BlogPostList.category2url(cat)
             add = BlogPostList.write_aggregated_post_list(folder=folder,
                                                           lp=posts,
                                                           division=division,
-                                                          prefix="cat-" +
-                                                          BlogPostList.category2url(
-                                                              cat),
+                                                          prefix="cat-" + url_cat,
                                                           encoding=self._encoding,
                                                           rst_links_up=rst_links_up,
                                                           rst_links_down=rst_links_down,
@@ -541,8 +541,8 @@ class BlogPostList:
             name = os.path.join(folder, "%s_%04d.rst" % (prefix, i))
             prev = "ap-%s-%d" % (prefix, i - 1) if i > 0 else None
             this = "ap-%s-%d" % (prefix, i)
-            next = "ap-%s-%d" % (prefix, i +
-                                 1) if i < len(buckets) - 1 else None
+            next = "ap-%s-%d" % (prefix, i + 1) \
+                   if i < len(buckets) - 1 else None
             content = BlogPostList.produce_aggregated_post_page(
                 name, b, this, prev, next,
                 rst_links_up=rst_links_up,

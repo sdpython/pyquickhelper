@@ -161,10 +161,10 @@ class EnhancedLaTeXTranslator(LaTeXTranslator):
             # The program should not necessarily be here.
             pass
 
-    def latex_image_length(self, width_str):
+    def latex_image_length(self, width_str, scale=100):
         # type: (nodes.Node) -> unicode
         try:
-            return rstdim_to_latexdim(width_str)
+            return rstdim_to_latexdim(width_str, scale)
         except ValueError:
             if width_str == 'auto':
                 pass

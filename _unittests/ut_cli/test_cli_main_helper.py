@@ -91,6 +91,12 @@ class TestCliMainHelper(ExtTestCase):
         self.assertIn(
             "ls [-h] [-f FOLDER] [-p PATTERN] [-n NEG_PATTERN]", res)
 
+        st = BufferedPrint()
+        main(args=["run_test_function", "--help"], fLOG=st.fprint)
+        res = str(st)
+        self.assertIn(
+            "run_test_function [-h] [-m MODULE] [-p PATTERN] [-s STOP_FIRST]", res)
+
     def test_main_epkg(self):
         st = BufferedPrint()
         main(args=["clean_files", "--help"], fLOG=st.fprint)
