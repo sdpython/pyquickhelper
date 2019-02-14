@@ -699,7 +699,7 @@ def post_process_latex(st, doall, info=None, latex_book=False, exc=True,
     # hyperref
     if doall and "%post_process_latex" not in st:
         st = "%post_process_latex\n" + st
-        reg = re.compile("hyperref[[]([a-zA-Z0-9]+)[]][{](.*?)[}]")
+        reg = re.compile("hyperref[\\[]([a-zA-Z0-9]+)[\\]][\\{](.*?)[\\}]")
         allhyp = reg.findall(st)
         sections = []
         for id, section in allhyp:

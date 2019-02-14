@@ -38,7 +38,7 @@ class TestNoteBooksBugSvg(ExtTestCase):
         """
         If the test fails, look into issue
         `216 <https://github.com/sdpython/pyquickhelper/issues/216>`_.
-        Avoid nbconvert==5.4.0.
+        Avoid nbconvert==5.4.0,==5.4.1.
         """
         fLOG(
             __file__,
