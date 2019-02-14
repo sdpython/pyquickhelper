@@ -172,6 +172,17 @@ class EnhancedLaTeXTranslator(LaTeXTranslator):
                 self.builder.logger.warning(
                     __('[EnhancedLaTeXTranslator] dimension unit %s is invalid. Ignored.'), width_str)
             return None
+        except TypeError:
+            # Sphinx <= 1.7
+            try:
+                return rstdim_to_latexdim(width_str)
+            except ValueError:
+                if width_str == 'auto':
+                    pass
+                else:
+                    self.builder.logger.warning(
+                        __('[EnhancedLaTeXTranslator] dimension unit %s is invalid. Ignored.'), width_str)
+                return None
 
     def visit_inheritance_diagram(self, node):
         pass
