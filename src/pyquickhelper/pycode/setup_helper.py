@@ -562,17 +562,26 @@ def get_folder(file_or_folder):
     return folder
 
 
-def write_version_for_setup(file_or_folder):
+def write_version_for_setup(file_or_folder, exc=False):
     """
     Extracts the version number,
     the function writes the files ``version.txt`` in this folder.
 
     @param      file_or_folder      file ``setup.py`` or folder which contains it
+    @param      exc                 raises an exception if cannot look into git folder
     @return                         version number
+
+    .. versionchanged:: 1.8
+        Parameter *exc* was added.
     """
     src = SourceRepository(commandline=True)
     ffolder = get_folder(file_or_folder)
-    version = src.version(ffolder)
+    try:
+        version = src.version(ffolder)
+    except Exception as e:
+        if exc:
+            raise e
+        return None
     if version in ["0", 0, None]:
         raise Exception("issue with version {0}".format(version))
 
