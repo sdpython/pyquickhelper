@@ -31,6 +31,7 @@ class TestCallSetupHook(unittest.TestCase):
         """for pylint"""
         self.assertTrue(src is not None)
 
+    @unittest.skipIf(sys.platform == "darwin", reason="skipping on Mac OS")
     def test_call_setup_hook_cmd(self):
         fLOG(
             __file__,
