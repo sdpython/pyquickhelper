@@ -1,9 +1,4 @@
 
-.. _l-README:
-
-README
-======
-
 .. image:: https://travis-ci.org/sdpython/pyquickhelper.svg?branch=master
     :target: https://travis-ci.org/sdpython/pyquickhelper
     :alt: Build status
@@ -48,11 +43,16 @@ README
     :target: http://www.xavierdupre.fr/app/pyquickhelper/helpsphinx/all_notebooks_coverage.html
     :alt: Notebook Coverage
 
-**Links:**
+.. _l-README:
 
-* `GitHub/pyquickhelper <https://github.com/sdpython/pyquickhelper>`_
-* `documentation <http://www.xavierdupre.fr/app/pyquickhelper/helpsphinx/index.html>`_
-* `Blog <http://www.xavierdupre.fr/app/pyquickhelper/helpsphinx/blog/main_0000.html#ap-main-0>`_
+pyquickhelper
+=============
+
+`pyquickhelper <http://www.xavierdupre.fr/app/pyquickhelper/helpsphinx/index.html>`_
+is used to automate the release of the documentation such as automating *Jenkins*,
+converting notebooks into many formats, extending *Sphinx* with custom
+extensions... It assumes the project is organized on the same template
+as this one.
 
 Functionalities
 ---------------
@@ -131,3 +131,11 @@ A sphinx extension to generate python documentation from a script:
 
         import sys
         print("sys.version_info=", str(sys.version_info))
+
+Links
+-----
+
+* `GitHub/pyquickhelper <https://github.com/sdpython/pyquickhelper>`_
+* `documentation <http://www.xavierdupre.fr/app/pyquickhelper/helpsphinx/index.html>`_
+* `Blog <http://www.xavierdupre.fr/app/pyquickhelper/helpsphinx/blog/main_0000.html#ap-main-0>`_
+
