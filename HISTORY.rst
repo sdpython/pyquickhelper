@@ -5,9 +5,11 @@
 History
 =======
 
-current - 2019-01-19 - 0.00Mb
+current - 2019-02-16 - 0.00Mb
 =============================
 
+* `233`: add a function to run all test function in a file (2019-02-14)
+* `232`: Missing blog posts between two pages (2019-01-28)
 * `230`: autosignature does not work for C++ function in cpyquickhelper (2019-01-19)
 * `229`: remove specific code for python2 (2019-01-12)
 * `228`: fix missing jpg images in documentation (2019-01-09)

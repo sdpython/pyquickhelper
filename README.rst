@@ -138,4 +138,3 @@ Links
 * `GitHub/pyquickhelper <https://github.com/sdpython/pyquickhelper>`_
 * `documentation <http://www.xavierdupre.fr/app/pyquickhelper/helpsphinx/index.html>`_
 * `Blog <http://www.xavierdupre.fr/app/pyquickhelper/helpsphinx/blog/main_0000.html#ap-main-0>`_
-
