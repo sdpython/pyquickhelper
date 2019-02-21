@@ -632,8 +632,8 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
         fLOG("     -pattern  '{0}'".format(nbneg_pattern))
         notebooks = explore_folder(notebook_dir, pattern=".*[.]ipynb", neg_pattern=nbneg_pattern,
                                    fullname=True, fLOG=fLOG)[1]
-        notebooks = [_ for _ in notebooks if "checkpoint" not in _ and
-                                             "/build/" not in _.replace("\\", "/")]
+        notebooks = [_ for _ in notebooks if "checkpoint" not in _
+                                             and "/build/" not in _.replace("\\", "/")]
         fLOG("     found {0} notebooks".format(len(notebooks)))
         if len(notebooks) > 0:
             fLOG("[generate_help_sphinx] **** notebooks", nbformats)
@@ -966,6 +966,25 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
                 mes = "Sphinx went through errors. Check if any of them is important.\nOUT:\n{0}\n[sphinxerror]-1\n{1}"
                 warnings.warn(mes.format(out, err), UserWarning)
         fLOG("[generate_help_sphinx] end run HTMLHELP")
+
+    #####################################
+    # we copy some file such as rss.xml
+    #####################################
+    fLOG("---- JENKINS BEGIN COPY RSS.XML ----")
+    tocopy = [os.path.join(docpath, "source", "blog", "rss.xml")]
+    for toco in tocopy:
+        if os.path.exists(toco):
+            fLOG("[generate_help_sphinx] copy '{}'".format(
+                os.path.split(toco)[-1]))
+            for build_path in build_paths:
+                dest = os.path.join(build_path, "_downloads")
+                if os.path.exists(dest):
+                    shutil.copy(toco, dest)
+        else:
+            fLOG("[generate_help_sphinx] not found '{}'".format(
+                os.path.split(toco)[-1]))
+
+    fLOG("---- JENKINS END COPY RSS.XML ----")
 
     #####################################
     # we copy the coverage files if it is missing

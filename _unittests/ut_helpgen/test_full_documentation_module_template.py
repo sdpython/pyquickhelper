@@ -281,7 +281,9 @@ class TestSphinxFullDocumentationModuleTemplate(unittest.TestCase):
                    os.path.join(root, "_doc", "sphinxdoc", "build", "html",
                                 "notebooks", "custom_notebooks.slides.html"),
                    os.path.join(root, "_doc", "sphinxdoc", "build", "html",
-                                "notebooks", "custom_notebooks.html")]
+                                "notebooks", "custom_notebooks.html"),
+                   os.path.join(root, "_doc", "sphinxdoc", "build", "html",
+                                "_downloads", "rss.xml")]
             for r in rev:
                 if not os.path.exists(r):
                     logs = os.path.join(temp, "log_custom_000.txt")
