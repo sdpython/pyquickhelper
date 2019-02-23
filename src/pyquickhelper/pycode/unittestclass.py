@@ -22,7 +22,22 @@ except ImportError:
 class ExtTestCase(unittest.TestCase):
     """
     Overwrites unit test class with additional testing functions.
+    Unless *setUp* is overwritten, warnings *FutureWarning* and
+    *PendingDeprecationWarning* are filtered out.
     """
+
+    def setUp(self):
+        """
+        Filters out *FutureWarning*, *PendingDeprecationWarning*.
+        """
+        warnings.simplefilter("ignore", (FutureWarning, PendingDeprecationWarning))
+
+    def tearDown(self):
+        """
+        Stops filtering out *FutureWarning*, *PendingDeprecationWarning*.
+        """
+        warnings.simplefilter("default", (FutureWarning, PendingDeprecationWarning))
+
     @staticmethod
     def _format_str(s):
         """
