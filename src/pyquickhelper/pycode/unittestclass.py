@@ -30,13 +30,15 @@ class ExtTestCase(unittest.TestCase):
         """
         Filters out *FutureWarning*, *PendingDeprecationWarning*.
         """
-        warnings.simplefilter("ignore", (FutureWarning, PendingDeprecationWarning))
+        warnings.simplefilter(
+            "ignore", (FutureWarning, PendingDeprecationWarning))
 
     def tearDown(self):
         """
         Stops filtering out *FutureWarning*, *PendingDeprecationWarning*.
         """
-        warnings.simplefilter("default", (FutureWarning, PendingDeprecationWarning))
+        warnings.simplefilter(
+            "default", (FutureWarning, PendingDeprecationWarning))
 
     @staticmethod
     def _format_str(s):

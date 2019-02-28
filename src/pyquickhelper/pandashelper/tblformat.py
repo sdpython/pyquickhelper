@@ -7,7 +7,8 @@ import warnings
 
 
 def df2rst(df, add_line=True, align="l", column_size=None, index=False,
-           list_table=False, title=None, header=True, sep=','):
+           list_table=False, title=None, header=True, sep=',',
+           number_format=None):
     """
     Builds a string in :epkg:`RST` format from a :epkg:`dataframe`.
 
@@ -20,6 +21,10 @@ def df2rst(df, add_line=True, align="l", column_size=None, index=False,
     @param      title           used only if *list_table* is True
     @param      header          add one header
     @param      sep             separator if *df* is a string and is a filename to load
+    @param      number_format   formats number in a specific way, if *number_format*
+                                is an integer, the pattern is replaced by
+                                ``{numpy.float64: '{:.2g}'}`` (if *number_format* is 2),
+                                see also :epkg:`pyformat.info`
     @return                     string
 
     If *list_table* is False, the format is the following.
@@ -53,10 +58,32 @@ def df2rst(df, add_line=True, align="l", column_size=None, index=False,
               - 2.99
               - anythings
             ...
+
+    .. versionchanged:: 1.8
+        Parameter *number_format* was added.
     """
     if isinstance(df, str):
         import pandas
         df = pandas.read_csv(df, encoding="utf-8", sep=sep)
+
+    if number_format is not None:
+        if isinstance(number_format, int):
+            number_format = "{:.%dg}" % number_format
+            import numpy
+            import pandas
+            typ1 = numpy.float64
+            _df = pandas.DataFrame({'f': [0.12]})
+            typ2 = list(_df.dtypes)[0]
+            number_format = {typ1: number_format, typ2: number_format}
+        df = df.copy()
+        for name, typ in zip(df.columns, df.dtypes):
+            if name in number_format:
+                pattern = number_format[name]
+                df[name] = df[name].apply(lambda x: pattern.format(x))
+            elif typ in number_format:
+                pattern = number_format[typ]
+                df[name] = df[name].apply(lambda x: pattern.format(x))
+
     if index:
         df = df.reset_index(drop=False).copy()
         ind = df.columns[0]

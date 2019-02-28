@@ -52,9 +52,7 @@ pyquickhelper documentation
 `wheel <http://www.xavierdupre.fr/site2013/index_code.html#pyquickhelper>`_,
 `travis <https://travis-ci.org/sdpython/pyquickhelper>`_,
 :ref:`l-README`,
-:ref:`blog <ap-main-0>`,
-:ref:`l-issues-todolist`,
-:ref:`l-completed-todolist`
+:ref:`blog <ap-main-0>`
 
 What is it?
 -----------

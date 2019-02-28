@@ -21,29 +21,24 @@ except ImportError:
         sys.path.append(path)
     import src
 
-from src.pyquickhelper.loghelper import fLOG
-from src.pyquickhelper.pandashelper import df2html
+from src.pyquickhelper.pycode import ExtTestCase
+from src.pyquickhelper.pandashelper import df2html, df2rst
 
 
-class TestPandasHelper_df2(unittest.TestCase):
+class TestPandasHelper_df2(ExtTestCase):
 
     def test_src_import(self):
         """for pylint"""
         self.assertTrue(src is not None)
 
     def test_df2(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
         data = os.path.join(os.path.abspath(os.path.dirname(__file__)), "data")
         mara = os.path.join(data, "marathon.txt")
         df = pandas.read_csv(
             mara, names=["city", "year", "time", "seconds"], sep="\t")
         conv = df2html(df)
-        assert conv.startswith("<table>")
-        assert conv.endswith("</table>\n")
+        self.assertStartsWith("<table>", conv)
+        self.assertEndsWith("</table>\n", conv)
 
 
 if __name__ == "__main__":

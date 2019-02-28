@@ -21,22 +21,17 @@ except ImportError:
         sys.path.append(path)
     import src
 
-from src.pyquickhelper.loghelper import fLOG
+from src.pyquickhelper.pycode import ExtTestCase
 from src.pyquickhelper.pandashelper import df2rst
 
 
-class TestPandasRst(unittest.TestCase):
+class TestPandasRst(ExtTestCase):
 
     def test_src_import(self):
         """for pylint"""
         self.assertTrue(src is not None)
 
     def test_pandas_rst(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
         df = pandas.DataFrame([{"A": "x", "AA": "xx", "AAA": "xxx"},
                                {"AA": "xxxxxxx", "AAA": "xxx"}])
         rst = df2rst(df)
@@ -51,11 +46,6 @@ class TestPandasRst(unittest.TestCase):
         self.assertEqual(rst, exp)
 
     def test_pandas_rst_right(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
         df = pandas.DataFrame([{"A": "x", "AA": "xx", "AAA": "xxx"},
                                {"AA": "xxxxxxx", "AAA": "xxx"}])
         rst = df2rst(df, align="r")
@@ -81,11 +71,6 @@ class TestPandasRst(unittest.TestCase):
         self.assertEqual(rst, exp)
 
     def test_pandas_rst_size(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
         df = pandas.DataFrame([{"A": "x", "AA": "xx", "AAA": "xxx"},
                                {"AA": "xxxxxxx", "AAA": "xxx"}])
         rst = df2rst(df, column_size=[1, 1, 2])
@@ -100,11 +85,6 @@ class TestPandasRst(unittest.TestCase):
         self.assertEqual(rst, exp)
 
     def test_pandas_rst_size_table(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
         df = pandas.DataFrame([{"A": "x", "AA": "xx", "AAA": "xxx"},
                                {"AA": "xxxxxxx", "AAA": "xxx"}])
         rst = df2rst(df, column_size=[1, 1, 2], list_table=True)
@@ -126,11 +106,6 @@ class TestPandasRst(unittest.TestCase):
         self.assertEqual(rst.strip("\n "), exp.strip("\n "))
 
     def test_pandas_rst_size_table_title(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
         df = pandas.DataFrame([{"A": "x", "AA": "xx", "AAA": "xxx"},
                                {"AA": "xxxxxxx", "AAA": "xxx"}])
         rst = df2rst(df, column_size=[1, 1, 2],
@@ -153,11 +128,6 @@ class TestPandasRst(unittest.TestCase):
         self.assertEqual(rst.strip("\n "), exp.strip("\n "))
 
     def test_pandas_rst_size_table_auto(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
         df = pandas.DataFrame([{"A": "x", "AA": "xx", "AAA": "xxx"},
                                {"AA": "xxxxxxx", "AAA": "xxx"}])
         rst = df2rst(df, list_table=True)
@@ -179,11 +149,6 @@ class TestPandasRst(unittest.TestCase):
         self.assertEqual(rst.strip("\n "), exp.strip("\n "))
 
     def test_pandas_rst_size_table_noheader(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
         df = pandas.DataFrame([{"A": "x", "AA": "xx", "AAA": "xxx"},
                                {"AA": "xxxxxxx", "AAA": "xxx"}])
         rst = df2rst(df, list_table=True, header=False)
@@ -197,6 +162,24 @@ class TestPandasRst(unittest.TestCase):
                         * -
                           - xxxxxxx
                           - xxx
+                    """.replace("                    ", "")
+        self.assertEqual(rst.strip("\n "), exp.strip("\n "))
+
+    def test_pandas_rst_size_table_number_format(self):
+        df = pandas.DataFrame([{"A": 2.12345678, "AA": 3.12345678,
+                                "AAA": 4.12345678},
+                               {"AA": 2.12345678e10, "AAA": 2.12345678e-10}])
+        rst = df2rst(df, list_table=True, header=False, number_format=3)
+        exp = """
+                    .. list-table::
+                        :widths: auto
+
+                        * - 2.12
+                          - 3.12
+                          - 4.12
+                        * - nan
+                          - 2.12e+10
+                          - 2.12e-10
                     """.replace("                    ", "")
         self.assertEqual(rst.strip("\n "), exp.strip("\n "))
 
