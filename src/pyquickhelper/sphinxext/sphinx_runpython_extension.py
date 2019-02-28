@@ -348,6 +348,10 @@ class RunPythonDirective(Directive):
     hide the source and a couple of other options.
     Option *toggle* can hide or unhide the piece of code
     or/and its output.
+    The directive also adds local variables such as
+    ``__WD__`` which contains the path to the documentation
+    which contains the directive. It is useful to load additional
+    files ``os.path.join(__WD__, ...)``.
 
     .. runpython::
         :toggle: out
