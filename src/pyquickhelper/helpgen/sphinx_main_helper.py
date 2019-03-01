@@ -144,14 +144,16 @@ def produce_code_graph_changes(df):
             xl = __XL__
             plt.close('all')
             plt.style.use('ggplot')
-            fig,ax = plt.subplots(nrows=1,ncols=1,figsize=(10,4))
-            ax.bar( x,y )
+            fig, ax = plt.subplots(nrows=1, ncols=1, figsize=(10, 4))
+            ax.bar(x, y)
             tig = ax.get_xticks()
-            labs = [ ]
+            labs = []
             for t in tig:
-                if t in x: labs.append(xl[x.index(t)])
-                else: labs.append("")
-            ax.set_xticklabels( labs )
+                if t in x:
+                    labs.append(xl[x.index(t)])
+                else:
+                    labs.append("")
+            ax.set_xticklabels(labs)
             ax.grid(True)
             ax.set_title("commits")
             plt.show()

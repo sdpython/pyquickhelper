@@ -40,7 +40,8 @@ def clean_exts(folder=".", fLOG=print, exts=None, fclean=None):
     return rem
 
 
-def clean_files(folder=".", posreg='.*', negreg=".*[.]git/.*", op="CR", fLOG=print):
+def clean_files(folder=".", posreg='.*[.]((py)|(rst))$',
+                negreg=".*[.]git/.*", op="CR", fLOG=print):
     """
     Cleans ``\\r`` in files a folder and subfolders with a given extensions.
     Backslashes are replaces by ``/``. The regular expressions

@@ -246,7 +246,8 @@ class MockSphinxApp:
         self.app.disconnect_env_collector(clname)
 
     @staticmethod
-    def create(writer="html", directives=None, confoverrides=None, new_extensions=None, fLOG=None):
+    def create(writer="html", directives=None, confoverrides=None,
+               new_extensions=None, fLOG=None):
         """
         Creates a @see cl MockSphinxApp for :epkg:`Sphinx`.
 
@@ -269,7 +270,8 @@ class MockSphinxApp:
         if confoverrides is None:
             confoverrides = {}
         if "extensions" not in confoverrides:
-            confoverrides["extensions"] = get_default_extensions()
+            confoverrides["extensions"] = get_default_extensions(
+                load_bokeh=False)
 
         if writer in ("sphinx", "custom", "HTMLWriterWithCustomDirectives", "html"):
             app = _CustomSphinx(srcdir=None, confdir=None, outdir=None, doctreedir=None,

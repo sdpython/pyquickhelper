@@ -90,7 +90,8 @@ class CustomSphinxApp(Sphinx):
         if 'extensions' not in confoverrides:
             if extensions == 'all':
                 from ..sphinxext import get_default_extensions, get_default_standard_extensions
-                exts = get_default_extensions() + get_default_standard_extensions()
+                exts = get_default_extensions(load_bokeh=False)
+                exts += get_default_standard_extensions()
                 skip = {'sphinx.ext.extlinks'}
                 exts = [_ for _ in exts if _ not in skip]
                 if buildername == "rst":

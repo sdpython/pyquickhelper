@@ -14,7 +14,8 @@ from docutils.core import publish_programmatically
 class BlogPostParseError(Exception):
 
     """
-    exceptions when a error comes after a blogpost was parsed
+    Exception raised when a error comes after
+    a blogpost was parsed.
     """
     pass
 
@@ -22,7 +23,7 @@ class BlogPostParseError(Exception):
 class BlogPost:
 
     """
-    defines a blog post,
+    Defines a blog post.
     """
 
     def __init__(self, filename, encoding='utf-8-sig', raise_exception=False, extensions=None):
@@ -79,7 +80,8 @@ class BlogPost:
             if extensions is None:
                 # To avoid circular references.
                 from . import get_default_extensions
-                extensions = get_default_extensions()
+                # By default, we do not load bokeh extension (slow).
+                extensions = get_default_extensions(load_bokeh=False)
             overrides["extensions"] = extensions
 
         from ..helpgen.sphinxm_mock_app import MockSphinxApp
