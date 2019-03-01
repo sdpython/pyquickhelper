@@ -44,6 +44,7 @@ sphinxcontrib-imagesvg
 sphinxcontrib-jsdemo
 sphinxjp.themes.sphinxjp
 tkinterquickhelper
+tornado<6.0
 tqdm
 unify
 virtualenv
