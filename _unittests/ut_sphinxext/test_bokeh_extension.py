@@ -66,7 +66,8 @@ class TestBokehExtension(unittest.TestCase):
 
         html = rst2html(content,  # fLOG=fLOG,
                         writer="html", keep_warnings=True,
-                        directives=None, layout="sphinx")
+                        directives=None, layout="sphinx",
+                        load_bokeh=True)
 
         t1 = "this code should appear"
         if t1 not in html:

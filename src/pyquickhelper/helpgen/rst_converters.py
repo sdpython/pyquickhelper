@@ -86,7 +86,7 @@ def rst2html(s, fLOG=noLOG, writer="html", keep_warnings=False,
              layout='docutils', document_name="<<string>>",
              external_docnames=None, filter_nodes=None,
              new_extensions=None, update_builder=None,
-             ret_doctree=False, **options):
+             ret_doctree=False, load_bokeh=False, **options):
     """
     Converts a string from :epkg:`RST`
     into :epkg:`HTML` format or transformed :epkg:`RST`.
@@ -115,6 +115,8 @@ def rst2html(s, fLOG=noLOG, writer="html", keep_warnings=False,
     @param      new_extensions      additional extension to setup
     @param      update_builder      update the builder after it is instantiated
     @param      ret_doctree         returns the doctree
+    @param      load_bokeh          load :epkg:`bokeh` extensions,
+                                    disabled by default as it takes a few seconds
     @param      options             used to overwrite configuration variables
     @return                         HTML format
 
@@ -238,7 +240,7 @@ def rst2html(s, fLOG=noLOG, writer="html", keep_warnings=False,
     .. versionchanged:: 1.8
         New nodes are now optional in *directives*.
         Markdown format was added.
-        Parameter *ret_doctree* was added.
+        Parameters *ret_doctree*, *load_bokeh* were added.
     """
     if 'html_theme' not in options:
         options['html_theme'] = 'basic'
@@ -250,18 +252,21 @@ def rst2html(s, fLOG=noLOG, writer="html", keep_warnings=False,
         defopt['latex_documents'] = latex_documents
 
     if writer in ["custom", "sphinx", "HTMLWriterWithCustomDirectives", "html"]:
-        mockapp, writer, title_names = MockSphinxApp.create("sphinx", directives,
-                                                            confoverrides=defopt, new_extensions=new_extensions, fLOG=fLOG)
+        mockapp, writer, title_names = MockSphinxApp.create("sphinx", directives, confoverrides=defopt,
+                                                            new_extensions=new_extensions,
+                                                            load_bokeh=load_bokeh, fLOG=fLOG)
         writer_name = "HTMLWriterWithCustomDirectives"
     elif writer in ("rst", "md", "latex", "elatex", 'text', 'doctree'):
         writer_name = writer
-        mockapp, writer, title_names = MockSphinxApp.create(writer, directives,
-                                                            confoverrides=defopt, new_extensions=new_extensions, fLOG=fLOG)
+        mockapp, writer, title_names = MockSphinxApp.create(writer, directives, confoverrides=defopt,
+                                                            new_extensions=new_extensions,
+                                                            load_bokeh=load_bokeh, fLOG=fLOG)
     elif isinstance(writer, tuple):
         # We extect something like ("builder_name", builder_class)
         writer_name = writer
-        mockapp, writer, title_names = MockSphinxApp.create(writer, directives,
-                                                            confoverrides=defopt, new_extensions=new_extensions, fLOG=fLOG)
+        mockapp, writer, title_names = MockSphinxApp.create(writer, directives, confoverrides=defopt,
+                                                            new_extensions=new_extensions,
+                                                            load_bokeh=load_bokeh, fLOG=fLOG)
     else:
         raise ValueError(
             "Unexpected writer '{0}', should be 'rst' or 'html' or 'md' or 'elatex' or 'text'.".format(writer))

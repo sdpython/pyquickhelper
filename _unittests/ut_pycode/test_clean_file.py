@@ -56,7 +56,7 @@ class TestCleanFile(ExtTestCase):
         with open(name2, "rb") as f:
             c2exp = f.read()
         folder = temp
-        res = clean_files(folder, fLOG=fLOG)
+        res = clean_files(folder, fLOG=fLOG, posreg='.*')
         self.assertEqual(len(res), 1)
         self.assertEqual(res[0], "cool.txt")
         with open(name1, "r") as f:

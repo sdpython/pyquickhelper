@@ -800,7 +800,7 @@ def produces_indexes(store_obj, indexes, fexclude_index, titles=None,
         tbl = DataFrame(
             columns=["_", k, "class parent", "truncated documentation"], data=values)
         if len(tbl.columns) >= 2:
-            tbl = tbl[tbl.columns[1:]]
+            tbl = tbl[tbl.columns[1:]]  # pylint: disable=E1136
 
         if len(tbl) > 0:
             maxi = max([len(_) for _ in tbl[k]])

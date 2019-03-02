@@ -74,7 +74,7 @@ from ..sphinxext.sphinx_md_builder import setup as setup_md
 from ..sphinxext.sphinx_rst_builder import setup as setup_rst
 
 
-def get_default_extensions(load_bokeh):
+def get_default_extensions(load_bokeh=False):
     """
     Returns a list of default extensions.
 
@@ -105,7 +105,7 @@ def get_default_extensions(load_bokeh):
                 warnings.simplefilter("error", UserWarning)
                 matplotlib.use('Agg')
         except UserWarning:
-            import matplotlib.pyplot as plt
+            import matplotlib.pyplot as plt  # pylint: disable=W0611
             switch_backend("Agg")
 
     default_setups = [setup_toctree,
@@ -127,7 +127,7 @@ def get_default_extensions(load_bokeh):
 
     if load_bokeh:
         try:
-            import bokeh
+            import bokeh  # pylint: disable=W0611
             from ..sphinxext.bokeh.bokeh_plot import setup as setup_bokeh
             default_setups.append(setup_bokeh)
         except ImportError:
