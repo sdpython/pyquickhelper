@@ -253,10 +253,12 @@ def _process_notebooks_in(notebooks, outfold, build, latex_path=None, pandoc_pat
     for :epkg:`pdf` and :epkg:`docx`. They could be downloaded first
     and replaced by local files.
 
-    :epkg:`nbconverts` introduced a commit which breaks
-    the conversion of notebooks in latex if they have
-    a cell outputting *svg*
-    (see `PR 910 <https://github.com/jupyter/nbconvert/pull/910>`_).
+    .. note::
+
+        :epkg:`nbconvert` introduced a commit which breaks
+        the conversion of notebooks in latex if they have
+        a cell outputting *svg*
+        (see `PR 910 <https://github.com/jupyter/nbconvert/pull/910>`_).
 
     .. versionchanged:: 1.7
         Change default value of *remove_unicode_latex* to False.
