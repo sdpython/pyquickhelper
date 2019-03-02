@@ -246,7 +246,8 @@ if not r:
             "metakernel",
             "multi_key_dict",
             # see https://github.com/sdpython/pyquickhelper/issues/216
-            "nbconvert @ git+https://github.com/sdpython/nbconvert.git@fixes",
+            # "nbconvert @ git+https://github.com/sdpython/nbconvert.git@fixes",
+            "nbconvert",
             "nbformat",
             "nbpresent",
             "notebook>=4.2.0",
