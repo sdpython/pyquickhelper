@@ -46,8 +46,8 @@ script:
   - { CMD: "python -u setup.py unittests -e \".*pylint.*\"", NAME: "UT_SKIP_PYLINT" }
   - if [ ${VERSION} == "3.7" and ${DIST} == "std" ]
       then 
-        --CMD=python -u setup.py build_sphinx;
-        --NAME=DOC;
+        --CMD=python -u setup.py build_sphinx;;
+        --NAME=DOC;;
       fi
 
 # To run after the script.

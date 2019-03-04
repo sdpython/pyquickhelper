@@ -133,11 +133,24 @@ def interpret_instruction(inst, variables=None):
 
     Example of a statement::
 
-        if [ ${PYTHON} == "C:\\\\Python370_x64" ] then python setup.py build_sphinx fi
+        - if [ ${PYTHON} == "C:\\\\Python370_x64" ] then python setup.py build_sphinx fi
 
+    Another example::
+
+        - if [ ${VERSION} == "3.7" and ${DIST} == "std" ]
+          then
+            --CMD=$PYINT -u scikit-learn/bench_plot_polynomial_features_partial_fit.py;;
+            --NAME=SKL_POLYF_PF;;
+          fi
+
+    In this second syntax, lines must end with ``;;``.
     If an instruction cannot be interpreted, it is left
     left unchanged as the function assumes it can only be solved
     in a bash script.
+
+    .. versionchanged:: 1.8
+        Switch to ``;;`` instead of ``;`` as a instruction separator
+        for conditional instructions.
     """
     if isinstance(inst, list):
         res = [interpret_instruction(_, variables) for _ in inst]
@@ -166,7 +179,7 @@ def interpret_instruction(inst, variables=None):
             return None if g is None else interpret_instruction(g, variables)
         elif inst.startswith('--'):
             # one format like --CMD=...; --NAME==...;
-            exp = re.compile("--([a-zA-Z]+?)=(.+?);")
+            exp = re.compile("--([a-zA-Z]+?)=(.+?);;")
             find = exp.findall(inst)
             if find:
                 inst = {k.strip(): v.strip() for k, v in find}

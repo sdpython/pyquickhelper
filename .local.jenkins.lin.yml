@@ -33,8 +33,8 @@ script:
   - { CMD: "$PYINT -u setup.py unittests -e \".*gitjs.*\"", NAME: "UT_SKIP_GITJS", TIMEOUT: 1500 }
   - if [ ${VERSION} == "3.7" and ${DIST} == "std" ]
       then 
-        --CMD=$PYINT -u setup.py build_sphinx;
-        --NAME=DOC;
+        --CMD=$PYINT -u setup.py build_sphinx;;
+        --NAME=DOC;;
       fi
 
 # To run after the script.

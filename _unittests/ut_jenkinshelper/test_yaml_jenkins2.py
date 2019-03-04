@@ -48,7 +48,7 @@ class TestYamlJenkins2(unittest.TestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
-        self._jenkins_ext_setup_server_yaml2(True)
+        self._jenkins_ext_setup_server_yaml2(False)
 
     def _jenkins_ext_setup_server_yaml2(self, use_url):
         srv = JenkinsExt(
@@ -90,7 +90,7 @@ class TestYamlJenkins2(unittest.TestCase):
                 raise Exception(conf)
             if "SET DIST=" not in conf:
                 raise Exception(conf)
-            if "anything\\pyquickhelper\\%NAME_JENKINS%" not in conf:
+            if use_url and "anything\\pyquickhelper\\%NAME_JENKINS%" not in conf:
                 raise Exception(conf)
             if "pyquickhelper_UT_%d%d_std" % sys.version_info[:2] in conf:
                 nb += 1
@@ -100,7 +100,8 @@ class TestYamlJenkins2(unittest.TestCase):
                 sch += 1
 
         self.assertTrue(i > 0)
-        self.assertTrue(nb > 0)
+        if use_url:
+            self.assertTrue(nb > 0)
         self.assertEqual(sch, 2)
 
 

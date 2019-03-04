@@ -1,0 +1,37 @@
+
+language: python
+
+python:
+  - { PATH: "{{Python37}}", VERSION: 3.7, DIST: std, PYINT: python3.7,
+      LD_LIBRARY_PATH: /usr/local/Python-3.7.2 }
+  - { PATH: "{{Python36}}", VERSION: 3.6, DIST: std, PYINT: python3.6,
+      LD_LIBRARY_PATH: /usr/local/Python-3.6.8 }
+  
+virtualenv:
+  - path: {{ospathjoin(root_path, pickname("$NAME_JENKINS", project_name + "_$VERSION_$DIST_$NAME"), "_venv")}}
+  
+before_script:
+    # regular expression for Jenkins view: ((.*PUBLISH.*)|(.*PYPI.*))|(.*37.*.*((std)|(STD)).*)
+  -  $PYINT -c "from pip._internal import main;main(\"install --no-cache-dir --no-deps --index http://localhost:8067/simple/ pyquickhelper jyquickhelper mlinsights --extra-index-url=https://pypi.python.org/simple/\".split())"
+
+script:
+  - if [ ${VERSION} == "3.7" and ${DIST} == "std" ]
+      then 
+        --CMD=$PYINT -u scikit-learn/bench_plot_polynomial_features.py;;
+        --NAME=SKL_POLYF;;
+      fi
+  - if [ ${VERSION} == "3.7" and ${DIST} == "std" ]
+      then 
+        --CMD=$PYINT -u scikit-learn/bench_plot_polynomial_features_partial_fit.py;;
+        --NAME=SKL_POLYF_PF;;
+      fi
+  - if [ ${VERSION} == "3.6" and ${DIST} == "std" ]
+      then 
+        --CMD=$PYINT -u onnx/bench_plot_onnxruntime_random_forest.py;;
+        --NAME=ORT_RF;;
+      fi
+  - if [ ${VERSION} == "3.7" and ${DIST} == "std" ]
+      then 
+        --CMD=$PYINT -c "from sphinx.cmd.build import build_main;build_main(['-j2','-v','-T','-b','html','-d','dist/doctrees','_doc','dist/html'])";;
+        --NAME=UT;;
+      fi

@@ -24,8 +24,8 @@ script:
   - { CMD: "python -u setup.py unittests [DEV]", NAME: "UT_DEV" }
   - if [ ${VERSION} == "3.5" and ${DIST} == "std" ]
       then 
-        --CMD=python -u setup.py build_sphinx;
-        --NAME=DOC;
+        --CMD=python -u setup.py build_sphinx;;
+        --NAME=DOC;;
       fi
 after_script:
   - python -u setup.py bdist_wheel
