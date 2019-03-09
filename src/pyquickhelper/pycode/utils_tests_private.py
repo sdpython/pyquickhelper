@@ -595,6 +595,9 @@ def is_valid_error(error):
     @param      error       text
     @return                 boolean
     """
+    lines = error.split('\n')
+    lines = [line for line in lines if "No module named 'numpy.core._multiarray_umath'" not in line]
+    error = "\n".join(lines)
     keys = ["Exception", "Error", "TraceBack", "invalid", " line "]
     error = error.lower()
     for key in keys:
