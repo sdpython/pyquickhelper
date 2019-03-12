@@ -10,9 +10,6 @@ import os
 import datetime
 import re
 import warnings
-from sphinx.builders.html import Stylesheet
-from sphinx.errors import ExtensionError
-from sphinx.extension import Extension
 from .style_css_template import style_figure_notebook
 
 
@@ -872,6 +869,10 @@ def custom_setup(app, author):
     from ..sphinxext.sphinx_collapse_extension import setup as setup_collapse
     from ..sphinxext.sphinx_downloadlink_extension import setup as setup_downloadlink
 
+    # delayed import to speed up import time
+    from sphinx.errors import ExtensionError
+    from sphinx.extension import Extension
+
     try:
         app.connect("autodoc-skip-member", skip)
     except ExtensionError as e:
@@ -935,6 +936,8 @@ def get_default_stylesheet():
 
     @return         list of files
     """
+    # delayed import to speed up time
+    from sphinx.builders.html import Stylesheet
     rel = "_static/" + style_figure_notebook[0]
     # rel2 = "_static/gallery.css"  # This should not be needed for sphinx-gallery.
     return [Stylesheet(rel="stylesheet", title="style_figure_notebook", filename=rel)]

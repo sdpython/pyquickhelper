@@ -7,7 +7,6 @@ import os
 from ..loghelper.flog import noLOG
 from .install_custom import download_revealjs, download_requirejs
 from ..filehelper import synchronize_folder, change_file_status
-from ..sphinxext import revealjs
 
 
 def install_javascript_tools(root, dest, fLOG=noLOG,
@@ -22,6 +21,9 @@ def install_javascript_tools(root, dest, fLOG=noLOG,
 
     The function will create sub folders in folder *root*.
     """
+    # delayed import to speed up time
+    from ..sphinxext import revealjs
+
     # reveal.js
     if revealjs_github:
         rev = os.path.join(dest, "reveal.js")

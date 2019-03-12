@@ -5,7 +5,7 @@
     :date: 2019-03-07
     :categories: module
 
-    !epkg:`tornado` was recently released in version 6.0.
+    :epkg:`tornado` was recently released in version 6.0.
     It introduced an incompabilities with all existing versions
     of :epkg:`nbconvert` (<= 0.4.1).
 

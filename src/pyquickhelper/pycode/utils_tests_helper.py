@@ -14,20 +14,22 @@ import importlib
 from contextlib import redirect_stdout, redirect_stderr
 from io import StringIO
 import pycodestyle
-from pylint.lint import Run as PyLinterRun
-from pylint import __version__ as pylint_version
 
 from ..filehelper.synchelper import remove_folder, explore_folder_iterfile
 from ..loghelper.flog import noLOG
 from ..loghelper import run_cmd
-from .pip_helper import fix_pip_902
 
 
-if pylint_version >= '2.0.0':
-    PyLinterRunV = PyLinterRun
-else:
-    PyLinterRunV = lambda *args, do_exit=False: PyLinterRun(  # pylint: disable=E1120, E1123
-        *args, exit=do_exit)  # pylint: disable=E1120, E1123
+def _get_PyLinterRunV():
+    # Separate function to speed up import.
+    from pylint.lint import Run as PyLinterRun
+    from pylint import __version__ as pylint_version
+    if pylint_version >= '2.0.0':
+        PyLinterRunV = PyLinterRun
+    else:
+        PyLinterRunV = lambda *args, do_exit=False: PyLinterRun(  # pylint: disable=E1120, E1123
+            *args, exit=do_exit)  # pylint: disable=E1120, E1123
+    return PyLinterRunV
 
 
 def get_temp_folder(thisfile, name=None, clean=True, create=True,
@@ -364,6 +366,7 @@ def check_pep8(folder, ignore=('E265', 'W504'), skip=None,
     if run_cmd_filter is not None:
         verbose = True
 
+    PyLinterRunV = _get_PyLinterRunV()
     sout = StringIO()
     serr = StringIO()
     with redirect_stdout(sout):
@@ -430,6 +433,8 @@ def add_missing_development_version(names, root, hide=False):
     .. versionchanged:: 1.7
         Calls @see fn fix_pip_902.
     """
+    # delayed import to speed up import time
+    from .pip_helper import fix_pip_902
     if not isinstance(names, list):
         names = [names]
     root = os.path.abspath(root)

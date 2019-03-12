@@ -8,71 +8,33 @@ from collections import deque
 import warnings
 import pickle
 from io import StringIO
-
-try:
-    from sphinx.deprecation import RemovedInSphinx30Warning, RemovedInSphinx40Warning
-except ImportError:
-    RemovedInSphinx30Warning = DeprecationWarning
-    RemovedInSphinx40Warning = DeprecationWarning
-
-from sphinx.locale import _
 from docutils.parsers.rst import roles
 from docutils.languages import en as docutils_en
-from sphinx.writers.html import HTMLWriter
-from sphinx.application import Sphinx, ENV_PICKLE_FILENAME
-from sphinx.errors import ExtensionError
-from sphinx.environment import BuildEnvironment
 from docutils import nodes
 from docutils.utils import Reporter
-from sphinx.ext.extlinks import setup_link_roles
-from sphinx.util.nodes import inline_all_toctrees
-from sphinx.util.console import bold, darkgreen
-from sphinx.util.docutils import WarningStream
-from sphinx.util import status_iterator, logging
+
+from sphinx.application import Sphinx
+from sphinx.builders.html import SingleFileHTMLBuilder
+from sphinx.environment import BuildEnvironment
+from sphinx.errors import ExtensionError
 from sphinx.transforms import SphinxTransformer
-from sphinx.util.osutil import relative_uri
-from sphinx.util.logging import getLogger
 from sphinx.util.docutils import is_html5_writer_available
-from sphinx import __display_version__
-from sphinx.application import Tags, builtin_extensions
-from sphinx.application import Config, CONFIG_FILENAME, ConfigError, VersionRequirementError
-from sphinx.registry import SphinxComponentRegistry
-from sphinx.events import EventManager
-from sphinx.locale import __
-from sphinx import highlighting
-from sphinx.environment.collectors.asset import logger as logger_asset
-import sphinx.util.osutil
-import sphinx.errors
-from .conf_path_tools import custom_ensuredir
+from sphinx.writers.html import HTMLWriter
 
 from ..sphinxext.sphinx_doctree_builder import DocTreeBuilder, DocTreeWriter, DocTreeTranslator
 from ..sphinxext.sphinx_md_builder import MdBuilder, MdWriter, MdTranslator
 from ..sphinxext.sphinx_latex_builder import EnhancedLaTeXBuilder, EnhancedLaTeXWriter, EnhancedLaTeXTranslator
 from ..sphinxext.sphinx_rst_builder import RstBuilder, RstWriter, RstTranslator
-from ..texthelper import compare_module_version
 
-try:
-    # Sphinx 1.8.0
-    from sphinx.extension import verify_needs_extensions as verify_extensions
-    from sphinx.util.pycompat import htmlescape
-except ImportError as e:
-    # Sphinx 1.7.6
+
+def _get_LaTeXTranslator():
     try:
-        from sphinx.extension import verify_required_extensions as verify_extensions
-    except ImportError as ee:
-        raise ImportError(
-            "Unable to import sphinx due to:\n{0}\n{1}".format(e, ee))
-
-try:
-    from sphinx.writers.latex import LaTeXTranslator
-except ImportError:
-    # Since sphinx 1.7.3 (circular reference).
-    import sphinx.builders.latex.transforms
-    from sphinx.writers.latex import LaTeXTranslator
-
-with warnings.catch_warnings():
-    warnings.simplefilter("ignore")
-    from sphinx.builders.html import SingleFileHTMLBuilder
+        from sphinx.writers.latex import LaTeXTranslator
+    except ImportError:
+        # Since sphinx 1.7.3 (circular reference).
+        import sphinx.builders.latex.transforms
+        from sphinx.writers.latex import LaTeXTranslator
+    return LaTeXTranslator
 
 
 if is_html5_writer_available():
@@ -128,19 +90,19 @@ class _AdditionalVisitDepart:
         """
         Tells if the translator is :epkg:`latex` format.
         """
-        return self.base_class is LaTeXTranslator
+        return self.base_class is _get_LaTeXTranslator()
 
     def is_md(self):
         """
         Tells if the translator is :epkg:`markdown` format.
         """
-        return self.base_class is LaTeXTranslator
+        return self.base_class is _get_LaTeXTranslator()
 
     def is_doctree(self):
         """
         Tells if the translator is doctree format.
         """
-        return self.base_class is LaTeXTranslator
+        return self.base_class is _get_LaTeXTranslator()
 
     def add_secnumber(self, node):
         """
@@ -501,6 +463,8 @@ class _MemoryBuilder:
         :param app: :epkg:`Sphinx application`
         """
         if "IMPOSSIBLE:TOFIND" in app.srcdir:
+            import sphinx.util.osutil
+            from .conf_path_tools import custom_ensuredir
             sphinx.util.osutil.ensuredir = custom_ensuredir
             sphinx.builders.ensuredir = custom_ensuredir
 
@@ -530,7 +494,9 @@ class _MemoryBuilder:
         """
         Overwrites *_write_serial* to avoid writing on disk.
         """
-        with logging.pending_warnings():
+        from sphinx.util.logging import pending_warnings
+        from sphinx.util import status_iterator
+        with pending_warnings():
             for docname in status_iterator(docnames, 'writing output... ', "darkgreen",
                                            len(docnames), self.app.verbosity):
                 doctree = self.env.get_and_resolve_doctree(docname, self)
@@ -548,6 +514,8 @@ class _MemoryBuilder:
         """
         Overwrites *assemble_doctree* to control the doctree.
         """
+        from sphinx.util.nodes import inline_all_toctrees
+        from sphinx.util.console import darkgreen
         master = self.config.master_doc
         if hasattr(self, "doctree_"):
             tree = self.doctree_
@@ -604,6 +572,7 @@ class _MemoryBuilder:
         """
         Overrides *handle_page* to write into stream instead of files.
         """
+        from sphinx.util.osutil import relative_uri
         ctx = self.globalcontext.copy()
         ctx['warn'] = self.warning if hasattr(self, "warning") else self.warn
         # current_page_name is backwards compatibility
@@ -663,6 +632,7 @@ class _MemoryBuilder:
         try:
             output = self.templates.render(templatename, ctx)
         except UnicodeError:
+            from sphinx.util.logging import getLogger
             logger = getLogger("MockSphinxApp")
             logger.warning("[_CustomSphinx] A unicode error occurred when rendering the page %s. "
                            "Please make sure all config values that contain "
@@ -861,8 +831,8 @@ class MemoryLatexBuilder(_MemoryBuilder, EnhancedLaTeXBuilder):
 
     def write_stylesheet(self):
         # type: () -> None
-        highlighter = highlighting.PygmentsBridge(
-            'latex', self.config.pygments_style)
+        from sphinx.highlighting import PygmentsBridge
+        highlighter = PygmentsBridge('latex', self.config.pygments_style)
         rows = []
         rows.append('\\NeedsTeXFormat{LaTeX2e}[1995/12/01]\n')
         rows.append('\\ProvidesPackage{sphinxhighlight}')
@@ -905,6 +875,7 @@ class _CustomBuildEnvironment(BuildEnvironment):
         # type: (unicode) -> nodes.Node
         """Read the doctree for a file from the pickle and return it."""
         if hasattr(self, "doctree_") and docname in self.doctree_:
+            from sphinx.util.docutils import WarningStream
             doctree = self.doctree_[docname]
             doctree.settings.env = self
             doctree.reporter = Reporter(self.doc2path(
@@ -993,6 +964,7 @@ class _CustomSphinx(Sphinx):
             'doctree': ('doctree', 'DocTreeBuilder')}
         '''
         # own purpose (to monitor)
+        from sphinx.util.logging import getLogger
         self._logger = getLogger("_CustomSphinx")
         self._added_objects = []
         self._added_collectors = []
@@ -1012,6 +984,7 @@ class _CustomSphinx(Sphinx):
         self.verbosity = verbosity
 
         # type: Dict[unicode, Extension]
+        from sphinx.registry import SphinxComponentRegistry
         self.extensions = {}
         self._setting_up_extension = ['?']      # type: List[unicode]
         self.builder = None                     # type: Builder
@@ -1019,7 +992,11 @@ class _CustomSphinx(Sphinx):
         self.registry = SphinxComponentRegistry()
         self.post_transforms = []               # type: List[Transform]
         self.html_themes = {}                   # type: Dict[unicode, unicode]
-        if compare_module_version(sphinx.__version__, '1.8') < 0:
+
+        from sphinx import __version__ as sphinx_version
+        from ..texthelper import compare_module_version
+        sphinx_version_less_18 = compare_module_version(sphinx_version, '1.8')
+        if sphinx_version_less_18 < 0:
             self.enumerable_nodes = {}          # type: Dict[nodes.Node, Tuple[unicode, Callable]]  # NOQA
 
         self.srcdir = srcdir
@@ -1045,6 +1022,7 @@ class _CustomSphinx(Sphinx):
         # self.warningiserror = warningiserror
         # logging.setup(self, self._status, self._warning)
 
+        from sphinx.events import EventManager
         self.events = EventManager()
 
         # keep last few messages for traceback
@@ -1052,12 +1030,22 @@ class _CustomSphinx(Sphinx):
         self.messagelog = deque(maxlen=10)  # type: deque
 
         # say hello to the world
-        self.info(bold('Running Sphinx v%s' % __display_version__))
+        from sphinx import __display_version__
+        self.info('Running Sphinx v%s' % __display_version__)
 
         # status code for command-line application
         self.statuscode = 0
 
+        # delayed import to speed up time
+        try:
+            from sphinx.deprecation import RemovedInSphinx30Warning, RemovedInSphinx40Warning
+        except ImportError:
+            RemovedInSphinx30Warning = DeprecationWarning
+            RemovedInSphinx40Warning = DeprecationWarning
+        from sphinx.application import CONFIG_FILENAME, Config
+
         # read config
+        from sphinx.application import Tags
         self.tags = Tags(tags)
         with warnings.catch_warnings():
             warnings.simplefilter("ignore", RemovedInSphinx30Warning)
@@ -1080,6 +1068,8 @@ class _CustomSphinx(Sphinx):
 
         # check the Sphinx version if requested
         if self.config.needs_sphinx and self.config.needs_sphinx > __display_version__:
+            from sphinx.locale import _
+            from sphinx.application import VersionRequirementError
             raise VersionRequirementError(
                 _('This project needs at least Sphinx v%s and therefore cannot '
                   'be built with this version.') % self.config.needs_sphinx)
@@ -1090,6 +1080,7 @@ class _CustomSphinx(Sphinx):
             self.confdir = self.srcdir
 
         # load all built-in extension modules
+        from sphinx.application import builtin_extensions
         for extension in builtin_extensions:
             try:
                 with warnings.catch_warnings():
@@ -1139,6 +1130,8 @@ class _CustomSphinx(Sphinx):
             if hasattr(self.config.setup, '__call__'):
                 self.config.setup(self)
             else:
+                from sphinx.locale import _
+                from sphinx.application import ConfigError
                 raise ConfigError(
                     _("'setup' as currently defined in conf.py isn't a Python callable. "
                       "Please modify its definition to make it a callable function. This is "
@@ -1177,12 +1170,27 @@ class _CustomSphinx(Sphinx):
 
             self.config.items = _citems
 
-        if compare_module_version(sphinx.__version__, '1.8') >= 0:
+        if sphinx_version_less_18 >= 0:
+
+            # delayed import to speed up time
+            try:
+                # Sphinx 1.8.0
+                from sphinx.extension import verify_needs_extensions as verify_extensions
+                from sphinx.util.pycompat import htmlescape
+            except ImportError as e:
+                # Sphinx 1.7.6
+                try:
+                    from sphinx.extension import verify_required_extensions as verify_extensions
+                except ImportError as ee:
+                    raise ImportError(
+                        "Unable to import sphinx due to:\n{0}\n{1}".format(e, ee))
+
             verify_extensions(self, self.config)
 
         # check primary_domain if requested
         primary_domain = self.config.primary_domain
         if primary_domain and not self.registry.has_domain(primary_domain):
+            from sphinx.locale import _
             self.warning(
                 _('primary_domain %r not found, ignored.'), primary_domain)
 
@@ -1220,9 +1228,11 @@ class _CustomSphinx(Sphinx):
             if self.srcdir is not None and self.srcdir != "IMPOSSIBLE:TOFIND":
                 self.env.find_files(self.config, self.builder)
         elif "IMPOSSIBLE:TOFIND" not in self.doctreedir:
+            from sphinx.application import ENV_PICKLE_FILENAME
             filename = os.path.join(self.doctreedir, ENV_PICKLE_FILENAME)
+            from sphinx.locale import __
             try:
-                self.info(bold(__('loading pickled environment... ')), nonl=True)
+                self.info(__('loading pickled environment... '), nonl=True)
                 with open(filename, 'rb') as f:
                     self.env = pickle.load(f)
                     self.env.setup(self)
@@ -1250,6 +1260,7 @@ class _CustomSphinx(Sphinx):
             self._events = {}
 
         # Otherwise, role issue is missing.
+        from sphinx.ext.extlinks import setup_link_roles
         setup_link_roles(self)
 
     def _lookup_doctree(self, doctree, node_type):
@@ -1286,6 +1297,7 @@ class _CustomSphinx(Sphinx):
         # modifying paths in image node.
         # Look for node['candidates'] = candidates in Sphinx code.
         # If a path startswith('/'), it is removed.
+        from sphinx.environment.collectors.asset import logger as logger_asset
         logger_asset.setLevel(40)  # only errors
         self.emit('doctree-read', doctree)
         logger_asset.setLevel(30)  # back to warnings
@@ -1323,6 +1335,13 @@ class _CustomSphinx(Sphinx):
     def setup_extension(self, extname):
         self._added_objects.append(('extension', extname))
         self.debug('[_CustomSphinx]  setting up extension: %r', extname)
+
+        # delayed import to speed up time
+        try:
+            from sphinx.deprecation import RemovedInSphinx30Warning
+        except ImportError:
+            RemovedInSphinx30Warning = DeprecationWarning
+
         try:
             with warnings.catch_warnings():
                 warnings.filterwarnings(
@@ -1340,7 +1359,7 @@ class _CustomSphinx(Sphinx):
             # Sphinx >= 1.8
             Sphinx.add_directive(self, name, obj, content=content, arguments=arguments,
                                  override=override, **options)
-        except sphinx.errors.ExtensionError:
+        except ExtensionError:
             # Sphinx < 1.8
             Sphinx.add_directive(self, name, obj, content=content, arguments=arguments,
                                  **options)
@@ -1418,13 +1437,7 @@ class _CustomSphinx(Sphinx):
                     from sphinx.writers.html5 import HTML5Translator
                     translators.append(HTML5Translator)
             elif key == 'latex':
-                try:
-                    from sphinx.writers.latex import LaTeXTranslator
-                except ImportError:
-                    # Since sphinx 1.7.3 (circular reference).
-                    import sphinx.builders.latex.transforms  # pylint: disable=W0621
-                    from sphinx.writers.latex import LaTeXTranslator
-                translators.append(LaTeXTranslator)
+                translators.append(_get_LaTeXTranslator())
             elif key == 'elatex':
                 translators.append(EnhancedLaTeXBuilder)
             elif key == 'text':

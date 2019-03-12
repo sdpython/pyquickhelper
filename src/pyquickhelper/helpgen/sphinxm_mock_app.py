@@ -5,16 +5,6 @@
 import logging
 import warnings
 from docutils.parsers.rst.directives import directive as rst_directive
-from sphinx.config import Config
-from sphinx.ext import autodoc
-from sphinx import __display_version__ as sphinx__display_version__
-from sphinx.application import VersionRequirementError
-from sphinx.errors import ExtensionError
-try:
-    from sphinx.deprecation import RemovedInSphinx30Warning, RemovedInSphinx40Warning
-except ImportError:
-    RemovedInSphinx30Warning = DeprecationWarning
-    RemovedInSphinx40Warning = DeprecationWarning
 from .sphinxm_convert_doc_sphinx_helper import HTMLWriterWithCustomDirectives, _CustomSphinx
 from .sphinxm_convert_doc_sphinx_helper import MDWriterWithCustomDirectives, RSTWriterWithCustomDirectives
 from .sphinxm_convert_doc_sphinx_helper import LatexWriterWithCustomDirectives, DocTreeWriterWithCustomDirectives
@@ -46,6 +36,15 @@ class MockSphinxApp:
                         "<class 'sphinx.ext.mathbase.displaymath'>": "displaymath",
                         "<class 'sphinx.ext.mathbase.eqref'>": "eqref",
                         }
+
+        # delayed import to speed up import time
+        try:
+            from sphinx.deprecation import RemovedInSphinx30Warning, RemovedInSphinx40Warning
+        except ImportError:
+            RemovedInSphinx30Warning = DeprecationWarning
+            RemovedInSphinx40Warning = DeprecationWarning
+        from sphinx.config import Config
+
         self.mapping_connect = {}
         with warnings.catch_warnings():
             warnings.simplefilter("ignore", RemovedInSphinx30Warning)
@@ -148,6 +147,8 @@ class MockSphinxApp:
         """
         See :epkg:`class Sphinx`.
         """
+        # delayed import to speed up import time
+        from sphinx.ext import autodoc
         autodoc.add_documenter(cls)
         self.app.add_directive('auto' + cls.objtype, autodoc.AutoDirective)
 
@@ -170,6 +171,9 @@ class MockSphinxApp:
     def require_sphinx(self, version):
         # type: (unicode) -> None
         # check the Sphinx version if requested
+        # delayed import to speed up import time
+        from sphinx import __display_version__ as sphinx__display_version__
+        from sphinx.application import VersionRequirementError
         if version > sphinx__display_version__[:3]:
             raise VersionRequirementError(version)
 
@@ -224,6 +228,8 @@ class MockSphinxApp:
 
             app.add_source_parser(self, ext, parser)
         """
+        # delayed import to speed up import time
+        from sphinx.errors import ExtensionError
         with warnings.catch_warnings():
             warnings.simplefilter("ignore", ImportWarning)
 

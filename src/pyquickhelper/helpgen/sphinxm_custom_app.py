@@ -11,13 +11,6 @@ from io import StringIO
 from sphinx.application import Sphinx
 from .default_conf import latex_preamble
 
-try:
-    from sphinx.deprecation import RemovedInSphinx30Warning, RemovedInSphinx40Warning, RemovedInSphinx20Warning
-except ImportError:
-    RemovedInSphinx20Warning = DeprecationWarning
-    RemovedInSphinx30Warning = DeprecationWarning
-    RemovedInSphinx40Warning = DeprecationWarning
-
 
 class CustomSphinxApp(Sphinx):
     """
@@ -105,6 +98,14 @@ class CustomSphinxApp(Sphinx):
                 exts = [module]
             if exts is not None:
                 confoverrides['extensions'] = exts
+
+        # delayed import to speed up time
+        try:
+            from sphinx.deprecation import RemovedInSphinx30Warning, RemovedInSphinx40Warning, RemovedInSphinx20Warning
+        except ImportError:
+            RemovedInSphinx20Warning = DeprecationWarning
+            RemovedInSphinx30Warning = DeprecationWarning
+            RemovedInSphinx40Warning = DeprecationWarning
 
         with warnings.catch_warnings():
             warnings.simplefilter("ignore", RemovedInSphinx20Warning)

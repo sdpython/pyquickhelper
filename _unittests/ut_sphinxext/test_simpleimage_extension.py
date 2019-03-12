@@ -30,7 +30,7 @@ from src.pyquickhelper.loghelper.flog import fLOG
 from src.pyquickhelper.pycode import get_temp_folder, ExtTestCase, is_travis_or_appveyor
 from src.pyquickhelper.helpgen import rst2html
 from src.pyquickhelper.sphinxext import SimpleImageDirective
-from src.pyquickhelper.helpgen import CustomSphinxApp
+from src.pyquickhelper.helpgen.sphinxm_custom_app import CustomSphinxApp
 from src.pyquickhelper.helpgen.sphinx_main_helper import compile_latex_output_final
 from src.pyquickhelper.helpgen.conf_path_tools import find_latex_path
 

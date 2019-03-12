@@ -21,7 +21,6 @@ from .install_js_dep import install_javascript_tools
 from .style_css_template import THUMBNAIL_TEMPLATE, THUMBNAIL_TEMPLATE_TABLE
 from .process_notebook_api import nb2rst
 from ..loghelper.flog import run_cmd, fLOG, noLOG
-from ..ipythonhelper import read_nb, notebook_coverage, badge_notebook_coverage
 from ..pandashelper import df2rst
 from ..filehelper.synchelper import has_been_updated, explore_folder
 
@@ -180,6 +179,7 @@ def process_notebooks(notebooks, outfold, build, latex_path=None, pandoc_path=No
 
 
 def _process_notebooks_in_private(fnbcexe, list_args, options_args):
+    from ..ipythonhelper import read_nb
     out = StringIO()
     err = StringIO()
     memo_out = sys.stdout
@@ -823,6 +823,7 @@ def build_thumbail_in_gallery(nbfile, folder_snippet, relative, rst_link, layout
         Modifies the function to bypass the generation of a snippet
         if a custom one was found. Parameter *snippet_folder* was added.
     """
+    from ..ipythonhelper import read_nb
     nb = read_nb(nbfile)
     _, desc = nb.get_description()
 
@@ -898,6 +899,7 @@ def add_tag_for_slideshow(ipy, folder, encoding="utf8"):
     @param      encoding    encoding
     @return                 written file
     """
+    from ..ipythonhelper import read_nb
     filename = os.path.split(ipy)[-1]
     output = os.path.join(folder, filename)
     nb = read_nb(ipy, encoding=encoding, kernel=False)
@@ -950,6 +952,7 @@ def build_notebooks_gallery(nbs, fileout, layout="classic", neg_pattern=None,
         Modifies the function to bypass the generation of a snippet
         if a custom one was found. Parameter *snippet_folder* was added.
     """
+    from ..ipythonhelper import read_nb
     if not isinstance(nbs, list):
         fold = nbs
         nbs = explore_folder(
@@ -1183,6 +1186,7 @@ def build_all_notebooks_coverage(nbs, fileout, module_name, dump=None, badge=Tru
     @param      fLOG            logging function
     @return                     dataframe which contains the data
     """
+    from ..ipythonhelper import read_nb, notebook_coverage
     if dump is None:
         dump = os.path.normpath(os.path.join(os.path.dirname(fileout), "..", "..", "..", "..",
                                              "_notebook_dumps", "notebook.{0}.txt".format(module_name)))
@@ -1228,6 +1232,7 @@ def build_all_notebooks_coverage(nbs, fileout, module_name, dump=None, badge=Tru
 
     # Badge
     if badge:
+        from ..ipythonhelper import badge_notebook_coverage
         img = os.path.join(os.path.dirname(fileout), "nbcov.png")
         cov = badge_notebook_coverage(report0, img)
         now = datetime.datetime.now()

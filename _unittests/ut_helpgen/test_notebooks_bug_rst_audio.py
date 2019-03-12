@@ -21,7 +21,7 @@ except ImportError:
     import src
 
 from src.pyquickhelper.loghelper import fLOG, CustomLog
-from src.pyquickhelper.helpgen import process_notebooks
+from src.pyquickhelper.helpgen.sphinx_main import process_notebooks
 from src.pyquickhelper.pycode import skipif_travis, skipif_appveyor, get_temp_folder, ExtTestCase
 
 

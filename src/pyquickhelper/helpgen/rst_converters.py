@@ -8,13 +8,10 @@ import os
 from io import StringIO
 from docutils import core, languages
 from docutils.io import StringInput, StringOutput
-from sphinx.environment import default_settings
 from .utils_sphinx_doc import migrating_doxygen_doc
+from .helpgen_exceptions import HelpGenConvertError
 from ..texthelper.texts_language import TITLES
 from ..loghelper.flog import noLOG
-from . helpgen_exceptions import HelpGenConvertError
-from .conf_path_tools import find_graphviz_dot, find_dvipng_path
-from .sphinxm_mock_app import MockSphinxApp
 
 
 def default_sphinx_options(fLOG=noLOG, **options):
@@ -31,6 +28,9 @@ def default_sphinx_options(fLOG=noLOG, **options):
     .. versionchanged:: 1.8
         Disables :epkg:`latex` if not available on :epkg:`Windows`.
     """
+    # delayed import to speed up time
+    from .conf_path_tools import find_graphviz_dot, find_dvipng_path
+
     res = {  # 'output_encoding': options.get('output_encoding', 'unicode'),
         # 'doctitle_xform': options.get('doctitle_xform', True),
         # 'initial_header_level': options.get('initial_header_level', 2),
@@ -242,6 +242,12 @@ def rst2html(s, fLOG=noLOG, writer="html", keep_warnings=False,
         Markdown format was added.
         Parameters *ret_doctree*, *load_bokeh* were added.
     """
+    # delayed import to speed up time
+    def _get_MockSphinxApp():
+        from .sphinxm_mock_app import MockSphinxApp
+        return MockSphinxApp
+    MockSphinxApp = _get_MockSphinxApp()
+
     if 'html_theme' not in options:
         options['html_theme'] = 'basic'
     defopt = default_sphinx_options(**options)
@@ -275,6 +281,8 @@ def rst2html(s, fLOG=noLOG, writer="html", keep_warnings=False,
         raise NotImplementedError(
             "The writer must not be null if custom directives will be added, check the documentation of the fucntion.")
 
+    # delayed import to speed up time
+    from sphinx.environment import default_settings
     settings_overrides = default_settings.copy()
     settings_overrides["warning_stream"] = StringIO()
     settings_overrides["master_doc"] = document_name

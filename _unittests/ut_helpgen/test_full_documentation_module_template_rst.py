@@ -25,7 +25,7 @@ except ImportError:
 
 from src.pyquickhelper.loghelper.flog import fLOG, download
 from src.pyquickhelper.loghelper import CustomLog
-from src.pyquickhelper.helpgen import generate_help_sphinx
+from src.pyquickhelper.helpgen.sphinx_main import generate_help_sphinx
 from src.pyquickhelper.pycode import get_temp_folder
 from src.pyquickhelper.pycode import is_travis_or_appveyor
 from src.pyquickhelper.filehelper.synchelper import remove_folder

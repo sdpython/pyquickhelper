@@ -26,7 +26,7 @@ except ImportError:
 
 from src.pyquickhelper.loghelper.flog import fLOG
 from src.pyquickhelper.pycode import get_temp_folder, ExtTestCase
-from src.pyquickhelper.helpgen import CustomSphinxApp
+from src.pyquickhelper.helpgen.sphinxm_custom_app import CustomSphinxApp
 
 
 class TestAppSphinx(ExtTestCase):

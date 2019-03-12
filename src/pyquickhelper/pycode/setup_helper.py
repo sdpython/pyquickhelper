@@ -18,7 +18,7 @@ from .build_helper import get_build_script, get_script_command, get_extra_script
 from .call_setup_hook import call_setup_hook
 from .tkinter_helper import fix_tkinter_issues_virtualenv
 from .default_regular_expression import _setup_pattern_copy
-from ..ipythonhelper import upgrade_notebook, remove_execution_number
+# from ..ipythonhelper import upgrade_notebook, remove_execution_number
 from .utils_tests import main_wrapper_tests, default_skip_function
 from ..loghelper.history_helper import build_history, compile_history
 from .utils_tests_helper import check_pep8
@@ -620,6 +620,7 @@ def clean_notebooks_for_numbers(file_or_folder):
 
     .. index:: notebooks
     """
+    from ..ipythonhelper.notebook_helper import upgrade_notebook, remove_execution_number
     ffolder = get_folder(file_or_folder)
     fold2 = os.path.normpath(
         os.path.join(ffolder, "_doc", "notebooks"))

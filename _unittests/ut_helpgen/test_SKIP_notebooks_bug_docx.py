@@ -22,7 +22,7 @@ except ImportError:
     import src
 
 from src.pyquickhelper.loghelper import fLOG
-from src.pyquickhelper.helpgen import process_notebooks
+from src.pyquickhelper.helpgen.sphinx_main import process_notebooks
 
 
 class TestNoteBooksBugDocx(unittest.TestCase):

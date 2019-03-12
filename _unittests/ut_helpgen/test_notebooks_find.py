@@ -22,7 +22,7 @@ except ImportError:
     import src
 
 from src.pyquickhelper.loghelper import fLOG
-from src.pyquickhelper.helpgen import process_notebooks
+from src.pyquickhelper.helpgen.sphinx_main import process_notebooks
 from src.pyquickhelper.pycode import is_travis_or_appveyor, get_temp_folder, ExtTestCase
 from src.pyquickhelper.ipythonhelper import upgrade_notebook
 from src.pyquickhelper.helpgen.post_process import update_notebook_link

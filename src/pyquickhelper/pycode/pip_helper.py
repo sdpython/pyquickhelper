@@ -8,7 +8,6 @@ Some links to look:
 * `Calling pip programmatically <http://blog.ducky.io/python/2013/08/22/calling-pip-programmatically/>`_
 """
 import sys
-import pip.__main__ as pip_main  # pylint: disable=W0611
 
 
 class PQPipError (Exception):
@@ -77,7 +76,7 @@ def get_packages_list():
 
 def package2dict(pkg):
     """
-    extract information from a package
+    Extracts information from a package.
 
     @param      pkg     type *pip._vendor.pkg_resources.Distribution*
     @return             dictionary
@@ -94,7 +93,7 @@ def package2dict(pkg):
 
 def get_package_info(name=None, start=0, end=-1):
     """
-    calls ``pip show`` to retrieve information about packages
+    Calls ``pip show`` to retrieve information about packages.
 
     @param      name        name of he packages or None to get all of them in a list
     @param      start       start at package n (in list return by @see fn get_packages_list)

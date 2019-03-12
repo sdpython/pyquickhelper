@@ -7,7 +7,6 @@ import argparse
 import inspect
 import re
 from docutils import nodes
-from ..helpgen import docstring2html
 
 
 def clean_documentation_for_cli(doc, cleandoc):
@@ -75,6 +74,8 @@ def create_cli_parser(f, prog=None, layout="sphinx", skip_parameters=('fLOG',),
     If an annotation offers mutiple types,
     the first one will be used for the command line.
     """
+    # delayed import to speed up import.
+    from ..helpgen import docstring2html
     docf = clean_documentation_for_cli(f.__doc__, cleandoc)
     doctree = docstring2html(docf, writer="doctree",
                              layout=layout, ret_doctree=True, **options)

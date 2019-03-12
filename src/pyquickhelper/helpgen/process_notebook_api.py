@@ -5,8 +5,6 @@
 """
 import os
 from io import StringIO
-from .install_js_dep import install_javascript_tools
-from .post_process import post_process_slides_output, post_process_html_output, post_process_rst_output
 
 
 def get_exporter(format, add_writer=False):
@@ -87,6 +85,7 @@ def nb2slides(nb_file, outfile, add_tag=True):
             nb2slides("nb.ipynb", "convert.slides.html")
     """
     from ..ipythonhelper import NotebookRunner, read_nb
+    from .post_process import post_process_slides_output
 
     if isinstance(nb_file, NotebookRunner):
         nb = nb_file.nb
@@ -113,6 +112,7 @@ def nb2slides(nb_file, outfile, add_tag=True):
     dirname = os.path.dirname(outfile)
     reveal = os.path.join(dirname, "reveal.js")
     if not os.path.exists(reveal):
+        from .install_js_dep import install_javascript_tools
         cp = install_javascript_tools(None, dest=dirname)
         res.extend(cp)
 
@@ -171,6 +171,7 @@ def nb2present(nb_file, outfile, add_tag=True):
         outfile = content
 
     # post_processing
+    from .post_process import post_process_slides_output
     post_process_slides_output(outfile, False, False, False, False)
     res = [outfile]
     return res
@@ -200,6 +201,7 @@ def nb2html(nb_file, outfile, exc=True):
         fh.writelines(source)
 
     # post_processing
+    from .post_process import post_process_html_output
     post_process_html_output(outfile, False, False, False, False, exc=exc)
     res = [outfile]
     return res
@@ -238,6 +240,7 @@ def nb2rst(nb_file, outfile, exc=True, post_process=True):
 
     # post_processing
     if post_process:
+        from .post_process import post_process_rst_output
         post_process_rst_output(outfile, False, False,
                                 False, False, False, exc=exc)
     res = [outfile]
