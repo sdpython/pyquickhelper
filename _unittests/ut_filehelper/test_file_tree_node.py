@@ -62,6 +62,8 @@ class TestFileNodeTree(ExtTestCase):
                 nb += 1
                 if nb > 15:
                     break
+                if "cli_helper.py" in f.name:
+                    continue
 
                 if "__init__" not in f.name and ".py" in f.name and ".pyc" not in f.name \
                         and "__main__" not in f.name:
@@ -77,9 +79,15 @@ class TestFileNodeTree(ExtTestCase):
                     condition = "# replace # from ." in cont2
                     if not condition:
                         for line in lines:
+                            if "from ..helpgen import docstring2html" in line:
+                                continue
+                            if "from .pandashelper import df2rst" in line:
+                                continue
                             if "from ." in line and "import" in line:
+                                doc = "\n-------------DOC--------\n" + doc
                                 raise Exception(
-                                    "{0}\nLINE:\n{1}\nCONT:\n{2}".format(f.fullname, line, cont2))
+                                    "{0}\nLINE:\n{1}\n-------CONT---------:\n{2}{3}".format(
+                                        f.fullname, line, cont2, doc))
 
         self.assertGreater(nb, 0)
         self.assertGreater(nrst, 0)

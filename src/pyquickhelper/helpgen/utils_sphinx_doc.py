@@ -871,7 +871,8 @@ def produces_indexes(store_obj, indexes, fexclude_index, titles=None,
 
 def filecontent_to_rst(filename, content):
     """
-    Produces a *.rst* file which contains the file. It adds a title and a label based on the
+    Produces a *.rst* file which contains the file.
+    It adds a title and a label based on the
     filename (no folder included).
 
     @param      filename        filename
