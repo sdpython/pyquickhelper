@@ -20,6 +20,7 @@ from sphinx.errors import ExtensionError
 from sphinx.transforms import SphinxTransformer
 from sphinx.util.docutils import is_html5_writer_available
 from sphinx.writers.html import HTMLWriter
+from sphinx.util.pycompat import htmlescape
 
 from ..sphinxext.sphinx_doctree_builder import DocTreeBuilder, DocTreeWriter, DocTreeTranslator
 from ..sphinxext.sphinx_md_builder import MdBuilder, MdWriter, MdTranslator
@@ -1176,7 +1177,6 @@ class _CustomSphinx(Sphinx):
             try:
                 # Sphinx 1.8.0
                 from sphinx.extension import verify_needs_extensions as verify_extensions
-                from sphinx.util.pycompat import htmlescape
             except ImportError as e:
                 # Sphinx 1.7.6
                 try:
