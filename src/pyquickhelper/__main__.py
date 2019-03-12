@@ -22,7 +22,7 @@ def main(args, fLOG=print):
         from .pandashelper import df2rst
         from .pycode import clean_files, run_test_function
         from .cli import cli_main_helper
-        from .helpgen import process_notebooks
+        from .helpgen.process_notebooks import process_notebooks
         from .filehelper import create_visual_diff_through_html_files
         from .filehelper import explore_folder
     except ImportError:
@@ -32,7 +32,7 @@ def main(args, fLOG=print):
         from pyquickhelper.pandashelper import df2rst
         from pyquickhelper.pycode import clean_files, run_test_function
         from pyquickhelper.cli import cli_main_helper
-        from pyquickhelper.helpgen import process_notebooks
+        from pyquickhelper.helpgen.process_notebooks import process_notebooks
         from pyquickhelper.filehelper import create_visual_diff_through_html_files
         from pyquickhelper.filehelper import explore_folder
 
