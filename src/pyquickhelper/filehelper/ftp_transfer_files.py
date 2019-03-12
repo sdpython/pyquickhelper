@@ -365,19 +365,19 @@ class FolderTransferFTP:
                 except FileNotFoundError as e:
                     r = False
                     issues.append((file.fullname, "not found", e))
-                    self.fLOG("    issue", e)
+                    self.fLOG("[FolderTransferFTP] - issue", e)
                 except ftplib.error_perm as ee:
                     r = False
                     issues.append((file.fullname, str(ee), ee))
-                    self.fLOG("    issue", ee)
+                    self.fLOG("[FolderTransferFTP] - issue", ee)
                 except TimeoutError as eee:
                     r = False
                     issues.append((file.fullname, "TimeoutError", eee))
-                    self.fLOG("    issue", eee)
+                    self.fLOG("[FolderTransferFTP] - issue", eee)
                 except EOFError as eeee:
                     r = False
                     issues.append((file.fullname, "EOFError", eeee))
-                    self.fLOG("    issue", eeee)
+                    self.fLOG("[FolderTransferFTP] - issue", eeee)
                 except ConnectionAbortedError as eeeee:
                     r = False
                     issues.append(
@@ -387,7 +387,7 @@ class FolderTransferFTP:
                     r = False
                     issues.append(
                         (file.fullname, "ConnectionResetError", eeeeee))
-                    self.fLOG("    issue", eeeeee)
+                    self.fLOG("[FolderTransferFTP] - issue", eeeeee)
 
             self.close_stream(data)
 
@@ -399,7 +399,8 @@ class FolderTransferFTP:
 
             if len(issues) >= max_errors:
                 raise FolderTransferFTPException("Too many issues:\n{0}".format(
-                    "\n".join("{0} -- {1} --- {2}".format(a, b, type(c)) for a, b, c in issues)))
+                    "\n".join("{0} -- {1} --- {2}".format(a, b,
+                    str(c).replace('\n', ' ')) for a, b, c in issues)))
 
             if delay is not None and delay > 0:
                 h = random()
