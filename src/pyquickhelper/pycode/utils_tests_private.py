@@ -74,19 +74,13 @@ def get_test_file(filter, dir=None, no_subfolder=False, fLOG=noLOG, root=None):
                 content = [(l, l) for l in content]
 
             content = [fu for l, fu in content if "test_" in l and
-                       ".py" in l and
-                       ".py.err" not in l and
-                       ".py.out" not in l and
-                       ".py.warn" not in l and
-                       "test_main" not in l and
-                       "temp_" not in l and
-                       "temp2_" not in l and
+                       ".py" in l and ".py.err" not in l and
+                       ".py.out" not in l and ".py.warn" not in l and
+                       "test_main" not in l and "temp_" not in l and
+                       "temp2_" not in l and ".pyo" not in l and
                        "out.test_copyfile.py.2.txt" not in l and
-                       ".pyc" not in l and
-                       ".pyd" not in l and
-                       ".so" not in l and
-                       ".py~" not in l and
-                       ".pyo" not in l]
+                       ".pyc" not in l and ".pyd" not in l and
+                       ".so" not in l and ".py~" not in l]
         li.extend(content)
         fLOG("[get_test_file], inspecting", dirs)
 
