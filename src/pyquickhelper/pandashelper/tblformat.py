@@ -131,7 +131,7 @@ def df2rst(df, add_line=True, align="l", column_size=None, index=False,
             if isinstance(s, float) and numpy.isnan(s):
                 s = ""
             else:
-                s = typstr(s)
+                s = typstr(s).replace("\n", " ")
             return (" " + s) if s else s
         else:
             i, s = cool
@@ -140,7 +140,7 @@ def df2rst(df, add_line=True, align="l", column_size=None, index=False,
             if isinstance(s, float) and numpy.isnan(s):
                 s = ""
             else:
-                s = typstr(s)
+                s = typstr(s).replace("\n", " ")
             i -= 2
             s = align_string(s.strip(), align, i)
             return s
