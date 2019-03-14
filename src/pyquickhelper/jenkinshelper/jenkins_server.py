@@ -785,6 +785,8 @@ class JenkinsExt(jenkins.Jenkins):
         elif scheduler is not None:
             if scheduler.lower() == "startup":
                 trigger = JenkinsExt._trigger_startup
+            elif scheduler.lower() == "NONE":
+                trigger = ""
             else:
                 new_scheduler = self.adjust_scheduler(
                     scheduler, adjust_scheduler)
