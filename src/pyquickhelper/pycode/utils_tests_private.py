@@ -69,9 +69,9 @@ def get_test_file(filter, folder=None, no_subfolder=False, fLOG=noLOG, root=None
                         return p[len(root):]
                     else:
                         return p
-                content = [(remove_root(l), l) for l in content]
+                content = [(remove_root(il), il) for il in content]
             else:
-                content = [(l, l) for l in content]
+                content = [(il, il) for il in content]
 
             content = []
             for il, fu in content:
