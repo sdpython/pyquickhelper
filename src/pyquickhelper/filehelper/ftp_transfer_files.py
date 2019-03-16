@@ -400,7 +400,7 @@ class FolderTransferFTP:
             if len(issues) >= max_errors:
                 raise FolderTransferFTPException("Too many issues:\n{0}".format(
                     "\n".join("{0} -- {1} --- {2}".format(a, b,
-                    str(c).replace('\n', ' ')) for a, b, c in issues)))
+                                                          str(c).replace('\n', ' ')) for a, b, c in issues)))
 
             if delay is not None and delay > 0:
                 h = random()

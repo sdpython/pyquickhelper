@@ -104,10 +104,6 @@ def rst2html(s, fLOG=noLOG, writer="html", keep_warnings=False,
     @param      language            language
     @param      layout              ``'docutils'``, ``'sphinx'``, ``'sphinx_body'``, see below.
     @param      document_name       document name, not really important since the input is a string
-    @param      options             :epkg:`Sphinx` options see
-                                    `Render math as images <http://www.sphinx-doc.org/en/stable/ext/math.html#module-sphinx.ext.imgmath>`_,
-                                    a subset of options is used, see @see fn default_sphinx_options.
-                                    By default, the theme (option *html_theme*) will ``'basic'``.
     @param      external_docnames   if the string to parse makes references to other documents,
                                     if one is missing, an exception is raised.
     @param      filter_nodes        transforms the doctree before writing the results (layout must be 'sphinx'),
@@ -117,7 +113,10 @@ def rst2html(s, fLOG=noLOG, writer="html", keep_warnings=False,
     @param      ret_doctree         returns the doctree
     @param      load_bokeh          load :epkg:`bokeh` extensions,
                                     disabled by default as it takes a few seconds
-    @param      options             used to overwrite configuration variables
+    @param      options             :epkg:`Sphinx` options see
+                                    `Render math as images <http://www.sphinx-doc.org/en/stable/ext/math.html#module-sphinx.ext.imgmath>`_,
+                                    a subset of options is used, see @see fn default_sphinx_options.
+                                    By default, the theme (option *html_theme*) will ``'basic'``.
     @return                         HTML format
 
     *directives* is None or a list of 2 or 5-uple:

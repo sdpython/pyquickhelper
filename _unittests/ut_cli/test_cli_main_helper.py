@@ -97,6 +97,12 @@ class TestCliMainHelper(ExtTestCase):
         self.assertIn(
             "run_test_function [-h] [-m MODULE] [-p PATTERN] [-s STOP_FIRST]", res)
 
+        st = BufferedPrint()
+        main(args=["sphinx_rst", "--help"], fLOG=st.fprint)
+        res = str(st)
+        self.assertIn(
+            "sphinx_rst [-h] [-i INPUT] [-w WRITER] [-k KEEP_WARNINGS]", res)
+
     def test_main_epkg(self):
         st = BufferedPrint()
         main(args=["clean_files", "--help"], fLOG=st.fprint)
