@@ -46,6 +46,7 @@ from sphinx import addnodes
 from sphinx.locale import admonitionlabels, versionlabels, _
 from sphinx.writers.text import TextTranslator, MAXWIDTH, STDINDENT
 from .sphinx_bigger_extension import visit_bigger_node_rst, depart_bigger_node_rst
+from .sphinx_gitlog_extension import visit_gitlog_node_rst, depart_gitlog_node_rst
 from .sphinx_collapse_extension import visit_collapse_node_rst, depart_collapse_node_rst
 from .sphinx_quote_extension import visit_quote_node_rst, depart_quote_node_rst
 from .sphinx_sharenet_extension import visit_sharenet_node_rst, depart_sharenet_node_rst
@@ -968,6 +969,12 @@ class RstTranslator(TextTranslator, CommonSphinxWriterHelpers):
 
     def depart_bigger_node(self, node):
         depart_bigger_node_rst(self, node)
+
+    def visit_gitlog_node(self, node):
+        visit_gitlog_node_rst(self, node)
+
+    def depart_gitlog_node(self, node):
+        depart_gitlog_node_rst(self, node)
 
     def visit_collapse_node(self, node):
         visit_collapse_node_rst(self, node)

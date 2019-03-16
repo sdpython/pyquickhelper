@@ -629,7 +629,7 @@ def get_master_location(path=None, commandline=True):
         try:
             raise NotImplementedError()
         except Exception:
-            return get_repo_version(path, True)
+            return get_master_location(path, True)
     else:
         cmd = get_cmd_git()
         cmd += " config --get remote.origin.url"
@@ -673,8 +673,8 @@ def get_nb_commits(path=None, commandline=True):
     if not commandline:
         try:
             raise NotImplementedError()
-        except Exception as e:
-            return get_repo_version(path, True)
+        except Exception:
+            return get_nb_commits(path, True)
     else:
         cmd = get_cmd_git()
         cmd += ' rev-list HEAD --count'
@@ -702,6 +702,45 @@ def get_nb_commits(path=None, commandline=True):
             raise ValueError(
                 "unable to parse: " + lines + "\nCMD:\n" + cmd) from e
         return nb
+
+
+def get_file_last_modification(path, commandline=True):
+    """
+    Returns the last modification of a file.
+
+    @param      path            path to look
+    @param      commandline     if True, use the command line to get the version number, otherwise it uses pysvn
+    @return                     integer
+    """
+    if path is None:
+        path = os.path.normpath(
+            os.path.abspath(os.path.join(os.path.split(__file__)[0], "..", "..", "..")))
+
+    if not commandline:
+        try:
+            raise NotImplementedError()
+        except Exception:
+            return get_file_last_modification(path, True)
+    else:
+        cmd = get_cmd_git()
+        cmd += ' log -1 --format="%ad" --'
+        cmd += " \"%s\"" % path
+
+        out, err = run_cmd(cmd,
+                           wait=True,
+                           encerror="strict",
+                           encoding=sys.stdout.encoding if sys.stdout is not None else "utf8",
+                           change_path=os.path.split(
+                               path)[0] if os.path.isfile(path) else path,
+                           log_error=False,
+                           shell=sys.platform.startswith("win32"))
+
+        if len(err) > 0:
+            raise GitException(
+                "Unable to get commit number from path {0}\n[giterror]\n{1}\nCMD:\n{2}".format(path, err, cmd))
+
+        lines = out.strip("\n\r ")
+        return lines
 
 
 def clone(location, srv, group, project, username=None, password=None, fLOG=None):

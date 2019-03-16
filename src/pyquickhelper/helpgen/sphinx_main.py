@@ -53,6 +53,7 @@ from ..sphinxext.sphinx_template_extension import tpl_role
 from ..sphinxext.sphinx_epkg_extension import epkg_role
 from ..sphinxext.sphinx_bigger_extension import bigger_role
 from ..sphinxext.sphinx_githublink_extension import githublink_role
+from ..sphinxext.sphinx_gitlog_extension import gitlog_role
 from ..sphinxext.sphinx_mathdef_extension import MathDef
 from ..sphinxext.sphinx_quote_extension import QuoteNode
 from ..sphinxext.sphinx_blocref_extension import BlocRef
@@ -320,6 +321,7 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
     roles.register_canonical_role("sharenet", sharenet_role)
     roles.register_canonical_role("bigger", bigger_role)
     roles.register_canonical_role("githublink", githublink_role)
+    roles.register_canonical_role("gitlog", gitlog_role)
     roles.register_canonical_role("tpl", tpl_role)
     roles.register_canonical_role("epkg", epkg_role)
     roles.register_canonical_role("downloadlink", process_downloadlink_role)

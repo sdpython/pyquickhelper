@@ -26,6 +26,7 @@ from .sphinx_epkg_extension import epkg_node
 from .sphinx_exref_extension import ExRef, ExRefList
 from .sphinx_faqref_extension import FaqRef, FaqRefList
 from .sphinx_githublink_extension import githublink_node, githublink_role
+from .sphinx_gitlog_extension import gitlog_node, gitlog_role
 from .sphinx_mathdef_extension import MathDef, MathDefList
 from .sphinx_quote_extension import QuoteNode
 from .sphinx_nbref_extension import NbRef, NbRefList
@@ -51,6 +52,7 @@ from ..sphinxext.sphinx_epkg_extension import setup as setup_epkg
 from ..sphinxext.sphinx_exref_extension import setup as setup_exref
 from ..sphinxext.sphinx_faqref_extension import setup as setup_faqref
 from ..sphinxext.sphinx_githublink_extension import setup as setup_githublink
+from ..sphinxext.sphinx_gitlog_extension import setup as setup_gitlog
 from ..sphinxext.sphinx_image_extension import setup as setup_simpleimage
 from ..sphinxext.sphinx_mathdef_extension import setup as setup_mathdef
 from ..sphinxext.sphinx_quote_extension import setup as setup_quote
@@ -123,7 +125,7 @@ def get_default_extensions(load_bokeh=False):
                       setup_autodoc, setup_imagesvg,
                       setup_plot, setup_image, setup_collapse,
                       setup_video, setup_simpleimage, setup_downloadlink,
-                      setup_quote]
+                      setup_quote, setup_gitlog]
 
     if load_bokeh:
         try:

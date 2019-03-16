@@ -27,10 +27,11 @@ except ImportError:
 from src.pyquickhelper.loghelper import fLOG, removedirs
 from src.pyquickhelper.filehelper import change_file_status
 from src.pyquickhelper.loghelper.repositories.pygit_helper import clone, rebase
-from src.pyquickhelper.pycode import is_travis_or_appveyor
+from src.pyquickhelper.loghelper.repositories.pygit_helper import get_file_last_modification
+from src.pyquickhelper.pycode import is_travis_or_appveyor, ExtTestCase
 
 
-class TestGitHelper(unittest.TestCase):
+class TestGitHelper(ExtTestCase):
 
     def test_clone_repo(self):
         fLOG(
@@ -66,6 +67,16 @@ class TestGitHelper(unittest.TestCase):
 
         r = change_file_status(temp)
         self.assertTrue(len(r) > 0)
+
+    def test_git_last_modifications(self):
+        fLOG(
+            __file__,
+            self._testMethodName,
+            OutputPrint=__name__ == "__main__")
+
+        this = os.path.abspath(__file__).replace(".pyc", ".py")
+        last = get_file_last_modification(this)
+        self.assertIn(last, "2019")
 
 
 if __name__ == "__main__":
