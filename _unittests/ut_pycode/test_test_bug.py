@@ -27,7 +27,7 @@ from src.pyquickhelper.pycode.utils_tests_private import get_test_file
 
 class TestTestBug(ExtTestCase):
 
-    def test_test_files(self):
+    def test_get_test_file(self):
         this = os.path.abspath(os.path.dirname(__file__))
         this = os.path.normpath(os.path.join(this, "..", ".."))
         tests = get_test_file("test_*", this)

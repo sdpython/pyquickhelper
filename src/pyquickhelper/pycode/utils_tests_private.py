@@ -69,19 +69,19 @@ def get_test_file(filter, folder=None, no_subfolder=False, fLOG=noLOG, root=None
                         return p[len(root):]
                     else:
                         return p
-                content = [(remove_root(il), il) for il in content]
+                couples = [(remove_root(il), il) for il in content]
             else:
-                content = [(il, il) for il in content]
+                couples = [(il, il) for il in content]
 
             content = []
-            for il, fu in content:
+            for il, fu in couples:
                 if "test_" in il and ".py" in il and ".py.err" not in il and \
                     ".py.out" not in il and ".py.warn" not in il and \
                     "test_main" not in il and "temp_" not in il and \
                     "temp2_" not in il and ".pyo" not in il and \
                     "out.test_copyfile.py.2.txt" not in il and \
-                    ".pyc" not in il and ".pyd" not in l and ".so" not in il and \
-                        ".py~" not in il:
+                    ".pyc" not in il and ".pyd" not in il and \
+                        ".so" not in il and ".py~" not in il:
                     content.append(fu)
         li.extend(content)
         fLOG("[get_test_file], inspecting", dirs)
@@ -204,7 +204,7 @@ def import_files(li, additional_ut_path=None, fLOG=noLOG):
     return allsuite
 
 
-def clean(dir=None, fLOG=noLOG):
+def clean(folder=None, fLOG=noLOG):
     """
     Does the cleaning.
 
@@ -214,7 +214,7 @@ def clean(dir=None, fLOG=noLOG):
     # do not use SVN here just in case some files are not checked in.
     for log_file in ["temp_hal_log.txt", "temp_hal_log2.txt",
                      "temp_hal_log_.txt", "temp_log.txt", "temp_log2.txt", ]:
-        li = get_test_file(log_file, dir=dir)
+        li = get_test_file(log_file, folder=folder)
         for l in li:
             try:
                 if os.path.isfile(l):
@@ -295,7 +295,7 @@ def main_run_test(runner, path_test=None, limit_max=1e9, log=False, skip=-1, ski
 
     # sort the test by increasing expected time
     fLOG("[main_run_test] path_test", path_test)
-    li = get_test_file("test*", dir=path_test, fLOG=fLOG, root=path_test)
+    li = get_test_file("test*", folder=path_test, fLOG=fLOG, root=path_test)
     if len(li) == 0:
         raise FileNotFoundError("no test files in " + path_test)
     est = [get_estimation_time(l) for l in li]
