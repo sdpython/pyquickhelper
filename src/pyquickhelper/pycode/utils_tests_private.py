@@ -17,13 +17,13 @@ from ..filehelper.synchelper import remove_folder
 from ..loghelper.flog import run_cmd, noLOG
 
 
-def get_test_file(filter, dir=None, no_subfolder=False, fLOG=noLOG, root=None):
+def get_test_file(filter, folder=None, no_subfolder=False, fLOG=noLOG, root=None):
     """
     Returns the list of test files.
 
-    @param      dir             path to look (or paths to look if it is a list)
+    @param      folder          path to look (or paths to look if it is a list)
     @param      filter          only select files matching the pattern (ex: test*)
-    @param      no_subfolder    the function investigates the folder *dir* and does not try any subfolder in
+    @param      no_subfolder    the function investigates the folder *folder* and does not try any subfolder in
                                 ``{"_nrt", "_unittest", "_unittests"}``
     @param      fLOG            logging function
     @param      root            root or folder which contains the project,
@@ -31,22 +31,22 @@ def get_test_file(filter, dir=None, no_subfolder=False, fLOG=noLOG, root=None):
     @return                     a list of test files
     """
     if no_subfolder:
-        dirs = [dir]
+        dirs = [folder]
     else:
         expected = {"_nrt", "_unittest", "_unittests"}
-        if dir is None:
+        if folder is None:
             path = os.path.split(__file__)[0]
             dirs = [os.path.join(path, "..", "..", d) for d in expected]
-        elif isinstance(dir, str):
-            if not os.path.exists(dir):
-                raise FileNotFoundError(dir)
-            last = os.path.split(dir)[-1]
+        elif isinstance(folder, str):
+            if not os.path.exists(folder):
+                raise FileNotFoundError(folder)
+            last = os.path.split(folder)[-1]
             if last in expected:
-                dirs = [dir]
+                dirs = [folder]
             else:
-                dirs = [os.path.join(dir, d) for d in expected]
+                dirs = [os.path.join(folder, d) for d in expected]
         else:
-            dirs = dir
+            dirs = folder
             for d in dirs:
                 if not os.path.exists(d):
                     raise FileNotFoundError(d)
@@ -54,14 +54,14 @@ def get_test_file(filter, dir=None, no_subfolder=False, fLOG=noLOG, root=None):
     copypaths = list(sys.path)
 
     li = []
-    for dir in dirs:
-        if "__pycache__" in dir or "site-packages" in dir:
+    for folder in dirs:
+        if "__pycache__" in folder or "site-packages" in folder:
             continue
-        if not os.path.exists(dir):
+        if not os.path.exists(folder):
             continue
-        if dir not in sys.path and dir != ".":
-            sys.path.append(dir)
-        content = glob.glob(dir + "/" + filter)
+        if folder not in sys.path and folder != ".":
+            sys.path.append(folder)
+        content = glob.glob(folder + "/" + filter)
         if filter != "temp_*":
             if root is not None:
                 def remove_root(p):
@@ -86,7 +86,7 @@ def get_test_file(filter, dir=None, no_subfolder=False, fLOG=noLOG, root=None):
         li.extend(content)
         fLOG("[get_test_file], inspecting", dirs)
 
-        lid = glob.glob(dir + "/*")
+        lid = glob.glob(folder + "/*")
         for l in lid:
             if os.path.isdir(l):
                 temp = get_test_file(
