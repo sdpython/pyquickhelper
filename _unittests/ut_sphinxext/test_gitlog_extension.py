@@ -31,7 +31,7 @@ from docutils.parsers.rst.roles import register_canonical_role
 
 class TestGitlogExtension(unittest.TestCase):
 
-    def _test_post_parse_sn(self):
+    def test_post_parse_sn(self):
         fLOG(
             __file__,
             self._testMethodName,
