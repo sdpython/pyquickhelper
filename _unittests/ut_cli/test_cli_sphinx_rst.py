@@ -2,7 +2,6 @@
 @brief      test tree node (time=7s)
 """
 
-
 import sys
 import os
 import unittest
@@ -21,9 +20,9 @@ except ImportError:
         sys.path.append(path)
     import src
 
-from src.pyquickhelper.pycode import ExtTestCase
+from src.pyquickhelper.pycode import ExtTestCase, get_temp_folder
 from src.pyquickhelper.__main__ import main
-from src.pyquickhelper.pycode import get_temp_folder
+from src.pyquickhelper.loghelper import BufferedPrint
 
 
 class TestCliSphinxRst(ExtTestCase):
@@ -34,10 +33,12 @@ class TestCliSphinxRst(ExtTestCase):
 
     def test_sphinx_rst(self):
         "sphinx rst"
+        st = BufferedPrint()
         temp = get_temp_folder(__file__, "temp_sphinx_rst")
         name = os.path.join(temp, "..", "data", "glossary.rst")
         out = os.path.join(temp, "out")
-        res = main(args=['sphinx_rst', '-i', name, '-o', out])
+        res = main(args=['sphinx_rst', '-i', name, '-o', out],
+                   fLOG=st.fprint)
         out += ".html"
         self.assertExists(out)
 

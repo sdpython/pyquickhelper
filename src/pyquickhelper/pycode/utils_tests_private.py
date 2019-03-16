@@ -73,14 +73,16 @@ def get_test_file(filter, dir=None, no_subfolder=False, fLOG=noLOG, root=None):
             else:
                 content = [(l, l) for l in content]
 
-            content = [fu for l, fu in content if "test_" in l and
-                       ".py" in l and ".py.err" not in l and
-                       ".py.out" not in l and ".py.warn" not in l and
-                       "test_main" not in l and "temp_" not in l and
-                       "temp2_" not in l and ".pyo" not in l and
-                       "out.test_copyfile.py.2.txt" not in l and
-                       ".pyc" not in l and ".pyd" not in l and
-                       ".so" not in l and ".py~" not in l]
+            content = []
+            for il, fu in content:
+                if "test_" in il and ".py" in il and ".py.err" not in il and \
+                    ".py.out" not in il and ".py.warn" not in il and \
+                    "test_main" not in il and "temp_" not in il and \
+                    "temp2_" not in il and ".pyo" not in il and \
+                    "out.test_copyfile.py.2.txt" not in il and \
+                    ".pyc" not in il and ".pyd" not in l and ".so" not in il and \
+                        ".py~" not in il:
+                    content.append(fu)
         li.extend(content)
         fLOG("[get_test_file], inspecting", dirs)
 
@@ -590,7 +592,8 @@ def is_valid_error(error):
     @return                 boolean
     """
     lines = error.split('\n')
-    lines = [line for line in lines if "No module named 'numpy.core._multiarray_umath'" not in line]
+    lines = [
+        line for line in lines if "No module named 'numpy.core._multiarray_umath'" not in line]
     error = "\n".join(lines)
     keys = ["Exception", "Error", "TraceBack", "invalid", " line "]
     error = error.lower()

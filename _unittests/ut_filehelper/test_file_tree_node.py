@@ -24,7 +24,6 @@ except ImportError:
         sys.path.append(path)
     import src
 
-from src.pyquickhelper.loghelper import fLOG
 from src.pyquickhelper.filehelper import FileTreeNode
 from src.pyquickhelper.pycode import ExtTestCase
 from src.pyquickhelper.helpgen.utils_sphinx_doc import filecontent_to_rst, replace_relative_import_fct
@@ -37,17 +36,13 @@ class TestFileNodeTree(ExtTestCase):
         self.assertTrue(src is not None)
 
     def test_file_tree_node(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
         this = os.path.abspath(os.path.dirname(__file__))
         folder = os.path.normpath(os.path.join(this, "..", "..", "src"))
 
         def filter(root, path, f, d):
             return "__pycache__" not in path and "__pycache__" not in f
 
-        ftn = FileTreeNode(folder, fLOG=fLOG, log=True, log1=True,
+        ftn = FileTreeNode(folder, log=True, log1=True,
                            filter=filter)
         if len(ftn) == 2:
             raise Exception("%d" % len(ftn))
@@ -79,10 +74,6 @@ class TestFileNodeTree(ExtTestCase):
                     condition = "# replace # from ." in cont2
                     if not condition:
                         for line in lines:
-                            if "from ..helpgen import docstring2html" in line:
-                                continue
-                            if "from .pandashelper import df2rst" in line:
-                                continue
                             if "from ." in line and "import" in line:
                                 doc = "\n-------------DOC--------\n" + doc
                                 raise Exception(

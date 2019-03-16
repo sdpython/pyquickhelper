@@ -13,7 +13,7 @@ def remove_extra_spaces_and_pep8(filename, apply_pep8=True, aggressive=False, is
     Removes extra spaces in a filename, replaces the file in place.
 
     @param      filename        file name or string (but it assumes it is python).
-    @param      apply_pep8      if True, calls ``autopep8`` on the file
+    @param      apply_pep8      if True, calls :epkg:`autopep8` on the file
     @param      aggressive      more aggressive
     @param      is_string       force *filename* to be a string
     @return                     number of removed extra spaces
@@ -174,7 +174,7 @@ def remove_extra_spaces_folder(
 
     @param      folder          folder to explore
     @param      extensions      list of file extensions to process
-    @param      apply_pep8      if True, calls ``autopep8`` on the file
+    @param      apply_pep8      if True, calls :epkg:`autopep8` on the file
     @param      file_filter     None of function which filters based on the filename
     @return                     the list of modified files
 

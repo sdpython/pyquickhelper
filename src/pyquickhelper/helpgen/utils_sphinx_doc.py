@@ -41,81 +41,68 @@ def validate_file_for_help(filename, fexclude=lambda f: False):
 
 def replace_relative_import_fct(fullname, content=None):
     """
-    Takes a :epkg:`python` file and replaces all relative imports it was able to find
-    by an import which can be processed by Python if the file were the main file.
+    Takes a :epkg:`python` file and replaces all relative
+    imports it was able to find by an import which can be
+    processed by :epkg:`Python` if the file were the main file.
 
     @param      fullname        name of the file
-    @param      content         a preprocessed content of the file of the content if it is None
+    @param      content         a preprocessed content of the file of
+                                the content if it is None
     @return                     content of the file without relative imports
 
-    @warning It uses regular expressions, so it might do it in the comments. It does not support import on several lines.
+    .. versionchanged:: 1.8
+        Does not change imports in comments.
     """
     if content is None:
         with open(fullname, "r", encoding="utf8") as f:
             content = f.read()
 
+    fullpath = os.path.dirname(fullname)
+    fullsplit = fullpath.replace('\\', '/').split('/')
+    root = None
+    for i in range(len(fullsplit), 1, -1):
+        path = "/".join(fullsplit[:i])
+        init = os.path.join(path, '__init__.py')
+        if not os.path.exists(init):
+            root = i + 1
+            break
+        if i < len(fullsplit) and fullsplit[i] in ('src', 'site-packages'):
+            root = i + 1
+            break
+    if root is None:
+        raise FileNotFoundError(
+            "Unable to package root for '{}'.".format(fullname))
+
     lines = content.split("\n")
-    reg = re.compile(
-        "^( *)from +[.]{2}([a-zA-Z_][a-zA-Z0-9_.]*) +import +(.*)$")
-    reg2 = re.compile("^( *)from +[.]([a-zA-Z_][a-zA-Z0-9_.]*) +import +(.*)$")
-    reg3 = re.compile("^( *)from +[.] +import +(.*)$")
-    reg4 = re.compile("^( *)from +[.]{2} +import +(.*)$")
+    name = "([a-zA-Z_][a-zA-Z_0-9]*)"
+    namedot = "([a-zA-Z_][a-zA-Z_0-9.]*)"
+    names = name + "(, " + name + ")*"
+    end = "( .*)?$"
+    regi = re.compile("^( *)from ([.]{1,3})" +
+                      namedot + " import " + names + end)
+
     for i in range(0, len(lines)):
         line = lines[i]
-        find = reg.search(line)
-
-        extracted = None
-        next = None
-        add = None
-        fr = None
+        find = regi.search(line)
 
         if find:
-            sp = find.groups()[0]
-            fr = "from"
-            extracted = find.groups()[1]
-            next = find.groups()[2]
-            add = ".."
-        else:
-            find = reg2.search(line)
-            if find:
-                sp = find.groups()[0]
-                fr = "from"
-                extracted = find.groups()[1]
-                next = find.groups()[2]
-                add = ""
+            space, dot, rel, name0, names, _, end = find.groups()
+            idot = len(dot)
+            level = len(fullsplit) - root - idot + 1
+            if level > 0:
+                if end is None:
+                    end = ""
+                if names is None:
+                    names = ""
+                packname = ".".join(fullsplit[root:root + level])
+                if rel:
+                    packname += '.' + rel
+                line = "{space}from {packname} import {name0}{names}{end}".format(
+                    space=space, packname=packname, name0=name0, names=names, end=end)
+                lines[i] = line
             else:
-                find = reg3.search(line)
-                if find:
-                    sp = find.groups()[0]
-                    fr = ""
-                    extracted = ""
-                    next = find.groups()[1]
-                    add = ""
-                else:
-                    find = reg4.search(line)
-                    if find:
-                        sp = find.groups()[0]
-                        fr = sp + "from"
-                        extracted = os.path.split(
-                            os.path.split(os.path.split(fullname)[0])[0])[-1]
-                        next = find.groups()[1]
-                        add = os.path.join("..", "..")
-
-        if extracted is not None:
-            by = ("%s%s %s import %s" % (sp, fr, extracted, next)).strip()
-            sts = ["", "# replace # " + line]
-            sts.append("%simport sys,os" % sp)
-            if len(add) > 0:
-                sts.append(
-                    "%spath=os.path.normpath(os.path.join(os.path.abspath(os.path.split(__file__)[0]),'%s'))" % (sp, add))
-            else:
-                sts.append(
-                    "%spath=os.path.normpath(os.path.join(os.path.abspath(os.path.split(__file__)[0])))" % sp)
-            sts.append("%ssys.path.insert(0,path)" % sp)
-            sts.append("%s%s" % (sp, by))
-            sts.append("%sdel sys.path[0]" % sp)
-            line = "\n".join(sts)
-            lines[i] = line
+                raise ValueError("Unable to replace relative import in '{0}', root='{1}'".format(
+                    line, fullsplit[root]))
 
     return "\n".join(lines)
 
