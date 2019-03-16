@@ -34,10 +34,6 @@ pyquickhelper documentation
     :alt: GitHub Issues
     :target: https://github.com/sdpython/pyquickhelper/issues
 
-.. image:: https://badge.waffle.io/sdpython/pyquickhelper.png?label=ready&title=Ready
-    :alt: Waffle
-    :target: https://waffle.io/sdpython/pyquickhelper
-
 .. image:: https://api.codacy.com/project/badge/Grade/793ffca6089d4d02b8292a50df74a8a4
     :target: https://www.codacy.com/app/sdpython/pyquickhelper?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=sdpython/pyquickhelper&amp;utm_campaign=Badge_Grade
     :alt: Codacy Badge

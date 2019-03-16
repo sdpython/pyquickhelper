@@ -54,14 +54,14 @@ def get_test_file(filter, folder=None, no_subfolder=False, fLOG=noLOG, root=None
     copypaths = list(sys.path)
 
     li = []
-    for folder in dirs:
-        if "__pycache__" in folder or "site-packages" in folder:
+    for fold in dirs:
+        if "__pycache__" in fold or "site-packages" in fold:
             continue
-        if not os.path.exists(folder):
+        if not os.path.exists(fold):
             continue
-        if folder not in sys.path and folder != ".":
-            sys.path.append(folder)
-        content = glob.glob(folder + "/" + filter)
+        if fold not in sys.path and fold != ".":
+            sys.path.append(fold)
+        content = glob.glob(fold + "/" + filter)
         if filter != "temp_*":
             if root is not None:
                 def remove_root(p):
@@ -86,11 +86,11 @@ def get_test_file(filter, folder=None, no_subfolder=False, fLOG=noLOG, root=None
         li.extend(content)
         fLOG("[get_test_file], inspecting", dirs)
 
-        lid = glob.glob(folder + "/*")
-        for l in lid:
-            if os.path.isdir(l):
+        lid = glob.glob(fold + "/*")
+        for il in lid:
+            if os.path.isdir(il):
                 temp = get_test_file(
-                    filter, l, no_subfolder=True, fLOG=fLOG, root=root)
+                    filter, il, no_subfolder=True, fLOG=fLOG, root=root)
                 temp = [t for t in temp]
                 li.extend(temp)
 

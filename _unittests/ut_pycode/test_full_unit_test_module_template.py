@@ -23,7 +23,7 @@ except ImportError:
 
 from src.pyquickhelper.loghelper.flog import fLOG
 from src.pyquickhelper.pycode import get_temp_folder, process_standard_options_for_setup, is_travis_or_appveyor
-from src.pyquickhelper.pycode import ExtTestCode
+from src.pyquickhelper.pycode import ExtTestCase
 from src.pyquickhelper.loghelper import git_clone
 from src.pyquickhelper import __file__ as pyq_location
 
