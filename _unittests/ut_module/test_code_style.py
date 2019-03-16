@@ -21,8 +21,8 @@ except ImportError:
         sys.path.append(path)
     import src
 
-from src.pyquickhelper.loghelper import fLOG, ExtTestCase
-from src.pyquickhelper.pycode import is_travis_or_appveyor
+from src.pyquickhelper.loghelper import fLOG
+from src.pyquickhelper.pycode import is_travis_or_appveyor, ExtTestCase
 from src.pyquickhelper.pycode._pylint_common import _private_test_style_src, _private_test_style_test
 
 
