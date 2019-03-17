@@ -20,7 +20,7 @@ except ImportError:
         sys.path.append(path)
     import src
 
-from src.pyquickhelper.pycode import ExtTestCase, get_temp_folder
+from src.pyquickhelper.pycode import ExtTestCase, get_temp_folder, skipif_travis, skipif_appveyor
 from src.pyquickhelper.__main__ import main
 from src.pyquickhelper.loghelper import BufferedPrint
 
@@ -42,6 +42,8 @@ class TestCliSphinxRst(ExtTestCase):
         out += ".html"
         self.assertExists(out)
 
+    @skipif_travis("latex is not installed")
+    @skipif_appveyor("latex is not installed")
     def test_sphinx_rst_notoctree(self):
         "sphinx rst toctree"
         st = BufferedPrint()
@@ -56,6 +58,8 @@ class TestCliSphinxRst(ExtTestCase):
             content = f.read()
         self.assertIn("pour finalement illustrer", content)
 
+    @skipif_travis("latex is not installed")
+    @skipif_appveyor("latex is not installed")
     def test_sphinx_rst_toctree(self):
         "sphinx rst toctree"
         st = BufferedPrint()
