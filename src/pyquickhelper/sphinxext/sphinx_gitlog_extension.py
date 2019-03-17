@@ -29,7 +29,7 @@ class gitlog_node(nodes.Element):
 def gitlog_role(role, rawtext, text, lineno, inliner, options=None, content=None):
     """
     Defines custom role *gitlog*. The following instruction prints
-    out (:gitlog:`date`).
+    out the date of the last modification for the current file.
 
     ::
 
@@ -93,7 +93,7 @@ def visit_gitlog_node_rst(self, node):
 
 def depart_gitlog_node_rst(self, node):
     """
-    depart gitlog_node for rst
+    depart *gitlog_node* for rst
     """
     self.add_text('`')
 
@@ -110,7 +110,7 @@ def visit_gitlog_node_latex(self, node):
 
 def depart_gitlog_node_latex(self, node):
     """
-    depart gitlog_node for latex
+    depart *gitlog_node* for latex
     """
 
 
@@ -126,7 +126,7 @@ def visit_gitlog_node(self, node):
 
 def depart_gitlog_node(self, node):
     """
-    depart gitlog_node for format other than html
+    depart *gitlog_node* for format other than html
     """
     logger = getLogger("gitlog")
     logger.warning("[depart_gitlog_node] output only available for HTML not for '{0}' != '{1}'".format(
