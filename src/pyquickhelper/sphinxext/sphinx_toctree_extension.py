@@ -21,8 +21,11 @@ from ..texthelper import compare_module_version
 
 class CustomTocTree(TocTree):
     """
-    Overwrites `toctree <http://www.sphinx-doc.org/en/stable/markup/toctree.html#directive-toctree>`_.
-    The code is located at `sphinx/directives/other.py <https://github.com/sphinx-doc/sphinx/blob/master/sphinx/directives/other.py#L38>`_.
+    Overwrites `toctree
+    <http://www.sphinx-doc.org/en/stable/markup/toctree.html#directive-toctree>`_.
+    The code is located at
+    `sphinx/directives/other.py
+    <https://github.com/sphinx-doc/sphinx/blob/master/sphinx/directives/other.py#L38>`_.
     """
 
     has_content = True
@@ -61,8 +64,10 @@ class CustomTocTree(TocTree):
                 # This comes from rst2html.
                 pass
             else:
-                raise ValueError("Unable to remove document '{0}' from\n{1}".format(
-                    env.docname, "\n".join(all_docnames)))
+                logger = logging.getLogger("CustomTocTreeCollector")
+                logger.warning(
+                    "[CustomTocTreeCollector] unable to remove document '{0}' from {1}".format(
+                        env.docname, ", ".join(all_docnames)))
 
         for entry in self.content:
             if not entry:

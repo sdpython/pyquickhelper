@@ -45,5 +45,5 @@ def sphinx_rst(input="", writer="html", keep_warnings=False,
                    document_name=output)
     if output:
         with open(output, "w", encoding="utf-8") as f:
-            f.write(output)
+            f.write(res)
     return res
