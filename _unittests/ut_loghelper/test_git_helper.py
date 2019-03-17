@@ -76,7 +76,7 @@ class TestGitHelper(ExtTestCase):
 
         this = os.path.abspath(__file__).replace(".pyc", ".py")
         last = get_file_last_modification(this)
-        self.assertIn(last, "2019")
+        self.assertIn("2019", last)
 
 
 if __name__ == "__main__":
