@@ -169,7 +169,7 @@ def import_any_object(docname, use_init=True, fLOG=None) -> Tuple[object, str, s
         "Unable to import '{0}'. Exceptions met: {1}".format(docname, sec))
 
 
-def import_path(obj, class_name=None, fLOG=None):
+def import_path(obj, class_name=None, err_msg=None, fLOG=None):
     """
     Determines the import path which is
     the shortest way to import the function. In case the
@@ -181,6 +181,7 @@ def import_path(obj, class_name=None, fLOG=None):
         static method and functions. If not None, this parameter
         should contain the name of the class which holds the static
         method given in *obj*
+    :param err_msg: an error message to display if anything happens
     :param fLOG: logging function
     :returns: import path
     :raises: :epkg:`*py:TypeError` if object is a property,
@@ -188,6 +189,9 @@ def import_path(obj, class_name=None, fLOG=None):
 
     The function does not work for methods or properties.
     It raises an exception or returns irrelevant results.
+
+    .. versionchanged:: 1.8
+        Parameter *err_msg* was added.
     """
     try:
         _ = obj.__module__
@@ -220,6 +224,6 @@ def import_path(obj, class_name=None, fLOG=None):
                 continue
 
     if found is None:
-        raise RuntimeError("Unable to import object '{0}' ({1}). Full path: '{2}'".format(
-            name, obj, '.'.join(elements)))
+        raise RuntimeError("Unable to import object '{0}' ({1}). Full path: '{2}'{3}".format(
+            name, obj, '.'.join(elements), ("\n-----\n" + err_msg) if err_msg else ''))
     return found

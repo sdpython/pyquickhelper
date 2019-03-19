@@ -95,8 +95,8 @@ def sphinx_rst(input="", writer="html", keep_warnings=False,
         if not ext:
             output += "." + writer
     if len(input) <= 5000 and \
-        (input.startswith('http') or \
-        os.path.exists(input)):
+        (input.startswith('http') or
+         os.path.exists(input)):
         content = read_content_ufs(input)
     else:
         content = input

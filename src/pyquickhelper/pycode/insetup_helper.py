@@ -20,7 +20,8 @@ def must_build(argv=None):
     """
     if argv is None:
         argv = sys.argv
-    for k in {'unittests', 'unittests_LONG', 'unittests_SKIP', 'unittests_GUI', 'build_sphinx'}:
+    for k in {'unittests', 'unittests_LONG', 'unittests_SKIP',
+              'unittests_GUI', 'build_sphinx'}:
         if k in argv:
             return True
     return False
@@ -34,15 +35,16 @@ def run_build_ext(setup_file):
     @return                     output
     """
     exe = sys.executable
-    setup = os.path.join(os.path.abspath(
-        os.path.dirname(setup_file)), "setup.py")
-    cmd = "{0} {1} build_ext --inplace".format(exe, setup)
+    setup = os.path.normpath(os.path.join(os.path.abspath(
+        os.path.dirname(setup_file)), "setup.py"))
+    cmd = "{0} -u {1} build_ext --inplace".format(exe, setup)
     chd = os.path.abspath(os.path.dirname(setup_file))
     out, err = run_cmd(cmd, wait=True, change_path=chd)
     err0 = _filter_out_warning(err)
     if len(err0) > 0:
         mes0 = "\n".join("### " + _ for _ in err.split("\n"))
-        mes = "Unable to run\n{0}\n[pyqerror]\n{1}".format(cmd, mes0)
+        mes = "Unable to run '{2}'\nin '{3}'\nCMD: '{0}'\n[pyqerror]\n{1}".format(
+            cmd, mes0, setup_file, chd)
         raise RuntimeError(mes)
     return out
 
@@ -64,8 +66,10 @@ def _filter_out_warning(out):
             skip = "ImportWarning" in line or "warning D9002: option '-std=c++11'" in line
             skip = skip or "RuntimeWarning: Config variable 'Py_DEBUG'" in line
             skip = skip or "RuntimeWarning: Config variable 'WITH_PYMALLOC'" in line
-            skip = skip or "UserWarning: Module pyquickhelper was already imported" in line
-            skip = skip or "UserWarning: Module nbconvert was already imported" in line
+            skip = skip or "UserWarning: Unbuilt egg for Unknown" in line
+            for mod in ['pyquickhelper', 'nbconvert']:
+                skip = skip or "UserWarning: Module {} was already imported".format(
+                    mod) in line
         if not skip:
             new_lines.append(line)
     return "\n".join(new_lines)

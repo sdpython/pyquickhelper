@@ -26,7 +26,7 @@ def remove_extra_spaces_and_pep8(filename, apply_pep8=True, aggressive=False, is
         filename = None
     else:
         ext = os.path.splitext(filename)[-1]
-        if ext in (".bat", ".py", ".sh"):
+        if ext in (".bat", ".py", ".sh", ".pyx", ".pxd"):
             try:
                 with open(filename, "r") as f:
                     lines = f.readlines()
@@ -63,7 +63,7 @@ def remove_extra_spaces_and_pep8(filename, apply_pep8=True, aggressive=False, is
         raise ValueError(
             "File '{0}' is empty, encoding='{1}'.".format(filename, encoding))
 
-    if filename is not None and ext == ".py":
+    if filename is not None and ext in (".py", ".pyx", ".pxd"):
         if encoding is not None and len(lines) > 0 and "#-*-coding:utf-8-*-" in lines[0].replace(" ", ""):
             with open(filename, "r", encoding="utf8") as f:
                 try:
@@ -89,7 +89,7 @@ def remove_extra_spaces_and_pep8(filename, apply_pep8=True, aggressive=False, is
 
     if filename is not None:
         ext = os.path.splitext(filename)[-1]
-    if ext == ".py" and apply_pep8:
+    if ext in (".py", ) and apply_pep8:
         options = ['', '-a'] if aggressive else ['']
         options.extend(["--ignore=E402"])
         r = autopep8.fix_code(
@@ -111,7 +111,7 @@ def remove_extra_spaces_and_pep8(filename, apply_pep8=True, aggressive=False, is
             diff, lines2 = cdiff(r.split("\n"))
         else:
             diff = 0
-    elif ext in (".rst", ".md"):
+    elif ext in (".rst", ".md", ".pyx", ".pxd"):
         lines2 = [_.replace("\r", "").rstrip("\n ") for _ in lines]
         rem = set()
         for i, line in enumerate(lines2):
@@ -167,7 +167,7 @@ def remove_extra_spaces_and_pep8(filename, apply_pep8=True, aggressive=False, is
 
 
 def remove_extra_spaces_folder(
-        folder, extensions=(".py", ".rst", ".md"), apply_pep8=True,
+        folder, extensions=(".py", ".rst", ".md", ".pyx", ".pxd"), apply_pep8=True,
         file_filter=None):
     """
     Removes extra files in a folder for specific file extensions.

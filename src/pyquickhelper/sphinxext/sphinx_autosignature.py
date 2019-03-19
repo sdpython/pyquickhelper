@@ -83,7 +83,7 @@ class AutoSignatureDirective(Directive):
 
     * *nosummary*: do not display a summary (shorten)
     * *annotation*: shows annotation
-    * *nolink*: add a link to a full documentation (produced by
+    * *nolink*: if False, add a link to a full documentation (produced by
       :epkg:`sphinx.ext.autodoc`)
     * *members*: shows members of a class
     * *path*: three options, *full* displays the full path including
@@ -197,7 +197,8 @@ class AutoSignatureDirective(Directive):
                 pimp = import_path(obj, class_name=cl, fLOG=logging_function)
                 anchor = '{0}.{1}.{2}'.format(pimp, cl, fu)
             else:
-                pimp = import_path(obj)
+                pimp = import_path(
+                    obj, err_msg="object name: '{0}'".format(object_name))
                 anchor = '{0}.{1}'.format(pimp, object_name.split(".")[-1])
         elif opt_path == 'full':
             anchor = object_name
