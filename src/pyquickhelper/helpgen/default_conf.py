@@ -321,7 +321,8 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
     version_file = os.path.join(dirconf, "..", "..", "..", "version.txt")
     if not os.path.exists(version_file):
         warnings.warn(
-            "File '{0}' must contain the commit number (or last part of the version).".format(version_file), UserWarning)
+            "File '{0}' must contain the commit number (or last part of the version).".format(
+                version_file), UserWarning)
         first_line = "0"
     else:
         first_line = get_first_line(version_file)
@@ -333,7 +334,8 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
     if doc_version is None:
         mod = sys.modules.get(module_name, None)
         if mod is None:
-            raise RuntimeError("Unknown module version. You should import '{0}'.".format(module_name))
+            raise RuntimeError("Unknown module version. You should import '{0}' or specifiy 'doc_version'.".format(
+                module_name))
         version = mod.__version__
     else:
         version = doc_version

@@ -1,12 +1,25 @@
 
+
 .. _l-HISTORY:
 
 =======
 History
 =======
 
-current - 2019-02-16 - 0.00Mb
+current - 2019-03-20 - 0.00Mb
 =============================
+
+* `243`: refactor unit tests (2019-03-20)
+* `239`: add sphinx directive to add date of the latest commit (2019-03-16)
+* `242`: add command line sphinx_rst to convert rst document (2019-03-16)
+* `240`: replaces separator ; by ;; in yaml files when dealing with conditional instructions (2019-03-04)
+* `236`: command line is slow (2019-03-01)
+* `237`: add parameter number_format to df2rst (2019-02-28)
+* `235`: removes FutureWarning when using ExtTestClass (2019-02-24)
+* `234`: fix RSS stream (2019-02-21)
+
+1.8.2973 - 2019-02-16 - 2.03Mb
+==============================
 
 * `233`: add a function to run all test function in a file (2019-02-14)
 * `232`: Missing blog posts between two pages (2019-01-28)
@@ -147,3 +160,4 @@ current - 2019-02-16 - 0.00Mb
 
 1.5.2275 - 2017-11-28 - 0.50Mb
 ==============================
+
