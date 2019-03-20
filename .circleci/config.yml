@@ -63,6 +63,7 @@ jobs:
           name: run tests
           command: |
             . venv/bin/activate
+            export PYTHONPATH=src
             python setup.py unittests
 
       - run:

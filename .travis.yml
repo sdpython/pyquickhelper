@@ -14,5 +14,6 @@ install:
     - pip install git+https://github.com/fancycode/pylzma.git --upgrade --no-deps
     - npm install
     - pip install sphinx$sphinxconstraint
+    - export PYTHONPATH=src
 script:
     - python setup.py unittests

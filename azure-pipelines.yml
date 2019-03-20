@@ -30,7 +30,9 @@ jobs:
   - script: pip install -r requirements.txt
     displayName: 'Install Requirements'
   - script: python -m pip install scikit-learn
-    displayName: 'Install scipy scikit-learn'
+    displayName: 'Install scipy scikit-learn'    
+  - script: export PYTHONPATH=src
+    displayName: 'PYTHONPATH=src'
   - script: python -u setup.py unittests
     displayName: 'Runs Unit Tests'
   - script: python -u setup.py bdist_wheel
@@ -77,6 +79,8 @@ jobs:
     displayName: 'Install Requirements'
   - script: python -m pip install scikit-learn
     displayName: 'Install scipy scikit-learn'
+  - script: export PYTHONPATH=src
+    displayName: 'PYTHONPATH=src'
   - script: python -u setup.py unittests
     displayName: 'Runs Unit Tests'
   - script: pip freeze

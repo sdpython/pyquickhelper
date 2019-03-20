@@ -6,7 +6,7 @@ language: python
 # A different script is generated for each PATH.
 # A path cannot be a virtual environment.
 python:
-  - { PATH: "{{Python37}}", VERSION: 3.7, DIST: std, PYINT: python3.7 }
+  - { PATH: "{{Python37}}", VERSION: 3.7, DIST: std, PYINT: python3.7, PYTHONPATH: src }
   
 # The test happens in a virtual environment not with the original distribution.
 virtualenv:

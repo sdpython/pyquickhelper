@@ -21,6 +21,7 @@ install:
   - python --version
   - pip freeze
   - pip freeze > pip_freeze.txt
+  - set PYTHONPATH=src
 
 # Depending on the version, some steps need to be run before the script itself.
 # The notation ${VERSION} refers to the version specified in section python.
