@@ -10,7 +10,6 @@ import pandas
 from pyquickhelper.loghelper import fLOG
 from pyquickhelper.pycode.pip_helper import get_package_info
 from pyquickhelper.pycode import ExtTestCase
-from pyquickhelper.pycode.pip_helper import fix_pip_902
 
 
 class TestPipHelper2(ExtTestCase):
@@ -21,7 +20,6 @@ class TestPipHelper2(ExtTestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
-        fix_pip_902()
         info = get_package_info("pandas")
         # if "license" not in info:
         #    raise Exception(str(info))

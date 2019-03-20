@@ -10,7 +10,7 @@ import pandas
 from pyquickhelper.loghelper import fLOG
 from pyquickhelper.pycode.pip_helper import get_packages_list, package2dict
 from pyquickhelper.pycode import ExtTestCase
-from pyquickhelper.pycode.pip_helper import fix_pip_902, PQPipError
+from pyquickhelper.pycode.pip_helper import PQPipError
 
 
 class TestPipHelper(ExtTestCase):
@@ -32,13 +32,12 @@ class TestPipHelper(ExtTestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
-        keys = fix_pip_902()
         li = get_packages_list()
         dt = package2dict(li[0])
         avoid = {'py_version'}
         empty = []
         for k, v in dt.items():
-            if k not in keys and k not in avoid:
+            if k not in avoid:
                 if k is None:
                     empty.append(k)
         self.assertEmpty(empty)

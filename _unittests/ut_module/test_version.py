@@ -22,14 +22,16 @@ class TestVersion (unittest.TestCase):
             os.path.split(__file__)[0],
             "..",
             "..",
-            "setup.py")
+            "src",
+            "pyquickhelper",
+            "__init__.py")
         with open(setup, "r") as f:
             c = f.read()
-        reg = re.compile("sversion *= \\\"(.*)\\\"")
+        reg = re.compile("__version__ *= \\\"(.*)\\\"")
 
         f = reg.findall(c)
         if len(f) != 1:
-            raise Exception("not only one version")
+            raise Exception("not only one version: {}".format(f))
         assert f[0] == __version__
 
 

@@ -7,7 +7,6 @@ Some links to look:
 * `installing_python_packages_programatically.py <https://gist.github.com/rwilcox/755524>`_
 * `Calling pip programmatically <http://blog.ducky.io/python/2013/08/22/calling-pip-programmatically/>`_
 """
-import sys
 
 
 class PQPipError (Exception):
@@ -29,48 +28,11 @@ class PQPipError (Exception):
             Exception.__init__(self, mes)
 
 
-def fix_pip_902():
-    """
-    Version 9.0.2 of pip introduced some weird checkings in file
-    `pip/_vendor/requests/packages.py <https://github.com/pypa/pip/blob/master/src/pip/_vendor/requests/packages.py>`_.
-    Option 1 is to avoid that version,
-    option 2 is to try to fix it.
-
-    @return     added keys in ``sys.modules``
-
-    See blog post
-    :ref:`pip 9.0.2 and issue with pip._vendor.urllib3.contrib <blog-pip-vendor-urllib3-contrib>`,
-    the following code must be run before the error
-    ``KeyError: 'pip._vendor.urllib3.contrib'`` is raised.
-
-    ::
-
-        from pyquickhelper.pycode.pip_helper import fix_pip_902
-        fix_pip_902()
-    """
-    keys = ['pip._vendor.urllib3.contrib',
-            'pip._vendor.urllib3.contrib.pyopenssl',
-            'pip._vendor.urllib3.packages.backports',
-            'pip._vendor.urllib3.packages.backports.makefile',
-            'pip._vendor.urllib3.contrib.socks']
-    res = []
-    for key in keys:
-        if key not in sys.modules:
-            sys.modules[key] = None
-            res.append(key)
-    return set(res)
-
-
 def get_packages_list():
     """
     calls ``pip list`` to retrieve the list of packages
     """
-    try:
-        # pip >= 10.0
-        from pip._internal.utils.misc import get_installed_distributions
-    except ImportError:
-        # pip < 10.0
-        from pip import get_installed_distributions
+    from pip._internal.utils.misc import get_installed_distributions
     return get_installed_distributions(local_only=True)
 
 
@@ -100,12 +62,7 @@ def get_package_info(name=None, start=0, end=-1):
     @param      end         end at package n, -1 for all
     @return                 dictionary or list of dictionaries
     """
-    try:
-        # pip >= 10.0
-        from pip._internal.commands.show import search_packages_info
-    except ImportError:
-        # pip < 10.0
-        from pip.commands.show import search_packages_info
+    from pip._internal.commands.show import search_packages_info
     if name is None:
         res = []
         packs = get_packages_list()

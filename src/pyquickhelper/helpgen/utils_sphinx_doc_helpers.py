@@ -728,8 +728,6 @@ def import_module(rootm, filename, log_function, additional_sys_path=None,
     except KeyError as e:
         if first_try and "KeyError: 'pip._vendor.urllib3.contrib'" in str(e):
             # Issue with pip 9.0.2
-            from ..pycode.pip_helper import fix_pip_902
-            fix_pip_902()
             return import_module(rootm=rootm, filename=filename, log_function=log_function,
                                  additional_sys_path=additional_sys_path,
                                  first_try=False)

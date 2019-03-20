@@ -429,12 +429,8 @@ def add_missing_development_version(names, root, hide=False):
                                 at the same place in a flat hierarchy)
     @param      hide            hide warnings when importing a module (might be a lot)
     @return                     added paths
-
-    .. versionchanged:: 1.7
-        Calls @see fn fix_pip_902.
     """
     # delayed import to speed up import time
-    from .pip_helper import fix_pip_902
     if not isinstance(names, list):
         names = [names]
     root = os.path.abspath(root)
@@ -458,7 +454,6 @@ def add_missing_development_version(names, root, hide=False):
     newroot = os.path.normpath(os.path.abspath(newroot))
     found = os.listdir(newroot)
     dirs = [os.path.join(newroot, _) for _ in found]
-    fix_pip_902()
 
     paths = []
     for name in names:
