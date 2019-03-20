@@ -51,8 +51,10 @@ class TestConfSphinx(unittest.TestCase):
             else:
                 raise e
 
-        for k, v in d.items():
+        for k, v in sorted(d.items()):
             fLOG(k, "\t=", v)
+            if k == 'version':
+                self.assertEqual(v, pyquickhelper.__version__)
 
 
 if __name__ == "__main__":

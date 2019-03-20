@@ -225,7 +225,7 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
                          enable_disabled_parts="enable_disabled_documented_pieces_of_code",
                          sharepost="facebook-linkedin-twitter-20-body", custom_style=None,
                          extlinks=None, github_user=None, github_repo=None, title=None,
-                         book=True, link_resolve=None, nblayout='classic'):
+                         book=True, link_resolve=None, nblayout='classic', doc_version=None):
     """
     Defines variables for :epkg:`Sphinx`.
 
@@ -261,6 +261,7 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
                                         used for parameter *linkcode_resolve*
     @param      nblayout                ``'classic'`` or ``'table'``, specifies the layout for
                                         the notebook gallery
+    @param      doc_version             if not None, overwrites the current version
 
     If the parameter *custom_style* is not None, it will call ``app.add_css_file(custom_style)``
     in the setup.
@@ -329,7 +330,13 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
     language = "en"
 
     # main version
-    version = first_line
+    if doc_version is None:
+        mod = sys.modules.get(module_name, None)
+        if mod is None:
+            raise RuntimeError("Unknown module version. You should import '{0}'.".format(module_name))
+        version = mod.__version__
+    else:
+        version = doc_version
 
     # settings sphinx
     pygments_style = 'sphinx'
