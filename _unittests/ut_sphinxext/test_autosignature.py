@@ -104,7 +104,6 @@ class TestAutoSignature(ExtTestCase):
         this = os.path.abspath(os.path.dirname(__file__))
         data = os.path.join(this, "datadoc")
         with sys_path_append(data):
-
             newstring = ["AAAAAAAAAAAAAAAA",
                          "",
                          ".. autosignature:: exsig.clex",
@@ -133,8 +132,7 @@ class TestAutoSignature(ExtTestCase):
     def test_autosignature_class_onemethod(self):
         this = os.path.abspath(os.path.dirname(__file__))
         data = os.path.join(this, "datadoc")
-        with sys_path_append(data):
-
+        with sys_path_append(data, 0):
             newstring = ["AAAAAAAAAAAAAAAA",
                          "",
                          ".. autosignature:: exsig.clex",
