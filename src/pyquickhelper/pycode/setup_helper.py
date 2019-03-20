@@ -742,12 +742,6 @@ def run_unittests_for_setup(file_or_folder, skip_function=default_skip_function,
         raise FileNotFoundError(
             "You must get the whole source to run the unittests,\nfolder {0} should exist".format(funit))
 
-    run_unit = os.path.join(funit, "run_unittests.py")
-    if not os.path.exists(run_unit):
-        content = os.listdir(funit)
-        raise FileNotFoundError(
-            "the folder {0} should contain run_unittests.py\nCONTENT:\n{1}".format(funit, "\n".join(content)))
-
     fix_tkinter_issues_virtualenv(fLOG=fLOG)
 
     cov = True
@@ -758,8 +752,9 @@ def run_unittests_for_setup(file_or_folder, skip_function=default_skip_function,
     if dump_coverage is not None and not cov:
         dump_coverage = None
 
+    logfile = os.path.join(funit, "unittests.out")
     main_wrapper_tests(
-        run_unit, add_coverage=cov, skip_function=skip_function, setup_params=setup_params,
+        logfile, add_coverage=cov, skip_function=skip_function, setup_params=setup_params,
         only_setup_hook=only_setup_hook, coverage_options=coverage_options,
         coverage_exclude_lines=coverage_exclude_lines, additional_ut_path=additional_ut_path,
         covtoken=covtoken, hook_print=hook_print, stdout=stdout, stderr=stderr,

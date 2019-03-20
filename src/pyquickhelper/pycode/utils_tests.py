@@ -17,7 +17,7 @@ from .utils_tests_private import default_skip_function, main_run_test
 from .utils_tests_stringio import StringIOAndFile
 
 
-def main_wrapper_tests(codefile, skip_list=None, processes=False, add_coverage=False, report_folder=None,
+def main_wrapper_tests(logfile, skip_list=None, processes=False, add_coverage=False, report_folder=None,
                        skip_function=default_skip_function, setup_params=None, only_setup_hook=False,
                        coverage_options=None, coverage_exclude_lines=None, additional_ut_path=None,
                        covtoken=None, hook_print=True, stdout=None, stderr=None, filter_warning=None,
@@ -26,15 +26,14 @@ def main_wrapper_tests(codefile, skip_list=None, processes=False, add_coverage=F
     Calls function :func:`main <pyquickhelper.unittests.utils_tests.main>`
     and throws an exception if it fails.
 
-    @param      codefile                ``__file__`` or ``run_unittests.py``
+    @param      logfile                 locatio of a logfile
     @param      skip_list               to skip a list of unit tests (by index, starting by 1)
     @param      processes               to run the unit test in a separate process (with function @see fn run_cmd),
                                         however, to make that happen, you need to specify
                                         ``exit=False`` for each test file, see `unittest.main
                                         <https://docs.python.org/3/library/unittest.html#unittest.main>`_
     @param      add_coverage            (bool) run the unit tests and measure the coverage at the same time
-    @param      report_folder           (str) folder where the coverage report will be stored, if None, it will be placed in:
-                                        ``os.path.join(os.path.dirname(codefile), "..", "_doc","sphinxdoc","source", "coverage")``
+    @param      report_folder           (str) folder where the coverage report will be stored
     @param      skip_function           *function(filename,content,duration) --> boolean* to skip a unit test
     @param      setup_params            parameters sent to @see fn call_setup_hook
     @param      only_setup_hook         calls only @see fn call_setup_hook, do not run the unit test
@@ -119,14 +118,9 @@ def main_wrapper_tests(codefile, skip_list=None, processes=False, add_coverage=F
     .. versionchanged:: 1.8
         Parameter *coverage_root* was added.
     """
-    try:
-        whole_ouput = StringIOAndFile(codefile + ".out")
-    except PermissionError:
-        # The first attempt might fail due to a previous run
-        # so we try another file.
-        whole_ouput = StringIOAndFile(codefile + ".2.out")
+    whole_ouput = StringIOAndFile(logfile)
     runner = unittest.TextTestRunner(verbosity=0, stream=whole_ouput)
-    path = os.path.abspath(os.path.join(os.path.split(codefile)[0]))
+    path = os.path.abspath(os.path.join(os.path.split(logfile)[0]))
     stdout_this = stdout if stdout else sys.stdout
     datetime_begin = datetime.now()
 
@@ -207,7 +201,7 @@ def main_wrapper_tests(codefile, skip_list=None, processes=False, add_coverage=F
 
     # project_var_name
     folder = os.path.normpath(
-        os.path.join(os.path.dirname(codefile), "..", "src"))
+        os.path.join(os.path.dirname(logfile), "..", "src"))
     content = [_ for _ in os.listdir(folder) if not _.startswith(
         "_") and not _.startswith(".") and os.path.isdir(os.path.join(folder, _))]
     if len(content) != 1:
@@ -216,7 +210,7 @@ def main_wrapper_tests(codefile, skip_list=None, processes=False, add_coverage=F
 
     project_var_name = content[0]
     src_abs = os.path.normpath(os.path.abspath(
-        os.path.join(os.path.dirname(codefile), "..")))
+        os.path.join(os.path.dirname(logfile), "..")))
 
     srcp = os.path.relpath(
         os.path.join(src_abs, "src", project_var_name), os.getcwd())
@@ -234,7 +228,7 @@ def main_wrapper_tests(codefile, skip_list=None, processes=False, add_coverage=F
             stdout_this.write("[main_wrapper_tests] --- COVERAGE BEGIN ---\n")
             if report_folder is None:
                 report_folder = os.path.join(
-                    os.path.abspath(os.path.dirname(codefile)), "..", "_doc", "sphinxdoc", "source", "coverage")
+                    os.path.abspath(os.path.dirname(logfile)), "..", "_doc", "sphinxdoc", "source", "coverage")
 
             fLOG("[main_wrapper_tests] call _setup_hook",
                  src_abs, "name=", project_var_name)
