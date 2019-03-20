@@ -199,6 +199,8 @@ class TestYaml(unittest.TestCase):
             if %errorlevel% neq 0 exit /b %errorlevel%
             pip freeze > pip_freeze.txt
             if %errorlevel% neq 0 exit /b %errorlevel%
+            set PYTHONPATH=src
+            if %errorlevel% neq 0 exit /b %errorlevel%
             set JOB_NAME=UT
 
             @echo SCRIPT
@@ -271,6 +273,8 @@ class TestYaml(unittest.TestCase):
             if %errorlevel% neq 0 exit /b %errorlevel%
             pip freeze > pip_freeze.txt
             if %errorlevel% neq 0 exit /b %errorlevel%
+            set PYTHONPATH=src
+            if %errorlevel% neq 0 exit /b %errorlevel%
             set JOB_NAME=UT
 
             @echo SCRIPT
@@ -306,6 +310,7 @@ class TestYaml(unittest.TestCase):
             expected = """
             export DIST=std
             export PYINT=python__VERSP__
+            export PYTHONPATH=src
             export VERSION=__VERSP__
             export NAME=UT
             export TIMEOUT=899
@@ -440,6 +445,8 @@ class TestYaml(unittest.TestCase):
             if %errorlevel% neq 0 exit /b %errorlevel%
             pip freeze > pip_freeze.txt
             if %errorlevel% neq 0 exit /b %errorlevel%
+            set PYTHONPATH=src
+            if %errorlevel% neq 0 exit /b %errorlevel%
 
             @echo BEFORE_SCRIPT
             set PATH=ROOT\\pyquickhelper\\%NAME_JENKINS%\\_venv\\Scripts;%PATH%
@@ -470,10 +477,10 @@ class TestYaml(unittest.TestCase):
             val = conv.strip("\n \t\r")
             if expected != val:
                 mes = "EXP:\n{0}\n###########\nGOT:\n{1}".format(expected, val)
-                for a, b in zip(expected.split("\n"), val.split("\n")):
+                for i, (a, b) in enumerate(zip(expected.split("\n"), val.split("\n"))):
                     if a != b:
                         raise Exception(
-                            "error on line:\nEXP:\n{0}\nGOT:\n{1}\n#######\n{2}".format(a, b, mes))
+                            "error on line {3}:\nEXP:\n{0}\nGOT:\n{1}\n#######\n{2}".format(a, b, mes, i))
                 raise Exception(mes)
 
 

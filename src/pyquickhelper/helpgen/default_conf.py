@@ -329,7 +329,7 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
     language = "en"
 
     # main version
-    version = extract_version_from_setup(fileconf)
+    version = first_line
 
     # settings sphinx
     pygments_style = 'sphinx'
@@ -784,30 +784,6 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
 #################
 # custom functions
 #################
-
-def extract_version_from_setup(filename):
-    """
-    Extracts the version from *setup.py* assuming it
-    is located in ``../../..`` and the version is specified
-    by the following line: ``sversion = "..."``.
-    """
-    setup = os.path.abspath(os.path.split(filename)[0])
-    setups = [os.path.join(setup, "..", "..", "..", "setup.py"),
-              os.path.join(setup, "..", "..", "..", "..", "setup.py")]
-    setups = [os.path.normpath(setup) for setup in setups]
-    for setup in setups:
-        if os.path.exists(setup):
-            with open(setup, "r") as f:
-                content = f.read()
-            exp = re.compile("sversion *= *['\\\"]([0-9.]+?)['\\\"]")
-            all = exp.findall(content)
-            if len(all) == 0:
-                raise Exception("unable to locate the version from setup.py")
-            if len(all) != 1:
-                raise Exception("more than one version was found: " + str(all))
-            return all[0]
-    raise FileNotFoundError(
-        "Unable to find *setup.py*, tried:\n{0}".format("\n".join(setups)))
 
 
 def get_first_line(filename):

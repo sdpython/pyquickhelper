@@ -7,6 +7,7 @@ import sys
 import os
 import unittest
 
+import pyquickhelper
 from pyquickhelper.loghelper import fLOG
 from pyquickhelper.helpgen.default_conf import set_sphinx_variables
 from pyquickhelper.pycode import is_travis_or_appveyor
@@ -35,7 +36,7 @@ class TestConfSphinx(unittest.TestCase):
         try:
             set_sphinx_variables(
                 ff,
-                "thisname",
+                "pyquickhelper",
                 "XD",
                 2014,
                 "sphinx_rtd_theme",

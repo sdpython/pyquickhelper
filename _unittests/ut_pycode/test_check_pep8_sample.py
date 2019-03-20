@@ -1,7 +1,6 @@
 """
 @brief      test tree node (time=15s)
 """
-import sys
 import os
 import unittest
 
@@ -19,7 +18,7 @@ class TestCheckPep8Sample(ExtTestCase):
         """Line too long                                                                                                                                      ....>`_"""
 
     def unused_var(self):
-        aa = 5
+        aa = 5  # pylint: disable=W0612
 
     def undeclared_var(self):
         aa + 5  # pylint: disable=E0602, W0104
@@ -42,20 +41,14 @@ class TestCheckPep8Sample(ExtTestCase):
                        pylint_ignore=('C0111', 'R0201', 'C0103'),
                        pattern="test_check_pep8_sample.py",
                        neg_pattern="##",
-                       skip=["test_check_pep8_sample.py:30",
-                             "test_check_pep8_sample.py:33",
+                       skip=["test_check_pep8_sample.py:15",
+                             "test_check_pep8_sample.py:18",
                              "Unused import src"])
 
         self.assertRaise(check_pep8_one_file, PEP8Exception,
                          "line too long (165 > 150 characters)")
         self.assertRaise(check_pep8_one_file, PEP8Exception,
                          "F[ECL1] line too long (link) 169 > 150")
-        self.assertRaise(check_pep8_error_file, PEP8Exception,
-                         "E0602: Undefined variable 'aa'")
-        self.assertRaise(check_pep8_error_file, PEP8Exception,
-                         "W0612: Unused variable 'aa'")
-        self.assertRaise(check_pep8_error_file, PEP8Exception,
-                         "W0104: Statement seems to have no effect")
 
         check_pep8(this, fLOG=fLOG, max_line_length=170, recursive=False,
                    pylint_ignore=('C0111', 'R0201', 'C0103'),

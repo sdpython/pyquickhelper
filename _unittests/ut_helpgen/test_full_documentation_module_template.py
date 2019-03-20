@@ -30,7 +30,7 @@ class TestSphinxFullDocumentationModuleTemplate(unittest.TestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
-        if is_travis_or_appveyor() in ('travis', 'appveyor') or sys.version_info[0] == 2:
+        if is_travis_or_appveyor() in ('travis', 'appveyor'):
             # travis fails due to the following:
             #       sitep = [_ for _ in site.getsitepackages() if "packages" in _]
             # AttributeError: 'module' object has no attribute
@@ -286,8 +286,9 @@ class TestSphinxFullDocumentationModuleTemplate(unittest.TestCase):
             with open(history, "r", encoding="utf-8") as f:
                 content = f.read()
 
-            if 'python3_module_template 0.2.0' not in content:
-                raise Exception(content)
+            tofind = 'python3_module_template'
+            if tofind not in content:
+                raise Exception("Unable to find '{0}' in\n{1}".format(tofind, content))
 
         # final check
         logs = os.path.join(temp, "log_custom_000.txt")
