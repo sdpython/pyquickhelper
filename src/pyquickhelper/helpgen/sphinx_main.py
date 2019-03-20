@@ -345,10 +345,15 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
     if os.path.exists(confb):
         try:
             import conf_base
-        except ImportError as e:
+        except (ImportError, ModuleNotFoundError) as e:
             sys.path.insert(0, root_source)
-            import conf_base
-            del sys.path[0]
+            try:
+                import conf_base
+                del sys.path[0]
+            except (ImportError, ModuleNotFoundError) as e:
+                del sys.path[0]                
+                raise ImportError("Unable to import conf_base '{}' from '{}'\nsys.path=\n{}".format(
+                    confb, root_source, "\n".join(sys.path)))
 
         fLOG("[generate_help_sphinx] conf_base.__file__='{0}'".format(
             os.path.abspath(conf_base.__file__)))
