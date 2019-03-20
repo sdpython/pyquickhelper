@@ -63,7 +63,9 @@ def replace_relative_import_fct(fullname, content=None):
     for i in range(len(fullsplit), 1, -1):
         path = "/".join(fullsplit[:i])
         init = os.path.join(path, '__init__.py')
-        if not os.path.exists(init):
+        src = os.path.join(path, 'src')
+        cond = init or (not init and src)
+        if not cond:
             root = i + 1
             break
         if i < len(fullsplit) and fullsplit[i] in ('src', 'site-packages'):
@@ -78,8 +80,8 @@ def replace_relative_import_fct(fullname, content=None):
     namedot = "([a-zA-Z_][a-zA-Z_0-9.]*)"
     names = name + "(, " + name + ")*"
     end = "( .*)?$"
-    regi = re.compile("^( *)from ([.]{1,3})" +
-                      namedot + " import " + names + end)
+    regi = re.compile("^( *)from ([.]{1,3})" + namedot +
+                      " import " + names + end)
 
     for i in range(0, len(lines)):
         line = lines[i]
@@ -101,8 +103,9 @@ def replace_relative_import_fct(fullname, content=None):
                     space=space, packname=packname, name0=name0, names=names, end=end)
                 lines[i] = line
             else:
-                raise ValueError("Unable to replace relative import in '{0}', root='{1}'".format(
-                    line, fullsplit[root]))
+                raise ValueError("Unable to replace relative import in '{0}', "
+                                 "root='{1}'\n{2}|{3}|{4}|{5}| level={6}".format(
+                                     line, fullsplit[root], dot, rel, name0, names, level))
 
     return "\n".join(lines)
 
@@ -1592,8 +1595,8 @@ def _private_migrating_doxygen_doc(rows, index_first_line, filename,
                         img = img.strip("~")
                         spl_path = filename.replace("\\", "/").split("/")
                         pos = spl_path.index("src")
-                        ref = "/".join([".."] *
-                                       (len(spl_path) - pos - 2)) + "/"
+                        dots = [".."] * (len(spl_path) - pos - 2)
+                        ref = "/".join(dots) + "/"
                     else:
                         ref = ""
 

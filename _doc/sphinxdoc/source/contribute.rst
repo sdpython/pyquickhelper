@@ -163,26 +163,16 @@ This test file must begin by `test_` and must look like the following::
     import sys
     import os
     import unittest
-
-    # to import files from the module
-    # and to make sure we do not use another installed version
-    try :
-        import src
-    except ImportError :
-        path = os.path.normpath(os.path.abspath( os.path.join( os.path.split(__file__)[0], "..", "..")))
-        if path not in sys.path : sys.path.append (path)
-        import src
-
     from pyquickhelper import fLOG
 
     # import the file you want to test
-    from src.project_name.subproject.myexample import myclass
+    from project_name.subproject.myexample import myclass
 
-    class TestExample (unittest.TestCase):
+    class TestExample(unittest.TestCase):
 
         def test_split_cmp_command(self) :
 
-            # to log information
+            # to log information only when run as main file
             fLOG (__file__, self._testMethodName, OutputPrint = __name__ == "__main__")
 
             # you test content
@@ -195,7 +185,8 @@ You can check if the test is run on a specific environment:
 
 ::
 
-    from pyquickhelper.pycode import is_travis_or_appveyor
+    from pyquickhelper.pycode import skipif_travis, skipif_circleci
+    from pyquickhelper.pycode import skipif_appveyor, skipif_azure
 
 Function :ref:`is_travis_or_appveyor <pyquickhelper.pycode.ci_helper.is_travis_or_appveyor>` return a string
 ``'travis'`` or ``'appveyor'`` is the code is executed on such environment or None if

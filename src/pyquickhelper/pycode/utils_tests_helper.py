@@ -17,7 +17,7 @@ import pycodestyle
 
 from ..filehelper.synchelper import remove_folder, explore_folder_iterfile
 from ..loghelper.flog import noLOG
-from ..loghelper import run_cmd
+from ..loghelper import run_cmd, sys_path_append
 
 
 def _get_PyLinterRunV():
@@ -481,11 +481,11 @@ def add_missing_development_version(names, root, hide=False):
         if not os.path.exists(this):
             raise FileNotFoundError("unable to find a subfolder '{0}' in '{1}' (*py27={3})\nFOUND:\n{2}".format(
                 this, newroot, "\n".join(dirs), py27))
-        sys.path.append(this)
-        if hide:
-            with warnings.catch_warnings(record=True):
+        with sys_path_append(this):
+            if hide:
+                with warnings.catch_warnings(record=True):
+                    importlib.import_module(name)
+            else:
                 importlib.import_module(name)
-        else:
-            importlib.import_module(name)
         paths.append(this)
     return paths

@@ -25,24 +25,9 @@ class TestCodeHelper(unittest.TestCase):
         try:
             import pymyinstall as skip_
         except ImportError:
-            path = os.path.normpath(
-                os.path.abspath(
-                    os.path.join(
-                        os.path.split(__file__)[0],
-                        "..",
-                        "..",
-                        "..",
-                        "pymyinstall",
-                        "src")))
-            if path not in sys.path:
-                sys.path.append(path)
-            try:
-                import pymyinstall as skip_
-            except ImportError:
-                # we skip
-                warnings.warn(
-                    "unable to test TestCodeHelper.test_synchro_hash")
-                return
+            warnings.warn(
+                "Unable to test TestCodeHelper.test_synchro_hash, cannot import pymyinstall.")
+            return
 
         fold = os.path.abspath(os.path.split(__file__)[0])
         data = os.path.join(fold, "data")

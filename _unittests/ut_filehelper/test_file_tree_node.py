@@ -52,7 +52,11 @@ class TestFileNodeTree(ExtTestCase):
                     self.assertNotIn("no documentation", doc)
                     self.assertIn(".. _f-", contr)
 
-                    cont2 = replace_relative_import_fct(f.fullname)
+                    try:
+                        cont2 = replace_relative_import_fct(f.fullname)
+                    except ValueError as e:
+                        raise ValueError(
+                            "Unable to process '{}'.".format(f.fullname)) from e
                     lines = cont2.split("\n")
                     condition = "# replace # from ." in cont2
                     if not condition:

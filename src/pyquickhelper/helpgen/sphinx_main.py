@@ -351,7 +351,7 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
                 import conf_base
                 del sys.path[0]
             except (ImportError, ModuleNotFoundError) as e:
-                del sys.path[0]                
+                del sys.path[0]
                 raise ImportError("Unable to import conf_base '{}' from '{}'\nsys.path=\n{}".format(
                     confb, root_source, "\n".join(sys.path)))
 

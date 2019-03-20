@@ -7,9 +7,9 @@ from datetime import datetime
 from time import perf_counter
 import pickle
 from ..loghelper import noLOG, CustomLog, fLOGFormat
-from ..texthelper import apply_template
-from ..pandashelper import df2rst
 from ..loghelper.flog import get_relative_path
+from ..pandashelper import df2rst
+from ..texthelper import apply_template
 
 
 class BenchMark:
@@ -22,8 +22,6 @@ class BenchMark:
                  cache_file=None, pickle_module=None, progressbar=None,
                  **params):
         """
-        initialisation
-
         @param      name            name of the test
         @param      clog            @see cl CustomLog or string
         @param      fLOG            logging function
@@ -77,7 +75,7 @@ class BenchMark:
 
     def end(self):
         """
-        Cleans. Overwrite this method.
+        Cleans. Overwrites this method.
         """
         raise NotImplementedError("It should be overwritten.")
 
@@ -139,8 +137,6 @@ class BenchMark:
 
         def __init__(self, func_gen, filename=None, title=None, root=None):
             """
-            constructor
-
             @param      func_gen        function generating the graph
             @param      filename        filename
             @param      title           title
@@ -157,7 +153,7 @@ class BenchMark:
 
         def plot(self, ax=None, text=True, **kwargs):
             """
-            Draw the graph again
+            Draws the graph again.
 
             @param      ax          axis
             @param      text        add text on the graph
@@ -168,7 +164,7 @@ class BenchMark:
 
         def add(self, name, value):
             """
-            add an attribute
+            Adds an attribute.
 
             @param      name        name of the attribute
             @param      value       value
@@ -177,7 +173,7 @@ class BenchMark:
 
         def to_html(self):
             """
-            render as html
+            Renders as :epkg:`HTML`.
             """
             # deal with relatif path.
             if hasattr(self, "filename"):
@@ -199,7 +195,7 @@ class BenchMark:
 
         def to_rst(self):
             """
-            render as htmrst
+            Renders as :ekg:`rst`.
             """
             # do not consider width or height
             # deal with relatif path
@@ -217,13 +213,13 @@ class BenchMark:
     @property
     def Name(self):
         """
-        Return the name of the benchmark.
+        Returns the name of the benchmark.
         """
         return self._name
 
     def fLOG(self, *l, **p):
         """
-        Log something.
+        Logs something.
         """
         self._tracelogs.append(fLOGFormat("\n", *l, **p).strip("\n"))
         if self._clog:
@@ -432,7 +428,7 @@ class BenchMark:
     @property
     def Metrics(self):
         """
-        Return the metrics.
+        Returns the metrics.
         """
         if not hasattr(self, "_metrics"):
             raise KeyError("Method run was not run, no metrics was found.")
@@ -441,7 +437,7 @@ class BenchMark:
     @property
     def Metadata(self):
         """
-        Return the metrics.
+        Returns the metrics.
         """
         if not hasattr(self, "_metadata"):
             raise KeyError("Method run was not run, no metadata was found.")
@@ -450,7 +446,7 @@ class BenchMark:
     @property
     def Appendix(self):
         """
-        Return the metrics.
+        Returns the metrics.
         """
         if not hasattr(self, "_appendix"):
             raise KeyError("Method run was not run, no metadata was found.")

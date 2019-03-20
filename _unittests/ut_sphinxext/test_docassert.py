@@ -4,15 +4,16 @@
 """
 import sys
 import os
+from io import StringIO
 import unittest
 import warnings
 import logging
-from io import StringIO
+from sphinx.util.logging import getLogger
 
 from pyquickhelper.loghelper.flog import fLOG
 from pyquickhelper.sphinxext.import_object_helper import import_object
 from pyquickhelper.helpgen import rst2html
-from sphinx.util.logging import getLogger
+from pyquickhelper.loghelper import sys_path_append
 
 
 class TestDocAssert(unittest.TestCase):
@@ -25,11 +26,10 @@ class TestDocAssert(unittest.TestCase):
 
         this = os.path.abspath(os.path.dirname(__file__))
         data = os.path.join(this, "datadoc")
-        sys.path.append(data)
-        obj, name = import_object("exdocassert.onefunction", "function")
-        self.assertTrue(obj is not None)
-        self.assertTrue(obj(4, 5), 9)
-        sys.path.pop()
+        with sys_path_append(data):
+            obj, name = import_object("exdocassert.onefunction", "function")
+            self.assertTrue(obj is not None)
+            self.assertTrue(obj(4, 5), 9)
 
     def test_docassert_html(self):
         fLOG(
@@ -48,30 +48,28 @@ class TestDocAssert(unittest.TestCase):
 
         this = os.path.abspath(os.path.dirname(__file__))
         data = os.path.join(this, "datadoc")
-        sys.path.append(data)
-        obj, name = import_object("exdocassert.onefunction", "function")
-        docstring = obj.__doc__
-        with warnings.catch_warnings(record=True) as ws:
-            html = rst2html(docstring)
-            if "if a and b have different" not in html:
-                raise Exception(html)
+        with sys_path_append(data):
+            obj, name = import_object("exdocassert.onefunction", "function")
+            docstring = obj.__doc__
+            with warnings.catch_warnings(record=True) as ws:
+                html = rst2html(docstring)
+                if "if a and b have different" not in html:
+                    raise Exception(html)
 
-        newstring = ".. autofunction:: exdocassert.onefunction"
-        with warnings.catch_warnings(record=True) as ws:
-            html = rst2html(newstring)
-            for i, w in enumerate(ws):
-                fLOG(i, ":", w)
-            if "if a and b have different" not in html:
-                html = rst2html(newstring, fLOG=fLOG)
-                fLOG("number of warnings", len(ws))
+            newstring = ".. autofunction:: exdocassert.onefunction"
+            with warnings.catch_warnings(record=True) as ws:
+                html = rst2html(newstring)
                 for i, w in enumerate(ws):
-                    fLOG(i, ":", str(w).replace("\\n", "\n"))
-                raise Exception(html)
+                    fLOG(i, ":", w)
+                if "if a and b have different" not in html:
+                    html = rst2html(newstring, fLOG=fLOG)
+                    fLOG("number of warnings", len(ws))
+                    for i, w in enumerate(ws):
+                        fLOG(i, ":", str(w).replace("\\n", "\n"))
+                    raise Exception(html)
 
-        from docutils.parsers.rst.directives import _directives
-        self.assertTrue("autofunction" in _directives)
-
-        sys.path.pop()
+            from docutils.parsers.rst.directives import _directives
+            self.assertTrue("autofunction" in _directives)
 
         lines = log_capture_string.getvalue().split("\n")
         if len(lines) > 0:
@@ -113,12 +111,11 @@ class TestDocAssert(unittest.TestCase):
 
         this = os.path.abspath(os.path.dirname(__file__))
         data = os.path.join(this, "datadoc")
-        sys.path.append(data)
-        obj, name = import_object("exdocassert2.onefunction", "function")
-        newstring = ".. autofunction:: exdocassert2.onefunction"
-        html = rst2html(newstring)
-        self.assertTrue(html is not None)
-        sys.path.pop()
+        with sys_path_append(data):
+            obj, name = import_object("exdocassert2.onefunction", "function")
+            newstring = ".. autofunction:: exdocassert2.onefunction"
+            html = rst2html(newstring)
+            self.assertTrue(html is not None)
         fLOG(len(log_capture_string))
 
         lines = log_capture_string.getvalue().split("\n")
@@ -163,12 +160,11 @@ class TestDocAssert(unittest.TestCase):
 
         this = os.path.abspath(os.path.dirname(__file__))
         data = os.path.join(this, "datadoc")
-        sys.path.append(data)
-        obj, name = import_object("exsig.clex.onemethod", "method")
-        newstring = ".. automethod:: exsig.clex.onemethod"
-        html = rst2html(newstring)
-        self.assertTrue(html is not None)
-        sys.path.pop()
+        with sys_path_append(data):
+            obj, name = import_object("exsig.clex.onemethod", "method")
+            newstring = ".. automethod:: exsig.clex.onemethod"
+            html = rst2html(newstring)
+            self.assertTrue(html is not None)
         fLOG(len(log_capture_string))
 
         lines = log_capture_string.getvalue().split("\n")

@@ -38,7 +38,7 @@ except ImportError:
     import pyquickhelper
 
 
-from src.pymyinstall.installhelper.module_install import ModuleInstall
+from pymyinstall.installhelper.module_install import ModuleInstall
 from pyquickhelper.loghelper import fLOG
 from pyquickhelper.pycode import get_temp_folder
 

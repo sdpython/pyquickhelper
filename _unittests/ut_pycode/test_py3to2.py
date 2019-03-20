@@ -29,7 +29,7 @@ class TestPy3to2(unittest.TestCase):
 
         script = """
             import sys
-            sys.path = [ p for p in sys.path if "src" not in p and "ut_" not in p ]
+            sys.path = [p for p in sys.path if "src" not in p and "ut_" not in p]
             sys.path.append(r"{0}")
             print ""
             for k in sys.path:

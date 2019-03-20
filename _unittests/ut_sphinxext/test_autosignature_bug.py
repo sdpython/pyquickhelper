@@ -9,6 +9,7 @@ import unittest
 import pandas
 import numpy
 
+from pyquickhelper.loghelper import sys_path_append
 from pyquickhelper.pycode import ExtTestCase
 from pyquickhelper.sphinxext.import_object_helper import import_object, import_any_object, import_path
 from pyquickhelper.sphinxext.sphinx_autosignature import enumerate_extract_signature, enumerate_cleaned_signature
@@ -38,21 +39,21 @@ class TestAutoSignatureBug(ExtTestCase):
     def test_autosignature_cplusplus(self):
         this = os.path.abspath(os.path.dirname(__file__))
         data = os.path.join(this, "datadoc")
-        sys.path.append(data)
-        from cpyquickhelper.numbers.cbenchmark import vector_dot_product16  # pylint: disable=E0611,E0401
-        self.assertIn("Computes a dot product in C++",
-                      vector_dot_product16.__doc__)
+        with sys_path_append(data):
+            from cpyquickhelper.numbers.cbenchmark import vector_dot_product16  # pylint: disable=E0611,E0401
+            self.assertIn("Computes a dot product in C++",
+                          vector_dot_product16.__doc__)
 
-        newstring = ["AAAAAAAAAAAAAAAA",
-                     "",
-                     ".. autosignature:: cpyquickhelper.numbers.cbenchmark.vector_dot_product16",
-                     "",
-                     "CCCCCCCCCCCCCCCC"]
-        newstring = "\n".join(newstring)
-        text = rst2html(newstring, writer="rst")
-        self.assertIn(
-            "cpyquickhelper.numbers.cbenchmark.vector_dot_product16", text)
-        self.assertIn("Computes a dot product in C++ with vectors", text)
+            newstring = ["AAAAAAAAAAAAAAAA",
+                         "",
+                         ".. autosignature:: cpyquickhelper.numbers.cbenchmark.vector_dot_product16",
+                         "",
+                         "CCCCCCCCCCCCCCCC"]
+            newstring = "\n".join(newstring)
+            text = rst2html(newstring, writer="rst")
+            self.assertIn(
+                "cpyquickhelper.numbers.cbenchmark.vector_dot_product16", text)
+            self.assertIn("Computes a dot product in C++ with vectors", text)
 
     def test_signature(self):
         seg = 'vector_dot_product16(arg0: numpy.ndarray[float32], arg1: numpy.ndarray[float32]) -> float\n'

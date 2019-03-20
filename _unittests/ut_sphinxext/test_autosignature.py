@@ -9,6 +9,7 @@ import unittest
 import pandas
 import numpy
 
+from pyquickhelper.loghelper import sys_path_append
 from pyquickhelper.pycode import ExtTestCase
 from pyquickhelper.sphinxext.import_object_helper import import_object, import_any_object, import_path
 from pyquickhelper.sphinxext.sphinx_autosignature import enumerate_extract_signature, enumerate_cleaned_signature
@@ -20,21 +21,19 @@ class TestAutoSignature(ExtTestCase):
     def test_import_object(self):
         this = os.path.abspath(os.path.dirname(__file__))
         data = os.path.join(this, "datadoc")
-        sys.path.append(data)
-        obj, name = import_object("exdocassert.onefunction", "function")
-        self.assertTrue(obj is not None)
-        self.assertTrue(obj(4, 5), 9)
-        sys.path.pop()
+        with sys_path_append(data):
+            obj, name = import_object("exdocassert.onefunction", "function")
+            self.assertTrue(obj is not None)
+            self.assertTrue(obj(4, 5), 9)
 
     def test_import_object_any(self):
         this = os.path.abspath(os.path.dirname(__file__))
         data = os.path.join(this, "datadoc")
-        sys.path.append(data)
-        obj, name, kind = import_any_object("exdocassert.onefunction")
-        self.assertTrue(obj is not None)
-        self.assertTrue(obj(4, 5), 9)
-        self.assertEqual(kind, 'function')
-        sys.path.pop()
+        with sys_path_append(data):
+            obj, name, kind = import_any_object("exdocassert.onefunction")
+            self.assertTrue(obj is not None)
+            self.assertTrue(obj(4, 5), 9)
+            self.assertEqual(kind, 'function')
 
     def test_import_object_kind_check(self):
         self.assertNotEmpty(import_object('pandas.DataFrame', 'class'))
@@ -58,26 +57,25 @@ class TestAutoSignature(ExtTestCase):
     def test_import_path_loc(self):
         this = os.path.abspath(os.path.dirname(__file__))
         data = os.path.join(this, "datadoc")
-        sys.path.append(data)
-        from exsig import clex
-        ipath = import_path(clex)
-        self.assertEqual(ipath, 'exsig')
-        sys.path.pop()
+        with sys_path_append(data):
+            from exsig import clex
+            ipath = import_path(clex)
+            self.assertEqual(ipath, 'exsig')
 
     def test_autosignature_html(self):
         this = os.path.abspath(os.path.dirname(__file__))
         data = os.path.join(this, "datadoc")
-        sys.path.append(data)
-        obj, name = import_object("exdocassert.onefunction", "function")
+        with sys_path_append(data):
+            obj, name = import_object("exdocassert.onefunction", "function")
 
-        newstring = ["AAAAAAAAAAAAAAAA",
-                     ".. autosignature:: exdocassert.onefunction",
-                     "BBBBBBBBBBBBBBBB",
-                     ".. autofunction:: exdocassert.onefunction",
-                     "CCCCCCCCCCCCCCCC"]
-        newstring = "\n\n".join(newstring)
-        htmls = rst2html(newstring, layout="sphinx_body")
-        sys.path.pop()
+            newstring = ["AAAAAAAAAAAAAAAA",
+                         ".. autosignature:: exdocassert.onefunction",
+                         "BBBBBBBBBBBBBBBB",
+                         ".. autofunction:: exdocassert.onefunction",
+                         "CCCCCCCCCCCCCCCC"]
+            newstring = "\n\n".join(newstring)
+            htmls = rst2html(newstring, layout="sphinx_body")
+
         self.assertIn("CCCCCCCCCCCCCCCC", htmls)
 
         from docutils.parsers.rst.directives import _directives
@@ -105,17 +103,17 @@ class TestAutoSignature(ExtTestCase):
     def test_autosignature_class(self):
         this = os.path.abspath(os.path.dirname(__file__))
         data = os.path.join(this, "datadoc")
-        sys.path.append(data)
+        with sys_path_append(data):
 
-        newstring = ["AAAAAAAAAAAAAAAA",
-                     "",
-                     ".. autosignature:: exsig.clex",
-                     "    :members:",
-                     "",
-                     "CCCCCCCCCCCCCCCC"]
-        newstring = "\n".join(newstring)
-        htmls = rst2html(newstring, layout="sphinx_body")
-        sys.path.pop()
+            newstring = ["AAAAAAAAAAAAAAAA",
+                         "",
+                         ".. autosignature:: exsig.clex",
+                         "    :members:",
+                         "",
+                         "CCCCCCCCCCCCCCCC"]
+            newstring = "\n".join(newstring)
+            htmls = rst2html(newstring, layout="sphinx_body")
+
         self.assertIn("CCCCCCCCCCCCCCCC", htmls)
 
         html = htmls.split("CCCCCCCCCCCCCCCC")
@@ -135,17 +133,17 @@ class TestAutoSignature(ExtTestCase):
     def test_autosignature_class_onemethod(self):
         this = os.path.abspath(os.path.dirname(__file__))
         data = os.path.join(this, "datadoc")
-        sys.path.append(data)
+        with sys_path_append(data):
 
-        newstring = ["AAAAAAAAAAAAAAAA",
-                     "",
-                     ".. autosignature:: exsig.clex",
-                     "    :members: onemethod",
-                     "",
-                     "CCCCCCCCCCCCCCCC"]
-        newstring = "\n".join(newstring)
-        htmls = rst2html(newstring, layout="sphinx_body")
-        sys.path.pop()
+            newstring = ["AAAAAAAAAAAAAAAA",
+                         "",
+                         ".. autosignature:: exsig.clex",
+                         "    :members: onemethod",
+                         "",
+                         "CCCCCCCCCCCCCCCC"]
+            newstring = "\n".join(newstring)
+            htmls = rst2html(newstring, layout="sphinx_body")
+
         self.assertIn("CCCCCCCCCCCCCCCC", htmls)
 
         html = htmls.split("CCCCCCCCCCCCCCCC")
@@ -165,16 +163,16 @@ class TestAutoSignature(ExtTestCase):
     def test_autosignature_class_onemethod2(self):
         this = os.path.abspath(os.path.dirname(__file__))
         data = os.path.join(this, "datadoc")
-        sys.path.append(data)
+        with sys_path_append(data):
 
-        newstring = ["AAAAAAAAAAAAAAAA",
-                     "",
-                     ".. autosignature:: exdocassert2.onefunction",
-                     "",
-                     "CCCCCCCCCCCCCCCC"]
-        newstring = "\n".join(newstring)
-        htmls = rst2html(newstring, layout="sphinx_body")
-        sys.path.pop()
+            newstring = ["AAAAAAAAAAAAAAAA",
+                         "",
+                         ".. autosignature:: exdocassert2.onefunction",
+                         "",
+                         "CCCCCCCCCCCCCCCC"]
+            newstring = "\n".join(newstring)
+            htmls = rst2html(newstring, layout="sphinx_body")
+
         self.assertIn("CCCCCCCCCCCCCCCC", htmls)
 
         html = htmls.split("CCCCCCCCCCCCCCCC")
@@ -200,19 +198,19 @@ class TestAutoSignature(ExtTestCase):
     def test_autosignature_class_static_method(self):
         this = os.path.abspath(os.path.dirname(__file__))
         data = os.path.join(this, "datadoc")
-        sys.path.append(data)
+        with sys_path_append(data):
 
-        obj = import_object("exsig.clex.static_method", "staticmethod")
-        self.assertTrue(obj is not None)
+            obj = import_object("exsig.clex.static_method", "staticmethod")
+            self.assertTrue(obj is not None)
 
-        newstring = ["AAAAAAAAAAAAAAAA",
-                     "",
-                     ".. autosignature:: exsig.clex.static_method",
-                     "",
-                     "CCCCCCCCCCCCCCCC"]
-        newstring = "\n".join(newstring)
-        htmls = rst2html(newstring, layout="sphinx_body")
-        sys.path.pop()
+            newstring = ["AAAAAAAAAAAAAAAA",
+                         "",
+                         ".. autosignature:: exsig.clex.static_method",
+                         "",
+                         "CCCCCCCCCCCCCCCC"]
+            newstring = "\n".join(newstring)
+            htmls = rst2html(newstring, layout="sphinx_body")
+
         self.assertIn("CCCCCCCCCCCCCCCC", htmls)
 
         html = htmls.split("CCCCCCCCCCCCCCCC")
@@ -301,17 +299,18 @@ class TestAutoSignature(ExtTestCase):
     def test_autosignature_class_onemethod2_debug(self):
         this = os.path.abspath(os.path.dirname(__file__))
         data = os.path.join(this, "datadoc")
-        sys.path.append(data)
+        with sys_path_append(data):
 
-        newstring = ["AAAAAAAAAAAAAAAA",
-                     "",
-                     ".. autosignature:: exdocassert2.onefunction",
-                     "    :debug:",
-                     "    :syspath: aaa;bbbb",
-                     "",
-                     "CCCCCCCCCCCCCCCC"]
-        newstring = "\n".join(newstring)
-        htmls = rst2html(newstring, writer="rst")
+            newstring = ["AAAAAAAAAAAAAAAA",
+                         "",
+                         ".. autosignature:: exdocassert2.onefunction",
+                         "    :debug:",
+                         "    :syspath: aaa;bbbb",
+                         "",
+                         "CCCCCCCCCCCCCCCC"]
+            newstring = "\n".join(newstring)
+            htmls = rst2html(newstring, writer="rst")
+
         self.assertIn('[debug]', htmls)
         self.assertIn('[import_any_object]', htmls)
 

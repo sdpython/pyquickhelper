@@ -50,26 +50,8 @@ def py3to2_convert_tree(folder, dest, encoding="utf8", pattern=".*[.]py$",
     You can also read blog post :ref:`b-migration-py2py3`.
 
     The variable *unittest_modules* indicates the list of modules which are not installed
-    in Python distribution but still used and placed in the same folder
-    as the same which has to converted. A subfolder
-    ``dist_module27`` will be added to it. We assume these modules are imported using the
-    following logic::
-
-        try:
-            import pyquickhelper
-        except ImportError:
-            path = os.path.normpath(
-                os.path.abspath(
-                    os.path.join(
-                        os.path.split(__file__)[0],
-                        "..",
-                        "..",
-                        "..",
-                        "pyquickhelper",  # it replaces it by "..", "pyquickhelper", "dist_module27",
-                        "src")))
-            if path not in sys.path:
-                sys.path.append(path)
-            import pyquickhelper
+    in :epkg:`Python` distribution but still used and placed in the same folder
+    as the same which has to converted.
 
     *unittest_modules* can be either a list or a tuple ``(module, alias)``. Then the alias
     appears instead of the module name.

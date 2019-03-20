@@ -288,7 +288,8 @@ class TestSphinxFullDocumentationModuleTemplate(unittest.TestCase):
 
             tofind = 'python3_module_template'
             if tofind not in content:
-                raise Exception("Unable to find '{0}' in\n{1}".format(tofind, content))
+                raise Exception(
+                    "Unable to find '{0}' in\n{1}".format(tofind, content))
 
         # final check
         logs = os.path.join(temp, "log_custom_000.txt")

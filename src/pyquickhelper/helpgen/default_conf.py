@@ -8,7 +8,6 @@
 import sys
 import os
 import datetime
-import re
 import warnings
 from .style_css_template import style_figure_notebook
 
